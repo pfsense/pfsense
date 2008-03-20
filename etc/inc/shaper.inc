@@ -1295,16 +1295,19 @@ class hfsc_queue extends priq_queue {
                        $input_errors[] = "Bandwidth in percentage should be between 1 and 100 bounds.";
                  }
 
+/*
                 $parent =& $this->GetParent();
                 switch ($data['bandwidthtype']) {
                        case "%":
                              $myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
                        default:
-                             $mybw = floatval($data['bandwiddth']) * get_bandwidthtype_scale($data['bandwidthtype']);
+                             $mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
                              break;
                 }
                 if ($parent->GetAvailableBandwidth() < $myBw)
                         $input_errors[] = "The sum of child bandwidths exceeds that of the parent.";
+*/
+
                 if ($data['priority'] > 7)
                         $input_errors[] = "Priority must be an integer between 1 and 7.";
 		}
@@ -1320,6 +1323,7 @@ class hfsc_queue extends priq_queue {
 		if ($data['upperlimit3'] <> "" && !is_valid_shaperbw($data['upperlimit3']))
 			$input_errors[] = ("upperlimit m2 value needs to be Kb, Mb, Gb, or %");
 
+/*
 		if (isset($data['upperlimit']) && $data['upperlimit3'] <> "" && $data['upperlimit1'] <> "") {
 		$bw_1 = get_hfsc_bandwidth($this, $data['upperlimit1']);
 		$bw_2 = get_hfsc_bandwidth($this, $data['upperlimit3']);
@@ -1330,6 +1334,8 @@ class hfsc_queue extends priq_queue {
 		if (get_interface_bandwidth($this) < (0.8 * (floatval($bw_1) + floatval($bw_2))))
 			$input_errors[] = ("upperlimit specification excedd 80% of allowable allocation.");
 		}
+*/
+
 		if ($data['linkshare1'] <> "" &&  $data['linkshare2'] == "")
 			$input_errors[] = ("linkshare service curve defined but missing (d) value");
 		if ($data['linkshare2'] <> "" &&  $data['linkshare1'] == "")
@@ -1345,6 +1351,7 @@ class hfsc_queue extends priq_queue {
 		if ($data['realtime2'] <> "" &&  $data['realtime1'] == "")
 			$input_errors[] = ("realtime service curve defined but missing initial bandwidth (m1) value");
 
+/*
 		if (isset($data['linkshare']) && $data['linkshare3'] <> "" && $data['linkshare1'] <> "") {
 		$bw_1 = get_hfsc_bandwidth($this, $data['linkshare1']);
                 $bw_2 = get_hfsc_bandwidth($this, $data['linkshare3']);
@@ -1355,6 +1362,8 @@ class hfsc_queue extends priq_queue {
                 if (get_interface_bandwidth($this) < (0.8 * (floatval($bw_1) + floatval($bw_2))))
                         $input_errors[] = ("linkshare specification excedd 80% of allowable allocation.");
 		}
+*/
+
 		if ($data['realtime1'] <> "" && !is_valid_shaperbw($data['realtime1']))
 			$input_errors[] = ("realtime m1 value needs to be Kb, Mb, Gb, or %");
 		if ($data['realtime2'] <> "" && !is_numeric($data['realtime2']))
@@ -1362,6 +1371,7 @@ class hfsc_queue extends priq_queue {
 		if ($data['realtime3'] <> "" && !is_valid_shaperbw($data['realtime3']))
 			$input_errors[] = ("realtime m2 value needs to be Kb, Mb, Gb, or %");
 
+/*
 		if (isset($data['realtime']) && $data['realtime3'] <> "" && $data['realtime1'] <> "") {
 		$bw_1 = get_hfsc_bandwidth($this, $data['realtime1']);
                 $bw_2 = get_hfsc_bandwidth($this, $data['realtime3']);
@@ -1372,6 +1382,7 @@ class hfsc_queue extends priq_queue {
                 if (get_interface_bandwidth($this) < (0.8 * (floatval($bw_1) + floatval($bw_2))))
                         $input_errors[] = ("realtime specification excedd 80% of allowable allocation.");
 		}
+*/
 
 	}
 
@@ -1820,16 +1831,18 @@ class cbq_queue extends priq_queue {
                        $input_errors[] = "Bandwidth in percentage should be between 1 and 100 bounds.";
            }
 
+/*
            $parent =& $this->GetParent();
            switch ($data['bandwidthtype']) {
                        case "%":
                              $myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
                        default:
-                             $mybw = floatval($data['bandwiddth']) * get_bandwidthtype_scale($data['bandwidthtype']);
+                             $mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
                              break;
            }
                 if ($parent->GetAvailableBandwidth() < floatval($myBw))
                         $input_errors[] = "The sum of child bandwidths exceeds that of the parent.";
+*/
 	}
 		function ReadConfig(&$q) {
 				parent::ReadConfig($q);

@@ -170,6 +170,9 @@ upgrade)
 		echo "Extracting $IMG." | logger -p daemon.info -i -t Upgrade
 		gzip -d $IMG
 		NEWIMG="`echo $IMG | sed 's/.tgz/.tar/'`"
+		if [ -f $NEWIMG ]; then
+			rm $NEWIMG
+		fi
 		echo "Installing $NEWIMG." | logger -p daemon.info -i -t Upgrade
 		for i in `/usr/bin/tar tvf $NEWIMG | egrep "(^d)" | nawk '{print $9;}'}'`;
 		do

@@ -174,6 +174,11 @@ upgrade)
 		echo "Extracting $IMG." | logger -p daemon.info -i -t Upgrade
 		gzip -d $IMG
 		echo "Installing $NEWIMG." | logger -p daemon.info -i -t Upgrade
+		mkdir -p /tmp/firmwareupgrade/usr
+		mtree -deU -f /etc/mtree/BSD.usr.dist -p /tmp/firmwareupgrade/usr
+		mtree -deU -f /etc/mtree/BSD.root.dist -p /tmp/firmwareupgrade/
+		mkdir -p /tmp/firmwareupgrade/kernels/
+		
 		for i in `/usr/bin/tar tvf $NEWIMG | egrep "(^d)" | nawk '{print $9;}'`;
 		do
 			if [ ! -d /$i ]; then
@@ -186,13 +191,13 @@ upgrade)
 			FILE=`basename ${i}`
 			echo "Working on ${FILE} - /${i}"
 			echo "Working on ${FILE} - /${i}" | logger -p daemon.info -i -t Upgrade
-			(cd /tmp && /usr/bin/tar xf ${NEWIMG} ${i})
-			echo "Installing /usr/bin/install -S /tmp/${i} /${i}" 
+			(cd /tmp/firmwareupgrade && /usr/bin/tar xf ${NEWIMG} ${i})
+			echo "Installing /usr/bin/install -S /tmp/firmwareupgrade/${i} /${i}" 
 			echo "Installing /${i}" | logger -p daemon.info -i -t Upgrade
-			/usr/bin/install -S "/tmp/${i}" "/${i}"
-			chflags noschg "/tmp/${i}"
+			/usr/bin/install -S "/tmp/firmwareupgrade/${i}" "/${i}"
+			chflags noschg "/tmp/firmwareupgrade/${i}"
 			chflags noschg "/${i}"
-			/bin/rm -f "/tmp/${i}"
+			/bin/rm -f "/tmp/firmwareupgrade/${i}"
 		done
 		/usr/bin/find / -name CVS -exec rm -fr {} \;
 		echo "Image installed $IMG." | logger -p daemon.info -i -t Upgrade
@@ -207,6 +212,7 @@ upgrade)
 		        echo "Custom image $CUSTOMIMG installed." | logger -p daemon.info -i -t Upgrade
 		    fi
 	    fi
+		rm -rf /tmp/firmwareupgrade/
 		# restore config
 		cp -p /tmp/configbak/* /conf 2>/dev/null
 		# restore /etc symlinks

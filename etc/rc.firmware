@@ -167,14 +167,14 @@ upgrade)
 		/etc/rc.conf_mount_rw
 		/sbin/mount -w -o noatime /cf 2>/dev/null
 		/sbin/mount -w -o noatime /   2>/dev/null
-		echo "Extracting $IMG." | logger -p daemon.info -i -t Upgrade
-		gzip -d $IMG
 		NEWIMG="`echo $IMG | sed 's/.tgz/.tar/'`"
 		if [ -f $NEWIMG ]; then
 			rm $NEWIMG
 		fi
+		echo "Extracting $IMG." | logger -p daemon.info -i -t Upgrade
+		gzip -d $IMG
 		echo "Installing $NEWIMG." | logger -p daemon.info -i -t Upgrade
-		for i in `/usr/bin/tar tvf $NEWIMG | egrep "(^d)" | nawk '{print $9;}'}'`;
+		for i in `/usr/bin/tar tvf $NEWIMG | egrep "(^d)" | nawk '{print $9;}'`;
 		do
 			if [ ! -d /$i ]; then
 				# directory does not exist, create it
@@ -187,10 +187,11 @@ upgrade)
 			echo "Working on ${FILE} - /${i}"
 			echo "Working on ${FILE} - /${i}" | logger -p daemon.info -i -t Upgrade
 			(cd /tmp && /usr/bin/tar xf ${NEWIMG} ${i})
-			echo "Installing /${i}" 
+			echo "Installing /usr/bin/install -S /tmp/${i} /${i}" 
 			echo "Installing /${i}" | logger -p daemon.info -i -t Upgrade
 			/usr/bin/install -S "/tmp/${i}" "/${i}"
 			chflags noschg "/tmp/${i}"
+			chflags noschg "/${i}"
 			/bin/rm -f "/tmp/${i}"
 		done
 		/usr/bin/find / -name CVS -exec rm -fr {} \;

@@ -860,7 +860,7 @@ EOD;
 			chmod("{$g['varetc_path']}/mpd-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']}/mpd-vpn -p {$g['varrun_path']}/mpd-vpn.pid pptpd");
+			mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']}/mpd-vpn -p {$g['varrun_path']}/mpd-vpn.pid pptpd -c {$g['varetc_path']}/mpd-vpn/mpd.conf");
 
 			break;
 

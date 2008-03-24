@@ -2549,10 +2549,8 @@ function sync_webgui_passwords() {
 	fclose($fd);
 	chmod("{$g['varrun_path']}/htpasswd", 0600);
 
-	if ($config['system']['user']) {
-		$root =& getUNIXRoot();
-		$crypted_pw = &$root['password'];
-	}
+	$root =& getUNIXRoot();
+	$crypted_pw = &$root['password'];
 
 	if (!$crypted_pw) {
 		log_error("Error: cannot determine root pwd in sync_webgui_passwords().\nRoot user struct follows:\n");

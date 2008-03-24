@@ -65,16 +65,8 @@
 		touch("/var/log/lastlog");
 	}
 
-	/* Make the root passwords are the same as the web admin password. */
-	conf_mount_rw();
-	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
-	fwrite($fd, $config['system']['password']);
-	fclose($fd);
-
-	/* Make the admin passwords are the same as the web admin password. */
-	$fd = popen("/usr/sbin/pw usermod -n admin -H 0", "w");
-	fwrite($fd, $config['system']['password']);
-	fclose($fd);
+	/* reset passwords */
+	sync_webgui_passwords();
 
 	$sshConfigDir = "/etc/ssh";
 

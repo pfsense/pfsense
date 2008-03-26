@@ -147,6 +147,7 @@ if(file_exists($rrdcolors)) {
 	$colorpacketsdown = "990000";
 	$colorstates = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 	$colorprocessor = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
+	$colormemory = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 	$colorqueuesup = array('000000','7B0000','990000','BB0000','CC0000','D90000','EE0000','FF0000','CC0000');
 	$colorqueuesdown = array('000000','7B7B7B','999999','BBBBBB','CCCCCC','D9D9D9','EEEEEE','FFFFFF','CCCCCC');
 	$colorqueuesdropup = array('000000','7B0000','990000','BB0000','CC0000','D90000','EE0000','FF0000','CC0000');
@@ -492,6 +493,58 @@ elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curd
 		GPRINT:processes:AVERAGE:'%7.2lf %s    '\\
 		GPRINT:processes:MAX:'%7.2lf %s    '\\
 		GPRINT:processes:LAST:'%7.2lf %s    '\\
+        	COMMENT:\"\\n\"\\
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+	}
+elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for memory usage stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
+		--start -$seconds -e -$average \\
+		--vertical-label \"utilization, percent\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
+		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
+		--height 200 --width 620 -x \"$scale\" \\
+		DEF:active=$rrddbpath$curdatabase:active:AVERAGE \\
+		DEF:inactive=$rrddbpath$curdatabase:inactive:AVERAGE \\
+		DEF:free=$rrddbpath$curdatabase:free:AVERAGE \\
+		DEF:cache=$rrddbpath$curdatabase:cache:AVERAGE \\
+		DEF:wire=$rrddbpath$curdatabase:wire:AVERAGE \\
+		LINE2:active#{$colormemory[0]}:active \\
+		LINE2:inactive#{$colormemory[1]}:inactive \\
+		LINE2:free#{$colormemory[2]}:free \\
+		LINE2:cache#{$colormemory[3]}:cache \\
+		LINE2:wire#{$colormemory[4]}:wire \\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"\t\t      minimum        average        maximum        current\\n\"\\
+		COMMENT:\"Active.      \"\\
+		GPRINT:active:MIN:'%7.2lf %s    '\\
+		GPRINT:active:AVERAGE:'%7.2lf %s    '\\
+		GPRINT:active:MAX:'%7.2lf %s    '\\
+		GPRINT:active:LAST:'%7.2lf %S    '\\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"Inactive.    \"\\
+		GPRINT:inactive:MIN:'%7.2lf %s    '\\
+		GPRINT:inactive:AVERAGE:'%7.2lf %s    '\\
+		GPRINT:inactive:MAX:'%7.2lf %s    '\\
+		GPRINT:inactive:LAST:'%7.2lf %S    '\\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"Free.        \"\\
+		GPRINT:free:MIN:'%7.2lf %s    '\\
+		GPRINT:free:AVERAGE:'%7.2lf %s    '\\
+		GPRINT:free:MAX:'%7.2lf %s    '\\
+		GPRINT:free:LAST:'%7.2lf %S    '\\
+        	COMMENT:\"\\n\"\\
+		COMMENT:\"Cached.      \"\\
+		GPRINT:cache:MIN:'%7.2lf %s    '\\
+		GPRINT:cache:AVERAGE:'%7.2lf %s    '\\
+		GPRINT:cache:MAX:'%7.2lf %s    '\\
+		GPRINT:cache:LAST:'%7.2lf %S    '\\
+        	COMMENT:\"\\n\"\\
+		COMMENT:\"Wired.       \"\\
+		GPRINT:wire:MIN:'%7.2lf %s    '\\
+		GPRINT:wire:AVERAGE:'%7.2lf %s    '\\
+		GPRINT:wire:MAX:'%7.2lf %s    '\\
+		GPRINT:wire:LAST:'%7.2lf %S    '\\
         	COMMENT:\"\\n\"\\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}

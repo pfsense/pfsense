@@ -3031,12 +3031,14 @@ function enable_rrd_graphing() {
 	$queuesdrop = "-queuedrops.rrd";
 	$spamd = "-spamd.rrd";
 	$proc = "-processor.rrd";
+	$mem = "-memory.rrd";
 
 	$rrdtool = "/usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
 	$awk = "/usr/bin/awk";
 	$tar = "/usr/bin/tar";
 	$pfctl = "/sbin/pfctl";
+	$sysctl = "/sbin/sysctl";
 	$php = "/usr/local/bin/php";
 	$top = "/usr/bin/top";
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
@@ -3052,6 +3054,7 @@ function enable_rrd_graphing() {
 	$rrdspamdinterval = 60;
 	$rrdlbpoolinterval = 60;
 	$rrdprocinterval = 60;
+	$rrdmeminterval = 60;
 
 	$trafficvalid = $rrdtrafficinterval * 2;
 	$qualityvalid = $rrdqualityinterval * 2;
@@ -3063,6 +3066,7 @@ function enable_rrd_graphing() {
 	$spamdvalid = $rrdspamdinterval * 2;
 	$lbpoolvalid = $rrdlbpoolinterval * 2;
 	$procvalid = $rrdlbpoolinterval * 2;
+	$memvalid = $rrdmeminterval * 2;
 
 	/* Asume GigE for now */
 	$downstream = 125000000;
@@ -3493,6 +3497,48 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "}'`\n\n";
 
 			/* End CPU statistics */
+
+			/* Memory, create Memory statistics database */
+			if(! file_exists("$rrddbpath$ifname$mem")) {
+				/* create rrd file if it does not exist */
+				log_error("Create RRD database $rrddbpath$ifname$mem");
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$mem --step $rrdmeminterval ";
+				$rrdcreate .= "DS:active:GAUGE:$memvalid:0:10000000 ";
+				$rrdcreate .= "DS:inactive:GAUGE:$memvalid:0:10000000 ";
+				$rrdcreate .= "DS:free:GAUGE:$memvalid:0:10000000 ";
+				$rrdcreate .= "DS:cache:GAUGE:$memvalid:0:10000000 ";
+				$rrdcreate .= "DS:wire:GAUGE:$memvalid:0:10000000 ";
+				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:720:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:720:1000";
+
+				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
+				if($rrdcreatereturn != 0) {
+			                log_error("RRD create failed exited with $rrdcreatereturn, the
+						error is: $rrdcreateoutput[0]\n");
+				}
+			}
+
+			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+			if($g['booting']) {
+				exec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U");
+			}
+
+ 			/* the Memory stats gathering function. */
+ 			$rrdupdatesh .= "`$sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count vm.stats.vm.v_free_count vm.stats.vm.v_cache_count vm.stats.vm.v_wire_count | ";
+			$rrdupdatesh .= " $awk '{getline active;getline inactive;getline free;getline cache;getline wire;printf \"$rrdtool update $rrddbpath$ifname$mem N:\"";
+			$rrdupdatesh .= "((active/$0) * 100)\":\"((inactive/$0) * 100)\":\"((free/$0) * 100)\":\"((cache/$0) * 100)\":\"(wire/$0 * 100)}'`\n\n";
+			
+			/* End Memory statistics */
 
 			/* SPAMD, set up the spamd rrd file */
 			if (isset($config['installedpackages']['spamdsettings']) &&

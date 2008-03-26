@@ -291,7 +291,7 @@ keepalive 10 60
 ping-timer-rem
 persist-tun
 persist-key
-/* NOTE: Make this tun$i so we can filter on the specific tun. */
+# NOTE: Make this tun$i so we can filter on the specific tun.
 dev tun
 proto $proto
 cipher $cipher

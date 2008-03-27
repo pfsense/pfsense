@@ -564,13 +564,13 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 		$t = 0;
 		foreach ($a_queues as $name => $q) {
 				$color = "$colorqueuesup[$t]";
-				if($t > 0) { $stack = ":STACK"; }
+				//if($t > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
 					\"CDEF:$name-bytes_out=$name,0,$upstream,LIMIT,UN,0,$name,IF\" \\
 					\"CDEF:$name-bits_out=$name-bytes_out,8,*\" \\
 					$AREA:$name-bits_out#${color}:$name \\";
 					$t++;
-					//if($t > 7) { $t = 0; }
+					if($t > 7) { $t = 0; }
 		}
 		$graphcmd .= "COMMENT:\"\\n\" \\";
 		$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
@@ -591,14 +591,14 @@ elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$cur
 		$t = 0;
 		foreach ($a_queues as $name => $q) {
 				$color = "$colorqueuesdropup[$t]";
-				if($t > 0) { $stack = ":STACK"; }
+				//if($t > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
 					\"CDEF:$name-bytes_out=$name,0,$upstream,LIMIT,UN,0,$name,IF\" \\
 					\"CDEF:$name-bits_out=$name-bytes_out,8,*\" \\
 					\"CDEF:$name-bits_out_neg=$name-bits_out,$multiplier,*\" \\
 					$AREA:$name-bits_out_neg#${color}:$name \\";
 					$t++;
-					//if($t > 7) { $t = 0; }
+					if($t > 7) { $t = 0; }
 		}
 		$graphcmd .= "COMMENT:\"\\n\" \\";
 		$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";

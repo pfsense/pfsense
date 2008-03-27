@@ -632,7 +632,7 @@ echo $jscriptstr;
 				</div>
 				<div style="clear:both;"></div>
 			</div>
-			<?php if ($displayarray[$widgetcounter] != "show") { ?>
+			<?php if ($displayarray[$widgetcounter] != "show" && $firstprint != true) { ?>
 			<div id="<?php echo $widgetname;?>-loader" style="display:<?php echo $display; ?>;"><br>
 					<div id="<?php echo $widgetname;?>-loader" style="display:<?php echo $display; ?>;">	
 						<center>
@@ -643,13 +643,10 @@ echo $jscriptstr;
 			if ($displayarray[$widgetcounter] != "show") $display = none; ?>
 			<div id="<?php echo $widgetname;?>" style="display:<?php echo $display; ?>;">				
 				<?php 
-					if ($displayarray[$widgetcounter] != "close")
+					if ($displayarray[$widgetcounter] != "close" || $firstprint != true)
 					{
 						include($directory . $widget);
 					}	
-					else
-					{ ?>
-					<?php } 
 				 ?>
 			</div>
 			<div style="clear:both;"></div>

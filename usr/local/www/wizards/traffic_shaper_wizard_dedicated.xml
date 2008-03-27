@@ -2,7 +2,7 @@
 <pfsensewizard>
 	<copyright>/* $Id$ */
 
-	traffic_shaper_wizard.xml
+	traffic_shaper_wizard_dedicated.xml
         part of pfSense (http://www.pfsense.org/)
 
         Copyright (C) 2005 Bill Marquette - bill.marquette@gmail.com.

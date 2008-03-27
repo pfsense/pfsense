@@ -2,7 +2,7 @@
 <pfsensewizard>
 	<copyright>/* $Id$ */
 
-	traffic_shaper_wizard.xml
+	traffic_shaper_wizard_multi_all.xml
         part of pfSense (http://www.pfsense.org/)
 
         Copyright (C) 2005 Bill Marquette - bill.marquette@gmail.com.
@@ -62,7 +62,7 @@
 			</field>
 		</fields>
 		<stepsubmitphpaction>step1_submitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc</includefile>
 	</step>
 	<step>
 		<id>2</id>
@@ -71,7 +71,7 @@
 		<javascriptafterformdisplay/>
 		<stepbeforeformdisplay>step2_stepbeforeformdisplay();</stepbeforeformdisplay>
 		<stepsubmitphpaction>step2_stepsubmitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc</includefile>
 		<fields>
 			<field>
 				<name>Next</name>
@@ -144,7 +144,7 @@
 		</fields>
 		<stepbeforeformdisplay>step3_stepbeforeformdisplay();</stepbeforeformdisplay>
 		<stepsubmitphpaction>step3_stepsubmitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc</includefile>
 	</step>
 	<step>
 		<id>4</id>
@@ -222,7 +222,7 @@
 			</field>
 		</fields>
 		<stepsubmitphpaction>step4_stepsubmitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc</includefile>
 	</step>
 	<step>
 		<id>5</id>
@@ -429,7 +429,7 @@
 			</field>
 		</fields>
 		<stepsubmitphpaction>step5_stepsubmitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc</includefile>
 	</step>
 	<step>
 		<id>6</id>
@@ -591,7 +591,7 @@
 				<type>submit</type>
 			</field>
 		</fields>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc</includefile>
 	</step>
 	<step>
 		<id>7</id>
@@ -1185,7 +1185,7 @@
 				<type>submit</type>
 			</field>
 		</fields>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc</includefile>
 	</step>
 	<step>
 		<id>8</id>
@@ -1202,7 +1202,7 @@
 			</field>
 		</fields>
 		<stepsubmitphpaction>step8_stepsubmitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc</includefile>
 	</step>
 	<step>
 		<id>9</id>
@@ -1213,7 +1213,7 @@
 				<type>submit</type>
 			</field>
 		</fields>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_multi_all.inc</includefile>
 		<stepsubmitphpaction>step9_stepsubmitphpaction();</stepsubmitphpaction>
 	</step>
 </pfsensewizard>

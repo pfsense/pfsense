@@ -145,6 +145,7 @@ if ($_GET) {
 				$output_form .= $q->build_form();
 				$output_form .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
 				$output_form .= " value=\"".$qname."\">";
+				$newjavascript = $q->build_javascript();
                 unset($q);
 				$newqueue = true;
 			}
@@ -391,6 +392,7 @@ if ($queue) {
         echo $queue->build_javascript();
         echo "</script>";
 }
+echo $newjavascript;
 
 include("fbegin.inc"); 
 ?>

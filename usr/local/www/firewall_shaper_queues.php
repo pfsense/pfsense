@@ -72,19 +72,37 @@ if ($_GET) {
 			 * XXX: WARNING: This returns the first it finds.
 			 * Maybe the user expects something else?!
 			 */
-			foreach ($altq_list_queues as $altq) {
-				$qtmp =& $altq->find_queue("", $qname);
-				if ($qtmp) {
-					$aq =& $altq_list_queues[$interface];
-					if ($aq) {
-						//$link =& get_reference_to_me_in_config(&$link);
-						$aq->copy_queue($interface, &$qtmp);
-						write_config();
-                        			touch($d_shaperconfdirty_path);
-						break;
-					}
-				}
-			}
+                        foreach ($altq_list_queues as $altq) {
+                                $qtmp =& $altq->find_queue("", $qname);
+                                if ($qtmp) {
+                                        $copycfg = array();
+                                        $qtmp->copy_queue($interface, &$copycfg);
+                                        $aq =& $altq_list_queues[$interface];
+                                        if ($aq) {
+                                                $tmp1 =& $qtmp->find_parentqueue($interface, $qname);
+                                                if ($tmp1)
+                                                        $tmp =& $aq->find_queue($interface, $tmp1->GetQname());
+
+                                                if ($tmp)
+                                                        $link =& get_reference_to_me_in_config($tmp->GetLink());
+                                                else
+                                                        $link =& get_reference_to_me_in_config($aq->GetLink());
+                                                $link['queue'][] = $copycfg;
+                                        } else {
+                                                $newroot = array();
+                                                $newroot['name'] = $interface;
+                                                $newroot['interface'] = $interface;
+                                                $newroot['scheduler'] = $altq->GetScheduler();
+                                                $newroot['queue'] = array();
+                                                $newroot['queue'][] = $copycfg;
+                                                $config['shaper']['queue'][] = $newroot;
+                                        }
+                                        write_config();
+                                        touch($d_shaperconfdirty_path);
+                                        break;
+                                }
+                        }
+
 			header("Location: firewall_shaper_queues.php?queue=".$qname."&action=show");
 			exit;
 		break;
@@ -149,7 +167,7 @@ include("head.inc");
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("By Interface", false, "firewall_shaper.php");
-	$tab_array[1] = array("By Queue", true, "firewall_shaper_queues.ph");
+	$tab_array[1] = array("By Queue", true, "firewall_shaper_queues.php");
 	$tab_array[2] = array("Wizards", false, "firewall_shaper_wizards.php");
 	display_top_tabs($tab_array);
 ?>

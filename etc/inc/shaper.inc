@@ -310,18 +310,21 @@ class altq_root_queue {
 
 	}
 	
-	function copy_queue($interface, &$queue) {
-		global $config;
-		
-		$mylink = &get_reference_to_me_in_config($this->GetLink());
-		$link = &get_reference_to_me_in_config($queue->GetLink());
-	
-		if ($link && $mylink) {
-				if (!is_array($mylink['queue'][$queue->GetQname()]))
-						$mylink['queue'][$queue->GetQname()] = array();
-
-				foreach ($link as $key => $value)
-						$mylink['queue'][$queue->GetQname()][$key] = $value;
+	function copy_queue($interface, &$cflink) {
+                $cflink['interface'] = $interface;
+                $cflink['name'] = $interface;
+                $cflink['scheduler'] = $this->GetScheduler();
+                $cflink['bandwidth'] = $this->GetBandwidth();
+                $cflink['bandwidthtype'] = $this->GetBwscale();
+                $cflink['qlimit'] = $this->GetQlimit();
+                $cflink['tbrconfig'] = $this->GetTbrConfig();
+                $cflink['enabled'] = $this->GetEnabled();
+		if (is_array($this->queues)) {
+			$cflink['queue'] = array();
+			foreach ($this->queues as $q) {
+				$cflink['queue'][$q->GetQname()] = array();
+				$q->copy_queue($interface, &$cflink['queue'][$q->GetQname()]);
+			}
 		}
 	}
 
@@ -794,19 +797,27 @@ function GetEcn() {
 	 * Currently this will not be called unless we decide to clonce whole 
 	 * queue tree on the 'By Queues' view or support drag&drop on the tree/list
 	 */
-	 function copy_queue($interface, &$queue) {
-		global $config;
+	 function copy_queue($interface, &$cflink) {
 
-		$mylink = &get_reference_to_me_in_config($this->GetLink());
-		$link = &get_reference_to_me_in_config($queue->GetLink());
+ 		$cflink['name'] = $this->GetQname();
+                $cflink['interface'] = $interface;
+                $cflink['qlimit'] = $this->GetQlimit();
+                $cflink['priority'] = $this->GetQpriority();
+                $cflink['description'] = $this->GetDescription();
+                $cflink['enabled'] = $this->GetEnabled();
+                $cflink['default'] = $this->GetDefault();
+                $cflink['red'] = $this->GetRed();
+                $cflink['rio'] = $this->GetRio();
+                $cflink['ecn'] = $this->GetEcn();
 
-		if ($link && $mylink) {
-				if (!is_array($mylink['queue'][$queue->GetQname()]))
-						$mylink['queue'][$queue->GetQname()] = array();
+                if (is_array($this->subqueues)) {
+                        $cflinkp['queue'] = array();
+                        foreach ($this->subqueues as $q) {
+				 $cflink['queue'][$q->GetQname()] = array();
+                                $q->copy_queue($interface, &$cflink['queue'][$q->GetQname()]);
+			}
+                }
 
-				foreach ($link as $key => $value)
-						$mylink['queue'][$queue->GetQname()][$key] = $value;
-		}
 	 }
 
 	function clean_queue($sched) {
@@ -1236,6 +1247,64 @@ class hfsc_queue extends priq_queue {
 			return $q;
 		}
 
+ 	        function copy_queue($interface, &$cflink) {
+
+                        $cflink['name'] = $this->GetQname();
+                        $cflink['interface'] = $interface;
+                        $cflink['qlimit'] = $this->GetQlimit();
+                        $cflink['priority'] = $this->GetQpriority();
+                        $cflink['description'] = $this->GetDescription();
+                        $cflink['bandwidth'] = $this->GetBandwidth();
+                        $cflink['bandwidthtype'] = $this->GetBwscale();
+                        $cflink['enabled'] = $this->GetEnabled();
+                        $cflink['default'] = $this->GetDefault();
+                        $cflink['red'] = $this->GetRed();
+                        $cflink['rio'] = $this->GetRio();
+                        $cflink['ecn'] = $this->GetEcn();
+                        if ($this->GetLinkshare() <> "") {
+                                if ($this->GetL_m1() <> "") {
+                                        $cflink['linkshare1'] = $this->GetL_m1();
+                                        $cflink['linkshare2'] = $this->GetL_d();
+                                        $cflink['linkshare'] = "on";
+                                }
+                                if ($this->GetL_m2() <> "") {
+                                        $cflink['linkshare3'] = $this->GetL_m2();
+                                        $cflink['linkshare'] = "on";
+                                }
+                        } else $cflink['linkshare'] = "";
+                        if ($this->GetRealtime() <> "") {
+                                if ($this->GetR_m1() <> "") {
+                                        $cflink['realtime1'] = $this->GetR_m1();
+                                        $cflink['realtime2'] = $this->GetR_d();
+                                        $cflink['realtime'] = "on";
+                                }
+                                if ($this->GetR_m2() <> "") {
+                                        $cflink['realtime3'] = $this->GetR_m2();
+                                        $cflink['realtime'] = "on";
+                                }
+                        } else $cflink['realtime'] = "";
+                        if ($this->GetUpperlimit() <> "") {
+                                if ($this->GetU_m1() <> "") {
+                                        $cflink['upperlimit1'] = $this->GetU_m1();
+                                        $cflink['upperlimit2'] = $this->GetU_d();
+                                        $cflink['upperlimit'] = "on";
+                                }
+                                if ($this->GetU_m2() <> "") {
+                                        $cflink['upperlimit3'] = $this->GetU_m2();
+                                        $cflink['upperlimit'] = "on";
+                                }
+                        } else $cflink['upperlimit'] = "";
+
+	                if (is_array($this->subqueues)) {
+        	                $cflinkp['queue'] = array();
+                	        foreach ($this->subqueues as $q) {
+                	                 $cflink['queue'][$q->GetQname()] = array();
+        	                        $q->copy_queue($interface, &$cflink['queue'][$q->GetQname()]);
+				}
+                	}
+
+         	}
+
 		function delete_queue() { 
 			unref_on_altq_queue_list($this->GetQname());
 			if ($this->GetDefault()) 
@@ -1294,7 +1363,6 @@ class hfsc_queue extends priq_queue {
                  if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0)
                        $input_errors[] = "Bandwidth in percentage should be between 1 and 100 bounds.";
                  }
-
 /*
                 $parent =& $this->GetParent();
                 switch ($data['bandwidthtype']) {
@@ -1307,7 +1375,6 @@ class hfsc_queue extends priq_queue {
                 if ($parent->GetAvailableBandwidth() < $myBw)
                         $input_errors[] = "The sum of child bandwidths exceeds that of the parent.";
 */
-
                 if ($data['priority'] > 7)
                         $input_errors[] = "Priority must be an integer between 1 and 7.";
 		}
@@ -1322,8 +1389,8 @@ class hfsc_queue extends priq_queue {
 			$input_errors[] = ("upperlimit d value needs to be numeric");
 		if ($data['upperlimit3'] <> "" && !is_valid_shaperbw($data['upperlimit3']))
 			$input_errors[] = ("upperlimit m2 value needs to be Kb, Mb, Gb, or %");
-
 /*
+
 		if (isset($data['upperlimit']) && $data['upperlimit3'] <> "" && $data['upperlimit1'] <> "") {
 		$bw_1 = get_hfsc_bandwidth($this, $data['upperlimit1']);
 		$bw_2 = get_hfsc_bandwidth($this, $data['upperlimit3']);
@@ -1335,7 +1402,6 @@ class hfsc_queue extends priq_queue {
 			$input_errors[] = ("upperlimit specification excedd 80% of allowable allocation.");
 		}
 */
-
 		if ($data['linkshare1'] <> "" &&  $data['linkshare2'] == "")
 			$input_errors[] = ("linkshare service curve defined but missing (d) value");
 		if ($data['linkshare2'] <> "" &&  $data['linkshare1'] == "")
@@ -1352,7 +1418,7 @@ class hfsc_queue extends priq_queue {
 			$input_errors[] = ("realtime service curve defined but missing initial bandwidth (m1) value");
 
 /*
-		if (isset($data['linkshare']) && $data['linkshare3'] <> "" && $data['linkshare1'] <> "") {
+		if (isset($data['linkshare']) && $data['linkshare3'] <> "" && $data['linkshare1'] <> "" && 0) {
 		$bw_1 = get_hfsc_bandwidth($this, $data['linkshare1']);
                 $bw_2 = get_hfsc_bandwidth($this, $data['linkshare3']);
                 if (floatval($bw_1) < floatval($bw_2))
@@ -1372,7 +1438,7 @@ class hfsc_queue extends priq_queue {
 			$input_errors[] = ("realtime m2 value needs to be Kb, Mb, Gb, or %");
 
 /*
-		if (isset($data['realtime']) && $data['realtime3'] <> "" && $data['realtime1'] <> "") {
+		if (isset($data['realtime']) && $data['realtime3'] <> "" && $data['realtime1'] <> "" && 0) {
 		$bw_1 = get_hfsc_bandwidth($this, $data['realtime1']);
                 $bw_2 = get_hfsc_bandwidth($this, $data['realtime3']);
                 if (floatval($bw_1) < floatval($bw_2))
@@ -1770,6 +1836,31 @@ class cbq_queue extends priq_queue {
 
 		return $q;
 		}
+
+		function copy_queue($interface, &$cflink) {
+
+                                $cflink['interface'] = $interface;
+                                $cflink['qlimit'] = $this->GetQlimit();
+                                $cflink['priority'] = $this->GetQpriority();
+                                $cflink['name'] = $this->GetQname();
+                                $cflink['description'] = $this->GetDescription();
+                                $cflink['bandwidth'] = $this->GetBandwidth();
+                                $cflink['bandwidthtype'] = $this->GetBwscale();
+                                $cflink['enabled'] = $this->GetEnabled();
+                                $cflink['default'] = $this->GetDefault();
+                                $cflink['red'] = $this->GetRed();
+                                $cflink['rio'] = $this->GetRio();
+                                $cflink['ecn'] = $this->GetEcn();
+                                $cflink['borrow'] = $this->GetBorrow();
+                		if (is_array($this->queues)) {
+ 		                       $cflinkp['queue'] = array();
+                        		foreach ($this->subqueues as $q) {
+ 		                                $cflink['queue'][$q->GetQname()] = array();
+                		                $q->copy_queue($interface, &$cflink['queue'][$q->GetQname()]);
+					}
+                		}
+
+		}
 	
 		/*
 		 * Should search even its childs
@@ -2133,14 +2224,13 @@ function get_interface_list_to_show() {
 		
 	$tree = "";
 	foreach ($config['interfaces'] as $if => $ifdesc) {
-		if ($altq_list_queues[$if])
+		if ($altq_list_queues[$if]) {
 			continue;
-		else  {
-			if (!is_altq_capable($ifdesc['if'])) 
-				continue;
-			if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan")
-				continue;
-			$tree .= " <li><a href=\"firewall_shaper.php?interface=".$if."&action=add\">".$if."</a></li>";
+		} else  {
+			if (is_altq_capable($ifdesc['if']) &&
+				isset($ifdesc['enable']) && $if != "lan" && $if != "wan") {
+				$tree .= " <li><a href=\"firewall_shaper.php?interface=".$if."&action=add\">".$if."</a></li>";
+			}
 		}
 	}
 	

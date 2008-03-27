@@ -316,8 +316,8 @@ if ($queue) {
 
 $tree = "<ul class=\"tree\" >";
 if (is_array($altq_list_queues)) {
-        foreach ($altq_list_queues as $altq) {
-                $tree .= $altq->build_tree();
+        foreach ($altq_list_queues as $tmpaltq) {
+                $tree .= $tmpaltq->build_tree();
         }
 $tree .=  get_interface_list_to_show();
 }

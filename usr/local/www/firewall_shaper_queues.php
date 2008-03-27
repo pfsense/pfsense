@@ -78,9 +78,11 @@ if ($_GET) {
                                         $copycfg = array();
                                         $qtmp->copy_queue($interface, &$copycfg);
                                         $aq =& $altq_list_queues[$interface];
-                                        if ($aq) {
+					if ($qname == $qtmp->GetInterface()) {
+                                                $config['shaper']['queue'][] = $copycfg;
+                                        } else if ($aq) {
                                                 $tmp1 =& $qtmp->find_parentqueue($interface, $qname);
-                                                if ($tmp1)
+                                                if ($tmp1) 
                                                         $tmp =& $aq->find_queue($interface, $tmp1->GetQname());
 
                                                 if ($tmp)

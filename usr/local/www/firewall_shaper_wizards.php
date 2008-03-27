@@ -64,7 +64,6 @@ $wizards = array("Single Lan multi Wan" => "traffic_shaper_wizard.xml",
 									"Single Wan multi Lan" => "traffic_shaper_wizard_multi_lan.xml",
 									"Multiple Lan/Wan" => "traffic_shaper_wizard_multi_all.xml",
 									"Dedicated Links" => "traffic_shaper_wizard_dedicated.xml",
-	"Single Wan multi Lan(2 levels)" => "traffic_shaper_wizard_multi_lan2.xml"
 								);
 
 include("head.inc");

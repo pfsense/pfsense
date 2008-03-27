@@ -925,8 +925,8 @@ $othersplist = array();
 
 		$altq->SetInterface($config['ezshaper']['step2']["conn{$i}interface"]);
 		$altq->SetScheduler($config['ezshaper']['step2']["conn{$i}uploadscheduler"]);
-		$altq->SetBandwidth(floatval($config['ezshaper']['step2']["conn{$i}upload"]));
-		$altq->SetBwscale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
+		//$altq->SetBandwidth(floatval($config['ezshaper']['step2']["conn{$i}upload"]));
+		//$altq->SetBwscale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
 		$altq->SetEnabled("on");
 		$altq_list_queues[$altq->GetQname()] =& $altq;
 		array_push($tmppath, $config['ezshaper']['step2']["conn{$i}interface"]);
@@ -1022,6 +1022,67 @@ $othersplist = array();
 			*/
 				$remainbw = 100 - $remainbw;
 			//}
+
+                        if ($sched == "PRIQ")
+                                $q =& new priq_queue();
+                        else if ($sched == "CBQ")
+                                $q =& new cbq_queue();
+                        else if ($sched == "HFSC")
+                                $q =& new hfsc_queue();
+                        $tmpcf = array();
+                        $tmpcf['name'] = "qLocal";
+                        //$tmpcf['priority'] = 6;
+                        $tmpcf['red'] = "on";
+                        $tmpcf['enabled'] = "on";
+                        If ($sched == "CBQ" || $sched == "HFSC") {
+                                $ifbwguess = 10 * 1000 * 1000; // 10Mbit/s
+                                $tmpcf['bandwidth'] = ($ifbwguess - $upbw) / 1000;
+                                $tmpcf['bandwidthtype'] = "Kb";
+                        }
+                        array_push($tmppath, "qLocal");
+                        $qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
+                        array_pop($tmppath);
+                        //echo "qLocal <br />";
+                        //var_dump($input_errors);
+                        $qtmp->wconfig();
+
+                        if ($sched == "PRIQ")
+                                $q =& new priq_queue();
+                        else if ($sched == "CBQ")
+                                $q =& new cbq_queue();
+                        else if ($sched == "HFSC")
+                                $q =& new hfsc_queue();
+                        $tmpcf = array();
+                        $tmpcf['name'] = "qInternet";
+                        //$tmpcf['priority'] = 6;
+                        $tmpcf['red'] = "on";
+                        $tmpcf['enabled'] = "on";
+                        If ($sched == "CBQ") {
+                                $tmpcf['bandwidth'] = floatval($config['ezshaper']['step2']["conn{$i}upload"]);
+                                $tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}uploadspeed"];
+                        }
+                        else if ($sched == "HFSC") {
+                                $tmpcf['linkshare1'] = $tmpcf['linkshare3'] =
+                                        floatval($config['ezshaper']['step2']["conn{$i}upload"]) . $config['ezshaper']['step2']["conn{$i}uploadspeed"];
+
+                                $tmpcf['upperlimit'] = "on";
+                                $tmpcf['upperlimit3'] =
+                                         floatval($config['ezshaper']['step2']["conn{$i}upload"]) . $config['ezshaper']['step2']["conn{$i}uploadspeed"];
+
+
+                                $tmpcf['linkshare2'] = 100;
+                                //$tmpcf['linkshare1'] = "0b";
+                                $tmpcf['linkshare'] = "on";
+                                $tmpcf['bandwidth'] =  floatval($config['ezshaper']['step2']["conn{$i}upload"]);
+                                $tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}uploadspeed"];
+                        }
+                        array_push($tmppath, "qInternet");
+                        $qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
+                        //array_pop($tmppath);
+                        //echo "qInternet <br />";
+                        //var_dump($input_errors);
+                        $qtmp->wconfig();
+                        $altq =& $qtmp;
 
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();
@@ -1301,8 +1362,8 @@ $othersplist = array();
 
 		$altq->SetInterface($config['ezshaper']['step2']["local{$i}interface"]);
 		$altq->SetScheduler($config['ezshaper']['step2']["local{$i}downloadscheduler"]);
-		$altq->SetBandwidth($config['ezshaper']['step2']["conn{$i}download"]);
-		$altq->SetBwscale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
+		//$altq->SetBandwidth($config['ezshaper']['step2']["conn{$i}download"]);
+		//$altq->SetBwscale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
 		$altq->SetEnabled("on");
 		$altq_list_queues[$altq->GetQname()] =& $altq;
 		array_push($tmppath, $config['ezshaper']['step2']["local{$i}interface"]);
@@ -1331,7 +1392,7 @@ $othersplist = array();
 					$voipbwunit = $config['ezshaper']['step3']["local{$i}downloadspeed"];
 					if ($scehd != HFSC) {
 						if ($penaltybwunit == "%")
-							$factor = $lanbw/100;
+							$factor = $downbw/100;
  						else
 							$factor = wizard_get_bandwidthtype_scale($voipbwunit);
 						$remainbw += floatval($voipbw) * $factor;
@@ -1343,7 +1404,7 @@ $othersplist = array();
 					$penaltybw = $config['ezshaper']['step4']['bandwidth'];
 					$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
 					if ($penaltybwunit == "%")
-						$factor = $lanbw/100;
+						$factor = $downbw/100;
 					else
 						$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
 					$remainbw += floatval($penaltybw) * $factor;
@@ -1358,7 +1419,7 @@ $othersplist = array();
 						$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
 						$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
 						if ($p2pcatchbwunit == "%")
-							$factor = $upbw/100;
+							$factor = $downbw/100;
 						else
 							$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
 						$remainbw += floatval($p2pcatchbw) * $factor;
@@ -1392,6 +1453,66 @@ $othersplist = array();
 			*/
 				$remainbw = 100 - $remainbw;
 			//}
+
+                        if ($sched == "PRIQ")
+                                $q =& new priq_queue();
+                        else if ($sched == "CBQ")
+                                $q =& new cbq_queue();
+                        else if ($sched == "HFSC")
+                                $q =& new hfsc_queue();
+                        $tmpcf = array();
+                        $tmpcf['name'] = "qLocal";
+                        //$tmpcf['priority'] = 6;
+                        $tmpcf['red'] = "on";
+                        $tmpcf['enabled'] = "on";
+                        If ($sched == "CBQ" || $sched == "HFSC") {
+                                $ifbwguess = 10 * 1000 * 1000; // 10Mbit/s
+                                $tmpcf['bandwidth'] = ($ifbwguess - $downbw) / 1000;
+                                $tmpcf['bandwidthtype'] = "Kb";
+                        }
+                        array_push($tmppath, "qLocal");
+                        $qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
+                        array_pop($tmppath);
+                        //echo "qLocal <br />";
+                        //var_dump($input_errors);
+                        $qtmp->wconfig();
+
+                        if ($sched == "PRIQ")
+                                $q =& new priq_queue();
+                        else if ($sched == "CBQ")
+                                $q =& new cbq_queue();
+                        else if ($sched == "HFSC")
+                                $q =& new hfsc_queue();
+                        $tmpcf = array();
+                        $tmpcf['name'] = "qInternet";
+                        //$tmpcf['priority'] = 6;
+                        $tmpcf['red'] = "on";
+                        $tmpcf['enabled'] = "on";
+                        If ($sched == "CBQ") {
+                                $tmpcf['bandwidth'] = floatval($config['ezshaper']['step2']["conn{$i}download"]);
+                                $tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}downloadspeed"];
+                        }
+                        else if ($sched == "HFSC") {
+                                $tmpcf['linkshare1'] = $tmpcf['linkshare3'] =
+                                        floatval($config['ezshaper']['step2']["conn{$i}download"]) . $config['ezshaper']['step2']["conn{$i}downloadspeed"];
+
+				$tmpcf['upperlimit'] = "on";
+				$tmpcf['upperlimit3'] = 
+					floatval($config['ezshaper']['step2']["conn{$i}download"]) . $config['ezshaper']['step2']["conn{$i}downloadspeed"];
+
+                                $tmpcf['linkshare2'] = 100;
+                                //$tmpcf['linkshare1'] = "0b";
+                                $tmpcf['linkshare'] = "on";
+                                $tmpcf['bandwidth'] =  floatval($config['ezshaper']['step2']["conn{$i}download"]);
+                                $tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}downloadspeed"];
+                        }
+                        array_push($tmppath, "qInternet");
+                        $qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
+                        //array_pop($tmppath);
+                        //echo "qInternet <br />";
+                        //var_dump($input_errors);
+                        $qtmp->wconfig();
+                        $altq =& $qtmp;
 
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();

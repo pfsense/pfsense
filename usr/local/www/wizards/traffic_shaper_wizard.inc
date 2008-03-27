@@ -231,8 +231,8 @@ function step2_stepsubmitphpaction() {
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
 					exit;
 				}
-				$upbw = floatval($_POST["conn{$i}upload"]);
-				$downbw = floatval($_POST["conn{$i}download"]);
+				$upbw = $_POST["conn{$i}upload"];
+				$downbw = $_POST["conn{$i}download"];
 				if ($upbw == 0 || $downbw = 0) {
                                         $message = gettext("You cannot specify 0 bandwidth!")
 ;
@@ -240,6 +240,7 @@ function step2_stepsubmitphpaction() {
 ={$message}");
                                         exit;
                                 }
+/*
 				if ($upbw < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}scheduler"]) == "CBQ") {
 					$message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
@@ -250,9 +251,9 @@ function step2_stepsubmitphpaction() {
                                         header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
                                                 exit;
                                 }
+*/
 			}
 	}		
-
 	/* This is necessary since the wizard expects predefined fields. */
 	unset($config['ezshaper']['step2']);
 	$config['ezshaper']['step2'] = array();
@@ -1263,8 +1264,8 @@ $othersplist = array();
 
 		$altq->SetInterface('lan');
 		$altq->SetScheduler($config['ezshaper']['step2']["downloadscheduler"]);
-		$altq->SetBandwidth($lanbw/1000);
-		$altq->SetBwscale("Kb");
+		//$altq->SetBandwidth($lanbw/1000);
+		//$altq->SetBwscale("Kb");
 		$altq->SetEnabled("on");
 		$altq_list_queues[$altq->GetQname()] =& $altq;
 		array_push($tmppath, 'lan');
@@ -1293,7 +1294,7 @@ $othersplist = array();
 					$voipbwunit = $config['ezshaper']['step3']["downloadspeed"];
 					if ($sched != "HFSC") {
 						if ($voipbwunit == "%") 
-							$factor =  $upbw/100;
+							$factor =  $lanbw/100;
 						else
 							$factor = wizard_get_bandwidthtype_scale($voipbwunit);
 						$remainbw += $voipbw * $factor;
@@ -1305,7 +1306,7 @@ $othersplist = array();
 					$penaltybw = $config['ezshaper']['step4']['bandwidth'];
 					$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
 					if ($penaltybwunit == "%")
-						$factor = $upbw/100;
+						$factor = $lanbw/100;
 					else
 						$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
 					$remainbw += $penaltybw * $factor;
@@ -1320,7 +1321,7 @@ $othersplist = array();
 						$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
 						$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
 						if ($p2pcatchbwunit == "%")
-							$factor = $upbw/100;
+							$factor = $lanbw/100;
 						else
 							$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
 						$remainbw += $p2pcatchbw * $factor;
@@ -1354,6 +1355,67 @@ $othersplist = array();
 			*/
 				$remainbw = 100 - $remainbw;
 			//}
+
+                        if ($sched == "PRIQ")
+                                $q =& new priq_queue();
+                        else if ($sched == "CBQ")
+                                $q =& new cbq_queue();
+                        else if ($sched == "HFSC")
+                                $q =& new hfsc_queue();
+                        $tmpcf = array();
+                        $tmpcf['name'] = "qLocal";
+                        //$tmpcf['priority'] = 6;
+                        $tmpcf['red'] = "on";
+                        $tmpcf['enabled'] = "on";
+                        If ($sched == "CBQ" || $sched == "HFSC") {
+                                $ifbwguess = 10 * 1000 * 1000; // 10Mbit/s
+                                $tmpcf['bandwidth'] = ($ifbwguess - $lanbw) / 1000;
+                                $tmpcf['bandwidthtype'] = "Kb";
+                        }
+                        array_push($tmppath, "qLocal");
+                        $qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
+                        array_pop($tmppath);
+                        //echo "qLocal <br />";
+                        //var_dump($input_errors);
+                        $qtmp->wconfig();
+
+                        if ($sched == "PRIQ")
+                                $q =& new priq_queue();
+                        else if ($sched == "CBQ")
+                                $q =& new cbq_queue();
+                        else if ($sched == "HFSC")
+                                $q =& new hfsc_queue();
+                        $tmpcf = array();
+                        $tmpcf['name'] = "qInternet";
+                        //$tmpcf['priority'] = 6;
+                        $tmpcf['red'] = "on";
+                        $tmpcf['enabled'] = "on";
+                        If ($sched == "CBQ") {
+                                $tmpcf['bandwidth'] = $lanbw/1000;
+                                $tmpcf['bandwidthtype'] = "Kb";
+                        }
+                        else if ($sched == "HFSC") {
+                                $tmpcf['linkshare1'] = $tmpcf['linkshare3'] = $lanbw/1000 ."Kb";
+                                        
+
+                                $tmpcf['upperlimit'] = "on";
+                                $tmpcf['upperlimit3'] = $lanbw/1000 ."Kb";
+
+
+                                $tmpcf['linkshare2'] = 100;
+                                //$tmpcf['linkshare1'] = "0b";
+                                $tmpcf['linkshare'] = "on";
+                                $tmpcf['bandwidth'] =  $lanbw/1000;
+                                $tmpcf['bandwidthtype'] = "Kb";
+                        }
+                        array_push($tmppath, "qInternet");
+                        $qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
+                        //array_pop($tmppath);
+                        //echo "qInternet <br />";
+                        //var_dump($input_errors);
+                        $qtmp->wconfig();
+                        $altq =& $qtmp;
+
 
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();

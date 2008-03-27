@@ -2085,10 +2085,11 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						queueing in certain situations. please check the faq.
 				*/
 				$noadvoptions = false;
-				if(isset($rule['statetype']) && $rule['statetype'] <> "") {
+				if(isset($rule['Statetype']) && $rule['statetype'] <> "") {
 					switch($rule['statetype']) {
 						case "none":
-							$noadvoptions = false;
+							$noadvoptions = true;
+							$aline['flags'] = " no state ";
 							break;
 						case "modulate state":
 						case "synproxy state":

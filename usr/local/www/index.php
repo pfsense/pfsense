@@ -595,7 +595,7 @@ echo $jscriptstr;
 		<div style="clear:both;"></div>
 		<div  id="<?php echo $widgetname;?>-container" class="widgetdiv" style="display:<?php echo $divdisplay; ?>;">
 			<input type="hidden" value="<?php echo $inputdisplay;?>" id="<?php echo $widgetname;?>-container-input" name="<?php echo $widgetname;?>-container-input">
-			<div id="<?php echo $widgetname;?>topic" class="widgetheader" style="cursor:move">
+			<div id="<?php echo $widgetname;?>-topic" class="widgetheader" style="cursor:move">
 				<div style="float:left;">
 					<?php 
 					
@@ -632,18 +632,17 @@ echo $jscriptstr;
 				</div>
 				<div style="clear:both;"></div>
 			</div>
-			<?php if ($displayarray[$widgetcounter] != "show" && $firstprint != true) { ?>
-			<div id="<?php echo $widgetname;?>-loader" style="display:<?php echo $display; ?>;"><br>
-					<div id="<?php echo $widgetname;?>-loader" style="display:<?php echo $display; ?>;">	
-						<center>
-							<img src="./themes/<?= $g['theme']; ?>/images/misc/widget_loader.gif" width=25 height=25 alt="Loading selected widget...">
-						</center>			
-					</div><br>
-			</div> <?php }
-			if ($displayarray[$widgetcounter] != "show") $display = none; ?>
+			<?php if ($divdisplay != "block") { ?>
+			<div id="<?php echo $widgetname;?>-loader" style="display:<?php echo $display; ?>;">
+				<br>	
+					<center>
+						<img src="./themes/<?= $g['theme']; ?>/images/misc/widget_loader.gif" width=25 height=25 alt="Loading selected widget...">
+					</center>	
+				<br>
+			</div> <?php } if ($divdisplay != "block") $display = none; ?>
 			<div id="<?php echo $widgetname;?>" style="display:<?php echo $display; ?>;">				
 				<?php 
-					if ($displayarray[$widgetcounter] != "close" || $firstprint != true)
+					if ($divdisplay == "block")
 					{
 						include($directory . $widget);
 					}	

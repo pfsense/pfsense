@@ -361,7 +361,7 @@ else
 
 $output = "<div id=\"shaperarea\" style=\"position:relative\">";
 if (!$dontshow) {
-if ($queue || $altq) {
+if ($queue || $altq || $newqueue) {
 	$output .= "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
 	$output .= "Enable/Disable";
 	$output .= "</td><td class=\"vncellreq\">";

@@ -6,22 +6,20 @@ touch /var/run/config.lock
 KERNELTYPE=`cat /boot/kernel/pfsense_kernel.txt`
 if [ $KERNELTYPE = "wrap" ]; then
 	if [ -f /kernels/kernel_wrap.gz ]; then 
-		cp /kernels/kernel_wrap.gz /boot/kernel/kernel.gz
+		tar xzpf /kernels/kernel_wrap.gz -C /boot/
 		cp /etc/ttys_wrap /etc/ttys
 	fi
 fi
 if [ $KERNELTYPE = "Developers" ]; then
 	if [ -f /kernels/kernel_Dev.gz ]; then 
-		cp /kernels/kernel_Dev.gz /boot/kernel/kernel.gz
+		tar xzpf /kernels/kernel_Dev.gz -C /boot/
+		cp  /boot/kernel/kernel.gz
 	fi
 fi
 if [ $KERNELTYPE = "SMP" ]; then
 	if [ -f /kernels/kernel_SMP.gz ]; then 
-		cp /kernels/kernel_SMP.gz /boot/kernel/kernel.gz
+		tar xzpf /kernels/kernel_SMP.gz -C /boot/
 	fi
-fi
-if [ -d /kernels ]; then
-	rm -rf /kernels/*
 fi
 
 # Now turn on or off serial console as needed

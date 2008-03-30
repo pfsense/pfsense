@@ -226,6 +226,7 @@ if [ "$PLATFORM" != "cdrom" ]; then
 	# the file being clobbered and the firewall
 	# not being able to boot back up.
 	cat >/usr/local/lib/php.ini <<EOF
+# File generated from /etc/rc
 output_buffering = "0"
 implicit_flush = true
 magic_quotes_gpc = Off

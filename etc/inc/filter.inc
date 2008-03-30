@@ -1610,14 +1610,14 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			} else if ($ispppoe) {
 				$aline['interface'] = "on \$pppoe ";
 			} else if ($rule['interface'] == "openvpn") {
-				$aline['interface'] = "on tun ";
+				$aline['interface'] = "on openvpn ";
 			} else if (isset($rule['floating'])) {
                  		if (isset($rule['interface']) && $rule['interface'] <> "") {
                      			$interfaces = explode(",", $rule['interface']);
 		                       $aline['interface'] = " on { ";
                 		       foreach ($interfaces as $iface) {
 						if ($iface == "openvpn")
-							$aline['interface'] = " tun ";
+							$aline['interface'] = " openvpn ";
 						else 
                              			$aline['interface'] .= " " .convert_friendly_interface_to_real_interface_name($iface) . " ";
 
@@ -2501,37 +2501,12 @@ EOD;
 	$ipfrules .= <<<EOD
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out on $wanif all keep state label "let out anything from firewall host itself"
-pass out on \$wan proto icmp keep state label "let out anything from firewall host itself"
-
+pass out all keep state label "let out anything from firewall host itself"
 
 EOD;
 
+	$ipfrules .=  create_firewall_outgoing_rules_to_itself();
 
-	if($config['interfaces']['lan']) 
-		$ipfrules .= "pass out on \$lan proto icmp keep state label \"let out anything from firewall host itself\"\n";
-		
-	$ipfrules .= create_firewall_outgoing_rules_to_itself();
-
-	if($config['interfaces']['wan']['ipaddr'] == "pppoe")
-		$ipfrules .= <<<EOD
-# permit wan interface to ping out (ping_hosts.sh)
-pass out on ng0 proto icmp keep state label "let out anything from firewall host itself"
-
-EOD;
-
-	/* group heads for optional interfaces */
-	foreach ($optcfg as $on => $oc) {
-		$ipfrules .= <<<EOD
-
-
-# let out anything from the firewall host itself and decrypted IPsec traffic
-pass out on {$oc['if']} proto icmp keep state label "let out anything from firewall host itself"
-pass out on {$oc['if']} all keep state label "let out anything from firewall host itself"
-
-EOD;
-
-	}
 
 	/* allow PPTP traffic if PPTP client is enabled on WAN */
 	if ($wancfg['ipaddr'] == "pptp") {
@@ -3134,57 +3109,17 @@ function create_firewall_outgoing_rules_to_itself() {
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
 
-	/* go through primary and optional interfaces */
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-		$return_gateway = $config['interfaces'][$ifname]['gateway'];
-		$ints = array();
-		$int = filter_translate_type_to_real_interface($ifname);
-		/* if the interface is pppoe, set the ng0 interface */
-		update_filter_reload_status("Creating IPsec tunnel items {$tunnel['descr']}...");
-		$ip = find_interface_ip($int);
-		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe") {
-			/* first add a rule for the real interface, then for ng0 */
-			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";
-		}
-		$rule .="pass out on {$int} all keep state label \"let out anything from firewall host itself\"\n";
-	}
-
-	update_filter_reload_status("Setting up bridging items");
-	/* is bridging turned on? */
-	for($x=0; $x<10; $x++) {
-		if(does_interface_exist("bridge{$x}") == true)
-			$rule .="pass out on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
-	}
-
-	update_filter_reload_status("Setting up pptp items");
-	if($config['pptpd']['mode'] == "server")
-		$rule .="pass out on \$pptp all keep state label \"let out anything from firewall host itself pptp\"\n";
-
-	update_filter_reload_status("Setting up pppoe items");
-	if($config['pppoe']['mode'] == "server")
-		$rule .="pass out on \$pppoe all keep state label \"let out anything from firewall host itself pppoe\"\n";
-
-	update_filter_reload_status("Setting up gif tunnels");
-	/* setup outgoing gif tunnels */
-	$number_of_gifs = find_last_gif_device();
-	$number_of_gifs++;
-	for($x=0; $x<$number_of_gifs; $x++) {
-		if(does_interface_exist("gif{$x}") == true)
-			$rule .="pass out on gif{$x} all keep state label \"let out anything from firewall host itself ipsec gif\"\n";
-	}
 
 	update_filter_reload_status("Setting up tun interfaces (openvpn)");
 	/* openvpn tun interfaces.  check for 100. */
 	for($x=0; $x<100; $x++) {
-		if(does_interface_exist("tun{$x}") == true) {
-			$rule .="pass out on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
-			$friendlytunif = convert_real_interface_to_friendly_interface_name("tun{$x}");
+		if(does_interface_exist("openvpn{$x}") == true) {
 			/* If the interface has a gateway we do not add a pass in rule. */
 			/* Some people use a TUN tunnel with public IP as a Multiwan interface */
-			if(interface_has_gateway("tun{$x}")) {
+			if(interface_has_gateway("openvpn{$x}")) {
 				$rule .= "# Not adding default pass in rule for interface $friendlytunif - tun{$x} with a gateway!";
 			} else {
-				$rule .="pass in on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+				$rule .="pass in on openvpn{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			}
 		}
 	}

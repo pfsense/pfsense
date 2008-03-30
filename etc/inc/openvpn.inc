@@ -279,10 +279,15 @@ function openvpn_reconfigure($mode, $id) {
 
 	$lport = 1194 + $id;
 
+	mwexec("/sbin/ifconfig tun{$id} create");
+	mwexec("/sbin/ifconfig tun{$id} name openvpn{$id}");
+	mwexec("/sbin/ifconfig openvpn{$id} group openvpn");
+
         $pidfile = $g['varrun_path'] . "/openvpn_{$mode}{$id}.pid";
         $proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
         $cipher = $settings['crypto'];
-        $openvpn_conf = <<<EOD
+	$openvpn_conf = "dev openvpn{$id}\n";
+        $openvpn_conf .= <<<EOD
 writepid $pidfile
 #user nobody
 #group nobody
@@ -291,8 +296,6 @@ keepalive 10 60
 ping-timer-rem
 persist-tun
 persist-key
-# NOTE: Make this tun$i so we can filter on the specific tun.
-dev tun
 proto $proto
 cipher $cipher
 up /etc/rc.filter_configure

@@ -2227,10 +2227,11 @@ function get_interface_list_to_show() {
 		if ($altq_list_queues[$if]) {
 			continue;
 		} else  {
-			if (is_altq_capable($ifdesc['if']) &&
-				isset($ifdesc['enable']) && $if != "lan" && $if != "wan") {
-				$tree .= " <li><a href=\"firewall_shaper.php?interface=".$if."&action=add\">".$if."</a></li>";
-			}
+			if (!is_altq_capable($ifdesc['if']))
+				continue;
+			if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan") 
+				continue;
+			$tree .= " <li><a href=\"firewall_shaper.php?interface=".$if."&action=add\">".$if."</a></li>";
 		}
 	}
 	

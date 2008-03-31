@@ -272,8 +272,14 @@ function interfaces_optional_configure_if($opti) {
 			$optdescr = " ({$optcfg['descr']})";
 		print "\tOPT{$opti}{$optdescr}... ";
 	}
+	
+	if(file_exists("/tmp/{$optcfg['if']}_router"))
+		unlink("/tmp/{$optcfg['if']}_router");
 
 	if (isset($optcfg['enable'])) {
+		if($optcfg['gateway'])
+			system("echo " . $optcfg['gateway'] . " > /tmp/" . $optcfg['if'] . "_router");
+
 		/* wireless configuration? */
 		if (is_array($optcfg['wireless']))
 			interfaces_wireless_configure($optcfg['if'], $optcfg['wireless']);
@@ -875,6 +881,9 @@ function interfaces_wan_configure() {
 
 	$wancfg = $config['interfaces']['wan'];
 
+	if(file_exists("/tmp/{$config['interfaces']['wan']['if']}_router")) 
+		unlink("/tmp/{$config['interfaces']['wan']['if']}_router");
+
 	if(!$g['booting']) {
 		mute_kernel_msgs();
 
@@ -962,6 +971,9 @@ function interfaces_wan_configure() {
 				mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " " .
 					escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']));
 			}
+
+			if($config['interfaces']['wan']['gateway'])
+				system("echo " . $config['interfaces']['wan']['gateway'] . " > /tmp/" . $config['interfaces']['wan']['if'] . "_router");
 
 			/* resync pf (done automatically for DHCP/PPPoE/PPTP) */
 			filter_configure();

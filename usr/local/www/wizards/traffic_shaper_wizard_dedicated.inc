@@ -915,12 +915,12 @@ $othersplist = array();
 	/* restart the cached config */
 	unset($altq_list_queues);
 	$altq_list_queues = array();
-	$tmppath = array();	
 
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	
 	for ($i = 0; $i < $steps; $i++) {
 
+		$tmppath = array();	
 		$altq =& new altq_root_queue();
 
 		$altq->SetInterface($config['ezshaper']['step2']["conn{$i}interface"]);

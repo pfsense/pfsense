@@ -112,6 +112,8 @@ if (isset($config['ezshaper']['step2']['download'])) {
 	$downif = "lan";
 }
 
+$speedlimit = ($downstream + $upstream);
+
 /* select theme colors if the inclusion file exists */
 $rrdcolors = "./themes/{$g['theme']}/rrdcolors.inc.php";
 if(file_exists($rrdcolors)) {
@@ -174,11 +176,11 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 		\"CDEF:$curif-out_bits=$curif-out_bytes,8,*\" \\
 		\"CDEF:$curif-bits_io=$curif-in_bits,$curif-out_bits,+\" \\
 		\"CDEF:$curif-out_bits_neg=$curif-out_bits,$multiplier,*\" \\
-		\"CDEF:$curif-bytes_in=$curif-in_bytes,0,$downstream,LIMIT,UN,0,$curif-in_bytes,IF,$average,*\" \\
-		\"CDEF:$curif-bytes_out=$curif-out_bytes,0,$upstream,LIMIT,UN,0,$curif-out_bytes,IF,$average,*\" \\
+		\"CDEF:$curif-bytes_in=$curif-in_bytes,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes,IF,$average,*\" \\
+		\"CDEF:$curif-bytes_out=$curif-out_bytes,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes,IF,$average,*\" \\
 		\"CDEF:$curif-bytes=$curif-bytes_in,$curif-bytes_out,+\" \\
-		\"CDEF:$curif-bytes_in_t=$curif-in_bytes,0,$downstream,LIMIT,UN,0,$curif-in_bytes,IF,$seconds,*\" \\
-		\"CDEF:$curif-bytes_out_t=$curif-out_bytes,0,$upstream,LIMIT,UN,0,$curif-out_bytes,IF,$seconds,*\" \\
+		\"CDEF:$curif-bytes_in_t=$curif-in_bytes,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes,IF,$seconds,*\" \\
+		\"CDEF:$curif-bytes_out_t=$curif-out_bytes,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes,IF,$seconds,*\" \\
 		\"CDEF:$curif-bytes_t=$curif-bytes_in_t,$curif-bytes_out_t,+\" \\
 		AREA:$curif-in_bits#$colortrafficdown:$curif-in \\
 		$AREA:$curif-out_bits_neg#$colortrafficup:$curif-out \\
@@ -241,11 +243,11 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 		$graphcmd .= "\"CDEF:{$ifname}-in_bits={$ifname}-in_bytes,8,*\"  ";
 		$graphcmd .= "\"CDEF:{$ifname}-out_bits={$ifname}-out_bytes,8,*\" ";
 		$graphcmd .= "\"CDEF:{$ifname}-bits_io={$ifname}-in_bits,{$ifname}-out_bits,+\" ";
-		$graphcmd .= "\"CDEF:{$ifname}-bytes_in={$ifname}-in_bytes,0,$downstream,LIMIT,UN,0,{$ifname}-in_bytes,IF,$average,*\" ";
-		$graphcmd .= "\"CDEF:{$ifname}-bytes_out={$ifname}-out_bytes,0,$upstream,LIMIT,UN,0,{$ifname}-out_bytes,IF,$average,*\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bytes_in={$ifname}-in_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes,IF,$average,*\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bytes_out={$ifname}-out_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-out_bytes,IF,$average,*\" ";
 		$graphcmd .= "\"CDEF:{$ifname}-bytes={$ifname}-bytes_in,{$ifname}-bytes_out,+\" ";
-		$graphcmd .= "\"CDEF:{$ifname}-bytes_in_t={$ifname}-in_bytes,0,$downstream,LIMIT,UN,0,{$ifname}-in_bytes,IF,$seconds,*\" ";
-		$graphcmd .= "\"CDEF:{$ifname}-bytes_out_t={$ifname}-out_bytes,0,$upstream,LIMIT,UN,0,{$ifname}-out_bytes,IF,$seconds,*\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bytes_in_t={$ifname}-in_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes,IF,$seconds,*\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bytes_out_t={$ifname}-out_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-out_bytes,IF,$seconds,*\" ";
 		$graphcmd .= "\"CDEF:{$ifname}-bytes_t={$ifname}-bytes_in_t,{$ifname}-bytes_out_t,+\" ";
 		if ($g > 0) {
 			$operand .= ",+";
@@ -458,7 +460,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 				$color = "$colorqueuesup[$t]";
 				if($t > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
-					\"CDEF:$name-bytes_out=$name,0,$upstream,LIMIT,UN,0,$name,IF\" \\
+					\"CDEF:$name-bytes_out=$name,0,$speedlimit,LIMIT,UN,0,$name,IF\" \\
 					\"CDEF:$name-bits_out=$name-bytes_out,8,*\" \\
 					\"CDEF:$name-bits_out_neg=$name-bits_out,$multiplier,*\" \\
 					$AREA:$name-bits_out_neg#${color}:$name$stack \\";
@@ -474,7 +476,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 				$color = "$colorqueuesdown[$i]";
 				if($i > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
-					\"CDEF:$name-bytes_in=$name,0,$downstream,LIMIT,UN,0,$name,IF\" \\
+					\"CDEF:$name-bytes_in=$name,0,$speedlimit,LIMIT,UN,0,$name,IF\" \\
 					\"CDEF:$name-bits_in=$name-bytes_in,8,*\" \\
 					$AREA:$name-bits_in#${color}:$name$stack \\";
 					$i++;
@@ -504,7 +506,7 @@ elseif((strstr($curdatabase, "-queuesdrop.rrd")) && (file_exists("$rrddbpath$cur
 				$color = "$colorqueuesdropup[$t]";
 				if($t > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
-					\"CDEF:$name-bytes_out=$name,0,$upstream,LIMIT,UN,0,$name,IF\" \\
+					\"CDEF:$name-bytes_out=$name,0,$speedlimit,LIMIT,UN,0,$name,IF\" \\
 					\"CDEF:$name-bits_out=$name-bytes_out,8,*\" \\
 					\"CDEF:$name-bits_out_neg=$name-bits_out,$multiplier,*\" \\
 					$AREA:$name-bits_out_neg#${color}:$name \\";
@@ -520,7 +522,7 @@ elseif((strstr($curdatabase, "-queuesdrop.rrd")) && (file_exists("$rrddbpath$cur
 				$color = "$colorqueuesdropdown[$i]";
 				if($i > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
-					\"CDEF:$name-bytes_in=$name,0,$downstream,LIMIT,UN,0,$name,IF\" \\
+					\"CDEF:$name-bytes_in=$name,0,$speedlimit,LIMIT,UN,0,$name,IF\" \\
 					\"CDEF:$name-bits_in=$name-bytes_in,8,*\" \\
 					LINE1:$name-bits_in#${color}:$name \\";
 					$i++;

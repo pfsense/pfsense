@@ -143,7 +143,12 @@
 			<description>If this option is set, Netbios-over-TCP/IP will be disabled.</description>
 			<type>checkbox</type>
 		</field>
-		
+    	<field>
+			<fieldname>gwredir</fieldname>
+			<fielddescr>Redirect Gateway</fielddescr>
+			<description>Redirect ALL traffic through the OpenVPN server.</description>
+			<type>checkbox</type>
+		</field>
 		<field>
 			<fieldname>custom_options</fieldname>
 			<fielddescr>Custom options</fielddescr>

@@ -552,7 +552,7 @@ function openvpn_resync_csc($id) {
   	if (!empty($settings['dhcp_nbttype']) && $settings['dhcp_nbttype'] !=0) $conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
     if (!empty($settings['dhcp_nbtscope'])) $conf .= "push \"dhcp-option NBS {$settings['dhcp_nbtscope']}\"\n";
    	if ($settings['dhcp_nbtdisable']) $conf .= "push \"dhcp-option DISABLE-NBT\"\n";
-
+    if ($settings['gwredir']) $conf .= "push \"redirect-gateway\"\n";
 
 	if (!empty($settings['custom_options'])) {
 		$options = explode(';', $settings['custom_options']);

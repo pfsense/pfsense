@@ -206,12 +206,6 @@
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fieldname>gwredir</fieldname>
-			<fielddescr>Redirect Gateway</fielddescr>
-			<description>Redirect ALL traffic through the OpenVPN server.</description>
-			<type>checkbox</type>
-		</field>
-		<field>
 			<fieldname>custom_options</fieldname>
 			<fielddescr>Custom options</fielddescr>
 			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the client configuration.</description>

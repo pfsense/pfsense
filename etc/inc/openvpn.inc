@@ -393,6 +393,7 @@ EOD;
 
     if (!empty($settings['tls'])) $openvpn_conf .= "tls-auth {$g['varetc_path']}/openvpn_server{$id}.tls 0\n";
 		if (!empty($settings['maxclients'])) $openvpn_conf .= "max-clients {$settings['maxclients']}\n";
+		if (!empty($settings['gwredir'])) $openvpn_conf .= "push \"redirect-gateway\"\n";
 			}
 
 	else { // $mode == client
@@ -464,8 +465,6 @@ EOD;
 
 	if ($settings['passtos']) $openvpn_conf .= "passtos\n";
 	
-	if ($settings['gwredir']) $openvpn_conf .= "push \"redirect-gateway\"\n";
-
 	if ($settings['dynamic_ip']) {
 		$openvpn_conf .= "persist-remote-ip\n";
 		$openvpn_conf .= "float\n";

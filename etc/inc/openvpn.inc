@@ -393,7 +393,7 @@ EOD;
 
     if (!empty($settings['tls'])) $openvpn_conf .= "tls-auth {$g['varetc_path']}/openvpn_server{$id}.tls 0\n";
 		if (!empty($settings['maxclients'])) $openvpn_conf .= "max-clients {$settings['maxclients']}\n";
-		if (!empty($settings['gwredir'])) $openvpn_conf .= "push \"redirect-gateway\"\n";
+		if (!empty($settings['gwredir'])) $openvpn_conf .= "push \"redirect-gateway def1\"\n";
 			}
 
 	else { // $mode == client
@@ -551,7 +551,7 @@ function openvpn_resync_csc($id) {
   	if (!empty($settings['dhcp_nbttype']) && $settings['dhcp_nbttype'] !=0) $conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
     if (!empty($settings['dhcp_nbtscope'])) $conf .= "push \"dhcp-option NBS {$settings['dhcp_nbtscope']}\"\n";
    	if ($settings['dhcp_nbtdisable']) $conf .= "push \"dhcp-option DISABLE-NBT\"\n";
-    if ($settings['gwredir']) $conf .= "push \"redirect-gateway\"\n";
+    if ($settings['gwredir']) $conf .= "push \"redirect-gateway def1\"\n";
 
 	if (!empty($settings['custom_options'])) {
 		$options = explode(';', $settings['custom_options']);

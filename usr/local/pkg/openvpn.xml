@@ -258,12 +258,6 @@
 			<description>Redirect ALL traffic through the OpenVPN server.</description>
 			<type>checkbox</type>
 		</field>
-		<field>
-			<fieldname>keepalive</fieldname>
-			<fielddescr>Keep alive</fielddescr>
-			<description>Sends bidirectional ICMP-like packets every 10 sec. to ensure hosts are up. Hosts are assumed to be down if no answer was received for 120 sec.</description>
-			<type>checkbox</type>
-		</field>		
     <field>
 			<fieldname>custom_options</fieldname>
 			<fielddescr>Custom options</fielddescr>

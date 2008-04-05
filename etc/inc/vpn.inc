@@ -388,6 +388,8 @@ remote {$tunnel['remote-gateway']} \{
 	{$certline}
 	peers_identifier address {$tunnel['remote-gateway']};
 	initial_contact on;
+	dpd_delay 20;                   # DPD poll every 20 seconds
+	ike_frag on;
 	support_proxy on;
 	proposal_check obey;
 
@@ -494,6 +496,8 @@ remote anonymous \{
 	{$nattline}
 	{$certline}
 	initial_contact on;
+	dpd_delay 20;                   # DPD poll every 20 seconds
+	ike_frag on;
 	passive on;
 	generate_policy on;
 	support_proxy on;

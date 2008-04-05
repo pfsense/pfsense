@@ -1,0 +1,1065 @@
+/* Element CSS Definitions */
+html, body, td, th, input, select {
+	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+	font-size: 0.9em;
+
+}
+
+/* please adjust the bgcolor to be used together with niftycorners! */
+.rtop, .artop {
+        background-color: #999999;
+}
+
+div.GraphLink {
+	position: relative;
+}
+
+span.GraphLinkLine {
+	position: absolute;
+	background-color: #990000;
+	width: 100%;
+}
+
+/* DOM Tooltip CSS definitions */
+div.niceTitle
+{
+	background-color: #333333;
+	color: #FFFFFF;
+  border-bottom: 1px dotted #FFFFFF;
+	font-weight: bold;
+	font-size: 13px;
+	font-family: "Trebuchet MS", sans-serif;
+	width: 250px;
+	left: 0;
+	top: 0;
+	padding: 4px;
+	position: absolute;
+	text-align: left;
+	z-index: 20;
+	-moz-border-radius: 0 10px 10px 10px;
+	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=87);
+	-moz-opacity: .87;
+	-khtml-opacity: .87;
+	opacity: .87;
+}
+div.niceTitle h1
+{
+  background: #990000;
+  border-bottom: 1px dotted #FFFFFF;
+	font-weight: bold;
+	font-size: 13px;
+	font-family: "Trebuchet MS", sans-serif;
+	margin: 3px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 3px;
+  text-align: left;
+	left: 0;
+	top: 0;
+  -moz-border-radius: 0 8px 0 0;
+  -moz-opacity: 1;
+}
+div.niceTitle .contents
+{
+	margin: 0;
+	padding: 0 3px;
+	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+	-moz-opacity: 1;
+	-khtml-opacity: 1;
+	opacity: 1;
+}
+div.niceTitle p
+{
+  background: #FFFFFF;
+  border: 1px solid #990000;
+	color: #000000;
+	font-size: 9px;
+	padding: 5px;
+	margin: 3px;
+	text-align: left;
+	-moz-opacity: 1;
+  -moz-border-radius: 0 0 8px 8px;
+}
+
+body {
+  margin: 0px auto;
+  /* background: url('images/background.png') no-repeat; */
+  background-position : center 0px;
+  background-color: #999999;
+}
+
+form {
+	margin: 0px;
+}
+a {
+	text-decoration: none;
+}
+form input {
+	font-size: 1.1em;
+}
+
+iframe {
+	z-index: 1;
+	border: 1px dashed #990000;
+}
+.iframe {
+	background-color: #FFFFFF;
+}
+
+/* ID Based CSS Definitions */
+#wrapper {
+	width: 810px;
+	margin: 0px auto;
+}
+
+#header {
+	background: url('images/header.png') no-repeat;
+	background-position: 0px;
+	height: 102px;
+	width: 810px;
+	margin-bottom: 5px;
+	z-index: 2;
+}
+#header-left {
+	position: relative;
+	/* background: url('images/logo.gif') no-repeat; */
+	background-position: center;
+	height: 65px;
+	width: 145px;
+	left: 10px;
+	float: left;
+}
+#header-left #status-link {
+	position: relative;
+	top: 10px;
+	left: 6px;
+}
+#header-right {
+	position: relative;
+	/* background: url('images/header.gif') no-repeat; */
+	height: 70px;
+	color: #fff;
+	left: 0px;
+	margin-left: 165px;
+}
+#header-right .alert {
+	position: relative;
+	/* background: url('images/alert.gif') no-repeat; */
+	background-position: 4px 2px;
+	color: #fff;
+	height: 17px;
+	width: 500px;
+	padding: 4px;
+	padding-left: 27px;
+	float: left;
+}
+#header-right .container {
+	position: relative;
+}
+#header-right .container .left {
+	position: relative; 
+	float: left;
+	font-size: 1.3em;
+	font-weight: bold;
+	top: 15px;
+	left: 4px;
+	display: none;
+}
+#header-right .container .right {
+	position: relative;
+	float: right;
+	top: 22px;
+	padding-right: 4px;
+	z-index: 1;
+}
+
+#header-right .container .right #alerts {
+	position: relative;
+	background: url('images/alert_bgr.png') no-repeat;
+	height: 39px;
+	width: 431px;
+	z-index: 1;
+	padding-top: 20px;
+	padding-left: 5px;
+	margin: 0px;
+}
+#header-right .container .right #hostname {
+	position: relative;
+	height: 39px;
+	width: 431px;
+	z-index: 1;
+	padding-left: 5px;
+	margin: 0px;
+	top: 25px;
+	left: 230px;
+	font-size: 14px;
+	color: #cccccc;
+	font-weight: bold;
+}
+
+
+
+table#marquee {
+	position: relative;
+	top: -6px;
+	left: -5px;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	width: 424px;
+	background-color: transparent;
+	padding: 2px;
+	border: 0px;
+}
+span#marquee-container {
+	position: absolute;
+	visibility: hidden;
+	top: -100px;
+	left: -10000px;
+}
+div#marquee-text {	
+	font-size: 1.18em;
+	font-weight: normal;
+	font-family: Verdana;
+	color: #ffffff;
+}
+table#marquee div#container {
+	position: relative;
+	overflow: hidden;
+	width: 418px;
+	height: 20px;
+}
+table#marquee div#container div#scroller {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
+
+
+
+
+#content {
+	position: relative;
+	top: -15px;
+	left: 0px;
+	margin-top: 0px;
+	margin-left: 0px;
+	padding-top: 0px;
+	width: 810px;
+	background-color: #ffffff;
+}
+
+#left {
+	width: 810px;
+	height: 1px;
+}
+#right {
+	position: relative;
+	top: -10px;
+	width: 770px;
+	margin-top: 0px;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding-top: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 20px;
+	min-height: 400px;
+}
+
+#footer {
+	position: relative;
+	background: url('images/footer.png') no-repeat;
+	top: -18px;
+	left: 0px;
+	width: 810px;
+	height: 75px;
+	color: #ffffff;
+	text-align: center;;
+	font-size: 0.9em;
+	padding-top: 17px;
+	margin-bottom: 20px;
+	clear: both;
+}
+#footer p {
+	padding: 0px;
+	margin: 0px;
+}
+
+/* Style the List */
+#navigation {
+	/* background: url('images/menu.gif') no-repeat; */
+	/* width: 693px; */
+	position: relative;
+	top: -25px;
+	left: 3px;
+	width: 810px;
+	padding: 0px;
+	height: 28px;
+	z-index: 3;
+}
+#navigation ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+	text-align: center;
+}
+#navigation ul#menu {
+	padding-top: 3px;
+	padding-left: 5px;
+}
+
+/* Style the List Elements */
+#navigation ul li {
+	float: left;
+	position: relative;
+	/* width: 7.5em; */
+	width: 8.77em;
+}
+#navigation ul li div {
+	font-size: 1em;
+	font-weight: bold;
+}
+/* Make the List inside the List Elements */
+/* initially hidden with absolute position */
+#navigation ul li ul {
+	display: none;
+	position: absolute; 
+	top: 2em;
+	left: -2px;
+	width: 9em;
+	font-weight: normal;
+	background: transparent bottom left no-repeat; /* This is key to making the menu maintain visibility when not on a link */
+	/* background-color: #202020;
+	background: url("images/menu_footer.gif") no-repeat;
+	background-position: bottom;
+	*/
+	padding: 0em 0 0.4em 0;
+	padding-top: 0.3em;
+}
+/* to override top and left in browsers other than IE */
+/* which will position to the top right of the containing */
+/* li, rather than bottom left */
+#navigation ul li > ul {
+	top: auto;
+	left: auto;
+	left: -1px !important;
+}
+/* Show initial drop down upon mouse over, but do not show */
+/* nested side drop menus within listed elements */
+#navigation ul li:hover ul { 
+	display: block;
+	cursor: pointer;
+}
+#navigation ul li:hover {
+	cursor: pointer;
+	cursor: pointer;
+}
+#navigation ul li:hover div {
+	text-decoration: none;
+}
+
+#navigation ul li {
+	background-color: transparent;
+	color: #FFF;
+}
+#navigation ul li ul li {
+	border: 1px solid #990000;
+	width: 8.8em;
+	height: 1.6em;
+	line-height: 1.6em;
+	background-color: #990000;
+	color: #FFF;
+}
+#navigation ul li ul li:hover {
+	background-color: #666666;
+}
+
+#navigation li li a {
+	display: block;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#navigation ul li ul li a.navlnk:hover {
+	text-decoration: none;
+}
+#navigation ul li.first {
+	border-right: 0px;
+}
+#navigation ul li.middle {
+	border-right: 0px;
+}
+#navigation ul li.last {
+
+}
+
+#navigation ul li.dropfirst {
+	border-bottom: 0px;
+}
+#navigation ul li.dropmiddle {
+	border-bottom: 0px;
+}
+#navigation ul li.droplast {
+}
+
+#wzdtabcont {
+	float: left;
+	background-color: #FFFFFF;
+	color: #000000;
+	padding: 0;
+}
+
+ul#wzdnav {
+  font-size: 0.96em;
+  float: left;
+	width: 14.5em;
+  margin: 0;
+	padding-left: 18px;
+}
+
+ul#wzdnav li {
+  list-style: none;
+  margin: 0;
+	padding-bottom: 0.2em;
+  padding-left: 0;
+}
+
+ul#wzdnav a {
+  display: block;
+  padding: 0.3em;
+  font-weight: normal;
+}
+
+#wzdnavbold a {
+  display: block;
+  padding: 0.3em;
+  font-weight: bold ! important;
+}
+
+ul#wzdnav a:link {
+  color: black;
+	background-color: #eee;
+}
+
+ul#wzdnav a:visited {
+  color: #666;
+	background-color: #eee;
+}
+
+ul#wzdnav a:hover {
+  color: black;
+	background-color: white;
+}
+
+ul#wzdnav a:active {
+  color: white;
+	background-color: gray;
+}
+
+#graph {
+	position: relative;
+	z-index: 10;
+}
+
+#logoutbtn {
+  position: absolute;
+  left: 95%;
+  vertical-align: middle;
+}
+
+
+#graph {
+	position: relative;
+	z-index: 10;
+}
+
+
+
+/* Class Based CSS Definitions */
+.pgtitle {
+	font-size: 18px;
+	color: #777777;
+	font-weight: bold;
+}
+.tfrtitle {
+	font-size: 18px;
+	color: #ffffff;
+	font-weight: bold;
+}
+.vncell {
+	background-color: #DDDDDD;
+	padding-right: 20px;
+	padding-left: 8px;
+	border-bottom: 1px solid #999999;
+}
+.formfld {
+  font-size: small;
+}
+.formselect {
+  font-size: 1.0em;
+}
+.langopt {
+  padding-left: 34px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+.saved {
+  /* background: url('/themes/nione/images/icons/icon_wzd_saved.png') no-repeat 0 1px #FFFFFF; */
+  list-style-image: url('/themes/nervecenter/images/icons/icon_wzd_saved.png') ! important;
+}
+.notsaved {
+  /* background: url('/themes/nione/images/icons/icon_wzd_nsaved.png') no-repeat 0 1px #FFFFFF; */
+  list-style-image: url('/themes/nervecenter/images/icons/icon_wzd_nsaved.png') ! important;
+}
+.en {
+  background: url('/themes/nervecenter/images/icons/icon_flag_en.png') no-repeat 0 1px #FFFFFF;
+}
+.de {
+  background: url('/themes/nervecenter/images/icons/icon_flag_de.png') no-repeat 0 1px #FFFFFF;
+}
+.es {
+  background: url('/themes/nervecenter/images/icons/icon_flag_es.png') no-repeat 0 1px #FFFFFF;
+}
+.pt_BR {
+  background: url('/themes/nervecenter/images/icons/icon_flag_pt_BR.png') no-repeat 0 1px #FFFFFF;
+}
+.host {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_host.png') no-repeat 0 1px #FFFFFF;
+}
+.search {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_search.png') no-repeat 0 1px #FFFFFF;
+}
+.file {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_file.png') no-repeat 0 1px #FFFFFF;
+}
+.mail {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_mail.png') no-repeat 0 1px #FFFFFF;
+}
+.imp {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_imp.png') no-repeat 0 1px #FFFFFF;
+}
+.pwd {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_pwd.png') no-repeat 0 1px #FFFFFF;
+}
+.user {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_user.png') no-repeat 0 1px #FFFFFF ;
+}
+.group {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_group.png') no-repeat 0 1px #FFFFFF;
+}
+.url {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_url.png') no-repeat 0 1px #FFFFFF;
+}
+.time {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_time.png') no-repeat 0 1px #FFFFFF;
+}
+.unknown {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_unknown.png') no-repeat 0 1px #FFFFFF;
+}
+.formfld_cert {
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_cert.png') no-repeat 0 1px #FFFFFF;
+  padding-left: 28px;
+	font-family: Courier New, Courier, monospaced;
+	font-size: 11px;
+}
+.formfldalias {
+	background-color: #990000;
+	color: #FFFFFF;
+}
+.formpre {
+	font-family: Courier New, Courier, monospaced;
+	font-size: 10px;
+}
+.formbtn {
+	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: bold;
+}
+.formbtns {
+	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+}
+.vvcell {
+	background-color: #FFFFC6;
+}
+.errmsg {
+	font-weight: bold;
+	color: #CC0000;
+}
+.red {
+	color: #CC0000;
+}
+.gray {
+	color: #A0A0A0;
+}
+.vexpl {
+	font-size: 11px;
+}
+.navlnk {
+	color: #FFFFFF;
+	text-decoration: none;
+	font-size: 13px;
+}
+.navlnks {
+	color: #FFFFFF;
+	text-decoration: none;
+	font-size: 11px;
+}
+.redlnk {
+	color: #990000;
+	text-decoration: none;
+}
+.tblnk {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.vncellreq {
+	background-color: #DDDDDD;
+	padding-right: 20px;
+	padding-left: 8px;
+	font-weight: bold;
+	border-bottom: 1px solid #999999;
+}
+.vncellt {
+	background-color: #DDDDDD;
+	padding-right: 20px;
+	padding-left: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	font-weight: bold;
+	border-bottom: 1px solid #999999;
+}
+.vtable {
+	border-bottom: 1px solid #999999;
+}
+.vnsepcell {
+	background-color: #BBBBBB;
+	padding-right: 20px;
+	padding-left: 8px;
+	font-weight: bold;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+}
+.cpline {
+	font-size: 11px;
+	color: #FFFFFF;
+}
+.hostname {
+	font-size: 11px;
+	color: #990000;
+	font-weight: bold;
+}
+.vnsepcellr {
+	background-color: #BBBBBB;
+	padding-right: 20px;
+	padding-left: 8px;
+	font-weight: bold;
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+}
+.listr {
+	background-color: #FFFFFF;
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+	padding-right: 6px;
+	padding-left: 6px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.listrpad {
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+	padding-right: 16px;
+	padding-left: 10px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+.listn {
+	font-size: 11px;
+	padding-right: 16px;
+	padding-left: 6px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.listbg {
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+	background-color: #990000;
+	padding-right: 16px;
+	padding-left: 6px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.listbggrey {
+	border-right: 1px solid #999999;
+        border-bottom: 1px solid #999999;
+        font-size: 11px;
+        background-color: #999999;
+        padding-right: 16px;
+        padding-left: 6px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+}
+.listhdr {
+	background-color: #BBBBBB;
+	padding-right: 16px;
+	padding-left: 6px;
+	font-weight: bold;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.listhdr a {
+	color: #000000;
+}
+.listhdrr {
+	background-color: #BBBBBB;
+	padding-right: 16px;
+	padding-left: 6px;
+	font-weight: bold;
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.listhdrr a {
+	color: #000000;
+}
+.listlr {
+	background-color: #FFFFFF;
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	border-left: 1px solid #999999;
+	font-size: 11px;
+	padding-right: 6px;
+	padding-left: 6px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.listlrns {
+	background-color: #FFFFFF;
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	border-left: 1px solid #999999;
+	font-size: 11px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.list {
+	font-size: 11px;
+	padding-left: 6px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.listt {
+	font-size: 11px;
+	padding-top: 5px;
+}
+.listhdrrns {
+	background-color: #BBBBBB;
+	padding-left: 6px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-right: 6px;
+	font-weight: bold;
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+}
+.listbgns {
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+	background-color: #D9DEE8;
+	padding-left: 6px;
+	padding-right: 4px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.listtopic {
+	border-right: 1px solid #999999;
+	font-size: 11px;
+	background-color: #990000;
+	padding-right: 16px;
+	padding-left: 6px;
+	color: #FFFFFF;
+	font-weight: bold;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.optsect_t {
+	border-right: 1px solid #999999;
+	background-color: #990000;
+	padding-right: 6px;
+	padding-left: 6px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.optsect_s {
+	font-size: 11px;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+.tabnavtbl {
+}
+
+
+/* MISC CSS Definitions */
+ul#tabnav {
+	font-size: 11px;
+	font-weight: bold;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+ul#tabnav li.tabinact1 {
+	float: left;
+	background-color: #777777;
+	color: #FFFFFF;
+	padding: 0;
+	white-space: nowrap;
+}
+ul#tabnav li.tabinact {
+	float: left;
+	border-left: 1px solid #999999;
+	background-color: #777777;
+	color: #FFFFFF;
+	padding: 0;
+	white-space: nowrap;
+}
+ul#tabnav li.tabinact a {
+	float: left;
+	display: block;
+	text-decoration: none;
+	padding: 5px 8px 5px 8px;
+	color: #FFFFFF;
+}
+ul#tabnav li.tabinact1 a {
+	float: left;
+	display: block;
+	text-decoration: none;
+	padding: 5px 8px 5px 8px;
+	color: #FFFFFF;
+}
+ul#tabnav li.tabact {
+	float: left;
+	background-color: #EEEEEE;
+	color: #000000;
+	padding: 5px 8px 5px 8px;
+	white-space: nowrap;
+}
+.tabcont {
+	background-color: #EEEEEE;
+	padding-right: 12px;
+	padding-left: 12px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+}
+.tabact {
+	float: left;
+	background-color: #EEEEEE;
+	color: #000000;
+	padding: 5px 8px 5px 8px;
+	white-space: nowrap;
+}
+.tabinact {
+	font-weight: bold;
+	float: left;
+	border-left: 1px solid #999999;
+	background-color: #777777;
+	color: #FFFFFF;
+	padding: 0;
+	white-space: nowrap;
+}
+.menu {
+	background-color: #000000;
+	white-space: nowrap;
+	padding: 0px 5px 0px 5px;
+	width: 100%;
+	vertical-align: top;
+}
+
+
+/* Auto Complete Suggestions */
+div.suggestions {
+    -moz-box-sizing: border-box;
+    /* box-sizing: border-box; */
+    border: 1px solid black;
+    position: absolute;
+	background-color: #990000;
+	color: #FFF;
+}
+
+div.suggestions div {
+    cursor: default;
+    padding: 0px 3px;
+	background-color: #990000;
+	color: #FFF;
+}
+
+div.suggestions div.current {
+    background-color: #3366cc;
+    color: #FFF;
+}
+/* End Auto Complete Suggestions */
+
+
+/* Nifty Corners Crap */
+.rtop,.artop{display:block}
+.rtop *,.artop *{display:block;height:1px;overflow:hidden;font-size:1px}
+.artop *{border-style: solid;border-width:0 1px}
+.r1,.rl1,.re1,.rel1{margin-left:5px}
+.r1,.rr1,.re1,.rer1{margin-right:5px}
+.r2,.rl2,.re2,.rel2,.ra1,.ral1{margin-left:3px}
+.r2,.rr2,.re2,.rer2,.ra1,.rar1{margin-right:3px}
+.r3,.rl3,.re3,.rel3,.ra2,.ral2,.rs1,.rsl1,.res1,.resl1{margin-left:2px}
+.r3,.rr3,.re3,.rer3,.ra2,.rar2,.rs1,.rsr1,.res1,.resr1{margin-right:2px}
+.r4,.rl4,.rs2,.rsl2,.re4,.rel4,.ra3,.ral3,.ras1,.rasl1,.res2,.resl2{margin-left:1px}
+.r4,.rr4,.rs2,.rsr2,.re4,.rer4,.ra3,.rar3,.ras1,.rasr1,.res2,.resr2{margin-right:1px}
+.rx1,.rxl1{border-left-width:5px}
+.rx1,.rxr1{border-right-width:5px}
+.rx2,.rxl2{border-left-width:3px}
+.rx2,.rxr2{border-right-width:3px}
+.re2,.rel2,.ra1,.ral1,.rx3,.rxl3,.rxs1,.rxsl1{border-left-width:2px}
+.re2,.rer2,.ra1,.rar1,.rx3,.rxr3,.rxs1,.rxsr1{border-right-width:2px}
+.rxl1,.rxl2,.rxl3,.rxl4,.rxsl1,.rxsl2,.ral1,.ral2,.ral3,.ral4,.rasl1,.rasl2{border-right-width:0}
+.rxr1,.rxr2,.rxr3,.rxr4,.rxsr1,.rxsr2,.rar1,.rar2,.rar3,.rar4,.rasr1,.rasr2{border-left-width:0}
+.r4,.rl4,.rr4,.re4,.rel4,.rer4,.ra4,.rar4,.ral4,.rx4,.rxl4,.rxr4{height:2px}
+.rer1,.rel1,.re1,.res1,.resl1,.resr1{border-width:1px 0 0;height:0px !important;height /**/:1px}
+/* End Nifty Corners Crap */
+
+
+
+/* CSS for Dynamic Log Viewer */
+/* Author: Erik Kristensen    */
+div#log div.log-entry {
+	clear: both;
+}
+
+div#log div.log-entry span,
+div#log div.log-header span {
+	padding: 3px 2px 3px 2px;
+	padding-left: 8px;
+}
+
+div#log div.log-entry span.log-action {
+	padding-bottom: 6px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+div#log div.log-header span {
+	border-top: 1px solid #999;
+	background-color: #bbb;
+	font-weight: bold;
+	text-align: left;
+}
+
+div#log span.log-action,
+div#log span.log-time,
+div#log span.log-interface,
+div#log span.log-source,
+div#log span.log-destination,
+div#log span.log-protocol {
+	float: left;
+	text-align: left;
+	border-left: 1px solid #999;
+	border-bottom: 1px solid #999;
+}
+
+div#log span.log-general {
+
+}
+
+div#log span.log-protocol {
+	border-right: 1px solid #999;
+}
+
+div#log span.log-action {
+	width: 2em;
+	text-align: center;
+}
+
+div#log span.log-time {
+	width: 12.5em;
+}
+
+div#log span.log-interface {
+	width: 5em;
+}
+
+div#log span.log-source,
+div#log span.log-destination {
+	width: 17.6em;
+}
+
+div#log span.log-protocol {
+	width: 5.5em;
+}
+/* END CSS FOR DYNAMIC LOG VIEWER */
+
+#login {
+	background: #cccccc;
+	border: 0px solid #666666;
+	margin: 5em auto;
+	padding: 0em;
+	width: 340px;
+}
+
+#login h1 {
+	background: url(images/misc/logon.png) no-repeat top left;
+	margin-top: 0;
+	display: block;
+	text-indent: -1000px;
+	height: 50px;
+	border-bottom: none;
+}
+
+#login p {
+	font-size: 1em;
+	font-weight: bold;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
+#login span {
+	font-size: 1em;
+	font-weight: bold;
+	width: 20%;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
+#login p#text {
+	font-size: 1em;
+	font-weight: normal;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
+#login #username, #password {
+	font-size: 1em;
+	width: 60%;
+	padding: 3px;
+	margin: 0em;
+}
+
+#login #submit {
+	font-size: 1em;
+	font-weight: bold;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}

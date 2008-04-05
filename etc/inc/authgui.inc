@@ -149,63 +149,28 @@ function display_error_form($http_code, $desc) {
 		echo "Error: {$http_code} Description: {$desc}";
 		return;
 	}
-  $htmlstr = <<<EOD
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
     <script type="text/javascript" src="/javascript/scriptaculous/prototype.js"></script>
     <script type="text/javascript" src="/javascript/scriptaculous/scriptaculous.js"></script>
     <title>An error occurred: {$http_code}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    <link rel="shortcut icon" href="/themes/{$g['theme']}/images/icons/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="/themes/{$g['theme']}/all.css" media="all" />
-    <style type="text/css">
-    #errordesc {
-      background: #cccccc;
-      border: 0px solid #666666;
-      margin: 5em auto;
-      padding: 0em;
-      width: 340px;
-    }
-    #errordesc h1 {
-      background: url(/themes/{$g['theme']}/images/misc/logon.png) no-repeat top left;
-      margin-top: 0;
-      display: block;
-      text-indent: -1000px;
-      height: 50px;
-      border-bottom: none;
-    }
-
-    #login p {
-      font-size: 1em;
-      font-weight: bold;
-      padding: 3px;
-      margin: 0em;
-      text-indent: 10px;
-    }
-
-    #login span {
-      font-size: 1em;
-      font-weight: bold;
-      width: 20%;
-      padding: 3px;
-      margin: 0em;
-      text-indent: 10px;
-    }
-
-    #login p#text {
-      font-size: 1em;
-      font-weight: normal;
-      padding: 3px;
-      margin: 0em;
-      text-indent: 10px;
-    }
-    </style>
-
+    <link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
+    <?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
+    <link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
+    <?php else: ?>
+    <link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
+    <?php endif; ?>
     <script type="text/javascript">
+    <title>An error occurred: {$http_code}</title>
     <!--
       function page_load() {
         NiftyCheck();
-        Rounded("div#errordesc","bl br","#333","#cccccc","smooth");
+        Rounded("div#login inputerrors","bl br","transparent","#cccccc","smooth");
         Effect.Pulsate('errortext', { duration: 10 });
       }
       <?php
@@ -224,11 +189,10 @@ function display_error_form($http_code, $desc) {
     </div>
   </body>
 </html>
+<?php
+} // end function
 
-EOD;
 
-  return $htmlstr;
-}
 
 function display_login_form() {
   require_once("globals.inc");
@@ -269,11 +233,7 @@ function display_login_form() {
     <?php endif; ?>
     <script type="text/javascript">
     <!--
-      function page_load() {
-        NiftyCheck();
-        Rounded("div#login","bl br","#333","#cccccc","smooth");
-        document.login_iform.usernamefld.focus();
-      }
+      function page_load() {}
       function clearError() {
         if($('inputerrors'))
           $('inputerrors').innerHTML='';
@@ -288,27 +248,31 @@ function display_login_form() {
   </head>
   <body onload="page_load()">
     <div id="login">
-      <h1>&nbsp;</h1>
       <form id="iform" name="login_iform" method="post" autocomplete="off" action="<?= $_SERVER['SCRIPT_NAME'] ?>">
-        <div id="inputerrors"></div>
+      <h1>&nbsp</h1>
+      <div id="inputerrors"></div>
         <p>
-          <span style="text-align: left;width=40%">
-            <?=gettext("Username"); ?>:&nbsp;&nbsp;
-          <input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld user" tabindex="1" />
+          <span style="text-align:left">
+            <?=gettext("Username"); ?>:<br>
+            <input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld user" tabindex="1" />
           </span>
         </p>
+        <br>
         <p>
-          <span style="text-align: left;width=40%;">
-            <?=gettext("Password"); ?>:&nbsp;&nbsp;
+          <span style="text-align:left">
+            <?=gettext("Password"); ?>: <br>
+            <input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld pwd" tabindex="2" />
           </span>
-          <input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld pwd" tabindex="2" />
         </p>
-        <table width="90%" style="margin-right: auto; margin-left: auto;">
-          <tr>
-            <td valign="middle" align="right" style="font-style: italic;"><br /><?=gettext("Enter username and password to login."); ?></td>
-            <td valign="middle" align="left"><input type="submit" id="submit" name="login" class="formbtn" value="<?=gettext("Login"); ?>" tabindex="3" /></td>
-          </tr>
-        </table>
+        <br>
+        <p>
+          <span style="text-align:center; font-weight: normal ; font-style: italic"><?=gettext("Enter username and password to login."); ?></span>
+        </p>        
+        <p>
+          <span style="text-align:center">
+            <input type="submit" id="submit" name="login" class="formbtn" value="<?=gettext("Login"); ?>" tabindex="3" />
+          </span>
+        </P>
       </form>
     </div>
   </body>

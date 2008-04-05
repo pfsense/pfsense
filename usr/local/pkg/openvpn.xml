@@ -259,6 +259,12 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fieldname>keepalive</fieldname>
+			<fielddescr>Keep alive</fielddescr>
+			<description>Sends bidirectional ICMP-like packets every 10 sec. to ensure hosts are up. Hosts are assumed to be down if no answer was received for 120 sec.</description>
+			<type>checkbox</type>
+		</field>		
+    <field>
 			<fieldname>custom_options</fieldname>
 			<fielddescr>Custom options</fielddescr>
 			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the server configuration.</description>

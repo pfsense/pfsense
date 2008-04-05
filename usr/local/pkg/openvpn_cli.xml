@@ -206,6 +206,12 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fieldname>infiniteresolvretry</fieldname>
+			<fielddescr>Infinitely resolve server</fielddescr>
+			<description>Infinitely retry to resolve the host name of the OpenVPN server. Useful for not permanently internet-connected machines.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
 			<fieldname>custom_options</fieldname>
 			<fielddescr>Custom options</fielddescr>
 			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the client configuration.</description>

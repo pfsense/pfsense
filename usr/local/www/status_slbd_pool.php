@@ -106,7 +106,8 @@ include("head.inc");
 						$lastchange = "";
                                                 $svr = split("\|", $server);
 						$monitorip = $svr[1];
-						$logstates = return_clog($slbd_logfile, $nentries, array("$monitorip", "marking"), true);
+						$logstates = return_clog($slbd_logfile, $nentries, true, array("$monitorip", "marking"), "", true);
+
 						$logstates = $logstates[0];
 
 						if(stristr($logstates, $monitorip)) {

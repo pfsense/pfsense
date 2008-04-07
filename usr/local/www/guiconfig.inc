@@ -660,10 +660,9 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
     }
 }
 
-function return_clog($logfile, $tail, $grepfor = "", $grepinvert = "", $grepreverse = false) {
+function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
 	global $g, $config;
-	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
-	$sor = isset($grepreverse) ? "-r" : "";
+	$sor = (isset($config['syslog']['reverse']) || $grepreverse) ? "-r" : "";
 	$logarr = "";
 	$grepline = "  ";
 	if(is_array($grepfor))

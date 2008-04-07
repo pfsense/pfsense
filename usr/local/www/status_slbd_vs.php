@@ -110,7 +110,7 @@ include("head.inc");
                                         foreach ((array) $vipent['servers'] as $server) {
 						$lastchange = "";
 						$monitorip = $server;
-						$logstates = return_clog($slbd_logfile, $nentries, array("$monitorip", "marking"), true);
+						$logstates = return_clog($slbd_logfile, $nentries, true, array("$monitorip", "marking"), "", true);
 						$logstates = $logstates[0];
 
 						if(stristr($logstates, $monitorip)) {

@@ -433,18 +433,21 @@ function session_auth($backing) {
       $_SESSION['Logged_In'] = "True";
       $_SESSION['Username'] = $_POST['usernamefld'];
       $_SESSION['last_access'] = time();
+      log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
     } else {
       /* give the user a more detailed error message */
       if (isset($userindex[$_POST['usernamefld']])) {
-        $_SESSION['Login_Error'] = "Wrong password";
+        $_SESSION['Login_Error'] = "Username or Password incorrect";
+	log_error("Wrong password entered for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
         if(isAjax()) {
-        	echo "showajaxmessage('Wrong password');";
-        	return;        	
+        	echo "showajaxmessage('{$_SESSION['Login_Error']}');";
+        	return;
         }
       } else {
-        $_SESSION['Login_Error'] = "User does not exist";
+        $_SESSION['Login_Error'] = "Username or Password incorrect";
+	log_error("Attempted login for invalid user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
         if(isAjax()) {
-        	echo "showajaxmessage('User does not exist');";
+                echo "showajaxmessage('{$_SESSION['Login_Error']}');";
         	return;
         }
       }
@@ -467,15 +470,21 @@ function session_auth($backing) {
        $_SESSION['last_access'] = time();
      else
        /* Check for stale session */
-       if ($_SESSION['last_access'] < (time() - ($config['system']['webgui']['session_timeout'] * 60)))
+       if ($_SESSION['last_access'] < (time() - ($config['system']['webgui']['session_timeout'] * 60))) {
          $_GET['logout'] = true;
-       else
+         $_SESSION['Logout'] = true;
+       } else
          /* only update if it wasn't ajax */
          if (!isAjax())
            $_SESSION['last_access'] = time();
 
     /* user hit the logout button */
     if (isset($_GET['logout'])) {
+      if ($_SESSION['Logout'])
+        log_error("Session timed out for user '{$_SESSION['Username']}' from: {$_SERVER['REMOTE_ADDR']}");
+      else
+        log_error("User logged out for user '{$_SESSION['Username']}' from: {$_SERVER['REMOTE_ADDR']}");
+      
       if (hasLockAbility($_SESSION['Username'])) {
         unlink_if_exists("{$g['tmp_path']}/webconfigurator.lock");
       }

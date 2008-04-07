@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	vpn_openvpn_create_existing.php
+	vpn_openvpn_certs_existing.php
 	part of pfSense
 
 	Copyright (C) 2004 Scott Ullrich

@@ -280,13 +280,14 @@ function openvpn_reconfigure($mode, $id) {
 	$lport = 1194 + $id;
 
 	mwexec("/sbin/ifconfig tun{$id} create");
-	mwexec("/sbin/ifconfig tun{$id} name openvpn{$id}");
-	mwexec("/sbin/ifconfig openvpn{$id} group openvpn");
+	//mwexec("/sbin/ifconfig tun{$id} name openvpn{$id}");
+	//mwexec("/sbin/ifconfig openvpn{$id} group openvpn");
+	mwexec("/sbin/ifconfig tun{$id} group openvpn");
 
         $pidfile = $g['varrun_path'] . "/openvpn_{$mode}{$id}.pid";
         $proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
         $cipher = $settings['crypto'];
-	$openvpn_conf = "dev openvpn{$id}\n";
+	$openvpn_conf = "dev tun{$id}\n";
         $openvpn_conf .= <<<EOD
 writepid $pidfile
 #user nobody

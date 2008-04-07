@@ -225,7 +225,7 @@ if ($_POST) {
 		}
 	} else {
 		/* item is a normal alias type */
-		for($x=0; $x<99; $x++) {
+		for($x=0; $x<299; $x++) {
 			$comd = "\$subnet = \$_POST['address" . $x . "'];";
 			eval($comd);
 			$comd = "\$subnet_address = \$_POST['address_subnet" . $x . "'];";

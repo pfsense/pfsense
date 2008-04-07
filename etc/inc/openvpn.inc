@@ -451,10 +451,10 @@ EOD;
         }
 
         foreach ($keys as $key) {
-                if ($mode == "server" && $settings['cipher'] != "none") {
+                if ($mode == "server" && isset($settings['cipher']) && $settings['cipher'] != "none") {
                         $openvpn_conf .= $key['directive'] . " " . $base_file . $settings['cipher'] . "/".$key['field'] . "\n";
                 } else {
-                        $filename = "$base_file/openvpn_{$mode}{$id}." . $key['field'];
+                        $filename = "$base_fileopenvpn_{$mode}{$id}." . $key['field'];
                         file_put_contents($filename, base64_decode($settings[$key['field']]));
                         chown($filename, 'nobody');
                         chgrp($filename, 'nobody');

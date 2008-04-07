@@ -1,10 +1,11 @@
 <?php
 /* $Id$ */
 /*
-	vpn_openvpn_create_certs.php
+	vpn_openvpn_certs_create.php
 	part of pfSense
 
 	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

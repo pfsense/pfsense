@@ -38,7 +38,7 @@ $easyrsapath = "/usr/local/share/openvpn/certificates";
 
 if ($_GET['ca']) {
 	if ($config['openvpn']['keys'][$_GET['ca']]) {
-		$data = $config['openvpn']['keys'][$_GET['ca']];
+		$data = &$config['openvpn']['keys'][$_GET['ca']];
 		$caname = trim($_GET['ca']);
 		$cakeysize = $data['keysize'];
 		$caexpire = $data['caexpire'];
@@ -99,6 +99,7 @@ if ($_POST) {
 	fwrite($fd, "setenv KEY_CITY $cityname \n");
 	fwrite($fd, "setenv KEY_ORG $orginizationname \n");
 	fwrite($fd, "setenv KEY_EMAIL $email \n");
+	fwrite($fd, "setenv CA_OK $ovpncapath/$caname/finished_ok\n");
 	fwrite($fd, "\n\n");
 	fclose($fd);
 
@@ -115,21 +116,6 @@ if ($_POST) {
 	fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
 	fwrite($fd, "echo \"Creating DH Parms...\" \n"); 
 	fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
-	if ($caclients && intval($caclients) > 0) {
-		fwrite($fd, "echo \"Creating Client Certificates...\" \n"); 
-		/* NOTE: i know that shel can do this too but i just do not care! */
-		$cmdclients = "";
-		for ($i = 0; $i < intval($caclients); $i++) {
-			$cmdclients .= "echo \"Creating client$i certificate...\" \n";
-			$cmdclients .= "$ovpncapath/pkitool --batch client$i \n";
-		}
-		fwrite($fd, "$cmdclients \n");
-		fwrite($fd, "cd $ovpncapath/$caname \n");
-		fwrite($fd, "tar czvf client_certificates.tar.gz $ovpncapath/$caname/ca.crt $ovpncapath/$caname/shared.key $ovpncapath/$caname/client* \n");
-		fwrite($fd, "echo \"Removing client certificates...\" \n");
-		fwrite($fd, "rm $ovpncapath/$caname/client* \n");
-		fwrite($fd, "cp $ovpncapath/client_certificates.tar.gz $ovpncapath/$caname/ \n");
-	}
 	fwrite($fd, "echo \"Done!\" \n");
 	fclose($fd);
 }
@@ -139,14 +125,27 @@ if ($_POST) {
     <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
     <?php include("fbegin.inc"); ?>
 
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="vpn_openvpn_certs_create.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
-<?php if ($_POST) { ?>
+	  <table width="90%" border="0" cellpadding="6" cellspacing="0">
+	<tr><td colspan="2">
+<?php
+        $tab_array = array();
+        $tab_array[0] = array("Server", false, "pkg.php?xml=openvpn.xml");
+        $tab_array[1] = array("Client", false, "pkg.php?xml=openvpn_cli.xml");
+        $tab_array[2] = array("Client-specific configuration", false, "pkg.php?xml=openvpn_csc.xml");
+        $tab_array[3] = array("Certificate generation", true, "vpn_openvpn_certs.php");
+        display_top_tabs($tab_array);
+?>
+	</td></tr>
+<?php
+      if ($_POST) { 
+?>
+<tr><td>
+        <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td>
 				    <textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
@@ -154,17 +153,17 @@ if ($_POST) {
 				</tr>
 				<tr>
 					<td>
-					<a href="<?="$ovpncapath/$caname/client_certificates.tar.gz"?>">Download client certificates.</a>
-					</td>
-				</tr>
-				<tr>
-					<td>
 					<a href="vpn_openvpn_certs.php"><input name="OK" type="button" value="Return"></a>
 					</td>
 				</tr>
+		</table></td></tr>
 		</table>
 <?php
 	execute_command_return_output("/bin/tcsh $ovpncapath/RUNME_FIRST", "r");
+	if (!file_exists("$ovpncapath/$caname/finished_ok")) {
+		mwexec("rm -rf $ovpncapath/$caname");
+		$input_errors = "An error occured while createing certificates\n";
+	} else {
 	conf_mount_ro();
 	if (!is_array($config['openvpn']['keys']))
 		$config['openvpn']['keys'] = array();
@@ -172,6 +171,7 @@ if ($_POST) {
 	if (!is_array($ovpnkeys[$caname]))
 		$ovpnkeys[$caname] = array();
 	/* vars */
+	$ovpnkeys[$caname]['existing'] = "no";
 	$ovpnkeys[$caname]['KEYSIZE'] = $cakeysize;
 	$ovpnkeys[$caname]['KEYEXPIRE'] = $cakeyexpire;
 	$ovpnkeys[$caname]['CAEXPIRE'] = $caexpire;
@@ -190,7 +190,10 @@ if ($_POST) {
 	$ovpnkeys[$caname]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
 	/* save it */
 	write_config();
+	}
 } else { ?>
+<tr><td>
+        <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 	  				<tr>
                       <td width="35%" valign="top" class="vncell"><B>Certificate Name</td>
                       <td width="78%" class="vtable">
@@ -211,7 +214,7 @@ if ($_POST) {
 			}
 ?>
 			</select>
-                        <span>Higher you set this value the slower TLS negotiation and DH key creation performance gets.</span></td>
+                        <br/><span>Higher you set this value the slower TLS negotiation and DH key creation performance gets.</span></td>
                     </tr>
                     <tr>
                       <td width="35%" valign="top" class="vncell"><B>Certificate Expire</td>
@@ -258,10 +261,6 @@ if ($_POST) {
 			<input name="email" class="formfld unknown" value="<?=$email?>">
 			</span></td>
 		    </tr>
-                      <td width="35%" valign="top" class="vncell"><B>Number of Client certificates</td>
-                      <td width="78%" class="vtable">
-                        <input name="caclients" class="formfld unknown" value="<?=$caclients?>">
-                        </span></td>
 		    <tr>
 		      <td width="35%" valign="top">&nbsp;</td>
 		      <td width="78%">
@@ -269,6 +268,8 @@ if ($_POST) {
 			<a href="vpn_openvpn_certs.php?reset=<?=$caname;?>"><input name="Cancel" type="button" class="formbtn" value="Cancel"></a>
 		      </td>
 		    </tr>
+	</table>
+	</td></tr>
 	</table>
     <?php include("fend.inc"); ?>
     </body>

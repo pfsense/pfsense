@@ -1768,6 +1768,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 										} else if(interface_has_gateway($lbconfig['gateway'][$l])) {
 											$int = convert_friendly_interface_to_real_interface_name($lbconfig['gateway'][$l]);
 											$gateway = get_interface_gateway($lbconfig['gateway'][$l]);
+											if(!is_ipaddr($gateway))
+												$gateway = lookup_gateway_ip_by_name($gateway);
 										}
 										if(($int <> "") && ($gateway <> "")) {
 											if($g['debug'])

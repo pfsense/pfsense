@@ -1139,7 +1139,7 @@ function convert_config() {
 	}
 
 	/* Convert 4.1 -> 4.2 */
-        if ($config['version'] <= 4.0) {
+        if ($config['version'] <= 4.1) {
 		if (isset($config['shaper']))
                         unset($config['shaper']);
                 if (isset($config['ezshaper']))
@@ -1149,7 +1149,7 @@ function convert_config() {
 	}
 
 	/* Convert 4.2 -> 4.3 */
-        if ($config['version'] <= 4.1) {
+        if ($config['version'] <= 4.2) {
 		/* migrate old interface gateway to the new gateways config */
 		$old_gateways = array();
 		$gateways = array();
@@ -1168,7 +1168,55 @@ function convert_config() {
 				$i++;
 			}
 		}
+		$config['version'] = "4.3";
 	}
+
+        /* Convert 4.3 -> 4.4 */
+        if ($config['version'] <= 4.3) {
+		if (isset($config['installedpackages']["openvpn$mode"]['config'])) {
+			$ocfg =& $config['installedpackages']['openvpnserver']['config'];
+			if (!isset($config['openvpn']))
+				$config['openvpn'] = array();
+			if (!isset($config['openvpn']['keys']))
+				$config['openvpn']['keys'] = array();
+			$ncfg =& $config['openvpn']['keys'];
+			foreach ($ocfg as $id => $cfg) {
+				if ($cfg['auth_method'] == 'shared_key') {
+					$ncfg["converted{$id}"]['shared.key'] = $cfg['shared_key'];
+					$ncfg["converted{$id}"]['existing'] = "yes";
+					$ncfg["converted{$id}"]['auth_method'] = "shared_key";
+					 $ocfg['cipher'] = "converted{$id}";
+					unset($ocfg['shared_key']);
+				} else  {
+					if (isset($ocfg['ca_cert']))  {
+						$ncfg["converted{$id}"]['ca.crt'] = $ocfg['ca_cert'];
+						unset($ocfg['ca_cert']);
+					}
+                                       if (isset($ocfg['server_cert']))  {
+                                                $ncfg["converted{$id}"]['server.crt'] = $ocfg['server_cert'];
+                                                unset($ocfg['server_cert']);
+                                        }
+                                       if (isset($ocfg['server_key']))  {
+                                                $ncfg["converted{$id}"]['server.key'] = $ocfg['server_key'];
+                                                unset($ocfg['ca_cert']);
+                                        }
+                                       if (isset($ocfg['dh_params']))  {
+                                                $ncfg["converted{$id}"]['dh_params.dh'] = $ocfg['dh_params'];
+                                                unset($ocfg['dh_params']);
+                                        }
+                                       if (isset($ocfg['crl']))  {
+                                                $ncfg["converted{$id}"]['crl'] = $ocfg['crl'];
+                                                unset($ocfg['crl']);
+                                        }
+					$ncfg["converted{$id}"]['existing'] = "yes";
+					$ocfg['cipher'] = "converted{$id}";
+				}
+					
+			}
+		}
+                $config['version'] = "4.4";
+        }
+
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");

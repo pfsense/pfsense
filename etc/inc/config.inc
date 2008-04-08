@@ -1173,7 +1173,7 @@ function convert_config() {
 
         /* Convert 4.3 -> 4.4 */
         if ($config['version'] <= 4.3) {
-		if (isset($config['installedpackages']["openvpn$mode"]['config'])) {
+		if (isset($config['installedpackages']['openvpnserver']['config'])) {
 			$ocfg =& $config['installedpackages']['openvpnserver']['config'];
 			if (!isset($config['openvpn']))
 				$config['openvpn'] = array();

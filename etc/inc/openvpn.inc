@@ -279,15 +279,19 @@ function openvpn_reconfigure($mode, $id) {
 
 	$lport = 1194 + $id;
 
+	/*
+	 * NOTE: if you change the name of the interfaces here than
+	 * be sure to change it even on the openvpn command parameters at
+	 * openvpn_restart() function.
+	 */
 	mwexec("/sbin/ifconfig tun{$id} create");
-	//mwexec("/sbin/ifconfig tun{$id} name openvpn{$id}");
-	//mwexec("/sbin/ifconfig openvpn{$id} group openvpn");
-	mwexec("/sbin/ifconfig tun{$id} group openvpn");
+	mwexec("/sbin/ifconfig tun{$id} name openvpn{$id}");
+	mwexec("/sbin/ifconfig openvpn{$id} group openvpn");
 
         $pidfile = $g['varrun_path'] . "/openvpn_{$mode}{$id}.pid";
         $proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
         $cipher = $settings['crypto'];
-	$openvpn_conf = "dev tun{$id}\n";
+	$openvpn_conf = "dev openvpn{$id}\n";
         $openvpn_conf .= <<<EOD
 writepid $pidfile
 #user nobody
@@ -587,7 +591,7 @@ function openvpn_restart($mode, $id) {
 	if ($settings['disable']) return;
 
 	$configfile = $g['varetc_path'] . "/openvpn_{$mode}{$id}.conf";
-	mwexec_bg("nohup openvpn --config $configfile");
+	mwexec_bg("nohup openvpn --config $configfile --dev-type tun --dev-node /dev/tun{$id}");
 	touch("{$g['tmp_path']}/filter_dirty");
 }
 

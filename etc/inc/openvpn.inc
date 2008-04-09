@@ -72,12 +72,7 @@ function openvpn_validate_port($value, $name) {
 	$value = trim($value);
 	if (!empty($value) && !(is_numeric($value) && ($value > 0) && ($value < 65535)))
 		return "The field '$name' must contain a valid port, ranging from 0 to 65535.";
-	
-  $portinuse = shell_exec('sockstat | grep '.$value);
-  if (!empty($portinuse))
-    return "The port '$value' is already in use."; 
-  
-  return false;
+	return false;
 }
 
 
@@ -105,6 +100,10 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 
 		if ($result = openvpn_validate_cidr($post['local_network'], 'Local network'))
 			$input_errors[] = $result;
+			
+		$portinuse = shell_exec('sockstat | grep '.$post['local_port'].' | grep '.strtolower($post['protocol']));
+    if (!empty($portinuse))
+    $input_errors[] = 'The port '.$post['local_port'].'/'.strtolower($post['protocol']).' is already in use.';
 
 	if (!empty($post['dhcp_dns'])) {
     $servers = explode(';', $post['dhcp_dns']);

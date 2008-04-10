@@ -420,7 +420,7 @@ remote {$tunnel['remote-gateway']} \{
 	{$certline}
 	peers_identifier address {$rgip};
 	initial_contact on;
-	dpd_delay 20;                   # DPD poll every 20 seconds
+	dpd_delay 120;                   # DPD poll every 120 seconds
 	ike_frag on;
 	support_proxy on;
 	proposal_check obey;
@@ -532,7 +532,7 @@ remote anonymous \{
 	my_identifier {$myidentt} "{$myident}";
 	{$certline}
 	initial_contact on;
-	dpd_delay 20;                   # DPD poll every 20 seconds
+	dpd_delay 120;                   # DPD poll every 120 seconds
 	ike_frag on;
 	passive on;
 	generate_policy on;

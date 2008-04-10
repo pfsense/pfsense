@@ -3706,7 +3706,7 @@ function get_interfaces_with_gateway() {
 			$ints[] = $friendly;
 			continue;
 		}
-		if (isset($config['interfaces'][$friendly]['pointtopoi']) <> "") {
+		if (isset($config['interfaces'][$friendly]['pointtopoint']) <> "") {
 			$ints[] = $friendly;
 			continue;
 		}

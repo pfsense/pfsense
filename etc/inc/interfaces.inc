@@ -59,7 +59,7 @@ function interfaces_vlan_configure() {
 		/* sweep through and axe old interfaces */
 		$vlan_count = get_number_of_vlan_interfaces();
 		for($x=0; $x<$vlan_count; $x++)
-			exec("/sbin/ifconfig vlan{$x} down delete");
+			exec("/sbin/ifconfig vlan{$x} down destroy");
 
 		$i = 0;
 

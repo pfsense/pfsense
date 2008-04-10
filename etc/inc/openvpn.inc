@@ -101,9 +101,11 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 		if ($result = openvpn_validate_cidr($post['local_network'], 'Local network'))
 			$input_errors[] = $result;
 			
-		$portinuse = shell_exec('sockstat | grep '.$post['local_port'].' | grep '.strtolower($post['protocol']));
+/*  check for port in use - update of existing entries not possible because $_GET['act'] is not passed from pkg_edit.php :-( mfuchs		
+    $portinuse = shell_exec('sockstat | grep '.$post['local_port'].' | grep '.strtolower($post['protocol']));
     if (!empty($portinuse))
     $input_errors[] = 'The port '.$post['local_port'].'/'.strtolower($post['protocol']).' is already in use.';
+*/
 
 	if (!empty($post['dhcp_dns'])) {
     $servers = explode(';', $post['dhcp_dns']);

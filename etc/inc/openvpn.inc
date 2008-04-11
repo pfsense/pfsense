@@ -213,7 +213,7 @@ if ($mode != "server") {
 			$items[] = array(	'field' => 'dh_param.dhs',
 						'string' => 'DH PARAMETERS',
 						'name' => 'DH parameters');
-			$items[] = array(	'field' => 'crlcrl',
+			$items[] = array(	'field' => 'crl.crl',
 						'string' => 'X509 CRL',
 						'name' => 'CRL');
 		}
@@ -300,6 +300,8 @@ function openvpn_reconfigure($mode, $id) {
         $proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
         $cipher = $settings['crypto'];
 	$openvpn_conf = "dev openvpn{$id}\n";
+	$openvpn_conf .= "dev-type tun\n";
+	$openvpn_conf .= "dev-node /dev/tun{$id}\n";
         $openvpn_conf .= <<<EOD
 writepid $pidfile
 #user nobody
@@ -451,7 +453,7 @@ EOD;
         $base_file = $g['varetc_path'] . "/openvpn/certificates/";
         $keys = array();
         if ($settings['auth_method'] == 'shared_key')
-                $keys[] = array('field' => 'shared_key', 'ext'  => 'secret', 'directive' => 'secret');
+                $keys[] = array('field' => 'shared.key', 'ext'  => 'secret', 'directive' => 'secret');
         else {
                 $keys[] = array('field' => 'ca.crt', 'directive' => 'ca');
                 $keys[] = array('field' => "{$mode}.crt", 'directive' => 'cert');
@@ -599,7 +601,7 @@ function openvpn_restart($mode, $id) {
 	if ($settings['disable']) return;
 
 	$configfile = $g['varetc_path'] . "/openvpn_{$mode}{$id}.conf";
-	mwexec_bg("nohup openvpn --config $configfile --dev-type tun --dev-node /dev/tun{$id}");
+	mwexec_bg("nohup openvpn --config $configfile");// --dev-type tun --dev-node /dev/tun{$id}");
 	touch("{$g['tmp_path']}/filter_dirty");
 }
 

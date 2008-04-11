@@ -290,6 +290,8 @@ function openvpn_reconfigure($mode, $id) {
 	 * be sure to change it even on the openvpn command parameters at
 	 * openvpn_restart() function.
 	 */
+	if (!$g['booting'])
+		mwexec("/sbin/ifconfig openvpn{$id} destroy");
 	mwexec("/sbin/ifconfig tun{$id} create");
 	mwexec("/sbin/ifconfig tun{$id} name openvpn{$id}");
 	mwexec("/sbin/ifconfig openvpn{$id} group openvpn");

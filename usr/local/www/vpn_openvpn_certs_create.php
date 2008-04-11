@@ -32,7 +32,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array("VPN", "OpenVPN Create Certs");
+$pgtitle = array("VPN", "OpenVPN", "Create Certs");
 $ovpncapath = $g['varetc_path']."/openvpn/certificates";
 /* XXX: hardcoded path; worth making it a global?! */
 $easyrsapath = "/usr/local/share/openvpn/certificates";
@@ -46,27 +46,31 @@ if ($_GET['ca']) {
 		$cakeyexpire = $data['keyexpire'];
    		$countrycode= $data['keycountry'];
    	 	$stateorprovince= $data['keyprovince'];
-    	$cityname= $data['keyclient'];
-    	$orginizationname= $data['keyorg'];
-    	$email = $data['keyemail'];
-		$caclients = $data['caclients'];
+    		$cityname= $data['keycity'];
+    		$orginizationname= $data['keyorg'];
+    		$email = $data['keyemail'];
+		$authmode = $data['auth_method'];
 	} else
 		$input_errors[] = "Certificate does not exist.";
-}
+
+} else 
+	$disabled = "disabled=\"yes\"";
 
 if ($_POST) {
-	$caname = $_POST['caname'];
 	$cakeysize = $_POST['cakeysize'];
 	$caexpire = $_POST['caexpire'];
 	$cakeyexpire = $_POST['cakeyexpire'];
-    $countrycode=$_POST['countrycode'];
-    $stateorprovince=$_POST['stateorprovince'];
-    $cityname=$_POST['cityname'];
-    $orginizationname=$_POST['orginizationname'];
-    $email = $_POST['email'];
-	$caclients = $_POST['caclients'];
+	$countrycode=$_POST['countrycode'];
+    	$stateorprovince=$_POST['stateorprovince'];
+    	$cityname=$_POST['cityname'];
+    	$orginizationname=$_POST['orginizationname'];
+    	$email = $_POST['email'];
+	$authmode = $_POST['auth_method'];
 
-	/* XXX: do input validation */
+	if (!$_POST['canme']) {
+		$caname = $_POST['caname'];
+
+	/* XXX: do more input validation */
 
 	/* Create sane environment for easyrsa scripts */
 	conf_mount_rw();
@@ -84,6 +88,7 @@ if ($_POST) {
 		header("Location: vpn_openvpn_certs.php");
 	}
 
+if ($authmode == 'pki') {
 	$fd = fopen($ovpncapath . "/$caname/vars", "w");
 	fwrite($fd, "#!/bin/tcsh\n");
 	fwrite($fd, "setenv EASY_RSA \"$easyrsapath\" \n");
@@ -109,8 +114,8 @@ if ($_POST) {
 	fwrite($fd, "touch $ovpncapath/$caname/index.txt \n");
 	fwrite($fd, "echo \"01\" > $ovpncapath/$caname/serial \n");
 	fwrite($fd, "source $ovpncapath/$caname/vars \n");
-	fwrite($fd, "echo \"Creating Shared Key...\" \n");
-	fwrite($fd, "openvpn --genkey --secret $ovpncapath/$caname/shared.key \n");
+	//fwrite($fd, "echo \"Creating Shared Key...\" \n");
+	//fwrite($fd, "openvpn --genkey --secret $ovpncapath/$caname/shared.key \n");
 	fwrite($fd, "echo \"Creating CA...\" \n");
 	fwrite($fd, "$easyrsapath/pkitool --batch --initca $ovpncapath/$caname/ca.crt \n");
 	fwrite($fd, "echo \"Creating Server Certificate...\" \n");
@@ -120,10 +125,51 @@ if ($_POST) {
 	fwrite($fd, "echo \"Done!\" \n");
 	fclose($fd);
 }
+	} else 
+		$input_errors[] = "You should specify a name.";
+
+        if (!is_array($config['openvpn']['keys']))
+                $config['openvpn']['keys'] = array();
+        $ovpnkeys =& $config['openvpn']['keys'];
+        if (!is_array($ovpnkeys[$caname]))
+                $ovpnkeys[$caname] = array();
+
+if ($caname && $authmode == 'shared_key') {
+        execute_command_return_output("openvpn --genkey --secret $ovpncapath/$caname/shared.key");
+        $ovpnkeys[$caname]['existing'] = "yes";
+        $ovpnkeys[$caname]['shared.key'] = file_get_contents("$ovpncapath/$caname/shared.key");
+        write_config();
+
+        header("Content-Type: application/octet-stream");
+        header("Content-Disposition: attachment; filename=\"shared.key\";");
+        header("Content-Transfer-Encoding: binary");
+        header("Content-Length: ".filesize($filename));
+        readfile("$ovpncapath/$caname/shared.key");
+}
+
+}
+
 	include("head.inc");
 ?>
 
     <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
+<script type="text/javascript">
+function onTypeChanged() {
+        var method = document.iform.auth_method;
+        var endis = (method.value == 'shared_key');
+
+        document.iform.cakeysize.disabled = endis;
+        document.iform.caexpire.disabled = endis;
+        document.iform.cakeyexpire.disabled = endis;
+        document.iform.countrycode.disabled = endis;
+        document.iform.stateorprovince.disabled = endis;
+        document.iform.cityname.disabled = endis;
+	document.iform.orginizationname.disabled = endis;
+	document.iform.email.disabled = endis;
+}
+</script>
+
     <?php include("fbegin.inc"); ?>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -131,7 +177,7 @@ if ($_POST) {
 <form action="vpn_openvpn_certs_create.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-	  <table width="90%" border="0" cellpadding="6" cellspacing="0">
+	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr><td colspan="2">
 <?php
         $tab_array = array();
@@ -143,68 +189,76 @@ if ($_POST) {
 ?>
 	</td></tr>
 <?php
-      if ($_POST) { 
+      if ($_POST && $caname && $authmode == 'pki') { 
 ?>
 <tr><td>
-        <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tr>
-					<td>
-				    <textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					<a href="vpn_openvpn_certs.php"><input name="OK" type="button" value="Return"></a>
-					</td>
-				</tr>
-		</table></td></tr>
-		</table>
+        <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+	<tr>
+	<td>
+	    <textarea cols="80" rows="35" name="output" id="output" wrap="hard"></textarea>
+	</td>
+	</tr>
+	<tr>
+	<td>
+		<a href="vpn_openvpn_certs.php"><inpput name="OK" type="button" value="Return"></a>
+	</td>
+	</tr>
+	</table></td></tr>
+	</table>
 <?php
 	execute_command_return_output("/bin/tcsh $ovpncapath/RUNME_FIRST", "r");
 	if (!file_exists("$ovpncapath/$caname/finished_ok")) {
 		mwexec("rm -rf $ovpncapath/$caname");
 		$input_errors = "An error occured while createing certificates\n";
 	} else {
-	conf_mount_ro();
-	if (!is_array($config['openvpn']['keys']))
-		$config['openvpn']['keys'] = array();
-	$ovpnkeys =& $config['openvpn']['keys'];
-	if (!is_array($ovpnkeys[$caname]))
-		$ovpnkeys[$caname] = array();
-	/* vars */
-	$ovpnkeys[$caname]['existing'] = "no";
-	$ovpnkeys[$caname]['KEYSIZE'] = $cakeysize;
-	$ovpnkeys[$caname]['KEYEXPIRE'] = $cakeyexpire;
-	$ovpnkeys[$caname]['CAEXPIRE'] = $caexpire;
-	$ovpnkeys[$caname]['KEYCOUNTRY'] = $countrycode;
-	$ovpnkeys[$caname]['KEYPROVINCE'] = $stateorprovince;
-	$ovpnkeys[$caname]['KEYCITY'] = $cityname;
-	$ovpnkeys[$caname]['KEYORG'] = $orginizationname;
-	$ovpnkeys[$caname]['KEYEMAIL'] = $email;
-	$ovpnkeys[$caname]['caclients'] = intval($caclients);
-	/* ciphers */
-	$ovpnkeys[$caname]['ca.key'] = file_get_contents("$ovpncapath/$caname/ca.key");
-	$ovpnkeys[$caname]['ca.crt'] = file_get_contents("$ovpncapath/$caname/ca.crt");
-	$ovpnkeys[$caname]['shared.key'] = file_get_contents("$ovpncapath/$caname/shared.key");
-	$ovpnkeys[$caname]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
-	$ovpnkeys[$caname]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");
-	$ovpnkeys[$caname]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
-	/* save it */
-	write_config();
+		conf_mount_ro();
+		/* vars */
+		$ovpnkeys[$caname]['existing'] = "no";
+		$ovpnleys[$caname]['auth_method'] = $auth_method;
+		$ovpnkeys[$caname]['KEYSIZE'] = $cakeysize;
+		$ovpnkeys[$caname]['KEYEXPIRE'] = $cakeyexpire;
+		$ovpnkeys[$caname]['CAEXPIRE'] = $caexpire;
+		$ovpnkeys[$caname]['KEYCOUNTRY'] = $countrycode;
+		$ovpnkeys[$caname]['KEYPROVINCE'] = $stateorprovince;
+		$ovpnkeys[$caname]['KEYCITY'] = $cityname;
+		$ovpnkeys[$caname]['KEYORG'] = $orginizationname;
+		$ovpnkeys[$caname]['KEYEMAIL'] = $email;
+		/* ciphers */
+		$ovpnkeys[$caname]['ca.key'] = file_get_contents("$ovpncapath/$caname/ca.key");
+		$ovpnkeys[$caname]['ca.crt'] = file_get_contents("$ovpncapath/$caname/ca.crt");
+		$ovpnkeys[$caname]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
+		$ovpnkeys[$caname]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");
+		$ovpnkeys[$caname]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
+	
+		/* save it */
+		write_config();
 	}
 } else { ?>
 <tr><td>
         <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-	  				<tr>
-                      <td width="35%" valign="top" class="vncell"><B>Certificate Name</td>
-                      <td width="78%" class="vtable">
-                        <input name="caname" class="formfld unknown" value="<?=$caname?>">
-                        </span></td>
-                    </tr>
-                    <tr>
-                      <td width="35%" valign="top" class="vncell"><B>Certificate Key Size</td>
-                      <td width="78%" class="vtable">
-			<select name="cakeysize" >
+	<tr>
+            <td width="35%"  class="vncell"><B>Certificate Name</td>
+            <td width="78%" class="vtable">
+            <input name="caname" class="formfld" value="<?=$caname?>">
+            </span></td>
+        </tr>
+        <tr>
+              <td width="35%"  class="vncell"><B>AUTH method</td>
+              <td width="78%" class="vtable">
+              <select name="auth_method"  onClick=onTypeChanged();>
+                  <option value="shared_key" >Shared Key</option>
+                  <option value="pki" 
+<?php if ($authmode == 'pki') 
+		echo " selected=\"yes\""; 
+?>
+		>PKI (Public Key Infrastructure)</option>
+               </select>
+             </td>
+        </tr>
+        <tr>
+            <td width="35%"  class="vncell"><B>Certificate Key Size</td>
+            <td width="78%" class="vtable">
+		<select <?=$disabled;?> name="cakeysize" >
 <?php
 			$strength = array("512", "1024", "2048");
 			foreach ($strength as $key) {
@@ -214,62 +268,59 @@ if ($_POST) {
 				echo ">{$key}</option>";	
 			}
 ?>
-			</select>
-                        <br/><span>Higher you set this value the slower TLS negotiation and DH key creation performance gets.</span></td>
-                    </tr>
-                    <tr>
-                      <td width="35%" valign="top" class="vncell"><B>Certificate Expire</td>
-                      <td width="78%" class="vtable">
-                        <input name="caexpire" class="formfld unknown" value="<?=$caexpire?>">
-                        <span>In how many days should the root CA key expire?</span></td>
-                    </tr>
-                    <tr>
-                      <td width="35%" valign="top" class="vncell"><B>Certificate Key Expire</td>
-                      <td width="78%" class="vtable">
-                        <input name="cakeyexpire" class="formfld unknown" value="<?=$cakeyexpire?>">
-                        <span>In how many days should certificates expire?</span></td>
-                    </tr>
-		    <tr>
-		      <td width="35%" valign="top" class="vncell"><B>Country Code (2 Letters)</td>
-		      <td width="78%" class="vtable">
-			<input name="countrycode" class="formfld unknown" value="<?=$countrycode?>">
-			</span></td>
-		    </tr>
-
-		    <tr>
-		      <td width="35%" valign="top" class="vncell"><B>State or Province name</td>
-		      <td width="78%" class="vtable">
-			<input name="stateorprovince" class="formfld unknown" value="<?=$stateorprovince?>">
-			</span></td>
-		    </tr>
-
-		    <tr>
-		      <td width="35%" valign="top" class="vncell"><B>City name</td>
-		      <td width="78%" class="vtable">
-			<input name="cityname" class="formfld unknown" value="<?=$cityname?>">
-			</span></td>
-		    </tr>
-
-		    <tr>
-		      <td width="35%" valign="top" class="vncell"><B>Organization name</td>
-		      <td width="78%" class="vtable">
-			<input name="orginizationname" class="formfld unknown" value="<?=$orginizationname?>">
-			</span></td>
-		    </tr>
-		    <tr>
-		      <td width="35%" valign="top" class="vncell"><B>E-Mail address</td>
-		      <td width="78%" class="vtable">
-			<input name="email" class="formfld unknown" value="<?=$email?>">
-			</span></td>
-		    </tr>
-		    <tr>
-		      <td width="35%" valign="top">&nbsp;</td>
-		      <td width="78%">
-			<input name="Submit" type="submit" class="formbtn" value="Save">
-			<a href="vpn_openvpn_certs.php?reset=<?=$caname;?>"><input name="Cancel" type="button" class="formbtn" value="Cancel"></a>
-		      </td>
-		    </tr>
-	</table>
+		</select>
+                <br/><span>Higher you set this value the slower TLS negotiation and DH key creation performance gets.</span></td>
+            </tr>
+            <tr>
+                <td width="35%"  class="vncell"><B>Certificate Expire</td>
+                <td width="78%" class="vtable">
+                <input <?=$disabled;?> name="caexpire" class="formfld" value="<?=$caexpire?>"/>
+                <br/><span>In how many days should the root CA key expire?</span></td>
+            </tr>
+            <tr>
+                <td width="35%"  class="vncell"><B>Certificate Key Expire</td>
+                <td width="78%" class="vtable">
+                <input <?=$disabled;?> name="cakeyexpire" class="formfld" value="<?=$cakeyexpire?>">
+                <br/><span>In how many days should certificates expire?</span></td>
+            </tr>
+	    <tr>
+	      <td width="35%"  class="vncell"><B>Country Code (2 Letters)</td>
+	      <td width="78%" class="vtable">
+		<input <?=$disabled;?> size="2" maxlength="2" name="countrycode" class="formfld" value="<?=$countrycode?>">
+		<br/></span></td>
+	    </tr>
+	    <tr>
+	      <td width="35%"  class="vncell"><B>State or Province name</td>
+	      <td width="78%" class="vtable">
+		<input <?=$disabled;?> name="stateorprovince" class="formfld" value="<?=$stateorprovince?>">
+		<br/></span></td>
+	    </tr>
+	    <tr>
+	      <td width="35%"  class="vncell"><B>City name</td>
+	      <td width="78%" class="vtable">
+		<input <?=$disabled;?> name="cityname" class="formfld" value="<?=$cityname?>">
+		<br/></span></td>
+	    </tr>
+	    <tr>
+	      <td width="35%"  class="vncell"><B>Organization name</td>
+	      <td width="78%" class="vtable">
+		<input <?=$disabled;?> name="orginizationname" class="formfld" value="<?=$orginizationname?>">
+		<br/></span></td>
+	    </tr>
+	    <tr>
+	      <td width="35%"  class="vncell"><B>E-Mail address</td>
+	      <td width="78%" class="vtable">
+		<input <?=$disabled;?> name="email" class="formfld" value="<?=$email?>">
+		<br/></span></td>
+	    </tr>
+	    <tr>
+	      <td width="35%" >&nbsp;</td>
+	      <td width="78%">
+		<input name="Submit" type="submit" class="formbtn" value="Save">
+		<a href="vpn_openvpn_certs.php?reset=<?=$caname;?>"><input name="Cancel" type="button" class="formbtn" value="Cancel"></a>
+	      </td>
+	    </tr>
+</table>
 	</td></tr>
 	</table>
     <?php include("fend.inc"); ?>

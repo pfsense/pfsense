@@ -53,14 +53,8 @@ if ($_GET['delete']) {
 	}
 }
 
-if (0) {
-exec("cd ".$g['varetc_path']."/openvpn/certificates && /usr/bin/find . -type d -name \"[a-zA-Z0-9_]*\"", $certificates);
-rsort($certificates);
-function cleanup($text) {
-	return preg_replace("/^\.\//", "", $text);
-}
-$certificates = array_map(cleanup, $certificates);
-}
+if (!is_array($config['openvpn']['keys']))
+	$config['openvpn']['keys'] = array();
 $certificates = &$config['openvpn']['keys'];
 	
 include("head.inc");
@@ -87,14 +81,14 @@ include("head.inc");
 	<tr><td>
 	<table class="tabcont" width="100%" border="0" cellpadding="2" cellspacing="0">
 	<tr><td class="listhdrr" width="35%">Certificates</td><td width="60%" class="listhdrr">Description</td></tr>
-	 <?php foreach ($certificates as $cert => $none) { ?>
+	 <?php foreach ($certificates as $cert => $ca) { ?>
 	  				<tr class="vtable">
                       <td class="vtable" width="35%">
                         <?=$cert;?>
                         </td><td class="vtable" width="60%"></td>
 					<td><a href="
 <?php
-				 if ($cert['existing'] == "yes")
+				 if ($ca['existing'] == "yes")
 					echo "vpn_openvpn_certs_existing.php?ca=$cert";
 				   else
 					echo "vpn_openvpn_certs_create.php?ca=$cert";

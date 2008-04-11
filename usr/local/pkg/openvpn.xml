@@ -159,9 +159,16 @@
 		<field>
                         <fieldname>cipher</fieldname>
                         <fielddescr>Certificates to apply</fielddescr>
-                        <description>Certificates generated from the certificate generation tab.</description>
+                        <description>Shared key to use.</description>
                         <type>select</type>
 			<default_value>none</default_value>
+                </field>
+                <field>
+                        <fieldname>cipherpki</fieldname>
+                        <fielddescr>Certificates to apply</fielddescr>
+                        <description>Certificates generated from the certificate generation tab.</description>
+                        <type>select</type>
+                        <default_value>none</default_value>
                 </field>
 		<field>
 			<fieldname>dhcp_domainname</fieldname>

@@ -58,12 +58,25 @@ function openvpn_get_ciphers($pkg) {
 		        if (is_array($config['openvpn']['keys'])) {
                 		if (count($config['openvpn']['keys']) > 0) {
 					$option_array = &$pkg['fields']['field'][$i]['options']['option'];
-                        		foreach ($config['openvpn']['keys'] as $cipher => $none) {
-						$option_array[] = array('value' => $cipher, 'name' => $cipher);
+                        		foreach ($config['openvpn']['keys'] as $cipher => $type) {
+						if ($type['shared.key'])
+							$option_array[] = array('value' => $cipher, 'name' => $cipher);
                        			}
                 		}
         		}
 		}
+                if ($field['fieldname'] == 'cipherpki') {
+                        if (is_array($config['openvpn']['keys'])) {
+                                if (count($config['openvpn']['keys']) > 0) {
+                                        $option_array = &$pkg['fields']['field'][$i]['options']['option'];
+                                        foreach ($config['openvpn']['keys'] as $cipher => $type) {
+                                                if ($type['auth_method'] == 'pki')
+                                                        $option_array[] = array('value' => $cipher, 'name' => $cipher);
+                                        }
+                                }
+                        }
+                }
+
 	}
 }
 
@@ -465,9 +478,13 @@ EOD;
         }
 
         foreach ($keys as $key) {
-                if ($mode == "server" && isset($settings['cipher']) && $settings['cipher'] != "none") {
-			
-                        $openvpn_conf .= $key['directive'] . " " . $base_file . $settings['cipher'] . "/".$key['field'] . "\n";
+                if ($mode == "server") {
+			$openvpn_conf .= $key['directive'] . " " . $base_file;
+			if ($settings['auth_method'] == 'pki' && isset($settings['cipherpki']) && $settings['cipherpki'] != "none") 
+                        	$openvpn_conf .= $settings['cipherpki'];
+			else 
+				$openvpn_conf .= $settings['cipher'];
+			$openvpn_conf .= "/".$key['field']."\n";
                 } else {
                         $filename = $g['varetc_path']."/openvpn_{$mode}{$id}." . $key['field'];
                         file_put_contents($filename, base64_decode($settings[$key['field']]));
@@ -699,33 +716,27 @@ function openvpn_resync_all() {
 function openvpn_print_javascript($mode) {
 	$javascript = <<<EOD
 <script language="JavaScript">
-<!--
+//<!--
 function onAuthMethodChanged() {
 	var method = document.iform.auth_method;
 	var endis = (method.options[method.selectedIndex].value == 'shared_key');
 
-	document.iform.shared.key.disabled = !endis;
-	document.iform.ca.crt.disabled = endis;
-	document.iform.{$mode}.crt.disabled = endis;
-	document.iform.{$mode}.key.disabled = endis;
-    document.iform.tls.disabled = endis;
-
-EOD;
-	if ($mode == 'server') {
-		$javascript .= <<<EOD
+	if ('$mode' == 'server') {
 	document.iform.nopool.disabled = endis;
 	document.iform.local_network.disabled = endis;
 	document.iform.client2client.disabled = endis;
 	document.iform.maxclients.disabled = endis;
-
-EOD;
+	document.iform.cipher.disabled = !endis;
+	document.iform.cipherpki.disabled = endis;
 	}
-
 	else { // Client mode
-		$javascript .= "\tdocument.iform.remote_network.disabled = !endis;\n";
+		document.iform.remote_network.disabled = !endis;;
+ 	        document.iform['shared.key'].disabled = !endis;
+    	   	document.iform['ca.crt'].disabled = endis;
+        	document.iform["{$mode}.crt"].disabled = endis;
+        	document.iform["{$mode}.key"].disabled = endis;
+        	document.iform.tls.disabled = endis;
 	}
-
-	$javascript .= <<<EOD
 }
 //-->
 </script>
@@ -738,7 +749,7 @@ EOD;
 function openvpn_print_javascript2() {
 	$javascript = <<<EOD
 <script language="JavaScript">
-<!--
+//<!--
 	onAuthMethodChanged();
 //-->
 </script>

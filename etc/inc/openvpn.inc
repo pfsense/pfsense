@@ -479,12 +479,14 @@ EOD;
 
         foreach ($keys as $key) {
                 if ($mode == "server") {
-			$openvpn_conf .= $key['directive'] . " " . $base_file;
-			if ($settings['auth_method'] == 'pki' && isset($settings['cipherpki']) && $settings['cipherpki'] != "none") 
-                        	$openvpn_conf .= $settings['cipherpki'];
-			else 
-				$openvpn_conf .= $settings['cipher'];
-			$openvpn_conf .= "/".$key['field']."\n";
+			if ($settings['auth_method'] == 'pki' && isset($settings['cipherpki']) && 
+				$settings['cipherpki'] != "none") 
+                        	$openvpn_conf .= $key['directive'] . " " . $base_file . $settings['cipherpki'] . 
+							"/".$key['field']."\n";
+			else if ($settings['auth_method'] == 'pki' && isset($settings['cipherpki']) && 
+				$settings['cipherpki'] != "none") 
+                        	$openvpn_conf .= $key['directive'] . " " . $base_file . $settings['cipherpki'] . 
+							"/".$key['field']."\n";
                 } else {
                         $filename = $g['varetc_path']."/openvpn_{$mode}{$id}." . $key['field'];
                         file_put_contents($filename, base64_decode($settings[$key['field']]));

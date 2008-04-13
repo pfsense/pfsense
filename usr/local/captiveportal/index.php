@@ -174,12 +174,12 @@ EOD;
     portal_allow($clientip, $clientmac, "unauthenticated");
 } else {
     /* display captive portal page */
-    portal_reply_page($redirurl, "login");
+    portal_reply_page($redirurl, "login",null,$clientmac,$clientip);
 }
 
 exit;
 
-function portal_reply_page($redirurl, $type = null, $message = null) {
+function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null) {
     global $g, $config;
 
     /* Get captive portal layout */
@@ -196,6 +196,8 @@ function portal_reply_page($redirurl, $type = null, $message = null) {
 
     $htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
     $htmltext = str_replace("\$PORTAL_MESSAGE\$", htmlspecialchars($message), $htmltext);
+    $htmltext = str_replace("\$CLIENT_MAC\$", htmlspecialchars($clientmac), $htmltext);
+    $htmltext = str_replace("\$CLIENT_IP\$", htmlspecialchars($clientip), $htmltext);
 
     echo $htmltext;
 }

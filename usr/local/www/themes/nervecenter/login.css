@@ -1007,20 +1007,27 @@ div#log span.log-protocol {
 }
 /* END CSS FOR DYNAMIC LOG VIEWER */
 
+
 #login {
-	background: #cccccc;
-	border: 0px solid #666666;
+/*	background: #cccccc; */
+	background-color: transparent;
+	border: 0px solid #cccccc;
 	margin: 5em auto;
 	padding: 0em;
-	width: 340px;
+	width: 400px;
+/*	filter:alpha(opacity=60);
+	-moz-opacity:0.6;
+	-khtml-opacity: 0.6;
+	opacity: 0.6;	*/
 }
 
 #login h1 {
 	background: url(images/misc/logon.png) no-repeat top left;
+/*	background: #ffffff; */
 	margin-top: 0;
 	display: block;
 	text-indent: -1000px;
-	height: 50px;
+	height: 400px;
 	border-bottom: none;
 }
 
@@ -1029,7 +1036,10 @@ div#log span.log-protocol {
 	font-weight: bold;
 	padding: 3px;
 	margin: 0em;
-	text-indent: 10px;
+/*	text-indent: 10px; */
+	position: relative;
+	top: -420px;
+	left: 70px;
 }
 
 #login span {
@@ -1038,7 +1048,7 @@ div#log span.log-protocol {
 	width: 20%;
 	padding: 3px;
 	margin: 0em;
-	text-indent: 10px;
+/*	text-indent: 10px; */
 }
 
 #login p#text {
@@ -1046,7 +1056,9 @@ div#log span.log-protocol {
 	font-weight: normal;
 	padding: 3px;
 	margin: 0em;
-	text-indent: 10px;
+/*	text-indent: 10px;
+	position: relative;
+	top: -300px; */
 }
 
 #login #username, #password {
@@ -1054,12 +1066,34 @@ div#log span.log-protocol {
 	width: 60%;
 	padding: 3px;
 	margin: 0em;
+/*	text-indent: 10px;
+	position: relative;
+  left: 10px;
+	top: -300px; */
 }
 
 #login #submit {
 	font-size: 1em;
 	font-weight: bold;
+	text-align: center;
 	padding: 3px;
 	margin: 0em;
-	text-indent: 10px;
+/*	text-indent: 10px; */
+	position: relative;
+	top: -20px;
+	left: 170px;
+}
+
+/* loginerror box follows */
+
+#login #inputerrors {
+	background-color: transparent;
+  border: 0px solid #666666;
+  margin: 5em auto;
+  vertical-align: middle;
+  padding: 0em;
+  width: 330px;
+  height: 50px;
+  position: relative;
+  top: -370px;
 }

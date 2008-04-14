@@ -3115,7 +3115,7 @@ function create_firewall_outgoing_rules_to_itself() {
 	update_filter_reload_status("Setting up tun interfaces (openvpn)");
 	/* openvpn tun interfaces.  check for 100. */
 	for($x=0; $x<100; $x++) {
-		if(does_interface_exist("openvpn{$x}") == true) {
+		if(does_interface_exist("ovpn{$x}") == true) {
 			/* If the interface has a gateway we do not add a pass in rule. */
 			/* Some people use a TUN tunnel with public IP as a Multiwan interface */
 			if(interface_has_gateway("openvpn{$x}")) {

@@ -304,15 +304,15 @@ function openvpn_reconfigure($mode, $id) {
 	 * openvpn_restart() function.
 	 */
 	if (!$g['booting'])
-		mwexec("/sbin/ifconfig openvpn{$id} destroy");
+		mwexec("/sbin/ifconfig ovpn{$id} destroy");
 	mwexec("/sbin/ifconfig tun{$id} create");
-	mwexec("/sbin/ifconfig tun{$id} name openvpn{$id}");
-	mwexec("/sbin/ifconfig openvpn{$id} group openvpn");
+	mwexec("/sbin/ifconfig tun{$id} name ovpn{$id}");
+	mwexec("/sbin/ifconfig ovpn{$id} group openvpn");
 
         $pidfile = $g['varrun_path'] . "/openvpn_{$mode}{$id}.pid";
         $proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
         $cipher = $settings['crypto'];
-	$openvpn_conf = "dev openvpn{$id}\n";
+	$openvpn_conf = "dev ovpn{$id}\n";
 	$openvpn_conf .= "dev-type tun\n";
 	$openvpn_conf .= "dev-node /dev/tun{$id}\n";
         $openvpn_conf .= <<<EOD

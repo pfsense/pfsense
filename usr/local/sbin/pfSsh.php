@@ -193,6 +193,14 @@ while($shell_active == true) {
 			continue;
 		}
 	}
+	if($first_command == "exit" or $first_command == "quit") {
+		die;
+	}
+	if($first_command == "help" or $first_command == "?") {
+		show_help();
+		$playbackbuffer = "";
+		continue;
+	}
 	if($first_command == "exec" or $first_command == "exec;") {
 		playback_text($playbackbuffer);
 		$playbackbuffer = "";

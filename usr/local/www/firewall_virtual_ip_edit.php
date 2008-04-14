@@ -86,8 +86,8 @@ if ($_POST) {
 	if ($_POST['ipaddr'] == $config['interfaces']['lan']['ipaddr'])
 		$input_errors[] = "The LAN IP address may not be used in a virtual entry.";
 
-	 if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
-	 	$input_errors[] = "The /32 subnet mask is invalid for CARP IP's.";
+	if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
+	 	$input_errors[] = "The /32 subnet mask is invalid for CARP IPs.";
 
 	/* check for overlaps with other virtual IP */
 	foreach ($a_vip as $vipent) {
@@ -142,7 +142,7 @@ if ($_POST) {
 			$can_post = false;
 		}
 		if($can_post == false)
-			$input_errors[] = "Sorry, we could not locate an interface with a matching subnet for {$cannot_find}.  Please add an ip in this subnet on a real interface.";
+			$input_errors[] = "Sorry, we could not locate an interface with a matching subnet for {$cannot_find}.  Please add an IP alias in this subnet on this interface.";
 	}
 
 	if (!$input_errors) {
@@ -222,6 +222,7 @@ function enable_change(enable_over) {
 	var note = document.getElementById("typenote");
 	var carpnote = document.createTextNode("This must be the network's subnet mask. It does not specify a CIDR range.");
 	var proxyarpnote = document.createTextNode("This is a CIDR block of proxy ARP addresses.");
+	var ipaliasnote = document.createTextNode("This must be the network's subnet mask. It does not specify a CIDR range.");
         if ((get_radio_value(document.iform.mode) == "carp") || enable_over) {
                 document.iform.vhid.disabled = 0;
                 document.iform.password.disabled = 0;
@@ -253,6 +254,12 @@ function enable_change(enable_over) {
 			note.removeChild(note.firstChild);
 		}
 	}
+	if (get_radio_value(document.iform.mode) == "ipalias") {
+                document.iform.type.disabled = 1;
+		note.removeChild(note.firstChild);
+		note.appendChild(ipaliasnote);
+		document.iform.subnet_bits.disabled = 0;
+	}
 
 }
 function typesel_change() {
@@ -275,6 +282,12 @@ function typesel_change() {
             //document.iform.range_from.disabled = 0;
             //document.iform.range_to.disabled = 0;
             break;
+	case 3: // IP alias
+            document.iform.subnet.disabled = 1;
+            document.iform.subnet_bits.disabled = 0;
+            //document.iform.range_from.disabled = 0;
+            //document.iform.range_to.disabled = 0;
+            break;
     }
 }
 //-->
@@ -292,6 +305,8 @@ function typesel_change() {
 					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> CARP
 					<input name="mode" type="radio" onclick="enable_change(false)" value="other"
 					<?php if ($pconfig['mode'] == "other") echo "checked";?>> Other
+					<input name="mode" type="radio" onclick="enable_change(false)" value="ipalias"
+					<?php if ($pconfig['mode'] == "ipalias") echo "checked";?>> IP Alias
 				  </td>
 				</tr>
 				<tr>
@@ -407,8 +422,8 @@ function typesel_change() {
 				      		<span class="red">
 				      			<strong>Note:<br></strong>
 				      		</span>&nbsp;&nbsp;
-				      		ProxyARP type IP addresses *DO NOT* work with the FTP Helper and addon packages such as squid.  Use a CARP type address in this case.
-				      		<p>&nbsp;&nbsp;&nbsp;For more information on CARP and the above values, visit the OpenBSD <a href='http://www.openbsd.org/faq/pf/carp.html'>CARP faq</A>.
+				      		ProxyARP type IP addresses *DO NOT* work with the FTP Helper and addon packages such as squid.  Use a CARP or IP Alias type address for these cases.
+				      		<p>&nbsp;&nbsp;&nbsp;For more information on CARP and the above values, visit the OpenBSD <a href='http://www.openbsd.org/faq/pf/carp.html'>CARP FAQ</A>.
 						</span>
 					  </p>
 				  </td>

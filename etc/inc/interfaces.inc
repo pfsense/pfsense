@@ -616,6 +616,21 @@ function interfaces_carp_bring_up_final() {
 		echo " done.\n";
 }
 
+function interfaces_ipalias_configure() {
+	global $g, $config, $debugging;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "interfaces_ipalias_configure() being called $mt\n";
+	}
+	$viparr = &$config['virtualip']['vip'];
+	foreach ($viparr as $vip) {
+		if ($vip['mode'] == "ipalias") {
+			$if = $vip['interface'];
+			mwexec("/sbin/ifconfig " . escapeshellarg($config['interfaces'][$if]['if']) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias"); 
+		}
+	}
+}
+
 function interfaces_wireless_configure($if, $wlcfg) {
 	global $config, $g;
 

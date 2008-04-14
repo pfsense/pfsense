@@ -149,6 +149,8 @@ EOF;
  	
 }
 
+$fp = fopen('php://stdin', 'r');
+
 echo ".\n\n";
 
 $pkg_interface='console';
@@ -191,6 +193,14 @@ while($shell_active == true) {
 			continue;
 		}
 	}
+	if($first_command == "exit" or $first_command == "quit") {
+		die;
+	}
+	if($first_command == "help" or $first_command == "?") {
+		show_help();
+		$playbackbuffer = "";
+		continue;
+	}
 	if($first_command == "exec" or $first_command == "exec;") {
 		playback_text($playbackbuffer);
 		$playbackbuffer = "";
@@ -214,7 +224,7 @@ while($shell_active == true) {
 		safe_mkdir("/etc/phpshellsessions");
 		if($recording) 
 			conf_mount_ro();
-		echo "==> Sessions available for playback are:\n\n";
+		echo "==> Sessions available for playback are:\n";
 		system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
 		echo "==> end of list.\n";
 		$command = "";
@@ -291,5 +301,4 @@ function playback_file($playback_file) {
 	$playback_file_contents = file_get_contents("/etc/phpshellsessions/{$playback_file}");
 	playback_text($playback_file_contents);
 }
-
 

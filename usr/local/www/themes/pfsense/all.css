@@ -790,3 +790,101 @@ div#log span.log-protocol-mini-header {
 	width: 8%;	
 	border-right: 1px solid #999;
 }
+
+/* loginscreen items follow */
+
+#login {
+/*	background: #cccccc; */
+	background-color: #ffffff;
+	border-left: 4px dotted #990000;
+/*	border: 0px solid #990000; */
+	margin: 5em auto;
+	padding: 0em;
+/*	width: 300px;  */
+  width: 300px;
+  height: 300px;
+/*	filter:alpha(opacity=60);
+	-moz-opacity:0.6;
+	-khtml-opacity: 0.6;
+	opacity: 0.6;	*/
+}
+
+#login h1 {
+	background: url(images/logo.gif) no-repeat top left;
+/*	background: #ffffff; */
+	margin-top: 0;
+	display: block;
+	text-indent: -1000px;
+	height: 300px;
+	border-bottom: none;
+}
+
+#login p {
+	font-size: 1em;
+	font-weight: bold;
+	padding: 3px;
+	margin: 0em;
+/*	text-indent: 10px; */
+	position: relative;
+	top: -420px;
+/*	left: 70px; */
+}
+
+#login span {
+	font-size: 1em;
+	font-weight: bold;
+	width: 20%;
+	padding: 3px;
+	margin: 0em;
+/*	text-indent: 10px; */
+}
+
+#login p#text {
+	font-size: 1em;
+	font-weight: normal;
+	padding: 3px;
+	margin: 0em;
+/*	text-indent: 10px;
+	position: relative;
+	top: -300px; */
+}
+
+#login #username, #password {
+	font-size: 1em;
+	width: 60%;
+	padding: 3px;
+	margin: 0em;
+
+	
+/*	text-indent: 10px;
+	position: relative;
+  left: 10px;
+	top: -300px; */
+}
+
+#login #submit {
+	font-size: 1em;
+	font-weight: bold;
+	text-align: center;
+	padding: 3px;
+	margin: 0em;
+/*	text-indent: 10px; */
+	position: relative;
+	top: -20px;
+	left: 120px;
+}
+
+/* loginerror box follows */
+
+#login #inputerrors {
+	background-color: transparent;
+  border: 0px solid #666666;
+  margin: 5em auto;
+  vertical-align: middle;
+  padding: 0em;
+  width: 300px;
+  height: 50px;
+  position: relative;
+  left:  0px;
+  top: -117px;
+}

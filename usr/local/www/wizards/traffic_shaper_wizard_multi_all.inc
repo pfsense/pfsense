@@ -1068,29 +1068,6 @@ $othersplist = array();
 				$remainbw = 100 - $remainbw;
 			//}
 
-                         if ($sched == "PRIQ")
-                                $q =& new priq_queue();
-                        else if ($sched == "CBQ")
-                                $q =& new cbq_queue();
-                        else if ($sched == "HFSC")
-                                $q =& new hfsc_queue();
-                        $tmpcf = array();
-                        $tmpcf['name'] = "qLocal";
-                        //$tmpcf['priority'] = 6;
-                        $tmpcf['red'] = "on";
-                        $tmpcf['enabled'] = "on";
-                        If ($sched == "CBQ" || $sched == "HFSC") {
-                                $ifbwguess = 10 * 1000 * 1000; // 10Mbit/s
-                                $tmpcf['bandwidth'] = ($ifbwguess - $upbw) / 1000;
-                                $tmpcf['bandwidthtype'] = "Kb";
-                        }
-                        array_push($tmppath, "qLocal");
-                        $qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
-                        array_pop($tmppath);
-                        //echo "qLocal <br />";
-                        //var_dump($input_errors);
-                        $qtmp->wconfig();
-
                         if ($sched == "PRIQ")
                                 $q =& new priq_queue();
                         else if ($sched == "CBQ")
@@ -1506,29 +1483,6 @@ $othersplist = array();
 			*/
 				$remainbw = 100 - $remainbw;
 			//}
-
-                        if ($sched == "PRIQ")
-                                $q =& new priq_queue();
-                        else if ($sched == "CBQ")
-                                $q =& new cbq_queue();
-                        else if ($sched == "HFSC")
-                                $q =& new hfsc_queue();
-                        $tmpcf = array();
-                        $tmpcf['name'] = "qLocal";
-                        //$tmpcf['priority'] = 6;
-                        $tmpcf['red'] = "on";
-                        $tmpcf['enabled'] = "on";
-                        If ($sched == "CBQ" || $sched == "HFSC") {
-                                $ifbwguess = 10 * 1000 * 1000; // 10Mbit/s
-                                $tmpcf['bandwidth'] = ($ifbwguess - $lanbw) / 1000;
-                                $tmpcf['bandwidthtype'] = "Kb";
-                        }
-                        array_push($tmppath, "qLocal");
-                        $qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
-                        array_pop($tmppath);
-                        //echo "qLocal <br />";
-                        //var_dump($input_errors);
-                        $qtmp->wconfig();
 
                         if ($sched == "PRIQ")
                                 $q =& new priq_queue();

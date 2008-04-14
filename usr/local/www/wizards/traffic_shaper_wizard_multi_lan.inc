@@ -845,29 +845,6 @@ $othersplist = array();
 				$remainbw = 100 - $remainbw;
 			//}
 
-                        if ($sched == "PRIQ")
-                                $q =& new priq_queue();
-                        else if ($sched == "CBQ")
-                                $q =& new cbq_queue();
-                        else if ($sched == "HFSC")
-                                $q =& new hfsc_queue();
-                        $tmpcf = array();
-                        $tmpcf['name'] = "qLocal";
-                        //$tmpcf['priority'] = 6;
-                        $tmpcf['red'] = "on";
-                        $tmpcf['enabled'] = "on";
-                        If ($sched == "CBQ" || $sched == "HFSC") {
-				$ifbwguess = 10 * 1000 * 1000; // 10Mbit/s
-                                $tmpcf['bandwidth'] = ($ifbwguess - $upbw) / 1000; 
-                                $tmpcf['bandwidthtype'] = "Kb";
-                        }
-                        array_push($tmppath, "qLocal");
-                        $qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
-                        array_pop($tmppath);
-                        //echo "qLocal <br />";
-                        //var_dump($input_errors);
-                        $qtmp->wconfig();
-
  			if ($sched == "PRIQ")
                                 $q =& new priq_queue();
                         else if ($sched == "CBQ")
@@ -1719,22 +1696,6 @@ $othersplist = array();
 					}
 				}
 			}
-	                                        $rule = array();
-                                                $rule['defaultqueue'] = 'qLocal';
-                                                $rule['source']['any'] = TRUE;
-                                                $rule['destination']['any'] = TRUE;
-                                                $rule['floating'] = "yes";
-                                                $rule['wizard'] = "yes";
-                                                $rule['enabled'] = "on";
-                                                $rule['descr'] = "Local traffic ";
-						for ($i = 0; $i < $steps; $i++) {
-							if ($config['ezshaper']['step2']["conn{$i}interface"] == "wan")
-								continue;
-							$rule['interface'] .= $config['ezshaper']['step2']["conn{$i}interface"];
-							if ($i > 0 && $i < $steps - 1)
-								$rule['interface'] .= ",";
-						}
-                                                $config['filter']['rule'][] = $rule;
 				
 		write_config();
 }

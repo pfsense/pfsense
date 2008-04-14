@@ -169,6 +169,9 @@
 
 	/* bring up carp interfaces */
 	interfaces_carp_configure();
+	
+	/* bring ip IP aliases */
+	interfaces_ipalias_configure();
 
 	/* generate resolv.conf */
 	system_resolvconf_generate();
@@ -189,7 +192,7 @@
 	slbd_configure();
 
 	/* start OpenVPN server & clients */
-    openvpn_resync_all();
+	openvpn_resync_all();
 
 	/* setup altq + pf */
 	echo "Configuring firewall...";

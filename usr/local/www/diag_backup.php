@@ -55,6 +55,7 @@ function spit_out_select_items($area) {
 		<option VALUE="dhcpd">DHCP Server</option>
 		<option VALUE="syslog">Syslog</option>
 		<option VALUE="system">System</option>
+		<option VALUE="staticroutes">Static routes</option>
 	</select>
 EOD;
 	echo $select;

@@ -1783,7 +1783,7 @@ function execute_command_return_output($command) {
 function convert_friendly_interface_to_real_interface_name($interface) {
 	global $config;
 	if($config['interfaces'][$interface]['ipaddr'] == "pppoe")
-		return "ng0";
+		return "pppoe0";
 	if(isset($config['interfaces'][$interface]['pointtopoint']))
 		return "ppp0";
 	$lc_interface = strtolower($interface);

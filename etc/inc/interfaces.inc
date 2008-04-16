@@ -1311,7 +1311,7 @@ function interfaces_wan_pppoe_configure() {
 	$mpdconf = <<<EOD
 startup:
 pppoeclient:
-	new -i ng0 pppoeclient pppoeclient
+	new -i pppoe0 pppoeclient pppoeclient
 	set iface route default
 	set iface {$ondemand} on-demand
 	set iface idle {$idle}
@@ -1470,7 +1470,7 @@ function interfaces_wan_pptp_configure() {
 
 	$mpdconf = <<<EOD
 pptp:
-	new -i ng0 pptp pptp
+	new -i pptp0 pptp pptp
 	set iface route default
 	set iface {$ondemand} on-demand
 	set iface idle {$idle}
@@ -1633,9 +1633,10 @@ function get_real_wan_interface() {
 	$wancfg = $config['interfaces']['wan'];
 
 	$wanif = $wancfg['if'];
-	if (($wancfg['ipaddr'] == "pppoe") || ($wancfg['ipaddr'] == "pptp")) {
-		$wanif = $g['pppoe_interface'];
-	}
+	if ($wancfg['ipaddr'] == "pppoe") 
+		$wanif = "pppoe0";
+	if ($wancfg['ipaddr'] == "pptp") 
+		$wanif = "pptp0";
 
 	return $wanif;
 }

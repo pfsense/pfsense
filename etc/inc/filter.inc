@@ -335,9 +335,12 @@ function filter_generate_aliases() {
 	if($config['interfaces']['lan']) 
 		$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
 
-    if($config['interfaces']['wan']['ipaddr'] == "pppoe" or $config['interfaces']['wan']['ipaddr'] == "pptp") {
-		$aliases .= "ng0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
-		$aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . "{$wan_aliases} ng0 }\"\n";
+    if($config['interfaces']['wan']['ipaddr'] == "pppoe") {
+	$aliases .= "pppoe0 = \"{ " . $config['interfaces']['wan']['if'] . " " .get_real_wan_interface() . " }\" \n"; 
+	 $aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . "{$wan_aliases} pppoe0 }\"\n";
+	} else if ($config['interfaces']['wan']['ipaddr'] == "pptp") {
+		$aliases .= "pptp0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
+		$aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . "{$wan_aliases} pptp0 }\"\n";
 	} else {
 		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 	}

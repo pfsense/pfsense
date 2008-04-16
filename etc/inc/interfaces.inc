@@ -623,10 +623,12 @@ function interfaces_ipalias_configure() {
 		echo "interfaces_ipalias_configure() being called $mt\n";
 	}
 	$viparr = &$config['virtualip']['vip'];
-	foreach ($viparr as $vip) {
-		if ($vip['mode'] == "ipalias") {
-			$if = $vip['interface'];
-			mwexec("/sbin/ifconfig " . escapeshellarg($config['interfaces'][$if]['if']) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias"); 
+	if(is_array($viparr)) {
+		foreach ($viparr as $vip) {
+			if ($vip['mode'] == "ipalias") {
+				$if = $vip['interface'];
+				mwexec("/sbin/ifconfig " . escapeshellarg($config['interfaces'][$if]['if']) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias"); 
+			}
 		}
 	}
 }

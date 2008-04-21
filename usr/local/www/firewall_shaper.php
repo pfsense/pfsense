@@ -124,6 +124,9 @@ if ($_GET) {
          	        case "PRIQ":
                 	        $q = new priq_queue();
                         	break;
+			case "FAIRQ":
+				$q = new fairq_queue();
+				break;
                         case "HFSC":
                          	$q = new hfsc_queue();
                         	break;

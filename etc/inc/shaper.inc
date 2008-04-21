@@ -2132,7 +2132,8 @@ class fairq_queue extends priq_queue {
                 $cflink['red'] = $this->GetRed();
                 $cflink['rio'] = $this->GetRio();
                 $cflink['ecn'] = $this->GetEcn();
-                $cflink['borrow'] = $this->GetBorrow();
+                $cflink['buckets'] = $this->GetBuckets();
+		$cflink['hogs'] = $this->GetHogs();
 	}
 	
 	/*

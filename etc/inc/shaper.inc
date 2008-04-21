@@ -994,7 +994,7 @@ function GetEcn() {
 				$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
 		$form .= "Queue Name</td><td width=\"78%\" class=\"vtable\">";
-		$form .= "<input name=\"name\" type=\"text\" id=\"name\" class=\"formfld unknown\" size=\"15\" value=\"";
+		$form .= "<input name=\"name\" type=\"text\" id=\"name\" class=\"formfld unknown\" size=\"15\" maxlength=\"15\" value=\"";
 		$form .= htmlspecialchars($this->GetQname());
 		$form .= "\">";
 				$form .= "<br> <span class=\"vexpl\">Enter the name of the queue here.  Do not use spaces and limit the size to 15 characters.";

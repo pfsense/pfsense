@@ -1670,20 +1670,20 @@ EODD;
 		} elseif ($g['booting']) {
 			if($config['interfaces']['lan']['if'])
 				mwexec("/sbin/ifconfig delete " . $config['interfaces']['lan']['if']);
-				if($config['interfaces']['lan'])
-					unset($config['interfaces']['lan']);
-				if($config['dhcpd']['lan'])
-					unset($config['dhcpd']['lan']);
-				if($config['interfaces']['lan']['if'])
-					unset($config['interfaces']['lan']['if']);
-				if($config['interfaces']['wan']['blockpriv'])
-					unset($config['interfaces']['wan']['blockpriv']);
-				if($config['shaper'])
-					unset($config['shaper']);
-				if($config['ezshaper'])
-					unset($config['ezshaper']);
-				if($config['nat'])
-					unset($config['nat']);				
+			if($config['interfaces']['lan'])
+				unset($config['interfaces']['lan']);
+			if($config['dhcpd']['lan'])
+				unset($config['dhcpd']['lan']);
+			if($config['interfaces']['lan']['if'])
+				unset($config['interfaces']['lan']['if']);
+			if($config['interfaces']['wan']['blockpriv'])
+				unset($config['interfaces']['wan']['blockpriv']);
+			if($config['shaper'])
+				unset($config['shaper']);
+			if($config['ezshaper'])
+				unset($config['ezshaper']);
+			if($config['nat'])
+				unset($config['nat']);				
 		}
 		if (preg_match($g['wireless_regex'], $lanif)) {
 			if (!is_array($config['interfaces']['lan']['wireless']))

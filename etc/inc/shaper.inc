@@ -2110,13 +2110,13 @@ class fairq_queue extends priq_queue {
 		return $this->buckets;
 	}
 	function SetBuckets($buckets) {
-		$this->qborrow = $buckets;
+		$this->buckets = $buckets;
 	}
 	function GetHogs() {
 		return $this->hogs;
 	}
 	function SetHogs($hogs) {
-		$this->qborrow = $buckets;
+		$this->hogs = $hogs;
 	}
 	function CanHaveChilds() {
 		return false;
@@ -2201,7 +2201,7 @@ class fairq_queue extends priq_queue {
 		parent::ReadConfig($q);
 		if ($q['buckets'])
 			$this->SetBuckets($q['buckets']);
-		if ($q['hogs'] && is_validbw($q['hogs']))
+		if ($q['hogs'] && is_valid_shaperbw($q['hogs']))
 			$this->SetHogs($q['hogs']);
 	}
 		
@@ -2224,7 +2224,7 @@ class fairq_queue extends priq_queue {
 	function build_rules() {
 		$pfq_rule = "queue ". $this->qname;
 		if ($this->GetInterface())
-			$pfq_rule .= "on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
+			$pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
 		if ($this->GetBandwidth() && $this->GetBwscale())
 			$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
 		if ($this->GetQpriority())
@@ -2233,7 +2233,7 @@ class fairq_queue extends priq_queue {
 			$pfq_rule .= " qlimit " . $this->GetQlimit();
 		if ($this->GetDefault() || $this->GetRed() || $this->GetRio() 
 			|| $this->GetEcn() || $this->GetBuckets() || $this->GetHogs()) {
-			$pfq_rule .= " cbq ( ";
+			$pfq_rule .= " fairq ( ";
 			if ($this->GetRed()) {
 				$comma = 1;
 				$pfq_rule .= " red ";
@@ -2306,14 +2306,16 @@ class fairq_queue extends priq_queue {
 		$form .= "</span></td></tr>";
 		$form .= parent::build_form();
 		$form .= "<tr><td class=\"vncellreq\">Scheduler specific options</td>";
-		$form .= "<td class=\"vtable\"><input id=\"buckets\" name=\"buckets\" value=\"";
+		$form .= "<td class=\"vtable\"><table><tr><td>";
+		$form .= "<input id=\"buckets\" name=\"buckets\" value=\"";
 			if($this->GetBuckets()) 
 				$form .=  $this->GetBuckets();
 		$form .= "\"> Number of buckets available.<br></td></tr>";
-		$form .= "<td class=\"vtable\"><input id=\"hogs\" name=\"hogs\" value=\"";
-			if($this->GetBuckets()) 
+		$form .= "<tr><td class=\"vtable\"><input id=\"hogs\" name=\"hogs\" value=\"";
+			if($this->GetHogs()) 
 				$form .=  $this->GetHogs();
 		$form .= "\"> Bandwidth limit for hosts to not saturate link.<br></td></tr>";
+		$form .= "</table></td></tr>";
 		return $form;
 	}
 

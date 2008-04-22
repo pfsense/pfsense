@@ -561,19 +561,23 @@ nterface\">";
 		$form .= "</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<select id=\"scheduler\" name=\"scheduler\" class=\"formselect\">";
-				$form .= "<option value=\"HFSC\"";
+		$form .= "<option value=\"HFSC\"";
 		if ($this->GetScheduler() == "HFSC")
 			$form .= " selected=\"yes\"";
 		$form .= ">HFSC</option>";
-				$form .= "<option value=\"CBQ\"";
+		$form .= "<option value=\"CBQ\"";
 		if ($this->GetScheduler() == "CBQ")
-						$form .= " selected=\"yes\"";
+			$form .= " selected=\"yes\"";
 		$form .= ">CBQ</option>";
-				$form .= "<option value=\"PRIQ\"";
+		$form .= "<option value=\"FAIRQ\"";
+                if ($this->GetScheduler() == "FAIRQ")
+                	$form .= " selected=\"yes\"";
+                $form .= ">FAIRQ</option>";
+		$form .= "<option value=\"PRIQ\"";
 		if ($this->GetScheduler() == "PRIQ")
-						$form .= " selected=\"yes\"";
+			$form .= " selected=\"yes\"";
 		$form .= ">PRIQ</option>";
-				$form .= "</select>";
+		$form .= "</select>";
 		$form .= "<br> <span class=\"vexpl\">";
 		$form .= "NOTE: changing this changes all queues underneath!";
 		$form .= " Beaware you can loose information.";

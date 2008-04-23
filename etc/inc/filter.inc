@@ -2510,7 +2510,9 @@ pass out all keep state label "let out anything from firewall host itself"
 
 EOD;
 
-	$ipfrules .=  create_firewall_outgoing_rules_to_itself();
+	//$ipfrules .=  create_firewall_outgoing_rules_to_itself();
+	/* permit internal ipsec outbound traffic */
+        $ipfrules .="pass out on \$enc0 keep state label \"IPsec internal host to host\"";
 
 
 	/* allow PPTP traffic if PPTP client is enabled on WAN */

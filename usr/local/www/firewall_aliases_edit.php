@@ -368,6 +368,7 @@ $url_help = gettext("Enter as many urls as you wish.  Also set the time that you
 $openvpn_str = gettext("Username");
 $openvpn_user_str = gettext("OpenVPN Users");
 $openvpn_help = gettext("Enter as many usernames as you wish.");
+$openvpn_freq = gettext("");
 
 $jscriptstr .= <<<EOD
 
@@ -411,7 +412,7 @@ function update_box_type() {
 		document.getElementById ("address_subnet").visible = false;
 		document.getElementById ("address_subnet").disabled = false;
 		document.getElementById ("onecolumn").firstChild.data = "{$openvpn_str}";
-		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
+		document.getElementById ("twocolumn").firstChild.data = "{$openvpn_freq}";
 		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
 		document.getElementById ("itemhelp").firstChild.data = "{$openvpn_help}";
 	}

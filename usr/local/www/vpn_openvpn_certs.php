@@ -98,7 +98,7 @@ include("head.inc");
 					<td><a href="vpn_openvpn_certs.php?delete=<?=$cert;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete certificate");?>" width="17" height="17" border="0" alt="" /></a></td>
                     </tr>
  	<?php } ?>
-				<tr><td colspan="2"></td><td><a href="vpn_openvpn_certs_create.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new certificate");?>" width="17" height="17" border="0" alt="" /></a></td></tr>
+				<tr><td colspan="2"></td><td><a href="vpn_openvpn_certs_create.php?add=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new certificate");?>" width="17" height="17" border="0" alt="" /></a></td></tr>
 		<tr>
 		<td colspan="2" >To import existing certificates please <a href="vpn_openvpn_certs_existing.php">
 			click this link.</a>

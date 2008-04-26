@@ -37,6 +37,11 @@ $ovpncapath = $g['varetc_path']."/openvpn/certificates";
 /* XXX: hardcoded path; worth making it a global?! */
 $easyrsapath = "/usr/local/share/openvpn/certificates";
 
+if($_GET['add'])
+	$edit_mode = true;
+else 
+	$edit_mode = false;
+
 if ($_GET['ca']) {
 	if ($config['openvpn']['keys'][$_GET['ca']]) {
 		$data = &$config['openvpn']['keys'][$_GET['ca']];
@@ -46,10 +51,11 @@ if ($_GET['ca']) {
 		$cakeyexpire = $data['keyexpire'];
    		$countrycode= $data['keycountry'];
    	 	$stateorprovince= $data['keyprovince'];
-    		$cityname= $data['keycity'];
-    		$orginizationname= $data['keyorg'];
-    		$email = $data['keyemail'];
+    	$cityname= $data['keycity'];
+    	$orginizationname= $data['keyorg'];
+    	$email = $data['keyemail'];
 		$authmode = $data['auth_method'];
+		$edit_mode = true;
 	} else
 		$input_errors[] = "Certificate does not exist.";
 
@@ -155,18 +161,16 @@ if ($caname && $authmode == 'shared_key') {
     <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <script type="text/javascript">
-function onTypeChanged() {
-        var method = document.iform.auth_method;
-        var endis = (method.value == 'shared_key');
-
-        document.iform.cakeysize.disabled = endis;
-        document.iform.caexpire.disabled = endis;
-        document.iform.cakeyexpire.disabled = endis;
-        document.iform.countrycode.disabled = endis;
-        document.iform.stateorprovince.disabled = endis;
-        document.iform.cityname.disabled = endis;
-	document.iform.orginizationname.disabled = endis;
-	document.iform.email.disabled = endis;
+function edit_mode() {
+	document.iform.cakeysize.disabled = true;
+	document.iform.caexpire.disabled = true;
+	document.iform.cakeyexpire.disabled = true;
+	document.iform.countrycode.disabled = true;
+	document.iform.stateorprovince.disabled = true;
+	document.iform.cityname.disabled = true;
+	document.iform.orginizationname.disabled = true;
+	document.iform.email.disabled = true;
+	document.iform.caname.disabled = true;
 }
 </script>
 
@@ -243,19 +247,6 @@ function onTypeChanged() {
             </span></td>
         </tr>
         <tr>
-              <td width="35%"  class="vncell"><B>AUTH method</td>
-              <td width="78%" class="vtable">
-              <select name="auth_method"  onClick=onTypeChanged();>
-                  <option value="shared_key" >Shared Key</option>
-                  <option value="pki" 
-<?php if ($authmode == 'pki') 
-		echo " selected=\"yes\""; 
-?>
-		>PKI (Public Key Infrastructure)</option>
-               </select>
-             </td>
-        </tr>
-        <tr>
             <td width="35%"  class="vncell"><B>Certificate Key Size</td>
             <td width="78%" class="vtable">
 		<select <?=$disabled;?> name="cakeysize" >
@@ -320,9 +311,16 @@ function onTypeChanged() {
 		<a href="vpn_openvpn_certs.php?reset=<?=$caname;?>"><input name="Cancel" type="button" class="formbtn" value="Cancel"></a>
 	      </td>
 	    </tr>
-</table>
+	</table>
 	</td></tr>
 	</table>
+	<?php
+		if($edit_mode) {
+			echo "<script language='javascript'>\n";
+			echo "edit_mode();\n";
+			echo "</script>\n";
+		}
+	?>
     <?php include("fend.inc"); ?>
     </body>
     </html>

@@ -71,10 +71,11 @@ include("head.inc");
 	  <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Server", false, "pkg.php?xml=openvpn.xml");
-	$tab_array[1] = array("Client", false, "pkg.php?xml=openvpn_cli.xml");
-	$tab_array[2] = array("Client-specific configuration", false, "pkg.php?xml=openvpn_csc.xml");
-	$tab_array[3] = array("Certificate generation", true, "vpn_openvpn_certs.php");
+	$tab_array[] = array("Server", false, "/pkg.php?xml=openvpn.xml");
+	$tab_array[] = array("Client", false, "/pkg.php?xml=openvpn_cli.xml");
+	$tab_array[] = array("Client-specific configuration", false, "openvpn_csc.xml");
+	$tab_array[] = array("Certificate Authority", true, "/vpn_openvpn_certs.php");	
+	$tab_array[] = array("Users", false, "vpn_openvpn_users.php");
 	display_top_tabs($tab_array);
 ?>
   	</td></tr>

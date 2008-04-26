@@ -447,6 +447,16 @@ function pptpd_users_sort() {
 	usort($config['pptpd']['user'], "usercmp");
 }
 
+function openvpn_users_sort() {
+	global $g, $config;
+
+	function usercmp($a, $b) {
+		return strcasecmp($a['name'], $b['name']);
+	}
+
+	usort($config['openvpn']['user'], "usercmp");
+}
+
 function pppoe_users_sort() {
 	global $g, $config;
 

@@ -15,12 +15,16 @@
 			<url>/pkg.php?xml=openvpn_cli.xml</url>
 		</tab>
 		<tab>
-			<text>Client-specific configuration</text>
+			<text>Client-specific overrides</text>
 			<url>/pkg.php?xml=openvpn_csc.xml</url>
 		</tab>
 		<tab>
-			<text>Certificate generation</text>
+			<text>Certificate Authority</text>
 			<url>/vpn_openvpn_certs.php</url>
+		</tab>
+		<tab>
+			<text>Users</text>
+			<url>/vpn_openvpn_users.php</url>
 		</tab>
 	</tabs>
 	<adddeleteeditpagefields>

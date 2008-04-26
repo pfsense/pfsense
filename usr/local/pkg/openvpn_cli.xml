@@ -15,13 +15,17 @@
 			<active/>
 		</tab>
 		<tab>
-			<text>Client-specific configuration</text>
+			<text>Client-specific overrides</text>
 			<url>/pkg.php?xml=openvpn_csc.xml</url>
 		</tab>
-                <tab>
-                        <text>Certificate generation</text>
-                        <url>/vpn_openvpn_certs.php</url>
-                </tab>
+        <tab>
+			<text>Certificate Authority</text>
+			<url>/vpn_openvpn_certs.php</url>
+        </tab>
+        <tab>
+			<text>Users</text>
+			<url>/vpn_openvpn_users.php</url>
+        </tab>
 	</tabs>
 	<adddeleteeditpagefields>
 		<columnitem>

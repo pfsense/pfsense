@@ -185,11 +185,11 @@ function edit_mode() {
 	<tr><td colspan="2">
 <?php
         $tab_array = array();
-        $tab_array[0] = array("Server", false, "pkg.php?xml=openvpn.xml");
-        $tab_array[1] = array("Client", false, "pkg.php?xml=openvpn_cli.xml");
-        $tab_array[2] = array("Client-specific overrides", false, "pkg.php?xml=openvpn_csc.xml");
-        $tab_array[3] = array("Certificate Authority", true, "vpn_openvpn_certs.php");
-        $tab_array[3] = array("Users", true, "vpn_openvpn_users.php");
+        $tab_array[] = array("Server", false, "pkg.php?xml=openvpn.xml");
+        $tab_array[] = array("Client", false, "pkg.php?xml=openvpn_cli.xml");
+        $tab_array[] = array("Client-specific overrides", false, "pkg.php?xml=openvpn_csc.xml");
+        $tab_array[] = array("Certificate Authority", true, "vpn_openvpn_certs.php");
+        $tab_array[] = array("Users", true, "vpn_openvpn_users.php");
         display_top_tabs($tab_array);
 ?>
 	</td></tr>

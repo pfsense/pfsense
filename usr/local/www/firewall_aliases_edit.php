@@ -334,6 +334,16 @@ function typesel_change() {
 				eval(comd);
 			}
 			break;
+
+		case 4:	/* OpenVPN Users */
+			var cmd;
+			document.iform.address_subnet.disabled = 1;
+			newrows = totalrows+1;
+			for(i=2; i<newrows; i++) {
+				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
+				eval(comd);
+			}
+			break;
 	}
 }
 
@@ -349,6 +359,7 @@ $ports_str = gettext("Port(s)");
 $port_str = gettext("Port");
 $url_str = gettext("URL");
 $update_freq_str = gettext("Update Freq.");
+$openvpn_user_str = gettext("OpenVPN Users");
 
 $networks_help = gettext("Networks can be expressed like 10.0.0.0 format.  Select the CIDR (network mask) that pertains to each entry.");
 $hosts_help = gettext("Enter as many hosts as you would like.  Hosts should be expressed in their ip address format.");
@@ -387,6 +398,14 @@ function update_box_type() {
 	} else if(selected == '{$url_str}') {
 		document.getElementById ("addressnetworkport").firstChild.data = "{$url_str}";
 		document.getElementById ("address_subnet").visible = true;
+		document.getElementById ("address_subnet").disabled = false;
+		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
+		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
+		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
+		document.getElementById ("itemhelp").firstChild.data = "{$url_help}";
+	} else if(selected == '{$openvpn_user_str}') {
+		document.getElementById ("addressnetworkport").firstChild.data = "{$openvpn_user_str}";
+		document.getElementById ("address_subnet").visible = false;
 		document.getElementById ("address_subnet").disabled = false;
 		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
 		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
@@ -470,6 +489,7 @@ EOD;
         <option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>>Host(s)</option>
         <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>>Network(s)</option>
         <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>>Port(s)</option>
+        <option value="openvpn" <?php if ($pconfig['type'] == "port") echo "selected"; ?>>OpenVPN Users</option>
       </select>
     </td>
   </tr>

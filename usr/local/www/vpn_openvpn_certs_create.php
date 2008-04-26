@@ -38,9 +38,9 @@ $ovpncapath = $g['varetc_path']."/openvpn/certificates";
 $easyrsapath = "/usr/local/share/openvpn/certificates";
 
 if($_GET['add'])
-	$edit_mode = true;
-else 
 	$edit_mode = false;
+else 
+	$edit_mode = true;
 
 if ($_GET['ca']) {
 	if ($config['openvpn']['keys'][$_GET['ca']]) {

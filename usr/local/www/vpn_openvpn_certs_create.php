@@ -37,10 +37,10 @@ $ovpncapath = $g['varetc_path']."/openvpn/certificates";
 /* XXX: hardcoded path; worth making it a global?! */
 $easyrsapath = "/usr/local/share/openvpn/certificates";
 
-if($_GET['add'])
+$edit_mode = false;
+
+if($_GET['add'] == "true")
 	$edit_mode = false;
-else 
-	$edit_mode = true;
 
 if ($_GET['ca']) {
 	if ($config['openvpn']['keys'][$_GET['ca']]) {
@@ -56,102 +56,102 @@ if ($_GET['ca']) {
     	$email = $data['keyemail'];
 		$authmode = $data['auth_method'];
 		$edit_mode = true;
-	} else
+	} else {
 		$input_errors[] = "Certificate does not exist.";
-
-} else 
-	$disabled = "disabled=\"yes\"";
+	}
+}
 
 if ($_POST) {
 	$cakeysize = $_POST['cakeysize'];
 	$caexpire = $_POST['caexpire'];
 	$cakeyexpire = $_POST['cakeyexpire'];
 	$countrycode=$_POST['countrycode'];
-    	$stateorprovince=$_POST['stateorprovince'];
-    	$cityname=$_POST['cityname'];
-    	$orginizationname=$_POST['orginizationname'];
-    	$email = $_POST['email'];
+  	$stateorprovince=$_POST['stateorprovince'];
+  	$cityname=$_POST['cityname'];
+  	$orginizationname=$_POST['orginizationname'];
+  	$email = $_POST['email'];
 	$authmode = $_POST['auth_method'];
 
 	if (!$_POST['canme']) {
 		$caname = $_POST['caname'];
 
-	/* XXX: do more input validation */
+		/* XXX: do more input validation */
 
-	/* Create sane environment for easyrsa scripts */
-	conf_mount_rw();
-	if (!is_dir($g['varetc_path']."/openvpn"))
-		safe_mkdir($g['varetc_path']."/openvpn");
-	if (!is_dir($ovpncapath)) 
-		safe_mkdir($ovpncapath);
-	else
-	    mwexec("rm -rf $ovpncapath/$caname");
-	safe_mkdir("$ovpncapath/$caname", 0755);
+		/* Create sane environment for easyrsa scripts */
+		conf_mount_rw();
+		if (!is_dir($g['varetc_path']."/openvpn"))
+			safe_mkdir($g['varetc_path']."/openvpn");
+		if (!is_dir($ovpncapath)) 
+			safe_mkdir($ovpncapath);
+		else
+		    mwexec("rm -rf $ovpncapath/$caname");
+		safe_mkdir("$ovpncapath/$caname", 0755);
 
-	mwexec("cp -r $easyrsapath ".$g['varetc_path']."/openvpn/");
-	if (!is_dir($ovpncapath)) {
-		$input_errors[] = "Failed to create environment for creating certificates. ";
-		header("Location: vpn_openvpn_certs.php");
-	}
+		mwexec("cp -r $easyrsapath ".$g['varetc_path']."/openvpn/");
+		if (!is_dir($ovpncapath)) {
+			$input_errors[] = "Failed to create environment for creating certificates. ";
+			header("Location: vpn_openvpn_certs.php");
+		}
 
-if ($authmode == 'pki') {
-	$fd = fopen($ovpncapath . "/$caname/vars", "w");
-	fwrite($fd, "#!/bin/tcsh\n");
-	fwrite($fd, "setenv EASY_RSA \"$easyrsapath\" \n");
-	fwrite($fd, "setenv OPENSSL \"`which openssl`\"\n");
-	fwrite($fd, "setenv PKCS11TOOL \"pkcs11-tool\" \n");
-	fwrite($fd, "setenv GREP \"grep\" \n");
-	fwrite($fd, "setenv KEY_CONFIG `$ovpncapath/whichopensslcnf $ovpncapath` \n");
-	fwrite($fd, "setenv KEY_DIR \"$ovpncapath/$caname\" \n");
-	fwrite($fd, "setenv KEY_SIZE $cakeysize \n");
-	fwrite($fd, "setenv CA_EXPIRE $caexpire \n");
-	fwrite($fd, "setenv KEY_EXPIRE $cakeyexpire \n");
-	fwrite($fd, "setenv KEY_COUNTRY $countrycode \n");
-	fwrite($fd, "setenv KEY_PROVINCE $stateorprovince \n");
-	fwrite($fd, "setenv KEY_CITY $cityname \n");
-	fwrite($fd, "setenv KEY_ORG $orginizationname \n");
-	fwrite($fd, "setenv KEY_EMAIL $email \n");
-	fwrite($fd, "setenv CA_OK $ovpncapath/$caname/finished_ok\n");
-	fwrite($fd, "\n\n");
-	fclose($fd);
+		if ($authmode == 'pki') {
+			$fd = fopen($ovpncapath . "/$caname/vars", "w");
+			fwrite($fd, "#!/bin/tcsh\n");
+			fwrite($fd, "setenv EASY_RSA \"$easyrsapath\" \n");
+			fwrite($fd, "setenv OPENSSL \"`which openssl`\"\n");
+			fwrite($fd, "setenv PKCS11TOOL \"pkcs11-tool\" \n");
+			fwrite($fd, "setenv GREP \"grep\" \n");
+			fwrite($fd, "setenv KEY_CONFIG `$ovpncapath/whichopensslcnf $ovpncapath` \n");
+			fwrite($fd, "setenv KEY_DIR \"$ovpncapath/$caname\" \n");
+			fwrite($fd, "setenv KEY_SIZE $cakeysize \n");
+			fwrite($fd, "setenv CA_EXPIRE $caexpire \n");
+			fwrite($fd, "setenv KEY_EXPIRE $cakeyexpire \n");
+			fwrite($fd, "setenv KEY_COUNTRY $countrycode \n");
+			fwrite($fd, "setenv KEY_PROVINCE $stateorprovince \n");
+			fwrite($fd, "setenv KEY_CITY $cityname \n");
+			fwrite($fd, "setenv KEY_ORG $orginizationname \n");
+			fwrite($fd, "setenv KEY_EMAIL $email \n");
+			fwrite($fd, "setenv CA_OK $ovpncapath/$caname/finished_ok\n");
+			fwrite($fd, "\n\n");
+			fclose($fd);
 
-	$fd = fopen($ovpncapath . "/RUNME_FIRST", "w");
-	fwrite($fd, "cd $ovpncapath \n");
-	fwrite($fd, "touch $ovpncapath/$caname/index.txt \n");
-	fwrite($fd, "echo \"01\" > $ovpncapath/$caname/serial \n");
-	fwrite($fd, "source $ovpncapath/$caname/vars \n");
-	//fwrite($fd, "echo \"Creating Shared Key...\" \n");
-	//fwrite($fd, "openvpn --genkey --secret $ovpncapath/$caname/shared.key \n");
-	fwrite($fd, "echo \"Creating CA...\" \n");
-	fwrite($fd, "$easyrsapath/pkitool --batch --initca $ovpncapath/$caname/ca.crt \n");
-	fwrite($fd, "echo \"Creating Server Certificate...\" \n");
-	fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
-	fwrite($fd, "echo \"Creating DH Parms...\" \n"); 
-	fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
-	fwrite($fd, "echo \"Done!\" \n");
-	fclose($fd);
-}
-	} else 
+			$fd = fopen($ovpncapath . "/RUNME_FIRST", "w");
+			fwrite($fd, "cd $ovpncapath \n");
+			fwrite($fd, "touch $ovpncapath/$caname/index.txt \n");
+			fwrite($fd, "echo \"01\" > $ovpncapath/$caname/serial \n");
+			fwrite($fd, "source $ovpncapath/$caname/vars \n");
+			//fwrite($fd, "echo \"Creating Shared Key...\" \n");
+			//fwrite($fd, "openvpn --genkey --secret $ovpncapath/$caname/shared.key \n");
+			fwrite($fd, "echo \"Creating CA...\" \n");
+			fwrite($fd, "$easyrsapath/pkitool --batch --initca $ovpncapath/$caname/ca.crt \n");
+			fwrite($fd, "echo \"Creating Server Certificate...\" \n");
+			fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
+			fwrite($fd, "echo \"Creating DH Parms...\" \n"); 
+			fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
+			fwrite($fd, "echo \"Done!\" \n");
+			fclose($fd);
+		}
+	} else {
 		$input_errors[] = "You should specify a name.";
+	}
+	if (!is_array($config['openvpn']['keys']))
+		$config['openvpn']['keys'] = array();
+	
+	$ovpnkeys =& $config['openvpn']['keys'];
+	if (!is_array($ovpnkeys[$caname]))
+		$ovpnkeys[$caname] = array();
 
-        if (!is_array($config['openvpn']['keys']))
-                $config['openvpn']['keys'] = array();
-        $ovpnkeys =& $config['openvpn']['keys'];
-        if (!is_array($ovpnkeys[$caname]))
-                $ovpnkeys[$caname] = array();
+	if ($caname && $authmode == 'shared_key') {
+	        execute_command_return_output("openvpn --genkey --secret $ovpncapath/$caname/shared.key");
+	        $ovpnkeys[$caname]['existing'] = "yes";
+	        $ovpnkeys[$caname]['shared.key'] = file_get_contents("$ovpncapath/$caname/shared.key");
+	        write_config();
 
-if ($caname && $authmode == 'shared_key') {
-        execute_command_return_output("openvpn --genkey --secret $ovpncapath/$caname/shared.key");
-        $ovpnkeys[$caname]['existing'] = "yes";
-        $ovpnkeys[$caname]['shared.key'] = file_get_contents("$ovpncapath/$caname/shared.key");
-        write_config();
-
-        header("Content-Type: application/octet-stream");
-        header("Content-Disposition: attachment; filename=\"shared.key\";");
-        header("Content-Transfer-Encoding: binary");
-        header("Content-Length: ".filesize($filename));
-        readfile("$ovpncapath/$caname/shared.key");
-}
+	        header("Content-Type: application/octet-stream");
+	        header("Content-Disposition: attachment; filename=\"shared.key\";");
+	        header("Content-Transfer-Encoding: binary");
+	        header("Content-Length: ".filesize($filename));
+	        readfile("$ovpncapath/$caname/shared.key");
+	}
 
 }
 
@@ -174,7 +174,7 @@ function edit_mode() {
 }
 </script>
 
-    <?php include("fbegin.inc"); ?>
+<?php include("fbegin.inc"); ?>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
@@ -249,7 +249,7 @@ function edit_mode() {
         <tr>
             <td width="35%"  class="vncell"><B>Certificate Key Size</td>
             <td width="78%" class="vtable">
-		<select <?=$disabled;?> name="cakeysize" >
+		<select  name="cakeysize" >
 <?php
 			$strength = array("512", "1024", "2048");
 			foreach ($strength as $key) {
@@ -265,43 +265,43 @@ function edit_mode() {
             <tr>
                 <td width="35%"  class="vncell"><B>Certificate Expire</td>
                 <td width="78%" class="vtable">
-                <input <?=$disabled;?> name="caexpire" class="formfld" value="<?=$caexpire?>"/>
+                <input  name="caexpire" class="formfld" value="<?=$caexpire?>"/>
                 <br/><span>In how many days should the root CA key expire?</span></td>
             </tr>
             <tr>
                 <td width="35%"  class="vncell"><B>Certificate Key Expire</td>
                 <td width="78%" class="vtable">
-                <input <?=$disabled;?> name="cakeyexpire" class="formfld" value="<?=$cakeyexpire?>">
+                <input  name="cakeyexpire" class="formfld" value="<?=$cakeyexpire?>">
                 <br/><span>In how many days should certificates expire?</span></td>
             </tr>
 	    <tr>
 	      <td width="35%"  class="vncell"><B>Country Code (2 Letters)</td>
 	      <td width="78%" class="vtable">
-		<input <?=$disabled;?> size="2" maxlength="2" name="countrycode" class="formfld" value="<?=$countrycode?>">
+		<input  size="2" maxlength="2" name="countrycode" class="formfld" value="<?=$countrycode?>">
 		<br/></span></td>
 	    </tr>
 	    <tr>
 	      <td width="35%"  class="vncell"><B>State or Province name</td>
 	      <td width="78%" class="vtable">
-		<input <?=$disabled;?> name="stateorprovince" class="formfld" value="<?=$stateorprovince?>">
+		<input  name="stateorprovince" class="formfld" value="<?=$stateorprovince?>">
 		<br/></span></td>
 	    </tr>
 	    <tr>
 	      <td width="35%"  class="vncell"><B>City name</td>
 	      <td width="78%" class="vtable">
-		<input <?=$disabled;?> name="cityname" class="formfld" value="<?=$cityname?>">
+		<input  name="cityname" class="formfld" value="<?=$cityname?>">
 		<br/></span></td>
 	    </tr>
 	    <tr>
 	      <td width="35%"  class="vncell"><B>Organization name</td>
 	      <td width="78%" class="vtable">
-		<input <?=$disabled;?> name="orginizationname" class="formfld" value="<?=$orginizationname?>">
+		<input  name="orginizationname" class="formfld" value="<?=$orginizationname?>">
 		<br/></span></td>
 	    </tr>
 	    <tr>
 	      <td width="35%"  class="vncell"><B>E-Mail address</td>
 	      <td width="78%" class="vtable">
-		<input <?=$disabled;?> name="email" class="formfld" value="<?=$email?>">
+		<input  name="email" class="formfld" value="<?=$email?>">
 		<br/></span></td>
 	    </tr>
 	    <tr>

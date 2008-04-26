@@ -359,12 +359,15 @@ $ports_str = gettext("Port(s)");
 $port_str = gettext("Port");
 $url_str = gettext("URL");
 $update_freq_str = gettext("Update Freq.");
-$openvpn_user_str = gettext("OpenVPN Users");
 
 $networks_help = gettext("Networks can be expressed like 10.0.0.0 format.  Select the CIDR (network mask) that pertains to each entry.");
 $hosts_help = gettext("Enter as many hosts as you would like.  Hosts should be expressed in their ip address format.");
 $ports_help = gettext("Enter as many ports as you wish.  Port ranges can be expressed by seperating with a colon.");
 $url_help = gettext("Enter as many urls as you wish.  Also set the time that you would like the url refreshed in days.  After saving {$g['product_name']} will download the URL and import the items into the alias.");
+
+$openvpn_str = gettext("Username");
+$openvpn_user_str = gettext("OpenVPN Users");
+$openvpn_help = gettext("Enter as many usernames as you wish.");
 
 $jscriptstr .= <<<EOD
 
@@ -407,10 +410,10 @@ function update_box_type() {
 		document.getElementById ("addressnetworkport").firstChild.data = "{$openvpn_user_str}";
 		document.getElementById ("address_subnet").visible = false;
 		document.getElementById ("address_subnet").disabled = false;
-		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
+		document.getElementById ("onecolumn").firstChild.data = "{$openvpn_str}";
 		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
 		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
-		document.getElementById ("itemhelp").firstChild.data = "{$url_help}";
+		document.getElementById ("itemhelp").firstChild.data = "{$openvpn_help}";
 	}
 }
 </script>

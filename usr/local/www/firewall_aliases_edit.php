@@ -325,19 +325,24 @@ function typesel_change() {
 				eval(comd);
 			}
 			break;
-		case 3:	/* url */
+		case 3:	/* OpenVPN Users */
 			var cmd;
-			document.iform.address_subnet.disabled = 0;
+
+			document.iform.address_subnet.disabled = 1;
+			document.iform.address_subnet.value = "";
+			document.iform.address_subnet.selected = 0;
 			newrows = totalrows+1;
 			for(i=2; i<newrows; i++) {
-				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
+				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
+				eval(comd);
+				comd = 'document.iform.address_subnet' + i + '.value = "";';
 				eval(comd);
 			}
 			break;
 
-		case 4:	/* OpenVPN Users */
+		case 4:	/* url */
 			var cmd;
-			document.iform.address_subnet.disabled = 1;
+			document.iform.address_subnet.disabled = 0;
 			newrows = totalrows+1;
 			for(i=2; i<newrows; i++) {
 				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';

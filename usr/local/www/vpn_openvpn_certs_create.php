@@ -72,7 +72,7 @@ if ($_POST) {
   	$email = $_POST['email'];
 	$authmode = $_POST['auth_method'];
 
-	if (!$_POST['canme']) {
+	if (!$_POST['caname']) {
 		$caname = $_POST['caname'];
 
 		/* XXX: do more input validation */

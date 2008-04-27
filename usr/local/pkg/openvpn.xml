@@ -164,7 +164,7 @@
                         <fieldname>cipher</fieldname>
                         <fielddescr>Shared key</fielddescr>
                         <description>Shared key to use.</description>
-                        <type>select</type>
+                        <type>input</type>
 			<default_value>none</default_value>
                 </field>
                 <field>

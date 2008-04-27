@@ -222,8 +222,9 @@ if ($_POST) {
 		conf_mount_ro();
 		/* vars */
 		$ovpnkeys[$caname]['existing'] = "no";
-		$ovpnleys[$caname]['descr'] = $descr;		
-		$ovpnleys[$caname]['auth_method'] = $auth_method;
+		print_r($descr);
+		$ovpnkeys[$caname]['descr'] = $descr;		
+		$ovpnkeys[$caname]['auth_method'] = "pki";
 		$ovpnkeys[$caname]['keysize'] = $cakeysize;
 		$ovpnkeys[$caname]['keyexpire'] = $cakeyexpire;
 		$ovpnkeys[$caname]['caexpire'] = $caexpire;

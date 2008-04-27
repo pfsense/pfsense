@@ -33,6 +33,10 @@ $d_isfwfile = 1;
 require_once("guiconfig.inc");
 require_once("xmlrpc_client.inc");
 
+/* Allow additional execution time 0 = no limit. */
+ini_set('max_execution_time', '3600');
+ini_set('max_input_time', '3600');
+
 /* if upgrade in progress, alert user */
 if(file_exists($d_firmwarelock_path)) {
 	$pgtitle = array("System","Firmware","Manual Update");

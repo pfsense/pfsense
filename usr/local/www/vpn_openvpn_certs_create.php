@@ -33,12 +33,11 @@
 require("guiconfig.inc");
 
 $pgtitle = array("VPN", "OpenVPN", "Create Certs");
-$ovpncapath = $g['varetc_path']."/openvpn/certificates";
-/* XXX: hardcoded path; worth making it a global?! */
-$easyrsapath = "/usr/local/share/openvpn/certificates";
 
-$edit_mode = false;
+$ovpncapath = $g['varetc_path'] . "/openvpn/certificates";
+$easyrsapath = $g['easyrsapath'];
 
+$edit_mode = true;
 if($_GET['add'] == "true")
 	$edit_mode = false;
 
@@ -50,6 +49,7 @@ if ($_GET['ca']) {
 		$caexpire = $data['caexpire'];
 		$cakeyexpire = $data['keyexpire'];
    		$countrycode= $data['keycountry'];
+		$descr = $data['descr'];
    	 	$stateorprovince= $data['keyprovince'];
     	$cityname= $data['keycity'];
     	$orginizationname= $data['keyorg'];
@@ -62,6 +62,7 @@ if ($_GET['ca']) {
 }
 
 if ($_POST) {
+	$descr = $_POST['descr'];
 	$cakeysize = $_POST['cakeysize'];
 	$caexpire = $_POST['caexpire'];
 	$cakeyexpire = $_POST['cakeyexpire'];
@@ -159,25 +160,28 @@ if ($_POST) {
 
     <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
-<script type="text/javascript">
-function edit_mode() {
-	document.iform.cakeysize.disabled = true;
-	document.iform.caexpire.disabled = true;
-	document.iform.cakeyexpire.disabled = true;
-	document.iform.countrycode.disabled = true;
-	document.iform.stateorprovince.disabled = true;
-	document.iform.cityname.disabled = true;
-	document.iform.orginizationname.disabled = true;
-	document.iform.email.disabled = true;
-	document.iform.caname.disabled = true;
-}
-</script>
+	<script type="text/javascript">
+		function f() {
+			/* do nothing */
+		}
+		function edit_mode() {
+			document.iform.cakeysize.disabled = true;
+			document.iform.caexpire.disabled = true;
+			document.iform.cakeyexpire.disabled = true;
+			document.iform.countrycode.disabled = true;
+			document.iform.stateorprovince.disabled = true;
+			document.iform.cityname.disabled = true;
+			document.iform.orginizationname.disabled = true;
+			document.iform.email.disabled = true;
+			document.iform.descr.disabled = true;
+		}
+	</script>
 
 <?php include("fbegin.inc"); ?>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
-<form action="vpn_openvpn_certs_create.php" method="post" name="iform" id="iform">
+	<form action="vpn_openvpn_certs_create.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
 	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -213,21 +217,21 @@ function edit_mode() {
 	execute_command_return_output("/bin/tcsh $ovpncapath/RUNME_FIRST", "r");
 	if (!file_exists("$ovpncapath/$caname/finished_ok")) {
 		mwexec("rm -rf $ovpncapath/$caname");
-		$input_errors = "An error occured while createing certificates\n";
+		$input_errors = "An error occurred while creating certificates\n";
 	} else {
 		conf_mount_ro();
 		/* vars */
 		$ovpnkeys[$caname]['existing'] = "no";
-		$ovpnleys[$caname]['descr'] = $_POST['descr'];		
+		$ovpnleys[$caname]['descr'] = $descr;		
 		$ovpnleys[$caname]['auth_method'] = $auth_method;
-		$ovpnkeys[$caname]['KEYSIZE'] = $cakeysize;
-		$ovpnkeys[$caname]['KEYEXPIRE'] = $cakeyexpire;
-		$ovpnkeys[$caname]['CAEXPIRE'] = $caexpire;
-		$ovpnkeys[$caname]['KEYCOUNTRY'] = $countrycode;
-		$ovpnkeys[$caname]['KEYPROVINCE'] = $stateorprovince;
-		$ovpnkeys[$caname]['KEYCITY'] = $cityname;
-		$ovpnkeys[$caname]['KEYORG'] = $orginizationname;
-		$ovpnkeys[$caname]['KEYEMAIL'] = $email;
+		$ovpnkeys[$caname]['keysize'] = $cakeysize;
+		$ovpnkeys[$caname]['keyexpire'] = $cakeyexpire;
+		$ovpnkeys[$caname]['caexpire'] = $caexpire;
+		$ovpnkeys[$caname]['keycountry'] = $countrycode;
+		$ovpnkeys[$caname]['keyprovince'] = $stateorprovince;
+		$ovpnkeys[$caname]['keycity'] = $cityname;
+		$ovpnkeys[$caname]['keyorg'] = $orginizationname;
+		$ovpnkeys[$caname]['keyemail'] = $email;
 		/* ciphers */
 		$ovpnkeys[$caname]['ca.key'] = file_get_contents("$ovpncapath/$caname/ca.key");
 		$ovpnkeys[$caname]['ca.crt'] = file_get_contents("$ovpncapath/$caname/ca.crt");

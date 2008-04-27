@@ -428,12 +428,29 @@ function is_alias($name) {
 function alias_expand_value($name) {
 
 	global $aliastable, $config;
+	$newaddress = "";
+	$firstentry = true;
 	if($config['aliases']['alias'])
 		foreach($config['aliases']['alias'] as $alias) {
-			if($alias['name'] == $name)
-				return $alias['address'];
+			if($alias['name'] == $name) {
+				if($alias['type'] == "openvpn") {
+					$vpn_address_split = split(" ", $alias['address']);
+					foreach($vpn_address_split as $vpnsplit) {
+						foreach($config['openvpn']['user'] as $openvpn) {
+							if($openvpn['name'] == $vpnsplit) {
+								if($firstentry == false) 
+									$newaddress .= " ";
+								$newaddress .= $openvpn['ip'];
+								$firstentry = false;
+							}
+						}
+					}
+				} else {
+					$newaddress = $alias['address'];
+				}
+			}
 		}
-
+		return $newaddress;
 }
 
 /* expand a host or network alias, if necessary */

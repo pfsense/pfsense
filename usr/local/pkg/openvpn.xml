@@ -165,7 +165,7 @@
                         <fielddescr>Shared key</fielddescr>
                         <description>Shared key to use.</description>
                         <type>input</type>
-			<default_value>none</default_value>
+			<default_value></default_value>
                 </field>
                 <field>
                         <fieldname>cipherpki</fieldname>
@@ -269,7 +269,7 @@
 			<description>Redirect ALL traffic through the OpenVPN server.</description>
 			<type>checkbox</type>
 		</field>
-    <field>
+		<field>
 			<fieldname>custom_options</fieldname>
 			<fielddescr>Custom options</fielddescr>
 			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the server configuration.</description>

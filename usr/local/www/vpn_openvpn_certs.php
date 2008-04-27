@@ -87,7 +87,12 @@ include("head.inc");
 	 <?php foreach ($certificates as $cert => $ca) { ?>
 	  				<tr class="vtable">
                       <td class="listlr" width="35%">
-                        <?=$cert;?>
+                        <?php
+                        	if($ca['caname'])
+								echo $ca['caname'];
+							else 
+								echo $cert;
+                        ?>
                         </td>
 					<td class="listr" width="60%">
 						<?=$ca['caexpire'];?>

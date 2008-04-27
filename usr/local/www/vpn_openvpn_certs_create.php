@@ -218,6 +218,7 @@ function edit_mode() {
 		conf_mount_ro();
 		/* vars */
 		$ovpnkeys[$caname]['existing'] = "no";
+		$ovpnleys[$caname]['caname'] = $caname;		
 		$ovpnleys[$caname]['auth_method'] = $auth_method;
 		$ovpnkeys[$caname]['KEYSIZE'] = $cakeysize;
 		$ovpnkeys[$caname]['KEYEXPIRE'] = $cakeyexpire;

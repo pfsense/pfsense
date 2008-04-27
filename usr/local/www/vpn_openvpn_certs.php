@@ -88,8 +88,8 @@ include("head.inc");
 	  				<tr class="vtable">
                       <td class="listlr" width="35%">
                         <?php
-                        	if($ca['caname'])
-								echo $ca['caname'];
+                        	if($ca['descr'])
+								echo $ca['descr'];
 							else 
 								echo $cert;
                         ?>

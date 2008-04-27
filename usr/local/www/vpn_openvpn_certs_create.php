@@ -71,8 +71,8 @@ if ($_POST) {
   	$orginizationname=$_POST['orginizationname'];
   	$email = $_POST['email'];
 	$authmode = $_POST['auth_method'];
-	$caname = $_POST['caname'];
-
+	$caname = trim(strtolower($_POST['descr']));
+	
 	if ($caname) {
 
 		/* XXX: do more input validation */
@@ -218,7 +218,7 @@ function edit_mode() {
 		conf_mount_ro();
 		/* vars */
 		$ovpnkeys[$caname]['existing'] = "no";
-		$ovpnleys[$caname]['caname'] = $caname;		
+		$ovpnleys[$caname]['descr'] = $_POST['descr'];		
 		$ovpnleys[$caname]['auth_method'] = $auth_method;
 		$ovpnkeys[$caname]['KEYSIZE'] = $cakeysize;
 		$ovpnkeys[$caname]['KEYEXPIRE'] = $cakeyexpire;
@@ -244,7 +244,7 @@ function edit_mode() {
 	<tr>
             <td width="35%"  class="vncell"><B>Certificate Name</td>
             <td width="78%" class="vtable">
-            <input name="caname" class="formfld" value="<?=$caname?>">
+            <input name="descr" class="formfld" value="<?=$descr?>">
             </span></td>
         </tr>
         <tr>

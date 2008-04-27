@@ -124,8 +124,6 @@ if ($_POST) {
 		//fwrite($fd, "openvpn --genkey --secret $ovpncapath/$caname/shared.key \n");
 		fwrite($fd, "echo \"Creating CA...\" \n");
 		fwrite($fd, "$easyrsapath/pkitool --batch --initca $ovpncapath/$caname/ca.crt \n");
-		fwrite($fd, "echo \"Creating Server Certificate...\" \n");
-		fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
 		fwrite($fd, "echo \"Creating DH Parms...\" \n"); 
 		fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
 		fwrite($fd, "echo \"Done!\" \n");
@@ -224,8 +222,6 @@ if ($_POST) {
 		/* ciphers */
 		$ovpnkeys[$caname]['ca.key'] = file_get_contents("$ovpncapath/$caname/ca.key");
 		$ovpnkeys[$caname]['ca.crt'] = file_get_contents("$ovpncapath/$caname/ca.crt");
-		$ovpnkeys[$caname]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
-		$ovpnkeys[$caname]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");
 		$ovpnkeys[$caname]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
 	
 		/* save it */

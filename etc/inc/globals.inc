@@ -48,6 +48,7 @@ $g = array(
     "www_path" => "/usr/local/www",
     "xml_rootobj" => "pfsense",
     "admin_group" => "admins",
+	"easyrsapath" => "/usr/local/share/openvpn/certificates",
 	"product_name" => "pfSense",
 	"product_copyright" => "BSD Perimeter LLC",    
 	"product_copyright_years" => "2005, 2006, 2007, 2008",

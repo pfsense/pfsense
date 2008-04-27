@@ -4,7 +4,7 @@
 	vpn_openvpn_certs_existing.php
 	part of pfSense
 
-	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2008 Scott Ullrich
 	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 

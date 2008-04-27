@@ -71,7 +71,7 @@ function openvpn_get_ciphers($pkg) {
                                         $option_array = &$pkg['fields']['field'][$i]['options']['option'];
                                         foreach ($config['openvpn']['keys'] as $cipher => $type) {
                                                 if ($type['auth_method'] == 'pki')
-                                                        $option_array[] = array('value' => $cipher, 'name' => $cipher);
+                                                        $option_array[] = array('value' => $cipher, 'name' => $type['descr']);
                                         }
                                 }
                         }

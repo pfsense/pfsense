@@ -140,19 +140,6 @@ if ($_POST) {
 	if (!is_array($ovpnkeys[$caname]))
 		$ovpnkeys[$caname] = array();
 
-	if ($caname && $authmode == 'shared_key') {
-	        execute_command_return_output("openvpn --genkey --secret $ovpncapath/$caname/shared.key");
-	        $ovpnkeys[$caname]['existing'] = "yes";
-	        $ovpnkeys[$caname]['shared.key'] = file_get_contents("$ovpncapath/$caname/shared.key");
-	        write_config();
-
-	        header("Content-Type: application/octet-stream");
-	        header("Content-Disposition: attachment; filename=\"shared.key\";");
-	        header("Content-Transfer-Encoding: binary");
-	        header("Content-Length: ".filesize($filename));
-	        readfile("$ovpncapath/$caname/shared.key");
-	}
-
 }
 
 	include("head.inc");

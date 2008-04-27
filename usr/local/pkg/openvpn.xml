@@ -176,37 +176,37 @@
                 </field>
 		<field>
 			<fieldname>dhcp_domainname</fieldname>
-			<fielddescr>DHCP-Opt.: DNS-Domainname</fielddescr>
+			<fielddescr>DHCP Option: DNS Suffix</fielddescr>
 			<description>Set connection-specific DNS Suffix.</description>
 			<type>input</type>
 		</field>
 		<field>
 			<fieldname>dhcp_dns</fieldname>
-			<fielddescr>DHCP-Opt.: DNS-Server</fielddescr>
+			<fielddescr>DHCP Option: DNS Server</fielddescr>
 			<description>Set domain name server addresses, separated by semi-colons (;).</description>
 			<type>input</type>
 		</field>
 		<field>
 			<fieldname>dhcp_wins</fieldname>
-			<fielddescr>DHCP-Opt.: WINS-Server</fielddescr>
+			<fielddescr>DHCP Option: WINS Server</fielddescr>
 			<description>Set WINS server addresses (NetBIOS over TCP/IP Name Server), separated by semi-colons (;).</description>
 			<type>input</type>
 		</field>
 		<field>
 			<fieldname>dhcp_nbdd</fieldname>
-			<fielddescr>DHCP-Opt.: NBDD-Server</fielddescr>
+			<fielddescr>DHCP Option: NBDD Server</fielddescr>
 			<description>Set NBDD server addresses (NetBIOS over TCP/IP Datagram Distribution Server), separated by semi-colons (;).</description>
 			<type>input</type>
 		</field>
 		<field>
 			<fieldname>dhcp_ntp</fieldname>
-			<fielddescr>DHCP-Opt.: NTP-Server</fielddescr>
+			<fielddescr>DHCP Option: NTP Server</fielddescr>
 			<description>Set NTP server addresses (Network Time Protocol), separated by semi-colons (;).</description>
 			<type>input</type>
 		</field>
 		<field>
 			<fieldname>dhcp_nbttype</fieldname>
-			<fielddescr>DHCP-Opt.: NetBIOS node type</fielddescr>
+			<fielddescr>DHCP Option: NetBIOS Node Type</fielddescr>
 			<description>Set NetBIOS over TCP/IP Node type. Possible options: b-node (broadcasts), p-node (point-to-point name queries to a WINS server), m-node (broadcast then query name server), and h-node (query name server, then broadcast).</description>
 			<type>select</type>
 			<options>
@@ -235,13 +235,13 @@
 		</field>
 		<field>
 			<fieldname>dhcp_nbtscope</fieldname>
-			<fielddescr>DHCP-Opt.: NetBIOS Scope</fielddescr>
+			<fielddescr>DHCP Option: NetBIOS Scope</fielddescr>
 			<description>Set NetBIOS over TCP/IP Scope. A NetBIOS Scope ID provides an extended naming service for NetBIOS over TCP/IP. The NetBIOS scope ID isolates NetBIOS traffic on a single network to only those nodes with the same NetBIOS scope ID.</description>
 			<type>input</type>
 		</field>
 		<field>
 			<fieldname>dhcp_nbtdisable</fieldname>
-			<fielddescr>DHCP-Opt.: Disable NetBIOS</fielddescr>
+			<fielddescr>DHCP Option: Disable NetBIOS</fielddescr>
 			<description>If this option is set, Netbios-over-TCP/IP will be disabled.</description>
 			<type>checkbox</type>
 		</field>

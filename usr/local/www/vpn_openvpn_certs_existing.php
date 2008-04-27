@@ -116,19 +116,6 @@ if ($_POST) {
 ?>
 
     <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript">
-function onAuthMethodChanged() {
-        var method = document.iform.auth_method;
-        var endis = (method.options[method.selectedIndex].value == 'shared_key');
-
-        document.iform['shared.key'].disabled = !endis;
-        document.iform['ca.crt'].disabled = endis;
-        document.iform['server.crt'].disabled = endis;
-        document.iform['server.key'].disabled = endis;
-        document.iform.dh.disabled = endis;
-        document.iform.crl.disabled = endis;
-}
-</script>
 
     <?php include("fbegin.inc"); ?>
 
@@ -159,35 +146,35 @@ function onAuthMethodChanged() {
 		<tr>
                       <td width="35%"  class="vncell"><B>CA certificate</td>
                       <td width="78%" class="vtable">
-                        <textarea name="ca.crt" disabled="yes" rows="8" cols="40" ><?=$cacrt;?></textarea>
-                        <br/><span class="gray">Paste your CA certificate in X.509 format here.</span></td>
+                        <textarea name="ca.crt" rows="8" cols="40" ><?=$cacrt;?></textarea>
+                        <br/><span>Paste your CA certificate in X.509 format here.</span></td>
                     </tr>
                     <tr>
                       <td width="35%"  class="vncell"><B>Server certificate</td>
                       <td width="78%" class="vtable">
-			<textarea name="server.crt" disabled="yes" rows="8" cols="40" ><?=$servercrt;?></textarea>
-			<br/><span class="gray">Paste your server certificate in X.509 format here.</span>
+			<textarea name="server.crt" rows="8" cols="40" ><?=$servercrt;?></textarea>
+			<br/><span>Paste your server certificate in X.509 format here.</span>
 			</td>
                     </tr>
                    <tr>
                       <td width="35%"  class="vncell"><B>Server key</td>
                       <td width="78%" class="vtable">
-                        <textarea name="server.key" disabled="yes" rows="8" cols="40" ><?=$serverkey;?></textarea>
-			<br/><span class="gray">Paste your server key in RSA format here.</span>
+                        <textarea name="server.key" rows="8" cols="40" ><?=$serverkey;?></textarea>
+			<br/><span>Paste your server key in RSA format here.</span>
 			</td>
                     </tr>
                    <tr>
                       <td width="35%"  class="vncell"><B>DH parameters</td>
                       <td width="78%" class="vtable">
-                        <textarea name="dh" disabled="yes" rows="8" cols="40"><?=$dh;?></textarea>
-			<br/><span class="gray">Paste your Diffie Hellman parameters in PEM format here.</span>
+                        <textarea name="dh" rows="8" cols="40"><?=$dh;?></textarea>
+			<br/><span>Paste your Diffie Hellman parameters in PEM format here.</span>
 			</td>
                     </tr>
                    <tr>
                       <td width="35%"  class="vncell"><B>CRL</td>
                       <td width="78%" class="vtable">
-                        <textarea disabled="yes" name="crl" rows="8" cols="40" ><?=$crl;?></textarea>
-			<br/><span class="gray">Paste your certificate revocation list (CRL) in PEM format here (optional).</span>
+                        <textarea name="crl" rows="8" cols="40" ><?=$crl;?></textarea>
+			<br/><span>Paste your certificate revocation list (CRL) in PEM format here (optional).</span>
 			</td>
                     </tr>
 		    <tr>

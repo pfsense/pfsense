@@ -93,43 +93,42 @@ if ($_POST) {
 			header("Location: vpn_openvpn_certs.php");
 		}
 
-		if ($authmode == 'pki') {
-			$fd = fopen($ovpncapath . "/$caname/vars", "w");
-			fwrite($fd, "#!/bin/tcsh\n");
-			fwrite($fd, "setenv EASY_RSA \"$easyrsapath\" \n");
-			fwrite($fd, "setenv OPENSSL \"`which openssl`\"\n");
-			fwrite($fd, "setenv PKCS11TOOL \"pkcs11-tool\" \n");
-			fwrite($fd, "setenv GREP \"grep\" \n");
-			fwrite($fd, "setenv KEY_CONFIG `$ovpncapath/whichopensslcnf $ovpncapath` \n");
-			fwrite($fd, "setenv KEY_DIR \"$ovpncapath/$caname\" \n");
-			fwrite($fd, "setenv KEY_SIZE $cakeysize \n");
-			fwrite($fd, "setenv CA_EXPIRE $caexpire \n");
-			fwrite($fd, "setenv KEY_EXPIRE $cakeyexpire \n");
-			fwrite($fd, "setenv KEY_COUNTRY $countrycode \n");
-			fwrite($fd, "setenv KEY_PROVINCE $stateorprovince \n");
-			fwrite($fd, "setenv KEY_CITY $cityname \n");
-			fwrite($fd, "setenv KEY_ORG $orginizationname \n");
-			fwrite($fd, "setenv KEY_EMAIL $email \n");
-			fwrite($fd, "setenv CA_OK $ovpncapath/$caname/finished_ok\n");
-			fwrite($fd, "\n\n");
-			fclose($fd);
+		$fd = fopen($ovpncapath . "/$caname/vars", "w");
+		fwrite($fd, "#!/bin/tcsh\n");
+		fwrite($fd, "setenv EASY_RSA \"$easyrsapath\" \n");
+		fwrite($fd, "setenv OPENSSL \"`which openssl`\"\n");
+		fwrite($fd, "setenv PKCS11TOOL \"pkcs11-tool\" \n");
+		fwrite($fd, "setenv GREP \"grep\" \n");
+		fwrite($fd, "setenv KEY_CONFIG `$ovpncapath/whichopensslcnf $ovpncapath` \n");
+		fwrite($fd, "setenv KEY_DIR \"$ovpncapath/$caname\" \n");
+		fwrite($fd, "setenv KEY_SIZE $cakeysize \n");
+		fwrite($fd, "setenv CA_EXPIRE $caexpire \n");
+		fwrite($fd, "setenv KEY_EXPIRE $cakeyexpire \n");
+		fwrite($fd, "setenv KEY_COUNTRY $countrycode \n");
+		fwrite($fd, "setenv KEY_PROVINCE $stateorprovince \n");
+		fwrite($fd, "setenv KEY_CITY $cityname \n");
+		fwrite($fd, "setenv KEY_ORG $orginizationname \n");
+		fwrite($fd, "setenv KEY_EMAIL $email \n");
+		fwrite($fd, "setenv CA_OK $ovpncapath/$caname/finished_ok\n");
+		fwrite($fd, "\n\n");
+		fclose($fd);
 
-			$fd = fopen($ovpncapath . "/RUNME_FIRST", "w");
-			fwrite($fd, "cd $ovpncapath \n");
-			fwrite($fd, "touch $ovpncapath/$caname/index.txt \n");
-			fwrite($fd, "echo \"01\" > $ovpncapath/$caname/serial \n");
-			fwrite($fd, "source $ovpncapath/$caname/vars \n");
-			//fwrite($fd, "echo \"Creating Shared Key...\" \n");
-			//fwrite($fd, "openvpn --genkey --secret $ovpncapath/$caname/shared.key \n");
-			fwrite($fd, "echo \"Creating CA...\" \n");
-			fwrite($fd, "$easyrsapath/pkitool --batch --initca $ovpncapath/$caname/ca.crt \n");
-			fwrite($fd, "echo \"Creating Server Certificate...\" \n");
-			fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
-			fwrite($fd, "echo \"Creating DH Parms...\" \n"); 
-			fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
-			fwrite($fd, "echo \"Done!\" \n");
-			fclose($fd);
-		}
+		$fd = fopen($ovpncapath . "/RUNME_FIRST", "w");
+		fwrite($fd, "cd $ovpncapath \n");
+		fwrite($fd, "touch $ovpncapath/$caname/index.txt \n");
+		fwrite($fd, "echo \"01\" > $ovpncapath/$caname/serial \n");
+		fwrite($fd, "source $ovpncapath/$caname/vars \n");
+		//fwrite($fd, "echo \"Creating Shared Key...\" \n");
+		//fwrite($fd, "openvpn --genkey --secret $ovpncapath/$caname/shared.key \n");
+		fwrite($fd, "echo \"Creating CA...\" \n");
+		fwrite($fd, "$easyrsapath/pkitool --batch --initca $ovpncapath/$caname/ca.crt \n");
+		fwrite($fd, "echo \"Creating Server Certificate...\" \n");
+		fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
+		fwrite($fd, "echo \"Creating DH Parms...\" \n"); 
+		fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
+		fwrite($fd, "echo \"Done!\" \n");
+		fclose($fd);
+
 	} else {
 		$input_errors[] = "You should specify a name.";
 	}

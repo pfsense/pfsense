@@ -81,12 +81,17 @@ include("head.inc");
   	</td></tr>
 	<tr><td>
 	<table class="tabcont" width="100%" border="0" cellpadding="2" cellspacing="0">
-	<tr><td class="listhdrr" width="35%">Certificates</td><td width="60%" class="listhdrr">Description</td></tr>
+	<tr>
+		<td class="listhdrr" width="35%">Certificates</td>
+		<td width="60%" class="listhdrr">Expires</td></tr>
 	 <?php foreach ($certificates as $cert => $ca) { ?>
 	  				<tr class="vtable">
                       <td class="listlr" width="35%">
                         <?=$cert;?>
-                        </td><td class="listr" width="60%"></td>
+                        </td>
+					<td class="listr" width="60%">
+						<?=$ca['caexpire'];?>
+					</td>
 					<td><a href="
 <?php
 				 if ($ca['existing'] == "yes")

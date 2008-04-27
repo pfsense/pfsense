@@ -111,7 +111,7 @@ if ($_POST) {
 		fwrite($fd, "setenv KEY_CITY \"$cityname\" \n");
 		fwrite($fd, "setenv KEY_ORG \"$orginizationname\" \n");
 		fwrite($fd, "setenv KEY_EMAIL \"$email\" \n");
-		fwrite($fd, "setenv CA_OK $ovpncapath/$caname/finished_ok\n");
+		fwrite($fd, "setenv CA_OK \"$ovpncapath/$caname/finished_ok\" \n");
 		fwrite($fd, "\n\n");
 		fclose($fd);
 

@@ -71,9 +71,9 @@ if ($_POST) {
   	$orginizationname=$_POST['orginizationname'];
   	$email = $_POST['email'];
 	$authmode = $_POST['auth_method'];
+	$caname = $_POST['caname'];
 
-	if ($_POST['caname']) {
-		$caname = $_POST['caname'];
+	if ($caname) {
 
 		/* XXX: do more input validation */
 
@@ -193,7 +193,7 @@ function edit_mode() {
 ?>
 	</td></tr>
 <?php
-      if ($_POST && $caname && $authmode == 'pki') { 
+      if ($_POST && $caname) { 
 ?>
 <tr><td>
         <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">

@@ -89,11 +89,6 @@ if ($_POST) {
         chown("$ovpncapath/$caname/ca.crt", 'nobody');
         chgrp("$ovpncapath/$caname/ca.crt", 'nobody');
         
-	$ovpnkeys[$caname]['shared.key'] = $sharedkey;
-	file_put_contents("$ovpncapath/$caname/shared.key", base64_decode($_POST['shared.key']));
-        chown("$ovpncapath/$caname/shared.key", 'nobody');
-        chgrp("$ovpncapath/$caname/shared.key", 'nobody');
-        
 	$ovpnkeys[$caname]['server.key'] = $serverkey;
 	file_put_contents("$ovpncapath/$caname/server.key", base64_decode($_POST['server.key']));
         chown("$ovpncapath/$caname/server.key", 'nobody');
@@ -159,22 +154,6 @@ function onAuthMethodChanged() {
                       <td width="35%"  class="vncell"><B>Certificate name</td>
                       <td width="78%" class="vtable">
                         <input name="caname"  value="<?=$caname?>">
-			</td>
-                    </tr>
-                   <tr>
-                      <td width="35%"  class="vncell"><B>AUTH method</td>
-                      <td width="78%" class="vtable">
-			<select name="auth_method"  onClick=onAuthMethodChanged();>
-				<option value="shared_key" >Shared Key</option>
-				<option value="pki" >PKI (Public Key Infrastructure)</option>
-			</select>
-			</td>
-                    </tr>
-                   <tr>
-                      <td width="35%"  class="vncell"><B>Shared key</td>
-                      <td width="78%" class="vtable">
-                        <textarea name="shared.key" rows="8" cols="40" ><?=$sharedkey;?></textarea>
-			<br/><span class="gray">Paste your shared key here.</span>
 			</td>
                     </tr>
 		<tr>

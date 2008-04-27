@@ -30,6 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+require("globals.inc");
 require("guiconfig.inc");
 
 $pgtitle = array("VPN", "OpenVPN", "Create Certs");
@@ -100,16 +101,16 @@ if ($_POST) {
 		fwrite($fd, "setenv OPENSSL \"`which openssl`\"\n");
 		fwrite($fd, "setenv PKCS11TOOL \"pkcs11-tool\" \n");
 		fwrite($fd, "setenv GREP \"grep\" \n");
-		fwrite($fd, "setenv KEY_CONFIG `$ovpncapath/whichopensslcnf $ovpncapath` \n");
+		fwrite($fd, "setenv KEY_CONFIG \"`$ovpncapath/whichopensslcnf $ovpncapath`\" \n");
 		fwrite($fd, "setenv KEY_DIR \"$ovpncapath/$caname\" \n");
-		fwrite($fd, "setenv KEY_SIZE $cakeysize \n");
-		fwrite($fd, "setenv CA_EXPIRE $caexpire \n");
-		fwrite($fd, "setenv KEY_EXPIRE $cakeyexpire \n");
-		fwrite($fd, "setenv KEY_COUNTRY $countrycode \n");
-		fwrite($fd, "setenv KEY_PROVINCE $stateorprovince \n");
-		fwrite($fd, "setenv KEY_CITY $cityname \n");
-		fwrite($fd, "setenv KEY_ORG $orginizationname \n");
-		fwrite($fd, "setenv KEY_EMAIL $email \n");
+		fwrite($fd, "setenv KEY_SIZE \"$cakeysize\" \n");
+		fwrite($fd, "setenv CA_EXPIRE \"$caexpire\" \n");
+		fwrite($fd, "setenv KEY_EXPIRE \"$cakeyexpire\" \n");
+		fwrite($fd, "setenv KEY_COUNTRY \"$countrycode\" \n");
+		fwrite($fd, "setenv KEY_PROVINCE \"$stateorprovince\" \n");
+		fwrite($fd, "setenv KEY_CITY \"$cityname\" \n");
+		fwrite($fd, "setenv KEY_ORG \"$orginizationname\" \n");
+		fwrite($fd, "setenv KEY_EMAIL \"$email\" \n");
 		fwrite($fd, "setenv CA_OK $ovpncapath/$caname/finished_ok\n");
 		fwrite($fd, "\n\n");
 		fclose($fd);

@@ -461,6 +461,10 @@ function captiveportal_prune_old() {
         $timedout = false;
         $term_cause = 1;
 
+		/* no pruning for fixed mac address entry */
+		if (portal_mac_fixed($cpdb[$i][3])) {
+			continue; // check next value
+		}
         /* hard timeout? */
         if ($timeout) {
             if ((time() - $cpdb[$i][0]) >= $timeout) {
@@ -1093,6 +1097,27 @@ function getNasIP()
     if(!$nasIp)
         $nasIp = "0.0.0.0";
     return $nasIp;
+}
+
+function portal_mac_fixed($clientmac) {
+	global $g ;
+
+	/* open captive portal mac db */
+	if (file_exists("{$g['vardb_path']}/captiveportal_mac.db")) {
+		$fd = @fopen("{$g['vardb_path']}/captiveportal_mac.db","r") ;
+		if (!$fd) {
+			return FALSE;
+		}
+		while (!feof($fd)) {
+			$mac = trim(fgets($fd)) ;
+			if(strcasecmp($clientmac, $mac) == 0) {
+				fclose($fd) ;
+				return TRUE ;
+			}
+		}
+		fclose($fd) ;
+	}
+	return FALSE ;
 }
 
 ?>

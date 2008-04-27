@@ -123,22 +123,22 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 	if (!empty($post['dhcp_dns'])) {
     $servers = explode(';', $post['dhcp_dns']);
       foreach ($servers as $server) if (!is_ipaddr($server))
-        {$input_errors[] = 'The field \'DHCP-Opt.: DNS-Server\' must contain a valid IP address and no whitespaces.';
+        {$input_errors[] = 'The field \'DHCP Option: DNS Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_wins'])) {
     $servers = explode(';', $post['dhcp_wins']);
       foreach ($servers as $server) if (!is_ipaddr($server))
-        {$input_errors[] = 'The field \'DHCP-Opt.: WINS-Server\' must contain a valid IP address and no whitespaces.';
+        {$input_errors[] = 'The field \'DHCP Option: WINS Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_nbdd'])) {
     $servers = explode(';', $post['dhcp_nbdd']);
       foreach ($servers as $server) if (!is_ipaddr($server))
-        {$input_errors[] = 'The field \'DHCP-Opt.: NBDD-Server\' must contain a valid IP address and no whitespaces.';
+        {$input_errors[] = 'The field \'DHCP Option: NBDD Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_ntp'])) {
     $servers = explode(';', $post['dhcp_ntp']);
       foreach ($servers as $server) if (!is_ipaddr($server))
-        {$input_errors[] = 'The field \'DHCP-Opt.: NTP-Server\' must contain a valid IP address and no whitespaces.';
+        {$input_errors[] = 'The field \'DHCP Option: NTP Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (isset($post['maxclients']) && $post['maxclients'] != "") {
 		if (!is_numeric($post['maxclients']))
@@ -247,21 +247,21 @@ function openvpn_validate_input_csc($post, $input_errors) {
 
 	if ($post['push_reset'] != 'on') {
     if (!empty($post['dhcp_domainname']))
-        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
+        $input_errors[] = 'It makes no sense to unselect push reset and configure DHCP options';
     elseif (!empty($post['dhcp_dns']))
-        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
+        $input_errors[] = 'It makes no sense to unselect push reset and configure DHCP options';
     elseif (!empty($post['dhcp_wins']))
-        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
+        $input_errors[] = 'It makes no sense to unselect push reset and configure DHCP options';
     elseif (!empty($post['dhcp_nbdd']))
-        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
+        $input_errors[] = 'It makes no sense to unselect push reset and configure DHCP options';
     elseif (!empty($post['dhcp_ntp']))
-        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
+        $input_errors[] = 'It makes no sense to unselect push reset and configure DHCP options';
     elseif ($post['dhcp_nbttype'])
-        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
+        $input_errors[] = 'It makes no sense to unselect push reset and configure DHCP options';
     elseif (!empty($post['dhcp_nbtscope']))
-        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
+        $input_errors[] = 'It makes no sense to unselect push reset and configure DHCP options';
     elseif ($post['dhcp_nbtdisable'])
-        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
+        $input_errors[] = 'It makes no sense to unselect push reset and configure DHCP options';
 
   }
   else {
@@ -269,22 +269,22 @@ function openvpn_validate_input_csc($post, $input_errors) {
 	if (!empty($post['dhcp_dns'])) {
     $servers = explode(';', $post['dhcp_dns']);
       foreach ($servers as $server) if (!is_ipaddr($server))
-        {$input_errors[] = 'The field \'DHCP-Opt.: DNS-Server\' must contain a valid IP address and no whitespaces.';
+        {$input_errors[] = 'The field \'DHCP Option: DNS Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_wins'])) {
     $servers = explode(';', $post['dhcp_wins']);
       foreach ($servers as $server) if (!is_ipaddr($server))
-        {$input_errors[] = 'The field \'DHCP-Opt.: WINS-Server\' must contain a valid IP address and no whitespaces.';
+        {$input_errors[] = 'The field \'DHCP Option: WINS Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_nbdd'])) {
     $servers = explode(';', $post['dhcp_nbdd']);
       foreach ($servers as $server) if (!is_ipaddr($server))
-        {$input_errors[] = 'The field \'DHCP-Opt.: NBDD-Server\' must contain a valid IP address and no whitespaces.';
+        {$input_errors[] = 'The field \'DHCP Option: NBDD Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_ntp'])) {
     $servers = explode(';', $post['dhcp_ntp']);
       foreach ($servers as $server) if (!is_ipaddr($server))
-        {$input_errors[] = 'The field \'DHCP-Opt.: NTP-Server\' must contain a valid IP address and no whitespaces.';
+        {$input_errors[] = 'The field \'DHCP Option: NTP Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 
 }}

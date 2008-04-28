@@ -294,7 +294,7 @@ function openvpn_server_create_cert($mode, $id) {
 		return;
 	global $g, $config;
 	$settings = $config['installedpackages']["openvpn$mode"]['config'][$id];
-	log_error("Creating server certificate for {$settings['description']} created.");
+	log_error("Creating server certificate for {$settings['description']}.");
 	$cakeysize = $settings['keysize'];
 	$caname = $settings['cipherpki'];
 	$ovpncapath = $g['varetc_path']."/openvpn/certificates";	
@@ -306,11 +306,11 @@ function openvpn_server_create_cert($mode, $id) {
 	fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
 	fclose($fd);
 	mwexec("/bin/tcsh $ovpncapath/RUNME_2ND");
-	log_error("Server certificate for {$settings['description']} created.");
 	$config['installedpackages']["openvpn$mode"]['config'][$id]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
 	$config['installedpackages']["openvpn$mode"]['config'][$id]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");
 	$config['installedpackages']["openvpn$mode"]['config'][$id]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
 	write_config();	
+	log_error("Server certificate for {$settings['description']} created.");
 }
 
 // Rewrite the settings

@@ -312,6 +312,7 @@ function openvpn_server_create_cert($mode, $id) {
 	fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
 	fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
 	fclose($fd);
+	system("/bin/chmod a+rx $ovpncapath/RUNME_2ND");
 	mwexec("/bin/tcsh $ovpncapath/RUNME_2ND");
 	$config['installedpackages']["openvpn$mode"]['config'][$id]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
 	$config['installedpackages']["openvpn$mode"]['config'][$id]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");

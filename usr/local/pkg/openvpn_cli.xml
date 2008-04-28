@@ -230,6 +230,9 @@
 			<type>input</type>
 		</field>
 	</fields>
+	<custom_delete_php_command>
+		openvpn_delete('client', $id);
+	</custom_delete_php_command>	
 	<custom_php_command_before_form>
 		openvpn_get_ciphers(&amp;$pkg);
 	</custom_php_command_before_form>

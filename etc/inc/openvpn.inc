@@ -304,7 +304,7 @@ function openvpn_server_create_cert($mode, $id) {
 	log_error("Creating server certificate for {$settings['description']}.");
 	$caname = $settings['cipherpki'];	
 	foreach($config['openvpn']['keys'] as $ca) {
-		if($ca == $caname)
+		if($ca['descr'] == $caname)
 			$cakeysize = $ca['keysize'];
 	}	
 	$ovpncapath = $g['varetc_path']."/openvpn/certificates";	

@@ -509,7 +509,7 @@ EOD;
 		$openvpn_conf .= "route $ip $mask\n";
 	}
 
-		
+		$caname = $settings['cipherpki'];
 
         // Write the settings for the keys
         // Set the keys up
@@ -519,8 +519,8 @@ EOD;
                 $keys[] = array('field' => 'shared.key', 'ext'  => 'secret', 'directive' => 'secret');
         else {
                 $keys[] = array('field' => 'ca.crt', 'directive' => 'ca');
-                $keys[] = array('field' => "{$mode}.crt", 'directive' => 'cert');
-                $keys[] = array('field' => "{$mode}.key", 'directive' => 'key');
+                $keys[] = array('field' => "{$caname}.crt", 'directive' => 'cert');
+                $keys[] = array('field' => "{$caname}.key", 'directive' => 'key');
                 if ($mode == 'server')
                         $keys[] = array('field' => 'dh_params.dh', 'directive' => 'dh');
                 if ($settings['crl'])

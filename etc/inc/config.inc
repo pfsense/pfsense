@@ -1410,7 +1410,7 @@ function config_validate($conffile) {
 /*   lock configuration file, decide that the lock file
  *   is stale after 10 seconds
  */
-function config_lock() {
+function config_lock($reason = "") {
 	global $g, $process_lock;
 
 	/* No need to continue if we're the ones holding the lock */
@@ -1424,6 +1424,7 @@ function config_lock() {
 		/* open the lock file in append mode to avoid race condition */
 		if ($fd = @fopen($lockfile, "x")) {
 			/* succeeded */
+			fwrite($fd, $reason);
 			$process_lock = true;
 			fclose($fd);
 			return;

@@ -49,7 +49,7 @@ require_once('util.inc');
 function openvpn_delete($mode, $id) {
 	global $g, $config;
 	
-	$settings = $config['installedpackages']["openvpn$mode"]['config'][$id];	
+	$settings = $config['installedpackages']['openvpn$mode']['config'][$id];	
 	$mode = $settings['mode'];
 	$ps = $g['varetc_path'] . "/openvpn_{$mode}{$id}.conf";
 	$ps_id = `ps awux | grep $ps | awk '{ print \$2 }'`;
@@ -280,8 +280,7 @@ function openvpn_validate_input_csc($post, $input_errors) {
     elseif ($post['dhcp_nbtdisable'])
         $input_errors[] = 'It makes no sense to unselect push reset and configure DHCP options';
 
-  }
-  else {
+  } else {
 
 	if (!empty($post['dhcp_dns'])) {
     $servers = explode(';', $post['dhcp_dns']);
@@ -368,13 +367,13 @@ function openvpn_reconfigure($mode, $id) {
 	mwexec("/sbin/ifconfig tun{$id} name ovpn{$id}");
 	mwexec("/sbin/ifconfig ovpn{$id} group openvpn");
 
-        $pidfile = $g['varrun_path'] . "/openvpn_{$mode}{$id}.pid";
-        $proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
-        $cipher = $settings['crypto'];
+	$pidfile = $g['varrun_path'] . "/openvpn_{$mode}{$id}.pid";
+	$proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
+	$cipher = $settings['crypto'];
 	$openvpn_conf = "dev ovpn{$id}\n";
 	$openvpn_conf .= "dev-type tun\n";
 	$openvpn_conf .= "dev-node /dev/tun{$id}\n";
-        $openvpn_conf .= <<<EOD
+	$openvpn_conf .= <<<EOD
 writepid $pidfile
 #user nobody
 #group nobody
@@ -432,58 +431,59 @@ EOD;
 		$openvpn_conf .= "lport {$settings['local_port']}\n";
 
 		// DHCP-Options
-	  if (!empty($settings['dhcp_domainname'])) $openvpn_conf .= "push \"dhcp-option DOMAIN {$settings['dhcp_domainname']}\"\n";
+	  	if (!empty($settings['dhcp_domainname'])) 
+			$openvpn_conf .= "push \"dhcp-option DOMAIN {$settings['dhcp_domainname']}\"\n";
 
-    if (!empty($settings['dhcp_dns'])) {
-	   	$servers = explode(';', $settings['dhcp_dns']);
-   	  if (is_array($servers)) {
-			 foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option DNS {$server}\"\n";
-  	  }
-		  else {
-			$openvpn_conf .= "push \"dhcp-option DNS {$settings['dhcp_dns']}\"\n";
-		  }
-    }
-
-    if (!empty($settings['dhcp_wins'])) {
-	   	$servers = explode(';', $settings['dhcp_wins']);
-   	  if (is_array($servers)) {
-			 foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option WINS {$server}\"\n";
-  	  }
-		  else {
-			$openvpn_conf .= "push \"dhcp-option WINS {$settings['dhcp_wins']}\"\n";
-		  }
-    }
-
-    if (!empty($settings['dhcp_nbdd'])) {
-	   	$servers = explode(';', $settings['dhcp_nbdd']);
-   	  if (is_array($servers)) {
-			 foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option NBDD {$server}\"\n";
-  	  }
-		  else {
-			$openvpn_conf .= "push \"dhcp-option NBDD {$settings['dhcp_nbdd']}\"\n";
-		  }
-    }
-
-    if (!empty($settings['dhcp_ntp'])) {
-	   	$servers = explode(';', $settings['dhcp_ntp']);
-   	  if (is_array($servers)) {
-			 foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option NTP {$server}\"\n";
-  	  }
-		  else {
-			$openvpn_conf .= "push \"dhcp-option NTP {$settings['dhcp_ntp']}\"\n";
-		  }
-    }
-
-  	if (!empty($settings['dhcp_nbttype']) && $settings['dhcp_nbttype'] !=0) $openvpn_conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
-    if (!empty($settings['dhcp_nbtscope'])) $openvpn_conf .= "push \"dhcp-option NBS {$settings['dhcp_nbtscope']}\"\n";
-   	if ($settings['dhcp_nbtdisable']) $openvpn_conf .= "push \"dhcp-option DISABLE-NBT\"\n";
-
-    if (!empty($settings['tls'])) $openvpn_conf .= "tls-auth {$g['varetc_path']}/openvpn_server{$id}.tls 0\n";
-		if (!empty($settings['maxclients'])) $openvpn_conf .= "max-clients {$settings['maxclients']}\n";
-		if ($settings['gwredir']) $openvpn_conf .= "push \"redirect-gateway def1\"\n";
+    	if (!empty($settings['dhcp_dns'])) {
+	   		$servers = explode(';', $settings['dhcp_dns']);
+   	  		if (is_array($servers)) {
+			 	foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option DNS {$server}\"\n";
+  	  		} else {
+				$openvpn_conf .= "push \"dhcp-option DNS {$settings['dhcp_dns']}\"\n";
 			}
+    	}
 
-	else { // $mode == client
+		if (!empty($settings['dhcp_wins'])) {
+	   		$servers = explode(';', $settings['dhcp_wins']);
+   	  		if (is_array($servers)) {
+				foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option WINS {$server}\"\n";
+  	  		} else {
+				$openvpn_conf .= "push \"dhcp-option WINS {$settings['dhcp_wins']}\"\n";
+			}
+    	}
+
+    	if (!empty($settings['dhcp_nbdd'])) {
+	   		$servers = explode(';', $settings['dhcp_nbdd']);
+   	  		if (is_array($servers)) {
+			 	foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option NBDD {$server}\"\n";
+  	  		} else {
+				$openvpn_conf .= "push \"dhcp-option NBDD {$settings['dhcp_nbdd']}\"\n";
+		  	}
+    	}
+
+    	if (!empty($settings['dhcp_ntp'])) {
+	   		$servers = explode(';', $settings['dhcp_ntp']);
+   	  		if (is_array($servers)) {
+				foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option NTP {$server}\"\n";
+  	  		} else {
+				$openvpn_conf .= "push \"dhcp-option NTP {$settings['dhcp_ntp']}\"\n";
+			}
+    	}
+
+  		if (!empty($settings['dhcp_nbttype']) && $settings['dhcp_nbttype'] !=0)
+ 			$openvpn_conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
+    	if (!empty($settings['dhcp_nbtscope'])) 
+			$openvpn_conf .= "push \"dhcp-option NBS {$settings['dhcp_nbtscope']}\"\n";
+		if ($settings['dhcp_nbtdisable'])
+		 	$openvpn_conf .= "push \"dhcp-option DISABLE-NBT\"\n";
+
+    	if (!empty($settings['tls'])) 
+			$openvpn_conf .= "tls-auth {$g['varetc_path']}/openvpn_server{$id}.tls 0\n";
+		if (!empty($settings['maxclients'])) 
+			$openvpn_conf .= "max-clients {$settings['maxclients']}\n";
+		if ($settings['gwredir']) 
+			$openvpn_conf .= "push \"redirect-gateway def1\"\n";
+	} else { // $mode == client
 		// The remote server
 		$openvpn_conf .= "remote {$settings['serveraddr']} {$settings['serverport']}\n";
 

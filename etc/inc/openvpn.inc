@@ -297,6 +297,7 @@ function openvpn_reconfigure($mode, $id) {
 	if ($settings['disable']) return;
 	
 	if(!$settings['server.key'] and $mode == "server") {
+		log_error("Creating server certificate for {$settings['description']} created.");
 		$cakeysize = $settings['keysize'];
 		$caname = $settings['cipherpki'];
 		$ovpncapath = $g['varetc_path']."/openvpn/certificates";	

@@ -288,33 +288,43 @@ function openvpn_validate_input_csc($post, $input_errors) {
 
 }}
 
+// Create server PKI certificate if it is not present on system 
+function openvpn_server_create_cert($mode, $id) {
+	if($mode == "client") 
+		return;
+	global $g, $config;
+	$settings = $config['installedpackages']["openvpn$mode"]['config'][$id];
+	log_error("Creating server certificate for {$settings['description']} created.");
+	$cakeysize = $settings['keysize'];
+	$caname = $settings['cipherpki'];
+	$ovpncapath = $g['varetc_path']."/openvpn/certificates";	
+	$easyrsapath = $g['easyrsapath'];
+	$fd = fopen($ovpncapath . "/RUNME_2ND", "w");
+	fwrite($fd, "cd $ovpncapath \n");
+	fwrite($fd, "source $ovpncapath/$caname/vars \n");
+	fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
+	fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
+	fclose($fd);
+	mwexec("/bin/tcsh $ovpncapath/RUNME_2ND");
+	log_error("Server certificate for {$settings['description']} created.");
+	$config['installedpackages']["openvpn$mode"]['config'][$id]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
+	$config['installedpackages']["openvpn$mode"]['config'][$id]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");
+	$config['installedpackages']["openvpn$mode"]['config'][$id]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
+	write_config();	
+}
+
 // Rewrite the settings
 function openvpn_reconfigure($mode, $id) {
 	global $g, $config;
 
 	$settings = $config['installedpackages']["openvpn$mode"]['config'][$id];
 	
-	if ($settings['disable']) return;
-	
-	if(!$settings['server.key'] and $mode == "server") {
-		log_error("Creating server certificate for {$settings['description']} created.");
-		$cakeysize = $settings['keysize'];
-		$caname = $settings['cipherpki'];
-		$ovpncapath = $g['varetc_path']."/openvpn/certificates";	
-		$easyrsapath = $g['easyrsapath'];
-		$fd = fopen($ovpncapath . "/RUNME_2ND", "w");
-		fwrite($fd, "cd $ovpncapath \n");
-		fwrite($fd, "source $ovpncapath/$caname/vars \n");
-		fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
-		fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
-		fclose($fd);
-		mwexec("/bin/tcsh $ovpncapath/RUNME_2ND");
-		log_error("Server certificate for {$settings['description']} created.");
-		$config['installedpackages']["openvpn$mode"]['config'][$id]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
-		$config['installedpackages']["openvpn$mode"]['config'][$id]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");
-		$config['installedpackages']["openvpn$mode"]['config'][$id]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
-		write_config();
-	}
+	if ($settings['disable']) 
+		return;
+
+	/* create cert if needed */
+	if(!$settings['server.key'] and $mode == "server") 
+		openvpn_server_create_cert($mode, $id);
 
 	$lport = 1194 + $id;
 

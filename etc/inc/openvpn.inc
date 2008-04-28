@@ -516,10 +516,10 @@ EOD;
         if ($settings['auth_method'] == 'shared_key')
                 $keys[] = array('field' => 'shared.key', 'ext'  => 'secret', 'directive' => 'secret');
         else {
-				$serveruniq =  $interface . $settings['local_port'] . $settings['protocol'];
 				$interface = $settings['interface'];
 				if(!$interface) 
 					$interface = "WAN";				
+				$serveruniq =  $interface . $settings['local_port'] . $settings['protocol'];
                 $keys[] = array('field' => 'ca.crt', 'directive' => 'ca');
                 $keys[] = array('field' => "{$serveruniq}.crt", 'directive' => 'cert');
                 $keys[] = array('field' => "{$serveruniq}.key", 'directive' => 'key');

@@ -516,10 +516,10 @@ EOD;
         if ($settings['auth_method'] == 'shared_key')
                 $keys[] = array('field' => 'shared.key', 'ext'  => 'secret', 'directive' => 'secret');
         else {
-				$caname = $settings['cipherpki'];
+				$serveruniq =  $interface . $settings['local_port'] . $settings['protocol'];
                 $keys[] = array('field' => 'ca.crt', 'directive' => 'ca');
-                $keys[] = array('field' => "{$caname}.crt", 'directive' => 'cert');
-                $keys[] = array('field' => "{$caname}.key", 'directive' => 'key');
+                $keys[] = array('field' => "{$serveruniq}.crt", 'directive' => 'cert');
+                $keys[] = array('field' => "{$serveruniq}.key", 'directive' => 'key');
                 if ($mode == 'server')
                         $keys[] = array('field' => 'dh_params.dh', 'directive' => 'dh');
                 if ($settings['crl'])

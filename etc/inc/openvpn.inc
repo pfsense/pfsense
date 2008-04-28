@@ -49,7 +49,7 @@ require_once('util.inc');
 function openvpn_delete($id) {
 	global $g, $config;
 	$ps = $g['varetc_path'] . "/openvpn_{$mode}{$id}.conf";
-	$ps_id = `ps awux | grep $ps | awk '{ print $2 }'`;
+	$ps_id = `ps awux | grep $ps | awk '{ print \$2 }'`;
 	killbypid($ps_id);
 }
 

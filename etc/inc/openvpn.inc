@@ -302,8 +302,11 @@ function openvpn_server_create_cert($mode, $id) {
 	global $g, $config;
 	$settings = $config['installedpackages']["openvpn$mode"]['config'][$id];
 	log_error("Creating server certificate for {$settings['description']}.");
-	$cakeysize = $settings['keysize'];
-	$caname = $settings['cipherpki'];
+	$caname = $settings['cipherpki'];	
+	foreach($config['openvpn']['keys'] as $ca) {
+		if($ca == $caname)
+			$cakeysize = $ca['keysize'];
+	}	
 	$ovpncapath = $g['varetc_path']."/openvpn/certificates";	
 	$easyrsapath = $g['easyrsapath'];
 	config_lock();
@@ -311,7 +314,7 @@ function openvpn_server_create_cert($mode, $id) {
 	fwrite($fd, "#!/bin/tcsh\n");
 	fwrite($fd, "cd $ovpncapath \n");
 	fwrite($fd, "source $ovpncapath/$caname/vars \n");
-	fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
+	fwrite($fd, "$easyrsapath/pkitool --batch --server {$caname} \n");
 	fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh $cakeysize \n");
 	fclose($fd);
 	system("/bin/chmod a+rx $ovpncapath/RUNME_2ND");

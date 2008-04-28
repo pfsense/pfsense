@@ -509,8 +509,6 @@ EOD;
 		$openvpn_conf .= "route $ip $mask\n";
 	}
 
-		$caname = $settings['cipherpki'];
-
         // Write the settings for the keys
         // Set the keys up
         $base_file = $g['varetc_path'] . "/openvpn/certificates/";
@@ -518,6 +516,7 @@ EOD;
         if ($settings['auth_method'] == 'shared_key')
                 $keys[] = array('field' => 'shared.key', 'ext'  => 'secret', 'directive' => 'secret');
         else {
+				$caname = $settings['cipherpki'];
                 $keys[] = array('field' => 'ca.crt', 'directive' => 'ca');
                 $keys[] = array('field' => "{$caname}.crt", 'directive' => 'cert');
                 $keys[] = array('field' => "{$caname}.key", 'directive' => 'key');

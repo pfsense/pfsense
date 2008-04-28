@@ -83,16 +83,18 @@ if ($_POST) {
 		conf_mount_rw();
 		if (!is_dir($g['varetc_path']."/openvpn"))
 			safe_mkdir($g['varetc_path']."/openvpn");
+
 		if (!is_dir($ovpncapath)) 
 			safe_mkdir($ovpncapath);
 		else
 		    mwexec("rm -rf $ovpncapath/$caname");
-		safe_mkdir("$ovpncapath/$caname", 0755);
 
+		safe_mkdir("$ovpncapath/$caname", 0755);
 		mwexec("cp -r $easyrsapath ".$g['varetc_path']."/openvpn/");
-		if (!is_dir($ovpncapath)) {
-			$input_errors[] = "Failed to create environment for creating certificates. ";
-			header("Location: vpn_openvpn_certs.php");
+		
+		if (!is_dir("$ovpncapath/$caname")) {
+			$input_errors[] = "Failed to create $ovpncapath/$caname environment certificate environment.";
+			Header("Location: vpn_openvpn_certs_create.php");
 		}
 
 		$fd = fopen($ovpncapath . "/$caname/vars", "w");
@@ -163,8 +165,6 @@ if ($_POST) {
 
 <?php include("fbegin.inc"); ?>
 
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-
 	<form action="vpn_openvpn_certs_create.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
@@ -199,31 +199,25 @@ if ($_POST) {
 	</table>
 <?php
 	execute_command_return_output("/bin/tcsh $ovpncapath/RUNME_FIRST", "r");
-	if (!file_exists("$ovpncapath/$caname/finished_ok")) {
-		mwexec("rm -rf $ovpncapath/$caname");
-		$input_errors = "An error occurred while creating certificates\n";
-	} else {
-		conf_mount_ro();
-		/* vars */
-		$ovpnkeys[$caname]['existing'] = "no";
-		print_r($descr);
-		$ovpnkeys[$caname]['descr'] = $descr;		
-		$ovpnkeys[$caname]['auth_method'] = "pki";
-		$ovpnkeys[$caname]['keysize'] = $cakeysize;
-		$ovpnkeys[$caname]['keyexpire'] = $cakeyexpire;
-		$ovpnkeys[$caname]['caexpire'] = $caexpire;
-		$ovpnkeys[$caname]['keycountry'] = $countrycode;
-		$ovpnkeys[$caname]['keyprovince'] = $stateorprovince;
-		$ovpnkeys[$caname]['keycity'] = $cityname;
-		$ovpnkeys[$caname]['keyorg'] = $orginizationname;
-		$ovpnkeys[$caname]['keyemail'] = $email;
-		/* ciphers */
-		$ovpnkeys[$caname]['ca.key'] = file_get_contents("$ovpncapath/$caname/ca.key");
-		$ovpnkeys[$caname]['ca.crt'] = file_get_contents("$ovpncapath/$caname/ca.crt");
-	
-		/* save it */
-		write_config();
-	}
+	conf_mount_ro();
+	/* vars */
+	$ovpnkeys[$caname]['existing'] = "no";
+	$ovpnkeys[$caname]['descr'] = $descr;		
+	$ovpnkeys[$caname]['auth_method'] = "pki";
+	$ovpnkeys[$caname]['keysize'] = $cakeysize;
+	$ovpnkeys[$caname]['keyexpire'] = $cakeyexpire;
+	$ovpnkeys[$caname]['caexpire'] = $caexpire;
+	$ovpnkeys[$caname]['keycountry'] = $countrycode;
+	$ovpnkeys[$caname]['keyprovince'] = $stateorprovince;
+	$ovpnkeys[$caname]['keycity'] = $cityname;
+	$ovpnkeys[$caname]['keyorg'] = $orginizationname;
+	$ovpnkeys[$caname]['keyemail'] = $email;
+	/* ciphers */
+	$ovpnkeys[$caname]['ca.key'] = file_get_contents("$ovpncapath/$caname/ca.key");
+	$ovpnkeys[$caname]['ca.crt'] = file_get_contents("$ovpncapath/$caname/ca.crt");
+
+	/* save it */
+	write_config();
 } else { ?>
 <tr><td>
         <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">

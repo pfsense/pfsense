@@ -3,8 +3,15 @@
 /* $Id$ */
 /*
 	$RCSfile$
+	
+	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
+	All rights reserved.
+	
 	Copyright (C) 2006  Fernando Lemos
 	All rights reserved.
+
+	This file was rewritten from scratch by Fernando Lemos but
+	*MIGHT* contain code previously written by:
 
 	Copyright (C) 2005 Peter Allgeyer <allgeyer_AT_web.de>
 	All rights reserved.

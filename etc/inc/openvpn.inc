@@ -306,6 +306,7 @@ function openvpn_server_create_cert($mode, $id) {
 	$caname = $settings['cipherpki'];
 	$ovpncapath = $g['varetc_path']."/openvpn/certificates";	
 	$easyrsapath = $g['easyrsapath'];
+	config_lock();
 	$fd = fopen($ovpncapath . "/RUNME_2ND", "w");
 	fwrite($fd, "cd $ovpncapath \n");
 	fwrite($fd, "source $ovpncapath/$caname/vars \n");
@@ -317,6 +318,7 @@ function openvpn_server_create_cert($mode, $id) {
 	$config['installedpackages']["openvpn$mode"]['config'][$id]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
 	$config['installedpackages']["openvpn$mode"]['config'][$id]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");
 	$config['installedpackages']["openvpn$mode"]['config'][$id]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
+	config_unlock();
 	write_config();	
 	log_error("Server certificate for {$settings['description']} created.");
 }

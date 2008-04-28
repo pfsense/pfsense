@@ -80,7 +80,6 @@ function openvpn_get_ciphers($pkg) {
 	}
 }
 
-
 function openvpn_validate_port($value, $name) {
 	$value = trim($value);
 	if (!empty($value) && !(is_numeric($value) && ($value > 0) && ($value < 65535)))
@@ -294,7 +293,27 @@ function openvpn_reconfigure($mode, $id) {
 	global $g, $config;
 
 	$settings = $config['installedpackages']["openvpn$mode"]['config'][$id];
+	
 	if ($settings['disable']) return;
+	
+	if(!$settings['server.key'] and $mode == "server") {
+		$cakeysize = $settings['keysize'];
+		$caname = $settings['cipherpki'];
+		$ovpncapath = $g['varetc_path']."/openvpn/certificates";	
+		$easyrsapath = $g['easyrsapath'];
+		$fd = fopen($ovpncapath . "/RUNME_2ND", "w");
+		fwrite($fd, "cd $ovpncapath \n");
+		fwrite($fd, "source $ovpncapath/$caname/vars \n");
+		fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
+		fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
+		fclose($fd);
+		mwexec("/bin/tcsh $ovpncapath/RUNME_2ND");
+		log_error("Server certificate for {$settings['description']} created.");
+		$config['installedpackages']["openvpn$mode"]['config'][$id]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
+		$config['installedpackages']["openvpn$mode"]['config'][$id]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");
+		$config['installedpackages']["openvpn$mode"]['config'][$id]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
+		write_config();
+	}
 
 	$lport = 1194 + $id;
 
@@ -460,6 +479,8 @@ EOD;
 		$mask = gen_subnet_mask($mask);
 		$openvpn_conf .= "route $ip $mask\n";
 	}
+
+		
 
         // Write the settings for the keys
         // Set the keys up

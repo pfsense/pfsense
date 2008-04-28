@@ -301,12 +301,15 @@ function openvpn_server_create_cert($mode, $id) {
 		return;
 	global $g, $config;
 	$settings = $config['installedpackages']["openvpn$mode"]['config'][$id];
-	$serveruniq = $settings['interface'] . $settings['local_port'] . $settings['protocol'];
+	$interface = $settings['interface'];
+	if(!$interface) 
+		$interface = "WAN";
+	$serveruniq =  $interface . $settings['local_port'] . $settings['protocol'];
 	log_error("Creating server certificate for {$settings['description']}.");
 	$caname = $settings['cipherpki'];	
-	foreach($config['openvpn']['keys'] as $ca) {
-		if($ca['descr'] == $caname)
-			$cakeysize = $ca['keysize'];
+	foreach($config['openvpn']['keys'] as $ca => $ca2) {
+		if($ca == $caname)
+			$cakeysize = $ca2['keysize'];
 	}	
 	$ovpncapath = $g['varetc_path']."/openvpn/certificates";	
 	$easyrsapath = $g['easyrsapath'];

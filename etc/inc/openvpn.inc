@@ -45,6 +45,14 @@ require_once('config.inc');
 require_once('pfsense-utils.inc');
 require_once('util.inc');
 
+// Shutdown running process if needed
+function openvpn_delete($id) {
+	global $g, $config;
+	$ps = $g['varetc_path'] . "/openvpn_{$mode}{$id}.conf";
+	$ps_id = `ps awux | grep $ps | awk '{ print $2 }'`;
+	killbypid($ps_id);
+}
+
 // Return the list of ciphers OpenVPN supports
 function openvpn_get_ciphers($pkg) {
 	global $config;
@@ -811,4 +819,5 @@ function openvpn_print_javascript2() {
 EOD;
 	print($javascript);
 }
+
 ?>

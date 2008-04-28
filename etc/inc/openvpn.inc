@@ -46,11 +46,12 @@ require_once('pfsense-utils.inc');
 require_once('util.inc');
 
 // Shutdown running process if needed
-function openvpn_delete($id) {
+function openvpn_delete($mode, $id) {
 	global $g, $config;
+	
 	$settings = $config['installedpackages']["openvpn$mode"]['config'][$id];	
 	$mode = $settings['mode'];
-	$ps = $g['varetc_path'] . "/openvpn_server{$id}.conf";
+	$ps = $g['varetc_path'] . "/openvpn_{$mode}{$id}.conf";
 	$ps_id = `ps awux | grep $ps | awk '{ print \$2 }'`;
 	killbypid($ps_id);
 }

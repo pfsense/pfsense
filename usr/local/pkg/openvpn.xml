@@ -285,7 +285,7 @@
 		</field>
 	</fields>
 	<custom_delete_php_command>
-		openvpn_delete($id);
+		openvpn_delete('server', $id);
 	</custom_delete_php_command>
 	<custom_php_command_before_form>
 		openvpn_get_ciphers(&amp;$pkg);

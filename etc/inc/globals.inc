@@ -63,8 +63,8 @@ $g = array(
     "xmlrpcpath" => "/pfSense/xmlrpc.php",
     "embeddedbootupslice" => "/dev/ad0a",
     "wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan)/",
-    "vlan_native_supp" => array("bfe", "dc", "fxp", "gem", "hme", "rl", "sis", "ste", "tl", "tx", "xl"),
-    "vlan_long_frame" =>  array("bfe", "bge", "dc", "em", "fxp", "gem", "hme", "ixgb", "le", "nge", "re", "rl", "sis", "sk", "ste", "ti", "tl", "tx", "txp", "vr", "xl")
+    "vlan_native_supp" => array("vge", "bfe", "dc", "fxp", "gem", "hme", "rl", "sis", "ste", "tl", "tx", "xl"),
+    "vlan_long_frame" =>  array("vge", "bfe", "bge", "dc", "em", "fxp", "gem", "hme", "ixgb", "le", "nge", "re", "rl", "sis", "sk", "ste", "ti", "tl", "tx", "txp", "vr", "xl")
 );
 
 /* IP TOS flags */

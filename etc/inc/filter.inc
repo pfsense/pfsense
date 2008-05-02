@@ -3276,17 +3276,18 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 		log_error("Beginning XMLRPC sync to {$url}:{$port}.");
 		$msg = new XML_RPC_Message($method, $params);
 		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-		$cli->setCredentials('admin', $password);
+		$username = $config['system']['user'][0]['name'];
+		$cli->setCredentials($username, $password);
 		if($numberofruns == 1)
 			$cli->setDebug(1);
 		/* send our XMLRPC message and timeout after 240 seconds */
 		$resp = $cli->send($msg, "240");
 		if(!$resp) {
-			$error = "A communications error occured while attempting XMLRPC sync with username admin {$url}:{$port}.";
+			$error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
 			log_error($error);
 			file_notice("sync_settings", $error, "Settings Sync", "");
 		} elseif($resp->faultCode()) {
-			$error = "An error code was received while attempting XMLRPC sync with username admin {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+			$error = "An error code was received while attempting XMLRPC sync with username {$username} {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 			log_error($error);
 			file_notice("sync_settings", $error, "Settings Sync", "");
 		} else {
@@ -3368,7 +3369,8 @@ function carp_sync_client() {
 			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);
 			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			    $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
-			    $cli->setCredentials('admin', $carp['password']);
+				$username = $config['system']['user'][0]['name'];
+			    $cli->setCredentials($username, $carp['password']);
 			    $cli->send($msg, "900");
 			    /* signal a carp reload */
 			    $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure');

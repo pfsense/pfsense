@@ -4,11 +4,17 @@
 # Part of the pfSense project
 # www.pfsense.com
 
+echo "rc.update_bogons.sh is starting up." | logger
+
 # Grab a random value 
 value=`od -A n -d -N2 /dev/random | awk '{print int(($1/65536)*8000)}'`
 
+echo "rc.update_bogons.sh is sleeping for $value" | logger
+
 # Sleep for that time.
 sleep $value
+
+echo "rc.update_bogons.sh is beginning the update cycle." | logger
 
 /etc/rc.conf_mount_rw
 /usr/bin/fetch -q -o /tmp/bogons "http://files.pfsense.org/bogon-bn-nonagg.txt"

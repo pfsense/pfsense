@@ -452,7 +452,7 @@ function show_netboot_config() {
 							for ($i = 32; $i > 0; $i--) {
 								if($i <> 31) {
 									echo "<option value=\"{$i}\" ";
-									if ($i == $pconfig['subnet']) echo "selected";
+									if ($i == $pconfig['netmask']) echo "selected";
 									echo ">" . $i . "</option>";
 								}
 							}

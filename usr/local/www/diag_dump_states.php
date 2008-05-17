@@ -46,7 +46,6 @@ if($_GET['action']) {
 
 /* get our states */
 if($_GET['filter']) {
-	$filter = escapeshellarg($_GET['filter']);
 	exec("/sbin/pfctl -s state | grep " . escapeshellarg($_GET['filter']), $states);
 }
 else {

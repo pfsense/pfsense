@@ -28,30 +28,33 @@
 
 require_once("guiconfig.inc");
 
-$pgtitle = array("Diagnostics","Show States");
-include("head.inc");
-
-$srcip  = escapeshellarg($_GET['srcip']);
-$dstip  = escapeshellarg($_GET['dstip']);
-$action = escapeshellarg($_GET['action']);
-$filter = escapeshellarg($_GET['filter']);
 
 /* handle AJAX operations */
 if($_GET['action']) {
-	if($action == "remove") {
-		$retval = mwexec("/sbin/pfctl -k '{$srcip}' -k '{$dstip}'");
-		echo "|{$srcip}|{$dstip}|{$retval}|";
+	if($_GET['action'] == "remove") {
+		$srcip  = $_GET['srcip'];
+		$dstip  = $_GET['dstip'];
+		if (is_ipaddr($srcip) and is_ipaddr($dstip)) {
+			$retval = mwexec("/sbin/pfctl -k '{$srcip}' -k '{$dstip}'");
+			echo "|{$srcip}|{$dstip}|{$retval}|";
+		} else {
+			echo "invalid input";
+		}
 		exit;
 	}
 }
 
 /* get our states */
 if($_GET['filter']) {
+	$filter = escapeshellarg($_GET['filter']);
 	exec("/sbin/pfctl -s state | grep " . escapeshellarg($_GET['filter']), $states);
 }
 else {
 	exec("/sbin/pfctl -s state", $states);
 }
+
+$pgtitle = array("Diagnostics","Show States");
+include("head.inc");
 
 ?>
 

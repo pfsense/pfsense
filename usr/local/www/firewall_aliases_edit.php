@@ -181,7 +181,7 @@ if ($_POST) {
 		/* item is a url type */
 		if($_POST['address'])
 			$_POST['address0'] = $_POST['address'];
-		for($x=0; $x<299; $x++) {
+		for($x=0; isset($_POST['address'. $x]); $x++) {
 			if($_POST['address' . $x]) {
 				/* fetch down and add in */
 				$isfirst = 0;

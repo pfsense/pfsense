@@ -579,6 +579,14 @@ function interfaces_carp_bring_up_final() {
 	/* could not locate an array, return */
 	if(!is_array($viparr))
 		return;
+	$havecarp = false;
+	foreach ($viparr as $vip) {
+		/* bail if this isn't a carp VIP */
+		if ($vip['mode'] == "carp")
+			$havecarp = true;
+	}		
+	if($havecarp == false) 
+		return;		
 	$carp_instances_counter = 0;
 	$counter = 0;
 	if($g['booting'])

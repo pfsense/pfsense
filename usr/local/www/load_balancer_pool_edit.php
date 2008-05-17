@@ -118,7 +118,7 @@ if ($_POST) {
 				foreach($ifdescrs as $iface) {
 					if($config['interfaces'][$iface]['ipaddr'] <> "") 
 						if($config['interfaces'][$iface]['ipaddr'] == $split_ip[0]) 
-							$input_errors[] = "{$split_ip[0]} is currently being referenced by an interface ip address on {$iface}.";
+							$input_errors[] = "{$split_ip[0]} is currently being referenced by an interface IP address on {$iface}.";
 				}
 			}
 		}
@@ -294,7 +294,7 @@ function clearcombo(){
 		</tr>
 		
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Behaviour");?></td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Behavior");?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input type="radio" name="behaviour" id="behaviour" value="balance"<?php if($pconfig['behaviour'] == 
 "balance") echo " CHECKED"; ?>><?=gettext("Load Balancing");?><br>
@@ -348,7 +348,7 @@ function clearcombo(){
 				</select>
 				<input size="16" id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>" style="float: left;">
 				</div><br><br>
-				<div id="monitorIpNote" style="float: none;">Note: Some gateways have ping capability disabled.</div>
+				<div id="monitorIpNote" style="float: none;">Note: Some gateways do not respond to pings.</div>
 			</td>
 		</tr>
 		<tr align="left">

@@ -47,6 +47,10 @@ function remove_bad_chars($string) {
 $optcfg = &$config['interfaces']['opt' . $index];
 $optcfg['descr'] = remove_bad_chars($optcfg['descr']);
 
+foreach($config['aliases']['alias'] as $alias) 
+	if($alias['name'] == $optcfg['descr']) 
+		$input_errors[] = gettext("Sorry, an alias with the name {$optcfg['descr']} already exists.");
+
 $pconfig['descr'] = $optcfg['descr'];
 $pconfig['bridge'] = $optcfg['bridge'];
 

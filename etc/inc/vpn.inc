@@ -346,6 +346,14 @@ function vpn_ipsec_configure($ipchg = false) {
 						$myident = gethostbyname($tunnel['p1']['myident']['dyn_dns']);
 					}
 
+					if (!($myidentt == "asn1dn" && $myident == "")) {
+						$myident = " \"".$myident."\"";
+					}
+
+					if (!($myidentt == "asn1dn" && $myident == "")) {
+						$myident = " \"".$myident."\"";
+					}
+
 					$nattline = '';
 					if (isset($tunnel['natt'])) {
 						$nattline = "nat_traversal on;";
@@ -415,7 +423,7 @@ EOD;
 					$racoonconf .=<<<EOD
 remote {$tunnel['remote-gateway']} \{
 	exchange_mode {$tunnel['p1']['mode']};
-	my_identifier {$myidentifier};
+	my_identifier {$myidentt}{$myident};
 	{$nattline}
 	{$certline}
 	peers_identifier address {$rgip};
@@ -529,7 +537,7 @@ EOD;
 				$racoonconf .=<<<EOD
 remote anonymous \{
 	exchange_mode {$tunnel['p1']['mode']};
-	my_identifier {$myidentt} "{$myident}";
+	my_identifier {$myidentt}{$myident};
 	{$certline}
 	initial_contact on;
 	dpd_delay 120;                   # DPD poll every 120 seconds

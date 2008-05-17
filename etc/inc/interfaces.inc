@@ -105,6 +105,9 @@ function interfaces_vlan_configure() {
 		}
 	}
 
+	/* CARP interfaces can be attached to VLAN's, too. */
+	interfaces_carp_bring_up_final();
+
 	return 0;
 }
 

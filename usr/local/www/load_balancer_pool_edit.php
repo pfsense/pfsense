@@ -289,7 +289,7 @@ function clearcombo(){
 				<input type="radio" name="behaviour" id="behaviour" value="failover"<?php if($pconfig['behaviour'] == 
 "failover") echo " CHECKED"; ?>><?=gettext("Failover");?><br>
 				Load Balancing: both active. Failover order: top -> down.<br>
-				NOTE: Failover mode only applies to outgoing rules (multi-wan).
+				NOTE: Failover mode only applies to outgoing rules (multi-WAN).
 			</td>
 		</tr>
 
@@ -337,7 +337,7 @@ function clearcombo(){
 				</select>
 				<input size="16" id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>" style="float: left;">
 				</div><br><br>
-				<div id="monitorIpNote" style="float: none;">Note: Some gateways have ping capability disabled.</div>
+				<div id="monitorIpNote" style="float: none;">Note: Some gateways do not respond to pings.</div>
 			</td>
 		</tr>
 		<tr align="left">

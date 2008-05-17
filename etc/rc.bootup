@@ -328,9 +328,6 @@
 
 	upnp_start();
 
-	if (isset($config['ipsec']['enable']) || isset($config['mobileclients']['enable'])) 
-		mwexec_bg("/usr/local/sbin/racoon_watch.sh");
-
 	mwexec_bg("/usr/sbin/update_dns_cache.sh");
 
 	/* done */

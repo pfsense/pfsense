@@ -1578,7 +1578,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			}
 
 			/* do not process reply-to for gateway'd rules */
-			if(($rule['gateway'] == "") and ($ri != "") and ($rg != "") and (stristr($rule['interface'],"opt") == true)) {
+			if(($rule['gateway'] == "") and ($ri != "") and ($rg != "")) {
 				$aline['reply'] = "reply-to (" . $ri . " " . $rg . ") ";
 			}
 

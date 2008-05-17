@@ -125,6 +125,10 @@
 		fwrite($fd, $authorizedkeys);
 		pclose($fd);
 		chmod("/root/.ssh/authorized_keys",0644);
+	} else {
+		if(file_exists("/root/.ssh/authorized_keys")) {
+			unlink("/root/.ssh/authorized_keys");
+		}
 	} 
 
 	/* mop up from a badly implemented ssh keys -> cf backup */

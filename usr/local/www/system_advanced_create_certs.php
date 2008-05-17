@@ -31,7 +31,7 @@
 
 require("guiconfig.inc");
 
-$fd = fopen("/etc/ssl/openssl.cnf", "r");
+$fd = fopen("/var/etc/ssl/openssl.cnf", "r");
 $openssl = fread($fd,8096);
 fclose($fd);
 
@@ -61,9 +61,9 @@ if ($_POST) {
     $orginizationdepartment=$_POST['orginizationdepartment'];
     $commonname=$_POST['commonname'];
 
-    /* Write out /etc/ssl/openssl.cnf */
+    /* Write out /var/etc/ssl/openssl.cnf */
     conf_mount_rw();
-    $fd = fopen("/etc/ssl/openssl.cnf", "w");
+    $fd = fopen("/var/etc/ssl/openssl.cnf", "w");
     fwrite($fd, "");
     fwrite($fd, "[ req ]\n");
     fwrite($fd, "distinguished_name=req_distinguished_name \n");
@@ -149,7 +149,7 @@ include("head.inc");
             <?php if ($savemsg) print_info_box($savemsg); ?>
 	    <p>One moment please...
 	<?php
-	    mwexec("cd /tmp/ && /usr/bin/openssl req -new -x509 -keyout cakey.pem -out cacert.pem -days 3650 -config /etc/ssl/openssl.cnf -passin pass:test -nodes");
+	    mwexec("cd /tmp/ && /usr/bin/openssl req -new -x509 -keyout cakey.pem -out cacert.pem -days 3650 -config /var/etc/ssl/openssl.cnf -passin pass:test -nodes");
 	    //mwexec("cd /tmp/ && /usr/bin/openssl req -config openssl.cnf -new -nodes > cacert.pem ");
 	    //mwexec("cd /tmp/ && /usr/bin/openssl x509 -in cert.csr -out cert.pem -req -signkey cakey.pem");
     	    $fd = fopen("/tmp/cacert.pem", "r");

@@ -1260,11 +1260,9 @@ function write_config($desc="Unknown", $backup = true) {
 	conf_mount_rw();
 
 	/* write new configuration */
-	$fd = fopen("{$g['cf_conf_path']}/config.xml", "w");
-	if (!$fd)
+	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig, false)) {
 		die("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
-	fwrite($fd, $xmlconfig);
-	fclose($fd);
+	}
 
 	if($g['platform'] == "embedded") {
 		cleanup_backupcache(5);
@@ -1281,11 +1279,7 @@ function write_config($desc="Unknown", $backup = true) {
 	$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
 
 	/* write config cache */
-	$fd = @fopen("{$g['tmp_path']}/config.cache", "wb");
-	if ($fd) {
-		fwrite($fd, serialize($config));
-		fclose($fd);
-	}
+	safe_write_file("{$g['tmp_path']}/config.cache", serialize($config), true);
 
 	/* tell kernel to sync fs data */
 	mwexec("/bin/sync");

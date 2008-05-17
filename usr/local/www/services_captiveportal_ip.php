@@ -140,14 +140,14 @@ include("head.inc");
 	  Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal.</p>
 	  <table border="0" cellspacing="0" cellpadding="0">
 		<tr>
-		  <td><span class="vexpl">any <img src="/themes/<=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>
+		  <td><span class="vexpl">any <img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>
 		  <td><span class="vexpl">All connections <strong>to</strong> the IP address are allowed</span></td>
 		</tr>
 		<tr>
 		  <td colspan="5" height="4"></td>
 		</tr>
 		<tr>
-		  <td>x.x.x.x <span class="vexpl"><img src="/themes/<=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"></span> any&nbsp;&nbsp;&nbsp; </td>
+		  <td>x.x.x.x <span class="vexpl"><img src="/themes/<?=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"></span> any&nbsp;&nbsp;&nbsp; </td>
 		  <td><span class="vexpl">All connections <strong>from</strong> the IP address are allowed </span></td>
 		</tr>
 	  </table></td>

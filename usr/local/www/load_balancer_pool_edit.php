@@ -282,7 +282,7 @@ function clearcombo(){
 		</tr>
 		
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Behaviour");?></td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Behavior");?></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input type="radio" name="behaviour" id="behaviour" value="balance"<?php if($pconfig['behaviour'] == 
 "balance") echo " CHECKED"; ?>><?=gettext("Load Balancing");?><br>

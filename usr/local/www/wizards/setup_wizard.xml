@@ -31,7 +31,7 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 </copyright>
-<totalsteps>8</totalsteps>
+<totalsteps>9</totalsteps>
 <step>
 	<id>1</id>
 	<title>pfSense Setup Wizard</title>
@@ -435,6 +435,63 @@
 </step>
 <step>
 	<id>7</id>
+	<stepbeforeformdisplay>
+	<![CDATA[
+		if(file_exists("/conf/registered_with_pfsense_org")) 
+			header("Location:wizard.php?xml=traffic_shaper_wizard.xml&stepid=8");
+	]]>	
+	</stepbeforeformdisplay>			
+	<title>Register installation</title>
+	<disableheader>true</disableheader>
+	<description>
+		Would you like to register this pfSense installation with pfSense.org?
+		&lt;p/&gt;
+		No private data will be sent, only the installations hardware profile (dmesg -a).
+		&lt;p/&gt;
+		This data will help us understand which hardware is in use and allow us to continually improve the project.
+	</description>
+	<fields>
+		<field>
+			<name>Register</name>
+			<type>checkbox</type>
+			<value>on</value>
+		</field>
+		<field>
+			<name>E-Mail</name>
+			<description>Optional</description>
+			<type>input</type>
+			<value>on</value>
+		</field>
+		<field>
+			<name>Continue</name>
+			<type>submit</type>
+		</field>
+	</fields>
+	<stepsubmitphpaction>
+	<![CDATA[
+		if($_POST['register']) {
+			$dmesg_data = urlencode(`/sbin/dmesg -a`);
+			$email = urlencode($_POST['e-mail']);
+
+			$ch = curl_init();
+
+			curl_setopt($ch, CURLOPT_URL, "http://reg.pfsense.com/reg.php");  
+			curl_setopt($ch, CURLOPT_POST, "2");
+			curl_setopt($ch, CURLOPT_POSTFIELDS, "dmesg=" . $dmesg_data . "&email=" . $email);
+
+			$result = curl_exec($ch);
+
+			curl_close($ch);
+
+			conf_mount_rw();
+			touch("/conf/registered_with_pfsense_org");
+			conf_mount_ro();
+		}
+	]]>
+	</stepsubmitphpaction>
+</step>
+<step>
+	<id>8</id>
 	<title>Reload configuration</title>
 	<disableheader>true</disableheader>
 	<description>Click 'Reload' to reload pfSense with new changes.  If you changed the password, pfSense will ask you to log in again.</description>
@@ -446,7 +503,7 @@
 	</fields>
 </step>
 <step>
-	<id>8</id>
+	<id>9</id>
 	<title>Reload in progress</title>
 	<description>A reload is now in progress.  Please wait. &lt;p&gt; The system will automatically try to access $myurl in 120 seconds. &lt;p&gt; You can click on the icon above to access the site more quickly.
 	&lt;meta http-equiv="refresh" content="60; url=$myurl" &gt;</description>

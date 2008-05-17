@@ -50,7 +50,11 @@ if (isset($id) && $a_aliases[$id]) {
 	$pconfig['detail'] = $a_aliases[$id]['detail'];
 	$pconfig['address'] = $a_aliases[$id]['address'];
 	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
-	
+
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		if($config['interfaces']['opt' . $i]['descr'] == $pconfig['descr']) 
+			$input_errors[] = "Sorry, an interface is already named {$pconfig['descr']}.";
+
 	$addresses = explode(' ', $pconfig['address']);
 	$address = explode("/", $addresses[0]);
 	if ($address[1])

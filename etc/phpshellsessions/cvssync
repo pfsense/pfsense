@@ -36,6 +36,11 @@ if(!file_exists("/usr/bin/cvs")) {
 	system("chmod a+rx /usr/bin/cvs");
 }
 
+if(!file_exists("/usr/bin/cvs") or !file_exists("/usr/local/bin/cvsup")) {
+	echo "Could not fetch cvs or cvsup.   exiting.";
+	exit;
+}
+
 global $argv;
 global $command_split;
 

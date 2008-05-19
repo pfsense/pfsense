@@ -347,11 +347,7 @@ function vpn_ipsec_configure($ipchg = false) {
 					}
 
 					if (!($myidentt == "asn1dn" && $myident == "")) {
-						$myident = " \"".$myident."\"";
-					}
-
-					if (!($myidentt == "asn1dn" && $myident == "")) {
-						$myident = " \"".$myident."\"";
+						$myident = " \"{$myident}\"";
 					}
 
 					$nattline = '';
@@ -421,7 +417,7 @@ EOD;
 					if (!empty($myident)) 
 						$myidentifier .= ' "' . $myident . '"';					
 					$racoonconf .=<<<EOD
-remote {$tunnel['remote-gateway']} \{
+remote {$tunnel['remote-gateway']} {
 	exchange_mode {$tunnel['p1']['mode']};
 	my_identifier {$myidentt}{$myident};
 	{$nattline}

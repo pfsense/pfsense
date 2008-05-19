@@ -65,6 +65,14 @@ function captiveportal_configure() {
 
 		/* make sure ipfw is loaded */
 		mwexec("/sbin/kldload ipfw");
+		
+		/* 
+		 * make sure ipfw is the first hook to make CP work correctly on
+		 * Multi-WAN.
+		 * Disable the ipfw outer hook it has not value to us.
+		 */
+		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"ipfw,pf\"");
+		mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"pf\"");    
 
 		/* stop accounting on all clients */
 		captiveportal_radius_stop_all();

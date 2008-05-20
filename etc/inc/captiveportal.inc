@@ -73,8 +73,11 @@ function captiveportal_configure() {
 		 */
 		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"ipfw,pf\"");
 
-		/* TODO: Should check that this does not break accounting. */
-		//mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"pf\"");    
+		/* 
+		 * TODO: Check if disabling ipfw hook 
+		 * does not break accounting. 
+		 */
+		mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"ipfw,pf\"");    
 
 		/* stop accounting on all clients */
 		captiveportal_radius_stop_all();

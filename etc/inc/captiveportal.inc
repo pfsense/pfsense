@@ -620,6 +620,7 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 
 	/* pfSense: ensure all pf states are killed (pfSense) */
 	mwexec("pfctl -k {$dbent[2]}");
+	mwexec("pfctl -K {$dbent[2]}");
 
 }
 

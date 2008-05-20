@@ -1671,7 +1671,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			}
 
 			/* do not process reply-to for gateway'd rules */
-			if(($rule['gateway'] == "") and (stristr($rule['interface'],"opt") == true)) {
+			if ($rule['gateway'] == "") {
 				if (is_array($config['gateways']['gateway_item'])) {
                                     foreach($config['gateways']['gateway_item'] as $gwy) {
     					if ($gwy['name'] == $config['interfaces'][$rule['interface']]['gateway']) {

@@ -1345,10 +1345,16 @@ function filter_nat_rules_generate() {
 
 		if ($pptpdcfg['mode'] == "redir") {
 
+/* 
+ * NB: ermal -- the rdr rule below is commented out now that we have a solution
+ * 		for PPTP passthrough. This unbreaks other GRE traffic passing  
+ *		through pfSense. 
+ * 		After some more testing this will be removed compeletely.
+ */ 
 		$natrules .= <<<EOD
 
 # PPTP
-rdr on \$wan proto gre from any to any -> $pptpdtarget
+#rdr on \$wan proto gre from any to any -> $pptpdtarget
 rdr on \$wan proto tcp from any to any port 1723 -> $pptpdtarget
 
 EOD;

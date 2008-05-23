@@ -4095,5 +4095,75 @@ function safe_write_file($file, $content, $force_binary) {
         return true;
 }
 
+function rule_popup($src,$srcport,$dst,$dstport){
+global $config;
+$aliases_array = array();
+if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
+{
+$span_begin = "";
+		$alias_src_span_begin = "";
+		$alias_src_span_end = "";
+		$alias_src_port_span_begin = "";
+		$alias_src_port_span_end = "";
+		$alias_dst_span_begin = "";
+		$alias_dst_span_end = "";
+		$alias_dst_port_span_begin = "";
+		$alias_dst_port_span_end = "";
+		$alias_content_text = "";
+	foreach($config['aliases']['alias'] as $alias_name) 
+	{	
+	 	$alias_addresses = explode (" ", $alias_name['address']);
+	 	$alias_details = explode ("||", $alias_name['detail']);
+	 	$alias_objects_with_details = "";
+	 	$counter = 0;
+	 	foreach($alias_addresses as $alias_ports_address)
+	 	{
+			$alias_objects_with_details .= $alias_addresses[$counter];
+			$alias_detail_default = strpos ($alias_details[$counter],"Entry added");
+			if ($alias_details[$counter] != "" && $alias_detail_default === False){
+				$alias_objects_with_details .=" - " . $alias_details[$counter];
+			}  
+			$alias_objects_with_details .= "<br>";
+			$counter++;
+		}			
+		//max character length for caption field
+		$maxlength = 60;
+		
+		$alias_descr_substr = $alias_name['descr'];
+		$alias_content_text = htmlspecialchars($alias_objects_with_details);
+		$alias_caption = htmlspecialchars($alias_descr_substr . ":");
+		$strlength = strlen ($alias_caption);
+		if ($strlength >= $maxlength) 
+			$alias_caption = substr($alias_caption, 0, $maxlength) . "...";		
+						
+		$span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>$alias_caption</h1><p>$alias_content_text</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
+		
+		
+		if ($alias_name['name'] == $src)
+	 	{										
+			$alias_src_span_begin = $span_begin;
+		}
+	 	if ($alias_name['name'] == $srcport)
+	 	{									
+			$alias_src_port_span_begin = $span_begin;					
+		}
+		if ($alias_name['name'] == $dst)
+	 	{										
+			$alias_dst_span_begin = $span_begin;									
+		}
+		if ($alias_name['name'] == $dstport)
+	 	{											
+			$alias_dst_port_span_begin = $span_begin;											
+		}										
+		
+	}
+	$descriptions = array ();
+	$descriptions['src'] = $alias_src_span_begin;
+	$descriptions['srcport'] = $alias_src_port_span_begin;
+	$descriptions['dst'] = $alias_dst_span_begin;
+	$descriptions['dstport'] = $alias_dst_port_span_begin;
+	return $descriptions; 
+  }
+}
 
 ?>

@@ -91,8 +91,8 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 	                 		<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
 	                 		 &nbsp;
 		                <? } else { ?><?=htmlspecialchars($ifinfo['status']); }?>				
-				  <?php if ($ifinfo['ipaddr']){ ?>
-	                 <div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);}?>&nbsp; 
+				  
+	                 <div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?>&nbsp; 
 	                 <?php if ($ifinfo['dhcplink']) { ?>
 						(DHCP)<br>
 					 <? } ?></div>

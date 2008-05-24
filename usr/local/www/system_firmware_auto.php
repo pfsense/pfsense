@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php
 /* $Id$ */
 /*
@@ -135,11 +134,38 @@ if($needs_system_upgrade == true)
 $downloaded_latest_tgz_sha256 = str_replace("\n", "", `sha256 /tmp/latest.tgz  | awk '{ print $4 }'`);
 $upgrade_latest_tgz_sha256 = str_replace("\n", "", `cat /tmp/latest.tgz.sha256 | awk '{ print $4 }'`);
 
+$sigchk = 0;
+
+if(!isset($curcfg['alturl']['enable']))
+	$sigchk = verify_digital_signature("/tmp/latest.tgz");
+
+if ($sigchk == 1)
+	$sig_warning = "The digital signature on this image is invalid.";
+else if ($sigchk == 2)
+	$sig_warning = "This image is not digitally signed.";
+else if (($sigchk == 3) || ($sigchk == 4))
+	$sig_warning = "There has been an error verifying the signature on this image.";
+
+if (!verify_gzip_file("/tmp/latest.tgz")) {
+	update_status("The image file is corrupt.");
+	update_output_window("Update cannot continue");
+	unlink("{$g['upload_path']}/latest.tgz");
+	require("fend.inc");
+	exit;
+}
+
+if ($sigchk) {
+	update_status($sig_warning);
+	update_output_window("Update cannot continue");
+	unlink("{$g['upload_path']}/latest.tgz");
+	require("fend.inc");
+	exit;
+}
+
 if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 	update_status("Downloading complete but sha256 does not match.");
 	update_output_window("Auto upgrade aborted.  \n\nDownloaded SHA256: $downloaded_latest_tgz_sha256 \n\nNeeded SHA256: $upgrade_latest_tgz_sha256");	
 } else {
-	update_status("Downloading complete.");
 	update_output_window("{$g['product_name']} is now upgrading.\\n\\nThe firewall will reboot once the operation is completed.");
 	echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
 	exec_rc_script_async("{$external_upgrade_helper_text}");

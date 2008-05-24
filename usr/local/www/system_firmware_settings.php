@@ -49,8 +49,13 @@ $curcfg = $config['system']['firmware'];
 $pgtitle = array("System","Firmware","Settings");
 include("head.inc");
 
-?>
+exec("fetch -q -o /tmp/manifest \"{$g['update_manifest']}\"");
+if(file_exists("/tmp/manifest")) {
+	$preset_urls_split = split("\n", file_get_contents("/tmp/manifest"));
+}
 
+?>
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <script language="JavaScript">
 <!--
 
@@ -88,7 +93,22 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td colspan="2" valign="top" class="listtopic">Firmware Branch</td>
 	</tr>
-
+<?php if(is_array($preset_urls_split)): ?>
+	<tr>
+		<td valign="top" class="vncell">Default Auto Update URLs</td>
+		<td class="vtable">
+			<select name='preseturls' id='preseturls' onChange="firmwareurl.value = preseturls.value; document.iform.firmwareurl.disabled = 0; alturlenable.checked=true;">
+					<option></option>
+				<?php 
+					foreach($preset_urls_split as $pus) {
+						$pus_text = split("\t", $pus);
+						echo "<option value='{$pus_text[1]}'>{$pus_text[0]}</option>";
+					}
+				?>
+			</select>
+		</td>
+	</tr>
+<?php endif; ?>
 	<tr>
 		<td valign="top" class="vncell">Firmware Auto Update URL</td>
 		<td class="vtable">

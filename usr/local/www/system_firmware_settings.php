@@ -102,7 +102,8 @@ function enable_altfirmwareurl(enable_over) {
 				<?php 
 					foreach($preset_urls_split as $pus) {
 						$pus_text = split("\t", $pus);
-						echo "<option value='{$pus_text[1]}'>{$pus_text[0]}</option>";
+						if($pus_text[0])
+							echo "<option value='{$pus_text[1]}'>{$pus_text[0]}</option>";
 					}
 				?>
 			</select>

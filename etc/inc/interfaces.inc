@@ -1695,6 +1695,10 @@ function get_current_wan_address($interface = "wan") {
 	$wancfg = $config['interfaces'][$interface];
 
 	$interface = filter_translate_type_to_real_interface($interface);
+
+	if($wancfg['ipaddr'] == "carpdev-dhcp") 
+		return "\${$interface}";
+
 	$ifinfo = "";
 	if(in_array($wancfg['ipaddr'], array('dhcp'))) {
 		/* get interface info with netstat */

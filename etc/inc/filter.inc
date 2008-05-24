@@ -2742,7 +2742,7 @@ EOD;
                 }
         }
         
-    if ($wancfg['ipaddr'] == "dhcp")
+    if ($wancfg['ipaddr'] == "dhcp" or $wancfg['ipaddr'] == "carodev-dhcp")
 		$ipfrules .= "anchor \"wandhcp\"";
 	if($config['interfaces']['lan']) 
 		$ipfrules .= <<<EOD
@@ -2762,7 +2762,7 @@ pass in on \$wan proto udp from any port = 67 to any port = 68 label "allow dhcp
 
 EOD;
         
-	if ($wancfg['ipaddr'] == "dhcp") {
+	if ($wancfg['ipaddr'] == "dhcp" or $wancfg['ipaddr'] == "carodev-dhcp") {
 
 		$ipfrules .= <<<EOD
 # allow our DHCP client out to the WAN
@@ -2773,7 +2773,7 @@ EOD;
 
 	/* allow access to DHCP server on optional interfaces */
 	foreach ($optcfg as $on => $oc) {
-		if ($config[interfaces][$on][ipaddr] == "dhcp" ) {
+		if ($config[interfaces][$on][ipaddr] == "dhcp" or $config[interfaces][$on][ipaddr] == "carpdev-dhcp") {
 			$friendly_on = filter_get_opt_interface_descr($on);
 			$ipfrules .= <<<EOD
 

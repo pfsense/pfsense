@@ -37,6 +37,8 @@ if ($_POST) {
 		} else {
 			unset($config['system']['firmware']['alturl']['enable']);
 			unset($config['system']['firmware']['alturl']['firmwareurl']);
+			unset($config['system']['firmware']['alturl']);
+			unset($config['system']['firmware']);			
 		}
 		write_config();
 	}

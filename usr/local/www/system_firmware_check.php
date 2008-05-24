@@ -114,6 +114,8 @@ update_output_window($static_text);
 
 if(isset($curcfg['alturl']['enable']))
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
+else 
+	$updater_url = "${g['update_url']}";
 
 update_status("Downloading current version information...");
 $latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");

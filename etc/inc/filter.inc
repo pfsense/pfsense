@@ -484,6 +484,7 @@ function generate_optcfg_array(& $optcfg) {
                         } else {
                                 $oic['ip'] = $oc['ipaddr'];
                                 $oic['sn'] = $oc['subnet'];
+                                $oic['descr'] = $oc['descr'];
                                 $oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
                         }
 

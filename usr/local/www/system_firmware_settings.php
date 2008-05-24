@@ -64,7 +64,8 @@ function enable_altfirmwareurl(enable_over) {
 	if (document.iform.alturlenable.checked || enable_over) { 	 
 		document.iform.firmwareurl.disabled = 0; 	 
 	} else { 	 
-		document.iform.firmwareurl.disabled = 1; 	 
+		document.iform.firmwareurl.disabled = 1;
+		document.iform.firmwareurl.value = '';
 	} 	 
 }
 

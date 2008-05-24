@@ -27,27 +27,16 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-Header("Location: system_firmware.php");
-exit;
-
 require("guiconfig.inc");
 
 if ($_POST) {
-	/* input validation */
-	if($_POST['firmwareurl'] && !is_string($_POST['firmwareurl'])) {
-		$input_errors[] = "The base XMLRPC URL must be a string.";
-	}
-	if($_POST['firmwarepath'] && !is_string($_POST['firmwarepath'])) {
-		$input_errors[] = "The XMLRPC path must be a string.";
-	}
 	if (!$input_errors) {
-		$config['system']['firmware']['branch'] = $_POST['branch'];
 		if($_POST['alturlenable'] == "yes") {
-			$config['system']['firmware']['alturl']['enable'] = "";
+			$config['system']['firmware']['alturl']['enable'] = true;
 			$config['system']['firmware']['alturl']['firmwareurl'] = $_POST['firmwareurl'];
-			$config['system']['firmware']['alturl']['firmwarepath'] = $_POST['firmwarepath'];
 		} else {
 			unset($config['system']['firmware']['alturl']['enable']);
+			unset($config['system']['firmware']['alturl']['firmwareurl']);
 		}
 		write_config();
 	}
@@ -62,27 +51,13 @@ include("head.inc");
 
 <script language="JavaScript">
 <!--
-var systemdescs=new Array(4);
-systemdescs[0]="This patch system uses a combination of unified and binary diffs. This system requires the least bandwidth, but is less forgiving of errors.";
-systemdescs[1]="This patch system uses tar files to update the system. This requires the most bandwidth, but is more reliable.";
-systemdescs[2]="This patch system uses tar files for the kernel and base system, and unified diffs for other components.";
 
-var branchinfo=new Array(4);
-branchinfo[0]="The stable branch contains only those updates believed to be stable by the developers.";
-branchinfo[1]="This branch contains both stable updates as well as those believed to be fairly stable.";
-branchinfo[2]="This branch contains all released updates, regardless of stability.";
-
-function update_description(itemnum) {
-        document.forms[0].branchinfo.value=branchinfo[itemnum];
-}
 
 function enable_altfirmwareurl(enable_over) {  	 
 	if (document.iform.alturlenable.checked || enable_over) { 	 
 		document.iform.firmwareurl.disabled = 0; 	 
-		document.iform.firmwarepath.disabled = 0; 	 
 	} else { 	 
 		document.iform.firmwareurl.disabled = 1; 	 
-		document.iform.firmwarepath.disabled = 1; 	 
 	} 	 
 }
 
@@ -111,50 +86,17 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td colspan="2" valign="top" class="listtopic">Firmware Branch</td>
 	</tr>
+
 	<tr>
-                  <td valign="top" class="vncell">Firmware Branch</td>
-                  <td class="vtable">
-			<select onChange="update_description(this.selectedIndex);" name="branch" id="branch">
-			<option value="stable"<?php if($curcfg['branch']=="stable") echo " SELECTED"; ?>>Stable</option>
-			<option value="beta"<?php if($curcfg['branch']=="beta") echo " SELECTED"; ?>>Beta</option>
-			<option value="alpha"<?php if($curcfg['branch']=="alpha") echo " SELECTED"; ?>>Alpha</option>
-			</select>
-			<br>
-			<textarea cols="60" rows="2" id="branchinfo" name="branchinfo"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;">
-			</textarea>
-			<script language="javascript">
-			update_description(document.forms[0].branch.selectedIndex);
-			</script>
-			<br><span class="vexpl">Select the update branch you would like this system to track.</td>
-	</tr>
-	<tr>
-		<td valign="top" class="vncell">Firmware XMLRPC URL</td>
+		<td valign="top" class="vncell">Firmware Auto Update URL</td>
 		<td class="vtable">
-			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onClick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked"; ?>> Use a different XMLRPC server for firmware upgrades<br>
+			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onClick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked"; ?>> Use a different URL server for firmware upgrades<br>
 			<table>
-			<tr><td>Base URL:</td><td><input name="firmwareurl" type="input" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['xmlrpcbaseurl']; ?>"></td></tr>
-			<tr><td>Path:</td><td><input name="firmwarepath" type="input" class="formfld unknown"id="firmwarepath" size="64" value="<?php if($curcfg['alturl']['firmwarepath']) echo $curcfg['alturl']['firmwarepath']; else echo $g['xmlrpcpath']; ?>"></td></tr>
+			<tr><td>Base URL:</td><td><input name="firmwareurl" type="input" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>"></td></tr>
 			</table>
-			<span class="vexpl">This is where {$g['product_name']} will check for newer firmware versions when the <a href="system_firmware_check.php">System: Firmware: Auto Update</a> page is viewed.</span></td>
+			<span class="vexpl">This is where <?php echo $g['product_name'] ?> will check for newer firmware versions when the <a href="system_firmware_check.php">System: Firmware: Auto Update</a> page is viewed.</span></td>
 	</tr>
 	<script>enable_altfirmwareurl();</script>
-<!--
-	<tr>
-                  <td width="22%" valign="top" class="vncell">Update Preference</td>
-                  <td width="78%" class="vtable">
-			<select onChange="update_description(branchinfo, this.selectedIndex);" name="branch" id="branch">
-			<option value="patches"<?php if($curcfg['updates']=="diffs") echo " SELECTED"; ?>>Patches</option>
-			<option value="full"<?php if($curcfg['updates']=="full") echo " SELECTED"; ?>>Full Updates</option>
-			<option value="combination"<?php if($config['updates']=="combination") echo " SELECTED"; ?>>Combination</option>
-			</select>
-			<textarea cols="60" rows="2" id="info" name="info"style="border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;">
-			</textarea>
-			<script language="javascript">
-			update_description(branchinfo, document.forms[0].optimization.selectedIndex);
-			</script>
-			<br><span class="vexpl"><b>Select the update branch you would like this system to track</b></td>
-                </tr>
--->
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

@@ -31,6 +31,10 @@
 
 $d_isfwfile = 1;
 require_once("guiconfig.inc");
+
+$curcfg = $config['system']['firmware'];
+
+
 require_once("xmlrpc_client.inc");
 
 /* Allow additional execution time 0 = no limit. */
@@ -135,6 +139,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	}
 }
 
+$pgtitle = array("Diagnostics","Firmware");
 include("head.inc");
 
 ?>
@@ -165,8 +170,8 @@ print_info_box($sig_warning);
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Manual Update", true, "system_firmware.php");
-	//$tab_array[1] = array("Auto Update", false, "system_firmware_check.php");
-	//$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
+	$tab_array[1] = array("Auto Update", false, "system_firmware_check.php");
+	$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
 	display_top_tabs($tab_array);
 ?>
 		</td>

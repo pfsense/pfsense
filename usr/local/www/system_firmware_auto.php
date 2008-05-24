@@ -1,11 +1,12 @@
+#!/usr/local/bin/php
 <?php
 /* $Id$ */
 /*
 	system_firmware_auto.php
-	part of pfSense (http://www.pfsense.com)
+	Copyright (C) 2005 Scott Ullrich
 
-	Copyright (C) 2005 Scott Ullrich and Colin Smith
-
+        Based originally on system_firmware.php
+        (C)2003-2004 Manuel Kasper
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -28,60 +29,76 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-
-	TODO:
-		* modify pfSense.com XMLRPC server to return md5 hashes of firmware updates.
 */
 
-Header("Location: system_firmware.php");
-exit;
+require("guiconfig.inc");
 
-require_once("guiconfig.inc");
-require_once("xmlrpc.inc");
+$curcfg = $config['system']['firmware'];
 
-$pgtitle = array("System","Firmware","Auto Update");
+if(isset($curcfg['alturl']['enable'])
+	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
+
+$pgtitle = array("Diagnostics","Firmware","Auto Update");
 include("head.inc");
 
 ?>
 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="gui.css" rel="stylesheet" type="text/css">
+</head>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
 <?php include("fbegin.inc"); ?>
 
 <form action="system_firmware_auto.php" method="post">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td>
+<table width="100%" border="0" cellpadding="6" cellspacing="0">
+	<tr>
+		<td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Manual Update", false, "system_firmware.php");
-	$tab_array[1] = array("Auto Update", true, "system_firmware_check.php");
+	$tab_array[0] = array("Manual Update", true, "system_firmware.php");
+	$tab_array[1] = array("Auto Update", false, "system_firmware_check.php");
 	$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
 	display_top_tabs($tab_array);
 ?>
-    </td>
-  </tr>
+		</td>
+	</tr>
 	<tr>
-	  <td>
-	      <div id="mainarea">
-	      <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-		<tr>
-		  <td>
-		      <!-- progress bar -->
-		      <center>
-		      <table id="progholder" name="progholder" height='20' border='1' bordercolor='black' width='420' bordercolordark='#000000' bordercolorlight='#000000' style='border-collapse: collapse' colspacing='2' cellpadding='2' cellspacing='2'><tr><td><img border='0' src='./themes/<?= $g['theme']; ?>/images/misc/progress_bar.gif' width='280' height='23' name='progressbar' id='progressbar'></td></tr></table>
-		      <br>
-		      <!-- status box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols="60" rows="1" name="status" id="status" wrap="hard">
-		      Beginning system autoupdate...
-		      </textarea>
-		      <!-- command output box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols="60" rows="25" name="output" id="output" wrap="hard">
-		      </textarea>
-		      </center>
-		  </td>
-		</tr>
+	  <td class="tabcont">
+	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
+			  <tr>
+			    <td class="tabcont">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<tr>
+							<td>
+								<center>
+								<table height='15' width='420' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+
+								<tr>
+									<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
+									</td>
+									<td>
+									<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+										<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
+											<img src='./themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
+										</td>
+									</table>
+								</td>
+								<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
+								</td>
+							</tr>
+						</table>
+						<br>
+						<!-- status box -->
+						<textarea cols="60" rows="1" name="status" id="status" wrap="hard">Beginning package installation.</textarea>
+						<!-- command output box -->
+						<textarea cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
+					</center>
+					</td>
+				</tr>
 	      </table>
-	      </div>
+		</table>
 	  </td>
 	</tr>
 </table>
@@ -92,72 +109,107 @@ include("head.inc");
 
 <?php
 
-/* Define necessary variables. */
-$update_types = array('full', 'diff');
-$didupdate = false;
+update_status("Downloading current version information...");
+$latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
 
-if($_GET['category'] == 'full') {
-	$tocheck = 'all';
-	$categories = array('firmware', 'kernel', 'base');
-} else {
-	$tocheck = array($_GET['category']);
-	$categories = $tocheck;
+$current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version"));
+$latest_version = str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version"));
+
+if($current_installed_pfsense_version <> $latest_version) 
+	$needs_system_upgrade = true;
+
+if($needs_system_upgrade == true) {
+	update_status("Downloading updates ...");
+	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz", "/tmp/latest.tgz");	
+	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz.sha256", "/tmp/latest.tgz.sha256");
+	update_output_window("{$g['product_name']} download complete.");
 }
 
-$static_output = "Downloading current version information... ";
-update_status($static_output);
-update_output_window($static_output);
+/* launch external upgrade helper */
+$external_upgrade_helper_text = "/etc/rc.firmware pfSenseupgrade ";
+if($needs_system_upgrade == true)
+	$external_upgrade_helper_text .= "/tmp/latest.tgz";
 
-if(file_exists("/tmp/versioncheck.cache")) {
-	$versions = unserialize("/tmp/versioncheck.cache");
-	if(time() - $versions['cachetime'] > 300) { // Our cached data is stale, get a new copy.
-		$versions = check_firmware_version($tocheck);
-	} else { // Our cached data is relatively currently, remove the cachetime label.
-		unset($versions['cachetime']);
+$downloaded_latest_tgz_sha256 = str_replace("\n", "", `sha256 /tmp/latest.tgz  | awk '{ print $4 }'`);
+$upgrade_latest_tgz_sha256 = str_replace("\n", "", `cat /tmp/latest.tgz.sha256 | awk '{ print $4 }'`);
+
+if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
+	update_status("Downloading complete but sha256 does not match.");
+	update_output_window("Auto upgrade aborted.  \n\nDownloaded SHA256: $downloaded_latest_tgz_sha256 \n\nNeeded SHA256: $upgrade_latest_tgz_sha256");	
+} else {
+	update_status("Downloading complete.");
+	update_output_window("{$g['product_name']} is now upgrading.\\n\\nThe firewall will reboot once the operation is completed.");
+	echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
+	exec_rc_script_async("{$external_upgrade_helper_text}");
+}
+
+/*
+	Helper functions
+*/
+
+function download_file_with_progress_bar($url_file, $destination_file) {
+	global $ch, $fout, $file_size, $downloaded, $counter;
+	$file_size  = 1;
+	$downloaded = 1;
+	/* open destination file */
+	$fout = fopen($destination_file, "wb");
+
+	/*
+		Originally by Author: Keyvan Minoukadeh
+		Modified by Scott Ullrich to return Content-Length size
+	*/
+
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url_file);
+	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
+	curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'read_body');
+	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
+
+	curl_exec($ch);
+	fclose($fout);
+	return 1;
+
+	if ($error = curl_error($ch)) {
+	    return -1;
 	}
 }
 
-$static_output .= "done.\n";
-update_output_window($static_output);
-
-foreach($categories as $index => $key) {
-	$bdiff_errors = array();
-	if(is_array($versions[$key][0])) { // Make sure we really need to update this section.
-		$didupdate = true;
-		update_status("Found required " . $key . " updates. Downloading...");
-		$static_output .= "Downloading " . $key . " updates... ";
-		update_output_window($static_output);
-		foreach($versions[$key] as $ver) { // Begin system updates.
-			foreach($update_types as $type) if(in_array($type, array_keys($ver))) $url_type = $type;
-			$tofetch = "pfSense-" . ucfirst($url_type) . "-" . ucfirst($key) . "-Update-" . $ver['version'] . ".tgz";
-			$static_output_bak = $static_output;
-			$static_output .= "\n\t" . $ver['version'] . "-" . $ver['name'] . " ";
-			update_output_window($static_output);
-			download_file_with_progress_bar("http://www.pfsense.com/updates/" . $tofetch, "/tmp/" . $tofetch);
-			if($url_type == "binary") {
-				exec("/etc/rc.firmware delta_update " . "/tmp/" . $tofetch, $bdiff_errors);
-				if(is_string($bdiff_errors[0])) {
-					unlink_if_exists("/tmp/" . $tofetch);
-					$static_output .= "failed!\n";
-					update_output_window($static_output);
-					break;
-				}
-			} else {
-				$tofetch = "pfSense-" . ucfirst($url_type) . "-Update-" . $ver['version'] . ".tgz";
-				exec("/etc/rc.firmware pfSenseupgrade " . "/tmp/" . $tofetch);
-				unlink_if_exists("/tmp/" . $tofetch);
-			}
-			$static_output = $static_output_bak . "done.\n";
-		}
+function read_header($ch, $string) {
+	global $file_size, $ch, $fout;
+	$length = strlen($string);
+	ereg("(Content-Length:) (.*)", $string, $regs);
+	if($regs[2] <> "") {
+		$file_size = intval($regs[2]);
 	}
+	return $length;
 }
 
-if($didupdate == true) {
-	update_status("Update finished. Rebooting...");
-	exec("/etc/rc.reboot");
-} else {
-	update_status("No updates required.");
+function read_body($ch, $string) {
+	global $fout, $file_size, $downloaded, $counter, $version, $latest_version, $current_installed_pfsense_version;
+	$length = strlen($string);
+	$downloaded += intval($length);
+	$downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
+	$downloadProgress = 100 - $downloadProgress;
+	$a = $file_size;
+	$b = $downloaded;
+	$c = $downloadProgress;
+	$text  = "  Auto Update Download Status\\n";
+	$text .= "---------------------------------\\n";
+	$text .= "  Latest Version  : {$latest_version}\\n";
+	$text .= "  Current Version : {$current_installed_pfsense_version}\\n";
+	$text .= "  File size       : {$a}\\n";
+	$text .= "  Downloaded      : {$b}\\n";
+	$text .= "  Percent         : {$c}%\\n";
+	$text .= "---------------------------------\\n";
+	$counter++;
+	if($counter > 150) {
+		update_output_window($text);
+		update_progress_bar($downloadProgress);
+		$counter = 0;
+	}
+	fwrite($fout, $string);
+	echo "<script language='javascript'>'>document.progressbar.style.width=\"$c%\";</script>\n";
+	return $length;
 }
 
-echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
 ?>

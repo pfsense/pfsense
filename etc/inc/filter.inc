@@ -2597,12 +2597,18 @@ EOD;
 
 	/* group heads for optional interfaces */
 	foreach ($optcfg as $on => $oc) {
+
+		$friendly_on = convert_friendly_interface_to_friendly_descr($on);
+
+		if($oc['descr']) 
+			$friendly_on = $oc['descr'];		
+				
 		$ipfrules .= <<<EOD
 
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
 pass out quick on {$oc['if']} proto icmp keep state label "let out anything from firewall host itself"
-pass out quick on {$oc['if']} all keep state label "let out anything from firewall host itself"
+pass out quick on \${$friendly_on} all keep state label "let out anything from firewall host itself"
 
 EOD;
 

@@ -535,7 +535,7 @@ function interfaces_carp_configure() {
 				if (ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits))
 					$found = true;
 			}
-			if($found == false) {
+			if($found == false and $vip['type'] =="carp") {
 				file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
 				continue;
 			}			
@@ -544,16 +544,28 @@ function interfaces_carp_configure() {
 
 			/* invalidate interface cache */
 			get_interface_arr(true);
-
-			$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
+			if($vip['type'] =="carp") 
+				$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 			if($vip['password'] != "")
 				$password = " pass \"" . $vip_password . "\"";
-			if($debugging)
-				echo "Configuring carp{$carp_instances_counter}.\n";
-			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password . "\n");
-			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password);
-			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
-			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " up\n");
+
+			if($vip['type'] =="carp") {
+				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . " advskew 200 " . $password);
+				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
+			}
+
+			if($vip['type'] =="carpdev-dhcp") {
+				$interface = convert_friendly_interface_to_real_interface_name($vip['interface']);
+				if($interface) {
+					exec("ifconfig carp{$carp_instances_counter} carpdev $interface");
+					mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " vhid " . $vip['vhid'] . " advskew 200 " . $password);	
+					mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
+					mwexec_bg("dhclient carp{$carp_instances_counter}");
+				} else {
+					log_error("Could not determine CarpDEV parent interface for {$vip['descr']}.");
+				}
+			}
+			
 			usleep(10);
 			$carp_instances_counter++;
 		}
@@ -616,11 +628,23 @@ function interfaces_carp_bring_up_final() {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 		if($vip['password'] != "")
 			$password = " pass " . $vip['password'];
-		if($debugging)
-			echo "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password . "\n";
-		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password);
-		sleep(1);
-		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
+
+		if($vip['type'] =="carp") {
+			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password);
+			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
+		}
+		
+		if($vip['type'] =="carpdev-dhcp") {
+			$interface = convert_friendly_interface_to_real_interface_name($vip['interface']);
+			if($interface)
+				exec("ifconfig carp{$carp_instances_counter} carpdev $interface");			
+			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password);
+			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
+			mwexec_bg("dhclient carp{$carp_instances_counter}");
+		}
+
+		usleep(10);
+
 		$carp_instances_counter++;
 	}
 	if($g['booting'])
@@ -973,6 +997,9 @@ function interfaces_wan_configure() {
 
 	switch ($wancfg['ipaddr']) {
 
+		case 'carpdev-dhcp':
+			interfaces_wan_carpdev_dhcp_configure();
+			break;
 		case 'dhcp':
 			interfaces_wan_dhcp_configure();
 			break;
@@ -1201,6 +1228,16 @@ EOD;
 	$fout = fopen("/tmp/ifconfig_{$optif}","w");
 	fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
 	fclose($fout);
+
+	return 0;
+}
+
+function interfaces_wan_carpdev_dhcp_configure() {
+	global $config, $g;
+
+	$wancfg = $config['interfaces']['wan'];
+	/* bring wan interface up before starting dhclient */
+	mwexec("/sbin/ifconfig {$wanif} up");
 
 	return 0;
 }

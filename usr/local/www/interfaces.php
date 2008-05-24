@@ -350,6 +350,11 @@ if ($_POST) {
 			$wancfg['dhcphostname'] = $_POST['dhcphostname'];
 			$wancfg['alias-address'] = $_POST['alias-address'];
 			$wancfg['alias-subnet'] = $_POST['alias-subnet'];
+		} else if ($_POST['type'] == "CarpDEV-DHCP") {
+			$wancfg['ipaddr'] = "carpdev-dhcp";
+			$wancfg['dhcphostname'] = $_POST['dhcphostname'];
+			$wancfg['alias-address'] = $_POST['alias-address'];
+			$wancfg['alias-subnet'] = $_POST['alias-subnet'];			
 		} else if ($_POST['type'] == "PPPoE") {
 			$wancfg['ipaddr'] = "pppoe";
 			$config['pppoe']['username'] = $_POST['username'];
@@ -643,6 +648,28 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.pptp_idletimeout.disabled = 1;
 			document.iform.dhcphostname.disabled = 1;
 			break;
+		case 5:
+			document.iform.username.disabled = 1;
+			document.iform.password.disabled = 1;
+			document.iform.provider.disabled = 1;
+			document.iform.pppoe_dialondemand.disabled = 1;
+			document.iform.pppoe_idletimeout.disabled = 1;
+			document.iform.pppoe_preset.disabled = 1;
+			document.iform.pppoe_preset.checked = 0;
+			Effect.Fade('presetwrap', { duration: 1.0 });
+			document.iform.ipaddr.disabled = 1;
+			document.iform.subnet.disabled = 1;
+			document.iform.gateway.disabled = 1;
+			document.iform.pptp_username.disabled = 1;
+			document.iform.pptp_password.disabled = 1;
+			document.iform.pptp_local.disabled = 1;
+			document.iform.pptp_subnet.disabled = 1;
+			document.iform.pptp_remote.disabled = 1;
+			document.iform.pptp_dialondemand.disabled = 1;
+			document.iform.pptp_idletimeout.disabled = 1;
+			document.iform.dhcphostname.disabled = 1;
+			break;
+
 	}
 }
 
@@ -667,11 +694,11 @@ function show_mon_config() {
                 <tr>
                   <td valign="middle" class="vncell"><strong>Type</strong></td>
                   <td class="vtable"> <select name="type" class="formselect" id="type" onchange="type_change()">
-                      <?php $opts = split(" ", "Static DHCP PPPoE PPTP");
-				foreach ($opts as $opt): ?>
-                      <option <?php if ($opt == $pconfig['type']) echo "selected";?>>
-                      <?=htmlspecialchars($opt);?>
-                      </option>
+                      <?php $opts = split(" ", "Static DHCP PPPoE PPTP CarpDEV-DHCP");
+					  foreach ($opts as $opt): ?>
+	                      <option <?php if ($opt == $pconfig['type']) echo "selected";?>>
+	                      <?=htmlspecialchars($opt);?>
+	                      </option>
                       <?php endforeach; ?>
                     </select></td>
                 </tr>

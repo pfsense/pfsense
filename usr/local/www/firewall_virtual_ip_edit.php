@@ -219,56 +219,65 @@ function get_radio_value(obj)
         return null;
 }
 function enable_change(enable_over) {
-	var note = document.getElementById("typenote");
-	var carpnote = document.createTextNode("This must be the network's subnet mask. It does not specify a CIDR range.");
-	var proxyarpnote = document.createTextNode("This is a CIDR block of proxy ARP addresses.");
-	var ipaliasnote = document.createTextNode("This must be the network's subnet mask. It does not specify a CIDR range.");
+		var note = document.getElementById("typenote");
+		var carpnote = document.createTextNode("This must be the network's subnet mask. It does not specify a CIDR range.");
+		var proxyarpnote = document.createTextNode("This is a CIDR block of proxy ARP addresses.");
+		var ipaliasnote = document.createTextNode("This must be the network's subnet mask. It does not specify a CIDR range.");
         if ((get_radio_value(document.iform.mode) == "carp") || enable_over) {
                 document.iform.vhid.disabled = 0;
                 document.iform.password.disabled = 0;
                 document.iform.advskew.disabled = 0;
                 document.iform.type.disabled = 1;
                 document.iform.subnet_bits.disabled = 0;
-		if (note.firstChild == null) {
-			note.appendChild(carpnote);
-		} else {
-			note.removeChild(note.firstChild);
-			note.appendChild(carpnote);
-		}
+				document.iform.subnet.disabled = 0;
+				if (note.firstChild == null) {
+					note.appendChild(carpnote);
+				} else {
+					note.removeChild(note.firstChild);
+					note.appendChild(carpnote);
+				}
         } else {
                 document.iform.vhid.disabled = 1;
                 document.iform.password.disabled = 1;
                 document.iform.advskew.disabled = 1;
                 document.iform.type.disabled = 0;
                 document.iform.subnet_bits.disabled = 1;
-		if (note.firstChild == null) {
-			note.appendChild(proxyarpnote);
-		} else {
-			note.removeChild(note.firstChild);
-			note.appendChild(proxyarpnote);
-		}
+				document.iform.subnet.disabled = 0;
+				if (note.firstChild == null) {
+					note.appendChild(proxyarpnote);
+				} else {
+					note.removeChild(note.firstChild);
+					note.appendChild(proxyarpnote);
+				}
         }
 	if (get_radio_value(document.iform.mode) == "other") {
-                document.iform.type.disabled = 1;
+		document.iform.type.disabled = 1;
 		if (note.firstChild != null) {
 			note.removeChild(note.firstChild);
 		}
+		document.iform.subnet.disabled = 0;
 	}
 	if (get_radio_value(document.iform.mode) == "ipalias") {
-                document.iform.type.disabled = 1;
+		document.iform.type.disabled = 1;
 		note.removeChild(note.firstChild);
 		note.appendChild(ipaliasnote);
 		document.iform.subnet_bits.disabled = 0;
+		document.iform.subnet.disabled = 0;		
 	}
-
+	if (get_radio_value(document.iform.mode) == "carpdev-dhcp") {
+		document.iform.type.disabled = 1;
+		note.removeChild(note.firstChild);
+		note.appendChild(ipaliasnote);
+		document.iform.subnet_bits.disabled = 1;
+		document.iform.subnet.disabled = 1;
+		document.iform.subnet.value = '';
+	}
 }
 function typesel_change() {
     switch (document.iform.type.selectedIndex) {
         case 0: // single
             document.iform.subnet.disabled = 0;
             if((get_radio_value(document.iform.mode) == "proxyarp")) document.iform.subnet_bits.disabled = 1;
-            //document.iform.range_from.disabled = 1;
-            //document.iform.range_to.disabled = 1;
             break;
         case 1: // network
             document.iform.subnet.disabled = 0;
@@ -307,6 +316,8 @@ function typesel_change() {
 					<?php if ($pconfig['mode'] == "other") echo "checked";?>> Other
 					<input name="mode" type="radio" onclick="enable_change(false)" value="ipalias"
 					<?php if ($pconfig['mode'] == "ipalias") echo "checked";?>> IP Alias
+					<input name="mode" type="radio" onclick="enable_change(false)" value="carpdev-dhcp"
+					<?php if ($pconfig['mode'] == "carpdev-dhcp") echo "checked";?>> CarpDEV-DHCP
 				  </td>
 				</tr>
 				<tr>

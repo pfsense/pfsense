@@ -141,7 +141,11 @@ if(!$latest_version) {
 } else {
 	if($needs_system_upgrade) {
 		echo "\n<script language=\"JavaScript\">$('invokeupgrade').style.visibility = 'visible';</script>";
-		update_output_window("A new version is now available. \n\nNew version: {$latest_version}");
+		$txt  = "A new version is now available \\n\\n";
+		$txt .= "New version:     {$latest_version}\\n";
+		$txt .= "Current version: {$current_installed_pfsense_version}\\n";
+		$txt .= "Update source:   {$g['update_url']}\\n";
+		update_output_window($txt);
 	} else {
 		update_output_window("You are on the latest version.");
 	}

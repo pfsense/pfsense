@@ -2,6 +2,7 @@
 /* $Id$ */
 /*
 	system_firmware_auto.php
+	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
 	Copyright (C) 2005 Scott Ullrich
 
         Based originally on system_firmware.php

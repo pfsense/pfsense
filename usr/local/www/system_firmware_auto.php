@@ -35,9 +35,11 @@ require("guiconfig.inc");
 
 $curcfg = $config['system']['firmware'];
 
-if(isset($curcfg['alturl']['enable'])
+if(isset($curcfg['alturl']['enable']))
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-
+else
+	$updater_url = $g['update_url'];
+	
 $pgtitle = array("Diagnostics","Firmware","Auto Update");
 include("head.inc");
 

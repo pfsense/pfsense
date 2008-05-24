@@ -56,6 +56,7 @@ if(file_exists("/tmp/manifest")) {
 
 ?>
 <script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 <script language="JavaScript">
 <!--
 
@@ -98,7 +99,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td valign="top" class="vncell">Default Auto Update URLs</td>
 		<td class="vtable">
-			<select name='preseturls' id='preseturls' onChange="firmwareurl.value = preseturls.value; document.iform.firmwareurl.disabled = 0; alturlenable.checked=true;">
+			<select name='preseturls' id='preseturls' onChange="firmwareurl.value = preseturls.value; document.iform.firmwareurl.disabled = 0; alturlenable.checked=true; new Effect.Highlight(this.parentNode, { startcolor: '#ffff99', endcolor: '#fffffff' });">
 					<option></option>
 				<?php 
 					foreach($preset_urls_split as $pus) {

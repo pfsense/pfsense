@@ -1,233 +1,158 @@
 <?php
 /* $Id$ */
 /*
-    system_firmware.php
-    Copyright (C) 2004, 2005 Scott Ullrich and Colin Smith
-    All rights reserved.
+	system_firmware.php
+	part of m0n0wall (http://m0n0.ch/wall)
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
-Header("Location: system_firmware.php");
-exit;
+$d_isfwfile = 1;
+require("guiconfig.inc");
 
-require_once("guiconfig.inc");
-require_once("xmlrpc.inc");
+$curcfg = $config['system']['firmware'];
 
-if(isset($config['system']['disablefirmwarecheck']))
-	Header("Location: system_firmware.php");
-
-$versions = check_firmware_version();
-$pgtitle = "System: Firmware: Auto Update";
 include("head.inc");
 
 ?>
+
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="gui.css" rel="stylesheet" type="text/css">
+</head>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
-		<SCRIPT>
-		<!--
-			function toggleTable (table, img) {
-				var table = document.getElementById(table);
-				var img = document.getElementById(img);
-				if (table.rows[0].style.display == 'none') {
-					for (var r = 0; r < table.rows.length; r++)
-						table.rows[r].style.display = '';
-					img.src = "./themes/<?= $g['theme']; ?>/images/misc/tri_o_black.gif";
-				} else {
-					for (var r = 0; r < table.rows.length; r++)
-						table.rows[r].style.display = 'none';
-					img.src = "./themes/<?= $g['theme']; ?>/images/misc/tri_c_black.gif";
-				}
-			}
-		//-->
-		</SCRIPT>
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
-			<tr>
-				<td>
+<p class="pgtitle">System: Firmware: Auto Upgrade</p>
+
+<form action="system_firmware_auto.php" method="post">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Manual Update", false, "system_firmware.php");
-	$tab_array[1] = array("Auto Update", true, "system_firmware_check.php");
+	$tab_array[1] = array("Auto Update Check", true, "system_firmware_check.php");
 	$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
 	display_top_tabs($tab_array);
 ?>
-				</td>
-			</tr>
-			<tr>
-				<td>
-<?php
-if(is_array($versions)) {
-?>
-					<div id="mainarea">
-					<table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
-						<tr>
-							<td width="10%" class="listhdrr">Act</td>
-							<td width="30%" class="listhdrr">Category</td>
-							<td width="30%" class="listhdrr">Installed</td>
-							<td width="30%" class="listhdrr">Current<td>
-						</tr>
-<?php
-	$currentvers = $versions['current'];
-	foreach($versions as $key => $version) {
-		if($key == "current") continue;
-		$currentver = array_shift(explode('-', $currentvers[$key]['version']));
-		if($version == 1) {
-			$img = "./themes/".$g['theme']."/images/icons/icon_pass.gif";
-			$pastlatest = true;
-		} elseif( strcmp($currentver , $version[count($version) - 1]['version']) ){
-			$img = "./themes/".$g['theme']."/images/icons/icon_pass.gif";
-			$pastlatest = true;
-		} else {
-			$allinstall = true;
-			$img = "./themes/".$g['theme']."/images/icons/icon_block.gif";
-		}
-?>
-						<tr valign="top">
-							<td class="listlr" nowrap align="middle"><img src="<?=$img;?>" width="11" height="11" align="absmiddle"></td>
-							<td class="listlr"><?= ucfirst($key) ?></td>
-							<td class="listlr"><?= $currentver ?></td>
-<?php
-		if($version == 1) {
-?>
-							<td class="listlr"><?= $currentver ?></td>
-<?php
-		} elseif($pastlatest) {
-			$newver = $version[count($version) - 1]['version'];
-?>
-							<td class="listbggrey"><font color="#FFFFFF"><?= $newver ?></td>
-<?php
-		} else {
-			$newver = $version[count($version) - 1]['version'];
-?>
-							<td class="listbg"><font color="#FFFFFF"><?= $newver ?></td>
-<?php
-		} 
-		if(!$pastlatest) {
-?>
-							<td valign="middle" class="list" nowrap>
-								<a href="system_firmware_auto.php?category=<?=$key;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
-							</td>
-<?php
-		}
-?>
-						</tr>
-<?php
-	}
-?>
-					</table>
-<?php
-	if($allinstall) {
-?>
-					<br>
-					<br>
-					<table align="center" width="80%" border="0" cellpadding="0" cellspacing="0">
-						<tr>
-							<td align="center"><a href="javascript:toggleTable('updates', 'tri_updates')"><img src="./themes/<?= $g['theme']; ?>/images/misc/tri_c_black.gif" id="tri_updates" width="14" height="10" border="0"></a><strong><a href="javascript:toggleTable('updates', 'tri_updates')">Needed Updates</a></strong></td>
-						</tr>
-						<tr>
-							<td>
-								<br>
-								<br>
-								<table id="updates" align="center" width="100%" border="0" cellpadding="0" cellspacing="0">
-									<tr>
-										<td width="20%" class="listhdrr">Released</td>
-										<td width="20%" class="listhdrr">Category</td>  
-										<td width="20%" class="listhdrr">Version</td>
-										<td width="20%" class="listhdrr">Size</td>
-										<td width="20%" class="listhdr">Type</td>
-									</tr>
-<?php
-		if(is_array($versions)) {
-			foreach($versions as $key => $value) {
-				if(($key == "current") or ($value == 1)) continue;
-				if(is_array($value)) {
-					foreach($value as $version) {
-						if(!$version['time']) $version['time'] = "Unknown";
-						if(!$version['size']) $version['size'] = "Unknown";
-						if(!$version['type']) $version['type'] = "Unknown";
-						$version['category'] = $key;
-						$times[$version['time']][] = $version;
-					}
-				}
-			}
-		}
-		asort($times);
-		if(is_array($times)) {
-			foreach($times as $time) {
-				foreach($time as $version) {
-?>
-									<tr>
-										<td class="listlr">
-<?php
-				if($version['time'] != "Unknown") {
-					echo date("D M j G:i:s", $version['time']);
-				} else {
-					echo $version['time'];
-				}
-?>
-										</td>
-										<td class="listlr"><?= ucfirst($version['category']) ?></td>
-										<td class="listlr"><?= $version['version'] ?></td>
-										<td class="listlr"><?= $version['size'] ?></td>
-										<td class="listlr"><?= ucfirst($version['type']) ?></td>
-									</tr>
-<?php
-				}
-			}
-		}
-?>
+		</td>
+	</tr>
+	<tr>
+	  <td class="tabcont">
+	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<tr>
+		  <td>
+		      <!-- progress bar -->
+		      <center>
+							<table height='15' width='420' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+
+							<tr>
+								<td background="./themes/the_wall/images/misc/bar_left.gif" height='15' width='5'>
+								</td>
+								<td>
+								<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+									<td background="./themes/the_wall/images/misc/bar_gray.gif" valign="top" align="left">
+										<img src='./themes/the_wall/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'>
+									</td>
 								</table>
-								<br>
-								<br>
-								<script language="javascript">toggleTable('updates', 'tri_updates');</script>
+							</td>
+							<td background="./themes/the_wall/images/misc/bar_right.gif" height='15' width='5'>
 							</td>
 						</tr>
 					</table>
-					<table align="center">
-						<tr>
-							<td>
-								<form action="system_firmware_auto.php" method="post" enctype="multipart/form-data">
-									<input name="full" type="submit" class="formbtn" value="Begin Full Update">
-								</form>
-							</td>
-						</tr>
-					</table>
-		</div>
+		      <br>                      
+		      <!-- command output box -->
+		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='60' rows='7' name='output' id='output' wrap='hard'>
+		      </textarea>                      
+		      </center>
+ 			<p>
+			<center><input id='invokeupgrade' style='visibility:hidden' type="submit" value="Invoke Auto Upgrade">
+		  </td>
+		</tr>
+	      </table>
+	  </td>
+	</tr>
+</table>
+
+<p>
+
 <?php
-	}
+
+/* Define necessary variables. */
+$firmware_version =	trim(file_get_contents('/etc/version'));
+
+$static_text = "Downloading current version information... ";
+update_output_window($static_text);
+
+$static_text .= "done.\n";
+update_output_window($static_text);
+
+if(isset($curcfg['alturl']['enable']))
+	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
+else 
+	$updater_url = $g['update_url'];
+
+update_status("Downloading current version information...");
+$latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
+
+if(strstr($latest_version,"404")) {
+	update_output_window("Could not download version information file {$updater_url}/version");
+	include("fend.inc");
+	exit;	
+}
+
+$current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version"));
+$latest_version = str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version"));
+
+$needs_system_upgrade = false;
+if($current_installed_pfsense_version <> $latest_version) 
+	$needs_system_upgrade = true;
+
+if(!$latest_version) {
+		if(isset($curcfg['alturl']['enable']))
+			update_output_window("Could not contact custom update server.");
+		else 
+			update_output_window("Could not contact {$g['product_name']} update server {$updater_url}.");
 } else {
-	print_info_box("Unable to receive version information.");
+	if($needs_system_upgrade) {
+		echo "\n<script language=\"JavaScript\">$('invokeupgrade').style.visibility = 'visible';</script>";
+		update_output_window("A new version is now available. \n\nNew version: {$latest_version}");
+	} else {
+		update_output_window("You are on the latest version.");
+	}
 }
 ?>
-				</td>
-			</tr>
-		</table>
-<?php
-include("fend.inc");
-$versions['cachetime'] = time();
-$fout = fopen("/tmp/versioncheck.cache", "w");
-fwrite($fout, serialize($versions));
-fclose($fout);
-?>
-	</body>
+
+</form>
+<?php include("fend.inc"); ?>
+</body>
+</html>
+
+
+</body>
 </html>

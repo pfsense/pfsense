@@ -31,15 +31,22 @@
 
 $d_isfwfile = 1;
 require_once("guiconfig.inc");
+
+$curcfg = $config['system']['firmware'];
+
+
 require_once("xmlrpc_client.inc");
+
+/* Allow additional execution time 0 = no limit. */
+ini_set('max_execution_time', '3600');
+ini_set('max_input_time', '3600');
 
 /* if upgrade in progress, alert user */
 if(file_exists($d_firmwarelock_path)) {
-	$pgtitle = "System: Firmware: Manual Update";
+	$pgtitle = array("System","Firmware","Manual Update");
 	include("head.inc");
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");
-	echo "<p class=\"pgtitle\"><?=$pgtitle?></p>\n";
 	echo "<div>\n";
 	print_info_box("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.<p><center><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
 	echo "</div>\n";
@@ -61,7 +68,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 
 	unset($input_errors);
 	unset($sig_warning);
-	
+
 	if (stristr($_POST['Submit'], "Enable"))
 		$mode = "enable";
 	else if (stristr($_POST['Submit'], "Disable"))
@@ -120,7 +127,10 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
                             /* fire up the update script in the background */
                             touch($d_firmwarelock_path);
                             $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";
-                            mwexec_bg("/etc/rc.firmware pfSenseupgrade {$g['upload_path']}/firmware.tgz");
+							if(stristr($_FILES['ulfile']['tmp_name'],"bdiff"))
+                            	mwexec_bg("/etc/rc.firmware delta_update {$g['upload_path']}/firmware.tgz");
+							else 
+								mwexec_bg("/etc/rc.firmware pfSenseupgrade {$g['upload_path']}/firmware.tgz");
                     } else {
                             $savemsg = "Firmware image missing or other error, please try again.";
                     }
@@ -129,13 +139,12 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	}
 }
 
-$pgtitle = "System: Firmware: Manual Update";
+$pgtitle = array("Diagnostics","Firmware");
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
@@ -161,8 +170,8 @@ print_info_box($sig_warning);
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Manual Update", true, "system_firmware.php");
-	//$tab_array[1] = array("Auto Update", false, "system_firmware_check.php");
-	//$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
+	$tab_array[1] = array("Auto Update", false, "system_firmware_check.php");
+	$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
 	display_top_tabs($tab_array);
 ?>
 		</td>
@@ -172,7 +181,7 @@ print_info_box($sig_warning);
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
-		 <td colspan="2" class="listtopic">Invoke pfSense Manual Upgrade</td>
+		 <td colspan="2" class="listtopic">Invoke <?=$g['product_name']?> Manual Upgrade</td>
 		</tr>
 		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
                   <td width="78%" class="vtable">
@@ -180,11 +189,6 @@ print_info_box($sig_warning);
               upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.tgz)
 			  to be uploaded.<br>Click &quot;Upgrade firmware&quot;
               to start the upgrade process.</p>
-			  		<?php if ($g['platform'] == "embedded" or $g['platform'] == "cdrom"): ?>
-						This platform cannot be upgraded.  Consider using option 13 from the console.
-						<?php include("fend.inc"); ?>
-						<?php exit; ?>
-					<?php endif; ?>
                     <?php if (!file_exists($d_sysrebootreqd_path)): ?>
                     <?php if (!file_exists($d_fwupenabled_path)): ?>
                     <input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
@@ -204,7 +208,7 @@ print_info_box($sig_warning);
 								echo "<option value='wrap'>Embedded kernel</option>";
 								echo "<option value='Developers'>Developers kernel</option>";
 								echo "</select>";
-								echo "<br><br>";							
+								echo "<br><br>";
 							}
 						}
 					  ?>

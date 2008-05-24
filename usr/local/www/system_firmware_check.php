@@ -120,6 +120,12 @@ else
 update_status("Downloading current version information...");
 $latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
 
+if(strstr($latest_version,"404")) {
+	update_output_window("Could not download version information file {$updater_url}/version");
+	include("fend.inc");
+	exit;	
+}
+
 $current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version"));
 $latest_version = str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version"));
 

@@ -1,11 +1,11 @@
 <?php
 /* $Id$ */
 /*
-	system_firmware_auto.php
-	Copyright (C) 2005 Scott Ullrich
-
-        Based originally on system_firmware.php
-        (C)2003-2004 Manuel Kasper
+	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
+	All rights reserved.
+	
+	Based originally on system_firmware.php
+	(C)2003-2004 Manuel Kasper
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

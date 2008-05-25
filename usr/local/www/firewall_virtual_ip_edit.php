@@ -109,11 +109,6 @@ if ($_POST) {
 			}
 		}
 	}
-
-	if ($_POST['mode'] == "carpdev-dhcp") {
-		unset($_POST['subnet']);
-		unset($_POST['subnet_bits']);
-	}
 	
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
@@ -187,6 +182,12 @@ if ($_POST) {
 			$vipent['subnet'] = $_POST['subnet'];
 		}
 
+		if ($_POST['mode'] == "carpdev-dhcp") {
+			unset($vipent['subnet']);
+			unset($vipent['subnet_bits']);
+			unset($vipent['alias-subnet']);		
+		}
+
 		if (isset($id) && $a_vip[$id]) {
 			/* modify all virtual IP rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
@@ -198,7 +199,7 @@ if ($_POST) {
 			$a_vip[] = $vipent;
 
 		touch($d_vipconfdirty_path);
-
+		
 		write_config();
 
 		header("Location: firewall_virtual_ip.php");

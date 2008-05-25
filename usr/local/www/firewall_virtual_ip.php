@@ -139,18 +139,20 @@ include("head.inc");
 		</tr>
 			  <?php $i = 0; foreach ($a_vip as $vipent): ?>
 			  <?php if($vipent['subnet'] <> "" or $vipent['range'] <> "" or
-			        $vipent['subnet_bits'] <> "" or $vipent['range']['from'] <> ""): ?>
+			        $vipent['subnet_bits'] <> "" or $vipent['range']['from'] <> "" or $vipent['mode'] == "carpdev-dhcp"): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
 					<?php	if (($vipent['type'] == "single") || ($vipent['type'] == "network"))
-								echo "{$vipent['subnet']}/{$vipent['subnet_bits']}";
+								if($vipent['subnet_bits'])
+									echo "{$vipent['subnet']}/{$vipent['subnet_bits']}";
 							if ($vipent['type'] == "range")
 								echo "{$vipent['range']['from']}-{$vipent['range']['to']}";
 					?>
 					<?php if($vipent['mode'] == "carp") echo " (vhid {$vipent['vhid']})"; ?>
+					<?php if($vipent['mode'] == "carpdev-dhcp") echo "DHCP"; ?>
                   </td>
                   <td class="listlr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-                    <? if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP'>"; elseif($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP'>"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other'>"; elseif($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ipalias.gif' title='IP Alias'>";?>
+                    <? if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP'>"; elseif($vipent['mode'] == "carp" or $vipent['mode'] == "carpdev-dhcp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP'>"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other'>"; elseif($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ipalias.gif' title='IP Alias'>";?>
                   </td>
                   <td class="listbg" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($vipent['descr']);?>&nbsp;

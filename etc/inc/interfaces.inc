@@ -1640,9 +1640,6 @@ function get_current_wan_address($interface = "wan") {
 
 	$interface = filter_translate_type_to_real_interface($interface);
 
-    if($wancfg['ipaddr'] == "carpdev-dhcp")
-            return "\$" . convert_real_interface_to_friendly_interface_name($interface);
-
 	$ifinfo = "";
 	if(in_array($wancfg['ipaddr'], array('dhcp'))) {
 		/* get interface info with netstat */
@@ -1674,6 +1671,21 @@ function get_current_wan_address($interface = "wan") {
 
 		return null;
 	} else {
+		if($wancfg['ipaddr'] == "carpdev-dhcp") {
+	        /* carpdev support on WAN */
+	        if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
+	                $viparr = &$config['virtualip']['vip'];
+	                $counter = 0;
+	                foreach ($viparr as $vip) {
+	                        if ($vip['mode'] == "carpdev-dhcp") {
+	                                if($vip['interface'] == "wan")
+											return str_replace("\n", "", `ifconfig carp{$counter} | grep inet | awk '{ print $2 }'`);
+	                                $counter++;
+	                        }
+	                }
+	        }
+		}
+		
 		/* static WAN IP address */
 		return $wancfg['ipaddr'];
 	}

@@ -508,8 +508,8 @@ function interfaces_carp_configure() {
 		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");
 	}
 	$fd = fopen("/tmp/carp.sh", "w");
+	$viparr = &$config['virtualip']['vip'];
 	if($config['virtualip']['vip']) {
-		$viparr = &$config['virtualip']['vip'];
 		mwexec("/sbin/sysctl net.inet.carp.allow=1");
 	} else {
 		$viparr = array();
@@ -1685,7 +1685,7 @@ function get_real_wan_interface() {
 		$wanif = "pppoe0";
 	if ($wancfg['ipaddr'] == "pptp") 
 		$wanif = "pptp0";
-
+	
 	return $wanif;
 }
 
@@ -1696,8 +1696,8 @@ function get_current_wan_address($interface = "wan") {
 
 	$interface = filter_translate_type_to_real_interface($interface);
 
-	if($wancfg['ipaddr'] == "carpdev-dhcp") 
-		return "\${$interface}";
+    if($wancfg['ipaddr'] == "carpdev-dhcp")
+            return "\$" . convert_real_interface_to_friendly_interface_name($interface);
 
 	$ifinfo = "";
 	if(in_array($wancfg['ipaddr'], array('dhcp'))) {

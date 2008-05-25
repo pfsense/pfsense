@@ -110,6 +110,11 @@ if ($_POST) {
 		}
 	}
 
+	if ($_POST['mode'] == "carpdev-dhcp") {
+		unset($_POST['subnet']);
+		unset($_POST['subnet_bits']);
+	}
+	
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */
@@ -271,6 +276,10 @@ function enable_change(enable_over) {
 		document.iform.subnet_bits.disabled = 1;
 		document.iform.subnet.disabled = 1;
 		document.iform.subnet.value = '';
+		document.iform.subnet_bits.value = '';		
+        document.iform.vhid.disabled = 0;
+        document.iform.password.disabled = 0;
+        document.iform.advskew.disabled = 0;
 	}
 }
 function typesel_change() {

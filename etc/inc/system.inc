@@ -230,6 +230,9 @@ function system_routing_configure() {
 			$dont_remove_route = true;
 	}
 
+	if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp")
+		$dont_remove_route = true;
+
 	if($dont_remove_route == false) {
 		/* remove default route */
 		mwexec("/sbin/route delete default");

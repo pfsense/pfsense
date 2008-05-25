@@ -335,14 +335,29 @@ function filter_generate_aliases() {
 	if($config['interfaces']['lan']) 
 		$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
 
+	$wanif = $config['interfaces']['wan']['if'];
+	
+	/* carpdev support on WAN */
+	if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
+		$viparr = &$config['virtualip']['vip'];
+		$counter = 0;
+		foreach ($viparr as $vip) {
+			if ($vip['mode'] == "carpdev-dhcp") {
+				if($vip['interface'] == "wan") 
+					$wanif = " carp{$counter}";
+				$counter++;
+			}
+		}
+	}
+
     if($config['interfaces']['wan']['ipaddr'] == "pppoe") {
-	$aliases .= "pppoe0 = \"{ " . $config['interfaces']['wan']['if'] . " " .get_real_wan_interface() . " }\" \n"; 
-	 $aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . "{$wan_aliases} pppoe0 }\"\n";
+		$aliases .= "pppoe0 = \"{ " . $wanif . " " . get_real_wan_interface() . " }\" \n"; 
+		$aliases .= "wan = \"{ " . $wanif . "{$wan_aliases} pppoe0  }\"\n";
 	} else if ($config['interfaces']['wan']['ipaddr'] == "pptp") {
-		$aliases .= "pptp0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
-		$aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . "{$wan_aliases} pptp0 }\"\n";
+		$aliases .= "pptp0 = \"{ " . $wanif . " " . get_real_wan_interface() . " }\" \n";
+		$aliases .= "wan = \"{ " . $wanif . "{$wan_aliases} pptp0  }\"\n";
 	} else {
-		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
+		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases}  }\"\n";
 	}
 
 	$aliases .= "enc0 = \"{ enc0 }\"\n";
@@ -517,10 +532,25 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		return;
 
 	/* Use interface name if IP isn't specified */
-        if ($natip != "")
-                $tgt = "{$natip}/32";
-        else
-                $tgt = "($if)";
+        if ($natip != "") 
+			$tgt = "{$natip}/32";
+        else 
+ 			$tgt = "($if)";
+
+		if($if == $config['interfaces']['wan']['if']) {
+			/* carpdev support on WAN */
+			if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
+				$viparr = &$config['virtualip']['vip'];
+				$counter = 0;
+				foreach ($viparr as $vip) {
+					if ($vip['mode'] == "carpdev-dhcp") {
+						if($vip['interface'] == "wan") 
+							$tgt = "carp{$counter}";
+						$counter++;
+					}
+				}
+			}
+		}
 
 	/* Add the hard set source port (useful for ISAKMP) */
         if ($natport != "")

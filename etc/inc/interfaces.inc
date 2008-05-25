@@ -516,7 +516,7 @@ function interfaces_carp_configure() {
 		mwexec("/sbin/sysctl net.inet.carp.allow=0");
 	}
 	foreach ($viparr as $vip) {
-		if ($vip['mode'] == "carp") {
+		if ($vip['mode'] == "carp" or $vip['mode'] == "carpdev-dhcp") {
 			$vip_password = $vip['password'];
 			$vip_password = str_replace(" ", "", $vip_password);
 
@@ -535,7 +535,7 @@ function interfaces_carp_configure() {
 				if (ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits))
 					$found = true;
 			}
-			if($found == false and $vip['type'] =="carp") {
+			if($found == false and $vip['mode'] =="carp") {
 				file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
 				continue;
 			}			
@@ -544,17 +544,18 @@ function interfaces_carp_configure() {
 
 			/* invalidate interface cache */
 			get_interface_arr(true);
-			if($vip['type'] =="carp") 
+			if($vip['mode'] =="carp") 
 				$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 			if($vip['password'] != "")
 				$password = " pass \"" . $vip_password . "\"";
 
-			if($vip['type'] =="carp") {
+			if($vip['mode'] =="carp") {
 				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . " advskew 200 " . $password);
 				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
 			}
 
-			if($vip['type'] =="carpdev-dhcp") {
+			if($vip['mode'] =="carpdev-dhcp") {
+				log_error("Found carpdev interface {$vip['interface']}");
 				$interface = convert_friendly_interface_to_real_interface_name($vip['interface']);
 				if($interface) {
 					exec("ifconfig carp{$carp_instances_counter} carpdev $interface");
@@ -629,12 +630,12 @@ function interfaces_carp_bring_up_final() {
 		if($vip['password'] != "")
 			$password = " pass " . $vip['password'];
 
-		if($vip['type'] =="carp") {
+		if($vip['mode'] =="carp") {
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password);
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
 		}
 		
-		if($vip['type'] =="carpdev-dhcp") {
+		if($vip['mode'] =="carpdev-dhcp") {
 			$interface = convert_friendly_interface_to_real_interface_name($vip['interface']);
 			if($interface)
 				exec("ifconfig carp{$carp_instances_counter} carpdev $interface");			

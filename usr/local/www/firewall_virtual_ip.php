@@ -57,6 +57,12 @@ if ($_POST) {
 		$retval |= filter_configure();
 		config_unlock();
 		interfaces_ipalias_configure();
+		
+		/* reset carp states */
+		reset_carp();
+		interfaces_carp_configure();
+		interfaces_carp_bring_up_final();
+		
 		$savemsg = get_std_save_message($retval);
 		unlink_if_exists($d_vipconfdirty_path);
 	}

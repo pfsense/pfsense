@@ -148,8 +148,8 @@ include("head.inc");
 							if ($vipent['type'] == "range")
 								echo "{$vipent['range']['from']}-{$vipent['range']['to']}";
 					?>
-					<?php if($vipent['mode'] == "carp" or $vipent['mode'] == "carpdev-dhcp") echo " (vhid {$vipent['vhid']})"; ?>
 					<?php if($vipent['mode'] == "carpdev-dhcp") echo "DHCP"; ?>
+					<?php if($vipent['mode'] == "carp" or $vipent['mode'] == "carpdev-dhcp") echo " (vhid {$vipent['vhid']})"; ?>
                   </td>
                   <td class="listlr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
                     <? if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP'>"; elseif($vipent['mode'] == "carp" or $vipent['mode'] == "carpdev-dhcp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP'>"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other'>"; elseif($vipent['mode'] == "ipalias") echo "<img src='./themes/".$g['theme']."/images/icons/icon_ipalias.gif' title='IP Alias'>";?>

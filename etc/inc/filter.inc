@@ -335,7 +335,7 @@ function filter_generate_aliases() {
 	if($config['interfaces']['lan']) 
 		$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
 
-	$wanif = $config['interfaces']['wan']['if'];
+	$wanif = get_real_wan_interface();
 	
 	/* carpdev support on WAN */
 	if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
@@ -344,7 +344,7 @@ function filter_generate_aliases() {
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] == "carpdev-dhcp") {
 				if($vip['interface'] == "wan") 
-					$wanif = " carp{$counter}";
+					$wanif = "carp{$counter}";
 				$counter++;
 			}
 		}
@@ -357,7 +357,7 @@ function filter_generate_aliases() {
 		$aliases .= "pptp0 = \"{ " . $wanif . " " . get_real_wan_interface() . " }\" \n";
 		$aliases .= "wan = \"{ " . $wanif . "{$wan_aliases} pptp0  }\"\n";
 	} else {
-		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases}  }\"\n";
+		$aliases .= "wan = \"{ " . $wanif . "{$wan_aliases}  }\"\n";
 	}
 
 	$aliases .= "enc0 = \"{ enc0 }\"\n";

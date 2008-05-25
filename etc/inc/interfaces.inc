@@ -41,7 +41,7 @@ require_once("globals.inc");
 
 function interfaces_loopback_configure() {
 	mwexec("/sbin/ifconfig lo0 127.0.0.1");
-
+	mwexec("/sbin/ifconfig lo0 up");
 	return 0;
 }
 
@@ -104,9 +104,6 @@ function interfaces_vlan_configure() {
 			$i++;
 		}
 	}
-
-	/* CARP interfaces can be attached to VLAN's, too. */
-	interfaces_carp_bring_up_final();
 
 	return 0;
 }
@@ -481,6 +478,7 @@ function interfaces_carp_configure() {
 		unset($balanacing);
 		unset($pfsyncenabled);
 	}
+	mwexec("/sbin/sysctl net.inet.carp.allow=1");	
 	if($balanacing) {
 		mwexec("/sbin/sysctl net.inet.carp.arpbalance=1");
 		mwexec("/sbin/sysctl net.inet.carp.preempt=0");
@@ -494,8 +492,8 @@ function interfaces_carp_configure() {
 		 */
 		exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
 		exec("echo pass quick proto pfsync all >> /tmp/rules.boot");
-		exec("echo pass out proto { tcp, udp } from any to any port 53 keep state >> /tmp/rules.boot");
-		exec("/sbin/pfctl -f /tmp/rules.boot");
+		exec("echo pass out quick from any to any keep state >> /tmp/rules.boot");
+//		exec("/sbin/pfctl -f /tmp/rules.boot");
 	}
 	/* setup pfsync interface */
 	if($carp_sync_int and $pfsyncenabled) {
@@ -569,6 +567,7 @@ function interfaces_carp_configure() {
 					mwexec("ifconfig carp{$carp_instances_counter} carpdev $interface");
 					mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password);
 					mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
+					sleep(1);
 					mwexec("/sbin/dhclient -b carp{$carp_instances_counter}");					
 				} else {
 					log_error("Could not determine CarpDEV parent interface for {$vip['descr']}.");
@@ -1180,6 +1179,7 @@ function interfaces_wan_carpdev_dhcp_configure() {
 	global $config, $g;
 
 	$wancfg = $config['interfaces']['wan'];
+	$wanif = $wancfg['if'];
 	/* bring wan interface up before starting dhclient */
 	mwexec("/sbin/ifconfig {$wanif} up");
 

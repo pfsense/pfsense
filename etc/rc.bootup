@@ -173,6 +173,13 @@
 	/* bring ip IP aliases */
 	interfaces_ipalias_configure();
 
+	/* setup altq + pf */
+	echo "Configuring firewall...";
+	//mute_kernel_msgs();
+	filter_configure_sync();
+	//unmute_kernel_msgs();
+	echo "done.\n";
+
 	/* generate resolv.conf */
 	system_resolvconf_generate();
 
@@ -193,13 +200,6 @@
 
 	/* start OpenVPN server & clients */
 	openvpn_resync_all();
-
-	/* setup altq + pf */
-	echo "Configuring firewall...";
-	//mute_kernel_msgs();
-	filter_configure_sync();
-	//unmute_kernel_msgs();
-	echo "done.\n";
 
 	if($avail > 0 and $avail < 65) {
 		echo "System has less than 65 megabytes of ram {$avail}.  Delaying webConfigurator startup.\n";

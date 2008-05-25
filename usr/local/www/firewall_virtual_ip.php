@@ -148,7 +148,7 @@ include("head.inc");
 							if ($vipent['type'] == "range")
 								echo "{$vipent['range']['from']}-{$vipent['range']['to']}";
 					?>
-					<?php if($vipent['mode'] == "carp") echo " (vhid {$vipent['vhid']})"; ?>
+					<?php if($vipent['mode'] == "carp" or $vipent['mode'] == "carpdev-dhcp") echo " (vhid {$vipent['vhid']})"; ?>
 					<?php if($vipent['mode'] == "carpdev-dhcp") echo "DHCP"; ?>
                   </td>
                   <td class="listlr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">

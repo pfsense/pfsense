@@ -118,7 +118,7 @@ if ($_POST) {
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */
-	if ($_POST['mode'] == "carp") {
+	if ($_POST['mode'] == "carp" or $_POST['mode'] == "carpdev-dhcp") {
 		if(!$id) {
 			/* verify against reusage of vhids */
 			$idtracker=0;
@@ -165,7 +165,7 @@ if ($_POST) {
 		}
 
 		/* CARP specific fields */
-		if ($_POST['mode'] === "carp") {
+		if ($_POST['mode'] === "carp" or $_POST['mode'] == "carpdev-dhcp") {
 			$vipent['vhid'] = $_POST['vhid'];
 			$vipent['advskew'] = $_POST['advskew'];
 			$vipent['password'] = $_POST['password'];

@@ -343,8 +343,11 @@ function filter_generate_aliases() {
 		$counter = 0;
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] == "carpdev-dhcp") {
-				if($vip['interface'] == "wan") 
-					$wanif = "carp{$counter}";
+				if($vip['interface'] == "wan") {
+					if($counter == 0) 
+						$wanif = "";
+					$wanif .= " carp{$counter}";
+				}
 				$counter++;
 			}
 		}

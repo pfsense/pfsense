@@ -522,6 +522,7 @@ function interfaces_carp_configure() {
 		$viparr_temp['password'] = $config['system']['hostname'] . "pfS";
 		$viparr = $viparr_temp;
 	}
+	if(is_array($viparr))
 	foreach ($viparr as $vip) {
 		if ($vip['mode'] == "carp" or $vip['mode'] == "carpdev-dhcp") {
 			$vip_password = $vip['password'];
@@ -1623,7 +1624,7 @@ function get_real_wan_interface() {
 	global $config, $g;
 
 	$wancfg = $config['interfaces']['wan'];
-
+	return "carp0";
 	$wanif = $wancfg['if'];
 	if ($wancfg['ipaddr'] == "pppoe") 
 		$wanif = "pppoe0";
@@ -1676,6 +1677,7 @@ function get_current_wan_address($interface = "wan") {
 	        if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
 	                $viparr = &$config['virtualip']['vip'];
 	                $counter = 0;
+					if(is_array($viparr))
 	                foreach ($viparr as $vip) {
 	                        if ($vip['mode'] == "carpdev-dhcp") {
 	                                if($vip['interface'] == "wan")

@@ -341,6 +341,7 @@ function filter_generate_aliases() {
 	if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
 		$viparr = &$config['virtualip']['vip'];
 		$counter = 0;
+		if(is_array($viparr))
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] == "carpdev-dhcp") {
 				if($vip['interface'] == "wan") {
@@ -545,6 +546,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 			if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
 				$viparr = &$config['virtualip']['vip'];
 				$counter = 0;
+				if(is_array($viparr))
 				foreach ($viparr as $vip) {
 					if ($vip['mode'] == "carpdev-dhcp") {
 						if($vip['interface'] == "wan") 

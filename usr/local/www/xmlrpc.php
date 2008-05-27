@@ -38,9 +38,11 @@ require_once("functions.inc");
 require_once("array_intersect_key.inc");
 
 /* grab sync to ip if enabled */
-if ($config['installedpackages']['carpsettings']['config']) {
-	foreach ($config['installedpackages']['carpsettings']['config'] as $carp) {
-		$synchronizetoip = $carp['synchronizetoip'];
+if($config['installedpackages']['carpsettings']) {
+	if ($config['installedpackages']['carpsettings']['config']) {
+		foreach ($config['installedpackages']['carpsettings']['config'] as $carp) {
+			$synchronizetoip = $carp['synchronizetoip'];
+		}
 	}
 }
 

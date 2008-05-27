@@ -103,7 +103,7 @@ function php_value_to_xmlrpc($value, $force_array = false) {
  */
 function xmlrpc_auth(&$params) {
 	global $config;
-	$localpass = $config['system']['password'];
+	$localpass =  $config['system']['user'][0]['password'];	
 	if(crypt($params[0], $localpass) == $localpass) {
 		array_shift($params);
 		return true;

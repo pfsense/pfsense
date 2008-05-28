@@ -1624,7 +1624,23 @@ function get_real_wan_interface() {
 	global $config, $g;
 
 	$wancfg = $config['interfaces']['wan'];
-	return "carp0";
+
+	if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
+		$viparr = &$config['virtualip']['vip'];
+		$counter = 0;
+		if(is_array($viparr))
+		foreach ($viparr as $vip) {
+			if ($vip['mode'] == "carpdev-dhcp") {
+				if($vip['interface'] == "wan") {
+					if($counter == 0) 
+						$wanif = "";
+					return " carp{$counter}";
+				}
+				$counter++;
+			}
+		}
+	}
+
 	$wanif = $wancfg['if'];
 	if ($wancfg['ipaddr'] == "pppoe") 
 		$wanif = "pppoe0";

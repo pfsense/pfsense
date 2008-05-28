@@ -348,6 +348,7 @@ function filter_generate_aliases() {
 					if($counter == 0) 
 						$wanif = "";
 					$wanif .= " carp{$counter}";
+					$aliases .= "carp{$counter} = \"{ carp{$counter} }\"\n";					
 				}
 				$counter++;
 			}

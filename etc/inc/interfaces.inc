@@ -1634,7 +1634,7 @@ function get_real_wan_interface() {
 				if($vip['interface'] == "wan") {
 					if($counter == 0) 
 						$wanif = "";
-					return " carp{$counter}";
+					return "carp{$counter}";
 				}
 				$counter++;
 			}

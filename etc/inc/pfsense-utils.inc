@@ -3307,6 +3307,8 @@ function enable_rrd_graphing() {
                                                 break;
                                         }
 					$qbandwidth = $altq->GetBandwidth() * $factor;
+					if ($qbandwidth <=0)
+						$qbandwidth = 100 * 1000 * 1000; /* 100Mbit */
 					$qlist =& $altq->get_queue_list($notused);
 					if (!file_exists("$rrddbpath$ifname$queues")) {
 						/* create rrd file if it does not exist */

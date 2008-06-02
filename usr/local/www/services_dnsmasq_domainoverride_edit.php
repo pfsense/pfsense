@@ -116,7 +116,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>">
-                    <br> <span class="vexpl">IP address of the authoritative dns server for this domain<br>
+                    <br> <span class="vexpl">IP address of the authoritative DNS server for this domain<br>
                     e.g. <em>192.168.100.100</em></span></td>
                 </tr>
                                <tr>

@@ -55,6 +55,9 @@ $a_gateways = &$config['gateways']['gateway_item'];
 $optcfg = &$config['interfaces']['opt' . $index];
 $optcfg['descr'] = remove_bad_chars($optcfg['descr']);
 
+if (!is_array($config['aliases']['alias']))
+        $config['aliases']['alias'] = array();
+
 foreach($config['aliases']['alias'] as $alias) 
 	if($alias['name'] == $optcfg['descr']) 
 		$input_errors[] = gettext("Sorry, an alias with the name {$optcfg['descr']} already exists.");

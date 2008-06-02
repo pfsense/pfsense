@@ -109,18 +109,22 @@ if ($_GET) {
 			exit;
 		break;
 	case "show":
-			$iflist = get_interface_list();
-			foreach ($iflist as $if) {
-				$altq = $altq_list_queues[$if['friendly']];
-				if ($altq) {
-					$qtmp =& $altq->find_queue("", $qname);
-					if ($qtmp) 
-						$output .= $qtmp->build_shortform();
-					else
-						$output .= build_iface_without_this_queue($if['friendly'], $qname);
-				} else 
-					$output .= build_iface_without_this_queue($if['friendly'], $qname);
-			}	
+                        foreach ($config['interfaces'] as $if => $ifdesc) {
+                                $altq = $altq_list_queues[$if];
+                                if ($altq) {
+                                        $qtmp =& $altq->find_queue("", $qname);
+                                        if ($qtmp)
+                                                $output .= $qtmp->build_shortform();
+                                        else
+                                                $output .= build_iface_without_this_queue($if, $qname);
+                                } else {
+                                        if (!is_altq_capable($ifdesc['if']))
+                                                continue;
+                                        if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan")
+                                                continue;
+                                        $output .= build_iface_without_this_queue($if, $qname);
+                                }
+                        }
 		break;
 	}
 }

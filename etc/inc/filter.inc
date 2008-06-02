@@ -441,18 +441,18 @@ function filter_generate_aliases() {
 	return $aliases;
 }
 
+/* returns space seperated list of vpn subnets */
 function get_vpns_list() {
 	global $config;
 	/* build list of vpns */
 	$vpns = "";
-	$isfirst = true;
+	$vpns_arr = array();
 	/* ipsec */
 	if ($config['ipsec']['tunnel']) {
 		foreach ($config['ipsec']['tunnel'] as $tunnel) {
-			if ($isfirst == false)
-				$vpns .= " ";
-			$vpns .= $tunnel['remote-subnet'];
-			$isfirst = false;
+			if(is_subnet($tunnel['remote-subnet'])) {
+				$vpns_arr[] = $tunnel['remote-subnet'];
+			}
 		}
 	}
 	/* openvpn */
@@ -460,20 +460,20 @@ function get_vpns_list() {
 		$conf =& $config['installedpackages']["openvpn$type"]['config'];
 		if (!is_array($conf)) continue;
 		foreach ($conf as $tunnel) {
-			if ($isfirst == false)
-				$vpns .= " ";
-			$vpns .= $tunnel['remote_network'];
-			$isfirst = false;
+			if(is_subnet($tunnel['remote-subnet'])) {
+				$vpns_arr[] = $tunnel['remote_network'];
+			}
 		}
 	}
 	/* pppoe */
 	if ($config['pppoe']['remoteip']) {
-		if ($isfirst == false)
-			$vpns .= " ";
-		$vpns .= $config['pppoe']['remoteip'] ."/". $config['pppoe']['pppoe_subnet'];
-		$isfirst = false;
+		if(is_subnet($tunnel['remote-subnet'])) {
+			$vpns_arr[] = $config['pppoe']['remoteip'] ."/". $config['pppoe']['pppoe_subnet'];
+		}
 	}
-	$vpns .= " ";
+	if(!empty($vpns_arr)) {
+		$vpns = implode(" ", $vpns_arr);
+	}
 	return $vpns;
 }
 

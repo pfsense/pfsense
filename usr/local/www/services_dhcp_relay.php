@@ -31,7 +31,7 @@
 
 function get_wan_dhcp_server() {
 	global $config, $g;
-	$dhclientfn = $g['vardb_path'] . "/dhclient.leases";
+	$dhclientfn = $g['vardb_path'] . "/dhclient.leases." . $config['interfaces']['wan']['if'];
 	if(file_exists($dhclientfn))
 		$leases = file($dhclientfn);
 	else 

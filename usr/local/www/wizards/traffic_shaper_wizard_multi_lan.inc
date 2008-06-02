@@ -752,8 +752,8 @@ $othersplist = array();
 
 		$altq->SetInterface($config['ezshaper']['step2']["conn{$i}interface"]);
 		$altq->SetScheduler($config['ezshaper']['step2']["conn{$i}downloadscheduler"]);
-		//$altq->SetBandwidth(floatval($config['ezshaper']['step2']["conndownload"]));
-		//$altq->SetBwscale($config['ezshaper']['step2']["conndownloadspeed"]);
+		$altq->SetBandwidth(floatval($config['ezshaper']['step2']["conndownload"]));
+		$altq->SetBwscale($config['ezshaper']['step2']["conndownloadspeed"]);
 		$altq->SetEnabled("on");
 		$altq_list_queues[$altq->GetQname()] =& $altq;
 		array_push($tmppath, $config['ezshaper']['step2']["conn{$i}interface"]);

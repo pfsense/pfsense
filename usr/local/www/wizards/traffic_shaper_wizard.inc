@@ -1264,8 +1264,8 @@ $othersplist = array();
 
 		$altq->SetInterface('lan');
 		$altq->SetScheduler($config['ezshaper']['step2']["downloadscheduler"]);
-		//$altq->SetBandwidth($lanbw/1000);
-		//$altq->SetBwscale("Kb");
+		$altq->SetBandwidth($lanbw/1000);
+		$altq->SetBwscale("Kb");
 		$altq->SetEnabled("on");
 		$altq_list_queues[$altq->GetQname()] =& $altq;
 		array_push($tmppath, 'lan');

@@ -42,8 +42,11 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 
-echo "Scanning nodes... One moment please...";
-$scan_nodes = `/sbin/ifconfig {$_GET['interface']} scan`;
+$interface = escapeshellarg($_GET['interface']);
+
+echo gettext("Scanning nodes... One moment please...");
+$scan_nodes = `/sbin/ifconfig {$interface} scan`;
+
 echo "<P>Available nodes:<PRE>";
 echo $scan_nodes;
 echo "</PRE>";

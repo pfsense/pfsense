@@ -256,6 +256,8 @@
 
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 
+	interfaces_carp_bring_up_final();
+
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();
 
@@ -263,8 +265,6 @@
 	echo "Starting FTP helpers...";
 	system_start_ftp_helpers();
 	echo "done.\n";
-
-	interfaces_carp_bring_up_final();
 
 	/* start SNMP service */
 	services_snmpd_configure();
@@ -276,7 +276,7 @@
 	if(isset($config['system']['disableconsolemenu']))
 		touch("/var/etc/console_lockdown");
 
-	filter_configure();
+	filter_configure_sync();
 
 	/* load graphing functions */
 	enable_rrd_graphing();

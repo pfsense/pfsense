@@ -46,66 +46,67 @@ function interfaces_loopback_configure() {
 }
 
 function interfaces_vlan_configure() {
-	global $config, $g;
+        global $config;
 
-	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+        if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
-		/* devices with native VLAN support */
-		$vlan_native_supp = $g['vlan_native_supp'];
+                foreach ($config['vlans']['vlan'] as $vlan)
+                        /* XXX: Maybe we should report any errors?! */
+                        interface_vlan_configure($vlan['if'], $vlan['tag'], $vlan['vlanif']);
+        }
+}
 
-		/* devices with long frame support */
-		$vlan_long_frame = $g['vlan_long_frame'];
+function interface_vlan_configure($if, $tag, $vlanif = "") {
+        global $config, $g;
 
-		/* sweep through and axe old interfaces */
-		$vlan_count = get_number_of_vlan_interfaces();
-		for($x=0; $x<$vlan_count; $x++)
-			exec("/sbin/ifconfig vlan{$x} down destroy");
+        /* devices with native VLAN support */
+        $vlan_native_supp = $g['vlan_native_supp'];
 
-		$i = 0;
+        /* devices with long frame support */
+        $vlan_long_frame = $g['vlan_long_frame'];
 
-		foreach ($config['vlans']['vlan'] as $vlan) {
+        /* make sure the parent interface is up */
+        mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
 
-			$cmd = "/sbin/ifconfig vlan{$i} create vlan " .
-				escapeshellarg($vlan['tag']) . " vlandev " .
-				escapeshellarg($vlan['if']);
+        if ($g['booting'])
+                $vif = $vlanif;
+        else
+                $vif = "vlan";
+        $cmd = "/sbin/ifconfig {$vif} create vlan " .
+                escapeshellarg($tag) . " vlandev " .
+                escapeshellarg($if);
 
-			/* get driver name */
-			for ($j = 0; $j < strlen($vlan['if']); $j++) {
-				if ($vlan['if'][$j] >= '0' && $vlan['if'][$j] <= '9')
-					break;
-			}
-			$drvname = substr($vlan['if'], 0, $j);
-
-			if (in_array($drvname, $vlan_native_supp))
-				$cmd .= " link0";
-			else if (in_array($drvname, $vlan_long_frame))
-				$cmd .= " mtu 1500";
-
-			mwexec($cmd);
-
-			/* invalidate interface cache */
-			get_interface_arr(true);
-
-			/*   all vlans need to spoof their parent mac address, too.  see
-			 *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33 
-			 */
-			foreach($config['interfaces'] as $interfaces) {
-				if($interfaces['if'] == $vlan['if']) {
-					if($interfaces['spoofmac']) {
-						mwexec("/sbin/ifconfig " . escapeshellarg($interfaces['if']) .
-							" link " . escapeshellarg($interfaces['spoofmac']));
-					}
-				}
-			}
-
-			/* make sure the parent interface is up */
-			mwexec("/sbin/ifconfig " . escapeshellarg($vlan['if']) . " up");
-
-			$i++;
-		}
+        /* get driver name */
+        for ($j = 0; $j < strlen($if); $j++) {
+                if ($if[$j] >= '0' && $if[$j] <= '9')
+                        break;
 	}
+        $drvname = substr($if, 0, $j);
 
-	return 0;
+        if (in_array($drvname, $vlan_native_supp))
+                $cmd .= " link0";
+        else if (in_array($drvname, $vlan_long_frame))
+                $cmd .= " mtu 1500";
+
+        $vlanif = exec($cmd);
+
+        /* invalidate interface cache */
+        get_interface_arr(true);
+
+        /*   all vlans need to spoof their parent mac address, too.  see
+         *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
+         */
+        foreach($config['interfaces'] as $interfaces) {
+                if($interfaces['if'] == $if && $interfaces['spoofmac']) {
+                        mwexec("/sbin/ifconfig " . escapeshellarg($if) .
+                                " link " . escapeshellarg($interfaces['spoofmac']));
+                }
+        }
+
+        /* XXX: ermal -- for now leave it here at the moment it does not hurt. */
+        mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
+
+        return $vlanif;
 }
 
 function interfaces_lan_configure() {

@@ -1216,6 +1216,15 @@ function convert_config() {
 		$config['version'] = "4.4";
 	}
 
+        /* Convert 4.4 -> 4.5 */
+        if ($config['version'] <= 4.4) {
+                if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+                        foreach ($config['vlans']['vlan'] as $id => $vlan)
+                                $vlan['vlanif'] = "vlan{$id}";
+                }
+                $config['version'] = "4.5";
+        }
+
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }

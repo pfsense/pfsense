@@ -52,33 +52,15 @@ function vlan_inuse($num) {
 	return false;
 }
 
-function renumber_vlan($if, $delvlan) {
-	if (!preg_match("/^vlan/", $if))
-		return $if;
-
-	$vlan = substr($if, 4);
-	if ($vlan > $delvlan)
-		return "vlan" . ($vlan - 1);
-	else
-		return $if;
-}
-
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (vlan_inuse($_GET['id'])) {
 		$input_errors[] = "This VLAN cannot be deleted because it is still being used as an interface.";
 	} else {
+		mwexec("/sbin/ifconfig " . $a_vlans[$_GET['id']]['vlanif'] . " destroy");
 		unset($a_vlans[$_GET['id']]);
 
-		/* renumber all interfaces that use VLANs */
-		$config['interfaces']['lan']['if'] = renumber_vlan($config['interfaces']['lan']['if'], $_GET['id']);
-		$config['interfaces']['wan']['if'] = renumber_vlan($config['interfaces']['wan']['if'], $_GET['id']);
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-			$config['interfaces']['opt' . $i]['if'] = renumber_vlan($config['interfaces']['opt' . $i]['if'], $_GET['id']);
-
 		write_config();
-
-		interfaces_vlan_configure();
 
 		header("Location: interfaces_vlan.php");
 		exit;

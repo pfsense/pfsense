@@ -44,6 +44,7 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_vlans[$id]) {
 	$pconfig['if'] = $a_vlans[$id]['if'];
+	$pconfig['vlanif'] = $a_vlans[$id]['vlanif'];
 	$pconfig['tag'] = $a_vlans[$id]['tag'];
 	$pconfig['descr'] = $a_vlans[$id]['descr'];
 }
@@ -79,33 +80,42 @@ if ($_POST) {
 		$vlan['tag'] = $_POST['tag'];
 		$vlan['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_vlans[$id])
-			$a_vlans[$id] = $vlan;
-		else
-			$a_vlans[] = $vlan;
+                $vlan['vlanif'] = interface_vlan_configure($vlan['if'], $vlan['tag']);
+                if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan"))
+                        $input_errors[] = "Error occured creating interface, please retry.";
+                else {
+                        if (isset($id) && $a_vlans[$id])
+                                $a_vlans[$id] = $vlan;
+                        else
+                                $a_vlans[] = $vlan;
 
-		write_config();
+                        write_config();
 
-		/* TODO 
-		this does not always work, some systems require
-		a reboot before VLANs function properly. Suspect
-		FreeBSD driver issue.
+
+			/* TODO 
+			this does not always work, some systems require
+			a reboot before VLANs function properly. Suspect
+			FreeBSD driver issue.
 		
-		This portion of code is also very slow, this is why
-		it takes a long time to add a new VLAN.
-		Benchmark_Timer on a 800 MHz VIA: 
-			interfaces_lan_configure() takes about 6 seconds 
-			interfaces_wan_configure() takes about 9.5 seconds
-			interfaces_optional_configure() takes about 5 seconds
-		*/
+			This portion of code is also very slow, this is why
+			it takes a long time to add a new VLAN.
+			Benchmark_Timer on a 800 MHz VIA: 
+				interfaces_lan_configure() takes about 6 seconds 
+				interfaces_wan_configure() takes about 9.5 seconds
+				interfaces_optional_configure() takes about 5 seconds
+			*/
 
-		interfaces_vlan_configure();
-		interfaces_lan_configure();
-		interfaces_wan_configure();
-		interfaces_optional_configure();
+			/* XXX: ermal -- on my test these now are only needed if the vlan
+					modification touches only one of these interfaces.
+					It needs some more testing to be activated though.
+			 */
+			interfaces_lan_configure();
+			interfaces_wan_configure();
+			interfaces_optional_configure();
 
-		header("Location: interfaces_vlan.php");
-		exit;
+			header("Location: interfaces_vlan.php");
+			exit;
+		}
 	}
 }
 

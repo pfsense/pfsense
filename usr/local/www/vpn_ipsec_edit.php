@@ -239,6 +239,13 @@ if ($_POST) {
 		$ipsecent['interface'] = $pconfig['interface'];
 		pconfig_to_address($ipsecent['local-subnet'], $_POST['localnet'], $_POST['localnetmask']);
 		$ipsecent['remote-subnet'] = $_POST['remotenet'] . "/" . $_POST['remotebits'];
+		/* if the remote gateway changed and the interface is not WAN then remove route */
+		/* the vpn_ipsec_configure() handles adding the route */
+		if($_POST['interface'] <> "wan") {
+			if($ipsecent['remote-gateway'] <> $_POST['remotegw']) {
+				mwexec("/sbin/route delete -host {$ipsecent['remote-gateway']}");
+			}
+		}
 		$ipsecent['remote-gateway'] = $_POST['remotegw'];
 		$ipsecent['p1']['mode'] = $_POST['p1mode'];
 

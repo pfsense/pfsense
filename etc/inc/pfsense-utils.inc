@@ -2445,11 +2445,6 @@ function reload_interfaces_sync() {
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
 
-	/* set up VLAN virtual interfaces */
-	if($debug)
-		log_error("Configuring VLANS");
-	interfaces_vlan_configure();
-
 	/* set up LAN interface */
 	if($debug)
 		log_error("Configuring LAN");
@@ -2826,9 +2821,6 @@ function reload_all_sync() {
 		mwexec("/sbin/ifconfig {$ifname_real} down");
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
-
-	/* set up VLAN virtual interfaces */
-	interfaces_vlan_configure();
 
 	/* set up LAN interface */
 	interfaces_lan_configure();

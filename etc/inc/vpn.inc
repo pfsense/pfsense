@@ -264,6 +264,21 @@ function vpn_ipsec_configure($ipchg = false) {
 					  "{$sa}/{$sn} any -P in ipsec " .
 					  "{$tunnel['p2']['protocol']}/tunnel/{$rgip}-" .
 					  "{$ep}/unique;\n";
+
+					if($tunnel['interface'] <> "wan") {
+						/* static route needed? */
+						if(preg_match("/^carp/i", $tunnel['interface'])) {
+							/* add endpoint routes to correct gateway on interface */
+							$parentinterface = link_carp_interface_to_parent($tunnel['interface']);
+							$gatewayip = get_interface_gateway("$parentinterface");
+							if($gatewayip) {
+								log_error("IPSEC interface is not WAN but {$tunnel['interface']}, adding static 
+route for VPN endpoint {$tunnel['remote-gateway']} via {$gatewayip}");
+								mwexec("/sbin/route add -host {$tunnel['remote-gateway']} {$gatewayip}");
+							}
+						}
+					}
+
 				}
 
 				fwrite($fd, $spdconf);

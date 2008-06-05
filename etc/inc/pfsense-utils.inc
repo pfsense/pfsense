@@ -1271,24 +1271,31 @@ function link_carp_interface_to_parent($interface) {
 	global $config;
 	if($interface == "") return;
 
-	if($config['interfaces']['lan']) 
-		$ifdescrs = array('wan', 'lan');
-	else 
-		$ifdescrs = array('wan');
+	if($config['interfaces']['lan']) {
+		$ifdescrs = array("wan" => "wan", "lan" => "lan");
+	} else {
+		$ifdescrs = array("wan" => "wan");
+	}
 
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
 
+	$carp_int = $interface;
+	$carp_ip = find_interface_ip($interface);
+	$carp_subnet = find_virtual_ip_netmask($carp_ip);
+	$starting_ip = gen_subnet("{$carp_ip}", "{$carp_subnet}");
 	$carp_ints = "";
 	$num_carp_ints = find_number_of_created_carp_interfaces();
+
 	foreach ($ifdescrs as $ifdescr => $ifname) {
-		$carp_int = $interface;
-		$carp_ip = find_interface_ip($interface);
-		$carp_subnet = find_virtual_ip_netmask($carp_ip);
-		$starting_ip = gen_subnet("{$carp_ip}", "{$carp_subnet}");
-		if(ip_in_subnet($starting_ip, "{$carp_ip}/{$carp_subnet}"))
-			if(!stristr($carp_ints, $carp_int))
+		if(interface_has_gateway($ifname)) {
+			$interfaceip = $config['interfaces'][$ifname]['ipaddr'];
+			$subnet_bits = $config['interfaces'][$ifname]['subnet'];
+			$subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
+			if(ip_in_subnet($carp_ip, "{$subnet_ip}/{$subnet_bits}")) {
 				return $ifname;
+			}
+		}
 	}
 	return $carp_ints;
 }

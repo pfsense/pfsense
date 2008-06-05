@@ -245,8 +245,14 @@ function vpn_ipsec_configure($ipchg = false) {
 				
 					if($tunnel['interface'] <> "wan") {
 						/* static route needed? */
-						if(strstr("carp", $tunnel['interface'])) {
-							
+						if(preg_match("/^carp/i", $tunnel['interface'])) {
+							/* add endpoint routes to correct gateway on interface */
+							$parentinterface = link_carp_interface_to_parent($tunnel['interface']);
+							$gatewayip = get_interface_gateway("$parentinterface");
+							if($gatewayip) {
+								log_error("IPSEC interface is not WAN but {$tunnel['interface']}, adding static route for VPN endpoint {$tunnel['remote-gateway']} via {$gatewayip}");
+								mwexec("/sbin/route add -host {$tunnel['remote-gateway']} {$gatewayip}");
+							}
 						}
 					}
 				}

@@ -74,6 +74,10 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_ipsec[$_GET['id']]) {
+		/* remove static route if interface is not WAN */
+		if($a_ipsec[$_GET['id']]['interface'] <> "wan") {
+			mwexec("/sbin/route delete -host {$$a_ipsec[$_GET['id']]['remote-gateway']}");
+		}
 		unset($a_ipsec[$_GET['id']]);
 		filter_configure();
 		write_config();

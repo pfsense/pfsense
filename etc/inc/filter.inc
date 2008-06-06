@@ -2587,7 +2587,10 @@ if (!isset($config['shaper']['enable']) && !is_array($config['shaper']['queue'])
 # let out anything from the firewall host itself and decrypted IPsec traffic
 pass out quick on \$lan proto icmp keep state label "let out anything from firewall host itself"
 pass out quick on \$wan proto icmp keep state label "let out anything from firewall host itself"
-pass out quick on $wanif all keep state label "let out anything from firewall host itself"
+
+# tcp.closed 5 is a workaround for load balancing, squid and a few other issues.
+# ticket (FEN-857512) in centipede tracker.
+pass out quick on $wanif all keep state ( tcp.closed 5 ) label "let out anything from firewall host itself"
 
 EOD;
 
@@ -2607,8 +2610,8 @@ EOD;
 
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out quick on {$oc['if']} proto icmp keep state label "let out anything from firewall host itself"
-pass out quick on \${$friendly_on} all keep state label "let out anything from firewall host itself"
+pass out quick on {$oc['if']} proto icmp keep state ( tcp.closed 5 ) label "let out anything from firewall host itself"
+pass out quick on \${$friendly_on} all keep state ( tcp.closed 5 ) label "let out anything from firewall host itself"
 
 EOD;
 
@@ -2617,7 +2620,7 @@ EOD;
 	if($config['interfaces']['wan']['ipaddr'] == "pppoe")
 		$ipfrules .= <<<EOD
 # permit wan interface to ping out (ping_hosts.sh)
-pass out quick on ng0 proto icmp keep state label "let out anything from firewall host itself"
+pass out quick on ng0 proto icmp keep state ( tcp.closed 5 ) label "let out anything from firewall host itself"
 
 EOD;
 

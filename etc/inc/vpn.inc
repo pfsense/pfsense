@@ -243,17 +243,25 @@ function vpn_ipsec_configure($ipchg = false) {
 						"{$tunnel['p2']['protocol']}/tunnel/{$tunnel['remote-gateway']}-" .
 						"{$ep}/unique;\n";
 				
-					if($tunnel['interface'] <> "wan") {
-						/* static route needed? */
-						if(preg_match("/^carp/i", $tunnel['interface'])) {
-							/* add endpoint routes to correct gateway on interface */
-							$parentinterface = link_carp_interface_to_parent($tunnel['interface']);
+					/* static route needed? */
+					$parentinterface = link_carp_interface_to_parent($tunnel['interface']);
+					if($parentinterface <> "wan") {
+						/* add endpoint routes to correct gateway on interface */
+						if(interface_has_gateway($parentinterface)) {
 							$gatewayip = get_interface_gateway("$parentinterface");
-							if($gatewayip) {
-								log_error("IPSEC interface is not WAN but {$tunnel['interface']}, adding static route for VPN endpoint {$tunnel['remote-gateway']} via {$gatewayip}");
-								mwexec("/sbin/route add -host {$tunnel['remote-gateway']} {$gatewayip}");
+							$interfaceip = $config['interfaces'][$parentinterface]['ipaddr'];
+							$subnet_bits = $config['interfaces'][$parentinterface]['subnet'];
+							$subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
+							/* if the remote gateway is in the local subnet, then don't add a route */
+							if(! ip_in_subnet($tunnel['remote-gateway'], "{$subnet_ip}/{$subnet_bits}")) {
+								if(is_ipaddr($gatewayip)) {
+									log_error("IPSEC interface is not WAN but {$tunnel['interface']}, adding static route for VPN endpoint {$tunnel['remote-gateway']} via {$gatewayip}");
+									mwexec("/sbin/route delete -host {$tunnel['remote-gateway']};/sbin/route add -host {$tunnel['remote-gateway']} {$gatewayip}");
+								}
 							}
 						}
+					} else {
+						mwexec("/sbin/route delete -host {$tunnel['remote-gateway']}");
 					}
 				}
 

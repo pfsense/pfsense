@@ -266,7 +266,11 @@ function vpn_ipsec_configure($ipchg = false) {
 					  "{$ep}/unique;\n";
 
 					/* static route needed? */
-					$parentinterface = link_carp_interface_to_parent($tunnel['interface']);
+					if(preg_match("/^carp/i", $tunnel['interface'])) {
+						$parentinterface = link_carp_interface_to_parent($tunnel['interface']);
+					} else {
+						$parentinterface = $tunnel['interface'];
+					}
 					if($parentinterface <> "wan") {
 						/* add endpoint routes to correct gateway on interface */
 						if(interface_has_gateway($parentinterface)) {

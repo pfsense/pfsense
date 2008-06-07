@@ -866,9 +866,10 @@ function vpn_endpoint_determine($tunnel, $curwanip) {
 	} else if ($tunnel['interface'] == "lan") {
 		return $config['interfaces']['lan']['ipaddr'];
 	} else {
+		$iface = $config['interfaces'][$tunnel['interface']]['if'];
 		$oc = $config['interfaces'][$tunnel['interface']];
 		/* carp ips, etc */
-		$ip = find_interface_ip($tunnel['interface']);
+		$ip = find_interface_ip($iface);
 		if($ip) 
 			return $ip;
 

@@ -85,7 +85,7 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) or $isAdminUser == true) {
         unset($input_errors);
         $pconfig = $_POST;
 
-		if(!$_POST['groupname']) 
+		if(!$_POST['groupname'] and $_POST['usernamefld'] != "admin") 
 			$input_errors[] = "You must specify at least one group!";
 
         /* input validation */

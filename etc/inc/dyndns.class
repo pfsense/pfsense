@@ -28,6 +28,7 @@
 	 *    - _error()
 	 *    - _detectChange()
 	 *    - _debug()
+	 *    - _checkIP()
 	 * +----------------------------------------------------+
 	 *  DynDNS Dynamic - Last Tested: 12 July 2005
 	 *  DynDNS Static  - Last Tested: NEVER
@@ -679,7 +680,7 @@
 			
 			if($successful_update == true) {
 				/* Write WAN IP to cache file */
-				$wan_ip = get_current_wan_address();
+				$wan_ip = $this->_checkIP();
 				$currentTime = time();				  
 				log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
 				conf_mount_rw();
@@ -743,7 +744,7 @@
 		
 			$currentTime = time();
 
-			$wan_ip = get_current_wan_address();
+			$wan_ip = $this->_checkIP();
 			$this->_dnsIP = $wan_ip;
 			log_error("DynDns: Current WAN IP: {$wan_ip}");
 
@@ -816,6 +817,22 @@
 			fwrite($file, $string);
 			fclose($file);
 			conf_mount_ro();
+		}
+		function _checkIP() {
+
+			log_error("DynDns: _checkIP() starting.");
+
+			$ip_ch = curl_init('http://checkip.dyndns.org');
+			curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+			$ip_result_page = curl_exec($ip_ch);
+			$ip_result_decoded = urldecode($ip_result_page);
+			preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
+			$ip_address = trim($matches[1]);
+
+			log_error("DynDns debug information: {$ip_address}");
+
+			return $ip_address;
 		}
 
 	}

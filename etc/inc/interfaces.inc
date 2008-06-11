@@ -1493,6 +1493,7 @@ EOD;
 	set bundle disable multilink
 	set bundle authname "{$pptpcfg['username']}"
 	set bundle password "{$pptpcfg['password']}"
+	set bundle no noretry
 	set link keep-alive 10 60
 	set link max-redial 0
 	set link no acfcomp protocomp

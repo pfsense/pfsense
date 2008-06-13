@@ -48,11 +48,15 @@ function interfaces_loopback_configure() {
 function interfaces_vlan_configure() {
         global $config;
 
+	$i = 0;
         if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-
-                foreach ($config['vlans']['vlan'] as $vlan)
+                foreach ($config['vlans']['vlan'] as $vlan) {
+			if(empty($vlan['vlanif'])) {
+				$vlan['vlanif'] = "vlan{$i}";
+			}
                         /* XXX: Maybe we should report any errors?! */
                         interface_vlan_configure($vlan['if'], $vlan['tag'], $vlan['vlanif']);
+		}
         }
 }
 

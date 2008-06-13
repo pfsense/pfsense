@@ -56,6 +56,7 @@ function interfaces_vlan_configure() {
 			}
                         /* XXX: Maybe we should report any errors?! */
                         interface_vlan_configure($vlan['if'], $vlan['tag'], $vlan['vlanif']);
+			$i++;
 		}
         }
 }

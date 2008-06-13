@@ -215,7 +215,10 @@
 	if ($intip != '') { 
 		echo "\n\n" . gettext("The IPv4 {$interface} address has been set to ") . "{$intip}/{$intbits}\n" ;
 		echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
-		echo "		{$config['system']['webgui']['protocol']}://{$intip}/\n";
+		if(!empty($config['system']['webgui']['port'])) {
+			$webuiport = $config['system']['webgui']['port'];
+		}
+		echo "		{$config['system']['webgui']['protocol']}://{$intip}:{$port/\n";
 	}
 
 	echo "\n" . gettext('Press <ENTER> to continue.');

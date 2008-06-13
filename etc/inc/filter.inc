@@ -2212,7 +2212,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 	/* exception(s) to a user rules can go here. */
 	/* rules with a gateway or pool should create another rule for routing to local networks or vpns */
 	/* we only trigger this for a rule with the destination of any and without a gateway */
-	if (($aline['route'] <> "") && ($aline['type'] == "pass") && ($dst == "any") && (! interface_has_gateway($aline['interface']))) {
+	if (($aline['route'] <> "") && (trim($aline['type']) == "pass") && (trim($dst) == "any")) {
 		/* negate VPN/PPTP/PPPoE networks for load balancer rules */
 		$vpns = " to <vpns> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .

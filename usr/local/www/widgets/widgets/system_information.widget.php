@@ -98,7 +98,7 @@ require_once('notices.inc');
 		<?php if ($config['revision']): ?>
 		<tr>
 			<td width="25%" class="vncellt">Last config change</td>
-			<td width="75%" class="listr"><?= htmlspecialchars(date("D M j G:i:s T Y", $config['revision']['time']));?></td>
+			<td width="75%" class="listr"><?= htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));?></td>
 		</tr>
 		<?php endif; ?>
 		<tr>

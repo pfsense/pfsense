@@ -477,6 +477,47 @@ function get_vpns_list() {
 	return $vpns;
 }
 
+/* returns space seperated list of directly connected networks */
+function get_direct_networks_list() {
+	global $config;
+	/* build list of directly connected interfaces and networks */
+	$networks = "";
+	$networks_arr = array();
+	/* if list */
+	if($config['interfaces']['lan']) {
+		$iflist = array("lan" => "lan", "wan" => "wan");
+	} else {
+		$iflist = array("wan" => "wan");
+		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+			$iflist['opt' . $i] = "opt{$i}";
+		}
+	}
+	foreach ($iflist as $ifent => $ifname) {
+		if(stristr($ifname, "opt")) {
+			if(!isset($config['interfaces'][$ifname]['enable'])) {
+				continue;
+			}
+		}
+		/* do not process interfaces that will end up with gateways */
+		$interface_ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($ifname));
+		$sn = $config['interfaces'][$ifname]['subnet'];
+		if($sn == "") {
+			$subnet = "{$interface_ip}/32";
+		} else {
+			$sa = gen_subnet($interface_ip, $config['interfaces'][$ifname]['subnet']);
+			$subnet = "{$sa}/{$sn}";
+		}
+		if(is_subnet($subnet)) {
+			$networks_arr[] = $subnet;
+		}
+	}
+
+	if(!empty($networks_arr)) {
+		$networks = implode(" ", $networks_arr);
+	}
+	return $networks;
+}
+
 function generate_optcfg_array(& $optcfg) {
 	global $config;
 	if(isset($config['system']['developerspew'])) {
@@ -962,6 +1003,7 @@ function filter_nat_rules_generate() {
 		$iflist['opt' . $i] = "opt{$i}";
 	$interface_counter = 0;
 	$vpns_list = get_vpns_list();
+	$direct_networks_list = get_direct_networks_list();
 	/* prevent 1:1 ips from ftp-proxy, they will be handled by ftp-sesame */
 	if($config['nat']['onetoone'])
 		foreach ($config['nat']['onetoone'] as $vipent)
@@ -970,6 +1012,8 @@ function filter_nat_rules_generate() {
 		$natrules .= "table <onetoonelist> { $onetoone_list }\n";
 	if($vpns_list)
 		$natrules .= "table <vpns> { $vpns_list }\n";
+	if($direct_networks_list) 
+		$natrules .= "table <direct_networks> { $direct_networks_list }\n";
 	/* loop through all interfaces and handle ftp-proxy redirections */
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_lower = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
@@ -2213,38 +2257,16 @@ function generate_user_filter_rule($rule, $ngcounter) {
 	/* rules with a gateway or pool should create another rule for routing to local networks or vpns */
 	/* we only trigger this for a rule with the destination of any and without a gateway */
 	if (($aline['route'] <> "") && (trim($aline['type']) == "pass") && (trim($dst) == "any")) {
-		/* negate VPN/PPTP/PPPoE networks for load balancer rules */
+		/* negate VPN/PPTP/PPPoE networks for load balancer/gateway rules */
 		$vpns = " to <vpns> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $vpns . $aline['dstport'].
 			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['flags'].
 			$aline['queue'] . " label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
-		/* if list */
-		if($config['interfaces']['lan'])
-			$iflist = array("lan", "wan");
-		else 
-			$iflist = array("wan");
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-			$iflist['opt' . $i] = "opt{$i}";
-		/* build local networks list */
-		$localnets = "to { ";
-		foreach ($iflist as $ifent => $ifname) {
-			if(stristr($ifname, "opt")) {
-				if(!isset($config['interfaces'][$ifname]['enable'])) {
-					continue;
-				}
-			}
-			/* do not process interfaces that will end up with gateways */
-			if(! interface_has_gateway($ifname)) {
-				$sa = gen_subnet($config['interfaces'][$ifname]['ipaddr'], $config['interfaces'][$ifname]['subnet']);
-				$sn = $config['interfaces'][$ifname]['subnet'];
-				$localnets .= "{$sa}/{$sn} ";
-			}
-		}
-		$localnets .= " } ";
-		/* return the line */
+		/* negate directly connected networks for load balancer/gateway rules */
+		$direct_networks = " to <direct_networks> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
-			$aline['src'] . $aline['srcport'] . $aline['os'] . $localnets . $aline['dstport'].
+			$aline['src'] . $aline['srcport'] . $aline['os'] . $direct_networks . $aline['dstport'].
 			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . 
 			$aline['flags'] . $aline['queue'] .
 			" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";

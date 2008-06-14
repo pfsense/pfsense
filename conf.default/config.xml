@@ -31,14 +31,14 @@
 			<value>1</value>
 		</item>
 		<item>
-			<desc>Disable sending IPv4 redirects</desc>
+			<desc>Enable sending IPv4 redirects</desc>
 			<tunable>net.inet.ip.redirect</tunable>
-			<value>0</value>
+			<value>1</value>
 		</item>
 		<item>
-			<desc>Disable sending IPv6 redirects</desc>
+			<desc>Enable sending IPv6 redirects</desc>
 			<tunable>net.inet6.ip6.redirect</tunable>
-			<value>0</value>
+			<value>1</value>
 		</item>
 		<item>
 			<desc>Generate SYN cookies for outbound SYN-ACK packets</desc>

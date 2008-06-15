@@ -258,7 +258,7 @@ if(isset($config['snmpd']['enable'])) {
 
 if(isset($config['proxyarp']['proxyarpnet'])) {
 	$pconfig['name'] = "choparp";
-	$pconfig['description'] = "Proxy Arp";
+	$pconfig['description'] = "Proxy ARP";
 	$services[] = $pconfig;
 	unset($pconfig);
 }

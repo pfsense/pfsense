@@ -225,7 +225,7 @@ if(isset($config['snmpd']['enable'])) {
 
 if(isset($config['proxyarp']['proxyarpnet'])) {
 	$pconfig['name'] = "choparp";
-	$pconfig['description'] = "Proxy Arp";
+	$pconfig['description'] = "Proxy ARP";
 	$services[] = $pconfig;
 	unset($pconfig);
 }
@@ -239,7 +239,7 @@ if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 
 if (isset($config['ipsec']['enable'])) {
     $pconfig['name'] = "racoon";
-    $pconfig['description'] = gettext("IPSEC VPN");
+    $pconfig['description'] = gettext("IPsec VPN");
     $services[] = $pconfig;
     unset($pconfig);
 }

@@ -1741,7 +1741,7 @@ function exec_command_and_return_text($command) {
 }
 
 /*
- *   exec_command_and_return_text: execute command and update output window dynamically
+ *   exec_command_and_return_output: execute command and update output window dynamically
  */
 function execute_command_return_output($command) {
 	global $fd_log, $pkg_interface;

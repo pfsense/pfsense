@@ -288,7 +288,7 @@ function system_routing_configure() {
 					}
 				}
 			}
-			if(is_ipaddr($rtent['gateway'])) {
+			if((is_ipaddr($rtent['gateway'])) && ($gatewayip == ""))  {
 				$gatewayip = $rtent['gateway'];
 				$interfacegw = $rtent['interface'];
 			}			

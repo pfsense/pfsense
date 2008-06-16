@@ -74,7 +74,12 @@ function relayd_configure() {
   fclose($fd);
 
   if (is_process_running('/usr/local/sbin/relayd')) {
-    mwexec('/usr/local/bin/relayctl stop');
+    /*
+     * XXX: Something breaks our control connection with relayd and makes relayctl stop working
+     * rule reloads are the current suspect
+     * mwexec('/usr/local/bin/relayctl stop');
+     */
+     mwexec('pkill relayd');
   }
   mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
 

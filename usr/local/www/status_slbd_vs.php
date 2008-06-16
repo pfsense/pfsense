@@ -40,14 +40,60 @@ if (!is_array($config['load_balancer']['virtual_server'])) {
 $a_vs = &$config['load_balancer']['virtual_server'];
 $a_pool = &$config['load_balancer']['lbpool'];
 
-$slbd_logfile = "{$g['varlog_path']}/slbd.log";
 
-$nentries = $config['syslog']['nentries'];
-if (!$nentries)
-        $nentries = 50;
 
-$now = time();
-$year = date("Y");
+// # relayctl show summary
+// Id   Type      Name                      Avlblty Status
+// 1    redirect  testvs2                           active
+// 5    table     test2:80                          active (3 hosts up)
+// 11   host      192.168.1.2               91.55%  up
+// 10   host      192.168.1.3               100.00% up
+// 9    host      192.168.1.4               88.73%  up
+// 3    table     test:80                           active (1 hosts up)
+// 7    host      192.168.1.2               66.20%  down
+// 6    host      192.168.1.3               97.18%  up
+// 0    redirect  testvs                            active
+// 3    table     test:80                           active (1 hosts up)
+// 7    host      192.168.1.2               66.20%  down
+// 6    host      192.168.1.3               97.18%  up
+// 4    table     testvs-sitedown:80                active (1 hosts up)
+// 8    host      192.168.1.4               84.51%  up
+// # relayctl show redirects
+// Id   Type      Name                      Avlblty Status
+// 1    redirect  testvs2                           active
+// 0    redirect  testvs                            active
+// # relayctl show redirects
+// Id   Type      Name                      Avlblty Status
+// 1    redirect  testvs2                           active
+//            total: 2 sessions
+//            last: 2/60s 2/h 2/d sessions
+//            average: 1/60s 0/h 0/d sessions
+// 0    redirect  testvs                            active
+
+$redirects_a = exec_command_and_return_text_array('/usr/local/sbin/relayctl show redirects');
+$summary_a = exec_command_and_return_text_array('/usr/local/sbin/relayctl show summary');
+$rdr_a = parse_redirects($redirects_a);
+//$server_a = parse_summary($summary_a, parse_redirects($redirects_a));
+
+function parse_redirects($rdr_a) {
+  $vs = array();
+  for ($i = 0; isset($rdr_a[$i]); $i++) {
+    $line = $rdr_a[$i];
+    if (preg_match("/^[0-9]+/", $line)) {
+      $regs = array();
+      if($x = preg_match("/^[0-9]+\s+redirect\s+([0-9a-zA-Z]+)\s+([a-z]+)/", $line, $regs)) {
+        $vs[$regs[1]] = array();
+        $vs[$regs[1]]['status'] = $regs[2];
+      }
+    }
+  }
+  return $vs;
+}
+
+function parse_summary($summary, $rdrs_a) {
+  $server_a = array();
+  return $server_a;
+}
 
 $pgtitle = array("Status","Load Balancer","Virtual Server");
 include("head.inc");
@@ -91,55 +137,24 @@ include("head.inc");
 			foreach ($a_pool as $vipent) {
 				if ($vipent['name'] == $vsent['pool']) {
 					foreach ((array) $vipent['servers'] as $server) {
-						PRINT "<tr><td> {$server} </td></tr>";
+						print "<tr><td> {$server} </td></tr>";
 					}
 				}
 			}
 			?>
 			</table>
                   </td>
-                  <td class="listr" >
-			<table border="0" cellpadding="0" cellspacing="2">
-                        <?php
-				$poolfile = "{$g['tmp_path']}/{$vsent['name']}.pool";
-				if(file_exists("$poolfile")) {
-					$poolstatus = file_get_contents("$poolfile");
-				}
-				foreach ($a_pool as $vipent) {
-					if ($vipent['name'] == $vsent['pool']) {
-                                        foreach ((array) $vipent['servers'] as $server) {
-						$lastchange = "";
-						$monitorip = $server;
-						$logstates = return_clog($slbd_logfile, $nentries, true, array("$monitorip", "marking"), "", true);
-						$logstates = $logstates[0];
-
-						if(stristr($logstates, $monitorip)) {
-							$date = preg_split("/[ ]+/" , $logstates);
-							$lastchange = "$date[0] $date[1] $year $date[2]";
-						}
-						if(stristr($poolstatus, $monitorip)) {
-							$online = "Online";
-							$bgcolor = "lightgreen";
-							$change = $now - strtotime("$lastchange");
-							if($change < 300) {
-								$bgcolor = "khaki";
-							}
-						} else {
-							$online = "Offline";
-							$bgcolor = "lightcoral";
-						}
-						PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
-						if($lastchange <> "") {
-							PRINT "Last change $lastchange";
-						} else {
-							PRINT "No changes found in logfile";
-						}
-						PRINT "</td></tr>";
-                                        }
-				}
-			}
-                        ?>
-			</table>
+                  <?php
+                  switch ($rdr_a[$vsent['name']]['status']) {
+                    case 'active':
+                      $bgcolor = "lightgreen";
+                      break;
+                    default:
+                      $bgcolor = "lightcoral";
+                  }
+                  ?>
+                  <td class="listr" bgcolor="<?=$bgcolor?>">
+                  <?=$rdr_a[$vsent['name']]['status']?>
                   </td>
                   <td class="listbg" >
 				<font color="#FFFFFF"><?=$vipent['desc'];?></font>

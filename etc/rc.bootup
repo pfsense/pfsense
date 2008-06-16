@@ -197,6 +197,7 @@
 	/* start load balancer daemon */
 	load_balancer_use_sticky();
 	slbd_configure();
+	relayd_configure();
 
 	/* start OpenVPN server & clients */
 	openvpn_resync_all();

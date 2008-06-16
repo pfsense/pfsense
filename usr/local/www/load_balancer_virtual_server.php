@@ -45,6 +45,7 @@ if ($_POST) {
 		config_lock();
 		$retval |= filter_configure();
 		$retval |= slbd_configure();
+		$retval |= relayd_configure();
 		config_unlock();
 		$savemsg = get_std_save_message($retval);
 		unlink_if_exists($d_vsconfdirty_path);

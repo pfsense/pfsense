@@ -987,6 +987,8 @@ function filter_nat_rules_generate() {
 	/* load balancer anchor */
 	$natrules .= "\n# Load balancing anchor - slbd updates\n";
 	$natrules .= "rdr-anchor \"slb\"\n";
+        $natrules .= "rdr-anchor \"relayd/*\"\n";
+
 
 	update_filter_reload_status("Setting up FTP helper");
 
@@ -2395,6 +2397,9 @@ function filter_rules_generate() {
 
 	/* ftp-sesame */
 	$ipfrules .= "anchor \"ftpsesame/*\" \n";
+
+	/* relayd */
+        $ipfrules .= "anchor \"relayd/*\"\n";
 
 	# BEGIN OF firewall rules
 	$ipfrules .= "anchor \"firewallrules\"\n";

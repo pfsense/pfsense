@@ -1225,6 +1225,41 @@ function convert_config() {
                 $config['version'] = "4.5";
         }
 
+	/* Upgrade load balancer from slb to relayd */
+        /* Convert 4.5 -> 4.6 */
+        if ($config['version'] <= 4.5) {
+                if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server'])) {
+			$vs_a = &$config['load_balancer']['virtual_server'];
+			$pool_a = &$config['load_balancer']['lbpool'];
+			$pools = array();
+			/* Index pools by name */
+			if(is_array($pool_a)) {
+				for ($i = 0; isset($pool_a[$i]); $i++) {
+					if ($pool_a[$i]['type'] == "server") {
+						$pools[$pool_a[$i]['name']] = $pool_a[$i];
+					}
+				}
+			}
+			/* Convert sitedown entries to pools and re-attach */
+			for ($i = 0; isset($vs_a[$i]); $i++) {
+				if (isset($vs_a[$i]['sitedown'])) {
+					$pool = array();
+					$pool['type'] = 'server';
+					$pool['behaviour'] = 'balance';
+					$pool['name'] = "{$vs_a[$i]['name']}-sitedown";
+					$pool['desc'] = "Sitedown pool for VS: {$vs_a[$i]['name']}";
+					$pool['port'] = $pools[$vs_a[$i]['pool']]['port'];
+					$pool['servers'] = array();
+					$pool['servers'][] = $vs_a[$i]['sitedown'];
+					$pool['monitor'] = $pools[$vs_a[$i]['pool']]['monitor'];
+					$pool_a[] = $pool;
+					$vs_a[$i]['sitedown'] = $pool['name'];
+				}
+			}
+                }
+                $config['version'] = "4.6";
+        }
+
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }

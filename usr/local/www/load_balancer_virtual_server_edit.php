@@ -72,12 +72,6 @@ if ($_POST) {
 	if(!is_ipaddr($_POST['ipaddr']))
 		$input_errors[] = "{$_POST['ipaddr']} is not a valid IP address.";
 
-        if(!isset($_POST['sitedown']) || $_POST['sitedown'] == "")
-                $input_errors[] = "Pool Down Server is required.";
-
-	if(($_POST['sitedown'] != "") && (!is_ipaddr($_POST['sitedown'])))
-		$input_errors[] = "{$_POST['sitedown']} is not a valid IP address.";
-
 	if (!$input_errors) {
 		$vsent = array();
 		if(isset($id) && $a_vs[$id])
@@ -170,8 +164,20 @@ include("head.inc");
                 <tr align="left">
 		  <td width="22%" valign="top" class="vncellreq">Pool Down Server</td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input name="sitedown" type="text" <?if(isset($pconfig['sitedown'])) echo "value=\"{$pconfig['sitedown']}\"";?> size="16" maxlength="16">
-		    <br><b>NOTE:</b> This is the server that clients will be redirected to if *ALL* servers in the pool are offline.
+                                <select id="sitedown" name="sitedown">
+                                <option value=""<?="selected" ? $pconfig['sitedown'] == '' : ''?>>none</option>
+            			<?php
+            				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+            					if ($config['load_balancer']['lbpool'][$i]['type'] == "server") {
+            						$selected = "";
+            						if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['sitedown'] )
+            							$selected = " SELECTED";
+            						echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
+            					}
+            				}
+            			?>
+            			</select>
+                  <br><b>NOTE:</b> This is the server that clients will be redirected to if *ALL* servers in the pool are offline.
                   </td>
 		</tr>
                 <tr align="left">

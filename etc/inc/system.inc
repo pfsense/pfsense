@@ -287,18 +287,21 @@ function system_routing_configure() {
 						$interfacegw = $gateway['interface'];
 					}
 				}
-				if(isset($rtent['interfacegateway'])) {
-					mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-						" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));
-				} else {
-					mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-						" " . escapeshellarg($gatewayip));
-				}
-				/* record route so it can be easily removed later (if necessary) */
-				fwrite($fd, $rtent['network'] . "\n");
 			}
+			if(is_ipaddr($rtent['gateway'])) {
+				$gatewayip = $rtent['gateway'];
+				$interfacegw = $rtent['interface'];
+			}			
+			if(isset($rtent['interfacegateway'])) {
+				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
+					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));
+			} else {
+				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
+					" " . escapeshellarg($gatewayip));
+			}
+			/* record route so it can be easily removed later (if necessary) */
+			fwrite($fd, $rtent['network'] . "\n");
 		}
-
 		fclose($fd);
 	}
 

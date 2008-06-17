@@ -227,6 +227,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?php endif; ?>
 							<?=output_menu_item("/carp_status.php", "CARP (failover)");?>
 							<?=output_menu_item("/index.php", "Dashboard");?>
+							<?=output_menu_item("/status_gateways.php", "Gateways");?>
 							<?=output_menu_item("/diag_dhcp_leases.php", "DHCP Leases");?>
 							<?=output_menu_item("/status_filter_reload.php", "Filter Reload");?>
 							<?=output_menu_item("/status_interfaces.php", "Interfaces");?>

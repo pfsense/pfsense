@@ -21,6 +21,12 @@ if [ $KERNELTYPE = "SMP" ]; then
 		tar xzpf /kernels/kernel_SMP.gz -C /boot/
 	fi
 fi
+if [ $KERNELTYPE = "UP" ]; then
+	if [ -f /kernels/kernel_SMP.gz ]; then 
+		tar xzpf /kernels/kernel_uniprocessor.gz -C /boot/
+	fi
+fi
+
 
 # Now turn on or off serial console as needed
 php -f /tmp/post_upgrade_command.php

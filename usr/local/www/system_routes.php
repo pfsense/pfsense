@@ -121,7 +121,7 @@ include("head.inc");
 		$tab_array = array();
 		$tab_array[0] = array("Gateways", false, "system_gateways.php");
 		$tab_array[1] = array("Routes", true, "system_routes.php");
-		$tab_array[2] = array("Groups", true, "system_gateway_groups.php");
+		$tab_array[2] = array("Groups", false, "system_gateway_groups.php");
 		display_top_tabs($tab_array);
 ?>
 </td></tr>

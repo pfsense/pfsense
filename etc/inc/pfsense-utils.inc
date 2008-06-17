@@ -4296,5 +4296,47 @@ EOD;
 	return 0;
 }
 
+/* return the status of the apinger targets as a array */
+function return_gateways_status() {
+	global $config;
+	global $g;
+
+	$apingerstatus = array();
+	$apingerstatus = file("{$g['tmp_path']}/apinger.status");
+
+	foreach($apingerstatus as $line) {
+		$fields = explode(":", $line);
+		switch($fields[0]) {
+			case "Target":
+				$target = trim($fields[1]);
+				$status[$target] = array();
+				$status[$target]['monitor'] = $target;
+				foreach($config['gateways']['gateway_item'] as $gateway) {
+					if($gateway['monitor'] == "$target") {
+						$status[$target]['gateway'] = $gateway['gateway'];
+						$status[$target]['interface'] = $gateway['interface'];
+					}
+				}
+				break;
+			case "Description":
+	 			$status[$target]['name'] = trim($fields[1]);
+				break;
+			case "Last reply received":
+				$status[$target]['lastcheck'] = trim($fields[1]) .":". trim($fields[2]) .":". trim($fields[3]);
+				break;
+			case "Average delay":
+				$status[$target]['delay'] = trim($fields[1]);
+				break;
+			case "Average packet loss":
+				$status[$target]['loss'] = trim($fields[1]);
+				break;
+			case "Active alarms":
+				$status[$target]['status'] = trim($fields[1]);
+				break;
+		}
+	}
+
+	return($status);
+}
 
 ?>

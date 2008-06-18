@@ -1886,23 +1886,21 @@ function system_start_ftp_helpers() {
 
 	mwexec("/usr/bin/killall ftpsesame");
 
-	/* build an array of interfaces to work with */
-	$iflist = array("lan" => "lan");
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-		$iflist['opt' . $i] = "opt{$i}";
+	/* if list */
+	$iflist = get_configured_interface_list();
 
 	/* loop through all interfaces and handle ftp-proxy */
 	$interface_counter = 0;
 	foreach ($iflist as $ifent => $ifname) {
+		/* XXX: needed?! */
+		if ($ifent == "wan")
+			continue;
+
 		/*    if the ftp proxy is disabled for this interface then kill ftp-proxy
 		 *    instance and continue. note that the helpers for port forwards are
 		 *    launched in a  different sequence so we are filtering them out
 	         *    here by not including -c {$port} -g 8021 first.
 		 */
-		 /* only install a ftp helper for enabled interfaces. wan and lan are always enabled. */
-		if(stristr($ifname, "opt") <> false)
-			if(!isset($config['interfaces'][strtolower($ifname)]['enable']))
-				continue;
 
 		/* Get the ftp queue for this interface */
 		if (isset($config['shaper'][$ifname]['ftpqueue']))

@@ -321,6 +321,8 @@ function captiveportal_rules_generate() {
 	     http://cvstrac.pfsense.com/tktview?tn=651
 	 */
 	
+	$captive_portal_interface = strtoupper($cpifn);
+
         /* if list */
         $iflist = get_configured_interface_list();
 

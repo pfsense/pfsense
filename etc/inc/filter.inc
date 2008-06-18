@@ -2542,7 +2542,6 @@ pass out all keep state label "let out anything from firewall host itself"
 
 EOD;
 
-	//$ipfrules .=  create_firewall_outgoing_rules_to_itself();
 	/* permit internal ipsec outbound traffic */
         $ipfrules .="pass out on \$enc0 keep state label \"IPsec internal host to host\"";
 
@@ -3121,56 +3120,6 @@ function setup_logging_interfaces() {
 		$rules .= "set loginterface {$int}\n";
 	}
 	return $rules;
-}
-
-function create_firewall_outgoing_rules_to_itself() {
-	global $config, $g;
-
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "create_firewall_outgoing_rules_to_itself() being called $mt\n";
-	}
-
-	$i = 0;
-	$rule .= "# pass traffic from firewall -> out\n";
-	$rule .= "anchor \"firewallout\"\n";
-
-	/* if list */
-	$ifdescrs = get_configured_interface_list();
-
-	update_filter_reload_status("Setting up tun interfaces (openvpn)");
-
-	/* XXX: FIXME: Removal candidate. */
-	/* openvpn tun interfaces.  check for 100. */
-	for($x=0; $x<100; $x++) {
-		if(does_interface_exist("ovpn{$x}") == true) {
-			/* If the interface has a gateway we do not add a pass in rule. */
-			/* Some people use a TUN tunnel with public IP as a Multiwan interface */
-			if(interface_has_gateway("openvpn{$x}")) {
-				$rule .= "# Not adding default pass in rule for interface $friendlytunif - tun{$x} with a gateway!";
-			} else {
-				$rule .="pass in on openvpn{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
-			}
-		}
-	}
-	for($x=0; $x<100; $x++) {
-		if(does_interface_exist("tap{$x}") == true) {
-			$rule .="pass out on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
-			$friendlytapif = convert_real_interface_to_friendly_interface_name("tap{$x}");
-			/* If the interface has a gateway we do not add a pass in rule. */
-			/* Some people use a TAP tunnel with public IP as a Multiwan interface */
-			if(interface_has_gateway("tap{$x}")) {
-				$rule .= "# Not adding default pass in rule for interface $friendlytapif - tap{$x} with a gateway!";
-			} else {
-				$rule .="pass in on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
-			}
-		}
-	}
-
-	/* permit internal ipsec outbound traffic */
-	$rule .="pass out on \$enc0 keep state label \"IPsec internal host to host\"";
-
-	return $rule;
 }
 
 function process_carp_nat_rules() {

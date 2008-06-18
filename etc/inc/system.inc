@@ -34,9 +34,12 @@ require_once("functions.inc");
 
 function activate_sysctls() {
 	global $config, $g;
-	foreach ($config['sysctl']['item'] as $tunable) {
-		mwexec("sysctl " . $tunable['tunable'] . "=\"" . $tunable['value'] .  "\"");
-	}
+	
+	if (is_array($config['sysctl']['item'])) 
+		foreach ($config['sysctl']['item'] as $tunable) 
+			mwexec("sysctl " . $tunable['tunable'] . "=\"" 
+				. $tunable['value'] .  "\"");
+	
 }
 
 function system_resolvconf_generate($dynupdate = false) {

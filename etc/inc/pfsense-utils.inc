@@ -4291,7 +4291,7 @@ EOD;
 	fclose($fd);
 
 	/* start a new apinger process */
-	mwexec("/usr/local/bin/apinger -c {$g['varetc_path']}/apinger.conf");
+	mwexec("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 
 	return 0;
 }

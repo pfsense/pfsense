@@ -230,8 +230,9 @@ function vpn_ipsec_configure($ipchg = false) {
 					if ($tunnel['pinghost']) {
 						$pfd = fopen("/var/db/ipsecpinghosts", "a");
 						$iflist = array("lan" => "lan", "wan" => "wan");
-			          	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-			          		$iflist['opt' . $i] = "opt{$i}";
+					/* if list */
+        				$iflist = get_configured_interface_list(true);
+
 			            foreach ($iflist as $ifent => $ifname) {
 			            	$interface_ip = find_interface_ip($config['interfaces'][$ifname]['if']);
 			            	if (ip_in_subnet($interface_ip, $sa . "/" . $sn))

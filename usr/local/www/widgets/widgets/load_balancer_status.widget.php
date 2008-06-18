@@ -34,9 +34,6 @@
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
-?>
-<div>&nbsp;</div>
-<?php
 
 	if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
@@ -59,7 +56,7 @@ require_once("functions.inc");
 	
 ?>
 
-	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
 		  <td width="10%" class="listhdrr">Port</td>

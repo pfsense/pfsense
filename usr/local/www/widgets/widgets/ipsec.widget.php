@@ -164,26 +164,6 @@ require_once("/usr/local/www/widgets/include/ipsec.inc");
 		</div>
 	<?php endforeach; ?>
 	</div>
-	
-	<div style="display:block">
-	 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-	  <tr>
-	    <td colspan="4">
-			  <p>
-	        <span class="vexpl">
-	          <span class="red">
-	            <strong>
-	              Note:<br />
-	            </strong>
-	          </span>
-	          You can configure your IPsec 
-	          <a href="vpn_ipsec.php">here</a>.
-	        </span>
-	      </p>
-		</td>
-	  </tr>
-	</table>
-	</div>
  </div>
 </div><?php //end ipsec tunnel
 }//end if tunnels are configured, else show code below

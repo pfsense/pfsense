@@ -399,15 +399,12 @@ function filter_generate_aliases() {
 			$aliases .= $tmp;
 	}
 
-	$ifdescrs = array();
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		$ifdescrs['opt' . $j] = "opt" . $j;
-	}
+
+	/* if list */
+	$ifdescrs = get_configured_interface_list(true);
+
 	$bridgetracker = 0;
 	foreach ($ifdescrs as $ifdescr => $ifname) {
-		/* do not process tun interfaces */
-		/* do process tun interfaces for openvpn compatibility */
-		/* if(stristr(filter_opt_interface_to_real($ifname), "tun") == true) continue; */
 		$aliases .= convert_friendly_interface_to_friendly_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname);
 		if(link_int_to_bridge_interface($ifname))
 			$aliases .= " " . link_int_to_bridge_interface($ifname);
@@ -483,21 +480,11 @@ function get_direct_networks_list() {
 	/* build list of directly connected interfaces and networks */
 	$networks = "";
 	$networks_arr = array();
+
 	/* if list */
-	if($config['interfaces']['lan']) {
-		$iflist = array("lan" => "lan", "wan" => "wan");
-	} else {
-		$iflist = array("wan" => "wan");
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-			$iflist['opt' . $i] = "opt{$i}";
-		}
-	}
+	$iflist = get_configured_interface_list();
+
 	foreach ($iflist as $ifent => $ifname) {
-		if(stristr($ifname, "opt")) {
-			if(!isset($config['interfaces'][$ifname]['enable'])) {
-				continue;
-			}
-		}
 		/* do not process interfaces that will end up with gateways */
 		$interface_ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($ifname));
 		$sn = $config['interfaces'][$ifname]['subnet'];
@@ -518,17 +505,20 @@ function get_direct_networks_list() {
 	return $networks;
 }
 
-function generate_optcfg_array(& $optcfg) {
+function generate_optcfg_array(&$optcfg) {
 	global $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "generate_optcfg_array() being called $mt\n";
 	}
 
-        for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-                $oc = $config['interfaces']['opt' . $i];
+	/* if list */
+        $iflist = get_configured_interface_list(true);
 
-                if (isset($oc['enable']) && $oc['if']) {
+        foreach ($iflist as $if => $ifdetail) {
+                $oc = $config['interfaces'][$if];
+
+                if ($oc['if']) {
                         $oic = array();
                         $oic['if'] = $oc['if'];
 
@@ -549,7 +539,7 @@ function generate_optcfg_array(& $optcfg) {
                                 $oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
                         }
 
-                        $optcfg['opt' . $i] = $oic;
+                        $optcfg[$if] = $oic;
                 }
         }
 }
@@ -810,12 +800,14 @@ function filter_nat_rules_generate() {
 			}
 		}
 
-		/* optional interfaces */
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-			update_filter_reload_status("Creating outbound rules (opt{$i})");
-			$optcfg = $config['interfaces']['opt' . $i];
+		/* optional interface if list */
+        	$iflist = get_configured_interface_list(true);
 
-			if ((isset ($optcfg['enable'])) && (!$optcfg['bridge']) && (!interface_has_gateway("opt{$i}"))) {
+		foreach ($iflist as $if => $ifname) {
+			update_filter_reload_status("Creating outbound rules (opt{$i})");
+			$optcfg = $config['interfaces'][$if];
+
+			if ((!$optcfg['bridge']) && (!interface_has_gateway("opt{$i}"))) {
 				$optsa = gen_subnet($optcfg['ipaddr'], $optcfg['subnet']);
 				$target = get_current_wan_address($interface = "opt$i");
 				if(is_ipaddr($wancfg['alias-address'])) {
@@ -836,6 +828,11 @@ function filter_nat_rules_generate() {
 					$natrules .= filter_nat_rules_generate_if($wanif,
 						"{$optsa}/{$optcfg['subnet']}", null, "", null, $target, null, isset($optcfg['nonat']));
 				}
+	
+				/*
+				 * XXX: ermal - is this correct at all or just 
+				 *		curlies mess?! 
+				 */
 				/* create outbound nat entries for all opt wans */
 				foreach($optints as $ocname => $oc) {
 					$opt_interface = $oc['if'];
@@ -996,13 +993,10 @@ function filter_nat_rules_generate() {
 	$natrules .= "\nno nat on \$wan to port tftp\n\n";
 
 	$natrules .= "\n# FTP Proxy/helper\n";
-	/* build an array of interfaces to work with */
-	if($config['interfaces']['lan']) 
-		$iflist = array("lan" => "LAN");
-	else 
-		$iflist = array();
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-		$iflist['opt' . $i] = "opt{$i}";
+
+	/* if list */
+        $iflist = get_configured_interface_list();
+
 	$interface_counter = 0;
 	$vpns_list = get_vpns_list();
 	$direct_networks_list = get_direct_networks_list();
@@ -1018,6 +1012,10 @@ function filter_nat_rules_generate() {
 		$natrules .= "table <direct_networks> { $direct_networks_list }\n";
 	/* loop through all interfaces and handle ftp-proxy redirections */
 	foreach ($iflist as $ifent => $ifname) {
+		/* XXX: ermal - this should be reallt unified with code above. */
+		if ($ifent == "wan")
+			continue;
+
 		$ifname_lower = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
 		$realif = convert_friendly_interface_to_real_interface_name(strtolower($ifname));
 		$int_ip = find_interface_ip($realif);
@@ -1026,11 +1024,6 @@ function filter_nat_rules_generate() {
 				log_error("Filter: FTP proxy disabled for interface {$ifname} - ignoring.");
 			$interface_counter++;
 			continue;
-		}
-		if(stristr($ifname, "opt")) {
-			if(!isset($config['interfaces'][$ifname]['enable'])) {
-				continue;
-			}
 		}
 		/* are we in routed mode? no source nat rules and not a outside interface? */
 		/* If we have advanced outbound nat we skip the FTP proxy, we use ftpsesame */
@@ -1652,9 +1645,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			return "# unresolvable dest aliases {$rule['descr']}";
 		}
 
-		$ifdescrs = array();
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-			$ifdescrs[] = "opt" . $i;
+		/* optional interface if list */
+        	$ifdescrs = get_configured_interface_list(true);
 
 		update_filter_reload_status("Setting up pass/block rules");
 
@@ -2468,14 +2460,13 @@ EOD;
 	}
 
 	foreach ($optcfg as $oc) {
-		if (!$oc['bridge'])
-			if($oc['sa'] <> "")
-				if(isset($oc['enable']))
-					$ipfrules .= "block in $log quick on \$wan from {$oc['sa']}/{$oc['sn']} to any label \"interface spoof check\"\n";
+		if (!$oc['bridge'] && $oc['sa'] <> "")
+			$ipfrules .= "block in $log quick on \$wan from {$oc['sa']}/{$oc['sn']} to any label \"interface spoof check\"\n";
 	}
-if($config['interfaces']['lan']) 	
-	if($config['interfaces']['lan']['bridge'] <> "wan" and $config['interfaces']['wan']['bridge'] <> "lan")
-		$ipfrules .= "block in $log quick on \$wan proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"block dhcp client out wan\"\n";
+	if($config['interfaces']['lan']) 	
+		if($config['interfaces']['lan']['bridge'] <> "wan" and 
+			$config['interfaces']['wan']['bridge'] <> "lan")
+			$ipfrules .= "block in $log quick on \$wan proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"block dhcp client out wan\"\n";
 
 	$ipfrules .= <<<EOD
 
@@ -2485,15 +2476,17 @@ EOD;
 
 	/* LAN spoof check */
 	$lanbridge = false;
-	foreach($config['interfaces'] as $int)
-		if($config['interfaces']['lan']) 
+	$wanbridge = false;
+	foreach($config['interfaces'] as $int) {
+		if($config['interfaces']['lan']) {
 			if($int['bridge'] == "lan")
 				$lanbridge = true;
-	$wanbridge = false;
-	foreach($config['interfaces'] as $int)
+		}
 		if($int['bridge'] == "wan")
-			$wanbridge = true;			
+			$wanbridge = true;	
+	}		
 
+	/* XXX: ermal - needed?! */
 	if($config['interfaces']['lan']['bridge'] == "wan") 
 		$wanbridge = true;
 
@@ -2699,13 +2692,8 @@ EOD;
 
                         if(!isset($config['system']['disablenatreflection'])) {
 
-						/* if list */
-						if($config['interfaces']['lan']) 
-							$iflist = array("lan" => "LAN");
-						else 
-							$iflist = array();
-                        for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-                                $iflist['opt' . $i] = "opt{$i}";
+			/* if list */
+        		$iflist = get_configured_interface_list();
 
                         foreach ($iflist as $ifent => $ifname) {
 
@@ -2975,12 +2963,8 @@ EOD;
 		else
 			exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
 
-		/* build an interface collection */
-		$ifdescrs = array ("wan");
-		for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
-			if(isset($config['interfaces']['opt' . $j]['enable']))
-				$ifdescrs['opt' . $j] = filter_get_opt_interface_descr("opt" . $j);
-		}
+		/* if list */
+                $ifdescrs = get_configured_interface_with_descr();
 
 		if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
 			foreach ($config['ipsec']['tunnel'] as $tunnel) {
@@ -3000,6 +2984,10 @@ EOD;
 				}
 				$local_subnet = return_vpn_subnet($tunnel['local-subnet']);
 				foreach($ifdescrs as $iface) {
+					/* XXX: really needed?! */
+					if ($iface == "lan")
+						continue;
+
 					foreach($ipsec_ips as $interface_ip) {
 						if($iface == "wan")
 							$interface_ip = find_interface_ip(get_real_wan_interface());
@@ -3121,16 +3109,14 @@ function setup_logging_interfaces() {
 	}
 	$rules = "";
 	$i = 0;
-	if($config['interfaces']['lan']) 
-		$ifdescrs = array('wan', 'lan');
-	else 
-		$ifdescrs = array('wan');
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		$ifdescrs['opt' . $j] = "opt" . $j;
-	}
+
+	/* if list */
+	$ifdescrs = get_configured_interface_list();
+
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		/* do not work with tun interfaces */
-		if(stristr(filter_translate_type_to_real_interface($ifname), "tun") == true) continue;
+		if(stristr(filter_translate_type_to_real_interface($ifname), "tun") == true)
+			continue;
 		$int = filter_translate_type_to_real_interface($ifname);
 		$rules .= "set loginterface {$int}\n";
 	}
@@ -3148,15 +3134,13 @@ function create_firewall_outgoing_rules_to_itself() {
 	$i = 0;
 	$rule .= "# pass traffic from firewall -> out\n";
 	$rule .= "anchor \"firewallout\"\n";
-	if($config['interfaces']['lan']) 
-		$ifdescrs = array('wan', 'lan');
-	else 
-		$ifdescrs = array('wan');
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
-		$ifdescrs['opt' . $j] = "opt" . $j;
 
+	/* if list */
+	$ifdescrs = get_configured_interface_list();
 
 	update_filter_reload_status("Setting up tun interfaces (openvpn)");
+
+	/* XXX: FIXME: Removal candidate. */
 	/* openvpn tun interfaces.  check for 100. */
 	for($x=0; $x<100; $x++) {
 		if(does_interface_exist("ovpn{$x}") == true) {

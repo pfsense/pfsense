@@ -4282,6 +4282,7 @@ EOD;
 				 * route as this will break the routing table */
 				continue;
 			} else {
+				mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']));
 				mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
 					" " . escapeshellarg($gateway['gateway']));
 			}

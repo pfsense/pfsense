@@ -35,6 +35,7 @@ if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
 
 $a_gateway_groups = &$config['gateways']['gateway_group'];
+$a_gateways = &$config['gateways']['gateway_item'];
 $changedesc = "Gateway Groups: ";
 
 if ($_POST) {
@@ -77,7 +78,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="system_gateways.php" method="post">
+<form action="system_gateway_groups.php" method="post">
 <input type="hidden" name="y1" value="1">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_staticroutesdirty_path)): ?><p>
@@ -123,12 +124,19 @@ effect.");?><br>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
                     <?php
-				echo htmlspecialchars($gateway_group['members']); ?>
+			foreach($gateway_group['item'] as $item) {
+				$itemsplit = explode("|", $item);
+				echo htmlspecialchars($itemsplit[0]) . "<br/>\n";
+			}
+		    ?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
 		    <?php
-				echo htmlspecialchars($gateway_group['priorities']); ?>
-		     ?>
+			foreach($gateway_group['item'] as $item) {
+				$itemsplit = explode("|", $item);
+				echo "Tier ". htmlspecialchars($itemsplit[1]) . "<br/>\n";
+			}
+		    ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($gateway_group['descr']);?>&nbsp;

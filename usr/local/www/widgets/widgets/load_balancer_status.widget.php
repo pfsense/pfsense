@@ -38,11 +38,6 @@ require_once("functions.inc");
 <div>&nbsp;</div>
 <?php
 
-	$tab_array = array();
-	$tab_array[0] = array("Pool Status", true, "load_balancer_status-pool");
-	$tab_array[1] = array("Server Status", false, "load_balancer_status-server");
-	display_widget_tabs($tab_array);
-
 	if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
 	}
@@ -64,91 +59,6 @@ require_once("functions.inc");
 	
 ?>
 
-
-<div id="load_balancer_status-pool" style="display:block;">
-	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td width="10%" class="listhdrr">Name</td>
-		  <td width="10%" class="listhdrr">Type</td>
-                  <td width="10%" class="listhdrr">Gateways</td>
-                  <td width="25%" class="listhdrr">Status</td>
-                  <td width="30%" class="listhdr">Description</td>
-				</tr>
-			  <?php $i = 0; foreach ($a_pool as $vipent):
-				if ($vipent['type'] == "gateway") {
-			  ?>
-                <tr>
-                  <td class="listlr">
-				<?=$vipent['name'];?>
-                  </td>
-                  <td class="listr" align="center" >
-                                <?=$vipent['type'];?>
-                                <br />
-                                (<?=$vipent['behaviour'];?>)
-                  </td>
-                  <td class="listr" align="center" >
-			<table border="0" cellpadding="0" cellspacing="2">
-                        <?php
-                                foreach ((array) $vipent['servers'] as $server) {
-                                        $svr = split("\|", $server);
-					PRINT "<tr><td> {$svr[0]} </td></tr>";
-                                }
-                        ?>
-			</table>
-                  </td>
-                  <td class="listr" >
-			<table border="0" cellpadding="0" cellspacing="2">
-                        <?php
-				if ($vipent['type'] == "gateway") {
-					$poolfile = "{$g['tmp_path']}/{$vipent['name']}.pool";
-					if(file_exists("$poolfile")) {
-						$poolstatus = file_get_contents("$poolfile");
-					}
-                                        foreach ((array) $vipent['servers'] as $server) {
-						$lastchange = "";
-                                                $svr = split("\|", $server);
-						$monitorip = $svr[1];
-						$logstates = return_clog($slbd_logfile, $nentries, array("$monitorip", "marking"), true);
-						$logstates = $logstates[0];
-
-						if(stristr($logstates, $monitorip)) {
-							$date = preg_split("/[ ]+/" , $logstates);
-							$lastchange = "$date[0] $date[1] $year $date[2]";
-						}
-						if(stristr($poolstatus, $monitorip)) {
-							$online = "Online";
-							$bgcolor = "lightgreen";
-							$change = $now - strtotime("$lastchange");
-							if($change < 300) {
-								$bgcolor = "khaki";
-							}
-						} else {
-							$online = "Offline";
-							$bgcolor = "lightcoral";
-						}
-						PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
-						
-						PRINT "</td></tr>";
-                                        }
-                                } else {
-					PRINT "<tr><td> {$vipent['monitor']} </td></tr>";
-                                }
-                        ?>
-			</table>
-                  </td>
-                  <td class="listbg" >
-				<font color="#FFFFFF"><?=$vipent['desc'];?></font>
-                  </td>
-                </tr>
-		<?php
-			}
-			$i++;
-		 endforeach;
-		 ?>
-              </table>
-</div>
-
-<div id="load_balancer_status-server" style="display:none;">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
@@ -228,4 +138,3 @@ require_once("functions.inc");
                 </tr>
 		<?php $i++; endforeach; ?>
              </table>
-</div>

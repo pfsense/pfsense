@@ -320,10 +320,10 @@ function captiveportal_rules_generate() {
 	/*   allow nat redirects to work  see
 	     http://cvstrac.pfsense.com/tktview?tn=651
 	 */
-	$iflist = array("lan" => "LAN", "wan" => "WAN");
-	$captive_portal_interface = strtoupper($cpifn);
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-		$iflist['opt' . $i] = "OPT{$i}";
+	
+        /* if list */
+        $iflist = get_configured_interface_list();
+
 	foreach ($iflist as $ifent => $ifname) {
 		if($captive_portal_interface == strtoupper($ifname))
 			continue;

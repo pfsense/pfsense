@@ -272,6 +272,37 @@ function is_valid_shaperbw($val) {
 	return (preg_match("/^(\d+(?:\.\d+)?)([MKG]?b|%)$/", $val));
 }
 
+/* return the configured interfaces list. */
+function get_configured_interface_list() {
+	global $config;
+
+	$iflist = array();
+
+	/* if list */
+        foreach($config['interfaces'] as $if => $ifdetail) 
+		if ($if == "wan" || $if == "lan" || $ifdetail['enabled'])
+			$iflist[$if] = $if;
+
+	return $iflist;
+			
+}
+
+/* return the configured interfaces list with their description. */
+function get_configured_interface_with_descr() {
+        global $config;
+
+        $iflist = array();
+
+        /* if list */
+        foreach($config['interfaces'] as $if => $ifdetail)
+                if ($if == "wan" || $if == "lan" || $ifdetail['enabled'])
+                        $iflist[$if] = $ifidetail['descr'];
+
+        return $iflist;
+
+}
+
+
 /*
  *   get_interface_list() - Return a list of all physical interfaces
  *   along with MAC and status.

@@ -2537,6 +2537,7 @@ EOD;
 
 	$ipfrules .= <<<EOD
 
+anchor "firewallout"
 # let out anything from the firewall host itself and decrypted IPsec traffic
 pass out all keep state label "let out anything from firewall host itself"
 

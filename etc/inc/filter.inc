@@ -1776,17 +1776,18 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if($rule['gateway'] <> "") {
 				$foundlb = 0;
 				$routeto = " route-to { ";
-				if(is_array($config['load_balancer']['lbpool'])) {
-					foreach($config['load_balancer']['lbpool'] as $lb) {
-						update_filter_reload_status("Creating load balancing item...");
-						if($lb['name'] == $rule['gateway']) {
+				if(is_array($config['gateways']['gateway_group'])) {
+					foreach($config['gateways']['gateway_group'] as $group) {
+						update_filter_reload_status("Creating gateway group item...");
+						if($group['name'] == $rule['gateway']) {
 							$gateway = $rule['gateway'];
 							/*
 							*    is $gateway a interface name?
 							*    if so, lets find out the gateway address
 							*    from /tmp/router_bleh.router
 							*/
-							if(in_array($gateway, $ifdescrs)==true) {
+							/* FIXME: this probably does not work with the new gateway code */
+							if(in_array($gateway, $ifdescrs) == true) {
 								if(is_file("{$g['tmp_path']}/{$gateway}_router")) {
 									$return_gateway = file_get_contents("{$g['tmp_path']}/{$gateway}_router");
 								} else {
@@ -1794,92 +1795,58 @@ function generate_user_filter_rule($rule, $ngcounter) {
 									continue;
 								}
 							}
-							/* if /tmp/$lbname.pool exists then read in our gateway hints from slbd */
-							if(file_exists("{$g['tmp_path']}/{$lb['name']}.pool")) {
-								$lbs_tmp = split("\n", file_get_contents("{$g['tmp_path']}/{$lb['name']}.pool"));
-								$lbs = array();
-								/* process the entire file to prevent empty lines */
-								foreach($lbs_tmp as $lb_tmp) {
-									if(is_ipaddr($lb_tmp)) {
-										$lbs[] = $lb_tmp;
+
+							/* fetch the current gateways status */
+							$gateways_status = return_gateways_status();
+							/* create array with group gateways members seperated by tier */
+							$tiers = array();
+							foreach($group['item'] as $item) {
+								$itemsplit = explode("|", $item);
+								$tier = $itemsplit[1];
+								$gwname = $itemsplit[0];
+								/* check if the gateway is available before adding it to the array */
+								foreach($gateways_status as $status) {
+									/* FIXME: possibly trigger on "delay" or "loss" in the future as well "triggerlevel??" */
+									if(($status['name'] == $gwname) && ($status['status'] == "None")) {
+										$tiers[$tier][] = $gwname;
 									}
 								}
-								$lbs_count = count($lbs);
-								if($g['debug'])
-									log_error("We found $lbs_count valid entries in status file {$g['tmp_path']}/{$lb['name']}.pool");
-
-								if(count($lbs) == 0) {
-									if($g['debug'])
-										log_error("There are no servers found in the status file, using XML config settings!");
-									foreach ($lb['servers'] as $lbsvr) {
-										$lbsvr_split = split("\|", $lbsvr);
-										$lbs[] = $lbsvr_split[1];
-									}
-								}
-							} else {
-								if($g['debug'])
-									log_error("There is no server status file, using XML config settings!");
-								$lbs = array();
-									foreach ($lb['servers'] as $lbsvr) {
-									$lbsvr_split = split("\|", $lbsvr);
-									$lbs[] = $lbsvr_split[1];
-								}
-							}
-							/* If we want failover we only return the first (top) server from the list
-							 * and work our way down from there. This way we order the failover order.
-							 */
-							if($lb['behaviour'] == "failover") {
-								$firstsrv = $lbs[0];
-								$lbs = array("$firstsrv");
 							}
 
-							/* create server/gateway gateway/monitor array */
-							$l = 0;
-							$lbconfig = array();
-		                                        foreach ($lb['servers'] as $lbsvr) {
-								$lbsvr_split=split("\|", $lbsvr);
-								$lbconfig['gateway'][$l] = $lbsvr_split[0];
-								$lbconfig['monitor'][$l] = $lbsvr_split[1];
-								$l++;
-							}
-							$lbconfig_count = count($lbconfig['gateway']);
+							$tiers_count = count($tiers);
 
-							$l = 0;
-							while($l < $lbconfig_count) {
-								/* iterate through $lbs and setup items accordingly */
-								foreach($lbs as $server) {
-									if ($server == "")
-										continue;
-									unset($gateway, $int);
-									if ($lbconfig['monitor'][$l] == $server) {
-										/* determine interface gateway */
-										if(is_ipaddr($lbconfig['gateway'][$l])) {
-											$int = guess_interface_from_ip($lbconfig['gateway'][$l]);
-											$gateway = $lbconfig['gateway'][$l];
-											log_error("SLBD pool {$lb['name']} is old style. Please recreate.");
-										} else if(interface_has_gateway($lbconfig['gateway'][$l])) {
-											$int = convert_friendly_interface_to_real_interface_name($lbconfig['gateway'][$l]);
-											$gateway = get_interface_gateway($lbconfig['gateway'][$l]);
-											if(!is_ipaddr($gateway))
-												$gateway = lookup_gateway_ip_by_name($gateway);
+							/* we do not really foreach the tiers as we stop after the first tier */
+							foreach($tiers as $tier) {
+								/* process all gateways in this tier */
+								$member_count = count($tier);
+								foreach($tier as $member) {
+									/* determine interface gateway */
+									foreach($config['gateways']['gateway_item'] as $gateway) {
+										if($gateway['name'] == $member) {
+											$friendly_if = $gateway['interface'];
+											if(is_ipaddr($gateway['gateway'])) {
+												$gatewayip = $gateway['gateway'];
+												$int = convert_friendly_interface_to_real_interface_name($friendly_if);
+											} else {
+												$gatewayip = lookup_gateway_ip_by_name($friendly_if);
+												$int = convert_friendly_interface_to_real_interface_name($friendly_if);
+											}
 										}
-										if(($int <> "") && ($gateway <> "")) {
-											if($g['debug'])
-												log_error("Setting up route with {$lbconfig['gateway'][$l]} om $int for monitor {$lbconfig['monitor'][$l]} on gateway $gateway");
-											if($foundlb == 1)
-												$routeto .= ", ";
-											$routeto .=  "( {$int} {$gateway} ) ";
-											$foundlb = 1;
-										}
-										/* we have a match, go forth and try the next LB item so we don't setup multiples incorrectly */
-										$l++;
-										continue;
+									}
+									if(($int <> "") && ($gatewayip <> "")) {
+										if($g['debug'])
+											log_error("Setting up route with {$gatewayip} om $int");
+										if($foundlb == 1)
+											$routeto .= ", ";
+										$routeto .=  "( {$int} {$gatewayip} ) ";
+										$foundlb = 1;
 									}
 								}
-								$l++;
+								/* we should have the 1st available tier now */
+								break;
 							}
 							/* If we want failover just use route-to else round-robin */
-							if($lb['behaviour'] == "failover") {
+							if($member_count == 1) {
 								$routeto .= "} ";
 							} else {
 								$routeto .= "} round-robin ";
@@ -1892,6 +1859,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					if ($foundlb == 1)
 						$aline['route'] = $routeto;
 				}
+				/* FIXME: We still need to fix single gateway rules with the new gateway code */
+
 				/*  we're not using load balancing, just setup gateway */
 				if($foundlb == 0) {
 					$gateway = $rule['gateway'];

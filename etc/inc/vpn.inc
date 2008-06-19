@@ -229,9 +229,9 @@ function vpn_ipsec_configure($ipchg = false) {
 					/* add entry to host pinger */
 					if ($tunnel['pinghost']) {
 						$pfd = fopen("/var/db/ipsecpinghosts", "a");
-						$iflist = array("lan" => "lan", "wan" => "wan");
+
 					/* if list */
-        				$iflist = get_configured_interface_list(true);
+        				$iflist = get_configured_interface_list();
 
 			            foreach ($iflist as $ifent => $ifname) {
 			            	$interface_ip = find_interface_ip($config['interfaces'][$ifname]['if']);

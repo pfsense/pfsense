@@ -3912,7 +3912,7 @@ function add_hostname_to_watch($hostname) {
 	if(!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");
 	}
-	if(is_fqdn($hostname)) {
+	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
 		exec("host -t A $hostname", $domrecords, $rethost);

@@ -2948,6 +2948,33 @@ EOD;
 	update_filter_reload_status("Creating carp rules...");
 
 	$ipfrules .= "\n# VPN Rules\n";
+	/*     is mobile ipsec enabled?  if so lets allow some pretty
+	 *     loose rules to allow mobile clients to phone in.
+	 */
+	$ipseccfg = $config['ipsec'];
+	if (isset($ipseccfg['mobileclients']['enable'])) {
+                $ifdescrs = get_configured_interface_with_descr();
+		foreach($ifdescrs as $iface) {
+			/* only process interfaces with gateway */
+			if(! interface_has_gateway($iface))
+				continue;
+
+			$gateway = lookup_gateway_ip_by_name($config['interfaces'][$iface]['gateway']);
+			$interface = convert_friendly_interface_to_real_interface_name($iface);
+			$route_to = " route-to ( $interface $gateway ) ";
+			$reply_to = " reply-to ( $interface $gateway ) ";
+
+			/* pass in rules for IPSEC with reply-to */
+			$ipfrules .= "pass in on \${$iface} $reply_to proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
+			$ipfrules .= "pass in on \${$iface} $reply_to proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
+			$ipfrules .= "pass in on \${$iface} $reply_to proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
+			/* Pass out rules for IPSEC with route-to */
+			$ipfrules .= "pass out on \${$iface} $route_to proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
+			$ipfrules .= "pass out on \${$iface} $route_to proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
+			$ipfrules .= "pass out on \${$iface} $route_to proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
+		}
+	}
+
 	if($config['interfaces']['lan']) {
 		$lan_ip = $config['interfaces']['lan']['ipaddr'];
 		$lan_subnet = $config['interfaces']['lan']['subnet'];
@@ -2966,7 +2993,7 @@ EOD;
 		/* if list */
                 $ifdescrs = get_configured_interface_with_descr();
 
-		if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
+		if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable']) && (! isset($ipseccfg['mobileclients']['enable']))) {
 			foreach ($config['ipsec']['tunnel'] as $tunnel) {
 				if(isset($tunnel['disabled']))
 					continue;
@@ -2997,15 +3024,24 @@ EOD;
 							continue;
 						if(!$remote_gateway) 
 							continue;
-						$ipfrules .= "pass out on \${$iface} proto udp from any to {$remote_gateway} port = 500 keep state label \"IPsec: {$tunnel['descr']} - outbound isakmp\"\n";
-						$ipfrules .= "pass in on \${$iface} proto udp from {$remote_gateway} to any port = 500 keep state label \"IPsec: {$tunnel['descr']} - inbound isakmp\"\n";
+						/* only process interfaces with gateway */
+						if(! interface_has_gateway($iface))
+							continue;
+
+						$gateway = lookup_gateway_ip_by_name($config['interfaces'][$iface]['gateway']);
+						$interface = convert_friendly_interface_to_real_interface_name($iface);
+						$route_to = " route-to ( $interface $gateway ) ";
+						$reply_to = " reply-to ( $interface $gateway ) ";
+
+						$ipfrules .= "pass out on \${$iface} $route_to proto udp from any to {$remote_gateway} port = 500 keep state label \"IPsec: {$tunnel['descr']} - outbound isakmp\"\n";
+						$ipfrules .= "pass in on \${$iface} $reply_to proto udp from {$remote_gateway} to any port = 500 keep state label \"IPsec: {$tunnel['descr']} - inbound isakmp\"\n";
 						if ($tunnel['p2']['protocol'] == 'esp') {
-							$ipfrules .= "pass out on \${$iface} proto esp from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound esp proto\"\n";
-							$ipfrules .= "pass in on \${$iface} proto esp from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound esp proto\"\n";
+							$ipfrules .= "pass out on \${$iface} $route_to  proto esp from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound esp proto\"\n";
+							$ipfrules .= "pass in on \${$iface} $reply_to proto esp from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound esp proto\"\n";
 						}
 						if ($tunnel['p2']['protocol'] == 'ah') {
-							$ipfrules .= "pass out on \${$iface} proto ah from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound ah proto\"\n";
-							$ipfrules .= "pass in on \${$iface} proto ah from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound ah proto\"\n";
+							$ipfrules .= "pass out on \${$iface} $route_to proto ah from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound ah proto\"\n";
+							$ipfrules .= "pass in on \${$iface} $reply_to proto ah from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound ah proto\"\n";
 						}
 					}
 				}

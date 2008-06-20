@@ -1851,7 +1851,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					if ($foundlb == 1)
 						$aline['route'] = $routeto;
 				}
-				/* FIXME: We still need to fix single gateway rules with the new gateway code */
 
 				/*  we're not using load balancing, just setup gateway */
 				if($foundlb == 0) {
@@ -1864,21 +1863,27 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					if(in_array($gateway, $ifdescrs)==true) {
 						$int=filter_opt_interface_to_real($gateway);
 						if(is_file("{$g['tmp_path']}/{$int}_router")) {
-							$gatewayip = file_get_contents("{$g['tmp_path']}/{$int}_router");
-							$gatewayip = rtrim($gatewayip);
-							if (is_ipaddr($gatewayip)) {
-								$aline['route'] = " route-to ( {$int} {$gatewayip} ) ";
+							$gateway = file_get_contents("{$g['tmp_path']}/{$int}_router");
+							$gateway = rtrim($gateway);
+							if(!is_ipaddr($gateway)) {
+								$gateway = lookup_gateway_ip_by_name($gateway);
+							}
+							if (is_ipaddr($gateway)) {
+								$aline['route'] = " route-to ( {$int} {$gateway} ) ";
 							}
 						} else {
 							log_error("Could not find {$g['tmp_path']}/{$int}_router.  Needed for dhcp gateway information");
 							continue;
 						}
 					} else {
+						if(!is_ipaddr($gateway)) {
+							$gateway = lookup_gateway_ip_by_name($rule['gateway']);
+						}
 						/* user picked a real gateway ip */
-						$gatewayip = lookup_gateway_ip_by_name($rule['gateway']);
-						if(is_ipaddr($gatewayip)) {
-							$int = guess_interface_from_ip($gatewayip);
-							$aline['route'] = " route-to ( " . guess_interface_from_ip($gatewayip) . " {$gatewayip} ) ";
+						$gateway = lookup_gateway_ip_by_name($rule['gateway']);
+						if(is_ipaddr($gateway)) {
+							$int = guess_interface_from_ip($gateway);
+							$aline['route'] = " route-to ( " . guess_interface_from_ip($gateway) . " {$gateway} ) ";
 						}					
 					}
 				}

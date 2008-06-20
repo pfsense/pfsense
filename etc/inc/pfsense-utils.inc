@@ -4258,7 +4258,8 @@ function return_gateways_status() {
 	global $g;
 
 	$apingerstatus = array();
-	$apingerstatus = @file("{$g['tmp_path']}/apinger.status");
+	if(is_readable("{$g['tmp_path']}/apinger.status"))
+		$apingerstatus = file("{$g['tmp_path']}/apinger.status");
 
 	foreach($apingerstatus as $line) {
 		$fields = explode(":", $line);
@@ -4291,7 +4292,6 @@ function return_gateways_status() {
 				break;
 		}
 	}
-
 	return($status);
 }
 

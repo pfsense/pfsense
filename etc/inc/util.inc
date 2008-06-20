@@ -301,6 +301,8 @@ function get_configured_interface_with_descr($only_opt = false) {
                	if ($only_opt == true && $if == "wan" || $if == "lan")
                         continue;
                 if ($if == "wan" || $if == "lan" || isset($ifdetail['enable']))
+			if($ifdetail['descr'] == "")
+				$ifdetail['descr'] = $if;
                         $iflist[$if] = $ifdetail['descr'];
 	}
 

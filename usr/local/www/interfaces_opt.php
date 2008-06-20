@@ -58,9 +58,10 @@ $optcfg['descr'] = remove_bad_chars($optcfg['descr']);
 if (!is_array($config['aliases']['alias']))
         $config['aliases']['alias'] = array();
 
-foreach($config['aliases']['alias'] as $alias) 
-	if($alias['name'] == $optcfg['descr']) 
-		$input_errors[] = gettext("Sorry, an alias with the name {$optcfg['descr']} already exists.");
+if(is_array($config['aliases']['alias']))
+	foreach($config['aliases']['alias'] as $alias) 
+		if($alias['name'] == $optcfg['descr']) 
+			$input_errors[] = gettext("Sorry, an alias with the name {$optcfg['descr']} already exists.");
 
 $pconfig['descr'] = $optcfg['descr'];
 $pconfig['bridge'] = $optcfg['bridge'];

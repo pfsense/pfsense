@@ -804,12 +804,12 @@ function filter_nat_rules_generate() {
         	$iflist = get_configured_interface_list(true);
 
 		foreach ($iflist as $if => $ifname) {
-			update_filter_reload_status("Creating outbound rules (opt{$i})");
+			update_filter_reload_status("Creating outbound rules ({$if})");
 			$optcfg = $config['interfaces'][$if];
 
-			if ((!$optcfg['bridge']) && (!interface_has_gateway("opt{$i}"))) {
+			if ((!$optcfg['bridge']) && (!interface_has_gateway($if))) {
 				$optsa = gen_subnet($optcfg['ipaddr'], $optcfg['subnet']);
-				$target = get_current_wan_address($interface = "opt$i");
+				$target = get_current_wan_address($interface = $if);
 				if(is_ipaddr($wancfg['alias-address'])) {
 					$aliastarget = $wancfg['alias-address'];
 					$aliassubnet = $wancfg['alias-subnet'];

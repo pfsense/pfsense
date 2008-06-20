@@ -1202,11 +1202,17 @@ function get_interface_mtu($interface) {
  ******/
 function is_interface_wireless($interface) {
 	global $config, $g;
-	$interface = convert_real_interface_to_friendly_interface_name($interface);
-	if(isset($config['interfaces'][$interface]['wireless']))
+	$friendly = convert_real_interface_to_friendly_interface_name($interface);
+	if (preg_match($g['wireless_regex'], $interface)) {
+		$config['interfaces'][$friendly]['wireless'] = array();
+	} else {
+		unset($config['interfaces'][$friendly]['wireless']);
+	}
+	if(isset($config['interfaces'][$friendly]['wireless'])) {
 		return true;
-	else
+	} else {
 		return false;
+	}
 }
 
 /****f* pfsense-utils/find_number_of_created_carp_interfaces
@@ -3848,22 +3854,11 @@ function get_interface_info($ifdescr) {
 				}
 			}
 
-			if ($ifdescr == "wan") {
-				/* run netstat to determine the default gateway */
-				unset($netstatrninfo);
-				exec("/usr/bin/netstat -rnf inet", $netstatrninfo);
-
-				foreach ($netstatrninfo as $nsr) {
-					if (preg_match("/^default\s*(\S+)/", $nsr, $matches)) {
-						$ifinfo['gateway'] = $matches[1];
-					}
-				}
-			} else {
+			/* lookup the gateway */
+			if(interface_has_gateway($ifdescr)) {
+				$gateway = $config['interfaces'][$ifdescr]['gateway'];
 				/* deterimine interface gateway */
-				$int = convert_friendly_interface_to_real_interface_name($ifdescr);
-				$gw = get_interface_gateway($int);
-				if($gw)
-					$ifinfo['gateway'] = $gw;
+				$ifinfo['gateway'] = lookup_gateway_ip_by_name($gateway);
 			}
 		}
 	}

@@ -36,7 +36,7 @@ function listtags() {
 		"earlyshellcmd encryption-algorithm-option field fieldname hash-algorithm-option " .
 		"hosts group interface_array item key lbpool menu mobilekey mount onetoone option ppp package passthrumac priv proxyarpnet " .
 		"queue pages pipe route row rule schedule service servernat servers serversdisabled earlyshellcmd shellcmd staticmap subqueue " .
-		"timerange tunnel user vip virtual_server vlan winsserver ntpserver wolentry widget depends_on_package gateway_item");
+		"timerange tunnel user vip virtual_server vlan winsserver ntpserver wolentry widget depends_on_package gateway_item gateway_group");
 	return $ret;
 }
 

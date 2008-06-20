@@ -300,10 +300,11 @@ function get_configured_interface_with_descr($only_opt = false) {
         foreach($config['interfaces'] as $if => $ifdetail) {
                	if ($only_opt == true && $if == "wan" || $if == "lan")
                         continue;
-                if ($if == "wan" || $if == "lan" || isset($ifdetail['enable']))
+                if ($if == "wan" || $if == "lan" || isset($ifdetail['enable'])) {
 			if($ifdetail['descr'] == "")
 				$ifdetail['descr'] = $if;
                         $iflist[$if] = $ifdetail['descr'];
+		}
 	}
 
         return $iflist;

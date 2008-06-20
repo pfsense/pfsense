@@ -809,12 +809,12 @@ function filter_nat_rules_generate() {
 
 			if ((!$optcfg['bridge']) && (!interface_has_gateway($if))) {
 				$optsa = gen_subnet($optcfg['ipaddr'], $optcfg['subnet']);
-				$target = get_current_wan_address($interface = $if);
+				$target = get_current_wan_address($interface = "wan");
 				if(is_ipaddr($wancfg['alias-address'])) {
 					$aliastarget = $wancfg['alias-address'];
 					$aliassubnet = $wancfg['alias-subnet'];
 					if($config['interfaces']['lan']) 
-						$natrules .= filter_nat_rules_generate_if($wanif,
+						$natrules .= filter_nat_rules_generate_if($if,
 							"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
 				}
 				/* create outbound nat entries for primary wan */
@@ -836,8 +836,8 @@ function filter_nat_rules_generate() {
 				/* create outbound nat entries for all opt wans */
 				foreach($optints as $ocname => $oc) {
 					$opt_interface = $oc['if'];
-					if (interface_has_gateway("$opt_interface")) {
-						$target = get_current_wan_address($interface = "$ocname");
+					if (interface_has_gateway($opt_interface)) {
+						$target = get_current_wan_address($interface = $ocname);
 						if(is_ipaddr($config['interfaces'][$ocname]['alias-address'])) {
 							$aliastarget = $config['interfaces'][$ocname]['alias-address'];
 							$aliassubnet = $config['interfaces'][$ocname]['alias-subnet'];

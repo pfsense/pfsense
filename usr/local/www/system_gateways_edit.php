@@ -73,7 +73,7 @@ if ($_POST) {
 	if (($_POST['gateway'] && !is_ipaddr($_POST['gateway']))) {
 		$input_errors[] = "A valid gateway IP address must be specified.";
 	}
-	if (($_POST['monitor'] && !is_ipaddr($_POST['monitor']))) {
+	if ((($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']))) {
 		$input_errors[] = "A valid monitor IP address must be specified.";
 	}
 
@@ -102,16 +102,16 @@ if ($_POST) {
 		if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway))
 			continue;
 
-		if ($gateway['name'] == $_POST['name']) {
-			$input_errors[] = "A gateway with this name \"{$_POST['name']}\" already exists.";
+		if (($gateway['name'] <> "") && (in_array($gateway, $_POST['name']))) {
+			$input_errors[] = "The name \"{$_POST['name']}\" already exists.";
 			break;
 		}
-		if ($gateway['gateway'] == $_POST['gateway']) {
-			$input_errors[] = "A gateway with the IP address \"{$_POST['gateway']}\" already exists.";
+		if (($gateway['gateway'] <> "") && (in_array($gateway, $_POST['gateway']))) {
+			$input_errors[] = "The IP address \"{$_POST['gateway']}\" already exists.";
 			break;
 		}
-		if ($gateway['monitor'] == $_POST['monitor']) {
-			$input_errors[] = "A monitor with the IP address \"{$_POST['monitor']}\" already exists.";
+		if (($gateway['monitor'] <> "") && (in_array($gateway, $gateway['monitor']))) {
+			$input_errors[] = "The IP address \"{$_POST['monitor']}\" already exists.";
 			break;
 		}
 	}

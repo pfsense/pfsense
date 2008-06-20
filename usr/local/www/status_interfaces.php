@@ -152,7 +152,9 @@ include("head.inc");
               <tr>
                 <td width="22%" class="vncellt">Gateway</td>
                 <td width="78%" class="listr">
-                  <?=htmlspecialchars($ifinfo['gateway']);?>
+			<?=htmlspecialchars($config['interfaces'][$ifdescr]['gateway']);?>
+			<?=htmlspecialchars($ifinfo['gateway']);?>
+			<?php /* FIXME: possibly show gateway status and if it is the default route */ ?>
                 </td>
               </tr><?php endif; if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/resolv.conf")): ?>
                 <td width="22%" class="vncellt">ISP DNS servers</td>

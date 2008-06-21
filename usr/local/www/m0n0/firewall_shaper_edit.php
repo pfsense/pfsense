@@ -491,10 +491,9 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable"><select name="interface" class="formselect">
-                      <?php $interfaces = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
-					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-					  }
+                      <?php $interfaces = get_configured_interface_with_descr();
+				$interfaces['pptp'] = 'PPTP';
+
 					  foreach ($interfaces as $iface => $ifacename): ?>
                       <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>> 
                       <?=htmlspecialchars($ifacename);?>
@@ -537,9 +536,10 @@ include("head.inc");
                             LAN subnet</option>
                             <option value="pptp" <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>> 
                             PPTP clients</option>
-                            <?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
-                            <option value="opt<?=$i;?>" <?php if ($pconfig['src'] == "opt" . $i) { echo "selected"; } ?>> 
-                            <?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?>
+                            <?php $iflist = get_configured_interface_with_descr(true);
+				foreach ($iflist as $opt => $ifdesc): ?>
+                            <option value="<?=$opt;?>" <?php if ($pconfig['src'] == $opt) { echo "selected"; } ?>> 
+                            <?=htmlspecialchars($ifdesc);?>
                             subnet</option>
                             <?php endfor; ?>
                           </select></td>
@@ -619,9 +619,10 @@ include("head.inc");
                             LAN subnet</option>
                             <option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>> 
                             PPTP clients</option>
-                            <?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
-                            <option value="opt<?=$i;?>" <?php if ($pconfig['dst'] == "opt" . $i) { echo "selected"; } ?>> 
-                            <?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?>
+                            <?php $iflist = get_configured_interface_with_descr(true);
+				foreach ($iflist as $opt => $ifdesc): ?>
+                            <option value="<?=$opt;?>" <?php if ($pconfig['dst'] == $opt) { echo "selected"; } ?>> 
+                            <?=htmlspecialchars($ifdesc);?>
                             subnet</option>
                             <?php endfor; ?>
                           </select> </td>

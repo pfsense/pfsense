@@ -34,10 +34,8 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
-	$i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-					for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-						$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-					}?>
+	$ifdescrs = get_configured_interface_with_descr();
+?>
 	<input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="">
 	<?php 
 					//set variables for traffic graph

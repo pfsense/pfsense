@@ -298,14 +298,8 @@ function enable_change(enable_over) {
 
 			<select name="interface" class="formselect" id="interface">
 			  <?php
-				if($config['interfaces']['lan'])
-					$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
-				else 
-					$interfaces = array('wan' => 'WAN');
-				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-				      if (isset($config['interfaces']['opt' . $i]['enable']))
-					      $interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-				}
+				$interfaces = get_configured_interface_with_descr();
+
 				foreach ($interfaces as $iface => $ifacename):
 			  ?>
 			  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>

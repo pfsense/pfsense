@@ -223,11 +223,12 @@ if(isset($config['captiveportal']['enable'])) {
 	unset($pconfig);
 }
 
-$iflist = array("lan" => "LAN");
-for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-	$oc = $config['interfaces']['opt' . $i];
-	if (isset($oc['enable']) && $oc['if'] && (!$oc['bridge']))
-		$iflist['opt' . $i] = "opt{$i}";
+$iflist = array();
+$ifdescrs = get_configured_interface_list();
+foreach ($ifdescrs as $if) {
+	$oc = $config['interfaces'][$if];
+	if ($oc['if'] && (!$oc['bridge']))
+		$iflist[$if] = $if;
 }
 $show_dhcprelay = false;
 foreach($iflist as $if) {

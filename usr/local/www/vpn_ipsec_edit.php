@@ -366,13 +366,7 @@ function methodsel_change() {
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable"><select name="interface" class="formselect">
                       <?php 
-						if($config['interfaces']['lan']) 
-                       		$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
-						else 
-							$interfaces = array('wan' => 'WAN');
-					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-					  }
+                       	$interfaces = get_configured_interface_with_descr();
                        $carpips = find_number_of_needed_carp_interfaces();
                        for($i=0; $i<$carpips; $i++) {
                        	$carpip = find_interface_ip("carp" . $i);

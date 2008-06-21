@@ -127,9 +127,7 @@ effect.");?><br>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
                     <?php
-				$iflabels = array('wan' => 'WAN', 'lan' => 'LAN');
-				for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
-					$iflabels['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+				$iflabels = get_configured_interface_with_descr();
 				echo htmlspecialchars($iflabels[$gateway['interface']]); ?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">

@@ -166,9 +166,8 @@ include("head.inc");
 				  } else {
 				  	$textss = $textse = "";
 				  }
-				  $iflabels = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
-				  for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
-				  	$iflabels['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+				  $iflabels = get_configured_interface_with_descr();
+
 				  echo $textss . htmlspecialchars($iflabels[$shaperent['interface']]);
 				  echo "<br>";
 				  echo "<a href=\"?act=toggle&id={$i}\">";

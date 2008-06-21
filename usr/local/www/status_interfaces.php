@@ -67,10 +67,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-              <?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-		for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-			$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-		}
+              <?php $ifdescrs = get_configured_interface_with_descr(false, true);
 		foreach ($ifdescrs as $ifdescr => $ifname):
 			$ifinfo = get_interface_info($ifdescr);
 		?>

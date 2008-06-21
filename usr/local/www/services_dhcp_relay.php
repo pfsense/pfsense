@@ -63,13 +63,12 @@ $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
 
-$iflist = array("lan" => "LAN");
+$ifdescrs = get_configured_interface_list();
+foreach ($ifdescrs as $ifname) {
+	$oc = $config['interfaces'][$ifname];
 
-for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-	$oc = $config['interfaces']['opt' . $i];
-
-	if (isset($oc['enable']) && $oc['if'] && (!$oc['bridge'])) {
-		$iflist['opt' . $i] = $oc['descr'];
+	if ($oc['if'] && (!$oc['bridge'])) {
+		$iflist[$ifname] = $oc['descr'];
 	}
 }
 

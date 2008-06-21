@@ -163,14 +163,12 @@ include("head.inc");
                   <?=$spane;?></td>
                   <td class="listr" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>'"><?=$spans;?>
 				  <?php if ($ipsecent['interface']) {
-							$iflabels = array('lan' => 'LAN', 'wan' => 'WAN');
+							$iflabels = get_configured_interface_with_descr();
                  	        $carpips = find_number_of_needed_carp_interfaces();
                          	    for($j=0; $j<$carpips; $j++) {
                        				$carpip = find_interface_ip("carp" . $j);
                       	 			$iflabels['carp' . $j] = "CARP{$j} ({$carpip})"; 
                      		    }
-							for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
-								$iflabels['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 							$if = htmlspecialchars($iflabels[$ipsecent['interface']]);
 						} else
 							$if = "WAN";

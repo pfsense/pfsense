@@ -143,9 +143,7 @@ function getAdminPageList() {
 		}
 		
 		/* firewall rule view and edit entries for lan, wan, optX */
-		$iflist = array("lan" => "lan", "wan" => "wan");
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
-			$iflist['opt' . $i] = "opt{$i}";
+		$iflist = get_configured_interface_list(false, true);
 
 		// Firewall Rules
 		foreach ($iflist as $ifent => $ifname) {

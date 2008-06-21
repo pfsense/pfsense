@@ -154,10 +154,8 @@ function get_interfacestats(){
 	
 	global $config;
 	//build interface list for widget use
-	$i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-	}
+	$ifdescrs = get_configured_interface_list_with_descr();
+
 	$array_in_packets = array();
 	$array_out_packets = array();
 	$array_in_bytes = array();
@@ -201,10 +199,7 @@ function get_interfacestatus(){
 	global $config;
 
 	//build interface list for widget use
-	$i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-	}
+	$ifdescrs = get_configured_interface_with_descr();
 	
 	foreach ($ifdescrs as $ifdescr => $ifname){
 		$ifinfo = get_interface_info($ifdescr);

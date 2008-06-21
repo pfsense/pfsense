@@ -88,9 +88,8 @@ include("head.inc");
 		 <td class="listlr" ondblclick="document.location='services_proxyarp_edit.php?id=<?=$i;?>';">
                   <?php
 				  	if ($arpent['interface']) {
-					  $iflabels = array('lan' => 'LAN', 'wan' => 'WAN');
-					  for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
-						$iflabels['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+					  $iflabels = get_configured_interface_with_descr();
+
 					  echo htmlspecialchars($iflabels[$arpent['interface']]);
 					} else {
 						echo "WAN";

@@ -63,12 +63,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php
-$ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
+$ifdescrs = get_configured_interface_with_descr();
 
-for($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	if(isset($config['interfaces']['opt' . $j]['enable']))
-		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-}
 if((isset($config['ipsec']['enable'])) || (isset($config['ipsec']['mobileclients']['enable']))) {
 	$ifdescrs['ipsec'] = "IPsec";
 }

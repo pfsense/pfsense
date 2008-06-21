@@ -104,17 +104,9 @@ include("head.inc");
                   <td width="78%" class="vtable">
 <select name="interface" class="formfld">
                       <?php 
-						if($config['interfaces']['lan'])
-							$interfaces = array('lan' => 'LAN');
-						else 
-							$interfaces = array('WAN' => 'WAN');
-					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-					    if (isset($config['interfaces']['opt' . $i]['enable']) &&
-							!$config['interfaces']['opt' . $i]['bridge'])
-					  		$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-					  }
+					  $interfaces = get_configured_interface_with_descr();
 					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>> 
+                      <option value="<?=$iface;?>" <?php if (!$config['interfaces'][$iface]['bridge'] && $iface == $pconfig['interface']) echo "selected"; ?>> 
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>

@@ -163,10 +163,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
 			<select name="interface" class="formselect">
-                      <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
-					  for ($i = 1; isset($config['interfaces']['opt' . $i]['enable']); $i++) {
-					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-					  }
+                      <?php $interfaces = get_configured_interface_with_descr(false, true);
 					  foreach ($interfaces as $iface => $ifacename): ?>
                       <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>> 
                       <?=htmlspecialchars($ifacename);?>

@@ -942,10 +942,10 @@ function get_radio_value(obj) {
       <td width="78%" class="vtable">
 	<select name="bridge" class="formfld" id="bridge" onChange="methodsel_change(false)">
 	<option <?php if (!$pconfig['bridge']) echo "selected";?> value="">none</option>
-	<?php $opts = array('lan' => "LAN", 'wan' => "WAN");
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-		if ($i != $index && !($config['interfaces']['opt' . $i]['ovpn']))
-			$opts['opt' . $i] = "Optional " . $i . " (" . $config['interfaces']['opt' . $i]['descr'] . ")";
+	<?php $iflist = get_configured_interface_with_descr();
+	foreach ($iflist as $if => $ifdesc) {
+		if (!($config['interfaces'][$if]['ovpn']))
+			$opts[$if] = "Optional " . $if . " (" . $ifdesc . ")";
 	}
 	foreach ($opts as $opt => $optname): ?>
 		<option <?php if ($opt == $pconfig['bridge']) echo "selected";?> value="<?=htmlspecialchars($opt);?>"> 

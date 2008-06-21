@@ -36,10 +36,7 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 
-		$i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-		for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-			$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-		}
+		$ifdescrs = get_configured_interface_with_descr();
 		
 		$array_in_packets = array();
 		$array_out_packets = array();

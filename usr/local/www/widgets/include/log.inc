@@ -21,8 +21,9 @@ function conv_clog_filter($logfile, $tail = 8) {
 	$iftable = array();
 	$iftable[$config['interfaces']['lan']['if']] = "LAN";
 	$iftable[get_real_wan_interface()] = "WAN";
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-		$iftable[$config['interfaces']['opt' . $i]['if']] = $config['interfaces']['opt' . $i]['descr'];
+	$iflist = get_configured_interface_with_descr(true);
+	foreach ($iflist as $ifl => $ifdesc)
+		$iftable[$config['interfaces'][$if]['if']] = $ifdesc;
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 

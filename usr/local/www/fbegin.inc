@@ -145,9 +145,11 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 								output_menu_item("/interfaces_lan.php", "LAN");
 							}
 							?>
-							<?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): if (!isset($config['interfaces']['opt' . $i]['ovpn'])): ?>
-							<?=output_menu_item("/interfaces_opt.php?index={$i}", htmlspecialchars($config['interfaces']['opt' . $i]['descr']))?>
-							<?php endif; endfor; ?>
+							<?php $opts = get_configured_interface_with_descr(true); 
+							foreach ($opts as $oif => $odescr): 
+								if (!isset($config['interfaces'][$oif]['ovpn'])): ?>
+							<?=output_menu_item("/interfaces_opt.php?optif={$oif}", htmlspecialchars($odescr))?>
+							<?php endif; endforeach; ?>
 							<?php echo return_ext_menu("Interfaces"); ?>
 						</ul>
 					</li>

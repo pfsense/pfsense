@@ -35,13 +35,13 @@
 
 require("guiconfig.inc");
 
-unset($index);
-if ($_GET['index'])
-	$index = $_GET['index'];
-else if ($_POST['index'])
-	$index = $_POST['index'];
+unset($optif);
+if ($_GET['optif'])
+	$optif = $_GET['optif'];
+else if ($_POST['optif'])
+	$optif = $_POST['optif'];
 
-if (!$index)
+if (!$optif)
 	exit;
 
 function remove_bad_chars($string) {
@@ -52,16 +52,15 @@ if (!is_array($config['gateways']['gateway_item']))
 	$config['gateways']['gateway_item'] = array();
 $a_gateways = &$config['gateways']['gateway_item'];
 
-$optcfg = &$config['interfaces']['opt' . $index];
+$optcfg = &$config['interfaces'][$optif];
 $optcfg['descr'] = remove_bad_chars($optcfg['descr']);
 
 if (!is_array($config['aliases']['alias']))
         $config['aliases']['alias'] = array();
 
-if(is_array($config['aliases']['alias']))
-	foreach($config['aliases']['alias'] as $alias) 
-		if($alias['name'] == $optcfg['descr']) 
-			$input_errors[] = gettext("Sorry, an alias with the name {$optcfg['descr']} already exists.");
+foreach($config['aliases']['alias'] as $alias) 
+	if($alias['name'] == $optcfg['descr']) 
+		$input_errors[] = gettext("Sorry, an alias with the name {$optcfg['descr']} already exists.");
 
 $pconfig['descr'] = $optcfg['descr'];
 $pconfig['bridge'] = $optcfg['bridge'];
@@ -132,26 +131,26 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['enable']) {
 
+		/* optional interface if list */
+		$iflist = get_configured_interface_with_descr(true);
+
 		/* description unique? */
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-			if ($i != $index) {
-				if ($config['interfaces']['opt' . $i]['descr'] == $_POST['descr']) {
-					$input_errors[] = "An interface with the specified description already exists.";
-				}
-			}
+		foreach ($iflist as $if => $ifdescr) {
+			if ($if != $optif && $ifdescr == $_POST['descr']) 
+				$input_errors[] = "An interface with the specified description already exists.";
 		}
 
 		if ($_POST['bridge']) {
 			/* double bridging? */
-			for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-				if ($i != $index) {
-					if ($config['interfaces']['opt' . $i]['bridge'] == $_POST['bridge']) {
-						//$input_errors[] = "Optional interface {$i} " .
-						//	"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
+			foreach($iflist as $oif => $oifname) {
+				if ($oif != $optif) {
+					if ($config['interfaces'][$oif]['bridge'] == $_POST['bridge']) {
+						//$input_errors[] = "Optional interface {$optif} " .
+						//	"({$config['interfaces'][$oif]['descr']}) is already bridged to " .
 						//	"the specified interface.";
-					} else if ($config['interfaces']['opt' . $i]['bridge'] == "opt{$index}") {
-						//$input_errors[] = "Optional interface {$i} " .
-						//	"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
+					} else if ($config['interfaces'][$oif]['bridge'] == $optif) {
+						//$input_errors[] = "Optional interface {$optif} " .
+						//	"({$config['interfaces'][$oif]['descr']}) is already bridged to " .
 						//	"this interface.";
 					}
 				}
@@ -265,7 +264,7 @@ if ($_POST) {
 }
 
 
-$pgtitle = array("Interfaces","Optional {$index} (" . htmlspecialchars($optcfg['descr']) . ")");
+$pgtitle = array("Interfaces","Optional {$optif} (" . htmlspecialchars($optcfg['descr']) . ")");
 include("head.inc");
 
 ?>
@@ -321,7 +320,7 @@ function show_mon_config() {
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
 			<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
-                    <strong>Enable Optional <?=$index;?> interface</strong></td>
+                    <strong>Enable Optional <?=$optif;?> interface</strong></td>
 		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
@@ -410,15 +409,12 @@ function show_mon_config() {
                   <td width="78%" class="vtable">
 			<select name="bridge" class="formselect" id="bridge" onChange="enable_change(false)">
 				  	<option <?php if (!$pconfig['bridge']) echo "selected";?> value="">none</option>
-                      <?php $opts = array('lan' => "LAN", 'wan' => "WAN");
-					  	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-							if ($i != $index)
-								$opts['opt' . $i] = "Optional " . $i . " (" .
-									$config['interfaces']['opt' . $i]['descr'] . ")";
-						}
-					foreach ($opts as $opt => $optname): ?>
-                      <option <?php if ($opt == $pconfig['bridge']) echo "selected";?> value="<?=htmlspecialchars($opt);?>">
-                      <?=htmlspecialchars($optname);?>
+                      <?php $opts = get_configured_interface_with_descr(); 
+				foreach ($opts as $opt => $optname): ?>
+                      <option 
+			<?php if ($opt != $optif && $opt == $pconfig['bridge']) 
+				echo "selected";?> value="<?=htmlspecialchars($opt);?>">
+                      <?=htmlspecialchars($if ."(".$optname.")");?>
                       </option>
                       <?php endforeach; ?>
                     </select> </td>
@@ -446,7 +442,7 @@ function show_mon_config() {
 			<?php
 			if(count($a_gateways) > 0) {
 				foreach ($a_gateways as $gateway) {
-					if($gateway['interface'] == "opt{$index}") {
+					if($gateway['interface'] == $optif) {
 			?>
 				<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>>
 				<?=htmlspecialchars($gateway['name']);?>
@@ -515,7 +511,7 @@ function show_mon_config() {
 		<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="index" type="hidden" value="<?=$index;?>">
+                    <input name="optif" type="hidden" value="<?=$optif;?>">
 				  <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
@@ -534,7 +530,7 @@ enable_change(false);
 //-->
 </script>
 <?php else: ?>
-<p><strong>Optional <?=$index;?> has been disabled because there is no OPT<?=$index;?> interface.</strong></p>
+<p><strong>Optional <?=$optif;?> has been disabled because there is no <?=strtoupper($optif);?> interface.</strong></p>
 <?php endif; ?>
 <?php include("fend.inc"); ?>
 </body>
@@ -549,7 +545,7 @@ if ($_POST) {
 		flush();
 		sleep(1);		
 		
-		interfaces_optional_configure_if($index);
+		interfaces_optional_configure_if($optif);
 		
 		reset_carp();
 

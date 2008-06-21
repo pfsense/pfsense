@@ -35,14 +35,12 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interfaces.inc");
 
-		$i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-					for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-						$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-					}?>
+		$i = 0; 
+		$ifdescrs = get_configured_interface_with_descr();
+?>
 			
 	         <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
 			<?php 
-			$counter = 1;
 			foreach ($ifdescrs as $ifdescr => $ifname){
 					$ifinfo = get_interface_info($ifdescr);
 					$iswireless = is_interface_wireless($ifdescr);
@@ -65,9 +63,8 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 				<? } else if ($ifname == "LAN") { ?>
 					<span onClick="location.href='/interfaces_lan.php'" style="cursor:pointer">
 				<? } else { ?>				
-					<span onClick="location.href='/interfaces_opt.php?index=<?=$counter; ?>'" style="cursor:pointer">
+					<span onClick="location.href='/interfaces_opt.php?optif=<?=$ifdescr; ?>'" style="cursor:pointer">
 				<? 
-				$counter++;
 				} ?>	
 				
 				

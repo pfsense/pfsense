@@ -234,12 +234,14 @@ function interfaces_lan_configure() {
 }
 
 function interfaces_optional_configure() {
-	global $config, $g;
-	global $bridgeconfig;
+	global $g;
 
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-		interfaces_optional_configure_if($i);
-	}
+	/* XXX: unify with wan when pppoe/pptp fixups are done. */
+	/* optional interface if list */
+	$iflist = get_configured_interface_list(true);
+	
+	foreach($iflist as $if => $ifname)
+		interfaces_optional_configure_if($if);
 
 	if (!$g['booting']) {
 		/* reconfigure static routes (kernel may have deleted them) */
@@ -270,13 +272,13 @@ function interfaces_optional_configure_if($opti) {
 
 	$bridges_total = get_next_available_bridge_interface();
 
-	$optcfg = $config['interfaces']['opt' . $opti];
+	$optcfg = $config['interfaces'][$opti];
 
 	if ($g['booting']) {
 		$optdescr = "";
 		if ($optcfg['descr'])
 			$optdescr = " ({$optcfg['descr']})";
-		print "\tOPT{$opti}{$optdescr}... ";
+		print "\t{$opti}{$optdescr}... ";
 	}
 	
 	if(file_exists("/tmp/{$optcfg['if']}_router"))
@@ -372,7 +374,7 @@ function interfaces_optional_configure_if($opti) {
 		} else {
 			/* if user has selected DHCP type then act accordingly */
 			if($optcfg['ipaddr'] == "dhcp") {
-				interfaces_opt_dhcp_configure("opt{$opti}");
+				interfaces_opt_dhcp_configure($opti);
 			} else {
 				mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .
 				escapeshellarg($optcfg['ipaddr'] . "/" . $optcfg['subnet']));

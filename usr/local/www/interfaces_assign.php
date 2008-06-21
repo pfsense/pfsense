@@ -137,7 +137,7 @@ if ($_GET['act'] == "del") {
 
 	$i = substr($id, 3); /* the number of the OPTn port being deleted */
 	unset($config['interfaces'][$id]['enable']);
-	interfaces_optional_configure_if($i);   /* down the interface */
+	interfaces_optional_configure_if($id);   /* down the interface */
 		
 	unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
 

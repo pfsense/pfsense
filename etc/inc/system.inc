@@ -214,14 +214,7 @@ function system_routing_configure() {
 	}
 
 	/* if list */
-	if ($config['interfaces']['lan']) {
-		$iflist = array("lan", "wan");	
-	} else {
-		$iflist = array("wan");
-	}
-	
-	for ($i = 1; isset($config['interfaces']['opt' . $i]['enable']); $i++)
-		$iflist['opt' . $i] = "opt{$i}";
+	$iflist = get_configured_interface_list();
 
 	$dont_remove_route = false;
 	foreach ($iflist as $ifent => $ifname) {

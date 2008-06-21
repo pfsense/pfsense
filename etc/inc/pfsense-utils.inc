@@ -3167,20 +3167,10 @@ function enable_rrd_graphing() {
 			} else {
 				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$5 \":\" \$8}'`\n";
 			}
-			/* FIXME: needs to use the monitor setting from the gateways array now */
-			/* if an alternative gateway is defined, use it */
-			if ($config['interfaces'][$ifname]['use_rrd_gateway'] <> "") {
-				$gatewayip = get_interface_gateway($ifname);
-				$monitorip = $config['interfaces'][$ifname]['use_rrd_gateway'];
-				mwexec("/sbin/route add -host {$monitorip} {$gatewayip} 1> /dev/null 2>&1");
-			} else {
-				$monitorip = get_interface_gateway($ifname);
-			}
-			$numpings = 5;
-			$btick = '`';
 
-			if($monitorip <> "") {
-				/* QUALITY, create link quality database */
+			/* QUALITY, create link quality database */
+			/* if the interface has a gateway defined, use it */
+			if(interface_has_gateway($ifname)) {
 				if (!file_exists("$rrddbpath$ifname$quality")) {
 					/* create rrd file if it does not exist */
 					log_error("Create RRD database $rrddbpath$ifname$quality");
@@ -3203,16 +3193,18 @@ function enable_rrd_graphing() {
 				if($g['booting']) {
 					exec("$rrdtool update $rrddbpath$ifname$quality N:U:U");
 				}
-
+				
+				$numpings = 5;
+				$monitorip = lookup_gateway_monitor_ip_by_name($config['interfaces'][$ifname]['gateway']);
 				/* the ping test function. We call this on the last line */
 				$rrdupdatesh .= "get_quality_stats_{$ifname} () {\n";
 				$rrdupdatesh .= "	packetloss_{$ifname}=100\n";
 				$rrdupdatesh .= "	roundtrip_{$ifname}=0\n";
 				$rrdupdatesh .= "	local out_{$ifname}\n";
-				$rrdupdatesh .= "	out_{$ifname}=$btick ping -c $numpings -q $monitorip $btick\n";
+				$rrdupdatesh .= "	out_{$ifname}=\`ping -c $numpings -q $monitorip\`\n";
 				$rrdupdatesh .= "	if [ $? -eq 0 ]; then\n";
-				$rrdupdatesh .= "		packetloss_{$ifname}=$btick echo \$out_{$ifname} | cut -f18 -d' ' | cut -c -1 $btick\n";
-				$rrdupdatesh .= "		roundtrip_{$ifname}=$btick echo \$out_{$ifname} | cut -f24 -d' ' | cut -f2 -d'/' $btick\n";
+				$rrdupdatesh .= "		packetloss_{$ifname}=\`echo \$out_{$ifname} | cut -f18 -d' ' | cut -c -1\`\n";
+				$rrdupdatesh .= "		roundtrip_{$ifname}=\`echo \$out_{$ifname} | cut -f24 -d' ' | cut -f2 -d'/'\`\n";
 				$rrdupdatesh .= "	fi\n";
 				$rrdupdatesh .= "	$rrdtool update $rrddbpath$ifname$quality N:\$packetloss_{$ifname}:\$roundtrip_{$ifname}\n";
 				$rrdupdatesh .= "}\n\n";
@@ -3989,6 +3981,23 @@ function lookup_gateway_ip_by_name($name) {
 				$gatewayip = $gateway['gateway'];
 				$interfacegw = $gateway['interface'];
 				return($gatewayip);
+			}
+		}
+	} else {
+		return(false);
+	}
+}
+
+function lookup_gateway_monitor_ip_by_name($name) {
+	global $config;
+	if(is_array($config['gateways'])) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if($gateway['name'] == "$name") {
+				$monitorip = $gateway['monitor'];
+				if($monitorip == "")
+					$monitorip = $gateway['gateway'];
+
+				return($monitorip);
 			}
 		}
 	} else {

@@ -245,7 +245,7 @@ include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pk
 ; add additional extensions below
 ; standard PHP extension
 extension=apc.so
-extension=pcre.so
+; extension=pcre.so - already loaded
 extension=bz2.so
 extension=bcmath.so
 extension=ctype.so

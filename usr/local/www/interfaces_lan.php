@@ -50,15 +50,16 @@ if ($_POST) {
 
 	if ($_POST['bridge']) {
 		/* double bridging? */
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-			if ($i != $index) {
-				if ($config['interfaces']['opt' . $i]['bridge'] == $_POST['bridge']) {
-					//$input_errors[] = "Optional interface {$i} " .
-					//	"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
+		$iflist = get_configured_interface_list(true, true);
+		foreach ($iflist as $if) {
+			if ($if != $index) { /* XXX: totaly bogus */
+				if ($config['interfaces'][$if]['bridge'] == $_POST['bridge']) {
+					//$input_errors[] = "Optional interface {$if} " .
+					//	"({$config['interfaces'][$if]['descr']}) is already bridged to " .
 					//	"the specified interface.";
-				} else if ($config['interfaces']['opt' . $i]['bridge'] == "opt{$index}") {
-					//$input_errors[] = "Optional interface {$i} " .
-					//	"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
+				} else if ($config['interfaces'][$if]['bridge'] == $if) {
+					//$input_errors[] = "Optional interface {$if} " .
+					//	"({$config['interfaces'][$if]['descr']}) is already bridged to " .
 					//	"this interface.";
 				}
 			}
@@ -174,13 +175,10 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable">
 			<select name="bridge" class="formselect" id="bridge" onChange="enable_change(false)">
 				  	<option <?php if (!$pconfig['bridge']) echo "selected";?> value="">none</option>
-                      <?php $opts = array('wan' => "WAN");
-					  	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-							if ($i != $index)
-								$opts['opt' . $i] = "Optional " . $i . " (" .
-									$config['interfaces']['opt' . $i]['descr'] . ")";
-						}
-					foreach ($opts as $opt => $optname): ?>
+                      <?php 
+					$opts = get_configured_interface_with_descr();
+					foreach ($opts as $opt => $optname): 
+						if ($opt == "lan") continue;?>
                       <option <?php if ($opt == $pconfig['bridge']) echo "selected";?> value="<?=htmlspecialchars($opt);?>">
                       <?=htmlspecialchars($optname);?>
                       </option>

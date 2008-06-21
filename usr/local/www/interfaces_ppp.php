@@ -41,13 +41,9 @@ $a_ppps = &$config['ppps']['ppp'] ;
 function ppp_inuse($num) {
 	global $config, $g;
 
-	if ($config['interfaces']['lan']['if'] == "ppp{$num}")
-		return true;
-	if ($config['interfaces']['wan']['if'] == "ppp{$num}")
-		return true;
-
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-		if ($config['interfaces']['opt' . $i]['if'] == "ppp{$num}")
+	$iflist = get_configured_interface_list(false, true);
+	foreach ($iflist as $if) {
+		if ($config['interfaces'][$if]['if'] == "ppp{$num}")
 			return true;
 	}
 
@@ -72,11 +68,9 @@ if ($_GET['act'] == "del") {
 	} else {
 		unset($a_ppps[$_GET['id']]);
 
-		/* renumber all interfaces that use PPP */
-		$config['interfaces']['lan']['if'] = renumber_ppp($config['interfaces']['lan']['if'], $_GET['id']);
-		$config['interfaces']['wan']['if'] = renumber_ppp($config['interfaces']['wan']['if'], $_GET['id']);
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-			$config['interfaces']['opt' . $i]['if'] = renumber_ppp($config['interfaces']['opt' . $i]['if'], $_GET['id']);
+		$iflist = get_configured_interface_list(false, true);
+		foreach ($iflist as $if)
+			$config['interfaces'][$if]['if'] = renumber_ppp($config['interfaces'][$if]['if'], $_GET['id']);
 
 		write_config();
 

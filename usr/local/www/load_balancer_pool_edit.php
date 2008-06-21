@@ -327,11 +327,10 @@ function clearcombo(){
 				<div style="float: none;">
 				<select id="gatewayip" name="gatewayip" onchange="gateway_change();" style="float: left;">
 <?php
-					$interfaces = array('wan' => 'WAN');
-					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-						$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-					}
+					$interfaces = get_configured_interface_with_descr(false, true);
 					foreach ($interfaces as $iface => $ifacename) {
+						if ($iface == "lan")
+							continue;
 						$ifinfo = get_interface_info($iface);
 						if(isset($ifinfo['gateway'])) { ?>
 							<option value="<?=$ifinfo['gateway'];?>"><?=htmlspecialchars($ifacename);?>'s Gateway</option>
@@ -357,13 +356,7 @@ function clearcombo(){
 				<input name="ipaddr" type="text" size="16" style="float: left;">
 				<select id="iface" name="iface" style="float: left; display: none;">
 <?php
-					if($config['interfaces']['lan'])
-						$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
-					else 
-						$interfaces = array('wan' => 'WAN');
-					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-						$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-					}
+					$interfaces = get_configured_interface_with_descr(false, true);
 					foreach ($interfaces as $iface => $ifacename) {
 						$ifinfo = get_interface_info($iface);
 						if(isset($ifinfo['gateway'])) { ?>

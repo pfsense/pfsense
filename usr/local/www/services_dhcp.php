@@ -39,30 +39,21 @@ if ($_POST['if'])
 if($config['installedpackages']['olsrd']) {
 	foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
 			if($olsrd['enable']) {
-				$iflist = array("lan" => "LAN", "wan" => "WAN");
 				$is_olsr_enabled = true;
 				break;
 			}
 	}
 }
 
-if($config['interfaces']['lan']) {
-	if(!$iflist)
-		$iflist = array("lan" => "LAN");
-} else {
-	/* if WAN is configured for anything other than static
-	  IP, do not allow DHCP server to be configured. */
-	if (!is_ipaddr($config['interfaces']['wan']['ipaddr']))
+$ifdescrs = get_configured_interface_with_descr();
+
+foreach ($ifdescrs as $ifname => $ifdesc) {
+	$oc = $config['interfaces'][$ifname];
+
+	if (!is_ipaddr($oc['ipaddr']) && $is_olsr_enabled)
 		$singleif_nostaticip = true;
-	$iflist = array("wan" => strtoupper($g['wan_interface_name']));
-}
-
-for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-	$oc = $config['interfaces']['opt' . $i];
-
-	if (isset($oc['enable']) && $oc['if'] && (!$oc['bridge'])) {
-		$iflist['opt' . $i] = $oc['descr'];
-	}
+	else if ($oc['if'] && (!$oc['bridge'])) 
+		$iflist[$ifname] = $ifdesc['descr'];
 }
 
 /* set the starting interface */

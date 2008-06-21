@@ -92,9 +92,10 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		/* make sure no interfaces are bridged */
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-			$coptif = &$config['interfaces']['opt' . $i];
-			if (isset($coptif['enable']) && $coptif['bridge'] == $pconfig['cinterface']) {
+		$iflist = get_configured_interface_list(true);
+		foreach ($iflist as $if) {
+			$coptif = &$config['interfaces'][$if];
+			if ($coptif['bridge'] == $pconfig['cinterface']) {
 				$input_errors[] = "The captive portal cannot be used when one or more interfaces are bridged.";
 				break;
 			}
@@ -279,14 +280,7 @@ function enable_change(enable_change) {
 	  <td width="78%" class="vtable">
 		<select name="cinterface" class="formselect" id="cinterface">
 		  <?php 
-		    if($config['interfaces']['lan'])
-				$interfaces = array('lan' => 'LAN');
-			else 
-				$interfaces = array();
-		  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-			if (isset($config['interfaces']['opt' . $i]['enable']))
-				$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-		  }
+		  $interfaces = get_configured_interface_with_descr();
 		  foreach ($interfaces as $iface => $ifacename): ?>
 		  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['cinterface']) echo "selected"; ?>>
 		  <?=htmlspecialchars($ifacename);?>

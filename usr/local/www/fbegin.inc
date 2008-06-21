@@ -145,7 +145,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 								output_menu_item("/interfaces_lan.php", "LAN");
 							}
 							?>
-							<?php $opts = get_configured_interface_with_descr(true); 
+							<?php $opts = get_configured_interface_with_descr(true, true); 
 							foreach ($opts as $oif => $odescr): 
 								if (!isset($config['interfaces'][$oif]['ovpn'])): ?>
 							<?=output_menu_item("/interfaces_opt.php?optif={$oif}", htmlspecialchars($odescr))?>
@@ -252,18 +252,11 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 								output_menu_item("/status_upnp.php", "UPnP");	
 							}
 							?>
-							<?php $i = 0; $ifdescrs = array();
-							if (is_array($config['interfaces']['wan']['wireless']) &&
-								preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))
-									$ifdescrs['wan'] = 'WAN';
-							if (is_array($config['interfaces']['lan']['wireless']) &&
-								preg_match($g['wireless_regex'], $config['interfaces']['lan']['if']))
-									$ifdescrs['lan'] = 'LAN';
-							for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-								if (is_array($config['interfaces']['opt' . $j]['wireless']) &&
-									isset($config['interfaces']['opt' . $j]['enable']) &&
-									 preg_match($g['wireless_regex'], $config['interfaces']['opt' . $j]['if']))
-										$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+							<?php $iflist = get_configured_interface_with_descr();
+							foreach ($iflist as $if => $ifdesc) {
+								if (is_array($config['interfaces'][$if]['wireless']) &&
+									preg_match($g['wireless_regex'], $config['interfaces'][$if]['if']))
+									$ifdescrs[$if] = $ifdesc;
 							}
 							if (count($ifdescrs) > 0): ?>
 							<?=output_menu_item("/status_wireless.php", "Wireless");?>

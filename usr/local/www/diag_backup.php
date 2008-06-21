@@ -172,10 +172,7 @@ if ($_POST) {
 									$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
 								unset($config['shaper']);
 								/* optional if list */
-								$ifdescrs = get_configured_interface_list(true);
-								/* build an interface collection */
-								for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++)
-									$ifdescrs['opt' . $j] = "opt" . $j;
+								$ifdescrs = get_configured_interface_list(true, true);
 								/* remove special characters from interface descriptions */
 								if(is_array($ifdescrs))
 									foreach($ifdescrs as $iface)

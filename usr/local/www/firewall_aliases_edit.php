@@ -51,8 +51,10 @@ if (isset($id) && $a_aliases[$id]) {
 	$pconfig['address'] = $a_aliases[$id]['address'];
 	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
 
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
-		if($config['interfaces']['opt' . $i]['descr'] == $pconfig['descr']) 
+	/* optional if list */
+	$iflist = get_configured_interface_with_descr(true, true);
+	foreach ($iflist as $if => $ifdesc)
+		if($ifdesc == $pconfig['descr']) 
 			$input_errors[] = "Sorry, an interface is already named {$pconfig['descr']}.";
 
 	$addresses = explode(' ', $pconfig['address']);

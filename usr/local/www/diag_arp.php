@@ -193,11 +193,9 @@ foreach ($leases as $value) {
 exec("/usr/sbin/arp -an",$rawdata);
 
 $i = 0; 
-$ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-						
-for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-}
+
+/* if list */
+$ifdescrs = get_configured_interface_with_descr();
 
 foreach ($ifdescrs as $key =>$interface) {
 	$hwif[$config['interfaces'][$key]['if']] = $interface;

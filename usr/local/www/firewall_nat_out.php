@@ -79,25 +79,15 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 			 *    user has enabled advanced outbound nat -- lets automatically create entries
 			 *    for all of the interfaces to make life easier on the pip-o-chap
 			 */
-			$ifdescrs = array('lan');
-			for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) 
-				$ifdescrs[] = "opt" . $j;
-			foreach($ifdescrs as $if) {
-				if($if <> "lan" and $if <> "wan") {
-					/* interface is an optional.  is it enabled? */
-					if(!isset($config['interfaces'][$if]['enabled'])) {
-						continue;
-					}
-				}
+			$ifdescrs = get_configured_interface_with_descr();
+				
+			foreach($ifdescrs as $if => $ifdesc) {
 				$natent = array();
 				$osn = gen_subnet($config['interfaces'][$if]['ipaddr'],
 					$config['interfaces'][$if]['subnet']);
 				$natent['source']['network'] = $osn . "/" . $config['interfaces'][$if]['subnet'];
 				$natent['sourceport'] = "";
-				$int_description = $config['interfaces'][$if]['descr'];
-				if($if == "lan")
-					$int_description = "LAN";
-				$natent['descr'] = "Auto created rule for {$int_description}";
+				$natent['descr'] = "Auto created rule for {$ifdesc}";
 				$natent['target'] = "";
 				$natent['interface'] = "wan";
 				$natent['destination']['any'] = true;

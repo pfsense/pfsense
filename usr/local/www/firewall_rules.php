@@ -44,18 +44,11 @@ $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
 
-$iflist = array();
+$ifdescs = get_configured_interface_with_descr();
 
-if($config['interfaces']['lan']) 
-	if(have_ruleint_access("lan")) 
-		$iflist['lan'] = "LAN";
-
-if(have_ruleint_access("wan")) 
-	$iflist['wan'] = "WAN";
-
-for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
-	if(have_ruleint_access("opt{$i}")) 
-		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+foreach ($ifdescs as $if => $ifdesc)
+	if(have_ruleint_access($if)) 
+		$iflist[$if] = $ifdesc;
 
 if ($config['pptpd']['mode'] == "server")
 	if(have_ruleint_access("pptp")) 

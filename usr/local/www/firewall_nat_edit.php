@@ -295,16 +295,10 @@ include("fbegin.inc"); ?>
 					<select name="interface" class="formselect">
 						<?php
 						
-						$interfaces = array();
-						
-						if(have_ruleint_access("lan")) 
-							$interfaces['lan'] = "LAN";
-						if(have_ruleint_access("wan")) 
-							$interfaces['wan'] = "WAN";
-							
-						for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
-							if(have_ruleint_access("opt{$i}")) 
-								$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+						$iflist = get_configured_interface_with_descr(false, true);
+						foreach ($iflist as $if => $ifdesc) 
+							if(have_ruleint_access($if)) 
+								$interfaces[$if] = $ifdesc;
 						
 						if ($config['pptpd']['mode'] == "server")
 							if(have_ruleint_access("pptp")) 

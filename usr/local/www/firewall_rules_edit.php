@@ -493,20 +493,12 @@ include("head.inc");
 				<select name="interface" class="formselect">
 <?php
    endif;
+				$ifdescs = get_configured_interface_with_descr();
 
-					$interfaces = array();
-					if($config['interfaces']['lan']) {
-                                                /* only add LAN if it exists */
-        					if(have_ruleint_access("lan")) 
-        						$interfaces['lan'] = "LAN";                                                
-                                        }
-					if(have_ruleint_access("wan")) 
-						$interfaces['wan'] = "WAN";
-						
-					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
-						if(have_ruleint_access("opt{$i}")) 
-							$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-					
+				foreach ($ifdescs as $if => $ifdesc)
+        				if(have_ruleint_access($if))
+                				$interfaces[$if] = $ifdesc;
+
 					if ($config['pptpd']['mode'] == "server")
 						if(have_ruleint_access("pptp")) 
 							$interfaces['pptp'] = "PPTP VPN";
@@ -635,14 +627,15 @@ include("head.inc");
 								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>
 								<?php endif; ?>								
 <?php
-								for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
-								<?php if(have_ruleint_access("opt{$i}")): ?>
-									<option value="opt<?=$i;?>" <?php if ($pconfig['src'] == "opt" . $i) { echo "selected"; } ?>><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
-									<option value="opt<?=$i;?>ip"<?php if ($pconfig['src'] == "opt" . $i . "ip") { echo "selected"; } ?>>
-										<?=$config['interfaces']['opt' . $i]['descr']?> address
+								$ifdisp = get_configured_interface_with_descr();
+								foreach ($ifdisp as $if => $ifdesc): ?>
+								<?php if(have_ruleint_access($if)): ?>
+									<option value="<?=$if;?>" <?php if ($pconfig['src'] == $if) { echo "selected"; } ?>><?=htmlspecialchars($ifdesc);?> subnet</option>
+									<option value="<?=$if;?>ip"<?php if ($pconfig['src'] ==  $if . "ip") { echo "selected"; } ?>>
+										<?=$ifdesc?> address
 									</option>
 								<?php endif; ?>
-<?php 							endfor; ?>
+<?php 							endforeach; ?>
 							</select>
 						</td>
 					</tr>
@@ -762,14 +755,15 @@ include("head.inc");
 								<option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>
 								<?php endif; ?>								
 								
-<?php 							for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
-								<?php if(have_ruleint_access("opt{$i}")): ?>
-									<option value="opt<?=$i;?>" <?php if ($pconfig['dst'] == "opt" . $i) { echo "selected"; } ?>><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
-									<option value="opt<?=$i;?>ip"<?php if ($pconfig['dst'] == "opt" . $i . "ip") { echo "selected"; } ?>>
-										<?=$config['interfaces']['opt' . $i]['descr']?> address
+
+<?php 							foreach ($ifdisp as $if => $ifdesc): ?>
+								<?php if(have_ruleint_access($if)): ?>
+									<option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected"; } ?>><?=htmlspecialchars($ifdesc);?> subnet</option>
+									<option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo "selected"; } ?>>
+										<?=$ifdesc;?> address
 									</option>
 								<?php endif; ?>
-<?php 							endfor; ?>
+<?php 							endforeach; ?>
 							</select>
 						</td>
 					</tr>
@@ -996,16 +990,16 @@ on another rule.")?>
 						}
 					}
 				}
-				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-					if($config['interfaces']['opt' . $i]['ipaddr'] == "dhcp") {
-						$descr = $config['interfaces']['opt' . $i]['descr'];
-						if ($pconfig['gateway'] == "opt{$i}") {
+				$iflist = get_configured_interface_with_descr();
+				foreach ($iflist as $if => $ifdesc) {
+					if($config['interfaces'][$if]['ipaddr'] == "dhcp") {
+						if ($pconfig['gateway'] == $if) {
 							$selected = " SELECTED";
 						} else {
 							$selected = "";
 						}
-						if($descr <> "") 
-							echo "<option value=\"opt{$i}\" {$selected}>OPT{$i} - {$descr}</option>\n";
+						if($ifdesc <> "") 
+							echo "<option value=\"{$if}\" {$selected}>".strtoupper($if)." - {$ifdesc}</option>\n";
 					}
 				}
 ?>

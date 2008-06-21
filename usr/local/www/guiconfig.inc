@@ -145,8 +145,9 @@ $wkports = array(3389 => "MS RDP",
 
 $specialnets = array("wanip" => "WAN address", "lanip" => "LAN address", "lan" => "LAN net", "pptp" => "PPTP clients");
 
-for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-	$specialnets['opt' . $i] = $config['interfaces']['opt' . $i]['descr'] . " net";
+$spiflist = get_configured_interface_with_descr(true, true);
+foreach ($spiflist as $if => $ifdesc) {
+	$specialnets[$if] = $ifdesc . " net";
 }
 
 $medias = array("auto" => "autoselect", "100full" => "100BASE-TX full-duplex",

@@ -273,7 +273,7 @@ function is_valid_shaperbw($val) {
 }
 
 /* return the configured interfaces list. */
-function get_configured_interface_list($only_opt = false) {
+function get_configured_interface_list($only_opt = false, $withdisabled = false) {
 	global $config;
 
 	$iflist = array();
@@ -282,7 +282,8 @@ function get_configured_interface_list($only_opt = false) {
         foreach($config['interfaces'] as $if => $ifdetail) {
 		if ($only_opt == true && ($if == "wan" || $if == "lan"))
 			continue;
-		if ($if == "wan" || $if == "lan" || isset($ifdetail['enable']))
+		if ($if == "wan" || $if == "lan" || isset($ifdetail['enable']) || 
+			$withdisabled == true) 
 			$iflist[$if] = $if;
 	}
 
@@ -291,7 +292,7 @@ function get_configured_interface_list($only_opt = false) {
 }
 
 /* return the configured interfaces list with their description. */
-function get_configured_interface_with_descr($only_opt = false) {
+function get_configured_interface_with_descr($only_opt = false, $withdisabled = false) {
         global $config;
 
         $iflist = array();
@@ -300,10 +301,12 @@ function get_configured_interface_with_descr($only_opt = false) {
         foreach($config['interfaces'] as $if => $ifdetail) {
                	if ($only_opt == true && ($if == "wan" || $if == "lan"))
                         continue;
-                if ($if == "wan" || $if == "lan" || isset($ifdetail['enable'])) {
+                if ($if == "wan" || $if == "lan" || isset($ifdetail['enable']) ||
+			$withdisabled == true) {
 			if($ifdetail['descr'] == "")
-				$ifdetail['descr'] = $if;
-                        $iflist[$if] = $ifdetail['descr'];
+				$iflist[$if] = $if;
+                        else
+				$iflist[$if] = $ifdetail['descr'];
 		}
 	}
 

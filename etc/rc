@@ -241,6 +241,7 @@ html_errors = Off
 zlib.output_compression = On
 zlib.output_compression_level = 5
 include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
+extension_dir=/usr/local/lib/php/20060613/
 
 ; add additional extensions below
 ; standard PHP extension

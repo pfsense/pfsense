@@ -94,17 +94,12 @@ function has_temp() {
 }
 
 function get_hwtype() {
-        if(`/sbin/dmesg -a | /usr/bin/grep net4801` <> "") {
-                return "4801";
-        }
 
 	return;
 }
 
 function get_temp() {
 	switch(get_hwtype()) {
-		case '4801':
-			break;
 		default:
 			return;
 	}

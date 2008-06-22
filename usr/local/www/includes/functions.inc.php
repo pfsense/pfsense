@@ -149,7 +149,7 @@ function get_interfacestats(){
 	
 	global $config;
 	//build interface list for widget use
-	$ifdescrs = get_configured_interface_list_with_descr();
+	$ifdescrs = get_configured_interface_list();
 
 	$array_in_packets = array();
 	$array_out_packets = array();

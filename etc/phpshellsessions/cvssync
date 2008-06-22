@@ -109,7 +109,6 @@ exec("rm -rf ${CODIR}/pfSense/root/.tcshrc");
 exec("rm -f ${CODIR}/pfSense/etc/syslog.conf 2>/dev/null");
 
 echo "Finding zero byte files (binaries)..."
-find $CODIR/pfSense -perm -+x -type f -size 0 -exec rm {} \;
 
 echo "Installing new files...\n";
 

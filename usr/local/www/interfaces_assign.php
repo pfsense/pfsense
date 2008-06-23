@@ -42,11 +42,9 @@ $portlist = get_interface_list();
 
 /* add VLAN interfaces */
 if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-	$i = 0;
 	foreach ($config['vlans']['vlan'] as $vlan) {
-		$portlist['vlan' . $i] = $vlan;
-		$portlist['vlan' . $i]['isvlan'] = true;
-		$i++;
+		$portlist[$vlan['vlanif']] = $vlan;
+		$portlist[$vlan['vlanif']]['isvlan'] = true;
 	}
 }
 
@@ -61,7 +59,28 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 	}
 }
 
-if ($_POST) {
+if ($_POST['apply']) {
+	if (file_exists("/var/run/interface_mismatch_reboot_needed"))
+		exec("/etc/rc.reboot");
+	else {
+		write_config();
+
+		$retval = 0;
+		$savemsg = get_std_save_message($retval);
+
+		config_lock();
+		$retval = filter_configure();
+		config_unlock();
+
+		if (stristr($retval, "error") <> true)
+			$savemsg = get_std_save_message($retval);
+		else
+			$savemsg = $retval;
+
+		unlink("/tmp/reload_interfaces");
+	}
+
+} else if ($_POST) {
 
 	unset($input_errors);
 
@@ -116,19 +135,16 @@ if ($_POST) {
 						unset($config['interfaces'][$ifname]['wireless']);
 					}
 					
-					/* make sure there is a name for OPTn */
-					if (substr($ifname, 0, 3) == 'opt') {
-						if (!isset($config['interfaces'][$ifname]['descr']))
-							$config['interfaces'][$ifname]['descr'] = strtoupper($ifname);
-					}
+					/* make sure there is a descr for all interfaces */
+					if (!isset($config['interfaces'][$ifname]['descr']))
+						$config['interfaces'][$ifname]['descr'] = strtoupper($ifname);
 				}
 			}
 		}
 	
-		$savemsg = get_std_save_message($retval);
-	
 		write_config();
 		
+		touch("/tmp/reload_interfaces");
 	}
 }
 
@@ -141,67 +157,48 @@ if ($_GET['act'] == "del") {
 		
 	unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
 
-	if($id <> "lan") {
-		/* shift down other OPTn interfaces to get rid of holes */
-		$i++;
-	
-		/* look at the following OPTn ports */
-		while (is_array($config['interfaces']['opt' . $i])) {
-			$config['interfaces']['opt' . ($i - 1)] =
-				$config['interfaces']['opt' . $i];
-		
-			if ($config['interfaces']['opt' . ($i - 1)]['descr'] == "OPT" . $i)
-				$config['interfaces']['opt' . ($i - 1)]['descr'] = "OPT" . ($i - 1);
-		
-			unset($config['interfaces']['opt' . $i]);
-			$i++;
-		}
-	} else {
+	if($id == "lan") {
 		unset($config['interfaces']['lan']);
 		unset($config['dhcpd']['lan']);
 		unset($config['shaper']);
 		unset($config['ezshaper']);
 		unset($config['nat']);
 		system("rm /var/dhcpd/var/db/*");
-        services_dhcpd_configure();
+        	services_dhcpd_configure();
 	}
 
 	write_config();
 	
-	if($id <> "lan") {
-		/*   move all the interfaces up.  for example:
-	 	*      opt1 --> opt1
-	 	*		opt2 --> delete
-	 	*		opt3 --> opt2
-     	*      opt4 --> opt3
-     	*/
-		cleanup_opt_interfaces_after_removal($i);
-	}
-
-	parse_config(true);
-
+	/* XXX: What is this for?!?! */
 	if($config['interfaces']['lan']) {
 		unset($config['dhcpd']['wan']);		
 	}
 	
 	$savemsg = "Interface has been deleted.";
-
 }
 
 if ($_GET['act'] == "add") {
 	/* find next free optional interface number */
-	$i = 1;
 	if(!$config['interfaces']['lan']) {
 		$newifname = "lan";
 		$config['interfaces'][$newifname] = array();
-		$config['interfaces'][$newifname]['descr'] = "{$descr}";
+		$config['interfaces'][$newifname]['descr'] = $descr;
 	} else {
-		while (is_array($config['interfaces']['opt' . $i]))
-			$i++;
+		$i = 1;
+                foreach ($config['interfaces'] as $ifname => $if) {
+                        if ($ifname == "wan" || $ifname == "lan")
+                                continue;
+                        if (substr($ifname, 3) == $i) {
+                                $i++;
+                                continue;
+                        }
+                        break;
+                }
 		$newifname = 'opt' . $i;
-		$descr = "OPT";
+		$descr = "OPT{$i}";
 		$config['interfaces'][$newifname] = array();
-		$config['interfaces'][$newifname]['descr'] = "{$descr}" . $i;
+		$config['interfaces'][$newifname]['descr'] = $descr;
+		ksort($config['interfaces']);
 	}
 	
 	/* Find an unused port for this interface */
@@ -221,6 +218,9 @@ if ($_GET['act'] == "add") {
 		}
 	}
 	
+        /* XXX: Do not remove this. */
+        mwexec("rm -f /tmp/config.cache");
+
 	write_config();
 
 	$savemsg = "Interface has been added.";
@@ -230,8 +230,8 @@ if ($_GET['act'] == "add") {
 include("head.inc");
 
 if(file_exists("/var/run/interface_mismatch_reboot_needed")) 
-	if ($_POST) 
-		$savemsg = "The firewall is now rebooting.";
+	if ($_POST)
+		$savemsg = "Reboot is needed. Please apply the settings in order to reboot.";
 	else
 		$savemsg = "Interface mismatch detected.  Please resolve the mismatch and click Save.  The firewall will reboot afterwards.";
 
@@ -243,7 +243,11 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
-  <div id="save_button" style="display:none"><?php print_info_box_np("Assignment change detected, changes are not yet saved.", "save", "Save Changes"); ?></div>
+<?php if (file_exists("/tmp/reload_interfaces")): ?><p>
+<?php print_info_box_np("The interface configuration has been changed.<br>You must apply
+ the changes in order for them to take effect.");?><br>
+<?php endif; ?>
+
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
@@ -272,7 +276,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <tr> 
 	<td class="listlr" valign="middle"><strong><?=$ifdescr;?></strong></td>
 	  <td valign="middle" class="listr">
-		<select onChange="document.getElementById('save_button').style.display='inline';" name="<?=$ifname;?>" class="formfld" id="<?=$ifname;?>">
+		<select name="<?=$ifname;?>" class="formfld" id="<?=$ifname;?>">
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
 		  <option value="<?=$portname;?>" <?php if ($portname == $iface['if']) echo "selected";?>> 
 		  <?php if ($portinfo['isvlan']) {
@@ -328,14 +332,3 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <?php include("fend.inc"); ?>
 </body>
 </html>
-
-<?php
-
-	if ($_POST) {
-		if (!$input_errors)
-			touch("/tmp/reload_interfaces");
-		if(file_exists("/var/run/interface_mismatch_reboot_needed")) 
-			exec("/etc/rc.reboot");
-	}
-	
-?>

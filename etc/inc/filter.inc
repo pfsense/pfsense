@@ -2959,24 +2959,26 @@ EOD;
 	$ipseccfg = $config['ipsec'];
 	if (isset($ipseccfg['mobileclients']['enable'])) {
                 $ifdescrs = get_configured_interface_with_descr();
-		foreach($ifdescrs as $iface) {
+		foreach($ifdescrs as $ifr => $iface) {
 			/* only process interfaces with gateway */
-			if(! interface_has_gateway($iface))
+			if(! interface_has_gateway($ifr))
 				continue;
 
-			$gateway = lookup_gateway_ip_by_name($config['interfaces'][$iface]['gateway']);
+			$gateway = lookup_gateway_ip_by_name($config['interfaces'][$ifr]['gateway']);
 			$interface = convert_friendly_interface_to_real_interface_name($iface);
 			$route_to = " route-to ( $interface $gateway ) ";
 			$reply_to = " reply-to ( $interface $gateway ) ";
 
+			$ifalias = convert_friendly_interface_to_friendly_descr($ifr);
+
 			/* pass in rules for IPSEC with reply-to */
-			$ipfrules .= "pass in on \${$iface} $reply_to proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
-			$ipfrules .= "pass in on \${$iface} $reply_to proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
-			$ipfrules .= "pass in on \${$iface} $reply_to proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
+			$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
+			$ipfrules .= "pass in on \${$ifalias} $reply_to proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
+			$ipfrules .= "pass in on \${$ifalias} $reply_to proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
 			/* Pass out rules for IPSEC with route-to */
-			$ipfrules .= "pass out on \${$iface} $route_to proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
-			$ipfrules .= "pass out on \${$iface} $route_to proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
-			$ipfrules .= "pass out on \${$iface} $route_to proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
+			$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
+			$ipfrules .= "pass out on \${$ifalias} $route_to proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
+			$ipfrules .= "pass out on \${$ifalias} $route_to proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
 		}
 	}
 
@@ -3015,13 +3017,13 @@ EOD;
 					continue;
 				}
 				$local_subnet = return_vpn_subnet($tunnel['local-subnet']);
-				foreach($ifdescrs as $iface) {
+				foreach($ifdescrs as $ifr => $iface) {
 					/* XXX: really needed?! */
-					if ($iface == "lan")
+					if ($ifr == "lan")
 						continue;
 
 					foreach($ipsec_ips as $interface_ip) {
-						if($iface == "wan")
+						if($ifr == "wan")
 							$interface_ip = find_interface_ip(get_real_wan_interface());
 						else
 							$interface_ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($iface));
@@ -3030,23 +3032,24 @@ EOD;
 						if(!$remote_gateway) 
 							continue;
 						/* only process interfaces with gateway */
-						if(! interface_has_gateway($iface))
+						if(! interface_has_gateway($ifr))
 							continue;
 
-						$gateway = lookup_gateway_ip_by_name($config['interfaces'][$iface]['gateway']);
+						$gateway = lookup_gateway_ip_by_name($config['interfaces'][$ifr]['gateway']);
 						$interface = convert_friendly_interface_to_real_interface_name($iface);
 						$route_to = " route-to ( $interface $gateway ) ";
 						$reply_to = " reply-to ( $interface $gateway ) ";
 
-						$ipfrules .= "pass out on \${$iface} $route_to proto udp from any to {$remote_gateway} port = 500 keep state label \"IPsec: {$tunnel['descr']} - outbound isakmp\"\n";
-						$ipfrules .= "pass in on \${$iface} $reply_to proto udp from {$remote_gateway} to any port = 500 keep state label \"IPsec: {$tunnel['descr']} - inbound isakmp\"\n";
+						$ifalias = convert_friendly_interface_to_friendly_descr($ifr);			
+						$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to {$remote_gateway} port = 500 keep state label \"IPsec: {$tunnel['descr']} - outbound isakmp\"\n";
+						$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from {$remote_gateway} to any port = 500 keep state label \"IPsec: {$tunnel['descr']} - inbound isakmp\"\n";
 						if ($tunnel['p2']['protocol'] == 'esp') {
-							$ipfrules .= "pass out on \${$iface} $route_to  proto esp from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound esp proto\"\n";
-							$ipfrules .= "pass in on \${$iface} $reply_to proto esp from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound esp proto\"\n";
+							$ipfrules .= "pass out on \${$ifalias} $route_to  proto esp from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound esp proto\"\n";
+							$ipfrules .= "pass in on \${$ifalias} $reply_to proto esp from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound esp proto\"\n";
 						}
 						if ($tunnel['p2']['protocol'] == 'ah') {
-							$ipfrules .= "pass out on \${$iface} $route_to proto ah from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound ah proto\"\n";
-							$ipfrules .= "pass in on \${$iface} $reply_to proto ah from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound ah proto\"\n";
+							$ipfrules .= "pass out on \${$ifalias} $route_to proto ah from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound ah proto\"\n";
+							$ipfrules .= "pass in on \${$ifalias} $reply_to proto ah from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound ah proto\"\n";
 						}
 					}
 				}
@@ -3058,10 +3061,12 @@ EOD;
 		 */
 		$ipseccfg = $config['ipsec'];
 		if (isset($ipseccfg['mobileclients']['enable'])) {
-			foreach($ifdescrs as $iface) {
-				$ipfrules .= "pass in on \${$iface} proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
-				$ipfrules .= "pass in on \${$iface} proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
-				$ipfrules .= "pass in on \${$iface} proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
+			foreach($ifdescrs as $ifr => $iface) {
+				$ifalias = convert_friendly_interface_to_friendly_descr($ifr);
+
+				$ipfrules .= "pass in on \${$ifalias} proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
+				$ipfrules .= "pass in on \${$ifalias} proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
+				$ipfrules .= "pass in on \${$ifalias} proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
 			}
 		}
 	}

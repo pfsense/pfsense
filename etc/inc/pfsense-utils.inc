@@ -1464,16 +1464,6 @@ function filter_get_opt_interface_descr($opt) {
 	return $config['interfaces'][$opt]['descr'];
 }
 
-function get_friendly_interface_list_as_array() {
-	global $config;
-	$ints = array();
-	$ifdescrs = get_interface_list();
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-		array_push($ints,$ifdescr);
-	}
-	return $ints;
-}
-
 /*
  * find_ip_interface($ip): return the interface where an ip is defined
  */

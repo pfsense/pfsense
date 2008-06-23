@@ -151,7 +151,6 @@ if ($_POST['apply']) {
 if ($_GET['act'] == "del") {
 	$id = $_GET['id'];
 
-	$i = substr($id, 3); /* the number of the OPTn port being deleted */
 	unset($config['interfaces'][$id]['enable']);
 	interfaces_optional_configure_if($id);   /* down the interface */
 		
@@ -166,6 +165,23 @@ if ($_GET['act'] == "del") {
 		system("rm /var/dhcpd/var/db/*");
         	services_dhcpd_configure();
 	}
+
+	if ($config['filter']['rule'] > 0)
+        foreach ($config['filter']['rule'] as $x => $rule) {
+                        if($rule['interface'] == $id)
+                                unset($config['filter']['rule'][$x]);
+        }
+	if ($config['nat']['advancedoutbound']['rule'] > 0)
+        foreach ($config['nat']['advancedoutbound']['rule'] as $id => $rule) {
+                        if($rule['interface'] == $x)
+                                unset($config['nat']['advancedoutbound']['rule'][$x]['interface']);
+        }
+        if (count($config['nat']['rule']) > 0) 
+        foreach ($config['nat']['rule'] as $x => $rule) {
+                        if($rule['interface'] == $id)
+                                unset($config['nat']['rule'][$x]['interface']);
+        }
+
 
 	write_config();
 	

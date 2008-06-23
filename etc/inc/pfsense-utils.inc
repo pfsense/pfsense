@@ -2615,69 +2615,6 @@ function sync_webgui_passwords() {
 	mwexec("/usr/sbin/pwd_mkdb -p /etc/master.passwd");
 	conf_mount_ro();
 }
-/****f* pfsense-utils/cleanup_opt_interfaces_after_removal
- * NAME
- *   cleanup_opt_interfaces_after_removal - renumber interfaces after removing
- *   * INPUTS
- *   optional interface number
- * RESULT
- *   none
- ******/
-function cleanup_opt_interfaces_after_removal($opt_interface_num) {
-	/*	move all the interfaces up.  for example:
-	*		opt1 --> opt1
-	*		opt2 --> delete
-	*		opt3 --> opt2
-	*		opt4 --> opt3
-	*/
-	global $g, $config;
-	config_lock();
-	conf_mount_rw();
-	unlink_if_exists("{$g['tmp_path']}/config.cache");
-	$config_file = file_get_contents("/cf/conf/config.xml");
-	/* loop through and reassign deleted items */
-	for ($i = 500; isset ($config['interfaces']['opt' . $i]); $i--) {
-		if ($i < $opt_interface_num)
-			break;
-		if ($i == $opt_interface_num) {
-			/* item should be deleted */
-			str_replace("opt" . $i, "optXXXX", $config_file);
-		}
-	}
-	/* loop through and reassign optional items */
-	for ($i = 500; isset ($config['interfaces']['opt' . $i]); $i--) {
-		if ($i < $opt_interface_num)
-			break;
-		/* replace opt$i with $i -1 */
-		str_replace("opt" . $i, "opt" . ($i -1), $config_file);
-	}
-	$fd = fopen("/cf/conf/config.xml", "w");
-	fwrite($fd, $config_file);
-	fclose($fd);
-	$config = parse_config(true);
-	/* loop through and delete old rules */
-	$num_rules = count($config['filter']['rule']);
-	for($x = $num_rules; $x > 0; $x--) {
-		if($config['filter']['rule'][$x])
-			if($config['filter']['rule'][$x]['interface'] == "optXXXX")
-		 		unset($config['filter']['rule'][$x]['interface']);
-	}
-	$num_rules = count($config['nat']['advancedoutbound']['rule']);
-	for($x = $num_rules; $x > 0; $x--) {
-		if($config['nat']['advancedoutbound']['rule'][$x])
-			if($config['nat']['advancedoutbound']['rule'][$x]['interface'] == "optXXXX")
-		 		unset($config['nat']['advancedoutbound']['rule'][$x]['interface']);
-	}
-	$num_rules = count($config['nat']['rule']);
-	for($x = $num_rules; $x > 0; $x--) {
-		if($config['nat']['rule'][$x])
-			if($config['nat']['rule'][$x]['interface'] == "optXXXX")
-		 		unset($config['nat']['rule'][$x]['interface']);
-	}
-	conf_mount_ro();
-	config_unlock();
-	return true;
-}
 
 /****f* pfsense-utils/get_number_of_wan_netgraph_interfaces_needed
  * NAME

@@ -46,9 +46,9 @@ if ($_POST['if'])
 
 $ifdescs = get_configured_interface_with_descr();
 
-foreach ($ifdescs as $if => $ifdesc)
-	if(have_ruleint_access($if)) 
-		$iflist[$if] = $ifdesc;
+foreach ($ifdescs as $ifent => $ifdesc)
+	if(have_ruleint_access($ifent)) 
+		$iflist[$ifent] = $ifdesc;
 
 if ($config['pptpd']['mode'] == "server")
 	if(have_ruleint_access("pptp")) 

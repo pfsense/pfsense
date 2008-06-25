@@ -537,14 +537,8 @@ function interfaces_carp_configure() {
 			$vip_password = str_replace(" ", "", $vip_password);
 			/* ensure CARP IP really exists prior to loading up */
 			$found = false;
-			$iflist = array("lan", "wan");
-			for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-				$iflist['opt' . $i] = 'opt' . $i;
+			$iflist = get_configured_interface_list();
 			foreach($iflist as $if) {
-				/* ignore down or "disabled" interfaces */
-				if($if <> "lan" and $if <> "wan")
-					if (!isset($config['interfaces'][$if]['enable'])) 
-						continue;								
 				$ww_subnet_ip = $config['interfaces'][$if]['ipaddr'];
 				$ww_subnet_bits = $config['interfaces'][$if]['subnet'];
 				if (ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits))

@@ -495,9 +495,9 @@ include("head.inc");
    endif;
 				$ifdescs = get_configured_interface_with_descr();
 
-				foreach ($ifdescs as $if => $ifdesc)
-        				if(have_ruleint_access($if))
-                				$interfaces[$if] = $ifdesc;
+				foreach ($ifdescs as $ifent => $ifdesc)
+        				if(have_ruleint_access($ifent))
+                				$interfaces[$ifent] = $ifdesc;
 
 					if ($config['pptpd']['mode'] == "server")
 						if(have_ruleint_access("pptp")) 
@@ -628,10 +628,10 @@ include("head.inc");
 								<?php endif; ?>								
 <?php
 								$ifdisp = get_configured_interface_with_descr();
-								foreach ($ifdisp as $if => $ifdesc): ?>
-								<?php if(have_ruleint_access($if)): ?>
-									<option value="<?=$if;?>" <?php if ($pconfig['src'] == $if) { echo "selected"; } ?>><?=htmlspecialchars($ifdesc);?> subnet</option>
-									<option value="<?=$if;?>ip"<?php if ($pconfig['src'] ==  $if . "ip") { echo "selected"; } ?>>
+								foreach ($ifdisp as $ifent => $ifdesc): ?>
+								<?php if(have_ruleint_access($ifent)): ?>
+									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected"; } ?>><?=htmlspecialchars($ifdesc);?> subnet</option>
+									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected"; } ?>>
 										<?=$ifdesc?> address
 									</option>
 								<?php endif; ?>
@@ -991,15 +991,15 @@ on another rule.")?>
 					}
 				}
 				$iflist = get_configured_interface_with_descr();
-				foreach ($iflist as $if => $ifdesc) {
-					if($config['interfaces'][$if]['ipaddr'] == "dhcp") {
-						if ($pconfig['gateway'] == $if) {
+				foreach ($iflist as $ifent => $ifdesc) {
+					if($config['interfaces'][$ifent]['ipaddr'] == "dhcp") {
+						if ($pconfig['gateway'] == $ifent) {
 							$selected = " SELECTED";
 						} else {
 							$selected = "";
 						}
 						if($ifdesc <> "") 
-							echo "<option value=\"{$if}\" {$selected}>".strtoupper($if)." - {$ifdesc}</option>\n";
+							echo "<option value=\"{$ifent}\" {$selected}>".strtoupper($if)." - {$ifdesc}</option>\n";
 					}
 				}
 ?>

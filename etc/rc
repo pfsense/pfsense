@@ -240,7 +240,20 @@ apc.enable_cli="1"
 apc.shm_size="30"
 extension_dir=/usr/local/lib/php/extensions/no-debug-non-zts-20020429/
 extension=apc.so
+extension=bcmath.so
+extension=ctype.so
+extension=curl.so
+extension=mbstring.so
+extension=openssl.so
+extension=overload.so
+extension=pcntl.so
+extension=pcre.so
+extension=posix.so
 extension=radius.so
+extension=readline.so
+extension=session.so
+extension=tokenizer.so
+extension=xml.so
 
 EOF
 fi

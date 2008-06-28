@@ -260,6 +260,9 @@ fi
 
 rm -f /cf/conf/backup/backup.cache
 
+# Copy php.ini to alternate location after generation
+cp /usr/local/lib/php.ini /usr/local/etc/php.ini
+
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching PHP init system..."
 /etc/rc.bootup

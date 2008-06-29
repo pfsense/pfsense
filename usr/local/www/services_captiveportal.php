@@ -344,7 +344,7 @@ to access after they've authenticated.</td>
         <input name="nomacfilter" type="checkbox" class="formfld" id="nomacfilter" value="yes" <?php if ($pconfig['nomacfilter']) echo "checked"; ?>>
         <strong>Disable MAC filtering</strong><br>
     If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in.
-    This is required when the MAC address of the client cannot be determined (usually because there are routers between {$g['product_name']} and the clients).
+    This is required when the MAC address of the client cannot be determined (usually because there are routers between <?php echo $g['product_name'] ?> and the clients).
     If this is enabled, RADIUS MAC authentication cannot be used.</td>
 	</tr>
 <?php

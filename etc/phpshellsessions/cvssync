@@ -45,7 +45,7 @@ global $argv;
 global $command_split;
 
 /* NOTE: Set branches here */
-$branches = array("HEAD" => "Main development branch",
+$branches = array("RELENG_1_MULTI_ANYTHING" => "Ermals multi interface branch",
 				  "RELENG_1" => "1.3 development branch",
 				  "RELENG_1_2" => "1.2 release branch");
 

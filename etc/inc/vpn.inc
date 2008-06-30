@@ -1019,6 +1019,7 @@ function vpn_pppoe_configure() {
 			}
 			$mpdconf = "\n\n";
 			$mpdconf .=<<<EOD
+startup:
 pppoe:
 
 EOD;
@@ -1052,14 +1053,9 @@ EOD;
 			$mpdconf .=<<<EOD
 
 pppoe_standart:
-	set link type pppoe
-	set pppoe iface {$pppoe_interface}
-	set pppoe service "*"
-	set pppoe disable originate
-	set pppoe enable incoming
 	set bundle no multilink
 	set bundle enable compression
-	set bundle max-logins 1
+	set auth max-logins 1
 	set iface idle 0
 	set iface disable on-demand
 	set iface disable proxy-arp
@@ -1126,9 +1122,12 @@ EOD;
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 				$mpdlinks .=<<<EOD
 
-pppoe:
-	set link type pppoe
-	set pppoe iface {$pppoe_interface}
+pppoe{$i}:
+        set phys type pppoe
+        set pppoe iface {$pppoe_interface}
+        set pppoe service "*"
+        set pppoe disable originate
+        set pppoe enable incoming
 
 EOD;
 			}

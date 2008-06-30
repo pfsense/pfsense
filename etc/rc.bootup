@@ -284,9 +284,9 @@
 	if(isset($config['system']['disableconsolemenu']))
 		touch("/var/etc/console_lockdown");
 
-	echo "Final filter pass..."
+	echo "Final filter pass...";
 	filter_configure_sync();
-	echo "done.\n"
+	echo "done.\n";
 
 	/* load graphing functions */
 	enable_rrd_graphing();

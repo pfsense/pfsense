@@ -4064,9 +4064,6 @@ function setup_gateways_monitor() {
 	global $config;
 	global $g;
 
-	/* killoff all old apinger processes */
-	mwexec("/sbin/killall apinger");
-	
 	$fd = fopen("{$g['varetc_path']}/apinger.conf", "w");
 	$apingerconfig = <<<EOD
 
@@ -4182,10 +4179,14 @@ EOD;
 	fwrite($fd, $apingerconfig);
 	fclose($fd);
 
-	/* start a new apinger process */
-	mwexec("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
-
-	return 0;
+	if(is_process_running("apinger")) {
+		/* SIGHUP apinger processes */
+		mwexec("/usr/bin/killall -1 apinger");
+        } else {
+		/* start a new apinger process */
+		mwexec("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
+	}
+	return true;
 }
 
 /* return the status of the apinger targets as a array */

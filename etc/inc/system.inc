@@ -300,11 +300,7 @@ function system_routing_configure() {
 		}
 		fclose($fd);
 	}
-
-	/* create routes for gateways and setup monitoring */
-	setup_gateways_monitor();
-	
-	return 0;
+	return true;
 }
 
 function system_routing_enable() {

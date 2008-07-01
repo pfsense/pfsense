@@ -198,6 +198,8 @@
 	load_balancer_use_sticky();
 	slbd_configure();
 	relayd_configure();
+	/* reconfigure our gateway monitor */
+	setup_gateways_monitor();
 
 	/* start OpenVPN server & clients */
 	openvpn_resync_all();

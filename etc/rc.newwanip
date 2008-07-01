@@ -125,10 +125,11 @@ if($old_ip <> "")
 
 /* reload slbd */
 /* if ($config['load_balancer']['lbpool']['type'] == "gateway") */
-slbd_configure();
 log_error("Configuring slbd");
+slbd_configure();
+/* reconfigure our gateway monitor */
+setup_gateways_monitor();
 
-
-return 0;
+return true;
 
 ?>

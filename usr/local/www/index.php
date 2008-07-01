@@ -453,7 +453,7 @@ echo $jscriptstr;
 		<div id="welcome-container">
 			<h1>
 				<div style="float:left;width:80%;padding: 2px">
-					Welcome to the New Dashboard page!
+					Welcome to the Dashboard page!
 				</div>
 				<div onclick="domTT_close(this);showAllWidgets();" style="float:right;width:8%; cursor:pointer;padding: 5px;" >
 					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" />
@@ -490,7 +490,7 @@ echo $jscriptstr;
 	$printed = false;
 	$firstprint = false;
 	?> 
-	<div id="col1" style="float:left;width:50%;padding-bottom:40px">		
+	<div id="col1" style="float:left;width:49%;padding-bottom:40px">		
 	<?php
 	
 	if ($config['widgets']){
@@ -579,7 +579,7 @@ echo $jscriptstr;
 				$printed = true;
 				?>
 				</div>
-				<div id="col2" style="float:right;width:50%;padding-bottom:40px">		
+				<div id="col2" style="float:right;width:49%;padding-bottom:40px">		
 				<?php
 			}
 		}

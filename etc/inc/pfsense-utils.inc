@@ -4064,14 +4064,15 @@ function setup_gateways_monitor() {
 	global $config;
 	global $g;
 
+	unlink("{$g['varetc_path']}/apinger.conf");
 	$fd = fopen("{$g['varetc_path']}/apinger.conf", "w");
 	$apingerconfig = <<<EOD
 
 # pfSense apinger configuration file. Automatically Generated!
 
 ## User and group the pinger should run as
-user "nobody"
-group "nobody"
+user "www"
+group "www"
 
 ## Mailer to use (default: "/usr/lib/sendmail -t")
 #mailer "/var/qmail/bin/qmail-inject" 
@@ -4181,10 +4182,10 @@ EOD;
 
 	if(is_process_running("apinger")) {
 		/* SIGHUP apinger processes */
-		mwexec("/usr/bin/killall -1 apinger");
+		exec("/usr/bin/killall -1 apinger");
         } else {
 		/* start a new apinger process */
-		mwexec("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
+		exec("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 	}
 	return 0;
 }

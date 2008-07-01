@@ -4186,7 +4186,7 @@ EOD;
 		/* start a new apinger process */
 		mwexec("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 	}
-	return true;
+	return 0;
 }
 
 /* return the status of the apinger targets as a array */

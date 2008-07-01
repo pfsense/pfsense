@@ -300,7 +300,7 @@ function system_routing_configure() {
 		}
 		fclose($fd);
 	}
-	return true;
+	return 0;
 }
 
 function system_routing_enable() {

@@ -261,6 +261,8 @@
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();
 
+	interfaces_carp_bring_up_final();
+
 	/* start ftp proxy helpers if they are enabled */
 	echo "Starting FTP helpers...";
 	system_start_ftp_helpers();
@@ -276,7 +278,9 @@
 	if(isset($config['system']['disableconsolemenu']))
 		touch("/var/etc/console_lockdown");
 
+	echo "Final filter pass...";
 	filter_configure_sync();
+	echo "done.\n";
 
 	/* load graphing functions */
 	enable_rrd_graphing();

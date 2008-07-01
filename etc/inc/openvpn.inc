@@ -361,19 +361,26 @@ function openvpn_reconfigure($mode, $id) {
 	 * be sure to change it even on the openvpn command parameters at
 	 * openvpn_restart() function.
 	 */
+
+        if ($mode == "client") 
+                $ovpndevice = "ovpnc{$id}";
+        else
+                $ovpndevice = "ovpn{$id}";
+
 	if (!$g['booting'])
-		mwexec("/sbin/ifconfig ovpn{$id} destroy");
-	mwexec("/sbin/ifconfig tun{$id} create");
-	mwexec("/sbin/ifconfig tun{$id} name ovpn{$id}");
-	mwexec("/sbin/ifconfig ovpn{$id} group openvpn");
+		mwexec("/sbin/ifconfig {$ovpndevice} destroy");
+
+	$tunname = exec("/sbin/ifconfig tun create");
+	mwexec("/sbin/ifconfig {$tunname} name {$ovpndevice}");
+	mwexec("/sbin/ifconfig {$ovpndevice} group openvpn");
 
 	$pidfile = $g['varrun_path'] . "/openvpn_{$mode}{$id}.pid";
 	$proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
 	$cipher = $settings['crypto'];
-	$openvpn_conf = "dev ovpn{$id}\n";
-	$openvpn_conf .= "dev-type tun\n";
-	$openvpn_conf .= "dev-node /dev/tun{$id}\n";
 	$openvpn_conf .= <<<EOD
+dev {$ovpndevice}
+dev-type tun
+dev-node /dev/{$tunname}
 writepid $pidfile
 #user nobody
 #group nobody

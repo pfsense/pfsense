@@ -1351,8 +1351,6 @@ EOD;
 	set ipcp yes vjcomp
 	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
 
-
-
 EOD;
 
 	if (isset($config['system']['dnsallowoverride'])) {

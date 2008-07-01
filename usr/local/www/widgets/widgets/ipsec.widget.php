@@ -93,22 +93,7 @@ require_once("/usr/local/www/widgets/include/ipsec.inc");
 			<tr>
 				<td class="listlr"><?=$activecounter;?></td>
 				<td class="listr"><?=$inactivecounter;?></td>
-			</tr>		 
-		  <tr>
-		    <td colspan="4">
-				<p>
-				<span class="vexpl">
-			          <span class="red">
-			            <strong>
-			              Note:<br />
-			            </strong>
-			          </span>
-			          You can configure your IPsec 
-			          <a href="vpn_ipsec.php">here</a>.
-				</span>
-		      </p>
-			</td>
-		  </tr>
+			</tr>
 		</table>
 	</div>
 </div>

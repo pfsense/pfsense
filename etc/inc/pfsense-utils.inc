@@ -4181,10 +4181,10 @@ EOD;
 	fwrite($fd, $apingerconfig);
 	fclose($fd);
 
-	sleep(1);
+	sleep(3);
 	if(!is_process_running("apinger")) {
 		/* start a new apinger process */
-		mwexec_bg("nohup /usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf &");
+		mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 	}
 	return 0;
 }

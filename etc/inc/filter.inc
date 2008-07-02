@@ -2964,11 +2964,13 @@ EOD;
 			if(! interface_has_gateway($ifr))
 				continue;
 
+			/* FIXME: make dynamic interface compatible */
 			$gateway = lookup_gateway_ip_by_name($config['interfaces'][$ifr]['gateway']);
 			$interface = convert_friendly_interface_to_real_interface_name($iface);
-			$route_to = " route-to ( $interface $gateway ) ";
-			$reply_to = " reply-to ( $interface $gateway ) ";
-
+			if((is_ipaddr($gateway)) && ($interface <> "")) {
+				$route_to = " route-to ( $interface $gateway ) ";
+				$reply_to = " reply-to ( $interface $gateway ) ";
+			}
 			$ifalias = convert_friendly_interface_to_friendly_descr($ifr);
 
 			/* pass in rules for IPSEC with reply-to */
@@ -3035,11 +3037,13 @@ EOD;
 						if(! interface_has_gateway($ifr))
 							continue;
 
+						/* FIXME: make dynamic interface compatible */
 						$gateway = lookup_gateway_ip_by_name($config['interfaces'][$ifr]['gateway']);
 						$interface = convert_friendly_interface_to_real_interface_name($iface);
-						$route_to = " route-to ( $interface $gateway ) ";
-						$reply_to = " reply-to ( $interface $gateway ) ";
-
+						if((is_ipaddr($gateway)) && ($interface <> "")) {
+							$route_to = " route-to ( $interface $gateway ) ";
+							$reply_to = " reply-to ( $interface $gateway ) ";
+						}
 						$ifalias = convert_friendly_interface_to_friendly_descr($ifr);			
 						$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to {$remote_gateway} port = 500 keep state label \"IPsec: {$tunnel['descr']} - outbound isakmp\"\n";
 						$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from {$remote_gateway} to any port = 500 keep state label \"IPsec: {$tunnel['descr']} - inbound isakmp\"\n";

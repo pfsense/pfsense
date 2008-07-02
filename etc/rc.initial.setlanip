@@ -59,18 +59,8 @@
 	$addr_blank = false;
 
 	/* build an interface collection */
-	$ifdescrs = array ("wan");
-	if($config['interfaces']['lan'])  {
-		$ifdescrs[] = "lan";
-	}
-	for ($j = 0; isset ($config['interfaces']['opt' . $j]); $j++) {
-		if(isset($config['interfaces']['opt' . $j]['enable']))
-			$ifdescrs['opt' . $j] = filter_get_opt_interface_descr("opt" . $j);
-	}
-	if($config['interfaces']['lan']) 
-		$j++;
-	// increment for wan
-	$j++;
+	$ifdescrs = get_configured_interface_with_descr();
+	$j = count($ifdescrs);
 	
 	/* grab interface that we will operate on, unless there is only one
 	interface */
@@ -78,7 +68,7 @@
 		echo "Available interfaces:\n\n";
 		$x=1;
 		foreach($ifdescrs as $iface) {
-			echo "{$x} - " . strtoupper($iface) . "\n";
+			echo "{$x} - {$iface}\n";
 			$x++;
 		}
 		echo "\nEnter the number of the interface you wish to configure: ";

@@ -57,6 +57,9 @@ $gateways_status = return_gateways_status();
                         <table border="0" cellpadding="0" cellspacing="2">
                         <?php
                                 $monitor = $gateway['monitor'];
+				if(empty($monitor)) {
+					$monitor = $gateway['gateway'];
+				}
                                 switch($gateways_status[$monitor]['status']) {
                                         case "None":
                                                 $online = "Online";

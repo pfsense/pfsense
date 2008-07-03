@@ -77,7 +77,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("System","Gateway Groups");
+$pgtitle = array("Status","Gateway Groups");
 include("head.inc");
 
 ?>

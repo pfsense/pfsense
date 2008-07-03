@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	interfaces_wan.php
-        Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -127,12 +127,6 @@ $pconfig['pptp_idletimeout'] = $config['pptp']['timeout'];
 
 $pconfig['disableftpproxy'] = isset($wancfg['disableftpproxy']);
 
-$pconfig['bigpond_username'] = $config['bigpond']['username'];
-$pconfig['bigpond_password'] = $config['bigpond']['password'];
-$pconfig['bigpond_authserver'] = $config['bigpond']['authserver'];
-$pconfig['bigpond_authdomain'] = $config['bigpond']['authdomain'];
-$pconfig['bigpond_minheartbeatinterval'] = $config['bigpond']['minheartbeatinterval'];
-
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 
 if ($wancfg['ipaddr'] == "dhcp") {
@@ -141,8 +135,6 @@ if ($wancfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "PPPoE";
 } else if ($wancfg['ipaddr'] == "pptp") {
 	$pconfig['type'] = "PPTP";
-} else if ($wancfg['ipaddr'] == "bigpond") {
-	$pconfig['type'] = "BigPond";
 } else {
 	$pconfig['type'] = "Static";
 	$pconfig['ipaddr'] = $wancfg['ipaddr'];
@@ -228,14 +220,10 @@ if ($_POST) {
 			$reqdfieldsn = explode(",", "PPTP username,PPTP password,PPTP local IP address,PPTP subnet,PPTP remote IP address");
 		}
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	} else if ($_POST['type'] == "BigPond") {
-		$reqdfields = explode(" ", "bigpond_username bigpond_password");
-		$reqdfieldsn = explode(",", "BigPond username,BigPond password");
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	}
+	} 
 
-        /* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
-        $_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
+	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
+	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
 
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 		$input_errors[] = "A valid IP address must be specified.";
@@ -282,15 +270,6 @@ if ($_POST) {
 	if (($_POST['pptp_idletimeout'] != "") && !is_numericint($_POST['pptp_idletimeout'])) {
 		$input_errors[] = "The idle timeout value must be an integer.";
 	}
-	if (($_POST['bigpond_authserver'] && !is_domain($_POST['bigpond_authserver']))) {
-		$input_errors[] = "The authentication server name contains invalid characters.";
-	}
-	if (($_POST['bigpond_authdomain'] && !is_domain($_POST['bigpond_authdomain']))) {
-		$input_errors[] = "The authentication domain name contains invalid characters.";
-	}
-	if ($_POST['bigpond_minheartbeatinterval'] && !is_numericint($_POST['bigpond_minheartbeatinterval'])) {
-		$input_errors[] = "The minimum heartbeat interval must be an integer.";
-	}
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac']))) {
 		$input_errors[] = "A valid MAC address must be specified.";
 	}
@@ -335,12 +314,8 @@ if ($_POST) {
       unset($config['pptp']['ondemand']);
       unset($config['pptp']['timeout']);
     }
-		unset($config['bigpond']['username']);
-		unset($config['bigpond']['password']);
-		unset($config['bigpond']['authserver']);
-		unset($config['bigpond']['authdomain']);
-		unset($config['bigpond']['minheartbeatinterval']);
-		unset($wancfg['disableftpproxy']);
+	
+	unset($wancfg['disableftpproxy']);
 
 		/* per interface pftpx helper */
 		if($_POST['disableftpproxy'] == "yes") {
@@ -459,13 +434,6 @@ if ($_POST) {
 			$config['pptp']['remote'] = $_POST['pptp_remote'];
 			$config['pptp']['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
 			$config['pptp']['timeout'] = $_POST['pptp_idletimeout'];
-		} else if ($_POST['type'] == "BigPond") {
-			$wancfg['ipaddr'] = "bigpond";
-			$config['bigpond']['username'] = $_POST['bigpond_username'];
-			$config['bigpond']['password'] = $_POST['bigpond_password'];
-			$config['bigpond']['authserver'] = $_POST['bigpond_authserver'];
-			$config['bigpond']['authdomain'] = $_POST['bigpond_authdomain'];
-			$config['bigpond']['minheartbeatinterval'] = $_POST['bigpond_minheartbeatinterval'];
 		}
     
     /* reset cron items if necessary */
@@ -560,9 +528,9 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.provider.disabled = 1;
 			document.iform.pppoe_dialondemand.disabled = 1;
 			document.iform.pppoe_idletimeout.disabled = 1;
-      document.iform.pppoe_preset.disabled = 1;
-      document.iform.pppoe_preset.checked = 0;
-      Effect.Fade('presetwrap', { duration: 1.0 });
+      		document.iform.pppoe_preset.disabled = 1;
+      		document.iform.pppoe_preset.checked = 0;
+      		Effect.Fade('presetwrap', { duration: 1.0 });
 			document.iform.ipaddr.disabled = 0;
 			document.iform.subnet.disabled = 0;
 			document.iform.gateway.disabled = 0;
@@ -573,11 +541,6 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.pptp_remote.disabled = 1;
 			document.iform.pptp_dialondemand.disabled = 1;
 			document.iform.pptp_idletimeout.disabled = 1;
-			document.iform.bigpond_username.disabled = 1;
-			document.iform.bigpond_password.disabled = 1;
-			document.iform.bigpond_authserver.disabled = 1;
-			document.iform.bigpond_authdomain.disabled = 1;
-			document.iform.bigpond_minheartbeatinterval.disabled = 1;
 			document.iform.dhcphostname.disabled = 1;
 			break;
 		case 1:
@@ -586,9 +549,9 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.provider.disabled = 1;
 			document.iform.pppoe_dialondemand.disabled = 1;
 			document.iform.pppoe_idletimeout.disabled = 1;
-      document.iform.pppoe_preset.disabled = 1;
-      document.iform.pppoe_preset.checked = 0;
-      Effect.Fade('presetwrap', { duration: 1.0 });
+			document.iform.pppoe_preset.disabled = 1;
+      		document.iform.pppoe_preset.checked = 0;
+      		Effect.Fade('presetwrap', { duration: 1.0 });
 			document.iform.ipaddr.disabled = 1;
 			document.iform.subnet.disabled = 1;
 			document.iform.gateway.disabled = 1;
@@ -599,11 +562,6 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.pptp_remote.disabled = 1;
 			document.iform.pptp_dialondemand.disabled = 1;
 			document.iform.pptp_idletimeout.disabled = 1;
-			document.iform.bigpond_username.disabled = 1;
-			document.iform.bigpond_password.disabled = 1;
-			document.iform.bigpond_authserver.disabled = 1;
-			document.iform.bigpond_authdomain.disabled = 1;
-			document.iform.bigpond_minheartbeatinterval.disabled = 1;
 			document.iform.dhcphostname.disabled = 0;
 			break;
 		case 2:
@@ -627,11 +585,6 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.pptp_remote.disabled = 1;
 			document.iform.pptp_dialondemand.disabled = 1;
 			document.iform.pptp_idletimeout.disabled = 1;
-			document.iform.bigpond_username.disabled = 1;
-			document.iform.bigpond_password.disabled = 1;
-			document.iform.bigpond_authserver.disabled = 1;
-			document.iform.bigpond_authdomain.disabled = 1;
-			document.iform.bigpond_minheartbeatinterval.disabled = 1;
 			document.iform.dhcphostname.disabled = 1;
 			break;
 		case 3:
@@ -640,9 +593,9 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.provider.disabled = 1;
 			document.iform.pppoe_dialondemand.disabled = 1;
 			document.iform.pppoe_idletimeout.disabled = 1;
-      document.iform.pppoe_preset.disabled = 1;
-      document.iform.pppoe_preset.checked = 0;
-      Effect.Fade('presetwrap', { duration: 1.0 });			
+      		document.iform.pppoe_preset.disabled = 1;
+      		document.iform.pppoe_preset.checked = 0;
+      		Effect.Fade('presetwrap', { duration: 1.0 });			
 			document.iform.ipaddr.disabled = 1;
 			document.iform.subnet.disabled = 1;
 			document.iform.gateway.disabled = 1;
@@ -657,37 +610,6 @@ function type_change(enable_change,enable_change_pptp) {
 			} else {
 				document.iform.pptp_idletimeout.disabled = 1;
 			}
-			document.iform.bigpond_username.disabled = 1;
-			document.iform.bigpond_password.disabled = 1;
-			document.iform.bigpond_authserver.disabled = 1;
-			document.iform.bigpond_authdomain.disabled = 1;
-			document.iform.bigpond_minheartbeatinterval.disabled = 1;
-			document.iform.dhcphostname.disabled = 1;
-			break;
-		case 4:
-			document.iform.username.disabled = 1;
-			document.iform.password.disabled = 1;
-			document.iform.provider.disabled = 1;
-			document.iform.pppoe_dialondemand.disabled = 1;
-			document.iform.pppoe_idletimeout.disabled = 1;
-      document.iform.pppoe_preset.disabled = 1;
-      document.iform.pppoe_preset.checked = 0;
-      Effect.Fade('presetwrap', { duration: 1.0 });
-			document.iform.ipaddr.disabled = 1;
-			document.iform.subnet.disabled = 1;
-			document.iform.gateway.disabled = 1;
-			document.iform.pptp_username.disabled = 1;
-			document.iform.pptp_password.disabled = 1;
-			document.iform.pptp_local.disabled = 1;
-			document.iform.pptp_subnet.disabled = 1;
-			document.iform.pptp_remote.disabled = 1;
-			document.iform.pptp_dialondemand.disabled = 1;
-			document.iform.pptp_idletimeout.disabled = 1;
-			document.iform.bigpond_username.disabled = 0;
-			document.iform.bigpond_password.disabled = 0;
-			document.iform.bigpond_authserver.disabled = 0;
-			document.iform.bigpond_authdomain.disabled = 0;
-			document.iform.bigpond_minheartbeatinterval.disabled = 0;
 			document.iform.dhcphostname.disabled = 1;
 			break;
 	}
@@ -708,7 +630,7 @@ function type_change(enable_change,enable_change_pptp) {
                 <tr>
                   <td valign="middle" class="vncell"><strong>Type</strong></td>
                   <td class="vtable"> <select name="type" class="formfld" id="type" onchange="type_change()">
-                      <?php $opts = split(" ", "Static DHCP PPPoE PPTP BigPond");
+                      <?php $opts = split(" ", "Static DHCP PPPoE PPTP");
 				foreach ($opts as $opt): ?>
                       <option <?php if ($opt == $pconfig['type']) echo "selected";?>>
                       <?=htmlspecialchars($opt);?>
@@ -927,51 +849,16 @@ function type_change(enable_change,enable_change_pptp) {
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
                 <tr>
-                  <td colspan="2" valign="top" class="listtopic">BigPond Cable configuration</td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncellreq">Username</td>
-                  <td class="vtable"><input name="bigpond_username" type="text" class="formfld" id="bigpond_username" size="20" value="<?=htmlspecialchars($pconfig['bigpond_username']);?>">
-                  </td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncellreq">Password</td>
-                  <td class="vtable"><input name="bigpond_password" type="text" class="formfld" id="bigpond_password" size="20" value="<?=htmlspecialchars($pconfig['bigpond_password']);?>">
-                  </td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncell">Authentication server</td>
-                  <td class="vtable"><input name="bigpond_authserver" type="text" class="formfld" id="bigpond_authserver" size="20" value="<?=htmlspecialchars($pconfig['bigpond_authserver']);?>">
-                    <br>
-                  <span class="vexpl">If this field is left empty, the default (&quot;dce-server&quot;) is used. </span></td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncell">Authentication domain</td>
-                  <td class="vtable"><input name="bigpond_authdomain" type="text" class="formfld" id="bigpond_authdomain" size="20" value="<?=htmlspecialchars($pconfig['bigpond_authdomain']);?>">
-                    <br>
-                  <span class="vexpl">If this field is left empty, the domain name assigned via DHCP will be used.<br>
-                  <br>
-                  Note: the BigPond client implicitly sets the &quot;Allow DNS server list to be overridden by DHCP/PPP on WAN&quot; on the System: General setup page.            </span></td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncell">Min. heartbeat interval</td>
-                  <td class="vtable">
-                    <input name="bigpond_minheartbeatinterval" type="text" class="formfld" id="bigpond_minheartbeatinterval" size="8" value="<?=htmlspecialchars($pconfig['bigpond_minheartbeatinterval']);?>">seconds<br>Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks. </td>
-                </tr>
-                <tr>
-                  <td colspan="2" valign="top" height="16"></td>
-                </tr>
-                <tr>
                   <td colspan="2" valign="top" class="listtopic">FTP Helper</td>
                 </tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">FTP Helper</td>
-			<td width="78%" class="vtable">
-				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>Disable the userland FTP-Proxy application</strong>
-				<br />
-			</td>
-		</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">FTP Helper</td>
+					<td width="78%" class="vtable">
+						<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> onclick="enable_change(false)" />
+						<strong>Disable the userland FTP-Proxy application</strong>
+						<br />
+					</td>
+				</tr>
 		        <?php
 				/* Wireless interface? */
 				if (isset($wancfg['wireless']))
@@ -999,8 +886,7 @@ function type_change(enable_change,enable_change_pptp) {
                     When set, this option blocks traffic from IP addresses that
                     are reserved (but not RFC 1918) or not yet assigned by IANA.<br>
                     Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.</td>
-		</tr>
-
+				</tr>
                 <tr>
                   <td width="100" valign="top">&nbsp;</td>
                   <td> &nbsp;<br> <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change_pptp(true)&&enable_change(true)">

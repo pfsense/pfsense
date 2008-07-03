@@ -137,7 +137,7 @@ include("head.inc");
 				$selected = array();
 				$name = $gateway['name'];
 				$interface = $gateway['interface'];
-				foreach($pconfig['item'] as $item) {
+				foreach((array)$pconfig['item'] as $item) {
 					$itemsplit = explode("|", $item);
 					if($itemsplit[0] == $name) {
 						$selected[$itemsplit[1]] = "selected";

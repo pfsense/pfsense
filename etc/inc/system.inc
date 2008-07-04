@@ -1046,8 +1046,6 @@ function system_ntp_configure() {
 
 	$syscfg = $config['system'];
 
-	if (!$config['installedpackages']['openntpd'])
-		return;
 
 	/* open configuration for wrting or bail */
 	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
@@ -1064,16 +1062,19 @@ function system_ntp_configure() {
 	foreach (explode(' ', $syscfg['timeservers']) as $ts)
 		fwrite($fd, "servers {$ts}\n");
 
-    /* server config is in coregui1 */
-	$xmlsettings = $config['installedpackages']['openntpd']['config'][0];
-	if ($xmlsettings['enable'] == 'on') {
-		$ifaces = explode(',', $xmlsettings['interface']);
-		$ifaces = array_map('convert_friendly_interface_to_real_interface_name', $ifaces);
-		$ifaces = array_filter($ifaces, 'does_interface_exist');
-		$ips = array_map('find_interface_ip', $ifaces);
-		foreach ($ips as $ip) {
-			if (is_ipaddr($ip))
-				fwrite($fd, "listen on $ip\n");
+	/* Setup listener(s) if the user has configured one */
+	if ($config['installedpackages']['openntpd']) {
+		/* server config is in coregui */
+		$xmlsettings = $config['installedpackages']['openntpd']['config'][0];
+		if ($xmlsettings['enable'] == 'on') {
+			$ifaces = explode(',', $xmlsettings['interface']);
+			$ifaces = array_map('convert_friendly_interface_to_real_interface_name', $ifaces);
+			$ifaces = array_filter($ifaces, 'does_interface_exist');
+			$ips = array_map('find_interface_ip', $ifaces);
+			foreach ($ips as $ip) {
+				if (is_ipaddr($ip))
+					fwrite($fd, "listen on $ip\n");
+			}
 		}
 	}
 

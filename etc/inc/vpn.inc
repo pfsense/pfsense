@@ -114,8 +114,8 @@ function vpn_ipsec_configure($ipchg = false) {
 			//echo "Enabling [VIA Padlock] ...";
 			//mwexec("/sbin/kldload padlock");
 			//mwexec("/sbin/sysctl net.inet.ipsec.crypto_support=1");
-			//mwexec("/sbin/setkey -F");
-			//mwexec("/sbin/setkey -FP");
+			//mwexec("/usr/local/sbin/setkey -F");
+			//mwexec("/usr/local/sbin/setkey -FP");
 			//echo " done.\n";
 		}
 	}
@@ -156,8 +156,8 @@ function vpn_ipsec_configure($ipchg = false) {
 		sigkillbypid("{$g['varrun_path']}/racoon.pid", "KILL");
 
 		/* flush SPD and SAD */
-		mwexec("/sbin/setkey -FP");
-		mwexec("/sbin/setkey -F");
+		mwexec("/usr/local/sbin/setkey -FP");
+		mwexec("/usr/local/sbin/setkey -F");
 
 		return true;
 	}
@@ -646,10 +646,10 @@ EOD;
 				/* We are already online, reload */
 				mwexec("/usr/bin/killall -HUP racoon");
 				/* flush SPD entries */
-				mwexec("/sbin/setkey -FP");
-				mwexec("/sbin/setkey -F");
+				mwexec("/usr/local/sbin/setkey -FP");
+				mwexec("/usr/local/sbin/setkey -F");
 				/* load SPD */
-				mwexec("/sbin/setkey -f {$g['varetc_path']}/spd.conf");
+				mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
 				sleep(1);
 				/* We are already online, reload */
 				mwexec("/usr/bin/killall -HUP racoon");
@@ -659,10 +659,10 @@ EOD;
 				/* start racoon */
 				mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
 				/* flush SA + SPD  entries*/
-				mwexec("/sbin/setkey -FP");
-				mwexec("/sbin/setkey -F");
+				mwexec("/usr/local/sbin/setkey -FP");
+				mwexec("/usr/local/sbin/setkey -F");
 				/* load SPD */
-				mwexec("/sbin/setkey -f {$g['varetc_path']}/spd.conf");
+				mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
 				sleep(1);
 				/* We are already online, reload */
 				mwexec("/usr/bin/killall -HUP racoon");

@@ -4099,8 +4099,8 @@ rrd interval 60s;
 
 ## These parameters can be overriden in a specific alarm configuration
 alarm default { 
-	command on "/etc/rc.filter_configure"
-	command off "/etc/rc.filter_configure"
+	command on "touch /tmp/filter_dirty"
+	command off "touch /tmp/filter_dirty"
 	combine 10s
 }
 

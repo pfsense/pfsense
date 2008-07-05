@@ -1017,7 +1017,12 @@ on another rule.")?>
 		$qlist =& get_unique_queue_list();
 		if (!is_array($qlist))
 			$qlist = array();
+		echo "<option value=\"none\"";
+		if (!$qselected) echo " SELECTED";
+		echo " >none</option>";
 		foreach ($qlist as $q => $qkey) {
+			if($q == "")
+				continue;
 			echo "<option value=\"$q\"";
 			if ($q == $pconfig['ackqueue']) {
 				$qselected = 1;
@@ -1025,15 +1030,17 @@ on another rule.")?>
 			}
 			echo ">{$q}</option>"; 
 		}
-		echo "<option value=\"none\"";
-		if (!$qselected) echo " SELECTED";
-		echo " >none</option>";
 ?>
 			</select> / 			
 			<select name="defaultqueue">
 <?php
 		$qselected = 0;
+		echo "<option value=\"none\"";
+		if (!$qselected) echo " SELECTED";
+		echo " >none</option>";
 		foreach ($qlist as $q => $qkey) {
+			if($q == "")
+				continue;
 			echo "<option value=\"$q\"";
 			if ($q == $pconfig['defaultqueue']) {
 				$qselected = 1;
@@ -1041,9 +1048,6 @@ on another rule.")?>
 			}
 			echo ">{$q}</option>"; 
 		}
-		echo "<option value=\"none\"";
-		if (!$qselected) echo " SELECTED";
-		echo " >none</option>";
 ?>
 			</select>
 				<br />

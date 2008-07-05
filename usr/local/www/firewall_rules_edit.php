@@ -979,14 +979,15 @@ on another rule.")?>
 						echo "<option value=\"{$gw}\" {$selected}>{$gw} - {$gwip}</option>\n";
 					}
 				}
-				if(is_array($config['load_balancer']['lbpool'])) {
-					foreach($config['load_balancer']['lbpool'] as $lb) {
-						if($lb['name'] == "") 
+				/* add gateway groups to the list */
+				if (is_array($config['gateways']['gateway_group'])) {
+					foreach($config['gateways']['gateway_group'] as $gw_group) {
+						if($gw_group['name'] == "")
 							continue;
-						if($pconfig['gateway'] == $lb['name']) {
-							echo "<option value=\"{$lb['name']}\" SELECTED>{$lb['name']}</option>\n";
+						if($pconfig['gateway'] == $gw_group['name']) {
+							echo "<option value=\"{$gw_group['name']}\" SELECTED>{$gw_group['name']}</option>\n";
 						} else {
-							echo "<option value=\"{$lb['name']}\">{$lb['name']}</option>\n";
+							echo "<option value=\"{$gw_group['name']}\">{$gw_group['name']}</option>\n";
 						}
 					}
 				}

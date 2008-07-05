@@ -2192,9 +2192,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			}
 			
 			if ($type == "pass") {
-				if (isset($rule['defaultqueue'])) {
+				if ($rule['defaultqueue'] <> "") {
 					$aline['queue'] = " queue (".$rule['defaultqueue'];
-					if (isset($rule['ackqueue']))
+					if ($rule['ackqueue'] <> "")
 						$aline['queue'] .= ",".$rule['ackqueue'];
 					$aline['queue'] .= ") "; 
 				}

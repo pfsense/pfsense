@@ -117,6 +117,9 @@ if [ ! -h /tmp/tmp ]; then
     ln -hfs / /tmp/tmp
 fi
 
+# Make sure our /tmp is 777
+chmod 1777 /tmp
+
 # Malloc debugging check
 if [ ! -L /etc/malloc.conf ]; then
     ln -s aj /etc/malloc.conf

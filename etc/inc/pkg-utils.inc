@@ -111,7 +111,7 @@ function get_pkg_id($pkg_name) {
  ******/
 function get_pkg_info($pkgs = 'all', $info = 'all') {
 	global $g;
-	$freebsd_version = str_replace("\n", "", `uname -r | cut -d'-' -f1`);
+	$freebsd_version = str_replace("\n", "", `uname -r | cut -d'-' -f1 | cut -d'.' -f1`);
 	$params = array(
 		"pkg" => $pkgs, 
 		"info" => $info, 

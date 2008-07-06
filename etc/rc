@@ -260,7 +260,7 @@ extension=pcntl.so
 extension=posix.so
 extension=readline.so
 extension=session.so
-extension=simplexml.so
+;extension=simplexml.so
 extension=shmop.so
 extension=sysvmsg.so
 extension=sysvsem.so
@@ -293,7 +293,7 @@ EOF
 
 fi
 
-cp /usr/local/lib/php.ini /usr/local/etc/
+cp /usr/local/lib/php.ini /usr/local/etc/php.ini
 
 rm -f /cf/conf/backup/backup.cache
 

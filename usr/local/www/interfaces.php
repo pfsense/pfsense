@@ -138,8 +138,8 @@ $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
 if ($wancfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "DHCP";
 } else if ($wancfg['ipaddr'] == "carpdev-dhcp") {
-	$pconfig['type'] = "CarpDEV-DHCP";
-	$pconfig['ipaddr'] = "";	    
+//	$pconfig['type'] = "CarpDEV-DHCP";
+//	$pconfig['ipaddr'] = "";	    
 } else if ($wancfg['ipaddr'] == "pppoe") {
 	$pconfig['type'] = "PPPoE";
 } else if ($wancfg['ipaddr'] == "pptp") {
@@ -697,7 +697,7 @@ function show_mon_config() {
                 <tr>
                   <td valign="middle" class="vncell"><strong>Type</strong></td>
                   <td class="vtable"> <select name="type" class="formselect" id="type" onchange="type_change()">
-                      <?php $opts = split(" ", "Static DHCP PPPoE PPTP CarpDEV-DHCP");
+                      <?php $opts = split(" ", "Static DHCP PPPoE PPTP");
 					  foreach ($opts as $opt): ?>
 	                      <option <?php if ($opt == $pconfig['type']) echo "selected";?>>
 	                      <?=htmlspecialchars($opt);?>

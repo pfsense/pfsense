@@ -189,7 +189,6 @@
 	<custom_add_php_command_late>
 		/* setup carp interfaces */
 		interfaces_carp_configure();
-		interfaces_carp_bring_up_final();
 		/* force a filter configure for syncing */
 		filter_configure();
 	</custom_add_php_command_late>

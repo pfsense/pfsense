@@ -209,13 +209,23 @@
 	filter_configure_sync();
 	echo "\n";
 	
-	if ($intip != '') { 
-		echo "\n\n" . gettext("The IPv4 {$interface} address has been set to ") . "{$intip}/{$intbits}\n" ;
-		echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
-		if(!empty($config['system']['webgui']['port'])) {
-			$webuiport = $config['system']['webgui']['port'];
+	if ($intip != '') {
+		if (is_ipaddr($intip)) {
+			echo "\n\n" . gettext("The IPv4 {$upperifname} address has been set to ") . "{$intip}/{$intbits}\n";
+		} else {
+			echo "\n\n" . gettext("The IPv4 {$upperifname} address has been set to ") . "{$intip}\n";
 		}
-		echo "		{$config['system']['webgui']['protocol']}://{$intip}:{$port}/\n";
+		if (count($ifdescrs) == "1" or $interface = "lan") {
+			echo "ifdescrs count is count($ifdescrs)\n";
+			echo "interface is $interface \n";
+			echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
+			if(!empty($config['system']['webgui']['port'])) {
+				$webuiport = $config['system']['webgui']['port'];
+				echo "		{$config['system']['webgui']['protocol']}://{$intip}:{$port}/\n";
+			} else {
+				echo "		{$config['system']['webgui']['protocol']}://{$intip}/\n";	
+			}
+		}
 	}
 
 	echo "\n" . gettext('Press <ENTER> to continue.');

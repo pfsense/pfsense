@@ -69,7 +69,7 @@ function services_dhcpd_configure() {
 	fwrite($fd, "cp /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
 	fwrite($fd, "chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
 	if(!trim($status))
-		fwrite($fd, "mount_devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
+		fwrite($fd, "mount devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	fclose($fd);
 	mwexec("/bin/sh /tmp/dhcpd.sh");
 

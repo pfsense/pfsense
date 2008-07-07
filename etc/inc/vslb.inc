@@ -65,7 +65,7 @@ function relayd_configure() {
       $conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
       $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} check tcp\n";
       /* XXX - this needs to use the backup pool aka sitedown - but that isn't converted yet */
-      if (isset($vs_a[$i]['sitedown']))
+      if (isset($vs_a[$i]['sitedown']) &&  $vs_a[$i]['sitedown'] != "")
         $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} check tcp\n";
       $conf .= "}\n";
     }
@@ -73,7 +73,7 @@ function relayd_configure() {
   fwrite($fd, $conf);
   fclose($fd);
 
-  if (is_process_running('/usr/local/sbin/relayd')) {
+  if (is_process_running('relayd: parent')) {
     /*
      * XXX: Something breaks our control connection with relayd and makes relayctl stop working
      * rule reloads are the current suspect

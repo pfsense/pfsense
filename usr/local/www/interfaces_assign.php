@@ -77,7 +77,7 @@ if ($_POST['apply']) {
 		else
 			$savemsg = $retval;
 
-		unlink("/tmp/reload_interfaces");
+		unlink_if_exists("/tmp/reload_interfaces");
 	}
 
 } else if ($_POST) {

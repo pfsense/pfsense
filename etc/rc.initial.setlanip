@@ -77,13 +77,22 @@
 		$intnum = $j;
 	}
 	
-	
 	if($intnum < 1) 
 		exit;
 	if($intnum > $j)
 		exit;
 		
 	$interface = $ifdescrs[$intnum-1];
+	$interface = $ifdescrs[$intnum-1];
+	$index = 1;
+	foreach ($ifdescrs as $ifname => $ifdesc) {
+		if ($intnum == $index)  {
+			$interface = $ifname;
+			break;
+		} else {
+			$index++;
+		}
+	}	
 	if(!$interface) {
 		echo "Invalid interface!\n";
 		exit;

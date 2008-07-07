@@ -843,8 +843,6 @@ function reset_carp() {
 	sleep(1);
 	mwexec("/sbin/sysctl net.inet.carp.allow=1");
 	interfaces_carp_configure();
-	usleep(1000);
-	interfaces_carp_bring_up_final();
 }
 
 /****f* pfsense-utils/get_dns_servers
@@ -2446,11 +2444,6 @@ function reload_interfaces_sync() {
 		log_error("Configuring CARP");
 	interfaces_carp_configure();
 
-	/* bring up carp interfaces*/
-	if($debug)
-		log_error("Bringing up CARP interfaces");
-	interfaces_carp_bring_up_final();
-
 	/* restart webConfigurator if needed */
 	if($shutdown_webgui_needed == true)
 		touch("/tmp/restart_webgui");
@@ -2763,9 +2756,6 @@ function reload_all_sync() {
 
         /* reload the filter */
 	filter_configure_sync();
-
-	/* bring up carp interfaces*/
-	interfaces_carp_bring_up_final();
 
 	/* sync pw database */
 	conf_mount_rw();

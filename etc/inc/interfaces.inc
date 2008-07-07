@@ -498,10 +498,11 @@ function interfaces_carp_configure() {
 		/*    install rules to alllow pfsync to sync up during boot
 		 *    carp interfaces will remain down until the bootup sequence finishes
 		 */
+		log_error("Installing minimal CARP rules...");
 		exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
 		exec("echo pass quick proto pfsync all >> /tmp/rules.boot");
 		exec("echo pass out quick from any to any keep state >> /tmp/rules.boot");
-//		exec("/sbin/pfctl -f /tmp/rules.boot");
+		exec("/sbin/pfctl -f /tmp/rules.boot");
 	}
 	/* setup pfsync interface */
 	if($carp_sync_int and $pfsyncenabled) {
@@ -513,7 +514,6 @@ function interfaces_carp_configure() {
 	} else {
 		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");
 	}
-	$fd = fopen("/tmp/carp.sh", "w");
 	$viparr = &$config['virtualip']['vip'];
 	if($config['virtualip']['vip']) {
 		mwexec("/sbin/sysctl net.inet.carp.allow=1");
@@ -530,7 +530,10 @@ function interfaces_carp_configure() {
 		$viparr_temp['password'] = $config['system']['hostname'] . "pfS";
 		$viparr = $viparr_temp;
 	}
-	if(is_array($viparr))
+	if(!is_array($viparr))
+		return;
+	exec("/sbin/ifconfig > /tmp/before_carpinit");
+	$fd = fopen("/tmp/carp.sh", "w");
 	foreach ($viparr as $vip) {
 		if ($vip['mode'] == "carp" or $vip['mode'] == "carpdev-dhcp") {
 			$vip_password = $vip['password'];
@@ -553,36 +556,68 @@ function interfaces_carp_configure() {
 
 			/* invalidate interface cache */
 			get_interface_arr(true);
+			
 			if($vip['mode'] =="carp") 
-				$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
+				$broadcast_address = "broadcast " . gen_subnet_max($vip['subnet'], $vip['subnet_bits']) . " ";
+			else
+				$broadcast_address = "";
+
 			if($vip['password'] != "")
-				$password = " pass \"" . $vip_password . "\"";
+				$password = "pass \"" . $vip_password . "\"";
+			
+			$carpint = "carp{$carp_instances_counter}";			
 
+			/*
+			 * XXX: BIG HACK but carpdev needs ip services active
+			 * 		before even starting something as dhclient.
+			 * 		I do not know if this is a feature or a bug
+			 * 		but better than track it make it work ;) .
+			 */
+			$fakeiptouse = "10.254.254." . ($carp_instances_counter+1);
+			mwexec("/sbin/ifconfig {$carpint} inet {$fakeiptouse}");
+			sleep(2);
+			
 			if($vip['mode'] =="carp") {
-				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password);
-				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
-			}
-
-			if($vip['mode'] =="carpdev-dhcp") {
+				$carp_cmd = "ifconfig carp" . $carp_instances_counter . " ";
+				$carp_cmd .= $vip['subnet'] . "/" . $vip['subnet_bits'] . " ";
+				$carp_cmd .= $broadcast_address;
+				$carp_cmd .= "vhid " . $vip['vhid'] . " ";
+				$carp_cmd .= "advskew " . $vip['advskew'] . " ";
+				$carp_cmd .= $password;
+				
+				/* bring up CARP ip */
+				exec($carp_cmd);
+				exec("/sbin/ifconfig {$carpint} up");
+				
+				/* Write out exact commands for easier debugging */
+				fwrite($fd, "#!/bin/sh\n");
+				fwrite($fd, $carp_cmd . "\n");
+				fwrite($fd, "/sbin/ifconfig {$carpint} up\n");
+				
+				mwexec("/bin/sh /tmp/carp.sh");
+			} else if($vip['mode'] == "carpdev-dhcp") {
 				log_error("Found carpdev interface {$vip['interface']}");
 				$interface = convert_friendly_interface_to_real_interface_name($vip['interface']);
 				if($interface) {
-					mwexec("ifconfig carp{$carp_instances_counter} carpdev $interface");
-					mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password);
-					mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
+					mwexec("ifconfig {$carpint} carpdev $interface");
+					mwexec("/sbin/ifconfig {$carpint}  vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password);
+					mwexec("/sbin/ifconfig {$carpint} up");
 					sleep(1);
-					mwexec("/sbin/dhclient -b carp{$carp_instances_counter}");					
+					mwexec("/sbin/dhclient -b {$carpint}");
 				} else {
 					log_error("Could not determine CarpDEV parent interface for {$vip['descr']}.");
 				}
 			}
 			
 			usleep(10);
+			
 			$carp_instances_counter++;
+
 		}
-	}
+	}	
 	fclose($fd);
-	mwexec("/bin/sh /tmp/carp.sh");
+
+	exec("/sbin/ifconfig > /tmp/after_carpinit");	
 	if ($g['booting']) {
 		unmute_kernel_msgs();
 		echo "done.\n";
@@ -591,10 +626,6 @@ function interfaces_carp_configure() {
 	/* update cache */
 	if ($carp_instances_counter != find_number_of_created_carp_interfaces())
 		find_number_of_created_carp_interfaces(true);
-}
-
-function interfaces_carp_bring_up_final() {
-
 }
 
 function interfaces_ipalias_configure() {

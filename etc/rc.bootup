@@ -265,8 +265,6 @@
 	echo "done.\n";
 
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
-	
-	interfaces_carp_bring_up_final();
 
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();

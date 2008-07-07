@@ -82,8 +82,6 @@
 	if($intnum > $j)
 		exit;
 		
-	$interface = $ifdescrs[$intnum-1];
-	$interface = $ifdescrs[$intnum-1];
 	$index = 1;
 	foreach ($ifdescrs as $ifname => $ifdesc) {
 		if ($intnum == $index)  {

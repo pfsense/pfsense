@@ -288,7 +288,6 @@ function interfaces_carp_configure_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	interfaces_carp_configure();
-	interfaces_carp_bring_up_final();
 	return $xmlrpc_g['return']['true'];
 }
 

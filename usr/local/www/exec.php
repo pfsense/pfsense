@@ -277,7 +277,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
       <td valign="top" class="label">
          <input type="submit" class="button" value="Execute">
 	 <p>
-	 <strong>Example:</strong>   interfaces_carp_bring_up_final();
+	 <strong>Example:</strong>   interfaces_carp_configure();
       </td>
     </tr>
     

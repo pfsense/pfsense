@@ -33,6 +33,5 @@ require_once("config.inc");
 require_once("filter.inc");
 
 interfaces_carp_configure();
-interfaces_carp_bring_up_final();
 
 ?>

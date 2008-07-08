@@ -46,7 +46,7 @@ function relayd_configure() {
   /* Virtual server pools */
   if(is_array($pool_a)) {
     for ($i = 0; isset($pool_a[$i]); $i++) {
-      /* Don't deal with gateway pools */
+      /* Don't deal with gateway pools - XXX remove me after gateways are converted */
       if ($pool_a[$i]['type'] == "gateway")
         continue;
       

@@ -3114,14 +3114,16 @@ function enable_rrd_graphing() {
 				$numpings = 5;
 				$monitorip = lookup_gateway_monitor_ip_by_name($config['interfaces'][$ifname]['gateway']);
 				/* the ping test function. We call this on the last line */
+				$rrdupdatesh .= "\n";
+				$rrdupdatesh .= "# Quality collector for {$ifname}\n";
 				$rrdupdatesh .= "get_quality_stats_{$ifname} () {\n";
 				$rrdupdatesh .= "	packetloss_{$ifname}=100\n";
 				$rrdupdatesh .= "	roundtrip_{$ifname}=0\n";
 				$rrdupdatesh .= "	local out_{$ifname}\n";
-				$rrdupdatesh .= "	out_{$ifname}=\`ping -c $numpings -q $monitorip\`\n";
+				$rrdupdatesh .= "	out_{$ifname}=`ping -c $numpings -q $monitorip`\n";
 				$rrdupdatesh .= "	if [ $? -eq 0 ]; then\n";
-				$rrdupdatesh .= "		packetloss_{$ifname}=\`echo \$out_{$ifname} | cut -f18 -d' ' | cut -c -1\`\n";
-				$rrdupdatesh .= "		roundtrip_{$ifname}=\`echo \$out_{$ifname} | cut -f24 -d' ' | cut -f2 -d'/'\`\n";
+				$rrdupdatesh .= "		packetloss_{$ifname}=`echo \$out_{$ifname} | cut -f18 -d' ' | cut -c -1`\n";
+				$rrdupdatesh .= "		roundtrip_{$ifname}=`echo \$out_{$ifname} | cut -f24 -d' ' | cut -f2 -d'/'`\n";
 				$rrdupdatesh .= "	fi\n";
 				$rrdupdatesh .= "	$rrdtool update $rrddbpath$ifname$quality N:\$packetloss_{$ifname}:\$roundtrip_{$ifname}\n";
 				$rrdupdatesh .= "}\n\n";

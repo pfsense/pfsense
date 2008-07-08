@@ -57,7 +57,7 @@ include("head.inc");
 
 /* delete any SA? */
 if ($_GET['act'] == "del") {
-	$fd = @popen("/sbin/setkey -c > /dev/null 2>&1", "w");
+	$fd = @popen("/usr/local/sbin/setkey -c > /dev/null 2>&1", "w");
 	if ($fd) {
 		fwrite($fd, "delete {$_GET['src']} {$_GET['dst']} {$_GET['proto']} {$_GET['spi']} ;\n");
 		pclose($fd);
@@ -66,7 +66,7 @@ if ($_GET['act'] == "del") {
 }
 
 /* query SAD */
-$fd = @popen("/sbin/setkey -D", "r");
+$fd = @popen("/usr/local/sbin/setkey -D", "r");
 $sad = array();
 if ($fd) {
 	while (!feof($fd)) {

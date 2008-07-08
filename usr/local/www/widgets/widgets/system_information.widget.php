@@ -86,7 +86,7 @@ $curcfg = $config['system']['firmware'];
 									echo "</script>";
 							}
 							else
-								echo "You are on the latest version.";
+								echo "<br /><br />You are on the latest version.";
 						} 
 					} 
 					?>		

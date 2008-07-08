@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-  Copyright (C) 2008 Bill Marquette
+  Copyright (C) 2008 Bill Marquette, Seth Mos
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -32,86 +32,183 @@ require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
 
-function slbd_configure() {
-  global $config, $g;
+/* add static routes for monitor IP addresse
+ * creates monitoring configuration file
+ */
+function setup_gateways_monitor() {
+	global $config;
+	global $g;
 
-  $a_vs = &$config['load_balancer']['virtual_server'];
-  $a_pool = &$config['load_balancer']['lbpool'];
+	/* kill apinger process */
+	exec("/usr/bin/killall apinger");
+	$fd = fopen("{$g['varetc_path']}/apinger.conf", "w");
+	$apingerconfig = <<<EOD
 
-  $should_start=0;
+# pfSense apinger configuration file. Automatically Generated!
 
-  $fd = fopen("{$g['varetc_path']}/slbd.conf", "w");
+## User and group the pinger should run as
+user "nobody"
+group "nobody"
 
-  /* Gateway Pools */
-  if(is_array($a_pool)) {
-    foreach ($a_pool as $vspool) {
-      if ($vspool['type'] != "gateway")
-        continue;
+## Mailer to use (default: "/usr/lib/sendmail -t")
+#mailer "/var/qmail/bin/qmail-inject" 
 
-      if ($vspool['desc'] == "")
-        $slbdconf .= "{$vspool['name']}:\\\n";
-      else
-        $slbdconf .= "{$vspool['name']}|{$vspool['desc']}:\\\n";
+## Location of the pid-file (default: "/var/run/apinger.pid")
+pid_file "{$g['varrun_path']}/apinger.pid"
 
-      /* pool name */
-      $slbdconf .= "\t:poolname={$vspool['name']}:\\\n";
-      /* remove pool status files so we don't end up with a mismatch */
-      if(file_exists("{$g['tmp_path']}/{$vspool['name']}.pool"))
-        unlink("{$g['tmp_path']}/{$vspool['name']}.pool");
-      /* virtual IP */
-      $slbdconf .= "\t:vip=127.0.0.1:\\\n";
-      $slbdconf .= "\t:vip-port=666:\\\n";
-      /* fallback IP */
-      $slbdconf .= "\t:sitedown=127.0.0.1:\\\n";
-      /* fallback port */
-      $slbdconf .= "\t:sitedown-port=666:\\\n";
+## Format of timestamp (%s macro) (default: "%b %d %H:%M:%S")
+#timestamp_format "%Y%m%d%H%M%S"
 
-      $svrcnt = 0;
-      $svrtxt = "";
-      if($vspool['servers'])
-      foreach ($vspool['servers'] as $lbsvr) {
-        $lbsvr_split=split("\|", $lbsvr);
-        $svrtxt .= "\t:{$svrcnt}={$lbsvr_split[1]}:\\\n";
-        $svrcnt++;
+status {
+	## File where the status information whould be written to
+	file "/tmp/apinger.status"
+	## Interval between file updates
+	## when 0 or not set, file is written only when SIGUSR1 is received
+	interval 10s
+}
 
-        /* Add static routes to the monitor IPs */
-        $int = convert_friendly_interface_to_real_interface_name($lbsvr_split[0]);
-        $gateway = get_interface_gateway($int);
-        $int_ip = find_interface_ip($int);
-        if($int_ip == "0.0.0.0") {
-          /*   DHCP Corner case.  If DHCP is down, we delete the route then
-            *   there is a chance the monitor ip gateway will go out the link
-            *   that is up.
-            */
-          mwexec("/sbin/route delete -host {$lbsvr_split[1]} 1>/dev/null 2>&1");
-          mwexec("/sbin/route add -host {$lbsvr_split[1]} 127.0.0.1 1> /dev/null 2>&1");
-        } else {
-          mwexec("/sbin/route delete -host {$lbsvr_split[1]} 1>/dev/null 2>&1");
-          mwexec("/sbin/route add -host {$lbsvr_split[1]} {$gateway} 1> /dev/null 2>&1");					
-        }
-      }
-      $slbdconf .= "\t:service-port=666:\\\n";
-      $slbdconf .= "\t:method=round-robin:\\\n";
-      $slbdconf .= "\t:services={$svrcnt}:\\\n";
-      $slbdconf .= $svrtxt;
+########################################
+# RRDTool status gathering configuration
+# Interval between RRD updates
+rrd interval 60s;
 
-      $slbdconf .= "\t:ping:\n";
+## These parameters can be overriden in a specific alarm configuration
+alarm default { 
+	command on "touch /tmp/filter_dirty"
+	command off "touch /tmp/filter_dirty"
+	combine 10s
+}
 
-      $should_start=1;
-    }
-  }
+## "Down" alarm definition. 
+## This alarm will be fired when target doesn't respond for 30 seconds.
+alarm down "down" {
+	time 10s
+}
 
-  if($should_start == 1) {
-    fwrite($fd, $slbdconf);
-    fclose($fd);
-    mwexec("/usr/bin/killall -9 slbd");
-    sleep(2);
-    /* startup slbd pointing it's config at /var/etc/slbd.conf with a polling interval of 5 seconds */
-    mwexec("/usr/local/sbin/slbd -c{$g['varetc_path']}/slbd.conf -r5000");
-  } else {
-    mwexec("/usr/bin/killall -9 slbd");
-    fclose($fd);
-  }
+## "Delay" alarm definition. 
+## This alarm will be fired when responses are delayed more than 200ms
+## it will be canceled, when the delay drops below 100ms
+alarm delay "delay" {
+	delay_low 200ms
+	delay_high 500ms
+}
+
+## "Loss" alarm definition. 
+## This alarm will be fired when packet loss goes over 20%
+## it will be canceled, when the loss drops below 10%
+alarm loss "loss" {
+	percent_low 10
+	percent_high 20
+}
+
+target default {
+	## How often the probe should be sent	
+	interval 1s
+	
+	## How many replies should be used to compute average delay 
+	## for controlling "delay" alarms
+	avg_delay_samples 10
+	
+	## How many probes should be used to compute average loss
+	avg_loss_samples 50
+
+	## The delay (in samples) after which loss is computed
+	## without this delays larger than interval would be treated as loss
+	avg_loss_delay_samples 20
+
+	## Names of the alarms that may be generated for the target
+	alarms "down","delay","loss"
+
+	## Location of the RRD
+	rrd file "{$g['vardb_path']}/rrd/apinger-%t.rrd"
+}
+
+## Targets to probe
+## Each one defined with:
+## target <address> { <parameter>... }
+## The parameters are those described above in the "target default" section
+## plus the "description" parameter.
+## the <address> should be IPv4 or IPv6 address (not hostname!)
+
+EOD;
+
+	/* add static routes for each gateway with their monitor IP */
+	if(is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if($gateway['monitor'] == "") {
+				$gateway['monitor'] = $gateway['gateway'];
+			}
+			$apingerconfig .= "target \"{$gateway['monitor']}\" {\n";
+			$apingerconfig .= "	description \"{$gateway['name']}\"\n";
+			$apingerconfig .= "}\n";
+			$apingerconfig .= "\n";
+			if($gateway['monitor'] == $gateway['gateway']) {
+				/* if the gateway is the same as the monitor we do not add a
+				 * route as this will break the routing table */
+				continue;
+			} else {
+				mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']));
+				mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
+					" " . escapeshellarg($gateway['gateway']));
+			}
+		}
+	}
+	fwrite($fd, $apingerconfig);
+	fclose($fd);
+
+	sleep(3);
+	if(!is_process_running("apinger")) {
+		if (is_dir("{$g['vardb_path']}/rrd"))
+			chown("{$g['vardb_path']}/rrd", "nobody");
+		if (is_dir("{$g['vardb_path']}/rrd"))
+			chgrp("{$g['vardb_path']}/rrd", "nobody");
+		/* start a new apinger process */
+		mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
+	}
+	return 0;
+}
+
+/* return the status of the apinger targets as a array */
+function return_gateways_status() {
+	global $config;
+	global $g;
+
+	$apingerstatus = array();
+	if(is_readable("{$g['tmp_path']}/apinger.status"))
+		$apingerstatus = file("{$g['tmp_path']}/apinger.status");
+
+	foreach($apingerstatus as $line) {
+		$fields = explode(":", $line);
+		switch($fields[0]) {
+			case "Target":
+				$target = trim($fields[1]);
+				$status[$target] = array();
+				$status[$target]['monitor'] = $target;
+				foreach($config['gateways']['gateway_item'] as $gateway) {
+					if($gateway['monitor'] == "$target") {
+						$status[$target]['gateway'] = $gateway['gateway'];
+						$status[$target]['interface'] = $gateway['interface'];
+					}
+				}
+				break;
+			case "Description":
+	 			$status[$target]['name'] = trim($fields[1]);
+				break;
+			case "Last reply received":
+				$status[$target]['lastcheck'] = trim($fields[1]) .":". trim($fields[2]) .":". trim($fields[3]);
+				break;
+			case "Average delay":
+				$status[$target]['delay'] = trim($fields[1]);
+				break;
+			case "Average packet loss":
+				$status[$target]['loss'] = trim($fields[1]);
+				break;
+			case "Active alarms":
+				$status[$target]['status'] = trim($fields[1]);
+				break;
+		}
+	}
+	return($status);
 }
 
 ?>

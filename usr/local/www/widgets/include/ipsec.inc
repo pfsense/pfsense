@@ -4,7 +4,7 @@ $ipsec_title = "IPsec";
 
 function get_ipsec_tunnel_sad() {
 	/* query SAD */
-	$fd = @popen("/sbin/setkey -D", "r");
+	$fd = @popen("/usr/local/sbin/setkey -D", "r");
 	$sad = array();
 	if ($fd) {
 		while (!feof($fd)) {

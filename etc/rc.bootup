@@ -195,8 +195,6 @@
 	setup_filter_bridge();
 
 	/* start load balancer daemon */
-	load_balancer_use_sticky();
-	slbd_configure();
 	relayd_configure();
 	/* reconfigure our gateway monitor */
 	setup_gateways_monitor();

@@ -64,8 +64,7 @@ $curcfg = $config['system']['firmware'];
 					$latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
 					
 					if(strstr($latest_version,"404")) {
-						echo "Unable to check for updates.";
-						exit;	
+						echo "<br /><br />Unable to check for updates.";
 					}
 					else {					
 						$current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version"));
@@ -76,12 +75,19 @@ $curcfg = $config['system']['firmware'];
 						if($current_installed_pfsense_version <> $latest_version) 
 							$needs_system_upgrade = true; 						
 							
-						if($needs_system_upgrade) {
-								echo "<br /><br /><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
-								echo "<script type=\"text/javascript\">";
-								echo "Effect.Pulsate('updatealert', { pulses: 30, duration: 10});";
-								echo "</script>";
-						}					
+						if(!$latest_version) {
+							echo "<br /><br />Unable to check for updates.";							
+						}
+						else {
+							if($needs_system_upgrade) {
+									echo "<br /><br /><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
+									echo "<script type=\"text/javascript\">";
+									echo "Effect.Pulsate('updatealert', { pulses: 30, duration: 10});";
+									echo "</script>";
+							}
+							else
+								echo "You are on the latest version.";
+						} 
 					} 
 					?>		
 			</td>

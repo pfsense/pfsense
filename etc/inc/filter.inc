@@ -982,8 +982,7 @@ function filter_nat_rules_generate() {
 	}
 
 	/* load balancer anchor */
-	$natrules .= "\n# Load balancing anchor - slbd updates\n";
-	$natrules .= "rdr-anchor \"slb\"\n";
+	$natrules .= "\n# Load balancing anchor\n";
         $natrules .= "rdr-anchor \"relayd/*\"\n";
 
 

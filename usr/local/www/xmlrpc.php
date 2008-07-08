@@ -217,9 +217,9 @@ function filter_configure_xmlrpc($raw_params) {
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	require_once("vslb.inc");
 	filter_configure();
-	relayd_configure();
 	system_routing_configure();
 	setup_gateways_monitor();
+	relayd_configure();
 	return $xmlrpc_g['return']['true'];
 }
 

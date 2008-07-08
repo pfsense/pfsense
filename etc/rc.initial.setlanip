@@ -103,7 +103,7 @@
 			echo gettext("Configure {$upperifname} interface via DHCP?  [y|n]") . "\n> ";
 			$intdhcp = chop(fgets($fp));
 			if(strtolower($intdhcp) == "y" || strtolower($intdhcp) == "yes") {
-				$intip = "DHCP";
+				$intip = "dhcp";
 				$intbits = "";
 				$isintdhcp = true;
 			} 

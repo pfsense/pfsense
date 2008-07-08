@@ -44,7 +44,6 @@ if ($_POST) {
 
 		config_lock();
 		$retval |= filter_configure();
-		$retval |= slbd_configure();
 		$retval |= relayd_configure();
 		config_unlock();
 
@@ -140,14 +139,7 @@ include("head.inc");
                   </td>
                   <td class="listr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
                         <?php
-                                if ($vipent['type'] == "gateway") {
-                                        foreach ((array) $vipent['servers'] as $server) {
-                                                $svr = split("\|", $server);
-                                                echo "{$svr[1]}<br />";
-                                        }
-                                } else {
-                                        echo $vipent['monitor'];
-                                }
+                        echo $vipent['monitor'];
                         ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">

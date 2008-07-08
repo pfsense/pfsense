@@ -42,7 +42,6 @@ else
 
 if (isset($id) && $a_pool[$id]) {
 	$pconfig['monitorip'] = $a_pool[$id]['monitorip'];
-	$pconfig['type'] = $a_pool[$id]['type'];
 	$pconfig['behaviour'] = $a_pool[$id]['behaviour'];
 	$pconfig['name'] = $a_pool[$id]['name'];
 	$pconfig['desc'] = $a_pool[$id]['desc'];
@@ -62,13 +61,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if($_POST['type'] == "server") {
-		$reqdfields = explode(" ", "name port monitor servers");
-		$reqdfieldsn = explode(",", "Name,Port,Monitor,Server List");
-	} else {
-		$reqdfields = explode(" ", "name servers");
-		$reqdfieldsn = explode(",", "Name,Server List");		
-	}
+	$reqdfields = explode(" ", "name port monitor servers");
+	$reqdfieldsn = explode(",", "Name,Port,Monitor,Server List");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -82,52 +76,20 @@ if ($_POST) {
 	if (is_array($_POST['servers'])) {
 		foreach($pconfig['servers'] as $svrent) {
 			if (!is_ipaddr($svrent)) {
-				if($_POST['type'] == "server") {
-					$input_errors[] = "{$svrent} is not a valid IP address (in \"enabled\" list).";
-				} else {
-					$split_ip = split("\|", $svrent);
-					if(!is_ipaddr($split_ip[1]))
-						$input_errors[] = "{$split_ip[1]} is not a valid IP address (in \"enabled\" list).";
-				}
+				$input_errors[] = "{$svrent} is not a valid IP address (in \"enabled\" list).";
 			}
 		}
 	}
 	if (is_array($_POST['serversdisabled'])) {
 		foreach($pconfig['serversdisabled'] as $svrent) {
 			if (!is_ipaddr($svrent)) {
-				if($_POST['type'] == "server") {
-					$input_errors[] = "{$svrent} is not a valid IP address (in \"disabled\" list).";
-				} else {
-					$split_ip = split("\|", $svrent);
-					if(!is_ipaddr($split_ip[1]))
-						$input_errors[] = "{$split_ip[1]} is not a valid IP address (in \"disabled\" list).";
-				}
+				$input_errors[] = "{$svrent} is not a valid IP address (in \"disabled\" list).";
 			}
 		}
 	}
 
-	/* make sure that we are not entering a interface ip as a gateway.  This creates a routing loop. */
-	if($_POST['type'] == "gateway") {
-		$ifdescrs = array ("wan");
-		for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
-			$ifdescrs['opt' . $j] = "opt" . $j;
-		}
-		if(is_array($pconfig['servers'])) {
-			foreach($pconfig['servers'] as $svrent) {
-				$split_ip = split("\|", $svrent);
-				foreach($ifdescrs as $iface) {
-					if($config['interfaces'][$iface]['ipaddr'] <> "") 
-						if($config['interfaces'][$iface]['ipaddr'] == $split_ip[0]) 
-							$input_errors[] = "{$split_ip[0]} is currently being referenced by an interface IP address on {$iface}.";
-				}
-			}
-		}
-	}
-
-	if($_POST['type'] == "server") {
-		if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP" && $_POST['monitor'] != "ICMP")
-			$input_errors[] = "Invalid monitor chosen.";
-	}
+	if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP" && $_POST['monitor'] != "ICMP")
+		$input_errors[] = "Invalid monitor chosen.";
 
 	if(!isset($_POST['behaviour'])) {
 			$input_errors[] = "No pool behaviour chosen.";
@@ -144,7 +106,6 @@ if ($_POST) {
 		if(is_ipaddr($poolent['monitorip']))
 			mwexec("route delete {$poolent['monitorip']}");
 		
-		update_if_changed("type", $poolent['type'], $_POST['type']);
 		update_if_changed("behaviour", $poolent['behaviour'], $_POST['behaviour']);
 		update_if_changed("monitorip", $poolent['monitorip'], $_POST['monitorip']);
 		update_if_changed("name", $poolent['name'], $_POST['name']);
@@ -185,78 +146,6 @@ include("head.inc");
 <script type="text/javascript" language="javascript" src="pool.js"></script>
 
 <script language="javascript">
-function gateway_change()
-{
-	if (document.iform.gatewayip.options[document.iform.gatewayip.selectedIndex].value == "other")
-	{
-		//document.iform.monitorip.value = "";
-		document.iform.monitorip.style.display = "block";
-	}
-	else
-	{
-		document.iform.monitorip.value = document.iform.gatewayip.options[document.iform.gatewayip.selectedIndex].value;
-		document.iform.monitorip.style.display = "none";
-	}
-	
-}
-
-function type_change(enable_change) {
-	switch (document.iform.type.selectedIndex) {
-		case 0:
-			// Server;
-			//clearcombo();
-			document.iform.gatewayip.disabled = 1;
-			document.iform.ipaddr.style.display = "block";
-			document.iform.iface.style.display = "none";
-			document.iform.serversSelect.clear;
-			document.iform.monitorip.disabled = 1;
-			var monitorIpNote = document.getElementById("monitorIpNote");
-			monitorIpNote.disabled = 1;
-			var monitorip_text = document.getElementById("monitorip_text");
-			monitorip_text.className = "vncell";
-			monitorip_text.disabled = 1;
-			var monitorport_text = document.getElementById("monitorport_text");
-			monitorport_text.className = "vncellreq";
-			monitorport_text.disabled = 0;
-			document.getElementById("monitorport_desc").disabled = 0;
-			document.iform.monitorip.value = "";
-			document.iform.port.disabled = 0;
-			document.iform.monitor.selectedIndex = 0;
-			document.iform.monitor.disabled = 0;
-			var interfacename_text = document.getElementById("interfacename_text");
-			interfacename_text.innerHTML = "Server IP Address";
-			var interfacename_desc = document.getElementById("interfacename_desc");
-			interfacename_desc.innerHTML = "Enter the IP Address of the inbound load balanced server here.";
-			break;
-		case 1:
-			// Gateway;
-			//clearcombo();
-			document.iform.gatewayip.disabled = 0;
-			document.iform.ipaddr.style.display = "none";
-			document.iform.iface.style.display = "block";
-			document.iform.monitorip.disabled = 0;
-			document.iform.monitorip.value = "";
-			var monitorIpNote = document.getElementById("monitorIpNote");
-			monitorIpNote.disabled = 0;
-			var monitorip_text = document.getElementById("monitorip_text");
-			monitorip_text.className = "vncellreq";
-			monitorip_text.disabled = 0;
-			var monitorport_text = document.getElementById("monitorport_text");
-			monitorport_text.className = "vncell";
-			monitorport_text.disabled = 1;
-			document.getElementById("monitorport_desc").disabled = 1;
-			document.iform.port.disabled = 1;
-			// set to ICMP
-			document.iform.monitor.selectedIndex = 1;
-			document.iform.monitor.disabled = 1;
-			var interfacename_text = document.getElementById("interfacename_text");
-			interfacename_text.innerHTML = "Interface Name";
-			var interfacename_desc = document.getElementById("interfacename_desc");
-			interfacename_desc.innerHTML = "Select the Interface to be used for outbound load balancing.";
-			break;
-	}
-}
-
 function clearcombo(){
   for (var i=document.iform.serversSelect.options.length-1; i>=0; i--){
     document.iform.serversSelect.options[i] = null;
@@ -283,16 +172,6 @@ function clearcombo(){
 			</td>
 		</tr>
 
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Type</td>
-			<td width="78%" class="vtable" colspan="2">
-				<select name="type" id="type" onchange="type_change();">
-					<option value="server"<?php if($pconfig['type'] == "server") echo " SELECTED"; ?>>Server</option>
-					<option value="gateway"<?php if($pconfig['type'] == "gateway") echo " SELECTED"; ?>>Gateway</option>
-				</select>
-			</td>
-		</tr>
-		
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Behavior");?></td>
 			<td width="78%" class="vtable" colspan="2">
@@ -325,45 +204,14 @@ function clearcombo(){
 			<td width="22%" valign="top" id="monitorip_text" class="vncell">Monitor IP</td>
 			<td width="78%" class="vtable" colspan="2">
 				<div style="float: none;">
-				<select id="gatewayip" name="gatewayip" onchange="gateway_change();" style="float: left;">
-<?php
-					$interfaces = get_configured_interface_with_descr(false, true);
-					foreach ($interfaces as $iface => $ifacename) {
-						if ($iface == "lan")
-							continue;
-						$ifinfo = get_interface_info($iface);
-						if(isset($ifinfo['gateway'])) { ?>
-							<option value="<?=$ifinfo['gateway'];?>"><?=htmlspecialchars($ifacename);?>'s Gateway</option>
-<?php						}
-					}
-					$dns_servers = get_dns_servers();
-					$iDns = 1;
-					foreach($dns_servers as $dns) { ?>
-						<option value="<?=$dns;?>">DNS Server <?=$iDns;?> (<?=$dns;?>)</option>
-<?php					$iDns++;
-					}
-?>
-						<option value="other" selected>other</option>
-				</select>
 				<input size="16" id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>" style="float: left;">
-				</div><br><br>
-				<div id="monitorIpNote" style="float: none;">Note: Some gateways do not respond to pings.</div>
+				</div>
 			</td>
 		</tr>
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq"><div id="interfacename_text"></div></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="ipaddr" type="text" size="16" style="float: left;">
-				<select id="iface" name="iface" style="float: left; display: none;">
-<?php
-					$interfaces = get_configured_interface_with_descr(false, true);
-					foreach ($interfaces as $iface => $ifacename) {
-						$ifinfo = get_interface_info($iface);
-						if(isset($ifinfo['gateway'])) { ?>
-							<option value="<?=$iface;?>"><?=htmlspecialchars($ifacename);?></option>
-<?php 						}
-					} ?>
-				</select>
 				<input class="formbtn" type="button" name="button1" value="Add to pool" onclick="AddServerToPool(document.iform);"><br>
 				<div id="interfacename_desc"></div>
 			</td>
@@ -431,10 +279,6 @@ echo "</select>";
 	</table>
 	</form>
 <br>
-<script language="javascript">
-	type_change();
-	gateway_change();
-</script>
 <?php include("fend.inc"); ?>
 </body>
 </html>

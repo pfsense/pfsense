@@ -31,7 +31,7 @@
 
 require("guiconfig.inc");
 
-$slbd_logfile = "{$g['varlog_path']}/ntpd.log";
+$ntpd_logfile = "{$g['varlog_path']}/ntpd.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
@@ -39,11 +39,11 @@ if (!$nentries)
 
 if ($_POST['clear']) {
 	if(isset($config['system']['disablesyslogclog'])) {
-		unlink($slbd_logfile);
-		touch($slbd_logfile);
+		unlink($ntpd_logfile);
+		touch($ntpd_logfile);
 	} else {
 		exec("killall syslogd");
-		exec("/usr/sbin/clog -i -s 262144 {$slbd_logfile}");
+		exec("/usr/sbin/clog -i -s 262144 {$ntpd_logfile}");
 		system_syslogd_start();
 	}
 }
@@ -65,7 +65,7 @@ include("head.inc");
 	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
 	$tab_array[] = array("IPsec VPN", false, "diag_logs_ipsec.php");
 	$tab_array[] = array("PPTP VPN", false, "diag_logs_vpn.php");
-	$tab_array[] = array("Load Balancer", false, "diag_logs_slbd.php");
+	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
 	$tab_array[] = array("OpenNTPD", true, "diag_logs_ntpd.php");
 	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
@@ -80,7 +80,7 @@ include("head.inc");
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> OpenNTPD log entries</td>
 		  </tr>
-		  <?php dump_clog($slbd_logfile, $nentries); ?>
+		  <?php dump_clog($ntpd_logfile, $nentries); ?>
 		<tr><td><br>
 		<form action="diag_logs_ntpd.php" method="post">
 			<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>

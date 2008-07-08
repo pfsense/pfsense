@@ -219,6 +219,7 @@ function filter_configure_xmlrpc($raw_params) {
 	filter_configure();
 	relayd_configure();
 	system_routing_configure();
+	setup_gateways_monitor();
 	return $xmlrpc_g['return']['true'];
 }
 

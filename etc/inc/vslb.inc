@@ -63,10 +63,10 @@ function relayd_configure() {
     for ($i = 0; isset($vs_a[$i]); $i++) {
       $conf .= "redirect \"{$vs_a[$i]['name']}\" {\n";
       $conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
-      $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} check tcp\n";
+      $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} check tcp timeout 1000\n";
       /* XXX - this needs to use the backup pool aka sitedown - but that isn't converted yet */
       if (isset($vs_a[$i]['sitedown']) &&  $vs_a[$i]['sitedown'] != "")
-        $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} check tcp\n";
+        $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} check tcp timeout 1000\n";
       $conf .= "}\n";
     }
   }

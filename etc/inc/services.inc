@@ -65,11 +65,11 @@ function services_dhcpd_configure() {
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/lib\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/run\n");
 	fwrite($fd, "chown -R dhcpd:_dhcp {$g['dhcpd_chroot_path']}/*\n");
-	fwrite($fd, "cp /lib/libc.so.6 {$g['dhcpd_chroot_path']}/lib/\n");
+	fwrite($fd, "cp /lib/libc.so.* {$g['dhcpd_chroot_path']}/lib/\n");
 	fwrite($fd, "cp /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
 	fwrite($fd, "chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
 	if(!trim($status))
-		fwrite($fd, "mount devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
+		fwrite($fd, "mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	fclose($fd);
 	mwexec("/bin/sh /tmp/dhcpd.sh");
 

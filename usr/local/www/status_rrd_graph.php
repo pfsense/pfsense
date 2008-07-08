@@ -194,10 +194,7 @@ include("head.inc");
 								case "outbound":
 									/* only show interfaces with a gateway */
 									$optionc = "$optionc[0]";
-									$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
-									$realif = convert_friendly_interface_to_real_interface_name(strtolower($optionc));
-									$monitorip = get_interface_gateway(strtolower($optionc));
-									if($monitorip == "") {
+									if(!interface_has_gateway($optionc)) {
 										continue 2; 
 									}
 									if(! preg_match("/($optionc)[-.]/i", $curdatabase)) {
@@ -249,12 +246,7 @@ include("head.inc");
 									$replace = array(" :: ", "", $friendly);
 									switch($curoption) {
 										case "outbound":
-											/* only show interfaces with a gateway */
-												$optionc = "$optionc[0]";
-												$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
-												$realif = convert_friendly_interface_to_real_interface_name(strtolower($optionc));
-												$monitorip = get_interface_gateway(strtolower($optionc));
-												if($monitorip == "") {
+											if(!interface_has_gateway($optionc)) {
 												continue 2; 
 											}
 											if(! stristr($curdatabase, $optionc)) {

@@ -123,10 +123,6 @@ if($old_ip <> "")
 		exec("/etc/rc.start_packages");
 
 
-/* reload slbd */
-/* if ($config['load_balancer']['lbpool']['type'] == "gateway") */
-log_error("Configuring slbd");
-slbd_configure();
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();
 

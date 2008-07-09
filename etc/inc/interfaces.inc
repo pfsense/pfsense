@@ -73,27 +73,28 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
         /* make sure the parent interface is up */
         mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
 
-        if ($g['booting'])
-                $vif = $vlanif;
+        if ($g['booting'] || !(empty($vlanif)))
+                mwexec("/sbin/ifconfig {$vlanif} create");
         else
-                $vif = "vlan";
-        $cmd = "/sbin/ifconfig {$vif} create vlan " .
+                $vlanif = exec("/sbin/ifconfig vlan create");
+
+        mwexec("/sbin/ifconfig {$vilanif} vlan " .
                 escapeshellarg($tag) . " vlandev " .
-                escapeshellarg($if);
+                escapeshellarg($if));
 
         /* get driver name */
         for ($j = 0; $j < strlen($if); $j++) {
                 if ($if[$j] >= '0' && $if[$j] <= '9')
                         break;
-	}
+        }
         $drvname = substr($if, 0, $j);
 
         if (in_array($drvname, $vlan_native_supp))
-                $cmd .= " link0";
+                mwexec("/sbin/ifconfig {$vlanif} link0");
         else if (in_array($drvname, $vlan_long_frame))
-                $cmd .= " mtu 1500";
+                $cmd .= mwexec("/sbin/ifconfig {$vlanif} vlanmtu 1500");
 
-        $vlanif = exec($cmd);
+        mwexec("/sbin/ifconfig {$vlanif} up");
 
         /* invalidate interface cache */
         get_interface_arr(true);

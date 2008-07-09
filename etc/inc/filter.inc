@@ -1711,7 +1711,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				// translate wan, man, lan, opt to real interface.
 				$interface = $rule['interface'];
 				$temp = filter_get_opt_interface_descr($interface);
-				if($temp <> "") $interface = $temp;
+				if($temp <> "" && $interface != "lan" && $interface != "wan")
+					$interface = $temp;
 				if(isset($rule['destination']['address'])) {
 					$canadd = 0; // XXX: billm - eh?  this is a nice little noop
 					/* because pf will not allow a interface for proxyARP
@@ -1721,7 +1722,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$canadd = 0;
 				}
 				if($canadd == 0 && !isset($rule['floating']))
-					$aline['interface'] = "on \$" . convert_real_interface_to_friendly_descr($rule['interface']) . " ";
+					$aline['interface'] = "on \$" . $interface . " ";
 			}
 
 

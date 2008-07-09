@@ -53,7 +53,7 @@ foreach ($ifdescrs as $ifname => $ifdesc) {
 	if (!is_ipaddr($oc['ipaddr']) && $is_olsr_enabled)
 		$singleif_nostaticip = true;
 	else if ($oc['if'] && (!$oc['bridge'])) 
-		$iflist[$ifname] = $ifdesc['descr'];
+		$iflist[$ifname] = $ifdesc;
 }
 
 /* set the starting interface */

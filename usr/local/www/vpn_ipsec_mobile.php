@@ -185,7 +185,7 @@ function methodsel_change() {
 }
 //-->
 </script>
-<form action="vpn_ipsec.php" method="post">
+<form action="vpn_ipsec_mobile.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_ipsecconfdirty_path)): ?><p>
 <?php print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>

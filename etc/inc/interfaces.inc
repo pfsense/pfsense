@@ -73,12 +73,13 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
         /* make sure the parent interface is up */
         mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
 
-        if ($g['booting'] || !(empty($vlanif)))
+        if ($g['booting'] || !(empty($vlanif))) {
+		mwexec("/sbin/ifconfig {$vlanif} destroy");
                 mwexec("/sbin/ifconfig {$vlanif} create");
-        else
+        } else
                 $vlanif = exec("/sbin/ifconfig vlan create");
 
-        mwexec("/sbin/ifconfig {$vilanif} vlan " .
+        mwexec("/sbin/ifconfig {$vlanif} vlan " .
                 escapeshellarg($tag) . " vlandev " .
                 escapeshellarg($if));
 

@@ -92,13 +92,6 @@ if ($_POST) {
 
                         write_config();
 
-                        if ($vlan['if'] == "lan")
-                                interfaces_lan_configure();
-                        else if ($vlan['if'] == "wan")
-                                interfaces_wan_configure();
-                        else
-                                interfaces_optional_configure_if($vlan['if']);
-
 			header("Location: interfaces_vlan.php");
 			exit;
 		}

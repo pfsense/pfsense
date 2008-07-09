@@ -1180,9 +1180,9 @@ function filter_nat_rules_generate() {
 						 */
 						/* Get the ftp queue for this interface */
 						if (isset($config['interfaces'][$rule['interface']]['ftpqueue']))
-							$shaper_queue = $config['interfaces'][$rule['interface']]['ftpqueue'];
+							$shaper_queue = " -q ". $config['interfaces'][$rule['interface']]['ftpqueue'];
 						/* else default queue configured on shaper will get this */
-						$after_filter_configure_run[] = "/usr/local/sbin/pftpx {$shaper_queue} -f {$target} -b {$external_address} -c 21 -g 21";
+						$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy {$shaper_queue} -R {$target} -b {$external_address} ";
 					}
 					$dontinstallrdr = true;
 				}

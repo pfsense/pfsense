@@ -1429,7 +1429,7 @@ function filter_nat_rules_generate() {
 		$natrules .= <<<EOD
 
 # PPTP
-#rdr on \$wan proto gre from any to any -> $pptpdtarget
+rdr on \$wan proto gre from any to any -> $pptpdtarget
 rdr on \$wan proto tcp from any to any port 1723 -> $pptpdtarget
 
 EOD;

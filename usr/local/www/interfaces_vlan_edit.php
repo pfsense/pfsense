@@ -79,8 +79,9 @@ if ($_POST) {
 		$vlan['if'] = $_POST['if'];
 		$vlan['tag'] = $_POST['tag'];
 		$vlan['descr'] = $_POST['descr'];
+		$vlan['vlanif'] = $_POST['vlanif'];
 
-                $vlan['vlanif'] = interface_vlan_configure($vlan['if'], $vlan['tag']);
+                $vlan['vlanif'] = interface_vlan_configure($vlan['if'], $vlan['tag'], $vlan['vlanif']);
                 if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan"))
                         $input_errors[] = "Error occured creating interface, please retry.";
                 else {
@@ -91,27 +92,12 @@ if ($_POST) {
 
                         write_config();
 
-
-			/* TODO 
-			this does not always work, some systems require
-			a reboot before VLANs function properly. Suspect
-			FreeBSD driver issue.
-		
-			This portion of code is also very slow, this is why
-			it takes a long time to add a new VLAN.
-			Benchmark_Timer on a 800 MHz VIA: 
-				interfaces_lan_configure() takes about 6 seconds 
-				interfaces_wan_configure() takes about 9.5 seconds
-				interfaces_optional_configure() takes about 5 seconds
-			*/
-
-			/* XXX: ermal -- on my test these now are only needed if the vlan
-					modification touches only one of these interfaces.
-					It needs some more testing to be activated though.
-			 */
-			interfaces_lan_configure();
-			interfaces_wan_configure();
-			interfaces_optional_configure();
+                        if ($vlan['if'] == "lan")
+                                interfaces_lan_configure();
+                        else if ($vlan['if'] == "wan")
+                                interfaces_wan_configure();
+                        else
+                                interfaces_optional_configure_if($vlan['if']);
 
 			header("Location: interfaces_vlan.php");
 			exit;
@@ -165,6 +151,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
+		    <input type="hidden" name="vlanif" value="<?=$pconfig['vlanif']; ?>">
                     <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()">
                     <?php if (isset($id) && $a_vlans[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">

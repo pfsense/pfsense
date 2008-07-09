@@ -43,22 +43,9 @@ $pfctl_vsq = `/sbin/pfctl -vsq`;
 $pfctl_vsq_array = split("\n", $pfctl_vsq);
 $if = "";
 foreach($pfctl_vsq_array as $pfctl) {
-	if (preg_match_all("/queue\s+(\w+)\s+/",$pfctl,$match_array))
-		if(stristr($match_array[1][0],"root_")==false)
-			$a_queues[] = $match_array[1][0] . " on {$if}" ;	
-		else {
-			$if = preg_replace("(root_)", "", $match_array[1][0]);
-			foreach ($config['interfaces'] as $ifkey => $ifdesc) {
-				if ($ifdesc['if'] == $if) {
-					if ($ifdesc['descr'] != "") {
-						$if = htmlspecialchars($ifdesc['descr']);
-					} else {
-						$if = strtoupper($ifkey);
-					}
-					break;
-				}
-			}
-		}
+	if (preg_match_all("/queue\s+(\w+)\s+(\w+)\s+(\w+)\s+/",$pfctl,$match_array))
+               $a_queues[] = $match_array[1][0] . " on " .
+				convert_real_interface_to_friendly_descr($match_array[3][0]);
 }
 
 $pgtitle = array("Status","Traffic shaper","Queues");

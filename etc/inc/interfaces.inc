@@ -93,7 +93,7 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
         if (in_array($drvname, $vlan_native_supp))
                 mwexec("/sbin/ifconfig {$vlanif} link0");
         else if (in_array($drvname, $vlan_long_frame))
-                $cmd .= mwexec("/sbin/ifconfig {$vlanif} vlanmtu 1500");
+                mwexec("/sbin/ifconfig {$vlanif} vlanmtu 1500");
 
         mwexec("/sbin/ifconfig {$vlanif} up");
 

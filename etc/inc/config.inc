@@ -1220,7 +1220,7 @@ function convert_config() {
         if ($config['version'] <= 4.4) {
                 if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
                         foreach ($config['vlans']['vlan'] as $id => $vlan)
-                                $vlan['vlanif'] = "vlan{$id}";
+                                $config['vlans']['vlan'][$id]['vlanif'] = "vlan{$id}";
                 }
                 $config['version'] = "4.5";
         }

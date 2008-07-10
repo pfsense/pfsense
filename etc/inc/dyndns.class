@@ -242,7 +242,7 @@
 				case 'noip':
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					$server = "http://dynupdate.no-ip.com/dns";
+					$server = "http://dynupdate.no-ip.com/ducupdate.php";
 					$port = "";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;

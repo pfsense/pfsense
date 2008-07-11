@@ -445,10 +445,10 @@ function get_vpns_list() {
 	$vpns = "";
 	$vpns_arr = array();
 	/* ipsec */
-	if ($config['ipsec']['tunnel']) {
-		foreach ($config['ipsec']['tunnel'] as $tunnel) {
-			if(is_subnet($tunnel['remote-subnet'])) {
-				$vpns_arr[] = $tunnel['remote-subnet'];
+	if ($config['ipsec']['phase2']) {
+		foreach ($config['ipsec']['phase2'] as $ph2ent) {
+			if(is_subnet($ph2ent['remote-subnet'])) {
+				$vpns_arr[] = $ph2ent['remote-subnet'];
 			}
 		}
 	}
@@ -2953,128 +2953,165 @@ EOD;
 	update_filter_reload_status("Creating carp rules...");
 
 	$ipfrules .= "\n# VPN Rules\n";
-	/*     is mobile ipsec enabled?  if so lets allow some pretty
-	 *     loose rules to allow mobile clients to phone in.
-	 */
-	$ipseccfg = $config['ipsec'];
-	if (isset($ipseccfg['mobileclients']['enable'])) {
-                $ifdescrs = get_configured_interface_with_descr();
-		foreach($ifdescrs as $ifr => $iface) {
-			/* only process interfaces with gateway */
-			if(! interface_has_gateway($ifr))
-				continue;
-
-			/* FIXME: make dynamic interface compatible */
-			$gateway = lookup_gateway_ip_by_name($config['interfaces'][$ifr]['gateway']);
-			$interface = convert_friendly_interface_to_real_interface_name($iface);
-			if((is_ipaddr($gateway)) && ($interface <> "")) {
-				$route_to = " route-to ( $interface $gateway ) ";
-				$reply_to = " reply-to ( $interface $gateway ) ";
-			}
-			$ifalias = convert_friendly_interface_to_friendly_descr($ifr);
-
-			/* pass in rules for IPSEC with reply-to */
-			$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
-			$ipfrules .= "pass in on \${$ifalias} $reply_to proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
-			$ipfrules .= "pass in on \${$ifalias} $reply_to proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
-			/* Pass out rules for IPSEC with route-to */
-			$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
-			$ipfrules .= "pass out on \${$ifalias} $route_to proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
-			$ipfrules .= "pass out on \${$ifalias} $route_to proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
-		}
-	}
 
 	if($config['interfaces']['lan']) {
 		$lan_ip = $config['interfaces']['lan']['ipaddr'];
 		$lan_subnet = $config['interfaces']['lan']['subnet'];
 	}
+
 	$wanif = get_real_wan_interface();
 	$wan_ip = find_interface_ip($wanif);
-	if($wan_ip) {
-		if($config['interfaces']['lan']) 
-			$internal_subnet = gen_subnet($lan_ip, $lan_subnet) . "/" . $config['interfaces']['lan']['subnet'];
+
+	if ($wan_ip) {
+
 		/* Is IP Compression enabled? */
-		if(isset($config['ipsec']['ipcomp']))
+		if (isset($config['ipsec']['ipcomp']))
 			exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
 		else
 			exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
 
 		/* if list */
-                $ifdescrs = get_configured_interface_with_descr();
+		$ifdescrs = get_configured_interface_with_descr();
 
-		if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable']) && (! isset($ipseccfg['mobileclients']['enable']))) {
-			foreach ($config['ipsec']['tunnel'] as $tunnel) {
-				if(isset($tunnel['disabled']))
-					continue;
-				update_filter_reload_status("Creating IPsec tunnel items {$tunnel['descr']}...");
-				/* if tunnel is disabled, lets skip to next item */
-				$ipsec_ips = array(get_current_wan_address($tunnel['interface']));
-				/* is this a dynamic dns hostname? */
-				$remote_gateway = gethostbyname($tunnel['remote-gateway']);
-				if($remote_gateway == "")
-					$remote_gateway = $tunnel['remote-gateway'];
-				/* do not add items with blank remote_gateway */
-				if(!$remote_gateway) {
-					$ipfrules .= "# ERROR!  Remote gateway not found on {$tunnel['remote-gateway']}\n";
+		/* NOTE : The ipsec related code was odd. I will
+		 * need feedback from other developers to get it
+		 * completelely sorted out.
+		 * -mgrooms 06/07/2008
+		 */
+		if(isset($config['ipsec']['enable']) &&
+		   is_array($config['ipsec']['phase1']) &&
+		   is_array($config['ipsec']['phase2'])) {
+			/* step through all phase1 entries */
+			foreach ($config['ipsec']['phase1'] as $ph1ent) {
+
+                if (isset ($ph1ent['disabled']))
+                    continue;
+
+				update_filter_reload_status("Creating IPsec phase1 items for {$ph1ent['descr']}...");
+
+				/*	NOTE : the old code built an array with a single
+				 *	element for each tunnel entry. Why? It was getting
+				 *	reset on each loop iteration.
+				 *
+				 *	ipsec_ips = array(get_current_wan_address($tunnel['interface']));
+				 *
+				 *	Is the get_current_wan_address function name
+				 *	misleading or did we always assume the local
+				 *	endpoint was the WAN interface?
+				 */
+
+				/* determine local and remote peer addresses */
+
+				$lgip = vpn_endpoint_determine($ph1ent, $wan_ip);
+
+				$rgip = $ph1ent['remote-gateway'];
+                if(!is_ipaddr($rgip))
+					$rgip = resolve_retry($rgip);
+
+				if (!$lgip) {
+					$ipfrules .= "# ERROR! Unable to determine local IPsec peer address for {$ph1ent['remote-gateway']}\n";
 					continue;
 				}
-				$local_subnet = return_vpn_subnet($tunnel['local-subnet']);
-				foreach($ifdescrs as $ifr => $iface) {
-					/* XXX: really needed?! */
-					if ($ifr == "lan")
+				if (!$rgip) {
+					$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['remote-gateway']}\n";
+					continue;
+				}
+
+				/*	Step through the interface list and the assigned IP
+				 *	addresses.
+				 *
+				 *	NOTE : I'm not really sure why this is neccessary. We
+				 *	have already resolved the local and remote endpoints
+				 *	and the interface is known. If vpn_endpoint_determine
+				 *	is not good enough to use here, it should be modified
+				 *	instead of doing the work locally. Otherwise we will
+				 *	have pf rules that don't match SPD.
+				 *	-mgrooms 06/07/2008
+				 */
+				foreach ($ifdescrs as $ifr => $iface) {
+
+					/*	Are we doing the lookups below just to ensure the
+					 *	interface has an IP address configured?
+					 *	-mgrooms 06/07/2008
+					 */
+
+					if($ifr == "wan")
+						$interface_ip = find_interface_ip(get_real_wan_interface());
+					else
+						$interface_ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($iface));
+
+					if(!$interface_ip)
 						continue;
 
-					foreach($ipsec_ips as $interface_ip) {
-						if($ifr == "wan")
-							$interface_ip = find_interface_ip(get_real_wan_interface());
-						else
-							$interface_ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($iface));
-						if(!$interface_ip) 
-							continue;
-						if(!$remote_gateway) 
-							continue;
-						/* only process interfaces with gateway */
-						if(! interface_has_gateway($ifr))
+					/*	NOTES : We went through a lot of trouble to determine the
+					 *	real interface address but we still use $lgip ( previously
+					 *	named $remote_gateway ) below in our rules. Why?
+					 *	
+					 *	There is also no statement to avoid adding rules/routes
+					 *	for interfaces that don't match the one defined in our
+					 *	phase1 entry ( previously a $tunnel ). Why do we loop if
+					 *	there is no qualification?
+					 *	-mgrooms 06/07/2008
+					 */
+
+					/* Only process interfaces with gateway */
+					if(! interface_has_gateway($ifr))
+						continue;
+
+					$gateway = lookup_gateway_ip_by_name($config['interfaces'][$ifr]['gateway']);
+					$interface = convert_friendly_interface_to_real_interface_name($iface);
+
+					$route_to = " route-to ( $interface $gateway ) ";
+					$reply_to = " reply-to ( $interface $gateway ) ";
+
+					/* Another conversion. Why? */
+					$ifalias = convert_friendly_interface_to_friendly_descr($ifr);
+
+					/* Add rules to allow IKE to pass */
+					$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to {$rgip} port = 500 keep state label \"IPsec: {$ph1ent['descr']} - outbound isakmp\"\n";
+					$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from {$rgip} to any port = 500 keep state label \"IPsec: {$ph1ent['descr']} - inbound isakmp\"\n";
+
+					/* If NAT-T is enabled, add additional rules */
+					if ($ph1ent['nat_traversal'] != "off" ) {
+						$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to {$rgip} port = 4500 keep state label \"IPsec: {$ph1ent['descr']} - outbound nat-t\"\n";
+						$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from {$rgip} to any port = 4500 keep state label \"IPsec: {$ph1ent['descr']} - inbound nat-t\"\n";
+					}
+
+					/*	Step through all phase2 entries and determine
+					 *	which protocols are in use with this peer
+					 */
+					$prot_used_esp = false;
+					$prot_used_ah  = false;
+
+					foreach ($config['ipsec']['phase2'] as $ph2ent) {
+
+						/* only evaluate ph2's bound to our ph1 */
+						if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
 							continue;
 
-						/* FIXME: make dynamic interface compatible */
-						$gateway = lookup_gateway_ip_by_name($config['interfaces'][$ifr]['gateway']);
-						$interface = convert_friendly_interface_to_real_interface_name($iface);
-						if((is_ipaddr($gateway)) && ($interface <> "")) {
-							$route_to = " route-to ( $interface $gateway ) ";
-							$reply_to = " reply-to ( $interface $gateway ) ";
-						}
-						$ifalias = convert_friendly_interface_to_friendly_descr($ifr);			
-						$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to {$remote_gateway} port = 500 keep state label \"IPsec: {$tunnel['descr']} - outbound isakmp\"\n";
-						$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from {$remote_gateway} to any port = 500 keep state label \"IPsec: {$tunnel['descr']} - inbound isakmp\"\n";
-						if ($tunnel['p2']['protocol'] == 'esp') {
-							$ipfrules .= "pass out on \${$ifalias} $route_to  proto esp from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound esp proto\"\n";
-							$ipfrules .= "pass in on \${$ifalias} $reply_to proto esp from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound esp proto\"\n";
-						}
-						if ($tunnel['p2']['protocol'] == 'ah') {
-							$ipfrules .= "pass out on \${$ifalias} $route_to proto ah from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound ah proto\"\n";
-							$ipfrules .= "pass in on \${$ifalias} $reply_to proto ah from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound ah proto\"\n";
-						}
+						if ($ph2ent['protocol'] == 'esp')
+							$prot_used_esp = true;
+							
+						if ($ph2ent['protocol'] == 'ah')
+							$prot_used_ah = true;
+					}
+
+					/* Add rules to allow the protocols in use */
+					if ($prot_used_esp) {
+						$ipfrules .= "pass out on \${$ifalias} $route_to proto esp from any to {$rgip} keep state label \"IPsec: {$ph1ent['descr']} - outbound esp proto\"\n";
+						$ipfrules .= "pass in on \${$ifalias} $reply_to proto esp from {$rgip} to any keep state label \"IPsec: {$ph1ent['descr']} - inbound esp proto\"\n";
+					}
+					if ($prot_used_ah) {
+						$ipfrules .= "pass out on \${$ifalias} $route_to proto ah from any to {$rgip} keep state label \"IPsec: {$ph1ent['descr']} - outbound ah proto\"\n";
+						$ipfrules .= "pass in on \${$ifalias} $reply_to proto ah from {$rgip} to any keep state label \"IPsec: {$ph1ent['descr']} - inbound ah proto\"\n";
 					}
 				}
 			}
 		}
-
-		/*     is mobile ipsec enabled?  if so lets allow some pretty
-		 *     loose rules to allow mobile clients to phone in.
-		 */
-		$ipseccfg = $config['ipsec'];
-		if (isset($ipseccfg['mobileclients']['enable'])) {
-			foreach($ifdescrs as $ifr => $iface) {
-				$ifalias = convert_friendly_interface_to_friendly_descr($ifr);
-
-				$ipfrules .= "pass in on \${$ifalias} proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
-				$ipfrules .= "pass in on \${$ifalias} proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
-				$ipfrules .= "pass in on \${$ifalias} proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
-			}
-		}
 	}
+
 	$ipfrules .= <<<EOD
+
 # Support for allow limiting of TCP connections by establishment rate
 anchor "limitingesr"
 pass in on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
@@ -3273,10 +3310,10 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			unset ($config_copy['virtualip']['vip'][$x]);
 		$config_copy['virtualip']['vip'][$x]['descr'] = remove_special_characters($config_copy['virtualip']['vip'][$x]['descr']);
 	}
-	for ($x = 0; $x < count($config_copy['ipsec']['tunnel']); $x++) {
-		if (isset ($config_copy['ipsec']['tunnel'][$x]['nosync']))
-			unset ($config_copy['ipsec']['tunnel'][$x]);
-		$config_copy['ipsec']['tunnel'][$x]['descr'] = remove_special_characters($config_copy['ipsec']['tunnel'][$x]['descr']);
+	for ($x = 0; $x < count($config_copy['ipsec']['phase1']); $x++) {
+		if (isset ($config_copy['ipsec']['phase1'][$x]['nosync']))
+			unset ($config_copy['ipsec']['phase1'][$x]);
+		$config_copy['ipsec']['phase1'][$x]['descr'] = remove_special_characters($config_copy['ipsec']['phase1'][$x]['descr']);
 	}
 
 	foreach($sections as $section) {

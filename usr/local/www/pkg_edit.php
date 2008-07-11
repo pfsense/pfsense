@@ -381,7 +381,7 @@ if ($pkg['tabs'] <> "") {
                   print("</select>\n<br />\n" . fixup_string($pkga['description']) . "\n");
 	      } else if($pkga['type'] == "vpn_selection") {
 		    echo "<select id='" . $pkga['fieldname'] . "' name='" . $vpn['name'] . "'>\n";
-		    foreach ($config['ipsec']['tunnel'] as $vpn) {
+		    foreach ($config['ipsec']['phase1'] as $vpn) {
 			echo "\t<option value=\"" . $vpn['descr'] . "\">" . $vpn['descr'] . "</option>\n";
 		    }
 		    echo "</select>\n";

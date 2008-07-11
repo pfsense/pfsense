@@ -33,30 +33,14 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array("Status","IPsec","SA");
+$pgtitle = array("Status","IPsec","SAD");
 include("head.inc");
 
-?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
-<?php
-	$tab_array = array();
-	$tab_array[0] = array("Overview", false, "diag_ipsec.php");
-	$tab_array[1] = array("SAD", true, "diag_ipsec_sad.php");
-	$tab_array[2] = array("SPD", false, "diag_ipsec_spd.php");
-	display_top_tabs($tab_array);
-?>
-  </td></tr>
-  <tr>
-    <td>
-<?php
+$sad = ipsec_dump_sad();
 
 /* delete any SA? */
 if ($_GET['act'] == "del") {
-	$fd = @popen("/sbin/setkey -c > /dev/null 2>&1", "w");
+	$fd = @popen("/usr/local/sbin/setkey -c > /dev/null 2>&1", "w");
 	if ($fd) {
 		fwrite($fd, "delete {$_GET['src']} {$_GET['dst']} {$_GET['proto']} {$_GET['spi']} ;\n");
 		pclose($fd);
@@ -64,87 +48,79 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-/* query SAD */
-$fd = @popen("/sbin/setkey -D", "r");
-$sad = array();
-if ($fd) {
-	while (!feof($fd)) {
-		$line = chop(fgets($fd));
-		if (!$line)
-			continue;
-		if ($line == "No SAD entries.")
-			break;
-		if ($line[0] != "\t") {
-			if (is_array($cursa))
-				$sad[] = $cursa;
-			$cursa = array();
-			list($cursa['src'],$cursa['dst']) = explode(" ", $line);
-			$i = 0;
-		} else {
-			$linea = explode(" ", trim($line));
-			if ($i == 1) {
-				$cursa['proto'] = $linea[0];
-				$cursa['spi'] = substr($linea[2], strpos($linea[2], "x")+1, -1);
-			} else if ($i == 2) {
-				$cursa['ealgo'] = $linea[1];
-			} else if ($i == 3) {
-				$cursa['aalgo'] = $linea[1];
-			}
-		}
-		$i++;
-	}
-	if (is_array($cursa) && count($cursa))
-		$sad[] = $cursa;
-	pclose($fd);
-}
 ?>
-	<div id="mainarea">
-            <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-<?php if (count($sad)): ?>
-  <tr>
-                <td nowrap class="listhdrr">Source</td>
-                <td nowrap class="listhdrr">Destination</a></td>
-                <td nowrap class="listhdrr">Protocol</td>
-                <td nowrap class="listhdrr">SPI</td>
-                <td nowrap class="listhdrr">Enc. alg.</td>
-                <td nowrap class="listhdr">Auth. alg.</td>
-                <td nowrap class="list"></td>
-	</tr>
-<?php
-foreach ($sad as $sa): ?>
-	<tr>
-		<td class="listlr"><?=htmlspecialchars($sa['src']);?></td>
-		<td class="listr"><?=htmlspecialchars($sa['dst']);?></td>
-		<td class="listr"><?=htmlspecialchars(strtoupper($sa['proto']));?></td>
-		<td class="listr"><?=htmlspecialchars($sa['spi']);?></td>
-		<td class="listr"><?=htmlspecialchars($sa['ealgo']);?></td>
-		<td class="listr"><?=htmlspecialchars($sa['aalgo']);?></td>
-		<td class="list" nowrap>
-		<?php
-			$args = "src=" . rawurlencode($sa['src']);
-			$args .= "&dst=" . rawurlencode($sa['dst']);
-			$args .= "&proto=" . rawurlencode($sa['proto']);
-			$args .= "&spi=" . rawurlencode("0x" . $sa['spi']);
-		?>
-		  <a href="diag_ipsec_sad.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security association?')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
-		</td>
 
-	</tr>
-<?php endforeach; ?>
-<?php else: ?>
-<tr><td><p><strong>No IPsec security associations.</strong></p></td></tr>
-<?php endif; ?>
-<td colspan="4">
-		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>You can configure your IPsec <a href="vpn_ipsec.php">here</a>.</span></p>
-		  </td>
-</table>
-</div>
-
-</td></tr>
-
-</table>
-
-<?php include("fend.inc"); ?>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+	<?php include("fbegin.inc"); ?>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td>
+				<?php
+					$tab_array = array();
+					$tab_array[0] = array("Overview", false, "diag_ipsec.php");
+					$tab_array[1] = array("SAD", true, "diag_ipsec_sad.php");
+					$tab_array[2] = array("SPD", false, "diag_ipsec_spd.php");
+					display_top_tabs($tab_array);
+				?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div id="mainarea">
+					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+						<?php if (count($sad)): ?>
+						<tr>
+							<td nowrap class="listhdrr">Source</td>
+							<td nowrap class="listhdrr">Destination</a></td>
+							<td nowrap class="listhdrr">Protocol</td>
+							<td nowrap class="listhdrr">SPI</td>
+							<td nowrap class="listhdrr">Enc. alg.</td>
+							<td nowrap class="listhdr">Auth. alg.</td>
+							<td nowrap class="list"></td>
+						</tr>
+						<?php foreach ($sad as $sa): ?>
+						<tr>
+							<td class="listlr"><?=htmlspecialchars($sa['src']);?></td>
+							<td class="listr"><?=htmlspecialchars($sa['dst']);?></td>
+							<td class="listr"><?=htmlspecialchars(strtoupper($sa['proto']));?></td>
+							<td class="listr"><?=htmlspecialchars($sa['spi']);?></td>
+							<td class="listr"><?=htmlspecialchars($sa['ealgo']);?></td>
+							<td class="listr"><?=htmlspecialchars($sa['aalgo']);?></td>
+							<td class="list" nowrap>
+								<?php
+									$args = "src=" . rawurlencode($sa['src']);
+									$args .= "&dst=" . rawurlencode($sa['dst']);
+									$args .= "&proto=" . rawurlencode($sa['proto']);
+									$args .= "&spi=" . rawurlencode("0x" . $sa['spi']);
+								?>
+								<a href="diag_ipsec_sad.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security association?')">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+								</a>
+							</td>
+						</tr>
+						<?php endforeach; ?>
+						<?php else: ?>
+						<tr>
+							<td>
+								<p><strong>No IPsec security associations.</strong></p>
+							</td>
+						</tr>
+						<?php endif; ?>
+						<td colspan="4">
+							<p>
+								<span class="vexpl">
+									<span class="red">
+										<strong>Note:<br></strong>
+									</span>
+									You can configure your IPsec <a href="vpn_ipsec.php">here</a>.
+								</span>
+							</p>
+						</td>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+	<?php include("fend.inc"); ?>
 </body>
 </html>

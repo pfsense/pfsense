@@ -3,6 +3,7 @@
 /*
 	diag_ipsec.php
 	Copyright (C) 2007 Scott Ullrich
+	Copyright (C) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
 	All rights reserved.
 
 	Parts of this code was originally based on vpn_ipsec_sad.php
@@ -30,170 +31,111 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+global $g;
+
 $pgtitle = array("Status","IPsec");
 
 require("guiconfig.inc");
 include("head.inc");
+
+if (!is_array($config['ipsec']['phase2']))
+    $config['ipsec']['phase2'] = array();
+
+$a_phase2 = &$config['ipsec']['phase2'];
+
+$spd = ipsec_dump_spd();
+$sad = ipsec_dump_sad();
+
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
 <div id="inputerrors"></div>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td>
-<?php
-	$tab_array = array();
-	$tab_array[0] = array("Overview", true, "diag_ipsec.php");
-	$tab_array[1] = array("SAD", false, "diag_ipsec_sad.php");
-	$tab_array[2] = array("SPD", false, "diag_ipsec_spd.php");
-	display_top_tabs($tab_array);
-?>
-    </td>
-  </tr>
-  <tr>
-    <td>
-<?php
-
-if (!is_array($config['ipsec']['tunnel'])) {
-	$config['ipsec']['tunnel'] = array();
-}
-
-/* query SAD */
-$fd = @popen("/sbin/setkey -D", "r");
-$sad = array();
-if ($fd) {
-	while (!feof($fd)) {
-		$line = chop(fgets($fd));
-		if (!$line)
-			continue;
-		if ($line == "No SAD entries.")
-			break;
-		if ($line[0] != "\t") {
-			if (is_array($cursa))
-				$sad[] = $cursa;
-			$cursa = array();
-			list($cursa['src'],$cursa['dst']) = explode(" ", $line);
-			$i = 0;
-		} else {
-			$linea = explode(" ", trim($line));
-			if ($i == 1) {
-				$cursa['proto'] = $linea[0];
-				$cursa['spi'] = substr($linea[2], strpos($linea[2], "x")+1, -1);
-			} else if ($i == 2) {
-				$cursa['ealgo'] = $linea[1];
-			} else if ($i == 3) {
-				$cursa['aalgo'] = $linea[1];
-			}
-		}
-		$i++;
-	}
-	if (is_array($cursa) && count($cursa))
-		$sad[] = $cursa;
-	pclose($fd);
-}
-?>
-	<div id="mainarea">
-            <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-<?php if (count($sad)): ?>
-  <tr>
-                <td nowrap class="listhdrr">Source</td>
-                <td nowrap class="listhdrr">Destination</a></td>
-                <td nowrap class="listhdrr">Description</a></td>
-                <td nowrap class="listhdrr">Status</td>
-	</tr>
-<?php
-foreach ($config['ipsec']['tunnel'] as $ipsec) {
-	if(! isset($ipsec['disabled'])) {
-?>
 	<tr>
-		<td class="listlr"><?=htmlspecialchars(get_ipsec_tunnel_src($ipsec));?>
-		<br/>
-        <?php	if ($ipsec['local-subnet']['network'])
-					echo strtoupper($ipsecent['local-subnet']['network']);
-				else
-					echo $ipsec['local-subnet']['address'];
-		?>		
+		<td>
+			<?php
+				$tab_array = array();
+				$tab_array[0] = array("Overview", true, "diag_ipsec.php");
+				$tab_array[1] = array("SAD", false, "diag_ipsec_sad.php");
+				$tab_array[2] = array("SPD", false, "diag_ipsec_spd.php");
+				display_top_tabs($tab_array);
+			?>
 		</td>
-		<td class="listr"><?=htmlspecialchars($ipsec['remote-gateway']);?>
-		<br/>
-		<?=$ipsec['remote-subnet'];?>
-		</td>
-		<td class="listr"><?=htmlspecialchars($ipsec['descr']);?></td>
-		<td class="listr"><?php echo output_ipsec_tunnel_status($ipsec); ?></td>
 	</tr>
-<?php
-	}
-}
-?>
-<?php else: ?>
-  <tr>
-    <td>
-      <p>
-        <strong>No IPsec security associations.</strong>
-      </p>
-    </td>
-  </tr>
-<?php endif; ?>
-  <tr>
-    <td colspan="4">
-		  <p>
-        <span class="vexpl">
-          <span class="red">
-            <strong>
-              Note:<br />
-            </strong>
-          </span>
-          You can configure your IPsec 
-          <a href="vpn_ipsec.php">here</a>.
-        </span>
-      </p>
+	<tr>
+    	<td>
+			<div id="mainarea">
+				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+					<?php if (count($sad)):	?>
+					<tr>
+						<td nowrap class="listhdrr">Local IP</td>
+						<td nowrap class="listhdrr">Remote IP</a></td>
+						<td nowrap class="listhdrr">Local Network</td>
+						<td nowrap class="listhdrr">Remote Network</a></td>
+						<td nowrap class="listhdrr">Description</a></td>
+						<td nowrap class="listhdrr">Status</td>
+					</tr>
+					<?php
+						foreach ($a_phase2 as $ph2ent) {
+							if (!isset($ph2ent['disabled'])) {
+								ipsec_lookup_phase1($ph2ent,$ph1ent);
+								if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent))
+									$icon = "pass";
+								else
+									$icon = "reject";
+					?>
+					<tr>
+						<td class="listlr">
+							<?=htmlspecialchars(ipsec_get_phase1_src($ph1ent));?>
+						</td>
+						<td class="listr">
+							<?=htmlspecialchars($ph1ent['remote-gateway']);?>
+						</td>
+						<td class="listr">
+							<?php echo ipsec_idinfo_to_text($ph2ent['localid']); ?>
+						</td>
+						<td class="listr">
+							<?php echo ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
+						</td>
+						<td class="listr"><?=htmlspecialchars($ph2ent['descr']);?></td>
+						<td class="listr">
+							<img src ="/themes/<?=$g['theme']?>/images/icons/icon_<?=$icon?>.gif">
+						</td>
+					</tr>
+					<?php
+							}
+						}
+					?>
+					<?php else: ?>
+					<tr>
+						<td>
+							<p>
+								<strong>No IPsec security associations.</strong>
+							</p>
+						</td>
+					</tr>
+					<?php endif; ?>
+					<tr>
+						<td colspan="4">
+							<p>
+								<span class="vexpl">
+									<span class="red">
+										<strong>Note:<br /></strong>
+									</span>
+									You can configure your IPsec 
+									<a href="vpn_ipsec.php">here</a>.
+								</span>
+							</p>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</td>
-  </tr>
-</table>
-</div>
-
-</td></tr>
-
+	</tr>
 </table>
 
 <?php include("fend.inc"); ?>
 </body>
 </html>
 
-<?php
-
-function get_ipsec_tunnel_src($tunnel) {
-	global $g, $config, $sad;
-	$if = "WAN";
-	if ($tunnel['interface']) {
-		$if = $tunnel['interface'];
-		$realinterface = convert_friendly_interface_to_real_interface_name($if);
-		$interfaceip = find_interface_ip($realinterface);
-	}
-	return $interfaceip;
-}
-
-function output_ipsec_tunnel_status($tunnel) {
-	global $g, $config, $sad;
-	$if = "WAN";
-	$interfaceip = get_ipsec_tunnel_src($tunnel);
-	$foundsrc = false;
-	$founddst = false;
-	foreach($sad as $sa) {
-		if($sa['src'] == $interfaceip) 
-			$foundsrc = true;
-		if($sa['dst'] == $tunnel['remote-gateway']) 
-			$founddst = true;
-	}
-	if($foundsrc && $founddst) { 
-		/* tunnel is up */
-		$iconfn = "pass";
-	} else {
-		/* tunnel is down */
-		$iconfn = "reject";
-	}
-	echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif'>";
-}
-
-?>

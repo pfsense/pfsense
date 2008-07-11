@@ -33,9 +33,8 @@
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
-require_once("/usr/local/www/widgets/include/ipsec.inc");
 
-	if (isset($config['ipsec']['tunnel'])){?>
+	if (isset($config['ipsec']['phase1'])){?>
 	<div>&nbsp;</div>
 	<?php	
 	$tab_array = array();
@@ -43,26 +42,27 @@ require_once("/usr/local/www/widgets/include/ipsec.inc");
 	$tab_array[1] = array("Tunnel Status", false, "ipsec-tunnel");
 	display_widget_tabs($tab_array);
 
-	$sad = array();
-	$sad = get_ipsec_tunnel_sad();
+	$spd = ipsec_dump_spd();
+	$sad = ipsec_dump_sad();
 
 	$activecounter = 0;
 	$inactivecounter = 0;
 	
 	$ipsec_detail_array = array();
-		foreach ($config['ipsec']['tunnel'] as $tunnel){ 
+		foreach ($config['ipsec']['phase2'] as $ph2ent){ 
+			ipsec_lookup_phase1($ph2ent,$ph1ent);
 			$ipsecstatus = false;
 			
 			$tun_disabled = "false";
 			$foundsrc = false;
 			$founddst = false; 
 	
-			if (isset($tunnel['disabled'])) {
+			if (isset($ph1ent['disabled']) || isset($ph2ent['disabled'])) {
 				$tun_disabled = "true";
 				continue;
-			}		
+			}
 			
-			if(output_ipsec_tunnel_status($tunnel)) {
+			if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent)) {
 				/* tunnel is up */
 				$iconfn = "true";
 				$activecounter++;
@@ -72,16 +72,16 @@ require_once("/usr/local/www/widgets/include/ipsec.inc");
 				$inactivecounter++;
 			}
 			
-			$ipsec_detail_array[] = array('src' => $tunnel['interface'],
-						'dest' => $tunnel['remote-gateway'],
-						'remote-subnet' => $tunnel['remote-subnet'],
-						'descr' => $tunnel['descr'],
+			$ipsec_detail_array[] = array('src' => $ph1ent['interface'],
+						'dest' => $ph1ent['remote-gateway'],
+						'remote-subnet' => ipsec_idinfo_to_text($ph2ent['remoteid']),
+						'descr' => $ph2ent['descr'],
 						'status' => $iconfn,
 						'disabled' => $tun_disabled);
 		}
 	}
 	
-	if (isset($config['ipsec']['tunnel'])){ ?>
+	if (isset($config['ipsec']['phase2'])){ ?>
 
 <div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;">
 	<div>

@@ -1260,7 +1260,183 @@ function convert_config() {
                 $config['version'] = "4.6";
         }
 
-	if ($prev_version != $config['version'])
+	/* Convert 4.6 -> 4.7 */
+	if ($config['version'] <= 4.7) {
+
+		/* Upgrade IPsec from tunnel to phase1/phase2 */
+
+		echo "Beginning upgrade to version 4.7\n";
+
+        if(is_array($config['ipsec']['tunnel'])) {
+
+			$a_phase1 = array();
+			$a_phase2 = array();
+			$ikeid = 0;
+
+			foreach ($config['ipsec']['tunnel'] as $tunnel) {
+
+				/* build new phase1 entry */
+
+				$ph1ent['ikeid'] = ++$ikeid;
+
+				if (isset($tunnel['disabled']))
+					$ph1ent['disabled'] = $tunnel['disabled'];
+
+				$ph1ent['interface'] = $tunnel['interface'];
+				$ph1ent['remote-gateway'] = $tunnel['remote-gateway'];
+				$ph1ent['descr'] = $tunnel['descr'];
+
+				$ph1ent['mode'] = $tunnel['p1']['mode'];
+
+				if (isset($tunnel['p1']['myident']['myaddress']))
+					$ph1ent['myid_type'] = "myaddress";
+				if (isset($tunnel['p1']['myident']['address'])) {
+					$ph1ent['myid_type'] = "address";
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['address'];
+				}
+				if (isset($tunnel['p1']['myident']['fqdn'])) {
+					$ph1ent['myid_type'] = "fqdn";
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['fqdn'];
+				}
+				if (isset($tunnel['p1']['myident']['user_fqdn'])) {
+					$ph1ent['myid_type'] = "user_fqdn";
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['user_fqdn'];
+				}
+				if (isset($tunnel['p1']['myident']['asn1dn'])) {
+					$ph1ent['myid_type'] = "asn1dn";
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['asn1dn'];
+				}
+				if (isset($tunnel['p1']['myident']['dyn_dns'])) {
+					$ph1ent['myid_type'] = "dyn_dns";
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['dyn_dns'];
+				}
+
+				$ph1ent['peerid_type'] = "peeraddress";
+
+				switch ($tunnel['p1']['encryption-algorithm']) {
+					case "des":
+						$ph1alg = array( 'name' => 'des' );
+						break;
+					case "3des":
+						$ph1alg = array( 'name' => '3des' );
+						break;
+					case "blowfish":
+						$ph1alg = array( 'name' => 'blowfish', 'keylen' => 'auto'  );
+						break;
+					case "cast128":
+						$ph1alg = array( 'name' => 'cast128' );
+						break;
+					case "rijndael":
+						$ph1alg = array( 'name' => 'aes', 'keylen' => 'auto' );
+						break;
+					case "rijndael 256":
+						$ph1alg = array( 'name' => 'aes', 'keylen' => '256' );
+						break;
+				}
+
+				$ph1ent['encryption-algorithm'] = $ph1alg;
+				$ph1ent['hash-algorithm'] = $tunnel['p1']['hash-algorithm'];
+				$ph1ent['dhgroup'] = $tunnel['p1']['dhgroup'];
+				$ph1ent['lifetime'] = $tunnel['p1']['lifetime'];
+				$ph1ent['authentication_method'] = $tunnel['p1']['authentication_method'];
+
+				if (isset($tunnel['p1']['pre-shared-key']))
+					$ph1ent['pre-shared-key'] = $tunnel['p1']['pre-shared-key'];
+				if (isset($tunnel['p1']['cert']))
+					$ph1ent['cert'] = $tunnel['p1']['cert'];
+				if (isset($tunnel['p1']['peercert']))
+					$ph1ent['peercert'] = $tunnel['p1']['peercert'];
+				if (isset($tunnel['p1']['private-key']))
+					$ph1ent['private-key'] = $tunnel['p1']['private-key'];
+
+				if (isset($tunnel['pinghost']['pinghost']))
+					$ph1ent['pinghost'] = $tunnel['pinghost'];
+
+				$ph1ent['nat_traversal'] = "on";
+				$ph1ent['dpd_enable'] = 1;
+				$ph1ent['dpd_delay'] = 10;
+				$ph1ent['dpd_maxfail'] = 5;
+
+				$a_phase1[] = $ph1ent;
+
+				/* build new phase2 entry */
+
+				$ph2ent['ikeid'] = $ikeid;
+
+				if (isset($tunnel['disabled']))
+					$ph1ent['disabled'] = $tunnel['disabled'];
+
+				$ph2ent['descr'] = "phase2 for ".$tunnel['descr'];
+
+				$type = "lan";
+				if ($tunnel['local-subnet']['network'])
+					$type = $tunnel['local-subnet']['network'];
+				if ($tunnel['local-subnet']['address']) {
+					list($address,$netbits) = explode("/",$tunnel['local-subnet']['address']);
+					if (is_null($netbits))
+						$type = "address";
+					else
+						$type = "network";
+				}
+				
+				switch ($type) {
+					case "address":
+						$ph2ent['localid'] = array('type' => $type,'address' => $address);
+						break;
+					case "network":
+						$ph2ent['localid'] = array('type' => $type,'address' => $address,'netbits' => $netbits);
+						break;
+					default:
+						$ph2ent['localid'] = array('type' => $type);
+						break;
+				}
+
+				list($address,$netbits) = explode("/",$tunnel['remote-subnet']);
+				$ph2ent['remoteid'] = array('type' => 'network','address' => $address,'netbits' => $netbits);
+
+				$ph2ent['protocol'] = $tunnel['p2']['protocol'];
+
+				foreach( $tunnel['p2']['encryption-algorithm-option'] as $tunalg ) {
+					switch ($tunalg) {
+						case "des":
+							$ph2alg = array( 'name' => 'des' );
+							break;
+						case "3des":
+							$ph2alg = array( 'name' => '3des' );
+							break;
+						case "blowfish":
+							$ph2alg = array( 'name' => 'blowfish', 'keylen' => 'auto'  );
+							break;
+						case "cast128":
+							$ph2alg = array( 'name' => 'cast128' );
+							break;
+						case "rijndael":
+							$ph2alg = array( 'name' => 'aes', 'keylen' => 'auto' );
+							break;
+						case "rijndael 256":
+							$ph2alg = array( 'name' => 'aes', 'keylen' => '256' );
+							break;
+					}
+
+					$ph2ent['encryption-algorithm-option'][] = $ph2alg;
+				}
+
+				$ph2ent['hash-algorithm-option'] = $tunnel['p2']['hash-algorithm-option'];
+				$ph2ent['pfsgroup'] = $tunnel['p2']['pfsgroup'];
+				$ph2ent['lifetime'] = $tunnel['p2']['lifetime'];
+
+				$a_phase2[] = $ph2ent;
+			}
+
+			unset($config['ipsec']['tunnel']);
+			$config['ipsec']['phase1'] = $a_phase1;
+			$config['ipsec']['phase2'] = $a_phase2;
+		}
+
+		$config['version'] = "4.7";
+	}
+
+//	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }
 

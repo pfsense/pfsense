@@ -3,6 +3,7 @@
 /*
 	vpn.inc
 	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2008 Shrew Soft Inc
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -33,6 +34,42 @@
 
 /* include all configuration functions */
 require_once ("functions.inc");
+
+/* IPsec defines */
+$my_identifier_list = array('myaddress' => 'My IP address',
+                                'address' => 'IP address',
+                                'keyid tag' => 'KeyID Tag',
+                                'fqdn' => 'Domain name',
+                                'user_fqdn' => 'User FQDN',
+                                'asn1dn' => 'Distinguished Name',
+                                'dyn_dns' => 'Dynamic DNS');
+
+$peer_identifier_list = array('peeraddress' => 'Peer IP address',
+                                'address' => 'IP address',
+                                'keyid tag' => 'KeyID Tag',
+                                'fqdn' => 'Domain name',
+                                'user_fqdn' => 'User FQDN',
+                                'asn1dn' => 'Distinguished Name');
+
+$p1_ealgos = array(
+                'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
+                'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 8 ) ),
+                '3des' => array( 'name' => '3DES' ),
+                'cast128' => array( 'name' => 'CAST128' ),
+                'des' => array( 'name' => 'DES' ) );
+
+$p2_ealgos = array(
+                'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
+                'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 8 ) ),
+                '3des' => array( 'name' => '3DES' ),
+                'cast128' => array( 'name' => 'CAST128' ),
+                'des' => array( 'name' => 'DES' ) );
+
+$p1_halgos = array('sha1' => 'SHA1', 'md5' => 'MD5');
+$p1_authentication_methods = array('pre_shared_key' => 'Pre-shared key', 'rsasig' => 'RSA signature');
+$p2_halgos = array('hmac_sha1' => 'SHA1', 'hmac_md5' => 'MD5');
+$p2_protos = array('esp' => 'ESP', 'ah' => 'AH');
+$p2_pfskeygroups = array('0' => 'off', '1' => '1', '2' => '2', '5' => '5');
 
 /* master setup for vpn (mpd) */
 function vpn_setup() {
@@ -98,8 +135,9 @@ function find_last_gif_device() {
 	return $last_gif_found;
 }
 
-function vpn_ipsec_configure($ipchg = false) {
-	global $config, $g, $sa, $sn;
+function vpn_ipsec_configure($ipchg = false)
+{
+	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos;
 
 	mwexec("/sbin/ifconfig enc0 up");
 
@@ -120,26 +158,25 @@ function vpn_ipsec_configure($ipchg = false) {
 		}
 	}
 
-	if(isset($config['ipsec']['preferredoldsa'])) {
+	if(isset($config['ipsec']['preferredoldsa']))
 		mwexec("/sbin/sysctl net.key.preferred_oldsa=0");
-	} else {
+	else
 		mwexec("/sbin/sysctl -w net.key.preferred_oldsa=-30");
-	}
 
 	$number_of_gifs = find_last_gif_device();
-	for ($x = 0; $x < $number_of_gifs; $x++) {
+	for ($x = 0; $x < $number_of_gifs; $x++)
 		mwexec("/sbin/ifconfig gif" . $x . " delete");
-	}
 
 	$curwanip = get_current_wan_address();
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
+	$a_phase1 = $config['ipsec']['phase1'];
+	$a_phase2 = $config['ipsec']['phase2'];
 	$lancfg = $config['interfaces']['lan'];
 	$lanip = $lancfg['ipaddr'];
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 	$lansn = $lancfg['subnet'];
-
 
 	if (!isset($ipseccfg['enable'])) {
 		mwexec("/sbin/ifconfig enc0 down");
@@ -162,9 +199,8 @@ function vpn_ipsec_configure($ipchg = false) {
 		return true;
 	}
 
-	if ($g['booting']) {
+	if ($g['booting'])
 		echo "Configuring IPsec VPN... ";
-	}
 
 	if (isset ($ipseccfg['enable'])) {
 		/* fastforwarding is not compatible with ipsec tunnels */
@@ -177,127 +213,128 @@ function vpn_ipsec_configure($ipchg = false) {
 			return 0;
 		}
 
-		if ((is_array($ipseccfg['tunnel']) && count($ipseccfg['tunnel'])) ||
-		  isset ($ipseccfg['mobileclients']['enable'])) {
-		  
-			$dnswatch_list = array();
-			$rgmap = array();
-		  
-			if (is_array($ipseccfg['tunnel']) && count($ipseccfg['tunnel'])) {
-				/* generate spd.conf */
-				$fd = fopen("{$g['varetc_path']}/spd.conf", "w");
-				if (!$fd) {
-					printf("Error: cannot open spd.conf in vpn_ipsec_configure().\n");
-					return 1;
+		/* resolve all local, peer addresses and setup pings */
+		$ipmap = array();
+		$rgmap = array();
+		$dnswatch_list = array();
+		if (is_array($a_phase1) && count($a_phase1)) {
+			foreach ($a_phase1 as $ph1ent) {
+				if (isset($ph1ent['disabled']))
+					continue;
+
+				$ep = vpn_endpoint_determine($ph1ent, $curwanip);
+				if (!$ep)
+					continue;
+
+				if(!in_array($ep,$ipmap))
+					$ipmap[] = $ep;
+
+				/* see if this tunnel has a hostname for the remote-gateway. If so,
+				   try to resolve it now and add it to the list for dnswatch */
+
+				$rg = $ph1ent['remote-gateway'];
+
+				if (!is_ipaddr($rg)) {
+					$dnswatch_list[] = $rg;
+					$rg = resolve_retry($rg);
+
+					if (!$rgip)
+						continue;
 				}
 
-				$spdconf = "";
+				$rgmap[$ph1ent['remote-gateway']] = $rg;
 
-				$spdconf .= "spdadd {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
-				$spdconf .= "spdadd {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
+				/* add an ipsec pinghosts entry */
 
-				foreach ($ipseccfg['tunnel'] as $tunnel) {
-					if (isset ($tunnel['disabled']))
-						continue;
-
-				   /* see if this tunnel has a hostname for the remote-gateway, and if so,
-				      try to resolve it now and add it to the list for dnswatch */
-				   if (!is_ipaddr($tunnel['remote-gateway'])) {
-				           $dnswatch_list[] = $tunnel['remote-gateway'];
-				           $rgip = resolve_retry($tunnel['remote-gateway']);
-				
-				           if (!$rgip)
-				                   continue;
-				
-				   } else {
-				           $rgip = $tunnel['remote-gateway'];
-				   }
-				   $rgmap[$tunnel['remote-gateway']] = $rgip;
-
-					$ep = vpn_endpoint_determine($tunnel, $curwanip);
-					if (!$ep)
-						continue;
-
-					vpn_localnet_determine($tunnel['local-subnet'], $sa, $sn);
-
-					if (is_domain($tunnel['remote-gateway'])) {
-						$tmp = gethostbyname($tunnel['remote-gateway']);
-						if ($tmp)
-							$tunnel['remote-gateway'] = $tmp;
+				if ($ph1ent['pinghost']) {
+					$pfd = fopen("/var/db/ipsecpinghosts", "a");
+					$iflist = array("lan" => "lan", "wan" => "wan");
+					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
+						$iflist['opt' . $i] = "opt{$i}";
+					foreach ($iflist as $ifent => $ifname) {
+						$interface_ip = find_interface_ip($config['interfaces'][$ifname]['if']);
+						if (ip_in_subnet($interface_ip, $sa . "/" . $sn))
+						$srcip = find_interface_ip($config['interfaces'][$ifname]['if']);
 					}
-
-					/* add entry to host pinger */
-					if ($tunnel['pinghost']) {
-						$pfd = fopen("/var/db/ipsecpinghosts", "a");
-
-					/* if list */
-        				$iflist = get_configured_interface_list();
-
-			            foreach ($iflist as $ifent => $ifname) {
-			            	$interface_ip = find_interface_ip($config['interfaces'][$ifname]['if']);
-			            	if (ip_in_subnet($interface_ip, $sa . "/" . $sn))
-			                	$srcip = find_interface_ip($config['interfaces'][$ifname]['if']);
-			            }
-						$dstip = $tunnel['pinghost'];
-						fwrite($pfd, "$srcip|$dstip|3\n");
-						fclose($pfd);
-					}
-
-					if (isset ($tunnel['creategif'])) {
-						$number_of_gifs = find_last_gif_device();
-						$number_of_gifs++;
-						$curwanip = get_current_wan_address();
-						if ($config['installedpackages']['sasyncd']['config'] <> "")
-							foreach ($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
-								if ($sasyncd['ip'] <> "")
-									$curwanip = $sasyncd['ip'];
-							}
-						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $tunnel['remote-gateway']);
-						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
-					}
-
-					$spdconf .= "spdadd {$sa}/{$sn} " .
-					  "{$tunnel['remote-subnet']} any -P out ipsec " .
-					  "{$tunnel['p2']['protocol']}/tunnel/{$ep}-" .
-					  "{$rgip}/unique;\n";
-
-					$spdconf .= "spdadd {$tunnel['remote-subnet']} " .
-					  "{$sa}/{$sn} any -P in ipsec " .
-					  "{$tunnel['p2']['protocol']}/tunnel/{$rgip}-" .
-					  "{$ep}/unique;\n";
-
-					/* static route needed? */
-					if(preg_match("/^carp/i", $tunnel['interface'])) {
-						$parentinterface = link_carp_interface_to_parent($tunnel['interface']);
-					} else {
-						$parentinterface = $tunnel['interface'];
-					}
-					if($parentinterface <> "wan") {
-						/* add endpoint routes to correct gateway on interface */
-						if(interface_has_gateway($parentinterface)) {
-							$gatewayip = get_interface_gateway("$parentinterface");
-							$interfaceip = $config['interfaces'][$parentinterface]['ipaddr'];
-							$subnet_bits = $config['interfaces'][$parentinterface]['subnet'];
-							$subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
-							/* if the remote gateway is in the local subnet, then don't add a route */
-							if(! ip_in_subnet($tunnel['remote-gateway'], "{$subnet_ip}/{$subnet_bits}")) {
-								if(is_ipaddr($gatewayip)) {
-									log_error("IPSEC interface is not WAN but {$tunnel['interface']}, adding static route for VPN endpoint {$tunnel['remote-gateway']} via {$gatewayip}");
-									mwexec("/sbin/route delete -host {$tunnel['remote-gateway']};/sbin/route add -host {$tunnel['remote-gateway']} {$gatewayip}");
-								}
-							}
-						}
-					} else {
-						mwexec("/sbin/route delete -host {$tunnel['remote-gateway']}");
-					}
-
+					$dstip = $ph1ent['pinghost'];
+					fwrite($pfd, "$srcip|$dstip|3\n");
+					fclose($pfd);
 				}
-
-				fwrite($fd, $spdconf);
-				fclose($fd);
 			}
+		}
 
-			/* generate racoon.conf */
+		/* generate CA certificates files */
+		$cacertnum = 0;
+		if (is_array($ipseccfg['cacert']) && count($ipseccfg['cacert'])) {
+			foreach ($ipseccfg['cacert'] as $cacert) {
+				++ $cacertnum;
+				if (isset ($cacert['cert'])) {
+					$cert = base64_decode($cacert['cert']);
+					$x509cert = openssl_x509_parse(openssl_x509_read($cert));
+					if (is_array($x509cert) && isset ($x509cert['hash'])) {
+						$fd1 = fopen("{$g['varetc_path']}/{$x509cert['hash']}.0", "w");
+						if (!$fd1) {
+							printf("Error: cannot open {$x509cert['hash']}.0 in vpn.\n");
+							return 1;
+						}
+						chmod("{$g['varetc_path']}/{$x509cert['hash']}.0", 0600);
+						fwrite($fd1, $cert);
+						fclose($fd1);
+					}
+				}
+			}
+		}
+		
+		/* generate psk.txt */
+		$fd = fopen("{$g['varetc_path']}/psk.txt", "w");
+		if (!$fd) {
+			printf("Error: cannot open psk.txt in vpn_ipsec_configure().\n");
+			return 1;
+		}
+
+		$pskconf = "";
+
+		if (is_array($a_phase1) && count($a_phase1)) {
+			foreach ($a_phase1 as $ph1ent) {
+
+				if (isset($ph1ent['disabled']))
+					continue;
+
+				$rgip = $rgmap[$ph1ent['remote-gateway']];
+					if (!$rgip)
+						continue;
+
+				$peerid_type = $ph1ent['peerid_type'];
+
+				switch ($peerid_type) {
+					case "peeraddress":
+						$peerid_type = "address";
+						$peerid_data = $rgip;
+						break;
+
+					case "address";
+						$peerid_data = $ph1ent['peerid_data'];
+						break;
+
+					case "fqdn";
+					case "keyid tag";
+					case "user_fqdn";
+						$peerid_data = $ph1ent['peerid_data'];
+						break;
+				}
+
+				$pskconf .= "{$peerid_data}\t\t\t{$ph1ent['pre-shared-key']}\n";
+			}
+		}
+
+		fwrite($fd, $pskconf);
+		fclose($fd);
+		chmod("{$g['varetc_path']}/psk.txt", 0600);
+			
+		/* begin racoon.conf */
+		if ((is_array($a_phase1) && count($a_phase1)) ||
+			(is_array($a_phase2) && count($a_phase2))) {
+
 			$fd = fopen("{$g['varetc_path']}/racoon.conf", "w");
 			if (!$fd) {
 				printf("Error: cannot open racoon.conf in vpn_ipsec_configure().\n");
@@ -309,395 +346,400 @@ function vpn_ipsec_configure($ipchg = false) {
 			$racoonconf .= "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";
 			$racoonconf .= "path certificate  \"{$g['varetc_path']}\";\n\n";
 
-			/* generate CA certificates files */
-			$cacertnum = 0;
-			if (is_array($ipseccfg['cacert']) && count($ipseccfg['cacert']))
-				foreach ($ipseccfg['cacert'] as $cacert) {
-					++ $cacertnum;
-					if (isset ($cacert['cert'])) {
-						$cert = base64_decode($cacert['cert']);
-						$x509cert = openssl_x509_parse(openssl_x509_read($cert));
-						if (is_array($x509cert) && isset ($x509cert['hash'])) {
-							$fd1 = fopen("{$g['varetc_path']}/{$x509cert['hash']}.0", "w");
-							if (!$fd1) {
-								printf("Error: cannot open {$x509cert['hash']}.0 in vpn.\n");
-								return 1;
-							}
-							chmod("{$g['varetc_path']}/{$x509cert['hash']}.0", 0600);
-							fwrite($fd1, $cert);
-							fclose($fd1);
-						}
-					}
+			/* begin listen section */
+			if (count($ipmap)) {
+				$racoonconf .= "\nlisten\n";
+				$racoonconf .= "{\n";
+				foreach ($ipmap as $addr) {
+					$racoonconf .= "\tisakmp {$addr} [500];\n";
+					$racoonconf .= "\tisakmp_natt {$addr} [4500];\n";
 				}
+				$racoonconf .= "}\n\n";
+			}
 
-			$tunnelnumber = 0;
-			if (is_array($ipseccfg['tunnel']) && count($ipseccfg['tunnel']))
-				foreach ($ipseccfg['tunnel'] as $tunnel) {
-
-					++ $tunnelnumber;
-
-					if (isset ($tunnel['disabled']))
+			/* begin remote sections */
+			if (is_array($a_phase1) && count($a_phase1)) {
+				/* begin remote */
+				foreach ($a_phase1 as $ph1ent) {
+					if (isset($ph1ent['disabled']))
 						continue;
 
+					$ikeid = $ph1ent['ikeid'];
 
-					  $rgip = $rgmap[$tunnel['remote-gateway']];
-					   if (!$rgip)
-					           continue;
-
-					$ep = vpn_endpoint_determine($tunnel, $curwanip);
+					$ep = vpn_endpoint_determine($ph1ent, $curwanip);
 					if (!$ep)
 						continue;
 
-					vpn_localnet_determine($tunnel['local-subnet'], $sa, $sn);
+					$myid_type = $ph1ent['myid_type'];
 
-					if (isset ($tunnel['p1']['myident']['myaddress'])) {
-						$myidentt = "address";
-						$myident = $ep;
-					} elseif (isset ($tunnel['p1']['myident']['address'])) {
-						$myidentt = "address";
-						$myident = $tunnel['p1']['myident']['address'];
-					} elseif (isset ($tunnel['p1']['myident']['fqdn'])) {
-						$myidentt = "fqdn";
-						$myident = $tunnel['p1']['myident']['fqdn'];
-					} elseif (isset ($tunnel['p1']['myident']['ufqdn'])) {
-						$myidentt = "user_fqdn";
-						$myident = $tunnel['p1']['myident']['ufqdn'];
-					} else if (isset($tunnel['p1']['myident']['asn1dn'])) {
-						$myidentt = "asn1dn";
-						$myident = $tunnel['p1']['myident']['asn1dn'];					
-					} else if (isset($tunnel['p1']['myident']['asn1dn'])) {
-						$myidentt = "asn1dn";
-						$myident = $tunnel['p1']['myident']['asn1dn'];						
-					} elseif (isset ($tunnel['p1']['myident']['dyn_dns'])) {
-						$myidentt = "dyn_dns";
-						$myident = gethostbyname($tunnel['p1']['myident']['dyn_dns']);
+					switch ($myid_type) {
+
+						case "myaddress":
+							$myid_type = "address";
+							$myid_data = $ep;
+							break;
+
+						case "dyn_dns":
+							$myid_data = gethostbyname($ph1ent['myid_data']);
+							break;
+
+						case "address";
+							$myid_data = $ph1ent['myid_data'];
+							break;
+
+						case "fqdn";
+						case "keyid tag";
+						case "user_fqdn";
+						case "asn1dn";
+							$myid_data = $ph1ent['myid_data'];
+							if( $myid_data )
+								$myid_data = "\"".$myid_data."\"";
+							break;
 					}
 
-					if (!($myidentt == "asn1dn" && $myident == "")) {
-						$myident = " \"{$myident}\"";
+					$rgip = $rgmap[$ph1ent['remote-gateway']];
+						if (!$rgip)
+							continue;
+
+					$peerid_type = $ph1ent['peerid_type'];
+
+					switch ($peerid_type) {
+						case "peeraddress":
+							$peerid_type = "address";
+							$peerid_data = $rgip;
+							break;
+
+						case "address";
+							$peerid_data = $ph1ent['peerid_data'];
+							break;
+
+						case "fqdn";
+						case "keyid tag";
+						case "user_fqdn";
+						case "asn1dn";
+							$peerid_data = $ph1ent['peerid_data'];
+							if( $peerid_data )
+								$peerid_data = "\"".$peerid_data."\"";
+							break;
 					}
 
 					$nattline = '';
-					if (isset($tunnel['natt'])) {
-						$nattline = "nat_traversal on;";
-					}
+					if (isset($ph1ent['nat_traversal']))
+						$nattline = "nat_traversal {$ph1ent['nat_traversal']};";
 
-					if (isset ($tunnel['p1']['authentication_method'])) {
-						$authmethod = $tunnel['p1']['authentication_method'];
-					} else {
+					if (isset ($ph1ent['authentication_method']))
+						$authmethod = $ph1ent['authentication_method'];
+					else
 						$authmethod = 'pre_shared_key';
-					}
 
 					$certline = '';
 
 					if ($authmethod == 'rsasig') {
-						if ($tunnel['p1']['cert'] && $tunnel['p1']['private-key']) {
-							$cert = base64_decode($tunnel['p1']['cert']);
-							$private_key = base64_decode($tunnel['p1']['private-key']);
+						if ($ph1ent['cert'] && $ph1ent['private-key']) {
+							$cert = base64_decode($ph1ent['cert']);
+							$private_key = base64_decode($ph1ent['private-key']);
 						} else {
 							/* null certificate/key */
 							$cert = '';
 							$private_key = '';
 						}
 
-						if ($tunnel['p1']['peercert'])
-							$peercert = base64_decode($tunnel['p1']['peercert']);
+						if ($ph1ent['peercert'])
+							$peercert = base64_decode($ph1ent['peercert']);
 						else
 							$peercert = '';
 
-						$fd1 = fopen("{$g['varetc_path']}/server{$tunnelnumber}-signed.pem", "w");
+						$fd1 = fopen("{$g['varetc_path']}/server{$ikeid}-signed.pem", "w");
 						if (!$fd1) {
-							printf("Error: cannot open server{$tunnelnumber}-signed.pem in vpn.\n");
+							printf("Error: cannot open server{$ikeid}-signed.pem in vpn.\n");
 							return 1;
 						}
-						chmod("{$g['varetc_path']}/server{$tunnelnumber}-signed.pem", 0600);
+						
+						chmod("{$g['varetc_path']}/server{$ikeid}-signed.pem", 0600);
 						fwrite($fd1, $cert);
 						fclose($fd1);
 
-						$fd1 = fopen("{$g['varetc_path']}/server{$tunnelnumber}-key.pem", "w");
+						$fd1 = fopen("{$g['varetc_path']}/server{$ikeid}-key.pem", "w");
 						if (!$fd1) {
-							printf("Error: cannot open server{$tunnelnumber}-key.pem in vpn.\n");
+							printf("Error: cannot open server{$ikeid}-key.pem in vpn.\n");
 							return 1;
 						}
-						chmod("{$g['varetc_path']}/server{$tunnelnumber}-key.pem", 0600);
+						chmod("{$g['varetc_path']}/server{$ikeid}-key.pem", 0600);
 						fwrite($fd1, $private_key);
 						fclose($fd1);
 
-						$certline = "certificate_type x509 \"server{$tunnelnumber}-signed.pem\" \"server{$tunnelnumber}-key.pem\";";
+						$certline = "certificate_type x509 \"server{$ikeid}-signed.pem\" \"server{$ikeid}-key.pem\";";
 
 						if ($peercert != '') {
-							$fd1 = fopen("{$g['varetc_path']}/peer{$tunnelnumber}-signed.pem", "w");
+							$fd1 = fopen("{$g['varetc_path']}/peer{$ikeid}-signed.pem", "w");
 							if (!$fd1) {
-								printf("Error: cannot open server{$tunnelnumber}-signed.pem in vpn.\n");
+								printf("Error: cannot open server{$ikeid}-signed.pem in vpn.\n");
 								return 1;
 							}
-							chmod("{$g['varetc_path']}/peer{$tunnelnumber}-signed.pem", 0600);
+							chmod("{$g['varetc_path']}/peer{$ikeid}-signed.pem", 0600);
 							fwrite($fd1, $peercert);
 							fclose($fd1);
-							$certline .=<<<EOD
-
-	peers_certfile "peer{$tunnelnumber}-signed.pem";
-EOD;
+							$certline .="peers_certfile \"peer{$ikeid}-signed.pem\"";
 						}
 					}
-					$myidentifier = $myidentt;
-					if (!empty($myident)) 
-						$myidentifier .= ' "' . $myident . '"';					
+
+					$ealgos = '';
+					$ealg_id = $ph1ent['encryption-algorithm']['name'];
+					$ealg_kl = $ph1ent['encryption-algorithm']['keylen'];
+					if ($ealg_kl)
+						$ealgos = $ealgos.$ealg_id." ".$ealg_kl;
+					else
+						$ealgos = $ealgos.$ealg_id;
+
+					$lifeline = '';
+					if ($ph1ent['lifetime'])
+						$lifeline = "lifetime time {$ph1ent['lifetime']} secs;";
+						
+					/* add remote section to configuration */
+
 					$racoonconf .=<<<EOD
-remote {$tunnel['remote-gateway']} {
-	exchange_mode {$tunnel['p1']['mode']};
-	my_identifier {$myidentt}{$myident};
+				
+remote {$rgip}
+{
+	ph1id {$ikeid};
+	exchange_mode {$ph1ent['mode']};
+	my_identifier {$myid_type} {$myid_data};
+	peers_identifier {$peerid_type} {$peerid_data};
+	ike_frag on;
 	{$nattline}
 	{$certline}
-	peers_identifier address {$rgip};
 	initial_contact on;
-	dpd_delay 120;                   # DPD poll every 120 seconds
-	ike_frag on;
 	support_proxy on;
-	proposal_check obey;
+	proposal_check claim;
 
-	proposal \{
-		encryption_algorithm {$tunnel['p1']['encryption-algorithm']};
-		hash_algorithm {$tunnel['p1']['hash-algorithm']};
+	proposal
+	{
 		authentication_method {$authmethod};
-		dh_group {$tunnel['p1']['dhgroup']};
+		encryption_algorithm ${ealgos};
+		hash_algorithm {$ph1ent['hash-algorithm']};
+		dh_group {$ph1ent['dhgroup']};
+		${lifeline}
+	}
+}
 
 EOD;
-					if ($tunnel['p1']['lifetime'])
-						$racoonconf .= "		lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-
-					$racoonconf .= "	}\n";
-
-					if ($tunnel['p1']['lifetime'])
-						$racoonconf .= "	lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-
-					$racoonconf .= "}\n\n";
-
-					$p2ealgos = join(",", $tunnel['p2']['encryption-algorithm-option']);
-					$p2halgos = join(",", $tunnel['p2']['hash-algorithm-option']);
-
-					$racoonconf .=<<<EOD
-sainfo address {$sa}/{$sn} any address {$tunnel['remote-subnet']} any \{
-	encryption_algorithm {$p2ealgos};
-	authentication_algorithm {$p2halgos};
-	compression_algorithm deflate;
-
-EOD;
-
-					if ($tunnel['p2']['pfsgroup'])
-						$racoonconf .= "	pfs_group {$tunnel['p2']['pfsgroup']};\n";
-
-					if ($tunnel['p2']['lifetime'])
-						$racoonconf .= "	lifetime time {$tunnel['p2']['lifetime']} secs;\n";
-
-					$racoonconf .= "}\n\n";
 				}
-
-			/* mobile clients? */
-			if (isset ($ipseccfg['mobileclients']['enable'])) {
-
-				$tunnel = $ipseccfg['mobileclients'];
-
-				if (isset ($tunnel['p1']['myident']['myaddress'])) {
-					$myidentt = "address";
-					$myident = $curwanip;
-				} else
-					if (isset ($tunnel['p1']['myident']['address'])) {
-						$myidentt = "address";
-						$myident = $tunnel['p1']['myident']['address'];
-					} else
-						if (isset ($tunnel['p1']['myident']['fqdn'])) {
-							$myidentt = "fqdn";
-							$myident = $tunnel['p1']['myident']['fqdn'];
-						} else
-							if (isset ($tunnel['p1']['myident']['ufqdn'])) {
-								$myidentt = "user_fqdn";
-								$myident = $tunnel['p1']['myident']['ufqdn'];
-							}
-
-				if (isset ($tunnel['p1']['authentication_method'])) {
-					$authmethod = $tunnel['p1']['authentication_method'];
-				} else {
-					$authmethod = 'pre_shared_key';
-				}
-
-				$certline = '';
-				if ($authmethod == 'rsasig') {
-					if ($tunnel['p1']['cert'] && $tunnel['p1']['private-key']) {
-						$cert = base64_decode($tunnel['p1']['cert']);
-						$private_key = base64_decode($tunnel['p1']['private-key']);
-					} else {
-						/* null certificate/key */
-						$cert = '';
-						$private_key = '';
-					}
-
-					if ($tunnel['p1']['peercert'])
-						$peercert = base64_decode($tunnel['p1']['peercert']);
-					else
-						$peercert = '';
-
-					$fd1 = fopen("{$g['varetc_path']}/server-mobile{$tunnelnumber}-signed.pem", "w");
-					if (!$fd1) {
-						printf("Error: cannot open server-mobile{$tunnelnumber}-signed.pem in vpn.\n");
-						return 1;
-					}
-					chmod("{$g['varetc_path']}/server-mobile{$tunnelnumber}-signed.pem", 0600);
-					fwrite($fd1, $cert);
-					fclose($fd1);
-
-					$fd1 = fopen("{$g['varetc_path']}/server-mobile{$tunnelnumber}-key.pem", "w");
-					if (!$fd1) {
-						printf("Error: cannot open server-mobile{$tunnelnumber}-key.pem in vpn.\n");
-						return 1;
-					}
-					chmod("{$g['varetc_path']}/server-mobile{$tunnelnumber}-key.pem", 0600);
-					fwrite($fd1, $private_key);
-					fclose($fd1);
-
-					$certline = "certificate_type x509 \"server-mobile{$tunnelnumber}-signed.pem\" \"server-mobile{$tunnelnumber}-key.pem\";";
-				}
-				$racoonconf .=<<<EOD
-remote anonymous \{
-	exchange_mode {$tunnel['p1']['mode']};
-	my_identifier {$myidentt}{$myident};
-	{$certline}
-	initial_contact on;
-	dpd_delay 120;                   # DPD poll every 120 seconds
-	ike_frag on;
-	passive on;
-	generate_policy on;
-	support_proxy on;
-	proposal_check obey;
-
-	proposal \{
-		encryption_algorithm {$tunnel['p1']['encryption-algorithm']};
-		hash_algorithm {$tunnel['p1']['hash-algorithm']};
-		authentication_method {$authmethod};
-		dh_group {$tunnel['p1']['dhgroup']};
-
-EOD;
-				if ($tunnel['p1']['lifetime'])
-					$racoonconf .= "		lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-
-				$racoonconf .= "	}\n";
-
-				if ($tunnel['p1']['lifetime'])
-					$racoonconf .= "	lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-
-				$racoonconf .= "}\n\n";
-
-				$p2ealgos = join(",", $tunnel['p2']['encryption-algorithm-option']);
-				$p2halgos = join(",", $tunnel['p2']['hash-algorithm-option']);
-
-				$racoonconf .=<<<EOD
-sainfo anonymous \{
-	encryption_algorithm {$p2ealgos};
-	authentication_algorithm {$p2halgos};
-	compression_algorithm deflate;
-
-EOD;
-
-				if ($tunnel['p2']['pfsgroup'])
-					$racoonconf .= "	pfs_group {$tunnel['p2']['pfsgroup']};\n";
-
-				if ($tunnel['p2']['lifetime'])
-					$racoonconf .= "	lifetime time {$tunnel['p2']['lifetime']} secs;\n";
-
-				$racoonconf .= "}\n\n";
+				/* end remote */
 			}
+			/* end remote sections */
+		
+			/* begin sainfo sections */
+			if (is_array($a_phase2) && count($a_phase2)) {
+				/* begin sainfo */
+				foreach ($a_phase2 as $ph2ent) {
+
+					$ikeid = $ph2ent['ikeid'];
+
+					$localid_type = $ph2ent['localid']['type'];
+					if ($localid_type != "address")
+						$localid_type = "subnet";
+
+					$remoteid_type = $ph2ent['remoteid']['type'];
+					if ($remoteid_type != "address")
+						$remoteid_type = "subnet";
+
+					$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
+					$remoteid_data = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+
+					$ealgos = '';
+					$halgos = join(",", $ph2ent['hash-algorithm-option']);
+
+					$pfsline = '';
+					if ($ph2ent['pfsgroup'])
+						$pfsline = "pfs_group {$ph2ent['pfsgroup']};";
+
+					$lifeline = '';
+					if ($ph2ent['lifetime'])
+						$lifeline = "lifetime time {$ph2ent['lifetime']} secs;";
+
+					foreach ($ph2ent['encryption-algorithm-option'] as $ealg) {
+
+						$ealg_id = $ealg['name'];
+						$ealg_kl = $ealg['keylen'];
+
+						if ($ealg_kl) {
+							if( $ealg_kl == "auto" ) {
+								$key_hi = $p2_ealgos[$ealg_id]['keysel']['hi'];
+								$key_lo = $p2_ealgos[$ealg_id]['keysel']['lo'];
+								$key_step = $p2_ealgos[$ealg_id]['keysel']['step'];
+
+								for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
+									if( $ealgos )
+										$ealgos = $ealgos.", ";
+									$ealgos = $ealgos.$ealg_id." ".$keylen;
+								}
+							} else {
+								if ($ealgos)
+									$ealgos = $ealgos.", ";
+								$ealgos = $ealgos.$ealg_id." ".$ealg_kl;
+							}
+						} else {
+							if ($ealgos)
+								$ealgos = $ealgos.", ";
+							$ealgos = $ealgos.$ealg_id;
+						}
+					}
+
+					/* add sainfo section to configuration */
+					
+					$racoonconf .=<<<EOD
+					
+sainfo {$localid_type} {$localid_data} any {$remoteid_type} {$remoteid_data} any
+{
+	remoteid {$ikeid};
+	encryption_algorithm {$ealgos};
+	authentication_algorithm {$halgos};
+	compression_algorithm deflate;
+	${pfsline}
+	${lifeline}
+}
+
+EOD;
+				}
+				/* end sainfo */
+			}
+			/* end sainfo sections */
 
 			fwrite($fd, $racoonconf);
 			fclose($fd);
+		}
+		/* end racoon.conf */
 
-			/* generate psk.txt */
-			$fd = fopen("{$g['varetc_path']}/psk.txt", "w");
+		/* generate IPsec policies */
+		if (is_array($a_phase2) && count($a_phase2)) {
+			/* generate spd.conf */
+			$fd = fopen("{$g['varetc_path']}/spd.conf", "w");
 			if (!$fd) {
-				printf("Error: cannot open psk.txt in vpn_ipsec_configure().\n");
+				printf("Error: cannot open spd.conf in vpn_ipsec_configure().\n");
 				return 1;
 			}
 
-			$pskconf = "";
+			$spdconf = "";
 
-			if (is_array($ipseccfg['tunnel'])) {
-				foreach ($ipseccfg['tunnel'] as $tunnel) {
-					if (isset ($tunnel['disabled']))
-						continue;
-                   $rgip = $rgmap[$tunnel['remote-gateway']];
-                   if (!$rgip)
-                           continue;
-                   $pskconf .= "{$rgip}     {$tunnel['p1']['pre-shared-key']}\n";
+			/* What are these SPD entries for?
+			 * -mgrooms 07/10/2008
+			 */
+			$spdconf .= "spdadd {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
+			$spdconf .= "spdadd {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
+
+			foreach ($a_phase2 as $ph2ent) {
+				if( !ipsec_lookup_phase1($ph2ent,$ph1ent))
+					continue;
+
+				if (isset ($ph1ent['disabled']))
+					continue;
+
+				if (isset ($ph2ent['disabled']))
+					continue;
+
+				$ep = vpn_endpoint_determine($ph1ent, $curwanip);
+				if (!$ep)
+					continue;
+
+				$rgip = $rgmap[$ph1ent['remote-gateway']];
+
+				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
+				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
+
+				if (isset ($ph2ent['creategif'])) {
+					$number_of_gifs = find_last_gif_device();
+					$number_of_gifs++;
+					$curwanip = get_current_wan_address();
+					if ($config['installedpackages']['sasyncd']['config'] <> "") {
+						foreach ($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
+							if ($sasyncd['ip'] <> "")
+								$curwanip = $sasyncd['ip'];
+						}
+					}
+					mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $rgip);
+					mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
 				}
+
+				$spdconf .= "spdadd {$localid} {$remoteid} any -P out ipsec " .
+					"{$ph2ent['protocol']}/tunnel/{$ep}-{$rgip}/unique;\n";
+
+				$spdconf .= "spdadd {$remoteid} {$localid} any -P in ipsec " .
+					"{$ph2ent['protocol']}/tunnel/{$rgip}-{$ep}/unique;\n";
+
+				/* static route needed? */
+				if (preg_match("/^carp/i", $ph1ent['interface']))
+					$parentinterface = link_carp_interface_to_parent($ph1ent['interface']);
+				else
+					$parentinterface = $ph1ent['interface'];
+
+				if ($parentinterface <> "wan") {
+					/* add endpoint routes to correct gateway on interface */
+					if (interface_has_gateway($parentinterface)) {
+						$gatewayip = get_interface_gateway("$parentinterface");
+						$interfaceip = $config['interfaces'][$parentinterface]['ipaddr'];
+						$subnet_bits = $config['interfaces'][$parentinterface]['subnet'];
+						$subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
+						/* if the remote gateway is in the local subnet, then don't add a route */
+						if (! ip_in_subnet($rgip, "{$subnet_ip}/{$subnet_bits}")) {
+							if(is_ipaddr($gatewayip)) {
+								log_error("IPSEC interface is not WAN but {$parentinterface}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
+								mwexec("/sbin/route delete -host {$rgip};/sbin/route add -host {$rgip} {$gatewayip}");
+							}
+						}
+					}
+				}
+				else
+					mwexec("/sbin/route delete -host {$rgip}");
 			}
 
-			/* add PSKs for mobile clients */
-			if (is_array($ipseccfg['mobilekey'])) {
-				foreach ($ipseccfg['mobilekey'] as $key) {
-					$pskconf .= "{$key['ident']}	{$key['pre-shared-key']}\n";
-				}
-			}
-
-			fwrite($fd, $pskconf);
+			fwrite($fd, $spdconf);
 			fclose($fd);
-			chmod("{$g['varetc_path']}/psk.txt", 0600);
+		}
 
+		/* mange racoon process */
+		if (is_process_running("racoon")) {
+			/* We are already online, reload */
+			mwexec("/usr/bin/killall -HUP racoon");
+			/* flush SPD entries */
+			mwexec("/usr/local/sbin/setkey -FP");
+			mwexec("/usr/local/sbin/setkey -F");
+			/* load SPD */
+			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
+			sleep(1);
+			/* We are already online, reload */
+			mwexec("/usr/bin/killall -HUP racoon");
+			sleep(1);
+			mwexec("/usr/bin/killall -HUP racoon");
+		} else {
+			/* start racoon */
+			mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
+			/* flush SA + SPD entries */
+			mwexec("/usr/local/sbin/setkey -FP");
+			mwexec("/usr/local/sbin/setkey -F");
+			/* load SPD */
+			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
+			sleep(1);
+			/* We are already online, reload */
+			mwexec("/usr/bin/killall -HUP racoon");
+			sleep(1);
+			mwexec("/usr/bin/killall -HUP racoon");
 
-			if(is_process_running("racoon")) {
-				/* We are already online, reload */
-				mwexec("/usr/bin/killall -HUP racoon");
-				/* flush SPD entries */
-				mwexec("/usr/local/sbin/setkey -FP");
-				mwexec("/usr/local/sbin/setkey -F");
-				/* load SPD */
-				mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
-				sleep(1);
-				/* We are already online, reload */
-				mwexec("/usr/bin/killall -HUP racoon");
-				sleep(1);
-				mwexec("/usr/bin/killall -HUP racoon");
-			} else {
-				/* start racoon */
-				mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
-				/* flush SA + SPD  entries*/
-				mwexec("/usr/local/sbin/setkey -FP");
-				mwexec("/usr/local/sbin/setkey -F");
-				/* load SPD */
-				mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
-				sleep(1);
-				/* We are already online, reload */
-				mwexec("/usr/bin/killall -HUP racoon");
-				sleep(1);
-				mwexec("/usr/bin/killall -HUP racoon");
+			/* start dnswatch, if necessary */
+			if (count($dnswatch_list) > 0) {
+				$interval = 60;
+				if ($ipseccfg['dns-interval'])
+					$interval = $ipseccfg['dns-interval'];
 
-				/* start dnswatch, if necessary */
-				if (count($dnswatch_list) > 0) {
-					$interval = 60;
-					if ($ipseccfg['dns-interval']) {
-						$interval = $ipseccfg['dns-interval'];
-					}
-			
-					$hostnames = "";
-					foreach ($dnswatch_list as $dns) {
-						$hostnames .= " " . escapeshellarg($dns);
-					}
-					mwexec("/usr/local/bin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval " .
-					escapeshellarg("/etc/rc.newipsecdns") . $hostnames);
-				}
-			}
+				$hostnames = "";
+				foreach ($dnswatch_list as $dns)
+					$hostnames .= " " . escapeshellarg($dns);
 
-			if (is_array($ipseccfg['tunnel'])) {
-				foreach ($ipseccfg['tunnel'] as $tunnel) {
-					if (isset ($tunnel['auto'])) {
-						$remotehost = substr($tunnel['remote-subnet'], 0, strpos($tunnel['remote-subnet'], "/"));
-						$srchost = vpn_endpoint_determine($tunnel, $curwanip);
-						if ($srchost)
-							mwexec_bg("/sbin/ping -c 10 -S {$srchost} {$remotehost}");
-					}
-				}
+				mwexec("/usr/local/bin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval " .
+				escapeshellarg("/etc/rc.newipsecdns") . $hostname);
 			}
 		}
 	}
-
+	
 	vpn_ipsec_failover_configure();
 
 	if (!$g['booting']) {
@@ -943,20 +985,20 @@ function vpn_localnet_determine($adr, & $sa, & $sn) {
 	}
 }
 
-function vpn_endpoint_determine($tunnel, $curwanip) {
+function vpn_endpoint_determine($ph1ent, $curwanip) {
 
 	global $g, $config;
 
-	if ((!$tunnel['interface']) || ($tunnel['interface'] == "wan")) {
+	if ((!$ph1ent['interface']) || ($ph1ent['interface'] == "wan")) {
 		if ($curwanip)
 			return $curwanip;
 		else
 			return null;
-	} elseif ($tunnel['interface'] == "lan") {
+	} elseif ($ph1ent['interface'] == "lan") {
 		return $config['interfaces']['lan']['ipaddr'];
 	} else {
-		$iface = $config['interfaces'][$tunnel['interface']]['if'];
-		$oc = $config['interfaces'][$tunnel['interface']];
+		$iface = $config['interfaces'][$ph1ent['interface']]['if'];
+		$oc = $config['interfaces'][$ph1ent['interface']];
 		/* carp ips, etc */
 		$ip = find_interface_ip($iface);
 		if($ip) 

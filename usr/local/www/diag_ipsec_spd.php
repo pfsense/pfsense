@@ -36,129 +36,104 @@ require("guiconfig.inc");
 $pgtitle = array("Status","IPsec","SPD");
 include("head.inc");
 
-?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
-<?php
-	$tab_array = array();
-	$tab_array[0] = array("Overview", false, "diag_ipsec.php");
-	$tab_array[1] = array("SAD", false, "diag_ipsec_sad.php");
-	$tab_array[2] = array("SPD", true, "diag_ipsec_spd.php");
-	display_top_tabs($tab_array);
-?>
-  </td></tr>
-  <tr>
-    <td>
-<?php
-
 /* delete any SP? */
 if ($_GET['act'] == "del") {
-	$fd = @popen("/sbin/setkey -c > /dev/null 2>&1", "w");
+	$fd = @popen("/usr/local/sbin/setkey -c > /dev/null 2>&1", "w");
 	if ($fd) {
-		fwrite($fd, "spddelete {$_GET['src']} {$_GET['dst']} any -P {$_GET['dir']} ;\n");
+		fwrite($fd, "spddelete {$_GET['srcid']} {$_GET['dstid']} any -P {$_GET['dir']} ;\n");
 		pclose($fd);
 		sleep(1);
 	}
 }
 
-/* query SAD */
-$fd = @popen("/sbin/setkey -DP", "r");
-$spd = array();
-if ($fd) {
-	while (!feof($fd)) {
-		$line = chop(fgets($fd));
-		if (!$line)
-			continue;
-		if ($line == "No SPD entries.")
-			break;
-		if ($line[0] != "\t") {
-			if (is_array($cursp))
-				$spd[] = $cursp;
-			$cursp = array();
-			$linea = explode(" ", $line);
-			$cursp['src'] = substr($linea[0], 0, strpos($linea[0], "["));
-			$cursp['dst'] = substr($linea[1], 0, strpos($linea[1], "["));
-			$i = 0;
-		} else if (is_array($cursp)) {
-			$linea = explode(" ", trim($line));
-			if ($i == 1) {
-				if ($linea[1] == "none")	/* don't show default anti-lockout rule */
-					unset($cursp);
-				else
-					$cursp['dir'] = $linea[0];
-			} else if ($i == 2) {
-				$upperspec = explode("/", $linea[0]);
-				$cursp['proto'] = $upperspec[0];
-				list($cursp['ep_src'], $cursp['ep_dst']) = explode("-", $upperspec[2]);
-			}
-		}
-		$i++;
-	}
-	if (is_array($cursp) && count($cursp))
-		$spd[] = $cursp;
-	pclose($fd);
-}
+$spd = ipsec_dump_spd();
 ?>
-<div id="mainarea" style="background:#eeeeee">
-            <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-<?php if (count($spd)): ?>
-  <tr>
-                <td nowrap class="listhdrr">Source</td>
-                <td nowrap class="listhdrr">Destination</a></td>
-                <td nowrap class="listhdrr">Direction</td>
-                <td nowrap class="listhdrr">Protocol</td>
-                <td nowrap class="listhdrr">Tunnel endpoints</td>
-                <td nowrap class="list"></td>
-	</tr>
-<?php
-foreach ($spd as $sp): ?>
-	<tr>
-		<td class="listlr" valign="top"><?=htmlspecialchars($sp['src']);?></td>
-		<td class="listr" valign="top"><?=htmlspecialchars($sp['dst']);?></td>
-		<td class="listr" valign="top"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_<?=$sp['dir'];?>.gif" width="11" height="11" style="margin-top: 2px"></td>
-		<td class="listr" valign="top"><?=htmlspecialchars(strtoupper($sp['proto']));?></td>
-		<td class="listr" valign="top"><?=htmlspecialchars($sp['ep_src']);?> - <br>
-			<?=htmlspecialchars($sp['ep_dst']);?></td>
-		<td class="list" nowrap>
-		<?php
-			$args = "src=" . rawurlencode($sp['src']);
-			$args .= "&dst=" . rawurlencode($sp['dst']);
-			$args .= "&dir=" . rawurlencode($sp['dir']);
-		?>
-		  <a href="diag_ipsec_spd.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security policy?')">
-		  <img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
-		</td>
 
-	</tr>
-<?php endforeach; ?>
-</table>
-<br>
-<table class="tabcont" border="0" cellspacing="0" cellpadding="6">
-  <tr>
-	<td width="16"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11"></td>
-	<td>incoming (as seen by firewall)</td>
-  </tr>
-  <tr>
-	<td colspan="5" height="4"></td>
-  </tr>
-  <tr>
-	<td><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_out.gif" width="11" height="11"></td>
-	<td>outgoing (as seen by firewall)</td>
-  </tr>
-<?php else: ?>
-<tr><td><p><strong>No IPsec security policies.</strong></p></td></tr>
-<?php endif; ?>
-<td colspan="4">
-		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>You can configure your IPsec <a href="vpn_ipsec.php">here</a>.</span></p>
-		  </td>
-</table>
-</div>
-</td></tr></table>
-<?php include("fend.inc"); ?>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+	<?php include("fbegin.inc"); ?>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td>
+				<?php
+					$tab_array = array();
+					$tab_array[0] = array("Overview", false, "diag_ipsec.php");
+					$tab_array[1] = array("SAD", false, "diag_ipsec_sad.php");
+					$tab_array[2] = array("SPD", true, "diag_ipsec_spd.php");
+					display_top_tabs($tab_array);
+				?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div id="mainarea" style="background:#eeeeee">
+					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+						<?php if (count($spd)): ?>
+						<tr>
+							<td nowrap class="listhdrr">Source</td>
+							<td nowrap class="listhdrr">Destination</td>
+							<td nowrap class="listhdrr">Direction</td>
+							<td nowrap class="listhdrr">Protocol</td>
+							<td nowrap class="listhdrr">Tunnel endpoints</td>
+							<td nowrap class="list"></td>
+						</tr>
+						<?php foreach ($spd as $sp): ?>
+						<tr>
+							<td class="listlr" valign="top"><?=htmlspecialchars($sp['srcid']);?></td>
+							<td class="listr" valign="top"><?=htmlspecialchars($sp['dstid']);?></td>
+							<td class="listr" valign="top">
+								<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_<?=$sp['dir'];?>.gif" width="11" height="11" style="margin-top: 2px">
+							</td>
+							<td class="listr" valign="top"><?=htmlspecialchars(strtoupper($sp['proto']));?></td>
+							<td class="listr" valign="top"><?=htmlspecialchars($sp['src']);?> -> <?=htmlspecialchars($sp['dst']);?></td>
+							<td class="list" nowrap>
+								<?php
+									$args = "srcid=".rawurlencode($sp['srcid']);
+									$args .= "&dstid=".rawurlencode($sp['dstid']);
+									$args .= "&dir=".rawurlencode($sp['dir']);
+								?>
+								<a href="diag_ipsec_spd.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security policy?')">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+								</a>
+							</td>
+						</tr>
+						<?php endforeach; ?>
+					</table>
+					<br>
+					<table class="tabcont" border="0" cellspacing="0" cellpadding="6">
+						<tr>
+							<td width="16"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11"></td>
+							<td>incoming (as seen by firewall)</td>
+						</tr>
+						<tr>
+							<td colspan="5" height="4"></td>
+						</tr>
+						<tr>
+							<td><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_out.gif" width="11" height="11"></td>
+							<td>outgoing (as seen by firewall)</td>
+						</tr>
+						<?php else: ?>
+						<tr>
+							<td>
+								<p><strong>No IPsec security policies.</strong></p>
+							</td>
+						</tr>
+						<?php endif; ?>
+						<td colspan="4">
+							<p>
+								<span class="vexpl">
+									<span class="red">
+										<strong>Note:<br></strong>
+									</span>
+									You can configure your IPsec <a href="vpn_ipsec.php">here</a>.
+								</span>
+							</p>
+			  			</td>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+	<?php include("fend.inc"); ?>
 </body>
 </html>
 

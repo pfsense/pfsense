@@ -51,22 +51,22 @@ include("head.inc");
 
 ?>
 
-
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="vpn_ipsec.php" method="post">
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_ipsecconfdirty_path)): ?><p>
-<?php print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<?php endif; ?>
+<?php
+	if ($savemsg)
+		print_info_box($savemsg);
+	if ($pconfig['enable'] && file_exists($d_ipsecconfdirty_path))
+		print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");
+?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Tunnels", false, "vpn_ipsec.php");
-	$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
-	$tab_array[2] = array("Pre-shared keys", false, "vpn_ipsec_keys.php");
-	$tab_array[3] = array("CAs", true, "vpn_ipsec_ca.php");
+//	$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
+	$tab_array[2] = array("CAs", true, "vpn_ipsec_ca.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

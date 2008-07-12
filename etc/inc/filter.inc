@@ -3060,9 +3060,13 @@ EOD;
 
 					$gateway = lookup_gateway_ip_by_name($config['interfaces'][$ifr]['gateway']);
 					$interface = convert_friendly_interface_to_real_interface_name($iface);
-
-					$route_to = " route-to ( $interface $gateway ) ";
-					$reply_to = " reply-to ( $interface $gateway ) ";
+					if (!is_ipaddr($gateway) || empty($interface)) {
+						$route_to = " ";
+						$reply_to = " ";
+					} else {
+						$route_to = " route-to ( $interface $gateway ) ";
+						$reply_to = " reply-to ( $interface $gateway ) ";
+					}
 
 					/* Another conversion. Why? */
 					$ifalias = convert_friendly_interface_to_friendly_descr($ifr);

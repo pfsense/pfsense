@@ -45,6 +45,7 @@ WORD="https"
 # so we can attempt to track down the
 # rc.initial respawn issues.
 echo `tty` > /tmp/last_term_seen
+chmod a+rw /tmp/last_term_seen
 
 # Set our operating platform
 PLATFORM=`cat /etc/platform`

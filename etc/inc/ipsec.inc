@@ -30,6 +30,63 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* IPsec defines */
+$my_identifier_list = array(
+	'myaddress' => array( 'desc' => 'My IP address', 'mobile' => true ),
+	'address' => array( 'desc' => 'IP address', 'mobile' => true ),
+	'fqdn' => array( 'desc' => 'Distinguished name', 'mobile' => true ),
+	'user_fqdn' => array( 'desc' => 'User distinguished name', 'mobile' => true ),
+	'asn1dn' => array( 'desc' => 'ASN.1 distinguished Name', 'mobile' => true ),
+	'keyid tag' => array( 'desc' => 'KeyID tag', 'mobile' => true ),
+	'dyn_dns' => array( 'desc' => 'Dynamic DNS', 'mobile' => true ));
+
+$peer_identifier_list = array(
+	'peeraddress' => array( 'desc' => 'Peer IP address', 'mobile' => false ),
+	'address' => array( 'desc' => 'IP address', 'mobile' => false ),
+	'fqdn' => array( 'desc' => 'Distinguished name', 'mobile' => true ),
+	'user_fqdn' => array( 'desc' => 'User distinguished name', 'mobile' => true ),
+	'asn1dn' => array( 'desc' => 'ASN.1 distinguished Name', 'mobile' => true ),
+	'keyid tag' => array( 'desc' =>'KeyID tag', 'mobile' => true ));
+
+$p1_ealgos = array(
+	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
+	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 8 ) ),
+	'3des' => array( 'name' => '3DES' ),
+	'cast128' => array( 'name' => 'CAST128' ),
+	'des' => array( 'name' => 'DES' ));
+
+$p2_ealgos = array(
+	'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
+	'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 8 ) ),
+	'3des' => array( 'name' => '3DES' ),
+	'cast128' => array( 'name' => 'CAST128' ),
+	'des' => array( 'name' => 'DES' ));
+
+$p1_halgos = array(
+	'sha1' => 'SHA1',
+	'md5' => 'MD5');
+
+$p2_halgos = array(
+	'hmac_sha1' => 'SHA1',
+	'hmac_md5' => 'MD5');
+
+$p1_authentication_methods = array(
+	'hybrid_rsa_server' => array( 'name' => 'Hybrid RSA + Xauth', 'mobile' => true ),
+	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
+	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => true ),
+	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
+	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
+
+$p2_protos = array(
+	'esp' => 'ESP',
+	'ah' => 'AH');
+
+$p2_pfskeygroups = array(
+	'0' => 'off',
+	'1' => '1',
+	'2' => '2',
+	'5' => '5');
+
 /*
  * Return phase1 local address
  */
@@ -47,6 +104,18 @@ function ipsec_get_phase1_src(& $ph1ent) {
 }
 
 /*
+ * Return phase1 local address
+ */
+function ipsec_get_phase1_dst(& $ph1ent) {
+
+	$rg = $ph1ent['remote-gateway'];
+	if (!is_ipaddr($rg))
+		return resolve_retry($rg);
+
+	return $rg;
+}
+
+/*
  * Return phase2 idinfo in cidr format
  */
 function ipsec_idinfo_to_cidr(& $idinfo,$addrbits = false) {
@@ -61,6 +130,8 @@ function ipsec_idinfo_to_cidr(& $idinfo,$addrbits = false) {
 				return $idinfo['address'];
 		case "network":
 			return $idinfo['address']."/".$idinfo['netbits'];
+		case "mobile":
+			return "0.0.0.0/0";
         default:
 			$address = $config['interfaces']['lan']['ipaddr'];
 			$netbits = $config['interfaces'][$idinfo['type']]['subnet'];
@@ -84,6 +155,8 @@ function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
 				return $idinfo['address'];
 		case "network":
 			return $idinfo['address']."/".gen_subnet_mask($idinfo['netbits']);
+		case "mobile":
+			return "0.0.0.0/0";
         default:
 			$address = $config['interfaces']['lan']['ipaddr'];
 			$netbits = $config['interfaces'][$idinfo['type']]['subnet'];
@@ -104,6 +177,8 @@ function ipsec_idinfo_to_text(& $idinfo) {
             return $idinfo['address'];
         case "network":
             return $idinfo['address']."/".$idinfo['netbits'];
+		case "mobile":
+			return "Mobile Client";
         default:
             return strtoupper($idinfo['type']);
     }

@@ -58,7 +58,12 @@ if (isset($p1index) && $a_phase1[$p1index])
 		$pconfig['interface'] = "wan";
 
 	list($pconfig['remotenet'],$pconfig['remotebits']) = explode("/", $a_phase1[$p1index]['remote-subnet']);
-	$pconfig['remotegw'] = $a_phase1[$p1index]['remote-gateway'];
+
+	if (isset($a_phase1[$p1index]['mobile']))
+		$pconfig['mobile'] = 'true';
+	else
+		$pconfig['remotegw'] = $a_phase1[$p1index]['remote-gateway'];
+
 	$pconfig['mode'] = $a_phase1[$p1index]['mode'];
 	$pconfig['myid_type'] = $a_phase1[$p1index]['myid_type'];
 	$pconfig['myid_data'] = $a_phase1[$p1index]['myid_data'];
@@ -76,9 +81,13 @@ if (isset($p1index) && $a_phase1[$p1index])
 
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];
-	$pconfig['dpd_enable'] = $a_phase1[$p1index]['dpd_enable'];
-	$pconfig['dpd_delay'] = $a_phase1[$p1index]['dpd_delay'];
-	$pconfig['dpd_maxfail'] = $a_phase1[$p1index]['dpd_maxfail'];
+
+	if ($a_phase1[$p1index]['dpd_delay'] &&	$a_phase1[$p1index]['dpd_maxfail']) {
+		$pconfig['dpd_enable'] = true;
+		$pconfig['dpd_delay'] = $a_phase1[$p1index]['dpd_delay'];
+		$pconfig['dpd_maxfail'] = $a_phase1[$p1index]['dpd_maxfail'];
+	}
+
 	$pconfig['pinghost'] = $a_phase1[$p1index]['pinghost'];
 }
 else
@@ -96,9 +105,11 @@ else
 	$pconfig['dhgroup'] = "2";
 	$pconfig['lifetime'] = "28800";
 	$pconfig['nat_traversal'] = "on";
-	$pconfig['dpd_enable'] = 1;
-	$pconfig['dpd_delay'] = 10;
-	$pconfig['dpd_maxfail'] = 5;
+	$pconfig['dpd_enable'] = true;
+
+	/* mobile client */
+	if($_GET['mobile'])
+		$pconfig['mobile']=true;
 }
 
 if (isset($_GET['dup']))
@@ -109,29 +120,33 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($_POST['authentication_method'] == "pre_shared_key") {
-		$reqdfields = explode(" ", "remotegw pskey");
-		$reqdfieldsn = explode(",", "Remote gateway,Pre-Shared Key");
+
+	$method = $pconfig['authentication_method'];
+	if (($method == "pre_shared_key")||($method == "xauth_psk_server")) {
+		$reqdfields = explode(" ", "pskey");
+		$reqdfieldsn = explode(",", "Pre-Shared Key");
 	} else	{
-		$reqdfields = explode(" ", "remotegw");
-		$reqdfieldsn = explode(",", "Remote gateway");
-		if (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))
+		if (!strstr($pconfig['cert'], "BEGIN CERTIFICATE") || !strstr($pconfig['cert'], "END CERTIFICATE"))
 			$input_errors[] = "This certificate does not appear to be valid.";
-		if (!strstr($_POST['privatekey'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['privatekey'], "END RSA PRIVATE KEY"))
+		if (!strstr($pconfig['privatekey'], "BEGIN RSA PRIVATE KEY") || !strstr($pconfig['privatekey'], "END RSA PRIVATE KEY"))
 			$input_errors[] = "This key does not appear to be valid.";
-		if ($_POST['peercert']!="" && (!strstr($_POST['peercert'], "BEGIN CERTIFICATE") || !strstr($_POST['peercert'], "END CERTIFICATE")))
+		if ($pconfig['peercert']!="" && (!strstr($pconfig['peercert'], "BEGIN CERTIFICATE") || !strstr($pconfig['peercert'], "END CERTIFICATE")))
 			$input_errors[] = "This peer certificate does not appear to be valid.";
 	}
+	if (!$pconfig['mobile']) {
+		$reqdfields[] = "remotegw";
+		$reqdfieldsn[] = "Remote gateway";
+	}
 
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($pconfig, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if (($_POST['lifetime'] && !is_numeric($_POST['lifetime'])))
+	if (($pconfig['lifetime'] && !is_numeric($pconfig['lifetime'])))
 		$input_errors[] = "The P1 lifetime must be an integer.";
 
-	if (($_POST['remotegw'] && !is_ipaddr($_POST['remotegw']) && !is_domain($_POST['remotegw']))) 
+	if (($pconfig['remotegw'] && !is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw']))) 
 		$input_errors[] = "A valid remote gateway address or host name must be specified.";
 
-	if (($_POST['remotegw'] && is_ipaddr($_POST['remotegw']) && !isset($_POST['disabled']) )) {
+	if (($pconfig['remotegw'] && is_ipaddr($pconfig['remotegw']) && !isset($pconfig['disabled']) )) {
 		$t = 0;
 		foreach ($a_phase1 as $ph1tmp) {
 			if ($p1index <> $t) {
@@ -146,123 +161,134 @@ if ($_POST) {
 
 	/* My identity */
 
-	if ($_POST['myid_type'] == "myaddress")
-		$_POST['myid_data'] = "";
+	if ($pconfig['myid_type'] == "myaddress")
+		$pconfig['myid_data'] = "";
 
-	if ($_POST['myid_type'] == "address" and $_POST['myid_data'] == "")
+	if ($pconfig['myid_type'] == "address" and $pconfig['myid_data'] == "")
 		$input_errors[] = gettext("Please enter an address for 'My Identifier'");
 
-	if ($_POST['myid_type'] == "keyid tag" and $_POST['myid_data'] == "")
+	if ($pconfig['myid_type'] == "keyid tag" and $pconfig['myid_data'] == "")
 		$input_errors[] = gettext("Please enter a keyid tag for 'My Identifier'");
 
-	if ($_POST['myid_type'] == "fqdn" and $_POST['myid_data'] == "")
+	if ($pconfig['myid_type'] == "fqdn" and $pconfig['myid_data'] == "")
 		$input_errors[] = gettext("Please enter a fully qualified domain name for 'My Identifier'");
 
-	if ($_POST['myid_type'] == "user_fqdn" and $_POST['myid_data'] == "")
+	if ($pconfig['myid_type'] == "user_fqdn" and $pconfig['myid_data'] == "")
 		$input_errors[] = gettext("Please enter a user and fully qualified domain name for 'My Identifier'");
 
-	if ($_POST['myid_type'] == "dyn_dns" and $_POST['myid_data'] == "")
+	if ($pconfig['myid_type'] == "dyn_dns" and $pconfig['myid_data'] == "")
 		$input_errors[] = gettext("Please enter a dynamic domain name for 'My Identifier'");
 
-	if ((($_POST['myid_type'] == "address") && !is_ipaddr($_POST['myid_data'])))
+	if ((($pconfig['myid_type'] == "address") && !is_ipaddr($pconfig['myid_data'])))
 		$input_errors[] = "A valid IP address for 'My identifier' must be specified.";
 
-	if ((($_POST['myid_type'] == "fqdn") && !is_domain($_POST['myid_data'])))
+	if ((($pconfig['myid_type'] == "fqdn") && !is_domain($pconfig['myid_data'])))
 		$input_errors[] = "A valid domain name for 'My identifier' must be specified.";
 
-	if ($_POST['myid_type'] == "fqdn")
-		if (is_domain($_POST['myid_data']) == false)
+	if ($pconfig['myid_type'] == "fqdn")
+		if (is_domain($pconfig['myid_data']) == false)
 			$input_errors[] = "A valid FQDN for 'My identifier' must be specified.";
 
-	if ($_POST['myid_type'] == "user_fqdn") {
-		$user_fqdn = explode("@",$_POST['myid_data']);
+	if ($pconfig['myid_type'] == "user_fqdn") {
+		$user_fqdn = explode("@",$pconfig['myid_data']);
 		if (is_domain($user_fqdn[1]) == false)
 			$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'My identifier' must be specified.";
 	}
 
-	if ($_POST['myid_type'] == "dyn_dns")
-		if (is_domain($_POST['myid_data']) == false)
+	if ($pconfig['myid_type'] == "dyn_dns")
+		if (is_domain($pconfig['myid_data']) == false)
 			$input_errors[] = "A valid Dynamic DNS address for 'My identifier' must be specified.";
 
 	/* Peer identity */
 
-	if ($_POST['peerid_type'] == "address" and $_POST['peerid_data'] == "")
+	if ($pconfig['myid_type'] == "peeraddress")
+		$pconfig['peerid_data'] = "";
+
+	if ($pconfig['peerid_type'] == "address" and $pconfig['peerid_data'] == "")
 		$input_errors[] = gettext("Please enter an address for 'Peer Identifier'");
 
-	if ($_POST['peerid_type'] == "keyid tag" and $_POST['peerid_data'] == "")
+	if ($pconfig['peerid_type'] == "keyid tag" and $pconfig['peerid_data'] == "")
 		$input_errors[] = gettext("Please enter a keyid tag for 'Peer Identifier'");
 
-	if ($_POST['peerid_type'] == "fqdn" and $_POST['peerid_data'] == "")
+	if ($pconfig['peerid_type'] == "fqdn" and $pconfig['peerid_data'] == "")
 		$input_errors[] = gettext("Please enter a fully qualified domain name for 'Peer Identifier'");
 
-	if ($_POST['peerid_type'] == "user_fqdn" and $_POST['peerid_data'] == "")
+	if ($pconfig['peerid_type'] == "user_fqdn" and $pconfig['peerid_data'] == "")
 		$input_errors[] = gettext("Please enter a user and fully qualified domain name for 'Peer Identifier'");
 
-	if ((($_POST['peerid_type'] == "address") && !is_ipaddr($_POST['peerid_data'])))
+	if ((($pconfig['peerid_type'] == "address") && !is_ipaddr($pconfig['peerid_data'])))
 		$input_errors[] = "A valid IP address for 'Peer identifier' must be specified.";
 
-	if ((($_POST['peerid_type'] == "fqdn") && !is_domain($_POST['peerid_data'])))
+	if ((($pconfig['peerid_type'] == "fqdn") && !is_domain($pconfig['peerid_data'])))
 		$input_errors[] = "A valid domain name for 'Peer identifier' must be specified.";
 
-	if ($_POST['peerid_type'] == "fqdn")
-		if (is_domain($_POST['peerid_data']) == false)
+	if ($pconfig['peerid_type'] == "fqdn")
+		if (is_domain($pconfig['peerid_data']) == false)
 			$input_errors[] = "A valid FQDN for 'Peer identifier' must be specified.";
 
-	if ($_POST['peerid_type'] == "user_fqdn") {
-		$user_fqdn = explode("@",$_POST['peerid_data']);
+	if ($pconfig['peerid_type'] == "user_fqdn") {
+		$user_fqdn = explode("@",$pconfig['peerid_data']);
 		if (is_domain($user_fqdn[1]) == false)
 			$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'Peer identifier' must be specified.";
 	}
 
-	if ($_POST['dpd_enable']) {
-		if (!is_numeric($_POST['dpd_delay']))
+	if ($pconfig['dpd_enable']) {
+		if (!is_numeric($pconfig['dpd_delay']))
 			$input_errors[] = "A numeric value must be specified for DPD delay.";
 
-		if (!is_numeric($_POST['dpd_maxfail']))
+		if (!is_numeric($pconfig['dpd_maxfail']))
 			$input_errors[] = "A numeric value must be specified for DPD retries.";
 	}
 
 	/* build our encryption algorithms array */
 	$pconfig['ealgo'] = array();
 	$pconfig['ealgo']['name'] = $_POST['ealgo'];
-        if($_POST['ealgo_keylen'])
+	if($pconfig['ealgo_keylen'])
 		$pconfig['ealgo']['keylen'] = $_POST['ealgo_keylen'];
 
 	if (!$input_errors) {
-		$ph1ent['ikeid'] = $_POST['ikeid'];
-		$ph1ent['disabled'] = $_POST['disabled'] ? true : false;
+		$ph1ent['ikeid'] = $pconfig['ikeid'];
+		$ph1ent['disabled'] = $pconfig['disabled'] ? true : false;
 		$ph1ent['interface'] = $pconfig['interface'];
 		/* if the remote gateway changed and the interface is not WAN then remove route */
 		/* the vpn_ipsec_configure() handles adding the route */
-		if ($_POST['interface'] <> "wan") {
-			if($ph1ent['remote-gateway'] <> $_POST['remotegw']) {
+		if ($pconfig['interface'] <> "wan") {
+			if($ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
 				mwexec("/sbin/route delete -host {$ph1ent['remote-gateway']}");
 			}
 		}
-		$ph1ent['remote-gateway'] = $_POST['remotegw'];
-		$ph1ent['mode'] = $_POST['mode'];
 
-		$ph1ent['myid_type'] = $_POST['myid_type'];
-		$ph1ent['myid_data'] = $_POST['myid_data'];
-		$ph1ent['peerid_type'] = $_POST['peerid_type'];
-		$ph1ent['peerid_data'] = $_POST['peerid_data'];
+		if ($pconfig['mobile'])
+			$ph1ent['mobile'] = true;
+		else
+			$ph1ent['remote-gateway'] = $pconfig['remotegw'];
+
+		$ph1ent['mode'] = $pconfig['mode'];
+
+		$ph1ent['myid_type'] = $pconfig['myid_type'];
+		$ph1ent['myid_data'] = $pconfig['myid_data'];
+		$ph1ent['peerid_type'] = $pconfig['peerid_type'];
+		$ph1ent['peerid_data'] = $pconfig['peerid_data'];
 
 		$ph1ent['encryption-algorithm'] = $pconfig['ealgo'];
-		$ph1ent['hash-algorithm'] = $_POST['halgo'];
-		$ph1ent['dhgroup'] = $_POST['dhgroup'];
-		$ph1ent['lifetime'] = $_POST['lifetime'];
-		$ph1ent['pre-shared-key'] = $_POST['pskey'];
-		$ph1ent['private-key'] = base64_encode($_POST['privatekey']);
-		$ph1ent['cert'] = base64_encode($_POST['cert']);
-		$ph1ent['peercert'] = base64_encode($_POST['peercert']);
-		$ph1ent['authentication_method'] = $_POST['authentication_method'];
+		$ph1ent['hash-algorithm'] = $pconfig['halgo'];
+		$ph1ent['dhgroup'] = $pconfig['dhgroup'];
+		$ph1ent['lifetime'] = $pconfig['lifetime'];
+		$ph1ent['pre-shared-key'] = $pconfig['pskey'];
+		$ph1ent['private-key'] = base64_encode($pconfig['privatekey']);
+		$ph1ent['cert'] = base64_encode($pconfig['cert']);
+		$ph1ent['peercert'] = base64_encode($pconfig['peercert']);
+		$ph1ent['authentication_method'] = $pconfig['authentication_method'];
 
-		$ph1ent['descr'] = $_POST['descr'];
-		$ph1ent['nat_traversal'] = $_POST['nat_traversal'];
-		$ph1ent['dpd_enable'] = $_POST['dpd_enable'];
-		$ph1ent['dpd_delay'] = $_POST['dpd_delay'];
-		$ph1ent['dpd_maxfail'] = $_POST['dpd_maxfail'];
-		$ph1ent['pinghost'] = $_POST['pinghost'];
+		$ph1ent['descr'] = $pconfig['descr'];
+		$ph1ent['nat_traversal'] = $pconfig['nat_traversal'];
+
+		if (isset($pconfig['dpd_enable'])) {
+			$ph1ent['dpd_delay'] = $pconfig['dpd_delay'];
+			$ph1ent['dpd_maxfail'] = $pconfig['dpd_maxfail'];
+		}
+
+		$ph1ent['pinghost'] = $pconfig['pinghost'];
 
 		/* generate unique phase1 ikeid */
 		if ($ph1ent['ikeid'] == 0) {
@@ -290,7 +316,11 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("VPN","IPsec","Edit Phase 1");
+if ($pconfig['mobile'])
+	$pgtitle = array("VPN","IPsec","Edit Phase 1", "Mobile Client");
+else
+	$pgtitle = array("VPN","IPsec","Edit Phase 1");
+
 include("head.inc");
 
 ?>
@@ -299,15 +329,44 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--
+
+function myidsel_change() {
+	index = document.iform.myid_type.selectedIndex;
+	value = document.iform.myid_type.options[index].value;
+	if (value == 'myaddress')
+			document.iform.myid_data.style.visibility = 'hidden';
+	else
+			document.iform.myid_data.style.visibility = 'visible';
+}
+
+function peeridsel_change() {
+	index = document.iform.peerid_type.selectedIndex;
+	value = document.iform.peerid_type.options[index].value;
+	if (value == 'peeraddress')
+			document.iform.peerid_data.style.visibility = 'hidden';
+	else
+			document.iform.peerid_data.style.visibility = 'visible';
+}
+
 function methodsel_change() {
-	switch (document.iform.authentication_method.selectedIndex) {
-		case 1:	/* rsa */
+	index = document.iform.authentication_method.selectedIndex;
+	value = document.iform.authentication_method.options[index].value;
+
+	switch (value) {
+		case 'hybrid_rsa_server':
+			document.iform.pskey.disabled = 1;
+			document.iform.privatekey.disabled = 0;
+			document.iform.cert.disabled = 0;
+			document.iform.peercert.disabled = 1;
+			break;
+		case 'xauth_rsa_server':
+		case 'rsasig':
 			document.iform.pskey.disabled = 1;
 			document.iform.privatekey.disabled = 0;
 			document.iform.cert.disabled = 0;
 			document.iform.peercert.disabled = 0;
 			break;
-		default: /* pre-shared */
+		default: /* psk modes*/
 			document.iform.pskey.disabled = 0;
 			document.iform.privatekey.disabled = 1;
 			document.iform.cert.disabled = 1;
@@ -349,6 +408,7 @@ function ealgosel_change(bits) {
 	if( bits )
 		document.iform.ealgo_keylen.value = bits;
 }
+
 function dpdchkbox_change() {
 	if( document.iform.dpd_enable.checked ) {
 			document.iform.dpd_delay.disabled = 0;
@@ -357,7 +417,14 @@ function dpdchkbox_change() {
 			document.iform.dpd_delay.disabled = 1;
 			document.iform.dpd_maxfail.disabled = 1;
 	}
+
+	if (!document.iform.dpd_delay.value)
+		document.iform.dpd_delay.value = "10";
+
+	if (!document.iform.dpd_maxfail.value)
+		document.iform.dpd_maxfail.value = "5";
 }
+
 //-->
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -394,6 +461,7 @@ function dpdchkbox_change() {
                     <span class="vexpl">Select the interface for the local endpoint of this phase1 entry.</span>
                   </td>
                 </tr>
+				<?php if (!$pconfig['mobile']): ?>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Remote gateway</td>
                   <td width="78%" class="vtable">
@@ -402,6 +470,7 @@ function dpdchkbox_change() {
                     Enter the public IP address or host name of the remote gateway
                   </td>
                 </tr>
+				<?php endif; ?>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
@@ -436,10 +505,10 @@ function dpdchkbox_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">My identifier</td>
                   <td width="78%" class="vtable">
-                    <select name="myid_type" class="formselect">
-                      <?php foreach ($my_identifier_list as $mode => $modename): ?>
-                        <option value="<?=$mode;?>" <?php if ($mode == $pconfig['myid_type']) echo "selected"; ?>>
-                          <?=htmlspecialchars($modename);?>
+                    <select name="myid_type" class="formselect" onChange="myidsel_change()">
+                      <?php foreach ($my_identifier_list as $id_type => $id_params): ?>
+                        <option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['myid_type']) echo "selected"; ?>>
+                          <?=htmlspecialchars($id_params['desc']);?>
                         </option>
                       <?php endforeach; ?>
                     </select>
@@ -449,10 +518,14 @@ function dpdchkbox_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Peer identifier</td>
                   <td width="78%" class="vtable">
-                    <select name="peerid_type" class="formselect">
-                      <?php foreach ($peer_identifier_list as $mode => $modename): ?>
-                      <option value="<?=$mode;?>" <?php if ($mode == $pconfig['peerid_type']) echo "selected"; ?>>
-                        <?=htmlspecialchars($modename);?>
+                    <select name="peerid_type" class="formselect" onChange="peeridsel_change()">
+                      <?php
+                        foreach ($peer_identifier_list as $id_type => $id_params):
+                          if ($pconfig['mobile'] && !$id_params['mobile'])
+                            continue;
+                      ?>
+                      <option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['peerid_type']) echo "selected"; ?>>
+                        <?=htmlspecialchars($id_params['desc']);?>
                       </option>
                       <?php endforeach; ?>
                     </select>
@@ -523,9 +596,13 @@ function dpdchkbox_change() {
                   <td width="22%" valign="top" class="vncellreq">Authentication method</td>
                   <td width="78%" class="vtable">
                     <select name="authentication_method" class="formselect" onChange="methodsel_change()">
-                      <?php foreach ($p1_authentication_methods as $method => $methodname): ?>
-                      <option value="<?=$method;?>" <?php if ($method == $pconfig['authentication_method']) echo "selected"; ?>>
-                        <?=htmlspecialchars($methodname);?>
+                      <?php
+                        foreach ($p1_authentication_methods as $method_type => $method_params):
+                          if (!$pconfig['mobile'] && $method_params['mobile'])
+                            continue;
+                      ?>
+                      <option value="<?=$method_type;?>" <?php if ($method_type == $pconfig['authentication_method']) echo "selected"; ?>>
+                        <?=htmlspecialchars($method_params['name']);?>
                       </option>
                       <?php endforeach; ?>
                     </select>
@@ -587,10 +664,10 @@ function dpdchkbox_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncell">Dead Peer Detection</td>
                   <td width="78%" class="vtable">
-                    <input name="dpd_enable" type="checkbox" id="dpd_enable" value="yes" <?php if ($pconfig['dpd_enable']) echo "checked"; ?> onClick="dpdchkbox_change()">
+                    <input name="dpd_enable" type="checkbox" id="dpd_enable" value="yes" <?php if (isset($pconfig['dpd_enable'])) echo "checked"; ?> onClick="dpdchkbox_change()">
                     Enable DPD<br>
                     <br>
-	            <input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=$pconfig['dpd_delay'];?>">
+                    <input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=$pconfig['dpd_delay'];?>">
                     seconds<br>
                     <span class="vexpl">Delay between requesting peer acknowledgement.</span><br>
                     <br>
@@ -609,11 +686,14 @@ function dpdchkbox_change() {
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save">
-                    <input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
                     <?php if (isset($p1index) && $a_phase1[$p1index]): ?>
                     <input name="p1index" type="hidden" value="<?=$p1index;?>">
                     <?php endif; ?>
+					<?php if ($pconfig['mobile']): ?>
+                    <input name="mobile" type="hidden" value="true">
+                    <?php endif; ?>
+                    <input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
+                    <input name="Submit" type="submit" class="formbtn" value="Save">
                   </td>
                 </tr>
               </table>
@@ -627,9 +707,13 @@ function dpdchkbox_change() {
 		if (is_numeric($pconfig['ealgo']['keylen']))
 			$keyset = $pconfig['ealgo']['keylen'];
 ?>
+myidsel_change();
+peeridsel_change();
 methodsel_change();
 ealgosel_change(<?=$keyset;?>);
 dpdchkbox_change();
 //-->
 </script>
 <?php include("fend.inc"); ?>
+</body>
+</html>

@@ -31,6 +31,11 @@
 
 require("guiconfig.inc");
 
+if (!is_array($config['ipsec']['client']))
+	$config['ipsec']['client'] = array();
+
+$a_client = &$config['ipsec']['client'];
+
 if (!is_array($config['ipsec']['phase2']))
 	$config['ipsec']['phase2'] = array();
 
@@ -60,6 +65,9 @@ if (isset($p2index) && $a_phase2[$p2index])
 	$pconfig['halgos'] = $a_phase2[$p2index]['hash-algorithm-option'];
 	$pconfig['pfsgroup'] = $a_phase2[$p2index]['pfsgroup'];
 	$pconfig['lifetime'] = $a_phase2[$p2index]['lifetime'];
+
+	if (isset($a_phase2[$p2index]['mobile']))
+		$pconfig['mobile'] = true;
 }
 else
 {
@@ -73,6 +81,10 @@ else
 	$pconfig['halgos'] = explode(",", "hmac_sha1,hmac_md5");
 	$pconfig['pfsgroup'] = "0";
 	$pconfig['lifetime'] = "3600";
+
+    /* mobile client */
+    if($_GET['mobile'])
+        $pconfig['mobile']=true;
 }
 
 if (isset($_GET['dup']))
@@ -83,40 +95,42 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	$ealgos = pconfig_to_ealgos($pconfig);
-	$localid = pconfig_to_idinfo("local",$pconfig);
-	$remoteid = pconfig_to_idinfo("remote",$pconfig);
-
 	if (!isset( $_POST['ikeid']))
 		$input_errors[] = "A valid ikeid must be specified.";
 
 	/* input validation */
-	$reqdfields = explode(" ", "localid_type remoteid_type halgos");
-	$reqdfieldsn = explode(",", "Local network type,Remote network type,P2 Hash Algorithms");
+	$reqdfields = explode(" ", "localid_type halgos");
+	$reqdfieldsn = explode(",", "Local network type,P2 Hash Algorithms");
+	if (!isset($pconfig['mobile'])){
+		$reqdfields[] = "remoteid_type";
+		$reqdfieldsn[] = "Remote network type";
+	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	switch ($_POST['localid_type']) {
+	switch ($pconfig['localid_type']) {
 		case "network":
-			if (!$_POST['localid_netbits'] || !is_numeric($_POST['localid_netbits']))
+			if (!$pconfig['localid_netbits'] || !is_numeric($pconfig['localid_netbits']))
 				$input_errors[] = "A valid local network bit count must be specified..";
 		case "address":
-			if (!$_POST['localid_address'] || !is_ipaddr($_POST['localid_address']))
+			if (!$pconfig['localid_address'] || !is_ipaddr($pconfig['localid_address']))
 				$input_errors[] = "A valid local network IP address must be specified.";
 			break;
 	}
 
-	switch ($_POST['remoteid_type']) {
+	switch ($pconfig['remoteid_type']) {
 		case "network":
-			if (!$_POST['remoteid_netbits'] || !is_numeric($_POST['remoteid_netbits']))
+			if (!$pconfig['remoteid_netbits'] || !is_numeric($pconfig['remoteid_netbits']))
 				$input_errors[] = "A valid remote network bit count must be specified..";
 		case "address":
-			if (!$_POST['remoteid_address'] || !is_ipaddr($_POST['remoteid_address']))
+			if (!$pconfig['remoteid_address'] || !is_ipaddr($pconfig['remoteid_address']))
 				$input_errors[] = "A valid remote network IP address must be specified.";
 			break;
 	}
 
 /* TODO : Validate enabled phase2's are not duplicates */
+
+	$ealgos = pconfig_to_ealgos($pconfig);
 
 	if (!count($ealgos)) {
 		$input_errors[] = "At least one encryption algorithm must be selected.";
@@ -126,16 +140,22 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$ph2ent['ikeid'] = $_POST['ikeid'];
-		$ph2ent['disabled'] = $_POST['disabled'] ? true : false;
-		$ph2ent['localid'] = $localid;
-		$ph2ent['remoteid'] = $remoteid;
-		$ph2ent['protocol'] = $_POST['proto'];
+
+		$ph2ent['ikeid'] = $pconfig['ikeid'];
+		$ph2ent['disabled'] = $pconfig['disabled'] ? true : false;
+
+		$ph2ent['localid'] = pconfig_to_idinfo("local",$pconfig);
+		$ph2ent['remoteid'] = pconfig_to_idinfo("remote",$pconfig);
+
+		$ph2ent['protocol'] = $pconfig['proto'];
 		$ph2ent['encryption-algorithm-option'] = $ealgos;
-		$ph2ent['hash-algorithm-option'] = $_POST['halgos'];
-		$ph2ent['pfsgroup'] = $_POST['pfsgroup'];
-		$ph2ent['lifetime'] = $_POST['lifetime'];
-		$ph2ent['descr'] = $_POST['descr'];
+		$ph2ent['hash-algorithm-option'] = $pconfig['halgos'];
+		$ph2ent['pfsgroup'] = $pconfig['pfsgroup'];
+		$ph2ent['lifetime'] = $pconfig['lifetime'];
+		$ph2ent['descr'] = $pconfig['descr'];
+
+		if (isset($pconfig['mobile']))
+			$ph2ent['mobile'] = true;
 
 		if (isset($p2index) && $a_phase2[$p2index])
 			$a_phase2[$p2index] = $ph2ent;
@@ -150,7 +170,11 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("VPN","IPsec","Edit Phase 2");
+if ($pconfig['mobile'])
+    $pgtitle = array("VPN","IPsec","Edit Phase 2", "Mobile Client");
+else
+    $pgtitle = array("VPN","IPsec","Edit Phase 2");
+
 include("head.inc");
 
 ?>
@@ -183,6 +207,17 @@ function typesel_change_local(bits) {
 			break;
 	}
 }
+
+<?php if (isset($pconfig['mobile'])): ?>
+
+function typesel_change_remote(bits) {
+
+	document.iform.remoteid_address.disabled = 1;
+	document.iform.remoteid_netbits.disabled = 1;
+}
+
+<?php else: ?>
+
 function typesel_change_remote(bits) {
 
 	if (!bits)
@@ -207,6 +242,9 @@ function typesel_change_remote(bits) {
 			break;
 	}
 }
+
+<?php endif; ?>
+
 //-->
 
 </script>
@@ -260,6 +298,8 @@ function typesel_change_remote(bits) {
                     </table>
                   </td>
                 </tr>
+                <?php if (!isset($pconfig['mobile'])): ?>
+				<tr>
                   <td width="22%" valign="top" class="vncellreq">Remote Network</td>
                   <td width="78%" class="vtable">
                     <table border="0" cellspacing="0" cellpadding="0">
@@ -291,6 +331,7 @@ function typesel_change_remote(bits) {
                     </table>
                   </td>
                 </tr>
+                <?php endif; ?>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
@@ -380,6 +421,7 @@ function typesel_change_remote(bits) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">PFS key group</td>
                   <td width="78%" class="vtable">
+					<?php if (!isset($pconfig['mobile']) || !isset($a_client['pfs_group'])): ?>
                     <select name="pfsgroup" class="formselect">
                       <?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
                       <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['pfsgroup']) echo "selected"; ?>>
@@ -389,6 +431,14 @@ function typesel_change_remote(bits) {
                     </select>
                     <br>
                     <span class="vexpl"><em>1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit</em></span>
+					<?php else: ?>
+                    <select class="formselect" disabled>
+                      <option selected><?=$p2_pfskeygroups[$a_client['pfs_group']];?></option>
+                    </select>
+                    <input name="pfsgroup" type="hidden" value="<?=$pconfig['pfsgroup'];?>">
+                    <br>
+                    <span class="vexpl"><em>Set globally in mobile client options</em></span>
+					<?php endif; ?>
                   </td>
                 </tr>
                 <tr>
@@ -401,11 +451,15 @@ function typesel_change_remote(bits) {
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save">
-                    <input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
                     <?php if (isset($p2index) && $a_phase2[$p2index]): ?>
                     <input name="p2index" type="hidden" value="<?=$p2index;?>">
                     <?php endif; ?>
+                    <?php if ($pconfig['mobile']): ?>
+                    <input name="mobile" type="hidden" value="true">
+                    <input name="remoteid_type" type="hidden" value="mobile">
+                    <?php endif; ?>
+                    <input name="Submit" type="submit" class="formbtn" value="Save">
+                    <input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
                   </td>
                 </tr>
               </table>
@@ -417,8 +471,12 @@ typesel_change_remote(<?=$pconfig['remoteid_netbits']?>);
 //-->
 </script>
 <?php include("fend.inc"); ?>
+</body>
+</html>
 
 <?php
+
+/* local utility functions */
 
 function pconfig_to_ealgos(& $pconfig) {
 
@@ -487,3 +545,4 @@ function idinfo_to_pconfig($prefix,& $idinfo,& $pconfig) {
 }
 
 ?>
+

@@ -228,7 +228,7 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	echo "        </td>\n";
 	echo "        <td width='70%'><font color='white'><b>{$msg}</b></font>\n";
 	echo "        </td>";
-	if(stristr($msg, "apply") == true || stristr($msg, "save")) {
+	if(stristr($msg, "apply") == true || stristr($msg, "save") || stristr($msg, "create")) {
 		echo "         <td>";
 		echo "           <input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">\n";
 		echo "         </td>";

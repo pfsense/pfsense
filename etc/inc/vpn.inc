@@ -35,42 +35,6 @@
 /* include all configuration functions */
 require_once ("functions.inc");
 
-/* IPsec defines */
-$my_identifier_list = array('myaddress' => 'My IP address',
-                                'address' => 'IP address',
-                                'keyid tag' => 'KeyID Tag',
-                                'fqdn' => 'Domain name',
-                                'user_fqdn' => 'User FQDN',
-                                'asn1dn' => 'Distinguished Name',
-                                'dyn_dns' => 'Dynamic DNS');
-
-$peer_identifier_list = array('peeraddress' => 'Peer IP address',
-                                'address' => 'IP address',
-                                'keyid tag' => 'KeyID Tag',
-                                'fqdn' => 'Domain name',
-                                'user_fqdn' => 'User FQDN',
-                                'asn1dn' => 'Distinguished Name');
-
-$p1_ealgos = array(
-                'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-                'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 8 ) ),
-                '3des' => array( 'name' => '3DES' ),
-                'cast128' => array( 'name' => 'CAST128' ),
-                'des' => array( 'name' => 'DES' ) );
-
-$p2_ealgos = array(
-                'aes' => array( 'name' => 'AES', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 64 ) ),
-                'blowfish' => array( 'name' => 'Blowfish', 'keysel' => array( 'lo' => 128, 'hi' => 256, 'step' => 8 ) ),
-                '3des' => array( 'name' => '3DES' ),
-                'cast128' => array( 'name' => 'CAST128' ),
-                'des' => array( 'name' => 'DES' ) );
-
-$p1_halgos = array('sha1' => 'SHA1', 'md5' => 'MD5');
-$p1_authentication_methods = array('pre_shared_key' => 'Pre-shared key', 'rsasig' => 'RSA signature');
-$p2_halgos = array('hmac_sha1' => 'SHA1', 'hmac_md5' => 'MD5');
-$p2_protos = array('esp' => 'ESP', 'ah' => 'AH');
-$p2_pfskeygroups = array('0' => 'off', '1' => '1', '2' => '2', '5' => '5');
-
 /* master setup for vpn (mpd) */
 function vpn_setup() {
 	/* start pptpd */
@@ -173,6 +137,7 @@ function vpn_ipsec_configure($ipchg = false)
 	$ipseccfg = $config['ipsec'];
 	$a_phase1 = $config['ipsec']['phase1'];
 	$a_phase2 = $config['ipsec']['phase2'];
+	$a_client = $config['ipsec']['client'];
 	$lancfg = $config['interfaces']['lan'];
 	$lanip = $lancfg['ipaddr'];
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
@@ -231,6 +196,9 @@ function vpn_ipsec_configure($ipchg = false)
 
 				/* see if this tunnel has a hostname for the remote-gateway. If so,
 				   try to resolve it now and add it to the list for dnswatch */
+
+				if (isset ($ph1ent['mobile']))
+					continue;
 
 				$rg = $ph1ent['remote-gateway'];
 
@@ -300,16 +268,15 @@ function vpn_ipsec_configure($ipchg = false)
 				if (isset($ph1ent['disabled']))
 					continue;
 
-				$rgip = $rgmap[$ph1ent['remote-gateway']];
-					if (!$rgip)
-						continue;
+				if (strstr($ph1ent['authentication_method'],'rsa'))
+					continue;
 
 				$peerid_type = $ph1ent['peerid_type'];
 
 				switch ($peerid_type) {
 					case "peeraddress":
 						$peerid_type = "address";
-						$peerid_data = $rgip;
+						$peerid_data = $rgmap[$ph1ent['remote-gateway']];
 						break;
 
 					case "address";
@@ -323,7 +290,7 @@ function vpn_ipsec_configure($ipchg = false)
 						break;
 				}
 
-				$pskconf .= "{$peerid_data}\t\t\t{$ph1ent['pre-shared-key']}\n";
+				$pskconf .= "{$peerid_data}\t{$ph1ent['pre-shared-key']}\n";
 			}
 		}
 
@@ -357,11 +324,99 @@ function vpn_ipsec_configure($ipchg = false)
 				$racoonconf .= "}\n\n";
 			}
 
+			/* begin mode_cfg section */
+			if (is_array($a_client) && isset($a_client['enable'])) {
+
+				$racoonconf .= "\nmode_cfg\n";
+				$racoonconf .= "{\n";
+
+				if ($a_client['user_source'])
+					$racoonconf .= "\tauth_source {$a_client['user_source']};\n";
+				if ($a_client['group_source'])
+					$racoonconf .= "\tgroup_source {$a_client['group_source']};\n";
+
+				if ($a_client['pool_address'] && $a_client['pool_netbits']) {
+					$pool_address = $a_client['pool_address'];
+					$pool_netmask = gen_subnet_mask($a_client['pool_netbits']);
+
+					$pool_address = long2ip(ip2long($pool_address)+1);
+					$pool_size = ~ip2long($pool_netmask) - 2;
+
+					$racoonconf .= "\tpool_size {$pool_size};\n";
+					$racoonconf .= "\tnetwork4 {$pool_address};\n";
+					$racoonconf .= "\tnetmask4 {$pool_netmask};\n";
+				}
+
+				if (isset($a_client['net_list'])) {
+
+					$net_list = '';
+
+					foreach ($a_phase2 as $ph2ent) {
+
+						if (isset($ph2ent['disabled']))
+							continue;
+
+						if (!isset($ph2ent['mobile']))
+							continue;
+
+						$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
+
+						if ($net_list)
+							$net_list .= ", ";
+						$net_list .= $localid;
+					}
+
+					if ($net_list)
+						$racoonconf .= "\tsplit_network include {$net_list};\n";
+				}
+
+				if ($a_client['dns_server1'])
+					$racoonconf .= "\tdns4 {$a_client['dns_server1']};\n";
+				if ($a_client['dns_server2'])
+					$racoonconf .= "\tdns4 {$a_client['dns_server2']};\n";
+				if ($a_client['dns_server3'])
+					$racoonconf .= "\tdns4 {$a_client['dns_server3']};\n";
+				if ($a_client['dns_server4'])
+					$racoonconf .= "\tdns4 {$a_client['dns_server4']};\n";
+
+				if ($a_client['wins_server1'])
+					$racoonconf .= "\twins4 {$a_client['wins_server1']};\n";
+				if ($a_client['wins_server2'])
+					$racoonconf .= "\twins4 {$a_client['wins_server2']};\n";
+
+				if ($a_client['dns_domain'])
+					$racoonconf .= "\tdefault_domain \"{$a_client['dns_domain']}\";\n";
+
+				if ($a_client['pfs_group'])
+					$racoonconf .= "\tpfs_group {$a_client['pfs_group']};\n";
+
+				if ($a_client['login_banner']) {
+					$fn = "{$g['varetc_path']}/racoon.motd";
+					$fd1 = fopen($fn, "w");
+					if (!$fd1) {
+						printf("Error: cannot open server{$fn} in vpn.\n");
+						return 1;
+					}
+
+					fwrite($fd1, $a_client['login_banner']);
+					fclose($fd1);
+
+					$racoonconf .= "\tbanner \"{$fn}\";\n";
+				}
+
+				$racoonconf .= "}\n\n";
+			}
+			/* end mode_cfg section */
+
 			/* begin remote sections */
 			if (is_array($a_phase1) && count($a_phase1)) {
 				/* begin remote */
 				foreach ($a_phase1 as $ph1ent) {
+
 					if (isset($ph1ent['disabled']))
+						continue;
+
+					if (isset($ph1ent['mobile']) && !isset($a_client['enable']))
 						continue;
 
 					$ikeid = $ph1ent['ikeid'];
@@ -369,6 +424,12 @@ function vpn_ipsec_configure($ipchg = false)
 					$ep = vpn_endpoint_determine($ph1ent, $curwanip);
 					if (!$ep)
 						continue;
+
+					if (!isset($ph1ent['mobile'])) {
+						$rgip = $rgmap[$ph1ent['remote-gateway']];
+						if (!$rgip)
+							continue;
+					}
 
 					$myid_type = $ph1ent['myid_type'];
 
@@ -397,10 +458,6 @@ function vpn_ipsec_configure($ipchg = false)
 							break;
 					}
 
-					$rgip = $rgmap[$ph1ent['remote-gateway']];
-						if (!$rgip)
-							continue;
-
 					$peerid_type = $ph1ent['peerid_type'];
 
 					switch ($peerid_type) {
@@ -423,9 +480,24 @@ function vpn_ipsec_configure($ipchg = false)
 							break;
 					}
 
-					$nattline = '';
+					$natt = "off";
 					if (isset($ph1ent['nat_traversal']))
-						$nattline = "nat_traversal {$ph1ent['nat_traversal']};";
+						$natt = $ph1ent['nat_traversal'];
+
+					$init = "on";
+					$genp = "off";
+					if (isset($ph1ent['mobile'])) {
+						$rgip = "anonymous";
+						$init = "off";
+						$genp = "unique";
+					}
+
+					$dpdline1 = '';
+					$dpdline2 = '';
+					if ($ph1ent['dpd_delay'] && $ph1ent['dpd_maxfail']) {
+						$dpdline1 = "dpd_delay = {$ph1ent['dpd_delay']};";
+						$dpdline2 = "dpd_maxfail = {$ph1ent['dpd_maxfail']};";
+					}
 
 					if (isset ($ph1ent['authentication_method']))
 						$authmethod = $ph1ent['authentication_method'];
@@ -434,7 +506,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 					$certline = '';
 
-					if ($authmethod == 'rsasig') {
+					if (strstr($authmethod,'rsa')) {
 						if ($ph1ent['cert'] && $ph1ent['private-key']) {
 							$cert = base64_decode($ph1ent['cert']);
 							$private_key = base64_decode($ph1ent['private-key']);
@@ -494,11 +566,11 @@ function vpn_ipsec_configure($ipchg = false)
 					$lifeline = '';
 					if ($ph1ent['lifetime'])
 						$lifeline = "lifetime time {$ph1ent['lifetime']} secs;";
-						
+
 					/* add remote section to configuration */
 
 					$racoonconf .=<<<EOD
-				
+
 remote {$rgip}
 {
 	ph1id {$ikeid};
@@ -506,9 +578,12 @@ remote {$rgip}
 	my_identifier {$myid_type} {$myid_data};
 	peers_identifier {$peerid_type} {$peerid_data};
 	ike_frag on;
-	{$nattline}
+	generate_policy = {$genp};
+	initial_contact = {$init};
+	nat_traversal = {$natt};
 	{$certline}
-	initial_contact on;
+	{$dpdline1}
+	{$dpdline2}
 	support_proxy on;
 	proposal_check claim;
 
@@ -530,21 +605,36 @@ EOD;
 		
 			/* begin sainfo sections */
 			if (is_array($a_phase2) && count($a_phase2)) {
+
 				/* begin sainfo */
 				foreach ($a_phase2 as $ph2ent) {
 
 					$ikeid = $ph2ent['ikeid'];
 
+					if (isset($ph2ent['disabled']))
+						continue;
+
+					if (isset($ph2ent['mobile']) && !isset($a_client['enable']))
+						continue;
+
 					$localid_type = $ph2ent['localid']['type'];
 					if ($localid_type != "address")
 						$localid_type = "subnet";
 
-					$remoteid_type = $ph2ent['remoteid']['type'];
-					if ($remoteid_type != "address")
-						$remoteid_type = "subnet";
-
 					$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
-					$remoteid_data = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+					$localid_spec = $localid_type." ".$localid_data." any";
+
+					if (!isset($ph2ent['mobile'])) {
+
+						$remoteid_type = $ph2ent['remoteid']['type'];
+						if ($remoteid_type != "address")
+							$remoteid_type = "subnet";
+
+						$remoteid_data = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+						$remoteid_spec = $remoteid_type." ".$remoteid_data." any";
+
+					} else
+						$remoteid_spec = "anonymous";
 
 					$ealgos = '';
 					$halgos = join(",", $ph2ent['hash-algorithm-option']);
@@ -552,6 +642,11 @@ EOD;
 					$pfsline = '';
 					if ($ph2ent['pfsgroup'])
 						$pfsline = "pfs_group {$ph2ent['pfsgroup']};";
+					if (isset($a_client['pfs_group'])) {
+						$pfsline = '';
+						if ($a_client['pfs_group'])
+							$pfsline = "pfs_group {$a_client['pfs_group']};";
+					}
 
 					$lifeline = '';
 					if ($ph2ent['lifetime'])
@@ -589,14 +684,14 @@ EOD;
 					
 					$racoonconf .=<<<EOD
 					
-sainfo {$localid_type} {$localid_data} any {$remoteid_type} {$remoteid_data} any
+sainfo {$localid_spec} {$remoteid_spec}
 {
 	remoteid {$ikeid};
 	encryption_algorithm {$ealgos};
 	authentication_algorithm {$halgos};
 	compression_algorithm deflate;
-	${pfsline}
-	${lifeline}
+	{$pfsline}
+	{$lifeline}
 }
 
 EOD;
@@ -628,13 +723,17 @@ EOD;
 			$spdconf .= "spdadd {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
 
 			foreach ($a_phase2 as $ph2ent) {
+
 				if( !ipsec_lookup_phase1($ph2ent,$ph1ent))
 					continue;
 
-				if (isset ($ph1ent['disabled']))
+				if (isset($ph1ent['mobile']))
 					continue;
 
-				if (isset ($ph2ent['disabled']))
+				if (isset($ph1ent['disabled']))
+					continue;
+
+				if (isset($ph2ent['disabled']))
 					continue;
 
 				$ep = vpn_endpoint_determine($ph1ent, $curwanip);

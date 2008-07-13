@@ -139,7 +139,7 @@ include("head.inc");
 			<?php
 				$tab_array = array();
 				$tab_array[0] = array("Tunnels", true, "vpn_ipsec.php");
-//				$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
+				$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
 				$tab_array[2] = array("CAs", false, "vpn_ipsec_ca.php");
 				display_top_tabs($tab_array);
 			?>
@@ -179,6 +179,7 @@ include("head.inc");
 							</table>
 						</td>
 					</tr>
+
 					<?php
 						$i = 0;
 						foreach ($a_phase1 as $ph1ent) {
@@ -205,7 +206,10 @@ include("head.inc");
 								else
 									$if = "WAN";
 
-								echo $if . "<br>" . $ph1ent['remote-gateway'];
+								if (!isset($ph1ent['mobile']))
+									echo $if."<br>".$ph1ent['remote-gateway'];
+								else
+									echo $if."<br><strong>Mobile Client</strong>";
 							?>
 							<?=$spane;?>
 						</td>
@@ -275,7 +279,7 @@ include("head.inc");
 									<td class="listhdrr">P2 Transforms</td>
 									<td class="listhdrr">P2 Auth Methods</td>
 									<td class ="list">
-										<a href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid'];?>">
+										<a href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid'];?><?php if (isset($ph1ent['mobile'])) echo "&mobile=true";?>">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add phase2 entry" width="17" height="17" border="0">
 										</a>
 									</td>
@@ -296,19 +300,20 @@ include("head.inc");
 											$spans = $spane = "";
 								?>
 								<tr valign="top">
+
 									<td nowrap class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
 										<?=$spans;?>
-										<?php echo ipsec_idinfo_to_text($ph2ent['localid']); ?>
+											<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
 										<?=$spane;?>
 									</td>
 									<td nowrap class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
 										<?=$spans;?>
-										<?php echo ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
+											<?=ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
 										<?=$spane;?>
 									</td>
 									<td nowrap class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
 										<?=$spans;?>
-										<?php echo $p2_protos[$ph2ent['protocol']];	?>
+											<?php echo $p2_protos[$ph2ent['protocol']];	?>
 										<?=$spane;?>
 									</td>
 									<td nowrap class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
@@ -350,6 +355,7 @@ include("head.inc");
 										</a>
 									</td>
 								</tr>
+
 								<?php
 										$j++;
 									}
@@ -361,6 +367,7 @@ include("head.inc");
 							$i++;
 						}
 					?>
+
 					<tr>
 						<td class="list" colspan="5"></td>
 						<td class="list">

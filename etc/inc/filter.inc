@@ -2979,8 +2979,7 @@ EOD;
 		 * -mgrooms 06/07/2008
 		 */
 		if(isset($config['ipsec']['enable']) &&
-		   is_array($config['ipsec']['phase1']) &&
-		   is_array($config['ipsec']['phase2'])) {
+		   is_array($config['ipsec']['phase1'])) {
 			/* step through all phase1 entries */
 			foreach ($config['ipsec']['phase1'] as $ph1ent) {
 
@@ -3004,18 +3003,24 @@ EOD;
 
 				$lgip = vpn_endpoint_determine($ph1ent, $wan_ip);
 
-				$rgip = $ph1ent['remote-gateway'];
-                if(!is_ipaddr($rgip))
-					$rgip = resolve_retry($rgip);
-
 				if (!$lgip) {
-					$ipfrules .= "# ERROR! Unable to determine local IPsec peer address for {$ph1ent['remote-gateway']}\n";
+					$ipfrules .= "# ERROR! Unable to determine local IPsec peer address for {$ph1ent['descr']}\n";
 					continue;
 				}
-				if (!$rgip) {
-					$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['remote-gateway']}\n";
-					continue;
+
+				if (!isset($ph1ent['mobile'])) {
+
+					$rgip = $ph1ent['remote-gateway'];
+    	            if(!is_ipaddr($rgip))
+						$rgip = resolve_retry($rgip);
+
+					if (!$rgip) {
+						$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['descr']}\n";
+						continue;
+					}
 				}
+				else
+					$rgip = "any";
 
 				/*	Step through the interface list and the assigned IP
 				 *	addresses.
@@ -3071,14 +3076,20 @@ EOD;
 					/* Another conversion. Why? */
 					$ifalias = convert_friendly_interface_to_friendly_descr($ifr);
 
+					/* Determine best description */
+					if ($ph1ent['descr'])
+						$descr = $ph1ent['descr'];
+					else
+						$descr = $rgip;
+
 					/* Add rules to allow IKE to pass */
-					$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to {$rgip} port = 500 keep state label \"IPsec: {$ph1ent['descr']} - outbound isakmp\"\n";
-					$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from {$rgip} to any port = 500 keep state label \"IPsec: {$ph1ent['descr']} - inbound isakmp\"\n";
+					$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to {$rgip} port = 500 keep state label \"IPsec: {$descr} - outbound isakmp\"\n";
+					$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from {$rgip} to any port = 500 keep state label \"IPsec: {$descr} - inbound isakmp\"\n";
 
 					/* If NAT-T is enabled, add additional rules */
 					if ($ph1ent['nat_traversal'] != "off" ) {
-						$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to {$rgip} port = 4500 keep state label \"IPsec: {$ph1ent['descr']} - outbound nat-t\"\n";
-						$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from {$rgip} to any port = 4500 keep state label \"IPsec: {$ph1ent['descr']} - inbound nat-t\"\n";
+						$ipfrules .= "pass out on \${$ifalias} $route_to proto udp from any to {$rgip} port = 4500 keep state label \"IPsec: {$descr} - outbound nat-t\"\n";
+						$ipfrules .= "pass in on \${$ifalias} $reply_to proto udp from {$rgip} to any port = 4500 keep state label \"IPsec: {$descr} - inbound nat-t\"\n";
 					}
 
 					/*	Step through all phase2 entries and determine
@@ -3102,12 +3113,12 @@ EOD;
 
 					/* Add rules to allow the protocols in use */
 					if ($prot_used_esp) {
-						$ipfrules .= "pass out on \${$ifalias} $route_to proto esp from any to {$rgip} keep state label \"IPsec: {$ph1ent['descr']} - outbound esp proto\"\n";
-						$ipfrules .= "pass in on \${$ifalias} $reply_to proto esp from {$rgip} to any keep state label \"IPsec: {$ph1ent['descr']} - inbound esp proto\"\n";
+						$ipfrules .= "pass out on \${$ifalias} $route_to proto esp from any to {$rgip} keep state label \"IPsec: {$descr} - outbound esp proto\"\n";
+						$ipfrules .= "pass in on \${$ifalias} $reply_to proto esp from {$rgip} to any keep state label \"IPsec: {$descr} - inbound esp proto\"\n";
 					}
 					if ($prot_used_ah) {
-						$ipfrules .= "pass out on \${$ifalias} $route_to proto ah from any to {$rgip} keep state label \"IPsec: {$ph1ent['descr']} - outbound ah proto\"\n";
-						$ipfrules .= "pass in on \${$ifalias} $reply_to proto ah from {$rgip} to any keep state label \"IPsec: {$ph1ent['descr']} - inbound ah proto\"\n";
+						$ipfrules .= "pass out on \${$ifalias} $route_to proto ah from any to {$rgip} keep state label \"IPsec: {$descr} - outbound ah proto\"\n";
+						$ipfrules .= "pass in on \${$ifalias} $reply_to proto ah from {$rgip} to any keep state label \"IPsec: {$descr} - inbound ah proto\"\n";
 					}
 				}
 			}

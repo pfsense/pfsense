@@ -1,9 +1,8 @@
 <?php
 /*
 	vpn_ipsec_mobile.php
-	part of m0n0wall (http://m0n0.ch/wall)
 	
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2008 Shrew Soft Inc
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -30,129 +29,170 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['ipsec']['mobileclients'])) {
-	$config['ipsec']['mobileclients'] = array();
-}
-$a_ipsec = &$config['ipsec']['mobileclients'];
+if (!is_array($config['ipsec']['phase1']))
+	$config['ipsec']['phase1'] = array();
 
-if (count($a_ipsec) == 0) {
-	/* defaults */
-	$pconfig['p1mode'] = "aggressive";
-	$pconfig['p1myidentt'] = "myaddress";
-	$pconfig['p1ealgo'] = "3des";
-	$pconfig['p1halgo'] = "sha1";
-	$pconfig['p1dhgroup'] = "2";
-	$pconfig['p1authentication_method'] = "pre_shared_key";
-	$pconfig['p2proto'] = "esp";
-	$pconfig['p2ealgos'] = explode(",", "3des,blowfish,cast128,rijndael");
-	$pconfig['p2halgos'] = explode(",", "hmac_sha1,hmac_md5");
-	$pconfig['p2pfsgroup'] = "0";
-} else {
-	$pconfig['enable'] = isset($a_ipsec['enable']);
-	$pconfig['natt'] = isset($a_ipsec['natt']);
-	$pconfig['p1mode'] = $a_ipsec['p1']['mode'];
-		
-	if (isset($a_ipsec['p1']['myident']['myaddress']))
-		$pconfig['p1myidentt'] = 'myaddress';
-	else if (isset($a_ipsec['p1']['myident']['address'])) {
-		$pconfig['p1myidentt'] = 'address';
-		$pconfig['p1myident'] = $a_ipsec['p1']['myident']['address'];
-	} else if (isset($a_ipsec['p1']['myident']['fqdn'])) {
-		$pconfig['p1myidentt'] = 'fqdn';
-		$pconfig['p1myident'] = $a_ipsec['p1']['myident']['fqdn'];
-	} else if (isset($a_ipsec['p1']['myident']['ufqdn'])) {
-		$pconfig['p1myidentt'] = 'user_fqdn';
-		$pconfig['p1myident'] = $a_ipsec['p1']['myident']['ufqdn'];
- 	}
-	
-	$pconfig['p1ealgo'] = $a_ipsec['p1']['encryption-algorithm'];
-	$pconfig['p1halgo'] = $a_ipsec['p1']['hash-algorithm'];
-	$pconfig['p1dhgroup'] = $a_ipsec['p1']['dhgroup'];
-	$pconfig['p1lifetime'] = $a_ipsec['p1']['lifetime'];
-	$pconfig['p1authentication_method'] = $a_ipsec['p1']['authentication_method'];
-	$pconfig['p1cert'] = base64_decode($a_ipsec['p1']['cert']);
-	$pconfig['p1privatekey'] = base64_decode($a_ipsec['p1']['private-key']);
-	$pconfig['p2proto'] = $a_ipsec['p2']['protocol'];
-	$pconfig['p2ealgos'] = $a_ipsec['p2']['encryption-algorithm-option'];
-	$pconfig['p2halgos'] = $a_ipsec['p2']['hash-algorithm-option'];
-	$pconfig['p2pfsgroup'] = $a_ipsec['p2']['pfsgroup'];
-	$pconfig['p2lifetime'] = $a_ipsec['p2']['lifetime'];
+$a_phase1 = &$config['ipsec']['phase1'];
+
+$a_client = &$config['ipsec']['client'];
+
+if (!is_array($config['ipsec']['client']))
+	$config['ipsec']['client'] = array();
+
+$a_client = &$config['ipsec']['client'];
+
+if (count($a_client)) {
+
+	$pconfig['enable'] = $a_client['enable'];
+
+	$pconfig['user_source'] = $a_client['user_source'];
+	$pconfig['group_source'] = $a_client['group_source'];
+
+	$pconfig['pool_address'] = $a_client['pool_address'];
+	$pconfig['pool_netbits'] = $a_client['pool_netbits'];
+	$pconfig['net_list'] = $a_client['net_list'];
+	$pconfig['dns_domain'] = $a_client['dns_domain'];
+	$pconfig['dns_server1'] = $a_client['dns_server1'];
+	$pconfig['dns_server2'] = $a_client['dns_server2'];
+	$pconfig['dns_server3'] = $a_client['dns_server3'];
+	$pconfig['dns_server4'] = $a_client['dns_server4'];
+	$pconfig['wins_server1'] = $a_client['wins_server1'];
+	$pconfig['wins_server2'] = $a_client['wins_server2'];
+	$pconfig['pfs_group'] = $a_client['pfs_group'];
+	$pconfig['login_banner'] = $a_client['login_banner'];
+
+	if (isset($pconfig['enable']))
+		$pconfig['enable'] = true;
+
+	if ($pconfig['pool_address']&&$pconfig['pool_netbits'])
+		$pconfig['pool_enable'] = true;
+	else
+		$pconfig['pool_netbits'] = 24;
+
+	if (isset($pconfig['net_list']))
+		$pconfig['net_list_enable'] = true;
+
+	if ($pconfig['dns_domain'])
+		$pconfig['dns_domain_enable'] = true;
+
+	if ($pconfig['dns_server1']||$pconfig['dns_server2']||$pconfig['dns_server3']||$pconfig['dns_server4'])
+		$pconfig['dns_server_enable'] = true;
+
+	if ($pconfig['wins_server1']||$pconfig['wins_server2'])
+		$pconfig['wins_server_enable'] = true;
+
+	if (isset($pconfig['pfs_group']))
+		$pconfig['pfs_group_enable'] = true;
+
+	if ($pconfig['login_banner'])
+		$pconfig['login_banner_enable'] = true;
 }
 
-if ($_POST) {
+if ($_POST['create']) {
+	header("Location: vpn_ipsec_phase1.php?mobile=true");
+}
+
+if ($_POST['apply']) {
+	$retval = 0;
+	$retval = vpn_ipsec_configure();
+	$savemsg = get_std_save_message($retval);
+	if ($retval == 0)
+		if (file_exists($d_ipsecconfdirty_path))
+			unlink($d_ipsecconfdirty_path);
+}
+
+if ($_POST['submit']) {
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	/* input consolidation */
+
+	
+
 	/* input validation */
-	$reqdfields = explode(" ", "p2ealgos p2halgos");
-	$reqdfieldsn = explode(",", "P2 Encryption Algorithms,P2 Hash Algorithms");
-	
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	
-	if ($_POST['p1authentication_method']== "rsasig") {
-		if (!strstr($_POST['p1cert'], "BEGIN CERTIFICATE") || !strstr($_POST['p1cert'], "END CERTIFICATE"))
-			$input_errors[] = "This certificate does not appear to be valid.";
-		if (!strstr($_POST['p1privatekey'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['p1privatekey'], "END RSA PRIVATE KEY"))
-			$input_errors[] = "This key does not appear to be valid.";	
+
+	$reqdfields = explode(" ", "user_source group_source");
+	$reqdfieldsn =  explode(",", "User Authentication Source,Group Authentication Source");
+
+    do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
+	if ($pconfig['pool_enable'])
+		if (!is_ipaddr($pconfig['pool_address']))
+			$input_errors[] = "A valid IP address for 'Virtual Address Pool Network' must be specified.";
+
+	if ($pconfig['dns_domain_enable'])
+		if (!is_domain($pconfig['dns_domain']))
+			$input_errors[] = "A valid value for 'DNS Default Domain' must be specified.";
+
+	if ($pconfig['dns_server_enable']) {
+		if (!$pconfig['dns_server1'] && !$pconfig['dns_server2'] &&
+			!$pconfig['dns_server3'] && !$pconfig['dns_server4'] )
+			$input_errors[] = "At least one DNS server must be specified to enable the DNS Server option.";
+		if ($pconfig['dns_server1'] && !is_ipaddr($pconfig['dns_server1']))
+			$input_errors[] = "A valid IP address for 'DNS Server #1' must be specified.";
+		if ($pconfig['dns_server2'] && !is_ipaddr($pconfig['dns_server2']))
+			$input_errors[] = "A valid IP address for 'DNS Server #2' must be specified.";
+		if ($pconfig['dns_server3'] && !is_ipaddr($pconfig['dns_server3']))
+			$input_errors[] = "A valid IP address for 'DNS Server #3' must be specified.";
+		if ($pconfig['dns_server4'] && !is_ipaddr($pconfig['dns_server4']))
+			$input_errors[] = "A valid IP address for 'DNS Server #4' must be specified.";
 	}
-	
-	if (($_POST['p1lifetime'] && !is_numeric($_POST['p1lifetime']))) {
-		$input_errors[] = "The P1 lifetime must be an integer.";
+
+	if ($pconfig['wins_server_enable']) {
+		if (!$pconfig['wins_server1'] && !$pconfig['wins_server2'])
+			$input_errors[] = "At least one WINS server must be specified to enable the DNS Server option.";
+		if ($pconfig['wins_server1'] && !is_ipaddr($pconfig['wins_server1']))
+			$input_errors[] = "A valid IP address for 'WINS Server #1' must be specified.";
+		if ($pconfig['wins_server2'] && !is_ipaddr($pconfig['wins_server2']))
+			$input_errors[] = "A valid IP address for 'WINS Server #2' must be specified.";
 	}
-	if (($_POST['p2lifetime'] && !is_numeric($_POST['p2lifetime']))) {
-		$input_errors[] = "The P2 lifetime must be an integer.";
-	}
-	if ((($_POST['p1myidentt'] == "address") && !is_ipaddr($_POST['p1myident']))) {
-		$input_errors[] = "A valid IP address for 'My identifier' must be specified.";
-	}
-	if ((($_POST['p1myidentt'] == "fqdn") && !is_domain($_POST['p1myident']))) {
-		$input_errors[] = "A valid domain name for 'My identifier' must be specified.";
-	}
-	if ($_POST['p1myidentt'] == "user_fqdn") {
-		$ufqdn = explode("@",$_POST['p1myident']);
-		if (!is_domain($ufqdn[1])) 
-			$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'My identifier' must be specified.";
-	}
-	
-	if ($_POST['p1myidentt'] == "myaddress")
-		$_POST['p1myident'] = "";
+
+	if ($pconfig['login_banner_enable'])
+		if (!strlen($pconfig['login_banner']))
+			$input_errors[] = "A valid value for 'Login Banner' must be specified.";
 
 	if (!$input_errors) {
-		$ipsecent = array();
-		$ipsecent['enable'] = $_POST['enable'] ? true : false;
-		$ipsecent['p1']['mode'] = $_POST['p1mode'];
-		$ipsecent['natt'] = $_POST['natt'] ? true : false;
+		$client = array();
 		
-		$ipsecent['p1']['myident'] = array();
-		switch ($_POST['p1myidentt']) {
-			case 'myaddress':
-				$ipsecent['p1']['myident']['myaddress'] = true;
-				break;
-			case 'address':
-				$ipsecent['p1']['myident']['address'] = $_POST['p1myident'];
-				break;
-			case 'fqdn':
-				$ipsecent['p1']['myident']['fqdn'] = $_POST['p1myident'];
-				break;
-			case 'user_fqdn':
-				$ipsecent['p1']['myident']['ufqdn'] = $_POST['p1myident'];
-				break;
+		if ($pconfig['enable'])
+			$client['enable'] = true;
+
+		$client['user_source'] = $pconfig['user_source'];
+		$client['group_source'] = $pconfig['group_source'];
+
+		if ($pconfig['pool_enable']) {
+			$client['pool_address'] = $pconfig['pool_address'];
+			$client['pool_netbits'] = $pconfig['pool_netbits'];
 		}
-		
-		$ipsecent['p1']['encryption-algorithm'] = $_POST['p1ealgo'];
-		$ipsecent['p1']['hash-algorithm'] = $_POST['p1halgo'];
-		$ipsecent['p1']['dhgroup'] = $_POST['p1dhgroup'];
-		$ipsecent['p1']['lifetime'] = $_POST['p1lifetime'];
-		$ipsecent['p1']['private-key'] = base64_encode($_POST['p1privatekey']);
-		$ipsecent['p1']['cert'] = base64_encode($_POST['p1cert']);
-		$ipsecent['p1']['authentication_method'] = $_POST['p1authentication_method'];
-		$ipsecent['p2']['protocol'] = $_POST['p2proto'];
-		$ipsecent['p2']['encryption-algorithm-option'] = $_POST['p2ealgos'];
-		$ipsecent['p2']['hash-algorithm-option'] = $_POST['p2halgos'];
-		$ipsecent['p2']['pfsgroup'] = $_POST['p2pfsgroup'];
-		$ipsecent['p2']['lifetime'] = $_POST['p2lifetime'];
-		
-		$a_ipsec = $ipsecent;
+
+		if ($pconfig['net_list_enable'])
+			$client['net_list'] = true;
+
+		if ($pconfig['dns_domain_enable'])
+			$client['dns_domain'] = $pconfig['dns_domain'];
+
+		if ($pconfig['dns_server_enable']) {
+			$client['dns_server1'] = $pconfig['dns_server1'];
+			$client['dns_server2'] = $pconfig['dns_server2'];
+			$client['dns_server3'] = $pconfig['dns_server3'];
+			$client['dns_server4'] = $pconfig['dns_server4'];
+		}
+
+		if ($pconfig['wins_server_enable']) {
+			$client['wins_server1'] = $pconfig['wins_server1'];
+			$client['wins_server2'] = $pconfig['wins_server2'];
+		}
+
+		if ($pconfig['pfs_group_enable'])
+			$client['pfs_group'] = $pconfig['pfs_group'];
+
+		if ($pconfig['login_banner_enable'])
+			$client['login_banner'] = $pconfig['login_banner'];
+
+//		$echo "login banner = {$pconfig['login_banner']}";
+
+		$a_client = $client;
 		
 		write_config();
 		touch($d_ipsecconfdirty_path);
@@ -164,235 +204,357 @@ if ($_POST) {
 
 $pgtitle = array("VPN","IPsec","Mobile");
 include("head.inc");
-
 ?>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+
 <script language="JavaScript">
 <!--
-function methodsel_change() {
-	switch (document.iform.p1authentication_method.selectedIndex) {
-		case 1:	/* rsa */
-			document.iform.p1privatekey.disabled = 0;
-			document.iform.p1cert.disabled = 0;
-			break;
-		default: /* pre-shared */
-			document.iform.p1privatekey.disabled = 1;
-			document.iform.p1cert.disabled = 1;
-			break;
+
+function pool_change() {
+
+	if (document.iform.pool_enable.checked) {
+		document.iform.pool_address.disabled = 0;
+		document.iform.pool_netbits.disabled = 0;
+	} else {
+		document.iform.pool_address.disabled = 1;
+		document.iform.pool_netbits.disabled = 1;
 	}
 }
+
+function dns_domain_change() {
+
+	if (document.iform.dns_domain_enable.checked)
+		document.iform.dns_domain.disabled = 0;
+	else
+		document.iform.dns_domain.disabled = 1;
+}
+
+function dns_server_change() {
+
+	if (document.iform.dns_server_enable.checked) {
+		document.iform.dns_server1.disabled = 0;
+		document.iform.dns_server2.disabled = 0;
+		document.iform.dns_server3.disabled = 0;
+		document.iform.dns_server4.disabled = 0;
+	} else {
+		document.iform.dns_server1.disabled = 1;
+		document.iform.dns_server2.disabled = 1;
+		document.iform.dns_server3.disabled = 1;
+		document.iform.dns_server4.disabled = 1;
+	}
+}
+
+function wins_server_change() {
+
+	if (document.iform.wins_server_enable.checked) {
+		document.iform.wins_server1.disabled = 0;
+		document.iform.wins_server2.disabled = 0;
+	} else {
+		document.iform.wins_server1.disabled = 1;
+		document.iform.wins_server2.disabled = 1;
+	}
+}
+
+function pfs_group_change() {
+
+	if (document.iform.pfs_group_enable.checked)
+		document.iform.pfs_group.disabled = 0;
+	else
+		document.iform.pfs_group.disabled = 1;
+}
+
+function login_banner_change() {
+
+	if (document.iform.login_banner_enable.checked)
+		document.iform.login_banner.disabled = 0;
+	else
+		document.iform.login_banner.disabled = 1;
+}
+
 //-->
 </script>
-<form action="vpn_ipsec.php" method="post">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if (file_exists($d_ipsecconfdirty_path)): ?><p>
-<?php print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<?php endif; ?>
-</form>
+
 <form action="vpn_ipsec_mobile.php" method="post" name="iform" id="iform">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td class="tabnavtbl">
 <?php
-	$tab_array = array();
-	$tab_array[0] = array("Tunnels", false, "vpn_ipsec.php");
-	$tab_array[1] = array("Mobile clients", true, "vpn_ipsec_mobile.php");
-	$tab_array[2] = array("CAs", false, "vpn_ipsec_ca.php");
-	display_top_tabs($tab_array);
+	if ($savemsg)
+		print_info_box($savemsg);
+	if (file_exists($d_ipsecconfdirty_path))
+		print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");
+	foreach ($a_phase1 as $ph1ent)
+		if (isset($ph1ent['mobile']))
+			$ph1found = true;
+	if ($pconfig['enable'] && !$ph1found)
+		print_info_box_np("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found.<br>Please click Create to define one.","create","Create Phase1");
 ?>
-  </td></tr>
-  <tr> 
-    <td>
-	 <div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-			  <tr> 
-                        <td width="22%" valign="top">&nbsp;</td>
-                        <td width="78%"> 
-                    <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
-                    <strong>Allow mobile clients</strong></td>
-                </tr>
-				<tr> 
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="natt" type="checkbox" id="natt" value="yes" <?php if ($pconfig['natt']) echo "checked"; ?>>
-                    <strong>Enable NAT Traversal (NAT-T)</strong><br>
-                    <span class="vexpl">Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
-                    	which can help with clients that are behind restrictive firewalls.</span></td>
-                </tr>
-                <tr> 
-                  <td colspan="2" valign="top" class="listtopic">Phase 1 proposal 
-                    (Authentication)</td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Negotiation mode</td>
-                        <td width="78%" class="vtable">
-					<select name="p1mode" class="formselect">
-                      <?php $modes = explode(" ", "main aggressive"); foreach ($modes as $mode): ?>
-                      <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1mode']) echo "selected"; ?>> 
-                      <?=htmlspecialchars($mode);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Aggressive is faster, but 
-                    less secure.</span></td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">My identifier</td>
-                        <td width="78%" class="vtable">
-					<select name="p1myidentt" class="formselect">
-                      <?php foreach ($my_identifier_list as $mode => $modename): ?>
-                      <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1myidentt']) echo "selected"; ?>> 
-                      <?=htmlspecialchars($modename);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <input name="p1myident" type="text" class="formfld unknown" id="p1myident" size="30" value="<?=$pconfig['p1myident'];?>"> 
-                  </td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Encryption algorithm</td>
-                        <td width="78%" class="vtable">
-					<select name="p1ealgo" class="formselect">
-                      <?php foreach ($p1_ealgos as $algo => $algoname): ?>
-                      <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1ealgo']) echo "selected"; ?>> 
-                      <?=htmlspecialchars($algoname);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Must match the setting 
-                    chosen on the remote side. </span></td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Hash algorithm</td>
-                        <td width="78%" class="vtable">
-					<select name="p1halgo" class="formselect">
-                      <?php foreach ($p1_halgos as $algo => $algoname): ?>
-                      <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1halgo']) echo "selected"; ?>> 
-                      <?=htmlspecialchars($algoname);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Must match the setting 
-                    chosen on the remote side. </span></td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">DH key group</td>
-                        <td width="78%" class="vtable">
-					<select name="p1dhgroup" class="formselect">
-                      <?php $keygroups = explode(" ", "1 2 5"); foreach ($keygroups as $keygroup): ?>
-                      <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p1dhgroup']) echo "selected"; ?>> 
-                      <?=htmlspecialchars($keygroup);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br> <span class="vexpl"><em>1 = 768 bit, 2 = 1024 
-                    bit, 5 = 1536 bit</em><br>
-                    Must match the setting chosen on the remote side. </span></td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncell">Lifetime</td>
-                        <td width="78%" class="vtable"> 
-                    <input name="p1lifetime" type="text" class="formfld unknown" id="p1lifetime" size="20" value="<?=$pconfig['p1lifetime'];?>">
-                    seconds</td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Authentication method</td>
-                  <td width="78%" class="vtable">
-					<select name="p1authentication_method" class="formselect" onChange="methodsel_change()">
-                      <?php foreach ($p1_authentication_methods as $method => $methodname): ?>
-                      <option value="<?=$method;?>" <?php if ($method == $pconfig['p1authentication_method']) echo "selected"; ?>> 
-                      <?=htmlspecialchars($methodname);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Must match the setting 
-                    chosen on the remote side. </span></td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Certificate</td>
-                  <td width="78%" class="vtable"> 
-                    <textarea name="p1cert" cols="65" rows="7" id="p1cert" class="formpre"><?=htmlspecialchars($pconfig['p1cert']);?></textarea>
-                    <br> 
-                    Paste a certificate in X.509 PEM format here.</td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Key</td>
-                  <td width="78%" class="vtable"> 
-                    <textarea name="p1privatekey" cols="65" rows="7" id="p1privatekey" class="formpre"><?=htmlspecialchars($pconfig['p1privatekey']);?></textarea>
-                    <br> 
-                    Paste an RSA private key in PEM format here.</td>
-                </tr>
-                <tr> 
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
-                <tr> 
-                  <td colspan="2" valign="top" class="listtopic">Phase 2 proposal 
-                    (SA/Key Exchange)</td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Protocol</td>
-                        <td width="78%" class="vtable">
-					<select name="p2proto" class="formselect">
-                      <?php foreach ($p2_protos as $proto => $protoname): ?>
-                      <option value="<?=$proto;?>" <?php if ($proto == $pconfig['p2proto']) echo "selected"; ?>> 
-                      <?=htmlspecialchars($protoname);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">ESP is encryption, AH is 
-                    authentication only </span></td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Encryption algorithms</td>
-                        <td width="78%" class="vtable"> 
-                          <?php foreach ($p2_ealgos as $algo => $algoname): ?>
-                    <input type="checkbox" name="p2ealgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['p2ealgos'])) echo "checked"; ?>> 
-                    <?=htmlspecialchars($algoname);?>
-                    <br> 
-                    <?php endforeach; ?>
-                    <br>
-                    Hint: use 3DES for best compatibility or if you have a hardware 
-                    crypto accelerator card. Blowfish is usually the fastest in 
-                    software encryption. </td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Hash algorithms</td>
-                        <td width="78%" class="vtable"> 
-                          <?php foreach ($p2_halgos as $algo => $algoname): ?>
-                    <input type="checkbox" name="p2halgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['p2halgos'])) echo "checked"; ?>> 
-                    <?=htmlspecialchars($algoname);?>
-                    <br> 
-                    <?php endforeach; ?>
-                  </td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">PFS key group</td>
-                        <td width="78%" class="vtable">
-					<select name="p2pfsgroup" class="formselect">
-                      <?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
-                      <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p2pfsgroup']) echo "selected"; ?>> 
-                      <?=htmlspecialchars($keygroupname);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br> <span class="vexpl"><em>1 = 768 bit, 2 = 1024 
-                    bit, 5 = 1536 bit</em></span></td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncell">Lifetime</td>
-                        <td width="78%" class="vtable"> 
-                    <input name="p2lifetime" type="text" class="formfld unknown" id="p2lifetime" size="20" value="<?=$pconfig['p2lifetime'];?>">
-                    seconds</td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save">
-                  </td>
-                </tr>
-              </table>
-	  </div>
-	 </td>
+<?php if ($input_errors) print_input_errors($input_errors); ?>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td class="tabnavtbl">
+			<?php
+				$tab_array = array();
+				$tab_array[0] = array("Tunnels", false, "vpn_ipsec.php");
+				$tab_array[1] = array("Mobile clients", true, "vpn_ipsec_mobile.php");
+				$tab_array[2] = array("CAs", false, "vpn_ipsec_ca.php");
+				display_top_tabs($tab_array);
+			?>
+		</td>
+	</tr>
+	<tr> 
+		<td>
+			<div id="mainarea">
+				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">IKE Extensions</td>
+						<td width="78%" class="vtable">
+							<?php set_checked($pconfig['enable'],$chk); ?>
+							<input name="enable" type="checkbox" id="enable" value="yes" <?=$chk;?>>
+							<strong>Enable Support of Mobile Clients</strong>
+							<br>
+						</td>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="list" height="12"></td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">
+							Extended Authentication (Xauth)
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">User Authentication</td>
+						<td width="78%" class="vtable">
+							Source:&nbsp;&nbsp;
+							<select name="user_source" class="formselect" id="user_source">
+								<option value="system">system</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Group Authentication</td>
+						<td width="78%" class="vtable">
+							Source:&nbsp;&nbsp;
+							<select name="group_source" class="formselect" id="group_source">
+								<option value="system">system</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="list" height="12"></td>
+					</tr>
+					<tr> 
+						<td colspan="2" valign="top" class="listtopic">
+							Client Configuration (mode-cfg)
+						</td>
+					</tr>
+					<tr> 
+						<td width="22%" valign="top" class="vncellreq">Virtual Address Pool</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['pool_enable'],$chk); ?>
+										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?> onClick="pool_change()">
+										Provide a vitual IP address to clients<br>
+										<br>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Network:&nbsp;
+										<input name="pool_address" type="text" class="formfld unknown" id="pool_address" size="20" value="<?=$pconfig['pool_address'];?>">
+										/
+										<select name="pool_netbits" class="formselect" id="pool_netbits">
+											<?php for ($i = 32; $i >= 0; $i--): ?>
+											<option value="<?=$i;?>" <?php if ($i == $pconfig['pool_netbits']) echo "selected"; ?>>
+												<?=$i;?>
+											</option>
+											<?php endfor; ?>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Network List</td>
+						<td width="78%" class="vtable">
+							<?php set_checked($pconfig['net_list_enable'],$chk); ?>
+							<input name="net_list_enable" type="checkbox" id="net_list_enable" value="yes" <?=$chk;?>>
+							Provide a list of accessable networks to clients<br>
+						</td>
+					</tr>
+					<tr> 
+						<td width="22%" valign="top" class="vncellreq">DNS Default Domain</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['dns_domain_enable'],$chk); ?>
+										<input name="dns_domain_enable" type="checkbox" id="dns_domain_enable" value="yes" <?=$chk;?> onClick="dns_domain_change()">
+										Provide a default domain name to clients<br>
+										<br>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<input name="dns_domain" type="text" class="formfld unknown" id="dns_domain" size="30" value="<?=htmlspecialchars($pconfig['dns_domain']);?>">
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr> 
+						<td width="22%" valign="top" class="vncellreq">DNS Servers</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['dns_server_enable'],$chk); ?>
+										<input name="dns_server_enable" type="checkbox" id="dns_server_enable" value="yes" <?=$chk;?> onClick="dns_server_change()">
+										Provide a DNS server list to clients<br>
+										<br>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Server #1:&nbsp;
+										<input name="dns_server1" type="text" class="formfld unknown" id="dns_server1" size="20" value="<?=$pconfig['dns_server1'];?>">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Server #2:&nbsp;
+										<input name="dns_server2" type="text" class="formfld unknown" id="dns_server2" size="20" value="<?=$pconfig['dns_server2'];?>">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Server #3:&nbsp;
+										<input name="dns_server3" type="text" class="formfld unknown" id="dns_server3" size="20" value="<?=$pconfig['dns_server3'];?>">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Server #4:&nbsp;
+										<input name="dns_server4" type="text" class="formfld unknown" id="dns_server4" size="20" value="<?=$pconfig['dns_server4'];?>">
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr> 
+						<td width="22%" valign="top" class="vncellreq">WINS Servers</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['wins_server_enable'],$chk); ?>
+										<input name="wins_server_enable" type="checkbox" id="wins_server_enable" value="yes" <?=$chk;?> onClick="wins_server_change()">
+										Provide a WINS server list to clients<br>
+										<br>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Server #1:&nbsp;
+										<input name="wins_server1" type="text" class="formfld unknown" id="wins_server1" size="20" value="<?=$pconfig['wins_server1'];?>">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Server #2:&nbsp;
+										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=$pconfig['wins_server2'];?>">
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Phase2 PFS Group</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['pfs_group_enable'],$chk); ?>
+										<input name="pfs_group_enable" type="checkbox" id="pfs_group_enable" value="yes" <?=$chk;?> onClick="pfs_group_change()">
+										Provide the Phase2 PFS group to clients ( overrides all mobile phase2 settings )<br>
+										<br>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Group:&nbsp;&nbsp;
+										<select name="pfs_group" class="formselect" id="pfs_group">
+										<?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
+											<option value="<?=$keygroup;?>" <?php if ($pconfig['pfs_group'] == $keygroup) echo "selected"; ?>>
+												<?=htmlspecialchars($keygroupname);?>
+											</option>
+										<?php endforeach; ?>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr> 
+						<td width="22%" valign="top" class="vncellreq">Login Banner</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['login_banner_enable'],$chk); ?>
+										<input name="login_banner_enable" type="checkbox" id="login_banner_enable" value="yes" <?=$chk;?> onClick="login_banner_change()">
+										Provide a login banner to clients<br>
+										<br>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<?php $banner = htmlspecialchars($pconfig['login_banner']); ?>
+										<textarea name="login_banner" cols="65" rows="7" id="login_banner" class="formpre"><?=$banner;?></textarea>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top">&nbsp;</td>
+						<td width="78%">
+							<input name="submit" type="submit" class="formbtn" value="Save">
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
 	</tr>
 </table>
 </form>
 <script language="JavaScript">
-<!--
-methodsel_change();
+pool_change();
+dns_domain_change();
+dns_server_change();
+wins_server_change();
+pfs_group_change();
+login_banner_change();
 //-->
 </script>
 <?php include("fend.inc"); ?>
 </body>
 </html>
+
+<?php
+
+/* local utility functions */
+
+function set_checked($var,& $chk) {
+	if($var)
+		$chk = '"checked"';
+	else
+		$chk = '';
+}
+
+?>
+

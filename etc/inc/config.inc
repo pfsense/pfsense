@@ -1321,13 +1321,13 @@ function convert_config() {
 						$ph1alg = array( 'name' => '3des' );
 						break;
 					case "blowfish":
-						$ph1alg = array( 'name' => 'blowfish', 'keylen' => 'auto'  );
+						$ph1alg = array( 'name' => 'blowfish', 'keylen' => '128'  );
 						break;
 					case "cast128":
 						$ph1alg = array( 'name' => 'cast128' );
 						break;
 					case "rijndael":
-						$ph1alg = array( 'name' => 'aes', 'keylen' => 'auto' );
+						$ph1alg = array( 'name' => 'aes', 'keylen' => '128' );
 						break;
 					case "rijndael 256":
 						$ph1alg = array( 'name' => 'aes', 'keylen' => '256' );

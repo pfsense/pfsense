@@ -1275,45 +1275,71 @@ function convert_config() {
 
 			foreach ($config['ipsec']['tunnel'] as $tunnel) {
 
-				/* build new phase1 entry */
+				unset($ph1ent);
+				unset($ph2ent);
 
-				$ph1ent['ikeid'] = ++$ikeid;
+				/*
+				 *  attempt to locate an enabled phase1
+				 *  entry that matches the peer gateway
+				 */
 
-				if (isset($tunnel['disabled']))
-					$ph1ent['disabled'] = $tunnel['disabled'];
+				if (!isset($tunnel['disabled'])) {
 
-				$ph1ent['interface'] = $tunnel['interface'];
-				$ph1ent['remote-gateway'] = $tunnel['remote-gateway'];
-				$ph1ent['descr'] = $tunnel['descr'];
+					$remote_gateway = $tunnel['remote-gateway'];
 
-				$ph1ent['mode'] = $tunnel['p1']['mode'];
-
-				if (isset($tunnel['p1']['myident']['myaddress']))
-					$ph1ent['myid_type'] = "myaddress";
-				if (isset($tunnel['p1']['myident']['address'])) {
-					$ph1ent['myid_type'] = "address";
-					$ph1ent['myid_data'] = $tunnel['p1']['myident']['address'];
-				}
-				if (isset($tunnel['p1']['myident']['fqdn'])) {
-					$ph1ent['myid_type'] = "fqdn";
-					$ph1ent['myid_data'] = $tunnel['p1']['myident']['fqdn'];
-				}
-				if (isset($tunnel['p1']['myident']['user_fqdn'])) {
-					$ph1ent['myid_type'] = "user_fqdn";
-					$ph1ent['myid_data'] = $tunnel['p1']['myident']['user_fqdn'];
-				}
-				if (isset($tunnel['p1']['myident']['asn1dn'])) {
-					$ph1ent['myid_type'] = "asn1dn";
-					$ph1ent['myid_data'] = $tunnel['p1']['myident']['asn1dn'];
-				}
-				if (isset($tunnel['p1']['myident']['dyn_dns'])) {
-					$ph1ent['myid_type'] = "dyn_dns";
-					$ph1ent['myid_data'] = $tunnel['p1']['myident']['dyn_dns'];
+					foreach ($a_phase1 as $ph1tmp) {
+						if ($ph1tmp['remote-gateway'] == $remote_gateway) {
+							$ph1ent = $ph1tmp;
+							break;
+						}
+					}
 				}
 
-				$ph1ent['peerid_type'] = "peeraddress";
+				/* none found, create a new one */
 
-				switch ($tunnel['p1']['encryption-algorithm']) {
+				if (!isset( $ph1ent )) {
+
+					/* build new phase1 entry */
+
+					$ph1ent = array();
+
+					$ph1ent['ikeid'] = ++$ikeid;
+
+					if (isset($tunnel['disabled']))
+						$ph1ent['disabled'] = $tunnel['disabled'];
+
+					$ph1ent['interface'] = $tunnel['interface'];
+					$ph1ent['remote-gateway'] = $tunnel['remote-gateway'];
+					$ph1ent['descr'] = $tunnel['descr'];
+
+					$ph1ent['mode'] = $tunnel['p1']['mode'];
+
+					if (isset($tunnel['p1']['myident']['myaddress']))
+						$ph1ent['myid_type'] = "myaddress";
+					if (isset($tunnel['p1']['myident']['address'])) {
+						$ph1ent['myid_type'] = "address";
+						$ph1ent['myid_data'] = $tunnel['p1']['myident']['address'];
+					}
+					if (isset($tunnel['p1']['myident']['fqdn'])) {
+						$ph1ent['myid_type'] = "fqdn";
+						$ph1ent['myid_data'] = $tunnel['p1']['myident']['fqdn'];
+					}
+					if (isset($tunnel['p1']['myident']['user_fqdn'])) {
+						$ph1ent['myid_type'] = "user_fqdn";
+						$ph1ent['myid_data'] = $tunnel['p1']['myident']['user_fqdn'];
+					}
+					if (isset($tunnel['p1']['myident']['asn1dn'])) {
+						$ph1ent['myid_type'] = "asn1dn";
+						$ph1ent['myid_data'] = $tunnel['p1']['myident']['asn1dn'];
+					}
+					if (isset($tunnel['p1']['myident']['dyn_dns'])) {
+						$ph1ent['myid_type'] = "dyn_dns";
+						$ph1ent['myid_data'] = $tunnel['p1']['myident']['dyn_dns'];
+					}
+
+					$ph1ent['peerid_type'] = "peeraddress";
+
+					switch ($tunnel['p1']['encryption-algorithm']) {
 					case "des":
 						$ph1alg = array( 'name' => 'des' );
 						break;
@@ -1332,36 +1358,39 @@ function convert_config() {
 					case "rijndael 256":
 						$ph1alg = array( 'name' => 'aes', 'keylen' => '256' );
 						break;
+					}
+
+					$ph1ent['encryption-algorithm'] = $ph1alg;
+					$ph1ent['hash-algorithm'] = $tunnel['p1']['hash-algorithm'];
+					$ph1ent['dhgroup'] = $tunnel['p1']['dhgroup'];
+					$ph1ent['lifetime'] = $tunnel['p1']['lifetime'];
+					$ph1ent['authentication_method'] = $tunnel['p1']['authentication_method'];
+
+					if (isset($tunnel['p1']['pre-shared-key']))
+						$ph1ent['pre-shared-key'] = $tunnel['p1']['pre-shared-key'];
+					if (isset($tunnel['p1']['cert']))
+						$ph1ent['cert'] = $tunnel['p1']['cert'];
+					if (isset($tunnel['p1']['peercert']))
+						$ph1ent['peercert'] = $tunnel['p1']['peercert'];
+					if (isset($tunnel['p1']['private-key']))
+						$ph1ent['private-key'] = $tunnel['p1']['private-key'];
+
+					if (isset($tunnel['pinghost']['pinghost']))
+						$ph1ent['pinghost'] = $tunnel['pinghost'];
+
+					$ph1ent['nat_traversal'] = "on";
+					$ph1ent['dpd_enable'] = 1;
+					$ph1ent['dpd_delay'] = 10;
+					$ph1ent['dpd_maxfail'] = 5;
+
+					$a_phase1[] = $ph1ent;
 				}
-
-				$ph1ent['encryption-algorithm'] = $ph1alg;
-				$ph1ent['hash-algorithm'] = $tunnel['p1']['hash-algorithm'];
-				$ph1ent['dhgroup'] = $tunnel['p1']['dhgroup'];
-				$ph1ent['lifetime'] = $tunnel['p1']['lifetime'];
-				$ph1ent['authentication_method'] = $tunnel['p1']['authentication_method'];
-
-				if (isset($tunnel['p1']['pre-shared-key']))
-					$ph1ent['pre-shared-key'] = $tunnel['p1']['pre-shared-key'];
-				if (isset($tunnel['p1']['cert']))
-					$ph1ent['cert'] = $tunnel['p1']['cert'];
-				if (isset($tunnel['p1']['peercert']))
-					$ph1ent['peercert'] = $tunnel['p1']['peercert'];
-				if (isset($tunnel['p1']['private-key']))
-					$ph1ent['private-key'] = $tunnel['p1']['private-key'];
-
-				if (isset($tunnel['pinghost']['pinghost']))
-					$ph1ent['pinghost'] = $tunnel['pinghost'];
-
-				$ph1ent['nat_traversal'] = "on";
-				$ph1ent['dpd_enable'] = 1;
-				$ph1ent['dpd_delay'] = 10;
-				$ph1ent['dpd_maxfail'] = 5;
-
-				$a_phase1[] = $ph1ent;
 
 				/* build new phase2 entry */
 
-				$ph2ent['ikeid'] = $ikeid;
+				$ph2ent = array();
+
+				$ph2ent['ikeid'] = $ph1ent['ikeid'];
 
 				if (isset($tunnel['disabled']))
 					$ph1ent['disabled'] = $tunnel['disabled'];
@@ -1396,7 +1425,9 @@ function convert_config() {
 
 				$ph2ent['protocol'] = $tunnel['p2']['protocol'];
 
+				$aes_count = 0;
 				foreach( $tunnel['p2']['encryption-algorithm-option'] as $tunalg ) {
+					$aes_found = false;
 					switch ($tunalg) {
 						case "des":
 							$ph2alg = array( 'name' => 'des' );
@@ -1411,14 +1442,15 @@ function convert_config() {
 							$ph2alg = array( 'name' => 'cast128' );
 							break;
 						case "rijndael":
-							$ph2alg = array( 'name' => 'aes', 'keylen' => 'auto' );
-							break;
 						case "rijndael 256":
-							$ph2alg = array( 'name' => 'aes', 'keylen' => '256' );
+							$ph2alg = array( 'name' => 'aes', 'keylen' => 'auto' );
+							$aes_found = true;
+							$aes_count++;
 							break;
 					}
 
-					$ph2ent['encryption-algorithm-option'][] = $ph2alg;
+					if( !$aes_found || ($aes_count < 2))
+						$ph2ent['encryption-algorithm-option'][] = $ph2alg;
 				}
 
 				$ph2ent['hash-algorithm-option'] = $tunnel['p2']['hash-algorithm-option'];

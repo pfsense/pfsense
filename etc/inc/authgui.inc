@@ -270,7 +270,7 @@ function display_login_form() {
         </p>        
         <p>
           <span style="text-align:center">
-            <input type="submit" id="submit" name="login" class="formbtn" value="<?=gettext("Login"); ?>" tabindex="3" />
+            <input type="submit" name="login" class="formbtn" value="<?=gettext("Login"); ?>" tabindex="3" />
           </span>
         </P>
       </form>

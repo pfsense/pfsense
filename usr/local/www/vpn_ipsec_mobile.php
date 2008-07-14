@@ -383,7 +383,7 @@ function login_banner_change() {
 						<td width="78%" class="vtable">
 							<?php set_checked($pconfig['net_list_enable'],$chk); ?>
 							<input name="net_list_enable" type="checkbox" id="net_list_enable" value="yes" <?=$chk;?>>
-							Provide a list of accessable networks to clients<br>
+							Provide a list of accessible networks to clients<br>
 						</td>
 					</tr>
 					<tr> 

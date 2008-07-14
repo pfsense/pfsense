@@ -63,7 +63,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 				<? } else if ($ifname == "LAN") { ?>
 					<span onClick="location.href='/interfaces_lan.php'" style="cursor:pointer">
 				<? } else { ?>				
-					<span onClick="location.href='/interfaces_opt.php?optif=<?=$ifdescr; ?>'" style="cursor:pointer">
+					<span onClick="location.href='/interfaces_wan.php?optif=<?=$ifdescr; ?>'" style="cursor:pointer">
 				<? 
 				} ?>	
 				

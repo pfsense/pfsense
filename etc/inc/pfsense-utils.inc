@@ -1743,6 +1743,8 @@ function execute_command_return_output($command) {
  * convert_friendly_interface_to_real_interface_name($interface): convert WAN to FXP0
  */
 function convert_friendly_interface_to_real_interface_name($interface) {
+	global $config;
+
 	$wanif = $interface;
 
 	switch ($interface) {

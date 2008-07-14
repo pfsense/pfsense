@@ -2,6 +2,7 @@
 
 /*
 	cmd_chain.inc
+	Part of pfSense
 	Copyright (C) 2008 Scott Ullrich
 	All rights reserved.
 
@@ -30,11 +31,19 @@
 /* 
  * HANDY FOR STAND ALONE DEBUGGING OF CLASS. 
  *
+
 	function log_error($text) {
 		echo $text . "\n";
 	}
+
 */
 
+/*
+ *   CmdCHAIN allows a chaining of commands into one call.
+ *   If debugging is enabled verbose logging is applied.
+ *   During the command(s) execution if it fails the result
+ *   will be reported to syslog so that the problem can be reported.
+ */
 Class CmdCHAIN {
 
 		var $cmd_chain_array = array();
@@ -51,32 +60,39 @@ Class CmdCHAIN {
 			$this->is_debugging = true;
 		}
 
-		/* adds a command to the cmdchain */
-		function add($cmd_title = "", $command = "") {
+		/* adds a command to the CmdCHAIN */
+		function add($cmd_title = "", $command = "", $ignore_return_text = false) {
 			if(!$cmd_title) 
-				return "$cmd_title must be set.";
-			if(!$command)
-				return "$command must be set.";
+				return;
+			if(!$command) 
+				return;
 			$temp = array();
 			$temp['cmd_title'] = $cmd_title;
 			$temp['command'] = $command;
-			$this->cmd_chain_array[] = $temp;
-			return;
+			if($ignore_return_text)
+				$temp['ignore_return_text'] = true;
+			else 
+				$temp['ignore_return_text'] = false;
+			$this->cmd_chain_array[] = $temp; // add array to class
+			return array();
 		}
 		
-		/* executes the command chain one command at a time */
+		/* executes the CmdCHAIN one command at a time */
 		function execute() {
 			foreach($this->cmd_chain_array as $cmd) {
 				$cmd_title = $cmd['cmd_title'];
 				$command = $cmd['command'];
+				$ignore_return_text = $cmd['ignore_return_text'];
+				// Should we perform verbose debugging?
 				if($this->is_debugging == true) {
 					log_error("CmdCHAIN is executing -> {$cmd_title} - {$command}");
 					usleep(100);	// give network stack time to deliver network syslog message
 				}
+				// Execute command
 				$status = exec($command);
-				if(!$status) {
-					log_error("$cmd_title failed with return code -> {$status}.  The command was {$command}");
-					return("$cmd_title failed with return code -> " . $status);
+				if(!$status and $this->ignore_return_text == false) {
+					log_error("{$cmd_title} failed with return code -> {$status}.  The command was {$command}");
+					return("{$cmd_title} failed with return code -> {$status}");
 				} else {
 					if($this->is_debugging == true) {
 						log_error("{$cmd_title} returned -> {$status}");
@@ -93,8 +109,8 @@ Class CmdCHAIN {
  *
 
 $cmdchain = new CmdCHAIN();
-$cmdchain->add("grab freebsd version", "uname -a");
-$cmdchain->setdebug();
+$cmdchain->add("grab freebsd version", "uname -a", false);
+$cmdchain->setdebug(); // optional for verbose logging
 $cmdchain->execute();
 
 */

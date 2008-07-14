@@ -3,6 +3,7 @@
 /*
 	interfaces.inc
 	Copyright (C) 2004-2006 Scott Ullrich
+	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
 	function interfaces_wireless_configure is

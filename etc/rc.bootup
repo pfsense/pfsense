@@ -142,30 +142,12 @@
 	/* set up VLAN virtual interfaces */
 	interfaces_vlan_configure();
 	
-	if($config['interfaces']['lan']) {
-		/* set up LAN interface */
-		echo "Configuring LAN interface...";
-		mute_kernel_msgs();
-		interfaces_lan_configure();
-		unmute_kernel_msgs();
-		echo "done.\n";
-	}
-
-	/* set up WAN interface */
-	echo "Configuring WAN interface...";
-	mute_kernel_msgs();
-	interfaces_wan_configure();
-	unmute_kernel_msgs();
-	echo "done.\n";
-
-	/* set up Optional interfaces */
-	echo "Configuring OPT interfaces...";
+	/* set up interfaces */
 	if(!$debugging)
 		mute_kernel_msgs();
-	interfaces_optional_configure();
+	interfaces_configure();
 	if(!$debugging)
 		unmute_kernel_msgs();
-	echo "done.\n";
 
 	/* bring up carp interfaces */
 	interfaces_carp_configure();
@@ -196,8 +178,9 @@
 
 	/* start load balancer daemon */
 	relayd_configure();
-	/* reconfigure our gateway monitor */
-	setup_gateways_monitor();
+
+ 	/* reconfigure our gateway monitor */
+ 	setup_gateways_monitor();
 
 	/* start OpenVPN server & clients */
 	openvpn_resync_all();
@@ -263,7 +246,7 @@
 	echo "done.\n";
 
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
-
+	
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();
 
@@ -282,9 +265,7 @@
 	if(isset($config['system']['disableconsolemenu']))
 		touch("/var/etc/console_lockdown");
 
-	echo "Final filter pass...";
 	filter_configure_sync();
-	echo "done.\n";
 
 	/* load graphing functions */
 	enable_rrd_graphing();

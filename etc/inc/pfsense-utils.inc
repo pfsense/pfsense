@@ -335,7 +335,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 			} else {
 				// translate wan, man, lan, opt to real interface.
 				$interface = $rule['interface'];
-				$temp = filter_get_opt_interface_descr($interface);
+				$temp = $config['interfaces'][$interface]['descr'];
 				if($temp <> "") $interface = $temp;
 				$aline['interface'] = convert_friendly_interface_to_real_interface_name($rule['interface']) . " ";
 			}
@@ -1188,7 +1188,7 @@ function is_carp_defined() {
  *   $tmp	- Returns the mtu of an interface
  ******/
 function get_interface_mtu($interface) {
-	$mtu = `/sbin/ifconfig {$interface} | /usr/bin/grep mtu | /usr/bin/cut -d" " -f4`;
+	$mtu = `/sbin/ifconfig {$interface} | /usr/bin/grep mtu | /usr/bin/cut -d" " -f6`;
 	return $mtu;
 }
 
@@ -1450,18 +1450,6 @@ function guess_interface_from_ip($ipaddress) {
 	return $ret;
 }
 
-function filter_opt_interface_to_real($opt) {
-	global $config;
-	if(isset($config['interfaces'][$opt]['pointtopoint']))
-		return "ppp0";
-	return $config['interfaces'][$opt]['if'];
-}
-
-function filter_get_opt_interface_descr($opt) {
-	global $config;
-	return $config['interfaces'][$opt]['descr'];
-}
-
 /*
  * find_ip_interface($ip): return the interface where an ip is defined
  */
@@ -1471,10 +1459,10 @@ function find_ip_interface($ip) {
         $ifdescrs = get_configured_interface_list();
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
-		$int = filter_translate_type_to_real_interface($ifname);
+		$int = convert_friendly_interface_to_real_interface_name($ifname);
 		$ifconfig = exec_command("/sbin/ifconfig {$int}");
-	if(stristr($ifconfig,$ip) <> false)
-		return $int;
+		if(stristr($ifconfig,$ip) <> false)
+			return $int;
 	}
 	return false;
 }
@@ -1755,23 +1743,78 @@ function execute_command_return_output($command) {
  * convert_friendly_interface_to_real_interface_name($interface): convert WAN to FXP0
  */
 function convert_friendly_interface_to_real_interface_name($interface) {
-	global $config;
-	if($config['interfaces'][$interface]['ipaddr'] == "pppoe")
-		return "pppoe0";
-	if(isset($config['interfaces'][$interface]['pointtopoint']))
-		return "ppp0";
-	$lc_interface = strtolower($interface);
+	$wanif = $interface;
 
-	/* if list */
-        $ifdescrs = get_configured_interface_list();
+	switch ($interface) {
+	case "pptp":
+		$wanif = "pptp";
+		break;
+	case "pppoe":
+		$wanif = "pppoe";
+		break;
+	case "openvpn":
+		$wanif = "openvpn";
+		break;
+	case "enc0":
+		$wanif = "enc0";
+		break;
+	/* XXX: dial in support?!
+	case "ppp":
+		$wanif = "ppp";
+		break;
+	*/
+	default:
+		$iflist = get_configured_interface_with_descr();
 
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-		if(strtolower($ifname) == $lc_interface)
-	    		return $config['interfaces'][$ifname]['if'];
-		else if(strtolower($config['interfaces'][$ifname]['descr']) == $lc_interface)
-			return $config['interfaces'][$ifname]['if'];
-   }
-   return $interface;
+		foreach ($iflist as $if => $ifdesc) {
+			if ($interface == $if || $interface == $ifdesc) {
+
+			$cfg = $config['interfaces'][$if];
+
+			switch ($cfg['ipaddr']) {
+			case "carpdev-dhcp":
+				$viparr = &$config['virtualip']['vip'];
+				$counter = 0;
+				if(is_array($viparr))
+				foreach ($viparr as $vip) {
+					if ($vip['mode'] == "carpdev-dhcp") {
+						if($vip['interface'] == $if) {
+							$wanif =  "carp{$counter}";
+							break;
+						}
+						$counter++;
+					} else if ($vip['mode'] = "carp") 
+						$counter++;
+				}
+				break;
+			case "pppoe": 
+				if ($if == "wan")
+					$wanif = "pppoe0";
+				else
+					$wanif = "pppoe" . substr($if,3);
+				break;
+			case "pptp": 
+				if ($if == "wan")
+					$wanif = "pptp0";
+				else
+					$wanif = "pptp" . substr($if, 3);
+				break;
+			default:
+				if (isset($cfg['ispointtopoint']) && $cfg['pointtopoint'])
+					$wanif = "ppp0"; // XXX: PPP needs to convert to mpd
+				else	
+					$wanif = $cfg['if'];
+				break;
+			}
+			break;
+
+			break;
+			}
+		}
+		break;
+	}
+
+    return $wanif;
 }
 
 /*
@@ -1779,16 +1822,44 @@ function convert_friendly_interface_to_real_interface_name($interface) {
  */
 function convert_real_interface_to_friendly_interface_name($interface) {
 	global $config;
+	
+	/* XXX: This should never happen but try to cope just in case. */
+	if (empty($interface))
+		return "wan"; 
 
+	if (stristr("pppoe", $interface)) {
+		$index = substr($interface, 5);
+		if (intval($index) > 0)
+			return "opt{$index}";
+		else
+			return "wan";
+	} else if (stristr("pptp", $interface)) {
+		$index = substr($interface, 4);
+                if (intval($index) > 0)
+                        return "opt{$index}";
+                else
+                        return "wan";	
+	} else if (stristr("carp", $interface)) {
+		$index = substr($interface, 4);
+		$counter = 0;
+		foreach ($config['virtualip']['vip'] as $vip) {
+			if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
+				if (intval($index) == $counter)
+					return $vip['interface'];
+				$counter++;
+			}
+		}
+	}
+		
 	/* if list */
         $ifdescrs = get_configured_interface_list();
 
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-		if($config['interfaces'][$ifname]['if'] == $interface)
+	foreach ($ifdescrs as $if => $ifname) {
+		if($config['interfaces'][$if]['if'] == $interface)
 			return $ifname;
 
 		/* XXX: ermal - The 3 lines below are totally bogus code. */
-		$int = filter_translate_type_to_real_interface($ifname);
+		$int = filter_translate_type_to_real_interface($if);
 		if($ifname == $interface) 
 			return $ifname;
 
@@ -1796,6 +1867,53 @@ function convert_real_interface_to_friendly_interface_name($interface) {
 			return $ifname;
 	}
 	return $interface;
+}
+
+/* attempt to resolve interface to friendly descr */
+function convert_friendly_interface_to_friendly_descr($interface) {
+        global $config;
+
+        switch ($interface) {
+        case "pptp":
+                $ifdesc = "PPTP";
+                break;
+        case "pppoe":
+                $ifdesc = "PPPoE";
+                break;
+        case "openvpn":
+                $ifdesc = "OpenVPN";
+                break;
+        case "enc0":
+                $ifdesc = "IPsec";
+                break;
+        /* XXX: dial in support?!
+        case "ppp":
+                $ifdesc = "PPP";
+                break;
+        */
+        default:
+        	/* if list */
+        	$ifdescrs = get_configured_interface_with_descr();
+
+        	foreach ($ifdescrs as $if => $ifname) {
+                	if ($if == $interface || $ifname == $interface)
+                        	return $ifname;
+        	}
+		break;
+	}
+
+        return $ifdesc;
+}
+
+function convert_real_interface_to_friendly_descr($interface) {
+        global $config;
+
+	$ifdesc = convert_real_interface_to_friendly_interface_name($interface);
+
+	if (!empty($ifdesc))
+		return $config['interfaces'][$ifdesc]['descr'];
+
+        return $interface;
 }
 
 /*
@@ -2389,40 +2507,27 @@ function reload_interfaces_sync() {
 		log_error("Cleaning up Interfaces");
 
 	/* if list */
-        $iflist = get_configured_interface_list();
+        $iflist = get_configured_interface_list(true);
 
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
 
-		/* XXX: ermal - This really needs to be simplified! */
 		if(stristr($ifname, "lo0") == true)
 			continue;
 		/* do not process wan interface, its mandatory */
-		if(stristr($ifname, "$wan_if") == true)
-			continue;
-		/* do not process lan interface, its mandatory */
-		if(stristr($ifname, "$lan_if") == true)
-			continue;
+                if(stristr($ifname, "$wan_if") == true)
+                        continue;
+                /* do not process lan interface, its mandatory */
+                if(stristr($ifname, "$lan_if") == true)
+                        continue;
 		if($debug)
 			log_error("Downing and deleting $ifname_real - $ifname");
 		mwexec("/sbin/ifconfig {$ifname_real} down");
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
 
-	/* set up LAN interface */
-	if($debug)
-		log_error("Configuring LAN");
-	interfaces_lan_configure();
-
-	/* set up WAN interface */
-	if($debug)
-		log_error("Configuring WAN");
-	interfaces_wan_configure();
-
-	/* set up Optional interfaces */
-	if($debug)
-		log_error("Configuring optional interfaces");
-	interfaces_optional_configure();
+	/* set up interfaces */
+	interfaces_configure();
 
 	/* set up static routes */
 	if($debug)
@@ -2609,48 +2714,6 @@ function sync_webgui_passwords() {
 	conf_mount_ro();
 }
 
-/****f* pfsense-utils/get_number_of_wan_netgraph_interfaces_needed
- * NAME
- *   get_number_of_wan_netgraph_interfaces_needed - returns the
- *   		amount of netgraph interfaces needed for system wans
- *   * INPUTS
- *   none
- * RESULT
- *   number of needed netgraph (ng) interfaces
- ******/
-function get_number_of_wan_netgraph_interfaces_needed() {
-	global $config, $g;
-
-	/* if list */
-        $iflist = get_configured_interface_list();
-
-	$ng_interfaces_needed = 0;
-	foreach ($iflist as $ifent => $ifname) {
-		if($config['interfaces'][$ifname]['ipaddr'] == "pppoe") {
-			$ng_interfaces_needed++;
-		}
-	}
-	return $ng_interfaces_needed;
-}
-
-function get_netgaph_interface_assignment($friendly_interface) {
-	global $config, $g;
-
-	/* if list */
-        $iflist = get_configured_interface_with_descr();
-
-	$ng_interfaces_needed = 0;
-	$ng_interfaces_number = 0;
-	foreach ($iflist as $ifent => $ifname) {
-		if($config['interfaces'][$ifname]['ipaddr'] == "pppoe") {
-			$ng_interfaces_number++;
-		}
-		if($friendly_interface == $ifname)
-			break;
-	}
-	return $ng_interfaces_number;
-}
-
 /****f* pfsense-utils/reload_all_sync
  * NAME
  *   reload_all - reload all settings
@@ -2712,14 +2775,8 @@ function reload_all_sync() {
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
 
-	/* set up LAN interface */
-	interfaces_lan_configure();
-
-	/* set up WAN interface */
-	interfaces_wan_configure();
-
-	/* set up Optional interfaces */
-	interfaces_optional_configure();
+	/* set up interfaces */
+	interfaces_configure();
 
 	/* bring up carp interfaces */
 	interfaces_carp_configure();
@@ -2872,30 +2929,6 @@ function print_value_list($list, $count = 10, $separator = ",") {
 		$list .= "...";
 	}
 	return $list;
-}
-
-function convert_friendly_interface_to_friendly_descr($interface) {
-	global $config;
-	/* attempt to resolve interface to friendly descr */
-	if($config['interfaces'][$interface]['descr'])
-		return $config['interfaces'][$interface]['descr'];
-	$tmp = convert_real_interface_to_friendly_descr($interface);
-	/* could not resolve, return back what was passed */
-	return $interface;
-}
-
-function convert_real_interface_to_friendly_descr($interface) {
-	global $config;
-	if($interface == $config['interfaces']['wan']['if'])
-		return "wan";
-	if($interface == $config['interfaces']['lan']['if'])
-		return "lan";
-	/* attempt to resolve interface to friendly descr */
-	$friendly_int = convert_real_interface_to_friendly_interface_name($interface);
-	if($config['interfaces'][$friendly_int]['descr'])
-		return $config['interfaces'][$friendly_int]['descr'];
-	/* could not resolve, return back what was passed */
-	return $interface;
 }
 
 function enable_rrd_graphing() {
@@ -3114,7 +3147,6 @@ function enable_rrd_graphing() {
 				$numpings = 5;
 				$monitorip = lookup_gateway_monitor_ip_by_name($config['interfaces'][$ifname]['gateway']);
 				/* the ping test function. We call this on the last line */
-				$rrdupdatesh .= "\n";
 				$rrdupdatesh .= "# Quality collector for {$ifname}\n";
 				$rrdupdatesh .= "get_quality_stats_{$ifname} () {\n";
 				$rrdupdatesh .= "	packetloss_{$ifname}=100\n";
@@ -3501,36 +3533,50 @@ function update_filter_reload_status($text) {
 }
 
 function get_interface_gateway($interface) {
-	global $config, $g;
-	$interface = strtolower($interface);
-	/*  if we are dhclient, obtain the gateway from the tmp file, otherwise
-	 *  grab the address from the configuration file.
+        global $config;
+
+        /* if wan is requested, return it */
+        if($interface == "wan")
+                return str_replace("\n", "", `route -n get default | grep gateway | awk '{ print $2 }'`);
+
+	$iflist = get_configured_interface_with_descr();
+	/* 
+	 * XXX: This is silly at first, but we may be called with the interface
+	 *	descr for no apparent reason!!!
 	 */
-	$tmpif = convert_real_interface_to_friendly_interface_name($interface);
-	if($tmpif <> $interface)
-		$interface = $tmpif;
-	$realif = $config['interfaces'][$interface]['if'];
-	if(file_exists("{$g['tmp_path']}/{$realif}_router")) {
-		$gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
-		$gw = rtrim($gw);
-	} else {
-		if(is_array($config['gateways']['gateway_item'])) {
-			foreach($config['gateways']['gateway_item'] as $gateway) {
-				if($gateway['name'] == $gateway['name']) {
-					$gatewayip = $gateway['gateway'];
-					$interfacegw = $gateway['interface'];
-				}
-			}
-			$gw = $gatewayip;
-		} else {
-			$gw = $config['interfaces'][$interface]['gateway'];
+	foreach ($iflist as $ifent => $ifdesc) {
+		if ($ifent == $interface || $ifdesc == $interface) {
+			$interface = $ifent;
+			break;
 		}
 	}
-	/* if wan is requested, return it */
-	if($interface == "wan")
-		return str_replace("\n", "", `route -n get default | grep gateway | awk '{ print $2 }'`);
-	/* return gateway */
-	return $gw;
+
+	$gw = NULL;
+
+	$gwcfg = $config['interfaces'][$interface];
+        if (is_ipaddr($gwcfg['gateway']))
+        	$gw = $gwcfg['gateway'];
+        else if ($gwcfg['gateway'] <> "") {
+        	if (is_array($config['gateways']['gateway_item']))
+                	foreach($config['gateways']['gateway_item'] as $gateway) {
+                                if($gateway['name'] == $gwcfg['gateway']) {
+                                        $gw = $gateway['gateway'];
+                        		break;
+                		}
+        		}
+        } 
+	
+	// for dynamic interfaces we handle them through the $if_router file.
+	if (!is_ipaddr($gw)) {
+        	$realif = get_real_wan_interface($if);
+        	if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
+                	$gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
+                	$gw = rtrim($gw);
+        	}
+	}
+
+        /* return gateway */
+        return $gw;
 }
 
 function is_dhcp_server_enabled() {
@@ -3571,25 +3617,19 @@ function get_interfaces_with_gateway() {
 	/* loop interfaces, check config for outbound */
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$friendly = $ifname['friendly'];
-		if ($config['interfaces'][$friendly]['ipaddr'] == "dhcp") {
+		switch ($config['interfaces'][$friendly]['ipaddr']) {
+		case "dhcp":
+		case "carpdev-dhcp":
+		case "pppoe":
+		case "pptp":
 			$ints[] = $friendly;
-			continue;
-		}
-		if ($config['interfaces'][$friendly]['ipaddr'] == "pppoe") {
-			$ints[] = $friendly;
-			continue;
-		}
-		if ($config['interfaces'][$friendly]['ipaddr'] == "pptp") {
-			$ints[] = $friendly;
-			continue;
-		}
-		if ($config['interfaces'][$friendly]['gateway'] <> "") {
-			$ints[] = $friendly;
-			continue;
-		}
-		if (isset($config['interfaces'][$friendly]['pointtopoint'])) {
-			$ints[] = $friendly;
-			continue;
+			break;	
+		default:
+			if ($config['interfaces'][$friendly]['pointtopoint']) 
+				$ints[] = $friendly;
+			else if ($config['interfaces'][$friendly]['gateway'] <> "")
+				$ints[] = $friendly;
+			break;
 		}
 	}
 	return $ints;
@@ -3624,13 +3664,20 @@ function get_interface_info($ifdescr) {
 	global $config, $linkinfo, $netstatrninfo;
 
 	$ifinfo = array();
-
-	/* find out interface name */
-	$ifinfo['hwif'] = $config['interfaces'][$ifdescr]['if'];
-	if ($ifdescr == "wan")
-		$ifinfo['if'] = get_real_wan_interface();
-	else
-		$ifinfo['if'] = $ifinfo['hwif'];
+	/* if list */
+	$iflist = get_configured_interface_with_descr(false,true);
+	
+	$found = false;
+    	foreach ($iflist as $if => $ifname) {
+    	if ($ifdescr == $if || $ifdescr == $ifname) {
+			$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
+			$ifinfo['if'] = get_real_wan_interface($if);
+			$found = true;
+			break;
+		}
+	}
+	if ($found == false)
+		return;
 
 	/* run netstat to determine link info */
 
@@ -3659,24 +3706,18 @@ function get_interface_info($ifdescr) {
 		$ifinfo['outbytes'] = $linkinfo[8];
 	}
 
+	switch ($config['interfaces'][$if]['ipaddr']) {
 	/* DHCP? -> see if dhclient is up */
-
-	/* if list */
-        $iflist = get_configured_interface_with_descr();
-
-        foreach ($iflist as $if => $ifname) {
-                if (($ifdescr == $if || $ifdescr == $ifname) && 
-			($config['interfaces'][$if]['ipaddr'] == "dhcp")) {
-                        /* see if dhclient is up */
-                        if (is_dhcp_running($if) == true)
-                                $ifinfo['dhcplink'] = "up";
-                        else
-                                $ifinfo['dhcplink'] = "down";
-                }
-        }
-
+	case "dhcp":
+	case "carpdev-dhcp":
+        /* see if dhclient is up */
+        if (is_dhcp_running($ifinfo['if']) == true)
+        	$ifinfo['dhcplink'] = "up";
+        else
+            $ifinfo['dhcplink'] = "down";
+		break;
 	/* PPPoE interface? -> get status from virtual interface */
-	if (($ifdescr == "wan") && ($config['interfaces']['wan']['ipaddr'] == "pppoe")) {
+	case "pppoe":
 		unset($linkinfo);
 		exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
 		$linkinfo = preg_split("/\s+/", $linkinfo[1]);
@@ -3693,12 +3734,17 @@ function get_interface_info($ifdescr) {
 			foreach ($ifconfiginfo as $ici) {
 				if (strpos($ici, 'LINK0') !== false)
 					$ifinfo['pppoelink'] = "down";
+
+				if (preg_match("/inet (\S+)/", $ici, $matches)) 
+					$ifinfo['ipaddr'] = $matches[1];
+				if (preg_match("/netmask (\S+)/", $ici, $matches)) 
+					if (preg_match("/^0x/", $matches[1]))
+						$ifinfo['subnet'] = long2ip(hexdec($matches[1]));
 			}
 		}
-	}
-
+		break;
 	/* PPTP interface? -> get status from virtual interface */
-	if (($ifdescr == "wan") && ($config['interfaces']['wan']['ipaddr'] == "pptp")) {
+	case "pptp":
 		unset($linkinfo);
 		exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
 		$linkinfo = preg_split("/\s+/", $linkinfo[1]);
@@ -3714,8 +3760,15 @@ function get_interface_info($ifdescr) {
 			foreach ($ifconfiginfo as $ici) {
 				if (strpos($ici, 'LINK0') !== false)
 					$ifinfo['pptplink'] = "down";
+
+				if (preg_match("/inet (\S+)/", $ici, $matches)) 
+					$ifinfo['ipaddr'] = $matches[1];
+				if (preg_match("/netmask (\S+)/", $ici, $matches)) 
+					if (preg_match("/^0x/", $matches[1]))
+						$ifinfo['subnet'] = long2ip(hexdec($matches[1]));
 			}
 		}
+		break;
 	}
 
 	if ($ifinfo['status'] == "up") {
@@ -3749,35 +3802,13 @@ function get_interface_info($ifdescr) {
 					$ifinfo['ssid'] = $matches[1];
 			}
 		}
-
-		if ($ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down") {
-			/* try to determine IP address and netmask with ifconfig */
-			unset($ifconfiginfo);
-			exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
-
-			foreach ($ifconfiginfo as $ici) {
-				if (preg_match("/inet (\S+)/", $ici, $matches)) {
-					$ifinfo['ipaddr'] = $matches[1];
-				}
-				if (preg_match("/netmask (\S+)/", $ici, $matches)) {
-					if (preg_match("/^0x/", $matches[1]))
-						$ifinfo['subnet'] = long2ip(hexdec($matches[1]));
-				}
-			}
-
-			/* lookup the gateway */
-			if(interface_has_gateway($ifdescr)) {
-				$gateway = $config['interfaces'][$ifdescr]['gateway'];
-				/* deterimine interface gateway */
-				$ifinfo['gateway'] = lookup_gateway_ip_by_name($gateway);
-			}
-		}
+		/* lookup the gateway */
+		if (interface_has_gateway($if)) 
+			$ifinfo['gateway'] = get_interface_gateway($if);
 	}
 
 	$bridge = "";
-	$int = "";
-	$int = convert_friendly_interface_to_real_interface_name($ifdescr);
-	$bridge = link_int_to_bridge_interface($int);
+	$bridge = link_int_to_bridge_interface($ifinfo['if']);
 	if($bridge) {
 		$bridge_text = `/sbin/ifconfig {$bridge}`;
 		if(stristr($bridge_text, "blocking") <> false) {
@@ -3896,7 +3927,7 @@ function lookup_gateway_ip_by_name($name) {
 	global $config;
 	if(is_array($config['gateways'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if($gateway['name'] == "$name") {
+			if($gateway['name'] == $name) {
 				$gatewayip = $gateway['gateway'];
 				$interfacegw = $gateway['interface'];
 				return($gatewayip);
@@ -4048,5 +4079,4 @@ $span_begin = "";
 	return $descriptions; 
   }
 }
-
 ?>

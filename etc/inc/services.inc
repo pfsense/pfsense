@@ -461,21 +461,21 @@ function services_dyndns_reset() {
 		echo "services_dyndns_reset() being called $mt\n";
 	}
 
-	if (file_exists("{$g['vardb_path']}/ez-ipupdate.cache")) {
+	if (file_exists("{$g['vardb_path']}/ez-ipupdate*.cache")) {
 		conf_mount_rw();
-		unlink("{$g['vardb_path']}/ez-ipupdate.cache");
+		unlink("{$g['vardb_path']}/ez-ipupdate*.cache");
 		conf_mount_ro();
 	}
 
-	if (file_exists("{$g['conf_path']}/ez-ipupdate.cache")) {
+	if (file_exists("{$g['conf_path']}/ez-ipupdate*.cache")) {
 		conf_mount_rw();
-		unlink("{$g['conf_path']}/ez-ipupdate.cache");
+		unlink("{$g['conf_path']}/ez-ipupdate*.cache");
 		conf_mount_ro();
 	}
 	
-	if (file_exists("{$g['conf_path']}/dyndns.cache")) {
+	if (file_exists("{$g['conf_path']}/dyndns*.cache")) {
 		conf_mount_rw();
-		unlink("{$g['conf_path']}/dyndns.cache");
+		unlink("{$g['conf_path']}/dyndns*.cache");
 		conf_mount_ro();
 	}
 
@@ -489,42 +489,50 @@ function services_dyndns_configure() {
 		echo "services_dyndns_configure() being called $mt\n";
 	}
 
-	$dyndnscfg = $config['dyndns'];
-	$wancfg = $config['interfaces']['wan'];
+	$dyndnscfg = $config['dyndnses']['dyndns'];
 
-	if (isset($dyndnscfg['enable'])) {
+	if (is_array($dyndnscfg)) {
+		foreach ($dyndnscfg as $dyndns) {
+			if (!isset($dyndns['enable']))
+				continue;
+			/* determine interface name */
+			if ($dyndns['interface'] == "wan")
+				$if = get_real_wan_interface();
+			else
+				$if = convert_friendly_interface_to_real_interface_name($dyndns['interface']);
 
-		if ($g['booting']) {
-			echo "Starting DynDNS client...";
-			if(isset($config['system']['use_old_dyndns'])) {
-				echo " [Using ez-ipupdate] ";
-				services_dyndns_configure_old();
-				return;
+			if ($g['booting']) {
+				echo "Starting DynDNS clients...";
+				if (isset($config['system']['use_old_dyndns'])) {
+					echo " [Using ez-ipupdate] ";
+					services_dyndns_configure_old($if);
+					continue;
+				}
+			} else {
+				sleep(1);
+				if (isset($config['system']['use_old_dyndns'])) {
+					services_dyndns_configure_old($if);
+					continue;
+				}
 			}
-		} else {
-			sleep(1);
-			if(isset($config['system']['use_old_dyndns'])) {
-				services_dyndns_configure_old();
-				return;
-			}
+
+			/* load up the dyndns.class */
+			require_once("dyndns.class");
+
+			log_error("DynDns: Running updatedns()");
+
+			
+			/* get ip */
+			$ip = find_interface_ip($if);
+
+			$dns = new updatedns($dnsService = $dyndns['type'],
+							 $dnsHost = $dyndns['host'],
+							 $dnsUser = $dyndns['username'],
+							 $dnsPass = $dyndns['password'],
+							 $dnsWilcard = $dyndns['wildcard'],
+							 $dnsMX = $dyndns['mx'], $dnsIf = $if);
+
 		}
-
-		/* load up the dyndns.class */
-		require_once("dyndns.class");
-
-		log_error("DynDns: Running updatedns()");
-
-		/* determine WAN interface name */
-		$wanif = get_real_wan_interface();
-		/* get ip */
-		$ip = find_interface_ip($wanif);
-
-		$dns = new updatedns($dnsService = $config['dyndns']['type'],
-							 $dnsHost = $config['dyndns']['host'],
-							 $dnsUser = $config['dyndns']['username'],
-							 $dnsPass = $config['dyndns']['password'],
-							 $dnsWilcard = $config['dyndns']['wildcard'],
-							 $dnsMX = $config['dyndns']['mx']);
 
 		if ($g['booting'])
 			echo "done.\n";
@@ -533,7 +541,7 @@ function services_dyndns_configure() {
 	return 0;
 }
 
-function services_dyndns_configure_old() {
+function services_dyndns_configure_old($if) {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -542,56 +550,48 @@ function services_dyndns_configure_old() {
 
         /* kill any running ez-ipupdate */
         /* ez-ipupdate needs SIGQUIT instead of SIGTERM */
-        sigkillbypid("{$g['varrun_path']}/ez-ipupdate.pid", "QUIT");
+        sigkillbypid("{$g['varrun_path']}/ez-ipupdate_{$if}.pid", "QUIT");
 
-        $dyndnscfg = $config['dyndns'];
+        $dyndnscfg = $config['dyndnses']['dyndns'];
         $wancfg = $config['interfaces']['wan'];
 
-        if (isset($dyndnscfg['enable'])) {
-
-                if ($g['booting'])
-                        echo "Starting DynDNS client...";
-                else
-                        sleep(1);
-
-                /* determine WAN interface name */
-                $wanif = get_real_wan_interface();
+                sleep(1);
 
                 /* write ez-ipupdate.conf */
-                $fd = fopen("{$g['varetc_path']}/ez-ipupdate.conf", "w");
+                $fd = fopen("{$g['varetc_path']}/ez-ipupdate_{$if}.conf", "w");
                 if (!$fd) {
-                        printf("Error: cannot open ez-ipupdate.conf in services_dyndns_configure().\n");
+                        printf("Error: cannot open ez-ipupdate_{$if}.conf in services_dyndns_configure().\n");
                         return 1;
                 }
 
                 $ezipupdateconf = <<<EOD
-service-type={$dyndnscfg['type']}
-user={$dyndnscfg['username']}:{$dyndnscfg['password']}
-host={$dyndnscfg['host']}
-interface={$wanif}
+service-type={$dyndns['type']}
+user={$dyndns['username']}:{$dyndns['password']}
+host={$dyndns['host']}
+interface={$if}
 max-interval=2073600
-pid-file={$g['varrun_path']}/ez-ipupdate.pid
-cache-file={$g['vardb_path']}/ez-ipupdate.cache
-execute=/etc/rc.dyndns.storecache
+pid-file={$g['varrun_path']}/ez-ipupdate_{$if}.pid
+cache-file={$g['vardb_path']}/ez-ipupdate_{$if}.cache
+execute=/etc/rc.dyndns.storecache {$g['vardb_path']}/ez-ipupdate_{$if}.cache
 daemon
 
 EOD;
 
                 /* enable server[:port]? */
-                if ($dyndnscfg['server']) {
-                        if ($dyndnscfg['port'])
-                                $ezipupdateconf .= "server={$dyndnscfg['server']}:{$dyndnscfg['port']}\n";
+                if ($dyndns['server']) {
+                        if ($dyndns['port'])
+                                $ezipupdateconf .= "server={$dyndns['server']}:{$dyndns['port']}\n";
                         else
-                                $ezipupdateconf .= "server={$dyndnscfg['server']}\n";
+                                $ezipupdateconf .= "server={$dyndns['server']}\n";
                 }
 
                 /* enable MX? */
-                if ($dyndnscfg['mx']) {
-                        $ezipupdateconf .= "mx={$dyndnscfg['mx']}\n";
+                if ($dyndns['mx']) {
+                        $ezipupdateconf .= "mx={$dyndns['mx']}\n";
                 }
 
                 /* enable wildcards? */
-                if (isset($dyndnscfg['wildcard'])) {
+                if (isset($dyndns['wildcard'])) {
                         $ezipupdateconf .= "wildcard\n";
                 }
 
@@ -600,17 +600,16 @@ EOD;
 
                 /* if we're booting, copy the cache file from /conf */
                 if ($g['booting']) {
-                        if (file_exists("{$g['conf_path']}/ez-ipupdate.cache")) {
-                                copy("{$g['conf_path']}/ez-ipupdate.cache", "{$g['vardb_path']}/ez-ipupdate.cache");
+                        if (file_exists("{$g['conf_path']}/ez-ipupdate_{$if}.cache")) {
+                                copy("{$g['conf_path']}/ez-ipupdate_{$if}.cache", "{$g['vardb_path']}/ez-ipupdate_{$if}.cache");
                        }
                 }
 
                 /* run ez-ipupdate */
-                mwexec("/usr/local/bin/ez-ipupdate -c {$g['varetc_path']}/ez-ipupdate.conf");
+                mwexec("/usr/local/bin/ez-ipupdate -c {$g['varetc_path']}/ez-ipupdate_{$if}.conf");
 
                 if ($g['booting'])
                         echo "done\n";
-        }
 
         return 0;
 }
@@ -906,69 +905,78 @@ function services_dnsupdate_process() {
 	}
 
 	/* Dynamic DNS updating active? */
-	if (isset($config['dnsupdate']['enable'])) {
+	if (is_array($config['dnsupdates']['dnsupdate'])) {
+		foreach ($config['dnsupdates']['dnsupdate'] as $i => $dnsupdate) {
+		if (!isset($dyndns['enable']))
+				continue;
+			/* determine interface name */
+			if ($dyndns['interface'] == "wan")
+				$if = get_real_wan_interface();
+			else
+				$if = convert_friendly_interface_to_real_interface_name($dyndns['interface']);
 
-		$wanip = get_current_wan_address();
-		if ($wanip) {
+			$wanip = get_current_wan_address($if);
+			if ($wanip) {
 
-			$keyname = $config['dnsupdate']['keyname'];
-			/* trailing dot */
-			if (substr($keyname, -1) != ".")
-				$keyname .= ".";
+				$keyname = $dnsupdate['keyname'];
+				/* trailing dot */
+				if (substr($keyname, -1) != ".")
+					$keyname .= ".";
 
-			$hostname = $config['dnsupdate']['host'];
-			/* trailing dot */
-			if (substr($hostname, -1) != ".")
-				$hostname .= ".";
+				$hostname = $dnsupdate['host'];
+				/* trailing dot */
+				if (substr($hostname, -1) != ".")
+					$hostname .= ".";
 
-			/* write private key file
-			   this is dumb - public and private keys are the same for HMAC-MD5,
-			   but nsupdate insists on having both */
-			$fd = fopen("{$g['varetc_path']}/K{$keyname}+157+00000.private", "w");
-			$privkey .= <<<EOD
+				/* write private key file
+				   this is dumb - public and private keys are the same for HMAC-MD5,
+				   but nsupdate insists on having both */
+				$fd = fopen("{$g['varetc_path']}/K{$i}{$keyname}+157+00000.private", "w");
+				$privkey .= <<<EOD
 Private-key-format: v1.2
 Algorithm: 157 (HMAC)
-Key: {$config['dnsupdate']['keydata']}
+Key: {$dnsupdate['keydata']}
 
 EOD;
-			fwrite($fd, $privkey);
-			fclose($fd);
+				fwrite($fd, $privkey);
+				fclose($fd);
 
-			/* write public key file */
-			if ($config['dnsupdate']['keytype'] == "zone") {
-				$flags = 257;
-				$proto = 3;
-			} else if ($config['dnsupdate']['keytype'] == "host") {
-				$flags = 513;
-				$proto = 3;
-			} else if ($config['dnsupdate']['keytype'] == "user") {
-				$flags = 0;
-				$proto = 2;
+				/* write public key file */
+				if ($dnsupdate['keytype'] == "zone") {
+					$flags = 257;
+					$proto = 3;
+				} else if ($dnsupdate['keytype'] == "host") {
+					$flags = 513;
+					$proto = 3;
+				} else if ($dnsupdate['keytype'] == "user") {
+					$flags = 0;
+					$proto = 2;
+				}
+
+				$fd = fopen("{$g['varetc_path']}/K{$keyname}+157+00000.key", "w");
+				fwrite($fd, "{$keyname} IN KEY {$flags} {$proto} 157 {$dnsupdate['keydata']}\n");
+				fclose($fd);
+
+				/* generate update instructions */
+				$upinst = "";
+				if (!empty($dnsupdate['server']))
+					$upinst .= "server {$dnsupdate['server']}\n";
+				$upinst .= "update delete {$dnsupdate['host']} A\n";
+				$upinst .= "update add {$dnsupdate['host']} {$dnsupdate['ttl']} A {$wanip}\n";
+				$upinst .= "\n";	/* mind that trailing newline! */
+
+				$fd = fopen("{$g['varetc_path']}/nsupdatecmds{$i}", "w");
+				fwrite($fd, $upinst);
+				fclose($fd);
+
+				/* invoke nsupdate */
+				$cmd = "/usr/sbin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
+				if (isset($dnsupdate['usetcp']))
+					$cmd .= " -v";
+				$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";
+	
+				mwexec_bg($cmd);
 			}
-
-			$fd = fopen("{$g['varetc_path']}/K{$keyname}+157+00000.key", "w");
-			fwrite($fd, "{$keyname} IN KEY {$flags} {$proto} 157 {$config['dnsupdate']['keydata']}\n");
-			fclose($fd);
-
-			/* generate update instructions */
-			$upinst = "";
-			if (!empty($config['dnsupdate']['server']))
-				$upinst .= "server {$config['dnsupdate']['server']}\n";
-			$upinst .= "update delete {$config['dnsupdate']['host']} A\n";
-			$upinst .= "update add {$config['dnsupdate']['host']} {$config['dnsupdate']['ttl']} A {$wanip}\n";
-			$upinst .= "\n";	/* mind that trailing newline! */
-
-			$fd = fopen("{$g['varetc_path']}/nsupdatecmds", "w");
-			fwrite($fd, $upinst);
-			fclose($fd);
-
-			/* invoke nsupdate */
-			$cmd = "/usr/sbin/nsupdate -k {$g['varetc_path']}/K{$keyname}+157+00000.key";
-			if (isset($config['dnsupdate']['usetcp']))
-				$cmd .= " -v";
-			$cmd .= " {$g['varetc_path']}/nsupdatecmds";
-
-			mwexec_bg($cmd);
 		}
 	}
 

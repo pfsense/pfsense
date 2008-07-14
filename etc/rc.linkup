@@ -93,8 +93,8 @@
 						interfaces_lan_configure();
 						break;
 					default:
-						interfaces_optional_configure_if($interface);
-						echo "interfaces_optional_configure_if($interface);\n";
+						interfaces_wan_configure($interface);
+						echo "interfaces_wan_configure($interface);\n";
 						log_error("HOTPLUG: Configuring optional interface {$interface}");
 						break;
 				}

@@ -62,18 +62,22 @@
 			$ifconf =& $config['interfaces'][$ifinfo['friendly']];
 			/* look for 'special cases' */
 			switch($ifconf['ipaddr']) {
+			case "carpdev-dhcp":
+				$ifinfo['class'] = "(CarpDEV)";
+				break;
 			case "dhcp":
 				$ifinfo['class'] = "(DHCP)";
 				break;
 			case "pppoe":
 				$ifinfo['class'] = "(PPPoE)";
-				$ifinfo['ipaddr'] = $iflist[$g['pppoe_interface']]['ipaddr'];
+				//$ifinfo['ipaddr'] = $iflist[$g['pppoe_interface']]['ipaddr'];
 				break;
 			case "pptp":
 				$ifinfo['class'] = "(PPTP)";
-				$ifinfo['ipaddr'] = $iflist[$g['pppoe_interface']]['ipaddr'];
+				//$ifinfo['ipaddr'] = $iflist[$g['pppoe_interface']]['ipaddr'];
 				break;
 			}
+			$ifinfo['ipaddr'] = get_current_wan_address($ifinfo['friendly']);
 			$tobanner = $friendly;
 			/* does this interface have an extra description? */
 			if($ifconf['descr']) {

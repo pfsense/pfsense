@@ -53,8 +53,8 @@
 	 */
 
 	class updatedns {
-		var $_cacheFile = '/cf/conf/dyndns.cache';
-		var $_debugFile = '/var/etc/dyndns.debug';
+		var $_cacheFile;
+		var $_debugFile;
 		var $_UserAgent = 'User-Agent: phpDynDNS/0.7';
 		var $_errorVerbosity = 0;
 		var $_dnsService;
@@ -71,6 +71,7 @@
 		var $_dnsUpdateURL;
 		var $status;
 		var $_debugID;
+		var $_if;
 		
 		/* 
 		 * Public Constructor Function (added 12 July 05) [beta]
@@ -78,10 +79,13 @@
 		 */
 		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '',
 				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsBackMX = '', $dnsWanip = '',
-				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '') {
+				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $if = '') {
 			
 			global $config;
 			
+			$this->_cacheFile = "/cf/conf/dyndns_{$if}.cache";
+			$this->_debugFile = "/var/etc/dyndns_{$if}.debug";
+
 			log_error("DynDns: updatedns() starting");
 			
 			if (!$dnsService) $this->_error(2);
@@ -108,9 +112,10 @@
 			$this->_dnsPort = $dnsPort;
 			$this->_dnsWildcard = $dnsWildcard;
 			$this->_dnsMX = $dnsMX;
+			$this->_if = $if;
 			
 			if(!$wan_ip) 
-				$wan_ip = get_current_wan_address();
+				$wan_ip = get_current_wan_address($if);
 				
 			$this->_dnsIP = $wan_ip;
 			$this->_debugID = rand(1000000, 9999999);

@@ -219,10 +219,7 @@ function system_routing_configure() {
 	$dont_remove_route = false;
 	foreach ($iflist as $ifent => $ifname) {
 		/* do not process interfaces that will end up with gateways */
-		if($config['interfaces'][$ifname]['ipaddr'] == "dhcp" or
-			$config['interfaces'][$ifname]['ipaddr'] == "bigpond" or
-			$config['interfaces'][$ifname]['ipaddr'] == "pppoe" or
-			$config['interfaces'][$ifname]['ipaddr'] == "pptp")
+		if (interface_has_gateway($ifent))
 			$dont_remove_route = true;
 	}
 
@@ -300,6 +297,7 @@ function system_routing_configure() {
 		}
 		fclose($fd);
 	}
+
 	return 0;
 }
 
@@ -1046,6 +1044,8 @@ function system_ntp_configure() {
 
 	$syscfg = $config['system'];
 
+	if (!$config['installedpackages']['openntpd'])
+		return;
 
 	/* open configuration for wrting or bail */
 	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
@@ -1063,8 +1063,8 @@ function system_ntp_configure() {
 		fwrite($fd, "servers {$ts}\n");
 
 	/* Setup listener(s) if the user has configured one */
-	if ($config['installedpackages']['openntpd']) {
-		/* server config is in coregui */
+        if ($config['installedpackages']['openntpd']) {
+    		/* server config is in coregui1 */
 		$xmlsettings = $config['installedpackages']['openntpd']['config'][0];
 		if ($xmlsettings['enable'] == 'on') {
 			$ifaces = explode(',', $xmlsettings['interface']);

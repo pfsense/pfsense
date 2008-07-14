@@ -177,6 +177,7 @@ function return_gateways_status() {
 	if(is_readable("{$g['tmp_path']}/apinger.status"))
 		$apingerstatus = file("{$g['tmp_path']}/apinger.status");
 
+	$status = array();
 	foreach($apingerstatus as $line) {
 		$fields = explode(":", $line);
 		switch($fields[0]) {

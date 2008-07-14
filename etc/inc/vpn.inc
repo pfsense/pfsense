@@ -35,18 +35,6 @@
 /* include all configuration functions */
 require_once ("functions.inc");
 
-/* master setup for vpn (mpd) */
-function vpn_setup() {
-	/* start pptpd */
-	vpn_pptpd_configure();
-
-	/* start pppoe server */
-	vpn_pppoe_configure();
-
-	/* setup l2tp */
-	vpn_l2tp_configure();
-}
-
 function vpn_ipsec_failover_configure() {
 	global $config, $g;
 
@@ -852,13 +840,106 @@ EOD;
 	return 0;
 }
 
+/* XXX: This is totally broken. */
+function vpn_localnet_determine($adr, & $sa, & $sn) {
+	global $config, $g;
+
+	if (isset ($adr)) {
+		if ($adr['network']) {
+			switch ($adr['network']) {
+				case 'lan' :
+					$sn = $config['interfaces']['lan']['subnet'];
+					$sa = gen_subnet($config['interfaces']['lan']['ipaddr'], $sn);
+					break;
+			}
+		} else
+			if ($adr['address']) {
+				list ($sa, $sn) = explode("/", $adr['address']);
+				if (is_null($sn))
+					$sn = 32;
+			}
+	} else {
+		$sn = $config['interfaces']['lan']['subnet'];
+		$sa = gen_subnet($config['interfaces']['lan']['ipaddr'], $sn);
+	}
+}
+
+/* XXX: is there a need for this get_current_wan_address() does already this?! */
+function vpn_endpoint_determine($ph1ent, $curwanip) {
+
+	global $g, $config;
+
+	if ((!$ph1ent['interface']) || ($ph1ent['interface'] == "wan")) {
+		if ($curwanip)
+			return $curwanip;
+		else
+			return null;
+	} elseif ($ph1ent['interface'] == "lan") {
+		return $config['interfaces']['lan']['ipaddr'];
+	} else {
+		$iface = $config['interfaces'][$ph1ent['interface']]['if'];
+		$oc = $config['interfaces'][$ph1ent['interface']];
+		/* carp ips, etc */
+		$ip = find_interface_ip($iface);
+		if($ip) 
+			return $ip;
+			
+		if (isset ($oc['enable']) && $oc['if']) {
+			return $oc['ipaddr'];
+		}
+	}
+
+	return null;
+}
+
+/* Forcefully restart IPsec
+ * This is required for when dynamic interfaces reload
+ * For all other occasions the normal vpn_ipsec_configure()
+ * will gracefully reload the settings without restarting
+ */
+function vpn_ipsec_force_reload() {
+	global $config;
+	global $g;
+
+	$ipseccfg = $config['ipsec'];
+
+	/* kill racoon */
+	mwexec("/usr/bin/killall racoon");
+
+	/* wait for process to die */
+	sleep(4);
+
+	/* send a SIGKILL to be sure */
+	sigkillbypid("{$g['varrun_path']}/racoon.pid", "KILL");
+
+	/* wait for flushing to finish */
+	sleep(1);
+
+	/* if ipsec is enabled, start up again */
+	if (isset($ipseccfg['enable'])) {
+		log_error("Forcefully reloading IPsec racoon daemon");
+		vpn_ipsec_configure();
+	}
+
+}
+
+/* master setup for vpn (mpd) */
+function vpn_setup() {
+	/* start pptpd */
+	vpn_pptpd_configure();
+
+	/* start pppoe server */
+	vpn_pppoe_configure();
+
+	/* setup l2tp */
+	vpn_l2tp_configure();
+}
+
 function vpn_pptpd_configure() {
 	global $config, $g;
 
 	$syscfg = $config['system'];
 	$pptpdcfg = $config['pptpd'];
-
-	$starting_ng = get_number_of_wan_netgraph_interfaces_needed();
 
 	if ($g['booting']) {
 		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off"))
@@ -867,30 +948,30 @@ function vpn_pptpd_configure() {
 		echo "Configuring PPTP VPN service... ";
 	} else {
 		/* kill mpd */
-		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
+		killbypid("{$g['varrun_path']}/pptp-vpn.pid");
 
 		/* wait for process to die */
 		sleep(3);
 
 		if (is_process_running("mpd -b")) {
-			killbypid("{$g['varrun_path']}/mpd-vpn.pid");
+			killbypid("{$g['varrun_path']}/pptp-vpn.pid");
 			log_error("Could not kill mpd within 3 seconds.   Trying again.");
 		}
 
 		/* remove mpd.conf, if it exists */
-		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.conf");
-		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.links");
-		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.secret");
+		unlink_if_exists("{$g['varetc_path']}/pptp-vpn/mpd.conf");
+		unlink_if_exists("{$g['varetc_path']}/pptp-vpn/mpd.links");
+		unlink_if_exists("{$g['varetc_path']}/pptp-vpn/mpd.secret");
 	}
 
-	/* make sure mpd-vpn directory exists */
-	if (!file_exists("{$g['varetc_path']}/mpd-vpn"))
-		mkdir("{$g['varetc_path']}/mpd-vpn");
+	/* make sure pptp-vpn directory exists */
+	if (!file_exists("{$g['varetc_path']}/pptp-vpn"))
+		mkdir("{$g['varetc_path']}/pptp-vpn");
 
 	switch ($pptpdcfg['mode']) {
 		case 'server' :
 			/* write mpd.conf */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.conf", "w");
+			$fd = fopen("{$g['varetc_path']}/pptp-vpn/mpd.conf", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.conf in vpn_pptpd_configure().\n");
 				return 1;
@@ -908,7 +989,6 @@ EOD;
 			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
-				$ngif = "ng" . ($i + $starting_ng);
 
 				if(isset($pptpdcfg['radius']['radiusissueips']) && isset($pptpdcfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 0.0.0.0/0";
@@ -920,7 +1000,7 @@ EOD;
 				$mpdconf .=<<<EOD
 
 pt{$i}:
-	new -i {$ngif} pt{$i} pt{$i}
+	new pt{$i} pt{$i}
 	{$isssue_ip_type}
 	load pts
 
@@ -934,7 +1014,7 @@ pts:
 	set iface enable proxy-arp
 	set iface enable tcpmssfix
 	set iface idle 1800
-	set iface up-script /usr/local/sbin/vpn-linkup
+	set iface up-script /usr/local/sbin/pptp-linkup
 	set iface down-script /usr/local/sbin/vpn-linkdown
 	set bundle enable multilink
 	set bundle enable crypt-reqd
@@ -999,7 +1079,7 @@ EOD;
 			fclose($fd);
 
 			/* write mpd.links */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.links", "w");
+			$fd = fopen("{$g['varetc_path']}/pptp-vpn/mpd.links", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.links in vpn_pptpd_configure().\n");
 				return 1;
@@ -1024,7 +1104,7 @@ EOD;
 			fclose($fd);
 
 			/* write mpd.secret */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.secret", "w");
+			$fd = fopen("{$g['varetc_path']}/pptp-vpn/mpd.secret", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.secret in vpn_pptpd_configure().\n");
 				return 1;
@@ -1039,10 +1119,10 @@ EOD;
 
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
-			chmod("{$g['varetc_path']}/mpd-vpn/mpd.secret", 0600);
+			chmod("{$g['varetc_path']}/pptp-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/mpd-vpn -p {$g['varrun_path']}/mpd-vpn.pid -f mpd.conf pptpd");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pptp-vpn -p {$g['varrun_path']}/pptp-vpn.pid -f mpd.conf pptpd");
 
 			break;
 
@@ -1061,67 +1141,15 @@ EOD;
 	return 0;
 }
 
-function vpn_localnet_determine($adr, & $sa, & $sn) {
-	global $config, $g;
-
-	if (isset ($adr)) {
-		if ($adr['network']) {
-			switch ($adr['network']) {
-				case 'lan' :
-					$sn = $config['interfaces']['lan']['subnet'];
-					$sa = gen_subnet($config['interfaces']['lan']['ipaddr'], $sn);
-					break;
-			}
-		} else
-			if ($adr['address']) {
-				list ($sa, $sn) = explode("/", $adr['address']);
-				if (is_null($sn))
-					$sn = 32;
-			}
-	} else {
-		$sn = $config['interfaces']['lan']['subnet'];
-		$sa = gen_subnet($config['interfaces']['lan']['ipaddr'], $sn);
-	}
-}
-
-function vpn_endpoint_determine($ph1ent, $curwanip) {
-
-	global $g, $config;
-
-	if ((!$ph1ent['interface']) || ($ph1ent['interface'] == "wan")) {
-		if ($curwanip)
-			return $curwanip;
-		else
-			return null;
-	} elseif ($ph1ent['interface'] == "lan") {
-		return $config['interfaces']['lan']['ipaddr'];
-	} else {
-		$iface = $config['interfaces'][$ph1ent['interface']]['if'];
-		$oc = $config['interfaces'][$ph1ent['interface']];
-		/* carp ips, etc */
-		$ip = find_interface_ip($iface);
-		if($ip) 
-			return $ip;
-			
-		if (isset ($oc['enable']) && $oc['if']) {
-			return $oc['ipaddr'];
-		}
-	}
-
-	return null;
-}
-
 function vpn_pppoe_configure() {
 	global $config, $g;
 
 	$syscfg = $config['system'];
 	$pppoecfg = $config['pppoe'];
 
-	$starting_ng = get_number_of_wan_netgraph_interfaces_needed();
-
 	/* create directory if it does not exist */
-	if (!is_dir("{$g['varetc_path']}/mpd-vpn"))
-		mkdir("{$g['varetc_path']}/mpd-vpn");
+	if (!is_dir("{$g['varetc_path']}/pppoe-vpn"))
+		mkdir("{$g['varetc_path']}/pppoe-vpn");
 
 	if ($g['booting']) {
 		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off"))
@@ -1130,16 +1158,16 @@ function vpn_pppoe_configure() {
 		echo "Configuring PPPoE VPN service... ";
 	} else {
 		/* kill mpd */
-		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
+		killbypid("{$g['varrun_path']}/pppoe-vpn.pid");
 
 		/* wait for process to die */
 		sleep(2);
 
 	}
 
-	/* make sure mpd-vpn directory exists */
-	if (!file_exists("{$g['varetc_path']}/mpd-vpn"))
-		mkdir("{$g['varetc_path']}/mpd-vpn");
+	/* make sure pppoe-vpn directory exists */
+	if (!file_exists("{$g['varetc_path']}/pppoe-vpn"))
+		mkdir("{$g['varetc_path']}/pppoe-vpn");
 
 	switch ($pppoecfg['mode']) {
 
@@ -1153,14 +1181,13 @@ function vpn_pppoe_configure() {
 				$paporchap = "set link enable pap";
 
 			/* write mpd.conf */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.conf", "a");
+			$fd = fopen("{$g['varetc_path']}/pppoe-vpn/mpd.conf", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.conf in vpn_pppoe_configure().\n");
 				return 1;
 			}
 			$mpdconf = "\n\n";
 			$mpdconf .=<<<EOD
-startup:
 pppoe:
 
 EOD;
@@ -1172,7 +1199,6 @@ EOD;
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 
 				$clientip = long2ip(ip2long($pppoecfg['remoteip']) + $i);
-				$ngif = "ng" . ($i + $starting_ng);
 
 				if (isset ($pppoecfg['radius']['radiusissueips']) && isset ($pppoecfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
@@ -1184,7 +1210,7 @@ EOD;
 				$mpdconf .=<<<EOD
 
 pppoe{$i}:
-	new -i {$ngif} pppoe{$i} pppoe{$i}
+	new pppoe{$i} pppoe{$i}
 	{$isssue_ip_type}
 	load pppoe_standart
 
@@ -1197,6 +1223,8 @@ pppoe_standart:
 	set bundle no multilink
 	set bundle enable compression
 	set auth max-logins 1
+	set iface up-script /usr/local/sbin/pppoe-linkup
+        set iface down-script /usr/local/sbin/vpn-linkdown
 	set iface idle 0
 	set iface disable on-demand
 	set iface disable proxy-arp
@@ -1252,7 +1280,7 @@ EOD;
 			fclose($fd);
 
 			/* write mpd.links */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.links", "a");
+			$fd = fopen("{$g['varetc_path']}/pppoe-vpn/mpd.links", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.links in vpn_pppoe_configure().\n");
 				return 1;
@@ -1262,9 +1290,9 @@ EOD;
 
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 				$mpdlinks .=<<<EOD
-
+			
 pppoe{$i}:
-        set phys type pppoe
+	set phys type pppoe
         set pppoe iface {$pppoe_interface}
         set pppoe service "*"
         set pppoe disable originate
@@ -1277,7 +1305,7 @@ EOD;
 			fclose($fd);
 
 			/* write mpd.secret */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.secret", "a");
+			$fd = fopen("{$g['varetc_path']}/pppoe-vpn/mpd.secret", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.secret in vpn_pppoe_configure().\n");
 				return 1;
@@ -1292,10 +1320,10 @@ EOD;
 
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
-			chmod("{$g['varetc_path']}/mpd-vpn/mpd.secret", 0600);
+			chmod("{$g['varetc_path']}/pppoe-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/mpd-vpn -p {$g['varrun_path']}/mpd-vpn.pid pppoe");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe-vpn -p {$g['varrun_path']}/pppoe-vpn.pid pppoe");
 
 			break;
 
@@ -1319,11 +1347,9 @@ function vpn_l2tp_configure() {
 
 	mwexec("/sbin/kldload /boot/kernel/ng_l2tp.ko");
 
-	$starting_ng = get_number_of_wan_netgraph_interfaces_needed();
-
 	/* create directory if it does not exist */
-	if (!is_dir("{$g['varetc_path']}/mpd-vpn"))
-		mkdir("{$g['varetc_path']}/mpd-vpn");
+	if (!is_dir("{$g['varetc_path']}/l2tp-vpn"))
+		mkdir("{$g['varetc_path']}/l2tp-vpn");
 
 	if ($g['booting']) {
 		if (!$l2tpcfg['mode'] || ($l2tpcfg['mode'] == "off"))
@@ -1332,16 +1358,16 @@ function vpn_l2tp_configure() {
 		echo "Configuring l2tp VPN service... ";
 	} else {
 		/* kill mpd */
-		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
+		killbypid("{$g['varrun_path']}/l2tp-vpn.pid");
 
 		/* wait for process to die */
 		sleep(2);
 
 	}
 
-	/* make sure mpd-vpn directory exists */
-	if (!file_exists("{$g['varetc_path']}/mpd-vpn"))
-		mkdir("{$g['varetc_path']}/mpd-vpn");
+	/* make sure l2tp-vpn directory exists */
+	if (!file_exists("{$g['varetc_path']}/l2tp-vpn"))
+		mkdir("{$g['varetc_path']}/l2tp-vpn");
 
 	switch ($l2tpcfg['mode']) {
 
@@ -1355,7 +1381,7 @@ function vpn_l2tp_configure() {
 				$paporchap = "set link enable pap";
 
 			/* write mpd.conf */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.conf", "a");
+			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.conf", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.conf in vpn_l2tp_configure().\n");
 				return 1;
@@ -1373,7 +1399,6 @@ EOD;
 			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
 
 				$clientip = long2ip(ip2long($l2tpcfg['remoteip']) + $i);
-				$ngif = "ng" . ($i + $starting_ng);
 
 				if (isset ($l2tpcfg['radius']['radiusissueips']) && isset ($l2tpcfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 0.0.0.0/0";
@@ -1385,7 +1410,7 @@ EOD;
 				$mpdconf .=<<<EOD
 
 l2tp{$i}:
-	new -i {$ngif} l2tp{$i} l2tp{$i}
+	new l2tp{$i} l2tp{$i}
 	{$isssue_ip_type}
 	load l2tp_standard
 
@@ -1403,6 +1428,8 @@ l2tp_standard:
         set ccp yes mppc
         set iface disable on-demand
         set iface enable proxy-arp
+	set iface up-script /usr/local/sbin/l2tp-linkup
+        set iface down-script /usr/local/sbin/vpn-linkdown
         set link yes acfcomp protocomp
         set link no pap chap
         set link enable chap
@@ -1443,7 +1470,7 @@ EOD;
 			fclose($fd);
 
 			/* write mpd.links */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.links", "a");
+			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.links", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.links in vpn_l2tp_configure().\n");
 				return 1;
@@ -1465,7 +1492,7 @@ EOD;
 			fclose($fd);
 
 			/* write mpd.secret */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.secret", "a");
+			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.secret", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.secret in vpn_l2tp_configure().\n");
 				return 1;
@@ -1480,10 +1507,10 @@ EOD;
 
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
-			chmod("{$g['varetc_path']}/mpd-vpn/mpd.secret", 0600);
+			chmod("{$g['varetc_path']}/l2tp-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/mpd-vpn -p {$g['varrun_path']}/mpd-vpn.pid l2tp");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid l2tp");
 
 			break;
 
@@ -1498,36 +1525,4 @@ EOD;
 
 	return 0;
 }
-
-/* Forcefully restart IPsec
- * This is required for when dynamic interfaces reload
- * For all other occasions the normal vpn_ipsec_configure()
- * will gracefully reload the settings without restarting
- */
-function vpn_ipsec_force_reload() {
-	global $config;
-	global $g;
-
-	$ipseccfg = $config['ipsec'];
-
-	/* kill racoon */
-	mwexec("/usr/bin/killall racoon");
-
-	/* wait for process to die */
-	sleep(4);
-
-	/* send a SIGKILL to be sure */
-	sigkillbypid("{$g['varrun_path']}/racoon.pid", "KILL");
-
-	/* wait for flushing to finish */
-	sleep(1);
-
-	/* if ipsec is enabled, start up again */
-	if (isset($ipseccfg['enable'])) {
-		log_error("Forcefully reloading IPsec racoon daemon");
-		vpn_ipsec_configure();
-	}
-
-}
-
 ?>

@@ -485,9 +485,9 @@ function conf_mount_ro() {
 /* convert configuration, if necessary */
 function convert_config() {
 	global $config, $g;
-	$now = date("H:i:s");
-	log_error("Start Configuration upgrade at $now, set execution timeout to 15 minutes");
-	ini_set("max_execution_time", "900");
+        $now = date("H:i:s");
+        log_error("Start Configuration upgrade at $now, set execution timeout to 15 minutes");
+        ini_set("max_execution_time", "900");
 
 	/* special case upgrades */
 	/* fix every minute crontab bogons entry */
@@ -1469,6 +1469,73 @@ function convert_config() {
 		}
 
 		$config['version'] = "4.7";
+	}
+	
+	/* Convert 4.7 -> 4.8 */
+        if ($config['version'] <= 4.7) {
+		$config['dyndnses']['dyndns'] = array();
+		if (isset($config['dyndns']['enable'])) {
+			$tempdyn = array();
+			$tempdyn['enable'] = isset($config['dyndns']['enable']);
+			$tempdyn['type'] = $config['dyndns']['type'];
+			$tempdyn['wildcard'] = isset($config['dyndns']['wildcard']);
+			$tempdyn['usernamefld'] = $config['dyndns']['username'];
+			$tempdyn['passwordfld'] = $config['dyndns']['password'];
+			$tempdyn['host'] = $config['dyndns']['host'];
+			$tempdyn['mx'] = $config['dyndns']['mx'];		
+			$config['dyndnses']['dyndns'][] = $tempdyn;
+			unset($config['dyndns']);
+		}		
+		$config['dnsupdates']['dnsupdate'] = array();
+		if (isset($config['dnsupdate']['enable'])) {
+			$pconfig = array();
+			$pconfig['dnsupdate_enable'] = isset($config['dnsupdate']['enable']);
+			$pconfig['dnsupdate_host'] = $config['dnsupdate']['host'];
+			$pconfig['dnsupdate_ttl'] = $config['dnsupdate']['ttl'];
+			if (!$pconfig['dnsupdate_ttl'])
+				$pconfig['dnsupdate_ttl'] = 60;
+			$pconfig['dnsupdate_keydata'] = $config['dnsupdate']['keydata'];
+			$pconfig['dnsupdate_keyname'] = $config['dnsupdate']['keyname'];
+			$pconfig['dnsupdate_keytype'] = $config['dnsupdate']['keytype'];
+			if (!$pconfig['dnsupdate_keytype'])
+				$pconfig['dnsupdate_keytype'] = "zone";
+			$pconfig['dnsupdate_server'] = $config['dnsupdate']['server'];
+			$pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate']['usetcp']);
+			$config['dnsupdates']['dnsupdate'][] = $pconfig;
+			unset($config['dnsupdate']);
+		}
+		
+		if (is_array($config['pppoe'])) {
+			$pconfig = array();
+			$pconfig['username'] = $config['pppoe']['username'];
+			$pconfig['password'] = $config['pppoe']['password'];
+			$pconfig['provider'] = $config['pppoe']['provider'];
+			$pconfig['ondemand'] = isset($config['pppoe']['ondemand']);
+			$pconfig['timeout'] = $config['pppoe']['timeout'];
+			unset($config['pppoe']);
+			$config['interfaces']['wan']['username'] = $pconfig['username'];
+			$config['interfaces']['wan']['password'] = $pconfig['password'];
+			$config['interfaces']['wan']['provider'] = $pconfig['provider'];
+			$config['interfaces']['wan']['username'] = isset($pconfig['ondemand']);
+			$config['interfaces']['wan']['timeout'] = $pconfig['timeout'];
+		}
+		if (is_array($config['pptp'])) {
+                        $pconfig = array();
+                        $pconfig['username'] = $config['pptp']['username'];
+                        $pconfig['password'] = $config['pptp']['password'];
+                        $pconfig['provider'] = $config['pptp']['provider'];
+                        $pconfig['ondemand'] = isset($config['pptp']['ondemand']);
+                        $pconfig['timeout'] = $config['pptp']['timeout'];
+                        unset($config['pptp']);
+                        $config['interfaces']['wan']['username'] = $pconfig['username'];
+                        $config['interfaces']['wan']['password'] = $pconfig['password'];
+                        $config['interfaces']['wan']['provider'] = $pconfig['provider'];
+                        $config['interfaces']['wan']['username'] = isset($pconfig['ondemand']
+);
+                        $config['interfaces']['wan']['timeout'] = $pconfig['timeout'];
+                }
+
+		$config['version'] = 4.8;
 	}
 
 	$now = date("H:i:s");

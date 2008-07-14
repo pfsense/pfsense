@@ -42,16 +42,16 @@ $argument = str_replace("\n", "", $argv[1]);
 
 log_error("Informational: rc.newwanip is starting {$argument}.");
 
-if($argument <> "") {
-	$interface = convert_real_interface_to_friendly_interface_name($argument);
-	$interface_real = convert_friendly_interface_to_real_interface_name($argument);
-	$curwanip = find_interface_ip($interface_real);
-	if($curwanip == "")
-	        $curwanip = get_current_wan_address();
-} else {
+if(empty($argument)) {
     $curwanip = get_current_wan_address();
     $interface = "wan";
-    $interface_real = $config['interfaces']['wan']['if'];
+    $interface_real = get_real_wan_interface();
+} else {
+        $interface = convert_real_interface_to_friendly_interface_name($argument);
+        $interface_real = $argument;
+        $curwanip = find_interface_ip($interface_real);
+        if($curwanip == "")
+                $curwanip = get_current_wan_address($interface);
 }
 
 log_error("rc.newwanip working with (IP address: {$curwanip}) (interface: {$interface}) (interface real: {$interface_real}).");
@@ -62,12 +62,6 @@ if($curwanip == "0.0.0.0") {
         exit;
 }
 
-/* grab the prior ip for pftpx tests */
-if(file_exists("/tmp/rc.newwanip_oldip")) {
-	/* grab hint from dhclient */
-	$old_ip = trim(file_get_contents("/tmp/rc.newwanip_oldip", "\r"));
-	unlink("/tmp/rc.newwanip_oldip");
-}
 /* fallback to rc.newwanip ip if needed */
 if(!$old_ip)
 	if(file_exists("{$g['vardb_path']}/{$interface}_ip"))
@@ -122,10 +116,8 @@ if($old_ip <> "")
 	if($old_ip <> $curwanip)
 		exec("/etc/rc.start_packages");
 
-
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();
 
-return true;
-
+return 0;
 ?>

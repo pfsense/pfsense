@@ -1088,13 +1088,14 @@ function filter_nat_rules_generate() {
 		mwexec("rm /var/etc/inetd.conf");
 	touch("/var/etc/inetd.conf");
 
+	// Open inetd.conf write handle
+	$inetd_fd = fopen("/var/etc/inetd.conf","w");
+
+	/* add tftp protocol helper */
+	fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy -v\n");
+
 	if (isset($config['nat']['rule'])) {
 		$natrules .= "# NAT Inbound Redirects\n";
-
-		$inetd_fd = fopen("/var/etc/inetd.conf","w");
-
-		/* add tftp protocol helper */
-		fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy -v\n");
 
 		if(!isset($config['system']['disablenatreflection'])) {
 			/* start redirects on port 19000 of localhost */
@@ -1399,17 +1400,17 @@ function filter_nat_rules_generate() {
 
 			$natrules .= "\n";
 		}
-
-		if(!isset($config['system']['disablenatreflection'])) {
-			fclose($inetd_fd);
-			$helpers = trim(exec("/bin/ps ax | /usr/bin/grep inetd | /usr/bin/grep -v grep | /usr/bin/grep 127"));
-			if(!$helpers)
-				mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
-			else
-				mwexec("/usr/bin/killall -HUP inetd");
-
-		}
+			
 	}
+
+	fclose($inetd_fd);	// Close file handle
+	
+	// Check if inetd is running, if not start it.  If so, restart it gracefully.
+	$helpers = trim(exec("/bin/ps ax | /usr/bin/grep inetd | /usr/bin/grep -v grep | /usr/bin/grep 127"));
+	if(!$helpers)
+		mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
+	else
+		mwexec("/usr/bin/killall -HUP inetd");
 
 	if ($pptpdcfg['mode'] && $pptpdcfg['mode'] != "off") {
 

@@ -485,6 +485,9 @@ function conf_mount_ro() {
 /* convert configuration, if necessary */
 function convert_config() {
 	global $config, $g;
+	$now = date("H:i:s");
+	log_error("Start Configuration upgrade at $now, set execution timeout to 15 minutes");
+	ini_set("max_execution_time", "900");
 
 	/* special case upgrades */
 	/* fix every minute crontab bogons entry */
@@ -1467,6 +1470,9 @@ function convert_config() {
 
 		$config['version'] = "4.7";
 	}
+
+	$now = date("H:i:s");
+	log_error("Ended Configuration upgrade at $now");
 
 //	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");

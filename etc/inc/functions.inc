@@ -84,5 +84,6 @@ require_once("vpn.inc");
 require_once("vslb.inc");
 require_once("gwlb.inc");
 require_once("notices.inc");
+require_once("cmd_chain.inc");
 
 ?>

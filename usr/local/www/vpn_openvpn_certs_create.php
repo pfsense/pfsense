@@ -166,7 +166,7 @@ if ($_POST) {
 	</script>
 
 <?php include("fbegin.inc"); ?>
-
+<?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="vpn_openvpn_certs_create.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 

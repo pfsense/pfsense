@@ -63,7 +63,7 @@ if ($_GET['ca']) {
 }
 
 if ($_POST) {
-	$descr = $_POST['descr'];
+	$descr = str_replace($_POST['descr'], " ", ""); // spaces can be deadly
 	$cakeysize = $_POST['cakeysize'];
 	$caexpire = $_POST['caexpire'];
 	$cakeyexpire = $_POST['cakeyexpire'];

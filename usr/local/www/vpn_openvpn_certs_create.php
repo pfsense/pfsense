@@ -63,7 +63,9 @@ if ($_GET['ca']) {
 }
 
 if ($_POST) {
-	$descr = str_replace($_POST['descr'], " ", ""); // spaces can be deadly
+	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['descr']))	
+		$input_errors[] = "Description contains invalid characters.";
+	$descr = $_POST['descr'];
 	$cakeysize = $_POST['cakeysize'];
 	$caexpire = $_POST['caexpire'];
 	$cakeyexpire = $_POST['cakeyexpire'];
@@ -198,26 +200,28 @@ if ($_POST) {
 	</table></td></tr>
 	</table>
 <?php
-	execute_command_return_output("/bin/tcsh $ovpncapath/RUNME_FIRST", "r");
-	conf_mount_ro();
-	/* vars */
-	$ovpnkeys[$caname]['existing'] = "no";
-	$ovpnkeys[$caname]['descr'] = $descr;		
-	$ovpnkeys[$caname]['auth_method'] = "pki";
-	$ovpnkeys[$caname]['keysize'] = $cakeysize;
-	$ovpnkeys[$caname]['keyexpire'] = $cakeyexpire;
-	$ovpnkeys[$caname]['caexpire'] = $caexpire;
-	$ovpnkeys[$caname]['keycountry'] = $countrycode;
-	$ovpnkeys[$caname]['keyprovince'] = $stateorprovince;
-	$ovpnkeys[$caname]['keycity'] = $cityname;
-	$ovpnkeys[$caname]['keyorg'] = $orginizationname;
-	$ovpnkeys[$caname]['keyemail'] = $email;
-	/* ciphers */
-	$ovpnkeys[$caname]['ca.key'] = file_get_contents("$ovpncapath/$caname/ca.key");
-	$ovpnkeys[$caname]['ca.crt'] = file_get_contents("$ovpncapath/$caname/ca.crt");
+	if(!$input_errors) {
+		execute_command_return_output("/bin/tcsh $ovpncapath/RUNME_FIRST", "r");
+		conf_mount_ro();
+		/* vars */
+		$ovpnkeys[$caname]['existing'] = "no";
+		$ovpnkeys[$caname]['descr'] = $descr;		
+		$ovpnkeys[$caname]['auth_method'] = "pki";
+		$ovpnkeys[$caname]['keysize'] = $cakeysize;
+		$ovpnkeys[$caname]['keyexpire'] = $cakeyexpire;
+		$ovpnkeys[$caname]['caexpire'] = $caexpire;
+		$ovpnkeys[$caname]['keycountry'] = $countrycode;
+		$ovpnkeys[$caname]['keyprovince'] = $stateorprovince;
+		$ovpnkeys[$caname]['keycity'] = $cityname;
+		$ovpnkeys[$caname]['keyorg'] = $orginizationname;
+		$ovpnkeys[$caname]['keyemail'] = $email;
+		/* ciphers */
+		$ovpnkeys[$caname]['ca.key'] = file_get_contents("$ovpncapath/$caname/ca.key");
+		$ovpnkeys[$caname]['ca.crt'] = file_get_contents("$ovpncapath/$caname/ca.crt");
 
-	/* save it */
-	write_config();
+		/* save it */
+		write_config();
+	}
 } else { ?>
 <tr><td>
         <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">

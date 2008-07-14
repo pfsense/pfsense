@@ -374,7 +374,7 @@ function typesel_change_remote(bits) {
                       ?>
                       <tr>
                         <td>
-                          <input type="checkbox" name="ealgos[]?>" value="<?=$algo;?>"<?=$checked?>>
+                          <input type="checkbox" name="ealgos[]" value="<?=$algo;?>"<?=$checked?>>
 						</td>
                         <td>
                           <?=htmlspecialchars($algodata['name']);?>

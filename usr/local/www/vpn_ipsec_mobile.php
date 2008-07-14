@@ -551,7 +551,7 @@ login_banner_change();
 
 function set_checked($var,& $chk) {
 	if($var)
-		$chk = '"checked"';
+		$chk = 'checked';
 	else
 		$chk = '';
 }

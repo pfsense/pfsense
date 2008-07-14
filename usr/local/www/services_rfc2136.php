@@ -28,13 +28,13 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['dyndnses']['dyndns']))
-	$config['dyndnses']['dyndns'] = array();
+if (!is_array($config['dnsupdates']['dnsupdate']))
+	$config['dnsupdates']['dnsupdate'] = array();
 
-$a_dyndns = &$config['dyndnses']['dyndns'];
+$a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
 if ($_GET['act'] == "del") {
-		unset($a_dyndns[$_GET['id']]);
+		unset($a_rfc2136[$_GET['id']]);
 
 		write_config();
 
@@ -42,21 +42,21 @@ if ($_GET['act'] == "del") {
 		exit;
 }
 
-$pgtitle = array("Services", "Dynamic DNS clients");
+$pgtitle = array("Services", "RFC 2136 clients");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="services_dyndns.php" method="post" name="iform" id="iform">
+<form action="services_rfc2136.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array("DynDns", true, "services_dyndns.php");
-	$tab_array[] = array("RFC 2136", false, "services_rfc2136.php");
+	$tab_array[] = array("DynDns", false, "services_dyndns.php");
+	$tab_array[] = array("RFC 2136", true, "services_rfc2136.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -66,46 +66,34 @@ include("head.inc");
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
 				  <td width="5%"  class="listhdrr"></td>
-				  <td width="15%" class="listhdrr">Service</td>
-                  <td width="20%" class="listhdrr">Hostname</td>
-                  <td width="50%" class="listhdr">Description</td>
+                  <td width="25%" class="listhdrr">Hostname</td>
+                  <td width="60%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
-			  <?php $i = 0; foreach ($a_dyndns as $dyndns): ?>
+			  <?php $i = 0; foreach ($a_rfc2136 as $rfc2136): ?>
                 <tr>
 				  <td class="listlr">
 				  <?php $iflist = get_configured_interface_with_descr();
 				  		foreach ($iflist as $if => $ifdesc):
-							if ($dyndns['interface'] == $if): ?>
+							if ($rfc2136['interface'] == $if): ?>
 								<?=$ifdesc; break;?>
 					<?php endif; endforeach; ?>
 				  </td>
-                  <td class="listlr">
-				  <?php
-						$types = explode(",", "DNS-O-Matic DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,ZoneEdit,Loopia,freeDNS");
-						$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns");				
-						$j = 0; for ($j = 0; $j < count($vals); $j++) 
-                      				if ($vals[$j] == $dyndns['type']) { 
-                      					echo htmlspecialchars($types[$j]);
-											break;
-									}
-						?>
-                  </td>
                   <td class="listr">
-					<?=htmlspecialchars($dyndns['host']);?>
+					<?=htmlspecialchars($rfc2136['host']);?>
                   </td>
                   <td class="listbg">
 		    <font color="white">
-                    <?=htmlspecialchars($dyndns['descr']);?>&nbsp;
+                    <?=htmlspecialchars($rfc2136['descr']);?>&nbsp;
 		    </font>
                   </td>
-                  <td valign="middle" nowrap class="list"> <a href="services_dyndns_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="services_dyndns.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this VLAN?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                  <td valign="middle" nowrap class="list"> <a href="services_rfc2136_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
+                     &nbsp;<a href="services_rfc2136.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="4"></td>
-                  <td class="list"> <a href="services_dyndns_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                  <td class="list" colspan="3">&nbsp;</td>
+                  <td class="list"> <a href="services_rfc2136_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>

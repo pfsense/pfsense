@@ -993,7 +993,8 @@ on another rule.")?>
 				}
 				$iflist = get_configured_interface_with_descr();
 				foreach ($iflist as $ifent => $ifdesc) {
-					if($config['interfaces'][$ifent]['ipaddr'] == "dhcp") {
+					if (in_array($config['interfaces'][$ifent]['ipaddr'],
+						 array("dhcp", "pppoe", "pptp"))) {
 						if ($pconfig['gateway'] == $ifent) {
 							$selected = " SELECTED";
 						} else {

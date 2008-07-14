@@ -152,7 +152,7 @@ if ($_GET['act'] == "del") {
 	$id = $_GET['id'];
 
 	unset($config['interfaces'][$id]['enable']);
-	interfaces_optional_configure_if($id);   /* down the interface */
+	interface_bring_down($id);   /* down the interface */
 		
 	unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
 
@@ -271,6 +271,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	$tab_array[0] = array("Interface assignments", true, "interfaces_assign.php");
 	$tab_array[1] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[2] = array("PPP", false, "interfaces_ppp.php");
+	$tab_array[3] = array("Bridges", false, "interfaces_bridges.php");
 	display_top_tabs($tab_array);
 ?>  
   </td></tr>

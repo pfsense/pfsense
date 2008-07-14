@@ -73,7 +73,8 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 	case "advancedoutboundnat":
         	$was_enabled = isset($config['nat']['advancedoutbound']['enable']);
 		$config['nat']['advancedoutbound']['enable'] = true;
-		unset($config['nat']['ipsecpassthru']['enable']);
+		if (isset($config['nat']['ipsecpassthru']['enable']))
+			unset($config['nat']['ipsecpassthru']['enable']);
 		if($was_enabled == false) {
 			/*
 			 *    user has enabled advanced outbound nat -- lets automatically create entries
@@ -252,6 +253,8 @@ include("head.inc");
 					  	echo "WAN";
                                         else if (!$natent['interface'] || ($natent['interface'] == "lan"))
                                                  echo "LAN";                                                
+					else if ($natent['interface'] == "openvpn")
+						echo "OpenVPN";
 					else
 						echo htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
 					?>

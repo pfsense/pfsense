@@ -87,7 +87,7 @@ if ($_POST) {
 
 		write_config();
 
-		interfaces_optional_configure();
+		interfaces_configure();
 
 		header("Location: interfaces_ppp.php");
 		exit;

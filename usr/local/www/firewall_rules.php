@@ -261,7 +261,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 			</table>
 		  </td>
 		</tr>
-<?php if (($if == "wan") && isset($config['interfaces']['wan']['blockpriv'])): ?>
+<?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
                 <tr valign="top" id="frrfc1918">
                   <td width="3%" class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
@@ -288,7 +288,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				  </td>
 				</tr>
 <?php endif; ?>
-<?php if (($if == "wan") && isset($config['interfaces']['wan']['blockbogons'])): ?>
+<?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
                 <tr valign="top" id="frrfc1918">
                   <td width="3%" class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
@@ -299,6 +299,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="listr" style="background-color: #e0e0e0">*</td>
 				  <td class="listr" style="background-color: #e0e0e0">*</td>
 				   <td class="listr" style="background-color: #e0e0e0">*</td>
+		  <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listbg" style="background-color: #990000"><font color="white">Block private networks</td>
                   <td valign="middle" nowrap class="list">
 				    <table border="0" cellspacing="0" cellpadding="1">

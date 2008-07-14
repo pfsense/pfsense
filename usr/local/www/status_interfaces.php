@@ -43,16 +43,16 @@ if ($_POST) {
 		if ($ifcfg['ipaddr'] == "dhcp")
 			interfaces_dhcp_down($interface);
 		else if ($ifcfg['ipaddr'] == "pppoe")
-			interfaces_wan_pppoe_down(); // FIXME: when we support multi-pppoe
+			interfaces_wan_pppoe_down($interface); 
 		else if ($ifcfg['ipaddr'] == "pptp")
-			interfaces_wan_pptp_down(); // FIXME: when we support multi-pptp
+			interfaces_wan_pptp_down($interface); 
 	} else if ($_POST['submit'] == "Connect" || $_POST['submit'] == "Renew") {
 		if ($ifcfg['ipaddr'] == "dhcp")
 			interfaces_dhcp_up($interface);
 		else if ($ifcfg['ipaddr'] == "pppoe")
-			interfaces_wan_pppoe_up(); // FIXME: when we support multi-pppoe
+			interfaces_wan_pppoe_up($interface); 
 		else if ($ifcfg['ipaddr'] == "pptp")
-			interfaces_wan_pptp_up(); // FIXME: when we support multi-pptp
+			interfaces_wan_pptp_up($interface); 
 	} else {
 		header("Location: index.php");
 		exit;
@@ -82,7 +82,7 @@ include("head.inc");
                 <td colspan="2" class="listtopic">
                   <?=htmlspecialchars($ifname);?>
 				  interface
-				  (<?=convert_friendly_interface_to_real_interface_name($ifname);?>)
+				  (<?=($ifinfo['hwif']);?>)
 				</td>
               </tr>
               <tr>
@@ -217,7 +217,7 @@ include("head.inc");
 			$real_interface = "";
 			$interrupt_total = "";
 			$interrupt_sec = "";
-			$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
+			$real_interface = $ifinfo['hwif'];
           	$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $3 }'`;
           	$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
           	if(strstr($interrupt_total, "hci")) {

@@ -473,7 +473,7 @@ class altq_root_queue {
 	 */
 	function build_rules() {
 		if (count($this->queues) > 0 && $this->GetEnabled()) {
-			$rules = " altq on  " . convert_friendly_interface_to_real_interface_name($this->GetInterface());
+			$rules = " altq on  " . get_real_wan_interface($this->GetInterface());
 			if ($this->GetScheduler())
 					$rules .= " ".strtolower($this->GetScheduler());
 			if ($this->GetBandwidth())
@@ -951,7 +951,7 @@ function GetEcn() {
 		function build_rules() {
 				$pfq_rule = " queue ". $this->qname;
 				if ($this->GetInterface())
-						$pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
+						$pfq_rule .= " on ".get_real_wan_interface($this->GetInterface());
 				if ($this->GetQpriority())
 						$pfq_rule .= " priority ".$this->GetQpriority();
 				if ($this->GetQlimit())
@@ -1526,7 +1526,7 @@ class hfsc_queue extends priq_queue {
 
 				$pfq_rule = " queue ". $this->qname;
 				if ($this->GetInterface())
-						$pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
+						$pfq_rule .= " on ".get_real_wan_interface($this->GetInterface());
 		if ($this->GetBandwidth() && $this->GetBwscale())
 						$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
 					
@@ -1980,7 +1980,7 @@ class cbq_queue extends priq_queue {
 	function build_rules() {
 		   $pfq_rule = "queue ". $this->qname;
 			if ($this->GetInterface())
-					$pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
+					$pfq_rule .= " on ".get_real_wan_interface($this->GetInterface());
 			if ($this->GetBandwidth() && $this->GetBwscale())
 					$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
 			if ($this->GetQpriority())
@@ -2224,7 +2224,7 @@ class fairq_queue extends priq_queue {
 	function build_rules() {
 		$pfq_rule = "queue ". $this->qname;
 		if ($this->GetInterface())
-			$pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
+			$pfq_rule .= " on ".get_real_wan_interface($this->GetInterface());
 		if ($this->GetBandwidth() && $this->GetBwscale())
 			$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
 		if ($this->GetQpriority())

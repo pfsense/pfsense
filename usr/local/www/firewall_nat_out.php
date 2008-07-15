@@ -83,6 +83,8 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 			$ifdescrs = get_configured_interface_with_descr();
 				
 			foreach($ifdescrs as $if => $ifdesc) {
+				if (interface_has_gateway())
+					continue;
 				$natent = array();
 				$osn = gen_subnet($config['interfaces'][$if]['ipaddr'],
 					$config['interfaces'][$if]['subnet']);

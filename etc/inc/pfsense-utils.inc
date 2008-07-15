@@ -3692,7 +3692,7 @@ function get_interface_info($ifdescr) {
 		$ifinfo['status'] = "up";
 	}
 
-	if (!strstr($ifinfo['if'],'tun')) {
+	if (!strstr($ifinfo['if'],'ovpn')) {
 		$ifinfo['macaddr'] = $linkinfo[3];
 		$ifinfo['inpkts'] = $linkinfo[4];
 		$ifinfo['inerrs'] = $linkinfo[5];
@@ -3708,6 +3708,17 @@ function get_interface_info($ifdescr) {
 		$ifinfo['outbytes'] = $linkinfo[8];
 	}
 
+	$ifconfiginfo = "";
+	unset($ifconfiginfo);
+	exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
+	foreach ($ifconfiginfo as $ici) {
+		if (preg_match("/inet (\S+)/", $ici, $matches)) 
+			$ifinfo['ipaddr'] = $matches[1];
+		if (preg_match("/netmask (\S+)/", $ici, $matches)) 
+			if (preg_match("/^0x/", $matches[1]))
+				$ifinfo['subnet'] = long2ip(hexdec($matches[1]));
+	}
+
 	switch ($config['interfaces'][$if]['ipaddr']) {
 	/* DHCP? -> see if dhclient is up */
 	case "dhcp":
@@ -3717,6 +3728,7 @@ function get_interface_info($ifdescr) {
         	$ifinfo['dhcplink'] = "up";
         else
             $ifinfo['dhcplink'] = "down";
+
 		break;
 	/* PPPoE interface? -> get status from virtual interface */
 	case "pppoe":
@@ -3727,21 +3739,11 @@ function get_interface_info($ifdescr) {
 			$ifinfo['pppoelink'] = "down";
 		} else {
 			/* get PPPoE link status for dial on demand */
-			$ifconfiginfo = "";
-			unset($ifconfiginfo);
-			exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
-
 			$ifinfo['pppoelink'] = "up";
 
 			foreach ($ifconfiginfo as $ici) {
 				if (strpos($ici, 'LINK0') !== false)
 					$ifinfo['pppoelink'] = "down";
-
-				if (preg_match("/inet (\S+)/", $ici, $matches)) 
-					$ifinfo['ipaddr'] = $matches[1];
-				if (preg_match("/netmask (\S+)/", $ici, $matches)) 
-					if (preg_match("/^0x/", $matches[1]))
-						$ifinfo['subnet'] = long2ip(hexdec($matches[1]));
 			}
 		}
 		break;
@@ -3754,22 +3756,15 @@ function get_interface_info($ifdescr) {
 			$ifinfo['pptplink'] = "down";
 		} else {
 			/* get PPTP link status for dial on demand */
-			unset($ifconfiginfo);
-			exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
-
 			$ifinfo['pptplink'] = "up";
 
 			foreach ($ifconfiginfo as $ici) {
 				if (strpos($ici, 'LINK0') !== false)
 					$ifinfo['pptplink'] = "down";
-
-				if (preg_match("/inet (\S+)/", $ici, $matches)) 
-					$ifinfo['ipaddr'] = $matches[1];
-				if (preg_match("/netmask (\S+)/", $ici, $matches)) 
-					if (preg_match("/^0x/", $matches[1]))
-						$ifinfo['subnet'] = long2ip(hexdec($matches[1]));
 			}
 		}
+		break;
+	default:
 		break;
 	}
 

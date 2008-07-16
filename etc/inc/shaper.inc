@@ -2712,15 +2712,16 @@ class dnpipe_class extends dummynet_class {
 		$form .= ">Bit/s</option>";
 		$form .= "</select>";
 		$form .= "</td></tr>";
-      		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Advanced</td>";
+      		$form .= "<tr id=\"sprtable4\" name=\"sprtable4\">";
+		$form .= "<td valign=\"top\" class=\"vncellreq\">Advanced</td>";
                 $form .= "<td><div id=\"showadvancedboxspr\">";
                 $form .= "<p><input type=\"button\" onClick=\"show_source_port_range()\"";
 		$form .= " value=\"Show\"></input> - Show source port range</a>";
                 $form .= "</div></td></tr>";
                 $form .= "<tr style=\"display:none\" id=\"sprtable\" name=\"sprtable\">";
 
-		$form .= "<td valign=\"top\" class=\"vncellreq\">";
 		$form .= "<td valign=\"top\" class=\"vncellreq\">Delay</td>";
+		$form .= "<td valign=\"top\" class=\"vncellreq\">";
 		$form .= "<input name=\"delay\" type=\"text\" id=\"delay\" size=\"5\" value=\"";
 		$form .= $this->GetDelay() . "\">";
 		$form .= "&nbsp;ms<br> <span class=\"vexpl\">Hint: in most cases, you"; 

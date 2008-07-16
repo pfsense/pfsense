@@ -219,8 +219,8 @@ if ($_GET) {
 			touch($d_shaperconfdirty_path);
 			$can_enable = true;
                         $can_add = true;
-			read_altq_config();
 		}
+		read_altq_config();
 		$output_form .= $altq->build_form();
 
 	} else if ($parentqueue) { /* Add a new queue */
@@ -233,7 +233,6 @@ if ($_GET) {
 				array_pop($tmppath);
 				$tmp->wconfig();
 				$can_enable = true;
-				read_altq_config();
 				if ($tmp->CanHaveChilds() && $can_enable) {
 					if ($tmp->GetDefault() <> "")
                              			$can_add = false;
@@ -250,6 +249,7 @@ if ($_GET) {
                                         else
                                                 $can_add = true;
 			}
+			read_altq_config();
 			$output_form .= $tmp->build_form();			
 		} else
 			$input_errors[] = "Could not add new queue.";
@@ -292,9 +292,9 @@ if ($_GET) {
 							write_config();
 				touch($d_shaperconfdirty_path);
 				$dontshow = false;
-				read_altq_config();
                 } 
-				$output_form .= $queue->build_form();
+		read_altq_config();
+		$output_form .= $queue->build_form();
 	} else  {
 		$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
 		$dontshow = true;

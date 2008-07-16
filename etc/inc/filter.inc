@@ -2507,7 +2507,8 @@ EOD;
                  */
                 $prot_used_esp = false;
                 $prot_used_ah  = false;
-
+		
+		if (is_array($config['ipsec']['phase2']))
                 foreach ($config['ipsec']['phase2'] as $ph2ent) {
 
                 	/* only evaluate ph2's bound to our ph1 */

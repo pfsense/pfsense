@@ -2565,7 +2565,7 @@ class dnpipe_class extends dummynet_class {
 		return $q;
 	}
 
-	function &get_dn_queue_list($q = null) {
+	function &get_queue_list($q = null) {
 		$qlist = array();
 
 		$qlist[$this->GetQname()] = & $this;
@@ -2840,7 +2840,7 @@ class dnqueue_class extends dummynet_class {
 		return $this->qparent;
         }
 
-        function &get_dn_queue_list(&$qlist) {
+        function &get_queue_list(&$qlist) {
         	$qlist[$this->GetQname()] = & $this;
         }		
 
@@ -3045,7 +3045,7 @@ function &get_unique_queue_list() {
 	return $qlist;
 }
 
-function &get_dn_unique_queue_list() {
+function &get_unique_dnqueue_list() {
 	global $dummynet_pipe_list;
 	
 	$qlist = array();

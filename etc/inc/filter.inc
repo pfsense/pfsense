@@ -94,32 +94,23 @@ function filter_configure_sync() {
 		echo "filter_configure_sync() being called $mt\n";
 	}
 
-	/* load ipfw / dummynet early on if required */
-	if($config['system']['dummynetshaper']) {
-			$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-			if($status == "0") {
-				mwexec("/sbin/kldload ipfw");
-				mwexec("/sbin/kldload dummynet");
-			}
-		} else {	
-			/* check to see if any rules reference a schedule
-			 * and if so load ipfw for later usage.
-			 */
-			foreach($config['filter']['rule'] as $rule) {
-				if($rule['sched'])
-					$time_based_rules = true;
-			}
-			if($time_based_rules == true) {
-				$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-				if($status == "0") {
-					mute_kernel_msgs();
-					mwexec("/sbin/kldload ipfw");
-					unmute_kernel_msgs();
-				}
-				exec("/sbin/ipfw delete set 9");
-				exec("/sbin/ipfw delete 2");
-				exec("/sbin/ipfw delete 3");			
-			}
+	/* check to see if any rules reference a schedule
+	 * and if so load ipfw for later usage.
+	 */
+	foreach($config['filter']['rule'] as $rule) {
+		if($rule['sched'])
+			$time_based_rules = true;
+		}
+	if($time_based_rules == true) {
+		$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
+		if($status == "0") {
+			mute_kernel_msgs();
+			mwexec("/sbin/kldload ipfw");
+			unmute_kernel_msgs();
+		}
+		exec("/sbin/ipfw delete set 9");
+		exec("/sbin/ipfw delete 2");
+		exec("/sbin/ipfw delete 3");			
 	}
 
 	/* Get interface list to work with. */
@@ -141,6 +132,8 @@ function filter_configure_sync() {
 	if($g['booting'] == true) echo ".";
 	update_filter_reload_status("Generating ALTQ queues");
 	$altq_queues = filter_generate_altq_queues();
+	update_filter_reload_status("Generating Virtual interfaces rules");
+	$dummynet_rules = filter_generate_dummynet_rules();
 
 	update_filter_reload_status("Loading filter rules");
 
@@ -198,6 +191,7 @@ function filter_configure_sync() {
 		$rules .= "scrub {$mssclamp}\n"; // reassemble all directions
 	}
 
+	$rules .= "{$dummynet_rules}\n";
 	$rules.= "{$altq_queues}\n";
 	$rules.= "{$natrules}\n";
 	$rules.= "{$pfrules}\n";

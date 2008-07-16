@@ -332,6 +332,8 @@ include("head.inc");
 <script type="text/javascript">
 function show_source_port_range() {
         document.getElementById("sprtable").style.display = '';
+	document.getElementById("sprtable1").style.display = '';
+	document.getElementById("sprtable2").style.display = '';
         document.getElementById("showadvancedboxspr").innerHTML='';
 }
 </script>

@@ -2720,16 +2720,14 @@ class dnpipe_class extends dummynet_class {
                 $form .= "<tr style=\"display:none\" id=\"sprtable\" name=\"sprtable\">";
 
 		$form .= "<td valign=\"top\" class=\"vncellreq\">";
-      		$form .= "<td valign=\"top\" class=\"vncellreq\">";
-		$form .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";
-		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Delay</td>";
-		$form .= "<td valign=\"top\" class=\"vncellreq\">";
+		$form .= "<td valign=\"top\" class=\"vncellreq\">Delay</td>";
 		$form .= "<input name=\"delay\" type=\"text\" id=\"delay\" size=\"5\" value=\"";
 		$form .= $this->GetDelay() . "\">";
 		$form .= "&nbsp;ms<br> <span class=\"vexpl\">Hint: in most cases, you"; 
 		$form .= "should specify 0 here (or leave the field empty)</span>";
 		$form .= "</td></tr><br/>";
-      	$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Packet loss rate</td>";
+      		$form .= "<tr style=\"display:none\" id=\"sprtable1\" name=\"sprtable1\">";
+		$form .= "<td valign=\"top\" class=\"vncellreq\">Packet loss rate</td>";
 		$form .= "<td valign=\"top\" class=\"vncellreq\">";
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\">";
@@ -2737,7 +2735,8 @@ class dnpipe_class extends dummynet_class {
         $form .= "should specify 0 here (or leave the field empty).";
 		$form .= "A value of 0.001 means one packet in 1000 gets dropped</span>";
 		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Queue Size</td>";
+		$form .= "<tr style=\"display:none\" id=\"sprtable2\" name=\"sprtable2\">";
+		$form .= "<td valign=\"top\" class=\"vncellreq\">Queue Size</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"qlimit\" name=\"qlimit\" value=\"";
 		$form .= $this->GetQlimit() . "\">";
@@ -2746,7 +2745,7 @@ class dnpipe_class extends dummynet_class {
 		$form .= "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first,";
         $form .= "then they are delayed by value specified in the Delay field, and then they ";
 		$form .= "are delivered to their destination.</span>";
-		$form .= "</td></tr></table></td></tr>";
+		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Mask</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<select name=\"mask\" class=\"formselect\">";

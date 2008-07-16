@@ -140,6 +140,8 @@ if (isset($id) && $a_filter[$id]) {
 	/* Shaper support */
 	$pconfig['defaultqueue'] = $a_filter[$id]['defaultqueue'];
 	$pconfig['ackqueue'] = $a_filter[$id]['ackqueue'];
+	$pconfig['dnpipe'] = $a_filter[$id]['dnpipe'];
+	$pconfig['pdnpipe'] = $a_filter[$id]['pdnpipe'];
 
 	//schedule support
 	$pconfig['sched'] = $a_filter[$id]['sched'];
@@ -324,6 +326,16 @@ if ($_POST) {
 		else if ($_POST['ackqueue'] == $_POST['defaultqueue'])
 			$input_errors[] = "Acknokledge queue and Queue cannot be the same.";		
 	}
+	if ($_POST['pdnpipe'] && $_POST['pdnpipe'] != "none") {
+		if ($_POST['dnpipe'] == "none" )
+			$input_errors[] = "You must select a queue for the In direction before selecting one for Out too.";
+		else if ($_POST['pdnpipe'] == $_POST['dnpipe'])
+			$input_errors[] = "In and Out Queue cannot be the same.";
+		else if ($pdnpipe[0] == "?" && $dnpipe[0] <> "?")
+			$input_errors[] = "You cannot select one queue and one virtual interface for IN and Out. both must be from the same type.";
+		else if ($dnpipe[0] == "?" && $pdnpipe[0] <> "?")
+			$input_errors[] = "You cannot select one queue and one virtual interface for IN and Out. both must be from the same type.";
+	}
 
 	if (!$input_errors) {
 		$filterent = array();
@@ -407,6 +419,12 @@ if ($_POST) {
 			$filterent['defaultqueue'] = $_POST['defaultqueue'];
 			if (isset($_POST['ackqueue']) && $_POST['ackqueue'] != "none")
 				$filterent['ackqueue'] = $_POST['ackqueue'];
+		}
+
+		if (isset($_POST['dnpipe']) && $_POST['dnpipe'] != "none") {
+			$filterent['dnpipe'] = $_POST['dnpipe'];
+			if (isset($_POST['pdnpipe']) && $_POST['pdnpipe'] != "none")
+				$filterent['pdnpipe'] = $_POST['pdnpipe'];
 		}
 
 		if ($_POST['sched'] != "") {
@@ -1009,6 +1027,53 @@ on another rule.")?>
 				<p><strong>Leave as 'default' to use the system routing table.  Or choose a gateway to utilize policy based routing.</strong></p>
 			</td>
 		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">In/Out</td>
+			<td width="78%" class="vtable">
+			<select name="dnpipe">
+<?php
+		read_dummynet_config(); /* XXX: */
+		$dnqlist =& get_unique_dnqueue_list();
+		if (!is_array($dnqlist))
+			$dnqlist = array();
+		echo "<option value=\"none\"";
+		if (!$dnqselected) echo " SELECTED";
+		echo " >none</option>";
+		foreach ($dnqlist as $dnq => $dnqkey) {
+			if($dnq == "")
+				continue;
+			echo "<option value=\"$dnqkey\"";
+			if ($dnqkey == $pconfig['dnpipe']) {
+				$dnqselected = 1;
+				echo " SELECTED";
+			}
+			echo ">{$dnq}</option>"; 
+		}
+?>
+			</select> / 			
+			<select name="pdnpipe">
+<?php
+		$dnqselected = 0;
+		echo "<option value=\"none\"";
+		if (!$dnqselected) echo " SELECTED";
+		echo " >none</option>";
+		foreach ($dnqlist as $dnq => $dnqkey) {
+			if($dnq == "")
+				continue;
+			echo "<option value=\"$dnqkey\"";
+			if ($dnqkey == $pconfig['pdnpipe']) {
+				$dnqselected = 1;
+				echo " SELECTED";
+			}
+			echo ">{$dnq}</option>"; 
+		}
+?>
+			</select>
+				<br />
+				<span class="vexpl">Choose the Out queue/Virtual interface only if you have selected In too. <br/> The Out selection is applied to traffic going out the interface the rule is created, In is the incoming one. <br/> If you are creating a rule on the Floating tab if the direction is In then the same rules apply, if the direction is out the selections are reverted Out is for incoming and In is for outgoing and if you do not select any direction use only the In since the Out selection does not make sense in there to prevent oddities.</span>
+			</td>
+		</tr>
+
 		<tr>
 			<td width="22%" valign="top" class="vncell">Ackqueue/Queue</td>
 			<td width="78%" class="vtable">

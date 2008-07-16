@@ -2712,8 +2712,40 @@ class dnpipe_class extends dummynet_class {
 		$form .= ">Bit/s</option>";
 		$form .= "</select>";
 		$form .= "</td></tr>";
+		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Mask</td>";
+		$form .= "<td class=\"vncellreq\">";
+		$form .= "<select name=\"mask\" class=\"formselect\">";
+		$form .= "<option value=\"none\"";
+		if ($this->GetMask() == "none")
+			$form .= " selected=\"yes\"";
+		$form .= ">none</option>";
+		$form .= "<option value=\"srcaddress\"";
+		if ($this->GetMask() == "srcaddress")
+			$form .= " selected=\"yes\"";
+		$form .= ">Source addresses</option>";
+		$form .= "<option value=\"dstaddress\"";
+		if ($this->GetMask() == "dstaddress")
+			$form .= " selected=\"yes\"";
+		$form .= ">Destination addresses</option>";
+		$form .= "</select>";
+		$form .= "&nbsp;slots<br>";
+		$form .= "<span class=\"vexpl\">If 'source' or 'destination' is chosen, \n";
+		$form .= "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n";
+		$form .= "be created for each source/destination IP address encountered, \n";
+		$form .= "respectively. This makes it possible to easily specify bandwidth \n";
+		$form .= "limits per host.</span>";
+		$form .= "</td></tr>";
+		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Description</td>";
+		$form .= "<td class=\"vncellreq\">";
+		$form .= "<input type=\"text\" class=\"formfld unknown\" size=\"50%\" id=\"description\" name=\"description\" value=\"";
+		$form .= $this->GetDescription();
+		$form .= "\">";
+		$form .= "<br> <span class=\"vexpl\">";
+		$form .= "You may enter a description here ";
+		$form .= "for your reference (not parsed).</span>";
+		$form .= "</td></tr>";
       		$form .= "<tr id=\"sprtable4\" name=\"sprtable4\">";
-		$form .= "<td valign=\"top\" class=\"vncellreq\">Advanced</td>";
+		$form .= "<td></td>";
                 $form .= "<td><div id=\"showadvancedboxspr\">";
                 $form .= "<p><input type=\"button\" onClick=\"show_source_port_range()\"";
 		$form .= " value=\"Show\"></input> - Show source port range</a>";
@@ -2747,38 +2779,7 @@ class dnpipe_class extends dummynet_class {
         $form .= "then they are delayed by value specified in the Delay field, and then they ";
 		$form .= "are delivered to their destination.</span>";
 		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Mask</td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<select name=\"mask\" class=\"formselect\">";
-		$form .= "<option value=\"none\"";
-		if ($this->GetMask() == "none")
-			$form .= " selected=\"yes\"";
-		$form .= ">none</option>";
-		$form .= "<option value=\"srcaddress\"";
-		if ($this->GetMask() == "srcaddress")
-			$form .= " selected=\"yes\"";
-		$form .= ">Source addresses</option>";
-		$form .= "<option value=\"dstaddress\"";
-		if ($this->GetMask() == "dstaddress")
-			$form .= " selected=\"yes\"";
-		$form .= ">Destination addresses</option>";
-		$form .= "</select>";
-		$form .= "&nbsp;slots<br>";
-		$form .= "<span class=\"vexpl\">If 'source' or 'destination' is chosen, \n";
-		$form .= "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n";
-		$form .= "be created for each source/destination IP address encountered, \n";
-		$form .= "respectively. This makes it possible to easily specify bandwidth \n";
-		$form .= "limits per host.</span>";
-		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Description</td>";
-		$form .= "<td class=\"vncellreq\">";
-		$form .= "<input type=\"text\" class=\"formfld unknown\" size=\"50%\" id=\"description\" name=\"description\" value=\"";
-		$form .= $this->GetDescription();
-		$form .= "\">";
-		$form .= "<br> <span class=\"vexpl\">";
-		$form .= "You may enter a description here ";
-		$form .= "for your reference (not parsed).</span>";
-		$form .= "</td></tr>";
+		
 
 		return $form;
 			

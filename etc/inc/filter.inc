@@ -1891,6 +1891,20 @@ function generate_user_filter_rule($rule)
 					$aline['queue'] .= ",".$rule['ackqueue'];
 				$aline['queue'] .= ") "; 
 			}
+		
+			if ($rule['dnpipe'] <> "") {
+				if ($rule['dnpipe'][0] == "?") {
+					$aline['dnpipe'] = " dnqueue( ";
+					$aline['dnpipe'] .= substr($rule['dnpipe'],1);
+                                	if ($rule['pdnpipe'] <> "")
+                                        	$aline['dnpipe'] .= ",".substr($rule['pdnpipe'], 1);
+				} else {
+					$aline['dnpipe'] = " dnpipe ( " . $rule['dnpipe'];
+					if ($rule['pdnpipe'] <> "")
+						$aline['dnpipe'] .= ", " . $rule['pdnpipe'];
+				}
+                                $aline['dnpipe'] .= ") ";
+                        }
 		}
 
 	/* cache entries */
@@ -1922,13 +1936,14 @@ function generate_user_filter_rule($rule)
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $vpns . $aline['dstport'].
 			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['flags'].
-			$aline['queue'] . " label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
+			$aline['queue'] . $aline['dnpipe'] . 
+			" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 		/* negate directly connected networks for load balancer/gateway rules */
 		$direct_networks = " to <direct_networks> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $direct_networks . $aline['dstport'].
 			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . 
-			$aline['flags'] . $aline['queue'] .
+			$aline['flags'] . $aline['queue'] . $aline['dnpipe'] .
 			" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 	}
 
@@ -1936,7 +1951,7 @@ function generate_user_filter_rule($rule)
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['reply'] .
 		$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
 		$aline['dstport'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . 
-		$aline['flags'] . $aline['queue'];
+		$aline['flags'] . $aline['queue'] . $aline['dnpipe'];
 
 	/* is a time based rule schedule attached? */
 	if($rule['sched']) {

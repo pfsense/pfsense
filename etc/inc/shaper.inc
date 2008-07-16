@@ -2568,7 +2568,7 @@ class dnpipe_class extends dummynet_class {
 	function &get_queue_list($q = null) {
 		$qlist = array();
 
-		$qlist[$this->GetQname()] = & $this;
+		$qlist[$this->GetQname()] = $this->GetNumber();
 		if (is_array($this->subqueues)) {
 			foreach ($this->subqueues as $queue)
 				$queue->get_queue_list(&$qlist);
@@ -2841,7 +2841,7 @@ class dnqueue_class extends dummynet_class {
         }
 
         function &get_queue_list(&$qlist) {
-        	$qlist[$this->GetQname()] = & $this;
+        	$qlist[$this->GetQname()] = "?" .$this->GetNumber();
         }		
 
 	function ReadConfig(&$q) {

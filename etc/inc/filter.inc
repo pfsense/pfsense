@@ -1505,6 +1505,7 @@ function generate_user_filter_rule($rule)
 						$tiers_count = count($tiers);
 						if($tiers_count == 0) {
 							/* Oh dear, we have no members! Engage Plan B */
+							log_error("All gateways are unavailable, proceeding with configured XML settings!");
 							foreach($group['item'] as $item) {
 								foreach($group['item'] as $item) {
 									$itemsplit = explode("|", $item);

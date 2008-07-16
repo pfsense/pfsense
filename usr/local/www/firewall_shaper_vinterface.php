@@ -367,10 +367,7 @@ include("fbegin.inc");
 			?>
 			<br/><br/>
 			<a href="firewall_shaper_vinterface.php?pipe=new&action=add">
-			<input type="button" id="newpipe" name="newpipe" value="Create virtual interface"></a><br/>
-			<a href="firewall_shaper_vinterface.php?action=resetall" >
-                        <input type="button" value="Remove Virtual Interfaces" >
-                        </a><br/>
+			<input type="button" id="newpipe" name="newpipe" value="Create limiter"></a><br/>
 			</td>
 			<td width="75%" valign="top" align="center">
 			<table>

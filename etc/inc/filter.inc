@@ -5,7 +5,7 @@
 	Copyright (C) 2004-2006 Scott Ullrich
         Copyright (C) 2005 	Bill Marquette
 	Copyright (C) 2006 	Peter Allgeyer
-	Copyright (C) 2008 	Ermal Lu\xe7i
+	Copyright (C) 2008 	Ermal Luci
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1503,6 +1503,17 @@ function generate_user_filter_rule($rule)
 						}
 
 						$tiers_count = count($tiers);
+						if($tiers_count == 0) {
+							/* Oh dear, we have no members! Engage Plan B */
+							foreach($group['item'] as $item) {
+								foreach($group['item'] as $item) {
+									$itemsplit = explode("|", $item);
+									$tier = $itemsplit[1];
+									$gwname = $itemsplit[0];
+									$tiers[$tier][] = $gwname;
+								}
+							}
+						}
 
 						/* we do not really foreach the tiers as we stop after the first tier */
 						foreach($tiers as $tier) {

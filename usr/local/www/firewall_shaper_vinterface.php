@@ -329,6 +329,13 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
+<script type="text/javascript">
+function show_source_port_range() {
+        document.getElementById("sprtable").style.display = '';
+        document.getElementById("showadvancedboxspr").innerHTML='';
+}
+</script>
+
 <?php
 include("fbegin.inc"); 
 ?>

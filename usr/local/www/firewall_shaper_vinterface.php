@@ -35,7 +35,7 @@ if($_GET['reset'] <> "") {
 	exit;
 }
 
-$pgtitle = array("Firewall","Traffic Shaper");
+$pgtitle = array("Firewall","Traffic Shaper", "Virtual Interfaces");
 
 read_dummynet_config();
 /* 
@@ -55,9 +55,9 @@ if ($_POST) {
 	if ($_POST['name'])
         	$qname = trim($_POST['name']);
         if ($_POST['pipe'])
-                $pipe = trim($_POST['pipe']);
-		else
-			$pipe = trim($_POST['name']);
+        	$pipe = trim($_POST['pipe']);
+	else
+		$pipe = trim($_POST['name']);
 	if ($_POST['parentqueue'])
 		$parentqueue = trim($_POST['parentqueue']);
 }
@@ -86,7 +86,7 @@ if ($_GET) {
 		break;
 	case "resetall":
 			foreach ($dummynet_pipe_list as $dn)
-				$dn->delete_all();
+				$dn->delete_queue();
 			unset($dummynet_pipe_list);
 			$dummynet_pipe_list = array();
 			unset($config['dnshaper']['queue']);
@@ -119,12 +119,11 @@ if ($_GET) {
 
 		break;
 	case "add":
-			/* XXX: Find better way because we shouldn't know about this */
 		if ($dnpipe) {
-				$q = new dnqueue_class();
-				$q->SetPipe($pipe);
-				$output_form .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
-				$output_form .= " value=\"".$pipe."\">";
+			$q = new dnqueue_class();
+			$q->SetPipe($pipe);
+			$output_form .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
+			$output_form .= " value=\"".$pipe."\">";
 		} else if ($addnewpipe) {
 			$q = new dnpipe_class();
 			$q->SetQname($pipe);
@@ -137,34 +136,34 @@ if ($_GET) {
 				$newqueue = true;
 			}
 		break;
-		case "show":
-			if ($queue)  
-                        $output_form .= $queue->build_form();
-			else
-					$input_errors[] = "Queue not found!";
+	case "show":
+		if ($queue)  
+                       $output_form .= $queue->build_form();
+		else
+			$input_errors[] = "Queue not found!";
 		break;
-		case "enable":
-			if ($queue) {
-					$queue->SetEnabled("on");
-					$output_form .= $queue->build_form();
-					write_config();
-					touch($d_shaperconfdirty_path);
-			} else
-					$input_errors[] = "Queue not found!";
+	case "enable":
+		if ($queue) {
+				$queue->SetEnabled("on");
+				$output_form .= $queue->build_form();
+				write_config();
+				touch($d_shaperconfdirty_path);
+		} else
+				$input_errors[] = "Queue not found!";
 		break;
-		case "disable":
-			if ($queue) {
-					$queue->SetEnabled("");
-					$output_form .= $queue->build_form();
-					write_config();
-					touch($d_shaperconfdirty_path);
-			} else
-					$input_errors[] = "Queue not found!";
+	case "disable":
+		if ($queue) {
+				$queue->SetEnabled("");
+				$output_form .= $queue->build_form();
+				write_config();
+				touch($d_shaperconfdirty_path);
+		} else
+				$input_errors[] = "Queue not found!";
 		break;
-		default:
-			$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
-			$dontshow = true;
-			break;
+	default:
+		$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
+		$dontshow = true;
+		break;
 	}
 } else if ($_POST) {
 	unset($input_errors);
@@ -182,9 +181,9 @@ if ($_GET) {
 			write_config();
 			touch($d_shaperconfdirty_path);
 			$can_enable = true;
-            $can_add = true;
-			read_dummynet_config();
+       		     	$can_add = true;
 		}
+		read_dummynet_config();
 		$output_form .= $dnpipe->build_form();
 
 	} else if ($parentqueue) { /* Add a new queue */
@@ -197,11 +196,11 @@ if ($_GET) {
 				$tmp->wconfig();
 				write_config();
 				$can_enable = true;
-				read_dummynet_config();
-                $can_add = false;
+                		$can_add = false;
 				touch($d_shaperconfdirty_path);
 				$can_enable = true;
 			}
+			read_dummynet_config();
 			$output_form .= $tmp->build_form();			
 		} else
 			$input_errors[] = "Could not add new queue.";
@@ -220,10 +219,8 @@ if ($_GET) {
 			else
 					$savemsg = $retval;
 
- 		/* reset rrd queues */
-                system("rm -f /var/db/rrd/*queuedrops.rrd");
-                system("rm -f /var/db/rrd/*queues.rrd");
-			enable_rrd_graphing();
+ 		/* XXX: TODO Make dummynet pretty graphs */ 
+		//	enable_rrd_graphing();
 
             unlink($d_shaperconfdirty_path);
 			
@@ -239,14 +236,14 @@ if ($_GET) {
 	} else if ($queue) {
                 $queue->validate_input($_POST, &$input_errors);
                 if (!$input_errors) {
-                            $queue->update_dn_data($_POST);
-                            $queue->wconfig();
-							write_config();
+                            	$queue->update_dn_data($_POST);
+                            	$queue->wconfig();
+				write_config();
 				touch($d_shaperconfdirty_path);
 				$dontshow = false;
-				read_dummynet_config();
                 } 
-				$output_form .= $queue->build_form();
+		read_dummynet_config();
+		$output_form .= $queue->build_form();
 	} else  {
 		$output_form .= "<p class=\"pgtitle\">" . $dn_default_shaper_msg."</p>";
 		$dontshow = true;
@@ -262,7 +259,7 @@ if ($queue) {
                         else
                                 $can_enable = false;
                         if ($queue->CanHaveChilds()) { 
-                        		$can_add = true;
+                       		$can_add = true;
                         } else
                                 $can_add = false;
 }
@@ -291,19 +288,19 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "&action=add\">";
 	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"Add new queue\">";
 	$output_form .= "</a>";
-	$output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
-	$output_form .= $pipe . "&queue=";
-	if ($queue) {
-		$output_form .= "&queue=" . $queue->GetQname();
-	}
-	$output_form .= "&action=delete\">";
-	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
-	if ($queue)
-		$output_form .= " value=\"Delete this queue\">";
-	else
-		$output_form .= " value=\"Disable shaper on interface\">";
-	$output_form .= "</a>";  
 }
+$output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
+$output_form .= $pipe . "&queue=";
+if ($queue) {
+	$output_form .= "&queue=" . $queue->GetQname();
+}
+$output_form .= "&action=delete\">";
+$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
+if ($queue)
+	$output_form .= " value=\"Delete this queue\">";
+else
+	$output_form .= " value=\"Delete virtual interface\">";
+$output_form .= "</a>";  
 $output_form .= "</td></tr>";
 $output_form .= "</div>";
 } 
@@ -325,8 +322,6 @@ if ($queue || $dnpipe || $newqueue) {
 }
 }
 $output .= $output_form;
-
-//$pgtitle = "Firewall: Shaper: By Interface View";
 
 include("head.inc");
 ?>
@@ -363,9 +358,6 @@ include("fbegin.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php if (count($dummynet_pipe_list) > 0): ?>
                         <tr class="tabcont"><td width="25%" align="left">
-                                <a href="firewall_shaper_vinterface.php?action=resetall" >
-                                        <input type="button" value="Remove Shaper" class="formbtn">
-                                </a>
                         </td><td width="75%"> </td></tr>
 <? endif; ?>
 			<tr>
@@ -373,9 +365,12 @@ include("fbegin.inc");
 			<?php
 				echo $tree; 
 			?>
-			<br/>
+			<br/><br/>
 			<a href="firewall_shaper_vinterface.php?pipe=new&action=add">
-			<input type="button" id="newpipe" name="newpipe" value="Add virtual interface"></a>
+			<input type="button" id="newpipe" name="newpipe" value="Create virtual interface"></a><br/>
+			<a href="firewall_shaper_vinterface.php?action=resetall" >
+                        <input type="button" value="Remove Virtual Interfaces" >
+                        </a><br/>
 			</td>
 			<td width="75%" valign="top" align="center">
 			<table>

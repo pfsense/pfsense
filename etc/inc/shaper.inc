@@ -2728,7 +2728,7 @@ class dnpipe_class extends dummynet_class {
 			$form .= " selected=\"yes\"";
 		$form .= ">Destination addresses</option>";
 		$form .= "</select>";
-		$form .= "&nbsp;slots<br>";
+		$form .= "&nbsp;<br>";
 		$form .= "<span class=\"vexpl\">If 'source' or 'destination' is chosen, \n";
 		$form .= "a dynamic pipe with the bandwidth, delay, packet loss and queue size given above will \n";
 		$form .= "be created for each source/destination IP address encountered, \n";
@@ -2748,7 +2748,7 @@ class dnpipe_class extends dummynet_class {
 		$form .= "<td></td>";
                 $form .= "<td><div id=\"showadvancedboxspr\">";
                 $form .= "<p><input type=\"button\" onClick=\"show_source_port_range()\"";
-		$form .= " value=\"Show\"></input> - Show source port range</a>";
+		$form .= " value=\"Show advanced options\"></input></a>";
                 $form .= "</div></td></tr>";
                 $form .= "<tr style=\"display:none\" id=\"sprtable\" name=\"sprtable\">";
 
@@ -2764,7 +2764,7 @@ class dnpipe_class extends dummynet_class {
 		$form .= "<td valign=\"top\" class=\"vncellreq\">";
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\">";
-		$form .= "&nbsp;ms<br> <span class=\"vexpl\">Hint: in most cases, you"; 
+		$form .= "&nbsp;<br> <span class=\"vexpl\">Hint: in most cases, you"; 
         $form .= "should specify 0 here (or leave the field empty).";
 		$form .= "A value of 0.001 means one packet in 1000 gets dropped</span>";
 		$form .= "</td></tr>";
@@ -2776,10 +2776,18 @@ class dnpipe_class extends dummynet_class {
 		$form .= "&nbsp;slots<br>";
 		$form .= "<span class=\"vexpl\">Hint: in most cases, you ";
 		$form .= "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first,";
-        $form .= "then they are delayed by value specified in the Delay field, and then they ";
+	        $form .= "then they are delayed by value specified in the Delay field, and then they ";
 		$form .= "are delivered to their destination.</span>";
 		$form .= "</td></tr>";
-		
+		$form .= "<tr style=\"display:none\" id=\"sprtable5\" name=\"sprtable5\">";
+                $form .= "<td valign=\"top\" class=\"vncellreq\">Bucket Size</td>";
+                $form .= "<td class=\"vncellreq\">";
+                $form .= "<input type=\"text\" id=\"buckets\" name=\"buckets\" value=\"";
+                $form .= $this->GetBuckets() . "\">";
+                $form .= "&nbsp;slots<br>";
+                $form .= "<span class=\"vexpl\">Hint: in most cases, you ";
+                $form .= "should leave the field empty. It increases the hash size set.";
+                $form .= "</td></tr>";
 
 		return $form;
 			
@@ -2948,7 +2956,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<td></td>";
                 $form .= "<td><div id=\"showadvancedboxspr\">";
                 $form .= "<p><input type=\"button\" onClick=\"show_source_port_range()\"";
-		$form .= " value=\"Show\"></input> - Show source port range</a>";
+		$form .= " value=\"Show advanced options\"></input></a>";
                 $form .= "</div></td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable\" name=\"sprtable\">";
 		$form .= "<td valign=\"top\" class=\"vncellreq\">Weight</td>";
@@ -2963,7 +2971,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<td valign=\"top\" class=\"vncellreq\">";
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\">";
-		$form .= "&nbsp;ms<br> <span class=\"vexpl\">Hint: in most cases, you"; 
+		$form .= "&nbsp;<br> <span class=\"vexpl\">Hint: in most cases, you"; 
         	$form .= "should specify 0 here (or leave the field empty).";
 		$form .= "A value of 0.001 means one packet in 1000 gets dropped</span>";
 		$form .= "</td></tr>";
@@ -2978,7 +2986,16 @@ class dnqueue_class extends dummynet_class {
         $form .= "then they are delayed by value specified in the Delay field, and then they ";
 		$form .= "are delivered to their destination.</span>";
 		$form .= "</td></tr>";
-		
+		$form .= "<tr style=\"display:none\" id=\"sprtable5\" name=\"sprtable5\">";
+                $form .= "<td valign=\"top\" class=\"vncellreq\">Bucket Size</td>";
+                $form .= "<td class=\"vncellreq\">";
+                $form .= "<input type=\"text\" id=\"buckets\" name=\"buckets\" value=\"";
+                $form .= $this->GetBuckets() . "\">";
+                $form .= "&nbsp;slots<br>";
+                $form .= "<span class=\"vexpl\">Hint: in most cases, you ";
+                $form .= "should leave the field empty. It increases the hash size set.";
+                $form .= "</td></tr>";
+
 		$form .= "<input type=\"hidden\" id=\"pipe\" name=\"pipe\"";
 		$form .= " value=\"" . $this->GetPipe() . "\">";
 

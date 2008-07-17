@@ -3173,10 +3173,13 @@ function read_dummynet_config() {
 
 	$dummynet_pipe_list = array();
 	
-	if (!is_array($config['dnshaper']['queue']))
+	if (!is_array($config['dnshaper']['queue'])
+		|| !count($config['dnshaper']['queue']))
 		return;
 
 	foreach ($a_int as $key => $conf) {
+		if (empty($conf['name']))
+			continue; /* XXX: grrrrrr at php */ 
 		$root =& new dnpipe_class();
 		$root->ReadConfig($conf);
 		$root->SetNumber($dnpipenumber);	
@@ -3240,14 +3243,16 @@ function filter_generate_dummynet_rules() {
 	
 	read_dummynet_config();
 	
-	if (count($dummynet_pipe_list) > 0) {
+	if (!empty($dummynet_pipe_list)) {
 		mwexec("kldload dummynet");
 		mwexec("pfctl -F dummynet");
 	}
 
 	$dn_rules = "";
-	foreach ($dummynet_pipe_list as $dn) 
+	foreach ($dummynet_pipe_list as $test => $dn) { 
+		$dn_rules .= "#{$test} !!\n";
 		$dn_rules .= $dn->build_rules();
+	}
 
 	return $dn_rules;
 }

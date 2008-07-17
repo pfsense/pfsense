@@ -378,7 +378,8 @@ include("fbegin.inc");
 			?>
 			<br/><br/>
 			<a href="firewall_shaper_vinterface.php?pipe=new&action=add">
-			<input type="button" id="newpipe" name="newpipe" value="Create limiter"></a><br/>
+			<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="Create new limiter" width="17" height="17" border="0">  Create new limiter
+			</a><br/>
 			</td>
 			<td width="75%" valign="top" align="center">
 			<table>

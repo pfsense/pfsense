@@ -334,7 +334,9 @@ function show_source_port_range() {
         document.getElementById("sprtable").style.display = '';
 	document.getElementById("sprtable1").style.display = '';
 	document.getElementById("sprtable2").style.display = '';
-        document.getElementById("showadvancedboxspr").innerHTML='';
+	document.getElementById("sprtable5").style.display = '';
+	document.getElementById("sprtable4").style.display = 'none';
+	document.getElementById("showadvancedboxspr").innerHTML='';
 }
 </script>
 

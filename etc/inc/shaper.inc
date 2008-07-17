@@ -3249,10 +3249,8 @@ function filter_generate_dummynet_rules() {
 	}
 
 	$dn_rules = "";
-	foreach ($dummynet_pipe_list as $test => $dn) { 
-		$dn_rules .= "#{$test} !!\n";
+	foreach ($dummynet_pipe_list as $test => $dn) 
 		$dn_rules .= $dn->build_rules();
-	}
 
 	return $dn_rules;
 }

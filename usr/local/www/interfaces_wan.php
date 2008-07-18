@@ -734,7 +734,7 @@ function show_mon_config() {
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
                         <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
-                    <strong>Enable Interface <?=$if;?> interface</strong></td>
+                    <strong>Enable Interface</strong></td>
                 </tr>
 <?php endif; ?>
                 <tr>

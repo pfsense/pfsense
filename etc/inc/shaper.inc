@@ -2642,6 +2642,9 @@ class dnpipe_class extends dummynet_class {
 	}
 
         function build_rules() {
+		if ($this->GetEnabled() == "")
+			return;
+
        		$pfq_rule = "\ndnpipe ". $this->GetNumber();
 		if ($this->GetBandwidth() && $this->GetBwscale())
                     	$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
@@ -2887,6 +2890,9 @@ class dnqueue_class extends dummynet_class {
 	}
 
         function build_rules() {
+		if ($this->GetEnabled() == "")
+			return; 
+
 		$parent =& $this->GetParent();
             	$pfq_rule = "dnqueue ". $this->GetNumber() . " dnpipe " . $parent->GetNumber();
 		if ($this->GetQlimit())

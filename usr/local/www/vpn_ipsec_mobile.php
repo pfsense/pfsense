@@ -34,8 +34,6 @@ if (!is_array($config['ipsec']['phase1']))
 
 $a_phase1 = &$config['ipsec']['phase1'];
 
-$a_client = &$config['ipsec']['client'];
-
 if (!is_array($config['ipsec']['client']))
 	$config['ipsec']['client'] = array();
 
@@ -280,7 +278,7 @@ function login_banner_change() {
 <?php
 	if ($savemsg)
 		print_info_box($savemsg);
-	if (file_exists($d_ipsecconfdirty_path))
+	if (isset($config['ipsec']['enable']) && file_exists($d_ipsecconfdirty_path))
 		print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");
 	foreach ($a_phase1 as $ph1ent)
 		if (isset($ph1ent['mobile']))

@@ -78,13 +78,13 @@
 		 *   - Gets the dice rolling for the update. 
 		 */
 		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '',
-				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsBackMX = '', $dnsWanip = '',
-				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $if = '') {
+				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '', $dnsWanip = '',
+				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '') {
 			
 			global $config;
 			
-			$this->_cacheFile = "/cf/conf/dyndns_{$if}.cache";
-			$this->_debugFile = "/var/etc/dyndns_{$if}.debug";
+			$this->_cacheFile = "/cf/conf/dyndns_{$dnsIf}.cache";
+			$this->_debugFile = "/var/etc/dyndns_{$dnsIf}.debug";
 
 			log_error("DynDns: updatedns() starting");
 			
@@ -112,10 +112,10 @@
 			$this->_dnsPort = $dnsPort;
 			$this->_dnsWildcard = $dnsWildcard;
 			$this->_dnsMX = $dnsMX;
-			$this->_if = $if;
+			$this->_if = $dnsIf;
 			
 			if(!$wan_ip) 
-				$wan_ip = get_current_wan_address($if);
+				$wan_ip = get_current_wan_address($dnsIf);
 				
 			$this->_dnsIP = $wan_ip;
 			$this->_debugID = rand(1000000, 9999999);

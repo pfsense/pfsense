@@ -496,10 +496,7 @@ function services_dyndns_configure() {
 			if (!isset($dyndns['enable']))
 				continue;
 			/* determine interface name */
-			if ($dyndns['interface'] == "wan")
-				$if = get_real_wan_interface();
-			else
-				$if = convert_friendly_interface_to_real_interface_name($dyndns['interface']);
+			$if = get_real_wan_interface($dyndns['interface']);
 
 			if ($g['booting']) {
 				echo "Starting DynDNS clients...";
@@ -530,7 +527,7 @@ function services_dyndns_configure() {
 							 $dnsUser = $dyndns['username'],
 							 $dnsPass = $dyndns['password'],
 							 $dnsWilcard = $dyndns['wildcard'],
-							 $dnsMX = $dyndns['mx'], $dnsIf = $if);
+							 $dnsMX = $dyndns['mx'], $dnsIf = "{$if}");
 
 		}
 

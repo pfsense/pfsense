@@ -343,7 +343,7 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>">
                     <br>
-                    Specify the starting address for the client IP address subnet.<br>
+                    Specify the starting address for the client IP subnet.<br>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Subnet netmask</td>
@@ -387,10 +387,10 @@ function enable_change(enable_over) {
 			<input name="pptp_dns2" type="text" class="formfld unknown" id="pptp_dns2" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns2']);?>">
                     <br>
 
-                   primary and secondary dns servers for pptp clients<br>
+                   primary and secondary DNS servers assigned to PPTP clients<br>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">RADIUS issued IP's</td>
+                  <td width="22%" valign="top" class="vncell">RADIUS issued IPs</td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if(isset($pconfig['radiusissueips'])) echo " checked=\"checked\""; ?> />
                   </td>
@@ -415,30 +415,30 @@ function enable_change(enable_over) {
                       </strong>Sends accounting packets to the RADIUS server.<br>
 			 <br>
                       <input name="radiussecenable" type="checkbox" id="radiussecenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiussecenable']) echo "checked"; ?>>
-                      <strong>backup RADIUS server for failover authentication</strong><br>
-                      When set, if primary radius fails all request will go to the backup server</td>
+                      <strong>Secondary RADIUS server for failover authentication</strong><br>
+                      When set, all requests will go to the secondary server when primary fails</td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">Radius NAS IP</td>
+                  <td width="22%" valign="top" class="vncell">RADIUS NAS IP</td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radius_nasip" class="formfld unknown" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>">
                   </td>
 		  </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">Radius Accounting Update</td>
+                  <td width="22%" valign="top" class="vncell">RADIUS Accounting Update</td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radius_acct_update" class="formfld unknown" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>">
                   </td>
 		  </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">RADIUS issued IP's</td>
+                  <td width="22%" valign="top" class="vncell">RADIUS issued IPs</td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
-                      <br>Issue IP Addresses via RADIUS server.
+                      <br>Issue IP addresses via RADIUS server.
                  </td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">RADIUS server </td>
+                  <td width="22%" valign="top" class="vncell">RADIUS Server </td>
                   <td width="78%" class="vtable">
                       <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>">
                       <input name="radiusserverport" type="text" class="formfld unknown" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>">
@@ -455,21 +455,21 @@ function enable_change(enable_over) {
                       to the RADIUS server.</td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">BACKUP RADIUS server </td>
+                  <td width="22%" valign="top" class="vncell">Secondary RADIUS server </td>
                   <td width="78%" class="vtable">
                       <input name="radiusserver2" type="text" class="formfld unknown" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>">
                       <input name="radiusserver2port" type="text" class="formfld unknown" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>">
                       <input name="radiusserver2acctport" type="text" class="formfld unknown" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>">
                       <br>
-                      Enter the IP address of the RADIUS server.</td>
+                      Enter the IP address of the secondary RADIUS server.</td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">BACKUP RADIUS shared secret</td>
+                  <td width="22%" valign="top" class="vncell">Secondary RADIUS shared secret</td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiussecret2" type="password" class="formfld pwd" id="radiussecret2" size="20" value="<?=htmlspecialchars($pconfig['radiussecret2']);?>">
                       <br>
                       Enter the shared secret that will be used to authenticate 
-                      to the RADIUS server.</td>
+                      to the secondary RADIUS server.</td>
                 </tr>
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>
@@ -479,8 +479,8 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable"> 
                     <input name="req128" type="checkbox" id="req128" value="yes" <?php if ($pconfig['req128']) echo "checked"; ?>> 
                     <strong>Require 128-bit encryption</strong><br>
-                    When set, 128-bit encryption will be accepted. Otherwise, 
-                    40-bit and 56-bit encryption will be accepted, too. Note that 
+                    When set, only 128-bit encryption will be accepted. Otherwise 
+                    40-bit and 56-bit encryption will be accepted as well. Note that 
                     encryption will always be forced on PPTP connections (i.e. 
                     unencrypted connections will not be accepted).</td>
                 </tr>

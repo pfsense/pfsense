@@ -74,7 +74,6 @@ include("head.inc");
 <?php
 include("fbegin.inc"); 
 ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="firewall_shaper_wizards.php" method="post" id="iform" name="iform">

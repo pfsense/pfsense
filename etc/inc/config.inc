@@ -1268,8 +1268,6 @@ function convert_config() {
 
 		/* Upgrade IPsec from tunnel to phase1/phase2 */
 
-		echo "Beginning upgrade to version 4.7\n";
-
         if(is_array($config['ipsec']['tunnel'])) {
 
 			$a_phase1 = array();

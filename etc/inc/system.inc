@@ -35,7 +35,7 @@ require_once("functions.inc");
 function activate_sysctls() {
 	global $config, $g;
 	
-	if (is_array($config['sysctl']['item'])) 
+	if (is_array($config['sysctl'])) 
 		foreach ($config['sysctl']['item'] as $tunable) 
 			mwexec("sysctl " . $tunable['tunable'] . "=\"" 
 				. $tunable['value'] .  "\"");

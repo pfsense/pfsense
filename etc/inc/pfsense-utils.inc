@@ -1822,26 +1822,22 @@ function convert_friendly_interface_to_real_interface_name($interface) {
 /*
  * convert_real_interface_to_friendly_interface_name($interface): convert fxp0 -> wan, etc.
  */
-function convert_real_interface_to_friendly_interface_name($interface) {
+function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	global $config;
 	
-	/* XXX: This should never happen but try to cope just in case. */
-	if (empty($interface))
-		return "wan"; 
-
-	if (stristr("pppoe", $interface)) {
+	if (stristr($interface, "pppoe")) {
 		$index = substr($interface, 5);
 		if (intval($index) > 0)
 			return "opt{$index}";
 		else
 			return "wan";
-	} else if (stristr("pptp", $interface)) {
+	} else if (stristr($interface, "pptp")) {
 		$index = substr($interface, 4);
                 if (intval($index) > 0)
                         return "opt{$index}";
                 else
                         return "wan";	
-	} else if (stristr("carp", $interface)) {
+	} else if (stristr($interface, "carp")) {
 		$index = substr($interface, 4);
 		$counter = 0;
 		foreach ($config['virtualip']['vip'] as $vip) {
@@ -1910,11 +1906,13 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 function convert_real_interface_to_friendly_descr($interface) {
         global $config;
 
-	$ifdesc = convert_real_interface_to_friendly_interface_name($interface);
+	$ifdesc = convert_real_interface_to_friendly_interface_name("{$interface}");
 
-	if (!empty($ifdesc))
-		return $config['interfaces'][$ifdesc]['descr'];
-
+	if ($ifdesc) {
+		$iflist = get_configured_interface_with_descr();
+		return $iflist[$ifdesc];
+	}
+	
         return $interface;
 }
 

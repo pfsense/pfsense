@@ -1135,7 +1135,7 @@ function convert_config() {
 	
 			$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.inflight.enable";
 			$config['sysctl']['item'][16]['desc'] =    "The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ";
-			$config['sysctl']['item'][16]['value'] =   "3";
+			$config['sysctl']['item'][16]['value'] =   "1";
 
 			$config['version'] = "4.1";
 		}

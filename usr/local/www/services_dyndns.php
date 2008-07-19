@@ -82,8 +82,8 @@ include("head.inc");
 				  </td>
                   <td class="listlr">
 				  <?php
-						$types = explode(",", "DNS-O-Matic DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,ZoneEdit,Loopia,freeDNS");
-						$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns");				
+						$types = explode(",", "DNS-O-Matic DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS");
+						$vals = explode(" ", "dnsomatic dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns");				
 						$j = 0; for ($j = 0; $j < count($vals); $j++) 
                       				if ($vals[$j] == $dyndns['type']) { 
                       					echo htmlspecialchars($types[$j]);

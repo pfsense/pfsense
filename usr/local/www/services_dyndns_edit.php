@@ -123,7 +123,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Disable</td>
 				  <td width="78%" class="vtable">
-				    <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
+				    <input name="enable" type="checkbox" id="enable" value="yes" <?php if (!$pconfig['enable']) echo "checked"; ?>>
 				  </td>
                 </tr>
                 <tr>
@@ -131,8 +131,8 @@ include("head.inc");
                   <td width="78%" class="vtable">
 			<select name="type" class="formselect" id="type">
                       <?php
-						$types = explode(",", "DNS-O-Matic DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,ZoneEdit,Loopia,freeDNS");
-						$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns");				
+						$types = explode(",", "DNS-O-Matic DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS");
+						$vals = explode(" ", "dnsomatic dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns");				
 						$j = 0; for ($j = 0; $j < count($vals); $j++): ?>
                       <option value="<?=$vals[$j];?>" <?php if ($vals[$j] == $pconfig['type']) echo "selected";?>>
                       <?=htmlspecialchars($types[$j]);?>

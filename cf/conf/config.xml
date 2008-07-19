@@ -99,7 +99,12 @@
 			<desc>Disable CTRL+ALT+Delete reboot from keyboard.</desc>
 			<tunable>hw.syscons.kbd_reboot</tunable>
 			<value>0</value>
-		</item>		
+		</item>
+		<item>
+			<desc>Enable TCP Inflight mode</desc>
+			<tunable>net.inet.tcp.inflight.enable</tunable>
+			<value>1</value>
+		</item>				
 	</sysctl>
 	<system>
 		<optimization>normal</optimization>

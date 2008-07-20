@@ -15,6 +15,7 @@
 	 *    - FreeDNS (freedns.afraid.org)
 	 *    - Loopia (loopia.se)
 	 *    - StaticCling (staticcling.org)
+	 *    - DNSexit (dnsexit.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with CURL Library
@@ -43,12 +44,15 @@
 	 *  FreeDNS        - Last Tested: NEVER
 	 *  Loopia         - Last Tested: NEVER
 	 *  StaticCling    - Last Tested: 27 April 2006
+	 *  DNSexit	   - Last Tested: 20 July 2008
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
 	 * @link    	http://www.idylldesigns.com/projects/phpdns/
 	 * @version 	0.8
 	 * @updated	13 October 05 at 21:02:42 GMT
+	 *
+	 * DNSexit support and multiwan extension for pfSense by Ermal Luçi
 	 *
 	 */
 
@@ -83,8 +87,8 @@
 			
 			global $config;
 			
-			$this->_cacheFile = "/cf/conf/dyndns_{$dnsIf}.cache";
-			$this->_debugFile = "/var/etc/dyndns_{$dnsIf}.debug";
+			$this->_cacheFile = "/var/etc/dyndns_{$dnsIf}{$dnsService}.cache";
+			$this->_debugFile = "/var/etc/dyndns_{$dnsIf}{$dnsService}.debug";
 
 			log_error("DynDns: updatedns() starting");
 			
@@ -136,7 +140,8 @@
 					$this->_dnsService == 'ods' ||
 					$this->_dnsService == 'freedns' ||
 					$this->_dnsService == 'loopia' ||
-					$this->_dnsService == 'staticcling')
+					$this->_dnsService == 'staticcling'||
+					$this->_dnsService == 'dnsexit')
 				{
 					$this->_update();
 				} else {
@@ -369,6 +374,14 @@
 					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
+					break;
+				case 'dnsexit':
+					$needsIP = TRUE;
+                                        curl_setopt($ch, CURLOPT_URL, 'http://www.dnsexit.com/RemoteUpdate.sv?login='.$this->_dnsUser. '&password='.$this->_dnsPass.'&host='.$this->_dnsHost.'&myip='.$this->_dnsIP);
+                                        $data = curl_exec($ch);
+                                        if (@curl_error($ch)) log_error("Curl errror occured:" . curl_error($ch));
+                                        curl_close($ch);
+                                        $this->_checkStatus($data);
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
@@ -641,6 +654,19 @@
 						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
 					} 
+					break;
+				case 'dnsexit':
+					if (preg_match("/is the same/i", $data)) {
+						$status = "phpDynDns: (Success) No Change In IP Address";
+						$successful_update = true;
+					} else if (preg_match("/Success/i", $data)) {
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully!";
+						$successful_update = true;
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
+                                                log_error("phpDynDNS: PAYLOAD: {$data}");
+                                                $this->_debug($data);
+					}
 					break;
 				case 'loopia':
 					if (preg_match("/nochg/i", $data)) {

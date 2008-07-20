@@ -714,11 +714,11 @@
 				$wan_ip = $this->_checkIP();
 				$currentTime = time();				  
 				log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
-				conf_mount_rw();
+				//conf_mount_rw();
 				$file = fopen($this->_cacheFile, 'w');
 				fwrite($file, $wan_ip.':'.$currentTime);
 				fclose($file);
-				conf_mount_ro();
+				//conf_mount_ro();
 			}
 			$this->status = $status;
 			log_error($status);

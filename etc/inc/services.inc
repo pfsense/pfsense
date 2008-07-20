@@ -468,6 +468,25 @@ function services_dyndns_reset($interface, $dyndnsservice) {
 	return 0;
 }
 
+function services_dyndns_configure_client($conf) {
+
+	/* determine interface name */
+	$if = get_real_wan_interface($conf['interface']);
+
+	/* load up the dyndns.class */
+	require_once("dyndns.class");
+
+	log_error("DynDns: Running updatedns()");
+
+	$dns = new updatedns($dnsService = $conf['type'],
+		$dnsHost = $conf['host'],
+		$dnsUser = $conf['username'],
+		$dnsPass = $conf['password'],
+		$dnsWilcard = $conf['wildcard'],
+		$dnsMX = $conf['mx'], $dnsIf = "{$if}");
+
+}
+
 function services_dyndns_configure() {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
@@ -478,29 +497,16 @@ function services_dyndns_configure() {
 	$dyndnscfg = $config['dyndnses']['dyndns'];
 
 	if (is_array($dyndnscfg)) {
+		if ($g['booting']) 
+			echo "Starting DynDNS clients...";
+
 		foreach ($dyndnscfg as $dyndns) {
 			if (!isset($dyndns['enable']))
 				continue;
-			/* determine interface name */
-			$if = get_real_wan_interface($dyndns['interface']);
 
-			if ($g['booting']) 
-				echo "Starting DynDNS clients...";
-			else 
-				sleep(1);
+			services_dyndns_configure_client($dyndns);
 
-			/* load up the dyndns.class */
-			require_once("dyndns.class");
-
-			log_error("DynDns: Running updatedns()");
-
-			$dns = new updatedns($dnsService = $dyndns['type'],
-							 $dnsHost = $dyndns['host'],
-							 $dnsUser = $dyndns['username'],
-							 $dnsPass = $dyndns['password'],
-							 $dnsWilcard = $dyndns['wildcard'],
-							 $dnsMX = $dyndns['mx'], $dnsIf = "{$if}");
-
+			sleep(1);
 		}
 
 		if ($g['booting'])

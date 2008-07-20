@@ -94,11 +94,11 @@ if ($_POST) {
 		/* nuke the cache file */
 		config_lock();
 		services_dyndns_reset($dyndns['interface'], $dyndns['type']);
-		$retval = services_dyndns_configure();
+		$retval = services_dyndns_configure_client($dyndns);
 		config_unlock();
+
 		header("Location: services_dyndns.php");
 		exit;
-		$savemsg = get_std_save_message($retval);
 	}
 }
 

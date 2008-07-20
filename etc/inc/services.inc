@@ -461,12 +461,6 @@ function services_dyndns_reset() {
 		echo "services_dyndns_reset() being called $mt\n";
 	}
 
-	if (file_exists("{$g['vardb_path']}/ez-ipupdate*.cache")) {
-		conf_mount_rw();
-		unlink("{$g['vardb_path']}/ez-ipupdate*.cache");
-		conf_mount_ro();
-	}
-
 	mwexec("rm {$g['varetc_path']}/ez-ipupdate*.cache");
 	mwexec("rm {$g['varetc_path']}/dyndns*.cache");
 
@@ -489,29 +483,15 @@ function services_dyndns_configure() {
 			/* determine interface name */
 			$if = get_real_wan_interface($dyndns['interface']);
 
-			if ($g['booting']) {
+			if ($g['booting']) 
 				echo "Starting DynDNS clients...";
-				if (isset($config['system']['use_old_dyndns'])) {
-					echo " [Using ez-ipupdate] ";
-					services_dyndns_configure_old($if);
-					continue;
-				}
-			} else {
+			else 
 				sleep(1);
-				if (isset($config['system']['use_old_dyndns'])) {
-					services_dyndns_configure_old($if);
-					continue;
-				}
-			}
 
 			/* load up the dyndns.class */
 			require_once("dyndns.class");
 
 			log_error("DynDns: Running updatedns()");
-
-			
-			/* get ip */
-			$ip = find_interface_ip($if);
 
 			$dns = new updatedns($dnsService = $dyndns['type'],
 							 $dnsHost = $dyndns['host'],
@@ -527,71 +507,6 @@ function services_dyndns_configure() {
 	}
 
 	return 0;
-}
-
-function services_dyndns_configure_old($if) {
-	global $config, $g;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "services_dyndns_configure_old() being called $mt\n";
-	}
-
-        /* kill any running ez-ipupdate */
-        /* ez-ipupdate needs SIGQUIT instead of SIGTERM */
-        sigkillbypid("{$g['varrun_path']}/ez-ipupdate_{$if}.pid", "QUIT");
-
-        $dyndnscfg = $config['dyndnses']['dyndns'];
-        $wancfg = $config['interfaces'][$if];
-
-                sleep(1);
-
-                /* write ez-ipupdate.conf */
-                $fd = fopen("{$g['varetc_path']}/ez-ipupdate_{$if}.conf", "w");
-                if (!$fd) {
-                        printf("Error: cannot open ez-ipupdate_{$if}.conf in services_dyndns_configure().\n");
-                        return 1;
-                }
-
-                $ezipupdateconf = <<<EOD
-service-type={$dyndns['type']}
-user={$dyndns['username']}:{$dyndns['password']}
-host={$dyndns['host']}
-interface={$if}
-max-interval=2073600
-pid-file={$g['varrun_path']}/ez-ipupdate_{$if}.pid
-cache-file={$g['vardb_path']}/ez-ipupdate_{$if}.cache
-daemon
-
-EOD;
-
-                /* enable server[:port]? */
-                if ($dyndns['server']) {
-                        if ($dyndns['port'])
-                                $ezipupdateconf .= "server={$dyndns['server']}:{$dyndns['port']}\n";
-                        else
-                                $ezipupdateconf .= "server={$dyndns['server']}\n";
-                }
-
-                /* enable MX? */
-                if ($dyndns['mx']) {
-                        $ezipupdateconf .= "mx={$dyndns['mx']}\n";
-                }
-
-                /* enable wildcards? */
-                if (isset($dyndns['wildcard'])) {
-                        $ezipupdateconf .= "wildcard\n";
-                }
-
-                fwrite($fd, $ezipupdateconf);
-                fclose($fd);
-
-                /* run ez-ipupdate */
-                mwexec("/usr/local/bin/ez-ipupdate -c {$g['varetc_path']}/ez-ipupdate_{$if}.conf");
-
-                if ($g['booting'])
-                        echo "done\n";
-
-        return 0;
 }
 
 function services_dnsmasq_configure() {

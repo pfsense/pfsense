@@ -461,8 +461,9 @@ function services_dyndns_reset() {
 		echo "services_dyndns_reset() being called $mt\n";
 	}
 
-	mwexec("rm {$g['varetc_path']}/ez-ipupdate*.cache");
-	mwexec("rm {$g['varetc_path']}/dyndns*.cache");
+	conf_mount_rw();
+	mwexec("rm {$g['conf_path']}/dyndns*.cache");
+	conf_mount_ro();
 
 	return 0;
 }

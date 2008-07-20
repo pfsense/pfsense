@@ -87,7 +87,7 @@
 			
 			global $config;
 			
-			$this->_cacheFile = "/var/etc/dyndns_{$dnsIf}{$dnsService}.cache";
+			$this->_cacheFile = "/cf/conf/dyndns_{$dnsIf}{$dnsService}.cache";
 			$this->_debugFile = "/var/etc/dyndns_{$dnsIf}{$dnsService}.debug";
 
 			log_error("DynDns: updatedns() starting");
@@ -118,13 +118,10 @@
 			$this->_dnsMX = $dnsMX;
 			$this->_if = $dnsIf;
 			
-			if(!$wan_ip) 
-				$wan_ip = get_current_wan_address($dnsIf);
-				
-			$this->_dnsIP = $wan_ip;
+			$this->_dnsIP = get_current_wan_address($dnsIf);
 			$this->_debugID = rand(1000000, 9999999);
 			
-			if ($this->_detectChange() == FALSE) {
+			if ($this->_detectChange($wan_ip) == FALSE) {
 				$this->_error(10);
 			} else {
 				if ($this->_dnsService == 'dnsomatic' ||
@@ -714,11 +711,11 @@
 				$wan_ip = $this->_checkIP();
 				$currentTime = time();				  
 				log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
-				//conf_mount_rw();
+				conf_mount_rw();
 				$file = fopen($this->_cacheFile, 'w');
 				fwrite($file, $wan_ip.':'.$currentTime);
 				fclose($file);
-				//conf_mount_ro();
+				conf_mount_ro();
 			}
 			$this->status = $status;
 			log_error($status);
@@ -856,6 +853,7 @@
 			$ip_ch = curl_init('http://checkip.dyndns.org');
 			curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+			curl_setopt($ip_ch, CURLOPT_SETINTERFACE, $this->_dnsIP);
 			$ip_result_page = curl_exec($ip_ch);
 			$ip_result_decoded = urldecode($ip_result_page);
 			preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);

@@ -853,8 +853,7 @@
 			$ip_ch = curl_init('http://checkip.dyndns.org');
 			curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-			if ($this->_dnsIP <> "" || $this->_dnsIP <> "0.0.0.0")
-				curl_setopt($ip_ch, CURLOPT_SETINTERFACE, $this->_dnsIP);
+			curl_setopt($ip_ch, CURLOPT_INTERFACE, $this->_if);
 			$ip_result_page = curl_exec($ip_ch);
 			curl_close($ip_ch);
 			$ip_result_decoded = urldecode($ip_result_page);

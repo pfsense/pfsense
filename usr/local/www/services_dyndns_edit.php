@@ -44,7 +44,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['host'] = $a_dyndns[$id]['host'];
 	$pconfig['mx'] = $a_dyndns[$id]['mx'];
 	$pconfig['type'] = $a_dyndns[$id]['type'];
-	$pconfig['enable'] = isset($a_dyndns[$id]['enable']);
+	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
 	$pconfig['interface'] = $a_dyndns[$id]['interface'];
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
 	$pconfig['descr'] = $a_dyndns[$id]['descr'];
@@ -123,7 +123,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Disable</td>
 				  <td width="78%" class="vtable">
-				    <input name="enable" type="checkbox" id="enable" value="yes" <?php if (!$pconfig['enable']) echo "checked"; ?>>
+				    <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
 				  </td>
                 </tr>
                 <tr>

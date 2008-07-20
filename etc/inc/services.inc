@@ -454,7 +454,7 @@ function services_dhcrelay_configure() {
 	return 0;
 }
 
-function services_dyndns_reset() {
+function services_dyndns_reset($interface, $dyndnsservice) {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -462,7 +462,7 @@ function services_dyndns_reset() {
 	}
 
 	conf_mount_rw();
-	mwexec("rm {$g['conf_path']}/dyndns*.cache");
+	mwexec("rm {$g['conf_path']}/dyndns_{$interface}{$dyndnsservice}.cache");
 	conf_mount_ro();
 
 	return 0;

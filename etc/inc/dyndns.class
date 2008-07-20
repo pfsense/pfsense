@@ -121,7 +121,7 @@
 			$this->_dnsIP = get_current_wan_address($dnsIf);
 			$this->_debugID = rand(1000000, 9999999);
 			
-			if ($this->_detectChange($wan_ip) == FALSE) {
+			if ($this->_detectChange() == FALSE) {
 				$this->_error(10);
 			} else {
 				if ($this->_dnsService == 'dnsomatic' ||

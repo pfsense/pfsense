@@ -467,17 +467,8 @@ function services_dyndns_reset() {
 		conf_mount_ro();
 	}
 
-	if (file_exists("{$g['conf_path']}/ez-ipupdate*.cache")) {
-		conf_mount_rw();
-		unlink("{$g['conf_path']}/ez-ipupdate*.cache");
-		conf_mount_ro();
-	}
-	
-	if (file_exists("{$g['conf_path']}/dyndns*.cache")) {
-		conf_mount_rw();
-		unlink("{$g['conf_path']}/dyndns*.cache");
-		conf_mount_ro();
-	}
+	mwexec("rm {$g['varetc_path']}/ez-ipupdate*.cache");
+	mwexec("rm {$g['varetc_path']}/dyndns*.cache");
 
 	return 0;
 }
@@ -550,7 +541,7 @@ function services_dyndns_configure_old($if) {
         sigkillbypid("{$g['varrun_path']}/ez-ipupdate_{$if}.pid", "QUIT");
 
         $dyndnscfg = $config['dyndnses']['dyndns'];
-        $wancfg = $config['interfaces']['wan'];
+        $wancfg = $config['interfaces'][$if];
 
                 sleep(1);
 
@@ -569,7 +560,6 @@ interface={$if}
 max-interval=2073600
 pid-file={$g['varrun_path']}/ez-ipupdate_{$if}.pid
 cache-file={$g['vardb_path']}/ez-ipupdate_{$if}.cache
-execute=/etc/rc.dyndns.storecache {$g['vardb_path']}/ez-ipupdate_{$if}.cache
 daemon
 
 EOD;
@@ -594,13 +584,6 @@ EOD;
 
                 fwrite($fd, $ezipupdateconf);
                 fclose($fd);
-
-                /* if we're booting, copy the cache file from /conf */
-                if ($g['booting']) {
-                        if (file_exists("{$g['conf_path']}/ez-ipupdate_{$if}.cache")) {
-                                copy("{$g['conf_path']}/ez-ipupdate_{$if}.cache", "{$g['vardb_path']}/ez-ipupdate_{$if}.cache");
-                       }
-                }
 
                 /* run ez-ipupdate */
                 mwexec("/usr/local/bin/ez-ipupdate -c {$g['varetc_path']}/ez-ipupdate_{$if}.conf");

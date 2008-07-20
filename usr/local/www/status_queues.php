@@ -43,9 +43,12 @@ $pfctl_vsq = `/sbin/pfctl -vsq`;
 $pfctl_vsq_array = split("\n", $pfctl_vsq);
 $if = "";
 foreach($pfctl_vsq_array as $pfctl) {
-	if (preg_match_all("/queue\s+(\w+)\s+(\w+)\s+(\w+)\s+/",$pfctl,$match_array))
+	if (preg_match_all("/queue\s+(\w+)\s+(\w+)\s+(\w+)\s+/",$pfctl,$match_array)) {
+		if (stristr($match_array[1][0],"root_"))
+			continue;
                $a_queues[] = $match_array[1][0] . " on " .
 				convert_real_interface_to_friendly_descr($match_array[3][0]);
+	}
 }
 
 $pgtitle = array("Status","Traffic shaper","Queues");

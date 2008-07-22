@@ -46,5 +46,3 @@ if [ -f /usr/local/sbin/php ]; then
 	rm /usr/local/sbin/php
 fi
 
-# Signal a package reinstall
-touch /conf/needs_package_sync

@@ -175,6 +175,7 @@ if ($config['widgets'])
 		}
 	}
 	$widgetlist = $savedwidgetfiles;
+	
 }
 else{
 	$widgetlist = $widgetfiles;
@@ -491,8 +492,8 @@ echo $jscriptstr;
 <div id="niftyOutter">
 	<?php
 	$totalwidgets = count($widgetfiles);
-	$halftotal = $totalwidgets / 2 - 1;
-	$widgetcounter = 1;
+	$halftotal = $totalwidgets / 2 - 2;
+	$widgetcounter = 0;
 	$directory = "/usr/local/www/widgets/widgets/";
 	$printed = false;
 	$firstprint = false;
@@ -500,6 +501,7 @@ echo $jscriptstr;
 	<div id="col1" style="float:left;width:49%;padding-bottom:40px">		
 	<?php	
 	foreach($widgetlist as $widget) {
+		
 		if(!stristr($widget, "widget.php"))
 					continue;	
 		$periodpos = strpos($widget, ".");

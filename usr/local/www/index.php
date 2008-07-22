@@ -154,6 +154,7 @@ if ($_POST){
 	
 if ($config['widgets'])
 {
+	$widgetlist = array();
 	$widgetlist = $pconfig['sequence'];
 	
 	$colpos = array();
@@ -503,15 +504,15 @@ echo $jscriptstr;
 	foreach($widgetlist as $widget) {
 		
 		if(!stristr($widget, "widget.php"))
-					continue;	
+					continue;
 		$periodpos = strpos($widget, ".");
 		$widgetname = substr($widget, 0, $periodpos);	
 		if ($widgetname != ""){
-		$nicename = $widgetname;
-		$nicename = str_replace("_", " ", $nicename);
-		
-		//make the title look nice
-		$nicename = ucwords($nicename);
+			$nicename = $widgetname;
+			$nicename = str_replace("_", " ", $nicename);
+			
+			//make the title look nice
+			$nicename = ucwords($nicename);
 		}
 		
 		if ($config['widgets']){

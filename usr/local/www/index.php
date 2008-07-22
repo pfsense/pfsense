@@ -114,10 +114,10 @@
 	}
 	
 //build list of widgets
-$directory = "widgets/widgets/";
+$directory = "/usr/local/www/widgets/widgets/";
 $dirhandle  = opendir($directory);
 $filename = "";
-$widgetnames = array ();
+$widgetnames = array();
 $widgetfiles = array();
 
 while (false !== ($filename = readdir($dirhandle))) {
@@ -173,13 +173,20 @@ if ($config['widgets'])
 		if ($config['widgets'][$widget . '-config']){
 			$pconfig[$widget . '-config'] = $config['widgets'][$widget . '-config'];
 		}
-	}	
+	}
+	$widgetlist = $savedwidgetfiles;
+}
+else{
+	$widgetlist = $widgetfiles;
 }
 
 
+
+
+
 //build list of php include files
-$phpincludefiles = Array();
-$directory = "widgets/include/";
+$phpincludefiles = array();
+$directory = "/usr/local/www/widgets/include/";
 $dirhandle  = opendir($directory);
 $filename = "";
 while (false !== ($filename = readdir($dirhandle))) {
@@ -484,43 +491,26 @@ echo $jscriptstr;
 <div id="niftyOutter">
 	<?php
 	$totalwidgets = count($widgetfiles);
-	$halftotal = $totalwidgets / 2 -1;
-	$widgetcounter = 0;
-	$directory = "widgets/widgets/";
+	$halftotal = $totalwidgets / 2 - 1;
+	$widgetcounter = 1;
+	$directory = "/usr/local/www/widgets/widgets/";
 	$printed = false;
 	$firstprint = false;
 	?> 
 	<div id="col1" style="float:left;width:49%;padding-bottom:40px">		
-	<?php
-	
-	if ($config['widgets']){
-		$widgetlist = $savedwidgetfiles;
-		
-		//add widgets that may not be in the saved configuration, in case they want to be added later
-		foreach ($widgetfiles as $defaultwidgets){
-			
-			if (!in_array($defaultwidgets, $savedwidgetfiles)){
-				$widgetlist[] = $defaultwidgets;
-			}
-		}		
-		
-	}
-	else
-		$widgetlist = $widgetfiles;	
-	
+	<?php	
 	foreach($widgetlist as $widget) {
-	
 		if(!stristr($widget, "widget.php"))
-			continue;		
-		
+					continue;	
 		$periodpos = strpos($widget, ".");
 		$widgetname = substr($widget, 0, $periodpos);	
 		if ($widgetname != ""){
 		$nicename = $widgetname;
 		$nicename = str_replace("_", " ", $nicename);
-			
+		
 		//make the title look nice
 		$nicename = ucwords($nicename);
+		}
 		
 		if ($config['widgets']){
 			if ($displayarray[$widgetcounter] == "show"){
@@ -564,14 +554,31 @@ echo $jscriptstr;
 			}
 			else
 			{
-				$divdisplay = "none";
-				$display = "block";
-				$inputdisplay = "close";			
-				$showdiv = "none";
-				$mindiv = "inline";
+				if ($widget == "interfaces.widget.php")
+				{
+					$divdisplay = "block";
+					$display = "block";
+					$inputdisplay = "show";					
+					$showdiv = "none";
+					$mindiv = "inline";
+				}
+				else if ($widget == "traffic_graphs.widget.php")
+				{
+					$divdisplay = "block";
+					$display = "block";
+					$inputdisplay = "show";					
+					$showdiv = "none";
+					$mindiv = "inline";
+				}
+				else {
+					$divdisplay = "none";
+					$display = "block";
+					$inputdisplay = "close";			
+					$showdiv = "none";
+					$mindiv = "inline";
+				}
 			}
 		}
-			
 		
 		if ($config['widgets']){
 			if ($colpos[$widgetcounter] == "col2" && $printed == false)
@@ -587,7 +594,7 @@ echo $jscriptstr;
 			$printed = true;
 			?>
 			</div>
-			<div id="col2" style="float:right;width:50%;padding-bottom:40px">		
+			<div id="col2" style="float:right;width:49%;padding-bottom:40px">		
 			<?php
 		}
 		
@@ -652,17 +659,10 @@ echo $jscriptstr;
 		</div>
 		<?php 	
 	$widgetcounter++;
-		}
+		
 	}//end foreach	
 	?>			
-	</div><!-- end col -->
-	<?php  if ($printed == false){
-			$printed = true;
-			?>
-			</div>
-			<div id="col2" style="float:right;width:50%;padding-bottom:40px"></div>
-		
-			<?php } ?>
+		</div>
 	<div style="clear:both;"></div>
 </div>
 

@@ -14,5 +14,9 @@
 	if(file_exists("/usr/local/www/fred.png"))
 		unlink("/usr/local/www/fred.png"); 
 	if(file_exists("/usr/local/www/dfuife.cgi"))
-		unlink("/usr/local/www/dfuife.cgi"); 
+		unlink("/usr/local/www/dfuife.cgi");
+		
+	if($g['platform'] == "pfSense")
+		touch("/conf/needs_package_sync");
+
 ?>

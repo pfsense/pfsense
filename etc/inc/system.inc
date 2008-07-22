@@ -738,12 +738,12 @@ function system_generate_lighty_config($filename,
 	}
 
 	if($avail > 97 and $avail < 128) {
-		$max_procs = 2;
-		$max_requests = 1;
+		$max_procs = 1;
+		$max_requests = 3;
 	}
 
 	if($avail > 127 and $avail < 256) {
-		$max_procs = 2;
+		$max_procs = 1;
 		$max_requests = 5;
 	}
 
@@ -765,9 +765,16 @@ function system_generate_lighty_config($filename,
         ), 
 EOC;
 
-	} else {
+	} else if ($avail > 0 and $avail < 128) {
+		$bin_environment = <<<EOC
+	"bin-environment" => (
+		"PHP_FCGI_CHILDREN" => "1",
+		"PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
+	),
+
+EOC;
+	} else
 		$bin_environment = "";
-	}
 		
 	if($fast_cgi_enable == true) {
 		$module = "\"mod_fastcgi\", \"mod_cgi\"";

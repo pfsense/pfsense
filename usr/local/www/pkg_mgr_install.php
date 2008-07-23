@@ -144,16 +144,19 @@ switch($_GET['mode']) {
             break;
 	case "reinstallall":
 	    if($config['installedpackages']['package'] <> "")
+			exec("rm -rf /var/db/pkg/*");
 			foreach($config['installedpackages']['package'] as $package)
-	                        $todo[] = array('name' => $package['name'], 'version' => $package['version']);
+				$todo[] = array('name' => $package['name'], 'version' => $package['version']);
 			$pkg_id = 0;
             foreach($todo as $pkgtodo) {
                     $static_output = "";
-                    update_output_window($static_output);
-                    delete_package($pkgtodo['name'] . '-' . $pkgtodo['version'], $pkg_id);
-                    delete_package_xml($pkgtodo['name']);
-                    install_package($pkgtodo['name']);
-					$pkg_id++;
+					if($pkgtodo['name']) {
+	                    update_output_window($static_output);
+	                    delete_package($pkgtodo['name'] . '-' . $pkgtodo['version'], $pkg_id);
+	                    delete_package_xml($pkgtodo['name']);
+	                    install_package($pkgtodo['name']);
+						$pkg_id++;
+					}
             }
             update_status("All packages reinstalled.");
             $static_output .= "\n\nAll packages reinstalled.";

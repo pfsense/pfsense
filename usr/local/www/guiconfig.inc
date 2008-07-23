@@ -797,4 +797,33 @@ function display_widget_tabs(& $tab_array) {
 	echo "</div>";
 }
 
+
+// Return inline javascript file or CSS to minimizie 
+// request count going back to server.
+function outputJavaScriptFileInline($javascript) {
+	if(file_exists($javascript)) {
+		echo "<script type=\"text/javascript\">";
+		include($javascript);
+		echo "</script>";
+	} else {
+		echo "<p/>ERROR!  COULD NOT LOCATE $javascript";
+		echo "<p/>Please contact webmaster.";
+		exit;
+	}
+}
+
+
+function outputCSSFileInline($css) {
+	if(file_exists($css)) {
+		echo "<style type=\"text/css\">";
+		include($css);
+		echo "</style>";
+	} else {
+		echo "<p/>ERROR!  COULD NOT LOCATE $css";
+		echo "<p/>Please contact webmaster.";
+		exit;
+	}
+}
+
+
 ?>

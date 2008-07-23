@@ -2267,7 +2267,7 @@ function cleanup_backupcache($revisions = 30) {
             if(!in_array($tocheck, $baktimes)) {
 				$i = true;
 				if($g['booting'])
-					print " " . $tocheck . "a";
+					echo ".";
 				$newxml = parse_xml_config($backup, $g['xml_rootobj']);
 				if($newxml == "-1") {
 					log_error("The backup cache file $backup is corrupted.  Unlinking.");

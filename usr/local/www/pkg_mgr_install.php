@@ -124,6 +124,12 @@ switch($_GET['mode']) {
             $static_output .= "\nPackage deleted.";
             update_output_window($static_output);
             break;
+	case "showlog":
+          $id = htmlspecialchars($_GET['pkg']);
+		  if(strpos($id, "."))	
+				exit;
+			update_output_window(file_get_contents("/tmp/pkg_mgr_{$id}.log"));
+			break;
 	case "reinstallpkg":
             $id = get_pkg_id(htmlspecialchars($_GET['pkg']));
             $todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);

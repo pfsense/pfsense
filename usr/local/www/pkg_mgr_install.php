@@ -144,24 +144,27 @@ switch($_GET['mode']) {
             update_output_window($static_output);
             break;
 	case "reinstallall":
-	    if($config['installedpackages']['package'] <> "")
+		    if($config['installedpackages']['package'] <> "")
+				exec("rm -rf /var/db/pkg/*");
 			foreach($config['installedpackages']['package'] as $package)
-	                        $todo[] = array('name' => $package['name'], 'version' => $package['version']);
+				$todo[] = array('name' => $package['name'], 'version' => $package['version']);
 			$pkg_id = 0;
-            foreach($todo as $pkgtodo) {
-                    $static_output = "";
-                    update_output_window($static_output);
-                    delete_package($pkgtodo['name'] . '-' . $pkgtodo['version'], $pkg_id);
-                    delete_package_xml($pkgtodo['name']);
-                    install_package($pkgtodo['name']);
-					$pkg_id++;
-            }
-            update_status("All packages reinstalled.");
-            $static_output .= "\n\nAll packages reinstalled.";
-            start_service(htmlspecialchars($_GET['pkg']));
-            update_output_window($static_output);
+			foreach($todo as $pkgtodo) {
+				$static_output = "";
+				if($pkgtodo['name']) {
+						update_output_window($static_output);
+						delete_package($pkgtodo['name'] . '-' . $pkgtodo['version'], $pkg_id);
+						delete_package_xml($pkgtodo['name']);
+						install_package($pkgtodo['name']);
+						$pkg_id++;
+					}
+			}
+			update_status("All packages reinstalled.");
+			$static_output .= "\n\nAll packages reinstalled.";
+			start_service(htmlspecialchars($_GET['pkg']));
+			update_output_window($static_output);
 	    break;
-	default:
+		default:
             $status = install_package(htmlspecialchars($_GET['id']));
 	    if($status == -1) {
 		update_status("Installation of " . htmlspecialchars($_GET['id']) . " FAILED!");

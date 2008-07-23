@@ -117,6 +117,106 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
         return $vlanif;
 }
 
+function interfaces_gre_configure() {
+        global $config;
+
+        $i = 0;
+        if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
+                foreach ($config['gres']['gre'] as $gre) {
+                        if(empty($gre['greif'])) {
+                                $gre['greif'] = "gre{$i}";
+                        }
+                        /* XXX: Maybe we should report any errors?! */
+                        interface_gre_configure($gre);
+                        $i++;
+                }
+        }
+}
+
+function interface_gre_configure(&$gre) {
+        global $config, $g;
+
+	if (!is_array($gre))
+		return -1;
+
+	$realif = get_real_wan_interface($gre['if']);
+	$realifip = get_current_wan_address($gre['if']);
+
+        /* make sure the parent interface is up */
+        mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
+
+        if ($g['booting'] || !(empty($gre['greif']))) {
+                mwexec("/sbin/ifconfig {$gre['greif']} destroy");
+                mwexec("/sbin/ifconfig {$gre['greif']} create");
+		$greif = $gre['greif'];
+        } else
+                $greif = exec("/sbin/ifconfig gre create");
+
+	/* Do not change the order here for more see gre(4) NOTES section. */
+	mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} {$gre['remote-addr']}");
+	mwexec("/sbin/ifconfig {$greif} {$gre['tunnel-local-addr']} {$gre['tunnel-remote-addr']} netmask 255.255.255.255 ");
+	if (isset($gre['link0']) && $gre['link0'])
+		mwexec("/sbin/ifconfig {$greif} link0");
+        if (isset($gre['link1']) && $gre['link1'])
+                mwexec("/sbin/ifconfig {$greif} link1");
+        if (isset($gre['link2']) && $gre['link2'])
+                mwexec("/sbin/ifconfig {$greif} link2");
+
+	mwexec("/sbin/ifconfig {$greif} up");
+	mwexec("/sbin/route add {$gre['remote-addr']}/{$gre['tunnel-remote-net']} {$realifip}");
+
+	return $greif;
+}
+
+function interfaces_gif_configure() {
+        global $config;
+
+        $i = 0;
+        if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
+                foreach ($config['gifs']['gif'] as $gif) {
+                        if(empty($gif['gifif'])) {
+                                $gre['gifif'] = "gif{$i}";
+                        }
+                        /* XXX: Maybe we should report any errors?! */
+                        interface_gif_configure($gif);
+                        $i++;
+                }
+        }
+}
+
+function interface_gif_configure(&$gif) {
+        global $config, $g;
+
+        if (!is_array($gif))
+                return -1;
+
+        $realif = get_real_wan_interface($gif['if']);
+        $realifip = get_current_wan_address($gif['if']);
+
+        /* make sure the parent interface is up */
+        mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
+
+        if ($g['booting'] || !(empty($gif['gifif']))) {
+                mwexec("/sbin/ifconfig {$gif['gifif']} destroy");
+                mwexec("/sbin/ifconfig {$gif['gifif']} create");
+                $gifif = $gif['gifif'];
+        } else
+                $gifif = exec("/sbin/ifconfig gif create");
+
+        /* Do not change the order here for more see gif(4) NOTES section. */
+        mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} {$gif['remote-addr']}");
+        mwexec("/sbin/ifconfig {$gifif} {$gif['tunnel-local-addr']} {$gif['tunnel-remote-addr']} netmask 255.255.255.255 ");
+        if (isset($gif['link0']) && $gif['link0'])
+                mwexec("/sbin/ifconfig {$gifif} link0");
+        if (isset($gif['link1']) && $gif['link1'])
+                mwexec("/sbin/ifconfig {$gifif} link1");
+
+        mwexec("/sbin/ifconfig {$gifif} up");
+        mwexec("/sbin/route add {$gif['remote-addr']}/{$gif['tunnel-remote-net']} {$realifip}");
+
+        return $gifif;
+}
+
 function interfaces_lan_configure() {
 	global $config, $g;
 

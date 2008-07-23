@@ -80,9 +80,8 @@ include("head.inc");
 	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
 	$tab_array[1] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[2] = array("PPP", false, "interfaces_ppp.php");
-	$tab_array[3] = array("Bridge", false, "interfaces_bridge.php");
-	$tab_array[4] = array("GRE", false, "interfaces_gre.php");
-	$tab_array[5] = array("GIF", true, "interfaces_gif.php");
+	$tab_array[3] = array("GRE", false, "interfaces_gre.php");
+	$tab_array[4] = array("GIF", true, "interfaces_gif.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

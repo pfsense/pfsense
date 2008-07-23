@@ -146,7 +146,7 @@ if ($_POST){
 		}
 	}
 	
-	write_config();
+	write_config("Widget configuration has been changed.");
 	header("Location: index.php");
 	exit;
 }

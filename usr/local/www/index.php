@@ -152,11 +152,10 @@ if ($_POST){
 }
 
 	
-if ($config['widgets'])
+if ($config['widgets'] && $pconfig['sequence'] != "")
 {
 	$widgetlist = array();
 	$widgetlist = $pconfig['sequence'];
-	
 	$colpos = array();
 	$savedwidgetfiles = array();
 	$widgetname = "";
@@ -501,6 +500,7 @@ echo $jscriptstr;
 	?> 
 	<div id="col1" style="float:left;width:49%;padding-bottom:40px">		
 	<?php	
+		
 	foreach($widgetlist as $widget) {
 		
 		if(!stristr($widget, "widget.php"))
@@ -515,7 +515,7 @@ echo $jscriptstr;
 			$nicename = ucwords($nicename);
 		}
 		
-		if ($config['widgets']){
+		if ($config['widgets'] && $pconfig['sequence'] != ""){
 			if ($displayarray[$widgetcounter] == "show"){
 				$divdisplay = "block";
 				$display = "block";
@@ -583,7 +583,7 @@ echo $jscriptstr;
 			}
 		}
 		
-		if ($config['widgets']){
+		if ($config['widgets'] && $pconfig['sequence'] != ""){
 			if ($colpos[$widgetcounter] == "col2" && $printed == false)
 			{
 				$printed = true;
@@ -675,7 +675,7 @@ echo $jscriptstr;
 	    
 <script type="text/javascript">
 
-	<?php if (!$config['widgets']){ ?>
+	<?php if (!$config['widgets']  && $pconfig['sequence'] != ""){ ?>
 	window.onload = function(in_event)
 	{		
 			hideAllWidgets();		    

@@ -69,31 +69,35 @@ if(!function_exists("pfSenseHeader")) {
 }
 /* END compatibility goo with HEAD */
 
-// Return inline javascript file or CSS to minimizie 
-// request count going back to server.
-function outputJavaScriptFileInline($javascript) {
-	if(file_exists($javascript)) {
-		echo "<script type=\"text/javascript\">";
-		include($javascript);
-		echo "</script>";
-	} else {
-		echo "<p/>ERROR!  COULD NOT LOCATE $javascript";
-		echo "<p/>Please contact webmaster.";
-		exit;
-	}
-}
-function outputCSSFileInline($css) {
-	if(file_exists($css)) {
-		echo "<style type=\"text/css\">";
-		include($css);
-		echo "</style>";
-	} else {
-		echo "<p/>ERROR!  COULD NOT LOCATE $css";
-		echo "<p/>Please contact webmaster.";
-		exit;
+if(!function_exists("outputJavaScriptFileInline")) {
+	// Return inline javascript file or CSS to minimizie 
+	// request count going back to server.
+	function outputJavaScriptFileInline($javascript) {
+		if(file_exists($javascript)) {
+			echo "<script type=\"text/javascript\">";
+			include($javascript);
+			echo "</script>";
+		} else {
+			echo "<p/>ERROR!  COULD NOT LOCATE $javascript";
+			echo "<p/>Please contact webmaster.";
+			exit;
+		}
 	}
 }
 
+if(!function_exists("outputCSSFileInline")) {
+	function outputCSSFileInline($css) {
+		if(file_exists($css)) {
+			echo "<style type=\"text/css\">";
+			include($css);
+			echo "</style>";
+		} else {
+			echo "<p/>ERROR!  COULD NOT LOCATE $css";
+			echo "<p/>Please contact webmaster.";
+			exit;
+		}
+	}
+}
 /* include all configuration functions */
 require_once("auth.inc");
 require_once("captiveportal.inc");

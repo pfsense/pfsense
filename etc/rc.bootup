@@ -149,6 +149,12 @@
 	if(!$debugging)
 		unmute_kernel_msgs();
 
+        /* set up GRE virtual interfaces */
+        interfaces_gre_configure();
+
+        /* set up GIF virtual interfaces */
+        interfaces_gif_configure();
+
 	/* bring up carp interfaces */
 	interfaces_carp_configure();
 	

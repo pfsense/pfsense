@@ -258,6 +258,7 @@ extension=ctype.so
 extension=curl.so
 extension=gettext.so
 extension=mbstring.so
+extension=mhash.so
 extension=pcntl.so
 extension=posix.so
 extension=readline.so

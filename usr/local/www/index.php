@@ -35,9 +35,22 @@
 	require_once('guiconfig.inc');
 	require_once('notices.inc');
 
+	if ($_POST && $_POST['submit']) {
+		$config['widgets']['sequence'] = $_POST['sequence'];
+
+		foreach ($widgetnames as $widget){
+			if ($_POST[$widget . '-config']){
+				$config['widgets'][$widget . '-config'] = $_POST[$widget . '-config'];
+			}
+		}
+
+		write_config("Widget configuration has been changed.");
+		header("Location: index.php");
+		exit;
+	}
+
 	## Load Functions Files
 	require_once('includes/functions.inc.php');
-
 
 	## Load AJAX, Initiate Class ###############################################
 	require_once('includes/sajax.class.php');
@@ -137,25 +150,10 @@ array_unshift($widgetfiles, "system_information.widget.php");
 if (!is_array($config['widgets'])) {
 	$config['widgets'] = array();
 }
-	
-if ($_POST){
-	$config['widgets']['sequence'] = $_POST['sequence'];
-	
-	foreach ($widgetnames as $widget){
-		if ($_POST[$widget . '-config']){
-			$config['widgets'][$widget . '-config'] = $_POST[$widget . '-config'];
-		}
-	}
-	
-	write_config("Widget configuration has been changed.");
-	header("Location: index.php");
-	exit;
-}
 
 $pconfig['sequence'] = $config['widgets']['sequence'];
 	
-if ($config['widgets'] && $pconfig['sequence'] != "")
-{
+if ($config['widgets'] && $pconfig['sequence'] != "") {
 	$widgetlist = $pconfig['sequence'];
 	$colpos = array();
 	$savedwidgetfiles = array();
@@ -171,8 +169,7 @@ if ($config['widgets'] && $pconfig['sequence'] != "")
 		$savedwidgetfiles[] = $widgetname . ".widget.php";
 	}
 	$widgetlist = $savedwidgetfiles;	
-}
-else{
+} else{
 	$widgetlist = $widgetfiles;
 }
 

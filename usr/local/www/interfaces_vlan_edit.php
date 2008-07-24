@@ -92,6 +92,12 @@ if ($_POST) {
 
                         write_config();
 
+			$confif = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+			if ($confif == "lan") 
+				interfaces_lan_configure();
+			else if ($confif <> "")
+				interfaces_wan_configure($confif);
+				
 			header("Location: interfaces_vlan.php");
 			exit;
 		}

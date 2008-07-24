@@ -495,6 +495,7 @@ function interfaces_carp_configure() {
 	} else {
 		mwexec("/sbin/sysctl net.inet.carp.preempt=1");
 	}
+	mwexec("/sbin/sysctl net.inet.carp.log=2"); // tell syslog about state changes
 	$carp_sync_int = convert_friendly_interface_to_real_interface_name($pfsyncinterface);
 	if($g['booting']) {
 		/*    install rules to alllow pfsync to sync up during boot

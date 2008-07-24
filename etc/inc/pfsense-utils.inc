@@ -1864,7 +1864,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 		if($int == $interface) 
 			return $ifname;
 	}
-	return $interface;
+	return NULL;
 }
 
 /* attempt to resolve interface to friendly descr */

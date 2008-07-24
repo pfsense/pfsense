@@ -129,14 +129,13 @@
 		fclose($fd);
 	}
 	
-//build list of widgets
+##build list of widgets
 $directory = "/usr/local/www/widgets/widgets/";
 $dirhandle  = opendir($directory);
 $filename = "";
 $widgetnames = array();
 $widgetfiles = array();
 $widgetlist = array();
-
 while (false !== ($filename = readdir($dirhandle))) {
 	$periodpos = strpos($filename, ".");
 	$widgetname = substr($filename, 0, $periodpos);
@@ -144,21 +143,30 @@ while (false !== ($filename = readdir($dirhandle))) {
 	if ($widgetname != "system_information")
 		$widgetfiles[] = $filename;   		
 }
+
+
+##sort widgets alphabetically
 sort($widgetfiles);
+
+##insert the system information widget as first, so as to be displayed first
 array_unshift($widgetfiles, "system_information.widget.php");
 
+##if no config entry found, initialize config entry
 if (!is_array($config['widgets'])) {
 	$config['widgets'] = array();
 }
 
-$pconfig['sequence'] = $config['widgets']['sequence'];
+##build widget information
+if ($config['widgets'] && $config['widgets']['sequence'] != "") {
+	$pconfig['sequence'] = $config['widgets']['sequence'];
 	
-if ($config['widgets'] && $pconfig['sequence'] != "") {
 	$widgetlist = $pconfig['sequence'];
 	$colpos = array();
 	$savedwidgetfiles = array();
 	$widgetname = "";
 	$widgetlist = explode(",",$widgetlist);
+	
+	##read the widget position and display information
 	foreach ($widgetlist as $widget){
 		$dashpos = strpos($widget, "-");		
 		$widgetname = substr($widget, 0, $dashpos);
@@ -168,13 +176,21 @@ if ($config['widgets'] && $pconfig['sequence'] != "") {
 		$displayarray[] = substr($widget,$displayposition+1);
 		$savedwidgetfiles[] = $widgetname . ".widget.php";
 	}
+	
+	##find custom configurations of a particular widget and load its info to $pconfig
+	foreach ($widgetnames as $widget){
+        if ($config['widgets'][$widget . '-config']){
+            $pconfig[$widget . '-config'] = $config['widgets'][$widget . '-config'];
+        }
+    }   
+	
 	$widgetlist = $savedwidgetfiles;	
 } else{
 	$widgetlist = $widgetfiles;
 }
 
 
-//build list of php include files
+##build list of php include files
 $phpincludefiles = array();
 $directory = "/usr/local/www/widgets/include/";
 $dirhandle  = opendir($directory);
@@ -188,6 +204,7 @@ foreach($phpincludefiles as $includename) {
 	include($directory . $includename);
 }
 
+##begin AJAX
 $jscriptstr = <<<EOD
 <script language="javascript" type="text/javascript">
 

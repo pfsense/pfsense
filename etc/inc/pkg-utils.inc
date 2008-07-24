@@ -372,67 +372,6 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	return true;
 }
 
-function download_file_with_progress_bar($url_file, $destination_file) {
-	global $ch, $fout, $file_size, $downloaded, $pkg_interface;
-	$file_size  = 1;
-	$downloaded = 1;
-	/* open destination file */
-	$fout = fopen($destination_file, "wb");
-
-	/*
-	 *	Originally by Author: Keyvan Minoukadeh
-	 *	Modified by Scott Ullrich to return Content-Length size
-         */
-
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url_file);
-	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
-	curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'read_body');
-	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-
-	curl_exec($ch);
-	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	if($fout)
-		fclose($fout);
-	curl_close($ch);
-	return ($http_code == 200) ? true : $http_code;
-}
-
-function read_header($ch, $string) {
-	global $file_size, $fout;
-	$length = strlen($string);
-	$regs = "";
-	ereg("(Content-Length:) (.*)", $string, $regs);
-	if($regs[2] <> "") {
-	$file_size = intval($regs[2]);
-	}
-	ob_flush();
-	return $length;
-}
-
-function read_body($ch, $string) {
-	global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen, $pkg_interface;
-	$length = strlen($string);
-	$downloaded += intval($length);
-	$downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
-	$downloadProgress = 100 - $downloadProgress;
-	if($lastseen <> $downloadProgress and $downloadProgress < 101) {
-		if($sendto == "status") {
-			$tostatus = $static_status . $downloadProgress . "%";
-			update_status($tostatus);
-		} else {
-			$tooutput = $static_output . $downloadProgress . "%";
-			update_output_window($tooutput);
-		}
-		update_progress_bar($downloadProgress);
-		$lastseen = $downloadProgress;
-	}
-	if($fout)
-		fwrite($fout, $string);
-	ob_flush();
-	return $length;
-}
-
 function install_package($package, $pkg_info = "") {
 	global $g, $config, $pkg_interface, $fd_log, $static_output, $pkg_interface, $restart_sync;
 	if($pkg_interface == "console") 	

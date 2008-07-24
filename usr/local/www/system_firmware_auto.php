@@ -122,7 +122,7 @@ if($current_installed_pfsense_version <> $latest_version)
 
 if($needs_system_upgrade == true) {
 	update_status("Downloading updates ...");
-	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz", "/tmp/latest.tgz");	
+	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz", "/tmp/latest.tgz", "read_body_firmware");	
 	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz.sha256", "/tmp/latest.tgz.sha256");
 	update_output_window("{$g['product_name']} download complete.");
 }
@@ -176,44 +176,7 @@ if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 	Helper functions
 */
 
-function download_file_with_progress_bar($url_file, $destination_file) {
-	global $ch, $fout, $file_size, $downloaded, $counter;
-	$file_size  = 1;
-	$downloaded = 1;
-	/* open destination file */
-	$fout = fopen($destination_file, "wb");
-
-	/*
-		Originally by Author: Keyvan Minoukadeh
-		Modified by Scott Ullrich to return Content-Length size
-	*/
-
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url_file);
-	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
-	curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'read_body');
-	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-
-	curl_exec($ch);
-	fclose($fout);
-	return 1;
-
-	if ($error = curl_error($ch)) {
-	    return -1;
-	}
-}
-
-function read_header($ch, $string) {
-	global $file_size, $ch, $fout;
-	$length = strlen($string);
-	ereg("(Content-Length:) (.*)", $string, $regs);
-	if($regs[2] <> "") {
-		$file_size = intval($regs[2]);
-	}
-	return $length;
-}
-
-function read_body($ch, $string) {
+function read_body_firmware($ch, $string) {
 	global $fout, $file_size, $downloaded, $counter, $version, $latest_version, $current_installed_pfsense_version;
 	$length = strlen($string);
 	$downloaded += intval($length);

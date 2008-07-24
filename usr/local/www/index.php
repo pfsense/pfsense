@@ -122,6 +122,7 @@ $dirhandle  = opendir($directory);
 $filename = "";
 $widgetnames = array();
 $widgetfiles = array();
+$widgetlist = array();
 
 while (false !== ($filename = readdir($dirhandle))) {
 	$periodpos = strpos($filename, ".");
@@ -133,12 +134,9 @@ while (false !== ($filename = readdir($dirhandle))) {
 sort($widgetfiles);
 array_unshift($widgetfiles, "system_information.widget.php");
 
-
 if (!is_array($config['widgets'])) {
 	$config['widgets'] = array();
 }
-
-$pconfig['sequence'] = $config['widgets']['sequence'];
 	
 if ($_POST){
 	$config['widgets']['sequence'] = $_POST['sequence'];
@@ -154,10 +152,10 @@ if ($_POST){
 	exit;
 }
 
+$pconfig['sequence'] = $config['widgets']['sequence'];
 	
 if ($config['widgets'] && $pconfig['sequence'] != "")
 {
-	$widgetlist = array();
 	$widgetlist = $pconfig['sequence'];
 	$colpos = array();
 	$savedwidgetfiles = array();
@@ -172,20 +170,11 @@ if ($config['widgets'] && $pconfig['sequence'] != "")
 		$displayarray[] = substr($widget,$displayposition+1);
 		$savedwidgetfiles[] = $widgetname . ".widget.php";
 	}
-	foreach ($widgetnames as $widget){
-		if ($config['widgets'][$widget . '-config']){
-			$pconfig[$widget . '-config'] = $config['widgets'][$widget . '-config'];
-		}
-	}
-	$widgetlist = $savedwidgetfiles;
-	
+	$widgetlist = $savedwidgetfiles;	
 }
 else{
 	$widgetlist = $widgetfiles;
 }
-
-
-
 
 
 //build list of php include files

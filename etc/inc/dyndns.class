@@ -168,7 +168,7 @@
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP.'&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -185,7 +185,7 @@
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server.$port.'?system=statdns&hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -202,7 +202,7 @@
 						$port = ":" . $this->_dnsPort;					
 					curl_setopt($ch, CURLOPT_URL, $server.$port.'?system=custom&hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -233,7 +233,7 @@
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -248,7 +248,7 @@
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . $this->_dnsUser . '&password=' . $this->_dnsPass . '&hostname=' . $this->_dnsHost.'&ip=' . $this->_dnsIP);
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -264,7 +264,7 @@
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard=' . $this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=' . $this->_dnsBackMX);
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -280,7 +280,7 @@
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?ver=1&IP=' . $this->_dnsIP);
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -299,7 +299,7 @@
 					curl_setopt($ch, CURLOPT_URL, "{$server}{$port}?host=" .$this->_dnsHost);
 
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -313,7 +313,7 @@
 						$port = ":" . $this->_dnsPort;					
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . $this->_dnsUser . '&password=' . $this->_dnsPass . '&host=' . $this->_dnsHost);
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -359,7 +359,7 @@
 					$needIP = FALSE;
 					curl_setopt($ch, CURLOPT_URL, 'http://freedns.afraid.org/dynamic/update.php?'.$this->_dnsHost);
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -369,7 +369,7 @@
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, 'https://dns.loopia.se/XDynDNSServer/XDynDNS.php?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP);
 					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;

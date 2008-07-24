@@ -67,8 +67,11 @@
 		if($config['installedpackages'] <> '') {
 			conf_mount_rw();
 			unlink('/conf/needs_package_sync');
-			header('Location: pkg_mgr_install.php?mode=reinstallall');
-			exit;
+			conf_mount_ro();
+			if($g['platform'] == "pfSense") {
+				header('Location: pkg_mgr_install.php?mode=reinstallall');
+				exit;
+			}
 		}
 	}
 

@@ -740,8 +740,7 @@ function show_mon_config() {
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="
-30" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="30" value="<?=htmlspecialchars($pconfig['descr']);?>">
                                         <br> <span class="vexpl">Enter a description (name) for the interface here.</span>
                   </td>
                 </tr>

@@ -154,6 +154,9 @@
 
         /* set up GIF virtual interfaces */
         interfaces_gif_configure();
+	
+	/* set up LAGG virtual interfaces */
+	interfaces_lagg_configure();
 
 	/* set up BRIDGe virtual interfaces */
         interfaces_bridge_configure();

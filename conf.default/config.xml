@@ -113,12 +113,18 @@
 		<dnsserver></dnsserver>
 		<dnsallowoverride/>
 		<group>
+			<name>all</name>
+			<description>All Users</description>
+			<scope>system</scope>
+			</pages>
+			<gid>1998</gid>
+		</group>
+		<group>
 			<name>admins</name>
 			<description>System Administrators</description>
 			<scope>system</scope>
 			<pages>ANY</pages>
-			<home>index.php</home>
-			<gid>110</gid>
+			<gid>1999</gid>
 		</group>
 		<user>
 			<name>admin</name>
@@ -148,8 +154,8 @@
 				<descr>This user is associated with the UNIX root user (you should associate this privilege only with one single user).</descr>
 			</priv>
 		</user>
-		<nextuid>115</nextuid>
-		<nextgid>115</nextgid>
+		<nextuid>2000</nextuid>
+		<nextgid>2000</nextgid>
 		<timezone>Etc/UTC</timezone>
 		<time-update-interval>300</time-update-interval>
 		<timeservers>0.pfsense.pool.ntp.org</timeservers>

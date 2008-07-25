@@ -36,101 +36,91 @@
 */
 
 require_once("functions.inc");
+
 $groupindex = index_groups();
 $userindex = index_users();
 
-function logout_session() {
-	global $_SESSION;
-	
-	if (hasLockAbility($_SESSION['Username']))
-		unlink_if_exists("{$g['tmp_path']}/webconfigurator.lock");
+function isAllowedPage($page) {
+	global $config, $userindex, $_SESSION;
 
-	/* wipe out $_SESSION */
-	$_SESSION = array();
+	/* admin/root access check */
+	$username = $_SESSION['Username'];
+	if (isset($username))
+		$user = &$config['system']['user'][$userindex[$username]];
+	if (isset($user))
+		if (isset($user['uid']))
+			if ($user['uid']==0)
+				return true;
 
-	/* and destroy it */
-	session_destroy();
+	/* user privelege access check */
+	$allowed_pages = $_SESSION['privs'];
+	if (in_array("ANY", $allowed_pages))
+		return true;
+	if (in_array(basename($page), $allowed_pages))
+		return true;
 
-	$scriptName = split("/", $_SERVER["SCRIPT_FILENAME"]);
-	$scriptElms = count($scriptName);
-	$scriptName = $scriptName[$scriptElms-1];
+	return false;
 }
 
-function getAllowedGroups($logged_in_user) {
-	global $g, $config;
+function getAllowedPages($logged_in_user) {
+	global $config, $_SESSION;
 
 	if (!function_exists("ldap_connect"))
 		return;
 	
-	$allowed = array();
+	$allowed_pages = array();
 	$allowed_groups = array();
 	
 	$ldapon = $_SESSION['ldapon'];
 	//log_error("Getting groups for {$logged_in_user}.");
-	
+
+	/* search for a local user by name */
 	$local_user = false;
-
-	//log_error("Local_user = {$local_user}");
-
-	foreach ($config['system']['user'] as $username) 
-		if ($username['name'] == $logged_in_user)
-			$local_user = true;
-
-	/* return ldap groups if we are in ldap mode */
-	if ($config['system']['webgui']['backend'] == "ldap" && $local_user == false) {
-		//log_error("Calling LDAP_GET_GROUPS from the first section");
-		$allowed_groups = ldap_get_groups($logged_in_user);
-		$fdny = fopen("/tmp/groups","w");
-		fwrite($fdny, print_r($allowed, true));
-		fclose($fdny);
-		$allowed = array();
-		if (is_array($config['system']['group']) && is_array($allowed_groups))
-			foreach ($config['system']['group'] as $group)
-				if (in_array($group['name'], $allowed_groups))
-					foreach ($group['pages'] as $page)
-						$allowed[] = $page;
-		return $allowed;
+	foreach ($config['system']['user'] as $user) {
+		if ($user['name'] == $logged_in_user) {
+			$local_user = $user;
+			break;
+		}
 	}
 
-	if ($config['system']['webgui']['backend'] == "ldapother" && $local_user == false) {
+	/* obtain local groups if we have a local user */
+	if ($local_user) {
+		$allowed_groups = get_local_user_groups($local_user);
+		foreach ($config['system']['group'] as $group)
+			if (in_array($group['name'], $allowed_groups))
+				if (is_array($group['pages']))
+					foreach ($group['pages'] as $page)
+						$allowed_pages[] = $page;
+	}
+
+	/* obtain ldap groups if we are in ldap mode */
+	if ($config['system']['webgui']['backend'] == "ldap" && !$local_user) {
 		//log_error("Calling LDAP_GET_GROUPS from the first section");
 		$allowed_groups = ldap_get_groups($logged_in_user);
-		$fdny = fopen("/tmp/groups","w");
-		fwrite($fdny, print_r($allowed, true));
-		fclose($fdny);
-		$allowed = array();
 		if (is_array($config['system']['group']) && is_array($allowed_groups))
 			foreach ($config['system']['group'] as $group)
 				if (in_array($group['name'], $allowed_groups))
 					foreach ($group['pages'] as $page)
-						$allowed[] = $page;
-		return $allowed;
+						$allowed_pages[] = $page;
+	}
+	if ($config['system']['webgui']['backend'] == "ldapother" && !$local_user) {
+		//log_error("Calling LDAP_GET_GROUPS from the first section");
+		$allowed_groups = ldap_get_groups($logged_in_user);
+		if (is_array($config['system']['group']) && is_array($allowed_groups))
+			foreach ($config['system']['group'] as $group)
+				if (in_array($group['name'], $allowed_groups))
+					foreach ($group['pages'] as $page)
+						$allowed_pages[] = $page;
 	}	
 
-	$final_allowed = array();
+	$allowed_groups = print_r($allowed, true);
+	$fdny = fopen("/tmp/groups", "w");
+	fwrite($fdny, $allowed_groups);
+	fclose($fdny);
 
-	foreach ($config['system']['user'] as $username)
-		if ($username['name'] == $logged_in_user) 
-			$allowed_groups  = explode(",", $username['groupname']);
+	$_SESSION['privs'] = $allowed_pages;
 
-	foreach ($config['system']['group'] as $group)
-		if (in_array($group['name'], $allowed_groups))
-			foreach ($group['pages'] as $page)
-				$allowed[] = $page;
-
-	return $allowed;
-}
-
-function &getSystemAdminNames() {
-	global $config, $g, $userindex;
-	$adminUsers = array();
-
-	if (is_array($config['system']['user']))
-		foreach ($config['system']['user'] as $user)
-			if (isSystemAdmin($user['name']))
-				$adminUsers[] = $user['name'];
-
-	return $adminUsers;
+	return $allowed_pages;
 }
 
 function &getSystemPrivs() {
@@ -171,229 +161,286 @@ function &getSystemPrivs() {
 	return $privs;
 }
 
-function assignUID($username = "") {
-	global $userindex, $config, $g;
-
-	if ($username == "")
-		return;
-
-	$nextuid = $config['system']['nextuid'];
-	$user =& $config['system']['user'][$userindex[$username]];
-
-	if (empty($user['uid'])) {
-		$user['uid'] = $nextuid;
-		$nextuid++;
-		$config['system']['nextuid'] = $nextuid;
-
-		write_config();
-		return $user;
-	}
+function & getUserEntry($name) {
+	global $config, $userindex;
+	return $config['system']['user'][$userindex[$name]];
 }
 
-function assignGID($groupname = "") {
-	global $groupindex, $config, $g;
-
-	if ($groupname == "")
-		return;
-
-	$nextgid = $config['system']['nextgid'];
-	$group =& $config['system']['group'][$groupindex[$groupname]];
-
-	if (empty($group['gid'])) {
-		$group['gid'] = $nextgid;
-		$nextgid++;
-		$config['system']['nextgid'] = $nextgid;
-
-		write_config();
-		return $group;
-	}
+function & getGroupEntry($name) {
+	global $config, $groupindex;
+	return $config['system']['group'][$groupindex[$name]];
 }
 
-function hasPrivilege($user, $privid = "") {
-	global $userindex, $config, $g;
+function userHasPrivilege($userent, $privid = false) {
 
-	if ($privid == "" || ! isset($userindex[$user]))
-		return 0;
+	if (!$privid || !is_array($userent))
+		return false;
 
-	$privs = &$config['system']['user'][$userindex[$user]]['priv'];
+	if (!is_array($userent['priv']))
+		return false;
 
-	if (is_array($privs))
-		foreach ($privs as $priv)
-			if ($priv['id'] == $privid)
-				return 1;
-	return 0;
+	foreach ($userent['priv'] as $priv)
+		if ($priv['id'] == $privid)
+			return true;
 }
 
-function isAllowedToCopyFiles($username) {
-	global $userindex, $config, $g;
-
-	if ($username == "")
-		return 0;
-
-	return hasPrivilege($username, "copyfiles");
+function hasPrivilegeCopyFiles($userent) {
+	return userHasPrivilege($userent, "copyfiles");
 }
 
-function hasLockAbility($username) {
-	global $userindex, $config, $g;
-
-	if ($username == "")
-		return 0;
-
-	return hasPrivilege($username, "lockwc");
+function hasPrivilegeLock($userent) {
+	return userHasPrivilege($userent, "lockwc");
 }
 
-function hasPageLockAbility($username) {
-	global $userindex, $config, $g;
-
-	if ($username == "")
-		return 0;
-
-	return hasPrivilege($username, "lock-ipages");
+function hasPrivilegeLockPages($userent) {
+	return userHasPrivilege($userent, "lock-ipages");
 }
 
-function hasShellAccess($username) {
-	global $userindex, $config, $g;
-
-	if ($username == "")
-		return 0;
-
-	return hasPrivilege($username, "hasshell");
+function hasPrivilegeShell($userent) {
+	return userHasPrivilege($userent, "hasshell");
 }
 
-function isUNIXRoot($username = "") {
-	global $userindex, $config;
+function sync_local_accounts() {
+	global $config;
 
-	if ($username == "")
-		return 0;
-
-	if (isSystemAdmin($username))
-		return hasPrivilege($username, "isroot");
-
-	return 0;
-}
-
-function setUserFullName($name = "", $new_name = "") {
-	global $config, $g, $userindex;
-
-	if ($name == "" || $new_name == "")
-		return;
-
-	$user = &$config['system']['user'][$userindex[$name]];
-	$user['fullname'] = $new_name;
-}
-
-function setUserName($name = "", $new_name = "") {
-	global $config, $g, $userindex;
-
-	if ($name == "" || $new_name == "")
-		return;
-
-	$user = &$config['system']['user'][$userindex[$name]];
-	$user['name'] = $new_name;
-}
-
-function setUserPWD($name = "", $password = "") {
-	global $config, $g, $userindex;
-
-	if ($name == "" || $password == "")
-		return;
-
-	$user = &$config['system']['user'][$userindex[$name]];
-	$user['password'] = crypt($password);
-}
-
-function setUserGroupName($name = "", $new_name = "") {
-	global $config, $g, $userindex;
-
-	if ($name == "" || $new_name == "")
-		return;
-
-	$user = &$config['system']['user'][$userindex[$name]];
-	$user['groupname'] = $new_name;
-}
-
-function setUserType($name = "", $new_type = "") {
-	global $config, $g, $userindex;
-
-	if ($name == "" || $new_type == "")
-		return;
-
-	$user = &$config['system']['user'][$userindex[$name]];
-	$user['scope'] = $new_type;
-}
-
-function getUNIXRoot() {
-	global $config, $g, $userindex;
-
-	if (is_array($config['system']['user'])) {
-		foreach($config['system']['user'] as $user) {
-			if (isUNIXRoot($user['name'])) {
-				$root = &$config['system']['user'][$userindex[$user['name']]];
-				return $root;
-			}
+	/* remove local users to avoid uid conflicts */
+	$fd = popen("/usr/sbin/pw usershow -a 2>&1", "r");
+	if ($fd) {
+		while (!feof($fd)) {
+			$line = explode(":",fgets($fd));
+			if (!strncmp($line[0], "_", 1))
+				continue;
+			if ($line[2] < 2000)
+				continue;
+			if ($line[2] > 65000)
+				continue;
+			mwexec("/usr/sbin/pw userdel {$line[2]}");
 		}
+		pclose($fd);
 	}
 
-	return NULL;
-}
+	/* remove local groups to avoid gid conflicts */
+	$gids = array();
+	$fd = popen("/usr/sbin/pw groupshow -a 2>&1", "r");
+	if ($fd) {
+		while (!feof($fd)) {
+			$line = explode(":",fgets($fd));
+			if (!strncmp($line[0], "_", 1))
+				continue;
+			if ($line[2] < 2000)
+				continue;
+			if ($line[2] > 65000)
+				continue;
+			mwexec("/usr/sbin/pw groupdel {$line[2]}");
+		}
+		pclose($fd);
+	}
 
-function getUNIXRootName() {
-	global $config, $g, $userindex;
-
+	/* sync all local users */
 	if (is_array($config['system']['user']))
 		foreach ($config['system']['user'] as $user)
-			if (isUNIXRoot($user['name']))
-				return $user['name'];
+			set_local_user($user);
 
-	return NULL;
+	/* sync all local groups */
+	if (is_array($config['system']['group']))
+		foreach ($config['system']['group'] as $group)
+			set_local_group($group);
+
+	sync_webgui_passwords();
 }
 
-function getGroupHomePage($group = "") {
-	global $groupindex, $config, $g;
+function set_local_user($user) {
 
-	if ($group == "")
-		return "";
+	$home_base = $g['platform'] == "pfSense" ? "/home" : "/var/home";
+	if (!is_dir($home_base))
+		mkdir($home_base, 0755);
 
-	$page = $config['system']['group'][$groupindex[$group]]['home'];
-	if (empty($page))
-		$page = "";
+	$user_uid = $user['uid'];
+	$user_name = $user['name'];
+	$user_home = "{$home_base}/$user_name";
+	$user_shell = "/etc/rc.initial";
+	$user_group = "nobody";
 
-	return $page;
+	/* configure shell type */
+	if (!hasPrivilegeShell($user)) {
+		if (!hasPrivilegeCopyFiles($user))
+			$user_shell = "/sbin/nologin";
+		else
+			$user_shell = "/usr/local/bin/scponly";
+	}
+
+	/* root user special handling */
+	if ($user_uid == 0) {
+		$fd = popen("/usr/sbin/pw usermod -n root -s /bin/sh -H 0", "w");
+		fwrite($fd, $user['password']);
+		pclose($fd);
+		$user_group = "wheel";
+	}
+
+	/* read from pw db */
+	$fd = popen("/usr/sbin/pw usershow {$user_name} 2>&1", "r");
+	$pwread = fgets($fd);
+	pclose($fd);
+
+	/* determine add or mod */
+	if (!strncmp($pwread, "pw:", 3))
+		$user_op = "useradd";
+	else
+		$user_op = "usermod";
+
+	/* add or mod pw db */
+	$cmd = "/usr/sbin/pw {$user_op} -u {$user_uid} -n {$user_name}".
+			" -g {$user_group} -G all -s {$user_shell} -d {$user_home}".
+			" -c ".escapeshellarg($user['fullname'])." -H 0";
+
+	log_error("Running: {$cmd}");
+	$fd = popen($cmd, "w");
+	fwrite($fd, $user['password']);
+	pclose($fd);
+
+	/* create user directory if required */
+	if (!is_dir($user_home))
+		mkdir($user_home, 0755);
+	chown($user_home, $user_name);
+	chgrp($user_home, $user_group);
+	chmod($user_home, 0700);
+
+	/* FIXME : ssh keys should be per-admin user */
+	if(isset($config['system']['ssh']['sshdkeyonly']) && hasPrivilegeShell($user))
+		create_authorized_keys($user_name, $user_home);
 }
 
-function isSystemAdmin($username = "") {
-	global $groupindex, $userindex, $config, $g, $_SESSION;
+function del_local_user($user) {
 
-	if ($_SESSION['isSystemAdmin']) 
-		return $_SESSION['isSystemAdmin'];
+	/* remove all memberships */
+	set_local_user_groups($user);
 
-	if (!function_exists("ldap_connect"))
+	/* delete from pw db */
+	$cmd = "/usr/sbin/pw userdel {$user['name']}";
+
+	log_error("Running: {$cmd}");
+	$fd = popen($cmd, "w");
+	fwrite($fd, $user['password']);
+	pclose($fd);
+}
+
+function get_local_user_groups($user, $all = false) {
+	global $config;
+
+	$groups = array();
+	if (!is_array($config['system']['group']))
+		return $groups;
+
+	foreach ($config['system']['group'] as $group)
+		if ( $all || ( !$all && ($group['name'] != "all")))
+			if (is_array($group['member']))
+				if (in_array($user['uid'], $group['member']))
+					$groups[] = $group['name'];
+
+	sort($groups);
+
+	return $groups;
+}
+
+function set_local_user_password(& $user, $password) {
+
+    $user['password'] = crypt($password);
+    $user['md5-hash'] = md5($password);
+
+	/*
+	 * NOTE : This section of code id based on the BSD
+	 * licensed CHAP.php courtesy of Michael Retterklieber.
+	 */
+	/* Waiting for mhash to settle into the tree
+	// Converts ascii to unicode.
+	$astr = (string) $password;
+	$ustr = '';
+	for ($i = 0; $i < strlen($astr); $i++) {
+		$a = ord($astr{$i}) << 8;
+		$ustr.= sprintf("%X", $a);
+	}
+
+	// Generate the NT-HASH from the unicode string
+	$user['nt-hash'] = bin2hex(mhash(MHASH_MD4, $ustr));
+	*/
+}
+
+function set_local_user_groups($user, $new_groups = NULL ) {
+	global $config, $groupindex;
+
+	if (!is_array($config['system']['group']))
 		return;
 
-	if ($username == "") {
-		$_SESSION['isSystemAdmin'] = false;
-		return 0; 
+	$cur_groups = get_local_user_groups($user);
+	$mod_groups = array();
+
+	if (!is_array($new_groups))
+		$new_groups = array();
+
+	if (!is_array($cur_groups))
+		$cur_groups = array();
+
+	/* determine which memberships to add */
+	foreach ($new_groups as $groupname) {
+		if (in_array($groupname,$cur_groups))
+			continue;
+		$group = & $config['system']['group'][$groupindex[$groupname]];
+		$group['member'][] = $user['uid'];
+		$mod_groups[] = $group;
 	}
 
-	$gname = $config['system']['group'][$groupindex[$config['system']['user'][$userindex[$username]]['groupname']]]['name'];
-
-	if (isset($gname)) {
-		$_SESSION['isSystemAdmin'] = $gname === $g["admin_group"];
-		return ($gname === $g["admin_group"]);
+	/* determine which memberships to remove */
+	foreach ($cur_groups as $groupname) {
+		if (in_array($groupname,$new_groups))
+		continue;
+		$group = & $config['system']['group'][$groupindex[$groupname]];
+		$index = array_search($user['uid'], $group['member']);
+		array_splice($group['member'], $index, 1);
+		$mod_groups[] = $group;
 	}
 
-	$_SESSION['isSystemAdmin'] = false; 
-
-	return 0;
+	/* sync all modified groups */
+	foreach ($mod_groups as $group)
+		set_local_group($group);
 }
 
-function getRealName($username = "") {
-	global $userindex, $config;
+function set_local_group($group) {
 
-	if ($username == "")
-		return "";
+	$group_name = $group['name'];
+	$group_gid = $group['gid'];
+	$group_members = "''";
+	if (count($group['member']))
+		$group_members = implode(",",$group['member']);
 
-	return $config['system']['user'][$userindex[$username]]['fullname'];
+	/* read from group db */
+	$fd = popen("/usr/sbin/pw groupshow {$group_name} 2>&1", "r");
+	$pwread = fgets($fd);
+	pclose($fd);
+
+	/* determine add or mod */
+	if (!strncmp($pwread, "pw:", 3))
+		$group_op = "groupadd";
+	else
+		$group_op = "groupmod";
+
+	/* add or mod group db */
+	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M {$group_members}";
+
+	log_error("Running: {$cmd}");
+	$fd = popen($cmd, "w");
+	fwrite($fd, $user['password']);
+	pclose($fd);
+}
+
+function del_local_group($group) {
+
+	/* delete from group db */
+	$cmd = "/usr/sbin/pw groupdel {$group['name']}";
+
+	log_error("Running: {$cmd}");
+	$fd = popen($cmd, "w");
+	fwrite($fd, $user['password']);
+	pclose($fd);
 }
 
 function basic_auth($backing) {
@@ -475,6 +522,9 @@ function session_auth($backing) {
 		}
 	}
 
+	/* obtain user object */
+	$user = getUserEntry($_SESSION['Username']);
+
 	/* user hit the logout button */
 	if (isset($_GET['logout'])) {
 
@@ -483,7 +533,7 @@ function session_auth($backing) {
 		else
 			log_error("User logged out for user '{$_SESSION['Username']}' from: {$_SERVER['REMOTE_ADDR']}");
 
-		if (hasLockAbility($_SESSION['Username']))
+		if (hasPrivilegeLock($user))
 			unlink_if_exists("{$g['tmp_path']}/webconfigurator.lock");
 
 		/* wipe out $_SESSION */
@@ -512,7 +562,7 @@ function session_auth($backing) {
 	 * user wants to explicitely delete the lock file.
 	 * Requires a particular privilege.
 	 */
-	if ($_GET['deletelock'] && hasLockAbility($_SESSION['Username'])) {
+	if ($_GET['deletelock'] && hasPrivilegeLock($user)) {
 		unlink_if_exists("{$g['tmp_path']}/webconfigurator.lock");
 		$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 		return true;
@@ -522,10 +572,9 @@ function session_auth($backing) {
 	 * user wants to explicitely create a lock.
 	 * Requires a particular privilege.
 	 */
-	if ($_GET['createlock'] && hasLockAbility($_SESSION['Username'])) {
+	if ($_GET['createlock'] && hasPrivilegeLock($user)) {
 		$fd = fopen("{$g['tmp_path']}/webconfigurator.lock", "w");
-		fputs($fd, "{$_SERVER['REMOTE_ADDR']} (" .
-			getRealName($_SESSION['Username']) . ")");
+		fputs($fd, "{$_SERVER['REMOTE_ADDR']}.{$_SESSION['Username']}");
 		fclose($fd);
 
 		/*
@@ -560,7 +609,7 @@ function session_auth($backing) {
 	/*
 	 * is the user is allowed to create a lock
 	 */
-	if (hasLockAbility($_SESSION['Username'])) {
+	if (hasPrivilegeLock($user)) {
 
 		/*
 		 * create a lock once per session
@@ -568,8 +617,7 @@ function session_auth($backing) {
 		if (!isset($_SESSION['Lock_Created'])) {
 
 			$fd = fopen("{$g['tmp_path']}/webconfigurator.lock", "w");
-			fputs($fd, "{$_SERVER['REMOTE_ADDR']} (" .
-				getRealName($_SESSION['Username']) . ")");
+			fputs($fd, "{$_SERVER['REMOTE_ADDR']}.{$_SESSION['Username']}");
 			fclose($fd);
 
 			/*

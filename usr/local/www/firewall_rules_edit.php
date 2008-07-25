@@ -55,20 +55,6 @@ if (isset($_GET['dup'])) {
 	$after = $_GET['dup'];
 }
 
-if($id > -1) {
-	$if = $a_filter[$id]['interface'];
-	$security_url = "firewall_rules_edit.php?if=". strtolower($if);
-	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
-		log_error("Checking for {$security_url}");
-		if(!in_array($security_url, $allowed)) {
-			// User does not have access
-	//		echo "displaying error {$security_url}"; print_r($allowed);
-			echo display_error_form("401", "Unauthorized. You do not have access to edit rules on the interface {$if}");
-			exit;
-		}
-	}
-}
-
 if (isset($id) && $a_filter[$id]) {
 	$pconfig['interface'] = $a_filter[$id]['interface'];
 

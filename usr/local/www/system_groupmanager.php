@@ -208,24 +208,24 @@ if (isset($_POST['id']))
 	
 if ($_GET['act'] == "del") {
 	if ($a_group[$_GET['id']]) {
-	    $ok_to_delete = true;
-	    if (isset($config['system']['user'])) {
-    	    foreach ($config['system']['user'] as $userent) {
-    	    	if ($userent['groupname'] == $a_group[$_GET['id']]['name']) {
-    				$ok_to_delete = false;
-    				$input_errors[] = "users still exist who are members of this group!";
-    				break;	    
-    	    	}
-    	    }
-	    }
-        if ($ok_to_delete) {
-    		unset($a_group[$_GET['id']]);
-	       	write_config();
-		    header("Location: system_groupmanager.php");
-		    exit;
-	    }
+		del_local_group($a_group[$_GET['id']]);
+   		unset($a_group[$_GET['id']]);
+       	write_config();
+	    header("Location: system_groupmanager.php");
+	    exit;
 	}
 }	
+
+if($_GET['act']=="edit"){
+	if (isset($id) && $a_group[$id]) {
+		$pconfig['name'] = $a_group[$id]['name'];
+		$pconfig['description'] = $a_group[$id]['description'];
+		if (is_array($a_group[$id]['pages']))
+			$pconfig['pages'] = $a_group[$id]['pages'];
+		else
+			$pconfig['pages'] = array();
+	}
+}
 	
 if ($_POST) {
 
@@ -252,30 +252,30 @@ if ($_POST) {
 	}
 	
 	if (!$input_errors) {
-	
+		$group = array();
 		if (isset($id) && $a_group[$id])
 			$group = $a_group[$id];
 		
-		if($id)
-			unset($a_group[$id]);
-		
 		$group['name'] = $_POST['groupname'];
 		$group['description'] = $_POST['description'];
+
 		unset($group['pages']);
-		
 		foreach ($pages as $fname => $title) {
 			$identifier = str_replace('.php','XXXUMXXX',$fname);
 			$identifier = str_replace('.','XXXDOTXXX',$identifier);
 			if ($_POST[$identifier] == 'yes') {
 				$group['pages'][] = $fname;
 			}
-		}		
-		
+		}
+
 		if (isset($id) && $a_group[$id])
 			$a_group[$id] = $group;
-		else
+		else {
+			$group['gid'] = $config['system']['nextgid']++;
 			$a_group[] = $group;
-		
+		}
+
+		set_local_group($group);
 		write_config();
 		
 		header("Location: system_groupmanager.php");
@@ -286,161 +286,191 @@ if ($_POST) {
 include("head.inc");
 
 ?>
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td class="tabnavtbl">
-  <ul id="tabnav">
-	<?php 
-		$tab_array = array();
-		$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
-		$tab_array[] = array(gettext("Group"), true, "system_groupmanager.php");
-		$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
-		display_top_tabs($tab_array);
-    ?>     
-  </ul>
-  </td></tr>    
-<tr>
-  <td class="tabcont">
-<?php
-if($_GET['act']=="new" || $_GET['act']=="edit"){
-	if($_GET['act']=="edit"){
-		if (isset($id) && $a_group[$id]) {
-	       $pconfig['name'] = $a_group[$id]['name'];
-	       $pconfig['description'] = $a_group[$id]['description'];
-	       $pconfig['pages'] = $a_group[$id]['pages'];
-        }
-	}
-?>
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-	function checkall() {
-        var el = document.getElementById('iform');
-        for (var i = 0; i < el.elements.length; i++) {
-          el.elements[i].checked = true;
-        }
-   	}
-   	function checknone() {
-        var el = document.getElementById('iform');
-        for (var i = 0; i < el.elements.length; i++) {
-          el.elements[i].checked = false;
-        }
-   	}
-</script>
-<form action="system_groupmanager.php" method="post" name="iform" id="iform">
-          <table width="100%" border="0" cellpadding="6" cellspacing="0">
-            <tr> 
-              <td width="22%" valign="top" class="vncellreq">Group name</td>
-              <td width="78%" class="vtable"> 
-              <?php 
-              	$inuse = false;
-              	foreach($config['system']['user'] as $su) {
-					if($su['groupname'] == $pconfig['name']) 
-						$inuse = true;
-				}
-              ?>
-              <?php if($inuse == false): ?>
-                <input name="groupname" type="text" class="formfld" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"> 
-              <?php else: ?>
-              	<?php echo $pconfig['name']; ?>
-              	<input name="groupname" type="hidden" class="formfld" id="groupname" value="<?=htmlspecialchars($pconfig['name']);?>"> 
-              <?php endif; ?>
-                </td>
-            </tr>
-            <tr> 
-              <td width="22%" valign="top" class="vncell">Description</td>
-              <td width="78%" class="vtable"> 
-                <input name="description" type="text" class="formfld" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>">
-                <br>
-                Group description, for your own information only</td>
-            </tr>
-            <tr>
-			  	<td colspan="4"><br>&nbsp;Select that pages that this group may access.  Members of this group will be able to perform all actions that<br>&nbsp; are possible from each individual web page.  Ensure you set access levels appropriately.<br><br>
-			  	<span class="vexpl"><span class="red"><strong>&nbsp;Note: </strong></span>Pages 
-          marked with an * are strongly recommended for every group.</span>
-			  	</td>
-				</tr>
-				<tr><td colspan="4">
-		           <input type="button" name="types[]" value="Check All" onClick="checkall(); return false;"> 
-        		   <input type="button" name="types[]" value="Check None" onClick="checknone(); return false;">
-				</td></tr>
-            <tr>
-              <td colspan="2">
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
-              <tr>
-                <td class="listhdrr">&nbsp;</td>
-                <td class="listhdrr">Page Description</td>
-                <td class="listhdr">Filename</td>
-              </tr>
-              <?php 
-              foreach ($pages as $fname => $title) {
-              	$identifier = str_replace('.php','XXXUMXXX',$fname);
-				$identifier = str_replace('.','XXXDOTXXX',$identifier);
-              	?>
-              	<tr><td class="listlr">
-              	<input class="check" name="<?=$identifier?>" type="checkbox" id="<?=$identifier?>" value="yes" <?php if (in_array($fname,$pconfig['pages'])) echo "checked"; ?>></td>
-              	<td class="listr"><?=$title?></td>
-              	<td class="listr"><?=$fname?></td>
-              	</tr>
-              	<?
-              } ?>
-              </table>
-              </td>
-            </tr>
-            <tr> 
-              <td width="22%" valign="top">&nbsp;</td>
-              <td width="78%"> 
-                <input name="save" type="submit" class="formbtn" value="Save"> 
-		        <?php if (isset($id) && $a_group[$id]): ?>
-		        <input name="id" type="hidden" value="<?=$id;?>">
-		        <?php endif; ?>                
-              </td>
-            </tr>
-          </table>
- </form>
+<body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php
-} else {
+	include("fbegin.inc");
+	if ($input_errors)
+		print_input_errors($input_errors);
+	if ($savemsg)
+		print_info_box($savemsg);
 ?>
- <table width="100%" border="0" cellpadding="0" cellspacing="0">
-    <tr>
-       <td width="35%" class="listhdrr">Group name</td>
-       <td width="20%" class="listhdrr">Description</td>
-       <td width="20%" class="listhdrr">Pages Accessible</td>                  
-       <td width="10%" class="list"></td>
-	</tr>
-	<?php $i = 0; foreach($a_group as $group): ?>
-		<tr>
-                  <td class="listlr">
-                    <?=htmlspecialchars($group['name']); ?>&nbsp;
-                  </td>
-                  <td class="listr">
-                    <?=htmlspecialchars($group['description']);?>&nbsp;
-                  </td>
-                  <td class="listbg">
-					<font color="white">
-                    <?=count($group['pages']);?>&nbsp;
-                  </td>
-                  <td valign="middle" nowrap class="list"> <a href="system_groupmanager.php?act=edit&id=<?=$i; ?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit group" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="system_groupmanager.php?act=del&id=<?=$i; ?>" onclick="return confirm('Do you really want to delete this group?')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete group" width="17" height="17" border="0"></a></td>
-		</tr>
-	<?php $i++; endforeach; ?>
-	    <tr> 
-			<td class="list" colspan="3"></td>
-			<td class="list"> <a href="system_groupmanager.php?act=new"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add group" width="17" height="17" border="0"></a></td>
-		</tr>
-		<tr>
-			<td colspan="3">
-		      Additional webGui admin groups can be added here.  Each group can be restricted to specific portions of the webGUI.  Individually select the desired web pages each group may access.  For example, a troubleshooting group could be created which has access only to selected Status and Diagnostics pages.
-			</td>
-		</tr>
- </table>
-<?php } ?>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td class="tabnavtbl">
+			<ul id="tabnav">
+			<?php 
+				$tab_array = array();
+				$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+				$tab_array[] = array(gettext("Group"), true, "system_groupmanager.php");
+				$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+				display_top_tabs($tab_array);
+			?>
+			</ul>
+		</td>
+	</tr>    
+	<tr>
+		<td class="tabcont">
+
+			<?php if($_GET['act']=="new" || $_GET['act']=="edit"): ?>
+
+			<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+			<script type="text/javascript">
+				function checkall() {
+					var el = document.getElementById('iform');
+					for (var i = 0; i < el.elements.length; i++)
+						el.elements[i].checked = true;
+				}
+				function checknone() {
+					var el = document.getElementById('iform');
+					for (var i = 0; i < el.elements.length; i++)
+						el.elements[i].checked = false;
+				}
+			</script>
+			<form action="system_groupmanager.php" method="post" name="iform" id="iform">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<tr> 
+						<td width="22%" valign="top" class="vncellreq">Group name</td>
+						<td width="78%" class="vtable"> 
+							<input name="groupname" type="text" class="formfld" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"> 
+						</td>
+					</tr>
+					<tr> 
+						<td width="22%" valign="top" class="vncell">Description</td>
+						<td width="78%" class="vtable"> 
+							<input name="description" type="text" class="formfld" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>">
+							<br>
+							Group description, for your own information only
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<br>
+							Select that pages that this group may access.
+							Members of this group will be able to perform
+							all actions that are possible from each
+							individual web page. Ensure you set access
+							levels appropriately.<br>
+							<br>
+							<span class="vexpl">
+								<span class="red">
+									<strong>&nbsp;Note:</strong>
+								</span>
+								Pages marked with an * are strongly recommended
+								for every group.
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<input type="button" name="types[]" value="Check All" onClick="checkall(); return false;"> 
+							<input type="button" name="types[]" value="Check None" onClick="checknone(); return false;">
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table width="100%" border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<td class="listhdrr">&nbsp;</td>
+									<td class="listhdrr">Page Description</td>
+									<td class="listhdr">Filename</td>
+								</tr>
+								<?php 
+									foreach ($pages as $fname => $title):
+										$identifier = str_replace('.php','XXXUMXXX',$fname);
+										$identifier = str_replace('.','XXXDOTXXX',$identifier);
+										$checked = "";
+										if (in_array($fname,$pconfig['pages']))
+											$checked = "checked";
+								?>
+								<tr>
+									<td class="listlr">
+										<input class="check" name="<?=$identifier?>" type="checkbox" id="<?=$identifier?>" value="yes" <?=$checked;?>>
+									</td>
+									<td class="listr"><?=$title?></td>
+									<td class="listr"><?=$fname?></td>
+								</tr>
+								<?php endforeach; ?>
+							</table>
+						</td>
+					</tr>
+					<tr> 
+						<td width="22%" valign="top">&nbsp;</td>
+						<td width="78%"> 
+							<input name="save" type="submit" class="formbtn" value="Save"> 
+							<?php if (isset($id) && $a_group[$id]): ?>
+							<input name="id" type="hidden" value="<?=$id;?>">
+							<?php endif; ?>                
+						</td>
+					</tr>
+				</table>
+			</form>
+
+			<?php else: ?>
+
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td width="25%" class="listhdrr">Group name</td>
+					<td width="25%" class="listhdrr">Description</td>
+					<td width="15%" class="listhdrr">Member Count</td>
+					<td width="15%" class="listhdrr">Pages Accessible</td>
+					<td width="10%" class="list"></td>
+				</tr>
+				<?php
+					$i = 0;
+					foreach($a_group as $group):
+				?>
+				<tr>
+					<td class="listlr">
+						<?=htmlspecialchars($group['name']); ?>&nbsp;
+					</td>
+					<td class="listr">
+						<?=htmlspecialchars($group['description']);?>&nbsp;
+					</td>
+					<td class="listr">
+						<?=count($group['member'])?>
+					</td>
+					<td class="listbg">
+						<font color="white">
+							<?=count($group['pages']);?>
+						</font>
+					</td>
+					<td valign="middle" nowrap class="list">
+						<a href="system_groupmanager.php?act=edit&id=<?=$i;?>">
+							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="edit group" width="17" height="17" border="0">
+						</a>
+						&nbsp;
+						<a href="system_groupmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this group?')">
+							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="delete group" width="17" height="17" border="0">
+						</a>
+					</td>
+				</tr>
+				<?php
+					$i++;
+					endforeach;
+				?>
+				<tr> 
+					<td class="list" colspan="4"></td>
+					<td class="list">
+						<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="add group" width="17" height="17" border="0">
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						Additional webGui admin groups can be added here.
+						Each group can be restricted to specific portions of the webGUI.
+						Individually select the desired web pages each group may access.
+						For example, a troubleshooting group could be created which has
+						access only to selected Status and Diagnostics pages.
+					</td>
+				</tr>
+			</table>
+			
+			<? endif; ?>
      
-  </td>
-  </tr>
-  </table>
-  
-  
+		</td>
+	</tr>
+</table>
+</body>
 <?php include("fend.inc"); ?>

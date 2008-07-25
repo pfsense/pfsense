@@ -293,8 +293,8 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 
 		<div id="right">
 
-
 <?php
+
 	/* display a top alert bar if need be */
 	$need_alert_display = false;
 	$found_notices = are_notices_pending();
@@ -317,25 +317,9 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 		echo "</div>";
 	}
 
-	$auth_user = $HTTP_SERVER_VARS['AUTH_USER'];
-
-	$groupindex = index_groups();
-	$userindex = index_users();
-
-	$allowed = array();
-	$allowed[] = '';
-	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))
-	    if (isset($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$auth_user]]['groupname']]]['pages'])) 
-			$allowed = &$config['system']['group'][$groupindex[$config['system']['user'][$userindex[$auth_user]]['groupname']]]['pages'];
-
 function output_menu_item($url, $name) {
-	global $auth_user, $groupindex, $userindex, $allowed, $HTTP_SERVER_VARS, $allowed;
-	if(!$allowed)
-		$allowed = $_SESSION['privs'];	
-	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) 
-		if (!in_array(basename($url), $allowed))	
-			return;
-	echo "<li><a href=\"{$url}\" class=\"navlnk\">{$name}</a></li>\n";
+	if (isAllowedPage($url))
+		echo "<li><a href=\"{$url}\" class=\"navlnk\">{$name}</a></li>\n";
 }
 	
 ?>

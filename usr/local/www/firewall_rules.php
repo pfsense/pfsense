@@ -77,16 +77,6 @@ if (!$if || !isset($iflist[$if])) {
                 $if = "wan";
 }
 
-$security_url = "firewall_rules.php?if=". strtolower($if);
-if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
-	if(!in_array($security_url, $allowed)) {
-		// User does not have access
-//		echo "displaying error {$security_url}"; print_r($allowed);
-		echo display_error_form("401", "Unauthorized. You do not have access to the page {$pagereq} for interface {$if}");
-		exit;
-	}
-}
-
 if ($_POST) {
 
 	$pconfig = $_POST;

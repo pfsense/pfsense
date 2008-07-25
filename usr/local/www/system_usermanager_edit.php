@@ -33,19 +33,19 @@ require("guiconfig.inc");
 $pgtitle = array("System","User manager","Edit privilege");
 
 /*
-  The following code presumes, that the following XML structure exists or
-  if it does not exist, it will be created.
+	NOTE: The following code presumes, that the following XML structure
+	exists or if it does not exist, it will be created.
 
-    <priv>
-      <id>fooid</id>
-      <name>foo</name>
-      <descr>foo desc</descr>
-    </priv>
-    <priv>
-      <id>barid</id>
-      <name>bar</name>
-      <descr>bar desc</descr>
-    </priv>
+	<priv>
+		<id>fooid</id>
+		<name>foo</name>
+		<descr>foo desc</descr>
+	</priv>
+	<priv>
+		<id>barid</id>
+		<name>bar</name>
+		<descr>bar desc</descr>
+	</priv>
 */
 
 $useract = $_GET['useract'];
@@ -63,24 +63,23 @@ if (isset($_POST['id']))
 	$id = $_POST['id'];
 
 if (empty($config['system']['user'][$userid])) {
-		pfSenseHeader("system_usermanager.php?id={$userid}&act={$_GET['useract']}");
-		exit;
+	pfSenseHeader("system_usermanager.php?id={$userid}&act={$_GET['useract']}");
+	exit;
 }
 
-if (!is_array($config['system']['user'][$userid]['priv'])) {
-  $config['system']['user'][$userid]['priv'] = array();
-}
+if (!is_array($config['system']['user'][$userid]['priv']))
+	$config['system']['user'][$userid]['priv'] = array();
 
 $t_privs = &$config['system']['user'][$userid]['priv'];
 
 if (isset($id) && $t_privs[$id]) {
-        $pconfig['pid'] = $t_privs[$id]['id'];
-        $pconfig['pname'] = $t_privs[$id]['name'];
-        $pconfig['descr'] = $t_privs[$id]['descr'];
+	$pconfig['pid'] = $t_privs[$id]['id'];
+	$pconfig['pname'] = $t_privs[$id]['name'];
+	$pconfig['descr'] = $t_privs[$id]['descr'];
 } else {
-        $pconfig['pid'] = $_GET['pid'];
-        $pconfig['pname'] = $_GET['pname'];
-        $pconfig['descr'] = $_GET['descr'];
+	$pconfig['pid'] = $_GET['pid'];
+	$pconfig['pname'] = $_GET['pname'];
+	$pconfig['descr'] = $_GET['descr'];
 }
 
 if ($_POST) {
@@ -96,22 +95,18 @@ if ($_POST) {
 
 	/* check for overlaps */
 	foreach ($t_privs as $priv) {
-		if (isset($id) && ($t_privs[$id]) && ($t_privs[$id] === $priv)) {
+		if (isset($id) && ($t_privs[$id]) && ($t_privs[$id] === $priv))
 			continue;
-		}
 		if ($priv['id'] == $pconfig['pid']) {
 			$input_errors[] = gettext("This privilege ID already exists.");
 			break;
 		}
 	}
 
-  if (hasShellAccess($userindex[$userid]['name']) ||
-      isAllowedToCopyFiles($userindex[$userid]['name'])) {
-    if (preg_match("/[^a-zA-Z0-9\.\-_]/", $userindex[$userid]['name']))
-        $input_errors[] = gettext("The username contains invalid characters " .
-                                  "((this means this user can't be used to create" .
-                                  " a shell account).");
-  }
+	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $userindex[$userid]['name']))
+		$input_errors[] = gettext("The username contains invalid characters " .
+								"((this means this user can't be used to create" .
+								" a shell account).");
 
 	/* if this is an AJAX caller then handle via JSON */
 	if(isAjax() && is_array($input_errors)) {
@@ -130,30 +125,18 @@ if ($_POST) {
 		else
 			$t_privs[] = $priv;
 	
-		$name = $config['system']['user'][$userid]['name'];
-		$groupname = $config['system']['user'][$userid]['groupname'];
-	
-	    if ($priv['id'] == "hasshell") {
-		  log_error("Assigning UID to $name / $groupname");
-	      assignUID($name);
-	      assignGID($groupname);
-	    }
+		set_local_user($config['system']['user'][$userid]);
+		write_config();
 
-	write_config();
+		$retval = 0;
+		config_lock();
+		config_unlock();
 
-	/* sync usernames and password db */
-	$retval = system_password_configure();
-	sync_webgui_passwords();
-		
-    $retval = 0;
-    config_lock();
-    config_unlock();
-
-    $savemsg = get_std_save_message($retval);
+		$savemsg = get_std_save_message($retval);
 
 		pfSenseHeader("system_usermanager.php?id={$userid}&act={$useract}");
 		exit;
-  }
+	}
 }
 
 /* if ajax is calling, give them an update message */

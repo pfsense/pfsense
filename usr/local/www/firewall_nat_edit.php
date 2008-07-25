@@ -61,19 +61,6 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if($id > -1) {
-	$if = $a_nat[$id]['interface'];
-	$security_url = "firewall_nat_edit.php?if=". strtolower($if);
-	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
-		if(!in_array($security_url, $allowed)) {
-			// User does not have access
-	//		echo "displaying error {$security_url}"; print_r($allowed);
-			echo display_error_form("401", "Unauthorized. You do not have access to edit nat rules on the interface {$if}");
-			exit;
-		}
-	}
-}
-
 if (isset($_GET['dup']))
 	unset($id);
 

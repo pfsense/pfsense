@@ -7,12 +7,13 @@ if($config['theme'] <> "")
 	$g['theme'] = $config['theme'];
 else
 	$g['theme'] = "pfsense";
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title><?=gentitle($pgtitle);?></title>
+	<title>gentitle( $pgtitle )</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
         <?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
                   file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
@@ -24,8 +25,8 @@ else
 	<script type="text/javascript">var theme = "<?php echo $g['theme']; ?>"</script>
 	<script type="text/javascript" src="/themes/<?php echo $g['theme']; ?>/loader.js"></script>
 
-
 <?
+
 	/*
 	 *	Find all javascript files that need to be included
 	 *	for this page ... from the arrays ... :)

@@ -1470,7 +1470,7 @@ function convert_config() {
 	}
 	
 	/* Convert 4.7 -> 4.8 */
-        if ($config['version'] <= 4.7) {
+	if ($config['version'] <= 4.7) {
 		$config['dyndnses']['dyndns'] = array();
 		if (isset($config['dyndns']['enable'])) {
 			$tempdyn = array();
@@ -1502,7 +1502,7 @@ function convert_config() {
 			$config['dnsupdates']['dnsupdate'][] = $pconfig;
 			unset($config['dnsupdate']);
 		}
-		
+	
 		if (is_array($config['pppoe'])) {
 			$pconfig = array();
 			$pconfig['username'] = $config['pppoe']['username'];
@@ -1518,28 +1518,87 @@ function convert_config() {
 			$config['interfaces']['wan']['timeout'] = $pconfig['timeout'];
 		}
 		if (is_array($config['pptp'])) {
-                        $pconfig = array();
-                        $pconfig['username'] = $config['pptp']['username'];
-                        $pconfig['password'] = $config['pptp']['password'];
-                        $pconfig['provider'] = $config['pptp']['provider'];
-                        $pconfig['ondemand'] = isset($config['pptp']['ondemand']);
-                        $pconfig['timeout'] = $config['pptp']['timeout'];
-                        unset($config['pptp']);
-                        $config['interfaces']['wan']['username'] = $pconfig['username'];
-                        $config['interfaces']['wan']['password'] = $pconfig['password'];
-                        $config['interfaces']['wan']['provider'] = $pconfig['provider'];
-                        $config['interfaces']['wan']['username'] = isset($pconfig['ondemand']
-);
-                        $config['interfaces']['wan']['timeout'] = $pconfig['timeout'];
-                }
+			$pconfig = array();
+			$pconfig['username'] = $config['pptp']['username'];
+			$pconfig['password'] = $config['pptp']['password'];
+			$pconfig['provider'] = $config['pptp']['provider'];
+			$pconfig['ondemand'] = isset($config['pptp']['ondemand']);
+			$pconfig['timeout'] = $config['pptp']['timeout'];
+			unset($config['pptp']);
+			$config['interfaces']['wan']['username'] = $pconfig['username'];
+			$config['interfaces']['wan']['password'] = $pconfig['password'];
+			$config['interfaces']['wan']['provider'] = $pconfig['provider'];
+			$config['interfaces']['wan']['username'] = isset($pconfig['ondemand'] );
+			$config['interfaces']['wan']['timeout'] = $pconfig['timeout'];
+		}
 
 		$config['version'] = 4.8;
+	}
+
+	/* Convert 4.8 -> 4.9 */
+	if ($config['version'] <= 4.8) {
+
+		/* setup new all users group */
+		$all = array();
+		$all['name'] = "all";
+		$all['description'] = "All Users";
+		$all['scope'] = "System";
+		$all['gid'] = 1998;
+		$all['member'] = array();
+
+		if (!is_array($config['system']['group']))
+			$config['system']['group'] = array();
+
+		/* work around broken uid assignments */
+		$config['system']['nextuid'] = 2000;
+		foreach ($config['system']['user'] as & $user) {
+			if (isset($user['uid']) && !$user['uid'])
+				continue;
+			$user['uid'] = $config['system']['nextuid']++;
+		}
+
+		/* work around broken gid assignments */
+		$config['system']['nextgid'] = 2000;
+		foreach ($config['system']['group'] as & $group) {
+			if ($group['name'] == $g['admin_group'])
+				$group['gid'] = 1999;
+			else
+				$group['gid'] = $config['system']['nextgid']++;
+		}
+
+		/* build group membership information */
+		foreach ($config['system']['group'] as & $group) {
+			$group['member'] = array();
+			foreach ($config['system']['user'] as & $user) {
+				$groupnames = explode(",", $user['groupname']);
+				if (in_array($group['name'],$groupnames))
+					$group['member'][] = $user['uid'];
+			}
+		}
+
+		/* reset user group information */
+		foreach ($config['system']['user'] as & $user) {
+			unset($user['groupname']);
+			$all['member'][] = $user['uid'];
+		}
+
+		/* insert new all group */
+		$groups = Array();
+		$groups[] = $all;
+		$groups = array_merge($config['system']['group'],$groups);
+		$config['system']['group'] = $groups;
+		set_local_group($all);
+
+		/* sync all local account information */
+		sync_local_accounts();
+
+		$config['version'] = 4.9;
 	}
 
 	$now = date("H:i:s");
 	log_error("Ended Configuration upgrade at $now");
 
-//	if ($prev_version != $config['version'])
+	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }
 

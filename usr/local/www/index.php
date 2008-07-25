@@ -128,7 +128,7 @@
 		}
 		fclose($fd);
 	}
-	
+
 ##build list of widgets
 $directory = "/usr/local/www/widgets/widgets/";
 $dirhandle  = opendir($directory);
@@ -410,7 +410,6 @@ $closehead = false;
 ## Set Page Title and Include Header
 $pgtitle = array("{$g['product_name']} Dashboard");
 include("head.inc");
-	
 	
 echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domLib.js\"></script>";
 echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domTT.js\"></script>";

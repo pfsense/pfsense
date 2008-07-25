@@ -42,12 +42,8 @@
  *   returns true if user has access to edit a specific firewall nat one to one interface
  ******/
 function have_natonetooneruleint_access($if) {
-	global $config, $g, $HTTP_SERVER_VARS;
-	$allowed = $g['privs'];
-	if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) 
-		return true;
 	$security_url = "firewall_nat_1to1_edit.php?if=". strtolower($if);
-	if(in_array($security_url, $allowed)) 
+	if(isAllowedPage($security_url, $allowed)) 
 		return true;
 	return false;
 }
@@ -61,13 +57,8 @@ function have_natonetooneruleint_access($if) {
  *   returns true if user has access to edit a specific firewall nat port forward interface
  ******/
 function have_natpfruleint_access($if) {
-	global $config, $g, $HTTP_SERVER_VARS, $allowed;
-	if(!$allowed)
-		$allowed = $g['privs'];
-	if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) 
-		return true;
 	$security_url = "firewall_nat_edit.php?if=". strtolower($if);
-	if(in_array($security_url, $allowed)) 
+	if(isAllowedPage($security_url, $allowed)) 
 		return true;
 	return false;
 }
@@ -81,14 +72,9 @@ function have_natpfruleint_access($if) {
  *   returns true if user has access to edit a specific firewall interface
  ******/
 function have_ruleint_access($if) {
-	global $config, $g, $HTTP_SERVER_VARS;
-	$allowed = $g['privs'];
-	if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) 
-		return true;
 	$security_url = "firewall_rules.php?if=". strtolower($if);
-	if(is_array($allowed))
-		if(in_array($security_url, $allowed)) 
-			return true;
+	if(isAllowedPage($security_url)) 
+		return true;
 	return false;
 }
 
@@ -2336,43 +2322,42 @@ function display_top_tabs(& $tab_array) {
 	global $HTTP_SERVER_VARS;
 	global $config;
 	global $g;
-	$allowed = $g['privs'];
-	if(!$allowed) 
-		$allowed = $_SESSION['privs'];
 
-	/*   does the user have access to this tab?
-	 *   master user has access to everything.
-	*   if the user does not have access, simply
-	*   unset the tab item.
+	/*  does the user have access to this tab?
+	 *  master user has access to everything.
+	 *  if the user does not have access, simply
+	 *  unset the tab item.
+	 */
+
+	$tab_temp = array ();
+	foreach ($tab_array as $ta)
+		if(isAllowedPage($ta[2]))
+			$tab_temp[] = $ta;
+	/*
+		// FIXME :	if the checks are not good enough
+		//			in isAllowedPage, it needs to be
+		//			fixed instead of kludging here
+
+		// TODO: humm what shall we do with pkg_edit.php and pkg.php?
+		if ((strpos($link, "pkg.php")) !== false || (strpos($link, "pkg_edit.php")) !== false) {
+			$pos_equal = strpos($link, "=");
+			$pos_xmlsuffix = strpos($link, ".xml");
+			// do we match an absolute url including ?xml= foo
+			if(!isAllowedPage($link, $allowed))
+				$link = substr($link, $pos_equal +1, ($pos_xmlsuffix - $pos_equal +3));
+		}
+		// next check - what if the basename contains a query string?
+		if ((strpos($link, "?")) !== false) {
+			$pos_qmark = strpos($link, "?");
+			$link = substr($link, 0, $pos_qmark);
+		}
+		$authorized_text = print_r($allowed, true);
+		if(is_array($authorized))
+			if (in_array(basename($link), $authorized))
 	*/
 
-	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
-		$authorized = & $allowed;
-		$tab_temp = array ();
-		foreach ($tab_array as $ta) {
-			$link = $ta[2];
-			// TODO: humm what shall we do with pkg_edit.php and pkg.php?
-			if ((strpos($link, "pkg.php")) !== false || (strpos($link, "pkg_edit.php")) !== false) {
-				$pos_equal = strpos($link, "=");
-				$pos_xmlsuffix = strpos($link, ".xml");
-				/* do we match an absolute url including ?xml= foo */
-				if(!in_array($link, $allowed)) 
-					$link = substr($link, $pos_equal +1, ($pos_xmlsuffix - $pos_equal +3));
-			}
-			// next check - what if the basename contains a query string?
-			if ((strpos($link, "?")) !== false) {
-				$pos_qmark = strpos($link, "?");
-				$link = substr($link, 0, $pos_qmark);
-			}
-			$authorized_text = print_r($allowed, true);
-//			log_error("comparing " . basename($link) . " {$authorized_text}");
-			if(is_array($authorized))
-				if (in_array(basename($link), $authorized))
-					$tab_temp[] = $ta;
-		}
-		unset ($tab_array);
-		$tab_array = & $tab_temp;
-	}
+	unset ($tab_array);
+	$tab_array = & $tab_temp;
 
 	echo "<table cellpadding='0' cellspacing='0'>\n";
 	echo " <tr>\n";
@@ -2595,7 +2580,7 @@ function reload_interfaces() {
 
 /****f* pfsense-utils/sync_webgui_passwords
  * NAME
- *   sync_webgui_passwords - syncs webgui and ssh passwords
+ *   sync_webgui_passwords - syncs all www pwdb entries
  * INPUTS
  *   none
  * RESULT
@@ -2613,111 +2598,13 @@ function sync_webgui_passwords() {
 	}
 
 	/* loop through custom users and add "virtual" entries */
-	if ($config['system']['user']) {
+	if ($config['system']['user'])
 		foreach ($config['system']['user'] as $user)
 			fwrite($fd, "{$user['name']}:{$user['password']}\n");
-	}
 
 	fclose($fd);
 	chmod("{$g['varrun_path']}/htpasswd", 0600);
 
-	$root =& getUNIXRoot();
-	$crypted_pw = &$root['password'];
-
-	if (!$crypted_pw) {
-		log_error("Error: cannot determine root pwd in sync_webgui_passwords().\nRoot user struct follows:\n");
-		if(!$root) 
-			 log_error("Unable to determine root user" . print_r($root, true));
-		log_error("Testing whether your system has the necessary users... ");
-		empty($config['system']['user']) ? log_error("users are missing.\n") : log_error("users found.\n");
-		return 1;
-	}
-
-	if(file_exists("/etc/pwd.db.tmp")) 
-		unlink("/etc/pwd.db.tmp");
-
-	mwexec("/usr/sbin/pwd_mkdb -d /etc -p /etc/master.passwd");
-	mwexec("/usr/sbin/pwd_mkdb -p /etc/master.passwd");
-	/* sync root */
-	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
-	fwrite($fd, $crypted_pw);
-	pclose($fd);
-	mwexec("/usr/sbin/pw usermod -n root -s /bin/sh");
-
-	/* and again for shell users */
-	/* only users with hasShellAccess() == true should be synced */
-	if($config['system']['user']) {
-		$home_base = $g['platform'] == "pfSense" ? "/home" : "/var/home";
-
-		if(! is_dir($home_base))
-			mkdir($home_base, 0755);
-
-		foreach($config['system']['user'] as $user) {
-			if (hasShellAccess($user['name']) || isAllowedToCopyFiles($user['name'])) {
-				$home  = hasShellAccess($user['name']) ? "{$home_base}/{$user['name']}" : "{$home_base}/scponly";
-				$shell = isAllowedToCopyFiles($user['name']) ? "/usr/local/bin/scponly" : "/etc/rc.initial";
-				if (isAllowedToCopyFiles($user['name']))
-					$user['groupname'] = "scponly";
-
-				$fd = popen("/usr/sbin/pw groupshow -n {$user['groupname']} 2>&1", "r");
-				$pwread = fgets($fd, 4096);
-				pclose($fd);
-
-				if (strpos($pwread, "unknown group") !== false) {
-					$groupname = $user['groupname'];
-					$group = $config['system']['group'][$groupindex[$groupname]];
-
-					if (isset($group) && is_array($group)) {
-						log_error("Running: /usr/sbin/pw groupadd -g {$group['gid']} -n {$group['name']}");
-						$fd = popen("/usr/sbin/pw groupadd -g {$group['gid']} -n {$group['name']}", "r");
-						pclose($fd);
-					} elseif (isAllowedToCopyFiles($user['name'])) {
-						log_error("Running: /usr/sbin/pw groupadd -g 100 -n scponly");
-						$fd = popen("/usr/sbin/pw groupadd -g 100 -n scponly", "r");
-						pclose($fd);
-					}
-				}
-
-				$fd = popen("/usr/sbin/pw usershow -n {$user['name']} 2>&1", "r");
-				$pwread = fgets($fd, 4096);
-				pclose($fd);
-
-				isSystemAdmin($user['name']) ? $group = "wheel" : $group = "staff";
-
-				if (strpos($pwread, "no such user") === false) {
-					log_error("Running: /usr/sbin/pw usermod -n {$user['name']} -g {$user['groupname']} -G {$group} -H 0");
-					$fd = popen("/usr/sbin/pw usermod -n {$user['name']} -g {$user['groupname']} -G {$group} -H 0", "w");
-					fwrite($fd, $user['password']);
-					pclose($fd);
-				} else {
-					log_error("Running: /usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c '" . escapeshellarg($user['fullname']) . " -g {$user['groupname']} -G {$group} -H 0");
-					$fd = popen("/usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c " . escapeshellarg($user['fullname']) . " -g {$user['groupname']} -G {$group} -H 0", "w");
-					fwrite($fd, $user['password']);
-					pclose($fd);
-				}
-
-				/* common user related operations */
-				mwexec("/usr/sbin/pw usermod -n {$user['name']} -s {$shell}");
-
-				if(! is_dir($home)) mkdir($home, 0755);
-				mwexec("/usr/sbin/pw usermod -n {$user['name']} -d {$home} -m");
-
-				if (isAllowedToCopyFiles($user['name'])) {
-					mwexec("/usr/sbin/pw usermod -n {$user['name']} -g scponly");
-				}
-
-				if (file_exists("{$home_base}/scponly"))
-					mwexec("chmod 0660 {$home_base}/scponly");
-
-				if(isset($config['system']['ssh']['sshdkeyonly']) && ! isAllowedToCopyFiles($user['name'])) {
-					create_authorized_keys($user['name'], $home);
-				}
-			}
-		}
-	}
-
-	mwexec("/usr/sbin/pwd_mkdb -d /etc -p /etc/master.passwd");
-	mwexec("/usr/sbin/pwd_mkdb -p /etc/master.passwd");
 	conf_mount_ro();
 }
 

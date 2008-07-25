@@ -281,14 +281,13 @@ function interface_lagg_configure(&$lagg) {
 	if (!count($members))
 		return -1;
 	
-	$checklist = get_configured_interface_list();
+	$checklist = get_interface_list();
 
 	$cmd = "";
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
-        	$realif = get_real_wan_interface($member);
-		$realif =  escapeshellarg($realif);
+		$realif =  escapeshellarg($member);
         	/* make sure the parent interface is up */
         	mwexec("/sbin/ifconfig {$realif} up");
 		$cmd .= " laggport {$realif}";

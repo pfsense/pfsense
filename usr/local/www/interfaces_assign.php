@@ -72,6 +72,15 @@ if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
         }
 }
 
+/* add GRE interfaces */
+if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
+        foreach ($config['laggs']['lagg'] as $lagg) {
+                $portlist[$lagg['laggif']] = $lagg;
+                $portlist[$lagg['laggif']]['islagg'] = true;
+        }
+}
+
+
 /* add PPP interfaces */
 if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 	$i = 0;
@@ -344,6 +353,11 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
                                         echo htmlspecialchars($descr);
                                  } elseif ($portinfo['isgif']) {
                                          $descr = "GRE {$portinfo['remote-addr']}";
+                                         if ($portinfo['descr'])
+                                                 $descr .= " (" . $portinfo['descr'] . ")";
+                                        echo htmlspecialchars($descr);
+                                 } elseif ($portinfo['islagg']) {
+                                         $descr = strtoupper($portinfo['laggif']);
                                          if ($portinfo['descr'])
                                                  $descr .= " (" . $portinfo['descr'] . ")";
                                         echo htmlspecialchars($descr);

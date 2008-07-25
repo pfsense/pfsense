@@ -255,6 +255,64 @@ function interface_bridge_configure(&$bridge) {
         return $bridgeif;
 }
 
+function interfaces_lagg_configure() {
+        global $config;
+
+        $i = 0;
+        if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
+                foreach ($config['laggs']['lagg'] as $lagg) {
+                        if(empty($lagg['laggif'])) {
+                                $lagg['laggif'] = "lagg{$i}";
+                        }
+                        /* XXX: Maybe we should report any errors?! */
+                        interface_lagg_configure($lagg);
+                        $i++;
+                }
+        }
+}
+
+function interface_lagg_configure(&$lagg) {
+        global $config, $g;
+
+        if (!is_array($lagg))
+		return -1;
+
+	$members = explode(',', $lagg['members']);
+	if (!count($members))
+		return -1;
+	
+	$checklist = get_configured_interface_list();
+
+	$cmd = "";
+	foreach ($members as $member) {
+		if (!array_key_exists($member, $checklist))
+			continue;
+        	$realif = get_real_wan_interface($member);
+		$realif =  escapeshellarg($realif);
+        	/* make sure the parent interface is up */
+        	mwexec("/sbin/ifconfig {$realif} up");
+		$cmd .= " laggport {$realif}";
+	}
+
+        if ($g['booting'] || !(empty($lagg['laggif']))) {
+                mwexec("/sbin/ifconfig {$lagg['laggif']} destroy");
+                mwexec("/sbin/ifconfig {$lagg['laggif']} create");
+		$laggif = $lagg['laggif'];
+        } else
+                $laggif = exec("/sbin/ifconfig lagg create");
+
+                return -1;
+
+	/* Add interfaces to lagg */
+        mwexec("/sbin/ifconfig {$laggif} {$cmd}");
+
+	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
+
+	mwexec("/sbin/ifconfig {$laggif} up");
+
+        return $laggif;
+}
+
 function interfaces_gre_configure() {
         global $config;
 

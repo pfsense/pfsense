@@ -73,12 +73,20 @@ if (count($a_ipsec) == 0) {
 	$pconfig['p1cert'] = base64_decode($a_ipsec['p1']['cert']);
 	$pconfig['p1privatekey'] = base64_decode($a_ipsec['p1']['private-key']);
 	$pconfig['p2proto'] = $a_ipsec['p2']['protocol'];
+
 	$pconfig['p2ealgos'] = $a_ipsec['p2']['encryption-algorithm-option'];
 	$pconfig['p2halgos'] = $a_ipsec['p2']['hash-algorithm-option'];
+
 	$pconfig['p2pfsgroup'] = $a_ipsec['p2']['pfsgroup'];
 	$pconfig['p2lifetime'] = $a_ipsec['p2']['lifetime'];
 }
 
+if ($_POST['apply']) {
+	unlink($d_ipsecconfdirty_path);
+	header("Location: vpn_ipsec_mobile.php");
+	exit;		
+}
+	
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;

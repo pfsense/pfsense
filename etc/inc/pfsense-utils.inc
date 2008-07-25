@@ -2520,6 +2520,7 @@ function reload_interfaces_sync() {
 	/* set up other cloned interfaces */
 	interfaces_gif_configure();
 	interfaces_gre_configure();
+	interfaces_bridge_configure();
 
 	/* set up static routes */
 	if($debug)
@@ -2678,6 +2679,7 @@ function reload_all_sync() {
         /* set up other cloned interfaces */
         interfaces_gif_configure();
         interfaces_gre_configure();
+        interfaces_bridge_configure();
 
 	/* bring up carp interfaces */
 	interfaces_carp_configure();

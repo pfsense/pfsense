@@ -155,6 +155,9 @@
         /* set up GIF virtual interfaces */
         interfaces_gif_configure();
 
+	/* set up BRIDGe virtual interfaces */
+        interfaces_bridge_configure();
+
 	/* bring up carp interfaces */
 	interfaces_carp_configure();
 	

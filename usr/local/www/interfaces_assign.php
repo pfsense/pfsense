@@ -297,6 +297,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	$tab_array[2] = array("PPP", false, "interfaces_ppp.php");
         $tab_array[3] = array("GRE", false, "interfaces_gre.php");
         $tab_array[4] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[5] = array("Bridges", false, "interfaces_bridge.php");
 	display_top_tabs($tab_array);
 ?>  
   </td></tr>

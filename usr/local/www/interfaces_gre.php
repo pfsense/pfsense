@@ -82,6 +82,7 @@ include("head.inc");
 	$tab_array[2] = array("PPP", false, "interfaces_ppp.php");
 	$tab_array[3] = array("GRE", true, "interfaces_gre.php");
 	$tab_array[4] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[5] = array("Bridges", false, "interfaces_bridge.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

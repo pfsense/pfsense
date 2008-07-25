@@ -83,6 +83,7 @@ include("head.inc");
 	$tab_array[3] = array("GRE", true, "interfaces_gre.php");
 	$tab_array[4] = array("GIF", false, "interfaces_gif.php");
 	$tab_array[5] = array("Bridges", false, "interfaces_bridge.php");
+	$tab_array[6] = array("LAGG", false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

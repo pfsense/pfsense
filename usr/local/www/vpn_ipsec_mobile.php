@@ -82,12 +82,11 @@ if (count($a_ipsec) == 0) {
 }
 
 if ($_POST['apply']) {
-	unlink($d_ipsecconfdirty_path);
-	header("Location: vpn_ipsec_mobile.php");
-	exit;		
-}
-	
-if ($_POST) {
+		$retval = 0;
+		$retval = vpn_ipsec_configure();
+		$savemsg = get_std_save_message($retval);	
+		unlink($d_ipsecconfdirty_path);
+} else if($_POST)  {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -194,6 +193,7 @@ function methodsel_change() {
 //-->
 </script>
 <form action="vpn_ipsec_mobile.php" method="post">
+<?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_ipsecconfdirty_path)): ?><p>
 <?php print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>

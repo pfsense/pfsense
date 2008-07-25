@@ -35,6 +35,7 @@ if (!is_array($config['laggs']['lagg']))
 
 $a_laggs = &$config['laggs']['lagg'];
 
+$portlist = get_interface_list();
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -61,7 +62,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$lagg = array();
-		$lagg['members'] = $_POST['members'];
+		$lagg['members'] = implode(',', $_POST['members']);
 		$lagg['descr'] = $_POST['descr'];
 		$lagg['laggif'] = $_POST['laggif'];
 
@@ -97,12 +98,11 @@ include("head.inc");
                   <td width="78%" class="vtable">
                     <select name="members[]" multiple="true" size="4" class="formselect">
                       <?php
-						$portlist = get_configured_interface_with_descr();
 					  	foreach ($portlist as $ifn => $ifinfo) {
 							echo "<option value=\"{$ifn}\"";
 							if (stristr($pconfig['members'], $ifn))
 								echo "selected";
-							echo ">{$ifinfo}</option>";
+							echo ">". $ifn ."(".$ifinfo['mac'] .")</option>";
 						}
 		      		?>
                     </select>

@@ -100,7 +100,7 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_laggs as $lagg): ?>
                 <tr>
                   <td class="listlr">
-					<?=htmlspecialchars($lagg['if']);?>
+					<?=htmlspecialchars(strtoupper($lagg['laggif']));?>
                   </td>
                   <td class="listr">
 					<?=htmlspecialchars($lagg['members']);?>

@@ -288,8 +288,9 @@ function interface_lagg_configure(&$lagg) {
 		if (!array_key_exists($member, $checklist))
 			continue;
 		$realif =  escapeshellarg($member);
+		$mtu = get_interface_mtu($realif);
         	/* make sure the parent interface is up */
-        	mwexec("/sbin/ifconfig {$realif} up");
+        	mwexec("/sbin/ifconfig {$realif} mtu {$mtu} up");
 		$cmd .= " laggport {$realif}";
 	}
 

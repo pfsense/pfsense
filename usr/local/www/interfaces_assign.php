@@ -48,6 +48,30 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	}
 }
 
+/* add Bridge interfaces */
+if (is_array($config['bridges']['bridge']) && count($config['bridges']['bridge'])) {
+        foreach ($config['bridges']['bridge'] as $bridge) {
+                $portlist[$bridge['bridgeif']] = $bridge;
+                $portlist[$bridge['bridgeif']]['isbridge'] = true;
+        }
+}
+
+/* add GIF interfaces */
+if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
+        foreach ($config['gifs']['gif'] as $gif) {
+                $portlist[$gif['gifif']] = $gif;
+                $portlist[$gif['gifif']]['isgif'] = true;
+        }
+}
+
+/* add GRE interfaces */
+if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
+        foreach ($config['gres']['gre'] as $gre) {
+                $portlist[$gre['greif']] = $gre;
+                $portlist[$gre['greif']]['isgre'] = true;
+        }
+}
+
 /* add PPP interfaces */
 if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 	$i = 0;
@@ -307,6 +331,21 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 					if ($portinfo['descr'])
 						$descr .= " (" . $portinfo['descr'] . ")";
 					echo htmlspecialchars($descr);
+                                 } elseif ($portinfo['isbridge']) {
+                                         $descr = strtoupper($portinfo['bridgeif']);
+                                         if ($portinfo['descr'])
+                                                 $descr .= " (" . $portinfo['descr'] . ")";
+                                        echo htmlspecialchars($descr);
+                                 } elseif ($portinfo['isgre']) {
+                                         $descr = "GRE {$portinfo['remote-addr']}";
+                                         if ($portinfo['descr'])
+                                                 $descr .= " (" . $portinfo['descr'] . ")";
+                                        echo htmlspecialchars($descr);
+                                 } elseif ($portinfo['isgif']) {
+                                         $descr = "GRE {$portinfo['remote-addr']}";
+                                         if ($portinfo['descr'])
+                                                 $descr .= " (" . $portinfo['descr'] . ")";
+                                        echo htmlspecialchars($descr);
 				  } else
 					echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
 		  ?>

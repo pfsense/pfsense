@@ -333,6 +333,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'ppp',
 				'sl',
 				'gif',
+				'gre',
 				'faith',
 				'lo',
 				'ng',

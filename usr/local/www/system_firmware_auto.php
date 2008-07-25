@@ -52,6 +52,8 @@ include("head.inc");
 
 <?php include("fbegin.inc"); ?>
 
+<p/>
+
 <form action="system_firmware_auto.php" method="post">
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>

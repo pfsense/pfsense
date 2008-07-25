@@ -156,7 +156,7 @@ if (!is_array($config['widgets'])) {
 	$config['widgets'] = array();
 }
 
-##build widget information
+##build widget saved list information
 if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 	$pconfig['sequence'] = $config['widgets']['sequence'];
 	
@@ -177,6 +177,13 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 		$savedwidgetfiles[] = $widgetname . ".widget.php";
 	}
 	
+	##add widgets that may not be in the saved configuration, in case they are to be displayed later
+    foreach ($widgetfiles as $defaultwidgets){         
+         if (!in_array($defaultwidgets, $savedwidgetfiles)){
+             $savedwidgetfiles[] = $defaultwidgets;
+         }
+     }   
+	
 	##find custom configurations of a particular widget and load its info to $pconfig
 	foreach ($widgetnames as $widget){
         if ($config['widgets'][$widget . '-config']){
@@ -185,7 +192,9 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
     }   
 	
 	$widgetlist = $savedwidgetfiles;	
-} else{
+} 
+##no saved widget sequence found, build default list.
+else{
 	$widgetlist = $widgetfiles;
 }
 
@@ -234,7 +243,7 @@ function widgetAjax(widget) {
 }
 
 
-function addDiv(selectedDiv){	
+function addWidget(selectedDiv){	
 	selectedDiv2 = selectedDiv + "-container";
 	d = document;
 	textlink = d.getElementById(selectedDiv2);
@@ -253,7 +262,7 @@ function addDiv(selectedDiv){
 	}
 }
 
-function configureDiv(selectedDiv){
+function configureWidget(selectedDiv){
 	selectIntLink = selectedDiv + "-settings";	
 	d = document;
 	textlink = d.getElementById(selectIntLink);
@@ -263,7 +272,7 @@ function configureDiv(selectedDiv){
 		Effect.BlindUp(selectIntLink, {duration:1});
 }
 
-function showDiv(selectedDiv,swapButtons){
+function showWidget(selectedDiv,swapButtons){
 	//appear element
     Effect.BlindDown(selectedDiv, {duration:1});      
     showSave();    
@@ -285,7 +294,7 @@ function showDiv(selectedDiv,swapButtons){
     
 }
 	
-function minimizeDiv(selectedDiv,swapButtons){
+function minimizeWidget(selectedDiv,swapButtons){
 	//fade element
     Effect.BlindUp(selectedDiv, {duration:1});      
     showSave();
@@ -305,7 +314,7 @@ function minimizeDiv(selectedDiv,swapButtons){
     
 }
 
-function closeDiv(selectedDiv){	
+function closeWidget(selectedDiv){	
 	showSave();
 	selectedDiv = selectedDiv + "-container";
 	Effect.Fade(selectedDiv, {duration:1});
@@ -449,12 +458,12 @@ echo $jscriptstr;
 					{
 						//echo widget title 
 						?>
-						<span style="cursor: pointer;" onclick='return addDiv("<?php echo $widgetname; ?>")'>
+						<span style="cursor: pointer;" onclick='return addWidget("<?php echo $widgetname; ?>")'>
 						<u><?php echo $$widgettitle; ?></u></span><br>
 						<?php 
 					}
 					else {?>
-						<span style="cursor: pointer;" onclick='return addDiv("<?php echo $widgetname; ?>")'>
+						<span style="cursor: pointer;" onclick='return addWidget("<?php echo $widgetname; ?>")'>
 						<u><?php echo $nicename; ?></u></span><br><?php
 					}
 			}
@@ -526,28 +535,28 @@ echo $jscriptstr;
 				$divdisplay = "block";
 				$display = "block";
 				$inputdisplay = "show";					
-				$showdiv = "none";
+				$showWidget = "none";
 				$mindiv = "inline";
 			}
 			else if ($displayarray[$widgetcounter] == "hide") {
 				$divdisplay = "block";
 				$display = "none";
 				$inputdisplay = "hide";		
-				$showdiv = "inline";
+				$showWidget = "inline";
 				$mindiv = "none";
 			}
 			else if ($displayarray[$widgetcounter] == "close"){
 				$divdisplay = "none";
 				$display = "block";
 				$inputdisplay = "close";			
-				$showdiv = "none";
+				$showWidget = "none";
 				$mindiv = "inline";
 			}
 			else{
 				$divdisplay = "none";
 				$display = "block";
 				$inputdisplay = "none";
-				$showdiv = "none";
+				$showWidget = "none";
 				$mindiv = "inline";
 			}
 		}
@@ -557,7 +566,7 @@ echo $jscriptstr;
 				$divdisplay = "block";
 				$display = "block";
 				$inputdisplay = "show";					
-				$showdiv = "none";
+				$showWidget = "none";
 				$mindiv = "inline";
 				$firstprint = true;
 			}
@@ -568,7 +577,7 @@ echo $jscriptstr;
 					$divdisplay = "block";
 					$display = "block";
 					$inputdisplay = "show";					
-					$showdiv = "none";
+					$showWidget = "none";
 					$mindiv = "inline";
 				}
 				else if ($widget == "traffic_graphs.widget.php")
@@ -576,14 +585,14 @@ echo $jscriptstr;
 					$divdisplay = "block";
 					$display = "block";
 					$inputdisplay = "show";					
-					$showdiv = "none";
+					$showWidget = "none";
 					$mindiv = "inline";
 				}
 				else {
 					$divdisplay = "none";
 					$display = "block";
 					$inputdisplay = "close";			
-					$showdiv = "none";
+					$showWidget = "none";
 					$mindiv = "inline";
 				}
 			}
@@ -641,10 +650,10 @@ echo $jscriptstr;
 					?>
 				</div>
 				<div align="right" style="float:right;">	
-					<div id="<?php echo $widgetname;?>-configure" onclick='return configureDiv("<?php echo $widgetname;?>")' style="display:none; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_configure.gif" /></div>									
-					<div id="<?php echo $widgetname;?>-open" onclick='return showDiv("<?php echo $widgetname;?>",true)' style="display:<?php echo $showdiv;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" /></div>	
-					<div id="<?php echo $widgetname;?>-min" onclick='return minimizeDiv("<?php echo $widgetname;?>",true)' style="display:<?php echo $mindiv;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif"/></div>												
-					<div id="<?php echo $widgetname;?>-close" onclick='return closeDiv("<?php echo $widgetname;?>",true)' style="display:inline; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" /></div>	
+					<div id="<?php echo $widgetname;?>-configure" onclick='return configureWidget("<?php echo $widgetname;?>")' style="display:none; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_configure.gif" /></div>									
+					<div id="<?php echo $widgetname;?>-open" onclick='return showWidget("<?php echo $widgetname;?>",true)' style="display:<?php echo $showWidget;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" /></div>	
+					<div id="<?php echo $widgetname;?>-min" onclick='return minimizeWidget("<?php echo $widgetname;?>",true)' style="display:<?php echo $mindiv;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif"/></div>												
+					<div id="<?php echo $widgetname;?>-close" onclick='return closeWidget("<?php echo $widgetname;?>",true)' style="display:inline; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" /></div>	
 				</div>
 				<div style="clear:both;"></div>
 			</div>

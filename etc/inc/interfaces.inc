@@ -140,7 +140,7 @@ function interface_bridge_configure(&$bridge) {
                 return -1;
 
 	$members = explode(',', $bridge['members']);
-	if (!count(members))
+	if (!count($members))
 		return -1;
 	
 	$checklist = get_configured_interface_list();

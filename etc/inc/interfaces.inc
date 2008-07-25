@@ -117,6 +117,144 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
         return $vlanif;
 }
 
+function interfaces_bridge_configure() {
+        global $config;
+
+        $i = 0;
+        if (is_array($config['bridges']['bridge']) && count($config['bridges']['bridge'])) {
+                foreach ($config['bridges']['bridge'] as $bridge) {
+                        if(empty($bridge['bridgeif'])) {
+                                $bridge['bridgeif'] = "bridge{$i}";
+                        }
+                        /* XXX: Maybe we should report any errors?! */
+                        interface_bridge_configure($bridge);
+                        $i++;
+                }
+        }
+}
+
+function interface_bridge_configure(&$bridge) {
+        global $config, $g;
+
+        if (!is_array($bridge))
+                return -1;
+
+	$members = explode(',', $bridge['members']);
+	if (!count(members))
+		return -1;
+	
+	$checklist = get_configured_interface_list();
+
+	$cmd = "";
+	foreach ($members as $member) {
+		if (!array_key_exists($member, $checklist))
+			continue;
+        	$realif = get_real_wan_interface($member);
+		$realif =  escapeshellarg($realif);
+        	/* make sure the parent interface is up */
+        	mwexec("/sbin/ifconfig {$realif} up");
+		$cmd .= " addm {$realif}";
+	}
+
+
+        if ($g['booting'] || $bridge['bridgeif'] <> "") {
+                mwexec("/sbin/ifconfig {$bridge['bridgeif']} destroy");
+                mwexec("/sbin/ifconfig {$bridge['bridgeif']} create");
+                $bridgeif = $bridge['bridgeif'];
+        } else
+                $bridgeif = exec("/sbin/ifconfig bridge create");
+
+	/* Add interfaces to bridge */
+        mwexec("/sbin/ifconfig {$bridgeif} {$cmd}");
+	
+	if (isset($bridge['enablestp'])) {
+		/* Choose spanning tree proto */
+		mwexec("/sbin/ifconfig {$bridgeif} proto {$bridge['proto']}");	
+		
+		$stpifs = explode(',', $bridge['stp']);
+		foreach ($stpifs as $stpif) {
+			$realif = get_real_wan_interface($stpif);
+			mwexec("/sbin/ifconfig {$bridgeif} stp {$realif}");
+		}
+		if ($bridge['maxage'] <> "")
+			mwexec("/sbin/ifconfig {$bridgeif} maxage {$bridge['maxage']}");
+		if ($brige['fwdelay'] <> "")
+			mwexec("/sbin/ifconfig {$bridgeif} fwddelay {$bridge['fwdelay']}");
+		if ($brige['hellotime'] <> "")
+                        mwexec("/sbin/ifconfig {$bridgeif} hellotime {$bridge['hellotime']}");
+		if ($brige['priority'] <> "")
+                        mwexec("/sbin/ifconfig {$bridgeif} priority {$bridge['priority']}");
+		if ($brige['holdcount'] <> "")
+                        mwexec("/sbin/ifconfig {$bridgeif} holdcnt {$bridge['holdcnt']}");
+		$pconfig = explode(",", $bridge['ifpriority']);
+		$ifpriority = array();
+		foreach ($pconfig as $cfg) {
+			$embcfg = explode(":", $cfg);
+			foreach ($embcfg as $key => $value)
+				$ifpriority[$key] = $value;
+		}
+		foreach ($ifpriority as $key => $value) {
+			$realif = get_real_wan_interface($key);
+			mwexec("/sbin/ifconfig ${bridgeif} ifpriority {$realif} {$value}"); 
+		}
+		$pconfig = explode(",", $bridges['ifpathcost']);
+		$ifpathcost = array();
+		foreach ($pconfig as $cfg) {
+			$embcfg = explode(":", $cfg);
+			foreach ($embcfg as $key => $value)
+				$ifpathcost[$key] = $value;
+		}
+		foreach ($ifpriority as $key => $value) {
+                        $realif = get_real_wan_interface($key);
+                        mwexec("/sbin/ifconfig ${bridgeif} ifpathcost {$realif} {$value}");
+                }
+
+	}
+
+	if ($bridge['maxaddr'] <> "")
+		mwexec("/sbin/ifconfig {$bridgeif} maxaddr {$bridge['maxaddr']}");
+        if ($bridge['timeout'] <> "")
+                mwexec("/sbin/ifconfig {$bridgeif} timeout {$bridge['timeout']}");
+        if ($bridge['span'] <> "") {
+		$realif = get_real_wan_interface($bridge['span']);
+                mwexec("/sbin/ifconfig {$bridgeif} span {$realif}");
+	}
+        $edgeifs = explode(',', $bridge['edge']);
+        foreach ($edgeifs as $edgeif) {
+		$realif = get_real_wan_interface($edgeif);
+                mwexec("/sbin/ifconfig {$bridgeif} edge {$realif}");
+        }
+        $edgeifs = explode(',', $bridge['autoedge']);
+        foreach ($edgeifs as $edgeif) {
+                $realif = get_real_wan_interface($edgeif);
+                mwexec("/sbin/ifconfig {$bridgeif} -autoedge {$realif}");
+        }
+        $ptpifs = explode(',', $bridge['ptp']);
+        foreach ($ptpifs as $ptpif) {
+                $realif = get_real_wan_interface($ptpif);
+                mwexec("/sbin/ifconfig {$bridgeif} ptp {$realif}");
+        }
+        $ptpifs = explode(',', $bridge['autoptp']);
+        foreach ($ptpifs as $ptpif) {
+                $realif = get_real_wan_interface($ptpif);
+                mwexec("/sbin/ifconfig {$bridgeif} -autoptp {$realif}");
+        }
+        $stickyifs = explode(',', $bridge['static']);
+        foreach ($stickyifs as $stickyif) {
+                $realif = get_real_wan_interface($stickyif);
+                mwexec("/sbin/ifconfig {$bridgeif} sticky {$realif}");
+        }
+        $privateifs = explode(',', $bridge['private']);
+        foreach ($privateifs as $privateif) {
+                $realif = get_real_wan_interface($privateif);
+                mwexec("/sbin/ifconfig {$bridgeif} private {$realif}");
+        }
+
+        mwexec("/sbin/ifconfig {$bridgeif} up");
+
+        return $bridgeif;
+}
+
 function interfaces_gre_configure() {
         global $config;
 

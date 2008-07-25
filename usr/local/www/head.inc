@@ -8,12 +8,14 @@ if($config['theme'] <> "")
 else
 	$g['theme'] = "pfsense";
 
+$pagetitle = gentitle( $pgtitle );
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title>gentitle( $pgtitle )</title>
+	<title><?=$pagetitle;?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
         <?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
                   file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>

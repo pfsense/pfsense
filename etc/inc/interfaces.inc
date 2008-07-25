@@ -301,12 +301,11 @@ function interface_lagg_configure(&$lagg) {
         } else
                 $laggif = exec("/sbin/ifconfig lagg create");
 
-                return -1;
+
+	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
 
 	/* Add interfaces to lagg */
         mwexec("/sbin/ifconfig {$laggif} {$cmd}");
-
-	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
 
 	mwexec("/sbin/ifconfig {$laggif} up");
 

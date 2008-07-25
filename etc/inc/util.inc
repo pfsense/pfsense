@@ -342,7 +342,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'pfsync',
 				'enc',
 				'tun',
-				'carp'
+				'carp',
+				'lagg'
 		);
 	}
 	switch($mode) {

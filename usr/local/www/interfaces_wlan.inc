@@ -320,7 +320,7 @@ function wireless_config_print() {
 			<td valign="top" class="vncell">Enable Hide SSID</td>
 			<td class="vtable"><input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <? if ($pconfig['hidessid_enable']) echo "checked";?>>
 			<br/>
-			Setting this option will force the card to NOT broadcast it's SSID
+			Setting this option will force the card to NOT broadcast its SSID
 			<br/>
 			(this might create problems for some clients). </td>
 		</tr>

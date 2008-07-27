@@ -30,7 +30,11 @@ $pagetitle = gentitle( $pgtitle );
 			var theme = "<?php echo $g['theme']; ?>";
 		</script>
 		<?php outputJavaScriptFileInline("themes/{$g['theme']}/loader.js"); ?>
-<?
+<?php
+		if($_GET['enablefirebuglite']) {
+			outputJavaScriptFileInline("javascript/pi.js");
+			outputJavaScriptFileInline("javascript/firebug-lite.js");
+		}
 
 	/*
 	 *	Find all javascript files that need to be included

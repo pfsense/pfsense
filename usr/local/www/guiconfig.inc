@@ -813,6 +813,20 @@ function outputJavaScriptFileInline($javascript) {
 }
 
 
+
+function outputCSSPrintFileInline($css) {
+	if(file_exists($css)) {
+		echo "\n<style media=\"print\" type=\"text/css\">\n";
+		include($css);
+		echo "\n</style>\n";
+	} else {
+		echo "<p/>ERROR!  COULD NOT LOCATE $css";
+		echo "<p/>Please contact webmaster.";
+		exit;
+	}
+}
+
+
 function outputCSSFileInline($css) {
 	if(file_exists($css)) {
 		echo "\n<style type=\"text/css\">\n";

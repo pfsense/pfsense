@@ -25,8 +25,7 @@ $pagetitle = gentitle( $pgtitle );
         <?php endif; ?>
 
 	<?php outputCSSFileInline("niftycssCode.css"); ?>
-	<?php outputCSSFileInline("niftycssprintCode.css"); ?>
-		<link rel="stylesheet" type="text/css" href="niftycssprintCode.css" media="print">
+	<link rel="stylesheet" type="text/css" href="niftycssprintCode.css" media="print">
 	<?php outputJavaScriptFileInline("niftyjsCode.js"); ?>
 	<script type="text/javascript">
 		var theme = "<?php echo $g['theme']; ?>";

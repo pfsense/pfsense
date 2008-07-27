@@ -825,7 +825,7 @@ server.event-handler		= "freebsd-kqueue"
 ## modules to load
 server.modules              =   (
 				  {$captive_portal_module}
-				  "mod_access", "mod_accesslog", "mod_expire"
+				  "mod_access", "mod_accesslog", "mod_expire",
                                   {$module}{$captiveportal}
 				)
 

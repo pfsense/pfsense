@@ -970,6 +970,7 @@ compress.cache-dir         = "/tmp/"
 compress.filetype          = ("text/plain", "text/html", "text/javascript", "text/css")
 
 expire.url = (
+                "/javascript/"      => "access 50 hours",	
                 "/themes/"			 => "access 50 hours",
                 "/widgets/"			 => "access 50 hours",
                 "/tree/"			 => "access 50 hours",

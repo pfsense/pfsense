@@ -825,7 +825,7 @@ server.event-handler		= "freebsd-kqueue"
 ## modules to load
 server.modules              =   (
 				  {$captive_portal_module}
-				  "mod_access", "mod_accesslog",
+				  "mod_access", "mod_accesslog", "mod_expire"
                                   {$module}{$captiveportal}
 				)
 
@@ -964,6 +964,18 @@ debug.log-file-not-found   = "disable"
 {$cgi_config}
 
 {$captive_portal_mod_evasive}
+
+# Turn on Lighty caching directives
+compress.cache-dir         = "/tmp/"
+compress.filetype          = ("text/plain", "text/html", "text/javascript", "text/css")
+
+expire.url = (
+                "/themes/"			 => "access 50 hours",
+                "/widgets/"			 => "access 50 hours",
+                "/tree/"			 => "access 50 hours",
+                "/tree-images/"      => "access 50 hours",
+                "/includes/"	     => "access 50 hours"
+        )
 
 EOD;
 

@@ -19,13 +19,13 @@ $pagetitle = gentitle( $pgtitle );
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
         <?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
                   file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
-        <link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/wizard.css" media="all" />
+		<?php outputCSSFileInline("themes/{$g['theme']}/wizard.css"); ?>
         <?php else: ?>
         <link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
         <?php endif; ?>
-	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
+	<?php outputCSSFileInline("niftycssprintCode.css"); ?>
 	<script type="text/javascript">var theme = "<?php echo $g['theme']; ?>"</script>
-	<script type="text/javascript" src="/themes/<?php echo $g['theme']; ?>/loader.js"></script>
+	<?php outputJavaScriptFileInline("themes/{$g['theme']}/loader.js"); ?>
 
 <?
 
@@ -41,7 +41,8 @@ $pagetitle = gentitle( $pgtitle );
 		if ($dh = opendir($path)) {
 			while (($file = readdir($dh)) !== false) {
 		   		if (is_dir($file)) continue;
-				echo "\t".'<script type="text/javascript" src="/javascript/'.$dir.'/'.$file.'"></script>'."\n";
+				//echo "\t".'<script type="text/javascript" src="/javascript/'.$dir.'/'.$file.'"></script>'."\n";
+				outputJavaScriptFileInline("javascript/{$dir}/{$file}"); 
 			}
 			closedir($dh);
 		}

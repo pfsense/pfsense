@@ -430,8 +430,7 @@ columns = ['col1','col2'];
 
 </script>
 
-
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+<?php outputJavaScriptFileInline("javascript/scriptaculous/prototype.js"); ?>
 <?php outputJavaScriptFileInline("javascript/scriptaculous/scriptaculous.js"); ?>
 
 

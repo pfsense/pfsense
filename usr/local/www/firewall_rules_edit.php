@@ -698,7 +698,7 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncellreq">Source OS</td>
+			<td width="22%" valign="top" class="vncell">Source OS</td>
 			<td width="78%" class="vtable">OS Type:&nbsp;
 				<select name="os" id="os" class="formselect">
 <?php

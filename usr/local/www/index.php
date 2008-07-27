@@ -432,7 +432,8 @@ columns = ['col1','col2'];
 
 
 <script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+<?php outputJavaScriptFileInline("javascript/scriptaculous/scriptaculous.js"); ?>
+
 
 <?php
 include("fbegin.inc");

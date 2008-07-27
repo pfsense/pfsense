@@ -802,9 +802,9 @@ function display_widget_tabs(& $tab_array) {
 // request count going back to server.
 function outputJavaScriptFileInline($javascript) {
 	if(file_exists($javascript)) {
-		echo "<script type=\"text/javascript\">";
+		echo "\n<script type=\"text/javascript\">\n";
 		include($javascript);
-		echo "</script>";
+		echo "\n</script>\n";
 	} else {
 		echo "<p/>ERROR!  COULD NOT LOCATE $javascript";
 		echo "<p/>Please contact webmaster.";
@@ -815,15 +815,14 @@ function outputJavaScriptFileInline($javascript) {
 
 function outputCSSFileInline($css) {
 	if(file_exists($css)) {
-		echo "<style type=\"text/css\">";
+		echo "\n<style type=\"text/css\">\n";
 		include($css);
-		echo "</style>";
+		echo "\n</style>\n";
 	} else {
 		echo "<p/>ERROR!  COULD NOT LOCATE $css";
 		echo "<p/>Please contact webmaster.";
 		exit;
 	}
 }
-
 
 ?>

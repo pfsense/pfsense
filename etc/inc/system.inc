@@ -691,14 +691,6 @@ function system_generate_lighty_config($filename,
 
 	global $config, $g;
 
-	/* only use freebsd-sendfile network handler on full installations
-	 * tests have shown that it is actually slower on embedded.
-	 */
-	if(stristr("pfSense", $g['platform']))
-		$network_handler = "server.network-backend		= \"freebsd-sendfile\"\n";
-	else
-		$network_handler = "";
-
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_generate_lighty_config() being called $mt\n";
@@ -819,15 +811,14 @@ EOD;
 
 ## FreeBSD!
 server.event-handler		= "freebsd-kqueue"
-
-{$network_handler}
+server.network-backend		= "writev"  ## Fixes 7.x upload issues
 
 ## modules to load
 server.modules              =   (
-				  {$captive_portal_module}
-				  "mod_access", "mod_accesslog", "mod_expire",
-                                  {$module}{$captiveportal}
-				)
+									{$captive_portal_module}
+									"mod_access", "mod_accesslog", "mod_expire", "mod_compress",
+									{$module}{$captiveportal}
+								)
 
 ## Unused modules
 #                               "mod_setenv",
@@ -949,12 +940,6 @@ debug.log-response-header  = "disable"
 debug.log-request-handling = "disable"
 debug.log-file-not-found   = "disable"
 
-#### compress module
-#compress.cache-dir         = "/tmp/lighttpd/cache/compress/"
-#compress.filetype          = ("text/plain", "text/html")
-
-#server.network-backend = "writev"
-
 {$server_upload_dirs}
 
 {$server_max_request_size}
@@ -970,7 +955,7 @@ compress.cache-dir         = "/tmp/"
 compress.filetype          = ("text/plain", "text/html", "text/javascript", "text/css")
 
 expire.url = (
-                "/javascript/"      => "access 50 hours",	
+                "/javascript/scriptaculous/"      => "access 50 hours",	
                 "/themes/"			 => "access 50 hours",
                 "/widgets/"			 => "access 50 hours",
                 "/tree/"			 => "access 50 hours",

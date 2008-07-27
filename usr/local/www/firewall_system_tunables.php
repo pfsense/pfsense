@@ -70,7 +70,7 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<form action="firewall_virtual_ip.php" method="post">
+<form action="firewall_system_tunables.php" method="post">
 <div id="inputerrors"></div>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>

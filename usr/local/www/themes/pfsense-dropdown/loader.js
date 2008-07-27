@@ -20,7 +20,7 @@ if (version == '') {
 	version = parseInt(whole_version);
 }
 
-if (version < 7) {
+if (browser == 'IE' && version < 7) {
 	document.write('<script type="text/javascript" src="/themes/pfsense-dropdown/javascript/ie7/ie7-standard-p.js"></script>');
 }
 

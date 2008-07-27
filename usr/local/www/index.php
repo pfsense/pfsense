@@ -430,9 +430,8 @@ columns = ['col1','col2'];
 
 </script>
 
-<?php outputJavaScriptFileInline("javascript/scriptaculous/prototype.js"); ?>
-<?php outputJavaScriptFileInline("javascript/scriptaculous/scriptaculous.js"); ?>
-
+<script type="text/javascript" language="javascript" src="/javascript/scriptaculous/prototype.js"></script>"
+<script type="text/javascript" language="javascript" src="javascript/scriptaculous/scriptaculous.js"></script>"
 
 <?php
 include("fbegin.inc");

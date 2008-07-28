@@ -772,6 +772,7 @@ EOD;
 {$ifconfig} {$if} {$wme}
 {$ifconfig} {$if} {$wepset}
 {$ifconfig} {$if} {$txpower}
+{$ifconfig} {$if} mtu 1500
 {$ifconfig} {$if} up
 
 EOD;

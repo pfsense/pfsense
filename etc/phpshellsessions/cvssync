@@ -27,12 +27,12 @@ unlink_if_exists("/tmp/config.cache");
 
 if(!file_exists("/usr/local/bin/cvsup")) {
 	echo "Cannot find cvsup, pkg_add in progress...";
-	system("/usr/sbin/pkg_add -r http://files.pfsense.org/packages/All/cvsup-without-gui-16.1h_2.tbz");
+	system("/usr/sbin/pkg_add -r cvsup-without-gui");
 }
 
 if(!file_exists("/usr/bin/cvs")) {
 	echo "Cannot find cvs, fetching static cvs...";
-	system("fetch -o /usr/bin/cvs http://www.pfsense.com/~sullrich/extra/cvs");
+	system("fetch -o /usr/bin/cvs http://files.pfsense.org/extras/7/cvs");
 	system("chmod a+rx /usr/bin/cvs");
 }
 

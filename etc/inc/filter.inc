@@ -454,7 +454,7 @@ function generate_optcfg_array()
 		$FilterIflist[$if] = $oic;
 	}
 		
-	if ($config['pptpd']['mode'] == "server") {
+	if ($config['pptpd']['mode'] == "server" || $config['pptpd']['mode'] == "redir") {
 		$oic = array();
 		$oic['if'] = 'pptp';
 		$oic['descr'] = 'PPTP';

@@ -535,8 +535,6 @@ function interfaces_lan_configure() {
 function interfaces_configure() {
 	global $g;
 
-	/* XXX: unify with wan when pppoe/pptp fixups are done. */
-	/* optional interface if list */
 	$iflist = get_configured_interface_with_descr();
 	
 	foreach($iflist as $if => $ifname) {

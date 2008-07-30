@@ -114,6 +114,13 @@
 		<dnsserver></dnsserver>
 		<dnsallowoverride/>
 		<group>
+			<name>all</name>
+			<description>All Users</description>
+			<scope>system</scope>
+			<pages/>
+			<gid>1998</gid>
+		</group>
+		<group>
 			<name>admins</name>
 			<description>System Administrators</description>
 			<scope>system</scope>

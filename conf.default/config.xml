@@ -116,7 +116,7 @@
 			<name>all</name>
 			<description>All Users</description>
 			<scope>system</scope>
-			</pages>
+			<pages/>
 			<gid>1998</gid>
 		</group>
 		<group>

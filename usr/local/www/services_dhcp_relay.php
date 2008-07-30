@@ -63,14 +63,7 @@ $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
 
-$ifdescrs = get_configured_interface_list();
-foreach ($ifdescrs as $ifname) {
-	$oc = $config['interfaces'][$ifname];
-
-	if ($oc['if'] && (!$oc['bridge'])) {
-		$iflist[$ifname] = $oc['descr'];
-	}
-}
+$iflist = get_configured_interface_with_descr();
 
 if (!$if || !isset($iflist[$if]))
 	$if = "lan";

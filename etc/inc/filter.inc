@@ -427,29 +427,14 @@ function generate_optcfg_array()
                 $oic = array();
                 $oic['if'] = get_real_wan_interface($if);
 
-                if ($oc['bridge']) {
-                	if (isset($config['interfaces'][$oc['bridge']]['enable']) &&
-                        	is_ipaddr($config['interfaces'][$oc['bridge']]['ipaddr'])) {
-                                $oic['ip'] = $config['interfaces'][$oc['bridge']]['ipaddr'];
-                                $oic['sn'] = $config['interfaces'][$oc['bridge']]['subnet'];
-                                $oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
-                        }
-			$oic['descr'] = $ifdetail;
-			$oic['nonat'] = $oc['nonat'];
-                        $oic['alias-address'] = $oc['alias-address'];
-                        $oic['alias-subnet'] = $oc['alias-subnet'];
-                        $oic['gateway'] = $oc['gateway'];
-                        $oic['bridge'] = 1;
-                } else {
-                        $oic['ip'] = $oc['ipaddr'];
-                        $oic['sn'] = $oc['subnet'];
-                        $oic['descr'] = $ifdetail;
-                        $oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
-			$oic['nonat'] = $oc['nonat'];
-			$oic['alias-address'] = $oc['alias-address'];
-			$oic['alias-subnet'] = $oc['alias-subnet'];
-			$oic['gateway'] = $oc['gateway'];
-                }
+                $oic['ip'] = $oc['ipaddr'];
+                $oic['sn'] = $oc['subnet'];
+                $oic['descr'] = $ifdetail;
+                $oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
+		$oic['nonat'] = $oc['nonat'];
+		$oic['alias-address'] = $oc['alias-address'];
+		$oic['alias-subnet'] = $oc['alias-subnet'];
+		$oic['gateway'] = $oc['gateway'];
 
 		$FilterIflist[$if] = $oic;
 	}

@@ -119,7 +119,7 @@ function enable_altfirmwareurl(enable_over) {
 		<td class="vtable">
 			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onClick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked"; ?>> Use a different URL server for firmware upgrades other than <?php echo $g['"product_website"']; ?><br>
 			<table>
-			<tr><td>Base URL:</td><td><input name="firmwareurl" type="input" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>"></td></tr>
+			<tr><td>Base URL:</td><td><input name="firmwareurl" type="input" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>"></td></tr>
 			</table>
 			<span class="vexpl">
 				This is where <?php echo $g['product_name'] ?> will check for newer firmware versions when the <a href="system_firmware_check.php">System: Firmware: Auto Update</a> page is viewed.

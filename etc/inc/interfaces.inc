@@ -1051,6 +1051,9 @@ EOD;
 
 	$standard_no_turbo = str_replace(" Turbo", "", $standard);
 
+	if($channel == "0")
+		$channel = "auto";
+
 	$settings = <<<EOD
 
 {$ifconfig} {$if} down

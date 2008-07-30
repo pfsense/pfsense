@@ -154,6 +154,10 @@ function interfaces_lan_configure() {
 
 		/* force all bridged interfaces to use same mtu */
 		$mtu = get_interface_mtu($config['interfaces'][$lancfg['bridge']]['if']);
+		if($mtu == "0") {
+			log_error("An error occurred while trying to obtain the MTU setting.  Using 1500.");
+			$mtu = "1500";
+		}
 		mwexec("/sbin/ifconfig {$lancfg['if']} mtu {$mtu}");
 		mwexec("/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} mtu {$mtu}");
 

@@ -78,7 +78,6 @@ function enable_altfirmwareurl(enable_over) {
 <?php include("fbegin.inc");?>
 <p class="pgtitle">System: Firmware: Settings</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<br/>
 <form action="system_firmware_settings.php" method="post" name="iform" id="iform">
             <?php if ($savemsg) print_info_box($savemsg); ?>
               <table width="100%" border="0" cellpadding="0" cellspacing="0">

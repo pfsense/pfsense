@@ -47,7 +47,7 @@ if ($_POST) {
 
 $curcfg = $config['system']['firmware'];
 
-$pgtitle = array("System: Firmware: Settings");
+$pgtitle = "System: Firmware: Settings";
 include("head.inc");
 
 exec("fetch -q -o /tmp/manifest \"{$g['update_manifest']}\"");

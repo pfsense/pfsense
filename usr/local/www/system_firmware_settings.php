@@ -76,6 +76,7 @@ function enable_altfirmwareurl(enable_over) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc");?>
+<p class="pgtitle">System: Firmware: Settings</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <br/>
 <form action="system_firmware_settings.php" method="post" name="iform" id="iform">

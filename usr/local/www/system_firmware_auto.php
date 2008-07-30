@@ -238,7 +238,6 @@ function read_body($ch, $string) {
 		$counter = 0;
 	}
 	fwrite($fout, $string);
-	echo "<script language='javascript'>'>document.progressbar.style.width=\"$c%\";</script>\n";
 	return $length;
 }
 

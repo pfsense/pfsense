@@ -89,7 +89,7 @@ if($branch == "RESTORE") {
 		exit();
 	}
 	echo "===> Restoring previous CVSSync backup... Please wait...\n";
-	exec("tar xzPf /root/cvssync_backup.tgz -C /");
+	exec("tar Uxpf /root/cvssync_backup.tgz -C /");
 	post_cvssync_commands();
 	exit();
 }

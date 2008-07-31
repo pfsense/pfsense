@@ -133,7 +133,9 @@ exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)");
 
 post_cvssync_commands();
 
-echo "===> Checkout complete.  Your system is now sync'd and PHP and Lighty will be restarted in 5 seconds.\n";
+echo "===> Checkout complete.\n";
+echo "\n";
+echo "Your system is now sync'd and PHP and Lighty will be restarted in 5 seconds.\n\n";
 
 function post_cvssync_commands() {
 	echo "===> Removing FAST-CGI temporary files...\n";

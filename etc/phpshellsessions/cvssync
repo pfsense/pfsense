@@ -96,7 +96,7 @@ if($branch == "RESTORE") {
 
 echo "===> Backing up current pfSense information...\n";
 echo "===> Please wait... ";
-exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /tmp --exclude /var/run /");
+exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /tmp --exclude /var/run --exclude /var/empty /");
 $size = filesize("/root/cvssync_backup.tgz");
 echo "{$size} bytes.\n\n";
 sleep(5);

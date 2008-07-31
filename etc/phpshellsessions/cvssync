@@ -127,11 +127,9 @@ exec("rm -rf ${CODIR}/pfSense/root/.shrc");
 exec("rm -rf ${CODIR}/pfSense/root/.tcshrc");
 exec("rm -f ${CODIR}/pfSense/etc/syslog.conf 2>/dev/null");
 
-echo "Installing new files...\n";
+echo "===> Installing new files...\n";
 
 exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)");
-
-echo "CVS Sync Complete\n";
 
 post_cvssync_commands();
 
@@ -143,22 +141,22 @@ function post_cvssync_commands() {
 
 	exec("rm -rf /tmp/xcache/* 2>/dev/null");
 
-	echo "Upgrading configuration...\n";
-
+	echo "===> Upgrading configuration (if needed)...\n";
 	convert_config();
+	
+	echo "===> Syncing system passwords...\n";
 	sync_webgui_passwords();
 
 	echo "Restarting check_reload_status...\n";
 	exec("killall check_reload_status");
 	mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
 
-	echo "Configuring filter...";
+	echo "===> Configuring filter...";
 	exec("/etc/rc.filter_configure_sync");
 	exec("pfctl -f /tmp/rules.debug");
 	echo "\n";
 
-	echo "Signaling PHP and Lighty restart...";
+	echo "===> Signaling PHP and Lighty restart...";
 	mwexec_bg("sleep 5 ; killall php ; touch /tmp/restart_webgui");
 
-	echo "\nCVSSync completed.\n";
 }

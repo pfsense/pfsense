@@ -133,10 +133,10 @@ exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)");
 
 post_cvssync_commands();
 
-echo "===> Checkout complete.  Your system is now sync'd.  Scripting terminating.\n";
+echo "===> Checkout complete.  Your system is now sync'd and PHP and Lighty will be restarted in 5 seconds.\n";
 
 function post_cvssync_commands() {
-	echo "Removing FAST-CGI temporary files...\n";
+	echo "===> Removing FAST-CGI temporary files...\n";
 	exec("find /tmp -name \"*php*\" -exec rm -rf {} \;");
 
 	exec("rm -rf /tmp/xcache/* 2>/dev/null");
@@ -147,7 +147,7 @@ function post_cvssync_commands() {
 	echo "===> Syncing system passwords...\n";
 	sync_webgui_passwords();
 
-	echo "Restarting check_reload_status...\n";
+	echo "===> Restarting check_reload_status...\n";
 	exec("killall check_reload_status");
 	mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
 
@@ -162,6 +162,7 @@ function post_cvssync_commands() {
 	fwrite($fd, "sleep 5\n");
 	fwrite($fd, "killall php\n");
 	fwrite($fd, "touch /tmp/restart_webgui\n");
+	fclose($fd);
 	mwexec_bg("sh /tmp/restart_lighty");
 	echo "\n";
 }

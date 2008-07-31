@@ -47,7 +47,11 @@ global $command_split;
 /* NOTE: Set branches here */
 $branches = array("RELENG_1_MULTI_ANYTHING" => "Ermals multi interface branch",
 				  "RELENG_1" => "1.3 development branch",
-				  "RELENG_1_2" => "1.2 release branch");
+				  "RELENG_1_2" => "1.2 release branch",
+				);
+
+if(file_exists("/root/cvssync_backup.tgz")) 
+	$branches[] = array("RESTORE" => "Restores prior CVSSync backup data.");
 
 if($command_split[2]) {
 	$branch = $command_split[2];
@@ -78,6 +82,21 @@ if(!$found) {
 	echo "\nInvalid branch.\n";
 	exit;
 }
+
+if($branch == "RESTORE") {
+	if(!file_exists("/root/cvssync_backup.tgz")) {
+		echo "Sorry, we could not find a previous CVSSync backup file.\n";
+		exit();
+	}
+	echo "===> Restoring previous CVSSync backup... Please wait...\n";
+	exec("tar xzPf /root/cvssync_backup.tgz -C /");
+	post_cvssync_commands();
+	exit();
+}
+
+echo "===> Backing up current pfSense information... Please wait...\n";
+exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /tmp /");
+exec("ls -lah /root/cvssync_backup.tgz");
 
 echo "===> Checking out $branch\n";
 exec("mkdir -p /home/pfsense/$branch");
@@ -114,27 +133,32 @@ exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)");
 
 echo "CVS Sync Complete\n";
 
-echo "Removing FAST-CGI temporary files...\n";
-exec("find /tmp -name \"*php*\" -exec rm -rf {} \;");
-
-exec("rm -rf /tmp/xcache/* 2>/dev/null");
-
-echo "Upgrading configuration...\n";
-
-convert_config();
-sync_webgui_passwords();
-
-echo "Restarting check_reload_status...\n";
-exec("killall check_reload_status");
-mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
-
-echo "Configuring filter...";
-exec("/etc/rc.filter_configure_sync");
-exec("pfctl -f /tmp/rules.debug");
-echo "\n";
+post_cvssync_commands();
 
 echo "===> Checkout complete.  Your system is now sync'd.  Scripting terminating.\n";
 
-touch("/tmp/restart_webgui");
+function post_cvssync_commands() {
+	echo "Removing FAST-CGI temporary files...\n";
+	exec("find /tmp -name \"*php*\" -exec rm -rf {} \;");
 
-exec("killall php");
+	exec("rm -rf /tmp/xcache/* 2>/dev/null");
+
+	echo "Upgrading configuration...\n";
+
+	convert_config();
+	sync_webgui_passwords();
+
+	echo "Restarting check_reload_status...\n";
+	exec("killall check_reload_status");
+	mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
+
+	echo "Configuring filter...";
+	exec("/etc/rc.filter_configure_sync");
+	exec("pfctl -f /tmp/rules.debug");
+
+	echo "\n";
+
+	touch("/tmp/restart_webgui");
+
+	exec("killall php");
+}

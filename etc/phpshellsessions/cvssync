@@ -95,7 +95,7 @@ if($branch == "RESTORE") {
 }
 
 echo "===> Backing up current pfSense information... Please wait...\n";
-exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /tmp --execlude /var/run /");
+exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /tmp --exclude /var/run /");
 exec("ls -lah /root/cvssync_backup.tgz");
 
 echo "===> Checking out $branch\n";

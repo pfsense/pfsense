@@ -449,7 +449,7 @@ function interfaces_lan_configure() {
 
 	/* bridged? */
 
-	if ($lancfg['bridge']) {
+	if ($lancfg['bridge'] && $lancfg['bridge'] <> "") {
 		/* use open/netBSD style bridge */
 		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
 
@@ -1221,7 +1221,7 @@ function interfaces_wan_configure($interface = "wan") {
 			filter_configure();
 	}
 
-	if ($wancfg['bridge']) {
+	if ($wancfg['bridge'] && $wancfg['bridge'] <> "") {
 		/* use open/netBSD style bridge */
 		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
 

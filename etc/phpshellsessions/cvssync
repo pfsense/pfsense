@@ -155,8 +155,10 @@ function post_cvssync_commands() {
 	echo "Configuring filter...";
 	exec("/etc/rc.filter_configure_sync");
 	exec("pfctl -f /tmp/rules.debug");
-
 	echo "\n";
 
-	exec("sleep 5 ; killall php ; touch /tmp/restart_webgui &");
+	echo "Signaling PHP and Lighty restart...";
+	mwexec_bg("sleep 5 ; killall php ; touch /tmp/restart_webgui");
+
+	echo "\nCVSSync completed.\n";
 }

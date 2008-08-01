@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-vpnpptp
+##|*NAME=VPN: VPN PPTP page
+##|*DESCR=Allow access to the 'VPN: VPN PPTP' page.
+##|*MATCH=vpn_pptp.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['pptpd']['radius'])) {

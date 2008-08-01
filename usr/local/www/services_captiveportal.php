@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-captiveportal
+##|*NAME=Services: Captive portal page
+##|*DESCR=Allow access to the 'Services: Captive portal' page.
+##|*MATCH=services_captiveportal.php*
+##|-PRIV
+
+
 $pgtitle = array("Services","Captive portal");
 require("guiconfig.inc");
 

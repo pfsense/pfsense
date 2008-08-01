@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-nat-1-1-edit
+##|*NAME=Firewall: NAT: 1:1: Edit page
+##|*DESCR=Allow access to the 'Firewall: NAT: 1:1: Edit' page.
+##|*MATCH=firewall_nat_1to1_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['nat']['onetoone'])) {

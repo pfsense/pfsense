@@ -3,6 +3,9 @@
 	$Id: system_groupmanager.php 
 	part of m0n0wall (http://m0n0.ch/wall)
 
+	Copyright (C) 2008 Shrew Soft Inc.
+	All rights reserved. 
+
 	Copyright (C) 2005 Paul Taylor <paultaylor@winn-dixie.com>.
 	All rights reserved. 
 
@@ -31,202 +34,76 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-groupmanager
+##|*NAME=System: Group manager page
+##|*DESCR=Allow access to the 'System: Group manager' page.
+##|*MATCH=system_groupmanager.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $pgtitle = array("System", "Group manager");
 
-// Returns an array of pages with their descriptions
-function getAdminPageList() {
-	global $g;
-	global $config;
-	
-    $tmp = Array();
-
-    if ($dir = opendir($g['www_path'])) {
-		while($file = readdir($dir)) {
-	    	// Make sure the file exists
-	    	if($file != "." && $file != ".." && $file[0] != '.') {
-	    		// Is this a .php file?
-	    		if (fnmatch('*.php',$file)) {
-	    			// Read the description out of the file
-		    		$contents = file_get_contents($file);
-		    		// Looking for a line like:
-		    		// $pgtitle = array("System", "Group manager");
-		    		$offset = strpos($contents,'$pgtitle');
-		    		$titlepos = strpos($contents,'(',$offset);
-		    		$titleendpos = strpos($contents,')',$titlepos);
-		    		if (($offset > 0) && ($titlepos > 0) && ($titleendpos > 0)) {
-		    			// Title found, extract it
-		    			$title = str_replace(',',': ',str_replace(array('"'),'',substr($contents,++$titlepos,($titleendpos - $titlepos))));
-		    			$tmp[$file] = trim($title);
-		    		}
-		    		else {
-		    			$tmp[$file] = '';
-		    		}
-	    		
-	    		}
-	        }
-		}
-
-        closedir($dir);
-        
-        // Sets Interfaces:Optional page that didn't read in properly with the above method,
-        // and pages that don't have descriptions.
-        $tmp['interfaces_opt.php'] = "Interfaces: Optional";
-        $tmp['graph.php'] = "Diagnostics: Interface Traffic";
-        $tmp['graph_cpu.php'] = "Diagnostics: CPU Utilization";
-        $tmp['exec.php'] = "Command";
-        $tmp['exec_raw.php'] = "Hidden: Exec Raw";
-        $tmp['status.php'] = "Hidden: Detailed Status";
-        $tmp['uploadconfig.php'] = "Hidden: Upload Configuration";
-        $tmp['index.php'] = "*After Login/Dashboard";
-        $tmp['system_usermanager.php'] = "*User Password change portal";
-        $tmp['diag_logs_settings.php'] = "Diagnostics: Logs: Settings";
-        $tmp['diag_logs_vpn.php'] = "Diagnostics: Logs: PPTP VPN";
-        $tmp['diag_logs_filter.php'] = "Diagnostics: Logs: Firewall";
-        $tmp['diag_logs_portal.php'] = "Diagnostics: Logs: Captive Portal";
-        $tmp['diag_logs_dhcp.php'] = "Diagnostics: Logs: DHCP";
-        $tmp['diag_logs.php'] = "Diagnostics: Logs: System";
-
-		$tmp['cg2.php'] = "CoreGUI GUI Manager";
-        
-        unset($tmp['system_groupmanager_edit.php']);
-        unset($tmp['firewall_rules_schedule_logic.php']);
-        unset($tmp['status_rrd_graph_img.php']);
-        unset($tmp['diag_new_states.php']);
-        unset($tmp['system_usermanager_edit.php']);
-        
-        $tmp['pkg.php'] = "{$g['product_name']} Package manager";
-        $tmp['pkg_edit.php'] = "{$g['product_name']} Package manager edit";
-        $tmp['wizard.php'] = "{$g['product_name']} wizard subsystem";
-        $tmp['graphs.php'] = "Graphing subsystem";
-        $tmp['headjs.php'] = "*Required for javascript";
-
-		$tmp['ifstats.php'] = ("*Hidden: XMLRPC Interface Stats");
-		$tmp['license.php'] = ("*System: License");
-		$tmp['progress.php'] = ("*Hidden: No longer included");
-		$tmp['diag_logs_filter_dynamic.php'] = ("*Hidden: No longer included"); 
-		$tmp['preload.php'] = ("*Hidden: XMLRPC Preloader");
-		$tmp['xmlrpc.php'] = ("*Hidden: XMLRPC Library");        
-		
-		$tmp['functions.inc.php'] = ("Hidden: Ajax Helper 1");
-		$tmp['javascript.inc.php'] = ("Hidden: Ajax Helper 2 ");
-		$tmp['sajax.class.php'] = ("Hidden: Ajax Helper 3");
-
-		/* custom pkg.php items */
-		$tmp['pkg.php?xml=openvpn.xml'] = ("VPN: OpenVPN");
-		$tmp['pkg_edit.php?xml=carp_settings.xml&id=0'] = ("Services: CARP Settings: Edit");
-		$tmp['pkg_edit.php?xml=olsrd.xml&id=0'] = ("Services: OLSR");
-		$tmp['pkg_edit.php?xml=openntpd.xml&id=0'] = ("Services: NTP Server");
-		
-		$tmp['system_usermanager_settings_test.php'] = ("System: User Manager: Settings: Test LDAP");
-		
-		/*  unset older openvpn scripts, we have a custom version
-		 *  included in CoreGUI */
-	 	unset($tmp['vpn_openvpn.php']);
-		unset($tmp['vpn_openvpn_crl.php']);
-		unset($tmp['vpn_openvpn_ccd.php']);
-		unset($tmp['vpn_openvpn_srv.php']);
-		unset($tmp['vpn_openvpn_cli.php']);
-		unset($tmp['vpn_openvpn_ccd_edit.php']);
-		unset($tmp['phpconfig.php']);
-		unset($tmp['system_usermanager_settings_ldapacpicker.php']);
-		
-        unset($tmp['progress.php']);
-        unset($tmp['stats.php']);
-        unset($tmp['phpinfo.php']);
-        unset($tmp['preload.php']);
-        
-        // Add appropriate descriptions for extensions, if they exist
-        if(file_exists("extensions.inc")){
-	   	   include("extensions.inc");
-		}
-		
-		/* firewall rule view and edit entries for lan, wan, optX */
-		$iflist = get_configured_interface_list(false, true);
-
-		// Firewall Rules
-		foreach ($iflist as $ifent => $ifname) {
-			$entryname = "firewall_rules.php?if={$ifname}";
-	        $tmp[$entryname] = ("Firewall: Rules: " . strtoupper($ifname));
-			$entryname = "firewall_rules_edit.php?if={$ifname}";
-	        $tmp[$entryname] = ("Firewall: Rules: Edit: " . strtoupper($ifname));
-		}
-
-		/* additional firewal rules tab entries */
-		$entryname = "firewall_rules_edit.php?if=enc0";
-        $tmp[$entryname] = "Firewall: Rules: Edit: IPsec";
-
-		$entryname = "firewall_rules_edit.php?if=pptp";
-        $tmp[$entryname] = "Firewall: Rules: Edit: PPTP";
-
-		$entryname = "firewall_rules_edit.php?if=pppoe";
-        $tmp[$entryname] = "Firewall: Rules: Edit: PPPoE";
-
-		// User manager
-		$entryname = "system_usermanager.php";
-		$tmp[$entryname] = "System: Change Password";
-
-		// User manager
-		$entryname = "system_usermanager";
-		$tmp[$entryname] = "System: User Manager";
-
-		// NAT Items
-		foreach ($iflist as $ifent => $ifname) {
-			$entryname = "firewall_nat.php?if={$ifname}";
-	        $tmp[$entryname] = ("Firewall: NAT: Port Forward " . strtoupper($ifname));
-			$entryname = "firewall_nat_edit.php?if={$ifname}";
-	        $tmp[$entryname] = ("Firewall: NAT: Port Forward: Edit: " . strtoupper($ifname));
-		}
-		/* additional nat tab entries */
-		$entryname = "firewall_nat_edit.php?if=enc0";
-        $tmp[$entryname] = "Firewall: NAT: Port Forward: Edit: IPsec";
-        
-		$entryname = "firewall_nat_edit.php?if=pptp";
-        $tmp[$entryname] = "Firewall: NAT: Port Forward: Edit: PPTP";
-
-		$entryname = "firewall_nat_edit.php?if=pppoe";
-        $tmp[$entryname] = "Firewall: NAT: Port Forward: Edit: PPPoE";
-
-        asort($tmp);
-        return $tmp;
-    }
-}
-
-// Get a list of all admin pages & Descriptions
-$pages = getAdminPageList();
-
-if (!is_array($config['system']['group'])) {
+if (!is_array($config['system']['group']))
 	$config['system']['group'] = array();
-}
+
 admin_groups_sort();
 $a_group = &$config['system']['group'];
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
-	
-if ($_GET['act'] == "del") {
-	if ($a_group[$_GET['id']]) {
-		del_local_group($a_group[$_GET['id']]);
-   		unset($a_group[$_GET['id']]);
-       	write_config();
-	    header("Location: system_groupmanager.php");
-	    exit;
+
+if ($_GET['act'] == "delgroup") {
+
+	if (!$a_group[$_GET['id']]) {
+		pfSenseHeader("system_groupmanager.php");
+		exit;
 	}
-}	
+
+	del_local_group($a_group[$_GET['id']]);
+	$groupdeleted = $a_group[$_GET['id']]['name'];
+	unset($a_group[$_GET['id']]);
+	write_config();
+	$savemsg = gettext("Group")." {$groupdeleted} ".
+				gettext("successfully deleted")."<br/>";
+}
+
+if ($_GET['act'] == "delpriv") {
+
+	if (!$a_group[$_GET['id']]) {
+		pfSenseHeader("system_groupmanager.php");
+		exit;
+	}
+
+	$privdeleted = $priv_list[$a_group[$id]['priv'][$_GET['privid']]]['name'];
+	unset($a_group[$id]['priv'][$_GET['privid']]);
+
+	foreach ($a_group[$id]['member'] as $uid) {
+		$user = getUserEntryByUID($uid);
+		if ($user)
+			set_local_user($user);
+	}
+
+	write_config();
+	$_GET['act'] = "edit";
+	$savemsg = gettext("Privilege")." {$privdeleted} ".
+				gettext("successfully deleted")."<br/>";
+}
 
 if($_GET['act']=="edit"){
 	if (isset($id) && $a_group[$id]) {
 		$pconfig['name'] = $a_group[$id]['name'];
+		$pconfig['gid'] = $a_group[$id]['gid'];
+		$pconfig['gtype'] = $a_group[$id]['scope'];
 		$pconfig['description'] = $a_group[$id]['description'];
-		if (is_array($a_group[$id]['pages']))
-			$pconfig['pages'] = $a_group[$id]['pages'];
-		else
-			$pconfig['pages'] = array();
+		$pconfig['members'] = $a_group[$id]['member'];
+		$pconfig['priv'] = $a_group[$id]['priv'];
 	}
 }
-	
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -259,14 +136,8 @@ if ($_POST) {
 		$group['name'] = $_POST['groupname'];
 		$group['description'] = $_POST['description'];
 
-		unset($group['pages']);
-		foreach ($pages as $fname => $title) {
-			$identifier = str_replace('.php','XXXUMXXX',$fname);
-			$identifier = str_replace('.','XXXDOTXXX',$identifier);
-			if ($_POST[$identifier] == 'yes') {
-				$group['pages'][] = $fname;
-			}
-		}
+		if ($group['gid'] != 1998) // all group
+			$group['member'] = $_POST['members'];
 
 		if (isset($id) && $a_group[$id])
 			$a_group[$id] = $group;
@@ -288,8 +159,59 @@ include("head.inc");
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
+<?php include("fbegin.inc"); ?>
+<script language="JavaScript">
+<!--
+
+function setall_selected(id) {
+	selbox = document.getElementById(id);
+	count = selbox.options.length;
+	for (index = 0; index<count; index++)
+		selbox.options[index].selected = true;
+}
+
+function clear_selected(id) {
+	selbox = document.getElementById(id);
+	count = selbox.options.length;
+	for (index = 0; index<count; index++)
+		selbox.options[index].selected = false;
+}
+
+function remove_selected(id) {
+	selbox = document.getElementById(id);
+	index = selbox.options.length - 1;
+	for (; index >= 0; index--)
+		if (selbox.options[index].selected)
+			selbox.remove(index);
+}
+
+function copy_selected(srcid, dstid) {
+	src_selbox = document.getElementById(srcid);
+	dst_selbox = document.getElementById(dstid);
+	count = src_selbox.options.length;
+	for (index = 0; index < count; index++) {
+		if (src_selbox.options[index].selected) {
+			option = document.createElement('option');
+			option.text = src_selbox.options[index].text;
+			option.value = src_selbox.options[index].value;
+			dst_selbox.add(option, null);
+		}
+	}
+}
+
+function move_selected(srcid, dstid) {
+	copy_selected(srcid, dstid);
+	remove_selected(srcid);
+}
+
+function presubmit() {
+	clear_selected('notmembers');
+	setall_selected('members');
+}
+
+//-->
+</script>
 <?php
-	include("fbegin.inc");
 	if ($input_errors)
 		print_input_errors($input_errors);
 	if ($savemsg)
@@ -302,7 +224,7 @@ include("head.inc");
 			<?php 
 				$tab_array = array();
 				$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
-				$tab_array[] = array(gettext("Group"), true, "system_groupmanager.php");
+				$tab_array[] = array(gettext("Groups"), true, "system_groupmanager.php");
 				$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
 				display_top_tabs($tab_array);
 			?>
@@ -327,70 +249,134 @@ include("head.inc");
 						el.elements[i].checked = false;
 				}
 			</script>
-			<form action="system_groupmanager.php" method="post" name="iform" id="iform">
+			<form action="system_groupmanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+                    <?php
+                        $ro = "";
+                        if ($pconfig['gtype'] == "system")
+                            $ro = "readonly = \"readonly\"";
+                    ?>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
+						<td width="78%" class="vtable">
+							<strong><?=strtoupper($pconfig['gtype']);?></strong>
+							<input name="gtype" type="hidden" value="<?=$pconfig['gtype']?>"/>
+						</td>
+					</tr>
 					<tr> 
 						<td width="22%" valign="top" class="vncellreq">Group name</td>
 						<td width="78%" class="vtable"> 
-							<input name="groupname" type="text" class="formfld" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"> 
+							<input name="groupname" type="text" class="formfld group" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" <?=$ro;?>> 
 						</td>
 					</tr>
 					<tr> 
 						<td width="22%" valign="top" class="vncell">Description</td>
 						<td width="78%" class="vtable"> 
-							<input name="description" type="text" class="formfld" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>">
+							<input name="description" type="text" class="formfld unknown" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>">
 							<br>
 							Group description, for your own information only
 						</td>
 					</tr>
+
+					<?php if ($pconfig['gid'] != 1998): // all users group ?>
+
 					<tr>
-						<td colspan="4">
-							<br>
-							Select that pages that this group may access.
-							Members of this group will be able to perform
-							all actions that are possible from each
-							individual web page. Ensure you set access
-							levels appropriately.<br>
-							<br>
-							<span class="vexpl">
-								<span class="red">
-									<strong>&nbsp;Note:</strong>
-								</span>
-								Pages marked with an * are strongly recommended
-								for every group.
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="4">
-							<input type="button" name="types[]" value="Check All" onClick="checkall(); return false;"> 
-							<input type="button" name="types[]" value="Check None" onClick="checknone(); return false;">
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>
+						<td width="78%" class="vtable" align="center">
+							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 								<tr>
-									<td class="listhdrr">&nbsp;</td>
-									<td class="listhdrr">Page Description</td>
-									<td class="listhdr">Filename</td>
+									<td align="center" width="50%">
+										<strong>Not Members</strong><br/>
+										<br/>
+											<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onChange="clear_selected('members')" multiple>
+											<?php
+												foreach ($config['system']['user'] as $user):
+													if (in_array($user['uid'],$pconfig['members']))
+														continue;
+											?>
+											<option value="<?=$user['uid'];?>" <?=$selected;?>>
+												<?=htmlspecialchars($user['name']);?>
+											</option>
+											<?php endforeach; ?>
+										</select>
+										<br/>
+									</td>
+									<td>
+										<br/>
+										<a href="javascript:move_selected('notmembers','members')">
+											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="Add Members" alt="Add Members" width="17" height="17" border="0" />
+										</a>
+										<br/><br/>
+										<a href="javascript:move_selected('members','notmembers')">
+											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="Remove Members" alt="Remove Members" width="17" height="17" border="0" />
+										</a>
+									</td>
+									<td align="center" width="50%">
+										<strong>Members</strong><br/>
+										<br/>
+										<select size="10" style="width: 75%" name="members[]" class="formselect" id="members" onChange="clear_selected('notmembers')" multiple>
+											<?php
+												foreach ($config['system']['user'] as $user):
+													if (!in_array($user['uid'],$pconfig['members']))
+														continue;
+											?>
+											<option value="<?=$user['uid'];?>">
+												<?=htmlspecialchars($user['name']);?>
+											</option>
+											<?php endforeach; ?>
+										</select>
+										<br/>
+									</td>
 								</tr>
-								<?php 
-									foreach ($pages as $fname => $title):
-										$identifier = str_replace('.php','XXXUMXXX',$fname);
-										$identifier = str_replace('.','XXXDOTXXX',$identifier);
-										$checked = "";
-										if (in_array($fname,$pconfig['pages']))
-											$checked = "checked";
+							</table>
+							<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
+						</td>
+					</tr>
+
+					<?php endif; ?>
+
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Effective Privileges");?></td>
+						<td width="78%" class="vtable">
+							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<td width="40%" class="listhdrr"><?=gettext("Name");?></td>
+									<td width="60%" class="listhdrr"><?=gettext("Description");?></td>
+									<td class="list"></td>
+								</tr>
+								<?php
+									if(is_array($pconfig['priv'])):
+										$i = 0;
+										foreach ($pconfig['priv'] as $priv):
 								?>
 								<tr>
-									<td class="listlr">
-										<input class="check" name="<?=$identifier?>" type="checkbox" id="<?=$identifier?>" value="yes" <?=$checked;?>>
+									<td class="listr">
+										<?=htmlspecialchars($priv_list[$priv]['name']);?>
 									</td>
-									<td class="listr"><?=$title?></td>
-									<td class="listr"><?=$fname?></td>
+									<td class="listbg">
+										<font color="#FFFFFF">
+											<?=htmlspecialchars($priv_list[$priv]['descr']);?>
+										</font>
+									</td>
+									<td valign="middle" nowrap class="list">
+										<a href="system_groupmanager.php?act=delpriv&id=<?=$id?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
+											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
+										</a>
+									</td>
 								</tr>
-								<?php endforeach; ?>
+								<?php
+										$i++;
+                      					endforeach;
+									endif;
+								?>
+								<tr>
+									<td class="list" colspan="2"></td>
+									<td class="list">
+										<a href="system_groupmanager_addprivs.php?groupid=<?=$id?>">
+											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
+										</a>
+									</td>
+								</tr>
 							</table>
 						</td>
 					</tr>
@@ -400,7 +386,8 @@ include("head.inc");
 							<input name="save" type="submit" class="formbtn" value="Save"> 
 							<?php if (isset($id) && $a_group[$id]): ?>
 							<input name="id" type="hidden" value="<?=$id;?>">
-							<?php endif; ?>                
+							<input name="gid" type="hidden" value="<?=$pconfig['gid'];?>">
+							<?php endif; ?>
 						</td>
 					</tr>
 				</table>
@@ -412,27 +399,38 @@ include("head.inc");
 				<tr>
 					<td width="25%" class="listhdrr">Group name</td>
 					<td width="25%" class="listhdrr">Description</td>
-					<td width="15%" class="listhdrr">Member Count</td>
-					<td width="15%" class="listhdrr">Pages Accessible</td>
+					<td width="30%" class="listhdrr">Member Count</td>
 					<td width="10%" class="list"></td>
 				</tr>
 				<?php
 					$i = 0;
 					foreach($a_group as $group):
+
+						if($group['scope'] == "system")
+							$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
+						else
+							$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
 				?>
 				<tr>
 					<td class="listlr">
-						<?=htmlspecialchars($group['name']); ?>&nbsp;
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td align="left" valign="center">
+									<img src="<?=$grpimg;?>" alt="User" title="User" border="0" height="16" width="16" />
+								</td>
+								</td>
+								<td align="left" valign="middle">
+									<?=htmlspecialchars($group['name']); ?>&nbsp;
+								</td>
+							</tr>
+						</table>
 					</td>
 					<td class="listr">
 						<?=htmlspecialchars($group['description']);?>&nbsp;
 					</td>
-					<td class="listr">
-						<?=count($group['member'])?>
-					</td>
 					<td class="listbg">
 						<font color="white">
-							<?=count($group['pages']);?>
+							<?=count($group['member'])?>
 						</font>
 					</td>
 					<td valign="middle" nowrap class="list">
@@ -440,9 +438,11 @@ include("head.inc");
 							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="edit group" width="17" height="17" border="0">
 						</a>
 						&nbsp;
-						<a href="system_groupmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this group?')">
+						<?php if($group['scope'] != "system"): ?>
+						<a href="system_groupmanager.php?act=delgroup&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this group?')">
 							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="delete group" width="17" height="17" border="0">
 						</a>
+						<?php endif; ?>
 					</td>
 				</tr>
 				<?php
@@ -450,7 +450,7 @@ include("head.inc");
 					endforeach;
 				?>
 				<tr> 
-					<td class="list" colspan="4"></td>
+					<td class="list" colspan="3"></td>
 					<td class="list">
 						<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="add group" width="17" height="17" border="0">
 						</a>

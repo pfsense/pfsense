@@ -26,6 +26,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-rfc2136clients
+##|*NAME=Services: RFC 2136 clients page
+##|*DESCR=Allow access to the 'Services: RFC 2136 clients' page.
+##|*MATCH=services_rfc2136.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['dnsupdates']['dnsupdate']))

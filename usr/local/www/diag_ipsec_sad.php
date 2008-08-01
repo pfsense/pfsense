@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-ipsec-sad
+##|*NAME=Status: IPsec: SAD page
+##|*DESCR=Allow access to the 'Status: IPsec: SAD' page.
+##|*MATCH=diag_ipsec_sad.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $pgtitle = array("Status","IPsec","SAD");

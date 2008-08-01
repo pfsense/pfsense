@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-interfaces-assignnetworkports
+##|*NAME=Interfaces: Assign network ports page
+##|*DESCR=Allow access to the 'Interfaces: Assign network ports' page.
+##|*MATCH=interfaces_assign.php*
+##|-PRIV
+
+
 $pgtitle = array("Interfaces", "Assign network ports");
 require("guiconfig.inc");
 

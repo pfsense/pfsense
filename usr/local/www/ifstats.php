@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-xmlrpcinterfacestats
+##|*NAME=XMLRPC Interface Stats page
+##|*DESCR=Allow access to the 'XMLRPC Interface Stats' page.
+##|*MATCH=ifstats.php*
+##|-PRIV
+
+
 	require("functions.inc");
 	require("config.inc");
 

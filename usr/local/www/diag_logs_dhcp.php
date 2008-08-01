@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-logs-dhcp
+##|*NAME=Diagnostics: Logs: DHCP page
+##|*DESCR=Allow access to the 'Diagnostics: Logs: DHCP' page.
+##|*MATCH=diag_logs_dhcp.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $dhcpd_logfile = "{$g['varlog_path']}/dhcpd.log";

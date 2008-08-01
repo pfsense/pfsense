@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-firmware-autoupdate
+##|*NAME=System: Firmware: Auto Update page
+##|*DESCR=Allow access to the 'System: Firmware: Auto Update' page.
+##|*MATCH=system_firmware_check.php*
+##|-PRIV
+
+
 $d_isfwfile = 1;
 require("guiconfig.inc");
 

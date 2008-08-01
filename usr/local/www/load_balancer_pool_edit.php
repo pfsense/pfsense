@@ -29,6 +29,14 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-loadbalancer-pool-edit
+##|*NAME=Load Balancer: Pool: Edit page
+##|*DESCR=Allow access to the 'Load Balancer: Pool: Edit' page.
+##|*MATCH=load_balancer_pool_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();

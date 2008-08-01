@@ -30,6 +30,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-hidden-nolongerincluded
+##|*NAME=Hidden: No longer included page
+##|*DESCR=Allow access to the 'Hidden: No longer included' page.
+##|*MATCH=diag_logs_filter_dynamic.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";

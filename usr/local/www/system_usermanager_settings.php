@@ -30,6 +30,14 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+##|+PRIV
+##|*IDENT=page-system-usermanager-settings
+##|*NAME=System: User manager: settings page
+##|*DESCR=Allow access to the 'System: User manager: settings' page.
+##|*MATCH=system_usermanager_settings.php*
+##|-PRIV
+
+
 
 if($_POST['savetest'])
 	$save_and_test = true;
@@ -215,7 +223,7 @@ include("head.inc");
 <?php
     $tab_array = array();
     $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
-    $tab_array[] = array(gettext("Group"), false, "system_groupmanager.php");
+    $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
     $tab_array[] = array(gettext("Settings"), true, "system_usermanager_settings.php");
     display_top_tabs($tab_array);
 

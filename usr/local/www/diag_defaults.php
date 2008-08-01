@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-factorydefaults
+##|*NAME=Diagnostics: Factory defaults page
+##|*DESCR=Allow access to the 'Diagnostics: Factory defaults' page.
+##|*MATCH=diag_defaults.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if ($_POST) {

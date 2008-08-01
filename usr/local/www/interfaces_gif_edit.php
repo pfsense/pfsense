@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-interfaces-gif-edit
+##|*NAME=Interfaces: GIF: Edit page
+##|*DESCR=Allow access to the 'Interfaces: GIF: Edit' page.
+##|*MATCH=interfaces_gif_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['gifs']['gif']))

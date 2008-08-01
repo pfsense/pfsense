@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-systemlogs-ipsecvpn
+##|*NAME=Status: System logs: IPsec VPN page
+##|*DESCR=Allow access to the 'Status: System logs: IPsec VPN' page.
+##|*MATCH=diag_logs_ipsec.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $ipsec_logfile = "{$g['varlog_path']}/ipsec.log";

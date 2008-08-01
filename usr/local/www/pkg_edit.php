@@ -27,6 +27,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-package-edit
+##|*NAME=Package: Edit page
+##|*DESCR=Allow access to the 'Package: Edit' page.
+##|*MATCH=pkg_edit.php*
+##|-PRIV
+
+
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 

@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-interfaces-wan
+##|*NAME=Interfaces: WAN page
+##|*DESCR=Allow access to the 'Interfaces: WAN' page.
+##|*MATCH=interfaces_wan.php*
+##|-PRIV
+
+
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");

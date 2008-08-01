@@ -32,6 +32,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-trafficgraph
+##|*NAME=Status: Traffic Graph page
+##|*DESCR=Allow access to the 'Status: Traffic Graph' page.
+##|*MATCH=status_graph.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if ($_POST['width'])

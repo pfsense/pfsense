@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-interfaces-lan
+##|*NAME=Interfaces: LAN page
+##|*DESCR=Allow access to the 'Interfaces: LAN' page.
+##|*MATCH=interfaces_lan.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $lancfg = &$config['interfaces']['lan'];

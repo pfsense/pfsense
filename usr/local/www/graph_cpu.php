@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-cpuutilization
+##|*NAME=Diagnostics: CPU Utilization page
+##|*DESCR=Allow access to the 'Diagnostics: CPU Utilization' page.
+##|*MATCH=graph_cpu.php*
+##|-PRIV
+
+
 header("Content-type: image/svg+xml");
 
 /********* Other conf *******/

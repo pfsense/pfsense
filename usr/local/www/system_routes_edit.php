@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-staticroutes-editroute
+##|*NAME=System: Static Routes: Edit route page
+##|*DESCR=Allow access to the 'System: Static Routes: Edit route' page.
+##|*MATCH=system_routes_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['staticroutes']['route']))

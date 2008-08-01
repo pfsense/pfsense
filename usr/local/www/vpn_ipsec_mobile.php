@@ -27,6 +27,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-ipsec-mobile
+##|*NAME=VPN: IPsec: Mobile page
+##|*DESCR=Allow access to the 'VPN: IPsec: Mobile' page.
+##|*MATCH=vpn_ipsec_mobile.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['phase1']))

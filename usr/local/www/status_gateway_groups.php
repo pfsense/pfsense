@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-gatewaygroups
+##|*NAME=Status: Gateway Groups page
+##|*DESCR=Allow access to the 'Status: Gateway Groups' page.
+##|*MATCH=status_gateway_groups.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['gateways']['gateway_group']))

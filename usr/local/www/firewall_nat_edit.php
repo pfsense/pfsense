@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-nat-portforward-edit
+##|*NAME=Firewall: NAT: Port Forward: Edit page
+##|*DESCR=Allow access to the 'Firewall: NAT: Port Forward: Edit' page.
+##|*MATCH=firewall_nat_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['nat']['rule'])) {

@@ -30,6 +30,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-logs-firewall
+##|*NAME=Diagnostics: Logs: Firewall page
+##|*DESCR=Allow access to the 'Diagnostics: Logs: Firewall' page.
+##|*MATCH=diag_logs_filter.php*
+##|-PRIV
+
+
 if($_GET['getrulenum'] or $_POST['getrulenum']) {
 	if($_GET['getrulenum'])
 		$rulenum = $_GET['getrulenum'];

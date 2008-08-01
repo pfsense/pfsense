@@ -27,6 +27,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-openvpn-editclient
+##|*NAME=VPN: OpenVPN: Edit client page
+##|*DESCR=Allow access to the 'VPN: OpenVPN: Edit client' page.
+##|*MATCH=vpn_openvpn_cli_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 require_once("openvpn.inc");
 

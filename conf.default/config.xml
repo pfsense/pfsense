@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>4.9</version>
+	<version>5.0</version>
 	<lastchange></lastchange>
 	<theme>nervecenter</theme>
 	<sysctl>
@@ -116,15 +116,16 @@
 			<name>all</name>
 			<description>All Users</description>
 			<scope>system</scope>
-			<pages/>
 			<gid>1998</gid>
+			<member>0</member>
 		</group>
 		<group>
 			<name>admins</name>
 			<description>System Administrators</description>
 			<scope>system</scope>
-			<pages>ANY</pages>
 			<gid>1999</gid>
+			<member>0</member>
+			<priv>page-all</priv>
 		</group>
 		<user>
 			<name>admin</name>
@@ -133,26 +134,9 @@
 			<groupname>admins</groupname>
 			<password>$1$dSJImFph$GvZ7.1UbuWu.Yb8etC0re.</password>
 			<uid>0</uid>
-			<priv>
-				<id>lockwc</id>
-				<name>Lock webConfigurator</name>
-				<descr>Indicates whether this user will lock access to the webConfigurator for other users.</descr>
-			</priv>
-			<priv>
-				<id>lock-ipages</id>
-				<name>Lock individual pages</name>
-				<descr>Indicates whether this user will lock individual HTML pages after having accessed a particular page(the lock will be freed if the user leaves or saves the page form).</descr>
-			</priv>
-			<priv>
-				<id>hasshell</id>
-				<name>Has shell access</name>
-				<descr>Indicates whether this user is able to login for example via SSH.</descr>
-			</priv>
-			<priv>
-				<id>isroot</id>
-				<name>Is root user</name>
-				<descr>This user is associated with the UNIX root user (you should associate this privilege only with one single user).</descr>
-			</priv>
+			<priv>user-lock-webcfg</priv>
+			<priv>user-lock-ipages</priv>
+			<priv>user-shell-access</priv>
 		</user>
 		<nextuid>2000</nextuid>
 		<nextgid>2000</nextgid>

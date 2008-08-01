@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-openvpn-editserver
+##|*NAME=VPN: OpenVPN: Edit server page
+##|*DESCR=Allow access to the 'VPN: OpenVPN: Edit server' page.
+##|*MATCH=vpn_openvpn_srv_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 require_once("openvpn.inc");
 

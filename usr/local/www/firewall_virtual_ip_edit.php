@@ -38,6 +38,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-virtualipaddress-edit
+##|*NAME=Firewall: Virtual IP Address: Edit page
+##|*DESCR=Allow access to the 'Firewall: Virtual IP Address: Edit' page.
+##|*MATCH=firewall_virtual_ip_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 if (!is_array($config['virtualip']['vip'])) {
         $config['virtualip']['vip'] = array();

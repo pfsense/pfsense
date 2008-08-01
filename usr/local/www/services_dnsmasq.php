@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-dnsforwarder
+##|*NAME=Services: DNS Forwarder page
+##|*DESCR=Allow access to the 'Services: DNS Forwarder' page.
+##|*MATCH=services_dnsmasq.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $pconfig['enable']  = isset($config['dnsmasq']['enable']);

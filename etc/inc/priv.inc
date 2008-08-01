@@ -1,0 +1,307 @@
+<?php
+/* $Id$ */
+/*
+		Copyright (C) 2008 Shrew Soft Inc
+		All rights reserved.
+
+		Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
+		All rights reserved.
+
+        Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
+        All rights reserved.
+
+        Copyright (C) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
+        All rights reserved.
+
+        Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
+        All rights reserved.
+
+        Redistribution and use in source and binary forms, with or without
+        modification, are permitted provided that the following conditions are met:
+
+        1. Redistributions of source code must retain the above copyright notice,
+           this list of conditions and the following disclaimer.
+
+        2. Redistributions in binary form must reproduce the above copyright
+           notice, this list of conditions and the following disclaimer in the
+           documentation and/or other materials provided with the distribution.
+
+        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+        POSSIBILITY OF SUCH DAMAGE.
+
+		DISABLE_PHP_LINT_CHECKING
+*/
+
+require_once("functions.inc");
+require_once("priv.defs.inc");
+
+/*
+ * USER PRIVILEGE DEFINITIONS
+ */
+
+$priv_list['user-lock-webcfg'] = array();
+$priv_list['user-lock-webcfg']['name']  = "User - Locks webConfigurator";
+$priv_list['user-lock-webcfg']['descr'] = "Indicates whether the user will lock access to ".
+										  "the webConfigurator for other users";
+
+$priv_list['user-lock-ipages'] = array();
+$priv_list['user-lock-ipages']['name']  = "User - Locks individual pages";
+$priv_list['user-lock-ipages']['descr'] = "Indicates whether the user will lock individual ".
+										  "HTML pages after having accessed a particular page".
+										  "(the lock will be freed if the user leaves or ".
+										  "saves the page form).";
+
+$priv_list['user-shell-access'] = array();
+$priv_list['user-shell-access']['name']  = "User - Shell account access";
+$priv_list['user-shell-access']['descr'] = "Indicates whether the user is able to login for ".
+										   "example via SSH.";
+
+$priv_list['user-copy-files'] = array();
+$priv_list['user-copy-files']['name']  = "User - Copy files";
+$priv_list['user-copy-files']['descr'] = "Indicates whether the user is allowed to copy files ".
+										 "onto the {$g['product_name']} appliance via SCP/SFTP. ".
+										 "If you are going to use this privilege, you must install ".
+										 "scponly on the appliance (Hint: pkg_add -r scponly).";
+
+sort_privs($priv_list);
+
+function cmp_privkeys($a, $b) {
+	/* user privs at the top */
+	$auser = strncmp("user-", $a, 5);
+	$buser = strncmp("user-", $b, 5);
+	if($auser != $buser)
+		return $auser - buser;
+
+	/* name compare others */
+	return strcasecmp($a, $b);
+}
+
+function sort_privs(& $privs) {
+
+	uksort($privs, "cmp_privkeys");
+}
+
+function cmp_page_matches($page, & $matches, $fullwc = true) {
+
+	if (!is_array($matches))
+		return false;
+
+	/* skip any leading fwdslash */
+	$test = strpos($page, "/");
+	if ($test !== false && $test == 0)
+		$page = substr($page, 1);
+
+	/* look for a match */
+	foreach ($matches as $match) {
+
+		/* possibly ignore full wildcard match */
+		if (!$fullwc && !strcmp($match ,"*"))
+			continue;
+
+		/* compare exact or wildcard match */
+		$wcpos = strpos($match, "*");
+		if ($wcpos === false)
+			$result = strcmp($page, $match);
+		else
+			$result = strncmp($page, $match, $wcpos);
+
+		if (!$result)
+			return true;
+	}
+
+	return false;
+}
+
+function map_page_privname($page) {
+	global $priv_list;
+
+	foreach ($priv_list as $pname => $pdata) {
+		if (strncmp($pname, "page-", 5))
+			continue;
+		$fullwc = false;
+		if (!strcasecmp($page,"any")||!strcmp($page,"*"))
+			$fullwc = true;
+		if (cmp_page_matches($page, $pdata['match'], $fullwc))
+			return $pname;
+	}
+
+	return false;
+}
+
+function get_user_privileges(& $user) {
+
+	$privs = $user['priv'];
+	if (!is_array($privs))
+		$privs = array();
+
+	$names = get_local_user_groups($user, true);
+
+	foreach ($names as $name) {
+		$group = getGroupEntry($name);
+		if (is_array($group['priv']))
+			$privs = array_merge( $privs, $group['priv']);
+	}
+
+	return $privs;
+}
+
+function get_user_privdesc(& $user) {
+	global $priv_list;
+
+	$privs = array();
+
+	$user_privs = $user['priv'];
+	if (!is_array($user_privs))
+		$user_privs = array();
+
+	$names = get_local_user_groups($user, true);
+
+	foreach ($names as $name) {
+		$group = getGroupEntry($name);
+		$group_privs = $group['priv'];
+		if (!is_array($group_privs))
+			continue;
+		foreach ($group_privs as $pname) {
+			if (in_array($pname,$user_privs))
+				continue;
+			if (!$priv_list[$pname])
+				continue;
+			$priv = $priv_list[$pname];
+			$priv['group'] = $group['name'];
+			$privs[] = $priv;
+		}
+	}
+
+	foreach ($user_privs as $pname)
+		if($priv_list[$pname])
+			$privs[] = $priv_list[$pname];
+
+	return $privs;
+}
+
+function isAllowedPage($page) {
+	global $_SESSION;
+
+	$username = $_SESSION['Username'];
+	if (!isset($username))
+		return false;
+
+	/* admin/root access check */
+	$user = getUserEntry($username);
+	if (isset($user))
+		if (isset($user['uid']))
+			if ($user['uid']==0)
+				return true;
+
+	/* user privelege access check */
+	if (cmp_page_matches($page, $allowed_pages))
+		return true;
+
+	return false;
+}
+
+function getPrivPages(& $entry, & $allowed_pages) {
+	global $priv_list;
+
+	if (!is_array($entry['priv']))
+		return;
+
+	foreach ($entry['priv'] as $pname) {
+		if (strncmp($pname, "page-", 5))
+			continue;
+		$priv = &$priv_list[$pname];
+		if (!is_array($priv))
+			continue;
+		$matches = &$priv['match'];
+		if (!is_array($matches))
+			continue;
+		foreach ($matches as $match)
+			$allowed_pages[] = $match;
+	}
+}
+
+function getAllowedPages($username) {
+	global $config, $_SESSION;
+
+	if (!function_exists("ldap_connect"))
+		return;
+	
+	$allowed_pages = array();
+	$allowed_groups = array();
+	
+	$ldapon = $_SESSION['ldapon'];
+
+	// search for a local user by name
+	$local_user = getUserEntry($username);
+
+	// obtain local groups if we have a local user
+	if ($local_user) {
+		$allowed_groups = get_local_user_groups($local_user);
+		getPrivPages($local_user, $allowed_pages);
+	}
+
+	// obtain ldap groups if we are in ldap mode
+	if ($config['system']['webgui']['backend'] == "ldap" && !$local_user)
+		$allowed_groups = ldap_get_groups($username);
+
+	// obtain ldapother groups if we are in ldap mode
+	if ($config['system']['webgui']['backend'] == "ldapother" && !$local_user)
+		$allowed_groups = ldap_get_groups($username);
+
+	// build a list of allowed pages
+	if (is_array($config['system']['group']) && is_array($allowed_groups))
+		foreach ($config['system']['group'] as $group)
+			if (in_array($group['name'], $allowed_groups))
+				getPrivPages($group, $allowed_pages);
+
+	$allowed_groups = print_r($allowed_groups, true);
+	$fdny = fopen("/tmp/groups", "w");
+	fwrite($fdny, $allowed_groups);
+	fclose($fdny);
+
+	$_SESSION['privs'] = $allowed_pages;
+
+	return $allowed_pages;
+}
+
+function userHasPrivilege($userent, $privid = false) {
+
+	if (!$privid || !is_array($userent))
+		return false;
+
+	$privs = get_user_privileges($userent);
+
+	if (!is_array($privs))
+		return false;
+
+	if (!in_array($privid, $privs))
+		return false;
+
+	return true;
+}
+
+function hasPrivilegeLock($userent) {
+	return userHasPrivilege($userent, "user-lock-webcfg");
+}
+
+function hasPrivilegeLockPages($userent) {
+	return userHasPrivilege($userent, "user-lock-ipages");
+}
+
+function hasPrivilegeShell($userent) {
+	return userHasPrivilege($userent, "user-shell-access");
+}
+
+function hasPrivilegeCopyFiles($userent) {
+	return userHasPrivilege($userent, "user-copy-files");
+}
+
+?>

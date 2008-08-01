@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-captiveportal-editmacaddresses
+##|*NAME=Services: Captive portal: Edit MAC Addresses page
+##|*DESCR=Allow access to the 'Services: Captive portal: Edit MAC Addresses' page.
+##|*MATCH=services_captiveportal_mac_edit.php*
+##|-PRIV
+
+
 $pgtitle = array("Services","Captive portal","Edit pass-through MAC address");
 require("guiconfig.inc");
 

@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-interfaces-scanwireless
+##|*NAME=Interfaces: Scan Wireless page
+##|*DESCR=Allow access to the 'Interfaces: Scan Wireless' page.
+##|*MATCH=interfaces_wlan_scan.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 

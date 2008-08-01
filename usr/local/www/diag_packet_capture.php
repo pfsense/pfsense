@@ -23,6 +23,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-packetcapture
+##|*NAME=Diagnostics: Packet Capture page
+##|*DESCR=Allow access to the 'Diagnostics: Packet Capture' page.
+##|*MATCH=diag_packet_capture.php*
+##|-PRIV
+
+
 $pgtitle = array("Diagnostics", "Packet Capture");
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");

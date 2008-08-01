@@ -27,6 +27,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-filterreloadstatus
+##|*NAME=Status: Filter Reload Status page
+##|*DESCR=Allow access to the 'Status: Filter Reload Status' page.
+##|*MATCH=status_filter_reload.php*
+##|-PRIV
+
+
 require_once("guiconfig.inc");
 require_once("functions.inc");
 

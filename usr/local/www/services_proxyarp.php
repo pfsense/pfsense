@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-proxyarp
+##|*NAME=Services: Proxy ARP page
+##|*DESCR=Allow access to the 'Services: Proxy ARP' page.
+##|*MATCH=services_proxyarp.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['proxyarp']['proxyarpnet'])) {

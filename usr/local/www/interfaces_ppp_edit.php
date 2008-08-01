@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-interfaces-ppp-edit
+##|*NAME=Interfaces: PPP: Edit page
+##|*DESCR=Allow access to the 'Interfaces: PPP: Edit' page.
+##|*MATCH=interfaces_ppp_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['ppps']['ppp']))

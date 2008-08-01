@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-trafficshaper
+##|*NAME=Firewall: Traffic Shaper page
+##|*DESCR=Allow access to the 'Firewall: Traffic Shaper' page.
+##|*MATCH=firewall_shaper.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if($_GET['reset'] <> "") {

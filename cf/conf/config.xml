@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>4.9</version>
+	<version>5.0</version>
 	<lastchange></lastchange>
 	<theme>nervecenter</theme>
 	<sysctl>
@@ -31,14 +31,14 @@
 			<value>1</value>
 		</item>
 		<item>
-			<desc>Disable sending IPv4 redirects</desc>
+			<desc>Enable sending IPv4 redirects</desc>
 			<tunable>net.inet.ip.redirect</tunable>
-			<value>0</value>
+			<value>1</value>
 		</item>
 		<item>
-			<desc>Disable sending IPv6 redirects</desc>
+			<desc>Enable sending IPv6 redirects</desc>
 			<tunable>net.inet6.ip6.redirect</tunable>
-			<value>0</value>
+			<value>1</value>
 		</item>
 		<item>
 			<desc>Generate SYN cookies for outbound SYN-ACK packets</desc>
@@ -104,11 +104,10 @@
 			<desc>Enable TCP Inflight mode</desc>
 			<tunable>net.inet.tcp.inflight.enable</tunable>
 			<value>1</value>
-		</item>				
+		</item>		
 	</sysctl>
 	<system>
 		<optimization>normal</optimization>
-		<schedulertype>priq</schedulertype>
 		<hostname>pfSense</hostname>
 		<domain>local</domain>
 		<dnsserver></dnsserver>
@@ -117,16 +116,16 @@
 			<name>all</name>
 			<description>All Users</description>
 			<scope>system</scope>
-			<pages/>
 			<gid>1998</gid>
+			<member>0</member>
 		</group>
 		<group>
 			<name>admins</name>
 			<description>System Administrators</description>
 			<scope>system</scope>
-			<pages>ANY</pages>
-			<home>index.php</home>
-			<gid>110</gid>
+			<gid>1999</gid>
+			<member>0</member>
+			<priv>page-all</priv>
 		</group>
 		<user>
 			<name>admin</name>
@@ -135,29 +134,12 @@
 			<groupname>admins</groupname>
 			<password>$1$dSJImFph$GvZ7.1UbuWu.Yb8etC0re.</password>
 			<uid>0</uid>
-			<priv>
-				<id>lockwc</id>
-				<name>Lock webConfigurator</name>
-				<descr>Indicates whether this user will lock access to the webConfigurator for other users.</descr>
-			</priv>
-			<priv>
-				<id>lock-ipages</id>
-				<name>Lock individual pages</name>
-				<descr>Indicates whether this user will lock individual HTML pages after having accessed a particular page(the lock will be freed if the user leaves or saves the page form).</descr>
-			</priv>
-			<priv>
-				<id>hasshell</id>
-				<name>Has shell access</name>
-				<descr>Indicates whether this user is able to login for example via SSH.</descr>
-			</priv>
-			<priv>
-				<id>isroot</id>
-				<name>Is root user</name>
-				<descr>This user is associated with the UNIX root user (you should associate this privilege only with one single user).</descr>
-			</priv>
+			<priv>user-lock-webcfg</priv>
+			<priv>user-lock-ipages</priv>
+			<priv>user-shell-access</priv>
 		</user>
-		<nextuid>115</nextuid>
-		<nextgid>115</nextgid>
+		<nextuid>2000</nextuid>
+		<nextgid>2000</nextgid>
 		<timezone>Etc/UTC</timezone>
 		<time-update-interval>300</time-update-interval>
 		<timeservers>0.pfsense.pool.ntp.org</timeservers>
@@ -172,7 +154,7 @@
 			<noantilockout></noantilockout>
 			-->
 		</webgui>
-		<disablenatreflection>yes</disablenatreflection>
+                <disablenatreflection>yes</disablenatreflection>
 		<!-- <disableconsolemenu/> -->
 		<!-- <disablefirmwarecheck/> -->
 		<!-- <shellcmd></shellcmd> -->
@@ -202,7 +184,7 @@
 			<subnet></subnet>
 			<gateway></gateway>
 			<blockpriv/>
-			<disableftpproxy/>
+                        <disableftpproxy/>
 			<dhcphostname></dhcphostname>
 			<media></media>
 			<mediaopt></mediaopt>
@@ -534,6 +516,7 @@
 	</filter>
 	<shaper>
 		<!-- <enable/> -->
+		<!-- <schedulertype>hfsc</schedulertype> -->
 		<!-- rule syntax:
 		<rule>
 			<disabled/>
@@ -669,15 +652,6 @@
 		</proxyarpnet>
 		-->
 	</proxyarp>
-	<wol>
-		<!--
-		<wolentry>
-			<interface>lan|opt[n]</interface>
-			<mac>xx:xx:xx:xx:xx:xx</mac>
-			<descr></descr>
-		</wolentry>
-		-->
-	</wol>
 	<cron>
 		<item>
 			<minute>0</minute>
@@ -770,4 +744,13 @@
 			<command>/usr/local/sbin/reset_slbd.sh</command>
 		</item>
 	</cron>
+	<wol>
+		<!--
+		<wolentry>
+			<interface>lan|opt[n]</interface>
+			<mac>xx:xx:xx:xx:xx:xx</mac>
+			<descr></descr>
+		</wolentry>
+		-->
+	</wol>
 </pfsense>

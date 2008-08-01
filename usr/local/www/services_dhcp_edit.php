@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-dhcpserver-editstaticmapping
+##|*NAME=Services: DHCP Server : Edit static mapping page
+##|*DESCR=Allow access to the 'Services: DHCP Server : Edit static mapping' page.
+##|*MATCH=services_dhcp_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $if = $_GET['if'];

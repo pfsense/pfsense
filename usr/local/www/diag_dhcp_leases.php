@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-dhcpleases
+##|*NAME=Status: DHCP leases page
+##|*DESCR=Allow access to the 'Status: DHCP leases' page.
+##|*MATCH=diag_dhcp_leases.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $pgtitle = array("Status","DHCP leases");

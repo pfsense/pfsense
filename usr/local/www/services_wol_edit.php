@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-wakeonlan-edit
+##|*NAME=Services: Wake on LAN: Edit page
+##|*DESCR=Allow access to the 'Services: Wake on LAN: Edit' page.
+##|*MATCH=services_wol_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['wol']['wolentry'])) {

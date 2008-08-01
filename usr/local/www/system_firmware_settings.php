@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-firmware-settings
+##|*NAME=System: Firmware: Settings page
+##|*DESCR=Allow access to the 'System: Firmware: Settings' page.
+##|*MATCH=system_firmware_settings.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if ($_POST) {

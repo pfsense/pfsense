@@ -28,6 +28,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-usermanager-settings-testldap
+##|*NAME=System: User Manager: Settings: Test LDAP page
+##|*DESCR=Allow access to the 'System: User Manager: Settings: Test LDAP' page.
+##|*MATCH=system_usermanager_settings_test.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $ldapserver = $config['system']['webgui']['ldapserver'];

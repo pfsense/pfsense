@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-nat-nataddresses
+##|*NAME=Firewall: NAT: NAT Addresses page
+##|*DESCR=Allow access to the 'Firewall: NAT: NAT Addresses' page.
+##|*MATCH=firewall_nat_server.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['nat']['servernat'])) {

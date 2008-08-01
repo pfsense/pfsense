@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-interfaces-vlan
+##|*NAME=Interfaces: VLAN page
+##|*DESCR=Allow access to the 'Interfaces: VLAN' page.
+##|*MATCH=interfaces_vlan.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['vlans']['vlan']))

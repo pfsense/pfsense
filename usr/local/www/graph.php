@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-interfacetraffic
+##|*NAME=Diagnostics: Interface Traffic page
+##|*DESCR=Allow access to the 'Diagnostics: Interface Traffic' page.
+##|*MATCH=graph.php*
+##|-PRIV
+
+
 header("Content-type: image/svg+xml");
 
 /********** HTTP GET Based Conf ***********/

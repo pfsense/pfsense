@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-resetstate
+##|*NAME=Diagnostics: Reset state page
+##|*DESCR=Allow access to the 'Diagnostics: Reset state' page.
+##|*MATCH=diag_resetstate.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if ($_POST) {

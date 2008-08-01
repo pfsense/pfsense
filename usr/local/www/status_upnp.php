@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-upnpstatus
+##|*NAME=Status: UPnP Status page
+##|*DESCR=Allow access to the 'Status: UPnP Status' page.
+##|*MATCH=status_upnp.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if ($_POST) {

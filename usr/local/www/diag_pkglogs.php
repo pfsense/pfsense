@@ -37,6 +37,14 @@
 
 */
 
+##|+PRIV
+##|*IDENT=page-status-packagelogs
+##|*NAME=Status: Package logs page
+##|*DESCR=Allow access to the 'Status: Package logs' page.
+##|*MATCH=diag_pkglogs.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 //require_once("pkg-utils.inc");
 

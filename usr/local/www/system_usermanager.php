@@ -4,6 +4,9 @@
     system_usermanager.php
     part of m0n0wall (http://m0n0.ch/wall)
 
+    Copyright (C) 2008 Shrew Soft Inc.
+    All rights reserved.
+
     Copyright (C) 2005 Paul Taylor <paultaylor@winn-dixie.com>.
     All rights reserved.
 
@@ -32,6 +35,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-usermanager
+##|*NAME=System: User Manager page
+##|*DESCR=Allow access to the 'System: User Manager' page.
+##|*MATCH=system_usermanager.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (isAllowedPage("system_usermanager")) {
@@ -47,32 +58,38 @@ if (isAllowedPage("system_usermanager")) {
 		$config['system']['user'] = array();
 
 	admin_users_sort();
-	if (is_array($config['system']['user'])) 
-		$a_user = &$config['system']['user'];
-	$t_privs = $a_user[$id]['priv'];
+	$a_user = &$config['system']['user'];
 
-	if ($_GET['act'] == "del") {
+	if ($_GET['act'] == "deluser") {
 
-		if (($_GET['what'] == "user") && $a_user[$_GET['id']]) {
-			del_local_user($a_user[$_GET['id']]);
-			$userdeleted = $a_user[$_GET['id']]['name'];
-			unset($a_user[$_GET['id']]);
-			write_config();
-			$retval = system_password_configure();
-			$savemsg = gettext("User")." {$userdeleted} ".
-						gettext("successfully deleted")."<br/>";
+		if (!$a_user[$_GET['id']]) {
+			pfSenseHeader("system_usermanager.php");
+			exit;
 		}
 
-		if (($_GET['what'] == "priv") && $t_privs[$_GET['privid']]) {
- 			$privdeleted = $t_privs[$_GET['privid']]['id'];
- 			unset($a_user[$id]['priv'][$_GET['privid']]);
-			write_config();
-			unset($t_privs[$_GET['privid']]);
-			$_GET['act'] = "edit";
-			$savemsg = gettext("Privilege")." {$privdeleted} ".
-						gettext("of user")." {$a_user[$_GET['id']]['name']} ".
-						gettext("successfully deleted")."<br/>";
+		del_local_user($a_user[$_GET['id']]);
+		$userdeleted = $a_user[$_GET['id']]['name'];
+		unset($a_user[$_GET['id']]);
+		write_config();
+		$retval = system_password_configure();
+		$savemsg = gettext("User")." {$userdeleted} ".
+					gettext("successfully deleted")."<br/>";
+	}
+
+	if ($_GET['act'] == "delpriv") {
+
+		if (!$a_user[$_GET['id']]) {
+			pfSenseHeader("system_usermanager.php");
+			exit;
 		}
+
+		$privdeleted = $priv_list[$a_user[$id]['priv'][$_GET['privid']]]['name'];
+		unset($a_user[$id]['priv'][$_GET['privid']]);
+		write_config();
+		unset($t_privs[$_GET['privid']]);
+		$_GET['act'] = "edit";
+		$savemsg = gettext("Privilege")." {$privdeleted} ".
+					gettext("successfully deleted")."<br/>";
 	}
 
 	if ($_GET['act'] == "edit") {
@@ -83,6 +100,7 @@ if (isAllowedPage("system_usermanager")) {
 			$pconfig['utype'] = $a_user[$id]['scope'];
 			$pconfig['uid'] = $a_user[$id]['uid'];
 			$pconfig['authorizedkeys'] = base64_decode($a_user[$id]['authorizedkeys']);
+			$pconfig['priv'] = $a_user[$id]['priv'];
 		}
 	}
 
@@ -154,9 +172,6 @@ if (isAllowedPage("system_usermanager")) {
 
 			isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
 
-			if ($_POST['passwordfld1'])
-				 set_local_user_password($userent, $_POST['passwordfld1']);
-
 			if(isset($config['system']['ssh']['sshdkeyonly']))
 				$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 
@@ -167,7 +182,7 @@ if (isAllowedPage("system_usermanager")) {
 				$a_user[] = $userent;
 			}
 
-			set_local_user($userent);
+			set_local_user($userent, $_POST['passwordfld1']);
 			set_local_user_groups($userent,$_POST['groups']);
 			write_config();
 			$retval = system_password_configure();
@@ -180,8 +195,59 @@ if (isAllowedPage("system_usermanager")) {
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
+<?php include("fbegin.inc"); ?>
+<script language="JavaScript">
+<!--
+
+function setall_selected(id) {
+	selbox = document.getElementById(id);
+	count = selbox.options.length;
+	for (index = 0; index<count; index++)
+		selbox.options[index].selected = true;
+}
+
+function clear_selected(id) {
+	selbox = document.getElementById(id);
+	count = selbox.options.length;
+	for (index = 0; index<count; index++)
+		selbox.options[index].selected = false;
+}
+
+function remove_selected(id) {
+	selbox = document.getElementById(id);
+	index = selbox.options.length - 1;
+	for (; index >= 0; index--)
+		if (selbox.options[index].selected)
+			selbox.remove(index);
+}
+
+function copy_selected(srcid, dstid) {
+	src_selbox = document.getElementById(srcid);
+	dst_selbox = document.getElementById(dstid);
+	count = src_selbox.options.length;
+	for (index = 0; index < count; index++) {
+		if (src_selbox.options[index].selected) {
+			option = document.createElement('option');
+			option.text = src_selbox.options[index].text;
+			option.value = src_selbox.options[index].value;
+			dst_selbox.add(option, null);
+		}
+	}
+}
+
+function move_selected(srcid, dstid) {
+	copy_selected(srcid, dstid);
+	remove_selected(srcid);
+}
+
+function presubmit() {
+	clear_selected('notgroups');
+	setall_selected('groups');
+}
+
+//-->
+</script>
 <?php
-	include("fbegin.inc");
 	if ($input_errors)
 		print_input_errors($input_errors);
 	if ($savemsg)
@@ -193,7 +259,7 @@ if (isAllowedPage("system_usermanager")) {
 		<?php
 			$tab_array = array();
 			$tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
-			$tab_array[] = array(gettext("Group"), false, "system_groupmanager.php");
+			$tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 			$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
 			display_top_tabs($tab_array);
 		?>
@@ -204,13 +270,20 @@ if (isAllowedPage("system_usermanager")) {
 
 			<?php if ($_GET['act'] == "new" || $_GET['act'] == "edit" || $input_errors): ?>
 
-			<form action="system_usermanager.php" method="post" name="iform" id="iform">
+			<form action="system_usermanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<?php
 						$ro = "";
 						if ($pconfig['utype'] == "system")
 							$ro = "readonly = \"readonly\"";
 					?>
+                    <tr>
+                        <td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
+                        <td width="78%" class="vtable">
+                            <strong><?=strtoupper($pconfig['utype']);?></strong>
+							<input name="utype" type="hidden" value="<?=$pconfig['utype']?>"/>
+                        </td>
+                    </tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
 						<td width="78%" class="vtable">
@@ -237,91 +310,7 @@ if (isAllowedPage("system_usermanager")) {
 							<?=gettext("User's full name, for your own information only");?>
 						</td>
 					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("User type");?></td>
-						<td width="78%" class="vtable">
-							<input name="utype" type="text" class="formfld unknown" id="utype" size="20" value="<?=htmlspecialchars($pconfig['utype']);?>" readonly="readonly" />
-							<br/>
-							<?=gettext("Indicates whether this is a system (aka non-deletable) user or a user created by a particular user.");?>
-						</td>
-					</tr>
 
-					<?php if ($pconfig['uid']): ?>
-
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("User Privileges");?></td>
-						<td width="78%" class="vtable">
-							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-								<tr>
-									<td width="5%" class="listhdrr"><?=gettext("ID");?></td>
-									<td width="30%" class="listhdrr"><?=gettext("Name");?></td>
-									<td width="40%" class="listhdrr"><?=gettext("Description");?></td>
-									<td width="5%" class="list"></td>
-								</tr>
-								<?php
-									if(is_array($t_privs)):
-										$i = 0;
-										foreach ($t_privs as $priv):
-											if($priv['id'] <> ""):
-								?>
-								<tr>
-									<td class="listlr" <?php if($a_user[$id]['scope'] == "user") echo "ondblclick=\"document.location='system_usermanager_edit.php?id={$i}&userid={$id}&useract={$_GET['act']}';\""; ?>>
-										<?=htmlspecialchars($priv['id']);?>
-									</td>
-									<td class="listr" <?php if($a_user[$id]['scope'] == "user") echo "ondblclick=\"document.location='system_usermanager_edit.php?id={$i}&userid={$id}&useract={$_GET['act']}';\""; ?>>
-										<?=htmlspecialchars($priv['name']);?>
-									</td>
-									<td class="listbg" <?php if($a_user[$id]['scope'] == "user") echo "ondblclick=\"document.location='system_usermanager_edit?id={$i}&userid={$id}&useract={$_GET['act']}';\""; ?>>
-										<font color="#FFFFFF"><?=htmlspecialchars($priv['descr']);?>&nbsp;</font>
-									</td>
-									<td valign="middle" nowrap class="list">
-										<?php if($a_user[$id]['scope'] == "user"): ?>
-										<table border="0" cellspacing="0" cellpadding="1">
-											<tr>
-												<td valign="middle">
-													<a href="system_usermanager_edit.php?id=<?=$i;?>&userid=<?= $id ?>&useract=<?= $_GET['act'] ?>">
-														<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="" />
-													</a>
-												</td>
-												<td valign="middle">
-													<a href="system_usermanager.php?act=del&privid=<?=$i;?>&what=priv&id=<?= $id ?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?");?>')">
-														<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
-													</a>
-												</td>
-											</tr>
-										</table>
-										<?php endif; ?>
-									</td>
-								</tr>
-								<?php
-											endif;
-										$i++;
-										endforeach;
-									endif;
-										if ($a_user[$id]['scope'] == "user"):
-								?>
-								<tr>
-									<td class="list" colspan="3"></td>
-									<td class="list">
-										<table border="0" cellspacing="0" cellpadding="1">
-											<tr>
-												<td valign="middle">
-													<a href="system_usermanager_edit.php?userid=<?= $id ?>&useract=<?= $_GET['act'] ?>">
-														<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
-													</a>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<?php
-									endif;
-								?>
-							</table>
-						</td>
-					</tr>
-
-					<?php endif; ?>
 					<?php if (isset($config['system']['ssh']['sshdkeyonly'])): ?>
 
 					<tr>
@@ -337,27 +326,122 @@ if (isAllowedPage("system_usermanager")) {
 
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>
-						<td width="78%" class="vtable">
-							<select size="10" name="groups[]" class="formselect" id="groups" multiple>
-								<?php
-									foreach ($config['system']['group'] as $group):
-										if ($group['gid'] != 1998): /* all users group */
-											$selected = "";
-											if (in_array($group['name'],$pconfig['groups']))
-												$selected = "selected";
-								?>
-								<option value="<?=$group['name'];?>" <?=$selected;?>>
-									<?=htmlspecialchars($group['name']);?>
-								</option>
-								<?php
-										endif;
-									endforeach;
-								?>
-							</select>
-							<br/>
+						<td width="78%" class="vtable" align="center">
+							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<td align="center" width="50%">
+										<strong>Not Member Of</strong><br/>
+										<br/>
+										<select size="10" style="width: 75%" name="notgroups[]" class="formselect" id="notgroups" onChange="clear_selected('groups')" multiple>
+											<?php
+												foreach ($config['system']['group'] as $group):
+													if ($group['gid'] == 1998) /* all users group */
+														continue;
+													if (in_array($group['name'],$pconfig['groups']))
+														continue;
+											?>
+											<option value="<?=$group['name'];?>" <?=$selected;?>>
+												<?=htmlspecialchars($group['name']);?>
+											</option>
+											<?php endforeach; ?>
+										</select>
+										<br/>
+									</td>
+									<td>
+										<br/>
+										<a href="javascript:move_selected('notgroups','groups')">
+											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="Add Groups" alt="Add Groups" width="17" height="17" border="0" />
+										</a>
+										<br/><br/>
+										<a href="javascript:move_selected('groups','notgroups')">
+											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="Remove Groups" alt="Remove Groups" width="17" height="17" border="0" />
+										</a>
+									</td>
+									<td align="center" width="50%">
+										<strong>Member Of</strong><br/>
+										<br/>
+										<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onChange="clear_selected('nogroups')" multiple>
+											<?php
+												foreach ($config['system']['group'] as $group):
+													if ($group['gid'] == 1998) /* all users group */
+														continue;
+													if (!in_array($group['name'],$pconfig['groups']))
+														continue;
+											?>
+											<option value="<?=$group['name'];?>">
+												<?=htmlspecialchars($group['name']);?>
+											</option>
+											<?php endforeach; ?>
+										</select>
+										<br/>
+									</td>
+								</tr>
+							</table>
 							<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
 						</td>
 					</tr>
+
+					<?php if ($pconfig['uid']): ?>
+
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Effective Privileges");?></td>
+						<td width="78%" class="vtable">
+							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<td width="20%" class="listhdrr"><?=gettext("Inherited From");?></td>
+									<td width="30%" class="listhdrr"><?=gettext("Name");?></td>
+									<td width="40%" class="listhdrr"><?=gettext("Description");?></td>
+									<td class="list"></td>
+								</tr>
+								<?php
+										
+									$privdesc = get_user_privdesc($a_user[$_GET['id']]);
+									if(is_array($privdesc)):
+										$i = 0;
+										foreach ($privdesc as $priv):
+										$group = false;
+										if ($priv['group'])
+											$group = $priv['group'];
+								?>
+								<tr>
+									<td class="listlr"><?=$group;?></td>
+									<td class="listr">
+										<?=htmlspecialchars($priv['name']);?>
+									</td>
+									<td class="listbg">
+										<font color="#FFFFFF">
+											<?=htmlspecialchars($priv['descr']);?>
+										</font>
+									</td>
+									<td valign="middle" nowrap class="list">
+										<?php if (!$group): ?>
+										<a href="system_usermanager.php?act=delpriv&id=<?=$id?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
+											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
+										</a>
+										<?php endif; ?>
+									</td>
+								</tr>
+								<?php
+										/* can only delete user priv indexes */
+										if (!$group)
+											$i++;
+										endforeach;
+									endif;
+								?>
+								<tr>
+									<td class="list" colspan="3"></td>
+									<td class="list">
+										<a href="system_usermanager_addprivs.php?userid=<?=$id?>">
+											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
+										</a>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+
+					<?php endif; ?>
+
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">
@@ -371,7 +455,6 @@ if (isAllowedPage("system_usermanager")) {
 			</form>
 
 			<?php else: ?>
-
 			<table width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td width="25%" class="listhdrr">Username</td>
@@ -389,10 +472,10 @@ if (isAllowedPage("system_usermanager")) {
 							<tr>
 								<td align="left" valign="center">
 									<?php
-										if($userent['scope'] == "user")
-											$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
-										else
+										if($userent['scope'] != "user")
 											$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user-grey.png";
+										else
+											$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
 									?>
 									<img src="<?=$usrimg;?>" alt="User" title="User" border="0" height="16" width="16" />
 								</td>
@@ -413,9 +496,9 @@ if (isAllowedPage("system_usermanager")) {
 						<a href="system_usermanager.php?act=edit&id=<?=$i;?>">
 							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="edit user" alt="edit user" width="17" height="17" border="0" />
 						</a>
-						<?php if($userent['scope'] == "user"): ?>
+						<?php if($userent['scope'] != "system"): ?>
 						&nbsp;
-						<a href="system_usermanager.php?act=del&what=user&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this User?");?>')">
+						<a href="system_usermanager.php?act=deluser&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this User?");?>')">
 							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete user" alt="delete user" width="17" height="17" border="0" />
 						</a>
 						<?php endif; ?>
@@ -460,6 +543,7 @@ if (isAllowedPage("system_usermanager")) {
 } else {
 
 	// start normal user code
+
 	$pgtitle = array("System","User Password");
 
 	if (isset($_POST['save'])) {
@@ -542,30 +626,7 @@ if (isAllowedPage("system_usermanager")) {
 </body>
 
 <?php
+
 } // end of normal user code
-
-/*
- * NOTE : sections of the code below are based on the BSD
- *		  licensed CHAP.php courtesy of Michael Retterklieber.
- */
-function set_password_hashes(& $userent, $password) {
-
-	$userent['password'] = crypt($password);
-	$userent['md5-hash'] = md5($password);
-/*
- *	Waiting for mhash
- *
- *	// Converts ascii to unicode.
- *	$astr = (string) $password;
- *	$ustr = '';
- *	for ($i = 0; $i < strlen($astr); $i++) {
- *		$a = ord($astr{$i}) << 8;
- *		$ustr.= sprintf("%X", $a);
- *	}
- *
- *	// Generate the NT-HASH from the unicode string
- *	$userent['nt-hash'] = bin2hex(mhash(MHASH_MD4, $ustr));
- */
-}
 
 ?>

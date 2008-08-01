@@ -28,6 +28,14 @@
        POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-dnsforwarder-editdomainoverride
+##|*NAME=Services: DNS Forwarder: Edit Domain Override page
+##|*DESCR=Allow access to the 'Services: DNS Forwarder: Edit Domain Override' page.
+##|*MATCH=services_dnsmasq_domainoverride_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['dnsmasq']['domainoverrides'])) {

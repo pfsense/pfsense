@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-systemlogs-portalauth
+##|*NAME=Status: System logs: Portal Auth page
+##|*DESCR=Allow access to the 'Status: System logs: Portal Auth' page.
+##|*MATCH=diag_logs_auth.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $portal_logfile = "{$g['varlog_path']}/portalauth.log";

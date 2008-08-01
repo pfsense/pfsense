@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-loadbalancer-pool
+##|*NAME=Status: Load Balancer: Pool page
+##|*DESCR=Allow access to the 'Status: Load Balancer: Pool' page.
+##|*MATCH=status_slbd_pool.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['load_balancer']['lbpool'])) {

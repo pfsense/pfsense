@@ -30,6 +30,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-systemlogs-loadbalancer
+##|*NAME=Status: System logs: Load Balancer page
+##|*DESCR=Allow access to the 'Status: System logs: Load Balancer' page.
+##|*MATCH=diag_logs_slbd.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $slbd_logfile = "{$g['varlog_path']}/slbd.log";

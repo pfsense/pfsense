@@ -33,6 +33,8 @@
         CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
+
+		DISABLE_PHP_LINT_CHECKING
 */
 
 require_once("functions.inc");
@@ -40,164 +42,55 @@ require_once("functions.inc");
 $groupindex = index_groups();
 $userindex = index_users();
 
-function isAllowedPage($page) {
-	global $config, $userindex, $_SESSION;
+function index_groups() {
+	global $g, $config, $groupindex;
 
-	/* admin/root access check */
-	$username = $_SESSION['Username'];
-	if (isset($username))
-		$user = &$config['system']['user'][$userindex[$username]];
-	if (isset($user))
-		if (isset($user['uid']))
-			if ($user['uid']==0)
-				return true;
+	$groupindex = array();
 
-	/* user privelege access check */
-	$allowed_pages = $_SESSION['privs'];
-	if (in_array("ANY", $allowed_pages))
-		return true;
-	if (in_array(basename($page), $allowed_pages))
-		return true;
-
-	return false;
-}
-
-function getAllowedPages($logged_in_user) {
-	global $config, $_SESSION;
-
-	if (!function_exists("ldap_connect"))
-		return;
-	
-	$allowed_pages = array();
-	$allowed_groups = array();
-	
-	$ldapon = $_SESSION['ldapon'];
-	//log_error("Getting groups for {$logged_in_user}.");
-
-	/* search for a local user by name */
-	$local_user = false;
-	foreach ($config['system']['user'] as $user) {
-		if ($user['name'] == $logged_in_user) {
-			$local_user = $user;
-			break;
+	if (isset($config['system']['group'])) {
+		$i = 0;
+		foreach($config['system']['group'] as $groupent) {
+			$groupindex[$groupent['name']] = $i;
+			$i++;
 		}
 	}
 
-	/* obtain local groups if we have a local user */
-	if ($local_user) {
-		$allowed_groups = get_local_user_groups($local_user);
-		foreach ($config['system']['group'] as $group)
-			if (in_array($group['name'], $allowed_groups))
-				if (is_array($group['pages']))
-					foreach ($group['pages'] as $page)
-						$allowed_pages[] = $page;
-	}
-
-	/* obtain ldap groups if we are in ldap mode */
-	if ($config['system']['webgui']['backend'] == "ldap" && !$local_user) {
-		//log_error("Calling LDAP_GET_GROUPS from the first section");
-		$allowed_groups = ldap_get_groups($logged_in_user);
-		if (is_array($config['system']['group']) && is_array($allowed_groups))
-			foreach ($config['system']['group'] as $group)
-				if (in_array($group['name'], $allowed_groups))
-					foreach ($group['pages'] as $page)
-						$allowed_pages[] = $page;
-	}
-	if ($config['system']['webgui']['backend'] == "ldapother" && !$local_user) {
-		//log_error("Calling LDAP_GET_GROUPS from the first section");
-		$allowed_groups = ldap_get_groups($logged_in_user);
-		if (is_array($config['system']['group']) && is_array($allowed_groups))
-			foreach ($config['system']['group'] as $group)
-				if (in_array($group['name'], $allowed_groups))
-					foreach ($group['pages'] as $page)
-						$allowed_pages[] = $page;
-	}	
-
-	$allowed_groups = print_r($allowed, true);
-	$fdny = fopen("/tmp/groups", "w");
-	fwrite($fdny, $allowed_groups);
-	fclose($fdny);
-
-	$_SESSION['privs'] = $allowed_pages;
-
-	return $allowed_pages;
+	return ($groupindex);
 }
 
-function &getSystemPrivs() {
-	global $g;
+function index_users() {
+	global $g, $config;
 
-	$privs = array();
+	if (isset($config['system']['user'])) {
+		$i = 0;
+		foreach($config['system']['user'] as $userent) {
+			$userindex[$userent['name']] = $i;
+			$i++;
+		}
+	}
 
-	$privs[] = array("id" =>	"lockwc",
-					 "name" =>	"Lock webConfigurator",
-					 "desc" =>	"Indicates whether this user will lock access to " .
-								"the webConfigurator for other users.");
-
-	$privs[] = array("id" =>	"lock-ipages",
-					 "name" =>	"Lock individual pages",
-					 "desc" =>	"Indicates whether this user will lock individual " .
-								"HTML pages after having accessed a particular page" .
-								"(the lock will be freed if the user leaves or " .
-								"saves the page form).");
-
-	$privs[] = array("id" =>	"hasshell",
-					 "name" =>	"Has shell access",
-					 "desc" =>	"Indicates whether this user is able to login for " .
-								"example via SSH.");
-
-	$privs[] = array("id" =>	"copyfiles",
-					 "name" =>	"Is allowed to copy files",
-					 "desc" =>	"Indicates whether this user is allowed to copy files " .
-								"onto the {$g['product_name']} appliance via SCP/SFTP. " .
-								"If you are going to use this privilege, you must install " .
-								"scponly on the appliance (Hint: pkg_add -r scponly).");
-
-	$privs[] = array("id" =>	"isroot",
-					 "name" =>	"Is root user",
-					 "desc" =>	"This user is associated with the UNIX root user " .
-								"(you should associate this privilege only with one " .
-								"single user).");
-
-	return $privs;
+	return ($userindex);
 }
 
 function & getUserEntry($name) {
 	global $config, $userindex;
-	return $config['system']['user'][$userindex[$name]];
+	if (isset($userindex[$name]))
+		return $config['system']['user'][$userindex[$name]];
+}
+
+function & getUserEntryByUID($uid) {
+	global $config;
+	foreach ($config['system']['user'] as & $user)
+		if ($user['uid'] == $uid)
+			return $user;
+
+	return false;
 }
 
 function & getGroupEntry($name) {
 	global $config, $groupindex;
-	return $config['system']['group'][$groupindex[$name]];
-}
-
-function userHasPrivilege($userent, $privid = false) {
-
-	if (!$privid || !is_array($userent))
-		return false;
-
-	if (!is_array($userent['priv']))
-		return false;
-
-	foreach ($userent['priv'] as $priv)
-		if ($priv['id'] == $privid)
-			return true;
-}
-
-function hasPrivilegeCopyFiles($userent) {
-	return userHasPrivilege($userent, "copyfiles");
-}
-
-function hasPrivilegeLock($userent) {
-	return userHasPrivilege($userent, "lockwc");
-}
-
-function hasPrivilegeLockPages($userent) {
-	return userHasPrivilege($userent, "lock-ipages");
-}
-
-function hasPrivilegeShell($userent) {
-	return userHasPrivilege($userent, "hasshell");
+	if (isset($groupindex[$name]))
+		return $config['system']['group'][$groupindex[$name]];
 }
 
 function sync_local_accounts() {
@@ -249,7 +142,8 @@ function sync_local_accounts() {
 	sync_webgui_passwords();
 }
 
-function set_local_user($user) {
+function set_local_user(& $user, $password = false) {
+	global $g;
 
 	$home_base = $g['platform'] == "pfSense" ? "/home" : "/var/home";
 	if (!is_dir($home_base))
@@ -260,6 +154,30 @@ function set_local_user($user) {
 	$user_home = "{$home_base}/$user_name";
 	$user_shell = "/etc/rc.initial";
 	$user_group = "nobody";
+
+	/* set all password hashes if required */
+	if ($password && strlen($password)) {
+
+		$user['password'] = crypt($password);
+		$user['md5-hash'] = md5($password);
+
+		/*
+		 * NOTE : This section of code id based on the BSD
+		 * licensed CHAP.php courtesy of Michael Retterklieber.
+		 */
+		/* Waiting for mhash to settle into the tree
+		// Converts ascii to unicode.
+		$astr = (string) $password;
+		$ustr = '';
+		for ($i = 0; $i < strlen($astr); $i++) {
+			$a = ord($astr{$i}) << 8;
+			$ustr.= sprintf("%X", $a);
+		}
+
+		// Generate the NT-HASH from the unicode string
+		$user['nt-hash'] = bin2hex(mhash(MHASH_MD4, $ustr));
+		*/
+	}
 
 	/* configure shell type */
 	if (!hasPrivilegeShell($user)) {
@@ -340,29 +258,6 @@ function get_local_user_groups($user, $all = false) {
 	sort($groups);
 
 	return $groups;
-}
-
-function set_local_user_password(& $user, $password) {
-
-    $user['password'] = crypt($password);
-    $user['md5-hash'] = md5($password);
-
-	/*
-	 * NOTE : This section of code id based on the BSD
-	 * licensed CHAP.php courtesy of Michael Retterklieber.
-	 */
-	/* Waiting for mhash to settle into the tree
-	// Converts ascii to unicode.
-	$astr = (string) $password;
-	$ustr = '';
-	for ($i = 0; $i < strlen($astr); $i++) {
-		$a = ord($astr{$i}) << 8;
-		$ustr.= sprintf("%X", $a);
-	}
-
-	// Generate the NT-HASH from the unicode string
-	$user['nt-hash'] = bin2hex(mhash(MHASH_MD4, $ustr));
-	*/
 }
 
 function set_local_user_groups($user, $new_groups = NULL ) {
@@ -1133,36 +1028,6 @@ function radius_backed($username, $passwd){
 	$rauth->close();
 
 	return $ret;
-}
-
-function index_groups() {
-	global $g, $config, $groupindex;
-
-	$groupindex = array();
-
-	if (isset($config['system']['group'])) {
-		$i = 0;
-		foreach($config['system']['group'] as $groupent) {
-			$groupindex[$groupent['name']] = $i;
-			$i++;
-		}
-	}
-
-	return ($groupindex);
-}
-
-function index_users() {
-	global $g, $config;
-
-	if (isset($config['system']['user'])) {
-		$i = 0;
-		foreach($config['system']['user'] as $userent) {
-			$userindex[$userent['name']] = $i;
-			$i++;
-		}
-	}
-
-	return ($userindex);
 }
 
 ?>

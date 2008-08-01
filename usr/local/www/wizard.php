@@ -27,6 +27,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-pfsensewizardsubsystem
+##|*NAME=pfSense wizard subsystem page
+##|*DESCR=Allow access to the 'pfSense wizard subsystem' page.
+##|*MATCH=wizard.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 function gentitle_pkg($pgname) {

@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-logs-system
+##|*NAME=Diagnostics: Logs: System page
+##|*DESCR=Allow access to the 'Diagnostics: Logs: System' page.
+##|*MATCH=diag_logs.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $system_logfile = "{$g['varlog_path']}/system.log";

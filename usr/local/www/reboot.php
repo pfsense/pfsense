@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-rebootsystem
+##|*NAME=Diagnostics: Reboot System page
+##|*DESCR=Allow access to the 'Diagnostics: Reboot System' page.
+##|*MATCH=reboot.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if ($_POST) {

@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-ipsec-editphase1
+##|*NAME=VPN: IPsec: Edit Phase 1 page
+##|*DESCR=Allow access to the 'VPN: IPsec: Edit Phase 1' page.
+##|*MATCH=vpn_ipsec_phase1.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['phase1']))

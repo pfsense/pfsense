@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-arptable
+##|*NAME=Diagnostics: ARP Table page
+##|*DESCR=Allow access to the 'Diagnostics: ARP Table' page.
+##|*MATCH=diag_arp.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 function leasecmp($a, $b) {

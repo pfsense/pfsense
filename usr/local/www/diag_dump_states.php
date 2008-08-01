@@ -26,6 +26,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-showstates
+##|*NAME=Diagnostics: Show States page
+##|*DESCR=Allow access to the 'Diagnostics: Show States' page.
+##|*MATCH=diag_dump_states.php*
+##|-PRIV
+
+
 require_once("guiconfig.inc");
 
 

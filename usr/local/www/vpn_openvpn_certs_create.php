@@ -30,6 +30,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-openvpn-createcerts
+##|*NAME=VPN: OpenVPN: Create Certs page
+##|*DESCR=Allow access to the 'VPN: OpenVPN: Create Certs' page.
+##|*MATCH=vpn_openvpn_certs_create.php*
+##|-PRIV
+
+
 require("globals.inc");
 require("guiconfig.inc");
 

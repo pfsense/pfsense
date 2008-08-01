@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-advancedfunctions-createcertificates
+##|*NAME=System: Advanced functions: Create Certificates page
+##|*DESCR=Allow access to the 'System: Advanced functions: Create Certificates' page.
+##|*MATCH=system_advanced_create_certs.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if(file_exists("/var/etc/ssl/openssl.cnf")) {

@@ -26,6 +26,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-carp
+##|*NAME=Status: CARP page
+##|*DESCR=Allow access to the 'Status: CARP' page.
+##|*MATCH=carp_status.php*
+##|-PRIV
+
+
 require_once("guiconfig.inc");
 require_once("xmlparse.inc");
 

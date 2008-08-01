@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-loadbalancer-virtualservers
+##|*NAME=Services: Load Balancer: Virtual Servers page
+##|*DESCR=Allow access to the 'Services: Load Balancer: Virtual Servers' page.
+##|*MATCH=load_balancer_virtual_server.php*
+##|-PRIV
+
+
 require_once("guiconfig.inc");
 require_once("vslb.inc");
 

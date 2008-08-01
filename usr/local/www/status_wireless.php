@@ -26,6 +26,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-wirelessstatus
+##|*NAME=Diagnostics: Wireless Status page
+##|*DESCR=Allow access to the 'Diagnostics: Wireless Status' page.
+##|*MATCH=status_wireless.php*
+##|-PRIV
+
+
 require_once("guiconfig.inc");
 
 function gentitle_pkg($pgname) {

@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-vpnpptp-user-edit
+##|*NAME=VPN: VPN PPTP: User: Edit page
+##|*DESCR=Allow access to the 'VPN: VPN PPTP: User: Edit' page.
+##|*MATCH=vpn_pptp_users_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['pptpd']['user'])) {

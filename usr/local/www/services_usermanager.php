@@ -31,6 +31,14 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+
+##|+PRIV
+##|*IDENT=page-services-usermanager
+##|*NAME=Services: User Manager page
+##|*DESCR=Allow access to the 'Services: User Manager' page.
+##|*MATCH=services_usermanager.php*
+##|-PRIV
+
 require("guiconfig.inc");
 if(isset($_POST['save'])){
 	$_POST['username']=trim($_POST['username']);

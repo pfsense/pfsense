@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-ipsec-certificateauthority-edit
+##|*NAME=VPN: IPsec: Certificate Authority: Edit page
+##|*DESCR=Allow access to the 'VPN: IPsec: Certificate Authority: Edit' page.
+##|*MATCH=vpn_ipsec_ca_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['cacert'])) {

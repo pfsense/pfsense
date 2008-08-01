@@ -26,6 +26,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-services
+##|*NAME=Status: Services page
+##|*DESCR=Allow access to the 'Status: Services' page.
+##|*MATCH=status_services.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 function gentitle_pkg($pgname) {

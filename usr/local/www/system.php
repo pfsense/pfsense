@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-generalsetup
+##|*NAME=System: General Setup page
+##|*DESCR=Allow access to the 'System: General Setup' page.
+##|*MATCH=system.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $pconfig['hostname'] = $config['system']['hostname'];

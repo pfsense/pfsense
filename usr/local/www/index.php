@@ -31,6 +31,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-login/logout
+##|*NAME=System: Login / Logout page
+##|*DESCR=Allow access to the 'System: Login / Logout' page.
+##|*MATCH=index.php*
+##|-PRIV
+
+
 	## Load Essential Includes
 	require_once('guiconfig.inc');
 	require_once('notices.inc');

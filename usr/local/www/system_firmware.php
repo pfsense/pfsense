@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-firmware-manualupdate
+##|*NAME=System: Firmware: Manual Update page
+##|*DESCR=Allow access to the 'System: Firmware: Manual Update' page.
+##|*MATCH=system_firmware.php*
+##|-PRIV
+
+
 $d_isfwfile = 1;
 require_once("guiconfig.inc");
 

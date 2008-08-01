@@ -32,6 +32,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-haltsystem
+##|*NAME=Diagnostics: Halt system page
+##|*DESCR=Allow access to the 'Diagnostics: Halt system' page.
+##|*MATCH=halt.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if ($_POST) {

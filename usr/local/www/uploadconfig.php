@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-hidden-uploadconfiguration
+##|*NAME=Hidden: Upload Configuration page
+##|*DESCR=Allow access to the 'Hidden: Upload Configuration' page.
+##|*MATCH=uploadconfig.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 header("Content-Type: text/plain");

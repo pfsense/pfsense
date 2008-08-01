@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-openvpn-createcerts
+##|*NAME=VPN: OpenVPN: Create Certs page
+##|*DESCR=Allow access to the 'VPN: OpenVPN: Create Certs' page.
+##|*MATCH=vpn_openvpn_create_certs.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 function get_file_contents($filename) {

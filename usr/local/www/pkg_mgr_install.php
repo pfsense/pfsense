@@ -28,6 +28,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-packagemanager-installpackage
+##|*NAME=System: Package Manager: Install Package page
+##|*DESCR=Allow access to the 'System: Package Manager: Install Package' page.
+##|*MATCH=pkg_mgr_install.php*
+##|-PRIV
+
+
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 

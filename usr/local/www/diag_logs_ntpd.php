@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-systemlogs-openntpd
+##|*NAME=Status: System logs: OpenNTPD page
+##|*DESCR=Allow access to the 'Status: System logs: OpenNTPD' page.
+##|*MATCH=diag_logs_ntpd.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $ntpd_logfile = "{$g['varlog_path']}/ntpd.log";

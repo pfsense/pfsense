@@ -31,6 +31,14 @@
 		* Expose more functions.
 */
 
+##|+PRIV
+##|*IDENT=page-xmlrpclibrary
+##|*NAME=XMLRPC Library page
+##|*DESCR=Allow access to the 'XMLRPC Library' page.
+##|*MATCH=xmlrpc.php*
+##|-PRIV
+
+
 require_once("xmlrpc_server.inc");
 require_once("xmlrpc.inc");
 require_once("config.inc");

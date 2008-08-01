@@ -28,6 +28,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-system-tunables-edit
+##|*NAME=Firewall: System: Tunables: Edit page
+##|*DESCR=Allow access to the 'Firewall: System: Tunables: Edit' page.
+##|*MATCH=firewall_system_tunables_edit.php*
+##|-PRIV
+
+
 $pgtitle = array("Firewall","System Tunables","Edit");
 
 require("guiconfig.inc");

@@ -32,6 +32,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-interfaces
+##|*NAME=Status: Interfaces page
+##|*DESCR=Allow access to the 'Status: Interfaces' page.
+##|*MATCH=status_interfaces.php*
+##|-PRIV
+
+
 require_once("guiconfig.inc");
 
 $wancfg = &$config['interfaces']['wan'];

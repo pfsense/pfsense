@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-backup/restore
+##|*NAME=Diagnostics: Backup/restore page
+##|*DESCR=Allow access to the 'Diagnostics: Backup/restore' page.
+##|*MATCH=diag_backup.php*
+##|-PRIV
+
+
 /* Allow additional execution time 0 = no limit. */
 ini_set('max_execution_time', '3600');
 ini_set('max_input_time', '3600');

@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-rules-edit
+##|*NAME=Firewall: Rules: Edit page
+##|*DESCR=Allow access to the 'Firewall: Rules: Edit' page.
+##|*MATCH=firewall_rules_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $specialsrcdst = explode(" ", "any wanip lanip lan pptp pppoe");

@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-ipsec
+##|*NAME=Status: IPsec page
+##|*DESCR=Allow access to the 'Status: IPsec' page.
+##|*MATCH=diag_ipsec.php*
+##|-PRIV
+
+
 global $g;
 
 $pgtitle = array("Status","IPsec");

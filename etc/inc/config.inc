@@ -1542,7 +1542,7 @@ function convert_config() {
 		$all = array();
 		$all['name'] = "all";
 		$all['description'] = "All Users";
-		$all['scope'] = "System";
+		$all['scope'] = "system";
 		$all['gid'] = 1998;
 		$all['member'] = array();
 
@@ -1582,6 +1582,11 @@ function convert_config() {
 			$all['member'][] = $user['uid'];
 		}
 
+		/* reset group scope information */
+		foreach ($config['system']['group'] as & $group)
+			if ($group['name'] != $g['admin_group'])
+				$group['scope'] = "user";
+
 		/* insert new all group */
 		$groups = Array();
 		$groups[] = $all;
@@ -1589,10 +1594,58 @@ function convert_config() {
 		$config['system']['group'] = $groups;
 		set_local_group($all);
 
+		$config['version'] = 4.9;
+	}
+
+	/* Convert 4.9 -> 5.0 */
+	if ($config['version'] <= 5.0) {
+		
+		/* update user privileges */
+		foreach ($config['system']['user'] as & $user) {
+			$privs = array();
+			if (!is_array($user['priv'])) {
+				unset($user['priv']);
+				continue;
+			}
+			foreach ($user['priv'] as $priv) {
+				switch($priv['id']) {
+					case "lockwc":
+						$privs[] = "user-lock-webcfg";
+						break;
+					case "lock-ipages":
+						$privs[] = "user-lock-ipages";
+						break;
+					case "hasshell":
+						$privs[] = "user-shell-access";
+						break;
+					case "copyfiles":
+						$privs[] = "user-copy-files";
+						break;
+				}
+			}
+			$user['priv'] = $privs;
+		}
+
+		/* update group privileges */
+		foreach ($config['system']['group'] as & $group) {
+			$privs = array();
+			if (!is_array($group['pages'])) {
+				unset($group['pages']);
+				continue;
+			}
+			foreach ($group['pages'] as $page) {
+				$priv = map_page_privname($page);
+				if ($priv)
+					$privs[] = $priv;
+			}
+			unset($group['pages']);
+			$group['priv'] = $privs;
+		}
+
 		/* sync all local account information */
 		sync_local_accounts();
 
-		$config['version'] = 4.9;
+		$config['version'] = 5.0;
 	}
 
 	$now = date("H:i:s");

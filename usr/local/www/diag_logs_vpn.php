@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-logs-pptpvpn
+##|*NAME=Diagnostics: Logs: PPTP VPN page
+##|*DESCR=Allow access to the 'Diagnostics: Logs: PPTP VPN' page.
+##|*MATCH=diag_logs_vpn.php*
+##|-PRIV
+
+
 $pgtitle = array("Status","System logs","PPTP VPN");
 require("guiconfig.inc");
 

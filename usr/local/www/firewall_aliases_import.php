@@ -27,6 +27,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-alias-import
+##|*NAME=Firewall: Alias: Import page
+##|*DESCR=Allow access to the 'Firewall: Alias: Import' page.
+##|*MATCH=firewall_aliases_import.php*
+##|-PRIV
+
+
 $pgtitle = array("Firewall","Aliases","Import");
 
 require("guiconfig.inc");

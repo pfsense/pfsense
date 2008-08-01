@@ -27,6 +27,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-packagemanager
+##|*NAME=System: Package Manager page
+##|*DESCR=Allow access to the 'System: Package Manager' page.
+##|*MATCH=pkg_mgr.php*
+##|-PRIV
+
+
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 

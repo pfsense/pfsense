@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-staticroutes
+##|*NAME=System: Static Routes page
+##|*DESCR=Allow access to the 'System: Static Routes' page.
+##|*MATCH=system_routes.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['staticroutes']['route']))

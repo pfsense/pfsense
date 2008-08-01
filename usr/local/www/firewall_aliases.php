@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-aliases
+##|*NAME=Firewall: Aliases page
+##|*DESCR=Allow access to the 'Firewall: Aliases' page.
+##|*MATCH=firewall_aliases.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['aliases']['alias']))

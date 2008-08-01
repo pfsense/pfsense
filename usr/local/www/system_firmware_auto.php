@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-firmware-checkforupdate
+##|*NAME=System: Firmware: Check For Update page
+##|*DESCR=Allow access to the 'System: Firmware: Check For Update' page.
+##|*MATCH=system_firmware_auto.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $curcfg = $config['system']['firmware'];

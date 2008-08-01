@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-traceroute
+##|*NAME=Diagnostics: Traceroute page
+##|*DESCR=Allow access to the 'Diagnostics: Traceroute' page.
+##|*MATCH=diag_traceroute.php*
+##|-PRIV
+
+
 
 require("guiconfig.inc");
 $pgtitle = array("Diagnostics","Traceroute");

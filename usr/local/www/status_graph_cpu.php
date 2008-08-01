@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-cpuload
+##|*NAME=Status: CPU load page
+##|*DESCR=Allow access to the 'Status: CPU load' page.
+##|*MATCH=status_graph_cpu.php*
+##|-PRIV
+
+
 $pgtitle = array("Status", "CPU load");
 require("guiconfig.inc");
 include("head.inc");

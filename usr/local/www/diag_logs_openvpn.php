@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-systemlogs-openvpn
+##|*NAME=Status: System logs: OpenVPN page
+##|*DESCR=Allow access to the 'Status: System logs: OpenVPN' page.
+##|*MATCH=diag_logs_openvpn.php*
+##|-PRIV
+
+
 $pgtitle = array("Status","System logs","OpenVPN");
 
 require("guiconfig.inc");

@@ -27,6 +27,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-openvpn-editcrl
+##|*NAME=VPN: OpenVPN: Edit CRL page
+##|*DESCR=Allow access to the 'VPN: OpenVPN: Edit CRL' page.
+##|*MATCH=vpn_openvpn_crl_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 require_once("openvpn.inc");
 

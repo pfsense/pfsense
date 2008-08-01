@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-captiveportal-macaddresses
+##|*NAME=Services: Captive portal: Mac Addresses page
+##|*DESCR=Allow access to the 'Services: Captive portal: Mac Addresses' page.
+##|*MATCH=services_captiveportal_mac.php*
+##|-PRIV
+
+
 $pgtitle = array("Services","Captive portal");
 require("guiconfig.inc");
 

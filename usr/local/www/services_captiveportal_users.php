@@ -30,6 +30,14 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+
+##|+PRIV
+##|*IDENT=page-services-captiveportal-users
+##|*NAME=Services: Captive portal: Users page
+##|*DESCR=Allow access to the 'Services: Captive portal: Users' page.
+##|*MATCH=services_captiveportal_users.php*
+##|-PRIV
+
 $pgtitle = array("Services","Captive portal");
 require("guiconfig.inc");
 

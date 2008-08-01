@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-snmp
+##|*NAME=Services: SNMP page
+##|*DESCR=Allow access to the 'Services: SNMP' page.
+##|*MATCH=services_snmp.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['snmpd'])) {

@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-hidden-execraw
+##|*NAME=Hidden: Exec Raw page
+##|*DESCR=Allow access to the 'Hidden: Exec Raw' page.
+##|*MATCH=exec_raw.php*
+##|-PRIV
+
+
 
 header("Content-Type: text/plain");
 include("guiconfig.inc");

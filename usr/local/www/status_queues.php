@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-trafficshaper-queues
+##|*NAME=Status: Traffic shaper: Queues page
+##|*DESCR=Allow access to the 'Status: Traffic shaper: Queues' page.
+##|*MATCH=status_queues.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if($_GET['reset'] <> "") {

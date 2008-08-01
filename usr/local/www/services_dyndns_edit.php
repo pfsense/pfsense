@@ -26,6 +26,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-dynamicdnsclient
+##|*NAME=Services: Dynamic DNS client page
+##|*DESCR=Allow access to the 'Services: Dynamic DNS client' page.
+##|*MATCH=services_dyndns_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['dyndnses']['dyndns'])) {

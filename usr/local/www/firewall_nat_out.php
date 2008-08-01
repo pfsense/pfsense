@@ -31,6 +31,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-nat-outbound
+##|*NAME=Firewall: NAT: Outbound page
+##|*DESCR=Allow access to the 'Firewall: NAT: Outbound' page.
+##|*MATCH=firewall_nat_out.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['nat']['advancedoutbound']['rule']))

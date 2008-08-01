@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-logs-settings
+##|*NAME=Diagnostics: Logs: Settings page
+##|*DESCR=Allow access to the 'Diagnostics: Logs: Settings' page.
+##|*MATCH=diag_logs_settings.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $pconfig['reverse'] = isset($config['syslog']['reverse']);

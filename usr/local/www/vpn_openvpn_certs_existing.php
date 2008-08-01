@@ -30,6 +30,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-openvpn-createexistingcerts
+##|*NAME=VPN: OpenVPN: Create Existing Certs page
+##|*DESCR=Allow access to the 'VPN: OpenVPN: Create Existing Certs' page.
+##|*MATCH=vpn_openvpn_certs_existing.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $pgtitle = array("VPN", "OpenVPN", "Create Existing Certs");

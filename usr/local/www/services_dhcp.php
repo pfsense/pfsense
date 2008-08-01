@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-dhcpserver
+##|*NAME=Services: DHCP server page
+##|*DESCR=Allow access to the 'Services: DHCP server' page.
+##|*MATCH=services_dhcp.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $if = $_GET['if'];

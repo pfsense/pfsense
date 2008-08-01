@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-captiveportal-filemanager
+##|*NAME=Services: Captive portal: File Manager page
+##|*DESCR=Allow access to the 'Services: Captive portal: File Manager' page.
+##|*MATCH=services_captiveportal_filemanager.php*
+##|-PRIV
+
+
 $pgtitle = array("Services","Captive portal");
 
 require_once("guiconfig.inc");

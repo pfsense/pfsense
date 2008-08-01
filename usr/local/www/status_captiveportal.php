@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-captiveportal
+##|*NAME=Status: Captive portal page
+##|*DESCR=Allow access to the 'Status: Captive portal' page.
+##|*MATCH=status_captiveportal.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $concurrent = `cat /var/db/captiveportal.db | wc -l`;

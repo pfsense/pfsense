@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-rules
+##|*NAME=Firewall: Rules page
+##|*DESCR=Allow access to the 'Firewall: Rules' page.
+##|*MATCH=firewall_rules.php*
+##|-PRIV
+
+
 $pgtitle = array("Firewall", "Rules");
 require("guiconfig.inc");
 

@@ -30,6 +30,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-schedules
+##|*NAME=Firewall: Schedules page
+##|*DESCR=Allow access to the 'Firewall: Schedules' page.
+##|*MATCH=firewall_schedule.php*
+##|-PRIV
+
+
 
 $pgtitle = array("Firewall","Schedules");
 

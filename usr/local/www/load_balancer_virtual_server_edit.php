@@ -29,6 +29,14 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-loadbalancer-virtualserver-edit
+##|*NAME=Load Balancer: Virtual Server: Edit page
+##|*DESCR=Allow access to the 'Load Balancer: Virtual Server: Edit' page.
+##|*MATCH=load_balancer_virtual_server_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 if (!is_array($config['load_balancer']['virtual_server'])) {
         $config['load_balancer']['virtual_server'] = array();

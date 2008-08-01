@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-interfaces-gre
+##|*NAME=Interfaces: GRE page
+##|*DESCR=Allow access to the 'Interfaces: GRE' page.
+##|*MATCH=interfaces_gre.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['gres']['gre']))

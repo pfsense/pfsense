@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-status-rrdgraphs
+##|*NAME=Status: RRD Graphs page
+##|*DESCR=Allow access to the 'Status: RRD Graphs' page.
+##|*MATCH=status_rrd_graph.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if ($_GET['cat']) {

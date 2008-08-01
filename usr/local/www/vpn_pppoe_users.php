@@ -28,6 +28,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-pppoeserver-users
+##|*NAME=Services: PPPoE Server: Users page
+##|*DESCR=Allow access to the 'Services: PPPoE Server: Users' page.
+##|*MATCH=vpn_pppoe_users.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['pppoe']['user'])) {

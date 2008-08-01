@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-firewall-alias-edit
+##|*NAME=Firewall: Alias: Edit page
+##|*DESCR=Allow access to the 'Firewall: Alias: Edit' page.
+##|*MATCH=firewall_aliases_edit.php*
+##|-PRIV
+
+
 $pgtitle = array("Firewall","Aliases","Edit");
 
 require("guiconfig.inc");

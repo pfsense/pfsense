@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-dnsforwarder-edithost
+##|*NAME=Services: DNS Forwarder: Edit host page
+##|*DESCR=Allow access to the 'Services: DNS Forwarder: Edit host' page.
+##|*MATCH=services_dnsmasq_edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['dnsmasq']['hosts'])) 

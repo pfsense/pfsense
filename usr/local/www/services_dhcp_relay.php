@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-services-dhcprelay
+##|*NAME=Services: DHCP Relay page
+##|*DESCR=Allow access to the 'Services: DHCP Relay' page.
+##|*MATCH=services_dhcp_relay.php*
+##|-PRIV
+
+
 function get_wan_dhcp_server() {
 	global $config, $g;
 	$dhclientfn = $g['vardb_path'] . "/dhclient.leases." . $config['interfaces']['wan']['if'];

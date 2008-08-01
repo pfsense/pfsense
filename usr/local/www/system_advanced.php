@@ -31,6 +31,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-advancedfunctions
+##|*NAME=System: Advanced functions page
+##|*DESCR=Allow access to the 'System: Advanced functions' page.
+##|*MATCH=system_advanced.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 $pconfig['disablefilter'] = $config['system']['disablefilter'];

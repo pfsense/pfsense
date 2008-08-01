@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-system-gateways
+##|*NAME=System: Gateways page
+##|*DESCR=Allow access to the 'System: Gateways' page.
+##|*MATCH=system_gateways.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (!is_array($config['gateways']['gateway_item']))

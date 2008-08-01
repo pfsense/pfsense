@@ -29,6 +29,14 @@
 
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-routingtables
+##|*NAME=Diagnostics: Routing tables page
+##|*DESCR=Allow access to the 'Diagnostics: Routing tables' page.
+##|*MATCH=diag_routes.php*
+##|-PRIV
+
+
 include('guiconfig.inc');
 
 $pgtitle = array("Diagnostics","Routing tables");

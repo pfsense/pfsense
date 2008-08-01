@@ -27,6 +27,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-editfile
+##|*NAME=Diagnostics: Edit File page
+##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
+##|*MATCH=edit.php*
+##|-PRIV
+
+
 require("guiconfig.inc");
 
 if (($_GET['submit'] == "Load") && file_exists($_GET['savetopath'])) {

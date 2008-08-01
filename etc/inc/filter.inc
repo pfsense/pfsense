@@ -2501,31 +2501,11 @@ EOD;
 	if (isset($config['ipsec']['enable']) && 
 	   is_array($config['ipsec']['phase1'])) {
 
-		/*      Step through all phase2 entries and determine
-                 *      which protocols are in use with this peer
-                 */
-                $prot_used_esp = false;
-                $prot_used_ah  = false;
-		
-		if (is_array($config['ipsec']['phase2']))
-                foreach ($config['ipsec']['phase2'] as $ph2ent) {
-
-                	/* only evaluate ph2's bound to our ph1 */
-                        if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
-                        	continue;
-
-                        if ($ph2ent['protocol'] == 'esp')
-                                $prot_used_esp = true;
-
-                        if ($ph2ent['protocol'] == 'ah')
-                                $prot_used_ah = true;
-                }
-
 		/* step through all phase1 entries */
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
 
-                	if (isset ($ph1ent['disabled']))
-                    	continue;
+			if (isset ($ph1ent['disabled']))
+				continue;
 
 			update_filter_reload_status("Creating IPsec phase1 items for {$ph1ent['descr']}...");
 
@@ -2548,6 +2528,30 @@ EOD;
 				$descr = $ph1ent['descr'];
 			else
 				$descr = $rgip;
+
+			/*
+			 * Step through all phase2 entries and determine
+			 * which protocols are in use with this peer
+			 */
+
+			$prot_used_esp = false;
+			$prot_used_ah  = false;
+
+			if (is_array($config['ipsec']['phase2'])) {
+
+				foreach ($config['ipsec']['phase2'] as $ph2ent) {
+
+					/* only evaluate ph2's bound to our ph1 */
+					if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
+						continue;
+
+					if ($ph2ent['protocol'] == 'esp')
+						$prot_used_esp = true;
+
+					if ($ph2ent['protocol'] == 'ah')
+						$prot_used_ah = true;
+				}
+			}
 
 			foreach ($FilterIflist as $ifr => $ifcfg) {
 

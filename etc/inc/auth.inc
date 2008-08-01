@@ -93,6 +93,15 @@ function & getGroupEntry($name) {
 		return $config['system']['group'][$groupindex[$name]];
 }
 
+function & getGroupEntryByGID($gid) {
+	global $config;
+	foreach ($config['system']['group'] as & $group)
+		if ($group['gid'] == $gid)
+			return $group;
+
+	return false;
+}
+
 function sync_local_accounts() {
 	global $config;
 
@@ -128,6 +137,10 @@ function sync_local_accounts() {
 		}
 		pclose($fd);
 	}
+
+	/* make sure the all group exists */
+	$allgrp = getGroupEntryByGID(1998);
+	set_local_group($allgrp);
 
 	/* sync all local users */
 	if (is_array($config['system']['user']))

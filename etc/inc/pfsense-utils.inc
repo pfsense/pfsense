@@ -1142,7 +1142,7 @@ function is_carp_defined() {
  *   $tmp	- Returns the mtu of an interface
  ******/
 function get_interface_mtu($interface) {
-	$mtu = `/sbin/ifconfig {$interface} | /usr/bin/grep mtu | /usr/bin/cut -d" " -f4`;
+	$mtu = `/sbin/ifconfig {$interface} | /usr/bin/grep mtu | /usr/bin/cut -d" " -f6`;
 	return $mtu;
 }
 

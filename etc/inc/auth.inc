@@ -140,7 +140,7 @@ function sync_local_accounts() {
 
 	/* make sure the all group exists */
 	$allgrp = getGroupEntryByGID(1998);
-	set_local_group($allgrp);
+	set_local_group($allgrp, true);
 
 	/* sync all local users */
 	if (is_array($config['system']['user']))
@@ -312,12 +312,12 @@ function set_local_user_groups($user, $new_groups = NULL ) {
 		set_local_group($group);
 }
 
-function set_local_group($group) {
+function set_local_group($group, $reset = false) {
 
 	$group_name = $group['name'];
 	$group_gid = $group['gid'];
 	$group_members = "''";
-	if (count($group['member']))
+	if (!$reset && count($group['member']))
 		$group_members = implode(",",$group['member']);
 
 	/* read from group db */

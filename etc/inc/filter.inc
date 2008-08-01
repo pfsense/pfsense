@@ -435,6 +435,7 @@ function generate_optcfg_array()
 		$oic['alias-address'] = $oc['alias-address'];
 		$oic['alias-subnet'] = $oc['alias-subnet'];
 		$oic['gateway'] = $oc['gateway'];
+		$oic['spoofcheck'] = "yes";
 
 		$FilterIflist[$if] = $oic;
 	}
@@ -2104,8 +2105,8 @@ EOD;
 				break;
 			}
 		}
-		if ($oc['ip'] && !($isbridged) && !isset($config['bridge']['filteringbridge']))
-			$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
+		if ($oc['ip'] && !($isbridged) && !isset($config['bridge']['filteringbridge']) && isset($oc['spoofcheck']))
+				$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
 
 
 		/* block private networks ? */

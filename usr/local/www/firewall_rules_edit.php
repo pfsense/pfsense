@@ -554,6 +554,7 @@ include("head.inc");
                                                 ><?=$direction;?></option>
                   	                <?php endforeach; ?>      
                                 </select>
+                		<input type="hidden" id="floating" name="floating" value="floating">
                         </td>
                 <tr>
 <?php endif; ?>
@@ -860,7 +861,6 @@ include("head.inc");
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
 <?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-                <input type="hidden" id="floating" name="floating" value="floating">
 
                                 <input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>">
                                 <br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and

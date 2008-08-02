@@ -112,6 +112,9 @@ function ipsec_get_phase1_dst(& $ph1ent) {
 	if (!is_ipaddr($rg))
 		return resolve_retry($rg);
 
+	if(!is_ipaddr($rg))
+		return false;
+
 	return $rg;
 }
 

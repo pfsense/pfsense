@@ -176,7 +176,7 @@ function vpn_ipsec_configure($ipchg = false)
 				if (isset($ph1ent['disabled']))
 					continue;
 
-				$ep = vpn_endpoint_determine($ph1ent, $curwanip);
+				$ep = ipsec_get_phase1_src($ph1ent);
 				if (!$ep)
 					continue;
 
@@ -194,8 +194,7 @@ function vpn_ipsec_configure($ipchg = false)
 				if (!is_ipaddr($rg)) {
 					$dnswatch_list[] = $rg;
 					$rg = resolve_retry($rg);
-
-					if (!$rgip)
+					if (!$rg)
 						continue;
 				}
 
@@ -408,7 +407,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 					$ikeid = $ph1ent['ikeid'];
 
-					$ep = vpn_endpoint_determine($ph1ent, $curwanip);
+					$ep = ipsec_get_phase1_src($ph1ent);
 					if (!$ep)
 						continue;
 
@@ -723,7 +722,7 @@ EOD;
 				if (isset($ph2ent['disabled']))
 					continue;
 
-				$ep = vpn_endpoint_determine($ph1ent, $curwanip);
+				$ep = ipsec_get_phase1_src($ph1ent);
 				if (!$ep)
 					continue;
 
@@ -861,34 +860,6 @@ function vpn_localnet_determine($adr, & $sa, & $sn) {
 		$sn = $config['interfaces']['lan']['subnet'];
 		$sa = gen_subnet($config['interfaces']['lan']['ipaddr'], $sn);
 	}
-}
-
-/* XXX: is there a need for this get_current_wan_address() does already this?! */
-function vpn_endpoint_determine($ph1ent, $curwanip) {
-
-	global $g, $config;
-
-	if ((!$ph1ent['interface']) || ($ph1ent['interface'] == "wan")) {
-		if ($curwanip)
-			return $curwanip;
-		else
-			return null;
-	} elseif ($ph1ent['interface'] == "lan") {
-		return $config['interfaces']['lan']['ipaddr'];
-	} else {
-		$iface = $config['interfaces'][$ph1ent['interface']]['if'];
-		$oc = $config['interfaces'][$ph1ent['interface']];
-		/* carp ips, etc */
-		$ip = find_interface_ip($iface);
-		if($ip) 
-			return $ip;
-			
-		if (isset ($oc['enable']) && $oc['if']) {
-			return $oc['ipaddr'];
-		}
-	}
-
-	return null;
 }
 
 /* Forcefully restart IPsec

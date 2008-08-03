@@ -119,9 +119,6 @@ ob_flush();
 /* mount rw fs */
 conf_mount_rw();
 
-/* resync password database to avoid out of sync issues */
-sync_webgui_passwords();
-
 switch($_GET['mode']) {
 	case "delete":
             $id = get_pkg_id($_GET['pkg']);

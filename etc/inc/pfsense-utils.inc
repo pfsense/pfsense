@@ -2580,36 +2580,6 @@ function reload_interfaces() {
 	touch("/tmp/reload_interfaces");
 }
 
-/****f* pfsense-utils/sync_webgui_passwords
- * NAME
- *   sync_webgui_passwords - syncs all www pwdb entries
- * INPUTS
- *   none
- * RESULT
- *   none
- ******/
-function sync_webgui_passwords() {
-	global $config, $g, $groupindex, $userindex;
-
-	conf_mount_rw();
-	$fd = fopen("{$g['varrun_path']}/htpasswd", "w");
-
-	if (!$fd) {
-		log_error("Error: cannot open htpasswd in sync_webgui_passwords().\n");
-		return 1;
-	}
-
-	/* loop through custom users and add "virtual" entries */
-	if ($config['system']['user'])
-		foreach ($config['system']['user'] as $user)
-			fwrite($fd, "{$user['name']}:{$user['password']}\n");
-
-	fclose($fd);
-	chmod("{$g['varrun_path']}/htpasswd", 0600);
-
-	conf_mount_ro();
-}
-
 /****f* pfsense-utils/reload_all_sync
  * NAME
  *   reload_all - reload all settings
@@ -2693,7 +2663,7 @@ function reload_all_sync() {
 	system_routing_enable();
 
 	/* ensure passwords are sync'd */
-	system_password_configure();
+//	system_password_configure();
 
 	/* start dnsmasq service */
 	services_dnsmasq_configure();

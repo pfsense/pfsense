@@ -67,11 +67,10 @@ if (isAllowedPage("system_usermanager")) {
 			exit;
 		}
 
-		del_local_user($a_user[$_GET['id']]);
+		local_user_del($a_user[$_GET['id']]);
 		$userdeleted = $a_user[$_GET['id']]['name'];
 		unset($a_user[$_GET['id']]);
 		write_config();
-		$retval = system_password_configure();
 		$savemsg = gettext("User")." {$userdeleted} ".
 					gettext("successfully deleted")."<br/>";
 	}
@@ -96,7 +95,7 @@ if (isAllowedPage("system_usermanager")) {
 		if (isset($id) && $a_user[$id]) {
 			$pconfig['usernamefld'] = $a_user[$id]['name'];
 			$pconfig['fullname'] = $a_user[$id]['fullname'];
-			$pconfig['groups'] = get_local_user_groups($a_user[$id]);
+			$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 			$pconfig['utype'] = $a_user[$id]['scope'];
 			$pconfig['uid'] = $a_user[$id]['uid'];
 			$pconfig['authorizedkeys'] = base64_decode($a_user[$id]['authorizedkeys']);
@@ -163,9 +162,13 @@ if (isAllowedPage("system_usermanager")) {
 			if (isset($id) && $a_user[$id])
 				$userent = $a_user[$id];
 
-			/* the user did change his username */
+			/* the user name was modified */
 			if ($_POST['usernamefld'] <> $_POST['oldusername'])
 				$_SERVER['REMOTE_USER'] = $_POST['usernamefld'];
+
+			/* the user password was mofified */
+			if ($_POST['passwordfld1'])
+				local_user_set_password($userent, $_POST['passwordfld1']);
 
 			$userent['name'] = $_POST['usernamefld'];
 			$userent['fullname'] = $_POST['fullname'];
@@ -182,10 +185,9 @@ if (isAllowedPage("system_usermanager")) {
 				$a_user[] = $userent;
 			}
 
-			set_local_user($userent, $_POST['passwordfld1']);
-			set_local_user_groups($userent,$_POST['groups']);
+			local_user_set($userent);
+			local_user_set_groups($userent,$_POST['groups']);
 			write_config();
-			$retval = system_password_configure();
 
 			pfSenseHeader("system_usermanager.php");
 		}
@@ -488,7 +490,7 @@ function presubmit() {
 					<td class="listr"><?=htmlspecialchars($userent['fullname']);?>&nbsp;</td>
 					<td class="listbg">
 						<font color="white">
-							<?=implode(",",get_local_user_groups($userent));?>
+							<?=implode(",",local_user_get_groups($userent));?>
 						</font>
 						&nbsp;
 					</td>
@@ -563,10 +565,6 @@ function presubmit() {
 			$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['password'] = crypt(trim($_POST['passwordfld1']));
 
 			write_config();
-
-			sync_webgui_passwords();
-
-			$retval = system_password_configure();
 			$savemsg = "Password successfully changed<br />";
 		}
 	}

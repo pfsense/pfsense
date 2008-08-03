@@ -106,11 +106,6 @@
 	system_setup_sysctl();
 	echo "done.\n";
 
-	/* sync user passwords */
-	echo "Syncing user passwords...";
-	sync_webgui_passwords();
-	echo "done.\n";
-
 	echo "Starting Secure Shell Services...";
 	mwexec_bg("/etc/sshd");
 	echo "done.\n";
@@ -216,7 +211,7 @@
 	system_routing_enable();
 
 	/* ensure passwords are sync'd */
-	system_password_configure();
+//	system_password_configure();
 
 	/* configure console menu */
 	system_console_configure();

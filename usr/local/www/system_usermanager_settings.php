@@ -126,11 +126,7 @@ if ($_POST) {
 		else
 			unset($pconfig['ldapgroupattribute']);
 
-
 		write_config();
-
-		$retval = system_password_configure();
-		sync_webgui_passwords();
 
 	}
 }

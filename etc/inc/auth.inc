@@ -102,7 +102,18 @@ function & getGroupEntryByGID($gid) {
 	return false;
 }
 
-function sync_local_accounts() {
+function local_backed($username, $passwd) {
+
+	$user = getUserEntry($username);
+	if (!$user)
+		return false;
+
+	$passwd = crypt($passwd, $user['password']);
+
+	return ($passwd == $user['password']);
+}
+
+function local_sync_accounts() {
 	global $config;
 
 	/* remove local users to avoid uid conflicts */
@@ -140,22 +151,20 @@ function sync_local_accounts() {
 
 	/* make sure the all group exists */
 	$allgrp = getGroupEntryByGID(1998);
-	set_local_group($allgrp, true);
+	local_group_set($allgrp, true);
 
 	/* sync all local users */
 	if (is_array($config['system']['user']))
 		foreach ($config['system']['user'] as $user)
-			set_local_user($user);
+			local_user_set($user);
 
 	/* sync all local groups */
 	if (is_array($config['system']['group']))
 		foreach ($config['system']['group'] as $group)
-			set_local_group($group);
-
-	sync_webgui_passwords();
+			local_group_set($group);
 }
 
-function set_local_user(& $user, $password = false) {
+function local_user_set(& $user) {
 	global $g;
 
 	$home_base = $g['platform'] == "pfSense" ? "/home" : "/var/home";
@@ -167,30 +176,6 @@ function set_local_user(& $user, $password = false) {
 	$user_home = "{$home_base}/$user_name";
 	$user_shell = "/etc/rc.initial";
 	$user_group = "nobody";
-
-	/* set all password hashes if required */
-	if ($password && strlen($password)) {
-
-		$user['password'] = crypt($password);
-		$user['md5-hash'] = md5($password);
-
-		/*
-		 * NOTE : This section of code id based on the BSD
-		 * licensed CHAP.php courtesy of Michael Retterklieber.
-		 */
-		/* Waiting for mhash to settle into the tree
-		// Converts ascii to unicode.
-		$astr = (string) $password;
-		$ustr = '';
-		for ($i = 0; $i < strlen($astr); $i++) {
-			$a = ord($astr{$i}) << 8;
-			$ustr.= sprintf("%X", $a);
-		}
-
-		// Generate the NT-HASH from the unicode string
-		$user['nt-hash'] = bin2hex(mhash(MHASH_MD4, $ustr));
-		*/
-	}
 
 	/* configure shell type */
 	if (!hasPrivilegeShell($user)) {
@@ -241,10 +226,10 @@ function set_local_user(& $user, $password = false) {
 		create_authorized_keys($user_name, $user_home);
 }
 
-function del_local_user($user) {
+function local_user_del($user) {
 
 	/* remove all memberships */
-	set_local_user_groups($user);
+	local_user_get_groups($user);
 
 	/* delete from pw db */
 	$cmd = "/usr/sbin/pw userdel {$user['name']}";
@@ -255,7 +240,30 @@ function del_local_user($user) {
 	pclose($fd);
 }
 
-function get_local_user_groups($user, $all = false) {
+function local_user_set_password(& $user, $password) {
+
+	$user['password'] = crypt($password);
+	$user['md5-hash'] = md5($password);
+
+	/*
+	 * NOTE : This section of code id based on the BSD
+	 * licensed CHAP.php courtesy of Michael Retterklieber.
+	 */
+	/* Waiting for mhash to settle into the tree
+	// Converts ascii to unicode.
+	$astr = (string) $password;
+	$ustr = '';
+	for ($i = 0; $i < strlen($astr); $i++) {
+		$a = ord($astr{$i}) << 8;
+		$ustr.= sprintf("%X", $a);
+	}
+
+	// Generate the NT-HASH from the unicode string
+	$user['nt-hash'] = bin2hex(mhash(MHASH_MD4, $ustr));
+	*/
+}
+
+function local_user_get_groups($user, $all = false) {
 	global $config;
 
 	$groups = array();
@@ -273,13 +281,13 @@ function get_local_user_groups($user, $all = false) {
 	return $groups;
 }
 
-function set_local_user_groups($user, $new_groups = NULL ) {
+function local_user_set_groups($user, $new_groups = NULL ) {
 	global $config, $groupindex;
 
 	if (!is_array($config['system']['group']))
 		return;
 
-	$cur_groups = get_local_user_groups($user);
+	$cur_groups = local_user_get_groups($user);
 	$mod_groups = array();
 
 	if (!is_array($new_groups))
@@ -309,10 +317,10 @@ function set_local_user_groups($user, $new_groups = NULL ) {
 
 	/* sync all modified groups */
 	foreach ($mod_groups as $group)
-		set_local_group($group);
+		local_group_set($group);
 }
 
-function set_local_group($group, $reset = false) {
+function local_group_set($group, $reset = false) {
 
 	$group_name = $group['name'];
 	$group_gid = $group['gid'];
@@ -340,7 +348,7 @@ function set_local_group($group, $reset = false) {
 	pclose($fd);
 }
 
-function del_local_group($group) {
+function local_group_del($group) {
 
 	/* delete from group db */
 	$cmd = "/usr/sbin/pw groupdel {$group['name']}";
@@ -351,24 +359,384 @@ function del_local_group($group) {
 	pclose($fd);
 }
 
-function basic_auth($backing) {
-	global $HTTP_SERVER_VARS;
+function ldap_test_connection() {
+	global $config, $g;
 
-	/* Check for AUTH_USER */
-	if ($HTTP_SERVER_VARS['PHP_AUTH_USER'] <> "") {
-		$HTTP_SERVER_VARS['AUTH_USER'] = $HTTP_SERVER_VARS['PHP_AUTH_USER'];
-		$HTTP_SERVER_VARS['AUTH_PW'] = $HTTP_SERVER_VARS['PHP_AUTH_PW'];
+	$ldapserver = $config['system']['webgui']['ldapserver'];
+	$ldapbindun = $config['system']['webgui']['ldapbindun'];
+	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
+
+	if (!($ldap = ldap_connect($ldapserver)))
+		return false;
+
+	return true;
+}
+
+function ldap_test_bind() {
+	global $config, $g;
+
+	$ldapserver = $config['system']['webgui']['ldapserver'];
+	$ldapbindun = $config['system']['webgui']['ldapbindun'];
+	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
+    
+	if (!($ldap = ldap_connect($ldapserver)))
+		return false;
+
+	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+    
+	if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw)))
+		return false;
+
+	return true;
+}
+
+function ldap_get_user_ous($show_complete_ou=true) {
+	global $config, $g;
+
+	if(!function_exists("ldap_connect"))
+		return;
+
+	$ldapserver     = $config['system']['webgui']['ldapserver'];
+	$ldapbindun     = $config['system']['webgui']['ldapbindun'];
+	$ldapbindpw     = $config['system']['webgui']['ldapbindpw'];
+	$ldapsearchbase = "{$config['system']['webgui']['ldapsearchbase']}";
+	$ldaptype       = $config['system']['webgui']['backend'];
+
+	$ldapfilter = "(ou=*)";
+	putenv('LDAPTLS_REQCERT=never');
+	if (!($ldap = ldap_connect($ldapserver))) {
+		log_error("ERROR!  ldap_get_groups() could not connect to server {$ldapserver}.  Defaulting to built-in local_backed()");
+		$status = local_backed($username, $passwd);
+		return $status;
 	}
 
-	if (!isset($HTTP_SERVER_VARS['AUTH_USER'])) {
-		require_once("authgui.inc");
-		header("WWW-Authenticate: Basic realm=\".\"");
-		header("HTTP/1.0 401 Unauthorized");
-		display_error_form("401", gettext("You must enter valid credentials to access this resource."));
-		exit;
+	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+
+	if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
+		log_error("ERROR! ldap_get_groups() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in local_backed()");
+		$status = local_backed($username, $passwd);
+		return $status;
 	}
 
-	return $backing($HTTP_SERVER_VARS['AUTH_USER'],$HTTP_SERVER_VARS['AUTH_PW']);
+	$search = ldap_search($ldap, $ldapsearchbase, $ldapfilter);
+
+	$info = ldap_get_entries($ldap, $search);
+
+	$ous = array();
+
+	if (is_array($info)) {
+		foreach ($info as $inf) {
+			if (!$show_complete_ou) {
+				$inf_split = split(",", $inf['dn']);
+				$ou = $inf_split[0];
+				$ou = str_replace("OU=","", $ou);
+			} else
+				if($inf['dn'])
+					$ou = $inf['dn'];
+			if($ou)
+				$ous[] = $ou;
+		}
+	}
+
+	//Tack on the default Users container for AD since its non-standard
+	if($ldaptype == 'ldap')
+		$ous[] = "CN=Users,".$ldapsearchbase;
+
+	return $ous;
+}
+
+function ldap_get_groups($username) {
+	global $config;
+	
+	if(!function_exists("ldap_connect"))
+		return;
+	
+	if(!$username) 
+		return false;
+
+	if(stristr($username, "@")) {
+		$username_split=split("\@", $username);
+		$username = $username_split[0];		
+	}
+
+	if(stristr($username, "\\")) {
+		$username_split=split("\\", $username);
+		$username = $username_split[0];        
+	}    
+	
+	//log_error("Getting LDAP groups for {$username}.");
+	
+	$ldapserver         = $config['system']['webgui']['ldapserver'];
+	$ldapbindun         = $config['system']['webgui']['ldapbindun'];
+	$ldapbindpw         = $config['system']['webgui']['ldapbindpw'];
+	$ldapfilter         = $config['system']['webgui']['ldapfilter'];
+	$ldapfilter         = str_replace("\$username", $username, $ldapfilter);
+	$ldapgroupattribute = $config['system']['webgui']['ldapgroupattribute'];
+	$ldapdn             = $_SESSION['ldapdn'];
+	 
+	/*Convert attribute to lowercase.  php ldap arrays put everything in lowercase */
+	$ldapgroupattribute = strtolower($ldapgroupattribute);
+
+	/* connect and see if server is up */
+	putenv('LDAPTLS_REQCERT=never');
+	if (!($ldap = ldap_connect($ldapserver))) {
+		log_error("ERROR!  ldap_get_groups() could not connect to server {$ldapserver}.  Defaulting to built-in local_backed()");
+		$status = local_backed($username, $passwd);
+		return $status;	
+	}
+    
+	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+
+	/* bind as user that has rights to read group attributes */
+	if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
+		log_error("ERROR! ldap_get_groups() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in local_backed()");
+		$status = local_backed($username, $passwd);
+		return $status;
+	}
+
+	/* get groups from DN found */
+	/* use ldap_read instead of search so we don't have to do a bunch of extra work */
+	/* since we know the DN is in $_SESSION['ldapdn'] */
+	//$search    = ldap_read($ldap, $ldapdn, "(objectclass=*)", array($ldapgroupattribute));
+	$search    = ldap_read($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
+	$info      = ldap_get_entries($ldap, $search);
+
+	$countem = $info["count"];	
+	$memberof = array();
+	
+	if(is_array($info[0][$ldapgroupattribute])) {
+		/* Iterate through the groups and throw them into an array */
+		foreach ($info[0][$ldapgroupattribute] as $member) {
+			if (stristr($member, "CN=") !== false) {
+				$membersplit = split(",", $member);
+				$memberof[] = preg_replace("/CN=/i", "", $membersplit[0]);
+			}
+		}
+	}
+	
+	/* Time to close LDAP connection */
+	ldap_close($ldap);
+	
+	$groups = print_r($memberof,true);
+	
+	//log_error("Returning groups ".$groups." for user $username");
+	
+	return $memberof;
+}
+
+function ldap_backed($username, $passwd) {
+	global $config;
+	
+	if(!$username) 
+		return;
+
+	if(!function_exists("ldap_connect"))
+		return;
+
+	$adbindas = $username;
+    
+	if(stristr($username, "@")) {
+		$username_split=split("\@", $username);
+		$username = $username_split[0];        
+	}
+	if(stristr($username, "\\")) {
+		$username_split=split("\\", $username);
+		$username = $username_split[0];        
+	}
+
+	$ldapserver         = $config['system']['webgui']['ldapserver'];
+	$ldapbindun         = $config['system']['webgui']['ldapbindun'];
+	$ldapbindpw         = $config['system']['webgui']['ldapbindpw'];
+	$ldapauthcont       = $config['system']['webgui']['ldapauthcontainers'];   
+	$ldapnameattribute  = $config['system']['webgui']['ldapnameattribute'];  
+	$ldapfilter         = $config['system']['webgui']['ldapfilter'];
+	$ldaptype           = $config['system']['webgui']['backend'];
+	$ldapfilter = str_replace("\$username", $username, $ldapfilter);
+
+	/* first check if there is even an LDAP server populated */ 
+	if(!$ldapserver) {
+		log_error("ERROR!  ldap_backed() backed selected with no LDAP authentication server defined.  Defaulting to built-in local_backed().     Visit System -> User Manager -> Settings.");
+		$status = local_backed($username, $passwd);
+		return $status;
+	}
+	
+	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+
+	/* Make sure we can connect to LDAP */
+	putenv('LDAPTLS_REQCERT=never');
+	if (!($ldap = ldap_connect($ldapserver))) {
+		log_error("ERROR!  ldap_backed() could not connect to server {$ldapserver} - {$ldapfilter}.  Defaulting to built-in local_backed().     Visit System -> User Manager -> Settings.");
+		$status = local_backed($username, $passwd);		
+		return $status;	
+	}
+	/* ok, its up.  now, lets bind as the bind user so we can search it */
+	if (!($res = ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
+		log_error("ERROR! ldap_backed() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in local_backed()");
+		ldap_close($ldap);
+		$status = local_backed($username, $passwd);
+		return $status;
+	}
+	
+	/* Get LDAP Authcontainers and split em up. */
+	$ldac_split = split(";", $ldapauthcont);
+	
+	/* now count how many there are */
+	$containers = count($ldac_split);
+	log_error("Number of Authentication Containers to search for $username is {$containers}");
+	
+	/* setup the usercount so we think we havn't found anyone yet */
+	$usercount  = 0;
+
+	/******************************/
+	/* Currently LDAP Types are   */
+	/* LDAP = Active Directory    */
+	/* LDAPOTHER = eDir/Openldap  */
+	/******************************/      
+        
+	/*****************************************************************/
+	/* Now Active Directory We keep this seperate for future addons. */
+	/*****************************************************************/
+	/* Now LDAP other.  eDirectory or Netscape or Sunone or OpenLDAP */
+	/*****************************************************************/
+	/*  We First find the user based on username and filter          */
+	/*  Then, once we find the first occurance of that person        */
+	/*  We set seesion variables to ponit to the OU and DN of the    */
+	/*  Person.  To later be used by ldap_get_groups.                */
+	/*  that way we don't have to search twice.                      */
+	/*****************************************************************/
+	if ($ldaptype == 'ldap'){
+		log_error("Now Searching for {$username} in Active directory.");
+		/* Iterate through the user containers for search */
+		for ($i=0;$i<$containers;$i++){
+			/* Make sure we just use the first user we find */
+			log_error("Now Searching in {$ldac_split[$i]} for {$ldapfilter}.");
+			$search	 = ldap_search($ldap,$ldac_split[$i],$ldapfilter);
+			$info	 = ldap_get_entries($ldap,$search);
+			$matches = $info['count'];
+			log_error("Matches Found = {$matches}");
+			if ($matches == 1){
+				$_SESSION['ldapdn'] = $info[0]['dn'];
+				$_SESSION['ldapou'] = $ldac_split[$i];
+				$_SESSION['ldapon'] = "true";
+				$ldapdn = $_SESSION['ldapdn'];
+				$userou = $_SESSION['ldapou'];
+				break;
+			}
+		}
+
+		if ($matches == 1){
+			$binduser = $adbindas;
+			log_error("Going to login as {$username} - DN = {$_SESSION['ldapdn']}");
+		}
+		if ($matches != 1){
+			log_error("ERROR! Either LDAP search failed, or multiple users were found");
+			$status = local_backed($username, $passwd);
+			$_SESSION['ldapon'] = "false";
+			ldap_close($ldap);
+			return $status;                         
+		}
+	}
+
+	/*****************************************************************/
+	/* Now LDAP other.  eDirectory or Netscape or Sunone or OpenLDAP */
+	/*****************************************************************/
+	/*  We First find the user based on username and filter          */
+	/*  Then, once we find the first occurance of that person        */
+	/*  We set seesion variables to ponit to the OU and DN of the    */
+	/*  Person.  To later be used by ldap_get_groups.                */
+	/*  that way we don't have to search twice.                      */
+	/*****************************************************************/
+	if ($ldaptype == 'ldapother'){
+		log_error("Now Searching for {$username} in LDAP.");
+		/* Iterate through the user containers for search */
+		for ($i=0;$i<$containers;$i++){
+			/* Make sure we just use the first user we find */
+			log_error("Now searching in {$ldac_split[$i]} for {$ldapfilter}.");
+			$search  = ldap_search($ldap,$ldac_split[$i],$ldapfilter);
+            $info    = ldap_get_entries($ldap,$search);
+            $matches = $info['count'];
+            log_error("Matches Found = {$matches}.");
+                                      
+			if ($matches == 1){
+				$_SESSION['ldapdn'] = $info[0]['dn'];
+				$_SESSION['ldapou'] = $ldac_split[$i];
+				$_SESSION['ldapon'] = "true";
+				$ldapdn = $_SESSION['ldapdn'];
+				$userou = $_SESSION['ldapou'];
+				break;
+			}
+		}
+		if($matches == 1){
+			$binduser = $ldapnameattribute."=".$username.",".$userou;
+			log_error("Going to login as {$username} - DN = {$_SESSION['ldapdn']}");
+		}
+		if($matches != 1){
+			log_error("ERROR! Either LDAP search failed, or multiple users were found");
+			$status = local_backed($username, $passwd);
+			ldap_close($ldap);
+			$_SESSION['ldapon'] = "false";
+			return $status;                         
+		}
+	}
+	
+	/* Now lets bind as the user we found */
+	if (!($res = @ldap_bind($ldap, $binduser, $passwd))) {
+		log_error("ERROR!  ldap_backed() could not bind to {$ldapserver} - {$username} - {$passwd}.  Defaulting to built-in local_backed().    Visit System -> User Manager -> Settings.");
+		$status = local_backed($username, $passwd);
+		return $status;
+	}
+
+	log_error("$binduser succesfully logged in via LDAP.");
+
+	/* At this point we are bound to LDAP so the user was auth'd okay. */
+	return true;
+}
+
+function radius_backed($username, $passwd){
+	global $config, $debug;
+	$ret = false;
+	$radiusservers = $config['system']['radius']['servers'];
+
+	$rauth = new Auth_RADIUS_PAP($username, $passwd);
+	/* Add a new servers to our instance */
+	foreach ($radiusservers as $radsrv)
+		$rauth->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['sharedsecret']);
+
+	if (!$rauth->start()) {
+		$retvalue['auth_val'] = 1;
+		$retvalue['error'] = $rauth->getError();
+		if ($debug)
+			printf("Radius start: %s<br>\n", $retvalue['error']);
+	}
+
+	// XXX - billm - somewhere in here we need to handle securid challenge/response
+
+	/* Send request */
+	$result = $rauth->send();
+	if (PEAR::isError($result)) {
+		$retvalue['auth_val'] = 1;
+		$retvalue['error'] = $result->getMessage();
+		if ($debug)
+			printf("Radius send failed: %s<br>\n", $retvalue['error']);
+	} else if ($result === true) {
+		$retvalue['auth_val'] = 2;
+		if ($debug)
+			printf(gettext("Radius Auth succeeded")."<br>\n");
+		$ret = true;
+	} else {
+		$retvalue['auth_val'] = 3;
+		if ($debug)
+			printf(gettext("Radius Auth rejected")."<br>\n");
+	}
+
+	// close OO RADIUS_AUTHENTICATION
+	$rauth->close();
+
+	return $ret;
 }
 
 function session_auth($backing) {
@@ -565,482 +933,6 @@ function session_auth($backing) {
 
 	$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 	return true;
-}
-
-function pam_backed($username = "", $password = "") {
-
-	/* do not allow blank passwords */
-	if ($username == "" || password == "")
-		return false;
-
-	if (!extension_loaded( 'pam_auth'))
-		if (!@dl('pam_auth.so'))
-			return false;
-
-	/* no php file no auth, sorry */
-	if (!file_exists("/etc/pam.d/php")) {
-
-		if (!file_exists("/etc/pam.d"))
-			mkdir("/etc/pam.d");
-
-       	$pam_php = <<<EOD
-
-# /etc/pam.d/php
-#
-# note: both an auth and account entry are required
-
-# auth
-auth            required        pam_nologin.so          no_warn
-auth            sufficient      pam_opie.so             no_warn no_fake_prompts
-auth            requisite       pam_opieaccess.so       no_warn allow_local
-auth            required        pam_unix.so             no_warn try_first_pass
-
-# account
-account         required        pam_unix.so
-
-# session
-session         required        pam_permit.so
-
-# password
-password        required        pam_unix.so             no_warn try_first_pass
-
-EOD;
-
-		file_put_contents("/etc/pam.d/php", $pam_php);
-	}
-
-	if (pam_auth($username, $password, &$error))
-		return true;
-
-	return false;
-}
-
-function passwd_backed($username, $passwd) {
-
-	$authfile = file("/etc/master.passwd");
-	$matches="";
-
-	/* Check to see if user even exists */
-	if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
-		return false;
-
-	/* Get crypted password */
-	preg_match("/^$username:((\\$1\\$[.\d\w_\/]{8}\\$)[.\d\w_\/]{22})$/", $line, $matches);
-	$pass = $matches[1];
-	$salt = $matches[2];
-
-	/*
-	 * Encrypt entered password with salt
-	 * And finally validate password
-	 */
-	if ($pass == crypt($passwd, $salt))
-		return true;
-
-	return false;
-}
-
-function ldap_test_connection() {
-	global $config, $g;
-
-	$ldapserver = $config['system']['webgui']['ldapserver'];
-	$ldapbindun = $config['system']['webgui']['ldapbindun'];
-	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-
-	if (!($ldap = ldap_connect($ldapserver)))
-		return false;
-
-	return true;
-}
-
-function ldap_test_bind() {
-	global $config, $g;
-
-	$ldapserver = $config['system']['webgui']['ldapserver'];
-	$ldapbindun = $config['system']['webgui']['ldapbindun'];
-	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-    
-	if (!($ldap = ldap_connect($ldapserver)))
-		return false;
-
-	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-    
-	if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw)))
-		return false;
-
-	return true;
-}
-
-function ldap_get_user_ous($show_complete_ou=true) {
-	global $config, $g;
-
-	if(!function_exists("ldap_connect"))
-		return;
-
-	$ldapserver     = $config['system']['webgui']['ldapserver'];
-	$ldapbindun     = $config['system']['webgui']['ldapbindun'];
-	$ldapbindpw     = $config['system']['webgui']['ldapbindpw'];
-	$ldapsearchbase = "{$config['system']['webgui']['ldapsearchbase']}";
-	$ldaptype       = $config['system']['webgui']['backend'];
-
-	$ldapfilter = "(ou=*)";
-	putenv('LDAPTLS_REQCERT=never');
-	if (!($ldap = ldap_connect($ldapserver))) {
-		log_error("ERROR!  ldap_get_groups() could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
-		$status = htpasswd_backed($username, $passwd);
-		return $status;
-	}
-
-	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-
-	if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
-		log_error("ERROR! ldap_get_groups() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed()");
-		$status = htpasswd_backed($username, $passwd);
-		return $status;
-	}
-
-	$search = ldap_search($ldap, $ldapsearchbase, $ldapfilter);
-
-	$info = ldap_get_entries($ldap, $search);
-
-	$ous = array();
-
-	if (is_array($info)) {
-		foreach ($info as $inf) {
-			if (!$show_complete_ou) {
-				$inf_split = split(",", $inf['dn']);
-				$ou = $inf_split[0];
-				$ou = str_replace("OU=","", $ou);
-			} else
-				if($inf['dn'])
-					$ou = $inf['dn'];
-			if($ou)
-				$ous[] = $ou;
-		}
-	}
-
-	//Tack on the default Users container for AD since its non-standard
-	if($ldaptype == 'ldap')
-		$ous[] = "CN=Users,".$ldapsearchbase;
-
-	return $ous;
-}
-
-function ldap_get_groups($username) {
-	global $config;
-	
-	if(!function_exists("ldap_connect"))
-		return;
-	
-	if(!$username) 
-		return false;
-
-	if(stristr($username, "@")) {
-		$username_split=split("\@", $username);
-		$username = $username_split[0];		
-	}
-
-	if(stristr($username, "\\")) {
-		$username_split=split("\\", $username);
-		$username = $username_split[0];        
-	}    
-	
-	//log_error("Getting LDAP groups for {$username}.");
-	
-	$ldapserver         = $config['system']['webgui']['ldapserver'];
-	$ldapbindun         = $config['system']['webgui']['ldapbindun'];
-	$ldapbindpw         = $config['system']['webgui']['ldapbindpw'];
-	$ldapfilter         = $config['system']['webgui']['ldapfilter'];
-	$ldapfilter         = str_replace("\$username", $username, $ldapfilter);
-	$ldapgroupattribute = $config['system']['webgui']['ldapgroupattribute'];
-	$ldapdn             = $_SESSION['ldapdn'];
-	 
-	/*Convert attribute to lowercase.  php ldap arrays put everything in lowercase */
-	$ldapgroupattribute = strtolower($ldapgroupattribute);
-
-	/* connect and see if server is up */
-	putenv('LDAPTLS_REQCERT=never');
-	if (!($ldap = ldap_connect($ldapserver))) {
-		log_error("ERROR!  ldap_get_groups() could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
-		$status = htpasswd_backed($username, $passwd);
-		return $status;	
-	}
-    
-	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-
-	/* bind as user that has rights to read group attributes */
-	if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
-		log_error("ERROR! ldap_get_groups() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed()");
-		$status = htpasswd_backed($username, $passwd);
-		return $status;
-	}
-
-	/* get groups from DN found */
-	/* use ldap_read instead of search so we don't have to do a bunch of extra work */
-	/* since we know the DN is in $_SESSION['ldapdn'] */
-	//$search    = ldap_read($ldap, $ldapdn, "(objectclass=*)", array($ldapgroupattribute));
-	$search    = ldap_read($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
-	$info      = ldap_get_entries($ldap, $search);
-
-	$countem = $info["count"];	
-	$memberof = array();
-	
-	if(is_array($info[0][$ldapgroupattribute])) {
-		/* Iterate through the groups and throw them into an array */
-		foreach ($info[0][$ldapgroupattribute] as $member) {
-			if (stristr($member, "CN=") !== false) {
-				$membersplit = split(",", $member);
-				$memberof[] = preg_replace("/CN=/i", "", $membersplit[0]);
-			}
-		}
-	}
-	
-	/* Time to close LDAP connection */
-	ldap_close($ldap);
-	
-	$groups = print_r($memberof,true);
-	
-	//log_error("Returning groups ".$groups." for user $username");
-	
-	return $memberof;
-}
-
-function ldap_backed($username, $passwd) {
-	global $config;
-	
-	if(!$username) 
-		return;
-
-	if(!function_exists("ldap_connect"))
-		return;
-
-	$adbindas = $username;
-    
-	if(stristr($username, "@")) {
-		$username_split=split("\@", $username);
-		$username = $username_split[0];        
-	}
-	if(stristr($username, "\\")) {
-		$username_split=split("\\", $username);
-		$username = $username_split[0];        
-	}
-
-	$ldapserver         = $config['system']['webgui']['ldapserver'];
-	$ldapbindun         = $config['system']['webgui']['ldapbindun'];
-	$ldapbindpw         = $config['system']['webgui']['ldapbindpw'];
-	$ldapauthcont       = $config['system']['webgui']['ldapauthcontainers'];   
-	$ldapnameattribute  = $config['system']['webgui']['ldapnameattribute'];  
-	$ldapfilter         = $config['system']['webgui']['ldapfilter'];
-	$ldaptype           = $config['system']['webgui']['backend'];
-	$ldapfilter = str_replace("\$username", $username, $ldapfilter);
-
-	/* first check if there is even an LDAP server populated */ 
-	if(!$ldapserver) {
-		log_error("ERROR!  ldap_backed() backed selected with no LDAP authentication server defined.  Defaulting to built-in htpasswd_backed().     Visit System -> User Manager -> Settings.");
-		$status = htpasswd_backed($username, $passwd);
-		return $status;
-	}
-	
-	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-
-	/* Make sure we can connect to LDAP */
-	putenv('LDAPTLS_REQCERT=never');
-	if (!($ldap = ldap_connect($ldapserver))) {
-		log_error("ERROR!  ldap_backed() could not connect to server {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed().     Visit System -> User Manager -> Settings.");
-		$status = htpasswd_backed($username, $passwd);		
-		return $status;	
-	}
-	/* ok, its up.  now, lets bind as the bind user so we can search it */
-	if (!($res = ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
-		log_error("ERROR! ldap_backed() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed()");
-		ldap_close($ldap);
-		$status = htpasswd_backed($username, $passwd);
-		return $status;
-	}
-	
-	/* Get LDAP Authcontainers and split em up. */
-	$ldac_split = split(";", $ldapauthcont);
-	
-	/* now count how many there are */
-	$containers = count($ldac_split);
-	log_error("Number of Authentication Containers to search for $username is {$containers}");
-	
-	/* setup the usercount so we think we havn't found anyone yet */
-	$usercount  = 0;
-
-	/******************************/
-	/* Currently LDAP Types are   */
-	/* LDAP = Active Directory    */
-	/* LDAPOTHER = eDir/Openldap  */
-	/******************************/      
-        
-	/*****************************************************************/
-	/* Now Active Directory We keep this seperate for future addons. */
-	/*****************************************************************/
-	/* Now LDAP other.  eDirectory or Netscape or Sunone or OpenLDAP */
-	/*****************************************************************/
-	/*  We First find the user based on username and filter          */
-	/*  Then, once we find the first occurance of that person        */
-	/*  We set seesion variables to ponit to the OU and DN of the    */
-	/*  Person.  To later be used by ldap_get_groups.                */
-	/*  that way we don't have to search twice.                      */
-	/*****************************************************************/
-	if ($ldaptype == 'ldap'){
-		log_error("Now Searching for {$username} in Active directory.");
-		/* Iterate through the user containers for search */
-		for ($i=0;$i<$containers;$i++){
-			/* Make sure we just use the first user we find */
-			log_error("Now Searching in {$ldac_split[$i]} for {$ldapfilter}.");
-			$search	 = ldap_search($ldap,$ldac_split[$i],$ldapfilter);
-			$info	 = ldap_get_entries($ldap,$search);
-			$matches = $info['count'];
-			log_error("Matches Found = {$matches}");
-			if ($matches == 1){
-				$_SESSION['ldapdn'] = $info[0]['dn'];
-				$_SESSION['ldapou'] = $ldac_split[$i];
-				$_SESSION['ldapon'] = "true";
-				$ldapdn = $_SESSION['ldapdn'];
-				$userou = $_SESSION['ldapou'];
-				break;
-			}
-		}
-
-		if ($matches == 1){
-			$binduser = $adbindas;
-			log_error("Going to login as {$username} - DN = {$_SESSION['ldapdn']}");
-		}
-		if ($matches != 1){
-			log_error("ERROR! Either LDAP search failed, or multiple users were found");
-			$status = htpasswd_backed($username, $passwd);
-			$_SESSION['ldapon'] = "false";
-			ldap_close($ldap);
-			return $status;                         
-		}
-	}
-
-	/*****************************************************************/
-	/* Now LDAP other.  eDirectory or Netscape or Sunone or OpenLDAP */
-	/*****************************************************************/
-	/*  We First find the user based on username and filter          */
-	/*  Then, once we find the first occurance of that person        */
-	/*  We set seesion variables to ponit to the OU and DN of the    */
-	/*  Person.  To later be used by ldap_get_groups.                */
-	/*  that way we don't have to search twice.                      */
-	/*****************************************************************/
-	if ($ldaptype == 'ldapother'){
-		log_error("Now Searching for {$username} in LDAP.");
-		/* Iterate through the user containers for search */
-		for ($i=0;$i<$containers;$i++){
-			/* Make sure we just use the first user we find */
-			log_error("Now searching in {$ldac_split[$i]} for {$ldapfilter}.");
-			$search  = ldap_search($ldap,$ldac_split[$i],$ldapfilter);
-            $info    = ldap_get_entries($ldap,$search);
-            $matches = $info['count'];
-            log_error("Matches Found = {$matches}.");
-                                      
-			if ($matches == 1){
-				$_SESSION['ldapdn'] = $info[0]['dn'];
-				$_SESSION['ldapou'] = $ldac_split[$i];
-				$_SESSION['ldapon'] = "true";
-				$ldapdn = $_SESSION['ldapdn'];
-				$userou = $_SESSION['ldapou'];
-				break;
-			}
-		}
-		if($matches == 1){
-			$binduser = $ldapnameattribute."=".$username.",".$userou;
-			log_error("Going to login as {$username} - DN = {$_SESSION['ldapdn']}");
-		}
-		if($matches != 1){
-			log_error("ERROR! Either LDAP search failed, or multiple users were found");
-			$status = htpasswd_backed($username, $passwd);
-			ldap_close($ldap);
-			$_SESSION['ldapon'] = "false";
-			return $status;                         
-		}
-	}
-	
-	/* Now lets bind as the user we found */
-	if (!($res = @ldap_bind($ldap, $binduser, $passwd))) {
-		log_error("ERROR!  ldap_backed() could not bind to {$ldapserver} - {$username} - {$passwd}.  Defaulting to built-in htpasswd_backed().    Visit System -> User Manager -> Settings.");
-		$status = htpasswd_backed($username, $passwd);
-		return $status;
-	}
-
-	log_error("$binduser succesfully logged in via LDAP.");
-
-	/* At this point we are bound to LDAP so the user was auth'd okay. */
-	return true;
-}
-
-function htpasswd_backed($username, $passwd) {
-	$authfile = file("/var/run/htpasswd");
-
-	/* sanity check to ensure that /usr/local/www/.htpasswd doesn't exist */
-	unlink_if_exists("/usr/local/www/.htpasswd");
-
-	$matches="";
-	if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
-		return false;
-
-	/* Get crypted password */
-	preg_match("/^$username:((\\$1\\$[.\d\w_\/]{8}\\$)[.\d\w_\/]{22})$/", $line, $matches);
-	$pass = $matches[1];
-	$salt = $matches[2];
-
-	/* Encrypt entered password with salt
-	 * And finally validate password
-	 */
-	if ($pass == crypt($passwd, $salt))
-		return true;
-
-	return false;
-}
-
-function radius_backed($username, $passwd){
-	global $config, $debug;
-	$ret = false;
-	$radiusservers = $config['system']['radius']['servers'];
-
-	$rauth = new Auth_RADIUS_PAP($username, $passwd);
-	/* Add a new servers to our instance */
-	foreach ($radiusservers as $radsrv)
-		$rauth->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['sharedsecret']);
-
-	if (!$rauth->start()) {
-		$retvalue['auth_val'] = 1;
-		$retvalue['error'] = $rauth->getError();
-		if ($debug)
-			printf("Radius start: %s<br>\n", $retvalue['error']);
-	}
-
-	// XXX - billm - somewhere in here we need to handle securid challenge/response
-
-	/* Send request */
-	$result = $rauth->send();
-	if (PEAR::isError($result)) {
-		$retvalue['auth_val'] = 1;
-		$retvalue['error'] = $result->getMessage();
-		if ($debug)
-			printf("Radius send failed: %s<br>\n", $retvalue['error']);
-	} else if ($result === true) {
-		$retvalue['auth_val'] = 2;
-		if ($debug)
-			printf(gettext("Radius Auth succeeded")."<br>\n");
-		$ret = true;
-	} else {
-		$retvalue['auth_val'] = 3;
-		if ($debug)
-			printf(gettext("Radius Auth rejected")."<br>\n");
-	}
-
-	// close OO RADIUS_AUTHENTICATION
-	$rauth->close();
-
-	return $ret;
 }
 
 ?>

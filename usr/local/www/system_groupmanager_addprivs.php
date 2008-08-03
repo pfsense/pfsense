@@ -85,7 +85,7 @@ if ($_POST) {
 		foreach ($a_group['member'] as $uid) {
 			$user = getUserEntryByUID($uid);
 			if ($user)
-				set_local_user($user);
+				local_user_set($user);
 		}
 
 		$retval = write_config();

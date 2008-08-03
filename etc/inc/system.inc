@@ -494,9 +494,6 @@ function system_webgui_start() {
 
 	sleep(1);
 
-	/* generate password file */
-	system_password_configure();
-
 	chdir($g['www_path']);
 
 	/* non-standard port? */
@@ -591,9 +588,6 @@ function system_webgui_start_old() {
 
         /* kill any running mini_httpd */
         killbypid("{$g['varrun_path']}/mini_httpd.pid");
-
-        /* generate password file */
-        system_password_configure();
 
         chdir($g['www_path']);
 
@@ -998,21 +992,6 @@ EOD;
 
 	return 0;
 
-}
-
-function system_password_configure() {
-	global $config, $g;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "system_password_configure() being called $mt\n";
-	}
-
-	/* sync passwords */
-	sync_webgui_passwords();
-
-	/* !NOTE! conf_mount_ro is done by sync_webgui_passwords() */
-
-	return 0;
 }
 
 function system_timezone_configure() {

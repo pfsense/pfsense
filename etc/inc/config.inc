@@ -1592,7 +1592,7 @@ function convert_config() {
 		$groups[] = $all;
 		$groups = array_merge($config['system']['group'],$groups);
 		$config['system']['group'] = $groups;
-		set_local_group($all);
+		local_group_set($all);
 
 		$config['version'] = 4.9;
 	}
@@ -1643,7 +1643,7 @@ function convert_config() {
 		}
 
 		/* sync all local account information */
-		sync_local_accounts();
+		local_sync_accounts();
 
 		$config['version'] = 5.0;
 	}

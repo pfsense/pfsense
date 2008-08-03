@@ -46,7 +46,6 @@ require_once("functions.inc");
  * 		radius_backed - this will allow you to use a radius server
  *		pam_backed - this uses the system's PAM facility .htpasswd file
  */
-$auth_method="session_auth";
 
 /* enable correct auth backend, default to htpasswd_backed */
 $ldapcase = $config['system']['webgui']['backend'];
@@ -59,11 +58,11 @@ switch($ldapcase)
 		$backing_method="ldap_backed";
 		break;
 	default:
-		$backing_method="htpasswd_backed"; 
+		$backing_method="local_backed";
 }
 
 /* Authenticate user - exit if failed */
-if (!$auth_method($backing_method))
+if (!session_auth($backing_method))
 	exit;
 
 /*

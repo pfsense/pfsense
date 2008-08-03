@@ -117,9 +117,6 @@ if ($_POST) {
 			($_POST['webguiport'] < 1) || ($_POST['webguiport'] > 65535))) {
 		$input_errors[] = "A valid TCP/IP port must be specified for the webConfigurator port.";
 	}
-	if (($_POST['password']) && ($_POST['password'] != $_POST['password2'])) {
-		$input_errors[] = "The passwords do not match.";
-	}
 
 	$t = (int)$_POST['timeupdateinterval'];
 	if (($t < 0) || (($t > 0) && ($t < 6)) || ($t > 1440)) {
@@ -163,12 +160,6 @@ if ($_POST) {
 		unset($config['system']['dnsallowoverride']);
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
 
-		if ($_POST['password']) {
-			$config['system']['password'] = crypt($_POST['password']);
-			update_changedesc("password changed via webConfigurator");
-			sync_webgui_passwords();
-		}
-
 		/* which interface should the dns servers resolve through? */
 		if($_POST['dns1gwint']) 
 			$config['system']['dns1gwint'] = $pconfig['dns1gwint'];
@@ -205,7 +196,6 @@ if ($_POST) {
 		$retval = system_hostname_configure();
 		$retval |= system_hosts_generate();
 		$retval |= system_resolvconf_generate();
-		$retval |= system_password_configure();
 		$retval |= services_dnsmasq_configure();
 		$retval |= system_timezone_configure();
 		$retval |= system_ntp_configure();

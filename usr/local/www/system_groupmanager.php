@@ -63,7 +63,7 @@ if ($_GET['act'] == "delgroup") {
 		exit;
 	}
 
-	del_local_group($a_group[$_GET['id']]);
+	local_group_del($a_group[$_GET['id']]);
 	$groupdeleted = $a_group[$_GET['id']]['name'];
 	unset($a_group[$_GET['id']]);
 	write_config();
@@ -84,7 +84,7 @@ if ($_GET['act'] == "delpriv") {
 	foreach ($a_group[$id]['member'] as $uid) {
 		$user = getUserEntryByUID($uid);
 		if ($user)
-			set_local_user($user);
+			local_user_set($user);
 	}
 
 	write_config();
@@ -146,7 +146,7 @@ if ($_POST) {
 			$a_group[] = $group;
 		}
 
-		set_local_group($group);
+		local_group_set($group);
 		write_config();
 		
 		header("Location: system_groupmanager.php");

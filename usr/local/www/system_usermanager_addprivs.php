@@ -86,7 +86,7 @@ if ($_POST) {
 		else
 			$a_user['priv'] = array_merge($a_user['priv'], $pconfig['sysprivs']);
 
-		set_local_user($a_user);
+		local_user_set($a_user);
 		$retval = write_config();
 		$savemsg = get_std_save_message($retval);
 

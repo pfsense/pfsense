@@ -65,9 +65,6 @@
 		touch("/var/log/lastlog");
 	}
 
-	/* reset passwords */
-	sync_webgui_passwords();
-
 	$sshConfigDir = "/etc/ssh";
 
 	if($config['system']['ssh']['port'] <> "") {

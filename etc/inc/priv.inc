@@ -142,7 +142,7 @@ function get_user_privileges(& $user) {
 	if (!is_array($privs))
 		$privs = array();
 
-	$names = get_local_user_groups($user, true);
+	$names = local_user_get_groups($user, true);
 
 	foreach ($names as $name) {
 		$group = getGroupEntry($name);
@@ -162,7 +162,7 @@ function get_user_privdesc(& $user) {
 	if (!is_array($user_privs))
 		$user_privs = array();
 
-	$names = get_local_user_groups($user, true);
+	$names = local_user_get_groups($user, true);
 
 	foreach ($names as $name) {
 		$group = getGroupEntry($name);
@@ -244,7 +244,7 @@ function getAllowedPages($username) {
 
 	// obtain local groups if we have a local user
 	if ($local_user) {
-		$allowed_groups = get_local_user_groups($local_user);
+		$allowed_groups = local_user_get_groups($local_user);
 		getPrivPages($local_user, $allowed_pages);
 	}
 

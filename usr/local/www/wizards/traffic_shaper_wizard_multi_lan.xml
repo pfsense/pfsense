@@ -491,7 +491,7 @@
 				<type>checkbox</type>
 				<typehint>Prioritize network gaming traffic</typehint>
 				<description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-				<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft,XBox360</enablefields>
+				<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft,XBox360,ArchLord</enablefields>
 				<donotdisable>true</donotdisable>
 				<bindstofield>ezshaper-&gt;step6-&gt;enable</bindstofield>
 			</field>
@@ -636,6 +636,12 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;xbox360</bindstofield>
 			</field>
 			<field>
+				<name>ArchLord</name>
+				<type>checkbox</type>
+				<typehint>ArchLord</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;archlord</bindstofield>
+			</field>
+      <field>
 				<name>Next</name>
 				<type>submit</type>
 			</field>
@@ -653,7 +659,7 @@
 				<type>checkbox</type>
 				<typehint>Other networking protocols</typehint>
 				<description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
-				<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,Jabber,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP,Slingbox</enablefields>
+				<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,Jabber,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP,Slingbox,HBCI</enablefields>
 				<donotdisable>true</donotdisable>
 				<bindstofield>ezshaper-&gt;step7-&gt;enable</bindstofield>
 			</field>
@@ -1210,26 +1216,46 @@
 				<typehint>CVSUP</typehint>
 			</field>
 			<field>
-                                <name>Slingbox</name>
-                                <bindstofield>ezshaper-&gt;step7-&gt;slingbox</bindstofield>
-                                <type>select</type>
-                                <options>
-                                        <option>
-                                                <name>Default priority</name>
-                                                <value>D</value>
-                                        </option>
-                                        <option>
-                                                <name>Higher priority</name>
-                                                <value>H</value>
-                                        </option>
-                                        <option>
-                                                <name>Lower priority</name>
-                                                <value>L</value>
-                                        </option>
-                                </options>
-                                <typehint>Slingbox</typehint>
-                        </field>
+        <name>Slingbox</name>
+        <bindstofield>ezshaper-&gt;step7-&gt;slingbox</bindstofield>
+        <type>select</type>
+        <options>
+          <option>
+            <name>Default priority</name>
+            <value>D</value>
+          </option>
+          <option>
+            <name>Higher priority</name>
+            <value>H</value>
+          </option>
+          <option>
+            <name>Lower priority</name>
+            <value>L</value>
+          </option>
+          </options>
+       <typehint>Slingbox</typehint>
+      </field>
 			<field>
+        <name>HBCI</name>
+        <bindstofield>ezshaper-&gt;step7-&gt;hbci</bindstofield>
+        <type>select</type>
+        <options>
+          <option>
+            <name>Default priority</name>
+            <value>D</value>
+          </option>
+          <option>
+            <name>Higher priority</name>
+            <value>H</value>
+          </option>
+          <option>
+            <name>Lower priority</name>
+            <value>L</value>
+          </option>
+          </options>
+       <typehint>HBCI</typehint>
+      </field>			
+      <field>
 				<name>Next</name>
 				<type>submit</type>
 			</field>

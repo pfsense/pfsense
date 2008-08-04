@@ -16,6 +16,7 @@
 	 *    - Loopia (loopia.se)
 	 *    - StaticCling (staticcling.org)
 	 *    - DNSexit (dnsexit.com)
+	 *    - OpenDNS (opendns.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with CURL Library
@@ -45,6 +46,7 @@
 	 *  Loopia         - Last Tested: NEVER
 	 *  StaticCling    - Last Tested: 27 April 2006
 	 *  DNSexit	   - Last Tested: 20 July 2008
+	 *  OpenDNS	   - Last Tested: 4 August 2008
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -52,7 +54,7 @@
 	 * @version 	0.8
 	 * @updated	13 October 05 at 21:02:42 GMT
 	 *
-	 * DNSexit support and multiwan extension for pfSense by Ermal Luçi
+	 * DNSexit/OpenDNS support and multiwan extension for pfSense by Ermal Luçi
 	 *
 	 */
 
@@ -138,7 +140,8 @@
 					$this->_dnsService == 'freedns' ||
 					$this->_dnsService == 'loopia' ||
 					$this->_dnsService == 'staticcling'||
-					$this->_dnsService == 'dnsexit')
+					$this->_dnsService == 'dnsexit' ||
+					$this->_dnsService == 'opendns')
 				{
 					$this->_update();
 				} else {
@@ -390,14 +393,33 @@
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
-	            case 'staticcling':
-                    $needsIP = FALSE;
-                    curl_setopt($ch, CURLOPT_URL, 'http://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
-                    $data = curl_exec($ch);
-                    if (@curl_error($ch)) log_error("Curl error occured: " . curl_error($ch));
-                    curl_close($ch);
-                    $this->_checkStatus($data);
-                    break;	                    
+				case 'opendns':
+					$needsIP = FALSE;
+					log_error("DynDns: DynDns _update() starting. Dynamic");
+					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					$server = "https://updates.opendns.com/nic/update?hostname=";
+					$port = "";
+					if($this->_dnsServer)
+						$server = $this->_dnsServer;
+					if($this->_dnsPort)
+						$port = ":" . $this->_dnsPort;
+					curl_setopt($ch, CURLOPT_URL, $server .$port);
+					$data = curl_exec($ch);
+					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+
+	            		case 'staticcling':
+                    			$needsIP = FALSE;
+                    			curl_setopt($ch, CURLOPT_URL, 'http://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
+                    			$data = curl_exec($ch);
+                    			if (@curl_error($ch)) log_error("Curl error occured: " . curl_error($ch));
+                    			curl_close($ch);
+                    			$this->_checkStatus($data);
+                    			break;	                    
 				case 'dnsomatic':
 				
 					/* Example syntax 
@@ -674,6 +696,25 @@
 						$successful_update = true;
 					} else if (preg_match('/badauth/i', $data)) {
 						$status = "phpDynDNS: (Error) User Authorization Failed";
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
+						$this->_debug($data);
+					}
+					break;
+				case 'opendns':
+					if (preg_match('/badauth/i', $data)) {
+						$status = "phpDynDNS: (Error) Not a valid username or password!";
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = "phpDynDNS: (Error) Hostname you are trying to update does not exist.";
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$successful_update = true;
+					} else if (preg_match('/yours/i', $data)) {
+						$status = "phpDynDNS: (Error) hostname specified exists, but not under the username specified.";
+					} else if (preg_match('/abuse/i', $data)) {
+						$status = "phpDynDns: (Error) Updating to frequently, considered abuse.";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
 						log_error("phpDynDNS: PAYLOAD: {$data}");

@@ -576,12 +576,12 @@
 				<bindstofield>ezshaper-&gt;step6-&gt;xbox360</bindstofield>
 			</field>
 			<field>
-        		<name>ArchLord</name>
-        		<type>checkbox</type>
-  				<typehint>ArchLord</typehint>
-    			<bindstofield>ezshaper-&gt;step6-&gt;archlord</bindstofield>
-      		</field>     
-      		<field>
+				<name>ArchLord</name>
+				<type>checkbox</type>
+				<typehint>ArchLord</typehint>
+				<bindstofield>ezshaper-&gt;step6-&gt;archlord</bindstofield>
+			</field>
+			<field>
 				<name>Next</name>
 				<type>submit</type>
 			</field>

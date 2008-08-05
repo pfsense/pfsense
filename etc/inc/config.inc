@@ -1666,6 +1666,12 @@ function convert_config() {
                 $pconfig['value'] = "0";
                 $config['sysctl']['item'][] = $pconfig;
 
+		unset($config['bridge']);
+
+		foreach ($config['interfaces'] as &$intf) {
+			if (isset($intf['bridge']))
+				unset($intf['bridge']);
+		}
 	}
 
 	$now = date("H:i:s");

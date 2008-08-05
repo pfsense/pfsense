@@ -347,6 +347,8 @@ function openvpn_reconfigure($mode, $id) {
 
 	$settings = $config['installedpackages']["openvpn$mode"]['config'][$id];
 	
+	if (empty($settings))
+		return;
 	if ($settings['disable']) 
 		return;
 

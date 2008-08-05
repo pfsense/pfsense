@@ -2911,10 +2911,10 @@ anchor "imspector"
 anchor "miniupnpd"
 
 #---------------------------------------------------------------------------
-# default rules (just to be sure)
+# default deny rules
 #---------------------------------------------------------------------------
-block in $log quick all label "Default block all just to be sure."
-block out $log quick all label "Default block all just to be sure."
+block in $log quick all label "Default deny rule"
+block out $log quick all label "Default deny rule"
 
 EOD;
 

@@ -1499,7 +1499,10 @@ function find_carp_interface($ip) {
 
 /*
  * setup_filter_bridge(): toggle filtering bridge
- */
+ *
+ * disabled 20080805 - this is of no use with if_bridge, in the sense it was
+ * with m0n0 (where this came from)
+ * --cmb
 function setup_filter_bridge() {
 	global $config, $g;
 	if(isset($config['bridge']['filteringbridge'])) {
@@ -1510,6 +1513,7 @@ function setup_filter_bridge() {
 		mwexec("/sbin/sysctl net.link.bridge.pfil_bridge=0");
 	}
 }
+*/
 
 /*
  * find_number_of_created_bridges(): returns the number of currently created bridges

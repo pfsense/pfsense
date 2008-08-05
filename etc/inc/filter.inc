@@ -313,8 +313,6 @@ function filter_generate_aliases() {
 		$aliases .= "{$ifcfg['descr']} = \"{ ";
 		            $aliases .= "{$ifcfg['if']} ";
 
-		if(link_int_to_bridge_interface($if))
-			$aliases .= " " . link_int_to_bridge_interface($if);
 		/* XXX: Ugly but this avoids uneccesary pollution in aliases. */
 		if ($ifcfg['ip'] != "carpdev-dhcp") {
 			$ip = find_interface_ip($ifcfg['if']);

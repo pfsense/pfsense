@@ -225,6 +225,7 @@ function presubmit() {
 				$tab_array = array();
 				$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 				$tab_array[] = array(gettext("Groups"), true, "system_groupmanager.php");
+				$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 				$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
 				display_top_tabs($tab_array);
 			?>
@@ -457,12 +458,13 @@ function presubmit() {
 					</td>
 				</tr>
 				<tr>
-					<td colspan="4">
-						Additional webGui admin groups can be added here.
-						Each group can be restricted to specific portions of the webGUI.
-						Individually select the desired web pages each group may access.
-						For example, a troubleshooting group could be created which has
-						access only to selected Status and Diagnostics pages.
+					<td colspan="3">
+						<p>
+							<?=gettext("Additional webConfigurator groups can be added here.");?>
+							<?=gettext("Group permissions can be assinged which will be inherited by users.");?>
+							<?=gettext("An icon that appears grey indicates that it is a system defined object.");?>
+							<?=gettext("Some system object properties can be modified but they cannot be deleted.");?>
+						</p>
 					</td>
 				</tr>
 			</table>

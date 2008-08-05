@@ -262,6 +262,7 @@ function presubmit() {
 			$tab_array = array();
 			$tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
 			$tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
+			$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 			$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
 			display_top_tabs($tab_array);
 		?>
@@ -521,10 +522,10 @@ function presubmit() {
 				<tr>
 					<td colspan="3">
 						<p>
-							<?=gettext("Additional webConfigurator users can be added here.  User permissions are determined by the admin group they are a member of.");?>
-						</p>
-						<p>
-							<?=gettext("An user icon that appears grey indicates that it is a system user and thus it's only possible to modified a subset of the regular user data. Additionally such an user can't be deleted.");?>
+							<?=gettext("Additional webConfigurator users can be added here.");?>
+							<?=gettext("User permissions can be assinged diretly or inherited from group memberships.");?>
+							<?=gettext("An icon that appears grey indicates that it is a system defined object.");?>
+							<?=gettext("Some system object properties can be modified but they cannot be deleted.");?>
 						</p>
 					</td>
 				</tr>

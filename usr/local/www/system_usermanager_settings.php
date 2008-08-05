@@ -220,6 +220,7 @@ include("head.inc");
     $tab_array = array();
     $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
     $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
+	$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
     $tab_array[] = array(gettext("Settings"), true, "system_usermanager_settings.php");
     display_top_tabs($tab_array);
 

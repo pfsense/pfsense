@@ -100,8 +100,50 @@ if (file_exists($d_firmwarelock_path)) {
 	}
 }
 
+$auth_server_types = array(
+	'ldap' => "LDAP",
+	'radius' => "Radius");
+
+$ldap_urltypes = array(
+	'TCP - Standard' => 389,
+	'SSL - Encrypted' => 636);
+
+$ldap_scopes = array(
+	'one' => "One Level",
+	'subtree' => "Entire Subtree");
+
+$ldap_protvers = array(
+	2,
+	3);
+
+$ldap_templates = array(
+
+	'open' => array(
+				'desc' => "OpenLDAP",
+				'attr_user' => "cn",
+				'attr_group' => "cn",
+				'attr_member' => "member"),
+
+	'msad' => array(
+				'desc' => "Microsoft AD",
+				'attr_user' => "samAccountNAme",
+				'attr_group' => "cn",
+				'attr_member' => "member"),
+
+	'edir' => array(
+				'desc' => "Novell eDirectory",
+				'attr_user' => "cn",
+				'attr_group' => "cn",
+				'attr_member' => "uniqueMember"));
+
+$radius_srvcs = array(
+	'both' => "Authentication and Accounting",
+	'auth' => "Authentication",
+	'acct' => "Accounting");
+
 /* some well knows ports */
-$wkports = array(3389 => "MS RDP",
+$wkports = array(
+	3389 => "MS RDP",
 	21 => "FTP",
 	22 => "SSH",
 	23 => "Telnet",

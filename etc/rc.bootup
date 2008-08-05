@@ -181,8 +181,6 @@
 	/* start pflog */
 	filter_pflog_start();
 
-	setup_filter_bridge();
-
 	/* start load balancer daemon */
 	relayd_configure();
 

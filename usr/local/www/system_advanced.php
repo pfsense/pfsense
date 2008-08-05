@@ -51,7 +51,6 @@ $pconfig['key'] = base64_decode($config['system']['webgui']['private-key']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
-$pconfig['filteringbridge_enable'] = isset($config['bridge']['filteringbridge']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
@@ -250,7 +249,6 @@ if ($_POST) {
 		$config['system']['shapertype'] = $_POST['shapertype'];
 		
 		$config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
-		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;
 		$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'] ? true : false;
 
 		write_config();
@@ -265,13 +263,9 @@ if ($_POST) {
 
 		config_unlock();
 
-		setup_filter_bridge();
-		
 		conf_mount_rw();
 
 		setup_serial_port();
-
-		setup_filter_bridge();
 
 		conf_mount_ro();		
 		
@@ -394,20 +388,6 @@ include("head.inc");
 		<tr>
 			<td colspan="2" class="list" height="12">&nbsp;</td>
 		</tr>
-		<tr>
-			<td colspan="2" valign="top" class="listtopic">Filtering Bridge</td>
-		</tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable">
-                    <input name="filteringbridge_enable" type="checkbox" id="filteringbridge_enable" value="yes" <?php if ($pconfig['filteringbridge_enable']) echo "checked"; ?>>
-                    <strong>Enable filtering bridge</strong><span class="vexpl"><br>
-                    This will cause bridged packets to pass through the packet
-                    filter in the same way as routed packets do (by default bridged
-                    packets are always passed). If you enable this option, you'll
-                    have to add filter rules to selectively permit traffic from
-                    bridged interfaces.</span></td>
-                </tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">

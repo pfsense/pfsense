@@ -1522,20 +1522,6 @@ function find_carp_interface($ip) {
 }
 
 /*
- * setup_filter_bridge(): toggle filtering bridge
- */
-function setup_filter_bridge() {
-	global $config, $g;
-	if(isset($config['bridge']['filteringbridge'])) {
-		mwexec("/sbin/sysctl net.link.bridge.pfil_member=1");
-		mwexec("/sbin/sysctl net.link.bridge.pfil_bridge=1");
-	} else {
-		mwexec("/sbin/sysctl net.link.bridge.pfil_member=0");
-		mwexec("/sbin/sysctl net.link.bridge.pfil_bridge=0");
-	}
-}
-
-/*
  * find_number_of_created_bridges(): returns the number of currently created bridges
  */
 function find_number_of_created_bridges($flush = false) {

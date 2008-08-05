@@ -117,7 +117,7 @@ function local_sync_accounts() {
 	global $config;
 
 	/* remove local users to avoid uid conflicts */
-	$fd = popen("/usr/sbin/pw usershow -a 2>&1", "r");
+	$fd = popen("/usr/sbin/pw usershow -a", "r");
 	if ($fd) {
 		while (!feof($fd)) {
 			$line = explode(":",fgets($fd));
@@ -127,14 +127,16 @@ function local_sync_accounts() {
 				continue;
 			if ($line[2] > 65000)
 				continue;
-			mwexec("/usr/sbin/pw userdel {$line[2]}");
+			$cmd = "/usr/sbin/pw userdel {$line[2]}";
+			log_error("Running: {$cmd}");
+			mwexec($cmd);
 		}
 		pclose($fd);
 	}
 
 	/* remove local groups to avoid gid conflicts */
 	$gids = array();
-	$fd = popen("/usr/sbin/pw groupshow -a 2>&1", "r");
+	$fd = popen("/usr/sbin/pw groupshow -a", "r");
 	if ($fd) {
 		while (!feof($fd)) {
 			$line = explode(":",fgets($fd));
@@ -144,7 +146,9 @@ function local_sync_accounts() {
 				continue;
 			if ($line[2] > 65000)
 				continue;
-			mwexec("/usr/sbin/pw groupdel {$line[2]}");
+			$cmd = "/usr/sbin/pw groupdel {$line[2]}";
+			log_error("Running: {$cmd}");
+			mwexec($cmd);
 		}
 		pclose($fd);
 	}
@@ -187,7 +191,9 @@ function local_user_set(& $user) {
 
 	/* root user special handling */
 	if ($user_uid == 0) {
-		$fd = popen("/usr/sbin/pw usermod -n root -s /bin/sh -H 0", "w");
+		$cmd = "/usr/sbin/pw usermod -n root -s /bin/sh -H 0";
+		log_error("Running: {$cmd}");
+		$fd = popen($cmd, "w");
 		fwrite($fd, $user['password']);
 		pclose($fd);
 		$user_group = "wheel";
@@ -207,10 +213,10 @@ function local_user_set(& $user) {
 	/* add or mod pw db */
 	$cmd = "/usr/sbin/pw {$user_op} -u {$user_uid} -n {$user_name}".
 			" -g {$user_group} -G all -s {$user_shell} -d {$user_home}".
-			" -c ".escapeshellarg($user['fullname'])." -H 0";
+			" -c ".escapeshellarg($user['fullname'])." -H 0 2>&1";
 
 	log_error("Running: {$cmd}");
-	$fd = popen($cmd, "w");
+	$fd = popen($cmd, "r+");
 	fwrite($fd, $user['password']);
 	pclose($fd);
 
@@ -340,10 +346,10 @@ function local_group_set($group, $reset = false) {
 		$group_op = "groupmod";
 
 	/* add or mod group db */
-	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M {$group_members}";
+	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M {$group_members} 2>&1";
 
 	log_error("Running: {$cmd}");
-	$fd = popen($cmd, "w");
+	$fd = popen($cmd, "r+");
 	fwrite($fd, $user['password']);
 	pclose($fd);
 }

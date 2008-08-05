@@ -1597,7 +1597,6 @@ function convert_config() {
 		$groups[] = $all;
 		$groups = array_merge($config['system']['group'],$groups);
 		$config['system']['group'] = $groups;
-		local_group_set($all);
 
 		$config['version'] = "4.9";
 	}

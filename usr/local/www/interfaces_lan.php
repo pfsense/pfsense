@@ -44,7 +44,6 @@ $optcfg = &$config['interfaces']['lan'];
 
 $pconfig['ipaddr'] = $lancfg['ipaddr'];
 $pconfig['subnet'] = $lancfg['subnet'];
-$pconfig['bridge'] = $lancfg['bridge'];
 
 $pconfig['disableftpproxy'] = isset($lancfg['disableftpproxy']);
 
@@ -55,32 +54,6 @@ if (isset($lancfg['wireless'])) {
 }
 
 if ($_POST) {
-
-	if ($_POST['bridge']) {
-		/* double bridging? */
-		$iflist = get_configured_interface_list(true, true);
-		foreach ($iflist as $if) {
-			if ($if != $index) { /* XXX: totaly bogus */
-				if ($config['interfaces'][$if]['bridge'] == $_POST['bridge']) {
-					//$input_errors[] = "Optional interface {$if} " .
-					//	"({$config['interfaces'][$if]['descr']}) is already bridged to " .
-					//	"the specified interface.";
-				} else if ($config['interfaces'][$if]['bridge'] == $if) {
-					//$input_errors[] = "Optional interface {$if} " .
-					//	"({$config['interfaces'][$if]['descr']}) is already bridged to " .
-					//	"this interface.";
-				}
-			}
-		}
-		if ($config['interfaces'][$_POST['bridge']]['bridge']) {
-			//$input_errors[] = "The specified interface is already bridged to " .
-			//	"another interface.";
-		}
-		/* captive portal on? */
-		if (isset($config['captiveportal']['enable'])) {
-			//$input_errors[] = "Interfaces cannot be bridged while the captive portal is enabled.";
-		}
-	}
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -119,13 +92,6 @@ if ($_POST) {
 			system_start_ftp_helpers();
 		}			
 		
-		$bridge = discover_bridge($lancfg['if'], filter_translate_type_to_real_interface($lancfg['bridge']));
-		if($bridge <> "-1") {
-			destroy_bridge($bridge);
-		}
-
-		$lancfg['bridge'] = $_POST['bridge'];
-		
 		if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {
 			update_if_changed("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
 			update_if_changed("subnet", &$lancfg['subnet'], $_POST['subnet']);
@@ -158,7 +124,7 @@ include("head.inc");
 function enable_change(enable_over) {
 	return;
 	var endis;
-	endis = !((document.iform.bridge.selectedIndex == 0) || enable_over);
+	endis = enable_over;
 	document.iform.ipaddr.disabled = endis;
 	document.iform.subnet.disabled = endis;
 }
@@ -177,21 +143,6 @@ function enable_change(enable_over) {
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
                   <td colspan="2" valign="top" class="listtopic">IP configuration</td>
-		</tr>	      
-		<tr>
-                  <td width="22%" valign="top" class="vncellreq">Bridge with</td>
-                  <td width="78%" class="vtable">
-			<select name="bridge" class="formselect" id="bridge" onChange="enable_change(false)">
-				  	<option <?php if (!$pconfig['bridge']) echo "selected";?> value="">none</option>
-                      <?php 
-					$opts = get_configured_interface_with_descr();
-					foreach ($opts as $opt => $optname): 
-						if ($opt == "lan") continue;?>
-                      <option <?php if ($opt == $pconfig['bridge']) echo "selected";?> value="<?=htmlspecialchars($opt);?>">
-                      <?=htmlspecialchars($optname);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> </td>
 		</tr>	      
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">IP address</td>

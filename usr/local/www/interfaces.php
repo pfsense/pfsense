@@ -353,11 +353,6 @@ n already exists.";
 
 	if (!$input_errors) {
 
-		$bridge = discover_bridge($wancfg['if'], filter_translate_type_to_real_interface($wancfg['bridge']));
-		if($bridge <> "-1") {
-			destroy_bridge($bridge);
-		}
-
 		unset($wancfg['ipaddr']);
 		unset($wancfg['subnet']);
 		unset($wancfg['gateway']);

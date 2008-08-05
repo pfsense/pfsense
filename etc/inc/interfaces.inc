@@ -415,8 +415,6 @@ function interface_gif_configure(&$gif) {
 function interfaces_lan_configure() {
 	global $config, $g;
 
-	$bridges_total = get_next_available_bridge_interface();
-
 	$lancfg = $config['interfaces']['lan'];
 
 	/* if user has removed ip address, clear it*/
@@ -445,51 +443,6 @@ function interfaces_lan_configure() {
 			write_config();
 			file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$lancfg['if']} has been automatically replaced with {$random_mac}", "Interfaces");
 		}
-	}
-
-	/* bridged? */
-
-	if ($lancfg['bridge'] && $lancfg['bridge'] <> "") {
-		/* use open/netBSD style bridge */
-		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
-
-		/* force all bridged interfaces to use same mtu */
-		$bridgedif = get_real_wan_interface($lancfg['bridge']);
-		$mtu = get_interface_mtu($bridgedif);
-		mwexec("/sbin/ifconfig {$lancfg['if']} mtu {$mtu}");
-		mwexec("/sbin/ifconfig {$bridgeidf} mtu {$mtu}");
-
-		/* assign items to a bridge */
-		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$bridgedif}");
-
-		if(!is_interface_wireless($lancfg['if']) and
-		   !is_interface_wireless($bridgedif))
-			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$bridgedif} stp {$lancfg['if']}");
-
-		/* log commands run for debugging in /tmp/ */
-		$fd = fopen("{$g['tmp_path']}/bridge_config_{$lancfg['if']}", "w");
-		fwrite($fd, "/sbin/ifconfig {$lancfg['if']} mtu {$mtu}\n");
-		fwrite($fd, "/sbin/ifconfig {$bridgedif} mtu {$mtu}\n");
-		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
-		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$bridgedif}\n");
-		if(!is_interface_wireless($lancfg['if']) and
-		   !is_interface_wireless($bridgedif))		
-			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$bridgedif}\n");
-		fclose($fd);
-
-		/* bring up interfaces */
-		mwexec("/sbin/ifconfig bridge{$bridges_total} down");
-		usleep(100);
-		mwexec("/sbin/ifconfig {$bridgedif} up");
-		usleep(5);
-		mwexec("/sbin/ifconfig {$lancfg['if']} up");
-		usleep(5);
-		mwexec("/sbin/ifconfig bridge{$bridges_total} up");
-
-		$bridges_total++;
-		/* update cache */
-		if ($bridges_total != find_number_of_created_bridges())
-			find_number_of_created_bridges(true);
 	}
 
 	/* media */
@@ -1112,7 +1065,7 @@ function find_dhclient_process($interface) {
 }
 
 function interfaces_wan_configure($interface = "wan") {
-	global $config, $g, $bridges_total;
+	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];
 
@@ -1219,52 +1172,6 @@ function interfaces_wan_configure($interface = "wan") {
 			/* resync pf (done automatically for DHCP/PPPoE/PPTP) */
 			/* XXX: shouldn't the caller do this?! */
 			filter_configure();
-	}
-
-	if ($wancfg['bridge'] && $wancfg['bridge'] <> "") {
-		/* use open/netBSD style bridge */
-		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
-
-		/* invalidate interface cache */
-		get_interface_arr(true);
-
-		/* force all bridged interfaces to use same mtu */
-		$bridgedif = get_real_wan_interface($wancfg['bridge']);
-		$mtu = get_interface_mtu($bridgedif);
-		mwexec("/sbin/ifconfig {$wancfg['if']} mtu {$mtu}");
-		mwexec("/sbin/ifconfig {$bridgedif} mtu {$mtu}");
-
-		/* assign items to a bridge */
-		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$wancfg['if']} addm {$bridgedif}");
-
-		if(!is_interface_wireless($wancfg['if']) and
-		   !is_interface_wireless($bridgedif))
-			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$bridgedif} stp {$wancfg['if']}");
-
-		/* log commands run for debugging in /tmp/ */
-		$fd = fopen("{$g['tmp_path']}/bridge_config_{$wancfg['if']}", "w");
-		fwrite($fd, "/sbin/ifconfig {$wancfg['if']} mtu {$mtu}\n");
-		fwrite($fd, "/sbin/ifconfig {$bridgedif} mtu {$mtu}\n");
-		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
-		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$wancfg['if']} addm {$bridgedif}\n");
-		if(!is_interface_wireless($wancfg['if']) and
-		   !is_interface_wireless($bridgedif))
-			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$wancfg['if']} stp {$bridgedif}\n");
-		fclose($fd);
-
-		/* bring up interfaces */
-		mwexec("/sbin/ifconfig bridge{$bridges_total} down");
-		usleep(100);
-		mwexec("/sbin/ifconfig {$bridgedif} up");
-		usleep(5);
-		mwexec("/sbin/ifconfig {$wancfg['if']} up");
-		usleep(5);
-		mwexec("/sbin/ifconfig bridge{$bridges_total} up");
-
-		$bridges_total++;
-		/* update cache */
-		if ($bridges_total != find_number_of_created_bridges())
-			find_number_of_created_bridges(true);
 	}
 
 	/* XXX: Shouldn't the caller do this?! */
@@ -2065,34 +1972,6 @@ function is_altq_capable($int) {
                 return false;
 }
 
-function get_number_of_bridged_interfaces() {
-	$bridges_total = 0;
-	$bridges = split("\n", `/sbin/ifconfig -a | /usr/bin/grep bridge | grep flags`);
-	foreach($bridges as $bridge) {
-		$match_array = "";
-		preg_match_all("/bridge(.*):/",$bridge,$match_array);
-		if($match_array[1][0] <> "") {
-			if($match_array[1][0] > $bridges_total)
-				$bridges_total = $match_array[1][0];
-		}
-	}
-	return "{$bridges_total}";
-}
-
-function get_number_of_vlan_interfaces() {
-        $vlans_total = 0;
-        $vlans = split("\n", `/sbin/ifconfig -a | /usr/bin/grep vlan | grep flags`);
-        foreach($vlans as $bridge) {
-                $match_array = "";
-                preg_match_all("/vlan(.*):/",$bridge,$match_array);
-                if($match_array[1][0] <> "") {
-                        if($match_array[1][0] > $vlans_total)
-                                $vlans_total = $match_array[1][0];
-                }
-        }
-        return "{$vlans_total}";
-}
-
 function get_number_of_ppp_interfaces() {
         $ppps_total = 0;
         $ppps = split("\n", `/sbin/ifconfig -a | /usr/bin/grep ppp | grep flags`);
@@ -2105,47 +1984,6 @@ function get_number_of_ppp_interfaces() {
                 }
         }
         return "{$ppps_total}";
-}
-
-function get_next_available_bridge_interface() {
-	$bridges_total = get_number_of_bridged_interfaces();
-	$interfaces = `/sbin/ifconfig -l`;
-	$x=0;
-	for($x=0; $x<$bridges_total; $x++) {
-		if(!stristr($interfaces, "bridge{$x}")) {
-			return "{$x}";
-		}
-	}
-	return "{$x}";
-}
-
-function destroy_bridge($bridge_num) {
-	mwexec("/sbin/ifconfig bridge{$bridge_num} down");
-	sleep(1);
-	mwexec("/sbin/ifconfig bridge{$bridge_num} delete");
-	sleep(1);
-	mwexec("/sbin/ifconfig bridge{$bridge_num} destroy");
-	sleep(1);
-	return;
-}
-
-function discover_bridge($interface1, $interface2) {
-	if(!$interface1) return;
-	if(!$interface2) return;
-	$total_bridges = get_number_of_bridged_interfaces();
-	$total_bridges++;
-	$interfaces = `/sbin/ifconfig -l`;
-	$x=0;
-	for($x=0; $x<$total_bridges; $x++) {
-		$bridge_text = "NA";
-		if(!stristr($interfaces, "bridge{$x}"))
-			continue;
-		$bridge_text = `/sbin/ifconfig bridge{$x} | grep member`;
-		if(stristr($bridge_text, $interface1))
-			if(stristr($bridge_text, $interface2))
-				return $x;
-	}
-	return "-1";
 }
 
 function get_wireless_modes($interface)

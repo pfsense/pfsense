@@ -3003,14 +3003,14 @@ function create_firewall_outgoing_rules_to_itself() {
 			$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 		}
 	}
-
+/*
 	update_filter_reload_status("Setting up bridging items");
-	/* is bridging turned on? */
+	// is bridging turned on? 
 	for($x=0; $x<10; $x++) {
 		if(does_interface_exist("bridge{$x}") == true)
 			$rule .="pass out quick on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
 	}
-
+*/
 	update_filter_reload_status("Setting up pptp items");
 	if($config['pptpd']['mode'] == "server")
 		$rule .="pass out quick on \$pptp all keep state label \"let out anything from firewall host itself pptp\"\n";

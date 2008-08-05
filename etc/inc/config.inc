@@ -1653,6 +1653,21 @@ function convert_config() {
 		$config['version'] = 5.0;
 	}
 
+        /* Convert 5.0 -> 5.1 */
+        if ($config['version'] <= 5.1) {
+		$pconfig = array();
+		$pconfig['desc'] = "Set to 0 to disable filtering on the incoming and outgoing member interfaces.";
+		$pconfig['tunable'] = "net.link.bridge.pfil_member";
+		$pconfig['value'] = "1";
+		$config['sysctl']['item'][] = $pconfig;
+		$pconfig = array();
+                $pconfig['desc'] = "Set to 1 to enable filtering on the bridge interface";
+                $pconfig['tunable'] = "net.link.bridge.pfil_bridge";
+                $pconfig['value'] = "0";
+                $config['sysctl']['item'][] = $pconfig;
+
+	}
+
 	$now = date("H:i:s");
 	log_error("Ended Configuration upgrade at $now");
 

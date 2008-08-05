@@ -1537,7 +1537,7 @@ function convert_config() {
 			$config['interfaces']['wan']['timeout'] = $pconfig['timeout'];
 		}
 
-		$config['version'] = 4.8;
+		$config['version'] = "4.8";
 	}
 
 	/* Convert 4.8 -> 4.9 */
@@ -1599,7 +1599,7 @@ function convert_config() {
 		$config['system']['group'] = $groups;
 		local_group_set($all);
 
-		$config['version'] = 4.9;
+		$config['version'] = "4.9";
 	}
 
 	/* Convert 4.9 -> 5.0 */
@@ -1650,7 +1650,7 @@ function convert_config() {
 		/* sync all local account information */
 		local_sync_accounts();
 
-		$config['version'] = 5.0;
+		$config['version'] = "5.0";
 	}
 
         /* Convert 5.0 -> 5.1 */
@@ -1691,7 +1691,7 @@ function convert_config() {
 				}
 			}
 		}
-		$config['version'] = 5.1;
+		$config['version'] = "5.1";
 	}
 
 	$now = date("H:i:s");

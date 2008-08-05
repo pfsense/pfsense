@@ -1691,6 +1691,7 @@ function convert_config() {
 				}
 			}
 		}
+		$config['version'] = 5.1;
 	}
 
 	$now = date("H:i:s");

@@ -700,7 +700,7 @@ function openvpn_restore_all_ciphers() {
 
         $ovpncapath = $g['varetc_path']."/openvpn/certificates";
 
-        if (is_array($config['openvpn']['keys'])) {
+        if (is_array($config['openvpn']['keys']) && count($config['openvpn']['keys'])) {
                 if (!is_dir($g['varetc_path']."/openvpn"))
                         safe_mkdir($g['varetc_path']."/openvpn");
                 if (!is_dir($ovpncapath))
@@ -762,8 +762,9 @@ function openvpn_resync_all() {
 
 	foreach (array('server', 'client') as $mode) {
 		if ($config['installedpackages']["openvpn$mode"]) {
-			if (is_array($config['installedpackages']["openvpn$mode"]['config'])) {
-				foreach ($config['installedpackages']["openvpn$mode"]['config'] as $id => $settings)
+			$cfgp =& $config['installedpackages']["openvpn$mode"];
+			if (is_array($cfgp['config']) && count($cfgp['config'])) {
+				foreach ($cfgp['config'] as $id => $settings)
 					openvpn_resync($mode, $id);
 			}
 		}
@@ -771,8 +772,9 @@ function openvpn_resync_all() {
 
 	openvpn_create_cscdir();
 	if ($config['installedpackages']['openvpncsc']) {
-		if (is_array($config['installedpackages']['openvpncsc']['config'])) {
-			foreach ($config['installedpackages']['openvpncsc']['config'] as $id => $csc)
+		$cfgp =& $config['installedpackages']['openvpncsc'];
+		if (is_array($cfgp['config']) && count($cfgp['config'])) {
+			foreach ($cfgp['config'] as $id => $csc)
 				openvpn_resync_csc($id);
 		}
 	}

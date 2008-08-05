@@ -37,6 +37,11 @@ $a_laggs = &$config['laggs']['lagg'];
 
 $portlist = get_interface_list();
 
+$checklist = get_configured_interface_list(false, true);
+$realifchecklist = array();
+foreach ($checklist as $tmpif)
+	$realifchecklist[get_real_wan_interface($tmpif)] = $tmpif;
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -58,7 +63,6 @@ if ($_POST) {
 	$reqdfieldsn = explode(",", "Member interfaces, Lagg protocol");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-
 
 	if (!$input_errors) {
 		$lagg = array();
@@ -99,6 +103,8 @@ include("head.inc");
                     <select name="members[]" multiple="true" size="4" class="formselect">
                       <?php
 					  	foreach ($portlist as $ifn => $ifinfo) {
+							if (array_key_exists($ifn, $realifchecklist))
+								continue;
 							echo "<option value=\"{$ifn}\"";
 							if (stristr($pconfig['members'], $ifn))
 								echo "selected";
@@ -109,7 +115,7 @@ include("head.inc");
 			<br/>
 			<span class="vexpl">Choose the members that will be used for the link aggregation.</span></td>
                 </tr>
-				<tr>
+		<tr>
                   <td valign="top" class="vncellreq">Lag proto</td>
                   <td class="vtable">
                     <select name="proto" class="formselect" id="proto">

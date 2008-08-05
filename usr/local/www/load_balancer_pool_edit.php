@@ -4,7 +4,7 @@
         load_balancer_pool_edit.php
         part of pfSense (http://www.pfsense.com/)
 
-        Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
+        Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
 
         Redistribution and use in source and binary forms, with or without
@@ -49,8 +49,6 @@ else
 	$id = $_GET['id'];
 
 if (isset($id) && $a_pool[$id]) {
-	$pconfig['monitorip'] = $a_pool[$id]['monitorip'];
-	$pconfig['behaviour'] = $a_pool[$id]['behaviour'];
 	$pconfig['name'] = $a_pool[$id]['name'];
 	$pconfig['desc'] = $a_pool[$id]['desc'];
 	$pconfig['port'] = $a_pool[$id]['port'];
@@ -79,8 +77,7 @@ if ($_POST) {
 		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id))
 			$input_errors[] = "This pool name has already been used.  Pool names must be unique.";
 	if (!is_port($_POST['port']))
-		if($_POST['type'] == "server")
-			$input_errors[] = "The port must be an integer between 1 and 65535.";
+		$input_errors[] = "The port must be an integer between 1 and 65535.";
 	if (is_array($_POST['servers'])) {
 		foreach($pconfig['servers'] as $svrent) {
 			if (!is_ipaddr($svrent)) {
@@ -95,13 +92,12 @@ if ($_POST) {
 			}
 		}
 	}
+	$m = array();
+	for ($i=0; isset($config['load_balancer']['monitor_type'][$i]); $i++)
+		$m[$config['load_balancer']['monitor_type'][$i]['name']] = $config['load_balancer']['monitor_type'][$i];
 
-	if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP" && $_POST['monitor'] != "ICMP")
+	if (!isset($m[$_POST['monitor']]))
 		$input_errors[] = "Invalid monitor chosen.";
-
-	if(!isset($_POST['behaviour'])) {
-			$input_errors[] = "No pool behaviour chosen.";
-	}
 
 	if (!$input_errors) {
 		$poolent = array();
@@ -110,12 +106,6 @@ if ($_POST) {
 		if($poolent['name'] != "")
 			$changedesc .= " modified '{$poolent['name']}' pool:";
 		
-		/* kill off old static route */
-		if(is_ipaddr($poolent['monitorip']))
-			mwexec("route delete {$poolent['monitorip']}");
-		
-		update_if_changed("behaviour", $poolent['behaviour'], $_POST['behaviour']);
-		update_if_changed("monitorip", $poolent['monitorip'], $_POST['monitorip']);
 		update_if_changed("name", $poolent['name'], $_POST['name']);
 		update_if_changed("description", $poolent['desc'], $_POST['desc']);
 		update_if_changed("port", $poolent['port'], $_POST['port']);
@@ -181,17 +171,6 @@ function clearcombo(){
 		</tr>
 
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><?=gettext("Behavior");?></td>
-			<td width="78%" class="vtable" colspan="2">
-				<input type="radio" name="behaviour" id="behaviour" value="balance"<?php if($pconfig['behaviour'] == 
-"balance") echo " CHECKED"; ?>><?=gettext("Load Balancing");?><br>
-				<input type="radio" name="behaviour" id="behaviour" value="failover"<?php if($pconfig['behaviour'] == 
-"failover") echo " CHECKED"; ?>><?=gettext("Failover");?><br>
-				Load Balancing: both active. Failover order: top -&gt; down.
-			</td>
-		</tr>
-
-		<tr align="left">
 			<td width="22%" valign="top" id="monitorport_text" class="vncellreq">Port</td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
@@ -202,26 +181,24 @@ function clearcombo(){
 			<td width="22%" valign="top" class="vncellreq">Monitor</td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="monitor" name="monitor">
-					<option value="TCP"<?php if($pconfig['monitor'] == "TCP") echo " SELECTED"; ?>>TCP</option>
-					<option value="ICMP"<?php if($pconfig['monitor'] == "ICMP") echo " SELECTED"; ?>>ICMP</option>
-					<!-- billm - XXX: add HTTP/HTTPS here -->
+					<?
+						foreach ($config['load_balancer']['monitor_type'] as $monitor) {
+							if ($monitor['name'] == $pconfig['monitor']) {
+								$selected=" selected";
+							} else {
+								$selected = "";
+							}
+							echo "<option value=\"{$monitor['name']}\"{$selected}>{$monitor['name']}</option>";
+						}
+					?>
 				</select>
 			</td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" id="monitorip_text" class="vncell">Monitor IP</td>
-			<td width="78%" class="vtable" colspan="2">
-				<div style="float: none;">
-				<input size="16" id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>" style="float: left;">
-				</div>
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"><div id="interfacename_text"></div></td>
+			<td width="22%" valign="top" class="vncellreq"></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="ipaddr" type="text" size="16" style="float: left;">
 				<input class="formbtn" type="button" name="button1" value="Add to pool" onclick="AddServerToPool(document.iform);"><br>
-				<div id="interfacename_desc"></div>
 			</td>
 		</tr>
 		<tr>
@@ -266,10 +243,6 @@ echo "</select>";
 							<br/>
 							<input class="formbtn" type="button" name="removeEnabled" value="Remove" onclick="RemoveServerFromPool(document.iform, 'servers[]');" />
 						</td>
-						<td valign="top">
-							<input class="formbtn" type="button" name="moveUp" value="Move up" onclick="up(document.iform.serversSelect);" /><br/>
-							<input class="formbtn" type="button" name="moveDown" value="Move down" onclick="down(document.iform.serversSelect);" />
-						</td>
 					</tr>
 					</tbody>
 				</table>
@@ -278,7 +251,7 @@ echo "</select>";
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);">
+				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);"><input type="button" class="formbtn" value="Cancel" onclick="history.back()">
 				<?php if (isset($id) && $a_pool[$id]): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">
 				<?php endif; ?>

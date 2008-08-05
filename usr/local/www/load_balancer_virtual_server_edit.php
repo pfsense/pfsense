@@ -4,7 +4,7 @@
         load_balancer_virtual_server_edit.php
         part of pfSense (http://www.pfsense.com/)
 
-        Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
+        Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
 
         Redistribution and use in source and binary forms, with or without
@@ -158,30 +158,26 @@ include("head.inc");
                     <select id="pool" name="pool">
 			<?php
 				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
-					if ($config['load_balancer']['lbpool'][$i]['type'] == "server") {
-						$selected = "";
-						if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['pool'] )
-							$selected = " SELECTED";
-						echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
-					}
+					$selected = "";
+					if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['pool'] )
+						$selected = " SELECTED";
+					echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
 				}
 			?>
 			</select>
                   </td>
 		</tr>
                 <tr align="left">
-		  <td width="22%" valign="top" class="vncellreq">Pool Down Server</td>
+		  <td width="22%" valign="top" class="vncellreq">Fall Back Pool</td>
                   <td width="78%" class="vtable" colspan="2">
                                 <select id="sitedown" name="sitedown">
                                 <option value=""<?="selected" ? $pconfig['sitedown'] == '' : ''?>>none</option>
             			<?php
             				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
-            					if ($config['load_balancer']['lbpool'][$i]['type'] == "server") {
-            						$selected = "";
-            						if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['sitedown'] )
-            							$selected = " SELECTED";
-            						echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
-            					}
+            					$selected = "";
+            					if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['sitedown'] )
+            						$selected = " SELECTED";
+            					echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
             				}
             			?>
             			</select>
@@ -190,7 +186,7 @@ include("head.inc");
 		</tr>
                 <tr align="left">
                   <td align="left" valign="bottom">
-			<input name="Submit" type="submit" class="formbtn" value="Submit">
+			<input name="Submit" type="submit" class="formbtn" value="Submit"><input type="button" class="formbtn" value="Cancel" onclick="history.back()">
 			<?php if (isset($id) && $a_vs[$id]): ?>
 			<input name="id" type="hidden" value="<?=$id;?>">
 			<?php endif; ?>

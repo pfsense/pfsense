@@ -4,7 +4,7 @@
 	load_balancer_pool.php
 	part of pfSense (http://www.pfsense.com/)
 
-	Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
+	Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@ if (!is_array($config['load_balancer']['lbpool'])) {
 }
 $a_pool = &$config['load_balancer']['lbpool'];
 
+
 if ($_POST) {
 	$pconfig = $_POST;
 
@@ -82,6 +83,15 @@ if ($_GET['act'] == "del") {
 	}
 }
 
+/* Index monitor_type array for easy hyperlinking */
+$mondex = array();
+for ($i = 0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
+	$mondex[$config['load_balancer']['monitor_type'][$i]['name']] = $i;
+}
+for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+	$a_pool[$i]['monitor'] = "<a href=\"/load_balancer_monitor_edit.php?id={$mondex[$a_pool[$i]['monitor']]}\">{$a_pool[$i]['monitor']}</a>";
+}
+
 $pgtitle = array("Load Balancer","Pool");
 include("head.inc");
 
@@ -101,83 +111,34 @@ include("head.inc");
         $tab_array = array();
         $tab_array[] = array("Pools", true, "load_balancer_pool.php");
         $tab_array[] = array("Virtual Servers", false, "load_balancer_virtual_server.php");
+        $tab_array[] = array("Monitors", false, "load_balancer_monitor.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td width="10%" class="listhdrr">Name</td>
-                  <td width="10%" class="listhdrr">Type</td>
-                  <td width="15%" class="listhdrr">Servers/Gateways</td>
-                  <td width="10%" class="listhdrr">Port</td>
-                  <td width="15%" class="listhdrr">Monitor</td>
-                  <td width="30%" class="listhdr">Description</td>
-                  <td width="10%" class="list">
-                    <table border="0" cellspacing="0" cellpadding="1">
-                      <tr>
-			<td width="17"></td>
-                        <td valign="middle"><a href="load_balancer_pool_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-                      </tr>
-                    </table>
-		</td>
-		</tr>
-			  <?php $i = 0; foreach ($a_pool as $vipent): ?>
-                <tr>
-                  <td class="listlr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
-				<?=$vipent['name'];?>
-                  </td>
-                  <td class="listr" align="center" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
-				<?=$vipent['type'];?>
-				<br />
-				(<?=$vipent['behaviour'];?>)
-                  </td>
-                  <td class="listr" align="center" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
-                        <?php
-                                foreach ((array) $vipent['servers'] as $server) {
-                                        $svr = split("\|", $server);
-                                        echo "{$svr[0]}<br />";
-                                }
-                        ?>
-                  </td>
-                  <td class="listr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
-				<?=$vipent['port'];?>
-                  </td>
-                  <td class="listr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
-                        <?php
-                        echo $vipent['monitor'];
-                        ?>
-                  </td>
-                  <td class="listbg" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
-				<font color="#FFFFFF"><?=$vipent['desc'];?></font>
-                  </td>
-                  <td class="list" nowrap>
-                    <table border="0" cellspacing="0" cellpadding="1">
-                      <tr>
-                        <td valign="middle"><a href="load_balancer_pool_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-                        <td valign="middle"><a href="load_balancer_pool.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <?php $i++; endforeach; ?>
-                <tr>
-                  <td class="list" colspan="6"></td>
-                  <td class="list">
-                    <table border="0" cellspacing="0" cellpadding="1">
-                      <tr>
-			<td width="17"></td>
-                        <td valign="middle"><a href="load_balancer_pool_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-	   </div>
-	</table>
-            </form>
+<?
+			$t = new MainTable();
+			$t->edit_uri('load_balancer_pool_edit.php');
+			$t->my_uri('load_balancer_pool.php');
+			$t->add_column('Name','name',10);
+			$t->add_column('Servers','servers',15);
+			$t->add_column('Port','port',10);
+			$t->add_column('Monitor','monitor',15);
+			$t->add_column('Description','desc',30);
+			$t->add_button('edit');
+			$t->add_button('dup');
+			$t->add_button('del');
+			$t->add_content_array($a_pool);
+			$t->display();
+?>
+
+	</div>
+    </td>
+  </tr>
+</table>
+</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

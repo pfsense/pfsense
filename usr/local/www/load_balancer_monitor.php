@@ -1,10 +1,10 @@
 <?php
 /* $Id$ */
 /*
-	load_balancer_virtual_server.php
+	load_balancer_monitor.php
 	part of pfSense (http://www.pfsense.com/)
 
-	Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
+	Copyright (C) 2008 Bill Marquette <bill.marquette@gmail.com>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -30,74 +30,68 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-services-loadbalancer-virtualservers
-##|*NAME=Services: Load Balancer: Virtual Servers page
-##|*DESCR=Allow access to the 'Services: Load Balancer: Virtual Servers' page.
-##|*MATCH=load_balancer_virtual_server.php*
+##|*IDENT=page-services-loadbalancer-monitor
+##|*NAME=Services: Load Balancer: Monitors page
+##|*DESCR=Allow access to the 'Services: Load Balancer: Monitors' page.
+##|*MATCH=load_balancer_monitor.php*
 ##|-PRIV
 
+require("guiconfig.inc");
 
-require_once("guiconfig.inc");
-require_once("vslb.inc");
-
-if (!is_array($config['load_balancer']['virtual_server'])) {
-	$config['load_balancer']['virtual_server'] = array();
+if (!is_array($config['load_balancer']['monitor_type'])) {
+	$config['load_balancer']['monitor_type'] = array();
 }
-$a_vs = &$config['load_balancer']['virtual_server'];
+$a_monitor = &$config['load_balancer']['monitor_type'];
 
 if ($_POST) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
 		$retval = 0;
+
 		config_lock();
 		$retval |= filter_configure();
 		$retval |= relayd_configure();
 		config_unlock();
+
 		$savemsg = get_std_save_message($retval);
 		unlink_if_exists($d_vsconfdirty_path);
 	}
 }
 
 if ($_GET['act'] == "del") {
-	if ($a_vs[$_GET['id']]) {
+	if ($a_monitor[$_GET['id']]) {
+		/* make sure no pools reference this entry */
+		if (is_array($config['load_balancer']['lbpool'])) {
+			foreach ($config['load_balancer']['pool'] as $pool) {
+				if ($pool['monitor'] == $a_monitor[$_GET['id']]['name']) {
+					$input_errors[] = "This entry cannot be deleted because it is still referenced by at least one pool.";
+					break;
+				}
+			}
+		}
 
 		if (!$input_errors) {
-			unset($a_vs[$_GET['id']]);
+			unset($a_monitor[$_GET['id']]);
 			write_config();
 			touch($d_vsconfdirty_path);
-			header("Location: load_balancer_virtual_server.php");
+			header("Location: load_balancer_monitor.php");
 			exit;
 		}
 	}
 }
 
-/* Index lbpool array for easy hyperlinking */
-$poodex = array();
-for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
-	$poodex[$config['load_balancer']['lbpool'][$i]['name']] = $i;
-}
-for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
-	$a_vs[$i]['pool'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['pool']]}\">{$a_vs[$i]['pool']}</a>";
-	if ($a_vs[$i]['sitedown'] != '') {
-		$a_vs[$i]['sitedown'] = "<a href=\"/load_balancer_pool_edit.php?id={$poodex[$a_vs[$i]['sitedown']]}\">{$a_vs[$i]['sitedown']}</a>";
-	} else {
-		$a_vs[$i]['sitedown'] = 'none';
-	}
-}
-
-
-$pgtitle = array("Services","Load Balancer","Virtual Servers");
+$pgtitle = array("Load Balancer","Monitor");
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="load_balancer_virtual_server.php" method="post">
+<form action="load_balancer_monitor.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_vsconfdirty_path)): ?><p>
-<?php print_info_box_np("The virtual server configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np("The load balancer configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
@@ -105,8 +99,8 @@ include("head.inc");
         /* active tabs */
         $tab_array = array();
         $tab_array[] = array("Pools", false, "load_balancer_pool.php");
-        $tab_array[] = array("Virtual Servers", true, "load_balancer_virtual_server.php");
-        $tab_array[] = array("Monitors", false, "load_balancer_monitor.php");
+        $tab_array[] = array("Virtual Servers", false, "load_balancer_virtual_server.php");
+        $tab_array[] = array("Monitors", true, "load_balancer_monitor.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>
@@ -115,21 +109,18 @@ include("head.inc");
 	<div id="mainarea">
 <?
 			$t = new MainTable();
-			$t->edit_uri('load_balancer_virtual_server_edit.php');
-			$t->my_uri('load_balancer_virtual_server.php');
-			$t->add_column('Name','name',10);
-			$t->add_column('IP Address','ipaddr',15);
-			$t->add_column('Port','port',10);
-			$t->add_column('Pool','pool',15);
-			$t->add_column('Fall Back Pool','sitedown',15);
+			$t->edit_uri('load_balancer_monitor_edit.php');
+			$t->my_uri('load_balancer_monitor.php');
+			$t->add_column('Name','name',20);
+			$t->add_column('Type','type',10);
 			$t->add_column('Description','desc',30);
 			$t->add_button('edit');
 			$t->add_button('dup');
 			$t->add_button('del');
-			$t->add_content_array($a_vs);
+			$t->add_content_array($a_monitor);
 			$t->display();
 ?>
-	   </div>
+	</div>
     </td>
   </tr>
 </table>

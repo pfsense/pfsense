@@ -47,6 +47,12 @@ require_once("authgui.inc");
 require_once("config.inc");
 require_once("functions.inc");
 
+/* Pull in all the gui related display classes) */
+foreach (scandir("/usr/local/www/classes/") as $file) {
+	if (stristr($file, ".inc") !== false) {
+		require_once("classes/{$file}");
+	}
+}
 /*
  *   if user has selected a custom template, use it.
  *   otherwise default to pfsense tempalte
@@ -881,5 +887,74 @@ function outputCSSFileInline($css) {
 	}
 }
 
-?>
+$rfc2616 = array(
+	100 => "100 Continue",
+	101 => "101 Switching Protocols",
+	200 => "200 OK",
+	201 => "201 Created",
+	202 => "202 Accepted",
+	203 => "203 Non-Authoritative Information",
+	204 => "204 No Content",
+	205 => "205 Reset Content",
+	206 => "206 Partial Content",
+	300 => "300 Multiple Choices",
+	301 => "301 Moved Permanently",
+	302 => "302 Found",
+	303 => "303 See Other",
+	304 => "304 Not Modified",
+	305 => "305 Use Proxy",
+	306 => "306 (Unused)",
+	307 => "307 Temporary Redirect",
+	400 => "400 Bad Request",
+	401 => "401 Unauthorized",
+	402 => "402 Payment Required",
+	403 => "403 Forbidden",
+	404 => "404 Not Found",
+	405 => "405 Method Not Allowed",
+	406 => "406 Not Acceptable",
+	407 => "407 Proxy Authentication Required",
+	408 => "408 Request Timeout",
+	409 => "409 Conflict",
+	410 => "410 Gone",
+	411 => "411 Length Required",
+	412 => "412 Precondition Failed",
+	413 => "413 Request Entity Too Large",
+	414 => "414 Request-URI Too Long",
+	415 => "415 Unsupported Media Type",
+	416 => "416 Requested Range Not Satisfiable",
+	417 => "417 Expectation Failed",
+	500 => "500 Internal Server Error",
+	501 => "501 Not Implemented",
+	502 => "502 Bad Gateway",
+	503 => "503 Service Unavailable",
+	504 => "504 Gateway Timeout",
+	505 => "505 HTTP Version Not Supported"
+);
 
+function is_rfc2616_code($code) {
+	global $rfc2616;
+	if (isset($rfc2616[$code]))
+		return true;
+	else
+		return false;
+}
+
+function print_rfc2616_select($tag, $current){
+	global $rfc2616;
+
+	/* Default to 200 OK if not set */
+	if ($current == "")
+		$current = 200;
+
+	echo "<select id=\"{$tag}\" name=\"{$tag}\">\n";	
+	foreach($rfc2616 as $code => $message) {
+		if ($code == $current) {
+			$sel = " selected";
+		} else {
+			$sel = "";
+		}
+		echo "<option value=\"{$code}\"{$sel}>{$message}</option>\n";
+	}
+}
+
+?>

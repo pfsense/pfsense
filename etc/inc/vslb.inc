@@ -28,16 +28,132 @@
 
  */
 
+/* DISABLE_PHP_LINT_CHECKING */
+
 /* include all configuration functions */
 require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
+
+class Monitor {
+	private $conf = array();
+	function __construct($config) {
+		$this->conf = $config;
+	}
+
+	public function p() {
+		return "check {$this->get('proto')}";
+	}
+	private function get($var) {
+		return isset($this->$var) ? $this->$var : "";
+	}
+	protected function config($element) {
+		return isset($this->conf[$element]) ? $this->conf[$element] : "";
+	}
+}
+
+class TCPMonitor extends Monitor {
+	protected $proto = 'tcp';
+}
+
+class SSLMonitor extends Monitor {
+	protected $proto = 'ssl';
+}
+
+class ICMPMonitor extends Monitor {
+	protected $proto = 'icmp';
+}
+
+class HTTPMonitor extends Monitor {
+	protected $proto = 'http';
+	function __construct($config) {
+		parent::__construct($config);
+	}
+	public function p() {
+		$method = ($this->code() != "") ? $this->code() : $this->digest();
+		return "check {$this->proto} {$this->path()} {$this->host()} {$method}";
+	}
+
+	private function path() {
+		return $this->config('path') != "" ? "'{$this->config('path')}'" : "";
+	}
+
+	private function host() {
+		return $this->config('host') != "" ? "host {$this->config('host')}" : "";
+	}
+
+	private function code() {
+		return $this->config('code') != "" ? "code {$this->config('code')}" : "";
+	}
+
+	private function digest() {
+		return $this->config('digest') != "" ? "digest {$this->config('digest')}" : "";
+	}
+}
+
+class HTTPSMonitor extends HTTPMonitor {
+	protected $proto = 'https';
+}
+
+class SendMonitor extends Monitor {
+	private $proto = 'send';
+	function __construct($config) {
+		parent::__construct($config);
+	}
+	public function p() {
+		return "check {$this->proto} {$this->data()} expect {$this->pattern()} {$this->ssl()}";
+	}
+
+
+	private function data() {
+		return $this->config('send') != "" ? "{$this->config('send')}" : "";
+	}
+
+	private function pattern() {
+		return $this->config('expect') != "" ? "{$this->config('expect')}" : "";
+	}
+
+	private function ssl() {
+		return $this->config('ssl') == true ? "ssl" : "";
+	}
+}
+
+
 
 function relayd_configure() {
   global $config, $g;
 
   $vs_a = &$config['load_balancer']['virtual_server'];
   $pool_a = &$config['load_balancer']['lbpool'];
+
+  $check_a = array();
+
+  foreach ($config['load_balancer']['monitor_type'] as $type) {
+    switch($type['type']) {
+      case 'icmp': {
+        $mon = new ICMPMonitor($type['options']);
+	break;
+      }
+      case 'tcp': {
+        $mon = new TCPMonitor($type['options']);
+	break;
+      }
+      case 'http': {
+        $mon = new HTTPMonitor($type['options']);
+	break;
+      }
+      case 'https': {
+        $mon = new HTTPSMonitor($type['options']);
+	break;
+      }
+      case 'send': {
+        $mon = new SendMonitor($type['options']);
+	break;
+      }
+    }
+    $check_a[$type['name']] = $mon->p();
+  }
+
 
   $fd = fopen("{$g['varetc_path']}/relayd.conf", "w");
 
@@ -46,10 +162,6 @@ function relayd_configure() {
   /* Virtual server pools */
   if(is_array($pool_a)) {
     for ($i = 0; isset($pool_a[$i]); $i++) {
-      /* Don't deal with gateway pools - XXX remove me after gateways are converted */
-      if ($pool_a[$i]['type'] == "gateway")
-        continue;
-      
       if(is_array($pool_a[$i]['servers'])) {
         $srvtxt = implode(", ", $pool_a[$i]['servers']);
         $conf .= "table <{$pool_a[$i]['name']}> { $srvtxt }\n";
@@ -59,14 +171,15 @@ function relayd_configure() {
     }
   }
 
+print_r($check_a);
   if(is_array($vs_a)) {
     for ($i = 0; isset($vs_a[$i]); $i++) {
       $conf .= "redirect \"{$vs_a[$i]['name']}\" {\n";
       $conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
-      $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} check tcp timeout 1000\n";
-      /* XXX - this needs to use the backup pool aka sitedown - but that isn't converted yet */
+      $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+
       if (isset($vs_a[$i]['sitedown']) &&  $vs_a[$i]['sitedown'] != "")
-        $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} check tcp timeout 1000\n";
+        $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
       $conf .= "}\n";
     }
   }

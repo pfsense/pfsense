@@ -2,7 +2,7 @@
         pool.js
         part of pfSense (http://www.pfsense.com/)
 
-        Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
+        Copyright (C) 2005-2008 Bill Marquette <bill.marquette@gmail.com>.
         All rights reserved.
 
         Redistribution and use in source and binary forms, with or without
@@ -31,27 +31,7 @@
  * operates on whatever form is passed to it
  */
 function AddServerToPool(form) {
-
-  var IntOrIp;
-	var enabledSel = form['servers[]'];
-	var disabledSel = form['serversdisabled[]'];
-	if (form.type.selectedIndex == 0)
-	    IntOrIp = form.ipaddr;
-	else
-	    IntOrIp = form.iface;
-
-	if (form.type.selectedIndex == 1) {
-		if (!form.monitorip.value) {
-			alert("Monitor IP Required First!");
-			return true;
-		}
-	}
-
-	var ServerPort = IntOrIp.value;
-	if(form.type.selectedIndex == 0)
-		var ServerPort = IntOrIp.value;
-	else
-		var ServerPort = IntOrIp.value + "|" + form.monitorip.value;
+	var ServerPort = form.ipaddr.value;
 	form['servers[]'].options[form['servers[]'].options.length] = new Option(ServerPort,ServerPort);
 }
 

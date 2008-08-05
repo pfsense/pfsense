@@ -128,7 +128,7 @@ function relayd_configure() {
 
   $check_a = array();
 
-  foreach ($config['load_balancer']['monitor_type'] as $type) {
+  foreach ((array)$config['load_balancer']['monitor_type'] as $type) {
     switch($type['type']) {
       case 'icmp': {
         $mon = new ICMPMonitor($type['options']);

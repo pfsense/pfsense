@@ -30,10 +30,10 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['bridges']['bridge']))
-	$config['bridges']['bridge'] = array();
+if (!is_array($config['bridges']['bridged']))
+	$config['bridges']['bridged'] = array();
 
-$a_bridges = &$config['bridges']['bridge'] ;
+$a_bridges = &$config['bridges']['bridged'] ;
 
 function bridge_inuse($num) {
 	global $config;

@@ -121,8 +121,8 @@ function interfaces_bridge_configure() {
         global $config;
 
         $i = 0;
-        if (is_array($config['bridges']['bridge']) && count($config['bridges']['bridge'])) {
-                foreach ($config['bridges']['bridge'] as $bridge) {
+        if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+                foreach ($config['bridges']['bridged'] as $bridge) {
                         if(empty($bridge['bridgeif'])) {
                                 $bridge['bridgeif'] = "bridge{$i}";
                         }

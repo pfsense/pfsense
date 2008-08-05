@@ -31,10 +31,10 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['bridges']['bridge']))
-	$config['bridges']['bridge'] = array();
+if (!is_array($config['bridges']['bridged']))
+	$config['bridges']['bridged'] = array();
 
-$a_bridges = &$config['bridges']['bridge'];
+$a_bridges = &$config['bridges']['bridged'];
 
 $ifacelist = get_configured_interface_with_descr();
 

@@ -1671,7 +1671,7 @@ function convert_config() {
 		foreach($config['interfaces'] as $intf) {
 			if (isset($intf['bridge']) && $intf['bridge'] <> "") {
 				$config['bridges'] = array();
-				$config['bridges']['bridge'] = array();
+				$config['bridges']['bridged'] = array();
 				$convert_bridges = true;
 				break;
 			}
@@ -1684,7 +1684,7 @@ function convert_config() {
 					$nbridge['members'] = "{$ifr},{$intf['bridge']}";
 					$nbridge['descr'] = "Converted bridged {$ifr}";
 					$nbridge['bridgeif'] = "bridge{$i}";
-					$config['bridges']['bridge'][] = $nbridge;
+					$config['bridges']['bridged'][] = $nbridge;
 					unset($intf['bridge']);
 					$i++;
 				}

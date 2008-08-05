@@ -440,7 +440,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Load Balancing</td>
 			<td width="78%" class="vtable">
-				<?php if($config['interfaces']['wan']['ipaddr'] <> "pppoe"): ?>
+				<?php if($config['interfaces']['wan']['ipaddr'] == "pppoe"): ?>
 					Sticky connections are disabled due to PPPoE being enabled.
 				<?php else: ?>
 					<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> />

@@ -154,10 +154,10 @@ switch($_GET['mode']) {
             update_output_window($static_output);
             break;
 	case "reinstallall":
-	    if($config['installedpackages']['package'] <> "")
+	    if($config['installedpackages']['package'])
 			exec("rm -rf /var/db/pkg/*");
-			foreach($config['installedpackages']['package'] as $package)
-				$todo[] = array('name' => $package['name'], 'version' => $package['version']);
+				foreach($config['installedpackages']['package'] as $package)
+					$todo[] = array('name' => $package['name'], 'version' => $package['version']);
 			$pkg_id = 0;
             foreach($todo as $pkgtodo) {
                     $static_output = "";

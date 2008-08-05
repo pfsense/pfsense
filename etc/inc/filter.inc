@@ -2500,8 +2500,6 @@ if($config['interfaces']['lan']['bridge'] <> "wan" and $config['interfaces']['wa
 
 	$ipfrules .= <<<EOD
 
-pass in quick on \$wan proto udp from any port = 67 to any port = 68 label "allow dhcp client out wan"
-
 # LAN/OPT spoof check (needs to be after DHCP because of broadcast addresses)
 
 EOD;

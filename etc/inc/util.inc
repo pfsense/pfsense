@@ -343,7 +343,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'enc',
 				'tun',
 				'carp',
-				'lagg'
+				'lagg',
+				'plip'
 		);
 	}
 	switch($mode) {

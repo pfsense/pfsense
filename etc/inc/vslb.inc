@@ -171,7 +171,6 @@ function relayd_configure() {
     }
   }
 
-print_r($check_a);
   if(is_array($vs_a)) {
     for ($i = 0; isset($vs_a[$i]); $i++) {
       $conf .= "redirect \"{$vs_a[$i]['name']}\" {\n";

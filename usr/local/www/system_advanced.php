@@ -253,13 +253,9 @@ if ($_POST) {
 
 		config_unlock();
 
-		setup_filter_bridge();
-		
 		conf_mount_rw();
 
 		setup_serial_port();
-
-		setup_filter_bridge();
 
 		conf_mount_ro();		
 		

@@ -178,8 +178,6 @@
 	/* start pflog */
 	filter_pflog_start();
 
-	setup_filter_bridge();
-
 	/* start load balancer daemon */
 	load_balancer_use_sticky();
 	slbd_configure();

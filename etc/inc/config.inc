@@ -1668,9 +1668,28 @@ function convert_config() {
 
 		unset($config['bridge']);
 
-		foreach ($config['interfaces'] as &$intf) {
-			if (isset($intf['bridge']))
-				unset($intf['bridge']);
+		$convert_bridges = false;
+		foreach($config['interfaces'] as $intf) {
+			if (isset($intf['bridge']) && $intf['bridge'] <> "") {
+				$config['bridges'] = array();
+				$config['bridges']['bridge'] = array();
+				$convert_bridges = true;
+				break;
+			}
+		}
+		if ($convert_bridges == true) {
+			$i = 0;
+			foreach ($config['interfaces'] as $ifr => &$intf) {
+				if (isset($intf['bridge']) && $intf['bridge'] <> "") {
+					$nbridge = array();
+					$nbridge['members'] = "{$ifr},{$intf['bridge']}";
+					$nbridge['descr'] = "Converted bridged {$ifr}";
+					$nbridge['bridgeif'] = "bridge{$i}";
+					$config['bridges']['bridge'][] = $nbridge;
+					unset($intf['bridge']);
+					$i++;
+				}
+			}
 		}
 	}
 

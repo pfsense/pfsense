@@ -305,11 +305,11 @@ function presubmit() {
 									<td>
 										<br/>
 										<a href="javascript:move_selected('notmembers','members')">
-											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="Add Members" alt="Add Members" width="17" height="17" border="0" />
+											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="Add Members" alt="Add Members" width="17" height="17" border="0" />
 										</a>
 										<br/><br/>
 										<a href="javascript:move_selected('members','notmembers')">
-											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="Remove Members" alt="Remove Members" width="17" height="17" border="0" />
+											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="Remove Members" alt="Remove Members" width="17" height="17" border="0" />
 										</a>
 									</td>
 									<td align="center" width="50%">

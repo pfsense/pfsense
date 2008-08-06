@@ -37,6 +37,11 @@
 		DISABLE_PHP_LINT_CHECKING
 */
 
+/*
+ * NOTE : Portions of the mschapv2 support was based on the BSD licensed CHAP.php
+ * file courtesy of Michael Retterklieber.
+ */
+
 require_once("functions.inc");
 
 $groupindex = index_groups();
@@ -251,11 +256,6 @@ function local_user_set_password(& $user, $password) {
 	$user['password'] = crypt($password);
 	$user['md5-hash'] = md5($password);
 
-	/*
-	 * NOTE : This section of code id based on the BSD
-	 * licensed CHAP.php courtesy of Michael Retterklieber.
-	 */
-	/* Waiting for mhash to settle into the tree
 	// Converts ascii to unicode.
 	$astr = (string) $password;
 	$ustr = '';
@@ -266,7 +266,6 @@ function local_user_set_password(& $user, $password) {
 
 	// Generate the NT-HASH from the unicode string
 	$user['nt-hash'] = bin2hex(mhash(MHASH_MD4, $ustr));
-	*/
 }
 
 function local_user_get_groups($user, $all = false) {

@@ -181,6 +181,7 @@ $wkports = array(
 	1755 => "MMS/TCP",
 	1812 => "Radius",
 	1813 => "Radius-accounting",
+	1863 => "MSN",
 	3000 => "HBCI",
 	3478 => "STUN",
 	4500 => "IPsec NAT-T",

@@ -620,7 +620,7 @@ nterface\">";
 		$form .= "</select>";
 		$form .= "<br> <span class=\"vexpl\">";
 		$form .= "NOTE: changing this changes all queues underneath!";
-		$form .= " Beaware you can loose information.";
+		$form .= " Beaware you can lose information.";
 		$form .= "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Bandwidth";

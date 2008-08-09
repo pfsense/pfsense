@@ -27,7 +27,7 @@ $pagetitle = gentitle( $pgtitle );
 			if(file_exists("niftycssCode.css")) 
 				outputCSSFileInline("niftycssCode.css"); 
 			if(file_exists("niftycssprintCode.css")) 
-				outputCSSFileInline("niftycssprintCode.css");
+				outputCSSPrintFileInline("niftycssprintCode.css");
 			if(file_exists("niftyjsCode.js")) 
 				outputJavaScriptFileInline("niftyjsCode.js"); 
 		?>

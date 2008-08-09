@@ -32,11 +32,17 @@
 
 /* The following items will be treated as arrays in config.xml */
 function listtags() {
-	$ret = explode(" ", "element alias aliasurl allowedip cacert config columnitem disk dnsserver domainoverrides " .
-		"earlyshellcmd encryption-algorithm-option field fieldname hash-algorithm-option " .
-		"hosts group member interface_array item key lbpool menu mobilekey monitor_type mount onetoone option ppp package passthrumac phase1 phase2 priv proxyarpnet " .
-		"queue pages pipe route row rule schedule service servernat servers serversdisabled earlyshellcmd shellcmd staticmap subqueue " .
-		"timerange tunnel user authserver vip virtual_server vlan winsserver ntpserver wolentry widget depends_on_package gateway_item gateway_group dyndns dnsupdate gre gif bridged lagg");
+	$ret = explode(" ",
+		"element alias aliasurl allowedip cacert config columnitem disk ".
+		"dnsserver domainoverrides earlyshellcmd encryption-algorithm-option ".
+		"field fieldname hash-algorithm-option hosts group member ca cert ".
+		"interface_array item key lbpool menu mobilekey monitor_type ".
+		"mount onetoone option ppp package passthrumac phase1 phase2 priv ".
+		"proxyarpnet queue pages pipe route row rule schedule service ".
+		"servernat servers serversdisabled earlyshellcmd shellcmd staticmap ".
+		"subqueue timerange tunnel user authserver vip virtual_server vlan ".
+		"winsserver ntpserver wolentry widget depends_on_package ".
+		"gateway_item gateway_group dyndns dnsupdate gre gif bridged lagg");
 	return $ret;
 }
 

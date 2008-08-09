@@ -519,7 +519,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 				}
 				?></select><br>
 				If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-Id will be set to the client's IP address and
-				the Called-Station-Id to the client's MAC address. Default behaviour is Calling-Station-Id = client's MAC address and Called-Station-Id = {$g['product_name']}'s WAN IP address.</td>
+				the Called-Station-Id to the client's MAC address. Default behaviour is Calling-Station-Id = client's MAC address and Called-Station-Id = <?=$g['product_name']?>'s WAN IP address.</td>
 			</tr>
 		</table>
 	</tr>
@@ -534,7 +534,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
       <td valign="top" class="vncell">HTTPS server name </td>
       <td class="vtable">
         <input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
-    	This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on {$g['product_name']}. </td>
+    	This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on <?=$g['product_name']?>. </td>
 	  </tr>
 	<tr>
       <td valign="top" class="vncell">HTTPS certificate</td>

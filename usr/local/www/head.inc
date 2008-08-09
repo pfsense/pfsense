@@ -23,8 +23,8 @@ $pagetitle = gentitle( $pgtitle );
         <?php else: ?>
         	<link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
         <?php endif; ?>
-		<?php if(file_exists("niftycssCode.css")) outputCSSFileInline("niftycssCode.css"); ?>
-		<?php outputCSSPrintFileInline("niftycssprintCode.css"); ?>	
+		<?php if(file_exists("niftycssCode.css")) outputCSSFileInline("niftycssCode.css"); ?>	
+		<script type="text/javascript" src="niftycssprintCode.css"></script>
 		<?php outputJavaScriptFileInline("niftyjsCode.js"); ?>
 		<script type="text/javascript">
 			var theme = "<?php echo $g['theme']; ?>";

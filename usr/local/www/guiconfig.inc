@@ -855,9 +855,7 @@ function outputJavaScriptFileInline($javascript) {
 		include($javascript);
 		echo "\n</script>\n";
 	} else {
-		echo "<p/>ERROR!  COULD NOT LOCATE $javascript";
-		echo "<p/>Please contact webmaster.";
-		exit;
+		echo "\n\n<!-- Could not location file:  {$javascript} -->\n\n";
 	}
 }
 
@@ -869,9 +867,7 @@ function outputCSSPrintFileInline($css) {
 		include($css);
 		echo "\n</style>\n";
 	} else {
-		echo "<p/>ERROR!  COULD NOT LOCATE $css";
-		echo "<p/>Please contact webmaster.";
-		exit;
+		echo "\n\n<!-- Could not location file:  {$css} -->\n\n";
 	}
 }
 
@@ -882,9 +878,7 @@ function outputCSSFileInline($css) {
 		include($css);
 		echo "\n</style>\n";
 	} else {
-		echo "<p/>ERROR!  COULD NOT LOCATE $css";
-		echo "<p/>Please contact webmaster.";
-		exit;
+		echo "\n\n<!-- Could not location file:  {$css} -->\n\n";
 	}
 }
 

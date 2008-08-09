@@ -396,7 +396,7 @@ function internalca_change() {
 
 					<tr>
 						<td colspan="2" align="center" class="vtable">
-							No internal Certifica Authorities have been defined. You must
+							No internal Certificate Authorities have been defined. You must
 							<a href="system_camanager.php?act=new&method=internal">create</a>
 							an internal CA before creating an internal certificate.
 						</td>

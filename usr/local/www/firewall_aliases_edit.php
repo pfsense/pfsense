@@ -211,7 +211,6 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		echo "{$address} --- ggggggggg <br/><br/>";
 		$alias['address'] = $address;
 		$alias['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
 		$alias['type'] = $_POST['type'];

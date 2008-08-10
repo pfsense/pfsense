@@ -456,25 +456,25 @@ EOD;
            <td><div id="threecolumn">Description</div></td>
           </tr>
 
-			<?php
-			$counter = 0;
-			$address = $pconfig['address'];
-			if ($address <> "") {
-			$item = explode(" ", $address);
-			$item3 = explode("||", $pconfig['detail']);
-			foreach($item as $ww) {
-				$address = $item[$counter];
-				$address_subnet = "";
-				$item2 = explode("/", $address);
-				foreach($item2 as $current) {
-					if($item2[1] <> "") {
-						$address = $item2[0];
-						$address_subnet = $item2[1];
-					}
+	<?php
+	$counter = 0;
+	$address = $pconfig['address'];
+	if ($address <> "") {
+		$item = explode(" ", $address);
+		$item3 = explode("||", $pconfig['detail']);
+		foreach($item as $ww) {
+			$address = $item[$counter];
+			$address_subnet = "";
+			$item2 = explode("/", $address);
+			foreach($item2 as $current) {
+				if($item2[1] <> "") {
+					$address = $item2[0];
+					$address_subnet = $item2[1];
 				}
-				$item4 = $item3[$counter];
-				$tracker = $counter;
-			?>
+			}
+			$item4 = $item3[$counter];
+			$tracker = $counter;
+	?>
           <tr>
             <td>
               <input name="address<?php echo $tracker; ?>" type="text" class="formfld unknown" id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
@@ -494,11 +494,12 @@ EOD;
     		<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="Delete" />
 	      </td>
           </tr>
-			<?php
-        $counter++;
+<?php
+        	$counter++;
 
-        }} // end foreach
-      ?>
+       		} // end foreach
+	} // end if
+?>
         </tbody>
         <tfoot>
 

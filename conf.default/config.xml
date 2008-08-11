@@ -114,6 +114,11 @@
 			<desc>Enable TCP Inflight mode</desc>
 			<tunable>net.inet.tcp.inflight.enable</tunable>
 			<value>1</value>
+		</item>
+		<item>
+			<desc>Enable TCP extended debugging</desc>
+			<tunable>net.inet.tcp.log_debug</tunable>
+			<value>0</value>
 		</item>		
 	</sysctl>
 	<system>

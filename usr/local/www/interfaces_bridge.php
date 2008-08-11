@@ -40,10 +40,8 @@ function bridge_inuse($num) {
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_bridges[$num]['bridgeif']) {
-			echo "<br/><br/>{$if}";
+		if ($config['interfaces'][$if]['if'] == $a_bridges[$num]['bridgeif'])
 			return true;
-		}
 	}
 
 	return false;

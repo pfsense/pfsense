@@ -48,10 +48,8 @@ function gif_inuse($num) {
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_gifs[$num]['gifif']) {
-			echo "<br/><br/>{$if}";
+		if ($config['interfaces'][$if]['if'] == $a_gifs[$num]['gifif']) 
 			return true;
-		}
 	}
 
 	return false;

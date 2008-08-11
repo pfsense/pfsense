@@ -62,14 +62,14 @@ if (isAllowedPage("system_usermanager")) {
 
 	if ($_GET['act'] == "deluser") {
 
-		if (!$a_user[$_GET['id']]) {
+		if (!$a_user[$id]) {
 			pfSenseHeader("system_usermanager.php");
 			exit;
 		}
 
-		local_user_del($a_user[$_GET['id']]);
-		$userdeleted = $a_user[$_GET['id']]['name'];
-		unset($a_user[$_GET['id']]);
+		local_user_del($a_user[$id]);
+		$userdeleted = $a_user[$id]['name'];
+		unset($a_user[$id]);
 		write_config();
 		$savemsg = gettext("User")." {$userdeleted} ".
 					gettext("successfully deleted")."<br/>";
@@ -77,7 +77,7 @@ if (isAllowedPage("system_usermanager")) {
 
 	if ($_GET['act'] == "delpriv") {
 
-		if (!$a_user[$_GET['id']]) {
+		if (!$a_user[$id]) {
 			pfSenseHeader("system_usermanager.php");
 			exit;
 		}
@@ -85,9 +85,23 @@ if (isAllowedPage("system_usermanager")) {
 		$privdeleted = $priv_list[$a_user[$id]['priv'][$_GET['privid']]]['name'];
 		unset($a_user[$id]['priv'][$_GET['privid']]);
 		write_config();
-		unset($t_privs[$_GET['privid']]);
 		$_GET['act'] = "edit";
 		$savemsg = gettext("Privilege")." {$privdeleted} ".
+					gettext("successfully deleted")."<br/>";
+	}
+
+	if ($_GET['act'] == "delcert") {
+
+		if (!$a_user[$id]) {
+			pfSenseHeader("system_usermanager.php");
+			exit;
+		}
+
+		$certdeleted = $a_user[$id]['cert'][$_GET['certid']]['name'];
+		unset($a_user[$id]['cert'][$_GET['certid']]);
+		write_config();
+		$_GET['act'] = "edit";
+		$savemsg = gettext("Certificate")." {$certdeleted} ".
 					gettext("successfully deleted")."<br/>";
 	}
 
@@ -400,7 +414,7 @@ function presubmit() {
 								</tr>
 								<?php
 										
-									$privdesc = get_user_privdesc($a_user[$_GET['id']]);
+									$privdesc = get_user_privdesc($a_user[$id]);
 									if(is_array($privdesc)):
 										$i = 0;
 										foreach ($privdesc as $priv):
@@ -447,6 +461,52 @@ function presubmit() {
 
 					<?php endif; ?>
 
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("User Certificates");?></td>
+						<td width="78%" class="vtable">
+							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<td width="45%" class="listhdrr"><?=gettext("Name");?></td>
+									<td width="45%" class="listhdrr"><?=gettext("CA");?></td>
+									<td class="list"></td>
+								</tr>
+								<?php
+										
+									$a_cert = $a_user[$id]['cert'];
+									if(is_array($a_cert)):
+										$i = 0;
+										foreach ($a_cert as $cert):
+					                        $ca = lookup_ca($cert['caref']);
+								?>
+								<tr>
+									<td class="listlr">
+										<?=htmlspecialchars($cert['name']);?>
+									</td>
+									<td class="listr">
+										<?=htmlspecialchars($ca['name']);?>
+									</td>
+									<td valign="middle" nowrap class="list">
+										<a href="system_usermanager.php?act=delcert&id=<?=$id?>&certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this certificate?");?>')">
+											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
+										</a>
+									</td>
+								</tr>
+								<?php
+											$i++;
+										endforeach;
+									endif;
+								?>
+								<tr>
+									<td class="list" colspan="2"></td>
+									<td class="list">
+										<a href="system_usermanager_addcert.php?userid=<?=$id?>">
+											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
+										</a>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">

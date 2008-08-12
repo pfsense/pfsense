@@ -129,7 +129,7 @@ delete_old_routes() {
 
 add_new_routes() {
 	$LOGGER "Adding new routes"
-	$ROUTE add $new_ip_address $LOCALHOST >/dev/null 2>&1
+	# $ROUTE add $new_ip_address $LOCALHOST >/dev/null 2>&1
 
 	# Only allow the default route to be overridden if it's on our own interface
 	DEFAULTROUTE_IFACE=`route get default | grep interface | awk '{print $2};'`

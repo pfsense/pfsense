@@ -373,9 +373,9 @@ document.location.href="{$my_redirurl}";
 
 EOD;
     } else {
+		captiveportal_unlock();
         header("Location: " . $my_redirurl);
     }
-
     captiveportal_unlock();
     return $sessionid;
 }

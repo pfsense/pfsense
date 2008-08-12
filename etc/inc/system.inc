@@ -700,24 +700,24 @@ function system_generate_lighty_config($filename,
 	}
 
 	if($avail > 97 and $avail < 128) {
-		$max_procs = 2;
-		$max_requests = 1;
+		$max_procs = 1;
+		$max_requests = 3;
 	}
 
-		if($avail > 127 and $avail < 256) {
-			$max_procs = 2;
-			$max_requests = 5;
-		}
+	if($avail > 127 and $avail < 256) {
+		$max_procs = 1;
+		$max_requests = 5;
+	}
 
-		if($avail > 255 and $avail < 384) {
-			$max_procs = 3;
-			$max_requests = 10;
-		}
+	if($avail > 255 and $avail < 384) {
+		$max_procs = 3;
+		$max_requests = 10;
+	}
 
-		if($avail > 383 and $avail < 512) {
-			$max_procs = 4;
-			$max_requests = 16;
-		}
+	if($avail > 383 and $avail < 512) {
+		$max_procs = 4;
+		$max_requests = 16;
+	}
 
 		if($captive_portal == true)  {	
 			$bin_environment =  <<<EOC

@@ -202,27 +202,6 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
     echo $htmltext;
 }
 
-function portal_mac_fixed($clientmac) {
-    global $g ;
-
-    /* open captive portal mac db */
-    if (file_exists("{$g['vardb_path']}/captiveportal_mac.db")) {
-        $fd = @fopen("{$g['vardb_path']}/captiveportal_mac.db","r") ;
-        if (!$fd) {
-            return FALSE;
-        }
-        while (!feof($fd)) {
-            $mac = trim(fgets($fd)) ;
-            if(strcasecmp($clientmac, $mac) == 0) {
-                fclose($fd) ;
-                return TRUE ;
-            }
-        }
-        fclose($fd) ;
-    }
-    return FALSE ;
-}
-
 function portal_mac_radius($clientmac,$clientip) {
     global $config ;
 

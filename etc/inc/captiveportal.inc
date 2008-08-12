@@ -1100,24 +1100,24 @@ function getNasIP()
 }
 
 function portal_mac_fixed($clientmac) {
-	global $g ;
+    global $g ;
 
-	/* open captive portal mac db */
-	if (file_exists("{$g['vardb_path']}/captiveportal_mac.db")) {
-		$fd = @fopen("{$g['vardb_path']}/captiveportal_mac.db","r") ;
-		if (!$fd) {
-			return FALSE;
-		}
-		while (!feof($fd)) {
-			$mac = trim(fgets($fd)) ;
-			if(strcasecmp($clientmac, $mac) == 0) {
-				fclose($fd) ;
-				return TRUE ;
-			}
-		}
-		fclose($fd) ;
-	}
-	return FALSE ;
+    /* open captive portal mac db */
+    if (file_exists("{$g['vardb_path']}/captiveportal_mac.db")) {
+        $fd = @fopen("{$g['vardb_path']}/captiveportal_mac.db","r") ;
+        if (!$fd) {
+            return FALSE;
+        }
+        while (!feof($fd)) {
+            $mac = trim(fgets($fd)) ;
+            if(strcasecmp($clientmac, $mac) == 0) {
+                fclose($fd) ;
+                return TRUE ;
+            }
+        }
+        fclose($fd) ;
+    }
+    return FALSE ;
 }
 
 ?>

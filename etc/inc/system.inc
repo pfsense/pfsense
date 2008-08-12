@@ -661,14 +661,6 @@ function system_generate_lighty_config($filename,
 
 	global $config, $g;
 
-	/* only use freebsd-sendfile network handler on full installations
-	 * tests have shown that it is actually slower on embedded.
-	 */
-	if(stristr("pfSense", $g['platform']))
-		$network_handler = "server.network-backend		= \"freebsd-sendfile\"\n";
-	else
-		$network_handler = "";
-
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_generate_lighty_config() being called $mt\n";
@@ -712,21 +704,33 @@ function system_generate_lighty_config($filename,
 		$max_requests = 1;
 	}
 
-	if($avail > 127 and $avail < 256) {
-		$max_procs = 2;
-		$max_requests = 1;
-	}
+		if($avail > 127 and $avail < 256) {
+			$max_procs = 2;
+			$max_requests = 5;
+		}
 
-	if($avail > 255 and $avail < 384) {
-		$max_procs = 3;
-		$max_requests = 1;
-	}
+		if($avail > 255 and $avail < 384) {
+			$max_procs = 3;
+			$max_requests = 10;
+		}
 
-	if($avail > 383 and $avail < 512) {
-		$max_procs = 4;
-		$max_requests = 1;
-	}
+		if($avail > 383 and $avail < 512) {
+			$max_procs = 4;
+			$max_requests = 16;
+		}
 
+		if($captive_portal == true)  {	
+			$bin_environment =  <<<EOC
+	        "bin-environment" => (
+	           "PHP_FCGI_CHILDREN" => "16",
+	           "PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
+	        ), 
+EOC;
+
+		} else {
+			$bin_environment = "";
+		}
+		
 	if($fast_cgi_enable == true) {
 		$module = "\"mod_fastcgi\", \"mod_cgi\"";
 		$cgi_config = "";
@@ -739,6 +743,7 @@ fastcgi.server = ( ".php" =>
 			"socket" => "/tmp/php-fastcgi.socket",
 			"min-procs" => 1,
 			"max-procs" => {$max_procs},
+			{$bin_environment}			
 			"bin-path" => "/usr/local/bin/php"
 		)
 	)
@@ -769,6 +774,7 @@ EOD;
 
 ## FreeBSD!
 server.event-handler		= "freebsd-kqueue"
+server.network-backend		= "writev"  ## Fixes 7.x upload issues
 
 {$network_handler}
 

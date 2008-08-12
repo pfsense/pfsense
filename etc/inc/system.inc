@@ -949,12 +949,7 @@ compress.cache-dir         = "/tmp/"
 compress.filetype          = ("text/plain", "text/html", "text/javascript", "text/css")
 
 expire.url = (
-                "/javascript/scriptaculous/"      => "access 50 hours",	
-                "/themes/"			 => "access 50 hours",
-                "/widgets/"			 => "access 50 hours",
-                "/tree/"			 => "access 50 hours",
-                "/tree-images/"      => "access 50 hours",
-                "/includes/"	     => "access 50 hours"
+				"" => "access 50 hours",	
         )
 
 EOD;

@@ -377,6 +377,7 @@ EOD;
     } else {
 		captiveportal_unlock();	
         header("Location: " . $my_redirurl);
+		return $sessionid;
     }
 
     captiveportal_unlock();

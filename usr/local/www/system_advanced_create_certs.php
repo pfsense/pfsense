@@ -65,6 +65,7 @@ if ($_POST) {
 
     /* Write out /var/etc/ssl/openssl.cnf */
     conf_mount_rw();
+	safe_mkdir("/var/etc/ssl/");
     $fd = fopen("/var/etc/ssl/openssl.cnf", "w");
     fwrite($fd, "");
     fwrite($fd, "[ req ]\n");

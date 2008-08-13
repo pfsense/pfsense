@@ -2097,14 +2097,16 @@ EOD;
 		}
 
    		$isbridged = false;
-		foreach ($FilterIflist as $on2 => $oc2) {
-			if ($oc2['bridge'] && $oc2['bridge'] == $on) {
-				$isbridged = true;
-				break;
+		if (is_array($config['bridges']['bridged'])) {
+			foreach ($config['bridges']['bridged'] as $oc2) {
+				if (stristr($oc2['members'], $on)) {
+					$isbridged = true;
+					break;
+				}
 			}
 		}
-		if ($oc['ip'] && !($isbridged) && !isset($config['bridge']['filteringbridge']) && isset($oc['spoofcheck']))
-				$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
+		if ($oc['ip'] && !($isbridged) && isset($oc['spoofcheck']))
+			$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
 
 
 		/* block private networks ? */

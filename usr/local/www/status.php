@@ -140,7 +140,7 @@ defCmdT("pfctl -si", "/sbin/pfctl -si");
 defCmdT("pfctl -sa"," /sbin/pfctl -sa");
 defCmdT("pfctl -s rules -vv","/sbin/pfctl -s rules -vv");
 defCmdT("pfctl -s queue -v","/sbin/pfctl -s queue -v");
-defCmdT("pfctl -s queue -v","/sbin/pfctl -s nat -v");
+defCmdT("pfctl -s nat -v","/sbin/pfctl -s nat -v");
 
 defCmdT("netstat -s -ppfsync","netstat -s -ppfsync");
 

@@ -38,6 +38,15 @@
 ##|*MATCH=interfaces_wan.php*
 ##|-PRIV
 
+unset($if);
+if ($_GET['if'])
+        $if = $_GET['if'];
+else if ($_POST['if'])
+        $if = $_POST['if'];
+
+if (!$if)
+        $if = "wan";
+
 
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
@@ -79,15 +88,6 @@ function remove_bad_chars($string) {
 }
 
 require("guiconfig.inc");
-
-unset($if);
-if ($_GET['if'])
-        $if = $_GET['if'];
-else if ($_POST['if'])
-        $if = $_POST['if'];
-
-if (!$if)
-        $if = "wan";
 
 if (!is_array($config['gateways']['gateway_item']))
 	$config['gateways']['gateway_item'] = array();
@@ -363,7 +363,8 @@ n already exists.";
 		unset($wancfg['provider']);
 		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
-		unset($wancfg['pppoe']['pppoe-reset-type']);
+		if ($wancfg['pppoe']['pppoe-reset-type'])
+			unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
 		unset($wancfg['subnet']);
 		unset($wancfg['remote']);

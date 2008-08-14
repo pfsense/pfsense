@@ -1480,6 +1480,7 @@ EOD;
 	$mpdconf .= <<<EOD
 	set iface {$ondemand} on-demand
 	set iface idle {$idle}
+	set iface enable tcpmssfix
 	set iface up-script /usr/local/sbin/ppp-linkup
 	set iface down-script /usr/local/sbin/ppp-linkdown
 

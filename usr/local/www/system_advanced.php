@@ -475,7 +475,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">Console menu </td>
 			<td width="78%" class="vtable">
 				<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked"; ?>  />
-				<strong>Disable console menu</strong>
+				<strong>Password protect the console menu</strong>
 				<br />
 				<span class="vexpl">Changes to this option will take effect after a reboot.</span>
 			</td>

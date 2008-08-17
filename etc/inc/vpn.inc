@@ -855,29 +855,27 @@ function vpn_localnet_determine($adr, &$sa, &$sn) {
 }
 
 function vpn_endpoint_determine($tunnel, $curwanip) {
-
 	global $g, $config;
 
-	if ((!$tunnel['interface']) || ($tunnel['interface'] == "wan")) {
-		if ($curwanip)
-			return $curwanip;
-		else
-			return null;
-	} else if ($tunnel['interface'] == "lan") {
-		return $config['interfaces']['lan']['ipaddr'];
-	} else {
-		$iface = $config['interfaces'][$tunnel['interface']]['if'];
+	if(!$tunnel['interface']) {
+		return null;
+	}
+	if(is_ipaddr($curwanip)) {
+		if(preg_match("/^carp/i", $tunnel['interface'])) {
+			$iface = $tunnel['interface'];
+		} else {
+			$iface = $config['interfaces'][$tunnel['interface']]['if'];
+		}
 		$oc = $config['interfaces'][$tunnel['interface']];
 		/* carp ips, etc */
 		$ip = find_interface_ip($iface);
-		if($ip) 
+		if($ip)
 			return $ip;
 
 		if (isset($oc['enable']) && $oc['if']) {
 			return $oc['ipaddr'];
 		}
 	}
-
 	return null;
 }
 

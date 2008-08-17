@@ -135,8 +135,8 @@ defCmdT("ez-ipupdate.cache","cat /conf/ez-ipupdate.cache");
 defCmdT("df","/bin/df");
 
 defCmdT("racoon.conf","cat /var/etc/racoon.conf");
-defCmdT("SPD","/sbin/setkey -DP");
-defCmdT("SAD","/sbin/setkey -D");
+defCmdT("SPD","/usr/local/sbin/setkey -DP");
+defCmdT("SAD","/usr/local/sbin/setkey -D");
 
 defCmdT("last 200 system log entries","/usr/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
 defCmdT("last 50 filter log entries","/usr/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");

@@ -40,7 +40,8 @@ function setup_gateways_monitor() {
 	global $g;
 
 	/* kill apinger process */
-	exec("/usr/bin/killall apinger");
+	if(is_process_running("apinger"))
+		exec("/usr/bin/killall apinger");
 	$fd = fopen("{$g['varetc_path']}/apinger.conf", "w");
 	$apingerconfig = <<<EOD
 

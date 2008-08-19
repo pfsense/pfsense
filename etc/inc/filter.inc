@@ -310,8 +310,8 @@ function filter_generate_aliases() {
 
 	$bridgetracker = 0;
 	foreach ($FilterIflist as $if => $ifcfg) {
-		$aliases .= "{$ifcfg['descr']} = \"{ ";
-		            $aliases .= "{$ifcfg['if']} ";
+
+		$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 
 		/* XXX: Ugly but this avoids uneccesary pollution in aliases. */
 		if ($ifcfg['ip'] != "carpdev-dhcp") {
@@ -319,11 +319,11 @@ function filter_generate_aliases() {
 			if($ip) {
 				$carp_ints = link_ip_to_carp_interface($ip);
 				if($carp_ints)
-					$aliases .= $carp_ints;
+					$aliases .= " {$carp_ints}";
 			}
 		}
 
-		$aliases .= " }\"\n";		
+		$aliases .= " }\"\n";
 	}
 	$aliases .= "# User Aliases \n";
 	/* Setup pf groups */
@@ -417,18 +417,18 @@ function generate_optcfg_array()
 	}
 
 	/* if list */
-        $iflist = get_configured_interface_with_descr();
+	$iflist = get_configured_interface_with_descr();
 
-        foreach ($iflist as $if => $ifdetail) {
-                $oc = $config['interfaces'][$if];
+	foreach ($iflist as $if => $ifdetail) {
+		$oc = $config['interfaces'][$if];
 
-                $oic = array();
-                $oic['if'] = get_real_wan_interface($if);
+		$oic = array();
+		$oic['if'] = get_real_wan_interface($if);
 
-                $oic['ip'] = $oc['ipaddr'];
-                $oic['sn'] = $oc['subnet'];
-                $oic['descr'] = $ifdetail;
-                $oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
+		$oic['ip'] = $oc['ipaddr'];
+		$oic['sn'] = $oc['subnet'];
+		$oic['descr'] = $ifdetail;
+		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
 		$oic['nonat'] = $oc['nonat'];
 		$oic['alias-address'] = $oc['alias-address'];
 		$oic['alias-subnet'] = $oc['alias-subnet'];
@@ -465,8 +465,7 @@ function generate_optcfg_array()
 	}
 
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || 
-		isset($config['ipsec']['mobileclients']['enable'])) {
+	if (isset($config['ipsec']['enable'])) {
 		$oic = array();
 		$oic['if'] = 'enc0';
 		$oic['descr'] = 'IPsec';
@@ -474,13 +473,23 @@ function generate_optcfg_array()
 		$FilterIflist['enc0'] = $oic;
 	}
 
-	/* add openvpn/tun interfaces */
+	/* add openvpn interfaces */
 	if  ($config['installedpackages']["openvpnserver"] || 
 		$config['installedpackages']["openvpnclient"]) {
-		if (!empty($config['installedpackages']["openvpnserver"]['config']) ||
-			!empty($config['installedpackages']["openvpnclient"]['config'])) {
+		$ovpn_count = 0;
+		if (is_array($config['installedpackages']["openvpnserver"]['config']))
+			$ovpn_count += count($config['installedpackages']["openvpnserver"]['config']);
+		if (is_array($config['installedpackages']["openvpnclient"]['config']))
+			$ovpn_count += count($config['installedpackages']["openvpnclient"]['config']);
+
+		if ($ovpn_count) {
 			$oic = array();
-			$oic['if'] = 'openvpn';
+			for ($i = 0; $i < $ovpn_count; $i++) {
+				if (!$i)
+					$oic['if'] = "ovpn{$i}";
+				else
+					$oic['if'] .= " ovpn{$i}";
+			}
 			$oic['descr'] = 'OpenVPN';
 			$oic['ip'] = "none";
 			$FilterIflist['openvpn'] = $oic;
@@ -739,11 +748,10 @@ function filter_nat_rules_generate()
 		
 		if ($numberofnathosts > 0):
 
-		if (!empty($config['installedpackages']['openvpnclient']['config'])) {
-                        foreach ($config['installedpackages']['openvpnclient']['config'] as $id => $settings)
-                                if (!empty($settings['remote_network'])) 
-                                        $natrules .= "nat on ovpnc{$id} from \$tonatsubnets to any -> (ovpnc{$id})\n";
-                }
+		if (!empty($config['installedpackages']['openvpnclient']['config']))
+			foreach ($config['installedpackages']['openvpnclient']['config'] as $id => $settings)
+				if (!empty($settings['remote_network'])) 
+					$natrules .= "nat on ovpnc{$id} from \$tonatsubnets to any -> (ovpnc{$id})\n";
 
 		foreach ($FilterIflist as $if => $ifcfg) {
 			update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
@@ -1272,12 +1280,8 @@ function run_command_return_string($cmd)
 
 function generate_user_filter_rule_arr($rule) 
 {
-	global $config, $FilterIflist;
-	update_filter_reload_status("Creating filter rules {$rule['descr']} ...");
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "generate_user_filter_rule() being called $mt\n";
-	}
+	global $config;
+	update_filter_reload_status("Creating filter rule {$rule['descr']} ...");
 	$ret = array();
 	$line = generate_user_filter_rule($rule);
 	$ret['rule'] = $line;
@@ -1710,17 +1714,17 @@ function generate_user_filter_rule($rule)
 					case 'lan':
 						$lansa = gen_subnet($FilterIflist['lan']['ip'], $FilterIflist['lan']['sn']);
 						$lansn = $FilterIflist['lan']['sn'];
-						$src = "{$lansa}/{$lansn}";
+						$dst = "{$lansa}/{$lansn}";
 						break;
 					case 'pptp':
 						$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
 						$pptpsn = $FilterIflist['pptp']['sn'];
-						$src = "{$pptpsa}/{$pptpsn}";
+						$dst = "{$pptpsa}/{$pptpsn}";
 						break;
 					case 'pppoe':
 						$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
 						$pppoesn = $FilterIflist['pppoe']['sn'];
-						$src = "{$pppoesa}/{$pppoesn}";
+						$dst = "{$pppoesa}/{$pppoesn}";
 						break;
 				}
 				if (isset($rule['destination']['not'])) $dst = " !{$dst}";
@@ -2096,7 +2100,7 @@ EOD;
 			$bogontableinstalled++;
 		}
 
-   		$isbridged = false;
+		$isbridged = false;
 		if (is_array($config['bridges']['bridged'])) {
 			foreach ($config['bridges']['bridged'] as $oc2) {
 				if (stristr($oc2['members'], $on)) {
@@ -2107,7 +2111,6 @@ EOD;
 		}
 		if ($oc['ip'] && !($isbridged) && isset($oc['spoofcheck']))
 			$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
-
 
 		/* block private networks ? */
 		if (isset($config['interfaces'][$on]['blockpriv'])) {
@@ -2437,7 +2440,7 @@ EOD;
 
 	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */
-		$rule_arr = array();
+		$rule_arr1 = array();
 		$rule_arr2 = array();
 		/* 
 		 * XXX: This is a double pass but it needs to be this way.
@@ -2445,48 +2448,29 @@ EOD;
 		 */
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
-			$line = "";
-			if (!isset ($rule['disabled']) && isset($rule['floating'])) {
-	                	$rule_arr[] = generate_user_filter_rule_arr($rule);
-								                        }
-			if (!isset($rule['disabled'])&& !isset($rule['floating'])) {
-				$rule_arr2[] = generate_user_filter_rule_arr($rule);
+			if (!isset ($rule['disabled'])) {
+				if(isset($rule['floating']))
+					$rule_arr1[] = generate_user_filter_rule_arr($rule);
+				else
+					$rule_arr2[] = generate_user_filter_rule_arr($rule);
 			}
 		}
+		$rule_arr = array_merge($rule_arr1,$rule_arr2);
 
 		$ipfrules .= "\n# User-defined aliases follow\n";
 		/* tables for aliases */
-		foreach($table_cache as $table) {
+		foreach($table_cache as $table)
 			$ipfrules .= $table;
-		}
 
 		$ipfrules .= "\n# User-defined rules follow\n";
 		/* Generate user rule lines */
 		foreach($rule_arr as $rule) {
-			$line = "";
-			if (!isset($rule['disabled'])) {
-				$line = $rule['rule'];
-				if($line <> "") {
-					/* label */
-					$line .= " {$rule['descr']}";
-				}
-			}
-			$line .= "\n";
-			$ipfrules .= $line;
+			if (isset($rule['disabled']))
+				continue;
+			if (!$rule['rule'])
+				continue;
+			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
 		}
-		foreach ($rule_arr2 as $rule) {
-			$line = "";
-		        if (!isset($rule['disabled'])) {
-		        	$line = $rule['rule'];
-	                	if($line <> "") {
-	                		/* label */
-			        	$line .= " {$rule['descr']}";
-				}
-			}
-		        $line .= "\n";
-		        $ipfrules .= $line;
-		}
-
 	}
 
 	update_filter_reload_status("Creating IPsec rules...");

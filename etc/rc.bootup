@@ -175,9 +175,6 @@
 	/* check if the wan interface is up, this might delay upto 10 seconds */
 	is_wan_interface_up("wan");
 
-	/* Sync the system time at boot before service startup */
-	sync_system_time();
-
 	/* start pflog */
 	filter_pflog_start();
 
@@ -213,6 +210,9 @@
 
 	/* configure console menu */
 	system_console_configure();
+
+	/* Sync the system time at boot before service startup */
+	sync_system_time();
 
 	/* start dyndns service */
 	services_dyndns_configure();

@@ -280,7 +280,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td class="list" colspan="5">
+						<td nowrap class="listrborder" colspan="5">
 							<div id="shph2but-<?=$i?>">
 								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="Phase2"></input> - Show Phase 2</a>
 							</div>

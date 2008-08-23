@@ -265,6 +265,7 @@ include("head.inc");
 										</a>
 									</td>
 								</tr>
+								<?php if (!isset($ph1ent['mobile'])): ?>
 								<tr>
 									<td>
 									</td>
@@ -274,6 +275,7 @@ include("head.inc");
 										</a>
 									</td>
 								</tr>
+								<?php endif; ?>
 							</table>
 						</td>
 					</tr>

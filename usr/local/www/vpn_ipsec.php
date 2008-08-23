@@ -280,7 +280,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td nowrap class="listrborder" colspan="5">
+						<td class="listrborder" colspan="5">
 							<div id="shph2but-<?=$i?>">
 								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="-"></input> - Show Phase 2</a>
 							</div>
@@ -329,7 +329,7 @@ include("head.inc");
 											<?php echo $p2_protos[$ph2ent['protocol']];	?>
 										<?=$spane;?>
 									</td>
-									<td nowrap class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
+									<td class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
 										<?=$spans;?>
 										<?php
 											$k = 0;

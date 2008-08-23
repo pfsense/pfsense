@@ -282,7 +282,7 @@ include("head.inc");
 					<tr>
 						<td nowrap class="listrborder" colspan="5">
 							<div id="shph2but-<?=$i?>">
-								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="Phase2"></input> - Show Phase 2</a>
+								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="-"></input> - Show Phase 2</a>
 							</div>
 							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none">
 								<tr>

@@ -281,7 +281,10 @@ include("head.inc");
 					</tr>
 					<tr>
 						<td class="list" colspan="5">
-							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
+							<div id="shph2but-<?=$i?>">
+								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="Phase2"></input> - Show Phase 2</a>
+							</div>
+							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none">
 								<tr>
 									<td class="listhdrr">Local Network</td>
 									<td class="listhdrr">Remote Network</td>
@@ -373,12 +376,15 @@ include("head.inc");
 							</table>
 						</td>
 					</tr>
-					<tr><td>&nbsp;<p/>&nbsp;</td></tr>
+					<tr>
+						<td>
+							&nbsp;
+						</td>
+					</tr>
 					<?php
 							$i++;
 						}
 					?>
-
 					<tr>
 						<td class="list" colspan="5"></td>
 						<td class="list">
@@ -413,5 +419,12 @@ include("head.inc");
 </table>
 </form>
 <?php include("fend.inc"); ?>
+<script type="text/javascript">
+function show_phase2(id, buttonid) {
+	document.getElementById(buttonid).innerHTML='';
+	aodiv = document.getElementById(id);
+	aodiv.style.display = "block";
+}
+</script>
 </body>
 </html>

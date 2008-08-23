@@ -156,6 +156,7 @@ include("head.inc");
 	<tr>
 		<td>
 			<div id="mainarea">
+				<table border='1'>
 				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
 						<td class="vtable">
@@ -170,6 +171,16 @@ include("head.inc");
 					</tr>
 				</table>
 				<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+					<?php
+						$i = 0;
+						foreach ($a_phase1 as $ph1ent) {
+							if (isset( $ph1ent['disabled'])) {
+								$spans = "<span class=\"gray\">";
+								$spane = "</span>";
+							}
+							else
+								$spans = $spane = "";
+					?>
 					<tr>
 						<td class="listhdrr">Interface<br>Remote gw</td>
 						<td class="listhdrr">P1 mode</td>
@@ -186,18 +197,7 @@ include("head.inc");
 								</tr>
 							</table>
 						</td>
-					</tr>
-
-					<?php
-						$i = 0;
-						foreach ($a_phase1 as $ph1ent) {
-							if (isset( $ph1ent['disabled'])) {
-								$spans = "<span class=\"gray\">";
-								$spane = "</span>";
-							}
-							else
-								$spans = $spane = "";
-					?>
+					</tr>					
 					<tr valign="top">
 						<td class="listlr" ondblclick="document.location='vpn_ipsec_phase1.php?id=<?=$i;?>'">
 							<?=$spans;?>
@@ -280,8 +280,8 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td class="listbg" colspan="5">
-							<table width="100%" height="100%"border="0" cellspacing="0" cellpadding="0">
+						<td class="list" colspan="5">
+							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
 								<tr>
 									<td class="listhdrr">Local Network</td>
 									<td class="listhdrr">Remote Network</td>
@@ -373,6 +373,7 @@ include("head.inc");
 							</table>
 						</td>
 					</tr>
+					<tr><td>&nbsp;<p/>&nbsp;</td></tr>
 					<?php
 							$i++;
 						}

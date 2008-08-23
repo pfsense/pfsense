@@ -69,6 +69,9 @@ if($command_split[2]) {
 }
 create_supfile($branch);
 
+if($argv[4] == "NOBACKUP") 
+	$nobackup=true;
+
 $CODIR =  "/home/pfsense/$branch";
 
 exec("mkdir -p /home/pfsense/$BRANCHTAG");
@@ -94,12 +97,14 @@ if($branch == "RESTORE") {
 	exit();
 }
 
-echo "===> Backing up current pfSense information...\n";
-echo "===> Please wait... ";
-exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /tmp --exclude /var/run --exclude /var/empty /");
-$size = filesize("/root/cvssync_backup.tgz");
-echo "{$size} bytes.\n\n";
-sleep(5);
+if(!$nobackup) {
+	echo "===> Backing up current pfSense information...\n";
+	echo "===> Please wait... ";
+	exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /tmp --exclude /var/run --exclude /var/empty /");
+	$size = filesize("/root/cvssync_backup.tgz");
+	echo "{$size} bytes.\n\n";
+	sleep(5);
+}
 
 echo "===> Checking out $branch\n";
 exec("mkdir -p /home/pfsense/$branch");

@@ -82,10 +82,15 @@ if (isset($p1index) && $a_phase1[$p1index])
 	$pconfig['dhgroup'] = $a_phase1[$p1index]['dhgroup'];
 	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
-	$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
-	$pconfig['cert'] = base64_decode($a_phase1[$p1index]['cert']);
-	$pconfig['peercert'] = base64_decode($a_phase1[$p1index]['peercert']);
-	$pconfig['privatekey'] = base64_decode($a_phase1[$p1index]['private-key']);
+
+	if (($pconfig['authentication_method'] == "pre_shared_key")||
+		($pconfig['authentication_method'] == "xauth_psk_server")) {
+		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
+	} else {
+		$pconfig['cert'] = base64_decode($a_phase1[$p1index]['cert']);
+		$pconfig['peercert'] = base64_decode($a_phase1[$p1index]['peercert']);
+		$pconfig['privatekey'] = base64_decode($a_phase1[$p1index]['private-key']);
+	}
 
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
 	$pconfig['nat_traversal'] = $a_phase1[$p1index]['nat_traversal'];

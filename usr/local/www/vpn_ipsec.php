@@ -160,8 +160,16 @@ include("head.inc");
 				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
 						<td class="vtable">
-							<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked";?>>
-							<strong>Enable IPsec</strong>
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked";?>>
+									</td>
+									<td>
+										<strong>Enable IPsec</strong>
+									</td>
+								</tr>
+							</table>
 						</td>
 					</tr>
 					<tr>

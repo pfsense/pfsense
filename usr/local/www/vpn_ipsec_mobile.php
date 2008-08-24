@@ -314,11 +314,17 @@ function login_banner_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq">IKE Extensions</td>
 						<td width="78%" class="vtable">
-							<?php set_checked($pconfig['enable'],$chk); ?>
-							<input name="enable" type="checkbox" id="enable" value="yes" <?=$chk;?>>
-							<strong>Enable Support of Mobile Clients</strong>
-							<br>
-						</td>
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['enable'],$chk); ?>
+										<input name="enable" type="checkbox" id="enable" value="yes" <?=$chk;?>>
+									</td>
+									<td>
+										<strong>Enable IPsec Mobile Client Support</strong>
+									</td>
+								</tr>
+							</table>
 						</td>
 					</tr>
 					<tr>
@@ -356,17 +362,20 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncellreq">Virtual Address Pool</td>
+						<td width="22%" valign="top" class="vncell">Virtual Address Pool</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['pool_enable'],$chk); ?>
 										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?> onClick="pool_change()">
+									</td>
+									<td>
 										Provide a vitual IP address to clients<br>
-										<br>
 									</td>
 								</tr>
+							</table>
+							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										Network:&nbsp;
@@ -385,25 +394,36 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Network List</td>
+						<td width="22%" valign="top" class="vncell">Network List</td>
 						<td width="78%" class="vtable">
-							<?php set_checked($pconfig['net_list_enable'],$chk); ?>
-							<input name="net_list_enable" type="checkbox" id="net_list_enable" value="yes" <?=$chk;?>>
-							Provide a list of accessible networks to clients<br>
+							<table border="0" cellspacing="2" cellpadding="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['net_list_enable'],$chk); ?>
+										<input name="net_list_enable" type="checkbox" id="net_list_enable" value="yes" <?=$chk;?>>
+									</td>
+									<td>
+										Provide a list of accessible networks to clients<br>
+									</td>
+								</tr>
+							</table>
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncellreq">DNS Default Domain</td>
+						<td width="22%" valign="top" class="vncell">DNS Default Domain</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['dns_domain_enable'],$chk); ?>
 										<input name="dns_domain_enable" type="checkbox" id="dns_domain_enable" value="yes" <?=$chk;?> onClick="dns_domain_change()">
+									</td>
+									<td>
 										Provide a default domain name to clients<br>
-										<br>
 									</td>
 								</tr>
+							</table>
+							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										<input name="dns_domain" type="text" class="formfld unknown" id="dns_domain" size="30" value="<?=htmlspecialchars($pconfig['dns_domain']);?>">
@@ -413,17 +433,20 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncellreq">DNS Servers</td>
+						<td width="22%" valign="top" class="vncell">DNS Servers</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['dns_server_enable'],$chk); ?>
 										<input name="dns_server_enable" type="checkbox" id="dns_server_enable" value="yes" <?=$chk;?> onClick="dns_server_change()">
+									</td>
+									<td>
 										Provide a DNS server list to clients<br>
-										<br>
 									</td>
 								</tr>
+							</table>
+							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										Server #1:&nbsp;
@@ -452,17 +475,20 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncellreq">WINS Servers</td>
+						<td width="22%" valign="top" class="vncell">WINS Servers</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['wins_server_enable'],$chk); ?>
 										<input name="wins_server_enable" type="checkbox" id="wins_server_enable" value="yes" <?=$chk;?> onClick="wins_server_change()">
+									</td>
+									<td>
 										Provide a WINS server list to clients<br>
-										<br>
 									</td>
 								</tr>
+							</table>
+							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										Server #1:&nbsp;
@@ -479,17 +505,20 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Phase2 PFS Group</td>
+						<td width="22%" valign="top" class="vncell">Phase2 PFS Group</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['pfs_group_enable'],$chk); ?>
 										<input name="pfs_group_enable" type="checkbox" id="pfs_group_enable" value="yes" <?=$chk;?> onClick="pfs_group_change()">
+									</td>
+									<td>
 										Provide the Phase2 PFS group to clients ( overrides all mobile phase2 settings )<br>
-										<br>
 									</td>
 								</tr>
+							</table>
+							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										Group:&nbsp;&nbsp;
@@ -506,17 +535,20 @@ function login_banner_change() {
 						</td>
 					</tr>
 					<tr> 
-						<td width="22%" valign="top" class="vncellreq">Login Banner</td>
+						<td width="22%" valign="top" class="vncell">Login Banner</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										<?php set_checked($pconfig['login_banner_enable'],$chk); ?>
 										<input name="login_banner_enable" type="checkbox" id="login_banner_enable" value="yes" <?=$chk;?> onClick="login_banner_change()">
+									</td>
+									<td>
 										Provide a login banner to clients<br>
-										<br>
 									</td>
 								</tr>
+							</table>
+							<table border="0" cellspacing="2" cellpadding="0">
 								<tr>
 									<td>
 										<?php $banner = htmlspecialchars($pconfig['login_banner']); ?>

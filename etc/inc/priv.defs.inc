@@ -12,12 +12,6 @@ $priv_list['page-all']['descr'] = "Allow access to all pages";
 $priv_list['page-all']['match'] = array();
 $priv_list['page-all']['match'][] = "*";
 
-$priv_list['page-diagnostics-routingtables'] = array();
-$priv_list['page-diagnostics-routingtables']['name'] = "WebCfg - Diagnostics: Routing tables page";
-$priv_list['page-diagnostics-routingtables']['descr'] = "Allow access to the 'Diagnostics: Routing tables' page.";
-$priv_list['page-diagnostics-routingtables']['match'] = array();
-$priv_list['page-diagnostics-routingtables']['match'][] = "diag_routes.php*";
-
 $priv_list['page-status-carp'] = array();
 $priv_list['page-status-carp']['name'] = "WebCfg - Status: CARP page";
 $priv_list['page-status-carp']['descr'] = "Allow access to the 'Status: CARP' page.";
@@ -96,17 +90,17 @@ $priv_list['page-diagnostics-logs-dhcp']['descr'] = "Allow access to the 'Diagno
 $priv_list['page-diagnostics-logs-dhcp']['match'] = array();
 $priv_list['page-diagnostics-logs-dhcp']['match'][] = "diag_logs_dhcp.php*";
 
-$priv_list['page-package-settings'] = array();
-$priv_list['page-package-settings']['name'] = "WebCfg - Package: Settings page";
-$priv_list['page-package-settings']['descr'] = "Allow access to the 'Package: Settings' page.";
-$priv_list['page-package-settings']['match'] = array();
-$priv_list['page-package-settings']['match'][] = "pkg.php*";
-
 $priv_list['page-diagnostics-logs-firewall'] = array();
 $priv_list['page-diagnostics-logs-firewall']['name'] = "WebCfg - Diagnostics: Logs: Firewall page";
 $priv_list['page-diagnostics-logs-firewall']['descr'] = "Allow access to the 'Diagnostics: Logs: Firewall' page.";
 $priv_list['page-diagnostics-logs-firewall']['match'] = array();
 $priv_list['page-diagnostics-logs-firewall']['match'][] = "diag_logs_filter.php*";
+
+$priv_list['page-interfaces-ppp-edit'] = array();
+$priv_list['page-interfaces-ppp-edit']['name'] = "WebCfg - Interfaces: PPP: Edit page";
+$priv_list['page-interfaces-ppp-edit']['descr'] = "Allow access to the 'Interfaces: PPP: Edit' page.";
+$priv_list['page-interfaces-ppp-edit']['match'] = array();
+$priv_list['page-interfaces-ppp-edit']['match'][] = "interfaces_ppp_edit.php*";
 
 $priv_list['page-hidden-nolongerincluded'] = array();
 $priv_list['page-hidden-nolongerincluded']['name'] = "WebCfg - Hidden: No longer included page";
@@ -179,6 +173,12 @@ $priv_list['page-diagnostics-resetstate']['name'] = "WebCfg - Diagnostics: Reset
 $priv_list['page-diagnostics-resetstate']['descr'] = "Allow access to the 'Diagnostics: Reset state' page.";
 $priv_list['page-diagnostics-resetstate']['match'] = array();
 $priv_list['page-diagnostics-resetstate']['match'][] = "diag_resetstate.php*";
+
+$priv_list['page-diagnostics-routingtables'] = array();
+$priv_list['page-diagnostics-routingtables']['name'] = "WebCfg - Diagnostics: Routing tables page";
+$priv_list['page-diagnostics-routingtables']['descr'] = "Allow access to the 'Diagnostics: Routing tables' page.";
+$priv_list['page-diagnostics-routingtables']['match'] = array();
+$priv_list['page-diagnostics-routingtables']['match'][] = "diag_routes.php*";
 
 $priv_list['page-diagnostics-traceroute'] = array();
 $priv_list['page-diagnostics-traceroute']['name'] = "WebCfg - Diagnostics: Traceroute page";
@@ -264,17 +264,23 @@ $priv_list['page-firewall-nat-nataddresses']['descr'] = "Allow access to the 'Fi
 $priv_list['page-firewall-nat-nataddresses']['match'] = array();
 $priv_list['page-firewall-nat-nataddresses']['match'][] = "firewall_nat_server.php*";
 
+$priv_list['page-firewall-nat-nataddresses-edit'] = array();
+$priv_list['page-firewall-nat-nataddresses-edit']['name'] = "WebCfg - Firewall: NAT: NAT Addresses: Edit page";
+$priv_list['page-firewall-nat-nataddresses-edit']['descr'] = "Allow access to the 'Firewall: NAT: NAT Addresses: Edit' page.";
+$priv_list['page-firewall-nat-nataddresses-edit']['match'] = array();
+$priv_list['page-firewall-nat-nataddresses-edit']['match'][] = "firewall_nat_server_edit.php*";
+
 $priv_list['page-firewall-rules'] = array();
 $priv_list['page-firewall-rules']['name'] = "WebCfg - Firewall: Rules page";
 $priv_list['page-firewall-rules']['descr'] = "Allow access to the 'Firewall: Rules' page.";
 $priv_list['page-firewall-rules']['match'] = array();
 $priv_list['page-firewall-rules']['match'][] = "firewall_rules.php*";
 
-$priv_list['page-firewall-nat-nataddresses-edit'] = array();
-$priv_list['page-firewall-nat-nataddresses-edit']['name'] = "WebCfg - Firewall: NAT: NAT Addresses: Edit page";
-$priv_list['page-firewall-nat-nataddresses-edit']['descr'] = "Allow access to the 'Firewall: NAT: NAT Addresses: Edit' page.";
-$priv_list['page-firewall-nat-nataddresses-edit']['match'] = array();
-$priv_list['page-firewall-nat-nataddresses-edit']['match'][] = "firewall_nat_server_edit.php*";
+$priv_list['page-firewall-trafficshaper'] = array();
+$priv_list['page-firewall-trafficshaper']['name'] = "WebCfg - Firewall: Traffic Shaper page";
+$priv_list['page-firewall-trafficshaper']['descr'] = "Allow access to the 'Firewall: Traffic Shaper' page.";
+$priv_list['page-firewall-trafficshaper']['match'] = array();
+$priv_list['page-firewall-trafficshaper']['match'][] = "firewall_shaper.php*";
 
 $priv_list['page-firewall-rules-edit'] = array();
 $priv_list['page-firewall-rules-edit']['name'] = "WebCfg - Firewall: Rules: Edit page";
@@ -293,12 +299,6 @@ $priv_list['page-firewall-schedules-edit']['name'] = "WebCfg - Firewall: Schedul
 $priv_list['page-firewall-schedules-edit']['descr'] = "Allow access to the 'Firewall: Schedules: Edit' page.";
 $priv_list['page-firewall-schedules-edit']['match'] = array();
 $priv_list['page-firewall-schedules-edit']['match'][] = "firewall_schedule_edit.php*";
-
-$priv_list['page-firewall-trafficshaper'] = array();
-$priv_list['page-firewall-trafficshaper']['name'] = "WebCfg - Firewall: Traffic Shaper page";
-$priv_list['page-firewall-trafficshaper']['descr'] = "Allow access to the 'Firewall: Traffic Shaper' page.";
-$priv_list['page-firewall-trafficshaper']['match'] = array();
-$priv_list['page-firewall-trafficshaper']['match'][] = "firewall_shaper.php*";
 
 $priv_list['page-firewall-trafficshaper-queues'] = array();
 $priv_list['page-firewall-trafficshaper-queues']['name'] = "WebCfg - Firewall: Traffic Shaper: Queues page";
@@ -336,23 +336,29 @@ $priv_list['page-firewall-virtualipaddresses']['descr'] = "Allow access to the '
 $priv_list['page-firewall-virtualipaddresses']['match'] = array();
 $priv_list['page-firewall-virtualipaddresses']['match'][] = "firewall_virtual_ip.php*";
 
-$priv_list['page-diagnostics-interfacetraffic'] = array();
-$priv_list['page-diagnostics-interfacetraffic']['name'] = "WebCfg - Diagnostics: Interface Traffic page";
-$priv_list['page-diagnostics-interfacetraffic']['descr'] = "Allow access to the 'Diagnostics: Interface Traffic' page.";
-$priv_list['page-diagnostics-interfacetraffic']['match'] = array();
-$priv_list['page-diagnostics-interfacetraffic']['match'][] = "graph.php*";
-
 $priv_list['page-firewall-virtualipaddress-edit'] = array();
 $priv_list['page-firewall-virtualipaddress-edit']['name'] = "WebCfg - Firewall: Virtual IP Address: Edit page";
 $priv_list['page-firewall-virtualipaddress-edit']['descr'] = "Allow access to the 'Firewall: Virtual IP Address: Edit' page.";
 $priv_list['page-firewall-virtualipaddress-edit']['match'] = array();
 $priv_list['page-firewall-virtualipaddress-edit']['match'][] = "firewall_virtual_ip_edit.php*";
 
+$priv_list['page-diagnostics-interfacetraffic'] = array();
+$priv_list['page-diagnostics-interfacetraffic']['name'] = "WebCfg - Diagnostics: Interface Traffic page";
+$priv_list['page-diagnostics-interfacetraffic']['descr'] = "Allow access to the 'Diagnostics: Interface Traffic' page.";
+$priv_list['page-diagnostics-interfacetraffic']['match'] = array();
+$priv_list['page-diagnostics-interfacetraffic']['match'][] = "graph.php*";
+
 $priv_list['page-diagnostics-cpuutilization'] = array();
 $priv_list['page-diagnostics-cpuutilization']['name'] = "WebCfg - Diagnostics: CPU Utilization page";
 $priv_list['page-diagnostics-cpuutilization']['descr'] = "Allow access to the 'Diagnostics: CPU Utilization' page.";
 $priv_list['page-diagnostics-cpuutilization']['match'] = array();
 $priv_list['page-diagnostics-cpuutilization']['match'][] = "graph_cpu.php*";
+
+$priv_list['page-package-settings'] = array();
+$priv_list['page-package-settings']['name'] = "WebCfg - Package: Settings page";
+$priv_list['page-package-settings']['descr'] = "Allow access to the 'Package: Settings' page.";
+$priv_list['page-package-settings']['match'] = array();
+$priv_list['page-package-settings']['match'][] = "pkg.php*";
 
 $priv_list['page-diagnostics-haltsystem'] = array();
 $priv_list['page-diagnostics-haltsystem']['name'] = "WebCfg - Diagnostics: Halt system page";
@@ -420,12 +426,6 @@ $priv_list['page-interfaces-ppp']['descr'] = "Allow access to the 'Interfaces: P
 $priv_list['page-interfaces-ppp']['match'] = array();
 $priv_list['page-interfaces-ppp']['match'][] = "interfaces_ppp.php*";
 
-$priv_list['page-interfaces-ppp-edit'] = array();
-$priv_list['page-interfaces-ppp-edit']['name'] = "WebCfg - Interfaces: PPP: Edit page";
-$priv_list['page-interfaces-ppp-edit']['descr'] = "Allow access to the 'Interfaces: PPP: Edit' page.";
-$priv_list['page-interfaces-ppp-edit']['match'] = array();
-$priv_list['page-interfaces-ppp-edit']['match'][] = "interfaces_ppp_edit.php*";
-
 $priv_list['page-interfaces-vlan'] = array();
 $priv_list['page-interfaces-vlan']['name'] = "WebCfg - Interfaces: VLAN page";
 $priv_list['page-interfaces-vlan']['descr'] = "Allow access to the 'Interfaces: VLAN' page.";
@@ -456,17 +456,23 @@ $priv_list['page-system-license']['descr'] = "Allow access to the 'System: Licen
 $priv_list['page-system-license']['match'] = array();
 $priv_list['page-system-license']['match'][] = "license.php*";
 
+$priv_list['page-services-loadbalancer-monitor'] = array();
+$priv_list['page-services-loadbalancer-monitor']['name'] = "WebCfg - Services: Load Balancer: Monitors page";
+$priv_list['page-services-loadbalancer-monitor']['descr'] = "Allow access to the 'Services: Load Balancer: Monitors' page.";
+$priv_list['page-services-loadbalancer-monitor']['match'] = array();
+$priv_list['page-services-loadbalancer-monitor']['match'][] = "load_balancer_monitor.php*";
+
+$priv_list['page-services-loadbalancer-monitor-edit'] = array();
+$priv_list['page-services-loadbalancer-monitor-edit']['name'] = "WebCfg - Services: Load Balancer: Monitor: Edit page";
+$priv_list['page-services-loadbalancer-monitor-edit']['descr'] = "Allow access to the 'Services: Load Balancer: Monitor: Edit' page.";
+$priv_list['page-services-loadbalancer-monitor-edit']['match'] = array();
+$priv_list['page-services-loadbalancer-monitor-edit']['match'][] = "load_balancer_monitor.php*";
+
 $priv_list['page-loadbalancer-pool'] = array();
 $priv_list['page-loadbalancer-pool']['name'] = "WebCfg - Load Balancer: Pool page";
 $priv_list['page-loadbalancer-pool']['descr'] = "Allow access to the 'Load Balancer: Pool' page.";
 $priv_list['page-loadbalancer-pool']['match'] = array();
 $priv_list['page-loadbalancer-pool']['match'][] = "load_balancer_pool.php*";
-
-$priv_list['page-system-packagemanager'] = array();
-$priv_list['page-system-packagemanager']['name'] = "WebCfg - System: Package Manager page";
-$priv_list['page-system-packagemanager']['descr'] = "Allow access to the 'System: Package Manager' page.";
-$priv_list['page-system-packagemanager']['match'] = array();
-$priv_list['page-system-packagemanager']['match'][] = "pkg_mgr.php*";
 
 $priv_list['page-loadbalancer-pool-edit'] = array();
 $priv_list['page-loadbalancer-pool-edit']['name'] = "WebCfg - Load Balancer: Pool: Edit page";
@@ -491,6 +497,12 @@ $priv_list['page-package-edit']['name'] = "WebCfg - Package: Edit page";
 $priv_list['page-package-edit']['descr'] = "Allow access to the 'Package: Edit' page.";
 $priv_list['page-package-edit']['match'] = array();
 $priv_list['page-package-edit']['match'][] = "pkg_edit.php*";
+
+$priv_list['page-system-packagemanager'] = array();
+$priv_list['page-system-packagemanager']['name'] = "WebCfg - System: Package Manager page";
+$priv_list['page-system-packagemanager']['descr'] = "Allow access to the 'System: Package Manager' page.";
+$priv_list['page-system-packagemanager']['match'] = array();
+$priv_list['page-system-packagemanager']['match'][] = "pkg_mgr.php*";
 
 $priv_list['page-system-packagemanager-installpackage'] = array();
 $priv_list['page-system-packagemanager-installpackage']['name'] = "WebCfg - System: Package Manager: Install Package page";
@@ -612,6 +624,12 @@ $priv_list['page-services-proxyarp']['descr'] = "Allow access to the 'Services: 
 $priv_list['page-services-proxyarp']['match'] = array();
 $priv_list['page-services-proxyarp']['match'][] = "services_proxyarp.php*";
 
+$priv_list['page-services-snmp'] = array();
+$priv_list['page-services-snmp']['name'] = "WebCfg - Services: SNMP page";
+$priv_list['page-services-snmp']['descr'] = "Allow access to the 'Services: SNMP' page.";
+$priv_list['page-services-snmp']['match'] = array();
+$priv_list['page-services-snmp']['match'][] = "services_snmp.php*";
+
 $priv_list['page-services-proxyarp-edit'] = array();
 $priv_list['page-services-proxyarp-edit']['name'] = "WebCfg - Services: Proxy ARP: Edit page";
 $priv_list['page-services-proxyarp-edit']['descr'] = "Allow access to the 'Services: Proxy ARP: Edit' page.";
@@ -623,12 +641,6 @@ $priv_list['page-services-rfc2136clients']['name'] = "WebCfg - Services: RFC 213
 $priv_list['page-services-rfc2136clients']['descr'] = "Allow access to the 'Services: RFC 2136 clients' page.";
 $priv_list['page-services-rfc2136clients']['match'] = array();
 $priv_list['page-services-rfc2136clients']['match'][] = "services_rfc2136.php*";
-
-$priv_list['page-services-snmp'] = array();
-$priv_list['page-services-snmp']['name'] = "WebCfg - Services: SNMP page";
-$priv_list['page-services-snmp']['descr'] = "Allow access to the 'Services: SNMP' page.";
-$priv_list['page-services-snmp']['match'] = array();
-$priv_list['page-services-snmp']['match'][] = "services_snmp.php*";
 
 $priv_list['page-services-usermanager'] = array();
 $priv_list['page-services-usermanager']['name'] = "WebCfg - Services: User Manager page";
@@ -768,6 +780,24 @@ $priv_list['page-system-advancedfunctions-createcertificates']['descr'] = "Allow
 $priv_list['page-system-advancedfunctions-createcertificates']['match'] = array();
 $priv_list['page-system-advancedfunctions-createcertificates']['match'][] = "system_advanced_create_certs.php*";
 
+$priv_list['page-system-authservers'] = array();
+$priv_list['page-system-authservers']['name'] = "WebCfg - System: Authentication Servers";
+$priv_list['page-system-authservers']['descr'] = "Allow access to the 'System: Authentication Servers' page.";
+$priv_list['page-system-authservers']['match'] = array();
+$priv_list['page-system-authservers']['match'][] = "system_authservers.php*";
+
+$priv_list['page-system-camanager'] = array();
+$priv_list['page-system-camanager']['name'] = "WebCfg - System: CA Manager";
+$priv_list['page-system-camanager']['descr'] = "Allow access to the 'System: CA Manager' page.";
+$priv_list['page-system-camanager']['match'] = array();
+$priv_list['page-system-camanager']['match'][] = "system_camanager.php*";
+
+$priv_list['page-system-certmanager'] = array();
+$priv_list['page-system-certmanager']['name'] = "WebCfg - System: Certificate Manager";
+$priv_list['page-system-certmanager']['descr'] = "Allow access to the 'System: Certificate Manager' page.";
+$priv_list['page-system-certmanager']['match'] = array();
+$priv_list['page-system-certmanager']['match'][] = "system_certmanager.php*";
+
 $priv_list['page-system-firmware-manualupdate'] = array();
 $priv_list['page-system-firmware-manualupdate']['name'] = "WebCfg - System: Firmware: Manual Update page";
 $priv_list['page-system-firmware-manualupdate']['descr'] = "Allow access to the 'System: Firmware: Manual Update' page.";
@@ -792,12 +822,6 @@ $priv_list['page-system-firmware-settings']['descr'] = "Allow access to the 'Sys
 $priv_list['page-system-firmware-settings']['match'] = array();
 $priv_list['page-system-firmware-settings']['match'][] = "system_firmware_settings.php*";
 
-$priv_list['page-system-gateways'] = array();
-$priv_list['page-system-gateways']['name'] = "WebCfg - System: Gateways page";
-$priv_list['page-system-gateways']['descr'] = "Allow access to the 'System: Gateways' page.";
-$priv_list['page-system-gateways']['match'] = array();
-$priv_list['page-system-gateways']['match'][] = "system_gateways.php*";
-
 $priv_list['page-system-gatewaygroups'] = array();
 $priv_list['page-system-gatewaygroups']['name'] = "WebCfg - System: Gateway Groups page";
 $priv_list['page-system-gatewaygroups']['descr'] = "Allow access to the 'System: Gateway Groups' page.";
@@ -809,6 +833,12 @@ $priv_list['page-system-gateways-editgatewaygroups']['name'] = "WebCfg - System:
 $priv_list['page-system-gateways-editgatewaygroups']['descr'] = "Allow access to the 'System: Gateways: Edit Gateway Groups' page.";
 $priv_list['page-system-gateways-editgatewaygroups']['match'] = array();
 $priv_list['page-system-gateways-editgatewaygroups']['match'][] = "system_gateway_groups_edit.php*";
+
+$priv_list['page-system-gateways'] = array();
+$priv_list['page-system-gateways']['name'] = "WebCfg - System: Gateways page";
+$priv_list['page-system-gateways']['descr'] = "Allow access to the 'System: Gateways' page.";
+$priv_list['page-system-gateways']['match'] = array();
+$priv_list['page-system-gateways']['match'][] = "system_gateways.php*";
 
 $priv_list['page-system-gateways-editgateway'] = array();
 $priv_list['page-system-gateways-editgateway']['name'] = "WebCfg - System: Gateways: Edit Gateway page";
@@ -822,11 +852,11 @@ $priv_list['page-system-groupmanager']['descr'] = "Allow access to the 'System: 
 $priv_list['page-system-groupmanager']['match'] = array();
 $priv_list['page-system-groupmanager']['match'][] = "system_groupmanager.php*";
 
-$priv_list['page-system-groupmanager-editprivileges'] = array();
-$priv_list['page-system-groupmanager-editprivileges']['name'] = "WebCfg - System: Group manager: Edit Privileges page";
-$priv_list['page-system-groupmanager-editprivileges']['descr'] = "Allow access to the 'System: Group manager: Edit Privileges' page.";
-$priv_list['page-system-groupmanager-editprivileges']['match'] = array();
-$priv_list['page-system-groupmanager-editprivileges']['match'][] = "system_groupmanager_edit.php*";
+$priv_list['page-system-groupmanager-addprivs'] = array();
+$priv_list['page-system-groupmanager-addprivs']['name'] = "WebCfg - System: Group Manager: Add Privileges page";
+$priv_list['page-system-groupmanager-addprivs']['descr'] = "Allow access to the 'System: Group Manager: Add Privileges' page.";
+$priv_list['page-system-groupmanager-addprivs']['match'] = array();
+$priv_list['page-system-groupmanager-addprivs']['match'][] = "system_groupmanager_addprivs.php*";
 
 $priv_list['page-system-staticroutes'] = array();
 $priv_list['page-system-staticroutes']['name'] = "WebCfg - System: Static Routes page";
@@ -846,17 +876,17 @@ $priv_list['page-system-usermanager']['descr'] = "Allow access to the 'System: U
 $priv_list['page-system-usermanager']['match'] = array();
 $priv_list['page-system-usermanager']['match'][] = "system_usermanager.php*";
 
-$priv_list['page-system-usermanager-addprivileges'] = array();
-$priv_list['page-system-usermanager-addprivileges']['name'] = "WebCfg - System: User Manager: Add Privileges page";
-$priv_list['page-system-usermanager-addprivileges']['descr'] = "Allow access to the 'System: User Manager: Add Privileges' page.";
-$priv_list['page-system-usermanager-addprivileges']['match'] = array();
-$priv_list['page-system-usermanager-addprivileges']['match'][] = "system_usermanager_addprivs.php*";
+$priv_list['page-system-usermanager_addcert'] = array();
+$priv_list['page-system-usermanager_addcert']['name'] = "WebCfg - System: User Manager: Add Certificate";
+$priv_list['page-system-usermanager_addcert']['descr'] = "Allow access to the 'User Manager: Add Certificate' page.";
+$priv_list['page-system-usermanager_addcert']['match'] = array();
+$priv_list['page-system-usermanager_addcert']['match'][] = "system_usermanager_addcert.php*";
 
-$priv_list['page-system-usermanager-settings'] = array();
-$priv_list['page-system-usermanager-settings']['name'] = "WebCfg - System: User manager: settings page";
-$priv_list['page-system-usermanager-settings']['descr'] = "Allow access to the 'System: User manager: settings' page.";
-$priv_list['page-system-usermanager-settings']['match'] = array();
-$priv_list['page-system-usermanager-settings']['match'][] = "system_usermanager_settings.php*";
+$priv_list['page-system-usermanager-addprivs'] = array();
+$priv_list['page-system-usermanager-addprivs']['name'] = "WebCfg - System: User Manager: Add Privileges page";
+$priv_list['page-system-usermanager-addprivs']['descr'] = "Allow access to the 'System: User Manager: Add Privileges' page.";
+$priv_list['page-system-usermanager-addprivs']['match'] = array();
+$priv_list['page-system-usermanager-addprivs']['match'][] = "system_usermanager_addprivs.php*";
 
 $priv_list['page-system-usermanager-settings-testldap'] = array();
 $priv_list['page-system-usermanager-settings-testldap']['name'] = "WebCfg - System: User Manager: Settings: Test LDAP page";
@@ -906,60 +936,6 @@ $priv_list['page-vpn-ipsec-editphase2']['descr'] = "Allow access to the 'VPN: IP
 $priv_list['page-vpn-ipsec-editphase2']['match'] = array();
 $priv_list['page-vpn-ipsec-editphase2']['match'][] = "vpn_ipsec_phase2.php*";
 
-$priv_list['page-vpn-openvpn-createcerts'] = array();
-$priv_list['page-vpn-openvpn-createcerts']['name'] = "WebCfg - VPN: OpenVPN: Create Certs page";
-$priv_list['page-vpn-openvpn-createcerts']['descr'] = "Allow access to the 'VPN: OpenVPN: Create Certs' page.";
-$priv_list['page-vpn-openvpn-createcerts']['match'] = array();
-$priv_list['page-vpn-openvpn-createcerts']['match'][] = "vpn_openvpn_certs_create.php*";
-
-$priv_list['page-vpn-openvpn-createexistingcerts'] = array();
-$priv_list['page-vpn-openvpn-createexistingcerts']['name'] = "WebCfg - VPN: OpenVPN: Create Existing Certs page";
-$priv_list['page-vpn-openvpn-createexistingcerts']['descr'] = "Allow access to the 'VPN: OpenVPN: Create Existing Certs' page.";
-$priv_list['page-vpn-openvpn-createexistingcerts']['match'] = array();
-$priv_list['page-vpn-openvpn-createexistingcerts']['match'][] = "vpn_openvpn_certs_existing.php*";
-
-$priv_list['page-vpn-openvpn-editclient'] = array();
-$priv_list['page-vpn-openvpn-editclient']['name'] = "WebCfg - VPN: OpenVPN: Edit client page";
-$priv_list['page-vpn-openvpn-editclient']['descr'] = "Allow access to the 'VPN: OpenVPN: Edit client' page.";
-$priv_list['page-vpn-openvpn-editclient']['match'] = array();
-$priv_list['page-vpn-openvpn-editclient']['match'][] = "vpn_openvpn_cli_edit.php*";
-
-$priv_list['page-vpn-openvpn-createcerts'] = array();
-$priv_list['page-vpn-openvpn-createcerts']['name'] = "WebCfg - VPN: OpenVPN: Create Certs page";
-$priv_list['page-vpn-openvpn-createcerts']['descr'] = "Allow access to the 'VPN: OpenVPN: Create Certs' page.";
-$priv_list['page-vpn-openvpn-createcerts']['match'] = array();
-$priv_list['page-vpn-openvpn-createcerts']['match'][] = "vpn_openvpn_create_certs.php*";
-
-$priv_list['page-vpn-openvpn-editcrl'] = array();
-$priv_list['page-vpn-openvpn-editcrl']['name'] = "WebCfg - VPN: OpenVPN: Edit CRL page";
-$priv_list['page-vpn-openvpn-editcrl']['descr'] = "Allow access to the 'VPN: OpenVPN: Edit CRL' page.";
-$priv_list['page-vpn-openvpn-editcrl']['match'] = array();
-$priv_list['page-vpn-openvpn-editcrl']['match'][] = "vpn_openvpn_crl_edit.php*";
-
-$priv_list['page-vpn-openvpn-editserver'] = array();
-$priv_list['page-vpn-openvpn-editserver']['name'] = "WebCfg - VPN: OpenVPN: Edit server page";
-$priv_list['page-vpn-openvpn-editserver']['descr'] = "Allow access to the 'VPN: OpenVPN: Edit server' page.";
-$priv_list['page-vpn-openvpn-editserver']['match'] = array();
-$priv_list['page-vpn-openvpn-editserver']['match'][] = "vpn_openvpn_srv_edit.php*";
-
-$priv_list['page-vpn-vpnopenvpn-user-edit'] = array();
-$priv_list['page-vpn-vpnopenvpn-user-edit']['name'] = "WebCfg - VPN: VPN OpenVPN: User: Edit page";
-$priv_list['page-vpn-vpnopenvpn-user-edit']['descr'] = "Allow access to the 'VPN: VPN OpenVPN: User: Edit' page.";
-$priv_list['page-vpn-vpnopenvpn-user-edit']['match'] = array();
-$priv_list['page-vpn-vpnopenvpn-user-edit']['match'][] = "vpn_openvpn_user_edit.php*";
-
-$priv_list['page-vpn-vpnopenvpn-users'] = array();
-$priv_list['page-vpn-vpnopenvpn-users']['name'] = "WebCfg - VPN: VPN OpenVPN: Users page";
-$priv_list['page-vpn-vpnopenvpn-users']['descr'] = "Allow access to the 'VPN: VPN OpenVPN: Users' page.";
-$priv_list['page-vpn-vpnopenvpn-users']['match'] = array();
-$priv_list['page-vpn-vpnopenvpn-users']['match'][] = "vpn_openvpn_users.php*";
-
-$priv_list['page-vpn-vpnopenvpn-user-edit'] = array();
-$priv_list['page-vpn-vpnopenvpn-user-edit']['name'] = "WebCfg - VPN: VPN OpenVPN: User: Edit page";
-$priv_list['page-vpn-vpnopenvpn-user-edit']['descr'] = "Allow access to the 'VPN: VPN OpenVPN: User: Edit' page.";
-$priv_list['page-vpn-vpnopenvpn-user-edit']['match'] = array();
-$priv_list['page-vpn-vpnopenvpn-user-edit']['match'][] = "vpn_openvpn_users_edit.php*";
-
 $priv_list['page-services-pppoeserver'] = array();
 $priv_list['page-services-pppoeserver']['name'] = "WebCfg - Services: PPPoE Server page";
 $priv_list['page-services-pppoeserver']['descr'] = "Allow access to the 'Services: PPPoE Server' page.";
@@ -1007,6 +983,24 @@ $priv_list['page-xmlrpclibrary']['name'] = "WebCfg - XMLRPC Library page";
 $priv_list['page-xmlrpclibrary']['descr'] = "Allow access to the 'XMLRPC Library' page.";
 $priv_list['page-xmlrpclibrary']['match'] = array();
 $priv_list['page-xmlrpclibrary']['match'][] = "xmlrpc.php*";
+
+$priv_list['page-openvpn-server'] = array();
+$priv_list['page-openvpn-server']['name'] = "WebCfg - OpenVPN: Server page";
+$priv_list['page-openvpn-server']['descr'] = "Allow access to the 'OpenVPN: Server' page.";
+$priv_list['page-openvpn-server']['match'] = array();
+$priv_list['page-openvpn-server']['match'][] = "vpn_openvpn_server.php*";
+
+$priv_list['page-openvpn-client'] = array();
+$priv_list['page-openvpn-client']['name'] = "WebCfg - OpenVPN: Client page";
+$priv_list['page-openvpn-client']['descr'] = "Allow access to the 'OpenVPN: Client' page.";
+$priv_list['page-openvpn-client']['match'] = array();
+$priv_list['page-openvpn-client']['match'][] = "vpn_openvpn_client.php*";
+
+$priv_list['page-openvpn-csc'] = array();
+$priv_list['page-openvpn-csc']['name'] = "WebCfg - OpenVPN: Client Specific Override page";
+$priv_list['page-openvpn-csc']['descr'] = "Allow access to the 'OpenVPN: Client Specific Override' page.";
+$priv_list['page-openvpn-csc']['match'] = array();
+$priv_list['page-openvpn-csc']['match'][] = "vpn_openvpn_csc.php*";
 
 
 $priv_rmvd = array();

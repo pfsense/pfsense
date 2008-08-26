@@ -65,6 +65,11 @@ if ($_GET['act'] == "del") {
 	$savemsg = gettext("Client successfully deleted")."<br/>";
 }
 
+if($_GET['act']=="new"){
+	$pconfig['interface'] = "wan";
+	$pconfig['server_port'] = 1194;
+}
+
 if($_GET['act']=="edit"){
 
 	if (isset($id) && $a_client[$id]) {
@@ -101,7 +106,21 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	if (isset($id) && $a_server[$id])
+		$vpnid = $a_server[$id]['vpnid'];
+	else
+		$vpnid = 0;
+
 	/* input validation */
+	if ($pconfig['local_port']) {
+
+		if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
+			$input_errors[] = $result;
+
+		if (openvpn_port_used($pconfig['protocol'], $pconfig['local_port']) != $vpnid)
+			$input_errors[] = "The specified 'Local port' is in use. Please select another value";
+	}
+
 	if ($result = openvpn_validate_host($pconfig['server_addr'], 'Server host or address'))
 		$input_errors[] = $result;
 
@@ -142,8 +161,8 @@ if ($_POST) {
 
 		$client = array();
 
-		if (isset($id) && $a_client[$id])
-			$client['vpnid'] = $a_client[$id]['vpnid'];
+		if ($vpnid)
+			$client['vpnid'] = $vpnid;
 		else
 			$client['vpnid'] = openvpn_vpnid_next();
 

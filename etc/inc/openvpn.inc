@@ -40,6 +40,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/* DISABLE_PHP_LINT_CHECKING */
 
 require_once('config.inc');
 require_once('pfsense-utils.inc');
@@ -56,12 +57,12 @@ function openvpn_vpnid_used($vpnid) {
 
 	if (is_array($config['openvpn']['openvpn-server']))
 		foreach ($config['openvpn']['openvpn-server'] as $id => & $settings)
-			if( $vpnid == $settings['vpnid'] )
+			if ($vpnid == $settings['vpnid'])
 				return true;
 
 	if (is_array($config['openvpn']['openvpn-client']))
 		foreach ($config['openvpn']['openvpn-client'] as $id => & $settings)
-			if( $vpnid == $settings['vpnid'] )
+			if ($vpnid == $settings['vpnid'])
 				return true;
 
 	return false;
@@ -74,6 +75,33 @@ function openvpn_vpnid_next() {
 		$vpnid++;
 
 	return $vpnid;
+}
+
+function openvpn_port_used($prot, $port) {
+	global $config;
+
+	if (is_array($config['openvpn']['openvpn-server']))
+		foreach ($config['openvpn']['openvpn-server'] as $id => & $settings)
+			if ($port == $settings['local_port'] &&
+				$prot == $settings['protocol'])
+				return $settings['vpnid'];
+
+	if (is_array($config['openvpn']['openvpn-client']))
+		foreach ($config['openvpn']['openvpn-client'] as $id => & $settings)
+			if ($port == $settings['local_port'] &&
+				$prot == $settings['protocol'])
+				return $settings['vpnid'];
+
+	return 0;
+}
+
+function openvpn_port_next($prot) {
+
+	$port = 1194;
+	while(openvpn_port_used($prot, $port))
+		$port++;
+
+	return $port;
 }
 
 function openvpn_get_cipherlist() {

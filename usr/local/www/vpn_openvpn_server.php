@@ -65,6 +65,12 @@ if ($_GET['act'] == "del") {
 	$savemsg = gettext("Server successfully deleted")."<br/>";
 }
 
+if($_GET['act']=="new"){
+	$pconfig['interface'] = "wan";
+	$pconfig['local_port'] = openvpn_port_next('UDP');
+	$pconfig['pool_enable'] = "yes";
+}
+
 if($_GET['act']=="edit"){
 
 	if (isset($id) && $a_server[$id]) {
@@ -136,6 +142,11 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	if (isset($id) && $a_server[$id])
+		$vpnid = $a_server[$id]['vpnid'];
+	else
+		$vpnid = 0;
+
 	/* input validation */
 	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
 		$input_errors[] = $result;
@@ -148,6 +159,9 @@ if ($_POST) {
 
 	if ($result = openvpn_validate_cidr($pconfig['local_network'], 'Local network'))
 		$input_errors[] = $result;
+
+	if (openvpn_port_used($pconfig['protocol'], $pconfig['local_port']) != $vpnid)
+		$input_errors[] = "The specified 'Local port' is in use. Please select another value";
 
 	if ($pconfig['auth_method'] == 'shared_key')
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
@@ -205,8 +219,8 @@ if ($_POST) {
 
 		$server = array();
 
-		if (isset($id) && $a_server[$id])
-			$server['vpnid'] = $a_server[$id]['vpnid'];
+		if ($vpnid)
+			$server['vpnid'] = $vpnid;
 		else
 			$server['vpnid'] = openvpn_vpnid_next();
 

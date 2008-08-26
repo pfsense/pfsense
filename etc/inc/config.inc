@@ -1747,6 +1747,7 @@ endif;
 				}
 
 				/* modify configuration values */
+				unset($server['dh_params']);
 				if (!$server['interface'])
 					$server['interface'] = 'wan';
 				$server['tunnel_network'] = $server['addresspool'];
@@ -1886,8 +1887,17 @@ endif;
 			unset($config['installedpackages']['openvpncsc']);
 		}
 
-		$config['installedpackages'] = array();
-		$config['installedpackages']['carp'] = array();
+		/*
+		 * FIXME: hack to keep things working with no installedpackages
+		 * or carp array in the configuration data.
+		 */
+		if (!is_array($config['installedpackages']))
+			$config['installedpackages'] = array();
+		if (!is_array($config['installedpackages']['carp']))
+			$config['installedpackages']['carp'] = array();
+
+		/* reconfigure openvpn services */
+		openvpn_resync_all();
 
 		$config['version'] = "5.2";
 	}

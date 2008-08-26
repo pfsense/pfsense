@@ -342,8 +342,11 @@ EOD;
 		openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
 		openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
 
-		if ($mode == 'server')
-			openvpn_add_keyfile($settings['dh_params'], $conf, $mode_id, "dh");
+		if ($mode == 'server') {
+			$path_ovdh = $g['varetc_path']."/openvpn/dh-parameters";
+			$conf .= "dh {$path_ovdh}\n";
+		}
+
 		if ($settings['crl'])
 			openvpn_add_keyfile($settings['crl'], $conf, $mode_id, "crl-verify");
 		if ($settings['tls']) 
@@ -464,6 +467,12 @@ function openvpn_resync_all() {
 
 	chown($path_ovpn, 'nobody');
 	chgrp($path_ovpn, 'nobody');
+
+	$path_ovdh = $g['varetc_path']."/openvpn/dh-parameters";
+	if (!file_exists($path_ovdh)) {
+		echo "Setting up OpenVPN environment ...\n";
+		exec("/usr/bin/openssl dhparam -out {$path_ovdh} 1024");
+	}
 
 	$path_csc = $g['varetc_path']."/openvpn_csc";
 	safe_mkdir($path_csc);

@@ -205,10 +205,9 @@ if ($_POST) {
 
 		$server = array();
 
-		if (isset($id) && $a_server[$id]) {
-			$server['dh_params'] = $a_server[$id]['dh_params'];
+		if (isset($id) && $a_server[$id])
 			$server['vpnid'] = $a_server[$id]['vpnid'];
-		} else
+		else
 			$server['vpnid'] = openvpn_vpnid_next();
 
 		$server['disable'] = $pconfig['disable'];

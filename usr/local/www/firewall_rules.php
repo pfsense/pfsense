@@ -72,11 +72,8 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']
 		$iflist["enc0"] = "IPsec";
 
 /* add openvpn/tun interfaces */
-if  ($config['installedpackages']["openvpnserver"] || $config['installedpackages']["openvpnclient"]) {
-	if (is_array($config['installedpackages']["openvpnserver"]['config']) ||
-		is_array($config['installedpackages']["openvpnclient"]['config']))
-                	$iflist["openvpn"] = "OpenVPN";
-}
+if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+   	$iflist["openvpn"] = "OpenVPN";
 
 if (!$if || !isset($iflist[$if])) {
 	if ("any" == $if)

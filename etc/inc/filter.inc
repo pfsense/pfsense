@@ -357,12 +357,11 @@ function get_vpns_list() {
 	}
 	/* openvpn */
 	foreach (array('client', 'server') as $type) {
-		$conf =& $config['installedpackages']["openvpn$type"]['config'];
-		if (!is_array($conf)) continue;
-		foreach ($conf as $tunnel) {
-			if(is_subnet($tunnel['remote-subnet'])) {
+		foreach ($config['openvpn']["openvpn-$type"] as & $settings) {
+			if (!is_array($settings))
+				continue;
+			if(is_subnet($settings['remote-subnet']))
 				$vpns_arr[] = $tunnel['remote_network'];
-			}
 		}
 	}
 	/* pppoe */
@@ -371,9 +370,8 @@ function get_vpns_list() {
 			$vpns_arr[] = $config['pppoe']['remoteip'] ."/". $config['pppoe']['pppoe_subnet'];
 		}
 	}
-	if(!empty($vpns_arr)) {
+	if(!empty($vpns_arr))
 		$vpns = implode(" ", $vpns_arr);
-	}
 	return $vpns;
 }
 
@@ -474,22 +472,19 @@ function generate_optcfg_array()
 	}
 
 	/* add openvpn interfaces */
-	if  ($config['installedpackages']["openvpnserver"] || 
-		$config['installedpackages']["openvpnclient"]) {
-		$ovpn_count = 0;
-		if (is_array($config['installedpackages']["openvpnserver"]['config']))
-			$ovpn_count += count($config['installedpackages']["openvpnserver"]['config']);
-		if (is_array($config['installedpackages']["openvpnclient"]['config']))
-			$ovpn_count += count($config['installedpackages']["openvpnclient"]['config']);
+	if  ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client']) {
 
-		if ($ovpn_count) {
+		$ovpnifs = array( "ovpns1");
+		foreach ($config['openvpn']['openvpn-server'] as & $server)
+			if (!$server['disable'])
+				$ovpnifs[] = "ovpns".$server['vpnid'];
+		foreach ($config['openvpn']['openvpn-client'] as & $client)
+			if (!$client['disable'])
+				$ovpnifs[] = "ovpnc".$client['vpnid'];
+
+		if (count($ovpnifs)) {
 			$oic = array();
-			for ($i = 0; $i < $ovpn_count; $i++) {
-				if (!$i)
-					$oic['if'] = "ovpn{$i}";
-				else
-					$oic['if'] .= " ovpn{$i}";
-			}
+			$oic['if'] = implode(" ", $ovpnifs);
 			$oic['descr'] = 'OpenVPN';
 			$oic['ip'] = "none";
 			$FilterIflist['openvpn'] = $oic;
@@ -748,10 +743,13 @@ function filter_nat_rules_generate()
 		
 		if ($numberofnathosts > 0):
 
-		if (!empty($config['installedpackages']['openvpnclient']['config']))
-			foreach ($config['installedpackages']['openvpnclient']['config'] as $id => $settings)
+		if (!empty($config['openvpn']['openvpn-client'])) {
+			foreach ($config['openvpn']['openvpn-client'] as $settings) {
+				$vpnid = $settings['vpnid'];
 				if (!empty($settings['remote_network'])) 
-					$natrules .= "nat on ovpnc{$id} from \$tonatsubnets to any -> (ovpnc{$id})\n";
+					$natrules .= "nat on ovpnc{$vpnid} from \$tonatsubnets to any -> (ovpnc{$vpnid})\n";
+			}
+		}
 
 		foreach ($FilterIflist as $if => $ifcfg) {
 			update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
@@ -2652,22 +2650,25 @@ function process_carp_nat_rules()
 		$mt = microtime();
 		echo "process_carp_nat_rules() being called $mt\n";
 	}
+
 	$lines = "";
-	if($config['installedpackages']['carp']['config'] != "")
-	    foreach($config['installedpackages']['carp']['config'] as $carp) {
-		$ip = $carp['ipaddress'];
-		if($ip <> "any") {
-			$ipnet = "any";
-		} else {
-			$int = find_ip_interface($ip);
-			$carp_int = find_carp_interface($ip);
+
+	if (is_array($config['installedpackages']['carp']['config'])) {
+		foreach($config['installedpackages']['carp']['config'] as $carp) {
+			$ip = $carp['ipaddress'];
+			if($ip <> "any") {
+				$ipnet = "any";
+			} else {
+				$int = find_ip_interface($ip);
+				$carp_int = find_carp_interface($ip);
+			}
+			if($int != false and $int != $wan_interface) {
+				$ipnet = convert_ip_to_network_format($ip, $carp['netmask']);
+				if($int)
+					$lines .= "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
+			}
 		}
-		if($int != false and $int != $wan_interface) {
-		    $ipnet = convert_ip_to_network_format($ip, $carp['netmask']);
-		    if($int)
-		    	$lines .= "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
-		}
-	    }
+	}
 	return $lines;
 }
 

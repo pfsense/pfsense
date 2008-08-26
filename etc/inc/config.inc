@@ -1178,6 +1178,8 @@ function convert_config() {
 		$config['version'] = "4.3";
 	}
 
+if(0):
+
 	/* Convert 4.3 -> 4.4 */
 	if ($config['version'] <= 4.3) {
 		if (isset($config['installedpackages']['openvpnserver']['config'])) {
@@ -1224,14 +1226,16 @@ function convert_config() {
 		$config['version'] = "4.4";
 	}
 
-        /* Convert 4.4 -> 4.5 */
-        if ($config['version'] <= 4.4) {
-                if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-                        foreach ($config['vlans']['vlan'] as $id => $vlan)
-                                $config['vlans']['vlan'][$id]['vlanif'] = "vlan{$id}";
-                }
-                $config['version'] = "4.5";
-        }
+endif;
+
+	/* Convert 4.4 -> 4.5 */
+	if ($config['version'] <= 4.4) {
+		if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+			foreach ($config['vlans']['vlan'] as $id => $vlan)
+				$config['vlans']['vlan'][$id]['vlanif'] = "vlan{$id}";
+		}
+		$config['version'] = "4.5";
+	}
 
 	/* Upgrade load balancer from slb to relayd */
         /* Convert 4.5 -> 4.6 */
@@ -1652,18 +1656,18 @@ function convert_config() {
 		$config['version'] = "5.0";
 	}
 
-        /* Convert 5.0 -> 5.1 */
-        if ($config['version'] <= 5.1) {
+	/* Convert 5.0 -> 5.1 */
+	if ($config['version'] <= 5.1) {
 		$pconfig = array();
 		$pconfig['desc'] = "Set to 0 to disable filtering on the incoming and outgoing member interfaces.";
 		$pconfig['tunable'] = "net.link.bridge.pfil_member";
 		$pconfig['value'] = "1";
 		$config['sysctl']['item'][] = $pconfig;
 		$pconfig = array();
-                $pconfig['desc'] = "Set to 1 to enable filtering on the bridge interface";
-                $pconfig['tunable'] = "net.link.bridge.pfil_bridge";
-                $pconfig['value'] = "0";
-                $config['sysctl']['item'][] = $pconfig;
+		$pconfig['desc'] = "Set to 1 to enable filtering on the bridge interface";
+		$pconfig['tunable'] = "net.link.bridge.pfil_bridge";
+		$pconfig['value'] = "0";
+		$config['sysctl']['item'][] = $pconfig;
 
 		unset($config['bridge']);
 
@@ -1691,6 +1695,201 @@ function convert_config() {
 			}
 		}
 		$config['version'] = "5.1";
+	}
+
+	/* Convert 5.1 -> 5.2 */
+	if ($config['version'] <= 5.1) {
+
+		$config['openvpn'] = array();
+		if (!is_array($config['system']['ca']))
+			$config['system']['ca'] = array();
+		if (!is_array($config['system']['cert']))
+			$config['system']['cert'] = array();
+
+		$vpnid = 1;
+
+		/* openvpn server configurations */
+		if (is_array($config['installedpackages']['openvpnserver']['config'])) {
+			$config['openvpn']['openvpn-server'] = array();
+
+			$index = 1;
+			foreach($config['installedpackages']['openvpnserver']['config'] as $server) {
+
+				if ($server['auth_method'] == "pki") {
+
+					/* create ca entry */
+					$ca = array();
+					$ca['refid'] = uniqid();
+					$ca['name'] = "OpenVPN Server CA #{$index}";
+					$ca['crt'] = $server['ca_cert'];
+					$ca['crl'] = $server['crl'];
+					$config['system']['ca'][] = $ca;
+
+					/* create ca reference */
+					unset($server['ca_cert']);
+					unset($server['crl']);
+					$server['caref'] = $ca['refid'];
+
+					/* create cert entry */
+					$cert = array();
+					$cert['refid'] = uniqid();
+					$cert['name'] = "OpenVPN Server Certificate #{$index}";
+					$cert['crt'] = $server['server_cert'];
+					$cert['prv'] = $server['server_key'];
+					$config['system']['cert'][] = $cert;
+
+					/* create cert reference */
+					unset($server['server_cert']);
+					unset($server['server_key']);
+					$server['certref'] = $cert['refid'];
+
+					$index++;
+				}
+
+				/* modify configuration values */
+				if (!$server['interface'])
+					$server['interface'] = 'wan';
+				$server['tunnel_network'] = $server['addresspool'];
+				unset($server['addresspool']);
+				$server['compress'] = $server['use_lzo'];
+				unset($server['use_lzo']);
+				if ($server['nopool'])
+					$server['pool_enable'] = false;
+				else
+					$server['pool_enable'] = "yes";
+				unset($server['nopool']);
+				$server['dns_domain'] = $server['dhcp_domainname'];
+				unset($server['dhcp_domainname']);
+				$server['dns_server1'] = $server['dhcp_dns'];
+				unset($server['dhcp_dns']);
+				$server['ntp_server1'] = $server['dhcp_ntp'];
+				unset($server['dhcp_ntp']);
+				if ($server['dhcp_nbtdisable'])
+					$server['netbios_enable'] = false;
+				else
+					$server['netbios_enable'] = "yes";
+				unset($server['dhcp_nbtdisable']);
+				$server['netbios_ntype'] = $server['dhcp_nbttype'];
+				unset($server['dhcp_nbttype']);
+				$server['netbios_scope'] = $server['dhcp_nbtscope'];
+				unset($server['dhcp_nbtscope']);
+				$server['nbdd_server1'] = $server['dhcp_nbdd'];
+				unset($server['dhcp_nbdd']);
+				$server['wins_server1'] = $server['dhcp_wins'];
+				unset($server['dhcp_wins']);
+
+				/* allocate vpnid */
+				$server['vpnid'] = $vpnid++;
+
+				$config['openvpn']['openvpn-server'][] = $server;
+			}
+			unset($config['installedpackages']['openvpnserver']);
+		}
+
+		/* openvpn client configurations */
+		if (is_array($config['installedpackages']['openvpnclient']['config'])) {
+			$config['openvpn']['openvpn-client'] = array();
+
+			$index = 1;
+			foreach($config['installedpackages']['openvpnclient']['config'] as $client) {
+
+				if ($client['auth_method'] == "pki") {
+
+					/* create ca entry */
+					$ca = array();
+					$ca['refid'] = uniqid();
+					$ca['name'] = "OpenVPN Client CA #{$index}";
+					$ca['crt'] = $client['ca_cert'];
+					$ca['crl'] = $client['crl'];
+					$config['system']['ca'][] = $ca;
+
+					/* create ca reference */
+					unset($client['ca_cert']);
+					unset($client['crl']);
+					$client['caref'] = $ca['refid'];
+
+					/* create cert entry */
+					$cert = array();
+					$cert['refid'] = uniqid();
+					$cert['name'] = "OpenVPN Client Certificate #{$index}";
+					$cert['crt'] = $client['client_cert'];
+					$cert['prv'] = $client['client_key'];
+					$config['system']['cert'][] = $cert;
+
+					/* create cert reference */
+					unset($client['client_cert']);
+					unset($client['client_key']);
+					$client['certref'] = $cert['refid'];
+
+					$index++;
+				}
+
+				/* modify configuration values */
+				if (!$client['interface'])
+					$client['interface'] = 'wan';
+				$client['tunnel_network'] = $client['interface_ip'];
+				unset($client['interface_ip']);
+				$client['server_addr'] = $client['serveraddr'];
+				unset($client['serveraddr']);
+				$client['server_port'] = $client['serverport'];
+				unset($client['serverport']);
+				$client['proxy_addr'] = $client['poxy_hostname'];
+				unset($client['proxy_addr']);
+				$client['compress'] = $client['use_lzo'];
+				unset($client['use_lzo']);
+				$client['resolve_retry'] = $client['infiniteresolvretry'];
+				unset($client['infiniteresolvretry']);
+
+				/* allocate vpnid */
+				$client['vpnid'] = $vpnid++;
+
+				$config['openvpn']['openvpn-client'][] = $client;
+			}
+
+			unset($config['installedpackages']['openvpnclient']);
+		}
+
+		/* openvpn client specific configurations */
+		if (is_array($config['installedpackages']['openvpncsc']['config'])) {
+			$config['openvpn']['openvpn-csc'] = array();
+
+			foreach($config['installedpackages']['openvpncsc']['config'] as $csc) {
+
+				/* modify configuration values */
+				$csc['common_name'] = $csc['commonname'];
+				unset($csc['commonname']);
+				$csc['tunnel_network'] = $csc['ifconfig_push'];
+				unset($csc['ifconfig_push']);
+				$csc['dns_domain'] = $csc['dhcp_domainname'];
+				unset($csc['dhcp_domainname']);
+				$csc['dns_server1'] = $csc['dhcp_dns'];
+				unset($csc['dhcp_dns']);
+				$csc['ntp_server1'] = $csc['dhcp_ntp'];
+				unset($csc['dhcp_ntp']);
+				if ($csc['dhcp_nbtdisable'])
+					$csc['netbios_enable'] = false;
+				else
+					$csc['netbios_enable'] = "yes";
+				unset($csc['dhcp_nbtdisable']);
+				$csc['netbios_ntype'] = $csc['dhcp_nbttype'];
+				unset($csc['dhcp_nbttype']);
+				$csc['netbios_scope'] = $csc['dhcp_nbtscope'];
+				unset($csc['dhcp_nbtscope']);
+				$csc['nbdd_server1'] = $csc['dhcp_nbdd'];
+				unset($csc['dhcp_nbdd']);
+				$csc['wins_server1'] = $csc['dhcp_wins'];
+				unset($csc['dhcp_wins']);
+
+				$config['openvpn']['openvpn-csc'][] = $csc;
+			}
+
+			unset($config['installedpackages']['openvpncsc']);
+		}
+
+		$config['installedpackages'] = array();
+		$config['installedpackages']['carp'] = array();
+
+		$config['version'] = "5.2";
 	}
 
 	$now = date("H:i:s");

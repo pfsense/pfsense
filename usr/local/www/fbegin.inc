@@ -130,6 +130,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?=output_menu_item("/wizard.php?xml=setup_wizard.xml", "Setup Wizard");?>
 							<?=output_menu_item("/system_gateways.php", "Routing");?>
 							<?=output_menu_item("/firewall_system_tunables.php", "Tunables");?>	
+							<?=output_menu_item("/system_camanager.php", "Cert Manager");?>	
 							<?=output_menu_item("/system_usermanager.php", "User Manager");?>	
 						</ul>
 					</li>
@@ -216,7 +217,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>VPN</div>
 						<ul class="subdrop">
 							<?=output_menu_item("/vpn_ipsec.php", "IPsec");?>
-							<?=output_menu_item("/pkg.php?xml=openvpn.xml", "OpenVPN");?>
+							<?=output_menu_item("/vpn_openvpn_server.php", "OpenVPN");?>
 							<?=output_menu_item("/vpn_pptp.php", "PPTP");?>
 							<?php echo return_ext_menu("VPN"); ?>
 						</ul>

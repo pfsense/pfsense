@@ -42,7 +42,8 @@ function listtags() {
 		"servernat servers serversdisabled earlyshellcmd shellcmd staticmap ".
 		"subqueue timerange tunnel user authserver vip virtual_server vlan ".
 		"winsserver ntpserver wolentry widget depends_on_package ".
-		"gateway_item gateway_group dyndns dnsupdate gre gif bridged lagg");
+		"gateway_item gateway_group dyndns dnsupdate gre gif bridged lagg ".
+		"openvpn-server openvpn-client openvpn-csc");
 	return $ret;
 }
 

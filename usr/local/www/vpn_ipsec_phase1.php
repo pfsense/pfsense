@@ -304,17 +304,8 @@ if ($_POST) {
 		$ph1ent['pinghost'] = $pconfig['pinghost'];
 
 		/* generate unique phase1 ikeid */
-		if ($ph1ent['ikeid'] == 0) {
-			while (true) {
-				$ph1ent['ikeid']++;
-				foreach ($a_phase1 as $ph1tmp)
-					if( $ph1ent['ikeid'] == $ph1tmp['ikeid'] )
-						break;
-
-				if( $ph1ent['ikeid'] != $ph1tmp['ikeid'] )
-					break;
-			}
-		}
+		if ($ph1ent['ikeid'] == 0)
+			$ph1ent['ikeid'] = ipsec_ikeid_next();
 
 		if (isset($p1index) && $a_phase1[$p1index])
 			$a_phase1[$p1index] = $ph1ent;

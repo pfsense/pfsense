@@ -525,12 +525,8 @@ include("head.inc");
 							$interfaces["enc0"] = "IPsec";
 		
 					/* add openvpn/tun interfaces */
-					if  ($config['installedpackages']["openvpnserver"] || $config['installedpackages']["openvpnclient"]) {
-					        if (is_array($config['installedpackages']["openvpnserver"]['config']) ||
-                					is_array($config['installedpackages']["openvpnclient"]['config']))
-        					$interfaces["openvpn"] = "OpenVPN";
-					}
-
+					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+       					$interfaces["openvpn"] = "OpenVPN";
 
 					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && stristr($pconfig['interface'], $iface)) echo "selected"; ?>><?=gettext($ifacename);?></option>

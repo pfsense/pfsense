@@ -173,10 +173,8 @@ function internalca_change() {
 			$tab_array = array();
 			$tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
 			$tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
-			$tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
-			$tab_array[] = array(gettext("Certificates"), false, "system_usermanager_addcert.php");
-			$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 			$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+			$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 			display_top_tabs($tab_array);
 		?>
 		</td>

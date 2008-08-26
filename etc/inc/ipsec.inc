@@ -88,6 +88,29 @@ $p2_pfskeygroups = array(
 	'5' => '5');
 
 /*
+ * ikeid management functions
+ */
+
+function ipsec_ikeid_used($ikeid) {
+	global $config;
+
+	foreach ($config['ipsec']['phase1'] as $ph1ent)
+		if( $ikeid == $ph1ent['ikeid'] )
+			return true;
+
+	return false;
+}
+
+function ipsec_ikeid_next() {
+
+	$ikeid = 1;
+	while(ipsec_ikeid_used($ikeid))
+		$ikeid++;
+
+	return $ikeid;
+}
+
+/*
  * Return phase1 local address
  */
 function ipsec_get_phase1_src(& $ph1ent) {

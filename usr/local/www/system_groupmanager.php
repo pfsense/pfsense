@@ -225,10 +225,8 @@ function presubmit() {
 				$tab_array = array();
 				$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 				$tab_array[] = array(gettext("Groups"), true, "system_groupmanager.php");
-				$tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
-				$tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
-				$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 				$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+				$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 				display_top_tabs($tab_array);
 			?>
 			</ul>
@@ -239,19 +237,6 @@ function presubmit() {
 
 			<?php if($_GET['act']=="new" || $_GET['act']=="edit"): ?>
 
-			<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-			<script type="text/javascript">
-				function checkall() {
-					var el = document.getElementById('iform');
-					for (var i = 0; i < el.elements.length; i++)
-						el.elements[i].checked = true;
-				}
-				function checknone() {
-					var el = document.getElementById('iform');
-					for (var i = 0; i < el.elements.length; i++)
-						el.elements[i].checked = false;
-				}
-			</script>
 			<form action="system_groupmanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
                     <?php

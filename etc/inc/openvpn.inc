@@ -309,8 +309,11 @@ EOD;
 			$conf .= "push \"route $ip $mask\"\n";
 		}
 
-		// The port we'll listen at
+		// The local port to listen on
 		$conf .= "lport {$settings['local_port']}\n";
+
+		// The management port to listen on
+		$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
 
 		if (!empty($settings['maxclients'])) 
 			$conf .= "max-clients {$settings['maxclients']}\n";

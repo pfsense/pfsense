@@ -26,6 +26,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/* DISABLE_PHP_LINT_CHECKING */
 
 ##|+PRIV
 ##|*IDENT=page-status-openvpn
@@ -145,11 +146,11 @@ echo $buff;
 				<?=$conn['bytes_recv'];?>
 			</td>
 		</tr>
+
+		<?php endforeach; ?>
 		<tr>
 			<td colspan="6" class="list" height="12"></td>
 		</tr>
-
-		<?php endforeach; ?>
 
 	</table>
 

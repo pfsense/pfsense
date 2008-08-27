@@ -59,7 +59,7 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 
-	openvpn_delete('client', $id);
+	openvpn_delete('client', $a_client[$id]);
 	unset($a_client[$id]);
 	write_config();
 	$savemsg = gettext("Client successfully deleted")."<br/>";
@@ -106,8 +106,8 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (isset($id) && $a_server[$id])
-		$vpnid = $a_server[$id]['vpnid'];
+	if (isset($id) && $a_client[$id])
+		$vpnid = $a_client[$id]['vpnid'];
 	else
 		$vpnid = 0;
 
@@ -195,7 +195,7 @@ if ($_POST) {
 		else
 			$a_client[] = $client;
 
-		openvpn_resync('client', $id);
+		openvpn_resync('client', $client);
 		write_config();
 		
 		header("Location: vpn_openvpn_client.php");

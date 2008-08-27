@@ -59,7 +59,7 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 
-	openvpn_delete('server', $id);
+	openvpn_delete('server', $a_server[$id]);
 	unset($a_server[$id]);
 	write_config();
 	$savemsg = gettext("Server successfully deleted")."<br/>";
@@ -284,7 +284,7 @@ if ($_POST) {
 		else
 			$a_server[] = $server;
 
-		openvpn_resync('server', $id);
+		openvpn_resync('server', $server);
 		write_config();
 		
 		header("Location: vpn_openvpn_server.php");

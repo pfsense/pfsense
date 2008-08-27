@@ -34,6 +34,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 */
+/* DISABLE_PHP_LINT_CHECKING */
 
 /* include all configuration functions */
 require_once("functions.inc");
@@ -347,31 +348,30 @@ function get_vpns_list() {
 	/* build list of vpns */
 	$vpns = "";
 	$vpns_arr = array();
+
 	/* ipsec */
-	if ($config['ipsec']['phase2']) {
-		foreach ($config['ipsec']['phase2'] as $ph2ent) {
-			if(is_subnet($ph2ent['remote-subnet'])) {
-				$vpns_arr[] = $ph2ent['remote-subnet'];
-			}
-		}
-	}
+	if ($config['ipsec']['enable'])
+		if (is_array($config['ipsec']['phase2']))
+			foreach ($config['ipsec']['phase2'] as $ph2ent)
+				if (is_subnet($ph2ent['remote-subnet']))
+					$vpns_arr[] = $ph2ent['remote-subnet'];
+
 	/* openvpn */
-	foreach (array('client', 'server') as $type) {
-		foreach ($config['openvpn']["openvpn-$type"] as & $settings) {
-			if (!is_array($settings))
-				continue;
-			if(is_subnet($settings['remote-subnet']))
-				$vpns_arr[] = $tunnel['remote_network'];
-		}
-	}
+	foreach (array('client', 'server') as $type)
+		if (is_array($$config['openvpn']["openvpn-$type"]))
+			foreach ($config['openvpn']["openvpn-$type"] as & $settings)
+				if (is_array($settings))
+					if(is_subnet($settings['remote-subnet']))
+						$vpns_arr[] = $tunnel['remote_network'];
+
 	/* pppoe */
-	if ($config['pppoe']['remoteip']) {
-		if(is_subnet($tunnel['remote-subnet'])) {
+	if ($config['pppoe']['remoteip'])
+		if(is_subnet($tunnel['remote-subnet']))
 			$vpns_arr[] = $config['pppoe']['remoteip'] ."/". $config['pppoe']['pppoe_subnet'];
-		}
-	}
+
 	if(!empty($vpns_arr))
 		$vpns = implode(" ", $vpns_arr);
+
 	return $vpns;
 }
 
@@ -472,15 +472,19 @@ function generate_optcfg_array()
 	}
 
 	/* add openvpn interfaces */
-	if  ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client']) {
+	if ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client']) {
 
-		$ovpnifs = array( "ovpns1");
-		foreach ($config['openvpn']['openvpn-server'] as & $server)
-			if (!$server['disable'])
-				$ovpnifs[] = "ovpns".$server['vpnid'];
-		foreach ($config['openvpn']['openvpn-client'] as & $client)
-			if (!$client['disable'])
-				$ovpnifs[] = "ovpnc".$client['vpnid'];
+		$ovpnifs = array();
+
+		if (is_array($config['openvpn']['openvpn-server']))
+			foreach ($config['openvpn']['openvpn-server'] as & $server)
+				if (!$server['disable'])
+					$ovpnifs[] = "ovpns".$server['vpnid'];
+
+		if (is_array($config['openvpn']['openvpn-client']))
+			foreach ($config['openvpn']['openvpn-client'] as & $client)
+				if (!$client['disable'])
+					$ovpnifs[] = "ovpnc".$client['vpnid'];
 
 		if (count($ovpnifs)) {
 			$oic = array();

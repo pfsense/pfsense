@@ -56,12 +56,12 @@ function openvpn_vpnid_used($vpnid) {
 	global $config;
 
 	if (is_array($config['openvpn']['openvpn-server']))
-		foreach ($config['openvpn']['openvpn-server'] as $id => & $settings)
+		foreach ($config['openvpn']['openvpn-server'] as & $settings)
 			if ($vpnid == $settings['vpnid'])
 				return true;
 
 	if (is_array($config['openvpn']['openvpn-client']))
-		foreach ($config['openvpn']['openvpn-client'] as $id => & $settings)
+		foreach ($config['openvpn']['openvpn-client'] as & $settings)
 			if ($vpnid == $settings['vpnid'])
 				return true;
 
@@ -81,13 +81,13 @@ function openvpn_port_used($prot, $port) {
 	global $config;
 
 	if (is_array($config['openvpn']['openvpn-server']))
-		foreach ($config['openvpn']['openvpn-server'] as $id => & $settings)
+		foreach ($config['openvpn']['openvpn-server'] as & $settings)
 			if ($port == $settings['local_port'] &&
 				$prot == $settings['protocol'])
 				return $settings['vpnid'];
 
 	if (is_array($config['openvpn']['openvpn-client']))
-		foreach ($config['openvpn']['openvpn-client'] as $id => & $settings)
+		foreach ($config['openvpn']['openvpn-client'] as & $settings)
 			if ($port == $settings['local_port'] &&
 				$prot == $settings['protocol'])
 				return $settings['vpnid'];
@@ -206,10 +206,8 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive) {
 	$conf .= "{$directive} {$fpath}\n";
 }
 
-function openvpn_reconfigure($mode, $id) {
+function openvpn_reconfigure($mode,& $settings) {
 	global $g, $config;
-
-	$settings = $config['openvpn']["openvpn-$mode"][$id];
 
 	if (empty($settings))
 		return;
@@ -224,20 +222,25 @@ function openvpn_reconfigure($mode, $id) {
 
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
-	$tunname = "tun{$vpnid}";
 
+	$tunname = "tun{$vpnid}";
 	if ($mode == "server")
 		$devname = "ovpns{$vpnid}";
 	else
 		$devname = "ovpnc{$vpnid}";
 
-	if (!file_exists("/dev/{$tunname}"))
-		$tunname = exec("/sbin/ifconfig {$tunname} create");
+	/* is our device already configured */
+	if (mwexec("/sbin/ifconfig {$devname}")) {
 
-	mwexec("/sbin/ifconfig {$tunname} name {$devname}");
-	mwexec("/sbin/ifconfig {$devname} group openvpn");
+		/* create the tap device if required */
+		if (!file_exists("/dev/{$tunname}"))
+			exec("/sbin/ifconfig {$tunname} create");
 
-	$pidfile = $g['varrun_path'] . "/openvpn_{$mode_id}.pid";
+		/* rename the device */
+		mwexec("/sbin/ifconfig {$tunname} name {$devname}");
+	}
+
+	$pfile = $g['varrun_path'] . "/openvpn_{$mode_id}.pid";
 	$proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
 	$cipher = $settings['crypto'];
 
@@ -246,14 +249,14 @@ function openvpn_reconfigure($mode, $id) {
 		$interface = 'WAN';
 
 	$iface = convert_friendly_interface_to_real_interface_name($interface);
-	$lines = explode(' ', trim(shell_exec("ifconfig $iface | grep inet | grep -v inet6")));
+	$lines = explode(' ', trim(shell_exec("ifconfig {$iface} | grep inet | grep -v inet6")));
 	$iface_ip = $lines[1];
 
 $conf .= <<<EOD
 dev {$devname}
 dev-type tun
 dev-node /dev/{$tunname}
-writepid $pidfile
+writepid {$pfile}
 #user nobody
 #group nobody
 daemon
@@ -403,10 +406,9 @@ EOD;
 	chgrp($fpath, 'nobody');
 }
 
-function openvpn_restart($mode, $id) {
+function openvpn_restart($mode, & $settings) {
 	global $g, $config;
 
-	$settings = $config['openvpn']["openvpn-$mode"][$id];
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
@@ -422,22 +424,33 @@ function openvpn_restart($mode, $id) {
 	touch("{$g['tmp_path']}/filter_dirty");
 }
 
-function openvpn_delete($mode, $id) {
+function openvpn_delete($mode, & $settings) {
 	global $g, $config;
 
-	$settings = $config['openvpn']["openvpn-$mode"][$id];
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
-	$ps = $g['varetc_path']."/openvpn_{$mode_id}.conf";
-	$ps_id = `ps awux | grep $ps | awk '{ print \$2 }'`;
-	killbypid($ps_id);
+    $tunname = "tun{$vpnid}";
+    if ($mode == "server")
+        $devname = "ovpns{$vpnid}";
+    else
+        $devname = "ovpnc{$vpnid}";
+
+	/* kill the process */
+	$pfile = "{$g['varrun_path']}/openvpn_{$mode_id}.pid";
+	killbypid($pfile);
+	unlink($pfile);
+
+	/* restore the original adapter name */
+	mwexec("/sbin/ifconfig {$devname} name {$tunname}");
+
+	/* remove the configuration files */
+	mwexec("/bin/rm {$g['varetc_path']}/openvpn/{$mode_id}.*");
 }
 
-function openvpn_resync_csc($id) {
+function openvpn_resync_csc(& $settings) {
 	global $g, $config;
 
-	$settings = $config['openvpn']['openvpn-csc'][$id];
 	$fpath = $g['varetc_path']."/openvpn_csc/".$settings['common_name'];
 
 	if ($settings['disable']) {
@@ -472,18 +485,17 @@ function openvpn_resync_csc($id) {
 	chgrp($fpath, 'nobody');
 }
 
-function openvpn_delete_csc($id) {
+function openvpn_delete_csc(& $settings) {
 	global $g, $config;
 
-	$settings = $config['openvpn']['openvpn-csc'][$id];
 	$fpath = $g['varetc_path']."/openvpn_csc/".$settings['common_name'];
 	unlink_if_exists($fpath);
 }
 
 // Resync the configuration and restart the VPN
-function openvpn_resync($mode, $id) {
-	openvpn_reconfigure($mode, $id);
-	openvpn_restart($mode, $id);
+function openvpn_resync($mode, & $settings) {
+	openvpn_reconfigure($mode, $settings);
+	openvpn_restart($mode, $settings);
 }
 
 // Resync and restart all VPNs
@@ -509,16 +521,16 @@ function openvpn_resync_all() {
 	chgrp($path_csc, 'nobody');
 
 	if (is_array($config['openvpn']['openvpn-server']))
-		foreach ($config['openvpn']['openvpn-server'] as $id => & $settings)
-			openvpn_resync('server', $id);
+		foreach ($config['openvpn']['openvpn-server'] as & $settings)
+			openvpn_resync('server', $settings);
 
 	if (is_array($config['openvpn']['openvpn-client']))
-		foreach ($config['openvpn']['openvpn-client'] as $id => & $settings)
-			openvpn_resync('client', $id);
+		foreach ($config['openvpn']['openvpn-client'] as & $settings)
+			openvpn_resync('client', $settings);
 
 	if (is_array($config['openvpn']['openvpn-csc']))
-		foreach ($config['openvpn']['openvpn-csc'] as $id => & $settings)
-			openvpn_resync_csc($id);
+		foreach ($config['openvpn']['openvpn-csc'] as & $settings)
+			openvpn_resync_csc($settings);
 
 	/* give speedy machines time to settle */
 	sleep(5);

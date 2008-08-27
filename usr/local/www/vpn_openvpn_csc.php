@@ -158,8 +158,8 @@ if ($_POST) {
 				$input_errors[] = "The field 'NetBIOS Data Distribution Server #1' must contain a valid IP address";
 	}
 
-	$reqfields[] = 'common_name';
-	$reqfieldsn[] = 'Common name';
+	$reqdfields[] = 'common_name';
+	$reqdfieldsn[] = 'Common name';
 
     do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

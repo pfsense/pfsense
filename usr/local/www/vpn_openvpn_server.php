@@ -206,12 +206,15 @@ if ($_POST) {
 		$input_errors[] = "The field 'Concurrent connections' must be numeric.";
 
 	if ($pconfig['auth_method'] == 'shared_key') {
-		$reqfields[] = 'shared_key';
-		$reqfieldsn[] = 'Shared key';
+		$reqdfields = array('shared_key');
+		$reqfieldsn = array('Shared key');
     } else {
-		$reqfields[] = explode(" ", "caref certref");
-		$reqfieldsn[] = explode(",", "Certificate Authority,Certificate");;
+		$reqdfields = explode(" ", "caref certref");
+		$reqdfieldsn = explode(",", "Certificate Authority,Certificate");;
 	}
+
+	$reqdfields[] = 'tunnel_network';
+	$reqdfieldsn[] = 'Tunnel network';
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	

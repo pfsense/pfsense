@@ -118,13 +118,51 @@ class SendMonitor extends Monitor {
 	}
 }
 
+function echo_lbaction($action) {
+  global $config;
+  
+  // Index actions by name
+  $actions_a = array();
+  for ($i=0; isset($config['load_balancer']['lbaction'][$i]); $i++)
+		$actions_a[$config['load_balancer']['lbaction'][$i]['name']] = $config['load_balancer']['lbaction'][$i];
 
+  $ret = "";
+  $ret .=  "{$actions_a[$action]['direction']} {$actions_a[$action]['type']} {$actions_a[$action]['action']}";
+  switch($actions_a[$action]['action']) {
+    case 'append': {
+      $ret .= " \"{$actions_a[$action]['options']['value']}\" to \"{$actions_a[$action]['options']['akey']}\"";
+      break;
+    }
+    case 'change': {
+      $ret .= " \"{$actions_a[$action]['options']['akey']}\" to \"{$actions_a[$action]['options']['value']}\"";
+      break;
+    }
+    case 'expect': {
+      $ret .= " \"{$actions_a[$action]['options']['value']}\" from \"{$actions_a[$action]['options']['akey']}\"";
+      break;
+    }
+    case 'filter': {
+      $ret .= " \"{$actions_a[$action]['options']['value']}\" from \"{$actions_a[$action]['options']['akey']}\"";
+      break;
+    }
+    case 'hash': {
+      $ret .= " \"{$actions_a[$action]['options']['akey']}\"";
+      break;
+    }
+    case 'log': {
+      $ret .= " \"{$actions_a[$action]['options']['akey']}\"";
+      break;
+    }
+  }
+  return $ret;
+}
 
 function relayd_configure() {
   global $config, $g;
 
   $vs_a = &$config['load_balancer']['virtual_server'];
   $pool_a = &$config['load_balancer']['lbpool'];
+  $protocol_a = &$config['load_balancer']['lbprotocol'];
 
   $check_a = array();
 
@@ -170,16 +208,42 @@ function relayd_configure() {
       }
     }
   }
-
+  if(is_array($protocol_a)) {
+    for ($i = 0; isset($protocol_a[$i]); $i++) {
+      $conf .= "protocol \"{$protocol_a[$i]['name']}\" {\n";
+      if(is_array($protocol_a[$i]['lbaction'])) {
+        for ($a = 0; isset($protocol_a[$i]['lbaction'][$a]); $a++) {
+          $conf .= "  " . echo_lbaction($protocol_a[$i]['lbaction'][$a]) . "\n";
+        }
+      }
+      $conf .= "}\n";
+    }
+  }
   if(is_array($vs_a)) {
     for ($i = 0; isset($vs_a[$i]); $i++) {
-      $conf .= "redirect \"{$vs_a[$i]['name']}\" {\n";
-      $conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
-      $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+      switch($vs_a[$i]['mode']) {
+        case 'redirect': {
+          $conf .= "redirect \"{$vs_a[$i]['name']}\" {\n";
+          $conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
+          $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
 
-      if (isset($vs_a[$i]['sitedown']) &&  $vs_a[$i]['sitedown'] != "")
-        $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
-      $conf .= "}\n";
+          if (isset($vs_a[$i]['sitedown']) &&  $vs_a[$i]['sitedown'] != "")
+            $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+          $conf .= "}\n";
+          break;
+        }
+        case 'relay': {
+          $conf .= "relay \"{$vs_a[$i]['name']}\" {\n";
+          $conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
+          $conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
+          $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+
+          if (isset($vs_a[$i]['sitedown']) &&  $vs_a[$i]['sitedown'] != "")
+            $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+          $conf .= "}\n";
+          break;
+        }
+      }
     }
   }
   fwrite($fd, $conf);

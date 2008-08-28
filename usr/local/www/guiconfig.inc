@@ -947,4 +947,32 @@ function print_rfc2616_select($tag, $current){
 	}
 }
 
+// Useful debugging function, much cleaner than print_r
+function echo_array($array,$return_me=false){
+    if(is_array($array) == false){
+        $return = "The provided variable is not an array.";
+    }else{
+        foreach($array as $name=>$value){
+            if(is_array($value)){
+                $return .= "";
+                $return .= "['<b>$name</b>'] {<div style='margin-left:10px;'>\n";
+                $return .= echo_array($value,true);
+                $return .= "</div>}";
+                $return .= "\n\n";
+            }else{
+                if(is_string($value)){
+                    $value = "\"$value\"";
+                }
+                $return .= "['<b>$name</b>'] = $value\n\n";
+            }
+        }
+    }
+    if($return_me == true){
+        return $return;
+    }else{
+        echo "<pre>".$return."</pre>";
+    }
+}
+
+
 ?>

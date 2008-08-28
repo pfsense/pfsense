@@ -252,7 +252,7 @@ echo "</select>";
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);"><input type="button" class="formbtn" value="Cancel" onclick="history.back()">
-				<?php if (isset($id) && $a_pool[$id]): ?>
+				<?php if (isset($id) && $a_pool[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">
 				<?php endif; ?>
 			</td>

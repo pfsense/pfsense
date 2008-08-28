@@ -33,7 +33,7 @@
 ##|*IDENT=page-services-loadbalancer-monitor-edit
 ##|*NAME=Services: Load Balancer: Monitor: Edit page
 ##|*DESCR=Allow access to the 'Services: Load Balancer: Monitor: Edit' page.
-##|*MATCH=load_balancer_monitor.php*
+##|*MATCH=load_balancer_monitor_edit.php*
 ##|-PRIV
 
 require("guiconfig.inc");

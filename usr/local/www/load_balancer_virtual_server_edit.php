@@ -49,12 +49,10 @@ else
 	$id = $_GET['id'];
 
 if (isset($id) && $a_vs[$id]) {
-	$pconfig['ipaddr'] = $a_vs[$id]['ipaddr'];
-	$pconfig['port'] = $a_vs[$id]['port'];
-	$pconfig['pool'] = $a_vs[$id]['pool'];
-	$pconfig['desc'] = $a_vs[$id]['desc'];
-	$pconfig['name'] = $a_vs[$id]['name'];
-	$pconfig['sitedown'] = $a_vs[$id]['sitedown'];
+  $pconfig = $a_vs[$id];
+} else {
+  // Sane defaults
+  $pconfig['mode'] = 'redirect';
 }
 
 $changedesc = "Load Balancer: Virtual Server: ";
@@ -65,8 +63,18 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "ipaddr name port");
-	$reqdfieldsn = explode(",", "IP Address, Name, Port");
+  switch($pconfig['mode']) {
+    case "redirect": {
+    	$reqdfields = explode(" ", "ipaddr name port mode");
+    	$reqdfieldsn = explode(",", "IP Address, Name, Port, Mode");
+    	break;
+    }
+    case "relay": {
+    	$reqdfields = explode(" ", "ipaddr name port mode relay_protocol");
+    	$reqdfieldsn = explode(",", "IP Address, Name, Port, Relay Protocol");
+      break;
+    }
+  }    
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -95,6 +103,8 @@ if ($_POST) {
 		update_if_changed("port", $vsent['port'], $_POST['port']);
 		update_if_changed("sitedown", $vsent['sitedown'], $_POST['sitedown']);
 		update_if_changed("ipaddr", $vsent['ipaddr'], $_POST['ipaddr']);
+		update_if_changed("mode", $vsent['mode'], $_POST['mode']);
+		update_if_changed("relay protocol", $vsent['relay_protocol'], $_POST['relay_protocol']);
 
 		if (isset($id) && $a_vs[$id])
 			$a_vs[$id] = $vsent;
@@ -119,11 +129,42 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+function updateRelay(m) {
+  switch (m) {
+    case "relay": {
+      $('relay_protocol').enable();
+      $('relay').appear();
+      break;
+    }
+    case "redirect": {
+      $('relay_protocol').disable();
+      $('relay').hide();
+      break;
+    }
+  }
+}
+
+document.observe("dom:loaded", function() {
+  // Setup some observers
+  $('redirect_mode').observe('click', function(){
+      updateRelay('redirect');
+  });
+  $('relay_mode').observe('click', function(){
+      updateRelay('relay');
+  });
+
+  // Go ahead and disable the relay stuff, we'll trigger
+  updateRelay("<?=$pconfig['mode'];?>");
+
+});
+
+</script>
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="load_balancer_virtual_server_edit.php" method="post" name="iform" id="iform">
-<script type="text/javascript" language="javascript" src="pool.js">
-</script>
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr align="left">
@@ -171,7 +212,7 @@ include("head.inc");
 		  <td width="22%" valign="top" class="vncellreq">Fall Back Pool</td>
                   <td width="78%" class="vtable" colspan="2">
                                 <select id="sitedown" name="sitedown">
-                                <option value=""<?="selected" ? $pconfig['sitedown'] == '' : ''?>>none</option>
+                                <option value=""<?=$pconfig['sitedown'] == '' ? ' selected' : ''?>>none</option>
             			<?php
             				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
             					$selected = "";
@@ -185,9 +226,35 @@ include("head.inc");
                   </td>
 		</tr>
                 <tr align="left">
+		  <td width="22%" valign="top" class="vncellreq">Mode</td>
+                  <td width="78%" class="vtable" colspan="2">
+                    <input id="redirect_mode" type="radio" name="mode" value="redirect"<?=$pconfig['mode'] == 'redirect' ? ' checked="checked"': ''?>> Redirect
+                    <input id="relay_mode" type="radio" name="mode" value="relay"<?=$pconfig['mode'] == 'relay' ? ' checked="checked"': ''?>> Relay
+                             
+                  <br>
+                  </td>
+		</tr>
+                <tr id="relay" align="left" style="display:none;">
+		  <td width="22%" valign="top" class="vncellreq">Relay Protocol</td>
+                  <td width="78%" class="vtable" colspan="2">
+                  <select id="relay_protocol" name="relay_protocol">
+                <?php
+            				for ($i = 0; isset($config['load_balancer']['lbprotocol'][$i]); $i++) {
+            					$selected = "";
+            					if ( $config['load_balancer']['lbprotocol'][$i]['name'] == $pconfig['lbprotocol'] )
+            						$selected = " SELECTED";
+            					echo "<option value=\"{$config['load_balancer']['lbprotocol'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbprotocol'][$i]['name']}</option>";
+            				}
+            			?>
+            			</select>
+                  <br>
+                  </td>
+		</tr>
+		
+                <tr align="left">
                   <td align="left" valign="bottom">
 			<input name="Submit" type="submit" class="formbtn" value="Submit"><input type="button" class="formbtn" value="Cancel" onclick="history.back()">
-			<?php if (isset($id) && $a_vs[$id]): ?>
+			<?php if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup'): ?>
 			<input name="id" type="hidden" value="<?=$id;?>">
 			<?php endif; ?>
 		  </td>

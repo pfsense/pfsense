@@ -38,15 +38,10 @@
 ##|*MATCH=interfaces_wan.php*
 ##|-PRIV
 
-unset($if);
-if ($_GET['if'])
-        $if = $_GET['if'];
-else if ($_POST['if'])
-        $if = $_POST['if'];
-
-if (!$if)
-        $if = "wan";
-
+if ($_REQUEST['if'])
+	$if = $_REQUEST['if'];
+else
+	$if = "wan";
 
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
@@ -542,6 +537,10 @@ n already exists.";
 	}
 }
 
+// Populate page descr if it does not exist.
+if($if == "wan" && !$wancfg['descr'])
+	$wancfg['descr'] = "WAN";
+	
 $pgtitle = array("Interfaces", $wancfg['descr']);
 $closehead = false;
 include("head.inc");

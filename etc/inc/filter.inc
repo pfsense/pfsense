@@ -350,11 +350,10 @@ function get_vpns_list() {
 	$vpns_arr = array();
 
 	/* ipsec */
-	if ($config['ipsec']['enable'])
-		if (is_array($config['ipsec']['phase2']))
-			foreach ($config['ipsec']['phase2'] as $ph2ent)
-				if (is_subnet($ph2ent['remote-subnet']))
-					$vpns_arr[] = $ph2ent['remote-subnet'];
+	if ($config['ipsec']['phase2']) 
+		foreach ($config['ipsec']['phase2'] as $ph2ent) 
+			if($ph2ent['remoteid']['address']) 
+				$vpns_arr[] = $ph2ent['remoteid']['address'] . "/" . $ph2ent['remoteid']['netbits'];
 
 	/* openvpn */
 	foreach (array('client', 'server') as $type)
@@ -2906,4 +2905,5 @@ function return_vpn_subnet($adr)
 	return " # error - {$adr['network']} ";
 
 }
+
 ?>

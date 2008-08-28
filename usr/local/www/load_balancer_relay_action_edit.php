@@ -392,7 +392,6 @@ function num_options() {
 
 
 document.observe("dom:loaded", function() {
-alert('fu');
   updateProtocol('<?=$pconfig['protocol']?>');  
   updateDirection('<?=$pconfig['direction']?>');  
   updateType('<?=$pconfig['type']?>');  

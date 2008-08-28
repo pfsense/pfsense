@@ -874,7 +874,7 @@ function filter_nat_rules_generate()
 		   they are most likely on a bridged interface */
 		if($int_ip and $vpns_list) {
 			$natrules .= "no rdr on $realif proto tcp from any to <vpns> port 21\n";
-			$natrules .= "no rdr on $realif proto udp from any to <vpns> port tftp\n";
+			$natrules .= "no rdr on $realif proto {tcp,udp} from any to <vpns> port tftp\n";
 			if($onetoone_list) {
 				$natrules .= "no rdr on $realif proto tcp from <onetoonelist> to any port 21\n";
 				$natrules .= "no rdr on $realif proto udp from <onetoonelist> to any port tftp\n";

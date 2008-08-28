@@ -81,17 +81,19 @@ include("head.inc");
 		<tr>
 			<td class="tabcont">
 <?php
-			if($status == false) {
-				$carp_enabled = false;
-				echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"Enable Carp\">";
-			} else {
-				$carp_enabled = true;
-				echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"Disable Carp\">";
-			}
-
 			if(is_array($config['virtualip']['vip'])) {
 				foreach($config['virtualip']['vip'] as $carp) {
-					if ($carp['mode'] == "carp") $carpcount++;
+					if ($carp['mode'] == "carp") 
+						$carpcount++;
+				}
+			}
+			if($carpcount > 0) {
+				if($status == false) {
+					$carp_enabled = false;
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"Enable Carp\">";
+				} else {
+					$carp_enabled = true;
+					echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"Disable Carp\">";
 				}
 			}
 ?>

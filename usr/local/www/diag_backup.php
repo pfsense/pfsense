@@ -92,125 +92,156 @@ if ($_POST) {
 		$ver2restore = $_POST["ver"];
 
 	if ($mode) {
+
 		if ($mode == "download") {
-			config_lock();
-			$fn = "config-" . $config['system']['hostname'] . "." .
-				$config['system']['domain'] . "-" . date("YmdHis") . ".xml";
-			if($options == "nopackages") {
-				exec("sed '/<installedpackages>/,/<\/installedpackages>/d' /conf/config.xml > /tmp/config.xml.nopkg");
-				$fs = filesize("{$g['tmp_path']}/config.xml.nopkg");
-				header("Content-Type: application/octet-stream");
-                        	header("Content-Disposition: attachment; filename=$fn");
-                        	header("Content-Length: $fs");
-				readfile("{$g['tmp_path']}/config.xml.nopkg");
-			} else {
-				if($_POST['backuparea'] <> "") {
-					/* user wishes to backup specific area of configuration */
-					$current_trafficshaper_section = backup_config_section($_POST['backuparea']);
-					/* generate aliases xml */
-					$fout = fopen("{$g['tmp_path']}/backup_section.txt","w");
-					fwrite($fout, $current_trafficshaper_section);
-					fclose($fout);
-					$fs = filesize($g['tmp_path'] . "/backup_section.txt");
-					header("Content-Type: application/octet-stream");
-					$fn = $_POST['backuparea'] . "-" . $fn;
-					header("Content-Disposition: attachment; filename=$fn");
-					header("Content-Length: $fs");
-					readfile($g['tmp_path'] . "/backup_section.txt");
-					unlink($g['tmp_path'] . "/backup_section.txt");
-				} else {
-					$fs = filesize($g['conf_path'] . "/config.xml");
-					header("Content-Type: application/octet-stream");
-					header("Content-Disposition: attachment; filename=$fn");
-					header("Content-Length: $fs");
-					readfile($g['conf_path'] . "/config.xml");
-				}
+
+			if ($_POST['encrypt']) {
+				if(!$_POST['encrypt_password'] || !$_POST['encrypt_passconf'])
+					$input_errors[] = "You must supply and confirm the password for encryption.";
+				if($_POST['encrypt_password'] != $_POST['encrypt_passconf'])
+					$input_errors[] = "The supplied 'Password' and 'Confirm' field values must match.";
 			}
-			config_unlock();
-			exit;
-		} else if ($mode == "restore") {
-			if (is_uploaded_file($_FILES['conffile']['tmp_name'])) {
-				$fd = fopen($_FILES['conffile']['tmp_name'], "r");
-				if(!$fd) {
-					log_error("Warning, could not open " . $_FILES['conffile']['tmp_name']);
-					return 1;
-				}
-				while(!feof($fd)) {
-					    $tmp .= fread($fd,49);
-				}
-				fclose($fd);
-				if(stristr($tmp, "m0n0wall") == true) {
-					log_error("Upgrading m0n0wall configuration to pfsense.");
-					/* m0n0wall was found in config.  convert it. */
-					$upgradedconfig = str_replace("m0n0wall", "pfsense", $tmp);
-					$fd = fopen($_FILES['conffile']['tmp_name'], "w");
-					fwrite($fd, $upgradedconfig);
-					fclose($fd);
-					$m0n0wall_upgrade = true;
-				}
-				if($_POST['restorearea'] <> "") {
-					/* restore a specific area of the configuration */
-					$rules = file_get_contents($_FILES['conffile']['tmp_name']);
-					if(stristr($rules, $_POST['restorearea']) == false) {
-						$input_errors[] = "You have selected to restore a area but we could not locate the correct xml tag.";
-					} else {
-						restore_config_section($_POST['restorearea'], $rules);
-						filter_configure();
-						$savemsg = "The configuration area has been restored.  You may need to reboot the firewall.";
-					}
+
+			if (!$input_errors) {
+
+				config_lock();
+
+				$host = "{$config['system']['hostname']}.{$config['system']['domain']}";
+				$name = "config-{$host}-".date("YmdHis").".xml";
+				$data = "";
+
+				if($options == "nopackages") {
+					$sfn = "/tmp/config.xml.nopkg";
+					exec("sed '/<installedpackages>/,/<\/installedpackages>/d' /conf/config.xml > {$sfn}");
+					$data = file_get_contents($sfn);
 				} else {
-					$rules = file_get_contents($_FILES['conffile']['tmp_name']);
-					if(stristr($rules, "pfsense") == false) {
-						$input_errors[] = "You have selected to restore the full configuration but we could not locate a pfsense tag.";
+					if(!$_POST['backuparea']) {
+						/* backup entire configuration */
+						$data = file_get_contents("{$g['conf_path']}/config.xml");
 					} else {
-						/* restore the entire configuration */
-						if (config_install($_FILES['conffile']['tmp_name']) == 0) {
-							/* this will be picked up by /index.php */
-							conf_mount_rw();
-							if($g['platform'] <> "cdrom")
-								touch("/needs_package_sync");
-							$reboot_needed = true;
-							$savemsg = "The configuration has been restored. The firewall is now rebooting.";
-							/* remove cache, we will force a config reboot */
-							if(file_exists("/tmp/config.cache"))
-								unlink("/tmp/config.cache");
-							$config = parse_config(true);
-							if($m0n0wall_upgrade == true) {
-								if($config['system']['gateway'] <> "")
-									$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
-								unset($config['shaper']);
-								/* optional if list */
-								$ifdescrs = get_configured_interface_list(true, true);
-								/* remove special characters from interface descriptions */
-								if(is_array($ifdescrs))
-									foreach($ifdescrs as $iface)
-										$config['interfaces'][$iface]['descr'] = remove_bad_chars($config['interfaces'][$iface]['descr']);
-								unlink_if_exists("/tmp/config.cache");
-								write_config();
-								conf_mount_ro();
-								$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense.<p>The firewall is now rebooting.";
-								$reboot_needed = true;
-							}
-							if(isset($config['captiveportal']['enable'])) {
-								/* for some reason ipfw doesn't init correctly except on bootup sequence */
-								$savemsg = "The configuration has been restored.<p>The firewall is now rebooting.";
-								$reboot_needed = true;
-							}
-							setup_serial_port();
-							if(is_interface_mismatch() == true) {
-								touch("/var/run/interface_mismatch_reboot_needed");
-								$reboot_needed = false;
-								header("Location: interfaces_assign.php");
-							}
+						/* backup specific area of configuration */
+						$data = backup_config_section($_POST['backuparea']);
+						$name = "{$_POST['backuparea']}-{$name}";
+					}
+				}
+
+				if ($_POST['encrypt']) {
+					$data = encrypt_data($data, $_POST['encrypt_password']);
+					tagfile_reformat($data, $data, "config.xml");
+				}
+
+				$size = strlen($data);
+				header("Content-Type: application/octet-stream");
+				header("Content-Disposition: attachment; filename={$name}");
+				header("Content-Length: $size");
+				echo $data;
+
+				config_unlock();
+				exit;
+			}
+		}
+
+		if ($mode == "restore") {
+
+			if ($_POST['decrypt']) {
+				if(!$_POST['decrypt_password'] || !$_POST['decrypt_passconf'])
+					$input_errors[] = "You must supply and confirm the password for decryption.";
+				if($_POST['decrypt_password'] != $_POST['decrypt_passconf'])
+					$input_errors[] = "The supplied 'Password' and 'Confirm' field values must match.";
+			}
+
+			if (!$input_errors) {
+
+				if (is_uploaded_file($_FILES['conffile']['tmp_name'])) {
+
+					/* read the file contents */
+					$data = file_get_contents($_FILES['conffile']['tmp_name']);
+					if(!$data) {
+						log_error("Warning, could not read file " . $_FILES['conffile']['tmp_name']);
+						return 1;
+					}
+
+					if ($_POST['decrypt']) {
+						if (!tagfile_deformat($data, $data, "config.xml")) {
+							$input_errors[] = "The uploaded file does not appear to contain an encrypted pfsense configuration.";
+							return 1;
+						}
+						$data = decrypt_data($data, $_POST['decrypt_password']);
+					}
+
+					if(stristr($data, "m0n0wall")) {
+						log_error("Upgrading m0n0wall configuration to pfsense.");
+						/* m0n0wall was found in config.  convert it. */
+						$data = str_replace("m0n0wall", "pfsense", $data);
+						$m0n0wall_upgrade = true;
+					}
+
+					if($_POST['restorearea']) {
+						/* restore a specific area of the configuration */
+						if(!stristr($data, $_POST['restorearea'])) {
+							$input_errors[] = "You have selected to restore a area but we could not locate the correct xml tag.";
 						} else {
-							$input_errors[] = "The configuration could not be restored.";
+							restore_config_section($_POST['restorearea'], $data);
+							filter_configure();
+							$savemsg = "The configuration area has been restored.  You may need to reboot the firewall.";
+						}
+					} else {
+						if(!stristr($data, "<pfsense>")) {
+							$input_errors[] = "You have selected to restore the full configuration but we could not locate a pfsense tag.";
+						} else {
+							/* restore the entire configuration */
+							file_put_contents($_FILES['conffile']['tmp_name'], $data);
+							if (config_install($_FILES['conffile']['tmp_name']) == 0) {
+								/* this will be picked up by /index.php */
+								conf_mount_rw();
+								if($g['platform'] <> "cdrom")
+									touch("/needs_package_sync");
+								$reboot_needed = true;
+								$savemsg = "The configuration has been restored. The firewall is now rebooting.";
+								/* remove cache, we will force a config reboot */
+								if(file_exists("/tmp/config.cache"))
+									unlink("/tmp/config.cache");
+								$config = parse_config(true);
+								if($m0n0wall_upgrade == true) {
+									if($config['system']['gateway'] <> "")
+										$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
+									unset($config['shaper']);
+									/* optional if list */
+									$ifdescrs = get_configured_interface_list(true, true);
+									/* remove special characters from interface descriptions */
+									if(is_array($ifdescrs))
+										foreach($ifdescrs as $iface)
+											$config['interfaces'][$iface]['descr'] = remove_bad_chars($config['interfaces'][$iface]['descr']);
+									unlink_if_exists("/tmp/config.cache");
+									write_config();
+									conf_mount_ro();
+									$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense.<p>The firewall is now rebooting.";
+									$reboot_needed = true;
+								}
+								if(isset($config['captiveportal']['enable'])) {
+									/* for some reason ipfw doesn't init correctly except on bootup sequence */
+									$savemsg = "The configuration has been restored.<p>The firewall is now rebooting.";
+									$reboot_needed = true;
+								}
+								setup_serial_port();
+								if(is_interface_mismatch() == true) {
+									touch("/var/run/interface_mismatch_reboot_needed");
+									$reboot_needed = false;
+									header("Location: interfaces_assign.php");
+								}
+							} else {
+								$input_errors[] = "The configuration could not be restored.";
+							}
 						}
 					}
+				} else {
+					$input_errors[] = "The configuration could not be restored (file upload error).";
 				}
-			} else {
-				$input_errors[] = "The configuration could not be restored (file upload error).";
 			}
-		} else if ($mode == "reinstallpackages") {
+		}
+
+		if ($mode == "reinstallpackages") {
+
 			header("Location: pkg_mgr_install.php?mode=reinstallall");
 			exit;
                 } else if ($mode == "restore_ver") {
@@ -242,7 +273,28 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="diag_backup.php" method="post" enctype="multipart/form-data">
+<script language="JavaScript">
+<!--
+
+function encrypt_change() {
+
+	if (!document.iform.encrypt.checked)
+		document.getElementById("encrypt_opts").style.display="none";
+	else
+		document.getElementById("encrypt_opts").style.display="";
+}
+
+function decrypt_change() {
+
+	if (!document.iform.decrypt.checked)
+		document.getElementById("decrypt_opts").style.display="none";
+	else
+		document.getElementById("decrypt_opts").style.display="";
+}
+
+//-->
+</script>
+<form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -267,7 +319,44 @@ include("head.inc");
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
 						<p>Click this button to download the system configuration in XML format.<br /><br /> Backup area: <?php spit_out_select_items("backuparea"); ?></p>
-						<p><input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.</p>
+						<table>
+							<tr>
+								<td>
+									<input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">
+								</td>
+								<td>
+									<span class="vexpl">Do not backup package information.</span>
+								</td>
+							</tr>
+						</table>
+						<table>
+							<tr>
+								<td>
+									<input name="encrypt" type="checkbox" class="formcheckbox" id="nopackages" onClick="encrypt_change()">
+								</td>
+								<td>
+									<span class="vexpl">Encrypt this configuration file.</span>
+								</td>
+							</tr>
+						</table>
+						<table id="encrypt_opts">
+							<tr>
+								<td>
+									<span class="vexpl">Password :</span>
+								</td>
+								<td>
+									<input name="encrypt_password" type="password" class="formfld pwd" size="20" value="" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="vexpl">confirm :</span>
+								</td>
+								<td>
+									<input name="encrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
+								</td>
+							</tr>
+						</table>
 						<p><input name="Submit" type="submit" class="formbtn" id="download" value="Download configuration"></p>
 					</td>
 				</tr>
@@ -282,6 +371,34 @@ include("head.inc");
 					<td width="78%" class="vtable">
 						Open a <?=$g['[product_name']?> configuration XML file and click the button below to restore the configuration. <br /><br /> Restore area: <?php spit_out_select_items("restorearea"); ?>
 						<p><input name="conffile" type="file" class="formfld unknown" id="conffile" size="40"></p>
+						<table>
+							<tr>
+								<td>
+									<input name="decrypt" type="checkbox" class="formcheckbox" id="nopackages" onClick="decrypt_change()">
+								</td>
+								<td>
+									<span class="vexpl">Configuration file is encrypted.</span>
+								</td>
+							</tr>
+						</table>
+						<table id="decrypt_opts">
+							<tr>
+								<td>
+									<span class="vexpl">Password :</span>
+								</td>
+								<td>
+									<input name="decrypt_password" type="password" class="formfld pwd" size="20" value="" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="vexpl">confirm :</span>
+								</td>
+								<td>
+									<input name="decrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
+								</td>
+							</tr>
+						</table>
 						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration"></p>
                       	<p><strong><span class="red">Note:</span></strong><br />The firewall may need a reboot after restoring the configuration.<br /></p>
 					</td>
@@ -307,6 +424,13 @@ include("head.inc");
 	</tr>
 </table>
 </form>
+
+<script language="JavaScript">
+<!--
+encrypt_change();
+decrypt_change();
+//-->
+</script>
 
 <?php include("fend.inc"); ?>
 </body>

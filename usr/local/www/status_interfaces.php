@@ -231,7 +231,8 @@ include("head.inc");
           	if(strstr($interrupt_total, "hci")) {
     	      	$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
 	          	$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $5 }'`;          	
-          	}	
+          	}
+			unset($interrupt_total); // XXX: FIX ME!  Need a regex and parse correct data 100% of the time.
 	?>
 	<?php if($interrupt_total): ?>
      <tr>

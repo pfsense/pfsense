@@ -93,14 +93,6 @@ include("head.inc");
 				foreach($config['virtualip']['vip'] as $carp) {
 					if ($carp['mode'] == "carp") $carpcount++;
 				}
-				if ($carpcount == 0) {
-					echo "</td></tr></table><center><br>Could not locate any defined CARP interfaces.";
-					echo "</center>";
-
-					include("fend.inc");
-					echo "</body></html>";
-					exit;
-				}
 			}
 ?>
 
@@ -112,6 +104,15 @@ include("head.inc");
 					<td class="listhdrr"><b><center>Status</center></b></td>
 				</tr>
 <?php
+				if ($carpcount == 0) {
+					echo "</td></tr></table></table></div><center><br>Could not locate any defined CARP interfaces.";
+					echo "</center>";
+
+					include("fend.inc");
+					echo "</body></html>";
+					exit;
+				}
+
 				if(is_array($config['virtualip']['vip'])) {
 					$carpint=0;
 					foreach($config['virtualip']['vip'] as $carp) {

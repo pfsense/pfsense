@@ -202,8 +202,8 @@ $wkports = array(
 $specialnets = array("wanip" => "WAN address", "lanip" => "LAN address", "lan" => "LAN net", "pptp" => "PPTP clients");
 
 $spiflist = get_configured_interface_with_descr(true, true);
-foreach ($spiflist as $if => $ifdesc) {
-	$specialnets[$if] = $ifdesc . " net";
+foreach ($spiflist as $ifgui => $ifdesc) {
+	$specialnets[$ifgui] = $ifdesc . " net";
 }
 
 $medias = array("auto" => "autoselect", "100full" => "100BASE-TX full-duplex",
@@ -513,14 +513,14 @@ function hosts_sort() {
 	usort($config['dnsmasq']['hosts'], "hostcmp");
 }
 
-function staticmaps_sort($if) {
+function staticmaps_sort($ifgui) {
 	global $g, $config;
 
 	function staticmapcmp($a, $b) {
 		return ipcmp($a['ipaddr'], $b['ipaddr']);
 	}
 
-	usort($config['dhcpd'][$if]['staticmap'], "staticmapcmp");
+	usort($config['dhcpd'][$ifgui]['staticmap'], "staticmapcmp");
 }
 
 function aliases_sort() {

@@ -350,10 +350,11 @@ function get_vpns_list() {
 	$vpns_arr = array();
 
 	/* ipsec */
-	if ($config['ipsec']['phase2']) 
-		foreach ($config['ipsec']['phase2'] as $ph2ent) 
-			if($ph2ent['remoteid']['address']) 
-				$vpns_arr[] = $ph2ent['remoteid']['address'] . "/" . $ph2ent['remoteid']['netbits'];
+	if (isset($config['ipsec']['enable']))
+		if (is_array($config['ipsec']['phase2']))
+			foreach ($config['ipsec']['phase2'] as $ph2ent)
+				if(!$ph2ent['mobile'])
+					$vpns_arr[] = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
 
 	/* openvpn */
 	foreach (array('client', 'server') as $type)

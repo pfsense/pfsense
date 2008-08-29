@@ -52,6 +52,18 @@ $openvpn_auth_methods = array(
 	'pki' => "Public Key Infrastructure",
 	'shared_key' => "Pre Shared Key");
 
+function openvpn_create_dhparams() {
+
+	$fp = popen("/usr/bin/openssl dhparam 1024", "r");
+	if (!$fp)
+		return false;
+
+	$rslt = stream_get_contents($fp);
+	pclose($fp);
+
+	return $rslt;
+}
+
 function openvpn_vpnid_used($vpnid) {
 	global $config;
 
@@ -505,23 +517,34 @@ function openvpn_resync($mode, & $settings) {
 function openvpn_resync_all() {
 	global $g, $config;
 
+	if (!is_array($config['openvpn']))
+		$config['openvpn'] = array();
+
 	$path_ovpn = $g['varetc_path']."/openvpn";
 	safe_mkdir($path_ovpn);
 
 	chown($path_ovpn, 'nobody');
 	chgrp($path_ovpn, 'nobody');
 
-	$path_ovdh = $g['varetc_path']."/openvpn/dh-parameters";
-	if (!file_exists($path_ovdh)) {
-		echo "Setting up OpenVPN environment ...\n";
-		exec("/usr/bin/openssl dhparam -out {$path_ovdh} 1024");
-	}
-
 	$path_csc = $g['varetc_path']."/openvpn_csc";
 	safe_mkdir($path_csc);
 
 	chown($path_csc, 'nobody');
 	chgrp($path_csc, 'nobody');
+
+	if (!$config['openvpn']['dh-parameters']) {
+		echo "Configuring OpenVPN Parameters ...\n";
+		$dh_parameters = openvpn_create_dhparams();
+		$dh_parameters = base64_encode($dh_parameters);
+		$config['openvpn']['dh-parameters'] = $dh_parameters;
+	}
+
+	$path_ovdh = $g['varetc_path']."/openvpn/dh-parameters";
+	if (!file_exists($path_ovdh)) {
+		$dh_parameters = $config['openvpn']['dh-parameters'];
+		$dh_parameters = base64_decode($dh_parameters);
+		file_put_contents($path_ovdh, $dh_parameters);
+	}
 
 	if (is_array($config['openvpn']['openvpn-server']))
 		foreach ($config['openvpn']['openvpn-server'] as & $settings)

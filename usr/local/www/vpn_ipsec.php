@@ -293,10 +293,8 @@ include("head.inc");
 								<?php
 									$phase2count=0;
 									foreach ($a_phase2 as $ph2ent) {
-										if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
-											$j++;
+										if ($ph2ent['ikeid'] != $ph1ent['ikeid']) 
 											continue;
-										}				
 										if (isset( $ph2ent['disabled']) || isset($ph1ent['disabled'])) 
 											continue;
 										$phase2count++;

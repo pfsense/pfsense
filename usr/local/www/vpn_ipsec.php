@@ -292,8 +292,15 @@ include("head.inc");
 							<div id="shph2but-<?=$i?>">
 								<?php
 									$phase2count=0;
-									foreach ($a_phase2 as $ph2ent) 
+									foreach ($a_phase2 as $ph2ent) {
+										if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
+											$j++;
+											continue;
+										}				
+										if (isset( $ph2ent['disabled']) || isset($ph1ent['disabled'])) 
+											continue;
 										$phase2count++;
+									}
 								?>								
 								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+"></input> - Show <?=$phase2count?> Phase-2 entries</a>
 							</div>

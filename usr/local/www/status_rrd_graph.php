@@ -161,6 +161,9 @@ include("head.inc");
 								/* Deduce a interface if possible and use the description */
 								$optionc = "$optionc[0]";
 								$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
+								if(empty($friendly)) {
+									$friendly = $optionc;
+								}
 								$search = array("-", ".rrd", $optionc);
 								$replace = array(" :: ", "", $friendly);
 								echo "<option value=\"$optionc\"";

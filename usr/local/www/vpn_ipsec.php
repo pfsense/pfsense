@@ -290,7 +290,12 @@ include("head.inc");
 					<tr>
 						<td class="listrborder" colspan="5">
 							<div id="shph2but-<?=$i?>">
-								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+"></input> - Show Phase 2</a>
+								<?php
+									$phase2count=0;
+									foreach ($a_phase2 as $ph2ent) 
+										$phase2count++;
+								?>								
+								<input  type="button" onClick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+"></input> - Show <?=$phase2count?> Phase-2 entries</a>
 							</div>
 							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none">
 								<tr>

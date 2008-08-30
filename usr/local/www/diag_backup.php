@@ -58,7 +58,7 @@ function check_and_returnif_section_exists($section) {
 	return false;
 }
 
-function spit_out_select_items($area) {
+function spit_out_select_items($area, $showall) {
 	global $config;
 		
 	$areas = array("aliases" => "Aliases", 
@@ -86,9 +86,12 @@ function spit_out_select_items($area) {
 	$select  = "<select name=\"{$area}\">\n";
 	$select .= "<option VALUE=\"\">ALL</option>";
 
-	foreach($areas as $area => $areaname)
-		if(check_and_returnif_section_exists($area) == true)
-			$select .= "<option value='{$area}'>{$areaname}</option>\n";
+	if($showall) 
+		$select .= "<option value='{$area}'>{$areaname}</option>\n";
+	else 
+		foreach($areas as $area => $areaname)
+			if(check_and_returnif_section_exists($area) == true)
+				$select .= "<option value='{$area}'>{$areaname}</option>\n";
 
 	$select .= "</select>\n";
 		
@@ -340,7 +343,7 @@ function decrypt_change() {
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						<p>Click this button to download the system configuration in XML format.<br /><br /> Backup area: <?php spit_out_select_items("backuparea"); ?></p>
+						<p>Click this button to download the system configuration in XML format.<br /><br /> Backup area: <?php spit_out_select_items("backuparea", false); ?></p>
 						<table>
 							<tr>
 								<td>
@@ -391,7 +394,7 @@ function decrypt_change() {
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						Open a <?=$g['[product_name']?> configuration XML file and click the button below to restore the configuration. <br /><br /> Restore area: <?php spit_out_select_items("restorearea"); ?>
+						Open a <?=$g['[product_name']?> configuration XML file and click the button below to restore the configuration. <br /><br /> Restore area: <?php spit_out_select_items("restorearea", true); ?>
 						<p><input name="conffile" type="file" class="formfld unknown" id="conffile" size="40"></p>
 						<table>
 							<tr>

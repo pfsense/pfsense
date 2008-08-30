@@ -215,6 +215,9 @@ function show_source_port_range() {
             <form action="interfaces_bridge_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
+					<td colspan="2" valign="top" class="listtopic">Bridge configuration</td>
+				</tr>
+				<tr>
                   <td width="22%" valign="top" class="vncellreq">Member interfaces</td>
                   <td width="78%" class="vtable">
 				  <select name="members[]" multiple="true" class="formselect" size="3">

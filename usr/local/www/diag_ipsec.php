@@ -108,7 +108,9 @@ $sad = ipsec_dump_sad();
 						</td>
 						<td class="listr"><?=htmlspecialchars($ph2ent['descr']);?></td>
 						<td class="listr">
-							<img src ="/themes/<?=$g['theme']?>/images/icons/icon_<?=$icon?>.gif">
+							<center>
+								<img src ="/themes/<?=$g['theme']?>/images/icons/icon_<?=$icon?>.gif">
+							</center>
 						</td>
 					</tr>
 					<?php

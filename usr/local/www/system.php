@@ -222,6 +222,9 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="system.php" method="post">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">System</td>
+				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Hostname</td>
                   <td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>">

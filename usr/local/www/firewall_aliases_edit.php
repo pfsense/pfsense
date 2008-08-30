@@ -398,6 +398,9 @@ EOD;
 <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
 <?php if(is_alias_inuse($pconfig['name']) == true): ?>
+	<tr>
+		<td colspan="2" valign="top" class="listtopic">Alias Edit</td>
+	</tr>
   <tr>
     <td valign="top" class="vncellreq">Name</td>
     <td class="vtable"> <input name="name" type="hidden" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />

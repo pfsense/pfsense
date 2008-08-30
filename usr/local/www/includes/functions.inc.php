@@ -5,8 +5,6 @@ if(Connection_Aborted()) {
 }
 
 require_once("config.inc");
-require_once('guiconfig.inc');
-
 
 
 function get_stats() {
@@ -32,6 +30,11 @@ function get_uptime() {
 	preg_match("/sec = (\d+)/", $boottime[0], $matches);
 	$boottime = $matches[1];
 	$uptime = time() - $boottime;
+
+	if(intval($boottime) == 0) 
+		return;
+	if(intval($uptime) == 0) 
+		return;
 
 	$updays = (int)($uptime / 86400);
 	$uptime %= 86400;
@@ -223,3 +226,4 @@ function get_interfacestatus(){
 	return $data;
 }
 
+?>

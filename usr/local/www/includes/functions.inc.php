@@ -144,3 +144,4 @@ function mem_usage()
 	return $memUsage;
 }
 
+?>

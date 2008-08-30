@@ -177,20 +177,6 @@
 		<!-- <harddiskstandby></harddiskstandby> -->
 	</system>
 	<interfaces>
-		<lan>
-			<if>sis0</if>
-			<ipaddr>192.168.1.1</ipaddr>
-			<subnet>24</subnet>
-			<media></media>
-			<mediaopt></mediaopt>
-			<bandwidth>100</bandwidth>
-			<bandwidthtype>Mb</bandwidthtype>
-			<!--
-			<wireless>
-				*see below (opt[n])*
-			</wireless>
-			-->
-		</lan>
 		<wan>
 			<if>sis1</if>
 			<mtu></mtu>
@@ -211,6 +197,20 @@
 			</wireless>
 			-->
 		</wan>
+		<lan>
+			<if>sis0</if>
+			<ipaddr>192.168.1.1</ipaddr>
+			<subnet>24</subnet>
+			<media></media>
+			<mediaopt></mediaopt>
+			<bandwidth>100</bandwidth>
+			<bandwidthtype>Mb</bandwidthtype>
+			<!--
+			<wireless>
+				*see below (opt[n])*
+			</wireless>
+			-->
+		</lan>
 		<!--
 		<opt[n]>
 			<enable/>

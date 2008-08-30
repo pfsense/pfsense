@@ -102,6 +102,9 @@ include("head.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 			<form action="diag_ping.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Ping</td>
+				</tr>
                 <tr>
 				  <td width="22%" valign="top" class="vncellreq">Host</td>
 				  <td width="78%" class="vtable"> 

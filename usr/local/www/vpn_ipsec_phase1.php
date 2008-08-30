@@ -434,6 +434,9 @@ function dpdchkbox_change() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_ipsec_phase1.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">General information</td>
+				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Disabled</td>
                   <td width="78%" class="vtable">

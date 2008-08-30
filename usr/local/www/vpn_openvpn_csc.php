@@ -282,6 +282,9 @@ function netbios_change() {
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
  	<tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">General information</td>
+		</tr>	
 		<td class="tabnavtbl">
 			<ul id="tabnav">
 			<?php 

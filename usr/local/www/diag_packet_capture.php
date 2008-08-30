@@ -123,6 +123,9 @@ include("head.inc"); ?>
           <td>
 			<form action="diag_packet_capture.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Packet capture</td>
+				</tr>	
                	<tr>
 				  <td width="17%" valign="top" class="vncellreq">Interface</td>
 				  <td width="83%" class="vtable">

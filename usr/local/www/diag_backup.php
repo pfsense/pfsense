@@ -51,25 +51,40 @@ function remove_bad_chars($string) {
 	return preg_replace('/[^a-z|_|0-9]/i','',$string);
 }
 
+function check_and_returnif_section_exists($section) {
+	global $config;
+	if(is_array($config[$section]))
+		return true;
+	return false;
+}
+
 function spit_out_select_items($area) {
-	$select = <<<EOD
-	<select name="{$area}">
-		<option VALUE="">ALL</option>
-		<option VALUE="aliases">Aliases</option>
-		<option VALUE="shaper">Traffic Shaper</option>
-		<option VALUE="filter">Firewall Rules</option>
-		<option VALUE="nat">NAT</option>
-		<option VALUE="pptpd">PPTP Server</option>
-		<option VALUE="ipsec">IPsec VPN</option>
-		<option VALUE="captiveportal">Captive Portal</option>
-		<option VALUE="installedpackages">Package Manager</option>
-		<option VALUE="interfaces">Interfaces</option>
-		<option VALUE="dhcpd">DHCP Server</option>
-		<option VALUE="syslog">Syslog</option>
-		<option VALUE="system">System</option>
-		<option VALUE="staticroutes">Static routes</option>
-	</select>
-EOD;
+	global $config;
+	
+	$areas = array("aliases" => "Aliases", 
+				   "shaper" => "Traffic Shaper",
+				   "filter" => "Firewall Rules",
+				   "nat" => "NAT",
+				   "pptpd" => "PPTP Server",
+				   "ipsec" => "IPSEC",
+				   "captiveportal" => "Captive Portal",
+				   "installedpackages" => "Package Manager",
+				   "interfaces" => "Interfaces",																							
+				   "dhcpd" => "DHCP Server",
+				   "syslog" => "Syslog",
+				   "system" => "System",
+				   "staticroutes" => "Static routes"									
+	);
+
+	$select .= "<select name=\"{$area}\">\n";
+	$select .= "<option VALUE=\"\">ALL</option>";
+
+	foreach($areas as $area => $areaname)
+		if(check_and_returnif_section_exists($area) == true)
+			$select .= "<option value='{$area}'>{$areaname}</option>\n";
+
+	$select .= "</select>\n";
+		
 	echo $select;
 
 }

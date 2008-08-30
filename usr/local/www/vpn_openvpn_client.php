@@ -241,9 +241,6 @@ function method_change() {
 		print_info_box($savemsg);
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td colspan="2" valign="top" class="listtopic">General information</td>
-	</tr>
  	<tr>
 		<td class="tabnavtbl">
 			<ul id="tabnav">
@@ -264,6 +261,9 @@ function method_change() {
 
 			<form action="vpn_openvpn_client.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">General information</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq">Disabled</td>
 						<td width="78%" class="vtable">

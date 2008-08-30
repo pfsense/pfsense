@@ -42,7 +42,7 @@ function listtags() {
 		"fieldname hash-algorithm-option gateway_item gateway_group gif gre ".
 		"group hosts member interface_array item key lagg lbaction lbpool ".
 		"lbprotocol member menu mobilekey monitor_type mount ntpserver onetoone ".
-		"openvpn-server openvpn-client openvpn-csc" .
+		"openvpn-server openvpn-client openvpn-csc " .
 		"option ppp package passthrumac phase1 phase2 priv proxyarpnet queue ".
 		"pages pipe route row rule schedule service servernat servers ".
 		"serversdisabled earlyshellcmd shellcmd staticmap subqueue timerange ".

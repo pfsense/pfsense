@@ -337,7 +337,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <tr> 
 	<td class="listlr" valign="middle"><strong><?=$ifdescr;?></strong></td>
 	  <td valign="middle" class="listr">
-		<select name="<?=$ifname;?>" class="formfld" id="<?=$ifname;?>">
+		<select name="<?=$ifname;?>" id="<?=$ifname;?>">
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
 		  <option value="<?=$portname;?>" <?php if ($portname == $iface['if']) echo "selected";?>> 
 		  <?php if ($portinfo['isvlan']) {

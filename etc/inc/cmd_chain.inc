@@ -48,6 +48,7 @@ Class CmdCHAIN {
 
 		var $cmd_chain_array = array();
 		var $is_debugging;
+		var $halt_on_errors = true;
 		
 		/* clear() erases the current cmdchain */
 		function clear() {
@@ -58,6 +59,16 @@ Class CmdCHAIN {
 		/* enables log_error() of each command we run */
 		function setdebug() {
 			$this->is_debugging = true;
+		}
+		
+		/* no halt execution of CmdCHAIN if there is a failure */
+		function nohaltonerror() {
+			$this->halt_on_errors = false;			
+		}
+
+		/* halts execution of CmdCHAIN if there is a failure */
+		function sethaltonerror() {
+			$this->halt_on_errors = true;			
 		}
 
 		/* adds a command to the CmdCHAIN */
@@ -90,18 +101,16 @@ Class CmdCHAIN {
 				}
 				// Execute command
 				$status = exec($command);
-				if(!$status and $this->ignore_return_text == false) {
+				if($this->ignore_return_text == true) 
+					continue;
+				if(intval($status) <> 0) {
 					log_error("{$cmd_title} failed with return code -> {$status}.  The command was {$command}");
-					return("{$cmd_title} failed with return code -> {$status}");
-				} else {
-					if($this->is_debugging == true) {
-						log_error("{$cmd_title} returned -> {$status}");
-					}
+					if($this->halt_on_errors == true) 
+						return("{$cmd_title} failed with return code -> {$status}.  The command was {$command}");
 				}
 			}
 			return;
 		}
-       
 }
 
 /* 

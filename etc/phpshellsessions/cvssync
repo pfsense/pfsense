@@ -137,7 +137,7 @@ exec("rm -f ${CODIR}/pfSense/etc/syslog.conf 2>/dev/null");
 
 echo "===> Installing new files...\n";
 
-exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)");
+exec("cd $CODIR/pfSense ; tar -cvpf - . | (cd / ; tar -Uvxpf -)");
 
 post_cvssync_commands();
 

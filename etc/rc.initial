@@ -75,9 +75,9 @@ echo "12)  pfSense PHP shell"
 echo "13)  Upgrade from console"
 SSHD=`netstat -an | grep "*.22" | wc -l`
 if [ "$SSHD" -gt 0 ]; then
-	echo "14)  Disable Secure Sheel (sshd)";
+	echo "14)  Disable Secure Shell (sshd)";
 else
-	echo "14)  Enable Secure Sheel (sshd)";
+	echo "14)  Enable Secure Shell (sshd)";
 fi
 
 for i in /var/db/pfi/capable_*; do

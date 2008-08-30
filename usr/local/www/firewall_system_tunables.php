@@ -36,7 +36,7 @@
 ##|-PRIV
 
 
-$pgtitle = array("Firewall","System","Tunables");
+$pgtitle = array("System","Tunables");
 
 require("guiconfig.inc");
 

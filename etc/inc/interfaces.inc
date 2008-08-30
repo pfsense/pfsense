@@ -636,14 +636,14 @@ function interfaces_carp_configure() {
 		unset($balanacing);
 		unset($pfsyncenabled);
 	}
-	$cmdchain->add("Allow CARP", "/sbin/sysctl net.inet.carp.allow=1", false);			
+	$cmdchain->add("Allow CARP", "/sbin/sysctl net.inet.carp.allow=1", true);			
 	if($balanacing) {
-		$cmdchain->add("Enable CARP ARP-balancing", "/sbin/sysctl net.inet.carp.arpbalance=1", false);		
-		$cmdchain->add("Disallow CARP preemption", "/sbin/sysctl net.inet.carp.preempt=0", false);
+		$cmdchain->add("Enable CARP ARP-balancing", "/sbin/sysctl net.inet.carp.arpbalance=1", true);
+		$cmdchain->add("Disallow CARP preemption", "/sbin/sysctl net.inet.carp.preempt=0", true);
 	} else {
-		$cmdchain->add("Enable CARP preemption", "/sbin/sysctl net.inet.carp.preempt=1", false);		
+		$cmdchain->add("Enable CARP preemption", "/sbin/sysctl net.inet.carp.preempt=1", true);		
 	}
-	$cmdchain->add("Enable CARP logging", "/sbin/sysctl net.inet.carp.log=2", false);
+	$cmdchain->add("Enable CARP logging", "/sbin/sysctl net.inet.carp.log=2", true);
 	$carp_sync_int = convert_friendly_interface_to_real_interface_name($pfsyncinterface);
 	if($g['booting']) {
 		/*    install rules to alllow pfsync to sync up during boot
@@ -667,10 +667,10 @@ function interfaces_carp_configure() {
 	//$fd = fopen("/tmp/carp.sh", "w");
 	$viparr = &$config['virtualip']['vip'];
 	if($config['virtualip']['vip']) {
-		$cmdchain->add("Allow CARP.", "/sbin/sysctl net.inet.carp.allow=1", false);				
+		$cmdchain->add("Allow CARP.", "/sbin/sysctl net.inet.carp.allow=1", true);				
 	} else {
 		$viparr = array();
-		$cmdchain->add("Disallow CARP.", "/sbin/sysctl net.inet.carp.allow=0", false);		
+		$cmdchain->add("Disallow CARP.", "/sbin/sysctl net.inet.carp.allow=0", true);		
 	}
 	if(!$viparr and $config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
 		/* no vips exist but we need to bring up carpdev... */

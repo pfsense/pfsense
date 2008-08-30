@@ -77,7 +77,7 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	fwrite($fd, $content);
 	fclose($fd);
 	$edit_area="";
-	$savemsg = "Saved text to " . $_POST['savetopath'];
+	$savemsg = $_POST['savetopath'] . " has been updated.";
 	if($_POST['savetopath'] == "/cf/conf/config.xml")
 		unlink_if_exists("/tmp/config.cache");
 	conf_mount_ro();

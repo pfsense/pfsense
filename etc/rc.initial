@@ -73,7 +73,13 @@ echo "10)  Filter Logs"
 echo "11)  Restart webConfigurator"
 echo "12)  pfSense PHP shell"
 echo "13)  Upgrade from console"
-echo "14)  Enable/Disable SSHD"
+SSHD=`netstat -an | grep "*.22" | wc -l`
+if [ "$SSHD" -gt 0 ]; then
+	echo "14)  Disable Secure Sheel (sshd)";
+else
+	echo "14)  Enable Secure Sheel (sshd)";
+fi
+
 for i in /var/db/pfi/capable_*; do
     if [ -f $i -a ! -L /cf/conf ]; then
 	echo "98)  Move configuration file to removable device"

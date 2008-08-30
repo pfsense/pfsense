@@ -44,6 +44,7 @@ if (isset($config['system']['enablesshd'])) {
 		echo "\n\nDisabling SSHD...";
 		exec("/etc/sshd");
 		echo "\n";
+		exec("ps awux | grep '/usr/sbin/sshd' | grep -v grep | awk '{print $2}' | xargs kill")
 	}
 	
 } else {

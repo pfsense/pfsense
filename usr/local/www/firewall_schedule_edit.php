@@ -741,6 +741,9 @@ EOD;
 
 <form action="firewall_schedule_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Schedule information</td>
+		</tr>	
         <tr>
           <td>
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -955,7 +958,9 @@ EOD;
 				  <td width="85%" class="vtable">
                     </td>
 				</tr>
-
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Schedule repeat</td>
+				</tr>	
 				<tr>
 					<td width="15%" valign="top" class="vncellreq">Configured Ranges</td>
 					<td width="85%">

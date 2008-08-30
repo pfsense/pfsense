@@ -167,6 +167,9 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Edit gateway</td>
+				</tr>	
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">

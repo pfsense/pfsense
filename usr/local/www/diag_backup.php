@@ -60,7 +60,7 @@ function check_and_returnif_section_exists($section) {
 
 function spit_out_select_items($area) {
 	global $config;
-	
+		
 	$areas = array("aliases" => "Aliases", 
 				   "shaper" => "Traffic Shaper",
 				   "filter" => "Firewall Rules",
@@ -76,7 +76,7 @@ function spit_out_select_items($area) {
 				   "staticroutes" => "Static routes"									
 	);
 
-	$select .= "<select name=\"{$area}\">\n";
+	$select  = "<select name=\"{$area}\">\n";
 	$select .= "<option VALUE=\"\">ALL</option>";
 
 	foreach($areas as $area => $areaname)

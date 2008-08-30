@@ -123,6 +123,9 @@ include("head.inc");
             <form action="interfaces_vlan_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
+					<td colspan="2" valign="top" class="listtopic">VLAN configuration</td>
+				</tr>
+				<tr>
                   <td width="22%" valign="top" class="vncellreq">Parent interface</td>
                   <td width="78%" class="vtable">
                     <select name="if" class="formselect">

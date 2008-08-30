@@ -129,7 +129,7 @@ include("head.inc"); ?>
                	<tr>
 				  <td width="17%" valign="top" class="vncellreq">Interface</td>
 				  <td width="83%" class="vtable">
-				<select name="interface" class="formfld">
+				<select name="interface">
                      <?php $interfaces = get_configured_interface_with_descr();
 					  foreach ($interfaces as $iface => $ifacename): ?>
                       <option value="<?=$iface;?>" <?php if (!$config['interfaces'][$iface]['bridge'] && $selectedif == $iface) echo "selected"; ?>>

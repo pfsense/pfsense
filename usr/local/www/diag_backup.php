@@ -62,18 +62,25 @@ function spit_out_select_items($area) {
 	global $config;
 		
 	$areas = array("aliases" => "Aliases", 
-				   "shaper" => "Traffic Shaper",
-				   "filter" => "Firewall Rules",
-				   "nat" => "NAT",
-				   "pptpd" => "PPTP Server",
-				   "ipsec" => "IPSEC",
 				   "captiveportal" => "Captive Portal",
-				   "installedpackages" => "Package Manager",
-				   "interfaces" => "Interfaces",																							
+				   "dnsmasq" => "DNS Forwarder",				
 				   "dhcpd" => "DHCP Server",
+				   "filter" => "Firewall Rules",
+				   "interfaces" => "Interfaces",
+				   "ipsec" => "IPSEC",
+				   "nat" => "NAT",
+				   "ovpn" => "OpenVPN",
+				   "installedpackages" => "Package Manager",
+				   "pptpd" => "PPTP Server",
+				   "cron" => "Scheduled Tasks",				
 				   "syslog" => "Syslog",
 				   "system" => "System",
-				   "staticroutes" => "Static routes"									
+				   "staticroutes" => "Static routes",
+				   "sysctl" => "System tunables",
+				   "snmpd" => "SNMP Server",
+				   "shaper" => "Traffic Shaper",
+				   "vlans" => "VLANS",
+				   "wol" => "Wake on LAN"
 	);
 
 	$select  = "<select name=\"{$area}\">\n";

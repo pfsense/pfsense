@@ -1,220 +1,216 @@
 <?php
 /* $Id$ */
 /*
-    edit.php
-    Copyright (C) 2004, 2005 Scott Ullrich
-    All rights reserved.
+	edit.php
+	Copyright (C) 2004, 2005 Scott Ullrich
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
-##|+PRIV
-##|*IDENT=page-diagnostics-editfile
-##|*NAME=Diagnostics: Edit File page
-##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
-##|*MATCH=edit.php*
-##|-PRIV
-
-
+$pgtitle = array(gettext("Diagnostics"), gettext("Toolbox"), gettext("Edit file"));
 require("guiconfig.inc");
 
-if (($_GET['submit'] == "Load") && file_exists($_GET['savetopath'])) {
-	$fd = fopen($_GET['savetopath'], "r");
-	if ((filesize($_GET['savetopath']) != 0)) {  $content = fread($fd, filesize($_GET['savetopath'])); } else { $content = ""; }
-	fclose($fd);
-	$edit_area="";
-	$loadmsg = gettext("Loaded text from")." " . $_GET['savetopath'];
-	if(stristr($_GET['savetopath'], ".php") == true)
-		$language = "php";
-	else if(stristr($_GET['savetopath'], ".inc") == true)
-		$language = "php";
-	else if(stristr($_GET['savetopath'], ".sh") == true)
-		$language = "core";
-	else if(stristr($_GET['savetopath'], ".xml") == true)
-		$language = "xml";
-
-	$savetopath = $_GET['savetopath'];
-}
-
-if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
-	$fd = fopen($_POST['savetopath'], "r");
-	if ((filesize($_POST['savetopath']) != "0")) {  $content = fread($fd, filesize($_POST['savetopath'])); } else { $content = ""; }
-	fclose($fd);
-	$edit_area="";
-	$loadmsg = "Loaded text from " . $_POST['savetopath'];
-	if(stristr($_POST['savetopath'], ".php") == true)
-		$language = "php";
-	else if(stristr($_POST['savetopath'], ".inc") == true)
-		$language = "php";
-	else if(stristr($_POST['savetopath'], ".sh") == true)
-		$language = "core";
-	else if(stristr($_POST['savetopath'], ".xml") == true)
-		$language = "xml";
-	$savetopath = $_POST['savetopath'];
-} else if (($_POST['submit'] == "Save")) {
-	conf_mount_rw();
-	$content = ereg_replace("\r","",$_POST['code']) ;
-	$fd = fopen($_POST['savetopath'], "w");
-	fwrite($fd, $content);
-	fclose($fd);
-	$edit_area="";
-	$savemsg = $_POST['savetopath'] . " has been updated.";
-	if($_POST['savetopath'] == "/cf/conf/config.xml")
-		unlink_if_exists("/tmp/config.cache");
-	conf_mount_ro();
-	$savetopath = $_POST['savetopath'];
-} else if (($_POST['submit'] == "Load") && !file_exists($_POST['savetopath'])) {
-	$savemsg = "File not found " . $_POST['savetopath'];
-	$content = "";
-	$_POST['savetopath'] = "";
-}
-
-if($_POST['highlight'] <> "") {
-	if($_POST['highlight'] == "yes" or
-	  $_POST['highlight'] == "enabled") {
-		$highlight = "yes";
-	} else {
-		$highlight = "no";
+if($_REQUEST['action']) {
+	switch($_REQUEST['action']) {
+		case 'load':
+			if(strlen($_REQUEST['file']) < 1) {
+				echo "|5|No file name specified.|";
+			} elseif(is_dir($_REQUEST['file'])) {
+				echo "|4|Loading a directory is not supported.|";
+			} elseif(! is_file($_REQUEST['file'])) {
+				echo "|3|File does not exist or is not a regular file.|";
+			} else {
+				$data = file_get_contents($_REQUEST['file']);
+				if($data === false) {
+					echo "|1|Failed to read file.|";
+				} else {
+					echo "|0|{$_REQUEST['file']}|{$data}|";	
+				}
+			}
+			exit;
+		case 'save':
+			if(strlen($_REQUEST['file']) < 1) {
+				echo "|No file name specified.|";
+			} else {
+				$ret = file_put_contents($_REQUEST['file'], $_REQUEST['data']);
+				if($ret === false) {
+					echo "|Failed to write file.|";
+				} elseif($ret <> strlen($_REQUEST['data'])) {
+					echo "|Error while writing file.|";
+				} else {
+					echo "|File successfully saved.|";
+				}
+			}
+			exit;
 	}
-} else {
-	$highlight = "no";
+	exit;
 }
 
-if($_POST['rows'] <> "")
-	$rows = $_POST['rows'];
-else
-	$rows = 30;
-
-if($_POST['cols'] <> "")
-	$cols = $_POST['cols'];
-else
-	$cols = 66;
-?>
-<?php
-
-/*
-	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
-	Created by technologEase (http://www.technologEase.com).
-	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
-        (modified for {$g['product_name']} Edit/Save file by Scott Ullrich, Copyright 2004, 2005)
-*/
-
-// Function: is Blank
-// Returns true or false depending on blankness of argument.
-
-function isBlank( $arg ) { return ereg( "^\s*$", $arg ); }
-
-// Function: Puts
-// Put string, Ruby-style.
-
-function puts( $arg ) { echo "$arg\n"; }
-
-// "Constants".
-
-$Version    = '';
-$ScriptName = $HTTP_SERVER_VARS['SCRIPT_NAME'];
-
-// Get year.
-
-$arrDT   = localtime();
-$intYear = $arrDT[5] + 1900;
-
-$pgtitle = array("Diagnostics","Edit File");
-
-include("head.inc");
+require("head.inc");
+outputCSSFileInline("code-syntax-highlighter/SyntaxHighlighter.css");
+outputJavaScriptFileInline("javascript/scriptaculous/prototype.js");
+outputJavaScriptFileInline("javascript/scriptaculous/scriptaculous.js");
+outputJavaScriptFileInline("javascript/scriptaculous/effects.js");
+outputJavaScriptFileInline("filebrowser/browser.js");
 
 ?>
 
+<body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 
-<script language="Javascript">
-function sf() { document.forms[0].savetopath.focus(); }
-</script>
-<body onLoad="sf();">
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if ($loadmsg) echo "<p><b><div style=\"background:#eeeeee\" id=\"shapeme\">&nbsp;&nbsp;&nbsp;{$loadmsg}</div><br>"; ?>
-<form action="edit.php" method="POST">
+<script type="text/javascript">	
+	function loadFile() {
+		$("fileStatus").innerHTML = "Loading file ...";
+		Effect.Appear("fileStatusBox", { duration: 0.5 });
 
-<div id="shapeme">
-<table width="100%" cellpadding='9' cellspacing='9' bgcolor='#eeeeee'>
- <tr>
-  <td>
-	<center>
-	Save/Load from path: <input size="42" id="savetopath" class="formfld unknown" name="savetopath" value="<?php echo $savetopath; ?>">
-	<input name="submit" type="submit"  class="button" id="Load" value="Load"> <input name="submit" type="submit"  class="button" id="Save" value="Save">
-	<hr noshade>
-	<?php if($_POST['highlight'] == "no"): ?>
-	   Rows: <input size="3" name="rows" value="<? echo $rows; ?>">
-	   Cols: <input size="3" name="cols" value="<? echo $cols; ?>">
-	<?php endif; ?>
-  </td>
- </tr>
-</table>
+		new Ajax.Request(
+			"<?=$_SERVER['SCRIPT_NAME'];?>", {
+				method:     "post",
+				postBody:   "action=load&file=" + $("fbTarget").value,
+				onComplete: loadComplete
+			}
+		);
+	}
+
+	function loadComplete(req) {
+		Element.show("fileContent")
+		var values = req.responseText.split("|");
+		values.shift(); values.pop();
+
+		if(values.shift() == "0") {
+			var file = values.shift();
+			$("fileStatus").innerHTML = "File successfully loaded.";
+			$("fileContent").value    = values.join("|");
+
+			var lang = "none";
+				 if(file.indexOf(".php") > 0) lang = "php";
+			else if(file.indexOf(".inc") > 0) lang = "php";
+			else if(file.indexOf(".xml") > 0) lang = "xml";
+			else if(file.indexOf(".js" ) > 0) lang = "js";
+			else if(file.indexOf(".css") > 0) lang = "css";
+
+			if($("highlight").checked && lang != "none") {
+				$("fileContent").className = lang + ":showcolumns";
+				dp.SyntaxHighlighter.HighlightAll("fileContent", true, false);
+			}
+		}
+		else {
+			$("fileStatus").innerHTML = values[0];
+			$("fileContent").value = "";
+		}
+	}
+
+	function saveFile(file) {
+		$("fileStatus").innerHTML = "Saving file ...";
+		Effect.Appear("fileStatusBox", { duration: 0.5 });
+
+		new Ajax.Request(
+			"<?=$_SERVER['SCRIPT_NAME'];?>", {
+				method:     "post",
+				postBody:   "action=save&file=" + $("fbTarget").value +
+							"&data=" + escape($("fileContent").value),
+				onComplete: function(req) {
+					var values = req.responseText.split("|");
+					$("fileStatus").innerHTML = values[1];
+				}
+			}
+		);
+	}
+</script>
+
+<!-- file status box -->
+<div style="display:none; background:#eeeeee;" id="fileStatusBox">
+	<div class="vexpl" style="padding-left:15px;">
+		<strong id="fileStatus"></strong>
+	</div>
 </div>
 
-<br>
+<br />
 
-  <table width='100%'>
-    <tr>
-      <td valign="top" class="label">
-	<div style="background:#eeeeee" id="textareaitem">
-	&nbsp;<br>&nbsp;
-	<center>
-	<textarea style="width:98%" name="code" language="<?php echo $language; ?>" rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo htmlentities($content); ?></textarea><br>
-	&nbsp;
-	</div>
-        <p>
-    </td>
-    </tr>
-  </table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td class="tabcont" align="center">
+
+<!-- controls -->
+<table width="100%" cellpadding="9" cellspacing="9">
+	<tr>
+		<td align="center" class="list">
+			Save / Load from path:
+			<input type="text"   class="formfld file" id="fbTarget"         size="45" />
+			<input type="button" class="formbtn"      onclick="loadFile();" value="<?=gettext('Load');?>" />
+			<input type="button" class="formbtn"      id="fbOpen"           value="<?=gettext('Browse');?>" />
+			<input type="button" class="formbtn"      onclick="saveFile();" value="<?=gettext('Save');?>" />
+			<br />
+			<input type="checkbox" id="highlight" /><?=gettext("Enable syntax highlighting");?>
+		</td>
+	</tr>
+</table>
+
+<!-- filebrowser -->
+<div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;"></div>
+
+<!-- file viewer/editor -->
+<table width="100%">
+	<tr>
+		<td valign="top" class="label">
+			<div style="background:#eeeeee;" id="fileOutput">
+				<textarea id="fileContent" name="fileContent" style="width:100%;" rows="30" wrap="off"></textarea>
+			</div>
+		</td>
+	</tr>
+</table>
+
+		</td>
+	</tr>
+</table>
+
+<script type="text/javascript" src="/code-syntax-highlighter/shCore.js"></script>
+<script type="text/javascript" src="/code-syntax-highlighter/shBrushCss.js"></script>
+<script type="text/javascript" src="/code-syntax-highlighter/shBrushJScript.js"></script>
+<script type="text/javascript" src="/code-syntax-highlighter/shBrushPhp.js"></script>
+<script type="text/javascript" src="/code-syntax-highlighter/shBrushXml.js"></script>
+<script type="text/javascript">
+	Event.observe(
+		window, "load",
+		function() {
+			$("fbTarget").focus();
+
+			NiftyCheck();
+			Rounded("div#fileStatusBox", "all", "#ffffff", "#eeeeee", "smooth");
+		}
+	);
+
+	<?php if($_GET['action'] == "load"): ?>
+		Event.observe(
+			window, "load",
+			function() {
+				$("fbTarget").value = "<?=$_GET['path'];?>";
+				loadFile();
+			}
+		);
+	<?php endif; ?>
+</script>
+
 <?php include("fend.inc"); ?>
-</form>
 </body>
 </html>
-
-<script language="Javascript">
-sf();
-</script>
-
-</div>
-<script language="javascript" src="/code-syntax-highlighter/shCore.js"></script>
-<script language="javascript" src="/code-syntax-highlighter/shBrushCSharp.js"></script>
-<script language="javascript" src="/code-syntax-highlighter/shBrushPhp.js"></script>
-<script language="javascript" src="/code-syntax-highlighter/shBrushJScript.js"></script>
-<script language="javascript" src="/code-syntax-highlighter/shBrushVb.js"></script>
-<script language="javascript" src="/code-syntax-highlighter/shBrushSql.js"></script>
-<script language="javascript" src="/code-syntax-highlighter/shBrushXml.js"></script>
-<script language="javascript" src="/code-syntax-highlighter/shBrushDelphi.js"></script>
-<script language="javascript" src="/code-syntax-highlighter/shBrushPython.js"></script>
-
-<?php if($_POST['highlight'] == "yes") {
-	echo "<script language=\"javascript\">\n";
-	echo "dp.SyntaxHighlighter.HighlightAll('code', true, true);\n";
-	echo "</script>\n";
-}
-?>
-
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#shapeme","all","#FFF","#eeeeee","smooth");
-Rounded("div#textareaitem","all","#FFF","#eeeeee","smooth");
-</script>

@@ -118,7 +118,7 @@ foreach($files as $file):
 	<tr>
 		<td></td>
 		<td class="fbFile vexpl" id="<?=$fqpn;?>" align="left">
-			<div onClick="$('fbTarget').value='<?=$path?><?=$file?>'; loadFile(); new Effect.Fade($('fbBrowser'));">
+			<div onClick="$('fbTarget').value='<?=$path?>/<?=$file?>'; loadFile(); new Effect.Fade($('fbBrowser'));">
 				<img src="/filebrowser/images/file_<?=$type;?>.gif" alt="" title="">
 				&nbsp;&nbsp;&nbsp;<?=$file;?>
 			</div>

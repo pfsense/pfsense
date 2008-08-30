@@ -160,7 +160,14 @@ $shell_active = true;
 if($argc < 2) {
 	echo "Welcome to the pfSense php shell system\n";
 	echo "Written by Scott Ullrich (sullrich@gmail.com)\n";
-	echo "\nType \"help\" to show common usage scenarios.\n\n";
+	echo "\nType \"help\" to show common usage scenarios.\n";
+	echo "\nAvailable playback commands:\n     ";
+	$files = scandir("/etc/phpshellsessions/");
+	foreach($files as $file) {
+		if($file <> "." and $file <> "..")
+			echo $file . " ";
+	}
+	echo "\n\n";
 }
 
 $recording = false;
@@ -302,3 +309,4 @@ function playback_file($playback_file) {
 	playback_text($playback_file_contents);
 }
 
+?>

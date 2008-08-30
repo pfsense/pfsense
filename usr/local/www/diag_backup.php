@@ -86,8 +86,9 @@ function spit_out_select_items($area, $showall) {
 	$select  = "<select name=\"{$area}\">\n";
 	$select .= "<option VALUE=\"\">ALL</option>";
 
-	if($showall) 
-		$select .= "<option value='{$area}'>{$areaname}</option>\n";
+	if($showall == true) 
+		foreach($areas as $area => $areaname)
+			$select .= "<option value='{$area}'>{$areaname}</option>\n";
 	else 
 		foreach($areas as $area => $areaname)
 			if(check_and_returnif_section_exists($area) == true)

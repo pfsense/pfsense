@@ -1715,6 +1715,9 @@ endif;
 			$index = 1;
 			foreach($config['installedpackages']['openvpnserver']['config'] as $server) {
 
+				if (!is_array($server))
+					continue;
+
 				if ($server['auth_method'] == "pki") {
 
 					/* create ca entry */
@@ -1794,6 +1797,9 @@ endif;
 			$index = 1;
 			foreach($config['installedpackages']['openvpnclient']['config'] as $client) {
 
+				if (!is_array($client))
+					continue;
+
 				if ($client['auth_method'] == "pki") {
 
 					/* create ca entry */
@@ -1855,6 +1861,9 @@ endif;
 			$config['openvpn']['openvpn-csc'] = array();
 
 			foreach($config['installedpackages']['openvpncsc']['config'] as $csc) {
+
+				if (!is_array($csc))
+					continue;
 
 				/* modify configuration values */
 				$csc['common_name'] = $csc['commonname'];

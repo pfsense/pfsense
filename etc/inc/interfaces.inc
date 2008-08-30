@@ -611,11 +611,13 @@ function interfaces_carp_configure() {
 		$mt = microtime();
 		echo "interfaces_carp_configure() being called $mt\n";
 	}
+	// Prepare CmdCHAIN that will be used to execute commands.
+	$cmdchain = new CmdCHAIN();	
 	$carp_instances_counter = 0;
 	$total_carp_interfaces_defined = find_number_of_created_carp_interfaces();
 	/* destroy previous interfaces */
-	for($x=0; $x<$total_carp_interfaces_defined; $x++)
-		mwexec("/sbin/ifconfig carp{$x} delete");
+	for($x=0; $x<$total_carp_interfaces_defined; $x++) 
+		$cmdchain->add("Delete CARP interface", "/sbin/ifconfig carp{$x} delete", false);
 	if ($g['booting']) {
 		echo "Configuring CARP interfaces...";
 		mute_kernel_msgs();
@@ -634,14 +636,14 @@ function interfaces_carp_configure() {
 		unset($balanacing);
 		unset($pfsyncenabled);
 	}
-	mwexec("/sbin/sysctl net.inet.carp.allow=1");	
+	$cmdchain->add("Allow CARP", "/sbin/sysctl net.inet.carp.allow=1", false);			
 	if($balanacing) {
-		mwexec("/sbin/sysctl net.inet.carp.arpbalance=1");
-		mwexec("/sbin/sysctl net.inet.carp.preempt=0");
+		$cmdchain->add("Enable CARP ARP-balancing", "/sbin/sysctl net.inet.carp.arpbalance=1", false);		
+		$cmdchain->add("Disallow CARP preemption", "/sbin/sysctl net.inet.carp.preempt=0", false);
 	} else {
-		mwexec("/sbin/sysctl net.inet.carp.preempt=1");
+		$cmdchain->add("Enable CARP preemption", "/sbin/sysctl net.inet.carp.preempt=1", false);		
 	}
-	mwexec("/sbin/sysctl net.inet.carp.log=2"); // tell syslog about state changes
+	$cmdchain->add("Enable CARP logging", "/sbin/sysctl net.inet.carp.log=2", false);
 	$carp_sync_int = convert_friendly_interface_to_real_interface_name($pfsyncinterface);
 	if($g['booting']) {
 		/*    install rules to alllow pfsync to sync up during boot
@@ -650,25 +652,25 @@ function interfaces_carp_configure() {
 		exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
 		exec("echo pass quick proto pfsync all >> /tmp/rules.boot");
 		exec("echo pass out quick from any to any keep state >> /tmp/rules.boot");
-//		exec("/sbin/pfctl -f /tmp/rules.boot");
+		exec("/sbin/pfctl -f /tmp/rules.boot");
 	}
 	/* setup pfsync interface */
 	if($carp_sync_int and $pfsyncenabled) {
 		if($pfsyncpeerip) {
-			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} syncpeer {$pfsyncpeerip} up");
+			$cmdchain->add("Bring up pfsync0 syncpeer", "/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} syncpeer {$pfsyncpeerip} up", false);						
 		} else {
-			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up");
+			$cmdchain->add("Bring up pfsync0 syncdev", "/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up", false);			
 		}
 	} else {
-		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");
+		$cmdchain->add("Bring up pfsync0", "/sbin/ifconfig pfsync0 syncdev lo0 up", false);						
 	}
 	//$fd = fopen("/tmp/carp.sh", "w");
 	$viparr = &$config['virtualip']['vip'];
 	if($config['virtualip']['vip']) {
-		mwexec("/sbin/sysctl net.inet.carp.allow=1");
+		$cmdchain->add("Allow CARP.", "/sbin/sysctl net.inet.carp.allow=1", false);				
 	} else {
 		$viparr = array();
-		mwexec("/sbin/sysctl net.inet.carp.allow=0");
+		$cmdchain->add("Disallow CARP.", "/sbin/sysctl net.inet.carp.allow=0", false);		
 	}
 	if(!$viparr and $config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
 		/* no vips exist but we need to bring up carpdev... */
@@ -679,6 +681,14 @@ function interfaces_carp_configure() {
 		$viparr_temp['password'] = $config['system']['hostname'] . "pfS";
 		$viparr = $viparr_temp;
 	}
+	
+	if($debugging)
+		$cmdchain->setdebug(); // optional for verbose logging
+	$cmdchain->execute();
+	
+	// Reset CmdCHAIN
+	$cmdchain->clear();
+
 	if(is_array($viparr))
 	foreach ($viparr as $vip) {
 		$vip_password = $vip['password'];
@@ -704,34 +714,34 @@ function interfaces_carp_configure() {
 				continue;
 			}			
 			/* create the carp interface and setup */
-			mwexec("/sbin/ifconfig {$carpint} create");
+			$cmdchain->add("create CARP interface", "/sbin/ifconfig {$carpint} create", false);
 
 			/* invalidate interface cache */
 			get_interface_arr(true);
 			$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-			mwexec("/sbin/ifconfig {$carpint} " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password);
-			mwexec("/sbin/ifconfig {$carpint} up");
+			$cmdchain->add("config CARP interface", "/sbin/ifconfig {$carpint} " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password, false);
+			$cmdchain->add("bring CARP interface UP", "/sbin/ifconfig {$carpint} up", false);
 			$carp_instances_counter++;
-			usleep(10);
 			break;
 		case "carpdev-dhcp":
 			log_error("Found carpdev interface {$vip['interface']} on top of interface {$interface}");
 			if(!empty($interface)) {
-				mwexec("/sbin/ifconfig {$interface} up");
-				mwexec("/sbin/ifconfig {$carpint} create");
-				sleep(3);
-				mwexec("/sbin/ifconfig {$carpint} carpdev ". $interface . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password);
-				mwexec("/sbin/ifconfig {$carpint} up");
-				/*
-				 * XXX: BIG HACK but carpdev needs ip services active
-				 * 	before even starting something as dhclient.
-				 * 	I do not know if this is a feature or a bug
-				 * 	but better than track it make it work ;) .
-				 */
-				$fakeiptouse = "10.254.254." . ($carp_instances_counter+1);
-				mwexec("/sbin/ifconfig {$carpint} inet {$fakeiptouse}");
+				
+					$cmdchain->add("bring CARP parent interface UP", "/sbin/ifconfig {$interface} up", false);			
+					$cmdchain->add("create CARP interface", "/sbin/ifconfig {$carpint} create", false);
+					$cmdchain->add("bring CARP interface UP", "/sbin/ifconfig {$carpint} up", false);
+					$cmdchain->add("assign CARP CarpDEV directive", "/sbin/ifconfig {$carpint} carpdev ". $interface . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password, false);
+					$cmdchain->add("bring CARP interface UP", "/sbin/ifconfig {$carpint} up", false);
 
-				sleep(3);
+					/*
+					 * XXX: BIG HACK but carpdev needs ip services active
+					 * 	before even starting something as dhclient.
+					 * 	I do not know if this is a feature or a bug
+					 * 	but better than track it make it work ;) .
+					 */
+					//$fakeiptouse = "10.254.254." . ($carp_instances_counter+1);
+					//$cmdchain->add("CarpDEV hack", "/sbin/ifconfig {$carpint} inet {$fakeiptouse}", false);
+
         			/* generate dhclient_wan.conf */
         			$fd = fopen("{$g['varetc_path']}/dhclient_{$carpint}.conf", "w");
         			if ($fd) {
@@ -753,26 +763,28 @@ EOD;
         			fclose($fd);
 
         			/* fire up dhclient */
-        			mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$carpint}.conf {$carpint} >/tmp/{$carpint}_output >/tmp/{$carpint}_error_output");
+					$cmdchain->add("bring CARP dhclient UP", "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$carpint}.conf {$carpint} >/tmp/{$carpint}_output >/tmp/{$carpint}_error_output", false);
 				} else {
-                                        log_error("Error: cannot open dhclient_{$carpint}.conf in interfaces_carp_configure() for writing.\n");
-					mwexec("/sbin/dhclient -b {$carpint}");
+					log_error("Error: cannot open dhclient_{$carpint}.conf in interfaces_carp_configure() for writing.\n");
+					$cmdchain->add("bring CARP dhclient UP in background", "/sbin/dhclient -b {$carpint}", false);					
 				}
 
-
-        			$fout = fopen("/tmp/ifconfig_{$carpint}","w");
-        			fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$carpint}.conf {$carpint}");
-
-        			fclose($fout);
+        		$fout = fopen("/tmp/ifconfig_{$carpint}","w");
+        		fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$carpint}.conf {$carpint}");
+        		fclose($fout);
 
 			} else {
 				log_error("Could not determine CarpDEV parent interface for {$vip['descr']}.");
 			}
 			$carp_instances_counter++;
-			usleep(10);
 			break;
 		}
 	}
+
+	if($debugging)
+		$cmdchain->setdebug(); // optional for verbose logging
+	// Execute built up command chain.
+	$cmdchain->execute();	
 
 	if ($g['booting']) {
 		unmute_kernel_msgs();
@@ -782,6 +794,7 @@ EOD;
 	/* update cache */
 	if ($carp_instances_counter != find_number_of_created_carp_interfaces())
 		find_number_of_created_carp_interfaces(true);
+
 }
 
 function interfaces_ipalias_configure() {

@@ -284,7 +284,10 @@ include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-	  	<tr>
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Edit NAT entry</td>
+				</tr>	
+				<tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
 					<select name="interface" class="formselect">

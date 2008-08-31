@@ -57,8 +57,8 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 }
 
 /* add Bridge interfaces */
-if (is_array($config['bridges']['bridge']) && count($config['bridges']['bridge'])) {
-        foreach ($config['bridges']['bridge'] as $bridge) {
+if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+        foreach ($config['bridges']['bridged'] as $bridge) {
                 $portlist[$bridge['bridgeif']] = $bridge;
                 $portlist[$bridge['bridgeif']]['isbridge'] = true;
         }

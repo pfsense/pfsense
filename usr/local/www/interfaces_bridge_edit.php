@@ -123,6 +123,17 @@ if ($_POST) {
 			$input_errors[] = "{$ifdescr} interface path cost for STP needs to be an interger between 1 and 200000000.";
 		$i++;
 	}
+
+	if (!is_array($_POST['members']) || count($_POST['members'] < 2)
+		$input_errors[] = "You must select at least 2 member interfaces for a bridge.";
+
+	if (is_array($_POST['members'])) {
+		foreach($_POST['members'] as $ifmembers)
+			if (is_array($config['interfaces'][$ifmembers]['wireless']) &&
+				$config['interfaces'][$ifmembers]['wireless']['mode'] != "hostap")
+				$input_errors[] = "Bridging a wireless interface is only possible in hostap mode.";
+	}
+
 	if (!$input_errors) {
 		$bridge = array();
 		$bridge['members'] = implode(',', $_POST['members']);

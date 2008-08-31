@@ -86,11 +86,6 @@ function wireless_config_post() {
 		$reqdfieldsn = explode(",", "Mode,SSID");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-		if (!$input_errors) {
-			/* bridge check (hostap only!) */
-			if ($pconfig['bridge'] && ($pconfig['mode'] != "hostap"))
-				$input_errors[] = "Bridging a wireless interface is only possible in hostap mode.";
-		}
 	}
 
 	/* loop through keys and enforce size */

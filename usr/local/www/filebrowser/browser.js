@@ -12,6 +12,8 @@ Event.observe(
 );
 
 function fbBrowse(path) {
+	new Effect.Fade("fileContent");
+
 	if($("fbCurrentDir"))
 		$("fbCurrentDir").innerHTML = "Loading ...";
 
@@ -19,7 +21,7 @@ function fbBrowse(path) {
 		"/filebrowser/browser.php?path=" + encodeURI(path ? path : "/"),
 		{ method: "get", onComplete: fbComplete }
 	);
-	new Effect.Fade("fileContent");	
+	
 }
 
 function fbComplete(req) {

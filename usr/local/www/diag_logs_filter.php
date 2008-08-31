@@ -136,12 +136,7 @@ function conv_clog($logfile, $tail = 50) {
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];
 
-		$friendly_int = convert_real_interface_to_friendly_interface_name($log_split[4]);
-
-		$flent['interface'] 	=  strtoupper($friendly_int);
-
-		if($config['interfaces'][$friendly_int]['descr'] <> "")
-			$flent['interface'] = "{$config['interfaces'][$friendly_int]['descr']}";
+		$flent['interface'] = convert_real_interface_to_friendly_descr($log_split[4]);
 
 		$tmp = split("/", $log_split[2]);
 		$flent['rulenum'] = $tmp[0];
@@ -244,7 +239,7 @@ include("head.inc");
 			  <img border="0" src="<?=$img;?>" width="11" height="11" align="absmiddle">
 			  <?php if ($filterent['count']) echo $filterent['count'];?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['time']);?></td>
-			  <td class="listr" nowrap><?=htmlspecialchars(convert_real_interface_to_friendly_interface_name($filterent['interface']));?></td>
+			  <td class="listr" nowrap><?=htmlspecialchars($filterent['interface']);?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['src']);?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['dst']);?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['proto']);?></td>

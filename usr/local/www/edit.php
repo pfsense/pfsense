@@ -27,7 +27,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Toolbox"), gettext("Edit file"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
 require("guiconfig.inc");
 
 if($_REQUEST['action']) {

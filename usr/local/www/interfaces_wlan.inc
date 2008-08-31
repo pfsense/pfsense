@@ -216,13 +216,7 @@ function wireless_config_post() {
 	return $input_errors;
 }
 
-if($wancfg['if'])
-	$curif = $lancfg['if'];
-if($wancfg['if'])
-	$curif = $lancfg['if'];
-if($optcfg['if'])
-	$curif = $optcfg['if'];
-
+$curif = convert_friendly_interface_to_real_interface_name($if);
 $wl_modes = get_wireless_modes($curif);
 
 function wireless_config_print() {

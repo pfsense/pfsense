@@ -36,7 +36,7 @@ if(is_file($path))
 		<td class="fbHome" width="25px" align="left">
 			<img src="/filebrowser/images/icon_home.gif" alt="Home" title="Home" />
 		</td>
-		<td></td>
+		<td>&nbsp;<?=$path;?></td>
 		<td class="fbClose" align="right">
 			<img onClick="new Effect.Fade($('fbBrowser'));" border="0" src="/filebrowser/images/icon_cancel.gif" alt="Close" title="Close" />
 		</td>
@@ -49,7 +49,7 @@ if(is_file($path))
 if(is_dir($path)) {
 	list($dirs, $files) = get_content($path);
 ?>
-			<?=$path;?>
+			
 		</td>
 	</tr>
 <?php
@@ -73,7 +73,7 @@ foreach($dirs as $dir):
 		<td class="fbDir vexpl" id="<?=$realDir;?>" align="left">
 			<div onClick="$('fbTarget').value='<?=$realDir?>'; fbBrowse('<?=$realDir?>');">
 				<img src="/filebrowser/images/folder_generic.gif" />
-				&nbsp;&nbsp;&nbsp;<?=$dir;?>
+				&nbsp;<?=$dir;?>
 			</div>
 		</td>
 		<td></td>
@@ -120,7 +120,7 @@ foreach($files as $file):
 		<td class="fbFile vexpl" id="<?=$fqpn;?>" align="left">
 			<div onClick="$('fbTarget').value='<?=$path?>/<?=$file?>'; loadFile(); new Effect.Fade($('fbBrowser'));">
 				<img src="/filebrowser/images/file_<?=$type;?>.gif" alt="" title="">
-				&nbsp;&nbsp;&nbsp;<?=$file;?>
+				&nbsp;<?=$file;?>
 			</div>
 		</td>
 		<td align="right" class="vexpl">

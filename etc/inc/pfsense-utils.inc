@@ -1829,30 +1829,25 @@ function convert_friendly_interface_to_friendly_descr($interface) {
         global $config;
 
         switch ($interface) {
-        case "pptp":
-                $ifdesc = "PPTP";
-                break;
-        case "pppoe":
-                $ifdesc = "PPPoE";
-                break;
-        case "openvpn":
-                $ifdesc = "OpenVPN";
-                break;
-        case "enc0":
-                $ifdesc = "IPsec";
-                break;
-        /* XXX: dial in support?!
-        case "ppp":
-                $ifdesc = "PPP";
-                break;
-        */
+        	case "pptp":
+				$ifdesc = "PPTP";
+				break;
+       		case "pppoe":
+				$ifdesc = "PPPoE";
+				break;
+        	case "openvpn":
+				$ifdesc = "OpenVPN";
+				break;
+        	case "enc0":
+			case "ipsec":
+				$ifdesc = "IPsec";
+				break;
         default:
         	/* if list */
         	$ifdescrs = get_configured_interface_with_descr();
-
         	foreach ($ifdescrs as $if => $ifname) {
-                	if ($if == $interface || $ifname == $interface)
-                        	return $ifname;
+				if ($if == $interface || $ifname == $interface)
+					return $ifname;
         	}
 		break;
 	}
@@ -2190,14 +2185,11 @@ function get_memory() {
 function safe_mkdir($path, $mode=0755) {
 	global $g;
 
-	/* cdrom is ro. */
-	if($g['platform'] == "cdrom")
+	if (!is_file($path) && !is_dir($path)) {
+		return @mkdir($path, $mode);
+	} else {
 		return false;
-
-	if (!is_file($path) && !is_dir($path))
-		return mkdir($path, $mode);
-	else
-		return false;
+	}
 }
 
 /*

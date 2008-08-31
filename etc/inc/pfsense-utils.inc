@@ -3379,7 +3379,7 @@ function update_filter_reload_status($text) {
 }
 
 function get_interface_gateway($interface) {
-        global $config;
+        global $config, $g;
 
         /* if wan is requested, return it */
         if($interface == "wan")
@@ -3412,9 +3412,9 @@ function get_interface_gateway($interface) {
         		}
         } 
 	
-	// for dynamic interfaces we handle them through the $if_router file.
+	// for dynamic interfaces we handle them through the $interface_router file.
 	if (!is_ipaddr($gw)) {
-        	$realif = get_real_wan_interface($if);
+        	$realif = get_real_wan_interface($interface);
         	if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
                 	$gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
                 	$gw = rtrim($gw);

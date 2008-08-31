@@ -132,7 +132,7 @@ include("head.inc"); ?>
 				<select name="interface">
                      <?php $interfaces = get_configured_interface_with_descr();
 					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if (!$config['interfaces'][$iface]['bridge'] && $selectedif == $iface) echo "selected"; ?>>
+                      <option value="<?=$iface;?>" <?php if (!link_int_to_bridge_interface($iface) && $selectedif == $iface) echo "selected"; ?>>
                       <?php echo $ifacename;?>
                       </option>
                       <?php endforeach;?>

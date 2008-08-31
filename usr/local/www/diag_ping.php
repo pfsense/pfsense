@@ -116,7 +116,7 @@ include("head.inc"); ?>
 				  <select name="interface" class="formfld">
                       <?php $interfaces = get_configured_interface_with_descr();
 					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if (!$config['interfaces'][$iface]['bridge'] && $iface == $interface) echo "selected"; ?>> 
+                      <option value="<?=$iface;?>" <?php if (!link_int_to_bridge_interface($iface) && $iface == $interface) echo "selected"; ?>> 
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>

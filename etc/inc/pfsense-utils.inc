@@ -1233,16 +1233,11 @@ function find_number_of_created_carp_interfaces($flush = false) {
  *   bridge[0-99]
  ******/
 function link_int_to_bridge_interface($int) {
-	global $config, $g;
-	$real_int = convert_friendly_interface_to_real_interface_name($int);
-	$num_bridges = find_number_of_created_bridges();
-	for($x=0; $x<$num_bridges; $x++) {
-		$matches = "";
-		$bridge_info = `/sbin/ifconfig bridge{$x}`;
-		if(stristr($bridge_info, "member: {$real_int}")) {
-			return "bridge{$x}";
-		}
-	}
+	global $config;
+
+	foreach ($config['bridges']['bridged'] as $bridge) 
+		if(stristr($bridge['members'], "{$int}")) 
+			return "{$bridge['bridgeif']}";
 }
 
 function link_carp_interface_to_parent($interface) {
@@ -1519,17 +1514,6 @@ function find_carp_interface($ip) {
 			return "carp{$carps}";
 		$carps++;
 	}
-}
-
-/*
- * find_number_of_created_bridges(): returns the number of currently created bridges
- */
-function find_number_of_created_bridges($flush = false) {
-	global $bridge_interface_count_cache;
-	if(!isset($bridge_interface_count_cache) or $flush)
-		$bridge_interface_count_cache = exec_command('/sbin/ifconfig | /usr/bin/grep "bridge[0-999]" | /usr/bin/wc -l');
-
-	return $bridge_interface_count_cache;
 }
 
 /*
@@ -3664,7 +3648,7 @@ function get_interface_info($ifdescr) {
 	}
 
 	$bridge = "";
-	$bridge = link_int_to_bridge_interface($ifinfo['if']);
+	$bridge = link_int_to_bridge_interface($ifdescr);
 	if($bridge) {
 		$bridge_text = `/sbin/ifconfig {$bridge}`;
 		if(stristr($bridge_text, "blocking") <> false) {

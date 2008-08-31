@@ -2614,8 +2614,9 @@ function system_start_ftp_helpers() {
 		}
 	}
 	/* support bridged interfaces.  even they need ftp mojo */
-	foreach($config['bridges']['bridged'] as $bridge) 
-		mwexec("/usr/local/sbin/ftpsesame {$shaper_queue} -i {$bridge['bridgeif']}");
+	if (is_array($config['bridges']['bridged']))
+		foreach($config['bridges']['bridged'] as $bridge) 
+			mwexec("/usr/local/sbin/ftpsesame {$shaper_queue} -i {$bridge['bridgeif']}");
 }
 
 function cleanup_backupcache($revisions = 30) {

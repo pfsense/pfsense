@@ -1234,10 +1234,11 @@ function find_number_of_created_carp_interfaces($flush = false) {
  ******/
 function link_int_to_bridge_interface($int) {
 	global $config;
-
-	foreach ($config['bridges']['bridged'] as $bridge) 
-		if(stristr($bridge['members'], "{$int}")) 
-			return "{$bridge['bridgeif']}";
+	
+	if (is_array($config['bridges']['bridged']))
+		foreach ($config['bridges']['bridged'] as $bridge) 
+			if(stristr($bridge['members'], "{$int}")) 
+				return "{$bridge['bridgeif']}";
 }
 
 function link_carp_interface_to_parent($interface) {

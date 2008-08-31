@@ -115,10 +115,10 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 			}
 		}
 		else {
-			new Effect.Appear("fileContent");
 			$("fileStatus").innerHTML = values[0];
 			$("fileContent").value = "";
 		}
+		new Effect.Appear("fileContent");
 	}
 
 	function saveFile(file) {

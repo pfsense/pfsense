@@ -117,6 +117,7 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 		else {
 			$("fileStatus").innerHTML = values[0];
 			$("fileContent").value = "";
+			new Effect.Appear("fileContent");
 		}
 	}
 

@@ -19,6 +19,7 @@ function fbBrowse(path) {
 		"/filebrowser/browser.php?path=" + encodeURI(path ? path : "/"),
 		{ method: "get", onComplete: fbComplete }
 	);
+	new Effect.Fade("fileContent");	
 }
 
 function fbComplete(req) {

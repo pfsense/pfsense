@@ -90,11 +90,11 @@ function services_dhcpd_configure() {
 			if (isset($dhcpifconf['enable']) &&
 				(($dhcpif == "lan") ||
 				(isset($config['interfaces'][$dhcpif]['enable']) &&
-				$config['interfaces'][$dhcpif]['if'] && (!$config['interfaces'][$dhcpif]['bridge']))))
+				$config['interfaces'][$dhcpif]['if'] && (!link_int_to_bridge_interface($dhcpif)))))
 				$dhcpdenable = true;
 			if (isset($dhcpifconf['enable']) &&
 				(($dhcpif == "wan") || (isset($config['interfaces'][$dhcpif]['enable']) &&
-				$config['interfaces'][$dhcpif]['if'] && (!$config['interfaces'][$dhcpif]['bridge']))))
+				$config['interfaces'][$dhcpif]['if'] && (!link_int_to_bridge_interface($dhcpif)))))
 				$dhcpdenable = true;
 		}
 
@@ -201,10 +201,11 @@ EOPP;
 		if (!isset($dhcpifconf['enable']) ||
 			($ifcfg['ipaddr'] == "dhcp") ||
 			(($dhcpif != "lan") &&
-			(!isset($ifcfg['enable']) || !$ifcfg['if'] || $ifcfg['bridge'])))
+			(!isset($ifcfg['enable']) || !$ifcfg['if'] || 
+			link_int_to_bridge_interface($dhcpif))))
 			continue;
 
-		if($dhcpif == "lan" && $ifcfg['bridge'])
+		if($dhcpif == "lan" && link_int_to_bridge_interface($dhcpif))
 			log_error("NOTE: DHCP Server on LAN is enabled.");
 
 		$subnet = gen_subnet($ifcfg['ipaddr'], $ifcfg['subnet']);
@@ -397,7 +398,7 @@ function services_dhcrelay_configure() {
 			if (isset($dhcrelayifconf['enable']) &&
 				(($dhcrelayif == "lan") ||
 				(isset($config['interfaces'][$dhcrelayif]['enable']) &&
-				$config['interfaces'][$dhcrelayif]['if'] && (!$config['interfaces'][$dhcrelayif]['bridge']))))
+				$config['interfaces'][$dhcrelayif]['if'] && (!link_int_to_bridge_interface($dhcrelayif)))))
 				$dhcrelayenable = true;
 		}
 	}
@@ -417,7 +418,8 @@ function services_dhcrelay_configure() {
 
 		if (!isset($dhcrelayifconf['enable']) ||
 			(($dhcrelayif != "lan") &&
-			(!isset($ifcfg['enable']) || !$ifcfg['if'] || $ifcfg['bridge'])))
+			(!isset($ifcfg['enable']) || !$ifcfg['if'] || 
+			link_int_to_bridge_interface($dhcrelayif))))
 			continue;
 
 		$dhcrelayifs[] = $ifcfg['if'];

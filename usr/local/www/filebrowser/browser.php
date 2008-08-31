@@ -36,7 +36,7 @@ if(is_file($path))
 		<td class="fbHome" width="25px" align="left">
 			<img onClick="$('fbTarget').value='<?=$realDir?>'; fbBrowse('/');" src="/filebrowser/images/icon_home.gif" alt="Home" title="Home" />
 		</td>
-		<td>&nbsp;<b><?=$path;?></b></td>
+		<td><b><?=$path;?></b></td>
 		<td class="fbClose" align="right">
 			<img onClick="new Effect.Fade($('fbBrowser'));" border="0" src="/filebrowser/images/icon_cancel.gif" alt="Close" title="Close" />
 		</td>

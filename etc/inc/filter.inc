@@ -432,6 +432,7 @@ function generate_optcfg_array()
 		$oic['alias-subnet'] = $oc['alias-subnet'];
 		$oic['gateway'] = $oc['gateway'];
 		$oic['spoofcheck'] = "yes";
+		$oic['bridge'] = link_int_to_bridge_interface($if);
 
 		$FilterIflist[$if] = $oic;
 	}
@@ -2167,8 +2168,7 @@ EOD;
 			break;
 		default:
 			/* allow access to DHCP server on interfaces */
-			if (isset($config['dhcpd'][$on]['enable']) && (!$oc['bridge'])  ||
-				($oc['bridge'] && isset($config['dhcpd'][$oc['bridge']]['enable']))) {
+			if (isset($config['dhcpd'][$on]['enable']) && empty($oc['bridge'])) {
 				$ipfrules .= <<<EOD
 # allow access to DHCP server on {$oc['descr']}
 anchor "dhcpserver{$oc['descr']}"

@@ -34,7 +34,7 @@ if(is_file($path))
 <table width="100%">
 	<tr>
 		<td class="fbHome" width="25px" align="left">
-			<img src="/filebrowser/images/icon_home.gif" alt="Home" title="Home" />
+			<img onClick="$('fbTarget').value='<?=$realDir?>'; fbBrowse('/');" src="/filebrowser/images/icon_home.gif" alt="Home" title="Home" />
 		</td>
 		<td>&nbsp;<?=$path;?></td>
 		<td class="fbClose" align="right">

@@ -410,7 +410,7 @@ remote {$tunnel['remote-gateway']} \{
 	{$certline}
 	peers_identifier address {$tunnel['remote-gateway']};
 	initial_contact on;
-	dpd_delay 120;                   # DPD poll every 120 seconds
+	#dpd_delay 120;                   # DPD poll every 120 seconds
 	ike_frag on;
 	support_proxy on;
 	proposal_check obey;

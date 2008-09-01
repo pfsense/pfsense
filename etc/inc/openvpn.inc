@@ -521,18 +521,6 @@ function openvpn_resync_all() {
 	if (!is_array($config['openvpn']))
 		$config['openvpn'] = array();
 
-	$path_ovpn = $g['varetc_path']."/openvpn";
-	safe_mkdir($path_ovpn);
-
-	chown($path_ovpn, 'nobody');
-	chgrp($path_ovpn, 'nobody');
-
-	$path_csc = $g['varetc_path']."/openvpn_csc";
-	safe_mkdir($path_csc);
-
-	chown($path_csc, 'nobody');
-	chgrp($path_csc, 'nobody');
-
 	if (!$config['openvpn']['dh-parameters']) {
 		echo "Configuring OpenVPN Parameters ...\n";
 		$dh_parameters = openvpn_create_dhparams();

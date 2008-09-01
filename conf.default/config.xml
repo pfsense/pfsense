@@ -75,16 +75,16 @@
 			<tunable>net.link.bridge.pfil_onlyip</tunable>
 			<value>0</value>
 		</item>
-                <item>
-                        <desc>Set to 0 to disable filtering on the incoming and outgoing member interfaces.</desc>
-                        <tunable>net.link.bridge.pfil_member</tunable>
-                        <value>1</value>
-                </item>
-                <item>
-                        <desc>Set to 1 to enable filtering on the bridge interface</desc>
-                        <tunable>net.link.bridge.pfil_bridge</tunable>
-                        <value>0</value>
-                </item>
+		<item>
+		        <desc>Set to 0 to disable filtering on the incoming and outgoing member interfaces.</desc>
+		        <tunable>net.link.bridge.pfil_member</tunable>
+		        <value>1</value>
+		</item>
+		<item>
+		        <desc>Set to 1 to enable filtering on the bridge interface</desc>
+		        <tunable>net.link.bridge.pfil_bridge</tunable>
+		        <value>0</value>
+		</item>
 		<item>
 			<desc>Allow unprivileged access to tap(4) device nodes</desc>
 			<tunable>net.link.tap.user_open</tunable>
@@ -119,6 +119,11 @@
 			<desc>Enable TCP extended debugging</desc>
 			<tunable>net.inet.tcp.log_debug</tunable>
 			<value>0</value>
+		</item>
+		<item>
+			<desc>Set ICMP Limits</desc>
+			<tunable>net.inet.icmp.icmplim</tunable>
+			<value>500</value>
 		</item>		
 	</sysctl>
 	<system>

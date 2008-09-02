@@ -1142,9 +1142,9 @@ function convert_config() {
 			$config['sysctl']['item'][16]['desc'] =    "The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ";
 			$config['sysctl']['item'][16]['value'] =   "1";
 
-			$config['sysctl']['item'][16]['tunable'] = "net.inet.icmp.icmplim";
-			$config['sysctl']['item'][16]['desc'] =    "Set ICMP Limits";
-			$config['sysctl']['item'][16]['value'] =   "500";
+			$config['sysctl']['item'][17]['tunable'] = "net.inet.icmp.icmplim";
+			$config['sysctl']['item'][17]['desc'] =    "Set ICMP Limits";
+			$config['sysctl']['item'][17]['value'] =   "500";
 
 			$config['version'] = "4.1";
 		}

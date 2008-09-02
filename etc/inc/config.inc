@@ -1235,8 +1235,8 @@ endif;
 	/* Convert 4.4 -> 4.5 */
 	if ($config['version'] <= 4.4) {
 		if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-			foreach ($config['vlans']['vlan'] as $id => $vlan)
-				$config['vlans']['vlan'][$id]['vlanif'] = "vlan{$id}";
+			foreach ($config['vlans']['vlan'] as $id => &$vlan)
+				$vlan['vlanif'] = "vlan{$id}";
 		}
 		$config['version'] = "4.5";
 	}
@@ -2277,7 +2277,7 @@ EOD;
 	
 			if($config['interfaces']['opt' . $i1]['descr'])
 				echo "\nOptional interface {$i1} description found: {$config['interfaces']['opt' . $i1]['descr']}";
-	
+
 			echo "\nEnter the Optional {$i1} interface name or 'a' for auto-detection\n" .
 				"(or nothing if finished): ";
 	
@@ -2533,7 +2533,7 @@ EOD;
 			echo "\nInvalid VLAN tag '{$vlan['tag']}'\n";
 			continue;
 		}
-
+		
 		$config['vlans']['vlan'][] = $vlan;
 	}
 }

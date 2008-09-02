@@ -137,7 +137,7 @@ effect.");?><br>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
                     <?php
-				$iflabels = get_configured_interface_with_descr();
+				$iflabels = get_configured_interface_with_descr(false, true);
 				echo htmlspecialchars($iflabels[$gateway['interface']]); ?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">

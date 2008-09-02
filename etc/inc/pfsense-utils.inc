@@ -1703,27 +1703,26 @@ function convert_friendly_interface_to_real_interface_name($interface) {
 	global $config;
 
 	$wanif = $interface;
-
 	switch ($interface) {
-	case "pptp":
-		$wanif = "pptp";
-		break;
-	case "pppoe":
-		$wanif = "pppoe";
-		break;
-	case "openvpn":
-		$wanif = "openvpn";
-		break;
-	case "enc0":
-		$wanif = "enc0";
-		break;
-	/* XXX: dial in support?!
-	case "ppp":
-		$wanif = "ppp";
-		break;
-	*/
-	default:
-		$iflist = get_configured_interface_with_descr();
+		case "pptp":
+			$wanif = "pptp";
+			break;
+		case "pppoe":
+			$wanif = "pppoe";
+			break;
+		case "openvpn":
+			$wanif = "openvpn";
+			break;
+		case "enc0":
+			$wanif = "enc0";
+			break;
+		/* XXX: dial in support?!
+		case "ppp":
+			$wanif = "ppp";
+			break;
+		*/
+		default:
+			$iflist = get_configured_interface_with_descr(false,true);
 
 		foreach ($iflist as $if => $ifdesc) {
 			if ($interface == $if || $interface == $ifdesc) {

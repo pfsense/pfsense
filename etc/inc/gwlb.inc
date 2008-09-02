@@ -157,10 +157,9 @@ EOD;
 	fwrite($fd, $apingerconfig);
 	fclose($fd);
 
-	sleep(3);
 	if(!is_process_running("apinger")) {
-		if (is_dir("{$g['vardb_path']}/rrd"))
-			chown("{$g['vardb_path']}/rrd", "nobody");
+		if (is_dir("{$g['tmp_path']}"))
+			chmod("{$g['tmp_path']}", 1777);
 		if (is_dir("{$g['vardb_path']}/rrd"))
 			chgrp("{$g['vardb_path']}/rrd", "nobody");
 		/* start a new apinger process */

@@ -418,14 +418,10 @@
 	<stepsubmitphpaction>
 	if($_POST['adminpassword'] != "") {
 		if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
-			$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
-			$salt = md5(time());
-			$crypted_pw = crypt($_POST['adminpassword'],$salt);
-			fwrite($fd, $crypted_pw);
-			pclose($fd);
-			$config['system']['password'] = crypt($_POST['adminpassword']);
+			$admin_user =&amp; getUserEntryByUID(0);
+			local_user_set_password($admin_user, $_POST['adminpassword']);
+			local_user_set($admin_user);
 			write_config();
-			system_password_configure();
 		} else {
 			print_info_box_np("Passwords do not match!  Please press back in your browser window and correct.");
 			die;

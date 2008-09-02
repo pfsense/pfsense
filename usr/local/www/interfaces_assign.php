@@ -241,16 +241,15 @@ if ($_GET['act'] == "add") {
 		$config['interfaces'][$newifname] = array();
 		$config['interfaces'][$newifname]['descr'] = $descr;
 	} else {
-		$i = 1;
-                foreach ($config['interfaces'] as $ifname => $if) {
-                        if ($ifname == "wan" || $ifname == "lan")
-                                continue;
-                        if (substr($ifname, 3) == $i) {
-                                $i++;
-                                continue;
-                        }
-                        break;
-                }
+		/* 
+		 * Since we account above for LAN and we start counting 
+		 * optional(opt#) interfaces from 1 the formula below
+		 * gives the next, to be added, opt# interface.
+		 *
+		 * XXX: The best of all i getting rid of lan and wan
+		 *	from interface keys and just keeping their descriptions.
+		 */
+		$i = count($config['interfaces']) - 1;
 		$newifname = 'opt' . $i;
 		$descr = "OPT{$i}";
 		$config['interfaces'][$newifname] = array();

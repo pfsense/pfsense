@@ -302,7 +302,7 @@ if [  $RAM -gt 96 ]; then
 cat >>/usr/local/lib/php.ini <<EOF
 extension=apc.so
 apc.enabled="1"
-;apc.enable_cli="1"
+apc.enable_cli="1"
 apc.shm_size="25"
 
 EOF

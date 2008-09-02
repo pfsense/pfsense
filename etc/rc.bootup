@@ -116,6 +116,9 @@
 	/* save dmesg output to file */
 	system_dmesg_save();
 
+	/* generate resolv.conf */
+	system_resolvconf_generate();
+
 	/* set up our timezone */
 	system_timezone_configure();
 
@@ -124,9 +127,6 @@
 
 	/* make hosts file */
 	system_hosts_generate();
-
-	/* generate resolv.conf */
-	system_resolvconf_generate();
 
 	/* configure loopback interface */
 	interfaces_loopback_configure();

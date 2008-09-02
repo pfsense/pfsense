@@ -148,8 +148,12 @@ fi
 [ ! -f /var/db/ez-ipupdate.cache ] || touch /var/db/ez-ipupdate.cache 2>/dev/null
 
 # OpenVPN storage
-[ ! -d /var/etc/openvpn ] || mkdir -p /var/etc/openvpn 2>/dev/null
-[ ! -d /var/etc/openvpn-csc ] || mkdir -p /var/etc/openvpn-csc 2>/dev/null
+if [ ! -d /var/etc/openvpn ]; then
+	mkdir -p /var/etc/openvpn
+fi
+if [ ! -d /var/etc/openvpn-csc ]; then
+	mkdir -p /var/etc/openvpn-csc
+fi
 
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3

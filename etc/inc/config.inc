@@ -1713,7 +1713,7 @@ endif;
 		$vpnid = 1;
 
 		/* openvpn server configurations */
-		if (is_array($config['installedpackages']['openvpnserver']['config'])) {
+		if (is_array($config['installedpackages']['openvpnserver'])) {
 			$config['openvpn']['openvpn-server'] = array();
 
 			$index = 1;
@@ -1795,7 +1795,7 @@ endif;
 		}
 
 		/* openvpn client configurations */
-		if (is_array($config['installedpackages']['openvpnclient']['config'])) {
+		if (is_array($config['installedpackages']['openvpnclient'])) {
 			$config['openvpn']['openvpn-client'] = array();
 
 			$index = 1;
@@ -1861,7 +1861,7 @@ endif;
 		}
 
 		/* openvpn client specific configurations */
-		if (is_array($config['installedpackages']['openvpncsc']['config'])) {
+		if (is_array($config['installedpackages']['openvpncsc'])) {
 			$config['openvpn']['openvpn-csc'] = array();
 
 			foreach($config['installedpackages']['openvpncsc']['config'] as $csc) {

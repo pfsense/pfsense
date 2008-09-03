@@ -124,7 +124,7 @@ if ($_POST) {
 		$i++;
 	}
 
-	if (!is_array($_POST['members']) || count($_POST['members'] < 2)
+	if (!is_array($_POST['members']) || count($_POST['members']) < 2)
 		$input_errors[] = "You must select at least 2 member interfaces for a bridge.";
 
 	if (is_array($_POST['members'])) {

@@ -80,34 +80,6 @@ function getHeadJS() {
         $('cancelbutton').style.visibility = 'hidden';
       $('loading').style.visibility = 'visible';
       // submit the form using Ajax
-  ";
-  
-  
-  isset($HTTP_SERVER_VARS['AUTH_USER']) ? $scriptName = split("/", $_SERVER["SCRIPT_FILENAME"]) : $scriptName = split("/", "/index.php");
-  isset($HTTP_SERVER_VARS['AUTH_USER']) ? $loggedin = "var isLoggedIn = true;" : $loggedin = "var isLoggedIn = false;";
-  $scriptElms = count($scriptName);
-  $scriptName = $scriptName[$scriptElms-1];
-  $realScriptName = str_replace("/", "", $_SERVER["SCRIPT_NAME"]);
-  
-  $headjs .= "
-       {$loggedin}
-
-      if (! isLoggedIn) {
-        var newInput = document.createElement('input');
-        newInput.setAttribute('id', 'scriptname');
-        newInput.setAttribute('name', 'scriptname');
-        newInput.setAttribute('value', '{$realScriptName}');
-        newInput.setAttribute('type', 'hidden');
-
-        $('iform').appendChild(newInput);
-      }
-
-      new Ajax.Request('{$scriptName}', {
-                method     : 'post',
-                parameters : Form.serialize($('iform')),
-                onSuccess  : formSubmitted,
-                onFailure  : formFailure
-      });
     }
    
     function formSubmitted(resp) {

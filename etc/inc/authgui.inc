@@ -47,6 +47,10 @@ require_once("functions.inc");
  *		pam_backed - this uses the system's PAM facility .htpasswd file
  */
 
+//log_error("debug: FILE_NAME = {$_SERVER['REQUEST_URI']}");
+//log_error("debug: FILE_NAME = {$_SERVER['SCRIPT_FILENAME']}");
+//log_error("debug: SCRIPT_NAME = {$_SERVER['SCRIPT_NAME']}");
+
 /* enable correct auth backend, default to htpasswd_backed */
 $ldapcase = $config['system']['webgui']['backend'];
 switch($ldapcase)
@@ -66,18 +70,6 @@ if (!session_auth($backing_method))
 	exit;
 
 /*
- * scriptname is set in headjs.php if the user tried to access
- * a page other than index.php without beeing logged in.
- *
- * NOTE : This doesn't make sense to me. -mgrooms
- */
-/*	if (isset($_POST['scriptname']) && isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
- *		pfSenseHeader("{$_POST['scriptname']}");
- *		exit;
- *	}
- */
-
-/*
  * Once here, the user has authenticated with the web server.
  * We give them access only to the appropriate pages based on
  * the user or group privileges.
@@ -85,32 +77,29 @@ if (!session_auth($backing_method))
 getAllowedPages($HTTP_SERVER_VARS['AUTH_USER']);
 
 /*
- * get the group homepage, to be able to forward
- * the user to this particular PHP page.
+ * get the user homepage
  */
 $home = $config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['home'];
 if (!$home)
 	$home = "/index.php";
 
 /*
- * If the user tries to explicitly access a particular
- * page, set $home to that page instead.
+ * redirect to homepage if no url is specified
  */
-if (isset($_POST['scriptname']) &&
-	$_POST['scriptname'] <> "/" && $_POST['scriptname'] <> "/index.php") {
-	$home = str_replace('/', '', basename($_POST['scriptname']));
-	$pagereq = $home;
+if ($_SERVER['REQUEST_URI'] == "/") {
+	pfSenseHeader($home);
+	exit;
 }
 
 /*
- * If the user is attempting to hit the default page, set it to
- * specifically look for /index.php. Without this, any user would
- * have access to the index page.
+ * redirect browsers post-login to avoid pages
+ * taking action in reponse to a POST request
  */
-if ($_SERVER['SCRIPT_NAME'] == '/')
-	$_SERVER['SCRIPT_NAME'] = $home;
-if ($pagereq == "")
-	$pagereq = str_replace('/', '', basename($_SERVER['SCRIPT_NAME']));
+if (!$_SESSION['Post_Login']) {
+	$_SESSION['Post_Login'] = true;
+	pfSenseHeader($_SERVER['REQUEST_URI']);
+	exit;
+}
 
 /*
  * determine if the user is allowed access to the requested page
@@ -130,18 +119,6 @@ if (!isAllowedPage($pagereq)) {
 	header("Status: 401 Unauthorized");
 	display_error_form("401", "Unauthorized. You do not have access to the page {$pagereq}");
 	exit;
-}
-
-if (isset($_SESSION['Logged_In'])) {
-	/*
-	 * only forward if the user has just logged in
-	 * TODO: session auth based - may be an issue.
-	 */
-	if ($_SERVER['SCRIPT_NAME'] <> $home && empty($_SESSION['First_Visit'])) {
-		$_SESSION['First_Visit'] = "False";
-		pfSenseHeader("{$home}");
-	exit;
-	}
 }
 
 function display_error_form($http_code, $desc) {
@@ -256,7 +233,7 @@ function display_login_form() {
 	</head>
 	<body onload="page_load()">
 		<div id="login">
-			<form id="iform" name="login_iform" method="post" autocomplete="off" action="<?= $_SERVER['SCRIPT_NAME'] ?>">
+			<form id="iform" name="login_iform" method="post" autocomplete="off" action="<?=$_SERVER['SCRIPT_NAME'];?>">
 				<h1></h1>
 				<div id="inputerrors"><?=$_SESSION['Login_Error'];?></div>
 				<p>

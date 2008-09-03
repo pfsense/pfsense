@@ -333,8 +333,8 @@ n already exists.";
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac']))) {
 		$input_errors[] = "A valid MAC address must be specified.";
 	}
-	if ($_POST['mtu'] && (($_POST['mtu'] < 576) || ($_POST['mtu'] > 1500))) {
-		$input_errors[] = "The MTU must be between 576 and 1500 bytes.";
+	if ($_POST['mtu'] && ($_POST['mtu'] < 576)) {
+		$input_errors[] = "The MTU must be greater than 576 bytes.";
 	}
 	}
 

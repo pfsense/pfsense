@@ -183,7 +183,7 @@ $pconfig['mtu'] = $wancfg['mtu'];
 /* Wireless interface? */
 if (isset($wancfg['wireless'])) {
 	require("interfaces_wlan.inc");
-	wireless_config_init();
+	wireless_config_init($wancfg);
 }
 
 if ($_POST) {
@@ -340,7 +340,7 @@ n already exists.";
 
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
-		$wi_input_errors = wireless_config_post();
+		$wi_input_errors = wireless_config_post($wancfg);
 		if ($wi_input_errors) {
 			$input_errors = array_merge($input_errors, $wi_input_errors);
 		}
@@ -1017,7 +1017,7 @@ seconds<br>If no qualifying outgoing packets are transmitted for the specified n
 		        <?php
 				/* Wireless interface? */
 				if (isset($wancfg['wireless']))
-					wireless_config_print();
+					wireless_config_print($wancfg);
 			?>
                 <tr>
                   <td height="16" colspan="2" valign="top"></td>

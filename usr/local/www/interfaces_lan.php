@@ -40,7 +40,6 @@
 require("guiconfig.inc");
 
 $lancfg = &$config['interfaces']['lan'];
-$optcfg = &$config['interfaces']['lan'];
 
 $pconfig['ipaddr'] = $lancfg['ipaddr'];
 $pconfig['subnet'] = $lancfg['subnet'];
@@ -50,7 +49,7 @@ $pconfig['disableftpproxy'] = isset($lancfg['disableftpproxy']);
 /* Wireless interface? */
 if (isset($lancfg['wireless'])) {
 	require("interfaces_wlan.inc");
-	wireless_config_init();
+	wireless_config_init($lancfg);
 }
 
 if ($_POST) {
@@ -74,7 +73,7 @@ if ($_POST) {
 
 	/* Wireless interface? */
 	if (isset($lancfg['wireless'])) {
-		$wi_input_errors = wireless_config_post();
+		$wi_input_errors = wireless_config_post($lancfg);
 		if ($wi_input_errors) {
 			$input_errors = array_merge($input_errors, $wi_input_errors);
 		}
@@ -177,7 +176,7 @@ function enable_change(enable_over) {
 		</tr>			
 				<?php /* Wireless interface? */
 				if (isset($lancfg['wireless']))
-					wireless_config_print();
+					wireless_config_print($lancfg);
 				?>
 
 

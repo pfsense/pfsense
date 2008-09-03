@@ -29,8 +29,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-function wireless_config_init() {
-	global $optcfg, $pconfig;
+function wireless_config_init(&$optcfg) {
+	global $pconfig;
 
 	$pconfig['standard'] = $optcfg['wireless']['standard'];
 	$pconfig['mode'] = $optcfg['wireless']['mode'];
@@ -74,8 +74,8 @@ function wireless_config_init() {
 	}
 }
 
-function wireless_config_post() {
-	global $optcfg, $pconfig;
+function wireless_config_post(&$optcfg) {
+	global $pconfig;
 
 	$input_errors = "";
 	unset($input_errors);
@@ -219,8 +219,8 @@ function wireless_config_post() {
 $curif = convert_friendly_interface_to_real_interface_name($if);
 $wl_modes = get_wireless_modes($curif);
 
-function wireless_config_print() {
-	global $optcfg, $pconfig, $wl_modes, $g;
+function wireless_config_print(&$optcfg) {
+	global $pconfig, $wl_modes, $g;
 ?>
 
 <script language="JavaScript">

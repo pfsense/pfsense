@@ -206,8 +206,8 @@ include("head.inc");
 							</table>
 						</td>
 					</tr>					
-					<tr valign="top">
-						<td class="listlr" ondblclick="document.location='vpn_ipsec_phase1.php?id=<?=$i;?>'">
+					<tr valign="top" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i;?>'">
+						<td class="listlr">
 							<?=$spans;?>
 							<?php
 								if ($ph1ent['interface']) {
@@ -229,12 +229,12 @@ include("head.inc");
 							?>
 							<?=$spane;?>
 						</td>
-						<td class="listr" ondblclick="document.location='vpn_ipsec_phase1.php?id=<?=$i;?>'">
+						<td class="listr">
 							<?=$spans;?>
 							<?=$ph1ent['mode'];?>
 							<?=$spane;?>
 						</td>
-						<td class="listr" ondblclick="document.location='vpn_ipsec_phase1.php?id=<?=$i;?>'">
+						<td class="listr">
 							<?=$spans;?>
 							<?=$p1_ealgos[$ph1ent['encryption-algorithm']['name']]['name'];?>
 							<?php
@@ -247,12 +247,12 @@ include("head.inc");
 							?>
 							<?=$spane;?>
 						</td>
-						<td class="listr" ondblclick="document.location='vpn_ipsec_phase1.php?id=<?=$i;?>'">
+						<td class="listr">
 							<?=$spans;?>
 							<?=$p1_halgos[$ph1ent['hash-algorithm']];?>
 							<?=$spane;?>
 						</td>
-						<td class="listtopic" ondblclick="document.location='vpn_ipsec_phase1.php?id=<?=$i;?>'">
+						<td class="listtopic">
 							<?=$spans;?>
 								<font color="#FFFFFF">
 									<?=htmlspecialchars($ph1ent['descr']);?>&nbsp;
@@ -330,24 +330,24 @@ include("head.inc");
 										else
 											$spans = $spane = "";
 								?>
-								<tr valign="top">
+								<tr valign="top" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$i;?>'">
 
-									<td nowrap class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
+									<td nowrap class="listlr">
 										<?=$spans;?>
 											<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
 										<?=$spane;?>
 									</td>
-									<td nowrap class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
+									<td nowrap class="listr">
 										<?=$spans;?>
 											<?=ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
 										<?=$spane;?>
 									</td>
-									<td nowrap class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
+									<td nowrap class="listr">
 										<?=$spans;?>
 											<?php echo $p2_protos[$ph2ent['protocol']];	?>
 										<?=$spane;?>
 									</td>
-									<td class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
+									<td class="listr">
 										<?=$spans;?>
 										<?php
 											$k = 0;
@@ -365,7 +365,7 @@ include("head.inc");
 										?>
 										<?=$spane;?>
 									</td>
-									<td nowrap class="listr" ondblclick="document.location='vpn_ipsec_phase2.php?id=<?=$i;?>'">
+									<td nowrap class="listr">
 										<?=$spans;?>
 										<?php
 											$k = 0;

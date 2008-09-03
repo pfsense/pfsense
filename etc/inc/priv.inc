@@ -91,6 +91,9 @@ function sort_privs(& $privs) {
 
 function cmp_page_matches($page, & $matches, $fullwc = true) {
 
+//	$dbg_matches = implode(",", $matches);
+//	log_error("debug: checking page {$page} match with {$dbg_matches}");
+
 	if (!is_array($matches))
 		return false;
 
@@ -202,7 +205,7 @@ function isAllowedPage($page) {
 				return true;
 
 	/* user privelege access check */
-	if (cmp_page_matches($page, $allowed_pages))
+	if (cmp_page_matches($page, $_SESSION['page-match']))
 		return true;
 
 	return false;
@@ -262,12 +265,12 @@ function getAllowedPages($username) {
 			if (in_array($group['name'], $allowed_groups))
 				getPrivPages($group, $allowed_pages);
 
-	$allowed_groups = print_r($allowed_groups, true);
-	$fdny = fopen("/tmp/groups", "w");
-	fwrite($fdny, $allowed_groups);
-	fclose($fdny);
+//	$dbg_pages = implode(",", $allowed_pages);
+//	$dbg_groups = implode(",", $allowed_groups);
+//	log_error("debug: user {$username} groups = {$dbg_groups}");
+//	log_error("debug: user {$username} pages = {$dbg_pages}");
 
-	$_SESSION['privs'] = $allowed_pages;
+	$_SESSION['page-match'] = $allowed_pages;
 
 	return $allowed_pages;
 }

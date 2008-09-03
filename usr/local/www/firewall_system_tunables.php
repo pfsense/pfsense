@@ -100,10 +100,10 @@ include("head.inc");
                   <td class="listlr" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
                   <?php echo $tunable['tunable']; ?>
                   </td>
-                  <td class="listlr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+                  <td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
                   <?php echo $tunable['desc']; ?>
                   </td>
-                  <td class="listlr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+                  <td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
                   <?php echo $tunable['value']; ?>
                   </td>
                   <td class="list" nowrap>

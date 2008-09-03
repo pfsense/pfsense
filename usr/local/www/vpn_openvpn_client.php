@@ -97,7 +97,7 @@ if($_GET['act']=="edit"){
 		$pconfig['tunnel_network'] = $a_client[$id]['tunnel_network'];
 		$pconfig['remote_network'] = $a_client[$id]['remote_network'];
 		$pconfig['compression'] = $a_client[$id]['compression'];
-		$pconfig['settos'] = $a_client[$id]['settos'];
+		$pconfig['passtos'] = $a_client[$id]['passtos'];
 	}
 }
 
@@ -526,8 +526,8 @@ function method_change() {
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['settos'],$chk); ?>
-										<input name="settos" type="checkbox" value="yes" <?=$chk;?>>
+										<?php set_checked($pconfig['passtos'],$chk); ?>
+										<input name="passtos" type="checkbox" value="yes" <?=$chk;?>>
 									</td>
 									<td>
 										<span class="vexpl">

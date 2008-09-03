@@ -96,7 +96,7 @@ if($_GET['act']=="edit"){
 		$pconfig['local_network'] = $a_server[$id]['local_network'];
 		$pconfig['maxclients'] = $a_server[$id]['maxclients'];
 		$pconfig['compression'] = $a_server[$id]['compression'];
-		$pconfig['settos'] = $a_server[$id]['settos'];
+		$pconfig['passtos'] = $a_server[$id]['passtos'];
 		$pconfig['client2client'] = $a_server[$id]['client2client'];
 
 		$pconfig['pool_enable'] = $a_server[$id]['pool_enable'];
@@ -248,6 +248,7 @@ if ($_POST) {
 		$server['local_network'] = $pconfig['local_network'];
 		$server['maxclients'] = $pconfig['maxclients'];
 		$server['compression'] = $pconfig['compression'];
+		$server['passtos'] = $pconfig['passtos'];
 		$server['client2client'] = $pconfig['client2client'];
 
 		$server['pool_enable'] = $pconfig['pool_enable'];
@@ -647,8 +648,8 @@ function netbios_change() {
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['settos'],$chk); ?>
-										<input name="settos" type="checkbox" value="yes" <?=$chk;?>>
+										<?php set_checked($pconfig['passtos'],$chk); ?>
+										<input name="passtos" type="checkbox" value="yes" <?=$chk;?>>
 									</td>
 									<td>
 										<span class="vexpl">

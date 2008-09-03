@@ -400,7 +400,7 @@ EOD;
 			openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth");
 	}
 
-	if ($settings['compress'])
+	if ($settings['compression'])
 		$conf .= "comp-lzo\n";
 
 	if ($settings['passtos'])

@@ -77,6 +77,7 @@ function filter_configure() {
 /* reload filter sync */
 function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run;
+	ini_set("memory_limit","32M");
 	filter_pflog_start();
 	update_filter_reload_status("Initializing");
 	/* invalidate interface cache */

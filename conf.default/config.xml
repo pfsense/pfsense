@@ -154,8 +154,6 @@
 			<groupname>admins</groupname>
 			<password>$1$dSJImFph$GvZ7.1UbuWu.Yb8etC0re.</password>
 			<uid>0</uid>
-			<priv>user-lock-webcfg</priv>
-			<priv>user-lock-ipages</priv>
 			<priv>user-shell-access</priv>
 		</user>
 		<nextuid>2000</nextuid>

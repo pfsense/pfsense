@@ -814,9 +814,6 @@ function session_auth($backing) {
 		else
 			log_error("User logged out for user '{$_SESSION['Username']}' from: {$_SERVER['REMOTE_ADDR']}");
 
-		if (hasPrivilegeLock($user))
-			unlink_if_exists("{$g['tmp_path']}/webconfigurator.lock");
-
 		/* wipe out $_SESSION */
 		$_SESSION = array();
 
@@ -840,34 +837,6 @@ function session_auth($backing) {
 	}
 
 	/*
-	 * user wants to explicitely delete the lock file.
-	 * Requires a particular privilege.
-	 */
-	if ($_GET['deletelock'] && hasPrivilegeLock($user)) {
-		unlink_if_exists("{$g['tmp_path']}/webconfigurator.lock");
-		$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
-		return true;
-	}
-
-	/*
-	 * user wants to explicitely create a lock.
-	 * Requires a particular privilege.
-	 */
-	if ($_GET['createlock'] && hasPrivilegeLock($user)) {
-		$fd = fopen("{$g['tmp_path']}/webconfigurator.lock", "w");
-		fputs($fd, "{$_SERVER['REMOTE_ADDR']}.{$_SESSION['Username']}");
-		fclose($fd);
-
-		/*
-		 * if the user did delete the lock manually, do not
-		 * re-create it while the session is valide.
-		 */
-		$_SESSION['Lock_Created'] = "True";
-		$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
-		return true;
-	}
-
-	/*
 	 * this is for debugging purpose if you do not want to use Ajax
 	 * to submit a HTML form. It basically diables the observation
 	 * of the submit event and hence does not trigger Ajax.
@@ -885,55 +854,6 @@ function session_auth($backing) {
 		unset($_SESSION['NO_AJAX']);
 		$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 		return true;
-	}
-
-	/*
-	 * is the user is allowed to create a lock
-	 */
-	if (hasPrivilegeLock($user)) {
-
-		/*
-		 * create a lock once per session
-		 */
-		if (!isset($_SESSION['Lock_Created'])) {
-
-			$fd = fopen("{$g['tmp_path']}/webconfigurator.lock", "w");
-			fputs($fd, "{$_SERVER['REMOTE_ADDR']}.{$_SESSION['Username']}");
-			fclose($fd);
-
-			/*
-			 * if the user did delete the lock manually, do not
-			 * re-create it while the session is valide.
-			 */
-			$_SESSION['Lock_Created'] = "True";
-		}
-
-	} else {
-
-		/*
-		 * give regular users a chance to automatically invalidate
-		 * a lock if its older than a particular time.
-		 */
-		if (file_exists("{$g['tmp_path']}/webconfigurator.lock")) {
-
-			$offset = 12; //hours
-			$mtime = filemtime("{$g['tmp_path']}/webconfigurator.lock");
-			$now_minus_offset = mktime(date("H") - $offset, 0, 0,
-									date("m"), date("d"), date("Y"));
-
-			if (($mtime - $now_minus_offset) < $mtime) {
-				require_once("authgui.inc");
-				display_login_form();
-				return false;
-			}
-
-			/*
-			 * file is older than mtime + offset which may
-			 * indicate a stale lockfile, hence we are going
-			 * to remove it.
-			 */
-			unlink_if_exists("{$g['tmp_path']}/webconfigurator.lock");
-		}
 	}
 
 	$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];

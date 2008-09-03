@@ -47,18 +47,6 @@ require_once("priv.defs.inc");
  * USER PRIVILEGE DEFINITIONS
  */
 
-$priv_list['user-lock-webcfg'] = array();
-$priv_list['user-lock-webcfg']['name']  = "User - Locks webConfigurator";
-$priv_list['user-lock-webcfg']['descr'] = "Indicates whether the user will lock access to ".
-										  "the webConfigurator for other users";
-
-$priv_list['user-lock-ipages'] = array();
-$priv_list['user-lock-ipages']['name']  = "User - Locks individual pages";
-$priv_list['user-lock-ipages']['descr'] = "Indicates whether the user will lock individual ".
-										  "HTML pages after having accessed a particular page".
-										  "(the lock will be freed if the user leaves or ".
-										  "saves the page form).";
-
 $priv_list['user-shell-access'] = array();
 $priv_list['user-shell-access']['name']  = "User - Shell account access";
 $priv_list['user-shell-access']['descr'] = "Indicates whether the user is able to login for ".

@@ -1621,12 +1621,6 @@ endif;
 			}
 			foreach ($user['priv'] as $priv) {
 				switch($priv['id']) {
-					case "lockwc":
-						$privs[] = "user-lock-webcfg";
-						break;
-					case "lock-ipages":
-						$privs[] = "user-lock-ipages";
-						break;
 					case "hasshell":
 						$privs[] = "user-shell-access";
 						break;

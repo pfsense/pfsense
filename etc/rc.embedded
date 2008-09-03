@@ -10,20 +10,26 @@ echo -n "Setting up embedded specific environment..."
 # Run some initialization routines
 [ -f /etc/rc.d/uzip ] && /etc/rc.d/uzip start
 
-# Initialize MFS for /tmp. Partly taken from /etc/rc.d/var
-if (/bin/mkdir -p /tmp/.diskless 2> /dev/null); then
-       rmdir /tmp/.diskless
+if [ -f /nanobuild ]; then
+# Init /etc and /var, /tmp to point towards /var/tmp
+# All these to be done by rc.initdiskless
+    sh /etc/rc.initdiskless
 else
+# Initialize MFS for /tmp. Partly taken from /etc/rc.d/var
+    if (/bin/mkdir -p /tmp/.diskless 2> /dev/null); then
+	rmdir /tmp/.diskless
+    else
         varsize="40m"
-       mdmfs -S -M -s ${varsize} md /tmp
-fi
+	mdmfs -S -M -s ${varsize} md /tmp
+    fi
 
 # Initialize MFS for /var. Partly taken from /etc/rc.d/var
-if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
-       rmdir /var/.diskless
-else
+    if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
+	rmdir /var/.diskless
+    else
         varsize="20m"
-       mdmfs -S -M -s ${varsize} md /var
+	mdmfs -S -M -s ${varsize} md /var
+    fi
 fi
 
 # Create some needed directories

@@ -324,7 +324,7 @@ function presubmit() {
 					<?php endif; ?>
 
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Effective Privileges");?></td>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Assigned Privileges");?></td>
 						<td width="78%" class="vtable">
 							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 								<tr>

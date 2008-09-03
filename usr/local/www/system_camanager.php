@@ -88,6 +88,24 @@ if ($act == "new") {
 	$pconfig['dn_commonname'] = "internal-ca";
 }
 
+if ($act == "exp") {
+
+	if (!$a_ca[$id]) {
+		pfSenseHeader("system_camanager.php");
+		exit;
+	}
+
+	$exp_name = urlencode("{$a_ca[$id]['name']}.crt");
+	$exp_data = base64_decode($a_ca[$id]['crt']);
+	$exp_size = strlen($exp_data);
+
+	header("Content-Type: application/octet-stream");
+	header("Content-Disposition: attachment; filename={$exp_name}");
+	header("Content-Length: $exp_size");
+	echo $exp_data;
+	exit;
+}
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -412,6 +430,9 @@ function method_change() {
 					<td class="listr"><?=$certcount;?>&nbsp;</td>
 					<td class="listr"><?=$subj;?>&nbsp;</td>
 					<td valign="middle" nowrap class="list">
+						<a href="system_camanager.php?act=exp&id=<?=$i;?>")">
+							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export ca" alt="export ca" width="17" height="17" border="0" />
+						</a>
 						<a href="system_camanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Authority and all associated Certificates?");?>')">
 							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete ca" alt="delete ca" width="17" height="17" border="0" />
 						</a>

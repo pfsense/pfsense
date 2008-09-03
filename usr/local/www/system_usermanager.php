@@ -90,6 +90,46 @@ if (isAllowedPage("system_usermanager")) {
 					gettext("successfully deleted")."<br/>";
 	}
 
+	if ($_GET['act'] == "expcert") {
+
+		if (!$a_user[$id]) {
+			pfSenseHeader("system_usermanager.php");
+			exit;
+		}
+
+		$cert =& $a_user[$id]['cert'][$_GET['certid']];
+
+		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['name']}.crt");
+		$exp_data = base64_decode($cert['crt']);
+		$exp_size = strlen($exp_data);
+
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename={$exp_name}");
+		header("Content-Length: $exp_size");
+		echo $exp_data;
+		exit;
+	}
+
+	if ($_GET['act'] == "expckey") {
+
+		if (!$a_user[$id]) {
+			pfSenseHeader("system_usermanager.php");
+			exit;
+		}
+
+		$cert =& $a_user[$id]['cert'][$_GET['certid']];
+
+		$exp_name = urlencode("{$a_user[$id]['name']}-{$cert['name']}.key");
+		$exp_data = base64_decode($cert['prv']);
+		$exp_size = strlen($exp_data);
+
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename={$exp_name}");
+		header("Content-Length: $exp_size");
+		echo $exp_data;
+		exit;
+	}
+
 	if ($_GET['act'] == "delcert") {
 
 		if (!$a_user[$id]) {
@@ -484,8 +524,14 @@ function presubmit() {
 										<?=htmlspecialchars($ca['name']);?>
 									</td>
 									<td valign="middle" nowrap class="list">
+										<a href="system_usermanager.php?act=expckey&id=<?=$id;?>&certid=<?=$i;?>">
+											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export private key" alt="export private key" width="17" height="17" border="0" />
+										</a>
+										<a href="system_usermanager.php?act=expcert&id=<?=$id;?>&certid=<?=$i;?>">
+											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export cert" alt="export cert" width="17" height="17" border="0" />
+										</a>
 										<a href="system_usermanager.php?act=delcert&id=<?=$id?>&certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this certificate?");?>')">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
+											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete cert" />
 										</a>
 									</td>
 								</tr>

@@ -40,9 +40,9 @@ $pgtitle = array("System","Tunables");
 
 require("guiconfig.inc");
 
-if (!is_array($config['sysctl']['item'])) {
+if (!is_array($config['sysctl']['item']))
 	$config['sysctl']['item'] = array();
-}
+
 $a_tunable = &$config['sysctl']['item'];
 
 if ($_POST) {
@@ -78,57 +78,70 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<form action="firewall_system_tunables.php" method="post">
-<div id="inputerrors"></div>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_sysctldirty_path)): ?><p>
-<?php print_info_box_np("The firewall tunables have changed.  You must apply the configuration to take affect.");?><br />
-<?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td>
-	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td width="20%" class="listhdrr">Tunable Name</td>
-                  <td width="60%" class="listhdrr">Description</td>                 
-                  <td width="20%" class="listhdrr">Value</td>
+	<form action="firewall_system_tunables.php" method="post">
+		<div id="inputerrors"></div>
+		<?php
+			if ($input_errors)
+				print_input_errors($input_errors);
+			if ($savemsg)
+				print_info_box($savemsg);
+			if (file_exists($d_sysctldirty_path))
+				print_info_box_np("The firewall tunables have changed.  You must apply the configuration to take affect.");
+?>
+		<div id="mainarea">
+			<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td width="20%" class="listhdrr">Tunable Name</td>
+					<td width="60%" class="listhdrr">Description</td>
+					<td width="20%" class="listhdrr">Value</td>
 				</tr>
-			  <?php $i = 0; foreach ($config['sysctl']['item'] as $tunable): ?>
-                <tr>
-                  <td class="listlr" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
-                  <?php echo $tunable['tunable']; ?>
-                  </td>
-                  <td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
-                  <?php echo $tunable['desc']; ?>
-                  </td>
-                  <td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
-                  <?php echo $tunable['value']; ?>
-                  </td>
-                  <td class="list" nowrap>
-                    <table border="0" cellspacing="0" cellpadding="1">
-                      <tr>
-                        <td valign="middle"><a href="firewall_system_tunables_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="" /></a></td>
-                        <td valign="middle"><a href="firewall_system_tunables.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" /></a></td>
-                      </tr>
-                    </table>
-                  </td>                  
-                <?php $i++; endforeach; ?>
-                <tr>
-                  <td class="list" colspan="3"></td>
-                  <td class="list">
-                    <table border="0" cellspacing="0" cellpadding="1">
-                      <tr>
-                        <td valign="middle"><a href="firewall_system_tunables_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" /></a></td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-	   </div>
-	</table>
-            </form>
+				<?php $i = 0; foreach ($config['sysctl']['item'] as $tunable): ?>
+				<tr>
+					<td class="listlr" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+						<?php echo $tunable['tunable']; ?>
+					</td>
+					<td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+						<?php echo $tunable['desc']; ?>
+					</td>
+					<td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+						<?php echo $tunable['value']; ?>
+					</td>
+					<td class="list" nowrap>
+						<table border="0" cellspacing="0" cellpadding="1">
+							<tr>
+								<td valign="middle">
+									<a href="firewall_system_tunables_edit.php?id=<?=$i;?>">
+										<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="" />
+									</a>
+								</td>
+								<td valign="middle">
+									<a href="firewall_system_tunables.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')">
+										<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
+									</a>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<?php $i++; endforeach; ?>
+				<tr>
+					<td class="list" colspan="3">
+					</td>
+					<td class="list">
+						<table border="0" cellspacing="0" cellpadding="1">
+							<tr>
+								<td valign="middle">
+									<a href="firewall_system_tunables_edit.php">
+										<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
+									</a>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

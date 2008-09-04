@@ -118,20 +118,19 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 					<li class="firstdrop">
 						<div>System</div>
 						<ul class="subdrop">
-							<?php 
-							output_menu_item("/system_advanced.php", "Advanced");
+							<?php
+							output_menu_item("/system_advanced_admin.php", "Advanced");
 							output_menu_item("/system_firmware.php", "Firmware");
 							output_menu_item("/system.php", "General Setup");
-							?>					 
-							<li><a href="/index.php?logout" class="navlnk">Logout</a></li>											
+							?>
 						<?php if($g['platform'] == "pfSense"): ?>
-							<?=output_menu_item("/pkg_mgr.php", "Packages");?>	
+							<?=output_menu_item("/pkg_mgr.php", "Packages");?>
 						<?php endif; ?>
 							<?=output_menu_item("/wizard.php?xml=setup_wizard.xml", "Setup Wizard");?>
 							<?=output_menu_item("/system_gateways.php", "Routing");?>
-							<?=output_menu_item("/firewall_system_tunables.php", "Tunables");?>	
 							<?=output_menu_item("/system_camanager.php", "Cert Manager");?>	
-							<?=output_menu_item("/system_usermanager.php", "User Manager");?>	
+							<?=output_menu_item("/system_usermanager.php", "User Manager");?>
+							<li><a href="/index.php?logout" class="navlnk">Logout</a></li>
 						</ul>
 					</li>
 					<li class="drop">

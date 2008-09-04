@@ -47,15 +47,15 @@ require_once('globals.inc');
 require_once('pfsense-utils.inc');
 require_once('util.inc');
 
-$openvpn_prots = array( "UDP", "TCP");
+$openvpn_prots = array("UDP", "TCP");
 
 $openvpn_auth_methods = array(
 	'pki' => "Public Key Infrastructure",
 	'shared_key' => "Pre Shared Key");
 
-function openvpn_create_dhparams() {
+function openvpn_create_dhparams($bits) {
 
-	$fp = popen("/usr/bin/openssl dhparam 1024", "r");
+	$fp = popen("/usr/bin/openssl dhparam {$bits}", "r");
 	if (!$fp)
 		return false;
 
@@ -529,7 +529,7 @@ function openvpn_resync_all() {
 
 	if (!$config['openvpn']['dh-parameters']) {
 		echo "Configuring OpenVPN Parameters ...\n";
-		$dh_parameters = openvpn_create_dhparams();
+		$dh_parameters = openvpn_create_dhparams(2048);
 		$dh_parameters = base64_encode($dh_parameters);
 		$config['openvpn']['dh-parameters'] = $dh_parameters;
 		write_config();

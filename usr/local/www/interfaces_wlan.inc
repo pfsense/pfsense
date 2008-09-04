@@ -44,20 +44,22 @@ function wireless_config_init(&$optcfg) {
 	$pconfig['apbridge_enable'] = isset($optcfg['wireless']['apbridge']['enable']);
 	$pconfig['authmode'] = $optcfg['wireless']['authmode'];
 	$pconfig['hidessid_enable'] = isset($optcfg['wireless']['hidessid']['enable']);
-	$pconfig['debug_mode'] = $optcfg['wireless']['wpa']['debug_mode'];
-	$pconfig['macaddr_acl'] = $optcfg['wireless']['wpa']['macaddr_acl'];
-	$pconfig['mac_acl_enable'] = isset($optcfg['wireless']['wpa']['mac_acl_enable']);
-	$pconfig['auth_algs'] = $optcfg['wireless']['wpa']['auth_algs'];
-	$pconfig['wpa_mode'] = $optcfg['wireless']['wpa']['wpa_mode'];
-	$pconfig['wpa_key_mgmt'] = $optcfg['wireless']['wpa']['wpa_key_mgmt'];
-	$pconfig['wpa_pairwise'] = $optcfg['wireless']['wpa']['wpa_pairwise'];
-	$pconfig['wpa_group_rekey'] = $optcfg['wireless']['wpa']['wpa_group_rekey'];
-	$pconfig['wpa_gmk_rekey'] = $optcfg['wireless']['wpa']['wpa_gmk_rekey'];
-	$pconfig['wpa_strict_rekey'] = isset($optcfg['wireless']['wpa']['wpa_strict_rekey']);
-	$pconfig['passphrase'] = $optcfg['wireless']['wpa']['passphrase'];
-	$pconfig['ieee8021x_enable'] = isset($optcfg['wireless']['wpa']['ieee8021x']['enable']);
-	$pconfig['ext_wpa_sw'] = $optcfg['wireless']['wpa']['ext_wpa_sw'];
-	$pconfig['wpa_enable'] = isset($optcfg['wireless']['wpa']['enable']);
+	if (is_array($optcfg['wireless']['wpa'])) {
+		$pconfig['debug_mode'] = $optcfg['wireless']['wpa']['debug_mode'];
+		$pconfig['macaddr_acl'] = $optcfg['wireless']['wpa']['macaddr_acl'];
+		$pconfig['mac_acl_enable'] = isset($optcfg['wireless']['wpa']['mac_acl_enable']);
+		$pconfig['auth_algs'] = $optcfg['wireless']['wpa']['auth_algs'];
+		$pconfig['wpa_mode'] = $optcfg['wireless']['wpa']['wpa_mode'];
+		$pconfig['wpa_key_mgmt'] = $optcfg['wireless']['wpa']['wpa_key_mgmt'];
+		$pconfig['wpa_pairwise'] = $optcfg['wireless']['wpa']['wpa_pairwise'];
+		$pconfig['wpa_group_rekey'] = $optcfg['wireless']['wpa']['wpa_group_rekey'];
+		$pconfig['wpa_gmk_rekey'] = $optcfg['wireless']['wpa']['wpa_gmk_rekey'];
+		$pconfig['wpa_strict_rekey'] = isset($optcfg['wireless']['wpa']['wpa_strict_rekey']);
+		$pconfig['passphrase'] = $optcfg['wireless']['wpa']['passphrase'];
+		$pconfig['ieee8021x_enable'] = isset($optcfg['wireless']['wpa']['ieee8021x']['enable']);
+		$pconfig['ext_wpa_sw'] = $optcfg['wireless']['wpa']['ext_wpa_sw'];
+		$pconfig['wpa_enable'] = isset($optcfg['wireless']['wpa']['enable']);
+	}
 	$pconfig['wep_enable'] = isset($optcfg['wireless']['wep']['enable']);
 	$pconfig['mac_acl'] = $optcfg['wireless']['mac_acl'];
 
@@ -135,6 +137,8 @@ function wireless_config_post(&$optcfg) {
 		$optcfg['wireless']['authmode'] = $_POST['authmode'];
 		$optcfg['wireless']['txpower'] = $_POST['txpower'];
 		$optcfg['wireless']['distance'] = $_POST['distance'];
+		if (!is_array($optcfg['wireless']['wpa']))
+			$optcfg['wireless']['wpa'] = array();
 		$optcfg['wireless']['wpa']['macaddr_acl'] = $_POST['macaddr_acl'];
 		$optcfg['wireless']['wpa']['auth_algs'] = $_POST['auth_algs'];
 		$optcfg['wireless']['wpa']['wpa_mode'] = $_POST['wpa_mode'];

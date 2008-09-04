@@ -313,7 +313,7 @@ EOD;
 				$conf .= "client-to-client\n";
 
 			$conf .= "server $ip $mask\n";
-			$csc_dir = "{$g['varetc_path']}/openvpn_csc";
+			$csc_dir = "{$g['varetc_path']}/openvpn-csc";
 			$conf .= "client-config-dir $csc_dir\n";
 		}
 
@@ -473,7 +473,7 @@ function openvpn_delete($mode, & $settings) {
 function openvpn_resync_csc(& $settings) {
 	global $g, $config;
 
-	$fpath = $g['varetc_path']."/openvpn_csc/".$settings['common_name'];
+	$fpath = $g['varetc_path']."/openvpn-csc/".$settings['common_name'];
 
 	if ($settings['disable']) {
 		unlink_if_exists($fpath);
@@ -510,7 +510,7 @@ function openvpn_resync_csc(& $settings) {
 function openvpn_delete_csc(& $settings) {
 	global $g, $config;
 
-	$fpath = $g['varetc_path']."/openvpn_csc/".$settings['common_name'];
+	$fpath = $g['varetc_path']."/openvpn-csc/".$settings['common_name'];
 	unlink_if_exists($fpath);
 }
 

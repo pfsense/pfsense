@@ -63,7 +63,7 @@ function wireless_config_init(&$optcfg) {
 	$pconfig['wep_enable'] = isset($optcfg['wireless']['wep']['enable']);
 	$pconfig['mac_acl'] = $optcfg['wireless']['mac_acl'];
 
-	if (is_array($optcfg['wireless']['wep']['key'])) {
+	if (is_array($optcfg['wireless']['wep'])) {
 		$i = 1;
 		foreach ($optcfg['wireless']['wep']['key'] as $wepkey) {
 			$pconfig['key' . $i] = $wepkey['value'];

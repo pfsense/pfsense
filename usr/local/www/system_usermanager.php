@@ -496,9 +496,6 @@ function presubmit() {
 							</table>
 						</td>
 					</tr>
-
-					<?php endif; ?>
-
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("User Certificates");?></td>
 						<td width="78%" class="vtable">
@@ -551,6 +548,9 @@ function presubmit() {
 							</table>
 						</td>
 					</tr>
+
+					<?php endif; ?>
+
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">

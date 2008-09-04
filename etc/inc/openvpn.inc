@@ -176,9 +176,9 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 
 	if ($settings['netbios_enable']) {
 
-  		if (!empty($settings['dhcp_nbttype']) && ($settings['dhcp_nbttype'] != 0))
- 			$conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
-    	if (!empty($settings['dhcp_nbtscope'])) 
+		if (!empty($settings['dhcp_nbttype']) && ($settings['dhcp_nbttype'] != 0))
+			$conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
+		if (!empty($settings['dhcp_nbtscope'])) 
 			$conf .= "push \"dhcp-option NBS {$settings['dhcp_nbtscope']}\"\n";
 
 		if (!empty($settings['wins_server1']))
@@ -251,6 +251,9 @@ function openvpn_reconfigure($mode,& $settings) {
 
 		/* rename the device */
 		mwexec("/sbin/ifconfig {$tunname} name {$devname}");
+
+		/* add the device to the openvpn group */
+		mwexec("/sbin/ifconfig {$devname} group openvpn");
 	}
 
 	$pfile = $g['varrun_path'] . "/openvpn_{$mode_id}.pid";
@@ -446,16 +449,19 @@ function openvpn_delete($mode, & $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
-    $tunname = "tun{$vpnid}";
-    if ($mode == "server")
-        $devname = "ovpns{$vpnid}";
-    else
-        $devname = "ovpnc{$vpnid}";
+	$tunname = "tun{$vpnid}";
+	if ($mode == "server")
+		$devname = "ovpns{$vpnid}";
+	else
+		$devname = "ovpnc{$vpnid}";
 
 	/* kill the process */
 	$pfile = "{$g['varrun_path']}/openvpn_{$mode_id}.pid";
 	killbypid($pfile);
 	unlink($pfile);
+
+	/* remove the device from the openvpn group */
+	mwexec("/sbin/ifconfig {$devname} -group openvpn");
 
 	/* restore the original adapter name */
 	mwexec("/sbin/ifconfig {$devname} name {$tunname}");

@@ -476,24 +476,12 @@ function generate_optcfg_array()
 	if ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client']) {
 
 		$ovpnifs = array();
+		$oic = array();
+		$oic['if'] = "openvpn";
+		$oic['descr'] = 'OpenVPN';
+		$oic['ip'] = "none";
 
-		if (is_array($config['openvpn']['openvpn-server']))
-			foreach ($config['openvpn']['openvpn-server'] as & $server)
-				if (!$server['disable'])
-					$ovpnifs[] = "ovpns".$server['vpnid'];
-
-		if (is_array($config['openvpn']['openvpn-client']))
-			foreach ($config['openvpn']['openvpn-client'] as & $client)
-				if (!$client['disable'])
-					$ovpnifs[] = "ovpnc".$client['vpnid'];
-
-		if (count($ovpnifs)) {
-			$oic = array();
-			$oic['if'] = implode(" ", $ovpnifs);
-			$oic['descr'] = 'OpenVPN';
-			$oic['ip'] = "none";
-			$FilterIflist['openvpn'] = $oic;
-		}
+		$FilterIflist['openvpn'] = $oic;
 	}
 }
 

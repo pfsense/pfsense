@@ -29,8 +29,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("functions.inc");
-require("config.inc");
+require_once("functions.inc");
+require_once("config.inc");
 
 $fp = fopen('php://stdin', 'r');
 
@@ -44,7 +44,7 @@ if (isset($config['system']['enablesshd'])) {
 		echo "\n\nDisabling SSHD...";
 		exec("/etc/sshd");
 		echo "\n";
-		exec("ps awux | grep '/usr/sbin/sshd' | grep -v grep | awk '{print $2}' | xargs kill")
+		exec("ps awux | grep '/usr/sbin/sshd' | grep -v grep | awk '{print $2}' | xargs kill");
 	}
 	
 } else {

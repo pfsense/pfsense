@@ -63,7 +63,8 @@ function wireless_config_init(&$optcfg) {
 	$pconfig['wep_enable'] = isset($optcfg['wireless']['wep']['enable']);
 	$pconfig['mac_acl'] = $optcfg['wireless']['mac_acl'];
 
-	if (is_array($optcfg['wireless']['wep'])) {
+	if (is_array($optcfg['wireless']['wep']) &&
+		is_array($optcfg['wireless']['wep']['key'])) {
 		$i = 1;
 		foreach ($optcfg['wireless']['wep']['key'] as $wepkey) {
 			$pconfig['key' . $i] = $wepkey['value'];
@@ -179,29 +180,43 @@ function wireless_config_post(&$optcfg) {
 		else
 			unset($optcfg['wireless']['wpa']['enable']);
 
-		if($_POST['wep_enable'] == "yes")
+		if($_POST['wep_enable'] == "yes") {
+			if (!is_array($optcfg['wireless']['wep']))
+                        	$optcfg['wireless']['wep'] = array();
 			$optcfg['wireless']['wep']['enable'] = $_POST['wep_enable'] = true;
-		else
+		} else
 			unset($optcfg['wireless']['wep']['enable']);
 
-		if($_POST['wme_enable'] == "yes")
+
+		if($_POST['wme_enable'] == "yes") {
+			if (!is_array($optcfg['wireless']['wme']))
+                        	$optcfg['wireless']['wme'] = array();
 			$optcfg['wireless']['wme']['enable'] = $_POST['wme_enable'] = true;
-		else
+		} else
 			unset($optcfg['wireless']['wme']['enable']);
 
-		if($_POST['pureg_enable'] == "yes")
+
+		if($_POST['pureg_enable'] == "yes") {
+			if (!is_array($optcfg['wireless']['pureg']))
+                        	$optcfg['wireless']['pureg'] = array();
 			$optcfg['wireless']['pureg']['enable'] = $_POST['pureg_enable'] = true;
-		else
+		} else
 			unset($optcfg['wireless']['pureg']['enable']);
 
-		if($_POST['apbridge_enable'] == "yes")
+
+		if($_POST['apbridge_enable'] == "yes") {
+			if (!is_array($optcfg['wireless']['apbridge']))
+                        	$optcfg['wireless']['apbridge'] = array();
 			$optcfg['wireless']['apbridge']['enable'] = $_POST['apbridge_enable'] = true;
-		else
+		} else
 			unset($optcfg['wireless']['apbridge']['enable']);
 
-		if($_POST['standard'] == "11a Turbo")
+
+		if($_POST['standard'] == "11a Turbo") {
+			if (!is_array($optcfg['wireless']['turbo']))
+                        	$optcfg['wireless']['turbo'] = array();
 			$optcfg['wireless']['turbo']['enable'] = true;
-		else
+		} else
 			unset($optcfg['wireless']['turbo']['enable']);
 
 		$optcfg['wireless']['wep']['key'] = array();

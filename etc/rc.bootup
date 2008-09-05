@@ -32,7 +32,6 @@
 */
 
 	echo " done.\n";
-	ini_set("memory_limit","32M");
 	echo "Initializing...";
 	echo ".";
 	require_once("/etc/inc/globals.inc");

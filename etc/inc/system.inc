@@ -60,6 +60,7 @@ implicit_flush = true
 magic_quotes_gpc = Off
 max_execution_time = 99999999
 max_input_time = 99999999
+memory_limit = 32M
 register_argc_argv = On
 file_uploads = On
 extension_dir=/usr/local/lib/php/extensions/no-debug-non-zts-20020429/

@@ -736,23 +736,14 @@ function filter_nat_rules_generate()
 		
 		if ($numberofnathosts > 0):
 
-		if (!empty($config['openvpn']['openvpn-client'])) {
-			foreach ($config['openvpn']['openvpn-client'] as $settings) {
-				$vpnid = $settings['vpnid'];
-				if (!empty($settings['remote_network'])) 
-					$natrules .= "nat on ovpnc{$vpnid} from \$tonatsubnets to any -> (ovpnc{$vpnid})\n";
-			}
-		}
-
 		foreach ($FilterIflist as $if => $ifcfg) {
 			update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
 
 			if (interface_has_gateway($if)) {
 				$target = get_current_wan_address($if);
 					
-		         	/* do not nat tftp proxy */
- 	                       $natrules .= "no nat on \${$ifcfg['descr']} to port tftp\n";
-
+				/* do not nat tftp proxy */
+				$natrules .= "no nat on \${$ifcfg['descr']} to port tftp\n";
 
 				/* create outbound nat entries for all local networks */
 				$natrules .= filter_nat_rules_generate_if($if,

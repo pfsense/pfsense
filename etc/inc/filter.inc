@@ -861,7 +861,7 @@ function filter_nat_rules_generate()
 				$natrules .= "no rdr on $realif proto udp from <onetoonelist> to any port tftp\n";
 			}
 		}
-		$tmp_port = 8020 + $interface_counter;
+		$tmp_port = 8021 + $interface_counter;
 		$temp_array_holder_pftpx = array();
 		$temp_array_holder_pftpx['port'] = $tmp_port;
 		$temp_array_holder_pftpx['interface'] = "\${$ifcfg['descr']}";

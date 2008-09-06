@@ -4,6 +4,12 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
+if(is_dir("/home/pfsense")) {
+	echo "\nRelocating cvssync...";
+	exec("rm -rf /home/pfsense");
+	echo " done.\n";
+}
+
 function create_supfile($branch) {
 
 	if($branch == "HEAD") 
@@ -13,7 +19,7 @@ function create_supfile($branch) {
 
 	$supfile = "
 *default host=cvs.pfsense.com
-*default base=/home/pfsense/$branch
+*default base=/root/pfsense/$branch
 *default release=cvs tag=$BRANCHTAG
 *default delete use-rel-suffix
 pfSense
@@ -72,9 +78,9 @@ create_supfile($branch);
 if($argv[4] == "NOBACKUP") 
 	$nobackup=true;
 
-$CODIR =  "/home/pfsense/$branch";
+$CODIR =  "/root/pfsense/$branch";
 
-exec("mkdir -p /home/pfsense/$BRANCHTAG");
+exec("mkdir -p /root/pfsense/$BRANCHTAG");
 
 $found = false;
 foreach($branches as $branchname => $branchdesc) {
@@ -107,7 +113,7 @@ if(!$nobackup) {
 }
 
 echo "===> Checking out $branch\n";
-exec("mkdir -p /home/pfsense/$branch");
+exec("mkdir -p /root/pfsense/$branch");
 system("cvsup /var/etc/pfSense-supfile");
 exec("rm -rf /usr/local/www/includes/*");
 exec("rm -rf /usr/local/www/javascript/*");

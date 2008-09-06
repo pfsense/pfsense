@@ -176,7 +176,7 @@ function enable_change(enable_change) {
                   <td width="78%" class="vtable">
 <select name="type" class="formfld" id="type">
                       <?php
-				$types = explode(",", "DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,ZoneEdit,Loopia,freeDNS");
+				$types = explode(",", "DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS");
 				$vals = explode(" ", "dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns");
 				$j = 0; for ($j = 0; $j < count($vals); $j++): ?>
                       <option value="<?=$vals[$j];?>" <?php if ($vals[$j] == $pconfig['type']) echo "selected";?>>

@@ -30,9 +30,9 @@
 
 require("guiconfig.inc");
 
-$pconfig['enable'] = isset($config['rrd']['enable']);
-$pconfig['category'] = isset($config['rrd']['category']);
-$pconfig['style'] = isset($config['rrd']['style']);
+$pconfig['enable'] = $config['rrd']['enable'];
+$pconfig['category'] = $config['rrd']['category'];
+$pconfig['style'] = $config['rrd']['style'];
 
 $curcat = "settings";
 $categories = array('system' => 'System',

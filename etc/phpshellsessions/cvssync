@@ -92,7 +92,7 @@ if(!$found) {
 	exit;
 }
 
-if($branch == "RESTORE") {
+if($branch == "RESTORE" && $g['platform'] == "pfSense") {
 	if(!file_exists("/root/cvssync_backup.tgz")) {
 		echo "Sorry, we could not find a previous CVSSync backup file.\n";
 		exit();
@@ -101,6 +101,8 @@ if($branch == "RESTORE") {
 	exec("tar Uxpf /root/cvssync_backup.tgz -C /");
 	post_cvssync_commands();
 	exit();
+} else {
+	$nobackup = true; // do not backup embedded, livecd
 }
 
 if(!$nobackup) {
@@ -143,7 +145,11 @@ exec("rm -f ${CODIR}/pfSense/etc/syslog.conf 2>/dev/null");
 
 echo "===> Installing new files...\n";
 
-exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)");
+if($g['platform'] == "pfSense") 
+	$command = "cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)";
+else 
+	$command = "cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -xpf -)";
+exec($command);
 
 post_cvssync_commands();
 

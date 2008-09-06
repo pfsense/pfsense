@@ -88,11 +88,20 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	mkdir /tmp/unionfs
 	mkdir /tmp/unionfs/usr
 	mkdir /tmp/unionfs/root
+	mkdir /tmp/unionfs/sbin
+	mkdir /tmp/unionfs/bin
+	mkdir /tmp/unionfs/boot
 	echo -n "Mounting unionfs directories:"
 	echo -n " usr"
 	mount_unionfs /tmp/unionfs/usr /usr/
 	echo -n " root"
-	mount_unionfs /tmp/unionfs/root /root/	
+	mount_unionfs /tmp/unionfs/root /root/
+	echo -n " bin"
+	mount_unionfs /tmp/unionfs/bin /bin/		
+	echo -n " sbin"
+	mount_unionfs /tmp/unionfs/sbin /sbin/	
+	echo -n " boot"
+	mount_unionfs /tmp/unionfs/boot /boot/
 	echo "... done."
 fi
 

@@ -149,7 +149,7 @@ echo "===> Installing new files...\n";
 if($g['platform'] == "pfSense") 
 	$command = "cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)";
 else 
-	$command = "cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -xpf -)";
+	$command = "cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -xpf -) 2>/dev/null";
 exec($command);
 
 post_cvssync_commands();

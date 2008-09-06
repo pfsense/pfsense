@@ -11,7 +11,7 @@ partsize="3m"
 
 export VARMFS_COPYDBPKG=yes
 
-for i in tmp varmfs etcmfs rootmfs; do
+for i in tmp varmfs etcmfs; do
        if [ -f /etc/rc.d/$i ]; then
                sh /etc/rc.d/$i start
        fi

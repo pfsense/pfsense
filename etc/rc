@@ -120,7 +120,7 @@ fi
 # Make sure our /tmp is 777
 chmod 1777 /tmp
 
-if [ ! "$PLATFORM" = "cdrom" ] ; then
+if [ "$PLATFORM" = "cdrom" ] ; then
 	mkdir /tmp/unionfs
 	mkdir /tmp/unionfs/usr
 	mkdir /tmp/unionfs/root

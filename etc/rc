@@ -121,6 +121,18 @@ fi
 chmod 1777 /tmp
 
 if [ ! "$PLATFORM" = "cdrom" ] ; then
+	mkdir /tmp/unionfs
+	mkdir /tmp/unionfs/usr
+	mkdir /tmp/unionfs/root
+	echo -n "Mounting unionfs directories: "
+	echo -n "usr"
+	mount_unionfs /tmp/unionfs/usr /usr/
+	echo -n " root"
+	mount_unionfs /tmp/unionfs/root /root/	
+	echo "done."
+fi
+
+if [ ! "$PLATFORM" = "cdrom" ] ; then
 	# Malloc debugging check
 	if [ -L /etc/malloc.conf ]; then
 	    #ln -s aj /etc/malloc.conf
@@ -351,14 +363,6 @@ nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status &
 minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
 chmod a+rw /tmp/.
-
-if [ ! "$PLATFORM" = "cdrom" ] ; then
-	mkdir /tmp/unionfs
-	mkdir /tmp/unionfs/usr
-	echo -n "Mounting /usr/ read/write..."
-	mount_unionfs /tmp/unionfs/usr /usr/
-	echo "done."
-fi
 
 echo "Bootup complete"
 

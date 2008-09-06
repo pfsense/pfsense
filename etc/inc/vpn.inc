@@ -864,7 +864,12 @@ function vpn_endpoint_determine($tunnel, $curwanip) {
 		if(preg_match("/^carp/i", $tunnel['interface'])) {
 			$iface = $tunnel['interface'];
 		} else {
-			$iface = $config['interfaces'][$tunnel['interface']]['if'];
+			if($config['interfaces'][$tunnel['interface']]['ipaddr'] == "pppoe" OR 
+				$config['interfaces'][$tunnel['interface']]['ipaddr'] == "pptp") {
+				$iface = "ng0";
+			} else {
+				$iface = $config['interfaces'][$tunnel['interface']]['if'];
+			}
 		}
 		$oc = $config['interfaces'][$tunnel['interface']];
 		/* carp ips, etc */

@@ -352,6 +352,14 @@ minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
 chmod a+rw /tmp/.
 
+if [ ! "$PLATFORM" = "cdrom" ] ; then
+	mkdir /tmp/unionfs
+	mkdir /tmp/unionfs/usr
+	echo -n "Mounting /usr/ read/write..."
+	mount_unionfs /tmp/unionfs/usr /usr/
+	echo "done."
+fi
+
 echo "Bootup complete"
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null

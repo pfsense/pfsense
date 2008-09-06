@@ -93,7 +93,7 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	mount_unionfs /tmp/unionfs/usr /usr/
 	echo -n " root"
 	mount_unionfs /tmp/unionfs/root /root/	
-	echo "done."
+	echo " ... done."
 fi
 
 echo -n "Creating symlinks..."

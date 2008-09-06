@@ -66,6 +66,9 @@ if ($_GET['act'] == "del") {
 }
 
 if($_GET['act']=="new"){
+	$pconfig['autokey_enable'] = "yes";
+	$pconfig['tlsauth_enable'] = "yes";
+	$pconfig['autotls_enable'] = "yes";
 	$pconfig['interface'] = "wan";
 	$pconfig['local_port'] = openvpn_port_next('UDP');
 	$pconfig['pool_enable'] = "yes";
@@ -76,18 +79,21 @@ if($_GET['act']=="edit"){
 	if (isset($id) && $a_server[$id]) {
 
 		$pconfig['disable'] = $a_server[$id]['disable'];
+		$pconfig['mode'] = $a_server[$id]['mode'];
 		$pconfig['protocol'] = $a_server[$id]['protocol'];
 		$pconfig['interface'] = $a_server[$id]['interface'];
 		$pconfig['local_port'] = $a_server[$id]['local_port'];
 		$pconfig['description'] = $a_server[$id]['description'];
 
-		$pconfig['auth_method'] = $a_server[$id]['auth_method'];
-		if ($pconfig['auth_method'] == "shared_key")
-			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
-		else {
+		if ($pconfig['mode'] != "p2p_shared_key") {
 			$pconfig['caref'] = $a_server[$id]['caref'];
 			$pconfig['certref'] = $a_server[$id]['certref'];
-		}
+			if ($a_server[$id]['tls']) {
+				$pconfig['tlsauth_enable'] = "yes";
+				$pconfig['tls'] = base64_decode($a_server[$id]['tls']);
+			}
+		} else
+			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
 		$pconfig['crypto'] = $a_server[$id]['crypto'];
 
 		$pconfig['tunnel_network'] = $a_server[$id]['tunnel_network'];
@@ -134,6 +140,10 @@ if($_GET['act']=="edit"){
 		$pconfig['nbdd_server1'] = $a_server[$id]['nbdd_server1'];
 		if ($pconfig['nbdd_server1'])
 			$pconfig['nbdd_server_enable'] = true;
+
+		// just in case the modes switch
+		$pconfig['autokey_enable'] = "yes";
+		$pconfig['autotls_enable'] = "yes";
 	}
 }
 
@@ -146,6 +156,11 @@ if ($_POST) {
 		$vpnid = $a_server[$id]['vpnid'];
 	else
 		$vpnid = 0;
+
+	if ($server['mode'] != "p2p_shared_key")
+		$tls_mode = true;
+	else
+		$tls_mode = false;
 
 	/* input validation */
 	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
@@ -163,10 +178,15 @@ if ($_POST) {
 	if (openvpn_port_used($pconfig['protocol'], $pconfig['local_port']) != $vpnid)
 		$input_errors[] = "The specified 'Local port' is in use. Please select another value";
 
-	if ($pconfig['auth_method'] == 'shared_key')
+	if (!$tls_mode && !$pconfig['autokey_enable'])
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
 			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----"))
-            $input_errors[] = "The field 'Shared Key' does not appear to be valid";
+			$input_errors[] = "The field 'Shared Key' does not appear to be valid";
+
+	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable'])
+		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
+			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----"))
+			$input_errors[] = "The field 'TLS Authentication Key' does not appear to be valid";
 
 	if ($pconfig['dns_server_enable']) {
 		if (!empty($pconfig['dns_server1']) && !is_ipaddr(trim($pconfig['dns_server1'])))
@@ -205,7 +225,7 @@ if ($_POST) {
 	if ($pconfig['maxclients'] && !is_numeric($pconfig['maxclients']))
 		$input_errors[] = "The field 'Concurrent connections' must be numeric.";
 
-	if ($pconfig['auth_method'] == 'shared_key') {
+	if (!$tls_mode) {
 		$reqdfields = array('shared_key');
 		$reqfieldsn = array('Shared key');
     } else {
@@ -228,17 +248,24 @@ if ($_POST) {
 			$server['vpnid'] = openvpn_vpnid_next();
 
 		$server['disable'] = $pconfig['disable'];
+		$server['mode'] = $pconfig['mode'];
 		$server['protocol'] = $pconfig['protocol'];
 		$server['interface'] = $pconfig['interface'];
 		$server['local_port'] = $pconfig['local_port'];
 		$server['description'] = $pconfig['description'];
 
-		$server['auth_method'] = $pconfig['auth_method'];
-		if ($server['auth_method'] == "shared_key")
-			$server['shared_key'] = base64_encode($pconfig['shared_key']);
-		else {
+		if ($tls_mode) {
 			$server['caref'] = $pconfig['caref'];
 			$server['certref'] = $pconfig['certref'];
+			if ($pconfig['tlsauth_enable']) {
+				if ($pconfig['autotls_enable'])
+					$pconfig['tls'] = openvpn_create_key();
+				$server['tls'] = base64_encode($pconfig['tls']);
+			}
+		} else {
+			if ($pconfig['autokey_enable'])
+				$pconfig['shared_key'] = openvpn_create_key();
+			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
 		$server['crypto'] = $pconfig['crypto'];
 
@@ -305,21 +332,71 @@ include("head.inc");
 <script language="JavaScript">
 <!--
 
-function method_change() {
-	index = document.iform.auth_method.selectedIndex;
-	value = document.iform.auth_method.options[index].value;
+function mode_change() {
+	index = document.iform.mode.selectedIndex;
+	value = document.iform.mode.options[index].value;
 	switch(value) {
-		case "pki":
-			document.getElementById("pki_ca").style.display="";
-			document.getElementById("pki_cert").style.display="";
+		case "p2p_tls":
+		case "server_tls":
+		case "server_user":
+		case "server_tls_user":
+			document.getElementById("tls").style.display="";
+			document.getElementById("tls_ca").style.display="";
+			document.getElementById("tls_cert").style.display="";
 			document.getElementById("psk").style.display="none";
 			break;
-		case "shared_key":
-			document.getElementById("pki_ca").style.display="none";
-			document.getElementById("pki_cert").style.display="none";
+		case "p2p_shared_key":
+			document.getElementById("tls").style.display="none";
+			document.getElementById("tls_ca").style.display="none";
+			document.getElementById("tls_cert").style.display="none";
 			document.getElementById("psk").style.display="";
 			break;
 	}
+	switch(value) {
+		case "p2p_tls":
+		case "p2p_shared_key":
+			document.getElementById("client_opts").style.display="none";
+			document.getElementById("remote_opts").style.display="";
+			break;
+		default:
+			document.getElementById("client_opts").style.display="";
+			document.getElementById("remote_opts").style.display="none";
+			break;
+	}
+}
+
+function autokey_change() {
+
+	if (document.iform.autokey_enable.checked)
+		document.getElementById("autokey_opts").style.display="none";
+	else
+		document.getElementById("autokey_opts").style.display="";
+}
+
+function tlsauth_change() {
+
+<?php if (!$pconfig['tls']): ?>
+	if (document.iform.tlsauth_enable.checked)
+		document.getElementById("tlsauth_opts").style.display="";
+	else
+		document.getElementById("tlsauth_opts").style.display="none";
+<?php endif; ?>
+
+	autotls_change();
+}
+
+function autotls_change() {
+
+<?php if (!$pconfig['tls']): ?>
+	autocheck = document.iform.autotls_enable.checked;
+<?php else: ?>
+	autocheck = false;
+<?php endif; ?>
+
+	if (document.iform.tlsauth_enable.checked && !autocheck)
+		document.getElementById("autotls_opts").style.display="";
+	else
+		document.getElementById("autotls_opts").style.display="none";
 }
 
 function gwredir_change() {
@@ -426,6 +503,21 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr>
+						<td width="22%" valign="top" class="vncellreq"><?=gettext("Server Mode");?></td>
+							<td width="78%" class="vtable">
+							<select name='mode' id='mode' class="formselect" onchange='mode_change()'>
+							<?php
+								foreach ($openvpn_server_modes as $name => $desc):
+									$selected = "";
+									if ($pconfig['mode'] == $name)
+										$selected = "selected";
+							?>
+								<option value="<?=$name;?>" <?=$selected;?>><?=$desc;?></option>
+							<?php endforeach; ?>
+							</select>
+						</td>
+					</tr>
+					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
 							<td width="78%" class="vtable">
 							<select name='protocol' class="formselect">
@@ -480,23 +572,50 @@ function netbios_change() {
 					<tr>
 						<td colspan="2" valign="top" class="listtopic">Cryptographic Settings</td>
 					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq">Authentication Method</td>
-							<td width="78%" class="vtable">
-							<select name='auth_method' id='auth_method' class="formselect" onchange='method_change()'>
-							<?php
-								foreach ($openvpn_auth_methods as $method => $name):
-									$selected = "";
-									if ($pconfig['auth_method'] == $method)
-										$selected = "selected";
-							?>
-								<option value="<?=$method;?>" <?=$selected;?>><?=$name;?></option>
-							<?php endforeach; ?>
-							</select>
-							</td>
+					<tr id="tls">
+						<td width="22%" valign="top" class="vncellreq">TLS Authentication</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['tlsauth_enable'],$chk); ?>
+										<input name="tlsauth_enable" id="tlsauth_enable" type="checkbox" value="yes" <?=$chk;?> onClick="tlsauth_change()">
+									</td>
+									<td>
+										<span class="vexpl">
+											Enable authentication of TLS packets.
+										</span>
+									</td>
+								</tr>
+							</table>
+							<?php if (!$pconfig['tls']): ?>
+							<table border="0" cellpadding="2" cellspacing="0" id='tlsauth_opts'>
+								<tr>
+									<td>
+										<?php set_checked($pconfig['autotls_enable'],$chk); ?>
+										<input name="autotls_enable" id="autotls_enable" type="checkbox" value="yes" <?=$chk;?> onClick="autotls_change()">
+									</td>
+									<td>
+										<span class="vexpl">
+											Automatically generate a shared TLS authentication key.
+										</span>
+									</td>
+								</tr>
+							</table>
+							<?php endif; ?>
+							<table border="0" cellpadding="2" cellspacing="0" id='autotls_opts'>
+								<tr>
+									<td>
+										<textarea name="tls" cols="65" rows="7" class="formpre"><?=htmlspecialchars($pconfig['tls']);?></textarea>
+										<br/>
+										Paste your shared key here.
+									</td>
+								</tr>
+							</table>
+						</td>
 					</tr>
-					<tr id="pki_ca">
-						<td width="22%" valign="top" class="vncellreq">Certificate Authority</td>
+					<tr id="tls_ca">
+						<td width="22%" valign="top" class="vncellreq">Peer Certificate Authority</td>
 							<td width="78%" class="vtable">
 							<select name='caref' class="formselect">
 							<?php
@@ -510,8 +629,8 @@ function netbios_change() {
 							</select>
 							</td>
 					</tr>
-					<tr id="pki_cert">
-						<td width="22%" valign="top" class="vncellreq">Certificate</td>
+					<tr id="tls_cert">
+						<td width="22%" valign="top" class="vncellreq">Server Certificate</td>
 							<td width="78%" class="vtable">
 							<select name='certref' class="formselect">
 							<?php
@@ -527,10 +646,31 @@ function netbios_change() {
 					</tr>
 					<tr id="psk">
 						<td width="22%" valign="top" class="vncellreq">Shared Key</td>
-						<td width="78%" class="vtable"> 
-							<textarea name="shared_key" cols="65" rows="7" class="formpre"><?=htmlspecialchars($pconfig['shared_key']);?></textarea>
-							<br/>
-							Paste your shared key here.
+						<td width="78%" class="vtable">
+							<?php if (!$pconfig['shared_key']): ?>
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['autokey_enable'],$chk); ?>
+										<input name="autokey_enable" type="checkbox" value="yes" <?=$chk;?> onClick="autokey_change()">
+									</td>
+									<td>
+										<span class="vexpl">
+											Automatically generate a shared key.
+										</span>
+									</td>
+								</tr>
+							</table>
+							<?php endif; ?>
+							<table border="0" cellpadding="2" cellspacing="0" id='autokey_opts'>
+								<tr>
+									<td>
+										<textarea name="shared_key" cols="65" rows="7" class="formpre"><?=htmlspecialchars($pconfig['shared_key']);?></textarea>
+										<br/>
+										Paste your shared key here.
+									</td>
+								</tr>
+							</table>
 						</td>
 					</tr>
 					<tr>
@@ -572,20 +712,6 @@ function netbios_change() {
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Remote Network</td>
-						<td width="78%" class="vtable">
-							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
-							<br>
-							This is a network that will be routed through
-							the tunnel, so that a site-to-site VPN can be
-							established without manually changing the
-							routing tables. Expressed as a CIDR range. If
-							this is a site-to-site VPN, enter here the
-							remote LAN here. You may leave this blank if
-							you don't want a site-to-site VPN.
-						</td>
-					</tr>
-					<tr>
 						<td width="22%" valign="top" class="vncell">Redirect Gateway</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
@@ -614,6 +740,20 @@ function netbios_change() {
 							want to add a route to the local network
 							through this tunnel on the remote machine.
 							This is generally set to your LAN network.
+						</td>
+					</tr>
+					<tr id="remote_opts">
+						<td width="22%" valign="top" class="vncell">Remote Network</td>
+						<td width="78%" class="vtable">
+							<input name="remote_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['remote_network']);?>">
+							<br>
+							This is a network that will be routed through
+							the tunnel, so that a site-to-site VPN can be
+							established without manually changing the
+							routing tables. Expressed as a CIDR range. If
+							this is a site-to-site VPN, enter here the
+							remote LAN here. You may leave this blank if
+							you don't want a site-to-site VPN.
 						</td>
 					</tr>
 					<tr>
@@ -678,6 +818,9 @@ function netbios_change() {
 							</table>
 						</td>
 					</tr>
+				</table>
+
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="client_opts">
 					<tr>
 						<td colspan="2" class="list" height="12"></td>
 					</tr>
@@ -911,6 +1054,9 @@ function netbios_change() {
 							</table>
 						</td>
 					</tr>
+				</table>
+
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="client_opts">
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%"> 
@@ -991,7 +1137,9 @@ function netbios_change() {
 </table>
 <script language="JavaScript">
 <!--
-method_change();
+mode_change();
+autokey_change();
+tlsauth_change();
 gwredir_change();
 dns_domain_change();
 dns_server_change();

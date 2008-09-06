@@ -49,13 +49,45 @@ require_once('util.inc');
 
 $openvpn_prots = array("UDP", "TCP");
 
-$openvpn_auth_methods = array(
-	'pki' => "Public Key Infrastructure",
-	'shared_key' => "Pre Shared Key");
+/* 
+ * The User Auth mode below is disabled because
+ * OpenVPN erroneously requires that we provide
+ * a CA configuration parameter. In this mode,
+ * clients don't send a certificate so there is
+ * no need for a CA. If we require that admins
+ * provide one in the pfSense UI due to a bogus
+ * requirement imposed by OpenVPN, it could be
+ * considered very confusing ( I know I was ).
+ *
+ * -mgrooms
+ */
+
+$openvpn_server_modes = array(
+	'p2p_tls' => "Peer to Peer ( SSL/TLS )",
+	'p2p_shared_key' => "Peer to Peer ( Shared Key )",
+	'server_tls' => "Remote Access ( SSL/TLS )",
+//	'server_user' => "Remote Access ( User Auth )",
+	'server_tls_user' => "Remote Access ( SSL/TLS + User Auth )");
+
+$openvpn_client_modes = array(
+	'p2p_tls' => "Peer to Peer ( SSL/TLS )",
+	'p2p_shared_key' => "Peer to Peer ( Shared Key )" );
+
+function openvpn_create_key() {
+
+	$fp = popen("/usr/local/sbin/openvpn --genkey --secret /dev/stdout 2>/dev/null", "r");
+	if (!$fp)
+		return false;
+
+	$rslt = stream_get_contents($fp);
+	pclose($fp);
+
+	return $rslt;
+}
 
 function openvpn_create_dhparams($bits) {
 
-	$fp = popen("/usr/bin/openssl dhparam {$bits}", "r");
+	$fp = popen("/usr/bin/openssl dhparam {$bits} 2>/dev/null", "r");
 	if (!$fp)
 		return false;
 
@@ -268,61 +300,64 @@ function openvpn_reconfigure($mode,& $settings) {
 	$lines = explode(' ', trim(shell_exec("ifconfig {$iface} | grep inet | grep -v inet6")));
 	$iface_ip = $lines[1];
 
-$conf .= <<<EOD
-dev {$devname}
-dev-type tun
-dev-node /dev/{$tunname}
-writepid {$pfile}
-#user nobody
-#group nobody
-daemon
-keepalive 10 60
-ping-timer-rem
-persist-tun
-persist-key
-proto $proto
-cipher $cipher
-up /etc/rc.filter_configure
-down /etc/rc.filter_configure
-local {$iface_ip}
+	$conf  = "dev {$devname}\n";
+	$conf .= "dev-type tun\n";
+	$conf .= "dev-node /dev/{$tunname}\n";
+	$conf .= "writepid {$pfile}\n";
+	$conf .= "#user nobody\n";
+	$conf .= "#group nobody\n";
+	$conf .= "daemon\n";
+	$conf .= "keepalive 10 60\n";
+	$conf .= "ping-timer-rem\n";
+	$conf .= "persist-tun\n";
+	$conf .= "persist-key\n";
+	$conf .= "proto {$proto}\n";
+	$conf .= "cipher {$cipher}\n";
+	$conf .= "up /etc/rc.filter_configure\n";
+	$conf .= "down /etc/rc.filter_configure\n";
+	$conf .= "local {$iface_ip}\n";
 
-EOD;
-
-	// Mode specific stuff
+	// server specific settings
 
 	if ($mode == 'server') {
 
 		list($ip, $mask) = explode('/', $settings['tunnel_network']);
 		$mask = gen_subnet_mask($mask);
 
-		// Using a shared key or not dynamically assigning IPs to the clients
-		if (($settings['auth_method'] == 'shared_key') || (!$settings['pool_enable'] == 'on')) {
-
-			if ($settings['auth_method'] == 'pki')
+		// configure tls modes
+		switch($settings['mode']) {
+			case 'p2p_tls':
+			case 'server_tls':
+			case 'server_tls_user':
 				$conf .= "tls-server\n";
-
-			$baselong = ip2long($ip) & ip2long($mask);
-			$ip1 = long2ip($baselong + 1);
-			$ip2 = long2ip($baselong + 2);
-			$conf .= "ifconfig $ip1 $ip2\n";
-		}
-		// Using a PKI
-		else if ($settings['auth_method'] == 'pki') {
-
-			if ($settings['client2client'])
-				$conf .= "client-to-client\n";
-
-			$conf .= "server $ip $mask\n";
-			$csc_dir = "{$g['varetc_path']}/openvpn-csc";
-			$conf .= "client-config-dir $csc_dir\n";
+				break;
 		}
 
-		// We can push routes
-		if (!empty($settings['local_network'])) {
+		// configure p2p/server modes
+		switch($settings['mode']) {
+			case 'p2p_tls':
+			case 'p2p_shared_key':
+				$baselong = ip2long($ip) & ip2long($mask);
+				$ip1 = long2ip($baselong + 1);
+				$ip2 = long2ip($baselong + 2);
+				$conf .= "ifconfig $ip1 $ip2\n";
+				break;
+			case 'server_tls':
+			case 'server_user':
+			case 'server_tls_user':
+				$conf .= "server {$ip} {$mask}\n";
+				$conf .= "client-config-dir {$g['varetc_path']}/openvpn-csc\n";
+				break;
+		}
 
-			list($ip, $mask) = explode('/', $settings['local_network']);
-			$mask = gen_subnet_mask($mask);
-			$conf .= "push \"route $ip $mask\"\n";
+		// configure user auth modes
+		switch($settings['mode']) {
+			case 'server_user':
+				$conf .= "client-cert-not-required\n";
+			case 'server_tls_user':
+				$conf .= "username-as-common-name\n";
+				$conf .= "auth-user-pass-verify /etc/inc/openvpn.auth-user.php via-env\n";
+				break;
 		}
 
 		// The local port to listen on
@@ -331,33 +366,52 @@ EOD;
 		// The management port to listen on
 		$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
 
-		if (!empty($settings['maxclients'])) 
+		if ($settings['maxclients'])
 			$conf .= "max-clients {$settings['maxclients']}\n";
 
-		openvpn_add_dhcpopts($settings, $conf);
+		// Can we push routes
+		if ($settings['local_network']) {
+			list($ip, $mask) = explode('/', $settings['local_network']);
+			$mask = gen_subnet_mask($mask);
+			$conf .= "push \"route $ip $mask\"\n";
+		}
+
+		// Configure client dhcp options
+		switch($settings['mode']) {
+			case 'server_tls':
+			case 'server_user':
+			case 'server_tls_user':
+				openvpn_add_dhcpopts($settings, $conf);
+				break;
+		}
 	}
+
+	// client specific settings
 
 	if ($mode == 'client') {
 
-		// The remote server
-		$conf .= "remote {$settings['server_addr']} {$settings['server_port']}\n";
+		// configure p2p mode
+		switch($settings['mode']) {
+			case 'p2p_tls':
+				$conf .= "tls-client\n";
+			case 'shared_key':
+				$conf .= "client\n";
+				break;
+		}
 
-		if ($settings['auth_method'] == 'pki')
-			$conf .= "client\n";
-
-		// FIXME : This should be a gui option
 		// The port we'll listen at
 		if ($settings['local_port'])
 			$conf .= "lport {$settings['local_port']}\n";
 		else
 			$conf .= "nobind\n";
 
+		// The remote server
+		$conf .= "remote {$settings['server_addr']} {$settings['server_port']}\n";
+
 		if (!empty($settings['use_shaper']))
 			$conf .= "shaper {$settings['use_shaper']}\n";
 
 		if (!empty($settings['tunnel_network'])) {
-
-			// Configure the IPs according to the address pool
 			list($ip, $mask) = explode('/', $settings['tunnel_network']);
 			$mask = gen_subnet_mask($mask);
 			$baselong = ip2long($ip) & ip2long($mask);
@@ -366,41 +420,38 @@ EOD;
 			$conf .= "ifconfig $ip2 $ip1\n";
 		}
 
-		if ($settings['proxy_addr']) {
-			/* ;http-proxy-retry # retry on connection failures */
+		if ($settings['proxy_addr'])
 			$conf .= "http-proxy {$settings['proxy_addr']} {$settings['proxy_port']}\n";
-		}
 	}
 
-	// Add the routes if they're set
-	if (!empty($settings['remote_network'])) {
+	// Add a remote network route if set
+	if ($settings['remote_network']) {
 		list($ip, $mask) = explode('/', $settings['remote_network']);
 		$mask = gen_subnet_mask($mask);
 		$conf .= "route $ip $mask\n";
 	}
 
 	// Write the settings for the keys
-	if ($settings['auth_method'] == 'shared_key')
-		openvpn_add_keyfile($settings['shared_key'], $conf, $mode_id, "secret");
-
-	if ($settings['auth_method'] == 'pki') {
-
-		$ca = lookup_ca($settings['caref']);
-		$cert = lookup_cert($settings['certref']);
-
-		openvpn_add_keyfile($ca['crt'], $conf, $mode_id, "ca");
-		openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
-		openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
-
-		if ($mode == 'server') {
-			$path_ovdh = $g['varetc_path']."/openvpn/dh-parameters";
-			$conf .= "dh {$path_ovdh}\n";
-		}
-
-		if ($settings['crl'])
-			openvpn_add_keyfile($settings['crl'], $conf, $mode_id, "crl-verify");
-		if ($settings['tls']) 
-			openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth");
+	switch($settings['mode']) {
+		case 'p2p_shared_key':
+			openvpn_add_keyfile($settings['shared_key'], $conf, $mode_id, "secret");
+			break;
+		case 'p2p_tls':
+		case 'server_tls':
+		case 'server_tls_user':
+			$ca = lookup_ca($settings['caref']);
+			openvpn_add_keyfile($ca['crt'], $conf, $mode_id, "ca");
+		case 'server_user':
+			$cert = lookup_cert($settings['certref']);
+			openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
+			openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
+			if ($mode == 'server')
+				$conf .= "dh {$g['varetc_path']}/openvpn/dh-parameters\n";
+			if ($settings['crl'])
+				openvpn_add_keyfile($settings['crl'], $conf, $mode_id, "crl-verify");
+			if ($settings['tls'])
+				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth");
+			break;
 	}
 
 	if ($settings['compression'])

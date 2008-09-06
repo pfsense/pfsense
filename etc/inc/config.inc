@@ -1747,6 +1747,16 @@ endif;
 					$index++;
 				}
 
+				/* determine operational mode */
+				if ($server['auth_method'] == 'pki') {
+					if($server['nopool'])
+						$server['mode'] = "p2p_tls";
+					else
+						$server['mode'] = "server_tls";
+				} else
+					$server['mode'] = "p2p_shared_key";
+				unset($server['auth_method']);
+
 				/* modify configuration values */
 				unset($server['dh_params']);
 				if (!$server['interface'])
@@ -1828,6 +1838,13 @@ endif;
 
 					$index++;
 				}
+
+				/* determine operational mode */
+				if ($client['auth_method'] == 'pki')
+					$client['mode'] = "p2p_tls";
+				else
+					$client['mode'] = "p2p_shared_key";
+				unset($client['auth_method']);
 
 				/* modify configuration values */
 				if (!$client['interface'])

@@ -84,6 +84,18 @@ else
 fi
 echo " done."
 
+if [ "$PLATFORM" = "cdrom" ] ; then
+	mkdir /tmp/unionfs
+	mkdir /tmp/unionfs/usr
+	mkdir /tmp/unionfs/root
+	echo -n "Mounting unionfs directories: "
+	echo -n "usr"
+	mount_unionfs /tmp/unionfs/usr /usr/
+	echo -n " root"
+	mount_unionfs /tmp/unionfs/root /root/	
+	echo "done."
+fi
+
 echo -n "Creating symlinks..."
 # Make sure symlink is correct on embedded
 if [ "$PLATFORM" = "embedded" ] ; then
@@ -119,18 +131,6 @@ fi
 
 # Make sure our /tmp is 777
 chmod 1777 /tmp
-
-if [ "$PLATFORM" = "cdrom" ] ; then
-	mkdir /tmp/unionfs
-	mkdir /tmp/unionfs/usr
-	mkdir /tmp/unionfs/root
-	echo -n "Mounting unionfs directories: "
-	echo -n "usr"
-	mount_unionfs /tmp/unionfs/usr /usr/
-	echo -n " root"
-	mount_unionfs /tmp/unionfs/root /root/	
-	echo "done."
-fi
 
 if [ ! "$PLATFORM" = "cdrom" ] ; then
 	# Malloc debugging check

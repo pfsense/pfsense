@@ -160,7 +160,8 @@ echo "Your system is now sync'd and PHP and Lighty will be restarted in 5 second
 
 function post_cvssync_commands() {
 	echo "===> Removing FAST-CGI temporary files...\n";
-	exec("find /tmp -name \"*php*\" -exec rm -rf {} \;");
+	exec("find /tmp -name \"php-fastcgi.socket*\" -exec rm -rf {} \;");
+	exec("find /tmp -name \"*.tmp\" -exec rm -rf {} \;");
 
 	exec("rm -rf /tmp/xcache/* 2>/dev/null");
 

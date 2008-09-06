@@ -134,6 +134,7 @@ exec("rm ${CODIR}/pfSense/etc/fstab 2>/dev/null");
 exec("rm ${CODIR}/pfSense/etc/ttys 2>/dev/null");
 exec("rm ${CODIR}/pfSense/etc/group 2>/dev/null");
 exec("rm ${CODIR}/pfSense/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/platform 2>/dev/null");
 exec("rm ${CODIR}/pfSense/boot/device.hints 2>/dev/null");
 exec("rm ${CODIR}/pfSense/boot/loader.conf 2>/dev/null");
 exec("rm ${CODIR}/pfSense/boot/loader.rc 2>/dev/null");

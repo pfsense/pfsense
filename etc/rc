@@ -88,12 +88,12 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	mkdir /tmp/unionfs
 	mkdir /tmp/unionfs/usr
 	mkdir /tmp/unionfs/root
-	echo -n "Mounting unionfs directories: "
-	echo -n "usr"
+	echo -n "Mounting unionfs directories:"
+	echo -n " usr"
 	mount_unionfs /tmp/unionfs/usr /usr/
 	echo -n " root"
 	mount_unionfs /tmp/unionfs/root /root/	
-	echo " ... done."
+	echo "... done."
 fi
 
 echo -n "Creating symlinks..."

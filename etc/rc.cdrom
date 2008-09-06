@@ -4,18 +4,21 @@
 # For pfSense
 
 # Size of memory file system /conf partition
-partsize="3m"
+partsize="6m"
 
 # Run some initialization routines
 /etc/rc.d/uzip start
 
 export VARMFS_COPYDBPKG=yes
 
+echo -n "Starting memory file systems:"
 for i in tmp varmfs etcmfs; do
        if [ -f /etc/rc.d/$i ]; then
-               sh /etc/rc.d/$i start
+			echo -n " $i"
+			sh /etc/rc.d/$i start
        fi
 done
+echo "... done."
 
 # Start PFI
 /bin/sh /scripts/pfi start

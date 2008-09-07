@@ -218,8 +218,10 @@
 			echo "\n\n" . gettext("The IPv4 {$upperifname} address has been set to ") . "{$intip}\n";
 		}
 		if (count($ifdescrs) == "1" or $interface = "lan") {
-			echo "ifdescrs count is count($ifdescrs)\n";
-			echo "interface is $interface \n";
+			if ($debug) {
+				echo "ifdescrs count is " . count($ifdescrs) . "\n";
+				echo "interface is {$interface} \n";
+			}
 			echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
 			if(!empty($config['system']['webgui']['port'])) {
 				$webuiport = $config['system']['webgui']['port'];

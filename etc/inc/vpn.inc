@@ -838,30 +838,6 @@ EOD;
 	return 0;
 }
 
-/* XXX: This is totally broken. */
-function vpn_localnet_determine($adr, & $sa, & $sn) {
-	global $config, $g;
-
-	if (isset ($adr)) {
-		if ($adr['network']) {
-			switch ($adr['network']) {
-				case 'lan' :
-					$sn = $config['interfaces']['lan']['subnet'];
-					$sa = gen_subnet($config['interfaces']['lan']['ipaddr'], $sn);
-					break;
-			}
-		} else
-			if ($adr['address']) {
-				list ($sa, $sn) = explode("/", $adr['address']);
-				if (is_null($sn))
-					$sn = 32;
-			}
-	} else {
-		$sn = $config['interfaces']['lan']['subnet'];
-		$sa = gen_subnet($config['interfaces']['lan']['ipaddr'], $sn);
-	}
-}
-
 /* Forcefully restart IPsec
  * This is required for when dynamic interfaces reload
  * For all other occasions the normal vpn_ipsec_configure()

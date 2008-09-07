@@ -150,7 +150,7 @@ $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
-$pconfig['enable'] = isset($wancfg['enable']);
+$pconfig['enable'] = $if == "wan" ? true : isset($wancfg['enable']);
 
 if (is_array($config['aliases']['alias']))
 foreach($config['aliases']['alias'] as $alias)
@@ -159,21 +159,22 @@ foreach($config['aliases']['alias'] as $alias)
 lready exists.");
 
 if ($wancfg['ipaddr'] == "dhcp") {
-	$pconfig['type'] = "DHCP";
+	$pconfig['type'] = "dhcp";
 } else if ($wancfg['ipaddr'] == "carpdev-dhcp") {
-	$pconfig['type'] = "CarpDEV-DHCP";
+	$pconfig['type'] = "carpdev-dhcp";
 	$pconfig['ipaddr'] = "";	    
 } else if ($wancfg['ipaddr'] == "pppoe") {
-	$pconfig['type'] = "PPPoE";
+	$pconfig['type'] = "pppoe";
 } else if ($wancfg['ipaddr'] == "pptp") {
-	$pconfig['type'] = "PPTP";
-} else {
-	$pconfig['type'] = "Static";
+	$pconfig['type'] = "pptp";
+} else if ($wancfg['ipaddr'] != "") {
+	$pconfig['type'] = "static";
 	$pconfig['ipaddr'] = $wancfg['ipaddr'];
 	$pconfig['subnet'] = $wancfg['subnet'];
 	$pconfig['gateway'] = $wancfg['gateway'];
 	$pconfig['pointtopoint'] = $wancfg['pointtopoint'];
-}
+} else
+	$pconfig['type'] = "none";
 
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
@@ -221,7 +222,7 @@ n already exists.";
 	}
 
 	/* input validation */
-	if ($_POST['type'] == "Static") {
+	if ($_POST['type'] == "static") {
 		if ($if == "wan") {
 			$reqdfields = explode(" ", "ipaddr subnet gateway");
 			$reqdfieldsn = explode(",", "IP address,Subnet bit count,Gateway");
@@ -318,7 +319,9 @@ n already exists.";
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
 		$wi_input_errors = wireless_config_post($wancfg);
-		if ($wi_input_errors) {
+		if (!is_array($input_errors))
+			$input_errors = array();
+		if (is_array($wi_input_errors)) {
 			$input_errors = array_merge($input_errors, $wi_input_errors);
 		}
 	}
@@ -353,23 +356,23 @@ n already exists.";
 		$wancfg['descr'] = remove_bad_chars($_POST['descr']);
 		$wancfg['enable'] = $if == "wan" ? true : $_POST['enable'] ? true : false;
 
-		if ($_POST['type'] == "Static") {
+		if ($_POST['type'] == "static") {
 			$wancfg['ipaddr'] = $_POST['ipaddr'];
 			$wancfg['subnet'] = $_POST['subnet'];
 			$wancfg['gateway'] = $_POST['gateway'];
 			if (isset($wancfg['ispointtopoint']))
 				$wancfg['pointtopoint'] = $_POST['pointtopoint'];
-		} else if ($_POST['type'] == "DHCP") {
+		} else if ($_POST['type'] == "dhcp") {
 			$wancfg['ipaddr'] = "dhcp";
 			$wancfg['dhcphostname'] = $_POST['dhcphostname'];
 			$wancfg['alias-address'] = $_POST['alias-address'];
 			$wancfg['alias-subnet'] = $_POST['alias-subnet'];
-		} else if ($_POST['type'] == "CarpDEV-DHCP") {
+		} else if ($_POST['type'] == "carpdev-dhcp") {
 			$wancfg['ipaddr'] = "carpdev-dhcp";
 			$wancfg['dhcphostname'] = $_POST['dhcphostname'];
 			$wancfg['alias-address'] = $_POST['alias-address'];
 			$wancfg['alias-subnet'] = $_POST['alias-subnet'];			
-		} else if ($_POST['type'] == "PPPoE") {
+		} else if ($_POST['type'] == "pppoe") {
 			$wancfg['ipaddr'] = "pppoe";
 			$wancfg['username'] = $_POST['username'];
 			$wancfg['password'] = $_POST['password'];
@@ -457,7 +460,7 @@ n already exists.";
 					$config['cron']['item'][] = $item;
 				}
 			} // end if
-		} else if ($_POST['type'] == "PPTP") {
+		} else if ($_POST['type'] == "pptp") {
 			$wancfg['ipaddr'] = "pptp";
 			$wancfg['username'] = $_POST['pptp_username'];
 			$wancfg['password'] = $_POST['pptp_password'];
@@ -522,6 +525,7 @@ $pgtitle = array("Interfaces", $wancfg['descr']);
 $closehead = false;
 include("head.inc");
 
+        $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe" => "PPPoE", "pptp" => "PPTP" /* , "carpdev-dhcp" => "CarpDev"*/); 
 ?>
 
 <script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
@@ -535,160 +539,31 @@ include("head.inc");
 
 <script type="text/javascript">
 <!--
-function enable_change(enable_change) {
-	if (document.iform.pppoe_dialondemand.checked || enable_change) {
-		document.iform.pppoe_idletimeout.disabled = 0;
-	} else {
-		document.iform.pppoe_idletimeout.disabled = 1;
-	}
+
+function updateType(t){
+        switch(t) {
+<?php
+        /* OK, so this is sick using php to generate javascript, but it needed to be done */
+        foreach ($types as $key => $val) {
+                echo "          case \"{$key}\": {\n";
+                $t = $types;
+                foreach ($t as $k => $v) {
+                        if ($k != $key) {
+                                echo "                  $('{$k}').hide();\n";
+                        }
+                }
+                echo "          }\n";
+        }
+?>
+        }
+        $(t).appear();
 }
 
-function enable_change_pptp(enable_change_pptp) {
-	if (document.iform.pptp_dialondemand.checked || enable_change_pptp) {
-		document.iform.pptp_idletimeout.disabled = 0;
-		document.iform.pptp_local.disabled = 0;
-		document.iform.pptp_remote.disabled = 0;
-	} else {
-		document.iform.pptp_idletimeout.disabled = 1;
-	}
-}
-
-function type_change(enable_change,enable_change_pptp) {
-	switch (document.iform.type.selectedIndex) {
-		case 0:
-			document.iform.username.disabled = 1;
-			document.iform.password.disabled = 1;
-			document.iform.provider.disabled = 1;
-			document.iform.pppoe_dialondemand.disabled = 1;
-			document.iform.pppoe_idletimeout.disabled = 1;
-			document.iform.pppoe_preset.disabled = 1;
-			document.iform.pppoe_preset.checked = 0;
-			Effect.Fade('presetwrap', { duration: 1.0 });
-			document.iform.ipaddr.disabled = 0;
-			document.iform.subnet.disabled = 0;
-			document.iform.gateway.disabled = 0;
-			document.iform.pptp_username.disabled = 1;
-			document.iform.pptp_password.disabled = 1;
-			document.iform.pptp_local.disabled = 1;
-			document.iform.pptp_subnet.disabled = 1;
-			document.iform.pptp_remote.disabled = 1;
-			document.iform.pptp_dialondemand.disabled = 1;
-			document.iform.pptp_idletimeout.disabled = 1;
-			document.iform.dhcphostname.disabled = 1;
-			break;
-		case 1:
-			document.iform.username.disabled = 1;
-			document.iform.password.disabled = 1;
-			document.iform.provider.disabled = 1;
-			document.iform.pppoe_dialondemand.disabled = 1;
-			document.iform.pppoe_idletimeout.disabled = 1;
-			document.iform.pppoe_preset.disabled = 1;
-			document.iform.pppoe_preset.checked = 0;
-			Effect.Fade('presetwrap', { duration: 1.0 });
-			document.iform.ipaddr.disabled = 1;
-			document.iform.subnet.disabled = 1;
-			document.iform.gateway.disabled = 1;
-			document.iform.pptp_username.disabled = 1;
-			document.iform.pptp_password.disabled = 1;
-			document.iform.pptp_local.disabled = 1;
-			document.iform.pptp_subnet.disabled = 1;
-			document.iform.pptp_remote.disabled = 1;
-			document.iform.pptp_dialondemand.disabled = 1;
-			document.iform.pptp_idletimeout.disabled = 1;
-			document.iform.dhcphostname.disabled = 0;
-			break;
-		case 2:
-			document.iform.username.disabled = 0;
-			document.iform.password.disabled = 0;
-			document.iform.provider.disabled = 0;
-			document.iform.pppoe_dialondemand.disabled = 0;
-			if (document.iform.pppoe_dialondemand.checked || enable_change) {
-				document.iform.pppoe_idletimeout.disabled = 0;
-			} else {
-				document.iform.pppoe_idletimeout.disabled = 1;
-			}
-			document.iform.pppoe_preset.disabled = 0;
-			document.iform.ipaddr.disabled = 1;
-			document.iform.subnet.disabled = 1;
-			document.iform.gateway.disabled = 1;
-			document.iform.pptp_username.disabled = 1;
-			document.iform.pptp_password.disabled = 1;
-			document.iform.pptp_local.disabled = 1;
-			document.iform.pptp_subnet.disabled = 1;
-			document.iform.pptp_remote.disabled = 1;
-			document.iform.pptp_dialondemand.disabled = 1;
-			document.iform.pptp_idletimeout.disabled = 1;
-			document.iform.dhcphostname.disabled = 1;
-			break;
-		case 3:
-			document.iform.username.disabled = 1;
-			document.iform.password.disabled = 1;
-			document.iform.provider.disabled = 1;
-			document.iform.pppoe_dialondemand.disabled = 1;
-			document.iform.pppoe_idletimeout.disabled = 1;
-			document.iform.pppoe_preset.disabled = 1;
-			document.iform.pppoe_preset.checked = 0;
-			Effect.Fade('presetwrap', { duration: 1.0 });			
-			document.iform.ipaddr.disabled = 1;
-			document.iform.subnet.disabled = 1;
-			document.iform.gateway.disabled = 1;
-			document.iform.pptp_username.disabled = 0;
-			document.iform.pptp_password.disabled = 0;
-			document.iform.pptp_local.disabled = 0;
-			document.iform.pptp_subnet.disabled = 0;
-			document.iform.pptp_remote.disabled = 0;
-			document.iform.pptp_dialondemand.disabled = 0;
-			if (document.iform.pptp_dialondemand.checked || enable_change_pptp) {
-				document.iform.pptp_idletimeout.disabled = 0;
-			} else {
-				document.iform.pptp_idletimeout.disabled = 1;
-			}
-			document.iform.dhcphostname.disabled = 1;
-			break;
-		case 4:
-			document.iform.username.disabled = 1;
-			document.iform.password.disabled = 1;
-			document.iform.provider.disabled = 1;
-			document.iform.pppoe_dialondemand.disabled = 1;
-			document.iform.pppoe_idletimeout.disabled = 1;
-			document.iform.pppoe_preset.disabled = 1;
-			document.iform.pppoe_preset.checked = 0;
-			Effect.Fade('presetwrap', { duration: 1.0 });
-			document.iform.ipaddr.disabled = 1;
-			document.iform.subnet.disabled = 1;
-			document.iform.gateway.disabled = 1;
-			document.iform.pptp_username.disabled = 1;
-			document.iform.pptp_password.disabled = 1;
-			document.iform.pptp_local.disabled = 1;
-			document.iform.pptp_subnet.disabled = 1;
-			document.iform.pptp_remote.disabled = 1;
-			document.iform.pptp_dialondemand.disabled = 1;
-			document.iform.pptp_idletimeout.disabled = 1;
-			document.iform.dhcphostname.disabled = 1;
-			break;
-		case 5:
-			document.iform.username.disabled = 1;
-			document.iform.password.disabled = 1;
-			document.iform.provider.disabled = 1;
-			document.iform.pppoe_dialondemand.disabled = 1;
-			document.iform.pppoe_idletimeout.disabled = 1;
-			document.iform.pppoe_preset.disabled = 1;
-			document.iform.pppoe_preset.checked = 0;
-			Effect.Fade('presetwrap', { duration: 1.0 });
-			document.iform.ipaddr.disabled = 1;
-			document.iform.subnet.disabled = 1;
-			document.iform.gateway.disabled = 1;
-			document.iform.pptp_username.disabled = 1;
-			document.iform.pptp_password.disabled = 1;
-			document.iform.pptp_local.disabled = 1;
-			document.iform.pptp_subnet.disabled = 1;
-			document.iform.pptp_remote.disabled = 1;
-			document.iform.pptp_dialondemand.disabled = 1;
-			document.iform.pptp_idletimeout.disabled = 1;
-			document.iform.dhcphostname.disabled = 1;
-			break;
-
-	}
+function show_allcfg(obj) {
+	if (obj.checked)
+		$('allcfg').appear();
+	else
+		$('allcfg').hide();
 }
 
 function show_mon_config() {
@@ -713,10 +588,13 @@ function show_mon_config() {
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
-                        <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
+                        <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="show_allcfg(this);">
                     <strong>Enable Interface</strong></td>
                 </tr>
 <?php endif; ?>
+		<tr style="display:none;" name="allcfg" id="allcfg">
+		<td colspan="2"> 
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
@@ -726,13 +604,15 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="middle" class="vncell"><strong>Type</strong></td>
-                  <td class="vtable"> <select name="type" class="formselect" id="type" onchange="type_change()">
-                      <?php $opts = split(" ", "Static DHCP PPPoE PPTP"); // CarpDEV-DHCP");
-					  foreach ($opts as $opt): ?>
-	                      <option <?php if ($opt == $pconfig['type']) echo "selected";?>>
-	                      <?=htmlspecialchars($opt);?>
-	                      </option>
-                      <?php endforeach; ?>
+                  <td class="vtable"> <select name="type" class="formselect" id="type">
+                      <?php 
+			foreach ($types as $key => $opt) { 
+	                      echo "<option onClick=\"updateType('{$key}');\"";
+			      if ($key == $pconfig['type']) 
+				echo " selected";
+			      echo " value=\"{$key}\" >" . htmlspecialchars($opt);
+	                      echo "</option>";
+                      } ?>
                     </select></td>
                 </tr>
                 <tr>
@@ -761,15 +641,17 @@ function show_mon_config() {
                     an MTU of 1492 bytes for PPPoE and 1500 bytes for all other
                     connection types will be assumed.</td>
                 </tr>
-                <tr>
-                  <td colspan="2" valign="top" height="16"></td>
-                </tr>
-                <tr>
+		<tr style="display:none;" name="none" id="none">
+		</tr>
+		<tr style="display:none;" name="static" id="static">
+		<td colspan="2">
+        <table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<tr>
                   <td colspan="2" valign="top" class="listtopic">Static IP configuration</td>
                 </tr>
                 <tr>
-                  <td width="100" valign="top" class="vncellreq">IP address</td>
-                  <td class="vtable"> <input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
+                  <td width="22%" valign="top" class="vncellreq">IP address</td>
+                  <td width="78%" class="vtable"> <input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     /
                     <select name="subnet" class="formselect" id="subnet">
 			<?php
@@ -784,14 +666,14 @@ function show_mon_config() {
                     </select></td>
                 </tr><?php if (isset($wancfg['ispointtopoint'])): ?>
                 <tr>
-                  <td valign="top" class="vncellreq">Point-to-point IP address </td>
-                  <td class="vtable">
+                  <td width="22%" valign="top" class="vncellreq">Point-to-point IP address </td>
+                  <td width"78%" class="vtable">
                     <input name="pointtopoint" type="text" class="formfld unknown" id="pointtopoint" size="20" value="<?=htmlspecialchars($pconfig['pointtopoint']);?>">
                   </td>
                 </tr><?php endif; ?>
                 <tr>
-                  <td valign="top" class="vncellreq">Gateway</td>
-                  <td class="vtable"><select name="gateway" class="formselect" id="gateway">
+                  <td width="22%" valign="top" class="vncellreq">Gateway</td>
+                  <td width="78%" class="vtable"><select name="gateway" class="formselect" id="gateway">
 			<?php
 			if(count($a_gateways) > 0) {
 				foreach ($a_gateways as $gateway) {
@@ -808,23 +690,26 @@ function show_mon_config() {
 			</select>Select a existing Gateway from the list or add one on the <a href="/system_gateways.php">Gateways</a> page<br>
                   </td>
                 </tr>
-                <tr>
-                  <td colspan="2" valign="top" height="16"></td>
-                </tr>
+	</table>
+	</td>
+	</tr>
+		<tr style="display:none;" name="dhcp" id="dhcp">
+		<td colspan="2">
+        <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">DHCP client configuration</td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncell">Hostname</td>
-                  <td class="vtable"> <input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
+                  <td width="22%" valign="top" class="vncell">Hostname</td>
+                  <td width="78%" class="vtable"> <input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
                     <br>
                     The value in this field is sent as the DHCP client identifier
                     and hostname when requesting a DHCP lease. Some ISPs may require
                     this (for client identification).</td>
                 </tr>
                 <tr>
-                  <td width="100" valign="top" class="vncellreq">Alias IP address</td>
-                  <td class="vtable"> <input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
+                  <td width="22%" valign="top" class="vncellreq">Alias IP address</td>
+                  <td width="78%" class="vtable"> <input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
                     <select name="alias-subnet" class="formselect" id="alias-subnet">
 			<?php
 			for ($i = 32; $i > 0; $i--) {
@@ -839,43 +724,46 @@ function show_mon_config() {
                     The value in this field is used as a fixed alias IP address by the
 		    DHCP client.</td>
                 </tr>
-                <tr>
-                  <td colspan="2" valign="top" height="16"></td>
-                </tr>
+	</table>
+	</td>
+	</tr>
+                <tr style="display:none;" name="pppoe" id="pppoe">
+		<td colspan="2">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">PPPoE configuration</td>
                 </tr>
-                <tr>
-                  <td valign="top" class="vncellreq">Username</td>
-                  <td class="vtable"><input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+		<tr>
+                  <td width="22%" valign="top" class="vncellreq">Username</td>
+                  <td width="78%" class="vtable"><input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
                   </td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncellreq">Password</td>
-                  <td class="vtable"><input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+                  <td width="22%" valign="top" class="vncellreq">Password</td>
+                  <td width="78%" class="vtable"><input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
                   </td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncell">Service name</td>
-                  <td class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
+                  <td width="22%" valign="top" class="vncell">Service name</td>
+                  <td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
                     <br> <span class="vexpl">Hint: this field can usually be left
                     empty</span></td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncell">Dial on demand</td>
-                  <td class="vtable"><input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?> onClick="enable_change(false)" >
+                  <td width="22%" valign="top" class="vncell">Dial on demand</td>
+                  <td width="78%" class="vtable"><input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?>" >
                     <strong>Enable Dial-On-Demand mode</strong><br>
 		    This option causes the interface to operate in dial-on-demand mode, allowing you to have a <i>virtual full time</i> connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncell">Idle timeout</td>
-                  <td class="vtable">
+                  <td width="22%" valign="top" class="vncell">Idle timeout</td>
+                  <td width="78%" class="vtable">
                     <input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> 
 seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncell"><?=gettext("Periodic reset");?></td>
-                  <td class="vtable">
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Periodic reset");?></td>
+                  <td width="78%" class="vtable">
                     <input name="pppoe_preset" type="checkbox" id="pppoe_preset" value="yes" <?php if ($pconfig['pppoe_preset']) echo "checked=\"checked\""; ?> onclick="Effect.toggle('presetwrap', 'appear', { duration: 1.0 });" />
                     <?= gettext("enable periodic PPPoE resets"); ?>
                     <br />
@@ -930,26 +818,29 @@ seconds<br>If no qualifying outgoing packets are transmitted for the specified n
                     </table>
                   </td>
                 </tr>                
-                <tr>
-                  <td colspan="2" valign="top" height="16"></td>
-                </tr>
+	</table>
+		</td>
+		</tr>
+		<tr style="display:none;" name="pptp" id="pptp">
+		<td colspan="2">
+        <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">PPTP configuration</td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncellreq">Username</td>
-                  <td class="vtable"><input name="pptp_username" type="text" class="formfld user" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>">
+                  <td width="22%" valign="top" class="vncellreq">Username</td>
+                  <td width="78%" class="vtable"><input name="pptp_username" type="text" class="formfld user" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>">
                   </td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncellreq">Password</td>
-                  <td class="vtable"><input name="pptp_password" type="text" class="formfld pwd" id="pptp_password" size="20" 
+                  <td width="22%" valign="top" class="vncellreq">Password</td>
+                  <td width="78%" class="vtable"><input name="pptp_password" type="text" class="formfld pwd" id="pptp_password" size="20" 
 value="<?=htmlspecialchars($pconfig['pptp_password']);?>">
                   </td>
                 </tr>
                 <tr>
-                  <td width="100" valign="top" class="vncellreq">Local IP address</td>
-                  <td class="vtable"> <input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20" 
+                  <td width="22%" width="100" valign="top" class="vncellreq">Local IP address</td>
+                  <td width="78%" class="vtable"> <input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20" 
 value="<?=htmlspecialchars($pconfig['pptp_local']);?>">
                     /
                     <select name="pptp_subnet" class="formselect" id="pptp_subnet">
@@ -961,32 +852,39 @@ value="<?=htmlspecialchars($pconfig['pptp_local']);?>">
                     </select></td>
                 </tr>
                 <tr>
-                  <td width="100" valign="top" class="vncellreq">Remote IP address</td>
-                  <td class="vtable"> <input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote']);?>">
+                  <td width="22%" width="100" valign="top" class="vncellreq">Remote IP address</td>
+                  <td width="78%" class="vtable"> <input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote']);?>">
                   </td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncell">Dial on demand</td>
-                  <td class="vtable"><input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?> onClick="enable_change_pptp(false)" >
+                  <td width="22%" valign="top" class="vncell">Dial on demand</td>
+                  <td width="78%" class="vtable"><input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?>" >
                     <strong>Enable Dial-On-Demand mode</strong><br>
 		    This option causes the interface to operate in dial-on-demand mode, allowing you to have a <i>virtual full time</i> connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncell">Idle timeout</td>
-                  <td class="vtable">
+                  <td width="22%" valign="top" class="vncell">Idle timeout</td>
+                  <td width="78%" class="vtable">
                     <input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> 
 seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
                 </tr>
-                <tr>
-                  <td colspan="2" valign="top" height="16"></td>
-                </tr>
+	</table>
+	</td>
+	</tr>
+	<tr>
+                  <td width="100" valign="top"></td>
+                  <td> <input name="Submit" type="submit" class="formbtn" value="Save"></td>
+	</tr>
+		<tr>
+			<td colspan="2" valign="top" height="10"></td>
+		</tr>
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">Other</td>
                 </tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">FTP Helper</td>
 			<td width="78%" class="vtable">
-				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> onclick="enable_change(false)" />
+				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> />
 				<strong>Disable the userland FTP-Proxy application</strong>
 				<br />
 			</td>
@@ -1019,10 +917,12 @@ seconds<br>If no qualifying outgoing packets are transmitted for the specified n
                     are reserved (but not RFC 1918) or not yet assigned by IANA.<br>
                     Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.</td>
 		</tr>
-
+        </table>
+        </td>
+        </tr>
                 <tr>
                   <td width="100" valign="top">&nbsp;</td>
-                  <td> &nbsp;<br> <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change_pptp(true)&&enable_change(true)">
+                  <td> &nbsp;<br> <input name="Submit" type="submit" class="formbtn" value="Save">
 			<input name="if" type="hidden" id="if" value="<?=$if;?>">
                   </td>
                 </tr>
@@ -1030,7 +930,13 @@ seconds<br>If no qualifying outgoing packets are transmitted for the specified n
 </form>
 <script language="JavaScript">
 <!--
-type_change();
+<?php
+if ($if == "wan")
+	echo "\$('allcfg').appear();";
+else
+	echo "show_allcfg(document.iform.enable);";
+echo "updateType('{$pconfig['type']}')";
+?>
 //-->
 </script>
 <?php include("fend.inc"); ?>

@@ -412,79 +412,6 @@ function interface_gif_configure(&$gif) {
         return $gifif;
 }
 
-function interfaces_lan_configure() {
-	global $config, $g;
-
-	$lancfg = $config['interfaces']['lan'];
-
-	/* if user has removed ip address, clear it*/
-	if($lancfg['ipaddr'] == "")
-		mwexec("/sbin/ifconfig {$lancfg['if']} delete");
-
-	/* wireless configuration? */
-	if (is_array($lancfg['wireless']))
-		interfaces_wireless_configure($lancfg['if'], $lancfg['wireless']);
-
-	/* MAC spoofing? */
-	if ($lancfg['spoofmac']) {
-		mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) .
-			" link " . escapeshellarg($lancfg['spoofmac']));
-	} else {
-		$mac = get_interface_mac_address($lancfg['if']);
-		if($mac == "ff:ff:ff:ff:ff:ff") {
-			/*   this is not a valid mac address.  generate a
-			 *   temporary mac address so the machine can get online.
-			 */
-			echo "Generating new MAC address.";
-			$random_mac = generate_random_mac_address();
-			mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) .
-				" link " . escapeshellarg($random_mac));
-			$lancfg['spoofmac'] = $random_mac;
-			write_config();
-			file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$lancfg['if']} has been automatically replaced with {$random_mac}", "Interfaces");
-		}
-	}
-
-	/* media */
-	if ($lancfg['media'] || $lancfg['mediaopt']) {
-		$cmd = "/sbin/ifconfig " . escapeshellarg($lancfg['if']);
-		if ($lancfg['media'])
-			$cmd .= " media " . escapeshellarg($lancfg['media']);
-		if ($lancfg['mediaopt'])
-			$cmd .= " mediaopt " . escapeshellarg($lancfg['mediaopt']);
-		mwexec($cmd);
-	}
-
-	mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) . " " .
-		escapeshellarg($lancfg['ipaddr'] . "/" . $lancfg['subnet']));
-
-	if (!$g['booting']) {
-		/* make new hosts file */
-		system_hosts_generate();
-
-		/* reconfigure static routes (kernel may have deleted them) */
-		system_routing_configure();
-
-		/* set the reload filter dity flag */
-		touch("{$g['tmp_path']}/filter_dirty");
-
-		/* reload IPsec tunnels */
-		vpn_ipsec_configure();
-
-		/* reload dhcpd (gateway may have changed) */
-		services_dhcpd_configure();
-
-		/* reload dnsmasq */
-		services_dnsmasq_configure();
-
-		/* reload captive portal */
-		captiveportal_configure();
-
-	}
-
-	return 0;
-}
-
 function interfaces_configure() {
 	global $g;
 
@@ -496,10 +423,8 @@ function interfaces_configure() {
 		if($debug)
  	               log_error("Configuring {$ifname}");
 
-		if ($if == "lan")
-			interfaces_lan_configure();
-		else
-			interfaces_wan_configure($if);
+		interfaces_wan_configure($if);
+
 		if ($g['booting']) 
                 	echo "done.\n";
 	}
@@ -1189,6 +1114,11 @@ function interfaces_wan_configure($interface = "wan") {
 
 	/* XXX: Shouldn't the caller do this?! */
 	if (!$g['booting']) {
+		/* XXX */
+		if ($interface = "lan")
+			/* make new hosts file */
+                	system_hosts_generate();
+
 		/* reconfigure static routes (kernel may have deleted them) */
 		system_routing_configure();
 
@@ -1198,7 +1128,7 @@ function interfaces_wan_configure($interface = "wan") {
 		/* reload ipsec tunnels */
 		vpn_ipsec_configure();
 
-		/* restart ez-ipupdate */
+		/* update dyndns */
 		services_dyndns_configure();
 
 		/* force DNS update */

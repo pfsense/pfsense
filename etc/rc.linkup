@@ -79,24 +79,12 @@
 						exec("/usr/sbin/arp -d -i {$argument1} -a");
 						break;
 				}
-				switch ($iface) {
-					case "wan":
-						if($config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
-							$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
-							/* do not reconfigure on hotplug events when using pppoe or pptp */
-							log_error("HOTPLUG: Configuring wan interface {$argument1}");
-							interfaces_wan_configure();
-						}
-						break;
-					case "lan":
-						log_error("HOTPLUG: Configuring lan interface {$argument1}");
-						interfaces_lan_configure();
-						break;
-					default:
-						interfaces_wan_configure($interface);
-						echo "interfaces_wan_configure($interface);\n";
-						log_error("HOTPLUG: Configuring optional interface {$interface}");
-						break;
+
+				if($config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
+					$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
+					/* do not reconfigure on hotplug events when using pppoe or pptp */
+					log_error("HOTPLUG: Configuring wan interface {$argument1}");
+					interfaces_wan_configure($iface);
 				}
 			}
 		}

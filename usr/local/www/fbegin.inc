@@ -139,13 +139,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?>
 							<?=output_menu_item("/interfaces_assign.php", "(assign)");?>								
 							<?php endif; ?>
-							<?=output_menu_item("/interfaces_wan.php?if=wan", "WAN");?>	
-							<?php
-							if($config['interfaces']['lan']) {
-								output_menu_item("/interfaces_lan.php", "LAN");
-							}
-							?>
-							<?php $opts = get_configured_interface_with_descr(true, true); 
+							<?php $opts = get_configured_interface_with_descr(false, true); 
 							foreach ($opts as $oif => $odescr): 
 								if (!isset($config['interfaces'][$oif]['ovpn'])): ?>
 							<?=output_menu_item("/interfaces_wan.php?if={$oif}", htmlspecialchars($odescr))?>

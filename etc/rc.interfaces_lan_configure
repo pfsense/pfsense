@@ -32,6 +32,6 @@
 require_once("config.inc");
 require_once("filter.inc");
 
-interfaces_lan_configure();
+interfaces_wan_configure("lan");
 
 ?>

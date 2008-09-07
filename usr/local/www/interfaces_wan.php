@@ -150,7 +150,10 @@ $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
-$pconfig['enable'] = $if == "wan" ? true : isset($wancfg['enable']);
+if ($if == "wan" || $if == "lan")
+	$pconfig['enable'] = true;
+else
+	$pconfig['enable'] = isset($wancfg['enable']);
 
 if (is_array($config['aliases']['alias']))
 foreach($config['aliases']['alias'] as $alias)
@@ -190,12 +193,12 @@ if (isset($wancfg['wireless'])) {
 if ($_POST) {
 
 	unset($input_errors);
-//	$pconfig = $_POST;
+	$pconfig = $_POST;
   
 	/* filter out spaces from descriptions  */
         $_POST['descr'] = remove_bad_chars($_POST['descr']);
 
-	if ($_POST['enable'] || $if == "wan") {
+	if ($_POST['enable'] || $if == "wan" || $if = "lan") {
 		/* optional interface if list */
                 $iflist = get_configured_interface_with_descr(true);
 
@@ -356,7 +359,10 @@ n already exists.";
 		}
 
 		$wancfg['descr'] = remove_bad_chars($_POST['descr']);
-		$wancfg['enable'] = $if == "wan" ? true : $_POST['enable'] ? true : false;
+		if ($if == "wan" || $if == "lan")
+			$wancfg['enable'] = true;
+		else
+			$wancfg['enable'] =  $_POST['enable'] ? true : false;
 
 		if ($_POST['type'] == "static") {
 			$wancfg['ipaddr'] = $_POST['ipaddr'];
@@ -495,7 +501,7 @@ n already exists.";
 		$wancfg['mtu'] = $_POST['mtu'];
 
 		write_config();
-		
+	
 		if ($if = "lan") {
 			/* restart snmp so that it binds to correct address */
                 	services_snmpd_configure();
@@ -528,6 +534,8 @@ n already exists.";
 // Populate page descr if it does not exist.
 if($if == "wan" && !$wancfg['descr'])
 	$wancfg['descr'] = "WAN";
+else if ($if == "lan" && !$wancfg['descr'])
+	$wancfg['descr'] = "LAN";
 	
 $pgtitle = array("Interfaces", $wancfg['descr']);
 $closehead = false;
@@ -586,13 +594,14 @@ function show_mon_config() {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="interfaces_wan.php?if=<?php echo "{$if}";?>" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">General configuration</td>
                 </tr>
-<?php if ($if != "wan"): ?>
+<?php if ($if != "wan" || $if != "lan"): ?>
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
@@ -939,7 +948,7 @@ seconds<br>If no qualifying outgoing packets are transmitted for the specified n
 <script language="JavaScript">
 <!--
 <?php
-if ($if == "wan")
+if ($if == "wan" || $if = "lan")
 	echo "\$('allcfg').appear();";
 else
 	echo "show_allcfg(document.iform.enable);";

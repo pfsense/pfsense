@@ -414,12 +414,6 @@ $priv_list['page-interfaces-gre-edit']['descr'] = "Allow access to the 'Interfac
 $priv_list['page-interfaces-gre-edit']['match'] = array();
 $priv_list['page-interfaces-gre-edit']['match'][] = "interfaces_gre_edit.php*";
 
-$priv_list['page-interfaces-lan'] = array();
-$priv_list['page-interfaces-lan']['name'] = "WebCfg - Interfaces: LAN page";
-$priv_list['page-interfaces-lan']['descr'] = "Allow access to the 'Interfaces: LAN' page.";
-$priv_list['page-interfaces-lan']['match'] = array();
-$priv_list['page-interfaces-lan']['match'][] = "interfaces_lan.php*";
-
 $priv_list['page-interfaces-ppp'] = array();
 $priv_list['page-interfaces-ppp']['name'] = "WebCfg - Interfaces: PPP page";
 $priv_list['page-interfaces-ppp']['descr'] = "Allow access to the 'Interfaces: PPP' page.";

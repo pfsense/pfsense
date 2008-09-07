@@ -41,7 +41,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 			
 	         <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
 			<?php 
-			foreach ($ifdescrs as $ifdescr => $ifname){
+			foreach ($ifdescrs as $ifdescr => $ifname) {
 					$ifinfo = get_interface_info($ifdescr);
 					$iswireless = is_interface_wireless($ifdescr);
 				?>
@@ -57,16 +57,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif"/>
 		                  <? } ?>&nbsp; 
 				<strong><u>
-				<?php
-				if ($ifname == "WAN") { ?>
-					<span onClick="location.href='/interfaces_wan.php'" style="cursor:pointer">				
-				<? } else if ($ifname == "LAN") { ?>
-					<span onClick="location.href='/interfaces_lan.php'" style="cursor:pointer">
-				<? } else { ?>				
-					<span onClick="location.href='/interfaces_wan.php?optif=<?=$ifdescr; ?>'" style="cursor:pointer">
-				<? 
-				} ?>	
-				
+					<span onClick="location.href='/interfaces_wan.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
 				
 				<?=htmlspecialchars($ifname);?></span></u></strong>
 				

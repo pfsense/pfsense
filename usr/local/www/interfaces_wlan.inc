@@ -406,7 +406,7 @@ function wireless_config_print() {
 		   	</td>
                 </tr>
                 <tr>
-			<td valign="top" class="vncell"><strong>WPA</strong></td>
+			<td valign="top" class="vncell">WPA</td>
 			<td class="vtable"><input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <? if ($pconfig['wpa_enable']) echo "checked"; ?>>
 			<strong>Enable WPA</strong>
 			<br/><br/>

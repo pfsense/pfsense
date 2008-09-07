@@ -1830,7 +1830,7 @@ function get_real_wan_interface($interface = "wan") {
 		break;
 	*/
 	default:
-		$iflist = get_configured_interface_with_descr();
+		$iflist = get_configured_interface_with_descr(false, true);
 
 		foreach ($iflist as $if => $ifdesc) {
 			if ($interface == $if || $interface == $ifdesc) {

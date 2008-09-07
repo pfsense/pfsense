@@ -220,29 +220,6 @@ n already exists.";
 		unlink_if_exists(CRON_PPPOE_CMD_FILE);
 	}
 
-	if($_POST['gateway'] and $pconfig['gateway'] <> $_POST['gateway']) {
-		/* enumerate slbd gateways and make sure we are not creating a route loop */
-		if(is_array($config['load_balancer']['lbpool'])) {
-			foreach($config['load_balancer']['lbpool'] as $lbpool) {
-				if($lbpool['type'] == "gateway") {
-				    foreach ((array) $lbpool['servers'] as $server) {
-			            $svr = split("\|", $server);
-			            if($svr[1] == $pconfig['gateway'])  {
-			            		$_POST['gateway']  = $pconfig['gateway'];
-			            		$input_errors[] = "Cannot change {$svr[1]} gateway.  It is currently referenced by the load balancer pools.";
-			            }
-					}
-				}
-			}
-			foreach($config['filter']['rule'] as $rule) {
-				if($rule['gateway'] == $pconfig['gateway']) {
-	            		$_POST['gateway']  = $pconfig['gateway'];
-	            		$input_errors[] = "Cannot change {$svr[1]} gateway.  It is currently referenced by the filter rules via policy based routing.";
-				}
-			}
-		}
-	}
-
 	/* input validation */
 	if ($_POST['type'] == "Static") {
 		if ($if == "wan") {

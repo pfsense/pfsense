@@ -1524,10 +1524,10 @@ endif;
 			$pconfig['ondemand'] = isset($config['pppoe']['ondemand']);
 			$pconfig['timeout'] = $config['pppoe']['timeout'];
 			unset($config['pppoe']);
-			$config['interfaces']['wan']['username'] = $pconfig['username'];
-			$config['interfaces']['wan']['password'] = $pconfig['password'];
+			$config['interfaces']['wan']['pppoe_username'] = $pconfig['username'];
+			$config['interfaces']['wan']['pppoe_password'] = $pconfig['password'];
 			$config['interfaces']['wan']['provider'] = $pconfig['provider'];
-			$config['interfaces']['wan']['username'] = isset($pconfig['ondemand']);
+			$config['interfaces']['wan']['ondemand'] = isset($pconfig['ondemand']);
 			$config['interfaces']['wan']['timeout'] = $pconfig['timeout'];
 		}
 		if (is_array($config['pptp'])) {
@@ -1538,10 +1538,10 @@ endif;
 			$pconfig['ondemand'] = isset($config['pptp']['ondemand']);
 			$pconfig['timeout'] = $config['pptp']['timeout'];
 			unset($config['pptp']);
-			$config['interfaces']['wan']['username'] = $pconfig['username'];
-			$config['interfaces']['wan']['password'] = $pconfig['password'];
+			$config['interfaces']['wan']['pptp_username'] = $pconfig['username'];
+			$config['interfaces']['wan']['pptp_password'] = $pconfig['password'];
 			$config['interfaces']['wan']['provider'] = $pconfig['provider'];
-			$config['interfaces']['wan']['username'] = isset($pconfig['ondemand'] );
+			$config['interfaces']['wan']['ondemand'] = isset($pconfig['ondemand'] );
 			$config['interfaces']['wan']['timeout'] = $pconfig['timeout'];
 		}
 

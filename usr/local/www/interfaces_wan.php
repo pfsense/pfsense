@@ -90,8 +90,8 @@ $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
 
-$pconfig['username'] = $wancfg['username'];
-$pconfig['password'] = $wancfg['password'];
+$pconfig['pppoe_username'] = $wancfg['pppoe_username'];
+$pconfig['pppoe_password'] = $wancfg['pppoe_password'];
 $pconfig['provider'] = $wancfg['provider'];
 $pconfig['pppoe_dialondemand'] = isset($wancfg['ondemand']);
 $pconfig['pppoe_idletimeout'] = $wancfg['timeout'];
@@ -136,8 +136,8 @@ if (isset($wancfg['pppoe']['pppoe-reset-type'])) {
   }
 }
 
-$pconfig['pptp_username'] = $wancfg['username'];
-$pconfig['pptp_password'] = $wancfg['password'];
+$pconfig['pptp_username'] = $wancfg['pptp_username'];
+$pconfig['pptp_password'] = $wancfg['pptp_password'];
 $pconfig['pptp_local'] = $wancfg['local'];
 $pconfig['pptp_subnet'] = $wancfg['subnet'];
 $pconfig['pptp_remote'] = $wancfg['remote'];
@@ -190,7 +190,7 @@ if (isset($wancfg['wireless'])) {
 if ($_POST) {
 
 	unset($input_errors);
-	$pconfig = $_POST;
+//	$pconfig = $_POST;
   
 	/* filter out spaces from descriptions  */
         $_POST['descr'] = remove_bad_chars($_POST['descr']);
@@ -233,10 +233,10 @@ n already exists.";
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	} else if ($_POST['type'] == "PPPoE") {
 		if ($_POST['pppoe_dialondemand']) {
-			$reqdfields = explode(" ", "username password pppoe_dialondemand pppoe_idletimeout");
+			$reqdfields = explode(" ", "pppoe_username pppoe_password pppoe_dialondemand pppoe_idletimeout");
 			$reqdfieldsn = explode(",", "PPPoE username,PPPoE password,Dial on demand,Idle timeout value");
 		} else {
-			$reqdfields = explode(" ", "username password");
+			$reqdfields = explode(" ", "pppoe_username pppoe_password");
 			$reqdfieldsn = explode(",", "PPPoE username,PPPoE password");
 		}
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -333,8 +333,10 @@ n already exists.";
 		unset($wancfg['gateway']);
 		unset($wancfg['pointtopoint']);
 		unset($wancfg['dhcphostname']);
-		unset($wancfg['username']);
-		unset($wancfg['password']);
+		unset($wancfg['pppoe_username']);
+		unset($wancfg['pppoe_password']);
+		unset($wancfg['pptp_username']);
+		unset($wancfg['pptp_password']);
 		unset($wancfg['provider']);
 		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
@@ -374,8 +376,8 @@ n already exists.";
 			$wancfg['alias-subnet'] = $_POST['alias-subnet'];			
 		} else if ($_POST['type'] == "pppoe") {
 			$wancfg['ipaddr'] = "pppoe";
-			$wancfg['username'] = $_POST['username'];
-			$wancfg['password'] = $_POST['password'];
+			$wancfg['pppoe_username'] = $_POST['pppoe_username'];
+			$wancfg['pppoe_password'] = $_POST['pppoe_password'];
 			$wancfg['provider'] = $_POST['provider'];
 			$wancfg['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 			$wancfg['timeout'] = $_POST['pppoe_idletimeout'];
@@ -462,8 +464,8 @@ n already exists.";
 			} // end if
 		} else if ($_POST['type'] == "pptp") {
 			$wancfg['ipaddr'] = "pptp";
-			$wancfg['username'] = $_POST['pptp_username'];
-			$wancfg['password'] = $_POST['pptp_password'];
+			$wancfg['pptp_username'] = $_POST['pptp_username'];
+			$wancfg['pptp_password'] = $_POST['pptp_password'];
 			$wancfg['local'] = $_POST['pptp_local'];
 			$wancfg['subnet'] = $_POST['pptp_subnet'];
 			$wancfg['remote'] = $_POST['pptp_remote'];
@@ -493,6 +495,12 @@ n already exists.";
 		$wancfg['mtu'] = $_POST['mtu'];
 
 		write_config();
+		
+		if ($if = "lan") {
+			/* restart snmp so that it binds to correct address */
+                	services_snmpd_configure();
+			$savemsg = "The changes have been applied.  You may need to correct your web browser's IP address.";
+		}
     
 		/* finally install the pppoerestart file */
 		if (isset($_POST['pppoe_preset'])) {
@@ -579,7 +587,7 @@ function show_mon_config() {
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-            <form action="interfaces_wan.php" method="post" name="iform" id="iform">
+            <form action="interfaces_wan.php?if=<?php echo "{$if}";?>" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">General configuration</td>
@@ -735,12 +743,12 @@ function show_mon_config() {
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Username</td>
-                  <td width="78%" class="vtable"><input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+                  <td width="78%" class="vtable"><input name="pppoe_username" type="text" class="formfld user" id="pppoe_username" size="20" value="<?=htmlspecialchars($pconfig['pppoe_username']);?>">
                   </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Password</td>
-                  <td width="78%" class="vtable"><input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+                  <td width="78%" class="vtable"><input name="pppoe_password" type="password" class="formfld pwd" id="pppoe_password" size="20" value="<?=htmlspecialchars($pconfig['pppoe_password']);?>">
                   </td>
                 </tr>
                 <tr>

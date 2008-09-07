@@ -482,13 +482,22 @@ function openvpn_restart($mode, & $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
-	$pidfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
-	killbypid($pidfile);
-	sleep(2);
+	/* read the pid file */
+	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
+	$pid = rtrim(file_get_contents($pfile));
+	unlink($pfile);
+
+	/* send the process a term signal */
+	posix_kill($pid, SIGTERM);
+
+	/* wait until the process exits */
+	while(posix_kill($pid, 0))
+		usleep(250000);
 
 	if ($settings['disable'])
 		return;
 
+	/* start the new process */
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.conf";
 	mwexec_bg("nohup openvpn --config {$fpath}");
 	touch("{$g['tmp_path']}/filter_dirty");
@@ -506,10 +515,13 @@ function openvpn_delete($mode, & $settings) {
 	else
 		$devname = "ovpnc{$vpnid}";
 
-	/* kill the process */
+	/* read the pid file */
 	$pfile = "{$g['varrun_path']}/openvpn_{$mode_id}.pid";
-	killbypid($pfile);
+	$pid = trim(file_get_contents($pfile));
 	unlink($pfile);
+
+	/* send the process a term signal */
+	posix_kill($pid, SIGTERM);
 
 	/* remove the device from the openvpn group */
 	mwexec("/sbin/ifconfig {$devname} -group openvpn");

@@ -141,7 +141,7 @@ if [ ! -h /tmp/tmp ]; then
     ln -hfs / /tmp/tmp
 fi
 
-# Make sure our /tmp is 777
+# Make sure our /tmp is 777 + Sticky
 chmod 1777 /tmp
 
 if [ ! "$PLATFORM" = "cdrom" ] ; then
@@ -193,7 +193,7 @@ rm -f /var/etc/nameserver*
 
 # Create uploadbar tmp directory
 mkdir -p /tmp/uploadbar
-chmod 777 /tmp/uploadbar
+chmod 0777 /tmp/uploadbar
 
 # make some directories in /var
 mkdir -p /var/run /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null

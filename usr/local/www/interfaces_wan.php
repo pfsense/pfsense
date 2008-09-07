@@ -604,7 +604,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="middle" class="vncell"><strong>Type</strong></td>
-                  <td class="vtable"> <select name="type" class="formselect" id="type">
+                  <td class="vtable"> <select name="type" onChange="updateType(this.value);" class="formselect" id="type">
                       <?php 
 			foreach ($types as $key => $opt) { 
 	                      echo "<option onClick=\"updateType('{$key}');\"";

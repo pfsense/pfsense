@@ -165,7 +165,8 @@
 		/* TODO - this line is causing a "Fatal error: Cannot unset
 		  string offsets in /etc/rc.initial.setlanip" on below line
 		  number */
-		unset($config['dhcpd'][$interface]['enable']);
+		if($config['dhcpd'][$interface])
+			unset($config['dhcpd'][$interface]['enable']);
 	}
 
 	if ($config['system']['webgui']['protocol'] == "https") {

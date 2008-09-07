@@ -193,6 +193,11 @@ if ($_POST) {
 
                         write_config();
 
+			$confif = convert_real_interface_to_friendly_interface_name($bridge['bridgeif']);
+                        if ($confif <> "")
+                                interfaces_wan_configure($confif);
+
+
 			header("Location: interfaces_bridge.php");
 			exit;
 		}

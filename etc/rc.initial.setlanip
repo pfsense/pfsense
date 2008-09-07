@@ -199,7 +199,7 @@
 		unset($config['shaper']);
 		unset($config['ezshaper']);
 		unset($config['nat']);
-		system("rm /var/dhcpd/var/db/*");
+		system("rm /var/dhcpd/var/db/* >/dev/null 2>/dev/null");
 		services_dhcpd_configure();
 	}
 

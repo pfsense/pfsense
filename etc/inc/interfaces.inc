@@ -596,7 +596,10 @@ function interfaces_wireless_configure($if, $wlcfg) {
 
 	/* set wireless channel value */
 	if(isset($wlcfg['channel']))
-		$channel = "channel " . escapeshellarg($wlcfg['channel']);
+		if($wlcfg['channel'] == "0")
+			$channel = "channel any";
+		else
+			$channel = "channel " . escapeshellarg($wlcfg['channel']);
 
 	/* set Distance value */
 	if($wlcfg['distance'])
@@ -759,9 +762,6 @@ EOD;
 	}
 
 	$standard_no_turbo = str_replace(" Turbo", "", $standard);
-
-	if($channel == "0")
-		$channel = "auto";
 
 	$settings = <<<EOD
 

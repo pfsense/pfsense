@@ -194,7 +194,8 @@
 
 	if(!$config['interfaces']['lan']) {
 		unset($config['interfaces']['lan']);
-		unset($config['dhcpd']['lan']);
+		if($config['dhcpd']['lan']);
+			unset($config['dhcpd']['lan']);
 		unset($config['shaper']);
 		unset($config['ezshaper']);
 		unset($config['nat']);

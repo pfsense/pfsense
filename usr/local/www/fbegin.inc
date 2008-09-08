@@ -142,7 +142,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?php $opts = get_configured_interface_with_descr(false, true); 
 							foreach ($opts as $oif => $odescr): 
 								if (!isset($config['interfaces'][$oif]['ovpn'])): ?>
-							<?=output_menu_item("/interfaces_wan.php?if={$oif}", htmlspecialchars($odescr))?>
+							<?=output_menu_item("/interfaces.php?if={$oif}", htmlspecialchars($odescr))?>
 							<?php endif; endforeach; ?>
 							<?php echo return_ext_menu("Interfaces"); ?>
 						</ul>

@@ -601,7 +601,7 @@ function openvpn_resync_all() {
 		$dh_parameters = openvpn_create_dhparams(2048);
 		$dh_parameters = base64_encode($dh_parameters);
 		$config['openvpn']['dh-parameters'] = $dh_parameters;
-		write_config();
+		write_config("OpenVPN DH parameters");
 	}
 
 	$path_ovdh = $g['varetc_path']."/openvpn/dh-parameters";

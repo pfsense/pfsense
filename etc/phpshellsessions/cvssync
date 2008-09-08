@@ -5,7 +5,7 @@
  */
 
 if(is_dir("/home/pfsense")) {
-	echo "\nRelocating cvssync...";
+	echo "\nRelocating downloaded cvssync data, please wait...";
 	exec("rm -rf /home/pfsense");
 	echo " done.\n";
 }

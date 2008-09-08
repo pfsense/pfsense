@@ -482,17 +482,21 @@ function openvpn_restart($mode, & $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
-	/* read the pid file */
+	/* kill the process if running */
 	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
-	$pid = rtrim(file_get_contents($pfile));
-	unlink($pfile);
+	if (file_exists($pfile)) {
 
-	/* send the process a term signal */
-	posix_kill($pid, SIGTERM);
+		/* read the pid file */
+		$pid = rtrim(file_get_contents($pfile));
+		unlink($pfile);
 
-	/* wait until the process exits */
-	while(posix_kill($pid, 0))
-		usleep(250000);
+		/* send a term signal to the process */
+		posix_kill($pid, SIGTERM);
+
+		/* wait until the process exits */
+		while(posix_kill($pid, 0))
+			usleep(250000);
+	}
 
 	if ($settings['disable'])
 		return;
@@ -515,13 +519,17 @@ function openvpn_delete($mode, & $settings) {
 	else
 		$devname = "ovpnc{$vpnid}";
 
-	/* read the pid file */
+	/* kill the process if running */
 	$pfile = "{$g['varrun_path']}/openvpn_{$mode_id}.pid";
-	$pid = trim(file_get_contents($pfile));
-	unlink($pfile);
+	if (file_exists($pfile)) {
 
-	/* send the process a term signal */
-	posix_kill($pid, SIGTERM);
+		/* read the pid file */
+		$pid = trim(file_get_contents($pfile));
+		unlink($pfile);
+
+		/* send a term signal to the process */
+		posix_kill($pid, SIGTERM);
+	}
 
 	/* remove the device from the openvpn group */
 	mwexec("/sbin/ifconfig {$devname} -group openvpn");

@@ -598,7 +598,7 @@ function openvpn_resync_all() {
 
 	if (!$config['openvpn']['dh-parameters']) {
 		echo "Configuring OpenVPN Parameters ...\n";
-		$dh_parameters = openvpn_create_dhparams(2048);
+		$dh_parameters = openvpn_create_dhparams(1024);
 		$dh_parameters = base64_encode($dh_parameters);
 		$config['openvpn']['dh-parameters'] = $dh_parameters;
 		write_config("OpenVPN DH parameters");

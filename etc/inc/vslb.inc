@@ -160,9 +160,9 @@ function echo_lbaction($action) {
 function relayd_configure() {
   global $config, $g;
 
-  $vs_a = &$config['load_balancer']['virtual_server'];
-  $pool_a = &$config['load_balancer']['lbpool'];
-  $protocol_a = &$config['load_balancer']['lbprotocol'];
+  $vs_a = $config['load_balancer']['virtual_server'];
+  $pool_a = $config['load_balancer']['lbpool'];
+  $protocol_a = $config['load_balancer']['lbprotocol'];
 
   $check_a = array();
 

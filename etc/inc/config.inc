@@ -1277,7 +1277,7 @@ endif;
         }
 
 	/* Convert 4.6 -> 4.7 */
-	if ($config['version'] <= 4.7) {
+	if ($config['version'] <= 4.6) {
 
 		/* Upgrade IPsec from tunnel to phase1/phase2 */
 

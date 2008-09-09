@@ -423,7 +423,7 @@ function interfaces_configure() {
 		if($debug)
  	               log_error("Configuring {$ifname}");
 
-		interfaces_wan_configure($if);
+		interface_configure($if);
 
 		if ($g['booting']) 
                 	echo "done.\n";
@@ -1002,7 +1002,7 @@ function find_dhclient_process($interface) {
 	return $pid;
 }
 
-function interfaces_wan_configure($interface = "wan") {
+function interface_configure($interface = "wan") {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];

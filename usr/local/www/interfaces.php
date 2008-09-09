@@ -1418,7 +1418,7 @@ if ($_POST) {
 		flush();
 		sleep(1);
 
-		interfaces_wan_configure($if);
+		interface_configure($if);
 
 		reset_carp();
 

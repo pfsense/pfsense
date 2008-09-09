@@ -84,7 +84,7 @@
 					$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
 					/* do not reconfigure on hotplug events when using pppoe or pptp */
 					log_error("HOTPLUG: Configuring wan interface {$argument1}");
-					interfaces_wan_configure($iface);
+					interface_configure($iface);
 				}
 			}
 		}

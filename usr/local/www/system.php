@@ -180,8 +180,9 @@ if ($_POST) {
 		$retval |= system_timezone_configure();
 		$retval |= system_ntp_configure();
 
+		/* XXX: ermal -- What is this supposed to do?! */
 		if ($olddnsallowoverride != $config['system']['dnsallowoverride'])
-			$retval |= interfaces_wan_configure();
+			$retval |= interface_configure();
 
 		config_unlock();
 

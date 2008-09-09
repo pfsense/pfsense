@@ -83,7 +83,7 @@ if ($_POST) {
 
 			$confif = convert_real_interface_to_friendly_interface_name($lagg['laggif']);
                         if ($confif <> "")
-                                interfaces_wan_configure($confif);
+                                interface_configure($confif);
 
 			header("Location: interfaces_lagg.php");
 			exit;

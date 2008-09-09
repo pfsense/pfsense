@@ -81,7 +81,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("Load Balancer","Monitor");
+$pgtitle = array("Services", "Load Balancer","Monitor");
 include("head.inc");
 
 ?>

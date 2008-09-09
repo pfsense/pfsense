@@ -173,7 +173,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Load Balancer","Relay Action","Edit");
+$pgtitle = array(Services", "Load Balancer","Relay Action","Edit");
 include("head.inc");
 
 ?>

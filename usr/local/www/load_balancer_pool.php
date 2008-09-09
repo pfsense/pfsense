@@ -92,7 +92,7 @@ for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 	$a_pool[$i]['monitor'] = "<a href=\"/load_balancer_monitor_edit.php?id={$mondex[$a_pool[$i]['monitor']]}\">{$a_pool[$i]['monitor']}</a>";
 }
 
-$pgtitle = array("Load Balancer","Pool");
+$pgtitle = array(Services", "Load Balancer","Pool");
 include("head.inc");
 
 ?>

@@ -219,8 +219,7 @@ function presubmit() {
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
-		<td class="tabnavtbl">
-			<ul id="tabnav">
+		<td>
 			<?php 
 				$tab_array = array();
 				$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
@@ -229,235 +228,236 @@ function presubmit() {
 				$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 				display_top_tabs($tab_array);
 			?>
-			</ul>
 		</td>
 	</tr>    
 	<tr>
-		<td class="tabcont">
+		<td id="mainarea">
+			<div class="tabcont">
 
-			<?php if($_GET['act']=="new" || $_GET['act']=="edit"): ?>
+				<?php if($_GET['act']=="new" || $_GET['act']=="edit"): ?>
 
-			<form action="system_groupmanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
-                    <?php
-                        $ro = "";
-                        if ($pconfig['gtype'] == "system")
-                            $ro = "readonly = \"readonly\"";
-                    ?>
+				<form action="system_groupmanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+	                    <?php
+	                        $ro = "";
+	                        if ($pconfig['gtype'] == "system")
+	                            $ro = "readonly = \"readonly\"";
+	                    ?>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
+							<td width="78%" class="vtable">
+								<strong><?=strtoupper($pconfig['gtype']);?></strong>
+								<input name="gtype" type="hidden" value="<?=$pconfig['gtype']?>"/>
+							</td>
+						</tr>
+						<tr> 
+							<td width="22%" valign="top" class="vncellreq">Group name</td>
+							<td width="78%" class="vtable"> 
+								<input name="groupname" type="text" class="formfld group" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" <?=$ro;?>> 
+							</td>
+						</tr>
+						<tr> 
+							<td width="22%" valign="top" class="vncell">Description</td>
+							<td width="78%" class="vtable"> 
+								<input name="description" type="text" class="formfld unknown" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>">
+								<br>
+								Group description, for your own information only
+							</td>
+						</tr>
+
+						<?php if ($pconfig['gid'] != 1998): // all users group ?>
+
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>
+							<td width="78%" class="vtable" align="center">
+								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td align="center" width="50%">
+											<strong>Not Members</strong><br/>
+											<br/>
+												<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onChange="clear_selected('members')" multiple>
+												<?php
+													foreach ($config['system']['user'] as $user):
+														if (in_array($user['uid'],$pconfig['members']))
+															continue;
+												?>
+												<option value="<?=$user['uid'];?>" <?=$selected;?>>
+													<?=htmlspecialchars($user['name']);?>
+												</option>
+												<?php endforeach; ?>
+											</select>
+											<br/>
+										</td>
+										<td>
+											<br/>
+											<a href="javascript:move_selected('notmembers','members')">
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="Add Members" alt="Add Members" width="17" height="17" border="0" />
+											</a>
+											<br/><br/>
+											<a href="javascript:move_selected('members','notmembers')">
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="Remove Members" alt="Remove Members" width="17" height="17" border="0" />
+											</a>
+										</td>
+										<td align="center" width="50%">
+											<strong>Members</strong><br/>
+											<br/>
+											<select size="10" style="width: 75%" name="members[]" class="formselect" id="members" onChange="clear_selected('notmembers')" multiple>
+												<?php
+													foreach ($config['system']['user'] as $user):
+														if (!in_array($user['uid'],$pconfig['members']))
+															continue;
+												?>
+												<option value="<?=$user['uid'];?>">
+													<?=htmlspecialchars($user['name']);?>
+												</option>
+												<?php endforeach; ?>
+											</select>
+											<br/>
+										</td>
+									</tr>
+								</table>
+								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
+							</td>
+						</tr>
+
+						<?php endif; ?>
+
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Assigned Privileges");?></td>
+							<td width="78%" class="vtable">
+								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td width="40%" class="listhdrr"><?=gettext("Name");?></td>
+										<td width="60%" class="listhdrr"><?=gettext("Description");?></td>
+										<td class="list"></td>
+									</tr>
+									<?php
+										if(is_array($pconfig['priv'])):
+											$i = 0;
+											foreach ($pconfig['priv'] as $priv):
+									?>
+									<tr>
+										<td class="listr">
+											<?=htmlspecialchars($priv_list[$priv]['name']);?>
+										</td>
+										<td class="listbg">
+											<font color="#FFFFFF">
+												<?=htmlspecialchars($priv_list[$priv]['descr']);?>
+											</font>
+										</td>
+										<td valign="middle" nowrap class="list">
+											<a href="system_groupmanager.php?act=delpriv&id=<?=$id?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
+												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
+											</a>
+										</td>
+									</tr>
+									<?php
+											$i++;
+	                      					endforeach;
+										endif;
+									?>
+									<tr>
+										<td class="list" colspan="2"></td>
+										<td class="list">
+											<a href="system_groupmanager_addprivs.php?groupid=<?=$id?>">
+												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
+											</a>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr> 
+							<td width="22%" valign="top">&nbsp;</td>
+							<td width="78%"> 
+								<input name="save" type="submit" class="formbtn" value="Save"> 
+								<?php if (isset($id) && $a_group[$id]): ?>
+								<input name="id" type="hidden" value="<?=$id;?>">
+								<input name="gid" type="hidden" value="<?=$pconfig['gid'];?>">
+								<?php endif; ?>
+							</td>
+						</tr>
+					</table>
+				</form>
+
+				<?php else: ?>
+
+				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
-						<td width="78%" class="vtable">
-							<strong><?=strtoupper($pconfig['gtype']);?></strong>
-							<input name="gtype" type="hidden" value="<?=$pconfig['gtype']?>"/>
-						</td>
+						<td width="25%" class="listhdrr">Group name</td>
+						<td width="25%" class="listhdrr">Description</td>
+						<td width="30%" class="listhdrr">Member Count</td>
+						<td width="10%" class="list"></td>
 					</tr>
-					<tr> 
-						<td width="22%" valign="top" class="vncellreq">Group name</td>
-						<td width="78%" class="vtable"> 
-							<input name="groupname" type="text" class="formfld group" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" <?=$ro;?>> 
-						</td>
-					</tr>
-					<tr> 
-						<td width="22%" valign="top" class="vncell">Description</td>
-						<td width="78%" class="vtable"> 
-							<input name="description" type="text" class="formfld unknown" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>">
-							<br>
-							Group description, for your own information only
-						</td>
-					</tr>
+					<?php
+						$i = 0;
+						foreach($a_group as $group):
 
-					<?php if ($pconfig['gid'] != 1998): // all users group ?>
-
+							if($group['scope'] == "system")
+								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
+							else
+								$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
+					?>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>
-						<td width="78%" class="vtable" align="center">
-							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+						<td class="listlr">
+							<table border="0" cellpadding="0" cellspacing="0">
 								<tr>
-									<td align="center" width="50%">
-										<strong>Not Members</strong><br/>
-										<br/>
-											<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onChange="clear_selected('members')" multiple>
-											<?php
-												foreach ($config['system']['user'] as $user):
-													if (in_array($user['uid'],$pconfig['members']))
-														continue;
-											?>
-											<option value="<?=$user['uid'];?>" <?=$selected;?>>
-												<?=htmlspecialchars($user['name']);?>
-											</option>
-											<?php endforeach; ?>
-										</select>
-										<br/>
+									<td align="left" valign="center">
+										<img src="<?=$grpimg;?>" alt="User" title="User" border="0" height="16" width="16" />
 									</td>
-									<td>
-										<br/>
-										<a href="javascript:move_selected('notmembers','members')">
-											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="Add Members" alt="Add Members" width="17" height="17" border="0" />
-										</a>
-										<br/><br/>
-										<a href="javascript:move_selected('members','notmembers')">
-											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="Remove Members" alt="Remove Members" width="17" height="17" border="0" />
-										</a>
 									</td>
-									<td align="center" width="50%">
-										<strong>Members</strong><br/>
-										<br/>
-										<select size="10" style="width: 75%" name="members[]" class="formselect" id="members" onChange="clear_selected('notmembers')" multiple>
-											<?php
-												foreach ($config['system']['user'] as $user):
-													if (!in_array($user['uid'],$pconfig['members']))
-														continue;
-											?>
-											<option value="<?=$user['uid'];?>">
-												<?=htmlspecialchars($user['name']);?>
-											</option>
-											<?php endforeach; ?>
-										</select>
-										<br/>
+									<td align="left" valign="middle">
+										<?=htmlspecialchars($group['name']); ?>&nbsp;
 									</td>
 								</tr>
 							</table>
-							<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
 						</td>
-					</tr>
-
-					<?php endif; ?>
-
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Assigned Privileges");?></td>
-						<td width="78%" class="vtable">
-							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-								<tr>
-									<td width="40%" class="listhdrr"><?=gettext("Name");?></td>
-									<td width="60%" class="listhdrr"><?=gettext("Description");?></td>
-									<td class="list"></td>
-								</tr>
-								<?php
-									if(is_array($pconfig['priv'])):
-										$i = 0;
-										foreach ($pconfig['priv'] as $priv):
-								?>
-								<tr>
-									<td class="listr">
-										<?=htmlspecialchars($priv_list[$priv]['name']);?>
-									</td>
-									<td class="listbg">
-										<font color="#FFFFFF">
-											<?=htmlspecialchars($priv_list[$priv]['descr']);?>
-										</font>
-									</td>
-									<td valign="middle" nowrap class="list">
-										<a href="system_groupmanager.php?act=delpriv&id=<?=$id?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
-										</a>
-									</td>
-								</tr>
-								<?php
-										$i++;
-                      					endforeach;
-									endif;
-								?>
-								<tr>
-									<td class="list" colspan="2"></td>
-									<td class="list">
-										<a href="system_groupmanager_addprivs.php?groupid=<?=$id?>">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
-										</a>
-									</td>
-								</tr>
-							</table>
+						<td class="listr">
+							<?=htmlspecialchars($group['description']);?>&nbsp;
 						</td>
-					</tr>
-					<tr> 
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%"> 
-							<input name="save" type="submit" class="formbtn" value="Save"> 
-							<?php if (isset($id) && $a_group[$id]): ?>
-							<input name="id" type="hidden" value="<?=$id;?>">
-							<input name="gid" type="hidden" value="<?=$pconfig['gid'];?>">
+						<td class="listbg">
+							<font color="white">
+								<?=count($group['member'])?>
+							</font>
+						</td>
+						<td valign="middle" nowrap class="list">
+							<a href="system_groupmanager.php?act=edit&id=<?=$i;?>">
+								<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="edit group" width="17" height="17" border="0">
+							</a>
+							&nbsp;
+							<?php if($group['scope'] != "system"): ?>
+							<a href="system_groupmanager.php?act=delgroup&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this group?')">
+								<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="delete group" width="17" height="17" border="0">
+							</a>
 							<?php endif; ?>
 						</td>
 					</tr>
+					<?php
+						$i++;
+						endforeach;
+					?>
+					<tr> 
+						<td class="list" colspan="3"></td>
+						<td class="list">
+							<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="add group" width="17" height="17" border="0">
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<p>
+								<?=gettext("Additional webConfigurator groups can be added here.");?>
+								<?=gettext("Group permissions can be assinged which will be inherited by users.");?>
+								<?=gettext("An icon that appears grey indicates that it is a system defined object.");?>
+								<?=gettext("Some system object properties can be modified but they cannot be deleted.");?>
+							</p>
+						</td>
+					</tr>
 				</table>
-			</form>
-
-			<?php else: ?>
-
-			<table width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tr>
-					<td width="25%" class="listhdrr">Group name</td>
-					<td width="25%" class="listhdrr">Description</td>
-					<td width="30%" class="listhdrr">Member Count</td>
-					<td width="10%" class="list"></td>
-				</tr>
-				<?php
-					$i = 0;
-					foreach($a_group as $group):
-
-						if($group['scope'] == "system")
-							$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group-grey.png";
-						else
-							$grpimg = "/themes/{$g['theme']}/images/icons/icon_system-group.png";
-				?>
-				<tr>
-					<td class="listlr">
-						<table border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td align="left" valign="center">
-									<img src="<?=$grpimg;?>" alt="User" title="User" border="0" height="16" width="16" />
-								</td>
-								</td>
-								<td align="left" valign="middle">
-									<?=htmlspecialchars($group['name']); ?>&nbsp;
-								</td>
-							</tr>
-						</table>
-					</td>
-					<td class="listr">
-						<?=htmlspecialchars($group['description']);?>&nbsp;
-					</td>
-					<td class="listbg">
-						<font color="white">
-							<?=count($group['member'])?>
-						</font>
-					</td>
-					<td valign="middle" nowrap class="list">
-						<a href="system_groupmanager.php?act=edit&id=<?=$i;?>">
-							<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="edit group" width="17" height="17" border="0">
-						</a>
-						&nbsp;
-						<?php if($group['scope'] != "system"): ?>
-						<a href="system_groupmanager.php?act=delgroup&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this group?')">
-							<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="delete group" width="17" height="17" border="0">
-						</a>
-						<?php endif; ?>
-					</td>
-				</tr>
-				<?php
-					$i++;
-					endforeach;
-				?>
-				<tr> 
-					<td class="list" colspan="3"></td>
-					<td class="list">
-						<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="add group" width="17" height="17" border="0">
-						</a>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="3">
-						<p>
-							<?=gettext("Additional webConfigurator groups can be added here.");?>
-							<?=gettext("Group permissions can be assinged which will be inherited by users.");?>
-							<?=gettext("An icon that appears grey indicates that it is a system defined object.");?>
-							<?=gettext("Some system object properties can be modified but they cannot be deleted.");?>
-						</p>
-					</td>
-				</tr>
-			</table>
 			
-			<? endif; ?>
-     
+				<? endif; ?>
+
+			</div>     
 		</td>
 	</tr>
 </table>

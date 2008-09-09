@@ -168,7 +168,7 @@ function internalca_change() {
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
-		<td class="tabnavtbl">
+		<td>
 		<?php
 			$tab_array = array();
 			$tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
@@ -180,84 +180,87 @@ function internalca_change() {
 		</td>
 	</tr>
 	<tr>
-		<td class="tabcont">
-			<form action="system_usermanager_addcert.php" method="post" name="iform" id="iform">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<td id="mainarea">
+			<div class="tabcont">
+				<form action="system_usermanager_addcert.php" method="post" name="iform" id="iform">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 
-					<?php if (!$internal_ca_count): ?>
+						<?php if (!$internal_ca_count): ?>
 
-					<tr>
-						<td colspan="2" align="center" class="vtable">
-							No internal Certificate Authorities have been defined. You must
-							<a href="system_camanager.php?act=new&method=internal">create</a>
-							an internal CA before creating an internal certificate.
-						</td>
-					</tr>
+						<tr>
+							<td colspan="2" align="center" class="vtable">
+								No internal Certificate Authorities have been defined. You must
+								<a href="system_camanager.php?act=new&method=internal">create</a>
+								an internal CA before creating an internal certificate.
+							</td>
+						</tr>
 
-					<?php else: ?>
+						<?php else: ?>
 
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
-						<td width="78%" class="vtable">
-							<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate authority");?></td>
-						<td width="78%" class="vtable">
-							<select name='caref' id='caref' class="formselect" onChange='internalca_change()'>
-							<?php
-								foreach( $a_ca as $ca):
-								if (!$ca['prv'])
-									continue;
-								$selected = "";
-								if ($pconfig['caref'] == $ca['refid'])
-									$selected = "selected";
-							?>
-								<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['name'];?></option>
-							<?php endforeach; ?>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>
-						<td width="78%" class="vtable">
-							<select name='keylen' class="formselect">
-							<?php
-								foreach( $cert_keylens as $len):
-								$selected = "";
-								if ($pconfig['keylen'] == $len)
-									$selected = "selected";
-							?>
-								<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
-							<?php endforeach; ?>
-							</select>
-							bits
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
-						<td width="78%" class="vtable">
-							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
-							days
-						</td>
-					</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
+							<td width="78%" class="vtable">
+								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate authority");?></td>
+							<td width="78%" class="vtable">
+								<select name='caref' id='caref' class="formselect" onChange='internalca_change()'>
+								<?php
+									foreach( $a_ca as $ca):
+									if (!$ca['prv'])
+										continue;
+									$selected = "";
+									if ($pconfig['caref'] == $ca['refid'])
+										$selected = "selected";
+								?>
+									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['name'];?></option>
+								<?php endforeach; ?>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>
+							<td width="78%" class="vtable">
+								<select name='keylen' class="formselect">
+								<?php
+									foreach( $cert_keylens as $len):
+									$selected = "";
+									if ($pconfig['keylen'] == $len)
+										$selected = "selected";
+								?>
+									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
+								<?php endforeach; ?>
+								</select>
+								bits
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
+							<td width="78%" class="vtable">
+								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
+								days
+							</td>
+						</tr>
 
-					<?php endif; ?>
+						<?php endif; ?>
 
-					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-							<?php if ($internal_ca_count): ?>
-							<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
-							<?php endif; ?>
-							<?php if (isset($userid) && $a_user[$userid]): ?>
-							<input name="userid" type="hidden" value="<?=$userid;?>" />
-							<?php endif;?>
-						</td>
-					</tr>
-				</table>
-			</form>
+						<tr>
+							<td width="22%" valign="top">&nbsp;</td>
+							<td width="78%">
+								<?php if ($internal_ca_count): ?>
+								<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
+								<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
+								<?php endif; ?>
+								<?php if (isset($userid) && $a_user[$userid]): ?>
+								<input name="userid" type="hidden" value="<?=$userid;?>" />
+								<?php endif;?>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
 		</td>
 	</tr>
 </table>

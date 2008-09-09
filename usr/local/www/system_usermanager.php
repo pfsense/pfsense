@@ -304,7 +304,7 @@ function presubmit() {
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
-		<td class="tabnavtbl">
+		<td>
 		<?php
 			$tab_array = array();
 			$tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
@@ -316,316 +316,319 @@ function presubmit() {
 		</td>
 	</tr>
 	<tr>
-		<td class="tabcont">
+		<td id="mainarea">
+			<div class="tabcont">
 
-			<?php if ($_GET['act'] == "new" || $_GET['act'] == "edit" || $input_errors): ?>
+				<?php if ($_GET['act'] == "new" || $_GET['act'] == "edit" || $input_errors): ?>
 
-			<form action="system_usermanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<form action="system_usermanager.php" method="post" name="iform" id="iform" onsubmit="presubmit()">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<?php
+							$ro = "";
+							if ($pconfig['utype'] == "system")
+								$ro = "readonly = \"readonly\"";
+						?>
+	                    <tr>
+	                        <td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
+	                        <td width="78%" class="vtable">
+	                            <strong><?=strtoupper($pconfig['utype']);?></strong>
+								<input name="utype" type="hidden" value="<?=$pconfig['utype']?>"/>
+	                        </td>
+	                    </tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
+							<td width="78%" class="vtable">
+								<input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" <?=$ro;?>/>
+								<input name="oldusername" type="hidden" id="oldusername" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" />
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq" rowspan="2"><?=gettext("Password");?></td>
+							<td width="78%" class="vtable">
+								<input name="passwordfld1" type="password" class="formfld pwd" id="passwordfld1" size="20" value="" />
+							</td>
+						</tr>
+						<tr>
+							<td width="78%" class="vtable">
+								<input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" value="" />&nbsp;<?= gettext("(confirmation)"); ?>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Full name");?></td>
+							<td width="78%" class="vtable">
+								<input name="fullname" type="text" class="formfld unknown" id="fullname" size="20" value="<?=htmlspecialchars($pconfig['fullname']);?>" <?=$ro;?>/>
+								<br/>
+								<?=gettext("User's full name, for your own information only");?>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>
+							<td width="78%" class="vtable" align="center">
+								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td align="center" width="50%">
+											<strong>Not Member Of</strong><br/>
+											<br/>
+											<select size="10" style="width: 75%" name="notgroups[]" class="formselect" id="notgroups" onChange="clear_selected('groups')" multiple>
+												<?php
+													foreach ($config['system']['group'] as $group):
+														if ($group['gid'] == 1998) /* all users group */
+															continue;
+														if (in_array($group['name'],$pconfig['groups']))
+															continue;
+												?>
+												<option value="<?=$group['name'];?>" <?=$selected;?>>
+													<?=htmlspecialchars($group['name']);?>
+												</option>
+												<?php endforeach; ?>
+											</select>
+											<br/>
+										</td>
+										<td>
+											<br/>
+											<a href="javascript:move_selected('notgroups','groups')">
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="Add Groups" alt="Add Groups" width="17" height="17" border="0" />
+											</a>
+											<br/><br/>
+											<a href="javascript:move_selected('groups','notgroups')">
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="Remove Groups" alt="Remove Groups" width="17" height="17" border="0" />
+											</a>
+										</td>
+										<td align="center" width="50%">
+											<strong>Member Of</strong><br/>
+											<br/>
+											<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onChange="clear_selected('nogroups')" multiple>
+												<?php
+													foreach ($config['system']['group'] as $group):
+														if ($group['gid'] == 1998) /* all users group */
+															continue;
+														if (!in_array($group['name'],$pconfig['groups']))
+															continue;
+												?>
+												<option value="<?=$group['name'];?>">
+													<?=htmlspecialchars($group['name']);?>
+												</option>
+												<?php endforeach; ?>
+											</select>
+											<br/>
+										</td>
+									</tr>
+								</table>
+								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
+							</td>
+						</tr>
+
+						<?php if ($pconfig['uid']): ?>
+
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Effective Privileges");?></td>
+							<td width="78%" class="vtable">
+								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td width="20%" class="listhdrr"><?=gettext("Inherited From");?></td>
+										<td width="30%" class="listhdrr"><?=gettext("Name");?></td>
+										<td width="40%" class="listhdrr"><?=gettext("Description");?></td>
+										<td class="list"></td>
+									</tr>
+									<?php
+											
+										$privdesc = get_user_privdesc($a_user[$id]);
+										if(is_array($privdesc)):
+											$i = 0;
+											foreach ($privdesc as $priv):
+											$group = false;
+											if ($priv['group'])
+												$group = $priv['group'];
+									?>
+									<tr>
+										<td class="listlr"><?=$group;?></td>
+										<td class="listr">
+											<?=htmlspecialchars($priv['name']);?>
+										</td>
+										<td class="listbg">
+											<font color="#FFFFFF">
+												<?=htmlspecialchars($priv['descr']);?>
+											</font>
+										</td>
+										<td valign="middle" nowrap class="list">
+											<?php if (!$group): ?>
+											<a href="system_usermanager.php?act=delpriv&id=<?=$id?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
+												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
+											</a>
+											<?php endif; ?>
+										</td>
+									</tr>
+									<?php
+											/* can only delete user priv indexes */
+											if (!$group)
+												$i++;
+											endforeach;
+										endif;
+									?>
+									<tr>
+										<td class="list" colspan="3"></td>
+										<td class="list">
+											<a href="system_usermanager_addprivs.php?userid=<?=$id?>">
+												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
+											</a>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("User Certificates");?></td>
+							<td width="78%" class="vtable">
+								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td width="45%" class="listhdrr"><?=gettext("Name");?></td>
+										<td width="45%" class="listhdrr"><?=gettext("CA");?></td>
+										<td class="list"></td>
+									</tr>
+									<?php
+										
+										$a_cert = $a_user[$id]['cert'];
+										if(is_array($a_cert)):
+											$i = 0;
+											foreach ($a_cert as $cert):
+						                        $ca = lookup_ca($cert['caref']);
+									?>
+									<tr>
+										<td class="listlr">
+											<?=htmlspecialchars($cert['name']);?>
+										</td>
+										<td class="listr">
+											<?=htmlspecialchars($ca['name']);?>
+										</td>
+										<td valign="middle" nowrap class="list">
+											<a href="system_usermanager.php?act=expckey&id=<?=$id;?>&certid=<?=$i;?>">
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export private key" alt="export private key" width="17" height="17" border="0" />
+											</a>
+											<a href="system_usermanager.php?act=expcert&id=<?=$id;?>&certid=<?=$i;?>">
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export cert" alt="export cert" width="17" height="17" border="0" />
+											</a>
+											<a href="system_usermanager.php?act=delcert&id=<?=$id?>&certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this certificate?");?>')">
+												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete cert" />
+											</a>
+										</td>
+									</tr>
+									<?php
+												$i++;
+											endforeach;
+										endif;
+									?>
+									<tr>
+										<td class="list" colspan="2"></td>
+										<td class="list">
+											<a href="system_usermanager_addcert.php?userid=<?=$id?>">
+												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
+											</a>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
+						<?php endif; ?>
+
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
+							<td width="78%" class="vtable">
+								<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
+								<br/>
+								<?=gettext("Paste an authorized keys file here.");?>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top">&nbsp;</td>
+							<td width="78%">
+								<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
+								<?php if (isset($id) && $a_user[$id]): ?>
+								<input name="id" type="hidden" value="<?=$id;?>" />
+								<?php endif;?>
+							</td>
+						</tr>
+					</table>
+				</form>
+
+				<?php else: ?>
+
+				<table width="100%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td width="25%" class="listhdrr">Username</td>
+						<td width="25%" class="listhdrr">Full name</td>
+						<td width="30%" class="listhdrr">Groups</td>
+						<td width="10%" class="list"></td>
+					</tr>
 					<?php
-						$ro = "";
-						if ($pconfig['utype'] == "system")
-							$ro = "readonly = \"readonly\"";
+						$i = 0;
+						foreach($a_user as $userent):
 					?>
-                    <tr>
-                        <td width="22%" valign="top" class="vncell"><?=gettext("Defined by");?></td>
-                        <td width="78%" class="vtable">
-                            <strong><?=strtoupper($pconfig['utype']);?></strong>
-							<input name="utype" type="hidden" value="<?=$pconfig['utype']?>"/>
-                        </td>
-                    </tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
-						<td width="78%" class="vtable">
-							<input name="usernamefld" type="text" class="formfld user" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" <?=$ro;?>/>
-							<input name="oldusername" type="hidden" id="oldusername" value="<?=htmlspecialchars($pconfig['usernamefld']);?>" />
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq" rowspan="2"><?=gettext("Password");?></td>
-						<td width="78%" class="vtable">
-							<input name="passwordfld1" type="password" class="formfld pwd" id="passwordfld1" size="20" value="" />
-						</td>
-					</tr>
-					<tr>
-						<td width="78%" class="vtable">
-							<input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" value="" />&nbsp;<?= gettext("(confirmation)"); ?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Full name");?></td>
-						<td width="78%" class="vtable">
-							<input name="fullname" type="text" class="formfld unknown" id="fullname" size="20" value="<?=htmlspecialchars($pconfig['fullname']);?>" <?=$ro;?>/>
-							<br/>
-							<?=gettext("User's full name, for your own information only");?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>
-						<td width="78%" class="vtable" align="center">
-							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+					<tr ondblclick="document.location='system_usermanager.php?act=edit&id=<?=$i;?>'">
+						<td class="listlr">
+							<table border="0" cellpadding="0" cellspacing="0">
 								<tr>
-									<td align="center" width="50%">
-										<strong>Not Member Of</strong><br/>
-										<br/>
-										<select size="10" style="width: 75%" name="notgroups[]" class="formselect" id="notgroups" onChange="clear_selected('groups')" multiple>
-											<?php
-												foreach ($config['system']['group'] as $group):
-													if ($group['gid'] == 1998) /* all users group */
-														continue;
-													if (in_array($group['name'],$pconfig['groups']))
-														continue;
-											?>
-											<option value="<?=$group['name'];?>" <?=$selected;?>>
-												<?=htmlspecialchars($group['name']);?>
-											</option>
-											<?php endforeach; ?>
-										</select>
-										<br/>
+									<td align="left" valign="center">
+										<?php
+											if($userent['scope'] != "user")
+												$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user-grey.png";
+											else
+												$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
+										?>
+										<img src="<?=$usrimg;?>" alt="User" title="User" border="0" height="16" width="16" />
 									</td>
-									<td>
-										<br/>
-										<a href="javascript:move_selected('notgroups','groups')">
-											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="Add Groups" alt="Add Groups" width="17" height="17" border="0" />
-										</a>
-										<br/><br/>
-										<a href="javascript:move_selected('groups','notgroups')">
-											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="Remove Groups" alt="Remove Groups" width="17" height="17" border="0" />
-										</a>
-									</td>
-									<td align="center" width="50%">
-										<strong>Member Of</strong><br/>
-										<br/>
-										<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onChange="clear_selected('nogroups')" multiple>
-											<?php
-												foreach ($config['system']['group'] as $group):
-													if ($group['gid'] == 1998) /* all users group */
-														continue;
-													if (!in_array($group['name'],$pconfig['groups']))
-														continue;
-											?>
-											<option value="<?=$group['name'];?>">
-												<?=htmlspecialchars($group['name']);?>
-											</option>
-											<?php endforeach; ?>
-										</select>
-										<br/>
-									</td>
-								</tr>
-							</table>
-							<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
-						</td>
-					</tr>
-
-					<?php if ($pconfig['uid']): ?>
-
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Effective Privileges");?></td>
-						<td width="78%" class="vtable">
-							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-								<tr>
-									<td width="20%" class="listhdrr"><?=gettext("Inherited From");?></td>
-									<td width="30%" class="listhdrr"><?=gettext("Name");?></td>
-									<td width="40%" class="listhdrr"><?=gettext("Description");?></td>
-									<td class="list"></td>
-								</tr>
-								<?php
-										
-									$privdesc = get_user_privdesc($a_user[$id]);
-									if(is_array($privdesc)):
-										$i = 0;
-										foreach ($privdesc as $priv):
-										$group = false;
-										if ($priv['group'])
-											$group = $priv['group'];
-								?>
-								<tr>
-									<td class="listlr"><?=$group;?></td>
-									<td class="listr">
-										<?=htmlspecialchars($priv['name']);?>
-									</td>
-									<td class="listbg">
-										<font color="#FFFFFF">
-											<?=htmlspecialchars($priv['descr']);?>
-										</font>
-									</td>
-									<td valign="middle" nowrap class="list">
-										<?php if (!$group): ?>
-										<a href="system_usermanager.php?act=delpriv&id=<?=$id?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
-										</a>
-										<?php endif; ?>
-									</td>
-								</tr>
-								<?php
-										/* can only delete user priv indexes */
-										if (!$group)
-											$i++;
-										endforeach;
-									endif;
-								?>
-								<tr>
-									<td class="list" colspan="3"></td>
-									<td class="list">
-										<a href="system_usermanager_addprivs.php?userid=<?=$id?>">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
-										</a>
+									<td align="left" valign="middle">
+										<?=htmlspecialchars($userent['name']);?>
 									</td>
 								</tr>
 							</table>
 						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("User Certificates");?></td>
-						<td width="78%" class="vtable">
-							<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-								<tr>
-									<td width="45%" class="listhdrr"><?=gettext("Name");?></td>
-									<td width="45%" class="listhdrr"><?=gettext("CA");?></td>
-									<td class="list"></td>
-								</tr>
-								<?php
-										
-									$a_cert = $a_user[$id]['cert'];
-									if(is_array($a_cert)):
-										$i = 0;
-										foreach ($a_cert as $cert):
-					                        $ca = lookup_ca($cert['caref']);
-								?>
-								<tr>
-									<td class="listlr">
-										<?=htmlspecialchars($cert['name']);?>
-									</td>
-									<td class="listr">
-										<?=htmlspecialchars($ca['name']);?>
-									</td>
-									<td valign="middle" nowrap class="list">
-										<a href="system_usermanager.php?act=expckey&id=<?=$id;?>&certid=<?=$i;?>">
-											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export private key" alt="export private key" width="17" height="17" border="0" />
-										</a>
-										<a href="system_usermanager.php?act=expcert&id=<?=$id;?>&certid=<?=$i;?>">
-											<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export cert" alt="export cert" width="17" height="17" border="0" />
-										</a>
-										<a href="system_usermanager.php?act=delcert&id=<?=$id?>&certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this certificate?");?>')">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete cert" />
-										</a>
-									</td>
-								</tr>
-								<?php
-											$i++;
-										endforeach;
-									endif;
-								?>
-								<tr>
-									<td class="list" colspan="2"></td>
-									<td class="list">
-										<a href="system_usermanager_addcert.php?userid=<?=$id?>">
-											<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
-										</a>
-									</td>
-								</tr>
-							</table>
+						<td class="listr"><?=htmlspecialchars($userent['fullname']);?>&nbsp;</td>
+						<td class="listbg">
+							<font color="white">
+								<?=implode(",",local_user_get_groups($userent));?>
+							</font>
+							&nbsp;
+						</td>
+						<td valign="middle" nowrap class="list">
+							<a href="system_usermanager.php?act=edit&id=<?=$i;?>">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="edit user" alt="edit user" width="17" height="17" border="0" />
+							</a>
+							<?php if($userent['scope'] != "system"): ?>
+							&nbsp;
+							<a href="system_usermanager.php?act=deluser&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this User?");?>')">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete user" alt="delete user" width="17" height="17" border="0" />
+							</a>
+							<?php endif; ?>
 						</td>
 					</tr>
-
-					<?php endif; ?>
-
+					<?php
+							$i++;
+						endforeach;
+					?>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
-						<td width="78%" class="vtable">
-							<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
-							<br/>
-							<?=gettext("Paste an authorized keys file here.");?>
+						<td class="list" colspan="3"></td>
+						<td class="list">
+							<a href="system_usermanager.php?act=new">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="add user" alt="add user" width="17" height="17" border="0" />
+							</a>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-							<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
-							<?php if (isset($id) && $a_user[$id]): ?>
-							<input name="id" type="hidden" value="<?=$id;?>" />
-							<?php endif;?>
+						<td colspan="3">
+							<p>
+								<?=gettext("Additional webConfigurator users can be added here.");?>
+								<?=gettext("User permissions can be assinged diretly or inherited from group memberships.");?>
+								<?=gettext("An icon that appears grey indicates that it is a system defined object.");?>
+								<?=gettext("Some system object properties can be modified but they cannot be deleted.");?>
+							</p>
 						</td>
 					</tr>
 				</table>
-			</form>
 
-			<?php else: ?>
-			<table width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tr>
-					<td width="25%" class="listhdrr">Username</td>
-					<td width="25%" class="listhdrr">Full name</td>
-					<td width="30%" class="listhdrr">Groups</td>
-					<td width="10%" class="list"></td>
-				</tr>
-				<?php
-					$i = 0;
-					foreach($a_user as $userent):
-				?>
-				<tr ondblclick="document.location='system_usermanager.php?act=edit&id=<?=$i;?>'">
-					<td class="listlr">
-						<table border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td align="left" valign="center">
-									<?php
-										if($userent['scope'] != "user")
-											$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user-grey.png";
-										else
-											$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
-									?>
-									<img src="<?=$usrimg;?>" alt="User" title="User" border="0" height="16" width="16" />
-								</td>
-								<td align="left" valign="middle">
-									<?=htmlspecialchars($userent['name']);?>
-								</td>
-							</tr>
-						</table>
-					</td>
-					<td class="listr"><?=htmlspecialchars($userent['fullname']);?>&nbsp;</td>
-					<td class="listbg">
-						<font color="white">
-							<?=implode(",",local_user_get_groups($userent));?>
-						</font>
-						&nbsp;
-					</td>
-					<td valign="middle" nowrap class="list">
-						<a href="system_usermanager.php?act=edit&id=<?=$i;?>">
-							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="edit user" alt="edit user" width="17" height="17" border="0" />
-						</a>
-						<?php if($userent['scope'] != "system"): ?>
-						&nbsp;
-						<a href="system_usermanager.php?act=deluser&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this User?");?>')">
-							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete user" alt="delete user" width="17" height="17" border="0" />
-						</a>
-						<?php endif; ?>
-					</td>
-				</tr>
-				<?php
-						$i++;
-					endforeach;
-				?>
-				<tr>
-					<td class="list" colspan="3"></td>
-					<td class="list">
-						<a href="system_usermanager.php?act=new">
-							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="add user" alt="add user" width="17" height="17" border="0" />
-						</a>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="3">
-						<p>
-							<?=gettext("Additional webConfigurator users can be added here.");?>
-							<?=gettext("User permissions can be assinged diretly or inherited from group memberships.");?>
-							<?=gettext("An icon that appears grey indicates that it is a system defined object.");?>
-							<?=gettext("Some system object properties can be modified but they cannot be deleted.");?>
-						</p>
-					</td>
-				</tr>
-			</table>
+				<?php endif; ?>
 
-			<?php endif; ?>
-
+			</div>
 		</td>
 	</tr>
 </table>
@@ -685,35 +688,39 @@ function presubmit() {
 		exit;
 	}
 ?>
-<form action="system_usermanager.php" method="post" name="iform" id="iform">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=$HTTP_SERVER_VARS['AUTH_USER']?>'s Password</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell" rowspan="2">Password</td>
-			<td width="78%" class="vtable">
-				<input name="passwordfld1" type="password" class="formfld pwd" id="passwordfld1" size="20" />
-			</td>
-		</tr>
-		<tr>
-			<td width="78%" class="vtable">
-				<input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" />
-				&nbsp;<?=gettext("(confirmation)");?>
-				<br/>
-				<span class="vexpl">
-					<?=gettext("Select a new password");?>
-				</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%">
-				<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-			</td>
-		</tr>
-	</table>
-</form>
+<div id="mainarea">
+	<div class="tabcont">
+		<form action="system_usermanager.php" method="post" name="iform" id="iform">
+			<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				<tr>
+					<td colspan="2" valign="top" class="listtopic"><?=$HTTP_SERVER_VARS['AUTH_USER']?>'s Password</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell" rowspan="2">Password</td>
+					<td width="78%" class="vtable">
+						<input name="passwordfld1" type="password" class="formfld pwd" id="passwordfld1" size="20" />
+					</td>
+				</tr>
+				<tr>
+					<td width="78%" class="vtable">
+						<input name="passwordfld2" type="password" class="formfld pwd" id="passwordfld2" size="20" />
+						&nbsp;<?=gettext("(confirmation)");?>
+						<br/>
+						<span class="vexpl">
+							<?=gettext("Select a new password");?>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top">&nbsp;</td>
+					<td width="78%">
+						<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
 <?php include("fend.inc");?>
 </body>
 

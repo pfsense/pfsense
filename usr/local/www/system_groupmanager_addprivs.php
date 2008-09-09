@@ -140,43 +140,62 @@ function update_description() {
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-	<form action="system_groupmanager_addprivs.php" method="post" name="iform" id="iform">
-		<div id="inputerrors"></div>
-		<table width="100%" border="0" cellpadding="6" cellspacing="0">
-			<tr>
-				<td width="22%" valign="top" class="vncellreq"><?=gettext("System Privileges");?></td>
-				<td width="78%" class="vtable">
-					<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple>
-						<?php
-							foreach($priv_list as $pname => $pdata):
-								if (in_array($pname, $a_group['priv']))
-									continue;
-						?>
-						<option value="<?=$pname;?>"><?=$pdata['name'];?></option>
-						<?php endforeach; ?>
-					</select>
-					<br/>
-					<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
-				</td>
-			</tr>
-			<tr height="60">
-				<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-				<td width="78%" valign="top" class="vtable" id="pdesc">
-					<em>Select a privilege from the list above for a description</em>
-				</td>
-			</tr>
-			<tr>
-				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%">
-					<input id="submitt"  name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-					<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
-					<?php if (isset($groupid)): ?>
-					<input name="groupid" type="hidden" value="<?=$groupid;?>" />
-					<?php endif; ?>
-				</td>
-			</tr>
-		</table>
-	</form>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>
+		<?php
+			$tab_array = array();
+			$tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
+			$tab_array[] = array(gettext("Groups"), true, "system_groupmanager.php");
+			$tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
+			$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
+			display_top_tabs($tab_array);
+		?>
+		</td>
+	</tr>
+	<tr>
+		<td id="mainarea">
+			<div class="tabcont">
+				<form action="system_groupmanager_addprivs.php" method="post" name="iform" id="iform">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("System Privileges");?></td>
+							<td width="78%" class="vtable">
+								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple>
+									<?php
+										foreach($priv_list as $pname => $pdata):
+											if (in_array($pname, $a_group['priv']))
+												continue;
+									?>
+									<option value="<?=$pname;?>"><?=$pdata['name'];?></option>
+									<?php endforeach; ?>
+								</select>
+								<br/>
+								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
+							</td>
+						</tr>
+						<tr height="60">
+							<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
+							<td width="78%" valign="top" class="vtable" id="pdesc">
+								<em>Select a privilege from the list above for a description</em>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top">&nbsp;</td>
+							<td width="78%">
+								<input id="submitt"  name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+								<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
+								<?php if (isset($groupid)): ?>
+								<input name="groupid" type="hidden" value="<?=$groupid;?>" />
+								<?php endif; ?>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</td>
+	</tr>
+</table>
 <?php include("fend.inc"); ?>
 </body>
 </html>

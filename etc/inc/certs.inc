@@ -43,10 +43,13 @@ function & lookup_ca($refid) {
 function & lookup_cert($refid) {
 	global $config;
 
-	foreach ($config['system']['cert'] as & $cert)
-		if ($cert['refid'] == $refid)
-			return $cert;
-
+	if(is_array($config['system']['cert'])) {
+		foreach ($config['system']['cert'] as & $cert) {
+			if ($cert['refid'] == $refid) {
+				return $cert;
+			}
+		}
+	}	
 	return false;
 }
 

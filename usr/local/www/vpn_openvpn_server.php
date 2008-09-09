@@ -69,6 +69,7 @@ if($_GET['act']=="new"){
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
 	$pconfig['autotls_enable'] = "yes";
+	$pconfig['dh_length'] = 1024;
 	$pconfig['interface'] = "wan";
 	$pconfig['local_port'] = openvpn_port_next('UDP');
 	$pconfig['pool_enable'] = "yes";
@@ -86,12 +87,13 @@ if($_GET['act']=="edit"){
 		$pconfig['description'] = $a_server[$id]['description'];
 
 		if ($pconfig['mode'] != "p2p_shared_key") {
-			$pconfig['caref'] = $a_server[$id]['caref'];
-			$pconfig['certref'] = $a_server[$id]['certref'];
 			if ($a_server[$id]['tls']) {
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_server[$id]['tls']);
 			}
+			$pconfig['caref'] = $a_server[$id]['caref'];
+			$pconfig['certref'] = $a_server[$id]['certref'];
+			$pconfig['dh_length'] = $a_server[$id]['dh_length'];
 		} else
 			$pconfig['shared_key'] = base64_decode($a_server[$id]['shared_key']);
 		$pconfig['crypto'] = $a_server[$id]['crypto'];
@@ -255,13 +257,14 @@ if ($_POST) {
 		$server['description'] = $pconfig['description'];
 
 		if ($tls_mode) {
-			$server['caref'] = $pconfig['caref'];
-			$server['certref'] = $pconfig['certref'];
 			if ($pconfig['tlsauth_enable']) {
 				if ($pconfig['autotls_enable'])
 					$pconfig['tls'] = openvpn_create_key();
 				$server['tls'] = base64_encode($pconfig['tls']);
 			}
+			$server['caref'] = $pconfig['caref'];
+			$server['certref'] = $pconfig['certref'];
+			$server['dh_length'] = $pconfig['dh_length'];
 		} else {
 			if ($pconfig['autokey_enable'])
 				$pconfig['shared_key'] = openvpn_create_key();
@@ -343,12 +346,14 @@ function mode_change() {
 			document.getElementById("tls").style.display="";
 			document.getElementById("tls_ca").style.display="";
 			document.getElementById("tls_cert").style.display="";
+			document.getElementById("tls_dh").style.display="";
 			document.getElementById("psk").style.display="none";
 			break;
 		case "p2p_shared_key":
 			document.getElementById("tls").style.display="none";
 			document.getElementById("tls_ca").style.display="none";
 			document.getElementById("tls_cert").style.display="none";
+			document.getElementById("tls_dh").style.display="none";
 			document.getElementById("psk").style.display="";
 			break;
 	}
@@ -642,6 +647,24 @@ function netbios_change() {
 								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['name'];?></option>
 							<?php endforeach; ?>
 							</select>
+						</td>
+					</tr>
+					<tr id="tls_dh">
+						<td width="22%" valign="top" class="vncellreq">DH Parameters Length</td>
+						<td width="78%" class="vtable">
+							<select name="dh_length" class="formselect">
+								<?php
+									foreach ($openvpn_dh_lengths as $length):
+									$selected = '';
+									if ($length == $pconfig['dh_length'])
+										$selected = ' selected';
+								?>
+								<option<?=$selected?>><?=$length;?></option>
+								<?php endforeach; ?>
+							</select>
+							<span class="vexpl">
+								bits
+							</span>
 						</td>
 					</tr>
 					<tr id="psk">

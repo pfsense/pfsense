@@ -1758,6 +1758,7 @@ endif;
 				unset($server['auth_method']);
 
 				/* modify configuration values */
+				$server['dh_length'] = 1024;
 				unset($server['dh_params']);
 				if (!$server['interface'])
 					$server['interface'] = 'wan';

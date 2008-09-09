@@ -2228,7 +2228,7 @@ pass in quick on {$lanif} from any to ({$lanif}) keep state label "anti-lockout 
 EOD;
                 } else {
 			/* single-interface deployment, add to WAN  */
-					$wanif = get_real_wan_interface("lan");
+					$wanif = get_real_wan_interface("wan");
 					$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"

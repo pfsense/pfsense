@@ -282,6 +282,7 @@ function method_change() {
 			document.getElementById("existing").style.display="";
 			document.getElementById("internal").style.display="none";
 			document.getElementById("external").style.display="none";
+			document.getElementById("submit").style.display="";
 			break;
 		case 1:
 			document.getElementById("existing").style.display="none";
@@ -293,6 +294,7 @@ function method_change() {
 			document.getElementById("existing").style.display="none";
 			document.getElementById("internal").style.display="none";
 			document.getElementById("external").style.display="";
+			document.getElementById("submit").style.display="";
 			break;
 	}
 }
@@ -341,418 +343,420 @@ function internalca_change() {
 		</td>
 	</tr>
 	<tr>
-		<td class="tabcont">
+		<td id="mainarea">
+			<div class="tabcont">
 
-			<?php if ($act == "new" || (($_POST['save'] == "Save") && $input_errors)): ?>
+				<?php if ($act == "new" || (($_POST['save'] == "Save") && $input_errors)): ?>
 
-			<form action="system_certmanager.php" method="post" name="iform" id="iform">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
-						<td width="78%" class="vtable">
-							<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
-						</td>
-					</tr>
-					<?php if (!isset($id)): ?>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Method");?></td>
-						<td width="78%" class="vtable">
-							<select name='method' id='method' class="formselect" onchange='method_change()'>
-							<?php
-								foreach($cert_methods as $method => $desc):
-								$selected = "";
-								if ($pconfig['method'] == $method)
-									$selected = "selected";
-							?>
-								<option value="<?=$method;?>"<?=$selected;?>><?=$desc;?></option>
-							<?php endforeach; ?>
-							</select>
-						</td>
-					</tr>
+				<form action="system_certmanager.php" method="post" name="iform" id="iform">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
+							<td width="78%" class="vtable">
+								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+							</td>
+						</tr>
+						<?php if (!isset($id)): ?>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Method");?></td>
+							<td width="78%" class="vtable">
+								<select name='method' id='method' class="formselect" onchange='method_change()'>
+								<?php
+									foreach($cert_methods as $method => $desc):
+									$selected = "";
+									if ($pconfig['method'] == $method)
+										$selected = "selected";
+								?>
+									<option value="<?=$method;?>"<?=$selected;?>><?=$desc;?></option>
+								<?php endforeach; ?>
+								</select>
+							</td>
+						</tr>
+						<?php endif; ?>
+					</table>
+
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="existing">
+						<tr>
+							<td colspan="2" class="list" height="12"></td>
+						</tr>
+						<tr>
+							<td colspan="2" valign="top" class="listtopic">Existing Certificate</td>
+						</tr>
+
+						<tr>
+							<td width="22%" valign="top" class="vncellreq">Certificate data</td>
+							<td width="78%" class="vtable">
+								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=$pconfig['cert'];?></textarea>
+								<br>
+								Paste a certificate in X.509 PEM format here.</td>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq">Private key data</td>
+							<td width="78%" class="vtable">
+								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=$pconfig['key'];?></textarea>
+								<br>
+								Paste a private key in X.509 PEM format here.</td>
+							</td>
+						</tr>
+					</table>
+
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="internal">
+						<tr>
+							<td colspan="2" class="list" height="12"></td>
+						</tr>
+						<tr>
+							<td colspan="2" valign="top" class="listtopic">Internal Certificate</td>
+						</tr>
+
+						<?php if (!$internal_ca_count): ?>
+
+						<tr>
+							<td colspan="2" align="center" class="vtable">
+								No internal Certificate Authorities have been defined. You must
+								<a href="system_camanager.php?act=new&method=internal">create</a>
+								an internal CA before creating an internal certificate.
+							</td>
+						</tr>
+
+						<?php else: ?>
+
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate authority");?></td>
+							<td width="78%" class="vtable">
+								<select name='caref' id='caref' class="formselect" onChange='internalca_change()'>
+								<?php
+									foreach( $a_ca as $ca):
+									if (!$ca['prv'])
+										continue;
+									$selected = "";
+									if ($pconfig['caref'] == $ca['refid'])
+										$selected = "selected";
+								?>
+									<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['name'];?></option>
+								<?php endforeach; ?>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>
+							<td width="78%" class="vtable">
+								<select name='keylen' class="formselect">
+								<?php
+									foreach( $cert_keylens as $len):
+									$selected = "";
+									if ($pconfig['keylen'] == $len)
+										$selected = "selected";
+								?>
+									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
+								<?php endforeach; ?>
+								</select>
+								bits
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
+							<td width="78%" class="vtable">
+								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
+								days
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Distinguished name");?></td>
+							<td width="78%" class="vtable">
+								<table border="0" cellspacing="0" cellpadding="2">
+									<tr>
+										<td align="right">Country Code : &nbsp;</td>
+										<td align="left">
+											<input name="dn_country" type="text" class="formfld unknown" size="2" value="<?=htmlspecialchars($pconfig['dn_country']);?>" readonly/>
+										</td>
+									</tr>
+									<tr>
+										<td align="right">State or Province : &nbsp;</td>
+										<td align="left">
+											<input name="dn_state" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_state']);?>" readonly/>
+										</td>
+									</tr>
+									<tr>
+										<td align="right">City : &nbsp;</td>
+										<td align="left">
+											<input name="dn_city" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_city']);?>" readonly/>
+										</td>
+									</tr>
+									<tr>
+										<td align="right">Organization : &nbsp;</td>
+										<td align="left">
+											<input name="dn_organization" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_organization']);?>" readonly/>
+										</td>
+									</tr>
+									<tr>
+										<td align="right">Email Address : &nbsp;</td>
+										<td align="left">
+											<input name="dn_email" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_email']);?>"/>
+											&nbsp;
+											<em>ex:</em>
+											&nbsp;
+											webadmin@mycompany.com
+										</td>
+									</tr>
+									<tr>
+										<td align="right">Common Name : &nbsp;</td>
+										<td align="left">
+											<input name="dn_commonname" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_commonname']);?>"/>
+											&nbsp;
+											<em>ex:</em>
+											&nbsp;
+											www.pfsense.org
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
 					<?php endif; ?>
-				</table>
 
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="existing">
-					<tr>
-						<td colspan="2" class="list" height="12"></td>
-					</tr>
-					<tr>
-						<td colspan="2" valign="top" class="listtopic">Existing Certificate</td>
-					</tr>
+					</table>
 
-					<tr>
-						<td width="22%" valign="top" class="vncellreq">Certificate data</td>
-						<td width="78%" class="vtable">
-							<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=$pconfig['cert'];?></textarea>
-							<br>
-							Paste a certificate in X.509 PEM format here.</td>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq">Private key data</td>
-						<td width="78%" class="vtable">
-							<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=$pconfig['key'];?></textarea>
-							<br>
-							Paste a private key in X.509 PEM format here.</td>
-						</td>
-					</tr>
-				</table>
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="external">
+						<tr>
+							<td colspan="2" class="list" height="12"></td>
+						</tr>
+						<tr>
+							<td colspan="2" valign="top" class="listtopic">External Signing Request</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>
+							<td width="78%" class="vtable">
+								<select name='csr_keylen' class="formselect">
+								<?php
+									foreach( $cert_keylens as $len):
+									$selected = "";
+									if ($pconfig['keylen'] == $len)
+										$selected = "selected";
+								?>
+									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
+								<?php endforeach; ?>
+								</select>
+								bits
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Distinguished name");?></td>
+							<td width="78%" class="vtable">
+								<table border="0" cellspacing="0" cellpadding="2">
+									<tr>
+										<td align="right">Country Code : &nbsp;</td>
+										<td align="left">
+											<input name="csr_dn_country" type="text" class="formfld unknown" size="2" value="<?=htmlspecialchars($pconfig['csr_dn_country']);?>" />
+											&nbsp;
+											<em>ex:</em>
+											&nbsp;
+											US
+											&nbsp;
+											<em>( two letters )</em>
+										</td>
+									</tr>
+									<tr>
+										<td align="right">State or Province : &nbsp;</td>
+										<td align="left">
+											<input name="csr_dn_state" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['csr_dn_state']);?>" />
+											&nbsp;
+											<em>ex:</em>
+											&nbsp;
+											Texas
+										</td>
+									</tr>
+									<tr>
+										<td align="right">City : &nbsp;</td>
+										<td align="left">
+											<input name="csr_dn_city" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['csr_dn_city']);?>" />
+											&nbsp;
+											<em>ex:</em>
+											&nbsp;
+											Austin
+										</td>
+									</tr>
+									<tr>
+										<td align="right">Organization : &nbsp;</td>
+										<td align="left">
+											<input name="csr_dn_organization" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['csr_dn_organization']);?>" />
+											&nbsp;
+											<em>ex:</em>
+											&nbsp;
+											My Company Inc.
+										</td>
+									</tr>
+									<tr>
+										<td align="right">Email Address : &nbsp;</td>
+										<td align="left">
+											<input name="csr_dn_email" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['csr_dn_email']);?>"/>
+											&nbsp;
+											<em>ex:</em>
+											&nbsp;
+											webadmin@mycompany.com
+										</td>
+									</tr>
+									<tr>
+										<td align="right">Common Name : &nbsp;</td>
+										<td align="left">
+											<input name="csr_dn_commonname" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['csr_dn_commonname']);?>"/>
+											&nbsp;
+											<em>ex:</em>
+											&nbsp;
+											www.pfsense.org
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
 
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="internal">
-					<tr>
-						<td colspan="2" class="list" height="12"></td>
-					</tr>
-					<tr>
-						<td colspan="2" valign="top" class="listtopic">Internal Certificate</td>
-					</tr>
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<tr>
+							<td width="22%" valign="top">&nbsp;</td>
+							<td width="78%">
+								<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
+								<?php if (isset($id) && $a_cert[$id]): ?>
+								<input name="id" type="hidden" value="<?=$id;?>" />
+								<?php endif;?>
+							</td>
+						</tr>
+					</table>
+				</form>
 
-					<?php if (!$internal_ca_count): ?>
+				<?php elseif ($act == "csr" || (($_POST['save'] == "Update") && $input_errors)):?>
 
-					<tr>
-						<td colspan="2" align="center" class="vtable">
-							No internal Certificate Authorities have been defined. You must
-							<a href="system_camanager.php?act=new&method=internal">create</a>
-							an internal CA before creating an internal certificate.
-						</td>
-					</tr>
+				<form action="system_certmanager.php" method="post" name="iform" id="iform">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
+							<td width="78%" class="vtable">
+								<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" class="list" height="12"></td>
+						</tr>
+						<tr>
+							<td colspan="2" valign="top" class="listtopic">Complete Signing Request</td>
+						</tr>
 
-					<?php else: ?>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq">Signing Request data</td>
+							<td width="78%" class="vtable">
+								<textarea name="csr" id="csr" cols="65" rows="7" class="formfld_cert" readonly><?=$pconfig['csr'];?></textarea>
+								<br>
+								Copy the certificate signing data from here and forward it to your certificate authority for singing.</td>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq">Final Certificate data</td>
+							<td width="78%" class="vtable">
+								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=$pconfig['cert'];?></textarea>
+								<br>
+								Paste the certificate received from your cerificate authority here.</td>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top">&nbsp;</td>
+							<td width="78%">
+								<input id="submit" name="save" type="submit" class="formbtn" value="Update" />
+								<?php if (isset($id) && $a_cert[$id]): ?>
+								<input name="id" type="hidden" value="<?=$id;?>" />
+								<input name="act" type="hidden" value="csr" />
+								<?php endif;?>
+							</td>
+						</tr>
+					</table>
+				</form>
 
+				<?php else:?>
+
+				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate authority");?></td>
-						<td width="78%" class="vtable">
-							<select name='caref' id='caref' class="formselect" onChange='internalca_change()'>
-							<?php
-								foreach( $a_ca as $ca):
-								if (!$ca['prv'])
-									continue;
-								$selected = "";
-								if ($pconfig['caref'] == $ca['refid'])
-									$selected = "selected";
-							?>
-								<option value="<?=$ca['refid'];?>"<?=$selected;?>><?=$ca['name'];?></option>
-							<?php endforeach; ?>
-							</select>
-						</td>
+						<td width="20%" class="listhdrr">Name</td>
+						<td width="20%" class="listhdrr">CA</td>
+						<td width="40%" class="listhdrr">Distinguished Name</td>
+						<td width="10%" class="list"></td>
 					</tr>
+					<?php
+						$i = 0;
+						foreach($a_cert as $cert):
+							$name = htmlspecialchars($cert['name']);
+
+							if ($cert['crt']) {
+								$subj = htmlspecialchars(cert_get_subject($cert['crt']));
+								$caname = "<em>external</em>";
+							}
+
+							if ($cert['csr']) {
+								$subj = htmlspecialchars(csr_get_subject($cert['csr']));
+								$caname = "<em>external - signature pending</em>";
+							}
+
+							$ca = lookup_ca($cert['caref']);
+							if ($ca)
+								$caname = $ca['name'];
+
+							if($cert['prv'])
+								$certimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
+							else
+								$certimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
+					?>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>
-						<td width="78%" class="vtable">
-							<select name='keylen' class="formselect">
-							<?php
-								foreach( $cert_keylens as $len):
-								$selected = "";
-								if ($pconfig['keylen'] == $len)
-									$selected = "selected";
-							?>
-								<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
-							<?php endforeach; ?>
-							</select>
-							bits
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
-						<td width="78%" class="vtable">
-							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
-							days
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Distinguished name");?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="0" cellpadding="2">
+						<td class="listlr">
+							<table border="0" cellpadding="0" cellspacing="0">
 								<tr>
-									<td align="right">Country Code : &nbsp;</td>
-									<td align="left">
-										<input name="dn_country" type="text" class="formfld unknown" size="2" value="<?=htmlspecialchars($pconfig['dn_country']);?>" readonly/>
+									<td align="left" valign="center">
+										<img src="<?=$certimg;?>" alt="CA" title="CA" border="0" height="16" width="16" />
 									</td>
-								</tr>
-								<tr>
-									<td align="right">State or Province : &nbsp;</td>
-									<td align="left">
-										<input name="dn_state" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_state']);?>" readonly/>
-									</td>
-								</tr>
-								<tr>
-									<td align="right">City : &nbsp;</td>
-									<td align="left">
-										<input name="dn_city" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_city']);?>" readonly/>
-									</td>
-								</tr>
-								<tr>
-									<td align="right">Organization : &nbsp;</td>
-									<td align="left">
-										<input name="dn_organization" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_organization']);?>" readonly/>
-									</td>
-								</tr>
-								<tr>
-									<td align="right">Email Address : &nbsp;</td>
-									<td align="left">
-										<input name="dn_email" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_email']);?>"/>
-										&nbsp;
-										<em>ex:</em>
-										&nbsp;
-										webadmin@mycompany.com
-									</td>
-								</tr>
-								<tr>
-									<td align="right">Common Name : &nbsp;</td>
-									<td align="left">
-										<input name="dn_commonname" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_commonname']);?>"/>
-										&nbsp;
-										<em>ex:</em>
-										&nbsp;
-										www.pfsense.org
+									<td align="left" valign="middle">
+										<?=$name;?>
 									</td>
 								</tr>
 							</table>
 						</td>
+						<td class="listr"><?=$caname;?>&nbsp;</td>
+						<td class="listr"><?=$subj;?>&nbsp;</td>
+						<td valign="middle" nowrap class="list">
+							<a href="system_certmanager.php?act=exp&id=<?=$i;?>")">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export cert" alt="export ca" width="17" height="17" border="0" />
+							</a>
+							<a href="system_certmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete cert" alt="delete cert" width="17" height="17" border="0" />
+							</a>
+							<?php	if ($cert['csr']): ?>
+							&nbsp;
+								<a href="system_certmanager.php?act=csr&id=<?=$i;?>">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="update csr" alt="update csr" width="17" height="17" border="0" />
+							</a>
+							<?php	endif; ?>
+						</td>
 					</tr>
+					<?php
+							$i++;
+						endforeach;
+					?>
+					<tr>
+						<td class="list" colspan="3"></td>
+						<td class="list">
+							<a href="system_certmanager.php?act=new">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="add or import ca" alt="add ca" width="17" height="17" border="0" />
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<p>
+								<?=gettext("Additional certificates can be added here.");?>
+							</p>
+						</td>
+					</tr>
+				</table>
 
 				<?php endif; ?>
 
-				</table>
-
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="external">
-					<tr>
-						<td colspan="2" class="list" height="12"></td>
-					</tr>
-					<tr>
-						<td colspan="2" valign="top" class="listtopic">External Signing Request</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>
-						<td width="78%" class="vtable">
-							<select name='csr_keylen' class="formselect">
-							<?php
-								foreach( $cert_keylens as $len):
-								$selected = "";
-								if ($pconfig['keylen'] == $len)
-									$selected = "selected";
-							?>
-								<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
-							<?php endforeach; ?>
-							</select>
-							bits
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Distinguished name");?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellspacing="0" cellpadding="2">
-								<tr>
-									<td align="right">Country Code : &nbsp;</td>
-									<td align="left">
-										<input name="csr_dn_country" type="text" class="formfld unknown" size="2" value="<?=htmlspecialchars($pconfig['csr_dn_country']);?>" />
-										&nbsp;
-										<em>ex:</em>
-										&nbsp;
-										US
-										&nbsp;
-										<em>( two letters )</em>
-									</td>
-								</tr>
-								<tr>
-									<td align="right">State or Province : &nbsp;</td>
-									<td align="left">
-										<input name="csr_dn_state" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['csr_dn_state']);?>" />
-										&nbsp;
-										<em>ex:</em>
-										&nbsp;
-										Texas
-									</td>
-								</tr>
-								<tr>
-									<td align="right">City : &nbsp;</td>
-									<td align="left">
-										<input name="csr_dn_city" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['csr_dn_city']);?>" />
-										&nbsp;
-										<em>ex:</em>
-										&nbsp;
-										Austin
-									</td>
-								</tr>
-								<tr>
-									<td align="right">Organization : &nbsp;</td>
-									<td align="left">
-										<input name="csr_dn_organization" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['csr_dn_organization']);?>" />
-										&nbsp;
-										<em>ex:</em>
-										&nbsp;
-										My Company Inc.
-									</td>
-								</tr>
-								<tr>
-									<td align="right">Email Address : &nbsp;</td>
-									<td align="left">
-										<input name="csr_dn_email" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['csr_dn_email']);?>"/>
-										&nbsp;
-										<em>ex:</em>
-										&nbsp;
-										webadmin@mycompany.com
-									</td>
-								</tr>
-								<tr>
-									<td align="right">Common Name : &nbsp;</td>
-									<td align="left">
-										<input name="csr_dn_commonname" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['csr_dn_commonname']);?>"/>
-										&nbsp;
-										<em>ex:</em>
-										&nbsp;
-										www.pfsense.org
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
-					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-							<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
-							<?php if (isset($id) && $a_cert[$id]): ?>
-							<input name="id" type="hidden" value="<?=$id;?>" />
-							<?php endif;?>
-						</td>
-					</tr>
-				</table>
-			</form>
-
-			<?php elseif ($act == "csr" || (($_POST['save'] == "Update") && $input_errors)):?>
-
-			<form action="system_certmanager.php" method="post" name="iform" id="iform">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
-					<tr>
-						<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
-						<td width="78%" class="vtable">
-							<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2" class="list" height="12"></td>
-					</tr>
-					<tr>
-						<td colspan="2" valign="top" class="listtopic">Complete Signing Request</td>
-					</tr>
-
-					<tr>
-						<td width="22%" valign="top" class="vncellreq">Signing Request data</td>
-						<td width="78%" class="vtable">
-							<textarea name="csr" id="csr" cols="65" rows="7" class="formfld_cert" readonly><?=$pconfig['csr'];?></textarea>
-							<br>
-							Copy the certificate signing data from here and forward it to your certificate authority for singing.</td>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq">Final Certificate data</td>
-						<td width="78%" class="vtable">
-							<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=$pconfig['cert'];?></textarea>
-							<br>
-							Paste the certificate received from your cerificate authority here.</td>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top">&nbsp;</td>
-						<td width="78%">
-							<input id="submit" name="save" type="submit" class="formbtn" value="Update" />
-							<?php if (isset($id) && $a_cert[$id]): ?>
-							<input name="id" type="hidden" value="<?=$id;?>" />
-							<input name="act" type="hidden" value="csr" />
-							<?php endif;?>
-						</td>
-					</tr>
-				</table>
-			</form>
-
-			<?php else:?>
-
-			<table width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tr>
-					<td width="20%" class="listhdrr">Name</td>
-					<td width="20%" class="listhdrr">CA</td>
-					<td width="40%" class="listhdrr">Distinguished Name</td>
-					<td width="10%" class="list"></td>
-				</tr>
-				<?php
-					$i = 0;
-					foreach($a_cert as $cert):
-						$name = htmlspecialchars($cert['name']);
-
-						if ($cert['crt']) {
-							$subj = htmlspecialchars(cert_get_subject($cert['crt']));
-							$caname = "<em>external</em>";
-						}
-
-						if ($cert['csr']) {
-							$subj = htmlspecialchars(csr_get_subject($cert['csr']));
-							$caname = "<em>external - signature pending</em>";
-						}
-
-						$ca = lookup_ca($cert['caref']);
-						if ($ca)
-							$caname = $ca['name'];
-
-						if($cert['prv'])
-							$certimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
-						else
-							$certimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
-				?>
-				<tr>
-					<td class="listlr">
-						<table border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td align="left" valign="center">
-									<img src="<?=$certimg;?>" alt="CA" title="CA" border="0" height="16" width="16" />
-								</td>
-								<td align="left" valign="middle">
-									<?=$name;?>
-								</td>
-							</tr>
-						</table>
-					</td>
-					<td class="listr"><?=$caname;?>&nbsp;</td>
-					<td class="listr"><?=$subj;?>&nbsp;</td>
-					<td valign="middle" nowrap class="list">
-						<a href="system_certmanager.php?act=exp&id=<?=$i;?>")">
-							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export cert" alt="export ca" width="17" height="17" border="0" />
-						</a>
-						<a href="system_certmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
-							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete cert" alt="delete cert" width="17" height="17" border="0" />
-						</a>
-						<?php	if ($cert['csr']): ?>
-						&nbsp;
-						<a href="system_certmanager.php?act=csr&id=<?=$i;?>">
-							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="update csr" alt="update csr" width="17" height="17" border="0" />
-						</a>
-						<?php	endif; ?>
-					</td>
-				</tr>
-				<?php
-						$i++;
-					endforeach;
-				?>
-				<tr>
-					<td class="list" colspan="3"></td>
-					<td class="list">
-						<a href="system_certmanager.php?act=new">
-							<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="add or import ca" alt="add ca" width="17" height="17" border="0" />
-						</a>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="3">
-						<p>
-							<?=gettext("Additional certificates can be added here.");?>
-						</p>
-					</td>
-				</tr>
-			</table>
-
-			<?php endif; ?>
-
+			</div>
 		</td>
 	</tr>
 </table>

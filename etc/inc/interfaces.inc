@@ -1095,13 +1095,16 @@ function interface_configure($interface = "wan") {
 			break;
 
 		default:
-			if (isset($wancfg['ispointtopoint']) && $wancfg['pointtopoint']) {
+			if ($wancfg['ipaddr'] <> "" && $wancfg['subnet'] <> "") {
+				if (isset($wancfg['ispointtopoint']) && $wancfg['pointtopoint']) {
 				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " " .
 					escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']) .
 					" " . escapeshellarg($wancfg['pointtopoint']) . " up");
-			} else {
-				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " " .
-					escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']));
+				} else {
+					mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
+					" " . escapeshellarg($wancfg['ipaddr'] . "/" . 
+					$wancfg['subnet']));
+				}
 			}
 
 			if (is_ipaddr($wancfg['gateway']))

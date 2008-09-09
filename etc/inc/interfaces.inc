@@ -1445,8 +1445,8 @@ EOD;
 
 	$mpdconf .= <<<EOD
 	set bundle disable multilink
-	set auth authname "{$wancfg['username']}"
-	set auth password "{$wancfg['password']}"
+	set auth authname "{$wancfg['pppoe_username']}"
+	set auth password "{$wancfg['pppoe_password']}"
 	set link keep-alive 10 60
 	set link max-redial 0
 	set link no acfcomp protocomp
@@ -1605,8 +1605,8 @@ EOD;
 
 	$mpdconf .= <<<EOD
 	set bundle disable multilink
-	set bundle authname "{$wancfg['username']}"
-	set bundle password "{$wancfg['password']}"
+	set bundle authname "{$wancfg['pptp_username']}"
+	set bundle password "{$wancfg['pptp_password']}"
 	set bundle no noretry
 	set link keep-alive 10 60
 	set link max-redial 0

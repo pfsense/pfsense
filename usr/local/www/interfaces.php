@@ -33,10 +33,10 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-interfaces-wan
+##|*IDENT=page-interfaces
 ##|*NAME=Interfaces: WAN page
-##|*DESCR=Allow access to the 'Interfaces: WAN' page.
-##|*MATCH=interfaces_wan.php*
+##|*DESCR=Allow access to the 'Interfaces' page.
+##|*MATCH=interfaces.php*
 ##|-PRIV
 
 if ($_REQUEST['if'])
@@ -597,7 +597,7 @@ function show_mon_config() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
-            <form action="interfaces_wan.php?if=<?php echo "{$if}";?>" method="post" name="iform" id="iform">
+            <form action="interfaces.php?if=<?php echo "{$if}";?>" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">General configuration</td>

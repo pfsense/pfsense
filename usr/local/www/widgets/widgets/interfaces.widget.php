@@ -57,7 +57,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif"/>
 		                  <? } ?>&nbsp; 
 				<strong><u>
-					<span onClick="location.href='/interfaces_wan.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
+					<span onClick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
 				
 				<?=htmlspecialchars($ifname);?></span></u></strong>
 				

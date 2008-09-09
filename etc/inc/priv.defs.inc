@@ -384,6 +384,12 @@ $priv_list['page-system-login/logout']['descr'] = "Allow access to the 'System: 
 $priv_list['page-system-login/logout']['match'] = array();
 $priv_list['page-system-login/logout']['match'][] = "index.php*";
 
+$priv_list['page-interfaces'] = array();
+$priv_list['page-interfaces']['name'] = "WebCfg - Interfaces page";
+$priv_list['page-interfaces']['descr'] = "Allow access to the 'Interfaces' page.";
+$priv_list['page-interfaces']['match'] = array();
+$priv_list['page-interfaces']['match'][] = "interfaces.php*";
+
 $priv_list['page-interfaces-assignnetworkports'] = array();
 $priv_list['page-interfaces-assignnetworkports']['name'] = "WebCfg - Interfaces: Assign network ports page";
 $priv_list['page-interfaces-assignnetworkports']['descr'] = "Allow access to the 'Interfaces: Assign network ports' page.";
@@ -431,12 +437,6 @@ $priv_list['page-interfaces-vlan-edit']['name'] = "WebCfg - Interfaces: VLAN: Ed
 $priv_list['page-interfaces-vlan-edit']['descr'] = "Allow access to the 'Interfaces: VLAN: Edit' page.";
 $priv_list['page-interfaces-vlan-edit']['match'] = array();
 $priv_list['page-interfaces-vlan-edit']['match'][] = "interfaces_vlan_edit.php*";
-
-$priv_list['page-interfaces-wan'] = array();
-$priv_list['page-interfaces-wan']['name'] = "WebCfg - Interfaces: WAN page";
-$priv_list['page-interfaces-wan']['descr'] = "Allow access to the 'Interfaces: WAN' page.";
-$priv_list['page-interfaces-wan']['match'] = array();
-$priv_list['page-interfaces-wan']['match'][] = "interfaces_wan.php*";
 
 $priv_list['page-interfaces-scanwireless'] = array();
 $priv_list['page-interfaces-scanwireless']['name'] = "WebCfg - Interfaces: Scan Wireless page";

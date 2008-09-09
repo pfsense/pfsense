@@ -88,8 +88,10 @@ $ifcfg = $config['interfaces'][$if];
  *   the two are not compatible with each other.
  */
 $dhcpd_enabled = false;
-foreach($config['dhcpd'] as $dhcp) {
-	if(isset($dhcp['enable'])) $dhcpd_enabled = true;
+if (is_array($config['dhcpd'])) {
+	foreach($config['dhcpd'] as $dhcp) 
+		if(isset($dhcp['enable'])) 
+			$dhcpd_enabled = true;
 }
 
 if ($_POST) {

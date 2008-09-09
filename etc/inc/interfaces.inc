@@ -1009,8 +1009,8 @@ function interface_configure($interface = "wan") {
 
 	$realif = get_real_wan_interface($interface);
 
-	if(file_exists("/tmp/{$wancfg['if']}_router")) 
-		unlink("/tmp/{$wancfg['if']}_router");
+	if(file_exists("/tmp/{$realif}_router")) 
+		unlink("/tmp/{$realif}_router");
 
 	if(!$g['booting']) {
 		mute_kernel_msgs();
@@ -1036,35 +1036,35 @@ function interface_configure($interface = "wan") {
 	}
 
 	/* remove all addresses first */
-	while (mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " -alias") == 0);
+	while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias") == 0);
 	mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
 
 	/* wireless configuration? */
 	if (is_array($wancfg['wireless']))
-		interfaces_wireless_configure($wancfg['if'], $wancfg['wireless']);
+		interfaces_wireless_configure($realif, $wancfg['wireless']);
 
 	if ($wancfg['spoofmac']) {
-		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 	}  else {
-		$mac = get_interface_mac_address($wancfg['if']);
+		$mac = get_interface_mac_address($realif);
 		if($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.
 			 */
 			echo "Generating new MAC address.";
 			$random_mac = generate_random_mac_address();
-			mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
 				" link " . escapeshellarg($random_mac));
 			$wancfg['spoofmac'] = $random_mac;
 			write_config();
-			file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$wancfg['if']} has been automatically replaced with {$random_mac}", "Interfaces");
+			file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$realif} has been automatically replaced with {$random_mac}", "Interfaces");
 		}
 	}
 
 	/* media */
 	if ($wancfg['media'] || $wancfg['mediaopt']) {
-		$cmd = "/sbin/ifconfig " . escapeshellarg($wancfg['if']);
+		$cmd = "/sbin/ifconfig " . escapeshellarg($realif);
 		if ($wancfg['media'])
 			$cmd .= " media " . escapeshellarg($wancfg['media']);
 		if ($wancfg['mediaopt'])
@@ -1096,21 +1096,20 @@ function interface_configure($interface = "wan") {
 
 		default:
 			if (isset($wancfg['ispointtopoint']) && $wancfg['pointtopoint']) {
-				mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " " .
+				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " " .
 					escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']) .
 					" " . escapeshellarg($wancfg['pointtopoint']) . " up");
 			} else {
-				mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " " .
+				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " " .
 					escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']));
 			}
 
 			if (is_ipaddr($wancfg['gateway']))
 				system("echo " . $wancfg['gateway'] . " > /tmp/" . $wancfg['if'] . "_router");
 
-			/* resync pf (done automatically for DHCP/PPPoE/PPTP) */
-			/* XXX: shouldn't the caller do this?! */
-			filter_configure();
 	}
+
+	mwexec("/sbin/ifconfig {$realif} up");
 
 	/* XXX: Shouldn't the caller do this?! */
 	if (!$g['booting']) {
@@ -1141,132 +1140,8 @@ function interface_configure($interface = "wan") {
 		captiveportal_configure();
 	}
 
-	mwexec("/sbin/ifconfig {$wancfg['if']} up");
 
 	unmute_kernel_msgs();
-
-	return 0;
-}
-
-function interfaces_opt_dhcp_configure($interface) {
-	global $config, $g;
-
-	$optcfg = $config['interfaces'][$interface];
-	$optif = $optcfg['if'];
-
-	/* generate dhclient_wan.conf */
-	$fd = fopen("{$g['varetc_path']}/dhclient_{$optif}.conf", "w");
-	if (!$fd) {
-		printf("Error: cannot open dhclient_{$optif}.conf in interfaces_opt_dhcp_configure({$optif}) for writing.\n");
-		return 1;
-	}
-
-	if ($optcfg['dhcphostname']) {
-		$dhclientconf_hostname = "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname .= "\tsend host-name \"{$optcfg['dhcphostname']}\";\n";
-	} else {
-		$dhclientconf_hostname = "";
-	}
-
- 	$dhclientconf = "";
-
-	$dhclientconf .= <<<EOD
-timeout 60;
-retry 1;
-select-timeout 0;
-initial-interval 1;
-interface "{$optif}" {
-	script "/sbin/dhclient-script";
-	{$dhclientconf_hostname}
-}
-
-EOD;
-
-if(is_ipaddr($optcfg['alias-address'])) {
-	$subnetmask = gen_subnet_mask($optcfg['alias-subnet']);
-	$dhclientconf .= <<<EOD
-alias {
-	interface  "{$optif}";
-	fixed-address {$optcfg['alias-address']};
-	option subnet-mask {$subnetmask};
-}
-
-EOD;
-}
-	fwrite($fd, $dhclientconf);
-	fclose($fd);
-
-        /* bring interface up before starting dhclient */
-        mwexec("/sbin/ifconfig {$optif} up");
-
-        /* fire up dhclient */
-        mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
-
-	return 0;
-}
-
-function interfaces_dhcp_configure($interface) {
-	global $config, $g;
-
-	if(filter_translate_type_to_real_interface($interface) <> "")
-        	$realinterface = filter_translate_type_to_real_interface($interface);
-
-	$optcfg = $config['interfaces'][$interface];
-
-	/* generate dhclient_$interface.conf */
-	$fd = fopen("{$g['varetc_path']}/dhclient_{$interface}.conf", "w");
-	if (!$fd) {
-		printf("Error: cannot open dhclient_{$interface}.conf in interfaces_dhcp_configure({$$interface}) for writing.\n");
-		return 1;
-	}
-
-	if ($optcfg['dhcphostname']) {
-		$dhclientconf_hostname =  "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname .= "\tsend host-name \"{$optcfg['dhcphostname']}\";\n";
-	} else {
-		$dhclientconf_hostname = "";
-	}
-
- 	$dhclientconf = "";
-
-	$dhclientconf .= <<<EOD
-timeout 60;
-retry 1;
-select-timeout 0;
-initial-interval 1;
-interface "{$realinterface}" {
-	{$dhclientconf_hostname}
-	script "/sbin/dhclient-script";
-}
-
-EOD;
-
-if(is_ipaddr($optcfg['alias-address'])) {
-	$subnetmask = gen_subnet_mask($optcfg['alias-subnet']);
-	$dhclientconf .= <<<EOD
-alias {
-	interface  "{$optif}";
-	fixed-address {$optcfg['alias-address']};
-	option subnet-mask {$subnetmask};
-}
-
-EOD;
-}
-
-	fwrite($fd, $dhclientconf);
-	fclose($fd);
-
-	$optif = $optcfg['if'];
-
-        /* bring wan interface up before starting dhclient */
-        mwexec("/sbin/ifconfig {$optif} up");
-
-        /* fire up dhclient */
-        mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif} >/tmp/{$optif}_output >/tmp/{$optif}_error_output");
-
-	$fout = fopen("/tmp/ifconfig_{$optif}","w");
-	fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
-	fclose($fout);
 
 	return 0;
 }
@@ -1508,19 +1383,23 @@ EOD;
 			killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");
 			sleep(3);
 		}
+
+		/* Bring the parent interface up */
+		mwecev("/sbin/ifconfig {$wancfg['if']} up");
+
 		/* fire up mpd */
 		mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pppoe_{$interface}.pid pppoeclient");
 	}
 
         /* sleep until wan is up - or 30 seconds, whichever comes first */
 	for ($count = 0; $count < 30; $count++) {
-		if(file_exists("{$g['tmp_path']}/wanup")) {
+		if(file_exists("{$g['tmp_path']}/{$interface}up")) {
 			break;
 		}
 		sleep(1);
 	}
 
-	unlink_if_exists("{$g['tmp_path']}/wanup");
+	unlink_if_exists("{$g['tmp_path']}/{$interface}up");
 
 	return 0;
 }

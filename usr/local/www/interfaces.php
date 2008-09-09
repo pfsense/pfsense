@@ -236,7 +236,32 @@ if (isset($wancfg['wireless'])) {
 	}
 }
 
-if ($_POST) {
+if ($_POST['apply']) {
+
+                unlink_if_exists("{$g['tmp_path']}/config.cache");
+		unlink_if_exists("{$d_landirty_path}");
+
+                ob_flush();
+                flush();
+                sleep(1);
+
+                interface_configure($if);
+
+                reset_carp();
+
+		if ($if == "lan") {
+			/* restart snmp so that it binds to correct address */
+			services_snmpd_configure();
+			$savemsg = "The changes have been applied.  You may need to correct your web browser's IP address.";
+		} 
+
+                /* sync filter configuration */
+                filter_configure();
+
+                /* set up static routes */
+                system_routing_configure();
+
+} else if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -682,12 +707,6 @@ n already exists.";
 
 		write_config();
 	
-		if ($if = "lan") {
-			/* restart snmp so that it binds to correct address */
-                	services_snmpd_configure();
-			$savemsg = "The changes have been applied.  You may need to correct your web browser's IP address.";
-		}
-    
 		/* finally install the pppoerestart file */
 		if (isset($_POST['pppoe_preset'])) {
 		config_lock();
@@ -708,6 +727,10 @@ n already exists.";
 
 		$retval = 0;
 		$savemsg = get_std_save_message($retval);
+
+		touch($d_landirty_path);
+		header("Location: interfaces.php?if={$if}");
+		exit;
 	}
 }
 
@@ -782,10 +805,12 @@ function openwindow(url) {
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+            <form action="interfaces.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-
+<?php if (file_exists($d_landirty_path)): ?><p>
+<?php print_info_box_np(gettext("The {$wancfg['descr']} configuration has been changed.<p>You must apply the changes in order for them to take effect.<p>Don't forget to adjust the DHCP Server range if needed before applying."));?><br />
+<?php endif; ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-            <form action="interfaces.php?if=<?php echo "{$if}";?>" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">General configuration</td>
@@ -1404,31 +1429,3 @@ echo "updateType('{$pconfig['type']}')";
 <?php include("fend.inc"); ?>
 </body>
 </html>
-
-
-<?php
-
-if ($_POST) {
-
-	if (!$input_errors) {
-
-		unlink_if_exists("{$g['tmp_path']}/config.cache");
-
-		ob_flush();
-		flush();
-		sleep(1);
-
-		interface_configure($if);
-
-		reset_carp();
-
-		/* sync filter configuration */
-		filter_configure();
-
- 		/* set up static routes */
-		system_routing_configure();
-
-	}
-}
-
-?>

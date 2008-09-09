@@ -33,9 +33,10 @@ require_once("functions.inc");
 function & lookup_ca($refid) {
 	global $config;
 
-	foreach ($config['system']['ca'] as & $ca)
-		if ($ca['refid'] == $refid)
-			return $ca;
+	if (is_array($config['system']['ca']))
+		foreach ($config['system']['ca'] as & $ca)
+			if ($ca['refid'] == $refid)
+				return $ca;
 
 	return false;
 }
@@ -43,13 +44,11 @@ function & lookup_ca($refid) {
 function & lookup_cert($refid) {
 	global $config;
 
-	if(is_array($config['system']['cert'])) {
-		foreach ($config['system']['cert'] as & $cert) {
-			if ($cert['refid'] == $refid) {
+	if (is_array($config['system']['cert']))
+		foreach ($config['system']['cert'] as & $cert)
+			if ($cert['refid'] == $refid)
 				return $cert;
-			}
-		}
-	}	
+
 	return false;
 }
 

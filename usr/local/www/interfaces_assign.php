@@ -199,7 +199,8 @@ if ($_GET['act'] == "del") {
 
 	if($id == "lan") {
 		unset($config['interfaces']['lan']);
-		unset($config['dhcpd']['lan']);
+		if (is_array($config['dhcpd']))
+			unset($config['dhcpd']['lan']);
 		unset($config['shaper']);
 		unset($config['ezshaper']);
 		unset($config['nat']);

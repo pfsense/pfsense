@@ -446,7 +446,7 @@ function openvpn_reconfigure($mode,& $settings) {
 			openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
 			openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
 			if ($mode == 'server')
-				$conf .= "dh {$g['varetc_path']}/openvpn/dh-parameters\n";
+				$conf .= "dh {$g['etc_path']}/dh-parameters.2048\n";
 			if ($settings['crl'])
 				openvpn_add_keyfile($settings['crl'], $conf, $mode_id, "crl-verify");
 			if ($settings['tls'])
@@ -604,6 +604,7 @@ function openvpn_resync_all() {
 	if (!is_array($config['openvpn']))
 		$config['openvpn'] = array();
 
+/*
 	if (!$config['openvpn']['dh-parameters']) {
 		echo "Configuring OpenVPN Parameters ...\n";
 		$dh_parameters = openvpn_create_dhparams(1024);
@@ -618,6 +619,7 @@ function openvpn_resync_all() {
 		$dh_parameters = base64_decode($dh_parameters);
 		file_put_contents($path_ovdh, $dh_parameters);
 	}
+*/
 
 	if (is_array($config['openvpn']['openvpn-server']))
 		foreach ($config['openvpn']['openvpn-server'] as & $settings)

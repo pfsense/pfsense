@@ -949,7 +949,7 @@ seconds<br>If no qualifying outgoing packets are transmitted for the specified n
 <script language="JavaScript">
 <!--
 <?php
-if ($if == "wan" || $if = "lan")
+if ($if == "wan" || $if == "lan")
 	echo "\$('allcfg').appear();";
 else
 	echo "show_allcfg(document.iform.enable);";

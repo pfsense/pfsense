@@ -58,7 +58,7 @@ $ifdescrs = get_configured_interface_with_descr();
 foreach ($ifdescrs as $ifname => $ifdesc) {
 	$oc = $config['interfaces'][$ifname];
 
-	if (!is_ipaddr($oc['ipaddr']) && $is_olsr_enabled)
+	if (!is_ipaddr($oc['ipaddr']) && !$is_olsr_enabled)
 		$singleif_nostaticip = true;
 	else if ($oc['if']) 
 		$iflist[$ifname] = $ifdesc;
@@ -68,33 +68,40 @@ foreach ($ifdescrs as $ifname => $ifdesc) {
 if($config['interfaces']['lan']) {
 	if (!$if || !isset($iflist[$if]))
 		$if = "lan";
-} else {
+} else
 	$if = "wan";
-}
 
-$pconfig['range_from'] = $config['dhcpd'][$if]['range']['from'];
-$pconfig['range_to'] = $config['dhcpd'][$if]['range']['to'];
-$pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
-$pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
-$pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
-$pconfig['domain'] = $config['dhcpd'][$if]['domain'];
-$pconfig['domainsearchlist'] = $config['dhcpd'][$if]['domainsearchlist'];
-list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
-list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpd'][$if]['dnsserver'];
-$pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
-$pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
-$pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
-$pconfig['ddnsdomain'] = $config['dhcpd'][$if]['ddnsdomain'];
-$pconfig['ddnsupdate'] = isset($config['dhcpd'][$if]['ddnsupdate']);
-list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpd'][$if]['ntpserver'];
-$pconfig['tftp'] = $config['dhcpd'][$if]['tftp'];
-$pconfig['ldap'] = $config['dhcpd'][$if]['ldap'];
-$pconfig['netboot'] = isset($config['dhcpd'][$if]['netboot']);
-$pconfig['nextserver'] = $config['dhcpd'][$if]['next-server'];
-$pconfig['filename'] = $config['dhcpd'][$if]['filename'];
-$pconfig['rootpath'] = $config['dhcpd'][$if]['rootpath'];
-$pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
-$pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
+if (is_array($config['dhcpd'][$if])){
+	if (is_array($config['dhcpd'][$if]['range'])) {
+		$pconfig['range_from'] = $config['dhcpd'][$if]['range']['from'];
+		$pconfig['range_to'] = $config['dhcpd'][$if]['range']['to'];
+	}
+	$pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
+	$pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
+	$pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
+	$pconfig['domain'] = $config['dhcpd'][$if]['domain'];
+	$pconfig['domainsearchlist'] = $config['dhcpd'][$if]['domainsearchlist'];
+	list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
+	list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpd'][$if]['dnsserver'];
+	$pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
+	$pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
+	$pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
+	$pconfig['ddnsdomain'] = $config['dhcpd'][$if]['ddnsdomain'];
+	$pconfig['ddnsupdate'] = isset($config['dhcpd'][$if]['ddnsupdate']);
+	list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpd'][$if]['ntpserver'];
+	$pconfig['tftp'] = $config['dhcpd'][$if]['tftp'];
+	$pconfig['ldap'] = $config['dhcpd'][$if]['ldap'];
+	$pconfig['netboot'] = isset($config['dhcpd'][$if]['netboot']);
+	$pconfig['nextserver'] = $config['dhcpd'][$if]['next-server'];
+	$pconfig['filename'] = $config['dhcpd'][$if]['filename'];
+	$pconfig['rootpath'] = $config['dhcpd'][$if]['rootpath'];
+	$pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
+	$pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
+	if (!is_array($config['dhcpd'][$if]['staticmap'])) 
+        	$config['dhcpd'][$if]['staticmap'] = array();
+	staticmaps_sort($if);
+	$a_maps = &$config['dhcpd'][$if]['staticmap'];
+}
 
 $ifcfg = $config['interfaces'][$if];
 
@@ -116,12 +123,6 @@ if(is_array($dhcrelaycfg)) {
 			$dhcrelay_enabled = true;
 	}
 }
-
-if (!is_array($config['dhcpd'][$if]['staticmap'])) {
-	$config['dhcpd'][$if]['staticmap'] = array();
-}
-staticmaps_sort($if);
-$a_maps = &$config['dhcpd'][$if]['staticmap'];
 
 function is_inrange($test, $start, $end) {
 	if ( (ip2long($test) < ip2long($end)) && (ip2long($test) > ip2long($start)) )
@@ -200,6 +201,11 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+		if (!is_array($config['dhcpd'][$if]))
+			$config['dhcpd'][$if] = array();
+		if (!is_array($config['dhcpd'][$if]['range']))
+			$config['dhcpd'][$if]['range'] = array();
+
 		$config['dhcpd'][$if]['range']['from'] = $_POST['range_from'];
 		$config['dhcpd'][$if]['range']['to'] = $_POST['range_to'];
 		$config['dhcpd'][$if]['defaultleasetime'] = $_POST['deftime'];

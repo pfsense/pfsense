@@ -3416,17 +3416,23 @@ function get_interface_gateway($interface) {
         return $gw;
 }
 
-function is_dhcp_server_enabled() {
-	/* DHCP enabled on any interfaces? */
+/* DHCP enabled on any interfaces? */
+function is_dhcp_server_enabled() 
+{
 	global $config, $g;
-	$dhcpdcfg = $config['dhcpd'];
+
 	$dhcpdenable = false;
-	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+	
+	if (!is_array($config['dhcpd']))
+		return false;
+
+	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
 		if (isset ($dhcpifconf['enable']) && (($dhcpif == "lan") || (isset ($config['interfaces'][$dhcpif]['enable']) && $config['interfaces'][$dhcpif]['if'] && (!link_int_to_bridge_interface($dhcpif)))))
 			$dhcpdenable = true;
 		if (isset ($dhcpifconf['enable']) && (($dhcpif == "wan") || (isset ($config['interfaces'][$dhcpif]['enable']) && $config['interfaces'][$dhcpif]['if'] && (!link_int_to_bridge_interface($dhcpif)))))
 			$dhcpdenable = true;
 	}
+
 	return $dhcpdenable;
 }
 

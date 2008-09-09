@@ -83,6 +83,13 @@ exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
 $timezonelist = array_filter($timezonelist, 'is_timezone');
 sort($timezonelist);
 
+$multiwan = false;
+foreach($config['interfaces'] as $int) 
+	if($int['gateway']) 
+		$multiwan = true;
+
+$ints = get_interface_list();
+
 if ($_POST) {
 
 	$changecount++;
@@ -196,143 +203,186 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<form action="system.php" method="post">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
-				<tr>
-					<td colspan="2" valign="top" class="listtopic">System</td>
-				</tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Hostname</td>
-                  <td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>">
-                    <br> <span class="vexpl">name of the firewall host, without
-                    domain part<br>
-                    e.g. <em>firewall</em></span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Domain</td>
-                  <td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
-                    <br> <span class="vexpl">e.g. <em>mycorp.com</em> </span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">DNS servers</td>
-                  <td width="78%" class="vtable"> <p>
-                  <table>
-                  	  <tr><td><b>DNS Server</td>
-                      <?php
-                      	$multiwan = false;
-                      	foreach($config['interfaces'] as $int) 
-                      		if($int['gateway']) 
-                      			$multiwan = true;
-                      	$ints = get_interface_list();
-                      	if($multiwan) 
-                      		echo "<td><b>Use gateway</td>";
-                      ?>
-                      </tr>
-<?php for($dnscounter=1; $dnscounter<5; $dnscounter++): ?>
-                      <tr>
-                      <td>
-                      <input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="20" value="<?php echo $pconfig['dns'.$dnscounter];?>">
-                      </td>
-                      <?php
-                      	if($multiwan) {
-                      		echo "<td><select name='dns{$dnscounter}gwint'>\n";
-                      		echo "<option value=''>wan</option>";
-                      		foreach($ints as $int) {
-	                      		$friendly = $int['friendly'];
-                      			if($config['interfaces'][$friendly]['gateway']) {
-	                   				$selected = "";
-	                   				if($pconfig['dns{$dnscounter}gwint'] == $int) 
-	                   					$selected = " SELECTED";
-	                   				echo "<option value='{$friendly}'{$selected}>{$friendly}</option>";
-                      			}
-                      		}
-                      		echo "</select>";
-                      	}
-                      ?>
-                      </td>
-                      </tr>
-<?php endfor; ?>
-                      </table>
-                      <br>
-                      <span class="vexpl">IP addresses; these are also used for
-                      the DHCP service, DNS forwarder and for PPTP VPN clients.
-                      <br>
-                      <?php
-                      	if($multiwan) 
-                      		echo "<br/>In addition, select the gateway for each DNS server.  You should have a unique DNS server per gateway.<br/>";
-                      ?>
-                      <br>
-                      <input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked"; ?>>
-                      <strong>Allow DNS server list to be overridden by DHCP/PPP
-                      on WAN</strong><br>
-                      If this option is set, <?php echo $g['product_name']; ?> will use DNS servers assigned
-                      by a DHCP/PPP server on WAN for its own purposes (including
-                      the DNS forwarder). They will not be assigned to DHCP and
-                      PPTP VPN clients, though.</span></p></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Time zone</td>
-                  <td width="78%" class="vtable"> <select name="timezone" id="timezone">
-                      <?php foreach ($timezonelist as $value): ?>
-                      <option value="<?=htmlspecialchars($value);?>" <?php if ($value == $pconfig['timezone']) echo "selected"; ?>>
-                      <?=htmlspecialchars($value);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Select the location closest
-                    to you</span></td>
-                </tr>
-                <!--
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Time update interval</td>
-                  <td width="78%" class="vtable"> <input name="timeupdateinterval" type="text" class="formfld unknown" id="timeupdateinterval" size="4" value="<?=htmlspecialchars($pconfig['timeupdateinterval']);?>">
-                    <br> <span class="vexpl">Minutes between network time sync.;
-                    300 recommended, or 0 to disable </span></td>
-                </tr>
-                -->
-                <tr>
-                  <td width="22%" valign="top" class="vncell">NTP time server</td>
-                  <td width="78%" class="vtable"> <input name="timeservers" type="text" class="formfld unknown" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>">
-                    <br> <span class="vexpl">Use a space to separate multiple
-                    hosts (only one required). Remember to set up at least one
-                    DNS server if you enter a host name here!</span></td>
-                </tr>
-				<tr>
-					<td colspan="2" class="list" height="12">&nbsp;</td>
-				</tr>
-				<tr>
-					<td colspan="2" valign="top" class="listtopic">Theme</td>
-				</tr>
-				<tr>
+<?php
+	include("fbegin.inc");
+	if ($input_errors)
+		print_input_errors($input_errors);
+	if ($savemsg)
+		print_info_box($savemsg);
+?>
+	<form action="system.php" method="post">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tr>
+				<td colspan="2" valign="top" class="listtopic">System</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq">Hostname</td>
+				<td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>">
+					<br/>
+					<span class="vexpl">
+						name of the firewall host, without domain part
+						<br>
+						e.g. <em>firewall</em>
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncellreq">Domain</td>
+				<td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
+					<br/>
+					<span class="vexpl">
+						e.g. <em>mycorp.com</em>
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">DNS servers</td>
+				<td width="78%" class="vtable">
+					<p>
+						<table>
+							<tr>
+								<td><b>DNS Server</b></td>
+								<?php if ($multiwan): ?>
+								<td><b>Use gateway</b></td>
+								<?php endif; ?>
+							</tr>
+							<?php
+								for ($dnscounter=1; $dnscounter<5; $dnscounter++):
+									$fldname="dns{$dnscounter}gwint";
+							?>
+							<tr>
+								<td>
+									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="20" value="<?php echo $pconfig['dns'.$dnscounter];?>">
+								</td>
+								<?php if ($multiwan): ?>
+								<td>
+									<select name=<?=$fldname;?>>
+										<?php
+											foreach($ints as $int):
+												$friendly = $int['friendly'];
+												if(!$config['interfaces'][$friendly]['gateway'])
+													continue;
+												$selected = "";
+												if($pconfig['dns{$dnscounter}gwint'] == $int)
+													$selected = " SELECTED";
+										?>
+											<option <?=$selected;?>><?=$friendly;?></option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+								<?php endif; ?>
+							</tr>
+							<?php endfor; ?>
+						</table>
+						<br>
+						<span class="vexpl">
+							IP addresses; these are also used for the DHCP
+							service, DNS forwarder and for PPTP VPN clients.
+							<br/>
+							<?php if($multiwan): ?>
+							<br/>
+							In addition, select the gateway for each DNS server.
+							You should have a unique DNS server per gateway.
+							<br/>
+							<?php endif; ?>
+							<br/>
+							<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked"; ?>>
+							<strong>
+								Allow DNS server list to be overridden by DHCP/PPP
+								on WAN
+							</strong>
+							<br/>
+							If this option is set, <?=$g['product_name'];?> will
+							use DNS servers assigned by a DHCP/PPP server on WAN
+							for its own purposes (including the DNS forwarder).
+							However, they will not be assigned to DHCP and PPTP
+							VPN	clients.
+						</span>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Time zone</td>
+				<td width="78%" class="vtable">
+					<select name="timezone" id="timezone">
+						<?php foreach ($timezonelist as $value): ?>
+						<option value="<?=htmlspecialchars($value);?>" <?php if ($value == $pconfig['timezone']) echo "selected"; ?>>
+							<?=htmlspecialchars($value);?>
+						</option>
+						<?php endforeach; ?>
+					</select>
+					<br/>
+					<span class="vexpl">
+						Select the location closest to you
+					</span>
+				</td>
+			</tr>
+<!--
+			<tr>
+				<td width="22%" valign="top" class="vncell">Time update interval</td>
+				<td width="78%" class="vtable">
+					<input name="timeupdateinterval" type="text" class="formfld unknown" id="timeupdateinterval" size="4" value="<?=htmlspecialchars($pconfig['timeupdateinterval']);?>">
+					<br/>
+					<span class="vexpl">
+						Minutes between network time sync. 300 recommended,
+						or 0 to disable
+					</span>
+				</td>
+			</tr>
+-->
+			<tr>
+				<td width="22%" valign="top" class="vncell">NTP time server</td>
+				<td width="78%" class="vtable">
+					<input name="timeservers" type="text" class="formfld unknown" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>">
+					<br/>
+					<span class="vexpl">
+						Use a space to separate multiple hosts (only one
+						required). Remember to set up at least one DNS server
+						if you enter a host name here!
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" class="list" height="12">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="2" valign="top" class="listtopic">Theme</td>
+			</tr>
+			<tr>
 				<td width="22%" valign="top" class="vncell">&nbsp;</td>
 				<td width="78%" class="vtable">
-				    <select name="theme">
-<?php
-				$files = return_dir_as_array("/usr/local/www/themes/");
-				foreach($files as $f) {
-					if ( (substr($f, 0, 1) == "_") && !isset($config['system']['developer']) ) continue;
-					if($f == "CVS") continue;
-					$selected = "";
-					if($f == $config['theme'])
-						$selected = " SELECTED";
-					if($config['theme'] == "" and $f == "pfsense")
-						$selceted = " SELECTED";
-					echo "\t\t\t\t\t"."<option{$selected}>{$f}</option>\n";
-				}
-?>
+					<select name="theme">
+						<?php
+							$files = return_dir_as_array("/usr/local/www/themes/");
+							foreach($files as $f):
+								if ((substr($f, 0, 1) == "_") && !isset($config['system']['developer']))
+									continue;
+								if ($f == "CVS")
+									continue;
+								$curtheme = "pfsense";
+								if ($config['theme'])
+									$curtheme = $config['theme'];
+								$selected = "";
+								if($f == $curtheme)
+									$selected = " SELECTED";
+						?>
+						<option <?=$selected;?>><?=$f;?></option>
+						<?php endforeach; ?>
 					</select>
-					<strong>This will change the look and feel of <?php echo $g['product_name']; ?>.</strong>
+					<strong>
+						This will change the look and feel of
+						<?=$g['product_name'];?>.
+					</strong>
 				</td>
-				</tr>
-				<tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> <input name="Submit" type="submit" class="formbtn" value="Save">
-                  </td>
-                </tr>
-              </table>
-</form>
+			</tr>
+			<tr>
+				<td width="22%" valign="top">&nbsp;</td>
+				<td width="78%">
+					<input name="Submit" type="submit" class="formbtn" value="Save">
+				</td>
+			</tr>
+		</table>
+	</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -279,20 +279,4 @@ function userHasPrivilege($userent, $privid = false) {
 	return true;
 }
 
-function hasPrivilegeLock($userent) {
-	return userHasPrivilege($userent, "user-lock-webcfg");
-}
-
-function hasPrivilegeLockPages($userent) {
-	return userHasPrivilege($userent, "user-lock-ipages");
-}
-
-function hasPrivilegeShell($userent) {
-	return userHasPrivilege($userent, "user-shell-access");
-}
-
-function hasPrivilegeCopyFiles($userent) {
-	return userHasPrivilege($userent, "user-copy-files");
-}
-
 ?>

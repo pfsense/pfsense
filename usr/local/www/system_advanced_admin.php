@@ -43,15 +43,24 @@
 
 require("guiconfig.inc");
 
-$pconfig['cert'] = base64_decode($config['system']['webgui']['certificate']);
-$pconfig['key'] = base64_decode($config['system']['webgui']['private-key']);
+$pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
+$pconfig['webguiport'] = $config['system']['webgui']['port'];
+$pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sshdkeyonly'] = $config['system']['ssh']['sshdkeyonly'];
-$pconfig['authorizedkeys'] = base64_decode($config['system']['ssh']['authorizedkeys']);
+
+$a_cert =& $config['system']['cert'];
+
+$certs_available = false;
+if (is_array($a_cert) && count($a_cert))
+	$certs_available = true;
+
+if (!$pconfig['webguiproto'] || !$certs_available)
+	$pconfig['webguiproto'] = "http";
 
 if ($_POST) {
 
@@ -59,15 +68,9 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if (($_POST['cert'] && !$_POST['key']) || ($_POST['key'] && !$_POST['cert']))
-		$input_errors[] = "Certificate and key must always be specified together.";
-
-	if ($_POST['cert'] && $_POST['key']) {
-		if (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))
-			$input_errors[] = "This certificate does not appear to be valid.";
-		if (!strstr($_POST['key'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['key'], "END RSA PRIVATE KEY"))
-			$input_errors[] = "This key does not appear to be valid.";
-	}
+	if ($_POST['webguiport'])
+		if(!is_port($_POST['webguiport']))
+			$input_errors[] = "You must specify a valid webConfigurator port number";
 
 	if ($_POST['sshport'])
 		if(!is_port($_POST['sshport']))
@@ -83,10 +86,12 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		$oldcert = $config['system']['webgui']['certificate'];
-		$oldkey = $config['system']['webgui']['private-key'];
-		$config['system']['webgui']['certificate'] = base64_encode($_POST['cert']);
-		$config['system']['webgui']['private-key'] = base64_encode($_POST['key']);
+		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto']))
+			$restart_webgui = true;
+		if (update_if_changed("webgui port", $config['system']['webgui']['port'], $_POST['webguiport']))
+			$restart_webgui = true;
+		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certref']))
+			$restart_webgui = true;
 
 		if($_POST['disableconsolemenu'] == "yes") {
 			$config['system']['disableconsolemenu'] = true;
@@ -106,36 +111,49 @@ if ($_POST) {
 		else
 			unset($config['system']['enableserial']);
 
-		if($_POST['enablesshd'] == "yes") {
+		$sshd_enabled = $config['system']['enablesshd'];
+		if($_POST['enablesshd'])
 			$config['system']['enablesshd'] = "enabled";
-			touch("{$g['tmp_path']}/start_sshd");
-		} else {
+		else
 			unset($config['system']['enablesshd']);
-			mwexec("/usr/bin/killall sshd");
-		}
 
-		$oldsshport = $config['system']['ssh']['port'];
-
-		if ($_POST['sshdkeyonly'] == "yes") {
+		$sshd_keyonly = $config['system']['sshdkeyonly'];
+		if ($_POST['sshdkeyonly'])
 			$config['system']['sshdkeyonly'] = true;
-			touch("{$g['tmp_path']}/start_sshd");
-		} else {
+		else
 			unset($config['system']['sshdkeyonly']);
-			mwexec("/usr/bin/killall sshd");
-		}
 
-		$config['system']['ssh']['port'] = $_POST['sshport'];
-		$config['system']['ssh']['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
+		$sshd_port = $config['system']['ssh']['port'];
+		if ($_POST['sshport'])
+			$config['system']['ssh']['port'] = $_POST['sshport'];
+		else
+			unset($config['system']['ssh']['port']);
+
+		if (($sshd_enabled != $config['system']['enablesshd']) ||
+			($sshd_keyonly != $config['system']['sshdkeyonly']) ||
+			($sshd_port != $config['system']['ssh']['port']))
+			$restart_sshd = true;
+
+		if ($restart_webgui) {
+			global $_SERVER;
+			list($host) = explode(":", $_SERVER['HTTP_HOST']);
+			$prot = $config['system']['webgui']['protocol'];
+			$port = $config['system']['webgui']['port'];
+			if ($port)
+				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";
+			else
+				$url = "{$prot}://{$host}/system.php";
+		}
 
 		write_config();
 
 		config_lock();
 		$retval = filter_configure();
-		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
-		else
-		    $savemsg = $retval;
 		config_unlock();
+
+	    $savemsg = get_std_save_message($retval);
+		if ($restart_webgui)
+			$savemsg .= "<br />One moment...redirecting to {$url} in 10 seconds.";
 
 		conf_mount_rw();
 		setup_serial_port();
@@ -149,8 +167,21 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
+<script language="JavaScript">
+<!--
+
+function prot_change() {
+
+	if (document.iform.https_proto.checked)
+		document.getElementById("ssl_opts").style.display="";
+	else
+		document.getElementById("ssl_opts").style.display="none";
+}
+
+//-->
+</script>
 <?php
-	include("fbegin.inc");
 	if ($input_errors)
 		print_input_errors($input_errors);
 	if ($savemsg)
@@ -192,19 +223,54 @@ include("head.inc");
 							<td colspan="2" valign="top" class="listtopic">webConfigurator</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">Certificate</td>
+							<td width="22%" valign="top" class="vncell">Protocol</td>
 							<td width="78%" class="vtable">
-								<textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
+								<?php
+									if ($pconfig['webguiproto'] == "http")
+										$http_chk = "checked";
+									if ($pconfig['webguiproto'] == "https")
+										$https_chk = "checked";
+									if (!$certs_available)
+										$https_disabled = "disabled";
+								?>
+								<input name="webguiproto" id="http_proto" type="radio" value="http" <?=$http_chk;?> onClick="prot_change()">
+								HTTP
+								&nbsp;&nbsp;&nbsp;
+								<input name="webguiproto" id="https_proto" type="radio" value="https" <?=$https_chk;?> <?=$https_disabled;?> onClick="prot_change()">
+								HTTPS
+								<?php if (!$certs_available): ?>
 								<br/>
-								Paste a signed certificate in X.509 PEM format here. <a href="javascript:if(openwindow('system_advanced_create_certs.php') == false) alert('Popup blocker detected.  Action aborted.');" >Create</a> certificates automatically.
+								No Certificates have been defined. You must
+								<a href="system_certmanager.php">Create or Import</a>
+								a Certificate before SSL can be enabled.
+								<?php endif; ?>
+							</td>
+						</tr>
+						<tr id="ssl_opts">
+							<td width="22%" valign="top" class="vncell">SSL Certificate</td>
+							<td width="78%" class="vtable">
+								<select name="ssl-certref" id="ssl-certref" class="formselect">
+									<?php
+										foreach($a_cert as $cert):
+											$selected = "";
+											if ($pconfig['ssl-certref'] == $cert['refid'])
+												$selected = "selected";
+									?>
+									<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['name'];?></option>
+									<?php endforeach; ?>
+								</select>
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">Key</td>
-							<td width="78%" class="vtable">
-								<textarea name="key" cols="65" rows="7" id="key" class="formpre"><?=htmlspecialchars($pconfig['key']);?></textarea>
-								<br/>
-								Paste an RSA private key in PEM format here.
+							<td valign="top" class="vncell">TCP port</td>
+							<td class="vtable">
+								<input name="webguiport" type="text" class="formfld unknown" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
+								<br>
+								<span class="vexpl">
+									Enter a custom port number for the webConfigurator
+									above if you want to override the default (80 for HTTP, 443
+									for HTTPS). Changes will take effect immediately after save.
+								</span>
 							</td>
 						</tr>
 						<tr>
@@ -246,9 +312,9 @@ include("head.inc");
 								<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if (isset($pconfig['sshdkeyonly'])) echo "checked"; ?> />
 								<strong>Disable Password login for Secure Shell (rsa key only)</strong>
 								<br/>
-								When this option is enabled, you will need to configure
-								allowed keys for each user that has secure shell
-								access.
+								When enabled, authorized keys need to be configured for each
+								<a href="system_usermanager.php">user</a>
+								that has been granted secure shell access.
 							</td>
 						</tr>
 						<tr>
@@ -257,14 +323,6 @@ include("head.inc");
 								<input name="sshport" type="text" id="sshport" value="<?php echo $pconfig['sshport']; ?>" />
 								<br/>
 								<span class="vexpl">Note:  Leave this blank for the default of 22</span>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell"><?=gettext("Authorizedkeys");?></td>
-							<td width="78%" class="vtable">
-								<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
-								<br/>
-								Paste an authorized keys file here.
 							</td>
 						</tr>
 						<tr>
@@ -311,22 +369,35 @@ include("head.inc");
 			</td>
 		</tr>
 	</table>
+	<script language="JavaScript" type="text/javascript">
+	<!--
+		prot_change();
+	//-->
+	</script>
 
 <?php include("fend.inc"); ?>
+<?php
+	if ($restart_webgui)
+		echo "<meta http-equiv=\"refresh\" content=\"10;url={$url}\">";
+?>
 </body>
 </html>
 
 <?php
+if ($restart_sshd) {
 
-if($_POST['cert'] || $_POST['key']) {
-	if (($config['system']['webgui']['certificate'] != $oldcert)
-			|| ($config['system']['webgui']['private-key'] != $oldkey)) {
-		ob_flush();
-		flush();
-		log_error("webConfigurator certificates have changed.  Restarting webConfigurator.");
-		sleep(1);
-		touch("/tmp/restart_webgui");
+	mwexec("/usr/bin/killall sshd");
+	log_error("secure shell configuration has changed. Stopping sshd.");
+
+	if ($config['system']['enablesshd']) {
+		log_error("secure shell configuration has changed. Restarting sshd.");
+		touch("{$g['tmp_path']}/start_sshd");
 	}
 }
-
+if ($restart_webgui) {
+	ob_flush();
+	flush();
+	log_error("webConfigurator configuration has changed. Restarting webConfigurator.");
+	touch("{$g['tmp_path']}/restart_webgui");
+}
 ?>

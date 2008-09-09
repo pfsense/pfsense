@@ -197,12 +197,7 @@ if (isAllowedPage("system_usermanager")) {
 			}
 		}
 
-		if(is_array($_POST['groups']))
-			foreach($_POST['groups'] as $groupname)
-				if ($pconfig['utype'] <> "system" && !isset($groupindex[$groupname]))
-					$input_errors[] = gettext("group {$groupname} does not exist, please define the group before assigning users.");
-
-        if (isset($config['system']['ssh']['sshdkeyonly']) && empty($_POST['authorizedkeys']))
+		if (isset($config['system']['ssh']['sshdkeyonly']) && empty($_POST['authorizedkeys']))
 			$input_errors[] = gettext("You must provide an authorized key otherwise you won't be able to login into this system.");
 
 		/* if this is an AJAX caller then handle via JSON */
@@ -216,6 +211,8 @@ if (isAllowedPage("system_usermanager")) {
 			if (isset($id) && $a_user[$id])
 				$userent = $a_user[$id];
 
+			isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
+
 			/* the user name was modified */
 			if ($_POST['usernamefld'] <> $_POST['oldusername'])
 				$_SERVER['REMOTE_USER'] = $_POST['usernamefld'];
@@ -226,11 +223,7 @@ if (isAllowedPage("system_usermanager")) {
 
 			$userent['name'] = $_POST['usernamefld'];
 			$userent['fullname'] = $_POST['fullname'];
-
-			isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
-
-			if(isset($config['system']['ssh']['sshdkeyonly']))
-				$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
+			$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 
 			if (isset($id) && $a_user[$id])
 				$a_user[$id] = $userent;
@@ -367,20 +360,6 @@ function presubmit() {
 							<?=gettext("User's full name, for your own information only");?>
 						</td>
 					</tr>
-
-					<?php if (isset($config['system']['ssh']['sshdkeyonly'])): ?>
-
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
-						<td width="78%" class="vtable">
-							<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
-							<br/>
-							<?=gettext("Paste an authorized keys file here.");?>
-						</td>
-					</tr>
-
-					<?php endif; ?>
-
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>
 						<td width="78%" class="vtable" align="center">
@@ -551,6 +530,14 @@ function presubmit() {
 
 					<?php endif; ?>
 
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
+						<td width="78%" class="vtable">
+							<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
+							<br/>
+							<?=gettext("Paste an authorized keys file here.");?>
+						</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%">

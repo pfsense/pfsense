@@ -43,17 +43,12 @@ $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
 list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $config['system']['dnsserver'];
 
-
 $pconfig['dns1gwint'] = $config['system']['dns1gwint'];
 $pconfig['dns2gwint'] = $config['system']['dns2gwint'];
 $pconfig['dns3gwint'] = $config['system']['dns3gwint'];
 $pconfig['dns4gwint'] = $config['system']['dns4gwint'];
 
 $pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
-$pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
-if (!$pconfig['webguiproto'])
-	$pconfig['webguiproto'] = "http";
-$pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeupdateinterval'] = $config['system']['time-update-interval'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
@@ -132,11 +127,6 @@ if ($_POST) {
 		update_if_changed("hostname", $config['system']['hostname'], strtolower($_POST['hostname']));
 		update_if_changed("domain", $config['system']['domain'], strtolower($_POST['domain']));
 
-		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto']))
-			$restart_webgui = true;
-		if (update_if_changed("webgui port", $config['system']['webgui']['port'], $_POST['webguiport']))
-			$restart_webgui = true;
-
 		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
 		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
 		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
@@ -181,16 +171,6 @@ if ($_POST) {
 		if ($changecount > 0)
 			write_config($changedesc);
 
-		if ($restart_webgui) {
-			global $_SERVER;
-			list($host) = explode(":", $_SERVER['HTTP_HOST']);
-			if ($config['system']['webgui']['port']) {
-				$url="{$config['system']['webgui']['protocol']}://{$host}:{$config['system']['webgui']['port']}/system.php";
-			} else {
-				$url = "{$config['system']['webgui']['protocol']}://{$host}/system.php";
-			}
-		}
-
 		$retval = 0;
 		config_lock();
 		$retval = system_hostname_configure();
@@ -206,8 +186,6 @@ if ($_POST) {
 		config_unlock();
 
 		$savemsg = get_std_save_message($retval);
-		if ($restart_webgui)
-			$savemsg .= "<br />One moment...redirecting to {$url} in 10 seconds.";
 	}
 }
 
@@ -295,20 +273,6 @@ include("head.inc");
                       PPTP VPN clients, though.</span></p></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">webConfigurator protocol</td>
-                  <td width="78%" class="vtable"> <input name="webguiproto" type="radio" value="http" <?php if ($pconfig['webguiproto'] == "http") echo "checked"; ?>>
-                    HTTP &nbsp;&nbsp;&nbsp; <input type="radio" name="webguiproto" value="https" <?php if ($pconfig['webguiproto'] == "https") echo "checked"; ?>>
-                    HTTPS</td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncell">webConfigurator port</td>
-                  <td class="vtable"> <input name="webguiport" type="text" class="formfld unknown" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
-                    <br>
-                    <span class="vexpl">Enter a custom port number for the webConfigurator
-                    above if you want to override the default (80 for HTTP, 443
-                    for HTTPS). Changes will take effect immediately after save.</span></td>
-                </tr>
-                <tr>
                   <td width="22%" valign="top" class="vncell">Time zone</td>
                   <td width="78%" class="vtable"> <select name="timezone" id="timezone">
                       <?php foreach ($timezonelist as $value): ?>
@@ -369,16 +333,5 @@ include("head.inc");
               </table>
 </form>
 <?php include("fend.inc"); ?>
-<?php
-	// restart webgui if proto or port changed
-	if ($restart_webgui) {
-		echo "<meta http-equiv=\"refresh\" content=\"10;url={$url}\">";
-	}
-?>
 </body>
 </html>
-<?php
-if ($restart_webgui) {
-	touch("/tmp/restart_webgui");
-}
-?>

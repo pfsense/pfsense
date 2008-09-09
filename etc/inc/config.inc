@@ -1926,6 +1926,42 @@ endif;
 		$config['version'] = "5.2";
 	}
 
+	/* Convert 5.2 -> 5.3 */
+	if ($config['version'] <= 5.2) {
+
+		if (!is_array($config['system']['ca']))
+			$config['system']['ca'] = array();
+		if (!is_array($config['system']['cert']))
+			$config['system']['cert'] = array();
+
+		/* migrate advanced admin page webui ssl to certifcate mngr */
+		if ($config['system']['webgui']['certificate'] &&
+			$config['system']['webgui']['private-key']) {
+
+			/* create cert entry */
+			$cert = array();
+			$cert['refid'] = uniqid();
+			$cert['name'] = "webConfigurator SSL Certificate";
+			$cert['crt'] = $config['system']['webgui']['certificate'];
+			$cert['prv'] = $config['system']['webgui']['private-key'];
+			$config['system']['cert'][] = $cert;
+
+			/* create cert reference */
+			unset($config['system']['webgui']['certificate']);
+			unset($config['system']['webgui']['private-key']);
+			$config['system']['webgui']['ssl-certref'] = $cert['refid'];
+		}
+
+		/* migrate advanced admin page ssh keys to user manager */
+		if ($config['system']['ssh']['authorizedkeys']) {
+			$admin_user =& getUserEntryByUID(0);
+			$admin_user['authorizedkeys'] = $config['system']['ssh']['authorizedkeys'];
+			unset($config['system']['ssh']['authorizedkeys']);
+		}
+
+		$config['version'] = "5.3";
+	}
+
 	$now = date("H:i:s");
 	log_error("Ended Configuration upgrade at $now");
 

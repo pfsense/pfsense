@@ -187,8 +187,8 @@ function local_user_set(& $user) {
 	$user_group = "nobody";
 
 	/* configure shell type */
-	if (!hasPrivilegeShell($user)) {
-		if (!hasPrivilegeCopyFiles($user))
+	if (!userHasPrivilege($user, "user-shell-access")) {
+		if (!userHasPrivilege($user, "user-copy-files"))
 			$user_shell = "/sbin/nologin";
 		else
 			$user_shell = "/usr/local/bin/scponly";
@@ -227,14 +227,17 @@ function local_user_set(& $user) {
 
 	/* create user directory if required */
 	if (!is_dir($user_home))
-		mkdir($user_home, 0755);
+		mkdir($user_home, 0700);
 	chown($user_home, $user_name);
 	chgrp($user_home, $user_group);
-	chmod($user_home, 0700);
 
-	/* FIXME : ssh keys should be per-admin user */
-	if(isset($config['system']['ssh']['sshdkeyonly']) && hasPrivilegeShell($user))
-		create_authorized_keys($user_name, $user_home);
+	/* write out ssh authorized key file */
+	if($user['authorizedkeys']) {
+		if (!is_dir("{$user_home}/.ssh"))
+			mkdir("{$user_home}/.ssh", 0700);
+		$keys = base64_decode($user['authorizedkeys']);
+		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
+	}
 }
 
 function local_user_del($user) {

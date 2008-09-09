@@ -39,11 +39,10 @@ require("guiconfig.inc");
 
 if($_GET['newver'] != "") {
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-	if(config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0) {
+	if(config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0)
 		$savemsg = "Successfully reverted to timestamp " . date("n/j/y H:i:s", $_GET['newver']) . " with description \"" . $confvers[$_GET['newver']]['description'] . "\".";
-	} else {
+	else
 		$savemsg = "Unable to revert to the selected configuration.";
-	}
 }
 
 if($_GET['rmver'] != "") {
@@ -62,64 +61,71 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
-<?php
-	$tab_array = array();
-	$tab_array[0] = array("Config History", true, "diag_confbak.php");
-	$tab_array[1] = array("Backup/Restore", false, "diag_backup.php");
-	display_top_tabs($tab_array);
-?>			
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-              <table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
-<?php
-if(is_array($confvers)) { 
-		?>
-                <tr>
-                  <td width="30%" class="listhdrr">Date</td>
-		  <td width="70%" class="listhdrr">Configuration Change</td>
-                </tr>
-
-                <tr valign="top">
-		  <td class="listlr"> <?= date("n/j/y H:i:s", $config['revision']['time']) ?></td>
-                  <td class="listlr"> <?= $config['revision']['description'] ?></td>
-		  <td colspan="2" valign="middle" class="list" nowrap><b>Current</b></td>
+	<?php
+		include("fbegin.inc");
+		if($savemsg)
+			print_info_box($savemsg);
+	?>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td>
+			<?php
+				$tab_array = array();
+				$tab_array[0] = array("Config History", true, "diag_confbak.php");
+				$tab_array[1] = array("Backup/Restore", false, "diag_backup.php");
+				display_top_tabs($tab_array);
+			?>			
+			</td>
 		</tr>
-		<?php
-		  foreach($confvers as $version) {
-			if($version['time'] != 0) {
-				$date = date("n/j/y H:i:s", $version['time']);
-			} else {
-				$date = "Unknown";
-			}
-			$desc = $version['description'];
-               ?>
-                            <tr valign="top">
-				<td class="listlr"> <?= $date ?></td>
-                                <td class="listlr"> <?= $desc ?></td>
-				<td valign="middle" class="list" nowrap>
-                                <a href="diag_confbak.php?newver=<?=$version['time'];?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
-                                </td>
-				<td valign="middle" class="list" nowrap>
-				<a href="diag_confbak.php?rmver=<?=$version['time'];?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
-			    </tr>
-               <?php
-                  } ?>
-<?php } else { ?>
-		<tr><td>
-		<?php print_info_box("No backups found."); ?>
-		</td></tr>
-<?php      }
-?>
+		<tr>
+			<td>
+				<div id="mainarea">
+					<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+						<?php if (is_array($confvers)): ?>
+						<tr>
+							<td width="30%" class="listhdrr">Date</td>
+							<td width="70%" class="listhdrr">Configuration Change</td>
+						</tr>
+						<tr valign="top">
+							<td class="listlr"> <?= date("n/j/y H:i:s", $config['revision']['time']) ?></td>
+							<td class="listr"> <?= $config['revision']['description'] ?></td>
+							<td colspan="2" valign="middle" class="list" nowrap><b>Current</b></td>
+						</tr>
+						<?php
+							foreach($confvers as $version):
+								if($version['time'] != 0)
+									$date = date("n/j/y H:i:s", $version['time']);
+								else
+									$date = "Unknown";
+								$desc = $version['description'];
+						?>
+						<tr valign="top">
+							<td class="listlr"> <?= $date ?></td>
+							<td class="listr"> <?= $desc ?></td>
+							<td valign="middle" class="list" nowrap>
+								<a href="diag_confbak.php?newver=<?=$version['time'];?>">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0">
+								</a>
+							</td>
+							<td valign="middle" class="list" nowrap>
+								<a href="diag_confbak.php?rmver=<?=$version['time'];?>">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+								</a>
+							</td>
+						</tr>
+						<?php endforeach; ?>
+						<?php else: ?>
+						<tr>
+							<td>
+								<?php print_info_box("No backups found."); ?>
+							</td>
+						</tr>
+						<?php endif; ?>
+					</table>
+				</div>
+			</td>
+		</tr>
 	</table>
-	</div>
-    </td>
-  </tr>
-</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

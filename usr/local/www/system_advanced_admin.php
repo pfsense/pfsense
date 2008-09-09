@@ -187,188 +187,188 @@ function prot_change() {
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td>
-				<span class="vexpl">
-					<span class="red">
-						<strong>Note:</strong>
+	<form action="system_advanced_admin.php" method="post" name="iform" id="iform">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<span class="vexpl">
+						<span class="red">
+							<strong>Note:</strong>
+						</span>
+						the options on this page are intended for use by advanced users only.
+						<br/>
 					</span>
-					the options on this page are intended for use by advanced users only.
 					<br/>
-				</span>
-				<br/>
-			</td>
-		</tr>
-		<tr>
-			<td class="tabnavtbl">
-				<ul id="tabnav">
-				<?php
-					$tab_array = array();
-					$tab_array[] = array("Admin Access", true, "system_advanced_admin.php");
-					$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
-					$tab_array[] = array("Networking", false, "system_advanced_network.php");
-					$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
-					$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
-					display_top_tabs($tab_array);
-				?>
-				</ul>
-			</td>
-		</tr>
-		<tr>
-			<td class="tabcont">
-				<form action="system_advanced_admin.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">webConfigurator</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Protocol</td>
-							<td width="78%" class="vtable">
-								<?php
-									if ($pconfig['webguiproto'] == "http")
-										$http_chk = "checked";
-									if ($pconfig['webguiproto'] == "https")
-										$https_chk = "checked";
-									if (!$certs_available)
-										$https_disabled = "disabled";
-								?>
-								<input name="webguiproto" id="http_proto" type="radio" value="http" <?=$http_chk;?> onClick="prot_change()">
-								HTTP
-								&nbsp;&nbsp;&nbsp;
-								<input name="webguiproto" id="https_proto" type="radio" value="https" <?=$https_chk;?> <?=$https_disabled;?> onClick="prot_change()">
-								HTTPS
-								<?php if (!$certs_available): ?>
-								<br/>
-								No Certificates have been defined. You must
-								<a href="system_certmanager.php">Create or Import</a>
-								a Certificate before SSL can be enabled.
-								<?php endif; ?>
-							</td>
-						</tr>
-						<tr id="ssl_opts">
-							<td width="22%" valign="top" class="vncell">SSL Certificate</td>
-							<td width="78%" class="vtable">
-								<select name="ssl-certref" id="ssl-certref" class="formselect">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<?php
+						$tab_array = array();
+						$tab_array[] = array("Admin Access", true, "system_advanced_admin.php");
+						$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
+						$tab_array[] = array("Networking", false, "system_advanced_network.php");
+						$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
+						$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
+						display_top_tabs($tab_array);
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div id="mainarea">
+						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">webConfigurator</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Protocol</td>
+								<td width="78%" class="vtable">
 									<?php
-										foreach($a_cert as $cert):
-											$selected = "";
-											if ($pconfig['ssl-certref'] == $cert['refid'])
-												$selected = "selected";
+										if ($pconfig['webguiproto'] == "http")
+											$http_chk = "checked";
+										if ($pconfig['webguiproto'] == "https")
+											$https_chk = "checked";
+										if (!$certs_available)
+											$https_disabled = "disabled";
 									?>
-									<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['name'];?></option>
-									<?php endforeach; ?>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top" class="vncell">TCP port</td>
-							<td class="vtable">
-								<input name="webguiport" type="text" class="formfld unknown" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
-								<br>
-								<span class="vexpl">
-									Enter a custom port number for the webConfigurator
-									above if you want to override the default (80 for HTTP, 443
-									for HTTPS). Changes will take effect immediately after save.
-								</span>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Anti-lockout</td>
-							<td width="78%" class="vtable">
-								<?php
-									if($config['interfaces']['lan']) 
-										$lockout_interface = "LAN";
-									else 
-										$lockout_interface = "WAN";
-								?>
-								<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
-								<strong>Disable webConfigurator anti-lockout rule</strong>
-								<br/>
-								By default, access to the webConfigurator on the <?=$lockout_interface;?>
-								interface is always permitted, regardless of the user-defined filter
-								rule set. Enable this feature to control webConfigurator access (make
-								sure to have a filter rule in place that allows you in, or you will
-								lock yourself out!). <em> Hint: the &quot;set configure IP address&quot;
-								option in the console menu resets this setting as well. </em>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">Secure Shell</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Secure Shell Server</td>
-							<td width="78%" class="vtable">
-								<input name="enablesshd" type="checkbox" id="enablesshd" value="yes" <?php if (isset($pconfig['enablesshd'])) echo "checked"; ?> />
-								<strong>Enable Secure Shell</strong>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Authentication Method</td>
-							<td width="78%" class="vtable">
-								<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if (isset($pconfig['sshdkeyonly'])) echo "checked"; ?> />
-								<strong>Disable Password login for Secure Shell (rsa key only)</strong>
-								<br/>
-								When enabled, authorized keys need to be configured for each
-								<a href="system_usermanager.php">user</a>
-								that has been granted secure shell access.
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">SSH port</td>
-							<td width="78%" class="vtable">
-								<input name="sshport" type="text" id="sshport" value="<?php echo $pconfig['sshport']; ?>" />
-								<br/>
-								<span class="vexpl">Note:  Leave this blank for the default of 22</span>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-						<?php if($g['platform'] == "pfSense" || $g['platform'] == "cdrom"): ?>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">Serial Communcations</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Serial Terminal</td>
-							<td width="78%" class="vtable">
-								<input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked"; ?> />
-								<strong>This will enable the first serial port with 9600/8/N/1</strong>
-								<br>
-								<span class="vexpl">Note:  This will disable the internal video card/keyboard</span>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-						<?php endif; ?>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">Shell Options</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Console menu</td>
-							<td width="78%" class="vtable">
-								<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked"; ?>  />
-								<strong>Password protect the console menu</strong>
-								<br/>
-								<span class="vexpl">Changes to this option will take effect after a reboot.</span>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top">&nbsp;</td>
-							<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-					</table>
-				</form>
-			</td>
-		</tr>
-	</table>
+									<input name="webguiproto" id="http_proto" type="radio" value="http" <?=$http_chk;?> onClick="prot_change()">
+									HTTP
+									&nbsp;&nbsp;&nbsp;
+									<input name="webguiproto" id="https_proto" type="radio" value="https" <?=$https_chk;?> <?=$https_disabled;?> onClick="prot_change()">
+									HTTPS
+									<?php if (!$certs_available): ?>
+									<br/>
+									No Certificates have been defined. You must
+									<a href="system_certmanager.php">Create or Import</a>
+									a Certificate before SSL can be enabled.
+									<?php endif; ?>
+								</td>
+							</tr>
+							<tr id="ssl_opts">
+								<td width="22%" valign="top" class="vncell">SSL Certificate</td>
+								<td width="78%" class="vtable">
+									<select name="ssl-certref" id="ssl-certref" class="formselect">
+										<?php
+											foreach($a_cert as $cert):
+												$selected = "";
+												if ($pconfig['ssl-certref'] == $cert['refid'])
+													$selected = "selected";
+										?>
+										<option value="<?=$cert['refid'];?>"<?=$selected;?>><?=$cert['name'];?></option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td valign="top" class="vncell">TCP port</td>
+								<td class="vtable">
+									<input name="webguiport" type="text" class="formfld unknown" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
+									<br>
+									<span class="vexpl">
+										Enter a custom port number for the webConfigurator
+										above if you want to override the default (80 for HTTP, 443
+										for HTTPS). Changes will take effect immediately after save.
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Anti-lockout</td>
+								<td width="78%" class="vtable">
+									<?php
+										if($config['interfaces']['lan']) 
+											$lockout_interface = "LAN";
+										else 
+											$lockout_interface = "WAN";
+									?>
+									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
+									<strong>Disable webConfigurator anti-lockout rule</strong>
+									<br/>
+									By default, access to the webConfigurator on the <?=$lockout_interface;?>
+									interface is always permitted, regardless of the user-defined filter
+									rule set. Enable this feature to control webConfigurator access (make
+									sure to have a filter rule in place that allows you in, or you will
+									lock yourself out!). <em> Hint: the &quot;set configure IP address&quot;
+									option in the console menu resets this setting as well. </em>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Secure Shell</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Secure Shell Server</td>
+								<td width="78%" class="vtable">
+									<input name="enablesshd" type="checkbox" id="enablesshd" value="yes" <?php if (isset($pconfig['enablesshd'])) echo "checked"; ?> />
+									<strong>Enable Secure Shell</strong>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Authentication Method</td>
+								<td width="78%" class="vtable">
+									<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if (isset($pconfig['sshdkeyonly'])) echo "checked"; ?> />
+									<strong>Disable Password login for Secure Shell (rsa key only)</strong>
+									<br/>
+									When enabled, authorized keys need to be configured for each
+									<a href="system_usermanager.php">user</a>
+									that has been granted secure shell access.
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">SSH port</td>
+								<td width="78%" class="vtable">
+									<input name="sshport" type="text" id="sshport" value="<?php echo $pconfig['sshport']; ?>" />
+									<br/>
+									<span class="vexpl">Note:  Leave this blank for the default of 22</span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<?php if($g['platform'] == "pfSense" || $g['platform'] == "cdrom"): ?>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Serial Communcations</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Serial Terminal</td>
+								<td width="78%" class="vtable">
+									<input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked"; ?> />
+									<strong>This will enable the first serial port with 9600/8/N/1</strong>
+									<br>
+									<span class="vexpl">Note:  This will disable the internal video card/keyboard</span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<?php endif; ?>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Shell Options</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Console menu</td>
+								<td width="78%" class="vtable">
+									<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked"; ?>  />
+									<strong>Password protect the console menu</strong>
+									<br/>
+									<span class="vexpl">Changes to this option will take effect after a reboot.</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top">&nbsp;</td>
+								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</form>
 	<script language="JavaScript" type="text/javascript">
 	<!--
 		prot_change();

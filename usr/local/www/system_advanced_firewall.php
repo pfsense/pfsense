@@ -153,175 +153,176 @@ function update_description(itemnum) {
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td>
-				<span class="vexpl">
-					<span class="red">
-						<strong>Note:</strong>
+	<form action="system_advanced_firewall.php" method="post" name="iform" id="iform">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<span class="vexpl">
+						<span class="red">
+							<strong>Note:</strong>
+						</span>
+						the options on this page are intended for use by advanced users only.
+						<br/>
 					</span>
-					the options on this page are intended for use by advanced users only.
 					<br/>
-				</span>
-				<br/>
-			</td>
-		</tr>
-		<tr>
-			<td class="tabnavtbl">
-				<ul id="tabnav">
-				<?php
-					$tab_array = array();
-					$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
-					$tab_array[] = array("Firewall / NAT", true, "system_advanced_firewall.php");
-					$tab_array[] = array("Networking", false, "system_advanced_network.php");
-					$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
-					$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
-					display_top_tabs($tab_array);
-				?>
+				</td>
+			</tr>
+			<tr>
+				<td class="tabnavtbl">
+					<?php
+						$tab_array = array();
+						$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
+						$tab_array[] = array("Firewall / NAT", true, "system_advanced_firewall.php");
+						$tab_array[] = array("Networking", false, "system_advanced_network.php");
+						$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
+						$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
+						display_top_tabs($tab_array);
+					?>
 				</ul>
-			</td>
-		</tr>
-		<tr>
-			<td class="tabcont">
-				<form action="system_advanced_firewall.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">Firewall Advanced</td>
-						</tr>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div id="mainarea">
+						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Firewall Advanced</td>
+							</tr>
 <?php
 /*
-						<tr>
-							<td width="22%" valign="top" class="vncell">Traffic shaper type</td>
-							<td width="78%" class="vtable">
-								<select name="shapertype" class="formselect">
-									<option value="pfSense"<?php if($pconfig['shapertype'] == 'pfSense') echo " selected"; ?>><?= $g['product_name'] ?> (ALTQ)</option>
-									<option value="m0n0"<?php if($pconfig['shapertype'] == 'm0n0') echo " selected"; ?>>M0n0wall (dummynet)</option>
-								</select>
-							</td>
-						</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Traffic shaper type</td>
+								<td width="78%" class="vtable">
+									<select name="shapertype" class="formselect">
+										<option value="pfSense"<?php if($pconfig['shapertype'] == 'pfSense') echo " selected"; ?>><?= $g['product_name'] ?> (ALTQ)</option>
+										<option value="m0n0"<?php if($pconfig['shapertype'] == 'm0n0') echo " selected"; ?>>M0n0wall (dummynet)</option>
+									</select>
+								</td>
+							</tr>
 */
 ?>
-						<tr>
-							<td width="22%" valign="top" class="vncell">FTP server compatibility</td>
-							<td width="78%" class="vtable">
-								<input name="rfc959workaround" type="checkbox" id="rfc959workaround" value="yes" <?php if (isset($config['system']['rfc959workaround'])) echo "checked"; ?> />
-								<strong>Allow data connections from the FTP command port</strong><br/>
-								This allows for communication with ftp servers that violate
-								RFC 959 by opening data connections from the command port (21).
-								Thes should be opened on the data port(20). This option should
-								not expose you to any extra risk as the firewall will still only
-								allow connections on a port that ftp-proxy listens on.
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">IP Do-Not-Fragment compatibility</td>
-							<td width="78%" class="vtable">
-								<input name="scrubnodf" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubnodf'])) echo "checked"; ?> />
-								<strong>Clear invalid DF bits instead of dropping the packets</strong><br/>
-								This allows for communications with hosts that generate fragmented
-								packets with the don't fragment (DF) bit set. Linux NFS is known to
-								do this. This will cause the filter to not drop such packets but
-								instead clear the don't fragment bit. The filter will also randomize
-								the IP identification field of outgoing packets with this option on,
-								to compensate for operating systems that set the DF bit but set a
-								zero IP identification header field.
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Firewall Optimization Options</td>
-							<td width="78%" class="vtable">
-								<select onChange="update_description(this.selectedIndex);" name="optimization" id="optimization">
-									<option value="normal"<?php if($config['system']['optimization']=="normal") echo " selected"; ?>>normal</option>
-									<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " selected"; ?>>high-latency</option>
-									<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " selected"; ?>>aggressive</option>
-									<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected"; ?>>conservative</option>
-								</select>
-								<br/>
-								<textarea cols="60" rows="1" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
-								<script language="javascript" type="text/javascript">
-									update_description(document.forms[0].optimization.selectedIndex);
-								</script>
-								<br/>
-								Select which type of state table optimization your would like to use
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Disable Firewall</td>
-							<td width="78%" class="vtable">
-								<input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> />
-								<strong>Disable all packet filtering.</strong>
-								<br/>
-								<span class="vexpl">Note:  This converts <?= $g['product_name'] ?> into a routing only platform!<br>
-			    	                Note:  This will turn off NAT!
-								</span>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Disable Firewall Scrub</td>
-							<td width="78%" class="vtable">
-								<input name="disablescrub" type="checkbox" id="disablescrub" value="yes" <?php if (isset($config['system']['disablescrub'])) echo "checked"; ?> />
-								<strong>Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.</strong>
-								<br/>
-								Click <a href='http://www.openbsd.org/faq/pf/scrub.html' target='_new'>here</a> for more information.
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Firewall Maximum States</td>
-							<td width="78%" class="vtable">
-								<input name="maximumstates" type="text" id="maximumstates" value="<?php echo $pconfig['maximumstates']; ?>" />
-								<br/>
-								<strong>Maximum number of connections to hold in the firewall state table.</strong>
-								<br/>
-								<span class="vexpl">Note:  Leave this blank for the default.  On your system the default size is: <?= pfsense_default_state_size() ?></span>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Static route filtering</td>
-							<td width="78%" class="vtable">
-								<input name="bypassstaticroutes" type="checkbox" id="bypassstaticroutes" value="yes" <?php if ($pconfig['bypassstaticroutes']) echo "checked"; ?> />
-								<strong>Bypass firewall rules for traffic on the same interface</strong>
-								<br/>
-								This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and
-				 				leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where
-								multiple subnets are connected to the same interface.
-								<br/>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-
-						<?php if($config['interfaces']['lan']): ?>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
-						</tr>		
-						<tr>
-							<td width="22%" valign="top" class="vncell">Disable NAT Reflection</td>
-							<td width="78%" class="vtable">
-								<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> />
-								<strong>Disables the automatic creation of NAT redirect rules for access to your public IP addresses from within your internal networks.  Note: Reflection only works on port forward type items  and does not work for large ranges > 500 ports.</strong>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Reflection Timeout</td>
-							<td width="78%" class="vtable">
-								<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" />
-								<strong>Enter value for Reflection timeout in seconds.</strong>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-						<?php endif; ?>
-						<tr>
-							<td width="22%" valign="top">&nbsp;</td>
-							<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
-						</tr>
-					</table>
-				</form>
-			</td>
-		</tr>
-	</table>
+							<tr>
+								<td width="22%" valign="top" class="vncell">FTP server compatibility</td>
+								<td width="78%" class="vtable">
+									<input name="rfc959workaround" type="checkbox" id="rfc959workaround" value="yes" <?php if (isset($config['system']['rfc959workaround'])) echo "checked"; ?> />
+									<strong>Allow data connections from the FTP command port</strong><br/>
+									This allows for communication with ftp servers that violate
+									RFC 959 by opening data connections from the command port (21).
+									Thes should be opened on the data port(20). This option should
+									not expose you to any extra risk as the firewall will still only
+									allow connections on a port that ftp-proxy listens on.
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">IP Do-Not-Fragment compatibility</td>
+								<td width="78%" class="vtable">
+									<input name="scrubnodf" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubnodf'])) echo "checked"; ?> />
+									<strong>Clear invalid DF bits instead of dropping the packets</strong><br/>
+									This allows for communications with hosts that generate fragmented
+									packets with the don't fragment (DF) bit set. Linux NFS is known to
+									do this. This will cause the filter to not drop such packets but
+									instead clear the don't fragment bit. The filter will also randomize
+									the IP identification field of outgoing packets with this option on,
+									to compensate for operating systems that set the DF bit but set a
+									zero IP identification header field.
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Firewall Optimization Options</td>
+								<td width="78%" class="vtable">
+									<select onChange="update_description(this.selectedIndex);" name="optimization" id="optimization">
+										<option value="normal"<?php if($config['system']['optimization']=="normal") echo " selected"; ?>>normal</option>
+										<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " selected"; ?>>high-latency</option>
+										<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " selected"; ?>>aggressive</option>
+										<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected"; ?>>conservative</option>
+									</select>
+									<br/>
+									<textarea cols="60" rows="1" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
+									<script language="javascript" type="text/javascript">
+										update_description(document.forms[0].optimization.selectedIndex);
+									</script>
+									<br/>
+									Select which type of state table optimization your would like to use
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Disable Firewall</td>
+								<td width="78%" class="vtable">
+									<input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> />
+									<strong>Disable all packet filtering.</strong>
+									<br/>
+									<span class="vexpl">Note:  This converts <?= $g['product_name'] ?> into a routing only platform!<br>
+				    	                Note:  This will turn off NAT!
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Disable Firewall Scrub</td>
+								<td width="78%" class="vtable">
+									<input name="disablescrub" type="checkbox" id="disablescrub" value="yes" <?php if (isset($config['system']['disablescrub'])) echo "checked"; ?> />
+									<strong>Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.</strong>
+									<br/>
+									Click <a href='http://www.openbsd.org/faq/pf/scrub.html' target='_new'>here</a> for more information.
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Firewall Maximum States</td>
+								<td width="78%" class="vtable">
+									<input name="maximumstates" type="text" id="maximumstates" value="<?php echo $pconfig['maximumstates']; ?>" />
+									<br/>
+									<strong>Maximum number of connections to hold in the firewall state table.</strong>
+									<br/>
+									<span class="vexpl">Note:  Leave this blank for the default.  On your system the default size is: <?= pfsense_default_state_size() ?></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Static route filtering</td>
+								<td width="78%" class="vtable">
+									<input name="bypassstaticroutes" type="checkbox" id="bypassstaticroutes" value="yes" <?php if ($pconfig['bypassstaticroutes']) echo "checked"; ?> />
+									<strong>Bypass firewall rules for traffic on the same interface</strong>
+									<br/>
+									This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and
+					 				leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where
+									multiple subnets are connected to the same interface.
+									<br/>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+	
+							<?php if($config['interfaces']['lan']): ?>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
+							</tr>		
+							<tr>
+								<td width="22%" valign="top" class="vncell">Disable NAT Reflection</td>
+								<td width="78%" class="vtable">
+									<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> />
+									<strong>Disables the automatic creation of NAT redirect rules for access to your public IP addresses from within your internal networks.  Note: Reflection only works on port forward type items  and does not work for large ranges > 500 ports.</strong>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Reflection Timeout</td>
+								<td width="78%" class="vtable">
+									<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" />
+									<strong>Enter value for Reflection timeout in seconds.</strong>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<?php endif; ?>
+							<tr>
+								<td width="22%" valign="top">&nbsp;</td>
+								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</div>
+		</table>
+	</form>
 
 <?php include("fend.inc"); ?>
 </body>

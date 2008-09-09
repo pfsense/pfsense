@@ -99,137 +99,136 @@ include("head.inc");
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td>
-				<span class="vexpl">
-					<span class="red">
-						<strong>Note:</strong>
+	<form action="system_advanced_misc.php" method="post" name="iform" id="iform">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<span class="vexpl">
+						<span class="red">
+							<strong>Note:</strong>
+						</span>
+						the options on this page are intended for use by advanced users only.
+						<br/>
 					</span>
-					the options on this page are intended for use by advanced users only.
 					<br/>
-				</span>
-				<br/>
-			</td>
-		</tr>
-		<tr>
-			<td class="tabnavtbl">
-				<ul id="tabnav">
-				<?php
-					$tab_array = array();
-					$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
-					$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
-					$tab_array[] = array("Networking", false, "system_advanced_network.php");
-					$tab_array[] = array("Miscellaneous", true, "system_advanced_misc.php");
-					$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
-					display_top_tabs($tab_array);
-				?>
-				</ul>
-			</td>
-		</tr>
-		<tr>
-			<td class="tabcont">
-				<form action="system_advanced_misc.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<?php
+						$tab_array = array();
+						$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
+						$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
+						$tab_array[] = array("Networking", false, "system_advanced_network.php");
+						$tab_array[] = array("Miscellaneous", true, "system_advanced_misc.php");
+						$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
+						display_top_tabs($tab_array);
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div id="mainarea">
+						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Load Balancing</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Load Balancing</td>
+								<td width="78%" class="vtable">
+									<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> />
+									<strong>Use sticky connections</strong><br/>
+									Successive connections will be redirected to the servers
+									in a round-robin manner with connections from the same
+									source being sent to the same web server. This "sticky
+									connection" will exist as long as there are states that
+									refer to this connection. Once the states expire, so will
+									the sticky connection. Further connections from that host
+									will be redirected to the next web server in the round
+									robin.
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+<?php
+/*
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Traffic Shaper</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Traffic shaper type</td>
+								<td width="78%" class="vtable">
+									<select name="shapertype" class="formselect">
+										<option value="pfSense"<?php if($pconfig['shapertype'] == 'pfSense') echo " selected"; ?>><?= $g['product_name'] ?> (ALTQ)</option>
+										<option value="m0n0"<?php if($pconfig['shapertype'] == 'm0n0') echo " selected"; ?>>M0n0wall (dummynet)</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+*/
+?>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">IP Security</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">IPsec SA preferral</td>
+								<td width="78%" class="vtable">
+									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
+									<strong>Prefer older IPsec SAs</strong>
+									<br />
+									By default, if several SAs match, the newest one is
+									preferred if it's at least 30 seconds old. Select this
+									option to always prefer old SAs over new ones.
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<?php if($g['platform'] == "pfSenseDISABLED"): ?>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Hardware Settings</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Hard disk standby time </td>
+								<td width="78%" class="vtable">
+									<select name="harddiskstandby" class="formselect">
+										<?php
+										 	## Values from ATA-2 http://www.t13.org/project/d0948r3-ATA-2.pdf (Page 66)
+											$sbvals = explode(" ", "0.5,6 1,12 2,24 3,36 4,48 5,60 7.5,90 10,120 15,180 20,240 30,241 60,242");
+										?>
+										<option value="" <?php if(!$pconfig['harddiskstandby']) echo('selected');?>>Always on</option>
+										<?php
+											foreach ($sbvals as $sbval):
+												list($min,$val) = explode(",", $sbval);
+										?>
+										<option value="<?=$val;?>" <?php if($pconfig['harddiskstandby'] == $val) echo('selected');?>><?=$min;?> minutes</option>
+										<?php endforeach; ?>
+									</select>
+									<br/>
+									Puts the hard disk into standby mode when the selected amount of time after the last
+									access has elapsed. <em>Do not set this for CF cards.</em>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<?php endif; ?>
 
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">Load Balancing</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Load Balancing</td>
-							<td width="78%" class="vtable">
-								<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> />
-								<strong>Use sticky connections</strong><br/>
-								Successive connections will be redirected to the servers
-								in a round-robin manner with connections from the same
-								source being sent to the same web server. This "sticky
-								connection" will exist as long as there are states that
-								refer to this connection. Once the states expire, so will
-								the sticky connection. Further connections from that host
-								will be redirected to the next web server in the round
-								robin.
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-						<?php
-						/*
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">Traffic Shaper</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Traffic shaper type</td>
-							<td width="78%" class="vtable">
-								<select name="shapertype" class="formselect">
-									<option value="pfSense"<?php if($pconfig['shapertype'] == 'pfSense') echo " selected"; ?>><?= $g['product_name'] ?> (ALTQ)</option>
-									<option value="m0n0"<?php if($pconfig['shapertype'] == 'm0n0') echo " selected"; ?>>M0n0wall (dummynet)</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-						*/
-						?>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">IP Security</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">IPsec SA preferral</td>
-							<td width="78%" class="vtable">
-								<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
-								<strong>Prefer older IPsec SAs</strong>
-								<br />
-								By default, if several SAs match, the newest one is
-								preferred if it's at least 30 seconds old. Select this
-								option to always prefer old SAs over new ones.
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-						<?php if($g['platform'] == "pfSenseDISABLED"): ?>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">Hardware Settings</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Hard disk standby time </td>
-							<td width="78%" class="vtable">
-								<select name="harddiskstandby" class="formselect">
-									<?php
-									 	## Values from ATA-2 http://www.t13.org/project/d0948r3-ATA-2.pdf (Page 66)
-										$sbvals = explode(" ", "0.5,6 1,12 2,24 3,36 4,48 5,60 7.5,90 10,120 15,180 20,240 30,241 60,242");
-									?>
-									<option value="" <?php if(!$pconfig['harddiskstandby']) echo('selected');?>>Always on</option>
-									<?php
-										foreach ($sbvals as $sbval):
-											list($min,$val) = explode(",", $sbval);
-									?>
-									<option value="<?=$val;?>" <?php if($pconfig['harddiskstandby'] == $val) echo('selected');?>><?=$min;?> minutes</option>
-									<?php endforeach; ?>
-								</select>
-								<br/>
-								Puts the hard disk into standby mode when the selected amount of time after the last
-								access has elapsed. <em>Do not set this for CF cards.</em>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-						<?php endif; ?>
-
-						<tr>
-							<td width="22%" valign="top">&nbsp;</td>
-							<td width="78%">
-								<input name="Submit" type="submit" class="formbtn" value="Save" />
-							</td>
-						</tr>
-					</table>
-				</form>
-			</td>
-		</tr>
-	</table>
+							<tr>
+								<td width="22%" valign="top">&nbsp;</td>
+								<td width="78%">
+									<input name="Submit" type="submit" class="formbtn" value="Save" />
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</form>
 
 <?php include("fend.inc"); ?>
 </body>

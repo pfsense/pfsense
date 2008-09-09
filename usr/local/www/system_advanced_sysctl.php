@@ -134,7 +134,7 @@ include("head.inc");
 				print_input_errors($input_errors);
 			if ($savemsg)
 				print_info_box($savemsg);
-			if (file_exists($d_sysctldirty_path))
+			if (file_exists($d_sysctldirty_path) && ($act != "edit" ))
 				print_info_box_np("The firewall tunables have changed.  You must apply the configuration to take affect.");
 		?>
 	</form>
@@ -152,8 +152,7 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
-			<td class="tabnavtbl">
-				<ul id="tabnav">
+			<td>
 				<?php
 					$tab_array = array();
 					$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
@@ -163,103 +162,106 @@ include("head.inc");
 					$tab_array[] = array("System Tunables", true, "system_advanced_sysctl.php");
 					display_top_tabs($tab_array);
 				?>
-				</ul>
 			</td>
 		</tr>
 		<?php if ($act != "edit" ): ?>
 		<tr>
-			<td class="tabcont">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
-					<tr>
-						<td width="20%" class="listhdrr">Tunable Name</td>
-						<td width="60%" class="listhdrr">Description</td>
-						<td width="20%" class="listhdrr">Value</td>
-					</tr>
-					<?php $i = 0; foreach ($config['sysctl']['item'] as $tunable): ?>
-					<tr>
-						<td class="listlr" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
-							<?php echo $tunable['tunable']; ?>
-						</td>
-						<td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
-							<?php echo $tunable['desc']; ?>
-						</td>
-						<td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
-							<?php echo $tunable['value']; ?>
-						</td>
-						<td class="list" nowrap>
-							<table border="0" cellspacing="0" cellpadding="1">
-								<tr>
-									<td valign="middle">
-										<a href="system_advanced_sysctl.php?act=edit&id=<?=$i;?>">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="" />
-										</a>
-									</td>
-									<td valign="middle">
-										<a href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
-										</a>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<?php $i++; endforeach; ?>
-					<tr>
-					<td class="list" colspan="3">
-						</td>
-						<td class="list">
-							<table border="0" cellspacing="0" cellpadding="1">
-								<tr>
-									<td valign="middle">
-										<a href="firewall_system_tunables_edit.php">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
-										</a>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
+			<td>
+				<div id="mainarea">
+					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+						<tr>
+							<td width="20%" class="listhdrr">Tunable Name</td>
+							<td width="60%" class="listhdrr">Description</td>
+							<td width="20%" class="listhdrr">Value</td>
+						</tr>
+						<?php $i = 0; foreach ($config['sysctl']['item'] as $tunable): ?>
+						<tr>
+							<td class="listlr" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+								<?php echo $tunable['tunable']; ?>
+							</td>
+							<td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+								<?php echo $tunable['desc']; ?>
+							</td>
+							<td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+								<?php echo $tunable['value']; ?>
+							</td>
+							<td class="list" nowrap>
+								<table border="0" cellspacing="0" cellpadding="1">
+									<tr>
+										<td valign="middle">
+											<a href="system_advanced_sysctl.php?act=edit&id=<?=$i;?>">
+												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="" />
+											</a>
+										</td>
+										<td valign="middle">
+											<a href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')">
+												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
+											</a>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<?php $i++; endforeach; ?>
+						<tr>
+						<td class="list" colspan="3">
+							</td>
+							<td class="list">
+								<table border="0" cellspacing="0" cellpadding="1">
+									<tr>
+										<td valign="middle">
+											<a href="firewall_system_tunables_edit.php">
+												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
+											</a>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
 			</td>
 		</tr>
 		<? else: ?>
 		<tr>
-			<td class="tabcont">
-				<form action="system_advanced_sysctl.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">Edit system tunable</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncellreq">Tunable</td>
-							<td width="78%" class="vtable">
-								<input size="65" name="tunable" value="<?php echo $pconfig['tunable']; ?>">
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncellreq">Description</td>
-							<td width="78%">
-								<textarea rows="7" cols="50" name="desc"><?php echo $pconfig['desc']; ?></textarea>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncellreq">Value</td>
-							<td width="78%">
-								<input size="65" name="value" value="<?php echo $pconfig['value']; ?>">
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top">&nbsp;</td>
-							<td width="78%">
-								<input id="submit" name="Submit" type="submit" class="formbtn" value="Save" />
-								<input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" onclick="history.back()" />
-								<?php if (isset($id) && $a_tunable[$id]): ?>
-								<input name="id" type="hidden" value="<?=$id;?>" />
-								<?php endif; ?>
-							</td>
-						</tr>
-					</table>
-				</form>
+			<td>
+				<div id="mainarea">
+					<form action="system_advanced_sysctl.php" method="post" name="iform" id="iform">
+						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Edit system tunable</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncellreq">Tunable</td>
+								<td width="78%" class="vtable">
+									<input size="65" name="tunable" value="<?php echo $pconfig['tunable']; ?>">
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncellreq">Description</td>
+								<td width="78%" class="vtable">
+									<textarea rows="7" cols="50" name="desc"><?php echo $pconfig['desc']; ?></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncellreq">Value</td>
+								<td width="78%" class="vtable">
+									<input size="65" name="value" value="<?php echo $pconfig['value']; ?>">
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top">&nbsp;</td>
+								<td width="78%">
+									<input id="submit" name="Submit" type="submit" class="formbtn" value="Save" />
+									<input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" onclick="history.back()" />
+									<?php if (isset($id) && $a_tunable[$id]): ?>
+									<input name="id" type="hidden" value="<?=$id;?>" />
+									<?php endif; ?>
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
 			</td>
 		</tr>
 		<? endif; ?>

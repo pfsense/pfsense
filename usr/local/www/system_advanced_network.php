@@ -135,96 +135,95 @@ function enable_change(enable_over) {
 	if ($savemsg)
 		print_info_box($savemsg);
 ?>
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td>
-				<span class="vexpl">
-    	        	<span class="red">
-						<strong>Note:</strong>
+	<form action="system_advanced_network.php" method="post" name="iform" id="iform">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<span class="vexpl">
+	    	        	<span class="red">
+							<strong>Note:</strong>
+						</span>
+						the options on this page are intended for use by advanced users only.
+						<br/>
 					</span>
-					the options on this page are intended for use by advanced users only.
 					<br/>
-				</span>
-				<br/>
-			</td>
-		</tr>
-		<tr>
-			<td class="tabnavtbl">
-				<ul id="tabnav">
-				<?php
-					$tab_array = array();
-					$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
-					$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
-					$tab_array[] = array("Networking", true, "system_advanced_network.php");
-					$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
-					$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
-					display_top_tabs($tab_array);
-				?>
-				</ul>
-			</td>
-		</tr>
-		<tr>
-			<td class="tabcont">
-				<form action="system_advanced_network.php" method="post" name="iform" id="iform">
-					<table width="100%" border="0" cellpadding="6" cellspacing="0">
-
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">IPv6 Options</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">IPv6 over IPv4 Tunneling</td>
-							<td width="78%" class="vtable">
-								<input name="ipv6nat_enable" type="checkbox" id="ipv6nat_enable" value="yes" <?php if ($pconfig['ipv6nat_enable']) echo "checked"; ?> onclick="enable_change(false)" />
-								<strong>Enable IPv4 NAT encapsulation of IPv6 packets</strong><br/>
-								This provides an RFC 2893 compatibility mechanism
-								that can be used to tunneling IPv6 packets over IPv4
-								routing	infrastructures. If enabled, don't forget to
-								add a firewall rule to permit IPv6 packets.<br/>
-								<br/>
-								IP address :&nbsp;
-								<input name="ipv6nat_ipaddr" type="text" class="formfld unknown" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" class="list" height="12">&nbsp;</td>
-						</tr>
-						<tr>
-							<td colspan="2" valign="top" class="listtopic">Network Interfaces</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Device polling</td>
-							<td width="78%" class="vtable">
-								<input name="polling_enable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['polling_enable']) echo "checked"; ?>>
-								<strong>Enable device polling</strong><br>
-								Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webConfigurator, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended.
-								Not all NICs support polling; see the <?= $g['product_name'] ?> homepage for a list of supported cards.
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top" class="vncell">Hardware Checksum Offloading</td>
-							<td width="78%" class="vtable">
-								<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked"; ?> />
-								<strong>Disable hardware checksum offload.</strong><br>
-								This option will hardware assisted checksum offloading. FreeBSD sometimes has difficulties with certain drivers.
-							</td>
-						</tr>		
-						<tr>
-							<td width="22%" valign="top" class="vncell">Arp Handling</td>
-							<td width="78%" class="vtable">
-								<input name="sharednet" type="checkbox" id="sharednet" value="yes" <?php if (isset($pconfig['sharednet'])) echo "checked"; ?> />
-								<strong>Suppress ARP messages</strong><br>
-								This option will suppress ARP messages when interfaces share the same physical network</strong>
-							</td>
-						</tr>
-						<tr>
-							<td width="22%" valign="top">&nbsp;</td>
-							<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
-						</tr>
-					</table>
-				</form>
-			</td>
-		</tr>
-	</table>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<?php
+						$tab_array = array();
+						$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
+						$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
+						$tab_array[] = array("Networking", true, "system_advanced_network.php");
+						$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
+						$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
+						display_top_tabs($tab_array);
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div id="mainarea">
+						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">IPv6 Options</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">IPv6 over IPv4 Tunneling</td>
+								<td width="78%" class="vtable">
+									<input name="ipv6nat_enable" type="checkbox" id="ipv6nat_enable" value="yes" <?php if ($pconfig['ipv6nat_enable']) echo "checked"; ?> onclick="enable_change(false)" />
+									<strong>Enable IPv4 NAT encapsulation of IPv6 packets</strong><br/>
+									This provides an RFC 2893 compatibility mechanism
+									that can be used to tunneling IPv6 packets over IPv4
+									routing	infrastructures. If enabled, don't forget to
+									add a firewall rule to permit IPv6 packets.<br/>
+									<br/>
+									IP address :&nbsp;
+									<input name="ipv6nat_ipaddr" type="text" class="formfld unknown" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Network Interfaces</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Device polling</td>
+								<td width="78%" class="vtable">
+									<input name="polling_enable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['polling_enable']) echo "checked"; ?>>
+									<strong>Enable device polling</strong><br>
+									Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webConfigurator, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended.
+									Not all NICs support polling; see the <?= $g['product_name'] ?> homepage for a list of supported cards.
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Hardware Checksum Offloading</td>
+								<td width="78%" class="vtable">
+									<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked"; ?> />
+									<strong>Disable hardware checksum offload.</strong><br>
+									This option will hardware assisted checksum offloading. FreeBSD sometimes has difficulties with certain drivers.
+								</td>
+							</tr>		
+							<tr>
+								<td width="22%" valign="top" class="vncell">Arp Handling</td>
+								<td width="78%" class="vtable">
+									<input name="sharednet" type="checkbox" id="sharednet" value="yes" <?php if (isset($pconfig['sharednet'])) echo "checked"; ?> />
+									<strong>Suppress ARP messages</strong><br>
+									This option will suppress ARP messages when interfaces share the same physical network</strong>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top">&nbsp;</td>
+								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</form>
 	<script language="JavaScript" type="text/javascript">
 	<!--
 		enable_change(false);

@@ -1934,6 +1934,8 @@ function get_number_of_ppp_interfaces() {
 function get_wireless_modes($interface)
 {
 	/* return wireless modes and channels */
+	$wireless_modes = array();
+
 	if(is_interface_wireless($interface)) {
 		$wi = 1;
 		$ifconfig = "/sbin/ifconfig";

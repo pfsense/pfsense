@@ -191,18 +191,6 @@ function prot_change() {
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
-					<span class="vexpl">
-						<span class="red">
-							<strong>Note:</strong>
-						</span>
-						the options on this page are intended for use by advanced users only.
-						<br/>
-					</span>
-					<br/>
-				</td>
-			</tr>
-			<tr>
-				<td>
 					<?php
 						$tab_array = array();
 						$tab_array[] = array("Admin Access", true, "system_advanced_admin.php");
@@ -215,9 +203,17 @@ function prot_change() {
 				</td>
 			</tr>
 			<tr>
-				<td>
-					<div id="mainarea">
-						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+				<td id="mainarea">
+					<div class="tabcont">
+						<span class="vexpl">
+							<span class="red">
+								<strong>NOTE:&nbsp</strong>
+							</span>
+							The options on this page are intended for use by advanced users only.
+							<br/>
+						</span>
+						<br/>
+						<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">webConfigurator</td>
 							</tr>

@@ -141,18 +141,6 @@ include("head.inc");
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td>
-				<span class="vexpl">
-					<span class="red">
-						<strong>Note:</strong>
-					</span>
-					the options on this page are intended for use by advanced users only.
-					<br/>
-				</span>
-				<br/>
-			</td>
-		</tr>
-		<tr>
-			<td>
 				<?php
 					$tab_array = array();
 					$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
@@ -166,9 +154,17 @@ include("head.inc");
 		</tr>
 		<?php if ($act != "edit" ): ?>
 		<tr>
-			<td>
-				<div id="mainarea">
-					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+			<td id="mainarea">
+				<div class="tabcont">
+					<span class="vexpl">
+						<span class="red">
+							<strong>NOTE:&nbsp</strong>
+						</span>
+						The options on this page are intended for use by advanced users only.
+						<br/>
+					</span>
+					<br/>
+					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
 							<td width="20%" class="listhdrr">Tunable Name</td>
 							<td width="60%" class="listhdrr">Description</td>

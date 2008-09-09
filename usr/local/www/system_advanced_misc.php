@@ -103,18 +103,6 @@ include("head.inc");
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
-					<span class="vexpl">
-						<span class="red">
-							<strong>Note:</strong>
-						</span>
-						the options on this page are intended for use by advanced users only.
-						<br/>
-					</span>
-					<br/>
-				</td>
-			</tr>
-			<tr>
-				<td>
 					<?php
 						$tab_array = array();
 						$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
@@ -127,9 +115,17 @@ include("head.inc");
 				</td>
 			</tr>
 			<tr>
-				<td>
-					<div id="mainarea">
-						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+				<td id="mainarea">
+					<div class="tabcont">
+						<span class="vexpl">
+							<span class="red">
+								<strong>NOTE:&nbsp</strong>
+							</span>
+							The options on this page are intended for use by advanced users only.
+							<br/>
+						</span>
+						<br/>
+						<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">Load Balancing</td>
 							</tr>
@@ -174,7 +170,7 @@ include("head.inc");
 								<td colspan="2" valign="top" class="listtopic">IP Security</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">IPsec SA preferral</td>
+								<td width="22%" valign="top" class="vncell">Security Assocications</td>
 								<td width="78%" class="vtable">
 									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
 									<strong>Prefer older IPsec SAs</strong>

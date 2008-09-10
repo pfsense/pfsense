@@ -1377,9 +1377,6 @@ function generate_user_filter_rule($rule)
 			return "# unresolvable dest aliases {$rule['descr']}";
 		}
 
-		/* optional interface if list 
-			$ifdescrs = get_configured_interface_list(true); */
-
 		update_filter_reload_status("Setting up pass/block rules");
 
 		$type = $rule['type'];

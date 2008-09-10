@@ -553,7 +553,7 @@ function interface_ppp_configure($ifcfg) {
 	$peerfile .= "lcp-echo-interval 0\n";
 	$peerfile .= "connect /etc/ppp/peers/ppp{$dev}-connect-chat\n";
 	//$peerfile .= "disconnect /etc/ppp/peers/ppp{$dev}-disconnect-chat\n";
-	$peerfile .= "/dev/{$ifcfg['if']}\n";
+	$peerfile .= "{$ifcfg['port']}\n";
 	$peerfile .= "crtscts\n";
 	$peerfile .= "local\n";
 	//$peerfile .= ":{$ifcfg['gateway']}\n";

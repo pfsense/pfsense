@@ -1753,18 +1753,27 @@ function get_current_wan_address($interface = "wan") {
 	 default:	
 		if (isset($cfg['ispointtopoint']) && $cfg['pointtopoint']) {
 			/* get interface info with netstat */
-                	exec("/usr/bin/netstat -nWI " . escapeshellarg($realif) . " -f inet", $ifinfo
-);
+                	exec("/usr/bin/netstat -nWI " . escapeshellarg($realif) . " -f inet", $ifinfo);
                 	if (isset($ifinfo[1])) {
  	                       	$aif = preg_split("/\s+/", $ifinfo[1]);
                        		$curwanip = chop($aif[3]);
-
                         	if ($curwanip && is_ipaddr($curwanip) && ($curwanip != "0.0.0.0"))
                                 	return $curwanip;
                 	}
 
                 	return null;
-		}
+		} else if (stristr($realif, "gre")) {
+			if (is_array($config['gres']['gre'])) 
+				foreach ($config['gres']['gre'] as $grecfg) 
+					if ($grecfg['greif'] == $realif)
+						return ($grecfg['tunnel-local-addr']);
+		} else if (stristr($realif, "gif")) {
+                        if (is_array($config['gifs']['gre']))
+                                foreach ($config['gifs']['gif'] as $gifcfg)
+                                        if ($gifcfg['gifif'] == $realif)
+                                                return ($gifcfg['tunnel-local-addr']);
+		}	
+
 		break;
 	}
 

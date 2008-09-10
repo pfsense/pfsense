@@ -116,24 +116,35 @@ function filter_configure_sync() {
 	/* Get interface list to work with. */
 	generate_optcfg_array();
 
+	if ($g['booting'] == true)
+		echo "Configuring firewall";
 	/* generate aliases */
-	if($g['booting'] == true) echo ".";
+	if ($g['booting'] == true) 
+		echo ".";
 	update_filter_reload_status("Creating aliases");
 	$aliases = filter_generate_aliases();
+	
 	/* generate nat rules */
-	  if($g['booting'] == true) echo ".";
+	if ($g['booting'] == true) 
+		echo ".";
 	update_filter_reload_status("Generating NAT rules");
 	$natrules = filter_nat_rules_generate();
+
 	/* generate pfctl rules */
-	if($g['booting'] == true) echo ".";
+	if ($g['booting'] == true) 
+		echo ".";
 	update_filter_reload_status("Generating filter rules");
 	$pfrules = filter_rules_generate();
-	/* generate altq */
-	if($g['booting'] == true) echo ".";
+	
+	/* generate altq, limiter */
+	if ($g['booting'] == true) 
+		echo ".";
 	update_filter_reload_status("Generating ALTQ queues");
 	$altq_queues = filter_generate_altq_queues();
-	update_filter_reload_status("Generating Virtual interfaces rules");
+	update_filter_reload_status("Generating Limiter rules");
 	$dummynet_rules = filter_generate_dummynet_rules();
+	if ($g['booting'] == true)
+		echo ".";
 
 	update_filter_reload_status("Loading filter rules");
 
@@ -144,6 +155,8 @@ function filter_configure_sync() {
 		mwexec("/sbin/pfctl -d");
 		unlink_if_exists("{$g['tmp_path']}/filter_loading");
 		update_filter_reload_status("Filter is disabled.  Not loading rules.");
+		if ($g['booting'] == true)
+                	echo "done.\n";
 		return;
 	}
 
@@ -265,11 +278,6 @@ function filter_configure_sync() {
 
 	system_start_ftp_helpers();
 	
-	if($config['system']['shapertype'] == "m0n0") {
-		require_once ("/etc/inc/m0n0/shaper.inc");
-		shaper_configure();	
-	}
-
 	/* if time based rules are enabled then swap in the set */
 	if($time_based_rules == true) {
 		tdr_install_cron(true);
@@ -289,12 +297,16 @@ function filter_configure_sync() {
 	/* sync carp entries to other firewalls */
 	update_filter_reload_status("Syncing CARP data");
 	carp_sync_client();
+	if ($g['booting'] == true)
+                echo ".";
 
 	system_routing_configure();
 	
 	find_dns_aliases();
 	
 	update_filter_reload_status("Done");
+	if ($g['booting'] == true)
+		echo "done.\n";
 
 	return 0;
 }

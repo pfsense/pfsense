@@ -134,9 +134,6 @@
 	/* start syslogd */
 	system_syslogd_start();
 
-	/* set up VLAN virtual interfaces */
-	interfaces_vlan_configure();
-	
 	/* set up interfaces */
 	if(!$debugging)
 		mute_kernel_msgs();
@@ -144,30 +141,10 @@
 	if(!$debugging)
 		unmute_kernel_msgs();
 
-        /* set up GRE virtual interfaces */
-        interfaces_gre_configure();
-
-        /* set up GIF virtual interfaces */
-        interfaces_gif_configure();
-	
-	/* set up LAGG virtual interfaces */
-	interfaces_lagg_configure();
-
-	/* set up BRIDGe virtual interfaces */
-        interfaces_bridge_configure();
-
-	/* bring up carp interfaces */
-	interfaces_carp_configure();
-	
-	/* bring ip IP aliases */
-	interfaces_ipalias_configure();
-
 	/* setup altq + pf */
-	echo "Configuring firewall...";
 	//mute_kernel_msgs();
 	filter_configure_sync();
 	//unmute_kernel_msgs();
-	echo "done.\n";
 
 	/* generate resolv.conf */
 	system_resolvconf_generate();
@@ -250,6 +227,7 @@
 	setup_microcode();
 	echo "done.\n";
 
+	/* XXX: what is up with such hacks!? */
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 	
 	/* start IPsec tunnels */
@@ -270,6 +248,7 @@
 	if(isset($config['system']['disableconsolemenu']))
 		touch("/var/etc/console_lockdown");
 
+	/* XXX: something like this is done 3 times in here?!?!?!?! */
 	filter_configure_sync();
 
 	/* load graphing functions */

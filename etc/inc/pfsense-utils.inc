@@ -2473,17 +2473,8 @@ function reload_interfaces_sync() {
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
 
-	/* set up VLAN interface */
-	interfaces_vlan_configure();
-
 	/* set up interfaces */
 	interfaces_configure();
-
-	/* set up other cloned interfaces */
-	interfaces_gif_configure();
-	interfaces_gre_configure();
-	interfaces_lagg_configure();
-	interfaces_bridge_configure();
 
 	/* set up static routes */
 	if($debug)
@@ -2499,11 +2490,6 @@ function reload_interfaces_sync() {
 	if($debug)
 		log_error("Configuring Captive portal");
 	captiveportal_configure();
-
-	/* bring up carp interfaces */
-	if($debug)
-		log_error("Configuring CARP");
-	interfaces_carp_configure();
 
 	/* restart webConfigurator if needed */
 	if($shutdown_webgui_needed == true)
@@ -2603,20 +2589,8 @@ function reload_all_sync() {
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
 
-	/* set up VLAN interfaces */
-	interfaces_vlan_configure();
-
 	/* set up interfaces */
 	interfaces_configure();
-
-        /* set up other cloned interfaces */
-        interfaces_gif_configure();
-        interfaces_gre_configure();
-	interfaces_lagg_configure();
-        interfaces_bridge_configure();
-
-	/* bring up carp interfaces */
-	interfaces_carp_configure();
 
 	/* set up static routes */
 	system_routing_configure();

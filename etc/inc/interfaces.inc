@@ -413,21 +413,81 @@ function interface_gif_configure(&$gif) {
 }
 
 function interfaces_configure() {
-	global $g;
+	global $config, $g;
+
+        /* set up VLAN virtual interfaces */
+        interfaces_vlan_configure();
+
+        /* set up LAGG virtual interfaces */
+        interfaces_lagg_configure();
+
+	/* Set up PPP interfaces */
+	interfaces_ppp_configure();
 
 	$iflist = get_configured_interface_with_descr();
+	$delayed_list = array();
+	$bridge_list = array();
 	
 	foreach($iflist as $if => $ifname) {
-		if ($g['booting']) 
-			echo "Configuring {$ifname} interface...";
-		if($debug)
- 	               log_error("Configuring {$ifname}");
+		$realif = $config['interfaces'][$if]['if'];
+
+		if (strstr($realif, "bridge")) 
+			$bridge_list[$if] = $ifname;
+		else if (strstr($realif, "gre"))
+			$delayed_list[$if] = $ifname;
+		else if (strstr($realif, "gif"))
+			$delayed_list[$if] = $ifname;
+		else {
+			if ($g['booting'])
+        	                echo "Configuring {$ifname} interface...";
+                	if($debug)
+                       		log_error("Configuring {$ifname}");
+
+			interface_configure($if);
+
+			if ($g['booting']) 
+                		echo "done.\n";
+		}
+	}
+
+        /* set up GRE virtual interfaces */
+        interfaces_gre_configure();
+
+        /* set up GIF virtual interfaces */
+        interfaces_gif_configure();
+	
+	foreach ($delayed_list as $if => $ifname) {
+		if ($g['booting'])
+                        echo "Configuring {$ifname} interface...";
+                if($debug)
+                       log_error("Configuring {$ifname}");
 
 		interface_configure($if);
 
-		if ($g['booting']) 
-                	echo "done.\n";
+		if ($g['booting'])
+			echo "done.\n";
 	}
+
+        /* set up BRIDGe virtual interfaces */
+        interfaces_bridge_configure();
+
+        foreach ($bridge_list as $if => $ifname) {
+                if ($g['booting'])
+                        echo "Configuring {$ifname} interface...";
+                if($debug)
+                       log_error("Configuring {$ifname}");
+
+                interface_configure($if);
+
+                if ($g['booting'])
+                        echo "done.\n";
+        }
+
+        /* bring up carp interfaces */
+        interfaces_carp_configure();
+
+        /* bring ip IP aliases */
+        interfaces_ipalias_configure();
 
 	if (!$g['booting']) {
 		/* reconfigure static routes (kernel may have deleted them) */
@@ -459,24 +519,44 @@ function interface_bring_down($interface) {
 	mwexec("/sbin/ifconfig " . escapeshellarg($cfg['if']) . " delete down");
 }
 
-function interfaces_ppp_configure_if($ifcfg) {
+function interfaces_ppp_configure() {
+        global $config;
+
+        $i = 0;
+        if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+                foreach ($config['ppps']['ppp'] as $ppp) {
+                        if(empty($ppp['pppif'])) {
+                                $ppp['pppif'] = "ppp{$i}";
+                        }
+                        /* XXX: Maybe we should report any errors?! */
+                        interface_vlan_configure($ppp);
+                        $i++;
+                }
+        }
+}
+
+function interface_ppp_configure($ifcfg) {
 	global $config;
 	
-	if(file_exists("/var/run/ppp0.pid")) {
-		$pid = file_get_contents("/var/run/ppp0.pid");
-		mwexec('kill $pid');
+	/* Remove  the /dev/ from the device name. */
+	$dev = substr($ifcfg['port'], 4);
+
+	if(file_exists("/var/run/ppp_{$dev}.pid")) {
+		$pid = trim(file_get_contents("/var/run/ppp_{$dev}.pid"));
+		mwexec("kill {$pid}");
 	}
 	
-	mwexec("/sbin/ifconfig ppp0 down destroy");
+	if ($ifcfg['pppif'] <> "")
+		mwexec("/sbin/ifconfig {$ifcfg['pppif']} destroy");
 
 	$peerfile = "lcp-echo-failure 0\n";
 	$peerfile .= "lcp-echo-interval 0\n";
-	$peerfile .= "connect /etc/ppp/peers/ppp0-connect-chat\n";
-	//$peerfile .= "disconnect /etc/ppp/peers/ppp0-disconnect-chat\n";
-	$peerfile .= "/dev/{$ifcfg['serialport']}\n";
+	$peerfile .= "connect /etc/ppp/peers/ppp{$dev}-connect-chat\n";
+	//$peerfile .= "disconnect /etc/ppp/peers/ppp{$dev}-disconnect-chat\n";
+	$peerfile .= "/dev/{$ifcfg['if']}\n";
 	$peerfile .= "crtscts\n";
 	$peerfile .= "local\n";
-	$peerfile .= ":{$ifcfg['gateway']}\n";
+	//$peerfile .= ":{$ifcfg['gateway']}\n";
 	$peerfile .= "noipdefault\n";
 	$peerfile .= "ipcp-accept-local\n";
 	$peerfile .= "novj\n";
@@ -492,7 +572,7 @@ function interfaces_ppp_configure_if($ifcfg) {
 	//$peerfile .= "nodetach\n";
 	// KD - so I know where to look!
 	$peerfile .= "# created by /etc/inc/interfaces.inc\n";
-	file_put_contents("/etc/ppp/peers/ppp0", $peerfile);
+	file_put_contents("/etc/ppp/peers/ppp_{$dev}", $peerfile);
 
 	// Added single quotes to some strings below:
 	// the \rAT is *always* going to need it
@@ -521,10 +601,12 @@ function interfaces_ppp_configure_if($ifcfg) {
 	$chatfile .= "TIMEOUT 22 \\\n";
 	$chatfile .= "CONNECT \"\" \\\n";
 	$chatfile .= "SAY \"\\nConnected.\"\n";
-	file_put_contents("/etc/ppp/peers/ppp0-connect-chat", $chatfile);
-	chmod("/etc/ppp/peers/ppp0-connect-chat", 0755);
-	mwexec("/sbin/ifconfig ppp0 create");
-	return 0;
+	file_put_contents("/etc/ppp/peers/ppp{$dev}-connect-chat", $chatfile);
+	chmod("/etc/ppp/peers/ppp{$dev}-connect-chat", 0755);
+	
+	$realif = exec("/sbin/ifconfig ppp create");
+	
+	return $realif;
 }
 
 function interfaces_carp_configure() {
@@ -1666,10 +1748,7 @@ function get_real_wan_interface($interface = "wan") {
 					$wanif = "pptp" . substr($if, 3);
 				break;
 			default:
-				if (isset($cfg['ispointtopoint']) && $cfg['pointtopoint'])
-					$wanif = "ppp0"; // XXX: PPP needs to convert to mpd
-				else	
-					$wanif = $cfg['if'];
+				$wanif = $cfg['if'];
 				break;
 			}
 			
@@ -1794,20 +1873,6 @@ function is_altq_capable($int) {
                 return true;
         else
                 return false;
-}
-
-function get_number_of_ppp_interfaces() {
-        $ppps_total = 0;
-        $ppps = split("\n", `/sbin/ifconfig -a | /usr/bin/grep ppp | grep flags`);
-        foreach($ppps as $bridge) {
-                $match_array = "";
-                preg_match_all("/ppp(.*):/",$bridge,$match_array);
-                if($match_array[1][0] <> "") {
-                        if($match_array[1][0] > $ppps_total)
-                                $ppps_total = $match_array[1][0];
-                }
-        }
-        return "{$ppps_total}";
 }
 
 function get_wireless_modes($interface)

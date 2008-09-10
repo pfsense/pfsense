@@ -546,8 +546,13 @@ function interface_ppp_configure($ifcfg) {
 		mwexec("kill {$pid}");
 	}
 	
-	if ($ifcfg['pppif'] <> "")
-		mwexec("/sbin/ifconfig {$ifcfg['pppif']} destroy");
+	$realif  = $ifcfg['pppif'];
+	if ($g['booting'] || !(empty($realif))) {
+                mwexec("/sbin/ifconfig {$realif} destroy");
+                mwexec("/sbin/ifconfig {$realif} create");
+        } else
+                $realif = exec("/sbin/ifconfig ppp create");
+
 
 	$peerfile = "lcp-echo-failure 0\n";
 	$peerfile .= "lcp-echo-interval 0\n";
@@ -572,7 +577,6 @@ function interface_ppp_configure($ifcfg) {
 	//$peerfile .= "nodetach\n";
 	// KD - so I know where to look!
 	$peerfile .= "# created by /etc/inc/interfaces.inc\n";
-	file_put_contents("/etc/ppp/peers/ppp_{$dev}", $peerfile);
 
 	// Added single quotes to some strings below:
 	// the \rAT is *always* going to need it
@@ -601,10 +605,14 @@ function interface_ppp_configure($ifcfg) {
 	$chatfile .= "TIMEOUT 22 \\\n";
 	$chatfile .= "CONNECT \"\" \\\n";
 	$chatfile .= "SAY \"\\nConnected.\"\n";
+
+	config_lock();
+	conf_mount_rw();
+	file_put_contents("/etc/ppp/peers/ppp_{$dev}", $peerfile);
 	file_put_contents("/etc/ppp/peers/ppp{$dev}-connect-chat", $chatfile);
 	chmod("/etc/ppp/peers/ppp{$dev}-connect-chat", 0755);
-	
-	$realif = exec("/sbin/ifconfig ppp create");
+	conf_mount_ro();
+	config_unlock();
 	
 	return $realif;
 }

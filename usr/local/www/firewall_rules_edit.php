@@ -221,8 +221,6 @@ if ($_POST) {
 		if (isset($_POST['floating']) && $key == "interface")
 			continue;
 		$newpost = htmlentities($temp);
-		if($newpost <> $temp) 
-			$input_errors[] = "Invalid characters detected ($temp).  Please remove invalid characters and save again.";
 	}
 
 	/* input validation */

@@ -2598,10 +2598,11 @@ function system_start_ftp_helpers() {
 	/* loop through all interfaces and handle ftp-proxy */
 	$interface_counter = 0;
 	foreach ($iflist as $ifent => $ifname) {
-		/* XXX: needed?! */
-		if ($ifent == "wan")
-			continue;
 
+		if(interface_has_gateway($ifname) {
+			$interface_counter++;
+			continue;
+		}
 		/*    if the ftp proxy is disabled for this interface then kill ftp-proxy
 		 *    instance and continue. note that the helpers for port forwards are
 		 *    launched in a  different sequence so we are filtering them out
@@ -2618,6 +2619,9 @@ function system_start_ftp_helpers() {
 			 *    keep processing interfaces. kill ftp-proxy if already
 			 *    running for this instance.
 			 */
+			if($g['debug'])
+				log_error("Config: FTP proxy disabled for interface {$ifent}");
+
 			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");
 			if($helpers)
 				mwexec("/bin/kill {$helpers}");
@@ -2657,6 +2661,8 @@ function system_start_ftp_helpers() {
 				}
 			}
 			/* if ftp-proxy is already running then do not launch it again */
+			if($g['debug'])
+				log_error("Config: FTP proxy port ($port) enabled for interface {$ifname}");
 			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)
  				mwexec("/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port} {$pftpxsourceaddr} {$ip}");

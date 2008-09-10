@@ -5,13 +5,13 @@
 echo "Starting the pfSense shell system";
 
 echo ".";
-require("globals.inc");
+require_once("globals.inc");
 $g['booting'] = true;
-require("functions.inc");
+require_once("functions.inc");
 echo ".";
-require("config.inc");
+require_once("config.inc");
 echo ".";
-require("util.inc");
+require_once("util.inc");
 echo ".";
 $g['booting'] = false;
 

@@ -732,14 +732,14 @@ function interfaces_ipalias_configure() {
 	if(is_array($viparr)) {
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] == "ipalias") {
-				$if = $vip['interface'];
-				mwexec("/sbin/ifconfig " . escapeshellarg($config['interfaces'][$if]['if']) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias"); 
+				$if = get_real_wan_interface($vip['interface']);
+				mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias"); 
 			}
 		}
 	}
 }
 
-function interfaces_wireless_configure($if, $wlcfg) {
+function interface_wireless_configure($if, $wlcfg) {
 	global $config, $g;
 
 	/*    open up a shell script that will be used to output the commands.
@@ -995,8 +995,8 @@ function kill_wpasupplicant($interface) {
 }
 
 function find_dhclient_process($interface) {
-	if(filter_translate_type_to_real_interface($interface) <> "")
-        	$realinterface = filter_translate_type_to_real_interface($interface);
+	if (get_real_wan_interface($interface) <> "")
+        	$realinterface = get_real_wan_interface($interface);
 	if($realinterface)
 		$pid = `ps awwwux | grep dhclient | grep -v grep | grep {$realinterface} | awk '{ print \$2 }'`;
 	return $pid;
@@ -1035,26 +1035,27 @@ function interface_configure($interface = "wan") {
 		unlink_if_exists("{$g['varetc_path']}/nameservers.conf");
 	}
 
-	/* remove all addresses first */
-	while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias") == 0);
-	mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
-
+	if (!$g['booting']) {
+		/* remove all addresses first */
+		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias") == 0);
+		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
+	}
 	/* wireless configuration? */
 	if (is_array($wancfg['wireless']))
 		interfaces_wireless_configure($realif, $wancfg['wireless']);
 
 	if ($wancfg['spoofmac']) {
-		mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
+		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 	}  else {
-		$mac = get_interface_mac_address($realif);
+		$mac = get_interface_mac_address($wancfg['if']);
 		if($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.
 			 */
 			echo "Generating new MAC address.";
 			$random_mac = generate_random_mac_address();
-			mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
+			mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .
 				" link " . escapeshellarg($random_mac));
 			$wancfg['spoofmac'] = $random_mac;
 			write_config();
@@ -1064,7 +1065,7 @@ function interface_configure($interface = "wan") {
 
 	/* media */
 	if ($wancfg['media'] || $wancfg['mediaopt']) {
-		$cmd = "/sbin/ifconfig " . escapeshellarg($realif);
+		$cmd = "/sbin/ifconfig " . escapeshellarg($wancfg['if']);
 		if ($wancfg['media'])
 			$cmd .= " media " . escapeshellarg($wancfg['media']);
 		if ($wancfg['mediaopt'])
@@ -1075,23 +1076,23 @@ function interface_configure($interface = "wan") {
 	switch ($wancfg['ipaddr']) {
 
 		case 'carpdev-dhcp':
-			interfaces_wan_carpdev_dhcp_configure($interface);
+			interface_carpdev_dhcp_configure($interface);
 			break;
 		case 'dhcp':
-			interfaces_wan_dhcp_configure($interface);
+			interface_dhcp_configure($interface);
 			break;
 
 		case 'pppoe':
-			interfaces_wan_pppoe_configure($interface);
+			interface_pppoe_configure($interface);
 			break;
 
 		case 'pptp':
-			interfaces_wan_pptp_configure($interface);
+			interface_pptp_configure($interface);
 			break;
 
 		case 'bigpond':
 			/* just configure DHCP for now; fire up bpalogin when we've got the lease */
-			interfaces_wan_dhcp_configure($interface);
+			interface_dhcp_configure($interface);
 			break;
 
 		default:
@@ -1112,7 +1113,7 @@ function interface_configure($interface = "wan") {
 
 	}
 
-	mwexec("/sbin/ifconfig {$realif} up");
+	mwexec("/sbin/ifconfig {$wancfg['if']} up");
 
 	/* XXX: Shouldn't the caller do this?! */
 	if (!$g['booting']) {
@@ -1149,7 +1150,7 @@ function interface_configure($interface = "wan") {
 	return 0;
 }
 
-function interfaces_wan_carpdev_dhcp_configure($interface = "wan") {
+function interface_carpdev_dhcp_configure($interface = "wan") {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];
@@ -1160,7 +1161,7 @@ function interfaces_wan_carpdev_dhcp_configure($interface = "wan") {
 	return 0;
 }
 
-function interfaces_wan_dhcp_configure($interface = "wan") {
+function interface_dhcp_configure($interface = "wan") {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];
@@ -1224,18 +1225,10 @@ EOD;
 	return 0;
 }
 
-function interfaces_wan_dhcp_down($interface = "wan") {
+function interface_dhcp_down($interface = "wan") {
 	global $config;
-	$wancfg = $config['interfaces'][$interface];
-	$wanif = $wancfg['if'];
-	mwexec("/sbin/ifconfig {$wanif} delete");
-	sleep(1);
-}
-
-function interfaces_dhcp_down($interface) {
-	global $config;
-	if(filter_translate_type_to_real_interface($interface) <> "")
-		$realinterface = filter_translate_type_to_real_interface($interface);
+	if(get_real_wan_interface($interface) <> "")
+		$realinterface = get_real_wan_interface($interface);
 	mwexec("/sbin/ifconfig {$realinterface} down");
 	sleep(1);
 	$pid = find_dhclient_process($interface);
@@ -1243,17 +1236,12 @@ function interfaces_dhcp_down($interface) {
 		mwexec("kill {$pid}");
 }
 
-function interfaces_dhcp_up($interface = "wan") {
+function interface_dhcp_up($interface = "wan") {
 	interfaces_dhcp_configure($interface);
 	sleep(1);
 }
 
-function interfaces_wan_dhcp_up($interface = "wan") {
-	interfaces_wan_dhcp_configure($interface);
-	sleep(1);
-}
-
-function interfaces_wan_pppoe_configure($interface = "wan") {
+function interface_pppoe_configure($interface = "wan") {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];
@@ -1261,7 +1249,7 @@ function interfaces_wan_pppoe_configure($interface = "wan") {
 	/* generate mpd.conf */
 	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.conf", "w");
 	if (!$fd) {
-		printf("Error: cannot open mpd_{$interface}.conf in interfaces_wan_pppoe_configure().\n");
+		printf("Error: cannot open mpd_{$interface}.conf in interface_pppoe_configure().\n");
 		return 1;
 	}
 
@@ -1361,7 +1349,7 @@ EOD;
 	/* generate mpd.links */
 	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.links", "w");
 	if (!$fd) {
-		printf("Error: cannot open mpd_{$interface}.links in interfaces_wan_pppoe_configure().\n");
+		printf("Error: cannot open mpd_{$interface}.links in interface_pppoe_configure().\n");
 		return 1;
 	}
 
@@ -1407,25 +1395,25 @@ EOD;
 	return 0;
 }
 
-function interfaces_wan_pppoe_restart($interface = "wan") {
-	interfaces_wan_pppoe_down($interface);
+function interface_pppoe_restart($interface = "wan") {
+	interface_pppoe_down($interface);
 	sleep(1);
-	interfaces_wan_pppoe_up($interface);
+	interface_pppoe_up($interface);
 }
 
-function interfaces_wan_pppoe_down($interface = "wan") {
+function interface_pppoe_down($interface = "wan") {
 	global $g;
 	sigkillbypid("{$g['varrun_path']}/pppoe_{$interface}.pid", "SIGUSR2");
 	sleep(1);
 }
 
-function interfaces_wan_pppoe_up($interface = "wan") {
+function interface_pppoe_up($interface = "wan") {
 	global $g;
 	sigkillbypid("{$g['varrun_path']}/pppoe_{$interface}.pid", "SIGUSR1");
 	sleep(1);
 }
 
-function interfaces_wan_pptp_configure($interface) {
+function interface_pptp_configure($interface) {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];
@@ -1433,7 +1421,7 @@ function interfaces_wan_pptp_configure($interface) {
 	/* generate mpd.conf */
 	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.conf", "w");
 	if (!$fd) {
-		printf("Error: cannot open mpd_{$interface}.conf in interfaces_wan_pptp_configure().\n");
+		printf("Error: cannot open mpd_{$interface}.conf in interface_pptp_configure().\n");
 		return 1;
 	}
 
@@ -1517,7 +1505,7 @@ EOD;
 	/* generate mpd.links */
 	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.links", "w");
 	if (!$fd) {
-		printf("Error: cannot open mpd_{$interface}.links in interfaces_wan_pptp_configure().\n");
+		printf("Error: cannot open mpd_{$interface}.links in interface_pptp_configure().\n");
 		return 1;
 	}
 
@@ -1544,25 +1532,25 @@ EOD;
 	return 0;
 }
 
-function interfaces_wan_pptp_restart($interface = "wan") {
-	interfaces_wan_pptp_down($interface);
+function interface_pptp_restart($interface = "wan") {
+	interface_pptp_down($interface);
 	sleep(1);
-	interfaces_wan_pptp_up($interface);
+	interface_pptp_up($interface);
 }
 
-function interfaces_wan_pptp_down($interface = "wan") {
+function interface_pptp_down($interface = "wan") {
 	global $g;
 	sigkillbypid("{$g['varrun_path']}/pptp_{$interface}.pid", "SIGUSR2");
 	sleep(1);
 }
 
-function interfaces_wan_pptp_up($interface = "wan") {
+function interface_pptp_up($interface = "wan") {
 	global $g;
 	sigkillbypid("{$g['varrun_path']}/pptp_{$interface}.pid", "SIGUSR1");
 	sleep(1);
 }
 
-function interfaces_wan_bigpond_configure($curwanip) {
+function interface_bigpond_configure($curwanip) {
 	global $config, $g;
 
 	$bpcfg = $config['bigpond'];

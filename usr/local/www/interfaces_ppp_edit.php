@@ -52,7 +52,8 @@ if (isset($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_ppps[$id]) {
-	$pconfig['if'] = $a_ppps[$id]['if'];
+	$pconfig['port'] = $a_ppps[$id]['port'];
+	$pconfig['pppif'] = $a_ppps[$id]['pppif'];
 	$pconfig['initstr'] = $a_ppps[$id]['initstr'];
 	$pconfig['phone'] = $a_ppps[$id]['phone'];
 	$pconfig['linespeed'] = $a_ppps[$id]['linespeed'];
@@ -87,18 +88,20 @@ if ($_POST) {
 		$ppp['phone'] = $_POST['phone'];
 		$ppp['linespeed'] = $_POST['linespeed'];
 		$ppp['descr'] = $_POST['descr'];
+		$ppp['pppif'] = interface_ppp_configure($ppp);
+                if ($ppp['pppif'] == "" || !stristr($ppp['pppif'], "ppp"))
+                        $input_errors[] = "Error occured creating interface, please retry.";
+                else {
+			if (isset($id) && $a_ppps[$id])
+				$a_ppps[$id] = $ppp;
+			else
+				$a_ppps[] = $ppp;
 
-		if (isset($id) && $a_ppps[$id])
-			$a_ppps[$id] = $ppp;
-		else
-			$a_ppps[] = $ppp;
+			write_config();
 
-		write_config();
-
-		interfaces_configure();
-
-		header("Location: interfaces_ppp.php");
-		exit;
+			header("Location: interfaces_ppp.php");
+			exit;
+		}
 	}
 }
 
@@ -125,7 +128,7 @@ include("head.inc");
 							if(preg_match("/\.(lock|init)$/", $port))
 								continue;
 							echo "<option value=\"{$port}\"";
-							if (false)
+							if ($pconfig['port'] = $port)
 								echo "selected";
 							echo ">";
                       		echo $port;

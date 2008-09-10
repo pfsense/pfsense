@@ -58,31 +58,15 @@ function ppp_inuse($num) {
 	return false;
 }
 
-function renumber_ppp($if, $delppp) {
-	if (!preg_match("/^ppp/", $if))
-		return $if;
-
-	$ppp = substr($if, 4);
-	if ($ppp > $delppp)
-		return "ppp" . ($ppp - 1);
-	else
-		return $if;
-}
-
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (ppp_inuse($_GET['id'])) {
 		$input_errors[] = "This PPP interface cannot be deleted because it is still being used as an interface.";
 	} else {
+		mwexec("/sbin/ifconfig " . $a_ppps[$_GET['id']]['pppif'] . " destroy");
 		unset($a_ppps[$_GET['id']]);
 
-		$iflist = get_configured_interface_list(false, true);
-		foreach ($iflist as $if)
-			$config['interfaces'][$if]['if'] = renumber_ppp($config['interfaces'][$if]['if'], $_GET['id']);
-
 		write_config();
-
-		interfaces_configure();
 
 		header("Location: interfaces_ppp.php");
 		exit;

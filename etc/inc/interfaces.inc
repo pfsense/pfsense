@@ -1388,7 +1388,7 @@ EOD;
 		}
 
 		/* Bring the parent interface up */
-		mwecev("/sbin/ifconfig {$wancfg['if']} up");
+		mwexec("/sbin/ifconfig {$wancfg['if']} up");
 
 		/* fire up mpd */
 		mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pppoe_{$interface}.pid pppoeclient");

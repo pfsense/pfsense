@@ -316,7 +316,7 @@ if ($_POST) {
 		if ($_POST['defaultqueue'] == "none" )
 			$input_errors[] = "You have to select a queue when you select an acknowledge queue too.";
 		else if ($_POST['ackqueue'] == $_POST['defaultqueue'])
-			$input_errors[] = "Acknokledge queue and Queue cannot be the same.";		
+			$input_errors[] = "Acknowledge queue and Queue cannot be the same.";		
 	}
 	if ($_POST['pdnpipe'] && $_POST['pdnpipe'] != "none") {
 		if ($_POST['dnpipe'] == "none" )

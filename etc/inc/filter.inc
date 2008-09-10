@@ -874,6 +874,8 @@ function filter_nat_rules_generate()
 			}
 		}
 		$tmp_port = 8021 + $interface_counter;
+		if($g['debug'])
+			log_error("Filter: FTP proxy port ($tmp_port) enabled for interface {$ifcfg['descr']}");
 		$temp_array_holder_pftpx = array();
 		$temp_array_holder_pftpx['port'] = $tmp_port;
 		$temp_array_holder_pftpx['interface'] = "\${$ifcfg['descr']}";

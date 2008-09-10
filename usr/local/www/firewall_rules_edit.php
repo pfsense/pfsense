@@ -1114,7 +1114,7 @@ on another rule.")?>
 			<td width="78%" class="vtable">
 				<input name="descr" type="text" class="formfld unknown" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>">
 				<br />
-				<span class="vexpl">You may enter a description here for your reference (not parsed).</span>
+				<span class="vexpl">You may enter a description here for your reference.</span>
 			</td>
 		</tr>
 		<tr>

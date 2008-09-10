@@ -221,12 +221,13 @@ if ($_POST) {
 		if (isset($_POST['floating']) && $key == "interface")
 			continue;
 		$newpost = htmlentities($temp);
+		if($newpost <> $temp)   	 
+			$input_errors[] = "Invalid characters detected ($temp).  Please remove invalid characters and save again.";		
 	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "type proto src dst");
 	$reqdfieldsn = explode(",", "Type,Protocol,Source,Destination");
-
 
 	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
 		if( $_POST['proto'] != "tcp" )
@@ -234,7 +235,6 @@ if ($_POST) {
 		if(($_POST['statetype'] == "synproxy state") && ($_POST['gateway'] != ""))
 			$input_errors[] = "{$_POST['statetype']} is only valid if the gateway is set to 'default'.";
 	}
-
 
 	if (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single"))) {
 		$reqdfields[] = "srcmask";

@@ -781,6 +781,10 @@ EOD;
 			fclose($fd);
 		}
 
+		/* needed for racoonctl admin socket */
+		if (!file_exists("/var/db/racoon"))
+			mkdir("/var/db/racoon/");
+		
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
 			/* We are already online, reload */

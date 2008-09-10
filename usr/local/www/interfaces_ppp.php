@@ -109,7 +109,7 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
                 <tr>
                   <td class="listlr">
-					ppp<?=htmlspecialchars($id);?>
+					<?=htmlspecialchars($ppp['pppif']);?>
                   </td>
                   <td class="listr">
 					<?=htmlspecialchars($ppp['port']);?>

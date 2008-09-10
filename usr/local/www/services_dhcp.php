@@ -53,16 +53,10 @@ if($config['installedpackages']['olsrd']) {
 	}
 }
 
-$ifdescrs = get_configured_interface_with_descr();
+if (!$_GET['if'])
+	$savemsg = "<b>The DHCP Server can only be enabled on interfaces configured with static IP addresses.<p> The interfaces not configured with static ip will not be shown.</p></b>";
 
-foreach ($ifdescrs as $ifname => $ifdesc) {
-	$oc = $config['interfaces'][$ifname];
-
-	if (!is_ipaddr($oc['ipaddr']) && !$is_olsr_enabled)
-		$singleif_nostaticip = true;
-	else if ($oc['if']) 
-		$iflist[$ifname] = $ifdesc;
-}
+$iflist = get_configured_interface_with_descr();
 
 /* set the starting interface */
 if($config['interfaces']['lan']) {
@@ -379,13 +373,6 @@ function show_netboot_config() {
 		echo "</html>";
 		exit;
 	}
-	if ($singleif_nostaticip) {
-		echo "<b>The DHCP Server can only be enabled on interfaces configured with static IP addresses. Your interface is not configured with a static IP.</b>";
-		include("fend.inc"); 
-		echo "</body>";
-		echo "</html>";
-		exit;		
-	}
 ?>
 <?php if (file_exists($d_staticmapsdirty_path)): ?><p>
 <?php print_info_box_np("The static mapping configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
@@ -398,11 +385,22 @@ function show_netboot_config() {
 	$tabscounter = 0;
 	$i = 0;
 	foreach ($iflist as $ifent => $ifname) {
+        	$oc = $config['interfaces'][$ifent];
+        	if (!is_ipaddr($oc['ipaddr']))
+			continue;
 		if ($ifent == $if)
 			$active = true;
 		else
 			$active = false;
 		$tab_array[] = array($ifname, $active, "services_dhcp.php?if={$ifent}");
+		$tabscounter++;
+	}
+	if ($tabscounter == 0) {
+		echo "</td></tr></table></form>";
+		include("fend.inc");
+		echo "</body>";
+		echo "</html>";
+		exit;
 	}
 	display_top_tabs($tab_array);
   ?>

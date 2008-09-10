@@ -153,7 +153,7 @@ if ($_POST) {
 
 	    $savemsg = get_std_save_message($retval);
 		if ($restart_webgui)
-			$savemsg .= "<br />One moment...redirecting to {$url} in 10 seconds.";
+			$savemsg .= "<br />One moment...redirecting to {$url} in 20 seconds.";
 
 		conf_mount_rw();
 		setup_serial_port();
@@ -374,7 +374,7 @@ function prot_change() {
 <?php include("fend.inc"); ?>
 <?php
 	if ($restart_webgui)
-		echo "<meta http-equiv=\"refresh\" content=\"10;url={$url}\">";
+		echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\">";
 ?>
 </body>
 </html>

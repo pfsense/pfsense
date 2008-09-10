@@ -49,18 +49,18 @@ if ($_POST) {
 	$ifcfg = &$config['interfaces'][$interface];
 	if ($_POST['submit'] == "Disconnect" || $_POST['submit'] == "Release") {
 		if ($ifcfg['ipaddr'] == "dhcp")
-			interfaces_dhcp_down($interface);
+			interface_dhcp_down($interface);
 		else if ($ifcfg['ipaddr'] == "pppoe")
-			interfaces_wan_pppoe_down($interface); 
+			interface_pppoe_down($interface); 
 		else if ($ifcfg['ipaddr'] == "pptp")
-			interfaces_wan_pptp_down($interface); 
+			interface_pptp_down($interface); 
 	} else if ($_POST['submit'] == "Connect" || $_POST['submit'] == "Renew") {
 		if ($ifcfg['ipaddr'] == "dhcp")
-			interfaces_dhcp_up($interface);
+			interface_dhcp_up($interface);
 		else if ($ifcfg['ipaddr'] == "pppoe")
-			interfaces_wan_pppoe_up($interface); 
+			interface_pppoe_up($interface); 
 		else if ($ifcfg['ipaddr'] == "pptp")
-			interfaces_wan_pptp_up($interface); 
+			interface_pptp_up($interface); 
 	} else {
 		header("Location: index.php");
 		exit;

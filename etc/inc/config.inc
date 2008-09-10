@@ -2599,7 +2599,7 @@ function system_start_ftp_helpers() {
 	$interface_counter = 0;
 	foreach ($iflist as $ifent => $ifname) {
 
-		if(interface_has_gateway($ifname) {
+		if(interface_has_gateway($ifname)) {
 			$interface_counter++;
 			continue;
 		}

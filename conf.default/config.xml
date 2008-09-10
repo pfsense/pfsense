@@ -496,7 +496,7 @@
 		<!-- <tcpidletimeout></tcpidletimeout> -->
 		<rule>
 			<type>pass</type>
-			<descr>Default LAN -&gt; any</descr>
+			<descr>Default allow LAN to any rule</descr>
 			<interface>lan</interface>
 			<source>
 				<network>lan</network>

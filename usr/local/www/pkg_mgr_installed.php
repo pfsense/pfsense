@@ -51,93 +51,116 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
-<?php
-	$version = file_get_contents("/etc/version");
-	$tab_array = array();
-	$tab_array[] = array("Available {$version} packages", false, "pkg_mgr.php");
-	$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
-/*  $tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other"); */
-	$tab_array[] = array("Installed packages", true, "pkg_mgr_installed.php");
-	display_top_tabs($tab_array);
-?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
-                  <td width="15%" class="listhdrr">Package Name</td>
-                  <td width="20%" class="listhdrr">Category</td>
-		  <td width="10%" class="listhdrr">Package Version</td>
-                  <td width="45%" class="listhdr">Description</td>
-                </tr>
-		<?php
-                 if($config['installedpackages']['package'] != "") {
-		    $instpkgs = array();
-		    foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
-		    asort($instpkgs);
-		    foreach ($instpkgs as $index => $pkgname){
-			$pkg = $config['installedpackages']['package'][$index];
-                        if($pkg['name'] <> "") {
-                            ?>
-                            <tr valign="top">
-                                <td class="listlr">
-                                    <?= $pkg['name'] ?>
-                                </td>
-                                <td class="listlr">
-                                    <?= $pkg['category'] ?>
-                                </td>
-                                <?php
-                                        $latest_package = $currentvers[$pkg['name']]['version'];
-					if($latest_package == false) {
-						// We can't determine this package's version status.
-						?><td class="listlr"><?php
-						echo "Current: Unknown.<br>Installed: " . $pkg['version'];
-                                       		?></td><?php
-					} elseif(strcmp($pkg['version'], $latest_package) > 0) {
-                                            /* we're running a newer version of the package */
-					    ?><td class="listbggrey"><font color="#FFFFFF"><?php
-                                            echo "Current: {$latest_package}";
-                                            echo "<br>Installed: {$pkg['version']}";
-					    ?></td><?php
-                                        } elseif(strcmp($pkg['version'], $latest_package) < 0) {
-					    /* our package is out of date */
-					    ?><td class="listbg"><font color="#FFFFFF"><?php
-                                            echo "Current: {$latest_package}";
-					    echo "<br>Installed: {$pkg['version']}";
-					    ?></td><?php
-                                        } else {
-					    ?><td class="listlr"><?php
-					    echo $pkg['version'];
-					    ?></td><?php
-					}
-                                ?>
-                                <td class="listbg">
-                                    <font color="#ffffff">
-                                    <?= $pkg['descr'] ?>
-                                </td>
-                                <td valign="middle" class="list" nowrap>
-                                    <a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>"><img title="Remove this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
-                                    <br>
-				    <a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>"><img title="Reinstall this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0"</a>
-				    <a href="pkg_mgr_install.php?mode=reinstallxml&pkg=<?= $pkg['name']; ?>"><img title="Reinstall this package's GUI components." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_xml.gif" width="17" height="17" border="0"</a>
-				</td>
-                            </tr>
-                            <?php
-                        }
-		    }
-                 } else {
-                    echo "<tr><td colspan=\"5\"><center>There are no packages currently installed.</td></tr>";
-                 }
-		?>
-        </table>
-	</div>
-    </td>
-  </tr>
-</table>
+	<?php include("fbegin.inc"); ?>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td>
+				<?php
+					$version = file_get_contents("/etc/version");
+					$tab_array = array();
+					$tab_array[] = array("Available {$version} packages", false, "pkg_mgr.php");
+					$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
+//					$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
+					$tab_array[] = array("Installed packages", true, "pkg_mgr_installed.php");
+					display_top_tabs($tab_array);
+				?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div id="mainarea">
+					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+						<tr>
+							<td width="15%" class="listhdrr">Package Name</td>
+							<td width="20%" class="listhdrr">Category</td>
+							<td width="10%" class="listhdrr">Package Version</td>
+							<td width="45%" class="listhdr">Description</td>
+						</tr>
+						<?php
+							if(is_array($config['installedpackages']['package'])):
+
+								$instpkgs = array();
+								foreach($config['installedpackages']['package'] as $instpkg)
+									if($instpkg['name'])
+										$instpkgs[] = $instpkg['name'];
+								asort($instpkgs);
+
+								foreach ($instpkgs as $index => $pkgname):
+
+									$pkg = $config['installedpackages']['package'][$index];
+									if(!$pkg['name'])
+										continue;
+
+									$latest_package = $currentvers[$pkg['name']]['version'];
+									if ($latest_package) {
+										// we're running a newer version of the package
+										if(strcmp($pkg['version'], $latest_package) > 0) {
+											$tdclass = "listbggrey";
+											$pkgver  = "Available: {$latest_package}<br/>";
+											$pkgver .= "Installed: {$pkg['version']}";
+										}
+										// we're running an older version of the package
+										if(strcmp($pkg['version'], $latest_package) < 0) {
+											$tdclass = "listbg";
+											$pkgver  = "Available: {$latest_package}<br/>";
+											$pkgver .= "Installed: {$pkg['version']}";
+										}
+										// we're running the current version
+										if(!strcmp($pkg['version'], $latest_package)) {
+											$tdclass = "listr";
+											$pkgver  = $pkg['version'];
+										}
+									} else {
+										// unknown available package version
+										if(!strcmp($pkg['version'], $latest_package)) {
+											$tdclass = "listr";
+											$pkgver = $pkg['version'];
+										}
+									}
+						?>
+						<tr valign="top">
+							<td class="listlr">
+								<?=$pkg['name'];?>
+							</td>
+							<td class="listr">
+								<?=$pkg['category'];?>
+							</td>
+							<td class="<?=$tdclass;?>">
+								<?=$pkgver;?>
+							</td>
+							<td class="listbg">
+								<font color="#ffffff">
+									<?=$pkg['descr'];?>
+								</font>
+							</td>
+							<td valign="middle" class="list" nowrap>
+								<a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>">
+									<img title="Remove this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+								</a>
+								<br>
+								<a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>">
+									<img title="Reinstall this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0">
+								</a>
+								<a href="pkg_mgr_install.php?mode=reinstallxml&pkg=<?= $pkg['name']; ?>">
+									<img title="Reinstall this package's GUI components." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_xml.gif" width="17" height="17" border="0">
+								</a>
+							</td>
+						</tr>
+						<?php
+								endforeach;
+							else:
+						 ?>
+						<tr>
+							<td colspan="5" align="center">
+								There are no packages currently installed.
+							</td>
+						</tr>
+						<?php endif; ?>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
 <?php include("fend.inc"); ?>
 </body>
 </html>

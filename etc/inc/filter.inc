@@ -2624,9 +2624,9 @@ function setup_logging_interfaces()
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		/* do not work with tun interfaces */
-		if(stristr(filter_translate_type_to_real_interface($ifname), "tun") == true)
+		if(stristr(get_real_wan_interface($ifname), "tun") == true)
 			continue;
-		$int = filter_translate_type_to_real_interface($ifname);
+		$int = get_real_wan_interface($ifname);
 		$rules .= "set loginterface {$int}\n";
 	}
 	return $rules;

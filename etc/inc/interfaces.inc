@@ -440,7 +440,7 @@ function interfaces_configure() {
 		else {
 			if ($g['booting'])
         	                echo "Configuring {$ifname} interface...";
-                	if($debug)
+                	if($g['debug'])
                        		log_error("Configuring {$ifname}");
 
 			interface_configure($if);
@@ -459,7 +459,7 @@ function interfaces_configure() {
 	foreach ($delayed_list as $if => $ifname) {
 		if ($g['booting'])
                         echo "Configuring {$ifname} interface...";
-                if($debug)
+                if($g['debug'])
                        log_error("Configuring {$ifname}");
 
 		interface_configure($if);
@@ -474,7 +474,7 @@ function interfaces_configure() {
         foreach ($bridge_list as $if => $ifname) {
                 if ($g['booting'])
                         echo "Configuring {$ifname} interface...";
-                if($debug)
+                if($g['debug'])
                        log_error("Configuring {$ifname}");
 
                 interface_configure($if);
@@ -529,7 +529,7 @@ function interfaces_ppp_configure() {
                                 $ppp['pppif'] = "ppp{$i}";
                         }
                         /* XXX: Maybe we should report any errors?! */
-                        interface_vlan_configure($ppp);
+                        interface_ppp_configure($ppp);
                         $i++;
                 }
         }
@@ -539,7 +539,7 @@ function interface_ppp_configure($ifcfg) {
 	global $config;
 	
 	/* Remove  the /dev/ from the device name. */
-	$dev = substr($ifcfg['port'], 4);
+	$dev = substr($ifcfg['port'], 5);
 
 	if(file_exists("/var/run/ppp_{$dev}.pid")) {
 		$pid = trim(file_get_contents("/var/run/ppp_{$dev}.pid"));
@@ -547,7 +547,7 @@ function interface_ppp_configure($ifcfg) {
 	}
 	
 	$realif  = $ifcfg['pppif'];
-	if ($g['booting'] || !(empty($realif))) {
+	if ($g['booting'] || $realif <> "") {
                 mwexec("/sbin/ifconfig {$realif} destroy");
                 mwexec("/sbin/ifconfig {$realif} create");
         } else
@@ -561,7 +561,7 @@ function interface_ppp_configure($ifcfg) {
 	$peerfile .= "{$ifcfg['port']}\n";
 	$peerfile .= "crtscts\n";
 	$peerfile .= "local\n";
-	//$peerfile .= ":{$ifcfg['gateway']}\n";
+	$peerfile .= ":{$ifcfg['gateway']}\n";
 	$peerfile .= "noipdefault\n";
 	$peerfile .= "ipcp-accept-local\n";
 	$peerfile .= "novj\n";
@@ -608,6 +608,7 @@ function interface_ppp_configure($ifcfg) {
 
 	config_lock();
 	conf_mount_rw();
+	safe_mkdir("/etc/ppp/peers", "0755");
 	file_put_contents("/etc/ppp/peers/ppp_{$dev}", $peerfile);
 	file_put_contents("/etc/ppp/peers/ppp{$dev}-connect-chat", $chatfile);
 	chmod("/etc/ppp/peers/ppp{$dev}-connect-chat", 0755);
@@ -1132,7 +1133,7 @@ function interface_configure($interface = "wan") {
 	}
 	/* wireless configuration? */
 	if (is_array($wancfg['wireless']))
-		interfaces_wireless_configure($realif, $wancfg['wireless']);
+		interface_wireless_configure($realif, $wancfg['wireless']);
 
 	if ($wancfg['spoofmac']) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .

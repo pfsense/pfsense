@@ -1450,13 +1450,11 @@ function find_ip_interface($ip) {
 }
 
 /*
- *  filter_translate_type_to_real_interface($interface): returns the real interface name
- *                                                       for a friendly interface.  ie: wan
+ *  filter_translate_type_to_real_interface($interface): 
+ *		returns the real hardware interface name for a friendly interface.  ie: wan
  */
 function filter_translate_type_to_real_interface($interface) {
 	global $config;
-	if(isset($config['interfaces'][$interface]['pointtopoint']))
-		return "ppp0";
 	if($config['interfaces'][$interface]['if'] <> "") {
 		return $config['interfaces'][$interface]['if'];
 	} else {

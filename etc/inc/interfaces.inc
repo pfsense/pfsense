@@ -536,17 +536,22 @@ function interfaces_ppp_configure() {
 }
 
 function interface_ppp_configure($ifcfg) {
-	global $config;
+	global $config, $g;
 	
 	/* Remove  the /dev/ from the device name. */
 	$dev = substr($ifcfg['port'], 5);
 
-	if(file_exists("/var/run/ppp_{$dev}.pid")) {
-		$pid = trim(file_get_contents("/var/run/ppp_{$dev}.pid"));
-		mwexec("kill {$pid}");
+	$realif  = $ifcfg['pppif'];
+	if ($realif <> "") {
+		$i = 0;
+		while ($realif != "ppp{$i}")
+			$i++;
+		if(file_exists("/var/run/ppp{$i}.pid")) {
+			$pid = trim(file_get_contents("/var/run/ppp{$i}.pid"));
+			mwexec("kill {$pid}");
+		}
 	}
 	
-	$realif  = $ifcfg['pppif'];
 	if ($g['booting'] || $realif <> "") {
                 mwexec("/sbin/ifconfig {$realif} destroy");
                 mwexec("/sbin/ifconfig {$realif} create");
@@ -558,11 +563,19 @@ function interface_ppp_configure($ifcfg) {
 	$peerfile .= "lcp-echo-interval 0\n";
 	$peerfile .= "connect /etc/ppp/peers/ppp{$dev}-connect-chat\n";
 	//$peerfile .= "disconnect /etc/ppp/peers/ppp{$dev}-disconnect-chat\n";
-	$peerfile .= "{$ifcfg['port']}\n";
+	$peerfile .= "{$ifcfg['port']} {$ifcfg['linespeed']}\n";
 	$peerfile .= "crtscts\n";
+	if ($ifcfg['connect-max-attempts'] <> "")
+		$peerfile .= "connect-max-attempts {$ifcfg['connect-max-attempts']}";
 	$peerfile .= "local\n";
-	$peerfile .= ":{$ifcfg['gateway']}\n";
-	$peerfile .= "noipdefault\n";
+	if ($ifcfg['localip'] <> "") {
+		$peerfile .= ":{$ifcfg['gateway']}\n";
+		$peerfile .= "{$ifcfg['localip']}:{$ifcfg['gateway']}";
+	} else if ($ifcfg['gateway'] <> "") {
+		$peerfile .= ":{$ifcfg['gateway']}\n";
+		$peerfile .= "noipdefault\n";
+	} else 
+		$peerfile .= "noipdefault\n";
 	$peerfile .= "ipcp-accept-local\n";
 	$peerfile .= "novj\n";
 	$peerfile .= "nobsdcomp\n";
@@ -570,6 +583,7 @@ function interface_ppp_configure($ifcfg) {
 	$peerfile .= "nopcomp\n";
 	$peerfile .= "noaccomp\n";
 	$peerfile .= "noauth\n";
+	//$peerfile .= "nodetach\n";
 	$peerfile .= "persist\n";
 	$peerfile .= "debug\n";
 	// KD - test
@@ -603,7 +617,12 @@ function interface_ppp_configure($ifcfg) {
 	// KD
 	$chatfile .= "OK 'ATD{$ifcfg['phone']}' \\\n";
 	$chatfile .= "TIMEOUT 22 \\\n";
-	$chatfile .= "CONNECT \"\" \\\n";
+	if ($ifcfg['username'] <> "") {
+		$chatfile .= "CONNECT \"\" TIMEOUT 10 \\\n";
+		$chatfile .= "ogin:-\\r-ogin: {$ifcfg['username']}\\\n";
+		$chatfile .= " TIMEOUT 5 sword: {$ifcfg['password']} \\\n";
+	} else
+		$chatfile .= "CONNECT \"\" \\\n";
 	$chatfile .= "SAY \"\\nConnected.\"\n";
 
 	config_lock();
@@ -615,6 +634,9 @@ function interface_ppp_configure($ifcfg) {
 	conf_mount_ro();
 	config_unlock();
 	
+	sleep(1);
+	mwexec("/usr/sbin/pppd call ppp_{$dev}");
+
 	return $realif;
 }
 

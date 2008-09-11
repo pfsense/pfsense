@@ -53,9 +53,15 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_ppps[$id]) {
 	$pconfig['port'] = $a_ppps[$id]['port'];
+	$pconfig['ap'] = $a_ppps[$id]['ap'];
 	$pconfig['pppif'] = $a_ppps[$id]['pppif'];
 	$pconfig['initstr'] = $a_ppps[$id]['initstr'];
+	$pconfig['username'] = $a_ppps[$id]['username'];
+	$pconfig['password'] = $a_ppps[$id]['password'];
+	$pconfig['gateway'] = $a_ppps[$id]['gateway'];
+	$pconfig['localip'] = $a_ppps[$id]['localip'];
 	$pconfig['phone'] = $a_ppps[$id]['phone'];
+	$pconfig['connect-max-attempts'] = $a_ppps[$id]['connect-max-attempts'];
 	$pconfig['linespeed'] = $a_ppps[$id]['linespeed'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
 }
@@ -85,9 +91,16 @@ if ($_POST) {
 		$ppp = array();
 		$ppp['port'] = $_POST['port'];
 		$ppp['initstr'] = $_POST['initstr'];
+		$ppp['ap'] = $_POST['ap'];
 		$ppp['phone'] = $_POST['phone'];
+		$ppp['username'] = $_POST['username'];
+		$ppp['password'] = $_POST['password'];
+		$ppp['localip'] = $_POST['localip'];
+		$ppp['gateway'] = $_POST['gateway'];
 		$ppp['linespeed'] = $_POST['linespeed'];
+		$ppp['connect-max-attempts'] = $_POST['connect-max-attempts'];
 		$ppp['descr'] = $_POST['descr'];
+		$ppp['pppif'] = $_POST['pppif'];
 		$ppp['pppif'] = interface_ppp_configure($ppp);
                 if ($ppp['pppif'] == "" || !stristr($ppp['pppif'], "ppp"))
                         $input_errors[] = "Error occured creating interface, please retry.";
@@ -121,54 +134,91 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">Parent interface</td>
                   <td width="78%" class="vtable">
-                    <select name="port" class="formfld">
+                    <select name="port" id="port" class="formselect">
                       <?php
-					 	$portlist = glob("/dev/cua*");
-					 	foreach ($portlist as $port) {
-							if(preg_match("/\.(lock|init)$/", $port))
-								continue;
-							echo "<option value=\"{$port}\"";
-							if ($pconfig['port'] = $port)
-								echo "selected";
-							echo ">";
-                      		echo $port;
-                    		echo "</option>";
-						}
-		      			?>
+			 	$portlist = glob("/dev/cua*");
+			 	foreach ($portlist as $port) {
+					if(preg_match("/\.(lock|init)$/", $port))
+						continue;
+					echo "<option value=\"".trim($port)."\"";
+					if ($pconfig['port'] == $port)
+						echo "selected";
+					echo ">{$port}</option>";
+				}
+		    	?>
                     </select>
                 </tr>
-				<tr>
+                <tr>
                   <td width="22%" valign="top" class="vncell">Init String</td>
                   <td width="78%" class="vtable">
                     <textarea name="initstr"><?=htmlspecialchars($pconfig['initstr']);?></textarea>
                     <br> <span class="vexpl">Enter the modem initialization string here</span></td>
                 </tr>
-		<tr>
-                  <td width="22%" valign="top" class="vncell">Phone Number</td>
+ 		<tr>
+ 		  <td width="22%" valign="top" class="vncell">AP Hostname</td>
+ 		  <td width="78%" class="vtable">
+ 		    <input name="ap" type="text" class="formfld unknown" id="ap" size="40" value="<?=htmlspecialchars($pconfig['ap']);?>">
+ 		</td>
+ 		</tr>
+ 		<tr>
+ 		  <td width="22%" valign="top" class="vncell">Phone Number</td>
+ 		  <td width="78%" class="vtable">
+ 		    <input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>">
+ 		  </td>
+ 		</tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">Username</td>
                   <td width="78%" class="vtable">
-                    <input name="phone" type="text" class="formfld" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>">
+			<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+                  </td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">Password</td>
+                  <td width="78%" class="vtable">
+			<input name="password" type="password" class="formfld pwd" id="password" value="<?=htmlspecialchars($pconfig['password']);?>">
+                  </td>
+		</tr>
+ 		<tr>
+ 		  <td width="22%" valign="top" class="vncell">Local IP</td>
+ 		  <td width="78%" class="vtable">
+ 		    <input name="gateway" type="text" class="formfld unknown" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+			<span><p>Note: This is needed if you connect to a private system and are given a static ip.</span>
+ 		  </td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">Remote IP</td>
+                  <td width="78%" class="vtable">
+                    <input name="localip" type="text" class="formfld unknown" id="localip" size="40" value="<?=htmlspecialchars($pconfig['localip']);?>">
+			<span><p>Note: This is where the packets will be routed, aka gateway on normal ip routing.</span>
                   </td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Line Speed</td>
                   <td width="78%" class="vtable">
-                    <input name="linespeed" type="text" class="formfld" id="linespeed" size="40" value="<?=htmlspecialchars($pconfig['linespeed']);?>">
+                    <input name="linespeed" type="text" class="formfld unknown" id="linespeed" size="40" value="<?=htmlspecialchars($pconfig['linespeed']);?>">
                   </td>
                 </tr>
-
+                <tr>
+                  <td width="22%" valign="top" class="vncell">Maximum connection retry</td>
+                  <td width="78%" class="vtable">
+                    <input name="connect-max-attempts" type="text" class="formfld unknown" id="connect-max-attempts" size="2" value="<?=htmlspecialchars($pconfig['connect-max-attempts']);?>">
+                  </td>
+                </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()">
+                  	<input name="Submit" type="submit" class="formbtn" value="Save"> 
+			<input type="button" value="Cancel" onclick="history.back()">
                     <?php if (isset($id) && $a_ppps[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
+		    <input name="pppif" id="pppif" type="hidden" value="<?=$pconfig['pppif'];?>">
                     <?php endif; ?>
                   </td>
                 </tr>

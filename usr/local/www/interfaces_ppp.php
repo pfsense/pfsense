@@ -63,7 +63,18 @@ if ($_GET['act'] == "del") {
 	if (ppp_inuse($_GET['id'])) {
 		$input_errors[] = "This PPP interface cannot be deleted because it is still being used as an interface.";
 	} else {
-		mwexec("/sbin/ifconfig " . $a_ppps[$_GET['id']]['pppif'] . " destroy");
+		$realif  = $a_ppps[$_GET['id']]['pppif'];
+ 	       	if ($realif <> "") {
+        	        $i = 0;
+                	while ($realif != "ppp{$i}")
+                        	$i++;
+                	if (file_exists("/var/run/ppp{$i}.pid")) {
+                        	$pid = trim(file_get_contents("/var/run/ppp{$i}.pid"));
+                        	mwexec("kill {$pid}");
+                	}
+        	}
+
+		mwexec("/sbin/ifconfig  {$realif} destroy");
 		unset($a_ppps[$_GET['id']]);
 
 		write_config();

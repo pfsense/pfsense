@@ -1327,7 +1327,7 @@ function interface_dhcp_down($interface = "wan") {
 }
 
 function interface_dhcp_up($interface = "wan") {
-	interfaces_dhcp_configure($interface);
+	interface_dhcp_configure($interface);
 	sleep(1);
 }
 
@@ -1843,7 +1843,7 @@ function get_current_wan_address($interface = "wan") {
 					if ($grecfg['greif'] == $realif)
 						return ($grecfg['tunnel-local-addr']);
 		} else if (stristr($realif, "gif")) {
-                        if (is_array($config['gifs']['gre']))
+                        if (is_array($config['gifs']['gif']))
                                 foreach ($config['gifs']['gif'] as $gifcfg)
                                         if ($gifcfg['gifif'] == $realif)
                                                 return ($gifcfg['tunnel-local-addr']);

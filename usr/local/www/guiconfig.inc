@@ -974,5 +974,22 @@ function echo_array($array,$return_me=false){
     }
 }
 
+function add_package_tab_hooks($section) {
+	global $config, $g;
+	if($config['installedpackages']) {
+		$tab_array = array();		
+		foreach($config['installedpackages']['tabs'] as $tab) {
+			if($tab['section'] == $section) {
+				$tab_array_tmp = array();
+				$tab_array_tmp['name'] = $tab['name'];
+				$tab_array_tmp['section']  = $tab['section'];
+				$tab_array_tmp['configfile'] = $tab['configfile'];
+				$tab_array_tmp['url'] = $tab['url'];
+				$tab_array[] = $tab_array_tmp;
+			}
+		}
+		return $tab_array;
+	}
+}
 
 ?>

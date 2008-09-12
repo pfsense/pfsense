@@ -56,7 +56,7 @@ function getMPDCRONSettings() {
 
   if (is_array($config['cron']['item'])) {
     for ($i = 0; $i < count($config['cron']['item']); $i++) {
-      $item =& $config['cron']['item'][$i];
+      $item = $config['cron']['item'][$i];
 
       if (strpos($item['command'], CRON_PPPOE_CMD_FILE) !== false) {
         return array("ID" => $i, "ITEM" => $item);
@@ -194,7 +194,7 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['standard'] = $wancfg['wireless']['standard'];
 	$pconfig['mode'] = $wancfg['wireless']['mode'];
 	$pconfig['protmode'] = $wancfg['wireless']['protmode'];
-	$pconfig['ssid'] = $config['interfaces'][$if]['wireless']['ssid'];
+	$pconfig['ssid'] = $wancfg['wireless']['ssid'];
 	$pconfig['channel'] = $wancfg['wireless']['channel'];
 	$pconfig['txpower'] = $wancfg['wireless']['txpower'];
 	$pconfig['distance'] = $wancfg['wireless']['distance'];
@@ -246,6 +246,8 @@ if ($_POST['apply']) {
                 sleep(1);
 
                 interface_configure($if);
+
+		system_start_ftp_helpers();
 
                 reset_carp();
 
@@ -457,12 +459,8 @@ n already exists.";
 		unset($wancfg['disableftpproxy']);
 
 		/* per interface pftpx helper */
-		if($_POST['disableftpproxy'] == "yes") {
+		if ($_POST['disableftpproxy'] == "yes")
 			$wancfg['disableftpproxy'] = true;
-			system_start_ftp_helpers();
-		} else {
-			system_start_ftp_helpers();
-		}
 
 		$wancfg['descr'] = remove_bad_chars($_POST['descr']);
 		if ($if == "wan" || $if == "lan")
@@ -496,7 +494,8 @@ n already exists.";
       
 			/* perform a periodic reset? */
 			if (isset($_POST['pppoe_preset'])) {
-				if (! is_array($config['cron']['item'])) { $config['cron']['item'] = array(); }
+				if (! is_array($config['cron']['item'])) 
+					$config['cron']['item'] = array(); 
 
 					$itemhash = getMPDCRONSettings();
 					$item = $itemhash['ITEM'];
@@ -590,7 +589,8 @@ n already exists.";
 			/* test whether a cron item exists and unset() it if necessary */
 			$itemhash = getMPDCRONSettings();
 			$item = $itemhash['ITEM'];
-			if (isset($item)) { unset($config['cron']['item'][$itemhash['ID']]); }
+			if (isset($item))
+				unset($config['cron']['item'][$itemhash['ID']]); 
 		}
 
 		if($_POST['blockpriv'] == "yes")
@@ -607,6 +607,8 @@ n already exists.";
 		$wancfg['mtu'] = $_POST['mtu'];
 
 		if (isset($wancfg['wireless'])) {
+			if (!is_array($wancfg['wireless']))
+				$wancfg['wireless'] = array();
 			$wancfg['wireless']['standard'] = $_POST['standard'];
 			$wancfg['wireless']['mode'] = $_POST['mode'];
 			$wancfg['wireless']['protmode'] = $_POST['protmode'];

@@ -3497,7 +3497,7 @@ function get_interface_info($ifdescr) {
 	/* run netstat to determine link info */
 
 	unset($linkinfo);
-	exec("/usr/bin/netstat -I " . $ifinfo['hwif'] . " -nWb -f link", $linkinfo);
+	exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
 	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
 	if (preg_match("/\*$/", $linkinfo[0])) {
 		$ifinfo['status'] = "down";
@@ -3505,7 +3505,12 @@ function get_interface_info($ifdescr) {
 		$ifinfo['status'] = "up";
 	}
 
-	if (!strstr($ifinfo['if'],'ovpn')) {
+	if (preg_match("/^enc|^tun|^ppp|^pptp|^ovpn/i", $ifinfo['if'])) {
+		$ifinfo['inpkts'] = $linkinfo[3];
+                $ifinfo['inbytes'] = $linkinfo[5];
+                $ifinfo['outpkts'] = $linkinfo[6];
+                $ifinfo['outbytes'] = $linkinfo[8];
+	} else {
 		$ifinfo['macaddr'] = $linkinfo[3];
 		$ifinfo['inpkts'] = $linkinfo[4];
 		$ifinfo['inerrs'] = $linkinfo[5];
@@ -3514,11 +3519,6 @@ function get_interface_info($ifdescr) {
 		$ifinfo['outerrs'] = $linkinfo[8];
 		$ifinfo['outbytes'] = $linkinfo[9];
 		$ifinfo['collisions'] = $linkinfo[10];
-	} else {
-		$ifinfo['inpkts'] = $linkinfo[3];
-		$ifinfo['inbytes'] = $linkinfo[5];
-		$ifinfo['outpkts'] = $linkinfo[6];
-		$ifinfo['outbytes'] = $linkinfo[8];
 	}
 
 	$ifconfiginfo = "";

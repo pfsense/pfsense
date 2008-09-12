@@ -37,44 +37,31 @@
 ##|-PRIV
 
 
-	require("functions.inc");
-	require("config.inc");
+	require_once("interfaces.inc");
 
 	$ifinfo = array();
 
 	$if = $_GET['if'];
 
-	$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
-	if(!$ifinfo['hwif'])
-		$ifinfo['hwif'] = $if;
-
-	$ifinfo['if'] = $ifinfo['hwif'];	
+	$realif = get_real_wan_interface($if);
+	if(!$realif)
+		$realif = $if; // Need for IPSec case interface.
 
 	/* run netstat to determine link info */
 	$linkinfo = "";
 	unset($linkinfo);
-	exec("/usr/bin/netstat -I " . $ifinfo['hwif'] . " -nWb -f link", $linkinfo);
+	exec("/usr/bin/netstat -I {$realif} -nWb -f link", $linkinfo);
 	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-	if (preg_match("/\*$/", $linkinfo[0])) {
-		$ifinfo['status'] = "down";
-	} else {
-		$ifinfo['status'] = "up";
-	}
-
-	if(preg_match("/^enc|^tun/i", $ifinfo['if'])) {
+	if (preg_match("/^enc|^tun|^pppoe|^pptp/i", $realif)) {
 		$ifinfo['inpkts'] = $linkinfo[3];
 		$ifinfo['inbytes'] = $linkinfo[5];
 		$ifinfo['outpkts'] = $linkinfo[6];
 		$ifinfo['outbytes'] = $linkinfo[8];
 	} else {
-		$ifinfo['macaddr'] = $linkinfo[3];
 		$ifinfo['inpkts'] = $linkinfo[4];
-		$ifinfo['inerrs'] = $linkinfo[5];
 		$ifinfo['inbytes'] = $linkinfo[6];
 		$ifinfo['outpkts'] = $linkinfo[7];
-		$ifinfo['outerrs'] = $linkinfo[8];
 		$ifinfo['outbytes'] = $linkinfo[9];
-		$ifinfo['collisions'] = $linkinfo[10];
 	}
 	$temp = gettimeofday();
 	$timing = (double)$temp["sec"] + (double)$temp["usec"] / 1000000.0;

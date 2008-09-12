@@ -52,16 +52,11 @@ if ($_POST['height'])
 else
 	$height = "275";
 
-/* link the ipsec interface magically */
-$config['interfaces']['ipsec']['if'] = "enc0";
 
-if ($_GET['if']) {
+if ($_GET['if'])
 	$curif = $_GET['if'];
-	$ifnum = $config['interfaces'][$curif]['if'];
-} else {
+else
 	$curif = "wan";
-	$ifnum = get_real_wan_interface();
-}
 
 $pgtitle = array("Status","Traffic Graph");
 include("head.inc");
@@ -73,9 +68,9 @@ include("head.inc");
 <?php
 $ifdescrs = get_configured_interface_with_descr();
 
-if((isset($config['ipsec']['enable'])) || (isset($config['ipsec']['mobileclients']['enable']))) {
-	$ifdescrs['ipsec'] = "IPsec";
-}
+/* link the ipsec interface magically */
+if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) 
+	$ifdescrs['enc0'] = "IPsec";
 
 ?>
 <form name="form1" action="status_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #999999">
@@ -95,8 +90,8 @@ foreach ($ifdescrs as $ifn => $ifd) {
 </form>
 <p>
 <div align="center">
-	<object data="graph.php?ifnum=<?=$ifnum;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml" width="550" height="275">
-		<param name="src" value="graph.php?ifnum=<?=$ifnum;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" />
+	<object data="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml" width="550" height="275">
+		<param name="src" value="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" />
 		Your browser does not support the type SVG! You need to either use Firefox or download the Adobe SVG plugin.
 	</object>
 </div>

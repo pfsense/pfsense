@@ -215,7 +215,7 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['wpa_gmk_rekey'] = $wancfg['wireless']['wpa']['wpa_gmk_rekey'];
 		$pconfig['wpa_strict_rekey'] = isset($wancfg['wireless']['wpa']['wpa_strict_rekey']);
 		$pconfig['passphrase'] = $wancfg['wireless']['wpa']['passphrase'];
-		$pconfig['ieee8021x_enable'] = isset($wancfg['wireless']['wpa']['ieee8021x']['enable']);
+		$pconfig['ieee8021x'] = isset($wancfg['wireless']['wpa']['ieee8021x']['enable']);
 		$pconfig['ext_wpa_sw'] = $wancfg['wireless']['wpa']['ext_wpa_sw'];
 		$pconfig['wpa_enable'] = isset($wancfg['wireless']['wpa']['enable']);
 	}
@@ -639,7 +639,7 @@ n already exists.";
 			else
 				unset($wancfg['wireless']['wpa']['mac_acl_enable']);
 
-			if ($_POST['ieee8021x_enable'] == "yes")
+			if ($_POST['ieee8021x'] == "yes")
 				$wancfg['wireless']['wpa']['ieee8021x']['enable'] = true;
 			else
 				unset($wancfg['wireless']['wpa']['ieee8021x']['enable']);

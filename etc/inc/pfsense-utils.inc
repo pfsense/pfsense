@@ -1187,15 +1187,15 @@ function get_interface_mtu($interface) {
 function is_interface_wireless($interface) {
 	global $config, $g;
 	$friendly = convert_real_interface_to_friendly_interface_name($interface);
-	if (preg_match($g['wireless_regex'], $interface)) {
-		$config['interfaces'][$friendly]['wireless'] = array();
-	} else {
+	if(!is_array($config['interfaces'][$friendly]['wireless'])) {
+		if (preg_match($g['wireless_regex'], $interface)) {
+			$config['interfaces'][$friendly]['wireless'] = array();
+			return true;
+		}
 		unset($config['interfaces'][$friendly]['wireless']);
-	}
-	if(isset($config['interfaces'][$friendly]['wireless'])) {
-		return true;
-	} else {
 		return false;
+	} else {
+		return true;
 	}
 }
 

@@ -1804,7 +1804,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
 	}
 		
 	/* if list */
-        $ifdescrs = get_configured_interface_list();
+        $ifdescrs = get_configured_interface_list(false, true);
 
 	foreach ($ifdescrs as $if => $ifname) {
 		if($config['interfaces'][$if]['if'] == $interface)
@@ -1841,7 +1841,7 @@ function convert_friendly_interface_to_friendly_descr($interface) {
 				break;
         default:
         	/* if list */
-        	$ifdescrs = get_configured_interface_with_descr();
+        	$ifdescrs = get_configured_interface_with_descr(false, true);
         	foreach ($ifdescrs as $if => $ifname) {
 				if ($if == $interface || $ifname == $interface)
 					return $ifname;

@@ -1093,7 +1093,8 @@ EOD;
 	/* execute commands now in shell */
 	mwexec("/bin/sh /tmp/{$if}_setup.sh");
 	sleep(2);
-	mwexec("/bin/sh /tmp/{$if}_setup.sh");
+	// XXX: ermal - This seems like not needed!? 
+	//mwexec("/bin/sh /tmp/{$if}_setup.sh");
 
 	return 0;
 

@@ -664,7 +664,7 @@ n already exists.";
                         		$wancfg['wireless']['wep'] = array();
 				$wancfg['wireless']['wep']['enable'] = $_POST['wep_enable'] = true;
 			} else
-				unset($wancfg['wireless']['wep']['enable']);
+				unset($wancfg['wireless']['wep']);
 
 			if ($_POST['wme_enable'] == "yes") {
 				if (!is_array($wancfg['wireless']['wme']))

@@ -2,3 +2,4 @@
 /usr/local/www/interfaces_lan.php
 /usr/local/www/interfaces_opt.php
 /usr/local/www/interfaces_wlan.inc
+/usr/local/www/ifstats.cgi

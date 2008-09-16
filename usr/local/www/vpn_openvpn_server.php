@@ -544,16 +544,14 @@ function netbios_change() {
 							<select name="interface" class="formselect">
 								<?php
 									$interfaces = get_configured_interface_with_descr();
-									$carpips = find_number_of_needed_carp_interfaces();
-									for ($i=0; $i<$carpips; $i++) {
-										$carpip = find_interface_ip("carp" . $i);
-										$interfaces['carp' . $i] = "CARP{$i} ({$carpip})";
-									}
 									foreach ($interfaces as $iface => $ifacename):
+										$selected = "";
+										if ($iface == $pconfig['interface'])
+											$selected = "selected";
 								?>
-								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
-									<?=htmlspecialchars($ifacename);?>
-								</option>
+									<option value="<?=$iface;?>" <?=$selected;?>>
+										<?=htmlspecialchars($ifacename);?>
+									</option>
 								<?php endforeach; ?>
 							</select> <br>
 						</td>

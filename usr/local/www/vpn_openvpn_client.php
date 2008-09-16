@@ -382,28 +382,26 @@ function autotls_change() {
 							<select name="interface" class="formselect">
 								<?php
 									$interfaces = get_configured_interface_with_descr();
-									$carpips = find_number_of_needed_carp_interfaces();
-									for ($i=0; $i<$carpips; $i++) {
-										$carpip = find_interface_ip("carp" . $i);
-										$interfaces['carp' . $i] = "CARP{$i} ({$carpip})";
-									}
-									foreach ($interfaces as $iface => $ifacename):
+										foreach ($interfaces as $iface => $ifacename):
+										$selected = "";
+										if ($iface == $pconfig['interface'])
+											$selected = "selected";
 								?>
-								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
-									<?=htmlspecialchars($ifacename);?>
-								</option>
+									<option value="<?=$iface;?>" <?=$selected;?>>
+										<?=htmlspecialchars($ifacename);?>
+									</option>
 								<?php endforeach; ?>
 							</select> <br>
 						</td>
 					</tr>
-                    <tr>
-                        <td width="22%" valign="top" class="vncell"><?=gettext("Local port");?></td>
-                        <td width="78%" class="vtable">
-                            <input name="local_port" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($pconfig['local_port']);?>"/>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Local port");?></td>
+						<td width="78%" class="vtable">
+							<input name="local_port" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($pconfig['local_port']);?>"/>
 							<br/>
 							Set this option if you would like to bind to a specific port.
-                        </td>
-                    </tr>
+						</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Server host or address");?></td>
 						<td width="78%" class="vtable">

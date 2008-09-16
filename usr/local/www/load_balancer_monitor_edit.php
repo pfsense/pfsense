@@ -184,7 +184,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(Services", "Load Balancer","Monitor","Edit");
+$pgtitle = array("Services", "Load Balancer","Monitor","Edit");
 include("head.inc");
 
 ?>

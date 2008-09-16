@@ -128,7 +128,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(Services", "Load Balancer","Relay Protocol","Edit");
+$pgtitle = array("Services", "Load Balancer","Relay Protocol","Edit");
 include("head.inc");
 
 ?>

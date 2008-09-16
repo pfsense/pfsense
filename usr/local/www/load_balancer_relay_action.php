@@ -98,7 +98,7 @@ if ($_GET['act'] == "del") {
 }
 */
 
-$pgtitle = array(Services", "Load Balancer","Relay Action");
+$pgtitle = array("Services", "Load Balancer","Relay Action");
 include("head.inc");
 
 ?>

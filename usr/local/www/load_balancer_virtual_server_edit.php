@@ -123,7 +123,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(Services", "Load Balancer","Virtual Server","Edit");
+$pgtitle = array("Services", "Load Balancer","Virtual Server","Edit");
 include("head.inc");
 
 ?>

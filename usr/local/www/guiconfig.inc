@@ -974,21 +974,22 @@ function echo_array($array,$return_me=false){
     }
 }
 
-function add_package_tab_hooks($section) {
+function add_package_tabs($tabgroup, & $tab_array) {
 	global $config, $g;
-	if($config['installedpackages']) {
-		$tab_array = array();		
-		foreach($config['installedpackages']['tabs'] as $tab) {
-			if($tab['section'] == $section) {
-				$tab_array_tmp = array();
-				$tab_array_tmp['name'] = $tab['name'];
-				$tab_array_tmp['section']  = $tab['section'];
-				$tab_array_tmp['configfile'] = $tab['configfile'];
-				$tab_array_tmp['url'] = $tab['url'];
-				$tab_array[] = $tab_array_tmp;
-			}
-		}
-		return $tab_array;
+
+	if(!is_array($config['installedpackages']))
+		return;
+	if(!is_array($config['installedpackages']['tab']))
+		return;
+
+	foreach($config['installedpackages']['tab'] as $tab) {
+		if ($tab['group'] !== $group)
+			continue;
+		$tab_entry = array();
+		$tab_entry[] = $tab['name'];
+		$tab_entry[] = false;
+		$tab_entry[] = $tab['url'];
+		$tab_array[] = $tab_entry;
 	}
 }
 

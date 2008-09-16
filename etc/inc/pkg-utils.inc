@@ -601,12 +601,27 @@ function install_package_xml($pkg) {
 			update_output_window($static_output);
 			if(is_array($pkg_config['menu'])) {
 				foreach($pkg_config['menu'] as $menu) {
-					if(is_array($config['installedpackages']['menu'])) {
-						foreach($config['installedpackages']['menu'] as $amenu) {
-							if($amenu['name'] == $menu['name']) continue 2;
-						}
-					}
+					if(is_array($config['installedpackages']['menu']))
+						foreach($config['installedpackages']['menu'] as $amenu)
+							if($amenu['name'] == $menu['name'])
+								continue 2;
 					$config['installedpackages']['menu'][] = $menu;
+				}
+			}
+			$static_output .= "done.\n";
+			update_output_window($static_output);
+		}
+		/* integrated tab items */
+		if($pkg_config['tabs'] != "") {
+			$static_output .= "\tIntegrated Tab items... ";
+			update_output_window($static_output);
+			if(is_array($pkg_config['tabs']['tab'])) {
+				foreach($pkg_config['tabs']['tab'] as $tab) {
+					if(is_array($config['installedpackages']['tab']))
+						foreach($config['installedpackages']['tab'] as $atab)
+							if($atab['name'] == $tab['name'])
+								continue 2;
+					$config['installedpackages']['tab'][] = $tab;
 				}
 			}
 			$static_output .= "done.\n";
@@ -734,20 +749,34 @@ function delete_package_xml($pkg) {
 	update_output_window($static_output);
 	/* parse package configuration */
 	$packages = &$config['installedpackages']['package'];
-	$menus = &$config['installedpackages']['menu'];
+	$tabs =& $config['installedpackages']['tab'];
+	$menus =& $config['installedpackages']['menu'];
 	$services = &$config['installedpackages']['service'];
 	if(file_exists("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'])) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
+		/* remove tab items */
+		if(is_array($pkg_config['tabs'])) {
+			$static_output .= "\tMenu items... ";
+			update_output_window($static_output);
+			foreach($tabs as $tab)
+				$insttabs[] = $tab['name'];
+			foreach($pkg_config['tabs']['tab'] as $tab)
+				foreach($insttabs as $key => $insttab)
+					if($insttab == $tab['name'])
+						unset($tabs[$key]);
+			$static_output .= "done.\n";
+			update_output_window($static_output);
+		}
 		/* remove menu items */
 		if(is_array($pkg_config['menu'])) {
 			$static_output .= "\tMenu items... ";
 			update_output_window($static_output);
-			foreach($menus as $menu) $instmenus[] = $menu['name'];
-			foreach($pkg_config['menu'] as $menu) {
-				foreach($instmenus as $key => $instmenu) {
-					if($instmenu == $menu['name']) unset($menus[$key]);
-				}
-			}
+			foreach($menus as $menu)
+				$instmenus[] = $menu['name'];
+			foreach($pkg_config['menu'] as $menu)
+				foreach($instmenus as $key => $instmenu)
+					if($instmenu == $menu['name'])
+						unset($menus[$key]);
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}

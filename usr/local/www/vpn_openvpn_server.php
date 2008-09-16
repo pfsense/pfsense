@@ -472,6 +472,7 @@ function netbios_change() {
 				$tab_array[] = array(gettext("Server"), true, "vpn_openvpn_server.php");
 				$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
 				$tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
+				add_package_tabs("OpenVPN", $tab_array);
 				display_top_tabs($tab_array);
 			?>
 			</ul>
@@ -486,7 +487,7 @@ function netbios_change() {
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
 						<td colspan="2" valign="top" class="listtopic">General information</td>
-					</tr>	
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq">Disabled</td>
 						<td width="78%" class="vtable">

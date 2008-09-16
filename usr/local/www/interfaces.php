@@ -150,7 +150,14 @@ $pconfig['disableftpproxy'] = isset($wancfg['disableftpproxy']);
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
+
+// Populate page descr if it does not exist.
+if($if == "wan" && !$wancfg['descr'])
+        $wancfg['descr'] = "WAN";
+else if ($if == "lan" && !$wancfg['descr'])
+        $wancfg['descr'] = "LAN";
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
+
 if ($if == "wan" || $if == "lan")
 	$pconfig['enable'] = true;
 else
@@ -711,20 +718,20 @@ n already exists.";
 	
 		/* finally install the pppoerestart file */
 		if (isset($_POST['pppoe_preset'])) {
-		config_lock();
-		conf_mount_rw();
+			config_lock();
+			conf_mount_rw();
       
-		if (! file_exists(CRON_PPPOE_CMD_FILE)) {
-			file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
-			chmod(CRON_PPPOE_CMD_FILE, 0700);
-		}
+			if (! file_exists(CRON_PPPOE_CMD_FILE)) {
+				file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
+				chmod(CRON_PPPOE_CMD_FILE, 0700);
+			}
       
-		/* regenerate cron settings/crontab file */
-		configure_cron();
-		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
+			/* regenerate cron settings/crontab file */
+			configure_cron();
+			sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
       
-		conf_mount_ro();
-		config_unlock();
+			conf_mount_ro();
+			config_unlock();
 		}
 
 		$retval = 0;
@@ -736,13 +743,7 @@ n already exists.";
 	}
 }
 
-// Populate page descr if it does not exist.
-if($if == "wan" && !$wancfg['descr'])
-	$wancfg['descr'] = "WAN";
-else if ($if == "lan" && !$wancfg['descr'])
-	$wancfg['descr'] = "LAN";
-	
-$pgtitle = array("Interfaces", $wancfg['descr']);
+$pgtitle = array("Interfaces", $pconfig['descr']);
 $closehead = false;
 include("head.inc");
 

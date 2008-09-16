@@ -57,7 +57,10 @@ if (isset($_GET['dup'])) {
 
 if (isset($p1index) && $a_phase1[$p1index])
 {
-	$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
+	// don't copy the ikeid on dup
+	if (!isset($_GET['dup']))
+		$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
+
 	$pconfig['disabled'] = isset($a_phase1[$p1index]['disabled']);
 
 	if ($a_phase1[$p1index]['interface'])

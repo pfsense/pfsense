@@ -82,7 +82,6 @@ Refresh Interval:
 						$firstgraphshown = true;
 					foreach ($ifdescrs as $ifdescr => $ifname){
 						$ifinfo = get_interface_info($ifdescr);					
-						$ifnum = convert_friendly_interface_to_real_interface_name($ifname);
 						$currentgraph = $showngraphlist[$graphcounter];
 						$colposition = strpos($currentgraph,":");
 						$currentgraph = substr($currentgraph, $colposition+1);
@@ -134,7 +133,7 @@ Refresh Interval:
 							<div style="clear:both;"></div>
 						</div>						
 						<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
-							<embed id="graph" src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($ifname);?>&timeint=<?=$refreshInterval;?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+							<embed id="graph" src="graph.php?fnum=<?=$ifdescr;?>&ifname=<?=rawurlencode($ifname);?>&timeint=<?=$refreshInterval;?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 						</div>
 				<? $firstgraphshown = true; $graphcounter++; ?>
 					</div>											 

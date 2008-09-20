@@ -1392,10 +1392,6 @@ function does_interface_exist($interface) {
 		
 	$ints = get_interface_arr();
 
-	if(strtolower($interface) == "lan")
-		if(!$config['interfaces']['lan']) 
-			return false;
-
 	if(stristr($ints, $interface) !== false)
 		return true;
 	else
@@ -1416,8 +1412,11 @@ function convert_ip_to_network_format($ip, $subnet) {
  */
 function find_interface_ip($interface, $flush = false) {
 	global $interface_ip_arr_cache;
+	
 	$interface = str_replace("\n", "", $interface);
-	if(does_interface_exist($interface) == false) return;
+	if(does_interface_exist($interface) == false) 
+		return;
+
 	/* Setup IP cache */
 	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
 		$interface_ip_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2| /usr/bin/head -1");

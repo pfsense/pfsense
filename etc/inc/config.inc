@@ -2821,6 +2821,7 @@ function start_devd() {
 function is_interface_mismatch() {
 	global $config, $g;
 
+	/* XXX: Should we process only enabled interfaces?! */
 	$do_assign = false;
 	$i = 0;
 	foreach ($config['interfaces'] as $ifname => $ifcfg) {

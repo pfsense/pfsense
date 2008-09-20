@@ -136,7 +136,47 @@ include("head.inc");
 		?>
                     </select>					
                     <br/>
-                    <span class="vexpl">Remote lagg address endpoint. The subnet part is used for the determinig the network that is tunneled.</span></td>
+                    <span class="vexpl">
+		   <ul>
+		<li>
+		    <b>failover</b><br/>      
+			Sends and receives traffic only through the master port.  If
+                  the master port becomes unavailable, the next active port is
+                  used.  The first interface added is the master port; any
+                  interfaces added after that are used as failover devices.
+		</li><li>
+     <b>fec</b><br/>          Supports Cisco EtherChannel.  This is a static setup and
+                  does not negotiate aggregation with the peer or exchange
+                  frames to monitor the link.
+		</li><li>
+     <b>lacp</b><br/>         Supports the IEEE 802.3ad Link Aggregation Control Protocol
+                  (LACP) and the Marker Protocol.  LACP will negotiate a set
+                  of aggregable links with the peer in to one or more Link
+                  Aggregated Groups.  Each LAG is composed of ports of the
+                  same speed, set to full-duplex operation.  The traffic will
+                  be balanced across the ports in the LAG with the greatest
+                  total speed, in most cases there will only be one LAG which
+                  contains all ports.  In the event of changes in physical
+                  connectivity, Link Aggregation will quickly converge to a
+                  new configuration.
+		</li><li>
+     <b>loadbalance</b><br/>  Balances outgoing traffic across the active ports based on
+                  hashed protocol header information and accepts incoming
+                  traffic from any active port.  This is a static setup and
+                  does not negotiate aggregation with the peer or exchange
+                  frames to monitor the link.  The hash includes the Ethernet
+                  source and destination address, and, if available, the VLAN
+                  tag, and the IP source and destination address.
+		</li><li>
+     <b>roundrobin</b><br/>   Distributes outgoing traffic using a round-robin scheduler
+                  through all active ports and accepts incoming traffic from
+                  any active port.
+		</li><li>
+     <b>none</b><br/>         This protocol is intended to do nothing: it disables any
+                  traffic without disabling the lagg interface itself.
+		</li>
+	</ul>
+	          </span></td>
 	    </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>

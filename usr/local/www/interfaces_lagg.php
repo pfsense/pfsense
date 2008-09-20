@@ -109,7 +109,7 @@ include("head.inc");
 		    </font>
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="interfaces_lagg_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_lagg.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this lagg tunnel?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="interfaces_lagg.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this lagg interface?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
@@ -120,7 +120,7 @@ include("head.inc");
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
 				  Note:<br>
 				  </strong></span>
-				  Something meaningful here.
+				  To add an interface to a lagg, it must be un-assigned.
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

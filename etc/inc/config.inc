@@ -2820,29 +2820,21 @@ function start_devd() {
 
 function is_interface_mismatch() {
 	global $config, $g;
-	if(!$config['interfaces']['lan']) 	
-		return false;
-	if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp")
-		return false;		
-	$lan_if = $config['interfaces']['lan']['if'];
-	$wan_if = get_real_wan_interface();
-	$do_assign = 0;
-	/* we need to ignore the vlan interface checks) */
-	if (stristr($lan_if, "vlan") == false and stristr($wan_if, "vlan") == false) {
-		if (does_interface_exist($lan_if) == false)
-			if($g['minimum_nic_count'] > 1)
-				$do_assign = 1;
-		if ($config['interfaces']['wan']['ipaddr'] <> "pppoe" && $config['interfaces']['wan']['ipaddr'] <> "pptp" && $do_assign == 0)
-			if (does_interface_exist($wan_if) == false)
-				$do_assign = 1;
+
+	$do_assign = false;
+	foreach ($config['interfaces'] as $ifname => $ifcfg) {
+		if (preg_match("/^enc|^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre|^lagg|^bridge|^vlan/i", $ifcfg['if']))	
+			continue;
+		if (does_interface_exist($ifcfg['if']) == false) {
+			file_notice("{$ifcfg['if']} is not present anymore on the system, you need to reassign interfaces or take appropriate actions.");
+			$do_assign = true;
+		}
 	}
-	/* XXX: enumerate OPT interfaces looking for mismatches */
+	
 	if (file_exists("{$g['tmp_path']}/assign_complete"))
-		return false;
-	if ($do_assign == 1)
-		return true;
-	else
-		return false;
+		$do_assign = false;
+
+	return $do_assign;
 }
 
 function set_device_perms() {

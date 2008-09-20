@@ -43,7 +43,8 @@
 	touch("{$g['varrun_path']}/booting");
 	if($g['platform'] == "cdrom") {
 		$motd = trim(file_get_contents("/etc/motd"));
-		if(strlen($motd) > 2) echo "\n{$motd}\n\n";
+		if (strlen($motd) > 2) 
+			echo "\n{$motd}\n\n";
 	}
 
 	/* parse the configuration and include all functions used below */
@@ -58,7 +59,7 @@
 	conf_mount_rw();
 
 	/* remove previous firmware upgrade if present */
-	if(file_exists("/root/firmware.tgz")) 
+	if (file_exists("/root/firmware.tgz")) 
 		unlink("/root/firmware.tgz");
 
 	/* start devd (dhclient now uses it */
@@ -78,15 +79,10 @@
 
 	/*
 	 *  Determine if we need to throw a interface exception
-     *  and ask the user to reassign interfaces.  This will
-     *  avoid a reboot and thats a good thing.
+     	 *  and ask the user to reassign interfaces.  This will
+     	 *  avoid a reboot and thats a good thing.
 	 */
 	unmute_kernel_msgs();
-	/*
-	 *   Determine if we need to throw a interface exception
-	 *   and ask the user to reassign interfaces.  This will
-	 *   avoid a reboot and thats a good thing.
-	 */
 	while(is_interface_mismatch() == true) {
 		echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
 		set_networking_interfaces_ports();

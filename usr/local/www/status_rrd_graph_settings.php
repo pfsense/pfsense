@@ -38,7 +38,7 @@
 
 require("guiconfig.inc");
 
-$pconfig['enable'] = $config['rrd']['enable'];
+$pconfig['enable'] = isset($config['rrd']['enable']);
 $pconfig['category'] = $config['rrd']['category'];
 $pconfig['style'] = $config['rrd']['style'];
 

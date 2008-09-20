@@ -1518,13 +1518,13 @@ function interface_pppoe_restart($interface = "wan") {
 
 function interface_pppoe_down($interface = "wan") {
 	global $g;
-	sigkillbypid("{$g['varrun_path']}/pppoe_{$interface}.pid", "SIGUSR2");
+	sigkillbypid("{$g['varrun_path']}/pppoe_{$interface}.pid", "USR2");
 	sleep(1);
 }
 
 function interface_pppoe_up($interface = "wan") {
 	global $g;
-	sigkillbypid("{$g['varrun_path']}/pppoe_{$interface}.pid", "SIGUSR1");
+	sigkillbypid("{$g['varrun_path']}/pppoe_{$interface}.pid", "USR1");
 	sleep(1);
 }
 
@@ -1655,13 +1655,13 @@ function interface_pptp_restart($interface = "wan") {
 
 function interface_pptp_down($interface = "wan") {
 	global $g;
-	sigkillbypid("{$g['varrun_path']}/pptp_{$interface}.pid", "SIGUSR2");
+	sigkillbypid("{$g['varrun_path']}/pptp_{$interface}.pid", "USR2");
 	sleep(1);
 }
 
 function interface_pptp_up($interface = "wan") {
 	global $g;
-	sigkillbypid("{$g['varrun_path']}/pptp_{$interface}.pid", "SIGUSR1");
+	sigkillbypid("{$g['varrun_path']}/pptp_{$interface}.pid", "USR1");
 	sleep(1);
 }
 

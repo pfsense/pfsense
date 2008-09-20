@@ -405,6 +405,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <li><span class="vexpl">change the IP address of your computer</span></li>
   <li><span class="vexpl">renew its DHCP lease</span></li>
   <li><span class="vexpl">access the webConfigurator with the new IP address</span></li>
+  <li><span class="vexpl">interfaces that are configured as members of a lagg(4) interface will not be shown.</span></li>
 </ul></td>
 	</tr>
 </table>

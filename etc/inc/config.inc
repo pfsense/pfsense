@@ -2822,16 +2822,22 @@ function is_interface_mismatch() {
 	global $config, $g;
 
 	$do_assign = false;
+	$i = 0;
 	foreach ($config['interfaces'] as $ifname => $ifcfg) {
-		if (preg_match("/^enc|^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre|^lagg|^bridge|^vlan/i", $ifcfg['if']))	
-			continue;
-		if (does_interface_exist($ifcfg['if']) == false) {
+		if (preg_match("/^enc|^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre|^lagg|^bridge|^vlan/i", $ifcfg['if'])) {
+			$i++;	
+		}
+		else if (does_interface_exist($ifcfg['if']) == false) {
 			file_notice("{$ifcfg['if']} is not present anymore on the system, you need to reassign interfaces or take appropriate actions.");
 			$do_assign = true;
-		}
+		} else 
+			$i++;
 	}
 	
-	if (file_exists("{$g['tmp_path']}/assign_complete"))
+	if ($g['minimum_nic_count'] > $i) {
+		file_notice("Minimum allowed interfaces is set to {$g['minimum_nic_count']} but system has only {$i} interfaces!");
+		$do_assign = true;
+	} else if (file_exists("{$g['tmp_path']}/assign_complete"))
 		$do_assign = false;
 
 	return $do_assign;

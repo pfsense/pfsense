@@ -36,7 +36,6 @@
 ##|*MATCH=interfaces_assign.php*
 ##|-PRIV
 
-
 $pgtitle = array("Interfaces", "Assign network ports");
 require("guiconfig.inc");
 
@@ -80,11 +79,16 @@ if (is_array($config['gres']['gre']) && count($config['gres']['gre'])) {
         }
 }
 
-/* add GRE interfaces */
+/* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
         foreach ($config['laggs']['lagg'] as $lagg) {
                 $portlist[$lagg['laggif']] = $lagg;
                 $portlist[$lagg['laggif']]['islagg'] = true;
+		/* LAGG members cannot be assigned */
+		$lagifs = explode(',', $lagg['members']);
+		foreach ($lagifs as $lagif)
+			if (isset($portlist[$lagif]))
+				unset($portlist[$lagif]);
         }
 }
 

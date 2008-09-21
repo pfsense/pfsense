@@ -2769,6 +2769,7 @@ function enable_rrd_graphing() {
 	$top = "/usr/bin/top";
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 	$ifconfig = "/sbin/ifconfig";
+	$pingcmd = "/sbin/ping";
 
 	$rrdtrafficinterval = 60;
 	$rrdqualityinterval = 60;
@@ -2967,7 +2968,7 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= "	packetloss_{$ifname}=100\n";
 				$rrdupdatesh .= "	roundtrip_{$ifname}=0\n";
 				$rrdupdatesh .= "	local out_{$ifname}\n";
-				$rrdupdatesh .= "	out_{$ifname}=`ping -c $numpings -q $monitorip`\n";
+				$rrdupdatesh .= "	out_{$ifname}=`$ping -c $numpings -q $monitorip`\n";
 				$rrdupdatesh .= "	if [ $? -eq 0 ]; then\n";
 				$rrdupdatesh .= "		packetloss_{$ifname}=`echo \$out_{$ifname} | cut -f18 -d' ' | cut -c -1`\n";
 				$rrdupdatesh .= "		roundtrip_{$ifname}=`echo \$out_{$ifname} | cut -f24 -d' ' | cut -f2 -d'/'`\n";

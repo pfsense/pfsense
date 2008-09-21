@@ -3346,10 +3346,6 @@ function update_filter_reload_status($text) {
 function get_interface_gateway($interface) {
         global $config, $g;
 
-        /* if wan is requested, return it */
-        if($interface == "wan")
-                return str_replace("\n", "", `route -n get default | grep gateway | awk '{ print $2 }'`);
-
 	$iflist = get_configured_interface_with_descr();
 	/* 
 	 * XXX: This is silly at first, but we may be called with the interface

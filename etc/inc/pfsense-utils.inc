@@ -2957,6 +2957,10 @@ function enable_rrd_graphing() {
 				if(!is_ipaddr($monitorip)) {
 					$monitorip = get_interface_gateway($ifname);
 				}
+				if(!is_ipaddr($monitorip)) {
+					/* still no monitor IP, don't write a collector and pass the batton */
+					continue;
+				}
 				/* the ping test function. We call this on the last line */
 				$rrdupdatesh .= "# Quality collector for {$ifname}\n";
 				$rrdupdatesh .= "get_quality_stats_{$ifname} () {\n";

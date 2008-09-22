@@ -112,9 +112,6 @@
 	/* save dmesg output to file */
 	system_dmesg_save();
 
-	/* generate resolv.conf */
-	system_resolvconf_generate();
-
 	/* set up our timezone */
 	system_timezone_configure();
 
@@ -138,9 +135,7 @@
 		unmute_kernel_msgs();
 
 	/* setup altq + pf */
-	//mute_kernel_msgs();
 	filter_configure_sync();
-	//unmute_kernel_msgs();
 
 	/* generate resolv.conf */
 	system_resolvconf_generate();
@@ -175,17 +170,14 @@
 	/* enable routing */
 	system_routing_enable();
 
-	/* ensure passwords are sync'd */
-//	system_password_configure();
-
 	/* configure console menu */
 	system_console_configure();
 
 	/* check if the wan interface is up, this might delay upto 10 seconds */
-	is_wan_interface_up("wan");
-
-	/* Sync the system time at boot before service startup */
-	sync_system_time();
+	if(is_wan_interface_up("wan")) {
+		/* Sync the system time at boot before service startup */
+		sync_system_time();
+	}
 
 	/* start dyndns service */
 	services_dyndns_configure();
@@ -193,9 +185,6 @@
 	/* static IP address? -> attempt DNS update */
 	if (is_ipaddr($config['interfaces']['wan']['ipaddr']))
 		services_dnsupdate_process();
-
-	/* start DHCP service */
-	services_dhcpd_configure();
 
 	/* start dnsmasq service */
 	services_dnsmasq_configure();
@@ -223,9 +212,6 @@
 	setup_microcode();
 	echo "done.\n";
 
-	/* XXX: what is up with such hacks!? */
-	mwexec("/sbin/pfctl -f /tmp/rules.debug");
-	
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();
 
@@ -244,15 +230,13 @@
 	if(isset($config['system']['disableconsolemenu']))
 		touch("/var/etc/console_lockdown");
 
-	/* XXX: something like this is done 3 times in here?!?!?!?! */
+	/* Run a filter configure now that most all services have started */
 	filter_configure_sync();
 
 	/* load graphing functions */
 	enable_rrd_graphing();
 
-	/*   start DHCP service again now that CARP has settled
-	 *   incase user is using primary/backup failover dhcp mode
-         */
+	/* start DHCP service */
 	services_dhcpd_configure();
 
 	/* startup OLSR if needed */
@@ -288,6 +272,7 @@
 	if($kern_hz == "1000") 
 		mwexec("sysctl net.inet.tcp.rexmit_min=30");
 
+	/* start the upnp daemon if it is enabled */
 	upnp_start();
 
 	mwexec_bg("/usr/sbin/update_dns_cache.sh");

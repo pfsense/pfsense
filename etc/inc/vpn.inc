@@ -458,16 +458,16 @@ EOD;
 				$tunnel = $ipseccfg['mobileclients'];
 
 				if (isset($tunnel['p1']['myident']['myaddress'])) {
-					$myidentt = "address";
+					$myidentt = "address ";
 					$myident = $curwanip;
 				} else if (isset($tunnel['p1']['myident']['address'])) {
-					$myidentt = "address";
+					$myidentt = "address ";
 					$myident = $tunnel['p1']['myident']['address'];
 				} else if (isset($tunnel['p1']['myident']['fqdn'])) {
-					$myidentt = "fqdn";
+					$myidentt = "fqdn ";
 					$myident = $tunnel['p1']['myident']['fqdn'];
 				} else if (isset($tunnel['p1']['myident']['ufqdn'])) {
-					$myidentt = "user_fqdn";
+					$myidentt = "user_fqdn ";
 					$myident = $tunnel['p1']['myident']['ufqdn'];
  				}
 

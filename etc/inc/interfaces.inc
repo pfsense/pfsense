@@ -339,7 +339,7 @@ function interface_gre_configure(&$gre) {
 	$realifip = get_current_wan_address($gre['if']);
 
         /* make sure the parent interface is up */
-        mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
+        mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " up");
 
         if ($g['booting'] || !(empty($gre['greif']))) {
                 mwexec("/sbin/ifconfig {$gre['greif']} destroy");
@@ -390,7 +390,7 @@ function interface_gif_configure(&$gif) {
         $realifip = get_current_wan_address($gif['if']);
 
         /* make sure the parent interface is up */
-        mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
+        mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " up");
 
         if ($g['booting'] || !(empty($gif['gifif']))) {
                 mwexec("/sbin/ifconfig {$gif['gifif']} destroy");

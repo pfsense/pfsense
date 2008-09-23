@@ -350,7 +350,7 @@ function interface_gre_configure(&$gre) {
 
 	/* Do not change the order here for more see gre(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} {$gre['remote-addr']}");
-	mwexec("/sbin/ifconfig {$greif} {$gre['tunnel-local-addr']} {$gre['tunnel-remote-addr']} netmask 255.255.255.255 ");
+	mwexec("/sbin/ifconfig {$greif} {$gre['tunnel-local-addr']} {$gre['tunnel-remote-addr']} netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
 	if (isset($gre['link0']) && $gre['link0'])
 		mwexec("/sbin/ifconfig {$greif} link0");
         if (isset($gre['link1']) && $gre['link1'])
@@ -401,7 +401,7 @@ function interface_gif_configure(&$gif) {
 
         /* Do not change the order here for more see gif(4) NOTES section. */
         mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} {$gif['remote-addr']}");
-        mwexec("/sbin/ifconfig {$gifif} {$gif['tunnel-local-addr']} {$gif['tunnel-remote-addr']} netmask 255.255.255.255 ");
+        mwexec("/sbin/ifconfig {$gifif} {$gif['tunnel-local-addr']} {$gif['tunnel-remote-addr']} netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
         if (isset($gif['link0']) && $gif['link0'])
                 mwexec("/sbin/ifconfig {$gifif} link0");
         if (isset($gif['link1']) && $gif['link1'])

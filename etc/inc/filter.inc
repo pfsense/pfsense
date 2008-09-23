@@ -2227,7 +2227,7 @@ EOD;
 
 	if (!isset($config['system']['webgui']['noantilockout'])) {
 
-		if($config['interfaces']['lan']) {
+		if (count($config['interfaces']) > 1) {
 				/* if antilockout is enabled, LAN exists and has
                                   an IP and subnet mask assigned */
 				$lanif = get_real_wan_interface("lan");

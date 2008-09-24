@@ -127,9 +127,11 @@ ddns-update-style none;
 one-lease-per-client true;
 deny duplicates;
 ping-check true;
-always-broadcast true;
 
 EOD;
+
+	if(isset($dhcpifconf['alwaysbroadcast'])) 
+		$dhcpdconf .= "always-broadcast on\n";
 
 	$dhcpdifs = array();
 

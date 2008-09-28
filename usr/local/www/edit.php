@@ -113,7 +113,6 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 			else if(file.indexOf(".css") > 0) lang = "css";
 
 			if($("highlight").checked && lang != "none") {
-				alert("highlight");
 				$("fileContent").className = lang + ":showcolumns";
 				dp.SyntaxHighlighter.HighlightAll("fileContent", true, false);
 			}
@@ -166,7 +165,11 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 			<input type="button" class="formbtn"      id="fbOpen"           value="<?=gettext('Browse');?>" />
 			<input type="button" class="formbtn"      onclick="saveFile();" value="<?=gettext('Save');?>" />
 			<br />
-			<input type="checkbox" id="highlight" /><?=gettext("Enable syntax highlighting");?>
+			<?php
+			/*
+			<input type="checkbox" id="highlight" /><?=gettext("Enable syntax highlighting");
+			*/
+			?>
 		</td>
 	</tr>
 </table>

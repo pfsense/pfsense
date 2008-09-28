@@ -1,4 +1,4 @@
-<?php
+1<?php
 /* $Id$ */
 /*
 	edit.php
@@ -53,6 +53,9 @@ if($_REQUEST['action']) {
 				echo "|No file name specified.|";
 			} else {
 				$ret = file_put_contents($_REQUEST['file'], $_REQUEST['data']);
+				if($_REQUEST['file'] == "config.xml")
+					if(file_exists("/tmp/config.cache"))
+						unlink("/tmp/config.cache");
 				if($ret === false) {
 					echo "|Failed to write file.|";
 				} elseif($ret <> strlen($_REQUEST['data'])) {

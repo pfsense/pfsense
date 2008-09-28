@@ -766,7 +766,6 @@ EOD;
 	$settings = <<<EOD
 
 {$ifconfig} {$if} down
-{$ifconfig} {$if} {$hostapmode}
 {$ifconfig} {$if} {$standard_no_turbo}
 {$ifconfig} {$if} {$channel}
 {$ifconfig} {$if} {$turbo}
@@ -779,6 +778,7 @@ EOD;
 {$ifconfig} {$if} {$wme}
 {$ifconfig} {$if} {$wepset}
 {$ifconfig} {$if} {$txpower}
+{$ifconfig} {$if} {$hostapmode}
 {$ifconfig} {$if} mtu 1500
 {$ifconfig} {$if} up
 

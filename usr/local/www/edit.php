@@ -1,4 +1,4 @@
-1<?php
+<?php
 /* $Id$ */
 /*
 	edit.php

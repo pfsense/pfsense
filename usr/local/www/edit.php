@@ -40,7 +40,7 @@ if($_REQUEST['action']) {
 			} elseif(! is_file($_REQUEST['file'])) {
 				echo "|3|File does not exist or is not a regular file.|";
 			} else {
-				$data = file_get_contents($_REQUEST['file']);
+				$data = file_get_contents(urldecode($_REQUEST['file']));
 				if($data === false) {
 					echo "|1|Failed to read file.|";
 				} else {
@@ -113,6 +113,7 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 			else if(file.indexOf(".css") > 0) lang = "css";
 
 			if($("highlight").checked && lang != "none") {
+				alert("highlight");
 				$("fileContent").className = lang + ":showcolumns";
 				dp.SyntaxHighlighter.HighlightAll("fileContent", true, false);
 			}
@@ -132,7 +133,7 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 			"<?=$_SERVER['SCRIPT_NAME'];?>", {
 				method:     "post",
 				postBody:   "action=save&file=" + $("fbTarget").value +
-							"&data=" + escape($("fileContent").value),
+							"&data=" + $("fileContent").value,
 				onComplete: function(req) {
 					var values = req.responseText.split("|");
 					$("fileStatus").innerHTML = values[1];

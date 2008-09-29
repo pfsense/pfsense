@@ -404,8 +404,9 @@ if ($pkg['tabs'] <> "") {
 	      } else if($pkga['type'] == "textarea") {
 		  if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";
 		  if($pkga['cols']) $cols = " cols='" . $pkga['cols'] . "' ";
-                  if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) $value = base64_decode($value);
-			echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "'>" . $value . "</textarea>\n";
+		  if($pkga['wrap'] == "off") { $wrap = 'wrap="off" style="white-space:nowrap;"'; } else { $wrap = ''; }		  
+          if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) $value = base64_decode($value);
+			echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "' ".$wrap.">" . $value . "</textarea>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 		  } else if($pkga['type'] == "interfaces_selection") {
 			$size = ($pkga['size'] ? "size=\"{$pkga['size']}\"" : '');

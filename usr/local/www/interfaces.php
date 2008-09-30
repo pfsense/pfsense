@@ -349,7 +349,7 @@ n already exists.";
 	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet']))) {
 		$input_errors[] = "A valid alias subnet bit count must be specified.";
 	}
-	if ($_POST['gateway']) {
+	if ($_POST['gateway'] != "none") {
 		$match = false;
 		foreach($a_gateways as $gateway) {
 			if(in_array($_POST['gateway'], $gateway)) {
@@ -478,7 +478,8 @@ n already exists.";
 		if ($_POST['type'] == "static") {
 			$wancfg['ipaddr'] = $_POST['ipaddr'];
 			$wancfg['subnet'] = $_POST['subnet'];
-			$wancfg['gateway'] = $_POST['gateway'];
+			if ($_POST['gateway'] != "none")
+				$wancfg['gateway'] = $_POST['gateway'];
 			if (isset($wancfg['ispointtopoint']))
 				$wancfg['pointtopoint'] = $_POST['pointtopoint'];
 		} else if ($_POST['type'] == "dhcp") {
@@ -908,6 +909,7 @@ function openwindow(url) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Gateway</td>
                   <td width="78%" class="vtable"><select name="gateway" class="formselect" id="gateway">
+					<option value="none" selected>None</option>
 			<?php
 			if(count($a_gateways) > 0) {
 				foreach ($a_gateways as $gateway) {

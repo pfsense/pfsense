@@ -2825,15 +2825,16 @@ EOD;
 							continue;
 						if(!$remote_gateway) 
 							continue;
-						$ipfrules .= "pass out quick on \${$iface} proto udp from any to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
-						$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to any port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
+                                                $shorttunneldescr = substr($tunnel['descr'], 0, 26);
+						$ipfrules .= "pass out quick on \${$iface} proto udp from any to {$remote_gateway} port = 500 keep state label \"IPSEC: $shorttunneldescr - outbound isakmp\"\n";
+						$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to any port = 500 keep state label \"IPSEC: $shorttunneldescr - inbound isakmp\"\n";
 						if ($tunnel['p2']['protocol'] == 'esp') {
-							$ipfrules .= "pass out quick on \${$iface} proto esp from any to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";
-							$ipfrules .= "pass in quick on \${$iface} proto esp from {$remote_gateway} to any keep state label \"IPSEC: {$tunnel['descr']} - inbound esp proto\"\n";
+							$ipfrules .= "pass out quick on \${$iface} proto esp from any to {$remote_gateway} keep state label \"IPSEC: $shorttunneldescr - outbound esp proto\"\n";
+							$ipfrules .= "pass in quick on \${$iface} proto esp from {$remote_gateway} to any keep state label \"IPSEC: $shorttunneldescr - inbound esp proto\"\n";
 						}
 						if ($tunnel['p2']['protocol'] == 'ah') {
-							$ipfrules .= "pass out quick on \${$iface} proto ah from any to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
-							$ipfrules .= "pass in quick on \${$iface} proto ah from {$remote_gateway} to any keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
+							$ipfrules .= "pass out quick on \${$iface} proto ah from any to {$remote_gateway} keep state label \"IPSEC: $shorttunneldescr - outbound ah proto\"\n";
+							$ipfrules .= "pass in quick on \${$iface} proto ah from {$remote_gateway} to any keep state label \"IPSEC: $shorttunneldescr - inbound ah proto\"\n";
 						}
 					}
 				}

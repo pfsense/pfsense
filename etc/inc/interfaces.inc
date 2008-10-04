@@ -1224,7 +1224,7 @@ function interface_configure($interface = "wan") {
 			}
 
 			if (is_ipaddr($wancfg['gateway']))
-				system("echo " . $wancfg['gateway'] . " > /tmp/" . $realif . "_router");
+				file_put_contents("/tmp/{$realif}_router", $wancfg['gateway']);
 
 	}
 

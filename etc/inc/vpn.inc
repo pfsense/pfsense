@@ -514,7 +514,7 @@ EOD;
 				$racoonconf .= <<<EOD
 remote anonymous \{
 	exchange_mode {$tunnel['p1']['mode']};
-	my_identifier {$myidentt}{$myident};	
+	my_identifier {$myidentt}"{$myident}";	
 	{$nattline}
 	{$certline}
 	initial_contact on;

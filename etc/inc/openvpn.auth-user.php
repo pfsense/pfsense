@@ -27,6 +27,8 @@
     CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
+
+	DISABLE_PHP_LINT_CHECKING
 */
 
 /*
@@ -53,7 +55,7 @@ $username = getenv("username");
 $password = getenv("password");
 
 if (!$username || !$password) {
-	syslog(LOG_ERROR, "invalid user authentication environment");
+	syslog(LOG_ERR, "invalid user authentication environment");
 	exit(-1);
 }
 

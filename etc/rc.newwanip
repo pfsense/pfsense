@@ -82,13 +82,8 @@ exec("killall -HUP openvpn 2>/dev/null");
 
 /* regenerate resolv.conf if DNS overrides are allowed or the BigPond
    client is enabled */
-if (isset($config['system']['dnsallowoverride']) ||
-	($config['interfaces'][$interface]['ipaddr'] == "bigpond"))
+if (isset($config['system']['dnsallowoverride'])) 
 		system_resolvconf_generate(true);
-
-/* fire up the BigPond client, if necessary */
-if ($config['interfaces'][$interface]['ipaddr'] == "bigpond")
-	interfaces_wan_bigpond_configure($curwanip);
 
 /* perform RFC 2136 DNS update */
 services_dnsupdate_process();

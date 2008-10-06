@@ -2131,15 +2131,6 @@ pass in on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA mod
 
 EOD;
 			break;
-			/* BigPond client enabled? */
-		case "bigpond":
-			$ipfrules .= <<<EOD
-# BigPond heartbeat rules
-anchor "bigpond"
-pass in quick on \${$oc['descr']} proto udp from any to any port = 5050 keep state label "BigPond heartbeat on {$oc['descr']}"
-
-EOD;
-			break;
 		case "dhcp":
 		case "carpdev-dhcp":
 			$ipfrules .= <<<EOD

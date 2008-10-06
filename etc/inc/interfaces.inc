@@ -1205,11 +1205,6 @@ function interface_configure($interface = "wan") {
 			interface_pptp_configure($interface);
 			break;
 
-		case 'bigpond':
-			/* just configure DHCP for now; fire up bpalogin when we've got the lease */
-			interface_dhcp_configure($interface);
-			break;
-
 		default:
 			if ($wancfg['ipaddr'] <> "" && $wancfg['subnet'] <> "") {
 				if (isset($wancfg['ispointtopoint']) && $wancfg['pointtopoint']) {
@@ -1518,13 +1513,15 @@ function interface_pppoe_restart($interface = "wan") {
 
 function interface_pppoe_down($interface = "wan") {
 	global $g;
-	sigkillbypid("{$g['varrun_path']}/pppoe_{$interface}.pid", "USR2");
+	killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");
 	sleep(1);
 }
 
 function interface_pppoe_up($interface = "wan") {
 	global $g;
-	sigkillbypid("{$g['varrun_path']}/pppoe_{$interface}.pid", "USR1");
+	/* fire up mpd */
+	/* NB: keep in sync with interface_pppoe_configure */
+        mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pppoe_{$interface}.pid pppoeclient");
 	sleep(1);
 }
 
@@ -1655,70 +1652,16 @@ function interface_pptp_restart($interface = "wan") {
 
 function interface_pptp_down($interface = "wan") {
 	global $g;
-	sigkillbypid("{$g['varrun_path']}/pptp_{$interface}.pid", "USR2");
+	killbypid("{$g['varrun_path']}/pptp_{$interface}.pid");
 	sleep(1);
 }
 
 function interface_pptp_up($interface = "wan") {
 	global $g;
-	sigkillbypid("{$g['varrun_path']}/pptp_{$interface}.pid", "USR1");
+	/* fire up mpd */
+	/* NB: Keep in sync with interface_pptp_configure */
+        mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pptp_{$interface}.pid pptp");
 	sleep(1);
-}
-
-function interface_bigpond_configure($curwanip) {
-	global $config, $g;
-
-	$bpcfg = $config['bigpond'];
-
-	if (!$curwanip) {
-		/* IP address not configured yet, exit */
-		return 0;
-	}
-
-	/* kill bpalogin */
-	killbyname("bpalogin");
-
-	/* wait a moment */
-	sleep(1);
-
-	/* get the default domain */
-	$nfd = @fopen("{$g['varetc_path']}/defaultdomain.conf", "r");
-	if ($nfd) {
-		$defaultdomain = trim(fgets($nfd));
-		fclose($nfd);
-	}
-
-	/* generate bpalogin.conf */
-	$fd = fopen("{$g['varetc_path']}/bpalogin.conf", "w");
-	if (!$fd) {
-		printf("Error: cannot open bpalogin.conf in interfaces_wan_bigpond_configure().\n");
-		return 1;
-	}
-
-	if (!$bpcfg['authserver'])
-		$bpcfg['authserver'] = "dce-server";
-	if (!$bpcfg['authdomain'])
-		$bpcfg['authdomain'] = $defaultdomain;
-
-	$bpconf = <<<EOD
-username {$bpcfg['username']}
-password {$bpcfg['password']}
-authserver {$bpcfg['authserver']}
-authdomain {$bpcfg['authdomain']}
-localport 5050
-
-EOD;
-
-	if ($bpcfg['minheartbeatinterval'])
-		$bpconf .= "minheartbeatinterval {$bpcfg['minheartbeatinterval']}\n";
-
-	fwrite($fd, $bpconf);
-	fclose($fd);
-
-	/* fire up bpalogin */
-	mwexec("/usr/local/sbin/bpalogin -c {$g['varetc_path']}/bpalogin.conf");
-
-	return 0;
 }
 
 function get_real_wan_interface($interface = "wan") {
@@ -1822,19 +1765,6 @@ function get_current_wan_address($interface = "wan") {
 		break;
 	case "pppoe":
 	case "pptp":
-	case "bigpond":
-		/* get interface info with netstat */
-		exec("/usr/bin/netstat -nWI " . escapeshellarg($realif) . " -f inet", $ifinfo);
-		if (isset($ifinfo[1])) {
-			$aif = preg_split("/\s+/", $ifinfo[1]);
-			$curwanip = chop($aif[3]);
-
-			if ($curwanip && is_ipaddr($curwanip) && ($curwanip != "0.0.0.0"))
-				return $curwanip;
-		}
-
-		return null;
-		break;
 	 /* carpdev support */
 	 case "carpdev-dhcp":
 	        $viparr = &$config['virtualip']['vip'];

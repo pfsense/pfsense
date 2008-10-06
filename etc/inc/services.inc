@@ -783,9 +783,7 @@ function services_proxyarp_configure() {
 
 		if (count($paa))
 		foreach ($paa as $paif => $paents) {
-			if ($paif == "wan" && !(is_ipaddr($config['interfaces']['wan']['ipaddr']) ||
-                                       ($config['interfaces']['wan']['ipaddr'] == "dhcp") ||
-                                       ($config['interfaces']['wan']['ipaddr'] == "bigpond")))
+			if (!(is_ipaddr($config['interfaces'][$paif]['ipaddr'])))
                                continue;
 
 			$args = $config['interfaces'][$paif]['if'] . " auto";

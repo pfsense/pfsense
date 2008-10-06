@@ -59,7 +59,6 @@
 			}
 			if($config['interfaces'][$iface]['ipaddr'] <> "dhcp" and
 				$config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
-				$config['interfaces'][$iface]['ipaddr'] <> "bigpond" and
 				$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
 				log_error("Hotplug event detected for {$argument1} but ignoring since interface is not set for DHCP");
 				exec("/usr/sbin/arp -d -i {$argument1} -a");
@@ -83,6 +82,7 @@
 				if($config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
 					$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
 					/* do not reconfigure on hotplug events when using pppoe or pptp */
+					/* XXX: Why not?! */
 					log_error("HOTPLUG: Configuring wan interface {$argument1}");
 					interface_configure($iface);
 				}

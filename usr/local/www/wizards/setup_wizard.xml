@@ -162,11 +162,6 @@
 					<enablefields>pptpusername,pptppassword,pptplocalipaddress,pptplocalsubnet,pptpremoteipaddress,pptpdialondemand,pptpidletimeout
 					</enablefields>
 				</option>
-				<option>
-					<name>BigPond</name>
-					<value>bigpond</value>
-					<enablefields>bigpondusername,bigpondpassword,bigpondauthenticationserver,bigpondauthenticationdomain,bigpondminheartbeatinterval</enablefields>
-				</option>
 			</options>
 		</field>
 		<field>
@@ -295,39 +290,6 @@
 			<name>PPTP Idle timeout</name>
 			<type>input</type>
 			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
-		</field>
-		<field>
-			<name>BigPond configuration</name>
-			<type>listtopic</type>
-		</field>
-		<field>
-			<name>BigPond Username</name>
-			<type>input</type>
-			<bindstofield>bigpond->username</bindstofield>
-		</field>
-		<field>
-			<name>BigPond Password</name>
-			<type>input</type>
-			<bindstofield>bigpond->password</bindstofield>
-		</field>
-		<field>
-			<name>BigPond Authentication server</name>
-			<type>input</type>
-			<bindstofield>bigpond->authserver</bindstofield>
-			<description>If this field is left empty, the default ("dce-server") is used.</description>
-		</field>
-		<field>
-			<name>BigPond Authentication domain</name>
-			<type>input</type>
-			<bindstofield>bigpond->authdomain</bindstofield>
-			<description>If this field is left empty, the domain name assigned via DHCP will be used.  Note: the BigPond client implicitly sets the "Allow DNS server list to be overridden by DHCP/PPP on WAN" on the System: General setup page.</description>
-		</field>
-		<field>
-			<name>BigPond min heartbeat interval</name>
-			<type>input</type>
-			<typehint>seconds</typehint>
-			<bindstofield>bigpond->minheartbeatinterval</bindstofield>
-			<description> Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks.</description>
 		</field>
 		<field>
 			<name>RFC1918 Networks</name>

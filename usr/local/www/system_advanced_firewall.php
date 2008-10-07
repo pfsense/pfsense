@@ -301,7 +301,7 @@ function update_description(itemnum) {
 							<tr>
 								<td width="22%" valign="top" class="vncell">Reflection Timeout</td>
 								<td width="78%" class="vtable">
-									<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" />
+									<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" /><br/>
 									<strong>Enter value for Reflection timeout in seconds.</strong>
 								</td>
 							</tr>

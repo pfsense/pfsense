@@ -256,7 +256,7 @@ function step2_stepsubmitphpaction() {
                                                 exit;
                                 }
 
-	/* This is necessary since the wizard expects predefined fields. */
+	/* This is necessary since the wizard expects pecnefined fields. */
 	unset($config['ezshaper']['step2']);
 	$config['ezshaper']['step2'] = array();
 
@@ -733,7 +733,7 @@ $othersplist = array();
 	 */
 	if(isset($config['shaper']['queue']))
 		unset($config['shaper']['queue']);
-	/* XXX: This is redundant, because this should be handled by converter at startup. */
+	/* XXX: This is ecnundant, because this should be handled by converter at startup. */
 	if(isset($config['shaper']['rule']))
 		unset($config['shaper']['rule']);
 	foreach ($config['filter']['rule'] as $key => $rule)
@@ -854,7 +854,7 @@ $othersplist = array();
                         $tmpcf = array();
                         $tmpcf['name'] = "qInternet";
                         //$tmpcf['priority'] = 6;
-                        $tmpcf['red'] = "on";
+                        $tmpcf['ecn'] = "on";
                         $tmpcf['enabled'] = "on";
                         If ($sched == "CBQ") {
                                 $tmpcf['bandwidth'] = floatval($config['ezshaper']['step2']["conndownload"]);
@@ -891,7 +891,7 @@ $othersplist = array();
 			$tmpcf = array();
 			$tmpcf['name'] = "qACK";
 			$tmpcf['priority'] = 6;
-			$tmpcf['red'] = "on";
+			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
 			If ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";
@@ -929,7 +929,7 @@ $othersplist = array();
 			$tmpcf['enabled'] = "on";
 			if (!$p2pcatchall)
 				$tmpcf['default'] = "on";
-			$tmpcf['red'] = "on";
+			$tmpcf['ecn'] = "on";
 			if ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";
 				$tmpcf['bandwidth'] = $remainbw * 0.1; /* 10% bandwidth */
@@ -955,7 +955,7 @@ $othersplist = array();
 				$tmpcf = array();
 				$tmpcf['name'] = "qP2P";
 				$tmpcf['priority'] = 1;
-				$tmpcf['red'] = "on";
+				$tmpcf['ecn'] = "on";
 				$tmpcf['enabled'] = "on";
 				if ($p2pcatchall) {
 					if ($sched == "CBQ") {
@@ -1009,7 +1009,7 @@ $othersplist = array();
 				$tmpcf = array();
 				$tmpcf['name'] = "qVoIP";
 				$tmpcf['priority'] = 7;
-				$tmpcf['red'] = "on";
+				$tmpcf['ecn'] = "on";
 				$tmpcf['enabled'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
@@ -1052,7 +1052,7 @@ $othersplist = array();
 				$tmpcf['name'] = "qGames";
 				$tmpcf['priority'] = 5;
 				$tmpcf['enabled'] = "on";
-				$tmpcf['red'] = "on";
+				$tmpcf['ecn'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
 					$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
@@ -1084,7 +1084,7 @@ $othersplist = array();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersHigh";
 				$tmpcf['priority'] = 4;
-				$tmpcf['red'] = "on";
+				$tmpcf['ecn'] = "on";
 				$tmpcf['enabled'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
@@ -1116,7 +1116,7 @@ $othersplist = array();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersLow";
 				$tmpcf['priority'] = 2;
-				$tmpcf['red'] = "on";
+				$tmpcf['ecn'] = "on";
 				$tmpcf['enabled'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
@@ -1261,7 +1261,7 @@ $othersplist = array();
 			$tmpcf = array();
 			$tmpcf['name'] = "qACK";
 			$tmpcf['priority'] = 6;
-			$tmpcf['red'] = "on";
+			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
 			If ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";
@@ -1300,7 +1300,7 @@ $othersplist = array();
 			$tmpcf['enabled'] = "on";
 			if (!$p2pcatchall)
 				$tmpcf['default'] = "on";
-			$tmpcf['red'] = "on";
+			$tmpcf['ecn'] = "on";
 			if ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";
 				$tmpcf['bandwidth'] = $remainbw * 0.1; /* 10% bandwidth */
@@ -1326,7 +1326,7 @@ $othersplist = array();
 				$tmpcf = array();
 				$tmpcf['name'] = "qP2P";
 				$tmpcf['priority'] = 1;
-				$tmpcf['red'] = "on";
+				$tmpcf['ecn'] = "on";
 				$tmpcf['enabled'] = "on";
 				if ($p2pcatchall) {
 					if ($sched == "CBQ") {
@@ -1380,7 +1380,7 @@ $othersplist = array();
 				$tmpcf = array();
 				$tmpcf['name'] = "qVoIP";
 				$tmpcf['priority'] = 7;
-				$tmpcf['red'] = "on";
+				$tmpcf['ecn'] = "on";
 				$tmpcf['enabled'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
@@ -1423,7 +1423,7 @@ $othersplist = array();
 				$tmpcf['name'] = "qGames";
 				$tmpcf['priority'] = 5;
 				$tmpcf['enabled'] = "on";
-				$tmpcf['red'] = "on";
+				$tmpcf['ecn'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
 					$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
@@ -1455,7 +1455,7 @@ $othersplist = array();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersHigh";
 				$tmpcf['priority'] = 4;
-				$tmpcf['red'] = "on";
+				$tmpcf['ecn'] = "on";
 				$tmpcf['enabled'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
@@ -1487,7 +1487,7 @@ $othersplist = array();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersLow";
 				$tmpcf['priority'] = 2;
-				$tmpcf['red'] = "on";
+				$tmpcf['ecn'] = "on";
 				$tmpcf['enabled'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";

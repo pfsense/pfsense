@@ -245,7 +245,11 @@ if (isset($wancfg['wireless'])) {
 
 if ($_POST['apply']) {
 
-                unlink_if_exists("{$g['tmp_path']}/config.cache");
+	unset($input_errors);
+	if (!file_exists($d_landirty_path))
+		$intput_errors[] = "You have already applied your settings!";
+	else {	
+               	unlink_if_exists("{$g['tmp_path']}/config.cache");
 		unlink_if_exists("{$d_landirty_path}");
 
                 ob_flush();
@@ -269,7 +273,9 @@ if ($_POST['apply']) {
 
                 /* set up static routes */
                 system_routing_configure();
-
+	}
+	header("Location: interfaces.php?if={$if}");
+	exit;
 } else if ($_POST) {
 
 	unset($input_errors);
@@ -280,7 +286,7 @@ if ($_POST['apply']) {
 
 	if ($_POST['enable'] || $if == "wan" || $if = "lan") {
 		/* optional interface if list */
-                $iflist = get_configured_interface_with_descr(true);
+                $iflist = get_configured_interface_with_descr();
 
                 /* description unique? */
                 foreach ($iflist as $ifent => $ifdescr) {
@@ -306,13 +312,8 @@ n already exists.";
 
 	/* input validation */
 	if ($_POST['type'] == "static") {
-		if ($if == "wan") {
-			$reqdfields = explode(" ", "ipaddr subnet gateway");
-			$reqdfieldsn = explode(",", "IP address,Subnet bit count,Gateway");
-		} else  {
-			$reqdfields = explode(" ", "ipaddr subnet");
-                        $reqdfieldsn = explode(",", "IP address,Subnet bit count");
-		}
+		$reqdfields = explode(" ", "ipaddr subnet gateway");
+		$reqdfieldsn = explode(",", "IP address,Subnet bit count,Gateway");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	} else if ($_POST['type'] == "PPPoE") {
 		if ($_POST['pppoe_dialondemand']) {

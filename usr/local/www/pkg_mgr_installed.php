@@ -87,7 +87,7 @@ include("head.inc");
                                         $latest_package = $currentvers[$pkg['name']]['version'];
 					if($latest_package == false) {
 						// We can't determine this package's version status.
-						?><td class="listlr"><font color="#FFFFFF"><?php
+						?><td class="listlr"><?php
 						echo "Current: Unknown.<br>Installed: " . $pkg['version'];
                                        		?></td><?php
 					} elseif(strcmp($pkg['version'], $latest_package) > 0) {

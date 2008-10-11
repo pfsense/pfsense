@@ -102,7 +102,7 @@ include("head.inc");
 										// we're running an older version of the package
 										if(strcmp($pkg['version'], $latest_package) < 0) {
 											$tdclass = "listbg";
-											$pkgver  = "Available: {$latest_package}<br/>";
+											$pkgver  = "<font color='#ffffff'>Available: {$latest_package}<br/>";
 											$pkgver .= "Installed: {$pkg['version']}";
 										}
 										// we're running the current version
@@ -126,9 +126,7 @@ include("head.inc");
 								<?=$pkg['category'];?>
 							</td>
 							<td class="<?=$tdclass;?>">
-								<font color="#ffffff">
 									<?=$pkgver;?>
-								</font>
 							</td>
 							<td class="listbg">
 								<font color="#ffffff">

@@ -363,7 +363,8 @@ if ($pkg['tabs'] <> "") {
 			echo "<input " . $size . " id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "password") {
-			echo "<input id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+			if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";		
+			echo "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "select") {
                   $fieldname = $pkga['fieldname'];

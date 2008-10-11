@@ -126,7 +126,9 @@ include("head.inc");
 								<?=$pkg['category'];?>
 							</td>
 							<td class="<?=$tdclass;?>">
-								<?=$pkgver;?>
+								<font color="#ffffff">
+									<?=$pkgver;?>
+								</font>
 							</td>
 							<td class="listbg">
 								<font color="#ffffff">

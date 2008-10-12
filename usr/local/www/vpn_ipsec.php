@@ -244,11 +244,9 @@ include("head.inc");
 							<?=$p1_halgos[$ph1ent['hash-algorithm']];?>
 							<?=$spane;?>
 						</td>
-						<td class="listtopic">
+						<td class="listbg">
 							<?=$spans;?>
-								<font color="#FFFFFF">
-									<?=htmlspecialchars($ph1ent['descr']);?>&nbsp;
-								</font>
+							<?=htmlspecialchars($ph1ent['descr']);?>&nbsp;
 							<?=$spane;?>
 						</td>
 						<td valign="middle" nowrap class="list">

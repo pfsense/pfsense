@@ -737,6 +737,64 @@ div.suggestions div.current {
 .r4,.rl4,.rr4,.re4,.rel4,.rer4,.ra4,.rar4,.ral4,.rx4,.rxl4,.rxr4{height:2px}
 .rer1,.rel1,.re1,.res1,.resl1,.resr1{border-width:1px 0 0;height:0px !important;height /**/:1px}
 
+#login {
+	background: #cccccc;
+	border: 0px solid #666666;
+	margin: 5em auto;
+	padding: 0em;
+	width: 340px;
+}
+
+#login h1 {
+	background: url(images/misc/logon.png) no-repeat top left;
+	margin-top: 0;
+	display: block;
+	text-indent: -1000px;
+	height: 50px;
+	border-bottom: none;
+}
+
+#login p {
+	font-size: 1em;
+	font-weight: bold;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
+#login span {
+	font-size: 1em;
+	font-weight: bold;
+	width: 20%;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
+#login p#text {
+	font-size: 1em;
+	font-weight: normal;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
+#login #username, #password {
+	font-size: 1em;
+	width: 60%;
+	padding: 3px;
+	margin: 0em;
+}
+
+#login #submit {
+	font-size: 1em;
+	font-weight: bold;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
+
 /* Widget CSS */
 .widgetsubheader {
 	border-right: 1px solid #999999;

@@ -284,31 +284,31 @@ if ($_POST['apply']) {
 	/* filter out spaces from descriptions  */
         $_POST['descr'] = remove_bad_chars($_POST['descr']);
 
-	if ($_POST['enable'] || $if == "wan" || $if = "lan") {
+	/* okay first of all, cause we are just hidding the PPPoE HTML
+         * fields releated to PPPoE resets, we are going to unset $_POST
+         * vars, if the reset feature should not be used. Otherwise the
+         * data validation procedure below, may trigger a false error
+         * message.
+         */        
+	if (empty($_POST['pppoe_preset'])) {
+                unset($_POST['pppoe_pr_type']);                
+		unset($_POST['pppoe_resethour']);
+                unset($_POST['pppoe_resetminute']);
+                unset($_POST['pppoe_resetdate']);
+                unset($_POST['pppoe_pr_preset_val']);                
+		unlink_if_exists(CRON_PPPOE_CMD_FILE);
+        }
+
+	if ($_POST['enable'] == "yes" || $if == "wan" || $if == "lan") {
 		/* optional interface if list */
                 $iflist = get_configured_interface_with_descr();
 
                 /* description unique? */
                 foreach ($iflist as $ifent => $ifdescr) {
                         if ($if != $ifent && $ifdescr == $_POST['descr'])
-                                $input_errors[] = "An interface with the specified descriptio
-n already exists.";
-                }
+                                $input_errors[] = "An interface with the specified description already exists.";
 
-	/* okay first of all, cause we are just hidding the PPPoE HTML
-	 * fields releated to PPPoE resets, we are going to unset $_POST
-	 * vars, if the reset feature should not be used. Otherwise the
-	 * data validation procedure below, may trigger a false error
-	 * message.
-	 */
-	if (empty($_POST['pppoe_preset'])) {
-		unset($_POST['pppoe_pr_type']);
-		unset($_POST['pppoe_resethour']);
-		unset($_POST['pppoe_resetminute']);
-		unset($_POST['pppoe_resetdate']);
-		unset($_POST['pppoe_pr_preset_val']);
-		unlink_if_exists(CRON_PPPOE_CMD_FILE);
-	}
+                }
 
 	/* input validation */
 	if ($_POST['type'] == "static") {
@@ -398,15 +398,12 @@ n already exists.";
 	if ($_POST['mtu'] && ($_POST['mtu'] < 576)) {
 		$input_errors[] = "The MTU must be greater than 576 bytes.";
 	}
-	}
 
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
-		if ($_POST['enable']) {
-			$reqdfields = explode(" ", "mode ssid");
-			$reqdfieldsn = explode(",", "Mode,SSID");
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-		}
+		$reqdfields = explode(" ", "mode ssid");
+		$reqdfieldsn = explode(",", "Mode,SSID");
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		/* loop through keys and enforce size */
 		for ($i = 1; $i <= 4; $i++) {
@@ -474,7 +471,7 @@ n already exists.";
 		if ($if == "wan" || $if == "lan")
 			$wancfg['enable'] = true;
 		else
-			$wancfg['enable'] =  $_POST['enable'] ? true : false;
+			$wancfg['enable'] =  $_POST['enable']  == "yes" ? true : false;
 
 		if ($_POST['type'] == "static") {
 			$wancfg['ipaddr'] = $_POST['ipaddr'];
@@ -736,12 +733,16 @@ n already exists.";
 			config_unlock();
 		}
 
-		$retval = 0;
-		$savemsg = get_std_save_message($retval);
-
 		touch($d_landirty_path);
 		header("Location: interfaces.php?if={$if}");
 		exit;
+	} 
+	} else {
+		unset($wancfg['enable']);
+		write_config("Interface {$_POST['descr']}({$if}) is now disabled.");
+		touch($d_landirty_path);
+                header("Location: interfaces.php?if={$if}");
+                exit;
 	}
 }
 
@@ -824,7 +825,7 @@ function openwindow(url) {
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
-                        <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="show_allcfg(this);">
+                        <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable'] == true) echo "checked"; ?> onClick="show_allcfg(this);">
                     <strong>Enable Interface</strong></td>
                 </tr>
 <?php endif; ?>

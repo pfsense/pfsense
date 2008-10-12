@@ -268,7 +268,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="listr" style="background-color: #e0e0e0">*</td>
 		<td class="listr" style="background-color: #e0e0e0">Default</td>
 	 		 <td class="listr" style="background-color: #e0e0e0">*</td>
-                  <td class="listbg" style="background-color: #990000"><font color="white">Block private networks</td>
+                  <td class="listbg">Block private networks</td>
                   <td valign="middle" nowrap class="list">
 				    <table border="0" cellspacing="0" cellpadding="1">
 					<tr>

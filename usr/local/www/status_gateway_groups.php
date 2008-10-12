@@ -193,7 +193,7 @@ effect.");?><br>
 			</table>
                   </td>
                   <td class="listbg">
-                    <font color="#FFFFFF"><?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
+                    <?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
                   </td>
 		</tr>
 			  <?php $i++; endforeach; ?>

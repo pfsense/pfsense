@@ -126,7 +126,7 @@ include("head.inc");
 			</table>
                   </td>
                   <td class="listbg" >
-				<font color="#FFFFFF"><?=$gateway['descr'];?></font>
+						<?=$gateway['descr'];?></font>
                   </td>
                 </tr>
 		<?php

@@ -148,7 +148,7 @@ include("head.inc");
 			</table>
                   </td>
                   <td class="listbg" >
-				<font color="#FFFFFF"><?=$vipent['desc'];?></font>
+					<?=$vipent['desc'];?>
                   </td>
                 </tr>
 		<?php

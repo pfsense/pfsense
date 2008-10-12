@@ -165,7 +165,7 @@ include("head.inc");
                   <?=$rdr_a[$vsent['name']]['status']?>
                   </td>
                   <td class="listbg" >
-				<font color="#FFFFFF"><?=$vipent['desc'];?></font>
+						<?=$vipent['desc'];?>
                   </td>
                 </tr>
 		<?php $i++; endforeach; ?>

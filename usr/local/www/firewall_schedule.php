@@ -209,7 +209,6 @@ include("head.inc");
 					}//end for?></table>
 	  </td>
 	 <td class="listbg" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
-    	<font color="#FFFFFF">
     		<?=htmlspecialchars($schedule['descr']);?>&nbsp;
   		</td>
   		  <td valign="middle" nowrap class="list">

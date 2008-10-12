@@ -253,7 +253,7 @@ function enable_change(enable_over) {
                  <td class="listr">
                    <?=$doment['ip'];?>&nbsp;
                  </td>
-                 <td class="listbg"><font color="#FFFFFF">
+                 <td class="listbg">
                    <?=htmlspecialchars($doment['descr']);?>&nbsp;
                  </td>
                  <td valign="middle" nowrap class="list"> <a href="services_dnsmasq_domainoverride_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>

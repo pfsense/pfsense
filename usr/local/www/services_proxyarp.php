@@ -115,7 +115,7 @@ include("head.inc");
 							echo $arpent['range']['from'] . "-" . $arpent['range']['to'];
                     ?>&nbsp;
                   </td>
-                  <td class="listbg" ondblclick="document.location='services_proxyarp_edit.php?id=<?=$i;?>';"><font color="white">
+                  <td class="listbg" ondblclick="document.location='services_proxyarp_edit.php?id=<?=$i;?>';">
                     <?=htmlspecialchars($arpent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">

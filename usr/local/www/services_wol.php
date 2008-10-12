@@ -171,7 +171,7 @@ You also can wake all clients at once: <a href="services_wol.php?wakeall=true"><
                     <a href="?mac=<?=$wolent['mac'];?>&if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>&nbsp;
                   </td>
                   <td class="listbg" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
-                    <font color="#FFFFFF"><?=htmlspecialchars($wolent['descr']);?>&nbsp;
+                    <?=htmlspecialchars($wolent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">
                     <table border="0" cellspacing="0" cellpadding="1">

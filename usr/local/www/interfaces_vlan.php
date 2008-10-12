@@ -113,9 +113,7 @@ include("head.inc");
 					<?=htmlspecialchars($vlan['tag']);?>
                   </td>
                   <td class="listbg">
-		    <font color="white">
                     <?=htmlspecialchars($vlan['descr']);?>&nbsp;
-		    </font>
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="interfaces_vlan_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
                      &nbsp;<a href="interfaces_vlan.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this VLAN?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>

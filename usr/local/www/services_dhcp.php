@@ -681,7 +681,7 @@ function show_netboot_config() {
                     <?=htmlspecialchars($mapent['hostname']);?>&nbsp;
                   </td>	
                   <td class="listbg" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
-                    <font color="#FFFFFF"><?=htmlspecialchars($mapent['descr']);?>&nbsp;</font>
+                    <?=htmlspecialchars($mapent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">
                     <table border="0" cellspacing="0" cellpadding="1">

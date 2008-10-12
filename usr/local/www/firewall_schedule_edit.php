@@ -815,7 +815,7 @@ EOD;
 						?>	
 	                        <div id="<?php echo date("F y",mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?>" z-index:-1000; style="position:relative; display:<?php if($firstmonth)echo "block";else echo "none";?>">    	
 		                   	<TABLE BORDER=1 CELLSPACING=1 CELLPADDING=1 id="calTable" class="tabcont">
-								<TR><TD COLSPAN="7" ALIGN=center class="listbg"><B><font color="white"><?php echo date("F Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?></B></TD>
+								<TR><TD COLSPAN="7" ALIGN=center class="listbg"><B><?php echo date("F Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?></B></TD>
 								</TR>							
 								<TR>																
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p1');"><u><b>Mon</b></u></TD>
@@ -967,10 +967,10 @@ EOD;
 						<table id="scheduletable">
 							<tbody>
 								<tr>
-									<TD  ALIGN=center class="listbg" width="35%"><font color="white">Day(s)</td>
-									<TD  ALIGN=center class="listbg" width="12%"><font color="white">Start Time</td>
-									<TD  ALIGN=center class="listbg" width="11%"><font color="white">Stop Time</td>
-									<TD  ALIGN=center class="listbg" width="42%"><font color="white">Description</td>
+									<TD ALIGN="center" class="listbg" width="35%">Day(s)</td>
+									<TD ALIGN="center" class="listbg" width="12%">Start Time</td>
+									<TD ALIGN="center" class="listbg" width="11%">Stop Time</td>
+									<TD ALIGN="center" class="listbg" width="42%">Description</td>
 								</tr>
 								<?php
 								if ($getSchedule){

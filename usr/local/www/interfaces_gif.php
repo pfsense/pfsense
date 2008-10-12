@@ -112,9 +112,7 @@ include("head.inc");
 					<?=htmlspecialchars($gif['remote-addr']);?>
                   </td>
                   <td class="listbg">
-		    <font color="white">
                     <?=htmlspecialchars($gif['descr']);?>&nbsp;
-		    </font>
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="interfaces_gif_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
                      &nbsp;<a href="interfaces_gif.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this gif tunnel?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>

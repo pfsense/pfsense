@@ -91,9 +91,7 @@ include("head.inc");
 					<?=htmlspecialchars($rfc2136['host']);?>
                   </td>
                   <td class="listbg">
-		    <font color="white">
                     <?=htmlspecialchars($rfc2136['descr']);?>&nbsp;
-		    </font>
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="services_rfc2136_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
                      &nbsp;<a href="services_rfc2136.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>

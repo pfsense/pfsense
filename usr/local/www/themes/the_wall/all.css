@@ -714,7 +714,9 @@ ul#wzdnav a:active {
 .listbg {
 	border-right: 1px solid #999999;
 	border-bottom: 1px solid #999999;
+	color: #FFFFFF;
 	font-size: 11px;
+	color: #FFFFFF;
 	background-color: #990000;
 	padding-right: 16px;
 	padding-left: 6px;
@@ -1189,4 +1191,3 @@ div#log span.log-protocol-mini-header {
 	width: 8%;	
 	border-right: 1px solid #999;
 }
-

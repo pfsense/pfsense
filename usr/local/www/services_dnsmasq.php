@@ -200,7 +200,7 @@ function enable_change(enable_over) {
                     <?=$hostent['ip'];?>&nbsp;
                   </td>
                   <td class="listbg" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
-                    <font color="#FFFFFF"><?=htmlspecialchars($hostent['descr']);?>&nbsp;
+                    <?=htmlspecialchars($hostent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">
                     <table border="0" cellspacing="0" cellpadding="1">

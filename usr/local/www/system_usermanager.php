@@ -583,9 +583,7 @@ function presubmit() {
 						</td>
 						<td class="listr"><?=htmlspecialchars($userent['fullname']);?>&nbsp;</td>
 						<td class="listbg">
-							<font color="white">
 								<?=implode(",",local_user_get_groups($userent));?>
-							</font>
 							&nbsp;
 						</td>
 						<td valign="middle" nowrap class="list">

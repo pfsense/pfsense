@@ -2318,35 +2318,46 @@ function display_top_tabs(& $tab_array) {
 	unset ($tab_array);
 	$tab_array = & $tab_temp;
 
+	$tab_active_bg   = "#EEEEEE";
+	$tab_inactive_bg = "#777777";
+	$nifty_tabs_corners = "#FFF";
+	$font_color = "white";
+	
+	/* if tabcontrols.php exist for a theme, allow it to be overriden */
+	$themename = $config['theme'];
+	$filename = "/usr/local/www/themes/{$themename}/tabcontrols.php";
+	if(file_exists($filename)) 
+		eval($filename);
+
 	echo "<table cellpadding='0' cellspacing='0'>\n";
 	echo " <tr>\n";
 	$tabscounter = 0;
 	foreach ($tab_array as $ta) {
 		if ($ta[1] == true) {
-			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabactive'></div></td>\n";
+			echo "  <td bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabactive'></div></td>\n";
 		} else {
-			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
+			echo "  <td bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
 		}
 		$tabscounter++;
 	}
 	echo "</tr>\n<tr>\n";
 	foreach ($tab_array as $ta) {
 		if ($ta[1] == true) {
-			echo "  <td height=\"15\" valign=\"middle\" bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+			echo "  <td height=\"15\" valign=\"middle\" bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
 			echo "&nbsp;&nbsp;&nbsp;";
 			echo "<font size='-12'>&nbsp;</font></B></td>\n";
 		} else {
-			echo "  <td height=\"15\" valign=\"middle\" bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
-			echo "<font color='white'>{$ta[0]}</font></a>&nbsp;&nbsp;&nbsp;";
+			echo "  <td height=\"15\" valign=\"middle\" bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
+			echo "<font color='{$font_color}'>{$ta[0]}</font></a>&nbsp;&nbsp;&nbsp;";
 			echo "<font size='-12'>&nbsp;</font></B></td>\n";
 		}
 	}
 	echo "</tr>\n<tr>\n";
 	foreach ($tab_array as $ta) {
 		if ($ta[1] == true) {
-			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
+			echo "  <td bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
 		} else {
-			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
+			echo "  <td bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
 		}
 		$tabscounter++;
 	}
@@ -2355,9 +2366,9 @@ function display_top_tabs(& $tab_array) {
 
 	echo "<script type=\"text/javascript\">";
 	echo "NiftyCheck();\n";
-	echo "Rounded(\"div#tabactive\",\"top\",\"#FFF\",\"#EEEEEE\",\"smooth\");\n";
+	echo "Rounded(\"div#tabactive\",\"top\",\"{$nifty_tabs_corners}\",\"{$tab_active_bg}\",\"smooth\");\n";
 	for ($x = 0; $x < $tabscounter; $x++)
-		echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"#FFF\",\"#777777\",\"smooth\");\n";
+		echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"{$nifty_tabs_corners}\",\"{$tab_inactive_bg}\",\"smooth\");\n";
 	echo "</script>";
 }
 

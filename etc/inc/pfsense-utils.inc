@@ -2326,9 +2326,11 @@ function display_top_tabs(& $tab_array) {
 	/* if tabcontrols.php exist for a theme, allow it to be overriden */
 	$themename = $config['theme'];
 	$filename = "/usr/local/www/themes/{$themename}/tabcontrols.php";
-	if(file_exists($filename)) 
-		eval($filename);
-
+	if(file_exists($filename)) {
+		$eval_code = file_get_contents($filename);
+		eval($eval_code);
+	}
+	
 	echo "<table cellpadding='0' cellspacing='0'>\n";
 	echo " <tr>\n";
 	$tabscounter = 0;

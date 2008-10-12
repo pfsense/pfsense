@@ -1119,7 +1119,7 @@ function netbios_change() {
 					<td class="listr">
 						<?=htmlspecialchars($server['tunnel_network']);?>
 					</td>
-					<td class="listr">
+					<td class="listbg">
 						<?=htmlspecialchars($server['description']);?>
 					</td>
 					<td valign="middle" nowrap class="list">

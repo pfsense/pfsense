@@ -702,7 +702,7 @@ function autotls_change() {
 					<td class="listr">
 						<?=htmlspecialchars($server);?>
 					</td>
-					<td class="listr">
+					<td class="listbg">
 						<?=htmlspecialchars($client['description']);?>
 					</td>
 					<td valign="middle" nowrap class="list">

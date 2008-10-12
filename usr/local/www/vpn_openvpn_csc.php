@@ -669,7 +669,7 @@ function netbios_change() {
 					<td class="listr">
 						<?=htmlspecialchars($csc['common_name']);?>
 					</td>
-					<td class="listr">
+					<td class="listbg">
 						<?=htmlspecialchars($csc['description']);?>
 					</td>
 					<td valign="middle" nowrap class="list">

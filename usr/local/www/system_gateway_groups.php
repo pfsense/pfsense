@@ -147,7 +147,7 @@ effect.");?><br>
 		    ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_gateway_groups_edit.php?id=<?=$i;?>';">
-                    <font color="#FFFFFF"><?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
+						<?=htmlspecialchars($gateway_group['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">
 			<table border="0" cellspacing="0" cellpadding="1">

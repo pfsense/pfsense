@@ -174,7 +174,7 @@ include("head.inc");
 			?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-                    <font color="#FFFFFF"><?=htmlspecialchars($route['descr']);?>&nbsp;
+                    <?=htmlspecialchars($route['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">
 			<table border="0" cellspacing="0" cellpadding="1">

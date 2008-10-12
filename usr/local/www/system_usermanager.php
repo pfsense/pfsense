@@ -446,9 +446,7 @@ function presubmit() {
 											<?=htmlspecialchars($priv['name']);?>
 										</td>
 										<td class="listbg">
-											<font color="#FFFFFF">
 												<?=htmlspecialchars($priv['descr']);?>
-											</font>
 										</td>
 										<td valign="middle" nowrap class="list">
 											<?php if (!$group): ?>

@@ -277,7 +277,6 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				  ?>
                   </td>
                   <td class="listbg" onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-		  <font color="#ffffff">
                     <?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list" nowrap>

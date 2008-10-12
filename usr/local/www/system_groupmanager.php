@@ -341,9 +341,7 @@ function presubmit() {
 											<?=htmlspecialchars($priv_list[$priv]['name']);?>
 										</td>
 										<td class="listbg">
-											<font color="#FFFFFF">
-												<?=htmlspecialchars($priv_list[$priv]['descr']);?>
-											</font>
+											<?=htmlspecialchars($priv_list[$priv]['descr']);?>
 										</td>
 										<td valign="middle" nowrap class="list">
 											<a href="system_groupmanager.php?act=delpriv&id=<?=$id?>&privid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this privilege?");?>')">
@@ -416,9 +414,7 @@ function presubmit() {
 							<?=htmlspecialchars($group['description']);?>&nbsp;
 						</td>
 						<td class="listbg">
-							<font color="white">
-								<?=count($group['member'])?>
-							</font>
+							<?=count($group['member'])?>
 						</td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_groupmanager.php?act=edit&id=<?=$i;?>">

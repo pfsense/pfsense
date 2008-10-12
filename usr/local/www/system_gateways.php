@@ -153,7 +153,7 @@ effect.");?><br>
                     <?=htmlspecialchars($gateway['monitor']);?>&nbsp;
                   </td>
                   <td class="listbg" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-                    <font color="#FFFFFF"><?=htmlspecialchars($gateway['descr']);?>&nbsp;
+                    <?=htmlspecialchars($gateway['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">
 			<table border="0" cellspacing="0" cellpadding="1">

@@ -129,9 +129,7 @@ include("head.inc");
 									<?=$pkgver;?>
 							</td>
 							<td class="listbg">
-								<font color="#ffffff">
 									<?=$pkg['descr'];?>
-								</font>
 							</td>
 							<td valign="middle" class="list" nowrap>
 								<a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>">

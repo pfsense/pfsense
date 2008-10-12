@@ -194,7 +194,6 @@ include("head.inc");
     ?>
   </td>
   <td class="listbg" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
-    <font color="#FFFFFF">
     <?=htmlspecialchars($alias['descr']);?>&nbsp;
   </td>
   <td valign="middle" nowrap class="list">

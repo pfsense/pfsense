@@ -175,7 +175,7 @@ include("head.inc");
 								echo "Nobody. <a href='mailto:{$g['product_email']}'>Apply</a> for it!";
 						?>
 						</td>
-						<td class="listbg" class="listbg" style="color: #FFFFFF; overflow: hidden;">
+						<td class="listbg" class="listbg" style="overflow: hidden;">
 							<?= $index['descr'] ?>
 						</td>
 						<td valign="middle" class="list" nowrap>

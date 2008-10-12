@@ -134,7 +134,7 @@ include("head.inc");
 					if ($natent['subnet']) echo "/" . $natent['subnet']; ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
-                    <font color="#ffffff"><?=htmlspecialchars($natent['descr']);?>&nbsp;
+                    <?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
                   <td class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">

@@ -325,7 +325,7 @@ include("head.inc");
                     ?>		    
                   </td>
                   <td class="listbg"  onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
-                    <font color="#FFFFFF"><?=htmlspecialchars($natent['descr']);?>&nbsp;
+                    <?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
                   <td class="list" valign="middle" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">

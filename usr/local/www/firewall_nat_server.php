@@ -127,7 +127,7 @@ include("head.inc");
                     <?=$natent['ipaddr'];?>
                   </td>
                   <td class="listbg" ondblclick="document.location='firewall_nat_server_edit.php?id=<?=$i;?>';">
-                    <font color="#FFFFFF"><?=htmlspecialchars($natent['descr']);?>&nbsp;
+                    <?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
                   <td class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">

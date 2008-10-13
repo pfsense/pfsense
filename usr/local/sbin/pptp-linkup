@@ -2,6 +2,6 @@
 
 # record login
 /usr/bin/logger -p local3.info "login,$1,$4,$5"
-/bin/echo $4 /tmp/$1_router
+
 /sbin/ifconfig $1 group pptp
 

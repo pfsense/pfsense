@@ -10,12 +10,13 @@ unset SERVER_PORT SCRIPT_NAME SERVER_NAME
 
 # write nameservers to file
 if [ "$6" = "dns1" ]; then
-	echo $7 >> /var/etc/nameservers.conf
+	/bin/echo $7 >> /var/etc/nameservers.conf
 fi
 if [ "$8" = "dns2" ]; then
-	echo $9 >> /var/etc/nameservers.conf
+	/bin/echo $9 >> /var/etc/nameservers.conf
 fi
 
-# let the configuration system know that the
-# WAN IP address has changed
-echo wan > /tmp/rc.newwanip
+# let the configuration system know that the ip has changed.
+/bin/echo $1 > /tmp/rc.newwanip
+/bin/echo $4 /tmp/$1_router
+

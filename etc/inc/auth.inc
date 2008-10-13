@@ -245,7 +245,8 @@ function local_user_set(& $user) {
 }
 
 function local_user_del($user) {
-
+	global $debug;
+	
 	/* remove all memberships */
 	local_user_get_groups($user);
 
@@ -334,7 +335,8 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 }
 
 function local_group_set($group, $reset = false) {
-
+	global $debug;
+	
 	$group_name = $group['name'];
 	$group_gid = $group['gid'];
 	$group_members = "''";
@@ -363,6 +365,7 @@ function local_group_set($group, $reset = false) {
 }
 
 function local_group_del($group) {
+	global $debug;
 
 	/* delete from group db */
 	$cmd = "/usr/sbin/pw groupdel {$group['name']}";

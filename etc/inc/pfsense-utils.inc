@@ -3377,17 +3377,13 @@ function get_interface_gateway($interface) {
 	$gw = NULL;
 
 	$gwcfg = $config['interfaces'][$interface];
-        if (is_ipaddr($gwcfg['gateway'])) {
+        if (is_ipaddr($gwcfg['gateway'])) 
         	$gw = $gwcfg['gateway'];
-		return $gw;
-	}
         else if ($gwcfg['gateway'] <> "") {
         	if (is_array($config['gateways']['gateway_item']))
                 	foreach($config['gateways']['gateway_item'] as $gateway) {
                                 if($gateway['name'] == $gwcfg['gateway']) {
                                         $gw = $gateway['gateway'];
-					return $gw;
-					/* NOTREACHED */
                         		break;
                 		}
         		}

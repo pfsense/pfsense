@@ -48,7 +48,7 @@ $groupindex = index_groups();
 $userindex = index_users();
 
 function index_groups() {
-	global $g, $config, $groupindex;
+	global $g, $debug, $config, $groupindex;
 
 	$groupindex = array();
 
@@ -64,7 +64,7 @@ function index_groups() {
 }
 
 function index_users() {
-	global $g, $config;
+	global $g, $debug, $config;
 
 	if (isset($config['system']['user'])) {
 		$i = 0;
@@ -78,13 +78,13 @@ function index_users() {
 }
 
 function & getUserEntry($name) {
-	global $config, $userindex;
+	global $debug, $config, $userindex;
 	if (isset($userindex[$name]))
 		return $config['system']['user'][$userindex[$name]];
 }
 
 function & getUserEntryByUID($uid) {
-	global $config;
+	global $debug, $config;
 	foreach ($config['system']['user'] as & $user)
 		if ($user['uid'] == $uid)
 			return $user;
@@ -93,13 +93,13 @@ function & getUserEntryByUID($uid) {
 }
 
 function & getGroupEntry($name) {
-	global $config, $groupindex;
+	global $debug, $config, $groupindex;
 	if (isset($groupindex[$name]))
 		return $config['system']['group'][$groupindex[$name]];
 }
 
 function & getGroupEntryByGID($gid) {
-	global $config;
+	global $debug, $config;
 	foreach ($config['system']['group'] as & $group)
 		if ($group['gid'] == $gid)
 			return $group;
@@ -119,7 +119,7 @@ function local_backed($username, $passwd) {
 }
 
 function local_sync_accounts() {
-	global $config;
+	global $debug, $config;
 
 	/* remove local users to avoid uid conflicts */
 	$fd = popen("/usr/sbin/pw usershow -a", "r");
@@ -133,7 +133,8 @@ function local_sync_accounts() {
 			if ($line[2] > 65000)
 				continue;
 			$cmd = "/usr/sbin/pw userdel {$line[2]}";
-			log_error("Running: {$cmd}");
+			if($debug)
+				log_error("Running: {$cmd}");
 			mwexec($cmd);
 		}
 		pclose($fd);
@@ -152,7 +153,8 @@ function local_sync_accounts() {
 			if ($line[2] > 65000)
 				continue;
 			$cmd = "/usr/sbin/pw groupdel {$line[2]}";
-			log_error("Running: {$cmd}");
+			if($debug)
+				log_error("Running: {$cmd}");
 			mwexec($cmd);
 		}
 		pclose($fd);
@@ -174,7 +176,7 @@ function local_sync_accounts() {
 }
 
 function local_user_set(& $user) {
-	global $g;
+	global $g, $debug;
 
 	$home_base = $g['platform'] == "pfSense" ? "/home" : "/var/home";
 	if (!is_dir($home_base))
@@ -197,7 +199,8 @@ function local_user_set(& $user) {
 	/* root user special handling */
 	if ($user_uid == 0) {
 		$cmd = "/usr/sbin/pw usermod -n root -s /bin/sh -H 0";
-		log_error("Running: {$cmd}");
+		if($debug)
+			log_error("Running: {$cmd}");
 		$fd = popen($cmd, "w");
 		fwrite($fd, $user['password']);
 		pclose($fd);
@@ -220,7 +223,8 @@ function local_user_set(& $user) {
 			" -g {$user_group} -G all -s {$user_shell} -d {$user_home}".
 			" -c ".escapeshellarg($user['fullname'])." -H 0 2>&1";
 
-	log_error("Running: {$cmd}");
+	if($debug)
+		log_error("Running: {$cmd}");
 	$fd = popen($cmd, "r+");
 	fwrite($fd, $user['password']);
 	pclose($fd);
@@ -248,7 +252,8 @@ function local_user_del($user) {
 	/* delete from pw db */
 	$cmd = "/usr/sbin/pw userdel {$user['name']}";
 
-	log_error("Running: {$cmd}");
+	if($debug)
+		log_error("Running: {$cmd}");
 	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
@@ -272,7 +277,7 @@ function local_user_set_password(& $user, $password) {
 }
 
 function local_user_get_groups($user, $all = false) {
-	global $config;
+	global $debug, $config;
 
 	$groups = array();
 	if (!is_array($config['system']['group']))
@@ -290,7 +295,7 @@ function local_user_get_groups($user, $all = false) {
 }
 
 function local_user_set_groups($user, $new_groups = NULL ) {
-	global $config, $groupindex;
+	global $debug, $config, $groupindex;
 
 	if (!is_array($config['system']['group']))
 		return;
@@ -350,7 +355,8 @@ function local_group_set($group, $reset = false) {
 	/* add or mod group db */
 	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M {$group_members} 2>&1";
 
-	log_error("Running: {$cmd}");
+	if($debug)
+		log_error("Running: {$cmd}");
 	$fd = popen($cmd, "r+");
 	fwrite($fd, $user['password']);
 	pclose($fd);
@@ -361,14 +367,15 @@ function local_group_del($group) {
 	/* delete from group db */
 	$cmd = "/usr/sbin/pw groupdel {$group['name']}";
 
-	log_error("Running: {$cmd}");
+	if($debug)
+		log_error("Running: {$cmd}");
 	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
 }
 
 function ldap_test_connection() {
-	global $config, $g;
+	global $debug, $config, $g;
 
 	$ldapserver = $config['system']['webgui']['ldapserver'];
 	$ldapbindun = $config['system']['webgui']['ldapbindun'];
@@ -381,7 +388,7 @@ function ldap_test_connection() {
 }
 
 function ldap_test_bind() {
-	global $config, $g;
+	global $debug, $config, $g;
 
 	$ldapserver = $config['system']['webgui']['ldapserver'];
 	$ldapbindun = $config['system']['webgui']['ldapbindun'];
@@ -400,7 +407,7 @@ function ldap_test_bind() {
 }
 
 function ldap_get_user_ous($show_complete_ou=true) {
-	global $config, $g;
+	global $debug, $config, $g;
 
 	if(!function_exists("ldap_connect"))
 		return;
@@ -456,7 +463,7 @@ function ldap_get_user_ous($show_complete_ou=true) {
 }
 
 function ldap_get_groups($username) {
-	global $config;
+	global $debug, $config;
 	
 	if(!function_exists("ldap_connect"))
 		return;
@@ -536,7 +543,7 @@ function ldap_get_groups($username) {
 }
 
 function ldap_backed($username, $passwd) {
-	global $config;
+	global $debug, $config;
 	
 	if(!$username) 
 		return;
@@ -705,7 +712,7 @@ function ldap_backed($username, $passwd) {
 }
 
 function radius_backed($username, $passwd){
-	global $config, $debug;
+	global $debug, $config, $debug;
 	$ret = false;
 	$radiusservers = $config['system']['radius']['servers'];
 
@@ -748,7 +755,7 @@ function radius_backed($username, $passwd){
 }
 
 function session_auth($backing) {
-	global $g, $HTTP_SERVER_VARS, $userindex, $config;
+	global $g, $debug, $HTTP_SERVER_VARS, $userindex, $config;
 
 	session_start();
 

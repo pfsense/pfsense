@@ -252,9 +252,11 @@ if ($_POST['apply']) {
                	unlink_if_exists("{$g['tmp_path']}/config.cache");
 		unlink_if_exists("{$d_landirty_path}");
 
+		/* ermal -- do not think these are needed at all.
                 ob_flush();
                 flush();
                 sleep(1);
+		*/
 
                 interface_configure($if);
 

@@ -78,7 +78,7 @@ if ($_POST) {
 
 	if($_POST['sshdkeyonly'] == "yes")
 		$config['system']['ssh']['sshdkeyonly'] = "enabled";
-	else
+	else if (isset($config['system']['ssh']['sshdkeyonly']))
 		unset($config['system']['ssh']['sshdkeyonly']);
 
 	ob_flush();

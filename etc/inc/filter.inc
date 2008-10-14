@@ -523,11 +523,15 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	if($src == "/32" || $src{0} == "/")
 		return "# src incorrectly specified\n";
 
-	/* Use interface name if IP isn't specified */
-        if ($natip != "") 
+    if ($natip != "") {
+            $tgt = "{$natip}/32";
+    } else {
+			$natip = get_current_wan_address($if);
+			if($natip)
 			$tgt = "{$natip}/32";
-        else 
- 			$tgt = "(". get_real_wan_interface($if).")";
+			else
+            	$tgt = "($if)";
+	}
 
 	/* Add the hard set source port (useful for ISAKMP) */
         if ($natport != "")

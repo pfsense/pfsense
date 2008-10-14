@@ -271,7 +271,9 @@ if ($_POST['apply']) {
 		} 
 
                 /* sync filter configuration */
+		config_lock();
                 filter_configure();
+		config_unlock();
 
                 /* set up static routes */
                 system_routing_configure();

@@ -297,6 +297,9 @@ function sourcesel_change() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_out_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="1">
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Edit Advanced Outbound NAT entry</td>
+				</tr>
 	        <tr>
                   <td width="22%" valign="top" class="vncellreq">No nat (NOT)</td>
                   <td width="78%" class="vtable">

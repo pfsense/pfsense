@@ -528,7 +528,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
     } else {
 			$natip = get_current_wan_address($if);
 			if($natip)
-			$tgt = "{$natip}/32";
+				$tgt = "{$natip}/32";
 			else
             	$tgt = "($if)";
 	}

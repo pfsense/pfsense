@@ -641,67 +641,67 @@ if ($_POST['apply']) {
 
 			if ($_POST['hidessid_enable'] == "yes")
 				$wancfg['wireless']['hidessid']['enable'] = true;
-			else
+			else if (isset($wancfg['wireless']['hidessid']['enable']))
 				unset($wancfg['wireless']['hidessid']['enable']);
 
 			if ($_POST['mac_acl_enable'] == "yes")
 				$wancfg['wireless']['wpa']['mac_acl_enable'] = true;
-			else
+			else if (isset($wancfg['wireless']['wpa']['mac_acl_enable']))
 				unset($wancfg['wireless']['wpa']['mac_acl_enable']);
 
 			if ($_POST['ieee8021x'] == "yes")
 				$wancfg['wireless']['wpa']['ieee8021x']['enable'] = true;
-			else
+			else if (isset($wancfg['wireless']['wpa']['ieee8021x']['enable']))
 				unset($wancfg['wireless']['wpa']['ieee8021x']['enable']);
 
 			if ($_POST['wpa_strict_rekey'] == "yes")
 				$wancfg['wireless']['wpa']['wpa_strict_rekey'] = true;
-			else
+			else if (isset($wancfg['wireless']['wpa']['wpa_strict_rekey']))
 				unset($wancfg['wireless']['wpa']['wpa_strict_rekey']);
 
 			if ($_POST['debug_mode'] == "yes")
 				$wancfg['wireless']['wpa']['debug_mode'] = true;
-			else
+			else if (isset($wancfg['wireless']['wpa']['debug_mode']))
 				unset($wancfg['wireless']['wpa']['debug_mode']);
 
 			if ($_POST['wpa_enable'] == "yes")
 				$wancfg['wireless']['wpa']['enable'] = $_POST['wpa_enable'] = true;
-			else
+			else if (isset($wancfg['wireless']['wpa']['enable']))
 				unset($wancfg['wireless']['wpa']['enable']);
 
 			if ($_POST['wep_enable'] == "yes") {
 				if (!is_array($wancfg['wireless']['wep']))
                         		$wancfg['wireless']['wep'] = array();
 				$wancfg['wireless']['wep']['enable'] = $_POST['wep_enable'] = true;
-			} else
+			} else if (isset($wancfg['wireless']['wep']))
 				unset($wancfg['wireless']['wep']);
 
 			if ($_POST['wme_enable'] == "yes") {
 				if (!is_array($wancfg['wireless']['wme']))
                         		$wancfg['wireless']['wme'] = array();
 				$wancfg['wireless']['wme']['enable'] = $_POST['wme_enable'] = true;
-			} else
+			} else if (isset($wancfg['wireless']['wme']['enable']))
 				unset($wancfg['wireless']['wme']['enable']);
 
 			if ($_POST['pureg_enable'] == "yes") {
 				if (!is_array($wancfg['wireless']['pureg']))
                         		$wancfg['wireless']['pureg'] = array();
 				$wancfg['wireless']['pureg']['enable'] = $_POST['pureg_enable'] = true;
-			} else
+			} else if (isset($wancfg['wireless']['pureg']['enable']))
 				unset($wancfg['wireless']['pureg']['enable']);
 
 			if ($_POST['apbridge_enable'] == "yes") {
 				if (!is_array($wancfg['wireless']['apbridge']))
                         		$wancfg['wireless']['apbridge'] = array();
 				$wancfg['wireless']['apbridge']['enable'] = $_POST['apbridge_enable'] = true;
-			} else
+			} else if (isset($wancfg['wireless']['apbridge']['enable']))
 				unset($wancfg['wireless']['apbridge']['enable']);
 
 			if ($_POST['standard'] == "11a Turbo") {
 				if (!is_array($wancfg['wireless']['turbo']))
                         		$wancfg['wireless']['turbo'] = array();
 				$wancfg['wireless']['turbo']['enable'] = true;
-			} else
+			} else if (isset($wancfg['wireless']['turbo']['enable']))
 				unset($wancfg['wireless']['turbo']['enable']);
 
 			$wancfg['wireless']['wep']['key'] = array();

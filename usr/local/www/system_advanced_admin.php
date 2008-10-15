@@ -126,7 +126,7 @@ if ($_POST) {
 		$sshd_port = $config['system']['ssh']['port'];
 		if ($_POST['sshport'])
 			$config['system']['ssh']['port'] = $_POST['sshport'];
-		else
+		else if (isset($config['system']['ssh']['port']))
 			unset($config['system']['ssh']['port']);
 
 		if (($sshd_enabled != $config['system']['enablesshd']) ||

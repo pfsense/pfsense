@@ -527,10 +527,10 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
             $tgt = "{$natip}/32";
     } else {
 			$natip = get_current_wan_address($if);
-			if($natip)
+			if(is_ipaddr($natip))
 				$tgt = "{$natip}/32";
 			else
-            	$tgt = "($if)";
+				$tgt = "($if)";
 	}
 
 	/* Add the hard set source port (useful for ISAKMP) */

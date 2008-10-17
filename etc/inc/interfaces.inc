@@ -46,74 +46,56 @@ function interfaces_loopback_configure() {
 }
 
 function interfaces_vlan_configure() {
+	global $config;
+
+	$i = 0;
+	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+		foreach ($config['vlans']['vlan'] as $vlan) {
+			if(empty($vlan['vlanif'])) {
+				$vlan['vlanif'] = "vlan{$i}";
+			}
+			/* XXX: Maybe we should report any errors?! */
+			interface_vlan_configure($vlan['if'], $vlan['tag'], $vlan['vlanif']);
+			$i++;
+		}
+		//Leaving it here as it was in original 1.2 code, I don't know if it's needed. aturetta.
+		/* CARP interfaces can be attached to VLAN's, too. */
+		interfaces_carp_bring_up_final();
+	}
+}
+
+function interface_vlan_configure($if, $tag, $vlanif = "") {
 	global $config, $g;
 
-	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+	/* make sure the parent interface is up and enable hw vlan support if available*/
+	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up vlanhwtag vlanmtu");
 
-		/* devices with native VLAN support */
-		$vlan_native_supp = $g['vlan_native_supp'];
+	if ($g['booting'] || !(empty($vlanif))) {
+		mwexec("/sbin/ifconfig {$vlanif} destroy");
+		mwexec("/sbin/ifconfig {$vlanif} create");
+	} else 
+		$vlanif = exec("/sbin/ifconfig vlan create");
+	
+	mwexec("/sbin/ifconfig {$vlanif} vlan " .
+		escapeshellarg($tag) . " vlandev " .
+		escapeshellarg($if));
 
-		/* devices with long frame support */
-		$vlan_long_frame = $g['vlan_long_frame'];
+	mwexec("/sbin/ifconfig {$vlanif} up");
 
-		/* sweep through and axe old interfaces */
-		$vlan_count = get_number_of_vlan_interfaces();
-		for($x=0; $x<$vlan_count; $x++)
-			exec("/sbin/ifconfig vlan{$x} down delete");
+	/* invalidate interface cache */
+	get_interface_arr(true);
 
-		$i = 0;
-
-		foreach ($config['vlans']['vlan'] as $vlan) {
-
-			$cmd = "/sbin/ifconfig vlan{$i} create vlan " .
-				escapeshellarg($vlan['tag']) . " vlandev " .
-				escapeshellarg($vlan['if']);
-
-			/* get driver name */
-			for ($j = 0; $j < strlen($vlan['if']); $j++) {
-				if ($vlan['if'][$j] >= '0' && $vlan['if'][$j] <= '9')
-					break;
-			}
-			$drvname = substr($vlan['if'], 0, $j);
-
-			/* Apparently, FreeBSD7 DoesTheRightThing without much help
-			   'link0' is no more mentioned in vlan section of 'man ifconfig',
-			   (it returns error on sis(4)) and 'mtu' also seems redundant
-			   XXXX: this code may be removed once my findings are validated
-			if (in_array($drvname, $vlan_native_supp))
-				$cmd .= " link0";
-			else if (in_array($drvname, $vlan_long_frame))
-				$cmd .= " mtu 1500";
-			*/
-
-			mwexec($cmd);
-
-			/* invalidate interface cache */
-			get_interface_arr(true);
-
-			/*   all vlans need to spoof their parent mac address, too.  see
-			 *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33 
-			 */
-			foreach($config['interfaces'] as $interfaces) {
-				if($interfaces['if'] == $vlan['if']) {
-					if($interfaces['spoofmac']) {
-						mwexec("/sbin/ifconfig " . escapeshellarg($interfaces['if']) .
-							" link " . escapeshellarg($interfaces['spoofmac']));
-					}
-				}
-			}
-
-			/* make sure the parent interface is up */
-			mwexec("/sbin/ifconfig " . escapeshellarg($vlan['if']) . " up");
-
-			$i++;
+	/*   all vlans need to spoof their parent mac address, too.  see
+	 *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
+	 */
+	foreach($config['interfaces'] as $interfaces) {
+		if($interfaces['if'] == $if && $interfaces['spoofmac']) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($if) .
+				" link " . escapeshellarg($interfaces['spoofmac']));
 		}
 	}
 
-	/* CARP interfaces can be attached to VLAN's, too. */
-	interfaces_carp_bring_up_final();
-
-	return 0;
+	return $vlanif;
 }
 
 function interfaces_lan_configure() {

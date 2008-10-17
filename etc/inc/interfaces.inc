@@ -76,10 +76,15 @@ function interfaces_vlan_configure() {
 			}
 			$drvname = substr($vlan['if'], 0, $j);
 
+			/* Apparently, FreeBSD7 DoesTheRightThing without much help
+			   'link0' is no more mentioned in vlan section of 'man ifconfig',
+			   (it returns error on sis(4)) and 'mtu' also seems redundant
+			   XXXX: this code may be removed once my findings are validated
 			if (in_array($drvname, $vlan_native_supp))
 				$cmd .= " link0";
 			else if (in_array($drvname, $vlan_long_frame))
 				$cmd .= " mtu 1500";
+			*/
 
 			mwexec($cmd);
 

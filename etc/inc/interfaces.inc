@@ -1765,6 +1765,18 @@ function get_current_wan_address($interface = "wan") {
 		break;
 	case "pppoe":
 	case "pptp":
+		/* get interface info with netstat */
+		exec("/usr/bin/netstat -nWI " . escapeshellarg($realif) . " -f inet", $ifinfo);
+		if (isset($ifinfo[1])) {
+			$aif = preg_split("/\s+/", $ifinfo[1]);
+			$curwanip = chop($aif[3]);
+
+			if ($curwanip && is_ipaddr($curwanip) && ($curwanip != "0.0.0.0"))
+				return $curwanip;
+		}
+
+		return null;
+		break;
 	 /* carpdev support */
 	 case "carpdev-dhcp":
 	        $viparr = &$config['virtualip']['vip'];

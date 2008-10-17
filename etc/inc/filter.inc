@@ -2414,6 +2414,10 @@ EOD;
 	   topologies */
 	$sa = "";
 	if (isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
+		$ipfrules .= <<<EOD
+anchor "staticroutes"
+
+EOD;
 		foreach ($config['staticroutes']['route'] as $route) {
 			unset($sa);
 			$friendly_int = convert_friendly_interface_to_friendly_descr($route['interface']);
@@ -2433,7 +2437,6 @@ EOD;
 
 			if ($sa) {
 				$ipfrules .= <<<EOD
-anchor "staticrouted"
 pass in quick on \${$friendly_int} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
 pass in quick on \${$friendly_int} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
 pass out quick on \${$friendly_int} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"

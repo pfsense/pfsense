@@ -634,25 +634,6 @@ function filter_nat_rules_generate() {
 		}
 	}
 
-	/* any 1:1 mappings? */
-	if (is_array($config['nat']['onetoone'])) {
-		$natrules .= "\n";
-		foreach ($config['nat']['onetoone'] as $natent) {
-			if (!is_numeric($natent['subnet']))
-				$sn = 32;
-			else
-				$sn = $natent['subnet'];
-
-			if (!$natent['interface'] || ($natent['interface'] == "wan"))
-				$natif = $wanif;
-			else
-				$natif = $config['interfaces'][$natent['interface']]['if'];
-
-			if($natent['interface'])
-				$natrules .= "binat on $natif from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
-		}
-	}
-
 	$natrules .= "\n# Outbound NAT rules\n";
 
 	/* outbound rules - advanced or standard */

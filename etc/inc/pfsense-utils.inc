@@ -2442,13 +2442,13 @@ function strncpy(&$dst, $src, $length) {
  *   none
  ******/
 function reload_interfaces_sync() {
-	global $config, $g, $debug;
+	global $config, $g;
 
 	$shutdown_webgui_needed = false;
 
 	touch("{$g['tmp_path']}/reloading_all");
 
-	if($debug)
+	if($g['debug'])
 		log_error("reload_interfaces_sync() is starting.");
 
 	if(file_exists("{$g['tmp_path']}/config.cache"))
@@ -2458,9 +2458,12 @@ function reload_interfaces_sync() {
 	$config = parse_config(true);
 
 	$wan_if = $config['interfaces']['wan']['if'];
-	$lan_if = $config['interfaces']['lan']['if'];
+	if (isset($config['interfaces']['lan']))
+                $lan_if = $config['interfaces']['lan']['if'];
+        else
+                $lan_if = "";
 
-	if($debug)
+	if($g['debug'])
 		log_error("Cleaning up Interfaces");
 
 	/* if list */
@@ -2477,7 +2480,7 @@ function reload_interfaces_sync() {
                 /* do not process lan interface, its mandatory */
                 if(stristr($ifname, "$lan_if") == true)
                         continue;
-		if($debug)
+		if($g['debug'])
 			log_error("Downing and deleting $ifname_real - $ifname");
 		mwexec("/sbin/ifconfig {$ifname_real} down");
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
@@ -2487,17 +2490,17 @@ function reload_interfaces_sync() {
 	interfaces_configure();
 
 	/* set up static routes */
-	if($debug)
+	if($g['debug'])
 		log_error("Configuring system Routing");
 	system_routing_configure();
 
 	/* enable routing */
-	if($debug)
+	if($g['debug'])
 		log_error("Enabling system routing");
 	system_routing_enable();
 
 	/* setup captive portal if needed */
-	if($debug)
+	if($g['debug'])
 		log_error("Configuring Captive portal");
 	captiveportal_configure();
 
@@ -2509,7 +2512,7 @@ function reload_interfaces_sync() {
 	mwexec("/bin/rm /tmp/reload*");
 
 	/* remove reloading_all trigger */
-	if($debug)
+	if($g['debug'])
 		log_error("Removing {$g['tmp_path']}/reloading_all");
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
 }
@@ -2576,11 +2579,11 @@ function reload_all_sync() {
 	/* Set up our loopback interface */
 	interfaces_loopback_configure();
 
-	/* delete all old interface information */
-	$iflist = split(" ", str_replace("\n", "", `/sbin/ifconfig -l`));
-
 	$wan_if = $config['interfaces']['wan']['if'];
-	$lan_if = $config['interfaces']['lan']['if'];
+	if (isset($config['interfaces']['lan']))
+		$lan_if = $config['interfaces']['lan']['if'];
+	else
+		$lan_if = "";
 
 	/* if list */
 	$iflist = get_configured_interface_list();

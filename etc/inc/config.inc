@@ -2539,6 +2539,8 @@ EOD;
 	$config['vlans']['vlan'] = array();
 	echo "\n";
 
+	$vlanif = 0;
+
 	while (1) {
 		$vlan = array();
 
@@ -2576,13 +2578,14 @@ EOD;
 
 		echo "Enter the VLAN tag (1-4094): ";
 		$vlan['tag'] = chop(fgets($fp));
-
+		$vlan['vlanif'] = "vlan{$vlanif}";
 		if (!is_numericint($vlan['tag']) || ($vlan['tag'] < 1) || ($vlan['tag'] > 4094)) {
 			echo "\nInvalid VLAN tag '{$vlan['tag']}'\n";
 			continue;
 		}
 		
 		$config['vlans']['vlan'][] = $vlan;
+		$vlanif++;
 	}
 }
 

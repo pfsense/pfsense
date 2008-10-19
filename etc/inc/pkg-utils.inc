@@ -624,6 +624,8 @@ function install_package_xml($pkg) {
 				} else {
 					$prefix = "/usr/local/pkg/";
 				}
+				if(!is_dir($prefix)) 
+					safe_mkdir($prefix);				
 				$static_output .= $filename . " ";
                                 update_output_window($static_output);
 				download_file_with_progress_bar($afn['item'][0], $prefix . $filename);

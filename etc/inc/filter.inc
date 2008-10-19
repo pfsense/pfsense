@@ -284,8 +284,10 @@ function filter_generate_scrubing()
         foreach ($FilterIflist as $scrubif => $scrubcfg) {
 		if (in_array($scrubif, array("pppoe", "pptp", "enc0", "openvpn" /*, "lt2p", "ppp" */))) 
 			continue;
+
                 /* set up MSS clamping */
-                if ($scrubcfg['mtu'] <> "" and is_numeric($scrubcfg['mtu']))
+                if ($scrubcfg['mtu'] <> "" && is_numeric($scrubcfg['mtu']) &&
+			$scrubcfg['ip'] != "pppoe")
                         $mssclamp = "max-mss " . (intval($scrubcfg['mtu'] - 40));
                 else
                         $mssclamp = "";

@@ -203,6 +203,42 @@ EOD;
 	mwexec("/sbin/mount -a");
 }
 
+/****f* config/encrypted_configxml
+ * NAME
+ *   encrypted_configxml - Checks to see if config.xml is encrypted and if so, prompts to unlock.
+ * INPUTS
+ *   None
+ * RESULT
+ *   $config 	- rewrites config.xml without encryption
+ ******/
+function encrypted_configxml() {
+	global $g, $config;
+	if(file_exists($g['conf_path'] . "/config.xml")) {
+		if($g['booting']) {
+			$configtxt = file_get_contents($g['conf_path'] . "/config.xml");			
+			if(!tagfile_deformat($configtxt, $configtxt, "config.xml")) {
+				$fp = fopen('php://stdin', 'r');
+				$data = "";
+				echo "\n\n*** Encrypted config.xml detected ***\n";
+				while($data == "") {
+					echo "\nEnter the password to decrypt config.xml: ";
+					$decrypt_password = chop(fgets($fp));
+					$data = decrypt_data($configtxt, $decrypt_password);
+					if($data) {
+						$fd = fopen($g['conf_path'] . "/config.xml", "w");
+						fwrite($fd, $data);
+						fclose($fd);
+						echo "\nConfig.xml unlocked.\n";
+						fclose($fp);
+					} else {
+						echo "Invalid password entered.  Please try again.\n";
+					}
+				}
+			}
+		}
+	}
+}
+
 /****f* config/parse_config
  * NAME
  *   parse_config - Read in config.cache or config.xml if needed and return $config array
@@ -225,6 +261,8 @@ function parse_config($parse = false) {
 	}
 	if($g['booting']) echo ".";
 	config_lock();
+	// Check for encrypted config.xml
+	encrypted_configxml();
 	if(!$parse) {
 		if(file_exists($g['tmp_path'] . '/config.cache')) {
 			$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
@@ -269,6 +307,13 @@ function parse_config($parse = false) {
 	if($g['booting']) echo ".";
 	alias_make_table($config);
 	config_unlock();
+
+	/* process packager manager custom rules */
+	if(is_dir("/usr/local/pkg/config_parse/")) {
+		update_filter_reload_status("Running plugins (config_parse)");
+		run_plugins("/usr/local/pkg/config_parse/");
+		update_filter_reload_status("Plugins completed.");
+	}
 
 	/*    override some global configuration parms if they exist
 	 *    instead of hard coding these checks into the codebase
@@ -2035,6 +2080,11 @@ function write_config($desc="Unknown", $backup = true) {
 	mwexec("/bin/sync");
 
 	config_unlock();
+
+	/* process packager manager custom rules */
+	update_filter_reload_status("Running plugins");
+	run_plugins("/usr/local/pkg/write_config/");
+	update_filter_reload_status("Plugins completed.");
 
 	return $config;
 }

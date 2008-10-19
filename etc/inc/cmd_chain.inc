@@ -120,7 +120,10 @@ Class CmdCHAIN {
 $cmdchain = new CmdCHAIN();
 $cmdchain->add("grab freebsd version", "uname -a", false);
 $cmdchain->setdebug(); // optional for verbose logging
+$cmdchain->nohaltonerror(); // tells cmdchain to keep processing commands if any of them fail
 $cmdchain->execute();
+
+$cmdchain->clear(); // clears the previous added entries
 
 */
 

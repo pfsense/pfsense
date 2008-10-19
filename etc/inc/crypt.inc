@@ -1,4 +1,5 @@
 <?php
+
 /* $Id$ */
 /*
     Copyright (C) 2008 Shrew Soft Inc
@@ -99,4 +100,5 @@
 
 		return true;
 	}
+
 ?>

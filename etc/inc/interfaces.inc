@@ -1428,7 +1428,15 @@ EOD;
 	set link no acfcomp protocomp
 	set link disable pap chap
 	set link accept chap
-	set link mtu 1492
+	
+EOD;
+	if (empty($wancfg['mtu']))
+		$mpdmtu = "1492";
+	else 
+		$mpdmtu = "{$wancfg['mtu']}";
+
+	$mpdconf .= <<<EOD
+	set link mtu {$mpdmtu}
 	set ipcp yes vjcomp
 	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
 

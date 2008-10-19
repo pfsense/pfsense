@@ -520,12 +520,51 @@ function interfaces_configure()
 	return 0;
 }
 
-function interface_bring_down($interface) 
+function interface_reconfigure($interface = "wan") 
 {
-	global $config;
+	interface_bring_down($interface);
+	sleep(1);
+	interface_configure($interface);
+}
 
-	$cfg = $config['interfaces'][$interface];
-	mwexec("/sbin/ifconfig " . escapeshellarg($cfg['if']) . " delete down");
+function interface_bring_down($interface = "wan") 
+{
+	global $config, $g;
+
+	$ifcfg = $config['interfaces'][$interface];
+
+	$realif = get_real_wan_interface($interface);
+
+	switch ($ifcfg['ipaddr']) {
+	case "pppoe":
+		killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");
+        	sleep(2);
+		break;
+	case "pptp":
+		killbypid("{$g['varrun_path']}/pptp_{$interface}.pid");
+        	sleep(2);
+		break;
+	case "carpdev-dhcp":
+		/* 
+		 * NB: When carpdev gets enabled it would be better to be handled as all
+		 *	other interfaces! 
+		 */
+	case "dhcp":
+               	mwexec("/sbin/ifconfig {$realinterface} down");
+               	sleep(1);
+        	$pid = find_dhclient_process($interface);
+        	if($pid)
+                	mwexec("kill {$pid}");
+		break;
+	default:
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete down");
+		break;
+	}
+
+	if (preg_match("/^tun|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|^vlan/i", $realif))
+                mwexec("/sbin/ifconfig {$realif} destroy");
+	
+	return;
 }
 
 function interfaces_ppp_configure() 
@@ -1352,24 +1391,6 @@ EOD;
 	return 0;
 }
 
-function interface_dhcp_down($interface = "wan") 
-{
-	global $config;
-	if(get_real_wan_interface($interface) <> "")
-		$realinterface = get_real_wan_interface($interface);
-	mwexec("/sbin/ifconfig {$realinterface} down");
-	sleep(1);
-	$pid = find_dhclient_process($interface);
-	if($pid)
-		mwexec("kill {$pid}");
-}
-
-function interface_dhcp_up($interface = "wan") 
-{
-	interface_dhcp_configure($interface);
-	sleep(1);
-}
-
 function interface_pppoe_configure($interface = "wan") 
 {
 	global $config, $g;
@@ -1533,29 +1554,6 @@ EOD;
 	return 0;
 }
 
-function interface_pppoe_restart($interface = "wan") 
-{
-	interface_pppoe_down($interface);
-	sleep(1);
-	interface_pppoe_up($interface);
-}
-
-function interface_pppoe_down($interface = "wan") 
-{
-	global $g;
-	killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");
-	sleep(1);
-}
-
-function interface_pppoe_up($interface = "wan") 
-{
-	global $g;
-	/* fire up mpd */
-	/* NB: keep in sync with interface_pppoe_configure */
-        mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pppoe_{$interface}.pid pppoeclient");
-	sleep(1);
-}
-
 function interface_pptp_configure($interface) 
 {
 	global $config, $g;
@@ -1674,29 +1672,6 @@ EOD;
 	mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pptp_{$interface}.pid pptp");
 
 	return 0;
-}
-
-function interface_pptp_restart($interface = "wan") 
-{
-	interface_pptp_down($interface);
-	sleep(1);
-	interface_pptp_up($interface);
-}
-
-function interface_pptp_down($interface = "wan") 
-{
-	global $g;
-	killbypid("{$g['varrun_path']}/pptp_{$interface}.pid");
-	sleep(1);
-}
-
-function interface_pptp_up($interface = "wan") 
-{
-	global $g;
-	/* fire up mpd */
-	/* NB: Keep in sync with interface_pptp_configure */
-        mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pptp_{$interface}.pid pptp");
-	sleep(1);
 }
 
 function get_real_wan_interface($interface = "wan") 

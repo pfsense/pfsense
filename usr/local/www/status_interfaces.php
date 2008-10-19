@@ -42,25 +42,12 @@
 
 require_once("guiconfig.inc");
 
-$wancfg = &$config['interfaces']['wan'];
-
 if ($_POST) {
 	$interface = $_POST['interface'];
-	$ifcfg = &$config['interfaces'][$interface];
 	if ($_POST['submit'] == "Disconnect" || $_POST['submit'] == "Release") {
-		if ($ifcfg['ipaddr'] == "dhcp")
-			interface_dhcp_down($interface);
-		else if ($ifcfg['ipaddr'] == "pppoe")
-			interface_pppoe_down($interface); 
-		else if ($ifcfg['ipaddr'] == "pptp")
-			interface_pptp_down($interface); 
+		interface_bring_down($interface);
 	} else if ($_POST['submit'] == "Connect" || $_POST['submit'] == "Renew") {
-		if ($ifcfg['ipaddr'] == "dhcp")
-			interface_dhcp_up($interface);
-		else if ($ifcfg['ipaddr'] == "pppoe")
-			interface_pppoe_up($interface); 
-		else if ($ifcfg['ipaddr'] == "pptp")
-			interface_pptp_up($interface); 
+		interface_configure($interface); 
 	} else {
 		header("Location: index.php");
 		exit;
@@ -75,7 +62,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-              <?php $ifdescrs = get_configured_interface_with_descr(false, true);
+              <?php $i = 0; $ifdescrs = get_configured_interface_with_descr(false, true);
 		foreach ($ifdescrs as $ifdescr => $ifname):
 			$ifinfo = get_interface_info($ifdescr);
 		?>
@@ -85,7 +72,7 @@ include("head.inc");
               <tr>
 			<td colspan="8" class="list" height="12"></td>
 			</tr>
-			<?php endif; ?>
+		<?php endif; ?>
               <tr>
                 <td colspan="2" class="listtopic">
                   <?=htmlspecialchars($ifname);?>
@@ -226,6 +213,7 @@ include("head.inc");
 			$interrupt_total = "";
 			$interrupt_sec = "";
 			$real_interface = $ifinfo['hwif'];
+		/* XXX for virtual interfaces this are not the most accurate stats! */
           	$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $3 }'`;
           	$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
           	if(strstr($interrupt_total, "hci")) {

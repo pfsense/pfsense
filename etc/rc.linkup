@@ -29,64 +29,58 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
-        /* parse the configuration and include all functions used below */
-        require_once("globals.inc");
-        require_once("config.inc");
-        require_once("functions.inc");
+/* parse the configuration and include all functions used below */
+require_once("globals.inc");
+require_once("config.inc");
+require_once("functions.inc");
 
-        if($g['booting'] == true) {
-                /* ignore all linkup events */
-        } else {
-			for ($i = 1; $i <= $_SERVER['argc']; $i++) {
-				$argspassed .= $_SERVER['argv'][$i] . " ";
-				$argument1 = $_SERVER['argv'][$i];
-				$argument2 = $_SERVER['argv'][$i+1];
-				handle_argument_group($argument1, $argument2);
-			}
-		}
+function handle_argument_group($argument1, $argument2) {
+	global $config;	
+
+	log_error("Processing {$argument1} - {$argument2}");
+	$iface = convert_real_interface_to_friendly_interface_name($argument1);
+	if ($iface == "") {
+		log_error("Not a valid interface {$argument1} -> \"$iface\"");
+		return;
+	}
+	if($argument2 == "") {
+		log_error("Not a valid interface action \"$argument2\"");
+		return;
+	}
 	
-		function handle_argument_group($argument1, $argument2) {
-			global $config;	
-			log_error("Processing {$argument1} - {$argument2}");
-			$iface = convert_real_interface_to_friendly_interface_name($argument1);
-			if($iface == "") {
-				log_error("Not a valid interface \"$iface\"");
-				return;
-			}
-			if($argument2 == "") {
-				log_error("Not a valid interface action \"$argument2\"");
-				return;
-			}
-			if($config['interfaces'][$iface]['ipaddr'] <> "dhcp" and
-				$config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
-				$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
-				log_error("Hotplug event detected for {$argument1} but ignoring since interface is not set for DHCP");
-				exec("/usr/sbin/arp -d -i {$argument1} -a");
-			} else {
-				switch ($argument2) {
-					case "stop":
-					case "down":
-						log_error("DEVD Ethernet detached event for {$argument1}");
-						exec("/sbin/ifconfig {$argument1} delete");
-						exec("/usr/sbin/arp -d -i {$argument1} -a");
-						exit;
-						break; /* LINT - NOT REACHED */
-					case "start":
-					case "up":
-						log_error("DEVD Ethernet attached event for {$argument1}");
-						exec("/sbin/ifconfig {$argument1} up");
-						exec("/usr/sbin/arp -d -i {$argument1} -a");
-						break;
-				}
-
-				if($config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
-					$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
-					/* do not reconfigure on hotplug events when using pppoe or pptp */
-					/* XXX: Why not?! */
-					log_error("HOTPLUG: Configuring wan interface {$argument1}");
-					interface_configure($iface);
-				}
-			}
+	$ipaddr = $config['interfaces'][$iface]['ipaddr']; 
+	if (is_ipaddr($ipaddr)) {
+		log_error("Hotplug event detected for {$argument1} but ignoring since interface is configured with static ip({$ipaddr})");
+		exec("/usr/sbin/arp -d -i {$argument1} -a");
+	} else {
+		switch ($argument2) {
+		case "stop":
+		case "down":
+			log_error("DEVD Ethernet detached event for {$argument1}");
+			if ($ipaddr <> "pppoe" || $ipaddr <> "pptp")
+				interface_bring_down($iface);
+			exit; 
+			break; /* LINT - NOTREACHED */ 
+		case "start":
+		case "up":
+			log_error("DEVD Ethernet attached event for {$argument1}");
+			exec("/usr/sbin/arp -d -i {$argument1} -a");
+			log_error("HOTPLUG: Configuring interface {$argument1}");
+			if ($ipaddr <> "pppoe" || $ipaddr <> "pptp")
+				interface_configure($iface);
+			break;
 		}
+	}
+}
 
+if ($g['booting'] == true) {
+	/* ignore all linkup events */
+} else {
+	for ($i = 1; $i <= $_SERVER['argc']; $i++) {
+		$argspassed .= $_SERVER['argv'][$i] . " ";
+		$argument1 = $_SERVER['argv'][$i];
+		$argument2 = $_SERVER['argv'][$i+1];
+		handle_argument_group($argument1, $argument2);
+	}
+}
 ?>

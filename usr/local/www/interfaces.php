@@ -743,6 +743,7 @@ if ($_POST['apply']) {
 	} 
 	} else {
 		unset($wancfg['enable']);
+		interface_bring_down($if);
 		write_config("Interface {$_POST['descr']}({$if}) is now disabled.");
 		touch($d_landirty_path);
                 header("Location: interfaces.php?if={$if}");

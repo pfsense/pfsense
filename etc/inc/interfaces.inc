@@ -365,7 +365,7 @@ function interface_gre_configure(&$gre)
 
 	mwexec("/sbin/ifconfig {$greif} up");
 	mwexec("/sbin/route add {$gre['remote-addr']}/{$gre['tunnel-remote-net']} {$realifip}");
-	file_put_contents("/tmp/{$greif}_router", $gre['tunnel-remote-net']);
+	file_put_contents("/tmp/{$greif}_router", $gre['tunnel-remote-addr']);
 
 	return $greif;
 }
@@ -416,7 +416,7 @@ function interface_gif_configure(&$gif)
 
         mwexec("/sbin/ifconfig {$gifif} up");
         mwexec("/sbin/route add {$gif['remote-addr']}/{$gif['tunnel-remote-net']} {$realifip}");
-	file_put_contents("/tmp/{$gifif}_router", $gif['tunnel-remote-net']);
+	file_put_contents("/tmp/{$gifif}_router", $gif['tunnel-remote-addr']);
 
         return $gifif;
 }

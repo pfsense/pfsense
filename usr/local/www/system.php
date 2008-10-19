@@ -182,6 +182,9 @@ if ($_POST) {
 
 		config_unlock();
 
+		// Reload filter -- plugins might need to run
+		filter_configure();
+
 		$savemsg = get_std_save_message($retval);
 		if ($restart_webgui)
 			$savemsg .= "<br />One moment...redirecting to {$url} in 10 seconds.";

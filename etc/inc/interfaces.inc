@@ -550,11 +550,11 @@ function interface_bring_down($interface = "wan")
 		 *	other interfaces! 
 		 */
 	case "dhcp":
-               	mwexec("/sbin/ifconfig {$realinterface} down");
-               	sleep(1);
         	$pid = find_dhclient_process($interface);
         	if($pid)
                 	mwexec("kill {$pid}");
+               	sleep(1);
+               	mwexec("/sbin/ifconfig {$realinterface} delete down");
 		break;
 	default:
 		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete down");

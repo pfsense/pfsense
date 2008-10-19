@@ -535,6 +535,8 @@ function interface_bring_down($interface = "wan")
 
 	$realif = get_real_wan_interface($interface);
 
+	mwexec("/usr/sbin/arp -d -i {$realif} -a");
+
 	switch ($ifcfg['ipaddr']) {
 	case "pppoe":
 		killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");

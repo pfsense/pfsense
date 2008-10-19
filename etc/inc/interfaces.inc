@@ -642,7 +642,7 @@ function interface_ppp_configure($ifcfg) {
 }
 
 function interfaces_carp_configure() {
-	global $g, $config, $debugging;
+	global $g, $config;
 	$balanacing = "";
 	$pfsyncinterface = "";
 	$pfsyncenabled = "";
@@ -721,7 +721,7 @@ function interfaces_carp_configure() {
 		$viparr = $viparr_temp;
 	}
 	
-	if($debugging)
+	if($g['debug'])
 		$cmdchain->setdebug(); // optional for verbose logging
 	$cmdchain->execute();
 	
@@ -820,7 +820,7 @@ EOD;
 		}
 	}
 
-	if($debugging)
+	if($g['debug'])
 		$cmdchain->setdebug(); // optional for verbose logging
 	// Execute built up command chain.
 	$cmdchain->execute();	
@@ -837,7 +837,7 @@ EOD;
 }
 
 function interfaces_ipalias_configure() {
-	global $g, $config, $debugging;
+	global $g, $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "interfaces_ipalias_configure() being called $mt\n";

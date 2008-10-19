@@ -46,6 +46,7 @@ require("guiconfig.inc");
 $pconfig['disablefilter'] = $config['system']['disablefilter'];
 $pconfig['rfc959workaround'] = $config['system']['rfc959workaround'];
 $pconfig['scrubnodf'] = $config['system']['scrubnodf'];
+$pconfig['scrubrnid'] = $config['system']['scrubrnid'];
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['optimization'] = $config['filter']['optimization'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
@@ -89,6 +90,11 @@ if ($_POST) {
 			$config['system']['scrubnodf'] = "enabled";
 		else
 			unset($config['system']['scrubnodf']);
+
+		if($_POST['scrubrnid'] == "yes")
+                        $config['system']['scrubrnid'] = "enabled";
+                else
+                        unset($config['system']['scrubrnid']);
 
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
@@ -217,10 +223,18 @@ function update_description(itemnum) {
 									This allows for communications with hosts that generate fragmented
 									packets with the don't fragment (DF) bit set. Linux NFS is known to
 									do this. This will cause the filter to not drop such packets but
-									instead clear the don't fragment bit. The filter will also randomize
-									the IP identification field of outgoing packets with this option on,
-									to compensate for operating systems that set the DF bit but set a
-									zero IP identification header field.
+									instead clear the don't fragment bit. 
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">IP Random id generation</td>
+								<td width="78%" class="vtable">
+									<input name="scrubrnid" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubrnid'])) echo "checked"; ?> />
+									<strong>Insert a stronger id into IP header of packets passing through the filter.</strong><br/>
+									Replaces the IP identification field of packets with random values to
+									compensate for operating systems that use predicatable values.
+									This option only applies to packets that are not fragmented after the
+									optional packet reassembly.
 								</td>
 							</tr>
 							<tr>

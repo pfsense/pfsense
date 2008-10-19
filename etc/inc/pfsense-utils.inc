@@ -648,7 +648,6 @@ function tdr_install_set() {
 */
 function get_time_based_rule_status($schedule) {
 	$should_add_rule = false;
-	global $debug;
 	/* no schedule? rule should be installed */
 	if($schedule == "") 
 		return true;
@@ -714,7 +713,6 @@ function tdr_day($schedule) {
 	 * Calculate day of month. 
 	 * IE: 29th of may
 	 */
-	global $debug;
 	$weekday	= date("w");
 	if ($weekday == 0)
 		$weekday = 7;
@@ -731,7 +729,6 @@ function tdr_day($schedule) {
 
 function tdr_hour($schedule) {
 	/* $schedule should be a string such as 16:00-19:00 */
-	global $debug;
 	$tmp = split("-", $schedule);
 	$starting_time = strtotime($tmp[0]);
 	$ending_time = strtotime($tmp[1]);
@@ -751,7 +748,6 @@ function tdr_position($schedule) {
 	 * Saturday = 6
 	 * ...
 	 */
-	global $debug;
 	$weekday	= date("w");
 	log_error("[TDR DEBUG] tdr_position($schedule) $weekday");
 	if ($weekday == 0)
@@ -769,7 +765,6 @@ function tdr_month($schedule) {
 	/*
 	 * Calculate month
 	 */
-	global $debug;
 	$todays_month = date("n");
 	$months = split(",", $schedule);
 	log_error("[TDR DEBUG] tdr_month($schedule)");

@@ -128,7 +128,9 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 					}
 				}
 			}
-
+			
+			run_plugins("/usr/local/pkg/firmware_upgrade");
+			
             /* Check for input errors, firmware locks, warnings, then check for firmware if sig_override is set */
             if (!$input_errors && !file_exists($d_firmwarelock_path) && (!$sig_warning || $_POST['sig_override'])) {
                     if (file_exists("{$g['upload_path']}/firmware.tgz")) {

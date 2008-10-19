@@ -2081,10 +2081,12 @@ function write_config($desc="Unknown", $backup = true) {
 
 	config_unlock();
 
-	/* process packager manager custom rules */
-	update_filter_reload_status("Running plugins");
-	run_plugins("/usr/local/pkg/write_config/");
-	update_filter_reload_status("Plugins completed.");
+	if(is_dir("/usr/local/pkg/write_config/")) {
+		/* process packager manager custom rules */
+		update_filter_reload_status("Running plugins");
+		run_plugins("/usr/local/pkg/write_config/");
+		update_filter_reload_status("Plugins completed.");
+	}
 
 	return $config;
 }

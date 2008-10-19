@@ -365,6 +365,7 @@ function interface_gre_configure(&$gre)
 
 	mwexec("/sbin/ifconfig {$greif} up");
 	mwexec("/sbin/route add {$gre['remote-addr']}/{$gre['tunnel-remote-net']} {$realifip}");
+	file_put_contents("/tmp/{$greif}_router", $gre['tunnel-remote-net']);
 
 	return $greif;
 }
@@ -415,6 +416,7 @@ function interface_gif_configure(&$gif)
 
         mwexec("/sbin/ifconfig {$gifif} up");
         mwexec("/sbin/route add {$gif['remote-addr']}/{$gif['tunnel-remote-net']} {$realifip}");
+	file_put_contents("/tmp/{$gifif}_router", $gif['tunnel-remote-net']);
 
         return $gifif;
 }
@@ -537,14 +539,23 @@ function interface_bring_down($interface = "wan")
 
 	mwexec("/usr/sbin/arp -d -i {$realif} -a");
 
+        /* remove interface up file if it exists */
+        unlink_if_exists("{$g['tmp_path']}/{$interface}up");
+        unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
+        unlink_if_exists("{$g['varetc_path']}/nameservers.conf");
+
 	switch ($ifcfg['ipaddr']) {
 	case "pppoe":
 		killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");
         	sleep(2);
+                unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
+                unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
 		break;
 	case "pptp":
 		killbypid("{$g['varrun_path']}/pptp_{$interface}.pid");
         	sleep(2);
+                unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
+                unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
 		break;
 	case "carpdev-dhcp":
 		/* 
@@ -556,6 +567,7 @@ function interface_bring_down($interface = "wan")
         	if($pid)
                 	mwexec("kill {$pid}");
                	sleep(1);
+                unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
                	mwexec("/sbin/ifconfig {$realinterface} delete down");
 		break;
 	default:
@@ -566,6 +578,7 @@ function interface_bring_down($interface = "wan")
 	if (preg_match("/^tun|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|^vlan/i", $realif))
                 mwexec("/sbin/ifconfig {$realif} destroy");
 	
+	unlink_if_exists("/tmp/{$realif}_router");
 	return;
 }
 
@@ -1276,7 +1289,6 @@ function interface_configure($interface = "wan")
 
 			if (is_ipaddr($wancfg['gateway']))
 				file_put_contents("/tmp/{$realif}_router", $wancfg['gateway']);
-
 	}
 
 	mwexec("/sbin/ifconfig {$wancfg['if']} up");

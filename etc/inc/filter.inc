@@ -98,19 +98,18 @@ function filter_configure_sync() {
 	 * and if so load ipfw for later usage.
 	 */
 	foreach($config['filter']['rule'] as $rule) {
-		if($rule['sched'])
-			$time_based_rules = true;
+		if($rule['sched']) {
+			$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
+			if($status == "0") {
+				mute_kernel_msgs();
+				mwexec("/sbin/kldload ipfw");
+				unmute_kernel_msgs();
+			}
+			exec("/sbin/ipfw delete set 9");
+			exec("/sbin/ipfw delete 2");
+			exec("/sbin/ipfw delete 3");			
+			break;
 		}
-	if($time_based_rules == true) {
-		$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-		if($status == "0") {
-			mute_kernel_msgs();
-			mwexec("/sbin/kldload ipfw");
-			unmute_kernel_msgs();
-		}
-		exec("/sbin/ipfw delete set 9");
-		exec("/sbin/ipfw delete 2");
-		exec("/sbin/ipfw delete 3");			
 	}
 
 	/* Get interface list to work with. */
@@ -182,27 +181,8 @@ function filter_configure_sync() {
 	$rules .= "\n";
 
 	update_filter_reload_status("Setting up SCRUB information");
-
-	/* disable scrub option */
-	if(!isset($config['system']['disablescrub'])) {
-		/* set up MSS clamping */
-		if ($config['interfaces']['wan']['mtu'] <> "" and is_numeric($config['interfaces']['wan']['mtu']))
-			$mssclamp = "max-mss " . (intval($config['interfaces']['wan']['mtu'] - 40));
-		else
-			if ($config['interfaces']['wan']['ipaddr'] == "pppoe")
-				$mssclamp = "max-mss 1452";
-			else
-				$mssclamp = "";
-	
-		/* configure no-df for linux nfs and others */
-		if ($config['system']['scrubnodf'])
-			$scrubnodf = "no-df random-id";
-		else
-			$scrubnodf = "random-id";
-		$rules .= "scrub all {$scrubnodf} {$mssclamp} fragment reassemble\n"; // reassemble all directions
-	} else if ($config['interfaces']['wan']['mtu'] <> "" and is_numeric($config['interfaces']['wan']['mtu'])) {
-		$rules .= "scrub {$mssclamp}\n"; // reassemble all directions
-	}
+	$rules .= filter_generate_scrubing();
+	$rules .= "\n";
 
 	$rules .= "{$dummynet_rules}\n";
 	$rules.= "{$altq_queues}\n";
@@ -292,6 +272,41 @@ function filter_configure_sync() {
 		echo "done.\n";
 
 	return 0;
+}
+
+function filter_generate_scrubing()
+{
+	global $config, $FilterIflist;
+
+	$scrubrules = "";
+
+	/* disable scrub option */
+        foreach ($FilterIflist as $scrubif => $scrubcfg) {
+                /* set up MSS clamping */
+                if ($scrubcfg['mtu'] <> "" and is_numeric($scrubcfg['mtu']))
+                        $mssclamp = "max-mss " . (intval($scrubcfg['mtu'] - 40));
+                else
+                        $mssclamp = "";
+
+                /* configure no-df for linux nfs and others */
+                if ($config['system']['scrubnodf'])
+                        $scrubnodf = "no-df";
+                else
+                        $scrubnodf = "";
+
+                if ($config['system']['scrubrnid'])
+                        $scrubrnid = "random-id";
+                else
+                        $scrubrnid = "";
+
+                if (!isset($config['system']['disablescrub']))
+                        $scrubrules .= "scrub on \${$scrubcfg['descr']} all {$scrubnodf} {$scrubrnid} {$mssclamp} fragment reassemble\n"; // reassemble all directions
+                else if (!empty($mssclamp))
+                        $scrubrules .= "scrub on \${$scrubcfg['descr']} {$mssclamp}\n";
+
+        }
+
+	return $scrubrules;
 }
 
 function filter_generate_aliases() {
@@ -420,6 +435,7 @@ function generate_optcfg_array()
 
 		$oic['ip'] = $oc['ipaddr'];
 		$oic['sn'] = $oc['subnet'];
+		$oic['mtu'] = $oc['mtu'];
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
 		$oic['nonat'] = $oc['nonat'];

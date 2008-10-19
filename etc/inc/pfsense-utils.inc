@@ -2151,6 +2151,30 @@ function get_disk_info() {
 	// $size, $used, $avail, $cap
 }
 
+function run_plugins($directory) {
+	global $config, $g;
+	/* process packager manager custom rules */
+	$files = return_dir_as_array($directory);
+	if($files <> "") {
+		foreach ($files as $file) {
+			if($file) {
+				$text = file_get_contents($directory . $file);
+				if($text) {
+					if(stristr($file, ".sh") == true) {
+						mwexec($directory . $file . " start");
+					} else {
+						if(!stristr($file,"CVS")) {
+							if($g['booting'] == true)
+								echo "\t{$file}... ";
+							require_once($directory . $file);
+						}
+					}
+				}
+			}
+		}
+	}	
+}
+
 /****f* pfsense-utils/display_top_tabs
  * NAME
  *   display_top_tabs - display tabs with rounded edges

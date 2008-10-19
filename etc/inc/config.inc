@@ -272,6 +272,13 @@ function parse_config($parse = false) {
 	alias_make_table($config);
 	config_unlock();
 
+	/* process packager manager custom rules */
+	if(is_dir("/usr/local/pkg/config_parse/")) {
+		update_filter_reload_status("Running plugins (config_parse)");
+		run_plugins("/usr/local/pkg/config_parse/");
+		update_filter_reload_status("Plugins completed.");
+	}
+
 	/*    override some global configuration parms if they exist
 	 *    instead of hard coding these checks into the codebase
      */
@@ -1093,6 +1100,13 @@ function write_config($desc="Unknown", $backup = true) {
 	mwexec("/bin/sync");
 
 	config_unlock();
+
+	if(is_dir("/usr/local/pkg/write_config/")) {
+		/* process packager manager custom rules */
+		update_filter_reload_status("Running plugins");
+		run_plugins("/usr/local/pkg/write_config/");
+		update_filter_reload_status("Plugins completed.");
+	}
 
 	return $config;
 }

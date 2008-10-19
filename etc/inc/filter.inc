@@ -259,27 +259,12 @@ function filter_configure_sync() {
 
 	update_filter_reload_status("Running plugins");
 
-	/* process packager manager custom rules */
-	$files = return_dir_as_array("/usr/local/pkg/pf/");
-	if($files <> "") {
-		foreach ($files as $file) {
-			if($file) {
-				$text = file_get_contents("/usr/local/pkg/pf/" . $file);
-				if($text) {
-					if(stristr($file, ".sh") == true) {
-						mwexec("/usr/local/pkg/pf/" . $file . " start");
-					} else {
-						if(!stristr($file,"CVS")) {
-							if($g['booting'] == true)
-								echo "\t{$file}... ";
-							require_once("/usr/local/pkg/pf/" . $file);
-						}
-					}
-				}
-			}
-		}
+	if(is_dir("/usr/local/pkg/pf/")) {
+		/* process packager manager custom rules */
+		update_filter_reload_status("Running plugins (pf)");
+		run_plugins("/usr/local/pkg/pf/");
+		update_filter_reload_status("Plugins completed.");
 	}
-	update_filter_reload_status("Plugins completed.");
 
 	system_start_ftp_helpers();
 	

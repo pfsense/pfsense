@@ -191,6 +191,9 @@ if ($_POST) {
 		if ($olddnsallowoverride != $config['system']['dnsallowoverride'])
 			$retval |= interface_configure();
 
+		// Reload the filter - plugins might need to be run.
+		filter_configure();
+		
 		config_unlock();
 
 		$savemsg = get_std_save_message($retval);

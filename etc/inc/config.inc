@@ -216,7 +216,7 @@ function encrypted_configxml() {
 	if(file_exists($g['conf_path'] . "/config.xml")) {
 		if($g['booting']) {
 			$configtxt = file_get_contents($g['conf_path'] . "/config.xml");			
-			if(!tagfile_deformat($configtxt, $configtxt, "config.xml")) {
+			if(tagfile_deformat($configtxt, $configtxt, "config.xml")) {
 				$fp = fopen('php://stdin', 'r');
 				$data = "";
 				echo "\n\n*** Encrypted config.xml detected ***\n";

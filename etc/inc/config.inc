@@ -224,7 +224,7 @@ function encrypted_configxml() {
 					echo "\nEnter the password to decrypt config.xml: ";
 					$decrypt_password = chop(fgets($fp));
 					$data = decrypt_data($configtxt, $decrypt_password);
-					if(!strstr($data, "pfsense"))
+					if(!strstr($data, "<pfsense>"))
 						$data = "";
 					if($data) {
 						$fd = fopen($g['conf_path'] . "/config.xml", "w");

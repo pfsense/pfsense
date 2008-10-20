@@ -233,7 +233,7 @@ function encrypted_configxml() {
 						echo "\nConfig.xml unlocked.\n";
 						fclose($fp);
 					} else {
-						echo "Invalid password entered.  Please try again.\n";
+						echo "\nInvalid password entered.  Please try again.\n";
 					}
 				}
 			}

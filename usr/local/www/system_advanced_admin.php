@@ -304,7 +304,7 @@ function prot_change() {
 							<tr>
 								<td width="22%" valign="top" class="vncell">Authentication Method</td>
 								<td width="78%" class="vtable">
-									<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if (isset($pconfig['sshdkeyonly'])) echo "checked"; ?> />
+									<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if ($pconfig['sshdkeyonly']) echo "checked"; ?> />
 									<strong>Disable Password login for Secure Shell (rsa key only)</strong>
 									<br/>
 									When enabled, authorized keys need to be configured for each

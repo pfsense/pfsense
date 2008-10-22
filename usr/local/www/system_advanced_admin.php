@@ -51,7 +51,7 @@ $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
-$pconfig['sshdkeyonly'] = $config['system']['ssh']['sshdkeyonly'];
+$pconfig['sshdkeyonly'] = isset($config['system']['ssh']['sshdkeyonly']);
 
 $a_cert =& $config['system']['cert'];
 

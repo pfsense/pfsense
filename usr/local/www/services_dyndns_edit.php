@@ -225,5 +225,6 @@ include("head.inc");
                 </tr>
               </table>
 </form>
+<?php include("fend.inc"); ?>
 </body>
 </html>

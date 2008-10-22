@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008 Ermal Luci
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -28,84 +28,190 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['dnsupdates']['dnsupdate']))
+if (!is_array($config['dnsupdates']['dnsupdate'])) {
 	$config['dnsupdates']['dnsupdate'] = array();
+}
 
 $a_rfc2136 = &$config['dnsupdates']['dnsupdate'];
 
-if ($_GET['act'] == "del") {
-		unset($a_rfc2136[$_GET['id']]);
+$id = $_GET['id'];
+if (isset($_POST['id']))
+	$id = $_POST['id'];
 
-		write_config();
+if (isset($id) && isset($a_rfc2136[$id])) {
+	$pconfig['enable'] = isset($a_rfc2136[$id]['enable']);
+	$pconfig['host'] = $a_rfc2136[$id]['host'];
+	$pconfig['ttl'] = $a_rfc2136[$id]['ttl'];
+	if (!$pconfig['ttl'])
+		$pconfig['ttl'] = 60;
+	$pconfig['keydata'] = $a_rfc2136[$id]['keydata'];
+	$pconfig['keyname'] = $a_rfc2136[$id]['keyname'];
+	$pconfig['keytype'] = $a_rfc2136[$id]['keytype'];
+	if (!$pconfig['keytype'])
+		$pconfig['keytype'] = "zone";
+	$pconfig['server'] = $a_rfc2136[$id]['server'];
+	$pconfig['interface'] = $a_rfc2136[$id]['interface'];
+	$pconfig['usetcp'] = isset($a_rfc2136[$id]['usetcp']);
+	$pconfig['descr'] = $a_rfc2136[$id]['descr'];
 
-		header("Location: services_dyndns.php");
-		exit;
 }
 
-$pgtitle = array("Services", "RFC 2136 clients");
+if ($_POST) {
+
+	unset($input_errors);
+	$pconfig = $_POST;
+
+	/* input validation */
+	$reqdfields = array();
+	$reqdfieldsn = array();
+	$reqdfields = array_merge($reqdfields, explode(" ", "host ttl keyname keydata"));
+	$reqdfieldsn = array_merge($reqdfieldsn, explode(",", "Hostname,TTL,Key name,Key"));
+
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
+	if (($_POST['host'] && !is_domain($_POST['host'])))  
+		$input_errors[] = "The DNS update host name contains invalid characters.";
+	if (($_POST['ttl'] && !is_numericint($_POST['ttl']))) 
+		$input_errors[] = "The DNS update TTL must be an integer.";
+	if (($_POST['keyname'] && !is_domain($_POST['keyname'])))
+		$input_errors[] = "The DNS update key name contains invalid characters.";
+
+	if (!$input_errors) {
+		$rfc2136 = array();
+		$rfc2136['enable'] = $_POST['enable'] ? false : true;
+		$rfc2136['host'] = $_POST['host'];
+		$rfc2136['ttl'] = $_POST['ttl'];
+		$rfc2136['keyname'] = $_POST['keyname'];
+		$rfc2136['keytype'] = $_POST['keytype'];
+		$rfc2136['keydata'] = $_POST['keydata'];
+		$rfc2136['server'] = $_POST['server'];
+		$rfc2136['usetcp'] = $_POST['usetcp'] ? true : false;
+		$rfc2136['interface'] = $_POST['interface'];
+		$rfc2136['descr'] = $_POST['descr'];
+
+		if (isset($id) && $a_rfc2136[$id])
+			$a_rfc2136[$id] = $rfc2136;
+		else
+			$a_rfc2136[] = $rfc2136;
+
+		write_config("New/Edited RFC2136 dnsupdate entry was posted.");
+
+		config_lock();
+		/* nuke the cache file */
+                services_rfc2136_reset();
+                $retval = services_dnsupdate_process();
+                config_unlock();
+
+		header("Location: services_rfc2136.php");
+		exit;
+	}
+}
+
+$pgtitle = array("Services","RFC 2136 client", "Edit");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="services_rfc2136.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
-<?php
-	$tab_array = array();
-	$tab_array[] = array("DynDns", false, "services_dyndns.php");
-	$tab_array[] = array("RFC 2136", true, "services_rfc2136.php");
-	display_top_tabs($tab_array);
-?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-                <tr>
-				  <td width="5%"  class="listhdrr"></td>
-                  <td width="25%" class="listhdrr">Hostname</td>
-                  <td width="60%" class="listhdr">Description</td>
-                  <td width="10%" class="list"></td>
-				</tr>
-			  <?php $i = 0; foreach ($a_rfc2136 as $rfc2136): ?>
-                <tr>
-				  <td class="listlr">
-				  <?php $iflist = get_configured_interface_with_descr();
-				  		foreach ($iflist as $if => $ifdesc):
-							if ($rfc2136['interface'] == $if): ?>
-								<?=$ifdesc; break;?>
-					<?php endif; endforeach; ?>
+<?php if ($savemsg) print_info_box($savemsg); ?>
+            <form action="services_rfc2136_edit.php" method="post" name="iform" id="iform">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+			  	<tr>
+                  <td colspan="2" valign="top" class="optsect_t">
+				  <table border="0" cellspacing="0" cellpadding="0" width="100%">
+				  	<tr><td class="optsect_s"><strong>RFC 2136 client</strong></td></tr>
+				  </table>
 				  </td>
-                  <td class="listr">
-					<?=htmlspecialchars($rfc2136['host']);?>
-                  </td>
-                  <td class="listbg">
-                    <?=htmlspecialchars($rfc2136['descr']);?>&nbsp;
-                  </td>
-                  <td valign="middle" nowrap class="list"> <a href="services_rfc2136_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="services_rfc2136.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
-				</tr>
-			  <?php $i++; endforeach; ?>
+                </tr>
                 <tr>
-                  <td class="list" colspan="3">&nbsp;</td>
-                  <td class="list"> <a href="services_rfc2136_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-				</tr>
+                  <td width="22%" valign="top" class="vncellreq">Enable</td>
+				  <td width="78%" class="vtable">
+				    <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
+				  </td>
+                </tr>
 				<tr>
-				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  Note:<br>
-				  </strong></span>
-				  Add something meaningful here.
-				  </td>
-				<td class="list">&nbsp;</td>
+				   <td width="22%" valign="top" class="vncellreq">Interface to monitor</td>  
+				   <td width="78%" class="vtable">
+				   <select name="interface" class="formselect" id="interface">
+				   <?php $iflist = get_configured_interface_with_descr();
+				   		foreach ($iflist as $if => $ifdesc):?>
+							<option value="<?=$if;?>" <?php if ($pconfig['interface'] == $if) echo "selected";?>><?=$ifdesc;?></option>
+					<?php endforeach; ?>
+					</select>
+					</td>
+					</td>
+				</tr>	
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Hostname</td>
+                  <td width="78%" class="vtable">
+                    <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
+                  </td>
 				</tr>
+                <tr>
+                  <td valign="top" class="vncellreq">TTL</td>
+                  <td class="vtable">
+                    <input name="ttl" type="text" class="formfld unknown" id="ttl" size="6" value="<?=htmlspecialchars($pconfig['ttl']);?>">
+                  seconds</td>
+                </tr>
+                <tr>
+                  <td valign="top" class="vncellreq">Key name</td>
+                  <td class="vtable">
+                    <input name="keyname" type="text" class="formfld unknown" id="keyname" size="30" value="<?=htmlspecialchars($pconfig['keyname']);?>">
+                    <br>
+                    This must match the setting on the DNS server.</td>
+                </tr>
+                <tr>
+                  <td valign="top" class="vncellreq">Key type </td>
+                  <td class="vtable">
+				  <input name="keytype" type="radio" value="zone" <?php if ($pconfig['keytype'] == "zone") echo "checked"; ?>> Zone &nbsp;
+                  <input name="keytype" type="radio" value="host" <?php if ($pconfig['keytype'] == "host") echo "checked"; ?>> Host &nbsp;
+                  <input name="keytype" type="radio" value="user" <?php if ($pconfig['keytype'] == "user") echo "checked"; ?>> User
+				</tr>
+                <tr>
+                  <td valign="top" class="vncellreq">Key</td>
+                  <td class="vtable">
+                    <input name="keydata" type="text" class="formfld unknown" id="keydata" size="70" value="<?=htmlspecialchars($pconfig['keydata']);?>">
+                    <br>
+                    Paste an HMAC-MD5 key here.</td>
+				</tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Server</td>
+                  <td width="78%" class="vtable">
+                    <input name="server" type="text" class+"formfld" id="server" size="30" value="<?=htmlspecialchars($pconfig['server'])?>">
+                  </td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Protocol</td>
+                  <td width="78%" class="vtable">
+                    <input name="usetcp" type="checkbox" id="usetcp" value="yes" <?php if ($pconfig['usetcp']) echo "checked"; ?>>
+                    <strong>Use TCP instead of UDP</strong></td>
+				</tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Description</td>
+                  <td width="78%" class="vtable">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                  </td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)">
+					<a href="services_rfc2136.php"><input name="Cancel" type="button" class="formbtn" value="Cancel"></a>
+					<?php if (isset($id) && $a_rfc2136[$id]): ?>
+						<input name="id" type="hidden" value="<?=$id;?>">
+					<?php endif; ?>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
+                    </strong></span>You must configure a DNS server in <a href="system.php">System:
+                    General setup</a> or allow the DNS server list to be overridden
+                    by DHCP/PPP on WAN for dynamic DNS updates to work.</span></td>
+                </tr>
               </table>
-	      </div>
-	</td>
-	</tr>
-</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

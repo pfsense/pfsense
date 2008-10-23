@@ -147,12 +147,6 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?php echo return_ext_menu("Interfaces"); ?>
 						</ul>
 					</li>
-<?php
-        if($config['system']['shapertype'] <> "m0n0")
-          $shaper = "firewall_shaper.php";
-        else
-          $shaper = "m0n0/firewall_shaper.php";
-?>
 					<li class="drop">
 						<div>Firewall</div>
 						<ul class="subdrop">
@@ -173,7 +167,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 								  deployments
 								remove to reduce user confusion
 								*/
-								output_menu_item("{$shaper}", "Traffic Shaper");
+								output_menu_item("/firewall_saper.php", "Traffic Shaper");
 							}
 							?>	
 							<?=output_menu_item("/firewall_virtual_ip.php", "Virtual IPs");?>	

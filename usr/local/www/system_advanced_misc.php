@@ -147,25 +147,6 @@ include("head.inc");
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
-<?php
-/*
-							<tr>
-								<td colspan="2" valign="top" class="listtopic">Traffic Shaper</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell">Traffic shaper type</td>
-								<td width="78%" class="vtable">
-									<select name="shapertype" class="formselect">
-										<option value="pfSense"<?php if($pconfig['shapertype'] == 'pfSense') echo " selected"; ?>><?= $g['product_name'] ?> (ALTQ)</option>
-										<option value="m0n0"<?php if($pconfig['shapertype'] == 'm0n0') echo " selected"; ?>>M0n0wall (dummynet)</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>
-*/
-?>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">IP Security</td>
 							</tr>

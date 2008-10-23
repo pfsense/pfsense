@@ -94,24 +94,6 @@ function filter_configure_sync() {
 		echo "filter_configure_sync() being called $mt\n";
 	}
 
-	/* check to see if any rules reference a schedule
-	 * and if so load ipfw for later usage.
-	 */
-	foreach($config['filter']['rule'] as $rule) {
-		if($rule['sched']) {
-			$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-			if($status == "0") {
-				mute_kernel_msgs();
-				mwexec("/sbin/kldload ipfw");
-				unmute_kernel_msgs();
-			}
-			exec("/sbin/ipfw delete set 9");
-			exec("/sbin/ipfw delete 2");
-			exec("/sbin/ipfw delete 3");			
-			break;
-		}
-	}
-
 	/* Get interface list to work with. */
 	generate_optcfg_array();
 
@@ -2429,12 +2411,12 @@ EOD;
 
 
 	if (isset($config['filter']['rule'])) {
+		$load_ipfw_module = false;
 		/* Pre-cache all our rules so we only have to generate them once */
 		$rule_arr1 = array();
 		$rule_arr2 = array();
 		/* 
-		 * XXX: This is a double pass but it needs to be this way.
-		 * to allow users to override floating rules.
+		 * NB: Floating rules need to be written before regular once.
 		 */
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
@@ -2443,9 +2425,27 @@ EOD;
 					$rule_arr1[] = generate_user_filter_rule_arr($rule);
 				else
 					$rule_arr2[] = generate_user_filter_rule_arr($rule);
+                		if ($rule['sched'])
+					$load_ipfw_module = true;
 			}
 		}
 		$rule_arr = array_merge($rule_arr1,$rule_arr2);
+
+		/* 
+		 * check to see if any rules reference a schedule
+	         * and if so load ipfw for later usage.
+        	 */
+		if ($load_ipfw_module == true) {
+                        $status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
+                        if($status == "0") {
+                                mute_kernel_msgs();
+                                mwexec("/sbin/kldload ipfw");
+                                unmute_kernel_msgs();
+                        }
+                        exec("/sbin/ipfw delete set 9");
+                        exec("/sbin/ipfw delete 2");
+                        exec("/sbin/ipfw delete 3");
+                }
 
 		$ipfrules .= "\n# User-defined aliases follow\n";
 		/* tables for aliases */

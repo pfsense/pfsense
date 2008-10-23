@@ -120,7 +120,7 @@
 			$this->_dnsMX = $dnsMX;
 			$this->_if = $dnsIf;
 			
-			$this->_dnsIP = get_current_wan_address($dnsIf);
+			$this->_dnsIP = get_interface_ip($dnsIf);
 			$this->_debugID = rand(1000000, 9999999);
 			
 			if ($this->_detectChange() == FALSE) {

@@ -68,31 +68,6 @@ if (!isset($do_ping)) {
 	$count = DEFAULT_COUNT;
 }
 
-function get_interface_addr($ifdescr) {
-	
-	global $config, $g;
-	
-	/* find out interface name */
-	if ($ifdescr == "wan")
-		$if = get_real_wan_interface();
-	else
-		$if = $config['interfaces'][$ifdescr]['if'];
-	
-	/* try to determine IP address and netmask with ifconfig */
-	$ifconfiginfo = "";
-	$matches = "";
-	unset($ifconfiginfo);
-	exec("/sbin/ifconfig " . $if, $ifconfiginfo);
-	
-	foreach ($ifconfiginfo as $ici) {
-		if (preg_match("/inet (\S+)/", $ici, $matches)) {
-			return $matches[1];
-		}
-	}
-	
-	return false;
-}
-
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <? include("fbegin.inc"); ?>
@@ -145,7 +120,7 @@ include("head.inc"); ?>
 					echo("<strong>Ping output:</strong><br>");
 					echo('<pre>');
 					ob_end_flush();
-					$ifaddr = get_interface_addr($interface);
+					$ifaddr = get_interface_ip($interface);
 					if ($ifaddr)
 						system("/sbin/ping -S$ifaddr -c$count " . escapeshellarg($host));
 					else

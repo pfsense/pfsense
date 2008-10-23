@@ -43,15 +43,15 @@ $argument = str_replace("\n", "", $argv[1]);
 log_error("Informational: rc.newwanip is starting {$argument}.");
 
 if(empty($argument)) {
-    $curwanip = get_current_wan_address();
+    $curwanip = get_interface_ip();
     $interface = "wan";
-    $interface_real = get_real_wan_interface();
+    $interface_real = get_real_interface();
 } else {
         $interface = convert_real_interface_to_friendly_interface_name($argument);
         $interface_real = $argument;
         $curwanip = find_interface_ip($interface_real);
         if($curwanip == "")
-                $curwanip = get_current_wan_address($interface);
+                $curwanip = get_interface_ip($interface);
 }
 
 log_error("rc.newwanip working with (IP address: {$curwanip}) (interface: {$interface}) (interface real: {$interface_real}).");

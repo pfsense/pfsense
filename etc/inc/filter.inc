@@ -401,7 +401,7 @@ function get_direct_networks_list() {
 
 	foreach ($iflist as $ifent => $ifname) {
 		/* do not process interfaces that will end up with gateways */
-		$interface_ip = get_current_wan_address($ifent);
+		$interface_ip = get_interface_ip($ifent);
 		$sn = $config['interfaces'][$ifent]['subnet'];
 		if($sn == "") {
 			$subnet = "{$interface_ip}/32";
@@ -435,7 +435,7 @@ function generate_optcfg_array()
 		$oc = $config['interfaces'][$if];
 
 		$oic = array();
-		$oic['if'] = get_real_wan_interface($if);
+		$oic['if'] = get_real_interface($if);
 
 		$oic['ip'] = $oc['ipaddr'];
 		$oic['sn'] = $oc['subnet'];
@@ -529,7 +529,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
     if ($natip != "") {
             $tgt = "{$natip}/32";
     } else {
-			$natip = get_current_wan_address($if);
+			$natip = get_interface_ip($if);
 			if(is_ipaddr($natip))
 				$tgt = "{$natip}/32";
 			else
@@ -648,7 +648,7 @@ function filter_nat_rules_generate()
 			else 
 				$natif = $natent['interface'];
 
-			$natif = get_real_wan_interface($natif);
+			$natif = get_real_interface($natif);
 
 			if ($natif)
 				$natrules .= "binat on $natif from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
@@ -759,7 +759,7 @@ function filter_nat_rules_generate()
 			update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
 
 			if (interface_has_gateway($if)) {
-				$target = get_current_wan_address($if);
+				$target = get_interface_ip($if);
 					
 				/* do not nat tftp proxy */
 				$natrules .= "no nat on \${$ifcfg['descr']} to port tftp\n";
@@ -787,7 +787,7 @@ function filter_nat_rules_generate()
 	/* is SPAMD insalled? */
 	if (is_package_installed("spamd") == 1) {
 		$natrules .= "\n# spam table \n";
-		$wanif = get_real_wan_interface("wan");
+		$wanif = get_real_interface("wan");
 		$natrules .= "table <whitelist> persist\n";
 		$natrules .= "table <blacklist> persist\n";
 		$natrules .= "table <spamd> persist\n";
@@ -833,7 +833,7 @@ function filter_nat_rules_generate()
 	/* loop through all interfaces and handle ftp-proxy redirections */
 	foreach ($FilterIflist as $ifent => $ifcfg) {
 		$realif = $ifcfg['if'];
-		$int_ip = get_current_wan_address($ifent);
+		$int_ip = get_interface_ip($ifent);
 
 		if ($int_ip == "")
 			continue;
@@ -960,14 +960,14 @@ function filter_nat_rules_generate()
 				else
 					$extaddr = $rule['external-address'];
 			else
-				$extaddr = get_current_wan_address($rule['interface']);
+				$extaddr = get_interface_ip($rule['interface']);
 
 			if (!$rule['interface'])
 				$natif == "wan";
 			else 
 				$natif = $rule['interface'];
 
-			$natif = get_real_wan_interface($natif);
+			$natif = get_real_interface($natif);
 
 			/*
 			 *   Expand aliases
@@ -1368,7 +1368,7 @@ function generate_user_filter_rule($rule)
 			if (!array_key_exists($rule['source']['network'], $FilterIflist)) {
 				$optmatch = "";
 				if (preg_match("/opt([0-999])/", $rule['source']['network'], $optmatch)) {
-					$opt_ip = get_current_wan_address("opt{$optmatch[1]}");
+					$opt_ip = get_interface_ip("opt{$optmatch[1]}");
 					if(!$opt_ip)
 						return "# unresolvable optarray $optmatch[0] - $opt_ip";
 				} else {
@@ -1379,7 +1379,7 @@ function generate_user_filter_rule($rule)
 		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
 			if (!array_key_exists($rule['destination']['network'], $FilterIflist)) {
 				if(preg_match("/opt([0-999])/", $rule['destination']['network'], $optmatch)) {
-					$opt_ip = get_current_wan_address("opt{$optmatch[1]}");
+					$opt_ip = get_interface_ip("opt{$optmatch[1]}");
 					if(!$opt_ip)
 						return "# unresolvable oparray $optmatch[0] - $opt_ip";
 				} else {
@@ -1505,7 +1505,7 @@ function generate_user_filter_rule($rule)
 								/* determine interface gateway */
 								foreach($config['gateways']['gateway_item'] as $gateway) {
 									if($gateway['name'] == $member) {
-										$int = get_real_wan_interface($gateway['interface']);
+										$int = get_real_interface($gateway['interface']);
 										if(is_ipaddr($gateway['gateway'])) 
 											$gatewayip = $gateway['gateway'];
 										else 
@@ -1546,7 +1546,7 @@ function generate_user_filter_rule($rule)
                                	$gw = lookup_gateway_ip_by_name($rule['gateway']);
 				if ($gw == false) {
 					if (array_key_exists($gateway, $FilterIflist)) {
-						$int = get_real_wan_interface($gateway);
+						$int = get_real_interface($gateway);
 						$gw = get_interface_gateway($gateway);
 					} else {
 						$gw = $gateway;
@@ -1590,15 +1590,15 @@ function generate_user_filter_rule($rule)
 				$matches = "";
 				if (preg_match("/opt([0-9999])ip/", $rule['source']['network'], $matches)) {
 					$optnum = $matches[1];
-					$src = get_current_wan_address("opt{$optnum}");
+					$src = get_interface_ip("opt{$optnum}");
 				}
 			} else {
 				switch ($rule['source']['network']) {
 						case 'wanip':
-							$src = get_current_wan_address("wan");
+							$src = get_interface_ip("wan");
 							break;
 						case 'lanip':
-							$src = get_current_wan_address("lan");
+							$src = get_interface_ip("lan");
 							break;
 						case 'lan':
 							$lansa = gen_subnet($FilterIflist['lan']['ip'], $FilterIflist['lan']['sn']);
@@ -1700,16 +1700,16 @@ function generate_user_filter_rule($rule)
 				$matches = "";
 				if (preg_match("/opt([0-9999])ip/", $rule['destination']['network'], $matches)) {
 					$optnum = $matches[1];
-					$dst = get_current_wan_address("opt{$optnum}");
+					$dst = get_interface_ip("opt{$optnum}");
 				}
 				if (isset($rule['destination']['not'])) $dst = " !{$dst}";
 			} else {
 				switch ($rule['destination']['network']) {
 					case 'wanip':
-						$dst = get_current_wan_address("wan");
+						$dst = get_interface_ip("wan");
 						break;
 					case 'lanip':
-						$dst = get_current_wan_address("lan");
+						$dst = get_interface_ip("lan");
 						break;
 					case 'lan':
 						$lansa = gen_subnet($FilterIflist['lan']['ip'], $FilterIflist['lan']['sn']);
@@ -2228,7 +2228,7 @@ EOD;
 		if (count($config['interfaces']) > 1) {
 				/* if antilockout is enabled, LAN exists and has
                                   an IP and subnet mask assigned */
-				$lanif = get_real_wan_interface("lan");
+				$lanif = get_real_interface("lan");
 				$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
@@ -2237,7 +2237,7 @@ pass in quick on {$lanif} from any to ({$lanif}) keep state label "anti-lockout 
 EOD;
                 } else {
 			/* single-interface deployment, add to WAN  */
-					$wanif = get_real_wan_interface("wan");
+					$wanif = get_real_interface("wan");
 					$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
@@ -2251,7 +2251,7 @@ EOD;
 	if ($pptpdcfg['mode'] && ($pptpdcfg['mode'] != "off")) {
 
 		if ($pptpdcfg['mode'] == "server")
-			$pptpdtarget = get_current_wan_address();
+			$pptpdtarget = get_interface_ip();
 		else
 			$pptpdtarget = $pptpdcfg['redir'];
 
@@ -2313,7 +2313,7 @@ EOD;
                                 else
                                         $extaddr = $rule['external-address'];
                         } else
-                                $extaddr = get_current_wan_address($rule['interface']);
+                                $extaddr = get_interface_ip($rule['interface']);
 
                         /*
                          *   Expand aliases
@@ -2532,7 +2532,7 @@ EOD;
 					continue;
 				
 				$gateway = get_interface_gateway($ifr);
-				$interface = get_real_wan_interface($ifr);
+				$interface = get_real_interface($ifr);
 				/* Just in case */
 				if (!is_ipaddr($gateway) || empty($interface)) {
 					$route_to = " ";
@@ -2623,9 +2623,9 @@ function setup_logging_interfaces()
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		/* do not work with tun interfaces */
-		if(stristr(get_real_wan_interface($ifname), "tun") == true)
+		if(stristr(get_real_interface($ifname), "tun") == true)
 			continue;
-		$int = get_real_wan_interface($ifname);
+		$int = get_real_interface($ifname);
 		$rules .= "set loginterface {$int}\n";
 	}
 	return $rules;
@@ -2637,7 +2637,7 @@ function process_carp_nat_rules()
 
 	update_filter_reload_status("Creating CARP NAT rules");
 
-	$wan_interface = get_real_wan_interface();
+	$wan_interface = get_real_interface();
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();

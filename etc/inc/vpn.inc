@@ -120,7 +120,7 @@ function vpn_ipsec_configure($ipchg = false)
 	for ($x = 0; $x < $number_of_gifs; $x++)
 		mwexec("/sbin/ifconfig gif" . $x . " delete");
 
-	$curwanip = get_current_wan_address();
+	$curwanip = get_interface_ip();
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
@@ -734,7 +734,7 @@ EOD;
 				if (isset ($ph2ent['creategif'])) {
 					$number_of_gifs = find_last_gif_device();
 					$number_of_gifs++;
-					$curwanip = get_current_wan_address();
+					$curwanip = get_interface_ip();
 					if ($config['installedpackages']['sasyncd']['config'] <> "") {
 						foreach ($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 							if ($sasyncd['ip'] <> "")

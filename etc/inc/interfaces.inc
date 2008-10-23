@@ -137,7 +137,7 @@ function interface_bridge_configure(&$bridge)
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
-        	$realif = get_real_wan_interface($member);
+        	$realif = get_real_interface($member);
 		$realif =  escapeshellarg($realif);
         	/* make sure the parent interface is up */
         	mwexec("/sbin/ifconfig {$realif} up");
@@ -161,7 +161,7 @@ function interface_bridge_configure(&$bridge)
 		
 		$stpifs = explode(',', $bridge['stp']);
 		foreach ($stpifs as $stpif) {
-			$realif = get_real_wan_interface($stpif);
+			$realif = get_real_interface($stpif);
 			mwexec("/sbin/ifconfig {$bridgeif} stp {$realif}");
 		}
 		if ($bridge['maxage'] <> "")
@@ -182,7 +182,7 @@ function interface_bridge_configure(&$bridge)
 				$ifpriority[$key] = $value;
 		}
 		foreach ($ifpriority as $key => $value) {
-			$realif = get_real_wan_interface($key);
+			$realif = get_real_interface($key);
 			mwexec("/sbin/ifconfig ${bridgeif} ifpriority {$realif} {$value}"); 
 		}
 		$pconfig = explode(",", $bridges['ifpathcost']);
@@ -193,7 +193,7 @@ function interface_bridge_configure(&$bridge)
 				$ifpathcost[$key] = $value;
 		}
 		foreach ($ifpriority as $key => $value) {
-                        $realif = get_real_wan_interface($key);
+                        $realif = get_real_interface($key);
                         mwexec("/sbin/ifconfig ${bridgeif} ifpathcost {$realif} {$value}");
                 }
 
@@ -204,37 +204,37 @@ function interface_bridge_configure(&$bridge)
         if ($bridge['timeout'] <> "")
                 mwexec("/sbin/ifconfig {$bridgeif} timeout {$bridge['timeout']}");
         if ($bridge['span'] <> "") {
-		$realif = get_real_wan_interface($bridge['span']);
+		$realif = get_real_interface($bridge['span']);
                 mwexec("/sbin/ifconfig {$bridgeif} span {$realif}");
 	}
         $edgeifs = explode(',', $bridge['edge']);
         foreach ($edgeifs as $edgeif) {
-		$realif = get_real_wan_interface($edgeif);
+		$realif = get_real_interface($edgeif);
                 mwexec("/sbin/ifconfig {$bridgeif} edge {$realif}");
         }
         $edgeifs = explode(',', $bridge['autoedge']);
         foreach ($edgeifs as $edgeif) {
-                $realif = get_real_wan_interface($edgeif);
+                $realif = get_real_interface($edgeif);
                 mwexec("/sbin/ifconfig {$bridgeif} -autoedge {$realif}");
         }
         $ptpifs = explode(',', $bridge['ptp']);
         foreach ($ptpifs as $ptpif) {
-                $realif = get_real_wan_interface($ptpif);
+                $realif = get_real_interface($ptpif);
                 mwexec("/sbin/ifconfig {$bridgeif} ptp {$realif}");
         }
         $ptpifs = explode(',', $bridge['autoptp']);
         foreach ($ptpifs as $ptpif) {
-                $realif = get_real_wan_interface($ptpif);
+                $realif = get_real_interface($ptpif);
                 mwexec("/sbin/ifconfig {$bridgeif} -autoptp {$realif}");
         }
         $stickyifs = explode(',', $bridge['static']);
         foreach ($stickyifs as $stickyif) {
-                $realif = get_real_wan_interface($stickyif);
+                $realif = get_real_interface($stickyif);
                 mwexec("/sbin/ifconfig {$bridgeif} sticky {$realif}");
         }
         $privateifs = explode(',', $bridge['private']);
         foreach ($privateifs as $privateif) {
-                $realif = get_real_wan_interface($privateif);
+                $realif = get_real_interface($privateif);
                 mwexec("/sbin/ifconfig {$bridgeif} private {$realif}");
         }
 
@@ -325,8 +325,8 @@ function interface_gre_configure(&$gre)
 	if (!is_array($gre))
 		return -1;
 
-	$realif = get_real_wan_interface($gre['if']);
-	$realifip = get_current_wan_address($gre['if']);
+	$realif = get_real_interface($gre['if']);
+	$realifip = get_interface_ip($gre['if']);
 
         /* make sure the parent interface is up */
         mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " up");
@@ -378,8 +378,8 @@ function interface_gif_configure(&$gif)
         if (!is_array($gif))
                 return -1;
 
-        $realif = get_real_wan_interface($gif['if']);
-        $realifip = get_current_wan_address($gif['if']);
+        $realif = get_real_interface($gif['if']);
+        $realifip = get_interface_ip($gif['if']);
 
         /* make sure the parent interface is up */
         mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " up");
@@ -520,7 +520,7 @@ function interface_bring_down($interface = "wan")
 
 	$ifcfg = $config['interfaces'][$interface];
 
-	$realif = get_real_wan_interface($interface);
+	$realif = get_real_interface($interface);
 
 	mwexec("/usr/sbin/arp -d -i {$realif} -a");
 
@@ -896,7 +896,7 @@ function interfaces_ipalias_configure()
 	if(is_array($viparr)) {
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] == "ipalias") {
-				$if = get_real_wan_interface($vip['interface']);
+				$if = get_real_interface($vip['interface']);
 				mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias"); 
 			}
 		}
@@ -1164,7 +1164,7 @@ function kill_wpasupplicant($interface)
 
 function find_dhclient_process($interface) 
 {
-       	$realinterface = get_real_wan_interface($interface);
+       	$realinterface = get_real_interface($interface);
 	if($realinterface)
 		$pid = `ps awwwux | grep dhclient | grep -v grep | grep {$realinterface} | awk '{ print \$2 }'`;
 	return $pid;
@@ -1176,7 +1176,7 @@ function interface_configure($interface = "wan")
 
 	$wancfg = $config['interfaces'][$interface];
 
-	$realif = get_real_wan_interface($interface);
+	$realif = get_real_interface($interface);
 
 	if(file_exists("/tmp/{$realif}_router")) 
 		unlink("/tmp/{$realif}_router");
@@ -1345,7 +1345,7 @@ function interface_dhcp_configure($interface = "wan")
 		$dhclientconf_hostname = "";
 	}
 
-	$wanif = get_real_wan_interface($interface);
+	$wanif = get_real_interface($interface);
 
  	$dhclientconf = "";
 	
@@ -1673,7 +1673,7 @@ EOD;
 	return 0;
 }
 
-function get_real_wan_interface($interface = "wan") 
+function get_real_interface($interface = "wan") 
 {
     global $config;
 
@@ -1747,91 +1747,20 @@ function get_real_wan_interface($interface = "wan")
     return $wanif;
 }
 
-function get_current_wan_address($interface = "wan") 
+function get_interface_ip($interface = "wan") 
 {
 	global $config, $g;
 
-	$realif = get_real_wan_interface($interface);
+	$realif = get_real_interface($interface);
 	/* Do we really come here for these interfaces ?! */
 	if (in_array($realif, array("pptp", "pppoe", "openvpn", "enc0" /* , "ppp" */)))
 			return "";
 
-	$wancfg = $config['interfaces'][$interface];
+	$curip = find_interface_ip($realif);
+	if ($curip && is_ipaddr($curip) && ($curip != "0.0.0.0"))
+		return $curip;
 
-	$ifinfo = "";
-	switch ($wancfg['ipaddr']) {
-	case "dhcp":
-		/* get interface info with netstat */
-		exec("/usr/bin/netstat -nWI " . escapeshellarg($realif) . " -f inet", $ifinfo);
-
-		if (isset($ifinfo[1])) {
-			$aif = preg_split("/\s+/", $ifinfo[1]);
-			$curwanip = chop($aif[3]);
-
-			if ($curwanip && is_ipaddr($curwanip) && ($curwanip != "0.0.0.0"))
-				return $curwanip;
-		}
-
-		return null;
-		break;
-	case "pppoe":
-	case "pptp":
-		/* get interface info with netstat */
-		exec("/usr/bin/netstat -nWI " . escapeshellarg($realif) . " -f inet", $ifinfo);
-		if (isset($ifinfo[1])) {
-			$aif = preg_split("/\s+/", $ifinfo[1]);
-			$curwanip = chop($aif[3]);
-
-			if ($curwanip && is_ipaddr($curwanip) && ($curwanip != "0.0.0.0"))
-				return $curwanip;
-		}
-
-		return null;
-		break;
-	 /* carpdev support */
-	 case "carpdev-dhcp":
-	        $viparr = &$config['virtualip']['vip'];
-	        $counter = 0;
-		if (is_array($viparr))
-	        	foreach ($viparr as $vip) {
-	                        if ($vip['mode'] == "carpdev-dhcp" && 
-	                        	$vip['interface'] == $interface) {
-					return str_replace("\n", "", `ifconfig carp{$counter} | grep inet | awk '{ print $2 }'`);
-	                        	$counter++;
-	                        } else if ($vip['mode'] == "carp")
-					$counter++;
-	                }
-		return null;
-		break;
-	 default:	
-		if (isset($cfg['ispointtopoint']) && $cfg['pointtopoint']) {
-			/* get interface info with netstat */
-                	exec("/usr/bin/netstat -nWI " . escapeshellarg($realif) . " -f inet", $ifinfo);
-                	if (isset($ifinfo[1])) {
- 	                       	$aif = preg_split("/\s+/", $ifinfo[1]);
-                       		$curwanip = chop($aif[3]);
-                        	if ($curwanip && is_ipaddr($curwanip) && ($curwanip != "0.0.0.0"))
-                                	return $curwanip;
-                	}
-
-                	return null;
-		} else if (stristr($realif, "gre")) {
-			if (is_array($config['gres']['gre'])) 
-				foreach ($config['gres']['gre'] as $grecfg) 
-					if ($grecfg['greif'] == $realif)
-						return ($grecfg['tunnel-local-addr']);
-		} else if (stristr($realif, "gif")) {
-                        if (is_array($config['gifs']['gif']))
-                                foreach ($config['gifs']['gif'] as $gifcfg)
-                                        if ($gifcfg['gifif'] == $realif)
-                                                return ($gifcfg['tunnel-local-addr']);
-		}	
-
-		break;
-	}
-
-	/* static WAN IP address */
-	return $wancfg['ipaddr'];
+	return null;
 }
 
 /****f* interfaces/is_altq_capable

@@ -75,7 +75,7 @@
 	echo "done.\n";
 
 	$lan_if = $config['interfaces']['lan']['if'];
-	$wan_if = get_real_wan_interface();
+	$wan_if = get_real_interface();
 
 	/*
 	 *  Determine if we need to throw a interface exception

@@ -614,7 +614,7 @@ function fixup_string($string) {
 	$myurl = $proto . "://" . $config['interfaces']['lan']['ipaddr'] . $urlport . "/";
 	$newstring = str_replace("\$myurl", $myurl, $newstring);
 	// fixup #2: $wanip
-	$curwanip = get_current_wan_address();
+	$curwanip = get_interface_ip();
 	$newstring = str_replace("\$wanip", $curwanip, $newstring);
 	// fixup #3: $lanip
 	$lanip = $config['interfaces']['lan']['ipaddr'];

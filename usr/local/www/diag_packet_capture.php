@@ -40,21 +40,6 @@ $fn = "packetcapture.cap";
 $snaplen = 1500;//default packet length
 $count = 100;//default number of packets to capture
 
-function get_interface_addr($if) {
-	global $config;
-
-	$ifdescr = convert_friendly_interface_to_friendly_descr($if);
-
-	/* find out interface name */
-	if ($ifdescr == "wan")
-		$if = get_real_wan_interface();
-	else
-		$if = $config['interfaces'][$ifdescr];
-
-	return $if;
-
-}
-
 if ($_POST) {
 	$do_tcpdump = true;
 	$host = $_POST['host'];

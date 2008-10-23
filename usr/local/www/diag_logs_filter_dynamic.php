@@ -68,12 +68,9 @@ function conv_clog_filter($logfile, $tail = 50) {
 
 	/* make interface/port table */
 	$iftable = array();
-	$iftable[$config['interfaces']['lan']['if']] = "LAN";
-	$iftable[get_real_wan_interface()] = "WAN";
-	/* optional if list */
-        $iflist = get_configured_interface_with_descr(true);
+        $iflist = get_configured_interface_with_descr();
         foreach ($iflist as $if => $ifdesc)
-                $iftable[$config['interfaces'][$if]['if']] = $ifdesc;
+                $iftable[get_real_interface($if)] = $ifdesc;
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 

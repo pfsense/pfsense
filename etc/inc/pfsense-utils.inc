@@ -200,7 +200,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 		$pppoecfg = $config['pppoe'];
 
 		$lanif = $lancfg['if'];
-		$wanif = get_real_wan_interface();
+		$wanif = get_real_interface();
 
 		$lanip = $lancfg['ipaddr'];
 		$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
@@ -211,7 +211,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 		$optcfg = array();
 		generate_optcfg_array($optcfg);
 
-		$curwanip = get_current_wan_address();
+		$curwanip = get_interface_ip();
 
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
@@ -3413,7 +3413,7 @@ function get_interface_gateway($interface) {
 	
 	// for dynamic interfaces we handle them through the $interface_router file.
 	if (!is_ipaddr($gw)) {
-        	$realif = get_real_wan_interface($interface);
+        	$realif = get_real_interface($interface);
         	if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
                 	$gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
                 	$gw = rtrim($gw);
@@ -3522,7 +3522,7 @@ function get_interface_info($ifdescr) {
     	foreach ($iflist as $if => $ifname) {
     	if ($ifdescr == $if || $ifdescr == $ifname) {
 			$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
-			$ifinfo['if'] = get_real_wan_interface($if);
+			$ifinfo['if'] = get_real_interface($if);
 			$found = true;
 			break;
 		}

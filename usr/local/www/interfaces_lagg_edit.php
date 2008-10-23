@@ -40,7 +40,7 @@ $portlist = get_interface_list();
 $checklist = get_configured_interface_list(false, true);
 $realifchecklist = array();
 foreach ($checklist as $tmpif)
-	$realifchecklist[get_real_wan_interface($tmpif)] = $tmpif;
+	$realifchecklist[get_real_interface($tmpif)] = $tmpif;
 
 $id = $_GET['id'];
 if (isset($_POST['id']))

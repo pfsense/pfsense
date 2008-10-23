@@ -476,7 +476,7 @@ function services_dyndns_reset($interface, $dyndnsservice) {
 function services_dyndns_configure_client($conf) {
 
 	/* determine interface name */
-	$if = get_real_wan_interface($conf['interface']);
+	$if = get_real_interface($conf['interface']);
 
 	/* load up the dyndns.class */
 	require_once("dyndns.class");
@@ -816,11 +816,11 @@ function services_dnsupdate_process() {
 				continue;
 			/* determine interface name */
 			if ($dyndns['interface'] == "wan")
-				$if = get_real_wan_interface();
+				$if = get_real_interface();
 			else
 				$if = convert_friendly_interface_to_real_interface_name($dyndns['interface']);
 
-			$wanip = get_current_wan_address($if);
+			$wanip = get_interface_ip($if);
 			if ($wanip) {
 
 				$keyname = $dnsupdate['keyname'];

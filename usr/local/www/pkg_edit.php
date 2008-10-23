@@ -643,7 +643,7 @@ function fixup_string($string) {
 	$newstring = str_replace("\$myurl", $myurl, $string);
 	$string = $newstring;
 	// fixup #2: $wanip
-	$curwanip = get_current_wan_address();
+	$curwanip = get_interface_ip();
 	$newstring = str_replace("\$wanip", $curwanip, $string);
 	$string = $newstring;
 	// fixup #3: $lanip

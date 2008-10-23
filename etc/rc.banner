@@ -77,7 +77,7 @@
 				//$ifinfo['ipaddr'] = $iflist[$g['pppoe_interface']]['ipaddr'];
 				break;
 			}
-			$ifinfo['ipaddr'] = get_current_wan_address($ifinfo['friendly']);
+			$ifinfo['ipaddr'] = get_interface_ip($ifinfo['friendly']);
 			$tobanner = $friendly;
 			/* does this interface have an extra description? */
 			if($ifconf['descr']) {

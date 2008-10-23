@@ -1109,7 +1109,7 @@ function getNasID()
 
 function getNasIP()
 {
-    $nasIp = get_current_wan_address();
+    $nasIp = get_interface_ip();
     if(!$nasIp)
         $nasIp = "0.0.0.0";
     return $nasIp;

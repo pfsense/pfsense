@@ -43,7 +43,7 @@
 
 	$if = $_GET['if'];
 
-	$realif = get_real_wan_interface($if);
+	$realif = get_real_interface($if);
 	if(!$realif)
 		$realif = $if; // Need for IPSec case interface.
 

@@ -56,8 +56,10 @@ $branches = array(
 				  "RELENG_1_2" => "1.2 release branch"
 				);
 
-if(file_exists("/root/cvssync_backup.tgz")) 
-	$branches[] = array("RESTORE" => "Restores prior CVSSync backup data.");
+if(file_exists("/root/cvssync_backup.tgz")) {
+	$tmp = array("RESTORE" => "Restores prior CVSSync backup data.");
+	$branches = array_merge($branches, $tmp);
+}
 
 if($command_split[2]) {
 	$branch = $command_split[2];

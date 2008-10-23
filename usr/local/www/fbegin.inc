@@ -167,7 +167,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 								  deployments
 								remove to reduce user confusion
 								*/
-								output_menu_item("/firewall_saper.php", "Traffic Shaper");
+								output_menu_item("/firewall_shaper.php", "Traffic Shaper");
 							}
 							?>	
 							<?=output_menu_item("/firewall_virtual_ip.php", "Virtual IPs");?>	

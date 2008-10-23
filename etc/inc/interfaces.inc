@@ -1673,6 +1673,16 @@ EOD;
 	return 0;
 }
 
+/* XXX: stub for code that references the old functions(mostly packages) */
+function get_real_wan_interface($interface) 
+{
+	return get_real_interface($interface);
+}
+function get_current_wan_address($interface)
+{
+	return get_interface_ip($interface);
+}
+
 function get_real_interface($interface = "wan") 
 {
     global $config;

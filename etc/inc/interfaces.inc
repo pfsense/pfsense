@@ -67,14 +67,11 @@ function interface_vlan_configure($if, $tag, $vlanif = "")
 {
         global $config, $g;
 
-        /* devices with native VLAN support */
-        $vlan_native_supp = $g['vlan_native_supp'];
-
-        /* devices with long frame support */
-        $vlan_long_frame = $g['vlan_long_frame'];
-
         /* make sure the parent interface is up */
         mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
+	/* Since we are going to add vlan(4) try to enable all that hardware supports. */
+	mwexec("/sbin/ifconfig {$if} vlanhwtag");
+	mwexec("/sbin/ifconfig {$if} vlanmtu");
 
         if ($g['booting'] || !(empty($vlanif))) {
 		mwexec("/sbin/ifconfig {$vlanif} destroy");
@@ -85,18 +82,6 @@ function interface_vlan_configure($if, $tag, $vlanif = "")
         mwexec("/sbin/ifconfig {$vlanif} vlan " .
                 escapeshellarg($tag) . " vlandev " .
                 escapeshellarg($if));
-
-        /* get driver name */
-        for ($j = 0; $j < strlen($if); $j++) {
-                if ($if[$j] >= '0' && $if[$j] <= '9')
-                        break;
-	}
-        $drvname = substr($if, 0, $j);
-
-        if (in_array($drvname, $vlan_native_supp))
-		mwexec("/sbin/ifconfig {$if} vlanhwtag");
-        else if (in_array($drvname, $vlan_long_frame))
-                mwexec("/sbin/ifconfig {$if} vlanmtu");
 
 	mwexec("/sbin/ifconfig {$vlanif} up");
 

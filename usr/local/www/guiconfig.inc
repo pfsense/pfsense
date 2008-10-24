@@ -986,10 +986,12 @@ function add_package_tabs($tabgroup, & $tab_array) {
 		if ($tab['group'] !== $group)
 			continue;
 		$tab_entry = array();
-		$tab_entry[] = $tab['name'];
-		$tab_entry[] = false;
-		$tab_entry[] = $tab['url'];
-		$tab_array[] = $tab_entry;
+		if($tab['name']) {
+			$tab_entry[] = $tab['name'];
+			$tab_entry[] = false;
+			$tab_entry[] = $tab['url'];
+			$tab_array[] = $tab_entry;
+		}
 	}
 }
 

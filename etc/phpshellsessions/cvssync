@@ -68,9 +68,9 @@ if($command_split[2]) {
 	if(!$argv[3]) {
 		echo "\nPlease select which branch you would like:\n\n";
 		foreach($branches as $branchname => $branchdesc) {
-			echo "{$branchname} - {$branchdesc}\n";
+			echo "{$branchname} \t {$branchdesc}\n";
 		}
-		$branch = readline("\n> ");
+		$branch = readline("> ");
 		echo "\n";
 	} else {
 		$branch = $argv[3];

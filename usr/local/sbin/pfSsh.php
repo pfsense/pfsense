@@ -100,7 +100,7 @@ $show_help_text = <<<EOF
 	/* to output a configuration array */
 	print_r(\$config);
 	
-	/* to output the interfaces configuration portion of the configuration */
+	/* to output the interfaces configuration portion of config.xml */
 	print_r(\$config['interfaces']);
 	
 	/* to output the dhcp server configuration */
@@ -200,9 +200,8 @@ while($shell_active == true) {
 			continue;
 		}
 	}
-	if($first_command == "exit" or $first_command == "quit") {
+	if($first_command == "exit" or $first_command == "quit") 
 		die;
-	}
 	if($first_command == "help" or $first_command == "?") {
 		show_help();
 		$playbackbuffer = "";
@@ -227,14 +226,8 @@ while($shell_active == true) {
 		}
 	}
 	if($first_command == "showrecordings") {
-		conf_mount_rw();
-		safe_mkdir("/etc/phpshellsessions");
-		if($recording) 
-			conf_mount_ro();
-		echo "==> Sessions available for playback are:\n";
-		system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
-		echo "==> end of list.\n";
-		$command = "";
+		show_recordings();
+		$command = "";		
 	}
 	if($first_command == "reset") {
 		$playbackbuffer = "";
@@ -261,6 +254,16 @@ while($shell_active == true) {
 		}
 	}
 	$playbackbuffer .= $command . "\n";
+}
+
+function show_recordings() {
+	conf_mount_rw();
+	safe_mkdir("/etc/phpshellsessions");
+	if($recording) 
+		conf_mount_ro();
+	echo "==> Sessions available for playback are:\n";
+	system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
+	echo "==> end of list.\n";	
 }
 
 function returnlastchar($command) {

@@ -92,7 +92,7 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_routes[$_GET['id']]) {
-		$changedesc .= "removed route to {$_GET['id']}";
+		$changedesc .= "removed route to " . $a_routes[$_GET['id']['route']];
 		unset($a_routes[$_GET['id']]);
 		write_config($changedesc);
 		touch($d_staticroutesdirty_path);

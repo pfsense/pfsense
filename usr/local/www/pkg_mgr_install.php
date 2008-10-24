@@ -135,8 +135,6 @@ switch($_GET['mode']) {
 		break;
 	case "reinstallpkg":
 		$id = get_pkg_id(htmlspecialchars($_GET['pkg']));
-		$todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
-		delete_package($todel, htmlspecialchars($_GET['pkg']));
 		delete_package_xml(htmlspecialchars($_GET['pkg']));
 		install_package(htmlspecialchars($_GET['pkg']));
 		update_status("Package reinstalled.");

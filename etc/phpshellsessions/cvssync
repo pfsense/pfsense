@@ -57,7 +57,8 @@ $branches = array(
 				);
 
 if(file_exists("/root/cvssync_backup.tgz")) {
-	$tmp = array("RESTORE" => "Restores prior CVSSync backup data.");
+	$backup_date = `ls -lah /root/cvssync_backup.tgz | awk '{ print $6,$7,$8 }'`;
+	$tmp = array("RESTORE" => "Restores prior CVSSync backup data performed at {$backup_date}");
 	$branches = array_merge($branches, $tmp);
 }
 

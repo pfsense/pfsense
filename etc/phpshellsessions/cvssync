@@ -66,7 +66,7 @@ if($command_split[2]) {
 	$branch = $command_split[2];
 } else {
 	if(!$argv[3]) {
-		echo "\nPlease select which branch you would like:\n\n";
+		echo "\nPlease select which branch you would like to sync against:\n\n";
 		foreach($branches as $branchname => $branchdesc) {
 			echo "{$branchname} \t {$branchdesc}\n";
 		}

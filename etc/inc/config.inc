@@ -375,6 +375,7 @@ function restore_backup($file) {
 		conf_mount_ro();
 	}
 	config_unlock();
+	reload_all();
 }
 
 /****f* config/parse_config_bootup

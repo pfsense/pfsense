@@ -194,13 +194,13 @@ function read_body_firmware($ch, $string) {
 	$b = $downloaded;
 	$c = $downloadProgress;
 	$text  = "  Auto Update Download Status\\n";
-	$text .= "---------------------------------\\n";
+	$text .= "----------------------------------------------------\\n";
 	$text .= "  Latest Version  : {$latest_version}\\n";
 	$text .= "  Current Version : {$current_installed_pfsense_version}\\n";
 	$text .= "  File size       : {$a}\\n";
 	$text .= "  Downloaded      : {$b}\\n";
 	$text .= "  Percent         : {$c}%\\n";
-	$text .= "---------------------------------\\n";
+	$text .= "----------------------------------------------------\\n";
 	$counter++;
 	if($counter > 150) {
 		update_output_window($text);

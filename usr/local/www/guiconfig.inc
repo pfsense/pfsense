@@ -530,7 +530,8 @@ function aliases_sort() {
 		return strcmp($a['name'], $b['name']);
 	}
 
-	usort($config['aliases']['alias'], "aliascmp");
+	if($config['aliases'])
+		usort($config['aliases']['alias'], "aliascmp");
 }
 
 function schedule_sort(){

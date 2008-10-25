@@ -1117,8 +1117,11 @@ seconds<br>If no qualifying outgoing packets are transmitted for the specified n
 	</td>
 	</tr>
 	<tr>
-                  <td width="100" valign="top"></td>
-                  <td> <input name="Submit" type="submit" class="formbtn" value="Save"></td>
+		<td width="100" valign="top"></td>
+		<td> 
+			<br/>
+			<input name="Submit" type="submit" class="formbtn" value="Save">
+		</td>
 	</tr>
         <?php
 		/* Wireless interface? */
@@ -1424,6 +1427,7 @@ roxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> />
 			&nbsp;
 	</td>
 	<td>
+		<br/>
 		<input name="Submit" type="submit" class="formbtn" value="Save">
 		<input name="if" type="hidden" id="if" value="<?=$if;?>">
 	</td>

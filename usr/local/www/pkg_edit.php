@@ -145,6 +145,8 @@ if ($_POST) {
 	if (!$input_errors) {
 		$pkgarr = array();
 		foreach ($pkg['fields']['field'] as $fields) {
+			if($fields['type'] == "listtopic")
+				continue;
 			if($fields['type'] == "rowhelper") {
 				// save rowhelper items.
 				for($x=0; $x<99; $x++) { // XXX: this really should be passed from the form.

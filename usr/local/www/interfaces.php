@@ -1,4 +1,4 @@
-<!-- <?php
+<?php
 /* $Id$ */
 /*
 	interfaces.php
@@ -1443,4 +1443,4 @@ echo "updateType('{$pconfig['type']}')";
 </script>
 <?php include("fend.inc"); ?>
 </body>
-</html> -->
+</html>

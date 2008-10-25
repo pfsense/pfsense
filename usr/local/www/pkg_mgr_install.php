@@ -120,8 +120,6 @@ conf_mount_rw();
 switch($_GET['mode']) {
 	case "delete":
 		$id = get_pkg_id($_GET['pkg']);
-		$todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
-		delete_package($todel, htmlspecialchars($_GET['pkg']));
 		delete_package_xml(htmlspecialchars($_GET['pkg']));
 		update_status("Package deleted.");
 		$static_output .= "\nPackage deleted.";

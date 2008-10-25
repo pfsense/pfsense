@@ -132,8 +132,10 @@ if ($_POST) {
 	$reqfieldsn = array();
 	foreach ($pkg['fields']['field'] as $field) {
 		if (($field['type'] == 'input') && isset($field['required'])) {
-			$reqfields[] = $field['fieldname'];
-			$reqfieldsn[] = $field['fielddescr'];
+			if($field['fieldname'])
+				$reqfields[] = $field['fieldname'];
+			if($field['fielddescr'])	
+				$reqfieldsn[] = $field['fielddescr'];
 		}
 	}
 	do_input_validation($_POST, $reqfields, $reqfieldsn, &$input_errors);
@@ -176,7 +178,8 @@ if ($_POST) {
 					if ($fields['encoding'] == 'base64')
 						$fieldvalue = base64_encode($fieldvalue);
 				}
-				$pkgarr[$fieldname] = $fieldvalue;
+				if($fieldname)
+					$pkgarr[$fieldname] = $fieldvalue;
 			}
 		}
 

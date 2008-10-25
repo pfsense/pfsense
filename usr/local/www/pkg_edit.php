@@ -326,7 +326,15 @@ if ($pkg['tabs'] <> "") {
   $cols = 0;
   $savevalue = gettext("Save");
   if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
-  foreach ($pkg['fields']['field'] as $pkga) { ?>
+  foreach ($pkg['fields']['field'] as $pkga) { 
+
+		if ($pkga['type'] == "listtopic") {
+			echo "<td>&nbsp;</td>";
+			echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $pkga['name'] . "<br></td></tr>\n";
+			continue;
+	    }	
+	
+?>
 
 	  <?php if(!$pkga['combinefieldsend']) echo "<tr valign=\"top\">"; ?>
 

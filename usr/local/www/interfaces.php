@@ -930,7 +930,9 @@ function openwindow(url) {
 				}
 			}
 			?>
-			</select>Select a existing Gateway from the list or add one on the <a href="/system_gateways.php">Gateways</a> page<br>
+			</select>
+			<br/>
+			Select a existing Gateway from the list or add one on the <a href="/system_gateways.php">Gateways</a> page<br>
                   </td>
                 </tr>
 	</table>

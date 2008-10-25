@@ -123,7 +123,7 @@
 		<item>
 			<desc>Set ICMP Limits</desc>
 			<tunable>net.inet.icmp.icmplim</tunable>
-			<value>500</value>
+			<value>750</value>
 		</item>
 	</sysctl>
 	<system>

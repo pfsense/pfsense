@@ -169,7 +169,8 @@ if ($_POST) {
 					if ($fields['encoding'] == 'base64')
 						$fieldvalue = base64_encode($fieldvalue);
 				}
-				$pkgarr[$fieldname] = $fieldvalue;
+				if($fieldname)
+					$pkgarr[$fieldname] = $fieldvalue;
 			}
 		}
 

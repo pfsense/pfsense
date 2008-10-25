@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 /* $Id$ */
 /*
 	interfaces.php
@@ -1416,16 +1416,19 @@ roxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> />
                     are reserved (but not RFC 1918) or not yet assigned by IANA.<br>
                     Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.</td>
 		</tr>
-        </table>
-        </td>
-        </tr>
-                <tr>
-                  <td width="100" valign="top">&nbsp;</td>
-                  <td> &nbsp;<br> <input name="Submit" type="submit" class="formbtn" value="Save">
-			<input name="if" type="hidden" id="if" value="<?=$if;?>">
-                  </td>
-                </tr>
-              </table>
+    </tr>
+	<tr>
+	<td width="100" valign="top">
+			&nbsp;
+	</td>
+	<td>
+		<input name="Submit" type="submit" class="formbtn" value="Save">
+		<input name="if" type="hidden" id="if" value="<?=$if;?>">
+	</td>
+	</tr>
+	</table>
+  </td>
+</table>
 </form>
 <script language="JavaScript">
 <!--
@@ -1440,4 +1443,4 @@ echo "updateType('{$pconfig['type']}')";
 </script>
 <?php include("fend.inc"); ?>
 </body>
-</html>
+</html> -->

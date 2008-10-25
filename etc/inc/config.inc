@@ -1191,7 +1191,7 @@ function convert_config() {
 
 			$config['sysctl']['item'][17]['tunable'] = "net.inet.icmp.icmplim";
 			$config['sysctl']['item'][17]['desc'] =    "Set ICMP Limits";
-			$config['sysctl']['item'][17]['value'] =   "500";
+			$config['sysctl']['item'][17]['value'] =   "750";
 
 			$config['version'] = "4.1";
 		}

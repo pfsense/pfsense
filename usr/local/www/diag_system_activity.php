@@ -47,7 +47,7 @@ include("head.inc");
 <script type="text/javascript">
 	function getcpuactivity() {
 		scroll(0,0);
-		var url = "/diag_cpu_activity.php";
+		var url = "/diag_system_activity.php";
 		var pars = 'getactivity=yes';
 		var myAjax = new Ajax.Request(
 			url,
@@ -84,7 +84,7 @@ include("head.inc");
 		<tr>
 			<td>
 				<div name='cpuactivitydiv' id='cpuactivitydiv'>
-					Gathering CPU activity, please wait...
+					<b>Gathering CPU activity, please wait...
 				</div>
 			</td>
 		</tr>

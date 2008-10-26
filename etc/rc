@@ -15,23 +15,15 @@
 #trap : 2
 #trap : 3
 
-# Set our operating platform
-PLATFORM=`cat /etc/platform`
-
 HOME=/
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
 export HOME PATH
 
+# Set our operating platform
+PLATFORM=`cat /etc/platform`
+
 # Set our current version
 version=`cat /etc/version`
-product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
-
-echo
-cat /etc/ascii-art/pfsense-logo-small.txt
-echo
-echo
-echo "Welcome to ${product} ${version} on the '${PLATFORM}' platform..."
-echo
 
 if [ "$PLATFORM" = "cdrom" ]; then
 	/etc/rc.cdrom
@@ -44,6 +36,15 @@ fi
 if [ "$PLATFORM" = "pfSense" ]; then
 	mdmfs -S -M -s 2m md /var/run
 fi
+
+product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
+
+echo
+cat /etc/ascii-art/pfsense-logo-small.txt
+echo
+echo
+echo "Welcome to ${product} ${version} on the '${PLATFORM}' platform..."
+echo
 
 # Enable console output if its muted.
 /sbin/conscontrol mute off >/dev/null

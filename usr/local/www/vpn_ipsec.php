@@ -180,24 +180,10 @@ include("head.inc");
 							}
 							else
 								$spans = $spane = "";
-					?>
-					<tr>
-						<td class="listhdrr">Interface<br>Remote gw</td>
-						<td class="listhdrr">P1 mode</td>
-						<td class="listhdrr">P1 Enc. Algo</td>
-						<td class="listhdrr">P1 Hash Algo</td>
-						<td class="listhdr">Description</td>
-						<td class="list" >
-							<table border="0" cellspacing="0" cellpadding="o">
-								<tr>
-									<td width="17" heigth="17"></td>
-									<td>
-										<a href="vpn_ipsec_phase1.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add phase1 entry" width="17" height="17" border="0"></a>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>					
+						
+						show_ipsec_header($ph1ent);
+						$counter++; // used to deterimine if we need to output header manually (no records exist)
+					?>					
 					<tr valign="top" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i;?>'">
 						<td class="listlr">
 							<?=$spans;?>
@@ -392,6 +378,8 @@ include("head.inc");
 					<?php
 							$i++;
 						}
+					if(!$counter)
+						show_ipsec_header();
 					?>
 					<tr>
 						<td class="list" colspan="5"></td>
@@ -436,3 +424,27 @@ function show_phase2(id, buttonid) {
 </script>
 </body>
 </html>
+
+<?php
+
+function show_ipsec_header() {
+	if (isset($ph1ent['mobile'])) $mobile = "&mobile=true";
+	echo <<<EOF
+	<tr>
+		<td class="listhdrr">Local Network</td>
+		<td class="listhdrr">Remote Network</td>
+		<td class="listhdrr">P2 Protocol</td>
+		<td class="listhdrr">P2 Transforms</td>
+		<td class="listhdrr">P2 Auth Methods</td>
+		<td class ="list">
+			<a href="vpn_ipsec_phase2.php?ikeid={$ph1ent['ikeid']}{$mobile}">
+				<img src="./themes/{$g['theme']}/images/icons/icon_plus.gif" title="add phase2 entry" width="17" height="17" border="0">
+			</a>
+		</td>
+	</tr>
+
+EOF;
+	
+}
+
+?>

@@ -27,6 +27,13 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diag-system-activity
+##|*NAME=Diagnostics: System Activity
+##|*DESCR=Allows access to the 'Diagnostics: System Activity' page
+##|*MATCH=diag_system_activity*
+##|-PRIV
+
 require("guiconfig.inc");
 
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));

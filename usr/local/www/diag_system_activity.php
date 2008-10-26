@@ -58,7 +58,7 @@ include("head.inc");
 			});
 	}
 	function activitycallback(transport) {
-		$('cpuactivitydiv').innerHTML = '<font face="Courier"><font size="2"><b><pre>' + transport.responseText  + '</pre>';
+		$('cpuactivitydiv').innerHTML = '<font face="Courier"><font size="2"><b><pre>' + transport.responseText  + '</pre></font>';
 		setTimeout('getcpuactivity()', 2500);		
 	}
 	setTimeout('getcpuactivity()', 1000);	
@@ -83,9 +83,14 @@ include("head.inc");
 	<table id="backuptable" class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 			<td>
-				<div name='cpuactivitydiv' id='cpuactivitydiv'>
-					<b>Gathering CPU activity, please wait...
-				</div>
+				<center>
+				<table>
+					<tr><td>
+						<div name='cpuactivitydiv' id='cpuactivitydiv'>
+							<b>Gathering CPU activity, please wait...
+						</div>
+					</td></tr>
+				</table>
 			</td>
 		</tr>
 	</table>

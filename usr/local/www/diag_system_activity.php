@@ -31,7 +31,7 @@ require("guiconfig.inc");
 
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 
-$pgtitle = "Diagnostics: CPU Activity";
+$pgtitle = "Diagnostics: System Activity";
 
 if($_REQUEST['getactivity']) {
 	$text = `top`;

@@ -2343,7 +2343,9 @@ EOD;
 
 	do {
 		echo "\nEnter the LAN interface name or 'a' for auto-detection \n" .
+		    "NOTE: this enables full Firewalling/NAT mode.\n" .
 			"(or nothing if finished): ";
+
 		$lanif = chop(fgets($fp));
 		
 		if($lanif == "exit") {
@@ -2422,7 +2424,7 @@ EOD;
 		}
 	}
 
-	echo "The interfaces will be assigned as follows: \n\n";
+	echo "\nThe interfaces will be assigned as follows: \n\n";
 
 	if ($lanif != "")
 		echo "LAN  ->" . $lanif . "\n";

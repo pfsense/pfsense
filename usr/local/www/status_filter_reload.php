@@ -34,7 +34,7 @@
 ##|*MATCH=status_filter_reload.php*
 ##|-PRIV
 
-
+require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("functions.inc");
 

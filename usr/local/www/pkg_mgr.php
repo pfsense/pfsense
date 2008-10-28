@@ -98,7 +98,7 @@ include("head.inc");
 						<td width="25%" class="listhdrr">Category</td>
 <!--					<td width="10%" class="listhdrr">Size</td>	-->
 						<td width="5%" class="listhdrr">Status</td>
-						<td width="5%" class="listhdrr">Maintainer</td>
+						<td width="5%" class="listhdrr">Support</td>
 						<td width="50%" class="listhdr">Description</td>
 					</tr>
 					<?php

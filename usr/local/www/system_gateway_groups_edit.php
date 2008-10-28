@@ -78,13 +78,18 @@ if ($_POST) {
 	}
 
 	/* check for overlaps */
-	foreach ($a_gateway_groups as $gateway_group) {
-		if (isset($id) && ($a_gateway_groups[$id]) && ($a_gateway_groups[$id] === $gateway_group))
-			continue;
+	if(!$a_gateway_groups) 
+		$input_errors[] = "You must setup a gateway first!";
 
-		if ($gateway_group['name'] == $_POST['name']) {
-			$input_errors[] = "A gateway group with this name \"{$_POST['name']}\" already exists.";
-			break;
+	if($a_gateway_groups) {
+		foreach ($a_gateway_groups as $gateway_group) {
+			if (isset($id) && ($a_gateway_groups[$id]) && ($a_gateway_groups[$id] === $gateway_group))
+				continue;
+
+			if ($gateway_group['name'] == $_POST['name']) {
+				$input_errors[] = "A gateway group with this name \"{$_POST['name']}\" already exists.";
+				break;
+			}
 		}
 	}
 

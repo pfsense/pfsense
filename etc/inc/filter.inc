@@ -2182,7 +2182,7 @@ EOD;
 	   interface in question to avoid problems with complicated routing
 	   topologies */
 	if (isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
-		$ipfrules .= "anchor \"staticrouted\"";
+		$ipfrules .= "anchor \"staticrouted\" \n";
 		foreach ($config['staticroutes']['route'] as $route) {
 			if (is_array($FilterIflist[$route['interface']])) {
 				$oc = $FilterIflist[$route['interface']];

@@ -1744,7 +1744,7 @@ function generate_user_filter_rule($rule)
 		}
 
 		if (!$dst || ($dst == "/")) {
-			return "# returning at dst $dst == \"/\"";
+			return "# returning at dst $dst == \"/\"\n";
 		}
 
 		$aline['dst'] = "to $dst ";

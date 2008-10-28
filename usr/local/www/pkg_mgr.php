@@ -168,12 +168,7 @@ include("head.inc");
 							platform: <?= $index['required_version'] ?>
 						</td>
 						<td class="listr">
-						<?php
-							if($index['maintainer'] != "")
-								echo "<a href='mailto:{$index['maintainer']}'>{$index['maintainer']}</a>";
-							else
-								echo "Nobody. <a href='mailto:{$g['product_email']}'>Apply</a> for it!";
-						?>
+							<a href='http://forum.pfsense.org/index.php/board,15.0.html'>pfSense forums</a>
 						</td>
 						<td class="listbg" class="listbg" style="overflow: hidden;">
 							<?= $index['descr'] ?>

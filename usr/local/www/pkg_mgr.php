@@ -162,14 +162,8 @@ include("fbegin.inc");
 					platform: <?= $index['required_version'] ?>
                                 </td>
                                 <td class="listlr">
-					<?php
-						if($index['maintainer'] != "") {
-							echo "<a href='mailto:{$index['maintainer']}'>{$index['maintainer']}</a>";
-						} else {
-							echo "Nobody. <a href='mailto:coreteam@pfsense.com'>Apply</a> for it!";
-						}
-					?>
-                                </td>
+									<a href='http://forum.pfsense.org/index.php/board,15.0.html'>pfSense forums</a>
+								</td>
                                 <td class="listbg" class="listbg" style="color: #FFFFFF; overflow: hidden;">
                                     <?= $index['descr'] ?>
                                 </td>

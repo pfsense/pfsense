@@ -105,6 +105,7 @@ include("head.inc");
 						if(!$pkg_info) {
 							echo "<tr><td colspan=\"5\"><center>There are currently no packages available for installation.</td></tr>";
 						} else {
+							$installed_pfsense_version = rtrim(file_get_contents("/etc/version"));
 							$pkgs = array();
 							$instpkgs = array();
 							if($config['installedpackages']['package'] != "")
@@ -137,6 +138,10 @@ include("head.inc");
 									if($index['major_version'] == $major &&
 										$requested_version == "other")
 										continue;
+									/* Package is for a newer version, lets skip */
+									if($installed_pfsense_version < $index['required_version'])
+										continue;
+
 					?>
 					<tr valign="top">
 						<td class="listlr">

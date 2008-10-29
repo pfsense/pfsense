@@ -136,7 +136,8 @@
 	$config['interfaces'][$interface]['ipaddr'] = $intip;
 	$config['interfaces'][$interface]['subnet'] = $intbits;
 	
-	$yn = prompt_for_enable_dhcp_server();
+	if($g['services_dhcp_server_enable'])
+		$yn = prompt_for_enable_dhcp_server();
 	
 	// TODO: Add DHCP IPv6 support
 	if ($yn == "y") {

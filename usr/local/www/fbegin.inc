@@ -180,7 +180,10 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?=output_menu_item("/services_captiveportal.php", "Captive Portal");?>	
 							<?=output_menu_item("/services_dnsmasq.php", "DNS Forwarder");?>	
 							<?=output_menu_item("/services_dhcp_relay.php", "DHCP Relay");?>	
-							<?=output_menu_item("/services_dhcp.php", "DHCP Server");?>	
+							<?php 
+								if($g['services_dhcp_server_enable']) 
+									output_menu_item("/services_dhcp.php", "DHCP Server");	
+							?>
 							<?=output_menu_item("/services_dyndns.php", "Dynamic DNS");?>
 							<?=output_menu_item("/load_balancer_pool.php", "Load Balancer");?>	
 							<?=output_menu_item("/pkg_edit.php?xml=olsrd.xml&id=0", "OLSR");?>	

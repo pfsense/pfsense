@@ -42,6 +42,10 @@ function load_balancer_use_sticky() {
 
 function services_dhcpd_configure() {
 	global $config, $g;
+	
+	if($g['services_dhcp_server_enable'] == false) 
+		return;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dhcpd_configure($if) being called $mt\n";

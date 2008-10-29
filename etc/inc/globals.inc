@@ -73,6 +73,7 @@ $g = array(
 	"captiveportal_element_sizelimit" => 262144,
 	"xmlrpcpath" => "/pfSense/xmlrpc.php",
 	"embeddedbootupslice" => "/dev/ad0a",
+	"services_dhcp_server_enable" => true,
 	"update_url" => "http://updates.pfSense.com/_updaters",
 	"update_manifest" => "http://updates.pfSense.com/manifest",
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan|rum)/",

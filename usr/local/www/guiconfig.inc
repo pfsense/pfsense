@@ -231,17 +231,28 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors
 
 function print_input_errors($input_errors) {
 	global $g;
-	echo "<p><table border=\"0\" cellspacing=\"0\" cellpadding=\"4\" width=\"100%\">\n";
-	echo "<tr><td bgcolor=\"#990000\" width=\"36\" align=\"center\" valign=\"top\"><img src=\"./themes/".$g['theme']."/images/icons/icon_error.gif\" width=\"28\" height=\"32\"></td>\n";
-	echo "<td bgcolor=\"#FFD9D1\" style=\"padding-left: 8px; padding-top: 6px\">";
 
-	echo "<span class=\"errmsg\"><p>The following input errors were detected:<ul>\n";
-	foreach ($input_errors as $ierr) {
-		echo "<li>" . htmlspecialchars($ierr) . "</li>\n";
-	}
-	echo "</ul></span>";
-
-	echo "</td></tr></table></p>&nbsp;<br>";
+	print <<<EOF
+	<p>
+	<table border="0" cellspacing="0" cellpadding="4" width="100%">
+	<tr>
+		<td class="alertboxleft">
+			<img src="./themes/{$g['theme']}/images/icons/icon_error.gif" width="28" height="32">
+		</td>
+		<td class="alertboxright">
+			<span class="errmsg"><p>
+				The following input errors were detected:
+				<ul>
+	<?php foreach ($input_errors as $ierr): ?>
+					<li><?=htmlspecialchars($ierr)?></li>
+	<?php endforeach; ?>
+				</ul>
+			</span>
+		</td></tr>
+	</table>
+	</p>&nbsp;<br>
+EOF;
+	
 }
 
 function exec_rc_script($scriptname) {

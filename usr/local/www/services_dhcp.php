@@ -36,8 +36,12 @@
 ##|*MATCH=services_dhcp.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
+
+if(!$g['services_dhcp_server_enable']) {
+	Header("Location: /");
+	exit;
+}
 
 $if = $_GET['if'];
 if ($_POST['if'])

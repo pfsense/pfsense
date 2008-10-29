@@ -36,6 +36,10 @@
 ##|*MATCH=services_dhcp_edit.php*
 ##|-PRIV
 
+if(!$g['services_dhcp_server_enable']) {
+	Header("Location: /");
+	exit;
+}
 
 require("guiconfig.inc");
 

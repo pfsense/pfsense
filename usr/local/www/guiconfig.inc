@@ -304,17 +304,17 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	}
 		
 	echo <<<EOFnp
-	<table id='infoboxnptable'>
+	<table>
 		<tr>
 			<td>
-				<div style='infoboxnp' id='redbox'>
-					<table id='infoboxnptable2'>
+				<div class='infoboxnp' id='redbox'>
+					<table class='infoboxnptable2'>
 						<tr>
-							<td id='infoboxnptd'>
-								&nbsp;&nbsp;&nbsp;<img style='infoboxnpimg' src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" >
+							<td class='infoboxnptd'>
+								&nbsp;&nbsp;&nbsp;<img class='infoboxnpimg' src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" >
 							</td>
-							<td id='infoboxnptd2'>
-								<b>{$msg}</b></font>
+							<td class='infoboxnptd2'>
+								<b>{$msg}</b>
 							</td>
 							{$savebutton}
 						</tr>

@@ -7,7 +7,7 @@ html, body, td, th, input, select {
 
 .infoboxnptd2 {
 	width:70%;
-	font-color:white;
+	color:white;
 	background-color:#990000;
 }
 
@@ -30,6 +30,7 @@ html, body, td, th, input, select {
 
 .infoboxnp {
 	background-color:#990000;
+	width:600px;
 }
 
 .infoboxnpimg {
@@ -42,7 +43,6 @@ html, body, td, th, input, select {
 .inputerrorsleft {
 	background-color: #990000;
 	width: 36px;
-	text-align: center;
 }
 
 .inputerrorsright {

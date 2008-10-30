@@ -108,7 +108,7 @@ if($branch == "RESTORE" && $g['platform'] == "pfSense") {
 	$nobackup = true; // do not backup embedded, livecd
 }
 
-if(!$nobackup) {
+if($nobackup == true) {
 	echo "===> Backing up current pfSense information...\n";
 	echo "===> Please wait... ";
 	exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /tmp --exclude /var/run --exclude /var/empty /");

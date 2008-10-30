@@ -40,8 +40,6 @@ require_once("functions.inc");
 
 $pgtitle = array("Status","Filter Reload Status");
 
-include("head.inc");
-
 if(file_exists("{$g['varrun_path']}/filter_reload_status"))
 	$status = file_get_contents("{$g['varrun_path']}/filter_reload_status");
 
@@ -49,6 +47,8 @@ if($_GET['getstatus']) {
 	echo "|{$status}|";
 	exit;
 }
+
+include("head.inc");
 
 ?>
 

@@ -185,7 +185,6 @@ include("head.inc");
                   <td width="78%" class="vtable">
 			<select name='trigger' class='formfldselect' id='trigger'>
 			<option value='down'>Member Down</option>
-			<option value='downlatencyandloss'>Packet Loss and High Latency</option>
 			<option value='downlatencyorloss'>Packet Loss or High Latency</option>
 			<option value='downlatency'>High Latency</option>
 			<option value='downloss'>Packet Loss</option>

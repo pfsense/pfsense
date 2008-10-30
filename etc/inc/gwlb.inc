@@ -232,7 +232,8 @@ function return_gateways_array() {
 			}
 			/* FIXME: somehow retrieve a proper monitor IP? */
 			$gateway['monitor'] = $gateway['gateway'];
-			$gateway['name'] = "Interface {$if} Gateway";
+			$gateway['name'] = "{$if}";
+			$gateway['descr'] = "Interface {$if} Gateway";
 			$gateway['modifier'] = "readonly";
 			$gateways_arr[] = $gateway;
 		}

@@ -1477,7 +1477,7 @@ function generate_user_filter_rule($rule)
 											$tiers[$tier][] = $gwname;
 										}
 										break;
-									case "delay":
+									case "loss":
 										if(strstr($group['trigger'], "loss")) {
 											/* packet loss */
 											log_error("MONITOR: $gwname has packet loss, removing from routing group");

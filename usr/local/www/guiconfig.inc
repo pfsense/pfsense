@@ -328,6 +328,7 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
 		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
 	</script>
+	<br/>
 EOFnp;
 
 }

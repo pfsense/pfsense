@@ -38,7 +38,7 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr', 'maintainer', 'required_version'));
+$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr', 'maintainer', 'required_version', 'maximum_version'));
 if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 	fwrite($fout, serialize($pkg_info));

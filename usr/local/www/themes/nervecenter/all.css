@@ -7,12 +7,6 @@ html, body, td, th, input, select {
 
 .inputerrorsleft {
 	background-color: #990000;	
-	color: #000000;
-	font-size: 11px;
-	padding-top: 1px;
-	padding-bottom: 1px;	
-	padding-right: 1px;
-	padding-left: 1px;
 	width: 36px;
 	align: center;
 	valign: center;
@@ -24,7 +18,6 @@ html, body, td, th, input, select {
 	font-size: 11px;
 	padding-left: 8px; 
 	padding-top: 6px;
-	width: 36px;
 	align: center;
 	valign: center;
 }

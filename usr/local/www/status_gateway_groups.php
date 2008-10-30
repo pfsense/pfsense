@@ -42,11 +42,8 @@ require("guiconfig.inc");
 if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
 
-if (!is_array($config['gateways']['gateway_item']))
-	$config['gateways']['gateway_item'] = array();
-
 $a_gateway_groups = &$config['gateways']['gateway_group'];
-$a_gateways = &$config['gateways']['gateway_item'];
+$a_gateways = return_gateways_array();
 $changedesc = "Gateway Groups: ";
 
 $gateways_status = array();

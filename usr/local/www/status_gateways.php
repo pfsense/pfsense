@@ -39,10 +39,7 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['gateways']['gateway_item'])) {
-	$config['gateways']['gateway_item'] = array();
-}
-$a_gateways = &$config['gateways']['gateway_item'];
+$a_gateways = return_gateways_array();
 
 $gateways_status = array();
 $gateways_status = return_gateways_status();
@@ -116,11 +113,15 @@ include("head.inc");
 
 				PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
 				$lastchange = $gateways_status[$monitor]['lastcheck'];
-				$lastchange = explode(" ", $lastchange);
-				array_shift($lastchange);
-				array_shift($lastchange);
-				$lastchange = implode(" ", $lastchange);
-				PRINT "Last succes $lastchange";
+				if(!empty($lastchange)) {
+					$lastchange = explode(" ", $lastchange);
+					array_shift($lastchange);
+					array_shift($lastchange);
+					$lastchange = implode(" ", $lastchange);
+					PRINT "Last succes $lastchange";
+				} else {
+					print "No data available";
+				}
 				PRINT "</td></tr>";
                         ?>
 			</table>

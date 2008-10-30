@@ -237,21 +237,24 @@ function print_input_errors($input_errors) {
 	<table border="0" cellspacing="0" cellpadding="4" width="100%">
 	<tr>
 		<td class="inputerrorsleft">
-			<img src="./themes/{$g['theme']}/images/icons/icon_error.gif" width="28" height="32">
+			<img src="./themes/{$g['theme']}/images/icons/icon_error.gif">
 		</td>
 		<td class="inputerrorsright">
 			<span class="errmsg"><p>
 				The following input errors were detected:
 				<ul>
-	<?php foreach ($input_errors as $ierr): ?>
-					<li><?=htmlspecialchars($ierr)?></li>
-	<?php endforeach; ?>
+EOF;
+		foreach ($input_errors as $ierr) {
+			echo "<li>" . htmlspecialchars($ierr) . "</li>";
+		}
+
+	print <<<EOF2
 				</ul>
 			</span>
 		</td></tr>
 	</table>
 	</p>&nbsp;<br>
-EOF;
+EOF2;
 	
 }
 

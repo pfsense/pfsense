@@ -745,13 +745,6 @@ function internalca_change() {
 							</a>
 						</td>
 					</tr>
-					<tr>
-						<td colspan="3">
-							<p>
-								<?=gettext("Additional certificates can be added here.");?>
-							</p>
-						</td>
-					</tr>
 				</table>
 
 				<?php endif; ?>

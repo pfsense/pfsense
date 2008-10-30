@@ -1447,7 +1447,6 @@ function generate_user_filter_rule($rule)
 								continue;
 							}
 						}
-
 						/* fetch the current gateways status */
 						$gateways_status = return_gateways_status();
 						/* create array with group gateways members seperated by tier */
@@ -1465,7 +1464,7 @@ function generate_user_filter_rule($rule)
 										$tiers[$tier][] = $gwname;
 										break;
 									case "delay":
-										if(strstr($status['trigger'], "latency")) {
+										if(strstr($group['trigger'] , "latency")) {
 											/* high latency */
 											log_error("MONITOR: $gwname has high latency, removing from routing group");
 										} else {
@@ -1473,7 +1472,7 @@ function generate_user_filter_rule($rule)
 										}
 										break;
 									case "delay":
-										if(strstr($status['trigger'], "loss")) {
+										if(strstr($group['trigger'], "loss")) {
 											/* packet loss */
 											log_error("MONITOR: $gwname has packet loss, removing from routing group");
 										} else {

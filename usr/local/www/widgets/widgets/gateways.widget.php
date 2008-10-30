@@ -30,10 +30,7 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
-if (!is_array($config['gateways']['gateway_item'])) {
-        $config['gateways']['gateway_item'] = array();
-}
-$a_gateways = &$config['gateways']['gateway_item'];
+$a_gateways = return_gateways_array();
 
 $gateways_status = array();
 $gateways_status = return_gateways_status();
@@ -77,6 +74,8 @@ $gateways_status = return_gateways_status();
                                                $online = "Warning, Packetloss";
                                                 $bgcolor = "khaki";
                                                 break;
+					default:
+						$online = "No data";
                                 }
 
                                 PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td></tr>";

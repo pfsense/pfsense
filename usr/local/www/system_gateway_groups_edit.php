@@ -39,14 +39,11 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['gateways']['gateway_item']))
-	$config['gateways']['gateway_item'] = array();
-
 if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
 
 $a_gateway_groups = &$config['gateways']['gateway_group'];
-$a_gateways = &$config['gateways']['gateway_item'];
+$a_gateways = return_gateways_array();
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -110,6 +107,7 @@ if ($_POST) {
 		$gateway_group = array();
 		$gateway_group['name'] = $_POST['name'];
 		$gateway_group['item'] = $pconfig['item'];
+		$gateway_group['trigger'] = $_POST['trigger'];
 		$gateway_group['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_gateway_groups[$id])
@@ -169,7 +167,7 @@ include("head.inc");
 				echo "<option value='3' $selected[3]>Tier 3</option>";
 				echo "<option value='4' $selected[4]>Tier 4</option>";
 				echo "<option value='5' $selected[5]>Tier 5</option>";
-				echo "</select> <strong>$name ({$interface})</strong><br/>";
+				echo "</select> <strong>{$gateway['descr']}</strong><br/>";
 		 	}
 		?>
 			<br/><span class="vexpl">
@@ -182,10 +180,23 @@ include("head.inc");
                 </tr>
 		  </td>
 		</tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Trigger Level</td>
+                  <td width="78%" class="vtable">
+			<select name='trigger' class='formfldselect' id='trigger'>
+			<option value='down'>Member Down</option>
+			<option value='downlatencyandloss'>Packet Loss and High Latency</option>
+			<option value='downlatencyorloss'>Packet Loss or High Latency</option>
+			<option value='downlatency'>High Latency</option>
+			<option value='downloss'>Packet Loss</option>
+			</select>
+                    <br> <span class="vexpl">When to trigger exclusion of a member</span></td>
+                </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" 
+value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>

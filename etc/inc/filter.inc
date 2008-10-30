@@ -1461,6 +1461,9 @@ function generate_user_filter_rule($rule)
 							/* check if the gateway is available before adding it to the array */
 							foreach($gateways_status as $status) {
 								/* FIXME: possibly trigger on "delay" or "loss" in the future as well "triggerlevel??" */
+								if(($status['name'] != $gwname)) {
+									continue;
+								}
 								switch($status['status']) {
 									case "None":
 										/* Online add member */

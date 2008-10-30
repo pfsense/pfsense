@@ -304,7 +304,7 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	}
 		
 	echo <<<EOFnp
-	<table>
+	<table class='infobox'>
 		<tr>
 			<td>
 				<div class='infoboxnp' id='redbox'>

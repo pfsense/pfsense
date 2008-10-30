@@ -4,6 +4,10 @@ html, body, td, th, input, select {
 	font-size: 0.9em;
 }
 
+.infobox {
+	width:100%;
+}
+
 .infoboxnptd2 {
 	width:70%;
 	color:white;

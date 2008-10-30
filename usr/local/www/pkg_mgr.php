@@ -74,10 +74,10 @@ include("head.inc");
 		<td>
 		<?php
 			$version = file_get_contents("/etc/version");
-			$dot = strpos($version, ".");
+			$dash = strpos($version, ".");
 			$hyphen = strpos($version, "-");
-			$major = substr($version, 0, $dot);
-			$minor = substr($version, $dot + 1, $hyphen - $dot - 1);
+			$major = substr($version, 0, $dash);
+			$minor = substr($version, $dash + 1, $hyphen - $dash - 1);
 			$testing_version = substr($version, $hyphen + 1, strlen($version) - $hyphen);
 
 			$tab_array = array();
@@ -106,6 +106,8 @@ include("head.inc");
 							echo "<tr><td colspan=\"5\"><center>There are currently no packages available for installation.</td></tr>";
 						} else {
 							$installed_pfsense_version = rtrim(file_get_contents("/etc/version"));
+							$dash = strpos($installed_pfsense_version, "-");
+							$installed_pfsense_version = substr($installed_pfsense_version, 0, $dash);
 							$pkgs = array();
 							$instpkgs = array();
 							if($config['installedpackages']['package'] != "")
@@ -118,10 +120,10 @@ include("head.inc");
 							if(count($pkg_keys) != 0) {
 								foreach($pkg_keys as $key) {
 									$index = &$pkg_info[$key];
-									if(in_array($index['name'], $instpkgs)) continue;
-										$dot = strpos($index['required_version'], ".");
-									$index['major_version'] = substr($index['required_version'], 0, $dot);
-
+									if(in_array($index['name'], $instpkgs)) 
+										continue;
+									$dash = strpos($index['required_version'], "-");
+									$index['major_version'] = substr($index['required_version'], 0, $dash);
 									if ($version <> "HEAD" &&
 										$index['required_version'] == "HEAD" &&
 										$requested_version <> "other")
@@ -173,6 +175,8 @@ include("head.inc");
 							<?= $index['version'] ?>
 							<br/>
 							platform: <?= $index['required_version'] ?>
+							<br/>
+							<?= $index['maximum_version']; ?>
 						</td>
 						<td class="listr">
 							<a href='http://forum.pfsense.org/index.php/board,15.0.html'>pfSense forums</a>

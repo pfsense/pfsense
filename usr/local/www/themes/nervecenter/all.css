@@ -5,6 +5,35 @@ html, body, td, th, input, select {
 
 }
 
+.infoboxnptd2 {
+	width:70%;
+	font-color:white;
+}
+
+.infoboxnptd {
+	width:8%;
+}
+
+.infoboxnptable {
+ 	height:32px;
+	width:100%;
+}
+
+.infoboxnptable2 {
+ 	height:32px;
+	width:100%;
+}
+
+.infoboxnp {
+	background-color:#990000;
+}
+
+.infoboxnpimg {
+	vertical-align:middle;
+	width:28px;
+	height:32px;
+}
+
 .inputerrorsleft {
 	background-color: #990000;
 	width: 36px;

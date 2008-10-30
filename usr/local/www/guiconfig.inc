@@ -289,30 +289,47 @@ function verify_gzip_file($fname) {
 
 function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	global $g;
-	echo "<table height=\"32\" width=\"100%\">\n";
-	echo "  <tr>\n";
-	echo "   <td>\n";
-	echo "      <div style='background-color:#990000' id='redbox'>\n";
-	echo "       <table width='100%'><tr><td width='8%'>\n";
-	echo "        &nbsp;&nbsp;&nbsp;<img style='vertical-align:middle' src=\"/themes/".$g['theme']."/images/icons/icon_exclam.gif\" width=\"28\" height=\"32\">\n";
-	echo "        </td>\n";
-	echo "        <td width='70%'><font color='white'><b>{$msg}</b></font>\n";
-	echo "        </td>";
-	if(stristr($msg, "apply") == true || stristr($msg, "save") || stristr($msg, "create")) {
-		echo "         <td>";
-		echo "           <input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">\n";
-		echo "         </td>";
+	
+	if(stristr($msg, "apply") == true || stristr($msg, "save") || stristr($msg, "create")) 
+		$savebutton="<td><input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\"></td>";
+
+	$nifty_redbox = "#990000";
+	$nifty_blackbox = "#000000";
+	
+	$themename = $g['theme'];
+	
+	if(file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
+		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
+		eval($toeval);
 	}
-	echo "        </tr></table>\n";
-	echo "       </div>\n";
-	echo "    </td>\n";
-	echo "</table>\n";
-	echo "<script type=\"text/javascript\">\n";
-	echo "NiftyCheck();\n";
-	echo "Rounded(\"div#redbox\",\"all\",\"#FFF\",\"#990000\",\"smooth\");\n";
-	echo "Rounded(\"td#blackbox\",\"all\",\"#FFF\",\"#000000\",\"smooth\");\n";
-	echo "</script>\n";
-	echo "\n<br>\n";
+		
+	echo <<<EOFnp
+	<table id='infoboxnptable'>
+		<tr>
+			<td>
+				<div style='infoboxnp' id='redbox'>
+					<table id='infoboxnptable2'>
+						<tr>
+							<td id='infoboxnptd'>
+								&nbsp;&nbsp;&nbsp;<img style='infoboxnpimg' src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" >
+							</td>
+							<td id='infoboxnptd2'>
+								<b>{$msg}</b></font>
+							</td>
+							{$savebutton}
+						</tr>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+	<script type="text/javascript">
+		NiftyCheck();
+		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
+		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
+	</script>
+EOFnp;
+
 }
 
 function print_info_box($msg) {

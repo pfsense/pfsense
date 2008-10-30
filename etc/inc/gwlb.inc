@@ -38,6 +38,7 @@ require_once("notices.inc");
 function setup_gateways_monitor() {
 	global $config;
 	global $g;
+	$gateways_arr = return_gateways_array();
 
 	/* kill apinger process */
 	if(is_process_running("apinger"))
@@ -134,8 +135,8 @@ target default {
 EOD;
 
 	/* add static routes for each gateway with their monitor IP */
-	if(is_array($config['gateways']['gateway_item'])) {
-		foreach($config['gateways']['gateway_item'] as $gateway) {
+	if(is_array($gateways_arr)) {
+		foreach($gateways_arr as $gateway) {
 			if($gateway['monitor'] == "") {
 				$gateway['monitor'] = $gateway['gateway'];
 			}
@@ -172,6 +173,7 @@ EOD;
 function return_gateways_status() {
 	global $config;
 	global $g;
+	$gateways_arr = return_gateways_array();
 
 	$apingerstatus = array();
 	if(is_readable("{$g['tmp_path']}/apinger.status"))
@@ -185,7 +187,7 @@ function return_gateways_status() {
 				$target = trim($fields[1]);
 				$status[$target] = array();
 				$status[$target]['monitor'] = $target;
-				foreach($config['gateways']['gateway_item'] as $gateway) {
+				foreach($gateways_arr as $gateway) {
 					if($gateway['monitor'] == "$target") {
 						$status[$target]['gateway'] = $gateway['gateway'];
 						$status[$target]['interface'] = $gateway['interface'];
@@ -210,6 +212,44 @@ function return_gateways_status() {
 		}
 	}
 	return($status);
+}
+
+function return_gateways_array() {
+	global $config;
+	global $g;
+	$gateways_arr = array();
+
+	/* Loop through all interfaces with a gateway and add it to a array */
+	$iflist = get_interface_list();
+	foreach($iflist as $ifname => $if ) {
+		$gateway = array();
+		if(interface_has_gateway($ifname)) {
+			$gateway['gateway'] = get_interface_gateway($ifname);
+			$gateway['interface'] = convert_friendly_interface_to_friendly_descr(convert_real_interface_to_friendly_interface_name($ifname));
+			/* Loopback for dynamic interfaces without a IP */
+			if(!is_ipaddr($gateway['gateway'])) {
+				 $gateway['gateway'] = "127.0.0.2";
+			}
+			/* FIXME: somehow retrieve a proper monitor IP? */
+			$gateway['monitor'] = $gateway['gateway'];
+			$gateway['name'] = "Interface {$if} Gateway";
+			$gateway['modifier'] = "readonly";
+			$gateways_arr[] = $gateway;
+		}
+	}
+
+	/* tack on all the hard defined gateways as well */
+	if(is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if($gateway['monitor'] == "") {
+				$gateway['monitor'] = $gateway['gateway'];
+			}
+			$gateway['modifier'] = "writeable";
+		}
+		$gateways_arr[] = $gateway;
+	}
+
+	return($gateways_arr);
 }
 
 ?>

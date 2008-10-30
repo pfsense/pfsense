@@ -5,7 +5,7 @@ html, body, td, th, input, select {
 
 }
 
-.alertboxleft {
+.inputerrorsleft {
 	background-color: #990000;	
 	color: #000000;
 	font-size: 11px;
@@ -18,7 +18,7 @@ html, body, td, th, input, select {
 	valign: center;
 }
 
-.alertboxright {
+.inputerrorsright {
 	background-color: #FFD9D1;	
 	color: #000000;
 	font-size: 11px;

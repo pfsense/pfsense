@@ -236,10 +236,10 @@ function print_input_errors($input_errors) {
 	<p>
 	<table border="0" cellspacing="0" cellpadding="4" width="100%">
 	<tr>
-		<td class="alertboxleft">
+		<td class="inputerrorsleft">
 			<img src="./themes/{$g['theme']}/images/icons/icon_error.gif" width="28" height="32">
 		</td>
-		<td class="alertboxright">
+		<td class="inputerrorsright">
 			<span class="errmsg"><p>
 				The following input errors were detected:
 				<ul>

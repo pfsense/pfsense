@@ -1440,6 +1440,8 @@ function generate_user_filter_rule($rule)
 					update_filter_reload_status("Creating gateway group item...");
 					if($group['name'] == $rule['gateway']) {
 						$gateway = $rule['gateway'];
+						/* Should be moved down to real interface check as a group is not real */
+						/*
 						if (array_key_exists($gateway, $FilterIflist)) {
 							$return_gateway = get_interface_gateway($gateway);
 							if (!is_ipaddr($return_gateway)) {
@@ -1447,6 +1449,7 @@ function generate_user_filter_rule($rule)
 								continue;
 							}
 						}
+						*/
 						/* fetch the current gateways status */
 						$gateways_status = return_gateways_status();
 						/* create array with group gateways members seperated by tier */
@@ -1497,13 +1500,16 @@ function generate_user_filter_rule($rule)
 							}
 						}
 
+						/* pull in gateways array */
+						$gateways_arr = return_gateways_array();
+
 						/* we do not really foreach the tiers as we stop after the first tier */
 						foreach($tiers as $tier) {
 							/* process all gateways in this tier */
 							$member_count = count($tier);
 							foreach($tier as $member) {
 								/* determine interface gateway */
-								foreach($config['gateways']['gateway_item'] as $gateway) {
+								foreach($gateways_arr as $gateway) {
 									if($gateway['name'] == $member) {
 										$int = get_real_interface($gateway['interface']);
 										if(is_ipaddr($gateway['gateway'])) 

@@ -6,10 +6,9 @@ html, body, td, th, input, select {
 }
 
 .inputerrorsleft {
-	background-color: #990000;	
+	background-color: #990000;
 	width: 36px;
-	align: center;
-	valign: center;
+	text-align: center;
 }
 
 .inputerrorsright {
@@ -18,9 +17,7 @@ html, body, td, th, input, select {
 	font-size: 11px;
 	padding-left: 8px; 
 	padding-top: 6px;
-	align: center;
-	valign: center;
-}
+
 
 div.GraphLink {
 	position: relative;

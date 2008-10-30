@@ -225,15 +225,17 @@ function return_gateways_array() {
 		$gateway = array();
 		if(interface_has_gateway($ifname)) {
 			$gateway['gateway'] = get_interface_gateway($ifname);
-			$gateway['interface'] = convert_friendly_interface_to_friendly_descr(convert_real_interface_to_friendly_interface_name($ifname));
+			$gateway['interface'] = $ifname;
+			$friendly = convert_real_interface_to_friendly_interface_name($ifname);
+			$descr = convert_friendly_interface_to_friendly_descr($friendly);
 			/* Loopback for dynamic interfaces without a IP */
 			if(!is_ipaddr($gateway['gateway'])) {
 				 $gateway['gateway'] = "127.0.0.2";
 			}
 			/* FIXME: somehow retrieve a proper monitor IP? */
 			$gateway['monitor'] = $gateway['gateway'];
-			$gateway['name'] = "{$if}";
-			$gateway['descr'] = "Interface {$if} Gateway";
+			$gateway['name'] = "{$friendly}";
+			$gateway['descr'] = "Interface {$descr} Gateway";
 			$gateway['modifier'] = "readonly";
 			$gateways_arr[] = $gateway;
 		}

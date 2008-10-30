@@ -1459,8 +1459,27 @@ function generate_user_filter_rule($rule)
 							/* check if the gateway is available before adding it to the array */
 							foreach($gateways_status as $status) {
 								/* FIXME: possibly trigger on "delay" or "loss" in the future as well "triggerlevel??" */
-								if(($status['name'] == $gwname) && ($status['status'] == "None")) {
-									$tiers[$tier][] = $gwname;
+								switch($status['status']) {
+									case "None":
+										/* Online add member */
+										$tiers[$tier][] = $gwname;
+										break;
+									case "delay":
+										if(strstr($status['trigger'], "latency")) {
+											/* high latency */
+											log_error("MONITOR: $gwname has high latency, removing from routing group");
+										} else {
+											$tiers[$tier][] = $gwname;
+										}
+										break;
+									case "delay":
+										if(strstr($status['trigger'], "loss")) {
+											/* packet loss */
+											log_error("MONITOR: $gwname has packet loss, removing from routing group");
+										} else {
+											$tiers[$tier][] = $gwname;
+										}
+										break;
 								}
 							}
 						}

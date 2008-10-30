@@ -141,7 +141,9 @@ include("head.inc");
 									/* Package is for a newer version, lets skip */
 									if($installed_pfsense_version < $index['required_version'])
 										continue;
-
+									if($index['maximum_version'])
+										if($installed_pfsense_version > $index['maximum_version'])
+											continue;
 					?>
 					<tr valign="top">
 						<td class="listlr">

@@ -43,44 +43,9 @@ if (!is_array($config['gateways']['gateway_group']))
 	$config['gateways']['gateway_group'] = array();
 
 $a_gateway_groups = &$config['gateways']['gateway_group'];
-$a_gateways = return_gateways_array();
 $changedesc = "Gateway Groups: ";
 
-$gateways_status = array();
 $gateways_status = return_gateways_status();
-
-if ($_POST) {
-
-	$pconfig = $_POST;
-
-	if ($_POST['apply']) {
-
-		$retval = 0;
-
-		$retval = system_routing_configure();
-		$retval |= filter_configure();
-
-		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			if (file_exists($d_staticroutesdirty_path)) {
-				config_lock();
-				unlink($d_staticroutesdirty_path);
-				config_unlock();
-			}
-		}
-	}
-}
-
-if ($_GET['act'] == "del") {
-	if ($a_gateway_groups[$_GET['id']]) {
-		$changedesc .= "removed gateway group {$_GET['id']}";
-		unset($a_gateway_groups[$_GET['id']]);
-		write_config($changedesc);
-		touch($d_staticroutesdirty_path);
-		header("Location: system_gateway_groups.php");
-		exit;
-	}
-}
 
 $pgtitle = array("Status","Gateway Groups");
 include("head.inc");
@@ -89,13 +54,6 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="system_gateway_groups.php" method="post">
-<input type="hidden" name="y1" value="1">
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_staticroutesdirty_path)): ?><p>
-<?php print_info_box_np("The gateway configuration has been changed.<br>You must apply the changes in order for them to take 
-effect.");?><br>
-<?php endif; ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 		  <td>
@@ -168,15 +126,19 @@ effect.");?><br>
 							                $bgcolor = "lightcoral";
 							                break;
 							        case "\"delay\"":
-							                $online = "Warning, Latency";
+							                $online = "Latency";
 							                $bgcolor = "khaki";
 							                break;
 							        case "\"loss\"":
-							                $online = "Warning, Packetloss";
+							                $online = "Packetloss";
 							                $bgcolor = "khaki";
 							                break;
+								default:
+							                $online = "Unknown";
+							                $bgcolor = "lightblue";
+							                break;
 							}
-							echo "<td bgcolor='$bgcolor'>". htmlspecialchars($member) ."</td>";
+							echo "<td bgcolor='$bgcolor'>". htmlspecialchars($member) .", $online</td>";
 						} else {
 							echo "<td>&nbsp;</td>";
 						}
@@ -200,7 +162,6 @@ effect.");?><br>
     </td>
   </tr>
 </table>
-</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

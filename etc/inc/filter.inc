@@ -2398,7 +2398,12 @@ EOD;
 	
 	/* XXX: ermal -- i am leaving this here for a second pass to optimize this rules. */
 	$ipfrules .= "\n# SSH lockout\n";
-	$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n";
+	if (is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
+		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port ";
+		$ipfrules .= $config['system']['ssh']['port'];
+		$ipfrules .= " label \"sshlockout\"\n";
+	} else
+		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n";
 
 	$ipfrules .= "anchor \"ftp-proxy/*\"\n";
 

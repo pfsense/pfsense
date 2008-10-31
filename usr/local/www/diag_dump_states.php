@@ -44,7 +44,7 @@ if($_GET['action']) {
 		$dstip  = $_GET['dstip'];
 		if (is_ipaddr($srcip) and is_ipaddr($dstip)) {
 			$retval = mwexec("/sbin/pfctl -k '{$srcip}' -k '{$dstip}'");
-			echo "|{$srcip}|{$dstip}|{$retval}|";
+			echo htmlentities("|{$srcip}|{$dstip}|{$retval}|");
 		} else {
 			echo "invalid input";
 		}

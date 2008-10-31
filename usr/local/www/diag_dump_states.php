@@ -28,16 +28,14 @@
 
 require_once("guiconfig.inc");
 
-
-
 /* handle AJAX operations */
 if($_GET['action']) {
 	if($_GET['action'] == "remove") {
-		$srcip  = escapeshellarg($_GET['srcip']);
-		$dstip  = escapeshellarg($_GET['dstip']);
+		$srcip  = $_GET['srcip'];
+		$dstip  = $_GET['dstip'];
 		if (is_ipaddr($srcip) and is_ipaddr($dstip)) {
 			$retval = mwexec("/sbin/pfctl -k '{$srcip}' -k '{$dstip}'");
-			echo "|{$srcip}|{$dstip}|{$retval}|";
+			echo htmlentities("|{$srcip}|{$dstip}|{$retval}|");
 		} else {
 			echo "invalid input";
 		}
@@ -53,7 +51,7 @@ else {
 	exec("/sbin/pfctl -s state", $states);
 }
 
-$pgtitle = "Diagnostics: Show States";
+$pgtitle = array("Diagnostics","Show States");
 include("head.inc");
 
 ?>
@@ -63,7 +61,7 @@ include("head.inc");
 <script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
+
 <form action="diag_dump_states.php" method="get" name="iform">
 
 <script type="text/javascript">
@@ -114,12 +112,17 @@ include("head.inc");
 
 <!-- Start of tab content -->
 
+<?php
+	$current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
+?>
+
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>
 			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
+					<td>Current state count: <?=$current_statecount?></td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
 						<input type="text" name="filter" class="formfld search" value="<?=$_GET['filter'];?>" size="30" />

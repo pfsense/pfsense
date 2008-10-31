@@ -3786,34 +3786,32 @@ function lookup_gateway_ip_by_name($name) {
 
 function lookup_gateway_monitor_ip_by_name($name) {
 	global $config;
-	if(is_array($config['gateways'])) {
-		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if($gateway['name'] == "$name") {
-				$monitorip = $gateway['monitor'];
-				if($monitorip == "")
-					$monitorip = $gateway['gateway'];
+	$gateways_arr = return_gateways_array();
 
-				return($monitorip);
-			}
+	foreach($gateways_arr as $gateway) {
+		if($gateway['name'] == "$name") {
+			$monitorip = $gateway['monitor'];
+			if($monitorip == "")
+				$monitorip = $gateway['gateway'];
+
+			return($monitorip);
 		}
-	} else {
-		return(false);
 	}
+	return(false);
 }
 
 function lookup_gateway_interface_by_name($name) {
 	global $config;
-	if(is_array($config['gateways'])) {
-		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if($gateway['name'] == "$name") {
-				$gatewayip = $gateway['gateway'];
-				$interfacegw = $gateway['interface'];
-				return($interfacegw);
-			}
+	$gateways_arr = return_gateways_array();
+
+	foreach($gateways_arr as $gateway) {
+		if($gateway['name'] == "$name") {
+			$gatewayip = $gateway['gateway'];
+			$interfacegw = $gateway['interface'];
+			return($interfacegw);
 		}
-	} else {
-		return(false);
 	}
+	return(false);
 }
 
 /****f* pfsense-utils/safe_write_file

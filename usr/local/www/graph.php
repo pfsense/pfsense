@@ -55,8 +55,6 @@ if ($_GET["timeint"])
 else
 	$time_interval = 3;
 
-$fetch_link = "ifstats.php?if={$ifnum}";
-
 //SVG attributes
 $attribs['axis']='fill="black" stroke="black"';
 $attribs['in']='fill="#FF0000" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="7"';
@@ -71,6 +69,13 @@ $attribs['switch_unit']='fill="#FF0000" font-family="Tahoma, Verdana, Arial, Hel
 $attribs['switch_scale']='fill="#FF0000" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4" text-decoration="underline"';
 $attribs['error']='fill="blue" font-family="Arial" font-size="4"';
 $attribs['collect_initial']='fill="gray" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4"';
+
+/* check for custom theme colors */
+$fetch_link = "ifstats.php?if={$ifnum}";
+if(file_exists("/themes/{$g['theme']}/graph.php")) {
+	$themetxt = file_get_contents("/themes/{$g['theme']}/graph.php");
+	eveal($themetxt);
+} 
 
 //Error text if we cannot fetch data : depends on which method is used
 $error_text = "Cannot get data about interface $ifnum";

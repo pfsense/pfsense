@@ -119,7 +119,6 @@ include("head.inc"); ?>
 					echo "<font face='terminal' size='2'>";
 					echo("<strong>Ping output:</strong><br>");
 					echo('<pre>');
-					ob_end_flush();
 					$ifaddr = get_interface_ip($interface);
 					if ($ifaddr)
 						system("/sbin/ping -S$ifaddr -c$count " . escapeshellarg($host));

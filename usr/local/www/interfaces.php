@@ -880,8 +880,7 @@ function openwindow(url) {
                     If you enter a value in this field, then MSS clamping for
                     TCP connections to the value entered above minus 40 (TCP/IP
                     header size) will be in effect. If you leave this field blank,
-                    an MTU of 1492 bytes for PPPoE and 1500 bytes for all other
-                    connection types will be assumed.</td>
+                    an MTU of 1500 bytes will be assumed.</td>
                 </tr>
 		<tr style="display:none;" name="none" id="none">
 		</tr>

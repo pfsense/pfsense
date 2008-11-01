@@ -223,10 +223,14 @@ function return_gateways_array() {
 	$iflist = get_interface_list();
 	foreach($iflist as $ifname => $if ) {
 		$gateway = array();
+		$friendly = convert_real_interface_to_friendly_interface_name($ifname);
+		if(is_ipaddr($config[$friendly]['gateway'])) {
+			/* static configs are automatically from the array */
+			continue;
+		}
 		if(interface_has_gateway($ifname)) {
 			$gateway['gateway'] = get_interface_gateway($ifname);
 			$gateway['interface'] = $ifname;
-			$friendly = convert_real_interface_to_friendly_interface_name($ifname);
 			$descr = convert_friendly_interface_to_friendly_descr($friendly);
 			/* Loopback for dynamic interfaces without a IP */
 			if(!is_ipaddr($gateway['gateway'])) {
@@ -248,10 +252,9 @@ function return_gateways_array() {
 				$gateway['monitor'] = $gateway['gateway'];
 			}
 			$gateway['modifier'] = "writeable";
+			$gateways_arr[] = $gateway;
 		}
-		$gateways_arr[] = $gateway;
 	}
-
 	return($gateways_arr);
 }
 

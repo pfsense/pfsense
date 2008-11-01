@@ -224,7 +224,7 @@ function return_gateways_array() {
 	foreach($iflist as $ifname => $if ) {
 		$gateway = array();
 		$friendly = convert_real_interface_to_friendly_interface_name($ifname);
-		if(is_ipaddr($config[$friendly]['gateway'])) {
+		if(lookup_gateway_ip_by_name($config['interfaces'][$friendly]['gateway'])) {
 			/* static configs are automatically from the array */
 			continue;
 		}

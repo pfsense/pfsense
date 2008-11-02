@@ -94,6 +94,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
+		system_setup_sysctl();		
 		$savemsg = get_std_save_message($retval);
 		unlink_if_exists($d_sysctldirty_path);
 	}

@@ -210,13 +210,17 @@ function relayd_configure() {
   }
   if(is_array($protocol_a)) {
     for ($i = 0; isset($protocol_a[$i]); $i++) {
-      $conf .= "{$protocol_a[$i]['type']} protocol \"{$protocol_a[$i]['name']}\" {\n";
+      $proto = "{$protocol_a[$i]['type']} protocol \"{$protocol_a[$i]['name']}\" {\n";
       if(is_array($protocol_a[$i]['lbaction'])) {
+        if($protocol_a[$i]['lbaction'][0] == "") {
+          continue;
+        }
         for ($a = 0; isset($protocol_a[$i]['lbaction'][$a]); $a++) {
-          $conf .= "  " . echo_lbaction($protocol_a[$i]['lbaction'][$a]) . "\n";
+          $proto .= "  " . echo_lbaction($protocol_a[$i]['lbaction'][$a]) . "\n";
         }
       }
-      $conf .= "}\n";
+      $proto .= "}\n";
+      $conf .= $proto;
     }
   }
   if(is_array($vs_a)) {

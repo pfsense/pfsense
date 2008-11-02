@@ -131,7 +131,11 @@ function filter_configure_sync() {
 
 	/* enable pf if we need to, otherwise disable */
 	if (!isset ($config['system']['disablefilter'])) {
-		mwexec("/sbin/pfctl -e");
+		exec("/sbin/pfctl -si | awk '/Status/ { print $2 }'", $oput, $ret);
+		$oput = implode("\n", $oput);
+		if(stristr("disabled", $oput)) {
+			mwexec("/sbin/pfctl -e");
+		}
 	} else {
 		mwexec("/sbin/pfctl -d");
 		unlink_if_exists("{$g['tmp_path']}/filter_loading");
@@ -177,7 +181,7 @@ function filter_configure_sync() {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";
 	}
-        $rules_loading = mwexec("/sbin/pfctl -o -f {$g['tmp_path']}/rules.debug");
+        $rules_loading = mwexec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl done at $mt\n";

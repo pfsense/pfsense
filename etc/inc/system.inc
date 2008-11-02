@@ -249,9 +249,10 @@ function system_routing_configure() {
 					$interfacegw = $gateway['interface'];
 				}
 			}
-			if($interfacegw <> "bgpd")
+			if(($interfacegw <> "bgpd") && (is_ipaddr($gatewayip)))
 				mwexec("/sbin/route add default " . escapeshellarg($gatewayip));
 		} else {
+			/* FIXME */
 			/* adding gateway for 1.2-style configs without the new
 			  gateway setup configured.
 			  Force WAN to be default gateway because that is the

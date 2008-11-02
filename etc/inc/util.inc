@@ -408,7 +408,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 }
 
 /* wrapper for exec() */
-function mwexec($command) {
+function mwexec($command, $mute = false) {
 
 	global $g;
 	$oarr = array();
@@ -420,7 +420,7 @@ function mwexec($command) {
 	} else {
 		exec("$command 2>&1", $oarr, $retval);
 	}
-	if($retval > 0) {
+	if(($retval <> 0) && ($mute === false)) {
 		$output = implode(" ", $oarr);
 		log_error("The command '$command' returned exit code '$retval', the output was '$output' ");
 	}

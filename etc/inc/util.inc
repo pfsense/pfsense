@@ -1,6 +1,4 @@
-<?php
-/* $Id$ */
-/*
+<?php /* $Id$ */ /*
 	util.inc
 	part of m0n0wall (http://m0n0.ch/wall)
 
@@ -413,16 +411,19 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 function mwexec($command) {
 
 	global $g;
-	$oarr = "";
-	$retval = "";
+	$oarr = array();
+	$retval = 0;
 	if ($g['debug']) {
 		if (!$_SERVER['REMOTE_ADDR'])
 			echo "mwexec(): $command\n";
-		exec("$command > /dev/null 2>&1", $oarr, $retval);
+		exec("$command 2>&1", $oarr, $retval);
 	} else {
-		exec("$command > /dev/null 2>&1", $oarr, $retval);
+		exec("$command 2>&1", $oarr, $retval);
 	}
-
+	if($retval > 0) {
+		$output = implode(" ", $oarr);
+		log_error("The command '$command' returned exit code '$retval', the output was '$output' ");
+	}
 	return $retval;
 }
 

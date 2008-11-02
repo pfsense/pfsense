@@ -1,3 +1,5 @@
+net.inet.tcp.tso: 1
+hw.bce.tso_enable: 1
 <?php
 /****h* pfSense/config
  * NAME
@@ -1193,6 +1195,10 @@ function convert_config() {
 			$config['sysctl']['item'][17]['tunable'] = "net.inet.icmp.icmplim";
 			$config['sysctl']['item'][17]['desc'] =    "Set ICMP Limits";
 			$config['sysctl']['item'][17]['value'] =   "750";
+
+			$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
+			$config['sysctl']['item'][18]['desc'] =    "TCP Offload engine";
+			$config['sysctl']['item'][18]['value'] =   "0";
 
 			$config['version'] = "4.1";
 		}

@@ -207,7 +207,7 @@ include("head.inc");
 								<table border="0" cellspacing="0" cellpadding="1">
 									<tr>
 										<td valign="middle">
-											<a href="system_advanced_sysctl.php?action=edit">
+											<a href="system_advanced_sysctl.php?act=edit">
 												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
 											</a>
 										</td>

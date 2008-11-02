@@ -274,6 +274,7 @@ if [ "$PLATFORM" != "cdrom" ]; then
 	cat >/usr/local/lib/php.ini <<EOF
 # File generated from /etc/rc
 output_buffering = "0"
+expose_php = Off
 implicit_flush = true
 magic_quotes_gpc = Off
 max_execution_time = 99999999

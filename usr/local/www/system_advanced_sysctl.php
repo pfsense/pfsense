@@ -172,13 +172,13 @@ include("head.inc");
 						</tr>
 						<?php $i = 0; foreach ($config['sysctl']['item'] as $tunable): ?>
 						<tr>
-							<td class="listlr" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+							<td class="listlr" ondblclick="document.location='system_advanced_sysctl.php?id=<?=$i;?>';">
 								<?php echo $tunable['tunable']; ?>
 							</td>
-							<td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?id=<?=$i;?>';">
 								<?php echo $tunable['desc']; ?>
 							</td>
-							<td class="listr" align="left" ondblclick="document.location='firewall_system_tunables_edit.php?id=<?=$i;?>';">
+							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?id=<?=$i;?>';">
 								<?php echo $tunable['value']; ?>
 							</td>
 							<td class="list" nowrap>
@@ -206,7 +206,7 @@ include("head.inc");
 								<table border="0" cellspacing="0" cellpadding="1">
 									<tr>
 										<td valign="middle">
-											<a href="firewall_system_tunables_edit.php">
+											<a href="system_advanced_sysctl.php">
 												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
 											</a>
 										</td>

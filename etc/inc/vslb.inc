@@ -210,7 +210,7 @@ function relayd_configure() {
   }
   if(is_array($protocol_a)) {
     for ($i = 0; isset($protocol_a[$i]); $i++) {
-      $conf .= "protocol \"{$protocol_a[$i]['name']}\" {\n";
+      $conf .= "{$protocol_a[$i]['type']} protocol \"{$protocol_a[$i]['name']}\" {\n";
       if(is_array($protocol_a[$i]['lbaction'])) {
         for ($a = 0; isset($protocol_a[$i]['lbaction'][$a]); $a++) {
           $conf .= "  " . echo_lbaction($protocol_a[$i]['lbaction'][$a]) . "\n";

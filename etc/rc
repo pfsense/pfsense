@@ -224,6 +224,7 @@ if [ "$PLATFORM" != "cdrom" ]; then
 # not being able to boot back up.
 cat >/usr/local/lib/php.ini <<EOF
 output_buffering = "0"
+expose_php = Off
 implicit_flush = true
 magic_quotes_gpc = Off
 max_execution_time = 99999999

@@ -1198,6 +1198,10 @@ function convert_config() {
 			$config['sysctl']['item'][18]['desc'] =    "TCP Offload engine";
 			$config['sysctl']['item'][18]['value'] =   "0";
 
+			$config['sysctl']['item'][19]['tunable'] = "hw.bce.tso_enable";
+			$config['sysctl']['item'][19]['desc'] =    "TCP Offload engine - BCE";
+			$config['sysctl']['item'][19]['value'] =   "0";
+
 			$config['version'] = "4.1";
 		}
 	}

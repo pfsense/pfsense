@@ -1,5 +1,3 @@
-net.inet.tcp.tso: 1
-hw.bce.tso_enable: 1
 <?php
 /****h* pfSense/config
  * NAME

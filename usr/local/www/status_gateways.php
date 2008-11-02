@@ -77,7 +77,7 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_gateways as $gateway) { ?>
                 <tr>
                   <td class="listlr">
-				<?=$gateway['name'];?>
+				<?=strtoupper($gateway['name']);?>
                   </td>
                   <td class="listr" align="center" >
                                 <?=$gateway['gateway'];?>

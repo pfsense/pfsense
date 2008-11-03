@@ -794,10 +794,7 @@ EOD;
 			mwexec("/usr/local/sbin/setkey -F");
 			/* load SPD */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
-			sleep(1);
 			/* We are already online, reload */
-			mwexec("/usr/bin/killall -HUP racoon");
-			sleep(1);
 			mwexec("/usr/bin/killall -HUP racoon");
 		} else {
 			/* start racoon */
@@ -807,10 +804,7 @@ EOD;
 			mwexec("/usr/local/sbin/setkey -F");
 			/* load SPD */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
-			sleep(1);
 			/* We are already online, reload */
-			mwexec("/usr/bin/killall -HUP racoon");
-			sleep(1);
 			mwexec("/usr/bin/killall -HUP racoon");
 
 			/* start dnswatch, if necessary */

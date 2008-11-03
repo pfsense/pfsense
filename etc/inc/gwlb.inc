@@ -222,20 +222,24 @@ function return_gateways_array() {
 	/* Loop through all interfaces with a gateway and add it to a array */
 	$iflist = get_interface_list();
 	foreach($iflist as $ifname => $if ) {
-		$gateway = array();
-		$friendly = convert_real_interface_to_friendly_interface_name($ifname);
-		if(lookup_gateway_ip_by_name($config['interfaces'][$friendly]['gateway'])) {
-			/* static configs are automatically from the array */
-			continue;
-		}
 		if(interface_has_gateway($ifname)) {
+			$gateway = array();
+			$friendly = convert_real_interface_to_friendly_interface_name($ifname);
 			$gateway['gateway'] = get_interface_gateway($ifname);
-			$gateway['interface'] = $ifname;
-			$descr = convert_friendly_interface_to_friendly_descr($friendly);
 			/* Loopback for dynamic interfaces without a IP */
 			if(!is_ipaddr($gateway['gateway'])) {
 				 $gateway['gateway'] = "127.0.0.2";
 			}
+			/* do not add dynamic gateways if it is also found in the gateways array */
+			if(is_array($config['gateways']['gateway_item'])) {
+				foreach($config['gateways']['gateway_item'] as $gateway_item) {
+					if($gateway_item['gateway'] == $gateway['gateway'])
+						continue 2;
+				}
+			}
+
+			$gateway['interface'] = $ifname;
+			$descr = convert_friendly_interface_to_friendly_descr($friendly);
 			/* FIXME: somehow retrieve a proper monitor IP? */
 			$gateway['monitor'] = $gateway['gateway'];
 			$gateway['name'] = "{$friendly}";

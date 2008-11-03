@@ -28,6 +28,9 @@
 
 require_once("guiconfig.inc");
 
+$pgtitle = array("Diagnostics","Show States");
+include("head.inc");
+
 /* handle AJAX operations */
 if($_GET['action']) {
 	if($_GET['action'] == "remove") {
@@ -51,9 +54,6 @@ else {
 	exec("/sbin/pfctl -s state", $states);
 }
 
-$pgtitle = array("Diagnostics","Show States");
-include("head.inc");
-
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
@@ -61,6 +61,7 @@ include("head.inc");
 <script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
+$pgtitle = "Diagnostics: Show States";
 
 <form action="diag_dump_states.php" method="get" name="iform">
 

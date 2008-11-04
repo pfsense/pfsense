@@ -35,16 +35,15 @@ require_once("functions.inc");
 function activate_sysctls() {
 	global $config, $g;
 	
-	if (is_array($config['sysctl'])) 
-		foreach ($config['sysctl']['item'] as $tunable) 
-			mwexec("sysctl " . $tunable['tunable'] . "=\"" 
-				. $tunable['value'] .  "\"");
-	
 	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=0x00000000");
 	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x00000000");
 	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x00000000");
 	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x00000001");
-	
+
+	if (is_array($config['sysctl'])) 
+		foreach ($config['sysctl']['item'] as $tunable) 
+			mwexec("sysctl " . $tunable['tunable'] . "=\"" 
+				. $tunable['value'] .  "\"");
 }
 
 function system_resolvconf_generate($dynupdate = false) {

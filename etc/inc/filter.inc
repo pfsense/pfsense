@@ -63,9 +63,9 @@ function filter_pflog_start() {
 	mute_kernel_msgs();
 
 	$pid = 0;
-	$pid = `ps awwwux | grep -v "grep" | grep "tcpdump -v -l -n -e -ttt -i pflog0"  | awk '{ print $2 }'`;
+	$pid = `ps awwwux | grep -v "grep" | grep "tcpdump -s 256 -v -l -n -e -ttt -i pflog0"  | awk '{ print $2 }'`;
 	if(!$pid)
-		mwexec_bg("/usr/sbin/tcpdump -v -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
+		mwexec_bg("/usr/sbin/tcpdump -s 256 -v -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 
 	unmute_kernel_msgs();
 

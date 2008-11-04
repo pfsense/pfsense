@@ -94,7 +94,9 @@ include("head.inc");
 	if ($input_errors) 
 		print_input_errors($input_errors);
 	else if ($savemsg) 
-		print_info_box($savemsg); 
+		print_info_box($savemsg);
+	else if (file_exists("/tmp/carp_reboot_needed"))
+		print_info_box_np("The VIP configuration changes require a reboot to apply. THE FIREWALL WILL REBOOT WHEN YOU CLICK APPLY CHANGES.");
 	else if (file_exists($d_vipconfdirty_path))
 		print_info_box_np("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect.");
 ?>

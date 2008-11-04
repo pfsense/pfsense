@@ -41,7 +41,7 @@ function activate_sysctls() {
 				. $tunable['value'] .  "\"");
 	
 	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=0x000002");
-	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x000002");
+	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x00");
 	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x000001");
 	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x000001");
 	

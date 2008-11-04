@@ -124,6 +124,16 @@
 			<desc>Set ICMP Limits</desc>
 			<tunable>net.inet.icmp.icmplim</tunable>
 			<value>750</value>
+		</item>
+		<item>
+			<desc>TCP Offload Engine</desc>
+			<tunable>net.inet.tcp.tso</tunable>
+			<value>0</value>
+		</item>
+		<item>
+			<desc>TCP Offload Engine - BCE</desc>
+			<tunable>hw.bce.tso_enable</tunable>
+			<value>0</value>
 		</item>		
 	</sysctl>
 	<system>

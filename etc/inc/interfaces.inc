@@ -133,18 +133,6 @@ function interface_bridge_configure(&$bridge)
 	
 	$checklist = get_configured_interface_list();
 
-	$cmd = "";
-	foreach ($members as $member) {
-		if (!array_key_exists($member, $checklist))
-			continue;
-        	$realif = get_real_interface($member);
-		$realif =  escapeshellarg($realif);
-        	/* make sure the parent interface is up */
-        	mwexec("/sbin/ifconfig {$realif} up");
-		$cmd .= " addm {$realif}";
-	}
-
-
         if ($g['booting'] || $bridge['bridgeif'] <> "") {
                 mwexec("/sbin/ifconfig {$bridge['bridgeif']} destroy");
                 mwexec("/sbin/ifconfig {$bridge['bridgeif']} create");
@@ -153,8 +141,16 @@ function interface_bridge_configure(&$bridge)
                 $bridgeif = exec("/sbin/ifconfig bridge create");
 
 	/* Add interfaces to bridge */
-        mwexec("/sbin/ifconfig {$bridgeif} {$cmd}");
-	
+	foreach ($members as $member) {
+                if (!array_key_exists($member, $checklist))
+                        continue;
+                $realif = get_real_interface($member);
+                $realif =  escapeshellarg($realif);
+                /* make sure the parent interface is up */
+                mwexec("/sbin/ifconfig {$realif} up");
+		mwexec("/sbin/ifconfig {$bridgeif} addm {$realif}");	
+        }
+
 	if (isset($bridge['enablestp'])) {
 		/* Choose spanning tree proto */
 		mwexec("/sbin/ifconfig {$bridgeif} proto {$bridge['proto']}");	

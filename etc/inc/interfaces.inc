@@ -146,14 +146,20 @@ function interface_bridge_configure(&$bridge)
                 $bridgeif = exec("/sbin/ifconfig bridge create");
 
 	/* Calculate smaller mtu and enforce it */
-	$smallermtu = 1500;
+	$smallermtu = 0;
 	foreach ($members as $member) {
 		$realif = get_real_interface($member);
 		$mtu = get_interface_mtu($realif);
-		if (!empty($mtu) && $mtu < $smallermtu)
+		if ($smallermtu == 0 && !empty($mtu))
+			$smallermtu = $mtu;
+		else if (!empty($mtu) && $mtu < $smallermtu)
 			$smallermtu = $mtu;
 	}
 	 
+	/* Just in case anything is not working well */
+	if ($smallermtu == 0)
+		$smallermtu = 1500; 
+
 	/* Add interfaces to bridge */
 	foreach ($members as $member) {
                 if (!array_key_exists($member, $checklist))
@@ -310,15 +316,20 @@ function interface_lagg_configure(&$lagg)
 	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
 
 	/* Calculate smaller mtu and enforce it */
-        $smallermtu = 1500;
+        $smallermtu = 0;
         foreach ($members as $member) {
                 $realif = get_real_interface($member);
                 $mtu = get_interface_mtu($realif);
-                if (!empty($mtu) && $mtu < $smallermtu)
+		if ($smallermtu == 0 && !empty($mtu))
+			$smallermtu = $mtu;
+                else if (!empty($mtu) && $mtu < $smallermtu)
                         $smallermtu = $mtu;
         }
 
-	$cmd = "";
+	/* Just in case anything is not working well */
+        if ($smallermtu == 0)
+                $smallermtu = 1500;
+
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;

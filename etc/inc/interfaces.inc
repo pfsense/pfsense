@@ -203,36 +203,48 @@ function interface_bridge_configure(&$bridge)
 		$realif = get_real_interface($bridge['span']);
                 mwexec("/sbin/ifconfig {$bridgeif} span {$realif}");
 	}
-        $edgeifs = explode(',', $bridge['edge']);
-        foreach ($edgeifs as $edgeif) {
-		$realif = get_real_interface($edgeif);
-                mwexec("/sbin/ifconfig {$bridgeif} edge {$realif}");
-        }
-        $edgeifs = explode(',', $bridge['autoedge']);
-        foreach ($edgeifs as $edgeif) {
-                $realif = get_real_interface($edgeif);
-                mwexec("/sbin/ifconfig {$bridgeif} -autoedge {$realif}");
-        }
-        $ptpifs = explode(',', $bridge['ptp']);
-        foreach ($ptpifs as $ptpif) {
-                $realif = get_real_interface($ptpif);
-                mwexec("/sbin/ifconfig {$bridgeif} ptp {$realif}");
-        }
-        $ptpifs = explode(',', $bridge['autoptp']);
-        foreach ($ptpifs as $ptpif) {
-                $realif = get_real_interface($ptpif);
-                mwexec("/sbin/ifconfig {$bridgeif} -autoptp {$realif}");
-        }
-        $stickyifs = explode(',', $bridge['static']);
-        foreach ($stickyifs as $stickyif) {
-                $realif = get_real_interface($stickyif);
-                mwexec("/sbin/ifconfig {$bridgeif} sticky {$realif}");
-        }
-        $privateifs = explode(',', $bridge['private']);
-        foreach ($privateifs as $privateif) {
-                $realif = get_real_interface($privateif);
-                mwexec("/sbin/ifconfig {$bridgeif} private {$realif}");
-        }
+	if (!empty($bridge['edge'])) {
+        	$edgeifs = explode(',', $bridge['edge']);
+        	foreach ($edgeifs as $edgeif) {
+			$realif = get_real_interface($edgeif);
+                	mwexec("/sbin/ifconfig {$bridgeif} edge {$realif}");
+        	}
+	}
+	if (!empty($bridge['autoedge'])) {
+        	$edgeifs = explode(',', $bridge['autoedge']);
+        	foreach ($edgeifs as $edgeif) {
+                	$realif = get_real_interface($edgeif);
+                	mwexec("/sbin/ifconfig {$bridgeif} -autoedge {$realif}");
+        	}
+	}
+	if (!empty($bridge['ptp'])) {
+        	$ptpifs = explode(',', $bridge['ptp']);
+        	foreach ($ptpifs as $ptpif) {
+                	$realif = get_real_interface($ptpif);
+                	mwexec("/sbin/ifconfig {$bridgeif} ptp {$realif}");
+        	}
+	}
+	if (!empty($bridge['autoptp'])) {
+        	$ptpifs = explode(',', $bridge['autoptp']);
+        	foreach ($ptpifs as $ptpif) {
+                	$realif = get_real_interface($ptpif);
+                	mwexec("/sbin/ifconfig {$bridgeif} -autoptp {$realif}");
+        	}
+	}
+	if (!empty($bridge['static'])) {
+        	$stickyifs = explode(',', $bridge['static']);
+        	foreach ($stickyifs as $stickyif) {
+                	$realif = get_real_interface($stickyif);
+                	mwexec("/sbin/ifconfig {$bridgeif} sticky {$realif}");
+        	}
+	}
+	if (!empty($bridge['private'])) {
+        	$privateifs = explode(',', $bridge['private']);
+        	foreach ($privateifs as $privateif) {
+                	$realif = get_real_interface($privateif);
+               	 	mwexec("/sbin/ifconfig {$bridgeif} private {$realif}");
+        	}
+	}
 
         mwexec("/sbin/ifconfig {$bridgeif} up");
 

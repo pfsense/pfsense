@@ -127,6 +127,11 @@ function interface_bridge_configure(&$bridge)
         if (!is_array($bridge))
                 return -1;
 
+	if (empty($bridge['members'])) {
+		log_error("No members found on {$bridge['bridgeif']}");
+		return -1;
+	}
+
 	$members = explode(',', $bridge['members']);
 	if (!count($members))
 		return -1;
@@ -155,44 +160,49 @@ function interface_bridge_configure(&$bridge)
 		/* Choose spanning tree proto */
 		mwexec("/sbin/ifconfig {$bridgeif} proto {$bridge['proto']}");	
 		
-		$stpifs = explode(',', $bridge['stp']);
-		foreach ($stpifs as $stpif) {
-			$realif = get_real_interface($stpif);
-			mwexec("/sbin/ifconfig {$bridgeif} stp {$realif}");
+		if (!empty($bridge['stp'])) {
+			$stpifs = explode(',', $bridge['stp']);
+			foreach ($stpifs as $stpif) {
+				$realif = get_real_interface($stpif);
+				mwexec("/sbin/ifconfig {$bridgeif} stp {$realif}");
+			}
 		}
-		if ($bridge['maxage'] <> "")
+		if (!empty($bridge['maxage']))
 			mwexec("/sbin/ifconfig {$bridgeif} maxage {$bridge['maxage']}");
-		if ($brige['fwdelay'] <> "")
+		if (!empty($brige['fwdelay']))
 			mwexec("/sbin/ifconfig {$bridgeif} fwddelay {$bridge['fwdelay']}");
-		if ($brige['hellotime'] <> "")
+		if (!empty($brige['hellotime']))
                         mwexec("/sbin/ifconfig {$bridgeif} hellotime {$bridge['hellotime']}");
-		if ($brige['priority'] <> "")
+		if (!empty($brige['priority']))
                         mwexec("/sbin/ifconfig {$bridgeif} priority {$bridge['priority']}");
-		if ($brige['holdcount'] <> "")
+		if (!empty($brige['holdcount']))
                         mwexec("/sbin/ifconfig {$bridgeif} holdcnt {$bridge['holdcnt']}");
-		$pconfig = explode(",", $bridge['ifpriority']);
-		$ifpriority = array();
-		foreach ($pconfig as $cfg) {
-			$embcfg = explode(":", $cfg);
-			foreach ($embcfg as $key => $value)
-				$ifpriority[$key] = $value;
+		if (!empty($bridge['ifpriority'])) {
+			$pconfig = explode(",", $bridge['ifpriority']);
+			$ifpriority = array();
+			foreach ($pconfig as $cfg) {
+				$embcfg = explode(":", $cfg);
+				foreach ($embcfg as $key => $value)
+					$ifpriority[$key] = $value;
+			}
+			foreach ($ifpriority as $key => $value) {
+				$realif = get_real_interface($key);
+				mwexec("/sbin/ifconfig ${bridgeif} ifpriority {$realif} {$value}"); 
+			}
 		}
-		foreach ($ifpriority as $key => $value) {
-			$realif = get_real_interface($key);
-			mwexec("/sbin/ifconfig ${bridgeif} ifpriority {$realif} {$value}"); 
+		if (!empty($bridge['ifpathcost'])) {
+			$pconfig = explode(",", $bridges['ifpathcost']);
+			$ifpathcost = array();
+			foreach ($pconfig as $cfg) {
+				$embcfg = explode(":", $cfg);
+				foreach ($embcfg as $key => $value)
+					$ifpathcost[$key] = $value;
+			}
+			foreach ($ifpathcost as $key => $value) {
+                        	$realif = get_real_interface($key);
+                        	mwexec("/sbin/ifconfig ${bridgeif} ifpathcost {$realif} {$value}");
+                	}
 		}
-		$pconfig = explode(",", $bridges['ifpathcost']);
-		$ifpathcost = array();
-		foreach ($pconfig as $cfg) {
-			$embcfg = explode(":", $cfg);
-			foreach ($embcfg as $key => $value)
-				$ifpathcost[$key] = $value;
-		}
-		foreach ($ifpriority as $key => $value) {
-                        $realif = get_real_interface($key);
-                        mwexec("/sbin/ifconfig ${bridgeif} ifpathcost {$realif} {$value}");
-                }
-
 	}
 
 	if ($bridge['maxaddr'] <> "")

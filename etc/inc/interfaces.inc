@@ -145,6 +145,15 @@ function interface_bridge_configure(&$bridge)
         } else
                 $bridgeif = exec("/sbin/ifconfig bridge create");
 
+	/* Calculate smaller mtu and enforce it */
+	$smallermtu = 1500;
+	foreach ($members as $member) {
+		$realif = get_real_interface($member);
+		$mtu = get_interface_mtu($realif);
+		if (!empty($mtu) && $mtu < $smallermtu)
+			$smallermtu = $mtu;
+	}
+	 
 	/* Add interfaces to bridge */
 	foreach ($members as $member) {
                 if (!array_key_exists($member, $checklist))
@@ -152,6 +161,7 @@ function interface_bridge_configure(&$bridge)
                 $realif = get_real_interface($member);
                 $realif =  escapeshellarg($realif);
                 /* make sure the parent interface is up */
+		mwexec("/sbin/ifconfig {$realif} mtu {$smallermtu}");
                 mwexec("/sbin/ifconfig {$realif} up");
 		mwexec("/sbin/ifconfig {$bridgeif} addm {$realif}");	
         }
@@ -290,30 +300,34 @@ function interface_lagg_configure(&$lagg)
 	
 	$checklist = get_interface_list();
 
+	if ($g['booting'] || !(empty($lagg['laggif']))) {
+                mwexec("/sbin/ifconfig {$lagg['laggif']} destroy");
+                mwexec("/sbin/ifconfig {$lagg['laggif']} create");
+                $laggif = $lagg['laggif'];
+        } else
+                $laggif = exec("/sbin/ifconfig lagg create");
+
+	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
+
+	/* Calculate smaller mtu and enforce it */
+        $smallermtu = 1500;
+        foreach ($members as $member) {
+                $realif = get_real_interface($member);
+                $mtu = get_interface_mtu($realif);
+                if (!empty($mtu) && $mtu < $smallermtu)
+                        $smallermtu = $mtu;
+        }
+
 	$cmd = "";
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
 		$realif =  escapeshellarg($member);
-		$mtu = get_interface_mtu($realif);
         	/* make sure the parent interface is up */
-        	mwexec("/sbin/ifconfig {$realif} mtu {$mtu}");
+        	mwexec("/sbin/ifconfig {$realif} mtu {$smallermtu}");
 		mwexec("/sbin/ifconfig {$realif} up");
-		$cmd .= " laggport {$realif}";
+		mwexec("/sbin/ifconfig {laggif} laggport {$realif}");
 	}
-
-        if ($g['booting'] || !(empty($lagg['laggif']))) {
-                mwexec("/sbin/ifconfig {$lagg['laggif']} destroy");
-                mwexec("/sbin/ifconfig {$lagg['laggif']} create");
-		$laggif = $lagg['laggif'];
-        } else
-                $laggif = exec("/sbin/ifconfig lagg create");
-
-
-	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
-
-	/* Add interfaces to lagg */
-        mwexec("/sbin/ifconfig {$laggif} {$cmd}");
 
 	mwexec("/sbin/ifconfig {$laggif} up");
 

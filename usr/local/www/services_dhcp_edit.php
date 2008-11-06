@@ -36,6 +36,8 @@
 ##|*MATCH=services_dhcp_edit.php*
 ##|-PRIV
 
+require_once('globals.inc');
+
 if(!$g['services_dhcp_server_enable']) {
 	Header("Location: /");
 	exit;

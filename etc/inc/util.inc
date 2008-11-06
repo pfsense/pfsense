@@ -54,9 +54,8 @@ function sigkillbypid($pidfile, $sig) {
 	if (is_file($pidfile)) {
 		$pid = trim(file_get_contents($pidfile));
 		if(isvalidpid($pid))
-			return mwexec("/bin/kill -s $sig {$pid}");
+			return mwexec("/bin/kill -s $sig {$pid}", true);
 	}
-
 	return 0;
 }
 

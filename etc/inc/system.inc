@@ -231,6 +231,9 @@ function system_routing_configure() {
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
 
 	/* clear out old routes, if necessary */
+	exec("/sbin/netstat -rn", $route_arr, $retval);
+	$route_str = implode("\n", $route_arr);
+
 	if (file_exists("{$g['vardb_path']}/routes.db")) {
 		$fd = fopen("{$g['vardb_path']}/routes.db", "r");
 		if (!$fd) {
@@ -239,7 +242,7 @@ function system_routing_configure() {
 		}
 		while (!feof($fd)) {
 			$oldrt = fgets($fd);
-			if ($oldrt)
+			if (preg_match("/{$oldrt}/", $route_str))
 				mwexec("/sbin/route delete " . escapeshellarg($oldrt));
 		}
 		fclose($fd);

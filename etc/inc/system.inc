@@ -932,7 +932,7 @@ function system_ntp_configure() {
 
 	/* if openntpd is running, kill it */
 	while(is_process_running("ntpd")) {
-		exec("/usr/bin/killall ntpd");
+		exec("/usr/bin/killall ntpd", true);
 		sleep(3);
 	}
 
@@ -1145,7 +1145,7 @@ function enable_watchdog() {
 	}
 	if($install_watchdog == true) {
 		if(is_process_running("watchdogd"))
-			exec("/usr/bin/killall watchdogd");
+			exec("/usr/bin/killall watchdogd", true);
 		exec("/usr/sbin/watchdogd");
 	}
 }

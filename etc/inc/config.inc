@@ -2658,7 +2658,7 @@ function system_start_ftp_helpers() {
 	require_once("interfaces.inc");
 	global $config, $g;
 
-	mwexec("/usr/bin/killall ftpsesame");
+	mwexec("/usr/bin/killall ftpsesame", true);
 
 	/* if list */
 	$iflist = get_configured_interface_list();

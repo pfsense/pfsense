@@ -593,7 +593,7 @@ function services_snmpd_configure() {
 	/* kill any running snmpd */
 	sigkillbypid("{$g['varrun_path']}/snmpd.pid", "TERM");
 	if(is_process_running("bsnmpd")) 
-		exec("/usr/bin/killall bsnmpd", true);
+		mwexec("/usr/bin/killall bsnmpd", true);
 
 	if (isset($config['snmpd']['enable'])) {
 

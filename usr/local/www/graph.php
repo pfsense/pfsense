@@ -36,7 +36,7 @@
 ##|*MATCH=graph.php*
 ##|-PRIV
 
-if(!$_SERVER['PHP_AUTH_USER']) {
+if(!$_SESSION['Username']) {
 	Header("Location: /");
 	exit;
 }

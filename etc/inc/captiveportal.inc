@@ -276,7 +276,7 @@ EOD;
 				}
 			}
 			if($installed_time_based_rules == false)
-				mwexec("/sbin/kldunload ipfw");
+				mwexec("/sbin/kldunload ipfw", true);
 		} else {
 			/* shaper is on - just remove our rules */
 			mwexec("/sbin/ipfw -f delete set 1");

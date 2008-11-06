@@ -167,6 +167,10 @@ function vpn_ipsec_configure($ipchg = false)
 			return 0;
 		}
 
+		/* this loads a route table which is used to determine if a route needs to be removed. */
+		exec("/sbin/netstat -rn", $route_arr, $retval);
+		$route_str = implode("\n", $route_arr);
+
 		/* resolve all local, peer addresses and setup pings */
 		$ipmap = array();
 		$rgmap = array();
@@ -768,13 +772,18 @@ EOD;
 						if (! ip_in_subnet($rgip, "{$subnet_ip}/{$subnet_bits}")) {
 							if(is_ipaddr($gatewayip)) {
 								log_error("IPSEC interface is not WAN but {$parentinterface}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-								mwexec("/sbin/route delete -host {$rgip};/sbin/route add -host {$rgip} {$gatewayip}");
+								mwexec("/sbin/route delete -host {$rgip}");
+								mwexec("/sbin/route add -host {$rgip} {$gatewayip}");
 							}
 						}
 					}
 				}
 				else
-					mwexec("/sbin/route delete -host {$rgip}");
+				{
+					if(preg_match("/{$rgip}/", $route_str)) {
+						mwexec("/sbin/route delete -host {$rgip}");
+					}
+				}
 			}
 
 			fwrite($fd, $spdconf);

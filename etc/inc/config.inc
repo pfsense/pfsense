@@ -1690,7 +1690,6 @@ function system_start_ftp_helpers() {
 	}
 	/* support bridged interfaces.  even they need ftp mojo */
 	$num_bridges = find_number_of_created_bridges();
-	$num_bridges++;
 	for($x=0; $x<$num_bridges; $x++) {
 		mwexec("/usr/local/sbin/ftpsesame {$shaper_queue}-i bridge{$x}");
 	}

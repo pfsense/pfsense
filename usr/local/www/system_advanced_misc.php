@@ -45,7 +45,6 @@ require("guiconfig.inc");
 
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
-$pconfig['shapertype'] = $config['system']['shapertype'];
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 
 if ($_POST) {
@@ -68,8 +67,6 @@ if ($_POST) {
 			$config['system']['lb_use_sticky'] = true;
 		else
 			unset($config['system']['lb_use_sticky']);
-
-		$config['system']['shapertype'] = $_POST['shapertype'];
 
 		$config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
 

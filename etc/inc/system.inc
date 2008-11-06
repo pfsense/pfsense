@@ -201,6 +201,9 @@ function system_routing_configure() {
 	if(isset($config['staticroutes']['enablefastrouting']))
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
 
+	exec("/sbin/netstat -rn", $route_arr, $retval);
+	$route_str = implode("\n", $route_arr);
+
 	/* clear out old routes, if necessary */
 	if (file_exists("{$g['vardb_path']}/routes.db")) {
 		$fd = fopen("{$g['vardb_path']}/routes.db", "r");
@@ -210,7 +213,7 @@ function system_routing_configure() {
 		}
 		while (!feof($fd)) {
 			$oldrt = fgets($fd);
-			if ($oldrt)
+			if (preg_match("/{$oldrt}/", $route_str))
 				mwexec("/sbin/route delete " . escapeshellarg($oldrt));
 		}
 		fclose($fd);
@@ -932,7 +935,7 @@ function system_ntp_configure() {
 
 	/* if openntpd is running, kill it */
 	while(is_process_running("ntpd")) {
-		exec("/usr/bin/killall ntpd", true);
+		mwexec("/usr/bin/killall ntpd", true);
 		sleep(3);
 	}
 
@@ -1145,7 +1148,7 @@ function enable_watchdog() {
 	}
 	if($install_watchdog == true) {
 		if(is_process_running("watchdogd"))
-			exec("/usr/bin/killall watchdogd", true);
+			mwexec("/usr/bin/killall watchdogd", true);
 		exec("/usr/sbin/watchdogd");
 	}
 }

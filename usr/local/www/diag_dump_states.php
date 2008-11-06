@@ -61,8 +61,7 @@ else {
 <script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
-$pgtitle = "Diagnostics: Show States";
-
+<p class="pgtitle"><?=$pgtitle?></font></p>
 <form action="diag_dump_states.php" method="get" name="iform">
 
 <script type="text/javascript">

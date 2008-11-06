@@ -75,7 +75,7 @@ function services_dhcpd_configure() {
 
 	/* kill any running dhcpd */
 	if(is_process_running("dhcpd"))
-		mwexec("killall dhcpd");
+		mwexec("killall dhcpd", true);
 
 	$syscfg = $config['system'];
 	$dhcpdcfg = $config['dhcpd'];
@@ -656,7 +656,7 @@ function services_snmpd_configure() {
 	/* kill any running snmpd */
 	sigkillbypid("{$g['varrun_path']}/snmpd.pid", "TERM");
 	if(is_process_running("bsnmpd")) 
-		exec("/usr/bin/killall bsnmpd");
+		mwexec("/usr/bin/killall bsnmpd", true);
 
 	if (isset($config['snmpd']['enable'])) {
 
@@ -1220,7 +1220,7 @@ EODAD;
 	}
 
 	if(is_process_running("olsrd"))
-		mwexec("/usr/bin/killall olsrd");
+		mwexec("/usr/bin/killall olsrd", true);
 
 	sleep(2);
 
@@ -1284,7 +1284,7 @@ function upnp_action ($action) {
 			break;
 		case "stop":
 			while((int)exec("pgrep miniupnpd | wc -l") > 0)
-				mwexec('killall miniupnpd 2>/dev/null');
+				mwexec('killall miniupnpd 2>/dev/null', true);
 			mwexec('/sbin/pfctl -aminiupnpd -Fr 2>&1 >/dev/null');
 			mwexec('/sbin/pfctl -aminiupnpd -Fn 2>&1 >/dev/null');
 			break;

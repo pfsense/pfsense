@@ -71,7 +71,7 @@ function vpn_ipsec_failover_configure() {
 	fclose($fd);
 	chmod("{$g['varetc_path']}/sasyncd.conf", 0600);
 
-	mwexec("killall sasyncd");
+	mwexec("killall sasyncd", true);
 
 	/* launch sasyncd, oh wise one */
 	/* mwexec_bg("/usr/local/sbin/sasyncd -d -v -v -v"); */
@@ -142,7 +142,7 @@ function vpn_ipsec_configure($ipchg = false) {
 		mwexec("/sbin/ifconfig enc0 destroy");
 
 		/* kill racoon */
-		mwexec("/usr/bin/killall racoon");
+		mwexec("/usr/bin/killall racoon", true);
 
 		/* wait for process to die */
 		sleep(2);
@@ -595,14 +595,14 @@ EOD;
 
 			if(is_process_running("racoon")) {
 				/* We are already online, reload */
-				mwexec("/usr/bin/killall -HUP racoon");
+				mwexec("/usr/bin/killall -HUP racoon", true);
 				/* flush SPD entries */
 				mwexec("/usr/local/sbin/setkey -FP");
 				mwexec("/usr/local/sbin/setkey -F");
 				/* load SPD */
 				mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
 				/* We are already online, reload */
-				mwexec("/usr/bin/killall -HUP racoon");
+				mwexec("/usr/bin/killall -HUP racoon", true);
 			} else {
 				/* start racoon */
 				mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
@@ -612,7 +612,7 @@ EOD;
 				/* load SPD */
 				mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
 				/* We are already online, reload */
-				mwexec("/usr/bin/killall -HUP racoon");
+				mwexec("/usr/bin/killall -HUP racoon", true);
 			}
 		}
 	}
@@ -1079,7 +1079,7 @@ function vpn_ipsec_force_reload() {
 	mwexec("/sbin/ifconfig enc0 destroy");
 
 	/* kill racoon */
-	mwexec("/usr/bin/killall racoon");
+	mwexec("/usr/bin/killall racoon", true);
 
 	/* wait for process to die */
 	sleep(4);

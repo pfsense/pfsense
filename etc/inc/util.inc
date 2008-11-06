@@ -46,7 +46,7 @@ function sigkillbypid($pidfile, $sig) {
 
 /* kill a process by name */
 function killbyname($procname) {
-	mwexec("/usr/bin/killall " . escapeshellarg($procname));
+	mwexec("/usr/bin/killall " . escapeshellarg($procname), true);
 }
 
 /* return the subnet address given a host address and a subnet bit count */

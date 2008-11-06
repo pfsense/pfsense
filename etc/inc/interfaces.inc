@@ -905,7 +905,7 @@ function interfaces_wan_configure() {
 					escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']));
 			}
 			/* install default route */
-			mwexec("/sbin/route delete default");
+			mwexec("/sbin/route delete default", true);
 
 			$dont_add_route = false;
 			/* if OLSRD is enabled, allow WAN to house DHCP. */

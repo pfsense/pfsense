@@ -97,8 +97,8 @@ function find_last_gif_device() {
 function vpn_ipsec_configure($ipchg = false) {
 	global $config, $g, $sa, $sn;
 
-	mwexec("/sbin/ifconfig enc0 create");
-	mwexec("/sbin/ifconfig enc0 up");
+	mwexec("/sbin/ifconfig enc0 create", true);
+	mwexec("/sbin/ifconfig enc0 up", true);
 
 	/* get the automatic /etc/ping_hosts.sh ready */
 	unlink_if_exists("/var/db/ipsecpinghosts");

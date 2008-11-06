@@ -840,7 +840,7 @@ function interfaces_wan_configure() {
 	}
 
 	/* remove all addresses first */
-	while (mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " -alias") == 0);
+	while (mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " -alias", true) == 0);
 	mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
 
 	/* wireless configuration? */

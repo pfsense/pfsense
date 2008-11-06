@@ -235,7 +235,7 @@ function system_routing_configure() {
 
 	if($dont_remove_route == false) {
 		/* remove default route */
-		mwexec("/sbin/route delete default");
+		mwexec("/sbin/route delete default", true);
 	}
 
 	$dont_add_route = false;

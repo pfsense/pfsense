@@ -39,7 +39,7 @@ if(isset($curcfg['alturl']['enable']))
 else
 	$updater_url = $g['update_url'];
 	
-$pgtitle = array("Diagnostics","Firmware","Auto Update");
+$pgtitle = array("Diagnostics: Firmware: Auto Update");
 include("head.inc");
 
 ?>
@@ -52,7 +52,7 @@ include("head.inc");
 
 <?php include("fbegin.inc"); ?>
 
-<p/>
+<p class="pgtitle"><?=$pgtitle?></font></p>
 
 <form action="system_firmware_auto.php" method="post">
 <table width="100%" border="0" cellpadding="6" cellspacing="0">

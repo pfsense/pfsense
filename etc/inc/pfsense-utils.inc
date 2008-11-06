@@ -1032,6 +1032,9 @@ function setup_polling() {
 			if(stristr($real_interface, $supported)) {
 				$supported = true;
 			}
+			if (stristr($real_interface, "vlan")) {
+				$supported = false;
+			}
 		}
 		if ($supported == true) {
 			mwexec("/sbin/ifconfig {$real_interface} polling");
@@ -1803,7 +1806,7 @@ function WakeOnLan($addr, $mac)
  *                             NOTE: this command takes 5 seconds to run
  */
 function gather_altq_queue_stats($dont_return_root_queues) {
-	mwexec("/usr/bin/killall -9 pfctl");
+	mwexec("/usr/bin/killall -9 pfctl", true);
 	$stats = `/sbin/pfctl -vvsq & /bin/sleep 5;/usr/bin/killall pfctl 2>/dev/null`;
 	$stats_array = split("\n", $stats);
 	$queue_stats = array();

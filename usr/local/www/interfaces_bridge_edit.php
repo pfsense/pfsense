@@ -415,7 +415,7 @@ Set the size of the bridge address cache to size.	The default is
                   <td valign="top" class="vncell">Span port</td>
 					<td class="vtable">
 				  	<select name="span" class="formselect" id="span">
-						<option value="none">none</option>
+						<option value="none" selected>None</option>
 						<?php 
 							foreach ($ifacelist as $ifn => $ifdescr) {
 								echo "<option value=\"{$ifn}\"";
@@ -431,7 +431,12 @@ Set the size of the bridge address cache to size.	The default is
 	     the bridge.  This is most useful for snooping a bridged network
 	     passively on another host connected to one of the span ports of
 	     the bridge.		
-					</span>					
+					</span>
+		<p class="vexpl"><span class="red"><strong>
+					 Note:<br>
+                                  </strong></span>
+                 The span interface cannot be part of the bridge.
+                                        </span>
 					</td>
 				</tr>
                 <tr style="display:none" id="sprtable5" name="sprtable5">

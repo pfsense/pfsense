@@ -1223,7 +1223,7 @@ function filter_nat_rules_generate() {
 			if(!$helpers)
 				mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
 			else
-				mwexec("/usr/bin/killall -HUP inetd");
+				mwexec("/usr/bin/killall -HUP inetd", true);
 
 		}
 	}

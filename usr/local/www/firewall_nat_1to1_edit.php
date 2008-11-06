@@ -154,7 +154,7 @@ include("head.inc");
 						<?php
 						$interfaces = get_configured_interface_with_descr();
 						foreach ($interfaces as $iface => $ifacename): 
-if ($iface == "lan") continue; ?>
+						?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
 						<?=htmlspecialchars($ifacename);?>
 						</option>

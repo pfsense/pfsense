@@ -780,7 +780,7 @@ EOD;
 				}
 				else
 				{
-					if(preg_match("/{$rgip}/", $route_str)) {
+					if(stristr($route_str, "/{$rgip}/")) {
 						mwexec("/sbin/route delete -host {$rgip}");
 					}
 				}

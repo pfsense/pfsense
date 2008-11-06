@@ -154,7 +154,7 @@ function filter_configure_sync() {
 
 	/* enable pf if we need to, otherwise disable */
 	if (!isset ($config['system']['disablefilter'])) {
-		mwexec("/sbin/pfctl -e");
+		mwexec("/sbin/pfctl -e", true);
 	} else {
 		mwexec("/sbin/pfctl -d");
 		unlink_if_exists("{$g['tmp_path']}/filter_loading");

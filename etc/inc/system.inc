@@ -242,7 +242,7 @@ function system_routing_configure() {
 		}
 		while (!feof($fd)) {
 			$oldrt = fgets($fd);
-			if (preg_match("/{$oldrt}/", $route_str))
+			if (($oldrt) && (stristr($route_str, $oldrt)))
 				mwexec("/sbin/route delete " . escapeshellarg($oldrt));
 		}
 		fclose($fd);

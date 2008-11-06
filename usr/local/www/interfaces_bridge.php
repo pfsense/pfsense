@@ -3,7 +3,7 @@
 /*
 	interfaces_bridge.php
 
-	Copyright (C) 2008 Ermal Luci
+	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

@@ -29,6 +29,11 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+if(!$_SERVER['PHP_AUTH_USER']) {
+	Header("Location: /");
+	exit;
+}
+
 header("Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
 header("Expires: " . gmdate( "D, j M Y H:i:s", time() ) . " GMT" );
 header("Cache-Control: no-store, no-cache, must-revalidate" ); // HTTP/1.1

@@ -32,14 +32,6 @@
 /* include all configuration functions */
 require_once("functions.inc");
 
-function load_balancer_use_sticky() {
-	global $config, $g;
-	if (isset ($config['system']['lb_use_sticky']))
-		touch("/var/etc/use_pf_pool__stickyaddr");
-	else
-		unlink_if_exists("/var/etc/use_pf_pool__stickyaddr");
-}
-
 function services_dhcpd_configure() {
 	global $config, $g;
 	
@@ -84,22 +76,18 @@ function services_dhcpd_configure() {
 	$syscfg = $config['system'];
 	$dhcpdcfg = $config['dhcpd'];
 
+
+	$Iflist = get_configured_interface_list();
+
 	/* DHCP enabled on any interfaces? */
 	$dhcpdenable = false;
 	if(is_array($dhcpdcfg))
 		foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
-			if($dhcpif == "lan") 
-				if(!$config['interfaces']['lan']) 	
-					continue;
 			if (isset($dhcpifconf['enable']) &&
-				(($dhcpif == "lan") ||
-				(isset($config['interfaces'][$dhcpif]['enable']) &&
-				$config['interfaces'][$dhcpif]['if'] && (!link_int_to_bridge_interface($dhcpif)))))
+				isset($Iflist[$dhcpif])) {
 				$dhcpdenable = true;
-			if (isset($dhcpifconf['enable']) &&
-				(($dhcpif == "wan") || (isset($config['interfaces'][$dhcpif]['enable']) &&
-				$config['interfaces'][$dhcpif]['if'] && (!link_int_to_bridge_interface($dhcpif)))))
-				$dhcpdenable = true;
+				break;
+			}
 		}
 
 	if (!$dhcpdenable)
@@ -144,6 +132,9 @@ EOD;
 	 */
 	$dhcpnum = 0;
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+
+		if (!isset($dhcpifconf['enable']))
+			continue;
 
 		if(!isset($dhcpifconf['disableauthoritative']))
 			$dhcpdconf .= "authoritative;\n";
@@ -205,15 +196,8 @@ EOPP;
 
 		$ifcfg = $config['interfaces'][$dhcpif];
 
-		if (!isset($dhcpifconf['enable']) ||
-			($ifcfg['ipaddr'] == "dhcp") ||
-			(($dhcpif != "lan") &&
-			(!isset($ifcfg['enable']) || !$ifcfg['if'] || 
-			link_int_to_bridge_interface($dhcpif))))
+		if (!isset($dhcpifconf['enable']) || !isset($Iflist[$dhcpif]))
 			continue;
-
-		if($dhcpif == "lan" && link_int_to_bridge_interface($dhcpif))
-			log_error("NOTE: DHCP Server on LAN is enabled.");
 
 		$subnet = gen_subnet($ifcfg['ipaddr'], $ifcfg['subnet']);
 		$subnetmask = gen_subnet_mask($ifcfg['subnet']);
@@ -228,9 +212,9 @@ EOPP;
 			$dnscfg .= "	option domain-name \"{$dhcpifconf['domain']}\";\n";
 		}
 		
-    if($dhcpifconf['domainsearchlist'] <> "") {
+    		if($dhcpifconf['domainsearchlist'] <> "") {
 			$dnscfg .= "	option domain-search-list \"{$dhcpifconf['domainsearchlist']}\";\n";
-    }
+    		}
 
 		if (isset($dhcpifconf['ddnsupdate'])) {
 			if($dhcpifconf['ddnsdomain'] <> "") {
@@ -282,7 +266,7 @@ $dnscfg
 
 EOD;
     
-    if ($dhcpifconf['defaultleasetime'])
+    		if ($dhcpifconf['defaultleasetime'])
 			$dhcpdconf .= "	default-lease-time {$dhcpifconf['defaultleasetime']};\n";
 		if ($dhcpifconf['maxleasetime'])
 			$dhcpdconf .= "	max-lease-time {$dhcpifconf['maxleasetime']};\n";
@@ -337,7 +321,7 @@ EOD;
 			}
 		}
 
-		$dhcpdifs[] = $ifcfg['if'];
+		$dhcpdifs[] = get_real_interface($dhcpif);
 	}
 
 	fwrite($fd, $dhcpdconf);

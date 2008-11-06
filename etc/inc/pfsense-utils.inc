@@ -1057,8 +1057,8 @@ function setup_polling() {
 	foreach ($iflist as $ifent => $ifname) {
 		$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
 		$supported = false;
-		foreach($supported_ints as $supported) {
-			if(stristr($real_interface, $supported)) {
+		foreach($supported_ints as $supported_int) {
+			if(stristr($real_interface, $supported_int)) {
 				$supported = true;
 			}
 			if (stristr($real_interface, "vlan")) {

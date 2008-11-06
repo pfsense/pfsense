@@ -173,6 +173,10 @@ function vpn_ipsec_configure($ipchg = false) {
 			return 0;
 		}
 
+		/* this loads a route table which is used to determine if a route needs to be removed. */
+		exec("/sbin/netstat -rn", $route_arr, $retval);
+		$route_str = implode("\n", $route_arr);
+
 		if ((is_array($ipseccfg['tunnel']) && count($ipseccfg['tunnel'])) ||
 				isset($ipseccfg['mobileclients']['enable'])) {
 
@@ -260,12 +264,15 @@ function vpn_ipsec_configure($ipchg = false) {
 							if(! ip_in_subnet($tunnel['remote-gateway'], "{$subnet_ip}/{$subnet_bits}")) {
 								if(is_ipaddr($gatewayip)) {
 									log_error("IPSEC interface is not WAN but {$tunnel['interface']}, adding static route for VPN endpoint {$tunnel['remote-gateway']} via {$gatewayip}");
-									mwexec("/sbin/route delete -host {$tunnel['remote-gateway']};/sbin/route add -host {$tunnel['remote-gateway']} {$gatewayip}");
+									mwexec("/sbin/route delete -host {$tunnel['remote-gateway']}");
+                                                                        mwexec("/sbin/route add -host {$tunnel['remote-gateway']} {$gatewayip}");
 								}
 							}
 						}
 					} else {
-						mwexec("/sbin/route delete -host {$tunnel['remote-gateway']}");
+						if(preg_match("/{$tunnel['remote-gateway']}/", $route_str)) {
+							mwexec("/sbin/route delete -host {$tunnel['remote-gateway']}");
+						}
 					}
 				}
 

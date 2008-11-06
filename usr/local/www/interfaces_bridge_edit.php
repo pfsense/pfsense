@@ -2,9 +2,8 @@
 /* $Id$ */
 /*
 	interfaces_bridge_edit.php
-	part of m0n0wall (http://m0n0.ch/wall)
 
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -128,10 +127,13 @@ if ($_POST) {
 		$input_errors[] = "You must select at least 2 member interfaces for a bridge.";
 
 	if (is_array($_POST['members'])) {
-		foreach($_POST['members'] as $ifmembers)
+		foreach($_POST['members'] as $ifmembers) {
 			if (is_array($config['interfaces'][$ifmembers]['wireless']) &&
 				$config['interfaces'][$ifmembers]['wireless']['mode'] != "hostap")
 				$input_errors[] = "Bridging a wireless interface is only possible in hostap mode.";
+			if ($_POST['span'] != "none" && $_POST['span'] == $ifmembers)
+				$input_errors[] = "Span interface cannot be part of the bridge. Remove the span interface from bridge members to continue.";
+		}
 	}
 
 	if (!$input_errors) {
@@ -171,7 +173,10 @@ if ($_POST) {
 		}
 		$bridge['ifpriority'] = $ifpriority;
 		$bridge['ifpathcost'] = $ifpathcost;
-		$bridge['span'] = $_POST['span'];
+		if ($_POST['span'] != "none")
+			$bridge['span'] = $_POST['span'];
+		else 
+			unset($bridge['span']);
 		if (isset($_POST['edge']))
 			$bridge['edge'] = implode(',', $_POST['edge']);
 		if (isset($_POST['autoedge']))
@@ -410,6 +415,7 @@ Set the size of the bridge address cache to size.	The default is
                   <td valign="top" class="vncell">Span port</td>
 					<td class="vtable">
 				  	<select name="span" class="formselect" id="span">
+						<option value="none">none</option>
 						<?php 
 							foreach ($ifacelist as $ifn => $ifdescr) {
 								echo "<option value=\"{$ifn}\"";

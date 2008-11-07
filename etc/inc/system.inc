@@ -201,7 +201,7 @@ function system_routing_configure() {
 	if(isset($config['staticroutes']['enablefastrouting']))
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
 
-	exec("/sbin/netstat -rn", $route_arr, $retval);
+	exec("/usr/bin/netstat -rn", $route_arr, $retval);
 	$route_str = implode("\n", $route_arr);
 
 	/* clear out old routes, if necessary */

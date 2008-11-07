@@ -1056,17 +1056,10 @@ function setup_polling() {
 
 	foreach ($iflist as $ifent => $ifname) {
 		$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
-		$supported = false;
-		foreach($supported_ints as $supported_int) {
-			if(stristr($real_interface, $supported_int)) {
-				$supported = true;
-				continue;
-			}
-		}
-		if (stristr($real_interface, "vlan")) {
-			$supported = false;
-		}
-		if ($supported == true) {
+		if(!in_array($real_interface, $supported_ints)) {
+			continue;
+                }
+		if(isset($config['system']['polling'])) {
 			mwexec("/sbin/ifconfig {$real_interface} polling");
 		} else {
 			mwexec("/sbin/ifconfig {$real_interface} -polling");

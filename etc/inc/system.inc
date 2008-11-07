@@ -213,7 +213,7 @@ function system_routing_configure() {
 		}
 		while (!feof($fd)) {
 			$oldrt = trim(fgets($fd));
-			if (($oldrt) && (stristr($route_str, "$oldrt")))
+			if (($oldrt) && (stristr($route_str, $oldrt)))
 				mwexec("/sbin/route delete " . escapeshellarg($oldrt));
 		}
 		fclose($fd);

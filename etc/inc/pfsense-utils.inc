@@ -1245,7 +1245,7 @@ function link_interface_to_gre($interface) {
 
         if (is_array($config['gres']['gre']))
                 foreach ($config['gres']['gre'] as $gre)
-                        if($gre['if'] == $interface))
+                        if($gre['if'] == $interface)
                                 return "{$gre['greif']}";
 }
 
@@ -1254,7 +1254,7 @@ function link_interface_to_gif($interface) {
 
         if (is_array($config['gifs']['gif']))
                 foreach ($config['gifs']['gif'] as $gif)
-                        if($gif['if'] == $interface))
+                        if($gif['if'] == $interface)
                                 return "{$gif['gifif']}";
 }
 

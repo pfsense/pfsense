@@ -147,7 +147,7 @@ function interface_bridge_configure(&$bridge)
 	
 	$checklist = get_configured_interface_list();
 
-	if ($g['booting'] || $bridge['bridgeif'] <> "") {
+	if ($g['booting'] || !empty($bridge['bridgeif'])) {
 		mwexec("/sbin/ifconfig {$bridge['bridgeif']} destroy");
 		mwexec("/sbin/ifconfig {$bridge['bridgeif']} create");
 		$bridgeif = $bridge['bridgeif'];

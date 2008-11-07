@@ -198,6 +198,10 @@ if ($_GET['act'] == "del") {
 
 	if (link_interface_to_bridge($id))
 		$input_errors[] = "The interface is part of a bridge. Please remove it from the bridge to continue";
+	else if (link_interface_to_gre($id))
+		$input_errors[] = "The interface is part of a gre tunnel. Please delete the tunnel to continue";
+	else if (link_interface_to_gif($id))
+		$input_errors[] = "The interface is part of a gif tunnel. Please delete the tunnel to continue";
 	else {
 		unset($config['interfaces'][$id]['enable']);
 		interface_bring_down($id);   /* down the interface */

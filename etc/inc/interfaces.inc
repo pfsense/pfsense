@@ -71,7 +71,7 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
 	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up vlanhwtag vlanmtu");
 
 	if ($g['booting'] || !(empty($vlanif))) {
-		mwexec("/sbin/ifconfig {$vlanif} destroy");
+		mwexec("/sbin/ifconfig {$vlanif} destroy", true);
 		mwexec("/sbin/ifconfig {$vlanif} create");
 	} else 
 		$vlanif = exec("/sbin/ifconfig vlan create");

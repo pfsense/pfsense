@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Diagnostics", "Ping");
+$pgtitle = "Diagnostics: Ping";
 require("guiconfig.inc");
 
 define('MAX_COUNT', 10);
@@ -85,7 +85,6 @@ function get_interface_addr($ifdescr) {
 	return false;
 }
 
-$pgtitle = "Diagnostics: Ping";
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <? include("fbegin.inc"); ?>

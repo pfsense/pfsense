@@ -51,7 +51,7 @@ ini_set('max_input_time', '3600');
 
 /* if upgrade in progress, alert user */
 if(file_exists($d_firmwarelock_path)) {
-	$pgtitle = array("System","Firmware","Manual Update");
+	$pgtitle = "System: Firmware: Manual Update";
 	include("head.inc");
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");

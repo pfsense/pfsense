@@ -23,7 +23,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Diagnostics", "Packet Capture");
+$pgtitle = "Diagnostics: Packet Capture";
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
@@ -105,13 +105,10 @@ else
 	$do_tcpdump = false;
 
 }
-$pgtitle = "Diagnostics: Packet Capture";
+
 include("head.inc"); ?>
 <body link="#000000" vlink="#0000CC" alink="#0000CC">
 <? include("fbegin.inc"); ?>
-
-
-
 <p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>

@@ -28,7 +28,7 @@
 
 require_once("guiconfig.inc");
 
-$pgtitle = array("Diagnostics","Show States");
+$pgtitle = "Diagnostics: Show States";
 include("head.inc");
 
 /* handle AJAX operations */

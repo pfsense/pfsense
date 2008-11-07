@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Interfaces", "Assign network ports");
+$pgtitle = "Interfaces: Assign network ports";
 require("guiconfig.inc");
 
 /*

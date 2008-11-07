@@ -39,7 +39,7 @@ if(isset($curcfg['alturl']['enable']))
 else
 	$updater_url = $g['update_url'];
 	
-$pgtitle = array("Diagnostics: Firmware: Auto Update");
+$pgtitle = "Diagnostics: Firmware: Auto Update";
 include("head.inc");
 
 ?>

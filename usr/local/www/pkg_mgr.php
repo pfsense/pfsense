@@ -103,36 +103,38 @@ include("fbegin.inc");
 		 if(!$pkg_info) {
 			echo "<tr><td colspan=\"5\"><center>There are currently no packages available for installation.</td></tr>";
 		 } else {
-		 $pkgs = array();
-		 $instpkgs = array();
+			$pfSense_installed_version = rtrim(file_get_contents("/etc/version"));
+		 	$pkgs = array();
+		 	$instpkgs = array();
 		    if($config['installedpackages']['package'] != "")
 			foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
 		    $pkg_names = array_keys($pkg_info);
 		    $pkg_keys = array();
 		    foreach($pkg_names as $name) {
-			if(!in_array($name, $instpkgs)) $pkg_keys[] = $name;
+				if(!in_array($name, $instpkgs)) 
+					$pkg_keys[] = $name;
 		    }
 		    sort($pkg_keys);
 		    if(count($pkg_keys) != 0) {
 		    	foreach($pkg_keys as $key) {
 			    $index = &$pkg_info[$key];
 			    if(in_array($index['name'], $instpkgs)) continue;
-          $dot = strpos($index['required_version'], ".");
-          $index['major_version'] = substr($index['required_version'], 0, $dot);
+          		$dot = strpos($index['required_version'], ".");
+          		$index['major_version'] = substr($index['required_version'], 0, $dot);
 
-          if ($version <> "HEAD" &&
-              $index['required_version'] == "HEAD" &&
-              $requested_version <> "other") { continue; }
-          if (empty($index['required_version']) &&
+          		if ($version <> "HEAD" &&
+              		$index['required_version'] == "HEAD" &&
+              		$requested_version <> "other") { continue; }
+          		if (empty($index['required_version']) &&
                     $requested_version <> "none") { continue; }
-          if($index['major_version'] > $major &&
-             $requested_version <> "other") { continue; }
-          if(isset($index['major_version']) &&
-             $requested_version == "none") { continue; }
-          if($index['major_version'] == $major &&
-             $requested_version == "other") { continue; }
+          		if($index['major_version'] > $major &&
+             		$requested_version <> "other") { continue; }
+          		if(isset($index['major_version']) &&
+					$requested_version == "none") { continue; }
+          		if($index['major_version'] == $major &&
+             		$requested_version == "other") { continue; }
 
-                            ?>
+			?>
                             <tr valign="top">
                                 <td class="listlr">
                                     <A target="_blank" href="<?= $index['website'] ?>"><?= $index['name'] ?></a>

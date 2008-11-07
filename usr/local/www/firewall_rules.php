@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Firewall", "Rules");
+$pgtitle = "Firewall: Rules";
 require("guiconfig.inc");
 
 if (!is_array($config['filter']['rule'])) {
@@ -163,8 +163,6 @@ if (isset($_POST['del_x'])) {
 	}
 }
 $closehead = false;
-
-$pgtitle = "Firewall: Rules";
 include("head.inc");
 
 echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domLib.js\"></script>";

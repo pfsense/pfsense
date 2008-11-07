@@ -95,13 +95,24 @@ include("head.inc");
                   <td width="50%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
-			  <?php $i = 0; foreach ($a_bridges as $bridge): ?>
+			  <?php $i = 0; $ifdescrs = get_configured_interface_with_descr();
+					foreach ($a_bridges as $bridge): ?>
                 <tr>
                   <td class="listlr">
 					<?=htmlspecialchars(strtoupper($bridge['bridgeif']));?>
                   </td>
                   <td class="listr">
-					<?=htmlspecialchars($bridge['members']);?>
+					<? $members = explode(',', $bridge['members']);
+					$j = 0;
+					foreach ($members as $member) {
+						if (isset($ifdescrs[$member])) {
+							echo $ifdescrs[$member];
+							$j++;
+						}
+						if ($j > 1)
+							echo ", ";
+					}
+					?>
                   </td>
                   <td class="listbg">
                     <?=htmlspecialchars($bridge['descr']);?>&nbsp;

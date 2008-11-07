@@ -435,7 +435,7 @@ Set the size of the bridge address cache to size.	The default is
 		<p class="vexpl"><span class="red"><strong>
 					 Note:<br>
                                   </strong></span>
-                 The span interface cannot be part of the bridge.
+                 The span interface cannot be part of the bridge member interfaces.
                                         </span>
 					</td>
 				</tr>

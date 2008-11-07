@@ -1060,10 +1060,11 @@ function setup_polling() {
 		foreach($supported_ints as $supported_int) {
 			if(stristr($real_interface, $supported_int)) {
 				$supported = true;
+				continue;
 			}
-			if (stristr($real_interface, "vlan")) {
-				$supported = false;
-			}
+		}
+		if (stristr($real_interface, "vlan")) {
+			$supported = false;
 		}
 		if ($supported == true) {
 			mwexec("/sbin/ifconfig {$real_interface} polling");

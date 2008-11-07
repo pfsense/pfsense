@@ -34,6 +34,7 @@
 $g = array(
 	"factory_shipped_username" => "admin",	
 	"factory_shipped_password" => "pfSense",	
+	"product_name" => "pfSense",	
 	"upload_path" => "/root",
     "dhcpd_chroot_path" => "/var/dhcpd",
     "varrun_path" => "/var/run",

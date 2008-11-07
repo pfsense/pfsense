@@ -196,47 +196,50 @@ if ($_POST['apply']) {
 if ($_GET['act'] == "del") {
 	$id = $_GET['id'];
 
-	unset($config['interfaces'][$id]['enable']);
-	interface_bring_down($id);   /* down the interface */
+	if (link_int_to_bridge_interface($id))
+		$input_errors[] = "The interface is part of a bridge. Please remove it from the bridge to continue";
+	else {
+		unset($config['interfaces'][$id]['enable']);
+		interface_bring_down($id);   /* down the interface */
 		
-	unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
+		unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
 
-	if($id == "lan") {
-		unset($config['interfaces']['lan']);
-		if (is_array($config['dhcpd']))
-			unset($config['dhcpd']['lan']);
-		unset($config['shaper']);
-		unset($config['ezshaper']);
-		unset($config['nat']);
-		system("rm /var/dhcpd/var/db/*");
-        	services_dhcpd_configure();
-	}
+		if($id == "lan") {
+			unset($config['interfaces']['lan']);
+			if (is_array($config['dhcpd']))
+				unset($config['dhcpd']['lan']);
+				unset($config['shaper']);
+				unset($config['ezshaper']);
+				unset($config['nat']);
+				system("rm /var/dhcpd/var/db/*");
+        			services_dhcpd_configure();
+		}
 
-	if ($config['filter']['rule'] > 0)
-        foreach ($config['filter']['rule'] as $x => $rule) {
-                        if($rule['interface'] == $id)
-                                unset($config['filter']['rule'][$x]);
-        }
-	if ($config['nat']['advancedoutbound']['rule'] > 0)
-        foreach ($config['nat']['advancedoutbound']['rule'] as $id => $rule) {
-                        if($rule['interface'] == $x)
-                                unset($config['nat']['advancedoutbound']['rule'][$x]['interface']);
-        }
-        if (count($config['nat']['rule']) > 0) 
-        foreach ($config['nat']['rule'] as $x => $rule) {
-                        if($rule['interface'] == $id)
-                                unset($config['nat']['rule'][$x]['interface']);
-        }
+		if ($config['filter']['rule'] > 0)
+       	 	foreach ($config['filter']['rule'] as $x => $rule) {
+                	        if($rule['interface'] == $id)
+               		                 unset($config['filter']['rule'][$x]);
+        	}
+		if ($config['nat']['advancedoutbound']['rule'] > 0)
+        	foreach ($config['nat']['advancedoutbound']['rule'] as $x => $rule) {
+                	        if($rule['interface'] == $id)
+           	    	                 unset($config['nat']['advancedoutbound']['rule'][$x]['interface']);
+        	}
+        	if (count($config['nat']['rule']) > 0) 
+        	foreach ($config['nat']['rule'] as $x => $rule) {
+                        	if($rule['interface'] == $id)
+                	                unset($config['nat']['rule'][$x]['interface']);
+        	}
 
-
-	write_config();
+		write_config();
 	
-	/* XXX: What is this for?!?! */
-	if($config['interfaces']['lan']) {
-		unset($config['dhcpd']['wan']);		
-	}
+		/* XXX: What is this for?!?! */
+		if($config['interfaces']['lan']) {
+			unset($config['dhcpd']['wan']);		
+		}
 	
-	$savemsg = "Interface has been deleted.";
+		$savemsg = "Interface has been deleted.";
+	}
 }
 
 if ($_GET['act'] == "add") {

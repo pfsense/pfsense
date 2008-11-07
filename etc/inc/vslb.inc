@@ -262,8 +262,9 @@ function relayd_configure() {
      */
      mwexec('pkill relayd');
   }
-  mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
-
+  if (! empty($vs_a)) {
+    mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
+  }
 }
 
 ?>

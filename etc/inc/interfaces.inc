@@ -460,6 +460,7 @@ function interfaces_carp_configure() {
 			}			
 			/* create the carp interface and setup */
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
+			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " create\n");
 
 			/* invalidate interface cache */
 			get_interface_arr(true);

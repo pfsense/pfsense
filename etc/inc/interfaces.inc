@@ -40,10 +40,18 @@
 require_once("functions.inc");
 require_once("globals.inc");
 
+function interfaces_bring_up($interface) {
+	if(!$interface) {
+		log_error("bring_interface_up was called but no variable defined.");
+		return;
+	}
+	mwexec("/sbin/ifconfig " . escapeshellarg($interface) . " up");
+}
+
 function interfaces_loopback_configure() 
 {
 	mwexec("/sbin/ifconfig lo0 127.0.0.1");
-	mwexec("/sbin/ifconfig lo0 up");
+	interfaces_bring_up("lo0");
 	return 0;
 }
 
@@ -77,7 +85,7 @@ function interface_vlan_configure($if, $tag, $vlanif = "")
         global $config, $g;
 
         /* make sure the parent interface is up */
-        mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
+		interfaces_bring_up($if);
 		/* Since we are going to add vlan(4) try to enable all that hardware supports. */
 		mwexec("/sbin/ifconfig {$if} vlanhwtag");
 		mwexec("/sbin/ifconfig {$if} vlanmtu");
@@ -92,7 +100,7 @@ function interface_vlan_configure($if, $tag, $vlanif = "")
                 escapeshellarg($tag) . " vlandev " .
                 escapeshellarg($if));
 
-		mwexec("/sbin/ifconfig {$vlanif} up");
+		interfaces_bring_up($vlanif);
 
         /* invalidate interface cache */
         get_interface_arr(true);
@@ -108,7 +116,7 @@ function interface_vlan_configure($if, $tag, $vlanif = "")
         }
 
         /* XXX: ermal -- for now leave it here at the moment it does not hurt. */
-        mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
+		interfaces_bring_up($if);
 
         return $vlanif;
 }
@@ -180,7 +188,7 @@ function interface_bridge_configure(&$bridge)
 		mwexec("/sbin/ifconfig {$realif} mtu {$smallermtu}");
 		if(!$realif) 
 			log_error("realif not defined in interfaces bridge - up");
-		mwexec("/sbin/ifconfig {$realif} up");
+		interfaces_bring_up($realif);
 		mwexec("/sbin/ifconfig {$bridgeif} addm {$realif}");	
 	}
 
@@ -285,7 +293,7 @@ function interface_bridge_configure(&$bridge)
 	}
 
 	if($bridgeif)
-		mwexec("/sbin/ifconfig {$bridgeif} up");
+		interfaces_bring_up($bridgeif);	
 	else 
 		log_error("bridgeif not defined -- could not bring interface up");
 
@@ -352,13 +360,13 @@ function interface_lagg_configure(&$lagg)
 		/* make sure the parent interface is up */
 		mwexec("/sbin/ifconfig {$realif} mtu {$smallermtu}");
 		if($realif)
-			mwexec("/sbin/ifconfig {$realif} up");
+			interfaces_bring_up($realif);
 		else 
 			log_error("could not bring realif up -- foreach(memebers)");
 		mwexec("/sbin/ifconfig {laggif} laggport {$realif}");
 	}
-
-	mwexec("/sbin/ifconfig {$laggif} up");
+	
+	interfaces_bring_up($laggif);
 
 	return $laggif;
 }
@@ -390,7 +398,7 @@ function interface_gre_configure(&$gre)
 	$realifip = get_interface_ip($gre['if']);
 
 	/* make sure the parent interface is up */
-	mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " up");
+	interfaces_bring_up($realif);
 
 	if ($g['booting'] || !(empty($gre['greif']))) {
 		mwexec("/sbin/ifconfig {$gre['greif']} destroy");
@@ -411,7 +419,7 @@ function interface_gre_configure(&$gre)
 		mwexec("/sbin/ifconfig {$greif} link2");
 
 	if($greif)
-		mwexec("/sbin/ifconfig {$greif} up");
+		interfaces_bring_up($greif);
 	else 
 		log_error("Could not bring greif up -- variable not defined.");
 
@@ -449,7 +457,7 @@ function interface_gif_configure(&$gif)
 
         /* make sure the parent interface is up */
 		if($realif)
-        	mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " up");
+			interfaces_bring_up($realif);
 		else 
 			log_error("could not bring realif up -- variable not defined -- interface_gif_configure()");
 
@@ -468,7 +476,7 @@ function interface_gif_configure(&$gif)
         if (isset($gif['link1']) && $gif['link1'])
                 mwexec("/sbin/ifconfig {$gifif} link1");
 		if($gifif)
-        	mwexec("/sbin/ifconfig {$gifif} up");
+			interfaces_bring_up($gifif);
 		else
 		 	log_error("could not bring gifif up -- variable not defined");
         mwexec("/sbin/route add {$gif['remote-addr']}/{$gif['tunnel-remote-net']} {$realifip}");
@@ -1326,7 +1334,7 @@ function interface_configure($interface = "wan")
 				file_put_contents("/tmp/{$realif}_router", $wancfg['gateway']);
 	}
 	if($wancfg['if'])
-		mwexec("/sbin/ifconfig {$wancfg['if']} up");
+		interfaces_bring_up($wancfg['if']);
 	else 
 		log_error("Could not bring wancfg['if'] up -- variable not defined in interface_configure()");
 	
@@ -1389,7 +1397,7 @@ function interface_carpdev_dhcp_configure($interface = "wan")
 	$wanif = $wancfg['if'];
 	/* bring wan interface up before starting dhclient */
 	if($wanif)
-		mwexec("/sbin/ifconfig {$wanif} up");
+		interfaces_bring_up($wanif);
 	else 
 		log_error("Could not bring wanif up in terface_carpdev_dhcp_configure()");
 
@@ -1450,8 +1458,9 @@ EOD;
 
 	/* bring wan interface up before starting dhclient */
 	if($realwanif)
-		mwexec("/sbin/ifconfig {$realwanif} up");
-	log_error("Could not bring realwanif up in interface_dhcp_configure()");
+		interfaces_bring_up($realwanif);
+	else 
+		log_error("Could not bring realwanif up in interface_dhcp_configure()");
 
 	/* fire up dhclient */
 	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} >/tmp/{$wanif}_output >/tmp/{$wanif}_error_output");
@@ -1608,7 +1617,7 @@ EOD;
 
 		/* Bring the parent interface up */
 		if($wancfg['if'])
-			mwexec("/sbin/ifconfig {$wancfg['if']} up");
+			interfaces_bring_up($wancfg['if']);
 		else 
 			log_error("Could not bring wancfg['if'] up in interface_pppoe_configure()");
 
@@ -1616,7 +1625,7 @@ EOD;
 		mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pppoe_{$interface}.pid pppoeclient");
 	}
 
-        /* sleep until wan is up - or 30 seconds, whichever comes first */
+	/* sleep until wan is up - or 30 seconds, whichever comes first */
 	for ($count = 0; $count < 30; $count++) {
 		if(file_exists("{$g['tmp_path']}/{$interface}up")) {
 			break;

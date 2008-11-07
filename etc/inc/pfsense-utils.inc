@@ -909,7 +909,10 @@ function enable_hardware_offloading($interface) {
 
 	if($config['system']['disablechecksumoffloading'])
 		return;
-
+	/* skip vlans for checksumming and polling */
+	if(stristr($interface, "vlan")) {
+		return;
+	}
 	if(stristr($options, "txcsum") == true)
 	    mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
 	if(stristr($options, "rxcsum") == true)

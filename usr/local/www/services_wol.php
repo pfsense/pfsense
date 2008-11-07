@@ -116,7 +116,7 @@ include("head.inc");
                       <?php 
 						$interfaces = get_configured_interface_with_descr();
 					  	foreach ($interfaces as $iface => $ifacename): ?>
-                      	<option value="<?=$iface;?>" <?php if (!link_int_to_bridge_interface($iface) && $iface == $if) echo "selected"; ?>>
+                      	<option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $iface == $if) echo "selected"; ?>>
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>

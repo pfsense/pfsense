@@ -73,7 +73,7 @@ $iflist = array("lan" => "LAN");
 $ifdescrs = get_configured_interface_list(true);
 foreach ($ifdescrs as $if) {
 	$oc = $config['interfaces'][$if];
-	if ($oc['if'] && (!link_int_to_bridge_interface($if)))
+	if ($oc['if'] && (!link_interface_to_bridge($if)))
 		$iflist[$if] = $if;
 }
 $show_dhcprelay = false;

@@ -100,7 +100,7 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		/* make sure no interfaces are bridged */
-		if (link_int_to_bridge_interface($pconfig['cinterface'])) 
+		if (link_interface_to_bridge($pconfig['cinterface'])) 
 			$input_errors[] = "The captive portal cannot be used when one or more interfaces are bridged.";
 
 		if ($_POST['httpslogin_enable']) {

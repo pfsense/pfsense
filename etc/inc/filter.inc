@@ -429,7 +429,7 @@ function generate_optcfg_array()
 		$oic['alias-subnet'] = $oc['alias-subnet'];
 		$oic['gateway'] = $oc['gateway'];
 		$oic['spoofcheck'] = "yes";
-		$oic['bridge'] = link_int_to_bridge_interface($if);
+		$oic['bridge'] = link_interface_to_bridge($if);
 
 		$FilterIflist[$if] = $oic;
 	}

@@ -389,7 +389,7 @@ function services_dhcrelay_configure() {
 			if (isset($dhcrelayifconf['enable']) &&
 				(($dhcrelayif == "lan") ||
 				(isset($config['interfaces'][$dhcrelayif]['enable']) &&
-				$config['interfaces'][$dhcrelayif]['if'] && (!link_int_to_bridge_interface($dhcrelayif)))))
+				$config['interfaces'][$dhcrelayif]['if'] && (!link_interface_to_bridge($dhcrelayif)))))
 				$dhcrelayenable = true;
 		}
 	}
@@ -410,7 +410,7 @@ function services_dhcrelay_configure() {
 		if (!isset($dhcrelayifconf['enable']) ||
 			(($dhcrelayif != "lan") &&
 			(!isset($ifcfg['enable']) || !$ifcfg['if'] || 
-			link_int_to_bridge_interface($dhcrelayif))))
+			link_interface_to_bridge($dhcrelayif))))
 			continue;
 
 		$dhcrelayifs[] = $ifcfg['if'];

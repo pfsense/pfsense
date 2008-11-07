@@ -1321,7 +1321,7 @@ function interface_configure($interface = "wan")
 
 	mwexec("/sbin/ifconfig {$wancfg['if']} up");
 	
-	$bridgeif = link_int_to_bridge_interface($interface);
+	$bridgeif = link_interface_to_bridge($interface);
 	if (!empty($bridgeif))
 		mwexec("/sbin/ifconfig {$bridgeif} addm {$realif}");
 

@@ -196,7 +196,7 @@ if ($_POST['apply']) {
 if ($_GET['act'] == "del") {
 	$id = $_GET['id'];
 
-	if (link_int_to_bridge_interface($id))
+	if (link_interface_to_bridge($id))
 		$input_errors[] = "The interface is part of a bridge. Please remove it from the bridge to continue";
 	else {
 		unset($config['interfaces'][$id]['enable']);

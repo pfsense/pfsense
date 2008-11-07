@@ -1223,21 +1223,39 @@ function find_number_of_created_carp_interfaces($flush = false) {
 	return $carp_interface_count_cache;
 }
 
-/****f* pfsense-utils/link_int_to_bridge_interface
+/****f* pfsense-utils/link_interface_to_bridge
  * NAME
- *   link_int_to_bridge_interface - Finds out a bridge group for an interface
+ *   link_interface_to_bridge - Finds out a bridge group for an interface
  * INPUTS
  *   $ip
  * RESULT
  *   bridge[0-99]
  ******/
-function link_int_to_bridge_interface($int) {
+function link_interface_to_bridge($int) {
 	global $config;
 	
 	if (is_array($config['bridges']['bridged']))
 		foreach ($config['bridges']['bridged'] as $bridge) 
 			if(stristr($bridge['members'], "{$int}")) 
 				return "{$bridge['bridgeif']}";
+}
+
+function link_interface_to_gre($interface) {
+        global $config;
+
+        if (is_array($config['gres']['gre']))
+                foreach ($config['gres']['gre'] as $gre)
+                        if($gre['if'] == $interface))
+                                return "{$gre['greif']}";
+}
+
+function link_interface_to_gif($interface) {
+        global $config;
+
+        if (is_array($config['gifs']['gif']))
+                foreach ($config['gifs']['gif'] as $gif)
+                        if($gif['if'] == $interface))
+                                return "{$gif['gifif']}";
 }
 
 function link_carp_interface_to_parent($interface) {
@@ -3439,9 +3457,9 @@ function is_dhcp_server_enabled()
 		return false;
 
 	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-		if (isset ($dhcpifconf['enable']) && (($dhcpif == "lan") || (isset ($config['interfaces'][$dhcpif]['enable']) && $config['interfaces'][$dhcpif]['if'] && (!link_int_to_bridge_interface($dhcpif)))))
+		if (isset ($dhcpifconf['enable']) && (($dhcpif == "lan") || (isset ($config['interfaces'][$dhcpif]['enable']) && $config['interfaces'][$dhcpif]['if'] && (!link_interface_to_bridge($dhcpif)))))
 			$dhcpdenable = true;
-		if (isset ($dhcpifconf['enable']) && (($dhcpif == "wan") || (isset ($config['interfaces'][$dhcpif]['enable']) && $config['interfaces'][$dhcpif]['if'] && (!link_int_to_bridge_interface($dhcpif)))))
+		if (isset ($dhcpifconf['enable']) && (($dhcpif == "wan") || (isset ($config['interfaces'][$dhcpif]['enable']) && $config['interfaces'][$dhcpif]['if'] && (!link_interface_to_bridge($dhcpif)))))
 			$dhcpdenable = true;
 	}
 
@@ -3658,7 +3676,7 @@ function get_interface_info($ifdescr) {
 	}
 
 	$bridge = "";
-	$bridge = link_int_to_bridge_interface($ifdescr);
+	$bridge = link_interface_to_bridge($ifdescr);
 	if($bridge) {
 		$bridge_text = `/sbin/ifconfig {$bridge}`;
 		if(stristr($bridge_text, "blocking") <> false) {

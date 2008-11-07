@@ -117,7 +117,7 @@ if(is_array($dhcrelaycfg)) {
 		if (isset($dhcrelayifconf['enable']) &&
 			(($dhcrelayif == "lan") ||
 			(isset($config['interfaces'][$dhcrelayif]['enable']) &&
-			$config['interfaces'][$dhcrelayif]['if'] && (!link_int_to_bridge_interface($dhcrelayif)))))
+			$config['interfaces'][$dhcrelayif]['if'] && (!link_interface_to_bridge($dhcrelayif)))))
 			$dhcrelay_enabled = true;
 	}
 }

@@ -1221,33 +1221,9 @@ function interface_configure($interface = "wan")
 
 	$realif = get_real_interface($interface);
 
-	if(file_exists("/tmp/{$realif}_router")) 
-		unlink("/tmp/{$realif}_router");
-
 	if(!$g['booting']) {
-		mute_kernel_msgs();
+		interface_bring_down($interface);
 
-		/* find dhclient process for wan and kill it */
-		killbypid(find_dhclient_process($interface));
-
-		/* remove wanup file if it exists */
-		unlink_if_exists("{$g['tmp_path']}/{$interface}up");
-
-		/* kill PPPoE client (mpd) */
-		killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");
-		killbypid("{$g['varrun_path']}/pptp_{$interface}.pid");
-
-		/* wait for processes to die */
-		sleep(3);
-
-		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
-		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
-		unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
-		unlink_if_exists("{$g['varetc_path']}/nameservers.conf");
-	}
-
-	if (!$g['booting']) {
 		/* remove all addresses first */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
 		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
@@ -1285,6 +1261,9 @@ function interface_configure($interface = "wan")
 		mwexec($cmd);
 	}
 
+	/* invalidate interface cache */
+        get_interface_arr(true);
+
 	switch ($wancfg['ipaddr']) {
 
 		case 'carpdev-dhcp':
@@ -1321,13 +1300,24 @@ function interface_configure($interface = "wan")
 
 	mwexec("/sbin/ifconfig {$wancfg['if']} up");
 	
-	$bridgeif = link_interface_to_bridge($interface);
-	if (!empty($bridgeif))
-		mwexec("/sbin/ifconfig {$bridgeif} addm {$realif}");
-
-
-	/* XXX: Shouldn't the caller do this?! */
 	if (!$g['booting']) {
+		if (link_interface_to_gre($interface)) {
+			foreach ($config['gres']['gre'] as $gre)
+				if ($gre['if'] == $interface)
+					interface_gre_configure($gre);
+		}
+		if (link_interface_to_gif($interface)) {
+                	foreach ($config['gifs']['gif'] as $gif)
+				if ($gif['if'] == $interface)
+                        		interface_gre_configure($gif);
+        	}
+		if (link_interface_to_bridge($interface)) {
+			foreach ($config['bridges']['bridged'] as $bridge)
+				if (stristr($bridge['members'], "{$interface}"))
+					interface_bridge_configure($bridge);
+		}
+
+		/* XXX: Shouldn't the caller do this?! */
 		/* XXX */
 		if ($interface = "lan")
 			/* make new hosts file */

@@ -291,11 +291,11 @@ function sourcesel_change() {
             <form action="firewall_nat_out_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="1">
 	        <tr>
-                  <td width="22%" valign="top" class="vncellreq">No nat (NOT)</td>
+                  <td width="22%" valign="top" class="vncellreq">No NAT (NOT)</td>
                   <td width="78%" class="vtable">
 			<input type="checkbox" name="nonat"<?php if(isset($pconfig['nonat'])) echo " CHECKED"; ?>>
-                     <span class="vexpl">Enabling this option will disable natting for the item and stop processing outgoing nat rules.
-		     <br>Hint: in most cases, you'll not use this option unless you know what you're doing.</span></td>
+                     <span class="vexpl">Enabling this option will disable NATing for the item and stop processing outgoing NAT rules.
+		     <br>Hint: this option is rarely needed, don't use this unless you know what you're doing.</span></td>
                 </tr>
 	        <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>

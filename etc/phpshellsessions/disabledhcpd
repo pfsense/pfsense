@@ -1,0 +1,12 @@
+global $config;
+
+$config = parse_config(true);
+
+unset($config['dhcpd']);
+
+echo "Disabling DHCP Server on all interfaces...";
+
+write_config("pfSsh.php disabled dhcp on all interfaces");
+
+services_dhcpd_configure();
+

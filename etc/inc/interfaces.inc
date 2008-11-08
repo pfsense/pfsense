@@ -581,7 +581,7 @@ function interfaces_configure()
 		captiveportal_configure();
 
 		/* set the reload filter dity flag */
-		touch("{$g['tmp_path']}/filter_dirty");
+		filter_configure();
 	}
 
 	return 0;
@@ -1366,7 +1366,7 @@ function interface_configure($interface = "wan")
 		system_routing_configure();
 
 		/* set the reload filter dity flag */
-		touch("{$g['tmp_path']}/filter_dirty");
+		filter_configure();
 
 		/* reload ipsec tunnels */
 		vpn_ipsec_configure();

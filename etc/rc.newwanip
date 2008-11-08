@@ -101,7 +101,7 @@ touch("/tmp/update_dyndns");
 
 /* signal filter reload */
 unlink_if_exists("/tmp/config.cache");
-touch("/tmp/filter_dirty");
+filter_configure();
 
 /* reload graphing functions */
 enable_rrd_graphing();

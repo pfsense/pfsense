@@ -836,7 +836,7 @@ EOD;
 
 	if (!$g['booting']) {
 		/* reload the filter */
-		touch("{$g["tmp_path"]}/filter_dirty");
+		filter_configure();
 	}
 
 	if ($g['booting'])
@@ -1284,7 +1284,7 @@ EOD;
 			break;
 	}
 
-	touch("{$g["tmp_path"]}/filter_dirty");
+	filter_configure();
 
 	if ($g['booting'])
 		echo "done\n";
@@ -1471,7 +1471,7 @@ EOD;
 			break;
 	}
 
-	touch("{$g["tmp_path"]}/filter_dirty");
+	filter_configure();
 
 	if ($g['booting'])
 		echo "done\n";

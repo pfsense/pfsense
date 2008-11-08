@@ -429,7 +429,7 @@ function services_dhcrelay_configure() {
 
 	if (!$g['booting']) {
 		/* set the reload filter dity flag */
-		touch("{$g['tmp_path']}/filter_dirty");
+		filter_configure();
 	}
 
 	return 0;

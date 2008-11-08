@@ -863,8 +863,11 @@ function get_dns_servers() {
 *   null
 ******/
 function log_error($error) {
+	global $g;
 	$page = $_SERVER['SCRIPT_NAME'];
 	syslog(LOG_WARNING, "$page: $error");
+	if ($g['debug'])
+		syslog(LOG_WARNING, var_dump(debug_backtrace()));
 	return;
 }
 

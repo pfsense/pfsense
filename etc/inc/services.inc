@@ -43,6 +43,10 @@ function services_dhcpd_configure() {
 		echo "services_dhcpd_configure($if) being called $mt\n";
 	}
 
+	/* DHCP enabled on any interfaces? */
+	if (!is_dhcp_server_enabled())
+		return 0;
+
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
 	if($config['installedpackages']['olsrd'])
 		foreach($config['installedpackages']['olsrd']['config'] as $olsrd)
@@ -75,24 +79,8 @@ function services_dhcpd_configure() {
 
 	$syscfg = $config['system'];
 	$dhcpdcfg = $config['dhcpd'];
-
-
 	$Iflist = get_configured_interface_list();
-
-	/* DHCP enabled on any interfaces? */
-	$dhcpdenable = false;
-	if(is_array($dhcpdcfg))
-		foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
-			if (isset($dhcpifconf['enable']) &&
-				isset($Iflist[$dhcpif])) {
-				$dhcpdenable = true;
-				break;
-			}
-		}
-
-	if (!$dhcpdenable)
-		return 0;
-
+		
 	if ($g['booting'])
 		echo "Starting DHCP service...";
 	else

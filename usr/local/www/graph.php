@@ -36,10 +36,7 @@
 ##|*MATCH=graph.php*
 ##|-PRIV
 
-if(!$_SESSION['Username']) {
-	Header("Location: /");
-	exit;
-}
+require("guiconfig.inc");
 
 header("Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
 header("Expires: " . gmdate( "D, j M Y H:i:s", time() ) . " GMT" );

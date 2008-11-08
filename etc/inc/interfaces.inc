@@ -43,6 +43,7 @@ require_once("globals.inc");
 function interfaces_bring_up($interface) {
 	if(!$interface) {
 		log_error("bring_interface_up was called but no variable defined.");
+		log_error( "Backtrace: " . var_dump(debug_backtrace()) );
 		return;
 	}
 	mwexec("/sbin/ifconfig " . escapeshellarg($interface) . " up");

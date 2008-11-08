@@ -3445,18 +3445,20 @@ function get_interface_gateway($interface) {
 /* DHCP enabled on any interfaces? */
 function is_dhcp_server_enabled() 
 {
-	global $config, $g;
+	global $config;
 
 	$dhcpdenable = false;
 	
 	if (!is_array($config['dhcpd']))
 		return false;
 
+	$Iflist = get_configured_interface_list();
+
 	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-		if (isset ($dhcpifconf['enable']) && (($dhcpif == "lan") || (isset ($config['interfaces'][$dhcpif]['enable']) && $config['interfaces'][$dhcpif]['if'] && (!link_interface_to_bridge($dhcpif)))))
+		if (isset($dhcpifconf['enable']) && isset($Iflist[$dhcpif])) {
 			$dhcpdenable = true;
-		if (isset ($dhcpifconf['enable']) && (($dhcpif == "wan") || (isset ($config['interfaces'][$dhcpif]['enable']) && $config['interfaces'][$dhcpif]['if'] && (!link_interface_to_bridge($dhcpif)))))
-			$dhcpdenable = true;
+			break;
+		}
 	}
 
 	return $dhcpdenable;

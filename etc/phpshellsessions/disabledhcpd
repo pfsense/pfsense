@@ -10,3 +10,4 @@ write_config("pfSsh.php disabled dhcp on all interfaces");
 
 services_dhcpd_configure();
 
+echo "done.\n";

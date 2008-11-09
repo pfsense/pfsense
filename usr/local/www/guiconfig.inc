@@ -302,6 +302,11 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
 		eval($toeval);
 	}
+	
+	if(file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
+		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/infobox.php");
+		eval($toeval);
+	}	
 		
 	echo <<<EOFnp
 	<table class='infobox'>

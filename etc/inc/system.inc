@@ -936,14 +936,11 @@ function system_ntp_configure() {
 	/* if openntpd is running, kill it */
 	while(is_process_running("ntpd")) {
 		mwexec("/usr/bin/killall ntpd", true);
-		sleep(3);
 	}
 
 	/* if /var/empty does not exist, create it */
 	if(!is_dir("/var/empty"))
 		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
-
-	sleep(1);
 
 	if($g['booting'])
 		return;

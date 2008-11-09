@@ -73,18 +73,19 @@ $attribs['switch_scale']='fill="#FF0000" font-family="Tahoma, Verdana, Arial, He
 $attribs['error']='fill="blue" font-family="Arial" font-size="4"';
 $attribs['collect_initial']='fill="gray" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4"';
 
-/* check for custom theme colors */
-$fetch_link = "ifstats.php?if={$ifnum}";
-if(file_exists("/themes/{$g['theme']}/graph.php")) {
-	$themetxt = file_get_contents("/themes/{$g['theme']}/graph.php");
-	eval($themetxt);
-} 
-
 //Error text if we cannot fetch data : depends on which method is used
 $error_text = "Cannot get data about interface $ifnum";
 
 $height=100;            //SVG internal height : do not modify
 $width=200;             //SVG internal width : do not modify
+
+$fetch_link = "ifstats.php?if={$ifnum}";
+
+/* check for custom theme colors */
+if(file_exists("/usr/local/www/themes/{$g['theme']}/graph.php")) {
+	$themetxt = file_get_contents("/usr/local/www/themes/{$g['theme']}/graph.php");
+	eval($themetxt);
+} 
 
 /********* Graph DATA **************/
 print('<?xml version="1.0" encoding="iso-8859-1"?>' . "\n");?>

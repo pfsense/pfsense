@@ -85,6 +85,10 @@ add_new_address() {
         echo $new_routers > /tmp/${interface}_router
 		cp /var/db/${interface}_ip /tmp/rc.newwanip_oldip 2>/dev/null
 		echo $new_ip_address > /var/db/${interface}_ip
+
+		echo $interface > /tmp/rc.newwanip
+		echo $new_ip_address >>  /tmp/rc.newwanip
+				
 }
 
 delete_old_alias() {
@@ -200,9 +204,6 @@ add_new_resolv_conf() {
 
 # Notify rc.newwanip of changes to an interface
 notify_rc_newwanip() {
-	$LOGGER "notify_rc_newwanip()"
-	echo $interface > /tmp/rc.newwanip
-	echo $old_ip_address > /tmp/rc.newwanip_oldip
 }
 
 #

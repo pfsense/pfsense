@@ -1,3 +1,4 @@
+global $config;
 $config = parse_config(true);
 echo "Adding allow all rule...\n";
 $filterent = array();

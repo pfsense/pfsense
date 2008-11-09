@@ -538,7 +538,7 @@ function interfaces_carp_bring_up_final() {
 		if($debugging)
 			echo "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password . "\n";
 		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password);
-		sleep(1);
+		usleep(100);
 		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
 		$carp_instances_counter++;
 	}

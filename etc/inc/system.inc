@@ -894,9 +894,6 @@ function system_ntp_configure() {
 
 	$syscfg = $config['system'];
 
-	if (!$config['installedpackages']['openntpd'])
-		return;
-
 	/* open configuration for wrting or bail */
 	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
 	if(!$fd) {

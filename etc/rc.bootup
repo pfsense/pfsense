@@ -79,8 +79,8 @@
 
 	/*
 	 *  Determine if we need to throw a interface exception
-     	 *  and ask the user to reassign interfaces.  This will
-     	 *  avoid a reboot and thats a good thing.
+	 *  and ask the user to reassign interfaces.  This will
+	 *  avoid a reboot and thats a good thing.
 	 */
 	unmute_kernel_msgs();
 	while(is_interface_mismatch() == true) {
@@ -141,16 +141,22 @@
 	system_resolvconf_generate();
 
 	/* start pflog */
+	echo "Starting PFLOG...";
 	filter_pflog_start();
+	echo "done.\n";
 
 	/* start load balancer daemon */
 	relayd_configure();
 
  	/* reconfigure our gateway monitor */
+	echo "Setting up gateway monitors...";
  	setup_gateways_monitor();
+	echo "done.\n";
 
 	/* start OpenVPN server & clients */
+	echo "Syncing OpenVPN settings...";
 	openvpn_resync_all();
+	echo "done.\n";
 
 	if($avail > 0 and $avail < 65) {
 		echo "System has less than 65 megabytes of ram {$avail}.  Delaying webConfigurator startup.\n";
@@ -162,8 +168,10 @@
 	}
 
 	/* configure cron service */
+	echo "Configuring CRON...";
 	configure_cron();
-
+	echo "done.\n";
+	
 	/* set up static routes */
 	system_routing_configure();
 
@@ -236,8 +244,10 @@
 	filter_configure_sync();
 
 	/* load graphing functions */
+	echo "Enabling RRD graphing subsystem...";
 	enable_rrd_graphing();
-
+	echo "done\n";
+	
 	/* start DHCP service */
 	services_dhcpd_configure();
 
@@ -252,8 +262,10 @@
 	enable_watchdog();
 
 	/* if <system><afterbootupshellcmd> exists, execute the command */
-	if($config['system']['afterbootupshellcmd'] <> "")
+	if($config['system']['afterbootupshellcmd'] <> "") {
+		echo "Running afterbootupshellcmd {$config['system']['afterbootupshellcmd']}\n";
 		mwexec($config['system']['afterbootupshellcmd']);
+	}
 
 	if($avail < 126) {
 		require_once("/etc/inc/notices.inc");

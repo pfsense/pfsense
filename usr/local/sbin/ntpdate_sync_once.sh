@@ -10,4 +10,4 @@ while [ "$NOTSYNCED" = "true" ]; do
 done
 
 # Launch -- we have net.
-/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf
+/usr/local/sbin/ntpd -s -f /var/etc/ntpd.conf

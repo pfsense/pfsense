@@ -168,9 +168,6 @@
 	/* generate resolv.conf */
 	system_resolvconf_generate();
 
-	/* check if the wan interface is up, this might delay upto 10 seconds */
-	is_wan_interface_up("wan");
-
 	/* start the NTP client */
 	echo "Starting OpenNTP time client...";
 	system_ntp_configure();

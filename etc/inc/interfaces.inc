@@ -517,7 +517,7 @@ function interfaces_carp_bring_up_final() {
 	$supress = intval(`/sbin/sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
 	if($g['booting']) {
 		while($supress > 0) {
-			sleep(2);
+			sleep(1);
 			$supress = intval(`/sbin/sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
 			if($counter > 15)
 				$supress = 0;

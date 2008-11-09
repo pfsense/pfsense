@@ -171,6 +171,11 @@
 	/* check if the wan interface is up, this might delay upto 10 seconds */
 	is_wan_interface_up("wan");
 
+	/* start the NTP client */
+	echo "Starting OpenNTP time client...";
+	system_ntp_configure();
+	echo "done.\n";
+
 	/* Launch on bootup and keep trying to sync.  Exit once time/date has been sync'd. */
 	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 
@@ -294,11 +299,6 @@
 
 	/* enable watchdog if supported */
 	enable_watchdog();
-
-	/* start the NTP client */
-	echo "Starting OpenNTP time client...";
-	system_ntp_configure();
-	echo "done.\n";
 
 	/* if <system><afterbootupshellcmd> exists, execute the command */
 	if($config['system']['afterbootupshellcmd'] <> "")

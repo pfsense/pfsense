@@ -945,6 +945,9 @@ function system_ntp_configure() {
 
 	sleep(1);
 
+	if($g['booting'])
+		return;
+	
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
 	exec("/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf");
 

@@ -8,3 +8,6 @@ while [ "$NOTSYNCED" = "true" ]; do
 		NOTSYNCED="false"
 	fi
 done
+
+# Launch -- we have net.
+/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf

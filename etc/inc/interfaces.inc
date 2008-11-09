@@ -524,7 +524,6 @@ function interfaces_carp_bring_up_final() {
 			$counter++;
 			echo ".";
 		}
-		echo " done.\n";
 	}
 	foreach ($viparr as $vip) {
 		/* bail if this isn't a carp VIP */

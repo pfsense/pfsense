@@ -37,6 +37,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require("globals.inc");
 
 header("Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
 header("Expires: " . gmdate( "D, j M Y H:i:s", time() ) . " GMT" );

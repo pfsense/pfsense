@@ -77,7 +77,7 @@ $attribs['collect_initial']='fill="gray" font-family="Tahoma, Verdana, Arial, He
 $fetch_link = "ifstats.php?if={$ifnum}";
 if(file_exists("/themes/{$g['theme']}/graph.php")) {
 	$themetxt = file_get_contents("/themes/{$g['theme']}/graph.php");
-	eveal($themetxt);
+	eval($themetxt);
 } 
 
 //Error text if we cannot fetch data : depends on which method is used

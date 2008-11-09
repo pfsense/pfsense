@@ -65,6 +65,9 @@ if ($_POST) {
 	for ($i=0; isset($config['load_balancer']['virtual_server'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['virtual_server'][$i]['name']) && ($i != $id))
 			$input_errors[] = "This virtual server name has already been used.  Virtual server names must be unique.";
+                        
+        if (strstr($_POST['name'], '/'))
+                $input_errors[] = "The virtual server name cannot contain the / character.";
 
 	if (!is_port($_POST['port']))
 		$input_errors[] = "The port must be an integer between 1 and 65535.";

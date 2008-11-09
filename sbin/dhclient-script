@@ -83,6 +83,7 @@ add_new_address() {
 		$LOGGER "New Routers ($interface): $new_routers"
 
         echo $new_routers > /tmp/${interface}_router
+		cp /var/db/${interface}_ip /tmp/rc.newwanip_oldip 2>/dev/null
 		echo $new_ip_address > /var/db/${interface}_ip
 }
 

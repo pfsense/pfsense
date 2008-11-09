@@ -150,7 +150,12 @@ include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onLoad="enablechange();">
-<link rel="stylesheet" href="/themes/<?=$g['theme']?>/all.css" media="all" />
+<?php
+	if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) 
+		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
+	else 
+		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
+?>
 <?php if($pkg['step'][$stepid]['fields']['field'] <> "") { ?>
 <script language="JavaScript">
 <!--

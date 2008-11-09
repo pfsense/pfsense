@@ -60,7 +60,7 @@ function interfaces_vlan_configure() {
 		}
 		//Leaving it here as it was in original 1.2 code, I don't know if it's needed. aturetta.
 		/* CARP interfaces can be attached to VLAN's, too. */
-		interfaces_carp_bring_up_final();
+		interfaces_carp_configure();
 	}
 }
 

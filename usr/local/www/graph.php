@@ -36,8 +36,8 @@
 ##|*MATCH=graph.php*
 ##|-PRIV
 
-require("guiconfig.inc");
 require("globals.inc");
+require("guiconfig.inc");
 
 header("Last-Modified: " . gmdate( "D, j M Y H:i:s" ) . " GMT" );
 header("Expires: " . gmdate( "D, j M Y H:i:s", time() ) . " GMT" );

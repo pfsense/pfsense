@@ -160,7 +160,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onLoad="enablechange();">
 
 <?php
-	if(file_exists("/usr/local/www/{$g['theme']}/wizard.css")) 
+	if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) 
 		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
 	else 
 		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";

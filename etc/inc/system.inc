@@ -1047,7 +1047,6 @@ function system_ntp_configure() {
 	/* if openntpd is running, kill it */
 	while(is_process_running("ntpd")) {
 		mwexec("/usr/bin/killall ntpd", true);
-		sleep(1);
 	}
 
 	/* if /var/empty does not exist, create it */

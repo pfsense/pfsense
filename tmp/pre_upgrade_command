@@ -4,6 +4,6 @@
 PRIOR_VERSION=`uname -r | cut -d'.' -f1`
 echo $PRIOR_VERSION > /tmp/pre_upgrade_version
 
-mv /tmp/pfsense_kernel.txt /tmp/pfsense_kernel.txt
+mv /boot/kernel/pfsense_kernel.txt /tmp/pfsense_kernel.txt
 rm /boot/kernel/*
 mv /tmp/pfsense_kernel.txt

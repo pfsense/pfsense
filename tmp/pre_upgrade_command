@@ -1,5 +1,7 @@
 #!/bin/sh
 
+/etc/rc.conf_mount_rw
+
 # Record the previous version
 PRIOR_VERSION=`uname -r | cut -d'.' -f1`
 echo $PRIOR_VERSION > /tmp/pre_upgrade_version

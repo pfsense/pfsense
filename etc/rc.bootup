@@ -173,6 +173,11 @@
 	/* configure console menu */
 	system_console_configure();
 
+	/* start the NTP client */
+	echo "Starting OpenNTP time client...";
+	system_ntp_configure();
+	echo "done.\n";
+
 	/* Launch on bootup and keep trying to sync.  Exit once time/date has been sync'd. */
 	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 
@@ -245,11 +250,6 @@
 
 	/* enable watchdog if supported */
 	enable_watchdog();
-
-	/* start the NTP client */
-	echo "Starting OpenNTP time client...";
-	system_ntp_configure();
-	echo "done.\n";
 
 	/* if <system><afterbootupshellcmd> exists, execute the command */
 	if($config['system']['afterbootupshellcmd'] <> "")

@@ -2165,7 +2165,7 @@ EOD;
 			break;
 		default:
 			/* allow access to DHCP server on interfaces */
-			if (isset($config['dhcpd'][$on]['enable']) && empty($oc['bridge'])) {
+			if (isset($config['dhcpd'][$on]['enable'])) {
 				$ipfrules .= <<<EOD
 # allow access to DHCP server on {$oc['descr']}
 anchor "dhcpserver{$oc['descr']}"

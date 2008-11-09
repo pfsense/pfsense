@@ -58,9 +58,6 @@ function interfaces_vlan_configure() {
 			interface_vlan_configure($vlan['if'], $vlan['tag'], $vlan['vlanif']);
 			$i++;
 		}
-		//Leaving it here as it was in original 1.2 code, I don't know if it's needed. aturetta.
-		/* CARP interfaces can be attached to VLAN's, too. */
-		interfaces_carp_configure();
 	}
 }
 

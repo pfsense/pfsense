@@ -33,7 +33,7 @@ unlink_if_exists("/tmp/config.cache");
 
 if(!file_exists("/usr/local/bin/cvsup")) {
 	echo "Cannot find cvsup, pkg_add in progress...";
-	system("/usr/sbin/pkg_add -r cvsup-without-gui");
+	system("/usr/sbin/pkg_add -r http://files.pfsense.org/packages/7/All/cvsup-without-gui-16.1h_4.tbz");
 }
 
 if(!file_exists("/usr/bin/cvs")) {

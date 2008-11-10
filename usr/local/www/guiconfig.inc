@@ -291,7 +291,7 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	global $g;
 	
 	if(stristr($msg, "apply") == true || stristr($msg, "save") || stristr($msg, "create")) 
-		$savebutton="<td><input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\"></td>";
+		$savebutton="<td class='infoboxsave'><input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\"></td>";
 
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";

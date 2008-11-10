@@ -345,7 +345,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 }
 
 /* wrapper for exec() */
-function mwexec($command, $mute = false) {
+function mwexec($command, $mute = true) {
 
 	global $g;
 	$oarr = array();

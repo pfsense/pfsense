@@ -857,19 +857,13 @@ include("head.inc");
 				<input type="button" onClick="show_aodiv();" value="Advanced"> - Show advanced options
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
-<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
 
                                 <input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>">
-                                <br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and
-use this mark to match on other rules. It is called <b>Policy filtering</b>");?>
+                                <br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other nat/filter rules. It is called <b>Policy filtering</b>");?>
                                 </span><p>
-<?php endif; ?>
-                                <input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>"
->
-                                <br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before
-on another rule.")?>
+                                <input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
+                                <br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
                                 </span> <p>
-
 				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
 				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
 				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /

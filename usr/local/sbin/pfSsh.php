@@ -2,7 +2,7 @@
  
 <?php
 
-echo "Starting the pfSense shell system";
+echo "Starting the {$g['product_name']} shell system";
 
 echo ".";
 require_once("globals.inc");
@@ -106,7 +106,7 @@ $show_help_text = <<<EOF
 	/* to output the dhcp server configuration */
 	print_r(\$config['dhcpd']);
 
-	/* to exit the php pfSense shell */
+	/* to exit the php {$g['product_name']} shell */
 	exit
 	
 	/* to output supported wireless modes for an interface */
@@ -158,7 +158,7 @@ $pkg_interface='console';
 $shell_active = true;
 
 if($argc < 2) {
-	echo "Welcome to the pfSense php shell system\n";
+	echo "Welcome to the {$g['product_name']} php shell system\n";
 	echo "Written by Scott Ullrich (sullrich@gmail.com)\n";
 	echo "\nType \"help\" to show common usage scenarios.\n";
 	echo "\nAvailable playback commands:\n     ";
@@ -184,7 +184,7 @@ if($argv[1]=="playback" or $argv[1]=="run") {
 }
 
 while($shell_active == true) {
-	$command = readline("pfSense shell: ");
+	$command = readline("{$g['product_name']} shell: ");
 	readline_add_history($command);
     $command_split = split(" ", $command);
     $first_command = $command_split[0];	
@@ -305,6 +305,7 @@ function playback_text($playback_file_contents) {
 		}
 	}
 	eval($playback_text);
+	echo $playback_text;
 }
 
 function playback_file($playback_file) {

@@ -444,7 +444,7 @@ include("head.inc");
 				<strong>Use sticky connections</strong>
 				<br />
 				<span class="vexpl">
-				Successive connections will be redirected to the servers in a round-robin manner with connections from the same source being sent to the same web server. This \"sticky connection\" will exist as long as there are states that refer to this connection. Once the states expire, so will the sticky connection. Further connections from that host will be redirected to the next web server in the round robin.
+				Successive connections will be redirected to the servers in a round-robin manner with connections from the same source being sent to the same web server. This "sticky connection" will exist as long as there are states that refer to this connection. Once the states expire, so will the sticky connection. Further connections from that host will be redirected to the next web server in the round robin.
 				</span>
 			</td>
 		</tr>

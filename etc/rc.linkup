@@ -50,18 +50,18 @@
 			log_error("Processing {$argument1} - {$argument2}");
 			$iface = convert_real_interface_to_friendly_interface_name($argument1);
 			if($iface == "") {
-				log_error("Not a valid interface \"$iface\"");
+				//log_error("Not a valid interface \"$iface\"");
 				return;
 			}
 			if($argument2 == "") {
-				log_error("Not a valid interface action \"$argument2\"");
+				//log_error("Not a valid interface action \"$argument2\"");
 				return;
 			}
 			if($config['interfaces'][$iface]['ipaddr'] <> "dhcp" and
 				$config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
 				$config['interfaces'][$iface]['ipaddr'] <> "bigpond" and
 				$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
-				log_error("Hotplug event detected for {$argument1} but ignoring since interface is not set for DHCP");
+				//log_error("Hotplug event detected for {$argument1} but ignoring since interface is not set for DHCP");
 				exec("/usr/sbin/arp -d -i {$argument1} -a");
 			} else {
 				switch ($argument2) {

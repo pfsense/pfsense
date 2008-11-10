@@ -131,11 +131,11 @@ function slbd_configure() {
 					 *   there is a chance the monitor ip gateway will go out the link
 					 *   that is up.
 					 */
-					mwexec("/sbin/route delete -host {$lbsvr_split[1]} 2>&1");
-					mwexec("/sbin/route add -host {$lbsvr_split[1]} 127.0.0.1 2>&1");
+					mwexec("/sbin/route delete -host {$lbsvr_split[1]} 2>&1", true);
+					mwexec("/sbin/route add -host {$lbsvr_split[1]} 127.0.0.1 2>&1", true);
 				} else {
-					mwexec("/sbin/route delete -host {$lbsvr_split[1]} 2>&1");
-					mwexec("/sbin/route add -host {$lbsvr_split[1]} {$gateway} 2>&1");					
+					mwexec("/sbin/route delete -host {$lbsvr_split[1]} 2>&1", true);
+					mwexec("/sbin/route add -host {$lbsvr_split[1]} {$gateway} 2>&1", true);
 				}
 			}
 			$slbdconf .= "\t:service-port=666:\\\n";

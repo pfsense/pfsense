@@ -76,11 +76,27 @@ function handle_argument_group($argument1, $argument2) {
 if ($g['booting'] == true) {
 	/* ignore all linkup events */
 } else {
-	for ($i = 1; $i <= $_SERVER['argc']; $i++) {
-		$argspassed .= $_SERVER['argv'][$i] . " ";
-		$argument1 = $_SERVER['argv'][$i];
-		$argument2 = $_SERVER['argv'][$i+1];
-		handle_argument_group($argument1, $argument2);
+	foreach($_SERVER['argv'] as $argv) {
+		switch($argv) {
+			case "start":
+				$action = "start";
+				break;
+			case "stop":
+				$action = "stop";
+				break;
+			case "/etc/rc.linkup":
+				break;
+			default:
+				$interface = convert_real_interface_to_friendly_interface_name($argv);
+				if($interface == "") {
+					unset($interface);
+				}
+				break;
+		}
+		if(($action) && ($interface)) {
+			handle_argument_group($interface, $action);
+			unset ($action, $interface);
+		}
 	}
 }
 ?>

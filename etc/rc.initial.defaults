@@ -53,7 +53,7 @@ EOD;
 
 		echo <<<EOD
 
-pfSense is rebooting now.
+{$g['product_name']} is rebooting now.
 
 EOD;
 

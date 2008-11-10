@@ -138,7 +138,7 @@
 
 	if (!file_exists("$sshConfigDir/ssh_host_key") or file_exists("/etc/keys_generating")) {
 		/* remove previous keys and regen later */
-		file_notice("SSH", "pfSense has started creating your SSH keys.  SSH Startup will be delayed.  Please note that reloading the filter rules and changes will be delayed until this operation is completed.", "SSH KeyGen", "");
+		file_notice("SSH", "{$g['product_name']} has started creating your SSH keys.  SSH Startup will be delayed.  Please note that reloading the filter rules and changes will be delayed until this operation is completed.", "SSH KeyGen", "");
 		conf_mount_rw();
 		mwexec("rm /etc/ssh/ssh_host_*");
 		touch("/etc/keys_generating");
@@ -149,7 +149,7 @@
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
 		unlink("/etc/keys_generating");
 		unlink("/tmp/keys_generating");
-		file_notice("SSH", "pfSense has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
+		file_notice("SSH", "{$g['product_name']} has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
 		echo "Starting SSH... ";
 	}
 

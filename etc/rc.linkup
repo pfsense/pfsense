@@ -37,17 +37,6 @@ require_once("functions.inc");
 function handle_argument_group($argument1, $argument2) {
 	global $config;	
 
-	log_error("Processing {$argument1} - {$argument2}");
-	$iface = convert_real_interface_to_friendly_interface_name($argument1);
-	if ($iface == "") {
-		log_error("Not a valid interface {$argument1} -> \"$iface\"");
-		return;
-	}
-	if($argument2 == "") {
-		log_error("Not a valid interface action \"$argument2\"");
-		return;
-	}
-	
 	$ipaddr = $config['interfaces'][$iface]['ipaddr']; 
 	if (is_ipaddr($ipaddr)) {
 		log_error("Hotplug event detected for {$argument1} but ignoring since interface is configured with static ip({$ipaddr})");

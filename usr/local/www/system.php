@@ -84,11 +84,12 @@ $timezonelist = array_filter($timezonelist, 'is_timezone');
 sort($timezonelist);
 
 $multiwan = false;
-foreach($config['interfaces'] as $int) 
-	if($int['gateway']) 
+$interfaces = get_configured_interface_list();
+foreach($interfaces as $interface) {
+	if(interface_has_gateway($interface)) {
 		$multiwan = true;
-
-$ints = get_interface_list();
+	}
+}
 
 if ($_POST) {
 
@@ -257,23 +258,31 @@ include("head.inc");
 								<td>
 									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="20" value="<?php echo $pconfig['dns'.$dnscounter];?>">
 								</td>
-								<?php if ($multiwan): ?>
 								<td>
 									<select name=<?=$fldname;?>>
 										<?php
-											foreach($ints as $int):
-												$friendly = $int['friendly'];
-												if(!$config['interfaces'][$friendly]['gateway'])
-													continue;
+										if ($multiwan) {
+											$interface = "none";
+											if($pconfig['dns{$dnscounter}gwint'] == $interface) {
+												$selected = "$selected";
+											} else {
 												$selected = "";
-												if($pconfig['dns{$dnscounter}gwint'] == $int)
-													$selected = " SELECTED";
+											}
+											print "<option value='$interface' $selected >". ucwords($interface) ."</option>\n";
+											foreach($interfaces as $interface) {
+												if(interface_has_gateway($interface)) {
+													if($pconfig['dns{$dnscounter}gwint'] == $interface) {
+														$selected = "$selected";
+													} else {
+														$selected = "";
+													}
+													print "<option value='$interface' $selected >". ucwords($interface) ."</option>\n";
+												}
+											}
+										}
 										?>
-											<option <?=$selected;?>><?=$friendly;?></option>
-										<?php endforeach; ?>
 									</select>
 								</td>
-								<?php endif; ?>
 							</tr>
 							<?php endfor; ?>
 						</table>

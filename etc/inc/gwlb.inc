@@ -31,6 +31,7 @@
 require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
+require_once("globals.inc");
 
 /* add static routes for monitor IP addresse
  * creates monitoring configuration file

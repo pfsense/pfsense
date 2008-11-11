@@ -101,8 +101,19 @@
 	## accessed since initial install show this stuff.
 	if(file_exists('/conf/trigger_initial_wizard')) {
 
-		$pgtitle = array("{$g['product_name']} first time setup");
-		include('head.inc');
+
+		echo <<<EOF
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title>pfSense.local - pfSense first time setup</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
+	<script type="text/javascript">var theme = "nervecenter"</script>
+	<script type="text/javascript" src="/themes/nervecenter/loader.js"></script>
+		
+EOF;
 
 		echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 
@@ -123,7 +134,7 @@
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
 		echo "<script type=\"text/javascript\">\n";
 		echo "NiftyCheck();\n";
-		echo "Rounded(\"div#nifty\",\"all\",\"#000\",\"#FFFFFF\",\"smooth\");\n";
+		echo "Rounded(\"div#nifty\",\"all\",\"#AAA\",\"#FFFFFF\",\"smooth\");\n";
 		echo "</script>\n";
 		exit;
 	}

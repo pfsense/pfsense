@@ -121,6 +121,21 @@ if ($_POST) {
 		$input_errors[] = "A valid TCP/IP port must be specified for the webConfigurator port.";
 	}
 
+	$direct_networks_list = explode(" ", get_direct_networks_list());
+	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
+		$dnsitem = "dns{$dnscounter}";
+		$dnsgwitem = "dns{$dnscounter}gwint";
+		if ($_POST[$dnsgwitem]) {
+			if(interface_has_gateway($_POST[$dnsgwitem])) {
+				foreach($direct_networks_list as $direct_network) {
+					if(ip_in_subnet($_POST[$dnsitem], $direct_network)) {
+						$input_errors[] = "You can not assign a gateway to DNS '{$_POST[$dnsitem]}' server which is on a directly connected network.";
+					}
+				}
+			}
+		}
+	}
+
 	$t = (int)$_POST['timeupdateinterval'];
 	if (($t < 0) || (($t > 0) && ($t < 6)) || ($t > 1440)) {
 		$input_errors[] = "The time update interval must be either 0 (disabled) or between 6 and 1440.";

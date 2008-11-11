@@ -82,6 +82,12 @@
 		include('head.inc');
 
 		echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
+		
+		if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) 
+			echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/wizard.css\" media=\"all\" />\n";
+		else 
+			echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
+		
 		echo "<form>\n";
 		echo "<center>\n";
 		echo "<img src=\"/themes/{$g['theme']}/images/logo.gif\" border=\"0\"><p>\n";

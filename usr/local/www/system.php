@@ -163,14 +163,17 @@ if ($_POST) {
 			$config['system']['dns1gwint'] = $pconfig['dns1gwint'];
 		else 
 			unset($config['system']['dns1gwint']);
+
 		if($_POST['dns2gwint']) 
 			$config['system']['dns2gwint'] = $pconfig['dns2gwint'];
 		else
 			unset($config['system']['dns2gwint']);
+
 		if($_POST['dns3gwint']) 
 			$config['system']['dns1gwint'] = $pconfig['dns3gwint'];
 		else 
 			unset($config['system']['dns3gwint']);
+
 		if($_POST['dns4gwint']) 
 			$config['system']['dns4gwint'] = $pconfig['dns4gwint'];
 		else
@@ -259,24 +262,25 @@ include("head.inc");
 									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="20" value="<?php echo $pconfig['dns'.$dnscounter];?>">
 								</td>
 								<td>
-									<select name=<?=$fldname;?>>
+									<select name='<?=$fldname;?>'>
 										<?php
 										if ($multiwan) {
 											$interface = "none";
-											if($pconfig['dns{$dnscounter}gwint'] == $interface) {
-												$selected = "$selected";
+											$dnsgw = "dns{$dnscounter}gwint";
+											if($pconfig[$dnsgw] == $interface) {
+												$selected = "selected";
 											} else {
 												$selected = "";
 											}
-											print "<option value='$interface' $selected >". ucwords($interface) ."</option>\n";
+											echo "<option value='$interface' $selected>". ucwords($interface) ."</option>\n";
 											foreach($interfaces as $interface) {
 												if(interface_has_gateway($interface)) {
-													if($pconfig['dns{$dnscounter}gwint'] == $interface) {
-														$selected = "$selected";
+													if($pconfig[$dnsgw] == $interface) {
+														$selected = "selected";
 													} else {
 														$selected = "";
 													}
-													print "<option value='$interface' $selected >". ucwords($interface) ."</option>\n";
+													echo "<option value='$interface' $selected>". ucwords($interface) ."</option>\n";
 												}
 											}
 										}

@@ -178,11 +178,11 @@ function local_sync_accounts() {
 function local_user_set(& $user) {
 	global $g, $debug;
 
+	conf_mount_rw();
+
 	$home_base = $g['platform'] == "pfSense" ? "/home" : "/var/home";
 	if (!is_dir($home_base))
 		mkdir($home_base, 0755);
-
-	conf_mount_rw();
 
 	$user_uid = $user['uid'];
 	$user_name = $user['name'];

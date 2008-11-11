@@ -109,6 +109,9 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 			<form action="services_wol.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tr>
+				<td colspan="2" valign="top" class="listtopic">Wake on LAN</td>
+			</tr>
 			  <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
@@ -136,14 +139,9 @@ include("head.inc");
 				</td>
 				</tr>
 			</table>
-			<span class="vexpl"><span class="red"><strong>Note:<br>
-            </strong></span>This service can be used to wake up (power on) computers by sending special &quot;Magic Packets&quot;. The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). </span><br>
-                      <br>
-                      You may store MAC addresses below for your convenience.
-Click the MAC address to wake up a computer. <br>
 &nbsp;<br>
-You also can wake all clients at once: <a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0"></a><br>
-&nbsp;<br>
+Wake all clients at once: <a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0"></a><p/>
+Or Click the MAC address to wake up an individual device:
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="15%" class="listhdrr">Interface</td>
@@ -196,6 +194,14 @@ You also can wake all clients at once: <a href="services_wol.php?wakeall=true"><
                   			
 		</tr>
               </table>
+			<span class="vexpl">
+					<span class="red">
+						<strong>
+							Note:<br>
+            			</strong>
+					</span>This service can be used to wake up (power on) computers by sending special &quot;Magic Packets&quot;. The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). 
+			</span>
+
 </form>
 <?php include("fend.inc"); ?>
 </body>

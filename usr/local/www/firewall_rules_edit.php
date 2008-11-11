@@ -226,6 +226,9 @@ if ($_POST) {
 		if(is_alias($_POST['src']))
 			$input_errors[] = "You must specify single host or alias for alias entries.";
 	}
+        if($_POST['sched'] && $_POST['gateway'])
+                $input_errors[] = "You cannot specify a gateway with time based rules.";
+
 	if($_POST['dsttype'] == "network") {
 		if(is_alias($_POST['dst']))
 			$input_errors[] = "You must specify single host or alias for alias entries.";

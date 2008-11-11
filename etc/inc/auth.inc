@@ -120,6 +120,7 @@ function local_backed($username, $passwd) {
 
 function local_sync_accounts() {
 	global $debug, $config;
+	conf_mount_rw();
 
 	/* remove local users to avoid uid conflicts */
 	$fd = popen("/usr/sbin/pw usershow -a", "r");
@@ -173,6 +174,9 @@ function local_sync_accounts() {
 	if (is_array($config['system']['group']))
 		foreach ($config['system']['group'] as $group)
 			local_group_set($group);
+
+	conf_mount_ro();
+
 }
 
 function local_user_set(& $user) {
@@ -265,7 +269,7 @@ function local_user_del($user) {
 }
 
 function local_user_set_password(& $user, $password) {
-	conf_mount_rw();
+
 	$user['password'] = crypt($password);
 	$user['md5-hash'] = md5($password);
 

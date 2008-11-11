@@ -236,9 +236,6 @@ if ($_POST) {
 			$input_errors[] = "{$_POST['statetype']} is only valid if the gateway is set to 'default'.";
 	}
         
-        if($_POST['sched'] && $_POST['gateway'])
-                $input_errors[] = "You cannot specify a gateway with time based rules.";
-
 	if (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single"))) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = "Source bit count";

@@ -52,6 +52,28 @@ $used_pftpx_ports = array();
 /* Used to hold the interface list that will be used on ruleset creation. */
 $FilterIflist = array();
 
+function filter_load_ipfw() 
+{
+	$status = intval(`kldstat | grep ipfw | grep -v "grep" | wc -l | awk '{ print $1 }'`);
+	if ($status == "0") {
+		mute_kernel_msgs();
+		mwexec("/sbin/kldload ipfw");
+		unmute_kernel_msgs();
+		/*
+                 * make sure ipfw is the first hook to make CP and schedules work
+                 * correctly on Multi-WAN.
+                 */
+                mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"ipfw,pf\"");
+
+                /*
+                 * TODO: Check if disabling ipfw hook
+                 * does not break accounting on CP.
+		 * XXX Not sure if we really do outbound filtering with ipfw!
+                 */
+                mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"ipfw,pf\"");
+	}
+}
+
 function filter_pflog_start() {
 	global $config, $g;
 	
@@ -2468,12 +2490,7 @@ EOD;
 	         * and if so load ipfw for later usage.
         	 */
 		if ($load_ipfw_module == true) {
-                        $status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-                        if($status == "0") {
-                                mute_kernel_msgs();
-                                mwexec("/sbin/kldload ipfw");
-                                unmute_kernel_msgs();
-                        }
+			filter_load_ipfw();
                         exec("/sbin/ipfw delete set 9");
                         exec("/sbin/ipfw delete 2");
                         exec("/sbin/ipfw delete 3");

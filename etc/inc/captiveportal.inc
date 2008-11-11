@@ -64,20 +64,7 @@ function captiveportal_configure() {
 		$cprules = captiveportal_rules_generate();
 
 		/* make sure ipfw is loaded */
-		mwexec("/sbin/kldload ipfw");
-		
-		/* 
-		 * make sure ipfw is the first hook to make CP work correctly on
-		 * Multi-WAN.
-		 * Disable the ipfw outer hook it has not value to us.
-		 */
-		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"ipfw,pf\"");
-
-		/* 
-		 * TODO: Check if disabling ipfw hook 
-		 * does not break accounting. 
-		 */
-		mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"ipfw,pf\"");    
+		filter_load_ipfw();
 
 		/* stop accounting on all clients */
 		captiveportal_radius_stop_all();

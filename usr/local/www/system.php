@@ -170,7 +170,7 @@ if ($_POST) {
 			unset($config['system']['dns2gwint']);
 
 		if($_POST['dns3gwint']) 
-			$config['system']['dns1gwint'] = $pconfig['dns3gwint'];
+			$config['system']['dns3gwint'] = $pconfig['dns3gwint'];
 		else 
 			unset($config['system']['dns3gwint']);
 

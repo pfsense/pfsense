@@ -2242,10 +2242,10 @@ EOD;
 				}
 				if ($sa) {
 				$ipfrules .= <<<EOD
-pass in on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
-pass in on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
-pass out on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
-pass out on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
+pass in on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
+pass in on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
+pass out on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
+pass out on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
 
 EOD;
 				}

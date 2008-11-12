@@ -182,8 +182,6 @@ function local_sync_accounts() {
 function local_user_set(& $user) {
 	global $g, $debug;
 
-	conf_mount_rw();
-
 	$home_base = $g['platform'] == "pfSense" ? "/home" : "/var/home";
 	if (!is_dir($home_base))
 		mkdir($home_base, 0755);
@@ -248,12 +246,10 @@ function local_user_set(& $user) {
 		$keys = base64_decode($user['authorizedkeys']);
 		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
 	}
-	conf_mount_ro();
 }
 
 function local_user_del($user) {
 	global $debug;
-	conf_mount_rw();
 	/* remove all memberships */
 	local_user_get_groups($user);
 
@@ -265,7 +261,6 @@ function local_user_del($user) {
 	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
-	conf_mount_ro();
 }
 
 function local_user_set_password(& $user, $password) {
@@ -345,7 +340,7 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 
 function local_group_set($group, $reset = false) {
 	global $debug;
-	conf_mount_rw();
+
 	$group_name = $group['name'];
 	$group_gid = $group['gid'];
 	$group_members = "''";
@@ -371,12 +366,12 @@ function local_group_set($group, $reset = false) {
 	$fd = popen($cmd, "r+");
 	fwrite($fd, $user['password']);
 	pclose($fd);
-	conf_mount_ro();
+
 }
 
 function local_group_del($group) {
 	global $debug;
-	conf_mount_rw();
+
 	/* delete from group db */
 	$cmd = "/usr/sbin/pw groupdel {$group['name']}";
 
@@ -385,7 +380,7 @@ function local_group_del($group) {
 	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
-	conf_mount_ro();	
+
 }
 
 function ldap_test_connection() {

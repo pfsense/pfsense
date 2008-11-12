@@ -1,12 +1,14 @@
 #!/bin/sh
 
 NOTSYNCED="true"
+SERVER=`cat /cf/conf/config.xml | grep timeservers | cut -d">" -f2 | cut -d"<" -f1`
 
 while [ "$NOTSYNCED" = "true" ]; do
-	ntpdate "0.pfsense.pool.ntp.org"
+	ntpdate $SERVER
 	if [ "$?" = "0" ]; then
 		NOTSYNCED="false"
 	fi
+	sleep 5
 done
 
 # Launch -- we have net.

@@ -2403,10 +2403,10 @@ EOD;
 
 			if ($sa) {
 				$ipfrules .= <<<EOD
-pass in quick on \${$friendly_int} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
-pass in quick on \${$friendly_int} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
-pass out quick on \${$friendly_int} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
-pass out quick on \${$friendly_int} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
+pass in quick on \${$friendly_int} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
+pass in quick on \${$friendly_int} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
+pass out quick on \${$friendly_int} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
+pass out quick on \${$friendly_int} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
 
 EOD;
 			}

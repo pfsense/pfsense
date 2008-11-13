@@ -225,7 +225,7 @@ function return_gateways_array() {
 	foreach($iflist as $ifname => $if ) {
 		if(interface_has_gateway($ifname)) {
 			$gateway = array();
-			$friendly = convert_real_interface_to_friendly_interface_name($friendly);
+			$friendly = convert_real_interface_to_friendly_interface_name($ifname);
 			$gateway['gateway'] = get_interface_gateway($ifname);
 			/* Loopback for dynamic interfaces without a IP */
 			if(!is_ipaddr($gateway['gateway'])) {
@@ -241,27 +241,27 @@ function return_gateways_array() {
 
 			$gateway['interface'] = $ifname;
 			$descr = convert_friendly_interface_to_friendly_descr($friendly);
-			/* dynamic interfaces fetch the monitor IP from the Interface config section */
-			if(is_ipaddr($config['interfaces'][$friendly]['monitorip'])) {
-				$gateway['monitor'] = $config['interfaces'][$friendly]['monitorip'];
-			} else {
-				$gateway['monitor'] = $gateway['gateway'];
-			}
+			/* FIXME: somehow retrieve a proper monitor IP? */
+			$gateway['monitor'] = $gateway['gateway'];
 			$gateway['name'] = "{$friendly}";
 			$gateway['descr'] = "Interface {$descr} Gateway";
-			$gateway['modifier'] = "readonly";
+			$gateway['attribute'] = "system";
+			$gateway['interface'] = "$friendly";
 			$gateways_arr[] = $gateway;
 		}
 	}
 
 	/* tack on all the hard defined gateways as well */
 	if(is_array($config['gateways']['gateway_item'])) {
+		$i = 0;
 		foreach($config['gateways']['gateway_item'] as $gateway) {
 			if($gateway['monitor'] == "") {
 				$gateway['monitor'] = $gateway['gateway'];
 			}
-			$gateway['modifier'] = "writeable";
+			/* include the gateway index as the attribute */
+			$gateway['attribute'] = "$i";
 			$gateways_arr[] = $gateway;
+			$i++;
 		}
 	}
 	return($gateways_arr);

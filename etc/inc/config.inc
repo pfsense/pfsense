@@ -2018,6 +2018,48 @@ endif;
 
 		$config['version'] = "5.3";
 	}
+	
+	/* Convert 5.3 -> 5.4 */
+	if ($config['version'] <= 5.3) {
+		if(is_array($config['loadbalancer']['lbpool'])) {
+			$lbpool_arr = $config['loadbalancer']['lbpool'];
+			$lbpool_srv_arr = array();
+			$gateway_group_arr = array();
+			foreach($lbpool_arr as $lbpool) {
+					if($lbpool['type'] == "gateway") {
+					$gateway_group['name'] = $lbpool['name'];
+					$gateway_group['descr'] = $lbpool['desc'];
+					$gateway_group['trigger'] = "down";
+					$gateway_group['item'] = array();
+					$i=0;
+					foreach($lbpool['servers'] as $member) {
+						$split = split("\|", $member);
+						$interface = $split[0];
+						$monitor = $split[1];
+						if($lbpool['behaviour'] == "failover") { $i++; }
+						$gateway_group['item'][] = "$interface|$i";
+						$config['interfaces'][$interface]['monitorip'] = "$monitor";
+					}
+					$gateway_group_arr[] = $gateway_group;
+				} else {
+					$lbpool_srv_arr[] = $lbpool;
+				}
+			}
+			$config['loadbalancer']['lbpool'] = $lbpool_srv_arr;
+			$config['gateways']['gateway_group'] = $gateway_group_arr;
+		}
+		// Unset lbpool if we no longer have any server pools
+		if (count($lbpool_srv_arr) == 0) {
+			unset($config['loadbalancer]'['lbpool']);
+		} else {
+			$config['loadbalancer']['lbpool'] = $lbpool_srv_arr;
+		}
+		// Only set the gateway group array if we converted any
+		if (count($gateway_group_arr) != 0) {
+			$config['gateways']['gateway_group'] = $gateway_group_arr;
+		}
+		$config['version'] = "5.4";
+	}
 
 	$now = date("H:i:s");
 	log_error("Ended Configuration upgrade at $now");

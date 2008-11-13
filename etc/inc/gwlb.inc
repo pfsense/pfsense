@@ -225,7 +225,7 @@ function return_gateways_array() {
 	foreach($iflist as $ifname => $if ) {
 		if(interface_has_gateway($ifname)) {
 			$gateway = array();
-			$friendly = convert_real_interface_to_friendly_interface_name($ifname);
+			$friendly = convert_real_interface_to_friendly_interface_name($friendly);
 			$gateway['gateway'] = get_interface_gateway($ifname);
 			/* Loopback for dynamic interfaces without a IP */
 			if(!is_ipaddr($gateway['gateway'])) {
@@ -241,8 +241,12 @@ function return_gateways_array() {
 
 			$gateway['interface'] = $ifname;
 			$descr = convert_friendly_interface_to_friendly_descr($friendly);
-			/* FIXME: somehow retrieve a proper monitor IP? */
-			$gateway['monitor'] = $gateway['gateway'];
+			/* dynamic interfaces fetch the monitor IP from the Interface config section */
+			if(is_ipaddr($config['interfaces'][$friendly]['monitorip'])) {
+				$gateway['monitor'] = $config['interfaces'][$friendly]['monitorip'];
+			} else {
+				$gateway['monitor'] = $gateway['gateway'];
+			}
 			$gateway['name'] = "{$friendly}";
 			$gateway['descr'] = "Interface {$descr} Gateway";
 			$gateway['modifier'] = "readonly";

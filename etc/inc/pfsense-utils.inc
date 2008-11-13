@@ -3007,7 +3007,11 @@ function enable_rrd_graphing() {
 				}
 				
 				$numpings = 5;
-				$monitorip = lookup_gateway_monitor_ip_by_name($config['interfaces'][$ifname]['gateway']);
+				if(isset($config['interfaces'][$ifname]['gateway'])) {
+					$monitorip = lookup_gateway_monitor_ip_by_name($config['interfaces'][$ifname]['gateway']);
+				} else {
+					$monitorip = lookup_gateway_monitor_ip_by_name($ifname);
+				}
 				if(!is_ipaddr($monitorip)) {
 					$monitorip = get_interface_gateway($ifname);
 				}

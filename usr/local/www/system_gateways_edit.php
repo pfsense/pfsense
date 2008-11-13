@@ -64,8 +64,6 @@ if (isset($_GET['dup']))
 
 if ($_POST) {
 
-	$post = print_r($_POST, true);
-	log_error("$post");
 	unset($input_errors);
 	$pconfig = $_POST;
 

@@ -39,10 +39,7 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['gateways']['gateway_item']))
-	$config['gateways']['gateway_item'] = array();
-
-$a_gateways = &$config['gateways']['gateway_item'];
+$a_gateways = return_gateways_array();
 $changedesc = "Gateways: ";
 
 if ($_POST) {

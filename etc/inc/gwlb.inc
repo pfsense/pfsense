@@ -241,8 +241,12 @@ function return_gateways_array() {
 
 			$gateway['interface'] = $ifname;
 			$descr = convert_friendly_interface_to_friendly_descr($friendly);
-			/* FIXME: somehow retrieve a proper monitor IP? */
-			$gateway['monitor'] = $gateway['gateway'];
+			/* retrieve a proper monitor IP? */
+			if(is_ipaddr($config['interfaces'][$friendly]['monitorip'])) {
+				$gateway['monitor'] = $config['interfaces'][$friendly]['monitorip'];
+			} else {
+				$gateway['monitor'] = $gateway['gateway'];
+			}
 			$gateway['name'] = "{$friendly}";
 			$gateway['descr'] = "Interface {$descr} Gateway";
 			$gateway['attribute'] = "system";

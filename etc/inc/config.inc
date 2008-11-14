@@ -2050,9 +2050,9 @@ endif;
 		}
 		// Unset lbpool if we no longer have any server pools
 		if (count($lbpool_srv_arr) == 0) {
-			unset($config['loadbalancer']['lbpool']);
+			unset($config['load_balancer']['lbpool']);
 		} else {
-			$config['loadbalancer']['lbpool'] = $lbpool_srv_arr;
+			$config['load_balancer']['lbpool'] = $lbpool_srv_arr;
 		}
 		// Only set the gateway group array if we converted any
 		if (count($gateway_group_arr) != 0) {

@@ -2050,7 +2050,7 @@ endif;
 		}
 		// Unset lbpool if we no longer have any server pools
 		if (count($lbpool_srv_arr) == 0) {
-			unset($config['loadbalancer]'['lbpool']);
+			unset($config['loadbalancer']['lbpool']);
 		} else {
 			$config['loadbalancer']['lbpool'] = $lbpool_srv_arr;
 		}

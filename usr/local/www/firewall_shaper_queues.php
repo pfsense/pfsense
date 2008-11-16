@@ -43,6 +43,7 @@ if($_GET['reset'] <> "") {
 	exit;
 }
 
+$shaperIFlist = get_configured_interface_with_descr();
 read_altq_config();
 $qlist =& get_unique_queue_list();
 
@@ -51,7 +52,11 @@ if (!is_array($qlist))
 
 $tree = "<ul class=\"tree\" >";
 foreach ($qlist as $queue => $qkey) {
-	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&action=show\" >{$queue}</a></li>";
+	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&action=show\" >";
+	if (isset($shaperIFlist[$queue]))
+		$tree .= $shaperIFlist[$queue] . "</a></li>";
+	else	
+		$tree .= $queue . "</a></li>";
 }
 $tree .= "</ul>";
 

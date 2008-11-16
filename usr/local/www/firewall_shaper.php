@@ -45,6 +45,7 @@ if($_GET['reset'] <> "") {
 
 $pgtitle = array("Firewall","Traffic Shaper");
 
+$shaperIFlist = get_configured_interface_with_descr();
 read_altq_config();
 /* 
  * The whole logic in these code maybe can be specified.

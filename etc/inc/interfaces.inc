@@ -1253,6 +1253,7 @@ function find_dhclient_process($interface)
 function interface_configure($interface = "wan") 
 {
 	global $config, $g;
+	global $interface_sn_arr_cache, $interface_ip_arr_cache;
 
 	$wancfg = $config['interfaces'][$interface];
 
@@ -1298,8 +1299,10 @@ function interface_configure($interface = "wan")
 		mwexec($cmd);
 	}
 
-	/* invalidate interface cache */
+	/* invalidate interface/ip/sn cache */
         get_interface_arr(true);
+	unset($interface_ip_arr_cache[$realif]);
+	unset($interface_sn_arr_cache[$realif]);
 
 	switch ($wancfg['ipaddr']) {
 
@@ -1847,8 +1850,6 @@ function get_real_interface($interface = "wan")
 
 function get_interface_ip($interface = "wan") 
 {
-	global $config, $g;
-
 	$realif = get_real_interface($interface);
 	/* Do we really come here for these interfaces ?! */
 	if (in_array($realif, array("pptp", "pppoe", "openvpn", "enc0" /* , "ppp" */)))
@@ -1857,6 +1858,20 @@ function get_interface_ip($interface = "wan")
 	$curip = find_interface_ip($realif);
 	if ($curip && is_ipaddr($curip) && ($curip != "0.0.0.0"))
 		return $curip;
+
+	return null;
+}
+
+function get_interface_subnet($interface = "wan")
+{
+	$realif = get_real_interface($interface);
+	/* Do we really come here for these interfaces ?! */
+	if (in_array($realif, array("pptp", "pppoe", "openvpn", "enc0" /* , "ppp" */)))
+		return "";
+
+	$cursn = find_interface_subnet($realif);
+	if (!empty($cursn))
+		return $cursn;
 
 	return null;
 }

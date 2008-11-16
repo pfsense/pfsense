@@ -1439,6 +1439,23 @@ function find_interface_ip($interface, $flush = false) {
 	return $interface_ip_arr_cache[$interface];
 }
 
+function find_interface_subnet($interface, $flush = false) 
+{
+	global $interface_sn_arr_cache;
+	
+	$interface = str_replace("\n", "", $interface);
+	if (does_interface_exist($interface) == false)
+		return;
+
+	if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
+		$interface_sn_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 4 | /usr/bin/head -1");
+		$interface_sn_arr_cache[$interface] = strlen(str_replace("0", "", base_convert(str_replace("\n", "", $interface_sn_arr_cache[$interface]),16, 2)));
+		log_error("int:{$interface} - generated subnet mask {$interface_sn_arr_cache[$interface]}");
+	}
+
+	return $interface_sn_arr_cache[$interface];
+}
+
 function guess_interface_from_ip($ipaddress) {
 	$ret = exec_command("/sbin/route -n get {$ipaddress} | /usr/bin/grep interface | /usr/bin/awk '{ print \$2; };'");
 	return $ret;

@@ -62,7 +62,6 @@ else
 
 <script type="text/javascript">
 	function getcpuactivity() {
-		scroll(0,0);
 		var url = "/diag_system_pftop.php";
 		var pars = 'getactivity=yes';
 		var myAjax = new Ajax.Request(

@@ -395,25 +395,13 @@ function get_vpns_list() {
 
 /* returns space seperated list of directly connected networks */
 function get_direct_networks_list() {
-	global $config;
+	global $config, $FilterIflist;
 	/* build list of directly connected interfaces and networks */
 	$networks = "";
 	$networks_arr = array();
 
-	/* if list */
-	$iflist = get_configured_interface_list();
-
-	foreach ($iflist as $ifent => $ifname) {
-		/* do not process interfaces that will end up with gateways */
-		$interface_ip = get_interface_ip($ifent);
-		$sn = $config['interfaces'][$ifent]['subnet'];
-		if($sn == "") {
-			$subnet = "{$interface_ip}/32";
-		} else {
-			$sa = gen_subnet($interface_ip, $config['interfaces'][$ifent]['subnet']);
-			$subnet = "{$sa}/{$sn}";
-		}
-		if(is_subnet($subnet)) {
+	foreach ($FilterIflist as $ifent => $ifcfg) {
+		if(is_subnet($ifcfg['sa'])) {
 			$networks_arr[] = $subnet;
 		}
 	}
@@ -442,7 +430,7 @@ function generate_optcfg_array()
 		$oic['if'] = get_real_interface($if);
 
 		$oic['ip'] = get_interface_ip($if);
-		$oic['sn'] = $oc['subnet'];
+		$oic['sn'] = get_interface_subnet($if);
 		$oic['mtu'] = $oc['mtu'];
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
@@ -631,11 +619,6 @@ function filter_nat_rules_generate()
 
 	$natrules .= "nat-anchor \"natearly/*\"\n";
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
-
-	/*
-	$optints = array();
-	generate_optcfg_array($optints);
-	*/
 
 	update_filter_reload_status("Creating 1:1 rules...");
 
@@ -1064,7 +1047,7 @@ function filter_nat_rules_generate()
 			 *    if so, add some extra goo to help this work.
 			 */
 			$rule_interface_ip = find_interface_ip($natif);
-			$rule_interface_subnet = $config['interfaces'][$rule['interface']]['subnet'];
+			$rule_interface_subnet = find_interface_subnet($natif);
 			$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
 			if($config['interfaces']['lan']) {
 				if($rule['external-address'] == "any" and $rule['interface'] == "lan") {
@@ -1632,9 +1615,9 @@ function generate_user_filter_rule($rule)
 							$src = get_interface_ip("lan");
 							break;
 						case 'lan':
-							$lansa = gen_subnet($FilterIflist['lan']['ip'], $FilterIflist['lan']['sn']);
-							$lansn = $FilterIflist['lan']['sn'];
-							$src = "{$lansa}/{$lansn}";
+							$lansa = $FilterIflist['lan']['sa'];
+                                                	$lansn = $FilterIflist['lan']['sn'];
+                                                	$src = "{$lansa}/{$lansn}";
 							break;
 						case 'pptp':
 							$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
@@ -1743,7 +1726,7 @@ function generate_user_filter_rule($rule)
 						$dst = get_interface_ip("lan");
 						break;
 					case 'lan':
-						$lansa = gen_subnet($FilterIflist['lan']['ip'], $FilterIflist['lan']['sn']);
+						$lansa = $FilterIflist['lan']['sa'];
 						$lansn = $FilterIflist['lan']['sn'];
 						$dst = "{$lansa}/{$lansn}";
 						break;

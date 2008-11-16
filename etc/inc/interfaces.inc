@@ -1572,7 +1572,7 @@ EOD;
 EOD;
 	}
 
-	if (!isset($wancfg['dnsnosec'])) {
+	if (!isset($wancfg['dnsnosec']) && isset($config['system']['dnsallowoverride'])) {
 			$mpdconf .= <<<EOD
 	set ipcp enable req-sec-dns
 

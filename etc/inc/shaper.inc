@@ -847,6 +847,8 @@ function GetEcn() {
 		return $javascript;
 	}
 	
+	function &add_queue($interface, &$qname, &$path, &$input_errors) { return; }
+
 	/* 
 	 * Currently this will not be called unless we decide to clonce whole 
 	 * queue tree on the 'By Queues' view or support drag&drop on the tree/list

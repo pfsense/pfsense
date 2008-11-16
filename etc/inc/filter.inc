@@ -428,7 +428,6 @@ function generate_optcfg_array()
 
 		$oic = array();
 		$oic['if'] = get_real_interface($if);
-
 		$oic['ip'] = get_interface_ip($if);
 		$oic['sn'] = get_interface_subnet($if);
 		$oic['mtu'] = $oc['mtu'];
@@ -635,7 +634,7 @@ function filter_nat_rules_generate()
 			else 
 				$natif = $natent['interface'];
 
-			$natif = get_real_interface($natif);
+			$natif = $FilterIflist[$natif]['if'];
 
 			if ($natif)
 				$natrules .= "binat on $natif from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
@@ -746,7 +745,7 @@ function filter_nat_rules_generate()
 			update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
 
 			if (interface_has_gateway($if)) {
-				$target = get_interface_ip($if);
+				$target = $ifcfg['ip'];
 					
 				/* do not nat tftp proxy */
 				$natrules .= "no nat on \${$ifcfg['descr']} to port tftp\n";
@@ -774,7 +773,7 @@ function filter_nat_rules_generate()
 	/* is SPAMD insalled? */
 	if (is_package_installed("spamd") == 1) {
 		$natrules .= "\n# spam table \n";
-		$wanif = get_real_interface("wan");
+		$wanif = $FilterIflist["wan"]['if'];
 		$natrules .= "table <whitelist> persist\n";
 		$natrules .= "table <blacklist> persist\n";
 		$natrules .= "table <spamd> persist\n";
@@ -820,7 +819,7 @@ function filter_nat_rules_generate()
 	/* loop through all interfaces and handle ftp-proxy redirections */
 	foreach ($FilterIflist as $ifent => $ifcfg) {
 		$realif = $ifcfg['if'];
-		$int_ip = get_interface_ip($ifent);
+		$int_ip = $ifcfg['ip'];
 
 		if ($int_ip == "")
 			continue;
@@ -947,14 +946,14 @@ function filter_nat_rules_generate()
 				else
 					$extaddr = $rule['external-address'];
 			else
-				$extaddr = get_interface_ip($rule['interface']);
+				$extaddr = $FilterIflist[$rule['interface']]['ip'];
 
 			if (!$rule['interface'])
 				$natif == "wan";
 			else 
 				$natif = $rule['interface'];
 
-			$natif = get_real_interface($natif);
+			$natif = $FilterIflist[$natif]['if'];
 
 			/*
 			 *   Expand aliases
@@ -1355,8 +1354,8 @@ function generate_user_filter_rule($rule)
 			if (!array_key_exists($rule['source']['network'], $FilterIflist)) {
 				$optmatch = "";
 				if (preg_match("/opt([0-999])/", $rule['source']['network'], $optmatch)) {
-					$opt_ip = get_interface_ip("opt{$optmatch[1]}");
-					if(!$opt_ip)
+					$opt_ip = $FilterIflist["opt{$optmatch[1]}"];
+					if(!is_ipaddr($opt_ip))
 						return "# unresolvable optarray $optmatch[0] - $opt_ip";
 				} else {
 					return "# {$rule['source']['network']} !array_key_exists source network " . $rule['descr'];
@@ -1366,8 +1365,8 @@ function generate_user_filter_rule($rule)
 		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
 			if (!array_key_exists($rule['destination']['network'], $FilterIflist)) {
 				if(preg_match("/opt([0-999])/", $rule['destination']['network'], $optmatch)) {
-					$opt_ip = get_interface_ip("opt{$optmatch[1]}");
-					if(!$opt_ip)
+					$opt_ip = $FilterIflist["opt{$optmatch[1]}"];
+					if(!is_ipaddr($opt_ip))
 						return "# unresolvable oparray $optmatch[0] - $opt_ip";
 				} else {
 					return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'];
@@ -1519,7 +1518,7 @@ function generate_user_filter_rule($rule)
 								/* determine interface gateway */
 								foreach($gateways_arr as $gateway) {
 									if($gateway['name'] == $member) {
-										$int = get_real_interface($gateway['interface']);
+										$int = $FilterIflist[$gateway['interface']]['ip'];
 										if(is_ipaddr($gateway['gateway'])) 
 											$gatewayip = $gateway['gateway'];
 										else 
@@ -1560,7 +1559,7 @@ function generate_user_filter_rule($rule)
                                	$gw = lookup_gateway_ip_by_name($rule['gateway']);
 				if ($gw == false) {
 					if (array_key_exists($gateway, $FilterIflist)) {
-						$int = get_real_interface($gateway);
+						$int = $FilterIflist[$gateway]['if'];
 						$gw = get_interface_gateway($gateway);
 					} else {
 						$gw = $gateway;
@@ -1604,15 +1603,15 @@ function generate_user_filter_rule($rule)
 				$matches = "";
 				if (preg_match("/opt([0-9999])ip/", $rule['source']['network'], $matches)) {
 					$optnum = $matches[1];
-					$src = get_interface_ip("opt{$optnum}");
+					$src = $FilterIflist["opt{$optnum}"]['ip'];
 				}
 			} else {
 				switch ($rule['source']['network']) {
 						case 'wanip':
-							$src = get_interface_ip("wan");
+							$src = $FilterIflist["wan"]['ip'];
 							break;
 						case 'lanip':
-							$src = get_interface_ip("lan");
+							$src = $FilterIflist["lan"]['ip'];
 							break;
 						case 'lan':
 							$lansa = $FilterIflist['lan']['sa'];
@@ -1714,16 +1713,16 @@ function generate_user_filter_rule($rule)
 				$matches = "";
 				if (preg_match("/opt([0-9999])ip/", $rule['destination']['network'], $matches)) {
 					$optnum = $matches[1];
-					$dst = get_interface_ip("opt{$optnum}");
+					$dst = $FilterIflist["opt{$optnum}"]['ip'];
 				}
 				if (isset($rule['destination']['not'])) $dst = " !{$dst}";
 			} else {
 				switch ($rule['destination']['network']) {
 					case 'wanip':
-						$dst = get_interface_ip("wan");
+						$dst = $FilterIflist["wan"]['ip'];
 						break;
 					case 'lanip':
-						$dst = get_interface_ip("lan");
+						$dst = $FilterIflist["lan"]['ip'];
 						break;
 					case 'lan':
 						$lansa = $FilterIflist['lan']['sa'];
@@ -2242,7 +2241,7 @@ EOD;
 		if (count($config['interfaces']) > 1) {
 				/* if antilockout is enabled, LAN exists and has
                                   an IP and subnet mask assigned */
-				$lanif = get_real_interface("lan");
+				$lanif = $FilterIflist["lan"]['if'];
 				$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
@@ -2251,7 +2250,7 @@ pass in quick on {$lanif} from any to ({$lanif}) keep state label "anti-lockout 
 EOD;
                 } else {
 			/* single-interface deployment, add to WAN  */
-					$wanif = get_real_interface("wan");
+					$wanif = $FilterIflist["wan"]['if'];
 					$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
@@ -2327,7 +2326,7 @@ EOD;
                                 else
                                         $extaddr = $rule['external-address'];
                         } else
-                                $extaddr = get_interface_ip($rule['interface']);
+                                $extaddr = $FilterIflist[$rule['interface']]['ip'];
 
                         /*
                          *   Expand aliases
@@ -2564,7 +2563,7 @@ EOD;
 					continue;
 				
 				$gateway = get_interface_gateway($ifr);
-				$interface = get_real_interface($ifr);
+				$interface = $ifcfg['if'];
 				/* Just in case */
 				if (!is_ipaddr($gateway) || empty($interface)) {
 					$route_to = " ";
@@ -2655,9 +2654,9 @@ function setup_logging_interfaces()
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		/* do not work with tun interfaces */
-		if(stristr(get_real_interface($ifname), "tun") == true)
-			continue;
 		$int = get_real_interface($ifname);
+		if(stristr($int, "tun") == true)
+			continue;
 		$rules .= "set loginterface {$int}\n";
 	}
 	return $rules;
@@ -2668,8 +2667,6 @@ function process_carp_nat_rules()
 	global $g, $config;
 
 	update_filter_reload_status("Creating CARP NAT rules");
-
-	$wan_interface = get_real_interface();
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();

@@ -378,7 +378,7 @@ class altq_root_queue {
 
 		function &get_queue_list($q = null) {
 			$qlist = array();
-
+			
 			$qlist[$this->GetQname()] = & $this;
 			if (is_array($this->queues)) {
 				foreach ($this->queues as $queue)
@@ -472,8 +472,10 @@ class altq_root_queue {
 	}
 
 	function build_tree() {
+		global $shaperIFlist;
+
 		$tree = " <li><a href=\"firewall_shaper.php?interface=".$this->GetInterface()."&queue=". $this->GetInterface()."&action=show"; 
-		$tree .= "\">" . $this->GetInterface() . "</a>";
+		$tree .= "\">" . $shaperIFlist[$this->GetInterface()] . "</a>";
 		if (is_array($this->queues)) {
 			$tree .= "<ul>";
 			foreach ($this->queues as $q)  {
@@ -3217,17 +3219,16 @@ function read_dummynet_config() {
 
 function get_interface_list_to_show() {
 	global $altq_list_queues, $config;
-		
+	global $shaperIFlist;
+
 	$tree = "";
-	foreach ($config['interfaces'] as $if => $ifdesc) {
-		if ($altq_list_queues[$if]) {
+	foreach ($shaperIFlist as $shif => $shDescr) {
+		if ($altq_list_queues[$shif]) {
 			continue;
 		} else  {
-			if (!is_altq_capable($ifdesc['if']))
+			if (!is_altq_capable(get_real_interface($shif)))
 				continue;
-			if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan") 
-				continue;
-			$tree .= " <li><a href=\"firewall_shaper.php?interface=".$if."&action=add\">".$if."</a></li>";
+			$tree .= " <li><a href=\"firewall_shaper.php?interface=".$if."&action=add\">".$shDescr."</a></li>";
 		}
 	}
 	

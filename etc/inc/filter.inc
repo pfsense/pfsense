@@ -441,7 +441,7 @@ function generate_optcfg_array()
 		$oic = array();
 		$oic['if'] = get_real_interface($if);
 
-		$oic['ip'] = $oc['ipaddr'];
+		$oic['ip'] = get_interface_ip($if);
 		$oic['sn'] = $oc['subnet'];
 		$oic['mtu'] = $oc['mtu'];
 		$oic['descr'] = $ifdetail;

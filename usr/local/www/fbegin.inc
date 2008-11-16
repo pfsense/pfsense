@@ -266,6 +266,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?=output_menu_item("/diag_defaults.php", "Factory Defaults");?>
 							<?=output_menu_item("/halt.php", "Halt System");?>
 							<?=output_menu_item("/diag_ping.php", "Ping");?>
+							<?=output_menu_item("/diag_system_pftop.php", "pfTOP");?>
 							<?=output_menu_item("/reboot.php", "Reboot");?>
 							<?=output_menu_item("/diag_routes.php", "Routes");?>
 							<?=output_menu_item("/diag_dump_states.php", "States");?>

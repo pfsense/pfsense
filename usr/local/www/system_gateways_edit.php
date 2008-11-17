@@ -56,13 +56,13 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['defaultgw'] = $a_gateways[$id]['defaultgw'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
-	if (!isset($_GET['dup'])) {
-		$pconfig['attribute'] = $a_gateways[$id]['attribute'];
-	}
+	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup'])) {
 	unset($id);
+	unset($pconfig['attribute']);
+}
 
 if ($_POST) {
 

@@ -208,8 +208,6 @@ function tdr_create_ipfw_rule($rule, $type) {
 
 		$int = "";
 
-		generate_optcfg_array();
-
 		$curwanip = get_interface_ip();
 
 		/* don't include disabled rules */

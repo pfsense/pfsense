@@ -192,7 +192,7 @@ function tdr_install_cron($should_install) {
  *   text string with ipfw rule already formatted
  ******/
 function tdr_create_ipfw_rule($rule, $type) {
-		global $config, $g, $tdr_get_next_ipfw_rule;
+		global $config, $g, $tdr_get_next_ipfw_rule, $FilterIflist;
 
 		$wancfg = $config['interfaces']['wan'];
 		$lancfg = $config['interfaces']['lan'];
@@ -208,8 +208,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 
 		$int = "";
 
-		$optcfg = array();
-		generate_optcfg_array($optcfg);
+		generate_optcfg_array();
 
 		$curwanip = get_interface_ip();
 
@@ -257,9 +256,10 @@ function tdr_create_ipfw_rule($rule, $type) {
 
 			/* Check to see if the interface is opt and in our opt list */
 			if (strstr($rule['interface'], "opt")) {
- 				if (!array_key_exists($rule['interface'], $optcfg)) {
+ 				if (!array_key_exists($rule['interface'], $FilterIflist)) {
 					$item = "";
-					foreach($optcfg as $oc) $item .= $oc['if'];
+					foreach($FilterIflist as $oc) 
+						$item .= $oc['if'];
 					return "# {$real_int} {$item} {$rule['interface']} array key does not exist for " . $rule['descr'];
 				}
 			}
@@ -275,7 +275,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 				}
 		}
 		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
-			if (!array_key_exists($rule['source']['network'], $optcfg)) {
+			if (!array_key_exists($rule['source']['network'], $FilterIflist)) {
 				$optmatch = "";
 				if(preg_match("/opt([0-999])/", $rule['source']['network'], $optmatch)) {
 					$real_opt_int = convert_friendly_interface_to_real_interface_name("opt" . $optmatch[1]);
@@ -288,7 +288,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 			}
 		}
 		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
-			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
+			if (!array_key_exists($rule['destination']['network'], $FilterIflist)) {
 				if(preg_match("/opt([0-999])/", $rule['destination']['network'], $optmatch)) {
 					$real_opt_int = convert_friendly_interface_to_real_interface_name("opt" . $optmatch[1]);
 					$opt_ip = find_interface_ip($real_opt_int);
@@ -345,8 +345,8 @@ function tdr_create_ipfw_rule($rule, $type) {
 			} else if ($rule['source']['network']) {
 
 				if (strstr($rule['source']['network'], "opt")) {
-					$src = $optcfg[$rule['source']['network']]['sa'] . "/" .
-						$optcfg[$rule['source']['network']]['sn'];
+					$src = $FilterIflist[$rule['source']['network']]['sa'] . "/" .
+						$FilterIflist[$rule['source']['network']]['sn'];
 					if (isset($rule['source']['not'])) $src = " not {$src}";
 					/* check for opt$NUMip here */
 					$matches = "";
@@ -446,8 +446,8 @@ function tdr_create_ipfw_rule($rule, $type) {
 			} else if ($rule['destination']['network']) {
 
 				if (strstr($rule['destination']['network'], "opt")) {
-					$dst = $optcfg[$rule['destination']['network']]['sa'] . "/" .
-						$optcfg[$rule['destination']['network']]['sn'];
+					$dst = $FilerIflist[$rule['destination']['network']]['sa'] . "/" .
+						$FilterIflist[$rule['destination']['network']]['sn'];
 					/* check for opt$NUMip here */
 					$matches = "";
 					if (preg_match("/opt([0-9999])ip/", $rule['destination']['network'], $matches)) {

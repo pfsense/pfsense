@@ -7,6 +7,11 @@ if($config['theme'] <> "")
 	$g['theme'] = $config['theme'];
 else
 	$g['theme'] = "pfsense";
+	
+$apple_ua = array("iPhone","iPod");
+foreach($apple_ua as $useragent)
+	if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
+		$g['theme'] = "pfsense";	
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

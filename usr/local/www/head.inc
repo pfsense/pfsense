@@ -8,6 +8,15 @@ if($config['theme'] <> "")
 else
 	$g['theme'] = "pfsense";
 
+/*
+ *  If this device is an apple ipod/iphone
+ *  switch the theme to one that works with it.
+ */
+$apple_ua = array("iPhone","iPod");
+foreach($apple_ua as $useragent)
+	if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
+		$g['theme'] = "pfsense";
+
 $pagetitle = gentitle( $pgtitle );
 
 ?>

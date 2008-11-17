@@ -62,6 +62,15 @@ if($config['theme'] <> "")
 else
         $g['theme'] = "pfsense";
 
+/*
+ *  If this device is an apple ipod/iphone
+ *  switch the theme to one that works with it.
+ */
+$apple_ua = array (“iPhone”,”iPod”);
+foreach($apple_ua as $useragent) 
+	if(eregi($useragent,$_SERVER[’HTTP_USER_AGENT’]))
+		$g['theme'] = "pfsense";
+
 $d_landirty_path = $g['varrun_path'] . "/lan.conf.dirty";
 $d_pppoeuserdirty_path = $g['varrun_path'] . "/vpn-pppoe-users-edit.dirty";
 $d_hostsdirty_path = $g['varrun_path'] . "/hosts.dirty";

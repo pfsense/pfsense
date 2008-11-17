@@ -68,14 +68,19 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_gateways[$_GET['id']]) {
-		$changedesc .= "removed gateway {$_GET['id']}";
-		unset($a_gateways[$_GET['id']]);
+		/* remove the real entry */
+		$realid = $a_gateways[$_GET['id']]['attribute'];
+		$a_gateways = &$config['gateways']['gateway_item'];
+
+		$changedesc .= "removed gateway {$realid}";
+		unset($a_gateways[$realid]);
 		write_config($changedesc);
 		touch($d_staticroutesdirty_path);
 		header("Location: system_gateways.php");
 		exit;
 	}
 }
+
 
 $pgtitle = array("System","Gateways");
 include("head.inc");

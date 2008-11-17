@@ -1262,9 +1262,8 @@ function interface_configure($interface = "wan")
 	if(!$g['booting']) {
 		/* remove all addresses first */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
-
 		interface_bring_down($interface);
+		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
 	}
 	/* wireless configuration? */
 	if (is_array($wancfg['wireless']))

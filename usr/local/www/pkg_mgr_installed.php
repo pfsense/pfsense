@@ -42,7 +42,7 @@ if(is_array($config['installedpackages']['package'])) {
 	foreach($config['installedpackages']['package'] as $instpkg) {
 		$tocheck[] = $instpkg['name'];
 	}
-	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver'));
+	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink'));
 }
 
 $pgtitle = array("System","Package Manager");
@@ -71,9 +71,10 @@ include("head.inc");
 				<div id="mainarea">
 					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
-							<td width="15%" class="listhdrr">Package Name</td>
+							<td width="10%" class="listhdrr">Package Name</td>
 							<td width="20%" class="listhdrr">Category</td>
-							<td width="10%" class="listhdrr">Package Version</td>
+							<td width="10%" class="listhdrr">Package Info</td>
+							<td width="15%" class="listhdrr">Package Version</td>
 							<td width="45%" class="listhdr">Description</td>
 						</tr>
 						<?php
@@ -124,6 +125,16 @@ include("head.inc");
 							</td>
 							<td class="listr">
 								<?=$pkg['category'];?>
+							</td>
+							<td class="listr">
+							<?php
+							if($currentvers[$pkg['name']]['pkginfolink']) {
+								$pkginfolink = $currentvers[$pkg['name']]['pkginfolink'];
+								echo "<a href='$pkginfolink'>Package Info</a>";
+							} else {
+								echo "No info, check the <a href='http://forum.pfsense.org/index.php/board,15.0.html'>forum</a>";
+							}
+							?>
 							</td>
 							<td class="<?=$tdclass;?>">
 									<?=$pkgver;?>

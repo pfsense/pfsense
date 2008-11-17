@@ -226,7 +226,11 @@ function return_gateways_array() {
 		if(interface_has_gateway($ifname)) {
 			$gateway = array();
 			$friendly = convert_real_interface_to_friendly_interface_name($ifname);
-			$gateway['gateway'] = get_interface_gateway($ifname);
+			if(isset($config['interfaces'][$friendly]['gateway'])) {
+				$gateway['gateway'] = lookup_gateway_ip_by_name($config['interfaces'][$friendly]['gateway']);
+			} else {
+				$gateway['gateway'] = get_interface_gateway($ifname);
+			}
 			/* Loopback for dynamic interfaces without a IP */
 			if(!is_ipaddr($gateway['gateway'])) {
 				 $gateway['gateway'] = "127.0.0.2";

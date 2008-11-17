@@ -116,7 +116,7 @@ if ($_POST) {
 
 		$a_gateways = &$config['gateways']['gateway_item'];
 
-		if ((is_numeric($pconfig['attribute'])) && ($pconfig['attribute'] != "system")) {
+		if ($pconfig['attribute'] != "system") {
 			$gateway = array();
 			$gateway['interface'] = $_POST['interface'];
 			$gateway['name'] = $_POST['name'];

@@ -2041,9 +2041,9 @@ function filter_rules_generate()
 	 */
 	if (isset($config['captiveportal']['enable'])) {
 		$cp_interface = $config['captiveportal']['interface'];
-		$cp_interface_real = convert_friendly_interface_to_real_interface_name($cp_interface);
-		$cp_interface_ip = find_interface_ip($cp_interface_real);
-		if($cp_interface_ip and $cp_interface_real)
+		$cp_interface_real = $FilterIflist[$cp_interface]['if'];
+		$cp_interface_ip = $FilterIflist[$cp_interface_real]['ip'];
+		if(is_ipaddr($cp_interface_ip) and $cp_interface_real)
 			$ipfrules .= "pass in quick on {$cp_interface_real} proto tcp from any to {$cp_interface_ip} port { 8000 8001 } keep state\n";
 	}
 

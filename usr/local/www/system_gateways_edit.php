@@ -165,7 +165,7 @@ include("head.inc");
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
 	<?php
 	/* If this is a automatically added system gateway we need this var */
-	if($pconfig['attribute'] == "system") {
+	if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
 		echo "<input type='hidden' name='attribute' id='attribute' value='{$pconfig['attribute']}' >\n";
 	}
 	?>

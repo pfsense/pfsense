@@ -1430,9 +1430,10 @@ function generate_user_filter_rule($rule)
 		if ($rule['gateway'] == "" && interface_has_gateway($rule['interface'])) {
 			$rg = get_interface_gateway($rule['interface']);
 			if (is_ipaddr($rg))
-    				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			else 
-                        	log_error("Could not find gateway for interface({$rule['interface']}).");
+				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
+			else
+				if($rule['interface'] <> "pptp")
+					log_error("Could not find gateway for interface({$rule['interface']}).");
 
 		}
 

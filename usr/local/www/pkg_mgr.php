@@ -38,7 +38,7 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr', 'maintainer', 'required_version', 'maximum_version'));
+$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr', 'maintainer', 'required_version', 'maximum_version', 'pkginfolink'));
 if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 	fwrite($fout, serialize($pkg_info));
@@ -98,7 +98,7 @@ include("head.inc");
 						<td width="25%" class="listhdrr">Category</td>
 <!--					<td width="10%" class="listhdrr">Size</td>	-->
 						<td width="5%" class="listhdrr">Status</td>
-						<td width="5%" class="listhdrr">Support</td>
+						<td width="5%" class="listhdrr">Package Info</td>
 						<td width="50%" class="listhdr">Description</td>
 					</tr>
 					<?php
@@ -179,7 +179,14 @@ include("head.inc");
 							<?= $index['maximum_version']; ?>
 						</td>
 						<td class="listr">
-							<a href='http://forum.pfsense.org/index.php/board,15.0.html'>pfSense forums</a>
+						<?php
+						if($index['pkginfolink']) {
+							$pkginfolink = $index['pkginfolink'];
+							echo "<a href='$pkginfolink'>Package Info</a>";
+						} else {
+							echo "No info, check the <a href='http://forum.pfsense.org/index.php/board,15.0.html'>forum</a>";
+						}
+						?>
 						</td>
 						<td class="listbg" class="listbg" style="overflow: hidden;">
 							<?= $index['descr'] ?>

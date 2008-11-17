@@ -1356,42 +1356,40 @@ $othersplist = array();
 				$remainbw = 100 - $remainbw;
 			//}
 
-                        if ($sched == "PRIQ")
-                                $q =& new priq_queue();
-                        else if ($sched == "CBQ")
-                                $q =& new cbq_queue();
-                        else if ($sched == "HFSC")
-                                $q =& new hfsc_queue();
-                        $tmpcf = array();
-                        $tmpcf['name'] = "qInternet";
-                        //$tmpcf['priority'] = 6;
-                        $tmpcf['ecn'] = "on";
-                        $tmpcf['enabled'] = "on";
-                        If ($sched == "CBQ") {
-                                $tmpcf['bandwidth'] = $lanbw/1000;
-                                $tmpcf['bandwidthtype'] = "Kb";
-                        }
-                        else if ($sched == "HFSC") {
-                                $tmpcf['linkshare1'] = $tmpcf['linkshare3'] = $lanbw/1000 ."Kb";
-                                        
-
-                                $tmpcf['upperlimit'] = "on";
-                                $tmpcf['upperlimit3'] = $lanbw/1000 ."Kb";
+                        if ($sched != "PRIQ") {
+                        	if ($sched == "CBQ")
+                                	$q =& new cbq_queue();
+                        	else if ($sched == "HFSC")
+                                	$q =& new hfsc_queue();
+                        	$tmpcf = array();
+                        	$tmpcf['name'] = "qInternet";
+                        	//$tmpcf['priority'] = 6;
+                        	$tmpcf['ecn'] = "on";
+                        	$tmpcf['enabled'] = "on";
+                        	If ($sched == "CBQ") {
+                                	$tmpcf['bandwidth'] = $lanbw/1000;
+                                	$tmpcf['bandwidthtype'] = "Kb";
+                        	}
+                        	else if ($sched == "HFSC") {
+                                	$tmpcf['linkshare1'] = $tmpcf['linkshare3'] = $lanbw/1000 ."Kb";
+                                	$tmpcf['upperlimit'] = "on";
+                                	$tmpcf['upperlimit3'] = $lanbw/1000 ."Kb";
 
 
-                                $tmpcf['linkshare2'] = 100;
-                                //$tmpcf['linkshare1'] = "0b";
-                                $tmpcf['linkshare'] = "on";
-                                $tmpcf['bandwidth'] =  $lanbw/1000;
-                                $tmpcf['bandwidthtype'] = "Kb";
-                        }
-                        array_push($tmppath, "qInternet");
-                        $qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
-                        //array_pop($tmppath);
-                        //echo "qInternet <br />";
-                        //var_dump($input_errors);
-                        $qtmp->wconfig();
-                        $altq =& $qtmp;
+                                	$tmpcf['linkshare2'] = 100;
+                                	//$tmpcf['linkshare1'] = "0b";
+                                	$tmpcf['linkshare'] = "on";
+                                	$tmpcf['bandwidth'] =  $lanbw/1000;
+                                	$tmpcf['bandwidthtype'] = "Kb";
+                        	}
+                        	array_push($tmppath, "qInternet");
+                        	$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
+                        	//array_pop($tmppath);
+                        	//echo "qInternet <br />";
+                        	//var_dump($input_errors);
+                        	$qtmp->wconfig();
+                        	$altq =& $qtmp;
+			}
 
 
 			if ($sched == "PRIQ")

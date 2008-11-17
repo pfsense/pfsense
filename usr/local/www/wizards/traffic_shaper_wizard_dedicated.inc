@@ -1023,9 +1023,8 @@ $othersplist = array();
 				$remainbw = 100 - $remainbw;
 			//}
 
-                        if ($sched == "PRIQ")
-                                $q =& new priq_queue();
-                        else if ($sched == "CBQ")
+                        if ($sched != "PRIQ") {
+                        if ($sched == "CBQ")
                                 $q =& new cbq_queue();
                         else if ($sched == "HFSC")
                                 $q =& new hfsc_queue();
@@ -1060,6 +1059,7 @@ $othersplist = array();
                         //var_dump($input_errors);
                         $qtmp->wconfig();
                         $altq =& $qtmp;
+			}
 
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();
@@ -1431,9 +1431,8 @@ $othersplist = array();
 				$remainbw = 100 - $remainbw;
 			//}
 
-                        if ($sched == "PRIQ")
-                                $q =& new priq_queue();
-                        else if ($sched == "CBQ")
+                        if ($sched != "PRIQ") {
+                        if ($sched == "CBQ")
                                 $q =& new cbq_queue();
                         else if ($sched == "HFSC")
                                 $q =& new hfsc_queue();
@@ -1467,6 +1466,7 @@ $othersplist = array();
                         //var_dump($input_errors);
                         $qtmp->wconfig();
                         $altq =& $qtmp;
+			}
 
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();

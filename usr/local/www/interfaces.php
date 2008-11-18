@@ -50,12 +50,8 @@ define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
-
-define("CRON_PPPOE_CMD_FILE", "/etc/pppoerestart");
-define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"interfaces.inc\"); interface_reconfigure($if); services_dyndns_reset($if); ?>' | /usr/local/bin/php -q");
 define("CRON_PPPOE_CMD_FILE", "{$g['varetc_path']}/pppoe{$if}restart");
-define("CRON_PPPOE_CMD", "#!/bin/sh\n/usr/bin/touch /tmp/filter_dirty");
-
+define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"interfaces.inc\"); interface_reconfigure($if); services_dyndns_reset($if); filter_configure(); ?>' | /usr/local/bin/php -q");
 
 function getMPDCRONSettings() {
   global $config;

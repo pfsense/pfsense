@@ -272,6 +272,12 @@ function system_routing_configure() {
 		fclose($fd);
 	}
 
+	/* Make sure default gateway is present */
+	$result = `/usr/bin/netstat -rn | grep default`;
+	if(!$result)
+		if($config['interfaces']['wan']['gateway'])
+			mwexec("/sbin/route add default " . escapeshellarg($config['interfaces']['wan']['gateway']));
+
 	return 0;
 }
 

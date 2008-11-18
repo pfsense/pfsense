@@ -371,8 +371,8 @@ function filter_generate_aliases() {
 		/* do process tun interfaces for openvpn compatibility */
 		/* if(stristr(filter_opt_interface_to_real($ifname), "tun") == true) continue; */
 		$aliases .= convert_friendly_interface_to_friendly_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname);
-		if(link_int_to_bridge_interface($ifname))
-			$aliases .= " " . link_int_to_bridge_interface($ifname);
+//		if(link_int_to_bridge_interface($ifname))
+//			$aliases .= " " . link_int_to_bridge_interface($ifname);
 		$optip = find_interface_ip($config['interfaces'][$ifname]['if']);
 		if($optip) {
 			$opt_carp_ints = link_ip_to_carp_interface($optip);

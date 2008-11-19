@@ -1327,9 +1327,10 @@ function interface_configure($interface = "wan")
 						escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']) .
 						" " . escapeshellarg($wancfg['pointtopoint']) . " up");
 				} else {
-					mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
-						" " . escapeshellarg($wancfg['ipaddr'] . "/" . 
-						$wancfg['subnet']));
+					if($wancfg['ipaddr'] && $wancfg['subnet'])
+						mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
+							" " . escapeshellarg($wancfg['ipaddr'] . "/" . 
+							$wancfg['subnet']));
 				}
 			}
 

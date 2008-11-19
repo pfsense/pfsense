@@ -134,7 +134,6 @@ function vpn_ipsec_configure($ipchg = false)
 
 	if (!isset($ipseccfg['enable'])) {
 		mwexec("/sbin/ifconfig enc0 down");
-		mwexec("/sbin/ifconfig enc0 destroy");
 
 		/* kill racoon */
 		mwexec("/usr/bin/killall racoon", true);
@@ -1478,4 +1477,5 @@ EOD;
 
 	return 0;
 }
+
 ?>

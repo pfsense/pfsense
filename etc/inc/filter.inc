@@ -630,7 +630,7 @@ function filter_nat_rules_generate()
 				$sn = $natent['subnet'];
 
 			if (!$natent['interface'])
-				$natif == "wan";
+				$natif = "wan";
 			else 
 				$natif = $natent['interface'];
 
@@ -658,7 +658,7 @@ function filter_nat_rules_generate()
 					$dst = $obent['destination']['address'];
 
 				if (!$obent['interface'])
-					$natif == "wan";
+					$natif = "wan";
 				else 
 					$natif = $obent['interface'];
 
@@ -949,7 +949,7 @@ function filter_nat_rules_generate()
 				$extaddr = $FilterIflist[$rule['interface']]['ip'];
 
 			if (!$rule['interface'])
-				$natif == "wan";
+				$natif = "wan";
 			else 
 				$natif = $rule['interface'];
 

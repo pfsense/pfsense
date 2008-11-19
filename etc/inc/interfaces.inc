@@ -898,8 +898,9 @@ function interfaces_wan_configure() {
 					escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']) .
 					" " . escapeshellarg($wancfg['pointtopoint']) . " up");
 			} else {
-				mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " " .
-					escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']));
+				if($wancfg['ipaddr'] && $wancfg['subnet'])
+					mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " " .
+						escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']));
 			}
 			/* install default route */
 			mwexec("/sbin/route delete default", true);

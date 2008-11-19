@@ -1190,7 +1190,7 @@ function filter_nat_rules_generate() {
 											if($config['system']['reflectiontimeout']) 
 												$reflectiontimeout = $config['system']['reflectiontimeout'];
 											else 
-												$reflectiontimeout = "20";												
+												$reflectiontimeout = "2000";
 											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n");
 											if($ifname_real)
 									  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$xxx} } -> 127.0.0.1 port {$starting_localhost_port}\n";

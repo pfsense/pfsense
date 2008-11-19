@@ -1083,7 +1083,6 @@ function vpn_ipsec_force_reload() {
 
 	/* kill any ipsec communications regardless when we are invoked */
 	mwexec("/sbin/ifconfig enc0 down");
-	mwexec("/sbin/ifconfig enc0 destroy");
 
 	/* kill racoon */
 	mwexec("/usr/bin/killall racoon", true);

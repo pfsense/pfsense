@@ -39,7 +39,7 @@ if [ "$PLATFORM" = "embedded" ]; then
 fi
 
 if [ "$PLATFORM" = "pfSense" ]; then
-	mdmfs -S -M -s 2m md /var/run
+	mdmfs -S -M -s 4m md /var/run
 fi
 
 # Enable console output if its muted.

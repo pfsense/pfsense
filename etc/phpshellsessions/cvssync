@@ -82,6 +82,8 @@ create_supfile($branch);
 
 if($argv[4] == "NOBACKUP") 
 	$nobackup=true;
+else 
+	$nobackup = false;
 
 $CODIR =  "/root/pfsense/$branch";
 
@@ -110,7 +112,7 @@ if($branch == "RESTORE" && $g['platform'] == "pfSense") {
 	$nobackup = true; // do not backup embedded, livecd
 }
 
-if($nobackup == true) {
+if($nobackup == false) {
 	echo "===> Backing up current pfSense information...\n";
 	echo "===> Please wait... ";
 	exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /var/db/racoon/racoon.sock --exclude /tmp --exclude /var/run --exclude /var/empty /");

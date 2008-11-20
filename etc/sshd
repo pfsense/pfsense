@@ -30,7 +30,7 @@
 */
 	require_once("config.inc");
 	require_once("notices.inc");
-
+	
 	if(isset($config['system']['enablesshd'])) {
 		/* do nothing, we're enabled */
 	} else {
@@ -38,6 +38,8 @@
 			echo "SSHD is disabled.";
 		exit;
 	}
+
+	conf_mount_rw();
 
 	function file_size($file) {
 	  $size = filesize($file);
@@ -133,13 +135,14 @@
 	}
 
 	/* are we already running?  if so exit */
-	if(file_exists("/tmp/keys_generating"))
+	if(file_exists("/tmp/keys_generating")) {
+		conf_mount_ro();
 		exit;
-
+	}
+	
 	if (!file_exists("$sshConfigDir/ssh_host_key") or file_exists("/etc/keys_generating")) {
 		/* remove previous keys and regen later */
 		file_notice("SSH", "{$g['product_name']} has started creating your SSH keys.  SSH Startup will be delayed.  Please note that reloading the filter rules and changes will be delayed until this operation is completed.", "SSH KeyGen", "");
-		conf_mount_rw();
 		mwexec("rm /etc/ssh/ssh_host_*");
 		touch("/etc/keys_generating");
 		touch("/tmp/keys_generating");
@@ -169,110 +172,5 @@
 	}
 
 	conf_mount_ro();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	exit;
-
-	/* exit early, this needs more testing. */
-
-	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {
-		/* generate keys */
-		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
-		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
-		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
-
-		/* save keys */
-		$dsa  = file_get_contents("{$sshConfigDir}/ssh_host_dsa_key");
-		$rsa  = file_get_contents("{$sshConfigDir}/ssh_host_rsa_key");
-		$rsa1 = file_get_contents("{$sshConfigDir}/ssh_host_key");
-		$config['ssh']['dsa'] = base64_encode($dsa);
-		$config['ssh']['rsa'] = base64_encode($rsa);
-		$config['ssh']['rsa1']= base64_encode($rsa1);
-
-		/* save public keys */
-		$dsapub  = file_get_contents("{$sshConfigDir}/ssh_host_dsa_key.pub");
-		$rsapub  = file_get_contents("{$sshConfigDir}/ssh_host_rsa_key.pub");
-		$rsa1pub = file_get_contents("{$sshConfigDir}/ssh_host_key.pub");
-		$config['ssh']['dsa_key'] = base64_encode($dsapub);
-		$config['ssh']['rsa_key'] = base64_encode($rsapub);
-		$config['ssh']['rsa1_key']= base64_encode($rsa1pub);
-		write_config("Saved SSH keys.");
-	} else {
-		/* restore keys */
-		$rsa1 = base64_decode($config['ssh']['rsa1']);
-		$rsa  = base64_decode($config['ssh']['rsa']);
-		$dsa  = base64_decode($config['ssh']['dsa']);
-		file_put_contents("{$sshConfigDir}/ssh_host_key", $rsa1);
-		file_put_contents("{$sshConfigDir}/ssh_host_rsa_key", $rsa);
-		file_put_contents("{$sshConfigDir}/ssh_host_dsa_key", $dsa);
-
-		/* restore public keys */
-		$rsa1_pub = base64_decode($config['ssh']['rsa1_key']);
-		$rsa_pub  = base64_decode($config['ssh']['rsa_key']);
-		$dsa_pub  = base64_decode($config['ssh']['dsa_key']);
-		file_put_contents("{$sshConfigDir}/ssh_host_key.pub", $rsa1_pub);
-		file_put_contents("{$sshConfigDir}/ssh_host_rsa_key.pub", $rsa_pub);
-		file_put_contents("{$sshConfigDir}/ssh_host_dsa_key.pub", $dsa_pub);
-
-		/* change keys owner to root */
-		chown("{$sshConfigDir}/ssh_host_key", "root");
-		chown("{$sshConfigDir}/ssh_host_rsa_key", "root");
-		chown("{$sshConfigDir}/ssh_host_dsa_key", "root");
-
-		/* change public keys owner to root */
-		chown("{$sshConfigDir}/ssh_host_key.pub", "root");
-		chown("{$sshConfigDir}/ssh_host_rsa_key.pub", "root");
-		chown("{$sshConfigDir}/ssh_host_dsa_key.pub", "root");
-
-		/* change mode on keys to u+rw */
-		chmod("{$sshConfigDir}/ssh_host_key",0600);
-		chmod("{$sshConfigDir}/ssh_host_rsa_key",0600);
-		chmod("{$sshConfigDir}/ssh_host_dsa_key",0600);
-
-		/* change mode on public keys to u+rw */
-		chmod("{$sshConfigDir}/ssh_host_key.pub",0600);
-		chmod("{$sshConfigDir}/ssh_host_rsa_key.pub",0600);
-		chmod("{$sshConfigDir}/ssh_host_dsa_key.pub",0600);
-	}
-
-	/* start sshd */
-	system("/usr/sbin/sshd");
-	echo "done.\n";
 
 ?>

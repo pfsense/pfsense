@@ -955,14 +955,14 @@ function interface_supports_polling($iface) {
 		"fxp",
 		"ixgb",
 		"nfe",
-		"vnge",
+		"vge",
 		"re",
 		"rl",
 		"sf",
-		"vsis",
+		"sis",
 		"ste",
-		"vstge",    
-		"vvge",
+		"stge",    
+		"vge",
 		"vr",
 		"xl");
 	if(in_array($interface, $supported_ints))

@@ -4,7 +4,7 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
-/etc/rc.conf_mount_rw 
+counf_mount_rw();
 
 if(is_dir("/home/pfsense")) {
 	echo "\nRelocating downloaded cvssync data, please wait...";
@@ -196,4 +196,5 @@ function post_cvssync_commands() {
 	echo "\n";
 }
 
-/etc/rc.conf_mount_ro
+counf_mount_ro();
+

@@ -926,13 +926,14 @@ function enable_hardware_offloading($interface) {
 
 	if(stristr($interface,"lnc"))
 		return;
+
 	if(isset($config['system']['do_not_use_nic_microcode']))
 		return;
 
-	if($g['booting']) {
 	/* translate wan, lan, opt -> real interface if needed */
 	$int = filter_translate_type_to_real_interface($interface);
-	if($int <> "") $interface = $int;
+	if($int <> "")	
+		$interface = $int;
 	$int_family = preg_split("/[0-9]+/", $int);
 	$options = strtolower(`/sbin/ifconfig {$interface} | grep options`);
 	$supported_ints = array('fxp');
@@ -944,12 +945,19 @@ function enable_hardware_offloading($interface) {
 
 	if(stristr($options, "txcsum") == true)
 	    mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
+
 	if(stristr($options, "rxcsum") == true)
 	    mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");
-	if(stristr($options, "polling") == true)
-	    mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
-	} else {
-		mwexec("sysctl kern.polling.enable=0");
+
+	/* if the NIC supports polling *AND* it is enabled in the GUI */
+	if(stristr($options, "polling") == true) {
+		$polling = isset($config['system']['polling']);	
+		if($polling) {
+			mwexec("sysctl kern.polling.enable=1");
+	    	mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
+		} else {
+			mwexec("sysctl kern.polling.enable=0");
+		}
 	}
 	return;
 }

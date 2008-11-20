@@ -4,6 +4,8 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
+/etc/rc.conf_mount_rw 
+
 if(is_dir("/home/pfsense")) {
 	echo "\nRelocating downloaded cvssync data, please wait...";
 	exec("rm -rf /home/pfsense");
@@ -193,3 +195,5 @@ function post_cvssync_commands() {
 	mwexec_bg("sh /tmp/restart_lighty");
 	echo "\n";
 }
+
+/etc/rc.conf_mount_ro

@@ -950,7 +950,7 @@ function enable_hardware_offloading($interface) {
 	    mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");
 
 	/* if the NIC supports polling *AND* it is enabled in the GUI */
-	if(stristr($options, "polling") == true) {
+	if(interface_supports_polling($interface)) {
 		$polling = isset($config['system']['polling']);	
 		if($polling) {
 			mwexec("sysctl kern.polling.enable=1");
@@ -960,6 +960,43 @@ function enable_hardware_offloading($interface) {
 		}
 	}
 	return;
+}
+
+/****f* pfsense-utils/interface_supports_polling
+ * NAME
+ *   checks to see if an interface supports polling according to man polling
+ * INPUTS
+ *
+ * RESULT
+ *   true or false
+ * NOTES
+ *
+ ******/
+function interface_supports_polling($iface) {
+	$pattern = '/([a-z].*)[0-9]/';
+	preg_match($pattern, $iface, $iface2);
+	$interface=$iface2[1];
+	$supported_ints = array("bge",
+		"dc",
+		"em",
+		"fwe",
+		"fwip",
+		"fxp",
+		"ixgb",
+		"nfe",
+		"vnge",
+		"re",
+		"rl",
+		"sf",
+		"vsis",
+		"ste",
+		"vstge",    
+		"vvge",
+		"vr",
+		"xl");
+	if(in_array($interface, $supported_ints))
+		return true;
+	return false;
 }
 
 /****f* pfsense-utils/is_alias_inuse

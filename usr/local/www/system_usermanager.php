@@ -167,6 +167,7 @@ if (isAllowedPage("system_usermanager")) {
 	}
 
 	if ($_POST) {
+		conf_mount_rw();
 		unset($input_errors);
 		$pconfig = $_POST;
 
@@ -236,6 +237,8 @@ if (isAllowedPage("system_usermanager")) {
 			local_user_set_groups($userent,$_POST['groups']);
 			write_config();
 
+			conf_mount_ro();
+			
 			pfSenseHeader("system_usermanager.php");
 		}
 	}

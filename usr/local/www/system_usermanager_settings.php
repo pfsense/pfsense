@@ -30,14 +30,13 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-settings
 ##|*NAME=System: User manager: settings page
 ##|*DESCR=Allow access to the 'System: User manager: settings' page.
 ##|*MATCH=system_usermanager_settings.php*
 ##|-PRIV
-
-
 
 if($_POST['savetest'])
 	$save_and_test = true;
@@ -60,6 +59,8 @@ $pgtitle = array("System","User manager settings");
 
 if ($_POST) {
 	unset($input_errors);
+
+	conf_mount_rw();
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -129,6 +130,9 @@ if ($_POST) {
 		write_config();
 
 	}
+
+	conf_mount_ro();
+
 }
 
 include("head.inc");
@@ -358,4 +362,3 @@ if(!$pconfig['backend'])
 	        }
 	}
 </script>
-

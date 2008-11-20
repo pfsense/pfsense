@@ -60,6 +60,7 @@ if (!is_array($a_user['priv']))
 	$a_user['priv'] = array();
 
 if ($_POST) {
+	conf_mount_rw();
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -89,10 +90,13 @@ if ($_POST) {
 		local_user_set($a_user);
 		$retval = write_config();
 		$savemsg = get_std_save_message($retval);
-
+		conf_mount_ro();
+		
 		pfSenseHeader("system_usermanager.php?act=edit&id={$userid}");
+		
 		exit;
 	}
+	conf_mount_ro();
 }
 
 /* if ajax is calling, give them an update message */

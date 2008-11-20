@@ -65,7 +65,8 @@ if ($_GET) {
 }
 
 if ($_POST) {
-
+	conf_mount_rw();
+	
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -93,6 +94,7 @@ if ($_POST) {
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
 		input_errors2Ajax($input_errors);
+		conf_mount_ro();
 		exit;
 	}
 
@@ -122,6 +124,8 @@ if ($_POST) {
 
 		write_config();
 
+		conf_mount_ro();
+		
 		pfSenseHeader("system_usermanager.php?act=edit&id={$userid}");
 	}
 }

@@ -894,10 +894,10 @@ function enable_hardware_offloading($interface) {
 
 	if(stristr($interface,"lnc"))
 		return;
+
 	if(isset($config['system']['do_not_use_nic_microcode']))
 		return;
 
-	if($g['booting']) {
 	/* translate wan, lan, opt -> real interface if needed */
 	$int = filter_translate_type_to_real_interface($interface);
 	if($int <> "") $interface = $int;
@@ -909,18 +909,26 @@ function enable_hardware_offloading($interface) {
 
 	if($config['system']['disablechecksumoffloading'])
 		return;
+
 	/* skip vlans for checksumming and polling */
-	if(stristr($interface, "vlan")) {
+	if(stristr($interface, "vlan")) 
 		return;
-	}
+
 	if(stristr($options, "txcsum") == true)
 	    mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
+
 	if(stristr($options, "rxcsum") == true)
 	    mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");
-	if(stristr($options, "polling") == true)
-	    mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
-	} else {
-		mwexec("sysctl kern.polling.enable=0");
+
+	/* if the NIC supports polling *AND* it is enabled in the GUI */
+	if(stristr($options, "polling") == true) {
+		$polling = isset($config['system']['polling']);	
+		if($polling) {
+			mwexec("sysctl kern.polling.enable=1");
+	    	mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
+		} else {
+			mwexec("sysctl kern.polling.enable=0");
+		}
 	}
 	return;
 }
@@ -3691,6 +3699,5 @@ function safe_write_file($file, $content, $force_binary) {
         }
         return true;
 }
-
 
 ?>

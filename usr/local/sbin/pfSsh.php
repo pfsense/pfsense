@@ -305,7 +305,6 @@ function playback_text($playback_file_contents) {
 		}
 	}
 	eval($playback_text);
-	echo $playback_text;
 }
 
 function playback_file($playback_file) {

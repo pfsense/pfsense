@@ -50,7 +50,7 @@ define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
-define("CRON_PPPOE_CMD_FILE", "{$g['varetc_path']}/pppoe{$if}restart");
+define("CRON_PPPOE_CMD_FILE", "/conf/pppoe{$if}restart");
 define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"interfaces.inc\"); interface_reconfigure($if); services_dyndns_reset($if); filter_configure(); ?>' | /usr/local/bin/php -q");
 
 function getMPDCRONSettings() {
@@ -288,7 +288,9 @@ if ($_POST) {
 
 		unset($input_errors);
 		$pconfig = $_POST;
-  
+
+		conf_mount_rw();
+
 		/* filter out spaces from descriptions  */
 		$_POST['descr'] = remove_bad_chars($_POST['descr']);
 

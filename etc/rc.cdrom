@@ -33,6 +33,12 @@ if [ ! -f /conf/config.xml ]; then
        echo "done."
 fi
 
+echo -n "Generating a MFS /home partition... "
+device=$(mdconfig -a -t malloc -s ${partsize})
+newfs /dev/${device} > /dev/null 2>&1
+mount /dev/${device} /home
+echo "done."
+
 # Create some needed directories
 /bin/mkdir -p /var/db/pkg/
 /bin/mkdir -p /var/tmp/vi.recover/

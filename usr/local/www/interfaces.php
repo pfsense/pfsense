@@ -513,9 +513,7 @@ function handle_pppoe_reset(&$wancfg) {
 		$pconfig['pppoe_pr_custom'] = true;
 		$item['minute'] = $_POST['pppoe_resetminute'];
 		$item['hour'] = $_POST['pppoe_resethour'];
-		if (isset($_POST['pppoe_resetdate']) && 
-			$_POST['pppoe_resetdate'] <> "" && 
-			strlen($_POST['pppoe_resetdate']) == 10) {
+		if (isset($_POST['pppoe_resetdate']) && $_POST['pppoe_resetdate'] <> "" && strlen($_POST['pppoe_resetdate']) == 10) {
 			$date = explode("/", $_POST['pppoe_resetdate']);
 			$item['mday'] = $date[1];
 			$item['month'] = $date[0];
@@ -576,9 +574,11 @@ function handle_pppoe_reset(&$wancfg) {
 	if (isset($_POST['pppoe_preset'])) {
 		setup_pppoe_reset_file($if, true);
 		$wancfg['pppoe_reset'] = true;
+		$wancfg['pppoe_preset'] = true;
 		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
 	} else {
 		unset($wancfg['pppoe_reset']);
+		unset($wancfg['pppoe_preset']);		
 		setup_pppoe_reset_file($if, false);			
 	}
 }

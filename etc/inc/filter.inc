@@ -44,6 +44,7 @@ require_once ("shaper.inc");
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
+
 /*	hold the ports being used by ftp-prxy to install the behind the scenes rule that 
  *	forces traffic out the primary wan until multi-wan ftp-proxy is all the rage.
  */
@@ -172,7 +173,7 @@ function filter_configure_sync() {
 	$rules.= "{$natrules}\n";
 	$rules.= "{$pfrules}\n";
 	fwrite($fd, $rules);
-		fclose($fd);
+	fclose($fd);
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";
@@ -416,7 +417,6 @@ function generate_optcfg_array()
 	}
 	/* add openvpn interfaces */
 	if ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client']) {
-
 		$ovpnifs = array();
 		$oic = array();
 		$oic['if'] = "openvpn";
@@ -640,13 +640,10 @@ function filter_nat_rules_generate()
 		if ($numberofnathosts > 0):
 			foreach ($FilterIflist as $if => $ifcfg) {
 				update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
-
 				if (interface_has_gateway($if)) {
 					$target = $ifcfg['ip'];
-					
 					/* do not nat tftp proxy */
 					$natrules .= "no nat on \${$ifcfg['descr']} to port tftp\n";
-
 					/* create outbound nat entries for all local networks */
 					$natrules .= filter_nat_rules_generate_if($if,
 						"{$macroortable}", 500, "", 500, $target, 500, false);
@@ -657,7 +654,6 @@ function filter_nat_rules_generate()
 					$natrules .= filter_nat_rules_generate_if($if,
 						"{$macroortable}", null, "", null, $target, null, isset($ifcfg['nonat']));
 					$natrule .= "\n";
-
 				}
 			}		
 		endif;
@@ -741,10 +737,12 @@ function filter_nat_rules_generate()
 					log_error("Filter: AON Rule matched for interface {$ifcfg['descr']} - using FTP proxy");
 			}
 		}
-		/* if the user has defined, include the alias so that we do not redirect ftp
-		   connections across the tunnels to ftp-proxy */
-		/* if interface lacks an ip, dont setup a rdr for ftp.	
-		   they are most likely on a bridged interface */
+		/*  if the user has defined, include the alias so that we do not redirect ftp
+		 *  connections across the tunnels to ftp-proxy 
+		 *
+		 *  if interface lacks an ip, dont setup a rdr for ftp.	
+		 *  they are most likely on a bridged interface 
+		 */
 		if($int_ip and $vpns_list) {
 			$natrules .= "no rdr on $realif proto tcp from any to <vpns> port 21\n";
 			$natrules .= "no rdr on $realif proto {tcp,udp} from any to <vpns> port tftp\n";
@@ -1043,7 +1041,6 @@ function filter_nat_rules_generate()
 		else if ($pptpdcfg['mode'] == "redir")
 			$pptpdtarget = $pptpdcfg['redir'];
 		if ($pptpdcfg['mode'] == "redir") {
-
 			/* 
 			 * NB: ermal -- the rdr rule below is commented out now that we have a solution
 			 *		for PPTP passthrough. This unbreaks other GRE traffic passing  
@@ -1301,7 +1298,6 @@ function generate_user_filter_rule($rule)
 							}
 						}
 					}
-
 					$tiers_count = count($tiers);
 					if($tiers_count == 0) {
 						/* Oh dear, we have no members! Engage Plan B */
@@ -1397,7 +1393,6 @@ function generate_user_filter_rule($rule)
 	if (isset($rule['source']['any'])) {
 		$src = "any";
 	} else if ($rule['source']['network']) {
-
 		if (strstr($rule['source']['network'], "opt")) {
 			$src = $FilterIflist[$rule['source']['network']]['sa'] . "/" .
 				$FilterIflist[$rule['source']['network']]['sn'];
@@ -1459,13 +1454,11 @@ function generate_user_filter_rule($rule)
 			/* support for tables */
 			$src_table_line = "table $src_table {$src}\n";
 			$src = $src_table;
-		}
-		else
+		} else
 			$src = "{ {$not} {$expsrc} }";
 	}
-	if (!$src || ($src == "/")) {
+	if (!$src || ($src == "/")) 
 		return "# at the break!";
-	}
 	$aline['src'] = " from $src ";
 	if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 		if ($rule['source']['port']) {
@@ -1724,7 +1717,6 @@ function generate_user_filter_rule($rule)
 				$aline['flags'] . $aline['queue'] . $aline['dnpipe'] .
 				" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 		}
-
 		/* piece together the actual user rule */
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['reply'] .
 			$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
@@ -1827,7 +1819,6 @@ function filter_rules_generate()
 		$log = "log";
 	else
 		$log = "";
-
 	$ipfrules .= <<<EOD
 #---------------------------------------------------------------------------
 # default deny rules
@@ -2010,10 +2001,10 @@ anchor "anti-lockout"
 pass in quick on {$lanif} from any to ({$lanif}) keep state label "anti-lockout rule"
 
 EOD;
-				} else {
+		} else {
 			/* single-interface deployment, add to WAN	*/
-					$wanif = $FilterIflist["wan"]['if'];
-					$ipfrules .= <<<EOD
+			$wanif = $FilterIflist["wan"]['if'];
+			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
 pass in quick on {$wanif} from any to ({$wanif}) keep state label "anti-lockout rule"
@@ -2069,12 +2060,12 @@ EOD;
 				continue;		/* unresolvable alias */
 			}
 			if ($rule['external-address']) {
-					if($rule['external-address'] <> "any")
-							$extaddr = $rule['external-address'] . "/32";
-					else
-							$extaddr = $rule['external-address'];
+				if($rule['external-address'] <> "any")
+					$extaddr = $rule['external-address'] . "/32";
+				else
+					$extaddr = $rule['external-address'];
 			} else {
-					$extaddr = $FilterIflist[$rule['interface']]['ip'];
+				$extaddr = $FilterIflist[$rule['interface']]['ip'];
 			}
 			/*
 			 *	 Expand aliases
@@ -2132,7 +2123,6 @@ EOD;
 			}
 		}
 	}
-
 	$ipfrules .= <<<EOD
 # package manager late specific hook
 anchor "packagelate"
@@ -2294,7 +2284,6 @@ pass in on \${$ifcfg['descr']} $reply_to proto udp from {$rgip} to any port = 45
 
 EOD;
 				}
-
 				/* Add rules to allow the protocols in use */
 				if ($prot_used_esp == true) {
 					$ipfrules .= <<<EOD

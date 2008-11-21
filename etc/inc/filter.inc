@@ -1970,8 +1970,10 @@ EOD;
 	if (isset($config['system']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		$ipfrules .= "anchor \"staticrouted\" \n";
 		foreach ($config['staticroutes']['route'] as $route) {
-			if (is_array($FilterIflist[$route['interface']])) {
-				$oc = $FilterIflist[$route['interface']];
+			$realif = guess_interface_from_ip(lookup_gateway_ip_by_name($route['gateway']));
+			$friendly = convert_real_interface_to_friendly_interface_name($realif);
+			if (is_array($FilterIflist[$friendly])) {
+				$oc = $FilterIflist[$friendly];
 				if ($oc['ip']) {
 					$sa = $oc['sa'];
 					$sn = $oc['sn'];

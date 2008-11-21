@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	interfaces.inc
-	Copyright (C) 2004-2006 Scott Ullrich
+	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
@@ -49,17 +49,14 @@ function interfaces_bring_up($interface) {
 	mwexec("/sbin/ifconfig " . escapeshellarg($interface) . " up");
 }
 
-function interfaces_loopback_configure() 
-{
+function interfaces_loopback_configure() {
 	mwexec("/sbin/ifconfig lo0 127.0.0.1");
 	interfaces_bring_up("lo0");
 	return 0;
 }
 
-function interfaces_vlan_configure() 
-{
+function interfaces_vlan_configure() {
 	global $config;
-
 	$i = 0;
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
@@ -72,8 +69,7 @@ function interfaces_vlan_configure()
 	}
 }
 
-function interface_vlan_configure($if, $tag, $vlanif = "") 
-{
+function interface_vlan_configure($if, $tag, $vlanif = "") {
 		if(!$if) {
 			log_error("interface_vlan_confgure called with if defined.");
 			return;
@@ -122,8 +118,7 @@ function interface_vlan_configure($if, $tag, $vlanif = "")
         return $vlanif;
 }
 
-function interfaces_bridge_configure() 
-{
+function interfaces_bridge_configure() {
         global $config;
 
         $i = 0;
@@ -138,8 +133,7 @@ function interfaces_bridge_configure()
         }
 }
 
-function interface_bridge_configure(&$bridge) 
-{
+function interface_bridge_configure(&$bridge) {
 	global $config, $g;
 
 	if (!is_array($bridge))
@@ -317,8 +311,7 @@ function interfaces_lagg_configure()
         }
 }
 
-function interface_lagg_configure(&$lagg) 
-{
+function interface_lagg_configure(&$lagg) {
         global $config, $g;
 
         if (!is_array($lagg))
@@ -372,8 +365,7 @@ function interface_lagg_configure(&$lagg)
 	return $laggif;
 }
 
-function interfaces_gre_configure() 
-{
+function interfaces_gre_configure() {
         global $config;
 
         $i = 0;
@@ -388,8 +380,7 @@ function interfaces_gre_configure()
         }
 }
 
-function interface_gre_configure(&$gre) 
-{
+function interface_gre_configure(&$gre) {
         global $config, $g;
 
 	if (!is_array($gre))
@@ -430,8 +421,7 @@ function interface_gre_configure(&$gre)
 	return $greif;
 }
 
-function interfaces_gif_configure() 
-{
+function interfaces_gif_configure() {
         global $config;
 
         $i = 0;
@@ -446,8 +436,7 @@ function interfaces_gif_configure()
         }
 }
 
-function interface_gif_configure(&$gif) 
-{
+function interface_gif_configure(&$gif) {
         global $config, $g;
 
         if (!is_array($gif))
@@ -486,8 +475,7 @@ function interface_gif_configure(&$gif)
         return $gifif;
 }
 
-function interfaces_configure() 
-{
+function interfaces_configure() {
 	global $config, $g;
 
 	/* set up VLAN virtual interfaces */
@@ -588,15 +576,13 @@ function interfaces_configure()
 	return 0;
 }
 
-function interface_reconfigure($interface = "wan") 
-{
+function interface_reconfigure($interface = "wan") {
 	interface_bring_down($interface);
 	sleep(1);
 	interface_configure($interface);
 }
 
-function interface_bring_down($interface = "wan") 
-{
+function interface_bring_down($interface = "wan") {
 	global $config, $g;
 
 	$ifcfg = $config['interfaces'][$interface];
@@ -648,8 +634,7 @@ function interface_bring_down($interface = "wan")
 	return;
 }
 
-function interfaces_ppp_configure() 
-{
+function interfaces_ppp_configure() {
         global $config;
 
         $i = 0;
@@ -664,8 +649,7 @@ function interfaces_ppp_configure()
         }
 }
 
-function interface_ppp_configure($ifcfg) 
-{
+function interface_ppp_configure($ifcfg) {
 	global $config, $g;
 	
 	/* Remove  the /dev/ from the device name. */
@@ -770,8 +754,7 @@ function interface_ppp_configure($ifcfg)
 	return $realif;
 }
 
-function interfaces_carp_configure() 
-{
+function interfaces_carp_configure() {
 	global $g, $config;
 	$balanacing = "";
 	$pfsyncinterface = "";
@@ -966,8 +949,7 @@ EOD;
 
 }
 
-function interfaces_ipalias_configure() 
-{
+function interfaces_ipalias_configure() {
 	global $g, $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -984,8 +966,7 @@ function interfaces_ipalias_configure()
 	}
 }
 
-function interface_wireless_configure($if, $wlcfg) 
-{
+function interface_wireless_configure($if, $wlcfg) {
 	global $config, $g;
 
 	/*    open up a shell script that will be used to output the commands.
@@ -1233,26 +1214,22 @@ EOD;
 
 }
 
-function kill_hostapd($interface) 
-{
+function kill_hostapd($interface) {
 	return "/bin/ps awwuxx | grep hostapd | grep $interface | awk '{ print \$2 }' | xargs kill\n";
 }
 
-function kill_wpasupplicant($interface) 
-{
+function kill_wpasupplicant($interface) {
 	return "/bin/ps awwuxx | grep wpa_supplicant | grep $interface | awk '{ print \$2 }' | xargs kill\n";
 }
 
-function find_dhclient_process($interface) 
-{
-       	$realinterface = get_real_interface($interface);
+function find_dhclient_process($interface) {
+	$realinterface = get_real_interface($interface);
 	if($realinterface)
 		$pid = `ps awwwux | grep dhclient | grep -v grep | grep {$realinterface} | awk '{ print \$2 }'`;
 	return $pid;
 }
 
-function interface_configure($interface = "wan") 
-{
+function interface_configure($interface = "wan") {
 	global $config, $g;
 	global $interface_sn_arr_cache, $interface_ip_arr_cache;
 
@@ -1300,7 +1277,7 @@ function interface_configure($interface = "wan")
 	}
 
 	/* invalidate interface/ip/sn cache */
-        get_interface_arr(true);
+	get_interface_arr(true);
 	unset($interface_ip_arr_cache[$realif]);
 	unset($interface_sn_arr_cache[$realif]);
 
@@ -1394,8 +1371,7 @@ function interface_configure($interface = "wan")
 	return 0;
 }
 
-function interface_carpdev_dhcp_configure($interface = "wan") 
-{
+function interface_carpdev_dhcp_configure($interface = "wan") {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];
@@ -1409,8 +1385,7 @@ function interface_carpdev_dhcp_configure($interface = "wan")
 	return 0;
 }
 
-function interface_dhcp_configure($interface = "wan") 
-{
+function interface_dhcp_configure($interface = "wan") {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];
@@ -1643,8 +1618,7 @@ EOD;
 	return 0;
 }
 
-function interface_pptp_configure($interface) 
-{
+function interface_pptp_configure($interface) {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];
@@ -1766,17 +1740,14 @@ EOD;
 }
  
 /* XXX: stub for code that references the old functions(mostly packages) */
-function get_real_wan_interface($interface = "wan") 
-{
+function get_real_wan_interface($interface = "wan") {
 	return get_real_interface($interface);
 }
-function get_current_wan_address($interface = "wan")
-{
+function get_current_wan_address($interface = "wan") {
 	return get_interface_ip($interface);
 }
 
-function get_real_interface($interface = "wan") 
-{
+function get_real_interface($interface = "wan") {
     global $config;
 
 	$wanif = $interface;
@@ -1849,8 +1820,7 @@ function get_real_interface($interface = "wan")
     return $wanif;
 }
 
-function get_interface_ip($interface = "wan") 
-{
+function get_interface_ip($interface = "wan") {
 	$realif = get_real_interface($interface);
 	/* Do we really come here for these interfaces ?! */
 	if (in_array($realif, array("pptp", "pppoe", "openvpn", "enc0" /* , "ppp" */)))
@@ -1863,8 +1833,7 @@ function get_interface_ip($interface = "wan")
 	return null;
 }
 
-function get_interface_subnet($interface = "wan")
-{
+function get_interface_subnet($interface = "wan") {
 	$realif = get_real_interface($interface);
 	/* Do we really come here for these interfaces ?! */
 	if (in_array($realif, array("pptp", "pppoe", "openvpn", "enc0" /* , "ppp" */)))
@@ -1886,8 +1855,7 @@ function get_interface_subnet($interface = "wan")
  *   boolean         - true or false
  ******/
 
-function is_altq_capable($int) 
-{
+function is_altq_capable($int) {
         /* Per:
          * http://www.freebsd.org/cgi/man.cgi?query=altq&manpath=FreeBSD+6.0-current&format=html
          * Only the following drivers have ALTQ support
@@ -1906,8 +1874,7 @@ function is_altq_capable($int)
                 return false;
 }
 
-function get_wireless_modes($interface)
-{
+function get_wireless_modes($interface) {
 	/* return wireless modes and channels */
 	$wireless_modes = array();
 
@@ -1942,8 +1909,7 @@ function get_wireless_modes($interface)
 	return($wireless_modes);
 }
 
-function get_interface_mac($interface) 
-{
+function get_interface_mac($interface) {
 	/* build interface list with netstat */
 	$linkinfo = "";
 	exec("/usr/bin/netstat -I $interface -nW -f link", $linkinfo);

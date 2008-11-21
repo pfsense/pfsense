@@ -51,7 +51,7 @@ define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 define("CRON_PPPOE_CMD_FILE", "/conf/pppoe{$if}restart");
-define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"interfaces.inc\"); interface_reconfigure($if); services_dyndns_reset($if); filter_configure(); ?>' | /usr/local/bin/php -q");
+define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"interfaces.inc\"); interface_reconfigure(\"$if\"); services_dyndns_reset(\"$if\"); filter_configure_sync(); ?>' | /usr/local/bin/php -q");
 
 function getMPDCRONSettings() {
   global $config;
@@ -536,6 +536,9 @@ if ($_POST) {
 
 			conf_mount_ro();
 
+			/* regenerate cron settings/crontab file */
+			configure_cron();
+
 			header("Location: interfaces.php?if={$if}");
 			exit;
 		}
@@ -626,8 +629,6 @@ function handle_pppoe_reset() {
 				file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
 				chmod(CRON_PPPOE_CMD_FILE, 0700);
 			}
-			/* regenerate cron settings/crontab file */
-			configure_cron();
 			sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
 		}
 }

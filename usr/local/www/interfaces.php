@@ -498,7 +498,7 @@ if ($_POST) {
 } // end if($_POST) 
 
 function handle_pppoe_reset() {
-	global $_POST, $config, $g, $wancfg;
+	global $_POST, $config, $g, $wancfg, $if;
 	/* perform a periodic reset? */
 	if(!isset($_POST['pppoe_preset'])) {
 		setup_pppoe_reset_file($if, false);		
@@ -586,7 +586,7 @@ function handle_pppoe_reset() {
 }
 
 function handle_wireless_post() {
-	global $_POST, $config, $g, $wancfg;
+	global $_POST, $config, $g, $wancfg, $if;
 	if (!is_array($wancfg['wireless']))
 		$wancfg['wireless'] = array();
 	$wancfg['wireless']['standard'] = $_POST['standard'];

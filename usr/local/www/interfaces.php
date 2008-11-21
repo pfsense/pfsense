@@ -85,7 +85,7 @@ $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
 
-$pconfig['pppoe_username'] = $wancfg['pppoe_username'];
+$pconfig['_username'] = $wancfg['pppoe_username'];
 $pconfig['pppoe_password'] = $wancfg['pppoe_password'];
 $pconfig['provider'] = $wancfg['provider'];
 $pconfig['pppoe_dialondemand'] = isset($wancfg['ondemand']);
@@ -497,7 +497,7 @@ if ($_POST) {
 	}
 } // end if($_POST) 
 
-function handle_pppoe_reset($wancfg) {
+function handle_pppoe_reset() {
 	global $_POST, $config, $g, $wancfg;
 	/* perform a periodic reset? */
 	if(!isset($_POST['pppoe_preset'])) {

@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	interfaces.php
-	Copyright (C) 2007 Scott Ullrich
+	Copyright (C) 2004-2008 Scott Ullrich
 	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 

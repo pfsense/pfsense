@@ -3,7 +3,7 @@
 # rc.cdrom - livedisc specific routines
 # For pfSense
 
-# Size of memory file system /conf partition
+# Size of memory file system /conf /home partitions
 partsize="6m"
 
 # Run some initialization routines

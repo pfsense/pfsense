@@ -254,6 +254,7 @@ if ($_POST) {
 									touch("/var/run/interface_mismatch_reboot_needed");
 									$reboot_needed = false;
 									header("Location: interfaces_assign.php");
+									exit;
 								}
 							} else {
 								$input_errors[] = "The configuration could not be restored.";

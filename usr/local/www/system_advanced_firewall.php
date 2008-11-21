@@ -107,9 +107,9 @@ if ($_POST) {
 		$config['system']['reflectiontimeout'] = $_POST['reflectiontimeout'];
 
 		if($_POST['bypassstaticroutes'] == "yes")
-			$config['system']['bypassstaticroutes'] = $_POST['bypassstaticroutes'];
+			$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'];
 		else
-			unset($config['system']['bypassstaticroutes']);
+			unset($config['filter']['bypassstaticroutes']);
 
 		if($_POST['disablescrub'] == "yes")
 			$config['system']['disablescrub'] = $_POST['disablescrub'];

@@ -244,9 +244,7 @@
 	filter_configure_sync();
 
 	/* load graphing functions */
-	echo "Enabling RRD graphing subsystem...";
 	enable_rrd_graphing();
-	echo "done\n";
 	
 	/* start DHCP service */
 	services_dhcpd_configure();

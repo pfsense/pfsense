@@ -456,7 +456,6 @@ if ($_POST) {
 			$wancfg['provider'] = $_POST['provider'];
 			$wancfg['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 			$wancfg['timeout'] = $_POST['pppoe_idletimeout'];
-			handle_pppoe_reset($wancfg);
 		} else if ($_POST['type'] == "pptp") {
 			$wancfg['ipaddr'] = "pptp";
 			$wancfg['pptp_username'] = $_POST['pptp_username'];
@@ -467,6 +466,7 @@ if ($_POST) {
 			$wancfg['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
 			$wancfg['timeout'] = $_POST['pptp_idletimeout'];
 		}
+		handle_pppoe_reset();		
 		/* reset cron items if necessary */
 		if (empty($_POST['pppoe_preset'])) {
 			/* test whether a cron item exists and unset() it if necessary */
@@ -486,7 +486,7 @@ if ($_POST) {
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
 		$wancfg['mtu'] = $_POST['mtu'];
 		if (isset($wancfg['wireless'])) 
-			handle_wireless_post($wancfg);
+			handle_wireless_post();
 		write_config();
 		touch($d_landirty_path);
 		conf_mount_ro();
@@ -497,11 +497,13 @@ if ($_POST) {
 	}
 } // end if($_POST) 
 
-function handle_pppoe_reset(&$wancfg) {
-	global $_POST, $config, $g;
+function handle_pppoe_reset($wancfg) {
+	global $_POST, $config, $g, $wancfg;
 	/* perform a periodic reset? */
-	if(!isset($_POST['pppoe_preset'])) 
+	if(!isset($_POST['pppoe_preset'])) {
+		setup_pppoe_reset_file($if, false);		
 		return;
+	}
 	if (!is_array($config['cron']['item'])) 
 		$config['cron']['item'] = array(); 
 	$itemhash = getMPDCRONSettings();
@@ -525,46 +527,46 @@ function handle_pppoe_reset(&$wancfg) {
 		$item['who'] = "root";
 		$item['command'] = CRON_PPPOE_CMD_FILE;
 	} else if (isset($_POST['pppoe_pr_type']) && $_POST['pppoe_pr_type'] = "preset") {
-			$wancfg['pppoe']['pppoe-reset-type'] = "preset";
-			$pconfig['pppoe_pr_preset'] = true;
-			switch ($_POST['pppoe_pr_preset_val']) {
-				case "monthly":
-					$item['minute'] = "0";
-					$item['hour'] = "0";
-					$item['mday'] = "1";
-					$item['month'] = "*";
-					$item['wday'] = "*";
-					$item['who'] = "root";
-					$item['command'] = CRON_PPPOE_CMD_FILE;
-					break;
-		        	case "weekly":
-					$item['minute'] = "0";
-					$item['hour'] = "0";
-					$item['mday'] = "*";
-					$item['month'] = "*";
-					$item['wday'] = "0";
-					$item['who'] = "root";
-					$item['command'] = CRON_PPPOE_CMD_FILE;
-					break;
-				case "daily":
-					$item['minute'] = "0";
-					$item['hour'] = "0";
-					$item['mday'] = "*";
-					$item['month'] = "*";
-					$item['wday'] = "*";
-					$item['who'] = "root";
-					$item['command'] = CRON_PPPOE_CMD_FILE;
-					break;
-				case "hourly":
-					$item['minute'] = "0";
-					$item['hour'] = "*";
-					$item['mday'] = "*";
-					$item['month'] = "*";
-					$item['wday'] = "*";
-					$item['who'] = "root";
-					$item['command'] = CRON_PPPOE_CMD_FILE;
-					break;
-			} // end switch
+		$wancfg['pppoe']['pppoe-reset-type'] = "preset";
+		$pconfig['pppoe_pr_preset'] = true;
+		switch ($_POST['pppoe_pr_preset_val']) {
+			case "monthly":
+				$item['minute'] = "0";
+				$item['hour'] = "0";
+				$item['mday'] = "1";
+				$item['month'] = "*";
+				$item['wday'] = "*";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE;
+				break;
+	        	case "weekly":
+				$item['minute'] = "0";
+				$item['hour'] = "0";
+				$item['mday'] = "*";
+				$item['month'] = "*";
+				$item['wday'] = "0";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE;
+				break;
+			case "daily":
+				$item['minute'] = "0";
+				$item['hour'] = "0";
+				$item['mday'] = "*";
+				$item['month'] = "*";
+				$item['wday'] = "*";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE;
+				break;
+			case "hourly":
+				$item['minute'] = "0";
+				$item['hour'] = "*";
+				$item['mday'] = "*";
+				$item['month'] = "*";
+				$item['wday'] = "*";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE;
+				break;
+		} // end switch
 	} // end if
 	if (isset($itemhash['ID'])) 
 		$config['cron']['item'][$itemhash['ID']] = $item;
@@ -579,12 +581,12 @@ function handle_pppoe_reset(&$wancfg) {
 	} else {
 		unset($wancfg['pppoe_reset']);
 		unset($wancfg['pppoe_preset']);		
-		setup_pppoe_reset_file($if, false);			
+		setup_pppoe_reset_file($if, false);	
 	}
 }
 
-function handle_wireless_post(&$wancfg) {
-	global $_POST, $config, $g;
+function handle_wireless_post() {
+	global $_POST, $config, $g, $wancfg;
 	if (!is_array($wancfg['wireless']))
 		$wancfg['wireless'] = array();
 	$wancfg['wireless']['standard'] = $_POST['standard'];

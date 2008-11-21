@@ -315,19 +315,14 @@ if ($_POST) {
 	}
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
-
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) 
 		$input_errors[] = "A valid IP address must be specified.";
-	
 	if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) 
 		$input_errors[] = "A valid subnet bit count must be specified.";
-	
 	if (($_POST['alias-address'] && !is_ipaddr($_POST['alias-address']))) 
 		$input_errors[] = "A valid alias IP address must be specified.";
-	
 	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet']))) 
 		$input_errors[] = "A valid alias subnet bit count must be specified.";
-	
 	if ($_POST['gateway'] != "none") {
 		$match = false;
 		foreach($a_gateways as $gateway) {
@@ -466,7 +461,7 @@ if ($_POST) {
 			$wancfg['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
 			$wancfg['timeout'] = $_POST['pptp_idletimeout'];
 		}
-		handle_pppoe_reset();		
+		handle_pppoe_reset();
 		/* reset cron items if necessary */
 		if (empty($_POST['pppoe_preset'])) {
 			/* test whether a cron item exists and unset() it if necessary */

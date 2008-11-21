@@ -505,7 +505,10 @@ function interfaces_configure()
 	
 	foreach($iflist as $if => $ifname) {
 		$realif = $config['interfaces'][$if]['if'];
-
+		if(isset($realif['pppoe_reset'])) 
+			setup_pppoe_reset_file($if, true);
+		else 
+			setup_pppoe_reset_file($if, false);
 		if (strstr($realif, "bridge")) 
 			$bridge_list[$if] = $ifname;
 		else if (strstr($realif, "gre"))
@@ -517,11 +520,9 @@ function interfaces_configure()
 				echo "Configuring {$ifname} interface...";
         	if($g['debug'])
 				log_error("Configuring {$ifname}");
-
 			interface_configure($if);
-
 			if ($g['booting']) 
-                		echo "done.\n";
+				echo "done.\n";
 		}
 	}
 
@@ -1943,14 +1944,26 @@ function get_wireless_modes($interface)
 
 function get_interface_mac($interface) 
 {
+	/* build interface list with netstat */
+	$linkinfo = "";
+	exec("/usr/bin/netstat -I $interface -nW -f link", $linkinfo);
+	array_shift($linkinfo);
+	$alink = preg_split("/\s+/", $linkinfo[0]);
+	$mac = chop($alink[3]);
+	return $mac;
+}
 
-        /* build interface list with netstat */
-        $linkinfo = "";
-        exec("/usr/bin/netstat -I $interface -nW -f link", $linkinfo);
-        array_shift($linkinfo);
-        $alink = preg_split("/\s+/", $linkinfo[0]);
-        $mac = chop($alink[3]);
-        return $mac;
+function setup_pppoe_reset_file($interface, $status) {
+	define("CRON_PPPOE_CMD_FILE", "/conf/pppoe{$interface}restart");
+	define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"interfaces.inc\"); interface_reconfigure(\"$interface\"); services_dyndns_reset(\"$interface\"); filter_configure_sync(); ?>' | /usr/local/bin/php -q");
+	if($status == true) {
+		if(!file_exists(CRON_PPPOE_CMD_FILE)) {
+			file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
+			chmod(CRON_PPPOE_CMD_FILE, 0700);
+		}	
+	} else {
+		unlink_if_exists(CRON_PPPOE_CMD_FILE);
+	}
 }
 
 ?>

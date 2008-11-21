@@ -182,7 +182,8 @@ function local_sync_accounts() {
 function local_user_set(& $user) {
 	global $g, $debug;
 
-	$home_base = $g['platform'] == "pfSense" ? "/home" : "/var/home";
+	$home_base = "/home";
+
 	if (!is_dir($home_base))
 		mkdir($home_base, 0755);
 

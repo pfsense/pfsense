@@ -456,7 +456,7 @@ if ($_POST) {
 			$wancfg['provider'] = $_POST['provider'];
 			$wancfg['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 			$wancfg['timeout'] = $_POST['pppoe_idletimeout'];
-			handle_pppoe_reset();
+			handle_pppoe_reset($wancfg);
 		} else if ($_POST['type'] == "pptp") {
 			$wancfg['ipaddr'] = "pptp";
 			$wancfg['pptp_username'] = $_POST['pptp_username'];
@@ -497,7 +497,7 @@ if ($_POST) {
 	}
 } // end if($_POST) 
 
-function handle_pppoe_reset() {
+function handle_pppoe_reset(&$wancfg) {
 	global $_POST, $config, $g;
 	/* perform a periodic reset? */
 	if(!isset($_POST['pppoe_preset'])) 

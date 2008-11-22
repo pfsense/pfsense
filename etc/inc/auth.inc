@@ -237,7 +237,7 @@ function local_user_set(& $user) {
 	/* create user directory if required */
 	if (!is_dir($user_home)) {
 		mkdir($user_home, 0700);
-		exec("cp /root/.* {$home_base}");
+		exec("cp /root/.* {$home_base}/");
 	}
 	chown($user_home, $user_name);
 	chgrp($user_home, $user_group);

@@ -123,7 +123,7 @@ target default {
 	alarms "down","delay","loss"
 
 	## Location of the RRD
-	rrd file "{$g['vardb_path']}/rrd/apinger-%t.rrd"
+	#rrd file "{$g['vardb_path']}/rrd/apinger-%t.rrd"
 }
 
 ## Targets to probe
@@ -143,6 +143,7 @@ EOD;
 			}
 			$apingerconfig .= "target \"{$gateway['monitor']}\" {\n";
 			$apingerconfig .= "	description \"{$gateway['name']}\"\n";
+			$apingerconfig .= "	rrd file \"{$g['vardb_path']}/rrd/apinger-{$gateway['name']}.rrd\"\n";
 			$apingerconfig .= "}\n";
 			$apingerconfig .= "\n";
 			if($gateway['monitor'] == $gateway['gateway']) {

@@ -100,6 +100,10 @@ $rrdtool = "/usr/local/bin/rrdtool";
 $uptime = "/usr/bin/uptime";
 $sed = "/usr/bin/sed";
 
+$havg = humantime($average);
+$hperiod = humantime($seconds);
+$data = true;
+
 /* XXX: (billm) do we have an exec() type function that does this type of thing? */
 exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
 rsort($databases);
@@ -183,9 +187,6 @@ function humantime($timestamp){
 		$text = "$difference $periods[$j]";
    return $text;
 }
-
-$havg = humantime($average);
-$hperiod = humantime($seconds);
 
 if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for traffic stats */
@@ -614,30 +615,30 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 		--vertical-label \"ms / %\" \\
 		--height 200 --width 620 \\
 		-x \"$scale\" --lower-limit 0 \\
-		DEF:roundtrip=$rrddbpath$curdatabase:roundtrip:AVERAGE \\
+		DEF:delay=$rrddbpath$curdatabase:delay:AVERAGE \\
 		DEF:loss=$rrddbpath$curdatabase:loss:AVERAGE \\
-		\"CDEF:roundavg=roundtrip,PREV(roundtrip),+,2,/\" \\
+		\"CDEF:roundavg=delay,PREV(delay),+,2,/\" \\
 		\"CDEF:loss10=loss,$multiplier,*\" \\
-		\"CDEF:r0=roundtrip,20,MIN\" \\
-		\"CDEF:r1=roundtrip,60,MIN\" \\
-		\"CDEF:r2=roundtrip,180,MIN\" \\
-		\"CDEF:r3=roundtrip,420,MIN\" \\
-		COMMENT:\"\t\t\t\t\tRoundtrip\t\t\tPacket loss\\n\" \\
-		AREA:roundtrip#$colorqualityrtt[0]:\"> 420      ms\" \\
-		GPRINT:roundtrip:MIN:\"\t\tMin\\:  %7.2lf ms\" \\
+		\"CDEF:r0=delay,20,MIN\" \\
+		\"CDEF:r1=delay,60,MIN\" \\
+		\"CDEF:r2=delay,180,MIN\" \\
+		\"CDEF:r3=delay,420,MIN\" \\
+		COMMENT:\"\t\t\t\t\tDelay\t\t\tPacket loss\\n\" \\
+		AREA:delay#$colorqualityrtt[0]:\"> 420      ms\" \\
+		GPRINT:delay:MIN:\"\t\tMin\\:  %7.2lf ms\" \\
 		GPRINT:loss:MIN:\"\tMin\\: %3.1lf %%\\n\" \\
     		AREA:r3#$colorqualityrtt[1]:\"180-420    ms\" \\
-		GPRINT:roundtrip:AVERAGE:\"\t\tAvg\\:  %7.2lf ms\" \\
+		GPRINT:delay:AVERAGE:\"\t\tAvg\\:  %7.2lf ms\" \\
 		GPRINT:loss:AVERAGE:\"\tAvg\\: %3.1lf %%\\n\" \\
 		AREA:r2#$colorqualityrtt[2]:\"60-180     ms\" \\
-		GPRINT:roundtrip:MAX:\"\t\tMax\\:  %7.2lf ms\" \\
+		GPRINT:delay:MAX:\"\t\tMax\\:  %7.2lf ms\" \\
 		GPRINT:loss:MAX:\"\tMax\\: %3.1lf %%\\n\" \\
 		AREA:r1#$colorqualityrtt[3]:\"20-60      ms\\n\" \\
 		AREA:r0#$colorqualityrtt[4]:\"< 20       ms\" \\
-		GPRINT:roundtrip:LAST:\"\t\tLast\\: %7.2lf ms\" \\
+		GPRINT:delay:LAST:\"\t\tLast\\: %7.2lf ms\" \\
 		GPRINT:loss:LAST:\"\tLast\: %3.1lf %%\\n\" \\
 		AREA:loss10#$colorqualityloss:\"Packet loss\\n\" \\
-		LINE1:roundtrip#$colorqualityrtt[5]:\"roundtrip average\\n\" \\
+		LINE1:delay#$colorqualityrtt[5]:\"Delay average\\n\" \\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
@@ -681,26 +682,28 @@ elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdataba
 	}
 else
 	{
-		$nodata = 1;
+		$data = false;
 		log_error("Sorry we do not have data to graph for $curdatabase");
 	} 
 
 	/* check modification time to see if we need to generate image */
 	if (file_exists("$rrdtmppath$curdatabase-$interval.png")) {
 		if((time() - filemtime("$rrdtmppath$curdatabase-$interval.png")) >= 55 ) {
+			if($data)
+				exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
+				flush();
+				usleep(500);
+		}			
+	} else {
+		if($data)
 			exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 			flush();
 			usleep(500);
-		}			
-	} else {
-		exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
-		flush();
-		usleep(500);
 	}
 	if(!empty($graphcmdoutput)) {
 		$graphcmdoutput = implode(" ", $graphcmdoutput);
 	}
-	if(($graphcmdreturn != 0) || ($nodata != 0)) {
+	if(($graphcmdreturn != 0) || (! $data)) {
 		log_error("Failed to create graph with error code $graphcmdreturn, the error is: $graphcmdoutput");
 		if(strstr($curdatabase, "queues")) {
 			log_error("failed to create graph from $rrddbpath$curdatabase, removing database");

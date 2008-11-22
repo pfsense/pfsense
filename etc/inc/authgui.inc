@@ -1,8 +1,8 @@
 <?php
 /* $Id$ */
 /*
-		Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
-		All rights reserved.
+	Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
+	All rights reserved.
 
         Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
         All rights reserved.
@@ -74,22 +74,23 @@ if (!session_auth($backing_method))
  * We give them access only to the appropriate pages based on
  * the user or group privileges.
  */
-getAllowedPages($HTTP_SERVER_VARS['AUTH_USER']);
+$allowedpages = getAllowedPages($HTTP_SERVER_VARS['AUTH_USER']);
 
 /*
- * get the user homepage
+ * redirect to first allowed page if requesting a wrong url
  */
-$home = $config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['home'];
-if (!$home)
-	$home = "/index.php";
-
-/*
- * redirect to homepage if no url is specified
- */
-if ($_SERVER['REQUEST_URI'] == "/") {
-	pfSenseHeader($home);
-	exit;
-}
+if (!isAllowedPage($_SERVER['SCRIPT_NAME'])) {
+	if (count($allowedpages) > 0) {
+		$page = str_replace('*', '', $allowedpages[0]);
+		$_SESSION['Post_Login'] = true;
+		pfSenseHeader("/{$page}");
+		exit;
+	} else {
+		display_error_form("201", "No page assigned to this user! Click here to logout.");
+		exit;
+	}
+} else 
+	$_SESSION['Post_Login'] = true;
 
 /*
  * redirect browsers post-login to avoid pages
@@ -104,23 +105,6 @@ if (!$_SESSION['Post_Login']) {
 /*
  * determine if the user is allowed access to the requested page
  */
-if (!isAllowedPage($pagereq)) {
-
-	/*
-	 * The currently logged in user is not allowed to access the page
-	 * they are attempting to view.  Redirect them to an allowed page.
-	 */
-	if(stristr($_SERVER['SCRIPT_NAME'],"sajax")) {
-		echo "||Access to AJAX has been disallowed for this user.";
-		exit;
-	}
-
-	header("HTTP/1.0 401 Unauthorized");
-	header("Status: 401 Unauthorized");
-	display_error_form("401", "Unauthorized. You do not have access to the page {$pagereq}");
-	exit;
-}
-
 function display_error_form($http_code, $desc) {
 	global $config, $g;
 	$g['theme'] = $config['theme'];
@@ -163,7 +147,7 @@ function display_error_form($http_code, $desc) {
 	<body onload="page_load();">
 		<div id="errordesc">
 			<h1>&nbsp</h1>
-			<a href="/">
+			<a href="/index.php?logout">
 			<p id="errortext" style="vertical-align: middle; text-align: center;">
 				<span style="color: #000000; font-weight: bold;">
 					<?=$desc;?>

@@ -30,6 +30,10 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* Include authentication routines */
+/* THIS MUST BE ABOVE ALL OTHER CODE */
+require_once("authgui.inc");
+
 /* make sure nothing is cached */
 if (!$omit_nocacheheaders) {
 	header("Expires: 0");
@@ -38,10 +42,6 @@ if (!$omit_nocacheheaders) {
 	header("Cache-Control: post-check=0, pre-check=0", false);
 	header("Pragma: no-cache");
 }
-
-/* Include authentication routines */
-/* THIS MUST BE ABOVE ALL OTHER CODE */
-require_once("authgui.inc");
 
 /* parse the configuration and include all configuration functions */
 require_once("config.inc");

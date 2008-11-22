@@ -180,6 +180,8 @@ function post_cvssync_commands() {
 			echo "+++> Found previous CVSSync backup.  Restoring...";
 			mwexec("cd / && tar xzpfU /root/cvssync_backup.tgz -C /");
 			echo "done.\n";
+			echo "\nWe'll exit now, try not to do whatever you did, again.\n";
+			exit;
 		} else {
 			echo "+++> Sorry, we could not locate a cvssync backup to restore from. Good luck rescuing your system! :( \n";
 		}

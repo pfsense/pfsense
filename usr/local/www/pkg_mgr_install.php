@@ -104,10 +104,12 @@ Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
 </body>
 </html>
 
-
 <?php
 
 ob_flush();
+
+// Write out configuration to creatae a backup prior to pkg install
+write_config("Creating restore point before package installation.");
 
 /* mount rw fs */
 conf_mount_rw();

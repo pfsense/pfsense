@@ -85,7 +85,7 @@ $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
 
-$pconfig['_username'] = $wancfg['pppoe_username'];
+$pconfig['pppoe_username'] = $wancfg['pppoe_username'];
 $pconfig['pppoe_password'] = $wancfg['pppoe_password'];
 $pconfig['provider'] = $wancfg['provider'];
 $pconfig['pppoe_dialondemand'] = isset($wancfg['ondemand']);

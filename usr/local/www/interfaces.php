@@ -737,7 +737,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		</tr>
 		<?php if ($if != "wan" && $if != "lan"): ?>
 		<tr>
-			<td width="22%" valign="top" class="vtable">&nbsp;</td>
 			<td width="78%" class="vtable">
 				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable'] == true) echo "checked"; ?> onClick="show_allcfg(this);">
 				<strong>Enable Interface</strong>
@@ -798,6 +797,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					an MTU of 1500 bytes will be assumed.
 				</td>
 			</tr>
+			<tr>
+				<td colspan="2" valign="top" height="16"></td>
+			</tr>			
 			<tr style="display:none;" name="none" id="none">
 			</tr>
 			<tr style="display:none;" name="static" id="static">
@@ -923,7 +925,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 							<tr>
 								<td width="22%" valign="top" class="vncell">Dial on demand</td>
 								<td width="78%" class="vtable">
-									<input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?>" >
+									<input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?>>
 									<strong>Enable Dial-On-Demand mode</strong><br>
 		    						This option causes the interface to operate in dial-on-demand mode, allowing you to have a <i>virtual full time</i> connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.
 								</td>
@@ -1033,7 +1035,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													<tr>
 														<td width="22%" valign="top" class="vncell">Dial on demand</td>
 														<td width="78%" class="vtable">
-															<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?>" >
+															<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?>>
 															<strong>Enable Dial-On-Demand mode</strong><br>
 															This option causes the interface to operate in dial-on-demand mode, allowing you to have a <i>virtual full time</i> connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.
 														</td>

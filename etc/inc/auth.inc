@@ -184,9 +184,9 @@ function local_user_set(& $user) {
 
 	$home_base = "/home/";
 	
-	if (!is_dir($home_base))
+	if (!is_dir($home_base)) 
 		mkdir($home_base, 0755);
-
+	
 	$user_uid = $user['uid'];
 	$user_name = $user['name'];
 	$user_home = "{$home_base}/$user_name";
@@ -235,8 +235,10 @@ function local_user_set(& $user) {
 	pclose($fd);
 
 	/* create user directory if required */
-	if (!is_dir($user_home))
+	if (!is_dir($user_home)) {
 		mkdir($user_home, 0700);
+		exec("cp /root/.* {$home_base}");
+	}
 	chown($user_home, $user_name);
 	chgrp($user_home, $user_group);
 

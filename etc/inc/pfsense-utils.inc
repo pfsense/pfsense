@@ -2863,7 +2863,6 @@ function enable_rrd_graphing() {
 	$traffic = "-traffic.rrd";
 	$packets = "-packets.rrd";
 	$states = "-states.rrd";
-	$quality = "-quality.rrd";
 	$wireless = "-wireless.rrd";
 	$queues = "-queues.rrd";
 	$queuesdrop = "-queuedrops.rrd";
@@ -2881,10 +2880,8 @@ function enable_rrd_graphing() {
 	$top = "/usr/bin/top";
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 	$ifconfig = "/sbin/ifconfig";
-	$pingcmd = "/sbin/ping";
 
 	$rrdtrafficinterval = 60;
-	$rrdqualityinterval = 60;
 	$rrdwirelessinterval = 60;
 	$rrdqueuesinterval = 60;
 	$rrdqueuesdropinterval = 60;
@@ -2896,7 +2893,6 @@ function enable_rrd_graphing() {
 	$rrdmeminterval = 60;
 
 	$trafficvalid = $rrdtrafficinterval * 2;
-	$qualityvalid = $rrdqualityinterval * 2;
 	$wirelessvalid = $rrdwirelessinterval * 2;
 	$queuesvalid = $rrdqueuesinterval * 2;
 	$queuesdropvalid = $rrdqueuesdropinterval * 2;
@@ -3037,62 +3033,6 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$4 \":\" \$7}'`\n";
 			} else {
 				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$5 \":\" \$8}'`\n";
-			}
-
-			/* QUALITY, create link quality database */
-			/* if the interface has a gateway defined, use it */
-			if(interface_has_gateway($ifname)) {
-				if (!file_exists("$rrddbpath$ifname$quality")) {
-					/* create rrd file if it does not exist */
-					log_error("Create RRD database $rrddbpath$ifname$quality");
-					$rrdcreate = "$rrdtool create $rrddbpath$ifname$quality --step $rrdqualityinterval ";
-					$rrdcreate .= "DS:loss:GAUGE:$qualityvalid:0:100 ";
-					$rrdcreate .= "DS:roundtrip:GAUGE:$qualityvalid:0:10000 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
-
-					$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
-					if ($rrdcreatereturn != 0) {
-						log_error("RRD create failed exited with $rrdcreatereturn, the error is: $rrdcreateoutput[0]\n");
-					}
-				}
-
-				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-				if($g['booting']) {
-					exec("$rrdtool update $rrddbpath$ifname$quality N:U:U");
-				}
-				
-				$numpings = 5;
-				if(isset($config['interfaces'][$ifname]['gateway'])) {
-					$monitorip = lookup_gateway_monitor_ip_by_name($config['interfaces'][$ifname]['gateway']);
-				} else {
-					$monitorip = lookup_gateway_monitor_ip_by_name($ifname);
-				}
-				if(!is_ipaddr($monitorip)) {
-					$monitorip = get_interface_gateway($ifname);
-				}
-				if(!is_ipaddr($monitorip)) {
-					/* still no monitor IP, don't write a collector and pass the batton */
-					continue;
-				}
-				/* the ping test function. We call this on the last line */
-				$rrdupdatesh .= "# Quality collector for {$ifname}\n";
-				$rrdupdatesh .= "get_quality_stats_{$ifname} () {\n";
-				$rrdupdatesh .= "	packetloss_{$ifname}=100\n";
-				$rrdupdatesh .= "	roundtrip_{$ifname}=0\n";
-				$rrdupdatesh .= "	local out_{$ifname}\n";
-				$rrdupdatesh .= "	out_{$ifname}=`$pingcmd -c $numpings -q $monitorip`\n";
-				$rrdupdatesh .= "	if [ $? -eq 0 ]; then\n";
-				$rrdupdatesh .= "		packetloss_{$ifname}=`echo \$out_{$ifname} | cut -f18 -d' ' | cut -c -1`\n";
-				$rrdupdatesh .= "		roundtrip_{$ifname}=`echo \$out_{$ifname} | cut -f24 -d' ' | cut -f2 -d'/'`\n";
-				$rrdupdatesh .= "	fi\n";
-				$rrdupdatesh .= "	$rrdtool update $rrddbpath$ifname$quality N:\$packetloss_{$ifname}:\$roundtrip_{$ifname}\n";
-				$rrdupdatesh .= "}\n\n";
-
-				$rrdupdatesh .= "get_quality_stats_{$ifname} &\n\n";
 			}
 
 			/* WIRELESS, set up the rrd file */
@@ -3326,20 +3266,11 @@ function enable_rrd_graphing() {
 			}
 
  			/* the CPU stats gathering function. */
- 			$rrdupdatesh .= "`$top -d 2 -s 1 0 | $awk '{gsub(/%/, \"\")} BEGIN { ";
-			$rrdupdatesh .= "printf \"$rrdtool update $rrddbpath$ifname$proc \" } ";
-			$rrdupdatesh .= "{ if ( \$2 == \"processes:\" ) { ";
-			$rrdupdatesh .= "processes = \$1; ";
-			$rrdupdatesh .= "} ";
-			$rrdupdatesh .= "else if ( \$1 == \"CPU\" ) { ";
-			$rrdupdatesh .= "user = \$3; ";
-			$rrdupdatesh .= "nice = \$5; ";
-			$rrdupdatesh .= "sys = \$7; ";
-			$rrdupdatesh .= "interrupt = \$9; ";
-			$rrdupdatesh .= "} ";
-			$rrdupdatesh .= "} END { ";
-			$rrdupdatesh .= "printf \"N:\"user\":\"nice\":\"sys\":\"interrupt\":\"processes ";
-			$rrdupdatesh .= "}'`\n\n";
+ 			$rrdupdatesh .= "`$top -d 2 -s 1 0 | $awk '{gsub(/%/, \"\")} BEGIN { \\\n";
+			$rrdupdatesh .= "printf \"$rrdtool update $rrddbpath$ifname$proc \" } \\\n";
+			$rrdupdatesh .= "{ if ( \$2 == \"processes:\" ) { processes = \$1; } \\\n";
+			$rrdupdatesh .= "else if ( \$1 == \"CPU\" ) { user = \$2; nice = \$4; sys = \$6; interrupt = \$8; } \\\n";
+			$rrdupdatesh .= "} END { printf \"N:\"user\":\"nice\":\"sys\":\"interrupt\":\"processes }'`\n\n";
 
 			/* End CPU statistics */
 

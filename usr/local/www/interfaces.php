@@ -325,11 +325,9 @@ if ($_POST) {
 		$input_errors[] = "A valid alias subnet bit count must be specified.";
 	if ($_POST['gateway'] != "none") {
 		$match = false;
-		foreach($a_gateways as $gateway) {
-			if(in_array($_POST['gateway'], $gateway)) {
+		foreach($a_gateways as $gateway) 
+			if(in_array($_POST['gateway'], $gateway)) 
 				$match = true;
-			}
-		}
 		if(!$match)
 			$input_errors[] = "A valid gateway must be specified.";
 	}
@@ -676,69 +674,63 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 
 ?>
 
-<script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
+<script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"/>
 <link href="/javascript/numericupdown/css/numericupdown.css" rel="stylesheet" type="text/css" />
-
-<script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"></script>
+<script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"/>
 <link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css" />
-
-<script type="text/javascript" src="/javascript/scriptaculous/prototype.js"></script>
-<script type="text/javascript" src="/javascript/scriptaculous/scriptaculous.js"></script>
+<script type="text/javascript" src="/javascript/scriptaculous/prototype.js"/>
+<script type="text/javascript" src="/javascript/scriptaculous/scriptaculous.js"/>
 
 <script type="text/javascript">
-<!--
-
-function updateType(t){
-	switch(t) {
-<?php
-	/* OK, so this is sick using php to generate javascript, but it needed to be done */
-	foreach ($types as $key => $val) {
-		echo "          case \"{$key}\": {\n";
-		$t = $types;
-		foreach ($t as $k => $v) {
-			if ($k != $key) {
-				echo "                  $('{$k}').hide();\n";
+	function updateType(t){
+		switch(t) {
+	<?php
+		/* OK, so this is sick using php to generate javascript, but it needed to be done */
+		foreach ($types as $key => $val) {
+			echo "          case \"{$key}\": {\n";
+			$t = $types;
+			foreach ($t as $k => $v) {
+				if ($k != $key) {
+					echo "                  $('{$k}').hide();\n";
+				}
 			}
+			echo "          }\n";
 		}
-		echo "          }\n";
+	?>
+		}
+		$(t).appear();
 	}
-?>
+
+	function show_allcfg(obj) {
+		if (obj.checked)
+			$('allcfg').appear();
+		else
+			$('allcfg').hide();
 	}
-	$(t).appear();
-}
 
-function show_allcfg(obj) {
-	if (obj.checked)
-		$('allcfg').appear();
-	else
-		$('allcfg').hide();
-}
+	function show_mon_config() {
+		document.getElementById("showmonbox").innerHTML='';
+		aodiv = document.getElementById('showmon');
+		aodiv.style.display = "block";
+	}
 
-function show_mon_config() {
-	document.getElementById("showmonbox").innerHTML='';
-	aodiv = document.getElementById('showmon');
-	aodiv.style.display = "block";
-}
-
-function openwindow(url) {
-	var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
-	if (oWin==null || typeof(oWin)=="undefined") 
-		return false;
-	else 
-		return true;
-}
-
-//-->
+	function openwindow(url) {
+		var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
+		if (oWin==null || typeof(oWin)=="undefined") 
+			return false;
+		else 
+			return true;
+	}
 </script>
 </head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<form action="interfaces.php" method="post" name="iform" id="iform">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if (file_exists($d_landirty_path)): ?><p>
-<?php print_info_box_np(gettext("The {$wancfg['descr']} configuration has been changed.<p>You must apply the changes in order for them to take effect.<p>Don't forget to adjust the DHCP Server range if needed before applying."));?><br />
-<?php endif; ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
+	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+	<?php include("fbegin.inc"); ?>
+	<form action="interfaces.php" method="post" name="iform" id="iform">
+		<?php if ($input_errors) print_input_errors($input_errors); ?>
+	<?php if (file_exists($d_landirty_path)): ?><p>
+		<?php print_info_box_np(gettext("The {$wancfg['descr']} configuration has been changed.<p>You must apply the changes in order for them to take effect.<p>Don't forget to adjust the DHCP Server range if needed before applying."));?><br />
+	<?php endif; ?>
+	<?php if ($savemsg) print_info_box($savemsg); ?>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">General configuration</td>

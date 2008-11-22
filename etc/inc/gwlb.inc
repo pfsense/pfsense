@@ -143,7 +143,7 @@ EOD;
 			}
 			$apingerconfig .= "target \"{$gateway['monitor']}\" {\n";
 			$apingerconfig .= "	description \"{$gateway['name']}\"\n";
-			$apingerconfig .= "	rrd file \"{$g['vardb_path']}/rrd/apinger-{$gateway['name']}.rrd\"\n";
+			$apingerconfig .= "	rrd file \"{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd\"\n";
 			$apingerconfig .= "}\n";
 			$apingerconfig .= "\n";
 			if($gateway['monitor'] == $gateway['gateway']) {

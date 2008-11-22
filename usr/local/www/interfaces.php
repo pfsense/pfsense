@@ -674,12 +674,12 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 
 ?>
 
-<script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"/>
+<script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
 <link href="/javascript/numericupdown/css/numericupdown.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"/>
-<link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="/javascript/scriptaculous/prototype.js"/>
-<script type="text/javascript" src="/javascript/scriptaculous/scriptaculous.js"/>
+<script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"></script>
+<link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="/javascript/scriptaculous/prototype.js"></script>
+<script type="text/javascript" src="/javascript/scriptaculous/scriptaculous.js"></script>
 
 <script type="text/javascript">
 	function updateType(t){

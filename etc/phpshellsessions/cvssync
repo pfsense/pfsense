@@ -172,6 +172,21 @@ function post_cvssync_commands() {
 
 	exec("rm -rf /tmp/xcache/* 2>/dev/null");
 
+	echo "===> Ensuring that PHP is working before going further...";
+	$test_php = `php -v`;
+	if(!strstr($test_php, "PHP")) {
+		echo "OH NOES.\n+++> Ruh roh, you're PHP is now toast.\n";
+		if(file_exists("/root/cvssync_backup.tgz")) {
+			echo "+++> Found previous CVSSync backup.  Restoring...";
+			mwexec("cd / && tar xzpfU /root/cvssync_backup.tgz -C /");
+			echo "done.\n";
+		} else {
+			echo "+++> Sorry, we could not locate a cvssync backup to restore from. Good luck rescuing your system! :( \n";
+		}
+	} else {
+		echo "it's good!\n";
+	}
+
 	echo "===> Upgrading configuration (if needed)...\n";
 	convert_config();
 

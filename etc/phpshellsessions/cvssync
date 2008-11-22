@@ -115,10 +115,16 @@ if($branch == "RESTORE" && $g['platform'] == "pfSense") {
 if($nobackup == false) {
 	echo "===> Backing up current pfSense information...\n";
 	echo "===> Please wait... ";
-	exec("tar czPf /root/cvssync_backup.tgz --exclude /root --exclude /dev --exclude /var/db/racoon/racoon.sock --exclude /tmp --exclude /var/run --exclude /var/empty /");
+	$exclude  = " --exclude /var/dhcpd/dev/";
+	$exclude .= " --exclude /root";
+	$exclude .= " --exclude /dev";
+	$exclude .= " --exclude /var/db/racoon/racoon.sock";
+	$exclude .= " --exclude /tmp";
+	$exclude .= " --exclude /var/run";
+	$exclude .= " --exclude /var/empty";
+	exec("tar czPf /root/cvssync_backup.tgz {$exclude} /");
 	$size = filesize("/root/cvssync_backup.tgz");
 	echo "{$size} bytes.\n\n";
-	sleep(5);
 }
 
 echo "===> Checking out $branch\n";

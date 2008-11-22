@@ -184,6 +184,7 @@ function post_cvssync_commands() {
 			exit;
 		} else {
 			echo "+++> Sorry, we could not locate a cvssync backup to restore from. Good luck rescuing your system! :( \n";
+			exit;
 		}
 	} else {
 		echo "it's good!\n";

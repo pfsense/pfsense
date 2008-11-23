@@ -468,7 +468,7 @@ function conf_mount_ro() {
 		return;
 
 	/* firmare upgrade in progress */
-	if(file_exists($g['varrun_path'] . "/fwup.enabled"))
+	if(file_exists($g['varrun_path'] . "/firmware.lock"))
 		return;
 
 	/* do not umount if generating ssh keys */
@@ -477,10 +477,6 @@ function conf_mount_ro() {
 
 	/* do not umount on cdrom or pfSense platforms */
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
-		return;
-
-	/* If a firmware upgrade is in progress, do not mount ro */
-	if(file_exists($d_firmwarelock_path)) 
 		return;
 
 	/* sync data, then force a remount of /cf */

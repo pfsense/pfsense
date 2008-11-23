@@ -412,7 +412,7 @@ function generate_optcfg_array()
 		$oic = array();
 		$oic['if'] = 'enc0';
 		$oic['descr'] = 'IPsec';
-		$oic['ip'] = "none";
+		$oic['type'] = "none";
 		$oc['virtual'] = true;
 		$FilterIflist['enc0'] = $oic;
 	}
@@ -422,7 +422,7 @@ function generate_optcfg_array()
 		$oic = array();
 		$oic['if'] = "openvpn";
 		$oic['descr'] = 'OpenVPN';
-		$oic['ip'] = "none";
+		$oic['type'] = "none";
 		$oc['virtual'] = true;
 		$FilterIflist['openvpn'] = $oic;
 	}

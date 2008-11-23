@@ -287,14 +287,10 @@ function filter_generate_aliases() {
 	$bridgetracker = 0;
 	foreach ($FilterIflist as $if => $ifcfg) {
 		$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
-		/* XXX: Ugly but this avoids uneccesary pollution in aliases. */
-		if ($ifcfg['ip'] != "carpdev-dhcp") {
-			$ip = find_interface_ip($ifcfg['if']);
-			if($ip) {
-				$carp_ints = link_ip_to_carp_interface($ip);
-				if($carp_ints)
-					$aliases .= " {$carp_ints}";
-			}
+		if (is_ipaddr($ifcfg['ip'])) {
+			$carp_ints = link_ip_to_carp_interface($ifcfg['ip']);
+			if($carp_ints)
+				$aliases .= " {$carp_ints}";
 		}
 		$aliases .= " }\"\n";
 	}

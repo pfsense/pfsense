@@ -81,7 +81,7 @@ if($command_split[2]) {
 create_supfile($branch);
 
 if($argv[4] == "NOBACKUP") 
-	$nobackup=true;
+	$nobackup = true;
 else 
 	$nobackup = false;
 
@@ -108,9 +108,10 @@ if($branch == "RESTORE" && $g['platform'] == "pfSense") {
 	exec("tar Uxpf /root/cvssync_backup.tgz -C /");
 	post_cvssync_commands();
 	exit();
-} else {
-	$nobackup = true; // do not backup embedded, livecd
 }
+
+if($g['platform'] == "embedded" || $g['platform'] == "livecd" || $g['platform'] == "wrap") 
+	$nobackup = true; // do not backup embedded, livecd
 
 if($nobackup == false) {
 	echo "===> Backing up current pfSense information...\n";

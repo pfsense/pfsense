@@ -4,17 +4,62 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
-echo "===> cvssync is starting at " . exec(date) . "\n";
+/*
+ * Functions
+ */
+function post_cvssync_commands() {
+	echo "===> Removing FAST-CGI temporary files...\n";
+	exec("find /tmp -name \"php-fastcgi.socket*\" -exec rm -rf {} \;");
+	exec("find /tmp -name \"*.tmp\" -exec rm -rf {} \;");
 
-conf_mount_rw();
+	exec("rm -rf /tmp/xcache/* 2>/dev/null");
 
-echo "===> Backing up original rules.debug\n";
-exec("cp /conf/config.xml /tmp/rules.beforecvssync");
+	check_php_status();
 
-if(is_dir("/home/pfsense")) {
-	echo "\nRelocating downloaded cvssync data, please wait...";
-	exec("rm -rf /home/pfsense");
-	echo " done.\n";
+	echo "===> Upgrading configuration (if needed)...\n";
+	convert_config();
+
+	echo "===> Syncing system passwords...\n";
+	local_sync_accounts();
+
+	echo "===> Restarting check_reload_status...\n";
+	exec("killall check_reload_status");
+	mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
+
+	echo "===> Configuring filter...";
+	exec("/etc/rc.filter_configure_sync");
+	exec("pfctl -f /tmp/rules.debug");
+	echo "\n";
+
+	echo "===> Signaling PHP and Lighty restart...";
+	$fd = fopen("/tmp/restart_lighty", "w");
+	fwrite($fd, "#!/bin/sh\n");
+	fwrite($fd, "sleep 5\n");
+	fwrite($fd, "killall php\n");
+	fwrite($fd, "touch /tmp/restart_webgui\n");
+	fclose($fd);
+	mwexec_bg("sh /tmp/restart_lighty");
+	echo "done.\n";
+}
+
+function check_php_status() {
+	echo "===> Ensuring that PHP is working before going further...";
+	$test_php = `php -v`;
+	if(!strstr($test_php, "PHP")) {
+		echo "OH NOES.\n+++> Ruh roh, you're PHP is now toast.\n";
+		if(file_exists("/root/cvssync_backup.tgz")) {
+			echo "+++> Found previous CVSSync backup.  Restoring...";
+			mwexec("cd / && tar xzpfU /root/cvssync_backup.tgz -C /");
+			echo "done.\n";
+			echo "\nWe'll exit now, try not to do whatever you did, again.\n";
+			exit;
+		} else {
+			echo "+++> Sorry, we could not locate a cvssync backup to restore from. Good luck rescuing your system! :( \n";
+			exit;
+		}
+	} else {
+		echo "it's good!\n";
+	}
 }
 
 function create_supfile($branch) {
@@ -34,6 +79,28 @@ pfSense
 ";
 
 	file_put_contents("/var/etc/pfSense-supfile", $supfile);
+}
+
+/*
+ *
+ * 
+ * cvssync script starts here 
+ *
+ * 
+ */
+
+echo "===> cvssync is starting at " . exec(date) . "\n";
+
+conf_mount_rw();
+
+echo "===> Backing up original rules.debug...";
+exec("cp /tmp/rules.debug /tmp/rules.beforecvssync");
+echo "done.\n";
+
+if(is_dir("/home/pfsense")) {
+	echo "\nRelocating downloaded cvssync data, please wait...";
+	exec("rm -rf /home/pfsense");
+	echo " done.\n";
 }
 
 unlink_if_exists("/tmp/config.cache");
@@ -178,60 +245,11 @@ echo "===> Checkout complete.\n";
 echo "\n";
 echo "Your system is now sync'd and PHP and Lighty will be restarted in 5 seconds.\n\n";
 
-function post_cvssync_commands() {
-	echo "===> Removing FAST-CGI temporary files...\n";
-	exec("find /tmp -name \"php-fastcgi.socket*\" -exec rm -rf {} \;");
-	exec("find /tmp -name \"*.tmp\" -exec rm -rf {} \;");
-
-	exec("rm -rf /tmp/xcache/* 2>/dev/null");
-
-	echo "===> Ensuring that PHP is working before going further...";
-	$test_php = `php -v`;
-	if(!strstr($test_php, "PHP")) {
-		echo "OH NOES.\n+++> Ruh roh, you're PHP is now toast.\n";
-		if(file_exists("/root/cvssync_backup.tgz")) {
-			echo "+++> Found previous CVSSync backup.  Restoring...";
-			mwexec("cd / && tar xzpfU /root/cvssync_backup.tgz -C /");
-			echo "done.\n";
-			echo "\nWe'll exit now, try not to do whatever you did, again.\n";
-			exit;
-		} else {
-			echo "+++> Sorry, we could not locate a cvssync backup to restore from. Good luck rescuing your system! :( \n";
-			exit;
-		}
-	} else {
-		echo "it's good!\n";
-	}
-
-	echo "===> Upgrading configuration (if needed)...\n";
-	convert_config();
-
-	echo "===> Syncing system passwords...\n";
-	local_sync_accounts();
-
-	echo "===> Restarting check_reload_status...\n";
-	exec("killall check_reload_status");
-	mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
-
-	echo "===> Configuring filter...";
-	exec("/etc/rc.filter_configure_sync");
-	exec("pfctl -f /tmp/rules.debug");
-	echo "\n";
-
-	echo "===> Signaling PHP and Lighty restart...";
-	$fd = fopen("/tmp/restart_lighty", "w");
-	fwrite($fd, "#!/bin/sh\n");
-	fwrite($fd, "sleep 5\n");
-	fwrite($fd, "killall php\n");
-	fwrite($fd, "touch /tmp/restart_webgui\n");
-	fclose($fd);
-	mwexec_bg("sh /tmp/restart_lighty");
-	echo "\n";
-}
-
 conf_mount_ro();
 
 echo "===> Showing rules.debug differences\n";
 system("diff -u /tmp/rules.beforecvssync /tmp/rules.debug");
 
-echo "\n";
+echo "===> Waiting for PHP restart...";
+sleep(10);
+

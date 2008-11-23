@@ -368,6 +368,8 @@ function generate_optcfg_array()
 		$oic = array();
 		$oic['if'] = get_real_interface($if);
 		$oic['ip'] = get_interface_ip($if);
+		if (!is_ipaddr($oc['ipaddr']) && !empty($oc['ipaddr']))
+			$oic['type'] = $oc['ipaddr'];
 		$oic['sn'] = get_interface_subnet($if);
 		$oic['mtu'] = $oc['mtu'];
 		$oic['descr'] = $ifdetail;
@@ -1891,7 +1893,7 @@ block in $log quick on \${$oc['descr']} from 192.168.0.0/16 to any label "block 
 EOD;
 			}
 		}
-		switch ($oc['ip']) {
+		switch ($oc['type']) {
 		case "pptp":
 				/* XXX: The proto gre rules should really be removed when the pptp patch is guaranted to work */
 				$ipfrules .= <<<EOD

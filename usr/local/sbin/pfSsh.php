@@ -2,10 +2,8 @@
  
 <?php
 
-echo "Starting the {$g['product_name']} shell system";
-
-echo ".";
 require_once("globals.inc");
+echo "Starting the {$g['product_name']} shell system";
 $g['booting'] = true;
 require_once("functions.inc");
 echo ".";

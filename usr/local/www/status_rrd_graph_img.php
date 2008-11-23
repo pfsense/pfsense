@@ -615,8 +615,9 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 		--vertical-label \"ms / %\" \\
 		--height 200 --width 620 \\
 		-x \"$scale\" --lower-limit 0 \\
-		DEF:delay=$rrddbpath$curdatabase:delay:AVERAGE \\
+		DEF:delayraw=$rrddbpath$curdatabase:delay:AVERAGE \\
 		DEF:loss=$rrddbpath$curdatabase:loss:AVERAGE \\
+		\"CDEF:delay=delayraw,1000,*\" \\
 		\"CDEF:roundavg=delay,PREV(delay),+,2,/\" \\
 		\"CDEF:loss10=loss,$multiplier,*\" \\
 		\"CDEF:r0=delay,20,MIN\" \\

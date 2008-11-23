@@ -507,7 +507,7 @@ function conf_mount_ro() {
 		return;
 
 	/* firmare upgrade in progress */
-	if(file_exists($g['varrun_path'] . "/fwup.enabled"))
+	if(file_exists($g['varrun_path'] . "/firmware.lock"))
 		return;
 
 	/* do not umount if generating ssh keys */

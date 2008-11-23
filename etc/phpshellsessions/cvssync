@@ -231,25 +231,24 @@ exec("rm -rf ${CODIR}/pfSense/root/.shrc");
 exec("rm -rf ${CODIR}/pfSense/root/.tcshrc");
 exec("rm -f ${CODIR}/pfSense/etc/syslog.conf 2>/dev/null");
 
-echo "===> Installing new files...\n";
-
+echo "===> Installing new files...";
 if($g['platform'] == "pfSense") 
 	$command = "cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)";
 else 
 	$command = "cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -xpf -) 2>/dev/null";
 exec($command);
+echo "done.\n";
 
 post_cvssync_commands();
 
-echo "===> Checkout complete.\n";
-echo "\n";
-echo "Your system is now sync'd and PHP and Lighty will be restarted in 5 seconds.\n\n";
+echo "===> Checkout and file installation complete.\n";
+echo "===> Signaling 5 second PHP and lighttpd reload\n";
 
 conf_mount_ro();
 
 echo "===> Showing rules.debug differences\n";
 system("diff -u /tmp/rules.beforecvssync /tmp/rules.debug");
 
-echo "===> Waiting for PHP restart...";
+echo "===> Waiting for PHP/lighttpd restart...";
 sleep(10);
 

@@ -518,6 +518,10 @@ function conf_mount_ro() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
+	/* If a firmware upgrade is in progress, do not mount ro */
+	if(file_exists($d_firmwarelock_path)) 
+		return;
+
 	/* sync data, then force a remount of /cf */
 	mwexec("/bin/sync");
 	mwexec("/sbin/mount -u -r -f {$g['cf_path']}");

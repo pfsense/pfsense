@@ -8,6 +8,9 @@ echo "===> cvssync is starting at " . exec(date) . "\n";
 
 conf_mount_rw();
 
+echo "===> Backing up original rules.debug\n";
+exec("cp /conf/config.xml /tmp/rules.beforecvssync");
+
 if(is_dir("/home/pfsense")) {
 	echo "\nRelocating downloaded cvssync data, please wait...";
 	exec("rm -rf /home/pfsense");
@@ -228,3 +231,7 @@ function post_cvssync_commands() {
 
 conf_mount_ro();
 
+echo "===> Showing rules.debug differences\n";
+exec("diff -u /tmp/rules.beforecvssync /conf/config.xml");
+
+echo "\n";

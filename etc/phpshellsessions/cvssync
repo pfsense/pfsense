@@ -232,6 +232,6 @@ function post_cvssync_commands() {
 conf_mount_ro();
 
 echo "===> Showing rules.debug differences\n";
-exec("diff -u /tmp/rules.beforecvssync /conf/config.xml");
+system("diff -u /tmp/rules.beforecvssync /tmp/rules.debug");
 
 echo "\n";

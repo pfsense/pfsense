@@ -1172,7 +1172,7 @@ function generate_user_filter_rule($rule)
 		if (!array_key_exists($rule['source']['network'], $FilterIflist)) {
 			$optmatch = "";
 			if (preg_match("/opt([0-999])/", $rule['source']['network'], $optmatch)) {
-				$opt_ip = $FilterIflist["opt{$optmatch[1]}"];
+				$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
 				if(!is_ipaddr($opt_ip))
 					return "# unresolvable optarray $optmatch[0] - $opt_ip";
 			} else {
@@ -1183,7 +1183,7 @@ function generate_user_filter_rule($rule)
 	if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
 		if (!array_key_exists($rule['destination']['network'], $FilterIflist)) {
 			if(preg_match("/opt([0-999])/", $rule['destination']['network'], $optmatch)) {
-				$opt_ip = $FilterIflist["opt{$optmatch[1]}"];
+				$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
 				if(!is_ipaddr($opt_ip))
 					return "# unresolvable oparray $optmatch[0] - $opt_ip";
 			} else {
@@ -1321,7 +1321,7 @@ function generate_user_filter_rule($rule)
 							/* determine interface gateway */
 							foreach($gateways_arr as $gateway) {
 								if($gateway['name'] == $member) {
-									$int = $FilterIflist[$gateway['interface']]['ip'];
+									$int = $FilterIflist[$gateway['interface']]['if'];
 									if(is_ipaddr($gateway['gateway'])) 
 										$gatewayip = $gateway['gateway'];
 									else 

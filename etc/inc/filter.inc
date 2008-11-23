@@ -252,7 +252,7 @@ function filter_generate_scrubing()
 	$scrubrules = "";
 	/* disable scrub option */
 	foreach ($FilterIflist as $scrubif => $scrubcfg) {
-		if (in_array($scrubif, array("pppoe", "pptp", "enc0", "openvpn" /*, "lt2p", "ppp" */))) 
+		if (isset($scrubcfg['virtual'])) 
 			continue;
 		/* set up MSS clamping */
 		if ($scrubcfg['mtu'] <> "" && is_numeric($scrubcfg['mtu']) && $scrubcfg['ip'] != "pppoe")
@@ -390,6 +390,7 @@ function generate_optcfg_array()
 		$oic['ip'] = $config['pptpd']['localip'];
 		$oc['sa'] = $config['pptpd']['remoteip'];
 		$oc['sn'] = $g['pptp_subnet'];
+		$oc['virtual'] = true;
 		if($config['pptpd']['pptp_subnet'] <> "")
 			$oc['sn'] = $config['pptpd']['pptp_subnet'];
 		$FilterIflist['pptp'] = $oic;
@@ -401,6 +402,7 @@ function generate_optcfg_array()
 		$oc['ip'] = $config['pppoe']['localip'];
 		$oc['sa'] = $config['pppoe']['remoteip'];
 		$oc['sn'] = $g['pppoe_subnet'];
+		$oc['virtual'] = true;
 		if($config['pppoe']['pppoe_subnet'] <> "")
 			$oc['sn'] = $config['pppoe']['pppoe_subnet'];
 		$FilterIflist['pppoe'] = $oic;
@@ -411,6 +413,7 @@ function generate_optcfg_array()
 		$oic['if'] = 'enc0';
 		$oic['descr'] = 'IPsec';
 		$oic['ip'] = "none";
+		$oc['virtual'] = true;
 		$FilterIflist['enc0'] = $oic;
 	}
 	/* add openvpn interfaces */
@@ -420,6 +423,7 @@ function generate_optcfg_array()
 		$oic['if'] = "openvpn";
 		$oic['descr'] = 'OpenVPN';
 		$oic['ip'] = "none";
+		$oc['virtual'] = true;
 		$FilterIflist['openvpn'] = $oic;
 	}
 }

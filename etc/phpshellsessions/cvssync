@@ -4,6 +4,8 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
+echo "===> cvssync is starting at " . exec(date) . "\n";
+
 conf_mount_rw();
 
 if(is_dir("/home/pfsense")) {
@@ -60,7 +62,7 @@ $branches = array(
 
 if(file_exists("/root/cvssync_backup.tgz")) {
 	$backup_date = `ls -lah /root/cvssync_backup.tgz | awk '{ print $6,$7,$8 }'`;
-	$tmp = array("RESTORE" => "Restores prior CVSSync backup data performed at {$backup_date}");
+	$tmp = array("RESTORE" => "Restores prior CVSSync backup from {$backup_date}");
 	$branches = array_merge($branches, $tmp);
 }
 
@@ -80,22 +82,25 @@ if($command_split[2]) {
 }
 create_supfile($branch);
 
+// Specify if we should backup system
 if($argv[4] == "NOBACKUP") 
 	$nobackup = true;
 else 
 	$nobackup = false;
+
+if($g['platform'] == "embedded" || $g['platform'] == "livecd" || $g['platform'] == "wrap") 
+	$nobackup = true; // do not backup embedded, livecd
 
 $CODIR =  "/root/pfsense/$branch";
 
 exec("mkdir -p /root/pfsense/$BRANCHTAG");
 
 $found = false;
-foreach($branches as $branchname => $branchdesc) {
+foreach($branches as $branchname => $branchdesc) 
 	if($branchname == $branch) 
 		$found = true;
-}
 if(!$found) {
-	echo "\nInvalid branch.\n";
+	echo "\nInvalid branch {$branch}.\n";
 	exit;
 }
 
@@ -110,11 +115,9 @@ if($branch == "RESTORE" && $g['platform'] == "pfSense") {
 	exit();
 }
 
-if($g['platform'] == "embedded" || $g['platform'] == "livecd" || $g['platform'] == "wrap") 
-	$nobackup = true; // do not backup embedded, livecd
-
 if($nobackup == false) {
 	echo "===> Backing up current pfSense information...\n";
+	echo "===> Specify NOBACKUP at the end of pfSsh.php command to turn this feature off.\n";
 	echo "===> Please wait... ";
 	$exclude  = " --exclude /var/dhcpd/dev/";
 	$exclude .= " --exclude /root";

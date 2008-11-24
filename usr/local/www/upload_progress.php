@@ -41,7 +41,7 @@ include("guiconfig.inc");
 // sanitize the ID value
 $id = $_SESSION['uploadid'];
 if (!$id) {
-	echo "Invalid upload id#.";
+	echo "Sorry, we could not find a uploadid code.";
 	exit;
 }
 
@@ -50,19 +50,15 @@ $info = uploadprogress_get_info($id);
 
 // false is returned if the data isn't found
 if (!$info) {
-
 	echo "Could not locate progress {$id}.  Trying again...";
 	echo "<html><meta http-equiv=\"Refresh\" CONTENT=\"1; url=upload_progress.php?uploadid={$id}\"><body></body></html>";
 	exit;
+}
 
-} else {
-
-	if (intval($info['percent']) > "99") {
-
-		//echo ('<html><body onLoad="window.close()"> UPLOAD completed!</body></html>');
-		echo ('<html><body> UPLOAD completed!</body></html>');
-
-	} else {
+if (intval($info['percent']) > "99") {
+	echo ('<html><body onLoad="window.close()"><&nbsp;<p>&nbsp;<p><center><b>UPLOAD completed!</b></center></body></html>');
+	exit;
+}
 
 ?>
 
@@ -138,9 +134,3 @@ if (!$info) {
 </table>
 </body>
 </html>
-
-<?php
-
-}}
-
-?>

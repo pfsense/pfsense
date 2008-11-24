@@ -273,7 +273,6 @@ if [ "$PLATFORM" != "cdrom" ]; then
 	# not being able to boot back up.
 	cat >/usr/local/lib/php.ini <<EOF
 # File generated from /etc/rc
-apc.enable_cli = On
 output_buffering = "0"
 expose_php = Off
 apc.rfc1867 = on

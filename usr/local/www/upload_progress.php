@@ -50,13 +50,31 @@ $info = uploadprogress_get_info($id);
 
 // false is returned if the data isn't found
 if (!$info) {
-	echo "Could not locate progress {$id}.  Trying again...";
-	echo "<html><meta http-equiv=\"Refresh\" CONTENT=\"1; url=upload_progress.php?uploadid={$id}\"><body></body></html>";
+	echo <<<EOF
+	<html>
+		<meta http-equiv="Refresh" CONTENT="1; url=upload_progress.php?uploadid={$id}">
+		<body>
+			Could not locate progress {$id}.  Trying again...
+		</body>
+	</html>
+EOF;
 	exit;
 }
 
 if (intval($info['percent']) > "99") {
-	echo ('<html><body onLoad="window.close()"><&nbsp;<p>&nbsp;<p><center><b>UPLOAD completed!</b></center></body></html>');
+	echo <<<EOF1
+	<html>
+		<body onLoad="window.close();">
+			&nbsp;<p>
+			&nbsp;<p>
+			<center>
+				<b>
+					UPLOAD completed!
+				</b>
+			</center>
+		</body>
+	</html>
+EOF1;
 	exit;
 }
 

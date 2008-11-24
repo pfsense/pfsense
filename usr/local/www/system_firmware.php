@@ -46,11 +46,8 @@ $curcfg = $config['system']['firmware'];
 require_once("xmlrpc_client.inc");
 
 /* Allow additional execution time 0 = no limit. */
-ini_set('max_execution_time', '3600');
-ini_set('max_input_time', '3600');
-
-/* Construct an upload_id for this session */
-$upload_id = $_SERVER['REQUEST_TIME'] . $_SESSION['Username'];
+ini_set('max_execution_time', '9999');
+ini_set('max_input_time', '9999');
 
 /* if upgrade in progress, alert user */
 if(file_exists($d_firmwarelock_path)) {
@@ -212,13 +209,16 @@ print_info_box($sig_warning);
                    			<input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
 							</form>
 						<?php else: ?>
-							<form action="system_firmware.php" method="post">	
+							<form id='sysfirmware' name='sysfirmware' action="system_firmware.php" method="post">	
 				  			<input name="Submit" type="submit" class="formbtn" value="Disable firmware upload">
 							</form>
-							<br><br>
-							</form>
-							<form action="system_firmware.php" method="post" enctype="multipart/form-data">
-							<input type="hidden" name="APC_UPLOAD_PROGRESS" value="<?=$upload_id?>" />
+							<br>
+							<form id='sysupload' name='sysupload' action="system_firmware.php" method="post" enctype="multipart/form-data">
+<?php
+	/* Construct an upload_id for this session */
+	$_SESSION['uploadid'] = uniqid();
+?>								
+							<input type="hidden" name="UPLOAD_IDENTIFIER" value="<?=$_SESSION['uploadid']?>">							
 							<strong>Firmware image file: </strong>&nbsp;
 							<input name="ulfile" type="file" class="formfld">
 							<br><br>
@@ -236,7 +236,7 @@ print_info_box($sig_warning);
 									}
 								}
 							?>
-							<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?uploadid=<?=$upload_id?>','UploadMeter','width=370,height=115', true); return true;">
+							<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('upload_progress.php','UploadMeter','width=370,height=115', true); return true;">
 						<?php endif; else: ?>
 							<strong>You must reboot the system before you can upgrade the firmware.</strong>
 						<?php endif; ?>

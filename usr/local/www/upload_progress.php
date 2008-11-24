@@ -39,57 +39,28 @@
 include("guiconfig.inc");
 
 // sanitize the ID value
-$id = $_REQUEST['uploadid'];
-if (strlen($id) == 0) {
-	echo "Invalid uploadid#.";
+$id = $_SESSION['uploadid'];
+if (!$id) {
+	echo "Invalid upload id#.";
 	exit;
 }
 
-// ensure the uploaded status data exists in the session
-if (!array_key_exists($id, $_SESSION[self::SESSION_KEY])) {
-	$_SESSION[self::SESSION_KEY][$id] = array(
-		'id'       => $id,
-		'finished' => false,
-		'percent'  => 0,
-		'total'    => 0,
-		'complete' => 0
-	);
-}
-
-// retrieve the data from the session so it can be updated and returned
-$ret = $_SESSION[self::SESSION_KEY][$id];
-
 // retrieve the upload data from APC
-$status = apc_fetch('upload_' . $id);
+$info = uploadprogress_get_info($id);
 
 // false is returned if the data isn't found
-if ($status) {
-	$ret['finished'] = (bool) $status['done'];
-	$ret['total']    = $status['total'];
-	$ret['complete'] = $status['current'];
-	// calculate the completed percentage
-	if ($ret['total'] > 0)
-		$ret['percent'] = $ret['complete'] / $ret['total'] * 100;
-	// write the changed data back to the session
-	$_SESSION[self::SESSION_KEY][$id] = $ret;
-}
+if (!$info) {
 
-if (!$ret) {
-
-	if ( array_key_exists( "e", $_GET ) ) {
-		echo "<html><body onLoad='window.close();'>Invalid Meter ID! {$_REQUEST['uploadid]}";
-		echo ('</body></html>');
-		exit;
-	} else {
-		echo ('<html><meta http-equiv="Refresh" CONTENT="1; url=progress.php?uploadid={$id}"><body></body></html>');
-		exit;
-	}
+	echo "Could not locate progress {$id}.  Trying again...";
+	echo "<html><meta http-equiv=\"Refresh\" CONTENT=\"1; url=upload_progress.php?uploadid={$id}\"><body></body></html>";
+	exit;
 
 } else {
 
-	if ($ret['percent'] > "99") {
+	if (intval($info['percent']) > "99") {
 
-		echo ('<html><body onLoad="window.close()"> UPLOAD completed!</body></html>');
+		//echo ('<html><body onLoad="window.close()"> UPLOAD completed!</body></html>');
+		echo ('<html><body> UPLOAD completed!</body></html>');
 
 	} else {
 
@@ -115,7 +86,10 @@ if (!$ret) {
 				<td>
 					<table WIDTH="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
 						<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif">
-							<?echo("<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' WIDTH='$meter%'>");?>
+							<?php
+								$meter = sprintf("%.2f", $info['bytes_uploaded'] / $info['bytes_total'] * 100);
+								echo "<img src='./themes/{$g['theme']}/images/misc/bar_blue.gif' height='15' WIDTH='{$meter}%'>";
+							?>
 						</td>
 					</table>
 				</td>
@@ -124,20 +98,49 @@ if (!$ret) {
 			<br>
 			<table width="100%">
 				<tr>
-					<td align="right"><font face="arial"><b>Uploaded:</td>
-					<td><font face="arial"><?=$ret['finished']?></td>
-					<td align="right"><font face="arial"><b>File Size:</td>
-					<td><font face="arial"><?=$ret['total']?></td>
+					<td align="right">
+						<font face="arial"><b>Uploaded:
+					</td>
+					<td>
+						<font face="arial">
+						<?=$info['bytes_uploaded']?>
+					</td>
+					<td align="right">
+						<font face="arial">
+						<b>File Size:
+					</td>
+					<td>
+						<font face="arial">
+						<?=$info['bytes_total']?>
+					</td>
 				</tr>
 	   			<tr>
-	   				<td align="right"><font face="arial"><b>Completed:</td>
-					<td><font face="arial"><?=$ret['complete']?>%</td>
-	   				<td align="right"><font face="arial"><b></td>
-					<td><font face="arial"></td>
-	   				</tr>
-				</table>
-			</td>
-		</tr>
-	</table>
+	   				<td align="right">
+						<font face="arial">
+						<b>Completed:
+					</td>
+					<td>
+						<font face="arial">
+						<?=$info['bytes_total']-$info['bytes_uploaded']?>%
+					</td>
+	   				<td align="right">
+						<font face="arial"><b>
+						Estimated:
+					</td>
+					<td>
+						<font face="arial">
+						<?=$info['est_sec']?>
+					</td>
+	   			</tr>
+			</table>
+		</td>
+	</tr>
+</table>
 </body>
 </html>
+
+<?php
+
+}}
+
+?>

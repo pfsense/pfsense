@@ -38,18 +38,19 @@
 ##|*MATCH=system_firmware.php*
 ##|-PRIV
 
-
 $d_isfwfile = 1;
 require_once("guiconfig.inc");
 
 $curcfg = $config['system']['firmware'];
-
 
 require_once("xmlrpc_client.inc");
 
 /* Allow additional execution time 0 = no limit. */
 ini_set('max_execution_time', '3600');
 ini_set('max_input_time', '3600');
+
+/* Construct an upload_id for this session */
+$upload_id = $_SERVER['REQUEST_TIME'] . $_SESSION['Username'];
 
 /* if upgrade in progress, alert user */
 if(file_exists($d_firmwarelock_path)) {
@@ -155,13 +156,14 @@ $pgtitle = array("Diagnostics","Firmware");
 include("head.inc");
 
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">	
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
 <?php if ($sig_warning && !$input_errors): ?>
-<form action="system_firmware.php" method="post">
+<form id="formitem" action="system_firmware.php" method="post">
 <?php
 $sig_warning = "<strong>" . $sig_warning . "</strong><br>This means that the image you uploaded " .
 	"is not an official/supported image and may lead to unexpected behavior or security " .
@@ -201,12 +203,14 @@ print_info_box($sig_warning);
               upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.tgz)
 			  to be uploaded.<br>Click &quot;Upgrade firmware&quot;
               to start the upgrade process.</p>
+					<div id="firmwarearea">
                     <?php if (!file_exists($d_sysrebootreqd_path)): ?>
                     <?php if (!file_exists($d_fwupenabled_path)): ?>
                     <input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
 				  <?php else: ?>
 				   <input name="Submit" type="submit" class="formbtn" value="Disable firmware upload">
                     <br><br>
+        			<input type="hidden" name="APC_UPLOAD_PROGRESS" value="<?=$upload_id?>" />
 					<strong>Firmware image file: </strong>&nbsp;
 					<input name="ulfile" type="file" class="formfld">
                     <br><br>
@@ -224,12 +228,13 @@ print_info_box($sig_warning);
 							}
 						}
 					  ?>
-		    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
+					<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?uploadid=<?=$upload_id?>','UploadMeter','width=370,height=115', true); return true;">
 				  <?php endif; else: ?>
 				    <strong>You must reboot the system before you can upgrade the firmware.</strong>
 				  <?php endif; ?>
+					</div>
                   </td>
-		</td>
+				</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
@@ -242,7 +247,6 @@ print_info_box($sig_warning);
 		</tr>
 		</td>
 </table>
-
 </form>
 <?php endif; endif; ?>
 <?php include("fend.inc"); ?>

@@ -154,12 +154,17 @@ include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">	
+<form action="system_firmware.php" method="post" enctype="multipart/form-data">
+<?php
+	/* Construct an upload_id for this session */
+	$upload_id = "up". $_SESSION['Username'];
+?>
+<input type="hidden" name="UPLOAD_IDENTIFIER" value="<?php echo $upload_id;?>" /> 
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
 <?php if ($sig_warning && !$input_errors): ?>
-<form action="system_firmware.php" method="post">
 <?php
 	$sig_warning = "<strong>" . $sig_warning . "</strong><br>This means that the image you uploaded " .
 		"is not an official/supported image and may lead to unexpected behavior or security " .
@@ -170,7 +175,6 @@ print_info_box($sig_warning);
 ?>
 <input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" Yes ">
 <input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" No ">
-</form>
 <?php else: ?>
 <?php if (!file_exists($d_firmwarelock_path)): ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -204,21 +208,11 @@ print_info_box($sig_warning);
 							to start the upgrade process.
 						</p>
 						<?php if (!file_exists($d_sysrebootreqd_path)): ?>
-                   		<?php if (!file_exists($d_fwupenabled_path)): ?>
-							<form action="system_firmware.php" method="post">	
-                   			<input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
-							</form>
+						<?php if (!file_exists($d_fwupenabled_path)): ?>
+							<input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
 						<?php else: ?>
-							<form id='sysfirmware' name='sysfirmware' action="system_firmware.php" method="post">	
 				  			<input name="Submit" type="submit" class="formbtn" value="Disable firmware upload">
-							</form>
-							<br>
-							<form id='sysupload' name='sysupload' action="system_firmware.php" method="post" enctype="multipart/form-data">
-<?php
-	/* Construct an upload_id for this session */
-	$_SESSION['uploadid'] = uniqid();
-?>								
-							<input type="hidden" name="UPLOAD_IDENTIFIER" value="<?=$_SESSION['uploadid']?>">							
+							<br><br>
 							<strong>Firmware image file: </strong>&nbsp;
 							<input name="ulfile" type="file" class="formfld">
 							<br><br>
@@ -236,7 +230,12 @@ print_info_box($sig_warning);
 									}
 								}
 							?>
-							<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('upload_progress.php','UploadMeter','width=370,height=115', true); return true;">
+							<?php
+								/*
+								<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('upload_progress.php?upload_id=<?=$upload_id?>','UploadMeter','width=370,height=115', true); return true;">
+								*/
+							?>
+							<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
 						<?php endif; else: ?>
 							<strong>You must reboot the system before you can upgrade the firmware.</strong>
 						<?php endif; ?>
@@ -253,7 +252,7 @@ print_info_box($sig_warning);
 		</div>
 	</tr>
 </table>
-</form>
+
 <?php endif; endif; ?>
 <?php include("fend.inc"); ?>
 </body>

@@ -61,7 +61,7 @@ EOF;
 	exit;
 }
 
-if (intval($info['percent']) > "99") {
+if ($info['bytes_uploaded'] >= $info['bytes_total']) {
 	echo <<<EOF1
 	<html>
 		<body onLoad="window.close();">

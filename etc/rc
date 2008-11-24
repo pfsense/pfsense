@@ -315,6 +315,7 @@ extension=tokenizer.so
 extension=xml.so
 extension=ldap.so
 extension=zlib.so
+extension=uploadprogress.so
 
 ; standard PHP extensions currently beeing unused
 ;extension=json.so

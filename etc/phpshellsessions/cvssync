@@ -198,7 +198,7 @@ if($nobackup == false) {
 	$exclude .= " --exclude /var/empty";
 	exec("tar czPf /root/cvssync_backup.tgz {$exclude} /");
 	$size = filesize("/root/cvssync_backup.tgz");
-	echo "{$size} bytes.\n\n";
+	echo "{$size} bytes.\n";
 }
 
 echo "===> Checking out $branch\n";

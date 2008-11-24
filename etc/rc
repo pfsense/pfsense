@@ -273,6 +273,7 @@ if [ "$PLATFORM" != "cdrom" ]; then
 	# not being able to boot back up.
 	cat >/usr/local/lib/php.ini <<EOF
 # File generated from /etc/rc
+apc.enable_cli = On
 output_buffering = "0"
 expose_php = Off
 implicit_flush = true
@@ -286,7 +287,7 @@ upload_max_filesize = 100M
 post_max_size = 100M
 html_errors = Off
 zlib.output_compression = On
-zlib.output_compression_level = 5
+zlib.output_compression_level = 1
 include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
 extension_dir=/usr/local/lib/php/20060613/
 

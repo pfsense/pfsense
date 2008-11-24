@@ -249,6 +249,4 @@ conf_mount_ro();
 echo "===> Showing rules.debug differences\n";
 system("diff -u /tmp/rules.beforecvssync /tmp/rules.debug");
 
-echo "===> Waiting for PHP/lighttpd restart...";
-sleep(10);
 

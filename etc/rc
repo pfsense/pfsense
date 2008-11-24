@@ -355,6 +355,8 @@ cp /usr/local/lib/php.ini /usr/local/etc/php.ini
 
 rm -f /cf/conf/backup/backup.cache
 
+rm -f /root/lighttpd*
+
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching PHP init system..."
 /etc/rc.bootup

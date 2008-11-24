@@ -82,14 +82,14 @@ if (intval($info['percent']) > "99") {
 				</td>
 				<td>
 					<table WIDTH="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
-						<tr>
-							<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif">
-								<?php
-								$meter = sprintf("%.2f", $info['bytes_uploaded'] / $info['bytes_total'] * 100);
-								echo "<img src='./themes/{$g['theme']}/images/misc/bar_blue.gif' height='15' WIDTH='{$meter}%'>";
-								?>
-							</td>
-						</tr>
+					<tr>
+						<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif">
+							<?php
+							$meter = sprintf("%.2f", $info['bytes_uploaded'] / $info['bytes_total'] * 100);
+							echo "<img src='./themes/{$g['theme']}/images/misc/bar_blue.gif' height='15' WIDTH='{$meter}%'>";
+							?>
+						</td>
+					</tr>
 					</table>
 				</td>
 				<td width="5" height="15" background="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" align="top">
@@ -98,44 +98,53 @@ if (intval($info['percent']) > "99") {
 			</table>
 			<br>
 			<table width="100%">
-				<tr>
-					<td align="right">
-						<font face="arial"><b>Uploaded:
-					</td>
-					<td>
-						<font face="arial">
-						<?=$info['bytes_uploaded']?>
-					</td>
-					<td align="right">
-						<font face="arial">
-						<b>File Size:
-					</td>
-					<td>
-						<font face="arial">
-						<?=$info['bytes_total']?>
-					</td>
-				</tr>
-	   			<tr>
-	   				<td align="right">
-						<font face="arial">
-						<b>Completed:
-					</td>
-					<td>
-						<font face="arial">
-						<?=$info['bytes_total']-$info['bytes_uploaded']?>%
-					</td>
-	   				<td align="right">
-						<font face="arial"><b>
-						Estimated:
-					</td>
-					<td>
-						<font face="arial">
-						<?=$info['est_sec']?>
-					</td>
-	   			</tr>
+			<tr>
+				<td align="right">
+					<font face="arial">
+					<b>
+					Uploaded:
+				</td>
+				<td>
+					<font face="arial">
+					<b>
+					<?=$info['bytes_uploaded']?>
+				</td>
+				<td align="right">
+					<font face="arial">
+					<b>
+					File Size:
+				</td>
+				<td>
+					<font face="arial">
+					<b>
+					<?=$info['bytes_total']?>
+				</td>
+			</tr>
+   			<tr>
+   				<td align="right">
+					<font face="arial">
+					<b>
+					Completed:
+				</td>
+				<td>
+					<font face="arial">
+					<b>
+					<?=$info['bytes_total']-$info['bytes_uploaded']?>%
+				</td>
+   				<td align="right">
+					<font face="arial">
+					<b>
+					Estimated:
+				</td>
+				<td>
+					<font face="arial">
+					<b>
+					<?=$info['est_sec']?>
+				</td>
+   			</tr>
 			</table>
 		</td>
 	</tr>
-</table>
+	</table>
 </body>
 </html>

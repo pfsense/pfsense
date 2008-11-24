@@ -76,7 +76,7 @@ if($_POST['kerneltype']) {
 
 /* Handle manual upgrade */
 if ($_POST && !file_exists($d_firmwarelock_path)) {
-
+	
 	unset($input_errors);
 	unset($sig_warning);
 
@@ -156,31 +156,29 @@ $pgtitle = array("Diagnostics","Firmware");
 include("head.inc");
 
 ?>
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">	
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
 <?php if ($sig_warning && !$input_errors): ?>
-<form id="formitem" action="system_firmware.php" method="post">
+<form action="system_firmware.php" method="post">
 <?php
-$sig_warning = "<strong>" . $sig_warning . "</strong><br>This means that the image you uploaded " .
-	"is not an official/supported image and may lead to unexpected behavior or security " .
-	"compromises. Only install images that come from sources that you trust, and make sure ".
-	"that the image has not been tampered with.<br><br>".
-	"Do you want to install this image anyway (on your own risk)?";
+	$sig_warning = "<strong>" . $sig_warning . "</strong><br>This means that the image you uploaded " .
+		"is not an official/supported image and may lead to unexpected behavior or security " .
+		"compromises. Only install images that come from sources that you trust, and make sure ".
+		"that the image has not been tampered with.<br><br>".
+		"Do you want to install this image anyway (on your own risk)?";
 print_info_box($sig_warning);
 ?>
 <input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" Yes ">
 <input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" No ">
 </form>
 <?php else: ?>
-            <?php if (!file_exists($d_firmwarelock_path)): ?>
-<form action="system_firmware.php" method="post" enctype="multipart/form-data">
+<?php if (!file_exists($d_firmwarelock_path)): ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td>
+		<tr>
+			<td>
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Manual Update", true, "system_firmware.php");
@@ -188,64 +186,72 @@ print_info_box($sig_warning);
 	$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
 	display_top_tabs($tab_array);
 ?>
-		</td>
-	</tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
-		 <td colspan="2" class="listtopic">Invoke <?=$g['product_name']?> Manual Upgrade</td>
+			</td>
 		</tr>
-		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable">
-            <p>Click &quot;Enable firmware
-              upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.tgz)
-			  to be uploaded.<br>Click &quot;Upgrade firmware&quot;
-              to start the upgrade process.</p>
-					<div id="firmwarearea">
-                    <?php if (!file_exists($d_sysrebootreqd_path)): ?>
-                    <?php if (!file_exists($d_fwupenabled_path)): ?>
-                    <input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
-				  <?php else: ?>
-				   <input name="Submit" type="submit" class="formbtn" value="Disable firmware upload">
-                    <br><br>
-        			<input type="hidden" name="APC_UPLOAD_PROGRESS" value="<?=$upload_id?>" />
-					<strong>Firmware image file: </strong>&nbsp;
-					<input name="ulfile" type="file" class="formfld">
-                    <br><br>
-					  <?php
-				  		if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
-				  			if($g['platform'] == "pfSense") { 
-								echo "Please select kernel type: ";
-								echo "<select name='kerneltype'>";
-								echo "<option value='SMP'>Multiprocessor kernel</option>";
-								echo "<option value='single'>Uniprocessor kernel</option>";
-								echo "<option value='wrap'>Embedded kernel</option>";
-								echo "<option value='Developers'>Developers kernel</option>";
-								echo "</select>";
-								echo "<br><br>";
-							}
-						}
-					  ?>
-					<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?uploadid=<?=$upload_id?>','UploadMeter','width=370,height=115', true); return true;">
-				  <?php endif; else: ?>
-				    <strong>You must reboot the system before you can upgrade the firmware.</strong>
-				  <?php endif; ?>
-					</div>
-                  </td>
+		<tr>
+			<td>
+				<div id="mainarea">
+					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+                	<tr>
+		 				<td colspan="2" class="listtopic">Invoke <?=$g['product_name']?> Manual Upgrade</td>
+					</tr>
+					<tr>
+		  				<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
+                  		<td width="78%" class="vtable">
+						<p>
+							Click &quot;Enable firmware
+							upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.tgz)
+							to be uploaded.
+							<br>
+							Click &quot;Upgrade firmware&quot;
+							to start the upgrade process.
+						</p>
+						<?php if (!file_exists($d_sysrebootreqd_path)): ?>
+                   		<?php if (!file_exists($d_fwupenabled_path)): ?>
+							<form action="system_firmware.php" method="post">	
+                   			<input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
+							</form>
+						<?php else: ?>
+							<form action="system_firmware.php" method="post">	
+				  			<input name="Submit" type="submit" class="formbtn" value="Disable firmware upload">
+							</form>
+							<br><br>
+							</form>
+							<form action="system_firmware.php" method="post" enctype="multipart/form-data">
+							<input type="hidden" name="APC_UPLOAD_PROGRESS" value="<?=$upload_id?>" />
+							<strong>Firmware image file: </strong>&nbsp;
+							<input name="ulfile" type="file" class="formfld">
+							<br><br>
+							<?php
+						  		if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
+						  			if($g['platform'] == "pfSense") { 
+										echo "Please select kernel type: ";
+										echo "<select name='kerneltype'>";
+										echo "<option value='SMP'>Multiprocessor kernel</option>";
+										echo "<option value='single'>Uniprocessor kernel</option>";
+										echo "<option value='wrap'>Embedded kernel</option>";
+										echo "<option value='Developers'>Developers kernel</option>";
+										echo "</select>";
+										echo "<br><br>";
+									}
+								}
+							?>
+							<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?uploadid=<?=$upload_id?>','UploadMeter','width=370,height=115', true); return true;">
+						<?php endif; else: ?>
+							<strong>You must reboot the system before you can upgrade the firmware.</strong>
+						<?php endif; ?>
+					</td>
 				</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong>Warning:<br>
-                    </strong></span>DO NOT abort the firmware upgrade once it
-                    has started. The firewall will reboot automatically after
-                    storing the new firmware. The configuration will be maintained.</span></td>
-              </table>
+			</tr>
+			<tr>
+				<td width="22%" valign="top">&nbsp;</td>
+				<td width="78%"><span class="vexpl"><span class="red"><strong>Warning:<br>
+				</strong></span>DO NOT abort the firmware upgrade once it
+				has started. The firewall will reboot automatically after
+				storing the new firmware. The configuration will be maintained.</span></td>
+			</table>
 		</div>
-		</tr>
-		</td>
+	</tr>
 </table>
 </form>
 <?php endif; endif; ?>

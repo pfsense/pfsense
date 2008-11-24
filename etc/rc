@@ -276,6 +276,7 @@ if [ "$PLATFORM" != "cdrom" ]; then
 apc.enable_cli = On
 output_buffering = "0"
 expose_php = Off
+apc.rfc1867 = on
 implicit_flush = true
 magic_quotes_gpc = Off
 max_execution_time = 99999999

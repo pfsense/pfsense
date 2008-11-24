@@ -74,22 +74,27 @@ if (intval($info['percent']) > "99") {
 	<table height="100%" width="100%" cellPadding="4" cellSpacing="4" style="border:1px solid #990000;">
 	<tr>
 		<td>
-			<font face="arial"><b><center>Uploading files...</b></center>
+			<font face="arial"><b><center>Uploading file...</b></center>
 			<br>
 			<table width="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
 			<tr>
-				<td width="5" height="15" background="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" align="top"></td>
+				<td width="5" height="15" background="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" align="top">
+				</td>
 				<td>
 					<table WIDTH="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
-						<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif">
-							<?php
+						<tr>
+							<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif">
+								<?php
 								$meter = sprintf("%.2f", $info['bytes_uploaded'] / $info['bytes_total'] * 100);
 								echo "<img src='./themes/{$g['theme']}/images/misc/bar_blue.gif' height='15' WIDTH='{$meter}%'>";
-							?>
-						</td>
+								?>
+							</td>
+						</tr>
 					</table>
 				</td>
-				<td width="5" height="15" background="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" align="top"></td>
+				<td width="5" height="15" background="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" align="top">
+				</td>
+			</tr>
 			</table>
 			<br>
 			<table width="100%">

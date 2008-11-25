@@ -879,8 +879,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<tr>
 												<td colspan="2" align="right">
 													<div id='savebuttondiv'>
-														<input type="Button" value="Save Gateway" onClick='hide_add_gatewaysave();'> 
-														<input type="Button" value="Cancel" onClick='hide_add_gateway();'>
+														<input id="gwsave" type="Button" value="Save Gateway" onClick='hide_add_gatewaysave();'> 
+														<input id="gwcancel" type="Button" value="Cancel" onClick='hide_add_gateway();'>
 													</div>
 												</td>
 											</tr>
@@ -1408,8 +1408,12 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					document.getElementById("gateway").style.display = '';
 					document.getElementById("save").style.display = '';
 					document.getElementById("cancel").style.display = '';
+					document.getElementById("gwsave").style.display = '';
+					document.getElementById("gwcancel").style.display = '';					
 				}
 				function hide_add_gatewaysave() {
+					document.getElementById("gwsave").style.display = 'none';
+					document.getElementById("gwcancel").style.display = 'none';					
 					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
 					var iface = $F('if');
 					var name = $('name').getValue();

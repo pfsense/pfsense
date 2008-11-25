@@ -687,23 +687,23 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 	<?php
 		/* OK, so this is sick using php to generate javascript, but it needed to be done */
 		foreach ($types as $key => $val) {
-			echo "          case \"{$key}\": {\n";
+			echo "case \"{$key}\": {\n";
 			$t = $types;
 			foreach ($t as $k => $v) {
 				if ($k != $key) {
-					echo "                  $('{$k}').hide();\n";
+					echo "$('{$k}').hide();\n";
 				}
 			}
-			echo "          }\n";
+			echo "}\n";
 		}
 	?>
 		}
-		$(t).appear();
+		$(t).show();
 	}
 
 	function show_allcfg(obj) {
 		if (obj.checked)
-			$('allcfg').appear();
+			$('allcfg').show();
 		else
 			$('allcfg').hide();
 	}
@@ -956,7 +956,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Periodic reset");?></td>
 								<td width="78%" class="vtable">
-									<input name="pppoe_preset" type="checkbox" id="pppoe_preset" value="yes" <?php if ($pconfig['pppoe_preset']) echo "checked=\"checked\""; ?> onclick="Effect.toggle('presetwrap', 'appear', { duration: 1.0 });" />
+									<input name="pppoe_preset" type="checkbox" id="pppoe_preset" value="yes" <?php if ($pconfig['pppoe_preset']) echo "checked=\"checked\""; ?> onclick="Effect.toggle('presetwrap', 'show', { duration: 0.0 });" />
 										<?= gettext("enable periodic PPPoE resets"); ?>
 										<br />
 										<?php if ($pconfig['pppoe_preset']): ?>
@@ -967,10 +967,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												<tr>
 													<td align="left" valign="top">
 														<p style="margin: 4px; padding: 4px 0 4px 0; width: 94%;">
-															<input name="pppoe_pr_type" type="radio" id="pppoe_pr_custom" value="custom" <?php if ($pconfig['pppoe_pr_custom']) echo "checked=\"checked\""; ?> onclick="if (this.checked) { Effect.Appear('pppoecustomwrap', { duration: 1.0 }); Effect.Fade('pppoepresetwrap', { duration: 1.0 }); }" /> 
+															<input name="pppoe_pr_type" type="radio" id="pppoe_pr_custom" value="custom" <?php if ($pconfig['pppoe_pr_custom']) echo "checked=\"checked\""; ?> onclick="if (this.checked) { Effect.Appear('pppoecustomwrap', { duration: 0.0 }); Effect.Fade('pppoepresetwrap', { duration: 0.0 }); }" /> 
 																<?= gettext("provide a custom reset time"); ?>
 																<br />
-																<input name="pppoe_pr_type" type="radio" id="pppoe_pr_preset" value="preset" <?php if ($pconfig['pppoe_pr_preset']) echo "checked=\"checked\""; ?> onclick="if (this.checked) { Effect.Appear('pppoepresetwrap', { duration: 1.0 }); Effect.Fade('pppoecustomwrap', { duration: 1.0 }); }" /> 
+																<input name="pppoe_pr_type" type="radio" id="pppoe_pr_preset" value="preset" <?php if ($pconfig['pppoe_pr_preset']) echo "checked=\"checked\""; ?> onclick="if (this.checked) { Effect.Appear('pppoepresetwrap', { duration: 0.0 }); Effect.Fade('pppoecustomwrap', { duration: 0.0 }); }" /> 
 																	<?= gettext("select reset time from a preset"); ?>
 																</p>
 																<?php if ($pconfig['pppoe_pr_custom']): ?>

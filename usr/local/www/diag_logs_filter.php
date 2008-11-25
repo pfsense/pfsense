@@ -30,17 +30,17 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+require("guiconfig.inc");
+
 if($_GET['getrulenum'] or $_POST['getrulenum']) {
 	if($_GET['getrulenum'])
-		$rulenum = $_GET['getrulenum'];
+		$rulenum = escapeshellarg($_GET['getrulenum']);
 	if($_POST['getrulenum'])
-		$rulenum = $_POST['getrulenum'];
+		$rulenum = escapeshellarg($_POST['getrulenum']);
 	$rule = `pfctl -vvsr | grep @{$rulenum}`;
 	echo "The rule that triggered this action is:\n\n{$rule}";
 	exit;
 }
-
-require("guiconfig.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 

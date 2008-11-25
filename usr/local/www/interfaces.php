@@ -798,12 +798,19 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				</td>
 			</tr>
 			<tr>
+				<td width="100" valign="top"></td>
+				<td> 
+					<br/>
+					<input name="Submit" type="submit" class="formbtn" value="Save">
+				</td>
+			</tr>
+			<tr>
 				<td colspan="2" valign="top" height="16"></td>
 			</tr>			
 			<tr style="display:none;" name="none" id="none">
 			</tr>
 			<tr style="display:none;" name="static" id="static">
-				<td colspan="2">
+				<td colspan="2" style="padding:0px;">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
 							<td colspan="2" valign="top" class="listtopic">Static IP configuration</td>
@@ -861,7 +868,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					</td>
 				</tr>
 				<tr style="display:none;" name="dhcp" id="dhcp">
-					<td colspan="2">
+					<td colspan="2" style="padding: 0px;">
 						<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">DHCP client configuration</td>
@@ -895,11 +902,21 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 									DHCP client.
 								</td>
 							</tr>
+							<tr>
+								<td width="100" valign="top"></td>
+								<td> 
+									<br/>
+									<input name="Submit" type="submit" class="formbtn" value="Save">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" valign="top" height="16"></td>
+							</tr>							
 						</table>
 					</td>
 				</tr>
 				<tr style="display:none;" name="pppoe" id="pppoe">
-					<td colspan="2">
+					<td colspan="2" style="padding:0px;">
 						<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">PPPoE configuration</td>
@@ -992,12 +1009,22 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 																</tr>
 															</table>
 														</td>
-													</tr>                
+													</tr>
+													<tr>
+														<td width="100" valign="top"></td>
+														<td> 
+															<br/>
+															<input name="Submit" type="submit" class="formbtn" value="Save">
+														</td>
+													</tr>
+													<tr>
+														<td colspan="2" valign="top" height="16"></td>
+													</tr> 
 												</table>
 											</td>
 										</tr>
 										<tr style="display:none;" name="pptp" id="pptp">
-											<td colspan="2">
+											<td colspan="2" style="padding:0px;">
 												<table width="100%" border="0" cellpadding="6" cellspacing="0">
 													<tr>
 														<td colspan="2" valign="top" class="listtopic">PPTP configuration</td>
@@ -1046,14 +1073,17 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 															<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.
 														</td>
 													</tr>
+													<tr>
+														<td width="100" valign="top"></td>
+														<td> 
+															<br/>
+															<input name="Submit" type="submit" class="formbtn" value="Save">
+														</td>
+													</tr>
+													<tr>
+														<td colspan="2" valign="top" height="16"></td>
+													</tr>
 												</table>
-											</td>
-										</tr>
-										<tr>
-											<td width="100" valign="top"></td>
-											<td> 
-												<br/>
-												<input name="Submit" type="submit" class="formbtn" value="Save">
 											</td>
 										</tr>
 										<?php
@@ -1063,6 +1093,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										<tr>
 											<td colspan="2" valign="top" height="16"></td>
 										</tr>
+
 										<tr>
 											<td colspan="2" valign="top" class="listtopic">Wireless configuration</td>
 										</tr>

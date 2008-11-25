@@ -868,8 +868,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								</div>								
 								<div style="display:none" id="addgateway" name="addgateway">
 									<p> 
-									<table border="1" style="background:#990000; border-style: none none none none; width:175px;"><tr><td>
-										<table bgcolor="#990000">
+									<table border="1" style="background:#990000; border-style: none none none none; width:225px;"><tr><td>
+										<table bgcolor="#990000" cellpadding="1" cellspacing="1">
 											<tr><td>&nbsp;</td>
 											<tr>
 												<td colspan="2"><center><b><font color="white">Add new gateway:</b></center></td>
@@ -880,7 +880,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												$checked = " CHECKED";
 											?>
 											<tr>
-												<td align="right"><font color="white">Default  gateway:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
+												<td width="45%" align="right"><font color="white">Default  gateway:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
 											</tr>												
 											<tr>
 												<td align="right"><font color="white">Gateway Name:</td><td><input id="name" name="name"></td>
@@ -893,11 +893,13 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											</tr>
 											<tr><td>&nbsp;</td>
 											<tr>
-												<td colspan="2" align="right">
-													<div id='savebuttondiv'>
-														<input id="gwsave" type="Button" value="Save Gateway" onClick='hide_add_gatewaysave();'> 
-														<input id="gwcancel" type="Button" value="Cancel" onClick='hide_add_gateway();'>
-													</div>
+												<td colspan="2">
+													<center>
+														<div id='savebuttondiv'>
+															<input id="gwsave" type="Button" value="Save Gateway" onClick='hide_add_gatewaysave();'> 
+															<input id="gwcancel" type="Button" value="Cancel" onClick='hide_add_gateway();'>
+														</div>
+													</center>
 												</td>
 											</tr>
 											<tr><td>&nbsp;</td>

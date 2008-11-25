@@ -864,21 +864,21 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								</div>
 								<div style="display:none" id="addgateway" name="addgateway">
 									<p> 
-									<table border="1" style="border-style: none none none none; width:175px;"><tr><td>
-										<table>
+									<table border="1" style="background:#990000; border-style: none none none none; width:175px;"><tr><td>
+										<table bgcolor="#990000">
 											<tr><td>&nbsp;</td>
 											<tr>
-												<td colspan="2"><center><b>Add new gateway:</b></center></td>
+												<td colspan="2"><center><b><font color="white">Add new gateway:</b></center></td>
 											</tr>
 											<tr><td>&nbsp;</td>
 											<tr>
-												<td align="right">Name:</td><td><input id="name" name="name"></td>
+												<td align="right"><font color="white">Name:</td><td><input id="name" name="name"></td>
 											</tr>
 											<tr>
-												<td align="right">Gateway IP:</td><td><input id="gatewayip" name="gatewayip"></td>
+												<td align="right"><font color="white">Gateway IP:</td><td><input id="gatewayip" name="gatewayip"></td>
 											</tr>
 											<tr>
-												<td align="right">Description:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
+												<td align="right"><font color="white">Description:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
 											</tr>
 											<tr><td>&nbsp;</td>
 											<tr>

@@ -1425,8 +1425,11 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					name = $('name').getValue();
 					var descr = $('gatewaydescr').getValue();
 					gatewayip = $('gatewayip').getValue();
+					var defaultgw;
+					if(iface == 'wan' || iface == 'WAN') 
+						defaultgw = 'checked';
 					var url = "system_gateways_edit.php";
-					var pars = 'isAjax=true&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+					var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
 					var myAjax = new Ajax.Request(
 						url,
 						{

@@ -1446,6 +1446,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				}				
 				function report_failure() {
 					alert("Sorry, we could not create your gateway at this time.");
+					hide_add_gateway();
 				}
 				function save_callback(transport) {
 					var response = transport.responseText;
@@ -1463,7 +1464,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				}
 				<?php
 				if ($if == "wan" || $if == "lan")
-					echo "\$('allcfg').appear();";
+					echo "\$('allcfg').show();";
 				else
 					echo "show_allcfg(document.iform.enable);";
 				echo "updateType('{$pconfig['type']}')";

@@ -854,10 +854,17 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										?>
 								</select>
 								<br/>
-								Select a existing Gateway from the list or <input onClick="show_add_gateway();" type="button" value="add one">.
+								<div id='addgwbox'>
+									Select a existing Gateway from the list or <input onClick="show_add_gateway();" type="button" value="add one">
+								</div>
 								<div style="display:none" id="addgateway" name="addgateway">
 									<p>
 										<table>
+											<tr><td>&nbsp;</td>
+											<tr>
+												<td colspan="2"><center><b>Add new gateway:</b></center></td>
+											</tr>
+											<tr><td>&nbsp;</td>
 											<tr>
 												<td align="right">Name:</td><td><input id="name" name="name"></td>
 											</tr>
@@ -867,6 +874,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<tr>
 												<td align="right">Description:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
 											</tr>
+											<tr><td>&nbsp;</td>
 											<tr>
 												<td colspan="2" align="right">
 													<div id='savebuttondiv'>
@@ -875,6 +883,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													</div>
 												</td>
 											</tr>
+											<tr><td>&nbsp;</td>
 										</table>
 										<div id="status">
 										</div>
@@ -1386,9 +1395,11 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				var gatewayip;
 				function show_add_gateway() {
 					document.getElementById("addgateway").style.display = '';
+					document.getElementById("addgwbox").style.display = 'none';
 				}
 				function hide_add_gateway() {
 					document.getElementById("addgateway").style.display = 'none';
+					document.getElementById("addgwbox").style.display = '';	
 				}
 				function hide_add_gatewaysave() {
 					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';

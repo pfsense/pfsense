@@ -779,8 +779,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 						$ip = getenv('REMOTE_ADDR');
 						$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
 						$mac = str_replace("\n","",$mac);
+						if($mac):
 					?>
-					<a OnClick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#">Copy my MAC address</a>
+						<a OnClick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#">Insert my local MAC address</a>
+					<?php endif; ?>
 					<br>
 					This field can be used to modify (&quot;spoof&quot;) the MAC
 					address of the WAN interface<br>

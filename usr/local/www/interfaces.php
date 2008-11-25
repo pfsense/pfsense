@@ -862,6 +862,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								<div id='addgwbox'>
 									Select a existing Gateway from the list or <a OnClick="show_add_gateway();" href="#">add a new one</a>.
 								</div>
+								<div id='notebox'>
+								</div>
 								<div id="status">
 								</div>								
 								<div style="display:none" id="addgateway" name="addgateway">
@@ -1452,6 +1454,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					optn.value = value;
 					selectbox.options.add(optn);
 					selectbox.selectedIndex = (selectbox.options.length-1);
+					$('notebox').innerHTML="<p/><strong>NOTE:</strong> You can manage Gateways <a href='system_gateways.php'>here</a>.";
 				}				
 				function report_failure() {
 					alert("Sorry, we could not create your gateway at this time.");

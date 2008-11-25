@@ -134,7 +134,7 @@ effect.");?><br>
                     <?php
 			foreach($gateway_group['item'] as $item) {
 				$itemsplit = explode("|", $item);
-				echo htmlspecialchars($itemsplit[0]) . "<br/>\n";
+				echo htmlspecialchars(strtoupper($itemsplit[0])) . "<br/>\n";
 			}
 		    ?>
                   </td>

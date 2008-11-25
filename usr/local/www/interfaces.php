@@ -1395,6 +1395,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				<script language="JavaScript">
 				<!--
 				var gatewayip;
+				var name;
 				function show_add_gateway() {
 					document.getElementById("addgateway").style.display = '';
 					document.getElementById("addgwbox").style.display = 'none';
@@ -1416,7 +1417,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				function hide_add_gatewaysave() {
 					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
 					var iface = $F('if');
-					var name = $('name').getValue();
+					name = $('name').getValue();
 					var descr = $('gatewaydescr').getValue();
 					gatewayip = $('gatewayip').getValue();
 					var url = "system_gateways_edit.php";
@@ -1444,7 +1445,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					document.getElementById("addgateway").style.display = 'none';
 					hide_add_gateway();
 					$('status').innerHTML = '';
-					addOption($('gateway'), gatewayip, gatewayip);
+					addOption($('gateway'), name, name);
 				}
 				<?php
 				if ($if == "wan" || $if == "lan")

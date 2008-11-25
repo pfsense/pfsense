@@ -1432,6 +1432,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 						{
 							method: 'post',
 							parameters: pars,
+							onFailure: report_failure,
 							onComplete: save_callback
 						});					
 				}
@@ -1453,6 +1454,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 						hide_add_gateway();
 						$('status').innerHTML = '';
 						addOption($('gateway'), name, name);
+						// Auto submit form?
+						//document.iform.submit();
+						//$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
 					} else {
 						report_failure();
 					}

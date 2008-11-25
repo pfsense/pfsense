@@ -1383,8 +1383,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 									</td>
 									<td>
 										<br/>
-										<input name="Submit" type="submit" class="formbtn" value="Save"> 
-										<input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+										<input id="save" name="Submit" type="submit" class="formbtn" value="Save"> 
+										<input id="cancel" type="button" class="formbtn" value="Cancel" onclick="history.back()">
 										<input name="if" type="hidden" id="if" value="<?=$if;?>">
 									</td>
 								</tr>
@@ -1399,11 +1399,15 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					document.getElementById("addgateway").style.display = '';
 					document.getElementById("addgwbox").style.display = 'none';
 					document.getElementById("gateway").style.display = 'none';
+					document.getElementById("save").style.display = 'none';
+					document.getElementById("cancel").style.display = 'none';
 				}
 				function hide_add_gateway() {
 					document.getElementById("addgateway").style.display = 'none';
 					document.getElementById("addgwbox").style.display = '';	
 					document.getElementById("gateway").style.display = '';
+					document.getElementById("save").style.display = '';
+					document.getElementById("cancel").style.display = '';
 				}
 				function hide_add_gatewaysave() {
 					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';

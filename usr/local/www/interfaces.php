@@ -798,13 +798,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				</td>
 			</tr>
 			<tr>
-				<td width="100" valign="top"></td>
-				<td> 
-					<br/>
-					<input name="Submit" type="submit" class="formbtn" value="Save">
-				</td>
-			</tr>
-			<tr>
 				<td colspan="2" valign="top" height="16"></td>
 			</tr>			
 			<tr style="display:none;" name="none" id="none">
@@ -902,16 +895,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 									DHCP client.
 								</td>
 							</tr>
-							<tr>
-								<td width="100" valign="top"></td>
-								<td> 
-									<br/>
-									<input name="Submit" type="submit" class="formbtn" value="Save">
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2" valign="top" height="16"></td>
-							</tr>							
 						</table>
 					</td>
 				</tr>
@@ -1010,16 +993,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 															</table>
 														</td>
 													</tr>
-													<tr>
-														<td width="100" valign="top"></td>
-														<td> 
-															<br/>
-															<input name="Submit" type="submit" class="formbtn" value="Save">
-														</td>
-													</tr>
-													<tr>
-														<td colspan="2" valign="top" height="16"></td>
-													</tr> 
 												</table>
 											</td>
 										</tr>
@@ -1073,16 +1046,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 															<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.
 														</td>
 													</tr>
-													<tr>
-														<td width="100" valign="top"></td>
-														<td> 
-															<br/>
-															<input name="Submit" type="submit" class="formbtn" value="Save">
-														</td>
-													</tr>
-													<tr>
-														<td colspan="2" valign="top" height="16"></td>
-													</tr>
 												</table>
 											</td>
 										</tr>
@@ -1092,8 +1055,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										?>
 										<tr>
 											<td colspan="2" valign="top" height="16"></td>
-										</tr>
-
+										</tr>										
 										<tr>
 											<td colspan="2" valign="top" class="listtopic">Wireless configuration</td>
 										</tr>
@@ -1337,7 +1299,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</tr>
 									<? endif; ?>
 									<tr>
-										<td colspan="2" valign="top" height="10"></td>
+										<td colspan="2" valign="top" height="16"></td>
 									</tr>
 									<tr>
 										<td colspan="2" valign="top" class="listtopic">Other</td>
@@ -1351,17 +1313,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</td>
 									</tr>
 									<tr>
-										<td width="100" valign="top">
-											&nbsp;
-										</td>
-										<td>
-											<br/>
-											<input name="Submit" type="submit" class="formbtn" value="Save">
-											<input name="if" type="hidden" id="if" value="<?=$if;?>">
-										</td>
-									</tr>
-									<tr>
-										<td colspan="2" valign="top" height="10"></td>
+										<td colspan="2" valign="top" height="16"></td>
 									</tr>
 									<tr>
 										<td colspan="2" valign="top" class="listtopic">Private networks</td>

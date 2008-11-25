@@ -883,7 +883,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												<td width="45%" align="right"><font color="white">Default  gateway:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
 											</tr>												
 											<tr>
-												<td align="right"><font color="white">Gateway Name:</td><td><input id="name" name="name"></td>
+												<td align="right"><font color="white">Gateway Name:</td><td><input id="name" name="name" value="<?=$wancfg['descr'] . "-GW"?>"></td>
 											</tr>
 											<tr>
 												<td align="right"><font color="white">Gateway IP:</td><td><input id="gatewayip" name="gatewayip"></td>

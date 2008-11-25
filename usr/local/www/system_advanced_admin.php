@@ -341,7 +341,7 @@ function prot_change() {
 							</tr>
 							<?php endif; ?>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">Shell Options</td>
+								<td colspan="2" valign="top" class="listtopic">Console Options</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell">Console menu</td>

@@ -1056,7 +1056,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													</tr>
 													<tr>
 														<td width="22%" valign="top" class="vncellreq">Username</td>
-														<td width="78%" class="vtable"><input name="pptp_username" type="text" class="formfld user" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>">
+														<td width="78%" class="vtable">
+															<input name="pptp_username" type="text" class="formfld user" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>">
 														</td>
 													</tr>
 													<tr>
@@ -1081,7 +1082,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													</tr>
 													<tr>
 														<td width="22%" width="100" valign="top" class="vncellreq">Remote IP address</td>
-														<td width="78%" class="vtable"> <input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote']);?>">
+														<td width="78%" class="vtable">
+															<input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote']);?>">
 														</td>
 													</tr>
 													<tr>
@@ -1151,18 +1153,21 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 									</tr>
 									<tr>
 										<td valign="top" class="vncellreq">SSID</td>
-										<td class="vtable"><input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>">
+										<td class="vtable">
+											<input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>">
 										</td>
                 					</tr>
 									<tr>
 										<td valign="top" class="vncell">802.11g only</td>
-										<td class="vtable"><input name="pureg_enable" type="checkbox" value="yes"  class="formfld" id="pureg_enable" <? if ($pconfig['pureg_enable']) echo "checked";?>>
+										<td class="vtable">
+											<input name="pureg_enable" type="checkbox" value="yes"  class="formfld" id="pureg_enable" <? if ($pconfig['pureg_enable']) echo "checked";?>>
 											<br/>When operating as an access point in 802.11g mode allow only 11g-capable stations to associate (11b-only stations are not permitted to associate).
 										</td>
 									</tr>
 									<tr>
 										<td valign="top" class="vncell">Allow intra-BSS communication</td>
-										<td class="vtable"><input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <? if ($pconfig['apbridge_enable']) echo "checked";?>>
+										<td class="vtable">
+											<input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <? if ($pconfig['apbridge_enable']) echo "checked";?>>
 											<br/>
 											When operating as an access point, enable this if you want to pass packets between wireless clients directly.
 											<br/>
@@ -1171,13 +1176,15 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 									</tr>
 									<tr>
 										<td valign="top" class="vncell">Enable WME</td>
-										<td class="vtable"><input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <? if ($pconfig['wme_enable']) echo "checked";?>>
+										<td class="vtable">
+											<input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <? if ($pconfig['wme_enable']) echo "checked";?>>
 											<br/>Setting this option will force the card to use WME (wireless QoS).
 										</td>
 									</tr>
 									<tr>
 										<td valign="top" class="vncell">Enable Hide SSID</td>
-										<td class="vtable"><input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <? if ($pconfig['hidessid_enable']) echo "checked";?>>
+										<td class="vtable">
+											<input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <? if ($pconfig['hidessid_enable']) echo "checked";?>>
 											<br/>
 											Setting this option will force the card to NOT broadcast its SSID
 											<br/>
@@ -1224,7 +1231,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</tr>
 										<tr>
 											<td valign="top" class="vncell">Distance setting</td>
-											<td class="vtable"><input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">
+											<td class="vtable">
+												<input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">
 												<br/>
 												Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client<br/>
 												(measured in Meters and works only for Atheros based cards !)
@@ -1232,7 +1240,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</tr>
 										<tr>
 											<td valign="top" class="vncell">WEP</td>
-											<td class="vtable"> <input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <? if ($pconfig['wep_enable']) echo "checked"; ?>>
+											<td class="vtable"> 
+												<input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <? if ($pconfig['wep_enable']) echo "checked"; ?>>
 												<strong>Enable WEP</strong>
 												<table border="0" cellspacing="0" cellpadding="0">
 													<tr>
@@ -1242,23 +1251,39 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													</tr>
 													<tr>
 														<td>Key 1:&nbsp;&nbsp;</td>
-														<td> <input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>"></td>
-														<td align="center"> <input name="txkey" type="radio" value="1" <? if ($pconfig['txkey'] == 1) echo "checked";?>></td>
+														<td>
+															<input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>">
+														</td>
+														<td align="center">
+															<input name="txkey" type="radio" value="1" <? if ($pconfig['txkey'] == 1) echo "checked";?>>
+														</td>
 													</tr>
 													<tr>
 														<td>Key 2:&nbsp;&nbsp;</td>
-														<td><input name="key2" type="text" class="formfld unknown" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>"></td>
-														<td align="center"> <input name="txkey" type="radio" value="2" <? if ($pconfig['txkey'] == 2) echo "checked";?>></td>
+														<td>
+															<input name="key2" type="text" class="formfld unknown" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>">
+														</td>
+														<td align="center">
+															<input name="txkey" type="radio" value="2" <? if ($pconfig['txkey'] == 2) echo "checked";?>>
+														</td>
 													</tr>
 													<tr>
 														<td>Key 3:&nbsp;&nbsp;</td>
-														<td> <input name="key3" type="text" class="formfld unknown" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>"></td>
-														<td align="center"> <input name="txkey" type="radio" value="3" <? if ($pconfig['txkey'] == 3) echo "checked";?>></td>
+														<td>
+															<input name="key3" type="text" class="formfld unknown" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>">
+														</td>
+														<td align="center">
+															<input name="txkey" type="radio" value="3" <? if ($pconfig['txkey'] == 3) echo "checked";?>>
+														</td>
 													</tr>
 													<tr>
 														<td>Key 4:&nbsp;&nbsp;</td>
-														<td><input name="key4" type="text" class="formfld unknown" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>"></td>
-														<td align="center"> <input name="txkey" type="radio" value="4" <? if ($pconfig['txkey'] == 4) echo "checked";?>></td>
+														<td>
+															<input name="key4" type="text" class="formfld unknown" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>">
+														</td>
+														<td align="center">
+															<input name="txkey" type="radio" value="4" <? if ($pconfig['txkey'] == 4) echo "checked";?>>
+														</td>
 													</tr>
 												</table>
 												<br/>
@@ -1268,7 +1293,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</tr>
 										<tr>
 											<td valign="top" class="vncell">WPA</td>
-											<td class="vtable"><input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <? if ($pconfig['wpa_enable']) echo "checked"; ?>>
+											<td class="vtable">
+												<input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <? if ($pconfig['wpa_enable']) echo "checked"; ?>>
 												<strong>Enable WPA</strong>
 												<br/><br/>
 												<table border="0" cellspacing="0" cellpadding="0">
@@ -1278,7 +1304,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													</tr>
 													<tr>
 														<td>PSK:&nbsp;&nbsp;</td>
-														<td><input name="passphrase" type="text" class="formfld unknown" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase']);?>"></td>
+														<td>
+															<input name="passphrase" type="text" class="formfld unknown" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase']);?>">
+														</td>
 													</tr>
 												</table>
 												<br/>Passphrase must be from 8 to 63 chars.
@@ -1327,25 +1355,29 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</tr>
 										<tr>
 											<td valign="top" class="vncell">Key Rotation</td>
-											<td class="vtable"><input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<? echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>">
+											<td class="vtable">
+												<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<? echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>">
 												<br/>Allowed values are 1-9999 but should not be longer than Master Key Regeneration time.
 											</td>
 										</tr>
 										<tr>
 											<td valign="top" class="vncell">Master Key Regeneration</td>
-											<td class="vtable"><input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<? echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>">
+											<td class="vtable">
+												<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<? echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>">
 												<br/>Allowed values are 1-9999 but should not be shorter than Key Rotation time.
 											</td>
 										</tr>
 										<tr>
 											<td valign="top" class="vncell">Strict Key Regeneration</td>
-											<td class="vtable"><input name="wpa_strict_rekey" type="checkbox" value="yes"  class="formfld" id="wpa_strict_rekey" <? if ($pconfig['wpa_strict_rekey']) echo "checked"; ?>>
+											<td class="vtable">
+												<input name="wpa_strict_rekey" type="checkbox" value="yes"  class="formfld" id="wpa_strict_rekey" <? if ($pconfig['wpa_strict_rekey']) echo "checked"; ?>>
 												<br/>Setting this option will force the AP to rekey whenever a client disassociates.
 											</td>
 										</tr>
 										<tr>
 											<td valign="top" class="vncell">Enable IEEE802.1X</td>
-											<td class="vtable"><input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <? if ($pconfig['ieee8021x']) echo "checked";?>>
+											<td class="vtable">
+												<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <? if ($pconfig['ieee8021x']) echo "checked";?>>
 												<br/>Setting this option will enable 802.1x authentication.
 											</td>
 										</tr>
@@ -1372,7 +1404,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 									</tr>
 									<tr>
 										<td valign="middle" class="vncell">&nbsp;</td>
-										<td class="vtable"><a name="rfc1918"></a> <input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?>>
+										<td class="vtable">
+											<a name="rfc1918"></a> 
+											<input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?>>
 											<strong>Block private networks</strong><br>
 											When set, this option blocks traffic from IP addresses that are reserved 
 											for private  networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as 
@@ -1383,7 +1417,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 									</tr>
 									<tr>
 										<td valign="middle" class="vncell">&nbsp;</td>
-										<td class="vtable"> <input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?>>
+										<td class="vtable"> 
+											<input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?>>
 											<strong>Block bogon networks</strong><br>
 											When set, this option blocks traffic from IP addresses that are reserved 
 											(but not RFC 1918) or not yet assigned by IANA.&nbsp;&nbsp;

@@ -855,7 +855,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								</select>
 								<br/>
 								<div id='addgwbox'>
-									Select a existing Gateway from the list or <input onClick="show_add_gateway();" type="button" value="add one">
+									Select a existing Gateway from the list or <a OnClick="show_add_gateway();" href="#">add one</a>.
 								</div>
 								<div style="display:none" id="addgateway" name="addgateway">
 									<p> 

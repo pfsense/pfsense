@@ -75,6 +75,11 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
+	/* Does this gateway name already exist? */
+	foreach($config['gateways']['gateway_item'] as $gw) 
+		if($gw['name'] == $_POST['name']) 
+			$input_errors[] = "This gateway name already exists.";
+	
 	if (! isset($_POST['name'])) {
 		$input_errors[] = "A valid gateway name must be specified.";
 	}

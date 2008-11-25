@@ -1427,6 +1427,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					document.getElementById("gwcancel").style.display = '';
 				}
 				function hide_add_gatewaysave() {
+					document.getElementById("addgateway").style.display = 'none';
 					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
 					var iface = $F('if');
 					name = $('name').getValue();

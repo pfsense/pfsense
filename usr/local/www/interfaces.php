@@ -245,8 +245,11 @@ if ($_POST['apply']) {
 		} 
 		/* sync filter configuration */
 		config_lock();
-		filter_configure();
+		setup_gateways_monitor();
+		if (file_exists($d_staticroutesdirty_path)) 
+			unlink($d_staticroutesdirty_path);
 		config_unlock();
+		filter_configure();
 		/* set up static routes */
 		system_routing_configure();
 	}

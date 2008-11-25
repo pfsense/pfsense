@@ -871,6 +871,13 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												<td colspan="2"><center><b><font color="white">Add new gateway:</b></center></td>
 											</tr>
 											<tr><td>&nbsp;</td>
+											<?php
+											if($if == "wan" || $if == "WAN")
+												$checked = " CHECKED";
+											?>
+											<tr>
+												<td align="right"><font color="white">Default  gateway:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
+											</tr>												
 											<tr>
 												<td align="right"><font color="white">Name:</td><td><input id="name" name="name"></td>
 											</tr>
@@ -1425,9 +1432,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					name = $('name').getValue();
 					var descr = $('gatewaydescr').getValue();
 					gatewayip = $('gatewayip').getValue();
-					var defaultgw;
-					if(iface == 'wan' || iface == 'WAN') 
-						defaultgw = 'checked';
+					var defaultgw = $('defaultgw').getValue();
 					var url = "system_gateways_edit.php";
 					var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
 					var myAjax = new Ajax.Request(

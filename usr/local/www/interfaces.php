@@ -1374,22 +1374,21 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										<td valign="middle" class="vncell">&nbsp;</td>
 										<td class="vtable"><a name="rfc1918"></a> <input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?>>
 											<strong>Block private networks</strong><br>
-											When set, this option blocks traffic from IP addresses that
-											are reserved for private 
-											networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as 
-											well as loopback addresses 
-											(127/8). You should generally leave this option turned on, 
-											unless your WAN network 
-											lies in such a private address space, too. 
+											When set, this option blocks traffic from IP addresses that are reserved 
+											for private  networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as 
+											well as loopback addresses (127/8).&nbsp;&nbsp; You should generally
+											leave this option turned on, unless your WAN network lies in such 
+											a private address space, too. 
 										</td>
 									</tr>
 									<tr>
 										<td valign="middle" class="vncell">&nbsp;</td>
 										<td class="vtable"> <input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?>>
 											<strong>Block bogon networks</strong><br>
-											When set, this option blocks traffic from IP addresses that
-											are reserved (but not RFC 1918) or not yet assigned by IANA.&nbsp;&nbsp;
-											Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.
+											When set, this option blocks traffic from IP addresses that are reserved 
+											(but not RFC 1918) or not yet assigned by IANA.&nbsp;&nbsp;
+											Bogons are prefixes that should never appear in the Internet routing table, 
+											and obviously should not appear as the source address in any packets you receive.
 										</td>
 									</tr>
 								</tr>

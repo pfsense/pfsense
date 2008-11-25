@@ -1412,7 +1412,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					var descr = $('gatewaydescr').getValue();
 					gatewayip = $('gatewayip').getValue();
 					var url = "system_gateways_edit.php";
-					var pars = 'interface=' + iface + '&name=' + name + '&descr=' + descr + '&gateway=' + gatewayip;
+					var pars = 'interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
 					var myAjax = new Ajax.Request(
 						url,
 						{

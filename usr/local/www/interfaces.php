@@ -858,7 +858,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 									Select a existing Gateway from the list or <input onClick="show_add_gateway();" type="button" value="add one">
 								</div>
 								<div style="display:none" id="addgateway" name="addgateway">
-									<p>
+									<p> 
+									<table border="1" style="border-style: none none none none; width:175px;"><tr><td>
 										<table>
 											<tr><td>&nbsp;</td>
 											<tr>
@@ -885,6 +886,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											</tr>
 											<tr><td>&nbsp;</td>
 										</table>
+										</td></tr></table>
 										<div id="status">
 										</div>
 									<p/>

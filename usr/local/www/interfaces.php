@@ -1454,7 +1454,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					optn.value = value;
 					selectbox.options.add(optn);
 					selectbox.selectedIndex = (selectbox.options.length-1);
-					$('notebox').innerHTML="<p/><strong>NOTE:</strong> You can manage Gateways <a href='system_gateways.php'>here</a>.";
+					$('notebox').innerHTML="<p/><strong>NOTE:</strong> You can manage Gateways <a target='_new' href='system_gateways.php'>here</a>.";
 				}				
 				function report_failure() {
 					alert("Sorry, we could not create your gateway at this time.");

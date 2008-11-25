@@ -845,20 +845,45 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												if($gateway['interface'] == $if) {
 										?>
 												<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>>
-												<?=htmlspecialchars($gateway['name']);?>
+													<?=htmlspecialchars($gateway['name']);?>
 												</option>
 										<?php
 												}
 											}
 										}
 										?>
-									</select>
-									<br/>
-									Select a existing Gateway from the list or add one on the <a href="/system_gateways.php">Gateways</a> page<br>
-								</td>
-							</tr>
-						</table>
-					</td>
+								</select>
+								<br/>
+								Select a existing Gateway from the list or <input onClick="show_add_gateway();" type="button" value="add one">.
+								<div style="display:none" id="addgateway" name="addgateway">
+									<p>
+										<table>
+											<tr>
+												<td align="right">Name:</td><td><input id="name" name="name"></td>
+											</tr>
+											<tr>
+												<td align="right">Gateway IP:</td><td><input id="gatewayip" name="gatewayip"></td>
+											</tr>
+											<tr>
+												<td align="right">Description:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
+											</tr>
+											<tr>
+												<td colspan="2" align="right">
+													<div id='savebuttondiv'>
+														<input type="Button" value="Save Gateway" onClick='hide_add_gatewaysave();'> 
+														<input type="Button" value="Cancel" onClick='hide_add_gateway();'>
+													</div>
+												</td>
+											</tr>
+										</table>
+										<div id="status">
+										</div>
+									<p/>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</td>
 				</tr>
 				<tr style="display:none;" name="dhcp" id="dhcp">
 					<td colspan="2" style="padding: 0px;">
@@ -1358,6 +1383,45 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				</form>
 				<script language="JavaScript">
 				<!--
+				var gatewayip;
+				function show_add_gateway() {
+					document.getElementById("addgateway").style.display = '';
+				}
+				function hide_add_gateway() {
+					document.getElementById("addgateway").style.display = 'none';
+				}
+				function hide_add_gatewaysave() {
+					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
+					var iface = $F('if');
+					var name = $('name').getValue();
+					var descr = $('gatewaydescr').getValue();
+					gatewayip = $('gatewayip').getValue();
+					var url = "system_gateways_edit.php";
+					var pars = 'interface=' + iface + '&name=' + name + '&descr=' + descr + '&gateway=' + gatewayip;
+					var myAjax = new Ajax.Request(
+						url,
+						{
+							method: 'post',
+							parameters: pars,
+							onComplete: save_callback()
+						});					
+				}
+				function addOption(selectbox,text,value )
+				{
+					var optn = document.createElement("OPTION");
+					optn.text = text;
+					optn.value = value;
+					selectbox.options.add(optn);
+					selectbox.selectedIndex = (selectbox.options.length-1);
+				}				
+				function report_failure() {
+					alert("Sorry, we could not create your gateway at this time.");
+				}
+				function save_callback() {
+					document.getElementById("addgateway").style.display = 'none';
+					$('status').innerHTML = '';
+					addOption($('gateway'), gatewayip, gatewayip);
+				}
 				<?php
 				if ($if == "wan" || $if == "lan")
 					echo "\$('allcfg').appear();";

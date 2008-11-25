@@ -737,14 +737,14 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		</tr>
 		<?php if ($if != "wan" && $if != "lan"): ?>
 		<tr>
+			<td width="22%" valign="top" class="vncell">Enable</td>
 			<td width="78%" class="vtable">
 				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable'] == true) echo "checked"; ?> onClick="show_allcfg(this);">
-				<strong>Enable Interface</strong>
+			<strong>Enable Interface</strong>
 			</td>
 		</tr>
 		<?php endif; ?>
 		<tr style="display:none;" name="allcfg" id="allcfg">
-		<td colspan="2"> 
 			<tr>
 				<td width="22%" valign="top" class="vncell">Description</td>
 				<td width="78%" class="vtable">

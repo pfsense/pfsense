@@ -1401,6 +1401,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					document.getElementById("gateway").style.display = 'none';
 					document.getElementById("save").style.display = 'none';
 					document.getElementById("cancel").style.display = 'none';
+					document.getElementById("gwsave").style.display = '';
+					document.getElementById("gwcancel").style.display = '';					
 				}
 				function hide_add_gateway() {
 					document.getElementById("addgateway").style.display = 'none';
@@ -1409,11 +1411,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					document.getElementById("save").style.display = '';
 					document.getElementById("cancel").style.display = '';
 					document.getElementById("gwsave").style.display = '';
-					document.getElementById("gwcancel").style.display = '';					
+					document.getElementById("gwcancel").style.display = '';
 				}
 				function hide_add_gatewaysave() {
-					document.getElementById("gwsave").style.display = 'none';
-					document.getElementById("gwcancel").style.display = 'none';					
 					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
 					var iface = $F('if');
 					var name = $('name').getValue();
@@ -1442,6 +1442,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				}
 				function save_callback() {
 					document.getElementById("addgateway").style.display = 'none';
+					hide_add_gateway();
 					$('status').innerHTML = '';
 					addOption($('gateway'), gatewayip, gatewayip);
 				}

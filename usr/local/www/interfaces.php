@@ -862,6 +862,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								<div id='addgwbox'>
 									Select a existing Gateway from the list or <a OnClick="show_add_gateway();" href="#">add a new one</a>.
 								</div>
+								<div id="status">
+								</div>								
 								<div style="display:none" id="addgateway" name="addgateway">
 									<p> 
 									<table border="1" style="background:#990000; border-style: none none none none; width:175px;"><tr><td>
@@ -899,8 +901,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<tr><td>&nbsp;</td>
 										</table>
 										</td></tr></table>
-										<div id="status">
-										</div>
 									<p/>
 								</div>
 							</td>

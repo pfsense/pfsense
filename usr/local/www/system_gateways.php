@@ -130,7 +130,7 @@ effect.");?><br>
                 <tr>
                   <td class="listlr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
                     <?php
-			echo $gateway['name'];
+			echo strtoupper($gateway['name']);
 			if(isset($gateway['defaultgw'])) {
 				echo " <strong>(default)<strong>";
 			}

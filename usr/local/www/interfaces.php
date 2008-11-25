@@ -1398,10 +1398,12 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				function show_add_gateway() {
 					document.getElementById("addgateway").style.display = '';
 					document.getElementById("addgwbox").style.display = 'none';
+					document.getElementById("gateway").style.display = 'none';
 				}
 				function hide_add_gateway() {
 					document.getElementById("addgateway").style.display = 'none';
 					document.getElementById("addgwbox").style.display = '';	
+					document.getElementById("gateway").style.display = '';
 				}
 				function hide_add_gatewaysave() {
 					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';

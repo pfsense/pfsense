@@ -1351,10 +1351,23 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</td>
 									</tr>
 									<tr>
-										<td height="16" colspan="2" valign="top"></td>
+										<td width="100" valign="top">
+											&nbsp;
+										</td>
+										<td>
+											<br/>
+											<input name="Submit" type="submit" class="formbtn" value="Save">
+											<input name="if" type="hidden" id="if" value="<?=$if;?>">
+										</td>
 									</tr>
 									<tr>
-										<td valign="middle">&nbsp;</td>
+										<td colspan="2" valign="top" height="10"></td>
+									</tr>
+									<tr>
+										<td colspan="2" valign="top" class="listtopic">Private networks</td>
+									</tr>
+									<tr>
+										<td valign="middle" class="vncell">&nbsp;</td>
 										<td class="vtable"><a name="rfc1918"></a> <input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?>>
 											<strong>Block private networks</strong><br>
 											When set, this option blocks traffic from IP addresses that
@@ -1367,7 +1380,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</td>
 									</tr>
 									<tr>
-										<td valign="middle">&nbsp;</td>
+										<td valign="middle" class="vncell">&nbsp;</td>
 										<td class="vtable"> <input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?>>
 											<strong>Block bogon networks</strong><br>
 											When set, this option blocks traffic from IP addresses that

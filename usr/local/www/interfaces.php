@@ -1419,7 +1419,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					document.getElementById("save").style.display = 'none';
 					document.getElementById("cancel").style.display = 'none';
 					document.getElementById("gwsave").style.display = '';
-					document.getElementById("gwcancel").style.display = '';					
+					document.getElementById("gwcancel").style.display = '';
+					$('notebox').innerHTML="";
 				}
 				function hide_add_gateway() {
 					document.getElementById("addgateway").style.display = 'none';

@@ -78,7 +78,7 @@ if ($_POST) {
 	}
 
 	/* check for overlaps */
-	if($a_gateway_groups) {
+	if(is_array($a_gateway_groups)) {
 		foreach ($a_gateway_groups as $gateway_group) {
 			if (isset($id) && ($a_gateway_groups[$id]) && ($a_gateway_groups[$id] === $gateway_group))
 				continue;

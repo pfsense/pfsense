@@ -1426,13 +1426,13 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					var descr = $('gatewaydescr').getValue();
 					gatewayip = $('gatewayip').getValue();
 					var url = "system_gateways_edit.php";
-					var pars = 'interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+					var pars = 'isAjax=true&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
 					var myAjax = new Ajax.Request(
 						url,
 						{
 							method: 'post',
 							parameters: pars,
-							onComplete: save_callback()
+							onComplete: save_callback
 						});					
 				}
 				function addOption(selectbox,text,value )
@@ -1446,11 +1446,16 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				function report_failure() {
 					alert("Sorry, we could not create your gateway at this time.");
 				}
-				function save_callback() {
-					document.getElementById("addgateway").style.display = 'none';
-					hide_add_gateway();
-					$('status').innerHTML = '';
-					addOption($('gateway'), name, name);
+				function save_callback(transport) {
+					var response = transport.responseText;
+					if(response) {
+						document.getElementById("addgateway").style.display = 'none';
+						hide_add_gateway();
+						$('status').innerHTML = '';
+						addOption($('gateway'), name, name);
+					} else {
+						report_failure();
+					}
 				}
 				<?php
 				if ($if == "wan" || $if == "lan")

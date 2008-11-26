@@ -2022,12 +2022,12 @@ EOD;
 			$pptpdtarget = get_interface_ip();
 		else
 			$pptpdtarget = $pptpdcfg['redir'];
-		if($pptpdtarget) {
+		if(is_ipaddr($pptpdtarget) and is_array($FilterIflist['wan'])) {
 			$ipfrules .= <<<EOD
 # PPTPd rules
 anchor "pptp"
-pass in on \$WAN proto gre from any to $pptpdtarget keep state label "allow gre pptpd"
-pass in on \$WAN proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
+pass in on \${$FilterIflist['wan']['descr']} proto gre from any to $pptpdtarget keep state label "allow gre pptpd"
+pass in on \${$FilterIflist['wan']['descr']} proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
 
 EOD;
 

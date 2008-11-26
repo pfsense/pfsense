@@ -1082,22 +1082,6 @@ EOD;
 	return $natrules;
 }
 
-function run_command_return_string($cmd) 
-{
-	global $config;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "generate_user_filter_rule() being called $mt\n";
-	}
-
-	$fd = popen($cmd, "r");
-	while(!feof($fd)) {
-		$tmp .= fread($fd,49);
-	}
-	fclose($fd);
-	return $tmp;
-}
-
 function generate_user_filter_rule_arr($rule) 
 {
 	global $config;

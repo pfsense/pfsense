@@ -1042,7 +1042,7 @@ function filter_nat_rules_generate()
 			$pptpdtarget = "127.0.0.1";
 		else if ($pptpdcfg['mode'] == "redir")
 			$pptpdtarget = $pptpdcfg['redir'];
-		if ($pptpdcfg['mode'] == "redir") {
+		if ($pptpdcfg['mode'] == "redir" && is_array($FilterIflist['wan'])) {
 			/* 
 			 * NB: ermal -- the rdr rule below is commented out now that we have a solution
 			 *		for PPTP passthrough. This unbreaks other GRE traffic passing  
@@ -1052,8 +1052,8 @@ function filter_nat_rules_generate()
 			$natrules .= <<<EOD
 
 # PPTP
-#rdr on \$WAN proto gre from any to any -> $pptpdtarget
-rdr on \$WAN proto tcp from any to any port 1723 -> $pptpdtarget
+#rdr on \${$FilterIflist['wan']['descr']} proto gre from any to any -> $pptpdtarget
+rdr on \${$FilterIflist['wan']['descr']} proto tcp from any to any port 1723 -> $pptpdtarget
 
 EOD;
 		}

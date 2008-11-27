@@ -175,9 +175,6 @@ function post_cvssync_commands() {
 	echo "===> Upgrading configuration (if needed)...\n";
 	convert_config();
 
-	echo "===> Syncing system passwords...\n";
-	local_sync_accounts();
-
 	echo "===> Restarting check_reload_status...\n";
 	exec("killall check_reload_status");
 	mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status");

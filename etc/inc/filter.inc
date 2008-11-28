@@ -45,11 +45,6 @@ require_once ("shaper.inc");
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
 
-/*	hold the ports being used by ftp-prxy to install the behind the scenes rule that 
- *	forces traffic out the primary wan until multi-wan ftp-proxy is all the rage.
- */
-$used_pftpx_ports = array();
-
 /* Used to hold the interface list that will be used on ruleset creation. */
 $FilterIflist = array();
 
@@ -375,6 +370,7 @@ function generate_optcfg_array()
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
 		$oic['nonat'] = $oc['nonat'];
+		$oic['ftpproxy'] = !isset($oc['disableftpproxy']);
 		$oic['alias-address'] = $oc['alias-address'];
 		$oic['alias-subnet'] = $oc['alias-subnet'];
 		$oic['gateway'] = $oc['gateway'];
@@ -532,7 +528,7 @@ function is_one_to_one_or_server_nat_rule($iptocheck)
 
 function filter_nat_rules_generate() 
 {
-	global $config, $g, $after_filter_configure_run, $used_pftpx_ports, $FilterIflist;
+	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	$natrules .= "nat-anchor \"ftp-proxy/*\"\n";
 	$natrules .= "nat-anchor \"natearly/*\"\n";
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
@@ -662,6 +658,7 @@ function filter_nat_rules_generate()
 	}
 	$natrules .= "\n#SSH Lockout Table\n";
 	$natrules .= "table <sshlockout> persist\n\n";
+
 	/* is SPAMD insalled? */
 	if (is_package_installed("spamd") == 1) {
 		$natrules .= "\n# spam table \n";
@@ -684,11 +681,13 @@ function filter_nat_rules_generate()
 	/* load balancer anchor */
 	$natrules .= "\n# Load balancing anchor\n";
 	$natrules .= "rdr-anchor \"relayd/*\"\n";
+
 	update_filter_reload_status("Setting up FTP helper");
-	$natrules .= "\n# FTP proxy\n";
+	$natrules .= "# FTP proxy\n";
 	$natrules .= "rdr-anchor \"ftp-proxy/*\"\n";
 	$natrules .= "rdr-anchor \"tftp-proxy/*\"\n";
 	$natrules .= "\n";
+
 	$interface_counter = 0;
 	$vpns_list = get_vpns_list();
 	$direct_networks_list = get_direct_networks_list();
@@ -704,30 +703,29 @@ function filter_nat_rules_generate()
 		$natrules .= "table <direct_networks> { $direct_networks_list }\n";
 	/* loop through all interfaces and handle ftp-proxy redirections */
 	foreach ($FilterIflist as $ifent => $ifcfg) {
-		$realif = $ifcfg['if'];
-		$int_ip = $ifcfg['ip'];
-		if ($int_ip == "")
-			continue;
-		if(isset($config['interfaces'][$ifent]['disableftpproxy'])) {
+		if ($ifcfg['ftpproxy'] == false) {
 			if($g['debug'])
 				log_error("Filter: FTP proxy disabled for interface {$ifcfg['descr']} - ignoring.");
 			$interface_counter++;
 			continue;
 		}
+		$realif = $ifcfg['if'];
+		$int_ip = $ifcfg['ip'];
+		if (!is_ipaddr($int_ip))
+			continue;
+
 		/* are we in routed mode? no source nat rules and not a outside interface? */
-		/* If we have advanced outbound nat we skip the FTP proxy, we use ftpsesame */
-		if((isset($config['nat']['advancedoutbound']['enable'])) && 
+		/* If advanced outbound nat enabled skip FTP proxy, we use ftpsesame */
+		if ((isset($config['nat']['advancedoutbound']['enable'])) && 
 			(! interface_has_gateway($ifent))) {
 			$sourcenat = 0;
 			/* we are using advanced outbound nat, are we in routing mode? */
 			/* if the interface address lies within a outbound NAT source network we should skip */
-			if(! empty($config['nat']['advancedoutbound']['rule'])) {
-				foreach($config['nat']['advancedoutbound']['rule'] as $natnetwork) {
-					if(ip_in_subnet($int_ip, $natnetwork['source']['network'])) {
-						/* if the interface address is matched in the AON Rule we need the ftp proxy */
+			if (! empty($config['nat']['advancedoutbound']['rule'])) {
+				/* if interface address is matched in the AON Rule we need the ftp proxy */
+				foreach($config['nat']['advancedoutbound']['rule'] as $natnetwork)
+					if(ip_in_subnet($int_ip, $natnetwork['source']['network']))
 						$sourcenat++;
-					}
-				}
 			}
 			if($sourcenat == 0) {
 				if($g['debug'])
@@ -739,13 +737,14 @@ function filter_nat_rules_generate()
 					log_error("Filter: AON Rule matched for interface {$ifcfg['descr']} - using FTP proxy");
 			}
 		}
+
 		/*  if the user has defined, include the alias so that we do not redirect ftp
 		 *  connections across the tunnels to ftp-proxy 
 		 *
 		 *  if interface lacks an ip, dont setup a rdr for ftp.	
 		 *  they are most likely on a bridged interface 
 		 */
-		if($int_ip and $vpns_list) {
+		if($vpns_list) {
 			$natrules .= "no rdr on $realif proto tcp from any to <vpns> port 21\n";
 			$natrules .= "no rdr on $realif proto {tcp,udp} from any to <vpns> port tftp\n";
 			if($onetoone_list) {
@@ -756,20 +755,19 @@ function filter_nat_rules_generate()
 		$tmp_port = 8021 + $interface_counter;
 		if($g['debug'])
 			log_error("Filter: FTP proxy port ($tmp_port) enabled for interface {$ifcfg['descr']}");
-		$temp_array_holder_pftpx = array();
-		$temp_array_holder_pftpx['port'] = $tmp_port;
-		$temp_array_holder_pftpx['interface'] = "\${$ifcfg['descr']}";
-		$temp_array_holder_pftpx['realif'] = $realif;
-		$used_pftpx_ports[] = $temp_array_holder_pftpx;
-		$natrules .= "rdr on $realif proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
-		$natrules .= "rdr on $realif proto udp from any to any port tftp -> 127.0.0.1 port 6969\n";
+
+		$natrules .= "rdr on $realif proto tcp from any to any port 21 tag PFFTPPROXY -> 127.0.0.1 port {$tmp_port}\n";
+		$natrules .= "rdr on $realif proto udp from any to any port tftp tag PFFTPPROXY -> 127.0.0.1 port 6969\n";
 		$interface_counter++;
 	}
 	$natrules .= "\n";
+
 	/* DIAG: add ipv6 NAT, if requested */
-	if (isset($config['diag']['ipv6nat']['enable']) and $config['diag']['ipv6nat']['ipaddr'] <> "") {
+	if (isset($config['diag']['ipv6nat']['enable']) &&
+		is_ipaddr($config['diag']['ipv6nat']['ipaddr']) &&
+		is_array($FilterIflist['wan'])) {
 		/* XXX: FIX ME!	 IPV6 */
-		$natrules .= "rdr on \$wan proto ipv6 from any to any -> {$config['diag']['ipv6nat']['ipaddr']}\n";
+		$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto ipv6 from any to any -> {$config['diag']['ipv6nat']['ipaddr']}\n";
 	}
 	if(file_exists("/var/etc/inetd.conf"))
 		mwexec("rm /var/etc/inetd.conf");
@@ -778,6 +776,7 @@ function filter_nat_rules_generate()
 	$inetd_fd = fopen("/var/etc/inetd.conf","w");
 	/* add tftp protocol helper */
 	fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy -v\n");
+
 	if (isset($config['nat']['rule'])) {
 		$natrules .= "# NAT Inbound Redirects\n";
 		$inetd_fd = fopen("/var/etc/inetd.conf","w");
@@ -866,9 +865,9 @@ function filter_nat_rules_generate()
 						case "tcp/udp":
 							if($natif) {
 								if($rule['external-port'] <> $rule['local-port'])
-									$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+									$natrules .= "{$nordr} rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 								else
-									$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}";
+									$natrules .= "{$nordr} rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}";
 							}
 							break;
 						case "udp":
@@ -892,16 +891,16 @@ function filter_nat_rules_generate()
 					switch ($rule['protocol']) {
 						case "tcp/udp":
 							if($natif)
-								$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
+								$natrules .= "{$nordr} rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
 							break;
 						case "udp":
 						case "tcp":
 							if($natif)
-								$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
+								$natrules .= "{$nordr} rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
 							break;
 						default:
 							if($natif)
-								$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}";
+								$natrules .= "{$nordr} rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}";
 					}
 				}
 			}
@@ -972,10 +971,10 @@ function filter_nat_rules_generate()
 										}										
 										foreach($toadd_array as $tda){
 											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -u -w {$reflectiontimeout} {$target} {$tda}\n");
-																							$natrules .= "rdr on {$ifname['if']} proto tcp from any to {$extaddr} port { {$xxx} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+																							$natrules .= "rdr on {$ifname['if']} proto tcp from any to {$extaddr} port { {$xxx} } tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
 											$starting_localhost_port++;
 											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w {$reflectiontimeout} {$target} {$tda}\n");
-												$natrules .= "rdr on { {$ifname['if']} } proto udp from any to {$extaddr} port { {$xxx} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+												$natrules .= "rdr on { {$ifname['if']} } proto udp from any to {$extaddr} port { {$xxx} } tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
 											$xxx++;
 											$starting_localhost_port++;
 										}
@@ -1009,7 +1008,7 @@ function filter_nat_rules_generate()
 											else 
 												$reflectiontimeout = "20";												
 											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n");
-												$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port { {$xxx} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+												$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port { {$xxx} } tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
 											$xxx++;
 											$starting_localhost_port++;
 										}
@@ -1760,7 +1759,7 @@ function generate_user_filter_rule($rule)
 
 function filter_rules_generate() 
 {
-	global $config, $g, $table_cache, $used_pftpx_ports, $FilterIflist;
+	global $config, $g, $table_cache, $FilterIflist;
 	update_filter_reload_status("Creating default rules");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -1828,6 +1827,16 @@ anchor "packageearly"
 anchor "carp"
 
 EOD;
+
+	$ipfrules .= process_carp_rules();
+
+        $ipfrules .= "\n# SSH lockout\n";
+        if (is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
+                $ipfrules .= "block in log quick proto tcp from <sshlockout> to any port ";
+                $ipfrules .= $config['system']['ssh']['port'];
+                $ipfrules .= " label \"sshlockout\"\n";
+        } else
+                $ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n";
 
 	/*
 	 * Support for allow limiting of TCP connections by establishment rate
@@ -2022,138 +2031,45 @@ EOD;
 			log_error("ERROR!  PPTP enabled but could not resolve the \$pptpdtarget");
 		}
 	}
+
 	$ipfrules .= "# NAT Reflection rules\n";
-	if (isset($config['nat']['rule'])) {
-		$natrules .= "# NAT Inbound Redirects\n";
-		if(!isset($config['system']['disablenatreflection'])) {
-			//$fd = fopen("/var/etc/inetd.conf","w");
-			/* start redirects on port 19000 of localhost */
-			$starting_localhost_port = 18999;
-		}
-		foreach ($config['nat']['rule'] as $rule) {
-			update_filter_reload_status("Creating NAT rule {$rule['descr']}");
-			/* if item is an alias, expand */
-			if(alias_expand($rule['external-port']))
-				$extport[0] = alias_expand_value($rule['external-port']);
-			else
-				$extport = explode("-", $rule['external-port']);
-			/* if item is an alias, expand */
-			if(alias_expand($rule['local-port']))
-				$localport = "";
-			else
-				$localport = " port {$rule['local-port']}";
-			$target = alias_expand_host($rule['target']);
-			if (!$target) {
-				$ipfrules .= "#Unresolvable alias not installing rule\n";
-				continue;		/* unresolvable alias */
-			}
-			if ($rule['external-address']) {
-				if($rule['external-address'] <> "any")
-					$extaddr = $rule['external-address'] . "/32";
-				else
-					$extaddr = $rule['external-address'];
-			} else {
-				$extaddr = $FilterIflist[$rule['interface']]['ip'];
-			}
-			/*
-			 *	 Expand aliases
-			 *	 XXX: may want to integrate this into pf macros
-			 */
-			if(alias_expand($target))
-					$target = alias_expand($target);
-			if(alias_expand($extaddr))
-					$extaddr = alias_expand($extaddr);
-			if(!isset($config['system']['disablenatreflection'])) {
-				foreach ($FilterIflist as $ifent => $ifname) {
-					/* do not process interfaces with gateways*/
-					if (interface_has_gateway($ifent))
-						continue;
-					if($extport[1])
-						$range_end = ($extport[1]);
-					else
-						$range_end = ($extport[0]);
-					$range_end++;
-					if($rule['local-port'])
-						$lrange_start = $rule['local-port'];
-					if($range_end - $extport[0] > 500) {
-						$range_end = $extport[0]+1;
-						log_error("Not installing nat reflection rules for a port range > 500");
-					} else {
-						/* only install reflection rules for < 19991 items */
-						if($starting_localhost_port < 19991) {
-							$loc_pt = $lrange_start;
-							for($x=$extport[0]; $x<$range_end; $x++) {
-								$starting_localhost_port++;
-								switch($rule['protocol']) {
-									case "tcp/udp":
-										$protocol = "{ tcp udp }";
-										$ipfrules .= "pass in on { {$ifname['if']} } inet proto tcp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
-										$starting_localhost_port++;
-										$ipfrules .= "pass in on { {$ifname['if']} } inet proto udp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
-										break;
-									case "tcp":
-									case "udp":
-										$protocol = $rule['protocol'];
-										$ipfrules .= "pass in on { {$ifname['if']} } inet proto {$rule['protocol']} from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
-										break;
-									default:
-										break;
-									}
-									$loc_pt++;
-									if($starting_localhost_port > 19990) {
-									log_error("Not installing nat reflection rules. Maximum 1,000 reached.");
-									$x = $range_end+1;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+	if (isset($config['nat']['rule']) &&
+		(!isset($config['system']['disablenatreflection']))) {
+		$ipfrules .= <<<EOD
+pass in inet tagged PFREFLECT keep state label \"NAT REFLECT: Allow traffic to localhost\"";
+
+EOD;
 	}
+
 	$ipfrules .= <<<EOD
 # package manager late specific hook
 anchor "packagelate"
 
 EOD;
 	
-	/* XXX: ermal -- i am leaving this here for a second pass to optimize this rules. */
-	$ipfrules .= "\n# SSH lockout\n";
-	if (is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
-		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port ";
-		$ipfrules .= $config['system']['ssh']['port'];
-		$ipfrules .= " label \"sshlockout\"\n";
-	} else
-		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n";
-	$ipfrules .= "anchor \"ftp-proxy/*\"\n";
-	$ipfrules .= process_carp_rules();
-	$ipfrules .= "\n";
+	$ipfrules .= "\nanchor \"ftp-proxy/*\"\n";
 	if(!isset($config['system']['disableftpproxy'])) {
 		$ipfrules .= "\n# enable ftp-proxy\n";
-		foreach($used_pftpx_ports as $pftpx) {
-			if(!isset($oc['gateway']) && $oc['if'] <> "") {
-				$ipfrules .= "pass in on {$pftpx['interface']} inet proto tcp from any to \$loopback port {$pftpx['port']} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
-				$ipfrules .= "pass in on {$pftpx['interface']} inet proto tcp from any to \$loopback port 21 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
-			}
-			if(isset($config['system']['rfc959workaround'])) {
-				$ipfrules .= <<<EODEOD
+		$ipfrules .= "pass in inet proto tcp tagged PFFTPPROXY flags S/SA keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+
+		if (isset($config['system']['rfc959workaround'])) {
+			$ipfrules .= <<<EODEOD
 # Fix sites that violate RFC 959 which specifies that the data connection
 # be sourced from the command port - 1 (typically port 20)
 # This workaround doesn't expose us to any extra risk as we'll still only allow
 # connections to the firewall on a port that ftp-proxy is listening on
 
 EODEOD;
-
-				$ipfrules .= "pass in on {$pftpx['interface']} inet proto tcp from any to ({$pftpx['realif']}) port > 49000 user proxy flags S/SA keep state label \"FTP PROXY: RFC959 violation workaround\" \n";
-				$ipfrules .= <<<EOD
-# Support for allow limiting of TCP connections by establishment rate
-pass in on {$pftpx['interface']} inet proto tcp from port 20 to ({$pftpx['realif']}) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
+			foreach ($FilterIflist as $ftpif => $ftpifcfg) {
+				if ($ftpifcfg['ftpproxy'] == true)
+					$ipfrules .= <<<EOD
+pass in on {$ftpifcfg['if']} inet proto tcp from port 20 to ({$ftpifcfg['if']}) port > 49000 flags S/SA keep state label "FTP PROXY: PASV mode data connection"
 
 EOD;
-
 			}
 		}
 	}
+
 	if (isset($config['filter']['rule'])) {
 		$load_ipfw_module = false;
 		/* Pre-cache all our rules so we only have to generate them once */
@@ -2377,7 +2293,7 @@ function process_carp_rules()
 	if($config['installedpackages']['carpsettings']['config'] <> "" or
 		$config['virtualip']['vip'] <> "") {
 		$lines .= "pass quick proto carp\n";
-		$lines .= "pass quick proto pfsync";
+		$lines .= "pass quick proto pfsync\n";
 	}
 	return $lines;
 }

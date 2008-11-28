@@ -266,7 +266,7 @@ function filter_generate_scrubing()
 		if (!isset($config['system']['disablescrub']))
 			$scrubrules .= "scrub on \${$scrubcfg['descr']} all {$scrubnodf} {$scrubrnid} {$mssclamp} fragment reassemble\n"; // reassemble all directions
 		else if (!empty($mssclamp))
-			$scrubrules .= "scrub on \${$scrubcfg['descr']} {$mssclamp}\n";
+			$scrubrules .= "scrub in on \${$scrubcfg['descr']} {$mssclamp}\n";
 	}
 	return $scrubrules;
 }

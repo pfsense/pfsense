@@ -2775,7 +2775,7 @@ function system_start_ftp_helpers() {
 				log_error("Config: FTP proxy port ($port) enabled for interface {$ifname}");
 			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)
- 				mwexec("/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port} {$pftpxsourceaddr} {$ip}");
+ 				mwexec("/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port} {$pftpxsourceaddr} {$ip} -T PFFTPPROXY");
 			if(!$ip)
 				mwexec("/usr/local/sbin/ftpsesame {$shaper_queue} -i $int");
 			$interface_counter++;

@@ -2050,7 +2050,7 @@ EOD;
 	$ipfrules .= "\nanchor \"ftp-proxy/*\"\n";
 	if(!isset($config['system']['disableftpproxy'])) {
 		$ipfrules .= "\n# enable ftp-proxy\n";
-		$ipfrules .= "pass in inet proto tcp tagged PFFTPPROXY flags S/SA keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+		$ipfrules .= "pass in quick inet proto tcp tagged PFFTPPROXY flags S/SA keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 
 		if (isset($config['system']['rfc959workaround'])) {
 			$ipfrules .= <<<EODEOD
@@ -2063,7 +2063,7 @@ EODEOD;
 			foreach ($FilterIflist as $ftpif => $ftpifcfg) {
 				if ($ftpifcfg['ftpproxy'] == true)
 					$ipfrules .= <<<EOD
-pass in on {$ftpifcfg['if']} inet proto tcp from port 20 to ({$ftpifcfg['if']}) port > 49000 flags S/SA keep state label "FTP PROXY: PASV mode data connection"
+pass in quick on {$ftpifcfg['if']} inet proto tcp from port 20 to ({$ftpifcfg['if']}) port > 49000 flags S/SA keep state label "FTP PROXY: PASV mode data connection"
 
 EOD;
 			}

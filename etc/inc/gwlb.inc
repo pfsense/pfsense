@@ -231,9 +231,10 @@ function return_gateways_array() {
 				$gateway['gateway'] = lookup_gateway_ip_by_name($config['interfaces'][$friendly]['gateway']);
 			} else {
 				$gateway['gateway'] = get_interface_gateway($ifname);
+				echo log_error("Found dynamic gateway '{$gateway['gateway']}'");
 			}
 			/* Loopback for dynamic interfaces without a IP */
-			if(!is_ipaddr($gateway['gateway'])) {
+			if(!is_ipaddr(trim($gateway['gateway']))) {
 				 $gateway['gateway'] = "127.0.0.2";
 			}
 			/* do not add dynamic gateways if it is also found in the gateways array */

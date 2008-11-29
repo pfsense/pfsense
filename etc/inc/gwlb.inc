@@ -222,7 +222,7 @@ function return_gateways_array() {
 	$gateways_arr = array();
 
 	/* Loop through all interfaces with a gateway and add it to a array */
-	$iflist = get_interface_list();
+	$iflist = get_configured_interface_list();
 	foreach($iflist as $ifname => $if ) {
 		if(interface_has_gateway($ifname)) {
 			$gateway = array();

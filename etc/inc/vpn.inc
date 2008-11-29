@@ -1047,7 +1047,6 @@ pt{$i}:
 	set pptp enable incoming
 	set pptp disable originate
 	set pptp disable windowing
-	set pptp self 127.0.0.1
 
 EOD;
 			}

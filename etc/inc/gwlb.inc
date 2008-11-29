@@ -231,8 +231,8 @@ function return_gateways_array() {
 				$gateway['gateway'] = lookup_gateway_ip_by_name($config['interfaces'][$friendly]['gateway']);
 			} else {
 				$gateway['gateway'] = get_interface_gateway($ifname);
-				echo log_error("Found dynamic gateway '{$gateway['gateway']}'");
 			}
+			log_error("Interface $friendly has a gateway, found gateway '{$gateway['gateway']}'");
 			/* Loopback for dynamic interfaces without a IP */
 			if(!is_ipaddr(trim($gateway['gateway']))) {
 				 $gateway['gateway'] = "127.0.0.2";
@@ -240,8 +240,10 @@ function return_gateways_array() {
 			/* do not add dynamic gateways if it is also found in the gateways array */
 			if(is_array($config['gateways']['gateway_item'])) {
 				foreach($config['gateways']['gateway_item'] as $gateway_item) {
-					if($gateway_item['gateway'] == $gateway['gateway'])
+					if($gateway_item['gateway'] == $gateway['gateway']) {
+						log_error("Found a match for {$gateway['gateway']} in the config array, skipping $friendly");
 						continue 2;
+					}
 				}
 			}
 
@@ -258,6 +260,8 @@ function return_gateways_array() {
 			$gateway['attribute'] = "system";
 			$gateway['interface'] = "$friendly";
 			$gateways_arr[] = $gateway;
+			$debugstr = print_r($gateway, true);
+			log_error("proceeding with gateway config $debugstr");
 		}
 	}
 

@@ -2036,7 +2036,7 @@ EOD;
 	if (isset($config['nat']['rule']) &&
 		(!isset($config['system']['disablenatreflection']))) {
 		$ipfrules .= <<<EOD
-pass in inet tagged PFREFLECT keep state label \"NAT REFLECT: Allow traffic to localhost\"";
+pass in inet tagged PFREFLECT keep state label "NAT REFLECT: Allow traffic to localhost"
 
 EOD;
 	}

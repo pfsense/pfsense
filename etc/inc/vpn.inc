@@ -991,7 +991,7 @@ EOD;
 EOD;
 			}
 
-			if  (isset($pptpdcfg["wins"]))
+			if  (isset($pptpdcfg["wins"]) && $pptpdcfg['wins'] != "")
 				$mpdconf  .=  "	set ipcp nbns {$pptpdcfg['wins']}\n";
 			if (is_array($pptpdcfg['dnsserver']) && ($pptpdcfg['dnsserver'][0])) {
 				$mpdconf .= "	set ipcp dns " . join(" ", $pptpdcfg['dnsserver']) . "\n";

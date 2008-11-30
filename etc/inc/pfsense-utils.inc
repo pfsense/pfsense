@@ -485,13 +485,13 @@ function tdr_create_ipfw_rule($rule, $type) {
 
 	/* piece together the actual user rule */
 	if ($aline['interface'] == "multiple") {
-		$line .= $type . " " . $aline['prot'] . $aline['src'] . 
+		$tmpline = $type . " " . $aline['prot'] . $aline['src'] . 
 			$aline['srcport'] . $aline['dst'] . $aline['dstport'] . " in recv ";
 		$interfaces = explode(",", $rule['interface']);
 		$ifliste = "";
 		foreach ($interfaces as $iface) {
 			if (array_key_exists($iface, $FilterIflist)) 
-				$line .= " " . $FilterIflist[$iface]['if'] . " ; {$line} "; /* XXX */
+				$line .= "{$tmpline} " . $FilterIflist[$iface]['if'] . "; ";/* XXX */
 		}
 	} else if ($aline['interface'] == "")
 		$line .= $type . " " . $aline['prot'] . $aline['src'] . 

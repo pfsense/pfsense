@@ -218,26 +218,25 @@ function return_gateways_status() {
 
 function return_gateways_array() {
 	global $config;
-	global $g;
+
 	$gateways_arr = array();
 
 	/* Loop through all interfaces with a gateway and add it to a array */
-	$iflist = get_configured_interface_list();
-	foreach($iflist as $ifname => $if ) {
+	$iflist = get_configured_interface_with_descr();
+	foreach($iflist as $ifname => $friendly ) {
 		if(interface_has_gateway($ifname)) {
 			$gateway = array();
-			$friendly = convert_real_interface_to_friendly_interface_name($ifname);
-			if(isset($config['interfaces'][$friendly]['gateway'])) {
-				$gateway['gateway'] = lookup_gateway_ip_by_name($config['interfaces'][$friendly]['gateway']);
-			} else {
-				$gateway['gateway'] = get_interface_gateway($ifname);
-			}
+			$gateway['gateway'] = get_interface_gateway($ifname);
 			log_error("Interface $friendly has a gateway, found gateway '{$gateway['gateway']}'");
 			/* Loopback for dynamic interfaces without a IP */
 			if(!is_ipaddr(trim($gateway['gateway']))) {
 				 $gateway['gateway'] = "127.0.0.2";
 			}
-			/* do not add dynamic gateways if it is also found in the gateways array */
+			/* 
+			 * do not add dynamic gateways if it is also found 
+			 * in the gateways array.
+			 * XXX: NB: Can this ever happen?!
+			 */
 			if(is_array($config['gateways']['gateway_item'])) {
 				foreach($config['gateways']['gateway_item'] as $gateway_item) {
 					if($gateway_item['gateway'] == $gateway['gateway']) {
@@ -247,21 +246,20 @@ function return_gateways_array() {
 				}
 			}
 
-			$gateway['interface'] = $ifname;
-			$descr = convert_friendly_interface_to_friendly_descr($friendly);
 			/* retrieve a proper monitor IP? */
-			if(is_ipaddr($config['interfaces'][$friendly]['monitorip'])) {
-				$gateway['monitor'] = $config['interfaces'][$friendly]['monitorip'];
+			if(is_ipaddr($config['interfaces'][$ifname]['monitorip'])) {
+				$gateway['monitor'] = $config['interfaces'][$ifname]['monitorip'];
 			} else {
 				$gateway['monitor'] = $gateway['gateway'];
 			}
-			$gateway['name'] = "{$friendly}";
-			$gateway['descr'] = "Interface {$descr} Gateway";
+			$gateway['interface'] = "{$ifname}";
+			$gateway['name'] = "{$ifname}";
+			$gateway['descr'] = "Interface {$friendly} Gateway";
 			$gateway['attribute'] = "system";
-			$gateway['interface'] = "$friendly";
+			$gateway['interface'] = "{$ifname}";
 			$gateways_arr[] = $gateway;
 			$debugstr = print_r($gateway, true);
-			log_error("proceeding with gateway config $debugstr");
+			log_error("proceeding with gateway config {$debugstr}");
 		}
 	}
 

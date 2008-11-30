@@ -1,0 +1,89 @@
+#!/bin/sh
+
+# Set our operating platform
+PLATFORM=`cat /etc/platform`
+
+if [ "$PLATFORM" != "cdrom" ]; then
+	# Populate a dummy php.ini to avoid
+	# the file being clobbered and the firewall
+	# not being able to boot back up.
+	cat >/usr/local/lib/php.ini <<EOF
+# File generated from /etc/rc
+output_buffering = "0"
+expose_php = Off
+implicit_flush = true
+magic_quotes_gpc = Off
+max_execution_time = 99999999
+max_input_time = 99999999
+register_argc_argv = On
+file_uploads = On
+upload_tmp_dir = /tmp
+upload_max_filesize = 100M
+post_max_size = 100M
+html_errors = Off
+zlib.output_compression = On
+zlib.output_compression_level = 1
+include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
+uploadprogress.file.filename_template = /tmp/uploadprogress_%s.txt
+extension_dir=/usr/local/lib/php/20060613/
+
+; add additional extensions below
+; standard PHP extension
+extension=pcre.so
+extension=bz2.so
+extension=bcmath.so
+extension=ctype.so
+extension=curl.so
+extension=gettext.so
+extension=mbstring.so
+extension=mhash.so
+;extension=openssl.so
+extension=pcntl.so
+extension=posix.so
+extension=readline.so
+extension=session.so
+;extension=simplexml.so
+extension=shmop.so
+extension=sysvmsg.so
+extension=sysvsem.so
+extension=sysvshm.so
+extension=tokenizer.so
+extension=xml.so
+extension=ldap.so
+extension=zlib.so
+extension=uploadprogress.so
+
+; standard PHP extensions currently beeing unused
+;extension=json.so
+;extension=ncurses.so
+;xmlreader.so
+;xmlwriter.so
+
+;[xdebug]
+;xdebug.remote_enable = On
+;xdebug.default_enable = On
+;xdebug.remote_mode = On
+;xdebug.remote_handler = dbgp
+;xdebug.remote_host = 127.0.0.1
+;xdebug.remote_port = 17869
+;xdebug.idekey = devphp
+
+EOF
+
+RAM=`sysctl hw.realmem | awk '{print $2/1000000}' | awk -F '.' '{print $1}'`
+export RAM
+	if [  $RAM -gt 96 ]; then
+
+		cat >>/usr/local/lib/php.ini <<EOF
+extension=apc.so
+apc.enabled="1"
+apc.enable_cli="1"
+apc.shm_size="25"
+
+EOF
+
+	fi
+
+fi
+
+cp /usr/local/lib/php.ini /usr/local/etc/php.ini

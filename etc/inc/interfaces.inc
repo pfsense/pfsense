@@ -619,7 +619,7 @@ function interface_bring_down($interface = "wan") {
                 	mwexec("kill {$pid}");
                	sleep(1);
                 unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
-               	mwexec("/sbin/ifconfig {$realinterface} delete down");
+               	mwexec("/sbin/ifconfig {$realif} delete down");
 		break;
 	default:
 		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete down");

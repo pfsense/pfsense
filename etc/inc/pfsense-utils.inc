@@ -3413,15 +3413,8 @@ function get_interface_gateway($interface) {
 	$gwcfg = $config['interfaces'][$interface];
         if (is_ipaddr($gwcfg['gateway'])) 
         	$gw = $gwcfg['gateway'];
-        else if ($gwcfg['gateway'] <> "") {
-        	if (is_array($config['gateways']['gateway_item']))
-                	foreach($config['gateways']['gateway_item'] as $gateway) {
-                                if($gateway['name'] == $gwcfg['gateway']) {
-                                        $gw = $gateway['gateway'];
-                        		break;
-                		}
-        		}
-        } 
+        else if (!empty($gwcfg['gateway']))
+		$gw = lookup_gateway_ip_by_name($gwcfg['gateway']);
 	
 	// for dynamic interfaces we handle them through the $interface_router file.
 	if (!is_ipaddr($gw)) {
@@ -3789,7 +3782,7 @@ function lookup_gateway_ip_by_name($name) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
 			if($gateway['name'] == $name) {
 				$gatewayip = $gateway['gateway'];
-				$interfacegw = $gateway['interface'];
+				//$interfacegw = $gateway['interface'];
 				return($gatewayip);
 			}
 		}

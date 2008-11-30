@@ -70,16 +70,16 @@ function interfaces_vlan_configure() {
 }
 
 function interface_vlan_configure($if, $tag, $vlanif = "") {
-		if(!$if) {
-			log_error("interface_vlan_confgure called with if defined.");
-			return;
-		}
-		if(!$vlanif) {
-			log_error("interface_vlan_confgure called with vlanif defined.");
-			return;
-		}
-
         global $config, $g;
+
+	if(empty($if)) {
+		log_error("interface_vlan_confgure called with if defined.");
+		return;
+	}
+	if(empty($vlanif)) {
+		log_error("interface_vlan_confgure called with vlanif defined.");
+		return;
+	}
 
         /* make sure the parent interface is up */
 		interfaces_bring_up($if);

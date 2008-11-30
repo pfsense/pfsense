@@ -76,16 +76,12 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
 		log_error("interface_vlan_confgure called with if defined.");
 		return;
 	}
-	if(empty($vlanif)) {
-		log_error("interface_vlan_confgure called with vlanif defined.");
-		return;
-	}
 
         /* make sure the parent interface is up */
-		interfaces_bring_up($if);
-		/* Since we are going to add vlan(4) try to enable all that hardware supports. */
-		mwexec("/sbin/ifconfig {$if} vlanhwtag");
-		mwexec("/sbin/ifconfig {$if} vlanmtu");
+	interfaces_bring_up($if);
+	/* Since we are going to add vlan(4) try to enable all that hardware supports. */
+	mwexec("/sbin/ifconfig {$if} vlanhwtag");
+	mwexec("/sbin/ifconfig {$if} vlanmtu");
 
         if ($g['booting'] || !(empty($vlanif))) {
 		mwexec("/sbin/ifconfig {$vlanif} destroy");
@@ -97,7 +93,7 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
                 escapeshellarg($tag) . " vlandev " .
                 escapeshellarg($if));
 
-		interfaces_bring_up($vlanif);
+	interfaces_bring_up($vlanif);
 
         /* invalidate interface cache */
         get_interface_arr(true);
@@ -113,7 +109,7 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
         }
 
         /* XXX: ermal -- for now leave it here at the moment it does not hurt. */
-		interfaces_bring_up($if);
+	interfaces_bring_up($if);
 
         return $vlanif;
 }

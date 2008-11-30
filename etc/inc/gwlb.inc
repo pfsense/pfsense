@@ -227,8 +227,7 @@ function return_gateways_array() {
 		if(interface_has_gateway($ifname)) {
 			$gateway = array();
 			$gateway['gateway'] = get_interface_gateway($ifname);
-			log_error("Interface $friendly has a gateway, found gateway '{$gateway['gateway']}'");
-			/* Loopback for dynamic interfaces without a IP */
+			/* Loopback dummy for dynamic interfaces without a IP */
 			if(!is_ipaddr(trim($gateway['gateway']))) {
 				 $gateway['gateway'] = "127.0.0.2";
 			}
@@ -236,6 +235,8 @@ function return_gateways_array() {
 			 * do not add dynamic gateways if it is also found 
 			 * in the gateways array.
 			 * XXX: NB: Can this ever happen?!
+			 * smos@ get_interface_gateway() also succeeds for 
+			 * static gateways, thus they need to be excluded
 			 */
 			if(is_array($config['gateways']['gateway_item'])) {
 				foreach($config['gateways']['gateway_item'] as $gateway_item) {
@@ -258,8 +259,6 @@ function return_gateways_array() {
 			$gateway['attribute'] = "system";
 			$gateway['interface'] = "{$ifname}";
 			$gateways_arr[] = $gateway;
-			$debugstr = print_r($gateway, true);
-			log_error("proceeding with gateway config {$debugstr}");
 		}
 	}
 

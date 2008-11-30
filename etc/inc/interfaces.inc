@@ -581,6 +581,9 @@ function interface_reconfigure($interface = "wan") {
 function interface_bring_down($interface = "wan") {
 	global $config, $g;
 
+	if (!isset($config['interfaces'][$interface]))
+		return; 
+
 	$ifcfg = $config['interfaces'][$interface];
 
 	$realif = get_real_interface($interface);
@@ -590,7 +593,7 @@ function interface_bring_down($interface = "wan") {
         /* remove interface up file if it exists */
         unlink_if_exists("{$g['tmp_path']}/{$interface}up");
         unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
-        unlink_if_exists("{$g['varetc_path']}/nameservers.conf");
+        //unlink_if_exists("{$g['varetc_path']}/nameservers.conf");
 
 	switch ($ifcfg['ipaddr']) {
 	case "pppoe":

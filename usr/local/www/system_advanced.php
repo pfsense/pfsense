@@ -385,13 +385,10 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncell">&nbsp;</td>
                   <td width="78%" class="vtable">
-                    <input name="filteringbridge_enable" type="checkbox" id="filteringbridge_enable" value="yes" <?php if ($pconfig['filteringbridge_enable']) echo "checked"; ?>>
                     <strong>Enable filtering bridge</strong><span class="vexpl"><br>
-                    This will cause bridged packets to pass through the packet
-                    filter in the same way as routed packets do (by default bridged
-                    packets are always passed). If you enable this option, you'll
-                    have to add filter rules to selectively permit traffic from
-                    bridged interfaces.</span></td>
+                    This setting no longer exists as it is unnecessary. Filtering
+                    occurs on the member interfaces of the bridge and cannot be
+                    disabled. </span></td>
                 </tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>

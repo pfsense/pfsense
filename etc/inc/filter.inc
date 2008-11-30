@@ -1943,6 +1943,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					switch($rule['statetype']) {
 						case "none":
 							$noadvoptions = true;
+                                                        $aline['flags'] = "no state ";
 							break;
 						case "modulate state":
 						case "synproxy state":

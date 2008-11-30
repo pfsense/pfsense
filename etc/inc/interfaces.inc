@@ -73,7 +73,7 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
         global $config, $g;
 
 	if(empty($if)) {
-		log_error("interface_vlan_confgure called with if defined.");
+		log_error("interface_vlan_confgure called with if undefined.");
 		return;
 	}
 

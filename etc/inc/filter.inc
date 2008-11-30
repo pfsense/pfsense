@@ -1712,9 +1712,11 @@ function generate_user_filter_rule($rule)
 		if($rule['sched']) {
 			if($config['schedules']) {
 				foreach($config['schedules']['schedule'] as $sched) {
-					if($sched['name'] == $rule['sched'])
-						$schedule_xml_block = $sched;					
-						$schedule_enabled = true;
+					$schedule_enabled = true;
+					if($sched['name'] == $rule['sched']) {
+						$schedule_xml_block = $sched;	
+						break;
+					}				
 				}
 			}
 			if($schedule_xml_block)

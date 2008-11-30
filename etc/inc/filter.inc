@@ -1479,15 +1479,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 			if ($type == "reject") {
 				/* special reject packet */
-				if ($rule['protocol'] == "tcp") {
-					$aline['type'] = "block return-rst";
-				} else if ($rule['protocol'] == "udp") {
-					$aline['type'] = "block return-icmp";
-				} else if ($rule['protocol'] == "tcp/udp") {
-                                        $aline['type'] = "block return";
-				} else {
-					$aline['type'] = "block";
-				}
+                                $aline['type'] = "block return";
 			} else {
 				$aline['type'] = $type;
 			}

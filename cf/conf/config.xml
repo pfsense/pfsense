@@ -57,6 +57,7 @@
 			<subnet></subnet>
 			<gateway></gateway>
 			<blockpriv/>
+			<blockbogons/>
 			<disableftpproxy/>
 			<dhcphostname></dhcphostname>
 			<media></media>

@@ -42,14 +42,14 @@
 
 require_once("guiconfig.inc");
 
-if ($_POST) {
-	$interface = $_POST['interface'];
-	if ($_POST['submit'] == "Disconnect" || $_POST['submit'] == "Release") {
+if ($_GET['if']) {
+	$interface = $_GET['if'];
+	if ($_GET['action'] == "Disconnect" || $_GET['action'] == "Release") {
 		interface_bring_down($interface);
-	} else if ($_POST['submit'] == "Connect" || $_POST['submit'] == "Renew") {
+	} else if ($_GET['action'] == "Connect" || $_GET['action'] == "Renew") {
 		interface_configure($interface); 
 	} else {
-		header("Location: index.php");
+		header("Location: status_interfaces.php");
 		exit;
 	}
 }
@@ -66,8 +66,6 @@ include("head.inc");
 		foreach ($ifdescrs as $ifdescr => $ifname):
 			$ifinfo = get_interface_info($ifdescr);
 		?>
-		<form action="status_interfaces.php" method="post">
-		<input type="hidden" name="interface" value="<?php echo $ifdescr; ?>">
               <?php if ($i): ?>
               <tr>
 			<td colspan="8" class="list" height="12"></td>
@@ -86,37 +84,46 @@ include("head.inc");
                   <?=htmlspecialchars($ifinfo['status']);?>
                 </td>
               </tr><?php if ($ifinfo['dhcplink']): ?>
-			  <tr>
-				<td width="22%" class="vncellt">DHCP</td>
-				<td width="78%" class="listr">
-				  <?=htmlspecialchars($ifinfo['dhcplink']);?>&nbsp;&nbsp;
-				  <?php if ($ifinfo['dhcplink'] == "up"): ?>
-				  <input type="submit" name="submit" value="Release" class="formbtns">
-				  <?php else: ?>
-				  <input type="submit" name="submit" value="Renew" class="formbtns">
-				  <?php endif; ?>
-				</td>
-			  </tr><?php endif; if ($ifinfo['pppoelink']): ?>
+		  <tr>
+			<td width="22%" class="vncellt">DHCP</td>
+			<td width="78%" class="listr">
+			  <?=htmlspecialchars($ifinfo['dhcplink']);?>&nbsp;&nbsp;
+			  <?php if ($ifinfo['dhcplink'] == "up"): ?>
+			  <a href="status_interfaces.php?action=Release&if=<?php echo $ifdescr; ?>">
+			  <input type="button" name="<?php echo $ifdescr; ?>" value="Release" class="formbtns">
+			  <?php else: ?>
+			  <a href="status_interfaces.php?action=Renew&if=<?php echo $ifdescr; ?>">
+			  <input type="button" name="<?php echo $ifdescr; ?>" value="Renew" class="formbtns">
+			  <?php endif; ?>
+			  </a>
+			</td>
+		  </tr><?php endif; if ($ifinfo['pppoelink']): ?>
               <tr>
                 <td width="22%" class="vncellt">PPPoE</td>
                 <td width="78%" class="listr">
                   <?=htmlspecialchars($ifinfo['pppoelink']);?>&nbsp;&nbsp;
-				  <?php if ($ifinfo['pppoelink'] == "up"): ?>
-				  <input type="submit" name="submit" value="Disconnect" class="formbtns">
-				  <?php else: ?>
-				  <input type="submit" name="submit" value="Connect" class="formbtns">
-				  <?php endif; ?>
+			  <?php if ($ifinfo['pppoelink'] == "up"): ?>
+			  <a href="status_interfaces.php?action=Disconnect&if=<?php echo $ifdescr; ?>">
+			  <input type="button" name="<?php echo $ifdescr; ?>" value="Disconnect" class="formbtns">
+			  <?php else: ?>
+			  <a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
+			  <input type="button" name="<?php echo $ifdescr; ?>" value="Connect" class="formbtns">
+			  <?php endif; ?>
+			  </a>
                 </td>
               </tr><?php  endif; if ($ifinfo['pptplink']): ?>
               <tr>
                 <td width="22%" class="vncellt">PPTP</td>
                 <td width="78%" class="listr">
                   <?=htmlspecialchars($ifinfo['pptplink']);?>&nbsp;&nbsp;
-				  <?php if ($ifinfo['pptplink'] == "up"): ?>
-				  <input type="submit" name="submit" value="Disconnect" class="formbtns">
-				  <?php else: ?>
-				  <input type="submit" name="submit" value="Connect" class="formbtns">
-				  <?php endif; ?>
+			  <?php if ($ifinfo['pptplink'] == "up"): ?>
+			  <a href="status_interfaces.php?action=Disconnect&if=<?php echo $ifdescr; ?>">
+			  <input type="button" name="<?php echo $ifdescr; ?>" value="Disconnect" class="formbtns">
+			  <?php else: ?>
+			  <a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
+			  <input type="button" name="<?php echo $ifdescr; ?>" value="Connect" class="formbtns">
+			  <?php endif; ?>
+			  </a>
                 </td>
               </tr><?php  endif; if ($ifinfo['macaddr']): ?>
               <tr>
@@ -125,7 +132,6 @@ include("head.inc");
                   <?=htmlspecialchars($ifinfo['macaddr']);?>
                 </td>
               </tr>
-	      </form>
 		<?php endif; if ($ifinfo['status'] != "down"): ?>
 			  <?php if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down"): ?>
 			  <?php if ($ifinfo['ipaddr']): ?>

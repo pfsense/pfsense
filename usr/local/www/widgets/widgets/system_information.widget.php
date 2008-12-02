@@ -61,7 +61,13 @@ $curcfg = $config['system']['firmware'];
 					else 
 						$updater_url = $g['update_url'];
 					
-					$latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
+					/* ensure we can obtain the DNS information quickly */
+					$host = split("/", $updater_url);
+					$test_dns = `/usr/bin/host -W1 {$host[2]} | grep "has address" | awk '{ print $4 }' | wc -l`;
+					if($test_dns)
+						$latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
+					else 
+						$latest_version ="404";
 					
 					if(strstr($latest_version,"404")) {
 						echo "<br /><br />Unable to check for updates.";

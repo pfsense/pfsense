@@ -1442,83 +1442,81 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 						</td>
 					</table>
 				</form>
-				<script language="JavaScript">
-				<!--
-				var gatewayip;
-				var name;
-				function show_add_gateway() {
-					document.getElementById("addgateway").style.display = '';
-					document.getElementById("addgwbox").style.display = 'none';
-					document.getElementById("gateway").style.display = 'none';
-					document.getElementById("save").style.display = 'none';
-					document.getElementById("cancel").style.display = 'none';
-					document.getElementById("gwsave").style.display = '';
-					document.getElementById("gwcancel").style.display = '';
-					$('notebox').innerHTML="";
-				}
-				function hide_add_gateway() {
-					document.getElementById("addgateway").style.display = 'none';
-					document.getElementById("addgwbox").style.display = '';	
-					document.getElementById("gateway").style.display = '';
-					document.getElementById("save").style.display = '';
-					document.getElementById("cancel").style.display = '';
-					document.getElementById("gwsave").style.display = '';
-					document.getElementById("gwcancel").style.display = '';
-				}
-				function hide_add_gatewaysave() {
-					document.getElementById("addgateway").style.display = 'none';
-					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> One moment please...';
-					var iface = $F('if');
-					name = $('name').getValue();
-					var descr = $('gatewaydescr').getValue();
-					gatewayip = $('gatewayip').getValue();
-					var defaultgw = $('defaultgw').getValue();
-					var url = "system_gateways_edit.php";
-					var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
-					var myAjax = new Ajax.Request(
-						url,
-						{
-							method: 'post',
-							parameters: pars,
-							onFailure: report_failure,
-							onComplete: save_callback
-						});					
-				}
-				function addOption(selectbox,text,value )
-				{
-					var optn = document.createElement("OPTION");
-					optn.text = text;
-					optn.value = value;
-					selectbox.options.add(optn);
-					selectbox.selectedIndex = (selectbox.options.length-1);
-					$('notebox').innerHTML="<p/><strong>NOTE:</strong> You can manage Gateways <a target='_new' href='system_gateways.php'>here</a>.";
-				}				
-				function report_failure() {
-					alert("Sorry, we could not create your gateway at this time.");
-					hide_add_gateway();
-				}
-				function save_callback(transport) {
-					var response = transport.responseText;
-					if(response) {
-						document.getElementById("addgateway").style.display = 'none';
-						hide_add_gateway();
-						$('status').innerHTML = '';
-						addOption($('gateway'), name, name);
-						// Auto submit form?
-						//document.iform.submit();
-						//$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
-					} else {
-						report_failure();
+				<script type="text/javascript">
+					var gatewayip;
+					var name;
+					function show_add_gateway() {
+						document.getElementById("addgateway").style.display = '';
+						document.getElementById("addgwbox").style.display = 'none';
+						document.getElementById("gateway").style.display = 'none';
+						document.getElementById("save").style.display = 'none';
+						document.getElementById("cancel").style.display = 'none';
+						document.getElementById("gwsave").style.display = '';
+						document.getElementById("gwcancel").style.display = '';
+						$('notebox').innerHTML="";
 					}
-				}
-				<?php
-				if ($if == "wan" || $if == "lan")
-					echo "\$('allcfg').show();";
-				else
-					echo "show_allcfg(document.iform.enable);";
-				echo "updateType('{$pconfig['type']}')";
-				?>
-				//-->
+					function hide_add_gateway() {
+						document.getElementById("addgateway").style.display = 'none';
+						document.getElementById("addgwbox").style.display = '';	
+						document.getElementById("gateway").style.display = '';
+						document.getElementById("save").style.display = '';
+						document.getElementById("cancel").style.display = '';
+						document.getElementById("gwsave").style.display = '';
+						document.getElementById("gwcancel").style.display = '';
+					}
+					function hide_add_gatewaysave() {
+						document.getElementById("addgateway").style.display = 'none';
+						$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> One moment please...';
+						var iface = $F('if');
+						name = $('name').getValue();
+						var descr = $('gatewaydescr').getValue();
+						gatewayip = $('gatewayip').getValue();
+						var defaultgw = $('defaultgw').getValue();
+						var url = "system_gateways_edit.php";
+						var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+						var myAjax = new Ajax.Request(
+							url,
+							{
+								method: 'post',
+								parameters: pars,
+								onFailure: report_failure,
+								onComplete: save_callback
+							});	
+					}
+					function addOption(selectbox,text,value)
+					{
+						var optn = document.createElement("OPTION");
+						optn.text = text;
+						optn.value = value;
+						selectbox.options.add(optn);
+						selectbox.selectedIndex = (selectbox.options.length-1);
+						$('notebox').innerHTML="<p/><strong>NOTE:</strong> You can manage Gateways <a target='_new' href='system_gateways.php'>here</a>.";
+					}				
+					function report_failure() {
+						alert("Sorry, we could not create your gateway at this time.");
+						hide_add_gateway();
+					}
+					function save_callback(transport) {
+						var response = transport.responseText;
+						if(response) {
+							document.getElementById("addgateway").style.display = 'none';
+							hide_add_gateway();
+							$('status').innerHTML = '';
+							addOption($('gateway'), name, name);
+							// Auto submit form?
+							//document.iform.submit();
+							//$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
+						} else {
+							report_failure();
+						}
+					}
+					<?php
+					if ($if == "wan" || $if == "lan")
+						echo "\$('allcfg').show();";
+					else
+						echo "show_allcfg(document.iform.enable);";
+					echo "updateType('{$pconfig['type']}')";
+					?>
 				</script>
 				<?php include("fend.inc"); ?>
 		</body>

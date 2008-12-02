@@ -1306,7 +1306,7 @@ function generate_user_filter_rule($rule)
 							/* determine interface gateway */
 							foreach($gateways_arr as $gateway) {
 								if($gateway['name'] == $member) {
-									$int = $FilterIflist[$gateway['interface']]['if'];
+									$int = $gateway['interface'];
 									if(is_ipaddr($gateway['gateway'])) 
 										$gatewayip = $gateway['gateway'];
 									else 

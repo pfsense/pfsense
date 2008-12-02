@@ -137,7 +137,7 @@ EOD;
 
 	/* add static routes for each gateway with their monitor IP */
 	if(is_array($gateways_arr)) {
-		foreach($gateways_arr as $gateway) {
+		foreach($gateways_arr as $name => $gateway) {
 			if($gateway['monitor'] == "") {
 				$gateway['monitor'] = $gateway['gateway'];
 			}
@@ -189,7 +189,7 @@ function return_gateways_status() {
 				$target = trim($fields[1]);
 				$status[$target] = array();
 				$status[$target]['monitor'] = $target;
-				foreach($gateways_arr as $gateway) {
+				foreach($gateways_arr as $name => $gateway) {
 					if($gateway['monitor'] == "$target") {
 						$status[$target]['gateway'] = $gateway['gateway'];
 						$status[$target]['interface'] = $gateway['interface'];
@@ -276,5 +276,96 @@ function return_gateways_array() {
 	}
 	return($gateways_arr);
 }
+
+/* return a array with all gateway groups with name as key
+ * All gateway groups will be processed before returning the array.
+*/
+function return_gateway_groups_array() {
+	global $config, $g;
+
+	/* fetch the current gateways status */
+	$gateways_status = return_gateways_status();
+	$gateways_arr = return_gateways_array();
+	$gateway_groups_array = array();
+
+	if (is_array($config['gateways']['gateway_group'])) {
+		foreach($config['gateways']['gateway_group'] as $group) {
+			/* create array with group gateways members seperated by tier */
+			$tiers = array();
+			foreach($group['item'] as $item) {
+				$itemsplit = explode("|", $item);
+				$tier = $itemsplit[1];
+				$gwname = $itemsplit[0];
+				/* check if the gateway is available before adding it to the array */
+				foreach($gateways_status as $status) {
+					if(($status['name'] != $gwname)) {
+						continue;
+					}
+					switch($status['status']) {
+						case "None":
+							/* Online add member */
+							$tiers[$tier][] = $gwname;
+							break;
+						case "delay":
+							if(strstr($group['trigger'] , "latency")) {
+								/* high latency */
+								log_error("MONITOR: $gwname has high latency, removing from routing group");
+							} else {
+								$tiers[$tier][] = $gwname;
+							}
+							break;
+						case "loss":
+							if(strstr($group['trigger'], "loss")) {
+								/* packet loss */
+								log_error("MONITOR: $gwname has packet loss, removing from routing group");
+							} else {
+								$tiers[$tier][] = $gwname;
+							}
+							break;
+					}
+				}
+			}
+			$tiers_count = count($tiers);
+			if($tiers_count == 0) {
+				/* Oh dear, we have no members! Engage Plan B */
+				log_error("All gateways are unavailable, proceeding with configured XML settings!");
+				foreach($group['item'] as $item) {
+					foreach($group['item'] as $item) {
+						$itemsplit = explode("|", $item);
+						$tier = $itemsplit[1];
+						$gwname = $itemsplit[0];
+						$tiers[$tier][] = $gwname;
+					}
+				}
+			}
+			/* we do not really foreach the tiers as we stop after the first tier */
+			foreach($tiers as $tiernr => $tier) {
+				/* process all gateways in this tier */
+				$member_count = count($tier);
+				foreach($tier as $tiernr => $member) {
+					/* determine interface gateway */
+					foreach($gateways_arr as $name => $gateway) {
+						if($gateway['name'] == $member) {
+							$int = $gateway['interface'];
+							if(is_ipaddr($gateway['gateway'])) 
+								$gatewayip = $gateway['gateway'];
+							else 
+								$gatewayip = lookup_gateway_ip_by_name($gateway['gateway']);
+							break;
+						}
+					}
+					if (($int <> "") && is_ipaddr($gatewayip)) {
+						$gateway_groups_array[$group['name']][$tiernr]['int']  = "$int";
+						$gateway_groups_array[$group['name']][$tiernr]['gwip']  = "$gatewayip";
+					}
+				}
+				/* we should have the 1st available tier now, exit stage left */
+				break;
+			}
+		}
+	}
+	return($gateway_groups_array);
+}
+
 
 ?>

@@ -213,17 +213,20 @@ $curcfg = $config['system']['firmware'];
 	</tbody>
 </table>
 <script type="text/javascript">
-	scroll(0,0);
-	var url = "/widgets/widgets/system_information.widget.php";
-	var pars = 'getupdatestatus=yes';
-	var myAjax = new Ajax.Request(
-		url,
-		{
-			method: 'get',
-			parameters: pars,
-			onComplete: activitycallback
-		});
+	function getstatus() {
+		scroll(0,0);
+		var url = "/widgets/widgets/system_information.widget.php";
+		var pars = 'getupdatestatus=yes';
+		var myAjax = new Ajax.Request(
+			url,
+			{
+				method: 'get',
+				parameters: pars,
+				onComplete: activitycallback
+			});
+	}
 	function activitycallback(transport) {
 		$('updatestatus').innerHTML = transport.responseText;
 	}
+	setTimeout('getstatus()', 2000);
 </script>

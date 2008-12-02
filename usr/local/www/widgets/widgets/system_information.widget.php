@@ -36,6 +36,43 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once('notices.inc');
 
+if($_REQUEST['getupdatestatus']) {
+	if(isset($curcfg['alturl']['enable']))
+		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
+	else 
+		$updater_url = $g['update_url'];
+	/* ensure we can obtain the DNS information quickly */
+	$host = split("/", $updater_url);
+	$test_dns = `/usr/bin/host -W1 {$host[2]} | grep "has address" | awk '{ print $4 }' | wc -l`;
+	if($test_dns)
+		$latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
+	else 
+		$latest_version ="404";
+	if(strstr($latest_version,"404")) {
+		echo "<br /><br />Unable to check for updates.";
+	} else {					
+		$current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version"));
+		$latest_version = str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version"));	
+		$needs_system_upgrade = false;
+		if($current_installed_pfsense_version <> $latest_version) 
+			$needs_system_upgrade = true; 						
+		if(!$latest_version) {
+			echo "<br /><br />Unable to check for updates.";							
+		}
+		else {
+			if($needs_system_upgrade) {
+				echo "<br/><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
+				echo "<script type=\"text/javascript\">";
+				echo "Effect.Pulsate('updatealert', { pulses: 30, duration: 10});";
+				echo "</script>";
+			} else {
+				echo "<br /><br />You are on the latest version.";
+			}
+		} 
+	} 
+	exit;
+}
+
 $curcfg = $config['system']['firmware'];
 
 ?>
@@ -54,48 +91,7 @@ $curcfg = $config['system']['firmware'];
 				built on <?php readfile("/etc/version.buildtime"); ?>
                 <br />
                 <?=`uname -sr`?>		
-                
-                <?php //display available firmware version
-					if(isset($curcfg['alturl']['enable']))
-						$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-					else 
-						$updater_url = $g['update_url'];
-					
-					/* ensure we can obtain the DNS information quickly */
-					$host = split("/", $updater_url);
-					$test_dns = `/usr/bin/host -W1 {$host[2]} | grep "has address" | awk '{ print $4 }' | wc -l`;
-					if($test_dns)
-						$latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
-					else 
-						$latest_version ="404";
-					
-					if(strstr($latest_version,"404")) {
-						echo "<br /><br />Unable to check for updates.";
-					}
-					else {					
-						$current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version"));
-						$latest_version = str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version"));
-		                					
-						$needs_system_upgrade = false;
-						
-						if($current_installed_pfsense_version <> $latest_version) 
-							$needs_system_upgrade = true; 						
-							
-						if(!$latest_version) {
-							echo "<br /><br />Unable to check for updates.";							
-						}
-						else {
-							if($needs_system_upgrade) {
-									echo "<br /><br /><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
-									echo "<script type=\"text/javascript\">";
-									echo "Effect.Pulsate('updatealert', { pulses: 30, duration: 10});";
-									echo "</script>";
-							}
-							else
-								echo "<br /><br />You are on the latest version.";
-						} 
-					} 
-					?>		
+                <div id='updatestatus'></div>
 			</td>
 		</tr>
 		<tr>
@@ -216,3 +212,18 @@ $curcfg = $config['system']['firmware'];
 		</tr>
 	</tbody>
 </table>
+<script type="text/javascript">
+	scroll(0,0);
+	var url = "/widgets/widgets/system_information.widget.php";
+	var pars = 'getupdatestatus=yes';
+	var myAjax = new Ajax.Request(
+		url,
+		{
+			method: 'get',
+			parameters: pars,
+			onComplete: activitycallback
+		});
+	function activitycallback(transport) {
+		$('updatestatus').innerHTML = transport.responseText;
+	}
+</script>

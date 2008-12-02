@@ -253,12 +253,11 @@ function return_gateways_array() {
 			} else {
 				$gateway['monitor'] = $gateway['gateway'];
 			}
-			$gateway['interface'] = "{$ifname}";
+			$gateway['interface'] = convert_friendly_interface_to_real_interface_name($ifname);
 			$gateway['name'] = "{$ifname}";
 			$gateway['descr'] = "Interface {$friendly} Gateway";
 			$gateway['attribute'] = "system";
-			$gateway['interface'] = "{$ifname}";
-			$gateways_arr[] = $gateway;
+			$gateways_arr[$ifname] = $gateway;
 		}
 	}
 
@@ -271,7 +270,7 @@ function return_gateways_array() {
 			}
 			/* include the gateway index as the attribute */
 			$gateway['attribute'] = "$i";
-			$gateways_arr[] = $gateway;
+			$gateways_arr[$gateway['name']] = $gateway;
 			$i++;
 		}
 	}

@@ -1467,7 +1467,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				}
 				function hide_add_gatewaysave() {
 					document.getElementById("addgateway").style.display = 'none';
-					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif">';
+					$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> One moment please...';
 					var iface = $F('if');
 					name = $('name').getValue();
 					var descr = $('gatewaydescr').getValue();

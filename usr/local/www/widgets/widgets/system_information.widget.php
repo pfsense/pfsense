@@ -91,7 +91,7 @@ $curcfg = $config['system']['firmware'];
 				built on <?php readfile("/etc/version.buildtime"); ?>
                 <br />
                 <?=`uname -sr`?>		
-                <div id='updatestatus'></div>
+                <div id='updatestatus'>Obtaining update status...</div>
 			</td>
 		</tr>
 		<tr>

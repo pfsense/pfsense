@@ -1235,16 +1235,12 @@ function generate_user_filter_rule($rule)
 	/* if user has selected a custom gateway, lets work with it */
 	else if($rule['gateway'] <> "") {
 		$routeto = " route-to { ";
-		echo "checking for {$rule['gateway']}\n";
 		update_filter_reload_status("Creating gateway group item...");
-		echo "Found gateway {$rule['gateway']} in array\n";
 		if(is_array($GatewayGroupsList[$rule['gateway']])) {
-			echo "Found match on array Item {$rule['gateway']}\n";
 			$gateway = $rule['gateway'];
 			$members = $GatewayGroupsList[$rule['gateway']];
 			$member_count = count($members);
 			foreach($members as $member) {
-				echo "processing member {$member['int']} {$member['gwip']} for group {$rule['gateway']}\n";
 				$int = $member['int'];
 				$gatewayip = $member['gwip'];
 				if (($int <> "") && is_ipaddr($gatewayip)) {

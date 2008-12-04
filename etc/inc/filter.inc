@@ -1268,20 +1268,11 @@ function generate_user_filter_rule($rule)
 		/*	we're not using load balancing, just setup gateway */
 		if($foundlb == 0) {
 			$gateway = $rule['gateway'];
-			$gw = lookup_gateway_ip_by_name($rule['gateway']);
-			if ($gw == false) {
-				if (array_key_exists($gateway, $FilterIflist)) {
-					$int = $FilterIflist[$gateway]['if'];
-					$gw = get_interface_gateway($gateway);
-				} else {
-					$gw = $gateway;
-					$int = guess_interface_from_ip($gw);
-				}
-			}
-			if (is_ipaddr($gw)) {
-				if (empty($int)) 
-					$int = guess_interface_from_ip($gw);
-				$aline['route'] = " route-to ( {$int} {$gw} ) ";
+			$gateway = $rule['gateway'];
+			$gwip = $GatewaysList[$rule['gateway']]['gateway'];
+			$int = $GatewaysList[$rule['gateway']]['interface'];
+			if (is_ipaddr($gwip)) {
+			        $aline['route'] = " route-to ( {$int} {$gwip} ) ";
 			} else 
 				log_error("Could not find gateway({$rule['gateway']}) for rule {$rule['descr']} - {$rule['interface']}.");
 		}

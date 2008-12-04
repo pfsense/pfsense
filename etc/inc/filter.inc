@@ -95,7 +95,7 @@ function filter_configure() {
 
 /* reload filter sync */
 function filter_configure_sync() {
-	global $config, $g, $after_filter_configure_run, $FilterIflist;
+	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $GatewayGroupsList;;
 	filter_pflog_start();
 	update_filter_reload_status("Initializing");
 	/* invalidate interface cache */
@@ -108,6 +108,11 @@ function filter_configure_sync() {
 	generate_optcfg_array();
 	if ($g['booting'] == true)
 		echo "Configuring firewall";
+
+	/* Lookup Gateways to be used in filter rules once */
+	$GatewaysList = return_gateways_array();
+	$GatewayGroupsList = return_gateway_groups_array();
+
 	/* generate aliases */
 	if ($g['booting'] == true) 
 		echo ".";
@@ -1099,7 +1104,7 @@ function generate_user_filter_rule_arr($rule)
 
 function generate_user_filter_rule($rule) 
 {
-	global $config, $g, $FilterIflist;
+	global $config, $g, $FilterIflist, $GatewaysList, $GatewayGroupsList;
 	global $table_cache;
 	global $schedule_enabled;
 	if(isset($config['system']['developerspew'])) {
@@ -1230,115 +1235,39 @@ function generate_user_filter_rule($rule)
 	/* if user has selected a custom gateway, lets work with it */
 	else if($rule['gateway'] <> "") {
 		$routeto = " route-to { ";
-		if (is_array($config['gateways']['gateway_group'])) {
-			foreach($config['gateways']['gateway_group'] as $group) {
-				update_filter_reload_status("Creating gateway group item...");
-				if($group['name'] == $rule['gateway']) {
-					$gateway = $rule['gateway'];
-					/* Should be moved down to real interface check as a group is not real */
-					/*
-					if (array_key_exists($gateway, $FilterIflist)) {
-						$return_gateway = get_interface_gateway($gateway);
-						if (!is_ipaddr($return_gateway)) {
-							log_error("Load Balancer code could not find gateway for {$gateway} interface.");
-							continue;
-						}
-					}
-					*/
-					/* fetch the current gateways status */
-					$gateways_status = return_gateways_status();
-					/* create array with group gateways members seperated by tier */
-					$tiers = array();
-					foreach($group['item'] as $item) {
-						$itemsplit = explode("|", $item);
-						$tier = $itemsplit[1];
-						$gwname = $itemsplit[0];
-						/* check if the gateway is available before adding it to the array */
-						foreach($gateways_status as $status) {
-							/* FIXME: possibly trigger on "delay" or "loss" in the future as well "triggerlevel??" */
-							if(($status['name'] != $gwname)) {
-								continue;
-							}
-							switch($status['status']) {
-								case "None":
-									/* Online add member */
-									$tiers[$tier][] = $gwname;
-									break;
-								case "delay":
-									if(strstr($group['trigger'] , "latency")) {
-										/* high latency */
-										log_error("MONITOR: $gwname has high latency, removing from routing group");
-									} else {
-										$tiers[$tier][] = $gwname;
-									}
-									break;
-								case "loss":
-									if(strstr($group['trigger'], "loss")) {
-										/* packet loss */
-										log_error("MONITOR: $gwname has packet loss, removing from routing group");
-									} else {
-										$tiers[$tier][] = $gwname;
-									}
-									break;
-							}
-						}
-					}
-					$tiers_count = count($tiers);
-					if($tiers_count == 0) {
-						/* Oh dear, we have no members! Engage Plan B */
-						log_error("All gateways are unavailable, proceeding with configured XML settings!");
-						foreach($group['item'] as $item) {
-							foreach($group['item'] as $item) {
-								$itemsplit = explode("|", $item);
-								$tier = $itemsplit[1];
-								$gwname = $itemsplit[0];
-								$tiers[$tier][] = $gwname;
-							}
-						}
-					}
-					/* pull in gateways array */
-					$gateways_arr = return_gateways_array();
-					/* we do not really foreach the tiers as we stop after the first tier */
-					foreach($tiers as $tier) {
-						/* process all gateways in this tier */
-						$member_count = count($tier);
-						foreach($tier as $member) {
-							/* determine interface gateway */
-							foreach($gateways_arr as $gateway) {
-								if($gateway['name'] == $member) {
-									$int = $gateway['interface'];
-									if(is_ipaddr($gateway['gateway'])) 
-										$gatewayip = $gateway['gateway'];
-									else 
-										$gatewayip = lookup_gateway_ip_by_name($gateway['gateway']);
-									break;
-								}
-							}
-							if (($int <> "") && is_ipaddr($gatewayip)) {
-								if($g['debug'])
-									log_error("Setting up route with {$gatewayip} om $int");
-								if($foundlb == 1)
-									$routeto .= ", ";
-								$routeto .=	 "( {$int} {$gatewayip} ) ";
-								$foundlb = 1;
-							}
-						}
-						/* we should have the 1st available tier now */
-						break;
-					}
-					/* If we want failover just use route-to else round-robin */
-					if($member_count == 1) {
-						$routeto .= "} ";
-					} else {
-						$routeto .= "} round-robin ";
-						if(isset($config['system']['lb_use_sticky'])) 
-							$routeto .= " sticky-address ";									
-					}
+		echo "checking for {$rule['gateway']}\n";
+		update_filter_reload_status("Creating gateway group item...");
+		echo "Found gateway {$rule['gateway']} in array\n";
+		if(is_array($GatewayGroupsList[$rule['gateway']])) {
+			echo "Found match on array Item {$rule['gateway']}\n";
+			$gateway = $rule['gateway'];
+			$members = $GatewayGroupsList[$rule['gateway']];
+			$member_count = count($members);
+			foreach($members as $member) {
+				echo "processing member {$member['int']} {$member['gwip']} for group {$rule['gateway']}\n";
+				$int = $member['int'];
+				$gatewayip = $member['gwip'];
+				if (($int <> "") && is_ipaddr($gatewayip)) {
+					if($g['debug'])
+						log_error("Setting up route with {$gatewayip} om $int");
+					if($foundlb == 1)
+						$routeto .= ", ";
+					$routeto .=	 "( {$int} {$gatewayip} ) ";
+					$foundlb = 1;
 				}
 			}
+			/* If we want failover just use route-to else round-robin */
+			if($member_count == 1) {
+				$routeto .= "} ";
+			} else {
+				$routeto .= "} round-robin ";
+				if(isset($config['system']['lb_use_sticky'])) 
+					$routeto .= " sticky-address ";									
+			}
 			/* Add the load balanced gateways */
-			if ($foundlb == 1)
+			if ($foundlb == 1) {
 				$aline['route'] = $routeto;
+			}
 		}
 		/*	we're not using load balancing, just setup gateway */
 		if($foundlb == 0) {

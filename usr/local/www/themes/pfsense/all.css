@@ -958,3 +958,11 @@ div#log span.log-protocol-mini-header {
   left:  0px;
   top: -117px;
 }
+
+/* Sortable tables */
+table.sortable thead {
+    background-color:#eee;
+    color:#666666;
+    font-weight: bold;
+    cursor: default;
+}

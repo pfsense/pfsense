@@ -861,6 +861,7 @@ ul#wzdnav a:active {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+
 .optsect_t {
 	border-right: 1px solid #999999;
 	background-color: #990000;
@@ -1227,3 +1228,10 @@ div#log span.log-protocol-mini-header {
 	border-right: 1px solid #999;
 }
 
+/* Sortable tables */
+table.sortable thead {
+    background-color:#eee;
+    color:#666666;
+    font-weight: bold;
+    cursor: default;
+}

@@ -2032,98 +2032,10 @@ EOD;
 			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
 		}
 	}
+
 	update_filter_reload_status("Creating IPsec rules...");
-	$ipfrules .= "\n# VPN Rules\n";
-	/* Is IP Compression enabled? */
-	if (isset($config['ipsec']['ipcomp']))
-		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
-	else
-		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
-	if (isset($config['ipsec']['enable']) && 
-	   is_array($config['ipsec']['phase1'])) {
-		/* step through all phase1 entries */
-		foreach ($config['ipsec']['phase1'] as $ph1ent) {
-			if (isset ($ph1ent['disabled']))
-				continue;
-			update_filter_reload_status("Creating IPsec phase1 items for {$ph1ent['descr']}...");
-			/* determine local and remote peer addresses */
-			if (!isset($ph1ent['mobile'])) {
-				$rgip = ipsec_get_phase1_dst($ph1ent);
-				if (!$rgip) {
-					$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['remote-gateway']}\n";
-					continue;
-				}
-			} else
-				$rgip = " any ";
-			/* Determine best description */
-			if ($ph1ent['descr'])
-				$descr = $ph1ent['descr'];
-			else
-				$descr = $rgip;
-			/*
-			 * Step through all phase2 entries and determine
-			 * which protocols are in use with this peer
-			 */
-			$prot_used_esp = false;
-			$prot_used_ah  = false;
-			if (is_array($config['ipsec']['phase2'])) {
-				foreach ($config['ipsec']['phase2'] as $ph2ent) {
-					/* only evaluate ph2's bound to our ph1 */
-					if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
-						continue;
-					if ($ph2ent['protocol'] == 'esp')
-						$prot_used_esp = true;
-					if ($ph2ent['protocol'] == 'ah')
-						$prot_used_ah = true;
-				}
-			}
-			foreach ($FilterIflist as $ifr => $ifcfg) {
-				/* Only process interfaces with gateway */
-				if (! interface_has_gateway($ifr)) 
-					continue;
-				$gateway = get_interface_gateway($ifr);
-				$interface = $ifcfg['if'];
-				/* Just in case */
-				if (!is_ipaddr($gateway) || empty($interface)) {
-					$route_to = " ";
-					$reply_to = " ";
-				} else { 
-					$route_to = " route-to ( $interface $gateway ) ";
-					$reply_to = " reply-to ( $interface $gateway ) ";
-				}
-				/* Add rules to allow IKE to pass */
-				$shorttunneldescr = substr($descr, 0, 36);
-				$ipfrules .= <<<EOD
-pass out on \${$ifcfg['descr']} $route_to proto udp from any to {$rgip} port = 500 keep state label \"IPsec: {$shorttunneldescr} - outbound isakmp\"
-pass in on \${$ifcfg['descr']} $reply_to proto udp from {$rgip} to any port = 500 keep state label \"IPsec: {$shorttunneldescr} - inbound isakmp\"
+	$ipfrules .= generate_ipsec_filter_rules();
 
-EOD;
-				/* If NAT-T is enabled, add additional rules */
-				if ($ph1ent['nat_traversal'] != "off" ) {
-					$ipfrules .= <<<EOD
-pass out on \${$ifcfg['descr']} $route_to proto udp from any to {$rgip} port = 4500 keep state label \"IPsec: {$shorttunneldescr} - outbound nat-t\"
-pass in on \${$ifcfg['descr']} $reply_to proto udp from {$rgip} to any port = 4500 keep state label \"IPsec: {$shorttunneldescr} - inbound nat-t\"
-
-EOD;
-				}
-				/* Add rules to allow the protocols in use */
-				if ($prot_used_esp == true) {
-					$ipfrules .= <<<EOD
-pass out on \${$ifcfg['descr']} $route_to proto esp from any to {$rgip} keep state label \"IPsec: {$shorttunneldescr} - outbound esp proto\"
-pass in on \${$ifcfg['descr']} $reply_to proto esp from {$rgip} to any keep state label \"IPsec: {$shorttunneldescr} - inbound esp proto\"
-
-EOD;
-				}
-				if ($prot_used_ah == true) {
-					$ipfrules .= <<<EOD
-pass out on \${$ifcfg['descr']} $route_to proto ah from any to {$rgip} keep state label \"IPsec: {$shorttunneldescr} - outbound ah proto\"
-pass in on \${$ifcfg['descr']} $reply_to proto ah from {$rgip} to any keep state label \"IPsec: {$shorttunneldescr} - inbound ah proto\"
-
-EOD;
-				}
-			}
-		}
-	}
 	$ipfrules .= <<<EOD
 
 anchor "limitingesr"
@@ -2405,5 +2317,116 @@ function return_vpn_subnet($adr)
 	/* fallback - error */
 	return " # error - {$adr['network']} ";
 }
+
+/* Generate IPSEC Filter Items */
+function generate_ipsec_filter_rules() {
+	global $config, $g, $FilterIflist, $GatewaysList;
+
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "generate_ipsec_filter_rules() being called $mt\n";
+	}
+
+	$ipfrules = "\n# VPN Rules\n";
+	/* Is IP Compression enabled? */
+	if (isset($config['ipsec']['ipcomp']))
+		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
+	else
+		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
+
+	if (isset($config['ipsec']['enable']) && 
+	   is_array($config['ipsec']['phase1'])) {
+		/* step through all phase1 entries */
+		foreach ($config['ipsec']['phase1'] as $ph1ent) {
+			if (isset ($ph1ent['disabled']))
+				continue;
+			/* determine local and remote peer addresses */
+			if (!isset($ph1ent['mobile'])) {
+				$rgip = ipsec_get_phase1_dst($ph1ent);
+				if (!$rgip) {
+					$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['remote-gateway']}\n";
+					continue;
+				}
+			} else
+				$rgip = " any ";
+			/* Determine best description */
+			if ($ph1ent['descr'])
+				$descr = $ph1ent['descr'];
+			else
+				$descr = $rgip;
+			/*
+			 * Step through all phase2 entries and determine
+			 * which protocols are in use with this peer
+			 */
+			$prot_used_esp = false;
+			$prot_used_ah  = false;
+			if (is_array($config['ipsec']['phase2'])) {
+				foreach ($config['ipsec']['phase2'] as $ph2ent) {
+					/* only evaluate ph2's bound to our ph1 */
+					if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
+						continue;
+					if ($ph2ent['protocol'] == 'esp')
+						$prot_used_esp = true;
+					if ($ph2ent['protocol'] == 'ah')
+						$prot_used_ah = true;
+				}
+			}
+
+			if(preg_match("/^carp/i", $ph1ent['interface'])) {
+				$parentinterface = link_carp_interface_to_parent($ph1ent['interface']);
+			} else {
+				$parentinterface = $ph1ent['interface'];
+			}
+
+			/* add endpoint routes to correct gateway on interface */
+			if(interface_has_gateway($parentinterface)) {
+				$gateway = get_interface_gateway($parentinterface);
+				$interface = $FilterIflist[$parentinterface]['if'];
+
+				/* Just in case */
+				if (!is_ipaddr($gateway) || empty($interface)) {
+					$route_to = " ";
+					$reply_to = " ";
+				} else { 
+					$route_to = " route-to ( $interface $gateway ) ";
+					$reply_to = " reply-to ( $interface $gateway ) ";
+				}
+
+				/* Add rules to allow IKE to pass */
+				$shorttunneldescr = substr($descr, 0, 36);
+				$ipfrules .= <<<EOD
+pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 500 keep state label \"IPsec: {$shorttunneldescr} - outbound isakmp\"
+pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 500 keep state label \"IPsec: {$shorttunneldescr} - inbound isakmp\"
+
+EOD;
+				/* If NAT-T is enabled, add additional rules */
+				if ($ph1ent['nat_traversal'] != "off" ) {
+					$ipfrules .= <<<EOD
+pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto udp from any to {$rgip} port = 4500 keep state label \"IPsec: {$shorttunneldescr} - outbound nat-t\"
+pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 4500 keep state label \"IPsec: {$shorttunneldescr} - inbound nat-t\"
+
+EOD;
+				}
+				/* Add rules to allow the protocols in use */
+				if ($prot_used_esp == true) {
+					$ipfrules .= <<<EOD
+pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto esp from any to {$rgip} keep state label \"IPsec: {$shorttunneldescr} - outbound esp proto\"
+pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to any keep state label \"IPsec: {$shorttunneldescr} - inbound esp proto\"
+
+EOD;
+				}
+				if ($prot_used_ah == true) {
+					$ipfrules .= <<<EOD
+pass out on \${$FilterIflist[$parentinterface]['descr']} $route_to proto ah from any to {$rgip} keep state label \"IPsec: {$shorttunneldescr} - outbound ah proto\"
+pass in on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to any keep state label \"IPsec: {$shorttunneldescr} - inbound ah proto\"
+
+EOD;
+				}
+			}
+		}
+	}
+	return($ipfrules);
+}
+
 
 ?>

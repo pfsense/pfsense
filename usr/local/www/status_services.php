@@ -117,8 +117,8 @@ if($_GET['mode'] == "stopservice" && $_GET['service']) {
 		case 'miniupnpd':
 			upnp_action('stop');
 			break;
-		case 'ntpd':
-			killbyname("ntpd");
+		case 'openntpd':
+			killbyname("openntpd");
             break;
         case 'sshd':
 			killbyname("sshd");
@@ -181,6 +181,11 @@ if(isset($config['dnsmasq']['enable'])) {
 	$services[] = $pconfig;
 	unset($pconfig);
 }
+
+$pconfig['name'] = "openntpd";
+$pconfig['description'] = "NTP clock sync";
+$services[] = $pconfig;
+unset($pconfig);
 
 if(isset($config['captiveportal']['enable'])) {
 	$pconfig['name'] = "lighttpd";

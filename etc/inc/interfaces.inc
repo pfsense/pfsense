@@ -1239,7 +1239,7 @@ function interface_configure($interface = "wan") {
 	if(!$g['booting']) {
 		/* remove all addresses first */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-		interface_bring_down($interface);
+		// interface_bring_down($interface);
 		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
 	}
 	/* wireless configuration? */

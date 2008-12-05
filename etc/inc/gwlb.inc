@@ -241,7 +241,6 @@ function return_gateways_array() {
 			if(is_array($config['gateways']['gateway_item'])) {
 				foreach($config['gateways']['gateway_item'] as $gateway_item) {
 					if($gateway_item['gateway'] == $gateway['gateway']) {
-						log_error("Found a match for {$gateway['gateway']} in the config array, skipping $friendly");
 						continue 2;
 					}
 				}

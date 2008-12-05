@@ -47,7 +47,6 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <?php
 
@@ -279,13 +278,13 @@ foreach ($pools as $data) {
 
 <table class="sortable" id="sortabletable" name="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
-    <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=ip">IP address</a></td>
-    <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=mac">MAC address</a></td>
-    <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=hostname">Hostname</a></td>
-    <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=start">Start</a></td>
-    <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=end">End</a></td>
-    <td class="listhdr"><a href="?all=<?=$_GET['all'];?>&order=online">Online</a></td>
-    <td class="listhdr"><a href="?all=<?=$_GET['all'];?>&order=act">Lease Type</a></td>
+    <td class="listhdrr"><a href="#">IP address</a></td>
+    <td class="listhdrr"><a href="#">MAC address</a></td>
+    <td class="listhdrr"><a href="#">Hostname</a></td>
+    <td class="listhdrr"><a href="#">Start</a></td>
+    <td class="listhdrr"><a href="#">End</a></td>
+    <td class="listhdrr"><a href="#">Online</a></td>
+    <td class="listhdrr"><a href="#">Lease Type</a></td>
 	</tr>
 <?php
 foreach ($leases as $data) {

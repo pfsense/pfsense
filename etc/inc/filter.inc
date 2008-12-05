@@ -1223,14 +1223,17 @@ function generate_user_filter_rule($rule)
 	/* set the gateway interface */
 	update_filter_reload_status("Setting up pass/block rules {$rule['descr']}");
 	$foundlb = 0;
+
 	/* do not process reply-to for gateway'd rules */
 	if ($rule['gateway'] == "" && interface_has_gateway($rule['interface'])) {
 		$rg = get_interface_gateway($rule['interface']);
-		if (is_ipaddr($rg))
+		if (is_ipaddr($rg)) {
 			$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-		else
-			if($rule['interface'] <> "pptp")
+		} else {
+			if($rule['interface'] <> "pptp") {
 				log_error("Could not find gateway for interface({$rule['interface']}).");
+			}
+		}
 	}
 	/* if user has selected a custom gateway, lets work with it */
 	else if($rule['gateway'] <> "") {
@@ -1268,13 +1271,18 @@ function generate_user_filter_rule($rule)
 		/*	we're not using load balancing, just setup gateway */
 		if($foundlb == 0) {
 			$gateway = $rule['gateway'];
-			$gateway = $rule['gateway'];
-			$gwip = $GatewaysList[$rule['gateway']]['gateway'];
-			$int = $GatewaysList[$rule['gateway']]['interface'];
-			if (is_ipaddr($gwip)) {
-			        $aline['route'] = " route-to ( {$int} {$gwip} ) ";
-			} else 
-				log_error("Could not find gateway({$rule['gateway']}) for rule {$rule['descr']} - {$rule['interface']}.");
+			if(!is_ipaddr($rule['gateway'])) {
+				$gwip = $GatewaysList[$rule['gateway']]['gateway'];
+				$int = $GatewaysList[$rule['gateway']]['interface'];
+			} else {
+				$gwip = $rule['gateway'];
+				$int = guess_interface_from_ip($rule['gateway']);
+			}
+			if ((is_ipaddr($gwip)) && ($int <> "")) {
+				$aline['route'] = " route-to ( {$int} {$gwip} ) ";
+			} else {
+				log_error("Could not find gateway ({$rule['gateway']}) for rule {$rule['descr']} - {$rule['interface']}.");
+			}
 		}
 	}
 	if (isset($rule['protocol'])) {

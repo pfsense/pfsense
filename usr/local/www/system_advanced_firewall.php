@@ -197,7 +197,7 @@ function update_description(itemnum) {
 									<strong>Allow data connections from the FTP command port</strong><br/>
 									This allows for communication with ftp servers that violate
 									RFC 959 by opening data connections from the command port (21).
-									Thes should be opened on the data port(20). This option should
+									These should be opened on the data port(20). This option should
 									not expose you to any extra risk as the firewall will still only
 									allow connections on a port that ftp-proxy listens on.
 								</td>

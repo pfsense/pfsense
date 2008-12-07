@@ -118,7 +118,7 @@ include("head.inc");
 					array_shift($lastchange);
 					array_shift($lastchange);
 					$lastchange = implode(" ", $lastchange);
-					PRINT "Last succes $lastchange";
+					PRINT "Last success $lastchange";
 				} else {
 					print "No data available";
 				}

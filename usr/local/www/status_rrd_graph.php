@@ -35,8 +35,12 @@
 ##|*MATCH=status_rrd_graph.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
+
+/* if the rrd graphs are not enabled redirect to settings page */
+if(! isset($config['rrd']['enable'])) {
+	header("Location: status_rrd_graph_settings.php");
+}
 
 if ($_GET['cat']) {
 	$curcat = $_GET['cat'];

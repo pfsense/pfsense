@@ -435,16 +435,28 @@ function services_dhcrelay_configure() {
 	return 0;
 }
 
-function services_dyndns_reset($interface, $dyndnsservice) {
+function services_dyndns_reset($interface = "wan" ) {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dyndns_reset() being called $mt\n";
 	}
 
-	conf_mount_rw();
-	mwexec("rm {$g['conf_path']}/dyndns_{$interface}{$dyndnsservice}.cache");
-	conf_mount_ro();
+	$dyndnscfg = $config['dyndnses']['dyndns'];
+
+        if (is_array($dyndnscfg)) {
+                foreach ($dyndnscfg as $dyndns) {
+                        if (!isset($dyndns['enable']))
+                                continue;
+			if ($dyndns['interface'] != $interface)
+				continue;
+
+                        services_dyndns_configure_client($dyndns);
+
+                        sleep(1);
+                }
+
+        }
 
 	return 0;
 }

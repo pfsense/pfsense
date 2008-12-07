@@ -454,7 +454,16 @@ function interfaces_carp_configure() {
 			if($found == false) {
 				file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
 				continue;
-			}			
+			}
+			/* ensure the interface containing the VIP really exists
+			  prevents a panic if the interface is missing or invalid
+			*/
+			$realif = convert_friendly_interface_to_real_interface_name($vip['interface']);
+			$intcount = exec("/sbin/ifconfig | grep $realif | wc -l | awk '{print $1}'");
+			if($intcount < 1) {
+				file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
+				continue;
+			}
 			/* create the carp interface and setup */
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
 			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " create\n");
@@ -526,7 +535,34 @@ function interfaces_carp_bring_up_final() {
 		/* bail if this isn't a carp VIP */
 		if ($vip['mode'] != "carp")
 			continue;
-
+		/* ensure CARP IP really exists prior to loading up */
+		$found = false;
+		$iflist = array("lan", "wan");
+		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
+			$iflist['opt' . $i] = 'opt' . $i;
+		foreach($iflist as $if) {
+			/* ignore down or "disabled" interfaces */
+			if($if <> "lan" and $if <> "wan")
+				if (!isset($config['interfaces'][$if]['enable'])) 
+					continue;								
+			$ww_subnet_ip = $config['interfaces'][$if]['ipaddr'];
+			$ww_subnet_bits = $config['interfaces'][$if]['subnet'];
+			if (ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits))
+				$found = true;
+		}
+		if($found == false) {
+			file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
+			continue;
+		}
+		/* ensure the interface containing the VIP really exists
+		  prevents a panic if the interface is missing or invalid
+		*/
+		$realif = convert_friendly_interface_to_real_interface_name($vip['interface']);
+		$intcount = exec("/sbin/ifconfig | grep $realif | wc -l | awk '{print $1}'");
+		if($intcount < 1) {
+			file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
+			continue;
+		}
 		if($debugging)
 			echo "Upping interface carp{$carp_instances_counter}.\n";
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);

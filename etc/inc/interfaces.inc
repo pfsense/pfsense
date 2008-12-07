@@ -578,7 +578,7 @@ function interface_reconfigure($interface = "wan") {
 	interface_configure($interface);
 }
 
-function interface_bring_down($interface = "wan") {
+function interface_bring_down($interface = "wan", $destroy = false) {
 	global $config, $g;
 
 	if (!isset($config['interfaces'][$interface]))
@@ -626,8 +626,10 @@ function interface_bring_down($interface = "wan") {
 		break;
 	}
 
-	if (preg_match("/^tun|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|^vlan/i", $realif))
-                mwexec("/sbin/ifconfig {$realif} destroy");
+	if ($destroy == true) {
+		if (preg_match("/^tun|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|^vlan/i", $realif))
+                	mwexec("/sbin/ifconfig {$realif} destroy");
+	}
 	
 	unlink_if_exists("/tmp/{$realif}_router");
 	return;
@@ -1239,7 +1241,7 @@ function interface_configure($interface = "wan") {
 	if(!$g['booting']) {
 		/* remove all addresses first */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-		// interface_bring_down($interface);
+		interface_bring_down($interface);
 		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
 	}
 	/* wireless configuration? */

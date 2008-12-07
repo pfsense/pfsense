@@ -280,11 +280,11 @@ include("head.inc");
 							</div>
 							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none">
 								<tr>
-									<td class="listhdrr">Local Network</td>
-									<td class="listhdrr">Remote Network</td>
-									<td class="listhdrr">P2 Protocol</td>
-									<td class="listhdrr">P2 Transforms</td>
-									<td class="listhdrr">P2 Auth Methods</td>
+									<td class="listhdrr">Remote gateway</td>
+									<td class="listhdrr">Mode</td>
+									<td class="listhdrr">P1 Protocol</td>
+									<td class="listhdrr">P1 Transforms</td>
+									<td class="listhdrr">Description</td>
 									<td class ="list">
 										<a href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid'];?><?php if (isset($ph1ent['mobile'])) echo "&mobile=true";?>">
 											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add phase2 entry" width="17" height="17" border="0">

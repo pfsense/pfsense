@@ -53,6 +53,8 @@ function filter_pflog_start() {
 		echo "filter_pflog_start() being called $mt\n";
 	}
 
+	if($g['booting'])
+		echo "Starting pflog0...";
 	mute_kernel_msgs();
 
 	$pid = `ps awwwux | grep -v "grep" | grep "tcpdump -s 256 -v -l -n -e -ttt -i pflog0"  | awk '{ print $2 }'`;
@@ -60,6 +62,9 @@ function filter_pflog_start() {
 		mwexec_bg("/usr/sbin/tcpdump -s 256 -v -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 
 	unmute_kernel_msgs();
+
+	if($g['booting'])
+		echo "done.\n";
 
 }
 
@@ -162,6 +167,9 @@ function filter_configure_sync() {
 		return;
 	}
 
+	// Copy rules.debug to rules.debug.old
+	exec("cp {$g['tmp_path']}/rules.debug {$g['tmp_path']}/rules.debug.old");
+
 	$fd = fopen("{$g['tmp_path']}/rules.debug", "w");
 	$rules = $aliases . " \n";
 
@@ -215,6 +223,13 @@ function filter_configure_sync() {
 	$rules.= "{$pfrules}\n";
 	fwrite($fd, $rules);
         fclose($fd);
+
+	$rules = file_get_contents("{$g['tmp_path']}/rules.debug");
+	$oldrules = file_get_contents("{$g['tmp_path']}/rules.debug.old");
+
+	/* Check to see if rules changed, if not do not continue */
+	if($rules == $oldrules) 
+		return;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();

@@ -865,7 +865,16 @@ function interfaces_carp_configure() {
 			if($found == false) {
 				file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
 				continue;
-			}			
+			}
+			/* ensure the interface containing the VIP really exists
+			  prevents a panic if the interface is missing or invalid
+			*/
+			$realif = convert_friendly_interface_to_real_interface_name($vip['interface']);
+			$intcount = exec("/sbin/ifconfig | grep $realif | wc -l | awk '{print $1}'");
+			if($intcount < 1) {
+				file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
+				continue;
+			}
 			/* create the carp interface and setup */
 			$cmdchain->add("create CARP interface", "/sbin/ifconfig {$carpint} create", false);
 

@@ -267,17 +267,17 @@ EOD;
 
 		mwexec("/sbin/sysctl net.link.ether.ipfw=0");
 
-		if (!isset($config['shaper']['enable'])) {
-			/* unload ipfw */
-			$installed_time_based_rules = false;
-			if($config['schedules']) {
-				foreach($config['schedules']['schedule'] as $sched) {
-					$installed_time_based_rules = true;
-				}
+		/* unload ipfw */
+		$installed_time_based_rules = false;
+		if($config['schedules']) {
+			foreach($config['schedules']['schedule'] as $sched) {
+				$installed_time_based_rules = true;
+				break;
 			}
-			if($installed_time_based_rules == false)
-				mwexec("/sbin/kldunload ipfw");
-		} else {
+		}
+		if($installed_time_based_rules == false)
+			mwexec("/sbin/kldunload ipfw");
+		else {
 			/* shaper is on - just remove our rules */
 			mwexec("/sbin/ipfw -f delete set 1");
 			mwexec("/sbin/ipfw -f delete set 2");
@@ -398,11 +398,6 @@ EOD;
         $cprules .= <<<EOD
 # Allow WPA
 add 1100 set 1 pass layer2 mac-type 0x888e
-
-EOD;
-
-
-    $cprules .= <<<EOD
 
 # ... 10000-19899: rules per authenticated client go here...
 
@@ -985,7 +980,7 @@ function captiveportal_write_elements() {
         }
         closedir($dh);
     } else {
-        mkdir($g['captiveportal_element_path']);
+        @mkdir($g['captiveportal_element_path']);
     }
     
 	if (is_array($config['captiveportal']['element'])) {

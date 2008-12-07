@@ -419,6 +419,8 @@ function mwexec($command, $mute = false) {
 	} else {
 		exec("$command 2>&1", $oarr, $retval);
 	}
+	if(isset($config['system']['developerspew']))
+                $mute = false;
 	if(($retval <> 0) && ($mute === false)) {
 		$output = implode(" ", $oarr);
 		//log_error("The command '$command' returned exit code '$retval', the output was '$output' ");

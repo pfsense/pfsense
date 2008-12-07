@@ -149,6 +149,10 @@ function filter_configure_sync() {
 					echo "done.\n";
 		return;
 	}
+
+	// Copy rules.debug to rules.debug.old
+	exec("cp {$g['tmp_path']}/rules.debug {$g['tmp_path']}/rules.debug.old");
+
 	$fd = fopen("{$g['tmp_path']}/rules.debug", "w");
 	$rules .= "{$aliases} \n";
 	update_filter_reload_status("Setting up logging information");
@@ -172,13 +176,22 @@ function filter_configure_sync() {
 	$rules.= "{$altq_queues}\n";
 	$rules.= "{$natrules}\n";
 	$rules.= "{$pfrules}\n";
+
 	fwrite($fd, $rules);
 	fclose($fd);
+
+	$rules = file_get_contents("{$g['tmp_path']}/rules.debug");
+	$oldrules = file_get_contents("{$g['tmp_path']}/rules.debug.old");
+
+	/* Check to see if rules changed, if not do not continue */
+	if($rules == $oldrules) 
+		return;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";
 	}
-		$rules_loading = mwexec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug");
+	$rules_loading = mwexec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl done at $mt\n";

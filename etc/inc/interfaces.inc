@@ -602,7 +602,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	mwexec("/usr/sbin/arp -d -i {$realif} -a");
 
         /* remove interface up file if it exists */
-        unlink_if_exists("{$g['tmp_path']}/{$interface}up");
+        unlink_if_exists("{$g['tmp_path']}/{$realif}up");
         unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
         //unlink_if_exists("{$g['varetc_path']}/nameservers.conf");
 
@@ -1628,13 +1628,13 @@ EOD;
 
 	/* sleep until wan is up - or 30 seconds, whichever comes first */
 	for ($count = 0; $count < 30; $count++) {
-		if(file_exists("{$g['tmp_path']}/{$interface}up")) {
+		if(file_exists("{$g['tmp_path']}/{$realif}up")) {
 			break;
 		}
 		sleep(1);
 	}
 
-	unlink_if_exists("{$g['tmp_path']}/{$interface}up");
+	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
 
 	return 0;
 }

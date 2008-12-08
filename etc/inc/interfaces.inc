@@ -881,7 +881,7 @@ function interfaces_carp_configure() {
 			/* invalidate interface cache */
 			get_interface_arr(true);
 			$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-			$cmdchain->add("config CARP interface", "/sbin/ifconfig {$carpint} " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password, false);
+			$cmdchain->add("config CARP interface", "/sbin/ifconfig {$carpint} " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password, false);
 			$cmdchain->add("bring CARP interface UP", "/sbin/ifconfig {$carpint} up", false);
 			$carp_instances_counter++;
 			break;

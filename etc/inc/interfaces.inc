@@ -84,7 +84,18 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
 	mwexec("/sbin/ifconfig {$if} vlanmtu");
 
         if ($g['booting'] || !(empty($vlanif))) {
-		mwexec("/sbin/ifconfig {$vlanif} destroy");
+		/* before destroying, see if CARP is in use
+		  If an interface containing an active CARP IP is destroyed,
+		  the CARP interface will hang in INIT and must be destroyed
+		  itself before it will function again (which causes a panic).
+		  Trying to configure a CARP interface stuck in INIT will
+		  cause a panic as well.  -cmb
+		*/
+		$carpcount = find_number_of_needed_carp_interfaces();
+		/* will continue to destroy VLANs where CARP is not in use
+		  to retain previous behavior and avoid regressions */
+		if($carpcount < 1)
+			mwexec("/sbin/ifconfig {$vlanif} destroy");
 		mwexec("/sbin/ifconfig {$vlanif} create");
         } else 
 		$vlanif = exec("/sbin/ifconfig vlan create");

@@ -234,8 +234,11 @@ function filter_configure_sync() {
 		$oldrules = file_get_contents("{$g['tmp_path']}/rules.debug.old");
 
 	/* Check to see if rules changed, if not do not continue */
-	if($rules == $oldrules) 
+	if($rules == $oldrules) {
+		update_filter_reload_status("Done");
+		log_error("Rules have not changed.  Not reloading.");
 		return;
+	}
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();

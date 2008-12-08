@@ -476,8 +476,8 @@ function interfaces_carp_configure() {
 				$password = " pass \"" . $vip_password . "\"";
 			if($debugging)
 				echo "Configuring carp{$carp_instances_counter}.\n";
-			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password . "\n");
-			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password);
+			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password . "\n");
+			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password);
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
 			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " up\n");
 			usleep(10);
@@ -569,8 +569,8 @@ function interfaces_carp_bring_up_final() {
 		if($vip['password'] != "")
 			$password = " pass " . $vip['password'];
 		if($debugging)
-			echo "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password . "\n";
-		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password);
+			echo "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password . "\n";
+		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password);
 		usleep(100);
 		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
 		$carp_instances_counter++;

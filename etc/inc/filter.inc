@@ -151,7 +151,8 @@ function filter_configure_sync() {
 	}
 
 	// Copy rules.debug to rules.debug.old
-	exec("cp {$g['tmp_path']}/rules.debug {$g['tmp_path']}/rules.debug.old");
+	if(file_exists({$g['tmp_path']}/rules.debug))
+		exec("cp {$g['tmp_path']}/rules.debug {$g['tmp_path']}/rules.debug.old");
 
 	$fd = fopen("{$g['tmp_path']}/rules.debug", "w");
 	$rules .= "{$aliases} \n";
@@ -180,8 +181,13 @@ function filter_configure_sync() {
 	fwrite($fd, $rules);
 	fclose($fd);
 
-	$rules = file_get_contents("{$g['tmp_path']}/rules.debug");
-	$oldrules = file_get_contents("{$g['tmp_path']}/rules.debug.old");
+	$rules = "1"; // force to be diff from oldrules
+	$oldrules = "2"; // force to be diff from rules
+
+	if(file_exists("{$g['tmp_path']}/rules.debug"))
+		$rules = file_get_contents("{$g['tmp_path']}/rules.debug");
+	if(file_exists("{$g['tmp_path']}/rules.debug.old"))
+		$oldrules = file_get_contents("{$g['tmp_path']}/rules.debug.old");
 
 	/* Check to see if rules changed, if not do not continue */
 	if($rules == $oldrules) 

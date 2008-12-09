@@ -151,7 +151,7 @@ function filter_configure_sync() {
 	}
 
 	// Copy rules.debug to rules.debug.old
-	if(file_exists({$g['tmp_path']}/rules.debug))
+	if(file_exists({$g['tmp_path']}/rules.debug"))
 		exec("cp {$g['tmp_path']}/rules.debug {$g['tmp_path']}/rules.debug.old");
 
 	$fd = fopen("{$g['tmp_path']}/rules.debug", "w");

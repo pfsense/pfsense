@@ -3406,7 +3406,7 @@ function get_interface_gateway($interface) {
 	}
 	/* if wan is requested, return it */
 	if($interface == "wan")
-		return str_replace("\n", "", `route -n get default | grep gateway | awk '{ print $2 }'`);
+		return str_replace("\n", "", `/usr/bin/netstat -rn | /usr/bin/awk '/default/ {print $2}'`);
 	/* return gateway */
 	return $gw;
 }

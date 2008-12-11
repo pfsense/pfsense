@@ -117,7 +117,6 @@
 	<description>On this screen we will configure the Wide Area Network information.</description>
 	<javascriptafterformdisplay>
 		var selectedItem = 0;
-		alert(document.forms[0].wantype.value);
 		if(document.forms[0].wantype.value == 'dhcp') {
 			selectedItem = 1;
 			document.forms[0].ipaddress.value = '';

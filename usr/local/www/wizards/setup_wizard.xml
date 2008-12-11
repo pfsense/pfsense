@@ -117,13 +117,14 @@
 	<description>On this screen we will configure the Wide Area Network information.</description>
 	<javascriptafterformdisplay>
 		var selectedItem = 0;
-		if(document.forms[0].ipaddress.value == 'dhcp') {
+		alert(document.forms[0].wantype.value);
+		if(document.forms[0].wantype.value == 'dhcp') {
 			selectedItem = 1;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'PPPoE') {
+		} else if(document.forms[0].wantype.value == 'pppoe') {
 			selectedItem = 2;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'PPTP') {
+		} else if(document.forms[0].wantype.value == 'pptp') {
 			selectedItem = 3;
 			document.forms[0].ipaddress.value = '';
 		} else {
@@ -138,7 +139,7 @@
 			<type>select</type>
 			<donotdisable>true</donotdisable>
 			<options>
-                                <option>
+				<option>
 					<name>DHCP</name>
 					<value>dhcp</value>
 					<enablefields>dhcphostname</enablefields>

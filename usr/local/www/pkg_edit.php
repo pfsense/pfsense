@@ -159,10 +159,11 @@ if ($_POST) {
 						} else {
 						  if($firstfield == $rowhelperfield['fieldname']) $rows++;
 						}
-						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";
+						$fieldname = str_replace("\\", "", $rowhelperfield['fieldname']);
+						$fieldname = "\$value = \$_POST['" . $fieldname . $x . "'];";
 						eval($comd);
 						if($value <> "") {
-							$comd = "\$pkgarr['row'][" . $x . "]['" . $rowhelperfield['fieldname'] . "'] = \"" . $value . "\";";
+							$comd = "\$pkgarr['row'][" . $x . "]['" . $fieldname . "'] = \"" . $value . "\";";
 							//echo($comd . "<br>");
 							eval($comd);
 						}

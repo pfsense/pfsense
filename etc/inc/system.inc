@@ -36,7 +36,7 @@ function activate_sysctls() {
 	global $config, $g;
 	
 	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=0x00000000");
-	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x00000002");
+	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x00000001");
 	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x00000000");
 	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x00000002");
 

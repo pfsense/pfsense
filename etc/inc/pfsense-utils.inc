@@ -1953,7 +1953,7 @@ function WakeOnLan($addr, $mac)
  *                             NOTE: this command takes 5 seconds to run
  */
 function gather_altq_queue_stats($dont_return_root_queues) {
-	$stats = exec("/sbin/pfctl -vvsq");
+	exec("/sbin/pfctl -vvsq", $stats);
 	$stats_array = split("\n", $stats);
 	$queue_stats = array();
 	foreach ($stats_array as $stats_line) {

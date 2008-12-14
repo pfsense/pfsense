@@ -1128,7 +1128,6 @@ function generate_user_filter_rule($rule)
 {
 	global $config, $g, $FilterIflist, $GatewaysList, $GatewayGroupsList;
 	global $table_cache;
-	global $schedule_enabled;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "generate_user_filter_rule() being called $mt\n";
@@ -1136,12 +1135,6 @@ function generate_user_filter_rule($rule)
 	/* don't include disabled rules */
 	if (isset($rule['disabled'])) {
 		return "# rule " . $rule['descr'] . " disabled \n";
-	}
-	if($config['schedules']) {
-		foreach($config['schedules']['schedule'] as $sched) {
-			$schedule_enabled = true;
-			break;
-		}
 	}
 	/* Setup cache array if not already existing */
 	if (!isset($table_cache)) {
@@ -1655,10 +1648,9 @@ function generate_user_filter_rule($rule)
 			$aline['flags'] . $aline['queue'] . $aline['dnpipe'];
 
 		/* is a time based rule schedule attached? */
-		if($rule['sched']) {
+		if(!empty($rule['sched'])) {
 			if($config['schedules']) {
 				foreach($config['schedules']['schedule'] as $sched) {
-					$schedule_enabled = true;
 					if($sched['name'] == $rule['sched']) {
 						$schedule_xml_block = $sched;	
 						break;
@@ -1695,14 +1687,9 @@ function generate_user_filter_rule($rule)
 				}
 				return "# $line";
 			}
-		} else {
-			if($schedule_enabled) {
-				// no schedule allow rules should simply allow
-				$ipfw_rule = tdr_create_ipfw_rule($rule, "allow");
-				tdr_install_rule($ipfw_rule);			
-			}
-			return $line;			
-		}
+		} 
+
+		return $line;			
 }
 
 function filter_rules_generate() 

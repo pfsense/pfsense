@@ -1650,15 +1650,19 @@ function generate_user_filter_rule($rule)
 		/* is a time based rule schedule attached? */
 		if(!empty($rule['sched'])) {
 			if($config['schedules']) {
+				$foundsched = false;
 				foreach($config['schedules']['schedule'] as $sched) {
 					if($sched['name'] == $rule['sched']) {
-						$schedule_xml_block = $sched;	
+						$status = get_time_based_rule_status($schedule_xml_block);
+						$foundsched = true;
 						break;
 					}				
 				}
-			}
-			if($schedule_xml_block)
-				$status = get_time_based_rule_status($schedule_xml_block);
+				if ($foundsched == false)
+					return $line;
+			} else
+				return $line;
+
 			if($status) {
 				if($g['debug'])
 					log_error("[TDR DEBUG] status true -- rule type '$type'");

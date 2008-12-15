@@ -263,7 +263,6 @@ triggers it. To substantiate this point: disconnecting manually
 will <strong>not</strong> prevent dial-on-demand from making connections
 to the outside! Don't use dial-on-demand if you want to make sure that the line
 is kept disconnected.
-<p>
-<span class="red"><strong>Note:</strong></span> In/out counters will wrap at 32bit (4 Gigabyte) ! <br/>
+
 
 <?php include("fend.inc"); ?>

@@ -228,13 +228,6 @@ function filter_configure_sync() {
 	if(file_exists("{$g['tmp_path']}/rules.debug.old"))
 		$oldrules = file_get_contents("{$g['tmp_path']}/rules.debug.old");
 
-	/* Check to see if rules changed, if not do not continue */
-	if($rules == $oldrules) {
-		update_filter_reload_status("Done");
-		log_error("Rules have not changed.  Not reloading.");
-		return;
-	}
-
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";

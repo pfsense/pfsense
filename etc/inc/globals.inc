@@ -34,7 +34,11 @@
 $g = array(
 	"factory_shipped_username" => "admin",	
 	"factory_shipped_password" => "pfsense",	
-	"product_name" => "pfSense",	
+	"product_name" => "pfSense",
+	"product_copyright" => "BSD Perimeter LLC",    
+	"product_copyright_years" => "2005, 2006, 2007, 2008",
+	"product_website" => "www.pfsense.com",
+	"product_email" => "coreteam@pfsense.com",
 	"upload_path" => "/root",
     "dhcpd_chroot_path" => "/var/dhcpd",
     "varrun_path" => "/var/run",

@@ -259,11 +259,10 @@ function filter_configure_sync() {
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
 
 	/* run items scheduled for after filter configure run */
-	foreach($after_filter_configure_run as $afcr) {
-		$fda = fopen("/tmp/commands.txt", "w");
+	$fda = fopen("/tmp/commands.txt", "w");
+	foreach($after_filter_configure_run as $afcr) 
 		fwrite($fda, $afcr . "\n");
-		fclose($fda);
-	}
+	fclose($fda);
 	if(file_exists("/tmp/commands.txt")) {
 		mwexec("sh /tmp/commands.txt &");
 		unlink("/tmp/commands.txt");

@@ -223,7 +223,7 @@ if(isset($config['dnsmasq']['enable'])) {
 	unset($pconfig);
 }
 
-$pconfig['name'] = "openntpd";
+$pconfig['name'] = "ntpd";
 $pconfig['description'] = "NTP clock sync";
 $services[] = $pconfig;
 unset($pconfig);

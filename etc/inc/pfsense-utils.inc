@@ -3518,25 +3518,34 @@ function get_interface_info($ifdescr) {
 
 	/* Use pfctl for non wrapping 64 bit counters */
 	/* Pass */
-	$in4_pass = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "In4/Pass" | awk '{ print $6 }'`;
-	$out4_pass = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "Out4/Pass" | awk '{ print $6 }'`;
-	$in4_packets = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "In4/Pass" | awk '{ print $4 }'`;
-	$out4_packets = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "Out4/Pass" | awk '{ print $4 }'`;
-	$ifinfo['inbytes'] = trim($in4_pass);
-	$ifinfo['outbytes'] = trim($out4_pass);
-	$ifinfo['inpkts'] = trim($in4_packets);
-	$ifinfo['outpkts'] = trim($out4_packets);
+	exec("/sbin/pfctl -vvsI -i {$ifinfo['if']}", $pfctlstats);
+	$pf_in4_pass = preg_split("/ +/ ", $pfctlstats[3]);
+	$pf_out4_pass = preg_split("/ +/", $pfctlstats[5]);
+	$in4_pass = $pf_in4_pass[5];
+	$out4_pass = $pf_out4_pass[5];
+	$in4_pass_packets = $pf_in4_pass[3];
+	$out4_pass_packets = $pf_out4_pass[3];
+	$ifinfo['inbytespass'] = $in4_pass;
+	$ifinfo['outbytespass'] = $out4_pass;
+	$ifinfo['inpktspass'] = $in4_pass_packets;
+	$ifinfo['outpktspass'] = $out4_pass_packets;
+
 	/* Block */
-	$in4_block = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "In4/Block" | awk '{ print $6 }'`;
-	$out4_block = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "Out4/Block" | awk '{ print $6 }'`;
-	$in4_block_packets = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "In4/Block" | awk '{ print $4 }'`;
-	$out4_block_packets = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "Out4/Block" | awk '{ print $4 }'`;
-	$ifinfo['inbytesblock'] = trim($in4_block);
-	$ifinfo['outbytesblock'] = trim($out4_block);
-	$ifinfo['inpktsblock'] = trim($in4_block_packets);
-	$ifinfo['outpktsblock'] = trim($out4_block_packets);
+	$pf_in4_block = preg_split("/ +/", $pfctlstats[4]);
+	$pf_out4_block = preg_split("/ +/", $pfctlstats[6]);
+	$in4_block = $pf_in4_block[5];
+	$out4_block = $pf_out4_block[5];
+	$in4_block_packets = $pf_in4_block[3];
+	$out4_block_packets = $pf_out4_block[3];
+	$ifinfo['inbytesblock'] = $in4_block;
+	$ifinfo['outbytesblock'] = $out4_block;
+	$ifinfo['inpktsblock'] = $in4_block_packets;
+	$ifinfo['outpktsblock'] = $out4_block_packets;
 
-
+	$ifinfo['inbytes'] = $in4_pass + $in4_block;
+	$ifinfo['outbytes'] = $out4_pass + $out4_block;
+	$ifinfo['inpkts'] = $in4_pass_packets + $in4_block_packets;
+	$ifinfo['outpkts'] = $in4_pass_packets + $out4_block_packets;
 		
 	$ifconfiginfo = "";
 	unset($ifconfiginfo);

@@ -3508,20 +3508,36 @@ function get_interface_info($ifdescr) {
 
 	if (preg_match("/^enc|^tun|^ppp|^pptp|^ovpn/i", $ifinfo['if'])) {
 		$ifinfo['inpkts'] = $linkinfo[3];
-                $ifinfo['inbytes'] = $linkinfo[5];
-                $ifinfo['outpkts'] = $linkinfo[6];
-                $ifinfo['outbytes'] = $linkinfo[8];
+		$ifinfo['outpkts'] = $linkinfo[6];
 	} else {
 		$ifinfo['macaddr'] = $linkinfo[3];
-		$ifinfo['inpkts'] = $linkinfo[4];
 		$ifinfo['inerrs'] = $linkinfo[5];
-		$ifinfo['inbytes'] = $linkinfo[6];
-		$ifinfo['outpkts'] = $linkinfo[7];
 		$ifinfo['outerrs'] = $linkinfo[8];
-		$ifinfo['outbytes'] = $linkinfo[9];
 		$ifinfo['collisions'] = $linkinfo[10];
 	}
 
+	/* Use pfctl for non wrapping 64 bit counters */
+	/* Pass */
+	$in4_pass = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "In4/Pass" | awk '{ print $6 }'`;
+	$out4_pass = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "Out4/Pass" | awk '{ print $6 }'`;
+	$in4_packets = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "In4/Pass" | awk '{ print $4 }'`;
+	$out4_packets = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "Out4/Pass" | awk '{ print $4 }'`;
+	$ifinfo['inbytes'] = trim($in4_pass);
+	$ifinfo['outbytes'] = trim($out4_pass);
+	$ifinfo['inpkts'] = trim($in4_packets);
+	$ifinfo['outpkts'] = trim($out4_packets);
+	/* Block */
+	$in4_block = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "In4/Block" | awk '{ print $6 }'`;
+	$out4_block = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "Out4/Block" | awk '{ print $6 }'`;
+	$in4_block_packets = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "In4/Block" | awk '{ print $4 }'`;
+	$out4_block_packets = `/sbin/pfctl -vvsI -i {$ifinfo['if']} | grep "Out4/Block" | awk '{ print $4 }'`;
+	$ifinfo['inbytesblock'] = trim($in4_block);
+	$ifinfo['outbytesblock'] = trim($out4_block);
+	$ifinfo['inpktsblock'] = trim($in4_block_packets);
+	$ifinfo['outpktsblock'] = trim($out4_block_packets);
+
+
+		
 	$ifconfiginfo = "";
 	unset($ifconfiginfo);
 	exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);

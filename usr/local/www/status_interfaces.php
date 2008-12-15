@@ -184,12 +184,24 @@ include("head.inc");
                 </td>
               </tr><?php endif; ?>
               <tr>
-                <td width="22%" class="vncellt">In/out packets</td>
+                <td width="22%" class="vncellt">In/out packets (pass)</td>
                 <td width="78%" class="listr">
-                  <?=htmlspecialchars($ifinfo['inpkts'] . "/" . $ifinfo['outpkts'] . " (" .
-			format_bytes($ifinfo['inbytes']) . "/" . format_bytes($ifinfo['outbytes']) . ")");?>
+				<?php
+					echo htmlspecialchars($ifinfo['inpkts'] . "/" . $ifinfo['outpkts'] . " (");
+					echo htmlspecialchars(format_bytes($ifinfo['inbytes']) . "/" . format_bytes($ifinfo['outbytes']) . ")");
+				?>
+                </td>
+              </tr>
+              <tr>
+                <td width="22%" class="vncellt">In/out packets (block)</td>
+                <td width="78%" class="listr">
+				<?php
+					echo htmlspecialchars($ifinfo['inpktsblock'] . "/" . $ifinfo['outpktsblock'] . " (");
+					echo htmlspecialchars(format_bytes($ifinfo['inbytesblock']) . "/" . format_bytes($ifinfo['outbytesblock']) . ")");
+				?>
                 </td>
               </tr><?php if (isset($ifinfo['inerrs'])): ?>
+
               <tr>
                 <td width="22%" class="vncellt">In/out errors</td>
                 <td width="78%" class="listr">

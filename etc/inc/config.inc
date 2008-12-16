@@ -2061,6 +2061,14 @@ endif;
 		$config['version'] = "5.4";
 	}
 
+	/* Convert 5.4 -> 5.5 */
+	if ($config['version'] <= 5.4) {
+	/* RRD files changed for quality, traffic and packets graphs */
+		exec("/bin/rm -f /var/db/rrd/*-quality.rrd");
+		exec("/bin/rm -f /var/db/rrd/*-packets.rrd");
+		exec("/bin/rm -f /var/db/rrd/*-traffic.rrd");
+	}
+
 	$now = date("H:i:s");
 	log_error("Ended Configuration upgrade at $now");
 

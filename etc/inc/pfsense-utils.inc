@@ -2882,9 +2882,10 @@ function enable_rrd_graphing() {
 			if ($g['platform'] != "pfSense") {
 				/* restore the databases, if we have one */
 				if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
-					exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
-					if((int)$rrdrestore <> 0) {
-						log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore[0]\n");
+					exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz 2>&1", $rrdrestore, $rrdreturn);
+					$rrdrestore = implode(" ", $rrdrestore);
+					if($rrdreturn <> 0) {
+						log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
 					}
 				}
 			}
@@ -2927,8 +2928,10 @@ function enable_rrd_graphing() {
 				/* create rrd file if it does not exist */
 				log_error("Create RRD database $rrddbpath$ifname$traffic");
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$traffic --step $rrdtrafficinterval ";
-				$rrdcreate .= "DS:in:COUNTER:$trafficvalid:0:$downstream ";
-				$rrdcreate .= "DS:out:COUNTER:$trafficvalid:0:$upstream ";
+				$rrdcreate .= "DS:inpass:COUNTER:$trafficvalid:0:$downstream ";
+				$rrdcreate .= "DS:outpass:COUNTER:$trafficvalid:0:$upstream ";
+				$rrdcreate .= "DS:inblock:COUNTER:$trafficvalid:0:$downstream ";
+				$rrdcreate .= "DS:outblock:COUNTER:$trafficvalid:0:$upstream ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
@@ -2939,9 +2942,10 @@ function enable_rrd_graphing() {
 				$rrdcreatereturn = "";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
-				if ($rrdcreatereturn != 0) {
+				if ($rrdcreatereturn <> 0) {
+					$rrdcreateoutput = implode(" ", $rrdcreateoutput);
 					log_error("RRD create failed exited with $rrdcreatereturn, the
-							error is: $rrdcreateoutput[0]\n");
+							error is: $rrdcreateoutput");
 				}
 			}
 
@@ -2953,19 +2957,17 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling traffic for interface $ifname $realif \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\\\n";
-			if(! is_macaddr(get_interface_mac($realif))) {
-				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$6 \":\" \$9}'`\n";
-			} else {
-				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$7 \":\" \$10}'`\n";
-			}
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass|In4\/Block|Out4\/Block/ {printf \$6 \":\"}'|sed -e 's/.\$//'`\n";
 
 			/* PACKETS, set up the rrd file */
 			if (!file_exists("$rrddbpath$ifname$packets")) {
 				/* create rrd file if it does not exist */
 				log_error("Create RRD database $rrddbpath$ifname$packets");
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$packets --step $rrdpacketsinterval ";
-				$rrdcreate .= "DS:in:COUNTER:$packetsvalid:0:$downstream ";
-				$rrdcreate .= "DS:out:COUNTER:$packetsvalid:0:$upstream ";
+				$rrdcreate .= "DS:inpass:COUNTER:$packetsvalid:0:$downstream ";
+				$rrdcreate .= "DS:outpass:COUNTER:$packetsvalid:0:$upstream ";
+				$rrdcreate .= "DS:inblock:COUNTER:$packetsvalid:0:$downstream ";
+				$rrdcreate .= "DS:outblock:COUNTER:$packetsvalid:0:$upstream ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
@@ -2973,9 +2975,10 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
-				if ($rrdcreatereturn != 0) {
+				if ($rrdcreatereturn <> 0) {
+					$rrdcreateoutput = implode(" ", $rrdcreateoutput);
 					log_error("RRD create failed exited with $rrdcreatereturn, the
-							error is: $rrdcreateoutput[0]\n");
+							error is: $rrdcreateoutput");
 				}
 			}
 
@@ -2987,11 +2990,7 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\\\n";
-			if(! is_macaddr(get_interface_mac($realif))) {
-				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$4 \":\" \$7}'`\n";
-			} else {
-				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$5 \":\" \$8}'`\n";
-			}
+			$rrdupdatesh .= "`$pfctl -vvsI -i {$realif} | awk '/In4\/Pass|Out4\/Pass|In4\/Block|Out4\/Block/ {printf \$4 \":\"}'|sed -e 's/.\$//'`\n";
 
 			/* WIRELESS, set up the rrd file */
 			if($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {
@@ -3012,9 +3011,10 @@ function enable_rrd_graphing() {
 					$rrdcreatereturn = "";
 
 					$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
-					if ($rrdcreatereturn != 0) {
+					if ($rrdcreatereturn <> 0) {
+						$rrdcreateoutput = implode(" ", $rrdcreateoutput);
 						log_error("RRD create failed exited with $rrdcreatereturn, the
-								error is: $rrdcreateoutput[0]\n");
+								error is: $rrdcreateoutput");
 					}
 				}
 
@@ -3035,13 +3035,13 @@ function enable_rrd_graphing() {
 					/* NOTE: Is it worth as its own function?! */
 					switch ($altq->GetBwscale()) {
                                         case "Gb":
-                                        	$factor = 1000 * 1000 * 1000;
+                                        	$factor = 1024 * 1024 * 1024;
                                                 break;
                                         case "Mb":
-                                                $factor = 1000 * 1000;
+                                                $factor = 1024 * 1024;
                                                 break;
                                         case "Kb":
-                                                $factor = 1000;
+                                                $factor = 1024;
                                                 break;
                                         case "b":
                                         default:
@@ -3069,9 +3069,10 @@ function enable_rrd_graphing() {
 						$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
 
 						$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
-						if ($rrdcreatereturn != 0) {
+						if ($rrdcreatereturn <> 0) {
+							$rrdcreateoutput = implode(" ", $rrdcreateoutput);
 							log_error("RRD create failed exited with $rrdcreatereturn, the
-									error is: $rrdcreateoutput[0]\n");
+									error is: $rrdcreateoutput");
 						}
 					}
 
@@ -3092,8 +3093,9 @@ function enable_rrd_graphing() {
 						$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
 
 						$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
-						if ($rrdcreatereturn != 0) {
-							log_error("RRD create failed exited with $rrdcreatereturn, the error is: $rrdcreateoutput[0]\n");
+						if ($rrdcreatereturn <> 0) {
+							$rrdcreateoutput = implode(" ", $rrdcreateoutput);
+							log_error("RRD create failed exited with $rrdcreatereturn, the error is: $rrdcreateoutput");
 						}
 					}
 
@@ -3110,8 +3112,8 @@ function enable_rrd_graphing() {
 							$q++;
 							$rrducommand .= ":U";
 						}
-						exec("$rrdtool update $rrddbpath$ifname$queues $rrdqcommand $rrducommand");
-						exec("$rrdtool update $rrddbpath$ifname$queuesdrop $rrdqcommand $rrducommand");
+						mwexec("$rrdtool update $rrddbpath$ifname$queues $rrdqcommand $rrducommand");
+						mwexec("$rrdtool update $rrddbpath$ifname$queuesdrop $rrdqcommand $rrducommand");
 					}
 
 					/* awk function to gather shaper data */
@@ -3171,9 +3173,10 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
-				if($rrdcreatereturn != 0) {
+				if($rrdcreatereturn <> 0) {
+					$rrdcreateoutput = implode(" ", $rrdcreateoutput);
 			                log_error("RRD create failed exited with $rrdcreatereturn, the
-						error is: $rrdcreateoutput[0]\n");
+						error is: $rrdcreateoutput");
 				}
 			}
 
@@ -3212,9 +3215,10 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
-				if($rrdcreatereturn != 0) {
+				if($rrdcreatereturn <> 0) {
+					$rrdcreateoutput = implode(" ", $rrdcreateoutput);
 			                log_error("RRD create failed exited with $rrdcreatereturn, the
-						error is: $rrdcreateoutput[0]\n");
+						error is: $rrdcreateoutput");
 				}
 			}
 
@@ -3256,9 +3260,9 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:MAX:0.5:720:1000";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
-				if($rrdcreatereturn != 0) {
+				if($rrdcreatereturn <> 0) {
 			                log_error("RRD create failed exited with $rrdcreatereturn, the
-						error is: $rrdcreateoutput[0]\n");
+						error is: $rrdcreateoutput");
 				}
 			}
 
@@ -3301,9 +3305,10 @@ function enable_rrd_graphing() {
 						$rrdcreate .= "RRA:MAX:0.5:1440:1500 ";
 
 					$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
-					if ($rrdcreatereturn != 0) {
+					if ($rrdcreatereturn <> 0) {
+						$rrdcreateoutput = implode(" ", $rrdcreateoutput);
 						log_error("RRD create failed exited with $rrdcreatereturn, the
-							error is: $rrdcreateoutput[0]\n");
+							error is: $rrdcreateoutput\n");
 					}
 				}
 
@@ -3517,8 +3522,8 @@ function get_interface_info($ifdescr) {
 	}
 
 	/* Use pfctl for non wrapping 64 bit counters */
-	exec("/sbin/pfctl -vvsI -i {$ifinfo['if']}", $pfctlstats);
 	/* Pass */
+	exec("/sbin/pfctl -vvsI -i {$ifinfo['if']}", $pfctlstats);
 	$pf_in4_pass = preg_split("/ +/ ", $pfctlstats[3]);
 	$pf_out4_pass = preg_split("/ +/", $pfctlstats[5]);
 	$in4_pass = $pf_in4_pass[5];

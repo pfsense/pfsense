@@ -99,9 +99,12 @@ if ($_POST) {
 		/* XXX: Make this with a touch file */
 		$retval = 0;
 
+		conf_mount_rw();
+		mwexec("rm {$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}.cache");
+		conf_mount_ro();
+
 		/* nuke the cache file */
 		config_lock();
-		services_dyndns_reset($dyndns['interface'], $dyndns['type']);
 		$retval = services_dyndns_configure_client($dyndns);
 		config_unlock();
 

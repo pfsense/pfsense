@@ -3517,8 +3517,8 @@ function get_interface_info($ifdescr) {
 	}
 
 	/* Use pfctl for non wrapping 64 bit counters */
-	/* Pass */
 	exec("/sbin/pfctl -vvsI -i {$ifinfo['if']}", $pfctlstats);
+	/* Pass */
 	$pf_in4_pass = preg_split("/ +/ ", $pfctlstats[3]);
 	$pf_out4_pass = preg_split("/ +/", $pfctlstats[5]);
 	$in4_pass = $pf_in4_pass[5];

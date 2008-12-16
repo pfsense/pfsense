@@ -45,6 +45,9 @@ require_once ("shaper.inc");
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
 
+/* For installing cron job of schedules */
+$time_based_rules = false;
+
 /* Used to hold the interface list that will be used on ruleset creation. */
 $FilterIflist = array();
 
@@ -95,7 +98,9 @@ function filter_configure() {
 
 /* reload filter sync */
 function filter_configure_sync() {
-	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $GatewayGroupsList;;
+	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $GatewayGroupsList;
+	global $time_based_rules;
+
 	filter_pflog_start();
 	update_filter_reload_status("Initializing");
 	/* invalidate interface cache */
@@ -1690,7 +1695,8 @@ function generate_user_filter_rule($rule)
 
 function filter_rules_generate() 
 {
-	global $config, $g, $table_cache, $FilterIflist;
+	global $config, $g, $table_cache, $FilterIflist, $time_based_rules;
+	
 	update_filter_reload_status("Creating default rules");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -2027,10 +2033,11 @@ EOD;
 		 */
 		if ($load_ipfw_module == true) {
 			filter_load_ipfw();
-						exec("/sbin/ipfw delete set 9");
-						exec("/sbin/ipfw delete 2");
-						exec("/sbin/ipfw delete 3");
-				}
+			$time_based_rules = true;
+			exec("/sbin/ipfw delete set 9");
+			exec("/sbin/ipfw delete 2");
+			exec("/sbin/ipfw delete 3");
+		}
 		$ipfrules .= "\n# User-defined aliases follow\n";
 		/* tables for aliases */
 		foreach($table_cache as $table)

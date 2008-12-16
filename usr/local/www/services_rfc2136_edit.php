@@ -97,8 +97,6 @@ if ($_POST) {
 		write_config("New/Edited RFC2136 dnsupdate entry was posted.");
 
 		config_lock();
-		/* nuke the cache file */
-                services_rfc2136_reset();
                 $retval = services_dnsupdate_process();
                 config_unlock();
 

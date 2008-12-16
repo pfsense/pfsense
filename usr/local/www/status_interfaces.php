@@ -184,11 +184,20 @@ include("head.inc");
                 </td>
               </tr><?php endif; ?>
               <tr>
-                <td width="22%" class="vncellt">In/out packets (pass)</td>
+                <td width="22%" class="vncellt">In/out packets</td>
                 <td width="78%" class="listr">
 				<?php
 					echo htmlspecialchars($ifinfo['inpkts'] . "/" . $ifinfo['outpkts'] . " (");
 					echo htmlspecialchars(format_bytes($ifinfo['inbytes']) . "/" . format_bytes($ifinfo['outbytes']) . ")");
+				?>
+                </td>
+              </tr>
+              <tr>
+                <td width="22%" class="vncellt">In/out packets (pass)</td>
+                <td width="78%" class="listr">
+				<?php
+					echo htmlspecialchars($ifinfo['inpktspass'] . "/" . $ifinfo['outpktspass'] . " (");
+					echo htmlspecialchars(format_bytes($ifinfo['inbytespass']) . "/" . format_bytes($ifinfo['outbytespass']) . ")");
 				?>
                 </td>
               </tr>

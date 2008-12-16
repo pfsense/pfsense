@@ -103,7 +103,6 @@ if ($_POST) {
 		mwexec("rm {$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}.cache");
 		conf_mount_ro();
 
-		/* nuke the cache file */
 		config_lock();
 		$retval = services_dyndns_configure_client($dyndns);
 		config_unlock();

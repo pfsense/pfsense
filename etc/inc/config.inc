@@ -2074,7 +2074,7 @@ endif;
 		rsort($databases);
 		foreach($databases as $database) {
 			log_error("Upgrading rrd database {$rrddbpath}{$database}");
-			mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
+			mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay ");
 		}
 		/* let apinger recreate required files */
 		setup_gateways_monitor();
@@ -2085,14 +2085,13 @@ endif;
 		foreach($databases as $database) {
 			log_error("Upgrading rrd database {$rrddbpath}{$database}");
 			/* rename DS source */
-			mwexec("$rrdtool tune {$rrddbpath}{$database} -r in:inpass 2>&1");
-			mwexec("$rrdtool tune {$rrddbpath}{$database} -r out:outpass 2>&1");
+			mwexec("$rrdtool tune {$rrddbpath}{$database} -r in:inpass ");
+			mwexec("$rrdtool tune {$rrddbpath}{$database} -r out:outpass ");
 			/* dump contents to xml and move database out of the way */
 			mwexec("$rrdtool dump {$rrddbpath}{$database} > {$g['tmp_path']}/{$database}.xml");
-			mwexec("mv {$rrddbpath}{$database} {$g['tmp_path']}/$databases.backup 2>&1");
+			mwexec("mv {$rrddbpath}{$database} {$g['tmp_path']}/{$database}.backup");
 			/* let enable_rrd_graphing recreate the database and restore the contents */
-			enable_rrd_graphing();
-			mwexec("$rrdtool restore {$g['tmp_path']}/{$database}.xml {$rrddbpath}{$database} 2>&1");
+			mwexec("$rrdtool restore {$g['tmp_path']}/{$database}.xml {$rrddbpath}{$database} ");
 		}
 
 		/* build a list of packets databases */
@@ -2101,14 +2100,13 @@ endif;
 		foreach($databases as $database) {
 			log_error("Upgrading rrd database {$rrddbpath}{$database}");
 			/* rename DS source */
-			mwexec("$rrdtool tune {$rrddbpath}{$database} -r in:inpass 2>&1");
-			mwexec("$rrdtool tune {$rrddbpath}{$database} -r out:outpass 2>&1");
+			mwexec("$rrdtool tune {$rrddbpath}{$database} -r in:inpass ");
+			mwexec("$rrdtool tune {$rrddbpath}{$database} -r out:outpass ");
 			/* dump contents to xml and move database out of the way */
 			mwexec("$rrdtool dump {$rrddbpath}{$database} > {$g['tmp_path']}/{$database}.xml");
-			mwexec("mv {$rrddbpath}{$database} {$g['tmp_path']}/$databases.backup 2>&1");
+			mwexec("mv {$rrddbpath}{$database} {$g['tmp_path']}/$databases.backup ");
 			/* let enable_rrd_graphing recreate the database and restore the contents */
-			enable_rrd_graphing();
-			mwexec("$rrdtool restore {$g['tmp_path']}/{$database}.xml {$rrddbpath}{$database} 2>&1");
+			mwexec("$rrdtool restore {$g['tmp_path']}/{$database}.xml {$rrddbpath}{$database} ");
 		}
 		$config['version'] = "5.5";
 	}

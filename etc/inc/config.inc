@@ -2086,7 +2086,7 @@ endif;
 			/* dump contents to xml and move database out of the way */
 			mwexec("$rrdtool dump {$database} > {$g['tmp_path']}/{$database}.xml");
 			mwexec("mv $database {$g['tmp_path']}/$databases.backup");
-			/* let enable_rrd_graphing recreate the database and restore the contents
+			/* let enable_rrd_graphing recreate the database and restore the contents */
 			enable_rrd_graphing();
 			mwexec("$rrdtool restore {$g['tmp_path']}/{$database}.xml $database");
 		}
@@ -2101,12 +2101,10 @@ endif;
 			/* dump contents to xml and move database out of the way */
 			mwexec("$rrdtool dump {$database} > {$g['tmp_path']}/{$database}.xml");
 			mwexec("mv $database {$g['tmp_path']}/$databases.backup");
-			/* let enable_rrd_graphing recreate the database and restore the contents
+			/* let enable_rrd_graphing recreate the database and restore the contents */
 			enable_rrd_graphing();
 			mwexec("$rrdtool restore {$g['tmp_path']}/{$database}.xml $database");
 		}
-
-
 	}
 
 	$now = date("H:i:s");

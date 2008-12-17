@@ -2063,10 +2063,50 @@ endif;
 
 	/* Convert 5.4 -> 5.5 */
 	if ($config['version'] <= 5.4) {
-	/* RRD files changed for quality, traffic and packets graphs */
-		mwexec("/bin/rm -f /var/db/rrd/*-quality.rrd");
-		mwexec("/bin/rm -f /var/db/rrd/*-packets.rrd");
-		mwexec("/bin/rm -f /var/db/rrd/*-traffic.rrd");
+		/* RRD files changed for quality, traffic and packets graphs */
+		$rrddbpath = "/var/db/rrd/";
+		$rrdtool = "/usr/local/bin/rrdtool";
+
+		/* build a list of quality databases */
+		/* roundtrip has become delay */
+		/* the roundtrip times need to be divided by 1000 to get seconds, really */
+		exec("cd $rrddbpath;/usr/bin/find -name *-quality.rrd", $databases);
+		rsort($databases);
+		foreach($databases as $database) {
+			mwexec("$rrdtool tune {$database} -r roundtrip:delay");
+		}
+
+		/* build a list of traffic databases */
+		exec("cd $rrddbpath;/usr/bin/find -name *-traffic.rrd", $databases);
+		rsort($databases);
+		foreach($databases as $database) {
+			/* rename DS source */
+			mwexec("$rrdtool tune {$database} -r in:inpass");
+			mwexec("$rrdtool tune {$database} -r out:outpass");
+			/* dump contents to xml and move database out of the way */
+			mwexec("$rrdtool dump {$database} > {$g['tmp_path']}/{$database}.xml");
+			mwexec("mv $database {$g['tmp_path']}/$databases.backup");
+			/* let enable_rrd_graphing recreate the database and restore the contents
+			enable_rrd_graphing();
+			mwexec("$rrdtool restore {$g['tmp_path']}/{$database}.xml $database");
+		}
+
+		/* build a list of packets databases */
+		exec("cd $rrddbpath;/usr/bin/find -name *-packets.rrd", $databases);
+		rsort($databases);
+		foreach($databases as $database) {
+			/* rename DS source */
+			mwexec("$rrdtool tune {$database} -r in:inpass");
+			mwexec("$rrdtool tune {$database} -r out:outpass");
+			/* dump contents to xml and move database out of the way */
+			mwexec("$rrdtool dump {$database} > {$g['tmp_path']}/{$database}.xml");
+			mwexec("mv $database {$g['tmp_path']}/$databases.backup");
+			/* let enable_rrd_graphing recreate the database and restore the contents
+			enable_rrd_graphing();
+			mwexec("$rrdtool restore {$g['tmp_path']}/{$database}.xml $database");
+		}
+
+
 	}
 
 	$now = date("H:i:s");

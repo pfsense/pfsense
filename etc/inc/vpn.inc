@@ -112,9 +112,9 @@ function vpn_ipsec_configure($ipchg = false)
 	}
 
 	if(isset($config['ipsec']['preferredoldsa']))
-		mwexec("/sbin/sysctl net.key.preferred_oldsa=0");
-	else
 		mwexec("/sbin/sysctl -w net.key.preferred_oldsa=-30");
+	else
+		mwexec("/sbin/sysctl net.key.preferred_oldsa=0");
 
 	$number_of_gifs = find_last_gif_device();
 	for ($x = 0; $x < $number_of_gifs; $x++)

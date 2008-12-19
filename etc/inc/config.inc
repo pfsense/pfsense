@@ -2066,6 +2066,7 @@ endif;
 		/* RRD files changed for quality, traffic and packets graphs */
 		ini_set("max_execution_time", "1800");
 		/* convert traffic RRD file */
+		global $parsedcfg, $listtags;
 		$listtags = array("ds", "v", "rra", "row");
 
 		$rrddbpath = "/var/db/rrd/";

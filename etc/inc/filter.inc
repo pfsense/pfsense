@@ -1237,7 +1237,7 @@ function generate_user_filter_rule($rule)
 	$foundlb = 0;
 
 	/* do not process reply-to for gateway'd rules */
-	if ($rule['gateway'] == "" && interface_has_gateway($rule['interface'])) {
+	if ($rule['gateway'] == "" && interface_has_gateway($rule['interface']) && $type == "pass") {
 		$rg = get_interface_gateway($rule['interface']);
 		if (is_ipaddr($rg)) {
 			$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";

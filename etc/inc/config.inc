@@ -2064,8 +2064,19 @@ endif;
 	/* Convert 5.4 -> 5.5 */
 	if ($config['version'] <= 5.4) {
 		/* RRD files changed for quality, traffic and packets graphs */
+		ini_set("max_execution_time", "1800");
+		/* convert traffic RRD file */
+		$listtags = array("ds", "v", "rra", "row");
+
 		$rrddbpath = "/var/db/rrd/";
 		$rrdtool = "/usr/local/bin/rrdtool";
+
+		$rrdinterval = 60;
+		$valid = $rrdinterval * 2;
+
+		/* Asume GigE for now */
+		$downstream = 125000000;
+		$upstream = 125000000;
 
 		/* build a list of quality databases */
 		/* roundtrip has become delay */
@@ -2079,34 +2090,56 @@ endif;
 		/* let apinger recreate required files */
 		setup_gateways_monitor();
 
-		/* build a list of traffic databases */
-		exec("cd $rrddbpath;/usr/bin/find -name *-traffic.rrd", $databases);
+		/* build a list of traffic and packets databases */
+		exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
 		rsort($databases);
 		foreach($databases as $database) {
-			log_error("Upgrading rrd database {$rrddbpath}{$database}");
-			/* rename DS source */
-			mwexec("$rrdtool tune {$rrddbpath}{$database} -r in:inpass ");
-			mwexec("$rrdtool tune {$rrddbpath}{$database} -r out:outpass ");
-			/* dump contents to xml and move database out of the way */
-			mwexec("$rrdtool dump {$rrddbpath}{$database} > {$g['tmp_path']}/{$database}.xml");
-			mwexec("mv {$rrddbpath}{$database} {$g['tmp_path']}/{$database}.backup");
-			/* let enable_rrd_graphing recreate the database and restore the contents */
-			mwexec("$rrdtool restore {$g['tmp_path']}/{$database}.xml {$rrddbpath}{$database} ");
-		}
+			$databasetmp = "{$database}.tmp";
+			$xmldump = "{$database}.old.xml";
+			$xmldumptmp = "{$database}.tmp.xml";
+			$databasenew = "{$database}.new.xml";
 
-		/* build a list of packets databases */
-		exec("cd $rrddbpath;/usr/bin/find -name *-packets.rrd", $databases);
-		rsort($databases);
-		foreach($databases as $database) {
-			log_error("Upgrading rrd database {$rrddbpath}{$database}");
+			log_error("Upgrading rrd database {$rrddbpath}/{$database}");
 			/* rename DS source */
-			mwexec("$rrdtool tune {$rrddbpath}{$database} -r in:inpass ");
-			mwexec("$rrdtool tune {$rrddbpath}{$database} -r out:outpass ");
+			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass");
+			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass");
+
 			/* dump contents to xml and move database out of the way */
-			mwexec("$rrdtool dump {$rrddbpath}{$database} > {$g['tmp_path']}/{$database}.xml");
-			mwexec("mv {$rrddbpath}{$database} {$g['tmp_path']}/$databases.backup ");
-			/* let enable_rrd_graphing recreate the database and restore the contents */
-			mwexec("$rrdtool restore {$g['tmp_path']}/{$database}.xml {$rrddbpath}{$database} ");
+			dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
+
+			/* create new rrd database file */
+			echo "Create RRD database {$g['tmp_path']}/{$databasetmp}\n";
+			$rrdcreate = "$rrdtool create {$g['tmp_path']}/{$databasetmp} --step $rrdinterval ";
+			$rrdcreate .= "DS:inpass:COUNTER:$valid:0:$downstream ";
+			$rrdcreate .= "DS:outpass:COUNTER:$valid:0:$upstream ";
+			$rrdcreate .= "DS:inblock:COUNTER:$valid:0:$downstream ";
+			$rrdcreate .= "DS:outblock:COUNTER:$valid:0:$upstream ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+
+			create_new_rrd("$rrdcreate");
+			/* create temporary xml from new RRD */
+			dump_rrd_to_xml("{$g['tmp_path']}/{$databasetmp}", "{$g['tmp_path']}/{$xmldumptmp}");
+
+			$rrdold = parse_xml_config_raw("{$g['tmp_path']}/{$xmldump}", "rrd");
+			$rrdnew = parse_xml_config_raw("{$g['tmp_path']}/{$xmldumptmp}", "rrd");
+
+			/* remove any MAX RRA's. Not needed for traffic. */
+			$i = 0;
+			foreach ($rrdold['rra'] as $rra) {
+				if(trim($rra['cf']) == "MAX") {
+					unset($rrdold['rra'][$i]);
+				}
+				$i++;
+			}
+
+			$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
+			$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
+			file_put_contents("{$g['tmp_path']}/{$databasenew}", $rrdxml);
+			exec("$rrdtool restore -f {$g['tmp_path']}/{$databasenew} {$rrddbpath}/{$database}");
 		}
 		$config['version'] = "5.5";
 	}

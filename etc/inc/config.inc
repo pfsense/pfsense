@@ -2098,7 +2098,7 @@ endif;
 			$databasetmp = "{$database}.tmp";
 			$xmldump = "{$database}.old.xml";
 			$xmldumptmp = "{$database}.tmp.xml";
-			$databasenew = "{$database}.new.xml";
+			$xmldumpnew = "{$database}.new.xml";
 
 			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
 			/* rename DS source */
@@ -2139,8 +2139,8 @@ endif;
 
 			$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
 			$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
-			file_put_contents("{$g['tmp_path']}/{$databasenew}", $rrdxml);
-			exec("$rrdtool restore -f {$g['tmp_path']}/{$databasenew} {$rrddbpath}/{$database}");
+			file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
+			exec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database}");
 		}
 		enable_rrd_graphing();
 		$config['version'] = "5.5";

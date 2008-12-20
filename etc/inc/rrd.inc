@@ -39,7 +39,7 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	exec("$rrdtool dump {$rrddatabase} {$xmldumpfile} 2>&1", $dumpout, $dumpret);
 	if ($dumpret <> 0) {
 		$dumpout = implode(" ", $dumpout);
-		echo "RRD dump failed exited with $dumpret, the error is: $dumpout\n";
+		log_error("RRD dump failed exited with $dumpret, the error is: $dumpout");
 	}
 	return($dumpret);
 }
@@ -51,7 +51,7 @@ function create_new_rrd($rrdcreatecmd) {
 	exec("$rrdcreatecmd 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 	if ($rrdcreatereturn <> 0) {
 		$rrdcreateoutput = implode(" ", $rrdcreateoutput);
-		echo "RRD create failed exited with $rrdcreatereturn, the error is: $rrdcreateoutput\n";
+		log_error("RRD create failed exited with $rrdcreatereturn, the error is: $rrdcreateoutput");
 	}
 	return $rrdcreatereturn;
 }
@@ -61,9 +61,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	$numdsold = count($rrdoldxml['ds']);
 	$numrranew = count($rrdnewxml['rra']);
 	$numdsnew = count($rrdnewxml['ds']);
-	echo "\nStart merging databases\n\n";
-	echo "old rrd had $numdsold ds values and $numrraold rra databases \n";
-	echo "new rrd has $numdsnew ds values and $numrranew rra databases \n";
+	log_error("Import RRD has $numdsold DS values and $numrraold RRA databases, new format RRD has $numdsnew DS values and $numrranew RRA databases");
 	
 	/* add data sources not found in the old array from the new array */
 	$i = 0;
@@ -119,6 +117,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 
 	$numrranew = count($rrdoldxml['rra']);
 	$numdsnew = count($rrdoldxml['ds']);
+	log_error("The new RRD now has $numdsnew DS values and $numrranew RRA databases");
 	return $rrdoldxml;
 }
 

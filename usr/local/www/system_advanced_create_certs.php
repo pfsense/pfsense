@@ -31,11 +31,8 @@
 
 require("guiconfig.inc");
 
-if(file_exists("/var/etc/ssl/openssl.cnf")) {
-	$fd = fopen("/var/etc/ssl/openssl.cnf", "r");
-	$openssl = fread($fd,8096);
-	fclose($fd);
-}
+if(file_exists("/var/etc/ssl/openssl.cnf")) 
+	$openssl = file_get_contents("/var/etc/ssl/openssl.cnf");
 
 /* Lets match the fileds in the read in file and
    populate the variables for the form */

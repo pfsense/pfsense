@@ -3032,6 +3032,392 @@ class dnqueue_class extends dummynet_class {
 	}
 }
 
+// List of layer7 objects
+$layer7_rules_list = array();
+
+class layer7 {
+    
+    var $rname; //alias
+    var $rdescription; //alias description
+    var $rport; //divert port
+    var $renabled; //rule enabled
+    var $rsets = array(); //array of l7 associations
+    
+    // Auxiliary functions
+    
+    function GetRName() {
+        return $this->rname;
+    }
+    function SetRName($rname) {
+        $this->rname = $rname;
+    }
+    function GetRDescription() {
+        return $this->rdescription;
+    }
+    function SetRDescription($rdescription) {
+        $this->rdescription = $rdescription;
+    }
+    function GetRPort() {
+        return $this->rport;
+    }
+    function SetRPort($rport) {
+        $this->rport = $rport;
+    }
+    function GetREnabled() {
+        return $this->renabled;
+    }
+    function SetREnabled($value) {
+        $this->renabled = $value;
+    }
+    function GetRl7() {
+        return $this->rsets;
+    }
+    function SetRl7($rsets) {
+        $this->rsets = $rsets;
+    }
+    
+    //Add a tuple (rule,sctructure,element) to the $rsets
+    
+    function add_rule($l7set) {
+        $this->rsets[] = $l7set;
+    }
+    
+    // Build the layer7 rules
+    function build_l7_rules() {
+        if($this->GetREnabled() == "") {
+            return;
+        }
+        //$l7rules = "#" . $this->rdescription . "\n";
+        foreach ($this->rsets as $rl7) {
+            $l7rules .= $rl7->build_rules();
+        }
+        return $l7rules;
+    }
+    
+    // Read the config from array
+    function ReadConfig(&$qname, &$q) {
+        $this->SetRName($qname);
+        $this->SetREnabled($q['enabled']);
+        $this->SetRPort($q['divert_port']);
+        if(isset($q['description']) && $q['description'] <> "")
+            $this->SetRDescription($q['description']);
+        $rsets = $q['l7rules'];
+        //Put individual rules in the array
+	if(is_array($rsets)) {
+	    foreach($rsets as $l7r) {
+	        $l7obj = new l7rule();
+	        $l7obj->SetRProtocol($l7r['protocol']);
+	        $l7obj->SetRStructure($l7r['structure']);
+	        $l7obj->SetRBehaviour($l7r['behaviour']);
+	        $this->add_rule($l7obj);
+	    }
+	}
+    }
+    
+    //Generate a random port for the divert socket
+    function gen_divert_port() {
+        $dports = get_divert_ports(); //array of used ports
+        $divert_port = rand(40000, 60000);
+        while(true) {
+            foreach($dports as $dport) {
+                $dupe = false;
+                if($dport == $divert_port) {
+                    $divert_port = rand(40000, 60000);
+                    $dupe = true;
+                    break;
+                }
+            }
+            if(!$dupe) {
+                break;
+            }
+        }
+        return $divert_port;
+    }
+    
+    //Helps building the left tree
+    function build_tree() {
+        $tree = " <li><a href=\"firewall_shaper_layer7.php?container=" . $this->GetRName() ."&action=show\">"; 
+        $tree .= $this->GetRName() . "</a>";
+	$tree .= "</li>";
+		
+	return $tree;
+    }
+    
+    function build_form() {
+        $form = "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
+	$form .= "Enable/Disable";
+	$form .= "</td><td class=\"vncellreq\">";
+	$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\"";
+	if ($this->GetREnabled()) {
+       	    $form .=  "checked = \"CHECKED\"";
+	}
+	$form .= " ><span class=\"vexpl\"> Enable/Disable layer7 Container</span>";
+	$form .= "</td></tr>";
+        $form .= "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
+	$form .= "<td class=\"vncellreq\">";
+	$form .= "<input type=\"text\" id=\"container\" name=\"container\" value=\"";
+	$form .= $this->GetRName()."\">";
+	$form .= "</td></tr>";
+	$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Description</td>";
+	$form .= "<td class=\"vncellreq\">";
+	$form .= "<input type=\"text\" class=\"formfld unknown\" size=\"50%\" id=\"description\" name=\"description\" value=\"";
+	$form .= $this->GetRDescription();
+	$form .= "\">";
+	$form .= "<br> <span class=\"vexpl\">";
+	$form .= "You may enter a description here ";
+	$form .= "for your reference (not parsed).</span>";
+	$form .= "</td></tr>";
+	
+	return $form;
+    }
+    
+    //Write the setting to the $config array
+    function wconfig() {
+	global $config;
+	
+	if(!is_array($config['l7shaper']['container'])) {
+		$config['l7shaper']['container'] = array();
+	}
+        //
+        $cflink =& get_l7c_reference_to_me_in_config($this->GetRName());
+	// Test if this rule does exists already
+	if(!$cflink) {
+		$cflink =& $config['l7shaper']['container'][];
+	}
+	$cflink['name'] = $this->GetRName();
+        $cflink['enabled'] = $this->GetREnabled();
+        $cflink['description'] = $this->GetRDescription();
+        $cflink['divert_port'] = $this->GetRPort();
+        
+	//Destroy previously existent rules
+	if(is_array($cflink['rules'])) {
+		unset($cflink['l7rules']);
+	}
+	
+        $cflink['l7rules'] = array();
+	
+        $i = 0;
+        foreach($this->rsets as $rulel7) {
+            $cflink['l7rules'][$i]['protocol'] = $rulel7->GetRProtocol();
+            $cflink['l7rules'][$i]['structure'] = $rulel7->GetRStructure();
+            $cflink['l7rules'][$i]['behaviour'] = $rulel7->GetRBehaviour();
+            $i++;
+        }
+    }
+    
+    //This function is necessary to help producing the overload options for keep state
+    function get_unique_structures() {
+        
+        $unique_structures = array("action" => false, "dummynet" => false, "altq" => false);
+        foreach($this->rsets as $l7rule) {
+		if($l7rule->GetRStructure() == "action")
+			$unique_structures['action'] = true;
+		else if($l7rule->GetRStructure() == "limiter")
+			$unique_structures['dummynet'] = true;
+		else
+			$unique_structures['altq'] = true;
+        }
+	//Delete non used structures so we don't have to check this in filter.inc
+	foreach($unique_structures as $key => $value)
+		if(!$value)
+			unset($unique_structures[$key]);
+        return $unique_structures;
+    }
+    
+    function validate_input($data, &$input_errors) {
+	$reqfields[] = "container";
+	$reqdfieldsn[] = "Name";
+		
+	shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+        
+        if (!preg_match("/^[a-zA-Z0-9_-]+$/", $data['container']))
+            $input_errors[] = "Queue names must be alphanumeric and _ or - only.";
+    }
+    
+    function delete_l7c() {
+	unset_l7_object_by_reference($this->GetRName());
+	cleanup_l7_from_rules($this->GetRName());
+    }
+}
+
+class l7rule {
+    
+    var $rprotocol; //protocol
+    var $rstructure; //action, limiter, queue
+    var $rbehaviour; //allow, block, queue_name, pipe_number ...
+    
+    //Auxiliary Functions
+    
+    function GetRProtocol() {
+        return $this->rprotocol;
+    }
+    function SetRProtocol($rprotocol) {
+        $this->rprotocol = $rprotocol;
+    }
+    function GetRStructure() {
+        return $this->rstructure;
+    }
+    function SetRStructure($rstructure) {
+        $this->rstructure = $rstructure;
+    }
+    function GetRBehaviour() {
+        return $this->rbehaviour;
+    }
+    function SetRBehaviour($rbehaviour) {
+        $this->rbehaviour = $rbehaviour;
+    }
+    
+    //XXX Do we need to test any particularity for AltQ queues?
+    function build_rules() {
+	global $dummynet_pipe_list;
+	switch ($this->GetRStructure()) {
+		case "limiter":
+			read_dummynet_config();
+			$dn_list =& get_unique_dnqueue_list();
+			$found = false;
+			if(is_array($dn_list)) {
+				foreach($dn_list as $key => $value) {
+					if($key == $this->GetRBehaviour()) {
+						if($value[0] == "?")
+							$l7rule = $this->GetRProtocol() . " = dnqueue " . substr($value, 1) . "\n";
+						else
+							$l7rule = $this->GetRProtocol() . " = dnpipe " . $value . "\n";
+						$found = true;
+					}
+					if($found)
+						break;
+				}
+			}
+			break;
+		default: //This is for action and for altq
+			$l7rule = $this->GetRProtocol() . " = " . $this->GetRStructure() . " " . $this->GetRBehaviour() . "\n";
+			break;
+	}
+        return $l7rule;
+    }
+}
+
+/*
+ * This function allows to return an array with all the used divert socket ports
+ */
+function get_divert_ports() {
+    global $layer7_rules_list;
+    $dports = array();
+    
+    foreach($layer7_rules_list as $l7r)
+        $dports[] = $l7r->GetRPort();
+    
+    return $dports;
+}
+
+function &get_l7c_reference_to_me_in_config(&$name) {
+	global $config;
+	
+	$ptr = NULL;
+	
+	if(is_array($config['l7shaper']['container'])) {
+		foreach($config['l7shaper']['container'] as $key => $value) {
+			if($value['name'] == $name)
+				$ptr =& $config['l7shaper']['container'][$key];
+		}
+	}	
+	return $ptr;
+// $ptr can be null. has to be checked later
+}
+
+function unset_l7_object_by_reference(&$name) {
+	global $config;
+        
+	if(is_array($config['l7shaper']['container'])) {
+		foreach($config['l7shaper']['container'] as $key => $value) {
+			if($value['name'] == $name) {
+				unset($config['l7shaper']['container'][$key]['l7rules']);
+				unset($config['l7shaper']['container'][$key]);
+				break;
+			}
+		}
+	}
+}
+
+function read_layer7_config() {
+    global $layer7_rules_list, $config;
+    
+    $l7cs = &$config['l7shaper']['container'];
+    
+    $layer7_rules_list = array();
+    
+    if (!is_array($config['l7shaper']['container']) || !count($config['l7shaper']['container']))
+	return;
+    
+    foreach ($l7cs as $conf) {
+	if (empty($conf['name']))
+		continue; /* XXX: grrrrrr at php */ 
+        $root =& new layer7();
+        $root->ReadConfig($conf['name'],$conf);
+        $layer7_rules_list[$root->GetRName()] = &$root;
+    }
+}
+
+function generate_layer7_files() {
+    global $layer7_rules_list;
+    
+    read_layer7_config();
+    
+    if (!empty($layer7_rules_list)) {
+	mwexec("kldload ipdivert.ko");
+        mwexec("killall -9 ipfw-classifyd");
+    }
+    
+    foreach($layer7_rules_list as $l7rules) {
+        if($l7rules->GetREnabled()) {
+            $filename = $l7rules->GetRName() . ".l7";
+            $path = "/tmp/" . $filename;
+        
+            $rules = $l7rules->build_l7_rules();
+        
+            $fp = fopen($path,'w');
+            fwrite($fp,$rules);
+            fclose($fp);
+            
+            $ipfw_classifyd_init = "ipfw-classifyd -c " . $path . " -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
+            mwexec($ipfw_classifyd_init);
+        }
+    }
+}
+
+// This function uses /usr/local/share/protocols as a default directory for searching .pat files
+function generate_protocols_array() {
+	$protocols = return_dir_as_array("/usr/local/share/protocols");
+	if(is_array($protocols)) {
+		foreach($protocols as $key => $proto)
+			$protocols[$key] =& str_replace(".pat", "", $proto);
+		sort($protocols);
+	}		
+	return $protocols;
+}
+
+function get_l7_unique_list() {
+	global $layer7_rules_list;
+	
+	$l7list = array();
+	if(is_array($layer7_rules_list)) 
+		foreach($layer7_rules_list as $l7c)
+			if($l7c->GetREnabled())
+				$l7list[] = $l7c->GetRName();
+	
+	return $l7list;
+}
+
+// Disable a removed l7 container from the filter
+function cleanup_l7_from_rules(&$name) {
+	global $config;
+
+	foreach ($config['filter']['rule'] as $key => $rule) {
+		//We have to change this
+		if ($rule['l7container'] == $name)
+			unset($config['filter']['rule'][$key]['l7container']);
+	}
+}
 
 /*
  * XXX: TODO Make a class shaper to hide all these function
@@ -3290,14 +3676,14 @@ $default_shaper_msg =	"<tr><td align=\"center\" width=\"80%\" >";
 $default_shaper_msg .= "<span class=\"vexpl\"><strong><p><b>Welcome to the pfSense Traffic Shaper.</b><br />";
 $default_shaper_msg .= "The tree on the left helps you navigate through the queues <br />";
 $default_shaper_msg .= "buttons at the bottom represent queue actions and are activated accordingly.";
-$default_shaper_ms .= " </p></strong></span>";
+$default_shaper_msg .= " </p></strong></span>";
 $default_shaper_msg .= "</td></tr>";
 
 $dn_default_shaper_msg =	"<tr><td align=\"center\" width=\"80%\" >";
 $dn_default_shaper_msg .= "<span class=\"vexpl\"><strong><p><b>Welcome to the pfSense Traffic Shaper.</b><br />";
 $dn_default_shaper_msg .= "The tree on the left helps you navigate through the queues <br />";
 $dn_default_shaper_msg .= "buttons at the bottom represent queue actions and are activated accordingly.";
-$dn_default_shaper_ms .= " </p></strong></span>";
+$dn_default_shaper_msg .= " </p></strong></span>";
 $dn_default_shaper_msg .= "</td></tr>";
 
 

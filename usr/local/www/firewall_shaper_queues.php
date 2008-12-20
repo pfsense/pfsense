@@ -188,7 +188,8 @@ include("head.inc");
 	$tab_array[0] = array("By Interface", false, "firewall_shaper.php");
 	$tab_array[1] = array("By Queue", true, "firewall_shaper_queues.php");
 	$tab_array[2] = array("Limiter", false, "firewall_shaper_vinterface.php");
-	$tab_array[3] = array("Wizards", false, "firewall_shaper_wizards.php");
+	$tab_array[3] = array("Layer7", false, "firewall_shaper_layer7.php");
+	$tab_array[4] = array("Wizards", false, "firewall_shaper_wizards.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

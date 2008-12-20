@@ -36,11 +36,11 @@ function listtags() {
    * I know it's a pain, but it's a pain to find stuff too if it's not
    */
 	$ret = explode(" ",
-		"alias aliasurl allowedip authserver bridged ca cacert cert config ".
+		"alias aliasurl allowedip authserver bridged ca cacert cert config container ".
 		"columnitem depends_on_package disk dnsserver dnsupdate domainoverrides ".
 		"dyndns earlyshellcmd element encryption-algorithm-option field ".
 		"fieldname hash-algorithm-option gateway_item gateway_group gif gre ".
-		"group hosts member interface_array item key lagg lbaction lbpool ".
+		"group hosts member interface_array item key lagg lbaction lbpool l7rules ".
 		"lbprotocol member menu tab mobilekey monitor_type mount ntpserver onetoone ".
 		"openvpn-server openvpn-client openvpn-csc " .
 		"option ppp package passthrumac phase1 phase2 priv proxyarpnet queue ".

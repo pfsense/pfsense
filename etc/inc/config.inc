@@ -2082,7 +2082,7 @@ endif;
 		/* build a list of quality databases */
 		/* roundtrip has become delay */
 		/* the roundtrip times need to be divided by 1000 to get seconds, really */
-		exec("cd $rrddbpath;/usr/bin/find -name *-quality.rrd", $databases);
+		exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
 		rsort($databases);
 		foreach($databases as $database) {
 			log_error("Upgrading rrd database {$rrddbpath}{$database}");
@@ -2100,7 +2100,7 @@ endif;
 			$xmldumptmp = "{$database}.tmp.xml";
 			$databasenew = "{$database}.new.xml";
 
-			echo "Upgrading rrd database {$rrddbpath}/{$database} \n");
+			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n");
 			/* rename DS source */
 			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass");
 			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass");

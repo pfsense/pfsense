@@ -154,16 +154,12 @@ include("head.inc");
 	    <p>One moment please...
 	<?php
 	    mwexec("cd /tmp/ && /usr/bin/openssl req -new -x509 -keyout /tmp/cakey.pem -out /tmp/cacert.pem -days 3650 -config /var/etc/ssl/openssl.cnf -passin pass:test -nodes");
-		$fd = fopen("/tmp/cacert.pem", "r");
-	    $cacert = fread($fd,8096);
-	    fclose($fd);
-	    $fd = fopen("/tmp/cakey.pem", "r");
-	    $cakey = fread($fd,8096);
-	    fclose($fd);
-	    $cacertA = ereg_replace("\r","",$cacert);
-	    $cakeyA = ereg_replace("\r","",$cakey);
-	    $cacert = ereg_replace("\n","\\n",$cacert);
-	    $cakey = ereg_replace("\n","\\n",$cakey);
+		$cacert1 = file_get_contents("/tmp/cacert.pem");
+		$cakey1  = file_get_contents("/tmp/cakey.pem");
+	    $cacertA = str_replace("\r","",$cacert1);
+	    $cakeyA = str_replace("\r","",$cakey1);
+	    $cacert = str_replace("\n","\\n",$cacertA);
+	    $cakey = str_replace("\n","\\n",$cakeyA);
 	?>
 	<script language="JavaScript">
 	<!--

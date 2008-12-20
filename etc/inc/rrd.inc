@@ -34,7 +34,7 @@ require_once("notices.inc");
 require_once("globals.inc");
 
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
-	global $rrdtool;
+	$rrdtool = "/usr/local/bin/rrdtool";
 	exec("rm {$xmldumpfile}");
 	exec("$rrdtool dump {$rrddatabase} {$xmldumpfile} 2>&1", $dumpout, $dumpret);
 	if ($dumpret <> 0) {

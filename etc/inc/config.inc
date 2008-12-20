@@ -2100,7 +2100,7 @@ endif;
 			$xmldumptmp = "{$database}.tmp.xml";
 			$databasenew = "{$database}.new.xml";
 
-			log_error("Upgrading rrd database {$rrddbpath}/{$database}");
+			echo "Upgrading rrd database {$rrddbpath}/{$database} \n");
 			/* rename DS source */
 			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass");
 			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass");
@@ -2142,6 +2142,7 @@ endif;
 			file_put_contents("{$g['tmp_path']}/{$databasenew}", $rrdxml);
 			exec("$rrdtool restore -f {$g['tmp_path']}/{$databasenew} {$rrddbpath}/{$database}");
 		}
+		enable_rrd_graphing();
 		$config['version'] = "5.5";
 	}
 

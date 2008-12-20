@@ -95,7 +95,7 @@ function setup_etc_gateways($iface="", $mode="") {
 }
 
 function start_routed() {
-	mwexec("/sbin/routed");
+	mwexec_bg("/sbin/routed");
 }
 
 function stop_routed() {

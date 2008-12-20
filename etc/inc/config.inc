@@ -2100,7 +2100,7 @@ endif;
 			$xmldumptmp = "{$database}.tmp.xml";
 			$databasenew = "{$database}.new.xml";
 
-			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n");
+			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
 			/* rename DS source */
 			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass");
 			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass");

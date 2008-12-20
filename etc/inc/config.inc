@@ -2085,7 +2085,7 @@ endif;
 		exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
 		rsort($databases);
 		foreach($databases as $database) {
-			log_error("Upgrading rrd database {$rrddbpath}{$database}");
+			log_error("Migrate RRD database {$rrddbpath}{$database}");
 			mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay ");
 		}
 		/* let apinger recreate required files */
@@ -2100,6 +2100,7 @@ endif;
 			$xmldumptmp = "{$database}.tmp.xml";
 			$xmldumpnew = "{$database}.new.xml";
 
+			log_error("Migrate RRD database {$rrddbpath}/{$database} to new format)";
 			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
 			/* rename DS source */
 			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass");

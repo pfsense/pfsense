@@ -43,9 +43,9 @@ $avail_structures = array("action","queue","limiter");
 // Available behaviours
 $avail_behaviours_action = array("block");
 read_altq_config();
-$avail_behaviours_altq = get_altq_name_list();
+$avail_behaviours_altq = get_unique_queue_list();
 read_dummynet_config();
-$avail_behaviours_limiter = get_dummynet_name_list();
+$avail_behaviours_limiter = get_unique_dnqueue_list();
 $show_proto_form = false;
 
 

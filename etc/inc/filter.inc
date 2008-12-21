@@ -854,32 +854,6 @@ function filter_nat_rules_generate()
 				$target = alias_expand($target);
 			if(alias_expand($extaddr))
 				$extaddr = alias_expand($extaddr);
-			/*
-			 *	  If FTP Proxy Helper is enabled and the
-			 *	  operator has requested a port forward to
-			 *	  a ftp server then launch a helper
-			 */
-			$dontinstallrdr = false;
-			if($target <> "") {
-				if($extport[0] == "21" and !isset($config['interfaces'][strtolower($rule['interface'])]['disableftpproxy'])) {
-					$external_address = $rule['external-address'];
-					$helpers = exec("/bin/ps awux | grep {$target} -b {$external_address} | grep -v grep");
-					if(!$helpers) {
-						if($external_address == "")
-							$external_address = find_interface_ip($natif);
-						/*	 install a ftp-proxy helper, do not set a rule.	 also use the delay filter configure run
-						 *	 routines because if this is the first bootup the filter is not completely configured
-						 *	 and thus pf is not fully running.	 otherwise we end up with: ftp-proxy: pf is disabled
-						 */
-						/* Get the ftp queue for this interface */
-						if (isset($config['interfaces'][$rule['interface']]['ftpqueue']))
-							$shaper_queue = $config['interfaces'][$rule['interface']]['ftpqueue'];
-						/* else default queue configured on shaper will get this */
-						$after_filter_configure_run[] = "/usr/local/sbin/pftpx {$shaper_queue} -f {$target} -b {$external_address} -c 21 -g 21";
-					}
-					$dontinstallrdr = true;
-				}
-			}
 			if($extaddr == "")
 				$dontinstallrdr = true;
 			if($dontinstallrdr == false) {
@@ -1096,6 +1070,28 @@ EOD;
 	if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/siproxd.inc')) {
 			require_once('siproxd.inc');
 			$natrules .= siproxd_generate_rules('nat');
+	}
+	/*   Traverse looking for 1:1 rules that have useftphelper enabled 
+	 *   This will prevent NAT from occurring and ftpsesame should pick up the rest.
+	 */
+	foreach($config['nat']['onetoone'] as $one) {
+		if($one['useftphelper']) {
+			$int = convert_friendly_interface_to_real_interface_name($one['interface']);
+			$external_address = $one['external'];
+			$internal_address = $one['internal'];
+			if($int && $external_address && $internal_address) {
+				$natrules .= "# FTP Helper binat\n";
+				$natrules .= "no binat on {$int} proto tcp from any to {$external_address} port 21\n";
+				$helpers = exec("/bin/ps awux | grep '-p 21 {$internal_address} {$external_address}' | grep -v grep");
+				if(!$helpers) {
+					/* Get the ftp queue for this interface */
+					if (isset($config['interfaces'][$rule['interface']]['ftpqueue']))
+						$shaper_queue = $config['interfaces'][$rule['interface']]['ftpqueue'];
+					/* else default queue configured on shaper will get this */
+					$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy {$shaper_queue} -p 21 {$internal_address} {$external_address} -T PFFTPPROXY");
+				}
+			}
+		}
 	}
 	$natrules .= process_carp_nat_rules();
 	$natrules .= "# IMSpector rdr anchor\n";

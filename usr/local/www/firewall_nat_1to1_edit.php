@@ -60,6 +60,7 @@ if (isset($id) && $a_1to1[$id]) {
 	else
 		$pconfig['subnet'] = $a_1to1[$id]['subnet'];
 	$pconfig['descr'] = $a_1to1[$id]['descr'];
+	$pconfig['useftphelper'] = $a_1to1[$id]['useftphelper'];
 } else {
     $pconfig['subnet'] = 32;
 	$pconfig['interface'] = "wan";
@@ -120,6 +121,7 @@ if ($_POST) {
 		$natent['internal'] = $_POST['internal'];
 		$natent['subnet'] = $_POST['subnet'];
 		$natent['descr'] = $_POST['descr'];
+		$natent['useftphelper'] = $_POST['useftphelper'];
 		$natent['interface'] = $_POST['interface'];
 		
 		if (isset($id) && $a_1to1[$id])
@@ -184,6 +186,14 @@ include("head.inc");
                     <br>
                      <span class="vexpl">Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the external subnet also applies to the internal subnet (they  have to be the same).</span></td>
                 </tr>
+
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">Use FTP-Helper</td>
+                  <td width="78%" class="vtable"> 
+                    <input name="useftphelper" type="checkbox" class="formfld unknown" id="useftphelper" <?php if($pconfig['useftphelper']) echo " CHECKED";?> > 
+                    <br><span class="vexpl">Checking this will launch a FTP Helper to assist in PASV NAT rewriting for the FTP protocol.</span></td>
+                </tr>
+
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 

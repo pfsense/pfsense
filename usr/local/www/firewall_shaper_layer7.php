@@ -234,7 +234,7 @@ var rows_limit = 0; // Set to 0 to disable limitation
 
 
 /* Build the behaviours arrays in javascript */
-var js_behaviours_action = ['allow', 'block']; //static
+var js_behaviours_action = ['block']; //static
 
 var js_behaviours_altq = new Array();
 js_behaviours_altq = array_altq(js_behaviours_altq);

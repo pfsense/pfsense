@@ -1074,6 +1074,7 @@ EOD;
 	/*   Traverse looking for 1:1 rules that have useftphelper enabled 
 	 *   This will prevent NAT from occurring and ftpsesame should pick up the rest.
 	 */
+	if (is_array($config['nat']['onetoone']))
 	foreach($config['nat']['onetoone'] as $one) {
 		if($one['useftphelper']) {
 			$int = convert_friendly_interface_to_real_interface_name($one['interface']);

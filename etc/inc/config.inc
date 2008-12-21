@@ -2082,6 +2082,7 @@ endif;
 		/* build a list of quality databases */
 		/* roundtrip has become delay */
 		/* the roundtrip times need to be divided by 1000 to get seconds, really */
+		$databases = array();
 		exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
 		rsort($databases);
 		print_r($databases);
@@ -2094,6 +2095,7 @@ endif;
 		setup_gateways_monitor();
 
 		/* build a list of traffic and packets databases */
+		$databases = array();
 		exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
 		print_r($databases);
 		rsort($databases);

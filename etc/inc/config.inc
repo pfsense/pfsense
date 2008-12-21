@@ -2089,7 +2089,7 @@ endif;
 		foreach($databases as $database) {
 			log_error("Migrate RRD database {$rrddbpath}/{$database} to new format");
 			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
-			mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay ");
+			mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 		}
 		/* let apinger recreate required files */
 		setup_gateways_monitor();
@@ -2108,8 +2108,8 @@ endif;
 			log_error("Migrate RRD database {$rrddbpath}/{$database} to new format");
 			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
 			/* rename DS source */
-			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass");
-			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass");
+			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass 2>&1");
+			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass 2>71");
 
 			/* dump contents to xml and move database out of the way */
 			dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
@@ -2145,7 +2145,7 @@ endif;
 			$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
 			$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
 			file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
-			exec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database}");
+			mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
 		}
 		enable_rrd_graphing();
 		$config['version'] = "5.5";

@@ -2086,7 +2086,8 @@ endif;
 		rsort($databases);
 		print_r($databases);
 		foreach($databases as $database) {
-			log_error("Migrate RRD database {$rrddbpath}{$database}");
+			log_error("Migrate RRD database {$rrddbpath}/{$database} to new format");
+			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
 			mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay ");
 		}
 		/* let apinger recreate required files */

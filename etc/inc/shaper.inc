@@ -3412,11 +3412,33 @@ function get_l7_unique_list() {
 function cleanup_l7_from_rules(&$name) {
 	global $config;
 
-	foreach ($config['filter']['rule'] as $key => $rule) {
-		//We have to change this
-		if ($rule['l7container'] == $name)
-			unset($config['filter']['rule'][$key]['l7container']);
-	}
+	if(is_array($config['filter']['rule']))
+		foreach ($config['filter']['rule'] as $key => $rule) {
+			if ($rule['l7container'] == $name)
+				unset($config['filter']['rule'][$key]['l7container']);
+		}
+}
+
+function get_dummynet_name_list() {
+	
+	$dn_name_list =& get_unique_dnqueue_list();
+	$dn_name = array();
+	if(is_array($dn_name_list))
+		foreach($dn_name_list as $key => $value)
+			$dn_name[] = $key;
+	
+	return $dn_name;
+	
+}
+
+function get_altq_name_list() {
+	$altq_name_list =& get_unique_queue_list();
+	$altq_name = array();
+	if(is_array($altq_name_list))
+		foreach($altq_name_list as $key => $aqobj)
+			$altq_name[] = $key;
+		
+	return $altq_name;
 }
 
 /*

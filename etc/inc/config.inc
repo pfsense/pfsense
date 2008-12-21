@@ -2084,6 +2084,7 @@ endif;
 		/* the roundtrip times need to be divided by 1000 to get seconds, really */
 		exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
 		rsort($databases);
+		print_r($databases);
 		foreach($databases as $database) {
 			log_error("Migrate RRD database {$rrddbpath}{$database}");
 			mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay ");
@@ -2093,6 +2094,7 @@ endif;
 
 		/* build a list of traffic and packets databases */
 		exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
+		print_r($databases);
 		rsort($databases);
 		foreach($databases as $database) {
 			$databasetmp = "{$database}.tmp";
@@ -2100,7 +2102,7 @@ endif;
 			$xmldumptmp = "{$database}.tmp.xml";
 			$xmldumpnew = "{$database}.new.xml";
 
-			log_error("Migrate RRD database {$rrddbpath}/{$database} to new format)";
+			log_error("Migrate RRD database {$rrddbpath}/{$database} to new format");
 			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
 			/* rename DS source */
 			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass");
@@ -2110,7 +2112,6 @@ endif;
 			dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
 
 			/* create new rrd database file */
-			echo "Create RRD database {$g['tmp_path']}/{$databasetmp}\n";
 			$rrdcreate = "$rrdtool create {$g['tmp_path']}/{$databasetmp} --step $rrdinterval ";
 			$rrdcreate .= "DS:inpass:COUNTER:$valid:0:$downstream ";
 			$rrdcreate .= "DS:outpass:COUNTER:$valid:0:$upstream ";

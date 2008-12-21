@@ -41,7 +41,7 @@ $avail_protos =& generate_protocols_array();
 $avail_structures = array("action","queue","limiter");
 
 // Available behaviours
-$avail_behaviours_action = array("allow","block");
+$avail_behaviours_action = array("block");
 read_altq_config();
 $avail_behaviours_altq = get_altq_name_list();
 read_dummynet_config();

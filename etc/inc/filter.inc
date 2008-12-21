@@ -1088,7 +1088,7 @@ EOD;
 					if (isset($config['interfaces'][$rule['interface']]['ftpqueue']))
 						$shaper_queue = $config['interfaces'][$rule['interface']]['ftpqueue'];
 					/* else default queue configured on shaper will get this */
-					$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy {$shaper_queue} -p 21 {$internal_address} {$external_address} -T PFFTPPROXY");
+					$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy {$shaper_queue} -p 21 {$internal_address} {$external_address} -T PFFTPPROXY";
 				}
 			}
 		}

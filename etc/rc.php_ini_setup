@@ -2,6 +2,7 @@
 
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
+EXTENSIONSDIR="/usr/local/lib/php/20060613/"
 
 PHPMODULES="apc \
 	bcmath \
@@ -56,7 +57,7 @@ zlib.output_compression = On
 zlib.output_compression_level = 1
 include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
 uploadprogress.file.filename_template = /tmp/uploadprogress_%s.txt
-extension_dir=/usr/local/lib/php/20060613/
+extension_dir=${EXTENSIONSDIR}
 
 ; Extensions
 EOF
@@ -71,7 +72,12 @@ for EXT in $PHPMODULES; do
 		fi
 	done
 	if [ "$SHOULDADD" = "true" ]; then
-		echo "extension=${EXT}.so" >> /usr/local/lib/php.ini
+		if [ -f "${EXTENSIONSDIR}/${EXT}.so" ]; then
+			echo "extension=${EXT}.so" >> /usr/local/lib/php.ini
+		else
+			echo ">>> WARNING!  Could not locate ${EXTENSIONSDIR}/${EXT}.so"
+			echo ">>> WARNING!  Could not locate ${EXTENSIONSDIR}/${EXT}.so <<< " | logger -p daemon.info -i -t rc.php_ini_setup
+		fi
 	fi
 done
 

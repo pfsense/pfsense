@@ -212,11 +212,11 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "CDEF:\"$curif-out_bits=$curif-out_bits_pass,$curif-out_bits_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bits_io=$curif-in_bits,$curif-out_bits,+\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bits_neg=$curif-out_bits,$multiplier,*\" ";
-	$graphcmd .= "CDEF:\"$curif-bytes_in=$curif-in_bytes,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes,IF,$average,*\" ";
-	$graphcmd .= "CDEF:\"$curif-bytes_out=$curif-out_bytes,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes,IF,$average,*\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_in=$curif-in_bytes,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes,IF,$average,*,0,+\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_out=$curif-out_bytes,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes,IF,$average,*,0,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes=$curif-bytes_in,$curif-bytes_out,+\" ";
-	$graphcmd .= "CDEF:\"$curif-bytes_in_t=$curif-in_bytes,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes,IF,$seconds,*\" ";
-	$graphcmd .= "CDEF:\"$curif-bytes_out_t=$curif-out_bytes,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes,IF,$seconds,*\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_in_t=$curif-in_bytes,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes,IF,$seconds,*,0,+\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_out_t=$curif-out_bytes,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes,IF,$seconds,*,0,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_t=$curif-bytes_in_t,$curif-bytes_out_t,+\" ";
 	$graphcmd .= "AREA:\"$curif-in_bits#$colortrafficdown:$curif-in\" ";
 	$graphcmd .= "{$AREA}:\"$curif-out_bits_neg#$colortrafficup:$curif-out\" ";
@@ -276,12 +276,12 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 		$graphcmd .= "CDEF:\"{$ifname}-out_bits={$ifname}-out_bytes,8,*\" ";
 		$graphcmd .= "CDEF:\"{$ifname}-bits_io={$ifname}-in_bits,{$ifname}-out_bits,+\" ";
 
-		$graphcmd .= "CDEF:\"{$ifname}-bytes_in={$ifname}-in_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes,IF,$average,*\" ";
-		$graphcmd .= "CDEF:\"{$ifname}-bytes_out={$ifname}-out_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-out_bytes,IF,$average,*\" ";
+		$graphcmd .= "CDEF:\"{$ifname}-bytes_in={$ifname}-in_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes,IF,$average,*,0,+\" ";
+		$graphcmd .= "CDEF:\"{$ifname}-bytes_out={$ifname}-out_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-out_bytes,IF,$average,*,0,+\" ";
 		$graphcmd .= "CDEF:\"{$ifname}-bytes={$ifname}-bytes_in,{$ifname}-bytes_out,+\" ";
 
-		$graphcmd .= "CDEF:\"{$ifname}-bytes_in_t={$ifname}-in_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes,IF,$seconds,*\" ";
-		$graphcmd .= "CDEF:\"{$ifname}-bytes_out_t={$ifname}-out_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-out_bytes,IF,$seconds,*\" ";
+		$graphcmd .= "CDEF:\"{$ifname}-bytes_in_t={$ifname}-in_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes,IF,$seconds,*,0,+\" ";
+		$graphcmd .= "CDEF:\"{$ifname}-bytes_out_t={$ifname}-out_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-out_bytes,IF,$seconds,*,0,+\" ";
 		$graphcmd .= "CDEF:\"{$ifname}-bytes_t={$ifname}-bytes_in_t,{$ifname}-bytes_out_t,+\" ";
 		if ($g > 0) {
 			$operand .= ",+";
@@ -341,12 +341,12 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "CDEF:\"$curif-in_pps=$curif-in_pps_pass,$curif-in_pps_block,*\" ";
 	$graphcmd .= "CDEF:\"$curif-out_pps=$curif-out_pps_pass,$curif-out_pps_block,*\" ";
 	$graphcmd .= "CDEF:\"$curif-out_pps_neg=$curif-out_pps,$multiplier,*\" ";
-	$graphcmd .= "CDEF:\"$curif-pps_in=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$average,*\" ";
-	$graphcmd .= "CDEF:\"$curif-pps_out=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$average,*\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_in=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$average,*,0,+\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_out=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$average,*,0,+\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_io=$curif-in_pps,$curif-out_pps,+\" ";
 	$graphcmd .= "CDEF:\"$curif-pps=$curif-pps_in,$curif-pps_out,+\" ";
-	$graphcmd .= "CDEF:\"$curif-pps_in_t=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$seconds,*\" ";
-	$graphcmd .= "CDEF:\"$curif-pps_out_t=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$seconds,*\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_in_t=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$seconds,*,0,+\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_out_t=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$seconds,*,0,+\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_t=$curif-pps_in_t,$curif-pps_out_t,+\" ";
 	$graphcmd .= "AREA:\"$curif-in_pps#$colorpacketsdown:$curif-in\" ";
 	$graphcmd .= "$AREA:\"$curif-out_pps_neg#$colorpacketsup:$curif-out\" ";

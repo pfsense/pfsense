@@ -33,10 +33,7 @@ PHPMODULES="apc \
 	xml \
 	zlib"
 
-mv /usr/local/etc/php.ini /tmp/
-mv /usr/local/lib/php.ini /tmp/
 LOADED_MODULES=`php -m | grep -v "\["`
-
 
 # Populate a dummy php.ini to avoid
 # the file being clobbered and the firewall

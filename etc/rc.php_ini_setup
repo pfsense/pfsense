@@ -34,11 +34,11 @@ mv /usr/local/etc/php.ini /tmp/
 mv /usr/local/lib/php.ini /tmp/
 LOADED_MODULES=`php -m | grep -v "\["`
 
-if [ "$PLATFORM" != "cdrom" ]; then
-	# Populate a dummy php.ini to avoid
-	# the file being clobbered and the firewall
-	# not being able to boot back up.
-	cat >/usr/local/lib/php.ini <<EOF
+
+# Populate a dummy php.ini to avoid
+# the file being clobbered and the firewall
+# not being able to boot back up.
+cat >/usr/local/lib/php.ini <<EOF
 ; File generated from /etc/rc.php_ini_setup
 output_buffering = "0"
 expose_php = Off
@@ -77,9 +77,9 @@ done
 
 RAM=`sysctl hw.realmem | awk '{print $2/1000000}' | awk -F '.' '{print $1}'`
 export RAM
-	if [  $RAM -gt 96 ]; then
+if [  $RAM -gt 96 ]; then
 
-		cat >>/usr/local/lib/php.ini <<EOF
+	cat >>/usr/local/lib/php.ini <<EOF
 
 ; APC Settings
 apc.enabled="1"
@@ -87,8 +87,6 @@ apc.enable_cli="1"
 apc.shm_size="25"
 
 EOF
-
-	fi
 
 fi
 

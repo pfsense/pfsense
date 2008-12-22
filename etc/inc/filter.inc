@@ -1083,7 +1083,7 @@ EOD;
 			if($int && $external_address && $internal_address) {
 				$natrules .= "# FTP Helper binat\n";
 				$natrules .= "no binat on {$int} proto tcp from any to {$external_address} port 21\n";
-				$helpers = exec("/bin/ps awux | grep '-p 21 {$internal_address} {$external_address}' | grep -v grep");
+				$helpers = exec("/bin/ps awux | grep \"\-p 21 {$internal_address} {$external_address}\" | grep -v grep");
 				if(!$helpers) {
 					/* Get the ftp queue for this interface */
 					if (isset($config['interfaces'][$rule['interface']]['ftpqueue']))
@@ -2444,6 +2444,5 @@ EOD;
 	}
 	return($ipfrules);
 }
-
 
 ?>

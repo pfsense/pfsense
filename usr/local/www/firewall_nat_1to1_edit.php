@@ -117,6 +117,12 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$natent = array();
+		
+		if($a_1to1[$id]['external'] != $_POST['external'] or $a_1to1[$id]['internal'] != $_POST['internal']) {			
+			$helpers = `/bin/ps awux | grep "p 21 {$a_1to1[$id]['internal']} {$a_1to1[$id]['external']}" | grep -v grep | awk '{ print $2 }'`;
+			if($helpers) 
+				exec("kill $helpers");
+		}
 		$natent['external'] = $_POST['external'];
 		$natent['internal'] = $_POST['internal'];
 		$natent['subnet'] = $_POST['subnet'];
@@ -132,7 +138,7 @@ if ($_POST) {
 		touch($d_natconfdirty_path);
 		
 		write_config();
-		
+
 		header("Location: firewall_nat_1to1.php");
 		exit;
 	}

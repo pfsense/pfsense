@@ -3,7 +3,8 @@
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
 
-PHPMODULES="bcmath \
+PHPMODULES="apc \
+	bcmath \
 	bz2 \
 	ctype \
 	curl \

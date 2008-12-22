@@ -15,7 +15,7 @@ PHPMODULES="apc \
 	libxml \
 	mbstring \
 	mhash \
-	mysql.so \
+	mysql \
 	pcntl \
 	pcre \
 	posix \

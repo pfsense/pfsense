@@ -196,8 +196,8 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
 	$graphcmd .= "--start -$seconds -e -$average --vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - $prettydb - $hperiod - $havg average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 -x \"{$scale}\" ";
 	$graphcmd .= "DEF:$curif-in_bytes_pass=$rrddbpath$curdatabase:inpass:AVERAGE ";
 	$graphcmd .= "DEF:$curif-out_bytes_pass=$rrddbpath$curdatabase:outpass:AVERAGE ";
 	$graphcmd .= "DEF:$curif-in_bytes_block=$rrddbpath$curdatabase:inblock:AVERAGE ";
@@ -212,11 +212,11 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "CDEF:\"$curif-out_bits=$curif-out_bits_pass,$curif-out_bits_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-bits_io=$curif-in_bits,$curif-out_bits,+\" ";
 	$graphcmd .= "CDEF:\"$curif-out_bits_neg=$curif-out_bits,$multiplier,*\" ";
-	$graphcmd .= "CDEF:\"$curif-bytes_in=$curif-in_bytes,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes,IF,$average,*,0,+\" ";
-	$graphcmd .= "CDEF:\"$curif-bytes_out=$curif-out_bytes,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes,IF,$average,*,0,+\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_in=$curif-in_bytes,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes,IF,$average,*\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_out=$curif-out_bytes,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes,IF,$average,*\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes=$curif-bytes_in,$curif-bytes_out,+\" ";
-	$graphcmd .= "CDEF:\"$curif-bytes_in_t=$curif-in_bytes,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes,IF,$seconds,*,0,+\" ";
-	$graphcmd .= "CDEF:\"$curif-bytes_out_t=$curif-out_bytes,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes,IF,$seconds,*,0,+\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_in_t=$curif-in_bytes,0,$speedlimit,LIMIT,UN,0,$curif-in_bytes,IF,$seconds,*\" ";
+	$graphcmd .= "CDEF:\"$curif-bytes_out_t=$curif-out_bytes,0,$speedlimit,LIMIT,UN,0,$curif-out_bytes,IF,$seconds,*\" ";
 	$graphcmd .= "CDEF:\"$curif-bytes_t=$curif-bytes_in_t,$curif-bytes_out_t,+\" ";
 	$graphcmd .= "AREA:\"$curif-in_bits#$colortrafficdown:$curif-in\" ";
 	$graphcmd .= "{$AREA}:\"$curif-out_bits_neg#$colortrafficup:$curif-out\" ";
@@ -224,7 +224,7 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "COMMENT:\"\t\t  maximum       average       current        period\\n\" ";
 	$graphcmd .= "COMMENT:\"in\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits:MAX:%7.2lf %sb/s\" ";
-	$graphcmd .= "GPRINT:\"$curif-in_bits:AVERAGE:'%7.2lf %Sb/s\" ";
+	$graphcmd .= "GPRINT:\"$curif-in_bits:AVERAGE:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits:LAST:%7.2lf %Sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-bytes_in_t:AVERAGE:'%7.2lf %sB i\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
@@ -249,8 +249,8 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 	$graphcmd .= "--start -$seconds -e -$average ";
 	$graphcmd .= "--vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - $prettydb - $hperiod - $havg average\" ";
-	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 -x \"{$scale}\" ";
 
 	$iflist = get_configured_interface_list();
 	$g = 0;
@@ -276,12 +276,12 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 		$graphcmd .= "CDEF:\"{$ifname}-out_bits={$ifname}-out_bytes,8,*\" ";
 		$graphcmd .= "CDEF:\"{$ifname}-bits_io={$ifname}-in_bits,{$ifname}-out_bits,+\" ";
 
-		$graphcmd .= "CDEF:\"{$ifname}-bytes_in={$ifname}-in_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes,IF,$average,*,0,+\" ";
-		$graphcmd .= "CDEF:\"{$ifname}-bytes_out={$ifname}-out_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-out_bytes,IF,$average,*,0,+\" ";
+		$graphcmd .= "CDEF:\"{$ifname}-bytes_in={$ifname}-in_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes,IF,$average,*\" ";
+		$graphcmd .= "CDEF:\"{$ifname}-bytes_out={$ifname}-out_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-out_bytes,IF,$average,*\" ";
 		$graphcmd .= "CDEF:\"{$ifname}-bytes={$ifname}-bytes_in,{$ifname}-bytes_out,+\" ";
 
-		$graphcmd .= "CDEF:\"{$ifname}-bytes_in_t={$ifname}-in_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes,IF,$seconds,*,0,+\" ";
-		$graphcmd .= "CDEF:\"{$ifname}-bytes_out_t={$ifname}-out_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-out_bytes,IF,$seconds,*,0,+\" ";
+		$graphcmd .= "CDEF:\"{$ifname}-bytes_in_t={$ifname}-in_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-in_bytes,IF,$seconds,*\" ";
+		$graphcmd .= "CDEF:\"{$ifname}-bytes_out_t={$ifname}-out_bytes,0,$speedlimit,LIMIT,UN,0,{$ifname}-out_bytes,IF,$seconds,*\" ";
 		$graphcmd .= "CDEF:\"{$ifname}-bytes_t={$ifname}-bytes_in_t,{$ifname}-bytes_out_t,+\" ";
 		if ($g > 0) {
 			$operand .= ",+";
@@ -320,9 +320,9 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"totals\" ";
 	$graphcmd .= "GPRINT:\"tput-bits_io:MAX:%7.2lf %sb/s\" ";
-	$graphcmd .= "GPRINT:\"tput-bits_io:AVERAGE:'%7.2lf %sb/s\" ";
-	$graphcmd .= "GPRINT:\"tput-bits_io:LAST:'%7.2lf %sb/s\" ";
-	$graphcmd .= "GPRINT:\"tput-bytes_t:AVERAGE:'%7.2lf %sB t\" ";
+	$graphcmd .= "GPRINT:\"tput-bits_io:AVERAGE:%7.2lf %sb/s\" ";
+	$graphcmd .= "GPRINT:\"tput-bits_io:LAST:%7.2lf %sb/s\" ";
+	$graphcmd .= "GPRINT:\"tput-bytes_t:AVERAGE:%7.2lf %sB t\" ";
         $graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }
@@ -332,7 +332,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "--start -$seconds -e -$average ";
 	$graphcmd .= "--vertical-label \"packets/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - $prettydb - $hperiod - $havg average\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
 	$graphcmd .= "DEF:\"$curif-in_pps_pass=$rrddbpath$curdatabase:inpass:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-out_pps_pass=$rrddbpath$curdatabase:outpass:AVERAGE\" ";
@@ -341,12 +341,12 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "CDEF:\"$curif-in_pps=$curif-in_pps_pass,$curif-in_pps_block,*\" ";
 	$graphcmd .= "CDEF:\"$curif-out_pps=$curif-out_pps_pass,$curif-out_pps_block,*\" ";
 	$graphcmd .= "CDEF:\"$curif-out_pps_neg=$curif-out_pps,$multiplier,*\" ";
-	$graphcmd .= "CDEF:\"$curif-pps_in=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$average,*,0,+\" ";
-	$graphcmd .= "CDEF:\"$curif-pps_out=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$average,*,0,+\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_in=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$average,*\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_out=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$average,*\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_io=$curif-in_pps,$curif-out_pps,+\" ";
 	$graphcmd .= "CDEF:\"$curif-pps=$curif-pps_in,$curif-pps_out,+\" ";
-	$graphcmd .= "CDEF:\"$curif-pps_in_t=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$seconds,*,0,+\" ";
-	$graphcmd .= "CDEF:\"$curif-pps_out_t=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$seconds,*,0,+\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_in_t=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$seconds,*\" ";
+	$graphcmd .= "CDEF:\"$curif-pps_out_t=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$seconds,*\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_t=$curif-pps_in_t,$curif-pps_out_t,+\" ";
 	$graphcmd .= "AREA:\"$curif-in_pps#$colorpacketsdown:$curif-in\" ";
 	$graphcmd .= "$AREA:\"$curif-out_pps_neg#$colorpacketsup:$curif-out\" ";
@@ -378,7 +378,7 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "--start -$seconds -e -$average ";
 	$graphcmd .= "--vertical-label \"snr/channel/rate\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - $prettydb - $hperiod - $havg average\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
 	$graphcmd .= "DEF:\"$curif-snr=$rrddbpath$curdatabase:snr:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-rate=$rrddbpath$curdatabase:rate:AVERAGE\" ";
@@ -411,7 +411,7 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "--start -$seconds -e -$average ";
 	$graphcmd .= "--vertical-label \"states, ip\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - $prettydb - $hperiod - $havg average\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
 	$graphcmd .= "DEF:\"$curif-pfrate=$rrddbpath$curdatabase:pfrate:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-pfstates=$rrddbpath$curdatabase:pfstates:AVERAGE\" ";
@@ -427,35 +427,35 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t      minimum        average        maximum        current         period\\n\" ";
 	$graphcmd .= "COMMENT:\"state changes\" ";
-	$graphcmd .= "GPRINT:\"$curif-pfrate:MIN:'%7.2lf %s cps\" ";
-	$graphcmd .= "GPRINT:\"$curif-pfrate:AVERAGE:'%7.2lf %s cps\" ";
-	$graphcmd .= "GPRINT:\"$curif-pfrate:MAX:'%7.2lf %s cps\" ";
-	$graphcmd .= "GPRINT:\"$curif-pfrate:LAST:'%7.2lf %S cps\" ";
+	$graphcmd .= "GPRINT:\"$curif-pfrate:MIN:%7.2lf %s cps\" ";
+	$graphcmd .= "GPRINT:\"$curif-pfrate:AVERAGE:%7.2lf %s cps\" ";
+	$graphcmd .= "GPRINT:\"$curif-pfrate:MAX:%7.2lf %s cps\" ";
+	$graphcmd .= "GPRINT:\"$curif-pfrate:LAST:%7.2lf %S cps\" ";
 	$graphcmd .= "GPRINT:\"$curif-pfrate_t:AVERAGE:'%7.2lf %s chg\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"filter states\" ";
-	$graphcmd .= "GPRINT:\"$curif-pfstates:MIN:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfstates:AVERAGE:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfstates:MAX:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfstates:LAST:'%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfstates:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfstates:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfstates:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfstates:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"nat states   \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfnat:MIN:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfnat:AVERAGE:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfnat:MAX:'%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfnat:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfnat:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfnat:MAX:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"$curif-pfnat:LAST:'%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"Source addr. \" ";
-	$graphcmd .= "GPRINT:\"$curif-srcip:MIN:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-srcip:AVERAGE:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-srcip:MAX:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-srcip:LAST:'%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-srcip:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-srcip:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-srcip:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-srcip:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"Dest. addr.  \" ";
-	$graphcmd .= "GPRINT:\"$curif-dstip:MIN:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-dstip:AVERAGE:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-dstip:MAX:'%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-dstip:LAST:'%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-dstip:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-dstip:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-dstip:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-dstip:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }
@@ -465,7 +465,7 @@ elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curd
 	$graphcmd .= "--start -$seconds -e -$average ";
 	$graphcmd .= "--vertical-label \"utilization, number\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - $prettydb - $hperiod - $havg average\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
 	$graphcmd .= "DEF:\"user=$rrddbpath$curdatabase:user:AVERAGE\" ";
 	$graphcmd .= "DEF:\"nice=$rrddbpath$curdatabase:nice:AVERAGE\" ";
@@ -517,7 +517,7 @@ elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "--start -$seconds -e -$average ";
 	$graphcmd .= "--vertical-label \"utilization, percent\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - $prettydb - $hperiod - $havg average\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
 	$graphcmd .= "DEF:\"active=$rrddbpath$curdatabase:active:AVERAGE\" ";
 	$graphcmd .= "DEF:\"inactive=$rrddbpath$curdatabase:inactive:AVERAGE\" ";
@@ -569,7 +569,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "--start -$seconds -e -$average ";
 	$graphcmd .= "--vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - $prettydb - $hperiod - $havg average\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
 	if ($altq) {
 		$a_queues =& $altq->get_queue_list();
@@ -597,7 +597,7 @@ elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd .= "--start -$seconds -e -$average ";
 	$graphcmd .= "--vertical-label \"drops / sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
-	$graphcmd .= "--title \"`hostname` - $prettydb - $hperiod - $havg average\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
 	if ($altq) {
 		$a_queues =& $altq->get_queue_list();
@@ -624,7 +624,7 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 	/* make a link quality graphcmd, we only have WAN for now, others too follow */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
 		--start -$seconds -e -$average \\
-		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
+		--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" \\
 		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--vertical-label \"ms / %\" \\
 		--height 200 --width 620 \\
@@ -660,7 +660,7 @@ elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdataba
 	/* graph a spamd statistics graph */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
 	$graphcmd .= "--start -$seconds -e -$average ";
-	$graphcmd .= "--title \"`hostname` - $prettydb - $hperiod - $havg average\" ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--vertical-label=\"Conn / Time, sec.\" ";
 	$graphcmd .= "--height 200 --width 620 --no-gridfit ";

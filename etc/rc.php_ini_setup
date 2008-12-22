@@ -39,7 +39,7 @@ if [ "$PLATFORM" != "cdrom" ]; then
 	# the file being clobbered and the firewall
 	# not being able to boot back up.
 	cat >/usr/local/lib/php.ini <<EOF
-# File generated from /etc/rc
+; File generated from /etc/rc.php_ini_setup
 output_buffering = "0"
 expose_php = Off
 implicit_flush = true
@@ -58,6 +58,7 @@ include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pk
 uploadprogress.file.filename_template = /tmp/uploadprogress_%s.txt
 extension_dir=/usr/local/lib/php/20060613/
 
+; Extensions
 EOF
 
 # Loop through and generate modules to load.
@@ -80,6 +81,7 @@ export RAM
 
 		cat >>/usr/local/lib/php.ini <<EOF
 
+; APC Settings
 apc.enabled="1"
 apc.enable_cli="1"
 apc.shm_size="25"

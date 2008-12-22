@@ -15,6 +15,7 @@ PHPMODULES="apc \
 	libxml \
 	mbstring \
 	mhash \
+	mysql.so \
 	pcntl \
 	pcre \
 	posix \
@@ -26,7 +27,8 @@ PHPMODULES="apc \
 	sysvmsg \
 	sysvsem \
 	sysvshm \
-	tokenizer 
+	sqlite \
+	tokenizer \ 
 	uploadprogress \
 	xml \
 	zlib"

@@ -83,13 +83,13 @@ if ($_POST) {
 	if (($_POST['internal'] && !is_ipaddr($_POST['internal']))) {
 		$input_errors[] = "A valid internal subnet must be specified.";
 	}
-	
+
 	if (is_ipaddr($config['interfaces']['wan']['ipaddr'])) {
 		if (check_subnets_overlap($_POST['external'], $_POST['subnet'], 
 				$config['interfaces']['wan']['ipaddr'], 32))
 			$input_errors[] = "The WAN IP address may not be used in a 1:1 rule.";
 	}
-	
+
 	/* check for overlaps with other 1:1 */
 	foreach ($a_1to1 as $natent) {
 		if (isset($id) && ($a_1to1[$id]) && ($a_1to1[$id] === $natent))
@@ -103,7 +103,7 @@ if ($_POST) {
 			//break;
 		}
 	}
-	
+
 	/* check for overlaps with advanced outbound NAT */
 	if (is_array($config['nat']['advancedoutbound']['rule'])) {
 		foreach ($config['nat']['advancedoutbound']['rule'] as $natent) {
@@ -117,11 +117,15 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$natent = array();
-		
-		if($a_1to1[$id]['external'] != $_POST['external'] or $a_1to1[$id]['internal'] != $_POST['internal']) {			
-			$helpers = `/bin/ps awux | grep "p 21 {$a_1to1[$id]['internal']} {$a_1to1[$id]['external']}" | grep -v grep | awk '{ print $2 }'`;
-			if($helpers) 
-				exec("kill $helpers");
+
+		/* Is there a ftp-proxy process running?  Kill it off if the items IP is changing. */
+		if($a_1to1[$id]['useftphelper']) {
+			if($a_1to1[$id]['external'] != $_POST['external'] or 
+				$a_1to1[$id]['internal'] != $_POST['internal'] or !$_POST['useftphelper']) {
+				$helpers = `/bin/ps awux | grep "p 21 {$a_1to1[$id]['internal']} {$a_1to1[$id]['external']}" | grep -v grep | awk '{ print $2 }'`;
+				if($helpers) 
+					exec("kill $helpers");
+			}
 		}
 		$natent['external'] = $_POST['external'];
 		$natent['internal'] = $_POST['internal'];
@@ -129,14 +133,14 @@ if ($_POST) {
 		$natent['descr'] = $_POST['descr'];
 		$natent['useftphelper'] = $_POST['useftphelper'];
 		$natent['interface'] = $_POST['interface'];
-		
+
 		if (isset($id) && $a_1to1[$id])
 			$a_1to1[$id] = $natent;
 		else
 			$a_1to1[] = $natent;
-		
+
 		touch($d_natconfdirty_path);
-		
+
 		write_config();
 
 		header("Location: firewall_nat_1to1.php");

@@ -3,9 +3,31 @@
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
 
-PHPMODULES="pcre bz2 bcmath ctype curl gettext mbstring mhash \
-pcntl posix readline session shmop sysvmsg sysvsem sysvshm \
-tokenizer xml ldap zlib uploadprogress"
+PHPMODULES="bcmath \
+	bz2 \
+	ctype \
+	curl \
+	date \
+	gettext \
+	ldap \
+	libxml \
+	mbstring \
+	mhash \
+	pcntl \
+	pcre \
+	posix \
+	readline \
+	Reflection \
+	session \
+	shmop \
+	standard \
+	sysvmsg \
+	sysvsem \
+	sysvshm \
+	tokenizer 
+	uploadprogress \
+	xml \
+	zlib"
 
 mv /usr/local/etc/php.ini /tmp/
 mv /usr/local/lib/php.ini /tmp/

@@ -106,7 +106,17 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 			$vcountnew = count($rrdnewxml['rra'][$i]['database']['row'][$k]['v']);
 			foreach($row['v'] as $value) {
 				if(empty($rrdoldxml['rra'][$i]['database']['row'][$k]['v'][$m])) {
-					$rrdoldxml['rra'][$i]['database']['row'][$k]['v'][$m] = $rrdnewxml['rra'][$i]['database']['row'][$k]['v'][$m];
+					if(isset($valid)) {
+						$rrdoldxml['rra'][$i]['database']['row'][$k]['v'][$m] = "0.0000000000e+00 ";
+					} else {
+						$rrdoldxml['rra'][$i]['database']['row'][$k]['v'][$m] = $rrdnewxml['rra'][$i]['database']['row'][$k]['v'][$m];
+					}
+				} else {
+					if($value <> " NaN ") {
+						$valid = true;
+					} else {
+						$valid = false;
+					}
 				}
 				$m++;
 			}

@@ -2085,7 +2085,6 @@ endif;
 		$databases = array();
 		exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
 		rsort($databases);
-		print_r($databases);
 		foreach($databases as $database) {
 			log_error("Migrate RRD database {$rrddbpath}/{$database} to new format");
 			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
@@ -2097,7 +2096,6 @@ endif;
 		/* build a list of traffic and packets databases */
 		$databases = array();
 		exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
-		print_r($databases);
 		rsort($databases);
 		foreach($databases as $database) {
 			$databasetmp = "{$database}.tmp";

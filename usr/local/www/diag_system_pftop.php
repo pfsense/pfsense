@@ -59,11 +59,11 @@ else
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
+<form method="post" action="diag_system_pftop.php">
 <script type="text/javascript">
 	function getcpuactivity() {
 		var url = "/diag_system_pftop.php";
-		var pars = 'getactivity=yes';
+		var pars = 'getactivity=yes&sorttype=' + $('sorttype').value;
 		var myAjax = new Ajax.Request(
 			url,
 			{

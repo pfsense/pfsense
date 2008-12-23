@@ -62,6 +62,7 @@ PHPMODULES="apc \
 	sysvmsg \
 	sysvsem \
 	sysvshm \
+	sqlite \
 	tokenizer \ 
 	uploadprogress \
 	xml \
@@ -143,3 +144,33 @@ fi
 
 # Copy php.ini file to etc/ too (cli)
 cp /usr/local/lib/php.ini /usr/local/etc/php.ini
+
+# Remove old log file if it exists.
+if [ -f /var/run/php_modules_load_errors.txt ]; then
+	rm /var/run/php_modules_load_errors.txt
+fi 
+
+# Check loaded modules and remove anything that did not load correctly
+LOADED_MODULES=`php -m 2>/dev/null | grep -v "\["`
+for EXT in $PHPMODULES; do
+	SHOULDREMOVE="true"
+	for LM in $LOADED_MODULES; do
+		if [ "$EXT" = "$LM" ]; then
+			SHOULDREMOVE="false"
+		fi		
+	done
+	if [ "$SHOULDREMOVE" = "true" ]; then
+		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
+			echo ">>> ${EXT} did not load correctly.  Removing from php.ini..." >> /var/run/php_modules_load_errors.txt
+			cat /usr/local/lib/php.ini | grep -v $EXT > /tmp/php.ini
+			mv /tmp/php.ini /usr/local/lib/php.ini
+		fi
+	fi
+done
+
+# Copy php.ini file to etc/ too (cli)
+cp /usr/local/lib/php.ini /usr/local/etc/php.ini
+
+
+
+

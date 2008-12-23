@@ -563,7 +563,7 @@ function filter_nat_rules_generate()
 	if (is_array($config['nat']['onetoone']))
 	foreach($config['nat']['onetoone'] as $one) {
 		if($one['useftphelper']) {
-			$int = convert_friendly_interface_to_real_interface_name($one['interface']);
+			$int = $FilterIflist[$one['interface']]['if'];
 			$external_address = $one['external'];
 			$internal_address = $one['internal'];
 			if($int && $external_address && $internal_address) {

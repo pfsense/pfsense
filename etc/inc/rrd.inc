@@ -35,7 +35,9 @@ require_once("globals.inc");
 
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	$rrdtool = "/usr/local/bin/rrdtool";
-	exec("rm {$xmldumpfile}");
+	if(file_exists($xmldumpfile))
+		exec("rm {$xmldumpfile}");
+
 	exec("$rrdtool dump {$rrddatabase} {$xmldumpfile} 2>&1", $dumpout, $dumpret);
 	if ($dumpret <> 0) {
 		$dumpout = implode(" ", $dumpout);

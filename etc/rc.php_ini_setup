@@ -111,9 +111,6 @@ for EXT in $PHPMODULES; do
 		# Ensure extension exists before adding.
 		if [ -f "${EXTENSIONSDIR}/${EXT}.so" ]; then
 			echo "extension=${EXT}.so" >> /usr/local/lib/php.ini
-		else
-			echo ">>> WARNING!  Could not locate ${EXTENSIONSDIR}/${EXT}.so"
-			echo ">>> WARNING!  Could not locate ${EXTENSIONSDIR}/${EXT}.so <<< " | logger -p daemon.info -i -t rc.php_ini_setup
 		fi
 	fi
 done

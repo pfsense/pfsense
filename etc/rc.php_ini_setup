@@ -51,6 +51,7 @@ PHPMODULES="apc \
 	mbstring \
 	mhash \
 	mysql \
+	openssl \
 	pcntl \
 	pcre \
 	posix \

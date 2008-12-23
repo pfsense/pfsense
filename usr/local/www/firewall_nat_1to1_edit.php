@@ -154,6 +154,7 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_1to1_edit.php" method="post" name="iform" id="iform">
@@ -181,7 +182,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq">External subnet</td>
                   <td width="78%" class="vtable"> 
                     <input name="external" type="text" class="formfld unknown" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>">
-                    <select name="subnet" class="formselect" id="subnet">
+                    <select name="subnet" class="formselect" id="subnet" onChange="hideshow_ftphelper();">
                       <?php for ($i = 32; $i >= 0; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>>
                       <?=$i;?>
@@ -198,14 +199,12 @@ include("head.inc");
                     <br>
                      <span class="vexpl">Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the external subnet also applies to the internal subnet (they  have to be the same).</span></td>
                 </tr>
-
-                <tr> 
+                <tr id="ftphelperrow"> 
                   <td width="22%" valign="top" class="vncell">Use FTP-Helper</td>
                   <td width="78%" class="vtable"> 
                     <input name="useftphelper" type="checkbox" class="formfld unknown" id="useftphelper" <?php if($pconfig['useftphelper']) echo " CHECKED";?> > 
                     <br><span class="vexpl">Checking this will launch a FTP Helper to assist in PASV NAT rewriting for the FTP protocol.</span></td>
                 </tr>
-
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
@@ -223,6 +222,18 @@ include("head.inc");
                   </td>
                 </tr>
               </table>
+<script type="text/javascript">
+	function hideshow_ftphelper() {
+		if($('subnet').value == '32') {
+			$('ftphelperrow').show();
+		} else {
+			$('ftphelperrow').hide();
+			$('useftphelper').checked = false;
+		}
+
+	}
+	hideshow_ftphelper();
+</script>
 </form>
 <?php include("fend.inc"); ?>
 </body>

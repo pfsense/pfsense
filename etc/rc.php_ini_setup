@@ -62,7 +62,6 @@ PHPMODULES="apc \
 	sysvmsg \
 	sysvsem \
 	sysvshm \
-	sqlite \
 	tokenizer \ 
 	uploadprogress \
 	xml \

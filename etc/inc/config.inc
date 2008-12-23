@@ -2081,6 +2081,12 @@ endif;
 
 		/* build a list of quality databases */
 		/* roundtrip has become delay */
+		function divide_delay($delayval) {
+			$delayval = floatval($delayval);
+			$delayval = ($delayval / 1000);
+			$delayval = " ". sprintf("%1.10e", $delayval) ." ";
+			return $delayval;
+		}
 		/* the roundtrip times need to be divided by 1000 to get seconds, really */
 		$databases = array();
 		exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
@@ -2089,6 +2095,25 @@ endif;
 			log_error("Migrate RRD database {$rrddbpath}/{$database} to new format");
 			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
 			mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
+
+			dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
+			$rrdold = parse_xml_config_raw("{$g['tmp_path']}/{$xmldump}", "rrd");
+
+			$i = 0;
+			foreach($rrdold['rra'] as $rra) {
+				$l = 0;
+				foreach($rra['database']['row'] as $row) {
+					$vnew = divide_delay($row['v'][1]);
+					$rrdold['rra'][$i]['database']['row'][$l]['v'][1] = $vnew;
+					$l++;
+				}
+				$i++;
+			}
+
+			$rrdxml = dump_xml_config_raw($rrdold, "rrd");
+			file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
+			mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+
 		}
 		/* let apinger recreate required files */
 		setup_gateways_monitor();

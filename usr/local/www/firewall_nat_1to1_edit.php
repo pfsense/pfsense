@@ -122,7 +122,7 @@ if ($_POST) {
 		if($a_1to1[$id]['useftphelper']) {
 			if($a_1to1[$id]['external'] != $_POST['external'] or 
 				$a_1to1[$id]['internal'] != $_POST['internal'] or !$_POST['useftphelper']) {
-				$helpers = `/bin/ps awux | grep "p 21 {$a_1to1[$id]['internal']} {$a_1to1[$id]['external']}" | grep -v grep | awk '{ print $2 }'`;
+				$helpers = `/bin/ps awux | grep "p 21 -R {$a_1to1[$id]['internal']} -b {$a_1to1[$id]['external']}" | grep -v grep | awk '{ print $2 }'`;
 				if($helpers) 
 					exec("kill $helpers");
 			}

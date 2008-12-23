@@ -2951,7 +2951,7 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				exec("$rrdtool update $rrddbpath$ifname$traffic N:U:U");
+				exec("$rrdtool update $rrddbpath$ifname$traffic N:U:U:U:U");
 			}
 
 			$rrdupdatesh .= "\n";
@@ -2985,7 +2985,7 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				exec("$rrdtool update $rrddbpath$ifname$packets N:U:U");
+				exec("$rrdtool update $rrddbpath$ifname$packets N:U:U:U:U");
 			}
 
 			$rrdupdatesh .= "\n";

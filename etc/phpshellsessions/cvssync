@@ -43,6 +43,8 @@ function post_cvssync_commands() {
 }
 
 function check_php_status() {
+	if(file_exists("/etc/rc.php_ini_setup"))
+		exec("/etc/rc.php_ini_setup");
 	echo "===> Ensuring that PHP is working before going further...";
 	$test_php = `php -v`;
 	if(!strstr($test_php, "PHP")) {

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>5.2</version>
+	<version>5.5</version>
 	<lastchange></lastchange>
 	<theme>nervecenter</theme>
 	<sysctl>
@@ -782,4 +782,7 @@
 		</wolentry>
 		-->
 	</wol>
+	<rrd>
+		<enable/>
+	</rrd>
 </pfsense>

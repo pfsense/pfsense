@@ -96,7 +96,7 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists("/tmp/vlanchanged")) { 
-	print_info_box("VLAN configuration has changed.  WARNING: You may need to <a href='system_reboot.php'>reboot</a> for
+	print_info_box("VLAN configuration has changed.  WARNING: You may need to <a href='reboot.php'>reboot</a> for
 		the changes to take effect.");
 	mwexec("/bin/rm /tmp/vlanchanged");
 }

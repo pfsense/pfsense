@@ -2095,8 +2095,8 @@ endif;
 			$xmldump = "{$database}.old.xml";
 			$xmldumpnew = "{$database}.new.xml";
 
-			log_error("Migrate RRD database {$rrddbpath}/{$database} to new format");
-			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
+			log_error("Migrate RRD database {$database} to new format");
+			echo "Migrate RRD database {$database} to new format \n";
 			mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
 			dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
@@ -2131,8 +2131,8 @@ endif;
 			$xmldumptmp = "{$database}.tmp.xml";
 			$xmldumpnew = "{$database}.new.xml";
 
-			log_error("Migrate RRD database {$rrddbpath}/{$database} to new format");
-			echo "Migrate RRD database {$rrddbpath}/{$database} to new format \n";
+			log_error("Migrate RRD database {$database} to new format");
+			echo "Migrate RRD database {$database} to new format \n";
 			/* rename DS source */
 			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass 2>&1");
 			mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass 2>71");

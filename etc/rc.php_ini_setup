@@ -30,6 +30,13 @@ PLATFORM=`cat /etc/platform`
 EXTENSIONSDIR="/usr/local/lib/php/20060613/"
 APCSHMEMSIZE="25"
 
+# Set upload directory
+if [ "$PLATFORM" = "embedded" ]; then
+	UPLOADTMPDIR="/root"
+else 
+	UPLOADTMPDIR="/tmp"
+fi
+
 # Define php modules.  Do not add .so, it will  
 # be done automatically by the script below.
 PHPMODULES="apc \
@@ -77,7 +84,7 @@ max_execution_time = 99999999
 max_input_time = 99999999
 register_argc_argv = On
 file_uploads = On
-upload_tmp_dir = /tmp
+upload_tmp_dir = ${UPLOADTMPDIR}
 upload_max_filesize = 100M
 post_max_size = 100M
 html_errors = Off

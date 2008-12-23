@@ -569,13 +569,13 @@ function filter_nat_rules_generate()
 			if($int && $external_address && $internal_address) {
 				$natrules .= "# FTP Helper binat\n";
 				$natrules .= "no binat on {$int} proto tcp from any to {$external_address} port 21\n";
-				$helpers = exec("/bin/ps awux | grep \"\-p 21 -R {$internal_address} -b {$external_address}\" | grep -v grep");
+				$helpers = exec("/bin/ps awux | /usr/bin/grep \"p 21 -R {$internal_address} -b {$external_address}\" | /usr/bin/grep -v grep");
 				if(!$helpers) {
 					/* Get the ftp queue for this interface */
 					if (isset($config['interfaces'][$rule['interface']]['ftpqueue']))
-						$shaper_queue = $config['interfaces'][$rule['interface']]['ftpqueue'];
+						$shaper_queue = "-q " . $config['interfaces'][$rule['interface']]['ftpqueue'];
 					/* else default queue configured on shaper will get this */
-					$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy {$shaper_queue} -p 21 -R {$internal_address} -b {$external_address} -T PFFTPPROXY";
+					$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy {$shaper_queue} -p 21 -R {$internal_address} -b {$external_address} -T PFFTPPROXY {$shaper_queue}";
 				}
 			}
 		}

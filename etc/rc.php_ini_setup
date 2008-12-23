@@ -69,7 +69,13 @@ PHPMODULES="apc \
 	zlib"
 
 # Get a loaded module list in the stock php
-LOADED_MODULES=`php -m | grep -v "\[" | grep "[a-z][A-Z]"`
+if [ -f /usr/local/etc/php.ini ]; then
+	rm /usr/local/etc/php.ini
+fi
+if [ -f /usr/local/lib/php.ini ]; then
+	rm /usr/local/lib/php.ini
+fi
+LOADED_MODULES=`php -m | grep -v "\["`
 
 # Populate a dummy php.ini to avoid
 # the file being clobbered and the firewall
@@ -109,7 +115,7 @@ for EXT in $PHPMODULES; do
 	done
 	if [ "$SHOULDADD" = "true" ]; then
 		# Ensure extension exists before adding.
-		if [ -f "${EXTENSIONSDIR}/${EXT}.so" ]; then
+		if [ -f "${EXTENSIONSDIR}${EXT}.so" ]; then
 			echo "extension=${EXT}.so" >> /usr/local/lib/php.ini
 		fi
 	fi

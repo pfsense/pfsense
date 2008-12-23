@@ -558,7 +558,7 @@ function filter_nat_rules_generate()
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
 	update_filter_reload_status("Creating 1:1 rules...");
 	/*   Traverse looking for 1:1 rules that have useftphelper enabled 
-	 *   This will prevent NAT from occurring and ftpsesame should pick up the rest.
+	 *   This will prevent NAT from occurring and ftp-proxy should pick up the rest.
 	 */
 	if (is_array($config['nat']['onetoone']))
 	foreach($config['nat']['onetoone'] as $one) {

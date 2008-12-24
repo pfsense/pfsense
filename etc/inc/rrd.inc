@@ -111,7 +111,7 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 		$rowsdata = $rows;
 		$rowsempty = array();
 		$r = 0;
-		while($r < $rowcountdiff)
+		while($r < $rowcountdiff) {
 			$rowsempty[] = $rrdnewxml['rra'][$i]['database']['row'][$r];
 			$r++;
 		}

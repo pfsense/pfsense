@@ -140,6 +140,8 @@ function filter_configure_sync() {
 	$altq_queues = filter_generate_altq_queues();
 	update_filter_reload_status("Generating Limiter rules");
 	$dummynet_rules = filter_generate_dummynet_rules();
+	update_filter_reload_status("Generating Layer7 rules");
+	generate_layer7_files();
 	if ($g['booting'] == true)
 		echo ".";
 	update_filter_reload_status("Loading filter rules");
@@ -380,6 +382,8 @@ function generate_optcfg_array()
 		$mt = microtime();
 		echo "generate_optcfg_array() being called $mt\n";
 	}
+
+	read_layer7_config();
 	/* if list */
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdetail) {
@@ -1122,6 +1126,7 @@ function generate_user_filter_rule($rule)
 {
 	global $config, $g, $FilterIflist, $GatewaysList, $GatewayGroupsList;
 	global $table_cache;
+	global $layer7_rules_list;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "generate_user_filter_rule() being called $mt\n";
@@ -1503,6 +1508,15 @@ function generate_user_filter_rule($rule)
 			}
 		}
 	}
+	//Layer7 support
+	$l7_present = false;
+	$l7_structures = array();
+	if(isset($rule['l7container']) && $rule['l7container'] != "none") {
+		$l7_present = true;
+		$l7rule =& $layer7_rules_list[$rule['l7container']];
+		$l7_structures = $l7rule->get_unique_structures();
+		$aline['divert'] = "divert " . $l7rule->GetRPort() . " ";
+	}
 	if (($rule['protocol'] == "icmp") && $rule['icmptype']) {
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
 	}
@@ -1547,13 +1561,14 @@ function generate_user_filter_rule($rule)
 		} else {
 			$aline['flags'] = "keep state ";
 		}
-		if($noadvoptions == false) 
+		if($noadvoptions == false || $l7_present) 
 			if( isset($rule['source-track']) and $rule['source-track'] <> "" or
 			  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
 			   isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or
 				isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or
 				 isset($rule['max-src-states']) and $rule['max-src-states'] <> "" or
-				  isset($rule['statetimeout']) and $rule['statetimeout'] <> "") {
+				  isset($rule['statetimeout']) and $rule['statetimeout'] <> "" or
+				   isset($rule['l7container']) and $rule['l7container']['name'] != "none") {
 					$aline['flags'] .= "( ";
 					if(isset($rule['source-track']) and $rule['source-track'] <> "")
 						$aline['flags'] .= "source-track rule ";
@@ -1567,6 +1582,21 @@ function generate_user_filter_rule($rule)
 				   	 and isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "") {
 						$aline['flags'] .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
 						$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
+					}
+					if(isset($rule['l7container']) && $rule['l7container']['name'] != "none" && !empty($l7_structures)) {
+						$aline['flags'] .= "max-packets 5, ";
+						if($l7_structures['action']) {
+							$aline['flags'] .= "overload action diverttag ";
+							unset($l7_structures['action']);
+						} 
+						if($l7_structures['dummynet']) {
+							$aline['flags'] .= "overload dummynet diverttag ";
+							unset($l7_structures['dummynet']);
+						} 
+						if($l7_structures['altq']) {
+							$aline['flags'] .= "overload altq diverttag ";
+							unset($l7_structures['altq']);
+						}
 					}
 					$aline['flags'] .= " ) ";
 				}

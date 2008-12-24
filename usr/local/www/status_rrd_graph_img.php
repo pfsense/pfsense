@@ -338,8 +338,8 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd .= "DEF:\"$curif-out_pps_pass=$rrddbpath$curdatabase:outpass:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-in_pps_block=$rrddbpath$curdatabase:inblock:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-out_pps_block=$rrddbpath$curdatabase:outblock:AVERAGE\" ";
-	$graphcmd .= "CDEF:\"$curif-in_pps=$curif-in_pps_pass,$curif-in_pps_block,*\" ";
-	$graphcmd .= "CDEF:\"$curif-out_pps=$curif-out_pps_pass,$curif-out_pps_block,*\" ";
+	$graphcmd .= "CDEF:\"$curif-in_pps=$curif-in_pps_pass,$curif-in_pps_block,+\" ";
+	$graphcmd .= "CDEF:\"$curif-out_pps=$curif-out_pps_pass,$curif-out_pps_block,+\" ";
 	$graphcmd .= "CDEF:\"$curif-out_pps_neg=$curif-out_pps,$multiplier,*\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_in=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$average,*\" ";
 	$graphcmd .= "CDEF:\"$curif-pps_out=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$average,*\" ";

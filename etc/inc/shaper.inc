@@ -3366,6 +3366,7 @@ function generate_layer7_files() {
     if (!empty($layer7_rules_list)) {
 	mwexec("kldload ipdivert.ko");
         mwexec("killall -9 ipfw-classifyd");
+	mwexec("rm -f /tmp/*.l7");
     }
     
     foreach($layer7_rules_list as $l7rules) {
@@ -3379,8 +3380,9 @@ function generate_layer7_files() {
             fwrite($fp,$rules);
             fclose($fp);
             
-            $ipfw_classifyd_init = "ipfw-classifyd -c " . $path . " -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
-            mwexec($ipfw_classifyd_init);
+	    // XXX: Hardcoded number of packets to garbage collect.
+            $ipfw_classifyd_init = "/usr/local/sbin/ipfw-classifyd -n 5 -c {$path} -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
+            mwexec_bg($ipfw_classifyd_init);
         }
     }
 }

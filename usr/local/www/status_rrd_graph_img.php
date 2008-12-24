@@ -183,10 +183,10 @@ function humantime($timestamp){
 	for($j = 0; $difference >= $lengths[$j]; $j++) {
 		$difference /= $lengths[$j];
 		$difference = round($difference);
-		if($difference != 1) {
-			$periods[$j].= "s";
-			$text = "$difference $periods[$j]";
-		}
+	}
+	if($difference != 1) {
+		$periods[$j].= "s";
+		$text = "$difference $periods[$j]";
 	}	
 	return $text;
 }

@@ -186,8 +186,8 @@ function humantime($timestamp){
 	}
 	if($difference != 1) {
 		$periods[$j].= "s";
-		$text = "$difference $periods[$j]";
 	}	
+	$text = "$difference $periods[$j]";
 	return $text;
 }
 

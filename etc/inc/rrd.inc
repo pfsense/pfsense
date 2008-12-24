@@ -70,6 +70,10 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 	foreach($rrdnewxml['ds'] as $ds) {
 		if(!is_array($rrdoldxml['ds'][$i])) {
 			$rrdoldxml['ds'][$i] = $rrdnewxml['ds'][$i];
+			/* set unknown values to 0 */
+			$rrdoldxml['ds'][$i]['last_ds'] = " 0.0000000000e+00 ";
+			$rrdoldxml['ds'][$i]['value'] = " 0.0000000000e+00 ";
+			$rrdoldxml['ds'][$i]['unknown_sec'] = "0";
 		}
 		$i++;
 	}
@@ -89,6 +93,10 @@ function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
 		foreach($cdp_prep['ds'] as $ds) {
 			if(!is_array($rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d])) {
 				$rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d] = $rrdnewxml['rra'][$i]['cdp_prep']['ds'][$d];
+				$rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d]['primary_value'] = " 0.0000000000e+00 ";
+				$rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d]['secondary_value'] = " 0.0000000000e+00 ";
+				$rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d]['value'] = " 0.0000000000e+00 ";
+				$rrdoldxml['rra'][$i]['cdp_prep']['ds'][$d]['unknown_datapoints'] = "0";
 			}
 			$d++;
 		}

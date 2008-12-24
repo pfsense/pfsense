@@ -257,8 +257,7 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 				create_new_rrd($rrdcreate);
 			}
@@ -284,8 +283,7 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 				create_new_rrd($rrdcreate);
 			}
@@ -311,8 +309,7 @@ function enable_rrd_graphing() {
 					$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 	
 					create_new_rrd($rrdcreate);
 				}
@@ -362,8 +359,7 @@ function enable_rrd_graphing() {
 						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 						$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 						$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-						$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-						$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 						create_new_rrd($rrdcreate);
 					}
@@ -379,8 +375,7 @@ function enable_rrd_graphing() {
 						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 						$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 						$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-						$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-						$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 						create_new_rrd($rrdcreate);
 					}
@@ -453,8 +448,7 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 				create_new_rrd($rrdcreate);
 			}
@@ -488,8 +482,7 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 
 				create_new_rrd($rrdcreate);
 			}
@@ -519,15 +512,15 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
 				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
 				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:720:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:720:3000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
 				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
 				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:720:1000";
+				$rrdcreate .= "RRA:MAX:0.5:720:3000";
 
 				create_new_rrd($rrdcreate);
 			}
@@ -555,18 +548,15 @@ function enable_rrd_graphing() {
 					$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
 					$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
 					$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
-					$rrdcreate .= "RRA:MIN:0.5:720:1000 ";
-					$rrdcreate .= "RRA:MIN:0.5:1440:1500 ";
+					$rrdcreate .= "RRA:MIN:0.5:720:3000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-					$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
 					$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
 					$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
 					$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
-					$rrdcreate .= "RRA:MAX:0.5:720:1000 ";
-					$rrdcreate .= "RRA:MAX:0.5:1440:1500 ";
+					$rrdcreate .= "RRA:MAX:0.5:720:3000 ";
 
 					create_new_rrd($rrdcreate);
 				}

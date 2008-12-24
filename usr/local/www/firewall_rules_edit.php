@@ -136,6 +136,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['ackqueue'] = $a_filter[$id]['ackqueue'];
 	$pconfig['dnpipe'] = $a_filter[$id]['dnpipe'];
 	$pconfig['pdnpipe'] = $a_filter[$id]['pdnpipe'];
+	$pconfig['l7container'] = $a_filter[$id]['l7container'];
 
 	//schedule support
 	$pconfig['sched'] = $a_filter[$id]['sched'];
@@ -328,6 +329,10 @@ if ($_POST) {
 		else if ($dnpipe[0] == "?" && $pdnpipe[0] <> "?")
 			$input_errors[] = "You cannot select one queue and one virtual interface for IN and Out. both must be from the same type.";
 	}
+	if($_POST['l7container'] && $_POST['l7container'] != "none") {
+		if(!($_POST['proto'] == "tcp" || $_POST['proto'] == "udp" || $_POST['proto'] == "tcp/udp"))
+			$input_errors[] = "You can only select a layer7 container for tcp and/or udp protocols";
+	}
 
 	if (!$input_errors) {
 		$filterent = array();
@@ -419,6 +424,10 @@ if ($_POST) {
 				$filterent['pdnpipe'] = $_POST['pdnpipe'];
 		}
 
+		if (isset($_POST['l7container']) && $_POST['l7container'] != "none") {
+			$filterent['l7container'] = $_POST['l7container'];
+		}
+		
 		if ($_POST['sched'] != "") {
 			$filterent['sched'] = $_POST['sched'];
 		}
@@ -1101,6 +1110,31 @@ include("head.inc");
 			</select>
 				<br />
 				<span class="vexpl">Choose the Acknowledge Queue only if you have selected Queue.</span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Layer7</td>
+			<td width="78%" class="vtable">
+			<select name="l7container">
+<?php
+		read_layer7_config();
+		$l7clist =& get_l7_unique_list();
+		if (!is_array($l7clist))
+			$dnqlist = array();
+		echo "<option value=\"none\"";
+		echo " >none</option>";
+		foreach ($l7clist as $l7ckey) {
+			echo "<option value=\"{$l7ckey}\"";
+			if ($l7ckey == $pconfig['l7container']) {
+				echo " SELECTED";
+			}
+			echo ">{$l7ckey}</option>"; 
+		}
+?>
+			</select>			
+				<br/>
+				<span class="vexpl">Choose a Layer7 container to apply application protocol inspection rules.
+				This rule are valid for tcp and udp protocols for now.</span>
 			</td>
 		</tr>
 		<tr>

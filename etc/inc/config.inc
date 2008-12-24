@@ -2083,7 +2083,7 @@ endif;
 		/* roundtrip has become delay */
 		function divide_delay($delayval) {
 			$delayval = floatval($delayval);
-			$delayval = ($delayval / 100);
+			// $delayval = ($delayval / 100);
 			$delayval = " ". sprintf("%1.10e", $delayval) ." ";
 			return $delayval;
 		}

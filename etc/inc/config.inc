@@ -2147,7 +2147,7 @@ endif;
 			$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 			$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 			$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-			$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
 
 			create_new_rrd("$rrdcreate");
 			/* create temporary xml from new RRD */
@@ -2169,6 +2169,8 @@ endif;
 			$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
 			file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
 			mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+			mwexec("$rrdtool resize {$rrddbpath}/{$database} 3 GROW 3000 2>&1");
+
 		}
 		enable_rrd_graphing();
 		$config['version'] = "5.5";

@@ -2147,8 +2147,7 @@ endif;
 			$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 			$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 			$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-			$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-			$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+			$rrdcreate .= "RRA:AVERAGE:0.5:720:4000 ";
 
 			create_new_rrd("$rrdcreate");
 			/* create temporary xml from new RRD */

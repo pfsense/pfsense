@@ -118,7 +118,7 @@
 			$this->_dnsPort = $dnsPort;
 			$this->_dnsWildcard = $dnsWildcard;
 			$this->_dnsMX = $dnsMX;
-			$this->_if = $dnsIf;
+			$this->_if = get_real_interface($dnsIf);
 			
 			$this->_dnsIP = get_interface_ip($dnsIf);
 			$this->_debugID = rand(1000000, 9999999);

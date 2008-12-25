@@ -463,9 +463,6 @@ function services_dyndns_reset($interface = "wan" ) {
 
 function services_dyndns_configure_client($conf) {
 
-	/* determine interface name */
-	$if = get_real_interface($conf['interface']);
-
 	/* load up the dyndns.class */
 	require_once("dyndns.class");
 
@@ -476,7 +473,7 @@ function services_dyndns_configure_client($conf) {
 		$dnsUser = $conf['username'],
 		$dnsPass = $conf['password'],
 		$dnsWilcard = $conf['wildcard'],
-		$dnsMX = $conf['mx'], $dnsIf = "{$if}");
+		$dnsMX = $conf['mx'], $dnsIf = "{$conf['interface']}");
 
 }
 

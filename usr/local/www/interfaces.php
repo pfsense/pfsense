@@ -252,6 +252,8 @@ if ($_POST['apply']) {
 		filter_configure();
 		/* set up static routes */
 		system_routing_configure();
+		/* start IPsec tunnels */
+		vpn_ipsec_configure();
 	}
 	header("Location: interfaces.php?if={$if}");
 	exit;

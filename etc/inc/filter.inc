@@ -1568,7 +1568,7 @@ function generate_user_filter_rule($rule)
 				isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or
 				 isset($rule['max-src-states']) and $rule['max-src-states'] <> "" or
 				  isset($rule['statetimeout']) and $rule['statetimeout'] <> "" or
-				   isset($rule['l7container']) and $rule['l7container']['name'] != "none") {
+				   isset($rule['l7container']) and $rule['l7container'] != "none") {
 					$aline['flags'] .= "( ";
 					if(isset($rule['source-track']) and $rule['source-track'] <> "")
 						$aline['flags'] .= "source-track rule ";
@@ -1583,7 +1583,7 @@ function generate_user_filter_rule($rule)
 						$aline['flags'] .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
 						$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
 					}
-					if(isset($rule['l7container']) && $rule['l7container']['name'] != "none" && !empty($l7_structures)) {
+					if(isset($rule['l7container']) && $rule['l7container'] != "none" && !empty($l7_structures)) {
 						$aline['flags'] .= "max-packets 5, ";
 						if($l7_structures['action']) {
 							$aline['flags'] .= "overload action diverttag ";
@@ -1668,7 +1668,7 @@ function generate_user_filter_rule($rule)
 		/* piece together the actual user rule */
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['reply'] .
 			$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
-			$aline['dstport'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . 
+			$aline['dstport'] . $aline['divert'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . 
 			$aline['flags'] . $aline['queue'] . $aline['dnpipe'];
 
 		/* is a time based rule schedule attached? */

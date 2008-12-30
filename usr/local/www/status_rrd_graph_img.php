@@ -443,7 +443,7 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "GPRINT:\"$curif-pfnat:MIN:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"$curif-pfnat:AVERAGE:%7.2lf %s    \" ";
 	$graphcmd .= "GPRINT:\"$curif-pfnat:MAX:%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfnat:LAST:'%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfnat:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"Source addr. \" ";
 	$graphcmd .= "GPRINT:\"$curif-srcip:MIN:%7.2lf %s    \" ";

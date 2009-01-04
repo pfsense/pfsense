@@ -3664,7 +3664,8 @@ function filter_generate_dummynet_rules() {
 	
 	if (!empty($dummynet_pipe_list)) {
 		mwexec("kldload dummynet");
-		mwexec("pfctl -F dummynet");
+		/* XXX: Needs to be added code elsewhere to clear pipes/queues from kernel when not needed! */
+		//mwexec("pfctl -F dummynet");
 	}
 
 	$dn_rules = "";

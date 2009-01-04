@@ -1547,18 +1547,6 @@ function get_number_of_bridged_interfaces() {
 	return "{$bridges_total}";
 }
 
-function get_next_available_bridge_interface() {
-	$bridges_total = get_number_of_bridged_interfaces();
-	$interfaces = `/sbin/ifconfig -l`;
-	$x=0;
-	for($x=0; $x<$bridges_total; $x++) {
-		if(!stristr($interfaces, "bridge{$x}")) {
-			return "{$x}";
-		}
-	}
-	return "{$x}";
-}
-
 function destroy_bridge($bridge_num) {
 	mwexec("/sbin/ifconfig bridge{$bridge_num} down");
 	sleep(1);

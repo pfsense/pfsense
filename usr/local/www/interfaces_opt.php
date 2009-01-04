@@ -191,6 +191,7 @@ if ($_POST) {
 		$bridge = discover_bridge($optcfg['if'], filter_translate_type_to_real_interface($optcfg['bridge']));
 		if($bridge <> "-1") {
 			destroy_bridge($bridge);
+                        setup_bridge();
 		}
 
 		unset($optcfg['dhcphostname']);

@@ -190,7 +190,7 @@ if ($_POST) {
 		$address = "";
 		$isfirst = 0;
 		/* item is a normal alias type */
-		for($x=0; $x<299; $x++) {
+		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
 				if ($isfirst > 0)
 					$address .= " ";

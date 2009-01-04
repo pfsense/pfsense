@@ -1,10 +1,10 @@
 // Global Variables
-var rowname = new Array(299);
-var rowtype = new Array(299);
-var newrow  = new Array(299);
-var rowsize = new Array(299);
+var rowname = new Array(4999);
+var rowtype = new Array(4999);
+var newrow  = new Array(4999);
+var rowsize = new Array(4999);
 
-for (i = 0; i < 299; i++) {
+for (i = 0; i < 4999; i++) {
 	rowname[i] = '';
 	rowtype[i] = '';
 	newrow[i] = '';

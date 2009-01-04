@@ -222,9 +222,9 @@ function enable_change(enable_change) {
 	document.iform.radiuskey.disabled = radius_endis;
 	document.iform.radiuskey2.disabled = radius_endis;
 	document.iform.radacct_enable.disabled = radius_endis;
-	//document.iform.peruserbw.disabled = endis;
-	//document.iform.bwdefaultdn.disabled = endis;
-	//document.iform.bwdefaultup.disabled = endis;
+	document.iform.peruserbw.disabled = endis;
+	document.iform.bwdefaultdn.disabled = endis;
+	document.iform.bwdefaultup.disabled = endis;
 	document.iform.reauthenticate.disabled = radius_endis;
 	document.iform.auth_method[0].disabled = endis;
 	document.iform.auth_method[1].disabled = endis;
@@ -349,8 +349,6 @@ to access after they've authenticated.</td>
     This is required when the MAC address of the client cannot be determined (usually because there are routers between <?php echo $g['product_name'] ?> and the clients).
     If this is enabled, RADIUS MAC authentication cannot be used.</td>
 	</tr>
-<?php
-/*
 	<tr>
       <td valign="top" class="vncell">Per-user bandwidth restriction</td>
       <td class="vtable">
@@ -366,10 +364,8 @@ to access after they've authenticated.</td>
         <td><input type="text" class="formfld unknown" name="bwdefaultup" id="bwdefaultup" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultup']);?>"> Kbit/s</td>
         </tr></table>
         <br>
-        If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. RADIUS can override the default settings. Leave empty or set to 0 for no limit. You will <strong>need</strong> to enable the traffic shaper for this to be effective.</td>
+        If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. RADIUS can override the default settings. Leave empty or set to 0 for no limit. </td>
 	</tr>
-*/
-?>
 	<tr>
 	  <td width="22%" valign="top" class="vncell">Authentication</td>
 	  <td width="78%" class="vtable">

@@ -113,6 +113,7 @@ if ($_POST) {
 		$bridge = discover_bridge($lancfg['if'], filter_translate_type_to_real_interface($lancfg['bridge']));
 		if($bridge <> "-1") {
 			destroy_bridge($bridge);
+			setup_bridge();
 		}
 
 		$lancfg['bridge'] = $_POST['bridge'];

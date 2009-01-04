@@ -290,6 +290,7 @@ if ($_POST) {
 		$bridge = discover_bridge($wancfg['if'], filter_translate_type_to_real_interface($wancfg['bridge']));
 		if($bridge <> "-1") {
 			destroy_bridge($bridge);
+			setup_bridge();
 		}
 
 		unset($wancfg['ipaddr']);

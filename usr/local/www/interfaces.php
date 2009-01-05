@@ -749,7 +749,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 			</td>
 		</tr>
 		<?php endif; ?>
-		<tr style="display:none;" name="allcfg" id="allcfg">
+		</table>
+		<div style="display:none;" name="allcfg" id="allcfg">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tr>
 				<td width="22%" valign="top" class="vncell">Description</td>
 				<td width="78%" class="vtable">
@@ -1429,6 +1431,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</td>
 									</tr>
 								</tr>
+				</table>
+				</div>
+				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 								<tr>
 									<td width="100" valign="top">
 										&nbsp;

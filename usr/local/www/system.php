@@ -277,9 +277,9 @@ include("head.inc");
 									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="20" value="<?php echo $pconfig['dns'.$dnscounter];?>">
 								</td>
 								<td>
+<?php if ($multiwan): ?>
 									<select name='<?=$fldname;?>'>
 										<?php
-										if ($multiwan) {
 											$interface = "none";
 											$dnsgw = "dns{$dnscounter}gwint";
 											if($pconfig[$dnsgw] == $interface) {
@@ -298,9 +298,9 @@ include("head.inc");
 													echo "<option value='$interface' $selected>". ucwords($interface) ."</option>\n";
 												}
 											}
-										}
 										?>
 									</select>
+<?php endif; ?>
 								</td>
 							</tr>
 							<?php endfor; ?>

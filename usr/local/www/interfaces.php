@@ -712,6 +712,13 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		else
 			$('allcfg').hide();
 	}
+	
+	function show_periodic_reset(obj) {
+		if (obj.checked)
+			$('presetwrap').show();
+		else
+			$('presetwrap').hide();
+	}
 
 	function show_mon_config() {
 		document.getElementById("showmonbox").innerHTML='';
@@ -995,7 +1002,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Periodic reset");?></td>
 								<td width="78%" class="vtable">
-									<input name="pppoe_preset" type="checkbox" id="pppoe_preset" value="yes" <?php if ($pconfig['pppoe_preset']) echo "checked=\"checked\""; ?> onclick="Effect.toggle('presetwrap', 'show', { duration: 0.0 });" />
+									<input name="pppoe_preset" type="checkbox" id="pppoe_preset" value="yes" <?php if ($pconfig['pppoe_preset']) echo "checked=\"checked\""; ?> onclick="show_periodic_reset(this);" />
 										<?= gettext("enable periodic PPPoE resets"); ?>
 										<br />
 										<?php if ($pconfig['pppoe_preset']): ?>

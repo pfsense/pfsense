@@ -134,7 +134,7 @@
 	</javascriptafterformdisplay>
 	<fields>
 		<field>
-			<name>WAN Type</name>
+			<name>SelectedType</name>
 			<type>select</type>
 			<donotdisable>true</donotdisable>
 			<options>

@@ -601,24 +601,29 @@ EOD;
 			chmod("{$g['varetc_path']}/psk.txt", 0600);
 
 			if(is_process_running("racoon")) {
-				/* We are already online, reload */
-				mwexec("/usr/bin/killall -HUP racoon", true);
 				/* flush SPD entries */
 				mwexec("/usr/local/sbin/setkey -FP");
+				sleep("0.1");
 				mwexec("/usr/local/sbin/setkey -F");
 				/* load SPD */
+				sleep("0.1");
 				mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
 				/* We are already online, reload */
+				sleep("0.1");
 				mwexec("/usr/bin/killall -HUP racoon", true);
 			} else {
-				/* start racoon */
-				mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
 				/* flush SA + SPD entries */
 				mwexec("/usr/local/sbin/setkey -FP");
+				sleep("0.1");
 				mwexec("/usr/local/sbin/setkey -F");
+				sleep("0.1");
+				/* start racoon */
+				mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
+				sleep("0.1");
 				/* load SPD */
 				mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf");
 				/* We are already online, reload */
+				sleep("0.1");
 				mwexec("/usr/bin/killall -HUP racoon", true);
 			}
 		}

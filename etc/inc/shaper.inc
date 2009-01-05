@@ -3638,7 +3638,7 @@ function get_interface_list_to_show() {
 		} else  {
 			if (!is_altq_capable(get_real_interface($shif)))
 				continue;
-			$tree .= " <li><a href=\"firewall_shaper.php?interface=".$if."&action=add\">".$shDescr."</a></li>";
+			$tree .= " <li><a href=\"firewall_shaper.php?interface=".$shif."&action=add\">".$shDescr."</a></li>";
 		}
 	}
 	

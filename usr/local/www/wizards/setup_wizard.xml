@@ -284,11 +284,13 @@
 			<name>PPTP Dial on demand</name>
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
+			<bindstofield>pptp->pptp_dialondemand</bindstofield>			
 			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
 		</field>
 		<field>
 			<name>PPTP Idle timeout</name>
-			<type>input</type>
+			<type>input</type>			
+			<bindstofield>pptp->pptp_idletimeout</bindstofield>
 			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
 		</field>
 		<field>

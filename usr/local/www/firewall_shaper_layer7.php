@@ -121,15 +121,10 @@ else if ($_POST) {
 	if($_POST['submit']) {
 		$l7r =& new layer7();
 		$_POST['divert_port'] = $l7r->gen_divert_port();
-		for($i=0; $i<100; $i++) {
-			if($_POST['protocol'][$i] <> "") {
-				$_POST['l7rules'][$i]['protocol'] = $_POST['protocol'][$i];
-				$_POST['l7rules'][$i]['structure'] = $_POST['structure'][$i];
-				$_POST['l7rules'][$i]['behaviour'] = $_POST['behaviour'][$i];
-			}
-			else {
-				break;
-			}
+		for($i=0; $_POST['protocol'][$i] <> ""; $i++) {
+			$_POST['l7rules'][$i]['protocol'] = $_POST['protocol'][$i];
+			$_POST['l7rules'][$i]['structure'] = $_POST['structure'][$i];
+			$_POST['l7rules'][$i]['behaviour'] = $_POST['behaviour'][$i];
 		}
 		$l7r->validate_input($_POST,&$input_errors);
 		$l7r->ReadConfig($_POST['container'], $_POST);

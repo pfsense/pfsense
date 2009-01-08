@@ -44,6 +44,9 @@ function get_pkg_descr($package_name) {
 
 if($_GET['mode'] == "restartservice" and $_GET['service']) {
 	switch($_GET['service']) {
+		case 'ntpd':
+			system_ntp_configure();
+			break;		
 		case 'bsnmpd':
 			services_snmpd_configure();
 			break;
@@ -71,6 +74,9 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 
 if($_GET['mode'] == "startservice" and $_GET['service']) {
 	switch($_GET['service']) {
+		case 'ntpd':
+			system_ntp_configure();
+			break;
 		case 'bsnmpd':
 			services_snmpd_configure();
 			break;
@@ -99,6 +105,9 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 /* stop service */
 if($_GET['mode'] == "stopservice" && $_GET['service']) {
 	switch($_GET['service']) {
+		case 'ntpd':
+			killbyname("ntpd");
+			break;		
 		case 'bsnmpd':
 			killbypid("{$g['varrun_path']}/snmpd.pid");
 			break;

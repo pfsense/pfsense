@@ -5,6 +5,7 @@
 	part of m0n0wall (http://m0n0.ch/wall)
 	
 	Copyright (C) 2007 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2009 Seth Mos <seth.mos@xs4all.nl>.
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -33,14 +34,18 @@
 	require_once("config.inc");
 	require_once("functions.inc");
 	
-	/* the IP address that a tunnel's remote gateway host name resolves
-	   to has changed; reload IPsec completely (we can't only change one
-	   specific tunnel at this time) */
-	
 	/* make sure to wait until the boot scripts have finished */
 	while (file_exists("{$g['varrun_path']}/booting")) {
 		sleep(1);
 	}
+	
+	log_error("IPSEC: One or more IPSEC tunnel endpoints has changed IP. Refreshing.");
+	/* We will walk the list of hostnames found in the ipsec tunnel
+	 * configuration. Since we are already triggered by dnswatch
+	 * that a hostname has changed we can proceed to compare the 
+	 * new IP address with the old address from the DNS cache.
+	 */
+	vpn_ipsec_refresh_policies();
 	
 	vpn_ipsec_configure();
 ?>

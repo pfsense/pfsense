@@ -1434,7 +1434,10 @@ function find_interface_ip($interface, $flush = false) {
 }
 
 function guess_interface_from_ip($ipaddress) {
-	$ret = exec_command("/sbin/route -n get {$ipaddress} | /usr/bin/grep interface | /usr/bin/awk '{ print \$2; };'");
+	$ret = exec_command("/usr/bin/netstat -rn | /usr/bin/awk '/^{$ipaddress}/ {print \$6}'");
+	if(empty($ret)) {
+		return false;
+	}
 	return $ret;
 }
 

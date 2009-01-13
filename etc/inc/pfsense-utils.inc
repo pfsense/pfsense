@@ -3441,4 +3441,49 @@ function read_body($ch, $string) {
 	return $length;
 }
 
+/* Compare the current hostname DNS to the DNS cache we made
+ * if it has changed we return the old records
+ * if no change we return true */
+function compare_hostname_to_dnscache($hostname) {
+	if(!is_dir("/var/db/dnscache")) {
+		mkdir("/var/db/dnscache");
+	}
+	$hostname = trim($hostname);
+	if(is_readable("/var/db/dnscache/{$hostname}")) {
+		$oldcontents = file_get_contents("/var/db/dnscache/{$hostname}");
+	} else {
+		$oldcontents = "";
+	}
+	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
+		$domrecords = array();
+		$domips = array();
+		exec("host -t A $hostname", $domrecords, $rethost);
+		if($rethost == 0) {
+			foreach($domrecords as $domr) {
+				$doml = explode(" ", $domr);
+				$domip = $doml[3];
+				/* fill array with domain ip addresses */
+				if(is_ipaddr($domip)) {
+					$domips[] = $domip;
+				}
+			}
+		}
+		sort($domips);
+		$contents = "";
+		if(! empty($domips)) {
+			foreach($domips as $ip) {
+				$contents .= "$ip\n";
+			}
+		}
+	}
+
+	if(trim($oldcontents) != trim($contents)) {
+		log_error("DNSCACHE: Found old IP {$oldcontents} and new IP {$contents}");
+		return ($oldcontents);
+	} else {
+		return false;
+	}
+}
+
+
 ?>

@@ -1497,26 +1497,52 @@ function vpn_ipsec_refresh_policies() {
 				$dnscache = trim($dnscache);
 				/* we should have the old IP addresses in the dnscache now */
 				if($dnscache <> "") {
-					reload_tunnel_spd_policy ($tunnel, $dnscache);
+					$oldtunnel = $tunnel;
+					$oldtunnel['remote-gateway'] = trim($dnscache);
+					reload_tunnel_spd_policy ($tunnel, $oldtunnel);
 				}
 			}
 		}
 	}
 
+	/* process all generated spd.conf files from tmp which are left behind
+	 * behind by either changes of dynamic tunnels or manual edits
+	 * scandir() is only available in PHP5 */
+	$tmpfiles = array();
+	$dh  = opendir($g['tmp_path']);
+	while (false !== ($filename = readdir($dh))) {
+		$tmpfiles[] = $filename;
+	}
+	sort($tmpfiles);
+	foreach($tmpfiles as $tmpfile) {
+		if(preg_match("/^spd.conf./", $tmpfile)) {
+			mwexec("/usr/local/sbin/setkey -f {$g['tmp_path']}/{$tmpfile} 2>&1", false);
+			unlink("{$g['tmp_path']}/{$tmpfile}");
+		}
+	}
 }
 
 /* reloads the tunnel configuration for a tunnel item
  * Will remove and add SPD polices */
-function reload_tunnel_spd_policy($tunnel, $oldgw = "") {
+function reload_tunnel_spd_policy($tunnel, $oldtunnel) {
 	global $config;
 	global $g;
 
-	$oldgw = trim($oldgw);
-	$spdconf = "";
+	/* if we are not passed a old tunnel array we create one */
+	if(empty($oldtunnel)) {
+		$oldtunnel = $tunnel;
+	}
+
 	$curwanip = get_current_wan_address();
 	$sad_arr = return_ipsec_sad_array();
+
 	$ep = vpn_endpoint_determine($tunnel, $curwanip);
 	vpn_localnet_determine($tunnel['local-subnet'], $sa, $sn);
+
+	/* make sure we pass the oldtunnel array with a IP for the remote gw */
+	$oldgw = trim($oldtunnel['remote-gateway']);
+	$oldep = vpn_endpoint_determine($oldtunnel, $curwanip);
+	vpn_localnet_determine($oldtunnel['local-subnet'], $oldsa, $oldsn);
 
 	/* see if this tunnel has a hostname for the remote-gateway, and if so,
 	 * try to resolve it now and add it to the list for dnswatch */
@@ -1534,58 +1560,57 @@ function reload_tunnel_spd_policy($tunnel, $oldgw = "") {
 		log_error("Could not determine VPN endpoint for {$tunnel['descr']}");
 		return false;
 	}
-	if(is_domain($tunnel['remote-gateway'])) {
-		$tmp = gethostbyname($tunnel['remote-gateway']);
-		if($tmp) {
-			$tunnel['remote-gateway'] = $tmp;
+
+	$spdconf = "";
+
+	/* Delete old SPD policies if there are changes between the old and new */
+	if($tunnel != $oldtunnel) {
+		$spdconf .= "spddelete {$oldsa}/{$oldsn} " .
+			"{$oldtunnel['remote-subnet']} any -P out ipsec " .
+			"{$oldtunnel['p2']['protocol']}/tunnel/{$oldep}-" .
+			"{$oldgw}/unique;\n";
+		$spdconf .= "spddelete {$oldtunnel['remote-subnet']} " .
+			"{$oldsa}/{$oldsn} any -P in ipsec " .
+			"{$oldtunnel['p2']['protocol']}/tunnel/{$oldgw}-" .
+			"{$oldep}/unique;\n";
+
+		/* zap any existing SA entries */
+		foreach($sad_arr as $sad) {
+			if(($sad['dst'] == $oldep) && ($sad['src'] == $oldgw)) {
+				$spdconf .= "delete {$oldep} {$oldgw} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+			}
+			if(($sad['src'] == $oldep) && ($sad['dst'] == $oldgw)) {
+				$spdconf .= "delete {$oldgw} {$oldep} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+			}
 		}
 	}
 
-	/* Delete old SPD policies if we have a old endpoint address */
-	if(is_ipaddr($oldgw)) {
-		$spdconf .= "spddelete {$sa}/{$sn} " .
-			"{$tunnel['remote-subnet']} any -P out ipsec " .
-			"{$tunnel['p2']['protocol']}/tunnel/{$ep}-" .
-			"{$oldgw}/unique;\n";
-		$spdconf .= "spddelete {$tunnel['remote-subnet']} " .
-			"{$sa}/{$sn} any -P in ipsec " .
-			"{$tunnel['p2']['protocol']}/tunnel/{$oldgw}-" .
-			"{$ep}/unique;\n";
-		/* remove SA entries as done on our diag page
-		 * diag_ipsec_sad.php?act=del&src=92.64.3.196&dst=194.122.177.166&proto=esp&spi=0x68d0a051 */
-		foreach($sad_arr as $sad) {
-			if(($sad['dst'] == $ep) && ($sad['src'] == $oldgw)) {
-				$spdconf .= "delete {$ep} {$oldgw} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
-			}
-			if(($sad['src'] == $ep) && ($sad['dst'] == $oldgw)) {
-				$spdconf .= "delete {$oldgw} {$ep} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
-			}
-		}
-	}
-	/* zap any existing SA entries */
+	/* Create new SPD entries for the new configuration */
+	/* zap any existing SA entries beforehand */
 	foreach($sad_arr as $sad) {
-		if(($sad['dst'] == $ep) && ($sad['src'] == $tunnel['remote-gateway'])) {
-			$spdconf .= "delete {$ep} {$tunnel['remote-gateway']} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+		if(($sad['dst'] == $ep) && ($sad['src'] == $rgip)) {
+			$spdconf .= "delete {$ep} {$rgip} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
 		}
-		if(($sad['src'] == $ep) && ($sad['dst'] == $tunnel['remote-gateway'])) {
-			$spdconf .= "delete {$tunnel['remote-gateway']} {$ep} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+		if(($sad['src'] == $ep) && ($sad['dst'] == $rgip)) {
+			$spdconf .= "delete {$rgip} {$ep} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
 		}
 	}
 	/* add new SPD policies to replace them */
 	$spdconf .= "spdadd {$sa}/{$sn} " .
 		"{$tunnel['remote-subnet']} any -P out ipsec " .
 		"{$tunnel['p2']['protocol']}/tunnel/{$ep}-" .
-		"{$tunnel['remote-gateway']}/unique;\n";
+		"{$rgip}/unique;\n";
 	$spdconf .= "spdadd {$tunnel['remote-subnet']} " .
 		"{$sa}/{$sn} any -P in ipsec " .
-		"{$tunnel['p2']['protocol']}/tunnel/{$tunnel['remote-gateway']}-" .
+		"{$tunnel['p2']['protocol']}/tunnel/{$rgip}-" .
 		"{$ep}/unique;\n";
 
 	log_error("IPSEC: Tunnel '{$tunnel['descr']}' has changed IP from '{$oldgw}' to '{$rgip}', reloading policy");
+
+	$now = time();
+	$spdfile = tempnam("{$g['tmp_path']}", "spd.conf.reload.{$now}.");
 	/* generate temporary spd.conf */
-	file_put_contents("{$g['tmp_path']}/purge-spd.conf", $spdconf);
-	/* load SPD */
-	mwexec("/usr/local/sbin/setkey -f {$g['tmp_path']}/purge-spd.conf", false);
+	file_put_contents($spdfile, $spdconf);
 	return true;
 }
 

@@ -2779,11 +2779,13 @@ EOD;
 				/* if tunnel is disabled, lets skip to next item */
 				$ipsec_ips = array(get_current_wan_address($tunnel['interface']));
 				/* is this a dynamic dns hostname? */
-				$remote_gateway = gethostbyname($tunnel['remote-gateway']);
-				if($remote_gateway == "")
+				if(!is_ipaddr($tunnel['remote-gateway'])) {
+					$remote_gateway = resolve_retry($tunnel['remote-gateway']);
+				} else {
 					$remote_gateway = $tunnel['remote-gateway'];
+				}
 				/* do not add items with blank remote_gateway */
-				if(!$remote_gateway) {
+				if(!is_ipaddr($remote_gateway)) {
 					$ipfrules .= "# ERROR!  Remote gateway not found on {$tunnel['remote-gateway']}\n";
 					continue;
 				}

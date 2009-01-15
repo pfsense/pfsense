@@ -40,6 +40,9 @@ $search = array();
 $replace = array();
 if(is_array($config['ipsec']['tunnel']))
 	foreach($config['ipsec']['tunnel'] as $tunnel) {
+		if(!is_ipaddr($tunnel['remote-gateway']))
+			$tunnel['remote-gateway'] = resolve_retry($tunnel['remote-gateway']);
+
 		$gateway = "{$tunnel['remote-gateway']}";
 		$search[] = "/(racoon: )([A-Z:].*?)({$gateway}\[[0-9].+\]|{$gateway})(.*)/i";
 		$replace[] = "$1<strong>[{$tunnel['descr']}]</strong>: $2$3$4";

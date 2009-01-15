@@ -34,6 +34,50 @@ $pgtitle = "Status: IPsec";
 
 require("guiconfig.inc");
 include("head.inc");
+
+function get_ipsec_tunnel_src($tunnel) {
+	global $g, $config, $sad;
+	$if = "WAN";
+	if ($tunnel['interface']) {
+		$if = $tunnel['interface'];
+		$realinterface = convert_friendly_interface_to_real_interface_name($if);
+		$interfaceip = find_interface_ip($realinterface);
+	}
+	return $interfaceip;
+}
+
+function output_ipsec_tunnel_status($tunnel) {
+	global $g, $config, $sad;
+	$if = "WAN";
+	$interfaceip = get_ipsec_tunnel_src($tunnel);
+	$foundsrc = false;
+	$founddst = false;
+	if(!is_ipaddr($tunnel['remote-gateway']))
+		$tunnel['remote-gateway'] = resolve_retry($tunnel['remote-gateway']);
+
+	foreach($sad as $sa) {
+		if($sa['src'] == $interfaceip) 
+			$foundsrc = true;
+		if($sa['dst'] == $tunnel['remote-gateway']) 
+			$founddst = true;
+	}
+	if($foundsrc && $founddst) { 
+		/* tunnel is up */
+		$iconfn = "pass";
+	} else {
+		/* tunnel is down */
+		$iconfn = "reject";
+	}
+	echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif'>";
+}
+
+/* query SAD */
+$sad = return_ipsec_sad_array();
+
+if (!is_array($config['ipsec']['tunnel'])) {
+	$config['ipsec']['tunnel'] = array();
+}
+
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
@@ -54,47 +98,6 @@ include("head.inc");
   </tr>
   <tr>
     <td>
-<?php
-
-/* query SAD */
-$fd = @popen("/usr/local/sbin/setkey -D", "r");
-$sad = array();
-if ($fd) {
-	while (!feof($fd)) {
-		$line = chop(fgets($fd));
-		if (!$line)
-			continue;
-		if ($line == "No SAD entries.")
-			break;
-		if ($line[0] != "\t") {
-			if (is_array($cursa))
-				$sad[] = $cursa;
-			$cursa = array();
-			list($cursa['src'],$cursa['dst']) = explode(" ", $line);
-			$i = 0;
-		} else {
-			$linea = explode(" ", trim($line));
-			if ($i == 1) {
-				$cursa['proto'] = $linea[0];
-				$cursa['spi'] = substr($linea[2], strpos($linea[2], "x")+1, -1);
-			} else if ($i == 2) {
-				$cursa['ealgo'] = $linea[1];
-			} else if ($i == 3) {
-				$cursa['aalgo'] = $linea[1];
-			}
-		}
-		$i++;
-	}
-	if (is_array($cursa) && count($cursa))
-		$sad[] = $cursa;
-	pclose($fd);
-}
-
-if (!is_array($config['ipsec']['tunnel'])) {
-	$config['ipsec']['tunnel'] = array();
-}
-
-?>
 	<div id="mainarea">
             <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 <?php if (count($sad)): ?>
@@ -162,40 +165,3 @@ foreach ($config['ipsec']['tunnel'] as $ipsec) {
 <?php include("fend.inc"); ?>
 </body>
 </html>
-
-<?php
-
-function get_ipsec_tunnel_src($tunnel) {
-	global $g, $config, $sad;
-	$if = "WAN";
-	if ($tunnel['interface']) {
-		$if = $tunnel['interface'];
-		$realinterface = convert_friendly_interface_to_real_interface_name($if);
-		$interfaceip = find_interface_ip($realinterface);
-	}
-	return $interfaceip;
-}
-
-function output_ipsec_tunnel_status($tunnel) {
-	global $g, $config, $sad;
-	$if = "WAN";
-	$interfaceip = get_ipsec_tunnel_src($tunnel);
-	$foundsrc = false;
-	$founddst = false;
-	foreach($sad as $sa) {
-		if($sa['src'] == $interfaceip) 
-			$foundsrc = true;
-		if($sa['dst'] == $tunnel['remote-gateway']) 
-			$founddst = true;
-	}
-	if($foundsrc && $founddst) { 
-		/* tunnel is up */
-		$iconfn = "pass";
-	} else {
-		/* tunnel is down */
-		$iconfn = "reject";
-	}
-	echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif'>";
-}
-
-?>

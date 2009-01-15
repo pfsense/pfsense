@@ -1434,7 +1434,7 @@ function find_interface_ip($interface, $flush = false) {
 }
 
 function guess_interface_from_ip($ipaddress) {
-	$ret = exec_command("/usr/bin/netstat -rn | /usr/bin/awk '/^{$ipaddress}/ {print \$6}'");
+	$ret = exec_command("/usr/bin/netstat -rn | /usr/bin/awk '/^{$ipaddress}/ {print $6}'");
 	if(empty($ret)) {
 		return false;
 	}
@@ -3739,5 +3739,98 @@ function safe_write_file($file, $content, $force_binary) {
         }
         return true;
 }
+
+/* Write out all the found IP addresses to a file
+ * so we can compare it on change */
+function add_hostname_to_watch($hostname) {
+	if(!is_dir("/var/db/dnscache")) {
+		mkdir("/var/db/dnscache");
+	}
+	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
+		$domrecords = array();
+		$domips = array();
+		exec("host -t A $hostname", $domrecords, $rethost);
+		if($rethost == 0) {
+			foreach($domrecords as $domr) {
+				$doml = explode(" ", $domr);
+				$domip = $doml[3];
+				/* fill array with domain ip addresses */
+				if(is_ipaddr($domip)) {
+					$domips[] = $domip;
+				}
+			}
+		}
+		sort($domips);
+		$contents = "";
+		if(! empty($domips)) {
+			foreach($domips as $ip) {
+				$contents .= "$ip\n";
+			}
+		}
+		file_put_contents("/var/db/dnscache/$hostname", $contents);
+	}
+}
+
+/* Compare the current hostname DNS to the DNS cache we made
+ * if it has changed we return the old records
+ * if no change we return true */
+function compare_hostname_to_dnscache($hostname) {
+	if(!is_dir("/var/db/dnscache")) {
+		mkdir("/var/db/dnscache");
+	}
+	$hostname = trim($hostname);
+	if(is_readable("/var/db/dnscache/{$hostname}")) {
+		$oldcontents = file_get_contents("/var/db/dnscache/{$hostname}");
+	} else {
+		$oldcontents = "";
+	}
+	if((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
+		$domrecords = array();
+		$domips = array();
+		exec("host -t A $hostname", $domrecords, $rethost);
+		if($rethost == 0) {
+			foreach($domrecords as $domr) {
+				$doml = explode(" ", $domr);
+				$domip = $doml[3];
+				/* fill array with domain ip addresses */
+				if(is_ipaddr($domip)) {
+					$domips[] = $domip;
+				}
+			}
+		}
+		sort($domips);
+		$contents = "";
+		if(! empty($domips)) {
+			foreach($domips as $ip) {
+				$contents .= "$ip\n";
+			}
+		}
+	}
+
+	if(trim($oldcontents) != trim($contents)) {
+		log_error("DNSCACHE: Found old IP {$oldcontents} and new IP {$contents}");
+		return ($oldcontents);
+	} else {
+		return false;
+	}
+}
+
+function is_fqdn($fqdn) {
+	$hostname = false;
+	if(preg_match("/[-A-Z0-9\.]+\.[-A-Z0-9\.]+/i", $fqdn)) {
+		$hostname = true;
+	}
+	if(preg_match("/\.\./", $fqdn)) {
+		$hostname = false;
+	}
+	if(preg_match("/^\./i", $fqdn)) { 
+		$hostname = false;
+	}
+	if(preg_match("/\//i", $fqdn)) {
+		$hostname = false;
+	}
+	return($hostname);
+}
+
 
 ?>

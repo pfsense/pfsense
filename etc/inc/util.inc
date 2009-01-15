@@ -566,4 +566,24 @@ function mac_format($clientmac) {
     }
 }
 
+function resolve_retry($hostname, $retries = 5) {
+
+	if (is_ipaddr($hostname))
+		return $hostname;
+
+	for ($i = 0; $i < $retries; $i++) {
+		$ip = gethostbyname($hostname);
+		
+		if ($ip && $ip != $hostname) {
+			/* success */
+			return $ip;
+		}
+		
+		sleep(1);
+	}
+	
+	return false;
+}
+
+
 ?>

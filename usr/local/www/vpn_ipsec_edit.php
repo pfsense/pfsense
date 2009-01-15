@@ -46,6 +46,7 @@ if (isset($_GET['dup'])) {
 }
 
 if (isset($id) && $a_ipsec[$id]) {
+	$oldipsecent = $a_ipsec[$id];
 	$pconfig['disabled'] = isset($a_ipsec[$id]['disabled']);
 	$pconfig['auto'] = isset($a_ipsec[$id]['auto']);
 
@@ -61,6 +62,7 @@ if (isset($id) && $a_ipsec[$id]) {
 
 	list($pconfig['remotenet'],$pconfig['remotebits']) = explode("/", $a_ipsec[$id]['remote-subnet']);
 	$pconfig['remotegw'] = $a_ipsec[$id]['remote-gateway'];
+
 	$pconfig['p1mode'] = $a_ipsec[$id]['p1']['mode'];
 
 	if (isset($a_ipsec[$id]['p1']['myident']['myaddress']))
@@ -209,13 +211,24 @@ if ($_POST) {
 		$ipsecent['interface'] = $pconfig['interface'];
 		pconfig_to_address($ipsecent['local-subnet'], $_POST['localnet'], $_POST['localnetmask']);
 		$ipsecent['remote-subnet'] = $_POST['remotenet'] . "/" . $_POST['remotebits'];
-		/* if the remote gateway changed and the interface is not WAN then remove route */
-		/* the vpn_ipsec_configure() handles adding the route */
-		if($_POST['interface'] <> "wan") {
-			if($ipsecent['remote-gateway'] <> $_POST['remotegw']) {
+
+		/* if the old endpoint is different from the new one we make sure to purge
+		 * the old policy and add a new one. If the old endpoint IP is empty we 
+		 * only add new SPD entries. */
+		if(!is_ipaddr($oldipsecent['remote-gateway'])) {
+			$oldipsecent['remote-gateway'] = resolve_retry($oldipsecent['remote-gateway']);
+		}
+		if($ipsecent['remote-gateway'] <> $_POST['remotegw']) {
+			if(!is_ipaddr($ipsecent['remote-gateway'])) {
+				$ipsecent['remote-gateway'] = resolve_retry($ipsecent['remote-gateway']);
+			}
+			/* if the remote gateway changed and the interface is not WAN then remove route */
+			/* the vpn_ipsec_configure() handles adding the route */
+			if($_POST['interface'] <> "wan") {
 				mwexec("/sbin/route delete -host {$ipsecent['remote-gateway']}");
 			}
 		}
+
 		$ipsecent['remote-gateway'] = $_POST['remotegw'];
 		$ipsecent['p1']['mode'] = $_POST['p1mode'];
 
@@ -261,6 +274,7 @@ if ($_POST) {
 			$a_ipsec[] = $ipsecent;
 
 		write_config();
+		reload_tunnel_spd_policy($ipsecent, $oldipsecent);
 		touch($d_ipsecconfdirty_path);
 
 		header("Location: vpn_ipsec.php");
@@ -401,7 +415,7 @@ function methodsel_change() {
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld" id="remotegw" size="20" value="<?=$pconfig['remotegw'];?>">
                     <br>
-                    Enter the public IP address of the remote gateway</td>
+                    Enter the public IP address or hostname of the remote gateway</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>

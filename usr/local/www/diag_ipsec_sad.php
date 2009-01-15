@@ -66,38 +66,8 @@ if ($_GET['act'] == "del") {
 }
 
 /* query SAD */
-$fd = @popen("/usr/local/sbin/setkey -D", "r");
-$sad = array();
-if ($fd) {
-	while (!feof($fd)) {
-		$line = chop(fgets($fd));
-		if (!$line)
-			continue;
-		if ($line == "No SAD entries.")
-			break;
-		if ($line[0] != "\t") {
-			if (is_array($cursa))
-				$sad[] = $cursa;
-			$cursa = array();
-			list($cursa['src'],$cursa['dst']) = explode(" ", $line);
-			$i = 0;
-		} else {
-			$linea = explode(" ", trim($line));
-			if ($i == 1) {
-				$cursa['proto'] = $linea[0];
-				$cursa['spi'] = substr($linea[2], strpos($linea[2], "x")+1, -1);
-			} else if ($i == 2) {
-				$cursa['ealgo'] = $linea[1];
-			} else if ($i == 3) {
-				$cursa['aalgo'] = $linea[1];
-			}
-		}
-		$i++;
-	}
-	if (is_array($cursa) && count($cursa))
-		$sad[] = $cursa;
-	pclose($fd);
-}
+$sad = return_ipsec_sad_array();
+
 ?>
 	<div id="mainarea">
             <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">

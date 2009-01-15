@@ -43,7 +43,10 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
+		$retval = vpn_ipsec_refresh_policies();
 		$retval = vpn_ipsec_configure();
+		/* reload the filter in the background */
+		filter_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (file_exists($d_ipsecconfdirty_path))
@@ -59,6 +62,7 @@ if ($_POST) {
 
 		$retval = 0;
 		config_lock();
+		$retval = vpn_ipsec_refresh_policies();
 		$retval = vpn_ipsec_configure();
 		config_unlock();
 		/* reload the filter in the background */
@@ -76,9 +80,11 @@ if ($_GET['act'] == "del") {
 	if ($a_ipsec[$_GET['id']]) {
 		/* remove static route if interface is not WAN */
 		if($a_ipsec[$_GET['id']]['interface'] <> "wan") {
-			mwexec("/sbin/route delete -host {$$a_ipsec[$_GET['id']]['remote-gateway']}");
+			$oldgw = resolve_retry($a_ipsec[$_GET['id']]['remote-gateway']);
+			mwexec("/sbin/route delete -host {$oldgw}");
 		}
 		unset($a_ipsec[$_GET['id']]);
+		vpn_ipsec_configure();
 		filter_configure();
 		write_config();
 		header("Location: vpn_ipsec.php");
@@ -99,7 +105,8 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_ipsecconfdirty_path)): ?><p>
 <?php if ($pconfig['enable'])
-		print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+		print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes 
+in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">

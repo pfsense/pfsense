@@ -263,7 +263,7 @@ function system_routing_configure() {
 				}
 			}
 			if(($interfacegw <> "bgpd") && (is_ipaddr($gatewayip)))
-				mwexec("/sbin/route add default " . escapeshellarg($gatewayip));
+				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
 		} else {
 			/* FIXME */
 			/* adding gateway for 1.2-style configs without the new
@@ -273,7 +273,7 @@ function system_routing_configure() {
 			*/
 			if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
 				$gatewayip = $config['interfaces']['wan']['gateway'];
-				mwexec("/sbin/route add default " . escapeshellarg($gatewayip));
+				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
 			}
 		}
 	}

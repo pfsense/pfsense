@@ -1260,10 +1260,10 @@ function reload_tunnel_spd_policy($tunnel, $oldtunnel) {
 	/* zap any existing SA entries beforehand */
 	foreach($sad_arr as $sad) {
 		if(($sad['dst'] == $ep) && ($sad['src'] == $rgip)) {
-			$spdconf .= "delete {$ep} {$rgip} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+			$spdconf .= "delete {$rgip} {$ep} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
 		}
 		if(($sad['src'] == $ep) && ($sad['dst'] == $rgip)) {
-			$spdconf .= "delete {$rgip} {$ep} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+			$spdconf .= "delete {$ep} {$rgip} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
 		}
 	}
 	/* add new SPD policies to replace them */

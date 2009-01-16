@@ -250,7 +250,7 @@ function ipsec_phase1_status(& $ph1ent) {
 function ipsec_phase2_status(& $spd,& $sad,& $ph1ent,& $ph2ent) {
 
 	$loc_ip = ipsec_get_phase1_src($ph1ent);
-	$rmt_ip = $ph1ent['remote-gateway'];
+	$rmt_ip = ipsec_get_phase1_dst($ph1ent);
 
 	$loc_id = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
 	$rmt_id = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);

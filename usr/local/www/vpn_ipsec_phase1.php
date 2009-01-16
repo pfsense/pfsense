@@ -42,7 +42,11 @@ require("guiconfig.inc");
 if (!is_array($config['ipsec']['phase1']))
 	$config['ipsec']['phase1'] = array();
 
+if (!is_array($config['ipsec']['phase2']))
+	$config['ipsec']['phase2'] = array();
+
 $a_phase1 = &$config['ipsec']['phase1'];
+$a_phase2 = &$config['ipsec']['phase2'];
 
 if($config['interfaces']['lan']) 
 		$specialsrcdst = explode(" ", "lan");
@@ -60,6 +64,7 @@ if (isset($p1index) && $a_phase1[$p1index])
 	// don't copy the ikeid on dup
 	if (!isset($_GET['dup']))
 		$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
+	$old_ph1ent = $a_phase1[$p1index];
 
 	$pconfig['disabled'] = isset($a_phase1[$p1index]['disabled']);
 
@@ -315,6 +320,17 @@ if ($_POST) {
 		else
 			$a_phase1[] = $ph1ent;
 
+		/* now we need to find all phase2 entries for this host */
+		if (is_array($a_phase2) && (count($a_phase2))) {
+			foreach ($a_phase2 as $phase2) {
+				if($phase2['ikeid'] == $ph1ent['ikeid']) {
+					log_error("Reload {$ph1ent['descr']} tunnels");
+					$old_ph1ent['remote-gateway'] = resolve_retry($old_ph1ent['remote-gateway']);
+					$old_phase2 = $phase2;
+					reload_tunnel_spd_policy ($ph1ent, $phase2, $old_ph1ent, $old_phase2);
+				}
+			}
+		}
 		write_config();
 		touch($d_ipsecconfdirty_path);
 

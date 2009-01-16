@@ -56,6 +56,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
+		$retval = vpn_ipsec_refresh_policies();
 		$retval = vpn_ipsec_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
@@ -71,6 +72,7 @@ if ($_POST) {
 
 		$retval = 0;
 		config_lock();
+		$retval = vpn_ipsec_refresh_policies();
 		$retval = vpn_ipsec_configure();
 		config_unlock();
 		/* reload the filter in the background */
@@ -99,6 +101,8 @@ if ($_GET['act'] == "delph1")
 
 		/* remove the phase1 entry */
 		unset($a_phase1[$_GET['p1index']]);
+		vpn_ipsec_refresh_policies();
+		vpn_ipsec_configure();
 		filter_configure();
 		write_config();
 		header("Location: vpn_ipsec.php");
@@ -111,6 +115,8 @@ if ($_GET['act'] == "delph2")
 	if ($a_phase2[$_GET['p2index']]) {
 		/* remove the phase2 entry */
 		unset($a_phase2[$_GET['p2index']]);
+		vpn_ipsec_refresh_policies();
+		vpn_ipsec_configure();
 		filter_configure();
 		write_config();
 		header("Location: vpn_ipsec.php");

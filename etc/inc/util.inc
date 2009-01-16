@@ -423,7 +423,7 @@ function mwexec($command, $mute = false) {
                 $mute = false;
 	if(($retval <> 0) && ($mute === false)) {
 		$output = implode(" ", $oarr);
-		//log_error("The command '$command' returned exit code '$retval', the output was '$output' ");
+		log_error("The command '$command' returned exit code '$retval', the output was '$output' ");
 	}
 	return $retval;
 }

@@ -48,7 +48,7 @@ $search = array();
 $replace = array();
 if(is_array($config['ipsec']['phase1']))
 	foreach($config['ipsec']['phase1'] as $ph1ent) {
-		$gateway = "{$ph1ent['remote-gateway']}";
+		$gateway = ipsec_get_phase1_dst($ph1ent);
 		$search[] = "/(racoon: )([A-Z:].*?)({$gateway}\[[0-9].+\]|{$gateway})(.*)/i";
 		$replace[] = "$1<strong>[{$ph1ent['descr']}]</strong>: $2$3$4";
 	}

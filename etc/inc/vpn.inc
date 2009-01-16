@@ -1477,29 +1477,40 @@ function vpn_ipsec_refresh_policies() {
 	global $g;
 
 	$ipseccfg = $config['ipsec'];
+	$a_phase1 = $config['ipsec']['phase1'];
+	$a_phase2 = $config['ipsec']['phase2'];
 
-	if (! isset($ipseccfg['enable'])) {
+	if (isset($ipseccfg['disable'])) {
 		return true;
 	}
 
 	/* Walk the Ipsec tunnel array */
-	if (is_array($ipseccfg['tunnel']) && count($ipseccfg['tunnel'])) {
-		foreach ($ipseccfg['tunnel'] as $tunnel) {
-			if (isset($tunnel['disabled'])) {
-				continue;
-			}
-			if (is_ipaddr($tunnel['remote-gateway'])) {
-				continue;
-			}
+	if (!is_array($a_phase1) || (!count($a_phase1))) {
+		continue;
+	}
 
-			if (!is_ipaddr($tunnel['remote-gateway'])) {
-				$dnscache = compare_hostname_to_dnscache($tunnel['remote-gateway']);
-				$dnscache = trim($dnscache);
-				/* we should have the old IP addresses in the dnscache now */
-				if($dnscache <> "") {
-					$oldtunnel = $tunnel;
-					$oldtunnel['remote-gateway'] = trim($dnscache);
-					reload_tunnel_spd_policy ($tunnel, $oldtunnel);
+	foreach ($a_phase1 as $phase1) {
+		if (isset($phase1['disabled'])) {
+			continue;
+		}
+		if (is_ipaddr($phase1['remote-gateway'])) {
+			continue;
+		}
+		if (!is_ipaddr($phase1['remote-gateway'])) {
+			$dnscache = compare_hostname_to_dnscache($phase1['remote-gateway']);
+			$dnscache = trim($dnscache);
+			/* we should have the old IP addresses in the dnscache now */
+			if($dnscache <> "") {
+				$oldphase1 = $phase1;
+				$oldphase1['remote-gateway'] = trim($dnscache);
+				/* now we need to find all tunnels for this host */
+				if (!is_array($a_phase2) || (!count($a_phase2))) {
+					continue;
+				}
+				foreach ($a_phase2 as $phase2) {
+					if($phase2['ikeid'] == $phase1['ikeid']) {
+						reload_tunnel_spd_policy ($phase1, $phase2, $oldphase1, $oldphase2);
+					}
 				}
 			}
 		}
@@ -1515,72 +1526,81 @@ function vpn_ipsec_refresh_policies() {
 	}
 	sort($tmpfiles);
 	foreach($tmpfiles as $tmpfile) {
-		if(preg_match("/^spd.conf./", $tmpfile)) {
-			mwexec("/usr/local/sbin/setkey -f {$g['tmp_path']}/{$tmpfile} 2>&1", false);
-			unlink("{$g['tmp_path']}/{$tmpfile}");
+		if(preg_match("/^spd.conf.reload./", $tmpfile)) {
+			$ret = mwexec("/usr/local/sbin/setkey -f {$g['tmp_path']}/{$tmpfile} 2>&1", false);
+			if($ret == 0) {
+				// unlink_if_exists("{$g['tmp_path']}/{$tmpfile}");
+			} else {
+				rename("{$g['tmp_path']}/{$tmpfile}", ("{$g['tmp_path']}/failed.{$tmpfile}"));
+			}
 		}
 	}
 }
 
 /* reloads the tunnel configuration for a tunnel item
  * Will remove and add SPD polices */
-function reload_tunnel_spd_policy($tunnel, $oldtunnel) {
+function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 	global $config;
 	global $g;
 
 	/* if we are not passed a old tunnel array we create one */
-	if(empty($oldtunnel)) {
-		$oldtunnel = $tunnel;
+	if(empty($old_phase1)) {
+		$old_phase1 = $phase1;
+	}
+	if(empty($old_phase2)) {
+		$old_phase2 = $phase2;
 	}
 
-	$curwanip = get_current_wan_address();
-	$sad_arr = return_ipsec_sad_array();
+	$sad_arr = ipsec_dump_sad();
 
-	$ep = vpn_endpoint_determine($tunnel, $curwanip);
-	vpn_localnet_determine($tunnel['local-subnet'], $sa, $sn);
+	$ep = ipsec_get_phase1_src($phase1);
+	$local_subnet = ipsec_idinfo_to_cidr($phase2['localid']);
+	$remote_subnet = ipsec_idinfo_to_cidr($phase2['remoteid']);
 
 	/* make sure we pass the oldtunnel array with a IP for the remote gw */
-	$oldgw = trim($oldtunnel['remote-gateway']);
-	$oldep = vpn_endpoint_determine($oldtunnel, $curwanip);
-	vpn_localnet_determine($oldtunnel['local-subnet'], $oldsa, $oldsn);
+	$old_gw = trim($old_phase1['remote-gateway']);
+
+	$old_ep = ipsec_get_phase1_src($old_phase1);
+	$old_local_subnet = ipsec_idinfo_to_cidr($old_phase2['localid']);
+	$old_remote_subnet = ipsec_idinfo_to_cidr($old_phase2['remoteid']);
 
 	/* see if this tunnel has a hostname for the remote-gateway, and if so,
 	 * try to resolve it now and add it to the list for dnswatch */
-	if (!is_ipaddr($tunnel['remote-gateway'])) {
-		$rgip = resolve_retry($tunnel['remote-gateway']);
-		add_hostname_to_watch($tunnel['remote-gateway']);
+	if (!is_ipaddr($phase1['remote-gateway'])) {
+		$rgip = resolve_retry($phase1['remote-gateway']);
+		add_hostname_to_watch($phase1['remote-gateway']);
 		if (!$rgip) {
-			log_error("Could not determine VPN endpoint for {$tunnel['descr']}");
+			log_error("Could not determine VPN endpoint for '{$phase1['descr']}'");
 			return false;
 		}
 	} else {
-		$rgip = $tunnel['remote-gateway'];
+		$rgip = $phase1['remote-gateway'];
 	}
 	if (!$ep) {
-		log_error("Could not determine VPN endpoint for {$tunnel['descr']}");
+		log_error("Could not determine VPN endpoint for '{$phase1['descr']}'");
 		return false;
 	}
 
 	$spdconf = "";
 
 	/* Delete old SPD policies if there are changes between the old and new */
-	if($tunnel != $oldtunnel) {
-		$spdconf .= "spddelete {$oldsa}/{$oldsn} " .
-			"{$oldtunnel['remote-subnet']} any -P out ipsec " .
-			"{$oldtunnel['p2']['protocol']}/tunnel/{$oldep}-" .
-			"{$oldgw}/unique;\n";
-		$spdconf .= "spddelete {$oldtunnel['remote-subnet']} " .
-			"{$oldsa}/{$oldsn} any -P in ipsec " .
-			"{$oldtunnel['p2']['protocol']}/tunnel/{$oldgw}-" .
-			"{$oldep}/unique;\n";
+	if(($phase1 != $old_phase1) || ($phase2 != $old_phase2)) {
+		$spdconf .= "spddelete {$old_local_subnet} " .
+			"{$old_remote_subnet} any -P out ipsec " .
+			"{$old_phase2['protocol']}/tunnel/{$old_ep}-" .
+			"{$old_gw}/unique;\n";
+		$spdconf .= "spddelete {$old_remote_subnet} " .
+			"{$old_local_subnet} any -P in ipsec " .
+			"{$old_phase2['protocol']}/tunnel/{$old_gw}-" .
+			"{$old_ep}/unique;\n";
 
 		/* zap any existing SA entries */
 		foreach($sad_arr as $sad) {
-			if(($sad['dst'] == $oldep) && ($sad['src'] == $oldgw)) {
-				$spdconf .= "delete {$oldep} {$oldgw} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+			if(($sad['dst'] == $old_ep) && ($sad['src'] == $old_gw)) {
+				$spdconf .= "delete {$old_ep} {$old_gw} {$old_phase2['protocol']} 0x{$sad['spi']};\n";
 			}
-			if(($sad['src'] == $oldep) && ($sad['dst'] == $oldgw)) {
-				$spdconf .= "delete {$oldgw} {$oldep} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+			if(($sad['src'] == $oldep) && ($sad['dst'] == $old_gw)) {
+				$spdconf .= "delete {$old_gw} {$old_ep} {$old_phase2['protocol']} 0x{$sad['spi']};\n";
 			}
 		}
 	}
@@ -1589,23 +1609,23 @@ function reload_tunnel_spd_policy($tunnel, $oldtunnel) {
 	/* zap any existing SA entries beforehand */
 	foreach($sad_arr as $sad) {
 		if(($sad['dst'] == $ep) && ($sad['src'] == $rgip)) {
-			$spdconf .= "delete {$ep} {$rgip} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+			$spdconf .= "delete {$rgip} {$ep} {$phase2['protocol']} 0x{$sad['spi']};\n";
 		}
 		if(($sad['src'] == $ep) && ($sad['dst'] == $rgip)) {
-			$spdconf .= "delete {$rgip} {$ep} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+			$spdconf .= "delete {$ep} {$rgip} {$phase2['protocol']} 0x{$sad['spi']};\n";
 		}
 	}
 	/* add new SPD policies to replace them */
-	$spdconf .= "spdadd {$sa}/{$sn} " .
-		"{$tunnel['remote-subnet']} any -P out ipsec " .
-		"{$tunnel['p2']['protocol']}/tunnel/{$ep}-" .
+	$spdconf .= "spdadd {$local_subnet} " .
+		"{$remote_subnet} any -P out ipsec " .
+		"{$phase2['protocol']}/tunnel/{$ep}-" .
 		"{$rgip}/unique;\n";
-	$spdconf .= "spdadd {$tunnel['remote-subnet']} " .
-		"{$sa}/{$sn} any -P in ipsec " .
-		"{$tunnel['p2']['protocol']}/tunnel/{$rgip}-" .
+	$spdconf .= "spdadd {$remote_subnet} " .
+		"{$local_subnet} any -P in ipsec " .
+		"{$phase2['protocol']}/tunnel/{$rgip}-" .
 		"{$ep}/unique;\n";
 
-	log_error("IPSEC: Tunnel '{$tunnel['descr']}' has changed IP from '{$oldgw}' to '{$rgip}', reloading policy");
+	log_error("IPSEC: Tunnel '{$phase1['descr']}' has changed IP from '{$old_gw}' to '{$rgip}', reloading policy");
 
 	$now = time();
 	$spdfile = tempnam("{$g['tmp_path']}", "spd.conf.reload.{$now}.");
@@ -1613,44 +1633,5 @@ function reload_tunnel_spd_policy($tunnel, $oldtunnel) {
 	file_put_contents($spdfile, $spdconf);
 	return true;
 }
-
-/* Return all IPsec SAD entries as a array we can foreach */
-function return_ipsec_sad_array() {
-	/* query SAD */
-	$fd = @popen("/usr/local/sbin/setkey -D", "r");
-	$sad = array();
-	if ($fd) {
-	        while (!feof($fd)) {
-	                $line = chop(fgets($fd));
-       	         if (!$line)
-       	                 continue;
-       	         if ($line == "No SAD entries.")
-       	                 break;
-       	         if ($line[0] != "\t") {
-       	                 if (is_array($cursa))
-       	                         $sad[] = $cursa;
-       	                 $cursa = array();
-       	                 list($cursa['src'],$cursa['dst']) = explode(" ", $line);
-        	                $i = 0;
-        		        } else {
-                        $linea = explode(" ", trim($line));
-                        if ($i == 1) {
-                                $cursa['proto'] = $linea[0];
-                                $cursa['spi'] = substr($linea[2], strpos($linea[2], "x")+1, -1);
-                        } else if ($i == 2) {
-                                $cursa['ealgo'] = $linea[1];
-                        } else if ($i == 3) {
-                                $cursa['aalgo'] = $linea[1];
-                        }
-                }
-                $i++;
-        }
-        if (is_array($cursa) && count($cursa))
-                $sad[] = $cursa;
-        pclose($fd);
-	}
-	return($sad);
-}
-
 
 ?>

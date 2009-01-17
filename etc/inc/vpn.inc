@@ -818,7 +818,7 @@ EOD;
 
 				killbypid("{$g['varrun_path']}/dnswatch-ipsec.pid");
 				mwexec("/usr/local/sbin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval " .
-				escapeshellarg("/etc/rc.newipsecdns") . $hostname);
+				escapeshellarg("/etc/rc.newipsecdns") . $hostnames);
 			}
 		}
 	}

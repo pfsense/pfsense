@@ -4,59 +4,32 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
-conf_mount_rw();
-
-if(is_dir("/home/pfsense")) {
-	echo "\nRelocating downloaded cvssync data, please wait...";
-	exec("rm -rf /home/pfsense");
-	echo " done.\n";
-}
-
-function create_supfile($branch) {
-
-	if($branch == "HEAD") 
-		$BRANCHTAG = ".";
-	else
-		$BRANCHTAG = $branch;
-
-	$supfile = "
-*default host=cvs.pfsense.com
-*default base=/root/pfsense/$branch
-*default release=cvs tag=$BRANCHTAG
-*default delete use-rel-suffix
-pfSense
-*default compress
-";
-
-	file_put_contents("/var/etc/pfSense-supfile", $supfile);
-}
-
-unlink_if_exists("/tmp/config.cache");
-
-if(!file_exists("/usr/local/bin/cvsup")) {
-	echo "Cannot find cvsup, pkg_add in progress...";
-	system("/usr/sbin/pkg_add -r http://files.pfsense.org/packages/7/All/cvsup-without-gui-16.1h_4.tbz");
-}
-
-if(!file_exists("/usr/bin/cvs")) {
-	echo "Cannot find cvs, fetching static cvs...";
-	system("fetch -o /usr/bin/cvs http://files.pfsense.org/extras/7/cvs");
-	system("chmod a+rx /usr/bin/cvs");
-}
-
-if(!file_exists("/usr/bin/cvs") or !file_exists("/usr/local/bin/cvsup")) {
-	echo "Could not fetch cvs or cvsup.   exiting.";
-	exit;
-}
+$GIT_REPO="http://gitweb.pfsense.org/pfsense/mainline.git pfSense";
 
 global $argv;
 global $command_split;
 
+conf_mount_rw();
+
+if(is_dir("/home/pfsense")) {
+	echo "\nRemoving downloaded cvssync data, please wait...";
+	exec("rm -rf /home/pfsense");
+	echo " done.\n";
+}
+
+unlink_if_exists("/tmp/config.cache");
+
+if(!file_exists("/usr/local/bin/git")) {
+	echo "Cannot find git, fetching static git...";
+	system("fetch -o /usr/local/bin/git http://files.pfsense.org/extras/7/git");
+	system("chmod a+rx /usr/local/bin/git");
+}
+
 /* NOTE: Set branches here */
 $branches = array(
-				  "RELENG_1" => "1.3 development branch",
-				  "RELENG_1_2" => "1.2 release branch"
-				);
+	"master" => "2.0 development branch",
+	"RELENG_1_2" => "1.2* release branch"
+);
 
 if(file_exists("/root/cvssync_backup.tgz")) {
 	$backup_date = `ls -lah /root/cvssync_backup.tgz | awk '{ print $6,$7,$8 }'`;
@@ -78,14 +51,13 @@ if($command_split[2]) {
 		$branch = $argv[3];
 	}
 }
-create_supfile($branch);
 
 if($argv[4] == "NOBACKUP") 
 	$nobackup=true;
 else 
 	$nobackup = false;
 
-$CODIR =  "/root/pfsense/$branch";
+$CODIR =  "/root/pfsense/";
 
 exec("mkdir -p /root/pfsense/$BRANCHTAG");
 
@@ -123,40 +95,45 @@ if($nobackup == false) {
 
 echo "===> Checking out $branch\n";
 exec("mkdir -p /root/pfsense/$branch");
-system("cvsup /var/etc/pfSense-supfile");
-exec("rm -rf /usr/local/www/includes/*");
-exec("rm -rf /usr/local/www/javascript/*");
-exec("find /usr/local/www -name \"*.js\" -exec rm {} \;");
+
+// Git 'er done!
+if(is_dir("$CODIR/master/mainline"))
+	exec("cd $CODIR/master/mainline && git fetch");
+else
+	exec("cd $CODIR && git clone $GIT_REPO pfSense");
+exec("cd $CODIR/master/mainline && git checkout $BRANCHTAG");
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 
-exec("cd ${CODIR}/ && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
-exec("cd ${CODIR}/ && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
-exec("rm -rf ${CODIR}/conf*");
-exec("rm ${CODIR}/pfSense/usr/local/www/trigger_initial_wizard 2>/dev/null");
-exec("rm ${CODIR}/pfSense/etc/crontab 2>/dev/null");
-exec("rm ${CODIR}/pfSense/etc/master.passwd 2>/dev/null");
-exec("rm ${CODIR}/pfSense/etc/passwd 2>/dev/null");
-exec("rm ${CODIR}/pfSense/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/pfSense/etc/ttys 2>/dev/null");
-exec("rm ${CODIR}/pfSense/etc/group 2>/dev/null");
-exec("rm ${CODIR}/pfSense/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/pfSense/etc/platform 2>/dev/null");
-exec("rm ${CODIR}/pfSense/boot/device.hints 2>/dev/null");
-exec("rm ${CODIR}/pfSense/boot/loader.conf 2>/dev/null");
-exec("rm ${CODIR}/pfSense/boot/loader.rc 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSense/conf/ 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSense/cf/ 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSense/root/.shrc");
-exec("rm -rf ${CODIR}/pfSense/root/.tcshrc");
-exec("rm -f ${CODIR}/pfSense/etc/syslog.conf 2>/dev/null");
+// Nuke CVS and pfSense tarballs
+exec("cd ${CODIR}/master/mainline && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
+exec("cd ${CODIR}/master/mainline && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
+
+// Remove files that we do not want to overwrite the system with 
+exec("rm ${CODIR}/master/mainline/usr/local/www/trigger_initial_wizard 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/etc/crontab 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/etc/master.passwd 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/etc/passwd 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/etc/ttys 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/etc/group 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/etc/platform 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/boot/device.hints 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/boot/loader.conf 2>/dev/null");
+exec("rm ${CODIR}/master/mainline/boot/loader.rc 2>/dev/null");
+exec("rm -rf ${CODIR}/master/mainline/conf*");
+exec("rm -rf ${CODIR}/master/mainline/cf 2>/dev/null");
+exec("rm -rf ${CODIR}/master/mainline/root/.shrc");
+exec("rm -rf ${CODIR}/master/mainline/root/.tcshrc");
+exec("rm -f ${CODIR}/master/mainline/etc/syslog.conf 2>/dev/null");
 
 echo "===> Installing new files...\n";
 
 if($g['platform'] == "pfSense") 
-	$command = "cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)";
+	$command = "cd $CODIR/master/mainline ; tar -cpf - . | (cd / ; tar -Uxpf -)";
 else 
-	$command = "cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -xpf -) 2>/dev/null";
+	$command = "cd $CODIR/master/mainline ; tar -cpf - . | (cd / ; tar -xpf -) 2>/dev/null";
 exec($command);
 
 post_cvssync_commands();
@@ -196,4 +173,3 @@ function post_cvssync_commands() {
 }
 
 conf_mount_ro();
-

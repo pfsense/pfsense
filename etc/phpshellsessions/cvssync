@@ -101,7 +101,11 @@ if(is_dir("$CODIR/master/mainline"))
 	exec("cd $CODIR/master/mainline && git fetch");
 else
 	exec("cd $CODIR && git clone $GIT_REPO pfSense");
-exec("cd $CODIR/master/mainline && git checkout $BRANCHTAG");
+
+if($branch == "master")
+	exec("cd $CODIR/master/mainline && git checkout");
+else 
+	exec("cd $CODIR/master/mainline && git checkout -b $BRANCHTAG origin/$BRANCHTAG");
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 

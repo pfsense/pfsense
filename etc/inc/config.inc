@@ -116,7 +116,7 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 					$cfgdevice = $cfgpartition = "fd0";
 				}
 			}
-			$cfgfstype = "msdos";
+			$cfgfstype = "msdosfs";
 			echo "CDROM build\n";
 			echo "   CFG: {$cfgpartition}\n";
 			echo "  TYPE: {$cfgfstype}\n";

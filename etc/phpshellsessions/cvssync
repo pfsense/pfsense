@@ -103,7 +103,7 @@ else
 	exec("cd $CODIR && git clone $GIT_REPO pfSense");
 
 if($branch == "master")
-	exec("cd $CODIR/master/mainline && git checkout");
+	exec("cd $CODIR/master/mainline && git checkout master");
 else 
 	exec("cd $CODIR/master/mainline && git checkout -b $BRANCHTAG origin/$BRANCHTAG");
 

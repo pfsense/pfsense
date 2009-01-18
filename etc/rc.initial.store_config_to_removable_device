@@ -60,7 +60,7 @@
 	
 	mwexec("/bin/mkdir -p /tmp/mnt/cf");
 
-	$status = mwexec("/sbin/mount -w -t msdos /dev/{$move_config_to_device} /tmp/mnt/cf");
+	$status = mwexec("/sbin/mount -w -t msdosfs /dev/{$move_config_to_device} /tmp/mnt/cf");
 	if(!$status) {
 		echo "Error while mounting {$move_config_to_device}.\n";
 		exit;

@@ -4,7 +4,7 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
-$GIT_REPO="http://gitweb.pfsense.org/pfsense/mainline.git pfSense";
+$GIT_REPO="http://gitweb.pfsense.org/pfsense/mainline.git";
 
 global $argv;
 global $command_split;
@@ -100,7 +100,7 @@ exec("mkdir -p /root/pfsense/$branch");
 if(is_dir("$CODIR/master/mainline"))
 	exec("cd $CODIR/master/mainline && git fetch");
 else
-	exec("cd $CODIR && git clone $GIT_REPO pfSense");
+	exec("cd $CODIR && git clone $GIT_REPO");
 
 if($branch == "master")
 	exec("cd $CODIR/master/mainline && git checkout master");

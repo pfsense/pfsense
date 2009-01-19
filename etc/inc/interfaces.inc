@@ -337,8 +337,6 @@ function interface_lagg_configure(&$lagg) {
         } else
                 $laggif = exec("/sbin/ifconfig lagg create");
 
-	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
-
 	/* Calculate smaller mtu and enforce it */
         $smallermtu = 0;
         foreach ($members as $member) {
@@ -367,6 +365,8 @@ function interface_lagg_configure(&$lagg) {
 		mwexec("/sbin/ifconfig {laggif} laggport {$realif}");
 	}
 	
+	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
+
 	interfaces_bring_up($laggif);
 
 	return $laggif;

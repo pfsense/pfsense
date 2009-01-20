@@ -355,7 +355,7 @@ function interface_lagg_configure(&$lagg) {
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
-		$realif =  escapeshellarg($member);
+                $realif = get_real_interface($member);
 		/* make sure the parent interface is up */
 		mwexec("/sbin/ifconfig {$realif} mtu {$smallermtu}");
 		if($realif)
@@ -485,11 +485,11 @@ function interface_gif_configure(&$gif) {
 function interfaces_configure() {
 	global $config, $g;
 
-	/* set up VLAN virtual interfaces */
-	interfaces_vlan_configure();
-
 	/* set up LAGG virtual interfaces */
 	interfaces_lagg_configure();
+
+	/* set up VLAN virtual interfaces */
+	interfaces_vlan_configure();
 
 	/* Set up PPP interfaces */
 	interfaces_ppp_configure();

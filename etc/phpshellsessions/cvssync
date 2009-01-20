@@ -101,13 +101,18 @@ if(is_dir("$CODIR/mainline")) {
 	exec("cd $CODIR/mainline && git fetch");
 } else {
 	exec("cd $CODIR && git clone $GIT_REPO");
-	exec("cd $CODIR/mainline && git fetch && git checkout -b $BRANCHTAG origin/$BRANCHTAG");	
+	exec("cd $CODIR/mainline && git fetch");
 }
 
-if($branch == "master")
+if($branch == "master") {
 	exec("cd $CODIR/mainline && git checkout master");
-else 
-	exec("cd $CODIR/mainline && git checkout $BRANCHTAG");
+} else {
+	$current_branch=`git branch | grep $BRANCHTAG`
+	if($current_branch == "") 
+		exec("cd $CODIR/mainline && git fetch && git checkout -b $BRANCHTAG origin/$BRANCHTAG");		
+	else
+		exec("cd $CODIR/mainline && git checkout $BRANCHTAG");
+}
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 

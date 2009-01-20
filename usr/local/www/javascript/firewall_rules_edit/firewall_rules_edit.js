@@ -52,7 +52,19 @@ function typesel_change() {
 			document.iform.srcmask.value = "";
 			document.iform.srcmask.disabled = 1;
 			break;
-		case 2:	/* network */
+		case 2:	/* IPv4 network */
+			var obj = document.getElementById('srcmask');
+			NetUtils_clearOptions(obj);
+			NetUtils_loadMaskIPv4(obj, 31, 1, 31);
+			
+			document.iform.src.disabled = 0;
+			document.iform.srcmask.disabled = 0;
+			break;
+		case 3: /* IPv6 network */
+			var obj = document.getElementById('srcmask');
+			NetUtils_clearOptions(obj);
+			NetUtils_loadMaskIPv6(obj, 127, 1, 127);
+
 			document.iform.src.disabled = 0;
 			document.iform.srcmask.disabled = 0;
 			break;
@@ -69,7 +81,19 @@ function typesel_change() {
 			document.iform.dstmask.value = "";
 			document.iform.dstmask.disabled = 1;
 			break;
-		case 2:	/* network */
+		case 2:	/* IPv4 network */
+			var obj = document.getElementById('dstmask');
+			NetUtils_clearOptions(obj);
+			NetUtils_loadMaskIPv4(obj, 31, 1, 31);
+
+			document.iform.dst.disabled = 0;
+			document.iform.dstmask.disabled = 0;
+			break;
+		case 3:	/* IPv6 network */
+			var obj = document.getElementById('dstmask');
+			NetUtils_clearOptions(obj);
+			NetUtils_loadMaskIPv6(obj, 63, 1, 63);
+
 			document.iform.dst.disabled = 0;
 			document.iform.dstmask.disabled = 0;
 			break;
@@ -104,10 +128,16 @@ function proto_change() {
 
 	ext_change();
 
-	if(document.iform.proto.selectedIndex == 3 || document.iform.proto.selectedIndex == 4) {
+	if(document.iform.proto.selectedIndex == 3 || document.iform.proto.selectedIndex == 8) {
 		document.getElementById("icmpbox").style.display = '';
 	} else {
 		document.getElementById("icmpbox").style.display = 'none';
+	}
+
+	if(document.iform.proto.selectedIndex == 7) {
+		document.getElementById("icmp6box").style.display = '';
+	} else {
+		document.getElementById("icmp6box").style.display = 'none';
 	}
 
 	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 2) {

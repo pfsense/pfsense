@@ -46,6 +46,12 @@ $a_vlans = &$config['vlans']['vlan'];
 
 $portlist = get_interface_list();
 
+/* add LAGG interfaces */
+if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
+        foreach ($config['laggs']['lagg'] as $lagg) {
+                $portlist[$lagg['laggif']] = $lagg;
+}
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];

@@ -40,7 +40,8 @@
 require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
-require_once ("shaper.inc");
+require_once("shaper.inc");
+require_once("IPv6.inc");
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
@@ -176,6 +177,7 @@ function filter_configure_sync() {
 	  $max_states = pfsense_default_state_size();
 	  $rules .= "set limit states {$max_states}\n";
 	}
+	$rules .= "set skip on { lo0, gif, tun, enc }\n";
 	$rules .= "\n";
 	update_filter_reload_status("Setting up SCRUB information");
 	$rules .= filter_generate_scrubing();
@@ -391,12 +393,15 @@ function generate_optcfg_array()
 		$oic = array();
 		$oic['if'] = get_real_interface($if);
 		$oic['ip'] = get_interface_ip($if);
+		$oic['ip6'] = get_interface_ip($if, 'ipv6');
 		if (!is_ipaddr($oc['ipaddr']) && !empty($oc['ipaddr']))
 			$oic['type'] = $oc['ipaddr'];
 		$oic['sn'] = get_interface_subnet($if);
+		$oic['sn6'] = get_interface_subnet($if, 'ipv6');
 		$oic['mtu'] = $oc['mtu'];
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
+		$oic['sa6'] = $oic['ip6'] != '' ? Net_IPv6::getNetmask($oic['ip6'], $oic['sn6']) : null;
 		$oic['nonat'] = $oc['nonat'];
 		$oic['ftpproxy'] = !isset($oc['disableftpproxy']);
 		$oic['alias-address'] = $oc['alias-address'];
@@ -1240,12 +1245,23 @@ function generate_user_filter_rule($rule)
 
 	/* do not process reply-to for gateway'd rules */
 	if ($rule['gateway'] == "" && interface_has_gateway($rule['interface'])) {
-		$rg = get_interface_gateway($rule['interface']);
-		if (is_ipaddr($rg)) {
-			$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-		} else {
-			if($rule['interface'] <> "pptp") {
+		if (Net_IPv6::checkIPv6($rule['source']['address']) || Net_IPv6::checkIPv6($rule['destination']['address'])) {
+			$rg = get_interface_gateway($rule['interface'], 'IPv6');
+
+			if (Net_IPv6::checkIPv6($rg)) {
+				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
+			} else  {
 				log_error("Could not find gateway for interface({$rule['interface']}).");
+			}
+		} else {
+			$rg = get_interface_gateway($rule['interface']);
+
+			if (is_ipaddr($rg)) {
+				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
+			} else  {
+				if($rule['interface'] <> "pptp") {
+					log_error("Could not find gateway for interface({$rule['interface']}).");
+				}
 			}
 		}
 	}
@@ -1300,12 +1316,29 @@ function generate_user_filter_rule($rule)
 		}
 	}
 	if (isset($rule['protocol'])) {
-		if($rule['protocol'] == "tcp/udp")
-			$aline['prot'] = " proto { tcp udp } ";
-		elseif($rule['protocol'] == "icmp")
+		switch($rule['protocol']) {
+		case 'tcp/udp':
+			$aline['prot'] = " inet proto { tcp udp } ";
+			break;
+		case 'tcp6/udp6':
+			$aline['prot'] = " inet6 proto { tcp udp } ";
+			break;
+		case 'tcp6':
+			$aline['prot'] = " inet6 proto tcp ";
+			break;
+		case 'udp6':
+			$aline['prot'] = " inet6 proto udp ";
+			break;
+		case 'icmp':
 			$aline['prot'] = " inet proto icmp ";
-		else
+			break;
+		case 'icmp6':
+			$aline['prot'] = " inet6 proto ipv6-icmp ";
+			break;
+		default:
 			$aline['prot'] = " proto {$rule['protocol']} ";
+			break;
+		}
 	} else {
 		if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "") {
 			$aline['prot'] = " proto tcp ";
@@ -1328,30 +1361,58 @@ function generate_user_filter_rule($rule)
 			}
 		} else {
 			switch ($rule['source']['network']) {
-					case 'wanip':
-						$src = $FilterIflist["wan"]['ip'];
-						break;
-					case 'lanip':
-						$src = $FilterIflist["lan"]['ip'];
-						break;
-					case 'lan':
-						$lansa = $FilterIflist['lan']['sa'];
-												$lansn = $FilterIflist['lan']['sn'];
-												$src = "{$lansa}/{$lansn}";
-						break;
-					case 'pptp':
-						$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
-						$pptpsn = $FilterIflist['pptp']['sn'];
-						$src = "{$pptpsa}/{$pptpsn}";
-						break;
-					case 'pppoe':
-						$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
-						$pppoesn = $FilterIflist['pppoe']['sn'];
-						$src = "{$pppoesa}/{$pppoesn}";
-						break;
+			case 'wanip':
+				if (isset($FilterIflist['wan']['ip6']) && isset($FilterIflist['wan']['ip'])) {
+					$src = "{ {$FilterIflist['wan']['ip6']}, {$FilterIflist['wan']['ip']} }";
+				} else if (isset($FilterIflist['wan']['ip6'])) {
+					$src = $FilterIflist['wan']['ip6'];
+				} else {
+					$src = $FilterIflist['wan']['ip'];
 				}
-				if (isset($rule['source']['not'])) $src = "!{$src}";
+
+				break;
+			case 'lanip':
+				if (isset($FilterIflist['lan']['ip6']) && isset($FilterIflist['lan']['ip'])) {
+					$src = "{ {$FilterIflist['lan']['ip6']}, {$FilterIflist['lan']['ip']} }";
+				} else if (isset($FilterIflist['lan']['ip6'])) {
+					$src = $FilterIflist['lan']['ip6'];
+				} else {
+					$src = $FilterIflist['lan']['ip'];
+				}
+
+				break;
+			case 'lan':
+				if ($FilterIflist['lan']['sa6'] != '' && $FilterIflist['lan']['sn6'] != '' &&
+					$FilterIflist['lan']['sa'] != '' && $FilterIflist['lan']['sn'] != '') {
+					$lansa = $FilterIflist['lan']['sa'];
+					$lansn = $FilterIflist['lan']['sn'];
+					$lansa6 = $FilterIflist['lan']['sa6'];
+					$lansn6 = $FilterIflist['lan']['sn6'];
+					$src = "{ $lansa/$lansn, $lansa6/$lansn6 }";
+				} else if ($FilterIflist['lan']['sa6'] != '' && $FilterIflist['lan']['sn6'] != '') {
+					$lansa6 = $FilterIflist['lan']['sa6'];
+					$lansn6 = $FilterIflist['lan']['sn6'];
+					$src = "{ $lansa6/$lansn6 }";
+				} else {
+					$lansa = $FilterIflist['lan']['sa'];
+					$lansn = $FilterIflist['lan']['sn'];
+					$src = "{ $lansa/$lansn }";
+				}
+
+				break;
+			case 'pptp':
+				$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
+				$pptpsn = $FilterIflist['pptp']['sn'];
+				$src = "{$pptpsa}/{$pptpsn}";
+				break;
+			case 'pppoe':
+				$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
+				$pppoesn = $FilterIflist['pppoe']['sn'];
+				$src = "{$pppoesa}/{$pppoesn}";
+				break;
 			}
+				if (isset($rule['source']['not'])) $src = "!{$src}";
+		}
 	} else if ($rule['source']['address']) {
 		$expsrc = alias_expand($rule['source']['address']);
 		if (isset($rule['source']['not']))
@@ -1427,27 +1488,54 @@ function generate_user_filter_rule($rule)
 			if (isset($rule['destination']['not'])) $dst = " !{$dst}";
 		} else {
 			switch ($rule['destination']['network']) {
-				case 'wanip':
-					$dst = $FilterIflist["wan"]['ip'];
-					break;
-				case 'lanip':
-					$dst = $FilterIflist["lan"]['ip'];
-					break;
-				case 'lan':
+			case 'wanip':
+				if (isset($FilterIflist['wan']['ip6']) && isset($FilterIflist['wan']['ip'])) {
+					$dst = "{ {$FilterIflist['wan']['ip6']}, {$FilterIflist['wan']['ip']} }";
+				} else if (isset($FilterIflist['wan']['ip6'])) {
+					$dst = $FilterIflist['wan']['ip6'];
+				} else {
+					$dst = $FilterIflist['wan']['ip'];
+				}
+
+				break;
+			case 'lanip':
+				if (isset($FilterIflist['lan']['ip6']) && isset($FilterIflist['lan']['ip'])) {
+					$dst = "{ {$FilterIflist['lan']['ip6']}, {$FilterIflist['lan']['ip']} }";
+				} else if (isset($FilterIflist['lan']['ip6'])) {
+					$dst = $FilterIflist['lan']['ip6'];
+				} else {
+					$dst = $FilterIflist['lan']['ip'];
+				}
+
+				break;
+			case 'lan':
+				if (isset($FilterIflist['lan']['sa6']) && isset($FilterIflist['lan']['sn6']) &&
+					isset($FilterIflist['lan']['sa']) && isset($FilterIflist['lan']['sn'])) {
 					$lansa = $FilterIflist['lan']['sa'];
 					$lansn = $FilterIflist['lan']['sn'];
-					$dst = "{$lansa}/{$lansn}";
-					break;
-				case 'pptp':
-					$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
-					$pptpsn = $FilterIflist['pptp']['sn'];
-					$dst = "{$pptpsa}/{$pptpsn}";
-					break;
-				case 'pppoe':
-					$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
-					$pppoesn = $FilterIflist['pppoe']['sn'];
-					$dst = "{$pppoesa}/{$pppoesn}";
-					break;
+					$lansa6 = $FilterIflist['lan']['sa6'];
+					$lansn6 = $FilterIflist['lan']['sn6'];
+					$dst = "{ $lansa/$lansn, $lansa6/$lansn6 }";
+				} else if (isset($FilterIflist['lan']['sa6']) && isset($FilterIflist['lan']['sn6'])) {
+					$lansa6 = $FilterIflist['lan']['sa6'];
+					$lansn6 = $FilterIflist['lan']['sn6'];
+					$dst = "{ $lansa6/$lansn6 }";
+				} else {
+					$lansa = $FilterIflist['lan']['sa'];
+					$lansn = $FilterIflist['lan']['sn'];
+					$dst = "{ $lansa/$lansn }";
+				}
+				break;
+			case 'pptp':
+				$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
+				$pptpsn = $FilterIflist['pptp']['sn'];
+				$dst = "{$pptpsa}/{$pptpsn}";
+				break;
+			case 'pppoe':
+				$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
+				$pppoesn = $FilterIflist['pppoe']['sn'];
+				$dst = "{$pppoesa}/{$pppoesn}";
+				break;
 			}
 			if (isset($rule['destination']['not'])) $dst = " !{$dst}";
 		}
@@ -1519,6 +1607,9 @@ function generate_user_filter_rule($rule)
 	}
 	if (($rule['protocol'] == "icmp") && $rule['icmptype']) {
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
+	}
+	if (($rule['protocol'] == "icmp6") && $rule['icmp6type']) {
+		$aline['icmp-type'] = "icmp6-type {$rule['icmp6type']} ";
 	}
 	if ($type == "pass") {
 		if (isset($rule['tag']) && $rule['tag'] <> "")
@@ -2433,7 +2524,7 @@ function generate_ipsec_filter_rules() {
 				$interface = $FilterIflist[$parentinterface]['if'];
 
 				/* Just in case */
-				if (!is_ipaddr($gateway) || empty($interface)) {
+				if ((!is_ipaddr($gateway) && !Net_IPv6::checkIPv6($gateway)) || empty($interface)) {
 					$route_to = " ";
 					$reply_to = " ";
 				} else { 
@@ -2441,6 +2532,7 @@ function generate_ipsec_filter_rules() {
 					$reply_to = " reply-to ( $interface $gateway ) ";
 				}
 
+				/* TODO: Put IPv6 here */
 				/* Add rules to allow IKE to pass */
 				$shorttunneldescr = substr($descr, 0, 36);
 				$ipfrules .= <<<EOD

@@ -25,6 +25,18 @@ if(!file_exists("/usr/local/bin/git")) {
 	system("chmod a+rx /usr/local/bin/git");
 }
 
+# Remove mainline if exists (older)
+if(is_dir("/root/pfsense/mainline")) 
+	exec("rm -rf /root/pfsense/mainline");
+
+# Remove RELENG_1_2 if exists (older)
+if(is_dir("/root/pfsense/RELENG_1_2")) 
+	exec("rm -rf /root/pfsense/RELENG_1_2");
+
+# Remove HEAD if exists (older)
+if(is_dir("/root/pfsense/HEAD")) 
+	exec("rm -rf /root/pfsense/HEAD");
+
 /* NOTE: Set branches here */
 $branches = array(
 	"master" => "2.0 development branch",
@@ -97,47 +109,55 @@ echo "===> Checking out $branch\n";
 exec("mkdir -p /root/pfsense/$branch");
 
 // Git 'er done!
-if(is_dir("$CODIR/master/mainline"))
-	exec("cd $CODIR/master/mainline && git fetch");
-else
-	exec("cd $CODIR && git clone $GIT_REPO");
+if(is_dir("$CODIR/pfSenseGITREPO")) {
+	exec("cd $CODIR/pfSenseGITREPO && git fetch");
+	exec("cd $CODIR/pfSenseGITREPO && git merge $branch");	
+} else {
+	exec("cd $CODIR && git clone $GIT_REPO pfSenseGITREPO");
+}
 
-if($branch == "master")
-	exec("cd $CODIR/master/mainline && git checkout master");
-else 
-	exec("cd $CODIR/master/mainline && git checkout -b $BRANCHTAG origin/$BRANCHTAG");
+if($branch == "master") {
+	exec("cd $CODIR/pfSenseGITREPO && git checkout master");
+} else {
+	$current_branch=`git branch | grep $BRANCHTAG`;
+	if($current_branch == "") {
+		exec("cd $CODIR/pfSenseGITREPO && git checkout -b $BRANCHTAG origin/$BRANCHTAG");
+	} else {
+		exec("cd $CODIR/pfSenseGITREPO && git checkout $BRANCHTAG");
+	}
+}
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 
 // Nuke CVS and pfSense tarballs
-exec("cd ${CODIR}/master/mainline && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
-exec("cd ${CODIR}/master/mainline && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
+exec("cd ${CODIR}/pfSenseGITREPO/ && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
+exec("cd ${CODIR}/pfSenseGITREPO/ && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
 
 // Remove files that we do not want to overwrite the system with 
-exec("rm ${CODIR}/master/mainline/usr/local/www/trigger_initial_wizard 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/crontab 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/master.passwd 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/passwd 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/ttys 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/group 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/platform 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/boot/device.hints 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/boot/loader.conf 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/boot/loader.rc 2>/dev/null");
-exec("rm -rf ${CODIR}/master/mainline/conf*");
-exec("rm -rf ${CODIR}/master/mainline/cf 2>/dev/null");
-exec("rm -rf ${CODIR}/master/mainline/root/.shrc");
-exec("rm -rf ${CODIR}/master/mainline/root/.tcshrc");
-exec("rm -f ${CODIR}/master/mainline/etc/syslog.conf 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/usr/local/www/trigger_initial_wizard 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/etc/crontab 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/etc/master.passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/etc/passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/etc/ttys 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/etc/group 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/etc/platform 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/boot/device.hints 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/boot/loader.conf 2>/dev/null");
+exec("rm ${CODIR}/pfSenseGITREPO/boot/loader.rc 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/conf*");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/cf 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/root/.shrc");
+exec("rm -rf ${CODIR}/pfSenseGITREPO/root/.tcshrc");
+exec("rm -f ${CODIR}/pfSenseGITREPO/etc/syslog.conf 2>/dev/null");
 
 echo "===> Installing new files...\n";
 
 if($g['platform'] == "pfSense") 
-	$command = "cd $CODIR/master/mainline ; tar -cpf - . | (cd / ; tar -Uxpf -)";
+	$command = "cd $CODIR/pfSenseGITREPO ; tar -cpf - . | (cd / ; tar -Uxpf -)";
 else 
-	$command = "cd $CODIR/master/mainline ; tar -cpf - . | (cd / ; tar -xpf -) 2>/dev/null";
+	$command = "cd $CODIR/pfSenseGITREPO ; tar -cpf - . | (cd / ; tar -xpf -) 2>/dev/null";
 exec($command);
 
 post_cvssync_commands();

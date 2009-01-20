@@ -90,12 +90,12 @@ function captiveportal_configure() {
 			$htmltext = <<<EOD
 <html>
 <head>
-<title>pfSense captive portal</title>
+<title>{$g['product_name']} captive portal</title>
 </head>
 <body>
 <center>
-<h2>pfSense captive portal</h2>
-Welcome to the pfSense Captive Portal!  This is the default page since a custom page has not been defined.
+<h2>{$g['product_name']} captive portal</h2>
+Welcome to the {$g['product_name']} Captive Portal!  This is the default page since a custom page has not been defined.
 <p>
 <form method="post" action="\$PORTAL_ACTION\$">
 <input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
@@ -1080,7 +1080,7 @@ function getNasID()
     $nasId = "";
     exec("/bin/hostname", $nasId);
     if(!$nasId[0])
-        $nasId[0] = "pfSense";
+        $nasId[0] = $g['product_name'];
     return $nasId[0];
 }
 

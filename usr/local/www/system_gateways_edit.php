@@ -38,17 +38,17 @@
 
 
 require("guiconfig.inc");
+require_once("IPv6.inc");
 
 $a_gateways = return_gateways_array();
-$a_gateways_arr = array();
-foreach($a_gateways as $gw) {
-	$a_gateways_arr[] = $gw;
-}
-$a_gateways = $a_gateways_arr;
 
-$id = $_GET['id'];
-if (isset($_POST['id']))
+if (isset($_GET['id'])) {
+	$id = $_GET['id'];
+} else if (isset($_POST['id'])) {
 	$id = $_POST['id'];
+} else {
+	$id = -1;
+}
 
 if (isset($_GET['dup'])) {
 	$id = $_GET['dup'];
@@ -62,6 +62,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
+	$pconfig['type'] = $a_gateways[$id]['type'];
 }
 
 if (isset($_GET['dup'])) {
@@ -80,15 +81,33 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
+	/* Does this gateway name already exist? */
+	foreach($config['gateways']['gateway_item'] as $gw) 
+		if($gw['name'] == $_POST['name']) 
+			$input_errors[] = "This gateway name already exists.";
+	
 	if (! isset($_POST['name'])) {
 		$input_errors[] = "A valid gateway name must be specified.";
 	}
-	/* skip system gateways which have been automatically added */
-	if ($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) {
-		$input_errors[] = "A valid gateway IP address must be specified.";
-	}
-	if ((($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']))) {
-		$input_errors[] = "A valid monitor IP address must be specified.";
+
+	if ($_POST['type'] == 'IPv4') {
+		if (!is_ipaddr($_POST['gateway']) && $pconfig['attribute'] != 'system') {
+			$input_errors[] = "A valid IPv4 gateway address must be specified.";
+		}
+
+		if ($_POST['monitor'] && !is_ipaddr($_POST['monitor'])) {
+			$input_errors[] = "A valid IPv4 monitor address must be specified.";
+		}
+	} else if ($_POST['type'] == 'IPv6') {
+		if (!Net_IPv6::checkIPv6($_POST['gateway']) && $pconfig['attribute'] != 'system') {
+			$input_errors[] = "A valid IPv6 gateway address must be specified.";
+		}
+
+		if ($_POST['monitor'] && !Net_IPv6::checkIPv6($_POST['monitor'])) {
+			$input_errors[] = "A valid IPv6 monitor address must be specified.";
+		}
+	} else {
+		$input_errors[] = "A network type must be specified.";
 	}
 
 	/* check for overlaps */
@@ -129,16 +148,18 @@ if ($_POST) {
 			$gateway['name'] = $_POST['name'];
 			$gateway['gateway'] = $_POST['gateway'];
 			$gateway['descr'] = $_POST['descr'];
+			$gateway['type'] = $_POST['type'];
 
 			if ($_POST['defaultgw'] == "yes") {
-				$i = 0;
-				foreach($a_gateways as $gw) {
-					unset($config['gateways'][$i]['defaultgw']);
+				$i=0;
+				foreach ($a_gateways as $gateway) {
+					if($id != $i && $config['gateways']['gateway_item'][$i]['type'] == $_POST['type']) {
+						unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+					} else if ($config['gateways']['gateway_item'][$i]['type'] == $_POST['type']) {
+						$config['gateways']['gateway_item'][$i]['defaultgw'] = true;
+					}
 					$i++;
 				}
-				$gateway['defaultgw'] = true;
-			} else {
-				unset($gateway['defaultgw']);
 			}
 
 			/* when saving the manual gateway we use the attribute which has the corresponding id */
@@ -211,10 +232,32 @@ include("head.inc");
                     <br> <span class="vexpl">Gateway name</span></td>
                 </tr>
 		<tr>
+                  <td width="22%" valign="top" class="vncellreq">Type</td>
+                  <td width="78%" class="vtable"> 
+                    <select name="type" class="formselect">
+			<?php
+				if ($pconfig['type'] == 'IPv6') {
+					$str = <<<EOD
+					<option value="IPv4">IPv4</option>
+					<option value="IPv6" selected>IPv6</option>
+EOD;
+				} else {
+					$str = <<<EOD
+					<option value="IPv4" selected>IPv4</option>
+					<option value="IPv6">IPv6</option>
+EOD;
+				}
+
+				echo $str;
+			?>
+		    </select>
+                  </td>
+                </tr>
+		<tr>
                   <td width="22%" valign="top" class="vncellreq">Gateway</td>
                   <td width="78%" class="vtable"> 
                     <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
-                    <br> <span class="vexpl">Gateway IP address</span></td>
+                    <br> <span class="vexpl">Gateway IPv4/IPv6 address</span></td>
                 </tr>
 		<tr>
 		  <td width="22%" valign="top" class="vncell">Default Gateway</td>
@@ -229,7 +272,7 @@ include("head.inc");
 		  <td width="78%" class="vtable">
 			<input name="monitor" type="text" id="monitor" value="<?php echo ($pconfig['monitor']) ; ?>" />
 			<strong>Alternative monitor IP</strong> <br />
-			Enter a alternative address here to be used to monitor the link. This is used for the
+			Enter an alternative address here to be used to monitor the link. This is used for the
 			quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond
 			to icmp requests.</strong>
 			<br />

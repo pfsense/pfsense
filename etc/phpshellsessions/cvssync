@@ -97,49 +97,49 @@ echo "===> Checking out $branch\n";
 exec("mkdir -p /root/pfsense/$branch");
 
 // Git 'er done!
-if(is_dir("$CODIR/master/mainline")) {
-	exec("cd $CODIR/master/mainline && git fetch && git merge");
+if(is_dir("$CODIR/mainline")) {
+	exec("cd $CODIR/mainline && git fetch");
 } else {
 	exec("cd $CODIR && git clone $GIT_REPO");
-	exec("cd $CODIR/master/mainline && git fetch && git merge && git checkout -b $BRANCHTAG origin/$BRANCHTAG");	
+	exec("cd $CODIR/mainline && git fetch && git checkout -b $BRANCHTAG origin/$BRANCHTAG");	
 }
 
 if($branch == "master")
-	exec("cd $CODIR/master/mainline && git checkout master");
+	exec("cd $CODIR/mainline && git checkout master");
 else 
-	exec("cd $CODIR/master/mainline && git checkout $BRANCHTAG");
+	exec("cd $CODIR/mainline && git checkout $BRANCHTAG");
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 
 // Nuke CVS and pfSense tarballs
-exec("cd ${CODIR}/master/mainline && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
-exec("cd ${CODIR}/master/mainline && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
+exec("cd ${CODIR}/mainline && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
+exec("cd ${CODIR}/mainline && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
 
 // Remove files that we do not want to overwrite the system with 
-exec("rm ${CODIR}/master/mainline/usr/local/www/trigger_initial_wizard 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/crontab 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/master.passwd 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/passwd 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/ttys 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/group 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/etc/platform 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/boot/device.hints 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/boot/loader.conf 2>/dev/null");
-exec("rm ${CODIR}/master/mainline/boot/loader.rc 2>/dev/null");
-exec("rm -rf ${CODIR}/master/mainline/conf*");
-exec("rm -rf ${CODIR}/master/mainline/cf 2>/dev/null");
-exec("rm -rf ${CODIR}/master/mainline/root/.shrc");
-exec("rm -rf ${CODIR}/master/mainline/root/.tcshrc");
-exec("rm -f ${CODIR}/master/mainline/etc/syslog.conf 2>/dev/null");
+exec("rm ${CODIR}/mainline/usr/local/www/trigger_initial_wizard 2>/dev/null");
+exec("rm ${CODIR}/mainline/etc/crontab 2>/dev/null");
+exec("rm ${CODIR}/mainline/etc/master.passwd 2>/dev/null");
+exec("rm ${CODIR}/mainline/etc/passwd 2>/dev/null");
+exec("rm ${CODIR}/mainline/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/mainline/etc/ttys 2>/dev/null");
+exec("rm ${CODIR}/mainline/etc/group 2>/dev/null");
+exec("rm ${CODIR}/mainline/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/mainline/etc/platform 2>/dev/null");
+exec("rm ${CODIR}/mainline/boot/device.hints 2>/dev/null");
+exec("rm ${CODIR}/mainline/boot/loader.conf 2>/dev/null");
+exec("rm ${CODIR}/mainline/boot/loader.rc 2>/dev/null");
+exec("rm -rf ${CODIR}/mainline/conf*");
+exec("rm -rf ${CODIR}/mainline/cf 2>/dev/null");
+exec("rm -rf ${CODIR}/mainline/root/.shrc");
+exec("rm -rf ${CODIR}/mainline/root/.tcshrc");
+exec("rm -f ${CODIR}/mainline/etc/syslog.conf 2>/dev/null");
 
 echo "===> Installing new files...\n";
 
 if($g['platform'] == "pfSense") 
-	$command = "cd $CODIR/master/mainline ; tar -cpf - . | (cd / ; tar -Uxpf -)";
+	$command = "cd $CODIR/mainline ; tar -cpf - . | (cd / ; tar -Uxpf -)";
 else 
-	$command = "cd $CODIR/master/mainline ; tar -cpf - . | (cd / ; tar -xpf -) 2>/dev/null";
+	$command = "cd $CODIR/mainline ; tar -cpf - . | (cd / ; tar -xpf -) 2>/dev/null";
 exec($command);
 
 post_cvssync_commands();

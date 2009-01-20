@@ -218,9 +218,14 @@ function system_routing_configure() {
 			return 1;
 		}
 		while (!feof($fd)) {
-			$oldrt = trim(fgets($fd));
-			if (($oldrt) && (stristr($route_str, $oldrt)))
-				mwexec("/sbin/route delete " . escapeshellarg($oldrt));
+			$oldrt = fgets($fd);
+			if ($oldrt && stristr($route_str, trim($oldrt))) {
+				if (Net_IPv6::checkIPv6(trim($oldrt))) {
+					mwexec("/sbin/route delete -inet6 " . escapeshellarg(trim($oldrt)));
+				} else {
+					mwexec("/sbin/route delete " . escapeshellarg(trim($oldrt)));
+				}
+			}
 		}
 		fclose($fd);
 		unlink("{$g['vardb_path']}/routes.db");
@@ -229,19 +234,21 @@ function system_routing_configure() {
 	/* if list */
 	$iflist = get_configured_interface_list();
 
-	$dont_remove_route = false;
-	foreach ($iflist as $ifent => $ifname) {
-		/* do not process interfaces that will end up with gateways */
-		if (interface_has_gateway($ifent))
-			$dont_remove_route = true;
+  	$dont_remove_route = false;
+  	foreach ($iflist as $ifent => $ifname) {
+  		/* do not process interfaces that will end up with gateways */
+  		if (interface_has_gateway($ifent))
+  			$dont_remove_route = true;
+  	}
+
+	if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
+		$dont_remove_route = true;
 	}
 
-	if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp")
-		$dont_remove_route = true;
-
 	if($dont_remove_route == false) {
-		/* remove default route */
-		mwexec("/sbin/route delete default", true);
+		/* remove default routes */
+		mwexec("/sbin/route delete default");
+		mwexec("/sbin/route delete -inet6 default");
 	}
 
 	$dont_add_route = false;
@@ -256,14 +263,41 @@ function system_routing_configure() {
 
 	if($dont_add_route == false) {
 		if(is_array($config['gateways']['gateway_item'])) {
+			$gatewayip = '';
+			$interfacegw = '';
+
+			$gatewayip_ipv6 = '';
+			$interfacegw_ipv6 = '';
+
 			foreach($config['gateways']['gateway_item'] as $gateway) {
 		        	if(isset($gateway['defaultgw'])) {
-					$gatewayip = $gateway['gateway'];
-					$interfacegw = $gateway['interface'];
+					if ($gateway['type'] == 'IPv4') {
+						$gatewayip = $gateway['gateway'];
+						$interfacegw = $gateway['interface'];
+					} else if ($gateway['type'] == 'IPv6') {
+						$gatewayip_ipv6 = $gateway['gateway'];
+						$interfacegw_ipv6 = $gateway['interface'];
+					}
 				}
 			}
-			if(($interfacegw <> "bgpd") && (is_ipaddr($gatewayip)))
-				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
+
+			if($interfacegw != "bgpd") {
+				/*
+				if (Net_IPv6::checkIPv6($gatewayip)) {
+					mwexec("/sbin/route add -inet6 default " . escapeshellarg($gatewayip));
+				} else {
+					mwexec("/sbin/route add default " . escapeshellarg($gatewayip));
+				}
+				*/
+
+				if ($gatewayip != '') {
+					mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
+				}
+
+				if ($gatewayip_ipv6 != '') {
+					mwexec("/sbin/route add -inet6 default " . escapeshellarg($gatewayip_ipv6), true);
+				}
+			}
 		} else {
 			/* FIXME */
 			/* adding gateway for 1.2-style configs without the new
@@ -274,6 +308,11 @@ function system_routing_configure() {
 			if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
 				$gatewayip = $config['interfaces']['wan']['gateway'];
 				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
+			}
+
+			if (Net_IPv6::checkIPv6($config['interfaces']['wan']['gateway_ipv6'])) {
+				$gatewayip = $config['interfaces']['wan']['gateway_ipv6'];
+				mwexec("/sbin/route add -inet6 default " . escapeshellarg($gatewayip), true);
 			}
 		}
 	}
@@ -295,19 +334,42 @@ function system_routing_configure() {
 					}
 				}
 			}
-			if((is_ipaddr($rtent['gateway'])) && ($gatewayip == ""))  {
-				$gatewayip = $rtent['gateway'];
-				$interfacegw = $rtent['interface'];
-			}			
-			if(isset($rtent['interfacegateway'])) {
-				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));
-			} else {
-				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-					" " . escapeshellarg($gatewayip));
+
+			if ($rtent['ip_version'] == 'IPv4') {
+				if(is_ipaddr($rtent['gateway']) && $gatewayip == "")  {
+					$gatewayip = $rtent['gateway'];
+					$interfacegw = $rtent['interface'];
+				}
+
+				if(isset($rtent['interfacegateway'])) {
+					mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
+						" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));
+				} else {
+					mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
+						" " . escapeshellarg($gatewayip));
+				}
+
+                            /* record route so it can be easily removed later (if necessary) */
+                            fwrite($fd, $rtent['network'] . "\n");
+			} else if ($rtent['ip_version'] == 'IPv6') {
+				///
+				if(Net_IPv6::checkIPv6($rtent['gateway']) && $gatewayip == "")  {
+					$gatewayip = $rtent['gateway'];
+					$interfacegw = $rtent['interface'];
+				}
+
+				if(isset($rtent['interfacegateway'])) {
+					mwexec("/sbin/route add -inet6 " . escapeshellarg($rtent['network']) .
+						" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));
+				} else {
+					mwexec("/sbin/route add -inet6 " . escapeshellarg($rtent['network']) .
+						" " . escapeshellarg($gatewayip));
+				}
+
+                            /* record route so it can be easily removed later (if necessary) */
+                            fwrite($fd, $rtent['network'] . "\n");
 			}
-			/* record route so it can be easily removed later (if necessary) */
-			fwrite($fd, $rtent['network'] . "\n");
+
 		}
 		fclose($fd);
 	}
@@ -317,12 +379,17 @@ function system_routing_configure() {
 
 function system_routing_enable() {
 	global $config, $g;
+	$retval = false;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_routing_enable() being called $mt\n";
 	}
 
-	return mwexec("/sbin/sysctl net.inet.ip.forwarding=1");
+	$retval = mwexec("/sbin/sysctl net.inet.ip.forwarding=1") && mwexec("/sbin/sysctl net.inet6.ip6.forwarding=1");
+
+	return $retval;
+
 }
 
 function system_syslogd_start() {
@@ -622,9 +689,9 @@ function system_generate_lighty_config($filename,
 
 	if($captive_portal == true)  {	
 		$bin_environment =  <<<EOC
-        "bin-environment" => (
-           "PHP_FCGI_CHILDREN" => "16",
-           "PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
+	"bin-environment" => (
+		"PHP_FCGI_CHILDREN" => "16",
+		"PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
         ), 
 EOC;
 
@@ -649,7 +716,7 @@ fastcgi.server = ( ".php" =>
 	( "localhost" =>
 		(
 			"socket" => "/tmp/php-fastcgi.socket",
-			"min-procs" => 1,
+			"min-procs" => 2,
 			"max-procs" => {$max_procs},
 			{$bin_environment}			
 			"bin-path" => "/usr/local/bin/php"
@@ -829,6 +896,8 @@ expire.url = (
 				"" => "access 50 hours",	
         )
 
+server.use-ipv6 = "enable"
+
 EOD;
 
 	$cert = str_replace("\r", "", $cert);
@@ -848,7 +917,7 @@ EOD;
 		fwrite($fd, "\n");
 		fwrite($fd, $key);
 		fclose($fd);
-		$lighty_config .= "\n";
+
 		$lighty_config .= "## ssl configuration\n";
 		$lighty_config .= "ssl.engine = \"enable\"\n";
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
@@ -861,6 +930,12 @@ EOD;
 	}
 	fwrite($fd, $lighty_config);
 	fclose($fd);
+
+	/*
+	 * Hard-code sysctl knob to ensure that lighttpd would work
+	 * with IPv4 + IPv6.
+	 */
+	mwexec("/sbin/sysctl net.inet6.ip6.v6only=0");
 
 	return 0;
 
@@ -925,7 +1000,7 @@ function system_ntp_configure() {
 			$ifaces = array_filter($ifaces, 'does_interface_exist');
 			$ips = array_map('find_interface_ip', $ifaces);
 			foreach ($ips as $ip) {
-				if (is_ipaddr($ip))
+				if (is_ipaddr($ip) || Net_IPv6::checkIPv6($ip))
 					fwrite($fd, "listen on $ip\n");
 			}
 		}

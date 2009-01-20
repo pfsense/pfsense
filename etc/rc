@@ -15,6 +15,7 @@
 
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
+product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
 
 HOME=/
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
@@ -27,7 +28,7 @@ echo
 cat /etc/ascii-art/pfsense-logo-small.txt
 echo
 echo
-echo "Welcome to pfSense ${version} on the '${PLATFORM}' platform..."
+echo "Welcome to ${product} ${version} on the '${PLATFORM}' platform..."
 echo
 
 if [ "$PLATFORM" = "cdrom" ]; then

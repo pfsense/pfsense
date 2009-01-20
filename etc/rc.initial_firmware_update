@@ -2,10 +2,11 @@
 
 <?php
 
-echo "Starting the pfSense console firmware update system";
-
 echo ".";
 require("globals.inc");
+
+echo "Starting the {$g['product_name']} console firmware update system";
+
 $g['booting'] = true;
 require("functions.inc");
 echo ".";

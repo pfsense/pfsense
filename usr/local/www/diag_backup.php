@@ -176,7 +176,7 @@ if ($_POST) {
 								unlink_if_exists("/tmp/config.cache");
 								write_config();
 								conf_mount_ro();
-								$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense.<p>The firewall is now rebooting.";
+								$savemsg = "The m0n0wall configuration has been restored and upgraded to {$g['product_name']}.<p>The firewall is now rebooting.";
 								$reboot_needed = true;
 							}
 							if(isset($config['captiveportal']['enable'])) {

@@ -46,10 +46,6 @@ $year = date("Y");
 
 $pgtitle = "Status: UPnP Status";
 include("head.inc");
-/* put your custom HTML head content here        */
-/* using some of the $pfSenseHead function calls */
-//$pfSenseHead->addMeta("<meta http-equiv=\"refresh\" content=\"120;url={$_SERVER['SCRIPT_NAME']}\" />");
-//echo $pfSenseHead->getHTML();
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

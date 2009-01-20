@@ -221,7 +221,7 @@ function enable_change(enable_over) {
                       <td width="78%" class="vtable">
 <input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked"; ?>>
                       <strong>Append circuit ID and agent ID to requests</strong><br>
-                      If this is checked, the DHCP relay will append the circuit ID (pfSense interface number) and the agent ID to the DHCP request.</td>
+                      If this is checked, the DHCP relay will append the circuit ID (<?=$g['product_name']?> interface number) and the agent ID to the DHCP request.</td>
         		  </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">Destination server</td>

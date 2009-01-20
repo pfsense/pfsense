@@ -42,7 +42,7 @@ if($pkg_info) {
 	    $savemsg = "Unable to retrieve package info from {$g['xmlrpcbaseurl']}. Cached data will be used.";
 		$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
 	} else {
-		$savemsg = "Unable to communicate to pfSense.com.  Please check DNS, default gateway, etc.";
+		$savemsg = "Unable to communicate to {$g['product_name']}.com.  Please check DNS, default gateway, etc.";
 	}
 }
 

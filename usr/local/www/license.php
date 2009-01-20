@@ -10,7 +10,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">License</p>
 
-            <p><strong>pfSense is Copyright &copy; 2004, 2005, 2006, 2007 by Scott Ullrich
+            <p><strong><?=$g['product_name']?> is Copyright &copy; 2004, 2005, 2006, 2007 by Scott Ullrich
               (<a href="mailto:geekgod@geekgod.com">geekgod@geekgod.com</a>).<br>
               All rights reserved.</strong></p>
 
@@ -117,9 +117,9 @@ include("head.inc");
               Peter Curran (<a href="mailto:peter@closeconsultants.com">peter@closeconsultants.com</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">OpenVPN support</font></em></p>
             <hr size="1">
-            <p>pfSense is based upon/includes various free software packages,
+            <p><?=$g['product_name']?> is based upon/includes various free software packages,
               listed below.<br>
-              The author of pfSense would like to thank the authors of these
+              The authors of <?=$g['product_name']?> would like to thank the authors of these
               software packages for their efforts.</p>
             <p>FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br>
               Copyright &copy; 1994-2003 FreeBSD, Inc. All rights reserved.<br>

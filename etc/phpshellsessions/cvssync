@@ -103,9 +103,9 @@ else
 	exec("cd $CODIR && git clone $GIT_REPO");
 
 if($branch == "master")
-	exec("cd $CODIR/master/mainline && git checkout master");
+	exec("cd $CODIR/master/mainline && git pull && git checkout master");
 else 
-	exec("cd $CODIR/master/mainline && git checkout -b $BRANCHTAG origin/$BRANCHTAG");
+	exec("cd $CODIR/master/mainline && git pull && checkout -b $BRANCHTAG origin/$BRANCHTAG");
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 

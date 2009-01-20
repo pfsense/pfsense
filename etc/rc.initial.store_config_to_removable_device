@@ -51,7 +51,7 @@
 		echo "\n\n";
 		echo "Enter the device that you wish the";
 		echo "\n";
-		echo "pfSense configuration file to reside on: ";
+		echo "{$g['product_name']} configuration file to reside on: ";
 		$move_config_to_device = chop(fgets($fp));
 		if ($move_config_to_device == "") {
 			exit(0);

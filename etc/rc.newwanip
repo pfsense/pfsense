@@ -122,7 +122,7 @@ if($old_ip <> "")
 	if($old_ip <> $curwanip) {
 		exec("/etc/rc.start_packages");		
 		exec("/etc/rc.start_packages");
-		log_error("pfSense package system has detected an ip change $old_ip ->  $curwanip ... Restarting packages.");
+		log_error("{$g['product_name']} package system has detected an ip change $old_ip ->  $curwanip ... Restarting packages.");
 	}
 
 /* reload slbd */

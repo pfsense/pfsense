@@ -45,7 +45,7 @@
 		}
 	} while (!is_ipaddr($lanip));
 
-	echo "\nSubnet masks are entered as bit counts (as in CIDR notation) in pfSense.\n";
+	echo "\nSubnet masks are entered as bit counts (as in CIDR notation) in {$g['product_name']}.\n";
 	echo "e.g. 255.255.255.0 = 24\n";
 	echo "     255.255.0.0   = 16\n";
 	echo "     255.0.0.0     = 8\n\n";

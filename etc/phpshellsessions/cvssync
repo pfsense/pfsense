@@ -102,6 +102,7 @@ exec("mkdir -p /root/pfsense/$branch");
 // Git 'er done!
 if(is_dir("$CODIR/pfSenseGITREPO")) {
 	exec("cd $CODIR/pfSenseGITREPO && git fetch");
+	exec("cd $CODIR/pfSenseGITREPO && git merge $BRANCHTAG");	
 } else {
 	exec("cd $CODIR && git clone $GIT_REPO pfSenseGITREPO");
 }
@@ -110,10 +111,11 @@ if($branch == "master") {
 	exec("cd $CODIR/pfSenseGITREPO && git checkout master");
 } else {
 	$current_branch=`git branch | grep $BRANCHTAG`;
-	if($current_branch == "") 
-		exec("cd $CODIR/pfSenseGITREPO && git fetch && git checkout -b $BRANCHTAG origin/$BRANCHTAG");		
-	else
+	if($current_branch == "") {
+		exec("cd $CODIR/pfSenseGITREPO && git checkout -b $BRANCHTAG origin/$BRANCHTAG");
+	} else {
 		exec("cd $CODIR/pfSenseGITREPO && git checkout $BRANCHTAG");
+	}
 }
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");

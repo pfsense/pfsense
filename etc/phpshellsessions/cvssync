@@ -102,7 +102,7 @@ exec("mkdir -p /root/pfsense/$branch");
 // Git 'er done!
 if(is_dir("$CODIR/pfSenseGITREPO")) {
 	exec("cd $CODIR/pfSenseGITREPO && git fetch");
-	exec("cd $CODIR/pfSenseGITREPO && git merge $BRANCHTAG");	
+	exec("cd $CODIR/pfSenseGITREPO && git merge $branch");	
 } else {
 	exec("cd $CODIR && git clone $GIT_REPO pfSenseGITREPO");
 }

@@ -25,8 +25,17 @@ if(!file_exists("/usr/local/bin/git")) {
 	system("chmod a+rx /usr/local/bin/git");
 }
 
+# Remove mainline if exists (older)
 if(is_dir("/root/pfsense/mainline")) 
 	exec("rm -rf /root/pfsense/mainline");
+
+# Remove RELENG_1_2 if exists (older)
+if(is_dir("/root/pfsense/RELENG_1_2")) 
+	exec("rm -rf /root/pfsense/RELENG_1_2");
+
+# Remove HEAD if exists (older)
+if(is_dir("/root/pfsense/HEAD")) 
+	exec("rm -rf /root/pfsense/HEAD");
 
 /* NOTE: Set branches here */
 $branches = array(

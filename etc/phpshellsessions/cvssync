@@ -107,7 +107,7 @@ if(is_dir("$CODIR/mainline")) {
 if($branch == "master") {
 	exec("cd $CODIR/mainline && git checkout master");
 } else {
-	$current_branch=`git branch | grep $BRANCHTAG`
+	$current_branch=`git branch | grep $BRANCHTAG`;
 	if($current_branch == "") 
 		exec("cd $CODIR/mainline && git fetch && git checkout -b $BRANCHTAG origin/$BRANCHTAG");		
 	else

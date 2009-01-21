@@ -1,5 +1,5 @@
 <?php 
-/* $Id$ */
+/* $Id: system_gateways_edit.php,v 1.3 2008/11/24 05:48:02 sumacob Exp $ */
 /*
 	system_gateways_edit.php
 	part of pfSense (http://pfsense.com)
@@ -37,10 +37,13 @@
 ##|-PRIV
 
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("IPv6.inc");
 
-$a_gateways = return_gateways_array();
+if (!is_array($config['gateways']['gateway_item']))
+	$config['gateways']['gateway_item'] = array();
+
+$a_gateways = &$config['gateways']['gateway_item'];
 
 if (isset($_GET['id'])) {
 	$id = $_GET['id'];
@@ -61,14 +64,11 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['defaultgw'] = $a_gateways[$id]['defaultgw'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
-	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 	$pconfig['type'] = $a_gateways[$id]['type'];
 }
 
-if (isset($_GET['dup'])) {
+if (isset($_GET['dup']))
 	unset($id);
-	unset($pconfig['attribute']);
-}
 
 if ($_POST) {
 
@@ -81,17 +81,12 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
-	/* Does this gateway name already exist? */
-	foreach($config['gateways']['gateway_item'] as $gw) 
-		if($gw['name'] == $_POST['name']) 
-			$input_errors[] = "This gateway name already exists.";
-	
 	if (! isset($_POST['name'])) {
 		$input_errors[] = "A valid gateway name must be specified.";
 	}
 
 	if ($_POST['type'] == 'IPv4') {
-		if (!is_ipaddr($_POST['gateway']) && $pconfig['attribute'] != 'system') {
+		if (!is_ipaddr($_POST['gateway'])) {
 			$input_errors[] = "A valid IPv4 gateway address must be specified.";
 		}
 
@@ -99,7 +94,7 @@ if ($_POST) {
 			$input_errors[] = "A valid IPv4 monitor address must be specified.";
 		}
 	} else if ($_POST['type'] == 'IPv6') {
-		if (!Net_IPv6::checkIPv6($_POST['gateway']) && $pconfig['attribute'] != 'system') {
+		if (!Net_IPv6::checkIPv6($_POST['gateway'])) {
 			$input_errors[] = "A valid IPv6 gateway address must be specified.";
 		}
 
@@ -108,6 +103,18 @@ if ($_POST) {
 		}
 	} else {
 		$input_errors[] = "A network type must be specified.";
+	}
+	
+	if ($_POST['defaultgw'] == "yes") {
+		$i=0;
+		foreach ($a_gateways as $gateway) {
+			if($id != $i && $config['gateways']['gateway_item'][$i]['type'] == $_POST['type']) {
+	                        unset($config['gateways']['gateway_item'][$i]['defaultgw']);
+			} else if ($config['gateways']['gateway_item'][$i]['type'] == $_POST['type']) {
+	                        $config['gateways']['gateway_item'][$i]['defaultgw'] = true;
+			}
+			$i++;
+		}
 	}
 
 	/* check for overlaps */
@@ -130,55 +137,26 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		/* if we are processing a system gateway only save the monitorip */
-		if($pconfig['attribute'] == "system") {
-			$config['interfaces'][$_POST['interface']]['monitorip'] = $_POST['monitor'];
+		$gateway = array();
+		$gateway['interface'] = $_POST['interface'];
+		$gateway['name'] = $_POST['name'];
+		$gateway['gateway'] = $_POST['gateway'];
+		$gateway['monitor'] = $_POST['monitor'];
+		$gateway['descr'] = $_POST['descr'];
+		$gateway['type'] = $_POST['type'];
+
+		if($_POST['defaultgw'] == "yes") {
+			$gateway['defaultgw'] = true;
 		}
 
-		/* Manual gateways are handled differently */
-		/* rebuild the array with the manual entries only */
-		if (!is_array($config['gateways']['gateway_item']))
-			$config['gateways']['gateway_item'] = array();
-
-		$a_gateways = &$config['gateways']['gateway_item'];
-
-		if ($pconfig['attribute'] != "system") {
-			$gateway = array();
-			$gateway['interface'] = $_POST['interface'];
-			$gateway['name'] = $_POST['name'];
-			$gateway['gateway'] = $_POST['gateway'];
-			$gateway['descr'] = $_POST['descr'];
-			$gateway['type'] = $_POST['type'];
-
-			if ($_POST['defaultgw'] == "yes") {
-				$i=0;
-				foreach ($a_gateways as $gateway) {
-					if($id != $i && $config['gateways']['gateway_item'][$i]['type'] == $_POST['type']) {
-						unset($config['gateways']['gateway_item'][$i]['defaultgw']);
-					} else if ($config['gateways']['gateway_item'][$i]['type'] == $_POST['type']) {
-						$config['gateways']['gateway_item'][$i]['defaultgw'] = true;
-					}
-					$i++;
-				}
-			}
-
-			/* when saving the manual gateway we use the attribute which has the corresponding id */
-			$id = $pconfig['attribute'];
-			if (isset($id) && $a_gateways[$id]) {
-				$a_gateways[$id] = $gateway;
-			} else {
-				$a_gateways[] = $gateway;
-			}
-		}
+		if (isset($id) && $a_gateways[$id])
+			$a_gateways[$id] = $gateway;
+		else
+			$a_gateways[] = $gateway;
 		
 		touch($d_staticroutesdirty_path);
 		
 		write_config();
-		
-		if($_REQUEST['isAjax']) {
-			echo $_POST['name'];
-			exit;
-		}
 		
 		header("Location: system_gateways.php");
 		exit;
@@ -194,12 +172,6 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
-	<?php
-	/* If this is a automatically added system gateway we need this var */
-	if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
-		echo "<input type='hidden' name='attribute' id='attribute' value='{$pconfig['attribute']}' >\n";
-	}
-	?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic">Edit gateway</td>
@@ -234,6 +206,45 @@ include("head.inc");
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Type</td>
                   <td width="78%" class="vtable"> 
+		<!-- XXX -->
+		<? /*
+		<?php if (isset($_GET['id']) || $_POST): ?>
+                    <select class="formselect" disabled="true">
+			<?php
+				if ($pconfig['type'] == 'IPv6') {
+					$str = <<<EOD
+					<option value="IPv6" selected>IPv6</option>
+EOD;
+				} else {
+					$str = <<<EOD
+					<option value="IPv4" selected>IPv4</option>
+EOD;
+				}
+
+				echo $str;
+			?>
+		    </select>
+		    <input type="hidden" name="type" id="type" value="<?php htmlspecialchars($pconfig['type']); ?>" />
+		<? else: ?>
+                    <select name="type" class="formselect">
+			<?php
+				if ($pconfig['type'] == 'IPv6') {
+					$str = <<<EOD
+					<option value="IPv4">IPv4</option>
+					<option value="IPv6" selected>IPv6</option>
+EOD;
+				} else {
+					$str = <<<EOD
+					<option value="IPv4" selected>IPv4</option>
+					<option value="IPv6">IPv6</option>
+EOD;
+				}
+
+				echo $str;
+			?>
+		    </select>
+		<? endif; ?>
+		*/ ?>
                     <select name="type" class="formselect">
 			<?php
 				if ($pconfig['type'] == 'IPv6') {

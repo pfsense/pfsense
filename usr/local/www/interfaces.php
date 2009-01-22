@@ -948,6 +948,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												<td colspan="2">
 													<center>
 														<div id='savebuttondiv'>
+															<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
 															<input id="gwsave" type="Button" value="Save Gateway" onClick='hide_add_gatewaysave();'> 
 															<input id="gwcancel" type="Button" value="Cancel" onClick='hide_add_gateway();'>
 														</div>
@@ -1579,9 +1580,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 						name = $('name').getValue();
 						var descr = $('gatewaydescr').getValue();
 						gatewayip = $('gatewayip').getValue();
+						addrtype = $('addrtype').getValue();
 						var defaultgw = $('defaultgw').getValue();
 						var url = "system_gateways_edit.php";
-						var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip);
+						var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip) + '&type=' + escape(addrtype);
 						var myAjax = new Ajax.Request(
 							url,
 							{

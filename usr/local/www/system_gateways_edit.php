@@ -158,6 +158,11 @@ if ($_POST) {
 		
 		write_config();
 		
+		if($_REQUEST['isAjax']) {
+			echo $_POST['name'];
+			exit;
+		}
+		
 		header("Location: system_gateways.php");
 		exit;
 	}

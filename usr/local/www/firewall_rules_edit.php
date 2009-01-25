@@ -119,6 +119,8 @@ if (isset($id) && $a_filter[$id]) {
         	$pconfig['tagged'] = $a_filter[$id]['tagged'];
 	if (isset($a_filter[$id]['quick']) && $a_filter[$id]['quick'])
 		$pconfig['quick'] = $a_filter[$id]['quick'];
+	if (isset($a_filter[$id]['allowopts']))
+		$pconfig['allowopts'] = true;
 
 	/* advanced */
         $pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
@@ -359,6 +361,10 @@ if ($_POST) {
 		}
 
 		/* Advanced options */
+		if ($_POST['allowopts'] == "yes")
+			$filterent['allowopts'] = true;
+		else
+			unset($filterent['allowopts']);
 		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
 		$filterent['max-src-states'] = $_POST['max-src-states'];
 		$filterent['statetimeout'] = $_POST['statetimeout'];
@@ -962,6 +968,9 @@ include("head.inc");
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
 
+                                <input type="checkbox" id="allowopts" value="yes" name="allowopts"<?php if($pconfig['allowopts'] == true) echo " checked"; ?>>
+                                <br/><span class="vexpl"><?=gettext("This allows packets with ip options to pass otherwise they are blocked by default i.e. with multicast routing/proxing.");?>
+				</span><p>
                                 <input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>">
                                 <br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other nat/filter rules. It is called <b>Policy filtering</b>");?>
                                 </span><p>

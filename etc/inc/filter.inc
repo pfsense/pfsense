@@ -1612,12 +1612,14 @@ function generate_user_filter_rule($rule)
 		$aline['icmp-type'] = "icmp6-type {$rule['icmp6type']} ";
 	}
 	if ($type == "pass") {
-		if (isset($rule['tag']) && $rule['tag'] <> "")
+		if (!empty($rule['tag']))
 			$aline['tag'] = " tag " .$rule['tag']. " ";
-		if (isset($rule['tagged']) && $rule['tagged'] <> "")
+		if (!empty($rule['tagged']))
 			$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
-		if (isset($rule['dscp']) && $rule['dscp'] <> "")
+		if (!empty($rule['dscp']))
 			$aline['dscp'] = " dscp " . $rule['dscp'] . " ";
+		if (isset($rule['allowopts']))
+			$aline['allowopts'] = " allow-opts ";
 		if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
 			if($rule['protocol'] == "tcp")
 				$aline['flags'] = "flags S/SA ";
@@ -1745,14 +1747,14 @@ function generate_user_filter_rule($rule)
 			$vpns = " to <vpns> ";
 			$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 				$aline['src'] . $aline['srcport'] . $aline['os'] . $vpns . $aline['dstport'].
-				$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['flags'].
+				$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['allowopts'] . $aline['flags'].
 				$aline['queue'] . $aline['dnpipe'] . 
 				" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 			/* negate directly connected networks for load balancer/gateway rules */
 			$direct_networks = " to <direct_networks> ";
 			$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 				$aline['src'] . $aline['srcport'] . $aline['os'] . $direct_networks . $aline['dstport'].
-				$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . 
+				$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['allowopts'] .
 				$aline['flags'] . $aline['queue'] . $aline['dnpipe'] .
 				" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 		}
@@ -1760,7 +1762,7 @@ function generate_user_filter_rule($rule)
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['reply'] .
 			$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
 			$aline['dstport'] . $aline['divert'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . 
-			$aline['flags'] . $aline['queue'] . $aline['dnpipe'];
+			$aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'];
 
 		/* is a time based rule schedule attached? */
 		if(!empty($rule['sched'])) {

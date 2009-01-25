@@ -10,11 +10,11 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">License</p>
 
-            <p><strong><?=$g['product_name']?> is Copyright &copy; 2004, 2005, 2006, 2007 by Scott Ullrich
+            <p><strong><?=$g['product_name']?> is Copyright &copy; 2004-2009 by Scott Ullrich
               (<a href="mailto:geekgod@geekgod.com">geekgod@geekgod.com</a>).<br>
               All rights reserved.</strong></p>
 
-            <p><strong>m0n0wall is Copyright &copy; 2002-2007 by Manuel Kasper
+            <p><strong>m0n0wall is Copyright &copy; 2002-2009 by Manuel Kasper
               (<a href="mailto:mk@neon1.net">mk@neon1.net</a>).<br>
               All rights reserved.</strong></p>
             <p> Redistribution and use in source and binary forms, with or without<br>

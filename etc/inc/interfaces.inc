@@ -1631,8 +1631,6 @@ function setup_bridge() {
 			$friendlyifname = convert_real_interface_to_friendly_interface_name($bridgeif);
 			if(is_interface_wireless($friendlyifname))
 				$wirelessbridge = true;
-			if(substr($bridgeif,0,4) == "vlan") 
-				$vlanbridge = true;
 		}
 
 		foreach ($bridgearray[$x] as $bridgeif) {

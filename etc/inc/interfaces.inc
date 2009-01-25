@@ -1626,7 +1626,6 @@ function setup_bridge() {
 		$bridgecmd = "/sbin/ifconfig bridge{$x} ";
 		$lowestmtu = "1500";
 		$wirelessbridge = false;
-		$vlanbridge = false;
 		// iterate through and see if any of the involved interfaces are wireless or VLANs
 		foreach ($bridgearray[$x] as $bridgeif) {
 			$friendlyifname = convert_real_interface_to_friendly_interface_name($bridgeif);

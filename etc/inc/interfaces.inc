@@ -1626,17 +1626,23 @@ function setup_bridge() {
 		$bridgecmd = "/sbin/ifconfig bridge{$x} ";
 		$lowestmtu = "1500";
 		$wirelessbridge = false;
-		// iterate through and see if any of the involved interfaces are wireless
+		$vlanbridge = false;
+		// iterate through and see if any of the involved interfaces are wireless or VLANs
 		foreach ($bridgearray[$x] as $bridgeif) {
 			$friendlyifname = convert_real_interface_to_friendly_interface_name($bridgeif);
 			if(is_interface_wireless($friendlyifname))
 				$wirelessbridge = true;
+			if(substr($bridgeif,0,4) == "vlan") 
+				$vlanbridge = true;
 		}
+
 		foreach ($bridgearray[$x] as $bridgeif) {
 			// iterate through all the interfaces in this bridge
 			// append to the bridgecmd for this interface
 			// only use STP if no wireless interfaces are involved
 			if($wirelessbridge)
+				$bridgecmd .= " addm $bridgeif ";
+			elseif (substr($bridgeif,0,4) == "vlan")
 				$bridgecmd .= " addm $bridgeif ";
 			else
 				$bridgecmd .= " addm $bridgeif stp $bridgeif ";

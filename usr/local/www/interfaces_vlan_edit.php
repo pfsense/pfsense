@@ -48,7 +48,7 @@ $portlist = get_interface_list();
 
 /* add LAGG interfaces */
 if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-        foreach ($config['laggs']['lagg'] as $lagg) {
+        foreach ($config['laggs']['lagg'] as $lagg)
                 $portlist[$lagg['laggif']] = $lagg;
 }
 
@@ -95,7 +95,7 @@ if ($_POST) {
 		$vlan['descr'] = $_POST['descr'];
 		$vlan['vlanif'] = $_POST['vlanif'];
 
-                $vlan['vlanif'] = interface_vlan_configure($vlan['if'], $vlan['tag'], $vlan['vlanif']);
+                $vlan['vlanif'] = interface_vlan_configure($vlan['if'], $vlan['tag'], "vlan" . $vlan['tag']);
                 if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan"))
                         $input_errors[] = "Error occured creating interface, please retry.";
                 else {

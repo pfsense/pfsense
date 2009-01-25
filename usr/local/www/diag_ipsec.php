@@ -75,7 +75,6 @@ $sad = ipsec_dump_sad();
     	<td>
 			<div id="mainarea">
 				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-					<?php if (count($sad)):	?>
 					<tr>
 						<td nowrap class="listhdrr">Local IP</td>
 						<td nowrap class="listhdrr">Remote IP</a></td>
@@ -117,15 +116,6 @@ $sad = ipsec_dump_sad();
 							}
 						}
 					?>
-					<?php else: ?>
-					<tr>
-						<td>
-							<p>
-								<strong>No IPsec security associations.</strong>
-							</p>
-						</td>
-					</tr>
-					<?php endif; ?>
 					<tr>
 						<td colspan="4">
 							<p>

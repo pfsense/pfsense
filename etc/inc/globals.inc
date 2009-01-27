@@ -39,6 +39,7 @@ $g = array(
         "product_copyright_url" => "http://www.bsdperimeter.com",
 	"product_copyright_years" => "2004 - 2009",
 	"product_website" => "www.pfsense.org",
+        "product_website_footer" => "http://www.pfsense.org/?gui12",
 	"product_email" => "coreteam@pfsense.org",
 	"upload_path" => "/root",
 	"dhcpd_chroot_path" => "/var/dhcpd",

@@ -55,6 +55,7 @@ $g = array(
         "product_copyright_url" => "http://www.bsdperimeter.com",
 	"product_copyright_years" => "2004 - 2009",
 	"product_website" => "www.pfsense.org",
+        "product_website_footer" => "http://www.pfsense.org/?gui20",
 	"product_email" => "coreteam@pfsense.org",
 	"pppoe_interface" => "ng0",
 	"n_pptp_units" => 16,  /* this value can be overriden in pptp->n_pptp_units */

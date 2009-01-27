@@ -346,7 +346,7 @@ to access after they've authenticated.</td>
         <input name="nomacfilter" type="checkbox" class="formfld" id="nomacfilter" value="yes" <?php if ($pconfig['nomacfilter']) echo "checked"; ?>>
         <strong>Disable MAC filtering</strong><br>
     If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in.
-    This is required when the MAC address of the client cannot be determined (usually because there are routers between <?=$g['product_name']?> and the clients).
+    This is required when the MAC address of the client cannot be determined (usually because there are routers between <?=$g['product_name']; ?> and the clients).
     If this is enabled, RADIUS MAC authentication cannot be used.</td>
 	</tr>
 <?php
@@ -512,7 +512,7 @@ to access after they've authenticated.</td>
 				}
 				?></select><br>
 				If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-Id will be set to the client's IP address and
-				the Called-Station-Id to the client's MAC address. Default behaviour is Calling-Station-Id = client's MAC address and Called-Station-Id = <?=$['product_name']?>'s WAN IP address.</td>
+				the Called-Station-Id to the client's MAC address. Default behaviour is Calling-Station-Id = client's MAC address and Called-Station-Id = <?=$g['product_name'];?>'s WAN IP address.</td>
 			</tr>
 		</table>
 	</tr>
@@ -527,7 +527,7 @@ to access after they've authenticated.</td>
       <td valign="top" class="vncell">HTTPS server name </td>
       <td class="vtable">
         <input name="httpsname" type="text" class="formfld" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
-    This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on <?=$g['product_name']?>.. </td>
+    This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on <?=$g['product_name'];?>.. </td>
 	  </tr>
 	<tr>
       <td valign="top" class="vncell">HTTPS certificate</td>

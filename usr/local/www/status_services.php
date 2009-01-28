@@ -64,6 +64,9 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 		case 'dhcpd':
 			services_dhcpd_configure();
 			break;
+		case 'igmpproxy':
+			services_igmpproxy_configure();
+			break;
 		case 'miniupnpd':
 			upnp_action('restart');	
 			break;
@@ -106,6 +109,9 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 			break;
 		case 'dhcpd':
 			services_dhcpd_configure();
+			break;
+		case 'igmpproxy':
+			services_igmpproxy_configure();
 			break;
 		case 'miniupnpd':
 			upnp_action('start');
@@ -153,6 +159,9 @@ if($_GET['mode'] == "stopservice" && $_GET['service']) {
 			break;
 		case 'dnsmasq':
 			killbypid("{$g['varrun_path']}/dnsmasq.pid");
+			break;
+		case 'igmpproxy':
+			killbyname("igmpproxy");
 			break;
 		case 'miniupnpd':
 			upnp_action('stop');
@@ -282,6 +291,13 @@ if(isset($config['snmpd']['enable'])) {
 if(isset($config['proxyarp']['proxyarpnet'])) {
 	$pconfig['name'] = "choparp";
 	$pconfig['description'] = "Proxy ARP";
+	$services[] = $pconfig;
+	unset($pconfig);
+}
+
+if (count($config['igmpproxy']['igmpentry']) > 0) {
+	$pconfig['name'] = "igmpproxy";
+	$pconfig['descritption'] = "IGMP proxy";
 	$services[] = $pconfig;
 	unset($pconfig);
 }

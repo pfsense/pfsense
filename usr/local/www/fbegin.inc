@@ -186,6 +186,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 									output_menu_item("/services_dhcp.php", "DHCP Server");	
 							?>
 							<?=output_menu_item("/services_dyndns.php", "Dynamic DNS");?>
+							<?=output_menu_item("/services_igmpproxy.php", "IGMP proxy");?>
 							<?=output_menu_item("/load_balancer_pool.php", "Load Balancer");?>	
 							<?=output_menu_item("/pkg_edit.php?xml=olsrd.xml&id=0", "OLSR");?>	
 							<?=output_menu_item("/vpn_pppoe.php", "PPPoE Server");?>	

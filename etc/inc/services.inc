@@ -329,6 +329,61 @@ EOD;
 	return 0;
 }
 
+function services_igmpproxy_configure() {
+        global $config, $g;
+
+        $iflist = get_configured_interface_list();
+
+        /* kill any running igmpproxy */
+        killbyname("igmpproxy");
+
+	if (!is_array($config['igmpproxy']['igmpentry']))
+		return 1;
+
+        $igmpconf = <<<EOD
+
+##------------------------------------------------------
+## Enable Quickleave mode (Sends Leave instantly)
+##------------------------------------------------------
+quickleave
+
+EOD;
+
+        foreach ($config['igmpproxy']['igmpentry'] as $igmpcf) {
+                unset($iflist[$igmpcf['ifname']]);
+                $realif = get_real_interface($igmpcf['ifname']);
+                if (empty($igmpcf['threshold']))
+                        $threshld = 1;
+                else
+                        $threshld = $igmpcf['threshold'];
+                $igmpconf .= "phyint {$realif} {$igmpcf['type']} ratelimit 0 threshold {$threshld}\n";
+
+                if ($igmpcf['address'] <> "") {
+                        $item = explode(" ", $igmpcf['address']);
+                        foreach($item as $iww)
+                                $igmpconf .= "altnet {$iww}\n";
+                }
+                $igmpconf .= "\n";
+        }
+        foreach ($iflist as $ifn) {
+                $realif = get_real_interface($ifn);
+                $igmpconf .= "phyint {$realif} disabled\n";
+        }
+
+        $igmpfl = fopen($g['tmp_path'] . "/igmpproxy.conf", "w");
+        if (!$igmpfl) {
+                log_error("Could not write Igmpproxy configuration file!");
+                return;
+        }
+        fwrite($igmpfl, $igmpconf);
+        fclose($igmpfl);
+
+        mwexec("/usr/local/sbin/igmpproxy -c " . $g['tmp_path'] . "/igmpproxy.conf");
+        log_error("Started Igmpproxy service sucsesfully.");
+
+        return 0;
+}
+
 function interfaces_staticarp_configure($if) {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {

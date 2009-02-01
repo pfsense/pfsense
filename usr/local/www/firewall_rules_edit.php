@@ -538,6 +538,10 @@ include("head.inc");
         				if(have_ruleint_access($ifent))
                 				$interfaces[$ifent] = $ifdesc;
 
+					if ($config['l2tp']['mode'] == "server")
+                                                if(have_ruleint_access("l2tp"))
+                                                        $interfaces['l2tp'] = "L2TP VPN";
+
 					if ($config['pptpd']['mode'] == "server")
 						if(have_ruleint_access("pptp")) 
 							$interfaces['pptp'] = "PPTP VPN";
@@ -720,6 +724,9 @@ include("head.inc");
 								<?php if(have_ruleint_access("lan")): ?>
 								<option value="lan"     <?php if ($pconfig['src'] == "lan") { echo "selected"; } ?>>LAN subnet</option>
 								<?php endif; ?>
+								<?php if(have_ruleint_access("l2tp")): ?>
+                                                                <option value="l2tp"    <?php if ($pconfig['src'] == "l2tp") { echo "selected"; } ?>>L2TP clients</option>
+                                                                <?php endif; ?>
 								<?php if(have_ruleint_access("pptp")): ?>
 								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>>PPTP clients</option>
 								<?php endif; ?>
@@ -868,6 +875,9 @@ include("head.inc");
 								<?php if(have_ruleint_access("lan")): ?>
 								<option value="lan" <?php if ($pconfig['dst'] == "lan") { echo "selected"; } ?>>LAN subnet</option>
 								<?php endif; ?>
+								<?php if(have_ruleint_access("l2tp")): ?>
+                                                                <option value="l2tp" <?php if ($pconfig['dst'] == "l2tp") { echo "selected"; } ?>>L2TP clients</option>
+                                                                <?php endif; ?>
 								<?php if(have_ruleint_access("pptp")): ?>
 								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>>PPTP clients</option>
 								<?php endif; ?>

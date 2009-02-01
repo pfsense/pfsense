@@ -58,6 +58,10 @@ foreach ($ifdescs as $ifent => $ifdesc)
 	if(have_ruleint_access($ifent)) 
 		$iflist[$ifent] = $ifdesc;
 
+if ($config['l2tp']['mode'] == "server")
+        if(have_ruleint_access("l2tp"))
+                $iflist['l2tp'] = "L2TP VPN";
+
 if ($config['pptpd']['mode'] == "server")
 	if(have_ruleint_access("pptp")) 
 		$iflist['pptp'] = "PPTP VPN";

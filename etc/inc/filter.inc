@@ -1283,6 +1283,8 @@ function generate_user_filter_rule($rule)
 						$routeto .= ", ";
 					$routeto .=	 "( {$int} {$gatewayip} ) ";
 					$foundlb = 1;
+				} else {
+					log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
 				}
 			}
 			/* If we want failover just use route-to else round-robin */

@@ -1811,6 +1811,9 @@ function get_real_interface($interface = "wan") {
 	$wanif = $interface;
 
 	switch ($interface) {
+	case "l2tp":
+		$wanif = "l2tp";
+		break;
 	case "pptp":
 		$wanif = "pptp";
 		break;

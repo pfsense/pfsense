@@ -1759,6 +1759,9 @@ function convert_friendly_interface_to_real_interface_name($interface) {
 
 	$wanif = $interface;
 	switch ($interface) {
+		case "l2tp":
+                	$wanif = "l2tp";
+                	break;
 		case "pptp":
 			$wanif = "pptp";
 			break;
@@ -1883,6 +1886,9 @@ function convert_friendly_interface_to_friendly_descr($interface) {
         global $config;
 
         switch ($interface) {
+		case "l2tp":
+				$ifdesc = "L2TP";
+				break;
         	case "pptp":
 				$ifdesc = "PPTP";
 				break;

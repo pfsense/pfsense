@@ -1891,7 +1891,7 @@ function get_interface_ip($interface = "wan", $type = "ipv4")
 
 	$realif = get_real_interface($interface);
 	/* Do we really come here for these interfaces ?! */
-	if (in_array($realif, array("pptp", "pppoe", "openvpn", "enc0" /* , "ppp" */)))
+	if (in_array($realif, array("pptp", "pppoe", "l2tp", "openvpn", "enc0" /* , "ppp" */)))
 			return "";
 
 	$curip = find_interface_ip($realif, false, $type);

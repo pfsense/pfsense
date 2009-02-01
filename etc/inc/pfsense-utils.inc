@@ -198,6 +198,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 		return "";
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
+	$l2tpcfg = $config['l2tp'];
 	$int = "";
 	/* Check to see if the interface is in our list */
 	if (isset($rule['floating'])) {
@@ -208,7 +209,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 	} else if (!array_key_exists($rule['interface'], $FilterIflist)) 
 			return "# {$rule['interface']} does not exist or is disabled for " . $rule['descr'];
 	else {
-		if ($rule['interface'] == "pptp" || $rule['interface'] == "pppoe")
+		if ($rule['interface'] == "pptp" || $rule['interface'] == "pppoe" || $rule['interface'] == "l2tp")
 			$aline['interface'] = "ng*";
 		else
 			$aline['interface'] = " " . $FilterIflist[$rule['interface']]['if'] . " ";

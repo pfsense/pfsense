@@ -682,13 +682,6 @@ function filter_nat_rules_generate()
 				$tonathosts .= "{$config['pptpd']['remoteip']}/{$pptp_subnet} ";
 			}
 		}
-		/* L2TP subnet */
-                if ($config['l2tp']['mode'] == "server") {
-                        if (is_private_ip($config['l2tp']['remoteip'])) {
-                                $numberofnathosts++;
-                                $tonathosts .= "{$config['l2tp']['remoteip']}/32 ";
-                        }
-                }
 		/* PPPoE subnet */
 		if ($config['pppoe']['mode'] == "server") {
 			$pppoe_subnet = $g['pppoe_subnet'];
@@ -1423,10 +1416,6 @@ function generate_user_filter_rule($rule)
 				$pptpsn = $FilterIflist['pptp']['sn'];
 				$src = "{$pptpsa}/{$pptpsn}";
 				break;
-			case 'l2tp':
-                                $l2tpsa = $FilterIflist['l2tp']['ip'];
-                                $src = "{$l2tpsa}/32";
-                                break;
 			case 'pppoe':
 				$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
 				$pppoesn = $FilterIflist['pppoe']['sn'];
@@ -1553,10 +1542,6 @@ function generate_user_filter_rule($rule)
 				$pptpsn = $FilterIflist['pptp']['sn'];
 				$dst = "{$pptpsa}/{$pptpsn}";
 				break;
-			case 'l2tp':
-                                $l2tpsa = $FilterIflist['l2tp']['ip'];
-                                $dst = "{$l2tpsa}/32";
-                                break;
 			case 'pppoe':
 				$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
 				$pppoesn = $FilterIflist['pppoe']['sn'];

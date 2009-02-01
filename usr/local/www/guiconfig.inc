@@ -408,6 +408,9 @@ function pprint_port($port) {
 function captiveportal_users_sort() {
 	global $g, $config;
 
+	if (!is_array($config['captiveportal']['user']))
+                return;
+
 	function cpusercmp($a, $b) {
 		return strcasecmp($a['name'], $b['name']);
 	}
@@ -418,6 +421,9 @@ function captiveportal_users_sort() {
 function admin_groups_sort() {
 	global $g, $config;
 
+	if (!is_array($config['system']['group']))
+                return;
+
 	function cpusercmp($a, $b) {
 		return strcasecmp($a['name'], $b['name']);
 	}
@@ -427,6 +433,9 @@ function admin_groups_sort() {
 
 function admin_users_sort() {
 	global $g, $config;
+
+	if (!is_array($config['system']['user']))
+                return;
 
 	function cpusercmp($a, $b) {
 		return strcasecmp($a['name'], $b['name']);
@@ -461,6 +470,9 @@ function filter_rules_sort() {
 function nat_rules_sort() {
 	global $config;
 
+	if (!is_array($config['nat']['rule']))
+                return;
+
 	function natcmp($a, $b) {
 		if ($a['external-address'] == $b['external-address']) {
 			if ($a['protocol'] == $b['protocol']) {
@@ -486,6 +498,9 @@ function nat_rules_sort() {
 function nat_1to1_rules_sort() {
 	global $g, $config;
 
+	if (!is_array($config['nat']['onetoone']))
+                return;
+
 	function nat1to1cmp($a, $b) {
 		return ipcmp($a['external'], $b['external']);
 	}
@@ -495,6 +510,9 @@ function nat_1to1_rules_sort() {
 
 function nat_server_rules_sort() {
 	global $g, $config;
+
+	if (!is_array($config['nat']['servernat']))
+                return;
 
 	function natservercmp($a, $b) {
 		return ipcmp($a['ipaddr'], $b['ipaddr']);
@@ -516,6 +534,9 @@ function nat_out_rules_sort() {
 function pptpd_users_sort() {
 	global $g, $config;
 
+	if (!is_array($config['ppptpd']['user']))
+                return;
+
 	function usercmp($a, $b) {
 		return strcasecmp($a['name'], $b['name']);
 	}
@@ -523,8 +544,24 @@ function pptpd_users_sort() {
 	usort($config['pptpd']['user'], "usercmp");
 }
 
+function  l2tp_users_sort()  { 
+        global  $g,  $config; 
+ 
+	if (!is_array($config['l2tp']['user']))
+		return;
+
+        function  usercmp($a,  $b)  { 
+                return  strcasecmp($a['name'],  $b['name']); 
+        } 
+	 
+        usort($config['l2tp']['user'],  "usercmp");  
+}
+
 function openvpn_users_sort() {
 	global $g, $config;
+
+	if (!is_array($config['openvpn']['user']))
+                return;
 
 	function usercmp($a, $b) {
 		return strcasecmp($a['name'], $b['name']);
@@ -536,6 +573,9 @@ function openvpn_users_sort() {
 function pppoe_users_sort() {
 	global $g, $config;
 
+	if (!is_array($config['pppoe']['user']))
+                return;
+
 	function usercmp($a, $b) {
 		return strcasecmp($a['name'], $b['name']);
 	}
@@ -546,6 +586,9 @@ function pppoe_users_sort() {
 function staticroutes_sort() {
 	global $g, $config;
 
+	if (!is_array($config['staticroutes']['route']))
+                return;
+
 	function staticroutecmp($a, $b) {
 		return strcmp($a['network'], $b['network']);
 	}
@@ -555,6 +598,9 @@ function staticroutes_sort() {
 
 function hosts_sort() {
 	global $g, $config;
+
+	if (!is_array($config['dnsmasq']['hosts']))
+                return;
 
 	function hostcmp($a, $b) {
 		return strcasecmp($a['host'], $b['host']);
@@ -586,6 +632,9 @@ function aliases_sort() {
 
 function schedule_sort(){
 	global $g, $config;
+
+	if (!is_array($config['schedules']['schedule']))
+                return;
 
 	function schedulecmp($a, $b) {
 		return strcmp($a['name'], $b['name']);

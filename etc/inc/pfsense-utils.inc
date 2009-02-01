@@ -196,9 +196,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 
 	if (isset($rule['disabled']))
 		return "";
-	$pptpdcfg = $config['pptpd'];
-	$pppoecfg = $config['pppoe'];
-	$l2tpcfg = $config['l2tp'];
+
 	$int = "";
 	/* Check to see if the interface is in our list */
 	if (isset($rule['floating'])) {

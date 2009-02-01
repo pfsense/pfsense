@@ -115,9 +115,9 @@ if(is_dir("$CODIR/pfSenseGITREPO")) {
 } else {
 	exec("cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/pfSense")) 
-		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO")
+		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/mainline")) 
-		exec("mv $CODIR/pfSenseGITREPO/mainline $CODIR/pfSenseGITREPO/pfSenseGITREPO")
+		exec("mv $CODIR/pfSenseGITREPO/mainline $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 }
 
 if($branch == "master") {

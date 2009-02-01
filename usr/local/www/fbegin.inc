@@ -211,6 +211,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?=output_menu_item("/vpn_ipsec.php", "IPsec");?>
 							<?=output_menu_item("/vpn_openvpn_server.php", "OpenVPN");?>
 							<?=output_menu_item("/vpn_pptp.php", "PPTP");?>
+							<?=output_menu_item("/vpn_l2tp.php", "L2TP");?>	
 							<?php echo return_ext_menu("VPN"); ?>
 						</ul>
 					</li>

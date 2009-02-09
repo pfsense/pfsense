@@ -1679,7 +1679,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							$gatewayip = file_get_contents("{$g['tmp_path']}/{$int}_router");
 							$gatewayip = rtrim($gatewayip);
 							if (is_ipaddr($gatewayip)) {
-								$aline['route'] = " route-to ( {$int} {$gatewayip} ) ";
+								if($int)
+									$aline['route'] = " route-to ( {$int} {$gatewayip} ) ";
+								log_error("An error occurred while trying to determine the real interface name for the gateway $gateway");
 							}
 						} else {
 							log_error("Could not find {$g['tmp_path']}/{$int}_router.  Needed for dhcp gateway information");

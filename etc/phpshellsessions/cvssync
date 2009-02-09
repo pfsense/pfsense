@@ -21,8 +21,7 @@ unlink_if_exists("/tmp/config.cache");
 
 if(!file_exists("/usr/local/bin/git")) {
 	echo "Cannot find git, fetching static git...";
-	system("fetch -o /usr/local/bin/git http://files.pfsense.org/extras/7/git");
-	system("chmod a+rx /usr/local/bin/git");
+    system("pkg_add -r git");
 }
 
 # Remove mainline if exists (older)
@@ -113,21 +112,23 @@ if(is_dir("$CODIR/pfSenseGITREPO")) {
 	exec("cd $CODIR/pfSenseGITREPO && git fetch");
 	exec("cd $CODIR/pfSenseGITREPO && git merge $branch");	
 } else {
+    exec("mkdir -p $CODIR/pfSenseGITREPO");
+    echo "Executing cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO";
 	exec("cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/pfSense")) 
-		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO")
+		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/mainline")) 
-		exec("mv $CODIR/pfSenseGITREPO/mainline $CODIR/pfSenseGITREPO/pfSenseGITREPO")
+		exec("mv $CODIR/pfSenseGITREPO/mainline $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 }
 
 if($branch == "master") {
 	exec("cd $CODIR/pfSenseGITREPO && git checkout master");
 } else {
-	$current_branch=`git branch | grep $BRANCHTAG`;
+	$current_branch=`git branch | grep $branch`;
 	if($current_branch == "") {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $BRANCHTAG origin/$BRANCHTAG");
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $BRANCHTAG origin/$branch");
 	} else {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout $BRANCHTAG");
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout $branch");
 	}
 }
 

@@ -278,7 +278,6 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'pflog',
 				'pfsync',
 				'enc',
-				'tun',
 				'carp'
 		);
 	}

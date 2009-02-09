@@ -275,6 +275,9 @@ function interfaces_optional_configure_if($opti) {
 			/* if user has selected DHCP type then act accordingly */
 			if($optcfg['ipaddr'] == "dhcp") {
 				interfaces_opt_dhcp_configure("opt{$opti}");
+			} elseif ($optcfg['ipaddr'] == "none") {
+				/* hidden trick for IP-less interfaces */
+				mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " up");
 			} else {
 				mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .
 				escapeshellarg($optcfg['ipaddr'] . "/" . $optcfg['subnet']));

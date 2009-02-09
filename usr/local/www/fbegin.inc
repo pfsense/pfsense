@@ -321,3 +321,7 @@ function output_menu_item($url, $name) {
 ?>
 
 <p class="pgtitle"><?=genhtmltitle($pgtitle);?></font></p>
+
+<?php
+	$pgtitle_output = true;
+?>

@@ -155,7 +155,8 @@ if ($_POST) {
 				$reqdfieldsn = explode(",", "Description,IP address,Subnet bit count");
 				do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 				if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
-					$input_errors[] = "A valid IP address must be specified.";
+					if($_POST['ipaddr'] <> "none")
+						$input_errors[] = "A valid IP address must be specified.";
 				}
 				if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
 					$input_errors[] = "A valid subnet bit count must be specified.";

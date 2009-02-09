@@ -498,6 +498,11 @@ EOD;
 					$myidentt = "user_fqdn ";
 					$myident = $tunnel['p1']['myident']['ufqdn'];
  				}
+				
+				$nattline = '';
+				if (isset($tunnel['natt'])) {
+					$nattline = "nat_traversal on;";
+				}
 
 				if (isset($tunnel['p1']['authentication_method'])) {
 					$authmethod = $tunnel['p1']['authentication_method'];

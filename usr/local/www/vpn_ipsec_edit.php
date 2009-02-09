@@ -48,6 +48,7 @@ if (isset($_GET['dup'])) {
 if (isset($id) && $a_ipsec[$id]) {
 	$oldipsecent = $a_ipsec[$id];
 	$pconfig['disabled'] = isset($a_ipsec[$id]['disabled']);
+	$pconfig['natt'] = isset($a_ipsec[$id]['natt']);
 	$pconfig['auto'] = isset($a_ipsec[$id]['auto']);
 
 	if (!isset($a_ipsec[$id]['local-subnet']))
@@ -209,6 +210,7 @@ if ($_POST) {
 		$ipsecent['disabled'] = $_POST['disabled'] ? true : false;
 		//$ipsecent['auto'] = $_POST['auto'] ? true : false;
 		$ipsecent['interface'] = $pconfig['interface'];
+		$ipsecent['natt'] = $_POST['natt'] ? true : false;
 		pconfig_to_address($ipsecent['local-subnet'], $_POST['localnet'], $_POST['localnetmask']);
 		$ipsecent['remote-subnet'] = $_POST['remotenet'] . "/" . $_POST['remotebits'];
 
@@ -365,6 +367,20 @@ function methodsel_change() {
                     </select> <br>
                     <span class="vexpl">Select the interface for the local endpoint of this tunnel.</span></td>
                 </tr>
+			   				<tr> 
+                  <td width="22%" valign="top" class="vncellreq">NAT-T</td>
+                  <td width="78%" class="vtable"> 
+                    <input name="natt" type="checkbox" id="natt" value="yes" <?php if ($pconfig['natt']) echo "checked"; ?>>
+                    <strong>Enable NAT Traversal (NAT-T)</strong><br>
+                    <span class="vexpl">Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
+                    	which can help with clients that are behind restrictive firewalls.</span></td>
+                </tr>
+                <tr> 
+		  <td width="22%" valign="top" class="vncellreq">DPD interval</td>
+		  <td width="78%" class="vtable"> 
+			<input name="dpddelay" type="text" class="formfld" id="dpddelay" size="5" value="<?php echo htmlspecialchars($pconfig['dpddelay']); ?>"> seconds<br>
+			<span class="vexpl">Enter a value here to enable Dead Peer Detection (e.g. 60 seconds).</span></td>
+		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Local subnet</td>
                   <td width="78%" class="vtable">

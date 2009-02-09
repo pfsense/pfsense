@@ -221,6 +221,14 @@ function methodsel_change() {
                     <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
                     <strong>Allow mobile clients</strong></td>
                 </tr>
+		<tr> 
+                  <td width="22%" class="vtable" valign="top">&nbsp;</td>
+                  <td width="78%" class="vtable"> 
+                    <input name="natt" type="checkbox" id="natt" value="yes" <?php if ($pconfig['natt']) echo "checked"; ?>>
+                    <strong>Enable NAT Traversal (NAT-T)</strong><br>
+                    <span class="vexpl">Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
+                    	which can help with clients that are behind restrictive firewalls.</span></td>
+                </tr>
                 <tr> 
                   <td colspan="2" valign="top" class="listtopic">Phase 1 proposal 
                     (Authentication)</td>

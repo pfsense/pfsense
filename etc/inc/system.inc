@@ -783,6 +783,9 @@ server.modules              =   (
 server.document-root        = "{$document_root}"
 {$captive_portal_rewrite}
 
+# Maximum idle time with nothing being written (php downloading)
+server.max-write-idle = 999
+
 ## where to send error-messages to
 server.errorlog             = "/var/log/lighttpd.error.log"
 

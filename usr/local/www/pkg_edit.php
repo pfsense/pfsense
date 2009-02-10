@@ -423,12 +423,10 @@ if ($pkg['tabs'] <> "") {
 				$multiple = 'multiple';
 			}
 			print("<select name=\"$fieldname\" $size $multiple>\n");
-
 			if (isset($pkga['all_interfaces']))
 				$ifaces = explode(' ', trim(shell_exec('ifconfig -l')));
 			else
 				$ifaces = $config['interfaces'];
-
 			$additional_ifaces = $pkga['add_to_interfaces_selection'];
 			if (!empty($additional_ifaces))
 				$ifaces = array_merge($ifaces, explode(',', $additional_ifaces));
@@ -436,9 +434,8 @@ if ($pkg['tabs'] <> "") {
 				$values = $value;
 			else
 				$values  =  explode(',',  $value);
-
 			foreach($ifaces as $ifname => $iface) {
-				if (isset($iface['descr']))
+				if($iface['descr'] <> "")
 					$ifdescr = $iface['descr'];
 				else
 					$ifdescr = strtoupper($ifname);
@@ -447,7 +444,6 @@ if ($pkg['tabs'] <> "") {
 				$selected = (in_array($ifname, $values) ? 'selected' : '');
 				print("<option value=\"$ifname\" $selected>$ifdescr</option>\n");
 			}
-
 			print("</select>\n<br />" . fixup_string($pkga['description']) . "\n");
 	      } else if($pkga['type'] == "radio") {
 			echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
@@ -455,7 +451,6 @@ if ($pkg['tabs'] <> "") {
 		?>
 			<script type="text/javascript" language='javascript'>
 			<!--
-
 			<?php
 				$rowcounter = 0;
 				$fieldcounter = 0;

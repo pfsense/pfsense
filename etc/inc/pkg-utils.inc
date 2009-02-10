@@ -494,6 +494,8 @@ function install_package($package, $pkg_info = "") {
 	$static_output .= "done.\n";
 	update_output_window($static_output);
 	$static_output .= "Starting service.\n";
+	if($pkg_info['after_install_info']) 
+		update_output_window($pkg_info['after_install_info']);
 	update_output_window($static_output);
 	start_service($pkg_info['config_file']);
 	$restart_sync = true;

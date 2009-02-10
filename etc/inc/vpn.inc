@@ -1486,7 +1486,7 @@ function vpn_ipsec_refresh_policies() {
 
 	/* Walk the Ipsec tunnel array */
 	if (!is_array($a_phase1) || (!count($a_phase1))) {
-		continue;
+		return;
 	}
 
 	foreach ($a_phase1 as $phase1) {

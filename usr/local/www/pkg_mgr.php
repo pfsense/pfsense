@@ -167,7 +167,7 @@ include("fbegin.inc");
 				<?php
 				if($index['pkginfolink']) {
                                         $pkginfolink = $index['pkginfolink'];
-					echo "<a href='$pkginfolink'>Package Info</a>";
+					echo "<a target='_new' href='$pkginfolink'>Package Info</a>";
 				} else {
 					echo "No info, check the <a href='http://forum.pfsense.org/index.php/board,15.0.html'>forum</a>";
 				}

@@ -387,7 +387,8 @@ function download_file_with_progress_bar($url_file, $destination_file) {
 	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
 	curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'read_body');
 	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-
+	curl_setopt($ch, CURLOPT_TIMEOUT, 0); 
+	
 	curl_exec($ch);
 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 	if($fout)

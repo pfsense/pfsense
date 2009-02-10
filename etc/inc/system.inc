@@ -755,6 +755,7 @@ fastcgi.server = ( ".php" =>
 			"socket" => "/tmp/php-fastcgi.socket",
 			"min-procs" => 1,
 			"max-procs" => {$max_procs},
+			"idle-timeout" => 0,
 			{$bin_environment}			
 			"bin-path" => "/usr/local/bin/php"
 		)
@@ -821,6 +822,9 @@ server.modules              =   (
 ## server.virtual-* options
 server.document-root        = "{$document_root}"
 {$captive_portal_rewrite}
+
+# Maximum idle time with nothing being written (php downloading)
+server.max-write-idle = 999
 
 ## where to send error-messages to
 server.errorlog             = "/var/log/lighttpd.error.log"

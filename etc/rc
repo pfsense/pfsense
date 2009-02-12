@@ -14,15 +14,15 @@
 #trap : 3
 
 # Set our operating platform
-PLATFORM=`cat /etc/platform`
-product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
+PLATFORM=`/bin/cat /etc/platform`
+product=`/bin/cat /etc/inc/globals.inc | /usr/bin/grep product_name | /usr/bin/cut -d'"' -f4`
 
 HOME=/
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
 export HOME PATH
 
 # Set our current version
-version=`cat /etc/version`
+version=`/bin/cat /etc/version`
 
 echo
 cat /etc/ascii-art/pfsense-logo-small.txt

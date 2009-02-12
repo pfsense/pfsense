@@ -1636,13 +1636,32 @@ function setup_bridge() {
 				$wirelessbridge = true;
 		}
 
+		$vfaces = array (
+				'bridge',
+				'ppp',
+				'sl',
+				'gif',
+				'faith',
+				'lo',
+				'ng',
+				'vlan',
+				'pflog',
+				'pfsync',
+				'enc',
+				'tun',
+				'tap',
+				'carp'
+		);
+		
 		foreach ($bridgearray[$x] as $bridgeif) {
 			// iterate through all the interfaces in this bridge
 			// append to the bridgecmd for this interface
-			// only use STP if no wireless interfaces are involved
+			// only use STP on Ethernet interfaces, not wireless 
+			// nor virtual interfaces
+			$trimbridgeif = preg_replace("/[0-9]/","", $bridgeif);
 			if($wirelessbridge)
 				$bridgecmd .= " addm $bridgeif ";
-			elseif (substr($bridgeif,0,4) == "vlan")
+			elseif(in_array($trimbridgeif, $vfaces)) 
 				$bridgecmd .= " addm $bridgeif ";
 			else
 				$bridgecmd .= " addm $bridgeif stp $bridgeif ";

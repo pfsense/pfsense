@@ -349,8 +349,6 @@ to access after they've authenticated.</td>
     This is required when the MAC address of the client cannot be determined (usually because there are routers between <?=$g['product_name']; ?> and the clients).
     If this is enabled, RADIUS MAC authentication cannot be used.</td>
 	</tr>
-<?php
-/*
 	<tr>
       <td valign="top" class="vncell">Per-user bandwidth restriction</td>
       <td class="vtable">
@@ -368,8 +366,6 @@ to access after they've authenticated.</td>
         <br>
         If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. RADIUS can override the default settings. Leave empty or set to 0 for no limit. You will <strong>need</strong> to enable the traffic shaper for this to be effective.</td>
 	</tr>
-*/
-?>
 	<tr>
 	  <td width="22%" valign="top" class="vncell">Authentication</td>
 	  <td width="78%" class="vtable">

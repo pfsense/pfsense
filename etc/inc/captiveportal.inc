@@ -66,6 +66,11 @@ function captiveportal_configure() {
 		/* make sure ipfw is loaded */
 		mwexec("/sbin/kldload ipfw");
 
+		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"ipfw,pf\"");
+		mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"ipfw,pf\""); 
+		if (isset($config['captiveportal']['peruserbw']))
+                        mwexec("kldload dummynet");
+
 		/* stop accounting on all clients */
 		captiveportal_radius_stop_all();
 

@@ -1738,8 +1738,8 @@ EOD;
 
 	$mpdconf .= <<<EOD
 	set bundle disable multilink
-	set bundle authname "{$wancfg['pptp_username']}"
-	set bundle password "{$wancfg['pptp_password']}"
+	set auth authname "{$wancfg['pptp_username']}"
+	set auth password "{$wancfg['pptp_password']}"
 	set bundle no noretry
 	set link keep-alive 10 60
 	set link max-redial 0

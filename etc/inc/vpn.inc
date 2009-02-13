@@ -1005,14 +1005,14 @@ EOD;
 	set radius server {$pptpdcfg['radius']['server']} "{$pptpdcfg['radius']['secret']}" {$authport} {$acctport}
 	set radius retries 3
 	set radius timeout 10
-	set bundle enable radius-auth
+	set auth enable radius-auth
 	set bundle disable radius-fallback
 
 EOD;
 
 				if (isset ($pptpdcfg['radius']['accounting'])) {
 					$mpdconf .=<<<EOD
-	set bundle enable radius-acct
+	set auth enable radius-acct
 	set radius acct-update 300
 
 EOD;
@@ -1206,14 +1206,14 @@ EOD;
 	set ipcp radius-ip
 	set radius retries 3
 	set radius timeout 10
-	set bundle enable radius-auth
+	set auth enable radius-auth
 	set bundle disable radius-fallback
 
 EOD;
 
 				if (isset ($pppoecfg['radius']['accounting'])) {
 					$mpdconf .=<<<EOD
-	set bundle enable radius-acct
+	set auth enable radius-acct
 
 EOD;
 				}
@@ -1396,14 +1396,14 @@ EOD;
 	set ipcp radius-ip
 	set radius retries 3
 	set radius timeout 10
-	set bundle enable radius-auth
+	set auth enable radius-auth
 	set bundle disable radius-fallback
 
 EOD;
 
 				if (isset ($l2tpcfg['radius']['accounting'])) {
 					$mpdconf .=<<<EOD
-	set bundle enable radius-acct
+	set auth enable radius-acct
 
 EOD;
 				}

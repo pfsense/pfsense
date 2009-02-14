@@ -1158,8 +1158,8 @@ EOD;
 
 	$mpdconf .= <<<EOD
 	set bundle disable multilink
-	set bundle authname "{$pppoecfg['username']}"
-	set bundle password "{$pppoecfg['password']}"
+	set auth authname "{$pppoecfg['username']}"
+	set auth password "{$pppoecfg['password']}"
 	set bundle no noretry
 	set link keep-alive 10 60
 	set link max-redial 0
@@ -1309,8 +1309,8 @@ EOD;
 
 	$mpdconf .= <<<EOD
 	set bundle disable multilink
-	set bundle authname "{$pptpcfg['username']}"
-	set bundle password "{$pptpcfg['password']}"
+	set auth authname "{$pptpcfg['username']}"
+	set auth password "{$pptpcfg['password']}"
 	set link keep-alive 10 60
 	set link max-redial 0
 	set link no acfcomp protocomp

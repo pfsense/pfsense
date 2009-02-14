@@ -225,6 +225,10 @@ function filter_configure_sync() {
 			return;
 		}
 	}
+
+	update_filter_reload_status("Starting up layer7 daemon");
+	layer7_start_l7daemon();
+
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
 	/* run items scheduled for after filter configure run */
 	$fda = fopen("/tmp/commands.txt", "w");

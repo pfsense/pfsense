@@ -501,7 +501,7 @@ function interfaces_configure() {
 	$bridge_list = array();
 	
 	foreach($iflist as $if => $ifname) {
-		$realif = $config['interfaces'][$if];
+		$realif = $config['interfaces'][$if]['if'];
 		if(is_array($realif['pppoe']) && isset($realif['pppoe']['pppoe-reset-type']))
 			setup_pppoe_reset_file($if, true);
 		else 

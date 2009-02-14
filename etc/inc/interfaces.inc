@@ -1847,10 +1847,6 @@ function get_real_interface($interface = "wan") {
 				}
 				break;
 			case "pppoe": 
-				/*
-				 * XXX: mpd seems to use netgraph interfaces so ngX interfaces are created
-				 * instead of pppoeX. =) -simoncpu-
-				 */
 				if ($if == "wan")
 					$wanif = "pppoe0";
 				else

@@ -1265,20 +1265,11 @@ function interface_configure($interface = "wan") {
 
 	$realif = get_real_interface($interface);
 
-        if (!$g['booting']) {
+	if (!$g['booting']) {
 		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
-		interface_bring_down($interface);
-
-		/* remove all IPv6 addresses */
-		$str = <<<EOD
-		while i="`/sbin/ifconfig $realif | /usr/bin/grep inet6 | /usr/bin/grep -m 1 -v '%'`"; do
-			ifconfig $realif \$i delete
-		done
-EOD;
-		mwexec("($str)");
-		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
-        }
+			interface_bring_down($interface);
+	}
 
 	/* wireless configuration? */
 	if (is_array($wancfg['wireless']))

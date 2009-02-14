@@ -1318,7 +1318,7 @@ function generate_user_filter_rule($rule)
 			$gateway = $rule['gateway'];
 			if(!is_ipaddr($rule['gateway'])) {
 				$gwip = $GatewaysList[$rule['gateway']]['gateway'];
-				$int = $GatewaysList[$rule['gateway']]['interface'];
+				$int = get_real_interface($GatewaysList[$gateway]['interface']);
 			} else {
 				$gwip = $rule['gateway'];
 				$int = guess_interface_from_ip($rule['gateway']);

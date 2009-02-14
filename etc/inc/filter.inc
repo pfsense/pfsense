@@ -1687,21 +1687,9 @@ function generate_user_filter_rule($rule)
 						$aline['flags'] .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
 						$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
 					}
-					if(isset($rule['l7container']) && $rule['l7container'] != "none" && !empty($l7_structures)) {
-						$aline['flags'] .= "max-packets 5, ";
-						if($l7_structures['action']) {
-							$aline['flags'] .= "overload action diverttag ";
-							unset($l7_structures['action']);
-						} 
-						if($l7_structures['dummynet']) {
-							$aline['flags'] .= "overload dummynet diverttag ";
-							unset($l7_structures['dummynet']);
-						} 
-						if($l7_structures['altq']) {
-							$aline['flags'] .= "overload altq diverttag ";
-							unset($l7_structures['altq']);
-						}
-					}
+					if (!empty($aline['divert'])) 
+						$aline['flags'] .= "max-packets 5 ";
+					
 					$aline['flags'] .= " ) ";
 				}
 		}

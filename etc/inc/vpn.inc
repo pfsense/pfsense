@@ -1200,7 +1200,6 @@ function vpn_ipsec_refresh_policies() {
 			} else {
 				rename("{$g['tmp_path']}/{$tmpfile}", ("{$g['tmp_path']}/failed.{$tmpfile}"));
 			}
-			unlink("{$g['tmp_path']}/{$tmpfile}");
 		}
 	}
 }

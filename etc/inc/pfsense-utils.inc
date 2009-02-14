@@ -1434,11 +1434,20 @@ function find_interface_ip($interface, $flush = false) {
 }
 
 function guess_interface_from_ip($ipaddress) {
-	$ret = exec_command("/usr/bin/netstat -rn | /usr/bin/awk '/^{$ipaddress}/ {print $6}'");
-	if(empty($ret)) {
-		return false;
-	}
-	return $ret;
+        exec("netstat -rn", $output, $ret);
+        foreach($output as $line) {
+                if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+link[#]/", $line)) {
+                        $fields = preg_split("/[ ]+/", $line);
+                        if(ip_in_subnet($ipaddress, $fields[0])) {
+                                return $fields[5];
+                        }
+                }
+        }
+        $ret = exec_command("/sbin/route -n get {$ipaddress} | /usr/bin/awk '/interface/ { print \$2; };'");
+        if(empty($ret)) {
+                return false;
+        }
+        return $ret;
 }
 
 function filter_opt_interface_to_real($opt) {

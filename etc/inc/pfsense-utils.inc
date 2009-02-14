@@ -1756,7 +1756,7 @@ function execute_command_return_output($command) {
 function convert_friendly_interface_to_real_interface_name($interface) {
 	global $config;
 
-	$wanif = $interface;
+	$wanif = NULL;
 	switch ($interface) {
 		case "l2tp":
                 	$wanif = "l2tp";

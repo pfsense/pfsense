@@ -1799,7 +1799,7 @@ function get_current_wan_address($interface = "wan") {
 function get_real_interface($interface = "wan") {
     global $config;
 
-	$wanif = $interface;
+	$wanif = NULL;
 
 	switch ($interface) {
 	case "l2tp":

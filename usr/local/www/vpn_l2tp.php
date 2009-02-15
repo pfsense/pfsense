@@ -39,6 +39,7 @@ $l2tpcfg = &$config['l2tp'];
 
 $pconfig['remoteip'] = $l2tpcfg['remoteip'];
 $pconfig['localip'] = $l2tpcfg['localip'];
+$pconfig['l2tp_subnet'] = $l2tpcfg['l2tp_subnet'];
 $pconfig['mode'] = $l2tpcfg['mode'];
 $pconfig['interface'] = $l2tpcfg['interface'];
 $pconfig['radiusenable'] = isset($l2tpcfg['radius']['enable']);
@@ -70,7 +71,7 @@ if ($_POST) {
 		if (($_POST['localip'] && !is_ipaddr($_POST['localip']))) {
 			$input_errors[] = gettext("A valid server address must be specified.");
 		}
-		if (($_POST['subnet'] && !is_ipaddr($_POST['remoteip']))) {
+		if (($_POST['l2tp_subnet'] && !is_ipaddr($_POST['remoteip']))) {
 			$input_errors[] = gettext("A valid remote start address must be specified.");
 		}
 		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver']))) {
@@ -84,9 +85,9 @@ if ($_POST) {
 		}
 
 		if (!$input_errors) {
-			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $g['l2tp_subnet']);
+			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['l2tp_subnet']);
 			$subnet_start = ip2long($_POST['remoteip']);
-			$subnet_end = ip2long($_POST['remoteip']) + $g['n_l2tp_units'] - 1;
+			$subnet_end = ip2long($_POST['remoteip']) + $_POST['n_l2tp_units'] - 1;
 
 			if ((ip2long($_POST['localip']) >= $subnet_start) &&
 			    (ip2long($_POST['localip']) <= $subnet_end)) {
@@ -107,6 +108,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$l2tpcfg['remoteip'] = $_POST['remoteip'];
 		$l2tpcfg['localip'] = $_POST['localip'];
+		$l2tpcfg['l2tp_subnet'] = $_POST['l2tp_subnet'];
 		$l2tpcfg['mode'] = $_POST['mode'];
 		$l2tpcfg['interface'] = $_POST['interface'];
 		$l2tpcfg['n_l2tp_units'] = $_POST['n_l2tp_units'];
@@ -168,6 +170,7 @@ function enable_change(enable_over) {
 	if ((get_radio_value(document.iform.mode) == "server") || enable_over) {
 		document.iform.remoteip.disabled = 0;
 		document.iform.localip.disabled = 0;
+		document.iform.l2tp_subnet.disabled = 0;
 		document.iform.radiusenable.disabled = 0;
 		document.iform.radiusissueips.disabled = 0;
 		document.iform.paporchap.disabled = 0;
@@ -176,6 +179,7 @@ function enable_change(enable_over) {
     /* fix colors */
 		document.iform.remoteip.style.backgroundColor = '#FFFFFF';
 		document.iform.localip.style.backgroundColor = '#FFFFFF';
+		document.iform.l2tp_subnet.style.backgroundColor = '#FFFFFF';
 		document.iform.radiusenable.style.backgroundColor = '#FFFFFF';
 		document.iform.radiusissueips.style.backgroundColor = '#FFFFFF';
 		document.iform.paporchap.style.backgroundColor = '#FFFFFF';
@@ -205,6 +209,7 @@ function enable_change(enable_over) {
 	} else {
 		document.iform.interface.disabled = 1;
 		document.iform.n_l2tp_units.disabled = 1;
+		document.iform.l2tp_subnet.disabled = 1;
 		document.iform.paporchap.disabled = 1;
 		document.iform.remoteip.disabled = 1;
 		document.iform.localip.disabled = 1;
@@ -216,6 +221,7 @@ function enable_change(enable_over) {
     /* fix colors */
 		document.iform.interface.style.backgroundColor = '#D4D0C8';
 		document.iform.n_l2tp_units.style.backgroundColor = '#D4D0C8';
+		document.iform.l2tp_subnet.style.backgroundColor = '#D4D0C8';
 		document.iform.paporchap.style.backgroundColor = '#D4D0C8';
 		document.iform.remoteip.style.backgroundColor = '#D4D0C8';
 		document.iform.localip.style.backgroundColor = '#D4D0C8';
@@ -294,6 +300,23 @@ function enable_change(enable_over) {
                     <br />
                     <?=gettext("Specify the starting address for the client IP address subnet.");?><br />
                     </td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Subnet netmask</td>
+                  <td width="78%" class="vtable">
+                    <select id="l2tp_subnet" name="l2tp_subnet">
+                    <?php
+                     for($x=0; $x<33; $x++) {
+                        if($x == $pconfig['l2tp_subnet'])
+                                $SELECTED = " SELECTED";
+                        else
+                                $SELECTED = "";
+                        echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
+                     }
+                    ?>
+                    </select>
+                    <br>Hint: 24 is 255.255.255.0
+                  </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">No. L2TP users</td>

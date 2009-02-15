@@ -317,19 +317,6 @@ function parse_config($parse = false) {
 		update_filter_reload_status("Plugins completed.");
 	}
 
-	/*    override some global configuration parms if they exist
-	 *    instead of hard coding these checks into the codebase
-     */
-	if($config['pptp']['n_pptp_units'])
-		$g['n_pptp_units'] = $config['pptp']['n_pptp_units'];
-	if($config['pptp']['pptp_subnet'])
-		$g['pptp_subnet'] = $config['pptp']['pptp_subnet'];
-
-	if($config['pppoe']['n_pppoe_units'])
-		$g['n_pppoe_units'] = $config['pppoe']['n_pppoe_units'];
-	if($config['pppoe']['pppoe_subnet'])
-		$g['pppoe_subnet'] = $config['pppoe']['pppoe_subnet'];
-
 	return $config;
 }
 

@@ -89,7 +89,7 @@ if ($_POST) {
 		if (($_POST['localip'] && !is_ipaddr($_POST['localip']))) {
 			$input_errors[] = "A valid server address must be specified.";
 		}
-		if (($_POST['subnet'] && !is_ipaddr($_POST['remoteip']))) {
+		if (($_POST['pptp_subnet'] && !is_ipaddr($_POST['remoteip']))) {
 			$input_errors[] = "A valid remote start address must be specified.";
 		}
 		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver']))) {
@@ -97,9 +97,9 @@ if ($_POST) {
 		}
 		
 		if (!$input_errors) {	
-			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $g['pptp_subnet']);
+			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pptp_subnet']);
 			$subnet_start = ip2long($_POST['remoteip']);
-			$subnet_end = ip2long($_POST['remoteip']) + $g['n_pptp_units'] - 1;
+			$subnet_end = ip2long($_POST['remoteip']) + $_POST['n_pptp_units'] - 1;
 						
 			if ((ip2long($_POST['localip']) >= $subnet_start) && 
 			    (ip2long($_POST['localip']) <= $subnet_end)) {

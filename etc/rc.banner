@@ -71,11 +71,9 @@
 				break;
 			case "pppoe":
 				$ifinfo['class'] = "(PPPoE)";
-				//$ifinfo['ipaddr'] = $iflist[$g['pppoe_interface']]['ipaddr'];
 				break;
 			case "pptp":
 				$ifinfo['class'] = "(PPTP)";
-				//$ifinfo['ipaddr'] = $iflist[$g['pppoe_interface']]['ipaddr'];
 				break;
 			}
 			$ifinfo['ipaddr'] = get_interface_ip($ifinfo['friendly']);

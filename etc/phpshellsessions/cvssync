@@ -70,6 +70,10 @@ else
 
 $CODIR =  "/root/pfsense/";
 
+// XXX Temporary until we get git under control.
+if(is_dir("$CODIR/pfSenseGITREPO")) 
+	exec("rm -rf $CODIR/pfSenseGITREPO");
+
 exec("mkdir -p /root/pfsense/$BRANCHTAG");
 
 $found = false;

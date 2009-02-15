@@ -1418,7 +1418,8 @@ EOD;
 
 l2tp{$i}:
 	set link type l2tp
-	set l2tp iface {$l2tp_interface}
+        set l2tp enable incoming
+        set l2tp disable originate
 
 EOD;
 			}

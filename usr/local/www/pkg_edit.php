@@ -39,7 +39,7 @@ require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
 /* dummy stubs needed by some code that was MFC'd */
-function pfSenseHeader($location) { header("Location: $location"); }
+function pfSenseHeader($location) { header("Location: " . $location); }
 
 function gentitle_pkg($pgname) {
 	global $pfSense_config;
@@ -75,7 +75,12 @@ $pgtitle      = $title;
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = htmlspecialchars($_POST['id']);
-
+	
+// Not posting?  Then user is editing a record. There must be a valid id
+// when editing a record.
+if(!$id && !$_POST)
+	$id = "0";
+	
 if($pkg['custom_php_global_functions'] <> "")
         eval($pkg['custom_php_global_functions']);
 

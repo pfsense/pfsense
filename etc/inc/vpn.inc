@@ -936,7 +936,6 @@ EOD;
 
 				if(isset($pptpdcfg['radius']['radiusissueips']) && isset($pptpdcfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 0.0.0.0/0";
-					$isssue_ip_type .="\n\tset ipcp yes radius-ip";
 				} else {
 					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 {$clientip}/32";
 				}
@@ -1144,7 +1143,6 @@ EOD;
 
 				if (isset ($pppoecfg['radius']['radiusissueips']) && isset ($pppoecfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
-					$isssue_ip_type .= "\n\tset ipcp yes radius-ip";
 				} else {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32";
 				}
@@ -1202,7 +1200,6 @@ EOD;
 			if (isset ($pppoecfg['radius']['enable'])) {
 				$mpdconf .=<<<EOD
 	set radius server {$pppoecfg['radius']['server']} "{$pppoecfg['radius']['secret']}"
-	set ipcp radius-ip
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth
@@ -1343,7 +1340,6 @@ EOD;
 
 				if (isset ($l2tpcfg['radius']['radiusissueips']) && isset ($l2tpcfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 0.0.0.0/0";
-					$isssue_ip_type .= "\n\tset ipcp yes radius-ip";
 				} else {
 					$isssue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 {$clientip}/32";
 				}
@@ -1391,7 +1387,6 @@ EOD;
 			if (isset ($l2tpcfg['radius']['enable'])) {
 				$mpdconf .=<<<EOD
 	set radius server {$l2tpcfg['radius']['server']} "{$l2tpcfg['radius']['secret']}"
-	set ipcp radius-ip
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth

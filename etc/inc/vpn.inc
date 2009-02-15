@@ -1299,7 +1299,7 @@ function vpn_l2tp_configure() {
 		killbypid("{$g['varrun_path']}/l2tp-vpn.pid");
 
 		/* wait for process to die */
-		sleep(2);
+		sleep(8);
 
 	}
 

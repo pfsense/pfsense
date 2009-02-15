@@ -225,6 +225,10 @@ function filter_configure_sync() {
 			return;
 		}
 	}
+
+	update_filter_reload_status("Starting up layer7 daemon");
+	layer7_start_l7daemon();
+
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
 	/* run items scheduled for after filter configure run */
 	$fda = fopen("/tmp/commands.txt", "w");
@@ -1314,7 +1318,10 @@ function generate_user_filter_rule($rule)
 			$gateway = $rule['gateway'];
 			if(!is_ipaddr($rule['gateway'])) {
 				$gwip = $GatewaysList[$rule['gateway']]['gateway'];
-				$int = get_real_interface($GatewaysList[$gateway]['interface']);
+				if ($GatewaysList[$gateway]['interface'])
+					$int = $GatewaysList[$gateway]['interface'];
+				else
+					$int = "";
 			} else {
 				$gwip = $rule['gateway'];
 				$int = guess_interface_from_ip($rule['gateway']);

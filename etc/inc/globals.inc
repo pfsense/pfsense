@@ -62,6 +62,7 @@ $g = array(
 	"pptp_subnet" => 28,   /* this value can be overriden in pptp->pptp_subnet  */
 	"n_pppoe_units" => 16, /* this value can be overriden in pppoe->n_pppoe_units */
 	"pppoe_subnet" => 28,  /* this value can be overriden in pppoe->pppoe_subnet  */
+	"l2tp_subnet" => 28,  /* this value can be overriden in l2tp->l2tp_subnet  */
 	"debug" => false,
 	"latest_config" => "5.5",
 	"nopkg_platforms" => array("cdrom"),

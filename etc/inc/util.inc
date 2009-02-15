@@ -27,8 +27,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once 'IPv6.inc';
-
 /* kill a process by pid file */
 function killbypid($pidfile) {
 	sigkillbypid($pidfile, "TERM");
@@ -122,8 +120,9 @@ function is_ipaddr($ipaddr) {
 		return false;
 }
 
-/* returns true if $ipaddr is a valid IPv4/IPv6 address or an alias thereof */
+/* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
 function is_ipaddroralias($ipaddr) {
+
 	global $aliastable, $config;
 
 	if(is_array($config['aliases']['alias'])) {
@@ -133,22 +132,22 @@ function is_ipaddroralias($ipaddr) {
 		}
 	}
 
-	if (isset($aliastable[$ipaddr]) && (is_ipaddr($aliastable[$ipaddr]) || Net_IPv6::checkIPv6($aliastable[$ipaddr]))) {
+	if (isset($aliastable[$ipaddr]) && is_ipaddr($aliastable[$ipaddr]))
 		return true;
-	} else {
-		return (is_ipaddr($ipaddr) || Net_IPv6::checkIPv6($ipaddr));
-	}
+	else
+		return is_ipaddr($ipaddr);
+
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or any alias */
 function is_ipaddroranyalias($ipaddr) {
+
 	global $aliastable;
 
-	if (isset($aliastable[$ipaddr])) {
+	if (isset($aliastable[$ipaddr]))
 		return true;
-	} else {
-		return (is_ipaddr($ipaddr) || Net_IPv6::checkIPv6($ipaddr));
-	}
+	else
+		return is_ipaddr($ipaddr);
 }
 
 /* returns true if $subnet is a valid subnet in CIDR format */
@@ -166,26 +165,6 @@ function is_subnet($subnet) {
 
 	return true;
 }
-
-/* returns true if $subnet is a valid IPv6 network address */
-function is_subnet_ipv6($subnet, $max = 64) {
-	if (!is_string($subnet)) {
-		return false;
-	}
-
-	list ($hp, $np) = explode('/', $subnet);
-
-	if (!Net_IPv6::checkIPv6($hp)) {
-		return false;
-	}
-
-	if (!is_numeric($np) || ($np < 1) || ($np > $max)) {
-		return false;
-	}
-
-	return true;
-}
-
 
 /* returns true if $subnet is a valid subnet in CIDR format or an alias thereof */
 function is_subnetoralias($subnet) {
@@ -524,15 +503,15 @@ function alias_expand_value($name) {
 
 /* expand a host or network alias, if necessary */
 function alias_expand($name) {
+
 	global $aliastable;
 
-	if (isset($aliastable[$name])) {
+	if (isset($aliastable[$name]))
 		return "\${$name}";
-	} else if (is_ipaddr($name) || is_subnet($name) || Net_IPv6::checkIPv6($name) || is_subnet_ipv6($name)) {
+	else if (is_ipaddr($name) || is_subnet($name))
 		return "{$name}";
-	} else {
+	else
 		return null;
-	}
 }
 
 /* expand a host alias, if necessary */
@@ -542,16 +521,14 @@ function alias_expand_host($name) {
 	if (isset($aliastable[$name])) {
 		$ip_arr = explode(" ", $aliastable[$name]);
 		foreach($ip_arr as $ip) {
-			if (!is_ipaddr($ip) || Net_IPv6::checkIPv6($ip)) {
+			if (!is_ipaddr($ip))
 				return null;
-			}
 		}
 		return $aliastable[$name];
-	} else if (is_ipaddr($name) || Net_IPv6::checkIPv6($name)) {
+	} else if (is_ipaddr($name))
 		return $name;
-	} else {
+	else
 		return null;
-	}
 }
 
 /* expand a network alias, if necessary */
@@ -635,8 +612,8 @@ function arp_get_mac_by_ip($ip) {
 
 /* return a fieldname that is safe for xml usage */
 function xml_safe_fieldname($fieldname) {
-	$replace = array('/', ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
-			 '+', '=', '{', '}', '[', ']', '|', '/', '<', '>', '?',
+	$replace = array('/', '-', ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
+			 '_', '+', '=', '{', '}', '[', ']', '|', '/', '<', '>', '?',
 			 ':', ',', '.', '\'', '\\'
 		);
 	return strtolower(str_replace($replace, "", $fieldname));
@@ -670,9 +647,8 @@ function mac_format($clientmac) {
 
 function resolve_retry($hostname, $retries = 5) {
 
-       if (is_ipaddr($hostname) || Net_IPv6::checkIPv6($hostname)) {
+       if (is_ipaddr($hostname))
                return $hostname;
-	}
 
        for ($i = 0; $i < $retries; $i++) {
                $ip = gethostbyname($hostname);

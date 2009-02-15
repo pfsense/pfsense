@@ -1,5 +1,5 @@
 <?php 
-/* $Id: system_gateways_edit.php,v 1.3 2008/11/24 05:48:02 sumacob Exp $ */
+/* $Id$ */
 /*
 	system_gateways_edit.php
 	part of pfSense (http://pfsense.com)
@@ -37,21 +37,18 @@
 ##|-PRIV
 
 
-require_once("guiconfig.inc");
-require_once("IPv6.inc");
+require("guiconfig.inc");
 
-if (!is_array($config['gateways']['gateway_item']))
-	$config['gateways']['gateway_item'] = array();
-
-$a_gateways = &$config['gateways']['gateway_item'];
-
-if (isset($_GET['id'])) {
-	$id = $_GET['id'];
-} else if (isset($_POST['id'])) {
-	$id = $_POST['id'];
-} else {
-	$id = -1;
+$a_gateways = return_gateways_array();
+$a_gateways_arr = array();
+foreach($a_gateways as $gw) {
+	$a_gateways_arr[] = $gw;
 }
+$a_gateways = $a_gateways_arr;
+
+$id = $_GET['id'];
+if (isset($_POST['id']))
+	$id = $_POST['id'];
 
 if (isset($_GET['dup'])) {
 	$id = $_GET['dup'];
@@ -64,11 +61,13 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['defaultgw'] = $a_gateways[$id]['defaultgw'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
-	$pconfig['type'] = $a_gateways[$id]['type'];
+	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup'])) {
 	unset($id);
+	unset($pconfig['attribute']);
+}
 
 if ($_POST) {
 
@@ -84,37 +83,12 @@ if ($_POST) {
 	if (! isset($_POST['name'])) {
 		$input_errors[] = "A valid gateway name must be specified.";
 	}
-
-	if ($_POST['type'] == 'IPv4') {
-		if (!is_ipaddr($_POST['gateway'])) {
-			$input_errors[] = "A valid IPv4 gateway address must be specified.";
-		}
-
-		if ($_POST['monitor'] && !is_ipaddr($_POST['monitor'])) {
-			$input_errors[] = "A valid IPv4 monitor address must be specified.";
-		}
-	} else if ($_POST['type'] == 'IPv6') {
-		if (!Net_IPv6::checkIPv6($_POST['gateway'])) {
-			$input_errors[] = "A valid IPv6 gateway address must be specified.";
-		}
-
-		if ($_POST['monitor'] && !Net_IPv6::checkIPv6($_POST['monitor'])) {
-			$input_errors[] = "A valid IPv6 monitor address must be specified.";
-		}
-	} else {
-		$input_errors[] = "A network type must be specified.";
+	/* skip system gateways which have been automatically added */
+	if ($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) {
+		$input_errors[] = "A valid gateway IP address must be specified.";
 	}
-	
-	if ($_POST['defaultgw'] == "yes") {
-		$i=0;
-		foreach ($a_gateways as $gateway) {
-			if($id != $i && $config['gateways']['gateway_item'][$i]['type'] == $_POST['type']) {
-	                        unset($config['gateways']['gateway_item'][$i]['defaultgw']);
-			} else if ($config['gateways']['gateway_item'][$i]['type'] == $_POST['type']) {
-	                        $config['gateways']['gateway_item'][$i]['defaultgw'] = true;
-			}
-			$i++;
-		}
+	if ((($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']))) {
+		$input_errors[] = "A valid monitor IP address must be specified.";
 	}
 
 	/* check for overlaps */
@@ -137,22 +111,44 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$gateway = array();
-		$gateway['interface'] = $_POST['interface'];
-		$gateway['name'] = $_POST['name'];
-		$gateway['gateway'] = $_POST['gateway'];
-		$gateway['monitor'] = $_POST['monitor'];
-		$gateway['descr'] = $_POST['descr'];
-		$gateway['type'] = $_POST['type'];
-
-		if($_POST['defaultgw'] == "yes") {
-			$gateway['defaultgw'] = true;
+		/* if we are processing a system gateway only save the monitorip */
+		if($pconfig['attribute'] == "system") {
+			$config['interfaces'][$_POST['interface']]['monitorip'] = $_POST['monitor'];
 		}
 
-		if (isset($id) && $a_gateways[$id])
-			$a_gateways[$id] = $gateway;
-		else
-			$a_gateways[] = $gateway;
+		/* Manual gateways are handled differently */
+		/* rebuild the array with the manual entries only */
+		if (!is_array($config['gateways']['gateway_item']))
+			$config['gateways']['gateway_item'] = array();
+
+		$a_gateways = &$config['gateways']['gateway_item'];
+
+		if ($pconfig['attribute'] != "system") {
+			$gateway = array();
+			$gateway['interface'] = $_POST['interface'];
+			$gateway['name'] = $_POST['name'];
+			$gateway['gateway'] = $_POST['gateway'];
+			$gateway['descr'] = $_POST['descr'];
+
+			if ($_POST['defaultgw'] == "yes") {
+				$i = 0;
+				foreach($a_gateways as $gw) {
+					unset($config['gateways'][$i]['defaultgw']);
+					$i++;
+				}
+				$gateway['defaultgw'] = true;
+			} else {
+				unset($gateway['defaultgw']);
+			}
+
+			/* when saving the manual gateway we use the attribute which has the corresponding id */
+			$id = $pconfig['attribute'];
+			if (isset($id) && $a_gateways[$id]) {
+				$a_gateways[$id] = $gateway;
+			} else {
+				$a_gateways[] = $gateway;
+			}
+		}
 		
 		touch($d_staticroutesdirty_path);
 		
@@ -177,6 +173,12 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
+	<?php
+	/* If this is a automatically added system gateway we need this var */
+	if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
+		echo "<input type='hidden' name='attribute' id='attribute' value='{$pconfig['attribute']}' >\n";
+	}
+	?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic">Edit gateway</td>
@@ -209,71 +211,10 @@ include("head.inc");
                     <br> <span class="vexpl">Gateway name</span></td>
                 </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncellreq">Type</td>
-                  <td width="78%" class="vtable"> 
-		<!-- XXX -->
-		<? /*
-		<?php if (isset($_GET['id']) || $_POST): ?>
-                    <select class="formselect" disabled="true">
-			<?php
-				if ($pconfig['type'] == 'IPv6') {
-					$str = <<<EOD
-					<option value="IPv6" selected>IPv6</option>
-EOD;
-				} else {
-					$str = <<<EOD
-					<option value="IPv4" selected>IPv4</option>
-EOD;
-				}
-
-				echo $str;
-			?>
-		    </select>
-		    <input type="hidden" name="type" id="type" value="<?php htmlspecialchars($pconfig['type']); ?>" />
-		<? else: ?>
-                    <select name="type" class="formselect">
-			<?php
-				if ($pconfig['type'] == 'IPv6') {
-					$str = <<<EOD
-					<option value="IPv4">IPv4</option>
-					<option value="IPv6" selected>IPv6</option>
-EOD;
-				} else {
-					$str = <<<EOD
-					<option value="IPv4" selected>IPv4</option>
-					<option value="IPv6">IPv6</option>
-EOD;
-				}
-
-				echo $str;
-			?>
-		    </select>
-		<? endif; ?>
-		*/ ?>
-                    <select name="type" class="formselect">
-			<?php
-				if ($pconfig['type'] == 'IPv6') {
-					$str = <<<EOD
-					<option value="IPv4">IPv4</option>
-					<option value="IPv6" selected>IPv6</option>
-EOD;
-				} else {
-					$str = <<<EOD
-					<option value="IPv4" selected>IPv4</option>
-					<option value="IPv6">IPv6</option>
-EOD;
-				}
-
-				echo $str;
-			?>
-		    </select>
-                  </td>
-                </tr>
-		<tr>
                   <td width="22%" valign="top" class="vncellreq">Gateway</td>
                   <td width="78%" class="vtable"> 
                     <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
-                    <br> <span class="vexpl">Gateway IPv4/IPv6 address</span></td>
+                    <br> <span class="vexpl">Gateway IP address</span></td>
                 </tr>
 		<tr>
 		  <td width="22%" valign="top" class="vncell">Default Gateway</td>
@@ -288,7 +229,7 @@ EOD;
 		  <td width="78%" class="vtable">
 			<input name="monitor" type="text" id="monitor" value="<?php echo ($pconfig['monitor']) ; ?>" />
 			<strong>Alternative monitor IP</strong> <br />
-			Enter an alternative address here to be used to monitor the link. This is used for the
+			Enter a alternative address here to be used to monitor the link. This is used for the
 			quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond
 			to icmp requests.</strong>
 			<br />

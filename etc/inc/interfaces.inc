@@ -501,7 +501,7 @@ function interfaces_configure() {
 	$bridge_list = array();
 	
 	foreach($iflist as $if => $ifname) {
-		$realif = $config['interfaces'][$if];
+		$realif = $config['interfaces'][$if]['if'];
 		if(is_array($realif['pppoe']) && isset($realif['pppoe']['pppoe-reset-type']))
 			setup_pppoe_reset_file($if, true);
 		else 
@@ -1799,7 +1799,7 @@ function get_current_wan_address($interface = "wan") {
 function get_real_interface($interface = "wan") {
     global $config;
 
-	$wanif = $interface;
+	$wanif = NULL;
 
 	switch ($interface) {
 	case "l2tp":
@@ -1847,10 +1847,6 @@ function get_real_interface($interface = "wan") {
 				}
 				break;
 			case "pppoe": 
-				/*
-				 * XXX: mpd seems to use netgraph interfaces so ngX interfaces are created
-				 * instead of pppoeX. =) -simoncpu-
-				 */
 				if ($if == "wan")
 					$wanif = "pppoe0";
 				else

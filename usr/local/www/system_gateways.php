@@ -1,5 +1,5 @@
 <?php
-/* $Id: system_gateways.php,v 1.1 2008/11/06 16:46:42 sumacob Exp $ */
+/* $Id$ */
 /*
 	system_gateways.php
 	part of pfSense (http://pfsense.com)
@@ -39,10 +39,7 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['gateways']['gateway_item']))
-	$config['gateways']['gateway_item'] = array();
-
-$a_gateways = &$config['gateways']['gateway_item'];
+$a_gateways = return_gateways_array();
 $changedesc = "Gateways: ";
 
 if ($_POST) {
@@ -71,14 +68,19 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_gateways[$_GET['id']]) {
-		$changedesc .= "removed gateway {$_GET['id']}";
-		unset($a_gateways[$_GET['id']]);
+		/* remove the real entry */
+		$realid = $a_gateways[$_GET['id']]['attribute'];
+		$a_gateways = &$config['gateways']['gateway_item'];
+
+		$changedesc .= "removed gateway {$realid}";
+		unset($a_gateways[$realid]);
 		write_config($changedesc);
 		touch($d_staticroutesdirty_path);
 		header("Location: system_gateways.php");
 		exit;
 	}
 }
+
 
 $pgtitle = array("System","Gateways");
 include("head.inc");
@@ -128,9 +130,9 @@ effect.");?><br>
                 <tr>
                   <td class="listlr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
                     <?php
-			echo $gateway['name'];
+			echo strtoupper($gateway['name']);
 			if(isset($gateway['defaultgw'])) {
-				echo " <br /><strong>({$gateway['type']} default)<strong>";
+				echo " <strong>(default)<strong>";
 			}
 			?>
 			

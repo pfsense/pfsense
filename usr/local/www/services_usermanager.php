@@ -193,7 +193,7 @@ END;
 	echo <<<END
 		<tr>
                   <td class="list" colspan="3"></td>
-                  <td class="list"> <a href="services_usermanager.php?act=new"><img src="./themes/".{$g['theme']}."/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                  <td class="list"> <a href="services_usermanager.php?act=new"><img src="./themes/".$g['theme']."/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 	        </tr>
      </table>
 END;

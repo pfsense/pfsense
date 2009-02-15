@@ -936,7 +936,6 @@ EOD;
 
 				if(isset($pptpdcfg['radius']['radiusissueips']) && isset($pptpdcfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 0.0.0.0/0";
-					$isssue_ip_type .="\n\tset ipcp yes radius-ip";
 				} else {
 					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 {$clientip}/32";
 				}
@@ -1006,7 +1005,6 @@ EOD;
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth
-	set bundle disable radius-fallback
 
 EOD;
 
@@ -1145,7 +1143,6 @@ EOD;
 
 				if (isset ($pppoecfg['radius']['radiusissueips']) && isset ($pppoecfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
-					$isssue_ip_type .= "\n\tset ipcp yes radius-ip";
 				} else {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32";
 				}
@@ -1203,11 +1200,9 @@ EOD;
 			if (isset ($pppoecfg['radius']['enable'])) {
 				$mpdconf .=<<<EOD
 	set radius server {$pppoecfg['radius']['server']} "{$pppoecfg['radius']['secret']}"
-	set ipcp radius-ip
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth
-	set bundle disable radius-fallback
 
 EOD;
 
@@ -1345,7 +1340,6 @@ EOD;
 
 				if (isset ($l2tpcfg['radius']['radiusissueips']) && isset ($l2tpcfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 0.0.0.0/0";
-					$isssue_ip_type .= "\n\tset ipcp yes radius-ip";
 				} else {
 					$isssue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 {$clientip}/32";
 				}
@@ -1393,11 +1387,9 @@ EOD;
 			if (isset ($l2tpcfg['radius']['enable'])) {
 				$mpdconf .=<<<EOD
 	set radius server {$l2tpcfg['radius']['server']} "{$l2tpcfg['radius']['secret']}"
-	set ipcp radius-ip
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth
-	set bundle disable radius-fallback
 
 EOD;
 
@@ -1424,9 +1416,10 @@ EOD;
 			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
 				$mpdlinks .=<<<EOD
 
-l2tp:
+l2tp{$i}:
 	set link type l2tp
-	set l2tp iface {$l2tp_interface}
+        set l2tp enable incoming
+        set l2tp disable originate
 
 EOD;
 			}

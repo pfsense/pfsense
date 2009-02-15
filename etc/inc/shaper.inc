@@ -3379,8 +3379,24 @@ function generate_layer7_files() {
             $fp = fopen($path,'w');
             fwrite($fp,$rules);
             fclose($fp);
-            
-	    // XXX: Hardcoded number of packets to garbage collect.
+        }
+    }
+}
+
+function layer7_start_l7daemon() {
+    global $layer7_rules_list;
+
+    /*
+     * XXX: Needed ?!
+     * read_layer7_config();
+     */
+
+    foreach($layer7_rules_list as $l7rules) {
+        if($l7rules->GetREnabled()) {
+            $filename = $l7rules->GetRName() . ".l7";
+            $path = "/tmp/" . $filename;
+
+            // XXX: Hardcoded number of packets to garbage collect.
             $ipfw_classifyd_init = "/usr/local/sbin/ipfw-classifyd -n 5 -c {$path} -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
             mwexec_bg($ipfw_classifyd_init);
         }

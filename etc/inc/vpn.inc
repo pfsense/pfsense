@@ -1006,7 +1006,6 @@ EOD;
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth
-	set bundle disable radius-fallback
 
 EOD;
 
@@ -1207,7 +1206,6 @@ EOD;
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth
-	set bundle disable radius-fallback
 
 EOD;
 
@@ -1397,7 +1395,6 @@ EOD;
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth
-	set bundle disable radius-fallback
 
 EOD;
 

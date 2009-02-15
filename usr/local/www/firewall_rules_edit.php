@@ -40,7 +40,6 @@
 
 
 require("guiconfig.inc");
-require_once("IPv6.inc");
 
 $specialsrcdst = explode(" ", "any wanip lanip lan pptp pppoe");
 
@@ -91,9 +90,6 @@ if (isset($id) && $a_filter[$id]) {
 
 	if ($a_filter[$id]['protocol'] == "icmp")
 		$pconfig['icmptype'] = $a_filter[$id]['icmptype'];
-
-	if ($a_filter[$id]['protocol'] == "icmp6")
-		$pconfig['icmp6type'] = $a_filter[$id]['icmp6type'];
 
 	address_to_pconfig($a_filter[$id]['source'], $pconfig['src'],
 		$pconfig['srcmask'], $pconfig['srcnot'],
@@ -162,9 +158,9 @@ if (isset($_GET['dup']))
 	unset($id);
 
 if ($_POST) {
-	if ($_POST['type'] == "reject" && !($_POST['proto'] == "tcp" || $_POST['proto'] == "tcp6")) {
-		$input_errors[] = "Reject type rules only works when the protocol is set to TCP or TCP6.";
-	}
+
+	if ($_POST['type'] == "reject" && $_POST['proto'] <> "tcp")
+		$input_errors[] = "Reject type rules only works when the protocol is set to TCP.";
 
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
 		$_POST['srcbeginport'] = 0;
@@ -288,7 +284,7 @@ if ($_POST) {
 
 	if (!is_specialnet($_POST['srctype'])) {
 		if (($_POST['src'] && !is_ipaddroranyalias($_POST['src']))) {
-			$input_errors[] = "A valid source IPv4/IPv6 address or alias must be specified.";
+			$input_errors[] = "A valid source IP address or alias must be specified.";
 		}
 		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
 			$input_errors[] = "A valid source bit count must be specified.";
@@ -296,7 +292,7 @@ if ($_POST) {
 	}
 	if (!is_specialnet($_POST['dsttype'])) {
 		if (($_POST['dst'] && !is_ipaddroranyalias($_POST['dst']))) {
-			$input_errors[] = "A valid destination IPv4/IPv6 address or alias must be specified.";
+			$input_errors[] = "A valid destination IP address or alias must be specified.";
 		}
 		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
 			$input_errors[] = "A valid destination bit count must be specified.";
@@ -396,11 +392,6 @@ if ($_POST) {
 		else
 			unset($filterent['icmptype']);
 
-		if ($_POST['proto'] == "icmp6" && $_POST['icmp6type'])
-			$filterent['icmp6type'] = $_POST['icmp6type'];
-		else
-			unset($filterent['icmp6type']);
-
 		pconfig_to_address($filterent['source'], $_POST['src'],
 			$_POST['srcmask'], $_POST['srcnot'],
 			$_POST['srcbeginport'], $_POST['srcendport']);
@@ -474,8 +465,6 @@ $page_filename = "firewall_rules_edit.php";
 include("head.inc");
 
 ?>
-
-<script type="text/javascript" src="javascript/NetUtils.js"></script>
 
 </head>
 
@@ -590,7 +579,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<select name="proto" class="formselect" onchange="proto_change()">
 <?php
-				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP TCP6 UDP6 TCP6/UDP6 ICMP6 ESP AH GRE IGMP any carp pfsync");
+				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IGMP any carp pfsync");
 				foreach ($protocols as $proto): ?>
 					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
 <?php 			endforeach; ?>
@@ -632,50 +621,6 @@ include("head.inc");
 			<span class="vexpl">If you selected ICMP for the protocol above, you may specify an ICMP type here.</span>
 		</td>
 		</tr>
-		<tr id="icmp6box" name="icmp6box">
-			<td valign="top" class="vncell">ICMP6 type</td>
-			<td class="vtable">
-				<select name="icmp6type" class="formselect">
-<?php
-				$icmp6types = array(
-					"unreach"	=>	"Destination unreachable",
-					"toobig"	=>	"Packet too big",
-					"timex"		=>	"Time exceeded",
-					"parampro"	=>	"Invalid IPv6 header",
-					"echoreq"	=>	"Echo service request",
-					"echorep"	=>	"Echo service reply",
-					"groupqry"	=>	"Group membership query",
-					"listqry"	=>	"Multicast listener query",
-					"grouprep"	=>	"Group membership report",
-					"listenrep"	=>	"Multicast listener report",
-					"groupterm"	=>	"Group membership termination",
-					"listendone"	=>	"Multicast listerner done",
-					"routersol"	=>	"Router solicitation",
-					"routeradv"	=>	"Router advertisement",
-					"neighbrsol"	=>	"Neighbor solicitation",
-					"neighbradv"	=>	"Neighbor advertisement",
-					"redir"		=>	"Shorter route exists",
-					"routrrenum"	=>	"Route renumbering",
-					"fqdnreq"	=>	"FQDN query",
-					"niqry"		=>	"Node information query",
-					"wrureq"	=>	"Who-are-you request",
-					"fqdnrep"	=>	"FQDN reply",
-					"nirep"		=>	"Node information reply",
-					"wrurep"	=>	"Who-are-you reply",
-					"mtraceresp"	=>	"mtrace response",
-					"mtrace"	=>	"mtrace messages"
-				);
-?>
-
-				<?php foreach ($icmp6types as $icmp6type => $descr): ?>
-					<option value="<?=$icmp6type;?>" <?php if ($icmp6type == $pconfig['icmp6type']) echo "selected"; ?>><?=htmlspecialchars($descr);?></option>
-				<?php endforeach; ?>
-
-				</select>
-				<br />
-				<span class="vexpl">If you selected ICMP6 for the protocol above, you may specify an ICMP6 type here.</span>
-			</td>
-		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Source</td>
 			<td width="78%" class="vtable">
@@ -690,31 +635,11 @@ include("head.inc");
 						<td>Type:&nbsp;&nbsp;</td>
 						<td>
 							<select name="srctype" class="formselect" onChange="typesel_change()">
-							<?php
-								$sel_host = false;
-								$sel_v4 = false;
-								$sel_v6 = false;
-
-								$sel = is_specialnet($pconfig['src']);
-
-								if (is_ipaddr($pconfig['src']) && !$sel) {
-									if ($pconfig['srcmask'] == 32) {
-										$sel_host = true;
-									} else {
-										$sel_v4 = true;
-									}
-								} else if (Net_IPv6::checkIPv6($pconfig['src']) && !$sel) {
-									if ($pconfig['srcmask'] == 128) {
-										$sel_host = true;
-									} else {
-										$sel_v6 = true;
-									}
-								}
-							?>
+<?php
+								$sel = is_specialnet($pconfig['src']); ?>
 								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>>any</option>
-								<option value="single"  <?php if ($sel_host) echo "selected"; ?>>Single host or alias</option>
-								<option value="network" <?php if ($sel_v4) echo "selected"; ?>>IPv4 Network</option>
-								<option value="network_ipv6" <?php if ($sel_v6) echo "selected"; ?>>IPv6 Network</option>
+								<option value="single"  <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>Single host or alias</option>
+								<option value="network" <?php if (!$sel) echo "selected"; ?>>Network</option>
 								<?php if(have_ruleint_access("wan")): ?>
 								<option value="wanip" 	<?php if ($pconfig['src'] == "wanip") { echo "selected"; } ?>>WAN address</option>
 								<?php endif; ?>
@@ -838,31 +763,11 @@ include("head.inc");
 						<td>Type:&nbsp;&nbsp;</td>
 						<td>
 							<select name="dsttype" class="formselect" onChange="typesel_change()">
-							<?php
-								$sel_host = false;
-								$sel_v4 = false;
-								$sel_v6 = false;
-
-								$sel = is_specialnet($pconfig['src']);
-
-								if (is_ipaddr($pconfig['src']) && !$sel) {
-									if ($pconfig['dstmask'] == 32) {
-										$sel_host = true;
-									} else {
-										$sel_v4 = true;
-									}
-								} else if (Net_IPv6::checkIPv6($pconfig['src']) && !$sel) {
-									if ($pconfig['dstmask'] == 128) {
-										$sel_host = true;
-									} else {
-										$sel_v6 = true;
-									}
-								}
-							?>
+<?php
+								$sel = is_specialnet($pconfig['dst']); ?>
 								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>any</option>
-								<option value="single" <?php if ($sel_host) echo "selected"; ?>>Single host or alias</option>
-								<option value="network" <?php if ($sel_v4) echo "selected"; ?>>IPv4 Network</option>
-								<option value="network_ipv6" <?php if ($sel_v6) echo "selected"; ?>>IPv6 Network</option>
+								<option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>Single host or alias</option>
+								<option value="network" <?php if (!$sel) echo "selected"; ?>>Network</option>
 								<?php if(have_ruleint_access("wan")): ?>
 								<option value="wanip" <?php if ($pconfig['dst'] == "wanip") { echo "selected"; } ?>>WAN address</option>
 								<?php endif; ?>

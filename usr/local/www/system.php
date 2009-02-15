@@ -38,7 +38,6 @@
 
 
 require("guiconfig.inc");
-require_once("IPv6.inc");
 
 $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
@@ -111,25 +110,12 @@ if ($_POST) {
 	if ($_POST['domain'] && !is_domain($_POST['domain'])) {
 		$input_errors[] = "The domain may only contain the characters a-z, 0-9, '-' and '.'.";
 	}
-        /*
 	if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2']))) {
 		$input_errors[] = "A valid IP address must be specified for the primary/secondary DNS server.";
 	}
 	if (($_POST['dns3'] && !is_ipaddr($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddr($_POST['dns4']))) {
 		$input_errors[] = "A valid IP address must be specified for the primary/secondary DNS server.";
 	}	
-        */
-
-	if (
-		$_POST['dns1'] && !is_ipaddr($_POST['dns1']) && !Net_IPv6::checkIPv6($_POST['dns1']) ||
-		$_POST['dns2'] && !is_ipaddr($_POST['dns2']) && !Net_IPv6::checkIPv6($_POST['dns2']) ||
-		$_POST['dns3'] && !is_ipaddr($_POST['dns3']) && !Net_IPv6::checkIPv6($_POST['dns3']) ||
-		$_POST['dns4'] && !is_ipaddr($_POST['dns4']) && !Net_IPv6::checkIPv6($_POST['dns4'])
-	) {
-		$input_errors[] = "A valid IPv4/IPv6 address must be specified for the primary/secondary DNS server.";
-	}
-
-
 	if ($_POST['webguiport'] && (!is_numericint($_POST['webguiport']) ||
 			($_POST['webguiport'] < 1) || ($_POST['webguiport'] > 65535))) {
 		$input_errors[] = "A valid TCP/IP port must be specified for the webConfigurator port.";
@@ -267,7 +253,7 @@ include("head.inc");
 				<td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
 					<br/>
 					<span class="vexpl">
-						e.g. <em>example.com</em>
+						e.g. <em>mycorp.com</em>
 					</span>
 				</td>
 			</tr>
@@ -321,7 +307,7 @@ include("head.inc");
 						</table>
 						<br>
 						<span class="vexpl">
-							IPv4/IPv6 addresses; these are also used for the DHCP
+							IP addresses; these are also used for the DHCP
 							service, DNS forwarder and for PPTP VPN clients.
 							<br/>
 							<?php if($multiwan): ?>

@@ -40,8 +40,7 @@
 ##|*MATCH=interfaces.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-require_once("IPv6.inc");
+require("guiconfig.inc");
 
 if ($_REQUEST['if'])
 	$if = $_REQUEST['if'];
@@ -155,14 +154,10 @@ if ($if == "wan" || $if == "lan")
 else
 	$pconfig['enable'] = isset($wancfg['enable']);
 
-if (is_array($config['aliases']['alias'])) {
-	foreach($config['aliases']['alias'] as $alias) {
-		if($alias['name'] == $wancfg['descr']) {
-			$input_errors[] = gettext("Sorry, an alias with the name {$wancfg['descr']} already exists.");
-		}
-	}
-}
-
+if (is_array($config['aliases']['alias']))
+foreach($config['aliases']['alias'] as $alias)
+	if($alias['name'] == $wancfg['descr'])
+		$input_errors[] = gettext("Sorry, an alias with the name {$wancfg['descr']} already exists.");
 if ($wancfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "dhcp";
 } else if ($wancfg['ipaddr'] == "carpdev-dhcp") {
@@ -172,25 +167,14 @@ if ($wancfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "pppoe";
 } else if ($wancfg['ipaddr'] == "pptp") {
 	$pconfig['type'] = "pptp";
-} else if ($wancfg['ipaddr'] == "" && $wancfg['ipaddr_ipv6'] == "") {
+} else if ($wancfg['ipaddr'] != "") {
+	$pconfig['type'] = "static";
+	$pconfig['ipaddr'] = $wancfg['ipaddr'];
+	$pconfig['subnet'] = $wancfg['subnet'];
+	$pconfig['gateway'] = $wancfg['gateway'];
+	$pconfig['pointtopoint'] = $wancfg['pointtopoint'];
+} else
 	$pconfig['type'] = "none";
-} else {
-	if ($wancfg['ipaddr'] != "") {
-		$pconfig['type'] = "static";
-		$pconfig['ipaddr'] = $wancfg['ipaddr'];
-		$pconfig['subnet'] = $wancfg['subnet'];
-		$pconfig['gateway'] = $wancfg['gateway'];
-		$pconfig['pointtopoint'] = $wancfg['pointtopoint'];
-	}
-
-	if ($wancfg['ipaddr_ipv6'] != "") {
-		$pconfig['type'] = "static";
-		$pconfig['ipaddr_ipv6'] = $wancfg['ipaddr_ipv6'];
-		$pconfig['subnet_ipv6'] = $wancfg['subnet_ipv6'];
-		$pconfig['gateway_ipv6'] = $wancfg['gateway_ipv6'];
-		$pconfig['pointtopoint_ipv6'] = $wancfg['pointtopoint_ipv6'];
-	}
-}
 
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
@@ -312,16 +296,8 @@ if ($_POST) {
 	}
 	/* input validation */
 	if ($_POST['type'] == "static") {
-		if ($_POST['ipaddr'] != "") {
-			$reqdfields = explode(" ", "ipaddr subnet gateway");
-			$reqdfieldsn = explode(",", "IPv4 Address,IPv4 Subnet Bit Count,IPv4 Gateway");
-		} else if ($_POST['ipaddr_ipv6'] != "") {
-			$reqdfields = explode(" ", "ipaddr_ipv6 subnet_ipv6 gateway_ipv6");
-			$reqdfieldsn = explode(",", "IPv6 Address,IPv6 Subnet Bit Count,IPv6 Gateway");
-		} else {
-			$input_errors[] = "An IPv4 or IPv6 Address is required.";
-		}
-
+		$reqdfields = explode(" ", "ipaddr subnet gateway");
+		$reqdfieldsn = explode(",", "IP address,Subnet bit count,Gateway");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	} else if ($_POST['type'] == "PPPoE") {
 		if ($_POST['pppoe_dialondemand']) {
@@ -345,13 +321,9 @@ if ($_POST) {
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) 
-		$input_errors[] = "A valid IPv4 address must be specified.";
+		$input_errors[] = "A valid IP address must be specified.";
 	if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) 
-		$input_errors[] = "A valid IPv4 subnet bit count must be specified.";
-	if ($_POST['ipaddr_ipv6'] && !Net_IPv6::checkIPv6($_POST['ipaddr_ipv6']))
-		$input_errors[] = "A valid IPv6 address must be specified.";
-	if ($_POST['subnet_ipv6'] && !is_numeric($_POST['subnet_ipv6']))
-		$input_errors[] = "A valid IPv6 prefix length must be specified.";
+		$input_errors[] = "A valid subnet bit count must be specified.";
 	if (($_POST['alias-address'] && !is_ipaddr($_POST['alias-address']))) 
 		$input_errors[] = "A valid alias IP address must be specified.";
 	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet']))) 
@@ -365,9 +337,7 @@ if ($_POST) {
 			$input_errors[] = "A valid gateway must be specified.";
 	}
 	if (($_POST['pointtopoint'] && !is_ipaddr($_POST['pointtopoint']))) 
-		$input_errors[] = "A valid IPv4 point-to-point address must be specified.";
-	if (($_POST['pointtopoint_ipv6'] && !is_ipaddr($_POST['pointtopoint_ipv6'])))
-		$input_errors[] = "A valid IPv6 point-to-point address must be specified.";
+		$input_errors[] = "A valid point-to-point IP address must be specified.";
 	if (($_POST['provider'] && !is_domain($_POST['provider']))) 
 		$input_errors[] = "The service name contains invalid characters.";
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) 
@@ -438,10 +408,6 @@ if ($_POST) {
 		unset($wancfg['subnet']);
 		unset($wancfg['gateway']);
 		unset($wancfg['pointtopoint']);
-		unset($wancfg['ipaddr_ipv6']);
-		unset($wancfg['subnet_ipv6']);
-		unset($wancfg['gateway_ipv6']);
-		unset($wancfg['pointtopoint_ipv6']);
 		unset($wancfg['dhcphostname']);
 		unset($wancfg['pppoe_username']);
 		unset($wancfg['pppoe_password']);
@@ -467,17 +433,10 @@ if ($_POST) {
 		if ($_POST['type'] == "static") {
 			$wancfg['ipaddr'] = $_POST['ipaddr'];
 			$wancfg['subnet'] = $_POST['subnet'];
-			$wancfg['ipaddr_ipv6'] = $_POST['ipaddr_ipv6'];
-			$wancfg['subnet_ipv6'] = $_POST['subnet_ipv6'];
-
-			if ($_POST['gateway'] != "none") {
+			if ($_POST['gateway'] != "none")
 				$wancfg['gateway'] = $_POST['gateway'];
-				$wancfg['gateway_ipv6'] = $_POST['gateway_ipv6'];
-			}
-			if (isset($wancfg['ispointtopoint'])) {
+			if (isset($wancfg['ispointtopoint']))
 				$wancfg['pointtopoint'] = $_POST['pointtopoint'];
-				$wancfg['pointtopoint_ipv6'] = $_POST['pointtopoint_ipv6'];
-			}
 		} else if ($_POST['type'] == "dhcp") {
 			$wancfg['ipaddr'] = "dhcp";
 			$wancfg['dhcphostname'] = $_POST['dhcphostname'];
@@ -753,7 +712,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		else
 			$('allcfg').hide();
 	}
-
+	
 	function show_periodic_reset(obj) {
 		if (obj.checked)
 			$('presetwrap').show();
@@ -863,7 +822,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 				<td colspan="2" style="padding:0px;">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Static IPv4 configuration</td>
+							<td colspan="2" valign="top" class="listtopic">Static IP configuration</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq">IP address</td>
@@ -885,7 +844,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 						</tr>
 						<?php if (isset($wancfg['ispointtopoint'])): ?>
 							<tr>
-								<td width="22%" valign="top" class="vncellreq">Point-to-point IPv4 address </td>
+								<td width="22%" valign="top" class="vncellreq">Point-to-point IP address </td>
 								<td width"78%" class="vtable">
 									<input name="pointtopoint" type="text" class="formfld unknown" id="pointtopoint" size="20" value="<?=htmlspecialchars($pconfig['pointtopoint']);?>">
 								</td>
@@ -899,10 +858,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										<?php
 										if(count($a_gateways) > 0) {
 											foreach ($a_gateways as $gateway) {
-												if($gateway['interface'] == $if && $gateway['type'] == 'IPv4') {
+												if($gateway['interface'] == $if) {
 										?>
 												<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>>
-												<?=htmlspecialchars($gateway['name']);?>
+													<?=htmlspecialchars($gateway['name']);?>
 												</option>
 										<?php
 												}
@@ -959,63 +918,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</table>
 										</td></tr></table>
 									<p/>
-								</div> </td>
+								</div>
+							</td>
 						</tr>
 					</table>
-
-			<!-- IPv6 begin -->
-				<tr>
-					<td colspan="2" valign="top" class="listtopic">Static IPv6 configuration</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncellreq">IP address</td>
-					<td width="78%" class="vtable"> <input name="ipaddr_ipv6" type="text" class="formfld unknown" id="ipaddr_ipv6" size="20" value="<?=htmlspecialchars($pconfig['ipaddr_ipv6']);?>">
-					/
-					<select name="subnet_ipv6" class="formselect" id="subnet_ipv6">
-						<?php
-						for ($i = 64; $i > 0; $i -= 4) {
-							if ($i == $pconfig['subnet_ipv6']) {
-							echo "<option value=\"$i\" selected=\"selected\">$i</option>";
-							} else {
-							echo "<option value=\"$i\">$i</option>";
-							}
-						}
-						?>
-					</select>
-					</td>
-				</tr>
-				<?php if (isset($wancfg['ispointtopoint'])): ?>
-				<tr>
-					<td width="22%" valign="top" class="vncellreq">Point-to-point IPv6 address </td>
-					<td width"78%" class="vtable">
-					<input name="pointtopoint_ipv6" type="text" class="formfld unknown" id="pointtopoint_ipv6" size="20" value="<?=htmlspecialchars($pconfig['pointtopoint_ipv6']);?>">
-					</td>
-				</tr><?php endif; ?>
-				<tr>
-					<td width="22%" valign="top" class="vncellreq">Gateway</td>
-					<td width="78%" class="vtable"><select name="gateway_ipv6" class="formselect" id="gateway_ipv6">
-								<option value="none" selected>None</option>
-						<?php
-						if(count($a_gateways) > 0) {
-							foreach ($a_gateways as $gateway) {
-								if($gateway['interface'] == $if && $gateway['type'] == 'IPv6') {
-						?>
-								<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway_ipv6']) echo "selected"; ?>>
-								<?=htmlspecialchars($gateway['name']);?>
-								</option>
-						<?php
-								}
-							}
-						}
-						?>
-						</select>
-						<br />
-						Select a existing Gateway from the list or add one on the <a href="/system_gateways.php">Gateways</a> page<br />
-						TODO: use Ajax, similar to IPv4
-					</td>
-				</tr>
-			<!-- IPv6 end -->
-
 				</td>
 				</tr>
 				<tr style="display:none;" name="dhcp" id="dhcp">

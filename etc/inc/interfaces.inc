@@ -1,5 +1,5 @@
 <?php
-/* $Id: interfaces.inc,v 1.176.2.288 2008/12/08 13:51:38 ermal Exp $ */
+/* $Id$ */
 /*
 	interfaces.inc
 	Copyright (C) 2004-2008 Scott Ullrich
@@ -51,6 +51,7 @@ function interfaces_bring_up($interface) {
 
 function interfaces_loopback_configure() {
 	mwexec("/sbin/ifconfig lo0 127.0.0.1");
+	mwexec("/sbin/ifconfig lo0 inet6 ::1 prefixlen 128");
 	interfaces_bring_up("lo0");
 	return 0;
 }
@@ -337,7 +338,6 @@ function interface_lagg_configure(&$lagg) {
         } else
                 $laggif = exec("/sbin/ifconfig lagg create");
 
-	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
 
 	/* Calculate smaller mtu and enforce it */
         $smallermtu = 0;
@@ -357,7 +357,7 @@ function interface_lagg_configure(&$lagg) {
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
-		$realif =  escapeshellarg($member);
+                $realif = get_real_interface($member);
 		/* make sure the parent interface is up */
 		mwexec("/sbin/ifconfig {$realif} mtu {$smallermtu}");
 		if($realif)
@@ -367,6 +367,8 @@ function interface_lagg_configure(&$lagg) {
 		mwexec("/sbin/ifconfig {laggif} laggport {$realif}");
 	}
 	
+	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
+
 	interfaces_bring_up($laggif);
 
 	return $laggif;
@@ -485,11 +487,11 @@ function interface_gif_configure(&$gif) {
 function interfaces_configure() {
 	global $config, $g;
 
-	/* set up VLAN virtual interfaces */
-	interfaces_vlan_configure();
-
 	/* set up LAGG virtual interfaces */
 	interfaces_lagg_configure();
+
+	/* set up VLAN virtual interfaces */
+	interfaces_vlan_configure();
 
 	/* Set up PPP interfaces */
 	interfaces_ppp_configure();
@@ -970,7 +972,8 @@ EOD;
 
 }
 
-function interfaces_ipalias_configure() {
+function interfaces_ipalias_configure() 
+{
 	global $g, $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -981,7 +984,11 @@ function interfaces_ipalias_configure() {
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] == "ipalias") {
 				$if = get_real_interface($vip['interface']);
-				mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias"); 
+				if ($vip['subnet_ipv6'] != '') {
+					mwexec("/sbin/ifconfig " . escapeshellarg($if) . " inet6 {$vip['subnet_ipv6']} alias");
+				} else {
+					mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias"); 
+				}
 			}
 		}
 	}
@@ -1258,12 +1265,21 @@ function interface_configure($interface = "wan") {
 
 	$realif = get_real_interface($interface);
 
-	if(!$g['booting']) {
-		/* remove all addresses first */
+        if (!$g['booting']) {
+		/* remove all IPv4 addresses */
 		while (mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " -alias", true) == 0);
 		interface_bring_down($interface);
+
+		/* remove all IPv6 addresses */
+		$str = <<<EOD
+		while i="`/sbin/ifconfig $realif | /usr/bin/grep inet6 | /usr/bin/grep -m 1 -v '%'`"; do
+			ifconfig $realif \$i delete
+		done
+EOD;
+		mwexec("($str)");
 		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
-	}
+        }
+
 	/* wireless configuration? */
 	if (is_array($wancfg['wireless']))
 		interface_wireless_configure($realif, $wancfg['wireless']);
@@ -1326,15 +1342,32 @@ function interface_configure($interface = "wan") {
 						escapeshellarg($wancfg['ipaddr'] . "/" . $wancfg['subnet']) .
 						" " . escapeshellarg($wancfg['pointtopoint']) . " up");
 				} else {
-					if($wancfg['ipaddr'] && $wancfg['subnet'])
+					if($wancfg['ipaddr'] && $wancfg['subnet']) {
 						mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
 							" " . escapeshellarg($wancfg['ipaddr'] . "/" . 
 							$wancfg['subnet']));
+					}
 				}
 			}
 
-			if (is_ipaddr($wancfg['gateway']))
+			if ($wancfg['ipaddr_ipv6'] <> "" && $wancfg['subnet_ipv6'] <> "") {
+				if (isset($wancfg['ispointtopoint_ipv6']) && $wancfg['pointtopoint_ipv6']) {
+					// TODO: do something
+				} else {
+					mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
+					" inet6 " . escapeshellarg($wancfg['ipaddr_ipv6'] . "/" . 
+					$wancfg['subnet_ipv6']));
+				}
+			}
+
+			if (is_ipaddr($wancfg['gateway'])) {
 				file_put_contents("/tmp/{$realif}_router", $wancfg['gateway']);
+			}
+
+			if (Net_IPv6::checkIPv6($wancfg['gateway_ipv6'])) {
+				// TODO: IPv6 needs to be configured too
+				file_put_contents("/tmp/{$realif}_router_ipv6", $wancfg['gateway_ipv6']);
+			}
 	}
 	if($wancfg['if'])
 		interfaces_bring_up($wancfg['if']);
@@ -1502,6 +1535,10 @@ pppoeclient:
 
 EOD;
 
+	/*
+	 * XXX: mpd seems to use netgraph interfaces so ngX interfaces are created
+	 * instead of pppoeX. =) -simoncpu-
+	 */
 	if ($interface == "wan")
 		$realif = "pppoe0";
 	else {
@@ -1701,8 +1738,8 @@ EOD;
 
 	$mpdconf .= <<<EOD
 	set bundle disable multilink
-	set bundle authname "{$wancfg['pptp_username']}"
-	set bundle password "{$wancfg['pptp_password']}"
+	set auth authname "{$wancfg['pptp_username']}"
+	set auth password "{$wancfg['pptp_password']}"
 	set bundle no noretry
 	set link keep-alive 10 60
 	set link max-redial 0
@@ -1774,6 +1811,9 @@ function get_real_interface($interface = "wan") {
 	$wanif = $interface;
 
 	switch ($interface) {
+	case "l2tp":
+		$wanif = "l2tp";
+		break;
 	case "pptp":
 		$wanif = "pptp";
 		break;
@@ -1816,6 +1856,10 @@ function get_real_interface($interface = "wan") {
 				}
 				break;
 			case "pppoe": 
+				/*
+				 * XXX: mpd seems to use netgraph interfaces so ngX interfaces are created
+				 * instead of pppoeX. =) -simoncpu-
+				 */
 				if ($if == "wan")
 					$wanif = "pppoe0";
 				else
@@ -1841,28 +1885,42 @@ function get_real_interface($interface = "wan") {
     return $wanif;
 }
 
-function get_interface_ip($interface = "wan") {
+function get_interface_ip($interface = "wan", $type = "ipv4") 
+{
+	global $config, $g;
+
 	$realif = get_real_interface($interface);
 	/* Do we really come here for these interfaces ?! */
-	if (in_array($realif, array("pptp", "pppoe", "openvpn", "enc0" /* , "ppp" */)))
+	if (in_array($realif, array("pptp", "pppoe", "l2tp", "openvpn", "enc0" /* , "ppp" */)))
 			return "";
 
-	$curip = find_interface_ip($realif);
-	if ($curip && is_ipaddr($curip) && ($curip != "0.0.0.0"))
-		return $curip;
+	$curip = find_interface_ip($realif, false, $type);
+
+	if ($type == 'ipv6') {
+		if ($curip && Net_IPv6::checkIPv6($curip)) {
+			return $curip;
+		}
+	} else {
+		if ($curip && is_ipaddr($curip) && ($curip != "0.0.0.0")) {
+			return $curip;
+		}
+	}
 
 	return null;
 }
 
-function get_interface_subnet($interface = "wan") {
+function get_interface_subnet($interface = "wan", $type = "ipv4")
+{
 	$realif = get_real_interface($interface);
 	/* Do we really come here for these interfaces ?! */
-	if (in_array($realif, array("pptp", "pppoe", "openvpn", "enc0" /* , "ppp" */)))
+	if (in_array($realif, array("pptp", "pppoe", "openvpn", "enc0" /* , "ppp" */))) {
 		return "";
+	}
 
-	$cursn = find_interface_subnet($realif);
-	if (!empty($cursn))
+	$cursn = find_interface_subnet($realif, false, $type);
+	if (!empty($cursn)) {
 		return $cursn;
+	}
 
 	return null;
 }

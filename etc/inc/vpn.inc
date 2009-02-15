@@ -1416,7 +1416,7 @@ EOD;
 			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
 				$mpdlinks .=<<<EOD
 
-l2tp{i}:
+l2tp{$i}:
 	set link type l2tp
 	set l2tp iface {$l2tp_interface}
 

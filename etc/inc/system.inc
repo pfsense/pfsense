@@ -621,7 +621,7 @@ function system_generate_lighty_config($filename,
 		$max_requests = 10;
 	}
 
-	if($avail > 383 and $avail < 512) {
+	if($avail > 383) {
 		$max_procs = 4;
 		$max_requests = 16;
 	}

@@ -597,7 +597,7 @@ function filter_nat_rules_generate()
 					if (isset($config['interfaces'][$rule['interface']]['ftpqueue']))
 						$shaper_queue = "-q " . $config['interfaces'][$rule['interface']]['ftpqueue'];
 					/* else default queue configured on shaper will get this */
-					$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy {$shaper_queue} -p 21 -R {$internal_address} -b {$external_address} -T PFFTPPROXY {$shaper_queue}";
+					$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy -p 21 -R {$internal_address} -b {$external_address} -T PFFTPPROXY {$shaper_queue}";
 				}
 			}
 		}

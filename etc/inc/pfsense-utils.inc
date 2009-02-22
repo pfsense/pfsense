@@ -1785,6 +1785,11 @@ function convert_friendly_interface_to_real_interface_name($interface) {
 
 			$cfg = $config['interfaces'][$if];
 
+			if (empty($cfg['ipaddr'])) {
+                                $wanif = $cfg['if'];
+                                break;
+                        }
+
 			switch ($cfg['ipaddr']) {
 			case "carpdev-dhcp":
 				$viparr = &$config['virtualip']['vip'];

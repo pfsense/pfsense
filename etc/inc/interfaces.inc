@@ -1830,6 +1830,11 @@ function get_real_interface($interface = "wan") {
 
 			$cfg = $config['interfaces'][$if];
 
+			if (empty($cfg['ipaddr'])) {
+				$wanif = $cfg['if'];
+				break;
+			}
+
 			switch ($cfg['ipaddr']) {
 			case "carpdev-dhcp":
 				$viparr = &$config['virtualip']['vip'];

@@ -6,6 +6,7 @@
 	rc.banner
 	part of pfSense
 	Copyright (C) 2005 Scott Ullrich and Colin Smith
+	Copyright (C) 2009 Ermal Luçi
 	All rights reserved
 
 	Redistribution and use in source and binary forms, with or without
@@ -31,8 +32,8 @@
 */
 
 	/* parse the configuration and include all functions used below */
-	require_once("config.inc");
-	require_once("functions.inc");
+	require("config.inc");
+	require("interfaces.inc");
 
 	$version  = trim(file_get_contents("{$g['etc_path']}/version"));
 	$platform = trim(file_get_contents("{$g['etc_path']}/platform"));
@@ -41,57 +42,37 @@
 	
 	print "\n*** Welcome to {$product} {$version}-{$platform} on {$hostname} ***\n";
 
-	/* get our initial interface list */
-	$vfaces = array(
-			'ppp',
-			'sl',
-			'gif',
-			'faith',
-			'lo',
-			'tun',
-			'pflog',
-			'pfsync',
-			'carp'
-		);
-	$iflist = get_interface_list("media", "physical", $vfaces);
-
-	foreach($iflist as $ifname => $ifinfo) {
-		/* skip interfaces that don't have a friendly name */
-		if($ifinfo['friendly'] != "") {
-			$friendly = strtoupper($ifinfo['friendly']);
-			/* point to this interface's config */
-			$ifconf =& $config['interfaces'][$ifinfo['friendly']];
-			/* look for 'special cases' */
-			switch($ifconf['ipaddr']) {
-			case "carpdev-dhcp":
-				$ifinfo['class'] = "(CarpDEV)";
-				break;
-			case "dhcp":
-				$ifinfo['class'] = "(DHCP)";
-				break;
-			case "pppoe":
-				$ifinfo['class'] = "(PPPoE)";
-				break;
-			case "pptp":
-				$ifinfo['class'] = "(PPTP)";
-				break;
-			}
-			$ifinfo['ipaddr'] = get_interface_ip($ifinfo['friendly']);
-			$tobanner = $friendly;
-			/* does this interface have an extra description? */
-			if($ifconf['descr']) {
-				$tobanner .= "({$ifconf['descr']})";
-			}
-			/* is the interface up? */
-			if($ifinfo['up']) {
-				$tobanner .= "*";
-			}
-			printf("\n  %-25s->\t%s\t->\t%s%s",
-				$tobanner,
-				$ifname,
-				$ifinfo['ipaddr'] ? $ifinfo['ipaddr'] : "NONE",
-				$ifinfo['class']
-			);
+	$iflist = get_configured_interface_with_descr(false, true);
+	foreach($iflist as $ifname => $friendly) {
+		/* point to this interface's config */
+		$ifconf =& $config['interfaces'][$ifname];
+		/* look for 'special cases' */
+		switch($ifconf['ipaddr']) {
+		case "carpdev-dhcp":
+			$class = "(CarpDEV)";
+			break;
+		case "dhcp":
+			$class = "(DHCP)";
+			break;
+		case "pppoe":
+			$class = "(PPPoE)";
+			break;
+		case "pptp":
+			$class = "(PPTP)";
+			break;
+		default:
+			$class = "";
+			break;
 		}
+		$ipaddr = get_interface_ip($ifname);
+		$realif = get_real_interface($ifname);
+		$tobanner = "{$friendly}({$ifname})";
+
+		printf("\n  %-25s -> %-10s -> %s%s",
+			$tobanner,
+			$realif,
+			$ipaddr ? $ipaddr : "NONE",
+			$class
+		);
 	}
 ?>

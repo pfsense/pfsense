@@ -442,6 +442,17 @@ function install_package($package, $pkg_info = "") {
 	$restart_sync = true;
 }
 
+function get_after_install_info($package) {
+	global $pkg_info;
+	/* fetch package information if needed */
+	if(!$pkg_info or !is_array($pkg_info[$package])) {
+		$pkg_info = get_pkg_info(array($package));
+		$pkg_info = $pkg_info[$package]; // We're only dealing with one package, so we can strip away the extra array.
+	}
+	if($pkg_info['after_install_info'])
+		return $pkg_info['after_install_info'];
+}
+
 function eval_once($toeval) {
 	global $evaled;
 	if(!$evaled) $evaled = array();

@@ -179,7 +179,11 @@ switch($_GET['mode']) {
 			$static_output .= "\n\nInstallation halted.";
 		} else {
 			update_status("Installation of " . htmlspecialchars($_GET['id']) . " completed.");
-			$static_output .= "\n\nInstallation completed.   Please check to make sure that the package is configured from the respective menu then start the package.";
+			$status = get_after_install_info($_GET['id']);
+			if($status) 
+				$static_output .= "\nInstallation completed.\n\n{$_GET['id']} setup instructions:\n\n{$status}";
+			else
+				$static_output .= "\nInstallation completed.   Please check to make sure that the package is configured from the respective menu then start the package.";
 		}
 		update_output_window($static_output);
 }

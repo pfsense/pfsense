@@ -2115,7 +2115,7 @@ EOD;
 	$ipfrules .= "\nanchor \"ftp-proxy/*\"\n";
 	if(!isset($config['system']['disableftpproxy'])) {
 		$ipfrules .= "\n# enable ftp-proxy\n";
-		$ipfrules .= "pass in quick inet proto tcp tagged PFFTPPROXY flags S/SA keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+		$ipfrules .= "pass in inet proto tcp tagged PFFTPPROXY flags S/SA keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 
 		if (isset($config['system']['rfc959workaround'])) {
 			$ipfrules .= <<<EODEOD

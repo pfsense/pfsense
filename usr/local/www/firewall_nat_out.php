@@ -102,6 +102,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 				$natent['interface'] = "wan";
 				$natent['destination']['any'] = true;
 				$natent['natport'] = "";
+				$natent['protocol'] = "any";
 				$a_out[] = $natent;
 			}
 			$savemsg = "Default rules for each interface have been created.";
@@ -265,6 +266,11 @@ include("head.inc");
                                                  echo "LAN";                                                
 					else
 						echo htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
+
+					if (($natent['protocol'] != "any") && ($natent['protocol'] != ""))
+						$proto = $natent['protocol'] . "/";
+					else
+						$proto = "";
 					?>
                                         &nbsp;
                   </td>
@@ -273,10 +279,11 @@ include("head.inc");
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
+
                       if (!$natent['sourceport'])
-                          echo "*";
+                          echo  $proto . "*";
                       else
-                          echo $natent['sourceport'];
+                          echo $proto . $natent['sourceport'];
                     ?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
@@ -293,9 +300,9 @@ include("head.inc");
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
                       if (!$natent['dstport'])
-                          echo "*";
+                          echo $proto . "*";
                       else
-                          echo $natent['dstport'];
+                          echo $proto . $natent['dstport'];
                     ?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">

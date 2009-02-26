@@ -49,7 +49,6 @@ if (isset($_GET['dup']))  {
 }
 
 if (isset($id) && $a_out[$id]) {
-    $pconfig['proto'] = $a_out[$id]['protocol'];
     list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
     $pconfig['sourceport'] = $a_out[$id]['sourceport'];
     address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
@@ -171,9 +170,6 @@ if ($_POST) {
 		if (!$natent['interface'])
 			$natent['interface'] == "wan";
 
-		if ($natent['proto'] != $_POST['proto'])
-			continue;			
-
 		if (($natent['interface'] == $_POST['interface']) && ($natent['source']['network'] == $osn)) {
 			if (isset($natent['destination']['not']) == isset($_POST['destination_not'])) {
 				if ((isset($natent['destination']['any']) && ($ext == "any")) ||
@@ -192,7 +188,6 @@ if ($_POST) {
         $natent['descr'] = $_POST['descr'];
         $natent['target'] = $_POST['target'];
         $natent['interface'] = $_POST['interface'];
-        $natent['protocol'] = $_POST['proto'];
 
 		/* static-port */
 		if(isset($_POST['staticnatport']))
@@ -319,17 +314,6 @@ function sourcesel_change() {
 			</select><br>
                      <span class="vexpl">Choose which interface this rule applies to.<br>
                      Hint: in most cases, you'll want to use WAN here.</span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Protocol</td>
-                  <td width="78%" class="vtable">
-                    <select name="proto" class="formfld" onChange="proto_change(); check_for_aliases();">
-                      <?php $protocols = explode(" ", "any TCP UDP GRE ESP AH L2TP ICMP"); foreach ($protocols as $proto): ?>
-                      <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
-                      <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Choose which IP protocol
-                    this rule should match.<br>
-                    Hint: in most cases, you should specify <em>any</em> &nbsp;here.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Source</td>

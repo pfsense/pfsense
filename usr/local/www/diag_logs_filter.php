@@ -65,9 +65,7 @@ function conv_clog($logfile, $tail = 50) {
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iftable[$config['interfaces']['opt' . $i]['if']] = $config['interfaces']['opt' . $i]['descr'];
 
-	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
-
-	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n 500", $logarr);
+	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail -r -n 500", $logarr);
 
 	$filterlog = array();
 
@@ -151,7 +149,7 @@ function conv_clog($logfile, $tail = 50) {
 
 	}
 
-	return $filterlog;
+	return isset($config['syslog']['reverse']) ? $filterlog : array_reverse($filterlog);
 }
 
 function convert_port_period_to_colon($addr) {

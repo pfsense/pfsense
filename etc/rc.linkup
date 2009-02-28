@@ -37,7 +37,7 @@ require_once("functions.inc");
 function handle_argument_group($argument1, $argument2) {
 	global $config;	
 
-	$ipaddr = $config['interfaces'][$iface]['ipaddr']; 
+	$ipaddr = $config['interfaces'][$argument1]['ipaddr'];
 	if (is_ipaddr($ipaddr)) {
 		log_error("Hotplug event detected for {$argument1} but ignoring since interface is configured with static ip({$ipaddr})");
 		exec("/usr/sbin/arp -d -i {$argument1} -a");

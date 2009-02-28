@@ -252,7 +252,7 @@ function return_gateways_array() {
 			} else {
 				$gateway['monitor'] = $gateway['gateway'];
 			}
-			$gateway['interface'] = convert_friendly_interface_to_real_interface_name($ifname);
+			$gateway['interface'] = get_real_interface($ifname);
 			$gateway['name'] = "{$ifname}";
 			$gateway['descr'] = "Interface {$friendly} Gateway";
 			$gateway['attribute'] = "system";

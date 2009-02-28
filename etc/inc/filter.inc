@@ -1251,34 +1251,33 @@ function generate_user_filter_rule($rule)
 		$aline['log'] = "log ";
 	if (!isset($rule['floating']) || isset($rule['quick']))
 		$aline['quick'] = " quick ";
+
 	/* set the gateway interface */
 	update_filter_reload_status("Setting up pass/block rules {$rule['descr']}");
-	$foundlb = 0;
 
 	/* do not process reply-to for gateway'd rules */
 	if ($rule['gateway'] == "" && interface_has_gateway($rule['interface'])) {
 		if (Net_IPv6::checkIPv6($rule['source']['address']) || Net_IPv6::checkIPv6($rule['destination']['address'])) {
 			$rg = get_interface_gateway($rule['interface'], 'IPv6');
 
-			if (Net_IPv6::checkIPv6($rg)) {
+			if (Net_IPv6::checkIPv6($rg))
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			} else  {
+			else
 				log_error("Could not find gateway for interface({$rule['interface']}).");
-			}
 		} else {
 			$rg = get_interface_gateway($rule['interface']);
 
 			if (is_ipaddr($rg)) {
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
 			} else  {
-				if($rule['interface'] <> "pptp") {
+				if($rule['interface'] <> "pptp")
 					log_error("Could not find gateway for interface({$rule['interface']}).");
-				}
 			}
 		}
 	}
 	/* if user has selected a custom gateway, lets work with it */
 	else if($rule['gateway'] <> "") {
+		$foundlb = 0;
 		$routeto = " route-to { ";
 		update_filter_reload_status("Creating gateway group item...");
 		if(is_array($GatewayGroupsList[$rule['gateway']])) {
@@ -1307,31 +1306,31 @@ function generate_user_filter_rule($rule)
 				if(isset($config['system']['lb_use_sticky'])) 
 					$routeto .= " sticky-address ";									
 			}
-			/* Add the load balanced gateways */
-			if ($foundlb == 1) {
-				$aline['route'] = $routeto;
-			}
 		}
-		/*	we're not using load balancing, just setup gateway */
-		if($foundlb == 0) {
+		/* Add the load balanced gateways */
+		if ($foundlb == 1)
+			$aline['route'] = $routeto;
+
+		/* we're not using load balancing, just setup gateway */
+		else if($foundlb == 0) {
 			$gateway = $rule['gateway'];
-			if(!is_ipaddr($rule['gateway'])) {
-				$gwip = $GatewaysList[$rule['gateway']]['gateway'];
+			if(!is_ipaddr($gateway)) {
+				$gwip = $GatewaysList[$gateway]['gateway'];
 				if ($GatewaysList[$gateway]['interface'])
 					$int = $GatewaysList[$gateway]['interface'];
 				else
 					$int = "";
 			} else {
-				$gwip = $rule['gateway'];
-				$int = guess_interface_from_ip($rule['gateway']);
+				$gwip = $gateway;
+				$int = guess_interface_from_ip($gwip);
 			}
-			if ((is_ipaddr($gwip)) && ($int <> "")) {
+			if (is_ipaddr($gwip) && ($int <> ""))
 				$aline['route'] = " route-to ( {$int} {$gwip} ) ";
-			} else {
+			else
 				log_error("Could not find gateway ({$rule['gateway']}) for rule {$rule['descr']} - {$rule['interface']}.");
-			}
 		}
 	}
+
 	if (isset($rule['protocol'])) {
 		switch($rule['protocol']) {
 		case 'tcp/udp':
@@ -1357,9 +1356,8 @@ function generate_user_filter_rule($rule)
 			break;
 		}
 	} else {
-		if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "") {
+		if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "")
 			$aline['prot'] = " proto tcp ";
-		}
 	}
 	update_filter_reload_status("Creating rule {$rule['descr']}");
 	/* source address */

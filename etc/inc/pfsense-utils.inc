@@ -2977,14 +2977,19 @@ function get_interface_info($ifdescr) {
 	/* run netstat to determine link info */
 
 	unset($linkinfo);
-	exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
+	if ($ifinfo['if'] != $ifinfo['hwif'])
+		$chkif = $ifinfo['hwif'];
+	else
+		$chkif = $ifinfo['if'];
+
+	exec("/usr/bin/netstat -I {$chkif} -nWb -f link", $linkinfo);
 
 	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-	if (preg_match("/{$ifinfo['if']}\*/", $linkinfo[0])) {
+	if ("{$chkif}*" == $linkinfo[0])
 		$ifinfo['status'] = "down";
-	} else if (preg_match("/{$ifinfo['if']}/", $linkinfo[0])) {
+	else if ($chkif == $linkinfo[0])
 		$ifinfo['status'] = "up";
-	} else
+	else
 		$ifinfo['status'] = "down";
 
 	if (preg_match("/^enc|^tun|^ppp|^pptp|^ovpn/i", $ifinfo['if'])) {
@@ -3029,25 +3034,27 @@ function get_interface_info($ifdescr) {
 	$ifinfo['outpkts'] = $in4_pass_packets + $out4_block_packets;
 		
 	$ifconfiginfo = "";
-	unset($ifconfiginfo);
+	unset($ifconfiginfo, $link0);
 	exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
 	foreach ($ifconfiginfo as $ici) {
 		if (preg_match("/inet (\S+)/", $ici, $matches)) 
 			$ifinfo['ipaddr'] = $matches[1];
-		if (preg_match("/netmask (\S+)/", $ici, $matches)) 
+		else if (preg_match("/netmask (\S+)/", $ici, $matches))
 			if (preg_match("/^0x/", $matches[1]))
 				$ifinfo['subnet'] = long2ip(hexdec($matches[1]));
+		if (strpos($ici, 'LINK0') !== false)
+			$link0 = "down";
 	}
 
 	switch ($config['interfaces'][$if]['ipaddr']) {
 	/* DHCP? -> see if dhclient is up */
 	case "dhcp":
 	case "carpdev-dhcp":
-        /* see if dhclient is up */
-        if (is_dhcp_running($ifinfo['if']) == true)
-        	$ifinfo['dhcplink'] = "up";
-        else
-            $ifinfo['dhcplink'] = "down";
+		/* see if dhclient is up */
+		if (is_dhcp_running($ifinfo['if']) == true)
+			$ifinfo['dhcplink'] = "up";
+		else
+			$ifinfo['dhcplink'] = "down";
 
 		break;
 	/* PPPoE interface? -> get status from virtual interface */
@@ -3055,34 +3062,28 @@ function get_interface_info($ifdescr) {
 		unset($linkinfo);
 		exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
 		$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-		if (preg_match("/\*$/", $linkinfo[0])) {
+		if ("{$ifinfo['if']}*" == $linkinfo[0])
 			$ifinfo['pppoelink'] = "down";
-		} else {
+		else if ($ifinfo['if'] == $linkinfo[0] && !isset($link0))
 			/* get PPPoE link status for dial on demand */
 			$ifinfo['pppoelink'] = "up";
+		else
+			$ifinfo['pppoelink'] = "down";
 
-			foreach ($ifconfiginfo as $ici) {
-				if (strpos($ici, 'LINK0') !== false)
-					$ifinfo['pppoelink'] = "down";
-			}
-		}
 		break;
 	/* PPTP interface? -> get status from virtual interface */
 	case "pptp":
 		unset($linkinfo);
 		exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
 		$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-		if (preg_match("/\*$/", $linkinfo[0])) {
+		if ("{$ifinfo['if']}*" == $linkinfo[0])
 			$ifinfo['pptplink'] = "down";
-		} else {
+		else if ($ifinfo['if'] == $linkinfo[0] && !isset($link0))
 			/* get PPTP link status for dial on demand */
 			$ifinfo['pptplink'] = "up";
+		else
+			$ifinfo['pptplink'] = "down";
 
-			foreach ($ifconfiginfo as $ici) {
-				if (strpos($ici, 'LINK0') !== false)
-					$ifinfo['pptplink'] = "down";
-			}
-		}
 		break;
 	default:
 		break;

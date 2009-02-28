@@ -177,7 +177,6 @@ function filter_configure_sync() {
 	  $max_states = pfsense_default_state_size();
 	  $rules .= "set limit states {$max_states}\n";
 	}
-	$rules .= "set skip on { lo0, gif, tun, enc }\n";
 	$rules .= "\n";
 	update_filter_reload_status("Setting up SCRUB information");
 	$rules .= filter_generate_scrubing();

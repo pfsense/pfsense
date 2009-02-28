@@ -130,7 +130,7 @@ effect.");?><br>
                 <tr>
                   <td class="listlr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
                     <?php
-			echo strtoupper($gateway['name']);
+			echo $gateway['name'];
 			if(isset($gateway['defaultgw'])) {
 				echo " <strong>(default)<strong>";
 			}
@@ -139,8 +139,8 @@ effect.");?><br>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
                     <?php
-				$iflabels = get_configured_interface_with_descr(false, true);
-				echo htmlspecialchars($iflabels[$gateway['interface']]); ?>
+				echo htmlspecialchars(convert_real_interface_to_friendly_descr($gateway['interface']));
+			?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
 				  <?php

@@ -1828,24 +1828,10 @@ function filter_rules_generate()
 		$mt = microtime();
 		echo "filter_rules_generate() being called $mt\n";
 	}
+
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
-	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
-		require_once('clamav.inc');
-		$ipfrules .= clamav_generate_rules('filter');
-	}
-	if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
-		require_once('squid.inc');
-		$ipfrules .= squid_generate_rules('filter');
-	}
-	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
-		require_once ('frickin.inc');
-		$ipfrules .= frickin_generate_rules('filter');
-	}
-	if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/siproxd.inc')) {
-		require_once('siproxd.inc');
-		$ipfrules .= siproxd_generate_rules('filter');
-	}
+
 	/* if captive portal is enabled, ensure that access to this port
 	 * is allowed on a locked down interface
 	 */
@@ -2183,6 +2169,23 @@ EOD;
 
 	update_filter_reload_status("Creating IPsec rules...");
 	$ipfrules .= generate_ipsec_filter_rules();
+
+	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
+                require_once('clamav.inc');
+                $ipfrules .= clamav_generate_rules('filter');
+        }
+        if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
+                require_once('squid.inc');
+                $ipfrules .= squid_generate_rules('filter');
+        }
+        if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
+                require_once ('frickin.inc');
+                $ipfrules .= frickin_generate_rules('filter');
+        }
+        if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/siproxd.inc')) {
+                require_once('siproxd.inc');
+                $ipfrules .= siproxd_generate_rules('filter');
+        }
 
 	$ipfrules .= <<<EOD
 

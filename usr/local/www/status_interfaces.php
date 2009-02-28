@@ -48,10 +48,9 @@ if ($_GET['if']) {
 		interface_bring_down($interface);
 	} else if ($_GET['action'] == "Connect" || $_GET['action'] == "Renew") {
 		interface_configure($interface); 
-	} else {
-		header("Location: status_interfaces.php");
-		exit;
 	}
+	header("Location: status_interfaces.php");
+	exit;
 }
 
 $pgtitle = array("Status","Interfaces");

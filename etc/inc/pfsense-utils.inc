@@ -3002,12 +3002,14 @@ function get_interface_info($ifdescr) {
 
 	unset($linkinfo);
 	exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
+
 	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-	if (preg_match("/\*$/", $linkinfo[0])) {
+	if (preg_match("/{$ifinfo['if']}\*/", $linkinfo[0])) {
 		$ifinfo['status'] = "down";
-	} else {
+	} else if (preg_match("/{$ifinfo['if']}/", $linkinfo[0])) {
 		$ifinfo['status'] = "up";
-	}
+	} else
+		$ifinfo['status'] = "down";
 
 	if (preg_match("/^enc|^tun|^ppp|^pptp|^ovpn/i", $ifinfo['if'])) {
 		$ifinfo['inpkts'] = $linkinfo[3];

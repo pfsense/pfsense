@@ -366,7 +366,7 @@ function local_group_set($group, $reset = false) {
 
 	if($debug)
 		log_error("Running: {$cmd}");
-	$fd = popen($cmd, "r+");
+	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
 

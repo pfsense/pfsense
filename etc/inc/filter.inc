@@ -1538,13 +1538,13 @@ function generate_user_filter_rule($rule)
 	if (($rule['protocol'] == "icmp") && $rule['icmptype']) {
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
 	}
+	if (!empty($rule['tag']))
+		$aline['tag'] = " tag " .$rule['tag']. " ";
+	if (!empty($rule['tagged']))
+		$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
+	if (!empty($rule['dscp']))
+		$aline['dscp'] = " dscp " . $rule['dscp'] . " ";
 	if ($type == "pass") {
-		if (!empty($rule['tag']))
-			$aline['tag'] = " tag " .$rule['tag']. " ";
-		if (!empty($rule['tagged']))
-			$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
-		if (!empty($rule['dscp']))
-			$aline['dscp'] = " dscp " . $rule['dscp'] . " ";
 		if (isset($rule['allowopts']))
 			$aline['allowopts'] = " allow-opts ";
 		if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
@@ -1564,7 +1564,7 @@ function generate_user_filter_rule($rule)
 				queueing in certain situations. please check the faq.
 		*/
 		$noadvoptions = false;
-		if (isset($rule['Statetype']) && $rule['statetype'] <> "") {
+		if (isset($rule['statetype']) && $rule['statetype'] <> "") {
 			switch($rule['statetype']) {
 				case "none":
 					$noadvoptions = true;
@@ -1608,7 +1608,7 @@ function generate_user_filter_rule($rule)
 					
 					$aline['flags'] .= " ) ";
 				}
-		}
+	}
 		if ($type == "reject" && $rule['protocol'] == "tcp") {
 			/* special reject packet */
 			$aline['flags'] .= "flags S/SA ";

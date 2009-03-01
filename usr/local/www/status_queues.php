@@ -39,16 +39,53 @@
 
 require("guiconfig.inc");
 
-if($_GET['reset'] <> "") {
-	Header("Location: status_queues.php");
+if ($_REQUEST['getactivity']) {
+	$stats_array = gather_altq_queue_stats(true);
+
+        /* calculate total packets being moved through all queues. */
+        $total_packets_s = 0;
+        foreach($stats_array as $stats_line) {
+                $stat_line_split = split("\|", $stats_line);
+                $total_packets_s = $total_packets_s + intval($stat_line_split[2]);
+        }
+
+        $i = 0;
+	$finscript = "";
+        foreach($stats_array as $stats_line) {
+                if($stat_line_split[2] == "" and $counter > 1) {
+                        continue;
+                }
+
+                $stat_line_split = split("\|", $stats_line);
+                $packet_sampled = intval($stat_line_split[2]);
+                $speed = $stat_line_split[1];
+                $borrows = intval($stat_line_split[3]);
+                $suspends = intval($stat_line_split[4]);
+                $drops = intval($stat_line_split[5]);
+
+
+                $packet_s = round(400 * (1 - $packet_sampled / $total_packets_s), 0);
+
+                $finscript .= "$('queue{$i}widthb').width='{$packet_s}';";
+                $finscript .= "$('queue{$i}widtha').width='" . (400 - $packet_s) . "';";
+                $borrows_txt = "{$borrows} borrows";
+                $suspends_txt = "{$suspends} suspends";
+                $drops_txt = "${drops} drops";
+                $finscript .= "$('queue{$i}pps').value = '{$packet_sampled}/pps';";
+                $finscript .= "$('queue{$i}bps').value = '{$speed}';";
+                $finscript .= "$('queue{$i}borrows').value = '{$borrows_txt}';";
+                $finscript .= "$('queue{$i}suspends').value = '{$suspends_txt}';";
+                $finscript .= "$('queue{$i}drops').value = '{$drops_txt}';";
+                $i++;
+        }
+	header("Content-type: text/javascript");
+	echo $finscript;
 	exit;
 }
 
 $a_queues = array();
 
-$pfctl_vsq = `/sbin/pfctl -vsq`;
-$pfctl_vsq_array = split("\n", $pfctl_vsq);
-$if = "";
+exec("/sbin/pfctl -vsq", $pfctl_vsq_array);
 foreach($pfctl_vsq_array as $pfctl) {
 	if (preg_match_all("/queue\s+(\w+)\s+(\w+)\s+(\w+)\s+/",$pfctl,$match_array)) {
 		if (stristr($match_array[1][0],"root_"))
@@ -74,6 +111,24 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
 ?>
 
 <form action="status_queues.php" method="post">
+<script type="text/javascript">
+        function getqueueactivity() {
+                var url = "/status_queues.php";
+                var pars = 'getactivity=yes';
+                var myAjax = new Ajax.Request(
+                        url,
+                        {
+                                method: 'post',
+                                parameters: pars,
+                                onComplete: activitycallback
+                        });
+        }
+        function activitycallback(transport) {
+                setTimeout('getqueueactivity()', 5100);
+        }
+        setTimeout('getqueueactivity()', 150);
+</script>
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td class="listhdr" colspan="1">Queue</td>
@@ -88,19 +143,19 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
 			<nobr>
 <?php
 			$cpuUsage = 0;
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
-			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (400 - $cpuUsage) . "' border='0' align='absmiddle'>";
-			echo "<nobr><img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='10' width='4' border='0' align='absmiddle'>";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='10' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='10' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (400 - $cpuUsage) . "' border='0' align='absmiddle'>";
+			echo "<nobr><img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='10' width='5' border='0' align='absmiddle'> ";
 			echo "</nobr></td></tr>";
 			echo "<tr><td bgcolor=\"#DDDDDD\" colspan=\"7\">";
 			echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 			echo "<nobr>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}pps' id='queue{$i}pps' value='                (Loading)' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}bps' id='queue{$i}bps' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}borrows' id='queue{$i}borrows' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}suspends' id='queue{$i}suspends' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}drops' id='queue{$i}drops' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='8' name='queue{$i}pps' id='queue{$i}pps' value='(Loading)' align='left'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='8' name='queue{$i}bps' id='queue{$i}bps' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='8' name='queue{$i}borrows' id='queue{$i}borrows' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='8' name='queue{$i}suspends' id='queue{$i}suspends' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='8 name='queue{$i}drops' id='queue{$i}drops' value='' align='right'>";
 			echo "</nobr>";
 ?>
 
@@ -115,70 +170,6 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
                       You can configure the Traffic Shaper <a href="firewall_shaper.php?reset=true">here</a>.
 		    </p>
             </form>
-<br><a href="status_queues.php?reset=true">Reset</a> queues if they do not load.
-
 <?php include("fend.inc"); ?>
 </body>
 </html>
-
-<?php
-
-ob_flush();
-
-sleep(3);
-
-$counter = 0;
-While(!Connection_Aborted()) {
-
-	$stats_array = gather_altq_queue_stats(true);
-
-	/* calculate total packets being moved through all queues. */
-	$total_packets_s = 0;
-	foreach($stats_array as $stats_line) {
-		$stat_line_split = split("\|", $stats_line);
-		$total_packets_s = $total_packets_s + intval($stat_line_split[2]);
-	}
-
-	$i = 0;
-	foreach($stats_array as $stats_line) {
-		if($stat_line_split[2] == "" and $counter > 1) {
-			exit;
-		}
-
-		$stat_line_split = split("\|", $stats_line);
-		$packet_sampled = intval($stat_line_split[2]);
-		$speed = $stat_line_split[1];
-		$borrows = intval($stat_line_split[3]);
-		$suspends = intval($stat_line_split[4]);
-		$drops = intval($stat_line_split[5]);
-
-		echo "<script language='javascript'>\n";
-
-		$packet_s = round(400 * (1 - $packet_sampled / $total_packets_s), 0);
-
-		echo "document.queue{$i}widthb.style.width='{$packet_s}px';\n";
-		echo "document.queue{$i}widtha.style.width='" . (400 - $packet_s) . "px';\n";
-		$borrows_txt = "{$borrows} borrows";
-		$suspends_txt = "{$suspends} suspends";
-		$drops_txt = "${drops} drops";
-		echo "document.forms[0].queue{$i}pps.value = '{$packet_sampled}/pps';\n";
-		echo "document.forms[0].queue{$i}bps.value = '{$speed}';\n";
-		echo "document.forms[0].queue{$i}borrows.value = '{$borrows_txt}';\n";
-		echo "document.forms[0].queue{$i}suspends.value = '{$suspends_txt}';\n";
-		echo "document.forms[0].queue{$i}drops.value = '{$drops_txt}';\n";
-		echo "</script>\n";
-		$i++;
-	}
-
-	/*
-	 *   prevent user from running out of ram.
-	 *   firefox and ie can be a bear on ram usage!
-         */
-	$counter++;
-	if($counter > 100) {
-		echo "Redirecting to <a href=\"status_queues.php\">Queue Status</a>.<p>";
-		echo "<meta http-equiv=\"refresh\" content=\"1;url={$_SERVER['SCRIPT_NAME']}\">";
-		exit;
-	}
-}
-?>

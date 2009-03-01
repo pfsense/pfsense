@@ -1423,60 +1423,36 @@ function convert_ip_to_network_format($ip, $subnet) {
 /*
  * find_interface_ip($interface): return the interface ip (first found)
  */
-function find_interface_ip($interface, $flush = false, $type = "ipv4") {
+function find_interface_ip($interface, $flush = false) {
 	global $interface_ip_arr_cache;
-	global $interface_ip_arr_cache_ipv6; // putting this into a 2D array is a good idea
 	
 	$interface = str_replace("\n", "", $interface);
 	if(does_interface_exist($interface) == false) 
 		return;
 
 	/* Setup IP cache */
-	if ($type == 'ipv4') {
-		if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
-			$interface_ip_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2| /usr/bin/head -1");
-			$interface_ip_arr_cache[$interface] = str_replace("\n", "", $interface_ip_arr_cache[$interface]);
-		}
-
-		return $interface_ip_arr_cache[$interface];
-	} else {
-		/*
-		 This assumes that the first IP in ifconfig is the "real" IP.
-		 What if the first IP is an alias?
-		*/
-		if (!isset($interface_ip_arr_cache_ipv6[$interface]) or $flush) {
-			$interface_ip_arr_cache_ipv6[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet6\" | /usr/bin/grep -v '%' | /usr/bin/cut -d\" \" -f 2| /usr/bin/head -1");
-			$interface_ip_arr_cache_ipv6[$interface] = str_replace("\n", "", $interface_ip_arr_cache_ipv6[$interface]);
-		}
-		return $interface_ip_arr_cache_ipv6[$interface];
+	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
+		$interface_ip_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2| /usr/bin/head -1");
+		$interface_ip_arr_cache[$interface] = str_replace("\n", "", $interface_ip_arr_cache[$interface]);
 	}
+
+	return $interface_ip_arr_cache[$interface];
 }
 
-function find_interface_subnet($interface, $flush = false, $type = "ipv4") 
+function find_interface_subnet($interface, $flush = false) 
 {
 	global $interface_sn_arr_cache;
-	global $interface_sn_arr_cache_ipv6;
 	
 	$interface = str_replace("\n", "", $interface);
-	if (does_interface_exist($interface) == false) {
+	if (does_interface_exist($interface) == false)
 		return;
+
+	if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
+		$interface_sn_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 4 | /usr/bin/head -1");
+		$interface_sn_arr_cache[$interface] = strlen(str_replace("0", "", base_convert(str_replace("\n", "", $interface_sn_arr_cache[$interface]),16, 2)));
 	}
 
-	if ($type == 'ipv4') {
-		if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
-			$interface_sn_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 4 | /usr/bin/head -1");
-			$interface_sn_arr_cache[$interface] = strlen(str_replace("0", "", base_convert(str_replace("\n", "", $interface_sn_arr_cache[$interface]),16, 2)));
-		}
-
-		return $interface_sn_arr_cache[$interface];
-	} else {
-		if (!isset($interface_sn_arr_cache_ipv6[$interface]) or $flush) {
-			$interface_sn_arr_cache_ipv6[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet6\" | /usr/bin/grep -v '%' | /usr/bin/cut -d\" \" -f 4 | /usr/bin/head -1");
-			log_error("int:{$interface} - IPv6 prefixlen {$interface_sn_arr_cache_ipv6[$interface]}");
-		}
-
-		return $interface_sn_arr_cache_ipv6[$interface];
-	}
+	return $interface_sn_arr_cache[$interface];
 }
 
 function guess_interface_from_ip($ipaddress) {
@@ -3524,5 +3500,6 @@ function compare_hostname_to_dnscache($hostname) {
 		return false;
 	}
 }
+
 
 ?>

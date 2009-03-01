@@ -318,17 +318,12 @@ function system_routing_configure() {
 
 function system_routing_enable() {
 	global $config, $g;
-	$retval = false;
-
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_routing_enable() being called $mt\n";
 	}
 
-	$retval = mwexec("/sbin/sysctl net.inet.ip.forwarding=1") && mwexec("/sbin/sysctl net.inet6.ip6.forwarding=1");
-
-	return $retval;
-
+	return mwexec("/sbin/sysctl net.inet.ip.forwarding=1");
 }
 
 function system_syslogd_start() {
@@ -628,9 +623,9 @@ function system_generate_lighty_config($filename,
 
 	if($captive_portal == true)  {	
 		$bin_environment =  <<<EOC
-	"bin-environment" => (
-		"PHP_FCGI_CHILDREN" => "16",
-		"PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
+        "bin-environment" => (
+           "PHP_FCGI_CHILDREN" => "16",
+           "PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
         ), 
 EOC;
 
@@ -655,7 +650,7 @@ fastcgi.server = ( ".php" =>
 	( "localhost" =>
 		(
 			"socket" => "/tmp/php-fastcgi.socket",
-			"min-procs" => 2,
+			"min-procs" => 1,
 			"max-procs" => {$max_procs},
 			{$bin_environment}			
 			"bin-path" => "/usr/local/bin/php"
@@ -838,8 +833,6 @@ expire.url = (
 				"" => "access 50 hours",	
         )
 
-server.use-ipv6 = "enable"
-
 EOD;
 
 	$cert = str_replace("\r", "", $cert);
@@ -859,7 +852,7 @@ EOD;
 		fwrite($fd, "\n");
 		fwrite($fd, $key);
 		fclose($fd);
-
+		$lighty_config .= "\n";
 		$lighty_config .= "## ssl configuration\n";
 		$lighty_config .= "ssl.engine = \"enable\"\n";
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
@@ -872,12 +865,6 @@ EOD;
 	}
 	fwrite($fd, $lighty_config);
 	fclose($fd);
-
-	/*
-	 * Hard-code sysctl knob to ensure that lighttpd would work
-	 * with IPv4 + IPv6.
-	 */
-	mwexec("/sbin/sysctl net.inet6.ip6.v6only=0");
 
 	return 0;
 
@@ -942,7 +929,7 @@ function system_ntp_configure() {
 			$ifaces = array_filter($ifaces, 'does_interface_exist');
 			$ips = array_map('find_interface_ip', $ifaces);
 			foreach ($ips as $ip) {
-				if (is_ipaddr($ip) || Net_IPv6::checkIPv6($ip))
+				if (is_ipaddr($ip))
 					fwrite($fd, "listen on $ip\n");
 			}
 		}

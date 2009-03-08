@@ -1,6 +1,6 @@
 
 // Seconds * 1000 = value
-var update_interval = 7000;
+var update_interval = 10000;
 
 
 function updateMeters()

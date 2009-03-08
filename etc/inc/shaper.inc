@@ -3235,6 +3235,8 @@ class layer7 {
     }
     
     function delete_l7c() {
+	$l7pid = `/bin/ps -ax | /usr/bin/grep ipfw-classifyd | /usr/bin/grep ". $l7rules->GetRPort() . " | /usr/bin/grep -v \"grep\" | /usr/bin/awk '{ print $1 }'`;
+	mwexec("/bin/kill {$l7pid}");
 	unset_l7_object_by_reference($this->GetRName());
 	cleanup_l7_from_rules($this->GetRName());
     }
@@ -3364,8 +3366,9 @@ function generate_layer7_files() {
     read_layer7_config();
     
     if (!empty($layer7_rules_list)) {
-	mwexec("kldload ipdivert.ko");
-        mwexec("killall -9 ipfw-classifyd");
+	if (!is_module_loaded("ipdivert.ko"))
+		mwexec("/sbin/kldload ipdivert.ko");
+        //mwexec("killall -9 ipfw-classifyd");
 	mwexec("rm -f /tmp/*.l7");
     }
     
@@ -3387,7 +3390,7 @@ function layer7_start_l7daemon() {
     global $layer7_rules_list;
 
     /*
-     * XXX: Needed ?!
+     * XXX: ermal - Needed ?!
      * read_layer7_config();
      */
 
@@ -3396,9 +3399,16 @@ function layer7_start_l7daemon() {
             $filename = $l7rules->GetRName() . ".l7";
             $path = "/tmp/" . $filename;
 
-            // XXX: Hardcoded number of packets to garbage collect.
-            $ipfw_classifyd_init = "/usr/local/sbin/ipfw-classifyd -n 5 -c {$path} -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
-            mwexec_bg($ipfw_classifyd_init);
+	    unset($l7pid);
+	    /* Only reread the configuration rather than restart to avoid loosing information. */
+	    $l7pid = `/bin/ps -ax | /usr/bin/grep ipfw-classifyd | /usr/bin/grep ". $l7rules->GetRPort() . " | /usr/bin/grep -v \"grep\" | /usr/bin/awk '{ print $1}'`;
+	    if (isset($l7pid))
+		mwexec("/bin/kill -HUP {$l7pid}");
+	    else {
+		// XXX: Hardcoded number of packets to garbage collect and queue length..
+		$ipfw_classifyd_init = "/usr/local/sbin/ipfw-classifyd -n 5 -q 700 -c {$path} -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
+		mwexec_bg($ipfw_classifyd_init);
+	    }
         }
     }
 }
@@ -3679,7 +3689,8 @@ function filter_generate_dummynet_rules() {
 	read_dummynet_config();
 	
 	if (!empty($dummynet_pipe_list)) {
-		mwexec("kldload dummynet");
+		if (!is_module_loaded("dummynet.ko"))
+			mwexec("/sbin/kldload dummynet");
 		/* XXX: Needs to be added code elsewhere to clear pipes/queues from kernel when not needed! */
 		//mwexec("pfctl -F dummynet");
 	}

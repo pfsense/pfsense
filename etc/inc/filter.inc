@@ -1072,11 +1072,12 @@ function filter_nat_rules_generate()
 	}
 	fclose($inetd_fd);		// Close file handle
 	// Check if inetd is running, if not start it.	If so, restart it gracefully.
-	$helpers = trim(exec("/bin/ps ax | /usr/bin/grep inetd | /usr/bin/grep -v grep | /usr/bin/grep 127"));
+	$helpers = isvalidproc("inetd");
 	if(!$helpers)
-		mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
+		killbypid("/var/run/inetd.pid");
 	else
-		mwexec("/usr/bin/killall -HUP inetd", true);
+		sigkillbypid("/var/run/inetd.pid", "HUP");
+
 	if ($pptpdcfg['mode'] && $pptpdcfg['mode'] != "off") {
 		if ($pptpdcfg['mode'] == "server")
 			$pptpdtarget = "127.0.0.1";
@@ -1751,8 +1752,8 @@ function filter_rules_generate()
 		$cp_interface = $config['captiveportal']['interface'];
 		$cp_interface_real = $FilterIflist[$cp_interface]['if'];
 		$cp_interface_ip = $FilterIflist[$cp_interface_real]['ip'];
-		if (isset($config['captiveportal']['peruserbw']))
-			mwexec("kldload dummynet");
+		if (isset($config['captiveportal']['peruserbw']) && !is_module_loaded("dummynet.ko"))
+			mwexec("/sbin/kldload dummynet");
 		if(is_ipaddr($cp_interface_ip) and $cp_interface_real)
 			$ipfrules .= "pass in quick on {$cp_interface_real} proto tcp from any to {$cp_interface_ip} port { 8000 8001 } keep state\n";
 	}

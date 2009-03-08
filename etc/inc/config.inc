@@ -2834,7 +2834,7 @@ function system_start_ftp_helpers() {
 			if($g['debug'])
 				log_error("Config: FTP proxy disabled for interface {$ifent}");
 
-			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");
+			$helpers = `/bin/ps awux | grep "ftp-proxy" | grep  "{$port}" | grep -v grep | awk '{ print $2 }'`;
 			if($helpers)
 				mwexec("/bin/kill {$helpers}");
 			$interface_counter++;

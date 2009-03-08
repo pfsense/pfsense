@@ -42,7 +42,7 @@ function isvalidpid($pid) {
 
 function isvalidproc($proc) {
 	$running = `ps awux | grep $proc | grep -v grep | wc -l`;
-	if(intval($running) > 1)
+	if(intval($running) >= 1)
 		return true;
 	else 
 		return false;
@@ -69,6 +69,14 @@ function sigkillbyname($procname, $sig) {
 function killbyname($procname) {
 	if(isvalidproc($procname))
 		mwexec("/usr/bin/killall " . escapeshellarg($procname));
+}
+
+function is_module_loaded($module_name) {
+	$running = `/sbin/kldstat -n {$module_name} | /usr/bin/grep {$module_name} | /usr/bin/wc -l`;
+	if (intval($running) >= 1)
+		return true;
+	else
+		return false;
 }
 
 /* return the subnet address given a host address and a subnet bit count */

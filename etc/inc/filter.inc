@@ -53,8 +53,7 @@ $FilterIflist = array();
 
 function filter_load_ipfw() 
 {
-	$status = intval(`kldstat | grep ipfw | grep -v "grep" | wc -l | awk '{ print $1 }'`);
-	if ($status == "0") {
+	if (!is_module_loaded("ipfw.ko")) {
 		mute_kernel_msgs();
 		mwexec("/sbin/kldload ipfw");
 		unmute_kernel_msgs();

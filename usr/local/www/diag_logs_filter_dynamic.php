@@ -423,7 +423,7 @@ function handle_ajax() {
 			$rulenum = $_GET['getrulenum'];
 		if($_POST['getrulenum'])
 			$rulenum = $_POST['getrulenum'];
-		$rule = `pfctl -vvsr | grep "@{$rulenum} "`;
+		$rule = `pfctl -vvsr | grep '@{$rulenum} '`;
 		echo "The rule that triggered this action is:\n\n{$rule}";
 		exit;
 	}

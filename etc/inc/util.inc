@@ -72,7 +72,7 @@ function killbyname($procname) {
 }
 
 function is_module_loaded($module_name) {
-	$running = `/sbin/kldstat -n {$module_name} | /usr/bin/grep {$module_name} | /usr/bin/wc -l`;
+	$running = `/sbin/kldstat -n /boot/kernel/{$module_name} | /usr/bin/grep {$module_name} | /usr/bin/wc -l`;
 	if (intval($running) >= 1)
 		return true;
 	else

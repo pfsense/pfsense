@@ -3401,10 +3401,11 @@ function layer7_start_l7daemon() {
 
 	    unset($l7pid);
 	    /* Only reread the configuration rather than restart to avoid loosing information. */
-	    $l7pid = `/bin/ps -ax | /usr/bin/grep ipfw-classifyd | /usr/bin/grep ". $l7rules->GetRPort() . " | /usr/bin/grep -v \"grep\" | /usr/bin/awk '{ print $1}'`;
-	    if (isset($l7pid))
-		mwexec("/bin/kill -HUP {$l7pid}");
-	    else {
+	    exec("/bin/ps -ax | /usr/bin/grep ipfw-classifyd | /usr/bin/grep ". $l7rules->GetRPort() . " | /usr/bin/grep -v grep | /usr/bin/awk '{ print $1}'", $l7pid);
+	    if (count($l7pid) > 0) {
+		log_error("Sending HUP signal to {$l7pid[0]}");
+		mwexec("/bin/kill -HUP {$l7pid[0]}");
+	    } else {
 		// XXX: Hardcoded number of packets to garbage collect and queue length..
 		$ipfw_classifyd_init = "/usr/local/sbin/ipfw-classifyd -n 5 -q 700 -c {$path} -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
 		mwexec_bg($ipfw_classifyd_init);

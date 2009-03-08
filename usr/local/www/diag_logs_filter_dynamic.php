@@ -245,7 +245,7 @@ include("head.inc");
 						$activerow = "";
 				}
 			?>
-			<div class="log-entry" >
+			<div class="log-entry" <?php echo $activerow; ?>>
 				<span class="log-action" nowrap><a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo $filterent['rulenum']; ?>', outputrule);">
 				<?php
 					if (strstr(strtolower($filterent['act']), "p"))
@@ -423,7 +423,7 @@ function handle_ajax() {
 			$rulenum = $_GET['getrulenum'];
 		if($_POST['getrulenum'])
 			$rulenum = $_POST['getrulenum'];
-		$rule = `pfctl -vvsr | grep @{$rulenum}`;
+		$rule = `pfctl -vvsr | grep "@{$rulenum} "`;
 		echo "The rule that triggered this action is:\n\n{$rule}";
 		exit;
 	}

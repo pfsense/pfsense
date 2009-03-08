@@ -35,7 +35,39 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 ?>
+<link  href="/themes/nervecenter/graphlink.css"  rel="stylesheet"  type="text/css"  />  
+<script src="/widgets/javascript/cpu_graphs.js" type="text/javascript"></script>
+<script type="text/javascript">
+    /* initialize the graph */
+    // --- Global Data --- //
+    var graphs;        // An array that stores all created graphs
+    var graph_dir;     // The direction in which each graph moves
+    var last_val;      // An array of values for each graph
+    var last_val_span; // References to Last Value span tags for each graph
+    var pause;         // Controls execution
 
-<div style="float:left;width:49%">
-<embed id="graph" src="graph_cpu.php" type="image/svg+xml" width="356" height="150" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
-</div>
+    var ajaxStarted = false;
+
+    /**
+     * Launches the GraphLink demo. It initializes the graph along with the ajax
+     * engine and starts the main execution loop.
+     */
+    graph         = new Array();
+    graph_dir     = new Array();
+    last_val      = new Array();
+    last_val_span = new Array();
+</script>
+<div class="GraphLink" id="GraphOutput"></div>
+<script language="javascript" type="text/javascript">
+
+    // Graph 1
+    graph[0]         = GraphInitialize('GraphOutput', 200, 50, 2);
+    graph_dir[0]     = GL_END;
+    last_val[0]      = Math.floor(Math.random() * 50);
+    last_val_span[0] = document.getElementById('LastValue0');
+
+    //GraphSetVMax(graph[0], 100);
+    //GraphDynamicScale(graph[0]);
+
+</script>
+

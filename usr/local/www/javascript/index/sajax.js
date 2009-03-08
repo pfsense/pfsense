@@ -32,18 +32,22 @@ function stats(x) {
 
 function updateMemory(x)
 {
-	document.getElementById("memusagemeter").value = x + '%';
-
-	document.getElementById("memwidtha").style.width = x + 'px';
-	document.getElementById("memwidthb").style.width = (100 - x) + 'px';
+	if($('memusagemeter'))
+		document.getElementById("memusagemeter").value = x + '%';
+	if($('memwidtha'))
+		document.getElementById("memwidtha").style.width = x + 'px';
+	if($('memwidthb'))
+		document.getElementById("memwidthb").style.width = (100 - x) + 'px';
 }
 
 function updateCPU(x)
 {
-	document.getElementById("cpumeter").value = x + '%';
-	
-	document.getElementById("cpuwidtha").style.width = x + 'px';
-	document.getElementById("cpuwidthb").style.width = (100 - x) + 'px';
+	if($('cpumeter'))
+		document.getElementById("cpumeter").value = x + '%';
+	if($('cpuwidtha'))
+		document.getElementById("cpuwidtha").style.width = x + 'px';
+	if($('cpuwidthb'))
+		document.getElementById("cpuwidthb").style.width = (100 - x) + 'px';
 }
 
 function updateTemp(x)
@@ -65,12 +69,14 @@ function updateDateTime(x) {
 
 function updateUptime(x)
 {
-	document.getElementById("uptime").value = x;
+	if($('uptime'))
+		document.getElementById("uptime").value = x;
 }
 
 function updateState(x)
 {
-	document.getElementById("pfstate").value = x;
+	if($('pfstate'))
+		document.getElementById("pfstate").value = x;
 }
 
 function updateInterfaceStats(x){

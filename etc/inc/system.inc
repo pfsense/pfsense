@@ -119,11 +119,15 @@ function get_nameservers() {
 	global $config, $g;
 	$master_list = array();
 	$dns_lists = split("\n", `ls /var/etc/nameserver_* 2>/dev/null`);
-	foreach($dns_lists as $dns) {
-		$items = split("\n", file_get_contents($dns));
-		foreach($items as $item)
-			if($item <> "")
-				$master_list[] = $item;
+	if($dns_lists) {
+		foreach($dns_lists as $dns) {
+			if(!$dns) 
+				continue;
+			$items = split("\n", file_get_contents($dns));
+			foreach($items as $item)
+				if($item <> "")
+					$master_list[] = $item;
+		}
 	}
 	if(!file_exists("/var/etc/nameservers.conf"))
 		return $master_list;

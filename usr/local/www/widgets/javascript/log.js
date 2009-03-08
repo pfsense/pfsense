@@ -4,7 +4,7 @@ var lines = Array();
 var timer;
 var updateDelay = 30000;
 var isBusy = false;
-var isPaused = false;
+var isPaused = true;
 
 <?php
 	if(isset($config['syslog']['reverse']))

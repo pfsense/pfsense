@@ -3235,7 +3235,7 @@ class layer7 {
     }
     
     function delete_l7c() {
-	$l7pid = `/bin/ps -ax | /usr/bin/grep ipfw-classifyd | /usr/bin/grep ". $l7rules->GetRPort() . " | /usr/bin/grep -v \"grep\" | /usr/bin/awk '{ print $1 }'`;
+	$l7pid = `/bin/ps -ax | /usr/bin/grep ipfw-classifyd | /usr/bin/grep ". $l7rules->GetRPort() . " | /usr/bin/grep -v grep | /usr/bin/awk '{ print $1 }'`;
 	mwexec("/bin/kill {$l7pid}");
 	unset_l7_object_by_reference($this->GetRName());
 	cleanup_l7_from_rules($this->GetRName());
@@ -3368,7 +3368,7 @@ function generate_layer7_files() {
     if (!empty($layer7_rules_list)) {
 	if (!is_module_loaded("ipdivert.ko"))
 		mwexec("/sbin/kldload ipdivert.ko");
-        //mwexec("killall -9 ipfw-classifyd");
+
 	mwexec("rm -f /tmp/*.l7");
     }
     

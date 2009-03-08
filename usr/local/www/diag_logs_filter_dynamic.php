@@ -41,13 +41,12 @@
 require("guiconfig.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
-
-/* AJAX related routines */
-handle_ajax();
-
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
+
+/* AJAX related routines */
+handle_ajax();
 
 if ($_POST['clear']) {
 	if(isset($config['system']['disablesyslogclog'])) {
@@ -62,13 +61,11 @@ if ($_POST['clear']) {
 
 /* format filter logs */
 function conv_clog_filter($logfile, $tail = 50) {
-	global $config, $nentries, $logfile;
-
-	$logfile = "/var/log/filter.log";
+	global $config, $nentries;
 
 	/* make interface/port table */
 	$iftable = array();
-        $iflist = get_configured_interface_with_descr();
+        $iflist = get_configured_interface_with_descr(false, true);
         foreach ($iflist as $if => $ifdesc)
                 $iftable[get_real_interface($if)] = $ifdesc;
 
@@ -128,13 +125,7 @@ function conv_clog_filter($logfile, $tail = 50) {
 
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];
-
-		$friendly_int = convert_real_interface_to_friendly_interface_name($log_split[4]);
-
-		$flent['interface'] 	=  strtoupper($friendly_int);
-
-		if($config['interfaces'][$friendly_int]['descr'] <> "")
-			$flent['interface'] = "{$config['interfaces'][$friendly_int]['descr']}";
+		$flent['interface'] 	=  empty($iftable[$log_split[4]]) ? $log_split[4] : $iftable[$log_split[4]];
 
 		$tmp = split("/", $log_split[2]);
 		$flent['rulenum'] = $tmp[0];
@@ -205,18 +196,6 @@ include("head.inc");
 		echo "	var isReverse = false;\n";
 ?>
 </script>
-<br>
-<table width="100%">
-	<tr>
-		<td>
-			<div class="pgtitle"><?=$pgtitle?></div>
-		</td>
-		<td align="right">
-			Pause:<input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
-		</td>
-	</tr>
-</table>
-<br>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -238,7 +217,7 @@ include("head.inc");
      <td>
 	<div id="mainarea">
 		<div class="listtopic">
-			Last <?php echo $nentries; ?> records
+			Last <?php echo $nentries; ?> records;                  Pause:<input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
 		</div>
 		<div id="log">
 			<div class="log-header">
@@ -266,7 +245,7 @@ include("head.inc");
 						$activerow = "";
 				}
 			?>
-			<div class="log-entry" <?php echo $activerow; ?>>
+			<div class="log-entry" >
 				<span class="log-action" nowrap><a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo $filterent['rulenum']; ?>', outputrule);">
 				<?php
 					if (strstr(strtolower($filterent['act']), "p"))
@@ -278,7 +257,7 @@ include("head.inc");
 				?>
 				<img border="0" src="<?=$img;?>" width="11" height="11" align="absmiddle"></a></span>
 				<span class="log-time" ><?=htmlspecialchars($filterent['time']);?></span>
-				<span class="log-interface" ><?=htmlspecialchars(convert_real_interface_to_friendly_interface_name($filterent['interface']));?></span>
+				<span class="log-interface" ><?=htmlspecialchars($filterent['interface']);?></span>
 				<span class="log-source" ><?=htmlspecialchars($filterent['src']);?></span>
 				<span class="log-destination" ><?=htmlspecialchars($filterent['dst']);?></span>
 				<span class="log-protocol" ><?=htmlspecialchars($filterent['proto']);?></span>

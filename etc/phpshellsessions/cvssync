@@ -4,7 +4,10 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
+exec("rm -rf /home/pfsense /root/pfsense");
+
 $GIT_REPO="http://gitweb.pfsense.org/pfsense/mainline.git";
+$CODIR =  "/root/pfsense/";
 
 global $argv;
 global $command_split;
@@ -13,6 +16,7 @@ conf_mount_rw();
 
 echo "\nRemoving downloaded cvssync data, please wait...";
 exec("/bin/rm -rf /home/pfsense");
+exec("mkdir -p /home/pfsense");
 echo " done.\n";
 
 unlink_if_exists("/tmp/config.cache");
@@ -65,13 +69,6 @@ if($argv[4] == "NOBACKUP")
 	$nobackup=true;
 else 
 	$nobackup = false;
-
-$CODIR =  "/root/pfsense/";
-
-// XXX Temporary until we get git under control.
-if(is_dir("$CODIR/pfSenseGITREPO")) 
-	exec("rm -rf $CODIR/pfSenseGITREPO");
-
 
 exec("mkdir -p /root/pfsense/$BRANCHTAG");
 

@@ -48,6 +48,8 @@ function updateCPU(x)
 		document.getElementById("cpuwidtha").style.width = x + 'px';
 	if($('cpuwidthb'))
 		document.getElementById("cpuwidthb").style.width = (100 - x) + 'px';
+        GraphValue(graph[0], x);
+
 }
 
 function updateTemp(x)

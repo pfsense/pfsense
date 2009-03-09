@@ -1949,7 +1949,7 @@ function get_interface_mac($interface) {
 
 function setup_pppoe_reset_file($interface, $status) {
 	define("CRON_PPPOE_CMD_FILE", "/conf/pppoe{$interface}restart");
-	define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"interfaces.inc\"); interface_reconfigure(\"$interface\"); services_dyndns_reset(\"$interface\"); filter_configure_sync(); ?>' | /usr/local/bin/php -q");
+	define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"interfaces.inc\"); interface_reconfigure({$interface}); services_dyndns_reset({$interface}); filter_configure(); ?>' | /usr/local/bin/php -q");
 	if($status == true) {
 		if(!file_exists(CRON_PPPOE_CMD_FILE)) {
 			file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);

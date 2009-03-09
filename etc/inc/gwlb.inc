@@ -268,6 +268,7 @@ function return_gateways_array() {
 				$gateway['monitor'] = $gateway['gateway'];
 			}
 			/* include the gateway index as the attribute */
+			$gateway['interface'] = convert_friendly_interface_to_real_interface_name($gateway['interface']);
 			$gateway['attribute'] = "$i";
 			$gateways_arr[$gateway['name']] = $gateway;
 			$i++;

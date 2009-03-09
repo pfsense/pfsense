@@ -78,7 +78,7 @@ function conv_clog_filter($logfile, $tail = 8) {
 
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];
-		$flent['interface'] 	=  empty($iftable[$log_split[4]) ? $log_split[4] : $iftable[$log_split[4]];
+		$flent['interface'] 	=  empty($iftable[$log_split[4]) ? $log_split[4] : $iftable[$log_split[4]);
 
 		$tmp = split("/", $log_split[2]);
 		$flent['rulenum'] = $tmp[0];

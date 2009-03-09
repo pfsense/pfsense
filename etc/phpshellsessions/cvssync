@@ -11,11 +11,9 @@ global $command_split;
 
 conf_mount_rw();
 
-if(is_dir("/home/pfsense")) {
-	echo "\nRemoving downloaded cvssync data, please wait...";
-	exec("rm -rf /home/pfsense");
-	echo " done.\n";
-}
+echo "\nRemoving downloaded cvssync data, please wait...";
+exec("rm -rf /home/pfsense");
+echo " done.\n";
 
 unlink_if_exists("/tmp/config.cache");
 

@@ -228,5 +228,5 @@ $curcfg = $config['system']['firmware'];
 	function activitycallback(transport) {
 		$('updatestatus').innerHTML = transport.responseText;
 	}
-	setTimeout('getstatus()', 2000);
+	setTimeout('getstatus()', 4000);
 </script>

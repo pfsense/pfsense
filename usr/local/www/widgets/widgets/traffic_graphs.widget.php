@@ -50,7 +50,7 @@ require_once("functions.inc");
 						$refreshInterval = substr($refreshintervalstring, $eqposition+1);
 					}
 					else {
-						$refreshInterval = "3";
+						$refreshInterval = "10";
 					}
 					
 ?>

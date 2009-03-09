@@ -436,6 +436,13 @@ $closehead = false;
 $pgtitle = array("{$g['product_name']} Dashboard");
 include("head.inc");
 
+?>
+
+<script type="text/javascript" language="javascript" src="/javascript/scriptaculous/prototype.js"></script>
+<script type="text/javascript" language="javascript" src="/javascript/scriptaculous/scriptaculous.js"></script>
+
+<?php
+
 outputJavaScriptFileInline("javascript/domTT/domLib.js");
 outputJavaScriptFileInline("javascript/domTT/domTT.js");
 outputJavaScriptFileInline("javascript/domTT/behaviour.js");
@@ -454,9 +461,6 @@ columns = ['col1','col2'];
 // ]]>
 
 </script>
-
-<script type="text/javascript" language="javascript" src="/javascript/scriptaculous/prototype.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/scriptaculous/scriptaculous.js"></script>
 
 <?php
 include("fbegin.inc");
@@ -716,19 +720,15 @@ echo $jscriptstr;
 <?php include("fend.inc"); ?>
 	    
 <script type="text/javascript">
-
-	<?php if (!$config['widgets']  && $pconfig['sequence'] != ""){ ?>
 	window.onload = function(in_event)
 	{		
+			Sortable.create("col1", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:showSave});	
+			Sortable.create("col2", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:showSave});		
+	<?php if (!$config['widgets']  && $pconfig['sequence'] != ""){ ?>
 			hideAllWidgets();		    
 			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');		
-	}
 	<?php } ?>
-	// <![CDATA[
-	Sortable.create("col1", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:showSave});	
-	Sortable.create("col2", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:showSave});		
-	// ]]>	
-	
+	}	
 	<?php
 	//build list of javascript include files
 	$jsincludefiles = array();

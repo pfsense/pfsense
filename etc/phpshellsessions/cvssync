@@ -12,7 +12,7 @@ global $command_split;
 conf_mount_rw();
 
 echo "\nRemoving downloaded cvssync data, please wait...";
-exec("rm -rf /home/pfsense");
+exec("/bin/rm -rf /home/pfsense");
 echo " done.\n";
 
 unlink_if_exists("/tmp/config.cache");

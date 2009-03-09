@@ -63,6 +63,11 @@ Refresh Interval:
 		<option value="3" <?php if ($refreshInterval == "3") echo "SELECTED";?>>3</option>
 		<option value="4" <?php if ($refreshInterval == "4") echo "SELECTED";?>>4</option>
 		<option value="5" <?php if ($refreshInterval == "5") echo "SELECTED";?>>5</option>
+		<option value="6" <?php if ($refreshInterval == "6") echo "SELECTED";?>>6</option>
+		<option value="7" <?php if ($refreshInterval == "7") echo "SELECTED";?>>7</option>
+		<option value="8" <?php if ($refreshInterval == "8") echo "SELECTED";?>>8</option>
+		<option value="9" <?php if ($refreshInterval == "9") echo "SELECTED";?>>9</option>
+		<option value="10" <?php if ($refreshInterval == "10") echo "SELECTED";?>>10</option>
 	</select>&nbsp; Seconds<br>&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this settings can affect CPU Performance on the pfSense Box<br><br>
 	<input id="submit" name="submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
 </div>

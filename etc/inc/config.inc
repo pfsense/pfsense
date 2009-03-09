@@ -2787,7 +2787,7 @@ EOD;
 
 		echo "Enter the VLAN tag (1-4094): ";
 		$vlan['tag'] = chop(fgets($fp));
-		$vlan['vlanif'] = "vlan{$vlanif}";
+		$vlan['vlanif'] = "vlan{$vlan['tag']}";
 		if (!is_numericint($vlan['tag']) || ($vlan['tag'] < 1) || ($vlan['tag'] > 4094)) {
 			echo "\nInvalid VLAN tag '{$vlan['tag']}'\n";
 			continue;

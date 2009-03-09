@@ -283,17 +283,22 @@ function get_configured_interface_list($only_opt = false, $withdisabled = false)
 
 	$iflist = array();
 
+	if (!$only_opt) {
+		if (isset($config['interfaces']['wan']))
+			$iflist['wan'] = "wan";
+		if (isset($config['interfaces']['lan']))
+			$iflist['lan'] = "lan";
+	}
+
 	/* if list */
         foreach($config['interfaces'] as $if => $ifdetail) {
-		if ($only_opt == true && ($if == "wan" || $if == "lan"))
+		if ($if == "wan" || $if == "lan")
 			continue;
-		if ($if == "wan" || $if == "lan" || isset($ifdetail['enable']) || 
-			$withdisabled == true) 
+		if (isset($ifdetail['enable']) || $withdisabled == true)
 			$iflist[$if] = $if;
 	}
 
 	return $iflist;
-			
 }
 
 /* return the configured interfaces list with their description. */
@@ -302,12 +307,24 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 
         $iflist = array();
 
+	if (!$only_opt) {
+                if (isset($config['interfaces']['wan'])) {
+			if (empty($config['interfaces']['wan']['descr']))
+				$iflist['wan'] = "WAN";
+			else
+				$iflist['wan'] = $config['interfaces']['wan']['descr'];
+		}
+                if (isset($config['interfaces']['lan'])) {
+			if (empty($config['interfaces']['lan']['descr']))
+                                $iflist['lan'] = "LAN";
+                        else
+                                $iflist['lan'] = $config['interfaces']['lan']['descr'];
+		}
+        }
+
         /* if list */
         foreach($config['interfaces'] as $if => $ifdetail) {
-               	if ($only_opt == true && ($if == "wan" || $if == "lan"))
-                        continue;
-                if ($if == "wan" || $if == "lan" || isset($ifdetail['enable']) ||
-			$withdisabled == true) {
+		if (isset($ifdetail['enable']) || $withdisabled == true) {
 			if($ifdetail['descr'] == "")
 				$iflist[$if] = strtoupper($if);
                         else
@@ -316,7 +333,6 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 	}
 
         return $iflist;
-
 }
 
 

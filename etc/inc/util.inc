@@ -328,7 +328,7 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 			if($ifdetail['descr'] == "")
 				$iflist[$if] = strtoupper($if);
                         else
-				$iflist[$if] = $ifdetail['descr'];
+				$iflist[$if] = strtoupper($ifdetail['descr']);
 		}
 	}
 

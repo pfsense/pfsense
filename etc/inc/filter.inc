@@ -1313,7 +1313,7 @@ function generate_user_filter_rule($rule)
 			} else {
 				$gwip = $gateway;
 				$int = guess_interface_from_ip($gwip);
-			}
+			}				$int = convert_friendly_interface_to_real_interface_name($int);
 			if (is_ipaddr($gwip) && ($int <> ""))
 				$aline['route'] = " route-to ( {$int} {$gwip} ) ";
 			else

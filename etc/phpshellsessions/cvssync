@@ -4,7 +4,7 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
-exec("rm -rf /home/pfsense /root/pfsense");
+exec("rm -rf /home/pfsense /root/pfsense /pfSenseGITREPO/");
 
 $GIT_REPO="http://gitweb.pfsense.org/pfsense/mainline.git";
 $CODIR =  "/root/pfsense/";

@@ -2836,8 +2836,9 @@ function system_start_ftp_helpers() {
 
 			$helpers = array(); 
 			exec("/bin/ps awwux | /usr/bin/grep \"[/]ftp-proxy\" | /usr/bin/grep  \"{$port}\" | /usr/bin/awk '{ print $2 }'", $helpers);
-			if(count($helpers > 0)
+			if(count($helpers > 0)) {
 				mwexec("/bin/kill {$helpers[0]}");
+			}
 			$interface_counter++;
 		} else {
 			/* grab the current interface IP address */

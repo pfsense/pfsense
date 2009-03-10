@@ -2834,8 +2834,9 @@ function system_start_ftp_helpers() {
 			if($g['debug'])
 				log_error("Config: FTP proxy disabled for interface {$ifent}");
 
-			exec("/bin/ps awwux | /usr/bin/grep \"[/]ftp-proxy\" | /usr/bin/grep  {$port} | /usr/bin/awk '{ print $2 }'", $helpers);
-			if(count($helpers[0]) > 0)
+			$helpers = array(); 
+			exec("/bin/ps awwux | /usr/bin/grep \"[/]ftp-proxy\" | /usr/bin/grep  \"{$port}\" | /usr/bin/awk '{ print $2 }'", $helpers);
+			if(count($helpers > 0)
 				mwexec("/bin/kill {$helpers[0]}");
 			$interface_counter++;
 		} else {
@@ -2873,8 +2874,10 @@ function system_start_ftp_helpers() {
 				}
 			}
 			/* if ftp-proxy is already running then do not launch it again */
-			if($g['debug'])
+			if($g['debug']) {
 				log_error("Config: FTP proxy port ($port) enabled for interface {$ifname}");
+			}
+			$helpers = array();
 			exec("/bin/ps awwux | /usr/bin/grep \"[/]ftp-proxy\" | /usr/bin/grep \"{$port}\" | /usr/bin/grep \"{$pftpxsourceaddr}\" | /usr/bin/awk '{ print $2 }'", $helpers);
 			if(!$helpers && $ip)
  				mwexec("/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port} {$pftpxsourceaddr} {$ip} -T PFFTPPROXY");

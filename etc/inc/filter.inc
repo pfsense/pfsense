@@ -324,18 +324,15 @@ function filter_generate_aliases() {
 	$lanip = find_interface_ip($config['interfaces']['lan']['if']);
 	$wanip = find_interface_ip(get_real_wan_interface());
 
-	$lan_aliases = " " . link_ip_to_carp_interface($lanip);
-	$wan_aliases = " " . link_ip_to_carp_interface($wanip);
-
 	$aliases .= "# System Aliases \n";
 	$aliases .= "loopback = \"{ lo0 }\"\n";
 	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
 
     if($config['interfaces']['wan']['ipaddr'] == "pppoe" or $config['interfaces']['wan']['ipaddr'] == "pptp") {
 		$aliases .= "ng0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
-		$aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . "{$wan_aliases} ng0 }\"\n";
+		$aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . " ng0 }\"\n";
 	} else {
-		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
+		$aliases .= "wan = \"{ " . get_real_wan_interface() . " }\"\n";
 	}
 
 	$aliases .= "enc0 = \"{ enc0 }\"\n";

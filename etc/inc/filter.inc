@@ -311,11 +311,6 @@ function filter_generate_aliases() {
 	$bridgetracker = 0;
 	foreach ($FilterIflist as $if => $ifcfg) {
 		$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
-		if (is_ipaddr($ifcfg['ip'])) {
-			$carp_ints = link_ip_to_carp_interface($ifcfg['ip']);
-			if($carp_ints)
-				$aliases .= " {$carp_ints}";
-		}
 		$aliases .= " }\"\n";
 	}
 	$aliases .= "# User Aliases \n";

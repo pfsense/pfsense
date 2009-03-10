@@ -149,7 +149,6 @@ function is_pid_running($pidfile) {
 }
 
 function is_dhcp_running($interface) {
-	$interface = convert_friendly_interface_to_real_interface_name($interface);
 	$status = find_dhclient_process($interface);
 	if($status <> "")
 		return true;

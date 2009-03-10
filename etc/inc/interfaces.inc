@@ -1244,9 +1244,8 @@ function kill_wpasupplicant($interface) {
 }
 
 function find_dhclient_process($interface) {
-	$realinterface = get_real_interface($interface);
-	if($realinterface)
-		$pid = `ps awwwux | grep dhclient | grep -v grep | grep {$realinterface} | awk '{ print \$2 }'`;
+	if($interface)
+		$pid = `ps awwwux | grep dhclient | grep -v grep | grep {$interface} | awk '{ print \$2 }'`;
 	return $pid;
 }
 

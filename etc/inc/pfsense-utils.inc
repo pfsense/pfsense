@@ -3048,6 +3048,13 @@ function get_interface_info($ifdescr) {
 	switch ($config['interfaces'][$if]['ipaddr']) {
 	/* DHCP? -> see if dhclient is up */
 	case "dhcp":
+		/* see if dhclient is up */
+		if (is_dhcp_running($ifinfo['if']) == true)
+			$ifinfo['dhcplink'] = "up";
+		else
+			$ifinfo['dhcplink'] = "down";
+
+		break;
 	case "carpdev-dhcp":
 		/* see if dhclient is up */
 		if (is_dhcp_running($ifinfo['if']) == true)

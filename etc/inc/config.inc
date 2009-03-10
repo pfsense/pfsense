@@ -2432,8 +2432,8 @@ EOD;
 		echo "No interfaces found!\n";
 	} else {
 		foreach ($iflist as $iface => $ifa) {
-			echo sprintf("% -8s%s%s\n", $iface, $ifa['mac'],
-				$ifa['up'] ? "   (up)" : "");
+			echo sprintf("% -8s%s%s\t%s\n", $iface, $ifa['mac'],
+				$ifa['up'] ? "   (up)" : "   (down)", $ifa['dmesg']);
 		}
 	}
 

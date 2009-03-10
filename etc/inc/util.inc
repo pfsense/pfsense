@@ -416,6 +416,10 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				if($friendly != "") {
 					$toput['friendly'] = $friendly;
 				}
+				$dmesg_arr = array();
+				exec("/sbin/dmesg |grep $ifname | head -n1", $dmesg_arr);
+				preg_match_all("/<(.*?)>/i", $dmesg_arr[0], $dmesg);
+				$toput['dmesg'] = $dmesg[1][0];
 				$iflist[$ifname] = $toput;
 				break;
 			case "friendly":

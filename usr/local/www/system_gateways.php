@@ -43,7 +43,7 @@ require("guiconfig.inc");
 $a_gateways = return_gateways_array();
 $a_gateways_arr = array();
 foreach($a_gateways as $gw) {
-	a_gateways_arr[] = $gw;
+	$a_gateways_arr[] = $gw;
 }
 $a_gateways = $a_gateways_arr;
 $changedesc = "Gateways: ";

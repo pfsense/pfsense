@@ -1766,7 +1766,7 @@ function execute_command_return_output($command) {
  */
 function convert_friendly_interface_to_real_interface_name($interface) {
 	global $config;
-	if($config['interfaces'][$interface]['ipaddr'] == "pppoe")
+	if($config['interfaces'][$interface]['ipaddr'] == "pppoe" or $config['interfaces'][$interface]['ipaddr'] == "pptp")
 		return "ng0";
 	$lc_interface = strtolower($interface);
 	if($lc_interface == "lan") return $config['interfaces']['lan']['if'];

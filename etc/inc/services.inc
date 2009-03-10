@@ -42,6 +42,10 @@ function services_dhcpd_configure() {
 		$mt = microtime();
 		echo "services_dhcpd_configure($if) being called $mt\n";
 	}
+	
+	/* kill any running dhcpd */
+	if(is_process_running("dhcpd"))
+		mwexec("killall dhcpd", true);
 
 	/* DHCP enabled on any interfaces? */
 	if (!is_dhcp_server_enabled())
@@ -72,10 +76,6 @@ function services_dhcpd_configure() {
 		fwrite($fd, "mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	fclose($fd);
 	mwexec("/bin/sh /tmp/dhcpd.sh");
-
-	/* kill any running dhcpd */
-	if(is_process_running("dhcpd"))
-		mwexec("killall dhcpd", true);
 
 	$syscfg = $config['system'];
 	$dhcpdcfg = $config['dhcpd'];

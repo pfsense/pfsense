@@ -237,7 +237,7 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd .= "AREA:\"$curif-in_bits_block#{$colortrafficdown[1]}:$curif-in-block\" ";
 	$graphcmd .= "AREA:\"$curif-in_bits_pass#{$colortrafficdown[0]}:$curif-in-pass:STACK\" ";
 	$graphcmd .= "{$AREA}:\"$curif-out_bits_block_neg#{$colortrafficup[1]}:$curif-out-block\" ";
-	$graphcmd .= "{$AREA}:\"$curif-out_bits_pass_neg#{$colortrafficup[0]}:$curif-out-block:STACK\" ";
+	$graphcmd .= "{$AREA}:\"$curif-out_bits_pass_neg#{$colortrafficup[0]}:$curif-out-pass:STACK\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t  maximum       average       current        period\\n\" ";
 	$graphcmd .= "COMMENT:\"in-pass\t\" ";

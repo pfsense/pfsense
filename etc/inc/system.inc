@@ -119,7 +119,7 @@ function get_nameservers() {
 	global $config, $g;
 	$master_list = array();
 	$dns_lists = split("\n", `ls /var/etc/nameserver_* 2>/dev/null`);
-	if($dns_lists) {
+	if(is_array($dns_lists)) {
 		foreach($dns_lists as $dns) {
 			if(!$dns) 
 				continue;

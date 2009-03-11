@@ -91,6 +91,7 @@ include("head.inc");
 				$priorities[$itemsplit[1]] = true;
 			}
 			$priority_count = count($priorities);
+			ksort($priorities);
 
 			echo "<tr>";
 			foreach($priorities as $number => $tier) {
@@ -104,8 +105,7 @@ include("head.inc");
 				$itemsplit = explode("|", $item);
 				$priority_arr[$itemsplit[1]][] = $itemsplit[0];
 			}
-
-			// echo print_r($priority_arr, true);
+			ksort($priority_arr);
 			$p = 1;
 			foreach($priority_arr as $number => $tier) {
 				/* for each priority process the gateways */

@@ -40,6 +40,7 @@ $gateways_status = return_gateways_status();
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
                   <td width="10%" class="listhdrr">Gateway</td>
+                  <td width="30%" class="listhdrr">RTT</td>
                   <td width="30%" class="listhdrr">Status</td>
                                 </tr>
          <?php foreach ($a_gateways as $gateway) { ?>
@@ -50,13 +51,16 @@ $gateways_status = return_gateways_status();
                   <td class="listr" align="center" >
                                 <?=$gateway['gateway'];?>
                   </td>
+                  <td class="listr" align="center" >
+								<?=$gateways_status[$monitor]['delay'];?>
+				  </td>
                   <td class="listr" >
                         <table border="0" cellpadding="0" cellspacing="2">
                         <?php
                                 $monitor = $gateway['monitor'];
-				if(empty($monitor)) {
-					$monitor = $gateway['gateway'];
-				}
+								if(empty($monitor)) {
+									$monitor = $gateway['gateway'];
+								}
                                 switch($gateways_status[$monitor]['status']) {
                                         case "None":
                                                 $online = "Online";
@@ -77,8 +81,7 @@ $gateways_status = return_gateways_status();
 					default:
 						$online = "No data";
                                 }
-
-                                PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td></tr>";
+                                echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
                         ?>
                         </table>
                   </td>

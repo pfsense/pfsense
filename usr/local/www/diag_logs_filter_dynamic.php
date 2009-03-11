@@ -32,14 +32,16 @@
 
 require("guiconfig.inc");
 
+/* In an effort to reduce duplicate code, many shared functions have been moved here. */
+require_once("includes/log.inc.php");
+
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 
 /* AJAX related routines */
-handle_ajax();
+handle_ajax(100, true);
 
-$nentries = $config['syslog']['nentries'];
-if (!$nentries)
-	$nentries = 50;
+/* Hardcode this. AJAX doesn't do so well with large numbers */
+$nentries = 50;
 
 if ($_POST['clear']) {
 	exec("killall syslogd");
@@ -47,111 +49,7 @@ if ($_POST['clear']) {
 	system_syslogd_start();
 }
 
-/* format filter logs */
-function conv_clog_filter($logfile, $tail = 50) {
-	global $config, $nentries, $logfile;
-
-	$logfile = "/var/log/filter.log";
-
-	/* make interface/port table */
-	$iftable = array();
-	$iftable[$config['interfaces']['lan']['if']] = "LAN";
-	$iftable[get_real_wan_interface()] = "WAN";
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-		$iftable[$config['interfaces']['opt' . $i]['if']] = $config['interfaces']['opt' . $i]['descr'];
-
-	$logarr = "";
-	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail -r -n {$tail}", $logarr);
-
-	$filterlog = array();
-
-	$counter = 0;
-
-	foreach ($logarr as $logent) {
-
-		if($counter > $nentries)
-			break;
-
-		$log_split = "";
-		
-		//old reg ex
-		//preg_match("/(.*)\s.*\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s(.*)\s>\s(.*)\:\s.*/", $logent, $log_split);
-		
-		preg_match("/(.*)\s.*\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s.*\slength\:.*\s(.*)\s>\s(.*)\:\s.*/", $logent, $log_split);
-
-		$logent = strtoupper($logent);
-
-		$do_not_display = false;
-
-		if(stristr(strtoupper($logent), "UDP") == true)
-			$flent['proto'] = "UDP";
-		else if(stristr(strtoupper($logent), "TCP") == true)
-			$flent['proto'] = "TCP";
-		else if(stristr(strtoupper($logent), "ICMP") == true)
-			$flent['proto'] = "ICMP";
-		else if(stristr(strtoupper($logent), "HSRP") == true)
-			$flent['proto'] = "HSRP";
-		else if(stristr(strtoupper($logent), "ESP") == true)
-			$flent['proto'] = "ESP";
-		else if(stristr(strtoupper($logent), "AH") == true)
-			$flent['proto'] = "AH";
-		else if(stristr(strtoupper($logent), "GRE") == true)
-			$flent['proto'] = "GRE";
-		else if(stristr(strtoupper($logent), "IGMP") == true)
-			$flent['proto'] = "IGMP";
-		else if(stristr(strtoupper($logent), "CARP") == true)
-			$flent['proto'] = "CARP";
-		else if(stristr(strtoupper($logent), "PFSYNC") == true)
-			$flent['proto'] = "PFSYNC";
-		else
-			$flent['proto'] = "TCP";
-
-		$flent['time'] 		= $log_split[1];
-		$flent['act'] 		= $log_split[3];
-
-		$friendly_int = convert_real_interface_to_friendly_interface_name($log_split[4]);
-
-		$flent['interface'] 	=  strtoupper($friendly_int);
-
-		if($config['interfaces'][$friendly_int]['descr'] <> "")
-			$flent['interface'] = "{$config['interfaces'][$friendly_int]['descr']}";
-
-		$flent['src'] 		= convert_port_period_to_colon($log_split[5]);
-		$flent['dst'] 		= convert_port_period_to_colon($log_split[6]);
-
-		$flent['dst'] = str_replace(": NBT UDP PACKET(137)", "", $flent['dst']);
-
-		$tmp = split("/", $log_split[2]);
-		$flent['rulenum'] = $tmp[0];
-
-		$counter++;
-		$filterlog[] = $flent;
-
-	}
-
-	return isset($config['syslog']['reverse']) ? $filterlog : array_reverse($filterlog);
-}
-
-function convert_port_period_to_colon($addr) {
-	$addr_split = split("\.", $addr);
-	if($addr_split[4] == "")
-		$newvar = $addr_split[0] . "." . $addr_split[1] . "." . $addr_split[2] . "." . $addr_split[3];
-	else
-		$newvar = $addr_split[0] . "." . $addr_split[1] . "." . $addr_split[2] . "." . $addr_split[3] . ":" . $addr_split[4];
-	if($newvar == "...")
-		return $addr;
-	return $newvar;
-}
-
-function format_ipf_ip($ipfip) {
-	list($ip,$port) = explode(",", $ipfip);
-	if (!$port)
-		return $ip;
-
-	return $ip . ", port " . $port;
-}
-
-$filterlog = conv_clog_filter($filter_logfile, $nentries);
+$filterlog = conv_clog_filter($filter_logfile, $nentries, $nentries + 100);
 
 $pgtitle = "Diagnostics: System logs: Firewall";
 include("head.inc");
@@ -170,9 +68,9 @@ include("head.inc");
 	var isPaused = false;
 <?php
 	if(isset($config['syslog']['reverse']))
-		echo "	var isReverse = true;\n";
+		echo "var isReverse = true;\n";
 	else
-		echo "	var isReverse = false;\n";
+		echo "var isReverse = false;\n";
 ?>
 </script>
 <br>
@@ -208,7 +106,7 @@ include("head.inc");
      <td>
 	<div id="mainarea">
 		<div class="listtopic">
-			Last <?php echo $nentries; ?> records
+			Last <?php echo $nentries; ?> records  (<a href="diag_logs_filter.php">Switch to regular view</a>)
 		</div>
 		<div id="log">
 			<div class="log-header">
@@ -230,13 +128,13 @@ include("head.inc");
 
 				} else {
 					/* non-reverse logging */
-					if($counter == count($filterlog))
+					if($counter == count($filterlog) - 1)
 						$activerow = " id=\"firstrow\"";
 					else
 						$activerow = "";
 				}
 			?>
-			<div class="log-entry" <?php echo $activerow; ?>>
+			<div class="log-entry"<?php echo $activerow; ?>>
 				<span class="log-action" nowrap><a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo $filterent['rulenum']; ?>', outputrule);">
 				<?php
 					if (strstr(strtolower($filterent['act']), "p"))
@@ -251,6 +149,10 @@ include("head.inc");
 				<span class="log-interface" ><?=htmlspecialchars(convert_real_interface_to_friendly_interface_name($filterent['interface']));?></span>
 				<span class="log-source" ><?=htmlspecialchars($filterent['src']);?></span>
 				<span class="log-destination" ><?=htmlspecialchars($filterent['dst']);?></span>
+				  <?php
+					if ($filterent['proto'] == "TCP")
+						$filterent['proto'] .= ":" . $filterent['tcpflags'];
+				  ?>
 				<span class="log-protocol" ><?=htmlspecialchars($filterent['proto']);?></span>
 			</div>
 		<?php $counter++; endforeach; ?>
@@ -322,14 +224,12 @@ function fetch_new_rules_callback(callback_data) {
 		/* loop through rows */
 		row_split = data_split[x].split("||");
 		var line = '';
-		line = '<div class="log-entry">';
-		line += '  <span class="log-action" nowrap>' + row_split[0] + '</span>';
+		line = '  <span class="log-action" nowrap>' + row_split[0] + '</span>';
 		line += '  <span class="log-time" nowrap>' + row_split[1] + '</span>';
 		line += '  <span class="log-interface" nowrap>' + row_split[2] + '</span>';
 		line += '  <span class="log-source" nowrap>' + row_split[3] + '</span>';
 		line += '  <span class="log-destination" nowrap>' + row_split[4] + '</span>';
 		line += '  <span class="log-protocol" nowrap>' + row_split[5] + '</span>';
-		line += '</div>';
 		lastsawtime = row_split[6];
 		new_data_to_add[new_data_to_add.length] = line;
 	}
@@ -352,26 +252,23 @@ function update_div_rows(data) {
 	//alert(data.length);
 	for(var x=0; x<data.length; x++) {
 		var numrows = rows.length;
-		var appearatrow;
 		/*    if reverse logging is enabled we need to show the
 		 *    records in a reverse order with new items appearing
-         *    on the top
-         */
-		//if(isReverse == false) {
-		//	for (var i = 2; i < numrows; i++) {
-		//		nextrecord = i + 1;
-		//		if(nextrecord < numrows)
-		//			rows[i].innerHTML = rows[nextrecord].innerHTML;
-		//	}
-		//	appearatrow = numrows - 1;
-		//} else {
+		 *    on the top
+		 */
+		if(isReverse == false) {
+			for (var i = 1; i < numrows; i++) {
+				nextrecord = i + 1;
+				if(nextrecord < numrows)
+					rows[i].innerHTML = rows[nextrecord].innerHTML;
+			}
+		} else {
 			for (var i = numrows; i > 0; i--) {
 				nextrecord = i + 1;
 				if(nextrecord < numrows)
 					rows[nextrecord].innerHTML = rows[i].innerHTML;
 			}
-			appearatrow = 1;
-		//}
+		}
 		var item = document.getElementById('firstrow');
 		if(x == data.length-1) {
 			/* nothing */
@@ -380,11 +277,11 @@ function update_div_rows(data) {
 			showanim = false;
 		}
 		if (showanim) {
-			rows[appearatrow].style.display = 'none';
-			rows[appearatrow].innerHTML = data[x];
-			new Effect.Appear(rows[appearatrow]);
+			item.style.display = 'none';
+			item.innerHTML = data[x];
+			new Effect.Appear(item);
 		} else {
-			rows[appearatrow].innerHTML = data[x];
+			item.innerHTML = data[x];
 		}
 	}
 	/* rechedule AJAX interval */
@@ -402,52 +299,13 @@ function toggle_pause() {
 lastsawtime = '<?php echo time(); ?>;';
 timer = setInterval('fetch_new_rules()', updateDelay);
 </script>
+
+<p><span class="vexpl"><a href="http://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">TCP Flags</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR</span></p>
+
 <?php include("fend.inc"); ?>
 </body>
 </html>
 <?php
 
-/* AJAX specific handlers */
-function handle_ajax() {
-	if($_GET['getrulenum'] or $_POST['getrulenum']) {
-		if($_GET['getrulenum'])
-			$rulenum = $_GET['getrulenum'];
-		if($_POST['getrulenum'])
-			$rulenum = $_POST['getrulenum'];
-		$rule = `pfctl -vvsr | grep '^@{$rulenum} '`;
-		echo "The rule that triggered this action is:\n\n{$rule}";
-		exit;
-	}
-
-	if($_GET['lastsawtime'] or $_POST['lastsawtime']) {
-		global $filter_logfile,$filterent;
-		if($_GET['lastsawtime'])
-			$lastsawtime = $_GET['lastsawtime'];
-		if($_POST['lastsawtime'])
-			$lastsawtime = $_POST['lastsawtime'];
-		/*  compare lastsawrule's time stamp to filter logs.
-		 *  afterwards return the newer records so that client
-                 *  can update AJAX interface screen.
-		 */
-		$new_rules = "";
-		$filterlog = conv_clog_filter($filter_logfile, 50);
-		foreach($filterlog as $log_row) {
-			$time_regex = "";
-			preg_match("/.*([0-9][0-9]:[0-9][0-9]:[0-9][0-9])/", $log_row['time'], $time_regex);
-			$row_time = strtotime($time_regex[1]);
-			if (strstr(strtolower($log_row['act']), "p"))
-				$img = "<img border='0' src='/themes/metallic/images/icons/icon_pass.gif'>";
-			else if(strstr(strtolower($filterent['act']), "r"))
-				$img = "<img border='0' src='/themes/metallic/images/icons/icon_reject.gif'>";
-			else
-				$img = "<img border='0' src='/themes/metallic/images/icons/icon_block.gif'>";
-			//echo "{$time_regex[1]} - $row_time > $lastsawtime<p>";
-			if($row_time > $lastsawtime)
-				$new_rules .= "{$img}||{$log_row['time']}||{$log_row['interface']}||{$log_row['src']}||{$log_row['dst']}||{$log_row['proto']}||" . time() . "||\n";
-		}
-		echo $new_rules;
-		exit;
-	}
-}
 
 ?>

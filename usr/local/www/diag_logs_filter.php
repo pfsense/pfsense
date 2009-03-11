@@ -32,12 +32,15 @@
 
 require("guiconfig.inc");
 
+/* In an effort to reduce duplicate code, many shared functions have been moved here. */
+require_once("includes/log.inc.php");
+
 if($_GET['getrulenum'] or $_POST['getrulenum']) {
 	if($_GET['getrulenum'])
 		$rulenum = escapeshellarg($_GET['getrulenum']);
 	if($_POST['getrulenum'])
 		$rulenum = escapeshellarg($_POST['getrulenum']);
-	$rule = `pfctl -vvsr | grep '^@{$rulenum} '`;
+	$rule = find_rule_by_number($rulenum);
 	echo "The rule that triggered this action is:\n\n{$rule}";
 	exit;
 }
@@ -52,123 +55,6 @@ if ($_POST['clear']) {
 	exec("killall syslogd");
 	exec("/usr/sbin/clog -i -s 512144 /var/log/filter.log");
 	system_syslogd_start();
-}
-
-/* format filter logs */
-function conv_clog($logfile, $tail = 50) {
-	global $config, $nentries, $g;
-	$logarr = "";
-	/* make interface/port table */
-	$iftable = array();
-	$iftable[$config['interfaces']['lan']['if']] = "LAN";
-	$iftable[get_real_wan_interface()] = "WAN";
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-		$iftable[$config['interfaces']['opt' . $i]['if']] = $config['interfaces']['opt' . $i]['descr'];
-
-	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail -r -n 500", $logarr);
-
-	$filterlog = array();
-
-	$counter = 1;
-
-	foreach ($logarr as $logent) {
-
-		if($counter > $nentries)
-			break;
-
-		$log_split = "";
-
-
-		preg_match("/(\b(?:\d{1,3}\.){3}\d{1,3}(\.\w+)?)\s.*\s(\b(?:\d{1,3}\.){3}\d{1,3}(\.\w+)?)/", $logent, $log_split);
-
-		$flent['src'] 		= convert_port_period_to_colon($log_split[1]);
-		$flent['dst'] 		= convert_port_period_to_colon($log_split[3]);
-
-		preg_match("/(.*)\s.*\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s(.*)\s>\s(.*)\:\s.*/", $logent, $log_split);
-
-		$beforeupper = $logent;
-		$logent = strtoupper($logent);
-
-		if(stristr(strtoupper($logent), "UDP") == true)
-			$flent['proto'] = "UDP";
-		else if(stristr(strtoupper($logent), "TCP") == true)
-			$flent['proto'] = "TCP";
-		else if(stristr(strtoupper($logent), "ICMP") == true)
-			$flent['proto'] = "ICMP";
-		else if(stristr(strtoupper($logent), "HSRP") == true)
-			$flent['proto'] = "HSRP";
-		else if(stristr(strtoupper($logent), "ESP") == true)
-			$flent['proto'] = "ESP";
-		else if(stristr(strtoupper($logent), "AH") == true)
-			$flent['proto'] = "AH";
-		else if(stristr(strtoupper($logent), "GRE") == true)
-			$flent['proto'] = "GRE";
-		else if(stristr(strtoupper($logent), "IGMP") == true)
-			$flent['proto'] = "IGMP";
-		else if(stristr(strtoupper($logent), "CARP") == true)
-			$flent['proto'] = "CARP";
-		else if(stristr(strtoupper($logent), "VRRP") == true)
-			$flent['proto'] = "VRRP";
-		else if(stristr(strtoupper($logent), "PFSYNC") == true)
-			$flent['proto'] = "PFSYNC";
-		else if(stristr($logent, "sack") == true)
-			$flent['proto'] = "TCP";
-		else
-			$flent['proto'] = "TCP";
-
-		$flent['time'] 		= $log_split[1];
-		$flent['act'] 		= $log_split[3];
-
-		$friendly_int = convert_real_interface_to_friendly_interface_name($log_split[4]);
-
-		$flent['interface'] 	=  strtoupper($friendly_int);
-
-		if($config['interfaces'][$friendly_int]['descr'] <> "")
-			$flent['interface'] = "{$config['interfaces'][$friendly_int]['descr']}";
-
-		$tmp = split("/", $log_split[2]);
-		$flent['rulenum'] = $tmp[0];
-
-		$shouldadd = true;
-
-		if(trim($flent['src']) == "")
-			$shouldadd = false;
-		if(trim($flent['dst']) == "")
-			$shouldadd = false;
-		if(trim($flent['time']) == "")
-			$shouldadd = false;
-
-		if($shouldadd == true) {
-			$counter++;
-			$filterlog[] = $flent;
-		} else {
-			if($g['debug']) {
-				log_error("There was a error parsing rule: $beforeupper .   Please report to mailing list or forum.");
-			}
-		}
-
-	}
-
-	return isset($config['syslog']['reverse']) ? $filterlog : array_reverse($filterlog);
-}
-
-function convert_port_period_to_colon($addr) {
-	$addr_split = split("\.", $addr);
-	if($addr_split[4] == "")
-		$newvar = $addr_split[0] . "." . $addr_split[1] . "." . $addr_split[2] . "." . $addr_split[3];
-	else
-		$newvar = $addr_split[0] . "." . $addr_split[1] . "." . $addr_split[2] . "." . $addr_split[3] . ":" . $addr_split[4];
-	if($newvar == "...")
-		return $addr;
-	return $newvar;
-}
-
-function format_ipf_ip($ipfip) {
-	list($ip,$port) = explode(",", $ipfip);
-	if (!$port)
-		return $ip;
-
-	return $ip . ", port " . $port;
 }
 
 $pgtitle = "Diagnostics: System logs: Firewall";
@@ -200,11 +86,11 @@ include("head.inc");
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php if (!isset($config['syslog']['rawfilter'])):
-	$filterlog = conv_clog($filter_logfile, $nentries);
+	$filterlog = conv_clog_filter($filter_logfile, $nentries, 500);
 ?>
 		<tr>
 		  <td colspan="6" class="listtopic">
-			    Last <?=$nentries;?> firewall log entries</td>
+			    Last <?=$nentries;?> firewall log entries. (<a href="diag_logs_filter_dynamic.php">Switch to dynamic view</a>)</td>
 			</tr>
 			<tr>
 			  <td width="10%" class="listhdrr">Act</td>
@@ -231,6 +117,10 @@ include("head.inc");
 			  <td class="listr" nowrap><?=htmlspecialchars(convert_real_interface_to_friendly_interface_name($filterent['interface']));?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['src']);?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['dst']);?></td>
+			  <?php
+				if ($filterent['proto'] == "TCP")
+					$filterent['proto'] .= ":" . $filterent['tcpflags'];
+			  ?>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['proto']);?></td>
 			</tr><?php endforeach; ?>
 <?php else: ?>
@@ -290,6 +180,9 @@ function outputrule(req) {
 	alert(req.content);
 }
 </script>
+
+<p><span class="vexpl"><a href="http://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">TCP Flags</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR</span></p>
+
 <?php include("fend.inc"); ?>
 </body>
 </html>

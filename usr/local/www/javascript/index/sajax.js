@@ -1,24 +1,21 @@
 
-// Seconds * 1000 = value
+/*   Most widgets update their backend data every 10 seconds.  11 seconds
+ *   will ensure that we update the GUI right after the stats are updated.
+ *   Seconds * 1000 = value
+ */
 var update_interval = 11000;
 
-
-function updateMeters()
-{
+function updateMeters() {
 	x_get_stats(stats);
-
 	window.setTimeout('updateMeters()', update_interval);
 }
 
 function stats(x) {
-
 	var values = x.split("|");
-
 	for(var counter=0; counter<x.length; x++) {
 		if(values[counter] == 'undefined' || values[counter] == null)
 			return;
 	}	
-
 	updateCPU(values[0]);
 	updateMemory(values[1]);
 	updateUptime(values[2]);
@@ -28,11 +25,9 @@ function stats(x) {
 	updateInterfaceStats(values[6]);
 	updateInterfaces(values[7]);
 	updateGatewayStats(values[8]);
-
 }
 
-function updateMemory(x)
-{
+function updateMemory(x) {
 	if($('memusagemeter'))
 		document.getElementById("memusagemeter").value = x + '%';
 	if($('memwidtha'))
@@ -41,8 +36,7 @@ function updateMemory(x)
 		document.getElementById("memwidthb").style.width = (100 - x) + 'px';
 }
 
-function updateCPU(x)
-{
+function updateCPU(x) {
 	if($('cpumeter'))
 		document.getElementById("cpumeter").value = x + '%';
 	if($('cpuwidtha'))
@@ -50,11 +44,9 @@ function updateCPU(x)
 	if($('cpuwidthb'))
 		document.getElementById("cpuwidthb").style.width = (100 - x) + 'px';
         GraphValue(graph[0], x);
-
 }
 
-function updateTemp(x)
-{
+function updateTemp(x) {
 	if(document.getElementById("tempmeter") != null) {
 		document.getElementById("tempmeter").value = x + 'C';
 		document.getElementById("tempwidtha").style.width = x + 'px';
@@ -70,14 +62,12 @@ function updateDateTime(x) {
 	document.getElementById("datetime").firstChild.data = x;
 }
 
-function updateUptime(x)
-{
+function updateUptime(x) {
 	if($('uptime'))
 		document.getElementById("uptime").value = x;
 }
 
-function updateState(x)
-{
+function updateState(x) {
 	if($('pfstate'))
 		document.getElementById("pfstate").value = x;
 }
@@ -135,7 +125,7 @@ function updateInterfaces(x){
 	}
 }
 
-function widgetActive(x){
+function widgetActive(x) {
 	var widget = document.getElementById(x + '-container');
 	if (widget.style.display != "none")
 		return true;

@@ -76,16 +76,21 @@ if ($_POST) {
 	if (! isset($_POST['name'])) {
 		$input_errors[] = "A valid gateway group name must be specified.";
 	}
+	if (! is_validaliasname($_POST['name'])) {
+		$input_errors[] = "The gateway name must not contain invalid characters.";
+	}
 
-	/* check for overlaps */
-	if(is_array($a_gateway_groups)) {
-		foreach ($a_gateway_groups as $gateway_group) {
-			if (isset($id) && ($a_gateway_groups[$id]) && ($a_gateway_groups[$id] === $gateway_group))
-				continue;
+	if (isset($_POST['name'])) {
+		/* check for overlaps */
+		if(is_array($a_gateway_groups)) {
+			foreach ($a_gateway_groups as $gateway_group) {
+				if (isset($id) && ($a_gateway_groups[$id]) && ($a_gateway_groups[$id] === $gateway_group))
+					continue;
 
-			if ($gateway_group['name'] == $_POST['name']) {
-				$input_errors[] = "A gateway group with this name \"{$_POST['name']}\" already exists.";
-				break;
+				if ($gateway_group['name'] == $_POST['name']) {
+					$input_errors[] = "A gateway group with this name \"{$_POST['name']}\" already exists.";
+					break;
+				}
 			}
 		}
 	}

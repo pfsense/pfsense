@@ -94,7 +94,7 @@ if ($_POST) {
 		$input_errors[] = "A valid monitor IP address must be specified.";
 	}
 
-	if (! isset($_POST['name'])) {
+	if (isset($_POST['name'])) {
 		/* check for overlaps */
 		foreach ($a_gateways as $gateway) {
 			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway))

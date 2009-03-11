@@ -27,7 +27,8 @@ function stats(x) {
 	updateDateTime(values[5]);
 	updateInterfaceStats(values[6]);
 	updateInterfaces(values[7]);
-	
+	updateGatewayStats(values[8]);
+
 }
 
 function updateMemory(x)
@@ -79,6 +80,17 @@ function updateState(x)
 {
 	if($('pfstate'))
 		document.getElementById("pfstate").value = x;
+}
+
+function updateGatewayStats(x){
+	if (widgetActive("gateways")){
+		gateways_split = x.split(",");
+		var counter = 1;
+		for (var y=0; y<gateways_split.length-1; y++){
+			document.getElementById('gateway' + counter).innerHTML = gateways_split[y];
+			counter++;	
+		}
+	}
 }
 
 function updateInterfaceStats(x){

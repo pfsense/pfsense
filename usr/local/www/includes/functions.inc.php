@@ -6,7 +6,6 @@ if(Connection_Aborted()) {
 
 require_once("config.inc");
 
-
 function get_stats() {
 	$stats['cpu'] = cpu_usage();
 	$stats['mem'] = mem_usage();
@@ -16,12 +15,48 @@ function get_stats() {
 	$stats['datetime'] = update_date_time();
 	$stats['interfacestatistics'] = get_interfacestats();
 	$stats['interfacestatus'] = get_interfacestatus();
-
+	$stats['gateways'] = get_gatewaystats();
 	$stats = join("|", $stats);
-
 	return $stats;
 }
 
+function get_gatewaystats() {
+	$gateways_status = array();
+	$gateways_status = return_gateways_status();
+	$data = "";
+	$isfirst = true;
+	foreach($gateways_status as $gw) {
+		if(!$isfirst) 
+			$data .= ",";
+		$isfirst = false;
+		$data .= $gw['name'] . ",";
+		$data .= $gw['gateway'] . ",";
+		$data .= $gw['delay'] . ",";
+		$data .= $gw['loss'] . ",";
+        switch($gw['status']) {
+			case "None":
+				$online = "Online";
+				$bgcolor = "lightgreen";
+				break;
+			case "\"down\"":
+				$online = "Offline";
+				$bgcolor = "lightcoral";
+				break;
+			case "\"delay\"":
+				$online = "Warning, Latency";
+				$bgcolor = "khaki";
+				break;
+			case "\"loss\"":
+				$online = "Warning, Packetloss";
+				$bgcolor = "khaki";
+				break;
+			default:
+				$online = "No data";
+		}
+		$data .= "<tr><td id=\"gateway{$counter}\" bgcolor=\"$bgcolor\" > $online </td>";
+	}
+	return $data;
+}
 
 function get_uptime() {
 	$boottime = "";

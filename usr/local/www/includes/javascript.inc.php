@@ -10,7 +10,6 @@
 	$top_javascript_files = array();
 	$bottom_javascript_files = array();
 
-
 	$top_javascript_files['firewall_rules_edit.php'][] = 'autosuggest.js';
 	$top_javascript_files['firewall_rules_edit.php'][] = 'suggestions.js';
 	$top_javascript_files['firewall_rules_edit.php'][] = 'firewall_rules_edit.js';

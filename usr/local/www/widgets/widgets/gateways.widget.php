@@ -35,6 +35,8 @@ $a_gateways = return_gateways_array();
 $gateways_status = array();
 $gateways_status = return_gateways_status();
 
+$counter = 1;
+
 ?>
          <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
@@ -52,17 +54,21 @@ $gateways_status = return_gateways_status();
 						}
 			 ?>
                 <tr>
-                  <td class="listlr">
+                  <td class="listlr" id="gateway<?= $counter; ?>">
                                 <?=$gateway['name'];?>
+								<?php $counter++; ?>
                   </td>
-                  <td class="listr" align="center" >
+                  <td class="listr" align="center" id="gateway<?= $counter; ?>">
                                 <?=$gateway['gateway'];?>
+								<?php $counter++; ?>
                   </td>
-                  <td class="listr" align="center" >
+                  <td class="listr" align="center" id="gateway<?= $counter; ?>">
 								<?=$gateways_status[$monitor]['delay'];?>
+								<?php $counter++; ?>
 				  </td>
-                  <td class="listr" align="center" >
+                  <td class="listr" align="center" id="gateway<?= $counter; ?>">
 								<?=$gateways_status[$monitor]['loss'];?>
+								<?php $counter++; ?>
 				  </td>
                   <td class="listr" >
                         <table border="0" cellpadding="0" cellspacing="2">
@@ -91,7 +97,8 @@ $gateways_status = return_gateways_status();
 										default:
 											$online = "No data";
 								}
-								echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
+								echo "<tr><td id=\"gateway{$counter}\" bgcolor=\"$bgcolor\" > $online </td>";
+								$counter++;
                         ?>
                         </table>
                   </td>

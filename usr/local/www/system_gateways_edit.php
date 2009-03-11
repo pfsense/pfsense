@@ -83,6 +83,9 @@ if ($_POST) {
 	if (! isset($_POST['name'])) {
 		$input_errors[] = "A valid gateway name must be specified.";
 	}
+	if (! is_validaliasname($_POST['name'])) {
+		$input_errors[] = "The gateway name must not contain invalid characters.";
+	}
 	/* skip system gateways which have been automatically added */
 	if ($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) {
 		$input_errors[] = "A valid gateway IP address must be specified.";
@@ -91,22 +94,24 @@ if ($_POST) {
 		$input_errors[] = "A valid monitor IP address must be specified.";
 	}
 
-	/* check for overlaps */
-	foreach ($a_gateways as $gateway) {
-		if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway))
-			continue;
+	if (! isset($_POST['name'])) {
+		/* check for overlaps */
+		foreach ($a_gateways as $gateway) {
+			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway))
+				continue;
 
-		if (($gateway['name'] <> "") && (in_array($gateway, $_POST['name']))) {
-			$input_errors[] = "The name \"{$_POST['name']}\" already exists.";
-			break;
-		}
-		if (($gateway['gateway'] <> "") && (in_array($gateway, $_POST['gateway']))) {
-			$input_errors[] = "The IP address \"{$_POST['gateway']}\" already exists.";
-			break;
-		}
-		if (($gateway['monitor'] <> "") && (in_array($gateway, $gateway['monitor']))) {
-			$input_errors[] = "The IP address \"{$_POST['monitor']}\" already exists.";
-			break;
+			if (($gateway['name'] <> "") && (in_array($gateway, $_POST['name']))) {
+				$input_errors[] = "The name \"{$_POST['name']}\" already exists.";
+				break;
+			}
+			if (($gateway['gateway'] <> "") && (in_array($gateway, $_POST['gateway']))) {
+				$input_errors[] = "The IP address \"{$_POST['gateway']}\" already exists.";
+				break;
+			}
+			if (($gateway['monitor'] <> "") && (in_array($gateway, $gateway['monitor']))) {
+				$input_errors[] = "The IP address \"{$_POST['monitor']}\" already exists.";
+				break;
+			}
 		}
 	}
 

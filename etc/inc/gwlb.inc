@@ -338,6 +338,8 @@ function return_gateway_groups_array() {
 					}
 				}
 			}
+			/* sort the tiers array by the tier key */
+			ksort($tiers);
 			/* we do not really foreach the tiers as we stop after the first tier */
 			foreach($tiers as $tiernr => $tier) {
 				/* process all gateways in this tier */

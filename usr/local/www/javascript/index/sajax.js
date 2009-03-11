@@ -87,8 +87,10 @@ function updateGatewayStats(x){
 		gateways_split = x.split(",");
 		var counter = 1;
 		for (var y=0; y<gateways_split.length-1; y++){
-			document.getElementById('gateway' + counter).innerHTML = gateways_split[y];
-			counter++;	
+			if($('gateway' + counter)) {
+				document.getElementById('gateway' + counter).innerHTML = gateways_split[y];
+				counter++;	
+			}
 		}
 	}
 }
@@ -98,8 +100,10 @@ function updateInterfaceStats(x){
 		statistics_split = x.split(",");
 		var counter = 1;
 		for (var y=0; y<statistics_split.length-1; y++){
-			document.getElementById('stat' + counter).innerHTML = statistics_split[y];
-			counter++;	
+			if($('stat' + counter)) {
+				document.getElementById('stat' + counter).innerHTML = statistics_split[y];
+				counter++;	
+			}
 		}
 	}
 }

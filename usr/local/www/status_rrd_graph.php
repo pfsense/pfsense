@@ -94,7 +94,7 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"outbound-traffic.rrd");
 
 /* append the existing array to the header */
-$databases = array_merge($dbheader, $databases);
+$ui_databases = array_merge($dbheader, $databases);
 
 $styles = array('inverse' => 'Inverse',
 		'absolute' => 'Absolute');
@@ -148,7 +148,7 @@ include("head.inc");
 					<select name="option" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 					<?php
 
-					foreach ($databases as $db => $database) {
+					foreach ($ui_databases as $db => $database) {
 						if(! preg_match("/($curcat)/i", $database)) {
 							continue;
 						}
@@ -198,7 +198,7 @@ include("head.inc");
 
 					foreach($periods as $period => $interval) {
 						/* check which databases are valid for our category */
-						foreach($databases as $curdatabase) {
+						foreach($ui_databases as $curdatabase) {
 							if(! preg_match("/($curcat)/i", $curdatabase)) {
 								continue;
 							}
@@ -210,7 +210,9 @@ include("head.inc");
 									/* only show interfaces with a gateway */
 									$optionc = "$optionc[0]";
 									if(!interface_has_gateway($optionc)) {
-										continue 2; 
+										if(!preg_match("/($optionc)-(quality)/", $curdatabase)) {
+											continue 2;
+										}
 									}
 									if(! preg_match("/($optionc)[-.]/i", $curdatabase)) {
 										continue 2;
@@ -235,8 +237,6 @@ include("head.inc");
 								echo "SRC=\"status_rrd_graph_img.php?interval=$interval&amp;database={$curdatabase}&amp;style={$curstyle}\" />\n";
 								echo "<br /><hr><br />\n";								
 								echo "</td></tr>\n";
-							} else {
-								echo "<b>There is no database available to generate $prettydb from.</b>";
 							}
 						}
 					}

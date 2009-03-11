@@ -54,6 +54,9 @@ if ($_GET['interval']) {
 $curif = split("-", $curdatabase);
 $curif = "$curif[0]";
 $friendly = convert_friendly_interface_to_friendly_descr(strtolower($curif));
+if($friendly == "") {
+	$friendly = $curif;
+}
 $search = array("-", ".rrd", $curif);
 $replace = array(" :: ", "", $friendly);
 $prettydb = ucwords(str_replace($search, $replace, $curdatabase));

@@ -88,10 +88,10 @@ $gateways_status = return_gateways_status();
                                                $online = "Warning, Packetloss";
                                                 $bgcolor = "khaki";
                                                 break;
-					default:
-						$online = "No data";
-                                }
-                                echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
+										default:
+											$online = "No data";
+								}
+								echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
                         ?>
                         </table>
                   </td>

@@ -44,6 +44,12 @@ $gateways_status = return_gateways_status();
                   <td width="30%" class="listhdrr">Status</td>
                                 </tr>
          <?php foreach ($a_gateways as $gateway) { ?>
+             <?php
+                     $monitor = $gateway['monitor'];
+						if(empty($monitor)) {
+							$monitor = $gateway['gateway'];
+						}
+			 ?>
                 <tr>
                   <td class="listlr">
                                 <?=$gateway['name'];?>

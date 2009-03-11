@@ -789,7 +789,7 @@ EOD;
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
 			sleep("0.1");
-			log_error("IPSEC: Send a reload signal to the IPsec process");
+			log_error("IPSEC: Sent a reload signal to the IPsec process");
 			mwexec("/usr/local/sbin/racoonctl -s /var/run/racoon.sock reload-config", false);
 		} else {
 			/* flush SA + SPD entries */

@@ -40,7 +40,8 @@ $gateways_status = return_gateways_status();
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
                   <td width="10%" class="listhdrr">Gateway</td>
-                  <td width="30%" class="listhdrr">RTT</td>
+                  <td width="10%" class="listhdrr">RTT</td>
+                  <td width="10%" class="listhdrr">Loss</td>
                   <td width="30%" class="listhdrr">Status</td>
                                 </tr>
          <?php foreach ($a_gateways as $gateway) { ?>
@@ -59,6 +60,9 @@ $gateways_status = return_gateways_status();
                   </td>
                   <td class="listr" align="center" >
 								<?=$gateways_status[$monitor]['delay'];?>
+				  </td>
+                  <td class="listr" align="center" >
+								<?=$gateways_status[$monitor]['loss'];?>
 				  </td>
                   <td class="listr" >
                         <table border="0" cellpadding="0" cellspacing="2">

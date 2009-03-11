@@ -70,7 +70,7 @@ $counter = 1;
 								<?=$gateways_status[$monitor]['loss'];?>
 								<?php $counter++; ?>
 				  </td>
-                  <td class="listr" >
+                  <td class="listr" id=\"gateway<?=$counter?>\" >
                         <table border="0" cellpadding="0" cellspacing="2">
                         <?php
                                 $monitor = $gateway['monitor'];
@@ -97,7 +97,7 @@ $counter = 1;
 										default:
 											$online = "No data";
 								}
-								echo "<tr><td id=\"gateway{$counter}\" bgcolor=\"$bgcolor\" > $online </td>";
+								echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
 								$counter++;
                         ?>
                         </table>

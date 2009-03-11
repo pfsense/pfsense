@@ -53,7 +53,7 @@ function get_gatewaystats() {
 			default:
 				$online = "No data";
 		}
-		$data .= "<tr><td id=\"gateway{$counter}\" bgcolor=\"$bgcolor\" > $online </td>";
+		$data .= "<table><tr><td bgcolor=\"$bgcolor\" > $online </td></td></tr></table>";
 	}
 	return $data;
 }

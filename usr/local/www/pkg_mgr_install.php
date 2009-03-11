@@ -150,6 +150,17 @@ switch($_GET['mode']) {
 		start_service(htmlspecialchars($_GET['pkg']));
 		update_output_window($static_output);
 		break;
+	case "installedinfo":
+		$id = get_pkg_id(htmlspecialchars($_GET['pkg']));
+		if(file_exists("/tmp/{$_GET['pkg']}.info")) {
+			$filename = escapeshellcmd("/tmp/" . $_GET['pkg']  . ".info");
+			$status = file_get_contents($filename);
+			update_status($_GET['pkg']  . " installation completed.");
+			update_output_window($status);
+		} else {
+			update_output_window("Could not find {$_GET['pkg']}.");
+		}
+		break;
 	case "reinstallall":
 		if ($config['installedpackages']['package'])
 			exec("rm -rf /var/db/pkg/*");
@@ -177,15 +188,21 @@ switch($_GET['mode']) {
 		if($status == -1) {
 			update_status("Installation of " . htmlspecialchars($_GET['id']) . " FAILED!");
 			$static_output .= "\n\nInstallation halted.";
+			update_output_window($static_output);
 		} else {
-			update_status("Installation of " . htmlspecialchars($_GET['id']) . " completed.");
+			$filename = escapeshellcmd("/tmp/" . $_GET['pkg']  . ".info");
+			$fd = fopen($filename, "w");
+			$status_a = "Installation of " . htmlspecialchars($_GET['id']) . " completed.";
+			update_status($status_a);
 			$status = get_after_install_info($_GET['id']);
 			if($status) 
 				$static_output .= "\nInstallation completed.\n\n{$_GET['id']} setup instructions:\n\n{$status}";
 			else
 				$static_output .= "\nInstallation completed.   Please check to make sure that the package is configured from the respective menu then start the package.";
+			fwrite($fd, $status_a . "\n\n". $static_output);
+			fclose($fd);
+			echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['id']}\";</script>";
 		}
-		update_output_window($static_output);
 }
 
 // Delete all temporary package tarballs and staging areas.

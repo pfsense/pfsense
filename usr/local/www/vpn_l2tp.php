@@ -271,7 +271,7 @@ function enable_change(enable_over) {
 
 			<select name="interface" class="formselect" id="interface">
 			  <?php
-				$interfaces = get_configured_interfaces_with_descr();
+				$interfaces = get_configured_interface_with_descr();
 				foreach ($interfaces as $iface => $ifacename):
 			  ?>
 			  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>

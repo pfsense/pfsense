@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>5.5</version>
+	<version>5.6</version>
 	<lastchange></lastchange>
 	<theme>nervecenter</theme>
 	<sysctl>

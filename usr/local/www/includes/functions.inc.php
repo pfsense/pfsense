@@ -178,7 +178,6 @@ function mem_usage()
 	return $memUsage;
 }
 
-<<<<<<< HEAD:usr/local/www/includes/functions.inc.php
 function update_date_time() {
 	
 	$datetime = date("D M j G:i:s T Y");
@@ -264,6 +263,3 @@ function get_interfacestatus(){
 }
 
 ?>
-=======
-?>
->>>>>>> 9d75714... cleaner and more proper cpu graph:usr/local/www/includes/functions.inc.php

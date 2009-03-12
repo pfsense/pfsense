@@ -64,6 +64,7 @@ if (isset($p2index) && $a_phase2[$p2index])
 	$pconfig['ikeid'] = $a_phase2[$p2index]['ikeid'];
 	$pconfig['disabled'] = isset($a_phase2[$p2index]['disabled']);
 	$pconfig['descr'] = $a_phase2[$p2index]['descr'];
+	$old_ph2ent = $a_phase2[$p2index];
 
 	idinfo_to_pconfig("local",$a_phase2[$p2index]['localid'],$pconfig);
 	idinfo_to_pconfig("remote",$a_phase2[$p2index]['remoteid'],$pconfig);
@@ -169,6 +170,14 @@ if ($_POST) {
 			$a_phase2[$p2index] = $ph2ent;
 		else
 			$a_phase2[] = $ph2ent;
+
+
+		/* now we need to find all phase2 entries for this host */
+		if(is_array($ph2ent)) {
+			ipsec_lookup_phase1($ph2ent, $ph1ent);
+			$old_ph1ent = $ph1ent;
+			reload_tunnel_spd_policy ($ph1ent, $ph2ent, $old_ph1ent, $old_ph2ent);
+		}
 
 		write_config();
 		touch($d_ipsecconfdirty_path);

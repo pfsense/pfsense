@@ -2163,6 +2163,46 @@ endif;
 		$config['version'] = "5.5";
 	}
 
+	/* Convert 5.5 -> 5.6 */
+	if ($config['version'] <= 5.5) {
+
+		/* migrate ipsec ca's to cert manager */
+		if (!is_array($config['system']['ca']))
+			$config['system']['ca'] = array();
+		if (!is_array($config['system']['cert']))
+			$config['system']['cert'] = array();
+		if (is_array($config['ipsec']['cacert'])) {
+			foreach($config['ipsec']['cacert'], & $cacert) {
+				$ca = new array();
+				$ca['crt'] = $cacert['cert'];
+				$ca['name'] = $cacert['ident'];
+				$config['system']['ca'][] = $ca;
+			}
+			unset($config['ipsec']['cacert']);
+		}
+
+		/* migrate phase1 certificates to cert manager */
+		if (is_array($config['ipsec']['phase1'])) {
+			foreach($config['ipsec']['phase1'], & $ph1ent) {
+				if($ph1ent['cert'] && $ph1ent['private-key']) {
+					$cert = new array();
+					$cert['name'] = "IPsec Peer {$ph1ent['remote-gateway']} Certificate";
+					$cert['crt'] = $ph1ent['cert'];
+					$cert['prv'] = $ph1ent['private-key'];
+					$config['system']['cert'][] = $cert;
+				}
+				if($ph1ent['cert'])
+					unset($ph1ent['cert']);
+				if($ph1ent['private-key'])
+					unset($ph1ent['private-key']);
+				if($ph1ent['peercert'])
+					unset($ph1ent['peercert']);
+			}
+		}
+
+		$config['version'] = "5.6";
+	}
+
 	$now = date("H:i:s");
 	log_error("Ended Configuration upgrade at $now");
 

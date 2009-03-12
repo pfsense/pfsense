@@ -106,6 +106,24 @@ if ($act == "exp") {
 	exit;
 }
 
+if ($act == "key") {
+
+	if (!$a_cert[$id]) {
+		pfSenseHeader("system_certmanager.php");
+		exit;
+	}
+
+	$exp_name = urlencode("{$a_cert[$id]['name']}.key");
+	$exp_data = base64_decode($a_cert[$id]['prv']);
+	$exp_size = strlen($exp_data);
+
+	header("Content-Type: application/octet-stream");
+	header("Content-Disposition: attachment; filename={$exp_name}");
+	header("Content-Length: $exp_size");
+	echo $exp_data;
+	exit;
+}
+
 if ($act == "csr") {
 
 	if (!$a_cert[$id]) {
@@ -721,6 +739,9 @@ function internalca_change() {
 						<td valign="middle" nowrap class="list">
 							<a href="system_certmanager.php?act=exp&id=<?=$i;?>")">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export cert" alt="export ca" width="17" height="17" border="0" />
+							</a>
+							<a href="system_certmanager.php?act=key&id=<?=$i;?>")">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export key" alt="export ca" width="17" height="17" border="0" />
 							</a>
 							<a href="system_certmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete cert" alt="delete cert" width="17" height="17" border="0" />

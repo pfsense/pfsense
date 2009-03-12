@@ -209,23 +209,22 @@ function vpn_ipsec_configure($ipchg = false)
 		}
 
 		/* generate CA certificates files */
-		$cacertnum = 0;
-		if (is_array($ipseccfg['cacert']) && count($ipseccfg['cacert'])) {
-			foreach ($ipseccfg['cacert'] as $cacert) {
-				++ $cacertnum;
-				if (isset ($cacert['cert'])) {
-					$cert = base64_decode($cacert['cert']);
-					$x509cert = openssl_x509_parse(openssl_x509_read($cert));
-					if (is_array($x509cert) && isset ($x509cert['hash'])) {
-						$fd1 = fopen("{$g['varetc_path']}/{$x509cert['hash']}.0", "w");
-						if (!$fd1) {
-							printf("Error: cannot open {$x509cert['hash']}.0 in vpn.\n");
-							return 1;
-						}
-						chmod("{$g['varetc_path']}/{$x509cert['hash']}.0", 0600);
-						fwrite($fd1, $cert);
-						fclose($fd1);
-					}
+		if (is_array($config['system']['ca']) && count($config['system']['ca'])) {
+			foreach ($config['system']['ca'] as $ca) {
+				if (!isset($ca['crt'])) {
+					log_error("Error: Invalid certificate info for {$ca['name']}");
+					continue;
+				}
+				$cert = base64_decode($ca['crt']);
+				$x509cert = openssl_x509_parse(openssl_x509_read($cert));
+				if (!is_array($x509cert) || !isset($x509cert['hash'])) {
+					log_error("Error: Invalid certificate hash info for {$ca['name']}");
+					continue;
+				}
+				$fname = $g['varetc_path']."/".$x509cert['hash'];
+				if (!file_put_contents($fname, $cert)) {
+					log_error("Error: Cannot write IPsec CA file for {$ca['name']}");
+					continue;
 				}
 			}
 		}
@@ -487,52 +486,38 @@ function vpn_ipsec_configure($ipchg = false)
 					$certline = '';
 
 					if (strstr($authmethod,'rsa')) {
-						if ($ph1ent['cert'] && $ph1ent['private-key']) {
-							$cert = base64_decode($ph1ent['cert']);
-							$private_key = base64_decode($ph1ent['private-key']);
-						} else {
-							/* null certificate/key */
-							$cert = '';
-							$private_key = '';
+
+						$cert = lookup_cert($ph1ent['certref']);
+
+						if (!$cert)
+						{
+							log_error("Error: Invalid phase1 certificate reference for {$ph1ent['name']}");
+							continue;
 						}
 
-						if ($ph1ent['peercert'])
-							$peercert = base64_decode($ph1ent['peercert']);
-						else
-							$peercert = '';
+						$certfile = "cert-".$ikeid.".crt";
+						$certpath = $g['varetc_path']."/".$certfile;
 
-						$fd1 = fopen("{$g['varetc_path']}/server{$ikeid}-signed.pem", "w");
-						if (!$fd1) {
-							printf("Error: cannot open server{$ikeid}-signed.pem in vpn.\n");
-							return 1;
+						if (!file_put_contents($certpath, base64_decode($cert['crt'])))
+						{
+							log_error("Error: Cannot write phase1 certificate file for {$ph1ent['name']}");
+							continue;
 						}
-						
-						chmod("{$g['varetc_path']}/server{$ikeid}-signed.pem", 0600);
-						fwrite($fd1, $cert);
-						fclose($fd1);
 
-						$fd1 = fopen("{$g['varetc_path']}/server{$ikeid}-key.pem", "w");
-						if (!$fd1) {
-							printf("Error: cannot open server{$ikeid}-key.pem in vpn.\n");
-							return 1;
+						chmod($certpath, 0600);
+
+						$keyfile = "cert-".$ikeid.".key";
+						$keypath = $g['varetc_path']."/".$keyfile;
+
+						if (!file_put_contents($keypath, base64_decode($cert['crt'])))
+						{
+							log_error("Error: Cannot write phase1 key file for {$ph1ent['name']}");
+							continue;
 						}
-						chmod("{$g['varetc_path']}/server{$ikeid}-key.pem", 0600);
-						fwrite($fd1, $private_key);
-						fclose($fd1);
 
-						$certline = "certificate_type x509 \"server{$ikeid}-signed.pem\" \"server{$ikeid}-key.pem\";";
+						chmod($keypath, 0600);
 
-						if ($peercert != '') {
-							$fd1 = fopen("{$g['varetc_path']}/peer{$ikeid}-signed.pem", "w");
-							if (!$fd1) {
-								printf("Error: cannot open server{$ikeid}-signed.pem in vpn.\n");
-								return 1;
-							}
-							chmod("{$g['varetc_path']}/peer{$ikeid}-signed.pem", 0600);
-							fwrite($fd1, $peercert);
-							fclose($fd1);
-							$certline .="peers_certfile \"peer{$ikeid}-signed.pem\"";
-						}
+						$certline = "certificate_type x509 \"{$certpath}\" \"{$keypath}.key\";";
 					}
 
 					$ealgos = '';

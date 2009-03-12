@@ -95,9 +95,7 @@ if (isset($p1index) && $a_phase1[$p1index])
 		($pconfig['authentication_method'] == "xauth_psk_server")) {
 		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
 	} else {
-		$pconfig['cert'] = base64_decode($a_phase1[$p1index]['cert']);
-		$pconfig['peercert'] = base64_decode($a_phase1[$p1index]['peercert']);
-		$pconfig['privatekey'] = base64_decode($a_phase1[$p1index]['private-key']);
+		$pconfig['certref'] = $a_phase1[$p1index]['certref'];
 	}
 
 	$pconfig['descr'] = $a_phase1[$p1index]['descr'];
@@ -146,13 +144,9 @@ if ($_POST) {
 	if (($method == "pre_shared_key")||($method == "xauth_psk_server")) {
 		$reqdfields = explode(" ", "pskey");
 		$reqdfieldsn = explode(",", "Pre-Shared Key");
-	} else	{
-		if (!strstr($pconfig['cert'], "BEGIN CERTIFICATE") || !strstr($pconfig['cert'], "END CERTIFICATE"))
-			$input_errors[] = "This certificate does not appear to be valid.";
-		if (!strstr($pconfig['privatekey'], "BEGIN RSA PRIVATE KEY") || !strstr($pconfig['privatekey'], "END RSA PRIVATE KEY"))
-			$input_errors[] = "This key does not appear to be valid.";
-		if ($pconfig['peercert']!="" && (!strstr($pconfig['peercert'], "BEGIN CERTIFICATE") || !strstr($pconfig['peercert'], "END CERTIFICATE")))
-			$input_errors[] = "This peer certificate does not appear to be valid.";
+	} else {
+		$reqdfields = explode(" ", "certref");
+		$reqdfieldsn = explode(",", "My Certificate");
 	}
 	if (!$pconfig['mobile']) {
 		$reqdfields[] = "remotegw";
@@ -297,8 +291,7 @@ if ($_POST) {
 		$ph1ent['lifetime'] = $pconfig['lifetime'];
 		$ph1ent['pre-shared-key'] = $pconfig['pskey'];
 		$ph1ent['private-key'] = base64_encode($pconfig['privatekey']);
-		$ph1ent['cert'] = base64_encode($pconfig['cert']);
-		$ph1ent['peercert'] = base64_encode($pconfig['peercert']);
+		$ph1ent['certref'] = $pconfig['certref'];
 		$ph1ent['authentication_method'] = $pconfig['authentication_method'];
 
 		$ph1ent['descr'] = $pconfig['descr'];
@@ -378,22 +371,16 @@ function methodsel_change() {
 	switch (value) {
 		case 'hybrid_rsa_server':
 			document.getElementById('opt_psk').style.display = 'none';
-			document.getElementById('opt_my_cert').style.display = '';
-			document.getElementById('opt_my_pkey').style.display = '';
-			document.getElementById('opt_peer_cert').style.display = 'none';
+			document.getElementById('opt_cert').style.display = '';
 			break;
 		case 'xauth_rsa_server':
 		case 'rsasig':
 			document.getElementById('opt_psk').style.display = 'none';
-			document.getElementById('opt_my_cert').style.display = '';
-			document.getElementById('opt_my_pkey').style.display = '';
-			document.getElementById('opt_peer_cert').style.display = '';
+			document.getElementById('opt_cert').style.display = '';
 			break;
 		default: /* psk modes*/
 			document.getElementById('opt_psk').style.display = '';
-			document.getElementById('opt_my_cert').style.display = 'none';
-			document.getElementById('opt_my_pkey').style.display = 'none';
-			document.getElementById('opt_peer_cert').style.display = 'none';
+			document.getElementById('opt_cert').style.display = 'none';
 			break;
 	}
 }
@@ -462,7 +449,6 @@ function dpdchkbox_change() {
 				$tab_array = array();
 				$tab_array[0] = array("Tunnels", true, "vpn_ipsec.php");
 				$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array("CAs", false, "vpn_ipsec_ca.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>
@@ -660,9 +646,9 @@ function dpdchkbox_change() {
 							<?php endforeach; ?>
 							</select>
 							<br>
-								<span class="vexpl">
-									Must match the setting chosen on the remote side.
-								</span>
+							<span class="vexpl">
+								Must match the setting chosen on the remote side.
+							</span>
 						</td>
 					</tr>
 					<tr id="opt_psk">
@@ -670,37 +656,29 @@ function dpdchkbox_change() {
 						<td width="78%" class="vtable">
 							<?=$mandfldhtml;?>
 							<input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=htmlspecialchars($pconfig['pskey']);?>">
+							<span class="vexpl">
+							<br>
+								Input your pre-shared key string.
+							</span>
 						</td>
 					</tr>
-					<tr id="opt_my_cert">
+					<tr id="opt_cert">
 						<td width="22%" valign="top" class="vncellreq">My Certificate</td>
 						<td width="78%" class="vtable">
-							<textarea name="cert" cols="65" rows="7" id="cert" class="formpre">
-								<?=htmlspecialchars($pconfig['cert']);?>
-							</textarea>
+							<select name='certref' class="formselect">
+							<?php
+								foreach ($config['system']['cert'] as $cert):
+									$selected = "";
+									if ($pconfig['certref'] == $cert['refid'])
+										$selected = "selected";
+							?>
+								<option value="<?=$cert['refid'];?>" <?=$selected;?>><?=$cert['name'];?></option>
+							<?php endforeach; ?>
+							</select>
 							<br>
-							Paste a certificate in X.509 PEM format here.
-						</td>
-					</tr>
-					<tr id="opt_my_pkey">
-						<td width="22%" valign="top" class="vncellreq">My Private Key</td>
-						<td width="78%" class="vtable">
-							<textarea name="privatekey" cols="65" rows="7" id="privatekey" class="formpre">
-								<?=htmlspecialchars($pconfig['privatekey']);?>
-							</textarea>
-							<br>
-							Paste an RSA private key in PEM format here.
-						</td>
-					</tr>
-					<tr id="opt_peer_cert">
-						<td width="22%" valign="top" class="vncell">Peer Certificate</td>
-						<td width="78%" class="vtable">
-							<textarea name="peercert" cols="65" rows="7" id="peercert" class="formpre">
-								<?=htmlspecialchars($pconfig['peercert']);?>
-							</textarea>
-							<br>
-							Paste the peer X.509 certificate in PEM format here.<br>
-							Leave this blank if you want to use a CA certificate for identity validation.
+							<span class="vexpl">
+								Select a certificate previously configured in the Certificate Manager.
+							</span>
 						</td>
 					</tr>
 					<tr>
@@ -740,7 +718,7 @@ function dpdchkbox_change() {
 								<input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=$pconfig['dpd_maxfail'];?>">
 								retries<br>
 								<span class="vexpl">
-									Number consecutive failures allowed before disconnect.
+									Number of consecutive failures allowed before disconnect.
 								</span>
 								<br>
 							</div>

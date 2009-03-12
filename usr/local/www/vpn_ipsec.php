@@ -146,7 +146,6 @@ include("head.inc");
 				$tab_array = array();
 				$tab_array[0] = array("Tunnels", true, "vpn_ipsec.php");
 				$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array("CAs", false, "vpn_ipsec_ca.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>

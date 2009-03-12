@@ -1557,8 +1557,11 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		return false;
 	}
 
-	if((!is_ipaddr($oldep)) || (! is_ipaddr($ep)) || (! is_ipaddr($rgip)) || (! is_ipaddr($old_gw))) {
-		log_error("IPSEC: ERROR: One of the local or remote endpoints did not resolve to a IP address, aborting");
+	if((!is_ipaddr($old_ep)) || (! is_ipaddr($ep))) {
+		log_error("IPSEC: ERROR: One of the endpoints is not a IP address. Old EP '{$old_ep}' new EP '{$ep}'");
+	}
+	if((! is_ipaddr($rgip)) || (! is_ipaddr($old_gw))) {
+		log_error("IPSEC: ERROR: One of the remote endpoints is not a IP address. Old RG '{$old_gw}' new RG '{$rgip}'");
 	}
 
 	$spdconf = "";

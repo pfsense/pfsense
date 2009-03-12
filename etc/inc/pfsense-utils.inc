@@ -3036,13 +3036,17 @@ function get_interface_info($ifdescr) {
 	unset($ifconfiginfo, $link0);
 	exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
 	foreach ($ifconfiginfo as $ici) {
-		if (preg_match("/inet (\S+)/", $ici, $matches)) 
+		if (preg_match("/inet (\S+)/", $ici, $matches)) {
 			$ifinfo['ipaddr'] = $matches[1];
-		else if (preg_match("/netmask (\S+)/", $ici, $matches))
-			if (preg_match("/^0x/", $matches[1]))
+		}
+		if (preg_match("/netmask (\S+)/", $ici, $matches)) {
+			if (preg_match("/^0x/", $matches[1])) {
 				$ifinfo['subnet'] = long2ip(hexdec($matches[1]));
-		if (strpos($ici, 'LINK0') !== false)
+			}
+		}
+		if (strpos($ici, 'LINK0') !== false) {
 			$link0 = "down";
+		}
 	}
 
 	switch ($config['interfaces'][$if]['ipaddr']) {

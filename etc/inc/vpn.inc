@@ -1572,8 +1572,11 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		return false;
 	}
 
-	$spdconf = "";
+	if((!ip_addr($oldep)) || (! is_ipaddr($ep)) || (! is_ipaddr($rgip)) || (! is_ipaddr($old_gw))) {
+		log_error("IPSEC: ERROR: One of the local or remote endpoints did not resolve to a IP address, aborting");
+	}
 
+	$spdconf = "";
 	/* Delete old SPD policies if there are changes between the old and new */
 	if(($phase1 != $old_phase1) || ($phase2 != $old_phase2)) {
 		$spdconf .= "spddelete {$old_local_subnet} " .

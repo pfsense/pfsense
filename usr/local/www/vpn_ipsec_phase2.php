@@ -254,223 +254,265 @@ function typesel_change_remote(bits) {
 <?php endif; ?>
 
 //-->
-
 </script>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="vpn_ipsec_phase2.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Mode</td>
-                  <td width="78%" class="vtable"> Tunnel</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Disabled</td>
-                  <td width="78%" class="vtable">
-                    <input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
-                    <strong>Disable this phase2 entry</strong><br>
-                    <span class="vexpl">Set this option to disable this phase2 entry without
-                      removing it from the list.
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Local Network</td>
-                  <td width="78%" class="vtable">
-                    <table border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td>Type:&nbsp;&nbsp;</td>
-                        <td></td>
-                        <td>
-                          <select name="localid_type" class="formselect" onChange="typesel_change_local()">
-                            <option value="address" <?php if ($pconfig['localid_type'] == "address") echo "selected";?>>Address</option>
-                            <option value="network" <?php if ($pconfig['localid_type'] == "network") echo "selected";?>>Network</option>
-                            <option value="lan" <?php if ($pconfig['localid_type'] == "lan" ) echo "selected";?>>LAN subnet</option>
-                          </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Address:&nbsp;&nbsp;</td>
-                        <td><?=$mandfldhtmlspc;?></td>
-                        <td>
-                          <input name="localid_address" type="text" class="formfld unknown" id="localid_address" size="20" value="<?=$pconfig['localid_address'];?>">
-                          /
-                          <select name="localid_netbits" class="formselect" id="localid_netbits">
-                            <?php for ($i = 32; $i >= 0; $i--): ?>
-                            <option value="<?=$i;?>" <?php if ($i == $pconfig['localid_netbits']) echo "selected"; ?>>
-                              <?=$i;?>
-                            </option>
-                            <?php endfor; ?>
-                          </select>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <?php if (!isset($pconfig['mobile'])): ?>
-				<tr>
-                  <td width="22%" valign="top" class="vncellreq">Remote Network</td>
-                  <td width="78%" class="vtable">
-                    <table border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td>Type:&nbsp;&nbsp;</td>
-                        <td></td>
-                        <td>
-                          <select name="remoteid_type" class="formselect" onChange="typesel_change_remote()">
-                            <option value="address" <?php if ($pconfig['remoteid_type'] == "address") echo "selected"; ?>>Address</option>
-                            <option value="network" <?php if ($pconfig['remoteid_type'] == "network") echo "selected"; ?>>Network</option>
-                          </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Address:&nbsp;&nbsp;</td>
-                        <td><?=$mandfldhtmlspc;?></td>
-                        <td>
-                          <input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="20" value="<?=$pconfig['remoteid_address'];?>">
-                          /
-                          <select name="remoteid_netbits" class="formselect" id="remoteid_netbits">
-                            <?php for ($i = 32; $i >= 0; $i--): ?>
-                            <option value="<?=$i;?>" <?php if ($i == $pconfig['remoteid_netbits']) echo "selected"; ?>>
-                              <?=$i;?>
-                            </option>
-                            <?php endfor; ?>
-                          </select>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <?php endif; ?>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
-                <tr>
-                  <td colspan="2" valign="top" class="listtopic">Phase 2 proposal
-                    (SA/Key Exchange)
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Protocol</td>
-                  <td width="78%" class="vtable">
-                    <select name="proto" class="formselect">
-                      <?php foreach ($p2_protos as $proto => $protoname): ?>
-                      <option value="<?=$proto;?>" <?php if ($proto == $pconfig['proto']) echo "selected"; ?>>
-                        <?=htmlspecialchars($protoname);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select>
-                    <br>
-                    <span class="vexpl">ESP is encryption, AH is authentication only </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Encryption algorithms</td>
-                  <td width="78%" class="vtable">
-                    <table border="0" cellspacing="0" cellpadding="0">
-                      <?php
-                        foreach ($p2_ealgos as $algo => $algodata):
-                        $checked = '';
-                        if (in_array($algo,$pconfig['ealgos']))
-                          $checked = " checked";
-                      ?>
-                      <tr>
-                        <td>
-                          <input type="checkbox" name="ealgos[]" value="<?=$algo;?>"<?=$checked?>>
+
+<form action="vpn_ipsec_phase2.php" method="post" name="iform" id="iform">
+
+<?php
+	if ($input_errors)
+		print_input_errors($input_errors);
+?>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr class="tabnavtbl">
+		<td id="tabnav">
+			<?php
+				$tab_array = array();
+				$tab_array[0] = array("Tunnels", true, "vpn_ipsec.php");
+				$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
+				$tab_array[2] = array("CAs", false, "vpn_ipsec_ca.php");
+				display_top_tabs($tab_array);
+			?>
+		</td>
+	</tr>
+	<tr>
+		<td id="mainarea">
+			<div class="tabcont">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Mode</td>
+						<td width="78%" class="vtable"> Tunnel</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Disabled</td>
+						<td width="78%" class="vtable">
+							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
+							<strong>Disable this phase2 entry</strong>
+							<br>
+							<span class="vexpl">Set this option to disable this phase2 entry without
+							  removing it from the list.
+							</span>
 						</td>
-                        <td>
-                          <?=htmlspecialchars($algodata['name']);?>
-                        </td>
-                        <td>
-                          <?php if(is_array($algodata['keysel'])): ?>
-                          &nbsp;&nbsp;
-                          <select name="keylen_<?=$algo;?>" class="formselect">
-                            <option value="auto">auto</option>
-                            <?php
-                              $key_hi = $algodata['keysel']['hi'];
-                              $key_lo = $algodata['keysel']['lo'];
-                              $key_step = $algodata['keysel']['step'];
-                              for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step):
-                                $selected = '';
-//                                if ($checked && in_array("keylen_".$algo,$pconfig))
-                                  if ($keylen == $pconfig["keylen_".$algo])
-                                    $selected = " selected";
-                             ?>
-                            <option value="<?=$keylen;?>"<?=$selected;?>><?=$keylen;?> bits</option>
-                            <?php endfor; ?>
-                          </select>
-                          <?php endif; ?>
-                        </td>
-                      </tr>
-                      <?php endforeach; ?>
-                    </table>
-                    <br>
-                    Hint: use 3DES for best compatibility or if you have a hardware
-                    crypto accelerator card. Blowfish is usually the fastest in
-                    software encryption.
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Hash algorithms</td>
-                  <td width="78%" class="vtable">
-                    <?php foreach ($p2_halgos as $algo => $algoname): ?>
-                    <input type="checkbox" name="halgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['halgos'])) echo "checked"; ?>>
-                    <?=htmlspecialchars($algoname);?>
-                    <br>
-                    <?php endforeach; ?>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">PFS key group</td>
-                  <td width="78%" class="vtable">
-					<?php if (!isset($pconfig['mobile']) || !isset($a_client['pfs_group'])): ?>
-                    <select name="pfsgroup" class="formselect">
-                      <?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
-                      <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['pfsgroup']) echo "selected"; ?>>
-                        <?=htmlspecialchars($keygroupname);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select>
-                    <br>
-                    <span class="vexpl"><em>1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit</em></span>
-					<?php else: ?>
-                    <select class="formselect" disabled>
-                      <option selected><?=$p2_pfskeygroups[$a_client['pfs_group']];?></option>
-                    </select>
-                    <input name="pfsgroup" type="hidden" value="<?=$pconfig['pfsgroup'];?>">
-                    <br>
-                    <span class="vexpl"><em>Set globally in mobile client options</em></span>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Local Network</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<td>Type:&nbsp;&nbsp;</td>
+									<td></td>
+									<td>
+										<select name="localid_type" class="formselect" onChange="typesel_change_local()">
+											<option value="address" <?php if ($pconfig['localid_type'] == "address") echo "selected";?>>Address</option>
+											<option value="network" <?php if ($pconfig['localid_type'] == "network") echo "selected";?>>Network</option>
+											<option value="lan" <?php if ($pconfig['localid_type'] == "lan" ) echo "selected";?>>LAN subnet</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Address:&nbsp;&nbsp;</td>
+									<td><?=$mandfldhtmlspc;?></td>
+									<td>
+										<input name="localid_address" type="text" class="formfld unknown" id="localid_address" size="20" value="<?=$pconfig['localid_address'];?>">
+										/
+										<select name="localid_netbits" class="formselect" id="localid_netbits">
+										<?php for ($i = 32; $i >= 0; $i--): ?>
+											<option value="<?=$i;?>" <?php if ($i == $pconfig['localid_netbits']) echo "selected"; ?>>
+												<?=$i;?>
+											</option>
+										<?php endfor; ?>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+
+					<?php if (!isset($pconfig['mobile'])): ?>
+					
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Remote Network</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<td>Type:&nbsp;&nbsp;</td>
+									<td></td>
+									<td>
+										<select name="remoteid_type" class="formselect" onChange="typesel_change_remote()">
+											<option value="address" <?php if ($pconfig['remoteid_type'] == "address") echo "selected"; ?>>Address</option>
+											<option value="network" <?php if ($pconfig['remoteid_type'] == "network") echo "selected"; ?>>Network</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Address:&nbsp;&nbsp;</td>
+									<td><?=$mandfldhtmlspc;?></td>
+									<td>
+										<input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="20" value="<?=$pconfig['remoteid_address'];?>">
+										/
+										<select name="remoteid_netbits" class="formselect" id="remoteid_netbits">
+										<?php for ($i = 32; $i >= 0; $i--): ?>
+											<option value="<?=$i;?>" <?php if ($i == $pconfig['remoteid_netbits']) echo "selected"; ?>>
+												<?=$i;?>
+											</option>
+										<?php endfor; ?>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					
 					<?php endif; ?>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Lifetime</td>
-                  <td width="78%" class="vtable">
-                    <input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=$pconfig['lifetime'];?>">
-                    seconds
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-                    <?php if (isset($p2index) && $a_phase2[$p2index]): ?>
-                    <input name="p2index" type="hidden" value="<?=$p2index;?>">
-                    <?php endif; ?>
-                    <?php if ($pconfig['mobile']): ?>
-                    <input name="mobile" type="hidden" value="true">
-                    <input name="remoteid_type" type="hidden" value="mobile">
-                    <?php endif; ?>
-                    <input name="Submit" type="submit" class="formbtn" value="Save">
-                    <input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
-                  </td>
-                </tr>
-              </table>
+					
+					<tr>
+						<td width="22%" valign="top" class="vncell">Description</td>
+						<td width="78%" class="vtable">
+							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+							<br>
+							<span class="vexpl">
+								You may enter a description here
+								for your reference (not parsed).
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="list" height="12"></td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">
+							Phase 2 proposal (SA/Key Exchange)
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Protocol</td>
+						<td width="78%" class="vtable">
+							<select name="proto" class="formselect">
+							<?php foreach ($p2_protos as $proto => $protoname): ?>
+								<option value="<?=$proto;?>" <?php if ($proto == $pconfig['proto']) echo "selected"; ?>>
+									<?=htmlspecialchars($protoname);?>
+								</option>
+							<?php endforeach; ?>
+							</select>
+							<br>
+							<span class="vexpl">
+								ESP is encryption, AH is authentication only
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Encryption algorithms</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellspacing="0" cellpadding="0">
+							<?php
+								foreach ($p2_ealgos as $algo => $algodata):
+									$checked = '';
+									if (in_array($algo,$pconfig['ealgos']))
+										$checked = " checked";
+								?>
+								<tr>
+									<td>
+										<input type="checkbox" name="ealgos[]" value="<?=$algo;?>"<?=$checked?>>
+									</td>
+									<td>
+										<?=htmlspecialchars($algodata['name']);?>
+									</td>
+									<td>
+										<?php if(is_array($algodata['keysel'])): ?>
+										&nbsp;&nbsp;
+										<select name="keylen_<?=$algo;?>" class="formselect">
+											<option value="auto">auto</option>
+											<?php
+												$key_hi = $algodata['keysel']['hi'];
+												$key_lo = $algodata['keysel']['lo'];
+												$key_step = $algodata['keysel']['step'];
+												for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step):
+													$selected = '';
+				//									if ($checked && in_array("keylen_".$algo,$pconfig))
+													if ($keylen == $pconfig["keylen_".$algo])
+														$selected = " selected";
+											?>
+											<option value="<?=$keylen;?>"<?=$selected;?>><?=$keylen;?> bits</option>
+											<?php endfor; ?>
+										</select>
+										<?php endif; ?>
+									</td>
+								</tr>
+								
+								<?php endforeach; ?>
+								
+							</table>
+							<br>
+							Hint: use 3DES for best compatibility or if you have a hardware
+							crypto accelerator card. Blowfish is usually the fastest in
+							software encryption.
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Hash algorithms</td>
+						<td width="78%" class="vtable">
+						<?php foreach ($p2_halgos as $algo => $algoname): ?>
+							<input type="checkbox" name="halgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['halgos'])) echo "checked"; ?>>
+							<?=htmlspecialchars($algoname);?>
+							<br>
+						<?php endforeach; ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">PFS key group</td>
+						<td width="78%" class="vtable">
+						<?php if (!isset($pconfig['mobile']) || !isset($a_client['pfs_group'])): ?>
+							<select name="pfsgroup" class="formselect">
+							<?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
+								<option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['pfsgroup']) echo "selected"; ?>>
+									<?=htmlspecialchars($keygroupname);?>
+								</option>
+							<?php endforeach; ?>
+							</select>
+							<br>
+							<span class="vexpl">
+								<em>
+									1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit
+								</em>
+							</span>
+							
+							<?php else: ?>
+
+							<select class="formselect" disabled>
+								<option selected><?=$p2_pfskeygroups[$a_client['pfs_group']];?></option>
+							</select>
+							<input name="pfsgroup" type="hidden" value="<?=$pconfig['pfsgroup'];?>">
+							<br>
+							<span class="vexpl"><em>Set globally in mobile client options</em></span>
+						<?php endif; ?>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">Lifetime</td>
+						<td width="78%" class="vtable">
+							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=$pconfig['lifetime'];?>">
+							seconds
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top">&nbsp;</td>
+						<td width="78%">
+						<?php if (isset($p2index) && $a_phase2[$p2index]): ?>
+							<input name="p2index" type="hidden" value="<?=$p2index;?>">
+						<?php endif; ?>
+						<?php if ($pconfig['mobile']): ?>
+							<input name="mobile" type="hidden" value="true">
+							<input name="remoteid_type" type="hidden" value="mobile">
+						<?php endif; ?>
+							<input name="Submit" type="submit" class="formbtn" value="Save">
+							<input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
 </form>
 <script lannguage="JavaScript">
 <!--

@@ -283,6 +283,7 @@ function login_banner_change() {
 </script>
 
 <form action="vpn_ipsec_mobile.php" method="post" name="iform" id="iform">
+
 <?php
 	if ($savemsg)
 		print_info_box($savemsg);
@@ -293,8 +294,10 @@ function login_banner_change() {
 			$ph1found = true;
 	if ($pconfig['enable'] && !$ph1found)
 		print_info_box_np("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found.<br>Please click Create to define one.","create","Create Phase1");
+	if ($input_errors)
+		print_input_errors($input_errors);
 ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td class="tabnavtbl">
@@ -308,9 +311,9 @@ function login_banner_change() {
 		</td>
 	</tr>
 	<tr> 
-		<td>
-			<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+		<td id="mainarea">
+			<div class="tabcont">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
 						<td width="22%" valign="top" class="vncellreq">IKE Extensions</td>
 						<td width="78%" class="vtable">

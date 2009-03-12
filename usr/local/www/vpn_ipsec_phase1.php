@@ -357,18 +357,18 @@ function myidsel_change() {
 	index = document.iform.myid_type.selectedIndex;
 	value = document.iform.myid_type.options[index].value;
 	if (value == 'myaddress')
-			document.iform.myid_data.style.visibility = 'hidden';
+			document.getElementById('myid_data').style.visibility = 'hidden';
 	else
-			document.iform.myid_data.style.visibility = 'visible';
+			document.getElementById('myid_data').style.visibility = 'visible';
 }
 
 function peeridsel_change() {
 	index = document.iform.peerid_type.selectedIndex;
 	value = document.iform.peerid_type.options[index].value;
 	if (value == 'peeraddress')
-			document.iform.peerid_data.style.visibility = 'hidden';
+			document.getElementById('peerid_data').style.visibility = 'hidden';
 	else
-			document.iform.peerid_data.style.visibility = 'visible';
+			document.getElementById('peerid_data').style.visibility = 'visible';
 }
 
 function methodsel_change() {
@@ -377,23 +377,23 @@ function methodsel_change() {
 
 	switch (value) {
 		case 'hybrid_rsa_server':
-			document.iform.pskey.disabled = 1;
-			document.iform.privatekey.disabled = 0;
-			document.iform.cert.disabled = 0;
-			document.iform.peercert.disabled = 1;
+			document.getElementById('opt_psk').style.display = 'none';
+			document.getElementById('opt_my_cert').style.display = '';
+			document.getElementById('opt_my_pkey').style.display = '';
+			document.getElementById('opt_peer_cert').style.display = 'none';
 			break;
 		case 'xauth_rsa_server':
 		case 'rsasig':
-			document.iform.pskey.disabled = 1;
-			document.iform.privatekey.disabled = 0;
-			document.iform.cert.disabled = 0;
-			document.iform.peercert.disabled = 0;
+			document.getElementById('opt_psk').style.display = 'none';
+			document.getElementById('opt_my_cert').style.display = '';
+			document.getElementById('opt_my_pkey').style.display = '';
+			document.getElementById('opt_peer_cert').style.display = '';
 			break;
 		default: /* psk modes*/
-			document.iform.pskey.disabled = 0;
-			document.iform.privatekey.disabled = 1;
-			document.iform.cert.disabled = 1;
-			document.iform.peercert.disabled = 1;
+			document.getElementById('opt_psk').style.display = '';
+			document.getElementById('opt_my_cert').style.display = 'none';
+			document.getElementById('opt_my_pkey').style.display = 'none';
+			document.getElementById('opt_peer_cert').style.display = 'none';
 			break;
 	}
 }
@@ -433,13 +433,10 @@ function ealgosel_change(bits) {
 }
 
 function dpdchkbox_change() {
-	if( document.iform.dpd_enable.checked ) {
-			document.iform.dpd_delay.disabled = 0;
-			document.iform.dpd_maxfail.disabled = 0;
-	} else {
-			document.iform.dpd_delay.disabled = 1;
-			document.iform.dpd_maxfail.disabled = 1;
-	}
+	if( document.iform.dpd_enable.checked )
+		document.getElementById('opt_dpd').style.display = '';
+	else
+		document.getElementById('opt_dpd').style.display = 'none';
 
 	if (!document.iform.dpd_delay.value)
 		document.iform.dpd_delay.value = "10";
@@ -450,280 +447,332 @@ function dpdchkbox_change() {
 
 //-->
 </script>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="vpn_ipsec_phase1.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
-				<tr>
-					<td colspan="2" valign="top" class="listtopic">General information</td>
-				</tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Disabled</td>
-                  <td width="78%" class="vtable">
-                    <input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
-                    <strong>Disable this phase1 entry</strong><br>
-                    <span class="vexpl">Set this option to disable this phase1 without
-                      removing it from the list.
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Interface</td>
-                  <td width="78%" class="vtable">
-                    <select name="interface" class="formselect">
-                      <?php 
-                        $interfaces = get_configured_interface_with_descr();
-                        $carpips = find_number_of_needed_carp_interfaces();
-                        for ($i=0; $i<$carpips; $i++) {
-                          $carpip = find_interface_ip("carp" . $i);
-                          $interfaces['carp' . $i] = "CARP{$i} ({$carpip})"; 
-                        }
-                        foreach ($interfaces as $iface => $ifacename):
-                      ?>
-                      <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
-                        <?=htmlspecialchars($ifacename);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br>
-                    <span class="vexpl">Select the interface for the local endpoint of this phase1 entry.</span>
-                  </td>
-                </tr>
-				<?php if (!$pconfig['mobile']): ?>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Remote gateway</td>
-                  <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="20" value="<?=$pconfig['remotegw'];?>">
-                    <br>
-                    Enter the public IP address or host name of the remote gateway
-                  </td>
-                </tr>
-				<?php endif; ?>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
-                <tr>
-                  <td colspan="2" valign="top" class="listtopic">Phase 1 proposal
-                    (Authentication)
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Negotiation mode</td>
-                  <td width="78%" class="vtable">
-                    <select name="mode" class="formselect">
-                      <?php
-                        $modes = explode(" ", "main aggressive");
-                        foreach ($modes as $mode):
-                      ?>
-                      <option value="<?=$mode;?>" <?php if ($mode == $pconfig['mode']) echo "selected"; ?>>
-                        <?=htmlspecialchars($mode);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Aggressive is more flexible, but less secure.</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">My identifier</td>
-                  <td width="78%" class="vtable">
-                    <select name="myid_type" class="formselect" onChange="myidsel_change()">
-                      <?php foreach ($my_identifier_list as $id_type => $id_params): ?>
-                        <option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['myid_type']) echo "selected"; ?>>
-                          <?=htmlspecialchars($id_params['desc']);?>
-                        </option>
-                      <?php endforeach; ?>
-                    </select>
-                    <input name="myid_data" type="text" class="formfld unknown" id="myid_data" size="30" value="<?=$pconfig['myid_data'];?>">
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Peer identifier</td>
-                  <td width="78%" class="vtable">
-                    <select name="peerid_type" class="formselect" onChange="peeridsel_change()">
-                      <?php
-                        foreach ($peer_identifier_list as $id_type => $id_params):
-                          if ($pconfig['mobile'] && !$id_params['mobile'])
-                            continue;
-                      ?>
-                      <option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['peerid_type']) echo "selected"; ?>>
-                        <?=htmlspecialchars($id_params['desc']);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select>
-                    <input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=$pconfig['peerid_data'];?>">
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Encryption algorithm</td>
-                  <td width="78%" class="vtable">
-                    <select name="ealgo" class="formselect" onChange="ealgosel_change()">
-                      <?php
-                        foreach ($p1_ealgos as $algo => $algodata):
-                        $selected = '';
-                        if ($algo == $pconfig['ealgo']['name'])
-                          $selected = ' selected';
-                      ?>
-                      <option value="<?=$algo;?>"<?=$selected?>>
-                        <?=htmlspecialchars($algodata['name']);?>
-                      </option>
-                    <?php endforeach; ?>
-                    </select>
-                    <select name="ealgo_keylen" width="30" class="formselect">
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Hash algorithm</td>
-                  <td width="78%" class="vtable">
-                    <select name="halgo" class="formselect">
-                      <?php foreach ($p1_halgos as $algo => $algoname): ?>
-                      <option value="<?=$algo;?>" <?php if ($algo == $pconfig['halgo']) echo "selected"; ?>>
-                        <?=htmlspecialchars($algoname);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select>
-                    <br>
-                    <span class="vexpl">
-                      Must match the setting chosen on the remote side.
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">DH key group</td>
-                  <td width="78%" class="vtable">
-                    <select name="dhgroup" class="formselect">
-                      <?php $keygroups = explode(" ", "1 2 5"); foreach ($keygroups as $keygroup): ?>
-                      <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['dhgroup']) echo "selected"; ?>>
-                        <?=htmlspecialchars($keygroup);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select>
-                    <br>
-                    <span class="vexpl">
-                      <em>1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit</em>
-                      <br>
-                      Must match the setting chosen on the remote side.
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Lifetime</td>
-                  <td width="78%" class="vtable">
-                    <input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=$pconfig['lifetime'];?>">
-                    seconds
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Authentication method</td>
-                  <td width="78%" class="vtable">
-                    <select name="authentication_method" class="formselect" onChange="methodsel_change()">
-                      <?php
-                        foreach ($p1_authentication_methods as $method_type => $method_params):
-                          if (!$pconfig['mobile'] && $method_params['mobile'])
-                            continue;
-                      ?>
-                      <option value="<?=$method_type;?>" <?php if ($method_type == $pconfig['authentication_method']) echo "selected"; ?>>
-                        <?=htmlspecialchars($method_params['name']);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select>
-                    <br>
-                    <span class="vexpl">Must match the setting chosen on the remote side.</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Pre-Shared Key</td>
-                  <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=htmlspecialchars($pconfig['pskey']);?>">
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">My Certificate</td>
-                  <td width="78%" class="vtable">
-                    <textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
-                    <br>
-                    Paste a certificate in X.509 PEM format here.</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">My Private Key</td>
-                  <td width="78%" class="vtable">
-                    <textarea name="privatekey" cols="65" rows="7" id="privatekey" class="formpre"><?=htmlspecialchars($pconfig['privatekey']);?></textarea>
-                    <br>
-                    Paste an RSA private key in PEM format here.
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Peer certificate</td>
-                  <td width="78%" class="vtable">
-                    <textarea name="peercert" cols="65" rows="7" id="peercert" class="formpre"><?=htmlspecialchars($pconfig['peercert']);?></textarea>
-                    <br>
-                    Paste the peer X.509 certificate in PEM format here.<br>
-                    Leave this blank if you want to use a CA certificate for identity validation.
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
-                <tr>
-                  <td colspan="2" valign="top" class="listtopic">Advanced Options</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">NAT Traversal</td>
-                  <td width="78%" class="vtable">
-                    <select name="nat_traversal" class="formselect">
-                      <option value="off" <?php if ($pconfig['nat_traversal'] == "off") echo "selected"; ?>>Disable</option>
-                      <option value="on" <?php if ($pconfig['nat_traversal'] == "on") echo "selected"; ?>>Enable</option>
-                      <option value="force" <?php if ($pconfig['nat_traversal'] == "force") echo "selected"; ?>>Force</option>
-                    </select>
-                    <br/>
-                    <span class="vexpl">
-                      Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
-                      which can help with clients that are behind restrictive firewalls.
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Dead Peer Detection</td>
-                  <td width="78%" class="vtable">
-                    <input name="dpd_enable" type="checkbox" id="dpd_enable" value="yes" <?php if (isset($pconfig['dpd_enable'])) echo "checked"; ?> onClick="dpdchkbox_change()">
-                    Enable DPD<br>
-                    <br>
-                    <input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=$pconfig['dpd_delay'];?>">
-                    seconds<br>
-                    <span class="vexpl">Delay between requesting peer acknowledgement.</span><br>
-                    <br>
-                    <input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=$pconfig['dpd_maxfail'];?>">
-                    retries<br>
-                    <span class="vexpl">Number consecutive failures allowed before disconnect.</span><br>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Automatically ping host</td>
-                  <td width="78%" class="vtable">
-                    <input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>">
-                    IP address
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-                    <?php if (isset($p1index) && $a_phase1[$p1index]): ?>
-                    <input name="p1index" type="hidden" value="<?=$p1index;?>">
-                    <?php endif; ?>
-					<?php if ($pconfig['mobile']): ?>
-                    <input name="mobile" type="hidden" value="true">
-                    <?php endif; ?>
-                    <input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
-                    <input name="Submit" type="submit" class="formbtn" value="Save">
-                  </td>
-                </tr>
-              </table>
+
+<form action="vpn_ipsec_phase1.php" method="post" name="iform" id="iform">
+
+<?php
+	if ($input_errors)
+		print_input_errors($input_errors);
+?>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr class="tabnavtbl">
+		<td id="tabnav">
+			<?php
+				$tab_array = array();
+				$tab_array[0] = array("Tunnels", true, "vpn_ipsec.php");
+				$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
+				$tab_array[2] = array("CAs", false, "vpn_ipsec_ca.php");
+				display_top_tabs($tab_array);
+			?>
+		</td>
+	</tr>
+	<tr>
+		<td id="mainarea">
+			<div class="tabcont">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0">
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">General information</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Disabled</td>
+						<td width="78%" class="vtable">
+							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
+							<strong>Disable this phase1 entry</strong><br>
+							<span class="vexpl">
+								Set this option to disable this phase1 without
+								removing it from the list.
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Interface</td>
+						<td width="78%" class="vtable">
+							<select name="interface" class="formselect">
+							<?php 
+								$interfaces = get_configured_interface_with_descr();
+								$carpips = find_number_of_needed_carp_interfaces();
+								for ($i=0; $i<$carpips; $i++) {
+									$carpip = find_interface_ip("carp" . $i);
+									$interfaces['carp' . $i] = "CARP{$i} ({$carpip})"; 
+								}
+								foreach ($interfaces as $iface => $ifacename):
+							?>
+								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+									<?=htmlspecialchars($ifacename);?>
+								</option>
+							<?php endforeach; ?>
+							</select>
+							<br>
+							<span class="vexpl">Select the interface for the local endpoint of this phase1 entry.</span>
+						</td>
+					</tr>
+
+					<?php if (!$pconfig['mobile']): ?>
+
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Remote gateway</td>
+						<td width="78%" class="vtable">
+							<?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="20" value="<?=$pconfig['remotegw'];?>">
+							<br>
+							Enter the public IP address or host name of the remote gateway
+						</td>
+					</tr>
+
+					<?php endif; ?>
+
+					<tr>
+						<td width="22%" valign="top" class="vncell">Description</td>
+						<td width="78%" class="vtable">
+							<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+							<br>
+							<span class="vexpl">
+								You may enter a description here
+								for your reference (not parsed).
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="list" height="12"></td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">
+							Phase 1 proposal (Authentication)
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Negotiation mode</td>
+						<td width="78%" class="vtable">
+							<select name="mode" class="formselect">
+							<?php
+								$modes = explode(" ", "main aggressive");
+								foreach ($modes as $mode):
+							?>
+								<option value="<?=$mode;?>" <?php if ($mode == $pconfig['mode']) echo "selected"; ?>>
+									<?=htmlspecialchars($mode);?>
+								</option>
+							<?php endforeach; ?>
+							</select> <br> <span class="vexpl">Aggressive is more flexible, but less secure.</span>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">My identifier</td>
+						<td width="78%" class="vtable">
+							<select name="myid_type" class="formselect" onChange="myidsel_change()">
+							<?php foreach ($my_identifier_list as $id_type => $id_params): ?>
+								<option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['myid_type']) echo "selected"; ?>>
+									<?=htmlspecialchars($id_params['desc']);?>
+								</option>
+							<?php endforeach; ?>
+							</select>
+							<input name="myid_data" type="text" class="formfld unknown" id="myid_data" size="30" value="<?=$pconfig['myid_data'];?>">
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Peer identifier</td>
+						<td width="78%" class="vtable">
+							<select name="peerid_type" class="formselect" onChange="peeridsel_change()">
+							<?php
+								foreach ($peer_identifier_list as $id_type => $id_params):
+									if ($pconfig['mobile'] && !$id_params['mobile'])
+										continue;
+							?>
+							<option value="<?=$id_type;?>" <?php if ($id_type == $pconfig['peerid_type']) echo "selected"; ?>>
+								<?=htmlspecialchars($id_params['desc']);?>
+							</option>
+							<?php endforeach; ?>
+							</select>
+							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=$pconfig['peerid_data'];?>">
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Encryption algorithm</td>
+						<td width="78%" class="vtable">
+							<select name="ealgo" class="formselect" onChange="ealgosel_change()">
+							<?php
+								foreach ($p1_ealgos as $algo => $algodata):
+									$selected = '';
+									if ($algo == $pconfig['ealgo']['name'])
+										$selected = ' selected';
+							?>
+								<option value="<?=$algo;?>"<?=$selected?>>
+									<?=htmlspecialchars($algodata['name']);?>
+								</option>
+							<?php endforeach; ?>
+							</select>
+							<select name="ealgo_keylen" width="30" class="formselect">
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Hash algorithm</td>
+						<td width="78%" class="vtable">
+							<select name="halgo" class="formselect">
+							<?php foreach ($p1_halgos as $algo => $algoname): ?>
+								<option value="<?=$algo;?>" <?php if ($algo == $pconfig['halgo']) echo "selected"; ?>>
+									<?=htmlspecialchars($algoname);?>
+								</option>
+							<?php endforeach; ?>
+							</select>
+							<br>
+							<span class="vexpl">
+								Must match the setting chosen on the remote side.
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">DH key group</td>
+						<td width="78%" class="vtable">
+							<select name="dhgroup" class="formselect">
+							<?php $keygroups = explode(" ", "1 2 5"); foreach ($keygroups as $keygroup): ?>
+								<option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['dhgroup']) echo "selected"; ?>>
+									<?=htmlspecialchars($keygroup);?>
+								</option>
+							<?php endforeach; ?>
+							</select>
+							<br>
+							<span class="vexpl">
+								<em>1 = 768 bit, 2 = 1024 bit, 5 = 1536 bit</em>
+								<br>
+								Must match the setting chosen on the remote side.
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">Lifetime</td>
+						<td width="78%" class="vtable">
+							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=$pconfig['lifetime'];?>">
+							seconds
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncellreq">Authentication method</td>
+						<td width="78%" class="vtable">
+							<select name="authentication_method" class="formselect" onChange="methodsel_change()">
+							<?php
+								foreach ($p1_authentication_methods as $method_type => $method_params):
+									if (!$pconfig['mobile'] && $method_params['mobile'])
+										continue;
+							?>
+								<option value="<?=$method_type;?>" <?php if ($method_type == $pconfig['authentication_method']) echo "selected"; ?>>
+									<?=htmlspecialchars($method_params['name']);?>
+								</option>
+							<?php endforeach; ?>
+							</select>
+							<br>
+								<span class="vexpl">
+									Must match the setting chosen on the remote side.
+								</span>
+						</td>
+					</tr>
+					<tr id="opt_psk">
+						<td width="22%" valign="top" class="vncellreq">Pre-Shared Key</td>
+						<td width="78%" class="vtable">
+							<?=$mandfldhtml;?>
+							<input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=htmlspecialchars($pconfig['pskey']);?>">
+						</td>
+					</tr>
+					<tr id="opt_my_cert">
+						<td width="22%" valign="top" class="vncellreq">My Certificate</td>
+						<td width="78%" class="vtable">
+							<textarea name="cert" cols="65" rows="7" id="cert" class="formpre">
+								<?=htmlspecialchars($pconfig['cert']);?>
+							</textarea>
+							<br>
+							Paste a certificate in X.509 PEM format here.
+						</td>
+					</tr>
+					<tr id="opt_my_pkey">
+						<td width="22%" valign="top" class="vncellreq">My Private Key</td>
+						<td width="78%" class="vtable">
+							<textarea name="privatekey" cols="65" rows="7" id="privatekey" class="formpre">
+								<?=htmlspecialchars($pconfig['privatekey']);?>
+							</textarea>
+							<br>
+							Paste an RSA private key in PEM format here.
+						</td>
+					</tr>
+					<tr id="opt_peer_cert">
+						<td width="22%" valign="top" class="vncell">Peer Certificate</td>
+						<td width="78%" class="vtable">
+							<textarea name="peercert" cols="65" rows="7" id="peercert" class="formpre">
+								<?=htmlspecialchars($pconfig['peercert']);?>
+							</textarea>
+							<br>
+							Paste the peer X.509 certificate in PEM format here.<br>
+							Leave this blank if you want to use a CA certificate for identity validation.
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="list" height="12"></td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">Advanced Options</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">NAT Traversal</td>
+						<td width="78%" class="vtable">
+							<select name="nat_traversal" class="formselect">
+								<option value="off" <?php if ($pconfig['nat_traversal'] == "off") echo "selected"; ?>>Disable</option>
+								<option value="on" <?php if ($pconfig['nat_traversal'] == "on") echo "selected"; ?>>Enable</option>
+								<option value="force" <?php if ($pconfig['nat_traversal'] == "force") echo "selected"; ?>>Force</option>
+							</select>
+							<br/>
+							<span class="vexpl">
+								Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
+								which can help with clients that are behind restrictive firewalls.
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">Dead Peer Detection</td>
+						<td width="78%" class="vtable">
+							<input name="dpd_enable" type="checkbox" id="dpd_enable" value="yes" <?php if (isset($pconfig['dpd_enable'])) echo "checked"; ?> onClick="dpdchkbox_change()">
+							Enable DPD<br>
+							<div id="opt_dpd">
+								<br>
+								<input name="dpd_delay" type="text" class="formfld unknown" id="dpd_delay" size="5" value="<?=$pconfig['dpd_delay'];?>">
+								seconds<br>
+								<span class="vexpl">
+									Delay between requesting peer acknowledgement.
+								</span><br>
+								<br>
+								<input name="dpd_maxfail" type="text" class="formfld unknown" id="dpd_maxfail" size="5" value="<?=$pconfig['dpd_maxfail'];?>">
+								retries<br>
+								<span class="vexpl">
+									Number consecutive failures allowed before disconnect.
+								</span>
+								<br>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">Automatically ping host</td>
+						<td width="78%" class="vtable">
+							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>">
+							IP address
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top">&nbsp;</td>
+						<td width="78%">
+							<?php if (isset($p1index) && $a_phase1[$p1index]): ?>
+							<input name="p1index" type="hidden" value="<?=$p1index;?>">
+							<?php endif; ?>
+							<?php if ($pconfig['mobile']): ?>
+							<input name="mobile" type="hidden" value="true">
+							<?php endif; ?>
+							<input name="ikeid" type="hidden" value="<?=$pconfig['ikeid'];?>">
+							<input name="Submit" type="submit" class="formbtn" value="Save">
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
 </form>
+
 <script lannguage="JavaScript">
 <!--
 <?php

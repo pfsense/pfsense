@@ -1498,17 +1498,17 @@ function vpn_ipsec_refresh_policies() {
 	$tmpfiles = array();
 	$dh  = opendir($g['tmp_path']);
 	while (false !== ($filename = readdir($dh))) {
-		$tmpfiles[] = $filename;
+		if(preg_match("/^spd.conf.reload./", $tmpfile)) {
+			$tmpfiles[] = $filename;
+		}
 	}
 	sort($tmpfiles);
 	foreach($tmpfiles as $tmpfile) {
-		if(preg_match("/^spd.conf.reload./", $tmpfile)) {
-			$ret = mwexec("/usr/local/sbin/setkey -f {$g['tmp_path']}/{$tmpfile} 2>&1", false);
-			if($ret == 0) {
-				// unlink_if_exists("{$g['tmp_path']}/{$tmpfile}");
-			} else {
-				rename("{$g['tmp_path']}/{$tmpfile}", ("{$g['tmp_path']}/failed.{$tmpfile}"));
-			}
+		$ret = mwexec("/usr/local/sbin/setkey -f {$g['tmp_path']}/{$tmpfile} 2>&1", false);
+		if($ret == 0) {
+			unlink_if_exists("{$g['tmp_path']}/{$tmpfile}");
+		} else {
+			rename("{$g['tmp_path']}/{$tmpfile}", ("{$g['tmp_path']}/failed.{$tmpfile}"));
 		}
 	}
 }

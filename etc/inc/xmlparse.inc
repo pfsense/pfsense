@@ -44,7 +44,7 @@ function listtags() {
 		"lbprotocol member menu tab mobilekey monitor_type mount ntpserver onetoone ".
 		"openvpn-server openvpn-client openvpn-csc " .
 		"option ppp package passthrumac phase1 phase2 priv proxyarpnet queue ".
-		"pages pipe route row rule schedule service servernat servers ".
+		"pages pipe route row rrddatafile rule schedule service servernat servers ".
 		"serversdisabled earlyshellcmd shellcmd staticmap subqueue timerange ".
 		"tunnel user vip virtual_server vlan winsserver wolentry widget  "
 		);

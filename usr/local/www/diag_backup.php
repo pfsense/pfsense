@@ -156,6 +156,27 @@ if ($_POST) {
 					tagfile_reformat($data, $data, "config.xml");
 				}
 
+				/* 
+				 *  Backup RRD Data
+				 */
+				if(!$_POST['donotbackuprrd']) {
+					$data = str_replace("</pfsense>", "\t<rrddata>", $data);
+					$rrd_files_var_db_rrd = split("\n",`cd /var/db/rrd && ls *.rrd`);
+					foreach($rrd_files_var_db_rrd as $rrd) {
+						if($rrd) {
+							$rrd_data = file_get_contents("{$g['vardb_path']}/rrd/{$rrd}");
+							if($rrd_data) {
+								$data .= "\t\t<rrddatafile>\n";
+								$data .= "\t\t\t<filename>{$rrd}</filename>\n";
+								$data .= "\t\t\t<data>" . base64_encode($rrd_data) . "</data>\n";
+								$data .= "\t\t</rrddatafile>\n";
+							}
+						}
+					}
+					$data .= "\t</rrddata>\n";
+					$data .= "</pfsense>\n";
+				}
+				
 				$size = strlen($data);
 				header("Content-Type: application/octet-stream");
 				header("Content-Disposition: attachment; filename={$name}");
@@ -228,6 +249,15 @@ if ($_POST) {
 								if(file_exists("/tmp/config.cache"))
 									unlink("/tmp/config.cache");
 								$config = parse_config(true);
+								/* extract out rrd items, unset from $confgi when done */
+								if($config['rrddata']) {
+									foreach($config['rrddata']['rrddatafile'] as $rrd) {
+										$rrd_fd = fopen("{$g['vardb_path']}/rrd/{$rrd['filename']}", "w");
+										fwrite($rrd_fd, $rrd['data']);
+										fclose($rrd_fd);
+									}
+								}
+								unset($config['rrddata']);
 								if($m0n0wall_upgrade == true) {
 									if($config['system']['gateway'] <> "")
 										$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
@@ -363,6 +393,14 @@ function decrypt_change() {
 								</td>
 								<td>
 									<span class="vexpl">Encrypt this configuration file.</span>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd">
+								</td>
+								<td>
+									<span class="vexpl">Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)</span>
 								</td>
 							</tr>
 						</table>

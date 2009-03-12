@@ -716,6 +716,9 @@ server.modules              =   (
 #                               "mod_cgi",
 #                                "mod_accesslog"
 
+server.max-keep-alive-requests = 15
+server.max-keep-alive-idle = 30
+
 ## a static document-root, for virtual-hosting take look at the
 ## server.virtual-* options
 server.document-root        = "{$document_root}"

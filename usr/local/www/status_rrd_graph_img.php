@@ -99,7 +99,7 @@ $scale = $graphs[$interval]['scale'];
 
 $rrddbpath = "/var/db/rrd/";
 $rrdtmppath = "/tmp/";
-$rrdtool = "/usr/local/bin/rrdtool";
+$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 $uptime = "/usr/bin/uptime";
 $sed = "/usr/bin/sed";
 

@@ -2057,7 +2057,7 @@ endif;
 		$listtags = array("ds", "v", "rra", "row");
 
 		$rrddbpath = "/var/db/rrd/";
-		$rrdtool = "/usr/local/bin/rrdtool";
+		$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
 		$rrdinterval = 60;
 		$valid = $rrdinterval * 2;

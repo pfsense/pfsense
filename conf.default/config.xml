@@ -752,7 +752,7 @@
 			<month>*</month>
 			<wday>*</wday>
 			<who>root</who>
-			<command>/usr/local/bin/checkreload.sh</command>
+			<command>/usr/bin/nice -n20 /usr/local/bin/checkreload.sh</command>
 		</item>
 		<item>
 			<minute>*/5</minute>
@@ -761,7 +761,7 @@
 			<month>*</month>
 			<wday>*</wday>
 			<who>root</who>
-			<command>/etc/ping_hosts.sh</command>
+			<command>/usr/bin/nice -n20 /etc/ping_hosts.sh</command>
 		</item>
 		<item>
 			<minute>*/140</minute>
@@ -770,7 +770,7 @@
 			<month>*</month>
 			<wday>*</wday>
 			<who>root</who>
-			<command>/usr/local/sbin/reset_slbd.sh</command>
+			<command>/usr/bin/nice -n20 /usr/local/sbin/reset_slbd.sh</command>
 		</item>
 	</cron>
 	<wol>

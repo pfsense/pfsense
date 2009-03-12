@@ -34,7 +34,7 @@ require_once("notices.inc");
 require_once("globals.inc");
 
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
-	$rrdtool = "/usr/local/bin/rrdtool";
+	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	if(file_exists($xmldumpfile))
 		exec("rm {$xmldumpfile}");
 
@@ -170,7 +170,7 @@ function enable_rrd_graphing() {
 	$proc = "-processor.rrd";
 	$mem = "-memory.rrd";
 
-	$rrdtool = "/usr/local/bin/rrdtool";
+	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
 	$awk = "/usr/bin/awk";
 	$tar = "/usr/bin/tar";

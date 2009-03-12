@@ -86,26 +86,27 @@ function get_uptime() {
 	return $uptimestr;
 }
 
+/* Calculates non-idle CPU time and returns as a percentage
 function cpu_usage() {
-	exec("sysctl -n kern.cp_time && sleep 1 && sysctl -n kern.cp_time",$cpuTicksEx);
-
-	$cpuTicks = explode(" ", $cpuTicksEx[0]);
-	$cpuTicks2 = explode(" ", $cpuTicksEx[1]);
+	$duration = 1;
+	$diff = array('user', 'nice', 'sys', 'intr', 'idle');
+	$cpuTicks = array_combine($diff, explode(" ", `/sbin/sysctl -n kern.cp_time`));
+	sleep($duration);
+	$cpuTicks2 = array_combine($diff, explode(" ", `/sbin/sysctl -n kern.cp_time`));
 	
-	$diff = array();
-    $diff['user'] = ($cpuTicks2[0] - $cpuTicks[0]);
-    $diff['nice'] = ($cpuTicks2[1] - $cpuTicks[1]);
-    $diff['sys'] = ($cpuTicks2[2] - $cpuTicks[2]);
-    $diff['intr'] = ($cpuTicks2[3] - $cpuTicks[3]);
-    $diff['idle'] = ($cpuTicks2[4] - $cpuTicks[4]);
-    
-    //echo "<!-- user: {$diff['user']}  nice {$diff['nice']}  sys {$diff['sys']}  intr {$diff['intr']}  idle {$diff['idle']} -->";
-    $totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
-    $totalused = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'];
-        if (isset($totalused)&&$totalused <= 0) {
-            $totalused = 0.001;
-        }
-    $cpuUsage = floor(100 * ($totalused / $totalDiff));
+	$totalStart = array_sum($cpuTicks);
+	$totalEnd = array_sum($cpuTicks2);
+
+	// Something wrapped ?!?!
+	if ($totalEnd <= $totalStart)
+		return 0;
+
+	// Calculate total cycles used
+	$totalUsed = ($totalEnd - $totalStart) - ($cpuTicks2['idle'] - $cpuTicks['idle']);
+
+	// Calculate the percentage used
+	$cpuUsage = floor(100 * ($totalUsed / ($totalEnd - $totalStart)));
+	
 	return $cpuUsage;
 }
 
@@ -177,6 +178,7 @@ function mem_usage()
 	return $memUsage;
 }
 
+<<<<<<< HEAD:usr/local/www/includes/functions.inc.php
 function update_date_time() {
 	
 	$datetime = date("D M j G:i:s T Y");
@@ -262,3 +264,6 @@ function get_interfacestatus(){
 }
 
 ?>
+=======
+?>
+>>>>>>> 9d75714... cleaner and more proper cpu graph:usr/local/www/includes/functions.inc.php

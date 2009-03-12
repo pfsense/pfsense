@@ -86,7 +86,7 @@ function get_uptime() {
 	return $uptimestr;
 }
 
-/* Calculates non-idle CPU time and returns as a percentage
+/* Calculates non-idle CPU time and returns as a percentage */
 function cpu_usage() {
 	$duration = 1;
 	$diff = array('user', 'nice', 'sys', 'intr', 'idle');

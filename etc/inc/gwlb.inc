@@ -152,8 +152,10 @@ EOD;
 				continue;
 			} else {
 				mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']));
-				mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
-					" " . escapeshellarg($gateway['gateway']));
+				if(! stristr("127.0.0", $gateway['gateway'])) {
+					mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
+						" " . escapeshellarg($gateway['gateway']));
+				}
 			}
 		}
 	}

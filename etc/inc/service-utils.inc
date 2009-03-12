@@ -167,14 +167,15 @@ function is_service_running($service, $ps = "") {
 	if(is_array($config['installedpackages']['service'])) {
                 foreach($config['installedpackages']['service'] as $aservice) {
                         if(strtolower($service) == strtolower($aservice['name'])) {
-				if(!$aservice['executable']) return false;
-				/*
-				if(count(preg_grep("/{$aservice['executable']}/i", $ps))) {
-					return true;
-				} else {
+				if(!$aservice['executable']) 
 					return false;
+				if($aservice['custom_php_service_status_command'] <> "") {
+					$_cmd=explode(';', $aservice['custom_php_service_status_command']);
+					foreach($_cmd as $_acmd) {
+						if($_acmd) eval('$rc='.$_acmd.';');
+					}
+					return $rc;
 				}
-				*/
 				return is_process_running($aservice['executable']) ? true : false;
                         }
                 }

@@ -125,7 +125,7 @@ include("head.inc");
 <script type="text/javascript" src="row_helper.js">
 </script>
 
-<input type='hidden' name='address_type' value='textbox' />
+<input type='hidden' name='address_type' value='textbox' class="formfld unknown" />
 <input type='hidden' name='address_subnet_type' value='select' />
 
 <script type="text/javascript">
@@ -199,7 +199,7 @@ include("head.inc");
   <tr>
     <td valign="top" class="vncell">Threshold</td>
     <td class="vtable">
-      <input name="threshold" class="formselect" id="threshold" value="<?php echo $pconfig['threshold'];?>">
+      <input name="threshold" class="formfld unknown" id="threshold" value="<?php echo $pconfig['threshold'];?>">
       <br />
       <span class="vexpl">
 	      Defines the TTL threshold for  the  network  interface.  Packets

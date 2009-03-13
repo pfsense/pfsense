@@ -253,7 +253,7 @@ if ($_POST) {
 								if($config['rrddata']) {
 									foreach($config['rrddata']['rrddatafile'] as $rrd) {
 										$rrd_fd = fopen("{$g['vardb_path']}/rrd/{$rrd['filename']}", "w");
-										fwrite($rrd_fd, $rrd['data']);
+										fwrite($rrd_fd, base64_decode($rrd['data']));
 										fclose($rrd_fd);
 									}
 									unset($config['rrddata']);

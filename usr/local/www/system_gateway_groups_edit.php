@@ -45,6 +45,11 @@ if (!is_array($config['gateways']['gateway_group']))
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
 
+$categories = array('down' => 'Member Down',
+                'downloss' => 'Packet Loss',
+                'downlatency' => 'High Latency',
+                'downlosslatency' => 'Packet Loss or High Latency');
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -57,6 +62,7 @@ if (isset($id) && $a_gateway_groups[$id]) {
 	$pconfig['name'] = $a_gateway_groups[$id]['name'];
 	$pconfig['item'] = &$a_gateway_groups[$id]['item'];
 	$pconfig['descr'] = $a_gateway_groups[$id]['descr'];
+	$pconfig['trigger'] = $a_gateway_groups[$id]['trigger'];
 }
 
 if (isset($_GET['dup']))
@@ -169,9 +175,9 @@ include("head.inc");
 				echo "<option value='0' $selected[0] >Never</option>";
 				echo "<option value='1' $selected[1] >Tier 1</option>";
 				echo "<option value='2' $selected[2] >Tier 2</option>";
-				echo "<option value='3' $selected[3]>Tier 3</option>";
-				echo "<option value='4' $selected[4]>Tier 4</option>";
-				echo "<option value='5' $selected[5]>Tier 5</option>";
+				echo "<option value='3' $selected[3] >Tier 3</option>";
+				echo "<option value='4' $selected[4] >Tier 4</option>";
+				echo "<option value='5' $selected[5] >Tier 5</option>";
 				echo "</select> <strong>{$gateway['descr']}</strong><br/>";
 		 	}
 		?>
@@ -189,10 +195,13 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq">Trigger Level</td>
                   <td width="78%" class="vtable">
 			<select name='trigger' class='formfldselect' id='trigger'>
-			<option value='down'>Member Down</option>
-			<option value='downlatencyorloss'>Packet Loss or High Latency</option>
-			<option value='downlatency'>High Latency</option>
-			<option value='downloss'>Packet Loss</option>
+			<?php
+				foreach ($categories as $category => $categoryd) {
+				        echo "<option value=\"$category\"";
+				        if ($category == $pconfig['trigger']) echo " selected";
+					echo ">" . htmlspecialchars($categoryd) . "</option>\n";
+				}
+			?>
 			</select>
                     <br> <span class="vexpl">When to trigger exclusion of a member</span></td>
                 </tr>

@@ -110,6 +110,7 @@ effect.");?><br>
 			$tab_array[0] = array("Gateways", true, "system_gateways.php");
 			$tab_array[1] = array("Routes", false, "system_routes.php");
 			$tab_array[2] = array("Groups", false, "system_gateway_groups.php");
+			$tab_array[3] = array("Settings", false, "system_gateways_settings.php");
 			display_top_tabs($tab_array);
 ?>
 </td></tr>

@@ -709,7 +709,7 @@ echo $jscriptstr;
 <?php include("fend.inc"); ?>
 	    
 <script type="text/javascript">
-	window.onload = function(in_event)
+	document.observe('dom:loaded', function(in_event)
 	{		
 			Sortable.create("col1", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:showSave});	
 			Sortable.create("col2", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:showSave});		
@@ -717,7 +717,7 @@ echo $jscriptstr;
 			hideAllWidgets();		    
 			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');		
 	<?php } ?>
-	}	
+	});
 	<?php
 	//build list of javascript include files
 	$jsincludefiles = array();

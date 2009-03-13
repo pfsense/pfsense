@@ -124,12 +124,7 @@ if(is_dir("$CODIR/pfSenseGITREPO")) {
 if($branch == "master") {
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout master");
 } else {
-	$current_branch=`git branch | grep $branch`;
-	if($current_branch == "") {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch");
-	} else {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout $branch");
-	}
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch");
 }
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");

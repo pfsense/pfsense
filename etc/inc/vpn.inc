@@ -374,6 +374,7 @@ function vpn_ipsec_configure($ipchg = false) {
 				if (isset($tunnel['natt'])) {
 					$nattline = "nat_traversal on;";
 				}
+
 				$dpdline = '';
 				if (isset($tunnel['dpddelay'])) {
 					$dpdline = "dpd_delay {$tunnel['dpddelay']};";

@@ -47,6 +47,7 @@ if (count($a_ipsec) == 0) {
 	$pconfig['p2ealgos'] = explode(",", "3des,blowfish,cast128,rijndael");
 	$pconfig['p2halgos'] = explode(",", "hmac_sha1,hmac_md5");
 	$pconfig['p2pfsgroup'] = "0";
+	$pconfig['dpddelay'] = "120";
 } else {
 	$pconfig['enable'] = isset($a_ipsec['enable']);
 	$pconfig['natt'] = isset($a_ipsec['natt']);
@@ -79,6 +80,7 @@ if (count($a_ipsec) == 0) {
 
 	$pconfig['p2pfsgroup'] = $a_ipsec['p2']['pfsgroup'];
 	$pconfig['p2lifetime'] = $a_ipsec['p2']['lifetime'];
+	$pconfig['dpddelay'] = $a_ipsec['dpddelay'];
 }
 
 if ($_POST['apply']) {
@@ -102,7 +104,9 @@ if ($_POST['apply']) {
 		if (!strstr($_POST['p1privatekey'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['p1privatekey'], "END RSA PRIVATE KEY"))
 			$input_errors[] = "This key does not appear to be valid.";	
 	}
-	
+	if (($_POST['dpddelay'] && !is_numeric($_POST['dpddelay']))) {
+		$input_errors[] = "The DPD delay interval must be an integer.";
+	}	
 	if (($_POST['p1lifetime'] && !is_numeric($_POST['p1lifetime']))) {
 		$input_errors[] = "The P1 lifetime must be an integer.";
 	}
@@ -158,6 +162,7 @@ if ($_POST['apply']) {
 		$ipsecent['p2']['hash-algorithm-option'] = $_POST['p2halgos'];
 		$ipsecent['p2']['pfsgroup'] = $_POST['p2pfsgroup'];
 		$ipsecent['p2']['lifetime'] = $_POST['p2lifetime'];
+		$ipsecent['dpddelay'] = $_POST['dpddelay'];
 		
 		$a_ipsec = $ipsecent;
 		
@@ -220,14 +225,6 @@ function methodsel_change() {
                         <td width="78%"> 
                     <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
                     <strong>Allow mobile clients</strong></td>
-                </tr>
-		<tr> 
-                  <td width="22%" class="vtable" valign="top">&nbsp;</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="natt" type="checkbox" id="natt" value="yes" <?php if ($pconfig['natt']) echo "checked"; ?>>
-                    <strong>Enable NAT Traversal (NAT-T)</strong><br>
-                    <span class="vexpl">Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
-                    	which can help with clients that are behind restrictive firewalls.</span></td>
                 </tr>
                 <tr> 
                   <td colspan="2" valign="top" class="listtopic">Phase 1 proposal 
@@ -294,6 +291,22 @@ function methodsel_change() {
                     bit, 5 = 1536 bit</em><br>
                     Must match the setting chosen on the remote side. </span></td>
                 </tr>
+                <tr>
+                  <td width="22%" class="vncellreq" valign="top">NAT Traversal</td>
+                  <td width="78%" class="vtable">
+                    <input name="natt" type="checkbox" id="natt" value="yes" <?php if ($pconfig['natt']) echo "checked"; ?>>
+                    Enable NAT Traversal (NAT-T)<br>
+                    <span class="vexpl">Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
+                        which can help with clients that are behind restrictive firewalls.</span></td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">DPD Interval</td>
+                        <td width="78%" class="vtable">
+                    <input name="dpddelay" type="text" class="formfld" id="dpddelay" size="3" value="<?=$pconfig['dpddelay'];?>">
+                        <span class="vexpl">Dead Peer Detection interval in seconds.<br /> Leave this empty to only respond to DPD requests
+                        and not send any requests.</td>
+                </tr>
+
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Lifetime</td>
                         <td width="78%" class="vtable"> 

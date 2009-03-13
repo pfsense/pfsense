@@ -212,12 +212,11 @@ include("head.inc");
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
 	<td valign="middle" width="17">&nbsp;</td>
-        <td valign="middle"><a href="firewall_aliases_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new alias"></a></td>
+        <td valign="middle">
+          <a href="firewall_aliases_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new alias"></a></td>
         </td>
 	      <td valign="middle">
-          <a href="firewall_aliases_import.php">
-            <img src="/themes/<?= $g['theme']; ?>/images/icons/icon_import_alias.gif" width="17" height="17" border="0" title="<?=gettext("import aliases from list");?>" alt="" />
-          </a>
+          <a href="firewall_aliases_import.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_import_alias.gif" width="17" height="17" border="0" title="<?=gettext("import aliases from list");?>" alt="" /></a>
         </td>
       </tr>
     </table>

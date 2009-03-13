@@ -256,8 +256,11 @@ if ($_POST) {
 										fwrite($rrd_fd, $rrd['data']);
 										fclose($rrd_fd);
 									}
+									unset($config['rrddata']);
+									unlink_if_exists("/tmp/config.cache");
+									write_config();
+									conf_mount_ro();
 								}
-								unset($config['rrddata']);
 								if($m0n0wall_upgrade == true) {
 									if($config['system']['gateway'] <> "")
 										$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];

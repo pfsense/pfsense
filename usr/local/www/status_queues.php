@@ -112,6 +112,7 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
 ?>
 
 <form action="status_queues.php" method="post">
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <script type="text/javascript">
         function getqueueactivity() {
                 var url = "/status_queues.php";
@@ -127,9 +128,10 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
         function activitycallback(transport) {
                 setTimeout('getqueueactivity()', 5100);
         }
-        setTimeout('getqueueactivity()', 150);
+        document.observe('dom:loaded', function(){
+          setTimeout('getqueueactivity()', 150);
+        });
 </script>
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td class="listhdr" colspan="1">Queue</td>
@@ -152,11 +154,11 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
 			echo "<tr><td bgcolor=\"#DDDDDD\" colspan=\"7\">";
 			echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 			echo "<nobr>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='8' name='queue{$i}pps' id='queue{$i}pps' value='(Loading)' align='left'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='8' name='queue{$i}bps' id='queue{$i}bps' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='8' name='queue{$i}borrows' id='queue{$i}borrows' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='8' name='queue{$i}suspends' id='queue{$i}suspends' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='8 name='queue{$i}drops' id='queue{$i}drops' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}pps' id='queue{$i}pps' value='(Loading)' align='left'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}bps' id='queue{$i}bps' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}borrows' id='queue{$i}borrows' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}suspends' id='queue{$i}suspends' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='10' name='queue{$i}drops' id='queue{$i}drops' value='' align='right'>";
 			echo "</nobr>";
 ?>
 

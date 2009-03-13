@@ -958,3 +958,8 @@ table.sortable thead {
     font-weight: bold;
     cursor: default;
 }
+
+#graph {
+	position: relative;
+	z-index: -10;
+}

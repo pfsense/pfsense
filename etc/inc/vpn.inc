@@ -374,6 +374,10 @@ function vpn_ipsec_configure($ipchg = false) {
 				if (isset($tunnel['natt'])) {
 					$nattline = "nat_traversal on;";
 				}
+				$dpdline = '';
+				if (isset($tunnel['dpddelay'])) {
+					$dpdline = "dpd_delay {$tunnel['dpddelay']};";
+				}
 
 				if (isset($tunnel['p1']['authentication_method'])) {
 					$authmethod = $tunnel['p1']['authentication_method'];
@@ -439,7 +443,7 @@ remote {$rgmap[$tunnel['remote-gateway']]} \{
 	{$certline}
 	peers_identifier address {$rgmap[$tunnel['remote-gateway']]};
 	initial_contact on;
-	#dpd_delay 120;                   # DPD poll every 120 seconds
+	{$dpdline}
 	ike_frag on;
 	support_proxy on;
 	proposal_check obey;
@@ -504,6 +508,10 @@ EOD;
 				if (isset($tunnel['natt'])) {
 					$nattline = "nat_traversal on;";
 				}
+				$dpdline = '';
+				if (isset($tunnel['dpddelay'])) {
+					$dpdline = "dpd_delay {$tunnel['dpddelay']};";
+				}
 
 				if (isset($tunnel['p1']['authentication_method'])) {
 					$authmethod = $tunnel['p1']['authentication_method'];
@@ -552,7 +560,7 @@ remote anonymous \{
 	{$nattline}
 	{$certline}
 	initial_contact on;
-	#dpd_delay 120;                   # DPD poll every 120 seconds
+	{$dpdline}
 	ike_frag on;
 	passive on;
 	generate_policy on;

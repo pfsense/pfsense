@@ -116,6 +116,7 @@ class sajax {
  			sajax_debug("sajax_init_object() called..")
  			
  			var A;
+/*
 			try {
 				A=new ActiveXObject("Msxml2.XMLHTTP");
 			} catch (e) {
@@ -125,6 +126,7 @@ class sajax {
 					A=null;
 				}
 			}
+*/
 			if(!A && typeof XMLHttpRequest != "undefined")
 				A = new XMLHttpRequest();
 			if (!A)

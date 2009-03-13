@@ -686,8 +686,8 @@ EOD;
 ############ Options you really have to take care of ####################
 
 ## FreeBSD!
-server.event-handler		= "freebsd-kqueue"
-server.network-backend		= "freebsd-sendfile"  ## was writev - Fixes 7.x upload issues
+##server.event-handler		= "freebsd-kqueue"
+##server.network-backend		= "freebsd-sendfile"  ## was writev - Fixes 7.x upload issues
 
 ## modules to load
 server.modules              =   (

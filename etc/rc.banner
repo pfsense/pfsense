@@ -32,8 +32,8 @@
 */
 
 	/* parse the configuration and include all functions used below */
-	require("config.inc");
-	require("interfaces.inc");
+	require_once("config.inc");
+	require_once("interfaces.inc");
 
 	$version  = trim(file_get_contents("{$g['etc_path']}/version"));
 	$platform = trim(file_get_contents("{$g['etc_path']}/platform"));

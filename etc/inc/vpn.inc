@@ -435,6 +435,7 @@ EOD;
 remote {$rgmap[$tunnel['remote-gateway']]} \{
 	exchange_mode {$tunnel['p1']['mode']};
 	my_identifier {$myidentt}{$myident};
+	{$nattline}
 	{$certline}
 	peers_identifier address {$rgmap[$tunnel['remote-gateway']]};
 	initial_contact on;
@@ -551,7 +552,7 @@ remote anonymous \{
 	{$nattline}
 	{$certline}
 	initial_contact on;
-	dpd_delay 120;                   # DPD poll every 120 seconds
+	#dpd_delay 120;                   # DPD poll every 120 seconds
 	ike_frag on;
 	passive on;
 	generate_policy on;

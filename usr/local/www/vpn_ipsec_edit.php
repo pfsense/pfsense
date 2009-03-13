@@ -63,6 +63,7 @@ if (isset($id) && $a_ipsec[$id]) {
 
 	list($pconfig['remotenet'],$pconfig['remotebits']) = explode("/", $a_ipsec[$id]['remote-subnet']);
 	$pconfig['remotegw'] = $a_ipsec[$id]['remote-gateway'];
+	$pconfig['dpddelay'] = $a_ipsec[$id]['dpddelay'];
 
 	$pconfig['p1mode'] = $a_ipsec[$id]['p1']['mode'];
 
@@ -156,6 +157,9 @@ if ($_POST) {
 			$input_errors[] = "A valid local network bit count must be specified.";
 		}
 	}
+	if (($_POST['dpddelay'] && !is_numeric($_POST['dpddelay']))) {
+		$input_errors[] = "The DPD interval delay must be an integer.";
+	}
 	if (($_POST['p1lifetime'] && !is_numeric($_POST['p1lifetime']))) {
 		$input_errors[] = "The P1 lifetime must be an integer.";
 	}
@@ -232,6 +236,7 @@ if ($_POST) {
 		}
 
 		$ipsecent['remote-gateway'] = $_POST['remotegw'];
+		$ipsecent['dpddelay'] = $_POST['dpddelay'];
 		$ipsecent['p1']['mode'] = $_POST['p1mode'];
 
 		$ipsecent['p1']['myident'] = array();

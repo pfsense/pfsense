@@ -71,9 +71,6 @@ if($_REQUEST['action']) {
 
 require("head.inc");
 outputCSSFileInline("code-syntax-highlighter/SyntaxHighlighter.css");
-outputJavaScriptFileInline("javascript/scriptaculous/prototype.js");
-outputJavaScriptFileInline("javascript/scriptaculous/scriptaculous.js");
-outputJavaScriptFileInline("javascript/scriptaculous/effects.js");
 outputJavaScriptFileInline("filebrowser/browser.js");
 
 ?>

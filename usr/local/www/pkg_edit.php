@@ -290,8 +290,6 @@ foreach ($pkg['fields']['field'] as $field) {
 <?php include("fbegin.inc"); ?>
 <?php if (!empty($input_errors)) print_input_errors($input_errors); ?>
 <form name="iform" action="pkg_edit.php" method="post">
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 <input type="hidden" name="xml" value="<?= $xml ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

@@ -175,18 +175,10 @@ if ($_POST) {
 
 $pgtitle = array("Services", "Load Balancer","Relay Action","Edit");
 include("head.inc");
-
+	$types = array("http" => "HTTP", "tcp" => "TCP", "dns" => "DNS");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<!-- <script type="text/javascript" language="javascript" src="mon.js"></script> -->
-
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
-
-<?php
-	$types = array("http" => "HTTP", "tcp" => "TCP", "dns" => "DNS");
-?>
 
 <script language="javascript">
 

@@ -551,9 +551,6 @@ include("head.inc");
 <script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"></script>
 <link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css" />
 
-<script type="text/javascript" src="/javascript/scriptaculous/prototype.js"></script>
-<script type="text/javascript" src="/javascript/scriptaculous/scriptaculous.js"></script>
-
 <script type="text/javascript">
 <!--
 

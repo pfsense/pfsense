@@ -49,7 +49,10 @@ $pagetitle = gentitle( $pgtitle );
 			outputJavaScriptFileInline("javascript/pi.js");
 			outputJavaScriptFileInline("javascript/firebug-lite.js");
 		}
-
+		outputJavaScriptFileInline("/javascript/scriptaculous/prototype.js");
+		outputJavaScriptFileInline("/javascript/scriptaculous/scriptaculous.js");
+		outputJavaScriptFileInline("/javascript/scriptaculous/effects.js");
+		
 	/*
 	 *	Find all javascript files that need to be included
 	 *	for this page ... from the arrays ... :)

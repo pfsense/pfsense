@@ -436,21 +436,10 @@ $closehead = false;
 $pgtitle = array("{$g['product_name']} Dashboard");
 include("head.inc");
 
-?>
-
-<script type="text/javascript" language="javascript" src="/javascript/scriptaculous/prototype.js"></script>
-<script type="text/javascript" language="javascript" src="/javascript/scriptaculous/scriptaculous.js"></script>
-
-<?php
-
 outputJavaScriptFileInline("javascript/domTT/domLib.js");
 outputJavaScriptFileInline("javascript/domTT/domTT.js");
 outputJavaScriptFileInline("javascript/domTT/behaviour.js");
 outputJavaScriptFileInline("javascript/domTT/fadomatic.js");
-//echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domLib.js\"></script>";
-//echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domTT.js\"></script>";
-//echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/behaviour.js\"></script>";
-//echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

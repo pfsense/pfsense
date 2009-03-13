@@ -79,7 +79,6 @@ else
 	setTimeout('getcpuactivity()', 1000);	
 </script>
 <div id='maincontent'>
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <?php
 	include("fbegin.inc"); 
 	if(strstr($pfSversion, "1.2")) 

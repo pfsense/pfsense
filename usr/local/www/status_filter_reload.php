@@ -49,12 +49,9 @@ if($_GET['getstatus']) {
 }
 
 include("head.inc");
-
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 
 <?php include("fbegin.inc"); ?>
 

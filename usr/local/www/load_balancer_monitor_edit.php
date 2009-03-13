@@ -186,18 +186,11 @@ if ($_POST) {
 
 $pgtitle = array("Services", "Load Balancer","Monitor","Edit");
 include("head.inc");
+$types = array("icmp" => "ICMP", "tcp" => "TCP", "http" => "HTTP", "https" => "HTTPS", "send" => "Send/Expect");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<!-- <script type="text/javascript" language="javascript" src="mon.js"></script> -->
-
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
-
-<?php
-	$types = array("icmp" => "ICMP", "tcp" => "TCP", "http" => "HTTP", "https" => "HTTPS", "send" => "Send/Expect");
-?>
 
 <script language="javascript">
 function updateType(t){

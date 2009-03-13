@@ -112,7 +112,6 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
 ?>
 
 <form action="status_queues.php" method="post">
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <script type="text/javascript">
         function getqueueactivity() {
                 var url = "/status_queues.php";

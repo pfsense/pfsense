@@ -64,8 +64,6 @@ if(file_exists("/tmp/manifest")) {
 }
 
 ?>
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 <script language="JavaScript">
 <!--
 

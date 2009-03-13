@@ -41,6 +41,15 @@ function setup_gateways_monitor() {
 	global $g;
 	$gateways_arr = return_gateways_array();
 
+	if (!is_array($config['gateways']['settings'])) {
+		$a_settings['latencylow'] = "10";
+		$a_settings['latencyhigh'] = "20";
+		$a_settings['losslow'] = "100";
+		$a_settings['losshigh'] = "500";
+	}
+
+	$a_settings = &$config['gateways']['settings'];
+
 	/* kill apinger process */
 	if(is_process_running("apinger"))
 		mwexec("/usr/bin/killall apinger", true);
@@ -92,16 +101,16 @@ alarm down "down" {
 ## This alarm will be fired when responses are delayed more than 200ms
 ## it will be canceled, when the delay drops below 100ms
 alarm delay "delay" {
-	delay_low 200ms
-	delay_high 500ms
+	delay_low {$a_settings['latencylow']}ms
+	delay_high {$a_settings['latencyhigh']}ms
 }
 
 ## "Loss" alarm definition. 
 ## This alarm will be fired when packet loss goes over 20%
 ## it will be canceled, when the loss drops below 10%
 alarm loss "loss" {
-	percent_low 10
-	percent_high 20
+	percent_low {$a_settings['losslow']}
+	percent_high {$a_settings['losshigh']}
 }
 
 target default {

@@ -43,6 +43,7 @@ if (!is_array($config['gateways']['settings']))
 $a_settings = &$config['gateways']['settings'];
 
 $changedesc = "Gateways: ";
+$input_errors = array();
 
 require("guiconfig.inc");
 
@@ -64,12 +65,41 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if(($_POST['latencylow']) && ($_POST['latencylow'] > $_POST['latencyhigh'])) {
-		$inputerrors = "The High latency watermark needs to be higher then the low latency watermark";
+	if($_POST['latencylow']) {
+		if (! is_numeric($_POST['latencylow'])) {
+			$input_errors[] = "The low latency watermark needs to be a numeric value.";
+		}
 	}
-	if(($_POST['losslow']) && ($_POST['latencylow'] > $_POST['losshigh'])) {
-		$inputerrors = "The High packet loss watermark needs to be higher then the low packet loss watermark";
+
+	if($_POST['latencyhigh']) {
+		if (! is_numeric($_POST['latencyhigh'])) {
+			$input_errors[] = "The high latency watermark needs to be a numeric value.";
+		}
 	}
+	if($_POST['losslow']) {
+		if (! is_numeric($_POST['losslow'])) {
+			$input_errors[] = "The low loss watermark needs to be a numeric value.";
+		}
+	}
+	if($_POST['losshigh']) {
+		if (! is_numeric($_POST['losshigh'])) {
+			$input_errors[] = "The high loss watermark needs to be a numeric value.";
+		}
+	}
+
+	if(($_POST['latencylow']) && ($_POST['latencyhigh'])){
+		if(($_POST['latencylow'] > $_POST['latencyhigh'])) {
+			$input_errors[] = "The High latency watermark needs to be higher then the low latency watermark";
+		}
+	}
+
+	if(($_POST['losslow']) && ($_POST['losshigh'])){
+		if($_POST['losslow'] > $_POST['losshigh']) {
+			$input_errors[] = "The High packet loss watermark needs to be higher then the low packet loss watermark";
+		}
+	}
+
+
 
         if (!$input_errors) {
 		$a_settings['latencylow'] = $_POST['latencylow'];
@@ -88,7 +118,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Status","RRD Graphs");
+$pgtitle = array("Gateways","Settings");
 include("head.inc");
 
 ?>

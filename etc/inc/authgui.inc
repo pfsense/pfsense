@@ -192,6 +192,8 @@ function display_login_form() {
 	<head>
 		<script type="text/javascript" src="/javascript/scriptaculous/prototype.js"></script>
 		<script type="text/javascript" src="/javascript/scriptaculous/scriptaculous.js"></script>
+		<script>document.observe('dom:loaded', function() { $('usernamefld').focus(); });</script>
+		
 		<title><?=gettext("Login"); ?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />

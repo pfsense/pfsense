@@ -2086,7 +2086,9 @@ endif;
 			mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
 
 			dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
-			$rrdold = parse_xml_config_raw("{$g['tmp_path']}/{$xmldump}", "rrd");
+			$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
+			$rrdold = xml2array($rrdoldxml, 1, "tag");
+			$rrdold = $rrdold['rrd'];
 
 			$i = 0;
 			foreach($rrdold['rra'] as $rra) {
@@ -2140,9 +2142,14 @@ endif;
 			/* create temporary xml from new RRD */
 			dump_rrd_to_xml("{$g['tmp_path']}/{$databasetmp}", "{$g['tmp_path']}/{$xmldumptmp}");
 
-			$rrdold = parse_xml_config_raw("{$g['tmp_path']}/{$xmldump}", "rrd");
-			$rrdnew = parse_xml_config_raw("{$g['tmp_path']}/{$xmldumptmp}", "rrd");
-
+			$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
+			$rrdold = xml2array($rrdoldxml, 1, "tag");
+			$rrdold = $rrdold['rrd'];
+			
+			$rrdnewxml = file_get_contents("{$g['tmp_path']}/{$xmldumptmp}");
+			$rrdnew = xml2array($rrdnewxml, 1, "tag");
+			$rrdnew = $rrdnew['rrd'];
+			
 			/* remove any MAX RRA's. Not needed for traffic. */
 			$i = 0;
 			foreach ($rrdold['rra'] as $rra) {
@@ -2156,7 +2163,6 @@ endif;
 			$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
 			file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
 			mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
-			// mwexec("$rrdtool resize {$rrddbpath}/{$database} 3 GROW 3000 2>&1");
 
 		}
 		enable_rrd_graphing();

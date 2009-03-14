@@ -160,6 +160,7 @@ EOD;
 				 * route as this will break the routing table */
 				continue;
 			} else {
+				log_error("Removing static route for monitor {$gateway['monitor']}");
 				mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']));
 				if(! stristr("127.0.0", $gateway['gateway'])) {
 					mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .

@@ -377,11 +377,11 @@ if ($pkg['tabs'] <> "") {
 
 	      if($pkga['type'] == "input") {
 			if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
-			echo "<input " . $size . " id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+			echo "<input " . $size . " id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "' class='formfld unknown' value='" . $value . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "password") {
 			if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";		
-			echo "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+			echo "<input " . $size . " id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' class='formfld pwd' value='" . $value . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "select") {
                   $fieldname = $pkga['fieldname'];
@@ -623,9 +623,9 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 		else
 			echo "<input size='" . $size . "' type='checkbox' id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "' value='ON'>\n";
 	} else if($type == "password") {
-		echo "<input size='" . $size . "' type='password' id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
+		echo "<input size='" . $size . "' type='password' id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "' class='formfld pwd' value='" . $value . "'>\n";
 	} else if($type == "textarea") {
-		echo "<textarea rows='2' cols='12' id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "'>" . $value . "</textarea>\n";
+		echo "<textarea rows='2' cols='12' id='" . $fieldname . $trc . "' class='formfld unknown' name='" . $fieldname . $trc . "'>" . $value . "</textarea>\n";
 	} else if($type == "select") {
 		echo "<select id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "'>\n";
 		foreach($rowhelper['options']['option'] as $rowopt) {

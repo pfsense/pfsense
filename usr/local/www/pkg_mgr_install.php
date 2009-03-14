@@ -89,12 +89,9 @@ include("head.inc");
 							</table>
 							<br>
 							<!-- status box -->
-							<textarea cols="60" rows="1" name="status" id="status" wrap="hard">
-								Beginning package installation.
-							</textarea>
+							<textarea cols="60" rows="1" name="status" id="status" wrap="hard">Beginning package installation.</textarea>
 							<!-- command output box -->
-							<textarea cols="60" rows="25" name="output" id="output" wrap="hard">
-							</textarea>
+							<textarea cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
 						</center>
 					</td>
 				</tr>

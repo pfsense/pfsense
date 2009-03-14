@@ -1,6 +1,6 @@
 <?php
 /*
-    carp_status.php
+    getstats.php
     Copyright (C) 2009 Bill Marquette
     All rights reserved.
 
@@ -27,10 +27,10 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-status-carp
-##|*NAME=Status: CARP page
-##|*DESCR=Allow access to the 'Status: CARP' page.
-##|*MATCH=carp_status.php*
+##|*IDENT=page-getstats
+##|*NAME=AJAX: Get Stats
+##|*DESCR=Allow access to the 'AJAX: Get Stats' page.
+##|*MATCH=getstats.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");

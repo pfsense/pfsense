@@ -36,7 +36,7 @@
 ##|*MATCH=ifstats.php*
 ##|-PRIV
 
-
+	require_once('guiconfig.inc');
 	require_once("interfaces.inc");
 
 	$ifinfo = array();

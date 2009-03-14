@@ -295,7 +295,8 @@ include("head.inc");
 													} else {
 														$selected = "";
 													}
-													echo "<option value='$interface' $selected>". ucwords($interface) ."</option>\n";
+													$friendly_interface = convert_friendly_interface_to_friendly_descr($interface);
+													echo "<option value='$interface' $selected>". ucwords($friendly_interface) ."</option>\n";
 												}
 											}
 										?>

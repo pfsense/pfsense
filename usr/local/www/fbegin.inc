@@ -97,7 +97,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<script type="text/javascript">
 							var content='<div id="marquee-text"><?= $notice_msgs; ?></div>'
 						</script>
-						<script type="text/javascript" src="/ticker.js"></script>
+						<script type="text/javascript" src="/javascript/ticker.js"></script>
 					</div>
 <?
 				} else {

@@ -185,7 +185,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat_out.php" method="post" name="iform">
-<script type="text/javascript" language="javascript" src="row_toggle.js">
+<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js">
 </script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_natconfdirty_path)): ?><p>

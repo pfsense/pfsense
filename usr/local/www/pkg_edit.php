@@ -284,7 +284,7 @@ foreach ($pkg['fields']['field'] as $field) {
 //-->
 </script>
 <?php } ?>
-<script type="text/javascript" language="javascript" src="row_helper_dynamic.js">
+<script type="text/javascript" language="javascript" src="/javascript/row_helper_dynamic.js">
 </script>
 
 <?php include("fbegin.inc"); ?>

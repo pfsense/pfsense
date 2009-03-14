@@ -194,7 +194,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_rules.php" method="post">
-<script type="text/javascript" language="javascript" src="row_toggle.js">
+<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js">
 </script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_filterconfdirty_path)): ?><p>

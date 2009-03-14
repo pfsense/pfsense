@@ -152,8 +152,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat.php" method="post" name="iform">
-<script type="text/javascript" language="javascript" src="row_toggle.js">
-</script>
+<script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
 <?php if (file_exists($d_natconfdirty_path)): ?><p>
 <?php
 	if($savemsg)

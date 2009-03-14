@@ -141,8 +141,6 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript" language="javascript" src="pool.js"></script>
-
 <script language="javascript">
 function clearcombo(){
   for (var i=document.iform.serversSelect.options.length-1; i>=0; i--){

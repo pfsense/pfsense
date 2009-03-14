@@ -28,33 +28,33 @@ $pagetitle = gentitle( $pgtitle );
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
         <?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
                   file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
-					<?php outputCSSFileInline("themes/{$g['theme']}/wizard.css"); ?>
+					<?php outputCSSFileInline("{$g['www_path']}/themes/{$g['theme']}/wizard.css"); ?>
         <?php else: ?>
         	<link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
         <?php endif; ?>
 		<?php 
-			if(file_exists("niftycssCode.css")) 
-				outputCSSFileInline("niftycssCode.css"); 
-			if(file_exists("niftycssprintCode.css")) 
-				outputCSSPrintFileInline("niftycssprintCode.css");
-			if(file_exists("niftyjsCode.js")) 
-				outputJavaScriptFileInline("niftyjsCode.js"); 
+			if(file_exists("{$g['www_path']}/niftycssCode.css")) 
+				outputCSSFileInline("{$g['www_path']}/niftycssCode.css"); 
+			if(file_exists("{$g['www_path']}/niftycssprintCode.css")) 
+				outputCSSPrintFileInline("{$g['www_path']}/niftycssprintCode.css");
+			if(file_exists("{$g['www_path']}/javascript/niftyjsCode.js")) 
+				outputJavaScriptFileInline("{$g['www_path']}/javascript/niftyjsCode.js"); 
 		?>
 		<script type="text/javascript">
 			var theme = "<?php echo $g['theme']; ?>";
 		</script>
-		<?php outputJavaScriptFileInline("themes/{$g['theme']}/loader.js"); ?>
+		<?php outputJavaScriptFileInline("{$g['www_path']}/themes/{$g['theme']}/loader.js"); ?>
 <?php
 		if($_GET['enablefirebuglite']) {
-			outputJavaScriptFileInline("javascript/pi.js");
-			outputJavaScriptFileInline("javascript/firebug-lite.js");
+			outputJavaScriptFileInline("{$g['www_path']}/javascript/pi.js");
+			outputJavaScriptFileInline("{$g['www_path']}/javascript/firebug-lite.js");
 		}
-		outputJavaScriptFileInline("javascript/scriptaculous/prototype.js");
-		outputJavaScriptFileInline("javascript/scriptaculous/scriptaculous.js");
-		outputJavaScriptFileInline("javascript/scriptaculous/effects.js");
-		outputJavaScriptFileInline("javascript/scriptaculous/dragdrop.js");
-		if(file_exists("javascript/global.js"))
-			outputJavaScriptFileInline("javascript/global.js");
+		outputJavaScriptFileInline("{$g['www_path']}/javascript/scriptaculous/prototype.js");
+		outputJavaScriptFileInline("{$g['www_path']}/javascript/scriptaculous/scriptaculous.js");
+		outputJavaScriptFileInline("{$g['www_path']}/javascript/scriptaculous/effects.js");
+		outputJavaScriptFileInline("{$g['www_path']}/javascript/scriptaculous/dragdrop.js");
+		if(file_exists("{$g['www_path']}/javascript/global.js"))
+			outputJavaScriptFileInline("{$g['www_path']}/javascript/global.js");
 
 	/*
 	 *	Find all javascript files that need to be included
@@ -63,13 +63,13 @@ $pagetitle = gentitle( $pgtitle );
 	 */
 
 	$dir  = trim(basename($_SERVER["SCRIPT_FILENAME"]), '.php');
-	$path = "/usr/local/www/javascript/" . $dir . "/";
+	$path = "{$g['www_path']}/javascript/" . $dir . "/";
 	if (is_dir($path)) {
 		if ($dh = opendir($path)) {
 			while (($file = readdir($dh)) !== false) {
 		   		if (is_dir($file)) continue;
 				//echo "\t".'<script type="text/javascript" src="/javascript/'.$dir.'/'.$file.'"></script>'."\n";
-				outputJavaScriptFileInline("javascript/{$dir}/{$file}"); 
+				outputJavaScriptFileInline("{$g['www_path']}/javascript/{$dir}/{$file}"); 
 			}
 			closedir($dh);
 		}

@@ -372,7 +372,7 @@ EOD;
 	echo $jscriptstr;
 ?>
 
-<script type="text/javascript" src="row_helper.js">
+<script type="text/javascript" src="/javascript/row_helper.js">
 </script>
 
 <input type='hidden' name='address_type' value='textbox' />

@@ -134,10 +134,6 @@ include("head.inc");
 $types = array("http" => "HTTP", "tcp" => "TCP", "dns" => "DNS");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script type="text/javascript" language="javascript" src="load_balancer_relay_protocol_edit.js"></script>
-
-
-
 <script language="javascript">
 function updateType(t){
 	switch(t) {

@@ -45,6 +45,7 @@ PHPMODULES="apc \
 	ctype \
 	curl \
 	date \
+	json \
 	gettext \
 	ldap \
 	libxml \

@@ -53,7 +53,9 @@ $pagetitle = gentitle( $pgtitle );
 		outputJavaScriptFileInline("javascript/scriptaculous/scriptaculous.js");
 		outputJavaScriptFileInline("javascript/scriptaculous/effects.js");
 		outputJavaScriptFileInline("javascript/scriptaculous/dragdrop.js");
-		
+		if(file_exists("javascript/global.js"))
+			outputJavaScriptFileInline("javascript/global.js");
+
 	/*
 	 *	Find all javascript files that need to be included
 	 *	for this page ... from the arrays ... :)

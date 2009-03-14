@@ -90,7 +90,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script language="javascript" type="text/javascript" src="datetimepicker.js">
+<script language="javascript" type="text/javascript" src="/javascript/datetimepicker.js">
 //Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
 //Script featured on JavaScript Kit (http://www.javascriptkit.com)
 //For this script, visit http://www.javascriptkit.com

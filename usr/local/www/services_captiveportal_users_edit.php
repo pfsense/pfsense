@@ -135,7 +135,7 @@ include("head.inc");
 
 ?>
 <?php include("fbegin.inc"); ?>
-<script language="javascript" type="text/javascript" src="datetimepicker.js">
+<script language="javascript" type="text/javascript" src="/javascript/datetimepicker.js">
 <!--
 //Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
 //Script featured on JavaScript Kit (http://www.javascriptkit.com)

@@ -11,7 +11,9 @@ function updateMeters() {
 	new Ajax.Request(url, {
 		method: 'get',
 		onSuccess: function(transport) {
-			stats(transport.responseText);
+			response = transport.responseText || "";
+			if (response != "")
+				stats(transport.responseText);
 		}
 	});
 	setTimeout('updateMeters()', update_interval);

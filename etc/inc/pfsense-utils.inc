@@ -1655,7 +1655,7 @@ function update_status($status) {
 	if($pkg_interface == "console") {
 		echo $status . "\n";
 	} else {
-		echo "\n<script type=\"text/javascript\">document.forms[0].status.value=\"" . $status . "\";</script>";
+		echo "\n<script type=\"text/javascript\">this.document.forms[0].status.value=\"" . $status . "\";</script>";
 	}
 	/* ensure that contents are written out */
 	ob_flush();

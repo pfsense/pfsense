@@ -124,7 +124,7 @@ if(isset($curcfg['alturl']['enable']))
 else 
 	$updater_url = $g['update_url'];
 
-update_status("Downloading current version information...");
+update_output_window("Downloading current version information...");
 $latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
 
 if(strstr($latest_version,"404")) {
@@ -147,7 +147,7 @@ if(!$latest_version) {
 			update_output_window("Could not contact {$g['product_name']} update server {$updater_url}.");
 } else {
 	if($needs_system_upgrade) {
-		echo "\n<script language=\"JavaScript\">$('invokeupgrade').style.visibility = 'visible';</script>";
+		echo "\n<script>$('invokeupgrade').style.visibility = 'visible';</script>";
 		$txt  = "A new version is now available \\n\\n";
 		$txt .= "New version:     {$latest_version}\\n";
 		$txt .= "Current version: {$current_installed_pfsense_version}\\n";

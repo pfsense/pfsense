@@ -12,10 +12,14 @@ function updateMeters() {
 
 function stats(x) {
 	var values = x.split("|");
-	for(var counter=0; counter<x.length; x++) {
-		if(values[counter] == 'undefined' || values[counter] == null)
-			return;
-	}	
+	if (values.find(function(value){
+		if (value == 'undefined' || value == null)
+			return true;
+		else
+			return false;
+	}))
+		return;
+
 	updateCPU(values[0]);
 	updateMemory(values[1]);
 	updateUptime(values[2]);
@@ -29,47 +33,47 @@ function stats(x) {
 
 function updateMemory(x) {
 	if($('memusagemeter'))
-		document.getElementById("memusagemeter").value = x + '%';
+		$("memusagemeter").value = x + '%';
 	if($('memwidtha'))
-		document.getElementById("memwidtha").style.width = x + 'px';
+		$("memwidtha").style.width = x + 'px';
 	if($('memwidthb'))
-		document.getElementById("memwidthb").style.width = (100 - x) + 'px';
+		$("memwidthb").style.width = (100 - x) + 'px';
 }
 
 function updateCPU(x) {
 	if($('cpumeter'))
-		document.getElementById("cpumeter").value = x + '%';
+		$("cpumeter").value = x + '%';
 	if($('cpuwidtha'))
-		document.getElementById("cpuwidtha").style.width = x + 'px';
+		$("cpuwidtha").style.width = x + 'px';
 	if($('cpuwidthb'))
-		document.getElementById("cpuwidthb").style.width = (100 - x) + 'px';
-        GraphValue(graph[0], x);
+		$("cpuwidthb").style.width = (100 - x) + 'px';
+		/* Load CPU Graph widget if enabled */
+		if(typeof GraphValue == 'function') {
+			GraphValue(graph[0], x);
+		}
 }
 
 function updateTemp(x) {
-	if(document.getElementById("tempmeter") != null) {
-		document.getElementById("tempmeter").value = x + 'C';
-		document.getElementById("tempwidtha").style.width = x + 'px';
-		document.getElementById("tempwidthb").style.width = (100 - x) + 'px';
+	if($("tempmeter")) {
+		$("tempmeter").value = x + 'C';
+		$("tempwidtha").style.width = x + 'px';
+		$("tempwidthb").style.width = (100 - x) + 'px';
 	}
 }
 
 function updateDateTime(x) {
-	if(!$('datetime')) 
-		return;		
-	if(document.getElementById("datetime") == null)
-		return;		
-	document.getElementById("datetime").firstChild.data = x;
+	if($('datetime')) 
+		$("datetime").firstChild.data = x;
 }
 
 function updateUptime(x) {
 	if($('uptime'))
-		document.getElementById("uptime").value = x;
+		$("uptime").value = x;
 }
 
 function updateState(x) {
 	if($('pfstate'))
-		document.getElementById("pfstate").value = x;
+		$("pfstate").value = x;
 }
 
 function updateGatewayStats(x){
@@ -78,7 +82,7 @@ function updateGatewayStats(x){
 		var counter = 1;
 		for (var y=0; y<gateways_split.length-1; y++){
 			if($('gateway' + counter)) {
-				document.getElementById('gateway' + counter).innerHTML = gateways_split[y];
+				$('gateway' + counter).update(gateways_split[y]);
 				counter++;	
 			}
 		}
@@ -91,7 +95,7 @@ function updateInterfaceStats(x){
 		var counter = 1;
 		for (var y=0; y<statistics_split.length-1; y++){
 			if($('stat' + counter)) {
-				document.getElementById('stat' + counter).innerHTML = statistics_split[y];
+				$('stat' + counter).update(statistics_split[y]);
 				counter++;	
 			}
 		}
@@ -101,27 +105,30 @@ function updateInterfaceStats(x){
 function updateInterfaces(x){
 	if (widgetActive("interfaces")){
 		interfaces = x.split("~");
-		for (var z=0; z<interfaces.length-1; z++){
-			details = interfaces[z].split(",");	
-			if (details[1] == "up"){
-				document.getElementById(details[0] + '-up').style.display = "inline";	 
-				document.getElementById(details[0] + '-down').style.display = "none";
-				document.getElementById(details[0] + '-block').style.display = "none";
-				document.getElementById(details[0] + '-ip').innerHTML = details[2]; 
-				document.getElementById(details[0] + '-media').innerHTML = details[3];
-			} else if (details[1] == "down"){
-				document.getElementById(details[0] + '-down').style.display = "inline";	 
-				document.getElementById(details[0] + '-up').style.display = "none";
-				document.getElementById(details[0] + '-block').style.display = "none";
-				document.getElementById(details[0] + '-ip').innerHTML = details[2]; 
-				document.getElementById(details[0] + '-media').innerHTML = details[3];			
-			} else if (details[1] == "block"){
-				document.getElementById(details[0] + '-block').style.display = "inline";	 
-				document.getElementById(details[0] + '-down').style.display = "none";
-				document.getElementById(details[0] + '-up').style.display = "none";			
+		interfaces.each(function(iface){
+			details = iface.split(",");
+			switch(details[1]) {
+				case "up":
+					$(details[0] + '-up').style.display = "inline";
+					$(details[0] + '-down').style.display = "none";
+					$(details[0] + '-block').style.display = "none";
+					$(details[0] + '-ip').update(details[2]);
+					$(details[0] + '-media').update(details[3]);
+					break;
+				case "down":
+					$(details[0] + '-down').style.display = "inline";
+					$(details[0] + '-up').style.display = "none";
+					$(details[0] + '-block').style.display = "none";
+					$(details[0] + '-ip').update(details[2]);
+					$(details[0] + '-media').update(details[3]);
+					break;
+				case "block":
+						$(details[0] + '-block').style.display = "inline";
+						$(details[0] + '-down').style.display = "none";
+						$(details[0] + '-up').style.display = "none";
+					break;
 			}
-			
-		}
+		});
 	}
 }
 

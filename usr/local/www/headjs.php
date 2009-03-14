@@ -69,7 +69,7 @@ function getHeadJS() {
         $('inputerrors').innerHTML = '<center><b><i>Loading...</i></b></center>';
         
       /* dsh: Introduced because pkg_edit tries to set some hidden fields
-       *      if executing submit's onclick event. Tho click gets deleted
+       *      if executing submit's onclick event. The click gets deleted
        *      by Ajax. Hence using onkeydown instead.
        */
       if($('submit') && $('submit').onkeydown)

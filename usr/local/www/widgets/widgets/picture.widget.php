@@ -75,7 +75,7 @@ if($_POST) {
 	<form action="/widgets/widgets/picture.widget.php" method="post" name="iforma" enctype="multipart/form-data">
 		<input name="pictfile" type="file" class="formfld unknown" id="pictfile" size="20"></p>
 		<input id="submita" name="submita" type="submit" class="formbtn" value="Upload" /><br/>
-		NOTE: Best image size is 320x320 or smaller.
+		NOTE: Best image size is 350x350 or smaller.
 	</form>
 </div>
 

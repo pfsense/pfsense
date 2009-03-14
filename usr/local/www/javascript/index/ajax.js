@@ -6,8 +6,15 @@
 var update_interval = 11000;
 
 function updateMeters() {
-	x_get_stats(stats);
-	window.setTimeout('updateMeters()', update_interval);
+	url = '/getstats.php'
+
+	new Ajax.Request(url, {
+		method: 'get',
+		onSuccess: function(transport) {
+			stats(transport.responseText);
+		}
+	});
+	setTimeout('updateMeters()', update_interval);
 }
 
 function stats(x) {
@@ -133,16 +140,15 @@ function updateInterfaces(x){
 }
 
 function widgetActive(x) {
-	var widget = document.getElementById(x + '-container');
+	var widget = $(x + '-container');
 	if (widget.style.display != "none")
 		return true;
 	else
 		return false;
 }
 
-/* start ajax helper "thread" if not started */
-if(!ajaxStarted) {
-	window.setTimeout('updateMeters()', update_interval);
-	var ajaxStarted = true;
-}
+/* start updater */
+document.observe('dom:loaded', function(){
+	setTimeout('updateMeters()', update_interval);
+});
 

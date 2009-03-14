@@ -59,20 +59,6 @@
 
 	## Load Functions Files
 	require_once('includes/functions.inc.php');
-
-	## Load AJAX, Initiate Class ###############################################
-	require_once('includes/sajax.class.php');
-
-	## Initiate Class and Set location of ajax file containing 
-	## the information that we need for this page. Also set functions
-	## that SAJAX will be using.
-	$oSajax = new sajax();
-	$oSajax->sajax_remote_uri = 'sajax/index.sajax.php';
-	$oSajax->sajax_request_type = 'POST';
-	$oSajax->sajax_export("get_stats");
-	$oSajax->sajax_handle_client_request();
-	############################################################################
-	
 	
 	## Check to see if we have a swap space,
 	## if true, display, if false, hide it ...
@@ -551,69 +537,61 @@ echo $jscriptstr;
 		}
 		
 		if ($config['widgets'] && $pconfig['sequence'] != ""){
-			if ($displayarray[$widgetcounter] == "show"){
-				$divdisplay = "block";
-				$display = "block";
-				$inputdisplay = "show";					
-				$showWidget = "none";
-				$mindiv = "inline";
-			}
-			else if ($displayarray[$widgetcounter] == "hide") {
-				$divdisplay = "block";
-				$display = "none";
-				$inputdisplay = "hide";		
-				$showWidget = "inline";
-				$mindiv = "none";
-			}
-			else if ($displayarray[$widgetcounter] == "close"){
-				$divdisplay = "none";
-				$display = "block";
-				$inputdisplay = "close";			
-				$showWidget = "none";
-				$mindiv = "inline";
-			}
-			else{
-				$divdisplay = "none";
-				$display = "block";
-				$inputdisplay = "none";
-				$showWidget = "none";
-				$mindiv = "inline";
-			}
-		}
-		else
-		{
-			if ($firstprint == false){
-				$divdisplay = "block";
-				$display = "block";
-				$inputdisplay = "show";					
-				$showWidget = "none";
-				$mindiv = "inline";
-				$firstprint = true;
-			}
-			else
-			{
-				if ($widget == "interfaces.widget.php")
-				{
+			switch($displayarray[$widgetcounter]){
+				case "show":
 					$divdisplay = "block";
 					$display = "block";
 					$inputdisplay = "show";					
 					$showWidget = "none";
 					$mindiv = "inline";
-				}
-				else if ($widget == "traffic_graphs.widget.php")
-				{
+					break;
+				case "hide":
 					$divdisplay = "block";
-					$display = "block";
-					$inputdisplay = "show";					
-					$showWidget = "none";
-					$mindiv = "inline";
-				}
-				else {
+					$display = "none";
+					$inputdisplay = "hide";		
+					$showWidget = "inline";
+					$mindiv = "none";
+					berak;
+				case "close":
 					$divdisplay = "none";
 					$display = "block";
 					$inputdisplay = "close";			
 					$showWidget = "none";
 					$mindiv = "inline";
+					break;
+				default:
+					$divdisplay = "none";
+					$display = "block";
+					$inputdisplay = "none";
+					$showWidget = "none";
+					$mindiv = "inline";
+					break;
+			}
+		} else {
+			if ($firstprint == false){
+				$divdisplay = "block";
+				$display = "block";
+				$inputdisplay = "show";
+				$showWidget = "none";
+				$mindiv = "inline";
+				$firstprint = true;
+			} else {
+				switch ($widget) {
+					case "interfaces.widget.php":
+					case "traffic_graphs.widget.php":
+						$divdisplay = "block";
+						$display = "block";
+						$inputdisplay = "show";
+						$showWidget = "none";
+						$mindiv = "inline";
+						break;
+					default:
+						$divdisplay = "none";
+						$display = "block";
+						$inputdisplay = "close";
+						$showWidget = "none";
+						$mindiv = "inline";
+						break;
 				}
 			}
 		}

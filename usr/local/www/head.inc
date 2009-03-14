@@ -73,14 +73,6 @@ $pagetitle = gentitle( $pgtitle );
 		}
 	}
 
-	if ($oSajax):
-?>
-	<script language="javascript" type="text/javascript">
-		<?php $oSajax->sajax_show_javascript(); ?>
-	</script>
-
-<?	endif; ?>
-
-<?php if (!isset($closehead))
+if (!isset($closehead))
 	echo "</head>";
 ?>

@@ -538,7 +538,7 @@ function convert_config() {
 	include_once('upgrade_config.inc');
 	/* Loop and run upgrade_VER_to_VER() until we're at current version */
 	while ($config['version'] < $g['latest_config']) {
-		$cur = $config['version'] * 10
+		$cur = $config['version'] * 10;
 		$next = $cur + 1;
 		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur, $next);
 		$migration_function();

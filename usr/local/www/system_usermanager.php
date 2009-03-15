@@ -277,7 +277,7 @@ if (isAllowedPage("system_usermanager")) {
 //Script featured on JavaScript Kit (http://www.javascriptkit.com)
 //For this script, visit http://www.javascriptkit.com
 // -->
-<script language="javascript" type="text/javascript" src="datetimepicker.js"></script>
+<script language="javascript" type="text/javascript" src="javascript/datetimepicker.js"></script>
 <script language="JavaScript">
 <!--
 

@@ -40,10 +40,10 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 ?>
 			
 	         <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
-			<?php 
-			foreach ($ifdescrs as $ifdescr => $ifname) {
-					$ifinfo = get_interface_info($ifdescr);
-					$iswireless = is_interface_wireless($ifdescr);
+				<?php 
+				foreach ($ifdescrs as $ifdescr => $ifname) {
+						$ifinfo = get_interface_info($ifdescr);
+						$iswireless = is_interface_wireless($ifdescr);
 				?>
 				<tr> 
 				<td class="vncellt" width="30%">
@@ -57,35 +57,59 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif"/>
 		                  <? } ?>&nbsp; 
 				<strong><u>
-					<span onClick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
-				
+				<span onClick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
 				<?=htmlspecialchars($ifname);?></span></u></strong>
-				
+				<?php 
+					if ($ifinfo['dhcplink']) 
+						echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(DHCP)";
+				?>
 				</td>
 				<td width="70%"  class="listr">
 	                 <?php if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") { ?> 
-	                 		<div id="<?php echo $ifname;?>-up" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
-	                 		<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
-	                 		<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
-	                 		&nbsp; 
+	                 		<table>
+								<tr>
+									<td>
+										<div id="<?php echo $ifname;?>-up" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+									</td>
+									<td>
+										<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+									</td>
+									<td>
+										<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+									</td>
 		                <? } else if ($ifinfo['status'] == "no carrier") { ?>
-		                  	<div id="<?php echo $ifname;?>-down" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
-		                  	<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
-	                 		<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
-	                 		&nbsp;
+		                  	<table>
+								<tr>
+									<td>
+										<div id="<?php echo $ifname;?>-down" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+									</td>
+									<td>
+										<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+									</td>
+									<td>
+										<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+									</td>
 						<? }  else if ($ifinfo['status'] == "down") { ?>
-		                	<div id="<?php echo $ifname;?>-block" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
-		                	<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
-	                 		<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
-	                 		 &nbsp;
-		                <? } else { ?><?=htmlspecialchars($ifinfo['status']); }?>				
-				  
-	                 <div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?>&nbsp; 
-	                 <?php if ($ifinfo['dhcplink']) { ?>
-						(DHCP)<br>
-					 <? } ?></div>
-					 	               
-		             <div id="<?php echo $ifname;?>-media" style="display:inline"><?=htmlspecialchars($ifinfo['media']);?></div>
+							<table>
+								<tr>
+									<td>
+										<div id="<?php echo $ifname;?>-block" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+									</td>
+									<td>
+										<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+									</td>
+									<td>
+										<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+									</td>
+		                <? } else { ?><?=htmlspecialchars($ifinfo['status']); }?>
+								<td>
+									<div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);?>&nbsp; </div>
+								</td>
+								<td>
+									<div id="<?php echo $ifname;?>-media" style="display:inline"><?=htmlspecialchars($ifinfo['media']);?></div>
+								</td>
+							</tr>
+						</table>
 		          </td></tr><?php 
 			}//end for each
 			?> 

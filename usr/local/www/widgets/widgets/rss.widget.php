@@ -34,6 +34,7 @@ if($_POST) {
 	$config['widgets']['rssfeed'] = str_replace("\n", ",", $_POST['rssfeed']);
 	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", $_POST['rssmaxitems']);
 	$config['widgets']['rsswidgetheight'] = $_POST['rsswidgetheight'];
+	$config['widgets']['rsswidgettextlength'] = $_POST['rsswidgettextlength'];
 	write_config("Saved RSS Widget feed via Dashboard");
 	Header("Location: /");
 }
@@ -48,6 +49,9 @@ if($config['widgets']['rssmaxitems'])
 if($config['widgets']['rsswidgetheight'])
 	$rsswidgetheight =  $config['widgets']['rsswidgetheight'];
 
+if($config['widgets']['rsswidgettextlength'])
+	$rsswidgettextlength =  $config['widgets']['rsswidgettextlength'];
+
 // Set a default feed if none exists
 if(!$rss_feed_s) {
 	$rss_feed_s = "http://blog.pfsense.org";
@@ -59,6 +63,9 @@ if(!$max_items)
 
 if(!$rsswidgetheight)
 	$rsswidgetheight = 300;
+	
+if(!$rsswidgettextlength)
+	$rsswidgettextlength = 140;	// oh twitter, how do we love thee?
 
 if($config['widgets']['rssfeed']) 
 	$textarea_txt =  str_replace(",", "\n", $config['widgets']['rssfeed']);
@@ -76,7 +83,7 @@ else
 		<br/>
 		<table>
 			<tr>
-				<td>
+				<td align="right">
 					Display number of items: 
 				</td>
 				<td>
@@ -103,6 +110,20 @@ else
 					</select>
 				</td>
 			</tr>
+			<tr>
+				<td align="right">		
+					Show how many words from story:
+				</td>
+				<td>
+					<select name='rsswidgettextlength' id='rsswidgettextlength'>
+						<option value='<?= $rsswidgettextlength ?>'><?= $rsswidgettextlength ?></option>
+						<?php
+							for($x=10; $x<5100; $x=$x+10) 
+								echo "<option value='{$x}'>{$x}</option>\n";
+						?>
+					</select>
+				</td>
+			</tr>			
 			<tr>
 				<td>
 					&nbsp;
@@ -142,7 +163,7 @@ else
 		echo "<a target='_new' href='" . $item->get_permalink() . "'>" . $item->get_title() . "</a><br/>";
 		$content = $item->get_content();
 		$content = strip_tags($content);
-		echo textLimit($content, 140) . "<br/>";
+		echo textLimit($content, $rsswidgettextlength) . "<br/>";
 		echo "Source: <a target='_new' href='" . $item->get_permalink() . "'><img src='" . $feed->get_favicon() . "' alt='" . $feed->get_title() . "' title='" . $feed->get_title() . "' border='0' width='16' height='16'></a><br/>";
 		$counter++;
 		if($counter > $max_items)

@@ -1,0 +1,1728 @@
+<?php
+/*
+	Copyright (C) 2004-2006 Scott Ullrich
+	All rights reserved.
+
+	originally part of m0n0wall (http://m0n0.ch/wall)
+Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+	this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+	*/
+
+
+/* Upgrade functions must be named:
+*    upgrade_XXX_to_YYY
+	* where XXX == previous version, zero padded, and YYY == next version, zero padded
+	*/
+
+function upgrade_010_to_011() {
+	global $config;
+	$opti = 1;
+	$ifmap = array('lan' => 'lan', 'wan' => 'wan', 'pptp' => 'pptp');
+
+	/* convert DMZ to optional, if necessary */
+	if (isset($config['interfaces']['dmz'])) {
+
+		$dmzcfg = &$config['interfaces']['dmz'];
+
+		if ($dmzcfg['if']) {
+			$config['interfaces']['opt' . $opti] = array();
+			$optcfg = &$config['interfaces']['opt' . $opti];
+
+			$optcfg['enable'] = $dmzcfg['enable'];
+			$optcfg['descr'] = "DMZ";
+			$optcfg['if'] = $dmzcfg['if'];
+			$optcfg['ipaddr'] = $dmzcfg['ipaddr'];
+			$optcfg['subnet'] = $dmzcfg['subnet'];
+
+			$ifmap['dmz'] = "opt" . $opti;
+			$opti++;
+		}
+
+		unset($config['interfaces']['dmz']);
+	}
+
+	/* convert WLAN1/2 to optional, if necessary */
+	for ($i = 1; isset($config['interfaces']['wlan' . $i]); $i++) {
+
+		if (!$config['interfaces']['wlan' . $i]['if']) {
+			unset($config['interfaces']['wlan' . $i]);
+			continue;
+		}
+
+		$wlancfg = &$config['interfaces']['wlan' . $i];
+		$config['interfaces']['opt' . $opti] = array();
+		$optcfg = &$config['interfaces']['opt' . $opti];
+
+		$optcfg['enable'] = $wlancfg['enable'];
+		$optcfg['descr'] = "WLAN" . $i;
+		$optcfg['if'] = $wlancfg['if'];
+		$optcfg['ipaddr'] = $wlancfg['ipaddr'];
+		$optcfg['subnet'] = $wlancfg['subnet'];
+		$optcfg['bridge'] = $wlancfg['bridge'];
+
+		$optcfg['wireless'] = array();
+		$optcfg['wireless']['mode'] = $wlancfg['mode'];
+		$optcfg['wireless']['ssid'] = $wlancfg['ssid'];
+		$optcfg['wireless']['channel'] = $wlancfg['channel'];
+		$optcfg['wireless']['wep'] = $wlancfg['wep'];
+
+		$ifmap['wlan' . $i] = "opt" . $opti;
+
+		unset($config['interfaces']['wlan' . $i]);
+		$opti++;
+	}
+
+	/* convert filter rules */
+	$n = count($config['filter']['rule']);
+	for ($i = 0; $i < $n; $i++) {
+
+		$fr = &$config['filter']['rule'][$i];
+
+		/* remap interface */
+		if (array_key_exists($fr['interface'], $ifmap))
+			$fr['interface'] = $ifmap[$fr['interface']];
+		else {
+			/* remove the rule */
+			echo "\nWarning: filter rule removed " .
+				"(interface '{$fr['interface']}' does not exist anymore).";
+			unset($config['filter']['rule'][$i]);
+			continue;
+		}
+
+		/* remap source network */
+		if (isset($fr['source']['network'])) {
+			if (array_key_exists($fr['source']['network'], $ifmap))
+				$fr['source']['network'] = $ifmap[$fr['source']['network']];
+			else {
+				/* remove the rule */
+				echo "\nWarning: filter rule removed " .
+					"(source network '{$fr['source']['network']}' does not exist anymore).";
+				unset($config['filter']['rule'][$i]);
+				continue;
+			}
+		}
+
+		/* remap destination network */
+		if (isset($fr['destination']['network'])) {
+			if (array_key_exists($fr['destination']['network'], $ifmap))
+				$fr['destination']['network'] = $ifmap[$fr['destination']['network']];
+			else {
+				/* remove the rule */
+				echo "\nWarning: filter rule removed " .
+					"(destination network '{$fr['destination']['network']}' does not exist anymore).";
+				unset($config['filter']['rule'][$i]);
+				continue;
+			}
+		}
+	}
+
+	/* convert shaper rules */
+	$n = count($config['pfqueueing']['rule']);
+	if (is_array($config['pfqueueing']['rule']))
+	for ($i = 0; $i < $n; $i++) {
+
+		$fr = &$config['pfqueueing']['rule'][$i];
+
+		/* remap interface */
+		if (array_key_exists($fr['interface'], $ifmap))
+			$fr['interface'] = $ifmap[$fr['interface']];
+		else {
+			/* remove the rule */
+			echo "\nWarning: traffic shaper rule removed " .
+				"(interface '{$fr['interface']}' does not exist anymore).";
+			unset($config['pfqueueing']['rule'][$i]);
+			continue;
+		}
+
+		/* remap source network */
+		if (isset($fr['source']['network'])) {
+			if (array_key_exists($fr['source']['network'], $ifmap))
+				$fr['source']['network'] = $ifmap[$fr['source']['network']];
+			else {
+				/* remove the rule */
+				echo "\nWarning: traffic shaper rule removed " .
+					"(source network '{$fr['source']['network']}' does not exist anymore).";
+				unset($config['pfqueueing']['rule'][$i]);
+				continue;
+			}
+		}
+
+		/* remap destination network */
+		if (isset($fr['destination']['network'])) {
+			if (array_key_exists($fr['destination']['network'], $ifmap))
+				$fr['destination']['network'] = $ifmap[$fr['destination']['network']];
+			else {
+				/* remove the rule */
+				echo "\nWarning: traffic shaper rule removed " .
+					"(destination network '{$fr['destination']['network']}' does not exist anymore).";
+				unset($config['pfqueueing']['rule'][$i]);
+				continue;
+			}
+		}
+	}
+}
+
+
+function upgrade_011_to_012() {
+	global $config;
+	/* move LAN DHCP server config */
+	$tmp = $config['dhcpd'];
+	$config['dhcpd'] = array();
+	$config['dhcpd']['lan'] = $tmp;
+
+	/* encrypt password */
+	$config['system']['password'] = crypt($config['system']['password']);
+}
+
+
+function upgrade_012_to_013() {
+	global $config;
+	/* convert advanced outbound NAT config */
+	for ($i = 0; isset($config['nat']['advancedoutbound']['rule'][$i]); $i++) {
+		$curent = &$config['nat']['advancedoutbound']['rule'][$i];
+		$src = $curent['source'];
+		$curent['source'] = array();
+		$curent['source']['network'] = $src;
+		$curent['destination'] = array();
+		$curent['destination']['any'] = true;
+	}
+
+	/* add an explicit type="pass" to all filter rules to make things consistent */
+	for ($i = 0; isset($config['filter']['rule'][$i]); $i++) {
+		$config['filter']['rule'][$i]['type'] = "pass";
+	}
+}
+
+
+function upgrade_013_to_014() {
+	global $config;
+	/* convert shaper rules (make pipes) */
+	if (is_array($config['pfqueueing']['rule'])) {
+		$config['pfqueueing']['pipe'] = array();
+
+		for ($i = 0; isset($config['pfqueueing']['rule'][$i]); $i++) {
+			$curent = &$config['pfqueueing']['rule'][$i];
+
+			/* make new pipe and associate with this rule */
+			$newpipe = array();
+			$newpipe['descr'] = $curent['descr'];
+			$newpipe['bandwidth'] = $curent['bandwidth'];
+			$newpipe['delay'] = $curent['delay'];
+			$newpipe['mask'] = $curent['mask'];
+			$config['pfqueueing']['pipe'][$i] = $newpipe;
+
+			$curent['targetpipe'] = $i;
+
+			unset($curent['bandwidth']);
+			unset($curent['delay']);
+			unset($curent['mask']);
+		}
+	}
+}
+
+
+function upgrade_014_to_015() {
+	global $config;
+	/* Default route moved */
+	if (isset($config['interfaces']['wan']['gateway']))
+		if ($config['interfaces']['wan']['gateway'] <> "")
+		$config['interfaces']['wan']['gateway'] = $config['interfaces']['wan']['gateway'];
+	unset($config['interfaces']['wan']['gateway']);
+
+	/* Queues are no longer interface specific */
+	if (isset($config['interfaces']['lan']['schedulertype']))
+		unset($config['interfaces']['lan']['schedulertype']);
+	if (isset($config['interfaces']['wan']['schedulertype']))
+		unset($config['interfaces']['wan']['schedulertype']);
+
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+		if(isset($config['interfaces']['opt' . $i]['schedulertype']))
+			unset($config['interfaces']['opt' . $i]['schedulertype']);
+	}
+}
+
+
+function upgrade_015_to_016() {
+	global $config;
+	/* Alternate firmware URL moved */
+	if (isset($config['system']['firmwareurl']) && isset($config['system']['firmwarename'])) { // Only convert if *both* are defined.
+		$config['system']['alt_firmware_url'] = array();
+		$config['system']['alt_firmware_url']['enabled'] = "";
+		$config['system']['alt_firmware_url']['firmware_base_url'] = $config['system']['firmwareurl'];
+		$config['system']['alt_firmware_url']['firmware_filename'] = $config['system']['firmwarename'];
+		unset($config['system']['firmwareurl'], $config['system']['firmwarename']);
+	} else {
+		unset($config['system']['firmwareurl'], $config['system']['firmwarename']);
+	}
+}
+
+
+function upgrade_016_to_017() {
+	global $config;
+	/* wipe previous shaper configuration */
+	unset($config['shaper']['queue']);
+	unset($config['shaper']['rule']);
+	unset($config['interfaces']['wan']['bandwidth']);
+	unset($config['interfaces']['wan']['bandwidthtype']);
+	unset($config['interfaces']['lan']['bandwidth']);
+	unset($config['interfaces']['lan']['bandwidthtype']);
+	$config['shaper']['enable'] = FALSE;
+}
+
+
+function upgrade_017_to_018() {
+	global $config;
+	if(isset($config['proxyarp']) && is_array($config['proxyarp']['proxyarpnet'])) {
+		$proxyarp = &$config['proxyarp']['proxyarpnet'];
+		foreach($proxyarp as $arpent){
+			$vip = array();
+			$vip['mode'] = "proxyarp";
+			$vip['interface'] = $arpent['interface'];
+			$vip['descr'] = $arpent['descr'];
+			if (isset($arpent['range'])) {
+				$vip['range'] = $arpent['range'];
+				$vip['type'] = "range";
+			} else {
+				$subnet = explode('/', $arpent['network']);
+				$vip['subnet'] = $subnet[0];
+				if (isset($subnet[1])) {
+					$vip['subnet_bits'] = $subnet[1];
+					$vip['type'] = "network";
+				} else {
+					$vip['subnet_bits'] = "32";
+					$vip['type'] = "single";
+				}
+			}
+			$config['virtualip']['vip'][] = $vip;
+		}
+		unset($config['proxyarp']);
+	}
+	if(isset($config['installedpackages']) && isset($config['installedpackages']['carp']) && is_array($config['installedpackages']['carp']['config'])) {
+		$carp = &$config['installedpackages']['carp']['config'];
+		foreach($carp as $carpent){
+			$vip = array();
+			$vip['mode'] = "carp";
+			$vip['interface'] = "AUTO";
+			$vip['descr'] = "CARP vhid {$carpent['vhid']}";
+			$vip['type'] = "single";
+			$vip['vhid'] = $carpent['vhid'];
+			$vip['advskew'] = $carpent['advskew'];
+			$vip['password'] = $carpent['password'];
+			$vip['subnet'] = $carpent['ipaddress'];
+			$vip['subnet_bits'] = $carpent['netmask'];
+			$config['virtualip']['vip'][] = $vip;
+		}
+		unset($config['installedpackages']['carp']);
+	}
+	/* Server NAT is no longer needed */
+	unset($config['nat']['servernat']);
+
+	/* enable SSH */
+	if ($config['version'] == "1.8") {
+		$config['system']['sshenabled'] = true;
+	}
+}
+
+
+function upgrade_018_to_019() {
+	global $config;
+	$config['theme']="metallic";
+}
+
+
+function upgrade_019_to_020() {
+	global $config;
+	if(is_array($config['ipsec']['tunnel'])) {
+		reset($config['ipsec']['tunnel']);
+		while (list($index, $tunnel) = each($config['ipsec']['tunnel'])) {
+			/* Sanity check on required variables */
+			/* This fixes bogus <tunnel> entries - remnant of bug #393 */
+			if (!isset($tunnel['local-subnet']) && !isset($tunnel['remote-subnet'])) {
+				unset($config['ipsec']['tunnel'][$tunnel]);
+			}
+		}
+	}
+}
+
+function upgrade_020_to_021() {
+	global $config;
+	/* shaper scheduler moved */
+	if(isset($config['system']['schedulertype'])) {
+		$config['shaper']['schedulertype'] = $config['system']['schedulertype'];
+		unset($config['system']['schedulertype']);
+	}
+}
+
+
+function upgrade_021_to_022() {
+	global $config;
+	/* move gateway to wan interface */
+	$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
+}
+
+function upgrade_022_to_023() {
+	global $config;
+	if(isset($config['shaper'])) {
+		/* wipe previous shaper configuration */
+		unset($config['shaper']);
+	}
+}
+
+
+function upgrade_023_to_024() {
+	global $config;
+}
+
+
+function upgrade_024_to_025() {
+	global $config;
+	$config['interfaces']['wan']['use_rrd_gateway'] = $config['system']['use_rrd_gateway'];
+	unset($config['system']['use_rrd_gateway']);
+}
+
+
+function upgrade_025_to_026() {
+	global $config;
+	$cron_item = array();
+	$cron_item['minute'] = "0";
+	$cron_item['hour'] = "*";
+	$cron_item['mday'] = "*";
+	$cron_item['month'] = "*";
+	$cron_item['wday'] = "*";
+	$cron_item['who'] = "root";
+	$cron_item['command'] = "/usr/bin/nice -n20 newsyslog";
+
+	$config['cron']['item'][] = $cron_item;
+
+	$cron_item = array();
+	$cron_item['minute'] = "1,31";
+	$cron_item['hour'] = "0-5";
+	$cron_item['mday'] = "*";
+	$cron_item['month'] = "*";
+	$cron_item['wday'] = "*";
+	$cron_item['who'] = "root";
+	$cron_item['command'] = "/usr/bin/nice -n20 adjkerntz -a";
+
+	$config['cron']['item'][] = $cron_item;
+
+	$cron_item = array();
+	$cron_item['minute'] = "1";
+	$cron_item['hour'] = "*";
+	$cron_item['mday'] = "1";
+	$cron_item['month'] = "*";
+	$cron_item['wday'] = "*";
+	$cron_item['who'] = "root";
+	$cron_item['command'] = "/usr/bin/nice -n20 /etc/rc.update_bogons.sh";
+
+	$config['cron']['item'][] = $cron_item;
+
+	$cron_item = array();
+	$cron_item['minute'] = "*/60";
+	$cron_item['hour'] = "*";
+	$cron_item['mday'] = "*";
+	$cron_item['month'] = "*";
+	$cron_item['wday'] = "*";
+	$cron_item['who'] = "root";
+	$cron_item['command'] = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshlockout";
+
+	$config['cron']['item'][] = $cron_item;
+
+	$cron_item = array();
+	$cron_item['minute'] = "1";
+	$cron_item['hour'] = "1";
+	$cron_item['mday'] = "*";
+	$cron_item['month'] = "*";
+	$cron_item['wday'] = "*";
+	$cron_item['who'] = "root";
+	$cron_item['command'] = "/usr/bin/nice -n20 /etc/rc.dyndns.update";
+
+	$config['cron']['item'][] = $cron_item;
+
+	$cron_item = array();
+	$cron_item['minute'] = "*/60";
+	$cron_item['hour'] = "*";
+	$cron_item['mday'] = "*";
+	$cron_item['month'] = "*";
+	$cron_item['wday'] = "*";
+	$cron_item['who'] = "root";
+	$cron_item['command'] = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 virusprot";
+
+	$config['cron']['item'][] = $cron_item;
+
+	$cron_item = array();
+	$cron_item['minute'] = "*/60";
+	$cron_item['hour'] = "*";
+	$cron_item['mday'] = "*";
+	$cron_item['month'] = "*";
+	$cron_item['wday'] = "*";
+	$cron_item['who'] = "root";
+	$cron_item['command'] = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -t 1800 snort2c";
+
+	$config['cron']['item'][] = $cron_item;
+
+	$cron_item = array();
+	$cron_item['minute'] = "*/5";
+	$cron_item['hour'] = "*";
+	$cron_item['mday'] = "*";
+	$cron_item['month'] = "*";
+	$cron_item['wday'] = "*";
+	$cron_item['who'] = "root";
+	$cron_item['command'] = "/usr/local/bin/checkreload.sh";
+
+	$config['cron']['item'][] = $cron_item;
+
+	/* write crontab entries to file */
+	configure_cron();
+}
+
+
+function upgrade_026_to_027() {
+	global $config;
+}
+
+
+function upgrade_027_to_028() {
+	global $config;
+	$founditem = false;
+	foreach($config['cron']['item'] as $cronitem) {
+		if($cronitem['command'] == "/usr/local/bin/checkreload.sh")
+			$founditem = true;
+	}
+	if($founditem == false) {
+		$cron_item = array();
+		$cron_item['minute'] = "*/5";
+		$cron_item['hour'] = "*";
+		$cron_item['mday'] = "*";
+		$cron_item['month'] = "*";
+		$cron_item['wday'] = "*";
+		$cron_item['who'] = "root";
+		$cron_item['command'] = "/usr/local/bin/checkreload.sh";
+		$config['cron']['item'][] = $cron_item;
+	}
+}
+
+
+function upgrade_028_to_029() {
+	global $config;
+	$rule_item = array();
+	$a_filter = &$config['filter']['rule'];
+	$rule_item['interface'] = "enc0";
+	$rule_item['type'] = "pass";
+	$rule_item['source']['any'] = true;
+	$rule_item['destination']['any'] = true;
+	$rule_item['descr'] = "Permit IPsec traffic.";
+	$rule_item['statetype'] = "keep state";
+	$a_filter[] = $rule_item;
+}
+
+
+function upgrade_029_to_030() {
+	global $config;
+	/* enable the rrd config setting by default */
+	$config['rrd']['enable'] = true;
+}
+
+
+function upgrade_030_to_031() {
+	global $config;
+	/* Insert upgrade code here */
+}
+
+
+function upgrade_031_to_032() {
+	global $config;
+	/* Insert upgrade code here */
+}
+
+
+function upgrade_032_to_033() {
+	global $config;
+	/* Insert upgrade code here */
+}
+
+
+function upgrade_033_to_034() {
+	global $config;
+	/* Insert upgrade code here */
+}
+
+
+function upgrade_034_to_035() {
+	global $config;
+	/* Insert upgrade code here */
+}
+
+
+function upgrade_035_to_036() {
+	global $config;
+	/* Insert upgrade code here */
+}
+
+
+function upgrade_036_to_037() {
+	global $config;
+	/* Insert upgrade code here */
+}
+
+
+function upgrade_037_to_038() {
+	global $config;
+	/* Insert upgrade code here */
+}
+
+
+function upgrade_038_to_039() {
+	global $config;
+	/* Insert upgrade code here */
+}
+
+
+function upgrade_039_to_040() {
+	global $config;
+	$config['system']['webgui']['auth_method'] = "session";
+	$config['system']['webgui']['backing_method'] = "htpasswd";
+
+	if (isset ($config['system']['username'])) {
+		$config['system']['group'] = array();
+		$config['system']['group'][0]['name'] = "admins";
+		$config['system']['group'][0]['description'] = "System Administrators";
+		$config['system']['group'][0]['scope'] = "system";
+		$config['system']['group'][0]['pages'] = "ANY";
+		$config['system']['group'][0]['home'] = "index.php";
+		$config['system']['group'][0]['gid'] = "110";
+
+		$config['system']['user'] = array();
+		$config['system']['user'][0]['name'] = "{$config['system']['username']}";
+		$config['system']['user'][0]['fullname'] = "System Administrator";
+		$config['system']['user'][0]['scope'] = "system";
+		$config['system']['user'][0]['groupname'] = "admins";
+		$config['system']['user'][0]['password'] = "{$config['system']['password']}";
+		$config['system']['user'][0]['uid'] = "0";
+
+		$config['system']['user'][0]['priv'] = array();
+		$config['system']['user'][0]['priv'][0]['id'] = "lockwc";
+		$config['system']['user'][0]['priv'][0]['name'] = "Lock webConfigurator";
+		$config['system']['user'][0]['priv'][0]['descr'] = "Indicates whether this user will lock access to the webConfigurator for other users.";
+		$config['system']['user'][0]['priv'][1]['id'] = "lock-ipages";
+		$config['system']['user'][0]['priv'][1]['name'] = "Lock individual pages";
+		$config['system']['user'][0]['priv'][1]['descr'] = "Indicates whether this user will lock individual HTML pages after having accessed a particular page (the lock will be freed if the user leaves or saves the page form).";
+		$config['system']['user'][0]['priv'][2]['id'] = "hasshell";
+		$config['system']['user'][0]['priv'][2]['name'] = "Has shell access";
+		$config['system']['user'][0]['priv'][2]['descr'] = "Indicates whether this user is able to login for example via SSH.";
+		$config['system']['user'][0]['priv'][3]['id'] = "copyfiles";
+		$config['system']['user'][0]['priv'][3]['name'] = "Is allowed to copy files";
+		$config['system']['user'][0]['priv'][3]['descr'] = "Indicates whether this user is allowed to copy files onto the {$g['product_name']} appliance via SCP/SFTP. If you are going to use this privilege, you must install scponly on the appliance (Hint: pkg_add -r scponly).";
+		$config['system']['user'][0]['priv'][4]['id'] = "isroot";
+		$config['system']['user'][0]['priv'][4]['name'] = "Is root user";
+		$config['system']['user'][0]['priv'][4]['descr'] = "This user is associated with the UNIX root user (you should associate this privilege only with one single user).";
+
+		$config['system']['nextuid'] = "111";
+		$config['system']['nextgid'] = "111";
+
+		/* wipe previous auth configuration */
+		unset ($config['system']['username']);
+		unset ($config['system']['password']);
+	}
+}
+
+function upgrade_040_to_041() {
+	global $config;
+	if(!$config['sysctl']) {
+		$config['sysctl']['item'] = array();
+
+		$config['sysctl']['item'][0]['tunable'] = "net.inet.tcp.blackhole";
+		$config['sysctl']['item'][0]['desc'] =    "Drop packets to closed TCP ports without returning a RST";
+		$config['sysctl']['item'][0]['value'] =   "2";
+
+		$config['sysctl']['item'][1]['tunable'] = "net.inet.udp.blackhole";
+		$config['sysctl']['item'][1]['desc'] =    "Do not send ICMP port unreachable messages for closed UDP ports";
+		$config['sysctl']['item'][1]['value'] =   "1";
+
+		$config['sysctl']['item'][2]['tunable'] = "net.inet.ip.random_id";
+		$config['sysctl']['item'][2]['desc'] =    "Randomize the ID field in IP packets (default is 0: sequential IP IDs)";
+		$config['sysctl']['item'][2]['value'] =   "1";
+
+		$config['sysctl']['item'][3]['tunable'] = "net.inet.tcp.drop_synfin";
+		$config['sysctl']['item'][3]['desc'] =    "Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)";
+		$config['sysctl']['item'][3]['value'] =   "1";
+
+		$config['sysctl']['item'][4]['tunable'] = "net.inet.ip.redirect";
+		$config['sysctl']['item'][4]['desc'] =    "Disable sending IPv4 redirects";
+		$config['sysctl']['item'][4]['value'] =   "0";
+
+		$config['sysctl']['item'][5]['tunable'] = "net.inet6.ip6.redirect";
+		$config['sysctl']['item'][5]['desc'] =    "Disable sending IPv6 redirects";
+		$config['sysctl']['item'][5]['value'] =   "0";
+
+		$config['sysctl']['item'][6]['tunable'] = "net.inet.tcp.syncookies";
+		$config['sysctl']['item'][6]['desc'] =    "Generate SYN cookies for outbound SYN-ACK packets";
+		$config['sysctl']['item'][6]['value'] =   "1";
+
+		$config['sysctl']['item'][7]['tunable'] = "net.inet.tcp.recvspace";
+		$config['sysctl']['item'][7]['desc'] =    "Maximum incoming TCP datagram size";
+		$config['sysctl']['item'][7]['value'] =   "65228";
+
+		$config['sysctl']['item'][8]['tunable'] = "net.inet.tcp.sendspace";
+		$config['sysctl']['item'][8]['desc'] =    "Maximum outgoing TCP datagram size";
+		$config['sysctl']['item'][8]['value'] =   "65228";
+
+		$config['sysctl']['item'][9]['tunable'] = "net.inet.ip.fastforwarding";
+		$config['sysctl']['item'][9]['desc'] =    "Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)";
+		$config['sysctl']['item'][9]['value'] =   "1";
+
+		$config['sysctl']['item'][10]['tunable'] = "net.inet.tcp.delayed_ack";
+		$config['sysctl']['item'][10]['desc'] =    "Do not delay ACK to try and piggyback it onto a data packet";
+		$config['sysctl']['item'][10]['value'] =   "0";
+
+		$config['sysctl']['item'][11]['tunable'] = "net.inet.udp.maxdgram";
+		$config['sysctl']['item'][11]['desc'] =    "Maximum outgoing UDP datagram size";
+		$config['sysctl']['item'][11]['value'] =   "57344";
+
+		$config['sysctl']['item'][12]['tunable'] = "net.link.bridge.pfil_onlyip";
+		$config['sysctl']['item'][12]['desc'] =    "Handling of non-IP packets which are not passed to pfil (see if_bridge(4))";
+		$config['sysctl']['item'][12]['value'] =   "0";
+
+		$config['sysctl']['item'][13]['tunable'] = "net.link.tap.user_open";
+		$config['sysctl']['item'][13]['desc'] =    "Allow unprivileged access to tap(4) device nodes";
+		$config['sysctl']['item'][13]['value'] =   "1";
+
+		$config['sysctl']['item'][14]['tunable'] = "kern.rndtest.verbose";
+		$config['sysctl']['item'][14]['desc'] =    "Verbosity of the rndtest driver (0: do not display results on console)";
+		$config['sysctl']['item'][14]['value'] =   "0";
+
+		$config['sysctl']['item'][15]['tunable'] = "kern.randompid";
+		$config['sysctl']['item'][15]['desc'] =    "Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())";
+		$config['sysctl']['item'][15]['value'] =   "347";
+
+		$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.inflight.enable";
+		$config['sysctl']['item'][16]['desc'] =    "The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ";
+		$config['sysctl']['item'][16]['value'] =   "1";
+
+		$config['sysctl']['item'][17]['tunable'] = "net.inet.icmp.icmplim";
+		$config['sysctl']['item'][17]['desc'] =    "Set ICMP Limits";
+		$config['sysctl']['item'][17]['value'] =   "750";
+
+		$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
+		$config['sysctl']['item'][18]['desc'] =    "TCP Offload engine";
+		$config['sysctl']['item'][18]['value'] =   "0";
+
+		$config['sysctl']['item'][19]['tunable'] = "hw.bce.tso_enable";
+		$config['sysctl']['item'][19]['desc'] =    "TCP Offload engine - BCE";
+		$config['sysctl']['item'][19]['value'] =   "0";
+	}
+}
+
+
+function upgrade_041_to_042() {
+	global $config;
+	if (isset($config['shaper']))
+		unset($config['shaper']);
+	if (isset($config['ezshaper']))
+		unset($config['ezshaper']);
+}
+
+
+function upgrade_042_to_043() {
+	global $config;
+	/* migrate old interface gateway to the new gateways config */
+	$old_gateways = array();
+	$gateways = array();
+	$i = 0;
+	$old_gateways = get_interfaces_with_gateway();
+	foreach($old_gateways as $ifname => $interface) {
+		if(is_ipaddr($config['interfaces'][$ifname]['gateway'])) {
+			$config['gateways'][$i][$ifname]['gateway'] = $config['interfaces'][$ifname]['gateway'];
+			$config['gateways'][$i][$ifname]['interface'] = $ifname;
+			$config['gateways'][$i][$ifname]['name'] = $ifname ."-". $config['interfaces'][$ifname]['gateway'];
+			if(is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
+				$config['gateways'][$i][$ifname]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
+				unset($config['interfaces'][$ifname]['use_rrd_gateway']);
+			}
+			$config['interfaces'][$ifname]['gateway'] = $config['gateways'][$i][$ifname]['name'];
+			$i++;
+		}
+	}
+}
+
+
+function upgrade_043_to_044() {
+	global $config;
+}
+
+
+function upgrade_044_to_045() {
+	global $config;
+	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+		foreach ($config['vlans']['vlan'] as $id => &$vlan)
+			$vlan['vlanif'] = "vlan{$tag}";
+	}
+}
+
+
+function upgrade_045_to_046() {
+	global $config;
+	/* Upgrade load balancer from slb to relayd */
+	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server'])) {
+		$vs_a = &$config['load_balancer']['virtual_server'];
+		$pool_a = &$config['load_balancer']['lbpool'];
+		$pools = array();
+		/* Index pools by name */
+		if(is_array($pool_a)) {
+			for ($i = 0; isset($pool_a[$i]); $i++) {
+				if ($pool_a[$i]['type'] == "server") {
+					$pools[$pool_a[$i]['name']] = $pool_a[$i];
+				}
+			}
+		}
+		/* Convert sitedown entries to pools and re-attach */
+		for ($i = 0; isset($vs_a[$i]); $i++) {
+			if (isset($vs_a[$i]['sitedown'])) {
+				$pool = array();
+				$pool['type'] = 'server';
+				$pool['behaviour'] = 'balance';
+				$pool['name'] = "{$vs_a[$i]['name']}-sitedown";
+				$pool['desc'] = "Sitedown pool for VS: {$vs_a[$i]['name']}";
+				$pool['port'] = $pools[$vs_a[$i]['pool']]['port'];
+				$pool['servers'] = array();
+				$pool['servers'][] = $vs_a[$i]['sitedown'];
+				$pool['monitor'] = $pools[$vs_a[$i]['pool']]['monitor'];
+				$pool_a[] = $pool;
+				$vs_a[$i]['sitedown'] = $pool['name'];
+			}
+		}
+	}
+}
+
+
+function upgrade_046_to_047() {
+	global $config;
+	/* Upgrade IPsec from tunnel to phase1/phase2 */
+
+	if(is_array($config['ipsec']['tunnel'])) {
+
+		$a_phase1 = array();
+		$a_phase2 = array();
+		$ikeid = 0;
+
+		foreach ($config['ipsec']['tunnel'] as $tunnel) {
+
+			unset($ph1ent);
+			unset($ph2ent);
+
+			/*
+				*  attempt to locate an enabled phase1
+				*  entry that matches the peer gateway
+				*/
+
+			if (!isset($tunnel['disabled'])) {
+
+				$remote_gateway = $tunnel['remote-gateway'];
+
+				foreach ($a_phase1 as $ph1tmp) {
+					if ($ph1tmp['remote-gateway'] == $remote_gateway) {
+						$ph1ent = $ph1tmp;
+						break;
+					}
+				}
+			}
+
+			/* none found, create a new one */
+
+			if (!isset( $ph1ent )) {
+
+				/* build new phase1 entry */
+
+				$ph1ent = array();
+
+				$ph1ent['ikeid'] = ++$ikeid;
+
+				if (isset($tunnel['disabled']))
+					$ph1ent['disabled'] = $tunnel['disabled'];
+
+				$ph1ent['interface'] = $tunnel['interface'];
+				$ph1ent['remote-gateway'] = $tunnel['remote-gateway'];
+				$ph1ent['descr'] = $tunnel['descr'];
+
+				$ph1ent['mode'] = $tunnel['p1']['mode'];
+
+				if (isset($tunnel['p1']['myident']['myaddress']))
+					$ph1ent['myid_type'] = "myaddress";
+				if (isset($tunnel['p1']['myident']['address'])) {
+					$ph1ent['myid_type'] = "address";
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['address'];
+				}
+				if (isset($tunnel['p1']['myident']['fqdn'])) {
+					$ph1ent['myid_type'] = "fqdn";
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['fqdn'];
+				}
+				if (isset($tunnel['p1']['myident']['user_fqdn'])) {
+					$ph1ent['myid_type'] = "user_fqdn";
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['user_fqdn'];
+				}
+				if (isset($tunnel['p1']['myident']['asn1dn'])) {
+					$ph1ent['myid_type'] = "asn1dn";
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['asn1dn'];
+				}
+				if (isset($tunnel['p1']['myident']['dyn_dns'])) {
+					$ph1ent['myid_type'] = "dyn_dns";
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['dyn_dns'];
+				}
+
+				$ph1ent['peerid_type'] = "peeraddress";
+
+				switch ($tunnel['p1']['encryption-algorithm']) {
+					case "des":
+					$ph1alg = array( 'name' => 'des' );
+					break;
+					case "3des":
+					$ph1alg = array( 'name' => '3des' );
+					break;
+					case "blowfish":
+					$ph1alg = array( 'name' => 'blowfish', 'keylen' => '128'  );
+					break;
+					case "cast128":
+					$ph1alg = array( 'name' => 'cast128' );
+					break;
+					case "rijndael":
+					$ph1alg = array( 'name' => 'aes', 'keylen' => '128' );
+					break;
+					case "rijndael 256":
+					$ph1alg = array( 'name' => 'aes', 'keylen' => '256' );
+					break;
+				}
+
+				$ph1ent['encryption-algorithm'] = $ph1alg;
+				$ph1ent['hash-algorithm'] = $tunnel['p1']['hash-algorithm'];
+				$ph1ent['dhgroup'] = $tunnel['p1']['dhgroup'];
+				$ph1ent['lifetime'] = $tunnel['p1']['lifetime'];
+				$ph1ent['authentication_method'] = $tunnel['p1']['authentication_method'];
+
+				if (isset($tunnel['p1']['pre-shared-key']))
+					$ph1ent['pre-shared-key'] = $tunnel['p1']['pre-shared-key'];
+				if (isset($tunnel['p1']['cert']))
+					$ph1ent['cert'] = $tunnel['p1']['cert'];
+				if (isset($tunnel['p1']['peercert']))
+					$ph1ent['peercert'] = $tunnel['p1']['peercert'];
+				if (isset($tunnel['p1']['private-key']))
+					$ph1ent['private-key'] = $tunnel['p1']['private-key'];
+
+				if (isset($tunnel['pinghost']['pinghost']))
+					$ph1ent['pinghost'] = $tunnel['pinghost'];
+
+				$ph1ent['nat_traversal'] = "on";
+				$ph1ent['dpd_enable'] = 1;
+				$ph1ent['dpd_delay'] = 10;
+				$ph1ent['dpd_maxfail'] = 5;
+
+				$a_phase1[] = $ph1ent;
+			}
+
+			/* build new phase2 entry */
+
+			$ph2ent = array();
+
+			$ph2ent['ikeid'] = $ph1ent['ikeid'];
+
+			if (isset($tunnel['disabled']))
+				$ph1ent['disabled'] = $tunnel['disabled'];
+
+			$ph2ent['descr'] = "phase2 for ".$tunnel['descr'];
+
+			$type = "lan";
+			if ($tunnel['local-subnet']['network'])
+				$type = $tunnel['local-subnet']['network'];
+			if ($tunnel['local-subnet']['address']) {
+				list($address,$netbits) = explode("/",$tunnel['local-subnet']['address']);
+				if (is_null($netbits))
+					$type = "address";
+				else
+					$type = "network";
+			}
+
+			switch ($type) {
+				case "address":
+				$ph2ent['localid'] = array('type' => $type,'address' => $address);
+				break;
+				case "network":
+				$ph2ent['localid'] = array('type' => $type,'address' => $address,'netbits' => $netbits);
+				break;
+				default:
+				$ph2ent['localid'] = array('type' => $type);
+				break;
+			}
+
+			list($address,$netbits) = explode("/",$tunnel['remote-subnet']);
+			$ph2ent['remoteid'] = array('type' => 'network','address' => $address,'netbits' => $netbits);
+
+			$ph2ent['protocol'] = $tunnel['p2']['protocol'];
+
+			$aes_count = 0;
+			foreach( $tunnel['p2']['encryption-algorithm-option'] as $tunalg ) {
+				$aes_found = false;
+				switch ($tunalg) {
+					case "des":
+					$ph2alg = array( 'name' => 'des' );
+					break;
+					case "3des":
+					$ph2alg = array( 'name' => '3des' );
+					break;
+					case "blowfish":
+					$ph2alg = array( 'name' => 'blowfish', 'keylen' => 'auto'  );
+					break;
+					case "cast128":
+					$ph2alg = array( 'name' => 'cast128' );
+					break;
+					case "rijndael":
+					case "rijndael 256":
+					$ph2alg = array( 'name' => 'aes', 'keylen' => 'auto' );
+					$aes_found = true;
+					$aes_count++;
+					break;
+				}
+
+				if( !$aes_found || ($aes_count < 2))
+					$ph2ent['encryption-algorithm-option'][] = $ph2alg;
+			}
+
+			$ph2ent['hash-algorithm-option'] = $tunnel['p2']['hash-algorithm-option'];
+			$ph2ent['pfsgroup'] = $tunnel['p2']['pfsgroup'];
+			$ph2ent['lifetime'] = $tunnel['p2']['lifetime'];
+
+			$a_phase2[] = $ph2ent;
+		}
+
+		unset($config['ipsec']['tunnel']);
+		$config['ipsec']['phase1'] = $a_phase1;
+		$config['ipsec']['phase2'] = $a_phase2;
+	}
+}
+
+
+function upgrade_047_to_048() {
+	global $config;
+	$config['dyndnses']['dyndns'] = array();
+	if (isset($config['dyndns']['enable'])) {
+		$tempdyn = array();
+		$tempdyn['enable'] = isset($config['dyndns']['enable']);
+		$tempdyn['type'] = $config['dyndns']['type'];
+		$tempdyn['wildcard'] = isset($config['dyndns']['wildcard']);
+		$tempdyn['usernamefld'] = $config['dyndns']['username'];
+		$tempdyn['passwordfld'] = $config['dyndns']['password'];
+		$tempdyn['host'] = $config['dyndns']['host'];
+		$tempdyn['mx'] = $config['dyndns']['mx'];		
+		$config['dyndnses']['dyndns'][] = $tempdyn;
+		unset($config['dyndns']);
+	}		
+	$config['dnsupdates']['dnsupdate'] = array();
+	if (isset($config['dnsupdate']['enable'])) {
+		$pconfig = array();
+		$pconfig['dnsupdate_enable'] = isset($config['dnsupdate']['enable']);
+		$pconfig['dnsupdate_host'] = $config['dnsupdate']['host'];
+		$pconfig['dnsupdate_ttl'] = $config['dnsupdate']['ttl'];
+		if (!$pconfig['dnsupdate_ttl'])
+			$pconfig['dnsupdate_ttl'] = 60;
+		$pconfig['dnsupdate_keydata'] = $config['dnsupdate']['keydata'];
+		$pconfig['dnsupdate_keyname'] = $config['dnsupdate']['keyname'];
+		$pconfig['dnsupdate_keytype'] = $config['dnsupdate']['keytype'];
+		if (!$pconfig['dnsupdate_keytype'])
+			$pconfig['dnsupdate_keytype'] = "zone";
+		$pconfig['dnsupdate_server'] = $config['dnsupdate']['server'];
+		$pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate']['usetcp']);
+		$config['dnsupdates']['dnsupdate'][] = $pconfig;
+		unset($config['dnsupdate']);
+	}
+
+	if (is_array($config['pppoe'])) {
+		$pconfig = array();
+		$pconfig['username'] = $config['pppoe']['username'];
+		$pconfig['password'] = $config['pppoe']['password'];
+		$pconfig['provider'] = $config['pppoe']['provider'];
+		$pconfig['ondemand'] = isset($config['pppoe']['ondemand']);
+		$pconfig['timeout'] = $config['pppoe']['timeout'];
+		unset($config['pppoe']);
+		$config['interfaces']['wan']['pppoe_username'] = $pconfig['username'];
+		$config['interfaces']['wan']['pppoe_password'] = $pconfig['password'];
+		$config['interfaces']['wan']['provider'] = $pconfig['provider'];
+		$config['interfaces']['wan']['ondemand'] = isset($pconfig['ondemand']);
+		$config['interfaces']['wan']['timeout'] = $pconfig['timeout'];
+	}
+	if (is_array($config['pptp'])) {
+		$pconfig = array();
+		$pconfig['username'] = $config['pptp']['username'];
+		$pconfig['password'] = $config['pptp']['password'];
+		$pconfig['provider'] = $config['pptp']['provider'];
+		$pconfig['ondemand'] = isset($config['pptp']['ondemand']);
+		$pconfig['timeout'] = $config['pptp']['timeout'];
+		unset($config['pptp']);
+		$config['interfaces']['wan']['pptp_username'] = $pconfig['username'];
+		$config['interfaces']['wan']['pptp_password'] = $pconfig['password'];
+		$config['interfaces']['wan']['provider'] = $pconfig['provider'];
+		$config['interfaces']['wan']['ondemand'] = isset($pconfig['ondemand'] );
+		$config['interfaces']['wan']['timeout'] = $pconfig['timeout'];
+	}
+}
+
+
+function upgrade_048_to_049() {
+	global $config;
+	/* setup new all users group */
+	$all = array();
+	$all['name'] = "all";
+	$all['description'] = "All Users";
+	$all['scope'] = "system";
+	$all['gid'] = 1998;
+	$all['member'] = array();
+
+	if (!is_array($config['system']['group']))
+		$config['system']['group'] = array();
+
+	/* work around broken uid assignments */
+	$config['system']['nextuid'] = 2000;
+	foreach ($config['system']['user'] as & $user) {
+		if (isset($user['uid']) && !$user['uid'])
+			continue;
+		$user['uid'] = $config['system']['nextuid']++;
+	}
+
+	/* work around broken gid assignments */
+	$config['system']['nextgid'] = 2000;
+	foreach ($config['system']['group'] as & $group) {
+		if ($group['name'] == $g['admin_group'])
+			$group['gid'] = 1999;
+		else
+			$group['gid'] = $config['system']['nextgid']++;
+	}
+
+	/* build group membership information */
+	foreach ($config['system']['group'] as & $group) {
+		$group['member'] = array();
+		foreach ($config['system']['user'] as & $user) {
+			$groupnames = explode(",", $user['groupname']);
+			if (in_array($group['name'],$groupnames))
+				$group['member'][] = $user['uid'];
+		}
+	}
+
+	/* reset user group information */
+	foreach ($config['system']['user'] as & $user) {
+		unset($user['groupname']);
+		$all['member'][] = $user['uid'];
+	}
+
+	/* reset group scope information */
+	foreach ($config['system']['group'] as & $group)
+		if ($group['name'] != $g['admin_group'])
+		$group['scope'] = "user";
+
+	/* insert new all group */
+	$groups = Array();
+	$groups[] = $all;
+	$groups = array_merge($config['system']['group'],$groups);
+	$config['system']['group'] = $groups;
+}
+
+
+function upgrade_049_to_050() {
+	global $config;
+	/* update user privileges */
+	foreach ($config['system']['user'] as & $user) {
+		$privs = array();
+		if (!is_array($user['priv'])) {
+			unset($user['priv']);
+			continue;
+		}
+		foreach ($user['priv'] as $priv) {
+			switch($priv['id']) {
+				case "hasshell":
+				$privs[] = "user-shell-access";
+				break;
+				case "copyfiles":
+				$privs[] = "user-copy-files";
+				break;
+			}
+		}
+		$user['priv'] = $privs;
+	}
+
+	/* update group privileges */
+	foreach ($config['system']['group'] as & $group) {
+		$privs = array();
+		if (!is_array($group['pages'])) {
+			unset($group['pages']);
+			continue;
+		}
+		foreach ($group['pages'] as $page) {
+			$priv = map_page_privname($page);
+			if ($priv)
+				$privs[] = $priv;
+		}
+		unset($group['pages']);
+		$group['priv'] = $privs;
+	}
+
+	/* sync all local account information */
+	local_sync_accounts();
+}
+
+
+function upgrade_050_to_051() {
+	global $config;
+	$pconfig = array();
+	$pconfig['desc'] = "Set to 0 to disable filtering on the incoming and outgoing member interfaces.";
+	$pconfig['tunable'] = "net.link.bridge.pfil_member";
+	$pconfig['value'] = "1";
+	$config['sysctl']['item'][] = $pconfig;
+	$pconfig = array();
+	$pconfig['desc'] = "Set to 1 to enable filtering on the bridge interface";
+	$pconfig['tunable'] = "net.link.bridge.pfil_bridge";
+	$pconfig['value'] = "0";
+	$config['sysctl']['item'][] = $pconfig;
+
+	unset($config['bridge']);
+
+	$convert_bridges = false;
+	foreach($config['interfaces'] as $intf) {
+		if (isset($intf['bridge']) && $intf['bridge'] <> "") {
+			$config['bridges'] = array();
+			$config['bridges']['bridged'] = array();
+			$convert_bridges = true;
+			break;
+		}
+	}
+	if ($convert_bridges == true) {
+		$i = 0;
+		foreach ($config['interfaces'] as $ifr => &$intf) {
+			if (isset($intf['bridge']) && $intf['bridge'] <> "") {
+				$nbridge = array();
+				$nbridge['members'] = "{$ifr},{$intf['bridge']}";
+				$nbridge['descr'] = "Converted bridged {$ifr}";
+				$nbridge['bridgeif'] = "bridge{$i}";
+				$config['bridges']['bridged'][] = $nbridge;
+				unset($intf['bridge']);
+				$i++;
+			}
+		}
+	}
+}
+
+
+function upgrade_051_to_052() {
+	global $config;
+	$config['openvpn'] = array();
+	if (!is_array($config['system']['ca']))
+		$config['system']['ca'] = array();
+	if (!is_array($config['system']['cert']))
+		$config['system']['cert'] = array();
+
+	$vpnid = 1;
+
+	/* openvpn server configurations */
+	if (is_array($config['installedpackages']['openvpnserver'])) {
+		$config['openvpn']['openvpn-server'] = array();
+
+		$index = 1;
+		foreach($config['installedpackages']['openvpnserver']['config'] as $server) {
+
+			if (!is_array($server))
+				continue;
+
+			if ($server['auth_method'] == "pki") {
+
+				/* create ca entry */
+				$ca = array();
+				$ca['refid'] = uniqid();
+				$ca['name'] = "OpenVPN Server CA #{$index}";
+				$ca['crt'] = $server['ca_cert'];
+				$ca['crl'] = $server['crl'];
+				$config['system']['ca'][] = $ca;
+
+				/* create ca reference */
+				unset($server['ca_cert']);
+				unset($server['crl']);
+				$server['caref'] = $ca['refid'];
+
+				/* create cert entry */
+				$cert = array();
+				$cert['refid'] = uniqid();
+				$cert['name'] = "OpenVPN Server Certificate #{$index}";
+				$cert['crt'] = $server['server_cert'];
+				$cert['prv'] = $server['server_key'];
+				$config['system']['cert'][] = $cert;
+
+				/* create cert reference */
+				unset($server['server_cert']);
+				unset($server['server_key']);
+				$server['certref'] = $cert['refid'];
+
+				$index++;
+			}
+
+			/* determine operational mode */
+			if ($server['auth_method'] == 'pki') {
+				if($server['nopool']) {
+					$server['mode'] = "p2p_tls";
+				} else {
+					$server['mode'] = "server_tls";
+				}
+			} else {
+				$server['mode'] = "p2p_shared_key";
+			}
+			unset($server['auth_method']);
+
+			/* modify configuration values */
+			$server['dh_length'] = 1024;
+			unset($server['dh_params']);
+			if (!$server['interface'])
+				$server['interface'] = 'wan';
+			$server['tunnel_network'] = $server['addresspool'];
+			unset($server['addresspool']);
+			$server['compress'] = $server['use_lzo'];
+			unset($server['use_lzo']);
+			if ($server['nopool'])
+				$server['pool_enable'] = false;
+			else
+				$server['pool_enable'] = "yes";
+			unset($server['nopool']);
+			$server['dns_domain'] = $server['dhcp_domainname'];
+			unset($server['dhcp_domainname']);
+			$server['dns_server1'] = $server['dhcp_dns'];
+			unset($server['dhcp_dns']);
+			$server['ntp_server1'] = $server['dhcp_ntp'];
+			unset($server['dhcp_ntp']);
+			if ($server['dhcp_nbtdisable'])
+				$server['netbios_enable'] = false;
+			else
+				$server['netbios_enable'] = "yes";
+			unset($server['dhcp_nbtdisable']);
+			$server['netbios_ntype'] = $server['dhcp_nbttype'];
+			unset($server['dhcp_nbttype']);
+			$server['netbios_scope'] = $server['dhcp_nbtscope'];
+			unset($server['dhcp_nbtscope']);
+			$server['nbdd_server1'] = $server['dhcp_nbdd'];
+			unset($server['dhcp_nbdd']);
+			$server['wins_server1'] = $server['dhcp_wins'];
+			unset($server['dhcp_wins']);
+
+			/* allocate vpnid */
+			$server['vpnid'] = $vpnid++;
+
+			$config['openvpn']['openvpn-server'][] = $server;
+		}
+		unset($config['installedpackages']['openvpnserver']);
+	}
+
+	/* openvpn client configurations */
+	if (is_array($config['installedpackages']['openvpnclient'])) {
+		$config['openvpn']['openvpn-client'] = array();
+
+		$index = 1;
+		foreach($config['installedpackages']['openvpnclient']['config'] as $client) {
+
+			if (!is_array($client))
+				continue;
+
+			if ($client['auth_method'] == "pki") {
+
+				/* create ca entry */
+				$ca = array();
+				$ca['refid'] = uniqid();
+				$ca['name'] = "OpenVPN Client CA #{$index}";
+				$ca['crt'] = $client['ca_cert'];
+				$ca['crl'] = $client['crl'];
+				$config['system']['ca'][] = $ca;
+
+				/* create ca reference */
+				unset($client['ca_cert']);
+				unset($client['crl']);
+				$client['caref'] = $ca['refid'];
+
+				/* create cert entry */
+				$cert = array();
+				$cert['refid'] = uniqid();
+				$cert['name'] = "OpenVPN Client Certificate #{$index}";
+				$cert['crt'] = $client['client_cert'];
+				$cert['prv'] = $client['client_key'];
+				$config['system']['cert'][] = $cert;
+
+				/* create cert reference */
+				unset($client['client_cert']);
+				unset($client['client_key']);
+				$client['certref'] = $cert['refid'];
+
+				$index++;
+			}
+
+			/* determine operational mode */
+			if ($client['auth_method'] == 'pki')
+				$client['mode'] = "p2p_tls";
+			else
+				$client['mode'] = "p2p_shared_key";
+			unset($client['auth_method']);
+
+			/* modify configuration values */
+			if (!$client['interface'])
+				$client['interface'] = 'wan';
+			$client['tunnel_network'] = $client['interface_ip'];
+			unset($client['interface_ip']);
+			$client['server_addr'] = $client['serveraddr'];
+			unset($client['serveraddr']);
+			$client['server_port'] = $client['serverport'];
+			unset($client['serverport']);
+			$client['proxy_addr'] = $client['poxy_hostname'];
+			unset($client['proxy_addr']);
+			$client['compress'] = $client['use_lzo'];
+			unset($client['use_lzo']);
+			$client['resolve_retry'] = $client['infiniteresolvretry'];
+			unset($client['infiniteresolvretry']);
+
+			/* allocate vpnid */
+			$client['vpnid'] = $vpnid++;
+
+			$config['openvpn']['openvpn-client'][] = $client;
+		}
+
+		unset($config['installedpackages']['openvpnclient']);
+	}
+
+	/* openvpn client specific configurations */
+	if (is_array($config['installedpackages']['openvpncsc'])) {
+		$config['openvpn']['openvpn-csc'] = array();
+
+		foreach($config['installedpackages']['openvpncsc']['config'] as $csc) {
+
+			if (!is_array($csc))
+				continue;
+
+			/* modify configuration values */
+			$csc['common_name'] = $csc['commonname'];
+			unset($csc['commonname']);
+			$csc['tunnel_network'] = $csc['ifconfig_push'];
+			unset($csc['ifconfig_push']);
+			$csc['dns_domain'] = $csc['dhcp_domainname'];
+			unset($csc['dhcp_domainname']);
+			$csc['dns_server1'] = $csc['dhcp_dns'];
+			unset($csc['dhcp_dns']);
+			$csc['ntp_server1'] = $csc['dhcp_ntp'];
+			unset($csc['dhcp_ntp']);
+			if ($csc['dhcp_nbtdisable'])
+				$csc['netbios_enable'] = false;
+			else
+				$csc['netbios_enable'] = "yes";
+			unset($csc['dhcp_nbtdisable']);
+			$csc['netbios_ntype'] = $csc['dhcp_nbttype'];
+			unset($csc['dhcp_nbttype']);
+			$csc['netbios_scope'] = $csc['dhcp_nbtscope'];
+			unset($csc['dhcp_nbtscope']);
+			$csc['nbdd_server1'] = $csc['dhcp_nbdd'];
+			unset($csc['dhcp_nbdd']);
+			$csc['wins_server1'] = $csc['dhcp_wins'];
+			unset($csc['dhcp_wins']);
+
+			$config['openvpn']['openvpn-csc'][] = $csc;
+		}
+
+		unset($config['installedpackages']['openvpncsc']);
+	}
+
+	/*
+		* FIXME: hack to keep things working with no installedpackages
+		* or carp array in the configuration data.
+		*/
+	if (!is_array($config['installedpackages']))
+		$config['installedpackages'] = array();
+	if (!is_array($config['installedpackages']['carp']))
+		$config['installedpackages']['carp'] = array();
+
+	/* reconfigure openvpn services */
+	openvpn_resync_all();
+}
+
+
+function upgrade_052_to_053() {
+	global $config;
+	if (!is_array($config['system']['ca']))
+		$config['system']['ca'] = array();
+	if (!is_array($config['system']['cert']))
+		$config['system']['cert'] = array();
+
+	/* migrate advanced admin page webui ssl to certifcate mngr */
+	if ($config['system']['webgui']['certificate'] &&
+	$config['system']['webgui']['private-key']) {
+
+		/* create cert entry */
+		$cert = array();
+		$cert['refid'] = uniqid();
+		$cert['name'] = "webConfigurator SSL Certificate";
+		$cert['crt'] = $config['system']['webgui']['certificate'];
+		$cert['prv'] = $config['system']['webgui']['private-key'];
+		$config['system']['cert'][] = $cert;
+
+		/* create cert reference */
+		unset($config['system']['webgui']['certificate']);
+		unset($config['system']['webgui']['private-key']);
+		$config['system']['webgui']['ssl-certref'] = $cert['refid'];
+	}
+
+	/* migrate advanced admin page ssh keys to user manager */
+	if ($config['system']['ssh']['authorizedkeys']) {
+		$admin_user =& getUserEntryByUID(0);
+		$admin_user['authorizedkeys'] = $config['system']['ssh']['authorizedkeys'];
+		unset($config['system']['ssh']['authorizedkeys']);
+	}
+}
+
+
+function upgrade_053_to_054() {
+	global $config;
+	if(is_array($config['loadbalancer']['lbpool'])) {
+		$lbpool_arr = $config['loadbalancer']['lbpool'];
+		$lbpool_srv_arr = array();
+		$gateway_group_arr = array();
+		foreach($lbpool_arr as $lbpool) {
+			if($lbpool['type'] == "gateway") {
+				$gateway_group['name'] = $lbpool['name'];
+				$gateway_group['descr'] = $lbpool['desc'];
+				$gateway_group['trigger'] = "down";
+				$gateway_group['item'] = array();
+				$i=0;
+				foreach($lbpool['servers'] as $member) {
+					$split = split("\|", $member);
+					$interface = $split[0];
+					$monitor = $split[1];
+					if($lbpool['behaviour'] == "failover") { $i++; }
+					$gateway_group['item'][] = "$interface|$i";
+					$config['interfaces'][$interface]['monitorip'] = "$monitor";
+				}
+				$gateway_group_arr[] = $gateway_group;
+			} else {
+				$lbpool_srv_arr[] = $lbpool;
+			}
+		}
+		$config['loadbalancer']['lbpool'] = $lbpool_srv_arr;
+		$config['gateways']['gateway_group'] = $gateway_group_arr;
+	}
+	// Unset lbpool if we no longer have any server pools
+	if (count($lbpool_srv_arr) == 0) {
+		unset($config['load_balancer']['lbpool']);
+	} else {
+		$config['load_balancer']['lbpool'] = $lbpool_srv_arr;
+	}
+	// Only set the gateway group array if we converted any
+	if (count($gateway_group_arr) != 0) {
+		$config['gateways']['gateway_group'] = $gateway_group_arr;
+	}
+}
+
+
+function upgrade_054_to_055() {
+	global $config;
+	/* RRD files changed for quality, traffic and packets graphs */
+	ini_set("max_execution_time", "1800");
+	/* convert traffic RRD file */
+	global $parsedcfg, $listtags;
+	$listtags = array("ds", "v", "rra", "row");
+
+	$rrddbpath = "/var/db/rrd/";
+	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+
+	$rrdinterval = 60;
+	$valid = $rrdinterval * 2;
+
+	/* Asume GigE for now */
+	$downstream = 125000000;
+	$upstream = 125000000;
+
+	/* build a list of quality databases */
+	/* roundtrip has become delay */
+	function divide_delay($delayval) {
+		$delayval = floatval($delayval);
+		$delayval = ($delayval / 1000);
+		$delayval = " ". sprintf("%1.10e", $delayval) ." ";
+		return $delayval;
+	}
+	/* the roundtrip times need to be divided by 1000 to get seconds, really */
+	$databases = array();
+	exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
+	rsort($databases);
+	foreach($databases as $database) {
+		$xmldump = "{$database}.old.xml";
+		$xmldumpnew = "{$database}.new.xml";
+
+		echo "Migrate RRD database {$database} to new format \n";
+		mwexec("$rrdtool tune {$rrddbpath}{$database} -r roundtrip:delay 2>&1");
+
+		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
+		$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
+		$rrdold = xml2array($rrdoldxml, 1, "tag");
+		$rrdold = $rrdold['rrd'];
+
+		$i = 0;
+		foreach($rrdold['rra'] as $rra) {
+			$l = 0;
+			foreach($rra['database']['row'] as $row) {
+				$vnew = divide_delay($row['v'][1]);
+				$rrdold['rra'][$i]['database']['row'][$l]['v'][1] = $vnew;
+				$l++;
+			}
+			$i++;
+		}
+
+		$rrdxml = dump_xml_config_raw($rrdold, "rrd");
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
+		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+
+	}
+	/* let apinger recreate required files */
+	setup_gateways_monitor();
+
+	/* build a list of traffic and packets databases */
+	$databases = array();
+	exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
+	rsort($databases);
+	foreach($databases as $database) {
+		$databasetmp = "{$database}.tmp";
+		$xmldump = "{$database}.old.xml";
+		$xmldumptmp = "{$database}.tmp.xml";
+		$xmldumpnew = "{$database}.new.xml";
+
+		echo "Migrate RRD database {$database} to new format \n";
+		/* rename DS source */
+		mwexec("$rrdtool tune {$rrddbpath}/{$database} -r in:inpass 2>&1");
+		mwexec("$rrdtool tune {$rrddbpath}/{$database} -r out:outpass 2>71");
+
+		/* dump contents to xml and move database out of the way */
+		dump_rrd_to_xml("{$rrddbpath}/{$database}", "{$g['tmp_path']}/{$xmldump}");
+
+		/* create new rrd database file */
+		$rrdcreate = "$rrdtool create {$g['tmp_path']}/{$databasetmp} --step $rrdinterval ";
+		$rrdcreate .= "DS:inpass:COUNTER:$valid:0:$downstream ";
+		$rrdcreate .= "DS:outpass:COUNTER:$valid:0:$upstream ";
+		$rrdcreate .= "DS:inblock:COUNTER:$valid:0:$downstream ";
+		$rrdcreate .= "DS:outblock:COUNTER:$valid:0:$upstream ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+		$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+
+		create_new_rrd("$rrdcreate");
+		/* create temporary xml from new RRD */
+		dump_rrd_to_xml("{$g['tmp_path']}/{$databasetmp}", "{$g['tmp_path']}/{$xmldumptmp}");
+
+		$rrdoldxml = file_get_contents("{$g['tmp_path']}/{$xmldump}");
+		$rrdold = xml2array($rrdoldxml, 1, "tag");
+		$rrdold = $rrdold['rrd'];
+
+		$rrdnewxml = file_get_contents("{$g['tmp_path']}/{$xmldumptmp}");
+		$rrdnew = xml2array($rrdnewxml, 1, "tag");
+		$rrdnew = $rrdnew['rrd'];
+
+		/* remove any MAX RRA's. Not needed for traffic. */
+		$i = 0;
+		foreach ($rrdold['rra'] as $rra) {
+			if(trim($rra['cf']) == "MAX") {
+				unset($rrdold['rra'][$i]);
+			}
+			$i++;
+		}
+
+		$rrdxmlarray = migrate_rrd_format($rrdold, $rrdnew);
+		$rrdxml = dump_xml_config_raw($rrdxmlarray, "rrd");
+		file_put_contents("{$g['tmp_path']}/{$xmldumpnew}", $rrdxml);
+		mwexec("$rrdtool restore -f {$g['tmp_path']}/{$xmldumpnew} {$rrddbpath}/{$database} 2>&1");
+
+	}
+	enable_rrd_graphing();
+}
+
+
+function upgrade_055_to_056() {
+	global $config;
+
+	if (!is_array($config['system']['ca']))
+		$config['system']['ca'] = array();
+	if (!is_array($config['system']['cert']))
+		$config['system']['cert'] = array();
+
+	/* migrate ipsec ca's to cert manager */
+	if (is_array($config['ipsec']['cacert'])) {
+		foreach($config['ipsec']['cacert'] as & $cacert) {
+			$ca = array();
+			$ca['refid'] = uniqid();
+			if (is_array($cacert['cert']))
+				$ca['crt'] = $cacert['cert'][0];
+			else
+				$ca['crt'] = $cacert['cert'];
+			$ca['name'] = $cacert['ident'];
+			$config['system']['ca'][] = $ca;
+		}
+		unset($config['ipsec']['cacert']);
+	}
+
+	/* migrate phase1 certificates to cert manager */
+	if (is_array($config['ipsec']['phase1'])) {
+		foreach($config['ipsec']['phase1'] as & $ph1ent) {
+			$cert = array();
+			$cert['refid'] = uniqid();
+			$cert['name'] = "IPsec Peer {$ph1ent['remote-gateway']} Certificate";
+			if (is_array($ph1ent['cert']))
+				$cert['crt'] = $ph1ent['cert'][0];
+			else
+				$cert['crt'] = $ph1ent['cert'];
+			$cert['prv'] = $ph1ent['private-key'];
+			$config['system']['cert'][] = $cert;
+			$ph1ent['certref'] = $cert['refid'];
+			if ($ph1ent['cert'])
+				unset($ph1ent['cert']);
+			if ($ph1ent['private-key'])
+				unset($ph1ent['private-key']);
+			if ($ph1ent['peercert'])
+				unset($ph1ent['peercert']);
+		}
+	}
+}
+
+
+function upgrade_056_to_057() {
+	global $config;
+	/* migrate captivate portal to user manager */
+	if (is_array($config['captiveportal']['user'])) {
+		foreach($config['captiveportal']['user'] as $user) {
+			// avoid user conflicts
+			if ($config['system']['user'][$user['name']])
+				continue;
+			$user['scope'] = "user";
+			if (isset($user['expirationdate'])) {
+				$user['expires'] = $user['expirationdate'];
+				unset($user['expirationdate']);
+			}
+			if (isset($user['password'])) {
+				$user['md5-hash'] = $user['password'];
+				unset($user['password']);
+			}
+			$config['system']['user'][] = $user;
+		}
+		unset($config['captiveportal']['user']);
+	}
+}
+?>

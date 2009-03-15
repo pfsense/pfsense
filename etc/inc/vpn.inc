@@ -629,7 +629,7 @@ EOD;
 						$remoteid_spec = "address {$remoteid_data}";
 					}
 
-					if($ph2ent['proto'] == "esp") {
+					if($ph2ent['protocol'] == 'esp') {
 
 						$ealgos = '';
 

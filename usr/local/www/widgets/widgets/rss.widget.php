@@ -102,10 +102,10 @@ if(!$max_items)
 		$content = strip_tags($content);
 		echo textLimit($content, 140) . "<br/>";
 		echo "Source: <a target='_new' href='" . $item->get_permalink() . "'><img src='" . $feed->get_favicon() . "' alt='" . $feed->get_title() . "' title='" . $feed->get_title() . "' border='0' width='16' height='16'></a><br/>";
-		echo "<hr/>";
 		$counter++;
 		if($counter > $max_items)
 			break;
+		echo "<hr/>";			
 	}
 ?>
 </div>				 

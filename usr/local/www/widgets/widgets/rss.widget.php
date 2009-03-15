@@ -45,6 +45,9 @@ if($config['widgets']['rssfeed'])
 if($config['widgets']['rssmaxitems'])
 	$max_items =  $config['widgets']['rssmaxitems'];
 
+if($config['widgets']['rsswidgetheight'])
+	$rsswidgetheight =  $config['widgets']['rsswidgetheight'];
+
 // Set a default feed if none exists
 if(!$rss_feed_s) {
 	$rss_feed_s = "http://blog.pfsense.org";
@@ -94,7 +97,7 @@ else
 					<select name='rsswidgetheight' id='rsswidgetheight'>
 						<option value='<?= $rsswidgetheight ?>'><?= $rsswidgetheight ?>px</option>
 						<?php
-							for($x=100; $x<1100; $x=$x+100) 
+							for($x=100; $x<5100; $x=$x+100) 
 								echo "<option value='{$x}'>{$x}px</option>\n";
 						?>
 					</select>

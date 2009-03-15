@@ -50,7 +50,7 @@ if(!$rss_feed)
 	$rss_feed = "http://blog.pfsense.org";
 	
 if(!$max_items)
-	$max_items = 5;
+	$max_items = 3;
 
 ?>
 

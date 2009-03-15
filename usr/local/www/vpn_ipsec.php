@@ -440,7 +440,7 @@ function show_ipsec_header() {
 		<td class="listhdrr">Mode</td>
 		<td class="listhdrr">P1 Protocol</td>
 		<td class="listhdrr">P1 Transforms</td>
-		<td class="listhdrr">P2 DEscription</td>
+		<td class="listhdrr">P1 Description</td>
 		<td class ="list">
 			<a href="vpn_ipsec_phase2.php?ikeid={$ph1ent['ikeid']}{$mobile}">
 				<img src="./themes/{$g['theme']}/images/icons/icon_plus.gif" title="add phase2 entry" width="17" height="17" border="0">

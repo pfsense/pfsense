@@ -74,6 +74,7 @@ if (isset($p2index) && $a_phase2[$p2index])
 	$pconfig['halgos'] = $a_phase2[$p2index]['hash-algorithm-option'];
 	$pconfig['pfsgroup'] = $a_phase2[$p2index]['pfsgroup'];
 	$pconfig['lifetime'] = $a_phase2[$p2index]['lifetime'];
+	$pconfig['pinghost'] = $a_phase2[$p2index]['pinghost'];
 
 	if (isset($a_phase2[$p2index]['mobile']))
 		$pconfig['mobile'] = true;
@@ -161,6 +162,7 @@ if ($_POST) {
 		$ph2ent['hash-algorithm-option'] = $pconfig['halgos'];
 		$ph2ent['pfsgroup'] = $pconfig['pfsgroup'];
 		$ph2ent['lifetime'] = $pconfig['lifetime'];
+		$ph2ent['pinghost'] = $pconfig['pinghost'];
 		$ph2ent['descr'] = $pconfig['descr'];
 
 		if (isset($pconfig['mobile']))
@@ -261,6 +263,15 @@ function typesel_change_remote(bits) {
 }
 
 <?php endif; ?>
+
+function protocol_change() {
+	index = document.iform.proto.selectedIndex;
+	value = document.iform.proto.options[index].value;
+	if (value == 'esp')
+		document.getElementById('opt_enc').style.display = '';
+	else
+		document.getElementById('opt_enc').style.display = 'none';
+}
 
 //-->
 </script>
@@ -395,7 +406,7 @@ function typesel_change_remote(bits) {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq">Protocol</td>
 						<td width="78%" class="vtable">
-							<select name="proto" class="formselect">
+							<select name="proto" class="formselect" onChange="protocol_change()">
 							<?php foreach ($p2_protos as $proto => $protoname): ?>
 								<option value="<?=$proto;?>" <?php if ($proto == $pconfig['proto']) echo "selected"; ?>>
 									<?=htmlspecialchars($protoname);?>
@@ -408,7 +419,7 @@ function typesel_change_remote(bits) {
 							</span>
 						</td>
 					</tr>
-					<tr>
+					<tr id="opt_enc">
 						<td width="22%" valign="top" class="vncellreq">Encryption algorithms</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="0" cellpadding="0">
@@ -500,6 +511,19 @@ function typesel_change_remote(bits) {
 						<td width="78%" class="vtable">
 							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=$pconfig['lifetime'];?>">
 							seconds
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="list" height="12"></td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">Advanced Options</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">Automatically ping host</td>
+						<td width="78%" class="vtable">
+							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>">
+							IP address
 						</td>
 					</tr>
 					<tr>

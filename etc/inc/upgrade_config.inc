@@ -927,9 +927,6 @@ function upgrade_046_to_047() {
 				if (isset($tunnel['p1']['private-key']))
 					$ph1ent['private-key'] = $tunnel['p1']['private-key'];
 
-				if (isset($tunnel['pinghost']['pinghost']))
-					$ph1ent['pinghost'] = $tunnel['pinghost'];
-
 				$ph1ent['nat_traversal'] = "on";
 				$ph1ent['dpd_enable'] = 1;
 				$ph1ent['dpd_delay'] = 10;
@@ -1008,6 +1005,9 @@ function upgrade_046_to_047() {
 			$ph2ent['hash-algorithm-option'] = $tunnel['p2']['hash-algorithm-option'];
 			$ph2ent['pfsgroup'] = $tunnel['p2']['pfsgroup'];
 			$ph2ent['lifetime'] = $tunnel['p2']['lifetime'];
+
+			if (isset($tunnel['pinghost']['pinghost']))
+				$ph2ent['pinghost'] = $tunnel['pinghost'];
 
 			$a_phase2[] = $ph2ent;
 		}

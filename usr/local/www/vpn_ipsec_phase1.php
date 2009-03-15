@@ -106,8 +106,6 @@ if (isset($p1index) && $a_phase1[$p1index])
 		$pconfig['dpd_delay'] = $a_phase1[$p1index]['dpd_delay'];
 		$pconfig['dpd_maxfail'] = $a_phase1[$p1index]['dpd_maxfail'];
 	}
-
-	$pconfig['pinghost'] = $a_phase1[$p1index]['pinghost'];
 }
 else
 {
@@ -301,8 +299,6 @@ if ($_POST) {
 			$ph1ent['dpd_delay'] = $pconfig['dpd_delay'];
 			$ph1ent['dpd_maxfail'] = $pconfig['dpd_maxfail'];
 		}
-
-		$ph1ent['pinghost'] = $pconfig['pinghost'];
 
 		/* generate unique phase1 ikeid */
 		if ($ph1ent['ikeid'] == 0)
@@ -722,13 +718,6 @@ function dpdchkbox_change() {
 								</span>
 								<br>
 							</div>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell">Automatically ping host</td>
-						<td width="78%" class="vtable">
-							<input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>">
-							IP address
 						</td>
 					</tr>
 					<tr>

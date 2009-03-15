@@ -162,6 +162,8 @@ function vpn_ipsec_configure($ipchg = false)
 		$rgmap = array();
 		$dnswatch_list = array();
 		if (is_array($a_phase1) && count($a_phase1)) {
+
+			/* step through each phase1 entry */
 			foreach ($a_phase1 as $ph1ent) {
 				if (isset($ph1ent['disabled']))
 					continue;
@@ -191,19 +193,31 @@ function vpn_ipsec_configure($ipchg = false)
 
 				$rgmap[$ph1ent['remote-gateway']] = $rg;
 
-				/* add an ipsec pinghosts entry */
+				/* step through each phase2 entry */
+				foreach ($a_phase2 as $ph2ent) {
 
-				if ($ph1ent['pinghost']) {
-					$pfd = fopen("/var/db/ipsecpinghosts", "a");
-					$iflist = get_configured_interface_list();
-					foreach ($iflist as $ifent => $ifname) {
-						$interface_ip = find_interface_ip($config['interfaces'][$ifname]['if']);
-						if (ip_in_subnet($interface_ip, $sa . "/" . $sn))
-						$srcip = find_interface_ip($config['interfaces'][$ifname]['if']);
+					$ikeid = $ph2ent['ikeid'];
+
+					if (isset($ph2ent['disabled']))
+						continue;
+
+					if ($ikeid != $ph1ent['ikeid'])
+						continue;
+
+					/* add an ipsec pinghosts entry */
+					if ($ph2ent['pinghost']) {
+						$pfd = fopen("/var/db/ipsecpinghosts", "a");
+						$iflist = get_configured_interface_list();
+						foreach ($iflist as $ifent => $ifname) {
+							$interface_ip = find_interface_ip($config['interfaces'][$ifname]['if']);
+							$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
+							if (ip_in_subnet($interface_ip, $local_subnet))
+								$srcip = $interface_ip;
+						}
+						$dstip = $ph2ent['pinghost'];
+						fwrite($pfd, "$srcip|$dstip|3\n");
+						fclose($pfd);
 					}
-					$dstip = $ph1ent['pinghost'];
-					fwrite($pfd, "$srcip|$dstip|3\n");
-					fclose($pfd);
 				}
 			}
 		}

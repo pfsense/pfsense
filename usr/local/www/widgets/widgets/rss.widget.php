@@ -30,7 +30,7 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
-if($_POST) {
+if($_POST['rssfeed']) {
 	$config['widgets']['rssfeed'] = str_replace("\n", ",", $_POST['rssfeed']);
 	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", $_POST['rssmaxitems']);
 	$config['widgets']['rsswidgetheight'] = $_POST['rsswidgetheight'];

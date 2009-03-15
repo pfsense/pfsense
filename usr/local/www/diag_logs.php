@@ -55,7 +55,7 @@ if ($_POST['clear']) {
 		system_syslogd_start();
 	} else {  
 		exec("killall syslogd");
-		exec("/usr/sbin/clog -i -s 262144 {$system_logfile}");
+		exec("/usr/sbin/fifolog_create -s 262144 {$system_logfile}");
 		system_syslogd_start();
 	}
 

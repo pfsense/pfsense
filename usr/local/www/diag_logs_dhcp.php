@@ -52,7 +52,7 @@ if ($_POST['clear']) {
 		unlink($dhcpd_logfile);
 		touch($dhcpd_logfile);
 	} else {
-		exec("/usr/sbin/clog -i -s 262144 {$dhcpd_logfile}");
+		exec("/usr/sbin/fifolog_create -s 262144 {$dhcpd_logfile}");
 	}
 }
 

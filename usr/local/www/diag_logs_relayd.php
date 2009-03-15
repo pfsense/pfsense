@@ -52,7 +52,7 @@ if ($_POST['clear']) {
 		touch($relayd_logfile);
 	} else {
 		exec("killall syslogd");
-		exec("/usr/sbin/clog -i -s 262144 {$relayd_logfile}");
+		exec("/usr/sbin/fifolog_create -s 262144 {$relayd_logfile}");
 		system_syslogd_start();
 	}
 }

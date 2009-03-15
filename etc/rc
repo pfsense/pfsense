@@ -217,18 +217,18 @@ if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then
 	touch /var/log/ntpd.log
 else 
 	# generate circular logfiles
-	clog -i -s 512144 /var/log/system.log
-	clog -i -s 512144 /var/log/filter.log
-	clog -i -s 65535 /var/log/dhcpd.log
-	clog -i -s 65535 /var/log/vpn.log
-	clog -i -s 65535 /var/log/openvpn.log
-	clog -i -s 65535 /var/log/portalauth.log
-	clog -i -s 65535 /var/log/ipsec.log
-	clog -i -s 65535 /var/log/relayd.log
-	clog -i -s 65535 /var/log/lighttpd.log
-	clog -i -s 65535 /var/log/ntpd.log
+	fifolog_create  -s 512144 /var/log/system.log
+	fifolog_create -s 512144 /var/log/filter.log
+	fifolog_create -s 65535 /var/log/dhcpd.log
+	fifolog_create -s 65535 /var/log/vpn.log
+	fifolog_create -s 65535 /var/log/openvpn.log
+	fifolog_create -s 65535 /var/log/portalauth.log
+	fifolog_create -s 65535 /var/log/ipsec.log
+	fifolog_create -s 65535 /var/log/relayd.log
+	fifolog_create -s 65535 /var/log/lighttpd.log
+	fifolog_create -s 65535 /var/log/ntpd.log
 fi 
-# change permissions on newly created clog files.
+# change permissions on newly created fifolog files.
 chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/relayd.log	
 
 echo -n "."

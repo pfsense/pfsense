@@ -755,10 +755,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	if($config['system']['disablesyslogclog']) 
 		exec("cat {$logfile}{$grepline} | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	else 
-		exec("/usr/sbin/clog {$logfile}{$grepline} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-    /* comment out debug code
-    echo "<!-- /usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail} -->";
-    */
+		exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
     foreach ($logarr as $logent) {
             $logent = preg_split("/\s+/", $logent, 6);
             echo "<tr valign=\"top\">\n";
@@ -784,13 +781,10 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	if(is_array($grepinvert))
 		foreach($grepinvert as $agrep)
 			$grepline .= " | grep -v \"$agrep\"";
-	/* comment out debug code
-	echo "<!-- /usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail} -->";
-	*/
 	if($config['system']['disablesyslogclog']) 
 		exec("cat {$logfile}{$grepline} | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	else 
-		exec("/usr/sbin/clog {$logfile}{$grepline} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+		exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	return($logarr);
 }
 

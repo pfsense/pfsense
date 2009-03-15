@@ -352,7 +352,7 @@ function system_syslogd_start() {
 					$pkgfacilities[] = $package['logging']['facilityname'];
 					$separatelogfacilities = $separatelogfacilities + $pkgfacilities;
 					$facilitylist = implode(',', $pkgfacilities);
-					mwexec("clog -i -s 10000 {$g['varlog_path']}/{$package['logging']['logfilename']}");
+					mwexec("fifolog_create -s 10000 {$g['varlog_path']}/{$package['logging']['logfilename']}");
                                 	$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t%{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}
                         }

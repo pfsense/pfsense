@@ -61,7 +61,7 @@ if ($_POST['clear']) {
 		touch("/var/log/filter.log");
 	} else {	
 		exec("killall syslogd");
-		exec("/usr/sbin/clog -i -s 512144 /var/log/filter.log");
+		exec("/usr/sbin/fifolog_create -s 512144 /var/log/filter.log");
 		system_syslogd_start();
 	}
 }
@@ -78,7 +78,7 @@ function conv_clog($logfile, $tail = 50) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n 500", $logarr);
+	exec("/usr/sbin/fifolog_reader {$logfile} | /usr/bin/tail {$sor} -n 500", $logarr);
 
 	$filterlog = array();
 

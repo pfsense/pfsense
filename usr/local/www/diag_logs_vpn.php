@@ -49,7 +49,7 @@ if ($_POST['clear']) {
 		unlink("/var/log/vpn.log");
 		touch("/var/log/vpn.log");
 	} else {	
-		exec("/usr/sbin/clog -i -s 65536 /var/log/vpn.log");
+		exec("/usr/sbin/fifolog_create -s 65536 /var/log/vpn.log");
 	}
 	/* redirect to avoid reposting form data on refresh */
 	header("Location: diag_logs_vpn.php");
@@ -62,7 +62,7 @@ function dump_clog_vpn($logfile, $tail) {
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
 	$logarr = "";
-	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
+	exec("/usr/sbin/fifolog_reader " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);

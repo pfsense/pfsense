@@ -112,7 +112,7 @@ else
 			</tr>
 			<tr>
 				<td align="right">		
-					Show how many words from story:
+					Show how many characters from story:
 				</td>
 				<td>
 					<select name='rsswidgettextlength' id='rsswidgettextlength'>
@@ -154,8 +154,8 @@ else
 		mkdir("/tmp/simplepie");
 		mkdir("/tmp/simplepie/cache");
 	}
-	exec("chmod a+rw/tmp/simplepie/.");
-	exec("chmod a+rw/tmp/simplepie/cache/.");
+	exec("chmod a+rw /tmp/simplepie/.");
+	exec("chmod a+rw /tmp/simplepie/cache/.");
 	$counter = 1;
 	foreach($feed->get_items() as $item) {
 		$feed = $item->get_feed();

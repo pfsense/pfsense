@@ -25,7 +25,7 @@ function conv_clog_filter($logfile, $tail = 8) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n 500", $logarr);
+	exec("/usr/sbin/fifolog_reader {$logfile} | /usr/bin/tail {$sor} -n 500", $logarr);
 
 	$filterlog = array();
 

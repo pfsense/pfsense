@@ -1725,4 +1725,12 @@ function upgrade_056_to_057() {
 		unset($config['captiveportal']['user']);
 	}
 }
+
+function upgrade_057_to_058() {
+	global $config;
+	/* set all phase2 entries to tunnel mode */
+	if (is_array($config['ipsec']['phase2']))
+		foreach($config['ipsec']['phase2'] as & $ph2ent)
+			$ph2ent['mode'] = 'tunnel';
+}
 ?>

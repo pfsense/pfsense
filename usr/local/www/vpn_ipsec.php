@@ -285,8 +285,11 @@ include("head.inc");
 							</div>
 							<table class="tabcont" width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" id="tdph2-<?=$i?>" style="display:none">
 								<tr>
+									<td class="listhdrr">Mode</td>
+									<?php if($ph2ent['mode'] == "tunnel"): ?>
 									<td class="listhdrr">Local Subnet</td>
 									<td class="listhdrr">Remote Subnet</td>
+									<?php endif; ?>
 									<td class="listhdrr">P2 Protocol</td>
 									<td class="listhdrr">P2 Transforms</td>
 									<td class="listhdrr">P2 Auth Methods</td>
@@ -315,6 +318,12 @@ include("head.inc");
 
 									<td nowrap class="listlr">
 										<?=$spans;?>
+											<?=$ph2ent['mode'];?>
+										<?=$spane;?>
+									</td>
+									<?php if($ph2ent['mode'] == "tunnel"): ?>
+									<td nowrap class="listr">
+										<?=$spans;?>
 											<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
 										<?=$spane;?>
 									</td>
@@ -323,6 +332,7 @@ include("head.inc");
 											<?=ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
 										<?=$spane;?>
 									</td>
+									<?php endif; ?>
 									<td nowrap class="listr">
 										<?=$spans;?>
 											<?php echo $p2_protos[$ph2ent['protocol']];	?>

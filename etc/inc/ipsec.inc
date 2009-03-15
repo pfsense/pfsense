@@ -77,6 +77,10 @@ $p1_authentication_methods = array(
 	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
 
+$p2_modes = array(
+	'tunnel' => 'Tunnel',
+	'transport' => 'Transport');
+
 $p2_protos = array(
 	'esp' => 'ESP',
 	'ah' => 'AH');

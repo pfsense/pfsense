@@ -587,33 +587,89 @@ EOD;
 
 					$ikeid = $ph2ent['ikeid'];
 
+					if( !ipsec_lookup_phase1($ph2ent,$ph1ent))
+						continue;
+
+					if (isset($ph1ent['disabled']))
+						continue;
+
 					if (isset($ph2ent['disabled']))
 						continue;
 
 					if (isset($ph2ent['mobile']) && !isset($a_client['enable']))
 						continue;
 
-					$localid_type = $ph2ent['localid']['type'];
-					if ($localid_type != "address")
-						$localid_type = "subnet";
+					if ($ph2ent['mode'] == 'tunnel') {
 
-					$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
-					$localid_spec = $localid_type." ".$localid_data." any";
+						$localid_type = $ph2ent['localid']['type'];
+						if ($localid_type != "address")
+							$localid_type = "subnet";
 
-					if (!isset($ph2ent['mobile'])) {
+						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
+						$localid_spec = $localid_type." ".$localid_data." any";
 
-						$remoteid_type = $ph2ent['remoteid']['type'];
-						if ($remoteid_type != "address")
-							$remoteid_type = "subnet";
+						if (!isset($ph2ent['mobile'])) {
+							$remoteid_type = $ph2ent['remoteid']['type'];
+							if ($remoteid_type != "address")
+								$remoteid_type = "subnet";
 
-						$remoteid_data = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
-						$remoteid_spec = $remoteid_type." ".$remoteid_data." any";
+							$remoteid_data = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+							$remoteid_spec = $remoteid_type." ".$remoteid_data." any";
+						} else
+							$remoteid_spec = "anonymous";
 
-					} else
-						$remoteid_spec = "anonymous";
+					} else {
 
-					$ealgos = '';
+						$rgip = $rgmap[$ph1ent['remote-gateway']];
+
+						$localid_data = ipsec_get_phase1_src($ph1ent);
+						$localid_spec = "address {$localid_data}";
+
+						$remoteid_data = $rgmap[$ph1ent['remote-gateway']];
+						$remoteid_spec = "address {$remoteid_data}";
+					}
+
+					if($ph2ent['proto'] == "esp") {
+
+						$ealgos = '';
+
+						foreach ($ph2ent['encryption-algorithm-option'] as $ealg) {
+
+							$ealg_id = $ealg['name'];
+							$ealg_kl = $ealg['keylen'];
+
+							if ($ealg_kl) {
+								if( $ealg_kl == "auto" ) {
+									$key_hi = $p2_ealgos[$ealg_id]['keysel']['hi'];
+									$key_lo = $p2_ealgos[$ealg_id]['keysel']['lo'];
+									$key_step = $p2_ealgos[$ealg_id]['keysel']['step'];
+
+									for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
+										if ($ealgos)
+											$ealgos = $ealgos.", ";
+										$ealgos = $ealgos.$ealg_id." ".$keylen;
+									}
+								} else {
+									if ($ealgos)
+										$ealgos = $ealgos.", ";
+									$ealgos = $ealgos.$ealg_id." ".$ealg_kl;
+								}
+							} else {
+								if ($ealgos)
+									$ealgos = $ealgos.", ";
+								$ealgos = $ealgos.$ealg_id;
+							}
+						}
+
+						$ealgosline = "encryption_algorithm {$ealgos};";
+
+					} else {
+
+						$ealgosline = "encryption_algorithm null_enc;";
+					}
+
 					$halgos = join(",", $ph2ent['hash-algorithm-option']);
+					$halgosline = "authentication_algorithm {$halgos};";
 
 					$pfsline = '';
 					if ($ph2ent['pfsgroup'])
@@ -628,34 +684,6 @@ EOD;
 					if ($ph2ent['lifetime'])
 						$lifeline = "lifetime time {$ph2ent['lifetime']} secs;";
 
-					foreach ($ph2ent['encryption-algorithm-option'] as $ealg) {
-
-						$ealg_id = $ealg['name'];
-						$ealg_kl = $ealg['keylen'];
-
-						if ($ealg_kl) {
-							if( $ealg_kl == "auto" ) {
-								$key_hi = $p2_ealgos[$ealg_id]['keysel']['hi'];
-								$key_lo = $p2_ealgos[$ealg_id]['keysel']['lo'];
-								$key_step = $p2_ealgos[$ealg_id]['keysel']['step'];
-
-								for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
-									if( $ealgos )
-										$ealgos = $ealgos.", ";
-									$ealgos = $ealgos.$ealg_id." ".$keylen;
-								}
-							} else {
-								if ($ealgos)
-									$ealgos = $ealgos.", ";
-								$ealgos = $ealgos.$ealg_id." ".$ealg_kl;
-							}
-						} else {
-							if ($ealgos)
-								$ealgos = $ealgos.", ";
-							$ealgos = $ealgos.$ealg_id;
-						}
-					}
-
 					/* add sainfo section to configuration */
 					
 					$racoonconf .=<<<EOD
@@ -663,11 +691,11 @@ EOD;
 sainfo {$localid_spec} {$remoteid_spec}
 {
 	remoteid {$ikeid};
-	encryption_algorithm {$ealgos};
-	authentication_algorithm {$halgos};
-	compression_algorithm deflate;
+	{$ealgosline}
+	{$halgosline}
 	{$pfsline}
 	{$lifeline}
+	compression_algorithm deflate;
 }
 
 EOD;
@@ -735,11 +763,23 @@ EOD;
 					mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
 				}
 
-				$spdconf .= "spdadd {$localid} {$remoteid} any -P out ipsec " .
-					"{$ph2ent['protocol']}/tunnel/{$ep}-{$rgip}/unique;\n";
+				if($ph2ent['mode'] == "tunnel") {
 
-				$spdconf .= "spdadd {$remoteid} {$localid} any -P in ipsec " .
-					"{$ph2ent['protocol']}/tunnel/{$rgip}-{$ep}/unique;\n";
+					$spdconf .= "spdadd {$localid} {$remoteid} any -P out ipsec " .
+						"{$ph2ent['protocol']}/tunnel/{$ep}-{$rgip}/unique;\n";
+
+					$spdconf .= "spdadd {$remoteid} {$localid} any -P in ipsec " .
+						"{$ph2ent['protocol']}/tunnel/{$rgip}-{$ep}/unique;\n";
+
+				} else {
+
+					$spdconf .= "spdadd {$localid} {$remoteid} any -P out ipsec " .
+						"{$ph2ent['protocol']}/transport//unique;\n";
+
+					$spdconf .= "spdadd {$remoteid} {$localid} any -P in ipsec " .
+						"{$ph2ent['protocol']}/transport//unique;\n";
+
+				}
 
 				/* static route needed? */
 				if (preg_match("/^carp/i", $ph1ent['interface']))

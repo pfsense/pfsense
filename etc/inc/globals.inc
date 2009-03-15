@@ -32,7 +32,7 @@
 */
 
 $g = array(
-	"factory_shipped_username" => "admin",	
+	"factory_shipped_username" => "admin",
 	"factory_shipped_password" => "pfsense",
 	"upload_path" => "/root",
 	"dhcpd_chroot_path" => "/var/dhcpd",
@@ -58,7 +58,7 @@ $g = array(
         "product_website_footer" => "http://www.pfsense.org/?gui20",
 	"product_email" => "coreteam@pfsense.org",
 	"debug" => false,
-	"latest_config" => "5.7",
+	"latest_config" => "5.8",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "115",
 	"minimum_ram_warning_text" => "128 megabytes",

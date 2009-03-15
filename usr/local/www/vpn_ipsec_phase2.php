@@ -63,6 +63,7 @@ if (isset($p2index) && $a_phase2[$p2index])
 {
 	$pconfig['ikeid'] = $a_phase2[$p2index]['ikeid'];
 	$pconfig['disabled'] = isset($a_phase2[$p2index]['disabled']);
+	$pconfig['mode'] = $a_phase2[$p2index]['mode'];
 	$pconfig['descr'] = $a_phase2[$p2index]['descr'];
 	$old_ph2ent = $a_phase2[$p2index];
 
@@ -118,24 +119,27 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	switch ($pconfig['localid_type']) {
-		case "network":
-			if (!$pconfig['localid_netbits'] || !is_numeric($pconfig['localid_netbits']))
-				$input_errors[] = "A valid local network bit count must be specified..";
-		case "address":
-			if (!$pconfig['localid_address'] || !is_ipaddr($pconfig['localid_address']))
-				$input_errors[] = "A valid local network IP address must be specified.";
-			break;
-	}
+	if($pconfig['mode'] == "tunnel")
+	{
+		switch ($pconfig['localid_type']) {
+			case "network":
+				if (!$pconfig['localid_netbits'] || !is_numeric($pconfig['localid_netbits']))
+					$input_errors[] = "A valid local network bit count must be specified..";
+			case "address":
+				if (!$pconfig['localid_address'] || !is_ipaddr($pconfig['localid_address']))
+					$input_errors[] = "A valid local network IP address must be specified.";
+				break;
+		}
 
-	switch ($pconfig['remoteid_type']) {
-		case "network":
-			if (!$pconfig['remoteid_netbits'] || !is_numeric($pconfig['remoteid_netbits']))
-				$input_errors[] = "A valid remote network bit count must be specified..";
-		case "address":
-			if (!$pconfig['remoteid_address'] || !is_ipaddr($pconfig['remoteid_address']))
-				$input_errors[] = "A valid remote network IP address must be specified.";
-			break;
+		switch ($pconfig['remoteid_type']) {
+			case "network":
+				if (!$pconfig['remoteid_netbits'] || !is_numeric($pconfig['remoteid_netbits']))
+					$input_errors[] = "A valid remote network bit count must be specified..";
+			case "address":
+				if (!$pconfig['remoteid_address'] || !is_ipaddr($pconfig['remoteid_address']))
+					$input_errors[] = "A valid remote network IP address must be specified.";
+				break;
+		}
 	}
 
 /* TODO : Validate enabled phase2's are not duplicates */
@@ -152,10 +156,13 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		$ph2ent['ikeid'] = $pconfig['ikeid'];
+		$ph2ent['mode'] = $pconfig['mode'];
 		$ph2ent['disabled'] = $pconfig['disabled'] ? true : false;
 
-		$ph2ent['localid'] = pconfig_to_idinfo("local",$pconfig);
-		$ph2ent['remoteid'] = pconfig_to_idinfo("remote",$pconfig);
+		if($ph2ent['mode'] == "tunnel") {
+			$ph2ent['localid'] = pconfig_to_idinfo("local",$pconfig);
+			$ph2ent['remoteid'] = pconfig_to_idinfo("remote",$pconfig);
+		}
 
 		$ph2ent['protocol'] = $pconfig['proto'];
 		$ph2ent['encryption-algorithm-option'] = $ealgos;
@@ -202,6 +209,19 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--
+
+function change_mode() {
+	index = document.iform.mode.selectedIndex;
+	value = document.iform.mode.options[index].value;
+	if (value == 'tunnel') {
+		document.getElementById('opt_localid').style.display = '';
+		document.getElementById('opt_remoteid').style.display = '';
+	} else {
+		document.getElementById('opt_localid').style.display = 'none';
+		document.getElementById('opt_remoteid').style.display = 'none';
+	}
+}
+
 function typesel_change_local(bits) {
 
 	if (!bits)
@@ -264,7 +284,7 @@ function typesel_change_remote(bits) {
 
 <?php endif; ?>
 
-function protocol_change() {
+function change_protocol() {
 	index = document.iform.proto.selectedIndex;
 	value = document.iform.proto.options[index].value;
 	if (value == 'esp')
@@ -299,10 +319,6 @@ function protocol_change() {
 			<div class="tabcont">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Mode</td>
-						<td width="78%" class="vtable"> Tunnel</td>
-					</tr>
-					<tr>
 						<td width="22%" valign="top" class="vncellreq">Disabled</td>
 						<td width="78%" class="vtable">
 							<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
@@ -314,6 +330,21 @@ function protocol_change() {
 						</td>
 					</tr>
 					<tr>
+						<td width="22%" valign="top" class="vncellreq">Mode</td>
+						<td width="78%" class="vtable">
+							<select name="mode" class="formselect" onChange="change_mode()">
+								<?php
+									foreach($p2_modes as $name => $value):
+										$selected = "";
+										if ($name == $pconfig['mode'])
+											$selected = "selected";
+								?>
+								<option value="<?=$name;?>" <?=$selected;?>><?=$value;?></option>
+								<?php endforeach; ?>
+							</select>
+						</td>
+					</tr>
+					<tr id="opt_localid">
 						<td width="22%" valign="top" class="vncellreq">Local Network</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="0" cellpadding="0">
@@ -349,7 +380,7 @@ function protocol_change() {
 
 					<?php if (!isset($pconfig['mobile'])): ?>
 					
-					<tr>
+					<tr id="opt_remoteid">
 						<td width="22%" valign="top" class="vncellreq">Remote Network</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellspacing="0" cellpadding="0">
@@ -406,7 +437,7 @@ function protocol_change() {
 					<tr>
 						<td width="22%" valign="top" class="vncellreq">Protocol</td>
 						<td width="78%" class="vtable">
-							<select name="proto" class="formselect" onChange="protocol_change()">
+							<select name="proto" class="formselect" onChange="change_protocol()">
 							<?php foreach ($p2_protos as $proto => $protoname): ?>
 								<option value="<?=$proto;?>" <?php if ($proto == $pconfig['proto']) echo "selected"; ?>>
 									<?=htmlspecialchars($protoname);?>
@@ -548,6 +579,8 @@ function protocol_change() {
 </form>
 <script lannguage="JavaScript">
 <!--
+change_mode('<?=$pconfig['mode']?>');
+change_protocol('<?=$pconfig['proto']?>');
 typesel_change_local(<?=$pconfig['localid_netbits']?>);
 typesel_change_remote(<?=$pconfig['remoteid_netbits']?>);
 //-->

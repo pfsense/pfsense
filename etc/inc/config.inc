@@ -167,20 +167,8 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 				file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
 				restore_backup("/cf/conf/backup/{$last_backup}");
 			} else {
-				/* no device found, print an error and die */
-				echo <<<EOD
-
-*******************************************************************************
-* FATAL ERROR                                                                 *
-* The device that contains the configuration file (config.xml) could not be   *
-* found. {$g['product_name']} cannot continue booting.                                     *
-*******************************************************************************
-
-
-EOD;
-
-				mwexec("/sbin/halt");
-				exit;
+				log_error("No config.xml or config backups found, resetting to factory defaults.")
+				restore_backup('/conf.default/config.xml');
 			}
 		}
 

@@ -2217,6 +2217,32 @@ endif;
 		$config['version'] = "5.6";
 	}
 
+	/* Convert 5.6 -> 5.7 */
+	if ($config['version'] <= 5.6) {
+
+		/* migrate captivate portal to user manager */
+		if (is_array($config['captiveportal']['user'])) {
+			foreach($config['captiveportal']['user'] as $user) {
+				// avoid user conflicts
+				if ($config['system']['user'][$user['name']])
+					continue;
+				$user['scope'] = "user";
+				if (isset($user['expirationdate'])) {
+					$user['expires'] = $user['expirationdate'];
+					unset($user['expirationdate']);
+				}
+				if (isset($user['password'])) {
+					$user['md5-hash'] = $user['password'];
+					unset($user['password']);
+				}
+				$config['system']['user'][] = $user;
+			}
+			unset($config['captiveportal']['user']);
+		}
+
+		$config['version'] = "5.7";
+	}
+
 	$now = date("H:i:s");
 	log_error("Ended Configuration upgrade at $now");
 

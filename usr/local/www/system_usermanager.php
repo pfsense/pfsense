@@ -149,6 +149,7 @@ if (isAllowedPage("system_usermanager")) {
 		if (isset($id) && $a_user[$id]) {
 			$pconfig['usernamefld'] = $a_user[$id]['name'];
 			$pconfig['fullname'] = $a_user[$id]['fullname'];
+			$pconfig['expires'] = $a_user[$id]['expires'];
 			$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 			$pconfig['utype'] = $a_user[$id]['scope'];
 			$pconfig['uid'] = $a_user[$id]['uid'];
@@ -198,6 +199,28 @@ if (isAllowedPage("system_usermanager")) {
 			}
 		}
 
+		/*
+		 * Check for a valid expirationdate if one is set at all (valid means,
+		 * strtotime() puts out a time stamp so any strtotime compatible time
+		 * format may be used. to keep it simple for the enduser, we only
+		 * claim to accept MM/DD/YYYY as inputs. Advanced users may use inputs
+		 * like "+1 day", which will be converted to MM/DD/YYYY based on "now".
+		 * Otherwhise such an entry would lead to an invalid expiration data.
+		 */
+		if ($_POST['expires']){
+			if(strtotime($_POST['expires']) > 0){
+				if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($_POST['expires'])))) {
+					$input_errors[] = "The expiration date lies in the past.";
+				} else {
+					//convert from any strtotime compatible date to MM/DD/YYYY
+					$expdate = strtotime($_POST['expires']);
+					$_POST['expires'] = date("m/d/Y",$expdate);
+				}
+			} else {
+				$input_errors[] = "Invalid expiration date format; use MM/DD/YYYY instead.";
+			}
+		}
+
 		if (isset($config['system']['ssh']['sshdkeyonly']) && empty($_POST['authorizedkeys']))
 			$input_errors[] = gettext("You must provide an authorized key otherwise you won't be able to login into this system.");
 
@@ -224,6 +247,7 @@ if (isAllowedPage("system_usermanager")) {
 
 			$userent['name'] = $_POST['usernamefld'];
 			$userent['fullname'] = $_POST['fullname'];
+			$userent['expires'] = $_POST['expires'];
 			$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 
 			if (isset($id) && $a_user[$id])
@@ -248,6 +272,12 @@ if (isAllowedPage("system_usermanager")) {
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
+<!--
+//Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
+//Script featured on JavaScript Kit (http://www.javascriptkit.com)
+//For this script, visit http://www.javascriptkit.com
+// -->
+<script language="javascript" type="text/javascript" src="datetimepicker.js"></script>
 <script language="JavaScript">
 <!--
 
@@ -363,6 +393,16 @@ function presubmit() {
 								<br/>
 								<?=gettext("User's full name, for your own information only");?>
 							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell">Expiration date</td>
+							<td width="78%" class="vtable">
+								<input name="expires" type="text" class="formfld unknown" id="expires" size="10" value="<?=$pconfig['expires'];?>">
+								<a href="javascript:NewCal('expires','mmddyyyy')">
+									<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="Pick a date">
+								</a>
+								<br>
+								<span class="vexpl">Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy</span></td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>

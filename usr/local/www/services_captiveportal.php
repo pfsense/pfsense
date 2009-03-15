@@ -264,7 +264,6 @@ function enable_change(enable_change) {
 	$tab_array[] = array("Captive portal", true, "services_captiveportal.php");
 	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
 	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
-	$tab_array[] = array("Users", false, "services_captiveportal_users.php");
 	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
 	display_top_tabs($tab_array);
 ?>    </td></tr>
@@ -372,15 +371,15 @@ to access after they've authenticated.</td>
 		<table cellpadding="0" cellspacing="0">
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="none" onClick="enable_change(false)" <?php if($pconfig['auth_method']!="local" && $pconfig['auth_method']!="radius") echo "checked"; ?>>
-  No authentication</td>
+  No Authentication</td>
 		  </tr>
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="local" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="local") echo "checked"; ?>>
-  Local <a href="services_captiveportal_users.php">user manager</a></td>
+  Local <a href="system_usermanager.php">User Manager</a></td>
 		  </tr>
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="radius" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius") echo "checked"; ?>>
-  RADIUS authentication</td>
+  RADIUS Authentication</td>
 		  </tr><tr>
 		  <td>&nbsp;</td>
 		  <td>&nbsp;</td>

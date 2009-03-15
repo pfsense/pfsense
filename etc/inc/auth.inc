@@ -113,9 +113,21 @@ function local_backed($username, $passwd) {
 	if (!$user)
 		return false;
 
-	$passwd = crypt($passwd, $user['password']);
+	if ($user['password'])
+	{
+		$passwd = crypt($passwd, $user['password']);
+		if ($passwd == $user['password'])
+			return true;
+	}
 
-	return ($passwd == $user['password']);
+	if ($user['md5-hash'])
+	{
+		$passwd = md5($passwd);
+		if ($passwd == $user['md5-hash'])
+			return true;
+	}
+
+	return false;
 }
 
 function local_sync_accounts() {

@@ -28,6 +28,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+require_once("auth.inc");
 require_once("functions.inc");
 
 header("Expires: 0");
@@ -135,33 +136,8 @@ EOD;
 
 } else if ($_POST['accept'] && $config['captiveportal']['auth_method'] == "local") {
 
-    //check against local usermanager
-    $userdb = &$config['captiveportal']['user'];
-
-    $loginok = false;
-
-    //erase expired accounts
-    if (is_array($userdb)) {
-        $moddb = false;
-        for ($i = 0; $i < count($userdb); $i++) {
-            if ($userdb[$i]['expirationdate'] && (strtotime("-1 day") > strtotime($userdb[$i]['expirationdate']))) {
-                unset($userdb[$i]);
-                $moddb = true;
-            }
-        }
-        if ($moddb)
-            write_config();
-
-        $userdb = &$config['captiveportal']['user'];
-
-        for ($i = 0; $i < count($userdb); $i++) {
-            if (($userdb[$i]['name'] == $_POST['auth_user']) && ($userdb[$i]['password'] == md5($_POST['auth_pass']))) {
-                $loginok = true;
-                break;
-            }
-        }
-    }
-
+	//check against local user manager
+	$loginok = local_backed($_POST['auth_user'], $_POST['auth_pass']);
     if ($loginok){
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"LOGIN");
         portal_allow($clientip, $clientmac,$_POST['auth_user']);

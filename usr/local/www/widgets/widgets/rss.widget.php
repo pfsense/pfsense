@@ -31,26 +31,36 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
 if($_POST) {
-	if($_POST['rssfeed'] <> "")
-		$config['widgets']['rssfeed'] = $_POST['rssfeed'];
-	if($_POST['rssmaxitems'] <> "")
-		$config['widgets']['rssmaxitems'] = $_POST['rssmaxitems'];
+	$config['widgets']['rssfeed'] = str_replace("\n", ",", $_POST['rssfeed']);
+	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", $_POST['rssmaxitems']);
+	$config['widgets']['rsswidgetheight'] = $_POST['rsswidgetheight'];
 	write_config("Saved RSS Widget feed via Dashboard");
 	Header("Location: /");
 }
 
 // Use saved feed and max items
-if($config['widgets']['rssfeed'])
-	$rss_feed = $config['widgets']['rssfeed'];
+if($config['widgets']['rssfeed']) 
+	$rss_feed_s = split(",", $config['widgets']['rssfeed']);	
+
 if($config['widgets']['rssmaxitems'])
 	$max_items =  $config['widgets']['rssmaxitems'];
 
 // Set a default feed if none exists
-if(!$rss_feed)
-	$rss_feed = "http://blog.pfsense.org";
+if(!$rss_feed_s) {
+	$rss_feed_s = "http://blog.pfsense.org";
+	$config['widgets']['rssfeed'] = "http://blog.pfsense.org";
+}
 	
 if(!$max_items)
-	$max_items = 3;
+	$max_items = 10;
+
+if(!$rsswidgetheight)
+	$rsswidgetheight = 300;
+
+if($config['widgets']['rssfeed']) 
+	$textarea_txt =  str_replace(",", "\n", $config['widgets']['rssfeed']);
+else 
+	$textarea_txt = "";
 
 ?>
 
@@ -59,31 +69,60 @@ if(!$max_items)
 <div id="rss-settings" name="rss-settings" class="widgetconfigdiv" style="display:none;">
 	</form>
 	<form action="/widgets/widgets/rss.widget.php" method="post" name="iforma">
-		<input name="rssfeed" class="formfld unknown" id="rssfeed" size="30"></p>
-		Display number of items: <select name='rssmaxitems' id='rssmaxitems'>
-			<?php
-				for($x=1; $x<100; $x++) {
-					echo "<option value='{$x}'>$x</option>\n";
-				}
-			?>
-		</select>
-		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" /><br/>
+		<textarea name=rssfeed class="formfld unknown" id="rssfeed" cols="40" rows="3"><?=$textarea_txt;?></textarea>
+		<br/>
+		<table>
+			<tr>
+				<td>
+					Display number of items: 
+				</td>
+				<td>
+					<select name='rssmaxitems' id='rssmaxitems'>
+						<option value='<?= $max_items ?>'><?= $max_items ?></option>
+						<?php
+							for($x=100; $x<5100; $x=$x+100) 
+								echo "<option value='{$x}'>{$x}</option>\n";
+						?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td align="right">		
+					Widget height: 
+				</td>
+				<td>
+					<select name='rsswidgetheight' id='rsswidgetheight'>
+						<option value='<?= $rsswidgetheight ?>'><?= $rsswidgetheight ?>px</option>
+						<?php
+							for($x=100; $x<1100; $x=$x+100) 
+								echo "<option value='{$x}'>{$x}px</option>\n";
+						?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					&nbsp;
+				</td>
+				<td>
+					<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
+				</td>
+			</tr>
+		</table>
 	</form>
 </div>
 
-<div id="rss-widgets" style="padding: 5px">
+<div id="rss-widgets" style="padding: 5px; height: <?=$rsswidgetheight?>px; overflow:scroll;">
 <?php
 	require_once("simplepie/simplepie.inc");
-	function textLimit($string, $length, $replacer = '...')
-	{
+	function textLimit($string, $length, $replacer = '...') {
 	  if(strlen($string) > $length)
 	  return (preg_match('/^(.*)\W.*$/', substr($string, 0, $length+1), $matches) ? $matches[1] : substr($string, 0, $length)) . $replacer;
-
 	  return $string;
 	}	
 	$feed = new SimplePie();
 	$feed->set_cache_location("/tmp/simplepie/");
-	$feed->set_feed_url("{$rss_feed}");
+	$feed->set_feed_url($rss_feed_s);
 	$feed->init();
 	$feed->set_output_encoding('latin-1');
 	$feed->handle_content_type();

@@ -376,7 +376,7 @@ function vpn_ipsec_configure($ipchg = false) {
 				}
 
 				$dpdline = '';
-				if (isset($tunnel['dpddelay'])) {
+				if (is_numeric($tunnel['dpddelay'])) {
 					$dpdline = "dpd_delay {$tunnel['dpddelay']};";
 				}
 

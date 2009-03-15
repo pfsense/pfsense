@@ -246,12 +246,8 @@ function get_interfacestatus(){
 			$data .= "block";
 		}
 		$data .= ",";
-		if ($ifinfo['ipaddr']){ 
+		if ($ifinfo['ipaddr'])
 			$data .= htmlspecialchars($ifinfo['ipaddr']);
-			if ($ifinfo['dhcplink']) {
-				$data .= " (DHCP)";
-			}
-		}
 		$data .= ",";
 		if ($ifinfo['status'] != "down")
 			$data .= htmlspecialchars($ifinfo['media']);

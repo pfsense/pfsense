@@ -136,8 +136,6 @@ $pconfig['pptp_remote'] = $wancfg['remote'];
 $pconfig['pptp_dialondemand'] = isset($wancfg['ondemand']);
 $pconfig['pptp_idletimeout'] = $wancfg['timeout'];
 
-$pconfig['disableftpproxy'] = isset($wancfg['disableftpproxy']);
-
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
@@ -237,7 +235,6 @@ if ($_POST['apply']) {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		unlink_if_exists("{$d_landirty_path}");
 		interface_configure($if);
-		system_start_ftp_helpers();
 		reset_carp();
 		/* restart snmp so that it binds to correct address */		
 		services_snmpd_configure();		
@@ -421,10 +418,7 @@ if ($_POST) {
 		unset($wancfg['local']);
 		unset($wancfg['subnet']);
 		unset($wancfg['remote']);
-		unset($wancfg['disableftpproxy']);
-		/* per interface pftpx helper */
-		if ($_POST['disableftpproxy'] == "yes")
-			$wancfg['disableftpproxy'] = true;
+
 		$wancfg['descr'] = remove_bad_chars($_POST['descr']);
 		if ($if == "wan" || $if == "lan")
 			$wancfg['enable'] = true;
@@ -1392,20 +1386,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											</td>
 										</tr>
 									<? endif; ?>
-									<tr>
-										<td colspan="2" valign="top" height="16"></td>
-									</tr>
-									<tr>
-										<td colspan="2" valign="top" class="listtopic">Other</td>
-									</tr>
-									<tr>
-										<td width="22%" valign="top" class="vncell">FTP Helper</td>
-										<td width="78%" class="vtable">
-											<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> />
-											<strong>Disable the userland FTP-Proxy application</strong>
-											<br />
-										</td>
-									</tr>
 									<tr>
 										<td colspan="2" valign="top" height="16"></td>
 									</tr>

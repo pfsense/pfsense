@@ -60,7 +60,6 @@ if (isset($id) && $a_1to1[$id]) {
 	else
 		$pconfig['subnet'] = $a_1to1[$id]['subnet'];
 	$pconfig['descr'] = $a_1to1[$id]['descr'];
-	$pconfig['useftphelper'] = $a_1to1[$id]['useftphelper'];
 } else {
     $pconfig['subnet'] = 32;
 	$pconfig['interface'] = "wan";
@@ -118,20 +117,10 @@ if ($_POST) {
 	if (!$input_errors) {
 		$natent = array();
 
-		/* Is there a ftp-proxy process running?  Kill it off if the items IP is changing. */
-		if($a_1to1[$id]['useftphelper']) {
-			if($a_1to1[$id]['external'] != $_POST['external'] or 
-				$a_1to1[$id]['internal'] != $_POST['internal'] or !$_POST['useftphelper']) {
-				$helpers = `/bin/ps awux | /usr/bin/grep "p 21 -R {$a_1to1[$id]['internal']} -b {$a_1to1[$id]['external']}" | /usr/bin/grep -v grep | /usr/bin/awk '{ print $2 }'`;
-				if($helpers) 
-					exec("kill $helpers");
-			}
-		}
 		$natent['external'] = $_POST['external'];
 		$natent['internal'] = $_POST['internal'];
 		$natent['subnet'] = $_POST['subnet'];
 		$natent['descr'] = $_POST['descr'];
-		$natent['useftphelper'] = $_POST['useftphelper'];
 		$natent['interface'] = $_POST['interface'];
 
 		if (isset($id) && $a_1to1[$id])
@@ -181,7 +170,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq">External subnet</td>
                   <td width="78%" class="vtable"> 
                     <input name="external" type="text" class="formfld unknown" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>">
-                    <select name="subnet" class="formselect" id="subnet" onChange="hideshow_ftphelper();">
+                    <select name="subnet" class="formselect" id="subnet" >
                       <?php for ($i = 32; $i >= 0; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>>
                       <?=$i;?>
@@ -197,12 +186,6 @@ include("head.inc");
                     <input name="internal" type="text" class="formfld unknown" id="internal" size="20" value="<?=htmlspecialchars($pconfig['internal']);?>"> 
                     <br>
                      <span class="vexpl">Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the external subnet also applies to the internal subnet (they  have to be the same).</span></td>
-                </tr>
-                <tr id="ftphelperrow"> 
-                  <td width="22%" valign="top" class="vncell">Use FTP-Helper</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="useftphelper" type="checkbox" class="formfld unknown" id="useftphelper" <?php if($pconfig['useftphelper']) echo " CHECKED";?> > 
-                    <br><span class="vexpl">Checking this will launch a FTP Helper to assist in PASV NAT rewriting for the FTP protocol.</span></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Description</td>
@@ -221,18 +204,6 @@ include("head.inc");
                   </td>
                 </tr>
               </table>
-<script type="text/javascript">
-	function hideshow_ftphelper() {
-		if($('subnet').value == '32') {
-			$('ftphelperrow').show();
-		} else {
-			$('ftphelperrow').hide();
-			$('useftphelper').checked = false;
-		}
-
-	}
-	hideshow_ftphelper();
-</script>
 </form>
 <?php include("fend.inc"); ?>
 </body>

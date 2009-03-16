@@ -82,12 +82,7 @@ if (isset($_POST['del_x'])) {
     /* delete selected rules */
     if (is_array($_POST['rule']) && count($_POST['rule'])) {
 	    foreach ($_POST['rule'] as $rulei) {
-			$target = $rule['target'];
-			$helpers = exec("/bin/ps awwux | grep pftpx | grep \"{$target}\" | grep -v grep | awk '{ print \$2 }'");
-			if($helpers) {
-				/* kill ftp proxy helper */
-				mwexec("/bin/kill {$helpers}");
-			}
+		$target = $rule['target'];
 	        unset($a_nat[$rulei]);
 	    }
 	    write_config();

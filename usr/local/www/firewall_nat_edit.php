@@ -224,45 +224,6 @@ if ($_POST) {
 
 			$config['filter']['rule'][] = $filterent;
 
-			/*    auto add rule to external port 21 as well since we are using
-			 *    pftpx to help open up ports automatically
-			 */
-			if($_POST['endport'] == "21") {
-				$filterent = array();
-				$filterent['interface'] = $_POST['interface'];
-				$filterent['protocol'] = $_POST['proto'];
-				$filterent['source']['any'] = "";
-
-				if($_POST['extaddr'] == "") {
-					$filterent['destination']['network'] = "wanip";
-				} else {
-					$filterent['destination']['address'] = $_POST['extaddr'];
-				}
-
-				$dstpfrom = $_POST['localbeginport'];
-				$dstpto = $dstpfrom + $_POST['endport'] - $_POST['beginport'];
-
-				if ($dstpfrom == $dstpto)
-					$filterent['destination']['port'] = $dstpfrom;
-				else
-					$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
-
-				$filterent['descr'] = "NAT " . $_POST['descr'];
-				/* See comment above */
-				$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 63);
-
-				$config['filter']['rule'][] = $filterent;
-
-				touch($d_filterconfdirty_path);
-
-				write_config();
-
-				header("Location: firewall_nat.php?savemsg=The%20changes%20have%20been%20saved.%20%20Please%20note%20that%20we%20have%20added%20an%20additional%20rule%20for%20the%20FTP%20helper.");
-
-				exit;
-
-			}
-
 			touch($d_filterconfdirty_path);
 		}
 

@@ -2695,9 +2695,6 @@ function reload_all_sync() {
 	/* start the NTP client */
 	system_ntp_configure();
 
-	/* start ftp proxy helpers if they are enabled */
-	system_start_ftp_helpers();
-
 	/* start the captive portal */
 	captiveportal_configure();
 

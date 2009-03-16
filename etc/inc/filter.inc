@@ -242,7 +242,6 @@ function filter_configure_sync() {
 		run_plugins("/usr/local/pkg/pf/");
 		update_filter_reload_status("Plugins completed.");
 	}
-	system_start_ftp_helpers();
 	/* if time based rules are enabled then swap in the set */
 	if($time_based_rules == true) {
 		tdr_install_cron(true);
@@ -396,7 +395,6 @@ function generate_optcfg_array()
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
 		$oic['nonat'] = $oc['nonat'];
-		$oic['ftpproxy'] = !isset($oc['disableftpproxy']);
 		$oic['alias-address'] = $oc['alias-address'];
 		$oic['alias-subnet'] = $oc['alias-subnet'];
 		$oic['gateway'] = $oc['gateway'];
@@ -531,69 +529,13 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	return $natrule;
 }
 
-function is_one_to_one_or_server_nat_rule($iptocheck) 
-{
-	global $config, $target;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "is_one_to_one_or_server_nat_rule() being called $mt\n";
-	}
-	if($config['nat']['onetoone'] <> "")
-		foreach($config['nat']['onetoone'] as $onetoone) {
-			if(ip_in_subnet($iptocheck,$onetoone['internal']."/".$onetoone['subnet']) == true)
-				return true;
-			if($onetoone['internal'] == $target)
-				return true;
-		}
-	if($config['nat']['servernat'] <> "")
-		foreach($config['nat']['servernat'] as $onetoone) {
-			$int = explode("/", $onetoone['ipaddr']);
-				if(ip_in_subnet($iptocheck,$onetoone['ipaddr']."/".$onetoone['subnet']) == true)
-					return true;
-			if($onetoone['ipaddr'] == $target)
-				return true;
-		}
-	if($config['nat']['rule'] <> "")
-		foreach($config['nat']['rule'] as $onetoone) {
-			$int = explode("/", $onetoone['target']);
-				if(ip_in_subnet($iptocheck,$onetoone['target']."/".$onetoone['subnet']) == true)
-					return true;
-			if($onetoone['target'] == $target)
-				return true;
-		}
-	return FALSE;
-}
-
 function filter_nat_rules_generate() 
 {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
-	$natrules .= "nat-anchor \"ftp-proxy/*\"\n";
 	$natrules .= "nat-anchor \"natearly/*\"\n";
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
 	update_filter_reload_status("Creating 1:1 rules...");
-	/*   Traverse looking for 1:1 rules that have useftphelper enabled 
-	 *   This will prevent NAT from occurring and ftp-proxy should pick up the rest.
-	 */
-	if (is_array($config['nat']['onetoone']))
-	foreach($config['nat']['onetoone'] as $one) {
-		if($one['useftphelper']) {
-			$int = $FilterIflist[$one['interface']]['if'];
-			$external_address = $one['external'];
-			$internal_address = $one['internal'];
-			if($int && $external_address && $internal_address) {
-				$natrules .= "# FTP Helper binat\n";
-				$natrules .= "no binat on {$int} proto tcp from any to {$external_address} port 21\n";
-				$helpers = exec("/bin/ps awux | /usr/bin/grep \"p 21 -R {$internal_address} -b {$external_address}\" | /usr/bin/grep -v grep");
-				if(!$helpers) {
-					/* Get the ftp queue for this interface */
-					if (isset($config['interfaces'][$rule['interface']]['ftpqueue']))
-						$shaper_queue = "-q " . $config['interfaces'][$rule['interface']]['ftpqueue'];
-					/* else default queue configured on shaper will get this */
-					$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy -p 21 -R {$internal_address} -b {$external_address} -T PFFTPPROXY {$shaper_queue}";
-				}
-			}
-		}
-	}
+
 	/* any 1:1 mappings? */
 	if (is_array($config['nat']['onetoone'])) {
 		foreach ($config['nat']['onetoone'] as $natent) {
@@ -743,85 +685,17 @@ function filter_nat_rules_generate()
 	$natrules .= "\n# Load balancing anchor\n";
 	$natrules .= "rdr-anchor \"relayd/*\"\n";
 
-	update_filter_reload_status("Setting up FTP helper");
-	$natrules .= "# FTP proxy\n";
-	$natrules .= "rdr-anchor \"ftp-proxy/*\"\n";
+	update_filter_reload_status("Setting up TFTP helper");
+	$natrules .= "# TFTP proxy\n";
 	$natrules .= "rdr-anchor \"tftp-proxy/*\"\n";
-	$natrules .= "\n";
 
 	$interface_counter = 0;
 	$vpns_list = get_vpns_list();
 	$direct_networks_list = get_direct_networks_list();
-	/* prevent 1:1 ips from ftp-proxy, they will be handled by ftp-sesame */
-	if($config['nat']['onetoone'])
-		foreach ($config['nat']['onetoone'] as $vipent)
-			$onetoone_list .= "{$vipent['internal']} ";
-	if($onetoone_list)
-		$natrules .= "table <onetoonelist> { $onetoone_list }\n";
 	if($vpns_list)
 		$natrules .= "table <vpns> { $vpns_list }\n";
 	if($direct_networks_list) 
 		$natrules .= "table <direct_networks> { $direct_networks_list }\n";
-	/* loop through all interfaces and handle ftp-proxy redirections */
-	foreach ($FilterIflist as $ifent => $ifcfg) {
-		if ($ifcfg['ftpproxy'] == false) {
-			if($g['debug'])
-				log_error("Filter: FTP proxy disabled for interface {$ifcfg['descr']} - ignoring.");
-			$interface_counter++;
-			continue;
-		}
-		$realif = $ifcfg['if'];
-		$int_ip = $ifcfg['ip'];
-		if (!is_ipaddr($int_ip))
-			continue;
-
-		/* are we in routed mode? no source nat rules and not a outside interface? */
-		/* If advanced outbound nat enabled skip FTP proxy, we use ftpsesame */
-		if ((isset($config['nat']['advancedoutbound']['enable'])) && 
-			(! interface_has_gateway($ifent))) {
-			$sourcenat = 0;
-			/* we are using advanced outbound nat, are we in routing mode? */
-			/* if the interface address lies within a outbound NAT source network we should skip */
-			if (! empty($config['nat']['advancedoutbound']['rule'])) {
-				/* if interface address is matched in the AON Rule we need the ftp proxy */
-				foreach($config['nat']['advancedoutbound']['rule'] as $natnetwork)
-					if(ip_in_subnet($int_ip, $natnetwork['source']['network']))
-						$sourcenat++;
-			}
-			if($sourcenat == 0) {
-				if($g['debug'])
-					log_error("Filter: No AON rule matched for interface {$ifcfg['descr']} - not using the FTP proxy");
-				$interface_counter++;
-				continue;
-			} else {
-				if($g['debug'])
-					log_error("Filter: AON Rule matched for interface {$ifcfg['descr']} - using FTP proxy");
-			}
-		}
-
-		/*  if the user has defined, include the alias so that we do not redirect ftp
-		 *  connections across the tunnels to ftp-proxy 
-		 *
-		 *  if interface lacks an ip, dont setup a rdr for ftp.	
-		 *  they are most likely on a bridged interface 
-		 */
-		if($vpns_list) {
-			$natrules .= "no rdr on $realif proto tcp from any to <vpns> port 21\n";
-			$natrules .= "no rdr on $realif proto {tcp,udp} from any to <vpns> port tftp\n";
-			if($onetoone_list) {
-				$natrules .= "no rdr on $realif proto tcp from <onetoonelist> to any port 21\n";
-				$natrules .= "no rdr on $realif proto udp from <onetoonelist> to any port tftp\n";
-			}
-		}
-		$tmp_port = 8021 + $interface_counter;
-		if($g['debug'])
-			log_error("Filter: FTP proxy port ($tmp_port) enabled for interface {$ifcfg['descr']}");
-
-		$natrules .= "rdr on $realif proto tcp from any to any port 21 tag PFFTPPROXY -> 127.0.0.1 port {$tmp_port}\n";
-		$natrules .= "rdr on $realif proto udp from any to any port tftp tag PFFTPPROXY -> 127.0.0.1 port 6969\n";
-		$interface_counter++;
-	}
-	$natrules .= "\n";
 
 	/* DIAG: add ipv6 NAT, if requested */
 	if (isset($config['diag']['ipv6nat']['enable']) &&
@@ -1751,8 +1625,6 @@ function filter_rules_generate()
 		if(is_ipaddr($cp_interface_ip) and $cp_interface_real)
 			$ipfrules .= "pass in quick on {$cp_interface_real} proto tcp from any to {$cp_interface_ip} port { 8000 8001 } keep state\n";
 	}
-	/* ftp-sesame */
-	$ipfrules .= "anchor \"ftpsesame/*\" \n";
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";
 	# BEGIN OF firewall rules
@@ -2005,29 +1877,6 @@ anchor "packagelate"
 
 EOD;
 	
-	$ipfrules .= "\nanchor \"ftp-proxy/*\"\n";
-	if(!isset($config['system']['disableftpproxy'])) {
-		$ipfrules .= "\n# enable ftp-proxy\n";
-		$ipfrules .= "pass in inet proto tcp tagged PFFTPPROXY flags S/SA keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
-
-		if (isset($config['system']['rfc959workaround'])) {
-			$ipfrules .= <<<EODEOD
-# Fix sites that violate RFC 959 which specifies that the data connection
-# be sourced from the command port - 1 (typically port 20)
-# This workaround doesn't expose us to any extra risk as we'll still only allow
-# connections to the firewall on a port that ftp-proxy is listening on
-
-EODEOD;
-			foreach ($FilterIflist as $ftpif => $ftpifcfg) {
-				if ($ftpifcfg['ftpproxy'] == true)
-					$ipfrules .= <<<EOD
-pass in quick on {$ftpifcfg['if']} inet proto tcp from port 20 to ({$ftpifcfg['if']}) port > 49000 flags S/SA keep state label "FTP PROXY: PASV mode data connection"
-
-EOD;
-			}
-		}
-	}
-
 	if (isset($config['filter']['rule'])) {
 		$load_ipfw_module = false;
 		/* Pre-cache all our rules so we only have to generate them once */

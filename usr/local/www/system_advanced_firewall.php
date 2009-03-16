@@ -191,18 +191,6 @@ function update_description(itemnum) {
 								<td colspan="2" valign="top" class="listtopic">Firewall Advanced</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">FTP server compatibility</td>
-								<td width="78%" class="vtable">
-									<input name="rfc959workaround" type="checkbox" id="rfc959workaround" value="yes" <?php if (isset($config['system']['rfc959workaround'])) echo "checked"; ?> />
-									<strong>Allow data connections from the FTP command port</strong><br/>
-									This allows for communication with ftp servers that violate
-									RFC 959 by opening data connections from the command port (21).
-									These should be opened on the data port(20). This option should
-									not expose you to any extra risk as the firewall will still only
-									allow connections on a port that ftp-proxy listens on.
-								</td>
-							</tr>
-							<tr>
 								<td width="22%" valign="top" class="vncell">IP Do-Not-Fragment compatibility</td>
 								<td width="78%" class="vtable">
 									<input name="scrubnodf" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubnodf'])) echo "checked"; ?> />

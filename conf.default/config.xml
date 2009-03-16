@@ -199,7 +199,6 @@
 			<gateway></gateway>
 			<blockpriv/>
 			<blockbogons/>
-                        <disableftpproxy/>
 			<dhcphostname></dhcphostname>
 			<media></media>
 			<mediaopt></mediaopt>

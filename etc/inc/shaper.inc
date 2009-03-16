@@ -200,12 +200,6 @@ function cleanup_queue_from_rules($queue)
 		if ($rule['ackqueue'] == $queue)
 			unset($rule['ackqueue']);
 	}
-	foreach ($config['interfaces'] as $if => $ifdata) {
-			if ($ifdata['ftpqueue'] == $queue) {
-				unset($config['interfaces'][$if]['ftpqueue']);
-				break;
-			}
-	}
 }
 
 function cleanup_dnqueue_from_rules($queue) 
@@ -957,8 +951,6 @@ function GetEcn() {
 						$this->SetQPriority($q['priority']);
 				if (isset($q['description']) && $q['description'] != "")
 						$this->SetDescription($q['description']);
-		if (isset($q['ftpqueue']) && $q['ftpqueue'] <> "") 
-			set_is_ftp_queue($this->GetInterface(), $this->GetQname());
 		$this->SetRed($q['red']);
 		$this->SetRio($q['rio']);
 		$this->SetEcn($q['ecn']);
@@ -1071,12 +1063,6 @@ function GetEcn() {
 			$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\"";
 					$form .= "> Default queue<br>";
 		}
-		/* XXX: TODO Add check to disable this if it has been set on another queue on this interface. */
-		$form .= "<input type=\"checkbox\" id=\"ftpqueue\" name=\"ftpqueue\" ";
-		if (get_is_ftp_queue($this->GetInterface(), $this->GetQname()))  
-			$form .= " CHECKED";
-		$form .= ">Use this queue for the ftp proxy<br>";
-		/* XXX: TODO */
 				$form .= "<input type=\"checkbox\" id=\"red\" name=\"red\"";
 				if($this->GetRed()) 
 			$form .=  " CHECKED";
@@ -3542,23 +3528,6 @@ function &get_unique_dnqueue_list() {
 		}
 	}
 	return $qlist;
-}
-
-function get_is_ftp_queue($interface, $qname) {
-	global $config;
-
-	if (isset($config['interfaces'][$interface]['ftpqueue']) &&
-		$config['interfaces'][$interface]['ftpqueue'] == $qname)
-		return true;
-	return false;
-}
-
-function set_is_ftp_queue($interface, $qname) {
-	global $config;
-
-	if (!is_array($config['interfaces'][$interface]['ftpqueue']))
-		$config['interfaces'][$interface]['ftpqueue'] = array();
-	$config['interfaces'][$interface]['ftpqueue'] = $qname;
 }
 
 function ref_on_altq_queue_list($parent, $qname) {

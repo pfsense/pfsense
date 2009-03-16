@@ -225,11 +225,6 @@
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();
 
-	/* start ftp proxy helpers if they are enabled */
-	echo "Starting FTP helpers...";
-	system_start_ftp_helpers();
-	echo "done.\n";
-
 	/* start SNMP service */
 	services_snmpd_configure();
 

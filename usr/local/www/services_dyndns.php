@@ -76,6 +76,7 @@ include("head.inc");
 				  <td width="5%"  class="listhdrr"></td>
 				  <td width="15%" class="listhdrr">Service</td>
                   <td width="20%" class="listhdrr">Hostname</td>
+                  <td width="20%" class="listhdrr">Cached IP</td>
                   <td width="50%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
@@ -102,6 +103,20 @@ include("head.inc");
                   <td class="listr">
 					<?=htmlspecialchars($dyndns['host']);?>
                   </td>
+                  <td class="listbg">
+					<?php
+						$int = strtolower($if);
+						$filename = "{$g['conf_path']}/dyndns_{$int}dyndns.cache";
+						if(file_exists($filename)) {
+							$cached_ip_s = split(":", file_get_contents($filename));
+							$cached_ip = $cached_ip_s[0];
+							
+							echo htmlspecialchars($cached_ip);
+						} else {
+							echo "N/A";
+						}
+					?>
+				  </td>
                   <td class="listbg">
                     <?=htmlspecialchars($dyndns['descr']);?>&nbsp;
                   </td>

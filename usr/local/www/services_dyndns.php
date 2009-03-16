@@ -138,7 +138,7 @@ include("head.inc");
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
 				  Note:<br>
 				  </strong></span>
-				  Add something meaningful here.
+				  IP addresses appearing in green are up to date with Dynamic DNS provider.
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

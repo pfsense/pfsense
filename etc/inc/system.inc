@@ -353,7 +353,7 @@ function system_syslogd_start() {
 					$separatelogfacilities = $separatelogfacilities + $pkgfacilities;
 					$facilitylist = implode(',', $pkgfacilities);
 					mwexec("fifolog_create -s 10000 {$g['varlog_path']}/{$package['logging']['logfilename']}");
-                                	$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t|fiflog_writer {$g['varlog_path']}/{$package['logging']['logfilename']}\n";
+                                	$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t|/usr/sbin/fifolog_writer {$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}
                         }
                 }
@@ -367,14 +367,14 @@ function system_syslogd_start() {
 		$syslogconf .= "!ntpdate,!ntpd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
-*.*						|fiflog_writer {$g['varlog_path']}/ntpd.log
+*.*						|/usr/sbin/fifolog_writer {$g['varlog_path']}/ntpd.log
 
 EOD;
 		}
 		$syslogconf .= "!racoon\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
-*.*						|fiflog_writer {$g['varlog_path']}/ipsec.log
+*.*						|/usr/sbin/fifolog_writer {$g['varlog_path']}/ipsec.log
 
 EOD;
 		}
@@ -387,7 +387,7 @@ EOD;
 		$syslogconf .= "!openvpn\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
-*.*						|fiflog_writer {$g['varlog_path']}/openvpn.log
+*.*						|/usr/sbin/fifolog_writer {$g['varlog_path']}/openvpn.log
 
 EOD;
 		}
@@ -400,16 +400,16 @@ EOD;
 		$syslogconf .= "!-{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 		$syslogconf .= <<<EOD
-local0.*					|fiflog_writer {$g['varlog_path']}/filter.log
-local3.*					|fiflog_writer {$g['varlog_path']}/vpn.log
-local4.*					|fiflog_writer {$g['varlog_path']}/portalauth.log
-local7.*					|fiflog_writer {$g['varlog_path']}/dhcpd.log
-*.notice;kern.debug;lpr.info;mail.crit; 	|fiflog_writer {$g['varlog_path']}/system.log
-news.err;local0.none;local3.none;local4.none; 	|fiflog_writer {$g['varlog_path']}/system.log
-local7.none					|fiflog_writer {$g['varlog_path']}/system.log
-security.*					|fiflog_writer {$g['varlog_path']}/system.log
-auth.info;authpriv.info;daemon.info		|fiflog_writer {$g['varlog_path']}/system.log
-local1.*					|fiflog_writer {$g['varlog_path']}/relayd.log
+local0.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/filter.log
+local3.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/vpn.log
+local4.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/portalauth.log
+local7.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/dhcpd.log
+*.notice;kern.debug;lpr.info;mail.crit; 	|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
+news.err;local0.none;local3.none;local4.none; 	|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
+local7.none					|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
+security.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
+auth.info;authpriv.info;daemon.info		|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
+local1.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/relayd.log
 auth.info;authpriv.info 			|exec /usr/local/sbin/sshlockout_pf
 *.emerg						*
 

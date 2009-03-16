@@ -106,7 +106,7 @@ include("head.inc");
                   <td class="listlr">
 					<?php
 						$int = strtolower($if);
-						$real_int = filter_translate_type_to_real_interface($if);
+						$real_int = get_real_interface($if);
 						$filename = "{$g['conf_path']}/dyndns_{$int}dyndns.cache";
 						if(file_exists($filename)) {
 							$cached_ip_s = split(":", file_get_contents($filename));

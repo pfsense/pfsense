@@ -1319,9 +1319,6 @@ function vpn_l2tp_configure() {
 	$syscfg = $config['system'];
 	$l2tpcfg = $config['l2tp'];
 
-	if (!is_module_loaded("ng_l2tp.ko"))
-		mwexec("/sbin/kldload /boot/kernel/ng_l2tp.ko");
-
 	/* create directory if it does not exist */
 	if (!is_dir("{$g['varetc_path']}/l2tp-vpn"))
 		mkdir("{$g['varetc_path']}/l2tp-vpn");

@@ -103,15 +103,21 @@ include("head.inc");
                   <td class="listr">
 					<?=htmlspecialchars($dyndns['host']);?>
                   </td>
-                  <td class="listbg">
+                  <td class="listlr">
 					<?php
 						$int = strtolower($if);
+						$real_int = filter_translate_type_to_real_interface($if);
 						$filename = "{$g['conf_path']}/dyndns_{$int}dyndns.cache";
 						if(file_exists($filename)) {
 							$cached_ip_s = split(":", file_get_contents($filename));
 							$cached_ip = $cached_ip_s[0];
-							
+							$int_ip = find_interface_ip($real_int);
+							if($int_ip <> $cached_ip) 
+								echo "<font color='red'>";
+							else 
+								echo "<font color='green'>";
 							echo htmlspecialchars($cached_ip);
+							echo "</font>";
 						} else {
 							echo "N/A";
 						}
@@ -125,7 +131,7 @@ include("head.inc");
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="4"></td>
+                  <td class="list" colspan="5"></td>
                   <td class="list"> <a href="services_dyndns_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 				<tr>

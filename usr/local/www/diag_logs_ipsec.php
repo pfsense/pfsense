@@ -69,7 +69,7 @@ if ($_POST['clear']) {
 		touch($ipsec_logfile);
 	} else {
 		exec("killall syslogd");
-		exec("/usr/sbin/fifolog_create -s 262144 {$ipsec_logfile}");
+		exec("/usr/sbin/fifolog_create -s 511488 {$ipsec_logfile}");
 		system_syslogd_start();
 	}
 }

@@ -54,7 +54,7 @@ if ($_POST['clear']) {
 		touch("/var/log/filter.log");
 	} else {
 		exec("killall syslogd");
-		exec("/usr/sbin/fifolog_create -s 262144 /var/log/filter.log");
+		exec("/usr/sbin/fifolog_create -s 511488 /var/log/filter.log");
 		system_syslogd_start();
 	}
 }

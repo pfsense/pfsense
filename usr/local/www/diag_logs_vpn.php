@@ -49,7 +49,7 @@ if ($_POST['clear']) {
 		unlink("/var/log/vpn.log");
 		touch("/var/log/vpn.log");
 	} else {	
-		exec("/usr/sbin/fifolog_create -s 65536 /var/log/vpn.log");
+		exec("/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log");
 	}
 	/* redirect to avoid reposting form data on refresh */
 	header("Location: diag_logs_vpn.php");

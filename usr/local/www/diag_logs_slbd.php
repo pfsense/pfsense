@@ -52,7 +52,7 @@ if ($_POST['clear']) {
 		touch($slbd_logfile);
 	} else {
 		exec("killall syslogd");
-		exec("/usr/sbin/fifolog_create -s 262144 {$slbd_logfile}");
+		exec("/usr/sbin/fifolog_create -s 511488 {$slbd_logfile}");
 		system_syslogd_start();
 	}
 }

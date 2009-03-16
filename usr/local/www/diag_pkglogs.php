@@ -51,7 +51,7 @@ require("guiconfig.inc");
 if(!($nentries = $config['syslog']['nentries'])) $nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/fifolog_create -s 262144 {$logfile}");
+	exec("/usr/sbin/fifolog_create -s 511488 {$logfile}");
 }
 $i = 0;
 $pkgwithlogging = false;

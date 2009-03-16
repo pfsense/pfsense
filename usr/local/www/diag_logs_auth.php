@@ -50,7 +50,7 @@ if ($_POST['clear']) {
 		unlink($portal_logfile);
 		touch($portal_logfile);
 	} else {
-		exec("/usr/sbin/fifolog_create -s 262144 {$portal_logfile}");
+		exec("/usr/sbin/fifolog_create -s 511488 {$portal_logfile}");
 	}
 }
 

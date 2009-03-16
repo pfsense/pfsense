@@ -51,7 +51,7 @@ if ($_POST['clear']) {
 		touch($ntpd_logfile);
 	} else {
 		exec("killall syslogd");
-		exec("/usr/sbin/fifolog_create -s 262144 {$ntpd_logfile}");
+		exec("/usr/sbin/fifolog_create -s 511488 {$ntpd_logfile}");
 		system_syslogd_start();
 	}
 }

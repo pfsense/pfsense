@@ -95,7 +95,7 @@ $counter = 1;
                                                 $bgcolor = "khaki";
                                                 break;
 										default:
-											$online = "No data";
+											$online = "Gathering data";
 								}
 								echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
 								$counter++;

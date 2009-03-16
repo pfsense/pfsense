@@ -753,7 +753,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		foreach($grepinvert as $agrep)
 			$grepline .= " | grep -v \"$agrep\"";
 	if($config['system']['disablesyslogclog']) 
-		exec("cat {$logfile}{$grepline} | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+		exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	else 
 		exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
     foreach ($logarr as $logent) {
@@ -782,7 +782,7 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 		foreach($grepinvert as $agrep)
 			$grepline .= " | grep -v \"$agrep\"";
 	if($config['system']['disablesyslogclog']) 
-		exec("cat {$logfile}{$grepline} | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+		exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	else 
 		exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	return($logarr);

@@ -51,7 +51,7 @@ function get_gatewaystats() {
 				$bgcolor = "khaki";
 				break;
 			default:
-				$online = "No data";
+				$online = "Gathering data";
 		}
 		$data .= "<table><tr><td bgcolor=\"$bgcolor\" > $online </td></td></tr></table>";
 	}

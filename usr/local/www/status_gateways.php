@@ -120,7 +120,7 @@ include("head.inc");
 					$lastchange = implode(" ", $lastchange);
 					PRINT "Last success $lastchange";
 				} else {
-					print "No data available";
+					print "Gathering data";
 				}
 				PRINT "</td></tr>";
                         ?>

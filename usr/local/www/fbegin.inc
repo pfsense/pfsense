@@ -119,50 +119,47 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 					<li class="firstdrop">
 						<div>System</div>
 						<ul class="subdrop">
-							<?php
+						<?php
 							output_menu_item("/system_advanced_admin.php", "Advanced");
 							output_menu_item("/system_firmware.php", "Firmware");
 							output_menu_item("/system.php", "General Setup");
-							?>
-						<?php if($g['platform'] == "pfSense"): ?>
-							<?=output_menu_item("/pkg_mgr.php", "Packages");?>
-						<?php endif; ?>
-							<?=output_menu_item("/wizard.php?xml=setup_wizard.xml", "Setup Wizard");?>
-							<?=output_menu_item("/system_gateways.php", "Routing");?>
-							<?=output_menu_item("/system_camanager.php", "Cert Manager");?>	
-							<?=output_menu_item("/system_usermanager.php", "User Manager");?>
+							if ($g['platform'] == "pfSense")
+								output_menu_item("/pkg_mgr.php", "Packages");
+							output_menu_item("/wizard.php?xml=setup_wizard.xml", "Setup Wizard");
+							output_menu_item("/system_gateways.php", "Routing");
+							output_menu_item("/system_camanager.php", "Cert Manager");
+							output_menu_item("/system_usermanager.php", "User Manager");
+						?>
 							<li><a href="/index.php?logout" class="navlnk">Logout</a></li>
 						</ul>
 					</li>
 					<li class="drop">
 						<div>Interfaces</div>
 						<ul class="subdrop">
-							<?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?>
-							<?=output_menu_item("/interfaces_assign.php", "(assign)");?>								
-							<?php endif; ?>
-							<?php $opts = get_configured_interface_with_descr(false, true); 
-							foreach ($opts as $oif => $odescr): 
-								if (!isset($config['interfaces'][$oif]['ovpn'])): ?>
-							<?=output_menu_item("/interfaces.php?if={$oif}", htmlspecialchars($odescr))?>
-							<?php endif; endforeach; ?>
-							<?php echo return_ext_menu("Interfaces"); ?>
+						<?php
+							if (!isset($config['system']['webgui']['noassigninterfaces']))
+								output_menu_item("/interfaces_assign.php", "(assign)");
+							$opts = get_configured_interface_with_descr(false, true);
+							foreach ($opts as $oif => $odescr)
+								if (!isset($config['interfaces'][$oif]['ovpn']))
+									output_menu_item("/interfaces.php?if={$oif}", htmlspecialchars($odescr));
+							echo return_ext_menu("Interfaces");
+						?>
 						</ul>
 					</li>
 					<li class="drop">
 						<div>Firewall</div>
 						<ul class="subdrop">
-							<?=output_menu_item("/firewall_aliases.php", "Aliases");?>	
-							<?php
+						<?php
+							output_menu_item("/firewall_aliases.php", "Aliases");
 							if($config['interfaces']['lan']) {
 								/* no use for NAT in single-interface deployments
 								remove to reduce user confusion
 								*/
 								output_menu_item("/firewall_nat.php", "NAT");	
 							}
-							?>
-							<?=output_menu_item("/firewall_rules.php", "Rules");?>	
-							<?=output_menu_item("/firewall_schedule.php", "Schedules");?>	
-							<?php
+							output_menu_item("/firewall_rules.php", "Rules");
+							output_menu_item("/firewall_schedule.php", "Schedules");
 							if($config['interfaces']['lan']) {
 								/* no use for traffic shaper in single-interface
 								  deployments
@@ -170,116 +167,115 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 								*/
 								output_menu_item("/firewall_shaper.php", "Traffic Shaper");
 							}
-							?>	
-							<?=output_menu_item("/firewall_virtual_ip.php", "Virtual IPs");?>	
-							<?php echo return_ext_menu("Firewall"); ?>
+							output_menu_item("/firewall_virtual_ip.php", "Virtual IPs");
+							echo return_ext_menu("Firewall");
+						?>
 						</ul>
 					</li>
 					<li class="drop">
 						<div>Services</div>
 						<ul class="subdrop">
-							<?=output_menu_item("/services_captiveportal.php", "Captive Portal");?>	
-							<?=output_menu_item("/services_dnsmasq.php", "DNS Forwarder");?>	
-							<?=output_menu_item("/services_dhcp_relay.php", "DHCP Relay");?>	
-							<?php 
-								if($g['services_dhcp_server_enable']) 
-									output_menu_item("/services_dhcp.php", "DHCP Server");	
-							?>
-							<?=output_menu_item("/services_dyndns.php", "Dynamic DNS");?>
-							<?=output_menu_item("/services_igmpproxy.php", "IGMP proxy");?>
-							<?=output_menu_item("/load_balancer_pool.php", "Load Balancer");?>	
-							<?=output_menu_item("/pkg_edit.php?xml=olsrd.xml&id=0", "OLSR");?>	
-							<?=output_menu_item("/vpn_pppoe.php", "PPPoE Server");?>	
-							<?=output_menu_item("/pkg_edit.php?xml=routed/routed.xml&id=0", "RIP");?>	
-							<?=output_menu_item("/services_snmp.php", "SNMP");?>	
-							<?php
+						<?
+							output_menu_item("/services_captiveportal.php", "Captive Portal");
+							output_menu_item("/services_dnsmasq.php", "DNS Forwarder");
+							output_menu_item("/services_dhcp_relay.php", "DHCP Relay");
+							if($g['services_dhcp_server_enable'])
+								output_menu_item("/services_dhcp.php", "DHCP Server");
+							output_menu_item("/services_dyndns.php", "Dynamic DNS");
+							output_menu_item("/services_igmpproxy.php", "IGMP proxy");
+							output_menu_item("/load_balancer_pool.php", "Load Balancer");
+							output_menu_item("/pkg_edit.php?xml=olsrd.xml&id=0", "OLSR");
+							output_menu_item("/vpn_pppoe.php", "PPPoE Server");
+							output_menu_item("/pkg_edit.php?xml=routed/routed.xml&id=0", "RIP");
+							output_menu_item("/services_snmp.php", "SNMP");
 							if($config['interfaces']['lan']) {
 								/* no use for UPnP in single-interface deployments
 								remove to reduce user confusion
 								*/
 								output_menu_item("/pkg_edit.php?xml=miniupnpd.xml&id=0", "UPnP");	
 							}
-							?>
-							<?=output_menu_item("/pkg_edit.php?xml=openntpd.xml&id=0", "OpenNTPD");?>	
-							<?=output_menu_item("/services_wol.php", "Wake on LAN");?>	
-							<?php echo return_ext_menu("Services"); ?>
+							output_menu_item("/pkg_edit.php?xml=openntpd.xml&id=0", "OpenNTPD");
+							output_menu_item("/services_wol.php", "Wake on LAN");
+							echo return_ext_menu("Services");
+						?>
 						</ul>
 					</li>
 					<li class="drop">
 						<div>VPN</div>
 						<ul class="subdrop">
-							<?=output_menu_item("/vpn_ipsec.php", "IPsec");?>
-							<?=output_menu_item("/vpn_openvpn_server.php", "OpenVPN");?>
-							<?=output_menu_item("/vpn_pptp.php", "PPTP");?>
-							<?=output_menu_item("/vpn_l2tp.php", "L2TP");?>	
-							<?php echo return_ext_menu("VPN"); ?>
+						<?php
+							output_menu_item("/vpn_ipsec.php", "IPsec");
+							output_menu_item("/vpn_openvpn_server.php", "OpenVPN");
+							output_menu_item("/vpn_pptp.php", "PPTP");
+							output_menu_item("/vpn_l2tp.php", "L2TP");
+							echo return_ext_menu("VPN");
+						?>
 						</ul>
 					</li>
 					<li class="drop">
 						<div>Status</div>
 						<ul class="subdrop">
-							<?php if (isset($config['captiveportal']['enable'])): ?>
-							<?=output_menu_item("/status_captiveportal.php", "Captive Portal");?>
-							<?php endif; ?>
-							<?=output_menu_item("/carp_status.php", "CARP (failover)");?>
-							<?=output_menu_item("/index.php", "Dashboard");?>
-							<?=output_menu_item("/status_gateways.php", "Gateways");?>
-							<?=output_menu_item("/diag_dhcp_leases.php", "DHCP Leases");?>
-							<?=output_menu_item("/status_filter_reload.php", "Filter Reload");?>
-							<?=output_menu_item("/status_interfaces.php", "Interfaces");?>
-							<?=output_menu_item("/diag_ipsec.php", "IPsec");?>
-							<?=output_menu_item("/status_slbd_pool.php", "Load Balancer");?>
-							<?=output_menu_item("/status_openvpn.php", "OpenVPN");?>
-							<?php if($g['platform'] == "pfSense"): ?>
-							<?=output_menu_item("/diag_pkglogs.php", "Package Logs");?>
-							<?php endif; ?>
-							<?=output_menu_item("/status_queues.php", "Queues");?>
-							<?=output_menu_item("/status_rrd_graph.php", "RRD Graphs");?>
-							<?=output_menu_item("/status_services.php", "Services");?>
-							<?=output_menu_item("/diag_logs.php", "System Logs");?>
-							<?=output_menu_item("/status_graph.php?if=wan", "Traffic Graph");?>
-							<?php
+						<?php
+							if (isset($config['captiveportal']['enable']))
+								output_menu_item("/status_captiveportal.php", "Captive Portal");
+							output_menu_item("/carp_status.php", "CARP (failover)");
+							output_menu_item("/index.php", "Dashboard");
+							output_menu_item("/status_gateways.php", "Gateways");
+							output_menu_item("/diag_dhcp_leases.php", "DHCP Leases");
+							output_menu_item("/status_filter_reload.php", "Filter Reload");
+							output_menu_item("/status_interfaces.php", "Interfaces");
+							output_menu_item("/diag_ipsec.php", "IPsec");
+							output_menu_item("/status_slbd_pool.php", "Load Balancer");
+							output_menu_item("/status_openvpn.php", "OpenVPN");
+							if ($g['platform'] == "pfSense")
+								output_menu_item("/diag_pkglogs.php", "Package Logs");
+							output_menu_item("/status_queues.php", "Queues");
+							output_menu_item("/status_rrd_graph.php", "RRD Graphs");
+							output_menu_item("/status_services.php", "Services");
+							output_menu_item("/diag_logs.php", "System Logs");
+							output_menu_item("/status_graph.php?if=wan", "Traffic Graph");
 							if($config['interfaces']['lan']) {
 								/* no use for UPnP in single-interface deployments
 								remove to reduce user confusion
 								*/
 								output_menu_item("/status_upnp.php", "UPnP");	
 							}
-							?>
-							<?php $ifentries = get_configured_interface_with_descr();
+							$ifentries = get_configured_interface_with_descr();
 							foreach ($ifentries as $ent => $entdesc) {
 								if (is_array($config['interfaces'][$ent]['wireless']) &&
 									preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if']))
 									$ifdescrs[$ent] = $entdesc;
 							}
-							if (count($ifdescrs) > 0): ?>
-							<?=output_menu_item("/status_wireless.php", "Wireless");?>
-							<?php endif; ?>
-							<?php echo return_ext_menu("Status"); ?>
+							if (count($ifdescrs) > 0)
+								output_menu_item("/status_wireless.php", "Wireless");
+							echo return_ext_menu("Status");
+						?>
 						</ul>
 					</li>
 					<li class="lastdrop">
 						<div>Diagnostics</div>
 						<ul id="diag" class="subdrop">
-							<?=output_menu_item("/diag_arp.php", "ARP Tables");?>
-							<?=output_menu_item("/diag_backup.php", "Backup/Restore");?>
-							<?=output_menu_item("/exec.php", "Command Prompt");?>
-							<?=output_menu_item("/edit.php", "Edit File");?>
-							<?=output_menu_item("/diag_defaults.php", "Factory Defaults");?>
-							<?=output_menu_item("/halt.php", "Halt System");?>
-							<?=output_menu_item("/diag_ping.php", "Ping");?>
-							<?=output_menu_item("/diag_system_pftop.php", "pfTOP");?>
-							<?=output_menu_item("/reboot.php", "Reboot");?>
-							<?=output_menu_item("/diag_routes.php", "Routes");?>
-							<?=output_menu_item("/diag_dump_states.php", "States");?>
-							<?=output_menu_item("/diag_system_activity.php", "System Activity");?>
-							<?=output_menu_item("/diag_traceroute.php", "Traceroute");?>
-							<?=output_menu_item("/diag_packet_capture.php", "Packet Capture");?>
-							<?php echo return_ext_menu("Diagnostics"); ?>
-							<?php if(isset($config['system']['developer'])): ?>
-							<li><hr width="80%"/></li>
-							<?=output_menu_item("/restart_httpd.php", "Restart HTTPD");?>							
-							<?php endif; ?>
+						<?
+							output_menu_item("/diag_arp.php", "ARP Tables");
+							output_menu_item("/diag_backup.php", "Backup/Restore");
+							output_menu_item("/exec.php", "Command Prompt");
+							output_menu_item("/edit.php", "Edit File");
+							output_menu_item("/diag_defaults.php", "Factory Defaults");
+							output_menu_item("/halt.php", "Halt System");
+							output_menu_item("/diag_ping.php", "Ping");
+							output_menu_item("/diag_system_pftop.php", "pfTOP");
+							output_menu_item("/reboot.php", "Reboot");
+							output_menu_item("/diag_routes.php", "Routes");
+							output_menu_item("/diag_dump_states.php", "States");
+							output_menu_item("/diag_system_activity.php", "System Activity");
+							output_menu_item("/diag_traceroute.php", "Traceroute");
+							output_menu_item("/diag_packet_capture.php", "Packet Capture");
+							echo return_ext_menu("Diagnostics");
+							if (isset($config['system']['developer'])) {
+								echo "<li><hr width=\"80%\"/></li>";
+								output_menu_item("/restart_httpd.php", "Restart HTTPD");
+							}
+						?>
 						</ul>
 					</li>
 				</ul>

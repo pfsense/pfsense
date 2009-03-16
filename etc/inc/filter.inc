@@ -408,11 +408,11 @@ function generate_optcfg_array()
 		$oic['if'] = 'pptp';
 		$oic['descr'] = 'PPTP';
 		$oic['ip'] = $config['pptpd']['localip'];
-		$oc['sa'] = $config['pptpd']['remoteip'];
-		$oc['sn'] = $g['pptp_subnet'];
-		$oc['virtual'] = true;
+		$oic['sa'] = $config['pptpd']['remoteip'];
+		$oic['sn'] = $g['pptp_subnet'];
+		$oic['virtual'] = true;
 		if($config['pptpd']['pptp_subnet'] <> "")
-			$oc['sn'] = $config['pptpd']['pptp_subnet'];
+			$oic['sn'] = $config['pptpd']['pptp_subnet'];
 		$FilterIflist['pptp'] = $oic;
 	}
 	if ($config['l2tp']['mode'] == "server") {
@@ -420,20 +420,20 @@ function generate_optcfg_array()
                 $oic['if'] = 'l2tp';
                 $oic['descr'] = 'L2TP';
                 $oic['ip'] = $config['l2tp']['localip'];
-                $oc['sa'] = $config['l2tp']['remoteip'];
-                $oc['virtual'] = true;
+                $oic['sa'] = $config['l2tp']['remoteip'];
+                $oic['virtual'] = true;
                 $FilterIflist['l2tp'] = $oic;
         }
 	if ($config['pppoe']['mode'] == "server") {
 		$oic = array();
 		$oic['if'] = 'pppoe';
 		$oic['descr'] = 'PPPoE';
-		$oc['ip'] = $config['pppoe']['localip'];
-		$oc['sa'] = $config['pppoe']['remoteip'];
-		$oc['sn'] = $g['pppoe_subnet'];
-		$oc['virtual'] = true;
+		$oic['ip'] = $config['pppoe']['localip'];
+		$oic['sa'] = $config['pppoe']['remoteip'];
+		$oic['sn'] = $g['pppoe_subnet'];
+		$oic['virtual'] = true;
 		if($config['pppoe']['pppoe_subnet'] <> "")
-			$oc['sn'] = $config['pppoe']['pppoe_subnet'];
+			$oic['sn'] = $config['pppoe']['pppoe_subnet'];
 		$FilterIflist['pppoe'] = $oic;
 	}
 	/* add ipsec interfaces */
@@ -442,19 +442,27 @@ function generate_optcfg_array()
 		$oic['if'] = 'enc0';
 		$oic['descr'] = 'IPsec';
 		$oic['type'] = "none";
-		$oc['virtual'] = true;
+		$oic['virtual'] = true;
 		$FilterIflist['enc0'] = $oic;
 	}
 	/* add openvpn interfaces */
 	if ($config['openvpn']['openvpn-server'] || $config['openvpn']['openvpn-client']) {
-		$ovpnifs = array();
 		$oic = array();
 		$oic['if'] = "openvpn";
 		$oic['descr'] = 'OpenVPN';
 		$oic['type'] = "none";
-		$oc['virtual'] = true;
+		$oic['virtual'] = true;
 		$FilterIflist['openvpn'] = $oic;
 	}
+	/* add interface groups */
+	if (is_array($config['ifgroups']['ifgroupentry']))
+		foreach($config['ifgroups']['ifgroupentry'] as $ifgen) {
+			$oc = array();
+			$oc['if'] = $ifgen['ifname'];
+			$oc['descr'] = $ifgen['ifname'];
+			$oc['virtual'] = true;
+			$FilterIflist[$ifgen['ifname']] = $oc;
+		}
 }
 
 function filter_flush_nat_table() 

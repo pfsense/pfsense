@@ -40,8 +40,9 @@ function listtags() {
 		"columnitem depends_on_package disk dnsserver dnsupdate domainoverrides ".
 		"dyndns earlyshellcmd element encryption-algorithm-option field ".
 		"fieldname hash-algorithm-option gateway_item gateway_group gif gre ".
-		"group hosts member igmpentry interface_array item key lagg lbaction lbpool l7rules ".
-		"lbprotocol member menu tab mobilekey monitor_type mount ntpserver onetoone ".
+		"group hosts member ifgroupentry igmpentry interface_array item key lagg " .
+		"lbaction lbpool l7rules lbprotocol ".
+		"member menu tab mobilekey monitor_type mount ntpserver onetoone ".
 		"openvpn-server openvpn-client openvpn-csc " .
 		"option ppp package passthrumac phase1 phase2 priv proxyarpnet queue ".
 		"pages pipe route row rrddatafile rule schedule service servernat servers ".

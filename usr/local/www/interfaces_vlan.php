@@ -85,12 +85,13 @@ include("head.inc");
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
-	$tab_array[1] = array("VLANs", true, "interfaces_vlan.php");
-	$tab_array[2] = array("PPP", false, "interfaces_ppp.php");
-        $tab_array[3] = array("GRE", false, "interfaces_gre.php");
-        $tab_array[4] = array("GIF", false, "interfaces_gif.php");
-	$tab_array[5] = array("Bridges", false, "interfaces_bridge.php");
-	$tab_array[6] = array("LAGG", false, "interfaces_lagg.php");
+	$tab_array[1] = array("Interface Groups", false, "interfaces_groups.php");
+	$tab_array[2] = array("VLANs", true, "interfaces_vlan.php");
+	$tab_array[3] = array("PPP", false, "interfaces_ppp.php");
+        $tab_array[4] = array("GRE", false, "interfaces_gre.php");
+        $tab_array[5] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[6] = array("Bridges", false, "interfaces_bridge.php");
+	$tab_array[7] = array("LAGG", false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

@@ -548,6 +548,12 @@ include("head.inc");
 					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
        					$interfaces["openvpn"] = "OpenVPN";
 
+					/* add group interfaces */
+					if (is_array($config['ifgroups']['ifgroupentry']))
+						foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
+							if (have_ruleint_access($ifgen['ifname']))
+								$interfaces[$ifgen['ifname']] = $ifgen['ifname'];
+
 					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && stristr($pconfig['interface'], $iface)) echo "selected"; ?>><?=gettext($ifacename);?></option>
 <?php 				endforeach; ?>

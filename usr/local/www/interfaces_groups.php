@@ -43,9 +43,14 @@ $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 
 if ($_GET['act'] == "del") {
 	if ($a_ifgroups[$_GET['id']]) {
+		$members = explode(" ", $a_ifgroups[$_GET[$id]]);
+		foreach ($members as $ifs) {
+			$realif = get_real_interface($ifs);
+			if ($realif)
+				mwexec("/sbin/ifconfig  {$realif} -group " . $a_ifgroups[$_GET[$id]]['ifname']);
+		}
 		unset($a_ifgroups[$_GET['id']]);
 		write_config();
-		touch($d_ifgroupsdirty_path);
 		header("Location: interfaces_groups.php");
 		exit;
 	}
@@ -93,7 +98,7 @@ include("head.inc");
   </td>
   <td class="listr" ondblclick="document.location='interfaces_groups_edit.php?id=<?=$i;?>';">
       <?php
-	$members_arr = array_slice(explode(" ", $ifgroupentry['members']), 0, 10);
+	$members_arr = explode(" ", $ifgroupentry['members']);
 	$iflist = get_configured_interface_with_descr();
 	foreach ($members_arr as $memb)
 		$memberses_arr[] = $iflist[$memb] ? $iflist[$memb] : $memb;
@@ -113,7 +118,7 @@ include("head.inc");
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
         <td valign="middle"><a href="interfaces_groups_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="edit group"></a></td>
-        <td><a href="interfaces_ifgroups.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this group? All elements that still use it will become invalid (e.g. filter rules)!')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="delete ifgroupentry"></a></td>
+        <td><a href="interfaces_groups.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this group? All elements that still use it will become invalid (e.g. filter rules)!')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="delete ifgroupentry"></a></td>
       </tr>
     </table>
   </td>

@@ -560,6 +560,9 @@ function interfaces_configure() {
 	/* bring ip IP aliases */
 	interfaces_ipalias_configure();
 
+	/* configure interface groups */
+	interfaces_group_setup();
+
 	if (!$g['booting']) {
 		/* reconfigure static routes (kernel may have deleted them) */
 		system_routing_configure();
@@ -1757,6 +1760,33 @@ EOD;
 	mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pptp_{$interface}.pid pptp");
 
 	return 0;
+}
+
+function interfaces_group_setup() {
+	global $config;
+
+	if (!is_array($config['ifgroups']['ifgroupentry']))
+		return;
+
+	foreach ($config['ifgroups']['ifgroupentry'] as $grouppar)
+		interface_group_setup($groupar);
+
+	return;
+}
+
+function interface_group_setup($groupname /* The parameter is an array */) {
+	global $config;
+
+	if (!is_array($groupname))
+		return;
+	$members = explode(" ", $groupname['members']);
+	foreach($members as $ifs) {
+		$realif = get_real_interface($ifs);
+		if ($realif)
+			mwexec("/sbin/ifconfig {$realif} group {$groupname['ifname']}");
+	}
+
+	return;
 }
  
 /* XXX: stub for code that references the old functions(mostly packages) */

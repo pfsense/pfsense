@@ -59,9 +59,13 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	foreach ($a_ifgroups as $groupentry)
-		if ($groupentry['ifname'] == $_POST['ifname'])
-			$input_errors[] = "Group name already exists!";
+	if (empty($id)) {
+		foreach ($a_ifgroups as $groupentry)
+			if ($groupentry['ifname'] == $_POST['ifname'])
+				$input_errors[] = "Group name already exists!";
+	}
+	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match))
+		$input_errors[] = "Only characters in a-z A-Z are allowed as interface name.";
 
 	$ifgroupentry = array();
 	$ifgroupentry['ifname'] = $_POST['ifname'];
@@ -81,12 +85,24 @@ if ($_POST) {
 		$ifgroupentry['members'] = $members;
 		$ifgroupentry['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
 
-		if (isset($id) && $a_ifgroups[$id])
+		if (isset($id) && $a_ifgroups[$id]) {
+			$omembers = explode(" ", $a_ifgroups[$id]['members']);
+			$nmembers = explode(" ", $members);
+			$delmembers = array_diff($omembers, $nmembers);
+			if (count($delmembers) > 0) {
+				foreach ($delmembers as $ifs) {
+					$realif = get_real_interface($ifs);
+					if ($realif)
+						mwexec("/sbin/ifconfig {$realif} -group " . $a_ifgroups[$id]['ifname']);
+				}
+			}
 			$a_ifgroups[$id] = $ifgroupentry;
-		else
+		} else
 			$a_ifgroups[] = $ifgroupentry;
 
 		write_config();
+
+		interface_group_setup($ifgroupentry);
 
 		header("Location: interfaces_groups.php");
 		exit;
@@ -186,6 +202,8 @@ function removeRow(el) {
     <td valign="top" class="vncellreq">Interface</td>
     <td class="vtable">
 	<input class="formfld unknown" name="ifname" id="ifname" value="<?=$pconfig['ifname'];?>" />
+	<br />
+	No numbers or spaces are allowed. Only characters in a-zA-Z
     </td>
   </tr>
   <tr>

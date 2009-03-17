@@ -752,10 +752,14 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	if(is_array($grepinvert))
 		foreach($grepinvert as $agrep)
 			$grepline .= " | grep -v \"$agrep\"";
-	if($config['system']['disablesyslogclog']) 
-		exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-	else 
-		exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	if(filesize("{$logfile}") == 0) {
+		$logarr = array("Log file started.");
+	} else {
+		if($config['system']['disablesyslogclog']) 
+			exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+		else 
+			exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	}
     foreach ($logarr as $logent) {
             $logent = preg_split("/\s+/", $logent, 6);
             echo "<tr valign=\"top\">\n";

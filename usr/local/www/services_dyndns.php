@@ -109,10 +109,11 @@ include("head.inc");
 						$real_int = get_real_interface($if);
 						$filename = "{$g['conf_path']}/dyndns_{$int}dyndns.cache";
 						if(file_exists($filename)) {
+							$dns_resolv = str_replace("\n", "", `host {$dyndns['host']} | awk '{ print $4 }'`);
 							$cached_ip_s = split(":", file_get_contents($filename));
 							$cached_ip = $cached_ip_s[0];
 							$int_ip = find_interface_ip($real_int);
-							if($int_ip <> $cached_ip) 
+							if($int_ip <> $cached_ip or $dns_resolv <> $int_ip) 
 								echo "<font color='red'>";
 							else 
 								echo "<font color='green'>";

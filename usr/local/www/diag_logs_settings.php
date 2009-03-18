@@ -38,7 +38,6 @@
 ##|*MATCH=diag_logs_settings.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 $pconfig['reverse'] = isset($config['syslog']['reverse']);

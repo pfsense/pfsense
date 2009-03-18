@@ -36,7 +36,6 @@
 ##|*MATCH=diag_logs_auth.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 $portal_logfile = "{$g['varlog_path']}/portalauth.log";
@@ -50,6 +49,9 @@ if ($_POST['clear']) {
 		unlink($portal_logfile);
 		touch($portal_logfile);
 	} else {
+		exec("killall syslogd");
+		if(file_exists("{$portal_logfile}")) 
+			unlink_file("{$portal_logfile}");		
 		exec("/usr/sbin/fifolog_create -s 511488 {$portal_logfile}");
 	}
 }

@@ -37,7 +37,6 @@
 ##|*MATCH=diag_logs_slbd.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 $slbd_logfile = "{$g['varlog_path']}/slbd.log";
@@ -52,6 +51,8 @@ if ($_POST['clear']) {
 		touch($slbd_logfile);
 	} else {
 		exec("killall syslogd");
+		if(file_exists("{$slbd_logfile}"))	
+			unlink_file("{$slbd_logfile}");		
 		exec("/usr/sbin/fifolog_create -s 511488 {$slbd_logfile}");
 		system_syslogd_start();
 	}

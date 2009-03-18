@@ -36,7 +36,6 @@
 ##|*MATCH=diag_logs_ntpd.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 $ntpd_logfile = "{$g['varlog_path']}/ntpd.log";
@@ -51,6 +50,8 @@ if ($_POST['clear']) {
 		touch($ntpd_logfile);
 	} else {
 		exec("killall syslogd");
+		if(file_exists("{$ntpd_logfile}"))
+			unlink_file("{$ntpd_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$ntpd_logfile}");
 		system_syslogd_start();
 	}

@@ -38,7 +38,6 @@
 ##|*MATCH=diag_logs.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 $system_logfile = "{$g['varlog_path']}/system.log";
@@ -55,6 +54,8 @@ if ($_POST['clear']) {
 		system_syslogd_start();
 	} else {  
 		exec("killall syslogd");
+		if(file_exists("{$system_logfile}")) 
+			unlink_file("{$system_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$system_logfile}");
 		system_syslogd_start();
 	}

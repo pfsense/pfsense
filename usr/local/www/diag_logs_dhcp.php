@@ -38,7 +38,6 @@
 ##|*MATCH=diag_logs_dhcp.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 $dhcpd_logfile = "{$g['varlog_path']}/dhcpd.log";
@@ -52,6 +51,9 @@ if ($_POST['clear']) {
 		unlink($dhcpd_logfile);
 		touch($dhcpd_logfile);
 	} else {
+		exec("killall syslogd");
+		if(file_exists("{$dhcpd_logfile}")) 
+			unlink_file("{$dhcpd_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$dhcpd_logfile}");
 	}
 }

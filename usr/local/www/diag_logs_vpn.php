@@ -48,7 +48,10 @@ if ($_POST['clear']) {
 	if(isset($config['system']['disablesyslogclog'])) {
 		unlink("/var/log/vpn.log");
 		touch("/var/log/vpn.log");
-	} else {	
+	} else {
+		exec("killall syslogd");
+		if(file_exists("/var/log/vpn.log"))	
+			unlink_file("/var/log/vpn.log");
 		exec("/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log");
 	}
 	/* redirect to avoid reposting form data on refresh */

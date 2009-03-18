@@ -38,7 +38,6 @@
 ##|*MATCH=diag_logs_ipsec.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 $ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
@@ -69,6 +68,8 @@ if ($_POST['clear']) {
 		touch($ipsec_logfile);
 	} else {
 		exec("killall syslogd");
+		if(file_exists("{$ipsec_logfile}")
+			unlink_file("{$ipsec_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$ipsec_logfile}");
 		system_syslogd_start();
 	}

@@ -381,5 +381,20 @@ function return_gateway_groups_array() {
 	return($gateway_groups_array);
 }
 
+/* Update DHCP WAN Interface ip address in gateway group item */
+function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
+	global $config, $g;
+	foreach($config['gateways']['gateway_item'] as & $gw) {	
+		if($gw['interface'] == $interface) {
+			$current_gw = get_interface_gateway($interface);
+			if($gw['gateway'] <> $current_gw) {
+				$gw['gateway'] = $current_gw;
+				$changed = true;
+			}
+		}
+	}
+	if($changed && $current_gw)
+		write_config("Updating gateway group gateway for $interface - new gateway is $current_gw");
+}
 
 ?>

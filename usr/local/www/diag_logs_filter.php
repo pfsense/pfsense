@@ -61,7 +61,7 @@ if ($_POST['clear']) {
 		touch("/var/log/filter.log");
 	} else {	
 		exec("killall syslogd");
-		if(file_exists("{$filter_logfile}")
+		if(file_exists("{$filter_logfile}"))
 			unlink("{$filter_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$filter_logfile}");
 		system_syslogd_start();

@@ -16,7 +16,8 @@
 	if(file_exists("/usr/local/www/dfuife.cgi"))
 		unlink("/usr/local/www/dfuife.cgi"); 
 
-	if($g['platform'] == "pfSense")
-		touch("/conf/needs_package_sync");
+	// Needed for major freebsd upgrades (ex: 6.X -> 7.x)
+	//if($g['platform'] == "pfSense")
+	//	touch("/conf/needs_package_sync");
 
 ?>

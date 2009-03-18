@@ -94,12 +94,13 @@ include("head.inc");
 		$i = 0; foreach ($a_ifgroups as $ifgroupentry): ?>
 <tr>
   <td class="listlr" ondblclick="document.location='interfaces_groups_edit.php?id=<?=$i;?>';">
-	<?=htmlspecialchars($ifgroupentry['ifname']);?>
+	<a href="/firewall_rules.php?if=<?=htmlspecialchars($ifgroupentry['ifname']);?>"><?=htmlspecialchars($ifgroupentry['ifname']);?></a>
   </td>
   <td class="listr" ondblclick="document.location='interfaces_groups_edit.php?id=<?=$i;?>';">
       <?php
 	$members_arr = explode(" ", $ifgroupentry['members']);
 	$iflist = get_configured_interface_with_descr();
+	$memberses_arr = array();
 	foreach ($members_arr as $memb)
 		$memberses_arr[] = $iflist[$memb] ? $iflist[$memb] : $memb;
 	$memberses = implode(", ", $memberses_arr);

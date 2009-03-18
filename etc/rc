@@ -204,6 +204,16 @@ rm -rf /var/run/*
 
 echo -n "."
 DISABLESYSLOGCLOG=`cat /cf/conf/config.xml | grep disablesyslogclog | wc -l | awk '{ print $1 }'`
+rm -f /var/log/system.log \
+	/var/log/filter.log \
+	/var/log/dhcpd.log \
+	/var/log/vpn.log \
+	/var/log/openvpn.log \
+	/var/log/portalauth.log \
+	/var/log/ipsec.log \
+	/var/log/relayd.log \
+	/var/log/lighttpd.log \
+	/var/log/ntpd.log
 if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
 	touch /var/log/system.log
 	touch /var/log/filter.log
@@ -216,17 +226,17 @@ if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then
 	touch /var/log/lighttpd.log
 	touch /var/log/ntpd.log
 else 
-	# generate circular logfiles
-	fifolog_create -s 511488 /var/log/system.log
-	fifolog_create -s 511488 /var/log/filter.log
-	fifolog_create -s 50688 /var/log/dhcpd.log
-	fifolog_create -s 50688 /var/log/vpn.log
-	fifolog_create -s 50688 /var/log/openvpn.log
-	fifolog_create -s 50688 /var/log/portalauth.log
-	fifolog_create -s 50688 /var/log/ipsec.log
-	fifolog_create -s 50688 /var/log/relayd.log
-	fifolog_create -s 50688 /var/log/lighttpd.log
-	fifolog_create -s 50688 /var/log/ntpd.log
+	# generate fifolog files
+	/usr/sbin/fifolog_create -s 511488 /var/log/system.log
+	/usr/sbin/fifolog_create -s 511488 /var/log/filter.log
+	/usr/sbin/fifolog_create -s 50688 /var/log/dhcpd.log
+	/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log
+	/usr/sbin/fifolog_create -s 50688 /var/log/openvpn.log
+	/usr/sbin/fifolog_create -s 50688 /var/log/portalauth.log
+	/usr/sbin/fifolog_create -s 50688 /var/log/ipsec.log
+	/usr/sbin/fifolog_create -s 50688 /var/log/relayd.log
+	/usr/sbin/fifolog_create -s 50688 /var/log/lighttpd.log
+	/usr/sbin/fifolog_create -s 50688 /var/log/ntpd.log
 fi 
 # change permissions on newly created fifolog files.
 chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/relayd.log	

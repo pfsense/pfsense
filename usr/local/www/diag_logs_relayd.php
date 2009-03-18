@@ -52,7 +52,7 @@ if ($_POST['clear']) {
 	} else {
 		exec("killall syslogd");
 		if(file_exists("{$relayd_logfile}"))
-			unlink_file("{$relayd_logfile}");
+			unlink("{$relayd_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$relayd_logfile}");
 		system_syslogd_start();
 	}

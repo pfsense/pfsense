@@ -55,7 +55,7 @@ if ($_POST['clear']) {
 	} else {  
 		exec("killall syslogd");
 		if(file_exists("{$system_logfile}")) 
-			unlink_file("{$system_logfile}");
+			unlink("{$system_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$system_logfile}");
 		system_syslogd_start();
 	}

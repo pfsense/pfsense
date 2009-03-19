@@ -752,7 +752,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	if(is_array($grepinvert))
 		foreach($grepinvert as $agrep)
 			$grepline .= " | grep -v \"$agrep\"";
-	if(filesize("{$logfile}") == 0) {
+	if(file_exists($logfile && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
 		if($config['system']['disablesyslogclog']) 

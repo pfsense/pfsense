@@ -764,9 +764,10 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
             $logent = preg_split("/\s+/", $logent, 6);
             echo "<tr valign=\"top\">\n";
             if ($withorig) {
+					$logent[1] = date("Y-m-d H:i:s","" . $logent[1] . "");
             		$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
                     echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
-                    echo "<td class=\"listr\">" . htmlspecialchars($logent[4] . " " . $logent[5]) . "</td>\n";
+                    echo "<td class=\"listr\">" . htmlspecialchars($logent[5]) . "</td>\n";
             } else {
                     echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
             }

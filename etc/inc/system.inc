@@ -344,6 +344,8 @@ function system_syslogd_start() {
 	else
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
+	exec("/usr/bin/killall fifolog_writer");
+
 	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntpd','racoon','openvpn');
 		if($config['installedpackages']['package']) {

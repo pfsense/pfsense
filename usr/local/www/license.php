@@ -41,8 +41,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">License</p>
 
-            <p><strong>{$g['product_name']} is Copyright &copy; {$g['product_copyright_years']} by {$g['product_copyright']}
-              (<a href="mailto:geekgod@geekgod.com">geekgod@geekgod.com</a>).<br>
+            <p><strong><?=$g['product_name'];?> is Copyright &copy; <?=$g['product_copyright_years'];?> by <?=$g['product_copyright'];?><br>
               All rights reserved.</strong></p>
 
             <p><strong>m0n0wall is Copyright &copy; 2002-2007 by Manuel Kasper

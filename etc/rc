@@ -237,6 +237,18 @@ else
 	/usr/sbin/fifolog_create -s 50688 /var/log/relayd.log
 	/usr/sbin/fifolog_create -s 50688 /var/log/lighttpd.log
 	/usr/sbin/fifolog_create -s 50688 /var/log/ntpd.log
+	# Echo date to log files (start time)
+	/bin/date | /usr/sbin/fifolog_writer /var/log/system.log	
+	/bin/date | /usr/sbin/fifolog_writer /var/log/filter.log
+	/bin/date | /usr/sbin/fifolog_writer /var/log/dhcpd.log
+	/bin/date | /usr/sbin/fifolog_writer /var/log/vpn.log
+	/bin/date | /usr/sbin/fifolog_writer /var/log/openvpn.log
+	/bin/date | /usr/sbin/fifolog_writer /var/log/portalauth.log
+	/bin/date | /usr/sbin/fifolog_writer /var/log/ipsec.log
+	/bin/date | /usr/sbin/fifolog_writer /var/log/relayd.log
+	/bin/date | /usr/sbin/fifolog_writer /var/log/lighttpd.log
+	/bin/date | /usr/sbin/fifolog_writer /var/log/ntpd.log
+
 fi 
 # change permissions on newly created fifolog files.
 chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/relayd.log	

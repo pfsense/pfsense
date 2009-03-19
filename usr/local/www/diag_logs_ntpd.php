@@ -54,6 +54,7 @@ if ($_POST['clear']) {
 		if(file_exists("{$ntpd_logfile}"))
 			unlink("{$ntpd_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$ntpd_logfile}");
+		exec("/bin/date | /usr/sbin/fifolog_writer {$ntpd_logfile}");
 		system_syslogd_start();
 	}
 }

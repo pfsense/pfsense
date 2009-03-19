@@ -57,6 +57,7 @@ if ($_POST['clear']) {
 		if(file_exists("{$filter_logfile}")
 			unlink("{$filter_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$filter_logfile}");
+		exec("/bin/date | /usr/sbin/fifolog_writer {$filter_logfile}");
 		system_syslogd_start();
 	}
 }

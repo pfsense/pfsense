@@ -55,6 +55,7 @@ if ($_POST['clear']) {
 		if(file_exists("{$relayd_logfile}"))
 			unlink("{$relayd_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$relayd_logfile}");
+		exec("/bin/date | /usr/sbin/fifolog_writer {$relayd_logfile}");
 		system_syslogd_start();
 	}
 }

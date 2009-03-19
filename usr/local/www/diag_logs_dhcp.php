@@ -56,6 +56,7 @@ if ($_POST['clear']) {
 		if(file_exists("{$dhcpd_logfile}")) 
 			unlink("{$dhcpd_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$dhcpd_logfile}");
+		exec("/bin/date | /usr/sbin/fifolog_writer {$dhcpd_logfile}");
 	}
 }
 

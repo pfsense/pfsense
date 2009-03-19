@@ -72,6 +72,7 @@ if ($_POST['clear']) {
 		if(file_exists("{$ipsec_logfile}"))
 			unlink("{$ipsec_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$ipsec_logfile}");
+		exec("/bin/date | /usr/sbin/fifolog_writer {$ipsec_logfile}");
 		system_syslogd_start();
 	}
 }

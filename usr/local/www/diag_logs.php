@@ -53,14 +53,15 @@ if ($_POST['clear']) {
 		touch($syslog_logfile);
 		system_syslogd_start();
 	} else {  
-		exec("killall syslogd");
-		sleep(1);
-		if(file_exists("{$system_logfile}")) 
-			unlink("{$system_logfile}");
+//		exec("killall syslogd");
+//		sleep(1);
+//		if(file_exists("{$system_logfile}")) 
+//			unlink("{$system_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$system_logfile}");
-		system_syslogd_start();
+		exec("/usr/bin/killall -HUP syslogd");
+//		system_syslogd_start();
+//		Header("Location: diag_logs.php");
 	}
-
 }
 
 if ($_GET['filtertext'])

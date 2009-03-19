@@ -49,13 +49,12 @@ if ($_POST['clear']) {
 		unlink("/var/log/vpn.log");
 		touch("/var/log/vpn.log");
 	} else {
-		exec("killall syslogd");
-		sleep(1);
-		if(file_exists("/var/log/vpn.log"))	
-			unlink("/var/log/vpn.log");
+//		exec("killall syslogd");
+//		sleep(1);
+//		if(file_exists("/var/log/vpn.log"))	
+//			unlink("/var/log/vpn.log");
 		exec("/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log");
-		exec("/bin/date | /usr/sbin/fifolog_writer /var/log/vpn.log");
-		system_syslogd_start();		
+		exec("/usr/bin/killall -HUP syslogd");
 	}
 	/* redirect to avoid reposting form data on refresh */
 	header("Location: diag_logs_vpn.php");

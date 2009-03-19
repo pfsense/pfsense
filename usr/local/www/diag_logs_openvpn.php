@@ -54,13 +54,12 @@ if ($_POST['clear']) {
 		unlink($openvpn_logfile);
 		touch($openvpn_logfile);
 	} else {
-		exec("killall syslogd");
-		sleep(1);		
-		if(file_exists("{$openvpn_logfile}"))
-			unlink("{$openvpn_logfile}");		
+//		exec("killall syslogd");
+//		sleep(1);		
+//		if(file_exists("{$openvpn_logfile}"))
+//			unlink("{$openvpn_logfile}");		
 		exec("/usr/sbin/fifolog_create -s 262144 {$openvpn_logfile}");
-		exec("/bin/date | /usr/sbin/fifolog_writer {$openvpn_logfile}");
-		system_syslogd_start();
+		exec("/usr/bin/killall -HUP syslogd");
 	}
 }
 

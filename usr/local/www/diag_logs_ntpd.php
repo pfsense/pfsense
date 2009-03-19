@@ -49,13 +49,12 @@ if ($_POST['clear']) {
 		unlink($ntpd_logfile);
 		touch($ntpd_logfile);
 	} else {
-		exec("killall syslogd");
-		sleep(1);		
-		if(file_exists("{$ntpd_logfile}"))
-			unlink("{$ntpd_logfile}");
+//		exec("killall syslogd");
+//		sleep(1);		
+//		if(file_exists("{$ntpd_logfile}"))
+//			unlink("{$ntpd_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$ntpd_logfile}");
-		exec("/bin/date | /usr/sbin/fifolog_writer {$ntpd_logfile}");
-		system_syslogd_start();
+		exec("/usr/bin/killall -HUP syslogd");
 	}
 }
 

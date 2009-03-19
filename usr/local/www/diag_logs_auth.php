@@ -49,12 +49,12 @@ if ($_POST['clear']) {
 		unlink($portal_logfile);
 		touch($portal_logfile);
 	} else {
-		exec("killall syslogd");
-		sleep(1);		
-		if(file_exists("{$portal_logfile}")) 
-			unlink("{$portal_logfile}");		
+//		exec("killall syslogd");
+///		sleep(1);		
+//		if(file_exists("{$portal_logfile}")) 
+//			unlink("{$portal_logfile}");		
 		exec("/usr/sbin/fifolog_create -s 511488 {$portal_logfile}");
-		exec("/bin/date | /usr/sbin/fifolog_writer {$portal_logfile}");
+		exec("/usr/bin/killall -HUP syslogd");
 	}
 }
 

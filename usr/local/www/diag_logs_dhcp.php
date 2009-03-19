@@ -51,12 +51,12 @@ if ($_POST['clear']) {
 		unlink($dhcpd_logfile);
 		touch($dhcpd_logfile);
 	} else {
-		exec("killall syslogd");
-		sleep(1);		
-		if(file_exists("{$dhcpd_logfile}")) 
-			unlink("{$dhcpd_logfile}");
+//		exec("killall syslogd");
+//		sleep(1);		
+//		if(file_exists("{$dhcpd_logfile}")) 
+//			unlink("{$dhcpd_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$dhcpd_logfile}");
-		exec("/bin/date | /usr/sbin/fifolog_writer {$dhcpd_logfile}");
+		exec("/usr/bin/killall -HUP syslogd");
 	}
 }
 

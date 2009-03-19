@@ -60,13 +60,12 @@ if ($_POST['clear']) {
 		unlink("/var/log/filter.log");
 		touch("/var/log/filter.log");
 	} else {	
-		exec("killall syslogd");
-		sleep(1);
-		if(file_exists("{$filter_logfile}"))
-			unlink("{$filter_logfile}");
+//		exec("killall syslogd");
+//		sleep(1);
+//		if(file_exists("{$filter_logfile}"))
+//			unlink("{$filter_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$filter_logfile}");
-		exec("/bin/date | /usr/sbin/fifolog_writer {$filter_logfile}");
-		system_syslogd_start();
+		exec("/usr/bin/killall -HUP syslogd");
 	}
 }
 

@@ -51,6 +51,7 @@ if ($_POST['clear']) {
 		touch($slbd_logfile);
 	} else {
 		exec("killall syslogd");
+		sleep(1);		
 		if(file_exists("{$slbd_logfile}"))	
 			unlink("{$slbd_logfile}");		
 		exec("/usr/sbin/fifolog_create -s 511488 {$slbd_logfile}");

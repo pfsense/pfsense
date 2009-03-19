@@ -52,6 +52,7 @@ if ($_POST['clear']) {
 		touch($dhcpd_logfile);
 	} else {
 		exec("killall syslogd");
+		sleep(1);		
 		if(file_exists("{$dhcpd_logfile}")) 
 			unlink("{$dhcpd_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$dhcpd_logfile}");

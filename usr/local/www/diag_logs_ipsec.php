@@ -68,6 +68,7 @@ if ($_POST['clear']) {
 		touch($ipsec_logfile);
 	} else {
 		exec("killall syslogd");
+		sleep(1);		
 		if(file_exists("{$ipsec_logfile}"))
 			unlink("{$ipsec_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$ipsec_logfile}");

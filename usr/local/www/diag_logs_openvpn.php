@@ -55,6 +55,7 @@ if ($_POST['clear']) {
 		touch($openvpn_logfile);
 	} else {
 		exec("killall syslogd");
+		sleep(1);		
 		if(file_exists("{$openvpn_logfile}"))
 			unlink("{$openvpn_logfile}");		
 		exec("/usr/sbin/fifolog_create -s 262144 {$openvpn_logfile}");

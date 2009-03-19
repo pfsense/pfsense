@@ -50,6 +50,7 @@ if ($_POST['clear']) {
 		touch("/var/log/vpn.log");
 	} else {
 		exec("killall syslogd");
+		sleep(1);
 		if(file_exists("/var/log/vpn.log"))	
 			unlink("/var/log/vpn.log");
 		exec("/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log");

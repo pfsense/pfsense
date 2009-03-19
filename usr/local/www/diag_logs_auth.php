@@ -50,6 +50,7 @@ if ($_POST['clear']) {
 		touch($portal_logfile);
 	} else {
 		exec("killall syslogd");
+		sleep(1);		
 		if(file_exists("{$portal_logfile}")) 
 			unlink("{$portal_logfile}");		
 		exec("/usr/sbin/fifolog_create -s 511488 {$portal_logfile}");

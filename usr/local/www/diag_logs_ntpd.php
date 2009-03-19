@@ -50,6 +50,7 @@ if ($_POST['clear']) {
 		touch($ntpd_logfile);
 	} else {
 		exec("killall syslogd");
+		sleep(1);		
 		if(file_exists("{$ntpd_logfile}"))
 			unlink("{$ntpd_logfile}");
 		exec("/usr/sbin/fifolog_create -s 511488 {$ntpd_logfile}");

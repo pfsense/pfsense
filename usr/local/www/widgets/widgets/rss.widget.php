@@ -138,6 +138,12 @@ else
 
 <div id="rss-widgets" style="padding: 5px; height: <?=$rsswidgetheight?>px; overflow:scroll;">
 <?php
+	if(!is_dir("/tmp/simplepie")) {
+		mkdir("/tmp/simplepie");
+		mkdir("/tmp/simplepie/cache");
+	}
+	exec("chmod a+rw /tmp/simplepie/.");
+	exec("chmod a+rw /tmp/simplepie/cache/.");
 	require_once("simplepie/simplepie.inc");
 	function textLimit($string, $length, $replacer = '...') {
 	  if(strlen($string) > $length)
@@ -150,12 +156,6 @@ else
 	$feed->init();
 	$feed->set_output_encoding('latin-1');
 	$feed->handle_content_type();
-	if(!is_dir("/tmp/simplepie")) {
-		mkdir("/tmp/simplepie");
-		mkdir("/tmp/simplepie/cache");
-	}
-	exec("chmod a+rw /tmp/simplepie/.");
-	exec("chmod a+rw /tmp/simplepie/cache/.");
 	$counter = 1;
 	foreach($feed->get_items() as $item) {
 		$feed = $item->get_feed();

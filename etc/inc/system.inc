@@ -344,128 +344,83 @@ function system_syslogd_start() {
 	else
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
-	exec("/usr/bin/killall fifolog_writer");
+	exec("/usr/bin/killall -9 syslogd");
+	exec("/usr/bin/killall -9 fifolog_writer");
 
 	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntpd','racoon','openvpn');
 		if($config['installedpackages']['package']) {
-                        foreach($config['installedpackages']['package'] as $package) {
-                                if($package['logging']) {
+			foreach($config['installedpackages']['package'] as $package) {
+				if($package['logging']) {
 					$pkgfacilities[] = $package['logging']['facilityname'];
 					$separatelogfacilities = $separatelogfacilities + $pkgfacilities;
 					$facilitylist = implode(',', $pkgfacilities);
 					mwexec("fifolog_create -s 10240 {$g['varlog_path']}/{$package['logging']['logfilename']}");
-                                	$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t|/usr/sbin/fifolog_writer {$g['varlog_path']}/{$package['logging']['logfilename']}\n";
+					$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t|/usr/sbin/fifolog_writer {$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}
-                        }
-                }
+			}
+		}
 		$facilitylist = implode(',', array_unique($separatelogfacilities));
-		/* write syslog.conf */
+		/* write syslog.conf */		
 		$fd = fopen("{$g['varetc_path']}/syslog.conf", "w");
 		if (!$fd) {
 			printf("Error: cannot open syslog.conf in system_syslogd_start().\n");
 			return 1;
 		}
 		$syslogconf .= "!ntpdate,!ntpd\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= <<<EOD
-*.*						|/usr/sbin/fifolog_writer {$g['varlog_path']}/ntpd.log
-
-EOD;
-		}
+		if (!isset($syslogcfg['disablelocallogging'])) 
+			$syslogconf .= "*.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/ntpd.log\n";
 		$syslogconf .= "!racoon\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= <<<EOD
-*.*						|/usr/sbin/fifolog_writer {$g['varlog_path']}/ipsec.log
-
-EOD;
-		}
-		if (isset($syslogcfg['vpn'])) {
-			$syslogconf .= <<<EOD
-*.*						@{$syslogcfg['remoteserver']}
-
-EOD;
-		}
+		if (!isset($syslogcfg['disablelocallogging'])) 
+			$syslogconf .= "*.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/ipsec.log\n";
+		if (isset($syslogcfg['vpn'])) 
+			$syslogconf .= "*.*					@{$syslogcfg['remoteserver']}\n";
 		$syslogconf .= "!openvpn\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= <<<EOD
-*.*						|/usr/sbin/fifolog_writer {$g['varlog_path']}/openvpn.log
-
-EOD;
-		}
-		if (isset($syslogcfg['vpn'])) {
-			$syslogconf .= <<<EOD
-*.*						@{$syslogcfg['remoteserver']}
-
-EOD;
-		}
+		if (!isset($syslogcfg['disablelocallogging'])) 
+			$syslogconf .= "*.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/openvpn.log\n";
+		if (isset($syslogcfg['vpn'])) 
+			$syslogconf .= "*.*					@{$syslogcfg['remoteserver']}\n";
 		$syslogconf .= "!-{$facilitylist}\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-		$syslogconf .= <<<EOD
-local0.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/filter.log
-local3.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/vpn.log
-local4.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/portalauth.log
-local7.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/dhcpd.log
-*.notice;kern.debug;lpr.info;mail.crit; 	|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
+		if (!isset($syslogcfg['disablelocallogging'])) 
+			$syslogconf .= <<<EOD
+local0.*										|/usr/sbin/fifolog_writer {$g['varlog_path']}/filter.log
+local3.*										|/usr/sbin/fifolog_writer {$g['varlog_path']}/vpn.log
+local4.*										|/usr/sbin/fifolog_writer {$g['varlog_path']}/portalauth.log
+local7.*										|/usr/sbin/fifolog_writer {$g['varlog_path']}/dhcpd.log
+*.notice;kern.debug;lpr.info;mail.crit; 		|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
 news.err;local0.none;local3.none;local4.none; 	|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
-local7.none					|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
-security.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
-auth.info;authpriv.info;daemon.info		|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
-local1.*					|/usr/sbin/fifolog_writer {$g['varlog_path']}/relayd.log
-auth.info;authpriv.info 			|exec /usr/local/sbin/sshlockout_pf
-*.emerg						*
+local7.none										|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
+security.*										|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
+auth.info;authpriv.info;daemon.info				|/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
+local1.*										|/usr/sbin/fifolog_writer {$g['varlog_path']}/relayd.log
+auth.info;authpriv.info 						|exec /usr/local/sbin/sshlockout_pf
+*.emerg											*
 
 EOD;
-		}
-
-		if (isset($syslogcfg['filter'])) {
+		if (isset($syslogcfg['filter'])) 
+			$syslogconf .= "local0.*			@{$syslogcfg['remoteserver']}\n";
+		if (isset($syslogcfg['vpn'])) 
+			$syslogconf .= "local3.*			@{$syslogcfg['remoteserver']}\n";
+		if (isset($syslogcfg['portalauth'])) 
+			$syslogconf .= "local4.*			@{$syslogcfg['remoteserver']}\n";
+		if (isset($syslogcfg['dhcp'])) 
+			$syslogconf .= "local7.*			@{$syslogcfg['remoteserver']}\n";
+		if (isset($syslogcfg['system'])) 
 			$syslogconf .= <<<EOD
-local0.*					@{$syslogcfg['remoteserver']}
-
-EOD;
-		}
-
-		if (isset($syslogcfg['vpn'])) {
-			$syslogconf .= <<<EOD
-local3.*					@{$syslogcfg['remoteserver']}
-
-EOD;
-		}
-
-
-		if (isset($syslogcfg['portalauth'])) {
-			$syslogconf .= <<<EOD
-local4.*					@{$syslogcfg['remoteserver']}
-
-EOD;
-		}
-
-
-		if (isset($syslogcfg['dhcp'])) {
-			$syslogconf .= <<<EOD
-local7.*					@{$syslogcfg['remoteserver']}
-
-EOD;
-		}
-
-		if (isset($syslogcfg['system'])) {
-			$syslogconf .= <<<EOD
-*.notice;kern.debug;lpr.info;mail.crit;		@{$syslogcfg['remoteserver']}
+*.notice;kern.debug;lpr.info;mail.crit;			@{$syslogcfg['remoteserver']}
 news.err;local0.none;local3.none;local7.none	@{$syslogcfg['remoteserver']}
-security.*					@{$syslogcfg['remoteserver']}
-auth.info;authpriv.info;daemon.info		@{$syslogcfg['remoteserver']}
-*.emerg						@{$syslogcfg['remoteserver']}
+security.*										@{$syslogcfg['remoteserver']}
+auth.info;authpriv.info;daemon.info				@{$syslogcfg['remoteserver']}
+*.emerg											@{$syslogcfg['remoteserver']}
 
 EOD;
-		}
 		fwrite($fd, $syslogconf);
 		fclose($fd);
-
 		// Are we logging to a least one remote server ?
 		if(strpos($syslogconf, "@") != false)
-			$retval = mwexec("/usr/sbin/syslogd -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -f {$g['varetc_path']}/syslog.conf");
 		else
-			$retval = mwexec("/usr/sbin/syslogd -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -f {$g['varetc_path']}/syslog.conf");
 
 	} else {
 		$retval = mwexec("/usr/sbin/syslogd");

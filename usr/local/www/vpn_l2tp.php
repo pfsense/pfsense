@@ -49,6 +49,7 @@ $pconfig['radiussecret'] = $l2tpcfg['radius']['secret'];
 $pconfig['radiusissueips'] = $l2tpcfg['radius']['radiusissueips'];
 $pconfig['n_l2tp_units'] = $l2tpcfg['n_l2tp_units'];
 $pconfig['paporchap'] = $l2tpcfg['paporchap'];
+$pconfig['secret'] = $l2tpcfg['secret'];
 
 if ($_POST) {
 
@@ -115,6 +116,7 @@ if ($_POST) {
 
 		$l2tpcfg['radius']['server'] = $_POST['radiusserver'];
 		$l2tpcfg['radius']['secret'] = $_POST['radiussecret'];
+		$l2tpcfg['secret'] = $_POST['secret'];
 
 		$l2tpcfg['paporchap'] = $_POST['paporchap'];
 
@@ -176,6 +178,7 @@ function enable_change(enable_over) {
 		document.iform.paporchap.disabled = 0;
 		document.iform.interface.disabled = 0;
 		document.iform.n_l2tp_units.disabled = 0;
+		document.iform.secret.disabled = 0;
     /* fix colors */
 		document.iform.remoteip.style.backgroundColor = '#FFFFFF';
 		document.iform.localip.style.backgroundColor = '#FFFFFF';
@@ -185,6 +188,7 @@ function enable_change(enable_over) {
 		document.iform.paporchap.style.backgroundColor = '#FFFFFF';
 		document.iform.interface.style.backgroundColor = '#FFFFFF';
 		document.iform.n_l2tp_units.style.backgroundColor = '#FFFFFF';
+		document.iform.secret.style.backgroundColor = '#FFFFFF';
 		if (document.iform.radiusenable.checked || enable_over) {
 			document.iform.radacct_enable.disabled = 0;
 			document.iform.radiusserver.disabled = 0;
@@ -218,6 +222,7 @@ function enable_change(enable_over) {
 		document.iform.radiusserver.disabled = 1;
 		document.iform.radiussecret.disabled = 1;
 		document.iform.radiusissueips.disabled = 1;
+		document.iform.secret.disabled = 1;
     /* fix colors */
 		document.iform.interface.style.backgroundColor = '#D4D0C8';
 		document.iform.n_l2tp_units.style.backgroundColor = '#D4D0C8';
@@ -230,6 +235,7 @@ function enable_change(enable_over) {
 		document.iform.radiusserver.style.backgroundColor = '#D4D0C8';
 		document.iform.radiussecret.style.backgroundColor = '#D4D0C8';
 		document.iform.radiusissueips.style.backgroundColor = '#D4D0C8';
+		document.iform.secret.style.backgroundColor = '#D4D0C8';
 	}
 }
 //-->
@@ -330,6 +336,14 @@ function enable_change(enable_over) {
                     </select>
                     <br>Hint: 10 is TEN l2tp clients
                   </td>
+                </tr>
+		<tr>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Secret");?></td>
+                  <td width="78%" class="vtable">
+			<input type="password" name="secret" id="secret" class="formfld pwd" value="<? echo htmlspecialchars($pconfig['secret']); ?>">
+                    <br />
+                    <?=gettext("Specify optional secret shared between peers. Required on some devices/setups.");?><br />
+                    </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Encyrption type");?></td>

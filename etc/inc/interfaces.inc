@@ -1274,7 +1274,7 @@ function interface_configure($interface = "wan") {
 		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 	}  else {
-		$mac = get_interface_mac_address($wancfg['if']);
+		$mac = get_interface_mac($wancfg['if']);
 		if($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.
@@ -1968,13 +1968,27 @@ function get_wireless_modes($interface) {
 }
 
 function get_interface_mac($interface) {
-	/* build interface list with netstat */
-	$linkinfo = "";
-	exec("/usr/bin/netstat -I $interface -nW -f link", $linkinfo);
-	array_shift($linkinfo);
-	$alink = preg_split("/\s+/", $linkinfo[0]);
-	$mac = chop($alink[3]);
-	return $mac;
+	$mac = exec("ifconfig {$interface} | awk '/ether/ {print $2}'");
+        if(is_macaddr($mac)) {
+                return trim($mac);
+        } else {
+                return "";
+        }
+}
+
+/****f* pfsense-utils/generate_random_mac_address
+ * NAME
+ *   generate_random_mac - generates a random mac address
+ * INPUTS
+ *   none
+ * RESULT
+ *   $mac - a random mac address
+ ******/
+function generate_random_mac_address() {
+        $mac = "02";
+        for($x=0; $x<5; $x++)
+                $mac .= ":" . dechex(rand(16, 255));
+        return $mac;
 }
 
 function setup_pppoe_reset_file($interface, $status) {

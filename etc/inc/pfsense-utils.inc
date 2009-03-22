@@ -826,23 +826,6 @@ function log_error($error) {
 	return;
 }
 
-/****f* pfsense-utils/get_interface_mac_address
- * NAME
- *   get_interface_mac_address - Return a interfaces mac address
- * INPUTS
- *   $interface	- interface to obtain mac address from
- * RESULT
- *   $mac - the mac address of the interface
- ******/
-function get_interface_mac_address($interface) {
-	$mac = exec("ifconfig {$interface} | awk '/ether/ {print $2}'");
-	if(is_macaddr($mac)) {
-		return trim($mac);
-	} else {
-		return "";
-	}
-}
-
 /****f* pfsense-utils/return_dir_as_array
  * NAME
  *   return_dir_as_array - Return a directory's contents as an array.
@@ -2466,21 +2449,6 @@ function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF
 	echo "NiftyCheck();\n";
 	echo "Rounded(\"div#topbar\",\"top\",\"{$replace_color}\",\"{$bg_color}\",\"{$rounding_style}\");\n";
 	echo "</script>";
-}
-
-/****f* pfsense-utils/generate_random_mac_address
- * NAME
- *   generate_random_mac - generates a random mac address
- * INPUTS
- *   none
- * RESULT
- *   $mac - a random mac address
- ******/
-function generate_random_mac_address() {
-	$mac = "02";
-	for($x=0; $x<5; $x++)
-		$mac .= ":" . dechex(rand(16, 255));
-	return $mac;
 }
 
 /****f* pfsense-utils/strncpy

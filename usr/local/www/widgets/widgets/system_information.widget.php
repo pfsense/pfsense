@@ -94,10 +94,12 @@ $curcfg = $config['system']['firmware'];
                 <div id='updatestatus'><br/>Obtaining update status...</div>
 			</td>
 		</tr>
+		<?php if(!$g['hideplatform']): ?>
 		<tr>
 			<td width="25%" class="vncellt">Platform</td>
 			<td width="75%" class="listr"><?=htmlspecialchars($g['platform']);?></td>
 		</tr>
+		<?php endif; ?>
 		<tr>
 			<td width="25%" class="vncellt">CPU Type</td>
 			<td width="75%" class="listr">

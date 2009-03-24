@@ -36,12 +36,19 @@ if [ "$PLATFORM" = "pfSense" ]; then
 fi
 
 product=`/bin/cat /etc/inc/globals.inc | /usr/bin/grep product_name | /usr/bin/cut -d'"' -f4`
+hideplatform=`cat /etc/inc/globals.inc | grep hideplatform | cut -d'"' -f4`
+
+if [ "$hideplatform" = "true" ];
+	platformbanner="" # hide the platform
+else
+	platformbanner=" on the '${PLATFORM}' platform"
+fi
 
 echo
 cat /etc/ascii-art/pfsense-logo-small.txt
 echo
 echo
-echo "Welcome to ${product} ${version} on the '${PLATFORM}' platform..."
+echo "Welcome to ${product} ${version}${platformbanner}..."
 echo
 
 # Enable console output if its muted.

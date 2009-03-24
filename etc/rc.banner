@@ -38,8 +38,12 @@
 	$platform = trim(file_get_contents("{$g['etc_path']}/platform"));
 	$hostname = $config['system']['hostname'];
 	$product  = $g['product_name'];
-
-	print "\n*** Welcome to {$g['product_name']} {$version}-{$platform} on {$hostname} ***\n";
+	$hideplatform = $g['hideplatform'];
+	
+	if(!$hideplatform)
+		$platformbanner = "-{$platform}";
+	
+	print "\n*** Welcome to {$g['product_name']} {$version}{$platformbanner} on {$hostname} ***\n";
 
 	/* get our initial interface list */
 	$vfaces = array(

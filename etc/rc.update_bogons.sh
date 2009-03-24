@@ -7,7 +7,7 @@
 echo "rc.update_bogons.sh is starting up." | logger
 
 # Grab a random value  
-value=`od -A n -d -N2 /dev/random | awk '{ print $1 }'
+value=`od -A n -d -N2 /dev/random | awk '{ print $1 }'`
 
 echo "rc.update_bogons.sh is sleeping for $value" | logger
 

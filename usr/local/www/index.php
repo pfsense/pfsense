@@ -166,10 +166,12 @@ include("fbegin.inc");
 				built on <?php readfile("/etc/version.buildtime"); ?>
 			</td>
 		</tr>
+		<?php if(!$g['hideplatform']): ?>
 		<tr>
 			<td width="25%" class="vncellt">Platform</td>
 			<td width="75%" class="listr"><?=htmlspecialchars($g['platform']);?></td>
 		</tr>
+		<?php endif; ?>
 		<?php if ($hwcrypto): ?>
 		<tr>
 			<td width="25%" class="vncellt">Hardware crypto</td>

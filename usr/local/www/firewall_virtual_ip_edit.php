@@ -136,10 +136,10 @@ if ($_POST) {
 		$can_post = true;
 		$found = false;
 		$subnet_ip = return_first_two_octets($_POST['subnet']);
-		$iflist = get_configured_interface_list(false, true);
-		foreach($iflist as $if) {
-			$ww_subnet_ip = $config['interfaces'][$if]['ipaddr'];
-			$ww_subnet_bits = $config['interfaces'][$if]['subnet'];
+		$iflist = get_configured_interface_list_by_realif(false, true);
+		foreach($iflist as $realif => $if) {
+			$ww_subnet_ip = get_interface_ip($realif);
+			$ww_subnet_bits = get_interface_subnet($realif);
 			if (ip_in_subnet($_POST['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits))
 				$found = true;
 		}

@@ -1296,7 +1296,7 @@ function reload_tunnel_spd_policy($tunnel, $oldtunnel) {
 		"{$tunnel['p2']['protocol']}/tunnel/{$rgip}-" .
 		"{$ep}/unique;\n";
 
-	log_error("IPSEC: Tunnel '{$tunnel['descr']}' has changed IP from '{$oldgw}' to '{$rgip}', reloading policy");
+	log_error("Reloading IPsec tunnel '{$tunnel['descr']}'. Previous IP '{$oldgw}', current IP '{$rgip}'. Reloading policy");
 
 	$now = time();
 	$spdfile = tempnam("{$g['tmp_path']}", "spd.conf.reload.{$now}.");

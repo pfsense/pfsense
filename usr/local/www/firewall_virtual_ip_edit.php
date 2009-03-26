@@ -195,6 +195,8 @@ if ($_POST) {
 		}
 
 		if (isset($id) && $a_vip[$id]) {
+			if ($_POST['mode'] == "ipalias")
+				mwexec("/sbin/ifconfig " . get_real_interface($a_vip[$id]['interface']) . " delete {$a_vip[$id]['subnet']}");
 			/* modify all virtual IP rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
 				if ($config['nat']['rule'][$i]['external-address'] == $a_vip[$id]['subnet'])

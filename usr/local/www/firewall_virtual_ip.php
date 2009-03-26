@@ -90,6 +90,8 @@ if ($_GET['act'] == "del") {
 		}
 
 		if (!$input_errors) {
+			if ($a_vip[$_GET['id']]['type'] == "ipalias")
+				mwexec("/sbin/ifconfig " . get_real_interface($a_vip[$_GET['id']]['interface']) . " delete {$a_vip[$_GET['id']]['subnet']}");
 			unset($a_vip[$_GET['id']]);
 			write_config();
 			touch($d_vipconfdirty_path);

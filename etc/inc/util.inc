@@ -301,6 +301,39 @@ function get_configured_interface_list($only_opt = false, $withdisabled = false)
 	return $iflist;
 }
 
+/* return the configured interfaces list. */
+function get_configured_interface_list_by_realif($only_opt = false, $withdisabled = false) {
+        global $config;
+
+        $iflist = array();
+
+        if (!$only_opt) {
+                if (isset($config['interfaces']['wan'])) {
+			$tmpif = get_real_interface("wan");
+			if (!empty($tmpif))
+				$iflist[$tmpif] = "wan";
+		}
+                if (isset($config['interfaces']['lan'])) {
+			$tmpif = get_real_interface("lan");
+			if (!empty($tmpif))
+				$iflist[$tmpif] = "lan";
+		}
+        }
+
+        /* if list */
+        foreach($config['interfaces'] as $if => $ifdetail) {
+                if ($if == "wan" || $if == "lan")
+                        continue;
+                if (isset($ifdetail['enable']) || $withdisabled == true) {
+			$tmpif = get_real_interface($if);
+			if (!empty($tmpif))
+				$iflist[$tmpif] = $if;
+		}
+        }
+
+        return $iflist;
+}
+
 /* return the configured interfaces list with their description. */
 function get_configured_interface_with_descr($only_opt = false, $withdisabled = false) {
         global $config;

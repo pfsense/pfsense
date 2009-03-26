@@ -146,7 +146,7 @@ include("head.inc");
 		</tr>
 			  <?php $i = 0; foreach ($a_vip as $vipent): ?>
 			  <?php if($vipent['subnet'] <> "" or $vipent['range'] <> "" or
-			        $vipent['subnet_bits'] <> "" or $vipent['range']['from'] <> "" or $vipent['mode'] == "carpdev-dhcp"): ?>
+			        $vipent['subnet_bits'] <> "" or (isset($vipent['range']['from']) && $vipent['range']['from'] <> "") or $vipent['mode'] == "carpdev-dhcp"): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
 					<?php	if (($vipent['type'] == "single") || ($vipent['type'] == "network"))

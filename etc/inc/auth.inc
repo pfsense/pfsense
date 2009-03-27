@@ -219,7 +219,7 @@ function local_user_set(& $user) {
 
 	/* root user special handling */
 	if ($user_uid == 0) {
-		$cmd = "/usr/sbin/pw usermod -n root -s /bin/sh -H 0";
+		$cmd = "/usr/sbin/pw usermod -q -n root -s /bin/sh -H 0";
 		if($debug)
 			log_error("Running: {$cmd}");
 		$fd = popen($cmd, "w");
@@ -240,7 +240,7 @@ function local_user_set(& $user) {
 		$user_op = "usermod";
 
 	/* add or mod pw db */
-	$cmd = "/usr/sbin/pw {$user_op} -u {$user_uid} -n {$user_name}".
+	$cmd = "/usr/sbin/pw {$user_op} -q -u {$user_uid} -n {$user_name}".
 			" -g {$user_group} -G all -s {$user_shell} -d {$user_home}".
 			" -c ".escapeshellarg($user['fullname'])." -H 0 2>&1";
 

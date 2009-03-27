@@ -194,16 +194,20 @@ function local_sync_accounts() {
 function local_user_set(& $user) {
 	global $g, $debug;
 
-	$home_base = "/home/";
-	
-	if (!is_dir($home_base)) 
-		mkdir($home_base, 0755);
-	
+	$home_base = "/home/";	
 	$user_uid = $user['uid'];
 	$user_name = $user['name'];
 	$user_home = "{$home_base}/$user_name";
 	$user_shell = "/etc/rc.initial";
 	$user_group = "nobody";
+
+	// Ensure $home_base exists and is writable
+	if (!is_dir($home_base)) 
+		mkdir($home_base, 0755);
+
+	// Ensure $user_home exists and is writable
+	if(!is_dir($user_home)) 
+		mkdir($user_home, 0755);
 
 	/* configure shell type */
 	if (!userHasPrivilege($user, "user-shell-access")) {

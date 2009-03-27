@@ -63,17 +63,6 @@ if ($_POST) {
                $input_errors[] = "A valid IP address must be specified.";
        }
 
-       /* check for overlaps */
-       foreach ($a_domainOverrides as $doment) {
-               if (isset($id) && ($a_domainOverrides[$id]) && ($a_domainOverrides[$id] === $doment))
-                       continue;
-
-               if (($doment['host'] == $_POST['host']) && ($doment['domain'] == $_POST['domain'])) {
-                       $input_errors[] = "A override already exists for this domain.";
-                       break;
-               }
-       }
-
        if (!$input_errors) {
                $doment = array();
                $doment['domain'] = $_POST['domain'];

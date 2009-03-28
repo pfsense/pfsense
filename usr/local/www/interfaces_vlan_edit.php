@@ -93,9 +93,9 @@ if ($_POST) {
 		$vlan['if'] = $_POST['if'];
 		$vlan['tag'] = $_POST['tag'];
 		$vlan['descr'] = $_POST['descr'];
-		$vlan['vlanif'] = $_POST['vlanif'];
+		$vlan['vlanif'] = "vlan{$_POST['tag']}";
 
-                $vlan['vlanif'] = interface_vlan_configure($vlan['if'], $vlan['tag'], "vlan" . $vlan['tag']);
+		$vlan['vlanif'] = interface_vlan_configure($vlan);
                 if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan"))
                         $input_errors[] = "Error occured creating interface, please retry.";
                 else {

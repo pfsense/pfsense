@@ -57,20 +57,26 @@ function interfaces_loopback_configure() {
 
 function interfaces_vlan_configure() {
 	global $config;
-	$i = 0;
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if(empty($vlan['vlanif']))
-				$vlan['vlanif'] = "vlan{$i}";
+				$vlan['vlanif'] = "vlan{$vlan['tag']}";
 			/* XXX: Maybe we should report any errors?! */
-			interface_vlan_configure($vlan['if'], $vlan['tag'], $vlan['vlanif']);
-			$i++;
+			interface_vlan_configure($vlan);
 		}
 	}
 }
 
-function interface_vlan_configure($if, $tag, $vlanif = "") {
+function interface_vlan_configure($vlan) {
         global $config, $g;
+
+	if (!is_array($vlan)) {
+		log_error("VLAN: called with wrong options. Problems with config!");
+		return;
+	}
+	$if = $vlan['if'];
+	$vlanif  = empty($vlan['vlanif']) ? "vlan{$vlan['tag']}" : $vlan['vlanif'];
+	$tag = $vlan['tag'];
 
 	if(empty($if)) {
 		log_error("interface_vlan_confgure called with if undefined.");
@@ -114,12 +120,155 @@ function interface_vlan_configure($if, $tag, $vlanif = "") {
          */
         foreach($config['interfaces'] as $interfaces) {
                 if($interfaces['if'] == $if && $interfaces['spoofmac']) {
-                        mwexec("/sbin/ifconfig " . escapeshellarg($if) .
+                        mwexec("/sbin/ifconfig " . escapeshellarg($vlanif) .
                                 " link " . escapeshellarg($interfaces['spoofmac']));
                 }
         }
 
         /* XXX: ermal -- for now leave it here at the moment it does not hurt. */
+	interfaces_bring_up($if);
+
+        return $vlanif;
+}
+
+function interface_qinq_configure($vlan) {
+        global $config, $g;
+
+	if (!is_array($vlan)) {
+                log_error("QinQ compat VLAN: called with wrong options. Problems with config!");
+                return;
+        }
+
+	$if = $vlan['if'];
+	$vlanif = empty($vlan['vlanif']) ? "vlan{$vlan['tag']}" : $vlan['vlanif'];
+	$tag = $vlan['tag'];
+	if(empty($if)) {
+		log_error("interface_qinq_confgure called with if undefined.");
+		return;
+	}
+
+        /* make sure the parent is converted to ng_vlan(4) and is up */
+	interfaces_bring_up($if);
+	/* Since we are going to add ng_vlan(4) try to enable all that hardware supports. */
+	mwexec("/sbin/ifconfig {$if} vlanhwtag");
+	mwexec("/sbin/ifconfig {$if} vlanmtu");
+
+        if ($g['booting'] || !(empty($vlanif))) {
+		/* before destroying, see if CARP is in use
+		  If an interface containing an active CARP IP is destroyed,
+		  the CARP interface will hang in INIT and must be destroyed
+		  itself before it will function again (which causes a panic).
+		  Trying to configure a CARP interface stuck in INIT will
+		  cause a panic as well.  -cmb
+		*/
+		$carpcount = find_number_of_needed_carp_interfaces();
+		/* will continue to destroy VLANs where CARP is not in use
+		  to retain previous behavior and avoid regressions */
+		if($carpcount < 1)
+			mwexec("/usr/sbin/ngctl shutdown {$if}qinq:");
+		exec("/usr/sbin/ngctl msg {$if}qinq: gettable", $result);
+		if (empty($result)) {
+			mwexec("/usr/sbin/ngctl mkpeer {$if}: vlan lower downstream");
+			mwexec("/usr/sbin/ngctl name {$if}:lower {$if}qinq");
+			mwexec("/usr/sbin/ngctl connect {$if}: {$if}qinq: upper nomatch");
+		}
+        } else {
+		mwexec("/usr/sbin/ngctl mkpeer {$if}: vlan lower downstream");
+                mwexec("/usr/sbin/ngctl name {$if}:lower {$if}qinq");
+                mwexec("/usr/sbin/ngctl connect {$if}: {$if}qinq: upper nomatch");
+	}
+
+	if (!$g['booting']) {
+		if (!empty($vlan['members'])) {
+			$members = explode(" ", $vlan['members']);
+			foreach ($members as $qtag) {
+				mwexec("/usr/sbin/ngctl shutdown {$vlanif}h{$qtag}:");
+			}
+		}
+		mwexec("/usr/sbin/ngctl shutdown vlanh{$tag}:");
+	}
+	mwexec("/usr/sbin/ngctl mkpeer {$if}qinq: eiface vlan{$tag} ether");
+	mwexec("/usr/sbin/ngctl name {$if}qinq:vlan{$tag} vlanh{$tag}");
+	mwexec("/usr/sbin/ngctl msg {$if}qinq: addfilter '{ vlan={$tag} hook=\"vlan{$tag}\" }'");
+	$result2 = array();
+	exec("/usr/sbin/ngctl msg vlanh{$tag}: getifname | /usr/bin/awk '/ngeth/ { print \$2 }' | sed s/\\\"//g", $result2);
+	mwexec("/usr/sbin/ngctl name {$result2[0]}: eth{$vlanif}");
+	mwexec("/usr/sbin/ngctl msg vlanh{$tag}: setifname \\\"{$vlanif}\\\"");
+	sleep(1);
+	mwexec("/sbin/ifconfig {$vlanif} link " . escapeshellarg(get_interface_mac($if)));
+
+	interfaces_bring_up($vlanif);
+
+        /* invalidate interface cache */
+        get_interface_arr(true);
+
+	if (!stristr($if, "vlan"))
+		mwexec("/sbin/ifconfig {$if} promisc");
+
+	if (!empty($vlan['members'])) {
+		$members = explode(" ", $vlan['members']);
+		foreach ($members as $qtag) {
+			$qinq = array();
+                        $qinq['tag'] = $qtag;
+                        $qinq['if'] = $vlanif;
+                        interface_qinq2_configure($qinq);
+		}
+	}
+	interfaces_bring_up($if);
+
+        return $vlanif;
+}
+
+function interfaces_qinq_configure() {
+        global $config;
+        if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
+                foreach ($config['qinqs']['qinqentry'] as $qinq) {
+                        /* XXX: Maybe we should report any errors?! */
+			interface_qinq_configure($qinq);
+                }
+        }
+}
+
+function interface_qinq2_configure($qinq) {
+	global $config, $g;
+
+        if (!is_array($qinq)) {
+                log_error("QinQ compat VLAN: called with wrong options. Problems with config!");
+		echo "ERROR";
+                return;
+        }
+
+        $if = $qinq['if'];
+        $tag = $qinq['tag'];
+	$vlanif = "{$if}.{$tag}";
+        if(empty($if)) {
+                log_error("interface_qinq_confgure called with if undefined.");
+                return;
+        }
+
+	$result = array();
+	exec("/usr/sbin/ngctl msg {$if}qinq: gettable", $result);
+	if (empty($result)) {
+		mwexec("/usr/sbin/ngctl mkpeer eth{$if}: vlan lower downstream");
+                mwexec("/usr/sbin/ngctl name eth{$if}:lower {$if}qinq ");
+                mwexec("/usr/sbin/ngctl connect eth{$if}: {$if}qinq: upper nomatch");
+	}
+
+	mwexec("/usr/sbin/ngctl shutdown ${if}h{$tag}:");
+        mwexec("/usr/sbin/ngctl mkpeer {$if}qinq: eiface {$if}{$tag} ether");
+        mwexec("/usr/sbin/ngctl name {$if}qinq:{$if}{$tag} {$if}h{$tag}");
+        mwexec("/usr/sbin/ngctl msg {$if}qinq: addfilter '{ vlan={$tag} hook=\"{$if}{$tag}\" }'");
+	$result2 = array();
+	exec("/usr/sbin/ngctl msg {$if}h{$tag}: getifname | /usr/bin/awk '/ngeth/ { print \$2 }' | sed s/\\\"//g", $result2);
+        mwexec("/usr/sbin/ngctl name {$result2[0]}: eth{$if}_{$tag}");
+        mwexec("/usr/sbin/ngctl msg {$if}h{$tag}: setifname \\\"{$vlanif}\\\"");
+        sleep(1);
+        mwexec("/sbin/ifconfig {$vlanif} link " . escapeshellarg(get_interface_mac($if)));
+        interfaces_bring_up($vlanif);
+
+	/* invalidate interface cache */
+        get_interface_arr(true);
+
 	interfaces_bring_up($if);
 
         return $vlanif;
@@ -490,6 +639,8 @@ function interfaces_configure() {
 
 	/* set up VLAN virtual interfaces */
 	interfaces_vlan_configure();
+
+	interfaces_qinq_configure();
 
 	/* Set up PPP interfaces */
 	interfaces_ppp_configure();

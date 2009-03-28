@@ -139,10 +139,13 @@ if ($_POST) {
 			setup_polling();
 		}
 
-		if($_POST['lb_use_sticky'] == "yes")
+		if($_POST['lb_use_sticky'] == "yes") {
 			$config['system']['lb_use_sticky'] = true;
-		else
+                        touch("/var/etc/use_pf_pool__stickyaddr");
+                } else {
 			unset($config['system']['lb_use_sticky']);
+                        unlink_if_exists("/var/etc/use_pf_pool__stickyaddr");
+                }
 
 		if($config['interfaces']['wan']['ipaddr'] == "pppoe") 
 			unset($config['system']['lb_use_sticky']);

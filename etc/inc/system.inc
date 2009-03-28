@@ -344,8 +344,8 @@ function system_syslogd_start() {
 	else
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
-	exec("/usr/bin/killall -9 syslogd");
-	exec("/usr/bin/killall -9 fifolog_writer");
+	mwexec("/usr/bin/killall -9 syslogd");
+	mwexec("/usr/bin/killall -9 fifolog_writer");
 
 	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntpd','racoon','openvpn');

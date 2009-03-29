@@ -119,7 +119,7 @@ if ($_POST) {
 					preg_match("/([^0-9])+/", $member[1], $match))
 					$input_errors[] = "Tags can contain only numbers or a range in format #-#.";
 
-				for ($i = $member[0]; $i < $member[1]; $i++) {
+				for ($i = $member[0]; $i <= $member[1]; $i++) {
 					if ($isfirst > 0)
 						$members .= " ";
 					$members .= $i;
@@ -341,6 +341,10 @@ function removeRow(el) {
   <tr>
     <td width="22%" valign="top" class="vncellreq"><div id="membersnetworkport">Member (s)</div></td>
     <td width="78%" class="vtable">
+	<span vlass="vexpl">
+		You can specify ranges in the input below. The format is pretty simple i.e 9-100 or 10.20...
+	</span>
+	<br/>
       <table id="maintable">
         <tbody>
           <tr>

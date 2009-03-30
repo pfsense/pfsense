@@ -92,6 +92,19 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
         }
 }
 
+/* add QinQ interfaces */
+if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
+        foreach ($config['qinqs']['qinqentry'] as $qinq) {
+                $portlist["vlan{$qinq['tag']}"] = $qinq;
+                $portlist["vlan{$qinq['tag']}"]['isqinq'] = true;
+                /* QinQ members */
+                $qinqifs = explode(' ', $qinq['members']);
+                foreach ($qinqifs as $qinqif) {
+			$portlist["vlan{$qinq['tag']}_{$qinqif}"]['descr'] = "QinQ {$qinqif}";
+			$portlist["vlan{$qinq['tag']}_{$qinqif}"]['isqinq'] = true;
+		}
+        }
+}
 
 /* add PPP interfaces */
 if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
@@ -349,43 +362,45 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
 		  <option value="<?=$portname;?>" <?php if ($portname == $iface['if']) echo "selected";?>> 
 		  <?php if ($portinfo['isvlan']) {
-		  			$descr = "VLAN {$portinfo['tag']} on {$portinfo['if']}";
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
-				} elseif ($portinfo['isppp']) {
-					$descr = "PPP {$portinfo['port']}";
-					if ($portinfo['descr'])
-						$descr .= " (" . $portinfo['descr'] . ")";
-					echo htmlspecialchars($descr);
-                                 } elseif ($portinfo['isbridge']) {
-                                         $descr = strtoupper($portinfo['bridgeif']);
-                                         if ($portinfo['descr'])
-                                                 $descr .= " (" . $portinfo['descr'] . ")";
-                                        echo htmlspecialchars($descr);
-                                 } elseif ($portinfo['isgre']) {
-                                         $descr = "GRE {$portinfo['remote-addr']}";
-                                         if ($portinfo['descr'])
-                                                 $descr .= " (" . $portinfo['descr'] . ")";
-                                        echo htmlspecialchars($descr);
-                                 } elseif ($portinfo['isgif']) {
-                                         $descr = "GRE {$portinfo['remote-addr']}";
-                                         if ($portinfo['descr'])
-                                                 $descr .= " (" . $portinfo['descr'] . ")";
-                                        echo htmlspecialchars($descr);
-                                 } elseif ($portinfo['islagg']) {
-                                         $descr = strtoupper($portinfo['laggif']);
-                                         if ($portinfo['descr'])
-                                                 $descr .= " (" . $portinfo['descr'] . ")";
-                                        echo htmlspecialchars($descr);
-				  } else
-					echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
-		  ?>
-		  </option>
-		  <?php endforeach; ?>
-		</select>
-		</td>
-		<td valign="middle" class="list"> 
+			$descr = "VLAN {$portinfo['tag']} on {$portinfo['if']}";
+		if ($portinfo['descr'])
+			$descr .= " (" . $portinfo['descr'] . ")";
+			echo htmlspecialchars($descr);
+		} elseif ($portinfo['isppp']) {
+			$descr = "PPP {$portinfo['port']}";
+			if ($portinfo['descr'])
+				$descr .= " (" . $portinfo['descr'] . ")";
+			echo htmlspecialchars($descr);
+                } elseif ($portinfo['isbridge']) {
+                        $descr = strtoupper($portinfo['bridgeif']);
+                        if ($portinfo['descr'])
+				$descr .= " (" . $portinfo['descr'] . ")";
+                        echo htmlspecialchars($descr);
+                } elseif ($portinfo['isgre']) {
+                        $descr = "GRE {$portinfo['remote-addr']}";
+                        if ($portinfo['descr'])
+				$descr .= " (" . $portinfo['descr'] . ")";
+                        echo htmlspecialchars($descr);
+                } elseif ($portinfo['isgif']) {
+                        $descr = "GRE {$portinfo['remote-addr']}";
+                        if ($portinfo['descr'])
+				$descr .= " (" . $portinfo['descr'] . ")";
+                        echo htmlspecialchars($descr);
+                } elseif ($portinfo['islagg']) {
+                        $descr = strtoupper($portinfo['laggif']);
+                        if ($portinfo['descr'])
+				$descr .= " (" . $portinfo['descr'] . ")";
+                        echo htmlspecialchars($descr);
+		} elseif ($portinfo['isqinq']) {
+			echo htmlspecialchars($portinfo['descr']);
+		} else
+			echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
+		?>
+		</option>
+		<?php endforeach; ?>
+	</select>
+	</td>
+	<td valign="middle" class="list">
 		  <?php if ($ifname != 'wan'): ?>
 		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete interface" width="17" height="17" border="0"></a> 
 		  <?php endif; ?>

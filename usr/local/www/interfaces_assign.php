@@ -95,7 +95,7 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 /* add QinQ interfaces */
 if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
         foreach ($config['qinqs']['qinqentry'] as $qinq) {
-                $portlist["vlan{$qinq['tag']}"] = $qinq;
+                $portlist["vlan{$qinq['tag']}"]['descr'] = "VLAN {$qinq['tag']}";
                 $portlist["vlan{$qinq['tag']}"]['isqinq'] = true;
                 /* QinQ members */
                 $qinqifs = explode(' ', $qinq['members']);

@@ -85,7 +85,7 @@ if ($_POST) {
 
 	if (is_ipaddr($config['interfaces']['wan']['ipaddr'])) {
 		if (check_subnets_overlap($_POST['external'], $_POST['subnet'], 
-				$config['interfaces']['wan']['ipaddr'], 32))
+				get_interface_ip("wan"), 32))
 			$input_errors[] = "The WAN IP address may not be used in a 1:1 rule.";
 	}
 

@@ -228,7 +228,7 @@ function enablechange() {
 
 <?php
 	if($title == "Reload in progress") {
-		$ip = "http://{$config['interfaces']['lan']['ipaddr']}";
+		$ip = "http://" . get_interface_ip("lan");
 	} else {
 		$ip = "/";
 	}
@@ -619,13 +619,13 @@ function fixup_string($string) {
 			$urlport = "";
 		}
 	}
-	$myurl = $proto . "://" . $config['interfaces']['lan']['ipaddr'] . $urlport . "/";
+	$myurl = $proto . "://" . get_interface_ip("lan") . $urlport . "/";
 	$newstring = str_replace("\$myurl", $myurl, $newstring);
 	// fixup #2: $wanip
 	$curwanip = get_interface_ip();
 	$newstring = str_replace("\$wanip", $curwanip, $newstring);
 	// fixup #3: $lanip
-	$lanip = $config['interfaces']['lan']['ipaddr'];
+	$lanip = get_interface_ip("lan");
 	$newstring = str_replace("\$lanip", $lanip, $newstring);
 	// fixup #4: fix'r'up here.
 	return $newstring;

@@ -32,7 +32,7 @@
 /* parse the configuration and include all functions used below */
 require_once("globals.inc");
 require_once("config.inc");
-require_once("functions.inc");
+require_once("interfaces.inc");
 
 function handle_argument_group($iface, $argument2) {
 	global $config;	

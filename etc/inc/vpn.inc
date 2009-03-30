@@ -115,9 +115,9 @@ function vpn_ipsec_configure($ipchg = false)
 	$a_phase2 = $config['ipsec']['phase2'];
 	$a_client = $config['ipsec']['client'];
 	$lancfg = $config['interfaces']['lan'];
-	$lanip = $lancfg['ipaddr'];
-	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
-	$lansn = $lancfg['subnet'];
+	$lanip = get_interface_ip("lan");
+	$lansn = get_interface_subnet("lan");
+	$lansa = gen_subnet($lanip, $lansn);
 
 	if (!isset($ipseccfg['enable'])) {
 		mwexec("/sbin/ifconfig enc0 down");
@@ -791,8 +791,8 @@ EOD;
 					/* add endpoint routes to correct gateway on interface */
 					if (interface_has_gateway($parentinterface)) {
 						$gatewayip = get_interface_gateway("$parentinterface");
-						$interfaceip = $config['interfaces'][$parentinterface]['ipaddr'];
-						$subnet_bits = $config['interfaces'][$parentinterface]['subnet'];
+						$interfaceip = get_interface_ip($parentinterface);
+						$subnet_bits = get_interface_subnet($parentinterface);
 						$subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
 						/* if the remote gateway is in the local subnet, then don't add a route */
 						if (! ip_in_subnet($rgip, "{$subnet_ip}/{$subnet_bits}")) {
@@ -1024,7 +1024,7 @@ EOD;
 				$mpdconf .= "	set ipcp dns " . join(" ", $pptpdcfg['dnsserver']) . "\n";
 			} else
 				if (isset ($config['dnsmasq']['enable'])) {
-					$mpdconf .= "	set ipcp dns " . $config['interfaces']['lan']['ipaddr'];
+					$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
 					if ($syscfg['dnsserver'][0])
 						$mpdconf .= " " . $syscfg['dnsserver'][0];
 					$mpdconf .= "\n";
@@ -1224,7 +1224,7 @@ pppoe_standart:
 EOD;
 
 			if (isset ($config['dnsmasq']['enable'])) {
-				$mpdconf .= "	set ipcp dns " . $config['interfaces']['lan']['ipaddr'];
+				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
 				$mpdconf .= "\n";
@@ -1406,7 +1406,7 @@ l2tp_standard:
 EOD;
 
 			if (isset ($config['dnsmasq']['enable'])) {
-				$mpdconf .= "	set ipcp dns " . $config['interfaces']['lan']['ipaddr'];
+				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
 				$mpdconf .= "\n";

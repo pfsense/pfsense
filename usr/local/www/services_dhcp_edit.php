@@ -62,7 +62,9 @@ $static_map_enabled=isset($config['dhcpd'][$if]['staticarp']);
 
 staticmaps_sort($if);
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
-$ifcfg = &$config['interfaces'][$if];
+$ifcfgip = get_interface_ip($if);
+$ifcfgsn = get_interface_subnet($if);
+$ifcfgdescr = convert_friendly_interface_to_friendly_descr($if);
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -121,11 +123,11 @@ if ($_POST) {
 	if ($_POST['ipaddr']) {
 		$dynsubnet_start = ip2long($config['dhcpd'][$if]['range']['from']);
 		$dynsubnet_end = ip2long($config['dhcpd'][$if]['range']['to']);
-		$lansubnet_start = (ip2long($ifcfg['ipaddr']) & gen_subnet_mask_long($ifcfg['subnet']));
-		$lansubnet_end = (ip2long($ifcfg['ipaddr']) | (~gen_subnet_mask_long($ifcfg['subnet'])));
+		$lansubnet_start = (ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn));
+		$lansubnet_end = (ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn)));
 		if ((ip2long($_POST['ipaddr']) < $lansubnet_start) ||
 			(ip2long($_POST['ipaddr']) > $lansubnet_end)) {
-			$input_errors[] = "The IP address must lie in the {$ifcfg['descr']} subnet.";
+			$input_errors[] = "The IP address must lie in the {$ifcfgdescr} subnet.";
 		}
 	}
 

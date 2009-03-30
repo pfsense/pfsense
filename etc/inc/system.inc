@@ -148,6 +148,7 @@ function system_hosts_generate() {
 
 	$syscfg = $config['system'];
 	$lancfg = $config['interfaces']['lan'];
+	$lancfgip = get_interface_ip("lan");
 	$dnsmasqcfg = $config['dnsmasq'];
 
 	if (!is_array($dnsmasqcfg['hosts'])) {
@@ -163,7 +164,11 @@ function system_hosts_generate() {
 
 	$hosts = <<<EOD
 127.0.0.1	localhost localhost.{$syscfg['domain']}
-{$lancfg['ipaddr']}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}
+
+EOD;
+	if (is_ipaddr($lancfgip))
+		$hosts .= <<<EOD
+{$lancfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}
 
 EOD;
 

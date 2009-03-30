@@ -101,7 +101,8 @@ if (is_array($config['dhcpd'][$if])){
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
 }
 
-$ifcfg = $config['interfaces'][$if];
+$ifcfgip = get_interface_ip($if);
+$ifcfgsn = get_interface_subnet($if);
 
 
 /*   set the enabled flag which will tell us if DHCP relay is enabled
@@ -181,8 +182,8 @@ if ($_POST) {
 
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
-			$subnet_start = (ip2long($ifcfg['ipaddr']) & gen_subnet_mask_long($ifcfg['subnet']));
-			$subnet_end = (ip2long($ifcfg['ipaddr']) | (~gen_subnet_mask_long($ifcfg['subnet'])));
+			$subnet_start = (ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn));
+			$subnet_end = (ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn)));
 
 			if ((ip2long($_POST['range_from']) < $subnet_start) || (ip2long($_POST['range_from']) > $subnet_end) ||
 			    (ip2long($_POST['range_to']) < $subnet_start) || (ip2long($_POST['range_to']) > $subnet_end)) {
@@ -431,23 +432,23 @@ function show_netboot_config() {
                       <tr>
                         <td width="22%" valign="top" class="vncellreq">Subnet</td>
                         <td width="78%" class="vtable">
-                          <?=gen_subnet($ifcfg['ipaddr'], $ifcfg['subnet']);?>
+                          <?=gen_subnet($ifcfgip, $ifcfgsn);?>
                         </td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncellreq">Subnet
                           mask</td>
                         <td width="78%" class="vtable">
-                          <?=gen_subnet_mask($ifcfg['subnet']);?>
+                          <?=gen_subnet_mask($ifcfgsn);?>
                         </td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncellreq">Available
                           range</td>
                         <td width="78%" class="vtable">
-                          <?=long2ip(ip2long($ifcfg['ipaddr']) & gen_subnet_mask_long($ifcfg['subnet']));?>
+                          <?=long2ip(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn));?>
                           -
-                          <?=long2ip(ip2long($ifcfg['ipaddr']) | (~gen_subnet_mask_long($ifcfg['subnet']))); ?>
+                          <?=long2ip(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))); ?>
                         </td>
                       </tr>
 					  <?php if($is_olsr_enabled): ?>

@@ -294,9 +294,9 @@ function captiveportal_rules_generate() {
 	global $config, $g;
 
 	$cpifn = $config['captiveportal']['interface'];
-	$cpif = $config['interfaces'][$cpifn]['if'];
-	$cpip = $config['interfaces'][$cpifn]['ipaddr'];
-	$lanip = $config['interfaces']['lan']['ipaddr'];
+	$cpif = get_real_interface($cpifn);
+	$cpip = get_interface_ip($cpifn);
+	$lanip = get_interface_ip("lan");
 	
 	/* note: the captive portal daemon inserts all pass rules for authenticated
 	   clients as skipto 50000 rules to make traffic shaping work */
@@ -307,16 +307,12 @@ function captiveportal_rules_generate() {
 	/*   allow nat redirects to work  see
 	     http://cvstrac.pfsense.com/tktview?tn=651
 	 */
-	
-	$captive_portal_interface = strtoupper($cpifn);
-
         /* if list */
         $iflist = get_configured_interface_list();
-
 	foreach ($iflist as $ifent => $ifname) {
-		if($captive_portal_interface == strtoupper($ifname))
+		if($cpifn == $ifname)
 			continue;
-		$int = convert_friendly_interface_to_real_interface_name($ifname);
+		$int = get_real_interface($ifname);
 		$cprules .= "add 30 set 1 skipto 50000 all from any to any in via {$int} keep-state\n";
 	}
 

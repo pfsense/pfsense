@@ -169,11 +169,9 @@
 		if($_POST["synchronizetoip"]) {
 			if(!is_ipaddr($_POST["synchronizetoip"]))
 				$input_errors[] = "You must specify a valid IP address.";
-			$ifdescrs = array('lan','wan');
-			for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) 
-				$ifdescrs['opt' . $j] = "opt" . $j;
+			$ifdescrs = get_configured_interface_list();
 			foreach($ifdescrs as $descr) 
-				if($config['interfaces']['$descr']['ipaddr'] == $_POST["synchronizetoip"]) 
+				if(get_interface_ip($descr) == $_POST["synchronizetoip"])
 					$input_errors[] = "CARP sync IP must be the backup firewall IP!  You cannot specify this firewalls IP in this location.";
 			if($config['virtualip']['vip']) {
 				foreach($config['virtualip']['vip'] as $vip) {
@@ -181,9 +179,6 @@
 						$input_errors[] = "CARP sync IP must be the backup firewall IP!  You cannot specify this firewalls IP in this location.";
 				}
 			}
-			$wanip = get_interface_ip();	
-			if($wanip == $_POST["synchronizetoip"]) 
-				$input_errors[] = "CARP sync IP must be the backup firewall's IP!  You cannot specify this firewall's IP in this location.";
 		}
 	</custom_php_validation_command>
 	<custom_add_php_command_late>

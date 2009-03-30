@@ -162,9 +162,9 @@ function ipsec_idinfo_to_cidr(& $idinfo,$addrbits = false) {
 			return $idinfo['address']."/".$idinfo['netbits'];
 		case "mobile":
 			return "0.0.0.0/0";
-        default:
-			$address = $config['interfaces']['lan']['ipaddr'];
-			$netbits = $config['interfaces'][$idinfo['type']]['subnet'];
+		default:
+			$address = get_interface_ip($idinfo['type']);
+			$netbits = get_interface_subnet($idinfo['type']);
 			$address = gen_subnet($address,$netbits);
 			return $address."/".$netbits;
     }
@@ -188,8 +188,8 @@ function ipsec_idinfo_to_subnet(& $idinfo,$addrbits = false) {
 		case "mobile":
 			return "0.0.0.0/0";
         default:
-			$address = $config['interfaces']['lan']['ipaddr'];
-			$netbits = $config['interfaces'][$idinfo['type']]['subnet'];
+			$address = get_interface_ip($idinfo['type']);
+			$netbits = get_interface_subnet($idinfo['type']);
 			$address = gen_subnet($address,$netbits);
 			$netbits = gen_subnet_mask($netbits);
 			return $address."/".netbits;

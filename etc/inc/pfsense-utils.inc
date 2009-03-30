@@ -561,12 +561,11 @@ function tdr_install_set() {
 	mwexec("/sbin/ipfw add 1 check-state");
 	mwexec("/sbin/ipfw delete 65534");
 	mwexec("/sbin/ipfw add 1 allow all from me to any keep-state");
-	if (!isset ($config['system']['webgui']['noantilockout'])) {
+	if (!isset ($config['system']['webgui']['noantilockout']) && count($config['interfaces']) > 1) {
 		/* lan ip lockout */
-		$lancfg = $config['interfaces']['lan'];
-		$lanip = $lancfg['ipaddr'];
-		$lansn = $lancfg['subnet'];
-		$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
+		$lanip = get_interface_ip("lan");
+		$lansn = get_interface_subnet("lan");
+		$lansa = gen_subnet($lanip, $lansn);
 		mwexec("/sbin/ipfw add 1 allow all from {$lansa}/{$lansn} to $lanip keep-state");
 	}
 	mwexec("/sbin/ipfw add 65534 check-state");
@@ -1249,12 +1248,11 @@ function link_carp_interface_to_parent($interface) {
 	$carp_subnet = find_virtual_ip_netmask($carp_ip);
 	$starting_ip = gen_subnet("{$carp_ip}", "{$carp_subnet}");
 	$carp_ints = "";
-	$num_carp_ints = find_number_of_created_carp_interfaces();
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		if(interface_has_gateway($ifname)) {
-			$interfaceip = $config['interfaces'][$ifname]['ipaddr'];
-			$subnet_bits = $config['interfaces'][$ifname]['subnet'];
+			$interfaceip = get_interface_ip($ifname);
+			$subnet_bits = get_interface_subnet($ifname);
 			$subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
 			if(ip_in_subnet($carp_ip, "{$subnet_ip}/{$subnet_bits}")) {
 				return $ifname;
@@ -2855,39 +2853,24 @@ function is_dhcp_server_enabled()
 /* return outside interfaces with a gateway */
 function get_interfaces_with_gateway() {
 	global $config;
+
 	$ints = array();
-	$vfaces = array(
-			'bridge.?*',
-			'ppp.?*',
-			'sl.?*',
-			'gif.?*',
-			'faith.?*',
-			'lo.?*',
-			'ng.?*',
-			'vlan.?*',
-			'pflog.?*',
-			'pfsync.?*',
-			'enc.?*',
-			'tun.?*',
-			'carp.?*'
-		);
-	$ifdescrs = get_interface_list("active","physical",$vfaces);
+	$ifdescrs = get_configured_interface_list(false, true);
 
 	/* loop interfaces, check config for outbound */
 	foreach ($ifdescrs as $ifdescr => $ifname) {
-		$friendly = $ifname['friendly'];
-		switch ($config['interfaces'][$friendly]['ipaddr']) {
+		switch ($config['interfaces'][$ifname]['ipaddr']) {
 		case "dhcp":
 		case "carpdev-dhcp":
 		case "pppoe":
 		case "pptp":
-			$ints[] = $friendly;
+			$ints[] = $ifname;
 			break;	
 		default:
-			if ($config['interfaces'][$friendly]['pointtopoint']) 
-				$ints[] = $friendly;
-			else if ($config['interfaces'][$friendly]['gateway'] <> "")
-				$ints[] = $friendly;
+			if ($config['interfaces'][$ifname]['pointtopoint'])
+				$ints[] = $ifname;
+			else if (!empty($config['interfaces'][$ifname]['gateway']))
+				$ints[] = $ifname;
 			break;
 		}
 	}
@@ -2897,13 +2880,10 @@ function get_interfaces_with_gateway() {
 /* return true if interface has a gateway */
 function interface_has_gateway($friendly) {
 	$friendly = strtolower($friendly);
-	if(in_array($friendly, get_interfaces_with_gateway())) {
+	if (in_array($friendly, get_interfaces_with_gateway()))
 		return true;
-	} else {
-		/* extra check for real interface names if it falls through */
-		$friendly = convert_real_interface_to_friendly_interface_name($friendly);
-		return(in_array($friendly, get_interfaces_with_gateway()));
-	}
+
+	return false;
 }
 
 /****f* pfsense-utils/isAjax

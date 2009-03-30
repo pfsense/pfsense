@@ -91,14 +91,17 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 			$ifdescrs = get_configured_interface_with_descr();
 				
 			foreach($ifdescrs as $if => $ifdesc) {
-				if (interface_has_gateway())
+				if (interface_has_gateway($if))
 					continue;
-				if($ifdesc == "WAN")
+				if($ifdesc == "wan")
 					continue;
 				$natent = array();
-				$osn = gen_subnet($config['interfaces'][$if]['ipaddr'],
-					$config['interfaces'][$if]['subnet']);
-				$natent['source']['network'] = $osn . "/" . $config['interfaces'][$if]['subnet'];
+				$osipaddr = get_interface_ip($if);
+				$ossubnet = get_interface_subnet($if);
+				if (!is_ipaddr($osipaddr) || empty($ossubnet))
+					continue;
+				$osn = gen_subnet($osipaddr, $ossubnet);
+				$natent['source']['network'] = "{$osn}/{$ossubnet}";
 				$natent['sourceport'] = "";
 				$natent['descr'] = "Auto created rule for {$ifdesc}";
 				$natent['target'] = "";

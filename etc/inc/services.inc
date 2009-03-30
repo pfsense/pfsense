@@ -186,9 +186,10 @@ EOPP;
 
 		if (!isset($dhcpifconf['enable']) || !isset($Iflist[$dhcpif]))
 			continue;
-
-		$subnet = gen_subnet($ifcfg['ipaddr'], $ifcfg['subnet']);
-		$subnetmask = gen_subnet_mask($ifcfg['subnet']);
+		$ifcfgip = get_interface_ip($dhcpif);
+		$ifcfgsn = get_interface_subnet($dhcpif);
+		$subnet = gen_subnet($ifcfgip, $ifcfgsn);
+		$subnetmask = gen_subnet_mask($ifcfgsn);
 
 		if($is_olsr_enabled == true)
 			if($dhcpifconf['netmask'])
@@ -214,7 +215,7 @@ EOPP;
 		if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
 			$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
 		} else if (isset($config['dnsmasq']['enable'])) {
-			$dnscfg .= "	option domain-name-servers " . $ifcfg['ipaddr'] . ";";
+			$dnscfg .= "	option domain-name-servers {$ifcfgip};";
 		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 			$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
 		}
@@ -239,7 +240,7 @@ EOPP;
 		if ($dhcpifconf['gateway'])
 			$routers = $dhcpifconf['gateway'];
 		else
-			$routers = $ifcfg['ipaddr'];
+			$routers = $ifcfgip;
 
 		if($dhcpifconf['failover_peerip'] <> "") {
 			$dhcpdconf .= "		failover peer \"dhcp{$dhcpnum}\";\n";
@@ -456,13 +457,14 @@ function services_dhcrelay_configure() {
 			link_interface_to_bridge($dhcrelayif))))
 			continue;
 
-		$dhcrelayifs[] = $ifcfg['if'];
+		$dhcrelayifs[] = get_real_interface($dhcprelayif);
 	}
 
 	/* In order for the relay to work, it needs to be active on the
 	   interface in which the destination server sits */
-	foreach ($config['interfaces'] as $ifname) {
-		$subnet = $ifname['ipaddr'] . "/" . $ifname['subnet'];
+	$dhrelayifs = get_configured_interface_list();
+	foreach ($dhrelayifs as $ifname) {
+		$subnet = get_interface_ip($ifname) . "/" . get_interface_subnet($ifname);
 		if (ip_in_subnet($dhcrelaycfg['server'],$subnet))
 			$destif = $ifname['if'];
 	}
@@ -709,7 +711,7 @@ begemotSnmpdCommunityDisable    = 1
 EOD;
 
 		if(isset($config['snmpd']['bindlan'])) {
-			$bind_to_ip = $config['interfaces']['lan']['ipaddr'];
+			$bind_to_ip = get_interface_ip("lan");
 		} else {
 			$bind_to_ip = "0.0.0.0";
 		}
@@ -823,10 +825,11 @@ function services_proxyarp_configure() {
 
 		if (count($paa))
 		foreach ($paa as $paif => $paents) {
-			if (!(is_ipaddr($config['interfaces'][$paif]['ipaddr'])))
+			$paaifip = get_interface_ip($paif);
+			if (!(is_ipaddr($paaifip)))
                                continue;
 
-			$args = $config['interfaces'][$paif]['if'] . " auto";
+			$args = get_real_interface($paif) . " auto";
 
 			foreach ($paents as $paent) {
 

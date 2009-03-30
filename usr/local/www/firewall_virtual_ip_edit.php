@@ -88,11 +88,10 @@ if ($_POST) {
 	if (($_POST['subnet'] && !is_ipaddr($_POST['subnet'])))
 		$input_errors[] = "A valid IP address must be specified.";
 
-	if ($_POST['ipaddr'] == $config['interfaces']['wan']['ipaddr'])
-		$input_errors[] = "The WAN IP address may not be used in a virtual entry.";
-
-	if ($_POST['ipaddr'] == $config['interfaces']['lan']['ipaddr'])
-		$input_errors[] = "The LAN IP address may not be used in a virtual entry.";
+	$natiflist = get_configured_interface_with_descr();
+	foreach ($natiflist as $natif => $natdescr)
+		if ($_POST['ipaddr'] == get_interface_ip($natif))
+			$input_errors[] = "The {$natdescr} IP address may not be used in a virtual entry.";
 
 	if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
 	 	$input_errors[] = "The /32 subnet mask is invalid for CARP IPs.";

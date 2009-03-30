@@ -597,13 +597,21 @@ function filter_nat_rules_generate()
 		update_filter_reload_status("Creating outbound NAT rules");
 		$tonathosts = "";
 		$numberofnathosts = 0;
-		/* static routes */
+
 		if (is_array($config['staticroutes']['route'])) {
 			foreach ($config['staticroutes']['route'] as $route) {
 				$netip = explode("/", $route['network']);
-				if ((! interface_has_gateway($route['interface'])) && (is_private_ip($netip[0]))) {
-					$numberofnathosts++;
-					$tonathosts .= "{$route['network']} ";
+				if(is_array($config['gateways']['gateway_item'])) {
+				        foreach($config['gateways']['gateway_item'] as $gateway) {
+						if($route['gateway'] == $gateway['name']) {
+							$gatewayip = $gateway['gateway'];
+							$interfacegw = $gateway['interface'];
+							if ((! interface_has_gateway($gateway['interface'])) && (is_private_ip($netip[0]))) {
+								$numberofnathosts++;
+								$tonathosts .= "{$route['network']} ";
+							}
+						}
+					}
 				}
 			}
 		}
@@ -2214,27 +2222,6 @@ function carp_sync_client() {
 			}
 		}
 	}
-}
-
-function return_vpn_subnet($adr) 
-{
-	global $config;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "return_vpn_subnet() being called $mt\n";
-	}
-	if ($adr['address']) {
-		list($padr, $pmask) = explode("/", $adr['address']);
-		if (is_null($pmask))
-			return "{$padr}/32";
-		return "{$padr}/{$pmask}";
-	}
-	/* XXX: do not return wan, lan, etc */
-	if(strstr($adr['network'], "wan") or strstr($adr['network'], "lan") or strstr($adr['network'], "opt"))
-		return convert_ip_to_network_format($config['interfaces'][$adr['network']]['ipaddr'],
-			   $config['interfaces'][$adr['network']]['subnet']);
-	/* fallback - error */
-	return " # error - {$adr['network']} ";
 }
 
 /* Generate IPSEC Filter Items */

@@ -71,7 +71,7 @@ if ($_POST) {
 		$input_errors[] = "A valid external IP address must be specified.";
 	}
 
-	if ($_POST['ipaddr'] == $config['interfaces']['wan']['ipaddr'])
+	if ($_POST['ipaddr'] == get_interface_ip("wan"))
 		$input_errors[] = "The WAN IP address may not be used in a NAT Address entry.";
 
 	/* check for overlaps with other server NAT */

@@ -105,7 +105,7 @@ if ($_POST) {
 			    (ip2long($_POST['localip']) <= $subnet_end)) {
 				$input_errors[] = "The specified server address lies in the remote subnet.";	
 			}
-			if ($_POST['localip'] == $config['interfaces']['lan']['ipaddr']) {
+			if ($_POST['localip'] == get_interface_ip("lan")) {
 				$input_errors[] = "The specified server address is equal to the LAN interface address.";	
 			}
 		}

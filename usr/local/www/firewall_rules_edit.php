@@ -458,6 +458,13 @@ if ($_POST) {
 	}
 }
 
+read_altq_config(); /* XXX: */
+$qlist =& get_unique_queue_list();
+read_dummynet_config(); /* XXX: */
+$dnqlist =& get_unique_dnqueue_list();
+read_layer7_config();
+$l7clist =& get_l7_unique_list();
+
 $pgtitle = array("Firewall","Rules","Edit");
 $closehead = false;
 
@@ -1043,8 +1050,6 @@ include("head.inc");
 			<td width="78%" class="vtable">
 			<select name="dnpipe">
 <?php
-		read_dummynet_config(); /* XXX: */
-		$dnqlist =& get_unique_dnqueue_list();
 		if (!is_array($dnqlist))
 			$dnqlist = array();
 		echo "<option value=\"none\"";
@@ -1090,8 +1095,6 @@ include("head.inc");
 			<td width="78%" class="vtable">
 			<select name="ackqueue">
 <?php
-		read_altq_config(); /* XXX: */
-		$qlist =& get_unique_queue_list();
 		if (!is_array($qlist))
 			$qlist = array();
 		echo "<option value=\"none\"";
@@ -1136,8 +1139,6 @@ include("head.inc");
 			<td width="78%" class="vtable">
 			<select name="l7container">
 <?php
-		read_layer7_config();
-		$l7clist =& get_l7_unique_list();
 		if (!is_array($l7clist))
 			$dnqlist = array();
 		echo "<option value=\"none\"";

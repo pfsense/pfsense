@@ -173,10 +173,14 @@ function filter_configure_sync() {
 
 	$rules .= setup_logging_interfaces();
 
-	if ($config['system']['optimization'] <> "")
+	if ($config['system']['optimization'] <> "") {
 		$rules .= "set optimization {$config['system']['optimization']}\n";
-	else
+		if ($config['system']['optimization'] == "conservative") {
+			$rules .= "set timeout { udp.first 300, udp.single 150, udp.multiple 900 }\n";
+		}
+	} else {
 		$rules .= "set optimization normal\n";
+	}
 
 	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */

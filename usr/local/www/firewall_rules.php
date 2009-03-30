@@ -360,8 +360,8 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				{
 					$alias_id_substr = $alias[0];
 					$alias_descr_substr = $alias[1];
-					$alias_content_text = htmlspecialchars($alias[2]);
-					$alias_caption = htmlspecialchars($alias_descr_substr . ":");
+					$alias_content_text = htmlentities($alias[2], ENT_QUOTES);
+					$alias_caption = htmlspecialchars($alias_descr_substr . ":", ENT_QUOTES);
 					$strlength = strlen ($alias_caption);
 					if ($strlength >= $maxlength) 
 						$alias_caption = substr($alias_caption, 0, $maxlength) . "...";					

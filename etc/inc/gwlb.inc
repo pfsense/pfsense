@@ -41,14 +41,14 @@ function setup_gateways_monitor() {
 	global $g;
 	$gateways_arr = return_gateways_array();
 
-	if (!is_array($config['gateways']['settings'])) {
+	if (is_array($config['gateways']['settings'])) {
+		$a_settings = &$config['gateways']['settings'];
+	} else {
 		$a_settings['latencylow'] = "10";
 		$a_settings['latencyhigh'] = "20";
 		$a_settings['losslow'] = "100";
 		$a_settings['losshigh'] = "500";
 	}
-
-	$a_settings = &$config['gateways']['settings'];
 
 	/* kill apinger process */
 	if(is_process_running("apinger"))

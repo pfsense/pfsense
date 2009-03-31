@@ -1521,7 +1521,7 @@ function find_carp_interface($ip) {
 	}
 	$carps = 0;
 	foreach($find_carp_ifconfig as $fci) {
-		if(stristr($fci, $ip) == true)
+		if(stristr($fci, $ip . " ") == true)
 			return "carp{$carps}";
 		$carps++;
 	}

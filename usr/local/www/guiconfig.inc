@@ -755,10 +755,14 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	if(file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
-		if($config['system']['disablesyslogclog']) 
+		if($config['system']['disablesyslogclog']) {
 			exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-		else 
-			exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+		} else {
+			if(isset($config['system']['usefifolog'])) 
+				exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);				
+			else
+				exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+		}
 	}
     foreach ($logarr as $logent) {
             $logent = preg_split("/\s+/", $logent, 6);
@@ -786,10 +790,15 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	if(is_array($grepinvert))
 		foreach($grepinvert as $agrep)
 			$grepline .= " | grep -v \"$agrep\"";
-	if($config['system']['disablesyslogclog']) 
+	if($config['system']['disablesyslogclog']) {
 		exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-	else 
-		exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	} else {
+		if(isset($config['system']['usefifolog'])) {
+			exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);			
+		} else {
+			exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+		}
+	}
 	return($logarr);
 }
 

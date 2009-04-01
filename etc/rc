@@ -233,29 +233,31 @@ if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then
 	touch /var/log/lighttpd.log
 	touch /var/log/ntpd.log
 else 
-	# generate fifolog files
-	/usr/sbin/fifolog_create -s 511488 /var/log/system.log
-	/usr/sbin/fifolog_create -s 511488 /var/log/filter.log
-	/usr/sbin/fifolog_create -s 50688 /var/log/dhcpd.log
-	/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log
-	/usr/sbin/fifolog_create -s 50688 /var/log/openvpn.log
-	/usr/sbin/fifolog_create -s 50688 /var/log/portalauth.log
-	/usr/sbin/fifolog_create -s 50688 /var/log/ipsec.log
-	/usr/sbin/fifolog_create -s 50688 /var/log/relayd.log
-	/usr/sbin/fifolog_create -s 50688 /var/log/lighttpd.log
-	/usr/sbin/fifolog_create -s 50688 /var/log/ntpd.log
-	# Echo date to log files (start time)
-	/bin/date | /usr/sbin/fifolog_writer /var/log/system.log	
-	/bin/date | /usr/sbin/fifolog_writer /var/log/filter.log
-	/bin/date | /usr/sbin/fifolog_writer /var/log/dhcpd.log
-	/bin/date | /usr/sbin/fifolog_writer /var/log/vpn.log
-	/bin/date | /usr/sbin/fifolog_writer /var/log/openvpn.log
-	/bin/date | /usr/sbin/fifolog_writer /var/log/portalauth.log
-	/bin/date | /usr/sbin/fifolog_writer /var/log/ipsec.log
-	/bin/date | /usr/sbin/fifolog_writer /var/log/relayd.log
-	/bin/date | /usr/sbin/fifolog_writer /var/log/lighttpd.log
-	/bin/date | /usr/sbin/fifolog_writer /var/log/ntpd.log
-
+	ENABLEFIFOLOG=`cat /cf/conf/config.xml | grep usefifolog | wc -l | awk '{ print $1 }'`
+	if [ "$ENABLEFIFOLOG" -gt "0" ]; then
+		# generate fifolog files
+		/usr/sbin/fifolog_create -s 511488 /var/log/system.log
+		/usr/sbin/fifolog_create -s 511488 /var/log/filter.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/dhcpd.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/openvpn.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/portalauth.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/ipsec.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/relayd.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/lighttpd.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/ntpd.log
+	else 
+		/usr/sbin/clog -i -s 512144 /var/log/system.log
+		/usr/sbin/clog -i -s 512144 /var/log/filter.log
+		/usr/sbin/clog -i -s 65535 /var/log/dhcpd.log
+		/usr/sbin/clog -i -s 65535 /var/log/vpn.log
+		/usr/sbin/clog -i -s 65535 /var/log/openvpn.log
+		/usr/sbin/clog -i -s 65535 /var/log/portalauth.log
+		/usr/sbin/clog -i -s 65535 /var/log/ipsec.log
+		/usr/sbin/clog -i -s 65535 /var/log/slbd.log
+		/usr/sbin/clog -i -s 65535 /var/log/lighttpd.log
+		/usr/sbin/clog -i -s 65535 /var/log/ntpd.log
+	fi
 fi 
 # change permissions on newly created fifolog files.
 chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/relayd.log	

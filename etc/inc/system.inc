@@ -376,7 +376,7 @@ function system_syslogd_start() {
 					$separatelogfacilities = $separatelogfacilities + $pkgfacilities;
 					$facilitylist = implode(',', $pkgfacilities);
 					mwexec("{$log_create_directive} 10240 {$g['varlog_path']}/{$package['logging']['logfilename']}");
-					$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t {$log_directive} {$g['varlog_path']}/{$package['logging']['logfilename']}\n";
+					$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t {$log_directive}{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}
 			}
 		}
@@ -389,30 +389,30 @@ function system_syslogd_start() {
 		}
 		$syslogconf .= "!ntpdate,!ntpd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive} {$g['varlog_path']}/ntpd.log\n";
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ntpd.log\n";
 		$syslogconf .= "!racoon\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive} {$g['varlog_path']}/ipsec.log\n";
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ipsec.log\n";
 		if (isset($syslogcfg['vpn'])) 
 			$syslogconf .= "*.*					 @{$syslogcfg['remoteserver']}\n";
 		$syslogconf .= "!openvpn\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive} {$g['varlog_path']}/openvpn.log\n";
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/openvpn.log\n";
 		if (isset($syslogcfg['vpn'])) 
 			$syslogconf .= "*.*					 @{$syslogcfg['remoteserver']}\n";
 		$syslogconf .= "!-{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= <<<EOD
-local0.*										 {$log_directive} {$g['varlog_path']}/filter.log
-local3.*										 {$log_directive} {$g['varlog_path']}/vpn.log
-local4.*										 {$log_directive} {$g['varlog_path']}/portalauth.log
-local7.*										 {$log_directive} {$g['varlog_path']}/dhcpd.log
-*.notice;kern.debug;lpr.info;mail.crit; 		 {$log_directive} {$g['varlog_path']}/system.log
-news.err;local0.none;local3.none;local4.none; 	 {$log_directive} {$g['varlog_path']}/system.log
-local7.none										 {$log_directive} {$g['varlog_path']}/system.log
-security.*										 {$log_directive} {$g['varlog_path']}/system.log
-auth.info;authpriv.info;daemon.info				 {$log_directive} {$g['varlog_path']}/system.log
-local1.*										 {$log_directive} {$g['varlog_path']}/relayd.log
+local0.*										 {$log_directive}{$g['varlog_path']}/filter.log
+local3.*										 {$log_directive}{$g['varlog_path']}/vpn.log
+local4.*										 {$log_directive}{$g['varlog_path']}/portalauth.log
+local7.*										 {$log_directive}{$g['varlog_path']}/dhcpd.log
+*.notice;kern.debug;lpr.info;mail.crit; 		 {$log_directive}{$g['varlog_path']}/system.log
+news.err;local0.none;local3.none;local4.none; 	 {$log_directive}{$g['varlog_path']}/system.log
+local7.none										 {$log_directive}{$g['varlog_path']}/system.log
+security.*										 {$log_directive}{$g['varlog_path']}/system.log
+auth.info;authpriv.info;daemon.info				 {$log_directive}{$g['varlog_path']}/system.log
+local1.*										 {$log_directive}{$g['varlog_path']}/relayd.log
 auth.info;authpriv.info 						 |exec /usr/local/sbin/sshlockout_pf
 *.emerg											 *
 

@@ -351,7 +351,22 @@ function system_syslogd_start() {
 
 	mwexec("/usr/bin/killall -9 syslogd");
 	mwexec("/usr/bin/killall -9 fifolog_writer");
+	
+	// Define carious commands for logging
+	$fifolog_create = "/usr/sbin/fifolog_create -s ";
+	$fifolog_log = "|/usr/sbin/fifolog_writer ";
+	$clog_create = "/usr/sbin/clog -i -s ";
+	$clog_log = "%";
 
+	// Which logging type are we using this week??
+	if(isset($config['system']['usefifolog'])) {
+		$log_directive = $fifolog_log;
+		$log_create_directive = $fifolog_create;		
+	} else { // Defaults to CLOG
+		$log_directive = $clog_log;
+		$log_create_directive = $clog_create;
+	}
+	
 	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntpd','racoon','openvpn');
 		if($config['installedpackages']['package']) {
@@ -360,8 +375,8 @@ function system_syslogd_start() {
 					$pkgfacilities[] = $package['logging']['facilityname'];
 					$separatelogfacilities = $separatelogfacilities + $pkgfacilities;
 					$facilitylist = implode(',', $pkgfacilities);
-					mwexec("fifolog_create -s 10240 {$g['varlog_path']}/{$package['logging']['logfilename']}");
-					$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t |/usr/sbin/fifolog_writer {$g['varlog_path']}/{$package['logging']['logfilename']}\n";
+					mwexec("{$log_create_directive} 10240 {$g['varlog_path']}/{$package['logging']['logfilename']}");
+					$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t {$log_directive} {$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}
 			}
 		}
@@ -374,30 +389,30 @@ function system_syslogd_start() {
 		}
 		$syslogconf .= "!ntpdate,!ntpd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 |/usr/sbin/fifolog_writer {$g['varlog_path']}/ntpd.log\n";
+			$syslogconf .= "*.*					 {$log_directive} {$g['varlog_path']}/ntpd.log\n";
 		$syslogconf .= "!racoon\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 |/usr/sbin/fifolog_writer {$g['varlog_path']}/ipsec.log\n";
+			$syslogconf .= "*.*					 {$log_directive} {$g['varlog_path']}/ipsec.log\n";
 		if (isset($syslogcfg['vpn'])) 
 			$syslogconf .= "*.*					 @{$syslogcfg['remoteserver']}\n";
 		$syslogconf .= "!openvpn\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 |/usr/sbin/fifolog_writer {$g['varlog_path']}/openvpn.log\n";
+			$syslogconf .= "*.*					 {$log_directive} {$g['varlog_path']}/openvpn.log\n";
 		if (isset($syslogcfg['vpn'])) 
 			$syslogconf .= "*.*					 @{$syslogcfg['remoteserver']}\n";
 		$syslogconf .= "!-{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= <<<EOD
-local0.*										 |/usr/sbin/fifolog_writer {$g['varlog_path']}/filter.log
-local3.*										 |/usr/sbin/fifolog_writer {$g['varlog_path']}/vpn.log
-local4.*										 |/usr/sbin/fifolog_writer {$g['varlog_path']}/portalauth.log
-local7.*										 |/usr/sbin/fifolog_writer {$g['varlog_path']}/dhcpd.log
-*.notice;kern.debug;lpr.info;mail.crit; 		 |/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
-news.err;local0.none;local3.none;local4.none; 	 |/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
-local7.none										 |/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
-security.*										 |/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
-auth.info;authpriv.info;daemon.info				 |/usr/sbin/fifolog_writer {$g['varlog_path']}/system.log
-local1.*										 |/usr/sbin/fifolog_writer {$g['varlog_path']}/relayd.log
+local0.*										 {$log_directive} {$g['varlog_path']}/filter.log
+local3.*										 {$log_directive} {$g['varlog_path']}/vpn.log
+local4.*										 {$log_directive} {$g['varlog_path']}/portalauth.log
+local7.*										 {$log_directive} {$g['varlog_path']}/dhcpd.log
+*.notice;kern.debug;lpr.info;mail.crit; 		 {$log_directive} {$g['varlog_path']}/system.log
+news.err;local0.none;local3.none;local4.none; 	 {$log_directive} {$g['varlog_path']}/system.log
+local7.none										 {$log_directive} {$g['varlog_path']}/system.log
+security.*										 {$log_directive} {$g['varlog_path']}/system.log
+auth.info;authpriv.info;daemon.info				 {$log_directive} {$g['varlog_path']}/system.log
+local1.*										 {$log_directive} {$g['varlog_path']}/relayd.log
 auth.info;authpriv.info 						 |exec /usr/local/sbin/sshlockout_pf
 *.emerg											 *
 

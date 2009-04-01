@@ -50,9 +50,9 @@ require("guiconfig.inc");
 
 if(!($nentries = $config['syslog']['nentries'])) $nentries = 50;
 
-if ($_POST['clear']) {
-	exec("/usr/sbin/fifolog_create -s 511488 {$logfile}");
-}
+//if ($_POST['clear']) 
+//	clear_log_file($logfile);
+
 $i = 0;
 $pkgwithlogging = false;
 $apkg = $_POST['pkg'];

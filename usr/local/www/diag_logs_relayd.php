@@ -45,19 +45,8 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if ($_POST['clear']) {
-	if(isset($config['system']['disablesyslogclog'])) {
-		unlink($relayd_logfile);
-		touch($relayd_logfile);
-	} else {
-//		exec("killall syslogd");
-//		sleep(1);		
-//		if(file_exists("{$relayd_logfile}"))
-//			unlink("{$relayd_logfile}");
-		exec("/usr/sbin/fifolog_create -s 511488 {$relayd_logfile}");
-		exec("/usr/bin/killall -HUP syslogd");
-	}
-}
+if ($_POST['clear']) 
+	clear_log_file($relayd_logfile);
 
 $pgtitle = array("Status","System logs","Load Balancer");
 include("head.inc");

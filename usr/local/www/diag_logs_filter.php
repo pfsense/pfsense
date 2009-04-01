@@ -55,19 +55,8 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if ($_POST['clear']) {
-	exec("/usr/bin/killall syslogd");
-	if(isset($config['system']['disablesyslogclog'])) {
-		unlink("/var/log/filter.log");
-		touch("/var/log/filter.log");
-	} else {	
-		if(isset($config['system']['usefifolog'])) {			
-			exec("/usr/sbin/fifolog_create -s 511488 {$filter_logfile}");
-		} else {
-			exec("/usr/sbin/clog -i -s 262144 {$filter_logfile}");
-		}
-	}
-}
+if ($_POST['clear']) 
+	clear_log_file($filter_logfile);
 
 /* format filter logs */
 function conv_clog($logfile, $tail = 50) {

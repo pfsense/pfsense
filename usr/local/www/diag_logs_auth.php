@@ -44,19 +44,8 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if ($_POST['clear']) {
-	if(isset($config['system']['disablesyslogclog'])) {
-		unlink($portal_logfile);
-		touch($portal_logfile);
-	} else {
-//		exec("killall syslogd");
-///		sleep(1);		
-//		if(file_exists("{$portal_logfile}")) 
-//			unlink("{$portal_logfile}");		
-		exec("/usr/sbin/fifolog_create -s 511488 {$portal_logfile}");
-		exec("/usr/bin/killall -HUP syslogd");
-	}
-}
+if ($_POST['clear']) 
+	clear_log_file($portal_logfile);
 
 $pgtitle = array("Status","System logs","Portal Auth");
 include("head.inc");

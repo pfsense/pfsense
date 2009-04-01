@@ -36,7 +36,6 @@
 ##|*MATCH=status_slbd_pool.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 if (!is_array($config['load_balancer']['lbpool'])) {

@@ -741,6 +741,21 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
+function clear_log_file($logfile = "/var/log/system.log") {
+	global $config, $g;
+	exec("/usr/bin/killall syslogd");
+	if(isset($config['system']['disablesyslogclog'])) {
+		unlink($logfile);
+		touch($logfile);
+	} else {
+		if(isset($config['system']['usefifolog'])) 
+			exec("/usr/sbin/fifolog_create -s 511488 {$logfile}");
+		else
+			exec("/usr/sbin/clog -i -s 511488 {$logfile}");
+	}
+	system_syslogd_start();	
+}
+
 function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
     $sor = isset($config['syslog']['reverse']) ? "-r" : "";

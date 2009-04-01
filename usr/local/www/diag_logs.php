@@ -46,23 +46,8 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if ($_POST['clear']) {
-	if(isset($config['system']['disablesyslogclog'])) {
-		exec("killall syslogd");
-		unlink($syslog_logfile);
-		touch($syslog_logfile);
-		system_syslogd_start();
-	} else {  
-//		exec("killall syslogd");
-//		sleep(1);
-//		if(file_exists("{$system_logfile}")) 
-//			unlink("{$system_logfile}");
-		exec("/usr/sbin/fifolog_create -s 511488 {$system_logfile}");
-		exec("/usr/bin/killall -HUP syslogd");
-//		system_syslogd_start();
-//		Header("Location: diag_logs.php");
-	}
-}
+if ($_POST['clear']) 
+	clear_log_file($system_logfile);
 
 if ($_GET['filtertext'])
 	$filtertext = $_GET['filtertext'];

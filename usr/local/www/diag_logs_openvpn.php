@@ -49,19 +49,8 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if ($_POST['clear']) {
-	if(isset($config['system']['disablesyslogclog'])) {
-		unlink($openvpn_logfile);
-		touch($openvpn_logfile);
-	} else {
-//		exec("killall syslogd");
-//		sleep(1);		
-//		if(file_exists("{$openvpn_logfile}"))
-//			unlink("{$openvpn_logfile}");		
-		exec("/usr/sbin/fifolog_create -s 262144 {$openvpn_logfile}");
-		exec("/usr/bin/killall -HUP syslogd");
-	}
-}
+if ($_POST['clear']) 
+	clear_log_file($openvpn_logfile);
 
 include("head.inc");
 

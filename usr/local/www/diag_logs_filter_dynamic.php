@@ -47,20 +47,8 @@ if (!$nentries)
 /* AJAX related routines */
 handle_ajax();
 
-if ($_POST['clear']) {
-	exec("/usr/bin/killall syslogd");
-	if(isset($config['system']['disablesyslogclog'])) {
-		unlink("/var/log/filter.log");
-		touch("/var/log/filter.log");
-	} else {		
-		if(isset($config['system']['usefifolog'])) {
-			exec("/usr/sbin/fifolog_create -s 511488 {$filter_logfile}");
-		} else {
-			exec("/usr/sbin/clog -i -s 262144 {$filter_logfile}");	
-		}
-	}
-		system_syslogd_start();	
-}
+if ($_POST['clear']) 
+	clear_log_file($filter_logfile);
 
 /* format filter logs */
 function conv_clog_filter($logfile, $tail = 50) {

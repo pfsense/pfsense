@@ -36,7 +36,6 @@
 ##|*MATCH=diag_logs_vpn.php*
 ##|-PRIV
 
-
 $pgtitle = array("Status","System logs","PPTP VPN");
 require("guiconfig.inc");
 
@@ -44,21 +43,8 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if ($_POST['clear']) {
-	exec("/usr/bin/killall syslogd");
-	if(isset($config['system']['disablesyslogclog'])) {
-		unlink("/var/log/vpn.log");
-		touch("/var/log/vpn.log");
-	} else {
-		if(isset($config['system']['usefifolog'])) 
-			exec("/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log");
-		else 
-			exec("/usr/sbin/clog -i -s 262144 /var/log/vpn.log");
-	}
-	/* redirect to avoid reposting form data on refresh */
-	header("Location: diag_logs_vpn.php");
-	exit;
-}
+if ($_POST['clear']) 
+	clear_log_file("/var/log/vpn.log");
 
 function dump_clog_vpn($logfile, $tail) {
 	global $g, $config;

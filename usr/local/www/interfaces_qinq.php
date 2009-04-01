@@ -122,7 +122,12 @@ include("head.inc");
 					<?=htmlspecialchars($qinq['tag']);?>
 		  </td>
                   <td class="listr">
-					<?=htmlspecialchars($qinq['members']);?>
+					<?php
+					if (strlen($qinq['members']) > 20)
+						echo substr(htmlspecialchars($qinq['members']), 1, 20) . "...";
+					else
+						echo htmlspecialchars($qinq['members']);
+					?>
                   </td>
                   <td class="listbg">
                     <?=htmlspecialchars($qinq['descr']);?>&nbsp;

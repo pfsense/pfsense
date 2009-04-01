@@ -758,8 +758,8 @@ function clear_log_file($logfile = "/var/log/system.log") {
 
 function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
-    $sor = isset($config['syslog']['reverse']) ? "-r" : "";
-    $logarr = "";
+	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
+	$logarr = "";
 	$grepline = "  ";
 	if(is_array($grepfor))
 		foreach($grepfor as $agrep)
@@ -773,25 +773,31 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		if($config['system']['disablesyslogclog']) {
 			exec("cat {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 		} else {
-			if(isset($config['system']['usefifolog'])) 
-				exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);				
+			if(isset($config['system']['usefifolog']))
+				exec("/usr/sbin/fifolog_reader {$logfile}{$grepline} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 			else
 				exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 		}
 	}
-    foreach ($logarr as $logent) {
-            $logent = preg_split("/\s+/", $logent, 6);
-            echo "<tr valign=\"top\">\n";
-            if ($withorig) {
-					$logent[1] = date("F j, Y, g:i a","" . $logent[1] . "");
-            		$entry_date_time = htmlspecialchars($logent[1]);
-                    echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
-                    echo "<td class=\"listr\">" . htmlspecialchars($logent[5]) . "</td>\n";
-            } else {
-                    echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
-            }
-            echo "</tr>\n";
-    }
+	foreach ($logarr as $logent) {
+			$logent = preg_split("/\s+/", $logent, 6);
+			echo "<tr valign=\"top\">\n";
+			if ($withorig) {
+					if(isset($config['system']['usefifolog'])) {
+						$entry_date_time = htmlspecialchars(date("F j, Y, g:i a","" . $logent[1] . ""));
+						$entry_text = htmlspecialchars($logent[5]);
+					} else {
+						$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+						$entry_text = htmlspecialchars($logent[4] . " " . $logent[5]);
+					}
+					echo "<td class=\"listlr\" nowrap>{$entry_date_time}</td>\n";
+					echo "<td class=\"listr\">{$entry_text}</td>\n";
+
+			} else {
+					echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
+			}
+			echo "</tr>\n";
+	}
 }
 
 function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {

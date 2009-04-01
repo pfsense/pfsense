@@ -45,16 +45,15 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
+	exec("/usr/bin/killall syslogd");
 	if(isset($config['system']['disablesyslogclog'])) {
 		unlink("/var/log/vpn.log");
 		touch("/var/log/vpn.log");
 	} else {
-//		exec("killall syslogd");
-//		sleep(1);
-//		if(file_exists("/var/log/vpn.log"))	
-//			unlink("/var/log/vpn.log");
-		exec("/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log");
-		exec("/usr/bin/killall -HUP syslogd");
+		if(isset($config['system']['usefifolog'])) 
+			exec("/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log");
+		else 
+			exec("/usr/sbin/clog -i -s 262144 /var/log/vpn.log");
 	}
 	/* redirect to avoid reposting form data on refresh */
 	header("Location: diag_logs_vpn.php");
@@ -67,7 +66,11 @@ function dump_clog_vpn($logfile, $tail) {
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
 	$logarr = "";
-	exec("/usr/sbin/fifolog_reader " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
+	
+	if(isset($config['system']['usefifolog'])) 
+		exec("/usr/sbin/fifolog_reader " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
+	else 
+		exec("/usr/sbin/clog " . $logfile . " | grep -v \"CLOG\" | grep -v \"\033\" | tail {$sor} -n " . $tail, $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);

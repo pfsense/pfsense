@@ -48,17 +48,18 @@ if (!$nentries)
 handle_ajax();
 
 if ($_POST['clear']) {
+	exec("/usr/bin/killall syslogd");
 	if(isset($config['system']['disablesyslogclog'])) {
 		unlink("/var/log/filter.log");
 		touch("/var/log/filter.log");
-	} else {
-//		exec("killall syslogd");
-//		sleep(1);		
-//		if(file_exists("{$filter_logfile}")
-//			unlink("{$filter_logfile}");
-		exec("/usr/sbin/fifolog_create -s 511488 {$filter_logfile}");
-		exec("/usr/bin/killall -HUP syslogd");
+	} else {		
+		if(isset($config['system']['usefifolog'])) {
+			exec("/usr/sbin/fifolog_create -s 511488 {$filter_logfile}");
+		} else {
+			exec("/usr/sbin/clog -i -s 262144 {$filter_logfile}");	
+		}
 	}
+		system_syslogd_start();	
 }
 
 /* format filter logs */
@@ -74,7 +75,10 @@ function conv_clog_filter($logfile, $tail = 50) {
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
 	$logarr = "";
-	exec("/usr/sbin/fifolog_reader {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	if(isset($config['system']['usefifolog'])) 
+		exec("/usr/sbin/fifolog_reader {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	else
+		exec("/usr/sbin/clog {$logfile} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 
 	$filterlog = array();
 
@@ -86,7 +90,6 @@ function conv_clog_filter($logfile, $tail = 50) {
 			break;
 
 		$log_split = "";
-
 
 		preg_match("/(\b(?:\d{1,3}\.){3}\d{1,3}(\.\w+)?)\s.*\s(\b(?:\d{1,3}\.){3}\d{1,3}(\.\w+)?)/", $logent, $log_split);
 

@@ -172,9 +172,14 @@ defCmdT("racoon.conf","cat /var/etc/racoon.conf");
 defCmdT("SPD","/sbin/setkey -DP");
 defCmdT("SAD","/sbin/setkey -D");
 
-defCmdT("last 200 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");
-defCmdT("last 50 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
-
+if(isset($config['system']['usefifolog']))  {
+	defCmdT("last 200 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");
+	defCmdT("last 50 filter log entries","/usr/sbin/fifolog_reader /var/log/filter.log 2>&1 | tail -n 50");
+} else {
+	defCmdT("last 200 system log entries","/usr/sbin/clog /var/log/system.log 2>&1 | tail -n 200");
+	defCmdT("last 50 filter log entries","/usr/sbin/clog /var/log/filter.log 2>&1 | tail -n 50");
+}
+	
 defCmd("ls /conf");
 defCmd("ls /var/run");
 

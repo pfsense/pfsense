@@ -7,6 +7,19 @@ if(Connection_Aborted()) {
 require_once("config.inc");
 require_once("guiconfig.inc");
 
+function array_combine($arr1, $arr2) {
+    $out = array();
+
+    $arr1 = array_values($arr1);
+    $arr2 = array_values($arr2);
+
+    foreach($arr1 as $key1 => $value1) {
+        $out[(string)$value1] = $arr2[$key1];
+    }
+
+    return $out;
+}
+
 function get_stats() {
 	$stats['cpu'] = cpu_usage();
 	$stats['mem'] = mem_usage();

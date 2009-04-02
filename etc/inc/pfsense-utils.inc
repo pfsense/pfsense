@@ -2378,47 +2378,65 @@ function display_top_tabs(& $tab_array) {
 		eval($eval_code);
 	}
 	
-	echo "<table cellpadding='0' cellspacing='0'>\n";
-	echo " <tr>\n";
-	$tabscounter = 0;
-	foreach ($tab_array as $ta) {
-		if ($ta[1] == true) {
-			echo "  <td bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabactive'></div></td>\n";
-		} else {
-			echo "  <td bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
-		}
-		$tabscounter++;
-	}
-	echo "</tr>\n<tr>\n";
-	foreach ($tab_array as $ta) {
-		if ($ta[1] == true) {
-			echo "  <td height=\"15\" valign=\"middle\" bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
-			echo "&nbsp;&nbsp;&nbsp;";
-			echo "<font size='-12'>&nbsp;</font></B></td>\n";
-		} else {
-			echo "  <td height=\"15\" valign=\"middle\" bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
-			echo "<font color='{$font_color}'>{$ta[0]}</font></a>&nbsp;&nbsp;&nbsp;";
-			echo "<font size='-12'>&nbsp;</font></B></td>\n";
-		}
-	}
-	echo "</tr>\n<tr>\n";
-	foreach ($tab_array as $ta) {
-		if ($ta[1] == true) {
-			echo "  <td bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
-		} else {
-			echo "  <td bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
-		}
-		$tabscounter++;
-	}
-	echo " </tr>\n";
-	echo "</table>\n";
+	$tabcharcount = 0;
+	foreach ($tab_array as $ta) 
+		$tabcharcount = $tabcharcount + strlen($ta[0]);
 
-	echo "<script type=\"text/javascript\">";
-	echo "NiftyCheck();\n";
-	echo "Rounded(\"div#tabactive\",\"top\",\"{$nifty_tabs_corners}\",\"{$tab_active_bg}\",\"smooth\");\n";
-	for ($x = 0; $x < $tabscounter; $x++)
-		echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"{$nifty_tabs_corners}\",\"{$tab_inactive_bg}\",\"smooth\");\n";
-	echo "</script>";
+	// If the character count of the tab names is > 50
+	// then show a select item dropdown menubox.
+	if($tabcharcount > 50) {
+		echo "Currently viewing: ";
+		echo "<select name='TabSelect'>\n";
+		foreach ($tab_array as $ta) {
+			if($ta[1]=="true")	
+				$selected = " SELECTED";
+			else 
+				$selected = "";
+			echo "<option onClick=\"document.location='{$ta[2]}';\"{$selected}>{$ta['0']}</option>\n";
+		}
+		echo "</select>\n<p/>";
+	}  else {
+		echo "<table cellpadding='0' cellspacing='0'>\n";
+		echo " <tr>\n";
+		$tabscounter = 0;
+		foreach ($tab_array as $ta) {
+			if ($ta[1] == true) {
+				echo "  <td bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabactive'></div></td>\n";
+			} else {
+				echo "  <td bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
+			}
+			$tabscounter++;
+		}
+		echo "</tr>\n<tr>\n";
+		foreach ($tab_array as $ta) {
+			if ($ta[1] == true) {
+				echo "  <td height=\"15\" valign=\"middle\" bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+				echo "&nbsp;&nbsp;&nbsp;";
+				echo "<font size='-12'>&nbsp;</font></B></td>\n";
+			} else {
+				echo "  <td height=\"15\" valign=\"middle\" bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
+				echo "<font color='{$font_color}'>{$ta[0]}</font></a>&nbsp;&nbsp;&nbsp;";
+				echo "<font size='-12'>&nbsp;</font></B></td>\n";
+			}
+		}
+		echo "</tr>\n<tr>\n";
+		foreach ($tab_array as $ta) {
+			if ($ta[1] == true) {
+				echo "  <td bgcolor='{$tab_active_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
+			} else {
+				echo "  <td bgcolor='{$tab_inactive_bg}' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
+			}
+			$tabscounter++;
+		}
+		echo " </tr>\n";
+		echo "</table>\n";
+		echo "<script type=\"text/javascript\">";
+		echo "NiftyCheck();\n";
+		echo "Rounded(\"div#tabactive\",\"top\",\"{$nifty_tabs_corners}\",\"{$tab_active_bg}\",\"smooth\");\n";
+		for ($x = 0; $x < $tabscounter; $x++)
+			echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"{$nifty_tabs_corners}\",\"{$tab_inactive_bg}\",\"smooth\");\n";
+		echo "</script>";
+	}
 }
 
 
@@ -3456,6 +3474,5 @@ function compare_hostname_to_dnscache($hostname) {
 		return false;
 	}
 }
-
 
 ?>

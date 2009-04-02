@@ -2241,49 +2241,66 @@ function run_plugins($directory) {
  *   null
  ******/
 function display_top_tabs($tab_array) {
-	echo "<table cellpadding='0' cellspacing='0'>\n";
-	echo " <tr height='1'>\n";
-	$tabscounter = 0;
-	foreach ($tab_array as $ta) {
-		if($ta[1] == true) {
-			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabactive'></div></td>\n";
-		} else {
-			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
+	$tabcharcount = 0;
+	foreach ($tab_array as $ta) 
+		$tabcharcount = $tabcharcount + strlen($ta[0]);
+	// If the character count of the tab names is > 70
+	// then show a select item dropdown menubox.
+	if($tabcharcount > 70) {
+		echo "Currently viewing: ";
+		echo "<select name='TabSelect'>\n";
+		foreach ($tab_array as $ta) {
+			if($ta[1]=="true")	
+				$selected = " SELECTED";
+			else 
+				$selected = "";
+			echo "<option onClick=\"document.location='{$ta[2]}';\"{$selected}>{$ta['0']}</option>\n";
 		}
-		$tabscounter++;
-	}
-	echo "</tr>\n<tr>\n";
-	foreach ($tab_array as $ta) {
-		if($ta[1] == true) {
-			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
-			echo "&nbsp;&nbsp;&nbsp;";
-			echo "<font size='-12'>&nbsp;</td>\n";
-		} else {
-			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
-			echo "<font color='white'>{$ta[0]}</a>&nbsp;&nbsp;&nbsp;";
-			echo "<font size='-12'>&nbsp;</td>\n";
+		echo "</select>\n<p/>";
+	}  else {
+		echo "<table cellpadding='0' cellspacing='0'>\n";
+		echo " <tr height='1'>\n";
+		$tabscounter = 0;
+		foreach ($tab_array as $ta) {
+			if($ta[1] == true) {
+				echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabactive'></div></td>\n";
+			} else {
+				echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
+			}
+			$tabscounter++;
 		}
-	}
-	echo "</tr>\n<tr height='5px'>\n";
-	foreach ($tab_array as $ta) {
-		if($ta[1] == true) {
-			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
-		} else {
-			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
+		echo "</tr>\n<tr>\n";
+		foreach ($tab_array as $ta) {
+			if($ta[1] == true) {
+				echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+				echo "&nbsp;&nbsp;&nbsp;";
+				echo "<font size='-12'>&nbsp;</td>\n";
+			} else {
+				echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
+				echo "<font color='white'>{$ta[0]}</a>&nbsp;&nbsp;&nbsp;";
+				echo "<font size='-12'>&nbsp;</td>\n";
+			}
 		}
-		$tabscounter++;
-	}
-	echo " </tr>\n";
-	echo "</table>\n";
+		echo "</tr>\n<tr height='5px'>\n";
+		foreach ($tab_array as $ta) {
+			if($ta[1] == true) {
+				echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
+			} else {
+				echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
+			}
+			$tabscounter++;
+		}
+		echo " </tr>\n";
+		echo "</table>\n";
 
-	echo "<script type=\"text/javascript\">";
-	echo "NiftyCheck();\n";
-	echo "Rounded(\"div#tabactive\",\"top\",\"#FFF\",\"#EEEEEE\",\"smooth\");\n";
-	for($x=0; $x<$tabscounter; $x++)
-		echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"#FFF\",\"#777777\",\"smooth\");\n";
-	echo "</script>";
+		echo "<script type=\"text/javascript\">";
+		echo "NiftyCheck();\n";
+		echo "Rounded(\"div#tabactive\",\"top\",\"#FFF\",\"#EEEEEE\",\"smooth\");\n";
+		for($x=0; $x<$tabscounter; $x++)
+			echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"#FFF\",\"#777777\",\"smooth\");\n";
+		echo "</script>";
+	}
 }
-
 
 /****f* pfsense-utils/display_topbar
  * NAME

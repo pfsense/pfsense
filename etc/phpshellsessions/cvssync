@@ -82,10 +82,14 @@ if(!$found) {
 	if(isURL($branch)) {
 		echo "\n";
 		echo "NOTE: $branch was not found.\n\n";
-		$command = readline("Is this a custom branch URL? [y]? ");
+		$command = readline("Is this a custom GIT URL? [y]? ");
 		if(strtolower($command) == "y" or $command == "") {
 			$GIT_REPO = $branch;
-			$branch = "master";
+			$command = readline("Checkout which branch [master]? ");
+			if($command == "")
+				$branch = "master";
+			if($command) 
+				$branch = $command;
 			$found = true;
 		}
 	}

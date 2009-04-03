@@ -67,6 +67,7 @@ if ($_GET['act'] == "del") {
 			foreach ($delmembers as $tag)
 				mwexec("/usr/sbin/ngctl shutdown vlan{$qinq['tag']}h{$tag}:");
                 }
+		mwexec("/usr/sbin/ngctl shutdown vlanh{$qinq['tag']}:");
 		mwexec("/usr/sbin/ngctl shutdown {$qinq['if']}qinq:");
 		unset($a_qinqs[$id]);
 

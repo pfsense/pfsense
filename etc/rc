@@ -36,9 +36,9 @@ if [ "$PLATFORM" = "pfSense" ]; then
 fi
 
 product=`/bin/cat /etc/inc/globals.inc | /usr/bin/grep product_name | /usr/bin/cut -d'"' -f4`
-hideplatform=`cat /etc/inc/globals.inc | grep hideplatform | cut -d'"' -f4`
+hideplatform=`cat /etc/inc/globals.inc | grep hideplatform | wc -l`
 
-if [ "$hideplatform" = "true" ]; then
+if [ "$hideplatform" -gt "0"]; then
 	platformbanner="" # hide the platform
 else
 	platformbanner=" on the '${PLATFORM}' platform"

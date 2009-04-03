@@ -126,7 +126,7 @@ if(is_dir("$CODIR/pfSenseGITREPO")) {
 	exec("cd $CODIR/pfSenseGITREPO && git merge $branch");	
 } else {
     exec("mkdir -p $CODIR/pfSenseGITREPO");
-    echo "Executing cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO";
+    echo "Executing cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO\n";
 	exec("cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/pfSense")) 
 		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO");

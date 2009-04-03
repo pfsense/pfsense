@@ -58,6 +58,7 @@ if($command_split[2]) {
 		foreach($branches as $branchname => $branchdesc) {
 			echo "{$branchname} \t {$branchdesc}\n";
 		}
+		echo "\nOr alternatively you may enter a custom branch URL.\n\n";
 		$branch = readline("> ");
 		echo "\n";
 	} else {
@@ -78,8 +79,24 @@ foreach($branches as $branchname => $branchdesc) {
 		$found = true;
 }
 if(!$found) {
-	echo "\nInvalid branch.\n";
-	exit;
+	if(isURL($branch)) {
+		echo "\n";
+		echo "NOTE: $branch was not found.\n\n";
+		$command = readline("Is this a custom GIT URL? [y]? ");
+		if(strtolower($command) == "y" or $command == "") {
+			$GIT_REPO = $branch;
+			$command = readline("Checkout which branch [master]? ");
+			if($command == "")
+				$branch = "master";
+			if($command) 
+				$branch = $command;
+			$found = true;
+		}
+	}
+	if(!$found) {
+		echo "\nNo valid branch found.  Exiting.\n\n";
+		exit;
+	}
 }
 
 if($branch == "RESTORE" && $g['platform'] == "pfSense") {
@@ -113,7 +130,7 @@ if(is_dir("$CODIR/pfSenseGITREPO")) {
 	exec("cd $CODIR/pfSenseGITREPO && git merge $branch");	
 } else {
     exec("mkdir -p $CODIR/pfSenseGITREPO");
-    echo "Executing cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO";
+    echo "Executing cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO\n";
 	exec("cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/pfSense")) 
 		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO");
@@ -124,12 +141,7 @@ if(is_dir("$CODIR/pfSenseGITREPO")) {
 if($branch == "master") {
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout master");
 } else {
-	$current_branch=`git branch | grep $branch`;
-	if($current_branch == "") {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch");
-	} else {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout $branch");
-	}
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch");
 }
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
@@ -199,6 +211,15 @@ function post_cvssync_commands() {
 	fclose($fd);
 	mwexec_bg("sh /tmp/restart_lighty");
 	echo "\n";
+}
+
+function isUrl($url = "") {
+	if($url) 
+		if(strstr($url, "rcs.pfsense.org") or 
+			strstr($url, "mainline") or 
+				strstr($url, ".git"))
+					return true;
+	return false;
 }
 
 conf_mount_ro();

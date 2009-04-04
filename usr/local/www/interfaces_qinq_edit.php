@@ -155,10 +155,14 @@ if ($_POST) {
 			$addmembers = array_diff($nmembers, $omembers);
 			if (count($addmembers) > 0) {
 				foreach ($addmembers as $member) {
-					$vlan = array();
-					$vlan['if'] = "vlan{$_POST['tag']}";
-					$vlan['tag'] = $member;
-					interface_qinq2_configure($vlan);
+					$if = "vlan{$_POST['tag']}";
+					$vlanif = "{$if}_{$member}";
+					$macaddr = get_interface_mac($if);
+					mwexec("/usr/sbin/ngctl mkpeer {$if}qinq: eiface {$if}{$member} ether");
+					mwexec("/usr/sbin/ngctl name {$if}qinq:{$if}{$tag} {$if}h{$member}");
+					mwexec("/usr/sbin/ngctl msg {$if}qinq: addfilter '{ vlan={$member} hook=\\\"{$if}{$member}\\\" }'");
+					mwexec("/usr/sbin/ngctl msg {$if}h{$tag}: setifname \\\"{$vlanif}\\\"");
+					mwexec("/usr/sbin/ngctl msg {$vlanif}: setenaddr {$macaddr}");
 				}
 			}
 			$a_qinqs[$id] = $qinqentry;

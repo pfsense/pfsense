@@ -34,8 +34,72 @@
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
-require_once("/usr/local/www/widgets/include/log.inc");
+
+/* In an effort to reduce duplicate code, many shared functions have been moved here. */
+require_once("filter_log.inc");
+
+//set variable for custom title
+$log_title = "Firewall Logs";
+$log_title_link = "diag_logs_filter.php";
+
+if($_POST['filterlogentries']) {
+	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
+	write_config("Saved Filter Log Entries via Dashboard");
+	Header("Location: /");
+}
+
+$nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : 5;
+
+//set variables for log
+$filter_logfile = "{$g['varlog_path']}/filter.log";
+$filterlog = conv_log_filter($filter_logfile, $nentries);
+
+/* AJAX related routines */
+handle_ajax($nentries, $nentries + 20);
+
 ?>
+
+<script language="javascript">
+lastsawtime = '<?php echo time(); ?>';
+var lines = Array();
+var timer;
+var updateDelay = 30000;
+var isBusy = false;
+var isPaused = false;
+var nentries = <?php echo $nentries; ?>;
+
+<?php
+if(isset($config['syslog']['reverse']))
+	echo "var isReverse = true;\n";
+else
+	echo "var isReverse = false;\n";
+?>
+
+/* Called by the AJAX updater */
+function format_log_line(row) {
+	var line = '';
+	line = '  <span class="log-action-mini" nowrap>&nbsp;' + row[0] + '&nbsp;</span>';
+	line += '  <span class="log-interface-mini" nowrap>' + row[2] + '</span>';
+	line += '  <span class="log-source-mini" nowrap>' + row[3] + '</span>';
+	line += '  <span class="log-destination-mini" nowrap>' + row[4] + '</span>';
+	line += '  <span class="log-protocol-mini" nowrap>' + row[5] + '</span>';
+	return line;
+}
+</script>
+<script src="/javascript/filter_log.js" type="text/javascript"></script>
+<input type="hidden" id="log-config" name="log-config" value="">
+
+<div id="log-settings" name="log-settings" class="widgetconfigdiv" style="display:none;">
+	<form action="/widgets/widgets/log.widget.php" method="post" name="iforma">
+		Number of lines to display: 
+		<select name="filterlogentries" class="formfld unknown" id="filterlogentries">
+		<?php for ($i = 1; $i <= 20; $i++) { ?>
+			<option value="<?php echo $i;?>" <?php if ($nentries == $i) echo "SELECTED";?>><?php echo $i;?></option>
+		<?php } ?>
+		</select><br/>
+        <input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
+	</form>
+</div>
 
 <div class="log-header">
     <span class="log-action-mini-header">Act</span>
@@ -45,36 +109,23 @@ require_once("/usr/local/www/widgets/include/log.inc");
     <span class="log-protocol-mini-header">Prot</span>
 </div>
 <?php $counter=0; foreach ($filterlog as $filterent): ?>
-<?php
-	if(isset($config['syslog']['reverse'])) {
-		/* honour reverse logging setting */
-		if($counter == 0)
-			$activerow = " id=\"firstrow\"";
-		else
-			$activerow = "";
-
-	} else {
-		/* non-reverse logging */
-		if($counter == count($filterlog))
-			$activerow = " id=\"firstrow\"";
-		else
-			$activerow = "";
-	}
-?>
-<div class="log-entry-mini" <?php echo $activerow; ?> style="clear:both;">
+<div class="log-entry-mini" <?php echo is_first_row($counter, count($filterlog)); ?> style="clear:both;">
 	<span class="log-action-mini" nowrap>
+	&nbsp;<a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['act']}"; ?>', outputrule);"><img border="0" src="<?php echo find_action_image($filterent['act']);?>" alt="<?php echo $filterent['act'];?>" title="<?php echo $filterent['act'];?>" /></a>&nbsp;</span>
+	<span class="log-interface-mini"><?php echo htmlspecialchars($filterent['interface']);?>&nbsp;</span>
+	<span class="log-source-mini"><?php echo htmlspecialchars($filterent['src']);?>&nbsp;</span>
+	<span class="log-destination-mini"><?php echo htmlspecialchars($filterent['dst']);?>&nbsp;</span>
 	<?php
-		if (strstr(strtolower($filterent['act']), "p"))
-			$img = "/themes/metallic/images/icons/icon_pass.gif";
-		else if(strstr(strtolower($filterent['act']), "r"))
-			$img = "/themes/metallic/images/icons/icon_reject.gif";
-		else
-			$img = "/themes/metallic/images/icons/icon_block.gif";
+	if ($filterent['proto'] == "TCP")
+		$filterent['proto'] .= ":{$filterent['tcpflags']}";
 	?>
-	&nbsp;<img border="0" src="<?=$img;?>">&nbsp;</span>
-	<span class="log-interface-mini" ><?=htmlspecialchars(convert_real_interface_to_friendly_interface_name($filterent['interface']));?>&nbsp;</span>
-	<span class="log-source-mini" ><?=htmlspecialchars($filterent['src']);?>&nbsp;</span>
-	<span class="log-destination-mini" ><?=htmlspecialchars($filterent['dst']);?>&nbsp;</span>
-	<span class="log-protocol-mini" ><?=htmlspecialchars($filterent['proto']);?>&nbsp;</span>
+	<span class="log-protocol-mini"><?php echo htmlspecialchars($filterent['proto']);?>&nbsp;</span>
 </div>
 <?php $counter++; endforeach; ?>
+
+<!-- needed to display the widget settings menu -->
+<script language="javascript" type="text/javascript">
+	selectIntLink = "log-configure";
+	textlink = document.getElementById(selectIntLink);
+	textlink.style.display = "inline";
+</script>

@@ -1,0 +1,226 @@
+<?php
+/* $Id$ */
+/*
+	log.inc.php
+	part of pfSesne by Scott Ullrich
+	originally based on m0n0wall (http://m0n0.ch/wall)
+
+	Copyright (C) 2009 Jim Pingle <myfirstname>@<mylastname>.org
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/* format filter logs */
+function conv_log_filter($logfile, $nentries, $tail = 50) {
+	global $config, $g;
+
+	/* Make sure this is a number before using it in a system call */
+	if (!(is_numeric($tail)))
+		return;
+
+	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
+	$logarr = "";
+
+	if(isset($config['system']['usefifolog'])) 
+		exec("/usr/sbin/fifolog_reader {$logfile} | /usr/bin/tail -r -n 500", $logarr);
+	else
+		exec("/usr/sbin/clog {$logfile} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail -r -n 500", $logarr);
+
+	$filterlog = array();
+	$counter = 0;
+
+	foreach ($logarr as $logent) {
+		if($counter >= $nentries)
+			break;
+
+		$flent = parse_filter_line($logent);
+		if ($flent != "") {
+			$counter++;
+			$filterlog[] = $flent;
+		}
+	}
+	/* Since the lines are in reverse order, flip them around if needed based on the user's preference */
+	return isset($config['syslog']['reverse']) ? $filterlog : array_reverse($filterlog);
+}
+
+function parse_filter_line($line) {
+	global $config, $g;
+	$log_split = "";
+	preg_match("/(.*)\s(.*)\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s\((.*)\)\s(.*)\s>\s(.*)\:\s(.*)/", $line, $log_split);
+
+	list($all, $flent['time'], $host, $rule, $flent['act'], $flent['realint'], $details, $src, $dst, $leftovers) = $log_split;
+
+	$flent['src']        = convert_port_period_to_colon($src);
+	$flent['dst']        = convert_port_period_to_colon($dst);
+	$flent['interface']  = convert_log_interface_to_friendly_interface_name($flent['realint']);
+
+	$tmp = split("/", $rule);
+	$flent['rulenum'] = $tmp[0];
+
+	$proto = array(" ", "(?)");
+	/* Attempt to determine the protocol, based on several possible patterns.
+	 * The value returned by strpos() must be strictly checkeded against the  
+	 * boolean FALSE because it could return a valid answer of 0 upon success. */
+	if (!(strpos($details, 'proto ') === FALSE)) {
+		preg_match("/.*\sproto\s(.*)\s\(/", $details, $proto);
+	} elseif (!(strpos($details, 'proto: ') === FALSE)) {
+		preg_match("/.*\sproto\:(.*)\s\(/", $details, $proto);
+	} elseif (!(strpos($leftovers, 'sum ok] ') === FALSE)) {
+		preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $leftovers, $proto);
+	} elseif (!(strpos($line, 'sum ok] ') === FALSE)) {
+		preg_match("/.*\ssum ok]\s(.*)\,\s.*/", $line, $proto);
+	}
+	$proto = split(" ", trim($proto[1]));
+	$flent['proto'] = rtrim($proto[0], ",");
+
+	/* If we're dealing with TCP, try to determine the flags/control bits */
+	$flent['tcpflags'] = "";
+	if ($flent['proto'] == "TCP") {
+		$flags = split('[\, ]', $leftovers);
+		$flent['tcpflags'] = $flags[0];
+		if ($flent['tcpflags'] == ".")
+			$flent['tcpflags'] = "A";
+	}
+
+	/* If there is a src, a dst, and a time, then the line should be usable/good */
+	if (!((trim($flent['src']) == "") || (trim($flent['dst']) == "") || (trim($flent['time']) == ""))) {
+		return $flent;
+	} else {
+		if($g['debug']) {
+			log_error("There was a error parsing rule: $errline.   Please report to mailing list or forum.");
+		}
+		return "";
+	}
+}
+
+function convert_log_interface_to_friendly_interface_name($int) {
+	global $config;
+
+	$iflist = get_configured_interface_with_descr();
+	foreach ($iflist as $if => $ifdesc)
+		$iftable[get_real_interface($if)] = $ifdesc;
+
+	/* Check for WAN first, pppoe (ng0) doesn't return properly otherwise */
+	if ($int == get_real_wan_interface($int))
+		$int = 'wan';
+	else
+		$int = empty($iftable[$int]) ? $int : $iftable[$int];
+
+	return $int;
+}
+
+function convert_port_period_to_colon($addr) {
+	if (substr_count($addr, '.') > 1) {
+		/* IPv4 - Change the port delimiter to : */
+		$addr_split = split("\.", $addr);
+		if($addr_split[4] == "") {
+			$newvar = "{$addr_split[0]}.{$addr_split[1]}.{$addr_split[2]}.{$addr_split[3]}";
+			$newvar = rtrim($newvar, ":");
+		} else {
+			$port_split = split("\:", $addr_split[4]);
+			$newvar = "{$addr_split[0]}.{$addr_split[1]}.{$addr_split[2]}.{$addr_split[3]}:{$port_split[0]}";
+			$newvar = rtrim($newvar, ":");
+		}
+		if($newvar == "...")
+			return $addr;
+		return $newvar;
+	} else {
+		/* IPv6 - Leave it alone */
+		$addr = split(" ", $addr);
+		return rtrim($addr[0], ":");
+	}
+}
+
+function find_rule_by_number($rulenum, $type="rules") {
+	/* Passing arbitrary input to grep could be a Very Bad Thing(tm) */
+	if (!(is_numeric($rulenum)))
+		return;
+	/* At the moment, miniupnpd is the only thing I know of that
+	   generates logging rdr rules */
+	if ($type == "rdr")
+		return `pfctl -vvsn -a "miniupnpd" | grep '^@{$rulenum} '`;
+	else
+		return `pfctl -vvsr | grep '^@{$rulenum} '`;
+}
+
+function find_action_image($action) {
+	global $g;
+	if ((strstr(strtolower($action), "p")) || (strtolower($action) == "rdr"))
+		return "/themes/{$g['theme']}/images/icons/icon_pass.gif";
+	else if(strstr(strtolower($action), "r"))
+		return "/themes/{$g['theme']}/images/icons/icon_reject.gif";
+	else
+		return "/themes/{$g['theme']}/images/icons/icon_block.gif";
+}
+
+function is_first_row($rownum, $totalrows) {
+	global $config;
+	if(isset($config['syslog']['reverse'])) {
+		/* Honor reverse logging setting */
+		if($rownum == 0)
+			return " id=\"firstrow\"";
+	} else {
+		/* non-reverse logging */
+		if($rownum == $totalrows - 1)
+			return " id=\"firstrow\"";
+	}
+	return "";
+}
+
+/* AJAX specific handlers */
+function handle_ajax($nentries, $tail = 50) {
+	global $config;
+	if($_GET['lastsawtime'] or $_POST['lastsawtime']) {
+		global $filter_logfile,$filterent;
+		if($_GET['lastsawtime'])
+			$lastsawtime = $_GET['lastsawtime'];
+		if($_POST['lastsawtime'])
+			$lastsawtime = $_POST['lastsawtime'];
+		/*  compare lastsawrule's time stamp to filter logs.
+		 *  afterwards return the newer records so that client
+                 *  can update AJAX interface screen.
+		 */
+		$new_rules = "";
+		$filterlog = conv_log_filter($filter_logfile, $nentries, $tail);
+		/* We need this to always be in forward order for the AJAX update to work properly */
+		$filterlog = isset($config['syslog']['reverse']) ? array_reverse($filterlog) : $filterlog;
+		foreach($filterlog as $log_row) {
+			$time_regex = "";
+			preg_match("/.*([0-9][0-9]:[0-9][0-9]:[0-9][0-9])/", $log_row['time'], $time_regex);
+			$row_time = strtotime($time_regex[1]);
+			$img = "<img border='0' src='" . find_action_image($log_row['act']) . "' alt={$log_row['act']} title={$log_row['act']} />";
+			//echo "{$time_regex[1]} - $row_time > $lastsawtime<p>";
+			if($row_time > $lastsawtime) {
+				if ($log_row['proto'] == "TCP")
+					$log_row['proto'] .= ":{$log_row['tcpflags']}";
+
+				$img = "<a href=\"#\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['rulenum']}', outputrule);\">{$img}</a>";
+				$new_rules .= "{$img}||{$log_row['time']}||{$log_row['interface']}||{$log_row['src']}||{$log_row['dst']}||{$log_row['proto']}||" . time() . "||\n";
+			}
+		}
+		echo $new_rules;
+		exit;
+	}
+}
+
+?>

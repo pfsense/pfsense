@@ -1,18 +1,4 @@
 
-lastsawtime = '<?php echo time(); ?>;';
-var lines = Array();
-var timer;
-var updateDelay = 30000;
-var isBusy = false;
-var isPaused = true;
-
-<?php
-	if(isset($config['syslog']['reverse']))
-		echo "	var isReverse = true;\n";
-	else
-		echo "	var isReverse = false;\n";
-?>
-
 if (typeof getURL == 'undefined') {
 	getURL = function(url, callback) {
 		if (!url)
@@ -74,20 +60,13 @@ function fetch_new_rules_callback(callback_data) {
 	for(var x=0; x<data_split.length-1; x++) {
 		/* loop through rows */
 		row_split = data_split[x].split("||");
-		var line = '';
-		line = '<div class="log-entry">';
-		line += '  <span class="log-action-mini" nowrap>&nbsp;' + row_split[0] + '&nbsp;</span>';
-		line += '  <span class="log-interface-mini" nowrap>' + row_split[2] + '</span>';
-		line += '  <span class="log-source-mini" nowrap>' + row_split[3] + '</span>';
-		line += '  <span class="log-destination-mini" nowrap>' + row_split[4] + '</span>';
-		line += '  <span class="log-protocol-mini" nowrap>' + row_split[5] + '</span>';
-		line += '</tr></div>';
 		lastsawtime = row_split[6];
-		new_data_to_add[new_data_to_add.length] = line;
+		new_data_to_add[new_data_to_add.length] = format_log_line(row_split);
 	}
 	update_div_rows(new_data_to_add);
 	isBusy = false;
 }
+
 function update_div_rows(data) {
 	if(isPaused)
 		return;
@@ -101,29 +80,32 @@ function update_div_rows(data) {
 	if (isIE) {
 		showanim = 0;
 	}
-	//alert(data.length);
+	
+	var startat = data.length - nentries;
+	if (startat < 0) {
+		startat = 0;
+	}
+	data = data.slice(startat, data.length);
+	
 	for(var x=0; x<data.length; x++) {
 		var numrows = rows.length;
-		var appearatrow;
 		/*    if reverse logging is enabled we need to show the
 		 *    records in a reverse order with new items appearing
-         *    on the top
-         */
-		//if(isReverse == false) {
-		//	for (var i = 2; i < numrows; i++) {
-		//		nextrecord = i + 1;
-		//		if(nextrecord < numrows)
-		//			rows[i].innerHTML = rows[nextrecord].innerHTML;
-		//	}
-		//	appearatrow = numrows - 1;
-		//} else {
+		 *    on the top
+		 */
+		if(isReverse == false) {
+			for (var i = 2; i < numrows; i++) {
+				nextrecord = i + 1;
+				if(nextrecord < numrows)
+					rows[i].innerHTML = rows[nextrecord].innerHTML;
+			}
+		} else {
 			for (var i = numrows; i > 0; i--) {
 				nextrecord = i + 1;
 				if(nextrecord < numrows)
 					rows[nextrecord].innerHTML = rows[i].innerHTML;
 			}
-			appearatrow = 1;
-		//}
+		}
 		var item = document.getElementById('firstrow');
 		if(x == data.length-1) {
 			/* nothing */
@@ -132,15 +114,13 @@ function update_div_rows(data) {
 			showanim = false;
 		}
 		if (showanim) {
-			rows[appearatrow].style.display = 'none';
-			rows[appearatrow].innerHTML = data[x];
-			new Effect.Appear(rows[appearatrow]);
+			item.style.display = 'none';
+			item.innerHTML = data[x];
+			new Effect.Appear(item);
 		} else {
-			rows[appearatrow].innerHTML = data[x];
+			item.innerHTML = data[x];
 		}
 	}
-	/* rechedule AJAX interval */
-	timer = setInterval('fetch_new_rules()', updateDelay);
 }
 function toggle_pause() {
 	if(isPaused) {
@@ -151,5 +131,4 @@ function toggle_pause() {
 	}
 }
 /* start local AJAX engine */
-lastsawtime = '<?php echo time(); ?>;';
 timer = setInterval('fetch_new_rules()', updateDelay);

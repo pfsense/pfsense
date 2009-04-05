@@ -146,6 +146,9 @@ include("head.inc");
 								</td>
 							</tr>
 							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<tr>
 								<td colspan="2" valign="top" class="listtopic">Power savings</td>
 							</tr>
 							<tr>

@@ -301,11 +301,11 @@ function sourcesel_change() {
 					<td colspan="2" valign="top" class="listtopic">Edit Advanced Outbound NAT entry</td>
 				</tr>
 	        <tr>
-                  <td width="22%" valign="top" class="vncellreq">No nat (NOT)</td>
+                  <td width="22%" valign="top" class="vncell">Do not NAT</td>
                   <td width="78%" class="vtable">
 			<input type="checkbox" name="nonat"<?php if(isset($pconfig['nonat'])) echo " CHECKED"; ?>>
-                     <span class="vexpl">Enabling this option will disable natting for the item and stop processing outgoing nat rules.
-		     <br>Hint: in most cases, you'll not use this option unless you know what you're doing.</span></td>
+                     <span class="vexpl">Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules.
+		     <br>Hint: in most cases, you won't use this option.</span></td>
                 </tr>
 	        <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
@@ -421,13 +421,13 @@ any)</td>
                           <td>Port:&nbsp;&nbsp;</td>
                           <td><input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"></td>
 			</tr>
-			<tr>
-                          <td>Static-port:&nbsp;&nbsp;</td>
-                          <td><input onChange="staticportchange();" name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " CHECKED";?>></td>
-			</tr>
 			<tr><td>&nbsp;</td><td>
                         <span class="vexpl">Enter the source port for the outbound NAT mapping.</span>
 			</td></tr>
+                        <tr>
+                          <td>Static-port:&nbsp;&nbsp;</td>
+                          <td><input onChange="staticportchange();" name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " CHECKED";?>></td>
+			</tr>
 			</table>
 		  </td>
                 </tr>
@@ -435,7 +435,7 @@ any)</td>
 				  <td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
 				  <td width="78%" class="vtable">
 					<input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-				   			 HINT: This prevents the rule from automatically syncing to other carp members.
+				   			 HINT: This prevents the rule from automatically syncing to other CARP members.
 				  </td>
 				</tr>
                 <tr>

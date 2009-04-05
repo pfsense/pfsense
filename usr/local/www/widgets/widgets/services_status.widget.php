@@ -123,7 +123,21 @@ if (isset($config['ipsec']['enable'])) {
     $services[] = $pconfig2;
     unset($pconfig2);
 }
+
+if(isset($_POST['servicestatusfilter'])) {
+	$config['widgets']['servicestatusfilter'] = $_POST['servicestatusfilter'];
+	write_config("Saved Service Status Filter via Dashboard");
+	Header("Location: /");
+}
 ?>
+<input type="hidden" id="services_status-config" name="services_status-config" value="">
+<div id="services_status-settings" name="services_status-settings" class="widgetconfigdiv" style="display:none;">
+	<form action="/widgets/widgets/services_status.widget.php" method="post" name="iforma">
+		Comma separated list of services to NOT display in the widget<br />
+		<input type="text" length="30" name="servicestatusfilter" class="formfld unknown" id="servicestatusfilter" value="<?= $config['widgets']['servicestatusfilter'] ?>">
+		<input id="submita" name="submita" type="submit" class="formbtn" value="Save" />
+    </form>
+</div>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
@@ -133,9 +147,11 @@ if (isset($config['ipsec']['enable'])) {
 		<td class="widgetsubheader">&nbsp;</td>
 	</tr>
 <?php
+$skipservices = explode(",", str_replace(" ", "", $config['widgets']['servicestatusfilter']));
+
 if($services) {
 	foreach($services as $service) {
-		if(!$service['name']) continue;
+		if((!$service['name']) || (in_array($service['name'], $skipservices))) continue;
 		if(!$service['description']) $service['description'] = get_pkg_descr($service['name']);
 		echo '<tr><td class="listlr">' . $service['name'] . "</td>\n";
 		echo '<td class="listr">' . substr($service['description'],0 ,20) . "</td>\n";
@@ -167,3 +183,10 @@ if($services) {
 }
 ?>
 </table>
+
+<!-- needed to display the widget settings menu -->
+<script language="javascript" type="text/javascript">
+	selectIntLink = "services_status-configure";
+	textlink = document.getElementById(selectIntLink);
+	textlink.style.display = "inline";
+</script>

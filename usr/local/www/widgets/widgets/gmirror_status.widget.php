@@ -25,6 +25,8 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+require_once("/usr/local/www/widgets/include/gmirror_status.inc");
+
 $mirrors = get_gmirror_status();
 
 ?>

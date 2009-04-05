@@ -32,6 +32,15 @@
 /* include all configuration functions */
 require_once("functions.inc");
 
+function activate_powerd() {
+	global $config, $g;
+	if(isset($config['system']['powerd_enable'])) {
+		exec("/usr/sbin/powerd -b adp -a adp");
+	} else {
+		exec("/usr/bin/killall powerd");
+	}
+}
+
 function activate_sysctls() {
 	global $config, $g;
 	

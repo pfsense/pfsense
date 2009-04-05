@@ -46,6 +46,7 @@ require("guiconfig.inc");
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
+$pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 
 if ($_POST) {
 
@@ -69,6 +70,7 @@ if ($_POST) {
 			unset($config['system']['lb_use_sticky']);
 
 		$config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
+		$config['system']['powerd_enable'] = $_POST['powerd_enable'] ? true : false;
 
 		write_config();
 
@@ -80,6 +82,8 @@ if ($_POST) {
 		else
 		    $savemsg = $retval;
 		config_unlock();
+		
+		activate_powerd();
 	}
 }
 
@@ -139,6 +143,26 @@ include("head.inc");
 									the sticky connection. Further connections from that host
 									will be redirected to the next web server in the round
 									robin.
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">PowerD</td>
+								<td width="78%" class="vtable">
+									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked"; ?> />
+									<br />
+								     The powerd utility monitors the system state and sets various power con-
+								     trol options accordingly.	It offers three modes (maximum, minimum, and
+								     adaptive) that can be individually selected while on AC power or batter-
+								     ies.  The modes maximum, minimum, and adaptive may be abbreviated max,
+								     min, adp.   Maximum mode chooses the highest performance values.  Minimum 
+								     mode selects the lowest performance values to get the most power savings.
+								     Adaptive mode attempts to strike a balance by degrading performance when
+								     the system appears idle and increasing it when the system is busy.  It
+								     offers a good balance between a small performance loss for greatly
+								     increased power savings.  The default mode for pfSense is adaptive.
 								</td>
 							</tr>
 							<tr>

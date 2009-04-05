@@ -280,6 +280,9 @@
 	/* start the upnp daemon if it is enabled */
 	upnp_start();
 
+	/* If powerd is enabled, lets launch it */
+	activate_powerd();
+
 	mwexec_bg("/usr/sbin/update_dns_cache.sh");
 
 	/* done */

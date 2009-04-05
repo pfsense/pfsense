@@ -38,10 +38,6 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("filter_log.inc");
 
-//set variable for custom title
-$log_title = "Firewall Logs";
-$log_title_link = "diag_logs_filter.php";
-
 if($_POST['filterlogentries']) {
 	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 	write_config("Saved Filter Log Entries via Dashboard");

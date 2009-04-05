@@ -81,10 +81,13 @@ function slbd_configure() {
 					$slbdconf .= "\t:method=round-robin:\\\n";
 					$slbdconf .= "\t:services={$svrcnt}:\\\n";
 					$slbdconf .= $svrtxt;
+					if($config['load_balancer']['lbpool'][$i]['monitor'] == "ICMP") {
+						$slbdconf .= "\t:ping:\n";
+					} else {
+						$slbdconf .= "\t:tcppoll:send=:expect=:\n";
+					}
 				}
 			}
-			
-			$slbdconf .= "\t:tcppoll:send=:expect=:\n";
 			
 			$should_start=1;
 		}

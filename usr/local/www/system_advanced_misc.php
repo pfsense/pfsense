@@ -155,6 +155,7 @@ include("head.inc");
 								<td width="22%" valign="top" class="vncell">PowerD</td>
 								<td width="78%" class="vtable">
 									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked"; ?> />
+									<strong>Use PowerD</strong><br/>
 									<br />
 								     The powerd utility monitors the system state and sets various power con-
 								     trol options accordingly.	It offers three modes (maximum, minimum, and

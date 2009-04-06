@@ -53,6 +53,8 @@ $FilterIflist = array();
 
 function filter_load_ipfw() 
 {
+	global $config;
+	
 	if (!is_module_loaded("ipfw.ko")) {
 		mute_kernel_msgs();
 		mwexec("/sbin/kldload ipfw");
@@ -68,6 +70,15 @@ function filter_load_ipfw()
 		 * XXX Not sure if we really do outbound filtering with ipfw!
 		 */
 		mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"ipfw,pf\"");
+	}
+	
+	/* Set ipfw state limit */
+	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
+		/* Set ipfw states to user defined maximum states in Advanced menu. */
+		mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");
+	} else {
+		/* Set to default 10,000 */
+		mwexec("sysctl net.inet.ip.fw.dyn_max=10000");
 	}
 }
 
@@ -1932,19 +1943,25 @@ EOD;
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
 			if (!isset ($rule['disabled'])) {
-				if(isset($rule['floating']))
+				if(isset($rule['floating'])) {
 					$rule_arr1[] = generate_user_filter_rule_arr($rule);
-				else
+				} else {
 					$rule_arr2[] = generate_user_filter_rule_arr($rule);
-						if ($rule['sched'])
+				}
+				if ($rule['sched']) 
 					$load_ipfw_module = true;
 			}
 		}
 		$rule_arr = array_merge($rule_arr1,$rule_arr2);
 		/* 
 		 * check to see if any rules reference a schedule
+		 * or if CP is enabled
 		 * and if so load ipfw for later usage.
 		 */
+		if (isset($config['captiveportal']['enable']) && isset($config['interfaces'][$config['captiveportal']['interface']]['enable'])) {
+			$load_ipfw_module = true;
+		}
+
 		if ($load_ipfw_module == true) {
 			filter_load_ipfw();
 			$time_based_rules = true;

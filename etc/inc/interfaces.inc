@@ -3,7 +3,7 @@
 /*
 	interfaces.inc
 	Copyright (C) 2004-2008 Scott Ullrich
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (C) 2008-2009 Ermal Luçi
 	All rights reserved.
 
 	function interfaces_wireless_configure is
@@ -249,7 +249,6 @@ function interface_qinq2_configure($qinq, $fd, $macaddr) {
 
         if (!is_array($qinq)) {
                 log_error("QinQ compat VLAN: called with wrong options. Problems with config!\n");
-                echo "ERROR";
                 return;
         }
 

@@ -1678,6 +1678,17 @@ block out $log all label "Default deny rule"
 block quick proto { tcp, udp } from any port = 0 to any
 block quick proto { tcp, udp } from any to any port = 0
 
+
+EOD;
+
+        if(!isset($config['system']['ipv6allow'])) {
+                $ipfrules .= "# Block all IPv6\n";
+                $ipfrules .= "block in quick inet6 all\n";
+                $ipfrules .= "block out quick inet6 all\n";
+        }
+
+        $ipfrules .= <<<EOD
+	
 # snort2c
 table <snort2c> persist
 block quick from <snort2c> to any label "Block snort2c hosts"

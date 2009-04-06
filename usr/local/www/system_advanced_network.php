@@ -45,6 +45,7 @@ require("guiconfig.inc");
 
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
+$pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
@@ -71,6 +72,12 @@ if ($_POST) {
 					unset($config['diag']['ipv6nat']['ipaddr']);				
 				}
 			}
+		}
+		
+		if($_POST['ipv6allow'] == "yes") {
+		    $config['system']['ipv6allow'] = true;
+		} else {
+		    unset($config['system']['ipv6allow']);
 		}
 
 		if($_POST['sharednet'] == "yes") {
@@ -164,6 +171,15 @@ function enable_change(enable_over) {
 						<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">IPv6 Options</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Allow IPv6</td>
+								<td width="78%" class="vtable">
+									<input name="ipv6allow" type="checkbox" id="ipv6allow" value="yes" <?php if ($pconfig['ipv6allow']) echo "checked"; ?> onclick="enable_change(false)" />
+									<strong>Allow IPv6</strong><br/>
+									All IPv6 will be blocked unless this box is checked.<br/>
+									<br/>
+								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell">IPv6 over IPv4 Tunneling</td>

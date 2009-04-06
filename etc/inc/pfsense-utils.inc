@@ -2244,9 +2244,9 @@ function display_top_tabs($tab_array) {
 	$tabcharcount = 0;
 	foreach ($tab_array as $ta) 
 		$tabcharcount = $tabcharcount + strlen($ta[0]);
-	// If the character count of the tab names is > 80
+	// If the character count of the tab names is > 82
 	// then show a select item dropdown menubox.
-	if($tabcharcount > 80) {
+	if($tabcharcount > 82) {
 		echo "Currently viewing: ";
 		echo "<select name='TabSelect'>\n";
 		foreach ($tab_array as $ta) {

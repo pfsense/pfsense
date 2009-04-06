@@ -222,7 +222,7 @@ function enablechange() {
 	} else {
 		$ip = "/";
 	}
-	if($xml == "traffic_shaper_wizard.xml") {
+	if($xml == "traffic_shaper_wizard.xml" && $_REQUEST['stepid'] > "0") {
 		echo "<a href='/firewall_shaper.php?remove=remove'>";
 	} else {
 		echo "<a href='$ip'>";

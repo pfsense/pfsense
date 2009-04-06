@@ -211,16 +211,6 @@ rm -rf /var/run/*
 
 echo -n "."
 DISABLESYSLOGCLOG=`cat /cf/conf/config.xml | grep disablesyslogclog | wc -l | awk '{ print $1 }'`
-rm -f /var/log/system.log \
-	/var/log/filter.log \
-	/var/log/dhcpd.log \
-	/var/log/vpn.log \
-	/var/log/openvpn.log \
-	/var/log/portalauth.log \
-	/var/log/ipsec.log \
-	/var/log/relayd.log \
-	/var/log/lighttpd.log \
-	/var/log/ntpd.log
 if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
 	touch /var/log/system.log
 	touch /var/log/filter.log

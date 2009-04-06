@@ -88,31 +88,38 @@ function filter_configure_sync() {
 
 	/* load ipfw / dummynet early on if required */
 	if($config['system']['dummynetshaper']) {
-				$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-				if($status == "0") {
-					mwexec("/sbin/kldload ipfw");
-					mwexec("/sbin/kldload dummynet");
-				}
-		} else {	
-			/* check to see if any rules reference a schedule
-			 * and if so load ipfw for later usage.
-			 */
-			foreach($config['filter']['rule'] as $rule) {
-				if($rule['sched'])
-					$time_based_rules = true;
+		$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
+		if($status == "0") {
+			mwexec("/sbin/kldload ipfw");
+			mwexec("/sbin/kldload dummynet");
+		}
+	} else {	
+		/* check to see if any rules reference a schedule
+		 * and if so load ipfw for later usage.
+		 */
+		foreach($config['filter']['rule'] as $rule) {
+			if($rule['sched'])
+				$time_based_rules = true;
+		}
+		if($time_based_rules == true) {
+			$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
+			if($status == "0") {
+				mute_kernel_msgs();
+				mwexec("/sbin/kldload ipfw");
+				unmute_kernel_msgs();
 			}
-			if($time_based_rules == true) {
-				$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-				if($status == "0") {
-					mute_kernel_msgs();
-					mwexec("/sbin/kldload ipfw");
-					unmute_kernel_msgs();
-				}
-				exec("/sbin/ipfw delete set 9");
-				exec("/sbin/ipfw delete 2");
-				exec("/sbin/ipfw delete 3");
-			}
-	}
+                        if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
+                                /* Set ipfw states to user defined maximum states in Advanced menu. */
+                                mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");
+                        } else {
+                                /* Set to default 10,000 */
+                                mwexec("sysctl net.inet.ip.fw.dyn_max=10000");
+                        }
+                        exec("/sbin/ipfw delete set 9");
+			exec("/sbin/ipfw delete 2");
+			exec("/sbin/ipfw delete 3");
+		}
+        }
 
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();

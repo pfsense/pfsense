@@ -65,6 +65,15 @@ function captiveportal_configure() {
 
 		/* make sure ipfw is loaded */
 		mwexec("/sbin/kldload ipfw");
+                
+                /* Set ipfw state limit */
+                if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
+                    /* Set ipfw states to user defined maximum states in Advanced menu. */
+                    mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");
+                } else {
+                    /* Set to default 10,000 */
+                    mwexec("sysctl net.inet.ip.fw.dyn_max=10000");
+                }
 
 		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"ipfw,pf\"");
 		mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"ipfw,pf\""); 

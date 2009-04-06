@@ -249,7 +249,6 @@ function interface_qinq2_configure($qinq, $fd, $macaddr) {
 
         if (!is_array($qinq)) {
                 log_error("QinQ compat VLAN: called with wrong options. Problems with config!\n");
-                echo "ERROR";
                 return;
         }
 

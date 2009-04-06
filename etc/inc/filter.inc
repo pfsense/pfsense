@@ -2189,6 +2189,15 @@ table <snort2c> persist
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
 
+EOD;
+
+        if(!isset($config['system']['ipv6allow'])) {
+                $ipfrules .= "# Block all IPv6\n";
+                $ipfrules .= "block in quick inet6 all\n";
+                $ipfrules .= "block out quick inet6 all\n";
+        }
+
+        $ipfrules .= <<<EOD
 # loopback
 anchor "loopback"
 pass in quick on \$loopback all label "pass loopback"

@@ -38,6 +38,7 @@ $pconfig['rfc959workaround'] = $config['system']['rfc959workaround'];
 $pconfig['scrubnodf'] = $config['system']['scrubnodf'];
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
+$pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 $pconfig['cert'] = base64_decode($config['system']['webgui']['certificate']);
 $pconfig['key'] = base64_decode($config['system']['webgui']['private-key']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
@@ -175,6 +176,11 @@ if ($_POST) {
 			unset($config['diag']['ipv6nat']['enable']);
 			unset($config['diag']['ipv6nat']['ipaddr']);
 		}
+		if($_POST['ipv6allow'] == "yes") {
+			$config['system']['ipv6allow'] = true;
+		} else {
+			unset($config['system']['ipv6allow']);
+		}                
 		$oldcert = $config['system']['webgui']['certificate'];
 		$oldkey = $config['system']['webgui']['private-key'];
 		$config['system']['webgui']['certificate'] = base64_encode($_POST['cert']);
@@ -367,16 +373,31 @@ include("head.inc");
 			<td colspan="2" class="list" height="12">&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">IPv6 tunneling</td>
+			<td colspan="2" valign="top" class="listtopic">IPv6</td>
+		</tr>
+       		<tr>
+			<td width="22%" valign="top" class="vncell">Allow IPv6</td>
+			<td width="78%" class="vtable">
+				<input name="ipv6allow" type="checkbox" id="ipv6allow" value="yes" <?php if ($pconfig['ipv6allow']) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Allow IPv6 traffic</strong>
+				<br /> <br />
+				All IPv6 traffic will be blocked unless this box is checked.
+			</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncell">&nbsp;</td>
+			<td width="22%" valign="top" class="vncell">IPv6 tunneling</td>
 			<td width="78%" class="vtable">
 				<input name="ipv6nat_enable" type="checkbox" id="ipv6nat_enable" value="yes" <?php if ($pconfig['ipv6nat_enable']) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>NAT encapsulated IPv6 packets (IP protocol 41/RFC2893) to:</strong>
 				<br /> <br />
 				<input name="ipv6nat_ipaddr" type="text" class="formfld" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
 				&nbsp;(IP address)
+			</td>
+		</tr>
+        	<tr>
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%">
+				<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" />
 			</td>
 		</tr>
 		<tr>

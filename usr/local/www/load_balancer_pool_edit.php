@@ -208,7 +208,6 @@ function type_change(enable_change) {
 			document.getElementById("monitorport_desc").disabled = 0;
 			document.iform.monitorip.value = "";
 			document.iform.port.disabled = 0;
-			document.iform.monitor.selectedIndex = 0;
 			document.iform.monitor.disabled = 0;
 			var interfacename_text = document.getElementById("interfacename_text");
 			interfacename_text.innerHTML = "Server IP Address";

@@ -99,7 +99,8 @@ function start_routed() {
 }
 
 function stop_routed() {
-	mwexec("killall routed");
+	if(isvalidproc("routed"))
+		mwexec("killall routed");
 }
 
 function restart_routed() {

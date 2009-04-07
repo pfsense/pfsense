@@ -146,21 +146,21 @@ include("head.inc");
 			<span class="vexpl">The interface here servers as the local address to be used for the gif tunnel.</span></td>
                 </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">gif remote address.  </td>
+                  <td valign="top" class="vncellreq">gif remote address</td>
                   <td class="vtable">
                     <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=$pconfig['remote-addr'];?>">
                     <br>
                     <span class="vexpl">Peer address where encapsulated gif packets will be sent. </span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">gif tunnel local address.  </td>
+                  <td valign="top" class="vncellreq">gif tunnel local address</td>
                   <td class="vtable">
                     <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=$pconfig['tunnel-local-addr'];?>">
                     <br>
-                    <span class="vexpl">Local gif tunnel endpoint. </span></td>
+                    <span class="vexpl">Local gif tunnel endpoint</span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">gif tunnel remote address.  </td>
+                  <td valign="top" class="vncellreq">gif tunnel remote address </td>
                   <td class="vtable">
                     <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="16" value="<?=$pconfig['tunnel-remote-addr'];?>">
                     <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
@@ -178,14 +178,14 @@ include("head.inc");
                     <span class="vexpl">Remote gif address endpoint. The subnet part is used for the determinig the network that is tunneled.</span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">Route caching  </td>
+                  <td valign="top" class="vncell">Route caching  </td>
                   <td class="vtable">
                     <input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked";?>>
                     <br>
                     <span class="vexpl">Specify if route caching can be enabled. Be careful with these settings on dynamic networks. </span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">ECN friendly behaviour.  </td>
+                  <td valign="top" class="vncell">ECN friendly behaviour</td>
                   <td class="vtable">
                     <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked";?>>
                     <br>

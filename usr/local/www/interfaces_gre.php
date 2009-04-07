@@ -58,7 +58,7 @@ function gre_inuse($num) {
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (gre_inuse($_GET['id'])) {
-		$input_errors[] = "This GRE TUNNEL cannot be deleted because it is still being used as an interface.";
+		$input_errors[] = "This GRE tunnel cannot be deleted because it is still being used as an interface.";
 	} else {
 		mwexec("/sbin/ifconfig " . $a_gres[$_GET['id']]['greif'] . " destroy");
 		unset($a_gres[$_GET['id']]);
@@ -124,14 +124,11 @@ include("head.inc");
                   <td class="list" colspan="3">&nbsp;</td>
                   <td class="list"> <a href="interfaces_gre_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
-				<tr>
-				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  Note:<br>
-				  </strong></span>
-				  Something meaningful here.
-				  </td>
-				<td class="list">&nbsp;</td>
-				</tr>
+        <tr>
+                <td class="tabcont" colspan="3">
+                    <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.</span></p>
+                    </td>
+                </tr>
               </table>
 	      </div>
 	</td>

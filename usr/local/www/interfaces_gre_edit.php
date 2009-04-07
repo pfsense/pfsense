@@ -145,24 +145,24 @@ include("head.inc");
 		      		?>
                     </select>
 			<br/>
-			<span class="vexpl">The interface here servers as the local address to be used for the GRE tunnel.</span></td>
+			<span class="vexpl">The interface here serves as the local address to be used for the GRE tunnel.</span></td>
                 </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">GRE remote address.  </td>
+                  <td valign="top" class="vncellreq">GRE remote address</td>
                   <td class="vtable">
                     <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=$pconfig['remote-addr'];?>">
                     <br>
-                    <span class="vexpl">Peer address where encapsulated GRE packets will be sent. </span></td>
+                    <span class="vexpl">Peer address where encapsulated GRE packets will be sent </span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">GRE tunnel local address.  </td>
+                  <td valign="top" class="vncellreq">GRE tunnel local address </td>
                   <td class="vtable">
                     <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=$pconfig['tunnel-local-addr'];?>">
                     <br>
-                    <span class="vexpl">Local GRE tunnel endpoint. </span></td>
+                    <span class="vexpl">Local GRE tunnel endpoint</span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">GRE tunnel remote address.  </td>
+                  <td valign="top" class="vncellreq">GRE tunnel remote address </td>
                   <td class="vtable">
                     <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="16" value="<?=$pconfig['tunnel-remote-addr'];?>">
                     <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
@@ -177,35 +177,33 @@ include("head.inc");
                                         ?>
                     </select>					
                     <br/>
-                    <span class="vexpl">Remote GRE address endpoint. The subnet part is used for the determinig the network that is tunneled.</span></td>
+                    <span class="vexpl">Remote GRE address endpoint. The subnet part is used for the determining the network that is tunneled.</span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">Mobile tunnel.  </td>
+                  <td valign="top" class="vncell">Mobile tunnel</td>
                   <td class="vtable">
                     <input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked";?>>
                     <br>
-                    <span class="vexpl">Specify which encapsulation method the tunnel should do. </span></td>
+                    <span class="vexpl">Specify which encapsulation method the tunnel should use. </span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">Route search type.  </td>
+                  <td valign="top" class="vncell">Route search type</td>
                   <td class="vtable">
                     <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked";?>>
                     <br>
                     <span class="vexpl">
-     For correct operation, the gre device needs a route to the destination
+     For correct operation, the GRE device needs a route to the destination
      that is less specific than the one over the tunnel.  (Basically, there
      needs to be a route to the decapsulating host that does not run over the
-     tunnel, as this would be a loop.)	If the addresses are ambiguous, doing
-     the ifconfig tunnel step before the ifconfig(8) call to set the gre IP
-     addresses will help to find a route outside the tunnel.
+     tunnel, as this would be a loop.)
 					 </span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">WCCP version.  </td>
+                  <td valign="top" class="vncell">WCCP version</td>
                   <td class="vtable">
                     <input name="link2" type="checkbox" id="link2" <?if ($pconfig['link2']) echo "checked";?>>
                     <br>
-                    <span class="vexpl">Specify which WCCP encapsulation(version 1 or 2) method the tunnel should do. </span></td>
+                    <span class="vexpl">Specify which WCCP encapsulation(version 1 or 2) method the tunnel should use</span></td>
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>

@@ -250,7 +250,7 @@ else
 	fi
 fi 
 # change permissions on newly created fifolog files.
-chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/relayd.log	
+chmod 0600 /var/log/*.log
 
 echo -n "."
 DEVFS=`mount | grep devfs | wc -l | cut -d" " -f8`

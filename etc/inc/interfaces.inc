@@ -1616,7 +1616,7 @@ EOD;
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
 
-	$relwanif = $wancfg['if'];
+	$realwanif = $wancfg['if'];
 
 	/* bring wan interface up before starting dhclient */
 	if($realwanif)

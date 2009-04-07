@@ -313,8 +313,8 @@ $port_str = gettext("Port");
 $url_str = gettext("URL");
 $update_freq_str = gettext("Update Freq.");
 
-$networks_help = gettext("Networks can be expressed like 10.0.0.0 format.  Select the CIDR (network mask) that pertains to each entry.");
-$hosts_help = gettext("Enter as many hosts as you would like.  Hosts should be expressed in their ip address format.");
+$networks_help = gettext("Networks are specified in CIDR format.  Select the CIDR mask that pertains to each entry. /32 specifies a single host, /24 specifies 255.255.255.0, etc. Hostnames (FQDNs) may also be specified, using a /32 mask.");
+$hosts_help = gettext("Enter as many hosts as you would like.  Hosts must be specified by their IP address.");
 $ports_help = gettext("Enter as many ports as you wish.  Port ranges can be expressed by seperating with a colon.");
 $url_help = gettext("Enter as many urls as you wish.  Also set the time that you would like the url refreshed in days.  After saving {$g['product_name']} will download the URL and import the items into the alias.");
 

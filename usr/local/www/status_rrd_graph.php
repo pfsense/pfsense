@@ -42,6 +42,10 @@ if(! isset($config['rrd']['enable'])) {
 	header("Location: status_rrd_graph_settings.php");
 }
 
+$rrddbpath = "/var/db/rrd/";
+/* XXX: (billm) do we have an exec() type function that does this type of thing? */
+exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
+
 if ($_GET['cat']) {
 	$curcat = $_GET['cat'];
 } else {
@@ -55,14 +59,27 @@ if ($_GET['cat']) {
 if ($_GET['option']) {
 	$curoption = $_GET['option'];
 } else {
-	if($curcat == "system") {
-		$curoption = "processor";
-	} else if($curcat == "queues") {
-		$curoption = "queues";
-	} else if($curcat == "queuedrops") {
-		$curoption = "queuedrops";
-	} else {
-		$curoption = "wan";
+	switch($curcat) {
+		case "system":
+			$curoption = "processor";
+			break;
+		case "queues":
+			$curoption = "queues";
+			break;
+		case "queuedrops":
+			$curoption = "queuedrops";
+			case "quality":
+		foreach($databases as $database) {
+			if(preg_match("/[-]quality\.rrd/i", $database)) {
+				/* pick off the 1st database we find that matches the quality graph */
+				$name = explode("-", $database);
+				$curoption = "$name[0]";
+				continue 2;
+			}
+		}
+		default:
+			$curoption = "wan";
+			break;
 	}
 }
 
@@ -76,10 +93,7 @@ if ($_GET['style']) {
 	}
 }
 
-$rrddbpath = "/var/db/rrd/";
-
-/* XXX: (billm) do we have an exec() type function that does this type of thing? */
-exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
+/* sort names reverse so WAN comes first */
 rsort($databases);
 
 /* these boilerplate databases are required for the other menu choices */

@@ -274,7 +274,7 @@ function show_source_port_range() {
 					<span class="vexpl"><strong>Enable spanning tree options for this bridge. </strong></span>
 					<br/><br/>
 				  	<table id="stpoptions" name="stpoptions" border="0" cellpadding="6" cellspacing="0">
-					<tr><td valign="top" class="vncell" width="20%">Proto</td>
+					<tr><td valign="top" class="vncell" width="20%">Protocol</td>
 					<td class="vtable" width="80%">
 				  	<select name="proto" id="proto">
 						<?php 
@@ -287,7 +287,7 @@ function show_source_port_range() {
 						?>
 					</select>
                     <br/>
-                    <span class="vexpl">Protocol used fro spanning tree. </span></td>
+                    <span class="vexpl">Protocol used for spanning tree. </span></td>
 					</td></tr>
 					<tr> <td valign="top" class="vncell" width="20%">STP interfaces</td>
 					<td class="vtable" width="80%">
@@ -303,9 +303,9 @@ function show_source_port_range() {
 					</select>
 					<br/>
 					<span class="vexpl" > 
-	     Enable Spanning Tree protocol on interface.  The if_bridge(4)
-	     driver has support for the IEEE 802.1D Spanning Tree protocol
-	     (STP).  Spanning Tree is used to detect and remove loops in a
+	     Enable Spanning Tree Protocol on interface.  The if_bridge(4)
+	     driver has support for the IEEE 802.1D Spanning Tree Protocol
+	     (STP).  STP is used to detect and remove loops in a
 	     network topology.
 					</span>
 					</td></tr>
@@ -314,7 +314,7 @@ function show_source_port_range() {
 					<input name="maxage" type="text" class="formfld unkown" id="maxage" size="8" value="<?=$pconfig['maxage'];?>"> seconds
 					<br/>
 					<span class="vexpl">
-	     Set the time that a Spanning Tree protocol configuration is
+	     Set the time that a Spanning Tree Protocol configuration is
 	     valid.  The default is 20 seconds.  The minimum is 6 seconds and
 	     the maximum is 40 seconds.
 					</span>
@@ -325,8 +325,7 @@ function show_source_port_range() {
 					<br/>
 					<span class="vexpl">
 	     Set the time that must pass before an interface begins forwarding
-	     packets when Spanning Tree is enabled.  The default is 15 sec-
-	     onds.  The minimum is 4 seconds and the maximum is 30 seconds.		
+	     packets when Spanning Tree is enabled.  The default is 15 seconds.  The minimum is 4 seconds and the maximum is 30 seconds.		
 					</span>
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%">Hello time</td>
@@ -334,10 +333,8 @@ function show_source_port_range() {
 					<input name="hellotime" type="text" class="formfld unkown" size="8" id="hellotime" value="<?=$pconfig['hellotime'];?>"> seconds
 					<br/>
 					<span class="vexpl">
-	     Set the time between broadcasting of Spanning Tree protocol con-
-	     figuration messages.  The hello time may only be changed when
-	     operating in legacy stp mode.  The default is 2 seconds.  The
-	     minimum is 1 second and the maximum is 2 seconds.		
+	     Set the time between broadcasting of Spanning Tree Protocol configuration messages.  The hello time may only be changed when
+	     operating in legacy STP mode.  The default is 2 seconds.  The minimum is 1 second and the maximum is 2 seconds.		
 					</span>
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%">Priority</td>
@@ -382,8 +379,7 @@ function show_source_port_range() {
 					<br/>
 					<span class="vexpl" > 
 	     Set the Spanning Tree path cost of interface to value.  The
-	     default is calculated from the link speed.  To change a previ-
-	     ously selected path cost back to automatic, set the cost to 0.
+	     default is calculated from the link speed.  To change a previously selected path cost back to automatic, set the cost to 0.
 	     The minimum is 1 and the maximum is 200000000.		
 					</span>
 					</td></tr>
@@ -405,7 +401,7 @@ Set the size of the bridge address cache to size.	The default is
 				  <td>
 					<input name="timeout" type="text" class="formfld unkown" id="timeout" size="10" value="<?=$pconfig['timeout'];?>"> seconds
 					<br/><span class="vexpl">		
-	     Set the timeout of address cache entries to seconds seconds.  If
+	     Set the timeout of address cache entries to this number of seconds.  If
 	     seconds is zero, then address cache entries will not be expired.
 	     The default is 240 seconds.
 					</span>					
@@ -541,7 +537,7 @@ Set the size of the bridge address cache to size.	The default is
 					</select>
                     <br>
                     <span class="vexpl">
-	     Mark an interface as a ``sticky'' interface.  Dynamically learned
+	     Mark an interface as a "sticky" interface.  Dynamically learned
 	     address entries are treated at static once entered into the
 	     cache.  Sticky entries are never aged out of the cache or
 	     replaced, even if the address is seen on a different interface.		
@@ -562,8 +558,7 @@ Set the size of the bridge address cache to size.	The default is
 					</select>
                     <br>
                     <span class="vexpl">
-	     Mark an interface as a ``private'' interface.  A private inter-
-	     face does not forward any traffic to any other port that is also
+	     Mark an interface as a "private" interface.  A private interface does not forward any traffic to any other port that is also
 	     a private interface.
 					</span></td>
 			    </tr>

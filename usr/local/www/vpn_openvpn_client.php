@@ -132,7 +132,8 @@ if ($_POST) {
 		if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
 			$input_errors[] = $result;
 
-		if (openvpn_port_used($pconfig['protocol'], $pconfig['local_port']) != $vpnid)
+		$portused = openvpn_port_used($pconfig['protocol'], $pconfig['local_port']);
+		if (($portused != $vpnid) && ($portused != 0))
 			$input_errors[] = "The specified 'Local port' is in use. Please select another value";
 	}
 

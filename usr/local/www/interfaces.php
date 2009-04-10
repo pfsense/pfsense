@@ -863,7 +863,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								</select>
 								<br/>
 								<div id='addgwbox'>
-									Select a existing Gateway from the list or <a OnClick="show_add_gateway();" href="#">add a new one</a>.
+									If this interface is an Internet connection, select an existing Gateway from the list or <a OnClick="show_add_gateway();" href="#">add a new one</a>.
 								</div>
 								<div id='notebox'>
 								</div>

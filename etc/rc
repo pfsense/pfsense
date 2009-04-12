@@ -247,6 +247,7 @@ else
 		/usr/sbin/clog -i -s 65535 /var/log/slbd.log
 		/usr/sbin/clog -i -s 65535 /var/log/lighttpd.log
 		/usr/sbin/clog -i -s 65535 /var/log/ntpd.log
+		/usr/sbin/clog -i -s 65535 /var/log/relayd.log		
 	fi
 fi 
 # change permissions on newly created fifolog files.

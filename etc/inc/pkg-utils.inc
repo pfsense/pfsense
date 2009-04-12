@@ -773,12 +773,14 @@ function delete_package_xml($pkg) {
 		if(is_array($pkg_config['tabs'])) {
 			$static_output .= "\tMenu items... ";
 			update_output_window($static_output);
-			foreach($tabs as $tab)
-				$insttabs[] = $tab['name'];
-			foreach($pkg_config['tabs']['tab'] as $tab)
-				foreach($insttabs as $key => $insttab)
-					if($insttab == $tab['name'])
-						unset($tabs[$key]);
+			if(is_array($tabs))
+				foreach($tabs as $	tab)
+					$insttabs[] = $tab['name'];
+			if($pkg_config['tabs']['tab'])
+				foreach($pkg_config['tabs']['tab'] as $tab)
+					foreach($insttabs as $key => $insttab)
+						if($insttab == $tab['name'])
+							unset($tabs[$key]);
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}

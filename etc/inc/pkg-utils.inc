@@ -774,7 +774,7 @@ function delete_package_xml($pkg) {
 			$static_output .= "\tMenu items... ";
 			update_output_window($static_output);
 			if(is_array($tabs))
-				foreach($tabs as $	tab)
+				foreach($tabs as $tab)
 					$insttabs[] = $tab['name'];
 			if($pkg_config['tabs']['tab'])
 				foreach($pkg_config['tabs']['tab'] as $tab)

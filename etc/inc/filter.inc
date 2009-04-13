@@ -191,6 +191,8 @@ function filter_configure_sync() {
 	  $rules .= "set limit states {$max_states}\n";
 	}
 	$rules .= "\n";
+	$rules .= "set skip on pfsync0\n";
+	$rules .= "\n";
 	update_filter_reload_status("Setting up SCRUB information");
 	$rules .= filter_generate_scrubing();
 	$rules .= "\n";

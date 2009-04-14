@@ -134,7 +134,8 @@ if ($_POST) {
 			$gateway['name'] = $_POST['name'];
 			$gateway['gateway'] = $_POST['gateway'];
 			$gateway['descr'] = $_POST['descr'];
-
+			$gateway['monitor'] = $_POST['monitor'];
+			
 			if ($_POST['defaultgw'] == "yes") {
 				$i = 0;
 				foreach($a_gateways as $gw) {

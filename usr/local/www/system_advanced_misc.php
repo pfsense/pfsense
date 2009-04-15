@@ -157,10 +157,10 @@ include("head.inc");
 									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked"; ?> />
 									<strong>Use PowerD</strong><br/>
 									<br />
-								     The powerd utility monitors the system state and sets various power con-
-								     trol options accordingly.	It offers three modes (maximum, minimum, and
-								     adaptive) that can be individually selected while on AC power or batter-
-								     ies.  The modes maximum, minimum, and adaptive may be abbreviated max,
+								     The powerd utility monitors the system state and sets various power control 
+								     options accordingly.	It offers three modes (maximum, minimum, and
+								     adaptive) that can be individually selected while on AC power or batteries.  
+								     The modes maximum, minimum, and adaptive may be abbreviated max,
 								     min, adp.   Maximum mode chooses the highest performance values.  Minimum 
 								     mode selects the lowest performance values to get the most power savings.
 								     Adaptive mode attempts to strike a balance by degrading performance when

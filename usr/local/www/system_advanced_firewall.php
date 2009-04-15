@@ -54,7 +54,6 @@ $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 $pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
-$pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 
 if ($_POST) {
 
@@ -117,11 +116,6 @@ if ($_POST) {
 		else
 			unset($config['system']['disablescrub']);
 
-                if($_POST['ipv6allow'] == "yes")
-                    $config['system']['ipv6allow'] = true;
-                else
-                    unset($config['system']['ipv6allow']);
-                    
 		write_config();
 
 		$retval = 0;
@@ -281,17 +275,6 @@ function update_description(itemnum) {
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
-							<tr>
-								<td colspan="2" valign="top" class="listtopic">IPv6</td>
-							</tr>		
-							<tr>
-								<td width="22%" valign="top" class="vncell">Allow IPv6</td>
-								<td width="78%" class="vtable">
-									<input name="ipv6allow" type="checkbox" id="ipv6allow" value="yes" <?php if (isset($config['system']['ipv6allow'])) echo "checked"; ?> />
-									<strong>Allow IPv6</strong>
-                                                                        <br>All IPv6 traffic will be blocked unless this box is checked.
-								</td>
-							</tr>	
 							<?php if($config['interfaces']['lan']): ?>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>

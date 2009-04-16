@@ -63,6 +63,7 @@ $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksum
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['shapertype']             = $config['system']['shapertype'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
+$pconfig['disablevpnrules'] = isset($config['system']['disablevpnrules']);
 
 if ($_POST) {
 
@@ -121,6 +122,11 @@ if ($_POST) {
 			$config['system']['disablefilter'] = "enabled";
 		} else {
 			unset($config['system']['disablefilter']);
+		}
+		if($_POST['disablevpnrules'] == "yes") {
+			$config['system']['disablevpnrules'] = true;
+		} else {
+			unset($config['system']['disablevpnrules']);
 		}
 		if($_POST['enablesshd'] == "yes") {
 			$config['system']['enablesshd'] = "enabled";
@@ -644,6 +650,16 @@ include("head.inc");
 				<strong>Maximum number of connections to hold in the firewall state table.</strong>
 				<br />
 				<span class="vexpl">Note:  Leave this blank for the default of 10000</span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Disable Auto-added VPN rules</td>
+			<td width="78%" class="vtable">
+				<input name="disablevpnrules" type="checkbox" id="disablevpnrules" value="yes" <?php if (isset($config['system']['disablevpnrules'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Disable all auto-added VPN rules.</strong>
+				<br />
+				<span class="vexpl">Note:  This disables automatically added rules for IPsec, PPTP, and OpenVPN. 
+				</span>
 			</td>
 		</tr>
 		<tr>

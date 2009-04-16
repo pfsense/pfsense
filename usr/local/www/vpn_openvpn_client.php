@@ -200,6 +200,7 @@ if ($_POST) {
 		$client['proxy_addr'] = $pconfig['proxy_addr'];
 		$client['proxy_port'] = $pconfig['proxy_port'];
 		$client['description'] = $pconfig['description'];
+		$client['mode'] = $pconfig['mode'];
 
         if ($tls_mode) {
             $client['caref'] = $pconfig['caref'];

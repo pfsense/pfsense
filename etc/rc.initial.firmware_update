@@ -153,15 +153,16 @@ function check_for_kernel_file() {
 }
 
 function do_upgrade($path, $type) {
-	global $fp;
 	check_for_kernel_file();
-	echo "\nOne moment please... Invoking firmware upgrade...\n";
+	echo "\nOne moment please...\nInvoking firmware upgrade... ";
 	if($type == "bdiff") 
-		exec("/etc/rc.firmware delta_update $path");
+		mwexec_bg("/etc/rc.firmware delta_update $path");
 	else 
-		exec("/etc/rc.firmware pfSenseupgrade $path");
-	unlink_if_exists($path);
-	die;
+		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");
+	sleep(1);
+	while(file_exists("{$g['varrun_path']}/firmware.lock")) 	
+		sleep(1);
+	echo "Done.  Rebooting...\n\n";
 }
 
 exec("rm -f /root/*.md5");

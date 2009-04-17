@@ -87,12 +87,16 @@ enable)
 	#	> /dev/null 2>&1
 	;;
 auto)
+	touch /var/run/firmware.lock
 	backup_chflags
 	remove_chflags
 	/etc/rc.firmware_auto
 	restore_chflags
 	;;
 upgrade)
+
+	touch /var/run/firmware.lock
+
 	# wait 5 seconds before beginning
 	sleep 5
 	backup_chflags
@@ -149,9 +153,12 @@ upgrade)
 	fi
 	;;
 pfSenseupgrade)
-	# wait 5 seconds before beginning
-	sleep 5
 
+	touch /var/run/firmware.lock
+
+	# wait 1 seconds before beginning
+	sleep 1
+	
 	# Sanity check - bail early if there's no firmware file!
 	if [ ! -r $IMG ]; then
 		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info -i -t Upgrade
@@ -210,10 +217,17 @@ pfSenseupgrade)
 	# Remove upgrade file
 	rm -f $IMG
 
-	rm -f /var/run/firmware.lock
+	if [ -e /etc/init_bootloader.sh ]; then
+		sh /etc/init_bootloader.sh
+	fi
 
-	/bin/sync
-	sleep 5
+	# If /tmp/post_upgrade_command exists after update
+	# then execute the command.
+	if [ -f /tmp/post_upgrade_command ]; then
+		sh /tmp/post_upgrade_command
+	fi
+
+	rm -f /var/run/firmware.lock
 
 	# remount /cf ro
 	rm -rf /etc/rc.conf
@@ -225,17 +239,11 @@ pfSenseupgrade)
 	/sbin/mount -r /cf 2>/dev/null
 	/sbin/umount -f / 2>/dev/null
 	/sbin/mount -r / 2>/dev/null
-	if [ -e /etc/init_bootloader.sh ]; then
-		sh /etc/init_bootloader.sh
-	fi
-	/bin/sync
-	echo "Done." | logger -p daemon.info -i -t Upgrade
 
-	# If /tmp/post_upgrade_command exists after update
-	# then execute the command.
-	if [ -f /tmp/post_upgrade_command ]; then
-		sh /tmp/post_upgrade_command
-	fi
+	sleep 3
+	/bin/sync
+	sleep 2
+	echo "Done." | logger -p daemon.info -i -t Upgrade
 
 	# If the archive has unpacked a file called
 	# /tmp/no_upgrade_reboot_required then do
@@ -246,8 +254,10 @@ pfSenseupgrade)
 		rm -f /var/run/config.lock
 		sh /etc/rc.reboot
 	fi
+
 	;;
 delta_update)
+	touch /var/run/firmware.lock
 	backup_chflags
 	remove_chflags
 	binary_update $IMG

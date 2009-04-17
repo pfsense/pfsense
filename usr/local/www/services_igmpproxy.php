@@ -76,7 +76,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("Services","Igmpproxy");
+$pgtitle = array("Services","IGMP Proxy");
 include("head.inc");
 
 ?>
@@ -86,7 +86,7 @@ include("head.inc");
 <form action="services_igmpproxy.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_igmpproxydirty_path)): ?><p>
-<?php print_info_box_np("The igmpentry list has been changed.<br>You must apply the changes in order for them to take effect.");?>
+<?php print_info_box_np("The IGMP entry list has been changed.<br>You must apply the changes in order for them to take effect.");?>
 <?php endif; ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -162,7 +162,7 @@ include("head.inc");
   </tr>
 <tr>
   <td class="tabcont" colspan="4">
-   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Please add the interfaces for upstream, and the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface is allowed to be configured.</span></p>
+   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface can be configured.</span></p>
   </td>
 </tr>
 </table>

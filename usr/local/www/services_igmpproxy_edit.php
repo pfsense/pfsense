@@ -41,7 +41,7 @@
 ##|-PRIV
 
 
-$pgtitle = array("Firewall","Igmpproxy", "Edit");
+$pgtitle = array("Firewall","IGMP Proxy", "Edit");
 
 require("guiconfig.inc");
 
@@ -148,7 +148,7 @@ include("head.inc");
 <form action="services_igmpproxy_edit.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
   <tr>
-	<td colspan="2" valign="top" class="listtopic">Igmpproxy Edit</td>
+	<td colspan="2" valign="top" class="listtopic">IGMP Proxy Edit</td>
   </tr>
   <tr>
     <td valign="top" class="vncellreq">Interface</td>
@@ -183,16 +183,15 @@ include("head.inc");
       </select>
       <br />
       <span class="vexpl">
-        The <b>upstream</b> network interface  is  the  outgoing  interface  which  is
-       responsible  for  communicating  to  availible  multicast data sources.
+        The <b>upstream</b> network interface is the outgoing interface which is
+       responsible for communicating to available multicast data sources.
        There can only be one upstream interface.
 	</span>
 	<br />
 	<span class="vexpl">
        <b>Downstream</b> network interfaces are the distribution  interfaces  to  the
        destination  networks,  where  multicast  clients  can  join groups and
-       receive multicast data. One or more downstream interfaces must be  con-
-       figured.
+       receive multicast data. One or more downstream interfaces must be configured.
       </span>
     </td>
   </tr>

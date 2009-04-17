@@ -107,7 +107,7 @@ include("head.inc");
 	  <?php $i = 0; foreach ($a_igmpproxy as $igmpentry): ?>
 <tr>
   <td class="listlr" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
-    <?=htmlspecialchars($igmpentry['ifname']);?>
+    <?=htmlspecialchars(strtoupper($igmpentry['ifname']));?>
   </td>
   <td class="listlr" ondblclick="document.location='services_igmpproxy_edit.php?id=<?=$i;?>';">
     <?=htmlspecialchars($igmpentry['type']);?>

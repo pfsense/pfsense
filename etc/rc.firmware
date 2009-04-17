@@ -227,8 +227,6 @@ pfSenseupgrade)
 		sh /tmp/post_upgrade_command
 	fi
 
-	rm -f /var/run/firmware.lock
-
 	# remount /cf ro
 	rm -rf /etc/rc.conf
 	rm -rf /etc/motd
@@ -241,6 +239,7 @@ pfSenseupgrade)
 	/sbin/mount -r / 2>/dev/null
 
 	sleep 3
+	rm -f /var/run/firmware.lock
 	/bin/sync
 	sleep 2
 	echo "Done." | logger -p daemon.info -i -t Upgrade

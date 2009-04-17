@@ -153,6 +153,7 @@ function check_for_kernel_file() {
 }
 
 function do_upgrade($path, $type) {
+	global $g;
 	check_for_kernel_file();
 	echo "\nOne moment please...\nInvoking firmware upgrade... ";
 	if($type == "bdiff") 

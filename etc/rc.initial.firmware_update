@@ -155,14 +155,16 @@ function check_for_kernel_file() {
 function do_upgrade($path, $type) {
 	global $g;
 	check_for_kernel_file();
-	echo "\nOne moment please...\nInvoking firmware upgrade... ";
+	echo "\nOne moment please...\nInvoking firmware upgrade...";
 	if($type == "bdiff") 
 		mwexec_bg("/etc/rc.firmware delta_update $path");
 	else 
 		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");
 	sleep(10);
-	while(file_exists("{$g['varrun_path']}/firmware.lock")) 	
+	while(file_exists("{$g['varrun_path']}/firmware.lock")) {
 		sleep(1);
+		echo ".";
+	}
 	echo "Done.  Rebooting...\n\n";
 }
 

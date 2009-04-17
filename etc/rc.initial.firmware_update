@@ -159,7 +159,7 @@ function do_upgrade($path, $type) {
 		mwexec_bg("/etc/rc.firmware delta_update $path");
 	else 
 		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");
-	sleep(1);
+	sleep(10);
 	while(file_exists("{$g['varrun_path']}/firmware.lock")) 	
 		sleep(1);
 	echo "Done.  Rebooting...\n\n";

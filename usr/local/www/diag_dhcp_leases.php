@@ -46,33 +46,33 @@ $pgtitle = array("Status","DHCP leases");
 $leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
 
 if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
-	// Stop DHCPD
+	/* Stop DHCPD */
 	killbyname("dhcpd");
 
-	// Read existing leases
+	/* Read existing leases */
 	$leases_contents = explode("\n", file_get_contents($leasesfile));
 	$newleases_contents = array();
 	$i=0;
 	while ($i < count($leases_contents)) {
-		// Find the lease(s) we want to delete
+		/* Find the lease(s) we want to delete */
 		if ($leases_contents[$i] == "lease {$_GET['deleteip']} {") {
-			// Skip to the end of the lease declaration
+			/* Skip to the end of the lease declaration */
 			do {
 				$i++;
 			} while ($leases_contents[$i] != "}");
 		} else {
-			// It's a line we want to keep, copy it over.
+			/* It's a line we want to keep, copy it over. */
 			$newleases_contents[] = $leases_contents[$i];
 		}
 		$i++;
 	}
 
-	// Write out the new leases file
+	/* Write out the new leases file */
 	$fd = fopen($leasesfile, 'w');
 	fwrite($fd, implode("\n", $newleases_contents));
 	fclose($fd);
 
-	// Restart DHCP Service
+	/* Restart DHCP Service */
 	services_dhcpd_configure();
 	header("Location: diag_dhcp_leases.php");
 }
@@ -366,10 +366,6 @@ foreach ($leases as $data) {
                 echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}&nbsp;</td>\n";
 		
 		if ($data['type'] == "dynamic") {
-			if ($data['online'] != "online") {
-				echo "<td class=\"list\" valign=\"middle\"><a href=\"diag_dhcp_leases.php?deleteip={$data['ip']}\">";
-				echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"delete this dhcp lease\"></a></td>\n";
-			}
 			echo "<td valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&hostname={$data['hostname']}\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a static mapping for this MAC address\"></a></td>\n";
 		} else {
@@ -379,6 +375,12 @@ foreach ($leases as $data) {
 
                 echo "<td valign=\"middle\"><a href=\"services_wol_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
 		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_wol_all.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a Wake on Lan mapping for this MAC address\"></a></td>\n";
+
+		/* Only show the button for offline dynamic leases */
+		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {
+			echo "<td class=\"list\" valign=\"middle\"><a href=\"diag_dhcp_leases.php?deleteip={$data['ip']}\">";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"delete this dhcp lease\"></a></td>\n";
+		}
                 echo "</tr>\n";
 	}
 }

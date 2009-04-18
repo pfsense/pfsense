@@ -1063,10 +1063,7 @@ function setup_polling() {
 
 	setup_polling_defaults();
 
-	if(isset($config['system']['polling']))
-		$supported_ints = array('bge', 'dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'nfe', 'nge', 're', 'rl', 'sf', 'sis', 'ste', 'stge', 'vge', 'vr', 'xl');
-	else
-		$supported_ints = array();
+	$supported_ints = array('bge', 'dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'nfe', 'nge', 're', 'rl', 'sf', 'sis', 'ste', 'stge', 'vge', 'vr', 'xl');
 
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN", "wan" => "WAN");
@@ -1076,10 +1073,10 @@ function setup_polling() {
 	foreach ($iflist as $ifent => $ifname) {
 		$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
 		$ifdevice = substr($real_interface, 0, -1); 
+		if(!in_array($ifdevice, $supported_ints)) {
+			continue;
+ 		}
 		if(isset($config['system']['polling'])) {
-			if(!in_array($ifdevice, $supported_ints)) {
-				continue;
-	 		}
 			mwexec("/sbin/ifconfig {$real_interface} polling");
 		} else {
 			mwexec("/sbin/ifconfig {$real_interface} -polling");

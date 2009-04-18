@@ -795,8 +795,8 @@ function set_networking_interfaces_ports() {
 	if($avail < $g['minimum_ram_warning']) {
 		echo "\n\n\n";
 		echo "DANGER!  WARNING!  ACHTUNG!\n\n";
-		echo "{$g['product_name']} requires *AT LEAST* {$g['minimum_ram_warning_text']} ram to function correctly.\n";
-		echo "Only ({$avail}) megs of ram has been detected.\n";
+		echo "{$g['product_name']} requires *AT LEAST* {$g['minimum_ram_warning_text']} RAM to function correctly.\n";
+		echo "Only ({$avail}) MB RAM has been detected.\n";
 		echo "\nPress ENTER to continue. ";
 		fgets($fp);
 		echo "\n";
@@ -813,6 +813,7 @@ EOD;
 
 	if(!is_array($iflist)) {
 		echo "No interfaces found!\n";
+		$iflist = array();
 	} else {
 		foreach ($iflist as $iface => $ifa) {
 			echo sprintf("% -8s%s%s\t%s\n", $iface, $ifa['mac'],

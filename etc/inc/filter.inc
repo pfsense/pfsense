@@ -423,7 +423,7 @@ function generate_optcfg_array()
 	if ($config['pptpd']['mode'] == "server" || $config['pptpd']['mode'] == "redir") {
 		$oic = array();
 		$oic['if'] = 'pptp';
-		$oic['descr'] = 'PPTP';
+		$oic['descr'] = 'pptp';
 		$oic['ip'] = $config['pptpd']['localip'];
 		$oic['sa'] = $config['pptpd']['remoteip'];
 		$oic['mode'] = $config['pptpd']['mode'];
@@ -435,23 +435,23 @@ function generate_optcfg_array()
 		$FilterIflist['pptp'] = $oic;
 	}
 	if ($config['l2tp']['mode'] == "server") {
-                $oic = array();
-                $oic['if'] = 'l2tp';
-                $oic['descr'] = 'L2TP';
-                $oic['ip'] = $config['l2tp']['localip'];
-                $oic['sa'] = $config['l2tp']['remoteip'];
+		$oic = array();
+		$oic['if'] = 'l2tp';
+		$oic['descr'] = 'L2TP';
+		$oic['ip'] = $config['l2tp']['localip'];
+		$oic['sa'] = $config['l2tp']['remoteip'];
 		if ($config['l2tp']['l2tp_subnet'] <> "")
 			$oic['sn'] = $config['l2tp']['l2tp_subnet'];
 		else
 			$oic['sn'] = "32";
 		$oic['mode'] = $config['l2tp']['mode'];
-                $oic['virtual'] = true;
-                $FilterIflist['l2tp'] = $oic;
+		$oic['virtual'] = true;
+		$FilterIflist['l2tp'] = $oic;
         }
 	if ($config['pppoe']['mode'] == "server") {
 		$oic = array();
 		$oic['if'] = 'pppoe';
-		$oic['descr'] = 'PPPoE';
+		$oic['descr'] = 'pppoe';
 		$oic['ip'] = $config['pppoe']['localip'];
 		$oic['sa'] = $config['pppoe']['remoteip'];
 		$oic['mode'] = $config['pppoe']['mode'];

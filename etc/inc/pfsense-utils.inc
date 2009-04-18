@@ -1031,19 +1031,17 @@ function setup_polling() {
 
 	setup_polling_defaults();
 
-	if(isset($config['system']['polling']))
-		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste', 'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
-	else
-		$supported_ints = array();
+	$supported_ints = array('bge', 'dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste', 'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
 
 	/* if list */
-        $iflist = get_configured_interface_list();
+	$iflist = get_configured_interface_list();
 
 	foreach ($iflist as $ifent => $ifname) {
 		$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
-		if(!in_array($real_interface, $supported_ints)) {
+		$ifdevice = substr($real_interface, 0, -1);
+		if(!in_array($ifdevice, $supported_ints)) {
 			continue;
-                }
+        }
 		if(isset($config['system']['polling'])) {
 			mwexec("/sbin/ifconfig {$real_interface} polling");
 		} else {

@@ -219,11 +219,11 @@ function enable_change(enable_over) {
 								</td>
 							</tr>		
 							<tr>
-								<td width="22%" valign="top" class="vncell">Arp Handling</td>
+								<td width="22%" valign="top" class="vncell">ARP Handling</td>
 								<td width="78%" class="vtable">
 									<input name="sharednet" type="checkbox" id="sharednet" value="yes" <?php if (isset($pconfig['sharednet'])) echo "checked"; ?> />
 									<strong>Suppress ARP messages</strong><br>
-									This option will suppress ARP messages when interfaces share the same physical network</strong>
+									This option will suppress ARP log messages when multiple interfaces reside on the same broadcast domain</strong>
 								</td>
 							</tr>
 							<tr>

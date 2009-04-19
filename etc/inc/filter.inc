@@ -988,7 +988,7 @@ function filter_nat_rules_generate()
 	// Check if inetd is running, if not start it.	If so, restart it gracefully.
 	$helpers = isvalidproc("inetd");
 	if(!$helpers)
-		killbypid("/var/run/inetd.pid");
+		mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
 	else
 		sigkillbypid("/var/run/inetd.pid", "HUP");
 

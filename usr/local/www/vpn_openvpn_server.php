@@ -230,7 +230,7 @@ if ($_POST) {
 
 	if (!$tls_mode) {
 		$reqdfields = array('shared_key');
-		$reqfieldsn = array('Shared key');
+		$reqdfieldsn = array('Shared key');
     } else {
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = explode(",", "Certificate Authority,Certificate");;

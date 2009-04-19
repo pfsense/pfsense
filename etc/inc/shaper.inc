@@ -303,9 +303,9 @@ class altq_root_queue {
 	
 	function validate_input($data, &$input_errors) {
 		
-		$reqfields[] = "bandwidth";
+		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = "Bandwidth";
-		$reqfields[] = "bandwidthtype";
+		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = "Bandwidthtype";
 		
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
@@ -918,8 +918,8 @@ function GetEcn() {
 		
 	function validate_input($data, &$input_errors) {
 	
-		$reqfields[] = "name";
-		$erqfieldsn[] = "Name";
+		$reqdfields[] = "name";
+		$reqdfieldsn[] = "Name";
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($data['priority'] && (!is_numeric($data['priority'])
@@ -1389,9 +1389,9 @@ class hfsc_queue extends priq_queue {
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
 		
-		$reqfields[] = "bandwidth";
+		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = "Bandwidth";
-		$reqfields[] = "bandwidthtype";
+		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = "Bandwidthtype";
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
@@ -1946,9 +1946,9 @@ class cbq_queue extends priq_queue {
 		
 		if ($data['priority'] > 7)
 				$input_errors[] = "Priority must be an integer between 1 and 7.";
-		$reqfields[] = "bandwidth";
+		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = "Bandwidth";
-		$reqfields[] = "bandwidthtype";
+		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = "Bandwidthtype";
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
@@ -2193,9 +2193,9 @@ class fairq_queue extends priq_queue {
 		
 		if ($data['priority'] > 255)
 				$input_errors[] = "Priority must be an integer between 1 and 255.";
-		$reqfields[] = "bandwidth";
+		$reqdfields[] = "bandwidth";
 		$reqdfieldsn[] = "Bandwidth";
-		$reqfields[] = "bandwidthtype";
+		$reqdfields[] = "bandwidthtype";
 		$reqdfieldsn[] = "Bandwidthtype";
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
@@ -2477,11 +2477,11 @@ class dummynet_class {
 		function build_javascript() { return; } /* Do not remove */
 
 		function validate_input($data, &$input_errors) {
-			$reqfields[] = "bandwidth";
+			$reqdfields[] = "bandwidth";
 			$reqdfieldsn[] = "Bandwidth";
-			$reqfields[] = "bandwidthtype";
+			$reqdfields[] = "bandwidthtype";
 			$reqdfieldsn[] = "Bandwidthtype";
-			$reqfields[] = "name";
+			$reqdfields[] = "name";
 			$reqdfieldsn[] = "Name";
 		
 			shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
@@ -3211,7 +3211,7 @@ class layer7 {
     }
     
     function validate_input($data, &$input_errors) {
-	$reqfields[] = "container";
+	$reqdfields[] = "container";
 	$reqdfieldsn[] = "Name";
 		
 	shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);

@@ -2635,7 +2635,8 @@ EOD;
 			$pptpdtarget = $pptpdcfg['redir'];
 
 		if($pptpdtarget) {
-			$ipfrules .= <<<EOD
+			if(!isset($config['system']['disablevpnrules'])) {
+				$ipfrules .= <<<EOD
 
 # PPTPd rules
 anchor "pptp"
@@ -2643,6 +2644,7 @@ pass in quick on \$wan proto gre from any to $pptpdtarget keep state label "allo
 pass in quick on \$wan proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
 
 EOD;
+			}
 
 		} else {
 			/*    this shouldnt ever happen but instead of breaking the clients ruleset
@@ -2822,7 +2824,10 @@ EOD;
 							continue;
 						if(!$remote_gateway) 
 							continue;
-                                                $shorttunneldescr = substr($tunnel['descr'], 0, 26);
+						if(isset($config['system']['disablevpnrules']))
+							continue;
+							
+  						$shorttunneldescr = substr($tunnel['descr'], 0, 26);
 						$ipfrules .= "pass out quick on \${$iface} proto udp from any to {$remote_gateway} port = 500 keep state label \"IPSEC: {$shorttunneldescr} - outbound isakmp\"\n";
 						$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to any port = 500 keep state label \"IPSEC: {$shorttunneldescr} - inbound isakmp\"\n";
 						if ($tunnel['p2']['protocol'] == 'esp') {
@@ -2843,10 +2848,12 @@ EOD;
 		 */
 		$ipseccfg = $config['ipsec'];
 		if (isset($ipseccfg['mobileclients']['enable'])) {
-			foreach($ifdescrs as $iface) {
-				$ipfrules .= "pass in quick on \${$iface} proto udp from any to any port = 500 keep state label \"IPSEC: Mobile - inbound isakmp\"\n";
-				$ipfrules .= "pass in quick on \${$iface} proto esp from any to any keep state label \"IPSEC: Mobile - inbound esp proto\"\n";
-				$ipfrules .= "pass in quick on \${$iface} proto ah from any to any  keep state label \"IPSEC: Mobile - inbound ah proto\"\n";
+			if(!isset($config['system']['disablevpnrules'])) {
+				foreach($ifdescrs as $iface) {
+					$ipfrules .= "pass in quick on \${$iface} proto udp from any to any port = 500 keep state label \"IPSEC: Mobile - inbound isakmp\"\n";
+					$ipfrules .= "pass in quick on \${$iface} proto esp from any to any keep state label \"IPSEC: Mobile - inbound esp proto\"\n";
+					$ipfrules .= "pass in quick on \${$iface} proto ah from any to any  keep state label \"IPSEC: Mobile - inbound ah proto\"\n";
+				}
 			}
 		}
 	}
@@ -3036,7 +3043,7 @@ function create_firewall_outgoing_rules_to_itself() {
 			/* Some people use a TUN tunnel with public IP as a Multiwan interface */
 			if(interface_has_gateway("tun{$x}")) {
 				$rule .= "# Not adding default pass in rule for interface $friendlytunif - tun{$x} with a gateway!";
-			} else {
+			} elseif (!isset($config['system']['disablevpnrules'])) {
 				$rule .="pass in quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			}
 		}
@@ -3049,7 +3056,7 @@ function create_firewall_outgoing_rules_to_itself() {
 			/* Some people use a TAP tunnel with public IP as a Multiwan interface */
 			if(interface_has_gateway("tap{$x}")) {
 				$rule .= "# Not adding default pass in rule for interface $friendlytapif - tap{$x} with a gateway!";
-			} else {
+			} elseif (!isset($config['system']['disablevpnrules'])) {
 				$rule .="pass in quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			}
 		}

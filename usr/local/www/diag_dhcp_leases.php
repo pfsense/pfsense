@@ -34,6 +34,41 @@
 require("guiconfig.inc");
 
 $pgtitle = "Diagnostics: DHCP leases";
+
+$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
+
+if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
+	/* Stop DHCPD */
+	killbyname("dhcpd");
+	
+	/* Read existing leases */
+	$leases_contents = explode("\n", file_get_contents($leasesfile));
+	$newleases_contents = array();
+	$i=0;
+	while ($i < count($leases_contents)) {
+		/* Find the lease(s) we want to delete */
+		if ($leases_contents[$i] == "lease {$_GET['deleteip']} {") {
+			/* Skip to the end of the lease declaration */
+			do {
+				$i++;
+			} while ($leases_contents[$i] != "}");
+		} else {
+			/* It's a line we want to keep, copy it over. */
+			$newleases_contents[] = $leases_contents[$i];
+		}
+		$i++;
+	}
+
+	/* Write out the new leases file */
+	$fd = fopen($leasesfile, 'w');
+	fwrite($fd, implode("\n", $newleases_contents));
+	fclose($fd);
+
+	/* Restart DHCP Service */
+	services_dhcpd_configure();
+	header("Location: diag_dhcp_leases.php");
+}
+
 include("head.inc");
 
 ?>
@@ -63,7 +98,6 @@ function remove_duplicate($array, $field)
   return $new;
 }
 
-$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
 $awk = "/usr/bin/awk";
 /* this pattern sticks comments into a single array item */
 $cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
@@ -321,9 +355,14 @@ foreach ($leases as $data) {
                 	echo "<td class=\"list\" valign=\"middle\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus_mo.gif\" width=\"17\" height=\"17\" border=\"0\"></td>\n";
 		}
-
                 echo "<td valign=\"middle\"><a href=\"services_wol_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
 		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_wol_all.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a Wake on Lan mapping for this MAC address\"></a></td>\n";
+
+		/* Only show the button for offline dynamic leases */
+		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {
+			echo "<td class=\"list\" valign=\"middle\"><a href=\"diag_dhcp_leases.php?deleteip={$data['ip']}\">";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"delete this dhcp lease\"></a></td>\n";
+		}
                 echo "</tr>\n";
 	}
 }

@@ -42,6 +42,9 @@ require_once("pkg-utils.inc");
 require_once("notices.inc");
 require_once ("shaper.inc");
 
+if(function_exists("apc_clear_cache")) 
+	apc_clear_cache();
+
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
 

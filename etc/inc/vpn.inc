@@ -139,10 +139,10 @@ function vpn_ipsec_configure($ipchg = false)
 		return true;
 	}
 
-	if ($g['booting'])
-		echo "Configuring IPsec VPN... ";
-
 	if (isset ($ipseccfg['enable'])) {
+		if ($g['booting'])
+			echo "Configuring IPsec VPN... ";
+
 		/* fastforwarding is not compatible with ipsec tunnels */
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=0");
 
@@ -209,7 +209,7 @@ function vpn_ipsec_configure($ipchg = false)
 						$pfd = fopen("/var/db/ipsecpinghosts", "a");
 						$iflist = get_configured_interface_list();
 						foreach ($iflist as $ifent => $ifname) {
-							$interface_ip = find_interface_ip($config['interfaces'][$ifname]['if']);
+							$interface_ip = get_interface_ip($ifnet);
 							$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
 							if (ip_in_subnet($interface_ip, $local_subnet))
 								$srcip = $interface_ip;
@@ -857,17 +857,15 @@ EOD;
 				escapeshellarg("/etc/rc.newipsecdns") . $hostnames);
 			}
 		}
-	}
 	
-	vpn_ipsec_failover_configure();
+		vpn_ipsec_failover_configure();
 
-	if (!$g['booting']) {
-		/* reload the filter */
-		filter_configure();
+		if (!$g['booting']) {
+			/* reload the filter */
+			filter_configure();
+		} else
+			echo "done\n";
 	}
-
-	if ($g['booting'])
-		echo "done\n";
 
 	return 0;
 }

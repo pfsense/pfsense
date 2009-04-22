@@ -122,10 +122,12 @@ function ipsec_get_phase1_src(& $ph1ent) {
 	if ($ph1ent['interface'])
 		$if = $ph1ent['interface'];
 	else
-		$if = "WAN";
+		$if = "wan";
 
-	$realinterface = convert_friendly_interface_to_real_interface_name($if);
-	$interfaceip = find_interface_ip($realinterface);
+	if (preg_match("/^carp/i", $ph1ent['interface']))
+		find_interface_ip($if);
+	else
+		$interfaceip = get_interface_ip($if);
 
 	return $interfaceip;
 }

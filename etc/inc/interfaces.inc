@@ -970,7 +970,7 @@ function interfaces_carp_configure() {
 		$cmdchain->add("Enable CARP preemption", "/sbin/sysctl net.inet.carp.preempt=1", true);		
 	}
 	$cmdchain->add("Enable CARP logging", "/sbin/sysctl net.inet.carp.log=2", true);
-	$carp_sync_int = convert_friendly_interface_to_real_interface_name($pfsyncinterface);
+	$carp_sync_int = get_real_interface($pfsyncinterface);
 	if($g['booting']) {
 		/*    install rules to alllow pfsync to sync up during boot
 		 *    carp interfaces will remain down until the bootup sequence finishes
@@ -1042,7 +1042,7 @@ function interfaces_carp_configure() {
 			/* ensure the interface containing the VIP really exists
 			  prevents a panic if the interface is missing or invalid
 			*/
-			$realif = convert_friendly_interface_to_real_interface_name($vip['interface']);
+			$realif = get_real_interface($vip['interface']);
 			$intcount = exec("/sbin/ifconfig | grep $realif | wc -l | awk '{print $1}'");
 			if($intcount < 1) {
 				file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
@@ -1949,11 +1949,114 @@ function interface_group_setup($groupname /* The parameter is an array */) {
 }
  
 /* XXX: stub for code that references the old functions(mostly packages) */
+/*
+ * convert_friendly_interface_to_real_interface_name($interface): convert WAN to FXP0
+ */
+function convert_friendly_interface_to_real_interface_name($interface) {
+	return get_real_interface($interface);
+}
+
 function get_real_wan_interface($interface = "wan") {
 	return get_real_interface($interface);
 }
+
 function get_current_wan_address($interface = "wan") {
 	return get_interface_ip($interface);
+}
+
+/*
+ * convert_real_interface_to_friendly_interface_name($interface): convert fxp0 -> wan, etc.
+ */
+function convert_real_interface_to_friendly_interface_name($interface = "wan") {
+        global $config;
+
+        if (stristr($interface, "pppoe")) {
+                $index = substr($interface, 5);
+                if (intval($index) > 0)
+                        return "opt{$index}";
+                else
+                        return "wan";
+        } else if (stristr($interface, "pptp")) {
+                $index = substr($interface, 4);
+                if (intval($index) > 0)
+                        return "opt{$index}";
+                else
+                        return "wan";
+        } else if (stristr($interface, "carp")) {
+                $index = substr($interface, 4);
+                $counter = 0;
+                foreach ($config['virtualip']['vip'] as $vip) {
+                        if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
+                                if (intval($index) == $counter)
+                                        return $vip['interface'];
+                                $counter++;
+                        }
+                }
+        }
+
+        /* if list */
+        $ifdescrs = get_configured_interface_list(false, true);
+
+        foreach ($ifdescrs as $if => $ifname) {
+                if($config['interfaces'][$if]['if'] == $interface)
+                        return $ifname;
+
+                /* XXX: ermal - The 3 lines below are totally bogus code. */
+                $int = filter_translate_type_to_real_interface($if);
+                if($ifname == $interface)
+                        return $ifname;
+
+                if($int == $interface)
+                        return $ifname;
+        }
+        return NULL;
+}
+
+/* attempt to resolve interface to friendly descr */
+function convert_friendly_interface_to_friendly_descr($interface) {
+        global $config;
+
+        switch ($interface) {
+                case "l2tp":
+                                $ifdesc = "L2TP";
+                                break;
+                case "pptp":
+                                $ifdesc = "pptp";
+                                break;
+                case "pppoe":
+                                $ifdesc = "pppoe";
+                                break;
+                case "openvpn":
+                                $ifdesc = "OpenVPN";
+                                break;
+                case "enc0":
+                        case "ipsec":
+                                $ifdesc = "IPsec";
+                                break;
+        default:
+                /* if list */
+                $ifdescrs = get_configured_interface_with_descr(false, true);
+                foreach ($ifdescrs as $if => $ifname) {
+                                if ($if == $interface || $ifname == $interface)
+                                        return $ifname;
+                }
+                break;
+        }
+
+        return $ifdesc;
+}
+
+function convert_real_interface_to_friendly_descr($interface) {
+        global $config;
+
+        $ifdesc = convert_real_interface_to_friendly_interface_name("{$interface}");
+
+        if ($ifdesc) {
+                $iflist = get_configured_interface_with_descr();
+                return $iflist[$ifdesc];
+        }
+
+        return $interface;
 }
 
 function get_real_interface($interface = "wan") {
@@ -2037,8 +2140,112 @@ function get_real_interface($interface = "wan") {
     return $wanif;
 }
 
+function guess_interface_from_ip($ipaddress) {
+        $ret = exec_command("/usr/bin/netstat -rn | /usr/bin/awk '/^{$ipaddress}/ {print \$6}'");
+        if(empty($ret)) {
+                return false;
+        }
+        return $ret;
+}
+
+/*
+ * find_ip_interface($ip): return the interface where an ip is defined
+ */
+function find_ip_interface($ip)
+{
+        /* if list */
+        $ifdescrs = get_configured_interface_list();
+
+        foreach ($ifdescrs as $ifdescr => $ifname) {
+                $int = get_real_interface($ifname);
+                $ifconfig = exec_command("/sbin/ifconfig {$int}");
+                if(stristr($ifconfig,$ip) <> false)
+                        return $int;
+        }
+        return false;
+}
+
+/****f* interfaces/link_interface_to_bridge
+ * NAME
+ *   link_interface_to_bridge - Finds out a bridge group for an interface
+ * INPUTS
+ *   $ip
+ * RESULT
+ *   bridge[0-99]
+ ******/
+function link_interface_to_bridge($int) {
+        global $config;
+
+        if (is_array($config['bridges']['bridged']))
+                foreach ($config['bridges']['bridged'] as $bridge)
+                        if(stristr($bridge['members'], "{$int}"))
+                                return "{$bridge['bridgeif']}";
+}
+
+function link_interface_to_gre($interface) {
+        global $config;
+
+        if (is_array($config['gres']['gre']))
+                foreach ($config['gres']['gre'] as $gre)
+                        if($gre['if'] == $interface)
+                                return "{$gre['greif']}";
+}
+
+function link_interface_to_gif($interface) {
+        global $config;
+
+        if (is_array($config['gifs']['gif']))
+                foreach ($config['gifs']['gif'] as $gif)
+                        if($gif['if'] == $interface)
+                                return "{$gif['gifif']}";
+}
+
+/*
+ * find_interface_ip($interface): return the interface ip (first found)
+ */
+function find_interface_ip($interface, $flush = false)
+{
+	global $interface_ip_arr_cache;
+
+	$interface = str_replace("\n", "", $interface);
+	if (does_interface_exist($interface) == false)
+		return;
+
+	/* Setup IP cache */
+	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
+		$interface_ip_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2| /usr/bin/head -1");
+		$interface_ip_arr_cache[$interface] = str_replace("\n", "", $interface_ip_arr_cache[$interface]);
+	}
+
+	return $interface_ip_arr_cache[$interface];
+}
+
+function find_interface_subnet($interface, $flush = false)
+{
+	global $interface_sn_arr_cache;
+
+	$interface = str_replace("\n", "", $interface);
+	if (does_interface_exist($interface) == false)
+		return;
+
+	if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
+		$interface_sn_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 4 | /usr/bin/head -1");
+		$interface_sn_arr_cache[$interface] = strlen(str_replace("0", "", base_convert(str_replace("\n", "", $interface_sn_arr_cache[$interface]),16, 2)));
+        }
+
+	return $interface_sn_arr_cache[$interface];
+}
+
 function get_interface_ip($interface = "wan") {
+
 	$realif = get_real_interface($interface);
+	if (!$realif) {
+		if (preg_match("/^carp/i", $interface))
+			$realif = $interface;
+		else
+			return null;
+	}
+
 	/* Do we really come here for these interfaces ?! */
 	if (in_array($realif, array("pptp", "pppoe", "l2tp", "openvpn", "enc0" /* , "ppp" */)))
 			return "";

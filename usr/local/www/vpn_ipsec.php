@@ -56,8 +56,12 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
+		config_lock();
 		$retval = vpn_ipsec_refresh_policies();
 		$retval = vpn_ipsec_configure();
+		config_unlock();
+		/* reload the filter in the background */
+		filter_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (file_exists($d_ipsecconfdirty_path))
@@ -69,20 +73,6 @@ if ($_POST) {
 		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
 		
 		write_config();
-
-		$retval = 0;
-		config_lock();
-		$retval = vpn_ipsec_refresh_policies();
-		$retval = vpn_ipsec_configure();
-		config_unlock();
-		/* reload the filter in the background */
-		filter_configure();
-
-		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			if (file_exists($d_ipsecconfdirty_path))
-				unlink($d_ipsecconfdirty_path);
-		}
 	}
 }
 

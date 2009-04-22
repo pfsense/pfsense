@@ -137,9 +137,7 @@ function vpn_ipsec_configure($ipchg = false)
 		mwexec("/usr/local/sbin/setkey -F");
 
 		return true;
-	}
-
-	if (isset ($ipseccfg['enable'])) {
+	} else {
 		if ($g['booting'])
 			echo "Configuring IPsec VPN... ";
 

@@ -35,7 +35,7 @@
 ##|*MATCH=status_rrd_graph_settings.php*
 ##|-PRIV
 
-include("guiconfig.inc");
+require("guiconfig.inc");
 
 if (!is_array($config['gateways']['settings']))
 	$config['gateways']['settings'] = array();
@@ -44,8 +44,6 @@ $a_settings = &$config['gateways']['settings'];
 
 $changedesc = "Gateways: ";
 $input_errors = array();
-
-require("guiconfig.inc");
 
 if (empty($a_settings)) {
 	$pconfig['latencylow'] = "100";

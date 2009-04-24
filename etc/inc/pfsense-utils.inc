@@ -895,37 +895,40 @@ function enable_hardware_offloading($interface) {
 	if(stristr($interface,"lnc"))
 		return;
 
-	if(isset($config['system']['do_not_use_nic_microcode']))
-		return;
-
 	/* translate wan, lan, opt -> real interface if needed */
 	$int = filter_translate_type_to_real_interface($interface);
 	if($int <> "") $interface = $int;
 	$int_family = preg_split("/[0-9]+/", $int);
-	$options = strtolower(`/sbin/ifconfig {$interface} | grep options`);
+	$options = strtolower(`/sbin/ifconfig -m {$interface} | grep capabilities`);
 	$supported_ints = array('fxp');
-	if (in_array($int_family, $supported_ints))
+	if (in_array($int_family, $supported_ints)) {
+        	if(isset($config['system']['do_not_use_nic_microcode']))
+                        continue;
 		mwexec("/sbin/ifconfig {$interface} link0");
-
-	if($config['system']['disablechecksumoffloading'])
-		return;
+        }
 
 	/* skip vlans for checksumming and polling */
 	if(stristr($interface, "vlan")) 
 		return;
 
-	if(stristr($options, "txcsum") == true)
-	    mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
-
-	if(stristr($options, "rxcsum") == true)
-	    mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");
+	if($config['system']['disablechecksumoffloading']) {
+                if(stristr($options, "txcsum") == true)
+                        mwexec("/sbin/ifconfig {$interface} -txcsum 2>/dev/null");
+                if(stristr($options, "rxcsum") == true)
+                        mwexec("/sbin/ifconfig {$interface} -rxcsum 2>/dev/null");
+	} else {
+               	if(stristr($options, "txcsum") == true)
+                        mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
+        	if(stristr($options, "rxcsum") == true)
+                        mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");
+        }
 
 	/* if the NIC supports polling *AND* it is enabled in the GUI */
 	if(interface_supports_polling($interface)) {
 		$polling = isset($config['system']['polling']);	
 		if($polling) {
 			mwexec("sysctl kern.polling.enable=1");
-	    	mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
+                        mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
 		} else {
 			mwexec("sysctl kern.polling.enable=0");
 		}

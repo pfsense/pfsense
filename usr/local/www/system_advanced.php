@@ -233,8 +233,10 @@ if ($_POST) {
 
 		if($_POST['disablechecksumoffloading'] == "yes") {
 			$config['system']['disablechecksumoffloading'] = $_POST['disablechecksumoffloading'];
+                        setup_microcode();
 		} else {
 			unset($config['system']['disablechecksumoffloading']);
+                        setup_microcode();
 		}
 
 		if($_POST['disablescrub'] == "yes") {
@@ -693,7 +695,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">Disable Hardware Checksum Offloading</td>
 			<td width="78%" class="vtable">
 				<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>Checking this option will prevent hardware checksum offloading.  FreeBSD sometimes has difficulties with certain drivers.</strong>
+				<strong>Checking this option will disable hardware checksum offloading.  Checksum offloading is broken in some hardware, particularly some Realtek cards. Rarely, drivers may have problems with checksum offloading and some specific NICs.</strong>
 			</td>
 		</tr>		
 		<tr>

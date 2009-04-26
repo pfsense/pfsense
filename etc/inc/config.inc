@@ -836,14 +836,12 @@ EOD;
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
 		echo "\n\nVLAN interfaces:\n\n";
-		$i = 0;
 		foreach ($config['vlans']['vlan'] as $vlan) {
 
-			echo sprintf("% -8s%s\n", "vlan{$i}",
+			echo sprintf("% -8s%s\n", "vlan{$vlan['tag']}",
 				"VLAN tag {$vlan['tag']}, interface {$vlan['if']}");
 
-			$iflist['vlan' . $i] = array();
-			$i++;
+			$iflist['vlan' . $vlan['tag']] = array();
 		}
 	}
 

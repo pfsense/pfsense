@@ -159,6 +159,9 @@ if ($_POST) {
 		touch($d_staticroutesdirty_path);
 		
 		write_config();
+
+		/* set up static routes */
+		system_routing_configure();
 		
 		if($_REQUEST['isAjax']) {
 			echo $_POST['name'];

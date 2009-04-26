@@ -1957,7 +1957,7 @@ function interfaces_group_setup() {
 	if (!is_array($config['ifgroups']['ifgroupentry']))
 		return;
 
-	foreach ($config['ifgroups']['ifgroupentry'] as $grouppar)
+	foreach ($config['ifgroups']['ifgroupentry'] as $groupar)
 		interface_group_setup($groupar);
 
 	return;

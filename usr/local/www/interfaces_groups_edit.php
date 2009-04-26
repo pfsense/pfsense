@@ -43,7 +43,8 @@ if (!is_array($config['ifgroups']['ifgroupentry']))
 
 $a_ifgroups = &$config['ifgroups']['ifgroupentry'];
 
-$id = $_GET['id'];
+if (isset($_GET['id']))
+	$id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
@@ -59,13 +60,11 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	/*
-	if (empty($id)) {
+	if (!isset($id)) {
 		foreach ($a_ifgroups as $groupentry)
 			if ($groupentry['ifname'] == $_POST['ifname'])
 				$input_errors[] = "Group name already exists!";
 	}
-	*/
 	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match))
 		$input_errors[] = "Only characters in a-z A-Z are allowed as interface name.";
 

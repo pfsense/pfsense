@@ -27,12 +27,6 @@
 
   */
 
-/* include all configuration functions */
-require_once("functions.inc");
-require_once("pkg-utils.inc");
-require_once("notices.inc");
-require_once("globals.inc");
-
 /* add static routes for monitor IP addresse
  * creates monitoring configuration file
  */
@@ -395,6 +389,88 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 	}
 	if($changed && $current_gw)
 		write_config("Updating gateway group gateway for $interface - new gateway is $current_gw");
+}
+
+function lookup_gateway_ip_by_name($name) {
+        global $config;
+        if(is_array($config['gateways'])) {
+                foreach($config['gateways']['gateway_item'] as $gateway) {
+                        if($gateway['name'] == $name) {
+                                $gatewayip = $gateway['gateway'];
+                                //$interfacegw = $gateway['interface'];
+                                return($gatewayip);
+                        }
+                }
+        } else {
+                return(false);
+        }
+}
+
+function lookup_gateway_monitor_ip_by_name($name) {
+        global $config;
+        $gateways_arr = return_gateways_array();
+
+        foreach($gateways_arr as $gateway) {
+                if($gateway['name'] == "$name") {
+                        $monitorip = $gateway['monitor'];
+                        if($monitorip == "")
+                                $monitorip = $gateway['gateway'];
+
+                        return($monitorip);
+                }
+        }
+        return(false);
+}
+
+function lookup_gateway_interface_by_name($name) {
+        global $config;
+        $gateways_arr = return_gateways_array();
+
+        foreach($gateways_arr as $gateway) {
+                if($gateway['name'] == "$name") {
+                        $gatewayip = $gateway['gateway'];
+                        $interfacegw = $gateway['interface'];
+                        return($interfacegw);
+                }
+        }
+        return(false);
+}
+
+function get_interface_gateway($interface) {
+        global $config, $g;
+
+        $iflist = get_configured_interface_with_descr();
+        /*
+         * XXX: BUG: This is silly at first, but we may be called with the interface
+         *      descr for no apparent reason!!!
+         *      Probably one of those silly strtoupper() legacy stuff!
+         */
+        foreach ($iflist as $ifent => $ifdesc) {
+                if ($ifent == $interface || $ifdesc == $interface) {
+                        $interface = $ifent;
+                        break;
+                }
+        }
+
+        $gw = NULL;
+
+        $gwcfg = $config['interfaces'][$interface];
+        if (is_ipaddr($gwcfg['gateway']))
+                $gw = $gwcfg['gateway'];
+        else if (!empty($gwcfg['gateway']))
+                $gw = lookup_gateway_ip_by_name($gwcfg['gateway']);
+
+        // for dynamic interfaces we handle them through the $interface_router file.
+        if (!is_ipaddr($gw)) {
+                $realif = get_real_interface($interface);
+                if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
+                        $gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
+                        $gw = rtrim($gw);
+                }
+        }
+
+        /* return gateway */
+        return $gw;
 }
 
 ?>

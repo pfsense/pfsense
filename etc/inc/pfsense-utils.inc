@@ -2776,51 +2776,6 @@ function pfsense_default_state_size() {
   return $max_states;
 }
 
-function lookup_gateway_ip_by_name($name) {
-	global $config;
-	if(is_array($config['gateways'])) {
-		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if($gateway['name'] == $name) {
-				$gatewayip = $gateway['gateway'];
-				//$interfacegw = $gateway['interface'];
-				return($gatewayip);
-			}
-		}
-	} else {
-		return(false);
-	}
-}
-
-function lookup_gateway_monitor_ip_by_name($name) {
-	global $config;
-	$gateways_arr = return_gateways_array();
-
-	foreach($gateways_arr as $gateway) {
-		if($gateway['name'] == "$name") {
-			$monitorip = $gateway['monitor'];
-			if($monitorip == "")
-				$monitorip = $gateway['gateway'];
-
-			return($monitorip);
-		}
-	}
-	return(false);
-}
-
-function lookup_gateway_interface_by_name($name) {
-	global $config;
-	$gateways_arr = return_gateways_array();
-
-	foreach($gateways_arr as $gateway) {
-		if($gateway['name'] == "$name") {
-			$gatewayip = $gateway['gateway'];
-			$interfacegw = $gateway['interface'];
-			return($interfacegw);
-		}
-	}
-	return(false);
-}
-
 /****f* pfsense-utils/safe_write_file
  * NAME
  *   safe_write_file - Write a file out atomically

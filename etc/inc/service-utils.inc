@@ -137,11 +137,6 @@ function restart_service($name) {
 	}
 }
 
-function is_process_running($process) {
-	$running = (trim(shell_exec("ps axwu | grep '\b{$process}\b' | grep -v 'grep'")) != '');
-	return $running;
-}
-
 function is_pid_running($pidfile) {
 	$pid = trim(file_get_contents($pidfile));
 	$running = (trim(shell_exec("ps axwu | grep '\b{$pid}\b' | grep -v 'grep'")) != '');

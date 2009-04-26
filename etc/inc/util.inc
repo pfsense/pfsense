@@ -40,9 +40,15 @@ function isvalidpid($pid) {
 		return false;
 }
 
+function is_process_running($process) {
+        $running = (trim(shell_exec("ps axwu | grep '\b{$process}\b' | grep -v 'grep'")) != '');
+
+        return $running;
+}
+
 function isvalidproc($proc) {
-	$running = `ps awux | grep $proc | grep -v grep | wc -l`;
-	if(intval($running) >= 1)
+	$running = is_process_running($proc);
+	if (intval($running) >= 1)
 		return true;
 	else 
 		return false;

@@ -2300,43 +2300,6 @@ function get_interface_subnet($interface = "wan") {
 	return null;
 }
 
-function get_interface_gateway($interface) {
-        global $config, $g;
-
-	$iflist = get_configured_interface_with_descr();
-        /*
-         * XXX: BUG: This is silly at first, but we may be called with the interface
-         *      descr for no apparent reason!!!
-	 * 	Probably one of those silly strtoupper() legacy stuff!
-         */
-        foreach ($iflist as $ifent => $ifdesc) {
-                if ($ifent == $interface || $ifdesc == $interface) {
-                        $interface = $ifent;
-                        break;
-                }
-        }
-
-	$gw = NULL;
-
-	$gwcfg = $config['interfaces'][$interface];
-        if (is_ipaddr($gwcfg['gateway']))
-                $gw = $gwcfg['gateway'];
-        else if (!empty($gwcfg['gateway']))
-                $gw = lookup_gateway_ip_by_name($gwcfg['gateway']);
-
-        // for dynamic interfaces we handle them through the $interface_router file.
-        if (!is_ipaddr($gw)) {
-                $realif = get_real_interface($interface);
-                if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
-                        $gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
-                        $gw = rtrim($gw);
-                }
-        }
-
-        /* return gateway */
-        return $gw;
-}
-
 /* return outside interfaces with a gateway */
 function get_interfaces_with_gateway() {
         global $config;

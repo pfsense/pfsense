@@ -65,6 +65,7 @@ function services_dhcpd_configure() {
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/etc\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/usr/local/sbin\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/var/db\n");
+	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/var/run\n");	
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/usr\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/lib\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/run\n");
@@ -318,6 +319,8 @@ EOD;
 
 	/* create an empty leases database */
 	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
+	touch("{$g['varrun_path']}/dhcpd.pid");
+	
 
 	/* fire up dhcpd in a chroot */
 	mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf {$g['dhcpd_chroot_path']}/etc/dhcpd.conf " .

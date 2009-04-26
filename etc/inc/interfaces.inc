@@ -796,6 +796,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
         /* remove interface up file if it exists */
         unlink_if_exists("{$g['tmp_path']}/{$realif}up");
         unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
+	unlink_if_exists("/tmp/{$realif}_router");
         //unlink_if_exists("{$g['varetc_path']}/nameservers.conf");
 
 	switch ($ifcfg['ipaddr']) {
@@ -822,10 +823,12 @@ function interface_bring_down($interface = "wan", $destroy = false) {
                 	mwexec("kill {$pid}");
                	sleep(1);
                 unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
-               	mwexec("/sbin/ifconfig {$realif} delete down");
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete");
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
 		break;
 	default:
-		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete down");
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete");
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
 		break;
 	}
 
@@ -834,7 +837,6 @@ function interface_bring_down($interface = "wan", $destroy = false) {
                 	mwexec("/sbin/ifconfig {$realif} destroy");
 	}
 	
-	unlink_if_exists("/tmp/{$realif}_router");
 	return;
 }
 
@@ -2290,7 +2292,7 @@ function get_interface_ip($interface = "wan") {
 function get_interface_subnet($interface = "wan") {
 	$realif = get_real_interface($interface);
 	/* Do we really come here for these interfaces ?! */
-	if (in_array($realif, array("pptp", "pppoe", "openvpn", "enc0" /* , "ppp" */)))
+	if (in_array($realif, array("pptp", "pppoe", "l2tp", "openvpn", "enc0" /* , "ppp" */)))
 		return "";
 
 	$cursn = find_interface_subnet($realif);

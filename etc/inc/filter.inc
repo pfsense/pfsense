@@ -265,12 +265,11 @@ function filter_configure_sync() {
 		update_filter_reload_status("Plugins completed.");
 	}
 	/* if time based rules are enabled then swap in the set */
-	if($time_based_rules == true) {
-		tdr_install_cron(true);
-		tdr_install_set();
-	} else {
-		tdr_install_cron(false);
-	}
+	if ($time_based_rules == true)
+		filter_tdr_install_cron(true);
+	else
+		filter_tdr_install_cron(false);
+
 	/*
 	 *	we need a way to let a user run a shell cmd after each
 	 *	filter_configure() call.  run this xml command after
@@ -278,16 +277,21 @@ function filter_configure_sync() {
 	 */
 	if($config['system']['afterfilterchangeshellcmd'] <> "")
 		mwexec($config['system']['afterfilterchangeshellcmd']);
+
 	/* sync carp entries to other firewalls */
 	update_filter_reload_status("Syncing CARP data");
 	carp_sync_client();
+
 	if ($g['booting'] == true)
-				echo ".";
+		echo ".";
 	system_routing_configure();
+
 	find_dns_aliases();
+
 	update_filter_reload_status("Done");
 	if ($g['booting'] == true)
 		echo "done.\n";
+
 	return 0;
 }
 
@@ -1224,7 +1228,7 @@ function generate_user_filter_rule($rule)
 		/* we're not using load balancing, just setup gateway */
 		else if($foundlb == 0) {
 			$gateway = $rule['gateway'];
-			if(!is_ipaddr($gateway)) {
+			if (!is_ipaddr($gateway)) {
 				$gwip = $GatewaysList[$gateway]['gateway'];
 				if ($GatewaysList[$gateway]['interface'])
 					$int = $GatewaysList[$gateway]['interface'];
@@ -1242,14 +1246,14 @@ function generate_user_filter_rule($rule)
 	}
 
 	if (isset($rule['protocol'])) {
-		if($rule['protocol'] == "tcp/udp")
+		if ($rule['protocol'] == "tcp/udp")
 			$aline['prot'] = " proto { tcp udp } ";
-		elseif($rule['protocol'] == "icmp")
+		elseif ($rule['protocol'] == "icmp")
 			$aline['prot'] = " inet proto icmp ";
 		else
 			$aline['prot'] = " proto {$rule['protocol']} ";
 	} else {
-		if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "")
+		if ($rule['source']['port'] <> "" || $rule['destination']['port'] <> "")
 			$aline['prot'] = " proto tcp ";
 	}
 	update_filter_reload_status("Creating rule {$rule['descr']}");
@@ -1420,9 +1424,9 @@ function generate_user_filter_rule($rule)
 		else
 			$dst = "{ {$not} {$expdst} }";
 	}
-	if (!$dst || ($dst == "/")) {
+	if (!$dst || ($dst == "/"))
 		return "# returning at dst $dst == \"/\"";
-	}
+
 	$aline['dst'] = "to $dst ";
 	if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 		if ($rule['destination']['port']) {
@@ -1458,9 +1462,8 @@ function generate_user_filter_rule($rule)
 		$l7_structures = $l7rule->get_unique_structures();
 		$aline['divert'] = "divert " . $l7rule->GetRPort() . " ";
 	}
-	if (($rule['protocol'] == "icmp") && $rule['icmptype']) {
+	if (($rule['protocol'] == "icmp") && $rule['icmptype'])
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
-	}
 	if (!empty($rule['tag']))
 		$aline['tag'] = " tag " .$rule['tag']. " ";
 	if (!empty($rule['tagged']))
@@ -1474,18 +1477,18 @@ function generate_user_filter_rule($rule)
 			if($rule['protocol'] == "tcp")
 				$aline['flags'] = "flags S/SA ";
 		/*
-			# keep state
-				works with TCP, UDP, and ICMP.
-			# modulate state
-				works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs)
-				for packets matching this rule.
-			# synproxy state
-				proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
-				This option includes the functionality of keep state and modulate state combined.
-			# none
-				do not use state mechanisms to keep track. this is only useful if your doing advanced
-				queueing in certain situations. please check the faq.
-		*/
+		 *	# keep state
+		 *		works with TCP, UDP, and ICMP.
+		 *	# modulate state
+		 *		works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs)
+		 *		for packets matching this rule.
+		 *	# synproxy state
+		 *		proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
+		 *		This option includes the functionality of keep state and modulate state combined.
+		 *	# none
+		 *		do not use state mechanisms to keep track. this is only useful if your doing advanced
+		 *		queueing in certain situations. please check the faq.
+		 */
 		$noadvoptions = false;
 		if (isset($rule['statetype']) && $rule['statetype'] <> "") {
 			switch($rule['statetype']) {
@@ -1501,17 +1504,17 @@ function generate_user_filter_rule($rule)
 				default:
 					$aline['flags'] = "{$rule['statetype']} ";
 			}
-		} else {
+		} else
 			$aline['flags'] = "keep state ";
-		}
-		if($noadvoptions == false || $l7_present) 
+
+		if ($noadvoptions == false || $l7_present)
 			if( isset($rule['source-track']) and $rule['source-track'] <> "" or
-			  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
-			   isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or
+				isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
+				isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or
 				isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or
-				 isset($rule['max-src-states']) and $rule['max-src-states'] <> "" or
-				  isset($rule['statetimeout']) and $rule['statetimeout'] <> "" or
-				   isset($rule['l7container']) and $rule['l7container'] != "none") {
+				isset($rule['max-src-states']) and $rule['max-src-states'] <> "" or
+				isset($rule['statetimeout']) and $rule['statetimeout'] <> "" or
+				isset($rule['l7container']) and $rule['l7container'] != "none") {
 					$aline['flags'] .= "( ";
 					if(isset($rule['source-track']) and $rule['source-track'] <> "")
 						$aline['flags'] .= "source-track rule ";
@@ -1532,123 +1535,89 @@ function generate_user_filter_rule($rule)
 					$aline['flags'] .= " ) ";
 				}
 	}
-		if ($type == "reject" && $rule['protocol'] == "tcp") {
-			/* special reject packet */
-			$aline['flags'] .= "flags S/SA ";
+	if ($type == "reject" && $rule['protocol'] == "tcp") {
+		/* special reject packet */
+		$aline['flags'] .= "flags S/SA ";
+	}
+	if ($type == "pass") {
+		if ($rule['defaultqueue'] <> "") {
+			$aline['queue'] = " queue (".$rule['defaultqueue'];
+			if ($rule['ackqueue'] <> "")
+				$aline['queue'] .= ",".$rule['ackqueue'];
+			$aline['queue'] .= ") ";
 		}
-		if ($type == "pass") {
-			if ($rule['defaultqueue'] <> "") {
-				$aline['queue'] = " queue (".$rule['defaultqueue'];
-				if ($rule['ackqueue'] <> "")
-					$aline['queue'] .= ",".$rule['ackqueue'];
-				$aline['queue'] .= ") "; 
+		if ($rule['dnpipe'] <> "") {
+			if ($rule['dnpipe'][0] == "?") {
+				$aline['dnpipe'] = " dnqueue( ";
+				$aline['dnpipe'] .= substr($rule['dnpipe'],1);
+				if ($rule['pdnpipe'] <> "")
+					$aline['dnpipe'] .= ",".substr($rule['pdnpipe'], 1);
+			} else {
+				$aline['dnpipe'] = " dnpipe ( " . $rule['dnpipe'];
+				if ($rule['pdnpipe'] <> "")
+					$aline['dnpipe'] .= ", " . $rule['pdnpipe'];
 			}
-			if ($rule['dnpipe'] <> "") {
-				if ($rule['dnpipe'][0] == "?") {
-					$aline['dnpipe'] = " dnqueue( ";
-					$aline['dnpipe'] .= substr($rule['dnpipe'],1);
-					if ($rule['pdnpipe'] <> "")
-						$aline['dnpipe'] .= ",".substr($rule['pdnpipe'], 1);
-				} else {
-					$aline['dnpipe'] = " dnpipe ( " . $rule['dnpipe'];
-					if ($rule['pdnpipe'] <> "")
-						$aline['dnpipe'] .= ", " . $rule['pdnpipe'];
-				}
-				$aline['dnpipe'] .= ") ";
-			}
+			$aline['dnpipe'] .= ") ";
 		}
-		/* cache entries */
-		if (isset($src_table))
-			if (isset($table_cache[$src_table])) {
-				if ($g['debug'])
-					echo "{$src_table} found in cache\n";
-			} else {
-				if ($g['debug'])
-					echo "{$src_table} NOT found in cache...adding\n";
-				$table_cache[$src_table] = $src_table_line;
-			}
-		if (isset($dst_table))
-			if (isset($table_cache[$dst_table])) {
-				if ($g['debug'])
-					echo "{$dst_table} found in cache\n";
-			} else {
-				if ($g['debug'])
-					echo "{$dst_table} NOT found in cache...adding\n";
-				$table_cache[$dst_table] = $dst_table_line;
-			}
-
-		/* exception(s) to a user rules can go here. */
-		/* rules with a gateway or pool should create another rule for routing to local networks or vpns */
-		/* we only trigger this for a rule with the destination of any and without a gateway */
-		if (($aline['route'] <> "") && (trim($aline['type']) == "pass") && (trim($dst) == "any")) {
-			/* negate VPN/PPTP/PPPoE networks for load balancer/gateway rules */
-			$vpns = " to <vpns> ";
-			$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
-				$aline['src'] . $aline['srcport'] . $aline['os'] . $vpns . $aline['dstport'].
-				$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['allowopts'] . $aline['flags'].
-				$aline['queue'] . $aline['dnpipe'] . 
-				" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
-			/* negate directly connected networks for load balancer/gateway rules */
-			$direct_networks = " to <direct_networks> ";
-			$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
-				$aline['src'] . $aline['srcport'] . $aline['os'] . $direct_networks . $aline['dstport'].
-				$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['allowopts'] .
-				$aline['flags'] . $aline['queue'] . $aline['dnpipe'] .
-				" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
+	}
+	/* cache entries */
+	if (isset($src_table))
+		if (isset($table_cache[$src_table])) {
+			if ($g['debug'])
+				echo "{$src_table} found in cache\n";
+		} else {
+			if ($g['debug'])
+				echo "{$src_table} NOT found in cache...adding\n";
+			$table_cache[$src_table] = $src_table_line;
 		}
-		/* piece together the actual user rule */
-		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['reply'] .
-			$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
-			$aline['dstport'] . $aline['divert'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . 
-			$aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'];
+	if (isset($dst_table))
+		if (isset($table_cache[$dst_table])) {
+			if ($g['debug'])
+				echo "{$dst_table} found in cache\n";
+		} else {
+			if ($g['debug'])
+				echo "{$dst_table} NOT found in cache...adding\n";
+			$table_cache[$dst_table] = $dst_table_line;
+		}
 
-		/* is a time based rule schedule attached? */
-		if(!empty($rule['sched'])) {
-			if($config['schedules']) {
-				$foundsched = false;
-				foreach($config['schedules']['schedule'] as $sched) {
-					if($sched['name'] == $rule['sched']) {
-						$status = get_time_based_rule_status($schedule_xml_block);
-						$foundsched = true;
-						break;
-					}				
-				}
-				if ($foundsched == false)
-					return $line;
-			} else
-				return $line;
+	/* is a time based rule schedule attached? */
+        if(!empty($rule['sched']) && !empty($config['schedules'])) {
+		$aline['schedlabel'] = "";
+                foreach ($config['schedules']['schedule'] as $sched) {
+                        if ($sched['name'] == $rule['sched']) {
+                                if (!filter_get_time_based_rule_status($sched)) {
+                                        mwexec("/sbin/pfctl -y \"{$sched['schedlabel']}\"");
+                                        $line = "# schedule finished - {$rule}";
+                                } else if ($g['debug'])
+                                        log_error("[TDR DEBUG] status true -- rule type '$type'");
 
-			if($status) {
-				if($g['debug'])
-					log_error("[TDR DEBUG] status true -- rule type '$type'");
-				if($type == "block") {
-					// active deny rules should deny
-					$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
-					tdr_install_rule($ipfw_rule);
-				} else {
-					// active allow rules should allow
-					$ipfw_rule = tdr_create_ipfw_rule($rule, "allow");
-					tdr_install_rule($ipfw_rule);
-				}
-				return "$line";
-			} else {
-				/*	 rule is turned off, if type == pass, deny traffic until 
-				 *	 active else allow traffic until active 
-				 */
-				if($type == "pass") {
-					// inactive pass rules should deny
-					$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
-					tdr_install_rule($ipfw_rule);
-				} else {
-					// inactive block rules should skipto
-					$ipfw_rule = tdr_create_ipfw_rule($rule, "skipto");
-					tdr_install_rule($ipfw_rule);			
-				}
-				return "# $line";
-			}
-		} 
+				$aline['schedlabel'] = " schedule \"{$sched['schedlabel']}\" ";
+                                break;
+                        }
+                }
+        }
 
-		return $line;			
+	/* exception(s) to a user rules can go here. */
+	/* rules with a gateway or pool should create another rule for routing to vpns */
+	if (($aline['route'] <> "") && (trim($aline['type']) == "pass") && (trim($dst) == "any")) {
+		/* negate VPN/PPTP/PPPoE networks for load balancer/gateway rules */
+		$vpns = " to <vpns> ";
+		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] .
+			$aline['interface'] . $aline['prot'] . $aline['src'] . $aline['srcport'] .
+			$aline['os'] . $vpns . $aline['dstport'] . $aline['icmp-type'] . $aline['tag'] .
+			$aline['tagged'] . $aline['dscp'] . $aline['allowopts'] . $aline['flags'] .
+			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] .
+			" label \"NEGATE_ROUTE: Negate policy route for vpn(s)\"\n";
+
+	}
+	/* piece together the actual user rule */
+	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
+		$aline['reply'] . $aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] .
+		$aline['os'] . $aline['dst'] . $aline['dstport'] . $aline['divert'] . $aline['icmp-type'] .
+		$aline['tag'] . $aline['tagged'] . $aline['dscp'] .  $aline['allowopts'] . $aline['flags'] .
+		$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
+
+	return $line;
 }
 
 function filter_rules_generate() 
@@ -1699,7 +1668,7 @@ block quick proto { tcp, udp } from any to any port = 0
 
 EOD;
 
-        if(!isset($config['system']['ipv6allow'])) {
+        if (!isset($config['system']['ipv6allow'])) {
                 $ipfrules .= "# Block all IPv6\n";
                 $ipfrules .= "block in quick inet6 all\n";
                 $ipfrules .= "block out quick inet6 all\n";
@@ -1940,7 +1909,6 @@ anchor "packagelate"
 EOD;
 	
 	if (isset($config['filter']['rule'])) {
-		$load_ipfw_module = false;
 		/* Pre-cache all our rules so we only have to generate them once */
 		$rule_arr1 = array();
 		$rule_arr2 = array();
@@ -1956,25 +1924,18 @@ EOD;
 					$rule_arr2[] = generate_user_filter_rule_arr($rule);
 				}
 				if ($rule['sched']) 
-					$load_ipfw_module = true;
+					$time_based_rules = true;
 			}
 		}
 		$rule_arr = array_merge($rule_arr1,$rule_arr2);
 		/* 
-		 * check to see if any rules reference a schedule
-		 * or if CP is enabled
+		 * check to see if CP is enabled
 		 * and if so load ipfw for later usage.
 		 */
 		if (isset($config['captiveportal']['enable']) && isset($config['interfaces'][$config['captiveportal']['interface']]['enable'])) {
-			$load_ipfw_module = true;
-		}
-
-		if ($load_ipfw_module == true) {
 			filter_load_ipfw();
-			$time_based_rules = true;
-			exec("/sbin/ipfw delete set 9");
-			exec("/sbin/ipfw delete 2");
-			exec("/sbin/ipfw delete 3");
+			mwexec("/sbin/ipfw delete set 3");
+			mwexec("/sbin/ipfw delete set 2");
 		}
 		$ipfrules .= "\n# User-defined aliases follow\n";
 		/* tables for aliases */
@@ -2037,6 +1998,209 @@ function filter_rules_spoofcheck_generate($ifname, $if, $sa, $sn, $log)
 	return $ipfrules;
 }
 
+/****f* filter/filter_tdr_install_cron
+ * NAME
+ *   filter_tdr_install_cron
+ * INPUTS
+ *   $should_install true if the cron entry should be installed, false
+ *   if the entry should be removed if it is present
+ * RESULT
+ *   none
+ ******/
+function filter_tdr_install_cron($should_install) {
+        global $config, $g;
+
+        if ($g['booting']==true)
+                return;
+
+        $is_installed = false;
+
+        if(!$config['cron']['item'])
+                return;
+
+        $x=0;
+        foreach($config['cron']['item'] as $item) {
+                if (strstr($item['command'], "filter_configure_sync")) {
+                        $is_installed = true;
+                        break;
+                }
+                $x++;
+        }
+        switch($should_install) {
+                case true:
+                        if(!$is_installed) {
+                                $cron_item = array();
+                                $cron_item['minute'] = "0,15,30,45";
+                                $cron_item['hour'] = "*";
+                                $cron_item['mday'] = "*";
+                                $cron_item['month'] = "*";
+                                $cron_item['wday'] = "*";
+                                $cron_item['who'] = "root";
+                                $cron_item['command'] = "/etc/rc.filter_configure_sync";
+                                $config['cron']['item'][] = $cron_item;
+                                write_config("Installed 15 minute filter reload for Time Based Rules");
+                                configure_cron();
+                        }
+                break;
+                case false:
+                        if($is_installed == true) {
+                                if($x > 0) {
+                                        unset($config['cron']['item'][$x]);
+                                        write_config();
+                                }
+                                configure_cron();
+                        }
+                break;
+        }
+}
+
+/****f* filter/filter_get_time_based_rule_status
+ * NAME
+ *   filter_get_time_based_rule_status
+ * INPUTS
+ *   xml schedule block
+ * RESULT
+ *   true/false - true if the rule should be installed
+ ******/
+/*
+ <schedules>
+   <schedule>
+     <name>ScheduleMultipleTime</name>
+     <descr>main descr</descr>
+     <time>
+       <position>0,1,2</position>
+       <hour>0:0-24:0</hour>
+       <desc>time range 2</desc>
+     </time>
+     <time>
+       <position>4,5,6</position>
+       <hour>0:0-24:0</hour>
+       <desc>time range 1</desc>
+     </time>
+   </schedule>
+ </schedules>
+*/
+function filter_get_time_based_rule_status($schedule) {
+        $should_add_rule = false;
+        /* no schedule? rule should be installed */
+        if (empty($schedule))
+                return true;
+        /*
+         * iterate through time blocks and deterimine
+         * if the rule should be installed or not.
+         */
+        foreach($schedule['timerange'] as $timeday) {
+                if($timeday['month'])
+                        $month = $timeday['month'];
+                else
+                        $week = "";
+                if($timeday['day'])
+                        $day = $timeday['day'];
+                else
+                        $day = "";
+                if($timeday['hour'])
+                        $hour = $timeday['hour'];
+                else
+                        $hour = "";
+                if($timeday['position'])
+                        $position = $timeday['position'];
+                else
+                        $position = "";
+                if($timeday['desc'])
+                        $desc = $timeday['desc'];
+                else
+                        $desc = "";
+                if($month) {
+                        $monthstatus = filter_tdr_month($month);
+                } else {
+                        $monthstatus = true;
+                }
+                if($day) {
+                        $daystatus = filter_tdr_day($day);
+                } else {
+                        $daystatus = true;
+                }
+                if($hour) {
+                        $hourstatus = filter_tdr_hour($hour);
+                } else {
+                        $hourstatus = true;
+                }
+                if($position) {
+                        $positionstatus = filter_tdr_position($position);
+                } else {
+                        $positionstatus = true;
+                }
+
+                if ($monthstatus == true && $daystatus == true && $positionstatus == true && $hourstatus == true)
+			$should_add_rule = true;
+        }
+
+        return $should_add_rule;
+}
+
+function filter_tdr_day($schedule) {
+        /*
+         * Calculate day of month.
+         * IE: 29th of may
+         */
+        $weekday        = date("w");
+        if ($weekday == 0)
+                $weekday = 7;
+        $date           = date("d");
+        $defined_days = split(",", $schedule);
+        log_error("[TDR DEBUG] filter_tdr_day($schedule)");
+        foreach($defined_days as $dd) {
+                if($date == $dd)
+                        return true;
+        }
+        return false;
+}
+function filter_tdr_hour($schedule) {
+        /* $schedule should be a string such as 16:00-19:00 */
+        $tmp = split("-", $schedule);
+        $starting_time = strtotime($tmp[0]);
+        $ending_time = strtotime($tmp[1]);
+        $now = strtotime("now");
+        log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
+        if ($now >= $starting_time and $now <= $ending_time)
+                return true;
+        return false;
+}
+
+function filter_tdr_position($schedule) {
+        /*
+         * Calculate possition, ie: day of week.
+         * Sunday = 7, Monday = 1, Tuesday = 2
+         * Weds = 3, Thursday = 4, Friday = 5,
+         * Saturday = 6
+         * ...
+         */
+        $weekday = date("w");
+        log_error("[TDR DEBUG] filter_tdr_position($schedule) $weekday");
+        if ($weekday == 0)
+                $weekday = 7;
+        $schedule_days = split(",", $schedule);
+        foreach($schedule_days as $day) {
+                if ($day == $weekday)
+                        return true;
+        }
+        return false;
+}
+
+function filter_tdr_month($schedule) {
+        /*
+         * Calculate month
+         */
+        $todays_month = date("n");
+        $months = split(",", $schedule);
+        log_error("[TDR DEBUG] filter_tdr_month($schedule)");
+        foreach($months as $month) {
+                if ($month == $todays_month)
+                        return true;
+        }
+        return false;
+}
+
 function setup_logging_interfaces() 
 {
 	global $config;
@@ -2051,8 +2215,6 @@ function setup_logging_interfaces()
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		/* do not work with tun interfaces */
 		$int = get_real_interface($ifname);
-		if(stristr($int, "tun") == true)
-			continue;
 		$rules .= "set loginterface {$int}\n";
 	}
 	return $rules;

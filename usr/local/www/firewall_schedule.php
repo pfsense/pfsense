@@ -107,7 +107,7 @@ include("head.inc");
 	<tr>
 	   <td class="listlr" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
 			<?=htmlspecialchars($schedule['name']); 
-			  	 $schedstatus = get_time_based_rule_status($schedule);
+					$schedstatus = filter_get_time_based_rule_status($schedule);
 					 if ($schedstatus) { ?>
 					 	&nbsp;<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_frmfld_time.png" title="Schedule is currently active" width="17" height="17" border="0">
 					 <?php } ?>

@@ -1733,4 +1733,13 @@ function upgrade_057_to_058() {
 		foreach($config['ipsec']['phase2'] as & $ph2ent)
 			$ph2ent['mode'] = 'tunnel';
 }
+
+function upgrade_058_to_059() {
+	global $config;
+
+	if (is_array($config['schedules']['schedule'])) {
+		foreach ($config['schedules']['schedule'] as & $schedl)
+			$schedl['schedlabel'] = uniqid();
+	}
+}
 ?>

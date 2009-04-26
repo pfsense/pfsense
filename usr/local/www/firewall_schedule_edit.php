@@ -65,6 +65,7 @@ if (isset($id) && $a_schedules[$id]) {
 	$pconfig['name'] = $a_schedules[$id]['name'];
 	$pconfig['descr'] = html_entity_decode($a_schedules[$id]['descr']);
 	$pconfig['timerange'] = $a_schedules[$id]['timerange'];
+	$pconfig['schedlabel'] = $a_schedules[$id]['schedlabel'];
 	$getSchedule = true;
 }
 
@@ -152,6 +153,11 @@ if ($_POST) {
 		
 	if (!$input_errors) {		
 		
+		if (!empty($pconfig['schedlabel']))
+			$schedule['schedlabel'] = $pconfig['schedlabel'];
+		else
+			$schedule['schedlabel'] = uniqid();
+
 		if (isset($id) && $a_schedules[$id]){
 			$a_schedules[$id] = $schedule;
 		}

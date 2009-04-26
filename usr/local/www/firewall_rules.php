@@ -389,7 +389,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					foreach ($a_schedules as $schedule)
 					{
 						if ($schedule['name'] == $filterent['sched'] ){
-							$schedstatus = get_time_based_rule_status($schedule);
+							$schedstatus = filter_get_time_based_rule_status($schedule);
 							
 							foreach($schedule['timerange'] as $timerange) {
 								$tempFriendlyTime = "";

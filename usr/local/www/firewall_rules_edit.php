@@ -528,6 +528,12 @@ include("head.inc");
 				<select name="interface" class="formselect">
 <?php
    endif;
+				/* add group interfaces */
+                                if (is_array($config['ifgroups']['ifgroupentry']))
+					foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
+						if (have_ruleint_access($ifgen['ifname']))
+							$interfaces[$ifgen['ifname']] = $ifgen['ifname'];
+
 				$ifdescs = get_configured_interface_with_descr();
 
 				foreach ($ifdescs as $ifent => $ifdesc)
@@ -554,12 +560,6 @@ include("head.inc");
 					/* add openvpn/tun interfaces */
 					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
        					$interfaces["openvpn"] = "OpenVPN";
-
-					/* add group interfaces */
-					if (is_array($config['ifgroups']['ifgroupentry']))
-						foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
-							if (have_ruleint_access($ifgen['ifname']))
-								$interfaces[$ifgen['ifname']] = $ifgen['ifname'];
 
 					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && stristr($pconfig['interface'], $iface)) echo "selected"; ?>><?=gettext($ifacename);?></option>

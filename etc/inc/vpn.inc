@@ -1451,8 +1451,8 @@ l2tp{$i}:
         set l2tp disable originate
 
 EOD;
-				if (!empty($l2tpcfg['secret']))
-					$mpdlink .= "set l2tp secret {$l2tpcfg['secret']}\n";
+			if (!empty($l2tpcfg['secret']))
+					$mpdlinks .= "set l2tp secret {$l2tpcfg['secret']}\n";
 			}
 
 			fwrite($fd, $mpdlinks);

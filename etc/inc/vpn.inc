@@ -825,6 +825,8 @@ EOD;
 			sleep("0.1");
 			log_error("IPSEC: Sent a reload signal to the IPsec process");
 			mwexec("/usr/local/sbin/racoonctl -s /var/run/racoon.sock reload-config", false);
+			/* load SPD without flushing to be safe on config additions or changes. */
+			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 		} else {
 			/* flush SA + SPD entries */
 			mwexec("/usr/local/sbin/setkey -FP", false);

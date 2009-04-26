@@ -49,6 +49,36 @@ function interfaces_bring_up($interface) {
 	mwexec("/sbin/ifconfig " . escapeshellarg($interface) . " up");
 }
 
+/*
+ * Return the interface array
+ */
+function get_interface_arr($flush = false) {
+        global $interface_arr_cache;
+
+        /* If the cache doesn't exist, build it */
+        if (!isset($interface_arr_cache) or $flush)
+                $interface_arr_cache = exec_command("/sbin/ifconfig -l");
+
+        return $interface_arr_cache;
+}
+
+/*
+ * does_interface_exist($interface): return true or false if a interface is
+ * detected.
+ */
+function does_interface_exist($interface) {
+        global $config;
+
+        if(!$interface)
+                return false;
+
+        $ints = get_interface_arr();
+        if(stristr($ints, $interface) !== false)
+                return true;
+        else
+                return false;
+}
+
 function interfaces_loopback_configure() {
 	mwexec("/sbin/ifconfig lo0 127.0.0.1");
 	interfaces_bring_up("lo0");
@@ -2270,6 +2300,79 @@ function get_interface_subnet($interface = "wan") {
 	return null;
 }
 
+function get_interface_gateway($interface) {
+        global $config, $g;
+
+	$iflist = get_configured_interface_with_descr();
+        /*
+         * XXX: BUG: This is silly at first, but we may be called with the interface
+         *      descr for no apparent reason!!!
+	 * 	Probably one of those silly strtoupper() legacy stuff!
+         */
+        foreach ($iflist as $ifent => $ifdesc) {
+                if ($ifent == $interface || $ifdesc == $interface) {
+                        $interface = $ifent;
+                        break;
+                }
+        }
+
+	$gw = NULL;
+
+	$gwcfg = $config['interfaces'][$interface];
+        if (is_ipaddr($gwcfg['gateway']))
+                $gw = $gwcfg['gateway'];
+        else if (!empty($gwcfg['gateway']))
+                $gw = lookup_gateway_ip_by_name($gwcfg['gateway']);
+
+        // for dynamic interfaces we handle them through the $interface_router file.
+        if (!is_ipaddr($gw)) {
+                $realif = get_real_interface($interface);
+                if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
+                        $gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
+                        $gw = rtrim($gw);
+                }
+        }
+
+        /* return gateway */
+        return $gw;
+}
+
+/* return outside interfaces with a gateway */
+function get_interfaces_with_gateway() {
+        global $config;
+
+	$ints = array();
+
+	/* loop interfaces, check config for outbound */
+        foreach ($config['interfaces'] as $ifdescr => $ifname) {
+                switch ($$ifname['ipaddr']) {
+                case "dhcp":
+                case "carpdev-dhcp":
+                case "pppoe":
+                case "pptp":
+                        $ints[] = $ifdescr;
+                        break;
+                default:
+                        if ($ifname['pointtopoint'])
+                                $ints[] = $ifdescr;
+                        else if (!empty($ifname['gateway']))
+                                $ints[] = $ifdescr;
+                        break;
+                }
+        }
+        return $ints;
+}
+
+/* return true if interface has a gateway */
+function interface_has_gateway($friendly) {
+
+        $friendly = strtolower($friendly);
+        if (in_array($friendly, get_interfaces_with_gateway()))
+                return true;
+
+	return false;
+}
+
 /****f* interfaces/is_altq_capable
  * NAME
  *   is_altq_capable - Test if interface is capable of using ALTQ
@@ -2296,6 +2399,27 @@ function is_altq_capable($int) {
                 return true;
         else
                 return false;
+}
+
+/****f* interfaces/is_interface_wireless
+ * NAME
+ *   is_interface_wireless - Returns if an interface is wireless
+ * RESULT
+ *   $tmp       - Returns if an interface is wireless
+ ******/
+function is_interface_wireless($interface) {
+        global $config, $g;
+
+        $friendly = convert_real_interface_to_friendly_interface_name($interface);
+        if(!is_array($config['interfaces'][$friendly]['wireless'])) {
+                if (preg_match($g['wireless_regex'], $interface)) {
+                        $config['interfaces'][$friendly]['wireless'] = array();
+                        return true;
+                }
+                unset($config['interfaces'][$friendly]['wireless']);
+                return false;
+        } else
+                return true;
 }
 
 function get_wireless_modes($interface) {
@@ -2333,6 +2457,17 @@ function get_wireless_modes($interface) {
 	return($wireless_modes);
 }
 
+/****f* interfaces/get_interface_mtu
+ * NAME
+ *   get_interface_mtu - Return the mtu of an interface
+ * RESULT
+ *   $tmp       - Returns the mtu of an interface
+ ******/
+function get_interface_mtu($interface) {
+        $mtu = `/sbin/ifconfig {$interface} | /usr/bin/grep mtu | /usr/bin/cut -d" " -f6`;
+        return $mtu;
+}
+
 function get_interface_mac($interface) {
 	$mac = array();
         exec("/sbin/ifconfig {$interface} | /usr/bin/awk '/ether/ {print $2}'", $mac);
@@ -2356,6 +2491,25 @@ function generate_random_mac_address() {
         for($x=0; $x<5; $x++)
                 $mac .= ":" . dechex(rand(16, 255));
         return $mac;
+}
+
+/****f* interfaces/is_jumbo_capable
+ * NAME
+ *   is_jumbo_capable - Test if interface is jumbo frame capable.  Useful for determining VLAN capability.
+ * INPUTS
+ *   $int             - string containing interface name
+ * RESULT
+ *   boolean          - true or false
+ ******/
+function is_jumbo_capable($int) {
+        global $g;
+
+        $int_family = preg_split("/[0-9]+/", $int);
+
+        if (in_array($int_family[0], $g['vlan_long_frame']))
+                return true;
+        else
+                return false;
 }
 
 function setup_pppoe_reset_file($interface, $status) {

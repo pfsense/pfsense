@@ -2310,11 +2310,11 @@ function get_interfaces_with_gateway() {
 
 	/* loop interfaces, check config for outbound */
         foreach ($config['interfaces'] as $ifdescr => $ifname) {
-                switch ($$ifname['ipaddr']) {
-                case "dhcp":
-                case "carpdev-dhcp":
-                case "pppoe":
-                case "pptp":
+                switch ($ifname['ipaddr']) {
+                	case "dhcp":
+                	case "carpdev-dhcp":
+                	case "pppoe":
+                	case "pptp":
                         $ints[] = $ifdescr;
                         break;
                 default:

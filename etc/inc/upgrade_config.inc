@@ -491,9 +491,6 @@ function upgrade_025_to_026() {
 	$cron_item['command'] = "/usr/local/bin/checkreload.sh";
 
 	$config['cron']['item'][] = $cron_item;
-
-	/* write crontab entries to file */
-	configure_cron();
 }
 
 

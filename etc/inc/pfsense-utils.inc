@@ -209,48 +209,6 @@ function get_dns_servers() {
 	return $dns_server_master;
 }
 
-/****f* pfsense-utils/log_error
-* NAME
-*   log_error  - Sends a string to syslog.
-* INPUTS
-*   $error     - string containing the syslog message.
-* RESULT
-*   null
-******/
-function log_error($error) {
-	global $g;
-	$page = $_SERVER['SCRIPT_NAME'];
-	syslog(LOG_WARNING, "$page: $error");
-	if ($g['debug'])
-		syslog(LOG_WARNING, var_dump(debug_backtrace()));
-	return;
-}
-
-/****f* pfsense-utils/return_dir_as_array
- * NAME
- *   return_dir_as_array - Return a directory's contents as an array.
- * INPUTS
- *   $dir	- string containing the path to the desired directory.
- * RESULT
- *   $dir_array - array containing the directory's contents. This array will be empty if the path specified is invalid.
- ******/
-function return_dir_as_array($dir) {
-	$dir_array = array();
-	if (is_dir($dir)) {
-		if ($dh = opendir($dir)) {
-			while (($file = readdir($dh)) !== false) {
-				$canadd = 0;
-				if($file == ".") $canadd = 1;
-				if($file == "..") $canadd = 1;
-				if($canadd == 0)
-					array_push($dir_array, $file);
-			}
-			closedir($dh);
-		}
-	}
-	return $dir_array;
-}
-
 /****f* pfsense-utils/enable_hardware_offloading
  * NAME
  *   enable_hardware_offloading - Enable a NIC's supported hardware features.
@@ -1207,62 +1165,6 @@ function rmdir_recursive($path,$follow_links=false) {
 }
 
 /*
- *     get_memory()
- *     returns an array listing the amount of
- *     memory installed in the hardware
- *     [0]real and [1]available
- */
-function get_memory() {
-	if(file_exists("/var/log/dmesg.boot")) {
-		$mem = `cat /var/log/dmesg.boot | grep memory`;
-		$matches = "";
-		if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
-			$real = $matches[1];
-		if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
-			$avail = $matches[1];
-		return array($real[0],$avail[0]);
-	} else {
-		$mem = `dmesg -a`;
-		$matches = "";
-		if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
-			$real = $matches[1];
-		if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
-			$avail = $matches[1];
-		return array($real[0],$avail[0]);
-	}
-}
-
-/*
- *    safe_mkdir($path, $mode = 0755)
- *    create directory if it doesn't already exist and isn't a file!
- */
-function safe_mkdir($path, $mode=0755) {
-	global $g;
-
-	if (!is_file($path) && !is_dir($path)) {
-		return @mkdir($path, $mode);
-	} else {
-		return false;
-	}
-}
-
-/*
- * make_dirs($path, $mode = 0755)
- * create directory tree recursively (mkdir -p)
- */
-function make_dirs($path, $mode = 0755) {
-	$base = '';
-	foreach (explode('/', $path) as $dir) {
-		$base .= "/$dir";
-		if (!is_dir($base)) {
-			if (!@mkdir($base, $mode))
-				return false;
-		}
-	}
-	return true;
-}
-
-/*
  * call_pfsense_method(): Call a method exposed by the pfsense.com XMLRPC server.
  */
 function call_pfsense_method($method, $params, $timeout = 0) {
@@ -1325,30 +1227,6 @@ function get_disk_info() {
 	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $2, $3, $4, $5 }'", $diskout);
 	return explode(' ', $diskout[0]);
 	// $size, $used, $avail, $cap
-}
-
-function run_plugins($directory) {
-	global $config, $g;
-	/* process packager manager custom rules */
-	$files = return_dir_as_array($directory);
-	if($files <> "") {
-		foreach ($files as $file) {
-			if($file) {
-				$text = file_get_contents($directory . $file);
-				if($text) {
-					if(stristr($file, ".sh") == true) {
-						mwexec($directory . $file . " start");
-					} else {
-						if(!stristr($file,"CVS")) {
-							if($g['booting'] == true)
-								echo "\t{$file}... ";
-							require_once($directory . $file);
-						}
-					}
-				}
-			}
-		}
-	}	
 }
 
 /****f* pfsense-utils/display_top_tabs
@@ -1835,14 +1713,6 @@ function print_value_list($list, $count = 10, $separator = ",") {
 		$list .= "...";
 	}
 	return $list;
-}
-
-
-function update_filter_reload_status($text) {
-	global $g;
-	$fd = fopen("{$g['varrun_path']}/filter_reload_status", "w");
-	fwrite($fd, $text);
-	fclose($fd);
 }
 
 /* DHCP enabled on any interfaces? */

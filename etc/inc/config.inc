@@ -56,11 +56,7 @@ require_once("globals.inc");
 if($g['booting']) echo ".";
 require_once("util.inc");
 if($g['booting']) echo ".";
-require_once("pfsense-utils.inc");
-if($g['booting']) echo ".";
 require_once("xmlparse.inc");
-if($g['booting']) echo ".";
-require_once("services.inc");
 
 /* read platform */
 if($g['booting']) echo ".";
@@ -350,7 +346,6 @@ function restore_backup($file) {
 		conf_mount_ro();
 	}
 	config_unlock();
-	reload_all();
 }
 
 /****f* config/parse_config_bootup
@@ -1076,8 +1071,11 @@ EOD;
 
 		$g['booting'] = false;
 
-		/* resync everything */
-		reload_all_sync();
+		/* XXX: ermal - disable it for now this is used during bootup at best so shouldn't be needed.
+		 * 		For now just comment it out and later remove it completely.
+		 * resync everything 
+			reload_all_sync();
+		 */
 
 		echo " done!\n";
 
@@ -1303,48 +1301,6 @@ function backup_config() {
 	conf_mount_ro();
 
 	return true;
-}
-
-function mute_kernel_msgs() {
-	return;
-	exec("/sbin/conscontrol mute on");
-}
-
-function unmute_kernel_msgs() {
-	exec("/sbin/conscontrol mute off");
-}
-
-function start_devd() {
-	exec("/sbin/devd");
-	sleep(1);
-	if(file_exists("/tmp/rc.linkup"))
-		unlink("/tmp/rc.linkup");
-}
-
-function is_interface_mismatch() {
-	global $config, $g;
-
-	/* XXX: Should we process only enabled interfaces?! */
-	$do_assign = false;
-	$i = 0;
-	foreach ($config['interfaces'] as $ifname => $ifcfg) {
-		if (preg_match("/^enc|^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre|^lagg|^bridge|^vlan/i", $ifcfg['if'])) {
-			$i++;	
-		}
-		else if (does_interface_exist($ifcfg['if']) == false) {
-			file_notice("interfaces", "{$ifcfg['if']} is not present anymore on the system, you need to reassign interfaces or take appropriate actions.", "System", "", 2);
-			$do_assign = true;
-		} else 
-			$i++;
-	}
-	
-	if ($g['minimum_nic_count'] > $i) {
-		file_notice("interfaces", "Minimum allowed interfaces is set to {$g['minimum_nic_count']} but system has only {$i} interfaces!", "", "System", 2);
-		$do_assign = true;
-	} else if (file_exists("{$g['tmp_path']}/assign_complete"))
-		$do_assign = false;
-
-	return $do_assign;
 }
 
 function set_device_perms() {

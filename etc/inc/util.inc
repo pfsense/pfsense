@@ -473,6 +473,23 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
         return $iflist;
 }
 
+/****f* util/log_error
+* NAME
+*   log_error  - Sends a string to syslog.
+* INPUTS
+*   $error     - string containing the syslog message.
+* RESULT
+*   null
+******/
+function log_error($error) {
+        global $g;
+        $page = $_SERVER['SCRIPT_NAME'];
+        syslog(LOG_WARNING, "$page: $error");
+        if ($g['debug'])
+                syslog(LOG_WARNING, var_dump(debug_backtrace()));
+        return;
+}
+
 /* wrapper for exec() */
 function mwexec($command, $mute = false) {
 
@@ -741,6 +758,161 @@ function format_bytes($bytes) {
 	} else {
 		return sprintf("%d bytes", $bytes);
 	}
+}
+
+function update_filter_reload_status($text) {
+        global $g;
+
+        file_put_contents("{$g['varrun_path']}/filter_reload_status", $text);
+}
+
+/****f* util/return_dir_as_array
+ * NAME
+ *   return_dir_as_array - Return a directory's contents as an array.
+ * INPUTS
+ *   $dir       - string containing the path to the desired directory.
+ * RESULT
+ *   $dir_array - array containing the directory's contents. This array will be empty if the path specified is invalid.
+ ******/
+function return_dir_as_array($dir) {
+        $dir_array = array();
+        if (is_dir($dir)) {
+                if ($dh = opendir($dir)) {
+                        while (($file = readdir($dh)) !== false) {
+                                $canadd = 0;
+                                if($file == ".") $canadd = 1;
+                                if($file == "..") $canadd = 1;
+                                if($canadd == 0)
+                                        array_push($dir_array, $file);
+                        }
+                        closedir($dh);
+                }
+        }
+        return $dir_array;
+}
+
+function run_plugins($directory) {
+        global $config, $g;
+
+        /* process packager manager custom rules */
+        $files = return_dir_as_array($directory);
+        if (is_array($files)) {
+                foreach ($files as $file) {
+                        if($file) {
+                                $text = file_get_contents($directory . $file);
+                                if($text) {
+                                        if(stristr($file, ".sh") == true) {
+                                                mwexec($directory . $file . " start");
+                                        } else {
+                                                if(!stristr($file,"CVS")) {
+                                                        if($g['booting'] == true)
+                                                                echo "\t{$file}... ";
+                                                        require_once($directory . $file);
+                                                }
+                                        }
+                                }
+                        }
+                }
+        }
+}
+
+/*
+ *    safe_mkdir($path, $mode = 0755)
+ *    create directory if it doesn't already exist and isn't a file!
+ */
+function safe_mkdir($path, $mode=0755) {
+        global $g;
+
+        if (!is_file($path) && !is_dir($path)) {
+                return @mkdir($path, $mode);
+        } else {
+                return false;
+        }
+}
+
+/*
+ * make_dirs($path, $mode = 0755)
+ * create directory tree recursively (mkdir -p)
+ */
+function make_dirs($path, $mode = 0755) {
+        $base = '';
+        foreach (explode('/', $path) as $dir) {
+                $base .= "/$dir";
+                if (!is_dir($base)) {
+                        if (!@mkdir($base, $mode))
+                                return false;
+                }
+        }
+        return true;
+}
+
+/*
+ *     get_memory()
+ *     returns an array listing the amount of
+ *     memory installed in the hardware
+ *     [0]real and [1]available
+ */
+function get_memory() {
+        if(file_exists("/var/log/dmesg.boot")) {
+                $mem = `cat /var/log/dmesg.boot | grep memory`;
+                $matches = "";
+                if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
+                        $real = $matches[1];
+                if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
+                        $avail = $matches[1];
+                return array($real[0],$avail[0]);
+        } else {
+                $mem = `dmesg -a`;
+                $matches = "";
+                if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
+                        $real = $matches[1];
+                if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
+                        $avail = $matches[1];
+                return array($real[0],$avail[0]);
+        }
+}
+
+function mute_kernel_msgs() {
+        return;
+        exec("/sbin/conscontrol mute on");
+}
+
+function unmute_kernel_msgs() {
+        exec("/sbin/conscontrol mute off");
+}
+
+function start_devd() {
+        exec("/sbin/devd");
+        sleep(1);
+        if(file_exists("/tmp/rc.linkup"))
+                unlink("/tmp/rc.linkup");
+}
+
+function is_interface_mismatch() {
+        global $config, $g;
+
+        /* XXX: Should we process only enabled interfaces?! */
+        $do_assign = false;
+        $i = 0;
+        foreach ($config['interfaces'] as $ifname => $ifcfg) {
+                if (preg_match("/^enc|^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre|^lagg|^bridge|^vlan/i", $ifcfg['if'])) {
+                        $i++;
+                }
+                else if (does_interface_exist($ifcfg['if']) == false) {
+                        file_notice("interfaces", "{$ifcfg['if']} is not present anymore on the system, you need to reassign interfaces or take appropriate actions.", "System", "
+", 2);
+                        $do_assign = true;
+                } else
+                        $i++;
+        }
+
+        if ($g['minimum_nic_count'] > $i) {
+                file_notice("interfaces", "Minimum allowed interfaces is set to {$g['minimum_nic_count']} but system has only {$i} interfaces!", "", "System", 2);
+                $do_assign = true;
+        } else if (file_exists("{$g['tmp_path']}/assign_complete"))
+                $do_assign = false;
+
+        return $do_assign;
 }
 
 ?>

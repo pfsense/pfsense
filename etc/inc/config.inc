@@ -57,6 +57,8 @@ if($g['booting']) echo ".";
 require_once("util.inc");
 if($g['booting']) echo ".";
 require_once("xmlparse.inc");
+if($g['booting']) echo ".";
+require_once("crypt.inc");
 
 /* read platform */
 if($g['booting']) echo ".";

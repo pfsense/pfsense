@@ -81,9 +81,9 @@ include("head.inc");
 							if(is_array($config['installedpackages']['package'])):
 
 								$instpkgs = array();
-								foreach($config['installedpackages']['package'] as $instpkg)
-									if($instpkg['name'])
-										$instpkgs[] = $instpkg['name'];
+								foreach($config['installedpackages']['package'] as $instpkg) {
+									$instpkgs[] = $instpkg['name'];
+								}
 								asort($instpkgs);
 
 								foreach ($instpkgs as $index => $pkgname):

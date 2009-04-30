@@ -90,8 +90,10 @@ switch ($command) {
 			}
 			if(stristr($url,"bdiff"))
 				$type = "bdiff";			
-			if(file_exists("/root/firmware.tgz"))
+			if(file_exists("/root/firmware.tgz")) {
 				do_upgrade("/root/firmware.tgz", $type);
+				exit;
+			}
 		} else {
 			echo "\nCould not download update.\n\n";
 			fclose($fp);

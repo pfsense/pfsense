@@ -202,9 +202,9 @@ function filter_configure_sync() {
 	$rules .= filter_generate_scrubing();
 	$rules .= "\n";
 	$rules .= "{$dummynet_rules}\n";
-	$rules.= "{$altq_queues}\n";
-	$rules.= "{$natrules}\n";
-	$rules.= "{$pfrules}\n";
+	$rules .= "{$altq_queues}\n";
+	$rules .= "{$natrules}\n";
+	$rules .= "{$pfrules}\n";
 
 	fwrite($fd, $rules);
 	fclose($fd);

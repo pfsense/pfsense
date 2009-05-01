@@ -268,21 +268,7 @@ EOD;
 		mwexec("/sbin/sysctl net.link.ether.ipfw=0");
 
 		/* unload ipfw */
-		$installed_time_based_rules = false;
-		if($config['schedules']) {
-			foreach($config['schedules']['schedule'] as $sched) {
-				$installed_time_based_rules = true;
-				break;
-			}
-		}
-		if($installed_time_based_rules == false)
-			mwexec("/sbin/kldunload ipfw");
-		else {
-			/* shaper is on - just remove our rules */
-			mwexec("/sbin/ipfw -f delete set 1");
-			mwexec("/sbin/ipfw -f delete set 2");
-			mwexec("/sbin/ipfw -f delete set 3");
-		}
+		mwexec("/sbin/kldunload ipfw.ko");
 	}
 
     captiveportal_unlock();

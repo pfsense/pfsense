@@ -328,6 +328,8 @@ add 1100 set 1 pass layer2 mac-type 0x88c7
 add 1100 set 1 pass layer2 mac-type 0x8863
 # PPP Over Ethernet Session Stage
 add 1100 set 1 pass layer2 mac-type 0x8864
+# Allow WPA
+add 1100 set 1 pass layer2 mac-type 0x888e
 
 # layer 2: block anything else non-IP
 add 1101 set 1 deny layer2 not mac-type ip
@@ -363,23 +365,11 @@ EOD;
 		$cprules .= <<<EOD
 add 1304 set 1 pass tcp from any to $cpip 8001 in
 add 1305 set 1 pass tcp from $cpip 8001 to any out
-add 1306 set 1 pass tcp from any to $lanip 8001 in
-add 1307 set 1 pass tcp from $lanip 8001 to any out
 
 EOD;
 	}
 
         $cprules .= <<<EOD
-#PPPoE Discovery Stage
-add 1100 set 1 pass layer2 mac-type 0x8863
-#PPPoE Session Stage
-add 1100 set 1 pass layer2 mac-type 0x8864
-
-EOD;
-
-        $cprules .= <<<EOD
-# Allow WPA
-add 1100 set 1 pass layer2 mac-type 0x888e
 
 # ... 10000-19899: rules per authenticated client go here...
 

@@ -37,7 +37,6 @@
 */
 
 /* include all configuration functions */
-require_once("functions.inc");
 require_once("globals.inc");
 
 function interfaces_bring_up($interface) {
@@ -57,7 +56,7 @@ function get_interface_arr($flush = false) {
 
         /* If the cache doesn't exist, build it */
         if (!isset($interface_arr_cache) or $flush)
-                $interface_arr_cache = exec_command("/sbin/ifconfig -l");
+                $interface_arr_cache = `/sbin/ifconfig -l`;
 
         return $interface_arr_cache;
 }
@@ -2173,7 +2172,7 @@ function get_real_interface($interface = "wan") {
 }
 
 function guess_interface_from_ip($ipaddress) {
-        $ret = exec_command("/usr/bin/netstat -rn | /usr/bin/awk '/^{$ipaddress}/ {print \$6}'");
+        $ret = `/usr/bin/netstat -rn | /usr/bin/awk '/^{$ipaddress}/ {print \$6}'`;
         if(empty($ret)) {
                 return false;
         }
@@ -2190,7 +2189,7 @@ function find_ip_interface($ip)
 
         foreach ($ifdescrs as $ifdescr => $ifname) {
                 $int = get_real_interface($ifname);
-                $ifconfig = exec_command("/sbin/ifconfig {$int}");
+                $ifconfig = `/sbin/ifconfig {$int}`;
                 if(stristr($ifconfig,$ip) <> false)
                         return $int;
         }
@@ -2245,7 +2244,7 @@ function find_interface_ip($interface, $flush = false)
 
 	/* Setup IP cache */
 	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
-		$interface_ip_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2| /usr/bin/head -1");
+		$interface_ip_arr_cache[$interface] = `/sbin/ifconfig {$interface} | /usr/bin/grep -w "inet" | /usr/bin/cut -d" " -f 2| /usr/bin/head -1`;
 		$interface_ip_arr_cache[$interface] = str_replace("\n", "", $interface_ip_arr_cache[$interface]);
 	}
 
@@ -2261,7 +2260,7 @@ function find_interface_subnet($interface, $flush = false)
 		return;
 
 	if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
-		$interface_sn_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 4 | /usr/bin/head -1");
+		$interface_sn_arr_cache[$interface] = `/sbin/ifconfig {$interface} | /usr/bin/grep -w "inet" | /usr/bin/cut -d" " -f 4 | /usr/bin/head -1`;
 		$interface_sn_arr_cache[$interface] = strlen(str_replace("0", "", base_convert(str_replace("\n", "", $interface_sn_arr_cache[$interface]),16, 2)));
         }
 

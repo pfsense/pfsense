@@ -1062,26 +1062,26 @@ function generate_user_filter_rule_arr($rule)
 	return $ret;
 }
 
-function filter_generate_address(& $rule) 
+function filter_generate_address(& $rule, $target = "source") 
 {
 	global $FilterIflist;
 	$src = "";
 
-	if (isset($rule['source']['any'])) {
+	if (isset($rule[$target]['any'])) {
                 $src = "any";
-        } else if ($rule['source']['network']) {
-                if (strstr($rule['source']['network'], "opt")) {
-                        $src = $FilterIflist[$rule['source']['network']]['sa'] . "/" .
-                                $FilterIflist[$rule['source']['network']]['sn'];
-                        if (isset($rule['source']['not'])) $src = " !{$src}";
+        } else if ($rule[$target]['network']) {
+                if (strstr($rule[$target]['network'], "opt")) {
+                        $src = $FilterIflist[$rule['source'][$target]]['sa'] . "/" .
+                                $FilterIflist[$rule[$target]['network']]['sn'];
+                        if (isset($rule[$target]['not'])) $src = " !{$src}";
                         /* check for opt$NUMip here */
                         $matches = "";
-                        if (preg_match("/opt([0-9999])ip/", $rule['source']['network'], $matches)) {
+                        if (preg_match("/opt([0-9999])ip/", $rule[$target]['network'], $matches)) {
                                 $optnum = $matches[1];
                                 $src = $FilterIflist["opt{$optnum}"]['ip'];
                         }
                 } else {
-                        switch ($rule['source']['network']) {
+                        switch ($rule[$target]['network']) {
                                         case 'wanip':
                                                 $src = $FilterIflist["wan"]['ip'];
                                                 break;
@@ -1104,29 +1104,29 @@ function filter_generate_address(& $rule)
                                                 $src = "{$pppoesa}/{$pppoesn}";
                                                 break;
                                 }
-                                if (isset($rule['source']['not'])) $src = "!{$src}";
+                                if (isset($rule[$target]['not'])) $src = "!{$src}";
                         }
-	} else if ($rule['source']['address']) {
-                $expsrc = alias_expand($rule['source']['address']);
-                if (isset($rule['source']['not']))
+	} else if ($rule[$target]['address']) {
+                $expsrc = alias_expand($rule[$target]['address']);
+                if (isset($rule[$target]['not']))
                         $not = "!";
                 else
                         $not = "";
                 if (stristr($expsrc, "$")) {
                         if($not) {
                                 $src = "{";
-                                foreach(preg_split("/[\s]+/", alias_expand_value($rule['source']['address'])) as $item) {
+                                foreach(preg_split("/[\s]+/", alias_expand_value($rule[$target]['address'])) as $item) {
                                         if($item != "") {
                                                 $src .= " {$not}{$item}";
                                         }
                                 }
                                 /* added support for tables */
                                 $src .= " 0/0 }";
-                                $src_table = "<not" . $rule['source']['address'] . ">";
+                                $src_table = "<not" . $rule[$target]['address'] . ">";
                         }
                         else {
-                                $src = "{ {$not} " . alias_expand_value($rule['source']['address']) . " } ";
-                                $src_table = "<" . $rule['source']['address'] . ">";
+                                $src = "{ {$not} " . alias_expand_value($rule[$target]['address']) . " } ";
+                                $src_table = "<" . $rule[$target]['address'] . ">";
                         }
                         /* support for tables */
                         $src_table_line = "table $src_table {$src}\n";
@@ -1136,8 +1136,8 @@ function filter_generate_address(& $rule)
         }
 
 	if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
-                if ($rule['source']['port']) {
-                        $srcport = explode("-", $rule['source']['port']);
+                if ($rule[$target]['port']) {
+                        $srcport = explode("-", $rule[$target]['port']);
                         if (alias_expand($srcport[0]))
                                 $srcporta = alias_expand($srcport[0]);
                         else
@@ -1361,7 +1361,7 @@ function generate_user_filter_rule($rule)
 	update_filter_reload_status("Creating rule {$rule['descr']}");
 	
 	/* source address */
-	$src = filter_generate_address($rule);
+	$src = filter_generate_address($rule, "source");
 	if (empty($src) || ($src == "/")) 
 		return "# at the break!";
 	$aline['src'] = " from $src ";
@@ -1371,7 +1371,7 @@ function generate_user_filter_rule($rule)
 		$aline['os'] = " os {$rule['os']} ";
 
 	/* destination address */
-	$dst = filter_generate_address($rule);
+	$dst = filter_generate_address($rule, "destination");
 	if (empty($dst) || ($dst == "/"))
 		return "# returning at dst $dst == \"/\"";
 	$aline['dst'] = "to $dst ";

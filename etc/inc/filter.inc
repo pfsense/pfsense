@@ -1062,6 +1062,108 @@ function generate_user_filter_rule_arr($rule)
 	return $ret;
 }
 
+function filter_generate_address(& $rule) 
+{
+	global $FilterIflist;
+	$src = "";
+
+	if (isset($rule['source']['any'])) {
+                $src = "any";
+        } else if ($rule['source']['network']) {
+                if (strstr($rule['source']['network'], "opt")) {
+                        $src = $FilterIflist[$rule['source']['network']]['sa'] . "/" .
+                                $FilterIflist[$rule['source']['network']]['sn'];
+                        if (isset($rule['source']['not'])) $src = " !{$src}";
+                        /* check for opt$NUMip here */
+                        $matches = "";
+                        if (preg_match("/opt([0-9999])ip/", $rule['source']['network'], $matches)) {
+                                $optnum = $matches[1];
+                                $src = $FilterIflist["opt{$optnum}"]['ip'];
+                        }
+                } else {
+                        switch ($rule['source']['network']) {
+                                        case 'wanip':
+                                                $src = $FilterIflist["wan"]['ip'];
+                                                break;
+                                        case 'lanip':
+                                                $src = $FilterIflist["lan"]['ip'];
+                                                break;
+                                        case 'lan':
+                                                $lansa = $FilterIflist['lan']['sa'];
+                                                $lansn = $FilterIflist['lan']['sn'];
+                                                $src = "{$lansa}/{$lansn}";
+                                                break;
+                                        case 'pptp':
+                                                $pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
+                                                $pptpsn = $FilterIflist['pptp']['sn'];
+                                                $src = "{$pptpsa}/{$pptpsn}";
+                                                break;
+                                        case 'pppoe':
+                                                $pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
+                                                $pppoesn = $FilterIflist['pppoe']['sn'];
+                                                $src = "{$pppoesa}/{$pppoesn}";
+                                                break;
+                                }
+                                if (isset($rule['source']['not'])) $src = "!{$src}";
+                        }
+	} else if ($rule['source']['address']) {
+                $expsrc = alias_expand($rule['source']['address']);
+                if (isset($rule['source']['not']))
+                        $not = "!";
+                else
+                        $not = "";
+                if (stristr($expsrc, "$")) {
+                        if($not) {
+                                $src = "{";
+                                foreach(preg_split("/[\s]+/", alias_expand_value($rule['source']['address'])) as $item) {
+                                        if($item != "") {
+                                                $src .= " {$not}{$item}";
+                                        }
+                                }
+                                /* added support for tables */
+                                $src .= " 0/0 }";
+                                $src_table = "<not" . $rule['source']['address'] . ">";
+                        }
+                        else {
+                                $src = "{ {$not} " . alias_expand_value($rule['source']['address']) . " } ";
+                                $src_table = "<" . $rule['source']['address'] . ">";
+                        }
+                        /* support for tables */
+                        $src_table_line = "table $src_table {$src}\n";
+                        $src = $src_table;
+                } else
+                        $src = "{ {$not} {$expsrc} }";
+        }
+
+	if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+                if ($rule['source']['port']) {
+                        $srcport = explode("-", $rule['source']['port']);
+                        if (alias_expand($srcport[0]))
+                                $srcporta = alias_expand($srcport[0]);
+                        else
+                                $srcporta = $srcport[0];
+                        if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+                                if(alias_expand($srcport[0]))
+                                        $src .= " port {$srcporta} ";
+                                else
+                                        $src .= " port = {$srcporta} ";
+                        } else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
+                                /* no need for a port statement here */
+                        } else if ($srcport[1] == 65535) {
+                                $src .= " port >= {$srcport[0]} ";
+                        } else if ($srcport[0] == 1) {
+                                $src .= " port <= {$srcport[1]} ";
+                        } else {
+                                $srcport[0]--;
+                                $srcport[1]++;
+                                $src .= " port {$srcport[0]} >< {$srcport[1]} ";
+                        }
+                }
+        }
+
+	return $src;
+}
+
 function generate_user_filter_rule($rule) 
 {
 	global $config, $g, $FilterIflist, $GatewaysList, $GatewayGroupsList;
@@ -1257,202 +1359,23 @@ function generate_user_filter_rule($rule)
 			$aline['prot'] = " proto tcp ";
 	}
 	update_filter_reload_status("Creating rule {$rule['descr']}");
+	
 	/* source address */
-	if (isset($rule['source']['any'])) {
-		$src = "any";
-	} else if ($rule['source']['network']) {
-		if (strstr($rule['source']['network'], "opt")) {
-			$src = $FilterIflist[$rule['source']['network']]['sa'] . "/" .
-				$FilterIflist[$rule['source']['network']]['sn'];
-			if (isset($rule['source']['not'])) $src = " !{$src}";
-			/* check for opt$NUMip here */
-			$matches = "";
-			if (preg_match("/opt([0-9999])ip/", $rule['source']['network'], $matches)) {
-				$optnum = $matches[1];
-				$src = $FilterIflist["opt{$optnum}"]['ip'];
-			}
-		} else {
-			switch ($rule['source']['network']) {
-					case 'wanip':
-						$src = $FilterIflist["wan"]['ip'];
-						break;
-					case 'lanip':
-						$src = $FilterIflist["lan"]['ip'];
-						break;
-					case 'lan':
-						$lansa = $FilterIflist['lan']['sa'];
-												$lansn = $FilterIflist['lan']['sn'];
-												$src = "{$lansa}/{$lansn}";
-						break;
-					case 'pptp':
-						$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
-						$pptpsn = $FilterIflist['pptp']['sn'];
-						$src = "{$pptpsa}/{$pptpsn}";
-						break;
-					case 'pppoe':
-						$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
-						$pppoesn = $FilterIflist['pppoe']['sn'];
-						$src = "{$pppoesa}/{$pppoesn}";
-						break;
-				}
-				if (isset($rule['source']['not'])) $src = "!{$src}";
-			}
-	} else if ($rule['source']['address']) {
-		$expsrc = alias_expand($rule['source']['address']);
-		if (isset($rule['source']['not']))
-			$not = "!";
-		else
-			$not = "";
-		if (stristr($expsrc, "$")) {
-			if($not) {
-				$src = "{";
-				foreach(preg_split("/[\s]+/", alias_expand_value($rule['source']['address'])) as $item) {
-					if($item != "") {
-						$src .= " {$not}{$item}";
-					}
-				}
-				/* added support for tables */
-				$src .= " 0/0 }";
-				$src_table = "<not" . $rule['source']['address'] . ">";
-			}
-			else {
-				$src = "{ {$not} " . alias_expand_value($rule['source']['address']) . " } ";
-				$src_table = "<" . $rule['source']['address'] . ">";
-			}
-			/* support for tables */
-			$src_table_line = "table $src_table {$src}\n";
-			$src = $src_table;
-		} else
-			$src = "{ {$not} {$expsrc} }";
-	}
-	if (!$src || ($src == "/")) 
+	$src = filter_generate_address($rule);
+	if (empty($src) || ($src == "/")) 
 		return "# at the break!";
 	$aline['src'] = " from $src ";
-	if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
-		if ($rule['source']['port']) {
-			$srcport = explode("-", $rule['source']['port']);
-			if (alias_expand($srcport[0]))
-				$srcporta = alias_expand($srcport[0]);
-			else
-				$srcporta = $srcport[0];
-			if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
-				if(alias_expand($srcport[0]))
-					$aline['srcport'] = " port {$srcporta} ";
-				else
-					$aline['srcport'] = " port = {$srcporta} ";
-			} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
-				/* no need for a port statement here */
-			} else if ($srcport[1] == 65535) {
-				$aline['srcport'] = "port >= {$srcport[0]} ";
-			} else if ($srcport[0] == 1) {
-				$aline['srcport']= "port <= {$srcport[1]} ";
-			} else {
-				$srcport[0]--;
-				$srcport[1]++;
-				$aline['srcport'] = " port {$srcport[0]} >< {$srcport[1]} ";
-			}
-		}
-		/* OS signatures */
-		if (($rule['protocol'] == "tcp") && ($rule['os'] <> ""))
-			$aline['os'] = " os {$rule['os']} ";
-	}
-	/* destination address */
-	if (isset($rule['destination']['any'])) {
-		$dst = "any";
-	} else if ($rule['destination']['network']) {
-		if (strstr($rule['destination']['network'], "opt")) {
-			$dst = $FilterIflist[$rule['destination']['network']]['sa'] . "/" .
-				$FilterIflist[$rule['destination']['network']]['sn'];
-			/* check for opt$NUMip here */
-			$matches = "";
-			if (preg_match("/opt([0-9999])ip/", $rule['destination']['network'], $matches)) {
-				$optnum = $matches[1];
-				$dst = $FilterIflist["opt{$optnum}"]['ip'];
-			}
-			if (isset($rule['destination']['not'])) $dst = " !{$dst}";
-		} else {
-			switch ($rule['destination']['network']) {
-				case 'wanip':
-					$dst = $FilterIflist["wan"]['ip'];
-					break;
-				case 'lanip':
-					$dst = $FilterIflist["lan"]['ip'];
-					break;
-				case 'lan':
-					$lansa = $FilterIflist['lan']['sa'];
-					$lansn = $FilterIflist['lan']['sn'];
-					$dst = "{$lansa}/{$lansn}";
-					break;
-				case 'pptp':
-					$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
-					$pptpsn = $FilterIflist['pptp']['sn'];
-					$dst = "{$pptpsa}/{$pptpsn}";
-					break;
-				case 'pppoe':
-					$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
-					$pppoesn = $FilterIflist['pppoe']['sn'];
-					$dst = "{$pppoesa}/{$pppoesn}";
-					break;
-			}
-			if (isset($rule['destination']['not'])) $dst = " !{$dst}";
-		}
-	} else if ($rule['destination']['address']) {
-		$expdst = alias_expand($rule['destination']['address']);
-		if (isset($rule['destination']['not']))
-			$not = "!";
-		else
-			$not = "";
-		if (stristr($expdst, "$")) {
-			if($not) {
-				$dst = "{";
-				foreach(preg_split("/[\s]+/", alias_expand_value($rule['destination']['address'])) as $item) {
-					if($item != "") 
-						$dst .= " {$not}{$item}";
-				}
-				/* added support for tables */
-				$dst .= " 0/0 }";
-				$dst_table = "<not" . $rule['destination']['address'] . ">";
-			}
-			else {
-				$dst = "{ {$not} " . alias_expand_value($rule['destination']['address']) . " } ";
-				$dst_table = "<" . $rule['destination']['address'] . ">";
-			}
-			/* support for tables */
-			$dst_table_line = "table $dst_table {$dst}\n";
-			$dst = $dst_table;
-		}
-		else
-			$dst = "{ {$not} {$expdst} }";
-	}
-	if (!$dst || ($dst == "/"))
-		return "# returning at dst $dst == \"/\"";
 
+	/* OS signatures */
+	if (($rule['protocol'] == "tcp") && ($rule['os'] <> ""))
+		$aline['os'] = " os {$rule['os']} ";
+
+	/* destination address */
+	$dst = filter_generate_address($rule);
+	if (empty($dst) || ($dst == "/"))
+		return "# returning at dst $dst == \"/\"";
 	$aline['dst'] = "to $dst ";
-	if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
-		if ($rule['destination']['port']) {
-			$dstport = explode("-", $rule['destination']['port']);
-			if (alias_expand($dstport[0]))
-				$dstporta = alias_expand($dstport[0]);
-			else
-				$dstporta = $dstport[0];
-			if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
-				if(alias_expand($dstport[0]))
-					$aline['dstport'] = " port {$dstporta} ";
-				else
-					$aline['dstport'] = "port = {$dstporta} ";
-			} else if (($dstport[0] == 1) && ($dstport[1] == 65535)) {
-				/* no need for a port statement here */
-			} else if ($dstport[1] == 65535) {
-				$aline['dstport'] = " port >= {$dstport[0]} ";
-			} else if ($dstport[0] == 1) {
-				$aline['dstport'] = " port <= {$dstport[1]} ";
-			}  else {
-				$dstport[0]--;
-				$dstport[1]++;
-				$aline['dstport'] = " port {$dstport[0]} >< {$dstport[1]} ";
-			}
-		}
-	}
+
 	//Layer7 support
 	$l7_present = false;
 	$l7_structures = array();
@@ -1603,19 +1526,19 @@ function generate_user_filter_rule($rule)
 		/* negate VPN/PPTP/PPPoE networks for load balancer/gateway rules */
 		$vpns = " to <vpns> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] .
-			$aline['interface'] . $aline['prot'] . $aline['src'] . $aline['srcport'] .
-			$aline['os'] . $vpns . $aline['dstport'] . $aline['icmp-type'] . $aline['tag'] .
-			$aline['tagged'] . $aline['dscp'] . $aline['allowopts'] . $aline['flags'] .
+			$aline['interface'] . $aline['prot'] . $aline['src'] . $aline['os'] .
+			$vpns . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] .
+			$aline['dscp'] . $aline['allowopts'] . $aline['flags'] .
 			$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'] .
 			" label \"NEGATE_ROUTE: Negate policy route for vpn(s)\"\n";
 
 	}
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
-		$aline['reply'] . $aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] .
-		$aline['os'] . $aline['dst'] . $aline['dstport'] . $aline['divert'] . $aline['icmp-type'] .
-		$aline['tag'] . $aline['tagged'] . $aline['dscp'] .  $aline['allowopts'] . $aline['flags'] .
-		$aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
+		$aline['reply'] . $aline['route'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
+		$aline['divert'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] .
+		$aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
+		
 
 	return $line;
 }

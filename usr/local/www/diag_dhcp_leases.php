@@ -98,7 +98,7 @@ function remove_duplicate($array, $field)
 {
   foreach ($array as $sub)
    $cmp[] = $sub[$field];
-  $unique = array_unique($cmp);
+  $unique = array_unique(array_reverse($cmp,true));
   foreach ($unique as $k => $rien)
    $new[] = $array[$k];
   return $new;

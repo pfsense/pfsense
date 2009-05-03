@@ -237,9 +237,8 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 			$slease['ip'] = $static['ipaddr'];
 			$slease['type'] = "static";
 			$slease['mac'] = $static['mac'];
-			$slease['start'] = gmdate("M d Y H:i:s", time());
-			$slease['end'] = gmdate("M d Y H:i:s", time());
-			$slease['end'] = gmdate("M d Y H:i:s", strtotime('+5 minutes'));
+			$slease['start'] = "";
+			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
 			$slease['act'] = "static";
 			$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$slease['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
@@ -343,8 +342,13 @@ foreach ($leases as $data) {
                 	echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
                 }
                 echo "<td class=\"listr\">{$fspans}" . htmlentities($data['hostname']) . "{$fspane}&nbsp;</td>\n";
-                echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";
-                echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}&nbsp;</td>\n";
+		if ($data['type'] != "static") {
+			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";
+			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}&nbsp;</td>\n";
+		} else {
+			echo "<td class=\"listr\">{$fspans} n/a {$fspane}&nbsp;</td>\n";
+			echo "<td class=\"listr\">{$fspans} n/a {$fspane}&nbsp;</td>\n";
+		}
                 echo "<td class=\"listr\">{$fspans}{$data['online']}{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}&nbsp;</td>\n";
 		

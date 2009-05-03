@@ -1570,7 +1570,6 @@ function setup_bridge() {
 			$iflist['opt' . $i] = 'opt' . $i;
 	foreach($iflist as $if) {
 		// go through all interfaces and check for bridged interfaces
-		log_error("foreach if is $if");
 		if ($config['interfaces'][$if]['bridge']) {
 			// this interface is bridged
 			$bridgefound = false;

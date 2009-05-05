@@ -76,7 +76,7 @@ if($_REQUEST['getupdatestatus']) {
 $curcfg = $config['system']['firmware'];
 
 ?>
-
+</script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tbody>
 		<tr>
@@ -90,7 +90,7 @@ $curcfg = $config['system']['firmware'];
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
                 <br />
-                <?=`uname -sr`?>		
+                <div name="uname" id="uname"><a href="#" onClick='swapuname();'><?=`uname -sr`?></a></div>
                 <div id='updatestatus'><br/>Obtaining update status...</div>
 			</td>
 		</tr>
@@ -229,6 +229,9 @@ $curcfg = $config['system']['firmware'];
 	}
 	function activitycallback(transport) {
 		$('updatestatus').innerHTML = transport.responseText;
+	}
+	function swapuname() {
+		$('uname').innerHTML="<?php echo exec("uname -a"); ?>";
 	}
 	setTimeout('getstatus()', 4000);
 </script>

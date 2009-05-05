@@ -150,7 +150,7 @@ function check_for_kernel_file() {
 }
 
 function do_upgrade($path) {
-	global $fp;
+	global $fp, $g;
 	touch($g['varrun_path'] . "/firmware.lock");
 	check_for_kernel_file();
 	echo "\nOne moment please... Invoking firmware upgrade...\n";

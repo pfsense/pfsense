@@ -156,6 +156,7 @@ function check_for_kernel_file() {
 
 function do_upgrade($path, $type) {
 	global $g;
+	touch($g['varrun_path'] . "/firmware.lock");	
 	check_for_kernel_file();
 	echo "\nOne moment please...\nInvoking firmware upgrade...";
 	if($type == "bdiff") 
@@ -168,6 +169,7 @@ function do_upgrade($path, $type) {
 		echo ".";
 	}
 	echo "Done.  Rebooting...\n\n";
+	unlink($g['varrun_path'] . "/firmware.lock");
 }
 
 exec("rm -f /root/*.md5");

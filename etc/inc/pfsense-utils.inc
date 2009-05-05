@@ -226,7 +226,7 @@ function enable_hardware_offloading($interface) {
 		return;
 
 	/* translate wan, lan, opt -> real interface if needed */
-	$int = filter_translate_type_to_real_interface($interface);
+	$int = interface_translate_type_to_real($interface);
 	if($int <> "") $interface = $int;
 	$int_family = preg_split("/[0-9]+/", $int);
 	$options = strtolower(`/sbin/ifconfig -m {$interface} | grep capabilities`);
@@ -612,19 +612,6 @@ function convert_ip_to_network_format($ip, $subnet) {
 	$ipsplit = split('[.]', $ip);
 	$string = $ipsplit[0] . "." . $ipsplit[1] . "." . $ipsplit[2] . ".0/" . $subnet;
 	return $string;
-}
-
-/*
- *  filter_translate_type_to_real_interface($interface): 
- *		returns the real hardware interface name for a friendly interface.  ie: wan
- */
-function filter_translate_type_to_real_interface($interface) {
-	global $config;
-	if($config['interfaces'][$interface]['if'] <> "") {
-		return $config['interfaces'][$interface]['if'];
-	} else {
-		return $interface;
-	}
 }
 
 /*

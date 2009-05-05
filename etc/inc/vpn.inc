@@ -1148,7 +1148,7 @@ function vpn_pppoe_configure() {
 
 		case 'server' :
 
-			$pppoe_interface = filter_translate_type_to_real_interface($pppoecfg['interface']);
+			$pppoe_interface = interface_translate_type_to_real($pppoecfg['interface']);
 
 			if ($pppoecfg['paporchap'] == "chap")
 				$paporchap = "set link enable chap";

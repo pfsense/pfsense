@@ -1052,7 +1052,7 @@ function interfaces_carp_configure() {
 		$vip_password = str_replace(" ", "", $vip_password);
 		if($vip['password'] != "")
                 	$password = " pass \"" . $vip_password . "\"";
-		$interface = filter_translate_type_to_real_interface($vip['interface']);
+		$interface = interface_translate_type_to_real($vip['interface']);
 		$carpint = "carp" . $carp_instances_counter;
 
 		switch ($vip['mode']) {
@@ -2033,7 +2033,7 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                         return $ifname;
 
                 /* XXX: ermal - The 3 lines below are totally bogus code. */
-                $int = filter_translate_type_to_real_interface($if);
+                $int = interface_translate_type_to_real($if);
                 if($ifname == $interface)
                         return $ifname;
 
@@ -2088,6 +2088,19 @@ function convert_real_interface_to_friendly_descr($interface) {
         }
 
         return $interface;
+}
+
+/*
+ *  interface_translate_type_to_real($interface):
+ *              returns the real hardware interface name for a friendly interface.  ie: wan
+ */
+function interface_translate_type_to_real($interface) {
+        global $config;
+
+        if ($config['interfaces'][$interface]['if'] <> "")
+                return $config['interfaces'][$interface]['if'];
+        else
+		return $interface;
 }
 
 function get_real_interface($interface = "wan") {

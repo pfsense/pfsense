@@ -2267,8 +2267,8 @@ function find_interface_subnet($interface, $flush = false)
 	return $interface_sn_arr_cache[$interface];
 }
 
-function get_interface_ip($interface = "wan") {
-
+function get_interface_ip($interface = "wan")
+{
 	$realif = get_real_interface($interface);
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
@@ -2288,8 +2288,16 @@ function get_interface_ip($interface = "wan") {
 	return null;
 }
 
-function get_interface_subnet($interface = "wan") {
+function get_interface_subnet($interface = "wan")
+{
 	$realif = get_real_interface($interface);
+	if (!$realif) {
+                if (preg_match("/^carp/i", $interface))
+                        $realif = $interface;
+                else
+                        return null;
+        }
+
 	/* Do we really come here for these interfaces ?! */
 	if (in_array($realif, array("pptp", "pppoe", "l2tp", "openvpn", "enc0" /* , "ppp" */)))
 		return "";

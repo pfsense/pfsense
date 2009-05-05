@@ -534,28 +534,25 @@ function find_number_of_created_carp_interfaces($flush = false) {
 
 function link_carp_interface_to_parent($interface) {
 	global $config;
-	if($interface == "") return;
+
+	if ($interface == "")
+		return;
+
+	$carp_ip = find_interface_ip($interface);
+	if (!is_ipaddr($carp_ip))
+		return;
 
 	/* if list */
         $ifdescrs = get_configured_interface_list();
-
-	$carp_int = $interface;
-	$carp_ip = find_interface_ip($interface);
-	$carp_subnet = find_virtual_ip_netmask($carp_ip);
-	$starting_ip = gen_subnet("{$carp_ip}", "{$carp_subnet}");
-	$carp_ints = "";
-
 	foreach ($ifdescrs as $ifdescr => $ifname) {
-		if(interface_has_gateway($ifname)) {
-			$interfaceip = get_interface_ip($ifname);
-			$subnet_bits = get_interface_subnet($ifname);
-			$subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
-			if(ip_in_subnet($carp_ip, "{$subnet_ip}/{$subnet_bits}")) {
-				return $ifname;
-			}
-		}
+		$interfaceip = get_interface_ip($ifname);
+		$subnet_bits = get_interface_subnet($ifname);
+		$subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
+		if(ip_in_subnet($carp_ip, "{$subnet_ip}/{$subnet_bits}"))
+			return $ifname;
 	}
-	return $carp_ints;
+
+	return "";
 }
 
 /****f* pfsense-utils/link_ip_to_carp_interface
@@ -568,27 +565,22 @@ function link_carp_interface_to_parent($interface) {
  ******/
 function link_ip_to_carp_interface($ip) {
 	global $config;
-	if($ip == "") return;
 
-	/* if list */
-        $ifdescrs = get_configured_interface_list();
-
-	$ft = split("\.", $ip);
-	$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
+	if (!is_ipaddr($ip))
+		return;
 
 	$carp_ints = "";
 	$num_carp_ints = find_number_of_created_carp_interfaces();
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-		for($x=0; $x<$num_carp_ints; $x++) {
-			$carp_int = "carp{$x}";
-			$carp_ip = find_interface_ip($carp_int);
-			$carp_subnet = find_virtual_ip_netmask($carp_ip);
-			$starting_ip = gen_subnet("{$carp_ip}", "{$carp_subnet}");
-			if(ip_in_subnet($ip, "{$starting_ip}/{$carp_subnet}"))
-				if(!stristr($carp_ints, $carp_int))
-					$carp_ints .= " " . $carp_int;
-		}
+	for ($x=0; $x<$num_carp_ints; $x++) {
+		$carp_int = "carp{$x}";
+		$carp_ip = find_interface_ip($carp_int);
+		$carp_subnet = find_virtual_ip_netmask($carp_ip);
+		$starting_ip = gen_subnet("{$carp_ip}", "{$carp_subnet}");
+		if (ip_in_subnet($ip, "{$starting_ip}/{$carp_subnet}"))
+			if(!stristr($carp_ints, $carp_int))
+				$carp_ints .= " " . $carp_int;
 	}
+	
 	return $carp_ints;
 }
 

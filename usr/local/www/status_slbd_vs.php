@@ -78,8 +78,10 @@ $a_pool = &$config['load_balancer']['lbpool'];
 //            average: 1/60s 0/h 0/d sessions
 // 0    redirect  testvs                            active
 
-$redirects_a = exec_command_and_return_text_array('/usr/local/sbin/relayctl show redirects');
-$summary_a = exec_command_and_return_text_array('/usr/local/sbin/relayctl show summary');
+$redirects_a = array();
+exec('/usr/local/sbin/relayctl show redirects 2>&1', $redirects_a);
+$summary_a = array();
+exec('/usr/local/sbin/relayctl show summary 2>&1', $summary_a);
 $rdr_a = parse_redirects($redirects_a);
 //$server_a = parse_summary($summary_a, parse_redirects($redirects_a));
 

@@ -54,6 +54,12 @@ if ($_POST['if'])
 
 $ifdescs = get_configured_interface_with_descr();
 
+/* add group interfaces */
+if (is_array($config['ifgroups']['ifgroupentry']))
+	foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
+		if (have_ruleint_access($ifgen['ifname']))
+			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
+
 foreach ($ifdescs as $ifent => $ifdesc)
 	if(have_ruleint_access($ifent)) 
 		$iflist[$ifent] = $ifdesc;
@@ -78,12 +84,6 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']
 /* add openvpn/tun interfaces */
 if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
    	$iflist["openvpn"] = "OpenVPN";
-
-/* add group interfaces */
-if (is_array($config['ifgroups']['ifgroupentry']))
-	foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
-		if (have_ruleint_access($ifgen['ifname']))
-			$iflist[$ifgen['ifname']] = $ifgen['ifname'];
 
 if (!$if || !isset($iflist[$if])) {
 	if ("any" == $if)

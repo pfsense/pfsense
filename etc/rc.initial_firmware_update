@@ -151,10 +151,12 @@ function check_for_kernel_file() {
 
 function do_upgrade($path) {
 	global $fp;
+	touch($g['varrun_path'] . "/firmware.lock");
 	check_for_kernel_file();
 	echo "\nOne moment please... Invoking firmware upgrade...\n";
 	exec("/etc/rc.firmware pfSenseupgrade $path");
 	unlink_if_exists($path);
+	unlink($g['varrun_path'] . "/firmware.lock");
 	die;
 }
 

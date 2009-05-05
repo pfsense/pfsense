@@ -90,7 +90,7 @@ $curcfg = $config['system']['firmware'];
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
                 <br />
-                <div name="uname" id="uname"><a href="#" onClick='swapuname();'><?=`uname -sr`?></a></div>
+                <div name="uname" id="uname"><a href="#" onClick='swapuname(); return false;'><?=`uname -sr`?></a></div>
                 <div id='updatestatus'><br/>Obtaining update status...</div>
 			</td>
 		</tr>

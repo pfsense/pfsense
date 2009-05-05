@@ -435,26 +435,6 @@ function setup_microcode() {
 		enable_hardware_offloading($if);
 }
 
-/****f* pfsense-utils/return_filename_as_array
- * NAME
- *   return_filename_as_array - Return a file's contents as an array.
- * INPUTS
- *   $filename	- string containing the path to the desired file.
- *   $strip	- array of characters to strip - default is '#'.
- * RESULT
- *   $file	- array containing the file's contents.
- * NOTES
- *   This function strips lines starting with '#' and leading/trailing whitespace by default.
- ******/
-function return_filename_as_array($filename, $strip = array('#')) {
-	if(file_exists($filename)) $file = file($filename);
-	if(is_array($file)) {
-		foreach($file as $line) $line = trim($line);
-		foreach($strip as $tostrip) $file = preg_grep("/^{$tostrip}/", $file, PREG_GREP_INVERT);
-	}
-	return $file;
-}
-
 /****f* pfsense-utils/get_carp_status
  * NAME
  *   get_carp_status - Return whether CARP is enabled or disabled.

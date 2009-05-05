@@ -225,8 +225,7 @@ function system_routing_configure() {
 	if(isset($config['staticroutes']['enablefastrouting']))
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
 
-	exec("/usr/bin/netstat -rn", $route_arr, $retval);
-	$route_str = implode("\n", $route_arr);
+	$route_str = exec_command("/usr/bin/netstat -rn");
 
 	/* clear out old routes, if necessary */
 	if (file_exists("{$g['vardb_path']}/routes.db")) {
@@ -249,15 +248,19 @@ function system_routing_configure() {
 
 	$dont_remove_route = false;
 	foreach ($iflist as $ifent => $ifname) {
+		/* 
+		 * XXX: The value of this is really when this function can take
+		 * 	an interface as parameter.
+		 */
 		/* do not process interfaces that will end up with gateways */
-		if (interface_has_gateway($ifent))
+		if (interface_has_gateway($ifent) || 
+			$config['interfaces'][$ifent]['ipaddr'] == "carpdev-dhcp") {
 			$dont_remove_route = true;
+			break;
+		}
 	}
 
-	if($config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp")
-		$dont_remove_route = true;
-
-	if($dont_remove_route == false) {
+	if ($dont_remove_route == false) {
 		/* remove default route */
 		mwexec("/sbin/route delete default", true);
 	}
@@ -268,6 +271,7 @@ function system_routing_configure() {
 		foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
 			if($olsrd['enabledyngw'] == "on") {
 				$dont_add_route = true;
+				break;
 			}
 		}
 	}

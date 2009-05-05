@@ -490,6 +490,22 @@ function log_error($error) {
         return;
 }
 
+/****f* util/exec_command
+ * NAME
+ *   exec_command - Execute a command and return a string of the result.
+ * INPUTS
+ *   $command   - String of the command to be executed.
+ * RESULT
+ *   String containing the command's result.
+ * NOTES
+ *   This function returns the command's stdout and stderr.
+ ******/
+function exec_command($command) {
+        $output = array();
+        exec($command . ' 2>&1 ', $output);
+        return(implode("\n", $output));
+}
+
 /* wrapper for exec() */
 function mwexec($command, $mute = false) {
 

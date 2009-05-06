@@ -26,7 +26,7 @@ fi
 PMD=`/bin/cat /tmp/latest.tgz.md5 | cut -d" " -f4 `
 MD=`/sbin/md5 /tmp/latest.tgz | cut -d" " -f4`
 
-PLATFORM=`cat /etc/version`
+PLATFORM=`cat /etc/platform`
 
 echo "   Package MD5: ${PMD}" | logger -p daemon.info -i -t AutoUpgrade
 echo "Downloaded MD5: ${MD}"  | logger -p daemon.info -i -t AutoUpgrade

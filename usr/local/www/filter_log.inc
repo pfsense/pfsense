@@ -38,16 +38,22 @@ function conv_log_filter($logfile, $nentries, $tail = 50) {
 	if (!(is_numeric($tail)))
 		return;
 
+	/* FreeBSD 8 splits pf log lines into two lines, so we need to at least
+	 * tail twice as many, plus some extra to account for unparseable lines */
+	$tail = $tail * 2 + 50;
+
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
 	$logarr = "";
 
 	if(isset($config['system']['usefifolog'])) 
-		exec("/usr/sbin/fifolog_reader {$logfile} | /usr/bin/tail -r -n 500", $logarr);
+		exec("/usr/sbin/fifolog_reader {$logfile} | /usr/bin/tail -r -n {$tail}", $logarr);
 	else
-		exec("/usr/sbin/clog {$logfile} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail -r -n 500", $logarr);
+		exec("/usr/sbin/clog {$logfile} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail -r -n {$tail}", $logarr);
 
 	$filterlog = array();
 	$counter = 0;
+
+	$logarr = array_reverse(collapse_filter_lines(array_reverse($logarr)));
 
 	foreach ($logarr as $logent) {
 		if($counter >= $nentries)
@@ -61,6 +67,25 @@ function conv_log_filter($logfile, $nentries, $tail = 50) {
 	}
 	/* Since the lines are in reverse order, flip them around if needed based on the user's preference */
 	return isset($config['syslog']['reverse']) ? $filterlog : array_reverse($filterlog);
+}
+
+function collapse_filter_lines($logarr) {
+	$lastline = "";
+	$collapsed = array();
+	foreach ($logarr as $logent) {
+		$line_split = "";
+		preg_match("/.*\spf:\s(.*)/", $logent, $line_split);
+		if (substr($line_split[1], 0, 4) != "    ") {
+			if (($lastline != "") && (substr($lastline, 0, 1) != " ")) {
+				$collapsed[] = $lastline;
+			}
+			$lastline = $logent;
+		} else {
+			$lastline .= substr($line_split[1], 3);
+		}
+	}
+	//print_r($collapsed);
+	return $collapsed;
 }
 
 function parse_filter_line($line) {
@@ -97,9 +122,7 @@ function parse_filter_line($line) {
 	$flent['tcpflags'] = "";
 	if ($flent['proto'] == "TCP") {
 		$flags = split('[\, ]', $leftovers);
-		$flent['tcpflags'] = $flags[0];
-		if ($flent['tcpflags'] == ".")
-			$flent['tcpflags'] = "A";
+		$flent['tcpflags'] = str_replace(".", "A", substr($flags[1], 1, -1));
 	}
 
 	/* If there is a src, a dst, and a time, then the line should be usable/good */

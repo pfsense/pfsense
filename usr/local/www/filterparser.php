@@ -35,13 +35,25 @@
 	clog /var/log/filter.log | tail -50 | /usr/local/www/filterparser.php
 	clog -f /var/log/filter.log | /usr/local/www/filterparser.php
 */
+include_once("functions.inc");
 include_once("filter_log.inc");
-include_once("interfaces.inc");
 
 $log = fopen("php://stdin", "r");
+$lastline = "";
 while(!feof($log)) { 
 	$line = fgets($log);
-	$flent = parse_filter_line(trim($line));
+	$line = rtrim($line);
+	$line_split = "";
+	preg_match("/.*\spf:\s(.*)/", $line, $line_split);
+	if (substr($line_split[1], 0, 4) != "    ") {
+		$flent = "";
+		if (($lastline != "") && (substr($lastline, 0, 1) != " ")) {
+			$flent = parse_filter_line(trim($lastline));
+		}
+		$lastline = $line;
+	} else {
+		$lastline .= substr($line_split[1], 3);
+	}
 	/* Available fields:
 	 time       - Time the packet was seen
 	 rulenum    - Rule number matched

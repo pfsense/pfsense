@@ -206,6 +206,8 @@ function filter_configure_sync() {
 	fwrite($fd, $rules);
 	fclose($fd);
 
+	/* 
+	 * XXX: This are not being used for now so just comment them out.
 	$rules = "1"; // force to be diff from oldrules
 	$oldrules = "2"; // force to be diff from rules
 
@@ -213,7 +215,8 @@ function filter_configure_sync() {
 		$rules = file_get_contents("{$g['tmp_path']}/rules.debug");
 	if(file_exists("{$g['tmp_path']}/rules.debug.old"))
 		$oldrules = file_get_contents("{$g['tmp_path']}/rules.debug.old");
-
+	 *
+	 */
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";

@@ -306,7 +306,7 @@ function method_change() {
 									<tr>
 										<td align="right">Country Code : &nbsp;</td>
 										<td align="left">
-											<input name="dn_country" type="text" class="formfld unknown" size="2" value="<?=htmlspecialchars($pconfig['dn_country']);?>"/>
+											<input name="dn_country" type="text" class="formfld unknown" maxlength="2" size="2" value="<?=htmlspecialchars($pconfig['dn_country']);?>"/>
 											&nbsp;
 											<em>ex:</em>
 											&nbsp;

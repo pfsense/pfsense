@@ -288,22 +288,6 @@
 		<timeout></timeout>
 		-->
 	</pptp>
-	<bigpond>
-		<username></username>
-		<password></password>
-		<authserver></authserver>
-		<authdomain></authdomain>
-		<minheartbeatinterval></minheartbeatinterval>
-	</bigpond>
-	<dyndns>
-		<!-- <enable/> -->
-		<type>dyndns</type>
-		<username></username>
-		<password></password>
-		<host></host>
-		<mx></mx>
-		<!-- <wildcard/> -->
-	</dyndns>
 	<dhcpd>
 		<lan>
 			<enable/>

@@ -435,7 +435,7 @@ function autotls_change() {
 								<tr>
 									<td>
 										<?php set_checked($pconfig['resolve_retry'],$chk); ?>
-										<input name="compression" type="checkbox" value="yes" <?=$chk;?>>
+										<input name="resolve_retry" type="checkbox" value="yes" <?=$chk;?>>
 									</td>
 									<td>
 										<span class="vexpl">

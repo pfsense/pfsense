@@ -168,14 +168,14 @@ function openvpn_get_cipherlist() {
 
 function openvpn_validate_host($value, $name) {
 	$value = trim($value);
-	if (empty($value) || !is_domain($value) || !is_ipaddr($value)))
+	if (empty($value) || (!is_domain($value) && !is_ipaddr($value)))
 		return "The field '$name' must contain a valid IP address or domain name.";
 	return false;
 }
 
 function openvpn_validate_port($value, $name) {
 	$value = trim($value);
-	if (empty($value) || !is_numeric($value) || $value < 0 || ($value > 65535)))
+	if (empty($value) || !is_numeric($value) || $value < 0 || ($value > 65535))
 		return "The field '$name' must contain a valid port, ranging from 0 to 65535.";
 	return false;
 }

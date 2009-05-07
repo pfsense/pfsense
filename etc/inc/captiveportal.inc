@@ -60,11 +60,14 @@ function captiveportal_configure() {
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/minicron.pid");
 
+		/* make sure ipfw is loaded */
+		if (!is_module_loaded("ipfw.ko"))
+			filter_load_ipfw();
+		if (isset($config['captiveportal']['peruserbw']) && !is_module_loaded("dummynet.ko"))
+                        mwexec("/sbin/kldload dummynet");
+
 		/* generate ipfw rules */
 		$cprules = captiveportal_rules_generate();
-
-		/* make sure ipfw is loaded */
-		filter_load_ipfw();
 
 		/* stop accounting on all clients */
 		captiveportal_radius_stop_all();

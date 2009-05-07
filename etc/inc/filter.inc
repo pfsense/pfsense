@@ -1563,8 +1563,6 @@ function filter_rules_generate()
 		$cp_interface = $config['captiveportal']['interface'];
 		$cp_interface_real = $FilterIflist[$cp_interface]['if'];
 		$cp_interface_ip = $FilterIflist[$cp_interface_real]['ip'];
-		if (isset($config['captiveportal']['peruserbw']) && !is_module_loaded("dummynet.ko"))
-			mwexec("/sbin/kldload dummynet");
 		if(is_ipaddr($cp_interface_ip) and $cp_interface_real)
 			$ipfrules .= "pass in quick on {$cp_interface_real} proto tcp from any to {$cp_interface_ip} port { 8000 8001 } keep state\n";
 	}
@@ -1851,15 +1849,7 @@ EOD;
 			}
 		}
 		$rule_arr = array_merge($rule_arr1,$rule_arr2);
-		/* 
-		 * check to see if CP is enabled
-		 * and if so load ipfw for later usage.
-		 */
-		if (isset($config['captiveportal']['enable']) && isset($config['interfaces'][$config['captiveportal']['interface']]['enable'])) {
-			filter_load_ipfw();
-			mwexec("/sbin/ipfw delete set 3");
-			mwexec("/sbin/ipfw delete set 2");
-		}
+
 		$ipfrules .= "\n# User-defined aliases follow\n";
 		/* tables for aliases */
 		foreach($table_cache as $table)

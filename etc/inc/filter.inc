@@ -2052,6 +2052,7 @@ function filter_get_time_based_rule_status($schedule) {
 }
 
 function filter_tdr_day($schedule) {
+	global $g;
         /*
          * Calculate day of month.
          * IE: 29th of may
@@ -2061,7 +2062,8 @@ function filter_tdr_day($schedule) {
                 $weekday = 7;
         $date           = date("d");
         $defined_days = split(",", $schedule);
-        log_error("[TDR DEBUG] filter_tdr_day($schedule)");
+	if ($g['debug'])
+        	log_error("[TDR DEBUG] filter_tdr_day($schedule)");
         foreach($defined_days as $dd) {
                 if($date == $dd)
                         return true;
@@ -2069,18 +2071,21 @@ function filter_tdr_day($schedule) {
         return false;
 }
 function filter_tdr_hour($schedule) {
+	global $g;
         /* $schedule should be a string such as 16:00-19:00 */
         $tmp = split("-", $schedule);
         $starting_time = strtotime($tmp[0]);
         $ending_time = strtotime($tmp[1]);
         $now = strtotime("now");
-        log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
+	if ($g['debug'])
+        	log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
         if ($now >= $starting_time and $now <= $ending_time)
                 return true;
         return false;
 }
 
 function filter_tdr_position($schedule) {
+	global $g;
         /*
          * Calculate possition, ie: day of week.
          * Sunday = 7, Monday = 1, Tuesday = 2
@@ -2089,7 +2094,8 @@ function filter_tdr_position($schedule) {
          * ...
          */
         $weekday = date("w");
-        log_error("[TDR DEBUG] filter_tdr_position($schedule) $weekday");
+	if ($g['debug'])
+        	log_error("[TDR DEBUG] filter_tdr_position($schedule) $weekday");
         if ($weekday == 0)
                 $weekday = 7;
         $schedule_days = split(",", $schedule);
@@ -2101,12 +2107,14 @@ function filter_tdr_position($schedule) {
 }
 
 function filter_tdr_month($schedule) {
+	global $g;
         /*
          * Calculate month
          */
         $todays_month = date("n");
         $months = split(",", $schedule);
-        log_error("[TDR DEBUG] filter_tdr_month($schedule)");
+	if ($g['debug'])
+        	log_error("[TDR DEBUG] filter_tdr_month($schedule)");
         foreach($months as $month) {
                 if ($month == $todays_month)
                         return true;

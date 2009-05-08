@@ -902,9 +902,8 @@ function radius($username,$password,$clientip,$clientmac,$type) {
                     $auth_list,
                     $ruleno);
     }
-    else {
-        captiveportal_unlock();
-    }
+
+    captiveportal_unlock();
 
     return $auth_list;
 

@@ -87,7 +87,7 @@ function config_unlock() {
 }
 
 /* lock configuration file */
-function lock($file) {
+function lock($lock) {
         global $g, $cfglckkeyconsumers;
 
 	if (!$file)
@@ -102,7 +102,7 @@ function lock($file) {
                 sem_remove($cfglckkey);
                 return NULL;
         } else if ($g['debug'])
-                log_error("lock() -  Got config lock.");
+                log_error("lock() -  Got {$file} lock.");
 
         return $cfglckkey;
 }
@@ -115,10 +115,10 @@ function unlock($cfglckkey = 0) {
                 return;
 
         if (!sem_release($cfglckkey))
-                log_error("WARNING: unlock() - Could not unlock config lock.");
+                log_error("WARNING: unlock() - Could not unlock lock.");
         else {
                 if ($g['debug'])
-                        log_error("Released config lock.");
+                        log_error("Released lock.");
                 sem_remove($cfglckkey);
         }
         $cfglckkeyconsumers--;

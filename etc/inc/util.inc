@@ -90,7 +90,7 @@ function config_unlock() {
 function lock($lock) {
         global $g, $cfglckkeyconsumers;
 
-	if (!$file)
+	if (!$lock)
 		die("WARNING: You must give a name as parameter to lock() function.");
         if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
                 @touch("{$g['tmp_path']}/{$lock}.lock");

@@ -50,11 +50,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-
-		config_lock();
 		$retval = vpn_setup();
-		config_unlock();
-
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (file_exists($d_pppoeuserdirty_path))

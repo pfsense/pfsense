@@ -62,8 +62,6 @@
 	function before_form_miniupnpd($pkg) {
 		global $config;
 
-		config_lock();		
-		
 		/* if shaper connection speed defined hide fields */
 		if($config['ezshaper']['step2']['download'] && $config['ezshaper']['step2']['upload']) {
 			$i=0;
@@ -73,8 +71,6 @@
 				$i++;
 			}
 		}
-
-		config_unlock();
 	}
 
 	function validate_form_miniupnpd($post, $input_errors) {
@@ -117,8 +113,6 @@
 	function sync_package_miniupnpd() {
 		global $config;
 		global $input_errors;
-
-		config_lock();
 
 		$upnp_config = $config['installedpackages']['miniupnpd']['config'][0];
 		$config_file = '/var/etc/miniupnpd.conf';
@@ -238,7 +232,5 @@
 				unlink($config_file);
 			}
 		}
-
-		config_unlock();
 	}
 ?>

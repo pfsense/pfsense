@@ -147,11 +147,9 @@ if ($_POST) {
 
 		write_config();
 
-		config_lock();
 		$retval = filter_configure();
-		config_unlock();
-
 	    $savemsg = get_std_save_message($retval);
+
 		if ($restart_webgui)
 			$savemsg .= "<br />One moment...redirecting to {$url} in 20 seconds.";
 

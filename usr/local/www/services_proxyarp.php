@@ -51,9 +51,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	$retval = 0;
-	config_lock();
 	$retval = services_proxyarp_configure();
-	config_unlock();
 	$savemsg = get_std_save_message($retval);
 
 	if ($retval == 0) {

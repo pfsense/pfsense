@@ -114,9 +114,7 @@ if ($_POST) {
 		mwexec("rm {$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}.cache");
 		conf_mount_ro();
 
-		config_lock();
 		$retval = services_dyndns_configure_client($dyndns);
-		config_unlock();
 
 		header("Location: services_dyndns.php");
 		exit;

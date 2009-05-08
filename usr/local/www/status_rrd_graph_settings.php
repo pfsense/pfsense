@@ -66,10 +66,7 @@ if ($_POST) {
                 write_config();
 
                 $retval = 0;
-                config_lock();
                 $retval = enable_rrd_graphing();
-                config_unlock();
-
                 $savemsg = get_std_save_message($retval);
 	}
 }

@@ -138,11 +138,7 @@ if ($_POST) {
 		write_config();
 
 		$retval = 0;
-
-		config_lock();
 		$retval = vpn_l2tp_configure();
-		config_unlock();
-
 		$savemsg = get_std_save_message($retval);
 
 		/* if ajax is calling, give them an update message */

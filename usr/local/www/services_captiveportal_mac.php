@@ -57,9 +57,7 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (file_exists($d_passthrumacsdirty_path)) {
-				config_lock();
 				unlink($d_passthrumacsdirty_path);
-				config_unlock();
 			}
 		}
 	}

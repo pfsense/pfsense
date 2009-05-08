@@ -57,15 +57,11 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-
-		config_lock();
 		$retval = services_proxyarp_configure();
 		/* Bring up any configured CARP interfaces */
 		reset_carp();
 		$retval |= filter_configure();
-		config_unlock();
 		interfaces_ipalias_configure();
-		
 		/* reset carp states */
 		reset_carp();
 		interfaces_carp_configure();

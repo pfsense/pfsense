@@ -98,9 +98,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		config_lock();
 		$retval = filter_configure();
-		config_unlock();
 
 		if (file_exists($d_filterconfdirty_path))
 			unlink($d_filterconfdirty_path);

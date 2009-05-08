@@ -32,7 +32,7 @@
 
 	/* parse the configuration and include all functions used below */
 	require_once("config.inc");
-	require_once("functions.inc");
+	require_once("util.inc");
 
 	$fp = fopen('php://stdin', 'r');
 
@@ -67,7 +67,7 @@
 	}
 
 	echo "\n\nProcessing: ";
-	config_lock();
+	$lockkey = lock('config');
 	echo "moving...";
 	mwexec("mkdir -p /tmp/mnt/cf/conf/");
 	mwexec("/bin/mv /cf/conf/config.xml /tmp/mnt/cf/conf/");
@@ -81,7 +81,7 @@
 	system("/sbin/mount_nullfs /tmp/mnt/cf /cf");
 	echo "linking...";
 	mwexec("/bin/rm -rf /var/db/pfi");
-	config_unlock();
+	unlock($lockkey);
 	echo "done.\n";
 	echo "\nYour configuration has been moved to {$move_config_to_device}\n";
 	touch("/tmp/config_moved");

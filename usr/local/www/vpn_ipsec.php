@@ -56,10 +56,8 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		config_lock();
 		$retval = vpn_ipsec_refresh_policies();
 		$retval = vpn_ipsec_configure();
-		config_unlock();
 		/* reload the filter in the background */
 		filter_configure();
 		$savemsg = get_std_save_message($retval);

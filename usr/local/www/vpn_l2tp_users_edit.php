@@ -110,9 +110,7 @@ if ($_POST) {
 
 		write_config();
 
-		config_lock();
 		$retval = vpn_l2tp_configure();
-		config_unlock();
 
 		pfSenseHeader("vpn_l2tp_users.php");
 

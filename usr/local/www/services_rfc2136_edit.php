@@ -96,9 +96,7 @@ if ($_POST) {
 
 		write_config("New/Edited RFC2136 dnsupdate entry was posted.");
 
-		config_lock();
                 $retval = services_dnsupdate_process();
-                config_unlock();
 
 		header("Location: services_rfc2136.php");
 		exit;

@@ -50,10 +50,8 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		config_lock();
 		$retval |= filter_configure();
 		$retval |= relayd_configure();
-		config_unlock();
 		$savemsg = get_std_save_message($retval);
 		unlink_if_exists($d_vsconfdirty_path);
 	}

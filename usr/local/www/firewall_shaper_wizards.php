@@ -47,12 +47,9 @@ if ($_POST['apply']) {
           write_config();
 
           $retval = 0;
-         $savemsg = get_std_save_message($retval);
         /* Setup pf rules since the user may have changed the optimization value */
-
-                        config_lock();
                         $retval = filter_configure();
-                        config_unlock();
+         $savemsg = get_std_save_message($retval);
                         if (stristr($retval, "error") <> true)
                                 $savemsg = get_std_save_message($retval);
                         else

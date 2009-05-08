@@ -77,6 +77,53 @@ function killbyname($procname) {
 		mwexec("/usr/bin/killall " . escapeshellarg($procname));
 }
 
+function config_lock() {
+	log_error("config_lock() is depricated please use lock().");
+	return;
+}
+function config_unlock() {
+	log_error("config_unlock() is depricated please use unlock().");
+	return;
+}
+
+/* lock configuration file */
+function lock($file) {
+        global $g, $cfglckkeyconsumers;
+
+	if (!$file)
+		die("WARNING: You must give a name as parameter to lock() function.");
+        if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
+                @touch("{$g['tmp_path']}/{$lock}.lock");
+        $config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
+        $cfglckkey = sem_get($config_lock_key, 1);
+        $cfglckkeyconsumers++;
+        if (!sem_acquire($cfglckkey)) {
+                log_error("WARNING: lock() -  Could not acquire {$lock} lock!");
+                sem_remove($cfglckkey);
+                return NULL;
+        } else if ($g['debug'])
+                log_error("lock() -  Got config lock.");
+
+        return $cfglckkey;
+}
+
+/* unlock configuration file */
+function unlock($cfglckkey = 0) {
+        global $g, $cfglckkeyconsumers;
+
+        if (!$cfglckkey)
+                return;
+
+        if (!sem_release($cfglckkey))
+                log_error("WARNING: unlock() - Could not unlock config lock.");
+        else {
+                if ($g['debug'])
+                        log_error("Released config lock.");
+                sem_remove($cfglckkey);
+        }
+        $cfglckkeyconsumers--;
+}
+
 function is_module_loaded($module_name) {
 	$running = `/sbin/kldstat | grep {$module_name} | /usr/bin/grep -v grep | /usr/bin/wc -l`;
 	if (intval($running) >= 1)
@@ -803,19 +850,12 @@ function run_plugins($directory) {
         $files = return_dir_as_array($directory);
         if (is_array($files)) {
                 foreach ($files as $file) {
-                        if($file) {
-                                $text = file_get_contents($directory . $file);
-                                if($text) {
-                                        if(stristr($file, ".sh") == true) {
-                                                mwexec($directory . $file . " start");
-                                        } else {
-                                                if(!stristr($file,"CVS")) {
-                                                        if($g['booting'] == true)
-                                                                echo "\t{$file}... ";
-                                                        require_once($directory . $file);
-                                                }
-                                        }
-                                }
+			if (stristr($file, ".sh") == true)
+				mwexec($directory . $file . " start");
+			else if (!stristr($file,"CVS")) {
+				if ($g['booting'] == true)
+					echo "\t{$file}... ";
+				require_once($directory . $file);
                         }
                 }
         }

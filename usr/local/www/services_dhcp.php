@@ -302,7 +302,6 @@ if ($_POST) {
 		$retval = 0;
 		$retvaldhcp = 0;
 		$retvaldns = 0;
-		config_lock();
 		/* Stop DHCP so we can cleanup leases */
 		killbyname("dhcpd");
 		dhcp_clean_leases();
@@ -323,7 +322,6 @@ if ($_POST) {
 					unlink($d_staticmapsdirty_path);
 			}
 		}	
-		config_unlock();
 		if($retvaldhcp == 1 || $retvaldns == 1)
 			$retval = 1;
 		$savemsg = get_std_save_message($retval);

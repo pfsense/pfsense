@@ -126,7 +126,6 @@ if ($_POST) {
 			filter_load_ipfw();
 			
 		$retval = 0;
-		config_lock();
 		$retval = filter_configure();
 		if(stristr($retval, "error") <> true)
 		    $savemsg = get_std_save_message($retval);

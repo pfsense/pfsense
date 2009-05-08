@@ -944,14 +944,12 @@ function interface_ppp_configure($ifcfg) {
 		$chatfile .= "CONNECT \"\" \\\n";
 	$chatfile .= "SAY \"\\nConnected.\"\n";
 
-	config_lock();
 	conf_mount_rw();
 	safe_mkdir("/etc/ppp/peers", "0755");
 	file_put_contents("/etc/ppp/peers/ppp_{$dev}", $peerfile);
 	file_put_contents("/etc/ppp/peers/ppp{$dev}-connect-chat", $chatfile);
 	chmod("/etc/ppp/peers/ppp{$dev}-connect-chat", 0755);
 	conf_mount_ro();
-	config_unlock();
 	
 	sleep(1);
 	mwexec("/usr/sbin/pppd call ppp_{$dev}");

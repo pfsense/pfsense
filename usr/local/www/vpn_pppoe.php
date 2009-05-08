@@ -172,11 +172,7 @@ if ($_POST) {
 		write_config();
 		
 		$retval = 0;
-		
-		config_lock();
 		$retval = vpn_setup();
-		config_unlock();
-		
 		$savemsg = get_std_save_message($retval);
 	}
 }

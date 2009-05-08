@@ -111,6 +111,9 @@ function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $GatewayGroupsList;
 	global $time_based_rules;
 
+	/* Use config lock to not allow recursion and config changes during this run. */
+	$filterlck = lock('config');
+
 	filter_pflog_start();
 	update_filter_reload_status("Initializing");
 
@@ -165,7 +168,8 @@ function filter_configure_sync() {
 		unlink_if_exists("{$g['tmp_path']}/filter_loading");
 		update_filter_reload_status("Filter is disabled.  Not loading rules.");
 		if ($g['booting'] == true)
-					echo "done.\n";
+			echo "done.\n";
+		unlock($filterlck);
 		return;
 	}
 
@@ -241,6 +245,7 @@ function filter_configure_sync() {
 			file_notice("filter_load", "There were error(s) loading the rules: {$rules_error} {$line_error}", "Filter Reload", "");
 			log_error("There were error(s) loading the rules: {$rules_error} - {$line_error}");
 			update_filter_reload_status("There were error(s) loading the rules: {$rules_error} - {$line_error}");
+			unlock($filterlck);
 			return;
 		}
 	}
@@ -277,6 +282,8 @@ function filter_configure_sync() {
 	 */
 	if($config['system']['afterfilterchangeshellcmd'] <> "")
 		mwexec($config['system']['afterfilterchangeshellcmd']);
+
+	unlock($filterlck);
 
 	/* sync carp entries to other firewalls */
 	update_filter_reload_status("Syncing CARP data");

@@ -198,7 +198,6 @@ if ($_POST) {
 			write_config($changedesc);
 
 		$retval = 0;
-		config_lock();
 		$retval = system_hostname_configure();
 		$retval |= system_hosts_generate();
 		$retval |= system_resolvconf_generate();
@@ -211,10 +210,8 @@ if ($_POST) {
 			$retval |= interface_configure();
 
 		// Reload the filter - plugins might need to be run.
-		filter_configure();
+		$retval |= filter_configure();
 		
-		config_unlock();
-
 		$savemsg = get_std_save_message($retval);
 	}
 }

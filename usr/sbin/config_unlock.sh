@@ -3,7 +3,7 @@
 
 <?php
 
-require_once("config.inc");
-config_lock();
+require_once("util.inc");
+unlock($GLOBALS['lockscript']);
 
 ?>

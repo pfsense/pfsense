@@ -241,11 +241,9 @@ if ($_POST['apply']) {
 		if ($if == "lan") 		
 			$savemsg = "The changes have been applied.  You may need to correct your web browser's IP address.";
 		/* sync filter configuration */
-		config_lock();
 		setup_gateways_monitor();
 		if (file_exists($d_staticroutesdirty_path)) 
 			unlink($d_staticroutesdirty_path);
-		config_unlock();
 		filter_configure();
 		/* set up static routes */
 		system_routing_configure();

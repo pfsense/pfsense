@@ -130,7 +130,7 @@ if ($_POST) {
 
 			if (!$input_errors) {
 
-				config_lock();
+				$lockbckp = lock('config');
 
 				$host = "{$config['system']['hostname']}.{$config['system']['domain']}";
 				$name = "config-{$host}-".date("YmdHis").".xml";
@@ -183,7 +183,7 @@ if ($_POST) {
 				header("Content-Length: $size");
 				echo $data;
 
-				config_unlock();
+				unlock($lockbckp);
 				exit;
 			}
 		}

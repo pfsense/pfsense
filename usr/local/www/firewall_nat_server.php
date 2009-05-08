@@ -51,10 +51,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-
-		config_lock();
 		$retval |= filter_configure();
-		config_unlock();
 
 		$savemsg = get_std_save_message($retval);
 

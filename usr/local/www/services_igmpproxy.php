@@ -54,11 +54,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	$retval = 0;
-
-	config_lock();
 	/* reload all components that use igmpproxy */
 	$retval = services_igmpproxy_configure();
-	config_unlock();
 
 	if(stristr($retval, "error") <> true)
 	    $savemsg = get_std_save_message($retval);

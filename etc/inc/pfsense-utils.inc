@@ -1912,45 +1912,6 @@ function pfsense_default_state_size() {
   return $max_states;
 }
 
-/****f* pfsense-utils/safe_write_file
- * NAME
- *   safe_write_file - Write a file out atomically
- * DESCRIPTION
- *   safe_write_file() Writes a file out atomically by first writing to a
- *   temporary file of the same name but ending with the pid of the current
- *   process, them renaming the temporary file over the original.
- * INPUTS
- *   $filename  - string containing the filename of the file to write
- *   $content   - string containing the file content to write to file
- *   $force_binary      - boolean denoting whether we should force binary
- *   mode writing.
- * RESULT
- *   boolean - true if successful, false if not
- ******/
-function safe_write_file($file, $content, $force_binary) {
-        $tmp_file = $file . "." . getmypid();
-        $write_mode = $force_binary ? "wb" : "w";
-
-        $fd = fopen($tmp_file, $write_mode);
-        if (!$fd) {
-                // Unable to open temporary file for writing
-                return false;
-        }
-        if (!fwrite($fd, $content)) {
-                // Unable to write to temporary file
-                fclose($fd);
-                return false;
-        }
-        fclose($fd);
-
-        if (!rename($tmp_file, $file)) {
-                // Unable to move temporary file to original
-                unlink($tmp_file);
-                return false;
-        }
-        return true;
-}
-
 function rule_popup($src,$srcport,$dst,$dstport){
 global $config;
 $aliases_array = array();

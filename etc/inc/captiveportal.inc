@@ -35,8 +35,8 @@
 */
 
 /* include all configuration functions */
-require_once("functions.inc");
 require_once("globals.inc");
+require_once("functions.inc");
 require_once("radius_authentication.inc");
 require_once("radius_accounting.inc");
 require_once("radius.inc");
@@ -45,6 +45,8 @@ $lockfile = "{$g['varrun_path']}/captiveportal.lock";
 
 function captiveportal_configure() {
 	global $config, $g;
+
+	$captiveportallck = lock('captiveportal');
 
 	if (isset($config['captiveportal']['enable']) &&
 		(($config['captiveportal']['interface'] == "lan") ||
@@ -70,7 +72,7 @@ function captiveportal_configure() {
 		$cprules = captiveportal_rules_generate();
 
 		/* stop accounting on all clients */
-		captiveportal_radius_stop_all();
+		captiveportal_radius_stop_all(true);
 
 		/* initialize minicron interval value */
 		$croninterval = $config['captiveportal']['croninterval'] ? $config['captiveportal']['croninterval'] : 60;
@@ -218,9 +220,9 @@ EOD;
 			"/etc/rc.prunecaptiveportal");
 
 		/* generate passthru mac database */
-		captiveportal_passthrumac_configure();
+		captiveportal_passthrumac_configure(true);
 		/* create allowed ip database and insert ipfw rules to make it so */
-		captiveportal_allowedip_configure();
+		captiveportal_allowedip_configure(true);
 
 		/* generate radius server database */
 		if ($config['captiveportal']['radiusip'] && (!isset($config['captiveportal']['auth_method']) ||
@@ -266,7 +268,7 @@ EOD;
 		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
 		killbypid("{$g['varrun_path']}/minicron.pid");
 
-		captiveportal_radius_stop_all();
+		captiveportal_radius_stop_all(true);
 
 		mwexec("/sbin/sysctl net.link.ether.ipfw=0");
 
@@ -274,7 +276,7 @@ EOD;
 		mwexec("/sbin/kldunload ipfw.ko");
 	}
 
-    captiveportal_unlock();
+    unlock($captiveportallck);
 	
 	return 0;
 }
@@ -416,7 +418,7 @@ function captiveportal_prune_old() {
     if (!$timeout && !$idletimeout && !isset($config['captiveportal']['reauthenticate']) && !isset($config['captiveportal']['radiussession_timeout']))
         return;
 
-    captiveportal_lock();
+    $captiveportallck = lock('captiveportal');
 
     /* read database */
     $cpdb = captiveportal_read_db();
@@ -543,7 +545,7 @@ function captiveportal_prune_old() {
     /* write database */
     captiveportal_write_db($cpdb);
 
-    captiveportal_unlock();
+    unlock($captiveportallck);
 }
 
 /* remove a single client according to the DB entry */
@@ -591,7 +593,7 @@ function captiveportal_disconnect_client($id,$term_cause = 1) {
 
 	global $g, $config;
 
-	captiveportal_lock();
+	$captiveportallck = lock('captiveportal');
 
 	/* read database */
 	$cpdb = captiveportal_read_db();
@@ -610,21 +612,22 @@ function captiveportal_disconnect_client($id,$term_cause = 1) {
 	/* write database */
 	captiveportal_write_db($cpdb);
 
-	captiveportal_unlock();
+	unlock($captiveportallck);
 }
 
 /* send RADIUS acct stop for all current clients */
-function captiveportal_radius_stop_all() {
+function captiveportal_radius_stop_all($lock = false) {
 	global $g, $config;
 
 	if (!isset($config['captiveportal']['radacct_enable']))
 		return;
 
-	captiveportal_lock();
+	if ($lock)
+		$captiveportallck = lock('captiveportal');
+
 	$cpdb = captiveportal_read_db();
 
 	$radiusservers = captiveportal_get_radius_servers();
-
 	if (isset($radiusservers[0])) {
 		for ($i = 0; $i < count($cpdb); $i++) {
 			RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
@@ -639,13 +642,15 @@ function captiveportal_radius_stop_all() {
 								   7); // Admin Reboot
 		}
 	}
-	captiveportal_unlock();
+	if ($lock)
+		unlock($captiveportallck);
 }
 
-function captiveportal_passthrumac_configure() {
+function captiveportal_passthrumac_configure($lock = false) {
 	global $config, $g;
 
-	captiveportal_lock();
+	if ($lock)
+		$captiveportallck = lock('captiveportal');
 
 	/* clear out passthru macs, if necessary */
 	unlink_if_exists("{$g['vardb_path']}/captiveportal_mac.db");
@@ -655,7 +660,7 @@ function captiveportal_passthrumac_configure() {
 		$fd = @fopen("{$g['vardb_path']}/captiveportal_mac.db", "w");
 		if (!$fd) {
 			printf("Error: cannot open passthru mac DB file in captiveportal_passthrumac_configure().\n");
-			captiveportal_unlock();
+			unlock($captiveportallck);
 			return 1;
 		}
 
@@ -685,15 +690,17 @@ function captiveportal_passthrumac_configure() {
 		}
 	}
 
-	captiveportal_unlock();
+	if ($lock)
+		unlock($captiveportallck);
 
 	return 0;
 }
 
-function captiveportal_allowedip_configure() {
+function captiveportal_allowedip_configure($lock = false) {
 	global $config, $g;
 
-	captiveportal_lock();
+	if ($lock)
+		$captiveportallck = lock('captiveportal');
 
 	/* clear out existing allowed ips, if necessary */
 	if (file_exists("{$g['vardb_path']}/captiveportal_ip.db")) {
@@ -722,7 +729,7 @@ function captiveportal_allowedip_configure() {
 		$fd = @fopen("{$g['vardb_path']}/captiveportal_ip.db", "w");
 		if (!$fd) {
 			printf("Error: cannot open allowed ip DB file in captiveportal_allowedip_configure().\n");
-			captiveportal_unlock();
+			unlock($captiveportallck);
 			return 1;
 		}
 
@@ -734,7 +741,7 @@ function captiveportal_allowedip_configure() {
             if (is_null($ruleno)) {
                 printf("Error: system reached maximum login capacity, no free FW rulenos in captiveportal_allowedip_configure().\n");
                 fclose($fd);
-                captiveportal_unlock();
+                unlock($captiveportallck);
                 return 1;
             }
 
@@ -755,7 +762,8 @@ function captiveportal_allowedip_configure() {
         fclose($fd);
     }
 
-    captiveportal_unlock();
+	if ($lock)
+    		unlock($captiveportallck);
     return 0;
 }
 
@@ -802,48 +810,6 @@ function captiveportal_get_radius_servers() {
         return false;
 }
 
-/* lock captive portal information, decide that the lock file is stale after 
-   10 minutes and EXIT the process to not risk dataloss, issue warning in syslog every 1 minutes */
-function captiveportal_lock() {
-
-        global $lockfile;
-
-        $n = 1;
-        while ($n) {
-                /* open the lock file in append mode to avoid race condition */
-                if ($fd = @fopen($lockfile, "x")) {
-                        /* succeeded */
-                        fclose($fd);
-						if($n > 10) {
-						    captiveportal_syslog("LOCKINFO: Waiting for lock for $n seconds/s!");
-						}
-                        return;
-                } else {
-                        /* file locked, wait and try again */
-                        sleep(1);
-
-						if(($n % 60) == 0) {
-						    captiveportal_syslog("LOCKWARNING: waiting for lock for " . $n/60 . " minute/s!");
-						    if(($n % 600) == 0) {
-						        captiveportal_syslog("LOCKERROR: waiting for lock for 10 minute/s - EXITING PROCESS!");
-						        die("Can't get a lock");
-						    }
-					    }
-                }
-                $n++;
-        }
-		/* we never get here */
-}
-
-/* unlock captive portal information file */
-function captiveportal_unlock() {
-
-        global $lockfile;
-
-        if (file_exists($lockfile))
-                unlink($lockfile);
-}
-
 /* log successful captive portal authentication to syslog */
 /* part of this code from php.net */
 function captiveportal_logportalauth($user,$mac,$ip,$status, $message = null) {
@@ -871,7 +837,7 @@ function radius($username,$password,$clientip,$clientmac,$type) {
     global $g, $config;
 
     /* Start locking from the beginning of an authentication session */
-    captiveportal_lock();
+    $captiveportallck = lock('captiveportal');
 
     $ruleno = captiveportal_get_next_ipfw_ruleno();
 
@@ -880,7 +846,7 @@ function radius($username,$password,$clientip,$clientmac,$type) {
         $auth_list = array();
         $auth_list['auth_val'] = 1;
         $auth_list['error'] = "System reached maximum login capacity";
-        captiveportal_unlock();
+        unlock($captiveportallck);
         return $auth_list;
     }
 
@@ -903,7 +869,7 @@ function radius($username,$password,$clientip,$clientmac,$type) {
                     $ruleno);
     }
 
-    captiveportal_unlock();
+    unlock($captiveportallck);
 
     return $auth_list;
 

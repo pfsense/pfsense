@@ -159,7 +159,7 @@ if ($_POST) {
 	else
 		$vpnid = 0;
 
-	if ($server['mode'] != "p2p_shared_key")
+	if ($pconfig['mode'] != "p2p_shared_key")
 		$tls_mode = true;
 	else
 		$tls_mode = false;

@@ -180,7 +180,7 @@ function is_dyndns_username($uname) {
 	if (!is_string($uname))
 		return false;
 
-	if (preg_match("/[^a-z0-9\-.@_]/i", $uname))
+	if (preg_match("/[^a-z0-9\-.@_:]/i", $uname))
 		return false;
 	else
 		return true;

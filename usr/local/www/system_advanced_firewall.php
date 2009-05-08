@@ -118,6 +118,13 @@ if ($_POST) {
 
 		write_config();
 
+		/* 
+		 * XXX: This is a kludge here but its the better place than on every filter reload.
+		 * NOTE: This is only for setting the ipfw state limits. 
+		 */
+		if ($_POST['maximumstates'] && is_numeric($_POST['maximumstates']) && is_module_loaded("ipfw.ko"))
+			filter_load_ipfw();
+			
 		$retval = 0;
 		config_lock();
 		$retval = filter_configure();

@@ -158,6 +158,9 @@ if ($_POST) {
 	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'Remote network'))
 		$input_errors[] = $result;
 
+    if ($pconfig['autokey_enable'])
+        $pconfig['shared_key'] = openvpn_create_key();
+
 	if (!$tls_mode && !$pconfig['autokey_enable'])
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
 			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----"))
@@ -168,7 +171,7 @@ if ($_POST) {
 			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----"))
 			$input_errors[] = "The field 'TLS Authentication Key' does not appear to be valid";
 
-	if (!$tls_mode) {
+	if (!$tls_mode && !$pconfig['autokey_enable']) {
 		$reqdfields = array('shared_key');
 		$reqdfieldsn = array('Shared key');
     } else {
@@ -211,8 +214,6 @@ if ($_POST) {
                 $client['tls'] = base64_encode($pconfig['tls']);
             }
         } else {
-            if ($pconfig['autokey_enable'])
-                $pconfig['shared_key'] = openvpn_create_key();
             $client['shared_key'] = base64_encode($pconfig['shared_key']);
         }
 		$client['crypto'] = $pconfig['crypto'];

@@ -181,6 +181,9 @@ if ($_POST) {
 	if (($portused != $vpnid) && ($portused != 0))
 		$input_errors[] = "The specified 'Local port' is in use. Please select another value";
 
+	if ($pconfig['autokey_enable'])
+		$pconfig['shared_key'] = openvpn_create_key();
+
 	if (!$tls_mode && !$pconfig['autokey_enable'])
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
 			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----"))
@@ -228,7 +231,7 @@ if ($_POST) {
 	if ($pconfig['maxclients'] && !is_numeric($pconfig['maxclients']))
 		$input_errors[] = "The field 'Concurrent connections' must be numeric.";
 
-	if (!$tls_mode) {
+	if (!$tls_mode && !$pconfig['autokey_enable']) {
 		$reqdfields = array('shared_key');
 		$reqdfieldsn = array('Shared key');
     } else {
@@ -267,8 +270,6 @@ if ($_POST) {
 			$server['certref'] = $pconfig['certref'];
 			$server['dh_length'] = $pconfig['dh_length'];
 		} else {
-			if ($pconfig['autokey_enable'])
-				$pconfig['shared_key'] = openvpn_create_key();
 			$server['shared_key'] = base64_encode($pconfig['shared_key']);
 		}
 		$server['crypto'] = $pconfig['crypto'];

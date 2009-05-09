@@ -647,7 +647,7 @@ function write_config($desc="Unknown", $backup = true) {
 function reset_factory_defaults($lock = false) {
 	global $g;
 
-	if ($lock)
+	if (!$lock)
 		$lockkey = lock('config');
 	conf_mount_rw();
 
@@ -669,7 +669,7 @@ function reset_factory_defaults($lock = false) {
 	/* call the wizard */
 	touch("/conf/trigger_initial_wizard");
 	conf_mount_ro();
-	if ($lock)
+	if (!$lock)
 		unlock($lockkey);
 
 	return 0;

@@ -198,7 +198,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
     /* See if a ruleno is passed, if not start locking the sessions because this means there isn't one atm */
     if ($ruleno == null) {
-        captiveportal_lock();
+        $cplock = lock('captiveportal');
         $ruleno = captiveportal_get_next_ipfw_ruleno();
     }
 
@@ -206,7 +206,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
     if (is_null($ruleno)) {
         portal_reply_page($redirurl, "error", "System reached maximum login capacity");
         log_error("WARNING!  Captive portal has reached maximum login capacity");
-        captiveportal_unlock();
+        unlock($cplock);
         exit;
     }
 
@@ -351,12 +351,12 @@ document.location.href="{$my_redirurl}";
 
 EOD;
     } else {
-		captiveportal_unlock();	
+		unlock($cplock);	
         header("Location: " . $my_redirurl);
 		return $sessionid;
     }
 
-    captiveportal_unlock();
+    unlock($cplock);
     return $sessionid;
 }
 
@@ -369,7 +369,7 @@ function disconnect_client($sessionid, $logoutReason = "LOGOUT", $term_cause = 1
 
     global $g, $config;
 
-    captiveportal_lock();
+    $cplock = lock('captiveportal');
     /* read database */
     $cpdb = captiveportal_read_db();
 
@@ -388,7 +388,7 @@ function disconnect_client($sessionid, $logoutReason = "LOGOUT", $term_cause = 1
     /* write database */
     captiveportal_write_db($cpdb);
 
-    captiveportal_unlock();
+    unlock($cplock);
 }
 
 ?>

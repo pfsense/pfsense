@@ -55,7 +55,7 @@ function clientcmp($a, $b) {
 }
 
 $cpdb = array();
-captiveportal_lock();
+$wdgcplck = lock('captiveportal');
 $fp = @fopen("{$g['vardb_path']}/captiveportal.db","r");
 
 if ($fp) {
@@ -83,7 +83,7 @@ if ($fp) {
 		usort($cpdb, "clientcmp");
 	}
 }
-captiveportal_unlock();
+unlock($wdgcplck);
 ?>
 <table class="sortable" name="sortabletable" id="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>

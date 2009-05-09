@@ -622,7 +622,7 @@ function captiveportal_radius_stop_all($lock = false) {
 	if (!isset($config['captiveportal']['radacct_enable']))
 		return;
 
-	if ($lock)
+	if (!$lock)
 		$captiveportallck = lock('captiveportal');
 
 	$cpdb = captiveportal_read_db();
@@ -642,14 +642,14 @@ function captiveportal_radius_stop_all($lock = false) {
 								   7); // Admin Reboot
 		}
 	}
-	if ($lock)
+	if (!$lock)
 		unlock($captiveportallck);
 }
 
 function captiveportal_passthrumac_configure($lock = false) {
 	global $config, $g;
 
-	if ($lock)
+	if (!$lock)
 		$captiveportallck = lock('captiveportal');
 
 	/* clear out passthru macs, if necessary */
@@ -690,7 +690,7 @@ function captiveportal_passthrumac_configure($lock = false) {
 		}
 	}
 
-	if ($lock)
+	if (!$lock)
 		unlock($captiveportallck);
 
 	return 0;
@@ -699,7 +699,7 @@ function captiveportal_passthrumac_configure($lock = false) {
 function captiveportal_allowedip_configure($lock = false) {
 	global $config, $g;
 
-	if ($lock)
+	if (!$lock)
 		$captiveportallck = lock('captiveportal');
 
 	/* clear out existing allowed ips, if necessary */
@@ -762,7 +762,7 @@ function captiveportal_allowedip_configure($lock = false) {
         fclose($fd);
     }
 
-	if ($lock)
+	if (!$lock)
     		unlock($captiveportallck);
     return 0;
 }

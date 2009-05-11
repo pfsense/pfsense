@@ -3042,7 +3042,7 @@ function create_firewall_outgoing_rules_to_itself() {
 			/* If the interface has a gateway we do not add a pass in rule. */
 			/* Some people use a TUN tunnel with public IP as a Multiwan interface */
 			if(interface_has_gateway("tun{$x}")) {
-				$rule .= "# Not adding default pass in rule for interface $friendlytunif - tun{$x} with a gateway!";
+				$rule .= "# Not adding default pass in rule for interface $friendlytunif - tun{$x} with a gateway!\n";
 			} elseif (!isset($config['system']['disablevpnrules'])) {
 				$rule .="pass in quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			}
@@ -3055,7 +3055,7 @@ function create_firewall_outgoing_rules_to_itself() {
 			/* If the interface has a gateway we do not add a pass in rule. */
 			/* Some people use a TAP tunnel with public IP as a Multiwan interface */
 			if(interface_has_gateway("tap{$x}")) {
-				$rule .= "# Not adding default pass in rule for interface $friendlytapif - tap{$x} with a gateway!";
+				$rule .= "# Not adding default pass in rule for interface $friendlytapif - tap{$x} with a gateway!\n";
 			} elseif (!isset($config['system']['disablevpnrules'])) {
 				$rule .="pass in quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			}

@@ -608,9 +608,9 @@ function write_config($desc="Unknown", $backup = true) {
         fclose($fd);
 
 	if($g['platform'] == "embedded") {
-		cleanup_backupcache(5, false);
+		cleanup_backupcache(5, true);
 	} else {
-		cleanup_backupcache(30, false);
+		cleanup_backupcache(30, true);
 	}
 
 	/* re-read configuration */
@@ -1150,11 +1150,11 @@ EOD;
 	}
 }
 
-function cleanup_backupcache($revisions = 30, $lock = true) {
+function cleanup_backupcache($revisions = 30, $lock = false) {
 	global $g;
 	$i = false;
 	
-	if ($lock)
+	if (!$lock)
 		$lockkey = lock('config');
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
 		conf_mount_rw();
@@ -1215,7 +1215,7 @@ function cleanup_backupcache($revisions = 30, $lock = true) {
 	}
 	if($g['booting'] && $i)
 		print "done.\n";
-	if ($lock)
+	if (!$lock)
 		unlock($lockkey);
 }
 

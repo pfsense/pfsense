@@ -258,6 +258,7 @@ function parse_config($parse = false) {
 			if(is_null($config)) {
 				unlock($lockkey);
 				parse_config(true);
+				$lockkey = lock('config');
 			}
 		} else {
 			if(!file_exists($g['conf_path'] . "/config.xml")) {
@@ -686,7 +687,9 @@ function config_restore($conffile) {
 
 	backup_config();
 	copy($conffile, "{$g['cf_conf_path']}/config.xml");
+	unlock($lockkey);
 	$config = parse_config(true);
+	$lockkey = lock('config');
 	write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
 
 	conf_mount_ro();

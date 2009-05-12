@@ -1072,7 +1072,7 @@ function generate_user_filter_rule_arr($rule)
 
 function filter_generate_address(& $rule, $target = "source") 
 {
-	global $FilterIflist;
+	global $FilterIflist, $src_table, $src_table_line, $dst_table, $dst_table_line;
 	$src = "";
 
 	if (isset($rule[$target]['any'])) {
@@ -1175,7 +1175,7 @@ function filter_generate_address(& $rule, $target = "source")
 function generate_user_filter_rule($rule) 
 {
 	global $config, $g, $FilterIflist, $GatewaysList, $GatewayGroupsList;
-	global $table_cache;
+	global $table_cache, $src_table, $src_table_line, $dst_table, $dst_table_line;
 	global $layer7_rules_list;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();

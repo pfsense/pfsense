@@ -968,7 +968,7 @@ EOD;
 
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
 
-				if(isset($pptpdcfg['radius']['radiusissueips']) && isset($pptpdcfg['radius']['enable'])) {
+				if(isset($pptpdcfg['radius']['radiusissueips']) && isset($pptpdcfg['radius']['server']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 0.0.0.0/0";
 				} else {
 					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 {$clientip}/32";
@@ -1031,11 +1031,20 @@ EOD;
 						$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
 					}
 
-			if (isset ($pptpdcfg['radius']['enable'])) {
-				$authport = isset($pptpdcfg['radius']['port']) ? $pptpdcfg['radius']['port'] : 1812;
+			if (isset ($pptpdcfg['radius']['server']['enable'])) {
+				$authport = (isset($pptpdcfg['radius']['server']['port']) && strlen($pptpdcfg['radius']['server']['port']) > 1) ? $pptpdcfg['radius']['server']['port'] : 1812;
 				$acctport = $authport + 1;
 				$mpdconf .=<<<EOD
-	set radius server {$pptpdcfg['radius']['server']} "{$pptpdcfg['radius']['secret']}" {$authport} {$acctport}
+	set radius server {$pptpdcfg['radius']['server']['ip']} "{$pptpdcfg['radius']['server']['secret']}" {$authport} {$acctport}
+EOD;
+			if (isset ($pptpdcfg['radius']['server2']['enable'])) {
+				$authport = (isset($pptpdcfg['radius']['server2']['port']) && strlen($pptpdcfg['radius']['server2']['port']) > 1) ? $pptpdcfg['radius']['server2']['port'] : 1812;
+				$acctport = $authport + 1;
+				$mpdconf .=<<<EOD
+	set radius server {$pptpdcfg['radius']['server2']['ip']} "{$pptpdcfg['radius']['server2']['secret']}" {$authport} {$acctport}
+EOD;
+			}
+			$mpdconf .=<<<EOD
 	set radius retries 3
 	set radius timeout 10
 	set auth enable radius-auth

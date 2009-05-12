@@ -1072,7 +1072,7 @@ function generate_user_filter_rule_arr($rule)
 
 function filter_generate_address(& $rule, $target = "source") 
 {
-	global $FilterIflist, $src_table, $src_table_line, $dst_table, $dst_table_line;
+	global $FilterIflist, $table_cache;
 	$src = "";
 
 	if (isset($rule[$target]['any'])) {
@@ -1139,6 +1139,8 @@ function filter_generate_address(& $rule, $target = "source")
                         /* support for tables */
                         $src_table_line = "table $src_table {$src}\n";
                         $src = $src_table;
+			/* cache entries */
+                       	$table_cache[$src_table] = $src_table_line;
                 } else
                         $src = "{ {$not} {$expsrc} }";
         }
@@ -1175,8 +1177,8 @@ function filter_generate_address(& $rule, $target = "source")
 function generate_user_filter_rule($rule) 
 {
 	global $config, $g, $FilterIflist, $GatewaysList, $GatewayGroupsList;
-	global $table_cache, $src_table, $src_table_line, $dst_table, $dst_table_line;
 	global $layer7_rules_list;
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "generate_user_filter_rule() being called $mt\n";
@@ -1184,12 +1186,6 @@ function generate_user_filter_rule($rule)
 	/* don't include disabled rules */
 	if (isset($rule['disabled'])) {
 		return "# rule " . $rule['descr'] . " disabled \n";
-	}
-	/* Setup cache array if not already existing */
-	if (!isset($table_cache)) {
-		if ($g['debug'])
-			echo "Creating table cache\n";
-		$table_cache = array();
 	}
 	update_filter_reload_status("Creating filter rules {$rule['descr']} ...");
 	$pptpdcfg = $config['pptpd'];
@@ -1491,25 +1487,6 @@ function generate_user_filter_rule($rule)
 			$aline['dnpipe'] .= ") ";
 		}
 	}
-	/* cache entries */
-	if (isset($src_table))
-		if (isset($table_cache[$src_table])) {
-			if ($g['debug'])
-				echo "{$src_table} found in cache\n";
-		} else {
-			if ($g['debug'])
-				echo "{$src_table} NOT found in cache...adding\n";
-			$table_cache[$src_table] = $src_table_line;
-		}
-	if (isset($dst_table))
-		if (isset($table_cache[$dst_table])) {
-			if ($g['debug'])
-				echo "{$dst_table} found in cache\n";
-		} else {
-			if ($g['debug'])
-				echo "{$dst_table} NOT found in cache...adding\n";
-			$table_cache[$dst_table] = $dst_table_line;
-		}
 
 	/* is a time based rule schedule attached? */
         if(!empty($rule['sched']) && !empty($config['schedules'])) {
@@ -1560,6 +1537,9 @@ function filter_rules_generate()
 		$mt = microtime();
 		echo "filter_rules_generate() being called $mt\n";
 	}
+
+	if (!is_array($table_cache))
+		$table_cache = array();
 
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];

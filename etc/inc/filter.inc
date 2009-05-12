@@ -177,7 +177,6 @@ function filter_configure_sync() {
 	if(file_exists("{$g['tmp_path']}/rules.debug"))
 		copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
 
-	$fd = fopen("{$g['tmp_path']}/rules.debug", "w");
 	$rules .= "{$aliases} \n";
 	update_filter_reload_status("Setting up logging information");
 	$rules .= setup_logging_interfaces();
@@ -207,8 +206,11 @@ function filter_configure_sync() {
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";
 
-	fwrite($fd, $rules);
-	fclose($fd);
+	if (!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
+		log_error("WARNING: Could not write new rules!");
+		unlock($filterlck);
+		return;
+	}
 
 	/* 
 	 * XXX: This are not being used for now so just comment them out.
@@ -258,8 +260,15 @@ function filter_configure_sync() {
 	$fda = fopen("/tmp/commands.txt", "w");
 	foreach($after_filter_configure_run as $afcr) 
 		fwrite($fda, $afcr . "\n");	
+	/*
+         *      we need a way to let a user run a shell cmd after each
+         *      filter_configure() call.  run this xml command after
+         *      each change.
+         */
+        if($config['system']['afterfilterchangeshellcmd'] <> "")
+                fwrite($fda, $config['system']['afterfilterchangeshellcmd'] . "\n");
 	fclose($fda);	
-	if(file_exists("/tmp/commands.txt")) {
+	if (file_exists("/tmp/commands.txt")) {
 		mwexec("sh /tmp/commands.txt &");
 		unlink("/tmp/commands.txt");
 	}
@@ -274,14 +283,6 @@ function filter_configure_sync() {
 		filter_tdr_install_cron(true);
 	else
 		filter_tdr_install_cron(false);
-
-	/*
-	 *	we need a way to let a user run a shell cmd after each
-	 *	filter_configure() call.  run this xml command after
-	 *	each change.
-	 */
-	if($config['system']['afterfilterchangeshellcmd'] <> "")
-		mwexec($config['system']['afterfilterchangeshellcmd']);
 
 	unlock($filterlck);
 

@@ -790,21 +790,19 @@ function captiveportal_get_radius_servers() {
         global $g;
 
         if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
-                $fd = @fopen("{$g['vardb_path']}/captiveportal_radius.db","r");
-                if ($fd) {
-                        $radiusservers = array();
-                        while (!feof($fd)) {
-                                $line = trim(fgets($fd));
-                                if ($line) {
-                                        $radsrv = array();
-                                        list($radsrv['ipaddr'],$radsrv['port'],$radsrv['acctport'],$radsrv['key']) = explode(",",$line);
-                                        $radiusservers[] = $radsrv;
-                                }
+                $radiusservers = array();
+		$cpradiusdb = file_get_contents("{$g['vardb_path']}/captiveportal_radius.db");
+		$cpradiusdb = explode("\n", $cpradiusdb);
+		foreach($cpradiusdb as $cpradiusentry) {
+                	$line = trim($cpradiusentry);
+                        if ($line) {
+                        	$radsrv = array();
+                                list($radsrv['ipaddr'],$radsrv['port'],$radsrv['acctport'],$radsrv['key']) = explode(",",$line);
+                        	$radiusservers[] = $radsrv;
                         }
-                        fclose($fd);
+		}
 
-                        return $radiusservers;
-                }
+		return $radiusservers;
         }
 
         return false;
@@ -850,6 +848,12 @@ function radius($username,$password,$clientip,$clientmac,$type) {
         return $auth_list;
     }
 
+    /*
+     * Drop the lock since radius takes some time to finish.
+     * The implementation is reentrant so we gain speed with this.
+     */
+    unlock($captiveportallck);
+
     $radiusservers = captiveportal_get_radius_servers();
 
     $auth_list = RADIUS_AUTHENTICATION($username,
@@ -858,6 +862,8 @@ function radius($username,$password,$clientip,$clientmac,$type) {
                     $clientip,
                     $clientmac,
                     $ruleno);
+
+    $captiveportallck = lock('captiveportal');
 
     if ($auth_list['auth_val'] == 2) {
         captiveportal_logportalauth($username,$clientmac,$clientip,$type);

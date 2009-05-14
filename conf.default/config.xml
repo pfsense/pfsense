@@ -35,7 +35,7 @@
 	</system>
 	<interfaces>
 		<lan>
-			<if>sis0</if>
+			<if>vr0</if>
 			<ipaddr>192.168.1.1</ipaddr>
 			<subnet>24</subnet>
 			<media></media>
@@ -49,7 +49,7 @@
 			-->
 		</lan>
 		<wan>
-			<if>sis1</if>
+			<if>vr1</if>
 			<mtu></mtu>
 			<ipaddr>dhcp</ipaddr>
 			<!-- *or* ipv4-address *or* 'pppoe' *or* 'pptp' *or* 'bigpond' -->

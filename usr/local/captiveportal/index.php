@@ -356,12 +356,10 @@ document.location.href="{$my_redirurl}";
 
 EOD;
     } else {
-		unlock($cplock);	
         header("Location: " . $my_redirurl);
 		return $sessionid;
     }
 
-    unlock($cplock);
     return $sessionid;
 }
 

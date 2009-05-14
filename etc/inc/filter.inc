@@ -312,7 +312,7 @@ function filter_generate_scrubing()
 		if (isset($scrubcfg['virtual'])) 
 			continue;
 		/* set up MSS clamping */
-		if ($scrubcfg['mtu'] <> "" && is_numeric($scrubcfg['mtu']) && $scrubcfg['ip'] != "pppoe")
+		if ($scrubcfg['mtu'] <> "" && is_numeric($scrubcfg['mtu']) && $scrubcfg['if'] != "pppoe" && $scrubcfg['if'] != "pptp")
 			$mssclamp = "max-mss " . (intval($scrubcfg['mtu'] - 40));
 		else
 			$mssclamp = "";

@@ -791,8 +791,9 @@ function captiveportal_get_radius_servers() {
 
         if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
                 $radiusservers = array();
-		$cpradiusdb = file_get_contents("{$g['vardb_path']}/captiveportal_radius.db");
-		$cpradiusdb = explode("\n", $cpradiusdb);
+		$cpradiusdb = file("{$g['vardb_path']}/captiveportal_radius.db", 
+			FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		if ($cpradiusdb)
 		foreach($cpradiusdb as $cpradiusentry) {
                 	$line = trim($cpradiusentry);
                         if ($line) {

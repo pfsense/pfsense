@@ -76,6 +76,7 @@ $g = array(
 	"services_dhcp_server_enable" => true,
 	"update_url" => "http://updates.pfSense.com/_updaters",
 	"update_manifest" => "http://updates.pfSense.com/manifest",
+	"firmware_update_text" => "(pfSense-*.tgz)",
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan|rum)/",
 	"vlan_native_supp" => array("bce", "bge", "bfe", "cxgb", "dc", "em", "fxp", "gem", "hme", "ixgb", "msk", "nge", "re", "rl", "sis", "ste", "stge", "ti", "tl", "tx", "txp", "vge", "vr", "xl", "lagg"),
 	"vlan_long_frame" => array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le",  "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg")

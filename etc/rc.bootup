@@ -47,8 +47,8 @@ function rescue_detect_keypress() {
 	$timeout=3;
 
     echo "Press R to Enter Recovery Mode.\n\n";
-	echo "Recovery mode can assist by rescuing config.xml from a installed\n";
-	echo "that is having problems, etc.\n\n";
+	echo "Recovery mode can assist by rescuing config.xml from a \n";
+	echo "installed hard disk that is having problems, etc.\n\n";
 	echo "Timeout (seconds): {$timeout}\n";
 
 	$key = null;

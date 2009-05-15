@@ -31,262 +31,311 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-	echo " done.\n";
 
-	echo "Initializing...";
-	echo ".";
-	require_once("/etc/inc/globals.inc");
-	echo ".";
-	/* let the other functions know we're booting */
-	$pkg_interface = 'console';
-	$g['booting'] = TRUE;
-	touch("{$g['varrun_path']}/booting");
-	if($g['platform'] == "cdrom") {
-		$motd = trim(file_get_contents("/etc/motd"));
-		if (strlen($motd) > 2) 
-			echo "\n{$motd}\n\n";
-	}
+function rescue_detect_keypress() {
 
-	/* parse the configuration and include all functions used below */
-	require_once("/etc/inc/config.inc");
-	echo ".";
-	require_once("/etc/inc/functions.inc");
-	/* get system memory amount */
-	$memory = get_memory();
-	$avail = $memory[0];
-	echo " done.\n";
-
-	conf_mount_rw();
-
-	/* remove previous firmware upgrade if present */
-	if (file_exists("/root/firmware.tgz")) 
-		unlink("/root/firmware.tgz");
-
-	/* start devd (dhclient now uses it */
-	echo "Starting device manager (devd)...";
-	mute_kernel_msgs();
-	start_devd();
-	set_device_perms();
-	unmute_kernel_msgs();
-	echo "done.\n";
-
-	echo "Loading configuration...";
-	parse_config_bootup();
-	echo "done.\n";
-
-	$lan_if = $config['interfaces']['lan']['if'];
-	$wan_if = get_real_interface();
-
-	/*
-	 *  Determine if we need to throw a interface exception
-	 *  and ask the user to reassign interfaces.  This will
-	 *  avoid a reboot and thats a good thing.
+	/**
+	 *
+	 * Author: Erik Kristensen
+	 * Project: pfSense 2.0
+	 * Date: 15 May 2009
+	 * License: BSD License
+	 *
 	 */
+
+	// How long do you want the script to wait before moving on (in seconds)
+	$timeout=3;
+
+    echo "Press R to Enter Recovery Mode.\n\n";
+	echo "Recovery mode can assist by rescuing config.xml from a installed\n";
+	echo "that is having problems, etc.\n\n";
+	echo "Timeout (seconds): {$timeout}\n";
+
+	$key = null;
+	while(!in_array($key, array("r","R")))
+	{
+
+	        echo "\033[08m{$timeout}\n";
+
+	        `stty -icanon min 0 time 10`;
+	        $key = trim(`KEY=\`dd count=1 2>/dev/null\`; echo \$KEY`);
+	        `stty icanon`;
+
+	        // Decrement our timeout value
+	        $timeout--;
+
+	        // If we have reached 0 exit and continue on
+	        if ($timeout == 0) break;
+	}
+
+	// If r was pressed do our logic here
+	if (in_array($key, array("r", "R")))
+	{
+	  system("TERM=vt102 && sh /scripts/lua_installer_rescue");
+	}
+
+}
+
+echo " done.\n";
+
+echo "Initializing...";
+echo ".";
+require_once("/etc/inc/globals.inc");
+echo ".";
+/* let the other functions know we're booting */
+$pkg_interface = 'console';
+$g['booting'] = TRUE;
+touch("{$g['varrun_path']}/booting");
+if($g['platform'] == "cdrom") {
+	$motd = trim(file_get_contents("/etc/motd"));
+	if (strlen($motd) > 2) 
+		echo "\n{$motd}\n\n";
+}
+
+/* parse the configuration and include all functions used below */
+require_once("/etc/inc/config.inc");
+echo ".";
+require_once("/etc/inc/functions.inc");
+/* get system memory amount */
+$memory = get_memory();
+$avail = $memory[0];
+echo " done.\n";
+
+conf_mount_rw();
+
+/* remove previous firmware upgrade if present */
+if (file_exists("/root/firmware.tgz")) 
+	unlink("/root/firmware.tgz");
+
+/* start devd (dhclient now uses it */
+echo "Starting device manager (devd)...";
+mute_kernel_msgs();
+start_devd();
+set_device_perms();
+unmute_kernel_msgs();
+echo "done.\n";
+
+echo "Loading configuration...";
+parse_config_bootup();
+echo "done.\n";
+
+// Display rescue configuration option
+if($g['platform'] == "cdrom") 
+		rescue_detect_keypress();
+
+$lan_if = $config['interfaces']['lan']['if'];
+$wan_if = get_real_interface();
+
+/*
+ *  Determine if we need to throw a interface exception
+ *  and ask the user to reassign interfaces.  This will
+ *  avoid a reboot and thats a good thing.
+ */
+unmute_kernel_msgs();
+while(is_interface_mismatch() == true) {
+	echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
+	set_networking_interfaces_ports();
+}
+
+/* convert config and clean backups */
+echo "Updating configuration...";
+convert_config();
+echo "done.\n";
+
+echo "Cleaning backup cache...";
+cleanup_backupcache(true);
+echo "done.\n";
+
+/* read in /etc/sysctl.conf and set values if needed */
+echo "Setting up extended sysctls...";
+system_setup_sysctl();
+echo "done.\n";
+
+echo "Starting Secure Shell Services...";
+mwexec_bg("/etc/sshd");
+echo "done.\n";
+
+/* run any early shell commands specified in config.xml */
+system_do_shell_commands(1);
+
+/* save dmesg output to file */
+system_dmesg_save();
+
+/* set up our timezone */
+system_timezone_configure();
+
+/* set up our hostname */
+system_hostname_configure();
+
+/* make hosts file */
+system_hosts_generate();
+
+/* configure loopback interface */
+interfaces_loopback_configure();
+
+/* start syslogd */
+system_syslogd_start();
+
+/* set up interfaces */
+if(!$debugging)
+	mute_kernel_msgs();
+interfaces_configure();
+if(!$debugging)
 	unmute_kernel_msgs();
-	while(is_interface_mismatch() == true) {
-		echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
-		set_networking_interfaces_ports();
-	}
-	
-	/* convert config and clean backups */
-	echo "Updating configuration...";
-	convert_config();
-	echo "done.\n";
 
-	echo "Cleaning backup cache...";
-	cleanup_backupcache(true);
-	echo "done.\n";
+/* setup altq + pf */
+filter_configure_sync();
 
-	/* read in /etc/sysctl.conf and set values if needed */
-	echo "Setting up extended sysctls...";
-	system_setup_sysctl();
-	echo "done.\n";
+/* generate resolv.conf */
+system_resolvconf_generate();
 
-	echo "Starting Secure Shell Services...";
-	mwexec_bg("/etc/sshd");
-	echo "done.\n";
+/* start pflog */
+echo "Starting PFLOG...";
+filter_pflog_start();
+echo "done.\n";
 
-	/* run any early shell commands specified in config.xml */
-	system_do_shell_commands(1);
+/* start load balancer daemon */
+relayd_configure();
 
-	/* save dmesg output to file */
-	system_dmesg_save();
+	/* reconfigure our gateway monitor */
+echo "Setting up gateway monitors...";
+	setup_gateways_monitor();
+echo "done.\n";
 
-	/* set up our timezone */
-	system_timezone_configure();
+/* start OpenVPN server & clients */
+echo "Syncing OpenVPN settings...";
+openvpn_resync_all();
+echo "done.\n";
 
-	/* set up our hostname */
-	system_hostname_configure();
+if($avail > 0 and $avail < 65) {
+	echo "System has less than 65 megabytes of ram {$avail}.  Delaying webConfigurator startup.\n";
+	/* start webConfigurator up on final pass */
+	touch("/tmp/restart_webgui");
+} else {
+	/* start web server */
+	system_webgui_start();
+}
 
-	/* make hosts file */
-	system_hosts_generate();
+/* configure cron service */
+echo "Configuring CRON...";
+configure_cron();
+echo "done.\n";
 
-	/* configure loopback interface */
-	interfaces_loopback_configure();
+/* set up static routes */
+system_routing_configure();
 
-	/* start syslogd */
-	system_syslogd_start();
+/* enable routing */
+system_routing_enable();
 
-	/* set up interfaces */
-	if(!$debugging)
-		mute_kernel_msgs();
-	interfaces_configure();
-	if(!$debugging)
-		unmute_kernel_msgs();
+/* configure console menu */
+system_console_configure();
 
-	/* setup altq + pf */
-	filter_configure_sync();
+/* start the NTP client */
+echo "Starting OpenNTP time client...";
+system_ntp_configure();
+echo "done.\n";
 
-	/* generate resolv.conf */
-	system_resolvconf_generate();
+/* Launch on bootup and keep trying to sync.  Exit once time/date has been sync'd. */
+mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 
-	/* start pflog */
-	echo "Starting PFLOG...";
-	filter_pflog_start();
-	echo "done.\n";
+/* start dyndns service */
+services_dyndns_configure();
 
-	/* start load balancer daemon */
-	relayd_configure();
+/* static IP address? -> attempt DNS update */
+if (is_ipaddr($config['interfaces']['wan']['ipaddr']))
+	services_dnsupdate_process();
 
- 	/* reconfigure our gateway monitor */
-	echo "Setting up gateway monitors...";
- 	setup_gateways_monitor();
-	echo "done.\n";
+/* start dnsmasq service */
+services_dnsmasq_configure();
 
-	/* start OpenVPN server & clients */
-	echo "Syncing OpenVPN settings...";
-	openvpn_resync_all();
-	echo "done.\n";
+/* start DHCP relay */
+services_dhcrelay_configure();
 
-	if($avail > 0 and $avail < 65) {
-		echo "System has less than 65 megabytes of ram {$avail}.  Delaying webConfigurator startup.\n";
-		/* start webConfigurator up on final pass */
-		touch("/tmp/restart_webgui");
-	} else {
-		/* start web server */
-		system_webgui_start();
-	}
+/* start proxy ARP service */
+services_proxyarp_configure();
 
-	/* configure cron service */
-	echo "Configuring CRON...";
-	configure_cron();
-	echo "done.\n";
-	
-	/* set up static routes */
-	system_routing_configure();
+/* setup pppoe and pptp */
+vpn_setup();
 
-	/* enable routing */
-	system_routing_enable();
+/* start the captive portal */
+captiveportal_configure();
 
-	/* configure console menu */
-	system_console_configure();
+/* run any shell commands specified in config.xml */
+system_do_shell_commands();
 
-	/* start the NTP client */
-	echo "Starting OpenNTP time client...";
-	system_ntp_configure();
-	echo "done.\n";
+/* setup polling */
+setup_polling();
 
-	/* Launch on bootup and keep trying to sync.  Exit once time/date has been sync'd. */
-	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
+/* setup interface microcode which improves tcp/ip speed */
+echo "Setting up microcode and tx/rx offloading...";
+setup_microcode();
+echo "done.\n";
 
-	/* start dyndns service */
-	services_dyndns_configure();
+/* start IPsec tunnels */
+vpn_ipsec_configure();
 
-	/* static IP address? -> attempt DNS update */
-	if (is_ipaddr($config['interfaces']['wan']['ipaddr']))
-		services_dnsupdate_process();
+/* start SNMP service */
+services_snmpd_configure();
 
-	/* start dnsmasq service */
-	services_dnsmasq_configure();
+/* power down hard drive if needed/set */
+system_set_harddisk_standby();
 
-	/* start DHCP relay */
-	services_dhcrelay_configure();
+/* lock down console if necessary */
+if(isset($config['system']['disableconsolemenu']))
+	touch("/var/etc/console_lockdown");
 
-	/* start proxy ARP service */
-	services_proxyarp_configure();
+/* Run a filter configure now that most all services have started */
+filter_configure_sync();
 
-	/* setup pppoe and pptp */
-	vpn_setup();
+/* load graphing functions */
+enable_rrd_graphing();
 
-	/* start the captive portal */
-	captiveportal_configure();
+/* start DHCP service */
+services_dhcpd_configure();
 
-	/* run any shell commands specified in config.xml */
-	system_do_shell_commands();
+/* startup OLSR if needed */
+setup_wireless_olsr();
 
-	/* setup polling */
-	setup_polling();
+/* startup routed if needed */
+include_once("/usr/local/pkg/routed/routed.inc");
+setup_routed();
 
-	/* setup interface microcode which improves tcp/ip speed */
-	echo "Setting up microcode and tx/rx offloading...";
-	setup_microcode();
-	echo "done.\n";
+/* enable watchdog if supported */
+enable_watchdog();
 
-	/* start IPsec tunnels */
-	vpn_ipsec_configure();
+/* if <system><afterbootupshellcmd> exists, execute the command */
+if($config['system']['afterbootupshellcmd'] <> "") {
+	echo "Running afterbootupshellcmd {$config['system']['afterbootupshellcmd']}\n";
+	mwexec($config['system']['afterbootupshellcmd']);
+}
 
-	/* start SNMP service */
-	services_snmpd_configure();
+if($avail < 126) {
+	require_once("/etc/inc/notices.inc");
+	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires atleast 128 megabytes of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
+	mwexec("sysctl net.inet.tcp.recvspace=4096");
+	mwexec("sysctl net.inet.tcp.sendspace=4096");
+}
 
-	/* power down hard drive if needed/set */
-	system_set_harddisk_standby();
+/* if we are operating at 1000 then increase timeouts.
+   this was never accounted for after moving to 1000 hz */
+$kern_hz = `sysctl kern.clockrate | awk '{ print $5 }' | cut -d"," -f1`;
+$kern_hz = trim($kern_hz, "\r\n");
+if($kern_hz == "1000") 
+	mwexec("sysctl net.inet.tcp.rexmit_min=30");
 
-	/* lock down console if necessary */
-	if(isset($config['system']['disableconsolemenu']))
-		touch("/var/etc/console_lockdown");
+/* start the igmpproxy daemon
+services_igmpproxy_configure();
 
-	/* Run a filter configure now that most all services have started */
-	filter_configure_sync();
+/* start the upnp daemon if it is enabled */
+upnp_start();
 
-	/* load graphing functions */
-	enable_rrd_graphing();
-	
-	/* start DHCP service */
-	services_dhcpd_configure();
+/* If powerd is enabled, lets launch it */
+activate_powerd();
 
-	/* startup OLSR if needed */
-	setup_wireless_olsr();
+mwexec_bg("/usr/sbin/update_dns_cache.sh");
 
-	/* startup routed if needed */
-	include_once("/usr/local/pkg/routed/routed.inc");
-	setup_routed();
-
-	/* enable watchdog if supported */
-	enable_watchdog();
-
-	/* if <system><afterbootupshellcmd> exists, execute the command */
-	if($config['system']['afterbootupshellcmd'] <> "") {
-		echo "Running afterbootupshellcmd {$config['system']['afterbootupshellcmd']}\n";
-		mwexec($config['system']['afterbootupshellcmd']);
-	}
-
-	if($avail < 126) {
-		require_once("/etc/inc/notices.inc");
-		file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires atleast 128 megabytes of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
-		mwexec("sysctl net.inet.tcp.recvspace=4096");
-		mwexec("sysctl net.inet.tcp.sendspace=4096");
-	}
-	
-	/* if we are operating at 1000 then increase timeouts.
-	   this was never accounted for after moving to 1000 hz */
-	$kern_hz = `sysctl kern.clockrate | awk '{ print $5 }' | cut -d"," -f1`;
-	$kern_hz = trim($kern_hz, "\r\n");
-	if($kern_hz == "1000") 
-		mwexec("sysctl net.inet.tcp.rexmit_min=30");
-
-	/* start the igmpproxy daemon
-	services_igmpproxy_configure();
-
-	/* start the upnp daemon if it is enabled */
-	upnp_start();
-
-	/* If powerd is enabled, lets launch it */
-	activate_powerd();
-
-	mwexec_bg("/usr/sbin/update_dns_cache.sh");
-
-	/* done */
-	unlink("{$g['varrun_path']}/booting");
-	$g['booting'] = FALSE;
+/* done */
+unlink("{$g['varrun_path']}/booting");
+$g['booting'] = FALSE;
 
 ?>

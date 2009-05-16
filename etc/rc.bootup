@@ -35,12 +35,12 @@
 function rescue_detect_keypress() {
 	// How long do you want the script to wait before moving on (in seconds)
 	$timeout=3;
-    echo "Press R to enter Recovery Mode or press I to enter installer.\n\n";
+    echo "Press R to enter Recovery Mode or press I to launch installer.\n\n";
 	echo "Recovery mode can assist by rescuing config.xml from a \n";
-	echo "installed hard disk that is having problems, etc.\n\n";
-	echo "The installer may be invoked now if you do\n";
-	echo "not wish to boot into the liveCD.\n\n"
-	echo "Timeout (seconds): {$timeout}\n";
+	echo "broken hard disk installation, etc.\n\n";
+	echo "Alternatively the installer may be invoked now \n";
+	echo "if you do not wish to boot into the liveCD.\n\n"
+	echo "Timeout before auto boot continues (seconds): {$timeout}\n";
 	$key = null;
 	while(!in_array($key, array("r","R"))) {
 	        echo "\033[08m{$timeout}\n";
@@ -53,7 +53,7 @@ function rescue_detect_keypress() {
 	        if ($timeout == 0) 
 				break;
 	}
-	// If r was pressed do our logic here
+	// If R or I was pressed do our logic here
 	if (in_array($key, array("r", "R"))) {
 	  system("env TERM=vt102 /scripts/lua_installer_rescue");
 	} elseif (in_array($key, array("i", "I"))) {

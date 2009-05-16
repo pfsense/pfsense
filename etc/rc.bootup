@@ -34,12 +34,13 @@
 
 function rescue_detect_keypress() {
 	// How long do you want the script to wait before moving on (in seconds)
-	$timeout=3;
-    echo "Press R to enter Recovery Mode or press I to launch installer.\n\n";
+	$timeout=4;
+    echo "[ Press R to enter recovery mode or ]\n";
+	echo "[  press I to launch the installer  ]\n\n";
 	echo "Recovery mode can assist by rescuing config.xml from a \n";
 	echo "broken hard disk installation, etc.\n\n";
-	echo "Alternatively the installer may be invoked now \n";
-	echo "if you do not wish to boot into the liveCD.\n\n"
+	echo "Alternatively the installer may be invoked now if you do \n";
+	echo "not wish to boot into the liveCD environment at this time.\n\n"
 	echo "Timeout before auto boot continues (seconds): {$timeout}\n";
 	$key = null;
 	while(!in_array($key, array("r","R"))) {
@@ -63,6 +64,7 @@ function rescue_detect_keypress() {
 		exit;
 	  }
 	} elseif (in_array($key, array("!", "~"))) {
+		echo "\n";
 		touch("/tmp/donotbootup");
 		exit;
 	}

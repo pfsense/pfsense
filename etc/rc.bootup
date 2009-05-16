@@ -58,6 +58,13 @@ function rescue_detect_keypress() {
 	  system("env TERM=vt102 /scripts/lua_installer_rescue");
 	} elseif (in_array($key, array("i", "I"))) {
 	  system("env TERM=vt102 /scripts/lua_installer");
+	  if(file_exists("/tmp/install_complete")) {
+		system("/etc/rc.reboot");
+		exit;
+	  }
+	} elseif (in_array($key, array("!", "~"))) {
+		touch("/tmp/donotbootup");
+		exit;
 	}
 }
 

@@ -35,6 +35,7 @@
 function rescue_detect_keypress() {
 	// How long do you want the script to wait before moving on (in seconds)
 	$timeout=4;
+	echo "\n";
     echo "[ Press R to enter recovery mode or ]\n";
 	echo "[  press I to launch the installer  ]\n\n";
 	echo "Recovery mode can assist by rescuing config.xml from a \n";

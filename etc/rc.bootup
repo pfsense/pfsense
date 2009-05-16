@@ -44,7 +44,7 @@ function rescue_detect_keypress() {
 	echo "Timeout before auto boot continues (seconds): {$timeout}\n";
 	$key = null;
 	while(!in_array($key, array("r","R"))) {
-	        echo "\033[08m{$timeout}\n";
+	        echo "\033[08m{$timeout}";
 	        `/bin/stty -icanon min 0 time 10`;
 	        $key = trim(`KEY=\`dd count=1 2>/dev/null\`; echo \$KEY`);
 	        `/bin/stty icanon`;

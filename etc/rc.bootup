@@ -54,8 +54,7 @@ function rescue_detect_keypress() {
 	// If r was pressed do our logic here
 	if (in_array($key, array("r", "R"))) {
 	  system("env TERM=vt102 /scripts/lua_installer_rescue");
-	}
-	if (in_array($key, array("i", "I"))) {
+	} elseif (in_array($key, array("i", "I"))) {
 	  system("env TERM=vt102 /scripts/lua_installer");
 	}
 }
@@ -99,13 +98,13 @@ set_device_perms();
 unmute_kernel_msgs();
 echo "done.\n";
 
-echo "Loading configuration...";
-parse_config_bootup();
-echo "done.\n";
-
 // Display rescue configuration option
 if($g['platform'] == "cdrom") 
 		rescue_detect_keypress();
+
+echo "Loading configuration...";
+parse_config_bootup();
+echo "done.\n";
 
 $lan_if = $config['interfaces']['lan']['if'];
 $wan_if = get_real_interface();

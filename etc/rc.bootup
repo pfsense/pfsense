@@ -57,9 +57,9 @@ function rescue_detect_keypress() {
 	}
 	// If R or I was pressed do our logic here
 	if (in_array($key, array("r", "R"))) {
-	  system("env TERM=cons25 /bin/tcsh -c /scripts/lua_installer_rescue");
+	  system("env TERM=cons25 /scripts/lua_installer_rescue");
 	} elseif (in_array($key, array("i", "I"))) {
-	  system("env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
+	  system("env TERM=cons25 /scripts/lua_installer");
 	  if(file_exists("/tmp/install_complete")) {
 		system("/etc/rc.reboot");
 		exit;

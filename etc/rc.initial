@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# If recovery console shell option has been specified
+if [ -f "/tmp/donotbootup"]; then
+	exit 0
+fi
+
 # $Id$
 # /etc/rc.initial
 # part of pfSense by Scott Ullrich

@@ -46,7 +46,7 @@ function rescue_detect_keypress() {
 	// How long do you want the script to wait before moving on (in seconds)
 	$timeout=3;
 
-    echo "Press R to Enter Recovery Mode.\n\n";
+    echo "Press R to enter Recovery Mode.\n\n";
 	echo "Recovery mode can assist by rescuing config.xml from a \n";
 	echo "installed hard disk that is having problems, etc.\n\n";
 	echo "Timeout (seconds): {$timeout}\n";

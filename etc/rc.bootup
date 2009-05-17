@@ -74,6 +74,8 @@ function rescue_detect_keypress() {
 		echo "\n";
 		touch("/tmp/donotbootup");
 		exit;
+	} else {
+		echo "\n\n";
 	}
 }
 

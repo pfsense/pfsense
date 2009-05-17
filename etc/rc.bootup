@@ -59,13 +59,13 @@ function rescue_detect_keypress() {
 	if (in_array($key, array("r", "R"))) {
 	  putenv("TERM=cons25");
 	  echo "\n\nRecovery mode selected...\n";
-	  system("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer_rescue");
+	  passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer_rescue");
 	} elseif (in_array($key, array("i", "I"))) {
 	  putenv("TERM=cons25");  
 	  echo "\n\nInstaller mode selected...\n";
-	  system("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
+	  passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
 	  if(file_exists("/tmp/install_complete")) {
-		system("/etc/rc.reboot");
+		passthru("/etc/rc.reboot");
 		exit;
 	  }
 	} elseif (in_array($key, array("!", "~"))) {

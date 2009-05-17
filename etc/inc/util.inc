@@ -90,21 +90,28 @@ function config_unlock() {
 function lock($lock) {
         global $g, $cfglckkeyconsumers;
 
-	if (!$lock)
-		die("WARNING: You must give a name as parameter to lock() function.");
+		if (!$lock)
+			die("WARNING: You must give a name as parameter to lock() function.");
         if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
-                @touch("{$g['tmp_path']}/{$lock}.lock");
-        $config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
-        $cfglckkey = sem_get($config_lock_key, 1);
-        $cfglckkeyconsumers++;
-        if (!sem_acquire($cfglckkey)) {
-                log_error("WARNING: lock() -  Could not acquire {$lock} lock!");
-                sem_remove($cfglckkey);
-                return NULL;
-        } else if ($g['debug'])
-                log_error("lock() -  Got {$file} lock.");
+ 			@touch("{$g['tmp_path']}/{$lock}.lock");
 
-        return $cfglckkey;
+		$config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
+		$cfglckkey = sem_get($config_lock_key, 1);
+		$cfglckkeyconsumers++;
+
+		// Rely on or own logging for errors here.
+		ini_set('error_reporting', E_NONE);
+
+		if (!sem_acquire($cfglckkey)) {
+				log_error("WARNING: lock() -  Could not acquire {$lock} lock!");
+				sem_remove($cfglckkey);
+				return NULL;
+		} else if ($g['debug'])
+			log_error("lock() -  Got {$file} lock.");
+
+		ini_set('error_reporting', E_ALL  & ~E_NOTICE);
+
+		return $cfglckkey;
 }
 
 /* unlock configuration file */

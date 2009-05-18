@@ -302,7 +302,7 @@ rm -f /root/lighttpd*
 # If a shell was selected from recovery 
 # console then just drop to the shell now.
 if [ -f "/tmp/donotbootup" ]; then
-	echo "\nDropping to recovery shell.\n\n"
+	echo "Dropping to recovery shell."
 	exit 0
 fi
 

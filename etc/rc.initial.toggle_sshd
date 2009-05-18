@@ -32,6 +32,8 @@
 require_once("functions.inc");
 require_once("config.inc");
 
+conf_mount_rw();
+
 $fp = fopen('php://stdin', 'r');
 
 if (isset($config['system']['enablesshd'])) {
@@ -63,3 +65,5 @@ if (isset($config['system']['enablesshd'])) {
 }
 
 fclose($fp);
+
+conf_mount_ro();

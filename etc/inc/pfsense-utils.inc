@@ -3399,7 +3399,8 @@ function enable_rrd_graphing() {
 }
 
 function kill_traffic_collector() {
-		mwexec("ps awwwux | grep '/[u]pdaterrd.sh' | awk '{print $2}' | xargs kill");
+		mwexec("/usr/bin/killall -9 rrdtool");
+		mwexec("ps awwwux | grep '/[u]pdaterrd.sh' | awk '{print $2}' | xargs kill -9");
 }
 
 function update_filter_reload_status($text) {

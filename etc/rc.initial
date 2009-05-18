@@ -2,7 +2,8 @@
 
 # If recovery console shell option has been specified
 if [ -f "/tmp/donotbootup" ]; then
-	exit 0
+	/bin/tcsh
+	exit
 fi
 
 # $Id$

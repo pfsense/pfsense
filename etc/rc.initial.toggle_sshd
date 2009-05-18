@@ -34,6 +34,8 @@ require_once("config.inc");
 
 $fp = fopen('php://stdin', 'r');
 
+conf_mount_rw();
+
 if (isset($config['system']['enablesshd'])) {
 	echo "SSHD is currently enabled.  Would you like to disable? [y/n]? ";
 	$yn = chop(fgets($fp));
@@ -63,3 +65,5 @@ if (isset($config['system']['enablesshd'])) {
 }
 
 fclose($fp);
+
+conf_mount_ro();

@@ -2,7 +2,7 @@
 
 # If recovery console shell option has been specified
 if [ -f "/tmp/donotbootup" ]; then
-	/bin/tcsh
+	/usr/bin/env prompt="%B[%n@%m]%b%/(%h)||RecoveryConsoleShell: " /bin/tcsh
 	exit
 fi
 

@@ -57,37 +57,26 @@ function clientcmp($a, $b) {
 }
 
 $cpdb = array();
-captiveportal_lock();
-$fp = @fopen("{$g['vardb_path']}/captiveportal.db","r");
-
-if ($fp) {
-	while (!feof($fp)) {
-		$line = trim(fgets($fp));
-		if ($line) {
-			$cpent = explode(",", $line);
-			if ($_GET['showact'])
-				$cpent[5] = captiveportal_get_last_activity($cpent[1]);
-			$cpdb[] = $cpent;
-		}
-	}
-	
-	fclose($fp);
-	
-	if ($_GET['order']) {
-		if ($_GET['order'] == "ip")
-			$order = 2;
-		else if ($_GET['order'] == "mac")
-			$order = 3;
-		else if ($_GET['order'] == "user")
-			$order = 4;
-		else if ($_GET['order'] == "lastact")
-			$order = 5;
-		else
-			$order = 0;
-		usort($cpdb, "clientcmp");
-	}
+$cpcontents = file("/var/db/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+foreach ($cpcontents as $cpcontent) {
+        $cpent = explode(",", $cpcontent);
+        if ($_GET['showact'])
+                $cpent[5] = captiveportal_get_last_activity($cpent[1]);
+                $cpdb[] = $cpent;
 }
-captiveportal_unlock();
+if ($_GET['order']) {
+        if ($_GET['order'] == "ip")
+                $order = 2;
+        else if ($_GET['order'] == "mac")
+                $order = 3;
+        else if ($_GET['order'] == "user")
+                $order = 4;
+        else if ($_GET['order'] == "lastact")
+                $order = 5;
+        else
+                $order = 0;
+        usort($cpdb, "clientcmp");
+}
 ?>
 <table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>

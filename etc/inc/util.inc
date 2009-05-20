@@ -343,6 +343,44 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
         return $iflist;
 }
 
+/* lock configuration file */
+function lock($lock) {
+        global $g, $cfglckkeyconsumers;
+        
+        if (!$lock)
+                die("WARNING: You must give a name as parameter to lock() function.");
+        if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
+                @touch("{$g['tmp_path']}/{$lock}.lock");
+        $config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
+        $cfglckkey = sem_get($config_lock_key, 1);
+        $cfglckkeyconsumers++;
+        if (!sem_acquire($cfglckkey)) {
+                log_error("WARNING: lock() -  Could not acquire {$lock} lock!");
+                sem_remove($cfglckkey);
+                return NULL;
+        } else if ($g['debug'])
+                log_error("lock() -  Got {$file} lock.");
+
+        return $cfglckkey;
+}
+
+/* unlock configuration file */
+function unlock($cfglckkey = 0) {
+        global $g, $cfglckkeyconsumers;
+
+        if (!$cfglckkey)
+                return;
+
+        if (!sem_release($cfglckkey))
+                log_error("WARNING: unlock() - Could not unlock lock.");
+        else {
+                if ($g['debug'])
+                        log_error("Released lock.");
+                sem_remove($cfglckkey);
+        }
+        $cfglckkeyconsumers--;
+}
+
 /* wrapper for exec() */
 function mwexec($command, $mute = true) {
 

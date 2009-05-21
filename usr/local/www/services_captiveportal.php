@@ -149,7 +149,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$config['captiveportal']['interface'] = $_POST['cinterface'];
+		$config['captiveportal']['interface'] = implode(",", $_POST['cinterface']);
 		$config['captiveportal']['maxproc'] = $_POST['maxproc'];
 		$config['captiveportal']['maxprocperip'] = $_POST['maxprocperip'] ? $_POST['maxprocperip'] : false;
 		$config['captiveportal']['timeout'] = $_POST['timeout'];
@@ -194,6 +194,8 @@ if ($_POST) {
 		$retval = captiveportal_configure();
 
 		$savemsg = get_std_save_message($retval);
+		
+		$pconfig['cinterface'] = implode(",", $_POST['cinterface']);
 	}
 }
 include("head.inc");
@@ -276,16 +278,16 @@ function enable_change(enable_change) {
 	<tr>
 	  <td width="22%" valign="top" class="vncellreq">Interface</td>
 	  <td width="78%" class="vtable">
-		<select name="cinterface" class="formselect" id="cinterface">
+		<select name="cinterface[]" multiple="true" size="3" class="formselect" id="cinterface">
 		  <?php 
 		  $interfaces = get_configured_interface_with_descr();
 		  foreach ($interfaces as $iface => $ifacename): ?>
-		  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['cinterface']) echo "selected"; ?>>
+		  <option value="<?=$iface;?>" <?php if (stristr($pconfig['cinterface'], $iface)) echo "selected"; ?>>
 		  <?=htmlspecialchars($ifacename);?>
 		  </option>
 		  <?php endforeach; ?>
 		</select> <br>
-		<span class="vexpl">Choose which interface to run the captive portal on.</span></td>
+		<span class="vexpl">Choose which interface(s) to run the captive portal on.</span></td>
 	</tr>
 	<tr>
 	  <td valign="top" class="vncell">Maximum concurrent connections</td>

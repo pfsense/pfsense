@@ -2184,9 +2184,9 @@ function get_real_interface($interface = "wan") {
 
 function guess_interface_from_ip($ipaddress) {
         $ret = `/usr/bin/netstat -rn | /usr/bin/awk '/^{$ipaddress}/ {print \$6}'`;
-        if(empty($ret)) {
+        if (empty($ret))
                 return false;
-        }
+
         return $ret;
 }
 

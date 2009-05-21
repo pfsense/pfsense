@@ -47,10 +47,32 @@ function captiveportal_configure() {
 	global $config, $g;
 
 	$captiveportallck = lock('captiveportal');
+	
+	$cpactive = false;
+	if (isset($config['captiveportal']['enable'])) {
+		$cpips = array();
+		$ifaces = get_configured_interface_list();
+		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
+		$firsttime = 0;
+		foreach ($cpinterfaces as $cpifgrp) {
+			if (!isset($ifaces[$cpifgrp]))
+				continue;
+			if ($firsttime > 0)
+				$cpinterface .= " or ";
+			$firsttime = 1;
+			$tmpif = get_real_interface($cpifgrp);
+			if (!empty($tmpif)) {
+				$cpinterface .= "via {$tmpif}"; 
+				$cpips[] = get_interface_ip($cpifgrp);
+			}
+		}
+		if (count($cpips) > 0) {
+			$cpactive = true;
+			$cpinterface = "{ {$cpinterface} } ";
+		}
+	}
 
-	if (isset($config['captiveportal']['enable']) &&
-		(($config['captiveportal']['interface'] == "lan") ||
-			isset($config['interfaces'][$config['captiveportal']['interface']]['enable']))) {
+	if ($cpactive == true) {
 
 		if ($g['booting'])
 			echo "Starting captive portal... ";
@@ -69,7 +91,7 @@ function captiveportal_configure() {
                         mwexec("/sbin/kldload dummynet");
 
 		/* generate ipfw rules */
-		$cprules = captiveportal_rules_generate();
+		$cprules = captiveportal_rules_generate($cpinterface, $cpips);
 
 		/* stop accounting on all clients */
 		captiveportal_radius_stop_all(true);
@@ -276,17 +298,15 @@ EOD;
 		mwexec("/sbin/kldunload ipfw.ko");
 	}
 
-    unlock($captiveportallck);
+	unlock($captiveportallck);
 	
 	return 0;
 }
 
-function captiveportal_rules_generate() {
+function captiveportal_rules_generate($cpif, &$cpiparray) {
 	global $config, $g;
 
 	$cpifn = $config['captiveportal']['interface'];
-	$cpif = get_real_interface($cpifn);
-	$cpip = get_interface_ip($cpifn);
 	$lanip = get_interface_ip("lan");
 	
 	/* note: the captive portal daemon inserts all pass rules for authenticated
@@ -301,27 +321,27 @@ function captiveportal_rules_generate() {
         /* if list */
         $iflist = get_configured_interface_list();
 	foreach ($iflist as $ifent => $ifname) {
-		if($cpifn == $ifname)
+		if(stristr($cpifn, $ifname))
 			continue;
 		$int = get_real_interface($ifname);
 		$cprules .= "add 30 set 1 skipto 50000 all from any to any in via {$int} keep-state\n";
 	}
 
 	/* captive portal on LAN interface? */
-	if ($cpifn == "lan") {
+	if (stristr($cpifn,  "lan")) {
 		/* add anti-lockout rules */
 		$cprules .= <<<EOD
-add 500 set 1 pass all from $cpip to any out via $cpif
-add 501 set 1 pass all from any to $cpip in via $cpif
+add 500 set 1 pass all from $lanip to any out $cpif
+add 501 set 1 pass all from any to $lanip in $cpif
 
 EOD;
 	}
 
 	$cprules .= <<<EOD
 # skip to traffic shaper if not on captive portal interface
-add 1000 set 1 skipto 50000 all from any to any not layer2 not via $cpif
+add 1000 set 1 skipto 50000 all from any to any not layer2 not $cpif
 # pass all layer2 traffic on other interfaces
-add 1001 set 1 pass layer2 not via $cpif
+add 1001 set 1 pass layer2 not $cpif
 
 # layer 2: pass ARP
 add 1100 set 1 pass layer2 mac-type arp
@@ -341,38 +361,49 @@ add 1101 set 1 deny layer2 not mac-type ip
 # layer 2: check if MAC addresses of authenticated clients are correct
 add 1102 set 1 skipto 20000 layer2
 
-# allow access to our DHCP server (which needs to be able to ping clients as well)
-add 1200 set 1 pass udp from any 68 to 255.255.255.255 67 in
-add 1201 set 1 pass udp from any 68 to $cpip 67 in
-add 1202 set 1 pass udp from $cpip 67 to any 68 out
-add 1203 set 1 pass icmp from $cpip to any out icmptype 8
-add 1204 set 1 pass icmp from any to $cpip in icmptype 0
-
-# allow access to our DNS forwarder
-add 1300 set 1 pass udp from any to $cpip 53 in
-add 1301 set 1 pass udp from $cpip 53 to any out
-
-# allow access to our DNS forwarder if it incorrectly resolves the hostname to $lanip
-add 1300 set 1 pass udp from any to $lanip 53 in
-add 1301 set 1 pass udp from $lanip 53 to any out
-
-# allow access to our web server
-add 1302 set 1 pass tcp from any to $cpip 8000 in
-add 1303 set 1 pass tcp from $cpip 8000 to any out
-
-# allow access to lan web server incase the dns name resolves incorrectly to $lanip
-add 1302 set 1 pass tcp from any to $lanip 8000 in
-add 1303 set 1 pass tcp from $lanip 8000 to any out
-
 EOD;
 
-	if (isset($config['captiveportal']['httpslogin'])) {
-		$cprules .= <<<EOD
-add 1304 set 1 pass tcp from any to $cpip 8001 in
-add 1305 set 1 pass tcp from $cpip 8001 to any out
+	$rulenum = 1200;
+	foreach ($cpiparray as $cpip) {
+		//# allow access to our DHCP server (which needs to be able to ping clients as well)
+		$cprules .= "add {$rulenum} set 1 pass udp from any 68 to 255.255.255.255 67 in \n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} set 1 pass udp from any 68 to {$cpip} 67 in \n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} 67 to any 68 out \n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} set 1 pass icmp from {$cpip} to any out icmptype 8\n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} set 1 pass icmp from any to {$cpip} in icmptype 0 \n";
+		$rulenum++;
+		//# allow access to our DNS forwarder
+		$cprules .= "add {$rulenum} set 1 pass udp from any to {$cpip} 53 in \n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} 53 to any out \n";
+		$rulenum++;
+		# allow access to our web server
+		$cprules .= "add {$rulenum} set 1 pass tcp from any to {$cpip} 8000 in \n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} set 1 pass tcp from {$cpip} 8000 to any out \n";
 
-EOD;
+		if (isset($config['captiveportal']['httpslogin'])) {
+			$rulenum++;
+			$cprules .= "add {$rulenum} set 1 pass tcp from any to {$cpip} 8001 in \n";
+			$rulenum++;
+			$cprules .= "add {$rulenum} set 1 pass tcp from {$cpip} 8001 to any out \n";
+		}
 	}
+
+	$rulenum++;
+        //# allow access to our DNS forwarder if it incorrectly resolves the hostname to $lanip
+        $cprules .= "add {$rulenum} set 1 pass udp from any to {$lanip} 53 in \n";
+        $rulenum++;
+        $cprules .= "add {$rulenum} set 1 pass udp from {$lanip} 53 to any out \n";
+	//# allow access to lan web server incase the dns name resolves incorrectly to $lanip
+	$rulenum++;
+        $cprules .= "add {$rulenum} set 1 pass tcp from any to {$lanip} 8000 in \n";
+        $rulenum++;
+        $cprules .= "add {$rulenum} set 1 pass tcp from {$lanip} 8000 to any out \n";
 
         $cprules .= <<<EOD
 
@@ -956,7 +987,6 @@ function captiveportal_write_elements() {
  * within the range specified based on the actual installed rules
  *
  */
-
 function captiveportal_get_next_ipfw_ruleno($rulenos_start = 10000, $rulenos_range_max = 9899) {
 
 	$fwrules = "";
@@ -1063,6 +1093,20 @@ function portal_mac_fixed($clientmac) {
         fclose($fd) ;
     }
     return FALSE ;
+}
+
+function portal_ip_from_client_ip($cliip) {
+	global $config;
+
+	$interfaces = explode(",", $config['captiveportal']['interface']);
+	foreach ($interfaces as $cpif) {
+		$ip = get_interface_ip($cpif);
+		$sn = get_interface_subnet($cpif);
+		if (ip_in_subnet($cliip, "{$ip}/{$sn}"))
+			return $ip;
+	}
+
+	return false;
 }
 
 ?>

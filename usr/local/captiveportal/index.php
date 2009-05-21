@@ -49,8 +49,13 @@ if (!$clientip) {
 
 if (isset($config['captiveportal']['httpslogin']))
     $ourhostname = $config['captiveportal']['httpsname'] . ":8001";
-else
-    $ourhostname = get_interface_ip($config['captiveportal']['interface']) . ":8000";
+else {
+    $ifip = portal_ip_from_client_ip($clientip);
+    if (!$ifip)
+    	$ourhostname = $config['system']['hostname'] . ":8000";
+    else
+    	$ourhostname = "{$ifip}:8000";
+}
 
 if ($orig_host != $ourhostname) {
     /* the client thinks it's connected to the desired web server, but instead
@@ -84,7 +89,7 @@ if (!$clientmac && $macfilter) {
 /* find out if we need RADIUS + RADIUSMAC or not */
 if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
     $radius_enable = TRUE;
-    if ($radius_enable && isset($config['captiveportal']['radmac_enable']))
+    if (isset($config['captiveportal']['radmac_enable']))
         $radmac_enable = TRUE;
 }
 
@@ -167,8 +172,14 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
     /* substitute other variables */
     if (isset($config['captiveportal']['httpslogin']))
         $htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
-    else
-        $htmltext = str_replace("\$PORTAL_ACTION\$", "http://" . get_interface_ip($config['captiveportal']['interface']) . ":8000/", $htmltext);
+    else {
+	$ifip = portal_ip_from_client_ip($clientip);
+    	if (!$ifip)
+        	$ourhostname = $config['system']['hostname'] . ":8000";
+    	else
+        	$ourhostname = "{$ifip}:8000";
+        $htmltext = str_replace("\$PORTAL_ACTION\$", "http://{$ourhostname}/", $htmltext);
+    }
 
     $htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
     $htmltext = str_replace("\$PORTAL_MESSAGE\$", htmlspecialchars($message), $htmltext);
@@ -320,8 +331,14 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
         if (isset($config['captiveportal']['httpslogin']))
             $logouturl = "https://{$config['captiveportal']['httpsname']}:8001/";
-        else
-            $logouturl = "http://" . get_interface_ip($config['captiveportal']['interface']) . ":8000/";
+        else {
+	    $ifip = portal_ip_from_client_ip($clientip);
+    	    if (!$ifip)
+        	$ourhostname = $config['system']['hostname'] . ":8000";
+            else
+        	$ourhostname = "{$ifip}:8000";
+            $logouturl = "http://{$ourhostname}/";
+	}
 
         echo <<<EOD
 <HTML>

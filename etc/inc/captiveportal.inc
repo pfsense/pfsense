@@ -57,13 +57,15 @@ function captiveportal_configure() {
 		foreach ($cpinterfaces as $cpifgrp) {
 			if (!isset($ifaces[$cpifgrp]))
 				continue;
-			if ($firsttime > 0)
-				$cpinterface .= " or ";
-			$firsttime = 1;
 			$tmpif = get_real_interface($cpifgrp);
 			if (!empty($tmpif)) {
+				if ($firsttime > 0)
+					$cpinterface .= " or ";
 				$cpinterface .= "via {$tmpif}"; 
-				$cpips[] = get_interface_ip($cpifgrp);
+				$firsttime = 1;
+				$cpipm = get_interface_ip($cpifgrp);
+				if (is_ipaddr($cpipm))
+					$cpips[] = $cpipm;
 			}
 		}
 		if (count($cpips) > 0) {

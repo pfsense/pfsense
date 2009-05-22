@@ -851,29 +851,6 @@ function backup_config_section($section) {
 }
 
 /*
- *  backup_vip_config_section($section): returns as an xml file string of
- *                                   the configuration section
- */
-function backup_vip_config_section() {
-	global $config;
-	$new_section = &$config['virtualip'];
-	foreach($new_section['vip'] as $section) {
-		if($section['mode'] == "proxyarp") {
-			unset($section);
-		}
-		if($section['advskew'] <> "") {
-			$section_val = intval($section['advskew']);
-			$section_val=$section_val+100;
-			if($section_val > 255)
-				$section_val = 255;
-			$section['advskew'] = $section_val;
-		}
-		$temp['vip'][] = $section;
-   }
-   return $temp;
-}
-
-/*
  *  restore_config_section($section, new_contents): restore a configuration section,
  *                                                  and write the configuration out
  *                                                  to disk/cf.

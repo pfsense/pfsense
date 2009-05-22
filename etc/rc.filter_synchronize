@@ -39,6 +39,29 @@
 require_once("config.inc");
 require_once("xmlrpc.inc");
 
+/*
+ *  backup_vip_config_section($section): returns as an xml file string of
+ *                                   the configuration section
+ */
+function backup_vip_config_section() {
+        global $config;
+        $new_section = &$config['virtualip'];
+        foreach($new_section['vip'] as $section) {
+                if($section['mode'] == "proxyarp") {
+                        unset($section);
+                }
+                if($section['advskew'] <> "") {
+                        $section_val = intval($section['advskew']);
+                        $section_val=$section_val+100;
+                        if($section_val > 255)
+                                $section_val = 255;
+                        $section['advskew'] = $section_val;
+                }
+                $temp['vip'][] = $section;
+   }
+   return $temp;
+}
+
 function remove_special_characters($string) {
         $match_array = "";
         preg_match_all("/[a-zA-Z0-9\_\-]+/",$string,$match_array);

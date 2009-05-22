@@ -255,7 +255,6 @@ function filter_configure_sync() {
 	update_filter_reload_status("Starting up layer7 daemon");
 	layer7_start_l7daemon();
 
-	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
 	/* run items scheduled for after filter configure run */
 	$fda = fopen("/tmp/commands.txt", "w");
 	foreach($after_filter_configure_run as $afcr) 
@@ -285,10 +284,6 @@ function filter_configure_sync() {
 		filter_tdr_install_cron(false);
 
 	unlock($filterlck);
-
-	/* sync carp entries to other firewalls */
-	update_filter_reload_status("Syncing CARP data");
-	carp_sync_client();
 
 	if ($g['booting'] == true)
 		echo ".";
@@ -2172,182 +2167,6 @@ function process_carp_rules()
 		$lines .= "pass quick proto pfsync\n";
 	}
 	return $lines;
-}
-
-function remove_special_characters($string) {
-	$match_array = "";
-	preg_match_all("/[a-zA-Z0-9\_\-]+/",$string,$match_array);
-	$string = "";
-	foreach($match_array[0] as $ma) {
-		if($string <> "")
-			$string .= " ";
-		$string .= $ma;
-	}
-	return $string;
-}
-
-function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
-	global $config, $g;
-
-	if($g['booting'])
-		return;
-
-	update_filter_reload_status("Syncing CARP data to {$url}");
-
-	/* make a copy of config */
-	$config_copy = $config;
-
-	/* strip out nosync items */
-	if (is_array($config_copy['nat']['advancedoutbound']['rule']))
-	for ($x = 0; $x < count($config_copy['nat']['advancedoutbound']['rule']); $x++) {
-		if (isset ($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']))
-			unset ($config_copy['nat']['advancedoutbound']['rule'][$x]);
-		$config_copy['nat']['advancedoutbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['advancedoutbound']['rule'][$x]['descr']);
-	}
-	if (is_array($config_copy['nat']['rule']))
-	for ($x = 0; $x < count($config_copy['nat']['rule']); $x++) {
-		if (isset ($config_copy['nat']['rule'][$x]['nosync']))
-			unset ($config_copy['nat']['rule'][$x]);
-		$config_copy['nat']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['rule'][$x]['descr']);
-	}
-	if (is_array($config_copy['filter']['rule']))
-	for ($x = 0; $x < count($config_copy['filter']['rule']); $x++) {
-		if (isset ($config_copy['filter']['rule'][$x]['nosync']))
-			unset ($config_copy['filter']['rule'][$x]);
-		$config_copy['filter']['rule'][$x]['descr'] = remove_special_characters($config_copy['filter']['rule'][$x]['descr']);
-	}
-	if (is_array($config_copy['aliases']['alias']))
-	for ($x = 0; $x < count($config_copy['aliases']['alias']); $x++) {
-		if (isset ($config_copy['aliases']['alias'][$x]['nosync']))
-			unset ($config_copy['aliases']['alias'][$x]);
-		$config_copy['aliases']['alias'][$x]['descr'] = remove_special_characters($config_copy['aliases']['alias'][$x]['descr']);
-	}
-	if (is_array($config_copy['dnsmasq']['hosts']))
-	for ($x = 0; $x < count($config_copy['dnsmasq']['hosts']); $x++) {
-		if (isset ($config_copy['dnsmasq']['hosts'][$x]['nosync']))
-			unset ($config_copy['dnsmasq']['hosts'][$x]);
-		$config_copy['dnsmasq']['hosts'][$x]['descr'] = remove_special_characters($config_copy['dnsmasq']['hosts'][$x]['descr']);
-	}
-	if (is_array($config_copy['virtualip']['vip']))
-	for ($x = 0; $x < count($config_copy['virtualip']['vip']); $x++) {
-		if (isset ($config_copy['virtualip']['vip'][$x]['nosync']) or $config_copy['virtualip']['vip'][$x]['mode'] == "proxyarp")
-			unset ($config_copy['virtualip']['vip'][$x]);
-		$config_copy['virtualip']['vip'][$x]['descr'] = remove_special_characters($config_copy['virtualip']['vip'][$x]['descr']);
-	}
-	if (is_array($config_copy['ipsec']['tunnel']))
-	for ($x = 0; $x < count($config_copy['ipsec']['tunnel']); $x++) {
-		if (isset ($config_copy['ipsec']['tunnel'][$x]['nosync']))
-			unset ($config_copy['ipsec']['tunnel'][$x]);
-		$config_copy['ipsec']['tunnel'][$x]['descr'] = remove_special_characters($config_copy['ipsec']['tunnel'][$x]['descr']);
-	}
-
-	foreach($sections as $section) {
-		/*  we can't use array_intersect_key()
-		 *  due to the vip 'special case' 
-		 */
-		if($section != 'virtualip') {
-			$xml[$section] = $config_copy[$section];
-		} else {
-			$xml[$section] = backup_vip_config_section();
-		}
-	}
-
-	$params = array(
-		XML_RPC_encode($password),
-		XML_RPC_encode($xml)
-	);
-	
-	$numberofruns = 0;
-	while($numberofruns < 2) {
-		log_error("Beginning XMLRPC sync to {$url}:{$port}.");
-		$msg = new XML_RPC_Message($method, $params);
-		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-		$username = $config['system']['user'][0]['name'];
-		$cli->setCredentials($username, $password);
-		if($numberofruns == 1)
-			$cli->setDebug(1);
-		/* send our XMLRPC message and timeout after 240 seconds */
-		$resp = $cli->send($msg, "240");
-		if(!$resp) {
-			$error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
-			log_error($error);
-			file_notice("sync_settings", $error, "Settings Sync", "");
-		} elseif($resp->faultCode()) {
-			$error = "An error code was received while attempting XMLRPC sync with username {$username} {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
-			log_error($error);
-			file_notice("sync_settings", $error, "Settings Sync", "");
-		} else {
-			log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
-			$numberofruns = 3;
-		}
-		$numberofruns++;
-	}
-}
-
-function carp_sync_client() {
-	global $config, $g;
-	update_filter_reload_status("Building CARP sync information");
-	if($g['booting'])
-		return;
-	if(is_array($config['installedpackages']['carpsettings']['config'])) {
-		foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
-			if($carp['synchronizetoip'] != "" ) {
-				/*
-				 * XXX: The way we're finding the port right now is really suboptimal -
-				 *		we can't assume that the other machine is setup identically.
-				 */
-				if($config['system']['webgui']['protocol'] != "") {
-					$synchronizetoip = $config['system']['webgui']['protocol'];
-					$synchronizetoip .= "://";
-				}
-				$port = $config['system']['webgui']['port'];
-				/* if port is empty lets rely on the protocol selection */
-				if($port == "") {
-					if($config['system']['webgui']['protocol'] == "http") 
-						$port = "80";
-					 else 
-						$port = "443";
-				}
-				$synchronizetoip .= $carp['synchronizetoip'];
-				if($carp['synchronizerules'] != "" and is_array($config['filter']))
-					$sections[] = 'filter';
-				if($carp['synchronizenat'] != "" and is_array($config['nat']))
-					$sections[] = 'nat';
-				if($carp['synchronizealiases'] != "" and is_array($config['aliases']))
-					$sections[] = 'aliases';
-				if($carp['synchronizedhcpd'] != "" and is_array($config['dhcpd']))
-					$sections[] = 'dhcpd';
-				if($carp['synchronizewol'] != "" and is_array($config['wol']))
-					$sections[] = 'wol';
-				if($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper']))
-					$sections[] = 'shaper';
-				if($carp['synchronizestaticroutes'] != "" and is_array($config['staticroutes'])) 
-					$sections[] = 'staticroutes';
-				if($carp['synchronizevirtualip'] != "" and is_array($config['virtualip']))
-					$sections[] = 'virtualip';
-				if($carp['synchronizelb'] != "" and is_array($config['load_balancer']))
-					$sections[] = 'load_balancer';
-				if($carp['synchronizeipsec'] != "" and is_array($config['ipsec']))
-					$sections[] = 'ipsec';
-				if($carp['synchronizednsforwarder'] != "" and is_array($config['dnsmasq'])) 
-					$sections[] = 'dnsmasq';
-				if($carp['synchronizeschedules'] != "" and is_array($config['schedules'])) 
-					$sections[] = 'schedules';
-				if(count($sections) > 0) {
-					update_filter_reload_status("Signaling CARP reload signal...");
-					carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);
-					$cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
-					$msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
-					$username = $config['system']['user'][0]['name'];
-					$cli->setCredentials($username, $carp['password']);
-					$cli->send($msg, "900");
-					/* signal a carp reload */
-					$msg = new XML_RPC_Message('pfsense.interfaces_carp_configure');
-					$cli->send($msg, "900");
-				}
-			}
-		}
-	}
 }
 
 /* Generate IPSEC Filter Items */

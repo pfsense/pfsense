@@ -61,7 +61,6 @@ PHPMODULES="apc \
 	session \
 	shmop \
 	standard \
-	shmop \
 	sysvmsg \
 	sysvsem \
 	sysvshm \

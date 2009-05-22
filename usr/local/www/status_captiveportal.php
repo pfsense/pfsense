@@ -100,7 +100,7 @@ if ($_GET['order']) {
     <td class="list sort_ignore"></td>
   </tr>
 <?php foreach ($cpdb as $cpent): 
-	if (empty($cpent))
+	if (empty($cpent[0]))
 		continue;
 ?>
   <tr>

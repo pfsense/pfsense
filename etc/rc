@@ -261,6 +261,7 @@ extension=posix.so
 extension=radius.so
 extension=readline.so
 extension=session.so
+extension=sysvsem.so
 extension=tokenizer.so
 extension=xml.so
 

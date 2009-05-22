@@ -100,8 +100,9 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		/* make sure no interfaces are bridged */
-		if (link_interface_to_bridge($pconfig['cinterface'])) 
-			$input_errors[] = "The captive portal cannot be used when one or more interfaces are bridged.";
+		foreach ($pconfig['cinterface'] as $cpbrif)
+			if (link_interface_to_bridge($cpbrif)) 
+				$input_errors[] = "The captive portal cannot be used on interface {$cpbrif} since it is part of a bridge.";
 
 		if ($_POST['httpslogin_enable']) {
 		 	if (!$_POST['cert'] || !$_POST['key']) {

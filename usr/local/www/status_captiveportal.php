@@ -99,7 +99,10 @@ if ($_GET['order']) {
 	<?php endif; ?>
     <td class="list sort_ignore"></td>
   </tr>
-<?php foreach ($cpdb as $cpent): ?>
+<?php foreach ($cpdb as $cpent): 
+	if (empty($cpent))
+		continue;
+?>
   <tr>
     <td class="listlr"><?=$cpent[2];?></td>
     <td class="listr"><?=$cpent[3];?>&nbsp;</td>

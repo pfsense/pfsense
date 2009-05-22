@@ -1665,8 +1665,7 @@ function setup_bridge() {
 			else
 				$bridgecmd .= " addm $bridgeif stp $bridgeif ";
 			// get MTU for this interface
-			$friendlyifname = convert_real_interface_to_friendly_interface_name($bridgeif);
-			$mtu = get_interface_mtu($friendlyifname);
+			$mtu = get_interface_mtu($bridgeif);
 			if (intval($mtu) == 0) {
 				log_error("An error occurred while trying to obtain the MTU setting for $bridgeif.  Using 1500.");
 				$mtu = "1500";

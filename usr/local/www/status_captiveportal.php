@@ -64,8 +64,7 @@ function clientcmp($a, $b) {
 }
 
 $cpdb = array();
-$cpcontents = `cat /var/db/captiveportal.db`;
-$cpcontents = explode("\n", $cpcontents);
+$cpcontents = file("/var/db/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 foreach ($cpcontents as $cpcontent) {
 	$cpent = explode(",", $cpcontent);
 	if ($_GET['showact'])
@@ -99,10 +98,7 @@ if ($_GET['order']) {
 	<?php endif; ?>
     <td class="list sort_ignore"></td>
   </tr>
-<?php foreach ($cpdb as $cpent): 
-	if (empty($cpent[0]))
-		continue;
-?>
+<?php foreach ($cpdb as $cpent): ?>
   <tr>
     <td class="listlr"><?=$cpent[2];?></td>
     <td class="listr"><?=$cpent[3];?>&nbsp;</td>

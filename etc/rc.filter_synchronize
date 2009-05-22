@@ -38,7 +38,6 @@
 /* Globals.inc and util.inc is included by config.inc */
 require_once("config.inc");
 require_once("xmlrpc.inc");
-require_once("pfsense-utils.inc");
 
 function remove_special_characters($string) {
         $match_array = "";

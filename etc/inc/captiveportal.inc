@@ -340,10 +340,12 @@ EOD;
 	}
 
 	$cprules .= <<<EOD
+add 1000 set 1 skipto 1200 all from any to any not layer2 $cpif
 # skip to traffic shaper if not on captive portal interface
-add 1000 set 1 skipto 50000 all from any to any not layer2 not $cpif
+add 1001 set 1 skipto 50000 all from any to any not layer2
+add 1003 set 1 skipto 1100 layer2 via $cpif
 # pass all layer2 traffic on other interfaces
-add 1001 set 1 pass layer2 not $cpif
+add 1004 set 1 pass layer2 
 
 # layer 2: pass ARP
 add 1100 set 1 pass layer2 mac-type arp

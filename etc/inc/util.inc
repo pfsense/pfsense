@@ -354,13 +354,15 @@ function lock($lock) {
         $config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
         $cfglckkey = sem_get($config_lock_key, 1);
         $cfglckkeyconsumers++;
+		// Rely on or own logging for errors here.
+		ini_set('error_reporting', E_NONE);
         if (!sem_acquire($cfglckkey)) {
                 log_error("WARNING: lock() -  Could not acquire {$lock} lock!");
                 sem_remove($cfglckkey);
                 return NULL;
         } else if ($g['debug'])
                 log_error("lock() -  Got {$file} lock.");
-
+		ini_set('error_reporting', E_ALL  & ~E_NOTICE);
         return $cfglckkey;
 }
 

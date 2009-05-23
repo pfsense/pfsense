@@ -351,11 +351,11 @@ function lock($lock) {
                 die("WARNING: You must give a name as parameter to lock() function.");
         if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
                 @touch("{$g['tmp_path']}/{$lock}.lock");
+		ini_set('error_reporting', E_NONE);
         $config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
         $cfglckkey = sem_get($config_lock_key, 1);
         $cfglckkeyconsumers++;
 		// Rely on or own logging for errors here.
-		ini_set('error_reporting', E_NONE);
         if (!sem_acquire($cfglckkey)) {
                 log_error("WARNING: lock() -  Could not acquire {$lock} lock!");
                 sem_remove($cfglckkey);

@@ -31,6 +31,54 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+function rescue_detect_keypress() {
+	// How long do you want the script to wait before moving on (in seconds)
+	$timeout=9;
+	echo "\n";
+    echo "[ Press R to enter recovery mode or ]\n";
+	echo "[  press I to launch the installer  ]\n\n";
+	echo "(R)ecovery mode can assist by rescuing config.xml\n";
+	echo "from a broken hard disk installation, etc.\n\n";
+	echo "Alternatively the (I)nstaller may be invoked now if you do \n";
+	echo "not wish to boot into the liveCD environment at this time.\n\n";
+	echo "Timeout before auto boot continues (seconds): {$timeout}";
+	$key = null;
+	exec("/bin/stty erase " . chr(8));
+	while(!in_array($key, array("r","R", "i", "I", "~", "!"))) {
+	        echo chr(8) . "{$timeout}";
+	        `/bin/stty -icanon min 0 time 25`;
+	        $key = trim(`KEY=\`dd count=1 2>/dev/null\`; echo \$KEY`);
+	        `/bin/stty icanon`;
+	        // Decrement our timeout value
+	        $timeout--;
+	        // If we have reached 0 exit and continue on
+	        if ($timeout == 0) 
+				break;
+	}
+	// If R or I was pressed do our logic here
+	if (in_array($key, array("r", "R"))) {
+	  putenv("TERM=cons25");
+	  echo "\n\nRecovery mode selected...\n";
+	  passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer_rescue");
+	} elseif (in_array($key, array("i", "I"))) {
+	  putenv("TERM=cons25");  
+	  echo "\n\nInstaller mode selected...\n";
+	  passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
+	  if(file_exists("/tmp/install_complete")) {
+		passthru("/etc/rc.reboot");
+		exit;
+	  }
+	} elseif (in_array($key, array("!", "~"))) {
+ 		putenv("TERM=cons25");
+		echo "\n\nRecovery shell selected...\n";
+		echo "\n";
+		touch("/tmp/donotbootup");
+		exit;
+	} else {
+		echo "\n\n";
+	}
+}
+
 	echo " done.\n";
 	echo "Initializing...";
 	echo ".";
@@ -67,6 +115,10 @@
 	set_device_perms();
 	unmute_kernel_msgs();
 	echo "done.\n";
+
+	// Display rescue configuration option
+	if($g['platform'] == "cdrom") 
+			rescue_detect_keypress();
 
 	echo "Loading configuration...";
 	parse_config_bootup();

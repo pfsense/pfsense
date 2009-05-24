@@ -388,6 +388,7 @@ function method_change() {
 					<tr>
 						<td width="20%" class="listhdrr">Name</td>
 						<td width="10%" class="listhdrr">Internal</td>
+						<td width="10%" class="listhdrr">Issuer</td>
 						<td width="10%" class="listhdrr">Certificates</td>
 						<td width="40%" class="listhdrr">Distinguished Name</td>
 						<td width="10%" class="list"></td>
@@ -397,8 +398,18 @@ function method_change() {
 						foreach($a_ca as $ca):
 							$name = htmlspecialchars($ca['name']);
 							$subj = cert_get_subject($ca['crt']);
+							$issuer = cert_get_issuer($ca['crt']);
+							if($subj == $issuer)
+							  $issuer_name = "<em>self-signed</em>";
+							else
+							  $issuer_name = "<em>external</em>";
 							$subj = htmlspecialchars($subj);
+							$issuer = htmlspecialchars($issuer);
 							$certcount = 0;
+
+							$issuer_ca = lookup_ca($ca['caref']);
+							if ($issuer_ca)
+								$issuer_name = $issuer_ca['name'];
 
 							// TODO : Need gray certificate icon
 
@@ -406,13 +417,16 @@ function method_change() {
 								$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
 								$internal = "YES";
 
-								foreach ($a_cert as $cert)
-									if ($cert['caref'] == $ca['refid'])
-										$certcount++;
 							} else {
 								$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
 								$internal = "NO";
 							}
+							foreach ($a_cert as $cert)
+								if ($cert['caref'] == $ca['refid'])
+									$certcount++;
+  						foreach ($a_ca as $cert)
+  							if ($cert['caref'] == $ca['refid'])
+  								$certcount++;
 					?>
 					<tr>
 						<td class="listlr">
@@ -428,6 +442,7 @@ function method_change() {
 							</table>
 						</td>
 						<td class="listr"><?=$internal;?>&nbsp;</td>
+						<td class="listr"><?=$issuer_name;?>&nbsp;</td>
 						<td class="listr"><?=$certcount;?>&nbsp;</td>
 						<td class="listr"><?=$subj;?>&nbsp;</td>
 						<td valign="middle" nowrap class="list">
@@ -444,7 +459,7 @@ function method_change() {
 						endforeach;
 					?>
 					<tr>
-						<td class="list" colspan="4"></td>
+						<td class="list" colspan="5"></td>
 						<td class="list">
 							<a href="system_camanager.php?act=new">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="add or import ca" alt="add ca" width="17" height="17" border="0" />
@@ -452,7 +467,7 @@ function method_change() {
 						</td>
 					</tr>
 					<tr>
-						<td colspan="4">
+						<td colspan="5">
 							<p>
 								<?=gettext("Additional trusted certificate authorities can be added here.");?>
 							</p>

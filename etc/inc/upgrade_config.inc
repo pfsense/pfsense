@@ -1739,4 +1739,37 @@ function upgrade_058_to_059() {
 			$schedl['schedlabel'] = uniqid();
 	}
 }
+
+function upgrade_059_to_060() {
+	global $config;
+
+	if (is_array($config['system']['ca']))
+	{
+		/* Locate issuer for all CAs */
+		foreach ($config['system']['ca'] as & $ca)
+		{
+			$subject = cert_get_subject($ca['crt']);
+			$issuer = cert_get_issuer($ca['crt']);
+			if($issuer <> $subject) {
+				$issuer_crt =& lookup_ca_by_subject($issuer);
+				if($issuer_crt)
+					$ca['caref'] = $issuer_crt['refid'];
+			}
+		}
+		
+		/* Locate issuer for all certificates */
+		if (is_array($config['system']['cert']))
+			foreach ($config['system']['cert'] as & $cert)
+			{
+				$subject = cert_get_subject($cert['crt']);
+				$issuer = cert_get_issuer($cert['crt']);
+				if($issuer <> $subject) {
+					$issuer_crt =& lookup_ca_by_subject($issuer);
+					if($issuer_crt)
+						$cert['caref'] = $issuer_crt['refid'];
+				}
+			}
+			
+	}
+}
 ?>

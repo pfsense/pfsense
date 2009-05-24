@@ -223,13 +223,13 @@ EOD;
 			$key = base64_decode($config['captiveportal']['private-key']);
 			/* generate lighttpd configuration */
 			system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal-SSL.conf",
-				$cert, $key, "lighty-CaptivePortal-ssl.pid", "8001", "/usr/local/captiveportal/",
+				$cert, $key, "", "lighty-CaptivePortal-ssl.pid", "8001", "/usr/local/captiveportal/",
 					"cert-portal.pem", "1", $maxproc, $use_fastcgi, true);
 		}
 
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
-			"", "", "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
+			"", "", "", "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
 				"cert-portal.pem", "1", $maxproc, $use_fastcgi, true);
 
 		/* attempt to start lighttpd */

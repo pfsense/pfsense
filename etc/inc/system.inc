@@ -509,6 +509,7 @@ function system_webgui_start() {
 	$portarg = "80";
 	$crt = "";
 	$key = "";
+	$ca = "";
 
 	/* non-standard port? */
 	if ($config['system']['webgui']['port'])
@@ -522,13 +523,14 @@ function system_webgui_start() {
 			$key = base64_decode($cert['prv']);
 			if(!$config['system']['webgui']['port'])
 				$portarg = "443";
+			$ca = ca_chain($cert);
 		} else
 			log_error("Invalid webConfigurator https certificate, defaulting to http");
 	}
 
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
-		$crt, $key, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/");
+		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/");
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
@@ -546,10 +548,12 @@ function system_webgui_start() {
 function system_generate_lighty_config($filename,
 	$cert,
 	$key,
+	$ca,
 	$pid_file,
 	$port = 80,
 	$document_root = "/usr/local/www/",
 	$cert_location = "cert.pem",
+	$ca_location = "ca.pem",
 	$max_procs = 2,
 	$max_requests = "1",
 	$fast_cgi_enable = true,
@@ -834,9 +838,11 @@ EOD;
 
 	$cert = str_replace("\r", "", $cert);
 	$key = str_replace("\r", "", $key);
+	$ca = str_replace("\r", "", $ca);
 
 	$cert = str_replace("\n\n", "\n", $cert);
 	$key = str_replace("\n\n", "\n", $key);
+	$ca = str_replace("\n\n", "\n", $ca);
 
 	if($cert <> "" and $key <> "") {
 		$fd = fopen("{$g['varetc_path']}/{$cert_location}", "w");
@@ -849,10 +855,22 @@ EOD;
 		fwrite($fd, "\n");
 		fwrite($fd, $key);
 		fclose($fd);
+		if($ca <> "") {
+			$fd = fopen("{$g['varetc_path']}/{$ca_location}", "w");
+			if (!$fd) {
+				printf("Error: cannot open ca.pem in system_webgui_start().\n");
+				return 1;
+			}
+			chmod("{$g['varetc_path']}/{$ca_location}", 0600);
+			fwrite($fd, $ca);
+			fclose($fd);
+		}
 		$lighty_config .= "\n";
 		$lighty_config .= "## ssl configuration\n";
 		$lighty_config .= "ssl.engine = \"enable\"\n";
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
+		if($ca <> "")
+			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
 	}
 
 	$fd = fopen("{$filename}", "w");

@@ -41,6 +41,20 @@ function & lookup_ca($refid) {
 	return false;
 }
 
+function & lookup_ca_by_subject($subject) {
+	global $config;
+
+	if (is_array($config['system']['ca']))
+		foreach ($config['system']['ca'] as & $ca)
+		{
+			$ca_subject = cert_get_subject($ca['crt']);
+			if ($ca_subject == $subject)
+				return $ca;
+		}
+
+	return false;
+}
+
 function & lookup_cert($refid) {
 	global $config;
 
@@ -52,10 +66,70 @@ function & lookup_cert($refid) {
 	return false;
 }
 
+function ca_chain_array(& $cert) {
+	if($cert['caref']) {
+		$chain = array();
+		$cert =& lookup_ca($cert['caref']);
+		$chain[] = $cert;
+		while ($cert) {
+			$caref = $cert['caref'];
+			if($caref)
+				$cert =& lookup_ca($caref);
+			else
+				$cert = false;
+			if($cert)
+				$chain[] = $cert;
+		}
+		return $chain;
+	}
+	return false;
+}
+
+function ca_chain(& $cert) {
+	if($cert['caref']) {
+		$ca = "";
+		$cas = ca_chain($cert);
+		if (is_array($cas))
+			foreach ($cas as & $ca_cert)
+			{
+				$ca .= base64_decode($ca_cert['crt']);
+				$ca .= "\n";
+			}
+		return $ca;
+	}
+	return false;
+}
+
 function ca_import(& $ca, $str) {
+	global $config;
 
 	$ca['crt'] = base64_encode($str);
 
+	$subject = cert_get_subject($str, false);
+	$issuer = cert_get_issuer($str, false);
+	
+	// Find my issuer unless self-signed
+	if($issuer <> $subject) {
+		$issuer_crt =& lookup_ca_by_subject($issuer);
+		if($issuer_crt)
+			$ca['caref'] = $issuer_crt['refid'];
+	}
+
+	/* Correct if child certificate was loaded first */
+	if (is_array($config['system']['ca']))
+		foreach ($config['system']['ca'] as & $oca)
+		{
+			$issuer = cert_get_issuer($oca['crt']);
+			if($ca['refid']<>$oca['refid'] && $issuer==$subject)
+				$oca['caref'] = $ca['refid'];
+		}
+	if (is_array($config['system']['cert']))
+		foreach ($config['system']['cert'] as & $cert)
+		{
+			$issuer = cert_get_issuer($cert['crt']);
+			if($issuer==$subject)
+				$cert['caref'] = $ca['refid'];
+		}
 	return true;
 }
 
@@ -93,6 +167,15 @@ function cert_import(& $cert, $crt_str, $key_str) {
 	$cert['crt'] = base64_encode($crt_str);
 	$cert['prv'] = base64_encode($key_str);
 
+	$subject = cert_get_subject($crt_str, false);
+	$issuer = cert_get_issuer($crt_str, false);
+	
+	// Find my issuer unless self-signed
+	if($issuer <> $subject) {
+		$issuer_crt =& lookup_ca_by_subject($issuer);
+		if($issuer_crt)
+			$cert['caref'] = $issuer_crt['refid'];
+	}
 	return true;
 }
 
@@ -221,6 +304,26 @@ function cert_get_subject_array($crt) {
 		$subject_array[] = array('a' => $a, 'v' => $v);
 
 	return $subject_array;
+}
+
+function cert_get_issuer($str_crt, $decode = true) {
+
+	if ($decode)
+		$str_crt = base64_decode($str_crt);
+
+	$inf_crt = openssl_x509_parse($str_crt);
+	$components = $inf_crt['issuer'];
+	
+	if (!is_array($components))
+		return "unknown";
+	foreach ($components as $a => $v) {
+		if (!strlen($issuer))
+			$issuer = "{$a}={$v}";
+		else
+			$issuer = "{$a}={$v}, {$issuer}";
+	}
+
+	return $issuer;
 }
 
 ?>

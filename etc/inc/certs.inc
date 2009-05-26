@@ -71,7 +71,7 @@ function ca_chain_array(& $cert) {
 		$chain = array();
 		$crt =& lookup_ca($cert['caref']);
 		$chain[] = $crt;
-		while ($cert) {
+		while ($crt) {
 			$caref = $crt['caref'];
 			if($caref)
 				$crt =& lookup_ca($caref);

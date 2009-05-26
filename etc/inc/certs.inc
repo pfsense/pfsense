@@ -69,16 +69,16 @@ function & lookup_cert($refid) {
 function ca_chain_array(& $cert) {
 	if($cert['caref']) {
 		$chain = array();
-		$cert =& lookup_ca($cert['caref']);
-		$chain[] = $cert;
+		$crt =& lookup_ca($cert['caref']);
+		$chain[] = $crt;
 		while ($cert) {
-			$caref = $cert['caref'];
+			$caref = $crt['caref'];
 			if($caref)
-				$cert =& lookup_ca($caref);
+				$crt =& lookup_ca($caref);
 			else
-				$cert = false;
-			if($cert)
-				$chain[] = $cert;
+				$crt = false;
+			if($crt)
+				$chain[] = $crt;
 		}
 		return $chain;
 	}
@@ -88,7 +88,7 @@ function ca_chain_array(& $cert) {
 function ca_chain(& $cert) {
 	if($cert['caref']) {
 		$ca = "";
-		$cas = ca_chain($cert);
+		$cas = ca_chain_array($cert);
 		if (is_array($cas))
 			foreach ($cas as & $ca_cert)
 			{
@@ -97,7 +97,7 @@ function ca_chain(& $cert) {
 			}
 		return $ca;
 	}
-	return false;
+	return "";
 }
 
 function ca_import(& $ca, $str) {

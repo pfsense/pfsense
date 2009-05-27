@@ -155,10 +155,6 @@ echo "Setting up extended sysctls...";
 system_setup_sysctl();
 echo "done.\n";
 
-echo "Starting Secure Shell Services...";
-mwexec_bg("/etc/sshd");
-echo "done.\n";
-
 /* run any early shell commands specified in config.xml */
 system_do_shell_commands(1);
 
@@ -230,6 +226,10 @@ system_routing_configure();
 
 /* enable routing */
 system_routing_enable();
+
+echo "Starting Secure Shell Services...";
+mwexec_bg("/etc/sshd");
+echo "done.\n";
 
 /* configure console menu */
 system_console_configure();

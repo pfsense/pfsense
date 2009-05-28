@@ -358,7 +358,9 @@ function lock($lock) {
 		// Rely on or own logging for errors here.
         if (!sem_acquire($cfglckkey)) {
                 log_error("WARNING: lock() -  Could not acquire {$lock} lock!");
+				ini_set('error_reporting', E_NONE);
                 sem_remove($cfglckkey);
+				ini_set('error_reporting', E_ALL  & ~E_NOTICE);
                 return NULL;
         } else if ($g['debug'])
                 log_error("lock() -  Got {$file} lock.");
@@ -378,7 +380,9 @@ function unlock($cfglckkey = 0) {
         else {
                 if ($g['debug'])
                         log_error("Released lock.");
+				ini_set('error_reporting', E_NONE);
                 sem_remove($cfglckkey);
+				ini_set('error_reporting', E_ALL  & ~E_NOTICE); 
         }
         $cfglckkeyconsumers--;
 }

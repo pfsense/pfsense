@@ -592,16 +592,15 @@ function services_dnsmasq_configure() {
 		$args = "";
 
 		if (isset($config['dnsmasq']['regdhcp'])) {
-
 			$args .= " -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases" .
 				" -s {$config['system']['domain']}";
 		}
 
-                if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
-                        foreach($config['dnsmasq']['domainoverrides'] as $override) {
-                                $args .= ' --server=/' . $override['domain'] . '/' . $override['ip'];
-                        }
-                }
+		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
+			foreach($config['dnsmasq']['domainoverrides'] as $override) {
+			        $args .= ' --server=/' . $override['domain'] . '/' . $override['ip'];
+			}
+		}
 
 		/* suppose that dnsmasq handles our domain and don't send
 		requests for our local domain to upstream servers */
@@ -610,7 +609,7 @@ function services_dnsmasq_configure() {
 		//}
 
 		/* run dnsmasq */
-		mwexec("/usr/local/sbin/dnsmasq --cache-size=5000 {$args}");
+		mwexec("/usr/local/sbin/dnsmasq --all-servers --cache-size=5000 {$args}");
 
 		if ($g['booting'])
 			echo "done.\n";

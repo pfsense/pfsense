@@ -95,7 +95,7 @@ function slbd_configure() {
 	/* Gateway Pools */
 	$a_settings['latencylow'] = "10";
 	$a_settings['latencyhigh'] = "20";
-	$a_settings['losslow'] = "100";
+	$a_settings['losslow'] = "200";
 	$a_settings['losshigh'] = "500";
 
 	/* kill apinger process */

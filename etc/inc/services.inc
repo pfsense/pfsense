@@ -633,7 +633,7 @@ function services_dnsmasq_configure() {
 		//}
 
 		/* run dnsmasq */
-		mwexec("/usr/local/sbin/dnsmasq {$args}");
+		mwexec("/usr/local/sbin/dnsmasq --all-servers {$args}");
 
 		if ($g['booting'])
 			echo "done.\n";

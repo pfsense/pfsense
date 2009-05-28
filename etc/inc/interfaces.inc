@@ -81,6 +81,7 @@ function does_interface_exist($interface) {
 function interfaces_loopback_configure() {
 	mwexec("/sbin/ifconfig lo0 127.0.0.1");
 	interfaces_bring_up("lo0");
+	exec("/sbin/route add 127.0.0.2 127.0.0.1");
 	return 0;
 }
 

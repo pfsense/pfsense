@@ -1074,7 +1074,7 @@ function filter_generate_address(& $rule, $target = "source")
                 $src = "any";
         } else if ($rule[$target]['network']) {
                 if (strstr($rule[$target]['network'], "opt")) {
-                        $src = $FilterIflist[$rule['source'][$target]]['sa'] . "/" .
+                        $src = $FilterIflist[$rule[$target][$target]]['sa'] . "/" .
                                 $FilterIflist[$rule[$target]['network']]['sn'];
                         if (isset($rule[$target]['not'])) $src = " !{$src}";
                         /* check for opt$NUMip here */
@@ -1085,6 +1085,11 @@ function filter_generate_address(& $rule, $target = "source")
                         }
                 } else {
                         switch ($rule[$target]['network']) {
+					case 'wan':
+						$wansa = $FilterIflist['wan']['sa'];
+                                                $wansn = $FilterIflist['wan']['sn'];
+                                                $src = "{$wansa}/{$wansn}";
+						break;
                                         case 'wanip':
                                                 $src = $FilterIflist["wan"]['ip'];
                                                 break;

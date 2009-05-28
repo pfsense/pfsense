@@ -38,6 +38,8 @@ $a_pool = &$config['load_balancer']['lbpool'];
 
 $slbd_logfile = "{$g['varlog_path']}/slbd.log";
 
+$apinger_status = return_apinger_status();
+
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
         $nentries = 50;
@@ -99,40 +101,28 @@ include("head.inc");
 			<table border="0" cellpadding="0" cellspacing="2">
                         <?php
 				if ($vipent['type'] == "gateway") {
-					$poolfile = "{$g['tmp_path']}/{$vipent['name']}.pool";
-					if(file_exists("$poolfile")) {
-						$poolstatus = file_get_contents("$poolfile");
-					}
                                         foreach ((array) $vipent['servers'] as $server) {
-						$lastchange = "";
                                                 $svr = split("\|", $server);
 						$monitorip = $svr[1];
-						$logstates = return_clog($slbd_logfile, $nentries, array("$monitorip", "marking"), true);
-						$logstates = $logstates[0];
 
-						if(stristr($logstates, $monitorip)) {
-							$date = preg_split("/[ ]+/" , $logstates);
-							$lastchange = "$date[0] $date[1] $year $date[2]";
-						}
-						if(stristr($poolstatus, $monitorip)) {
-							$online = "Online";
-							$bgcolor = "lightgreen";
-							$change = $now - strtotime("$lastchange");
-							if($change < 300) {
-								$bgcolor = "khaki";
-							}
-						} else {
+						if(preg_match("/down/i", $apinger_status[$monitorip]['status'])) {
 							$online = "Offline";
 							$bgcolor = "lightcoral";
+						} elseif(preg_match("/delay/i", $apinger_status[$monitorip]['status'])) {
+							$online = "Warning";
+							$bgcolor = "khaki";
+						} elseif(preg_match("/loss/i", $apinger_status[$monitorip]['status'])) {
+							$online = "Warning";
+							$bgcolor = "khaki";
+						} elseif(preg_match("/none/i", $apinger_status[$monitorip]['status'])) {
+							$online = "Online";
+							$bgcolor = "lightgreen";
 						}
-						PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
-						if($lastchange <> "") {
-							PRINT "Last change $lastchange";
-						} else {
-							PRINT "No changes found in logfile";
-						}
-						PRINT "</td></tr>";
-                                        }
+					PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
+					PRINT "Delay: {$apinger_status[$monitorip]['delay']}, ";
+					PRINT "Loss: {$apinger_status[$monitorip]['loss']}";
+					PRINT "</td></tr>";
+					}
                                 } else {
 					PRINT "<tr><td> {$vipent['monitor']} </td></tr>";
                                 }

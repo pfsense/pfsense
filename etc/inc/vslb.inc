@@ -43,7 +43,6 @@ function slbd_configure() {
 
 	$fd = fopen("{$g['varetc_path']}/slbd.conf", "w");
 
-
 	/* Virtual server pools */
 	if(is_array($a_vs)) {
 		foreach ($a_vs as $vsent) {
@@ -94,75 +93,174 @@ function slbd_configure() {
 	}
 
 	/* Gateway Pools */
+	$a_settings['latencylow'] = "10";
+	$a_settings['latencyhigh'] = "20";
+	$a_settings['losslow'] = "100";
+	$a_settings['losshigh'] = "500";
+
+	/* kill apinger process */
+	if(is_process_running("apinger"))
+		mwexec("/usr/bin/killall apinger", true);
+
+	$fda = fopen("{$g['varetc_path']}/apinger.conf", "w");
+	$apingerconfig = <<<EOD
+# pfSense apinger configuration file. Automatically Generated!
+user "nobody"
+group "nobody"
+pid_file "{$g['varrun_path']}/apinger.pid"
+status {
+	## File where the status information whould be written to
+	file "/tmp/apinger.status"
+	## Interval between file updates
+	## when 0 or not set, file is written only when SIGUSR1 is received
+	interval 10s
+}
+rrd interval 60s;
+alarm default { 
+	command on "/usr/bin/touch /tmp/filter_dirty"
+	command off "/usr/bin/touch /tmp/filter_dirty"
+	combine 10s
+}
+alarm down "down" {
+	time 10s
+}
+alarm delay "delay" {
+	delay_low {$a_settings['latencylow']}ms
+	delay_high {$a_settings['latencyhigh']}ms
+}
+alarm loss "loss" {
+	percent_low {$a_settings['losslow']}
+	percent_high {$a_settings['losshigh']}
+}
+target default {
+	interval 1s
+	avg_delay_samples 10
+	avg_loss_samples 50
+	avg_loss_delay_samples 20
+	alarms "down","delay","loss"
+}
+
+EOD;
+
+	/* loop all pools to create configuration */
 	if(is_array($a_pool)) {
+		/* create a list of unique IP addresses */
+		$a_addresses = array();
 		foreach ($a_pool as $vspool) {
 			if ($vspool['type'] != "gateway")
 				continue;
 
-			if ($vspool['desc'] == "")
-				$slbdconf .= "{$vspool['name']}:\\\n";
-			else
-				$slbdconf .= "{$vspool['name']}|{$vspool['desc']}:\\\n";
-	
-			/* pool name */
-			$slbdconf .= "\t:poolname={$vspool['name']}:\\\n";
-			/* remove pool status files so we don't end up with a mismatch */
-			if(file_exists("{$g['tmp_path']}/{$vspool['name']}.pool"))
-				unlink("{$g['tmp_path']}/{$vspool['name']}.pool");
-			/* virtual IP */
-			$slbdconf .= "\t:vip=127.0.0.1:\\\n";
-			$slbdconf .= "\t:vip-port=666:\\\n";
-			/* fallback IP */
-			$slbdconf .= "\t:sitedown=127.0.0.1:\\\n";
-			/* fallback port */
-			$slbdconf .= "\t:sitedown-port=666:\\\n";
-
-			$svrcnt = 0;
-			$svrtxt = "";
-			if($vspool['servers'])
-			foreach ($vspool['servers'] as $lbsvr) {
-				$lbsvr_split=split("\|", $lbsvr);
-				$svrtxt .= "\t:{$svrcnt}={$lbsvr_split[1]}:\\\n";
-				$svrcnt++;
-
-				/* Add static routes to the monitor IPs */
-				$int = convert_friendly_interface_to_real_interface_name($lbsvr_split[0]);
-				$gateway = get_interface_gateway($int);
-				$int_ip = find_interface_ip($int);
-				if($int_ip == "0.0.0.0") {
-					/*   DHCP Corner case.  If DHCP is down, we delete the route then
-					 *   there is a chance the monitor ip gateway will go out the link
-					 *   that is up.
-					 */
-					mwexec("/sbin/route delete -host {$lbsvr_split[1]} 2>&1", true);
-					mwexec("/sbin/route add -host {$lbsvr_split[1]} 127.0.0.1 2>&1", true);
-				} else {
-					mwexec("/sbin/route delete -host {$lbsvr_split[1]} 2>&1", true);
-					mwexec("/sbin/route add -host {$lbsvr_split[1]} {$gateway} 2>&1", true);
+			if(is_array($vspool['servers'])) {
+				foreach ($vspool['servers'] as $lbsvr) {
+					$lbsvr_split=split("\|", $lbsvr);
+					$a_addresses[] = "$lbsvr_split[1]";
 				}
 			}
-			$slbdconf .= "\t:service-port=666:\\\n";
-			$slbdconf .= "\t:method=round-robin:\\\n";
-			$slbdconf .= "\t:services={$svrcnt}:\\\n";
-			$slbdconf .= $svrtxt;
-			
-			$slbdconf .= "\t:ping:\n";
-			
-			$should_start=1;
+		}
+		$a_addresses = array_unique($a_addresses);
+
+		/* add static routes for each gateway with their monitor IP */
+		if(!empty($a_addresses)) {
+			foreach($a_addresses as $address) {
+				$apingerconfig .= "target \"{$address}\" {\n";
+				$apingerconfig .= "	description \"{$address}\"\n";
+				$apingerconfig .= "	rrd file \"{$g['vardb_path']}/rrd/{$address}-quality.rrd\"\n";
+				$apingerconfig .= "}\n";
+				$apingerconfig .= "\n";
+			}
+			fwrite($fda, $apingerconfig);
+			fclose($fda);
+		}
+
+		foreach ($a_pool as $vspool) {
+			if ($vspool['type'] != "gateway") {
+				continue;
+			}
+
+			if(is_array($vspool['servers'])) {
+				foreach ($vspool['servers'] as $lbsvr) {
+					$lbsvr_split=split("\|", $lbsvr);
+
+					/* Add static routes to the monitor IPs */
+					$int = convert_friendly_interface_to_real_interface_name($lbsvr_split[0]);
+					$gateway = get_interface_gateway($int);
+					$int_ip = find_interface_ip($int);
+					if($int_ip == "0.0.0.0") {
+						/*   DHCP Corner case.  If DHCP is down, we delete the route then
+						 *   there is a chance the monitor ip gateway will go out the link
+						 *   that is up.
+						 */
+						mwexec("/sbin/route delete -host {$lbsvr_split[1]} 2>&1", true);
+						mwexec("/sbin/route add -host {$lbsvr_split[1]} 127.0.0.1 2>&1", true);
+					} else {
+						mwexec("/sbin/route delete -host {$lbsvr_split[1]} 2>&1", true);
+						mwexec("/sbin/route add -host {$lbsvr_split[1]} {$gateway} 2>&1", true);
+					}
+				}
+			}
 		}
 	}
-	
-	if($should_start == 1) {
-		fwrite($fd, $slbdconf);
-		fclose($fd);
-		mwexec("/usr/bin/killall -9 slbd", true);
-		sleep(2);
-		/* startup slbd pointing it's config at /var/etc/slbd.conf with a polling interval of 5 seconds */
-		mwexec("/usr/local/sbin/slbd -c{$g['varetc_path']}/slbd.conf -r5000");
-	} else {
-		mwexec("/usr/bin/killall -9 slbd", true);
-		fclose($fd);
+
+        if($should_start == 1) {
+                fwrite($fd, $slbdconf);
+                fclose($fd);
+                mwexec("/usr/bin/killall -9 slbd", true);
+                sleep(2);
+                /* startup slbd pointing it's config at /var/etc/slbd.conf with a polling interval of 5 seconds */
+                mwexec("/usr/local/sbin/slbd -c{$g['varetc_path']}/slbd.conf -r5000");
+        } else {
+                mwexec("/usr/bin/killall -9 slbd", true);
+                fclose($fd);
+        }
+
+	if(!is_process_running("apinger") && (!empty($a_addresses))) {
+		if (is_dir("{$g['tmp_path']}"))
+			chmod("{$g['tmp_path']}", 01777);
+		if (is_dir("{$g['vardb_path']}/rrd"))
+			chown("{$g['vardb_path']}/rrd", "nobody");
+		/* start a new apinger process */
+		mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 	}
+	
+}
+
+/* return the status of the apinger targets as a array */
+function return_apinger_status() {
+	global $config;
+	global $g;
+
+	$apingerstatus = array();
+	if(is_readable("{$g['tmp_path']}/apinger.status"))
+		$apingerstatus = file("{$g['tmp_path']}/apinger.status");
+
+	$status = array();
+	foreach($apingerstatus as $line) {
+		$fields = explode(":", $line);
+		switch($fields[0]) {
+			case "Target":
+				$target = trim($fields[1]);
+				$status[$target] = array();
+				$status[$target]['monitor'] = $target;
+				break;
+			case "Description":
+	 			$status[$target]['name'] = trim($fields[1]);
+				break;
+			case "Last reply received":
+				$status[$target]['lastcheck'] = trim($fields[1]) .":". trim($fields[2]) .":". 
+trim($fields[3]);
+				break;
+			case "Average delay":
+				$status[$target]['delay'] = trim($fields[1]);
+				break;
+			case "Average packet loss":
+				$status[$target]['loss'] = trim($fields[1]);
+				break;
+			case "Active alarms":
+				$status[$target]['status'] = trim($fields[1]);
+				break;
+		}
+	}
+	return($status);
 }
 
 ?>

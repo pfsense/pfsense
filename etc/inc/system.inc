@@ -341,6 +341,13 @@ EOD;
 
 EOD;
 		}
+		$syslogconf .= "!apinger\n";
+		if (!isset($syslogcfg['disablelocallogging'])) {
+			$syslogconf .= <<<EOD
+*.*						%{$g['varlog_path']}/slbd.log
+
+EOD;
+		}
 		if (isset($syslogcfg['vpn'])) {
 			$syslogconf .= <<<EOD
 *.*						@{$syslogcfg['remoteserver']}

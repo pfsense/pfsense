@@ -126,7 +126,9 @@ function unlock($cfglckkey = 0) {
         else {
                 if ($g['debug'])
                         log_error("Released lock.");
+				ini_set('error_reporting', E_NONE);
                 sem_remove($cfglckkey);
+				ini_set('error_reporting', E_ALL  & ~E_NOTICE);
         }
         $cfglckkeyconsumers--;
 }

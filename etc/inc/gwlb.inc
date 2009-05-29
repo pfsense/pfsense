@@ -38,10 +38,10 @@ function setup_gateways_monitor() {
 	if (is_array($config['gateways']['settings'])) {
 		$a_settings = &$config['gateways']['settings'];
 	} else {
-		$a_settings['latencylow'] = "10";
-		$a_settings['latencyhigh'] = "20";
-		$a_settings['losslow'] = "100";
-		$a_settings['losshigh'] = "500";
+		$a_settings['latencylow'] = "200";
+		$a_settings['latencyhigh'] = "500";
+		$a_settings['losslow'] = "10";
+		$a_settings['losshigh'] = "20";
 	}
 
 	/* kill apinger process */

@@ -1074,7 +1074,7 @@ function filter_generate_address(& $rule, $target = "source")
                 $src = "any";
         } else if ($rule[$target]['network']) {
                 if (strstr($rule[$target]['network'], "opt")) {
-                        $src = $FilterIflist[$rule[$target][$target]]['sa'] . "/" .
+                        $src = $FilterIflist[$rule[$target]['network']]['sa'] . "/" .
                                 $FilterIflist[$rule[$target]['network']]['sn'];
                         if (isset($rule[$target]['not'])) $src = " !{$src}";
                         /* check for opt$NUMip here */

@@ -966,4 +966,44 @@ function squash_from_bytes($size, $round = "") {
 	return;
 }
 
+function pkg_build_filter_rules() {
+	global $config;
+
+	$pkgrules = "";
+	$pkgnatrules = "";
+	if (is_array($config['installedpackages']['package'])) {
+		run_plugins("/usr/local/pkg");
+                foreach($config['installedpackages']['package'] as $pkg) {
+                        if (!isset($pkg['filter_rule_function']))
+				continue;
+			$tmpresult = call_user_func($pkg['filter_rule_function'], 'nat');
+			if (!empty($tmpresult))
+				$pkgnatrules .= $tmpresult . " \n";
+			$tmpresult = call_user_func($pkg['filter_rule_function'], 'rule');
+			if (!empty($tmpresult))
+				$pkgrules .= $tmpresult . " \n";
+			
+                }
+        }
+	if ($pkgnatrules <> "")
+		file_put_contents("{$g['tmp_path']}/rules.nat.packages", $pkgnatrules);
+	if ($pkgrules <> "")
+		file_put_contents("{$g['tmp_path']}/rules.packages", $pkgrules);
+	$error = "";
+	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.nat.packages");
+	if ($status <> 0) {
+		log_error("Packages nat rules have problems!");
+		$ error = "Packages nat rules have problems!";
+	}
+	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.packages");
+	if ($status <> 0) {
+                log_error("Packages nat rules have problems!");
+                $error .= "\nPackages nat rules have problems!";
+        }
+	if ($error <> "")
+		file_notice($error);
+	else
+		filter_configure();
+}
+
 ?>

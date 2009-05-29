@@ -329,7 +329,7 @@ minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 # Start account expire handler every hour
 minicron 3600 /var/run/expire_accounts.pid /etc/inc/rc.exipireaccounts
 
-chmod a+rw /tmp/.
+/bin/chmod a+rw /tmp/.
 
 echo "Bootup complete"
 

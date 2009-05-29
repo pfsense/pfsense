@@ -164,7 +164,7 @@ EOD;
 			foreach($a_addresses as $address) {
 				$apingerconfig .= "target \"{$address}\" {\n";
 				$apingerconfig .= "	description \"{$address}\"\n";
-				$apingerconfig .= "	rrd file \"{$g['vardb_path']}/rrd/{$address}-quality.rrd\"\n";
+				$apingerconfig .= "	rrd file \"{$g['tmp_path']}/rrd/{$address}-quality.rrd\"\n";
 				$apingerconfig .= "}\n";
 				$apingerconfig .= "\n";
 			}

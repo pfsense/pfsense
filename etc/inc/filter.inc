@@ -1074,15 +1074,22 @@ function filter_generate_address(& $rule, $target = "source")
                 $src = "any";
         } else if ($rule[$target]['network']) {
                 if (strstr($rule[$target]['network'], "opt")) {
-                        $src = $FilterIflist[$rule[$target]['network']]['sa'] . "/" .
-                                $FilterIflist[$rule[$target]['network']]['sn'];
-                        if (isset($rule[$target]['not'])) $src = " !{$src}";
+			$optmatch = ""; 
+			$matches = "";
+			if (preg_match("/opt([0-9999])/", $rule[$target]['network'], $optmatch)) {
+                                $opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
+                                if(!is_ipaddr($opt_ip))
+                                        return "";
+                        	$src = $opt_ip . "/" .
+                                	$FilterIflist["opt{$optmatch[1]}"]['sn'];
                         /* check for opt$NUMip here */
-                        $matches = "";
-                        if (preg_match("/opt([0-9999])ip/", $rule[$target]['network'], $matches)) {
-                                $optnum = $matches[1];
-                                $src = $FilterIflist["opt{$optnum}"]['ip'];
+                        } else if (preg_match("/opt([0-9999])ip/", $rule[$target]['network'], $matches)) {
+                                $src = $FilterIflist["opt{$matches[1]}"]['ip'];
+				if (!is_ipaddr($src))
+					return "";
                         }
+			if (isset($rule[$target]['not']))
+				$src = " !{$src}";
                 } else {
                         switch ($rule[$target]['network']) {
 					case 'wan':
@@ -1218,29 +1225,7 @@ function generate_user_filter_rule($rule)
 			($rule['destination']['network'] == "pptp")) 
 				return "# source network or destination network == pptp on " . $rule['descr'];
 	}
-	if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
-		if (!array_key_exists($rule['source']['network'], $FilterIflist)) {
-			$optmatch = "";
-			if (preg_match("/opt([0-999])/", $rule['source']['network'], $optmatch)) {
-				$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
-				if(!is_ipaddr($opt_ip))
-					return "# unresolvable optarray $optmatch[0] - $opt_ip";
-			} else {
-				return "# {$rule['source']['network']} !array_key_exists source network " . $rule['descr'];
-			}
-		}
-	}
-	if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
-		if (!array_key_exists($rule['destination']['network'], $FilterIflist)) {
-			if(preg_match("/opt([0-999])/", $rule['destination']['network'], $optmatch)) {
-				$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
-				if(!is_ipaddr($opt_ip))
-					return "# unresolvable oparray $optmatch[0] - $opt_ip";
-			} else {
-				return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'];
-			}
-		}
-	}
+
 	/* check for unresolvable aliases */
 	if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
 		file_notice("Filter_Reload", "# unresolvable source aliases {$rule['descr']}");

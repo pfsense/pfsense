@@ -270,6 +270,9 @@ fi
 
 rm -f /cf/conf/backup/backup.cache
 
+# Setup host GUID ID.  This is used by ZFS.
+/etc/rc.d/hostid start
+
 # Copy php.ini to alternate location after generation
 cp /usr/local/lib/php.ini /usr/local/etc/php.ini
 

@@ -820,6 +820,8 @@ EOD;
 		if (!file_exists("/var/db/racoon"))
 			mkdir("/var/db/racoon/");
 		
+		exec("/bin/mkdir -p /var/db/racoon");
+		
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
 			sleep("0.1");

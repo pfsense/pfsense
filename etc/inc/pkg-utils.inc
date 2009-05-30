@@ -993,7 +993,7 @@ function pkg_build_filter_rules() {
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.nat.packages");
 	if ($status <> 0) {
 		log_error("Packages nat rules have problems!");
-		$ error = "Packages nat rules have problems!";
+		$error = "Packages nat rules have problems!";
 	}
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.packages");
 	if ($status <> 0) {

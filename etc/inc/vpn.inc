@@ -642,6 +642,8 @@ EOD;
 			fclose($fd);
 			chmod("{$g['varetc_path']}/psk.txt", 0600);
 
+			exec("/sbin/mkdir -p /var/db/racoon");
+
 			if(is_process_running("racoon")) {
 				log_error("IPSEC: Send a reload signal to the IPsec process");
 				sleep("0.1");

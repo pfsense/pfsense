@@ -293,6 +293,9 @@ cap_mkdb /etc/login.conf
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 . /etc/rc.php_ini_setup
 
+# Setup the hostid which is required for ZFS
+/etc/rc.d/hostid start
+
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching PHP init system..."
 rm -f /cf/conf/backup/backup.cache
@@ -305,9 +308,6 @@ if [ -f "/tmp/donotbootup" ]; then
 	echo "Dropping to recovery shell."
 	exit 0
 fi
-
-# Setup the hostid which is required for ZFS
-/etc/rc.d/hostid start
 
 echo -n "Starting CRON... "
 cd /tmp && /usr/sbin/cron -s 2>/dev/null

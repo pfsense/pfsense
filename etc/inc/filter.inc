@@ -1533,11 +1533,25 @@ function filter_rules_generate()
 	 * is allowed on a locked down interface
 	 */
 	if (isset($config['captiveportal']['enable'])) {
-		$cp_interface = $config['captiveportal']['interface'];
-		$cp_interface_real = $FilterIflist[$cp_interface]['if'];
-		$cp_interface_ip = $FilterIflist[$cp_interface_real]['ip'];
-		if(is_ipaddr($cp_interface_ip) and $cp_interface_real)
-			$ipfrules .= "pass in quick on {$cp_interface_real} proto tcp from any to {$cp_interface_ip} port { 8000 8001 } keep state\n";
+		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
+                $cpiflist = array();
+		$cpiplist = array();
+                foreach ($cpinterfaces as $cpifgrp) {
+                        if (!isset($FilterIflist[$cpifgrp]))
+                                continue;
+                        $tmpif = get_real_interface($cpifgrp);
+                        if (!empty($tmpif)) {
+                                $cpiflist[] = "{$tmpif}";
+                                $cpipm = get_interface_ip($cpifgrp);
+                                if (is_ipaddr($cpipm))
+                                        $cpiplist[] = $cpipm;
+                        }
+                }
+                if (count($cpiplist) > 0 && count($cpiflist) > 0) {
+                        $cpinterface = implode(" ", $cpiflist);
+			$cpaddresses = implode(" ", $cpiplist);
+			$ipfrules .= "pass in quick on {$cpinterface} proto tcp from any to {$cpaddresses} port { 8000 8001 } keep state\n";
+                }
 	}
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";

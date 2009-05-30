@@ -306,6 +306,9 @@ if [ -f "/tmp/donotbootup" ]; then
 	exit 0
 fi
 
+# Setup the hostid which is required for ZFS
+/etc/rc.d/hostid start
+
 echo -n "Starting CRON... "
 cd /tmp && /usr/sbin/cron -s 2>/dev/null
 echo "done."

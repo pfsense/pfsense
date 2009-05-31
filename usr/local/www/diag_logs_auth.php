@@ -57,7 +57,7 @@ include("head.inc");
 	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
 	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
 	$tab_array[] = array("Portal Auth", true, "diag_logs_auth.php");
-	$tab_array[] = array("IPSEC VPN", false, "diag_logs_ipsec.php");
+	$tab_array[] = array("IPsec VPN", false, "diag_logs_ipsec.php");
 	$tab_array[] = array("PPTP VPN", false, "diag_logs_vpn.php");
 	$tab_array[] = array("Load Balancer", false, "diag_logs_slbd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");

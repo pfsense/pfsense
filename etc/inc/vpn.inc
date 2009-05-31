@@ -284,7 +284,7 @@ function vpn_ipsec_configure($ipchg = false) {
 							}
 						}
 					} else {
-						if(stristr($route_str, "/{$tunnel['remote-gateway']}/")) {
+						if(stristr($route_str, "{$tunnel['remote-gateway']}")) {
 							mwexec("/sbin/route delete -host {$tunnel['remote-gateway']}");
 						}
 					}

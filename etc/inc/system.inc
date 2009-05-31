@@ -210,8 +210,13 @@ function system_hostname_configure() {
 	$syscfg = $config['system'];
 
 	/* set hostname */
-	return mwexec("/bin/hostname " .
+	$status = mwexec("/bin/hostname " .
 		escapeshellarg("{$syscfg['hostname']}.{$syscfg['domain']}"));
+
+    /* Setup host GUID ID.  This is used by ZFS. */
+	mwexec("/etc/rc.d/hostid start");
+
+	return $status;
 }
 
 function system_routing_configure() {

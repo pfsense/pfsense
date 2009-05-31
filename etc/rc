@@ -293,9 +293,6 @@ cap_mkdb /etc/login.conf
 # /usr/local/etc/php.ini and /usr/local/lib/php.ini
 . /etc/rc.php_ini_setup
 
-# Setup the hostid which is required for ZFS
-/etc/rc.d/hostid start
-
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching PHP init system..."
 rm -f /cf/conf/backup/backup.cache

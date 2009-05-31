@@ -970,40 +970,99 @@ function pkg_build_filter_rules() {
 	global $config;
 
 	$pkgrules = "";
+	$pkgrulesearly = "";
 	$pkgnatrules = "";
+	$pkgnatrulesearly = "";
+	$pkgrdrrules = "";
+	$pkgrdrrules = "";
+	$pkgrdrrulesearly = "";
 	if (is_array($config['installedpackages']['package'])) {
 		run_plugins("/usr/local/pkg");
                 foreach($config['installedpackages']['package'] as $pkg) {
                         if (!isset($pkg['filter_rule_function']))
 				continue;
+			$tmpresult = call_user_func($pkg['filter_rule_function'], 'natearly');
+                        if (!empty($tmpresult))
+                                $pkgnatrulesearly .= $tmpresult . " \n";
 			$tmpresult = call_user_func($pkg['filter_rule_function'], 'nat');
 			if (!empty($tmpresult))
 				$pkgnatrules .= $tmpresult . " \n";
+			$tmpresult = call_user_func($pkg['filter_rule_function'], 'ruleearly');
+                        if (!empty($tmpresult))
+                                $pkgrulesearly .= $tmpresult . " \n";
 			$tmpresult = call_user_func($pkg['filter_rule_function'], 'rule');
 			if (!empty($tmpresult))
 				$pkgrules .= $tmpresult . " \n";
+			$tmpresult = call_user_func($pkg['filter_rule_function'], 'rdrearly');
+                        if (!empty($tmpresult))
+                                $pkgrdrrulesearly .= $tmpresult . " \n";
+			$tmpresult = call_user_func($pkg['filter_rule_function'], 'rdr');
+                        if (!empty($tmpresult))
+                                $pkgrdrrules .= $tmpresult . " \n";
 			
                 }
         }
+	if ($pkgnatrulesearly <> "")
+                file_put_contents("{$g['tmp_path']}/rules.natearly.packages", $pkgnatrulesearly);
 	if ($pkgnatrules <> "")
 		file_put_contents("{$g['tmp_path']}/rules.nat.packages", $pkgnatrules);
 	if ($pkgrules <> "")
 		file_put_contents("{$g['tmp_path']}/rules.packages", $pkgrules);
+	if ($pkgrdrrules <> "")
+                file_put_contents("{$g['tmp_path']}/rules.rdr.packages", $pkgrdrrules);
+	if ($pkgrdrrulesearly <> "")
+                file_put_contents("{$g['tmp_path']}/rules.rdr.packages", $pkgrdrrulesearly);
 	$error = "";
+	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.natearly.packages");
+        if ($status <> 0) {
+                log_error("There was an error while parsing the NAT early package rules.");
+                $error = "\nThere was an error while parsing the NAT early package rules.";
+        } else {
+                mwexec("/sbin/pfctl -a pkgnatearly -F rules");
+                mwexec("/sbin/pfctl -a pkgnatearly -f {$g['tmp_path']}/rules.natearly.packages");
+        }
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.nat.packages");
+        if ($status <> 0) {
+                log_error("There was an error while parsing the NAT package rules.");
+                $error = "\nThere was an error while parsing the NAT package rules.";
+        } else {
+                mwexec("/sbin/pfctl -a pkgnat -F rules");
+                mwexec("/sbin/pfctl -a pkgnat -f {$g['tmp_path']}/rules.nat.packages");
+        }
+	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.rulesearly.packages");
 	if ($status <> 0) {
-		log_error("There was an error while parsing the NAT package rules.");
-		$error = "There was an error while parsing the NAT package rules.";
+		log_error("There was an error while parsing the package filter early rules.");
+		$error = "\nThere was an error while parsing the package filter early rules.";
+	} else {
+		mwexec("/sbin/pfctl -a packageearly -F rules");
+		mwexec("/sbin/pfctl -a packageearly -f {$g['tmp_path']}/rulesearly.packages");
 	}
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.packages");
 	if ($status <> 0) {
-                log_error("Packages nat rules have problems!");
-                $error .= "\nPackages nat rules have problems!";
+		log_error("There was an error while parsing the package filter rules.");
+		$error = "\nThere was an error while parsing the package filter rules.";
+        } else {
+                mwexec("/sbin/pfctl -a packagelate -F rules");
+                mwexec("/sbin/pfctl -a packagelate -f {$g['tmp_path']}/rules.packages");
+        }
+	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.rdrearly.packages");
+        if ($status <> 0) {
+                log_error("There was an error while parsing the RDR early package rules.");
+                $error = "\nThere was an error while parsing the RDR early package rules.";
+        } else {
+                mwexec("/sbin/pfctl -a pkgrdrearly -F rules");
+                mwexec("/sbin/pfctl -a pkgrdrearly -f {$g['tmp_path']}/rules.rdrearly.packages");
+        }
+	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.rdr.packages");
+        if ($status <> 0) {
+		log_error("There was an error while parsing the RDR package rules.");
+		$error = "\nThere was an error while parsing the RDR package rules.";
+        } else {
+                mwexec("/sbin/pfctl -a pkgrdr -F rules");
+                mwexec("/sbin/pfctl -a pkgrdr -f {$g['tmp_path']}/rules.rdr.packages");
         }
 	if ($error <> "")
 		file_notice($error);
-	else
-		filter_configure();
 }
 
 ?>

@@ -411,6 +411,9 @@ function system_syslogd_start() {
 		$syslogconf .= "!racoon\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ipsec.log\n";
+		$syslogconf .= "!apinger\n";
+		if (!isset($syslogcfg['disablelocallogging'])) 
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/slbd.log\n";
 		if (isset($syslogcfg['vpn'])) 
 			$syslogconf .= "*.*					 @{$syslogcfg['remoteserver']}\n";
 		$syslogconf .= "!openvpn\n";

@@ -803,9 +803,7 @@ EOD;
 							}
 						}
 					}
-				}
-				else
-				{
+				} else {
 					if(stristr($route_str, "/{$rgip}/")) {
 						mwexec("/sbin/route delete -host {$rgip}");
 					}
@@ -1666,7 +1664,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		"{$phase2['protocol']}/tunnel/{$rgip}-" .
 		"{$ep}/unique;\n";
 
-	log_error("IPSEC: Tunnel '{$phase1['descr']}' has changed IP from '{$old_gw}' to '{$rgip}', reloading policy");
+	log_error("Reloading IPsec tunnel '{$tunnel['descr']}'. Previous IP '{$oldgw}', current IP '{$rgip}'. Reloading policy");
 
 	$now = time();
 	$spdfile = tempnam("{$g['tmp_path']}", "spd.conf.reload.{$now}.");

@@ -804,7 +804,7 @@ EOD;
 						}
 					}
 				} else {
-					if(stristr($route_str, "/{$rgip}/")) {
+					if(stristr($route_str, "{$rgip}")) {
 						mwexec("/sbin/route delete -host {$rgip}");
 					}
 				}

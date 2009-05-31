@@ -2819,6 +2819,10 @@ EOD;
   						$shorttunneldescr = substr($tunnel['descr'], 0, 26);
 						$ipfrules .= "pass out quick on \${$iface} proto udp from any to {$remote_gateway} port = 500 keep state label \"IPSEC: {$shorttunneldescr} - outbound isakmp\"\n";
 						$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to any port = 500 keep state label \"IPSEC: {$shorttunneldescr} - inbound isakmp\"\n";
+						if (isset($tunnel['natt'])) {
+							$ipfrules .= "pass out quick on \${$iface} proto udp from any to {$remote_gateway} port = 4500 keep state label \"IPSEC: {$shorttunneldescr} - outbound nat-t\"\n";
+							$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to any port = 4500 keep state label \"IPSEC: {$shorttunneldescr} - inbound nat-t\"\n";
+						}
 						if ($tunnel['p2']['protocol'] == 'esp') {
 							$ipfrules .= "pass out quick on \${$iface} proto esp from any to {$remote_gateway} keep state label \"IPSEC: {$shorttunneldescr} - outbound esp proto\"\n";
 							$ipfrules .= "pass in quick on \${$iface} proto esp from {$remote_gateway} to any keep state label \"IPSEC: {$shorttunneldescr} - inbound esp proto\"\n";
@@ -2842,6 +2846,9 @@ EOD;
 					$ipfrules .= "pass in quick on \${$iface} proto udp from any to any port = 500 keep state label \"IPSEC: Mobile - inbound isakmp\"\n";
 					$ipfrules .= "pass in quick on \${$iface} proto esp from any to any keep state label \"IPSEC: Mobile - inbound esp proto\"\n";
 					$ipfrules .= "pass in quick on \${$iface} proto ah from any to any  keep state label \"IPSEC: Mobile - inbound ah proto\"\n";
+					if (isset($ipseccfg['mobileclients']['natt'])) {
+						$ipfrules .= "pass in quick on \${$iface} proto udp from any to any port = 4500 keep state label \"IPSEC: Mobile - inbound nat-t\"\n";
+					}
 				}
 			}
 		}

@@ -387,36 +387,36 @@ function get_configured_interface_list_by_realif($only_opt = false, $withdisable
 
 /* return the configured interfaces list with their description. */
 function get_configured_interface_with_descr($only_opt = false, $withdisabled = false) {
-        global $config;
+	global $config;
 
-        $iflist = array();
+	$iflist = array();
 
 	if (!$only_opt) {
-                if (isset($config['interfaces']['wan'])) {
+		if (isset($config['interfaces']['wan'])) {
 			if (empty($config['interfaces']['wan']['descr']))
 				$iflist['wan'] = "WAN";
 			else
-				$iflist['wan'] = $config['interfaces']['wan']['descr'];
+				$iflist['wan'] = strtoupper($config['interfaces']['wan']['descr']);
 		}
-                if (isset($config['interfaces']['lan'])) {
+		if (isset($config['interfaces']['lan'])) {
 			if (empty($config['interfaces']['lan']['descr']))
-                                $iflist['lan'] = "LAN";
-                        else
-                                $iflist['lan'] = $config['interfaces']['lan']['descr'];
+				$iflist['lan'] = "LAN";
+			else
+				$iflist['lan'] = strtoupper($config['interfaces']['lan']['descr']);
 		}
-        }
+	}
 
-        /* if list */
-        foreach($config['interfaces'] as $if => $ifdetail) {
+	/* if list */
+	foreach($config['interfaces'] as $if => $ifdetail) {
 		if (isset($ifdetail['enable']) || $withdisabled == true) {
 			if($ifdetail['descr'] == "")
 				$iflist[$if] = strtoupper($if);
-                        else
+			else
 				$iflist[$if] = strtoupper($ifdetail['descr']);
 		}
 	}
 
-        return $iflist;
+	return $iflist;
 }
 
 
@@ -444,6 +444,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'ng',
 				'vlan',
 				'pflog',
+				'plip',
 				'pfsync',
 				'enc',
 				'tun',

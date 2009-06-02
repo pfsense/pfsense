@@ -815,7 +815,7 @@ EOD;
 		}
 
 		/* needed for racoonctl admin socket */
-		if (!file_exists("/var/db/racoon"))
+		if (!is_dir("/var/db/racoon"))
 			mkdir("/var/db/racoon/");
 		
 		exec("/bin/mkdir -p /var/db/racoon");

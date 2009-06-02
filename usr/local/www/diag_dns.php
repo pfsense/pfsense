@@ -49,13 +49,21 @@ if ($_POST) {
 
 	$type = "unknown";
 	$resolved = "";
+	$ipaddr = "";
+	$hostname = "";
 	if (!$input_errors) {
 		if (is_ipaddr($host)) {
 			$type = "ip";
 			$resolved = gethostbyaddr($host);
+			$ipaddr = $host;
+			if ($host != $resolved)
+				$hostname = $resolved;
 		} elseif (is_hostname($host)) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
+			$hostname = $host;
+			if ($host != $resolved)
+				$ipaddr = $resolved;
 		}
 
 		if ($host == $resolved) {
@@ -83,6 +91,16 @@ include("head.inc"); ?>
 			<?	} ?>
 		  </td>
 		</tr>
+		<?php if (!$input_errors && $ipaddr) { ?>
+		<tr>
+			<td width="22%" valign="top">More Information:</td>
+			<td width="78%" class="vtable">
+				NOTE: These links are to external services, so their reliability cannot be guaranteed.<br/><br/>
+				<a href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>">IP WHOIS @ DNS Stuff</a><br />
+				<a href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>">IP Info @ DNS Stuff</a>
+			</td>
+		</tr>
+		<?php } ?>
 		<tr>
 		  <td width="22%" valign="top">&nbsp;</td>
 		  <td width="78%">

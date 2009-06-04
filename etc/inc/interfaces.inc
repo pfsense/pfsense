@@ -527,8 +527,8 @@ function interface_lagg_configure(&$lagg) {
 	/* Calculate smaller mtu and enforce it */
         $smallermtu = 0;
         foreach ($members as $member) {
-                $realif = get_real_interface($member);
-                $mtu = get_interface_mtu($realif);
+                //$realif = get_real_interface($member);
+                $mtu = get_interface_mtu($member);
 		if ($smallermtu == 0 && !empty($mtu))
 			$smallermtu = $mtu;
                 else if (!empty($mtu) && $mtu < $smallermtu)
@@ -542,17 +542,14 @@ function interface_lagg_configure(&$lagg) {
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
-                $realif = get_real_interface($member);
+                //$realif = get_real_interface($member);
 		/* make sure the parent interface is up */
-		mwexec("/sbin/ifconfig {$realif} mtu {$smallermtu}");
-		if($realif)
-			interfaces_bring_up($realif);
-		else 
-			log_error("could not bring realif up -- foreach(memebers)");
-		mwexec("/sbin/ifconfig {laggif} laggport {$realif}");
+		mwexec("/sbin/ifconfig {$member} mtu {$smallermtu}");
+		interfaces_bring_up($member);
+		mwexec("/sbin/ifconfig {laggif} laggport {$member}");
 	}
 	
-	mwexec("/sbin/ifconfig {$laggif} {$lagg['proto']}");
+	mwexec("/sbin/ifconfig {$laggif} laggproto {$lagg['proto']}");
 
 	interfaces_bring_up($laggif);
 

@@ -75,6 +75,7 @@ if ($_POST) {
 		$lagg['members'] = implode(',', $_POST['members']);
 		$lagg['descr'] = $_POST['descr'];
 		$lagg['laggif'] = $_POST['laggif'];
+		$lagg['proto'] = $_POST['proto'];
 
                 $lagg['laggif'] = interface_lagg_configure($lagg);
                 if ($lagg['laggif'] == "" || !stristr($lagg['laggif'], "lagg"))

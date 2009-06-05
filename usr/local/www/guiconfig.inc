@@ -55,7 +55,7 @@ foreach (scandir("/usr/local/www/classes/") as $file) {
 }
 /*
  *   if user has selected a custom template, use it.
- *   otherwise default to pfsense tempalte
+ *   otherwise default to pfsense template
  */
 if($config['theme'] <> "")
         $g['theme'] = $config['theme'];

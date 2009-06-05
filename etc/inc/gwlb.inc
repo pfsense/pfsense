@@ -391,7 +391,7 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 
 function lookup_gateway_ip_by_name($name) {
         global $config;
-        if(is_array($config['gateways'])) {
+        if(is_array($config['gateways']['gateway_item'])) {
                 foreach($config['gateways']['gateway_item'] as $gateway) {
                         if($gateway['name'] == $name) {
                                 $gatewayip = $gateway['gateway'];

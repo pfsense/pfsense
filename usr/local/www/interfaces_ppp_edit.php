@@ -103,7 +103,7 @@ if ($_POST) {
 		$ppp['pppif'] = $_POST['pppif'];
 		$ppp['pppif'] = interface_ppp_configure($ppp);
                 if ($ppp['pppif'] == "" || !stristr($ppp['pppif'], "ppp"))
-                        $input_errors[] = "Error occured creating interface, please retry.";
+                        $input_errors[] = "Error occured creating PPP interface.";
                 else {
 			if (isset($id) && $a_ppps[$id])
 				$a_ppps[$id] = $ppp;
@@ -181,15 +181,16 @@ include("head.inc");
  		<tr>
  		  <td width="22%" valign="top" class="vncell">Local IP</td>
  		  <td width="78%" class="vtable">
- 		    <input name="gateway" type="text" class="formfld unknown" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
-			<span><p>Note: This is needed if you connect to a private system and are given a static ip.</span>
+			<input name="localip" type="text" class="formfld unknown" id="localip" size="40" value="<?=htmlspecialchars($pconfig['localip']);?>">
+			<span><p>Note: Enter your IP address here if it is not automatically assigned.</span>
  		  </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Remote IP</td>
                   <td width="78%" class="vtable">
-                    <input name="localip" type="text" class="formfld unknown" id="localip" size="40" value="<?=htmlspecialchars($pconfig['localip']);?>">
-			<span><p>Note: This is where the packets will be routed, aka gateway on normal ip routing.</span>
+			<input name="gateway" type="text" class="formfld unknown" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+			<span><p>Note: Enter the remote IP here if not automatically assigned. This
+			is where the packets will be routed, equivalent to the gateway.</span>
                   </td>
                 </tr>
 		<tr>

@@ -109,13 +109,9 @@ user "nobody"
 group "nobody"
 pid_file "{$g['varrun_path']}/apinger.pid"
 status {
-	## File where the status information whould be written to
 	file "/tmp/apinger.status"
-	## Interval between file updates
-	## when 0 or not set, file is written only when SIGUSR1 is received
 	interval 10s
 }
-rrd interval 60s;
 alarm default { 
 	command on "/usr/bin/touch /tmp/filter_dirty"
 	command off "/usr/bin/touch /tmp/filter_dirty"
@@ -164,7 +160,6 @@ EOD;
 			foreach($a_addresses as $address) {
 				$apingerconfig .= "target \"{$address}\" {\n";
 				$apingerconfig .= "	description \"{$address}\"\n";
-				$apingerconfig .= "	rrd file \"{$g['tmp_path']}/rrd/{$address}-quality.rrd\"\n";
 				$apingerconfig .= "}\n";
 				$apingerconfig .= "\n";
 			}

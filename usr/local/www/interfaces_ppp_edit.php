@@ -103,7 +103,7 @@ if ($_POST) {
 		$ppp['pppif'] = $_POST['pppif'];
 		$ppp['pppif'] = interface_ppp_configure($ppp);
                 if ($ppp['pppif'] == "" || !stristr($ppp['pppif'], "ppp"))
-                        $input_errors[] = "Error occured creating PPP interface.";
+                        $input_errors[] = "Error occurred creating PPP interface.";
                 else {
 			if (isset($id) && $a_ppps[$id])
 				$a_ppps[$id] = $ppp;

@@ -1560,7 +1560,7 @@ function upgrade_054_to_055() {
 	}
 	/* the roundtrip times need to be divided by 1000 to get seconds, really */
 	$databases = array();
-	mwexec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
+	exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
 	rsort($databases);
 	foreach($databases as $database) {
 		$xmldump = "{$database}.old.xml";
@@ -1595,7 +1595,7 @@ function upgrade_054_to_055() {
 
 	/* build a list of traffic and packets databases */
 	$databases = array();
-	mwexec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
+	exec("cd $rrddbpath;/usr/bin/find *-traffic.rrd *-packets.rrd", $databases);
 	rsort($databases);
 	foreach($databases as $database) {
 		$databasetmp = "{$database}.tmp";

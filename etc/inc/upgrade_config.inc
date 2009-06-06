@@ -607,7 +607,8 @@ function upgrade_037_to_038() {
 			$bridge['bridgeif'] = "bridge{$counter}";
 			/* done collecting info, have to burn those bridges */
 			$config['interfaces'][$name]['bridge'] = true;
-			$a_bridges[] = $bridge;
+			$a_bridges[$counter] = $bridge;
+			$counter++;
 		}
 	}
 	$config['bridges'] = $a_bridges;

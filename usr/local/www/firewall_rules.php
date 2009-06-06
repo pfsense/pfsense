@@ -58,7 +58,7 @@ if ($config['pppoe']['mode'] == "server")
 
 /* add ipsec interfaces */
 if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])){ 
-	$iflist["enc0"] = "IPSEC";
+	$iflist["enc0"] = "IPsec";
 }
 
 for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {

@@ -63,7 +63,11 @@ while(!feof($log)) {
 	 proto      - Protocol (e.g. TCP, UDP, ICMP, etc)
 	 tcpflags   - TCP flags/control bits
 	 src        - Source address with port
+	 srcip      - Source IP
+	 srcport    - Source Port
 	 dst        - Destination address with port
+	 dstip      - Destination IP
+	 dstport    - Destination Port
 	*/
 	if ($flent != "")
 		echo "{$flent['time']} {$flent['act']} {$flent['realint']} {$flent['proto']} {$flent['src']} {$flent['dst']}\n";

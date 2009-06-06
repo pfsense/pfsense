@@ -1,0 +1,227 @@
+<?php
+/*
+	diag_logs_filter_summary.php
+
+	Copyright (C) 2009 Jim Pingle (jpingle@gmail.com)
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+	1. Redistributions of source code must retain the above copyright notice,
+	this list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
+
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+$pgtitle = "Diagnostics: System logs: Firewall Log Summary";
+require_once("guiconfig.inc");
+include_once("includes/log.inc.php");
+
+$filter_logfile = "{$g['varlog_path']}/filter.log";
+$lines = 5000;
+$entriesperblock = 5;
+
+$filterlog = conv_clog_filter($filter_logfile, $lines, $lines);
+$gotlines = count($filterlog);
+
+$descr = array();
+$descr['actions']  = "Actions";
+$descr['ints']     = "Interfaces";
+$descr['protos']   = "Protocols";
+$descr['srcips']   = "Source IPs";
+$descr['dstips']   = "Destination IPs";
+$descr['srcports'] = "Source Ports";
+$descr['dstports'] = "Destination Ports";
+
+$summary['actions']  = array();
+$summary['ints']     = array();
+$summary['protos']   = array();
+$summary['srcips']   = array();
+$summary['dstips']   = array();
+$summary['srcports'] = array();
+$summary['dstports'] = array();
+
+$totals = array();
+
+function cmp($a, $b) {
+    if ($a == $b) {
+        return 0;
+    }
+    return ($a < $b) ? 1 : -1;
+}
+
+function stat_block($summary, $stat, $num) {
+	global $gotlines, $descr;
+	uasort($summary[$stat] , 'cmp');
+	print '<table width="200px" cellpadding="3" cellspacing="0" border="1">';
+	print "<tr><th colspan='2'>{$descr[$stat]} data</th></tr>";
+	$k = array_keys($summary[$stat]);
+	$total = 0;
+	$numentries = 0;
+	for ($i=0; $i < $num; $i++) {
+		if ($k[$i]) {
+			$total += $summary[$stat][$k[$i]];
+			$numentries++;
+			$outstr = $k[$i];
+			if (is_ipaddr($outstr)) {
+				$outstr = "<a href=\"diag_dns.php?host={$outstr}\" title=\"Reverse Resolve with DNS\"><img border=\"0\" src=\"/themes/nervecenter/images/icons/icon_log.gif\"></a> {$outstr}";
+			} elseif (substr_count($outstr, '/') == 1) {
+				list($proto, $port) = explode('/', $outstr);
+				$service = getservbyport($port, strtolower($proto));
+				if ($service)
+					$outstr .= ": {$service}";
+			}
+			print "<tr><td>{$outstr}</td><td width='50px' align='right'>{$summary[$stat][$k[$i]]}</td></tr>\n";
+		}
+	}
+	$leftover = $gotlines - $total;
+	if ($leftover > 0) {
+		print "<tr><td>Other</td><td width='50px' align='right'>{$leftover}</td></tr>\n";
+	}
+	print '</table>';
+}
+
+function pie_block($summary, $stat, $num) {
+	global $gotlines, $descr;
+	uasort($summary[$stat] , 'cmp');
+	$k = array_keys($summary[$stat]);
+	$total = 0;
+	$numentries = 0;
+	print "\n<script language=\"javascript\" type=\"text/javascript\">\n";
+	print "function lblfmt(lbl) {\n";
+	print "	return '<font size=\"-2\">' + lbl + '</font>'\n";
+	print "}\n";
+	for ($i=0; $i < $num; $i++) {
+		if ($k[$i]) {
+			$total += $summary[$stat][$k[$i]];
+			$numentries++;
+			print "var d{$i} = [];\n";
+			print "d{$i}.push([1, {$summary[$stat][$k[$i]]}]);\n";
+		}
+	}
+	$leftover = $gotlines - $total;
+	if ($leftover > 0) {
+		print "var d{$num} = [];\n";
+		print "d{$num}.push([1, {$leftover}]);\n";
+	}
+
+	print "Event.observe(window, 'load', function() {\n";
+	print "	new Proto.Chart($('piechart{$stat}'),           \n";
+	print "			[\n";
+	for ($i=0; $i < $num; $i++) {
+		if ($k[$i]) {
+			print "			{ data: d{$i}, label: \"{$k[$i]}\"}";
+			if (!(($i == ($numentries - 1)) && ($leftover <= 0)))
+				print ",\n";
+			else
+				print "\n";
+		}
+	}
+	if ($leftover > 0)
+		print "			{ data: d{$i}, label: \"Other\"}\n";
+	print "			],\n";
+	print "			{\n";
+	print "				pies: {show: true, autoScale: true},\n";
+	print "				legend: {show: true, labelFormatter: lblfmt}\n";
+	print "			});\n";
+	print "});\n";
+
+	print "</script>";
+	print "<table cellpadding=\"3\" cellspacing=\"0\" border=\"0\">";
+	print "<tr><th><font size=\"+1\">{$descr[$stat]}</font></th></tr>";
+	print "<tr><td><div id=\"piechart{$stat}\" style=\"width:450px;height:300px\"></div>\n";
+	print "</table>";
+}
+
+foreach ($filterlog as $fe) {
+	$summary['actions'][$fe['act']]++;
+	$summary['ints'][$fe['interface']]++;
+	$summary['protos'][$fe['proto']]++;
+	$summary['srcips'][$fe['srcip']]++;
+	$summary['dstips'][$fe['dstip']]++;
+	if ($fe['srcport'])
+		$summary['srcports'][$fe['proto'].'/'.$fe['srcport']]++;
+	else
+		$summary['srcports'][$fe['srcport']]++;
+	if ($fe['dstport'])
+		$summary['dstports'][$fe['proto'].'/'.$fe['dstport']]++;
+	else
+		$summary['dstports'][$fe['dstport']]++;
+}
+
+include("head.inc"); ?>
+<body link="#000000" vlink="#000000" alink="#000000">
+<script src="/javascript/filter_log.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript" src="/protochart/prototype.js"></script>
+<script language="javascript" type="text/javascript" src="/protochart/ProtoChart.js"></script>
+<!--[if IE]>
+<script language="javascript" type="text/javascript" src="/protochart/excanvas.js">
+</script>
+<![endif]--> 
+
+<? include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td>
+<?php
+	$tab_array = array();
+	$tab_array[] = array("System", false, "diag_logs.php");
+	$tab_array[] = array("Firewall", true, "diag_logs_filter.php");
+	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
+	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
+	$tab_array[] = array("IPSEC VPN", false, "diag_logs_ipsec.php");
+	$tab_array[] = array("PPTP VPN", false, "diag_logs_vpn.php");
+	$tab_array[] = array("Load Balancer", false, "diag_logs_slbd.php");
+	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
+	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
+	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
+	display_top_tabs($tab_array);
+?>
+ </td></tr>
+  <tr>
+    <td>
+	<div id="mainarea">
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
+		<tr><td colspan="6" align="left">
+			<a href="diag_logs_filter.php">Normal View</a> | <a href="diag_logs_filter_dynamic.php">Dynamic View</a> | Summary View<br/><br/>
+		</td></tr>
+		<tr><td align="center">
+
+This is a firewall log summary, of the last <?php echo $gotlines; ?> lines of the firewall log (Max <?php echo $lines; ?>).<br />
+NOTE: IE8 users must enable compatibility view.
+
+<?php pie_block($summary, 'actions' , $entriesperblock); ?><br /><br />
+<?php stat_block($summary, 'actions' , $entriesperblock); ?><br /><br />
+<?php pie_block($summary, 'ints'    , $entriesperblock); ?><br /><br />
+<?php stat_block($summary, 'ints'    , $entriesperblock); ?><br /><br />
+<?php pie_block($summary, 'protos'  , $entriesperblock); ?><br /><br />
+<?php stat_block($summary, 'protos'  , $entriesperblock); ?><br /><br />
+<?php pie_block($summary, 'srcips'  , $entriesperblock); ?><br /><br />
+<?php stat_block($summary, 'srcips'  , $entriesperblock); ?><br /><br />
+<?php pie_block($summary, 'dstips'  , $entriesperblock); ?><br /><br />
+<?php stat_block($summary, 'dstips'  , $entriesperblock); ?><br /><br />
+<?php pie_block($summary, 'srcports', $entriesperblock); ?><br /><br />
+<?php stat_block($summary, 'srcports', $entriesperblock); ?><br /><br />
+<?php pie_block($summary, 'dstports', $entriesperblock); ?><br /><br />
+<?php stat_block($summary, 'dstports', $entriesperblock); ?><br /><br />
+
+		</td></tr></table>
+		</div>
+	</td>
+  </tr>
+</table>
+<?php include("fend.inc"); ?>

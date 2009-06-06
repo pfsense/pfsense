@@ -5,7 +5,8 @@
 	part of pfSesne by Scott Ullrich
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2003-2009 Manuel Kasper <mk@neon1.net>,
+				Jim Pingle <myfirstname>@<mylastname>.org
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -51,13 +52,34 @@ if($_GET['getrulenum'] or $_POST['getrulenum']) {
 	exit;
 }
 
+if($_GET['dnsip'] or $_POST['dnsip']) {
+	if($_GET['dnsip'])
+		$dnsip = $_GET['dnsip'];
+	if($_POST['dnsip'])
+		$dnsip = $_POST['dnsip'];
+	$host = get_reverse_dns($dnsip);
+	if ($host == $ip) {
+		$host = "No PTR Record";
+	}
+	echo "IP: {$dnsip}\nHost: {$host}";
+	exit;
+}
+
+$filtertext = "";
+if($_GET['filtertext'] or $_POST['filtertext']) {
+	if($_GET['filtertext'])
+		$filtertext = $_GET['filtertext'];
+	if($_POST['filtertext'])
+		$filtertext = $_POST['filtertext'];
+}
+
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
-if ($_POST['clear']) 
+if ($_POST['clear'])
 	clear_log_file($filter_logfile);
 
 $pgtitle = array("Status","System logs","Firewall");
@@ -88,12 +110,20 @@ include("head.inc");
     <td>
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr><td colspan="6" align="left">
+			Normal View | <a href="diag_logs_filter_dynamic.php">Dynamic View</a> | <a href="diag_logs_filter_summary.php">Summary View</a><br/><br/>
+		</td></tr>
 <?php if (!isset($config['syslog']['rawfilter'])):
-	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100);
+	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext);
 ?>
 		<tr>
 		  <td colspan="6" class="listtopic">
-			    Last <?php echo $nentries;?> firewall log entries &nbsp;&nbsp;&nbsp;(<a href='/diag_logs_filter_dynamic.php'>switch</a> to dynamic view)</td>
+				<?php if (!$filtertext) { ?>
+			    Last <?php echo count($filterlog);?> firewall log entries.
+				<?php } else { ?>
+				<?php echo count($filterlog);?> matched log entries.
+				<?php } ?>
+			    (Max <?php echo $nentries;?>)
 			</tr>
 			<tr>
 			  <td width="10%" class="listhdrr">Act</td>
@@ -111,8 +141,23 @@ include("head.inc");
 			  <?php if ($filterent['count']) echo $filterent['count'];?></td>
 			  <td class="listr" nowrap><?php echo htmlspecialchars($filterent['time']);?></td>
 			  <td class="listr" nowrap><?php echo htmlspecialchars($filterent['interface']);?></td>
-			  <td class="listr" nowrap><?php echo htmlspecialchars($filterent['src']);?></td>
-			  <td class="listr" nowrap><?php echo htmlspecialchars($filterent['dst']);?></td>
+			  <?php
+			  $int = strtolower($filterent['interface']);
+			  $proto = strtolower($filterent['proto']);
+
+			  $srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
+			  $dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
+			  ?>
+			  <td class="listr" nowrap>
+				<a href="diag_dns.php?host=<?php echo $filterent['srcip']; ?>" title="Reverse Resolve with DNS"><img border="0" src="/themes/nervecenter/images/icons/icon_log.gif"></a>
+				<a href="easyrule.php?<?php echo "action=block&int={$int}&src={$filterent['srcip']}"; ?>" title="Easy Rule: Add to Block List" onclick="return confirm('Do you really want to add this BLOCK rule?\n\nEasy Rule is still experimental.\nContinue at risk of your own peril.\nBackups are also nice.')"><img border="0" src="/themes/nervecenter/images/icons/icon_block_add.gif"></a>
+				<?php echo $srcstr;?>
+			  </td>
+			  <td class="listr" nowrap>
+				<a href="diag_dns.php?host=<?php echo $filterent['dstip']; ?>" title="Reverse Resolve with DNS"><img border="0" src="/themes/nervecenter/images/icons/icon_log.gif"></a>
+				<a href="easyrule.php?<?php echo "action=pass&int={$int}&proto={$proto}&src={$filterent['srcip']}&dst={$filterent['dstip']}&dstport={$filterent['dstport']}"; ?>" title="Easy Rule: Pass this traffic" onclick="return confirm('Do you really want to add this PASS rule?\n\nEasy Rule is still experimental.\nContinue at risk of your own peril.\nBackups are also nice.')"><img border="0" src="/themes/nervecenter/images/icons/icon_pass_add.gif"></a>
+				<?php echo $dststr;?>
+			  </td>
 			  <?php
 				if ($filterent['proto'] == "TCP")
 					$filterent['proto'] .= ":{$filterent['tcpflags']}";
@@ -124,11 +169,27 @@ include("head.inc");
 			<td colspan="2" class="listtopic">
 			  Last <?php echo $nentries;?> firewall log entries</td>
 		  </tr>
-		  <?php dump_clog($filter_logfile, $nentries); ?>
+		  <?php
+			if($filtertext)
+				dump_clog($filter_logfile, $nentries, true, array("$filtertext"));
+			else
+				dump_clog($filter_logfile, $nentries);
+		  ?>
 <?php endif; ?>
-		<tr><td><br /><form action="diag_logs_filter.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="Clear log" /></td></tr>
-</form>
+		<tr>
+			<td align="left" valign="top" colspan="3">
+				<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
+					<input id="submit" name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log");?>" />
+				</form>
+			</td>
+			<td align="right" valign="top" colspan="3">
+				<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
+					<input id="filtertext" name="filtertext" value="<?=gettext($filtertext);?>" />
+					<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
+				</form>
+			</td>
+
+		</tr>
 		</table>
 		</div>
 	</td>

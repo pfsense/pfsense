@@ -108,8 +108,11 @@ include("head.inc");
   <tr>
      <td>
 	<div id="mainarea">
+		<div class="tabcont">
+			<a href="diag_logs_filter.php">Normal View</a> | Dynamic View | <a href="diag_logs_filter_summary.php">Summary View</a>
+		</div>
 		<div class="listtopic">
-			Last <?php echo $nentries; ?> records; (Switch to <a href="diag_logs_filter.php">regular</a> view)  Pause:<input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
+			Last <?php echo $nentries; ?> records;   Pause:<input valign="middle" type="checkbox" onClick="javascript:toggle_pause();">
 		</div>
 		<div id="log">
 			<div class="log-header">

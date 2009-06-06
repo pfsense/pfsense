@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	log.inc.php
+	filter_log.inc
 	part of pfSesne by Scott Ullrich
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
@@ -31,12 +31,15 @@
 */
 
 /* format filter logs */
-function conv_log_filter($logfile, $nentries, $tail = 50) {
+function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "") {
 	global $config, $g;
 
 	/* Make sure this is a number before using it in a system call */
 	if (!(is_numeric($tail)))
 		return;
+
+	if ($filtertext)
+		$tail = 5000;
 
 	/* FreeBSD 8 splits pf log lines into two lines, so we need to at least
 	 * tail twice as many, plus some extra to account for unparseable lines */
@@ -45,7 +48,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50) {
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
 	$logarr = "";
 
-	if(isset($config['system']['usefifolog'])) 
+	if(isset($config['system']['usefifolog']))
 		exec("/usr/sbin/fifolog_reader {$logfile} | /usr/bin/tail -r -n {$tail}", $logarr);
 	else
 		exec("/usr/sbin/clog {$logfile} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail -r -n {$tail}", $logarr);
@@ -60,13 +63,20 @@ function conv_log_filter($logfile, $nentries, $tail = 50) {
 			break;
 
 		$flent = parse_filter_line($logent);
-		if ($flent != "") {
+		if (($flent != "") && (match_filter_line($flent, $filtertext))) {
 			$counter++;
 			$filterlog[] = $flent;
 		}
 	}
 	/* Since the lines are in reverse order, flip them around if needed based on the user's preference */
 	return isset($config['syslog']['reverse']) ? $filterlog : array_reverse($filterlog);
+}
+
+function match_filter_line($flent, $filtertext = "") {
+	if (!$filtertext)
+		return true;
+	$filtertext = str_replace(' ', '\s+', $filtertext);
+	return preg_match("/{$filtertext}/i", implode(" ", array_values($flent)));
 }
 
 function collapse_filter_lines($logarr) {
@@ -95,8 +105,17 @@ function parse_filter_line($line) {
 
 	list($all, $flent['time'], $host, $rule, $flent['act'], $flent['realint'], $details, $src, $dst, $leftovers) = $log_split;
 
-	$flent['src']        = convert_port_period_to_colon($src);
-	$flent['dst']        = convert_port_period_to_colon($dst);
+	list($flent['srcip'], $flent['srcport']) = parse_ipport($src);
+	list($flent['dstip'], $flent['dstport']) = parse_ipport($dst);
+
+	$flent['src'] = $flent['srcip'];
+	$flent['dst'] = $flent['dstip'];
+
+	if ($flent['srcport'])
+		$flent['src'] .= ':' . $flent['srcport'];
+	if ($flent['dstport'])
+		$flent['dst'] .= ':' . $flent['dstport'];
+
 	$flent['interface']  = convert_log_interface_to_friendly_interface_name($flent['realint']);
 
 	$tmp = split("/", $rule);
@@ -104,7 +123,7 @@ function parse_filter_line($line) {
 
 	$proto = array(" ", "(?)");
 	/* Attempt to determine the protocol, based on several possible patterns.
-	 * The value returned by strpos() must be strictly checkeded against the  
+	 * The value returned by strpos() must be strictly checkeded against the
 	 * boolean FALSE because it could return a valid answer of 0 upon success. */
 	if (!(strpos($details, 'proto ') === FALSE)) {
 		preg_match("/.*\sproto\s(.*)\s\(/", $details, $proto);
@@ -152,26 +171,49 @@ function convert_log_interface_to_friendly_interface_name($int) {
 	return $int;
 }
 
-function convert_port_period_to_colon($addr) {
+function parse_ipport($addr) {
+	$addr = rtrim($addr, ":");
+	$port = '';
 	if (substr_count($addr, '.') > 1) {
-		/* IPv4 - Change the port delimiter to : */
+		/* IPv4 */
 		$addr_split = split("\.", $addr);
-		if($addr_split[4] == "") {
-			$newvar = "{$addr_split[0]}.{$addr_split[1]}.{$addr_split[2]}.{$addr_split[3]}";
-			$newvar = rtrim($newvar, ":");
-		} else {
+		$ip = "{$addr_split[0]}.{$addr_split[1]}.{$addr_split[2]}.{$addr_split[3]}";
+
+		if ($ip == "...")
+			return array($addr, '');
+
+		if($addr_split[4] != "") {
 			$port_split = split("\:", $addr_split[4]);
-			$newvar = "{$addr_split[0]}.{$addr_split[1]}.{$addr_split[2]}.{$addr_split[3]}:{$port_split[0]}";
-			$newvar = rtrim($newvar, ":");
+			$port = $port_split[0];
 		}
-		if($newvar == "...")
-			return $addr;
-		return $newvar;
 	} else {
-		/* IPv6 - Leave it alone */
+		/* IPv6 */
 		$addr = split(" ", $addr);
-		return rtrim($addr[0], ":");
+		$addr = rtrim($addr[0], ":");
+		$addr_split = split("\.", $addr);
+		if (count($addr_split) > 1) {
+			$ip   = $addr_split[0];
+			$port = $addr_split[1];
+		} else {
+			$ip   = $addr;
+		}
 	}
+
+	return array($ip, $port);
+}
+
+function get_port_with_service($port, $proto) {
+	if (!$port)
+		return '';
+
+	$service = getservbyport($port, $proto);
+	$portstr = "";
+	if ($service) {
+		$portstr = "<span title=\"Service {$port}/{$proto}: {$service}\">" . htmlspecialchars($port) . "</span>";
+	} else {
+		$portstr = htmlspecialchars($port);
+	}
+	return ':' . $portstr;
 }
 
 function find_rule_by_number($rulenum, $type="rules") {

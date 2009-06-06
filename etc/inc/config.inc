@@ -1839,7 +1839,10 @@ function is_interface_mismatch() {
 	$wan_if = get_real_wan_interface();
 	$do_assign = 0;
 	/* we need to ignore the vlan interface checks) */
-	if (stristr($lan_if, "vlan") == false and stristr($wan_if, "vlan") == false) {
+	if (stristr($lan_if, "ppp") == false and 
+		stristr($lan_if, "vlan") == false and 
+		stristr($wan_if, "vlan") == false and 
+		stristr($wan_if, "ppp") == false) {
 		if (does_interface_exist($lan_if) == false)
 			$do_assign = 1;
 		if ($config['interfaces']['wan']['ipaddr'] <> "pppoe" && $config['interfaces']['wan']['ipaddr'] <> "pptp" && $do_assign == 0)

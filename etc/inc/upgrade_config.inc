@@ -589,7 +589,7 @@ function upgrade_037_to_038() {
 	/* This should only be valid when upgrading bridges from a 1.2 config */
 	$a_bridges = array();
 	$counter = 0;
-	foreach($config['interfaces'] as & $interface => $name) {
+	foreach($config['interfaces'] as $interface => $name) {
 		if($interface['bridge'] <> "") {
 			$bridge = array();
 			$bridge['members'] = "{$name},{$interface['bridge']}";
@@ -623,7 +623,7 @@ function upgrade_038_to_039() {
 	$a_vlans = array();
 	$vlan_counter = 0;
 	if (is_array($config['vlans'])) {
-		foreach ($config['vlans'] as & $vlan) {
+		foreach ($config['vlans'] as $vlan) {
 			$a_vlans[$vlan_counter] = $vlan;
 			$a_vlans[$vlan_counter]['vlanif] = "vlan{$vlan_counter}";
 			$vlan_counter++;

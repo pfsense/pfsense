@@ -124,7 +124,7 @@ Message: <?php echo $message; ?>
 This is the Easy Rule status page, mainly used to display errors when adding rules. 
 If you are seeing this, there apparently was not an error, and you navigated to the
 page directly without telling it what to do.<br/><br/>
-This page is meant to be called from the block/pass buttons on the Firewall Logs page, <a href="http://192.168.56.101/diag_logs_filter.php">Status &gt; System Logs,
+This page is meant to be called from the block/pass buttons on the Firewall Logs page, <a href="diag_logs_filter.php">Status &gt; System Logs,
 Firewall Tab</a>.
 <br />      
 <? } ?>

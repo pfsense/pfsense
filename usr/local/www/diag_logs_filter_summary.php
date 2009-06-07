@@ -29,13 +29,13 @@
 
 $pgtitle = "Diagnostics: System logs: Firewall Log Summary";
 require_once("guiconfig.inc");
-include_once("includes/log.inc.php");
+include_once("filter_log.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 $lines = 5000;
 $entriesperblock = 5;
 
-$filterlog = conv_clog_filter($filter_logfile, $lines, $lines);
+$filterlog = conv_log_filter($filter_logfile, $lines, $lines);
 $gotlines = count($filterlog);
 
 $descr = array();
@@ -166,7 +166,6 @@ foreach ($filterlog as $fe) {
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
-<script language="javascript" type="text/javascript" src="/protochart/prototype.js"></script>
 <script language="javascript" type="text/javascript" src="/protochart/ProtoChart.js"></script>
 <!--[if IE]>
 <script language="javascript" type="text/javascript" src="/protochart/excanvas.js">
@@ -174,7 +173,6 @@ include("head.inc"); ?>
 <![endif]--> 
 
 <? include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php

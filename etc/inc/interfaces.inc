@@ -527,7 +527,6 @@ function interface_lagg_configure(&$lagg) {
 	/* Calculate smaller mtu and enforce it */
         $smallermtu = 0;
         foreach ($members as $member) {
-                //$realif = get_real_interface($member);
                 $mtu = get_interface_mtu($member);
 		if ($smallermtu == 0 && !empty($mtu))
 			$smallermtu = $mtu;
@@ -542,11 +541,10 @@ function interface_lagg_configure(&$lagg) {
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
-                //$realif = get_real_interface($member);
 		/* make sure the parent interface is up */
 		mwexec("/sbin/ifconfig {$member} mtu {$smallermtu}");
 		interfaces_bring_up($member);
-		mwexec("/sbin/ifconfig {laggif} laggport {$member}");
+		mwexec("/sbin/ifconfig {$laggif} laggport {$member}");
 	}
 	
 	mwexec("/sbin/ifconfig {$laggif} laggproto {$lagg['proto']}");

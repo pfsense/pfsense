@@ -90,7 +90,7 @@ function interfaces_vlan_configure() {
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if(empty($vlan['vlanif']))
-				$vlan['vlanif'] = "vlan{$vlan['tag']}";
+				$vlan['vlanif'] = "{$vlan['if']}.vlan{$vlan['tag']}";
 			/* XXX: Maybe we should report any errors?! */
 			interface_vlan_configure($vlan);
 		}
@@ -105,7 +105,7 @@ function interface_vlan_configure($vlan) {
 		return;
 	}
 	$if = $vlan['if'];
-	$vlanif  = empty($vlan['vlanif']) ? "vlan{$vlan['tag']}" : $vlan['vlanif'];
+	$vlanif  = empty($vlan['vlanif']) ? "{$if}.vlan{$vlan['tag']}" : $vlan['vlanif'];
 	$tag = $vlan['tag'];
 
 	if(empty($if)) {
@@ -132,9 +132,10 @@ function interface_vlan_configure($vlan) {
 		  to retain previous behavior and avoid regressions */
 		if($carpcount < 1)
 			mwexec("/sbin/ifconfig {$vlanif} destroy");
-		mwexec("/sbin/ifconfig {$vlanif} create");
-        } else 
-		$vlanif = exec("/sbin/ifconfig vlan create");
+		//mwexec("/sbin/ifconfig {$vlanif} create");
+        }
+	$tmpvlanif = exec("/sbin/ifconfig vlan create");
+	mwexec("/sbin/ifconfig {$tmpvlanif} name {$vlanif}");
 	
         mwexec("/sbin/ifconfig {$vlanif} vlan " .
                 escapeshellarg($tag) . " vlandev " .

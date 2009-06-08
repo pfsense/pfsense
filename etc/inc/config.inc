@@ -815,7 +815,7 @@ EOD;
 			echo sprintf("% -8s%s\n", "vlan{$vlan['tag']}",
 				"VLAN tag {$vlan['tag']}, interface {$vlan['if']}");
 
-			$iflist['vlan' . $vlan['tag']] = array();
+			$iflist[$vlan['if'] . '.vlan' . $vlan['tag']] = array();
 		}
 	}
 
@@ -1146,7 +1146,7 @@ EOD;
 
 		echo "Enter the VLAN tag (1-4094): ";
 		$vlan['tag'] = chop(fgets($fp));
-		$vlan['vlanif'] = "vlan{$vlan['tag']}";
+		$vlan['vlanif'] = "{$vlan['if']}.vlan{$vlan['tag']}";
 		if (!is_numericint($vlan['tag']) || ($vlan['tag'] < 1) || ($vlan['tag'] > 4094)) {
 			echo "\nInvalid VLAN tag '{$vlan['tag']}'\n";
 			continue;

@@ -29,31 +29,27 @@
 
 $pgtitle = "Diagnostics: System logs: Firewall Log Summary";
 require_once("guiconfig.inc");
-include_once("filter_log.inc");
+include_once("includes/log.inc.php");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 $lines = 5000;
 $entriesperblock = 5;
 
-$filterlog = conv_log_filter($filter_logfile, $lines, $lines);
+$filterlog = conv_clog_filter($filter_logfile, $lines, $lines);
 $gotlines = count($filterlog);
+$fields = array(
+	'act'       => "Actions",
+	'interface' => "Interfaces",
+	'proto'     => "Protocols",
+	'srcip'     => "Source IPs",
+	'dstip'     => "Destination IPs",
+	'srcport'   => "Source Ports",
+	'dstport'   => "Destination Ports");
 
-$descr = array();
-$descr['actions']  = "Actions";
-$descr['ints']     = "Interfaces";
-$descr['protos']   = "Protocols";
-$descr['srcips']   = "Source IPs";
-$descr['dstips']   = "Destination IPs";
-$descr['srcports'] = "Source Ports";
-$descr['dstports'] = "Destination Ports";
-
-$summary['actions']  = array();
-$summary['ints']     = array();
-$summary['protos']   = array();
-$summary['srcips']   = array();
-$summary['dstips']   = array();
-$summary['srcports'] = array();
-$summary['dstports'] = array();
+$summary = array();
+foreach (array_keys($fields) as $f) {
+	$summary[$f]  = array();
+}
 
 $totals = array();
 
@@ -65,10 +61,10 @@ function cmp($a, $b) {
 }
 
 function stat_block($summary, $stat, $num) {
-	global $gotlines, $descr;
+	global $gotlines, $fields;
 	uasort($summary[$stat] , 'cmp');
 	print '<table width="200px" cellpadding="3" cellspacing="0" border="1">';
-	print "<tr><th colspan='2'>{$descr[$stat]} data</th></tr>";
+	print "<tr><th colspan='2'>{$fields[$stat]} data</th></tr>";
 	$k = array_keys($summary[$stat]);
 	$total = 0;
 	$numentries = 0;
@@ -96,27 +92,24 @@ function stat_block($summary, $stat, $num) {
 }
 
 function pie_block($summary, $stat, $num) {
-	global $gotlines, $descr;
+	global $gotlines, $fields;
 	uasort($summary[$stat] , 'cmp');
 	$k = array_keys($summary[$stat]);
 	$total = 0;
 	$numentries = 0;
 	print "\n<script language=\"javascript\" type=\"text/javascript\">\n";
-	print "function lblfmt(lbl) {\n";
-	print "	return '<font size=\"-2\">' + lbl + '</font>'\n";
-	print "}\n";
 	for ($i=0; $i < $num; $i++) {
 		if ($k[$i]) {
 			$total += $summary[$stat][$k[$i]];
 			$numentries++;
-			print "var d{$i} = [];\n";
-			print "d{$i}.push([1, {$summary[$stat][$k[$i]]}]);\n";
+			print "var d{$stat}{$i} = [];\n";
+			print "d{$stat}{$i}.push([1, {$summary[$stat][$k[$i]]}]);\n";
 		}
 	}
 	$leftover = $gotlines - $total;
 	if ($leftover > 0) {
-		print "var d{$num} = [];\n";
-		print "d{$num}.push([1, {$leftover}]);\n";
+		print "var d{$stat}{$num} = [];\n";
+		print "d{$stat}{$num}.push([1, {$leftover}]);\n";
 	}
 
 	print "Event.observe(window, 'load', function() {\n";
@@ -124,7 +117,7 @@ function pie_block($summary, $stat, $num) {
 	print "			[\n";
 	for ($i=0; $i < $num; $i++) {
 		if ($k[$i]) {
-			print "			{ data: d{$i}, label: \"{$k[$i]}\"}";
+			print "			{ data: d{$stat}{$i}, label: \"{$k[$i]}\"}";
 			if (!(($i == ($numentries - 1)) && ($leftover <= 0)))
 				print ",\n";
 			else
@@ -132,7 +125,7 @@ function pie_block($summary, $stat, $num) {
 		}
 	}
 	if ($leftover > 0)
-		print "			{ data: d{$i}, label: \"Other\"}\n";
+		print "			{ data: d{$stat}{$i}, label: \"Other\"}\n";
 	print "			],\n";
 	print "			{\n";
 	print "				pies: {show: true, autoScale: true},\n";
@@ -142,37 +135,45 @@ function pie_block($summary, $stat, $num) {
 
 	print "</script>";
 	print "<table cellpadding=\"3\" cellspacing=\"0\" border=\"0\">";
-	print "<tr><th><font size=\"+1\">{$descr[$stat]}</font></th></tr>";
+	print "<tr><th><font size=\"+1\">{$fields[$stat]}</font></th></tr>";
 	print "<tr><td><div id=\"piechart{$stat}\" style=\"width:450px;height:300px\"></div>\n";
 	print "</table>";
 }
 
 foreach ($filterlog as $fe) {
-	$summary['actions'][$fe['act']]++;
-	$summary['ints'][$fe['interface']]++;
-	$summary['protos'][$fe['proto']]++;
-	$summary['srcips'][$fe['srcip']]++;
-	$summary['dstips'][$fe['dstip']]++;
+	$specialfields = array('srcport', 'dstport');
+	foreach (array_keys($fields) as $field) {
+		if (!in_array($field, $specialfields))
+			$summary[$field][$fe[$field]]++;
+	}
+	/* Handle some special cases */
 	if ($fe['srcport'])
-		$summary['srcports'][$fe['proto'].'/'.$fe['srcport']]++;
+		$summary['srcport'][$fe['proto'].'/'.$fe['srcport']]++;
 	else
-		$summary['srcports'][$fe['srcport']]++;
+		$summary['srcport'][$fe['srcport']]++;
 	if ($fe['dstport'])
-		$summary['dstports'][$fe['proto'].'/'.$fe['dstport']]++;
+		$summary['dstport'][$fe['proto'].'/'.$fe['dstport']]++;
 	else
-		$summary['dstports'][$fe['dstport']]++;
+		$summary['dstport'][$fe['dstport']]++;
 }
 
 include("head.inc"); ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <script src="/javascript/filter_log.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript" src="/protochart/prototype.js"></script>
 <script language="javascript" type="text/javascript" src="/protochart/ProtoChart.js"></script>
 <!--[if IE]>
 <script language="javascript" type="text/javascript" src="/protochart/excanvas.js">
 </script>
-<![endif]--> 
+<![endif]-->
+<script language="javascript" type="text/javascript">
+	function lblfmt(lbl) {
+		return '<font size=\"-2\">' + lbl + '</font>'
+	}
+</script>
 
 <? include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -202,21 +203,14 @@ include("head.inc"); ?>
 This is a firewall log summary, of the last <?php echo $gotlines; ?> lines of the firewall log (Max <?php echo $lines; ?>).<br />
 NOTE: IE8 users must enable compatibility view.
 
-<?php pie_block($summary, 'actions' , $entriesperblock); ?><br /><br />
-<?php stat_block($summary, 'actions' , $entriesperblock); ?><br /><br />
-<?php pie_block($summary, 'ints'    , $entriesperblock); ?><br /><br />
-<?php stat_block($summary, 'ints'    , $entriesperblock); ?><br /><br />
-<?php pie_block($summary, 'protos'  , $entriesperblock); ?><br /><br />
-<?php stat_block($summary, 'protos'  , $entriesperblock); ?><br /><br />
-<?php pie_block($summary, 'srcips'  , $entriesperblock); ?><br /><br />
-<?php stat_block($summary, 'srcips'  , $entriesperblock); ?><br /><br />
-<?php pie_block($summary, 'dstips'  , $entriesperblock); ?><br /><br />
-<?php stat_block($summary, 'dstips'  , $entriesperblock); ?><br /><br />
-<?php pie_block($summary, 'srcports', $entriesperblock); ?><br /><br />
-<?php stat_block($summary, 'srcports', $entriesperblock); ?><br /><br />
-<?php pie_block($summary, 'dstports', $entriesperblock); ?><br /><br />
-<?php stat_block($summary, 'dstports', $entriesperblock); ?><br /><br />
-
+<?php
+foreach(array_keys($fields) as $field) {
+	pie_block($summary, $field , $entriesperblock);
+	echo "<br /><br />";
+	stat_block($summary, $field , $entriesperblock);
+	echo "<br /><br />";
+}
+?>
 		</td></tr></table>
 		</div>
 	</td>

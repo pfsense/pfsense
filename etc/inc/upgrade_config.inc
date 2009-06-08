@@ -591,16 +591,7 @@ function upgrade_037_to_038() {
 
 function upgrade_038_to_039() {
 	global $config;
-
-	/* This should only be valid when upgrading vlans from a 1.2 config though */
-	/* Vlan upgrade code. Since we now create vlans with a vlanif tag we just start at 0 */
-	$vlan_counter = 0;
-	if (is_array($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlan) {
-			$config['vlans']['vlan'][$vlan_counter]['vlanif'] = "vlan{$vlan_counter}";
-			$vlan_counter++;
-		}
-	}
+	/* Insert upgrade code here */
 }
 
 
@@ -781,7 +772,7 @@ function upgrade_044_to_045() {
 	global $config;
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $id => &$vlan)
-			$vlan['vlanif'] = "vlan{$tag}";
+			$vlan['vlanif'] = "vlan{$vlan['tag']}";
 	}
 }
 

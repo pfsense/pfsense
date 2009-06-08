@@ -810,12 +810,12 @@ EOD;
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
 		echo "\n\nVLAN interfaces:\n\n";
-		foreach ($config['vlans']['vlan'] as $vlan) {
+		foreach ($config['vlans']['vlan'] as $vlanid => $vlan) {
 
-			echo sprintf("% -8s%s\n", "vlan{$vlan['tag']}",
+			echo sprintf("% -8s%s\n", "vlan{$vlanid}",
 				"VLAN tag {$vlan['tag']}, interface {$vlan['if']}");
 
-			$iflist['vlan' . $vlan['tag']] = array();
+			$iflist['vlan' . $vlanid] = array();
 		}
 	}
 
@@ -1146,7 +1146,7 @@ EOD;
 
 		echo "Enter the VLAN tag (1-4094): ";
 		$vlan['tag'] = chop(fgets($fp));
-		$vlan['vlanif'] = "vlan{$vlan['tag']}";
+		$vlan['vlanif'] = "vlan{$vlanif}";
 		if (!is_numericint($vlan['tag']) || ($vlan['tag'] < 1) || ($vlan['tag'] > 4094)) {
 			echo "\nInvalid VLAN tag '{$vlan['tag']}'\n";
 			continue;

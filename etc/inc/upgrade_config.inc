@@ -585,31 +585,7 @@ function upgrade_036_to_037() {
 
 function upgrade_037_to_038() {
 	global $config;
-
-	/* This should only be valid when upgrading bridges from a 1.2 config */
-	$a_bridges = array();
-	$counter = 0;
-	foreach($config['interfaces'] as $name => & $interface ) {
-		if($interface['bridge'] <> "") {
-			$bridge = array();
-			$bridge['members'] = "{$name},{$interface['bridge']}";
-			$bridge['descr'] = "Upgraded from 1.2";
-			$bridge['maxaddr'] = "";
-			$bridge['timeout'] = "";
-			$bridge['maxage'] = "";
-			$bridge['fwdelay'] = "";
-			$bridge['hellotime'] = "";
-			$bridge['priority'] = "";
-			$bridge['proto'] = "rstp";
-			$bridge['holdcount'] = "";
-			$bridge['ifpriority'] = "";
-			$bridge['ifpathcost'] = "";
-			$bridge['bridgeif'] = "bridge{$counter}";
-			$a_bridges[$counter] = $bridge;
-			$counter++;
-		}
-	}
-	$config['bridges'] = $a_bridges;
+	/* Insert upgrade code here */
 }
 
 

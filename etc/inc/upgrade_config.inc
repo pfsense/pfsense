@@ -589,7 +589,7 @@ function upgrade_037_to_038() {
 	/* This should only be valid when upgrading bridges from a 1.2 config */
 	$a_bridges = array();
 	$counter = 0;
-	foreach($config['interfaces'] as $name => $interface ) {
+	foreach($config['interfaces'] as $name => & $interface ) {
 		if($interface['bridge'] <> "") {
 			$bridge = array();
 			$bridge['members'] = "{$name},{$interface['bridge']}";
@@ -605,8 +605,6 @@ function upgrade_037_to_038() {
 			$bridge['ifpriority'] = "";
 			$bridge['ifpathcost'] = "";
 			$bridge['bridgeif'] = "bridge{$counter}";
-			/* done collecting info, have to burn those bridges */
-			$config['interfaces'][$name]['bridge'] = true;
 			$a_bridges[$counter] = $bridge;
 			$counter++;
 		}

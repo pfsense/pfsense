@@ -88,9 +88,9 @@ function interfaces_loopback_configure() {
 function interfaces_vlan_configure() {
 	global $config;
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $vlanid => $vlan) {
+		foreach ($config['vlans']['vlan'] as $vlan) {
 			if(empty($vlan['vlanif']))
-				$vlan['vlanif'] = "vlan{$vlanid}";
+				$vlan['vlanif'] = "vlan{$vlan['tag']}";
 			/* XXX: Maybe we should report any errors?! */
 			interface_vlan_configure($vlan);
 		}
@@ -105,10 +105,11 @@ function interface_vlan_configure($vlan) {
 		return;
 	}
 	$if = $vlan['if'];
+	$vlanif  = empty($vlan['vlanif']) ? "vlan{$vlan['tag']}" : $vlan['vlanif'];
 	$tag = $vlan['tag'];
 
-	if (empty($if)) {
-		log_error("interface_vlan_confgure called with parent if undefined.");
+	if(empty($if)) {
+		log_error("interface_vlan_confgure called with if undefined.");
 		return;
 	}
 
@@ -147,13 +148,14 @@ function interface_vlan_configure($vlan) {
         /*   all vlans need to spoof their parent mac address, too.  see
          *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
          */
-        foreach ($config['interfaces'] as $interfaces) {
-                if ($interfaces['if'] == $if && $interfaces['spoofmac']) {
+        foreach($config['interfaces'] as $interfaces) {
+                if($interfaces['if'] == $if && $interfaces['spoofmac']) {
                         mwexec("/sbin/ifconfig " . escapeshellarg($vlanif) .
                                 " link " . escapeshellarg($interfaces['spoofmac']));
                 }
         }
 
+        /* XXX: ermal -- for now leave it here at the moment it does not hurt. */
 	interfaces_bring_up($if);
 
         return $vlanif;
@@ -168,7 +170,7 @@ function interface_qinq_configure($vlan, $fd = NULL) {
         }
 
         $if = $vlan['if'];
-	$vlanif = empty($vlan['vlanif']) ? "vlan" . count($config['qinqs']['qinq']) : $vlan['vlanif'];
+        $vlanif = empty($vlan['vlanif']) ? "vlan{$vlan['tag']}" : $vlan['vlanif'];
         $tag = $vlan['tag'];
         if(empty($if)) {
                 log_error("interface_qinq_confgure called with if undefined.\n");

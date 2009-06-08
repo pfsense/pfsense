@@ -140,12 +140,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$qinqentry['members'] = $members;
 		$qinqentry['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
-		if (isset($id) && $a_qinqs[$id]) {
-			$qinqentry['vlanif'] = "vlan{$id}";
-		else {
-			$id = count($a_qinqs);
-			$qinqentry['vlanif'] = "vlan{$id}";
-		}
+		$qinqentry['vlanif'] = "vlan{$_POST['tag']}";
 		$nmembers = explode(" ", $members);
 
 		if (isset($id) && $a_qinqs[$id]) {
@@ -153,14 +148,14 @@ if ($_POST) {
 			$delmembers = array_diff($omembers, $nmembers);
 			if (count($delmembers) > 0) {
 				foreach ($delmembers as $tag) {
-					mwexec("/usr/sbin/ngctl shutdown vlan{$id}h{$tag}:");
-					mwexec("/usr/sbin/ngctl msg vlan{$id}qinq: delfilter \\\"vlan{$id}{$tag}\\\"");
+					mwexec("/usr/sbin/ngctl shutdown vlan{$_POST['tag']}h{$tag}:");
+					mwexec("/usr/sbin/ngctl msg vlan{$_POST['tag']}qinq: delfilter \\\"vlan{$_POST['tag']}{$tag}\\\"");
 				}
 			}
 			$addmembers = array_diff($nmembers, $omembers);
 			if (count($addmembers) > 0) {
 				foreach ($addmembers as $member) {
-					$if = "vlan{$id}";
+					$if = "vlan{$_POST['tag']}";
 					$vlanif = "{$if}_{$member}";
 					$macaddr = get_interface_mac($if);
 					mwexec("/usr/sbin/ngctl mkpeer {$if}qinq: eiface {$if}{$member} ether");
@@ -186,8 +181,8 @@ if ($_POST) {
 			}
 			$additions = "";
 			foreach($nmembers as $qtag)
-				$additions .= "vlan{$id}_{$qtag} ";
-			$additions .= "vlan{$id} ";
+				$additions .= "vlan{$qinqentry['tag']}_{$qtag} ";
+			$additions .= "vlan{$qinqentry['tag']} ";
 			if ($found == true)
 				$config['ifgroups']['ifgroupentry'][$gid]['members'] .= " {$additions}";
 			else {

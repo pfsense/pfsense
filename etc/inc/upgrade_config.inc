@@ -593,7 +593,7 @@ function upgrade_037_to_038() {
 		if($interface['bridge'] <> "") {
 			$bridge = array();
 			$bridge['members'] = "{$name},{$interface['bridge']}";
-			$bridge['descr'] = "Upgraded from 1.2"
+			$bridge['descr'] = "Upgraded from 1.2";
 			$bridge['maxaddr'] = "";
 			$bridge['timeout'] = "";
 			$bridge['maxage'] = "";

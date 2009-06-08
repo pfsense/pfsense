@@ -1779,5 +1779,8 @@ function upgrade_058_to_059() {
 }
 
 function upgrade_059_to_060() {
+	global $config;
+	/* Insert upgrade code here */
+}
 
 ?>

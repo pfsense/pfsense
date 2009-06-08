@@ -29,13 +29,13 @@
 
 $pgtitle = "Diagnostics: System logs: Firewall Log Summary";
 require_once("guiconfig.inc");
-include_once("includes/log.inc.php");
+include_once("filter_log.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 $lines = 5000;
 $entriesperblock = 5;
 
-$filterlog = conv_clog_filter($filter_logfile, $lines, $lines);
+$filterlog = conv_log_filter($filter_logfile, $lines, $lines);
 $gotlines = count($filterlog);
 $fields = array(
 	'act'       => "Actions",
@@ -173,7 +173,6 @@ include("head.inc"); ?>
 </script>
 
 <? include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php

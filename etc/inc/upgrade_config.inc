@@ -625,7 +625,7 @@ function upgrade_038_to_039() {
 	if (is_array($config['vlans'])) {
 		foreach ($config['vlans'] as $vlan) {
 			$a_vlans[$vlan_counter] = $vlan;
-			$a_vlans[$vlan_counter]['vlanif] = "vlan{$vlan_counter}";
+			$a_vlans[$vlan_counter]['vlanif'] = "vlan{$vlan_counter}";
 			$vlan_counter++;
 		}
 		$config['vlans'] = $a_vlans;

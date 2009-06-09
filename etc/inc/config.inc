@@ -51,8 +51,8 @@ if($config_inc_loaded == true)
 else
 	$config_inc_loaded = true;
 
-/* include globals/utility/XML parser files */
-require_once("globals.inc");
+/* include globals from notices.inc /utility/XML parser files */
+require_once("notices.inc");
 if($g['booting']) echo ".";
 require_once("util.inc");
 if($g['booting']) echo ".";

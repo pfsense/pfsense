@@ -496,7 +496,7 @@ include("head.inc");
                     <input name="polling_enable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['polling_enable']) echo "checked"; ?>>
                     <strong>Use device polling</strong><br>
                                         Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webGUI, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended.
-                                        Not all NICs support polling; see the pfSense homepage for a list of supported cards.
+                                        Not all NICs support polling; see the <?=$g['product_name'];?> homepage for a list of supported cards.
                   </td>
                 </tr>
 
@@ -630,7 +630,7 @@ include("head.inc");
 				<input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>Disable all packet filtering.</strong>
 				<br />
-				<span class="vexpl">Note:  This converts pfSense into a routing only platform!<br>
+				<span class="vexpl">Note:  This converts <?=$g['product_name'];?> into a routing only platform!<br>
 				                    Note:  This will turn off NAT!
 				</span>
 			</td>

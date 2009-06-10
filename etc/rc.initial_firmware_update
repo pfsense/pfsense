@@ -156,7 +156,7 @@ function do_upgrade($path) {
 	echo "\nOne moment please... Invoking firmware upgrade...\n";
 	exec("/etc/rc.firmware pfSenseupgrade $path");
 	unlink_if_exists($path);
-	unlink($g['varrun_path'] . "/firmware.lock");
+	unlink_if_exists($g['varrun_path'] . "/firmware.lock");
 	die;
 }
 

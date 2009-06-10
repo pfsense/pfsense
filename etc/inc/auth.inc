@@ -260,10 +260,13 @@ function local_user_set(& $user) {
 
 	/* write out ssh authorized key file */
 	if($user['authorizedkeys']) {
-		if (!is_dir("{$user_home}/.ssh"))
+		if (!is_dir("{$user_home}/.ssh")) {
 			mkdir("{$user_home}/.ssh", 0700);
+			chown("{$user_home}/.ssh", $user_name);
+		}
 		$keys = base64_decode($user['authorizedkeys']);
 		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
+		chown("{$user_home}/.ssh/authorized_keys", $user_name);
 	}
 }
 

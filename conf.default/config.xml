@@ -134,7 +134,12 @@
 			<desc>TCP Offload Engine - BCE</desc>
 			<tunable>hw.bce.tso_enable</tunable>
 			<value>0</value>
-		</item>		
+		</item>
+		<item>
+			<desc>Enable accelerating of L3 and L2 lookups</desc>
+			<tunable>net.inet.flowtable.enable</tunable>
+			<value>1</value>
+		</item>
 	</sysctl>
 	<system>
 		<optimization>normal</optimization>

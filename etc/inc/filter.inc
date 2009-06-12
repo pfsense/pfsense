@@ -250,6 +250,13 @@ function filter_configure_sync() {
 			unlock($filterlck);
 			return;
 		}
+		/* Brutal ugly hack but required -- PF is stuck, unwedge */
+		if(strstr("$rules_error", "busy")) {
+			exec("/sbin/pfctl -d");
+			exec("/sbin/pfctl -e");
+			file_notice("pf_busy", "PF was marked busy and has been reset.", "pf_busy", "");
+			log_error("PF was marked busy and has been reset.");
+		}
 	}
 
 	update_filter_reload_status("Starting up layer7 daemon");

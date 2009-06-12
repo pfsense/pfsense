@@ -255,8 +255,8 @@ function filter_configure_sync() {
 			exec("/sbin/pfctl -d");
 			exec("/sbin/pfctl -e");
 			exec("/sbin/pfctl -f /tmp/rules.debug");
-			file_notice("pf_busy", "PF was marked busy and has been reset.", "pf_busy", "");
-			log_error("PF was marked busy and has been reset.");
+			file_notice("pf_busy", "PF was wedged/busy and has been reset.", "pf_busy", "");
+			log_error("PF was wedged/busy and has been reset.");
 		}
 	}
 

@@ -90,6 +90,7 @@ include("head.inc");
 	$tab_array[] = array("Captive portal", false, "services_captiveportal.php");
 	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
 	$tab_array[] = array("Allowed IP addresses", true, "services_captiveportal_ip.php");
+	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
 	display_top_tabs($tab_array);
 ?>

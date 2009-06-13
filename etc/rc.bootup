@@ -264,6 +264,10 @@ vpn_setup();
 /* start the captive portal */
 captiveportal_configure();
 
+/* start Voucher support */
+require_once("voucher.inc");
+voucher_configure();
+
 /* run any shell commands specified in config.xml */
 system_do_shell_commands();
 

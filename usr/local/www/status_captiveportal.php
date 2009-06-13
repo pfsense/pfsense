@@ -36,10 +36,7 @@
 ##|*MATCH=status_captiveportal.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
-
-$concurrent = `cat /var/db/captiveportal.db | wc -l`;
 
 $pgtitle = array("Status: Captive portal");
 
@@ -64,10 +61,13 @@ function clientcmp($a, $b) {
 }
 
 $cpdb = array();
-if (file_exists("/var/db/captiveportal.db"))
-	$cpcontents = file("/var/db/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+if (file_exists("{$g['vardb_path']}/captiveportal.db"))
+	$cpcontents = file("{$g['vardb_path']}/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 else
 	$cpcontents = array();
+
+$concurrent = count($cpcontents);
+
 foreach ($cpcontents as $cpcontent) {
 	$cpent = explode(",", $cpcontent);
 	if ($_GET['showact'])
@@ -88,6 +88,24 @@ if ($_GET['order']) {
 	usort($cpdb, "clientcmp");
 }
 ?>
+
+<?php if (isset($config['voucher']['enable'])): ?>
+<form action="status_captiveportal.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" summary="tab pane">
+<tr><td class="tabnavtbl">
+<?php 
+	$tab_array = array();
+        $tab_array[] = array("Logged Users", true, "status_captiveportal.php");
+        $tab_array[] = array("Active Vouchers", false, "status_captiveportal_vouchers.php");
+        $tab_array[] = array("Voucher Rolls", false, "status_captiveportal_voucher_rolls.php");
+        $tab_array[] = array("Test Vouchers", false, "status_captiveportal_test.php");
+        display_top_tabs($tab_array);
+?> 
+</td></tr>
+<tr>
+<td class="tabcont">
+<? endif; ?>
+
 <table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr"><a href="?order=ip&amp;showact=<?=$_GET['showact'];?>"><?=gettext("IP address");?></a></td>
@@ -115,6 +133,14 @@ if ($_GET['order']) {
   </tr>
 <?php endforeach; ?>
 </table>
+
+<?php if (isset($config['voucher']['enable'])): ?>
+</td>
+</tr>
+</table>
+</form>
+<?php endif; ?>
+
 <form action="status_captiveportal.php" method="get" style="margin: 14px;">
 <input type="hidden" name="order" value="<?=$_GET['order'];?>" />
 <?php if ($_GET['showact']): ?>

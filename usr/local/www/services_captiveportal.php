@@ -264,6 +264,7 @@ function enable_change(enable_change) {
 	$tab_array[] = array("Captive portal", true, "services_captiveportal.php");
 	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
 	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
+	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
 	display_top_tabs($tab_array);
 ?>    </td></tr>
@@ -558,12 +559,13 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 		<?php endif; ?>
 		  Upload an HTML file for the portal page here (leave blank to keep the current one). Make sure to include a form (POST to &quot;$PORTAL_ACTION$&quot;)
 with a submit button (name=&quot;accept&quot;) and a hidden field with name=&quot;redirurl&quot; and value=&quot;$PORTAL_REDIRURL$&quot;.
-Include the &quot;auth_user&quot; and &quot;auth_pass&quot; input fields if authentication is enabled, otherwise it will always fail.
+Include the &quot;auth_user&quot; and &quot;auth_pass&quot; and/or &quot;auth_voucher&quot; input fields if authentication is enabled, otherwise it will always fail.
 Example code for the form:<br>
 		  <br>
 		  <tt>&lt;form method=&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br>
 		  &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type=&quot;text&quot;&gt;<br>
 		  &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_pass&quot; type=&quot;password&quot;&gt;<br>
+		  &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type=&quot;text&quot;&gt;<br>
 		  &nbsp;&nbsp;&nbsp;&lt;input name=&quot;redirurl&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_REDIRURL$&quot;&gt;<br>
 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br>
 		  &lt;/form&gt;</tt></td>

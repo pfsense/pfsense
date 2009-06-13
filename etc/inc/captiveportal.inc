@@ -450,7 +450,8 @@ function captiveportal_prune_old() {
     else
         $idletimeout = 0;
 
-    if (!$timeout && !$idletimeout && !isset($config['captiveportal']['reauthenticate']) && !isset($config['captiveportal']['radiussession_timeout']))
+    if (!$timeout && !$idletimeout && !isset($config['captiveportal']['reauthenticate']) && 
+		!isset($config['captiveportal']['radiussession_timeout']) && !isset($config['voucher']['enable']))
         return;
 
     $captiveportallck = lock('captiveportal');
@@ -505,6 +506,14 @@ function captiveportal_prune_old() {
                 $stop_time = $lastact; // Entry added to comply with WISPr
             }
         }
+
+	/* if vouchers are configured, activate session timeouts */
+	if (!$timedout && isset($config['voucher']['enable']) && !empty($cpdb[$i][7])) {
+		if (time() >= ($cpdb[$i][0] + $cpdb[$i][7])) {
+			$timedout = true;
+			$term_cause = 5; // Session-Timeout
+		}
+	}
 
         /* if radius session_timeout is enabled and the session_timeout is not null, then check if the user should be logged out */
         if (!$timedout && isset($config['captiveportal']['radiussession_timeout']) && !empty($cpdb[$i][7])) {

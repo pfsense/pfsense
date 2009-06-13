@@ -121,6 +121,33 @@ EOD;
     /* radius functions handle everything so we exit here since we're done */
     exit;
 
+} else if ($_POST['accept'] && $_POST['auth_voucher']) {
+
+    $voucher = trim($_POST['auth_voucher']);
+    $timecredit = voucher_auth($voucher);
+    // $timecredit contains either a credit in minutes or an error message
+    if ($timecredit > 0) {  // voucher is valid. Remaining minutes returned
+        // if multiple vouchers given, use the first as username
+        $a_vouchers = split("[\t\n\r ]+",$voucher);
+        $voucher = $a_vouchers[0];
+        $attr = array( 'voucher' => 1,
+                'session_timeout' => $timecredit*60,
+                'session_terminate_time' => 0);
+        if (portal_allow($clientip, $clientmac,$voucher,null,$attr)) {
+
+            // YES: user is good for $timecredit minutes.
+            captiveportal_logportalauth($voucher,$clientmac,$clientip,"VOUCHER LOGIN good for $timecredit min.");
+        } else {
+            portal_reply_page($redirurl, "error", $config['voucher']['msgexpired']);
+        }
+    } else if (-1 == $timecredit) {  // valid but expired
+        captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE","voucher expired");
+        portal_reply_page($redirurl, "error", $config['voucher']['msgexpired']);
+    } else {
+        captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE");
+        portal_reply_page($redirurl, "error", $config['voucher']['msgnoaccess']);
+    }
+
 } else if ($_POST['accept'] && $radius_enable) {
 
     if ($_POST['auth_user'] && $_POST['auth_pass']) {
@@ -233,12 +260,28 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 
     $radiusservers = captiveportal_get_radius_servers();
 
+    if ($attributes['voucher'])
+        $remaining_time = $attributes['session_timeout'];
+
     /* Find an existing session */
     for ($i = 0; $i < count($cpdb); $i++) {
         /* on the same ip */
         if($cpdb[$i][2] == $clientip) {
             captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - REUSING OLD SESSION");
             $sessionid = $cpdb[$i][5];
+            break;
+        }
+	elseif (($attributes['voucher']) && ($username != 'unauthenticated') && ($cpdb[$i][4] == $username)) {
+            // user logged in with an active voucher. Check for how long and calculate 
+            // how much time we can give him (voucher credit - used time)
+            $remaining_time = $cpdb[$i][0] + $cpdb[$i][7] - time();
+            if ($remaining_time < 0)    // just in case. 
+                $remaining_time = 0;
+
+            /* This user was already logged in so we disconnect the old one */
+            captiveportal_disconnect($cpdb[$i],$radiusservers,13);
+            captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
+            unset($cpdb[$i]);
             break;
         }
         elseif ((isset($config['captiveportal']['noconcurrentlogins'])) && ($username != 'unauthenticated')) {
@@ -251,6 +294,11 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
                 break;
             }
         }
+    }
+
+    if ($attributes['voucher'] && $remaining_time <= 0) {
+	unlock($cplock);
+        return 0;       // voucher already used and no time left
     }
 
     if (!isset($sessionid)) {
@@ -289,6 +337,9 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
             exec("/sbin/ipfw add $l2ruleno set 3 deny all from $clientip to any not MAC any $clientmac layer2 in");
             exec("/sbin/ipfw add $l2ruleno set 3 deny all from any to $clientip not MAC $clientmac any layer2 out");
         }
+
+	if ($attributes['voucher'])
+		$attributes['session_timeout'] = $remaining_time;
 
         /* encode password in Base64 just in case it contains commas */
         $bpassword = base64_encode($password);

@@ -40,17 +40,18 @@
 ##|-PRIV
 
 
+
 require("guiconfig.inc");
 
 if ($_POST['width'])
 	$width = $_POST['width'];
 else
-	$width = "550";
+	$width = "100%";
 
 if ($_POST['height'])
 	$height = $_POST['height'];
 else
-	$height = "275";
+	$height = "200";
 
 
 if ($_GET['if'])
@@ -59,14 +60,104 @@ else
 	$curif = "wan";
 
 $pgtitle = array("Status","Traffic Graph");
+
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+
+function updateBandwidth(){
+    var hostinterface = "<?php echo $curif; ?>";
+    bandwidthAjax(hostinterface);
+}
+
+function bandwidthAjax(hostinterface) {
+	uri = "bandwidth_by_ip.php?if=" + hostinterface;
+	var opt = {
+	    // Use GET
+	    method: 'get',
+	    asynchronous: true,
+	    // Handle 404
+	    on404: function(t) {
+	        alert('Error 404: location "' + t.statusText + '" was not found.');
+	    },
+	    // Handle other errors
+	    onFailure: function(t) {
+	        alert('Error ' + t.status + ' -- ' + t.statusText);
+	    },
+		onSuccess: function(t) {
+			updateBandwidthHosts(t.responseText);
+	    }
+	}
+	new Ajax.Request(uri, opt);
+}
+
+function updateBandwidthHosts(data){
+    var hosts_split = data.split("|");
+    d = document;
+    //parse top ten bandwidth abuser hosts
+    for (var y=0; y<10; y++){
+        if (hosts_split[y] != "" && hosts_split[y] != "no info"){
+            if (hosts_split[y]) {
+                hostinfo = hosts_split[y].split(";");
+
+                //update host ip info
+                var HostIpID = "hostip" + y;
+                var hostip = d.getElementById(HostIpID);
+                hostip.innerHTML = hostinfo[0];
+
+                //update bandwidth inbound to host
+                var hostbandwidthInID = "bandwidthin" + y;
+                var hostbandwidthin = d.getElementById(hostbandwidthInID);
+                hostbandwidthin.innerHTML = hostinfo[1] + " Bytes/sec";
+
+                //update bandwidth outbound from host
+                var hostbandwidthOutID = "bandwidthout" + y;
+                var hostbandwidthOut = d.getElementById(hostbandwidthOutID);
+                hostbandwidthOut.innerHTML = hostinfo[2] + " Bytes/sec";
+
+                //make the row appear if hidden
+                var rowid = "host" + y;
+                textlink = d.getElementById(rowid);
+                if (textlink.style.display == "none"){
+                     //hide rows that contain no data
+                     Effect.Appear(rowid, {duration:1});
+                }
+            }
+        }
+        else
+        {
+            var rowid = "host" + y;
+            textlink = d.getElementById(rowid);
+            if (textlink.style.display != "none"){
+                //hide rows that contain no data
+                Effect.Fade(rowid, {duration:2});
+            }
+        }
+    }
+    
+    setTimeout('updateBandwidth()', 3000);
+}
+
+
+</script>
+
 <?php include("fbegin.inc"); ?>
 <?php
-$ifdescrs = get_configured_interface_with_descr();
+$ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
+
+for($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+	if(isset($config['interfaces']['opt' . $j]['enable']))
+		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+}
+if((isset($config['ipsec']['enable'])) || (isset($config['ipsec']['mobileclients']['enable']))) {
+	$ifdescrs['ipsec'] = "IPSEC";
+}
 
 /* link the ipsec interface magically */
 if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) 
@@ -89,13 +180,112 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <p><form method="post" action="status_graph.php">
 </form>
 <p>
-<div align="center">
-	<object data="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml" width="550" height="275">
-		<param name="src" value="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" />
-		Your browser does not support the type SVG! You need to either use Firefox or download the Adobe SVG plugin.
-	</object>
+<div>
+    <div class="widgetdiv" style="padding: 5px; float:left; width:46%">
+        <object data="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml" width="<?=$width;?>" height="<?=$height;?>">
+            <param name="src" value="graph.php?ifnum=<?=$curif;?>&amp;ifname=<?=rawurlencode($ifdescrs[$curif]);?>" />
+            Your browser does not support the type SVG! You need to either use Firefox or download the Adobe SVG plugin.
+        </object>
+    </div>
+    <div class="widgetdiv" style="padding: 5px; float:right; width:48%">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td class="listtopic" valign="top">Host IP</td>
+                <td class="listtopic" valign="top">Bandwidth In</td>
+                <td class="listtopic" valign="top">Bandwidth Out</td>
+           </tr>
+           <tr id="host0" style="display:none">
+                <td id="hostip0" class="vncell">
+                </td>
+                <td id="bandwidthin0" class="listr">
+                </td>
+                <td id="bandwidthout0" class="listr">
+                </td>
+           </tr>
+           <tr id="host1" style="display:none">
+                <td id="hostip1" class="vncell">
+                </td>
+                <td id="bandwidthin1" class="listr">
+                </td>
+                <td id="bandwidthout1" class="listr">
+                </td>
+           </tr>
+           <tr id="host2" style="display:none">
+                <td id="hostip2" class="vncell">
+                </td>
+                <td id="bandwidthin2" class="listr">
+                </td>
+                <td id="bandwidthout2" class="listr">
+                </td>
+           </tr>
+           <tr id="host3" style="display:none">
+                <td id="hostip3" class="vncell">
+                </td>
+                <td id="bandwidthin3" class="listr">
+                </td>
+                <td id="bandwidthout3" class="listr">
+                </td>
+           </tr>
+           <tr id="host4" style="display:none">
+                <td id="hostip4" class="vncell">
+                </td>
+                <td id="bandwidthin4" class="listr">
+                </td>
+                <td id="bandwidthout4" class="listr">
+                </td>
+           </tr>
+           <tr id="host5" style="display:none">
+                <td id="hostip5" class="vncell">
+                </td>
+                <td id="bandwidthin5" class="listr">
+                </td>
+                <td id="bandwidthout5" class="listr">
+                </td>
+           </tr>
+           <tr id="host6" style="display:none">
+                <td id="hostip6" class="vncell">
+                </td>
+                <td id="bandwidthin6" class="listr">
+                </td>
+                <td id="bandwidthout6" class="listr">
+                </td>
+           </tr>
+           <tr id="host7" style="display:none">
+                <td id="hostip7" class="vncell">
+                </td>
+                <td id="bandwidthin7" class="listr">
+                </td>
+                <td id="bandwidthout7" class="listr">
+                </td>
+           </tr>
+           <tr id="host8" style="display:none">
+                <td id="hostip8" class="vncell">
+                </td>
+                <td id="bandwidthin8" class="listr">
+                </td>
+                <td id="bandwidthout8" class="listr">
+                </td>
+           </tr>
+           <tr id="host9" style="display:none">
+                <td id="hostip9" class="vncell">
+                </td>
+                <td id="bandwidthin9" class="listr">
+                </td>
+                <td id="bandwidthout9" class="listr">
+                </td>
+           </tr>
+        </table>
+	 </div>
 </div>
 
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+window.onload = function(in_event)
+	{
+        updateBandwidth();
+    }
+
+</script>
 </body>
 </html>

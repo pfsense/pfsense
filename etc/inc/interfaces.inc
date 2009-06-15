@@ -829,7 +829,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	}
 
 	if ($destroy == true) {
-		if (preg_match("/^tun|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|^vlan/i", $realif))
+		if (preg_match("/^tun|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $realif))
                 	mwexec("/sbin/ifconfig {$realif} destroy");
 	}
 	
@@ -2377,6 +2377,8 @@ function is_altq_capable($int) {
 
         if (in_array($int_family[0], $capable))
                 return true;
+	else if (stristr($int_family, "vlan")) /* VLANs are name $parent.$vlan now */
+		return true;
         else
                 return false;
 }

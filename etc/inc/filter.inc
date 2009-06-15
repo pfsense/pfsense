@@ -3004,14 +3004,7 @@ function create_firewall_outgoing_rules_to_itself() {
 			$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 		}
 	}
-/*
-	update_filter_reload_status("Setting up bridging items");
-	// is bridging turned on? 
-	for($x=0; $x<10; $x++) {
-		if(does_interface_exist("bridge{$x}") == true)
-			$rule .="pass out quick on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
-	}
-*/
+
 	update_filter_reload_status("Setting up pptp items");
 	if($config['pptpd']['mode'] == "server")
 		$rule .="pass out quick on \$pptp all keep state label \"let out anything from firewall host itself pptp\"\n";
@@ -3030,8 +3023,8 @@ function create_firewall_outgoing_rules_to_itself() {
 	}
 
 	update_filter_reload_status("Setting up tun interfaces (openvpn)");
-	/* openvpn tun interfaces.  check for 100. */
-	for($x=0; $x<100; $x++) {
+	/* openvpn tun interfaces.  check for 1000. */
+	for($x=0; $x<1000; $x++) {
 		if(does_interface_exist("tun{$x}") == true) {
 			$rule .="pass out quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			$friendlytunif = convert_real_interface_to_friendly_interface_name("tun{$x}");
@@ -3044,7 +3037,7 @@ function create_firewall_outgoing_rules_to_itself() {
 			}
 		}
 	}
-	for($x=0; $x<100; $x++) {
+	for($x=0; $x<1000; $x++) {
 		if(does_interface_exist("tap{$x}") == true) {
 			$rule .="pass out quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			$friendlytapif = convert_real_interface_to_friendly_interface_name("tap{$x}");

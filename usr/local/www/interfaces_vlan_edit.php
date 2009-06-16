@@ -98,7 +98,7 @@ if ($_POST) {
 		$vlan['if'] = $_POST['if'];
 		$vlan['tag'] = $_POST['tag'];
 		$vlan['descr'] = $_POST['descr'];
-		$vlan['vlanif'] = "{$_POST['if']}.vlan{$_POST['tag']}";
+		$vlan['vlanif'] = "{$_POST['if']}_vlan{$_POST['tag']}";
 
 		$vlan['vlanif'] = interface_vlan_configure($vlan);
                 if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan"))

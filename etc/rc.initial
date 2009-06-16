@@ -71,7 +71,7 @@ hidebanner=`cat /etc/inc/globals.inc | grep hidebanner | cut -d'"' -f4`
 echo
 echo
 echo " ${product} console setup "
-echo "***********************"
+echo "***************************"
 echo " 0)  Logout (SSH only)"
 echo " 1)  Assign Interfaces"
 echo " 2)  Set interface(s) IP address"

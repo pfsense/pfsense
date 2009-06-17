@@ -32,6 +32,7 @@
 */
 
 $g = array(
+	"base_packages" => "AutoConfigBackup, siproxd", 
 	"factory_shipped_username" => "admin",
 	"factory_shipped_password" => "pfsense",
 	"upload_path" => "/root",

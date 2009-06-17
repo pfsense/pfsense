@@ -43,6 +43,10 @@ $g['platform'] = trim(file_get_contents("/etc/platform"));
 if($g['platform'] == "pfSense") {
 	safe_mkdir("/usr/local/pkg");
 	safe_mkdir("/usr/local/pkg/pf");
+} else {
+	conf_mount_rw();
+	safe_mkdir("/usr/local/pkg");
+	safe_mkdir("/usr/local/pkg/pf");	
 }
 
 /****f* pkg-utils/remove_package

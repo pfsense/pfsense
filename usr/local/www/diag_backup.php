@@ -39,6 +39,36 @@ function remove_bad_chars($string) {
 	return preg_replace('/[^a-z|_|0-9]/i','',$string);
 }
 
+function add_base_packages_menu_items() {
+	global $g, $config;
+	$base_packages = split($g['base_packages'], ",");
+	$modified_config = false;
+	foreach($base_packages as $bp) {
+		$basepkg_path = "/usr/local/pkg/";
+		if(file_exists($basepkg_path . $configfile)) {
+			$pkg_config = parse_xml_config_pkg($basepkg_path . $bp, "packagegui");
+			if($pkg_config['menu'] != "") {
+				if(is_array($pkg_config['menu'])) {
+					foreach($pkg_config['menu'] as $menu) {
+						if(is_array($config['installedpackages']['menu']))
+							foreach($config['installedpackages']['menu'] as $amenu)
+								if($amenu['name'] == $menu['name'])
+									continue;
+						$config['installedpackages']['menu'][] = $menu;
+						$modified_config = true;
+					}
+				}
+				$static_output .= "done.\n";
+				update_output_window($static_output);
+			}
+		}
+	}
+	if($modified_config) {
+		write_confg("Restored base_package menus after configuration restore.");
+		$config = parse_config(true);
+	}
+}
+
 function spit_out_select_items($area) {
 	$select = <<<EOD
 	<select name="{$area}">
@@ -175,6 +205,7 @@ if ($_POST) {
 										$config['interfaces'][$iface]['descr'] = remove_bad_chars($config['interfaces'][$iface]['descr']);
 								unlink_if_exists("/tmp/config.cache");
 								write_config();
+								add_base_packages_menu_items();
 								conf_mount_ro();
 								$savemsg = "The m0n0wall configuration has been restored and upgraded to {$g['product_name']}.<p>The firewall is now rebooting.";
 								$reboot_needed = true;

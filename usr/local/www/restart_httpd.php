@@ -26,9 +26,16 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-restart-httpd
+##|*NAME=Diagnostics: Restart HTTPD : System page
+##|*DESCR=Allow access to the 'Diagnostics: Restart HTTPD: System' page.
+##|*MATCH=restart_httpd.php*
+##|-PRIV
+
 require_once("guiconfig.inc");
 require_once("system.inc");
-$pgtitle = array("Restarting mini_httpd");
+$pgtitle = array("Restarting httpd");
 include("head.inc");
 ?>
 

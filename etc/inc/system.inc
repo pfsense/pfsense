@@ -29,8 +29,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/* include all configuration functions */
-require_once("functions.inc");
 
 function activate_powerd() {
 	global $config, $g;

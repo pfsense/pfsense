@@ -31,9 +31,7 @@
 /* DISABLE_PHP_LINT_CHECKING */
 
 /* include all configuration functions */
-require_once("functions.inc");
-require_once("pkg-utils.inc");
-require_once("notices.inc");
+require_once("config.inc");
 
 class Monitor {
 	private $conf = array();

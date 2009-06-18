@@ -29,9 +29,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once("config.inc");
-require_once("filter.inc");
-require_once("services.inc");
+require("captiveportal.inc");
 
 captiveportal_configure();
 

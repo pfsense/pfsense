@@ -28,6 +28,13 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-vpn-vpnl2tp-users
+##|*NAME=VPN: VPN L2TP : Users page
+##|*DESCR=Allow access to the 'VPN: VPN L2TP : Users' page.
+##|*MATCH=vpn_l2tp_users.php*
+##|-PRIV
+
 $pgtitle = array(gettext("VPN"),gettext("L2TP"),gettext("Users"));
 
 require("guiconfig.inc");

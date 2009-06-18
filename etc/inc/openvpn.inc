@@ -636,11 +636,6 @@ function openvpn_resync_all() {
 		foreach ($config['openvpn']['openvpn-csc'] as & $settings)
 			openvpn_resync_csc($settings);
 
-	/* give speedy machines time to settle */
-	sleep(5);
-
-	/* reload the filter policy */
-	filter_configure();
 }
 
 ?>

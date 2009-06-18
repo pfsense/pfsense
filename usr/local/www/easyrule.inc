@@ -208,9 +208,7 @@ function easyrule_block_host_add($host, $int = 'wan') {
 	/* If needed, write the config and reload the filter */
 	if ($dirty) {
 		write_config();
-		config_lock();
 		$retval = filter_configure();
-		config_unlock();
 		header("Location: firewall_aliases.php");
 		exit;
 	} else {
@@ -251,9 +249,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport) {
 	$a_filter[] = $filterent;
 
 	write_config();
-	config_lock();
 	$retval = filter_configure();
-	config_unlock();
 	header("Location: firewall_rules.php?if={$int}");
 	exit;
 }

@@ -339,17 +339,17 @@ function system_syslogd_start() {
 
 EOD;
 		}
-		$syslogconf .= "!racoon\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= <<<EOD
-*.*						%{$g['varlog_path']}/ipsec.log
-
-EOD;
-		}
 		$syslogconf .= "!apinger\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
 *.*						%{$g['varlog_path']}/slbd.log
+
+EOD;
+		}
+		$syslogconf .= "!racoon\n";
+		if (!isset($syslogcfg['disablelocallogging'])) {
+			$syslogconf .= <<<EOD
+*.*						%{$g['varlog_path']}/ipsec.log
 
 EOD;
 		}

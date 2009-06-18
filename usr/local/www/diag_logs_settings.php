@@ -193,7 +193,7 @@ function enable_change(enable_over) {
                           firewall events<br> <input name="dhcp" id="dhcp" type="checkbox" value="yes" <?php if ($pconfig['dhcp']) echo "checked"; ?>>
                           DHCP service events<br> <input name="portalauth" id="portalauth" type="checkbox" value="yes" <?php if ($pconfig['portalauth']) echo "checked"; ?>>
                           Portal Auth<br> <input name="vpn" id="vpn" type="checkbox" value="yes" <?php if ($pconfig['vpn']) echo "checked"; ?>>
-                          PPTP VPN events</td>
+                          VPN events</td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top">&nbsp;</td>

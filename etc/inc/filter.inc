@@ -1500,7 +1500,7 @@ function generate_user_filter_rule($rule)
 
 	/* exception(s) to a user rules can go here. */
 	/* rules with a gateway or pool should create another rule for routing to vpns */
-	if (($aline['route'] <> "") && (trim($aline['type']) == "pass") && (trim($dst) == "any")) {
+	if (($aline['route'] <> "") && (trim($aline['type']) == "pass") && strstr($dst, "any")) {
 		/* negate VPN/PPTP/PPPoE networks for load balancer/gateway rules */
 		$vpns = " to <vpns> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] .

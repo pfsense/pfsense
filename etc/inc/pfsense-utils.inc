@@ -1054,77 +1054,36 @@ function strncpy(&$dst, $src, $length) {
 function reload_interfaces_sync() {
 	global $config, $g;
 
-	$shutdown_webgui_needed = false;
-
+	/* XXX: Use locks?! */
+	if (file_exists("{$g['tmp_path']}/reloading_all")) {
+		log_error("WARNING: Recursive call to interfaces sync!");
+		return;
+	}
 	touch("{$g['tmp_path']}/reloading_all");
 
 	if($g['debug'])
 		log_error("reload_interfaces_sync() is starting.");
 
-	if(file_exists("{$g['tmp_path']}/config.cache"))
-		unlink("{$g['tmp_path']}/config.cache");
-
 	/* parse config.xml again */
 	$config = parse_config(true);
 
-	$wan_if = $config['interfaces']['wan']['if'];
-	if (isset($config['interfaces']['lan']))
-                $lan_if = $config['interfaces']['lan']['if'];
-        else
-                $lan_if = "";
+	/* enable routing */
+	system_routing_enable();
+	if($g['debug'])
+		log_error("Enabling system routing");
 
 	if($g['debug'])
 		log_error("Cleaning up Interfaces");
 
-	/* if list */
-        $iflist = get_configured_interface_list(true);
-
-	foreach ($iflist as $ifent => $ifname) {
-		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
-
-		if(stristr($ifname, "lo0") == true)
-			continue;
-		/* do not process wan interface, its mandatory */
-                if(stristr($ifname, "$wan_if") == true)
-                        continue;
-                /* do not process lan interface, its mandatory */
-                if(stristr($ifname, "$lan_if") == true)
-                        continue;
-		if($g['debug'])
-			log_error("Downing and deleting $ifname_real - $ifname");
-		mwexec("/sbin/ifconfig {$ifname_real} down");
-		mwexec("/sbin/ifconfig {$ifname_real} delete");
-	}
-
 	/* set up interfaces */
 	interfaces_configure();
-
-	/* set up static routes */
-	if($g['debug'])
-		log_error("Configuring system Routing");
-	system_routing_configure();
-
-	/* enable routing */
-	if($g['debug'])
-		log_error("Enabling system routing");
-	system_routing_enable();
-
-	/* setup captive portal if needed */
-	if($g['debug'])
-		log_error("Configuring Captive portal");
-	captiveportal_configure();
-
-	/* restart webConfigurator if needed */
-	if($shutdown_webgui_needed == true)
-		touch("/tmp/restart_webgui");
-
-	/* start devd back up */
-	mwexec("/bin/rm /tmp/reload*");
 
 	/* remove reloading_all trigger */
 	if($g['debug'])
 		log_error("Removing {$g['tmp_path']}/reloading_all");
-	unlink_if_exists("{$g['tmp_path']}/reloading_all");
+
+	/* start devd back up */
+	mwexec("/bin/rm /tmp/reload*");
 }
 
 /****f* pfsense-utils/reload_all
@@ -1164,12 +1123,12 @@ function reload_all_sync() {
 
 	$g['booting'] = false;
 
+	/* XXX: Use locks?! */
+        if (file_exists("{$g['tmp_path']}/reloading_all")) {
+                log_error("WARNING: Recursive call to reload all sync!");
+                return;
+        }
 	touch("{$g['tmp_path']}/reloading_all");
-
-	$shutdown_webgui_needed = false;
-
-	if(file_exists("{$g['tmp_path']}/config.cache"))
-		unlink("{$g['tmp_path']}/config.cache");
 
 	/* parse config.xml again */
 	$config = parse_config(true);
@@ -1186,52 +1145,14 @@ function reload_all_sync() {
 	/* generate resolv.conf */
 	system_resolvconf_generate();
 
-	/* Set up our loopback interface */
-	interfaces_loopback_configure();
-
-	$wan_if = $config['interfaces']['wan']['if'];
-	if (isset($config['interfaces']['lan']))
-		$lan_if = $config['interfaces']['lan']['if'];
-	else
-		$lan_if = "";
-
-	/* if list */
-	$iflist = get_configured_interface_list();
-
-	foreach ($iflist as $ifent => $ifname) {
-		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
-		if(stristr($ifname, "lo0") == true)
-			continue;
-		/* do not process wan interface, its mandatory */
-		if($wan_if == $ifname_real)
-			continue;
-		/* do not process lan interface, its mandatory */
-		if($lan_if == $ifname_real)
-			continue;
-		mwexec("/sbin/ifconfig {$ifname_real} down");
-		mwexec("/sbin/ifconfig {$ifname_real} delete");
-	}
+	/* enable routing */
+	system_routing_enable();
 
 	/* set up interfaces */
 	interfaces_configure();
 
-	/* set up static routes */
-	system_routing_configure();
-
-	/* enable routing */
-	system_routing_enable();
-
-	/* ensure passwords are sync'd */
-//	system_password_configure();
-
-	/* start dnsmasq service */
-	services_dnsmasq_configure();
-
 	/* start dyndns service */
 	services_dyndns_configure();
-
-	/* start DHCP service */
-	services_dhcpd_configure();
 
 	/* configure cron service */
 	configure_cron();
@@ -1239,28 +1160,18 @@ function reload_all_sync() {
 	/* start the NTP client */
 	system_ntp_configure();
 
-	/* start the captive portal */
-	captiveportal_configure();
-
-        /* reload the filter */
-	filter_configure_sync();
-
 	/* sync pw database */
 	conf_mount_rw();
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
 	conf_mount_ro();
 
 	/* restart sshd */
-	touch("/tmp/start_sshd");
+	@touch("/tmp/start_sshd");
 
 	/* restart webConfigurator if needed */
-	if($shutdown_webgui_needed == true)
-		touch("/tmp/restart_webgui");
+	touch("/tmp/restart_webgui");
 
 	mwexec("/bin/rm /tmp/reload*");
-
-	unlink_if_exists("{$g['tmp_path']}/reloading_all");
-
 }
 
 function auto_login($status) {

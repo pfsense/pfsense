@@ -240,19 +240,16 @@ if ($_POST['apply']) {
 		services_snmpd_configure();		
 		if ($if == "lan") 		
 			$savemsg = "The changes have been applied.  You may need to correct your web browser's IP address.";
+
 		/* sync filter configuration */
 		setup_gateways_monitor();
+
 		if (file_exists($d_staticroutesdirty_path)) 
 			unlink($d_staticroutesdirty_path);
-		filter_configure();
-		/* set up static routes */
-		system_routing_configure();
-		/* start IPsec tunnels */
-		vpn_ipsec_configure();
 	}
 	header("Location: interfaces.php?if={$if}");
 	exit;
-}
+} else
 
 if ($_POST && $_POST['enable'] == "no") {
 	unset($wancfg['enable']);
@@ -261,7 +258,7 @@ if ($_POST && $_POST['enable'] == "no") {
 	touch($d_landirty_path);
 	header("Location: interfaces.php?if={$if}");
 	exit;
-}
+} else
 
 if ($_POST) {
 	unset($input_errors);

@@ -668,6 +668,9 @@ function interface_gif_configure(&$gif) {
 function interfaces_configure() {
 	global $config, $g;
 
+	/* Set up our loopback interface */
+        interfaces_loopback_configure();
+
 	/* set up LAGG virtual interfaces */
 	interfaces_lagg_configure();
 
@@ -698,9 +701,9 @@ function interfaces_configure() {
 		else {
 			if ($g['booting'])
 				echo "Configuring {$ifname} interface...";
-        	if($g['debug'])
+        		if($g['debug'])
 				log_error("Configuring {$ifname}");
-			interface_configure($if);
+			interface_configure($if, true);
 			if ($g['booting']) 
 				echo "done.\n";
 		}
@@ -715,10 +718,10 @@ function interfaces_configure() {
 	foreach ($delayed_list as $if => $ifname) {
 		if ($g['booting'])
 			echo "Configuring {$ifname} interface...";
-        if($g['debug'])
-        	log_error("Configuring {$ifname}");
+        	if ($g['debug'])
+        		log_error("Configuring {$ifname}");
 
-		interface_configure($if);
+		interface_configure($if, true);
 
 		if ($g['booting'])
 			echo "done.\n";
@@ -733,7 +736,7 @@ function interfaces_configure() {
 		if($g['debug'])
 			log_error("Configuring {$ifname}");
 
-		interface_configure($if);
+		interface_configure($if, true);
 
 		if ($g['booting'])
 			echo "done.\n";
@@ -1437,7 +1440,7 @@ function find_dhclient_process($interface) {
 	return $pid;
 }
 
-function interface_configure($interface = "wan") {
+function interface_configure($interface = "wan", $reloadall = false) {
 	global $config, $g;
 	global $interface_sn_arr_cache, $interface_ip_arr_cache;
 
@@ -1545,32 +1548,34 @@ function interface_configure($interface = "wan") {
 					interface_bridge_configure($bridge);
 		}
 
-		/* XXX: Shouldn't the caller do this?! */
-		/* XXX */
-		if ($interface = "lan")
+		/* XXX: Shouldn't the caller do all this reconfiguring?! */
+		if ($interface == "lan")
 			/* make new hosts file */
-                	system_hosts_generate();
+               		system_hosts_generate();
 
-		/* reconfigure static routes (kernel may have deleted them) */
-		system_routing_configure();
+		if ($reloadall == true) {
 
-		/* set the reload filter dity flag */
-		filter_configure();
+			/* reconfigure static routes (kernel may have deleted them) */
+			system_routing_configure();
 
-		/* reload ipsec tunnels */
-		vpn_ipsec_configure();
+			/* reload ipsec tunnels */
+			vpn_ipsec_configure();
 
-		/* update dyndns */
-		services_dyndns_configure();
+			/* update dyndns */
+			services_dyndns_configure();
 
-		/* force DNS update */
-		services_dnsupdate_process();
+			/* force DNS update */
+			services_dnsupdate_process();
 
-		/* restart dnsmasq */
-		services_dnsmasq_configure();
+			/* restart dnsmasq */
+			services_dnsmasq_configure();
 
-		/* reload captive portal */
-		captiveportal_configure();
+			/* reload captive portal */
+			captiveportal_configure();
+
+			/* set the reload filter dity flag */
+			filter_configure();
+		}
 	}
 
 
@@ -2496,15 +2501,14 @@ function is_jumbo_capable($int) {
 
 function setup_pppoe_reset_file($interface, $status) {
 	define("CRON_PPPOE_CMD_FILE", "/conf/pppoe{$interface}restart");
-	define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"interfaces.inc\"); interface_reconfigure({$interface}); services_dyndns_reset({$interface}); filter_configure(); ?>' | /usr/local/bin/php -q");
-	if($status == true) {
-		if(!file_exists(CRON_PPPOE_CMD_FILE)) {
+	define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"config.inc\"); require(\"interfaces.inc\"); interface_reconfigure({$interface}); ?>' | /usr/local/bin/php -q");
+	if ($status == true) {
+		if (!file_exists(CRON_PPPOE_CMD_FILE)) {
 			file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
 			chmod(CRON_PPPOE_CMD_FILE, 0700);
 		}	
-	} else {
+	} else
 		unlink_if_exists(CRON_PPPOE_CMD_FILE);
-	}
 }
 
 ?>

@@ -487,11 +487,6 @@ function services_dhcrelay_configure() {
 	$cmd .= " {$dhcrelaycfg['server']}";
 	mwexec($cmd);
 
-	if (!$g['booting']) {
-		/* set the reload filter dity flag */
-		filter_configure();
-	}
-
 	return 0;
 }
 

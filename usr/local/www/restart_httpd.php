@@ -34,7 +34,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
-require_once("system.inc");
+
 $pgtitle = array("Restarting httpd");
 include("head.inc");
 ?>

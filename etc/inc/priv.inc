@@ -40,8 +40,8 @@
 		DISABLE_PHP_LINT_CHECKING
 */
 
-require_once("functions.inc");
 require_once("priv.defs.inc");
+require_once("auth.inc");
 
 /*
  * USER PRIVILEGE DEFINITIONS
@@ -125,23 +125,6 @@ function map_page_privname($page) {
 	}
 
 	return false;
-}
-
-function get_user_privileges(& $user) {
-
-	$privs = $user['priv'];
-	if (!is_array($privs))
-		$privs = array();
-
-	$names = local_user_get_groups($user, true);
-
-	foreach ($names as $name) {
-		$group = getGroupEntry($name);
-		if (is_array($group['priv']))
-			$privs = array_merge( $privs, $group['priv']);
-	}
-
-	return $privs;
 }
 
 function get_user_privdesc(& $user) {
@@ -261,22 +244,6 @@ function getAllowedPages($username) {
 	$_SESSION['page-match'] = $allowed_pages;
 
 	return $allowed_pages;
-}
-
-function userHasPrivilege($userent, $privid = false) {
-
-	if (!$privid || !is_array($userent))
-		return false;
-
-	$privs = get_user_privileges($userent);
-
-	if (!is_array($privs))
-		return false;
-
-	if (!in_array($privid, $privs))
-		return false;
-
-	return true;
 }
 
 ?>

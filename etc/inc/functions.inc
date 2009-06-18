@@ -70,11 +70,9 @@ if(!function_exists("pfSenseHeader")) {
 /* END compatibility goo with HEAD */
 
 /* include all configuration functions */
-require_once("auth.inc");
 require_once("priv.inc");
 require_once("certs.inc");
 require_once("crypt.inc");
-require_once("util.inc");
 require_once("interfaces.inc");
 require_once("gwlb.inc");
 require_once("services.inc");
@@ -86,7 +84,6 @@ require_once("openvpn.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
-require_once("notices.inc");
 require_once("cmd_chain.inc");
 require_once("rrd.inc");
 

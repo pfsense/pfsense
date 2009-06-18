@@ -35,8 +35,7 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
-include_once("auth.inc");
-require_once("functions.inc");
+include_once("priv.inc");
 
 /* We only support htpasswd backed HTTP Basic auth and session
  * based backing methods at the moment.

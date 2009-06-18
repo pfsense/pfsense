@@ -42,7 +42,7 @@
  * file courtesy of Michael Retterklieber.
  */
 
-require_once("functions.inc");
+require_once("config.inc");
 
 $groupindex = index_groups();
 $userindex = index_users();
@@ -105,6 +105,39 @@ function & getGroupEntryByGID($gid) {
 			return $group;
 
 	return false;
+}
+
+function get_user_privileges(& $user) {
+
+        $privs = $user['priv'];
+        if (!is_array($privs))
+                $privs = array();
+
+        $names = local_user_get_groups($user, true);
+
+        foreach ($names as $name) {
+                $group = getGroupEntry($name);
+                if (is_array($group['priv']))
+                        $privs = array_merge( $privs, $group['priv']);
+        }
+
+        return $privs;
+}
+
+function userHasPrivilege($userent, $privid = false) {
+
+        if (!$privid || !is_array($userent))
+                return false;
+
+        $privs = get_user_privileges($userent);
+
+        if (!is_array($privs))
+                return false;
+
+        if (!in_array($privid, $privs))
+                return false;
+
+        return true;
 }
 
 function local_backed($username, $passwd) {
@@ -872,7 +905,7 @@ function session_auth($backing) {
 			return false;
 
 		/* redirect to page the user is on, it'll prompt them to login again */
-		pfSenseHeader($scriptName);
+		Header("Location: {$scriptName}");
 
 		return false;
 	}

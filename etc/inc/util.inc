@@ -975,4 +975,17 @@ function carp_sync_client() {
 	touch($g['tmp_path'] . "/filter_sync"); 
 }
 
+/****f* util/isAjax
+ * NAME
+ *   isAjax - reports if the request is driven from prototype
+ * INPUTS
+ *   none
+ * RESULT
+ *   true/false
+ ******/
+function isAjax() {
+        return isset ($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+}
+
+
 ?>

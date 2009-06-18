@@ -28,10 +28,7 @@
   */
 
 /* include all configuration functions */
-require_once("functions.inc");
-require_once("pkg-utils.inc");
-require_once("notices.inc");
-require_once("globals.inc");
+require_once("config.inc");
 
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";

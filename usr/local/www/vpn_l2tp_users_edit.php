@@ -127,7 +127,6 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 			<div id="inputerrors"></div>
             <form action="vpn_l2tp_users_edit.php" method="post" name="iform" id="iform">
-              <?display_topbar()?>
               <div id="mainarea">
 	          <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>

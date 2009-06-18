@@ -28,8 +28,6 @@
 		DISABLE_PHP_LINT_CHECKING
 */
 
-require_once("functions.inc");
-
 function & lookup_ca($refid) {
 	global $config;
 

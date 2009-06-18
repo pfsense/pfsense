@@ -91,8 +91,8 @@ if ($_GET['act'] == "delph1")
 		unset($a_phase1[$_GET['p1index']]);
 		vpn_ipsec_refresh_policies();
 		vpn_ipsec_configure();
-		filter_configure();
 		write_config();
+		filter_configure();
 		header("Location: vpn_ipsec.php");
 		exit;
 	}

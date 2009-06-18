@@ -860,10 +860,7 @@ EOD;
 	
 		vpn_ipsec_failover_configure();
 
-		if (!$g['booting']) {
-			/* reload the filter */
-			filter_configure();
-		} else
+		if ($g['booting'])
 			echo "done\n";
 	}
 
@@ -1114,11 +1111,6 @@ EOD;
 			break;
 	}
 
-	if (!$g['booting']) {
-		/* reload the filter */
-		filter_configure();
-	}
-
 	if ($g['booting'])
 		echo "done\n";
 
@@ -1312,8 +1304,6 @@ EOD;
 			break;
 	}
 
-	filter_configure();
-
 	if ($g['booting'])
 		echo "done\n";
 
@@ -1493,8 +1483,6 @@ EOD;
 		case 'redir' :
 			break;
 	}
-
-	filter_configure();
 
 	if ($g['booting'])
 		echo "done\n";

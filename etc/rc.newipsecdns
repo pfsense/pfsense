@@ -31,7 +31,6 @@
 */
 
 	/* parse the configuration and include all functions used below */
-	require_once("config.inc");
 	require_once("functions.inc");
 	
 	/* make sure to wait until the boot scripts have finished */
@@ -48,4 +47,6 @@
 	vpn_ipsec_refresh_policies();
 	
 	vpn_ipsec_configure();
+
+	filter_configure();
 ?>

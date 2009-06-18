@@ -127,8 +127,6 @@ if ($_POST) {
 			}
 		}
 		unset($config['pptpd']['mode']);
-
-		write_config();
 	}
 
 	if (!$input_errors) {
@@ -188,7 +186,7 @@ if ($_POST) {
 		write_config();
 		
 		$retval = 0;
-		$retval = vpn_setup();
+		$retval = vpn_pptpd_configure();
 		$savemsg = get_std_save_message($retval);
 		
 		filter_configure();

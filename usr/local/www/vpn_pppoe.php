@@ -118,7 +118,6 @@ if ($_POST) {
 			}
 		}
 		unset($config['pppoe']);
-		write_config();		
 	}
 	
 	if (!$input_errors) {
@@ -172,7 +171,7 @@ if ($_POST) {
 		write_config();
 		
 		$retval = 0;
-		$retval = vpn_setup();
+		$retval = vpn_pppoe_configure();
 		$savemsg = get_std_save_message($retval);
 	}
 }

@@ -71,7 +71,6 @@ if(!function_exists("pfSenseHeader")) {
 
 /* include all configuration functions */
 require_once("priv.inc");
-require_once("certs.inc");
 require_once("interfaces.inc");
 require_once("gwlb.inc");
 require_once("services.inc");

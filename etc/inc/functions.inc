@@ -84,5 +84,6 @@ require_once("vpn.inc");
 require_once("vslb.inc");
 require_once("cmd_chain.inc");
 require_once("rrd.inc");
+require_once("haproxy.inc");
 
 ?>

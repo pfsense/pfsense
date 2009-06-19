@@ -94,6 +94,7 @@ $d_vipconfdirty_path = $g['varrun_path'] . "/vip.conf.dirty";
 $d_sysctldirty_path = $g['varrun_path'] . "/sysctl.conf.dirty";
 $d_vsconfdirty_path = $g['varrun_path'] . "/vs.conf.dirty";
 $d_shaperconfdirty_path = $g['varrun_path'] . "/shaper.conf.dirty";
+$d_haproxyconfdirty_path = $g['varrun_path'] . "/haproxy.conf.dirty";
 
 /* OpenVPN Directories */
 $d_ovpnsrvdirty_path = "/tmp/ovpn-srv.dirty";

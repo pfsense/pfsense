@@ -197,9 +197,12 @@ echo "done.\n";
 /* start load balancer daemon */
 relayd_configure();
 
-	/* reconfigure our gateway monitor */
+/* start haproxy daemon */ 
+haproxy_configure();
+
+/* reconfigure our gateway monitor */
 echo "Setting up gateway monitors...";
-	setup_gateways_monitor();
+setup_gateways_monitor();
 echo "done.\n";
 
 /* start OpenVPN server & clients */

@@ -504,7 +504,6 @@ if ($pkg['tabs'] <> "") {
 								$size = $rowhelper['size'];
 							else
 								$size = "8";
-							if($rowhelper['size'] <> "") $size = $rowhelper['size'];
 							display_row($rowcounter, $value, $fieldname, $type, $rowhelper, $size);
 							// javascript helpers for row_helper_dynamic.js
 							echo "</td>\n";

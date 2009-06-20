@@ -274,7 +274,7 @@ rm -f /cf/conf/backup/backup.cache
 cp /usr/local/lib/php.ini /usr/local/etc/php.ini
 
 # let the PHP-based configuration subsystem set up the system now
-echo -n "Launching PHP init system..."
+echo -n "Launching the init system..."
 /etc/rc.bootup
 
 # If a shell was selected from recovery 

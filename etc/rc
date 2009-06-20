@@ -294,7 +294,7 @@ cap_mkdb /etc/login.conf
 . /etc/rc.php_ini_setup
 
 # let the PHP-based configuration subsystem set up the system now
-echo -n "Launching PHP init system..."
+echo -n "Launching the init system..."
 rm -f /cf/conf/backup/backup.cache
 rm -f /root/lighttpd*
 /etc/rc.bootup

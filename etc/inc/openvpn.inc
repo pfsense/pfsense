@@ -43,9 +43,8 @@
 /* DISABLE_PHP_LINT_CHECKING */
 
 require_once('config.inc');
-require_once('globals.inc');
+require_once("certs.inc");
 require_once('pfsense-utils.inc');
-require_once('util.inc');
 
 $openvpn_prots = array("UDP", "TCP");
 

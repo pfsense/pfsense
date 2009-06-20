@@ -35,6 +35,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("certs.inc");
 
 $ca_methods = array(
 	"existing" => "Import an existing Certificate Authority",

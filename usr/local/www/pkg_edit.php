@@ -165,7 +165,7 @@ if ($_POST) {
 						  if($firstfield == $rowhelperfield['fieldname']) $rows++;
 						}
 						$fieldname = str_replace("\\", "", $rowhelperfield['fieldname']);
-						$fieldname = "\$value = \$_POST['" . $fieldname . $x . "'];";
+						$comd = "\$value = \$_POST['" . $fieldname . $x . "'];";
 						eval($comd);
 						if($value <> "") {
 							$comd = "\$pkgarr['row'][" . $x . "]['" . $fieldname . "'] = \"" . $value . "\";";
@@ -195,7 +195,6 @@ if ($_POST) {
 			$a_pkg[] = $pkgarr;
 
 		write_config($pkg['addedit_string']);
-
 		// late running code
 		if($pkg['custom_add_php_command_late'] <> "") {
 		    eval($pkg['custom_add_php_command_late']);
@@ -508,7 +507,7 @@ if ($pkg['tabs'] <> "") {
 							$type = $rowhelper['type'];
 							$fieldname = $rowhelper['fieldname'];
 							if($type == "option") $options = &$rowhelper['options']['option'];
-							if($rowhelper['size'] && isint($rowhelper['size'])) 
+							if($rowhelper['size'] && is_int($rowhelper['size'])) 
 								$size = $rowhelper['size'];
 							else
 								$size = "8";

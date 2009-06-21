@@ -157,11 +157,11 @@ if ($_POST) {
 						}
 						$fieldname = str_replace("\\", "", $rowhelperfield['fieldname']);
 						$comd = "\$value = \$_POST['" . $fieldname . $x . "'];";
-						echo($comd . "<br>");
+//						echo($comd . "<br>");
 						eval($comd);
 						if($value <> "") {
 							$comd = "\$pkgarr['row'][" . $x . "]['" . $fieldname . "'] = \"" . $value . "\";";
-							echo($comd . "<br>");
+//							echo($comd . "<br>");
 							eval($comd);
 						}
 					}
@@ -185,7 +185,6 @@ if ($_POST) {
 			$a_pkg[$id] = $pkgarr;
 		else
 			$a_pkg[] = $pkgarr;
-exit;
 		write_config($pkg['addedit_string']);
 
 		// late running code

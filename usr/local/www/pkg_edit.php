@@ -507,7 +507,7 @@ if ($pkg['tabs'] <> "") {
 							$type = $rowhelper['type'];
 							$fieldname = $rowhelper['fieldname'];
 							if($type == "option") $options = &$rowhelper['options']['option'];
-							if($rowhelper['size'] && is_int($rowhelper['size'])) 
+							if($rowhelper['size']) 
 								$size = $rowhelper['size'];
 							else
 								$size = "8";

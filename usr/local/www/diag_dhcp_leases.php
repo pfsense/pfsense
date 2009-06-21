@@ -66,7 +66,7 @@ if (($_GET['deleteip']) && (is_ipaddr($_GET['deleteip']))) {
 
 	/* Restart DHCP Service */
 	services_dhcpd_configure();
-	header("Location: diag_dhcp_leases.php");
+	header("Location: diag_dhcp_leases.php?all={$_GET['all']}");
 }
 
 include("head.inc");
@@ -364,7 +364,7 @@ foreach ($leases as $data) {
 
 		/* Only show the button for offline dynamic leases */
 		if (($data['type'] == "dynamic") && ($data['online'] != "online")) {
-			echo "<td class=\"list\" valign=\"middle\"><a href=\"diag_dhcp_leases.php?deleteip={$data['ip']}\">";
+			echo "<td class=\"list\" valign=\"middle\"><a href=\"diag_dhcp_leases.php?deleteip={$data['ip']}&all={$_GET['all']}\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_x.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"delete this dhcp lease\"></a></td>\n";
 		}
                 echo "</tr>\n";

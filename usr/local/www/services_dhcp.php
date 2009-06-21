@@ -38,6 +38,8 @@ require("guiconfig.inc");
 function dhcp_clean_leases() {
 	global $g, $config;
 	$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
+	if (!file_exists($leasesfile))
+		return;
 	/* Build list of static MACs */
 	$staticmacs = array();
 	foreach($config['interfaces'] as $ifname => $ifarr)

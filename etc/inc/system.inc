@@ -1277,6 +1277,9 @@ function system_enable_arp_wrong_if() {
 
 function enable_watchdog() {
 	global $config;
+	// this is disabled until the IPSEC throughput issues
+	// can bre resolved.
+	return;
 	$install_watchdog = false;
 	$supported_watchdogs = array("Geode");
 	$file = file_get_contents("/var/log/dmesg.boot");

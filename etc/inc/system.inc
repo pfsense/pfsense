@@ -1150,6 +1150,7 @@ function system_enable_arp_wrong_if() {
 
 function enable_watchdog() {
 	global $config;
+	return;
 	$install_watchdog = false;
 	$supported_watchdogs = array("Geode");
 	$file = file_get_contents("/var/log/dmesg.boot");

@@ -1275,24 +1275,4 @@ function system_enable_arp_wrong_if() {
 	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_movements=1");
 }
 
-function enable_watchdog() {
-	global $config;
-	// this is disabled until the IPSEC throughput issues
-	// can bre resolved.
-	return;
-	$install_watchdog = false;
-	$supported_watchdogs = array("Geode");
-	$file = file_get_contents("/var/log/dmesg.boot");
-	foreach($supported_watchdogs as $sd) {
-		if(stristr($file, "Geode")) {
-			$install_watchdog = true;
-		}
-	}
-	if($install_watchdog == true) {
-		if(is_process_running("watchdogd"))
-			mwexec("/usr/bin/killall watchdogd", true);
-		exec("/usr/sbin/watchdogd");
-	}
-}
-
 ?>

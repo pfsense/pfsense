@@ -346,6 +346,4 @@ mwexec_bg("/usr/sbin/update_dns_cache.sh");
 unlink("{$g['varrun_path']}/booting");
 $g['booting'] = FALSE;
 
-conf_mount_ro();
-
 ?>

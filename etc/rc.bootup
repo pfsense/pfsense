@@ -370,4 +370,6 @@ function rescue_detect_keypress() {
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;
 
+	conf_mount_ro();
+
 ?>

@@ -164,17 +164,12 @@ pfSenseNanoBSDupgrade)
 		exit
 	fi
 
-	backup_chflags
-	remove_chflags
-
 	# Do we have a pre-upgrade hook in the update file?
 	if [ `tar tvzf $IMG | grep /tmp/pre_upgrade_command | wc -l` -gt 0 ]; then 
 		tar xzvf $IMG -C / ./tmp/pre_upgrade_command
 		chmod a+rx /tmp/pre_upgrade_command
 		sh /tmp/pre_upgrade_command
 	fi
-
-	#exec </dev/console >/dev/console 2>/dev/console
 
 	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
 
@@ -186,8 +181,8 @@ pfSenseNanoBSDupgrade)
 	/sbin/mount -w -o noatime /cf 2>/dev/null
 	/sbin/mount -w -o noatime /   2>/dev/null
 
-	# tar explode image onto hd
 	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
+
 	cat $IMG | update1
 
 	# restore config

@@ -293,8 +293,6 @@ echo "done."
 
 rm -rf /usr/local/pkg/pf/CVS
 
-/usr/local/bin/php -f /etc/rc.conf_mount_ro
-
 # Remove stale files that have already been processed by bootup
 # scripts
 rm -f /tmp/filter_dirty
@@ -307,5 +305,7 @@ minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 echo "Bootup complete"
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
+
+etc/rc.conf_mount_ro
 
 exit 0

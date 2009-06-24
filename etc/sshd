@@ -172,6 +172,10 @@
 		echo "done.\n";
 	}
 
+	// NanoBSD
+	if(file_exists("/root/save_sshkeys"))
+		exec("/root/save_sshkeys");
+
 	conf_mount_ro();
 
 ?>

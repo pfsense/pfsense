@@ -152,6 +152,80 @@ upgrade)
 		sh /etc/rc.reboot
 	fi
 	;;
+pfSenseNanoBSDupgrade)
+	touch /var/run/firmware.lock
+
+	# wait 1 seconds before beginning
+	sleep 1
+
+	# Sanity check - bail early if there's no firmware file!
+	if [ ! -r $IMG ]; then
+		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info -i -t Upgrade
+		exit
+	fi
+
+	backup_chflags
+	remove_chflags
+
+	# Do we have a pre-upgrade hook in the update file?
+	if [ `tar tvzf $IMG | grep /tmp/pre_upgrade_command | wc -l` -gt 0 ]; then 
+		tar xzvf $IMG -C / ./tmp/pre_upgrade_command
+		chmod a+rx /tmp/pre_upgrade_command
+		sh /tmp/pre_upgrade_command
+	fi
+
+	#exec </dev/console >/dev/console 2>/dev/console
+
+	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
+
+	# backup config
+	/bin/mkdir -p /tmp/configbak
+	cp -p /conf/* /tmp/configbak 2>/dev/null
+	# mount /cf
+	/etc/rc.conf_mount_rw
+	/sbin/mount -w -o noatime /cf 2>/dev/null
+	/sbin/mount -w -o noatime /   2>/dev/null
+
+	# tar explode image onto hd
+	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
+	cat $IMG | update1
+
+	# restore config
+	cp -p /tmp/configbak/* /conf 2>/dev/null
+
+	# Remove upgrade file
+	rm -f $IMG
+
+	# If /tmp/post_upgrade_command exists after update
+	# then execute the command.
+	if [ -f /tmp/post_upgrade_command ]; then
+		sh /tmp/post_upgrade_command
+	fi
+
+	# remount /cf ro
+	rm -rf /etc/rc.conf
+	rm -rf /etc/motd
+	find / -name CVS -type d -exec rm {} \;
+	rm -rf /usr/savecore/*
+	/etc/rc.conf_mount_ro
+
+	sleep 3
+	rm -f /var/run/firmware.lock
+	/bin/sync
+	sleep 2
+	echo "Done." | logger -p daemon.info -i -t Upgrade
+
+	# If the archive has unpacked a file called
+	# /tmp/no_upgrade_reboot_required then do
+	# not reboot after upgrade.
+	if [ -f /tmp/no_upgrade_reboot_required ]; then
+		rm /tmp/no_upgrade_reboot_required
+	else
+		rm -f /var/run/config.lock
+		sh /etc/rc.reboot
+	fi
+
+	;;
 pfSenseupgrade)
 
 	touch /var/run/firmware.lock

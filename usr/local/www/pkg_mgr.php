@@ -78,7 +78,7 @@ include("fbegin.inc");
 
 	$tab_array = array();
 	$tab_array[] = array("Available {$version} packages", $requested_version <> "" ? false : true, "pkg_mgr.php");
-	$tab_array[] = array("Packages for any platform", $requested_version == "none" ? true : false, "pkg_mgr.php?ver=none");
+//	$tab_array[] = array("Packages for any platform", $requested_version == "none" ? true : false, "pkg_mgr.php?ver=none");
 /*  $tab_array[] = array("Packages with a different version", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other"); */
 	$tab_array[] = array("Installed Packages", false, "pkg_mgr_installed.php");
 	display_top_tabs($tab_array);

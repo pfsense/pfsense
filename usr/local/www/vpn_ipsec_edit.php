@@ -111,7 +111,7 @@ if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['p1halgo'] = "sha1";
 	$pconfig['p1dhgroup'] = "2";
 	$pconfig['p2proto'] = "esp";
-	$pconfig['p2ealgos'] = explode(",", "3des,blowfish,cast128,rijndael,rijndael 256");
+	$pconfig['p2ealgos'] = explode(",", "3des,blowfish,cast128,rijndael,aes 256");
 	$pconfig['p2halgos'] = explode(",", "hmac_sha1,hmac_md5");
 	$pconfig['p2pfsgroup'] = "0";
 	$pconfig['remotebits'] = 32;

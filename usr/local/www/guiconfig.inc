@@ -166,9 +166,9 @@ $my_identifier_list = array('myaddress' => 'My IP address',
 				'dyn_dns' => 'Dynamic DNS');
 
 $p1_ealgos = array('des' => 'DES', '3des' => '3DES', 'blowfish' => 'Blowfish',
-		'cast128' => 'CAST128','rijndael' => 'Rijndael (AES)', 'rijndael 256' => 'Rijndael 256');
+		'cast128' => 'CAST128','rijndael' => 'Rijndael (AES)', 'aes 256' => 'AES-256');
 $p2_ealgos = array('des' => 'DES', '3des' => '3DES', 'blowfish' => 'Blowfish',
-		'cast128' => 'CAST128', 'rijndael' => 'Rijndael (AES)', 'rijndael 256' => 'Rijndael 256');
+		'cast128' => 'CAST128', 'rijndael' => 'Rijndael (AES)', 'aes 256' => 'AES-256');
 
 $p1_halgos = array('sha1' => 'SHA1', 'md5' => 'MD5');
 $p1_authentication_methods = array('pre_shared_key' => 'Pre-shared key', 'rsasig' => 'RSA signature');

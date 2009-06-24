@@ -153,16 +153,17 @@ upgrade)
 	fi
 	;;
 pfSenseNanoBSDupgrade)
-	touch /var/run/firmware.lock
-
-	# wait 1 seconds before beginning
-	sleep 1
 
 	# Sanity check - bail early if there's no firmware file!
 	if [ ! -r $IMG ]; then
 		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info -i -t Upgrade
 		exit
 	fi
+
+	# wait 1 seconds before beginning
+	sleep 1
+
+	touch /var/run/firmware.lock
 
 	# Do we have a pre-upgrade hook in the update file?
 	if [ `tar tvzf $IMG | grep /tmp/pre_upgrade_command | wc -l` -gt 0 ]; then 
@@ -183,7 +184,7 @@ pfSenseNanoBSDupgrade)
 
 	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
 
-	zcat $IMG | update1
+	zcat $IMG | /root/updatep1
 
 	# restore config
 	cp -p /tmp/configbak/* /conf 2>/dev/null
@@ -222,17 +223,17 @@ pfSenseNanoBSDupgrade)
 
 	;;
 pfSenseupgrade)
-
-	touch /var/run/firmware.lock
-
-	# wait 1 seconds before beginning
-	sleep 1
 	
 	# Sanity check - bail early if there's no firmware file!
 	if [ ! -r $IMG ]; then
 		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info -i -t Upgrade
 		exit
 	fi
+
+	# wait 1 seconds before beginning
+	sleep 1
+
+	touch /var/run/firmware.lock
 
 	backup_chflags
 	remove_chflags

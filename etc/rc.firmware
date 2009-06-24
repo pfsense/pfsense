@@ -183,7 +183,7 @@ pfSenseNanoBSDupgrade)
 
 	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
 
-	cat $IMG | update1
+	zcat $IMG | update1
 
 	# restore config
 	cp -p /tmp/configbak/* /conf 2>/dev/null

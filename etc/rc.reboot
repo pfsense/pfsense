@@ -18,6 +18,10 @@ else
 	/etc/rc.conf_mount_rw
 	# Save the rrd databases to the config path.
 	cd / && tar -czf /cf/conf/rrd.tgz -C / var/db/rrd/*.rrd
+	# NanoBSD
+	if [ -f /root/save_sshkeys ]; then
+		/root/save_sshkeys
+	fi
 	/etc/rc.conf_mount_ro
 fi
 

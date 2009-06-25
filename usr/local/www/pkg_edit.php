@@ -257,25 +257,45 @@ foreach ($pkg['fields']['field'] as $field) {
 		print("\tif (document.iform.elements[\"{$field['fieldname']}\"].checked == false) {\n");
 
 		if (isset($field['enablefields'])) {
-			foreach (explode(',', $field['enablefields']) as $enablefield)
-				print("\t\tdocument.iform.elements[\"$enablefield\"].disabled = 1;\n");
+			foreach (explode(',', $field['enablefields']) as $enablefield) {
+				print("\t\tif(document.iform.elements[\"$enablefield\"]){\n");
+				print("\t\t\tdocument.iform.elements[\"$enablefield\"].disabled = 1;\n");
+				print("\t\t}else{\n");
+				print("\t\t\tdocument.iform.elements[\"$enablefield".'[]'."\"].disabled = 1;\n");
+				print("\t\t}\n");
+			}
 		}
 
 		if (isset($field['checkenablefields'])) {
-			foreach (explode(',', $field['checkenablefields']) as $checkenablefield)
-				print("\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 0;\n");
+			foreach (explode(',', $field['checkenablefields']) as $checkenablefield) {
+				print("\t\tif(document.iform.elements[\"$checkenablefield\"]){\n");
+				print("\t\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 0;\n");
+				print("\t\t}else{\n");
+				print("\t\t\tdocument.iform.elements[\"$checkenablefield".'[]'."\"].checked = 0;\n");
+				print("\t\t}\n");
+			}
 		}
 
 		print("\t}\n\telse {\n");
 
 		if (isset($field['enablefields'])) {
-			foreach (explode(',', $field['enablefields']) as $enablefield)
-				print("\t\tdocument.iform.elements[\"$enablefield\"].disabled = 0;\n");
+			foreach (explode(',', $field['enablefields']) as $enablefield) {
+				print("\t\tif(document.iform.elements[\"$enablefield\"]){\n");
+				print("\t\t\tdocument.iform.elements[\"$enablefield\"].disabled = 0;\n");
+				print("\t\t}else{\n");
+				print("\t\t\tdocument.iform.elements[\"$enablefield".'[]'."\"].disabled = 0;\n");
+				print("\t\t}\n");
+			}
 		}
 
 		if (isset($field['checkenablefields'])) {
-			foreach(explode(',', $field['checkenablefields']) as $checkenablefield)
-				print("\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 1;\n");
+			foreach(explode(',', $field['checkenablefields']) as $checkenablefield) {
+				print("\t\tif(document.iform.elements[\"$checkenablefield\"]){\n");
+				print("\t\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 1;\n");
+				print("\t\t}else{\n");
+				print("\t\t\tdocument.iform.elements[\"$checkenablefield".'[]'."\"].checked = 1;\n");
+				print("\t\t}\n");
+			}
 		}
 
 		print("\t}\n");
@@ -335,7 +355,7 @@ if ($pkg['tabs'] <> "") {
 <tr><td><div id="mainarea"><table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
   <?php
   $cols = 0;
-  $savevalue = gettext("Save");
+  $savevalue = "Salvar";
   if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
   foreach ($pkg['fields']['field'] as $pkga) { 
 
@@ -598,7 +618,7 @@ if($pkg['note'] != "")
 ?>
       <input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>">
 <?php if (!$only_edit): ?>
-      <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
+      <input class="formbtn" type="button" value="Cancelar" onclick="history.back()">
 <?php endif; ?>
     </td>
   </tr>

@@ -355,7 +355,7 @@ if ($pkg['tabs'] <> "") {
 <tr><td><div id="mainarea"><table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
   <?php
   $cols = 0;
-  $savevalue = "Salvar";
+  $savevalue = gettext("Save");
   if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
   foreach ($pkg['fields']['field'] as $pkga) { 
 
@@ -618,7 +618,7 @@ if($pkg['note'] != "")
 ?>
       <input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>">
 <?php if (!$only_edit): ?>
-      <input class="formbtn" type="button" value="Cancelar" onclick="history.back()">
+      <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
 <?php endif; ?>
     </td>
   </tr>

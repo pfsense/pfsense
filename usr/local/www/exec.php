@@ -54,7 +54,8 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 	unset($_POST['txtCommand']);
 }
 
-conf_mount_rw();
+if($_POST)
+	conf_mount_rw();
 
 // Function: is Blank
 // Returns true or false depending on blankness of argument.
@@ -321,6 +322,7 @@ document.forms[0].txtCommand.focus();
 
 <?php
 
-conf_mount_ro();
+if($_POST)
+	conf_mount_ro();
 
 ?>

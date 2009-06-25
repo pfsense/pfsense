@@ -138,11 +138,11 @@ include("head.inc");
 				<span class="log-action" nowrap><a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo $filterent['rulenum']; ?>', outputrule);">
 				<?php
 					if (strstr(strtolower($filterent['act']), "p"))
-						$img = "/themes/metallic/images/icons/icon_pass.gif";
+						$img = "/themes/{$g['theme']}/images/icons/icon_pass.gif";
 					else if(strstr(strtolower($filterent['act']), "r"))
-						$img = "/themes/metallic/images/icons/icon_reject.gif";
+						$img = "/themes/{$g['theme']}/images/icons/icon_reject.gif";
 					else
-						$img = "/themes/metallic/images/icons/icon_block.gif";
+						$img = "/themes/{$g['theme']}/images/icons/icon_block.gif";
 				?>
 				<img border="0" src="<?=$img;?>" width="11" height="11" align="absmiddle"></a></span>
 				<span class="log-time" ><?=htmlspecialchars($filterent['time']);?></span>

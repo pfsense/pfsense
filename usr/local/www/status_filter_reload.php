@@ -77,12 +77,12 @@ function update_data(obj) {
 	result_text = result_text.replace("\n","");
 	result_text = result_text.replace("\r","");
 	if (result_text) {
-		$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> ' + result_text + '...';
+		$('status').innerHTML = '<img src="/themes/{$g['theme']}/images/misc/loader.gif"> ' + result_text + '...';
 	} else {
-		$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> Obtaining filter status...';
+		$('status').innerHTML = '<img src="/themes/{$g['theme']}/images/misc/loader.gif"> Obtaining filter status...';
 	}
 	if(result_text == "Initializing") {
-		$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> Initializing...';
+		$('status').innerHTML = '<img src="/themes/{$g['theme']}/images/misc/loader.gif"> Initializing...';
 	} else if(result_text == "Done") {
 		new Effect.Highlight($('status'));
 		$('status').innerHTML = 'Done.  The filter rules have been reloaded.';

@@ -161,11 +161,11 @@ function handle_ajax($tail = 50, $showflags = false) {
 			preg_match("/.*([0-9][0-9]:[0-9][0-9]:[0-9][0-9])/", $log_row['time'], $time_regex);
 			$row_time = strtotime($time_regex[1]);
 			if (strstr(strtolower($log_row['act']), "p"))
-				$img = "<img border='0' src='/themes/metallic/images/icons/icon_pass.gif'>";
+				$img = "<img border='0' src='/themes/{$g['theme']}/images/icons/icon_pass.gif'>";
 			else if(strstr(strtolower($filterent['act']), "r"))
-				$img = "<img border='0' src='/themes/metallic/images/icons/icon_reject.gif'>";
+				$img = "<img border='0' src='/themes/{$g['theme']}/images/icons/icon_reject.gif'>";
 			else
-				$img = "<img border='0' src='/themes/metallic/images/icons/icon_block.gif'>";
+				$img = "<img border='0' src='/themes/{$g['theme']}/images/icons/icon_block.gif'>";
 			//echo "{$time_regex[1]} - $row_time > $lastsawtime<p>";
 			if($row_time > $lastsawtime) {
 

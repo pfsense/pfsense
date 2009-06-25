@@ -261,6 +261,17 @@ function local_user_set(& $user) {
 		$user_group = "wheel";
 	}
 
+	/* admin user special handling */
+	if ($user_uid == 0) {
+		$cmd = "/usr/sbin/pw usermod -q -n admin -s /bin/sh -H 0";
+		if($debug)
+			log_error("Running: {$cmd}");
+		$fd = popen($cmd, "w");
+		fwrite($fd, $user['password']);
+		pclose($fd);
+		$user_group = "wheel";
+	}
+
 	/* read from pw db */
 	$fd = popen("/usr/sbin/pw usershow {$user_name} 2>&1", "r");
 	$pwread = fgets($fd);

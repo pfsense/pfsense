@@ -368,6 +368,6 @@ function rescue_detect_keypress() {
 
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
-	$g['booting'] = FALSE;
+	unset($g['booting']);
 
 ?>

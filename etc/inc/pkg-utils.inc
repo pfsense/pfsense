@@ -47,6 +47,7 @@ if($g['platform'] == "pfSense") {
 	conf_mount_rw();
 	safe_mkdir("/usr/local/pkg");
 	safe_mkdir("/usr/local/pkg/pf");	
+	conf_mount_ro();
 }
 
 /****f* pkg-utils/remove_package

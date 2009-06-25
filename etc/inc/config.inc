@@ -306,12 +306,9 @@ function parse_config($parse = false) {
 function generate_config_cache($config) {
 	global $g;
 	config_lock();
-	conf_mount_rw();
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
-	mwexec("sync");
-	conf_mount_ro();
 	config_unlock();
 	return true;
 }

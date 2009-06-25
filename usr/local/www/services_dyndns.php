@@ -45,6 +45,7 @@ $pconfig['wildcard'] = isset($config['dyndns']['wildcard']);
 
 $pconfig['dnsupdate_enable'] = isset($config['dnsupdate']['enable']);
 $pconfig['dnsupdate_host'] = $config['dnsupdate']['host'];
+$pconfig['dnsupdate_server'] = $config['dnsupdate']['server'];
 $pconfig['dnsupdate_ttl'] = $config['dnsupdate']['ttl'];
 if (!$pconfig['dnsupdate_ttl'])
 	$pconfig['dnsupdate_ttl'] = 60;
@@ -106,6 +107,7 @@ if ($_POST) {
 
 		$config['dnsupdate']['enable'] = $_POST['dnsupdate_enable'] ? true : false;
 		$config['dnsupdate']['host'] = $_POST['dnsupdate_host'];
+		$config['dnsupdate']['server'] = $_POST['dnsupdate_server'];
 		$config['dnsupdate']['ttl'] = $_POST['dnsupdate_ttl'];
 		$config['dnsupdate']['keyname'] = $_POST['dnsupdate_keyname'];
 		$config['dnsupdate']['keytype'] = $_POST['dnsupdate_keytype'];
@@ -146,6 +148,7 @@ function enable_change(enable_change) {
 
 	endis = !(document.iform.dnsupdate_enable.checked || enable_change);
 	document.iform.dnsupdate_host.disabled = endis;
+	document.iform.dnsupdate_server.disabled = endis;
 	document.iform.dnsupdate_ttl.disabled = endis;
 	document.iform.dnsupdate_keyname.disabled = endis;
 	document.iform.dnsupdate_keytype[0].disabled = endis;
@@ -248,6 +251,12 @@ function enable_change(enable_change) {
                   </td>
 				</tr>
                 <tr>
+                  <td width="22%" valign="top" class="vncell">Server</td>
+                  <td width="78%" class="vtable">
+                    <input name="dnsupdate_server" type="text" class="formfld" id="dnsupdate_server" size="30" value="<?=htmlspecialchars($pconfig['dnsupdate_server']);?>">
+                  </td>
+				</tr>
+                <tr>
                   <td valign="top" class="vncellreq">TTL</td>
                   <td class="vtable">
                     <input name="dnsupdate_ttl" type="text" class="formfld" id="dnsupdate_ttl" size="6" value="<?=htmlspecialchars($pconfig['dnsupdate_ttl']);?>">
@@ -261,7 +270,7 @@ function enable_change(enable_change) {
                     This must match the setting on the DNS server.</td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncellreq">Key type </td>
+                  <td valign="top" class="vncell">Key type </td>
                   <td class="vtable">
 				  <input name="dnsupdate_keytype" type="radio" value="zone" <?php if ($pconfig['dnsupdate_keytype'] == "zone") echo "checked"; ?>> Zone &nbsp;
                   <input name="dnsupdate_keytype" type="radio" value="host" <?php if ($pconfig['dnsupdate_keytype'] == "host") echo "checked"; ?>> Host &nbsp;
@@ -275,7 +284,7 @@ function enable_change(enable_change) {
                     Paste an HMAC-MD5 key here.</td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Protocol</td>
+                  <td width="22%" valign="top" class="vncell">Protocol</td>
                   <td width="78%" class="vtable">
                     <input name="dnsupdate_usetcp" type="checkbox" id="dnsupdate_usetcp" value="yes" <?php if ($pconfig['dnsupdate_usetcp']) echo "checked"; ?>>
                     <strong>Use TCP instead of UDP</strong></td>

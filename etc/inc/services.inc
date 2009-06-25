@@ -925,7 +925,10 @@ EOD;
 			fclose($fd);
 
 			/* generate update instructions */
-			$upinst =  "update delete {$config['dnsupdate']['host']} A\n";
+			$upinst = "";
+			if ($config['dnsupdate']['server'])
+				$upinst .=  "server {$config['dnsupdate']['server']}\n";
+			$upinst .= "update delete {$config['dnsupdate']['host']} A\n";
 			$upinst .= "update add {$config['dnsupdate']['host']} {$config['dnsupdate']['ttl']} A {$wanip}\n";
 			$upinst .= "\n";	/* mind that trailing newline! */
 

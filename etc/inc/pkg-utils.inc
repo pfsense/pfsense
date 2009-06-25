@@ -46,7 +46,8 @@ if($g['platform'] == "pfSense") {
 } else {
 	conf_mount_rw();
 	safe_mkdir("/usr/local/pkg");
-	safe_mkdir("/usr/local/pkg/pf");	
+	safe_mkdir("/usr/local/pkg/pf");
+	conf_mount_ro();
 }
 
 $version = split("-", trim(file_get_contents("/etc/version")));

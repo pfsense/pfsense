@@ -184,7 +184,33 @@ pfSenseNanoBSDupgrade)
 
 	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
 
-	zcat $IMG | /root/updatep1
+	BOOT_DEVICE=`/sbin/mount | /usr/bin/grep root | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`
+	if [ "$BOOT_DEVICE" = "root0" ]; then
+		TOFLASH="root1"
+	else
+		TOFLASH="root0"
+	fi
+
+	# Remove TOFLASH and get ready for new flash image
+	dd if=/dev/zero of=/dev/ufs/${TOFLASH} bs=1m count=1 >/dev/null 2>&1
+
+	# Stream gzipped image to dd and explode image to new area
+	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/ufs/${TOFLASH} bs=16k >/dev/null 2>&1
+	
+	# Ensure that our new system is sound and bail if it is not and file a notice
+	/sbin/fsck_ffs -n /dev/ufs/${TOFLASH}
+	if [ $? != 0 ]; then
+		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
+		<?php
+			require_once(\"functions.inc\");
+			require_once(\"/usr/local/pkg/apache_mod_security.inc\");
+			file_notice("UpgradeFailure", "{$g['product_name']} upgrade has failed.   Your system has been left in a usable state.", "UpgradeFailure", "");
+		?>
+ENDOFF
+		
+	fi
+
+	/usr/sbin/boot0cfg -s 1 -v /dev/ufs/${TOFLASH}
 
 	# restore config
 	cp -p /tmp/configbak/* /conf 2>/dev/null

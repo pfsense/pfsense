@@ -11,8 +11,10 @@ value=`od -A n -d -N2 /dev/random | awk '{ print $1 }'`
 
 echo "rc.update_bogons.sh is sleeping for $value" | logger
 
-# Sleep for that time.
-sleep $value
+# Sleep for that time, unless an argument is specified.
+if [ ! $1 ]; then
+    sleep $value
+fi    
 
 echo "rc.update_bogons.sh is beginning the update cycle." | logger
 

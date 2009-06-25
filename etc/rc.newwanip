@@ -107,7 +107,7 @@ filter_configure();
 enable_rrd_graphing();
 
 /* This is DHCP, update the gateway group items default gateway */
-update_gateway_groups_defaultroute_dhclient($interface);
+//update_gateway_groups_defaultroute_dhclient($interface);
 
 /* restart packages */
 if($old_ip <> "") {

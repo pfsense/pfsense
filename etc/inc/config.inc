@@ -320,11 +320,9 @@ function parse_config($parse = false) {
 function generate_config_cache($config) {
 	global $g;
 
-	conf_mount_rw();
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
-	conf_mount_ro();
 }
 
 function discover_last_backup() {

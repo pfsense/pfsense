@@ -203,6 +203,7 @@ ENDOFF
 	fi
 
 	/usr/sbin/boot0cfg -s 1 -v /dev/ufs/${TOFLASH}
+	#>/dev/null 2>&1
 
 	# restore config
 	cp -p /tmp/configbak/* /conf 2>/dev/null

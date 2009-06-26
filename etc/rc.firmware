@@ -180,11 +180,11 @@ pfSenseNanoBSDupgrade)
 	BOOT_DRIVE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense1 | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`
 	# test the slice.  if we are on slice 1 we need to flash 2 and vica versa
 	if [ `echo $REAL_BOOT_DEVICE | /usr/bin/grep "s1"` ]; then 
-		TOFLASH="${BOOT_DRIVE}s2a"
 		SLICE="2"
+		TOFLASH="${BOOT_DRIVE}s${SLICE}"
 	else
-		TOFLASH="${BOOT_DRIVE}s1a"
 		SLICE="1"
+		TOFLASH="${BOOT_DRIVE}s${SLICE}"
 	fi
 
 	# Remove TOFLASH and get ready for new flash image

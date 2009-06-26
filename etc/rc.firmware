@@ -211,11 +211,14 @@ ENDOFF
 	# Remove upgrade file
 	rm -f $IMG
 
+	mkdir /tmp/$TOFLASH
+	mount /dev/ufs/$TOFLASH /tmp/$TOFLASH
 	# If /tmp/post_upgrade_command exists after update
 	# then execute the command.
-	if [ -f /tmp/post_upgrade_command ]; then
-		sh /tmp/post_upgrade_command
+	if [ -f /tmp/$TOFLASH/tmp/post_upgrade_command ]; then
+		sh /tmp/$TOFLASH/tmp/post_upgrade_command
 	fi
+	umount /tmp/$TOFLASH
 
 	# remount /cf ro
 	rm -rf /etc/rc.conf

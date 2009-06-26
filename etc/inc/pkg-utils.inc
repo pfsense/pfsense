@@ -38,6 +38,14 @@ require_once("service-utils.inc");
 require_once("pfsense-utils.inc");
 require_once("globals.inc");
 
+if($pkg_interface == "console") {
+	if(!function_exists("update_status")) {
+		function update_status($status) {
+			echo $status . "\n";
+		}
+	}
+}
+
 safe_mkdir("/var/db/pkg");
 
 $g['platform'] = trim(file_get_contents("/etc/platform"));

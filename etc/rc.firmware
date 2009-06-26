@@ -157,11 +157,8 @@ pfSenseNanoBSDupgrade)
 	# Sanity check - bail early if there's no firmware file!
 	if [ ! -r $IMG ]; then
 		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info -i -t Upgrade
-		exit
+		exit 1
 	fi
-
-	# wait 1 seconds before beginning
-	sleep 1
 
 	touch /var/run/firmware.lock
 
@@ -185,10 +182,12 @@ pfSenseNanoBSDupgrade)
 	fi
 
 	# Remove TOFLASH and get ready for new flash image
-	dd if=/dev/zero of=/dev/ufs/${TOFLASH} bs=1m count=1 >/dev/null 2>&1
+	dd if=/dev/zero of=/dev/ufs/${TOFLASH} bs=1m count=1 
+	#>/dev/null 2>&1
 
 	# Stream gzipped image to dd and explode image to new area
-	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/ufs/${TOFLASH} bs=16k >/dev/null 2>&1
+	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/ufs/${TOFLASH} bs=16k 
+	#>/dev/null 2>&1
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
 	/sbin/fsck_ffs -n /dev/ufs/${TOFLASH}

@@ -224,10 +224,8 @@ ENDOFF
 	rm -rf /usr/savecore/*
 	/etc/rc.conf_mount_ro
 
-	sleep 3
 	rm -f /var/run/firmware.lock
 	/bin/sync
-	sleep 2
 	echo "Done." | logger -p daemon.info -i -t Upgrade
 
 	rm -f /var/run/config.lock

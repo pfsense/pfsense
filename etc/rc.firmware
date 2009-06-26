@@ -237,15 +237,8 @@ ENDOFF
 	sleep 2
 	echo "Done." | logger -p daemon.info -i -t Upgrade
 
-	# If the archive has unpacked a file called
-	# /tmp/no_upgrade_reboot_required then do
-	# not reboot after upgrade.
-	if [ -f /tmp/no_upgrade_reboot_required ]; then
-		rm /tmp/no_upgrade_reboot_required
-	else
-		rm -f /var/run/config.lock
-		sh /etc/rc.reboot
-	fi
+	rm -f /var/run/config.lock
+	sh /etc/rc.reboot
 
 	;;
 pfSenseupgrade)

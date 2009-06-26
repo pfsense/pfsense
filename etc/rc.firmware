@@ -164,33 +164,37 @@ pfSenseNanoBSDupgrade)
 
 	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
 
+	# mount /cf
+	/etc/rc.conf_mount_rw
 	# backup config
 	/bin/mkdir -p /tmp/configbak
 	cp -p /conf/* /tmp/configbak 2>/dev/null
-	# mount /cf
-	/etc/rc.conf_mount_rw
-	/sbin/mount -w -o noatime /cf 2>/dev/null
-	/sbin/mount -w -o noatime /   2>/dev/null
 
 	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
 
+	# resolve glabel label that we booted from
 	BOOT_DEVICE=`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`
-	if [ "$BOOT_DEVICE" = "pfsense0" ]; then
-		TOFLASH="pfsense1"
+	# resolve glabel to the real boot dev entry
+	REAL_BOOT_DEVICE=`/sbin/glabel list | grep -B2 ufs/${BOOT_DEVICE} | head -n 1 | cut -f3 -d' '`
+	# grab the boot device, example ad1, ad0
+	BOOT_DRIVE=`/sbin/glabel list | grep -B2 ufs/pfsense1 | head -n 1 | cut -f3 -d' ' | cut -d's' -f1`
+	# test the slice.  if we are on slice 1 we need to flash 2 and vica versa
+	if [ `echo $REAL_BOOT_DEVICE | grep "s1"` ]; then 
+		TOFLASH="${BOOT_DRIVE}s2a"
 	else
-		TOFLASH="pfsense0"
+		TOFLASH="${BOOT_DRIVE}s1a"
 	fi
 
 	# Remove TOFLASH and get ready for new flash image
-	dd if=/dev/zero of=/dev/ufs/${TOFLASH} bs=1m count=1 
+	dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1 
 	#>/dev/null 2>&1
 
 	# Stream gzipped image to dd and explode image to new area
-	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/ufs/${TOFLASH} bs=16k 
+	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k 
 	#>/dev/null 2>&1
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
-	/sbin/fsck_ffs -n /dev/ufs/${TOFLASH}
+	/sbin/fsck_ffs -n /dev/${TOFLASH}
 	if [ $? != 0 ]; then
 		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
 		<?php
@@ -199,10 +203,11 @@ pfSenseNanoBSDupgrade)
 			file_notice("UpgradeFailure", "{$g['product_name']} upgrade has failed.   Your system has been left in a usable state.", "UpgradeFailure", "");
 		?>
 ENDOFF
+		rm /var/run/firmware.lock
 		exit 1
 	fi
 
-	/usr/sbin/boot0cfg -s 1 -v /dev/ufs/${TOFLASH}
+	/usr/sbin/boot0cfg -s 1 -v /dev/${TOFLASH}
 	#>/dev/null 2>&1
 
 	# restore config
@@ -212,7 +217,7 @@ ENDOFF
 	rm -f $IMG
 
 	mkdir /tmp/$TOFLASH
-	mount /dev/ufs/$TOFLASH /tmp/$TOFLASH
+	mount /dev/$TOFLASH /tmp/$TOFLASH
 	# If /tmp/$TOFLASH/tmp/post_upgrade_command exists 
 	# after update then execute the command.
 	if [ -f /tmp/$TOFLASH/tmp/post_upgrade_command ]; then

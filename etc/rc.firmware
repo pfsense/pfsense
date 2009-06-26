@@ -175,14 +175,16 @@ pfSenseNanoBSDupgrade)
 	# resolve glabel label that we booted from
 	BOOT_DEVICE=`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`
 	# resolve glabel to the real boot dev entry
-	REAL_BOOT_DEVICE=`/sbin/glabel list | grep -B2 ufs/${BOOT_DEVICE} | head -n 1 | cut -f3 -d' '`
+	REAL_BOOT_DEVICE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/${BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`
 	# grab the boot device, example ad1, ad0
-	BOOT_DRIVE=`/sbin/glabel list | grep -B2 ufs/pfsense1 | head -n 1 | cut -f3 -d' ' | cut -d's' -f1`
+	BOOT_DRIVE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense1 | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`
 	# test the slice.  if we are on slice 1 we need to flash 2 and vica versa
-	if [ `echo $REAL_BOOT_DEVICE | grep "s1"` ]; then 
+	if [ `echo $REAL_BOOT_DEVICE | /usr/bin/grep "s1"` ]; then 
 		TOFLASH="${BOOT_DRIVE}s2a"
+		SLICE="2"
 	else
 		TOFLASH="${BOOT_DRIVE}s1a"
+		SLICE="1"
 	fi
 
 	# Remove TOFLASH and get ready for new flash image
@@ -207,7 +209,7 @@ ENDOFF
 		exit 1
 	fi
 
-	/usr/sbin/boot0cfg -s 1 -v /dev/${TOFLASH}
+	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${TOFLASH}
 	#>/dev/null 2>&1
 
 	# restore config

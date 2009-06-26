@@ -209,7 +209,7 @@ ENDOFF
 		exit 1
 	fi
 
-	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${TOFLASH}
+	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${REAL_BOOT_DEVICE}
 	#>/dev/null 2>&1
 
 	# restore config

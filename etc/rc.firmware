@@ -196,7 +196,7 @@ pfSenseNanoBSDupgrade)
 	#>/dev/null 2>&1
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
-	/sbin/fsck_ffs -n /dev/${TOFLASH}
+	/sbin/fsck_ffs -n /dev/${TOFLASH}a
 	if [ $? != 0 ]; then
 		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
 		<?php

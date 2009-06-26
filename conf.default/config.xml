@@ -3,7 +3,7 @@
 <pfsense>
 	<version>5.8</version>
 	<lastchange></lastchange>
-	<theme>nervecenter</theme>
+	<theme>pfsense_ng</theme>
 	<sysctl>
 		<item>
 			<desc>Set the ephemeral port range to be lower.</desc>

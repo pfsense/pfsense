@@ -187,15 +187,25 @@ pfSenseNanoBSDupgrade)
 		TOFLASH="${BOOT_DRIVE}s${SLICE}"
 	fi
 
+	echo $SLICE
+	echo $TOFLASH
+	echo $BOOT_DRIVE
+
+	# Foot shooting is fun!
+	/sbin/sysctl kern.geom.debugflags=16
+
 	# Remove TOFLASH and get ready for new flash image
 	dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1 
+	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1"  | logger -p daemon.info -i -t Upgrade
 	#>/dev/null 2>&1
 
 	# Stream gzipped image to dd and explode image to new area
+	echo "/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k" | logger -p daemon.info -i -t Upgrade
 	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k 
 	#>/dev/null 2>&1
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
+	echo "/sbin/fsck_ffs -n /dev/${TOFLASH}a" | logger -p daemon.info -i -t Upgrade
 	/sbin/fsck_ffs -n /dev/${TOFLASH}a
 	if [ $? != 0 ]; then
 		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
@@ -209,6 +219,7 @@ ENDOFF
 		exit 1
 	fi
 
+	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${REAL_BOOT_DEVICE}" | logger -p daemon.info -i -t Upgrade
 	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${REAL_BOOT_DEVICE}
 	#>/dev/null 2>&1
 

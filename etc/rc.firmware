@@ -165,13 +165,6 @@ pfSenseNanoBSDupgrade)
 
 	touch /var/run/firmware.lock
 
-	# Do we have a pre-upgrade hook in the update file?
-	if [ `tar tvzf $IMG | grep /tmp/pre_upgrade_command | wc -l` -gt 0 ]; then 
-		tar xzvf $IMG -C / ./tmp/pre_upgrade_command
-		chmod a+rx /tmp/pre_upgrade_command
-		sh /tmp/pre_upgrade_command
-	fi
-
 	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
 
 	# backup config

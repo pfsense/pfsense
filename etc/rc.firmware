@@ -177,7 +177,7 @@ pfSenseNanoBSDupgrade)
 	# resolve glabel to the real boot dev entry
 	REAL_BOOT_DEVICE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/${BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`
 	# grab the boot device, example ad1, ad0
-	BOOT_DRIVE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense1 | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`
+	BOOT_DRIVE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`
 	# test the slice.  if we are on slice 1 we need to flash 2 and vica versa
 	if [ `echo $REAL_BOOT_DEVICE | /usr/bin/grep "s1"` ]; then 
 		SLICE="2"
@@ -196,17 +196,17 @@ pfSenseNanoBSDupgrade)
 
 	# Remove TOFLASH and get ready for new flash image
 	dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1 
-	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1"  | logger -p daemon.info -i -t Upgrade
+	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1"
 	#>/dev/null 2>&1
 
 	# Stream gzipped image to dd and explode image to new area
-	echo "/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k" | logger -p daemon.info -i -t Upgrade
+	echo "/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k" |
 	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k 
 	#>/dev/null 2>&1
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
-	echo "/sbin/fsck_ffs -n /dev/${TOFLASH}a" | logger -p daemon.info -i -t Upgrade
-	/sbin/fsck_ffs -n /dev/${TOFLASH}a
+	echo "/sbin/fsck_ffs -n /dev/${TOFLASH}a"
+	/sbin/fsck_ffs -y /dev/${TOFLASH}a
 	if [ $? != 0 ]; then
 		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
 		<?php
@@ -219,7 +219,7 @@ ENDOFF
 		exit 1
 	fi
 
-	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${REAL_BOOT_DEVICE}" | logger -p daemon.info -i -t Upgrade
+	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${REAL_BOOT_DEVICE}"
 	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${REAL_BOOT_DEVICE}
 	#>/dev/null 2>&1
 

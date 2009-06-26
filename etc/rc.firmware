@@ -3,7 +3,7 @@
 # $Id$
 # /etc/rc.firmware
 # part of m0n0wall (http://neon1.net/m0n0wall)
-#
+# Copyright (C) 2005-2009 Scott Ullrich <sullrich@pfsense.org>.
 # Copyright (C) 2003 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
 
@@ -200,7 +200,7 @@ pfSenseNanoBSDupgrade)
 		<?php
 			require_once("globals.inc");		
 			require_once("functions.inc");
-			file_notice("UpgradeFailure", "{$g['product_name']} upgrade has failed.   Your system has been left in a usable state.", "UpgradeFailure", "");
+			file_notice("UpgradeFailure", "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state.", "UpgradeFailure", "");
 		?>
 ENDOFF
 		rm /var/run/firmware.lock

@@ -207,7 +207,7 @@ pfSenseNanoBSDupgrade)
 			file_notice("UpgradeFailure", "{$g['product_name']} upgrade has failed.   Your system has been left in a usable state.", "UpgradeFailure", "");
 		?>
 ENDOFF
-		
+		exit 1
 	fi
 
 	/usr/sbin/boot0cfg -s 1 -v /dev/ufs/${TOFLASH}

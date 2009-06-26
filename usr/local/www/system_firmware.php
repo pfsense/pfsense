@@ -138,7 +138,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
                             touch($d_firmwarelock_path);
                             $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";
 							if(stristr($_FILES['ulfile']['tmp_name'],"nanobsd"))
-								mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz"
+								mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
 							else if(stristr($_FILES['ulfile']['tmp_name'],"bdiff"))
                             	mwexec_bg("/etc/rc.firmware delta_update {$g['upload_path']}/firmware.tgz");
 							else 

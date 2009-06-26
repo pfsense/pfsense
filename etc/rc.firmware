@@ -202,8 +202,8 @@ pfSenseNanoBSDupgrade)
 	if [ $? != 0 ]; then
 		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
 		<?php
+			require_once(\"globals.inc\");		
 			require_once(\"functions.inc\");
-			require_once(\"/usr/local/pkg/apache_mod_security.inc\");
 			file_notice("UpgradeFailure", "{$g['product_name']} upgrade has failed.   Your system has been left in a usable state.", "UpgradeFailure", "");
 		?>
 ENDOFF

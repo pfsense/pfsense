@@ -43,6 +43,7 @@
 			<fielddescr>Enable UPnP</fielddescr>
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
+			<enablefields>iface_array,overridewanip,logpackets,sysuptime,permdefault,permuser1,permuser2,permuser3,permuser4</enablefields>
 		</field>			
 		<field>
 			<fielddescr>Interfaces (generally LAN)</fielddescr>

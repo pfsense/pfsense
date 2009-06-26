@@ -184,7 +184,7 @@ pfSenseNanoBSDupgrade)
 
 	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
 
-	BOOT_DEVICE=`/sbin/mount | /usr/bin/grep root | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`
+	BOOT_DEVICE=`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`
 	if [ "$BOOT_DEVICE" = "pfsense0" ]; then
 		TOFLASH="pfsense1"
 	else

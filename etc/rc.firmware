@@ -213,8 +213,8 @@ ENDOFF
 
 	mkdir /tmp/$TOFLASH
 	mount /dev/ufs/$TOFLASH /tmp/$TOFLASH
-	# If /tmp/post_upgrade_command exists after update
-	# then execute the command.
+	# If /tmp/$TOFLASH/tmp/post_upgrade_command exists 
+	# after update then execute the command.
 	if [ -f /tmp/$TOFLASH/tmp/post_upgrade_command ]; then
 		sh /tmp/$TOFLASH/tmp/post_upgrade_command
 	fi
@@ -231,7 +231,6 @@ ENDOFF
 	/bin/sync
 	echo "Done." | logger -p daemon.info -i -t Upgrade
 
-	rm -f /var/run/config.lock
 	sh /etc/rc.reboot
 
 	;;

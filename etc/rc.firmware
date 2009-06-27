@@ -184,11 +184,13 @@ pfSenseNanoBSDupgrade)
 		OLDSLICE="1"
 		TOFLASH="${BOOT_DRIVE}s${SLICE}"
 		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
+		GLABEL_SLICE="pfsense1"
 	else
 		SLICE="1"
 		OLDSLICE="2"		
 		TOFLASH="${BOOT_DRIVE}s${SLICE}"
 		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
+		GLABEL_SLICE="pfsense0"		
 	fi
 
 	echo $SLICE
@@ -224,7 +226,7 @@ ENDOFF
 	fi
 
 	# Add back the corresponding glabel
-	/sbin/tunefs -L pfsense${SLICE} /dev/$COMPLETE_PATH
+	/sbin/tunefs -L pfsense${GLABEL_SLICE} /dev/$COMPLETE_PATH
 
 	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}"
 	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}

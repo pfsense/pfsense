@@ -148,6 +148,155 @@ upgrade)
 		sh /etc/rc.reboot
 	fi
 	;;
+pfSenseNanoBSDupgrade)
+
+	# Sanity check - bail early if there's no firmware file!
+	if [ ! -r $IMG ]; then
+		echo "2nd parameter has not been passed or file does not exist. Exiting." >> /cf/upgrade_log.txt 2>&1
+		exit 1
+	fi
+
+	touch /var/run/firmware.lock
+
+	echo "Firmware upgrade in progress..."  >> /cf/upgrade_log.txt 2>&1
+	echo "Firmware upgrade in progress..." | wall
+
+	# mount /cf
+	/etc/rc.conf_mount_rw
+
+	# backup config
+	/bin/mkdir -p /tmp/configbak
+	cp -p /conf/* /tmp/configbak 2>/dev/null
+
+	touch /cf/upgrade_log.txt
+	echo "" > /cf/upgrade_log.txt
+
+	echo "Installing $IMG." >> /cf/upgrade_log.txt 2>&1
+	echo "Installing $IMG." >> /cf/upgrade_log.txt
+
+	# resolve glabel label that we booted from
+	BOOT_DEVICE=`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`
+	# resolve glabel to the real boot dev entry
+	REAL_BOOT_DEVICE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/${BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`
+	# grab the boot device, example ad1, ad0
+	BOOT_DRIVE=`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`
+	# test the slice.  if we are on slice 1 we need to flash 2 and vica versa
+	if [ `echo $REAL_BOOT_DEVICE | /usr/bin/grep "s1"` ]; then 
+		SLICE="2"
+		OLDSLICE="1"
+		TOFLASH="${BOOT_DRIVE}s${SLICE}"
+		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
+		GLABEL_SLICE="pfsense1"
+	else
+		SLICE="1"
+		OLDSLICE="2"		
+		TOFLASH="${BOOT_DRIVE}s${SLICE}"
+		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
+		GLABEL_SLICE="pfsense0"		
+	fi
+
+	# Output specifc information that this script is using
+	echo "SLICE $SLICE" >> /cf/upgrade_log.txt
+	echo "OLDSLICE $OLDSLICE" >> /cf/upgrade_log.txt
+	echo "TOFLASH $TOFLASH" >> /cf/upgrade_log.txt
+	echo "COMPLETE_PATH $COMPLETE_PATH" >> /cf/upgrade_log.txt
+	echo "GLABEL_SLICE $GLABEL_SLICE" >> /cf/upgrade_log.txt
+
+	# Output environment information to log file
+	output_env_to_log
+
+	# Foot shooting is fun!
+	echo "" >> /cf/upgrade_log.txt
+	echo "/sbin/sysctl kern.geom.debugflags=16" >> /cf/upgrade_log.txt
+	/sbin/sysctl kern.geom.debugflags=16 >> /cf/upgrade_log.txt 2>&1
+
+	# Remove TOFLASH and get ready for new flash image
+	echo "" >> /cf/upgrade_log.txt
+	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1" >> /cf/upgrade_log.txt	
+	dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1 >> /cf/upgrade_log.txt 2>&1
+
+	# Stream gzipped image to dd and explode image to new area
+	echo "" >> /cf/upgrade_log.txt
+	echo "/usr/bin/gunzip -S '' -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k" >> /cf/upgrade_log.txt
+	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k >> /cf/upgrade_log.txt 2>&1
+
+	# Ensure that our new system is sound and bail if it is not and file a notice
+	echo "" >> /cf/upgrade_log.txt
+	echo "/sbin/fsck_ffs -y /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
+	/sbin/fsck_ffs -y /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
+	if [ $? != 0 ]; then
+		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
+		<?php
+			require_once("globals.inc");		
+			require_once("functions.inc");
+			file_notice("UpgradeFailure", "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state.", "UpgradeFailure", "");
+		?>
+ENDOFF
+		rm /var/run/firmware.lock
+		exit 1
+	fi
+
+	# Add back the corresponding glabel
+	echo "" >> /cf/upgrade_log.txt
+	echo "/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
+	/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
+
+	# Set active boot source
+	echo "" >> /cf/upgrade_log.txt
+	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /cf/upgrade_log.txt
+	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /cf/upgrade_log.txt 2>&1
+
+	# Set active mount slice in fdisk
+	echo "" >> /cf/upgrade_log.txt
+	echo "gpart set -a active -i ${SLICE} ${BOOT_DRIVE}" >> /cf/upgrade_log.txt
+	gpart set -a active -i ${SLICE} ${BOOT_DRIVE}
+
+	# restore config
+	cp -p /tmp/configbak/* /conf 2>/dev/null
+
+	# Remove upgrade file
+	rm -f $IMG
+
+	# Mount newly prepared slice
+	mkdir /tmp/$GLABEL_SLICE
+	mount /dev/ufs/$GLABEL_SLICE /tmp/$GLABEL_SLICE
+
+	# If /tmp/$TOFLASH/tmp/post_upgrade_command exists 
+	# after update then execute the command.
+	if [ -f /tmp/$TOFLASH/tmp/post_upgrade_command ]; then
+		sh /tmp/$TOFLASH/tmp/post_upgrade_command >> /cf/upgrade_log.txt 2>&1
+	fi
+
+	# Update fstab
+	sed -i "" "s/pfsense${OLDSLICE}/pfsense${SLICE}/g" /tmp/$GLABEL_SLICE/etc/fstab
+	echo "" >> /cf/upgrade_log.txt
+	cat /tmp/$GLABEL_SLICE/etc/fstab >> /cf/upgrade_log.txt
+
+	# Unmount newly prepared slice
+	umount /tmp/$GLABEL_SLICE
+
+	# Remove extra stuff
+	rm -rf /etc/rc.conf
+	rm -rf /etc/motd
+	rm -rf /usr/savecore/*
+
+	date >> /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
+
+	# remount /cf ro
+	/etc/rc.conf_mount_ro
+	/bin/sync
+	echo "Done." >> /cf/upgrade_log.txt 2>&1
+
+	# Enough fun for now.
+	echo "" >> /cf/upgrade_log.txt
+	echo "/sbin/sysctl kern.geom.debugflags=0" >> /cf/upgrade_log.txt
+	/sbin/sysctl kern.geom.debugflags=0 >> /cf/upgrade_log.txt 2>&1
+
+	rm -f /var/run/firmware.lock
+	sh /etc/rc.reboot
+
+	;;
 pfSenseupgrade)
 	# wait 5 seconds before beginning
 	sleep 5

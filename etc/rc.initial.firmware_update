@@ -1,0 +1,184 @@
+#!/usr/local/bin/php -f
+
+<?php
+
+$g['booting'] = true;
+require("globals.inc");
+
+echo "Starting the {$g['product_name']} console firmware update system";
+
+require("functions.inc");
+echo ".";
+require("config.inc");
+echo ".";
+$g['booting'] = false;
+
+$d_fwupenabled_path = $g['varrun_path'] . "/fwup.enabled";
+
+$fp = fopen('php://stdin', 'r');
+
+echo ".\n\n";
+
+$shell_active = true;
+
+echo "1) Update from a URL\n";
+echo "2) Update from a local file\n";
+echo "Q) Quit\n";
+
+echo "\nPlease select an option to continue: ";
+
+$command = strtoupper(chop(fgets($fp)));
+
+switch ($command) {
+	case "q":
+	case "quit":
+		echo "\n";
+		fclose($fp);
+		die;
+	break;
+	case "1":
+		echo "\nEnter the URL to the .tgz update file:\n> ";
+		$url = chop(fgets($fp));
+		if(!$url) { 
+			fclose($fp);
+			die;
+		}
+		$status = does_url_exist($url);
+		if($status) {
+			conf_mount_rw();
+			touch($d_fwupenabled_path);
+			if(file_exists("/root/firmware.tgz"))
+				unlink("/root/firmware.tgz");
+			echo "\nFetching file size...\n";
+			$file_size = exec("fetch -s \"$url\"");
+			$file_size = trim($file_size, "\r");
+			echo "\nFile size: $file_size\n";
+			echo "\nFetching file...\n";
+			exec("fetch -1 -w15 -a -v -o /root/firmware.tgz \"$url\"");
+			if($file_size <> filesize("/root/firmware.tgz")) {
+				echo "\nFile size mismatch.  Upgrade cancelled.\n\n";
+				fclose($fp);
+				die;
+			}			
+			if(!file_exists("/root/firmware.tgz")) {
+				echo "Something went wrong during file transfer.  Exiting.\n\n";
+				fclose($fp);
+				die;
+			}
+			$status = does_url_exist("$url.md5");
+			if($status) { 
+				echo "\nFetching MD5...\n";
+				exec("fetch -1 -w15 -a -v -o /root/firmware.tgz.md5 \"$url.md5\"");
+			} else {
+				echo "\n\nWARNING.\n";
+				echo "\nCould not locate a MD5 file.  We cannot verify the download once its done.\n\n";
+				sleep(15);
+			}
+			if(file_exists("/root/firmware.tgz.md5")) {
+				$source_md5 = trim(`cat /root/firmware.tgz.md5 | awk '{ print \$4 }'`,"\r");
+				$file_md5 = trim(`md5 /root/firmware.tgz | awk '{ print \$4 }'`,"\r");
+				echo "URL MD5: $source_md5\n";
+				echo "Downloaded file MD5: $file_md5\n";
+				if($source_md5 <> $file_md5) {
+					echo "\n\nMD5 checksum does not match.  Cancelling upgrade.\n\n";
+					exec("rm -f /root/*.md5");
+					fclose($fp);
+					die -1;
+				}
+				echo "\nMD5 checksum matches.\n";
+				exec("rm -f /root/*.md5");
+			}
+			if(stristr($url,"bdiff"))
+				$type = "bdiff";
+			if(stristr($url,"bdiff"))
+				$type = "nanobsd";				
+			if(file_exists("/root/firmware.tgz")) {
+				do_upgrade("/root/firmware.tgz", $type);
+				exit;
+			}
+		} else {
+			echo "\nCould not download update.\n\n";
+			fclose($fp);
+			die -1;
+		}
+	case "2":
+		echo "\nEnter the complete path to the .tgz update file: ";
+		$path = chop(fgets($fp));
+		if(!$path) {
+			fclose($fp);
+			die;
+		}
+		if(stristr($fp,"bdiff"))
+			$type = "bdiff";
+		if(stristr($fp,"bdiff"))
+			$type = "nanobsd";			
+		if(file_exists($path)) {
+			touch($d_fwupenabled_path);
+			do_upgrade($path, $type);
+		} else {
+			echo "\nCould not find file.\n\n";
+			fclose($fp);
+			die -1;
+		}
+}
+
+function check_for_kernel_file() {
+	global $fp;
+	$platform = file_get_contents("/etc/platform");
+	$platform = str_replace("\n", "", $platform);
+	$platform = str_replace("\r", "", $platform);
+	if($platform == "embedded" or $platform == "wrap" or $platform == "nanobsd") {
+		exec("echo wrap > /boot/kernel/pfsense_kernel.txt");
+		echo "\n";
+		return;
+	}	
+	if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
+		echo "\nPlease select which kernel you would like to use:\n";
+		echo "\n1. Non SMP kernel";
+		echo "\n2. SMP kernel";
+		echo "\n3. Embedded kernel (no video or keyboard)";
+		echo "\n4. Developers kernel (slower performing, more debugging)\n";
+		echo "\nPlease enter a number [1-4]: ";
+		$selection = strtoupper(chop(fgets($fp)));
+		switch ($selection) {
+			case "1":
+				exec("echo UP > /boot/kernel/pfsense_kernel.txt");
+			break;
+			case "2":
+				exec("echo SMP > /boot/kernel/pfsense_kernel.txt");
+			break;
+			case "3":
+				exec("echo wrap > /boot/kernel/pfsense_kernel.txt");
+			break;
+			case "4":
+				exec("echo Developers > /boot/kernel/pfsense_kernel.txt");
+			break;		
+		}
+		echo "\n";
+	}
+}
+
+function do_upgrade($path, $type) {
+	global $g;
+	touch($g['varrun_path'] . "/firmware.lock");	
+	check_for_kernel_file();
+	echo "\nOne moment please...\nInvoking firmware upgrade...";
+	if($type == "bdiff") 
+		mwexec_bg("/etc/rc.firmware delta_update $path");
+	elseif($type == "nanobsd") 
+		mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade $path");
+	else
+		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");
+	sleep(10);
+	while(file_exists("{$g['varrun_path']}/firmware.lock")) {
+		sleep(1);
+		echo ".";
+	}
+	echo "Done.  Rebooting...\n\n";
+	unlink($g['varrun_path'] . "/firmware.lock");
+}
+
+exec("rm -f /root/*.md5");
+fclose($fp);
+
+?>

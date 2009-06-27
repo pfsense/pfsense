@@ -46,6 +46,13 @@
 	  return $size;
 	}
 
+	/* restore ssh data for nanobsd platform */
+	if($g['platform'] == "nanobsd" and file_exists("/config/ssh/ssh_host_key")) {
+		if(!file_exists("/etc/ssh/sshd_host_key.pub")) {
+			cp("/config/ssh/* /etc/ssh/");
+		}
+	}
+
 	/*    if any of these files are 0 bytes then they are corrupted.
 	 *    remove them
 	 */
@@ -173,9 +180,11 @@
 	}
 
 	// NanoBSD
-	if(file_exists("/root/save_sshkeys"))
-		exec("/root/save_sshkeys");
-
+	if($g['platform'] == "nanobsd") {
+		if(!is_dir("/config/sshd"))
+			exec("mkdir /config/sshd");
+		exec("cp /etc/ssh/ssh_host* /config/sshd");
+	}
 	conf_mount_ro();
 
 ?>

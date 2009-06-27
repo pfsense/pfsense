@@ -149,12 +149,14 @@ pfSenseNanoBSDupgrade)
 		TOFLASH="${BOOT_DRIVE}s${SLICE}"
 		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
 		GLABEL_SLICE="pfsense1"
+		UFS_ID="1"
 	else
 		SLICE="1"
 		OLDSLICE="2"		
 		TOFLASH="${BOOT_DRIVE}s${SLICE}"
 		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
-		GLABEL_SLICE="pfsense0"		
+		GLABEL_SLICE="pfsense0"
+		UFS_ID="0"
 	fi
 
 	# Output specifc information that this script is using
@@ -203,15 +205,15 @@ ENDOFF
 	echo "/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
 	/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
 
-	# Set active boot source
-	echo "" >> /cf/upgrade_log.txt
-	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /cf/upgrade_log.txt
-	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /cf/upgrade_log.txt 2>&1
-
 	# Set active mount slice in fdisk
 	echo "" >> /cf/upgrade_log.txt
 	echo "gpart set -a active -i ${SLICE} ${BOOT_DRIVE}" >> /cf/upgrade_log.txt
 	gpart set -a active -i ${SLICE} ${BOOT_DRIVE}
+
+	# Set active boot source
+	echo "" >> /cf/upgrade_log.txt
+	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /cf/upgrade_log.txt
+	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /cf/upgrade_log.txt 2>&1
 
 	# restore config
 	cp -p /tmp/configbak/* /conf 2>/dev/null
@@ -230,7 +232,7 @@ ENDOFF
 	fi
 
 	# Update fstab
-	sed -i "" "s/pfsense${OLDSLICE}/pfsense${SLICE}/g" /tmp/$GLABEL_SLICE/etc/fstab
+	sed -i "" "s/pfsense${OLDSLICE}/pfsense${UFS_ID}/g" /tmp/$GLABEL_SLICE/etc/fstab
 	echo "" >> /cf/upgrade_log.txt
 	cat /tmp/$GLABEL_SLICE/etc/fstab >> /cf/upgrade_log.txt
 

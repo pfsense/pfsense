@@ -243,6 +243,11 @@ ENDOFF
 	/bin/sync
 	echo "Done." >> /cf/upgrade_log.txt 2>&1
 
+	# Enough fun for now.
+	echo "" >> /cf/upgrade_log.txt
+	echo "/sbin/sysctl kern.geom.debugflags=0" >> /cf/upgrade_log.txt
+	/sbin/sysctl kern.geom.debugflags=0 >> /cf/upgrade_log.txt 2>&1
+
 	rm -f /var/run/firmware.lock
 	sh /etc/rc.reboot
 

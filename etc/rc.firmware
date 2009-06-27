@@ -1,15 +1,12 @@
 #!/bin/sh
 
-# $Id$
 # /etc/rc.firmware
-# part of m0n0wall (http://neon1.net/m0n0wall)
+# originally part of m0n0wall (http://neon1.net/m0n0wall)
 # Copyright (C) 2005-2009 Scott Ullrich <sullrich@pfsense.org>.
 # Copyright (C) 2003 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
 
-#CFDEVICE=`cat /var/etc/cfdevice`
-
-exec 3>&2 2>>/cf/firmware_update.log
+exec 3>&2 2>>/cf/firmware_update_misc.log
 
 export ACTION=$1
 export IMG=$2
@@ -21,17 +18,34 @@ if [ $ACTION != "upgrade" ]; then
 	/sbin/umount -f /ftmp > /dev/null 2>&1
 fi
 
+output_env_to_log() {
+	ls -lah /dev/ >> /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
+
+	ls -lah $IMG >> /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
+
+	md5 $IMG >> /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
+
+	mount >> /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
+
+	top >> /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
+}
+
 backup_chflags() {
 	TOPROCESS="bin lib libexec sbin usr"
 	for files in $TOPROCESS; do
-		/usr/sbin/mtree -Pcp /${files} | bzip2 -9 > /tmp/chflags.dist.${files}.bz2 | logger -p daemon.info -i -t UpgradeFlags
+		/usr/sbin/mtree -Pcp /${files} | bzip2 -9 > /tmp/chflags.dist.${files}.bz2 >> /cf/upgrade_log.txt 2>&1
 	done
 }
 
 restore_chflags() {
 	TOPROCESS="bin lib libexec sbin usr"
 	for files in $TOPROCESS; do
-		cd / && /usr/bin/bzcat /tmp/chflags.dist.${files}.bz2 | /usr/sbin/mtree -PU -p /${files} | logger -p daemon.info -i -t UpgradeFlags
+		cd / && /usr/bin/bzcat /tmp/chflags.dist.${files}.bz2 | /usr/sbin/mtree -PU -p /${files} >> /cf/upgrade_log.txt 2>&1
 	done
 }
 
@@ -83,8 +97,8 @@ binary_update() {
 
 case $ACTION in
 enable)
-	#/sbin/mount_mfs -s 15360 -T qp120at -b 8192 -f 1024 dummy /ftmp \
-	#	> /dev/null 2>&1
+	touch /cf/upgrade_log.txt
+	echo "" > /cf/upgrade_log.txt
 	;;
 auto)
 	touch /var/run/firmware.lock
@@ -93,76 +107,18 @@ auto)
 	/etc/rc.firmware_auto
 	restore_chflags
 	;;
-upgrade)
-
-	touch /var/run/firmware.lock
-
-	# wait 5 seconds before beginning
-	sleep 5
-	backup_chflags
-	remove_chflags
-
-	exec </dev/console >/dev/console 2>/dev/console
-
-	echo
-	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
-	echo "Firmware upgrade in progress..." | wall
-
-	# backup config
-	mkdir /tmp/configbak
-	cp -p /conf/* /tmp/configbak
-
-	# unmount /cf
-	/sbin/umount -f /cf
-
-	# dd image onto card
-	if [ -r $IMG ]; then
-		/usr/bin/gunzip -S "" -c $IMG | dd of=/dev/r$CFDEVICE bs=16k > /dev/null 2>&1
-		echo "Image installed."
-	fi
-
-	# mount /cf
-	/sbin/mount -w -o noatime /cf
-
-	# restore config
-	cp -p /tmp/configbak/* /conf
-
-	restore_chflags
-
-	rm -f /var/run/firmware.lock
-
-        /bin/sync
-        sleep 5
-
-	echo "Done."
-
-	# If /tmp/post_upgrade_command exists after update
-	# then execute the command.
-	if [ -f /tmp/post_upgrade_command ]; then
-		sh /tmp/post_upgrade_command
-	fi
-
-	# If the archive has unpacked a file called
-	# /tmp/no_upgrade_reboot_required then do
-	# not reboot after upgrade.
-	if [ -f /tmp/no_upgrade_reboot_required ]; then
-		rm /tmp/no_upgrade_reboot_required
-	else
-		rm -f /var/run/config.lock
-		sh /etc/rc.reboot
-	fi
-	;;
 pfSenseNanoBSDupgrade)
 
 	# Sanity check - bail early if there's no firmware file!
 	if [ ! -r $IMG ]; then
-		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info -i -t Upgrade
+		echo "2nd parameter has not been passed or file does not exist. Exiting." >> /cf/upgrade_log.txt 2>&1
 		exit 1
 	fi
 
 	touch /var/run/firmware.lock
 
-	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
+	echo "Firmware upgrade in progress..."  >> /cf/upgrade_log.txt 2>&1
+	echo "Firmware upgrade in progress..." | wall
 
 	# mount /cf
 	/etc/rc.conf_mount_rw
@@ -171,9 +127,9 @@ pfSenseNanoBSDupgrade)
 	cp -p /conf/* /tmp/configbak 2>/dev/null
 
 	touch /cf/upgrade_log.txt
-	echo "" >> /cf/upgrade_log.txt
+	echo "" > /cf/upgrade_log.txt
 
-	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
+	echo "Installing $IMG." >> /cf/upgrade_log.txt 2>&1
 	echo "Installing $IMG." >> /cf/upgrade_log.txt
 
 	# resolve glabel label that we booted from
@@ -197,19 +153,15 @@ pfSenseNanoBSDupgrade)
 		GLABEL_SLICE="pfsense0"		
 	fi
 
+	# Output specifc information that this script is using
 	echo "SLICE $SLICE" >> /cf/upgrade_log.txt
 	echo "OLDSLICE $OLDSLICE" >> /cf/upgrade_log.txt
 	echo "TOFLASH $TOFLASH" >> /cf/upgrade_log.txt
 	echo "COMPLETE_PATH $COMPLETE_PATH" >> /cf/upgrade_log.txt
 	echo "GLABEL_SLICE $GLABEL_SLICE" >> /cf/upgrade_log.txt
 
-	ls -lah /dev/ >> /cf/upgrade_log.txt
-	echo "" >> /cf/upgrade_log.txt
-	ls -lah $IMG >> /cf/upgrade_log.txt
-	echo "" >> /cf/upgrade_log.txt
-	mount >> /cf/upgrade_log.txt
-	echo "" >> /cf/upgrade_log.txt
-	top >> /cf/upgrade_log.txt
+	# Output environment information to log file
+	output_env_to_log
 
 	# Foot shooting is fun!
 	echo "" >> /cf/upgrade_log.txt
@@ -273,7 +225,7 @@ ENDOFF
 	cat /tmp/$TOFLASH/etc/fstab >> /cf/upgrade_log.txt
 
 	# Unmount newly prepared slice
-	umount /tmp/$TOFLASH
+	umount /tmp/$COMPLETE_PATH
 
 	# Remove extra stuff
 	rm -rf /etc/rc.conf
@@ -283,7 +235,7 @@ ENDOFF
 	# remount /cf ro
 	/etc/rc.conf_mount_ro
 	/bin/sync
-	echo "Done." | logger -p daemon.info -i -t Upgrade
+	echo "Done." >> /cf/upgrade_log.txt 2>&1
 
 	rm -f /var/run/firmware.lock
 	sh /etc/rc.reboot
@@ -293,7 +245,7 @@ pfSenseupgrade)
 	
 	# Sanity check - bail early if there's no firmware file!
 	if [ ! -r $IMG ]; then
-		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info -i -t Upgrade
+		echo "2nd parameter has not been passed or file does not exist. Exiting." >> /cf/upgrade_log.txt 2>&1
 		exit
 	fi
 
@@ -302,43 +254,46 @@ pfSenseupgrade)
 
 	touch /var/run/firmware.lock
 
+	touch /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
+
+	# Output environment information to log file
+	output_env_to_log
+
 	backup_chflags
 	remove_chflags
 
 	# Do we have a pre-upgrade hook in the update file?
 	if [ `tar tvzf $IMG | grep /tmp/pre_upgrade_command | wc -l` -gt 0 ]; then 
-		tar xzvf $IMG -C / ./tmp/pre_upgrade_command
-		chmod a+rx /tmp/pre_upgrade_command
-		sh /tmp/pre_upgrade_command
+		tar xzvf $IMG -C / ./tmp/pre_upgrade_command >> /cf/upgrade_log.txt 2>&1
+		chmod a+rx /tmp/pre_upgrade_command >> /cf/upgrade_log.txt 2>&1
+		sh /tmp/pre_upgrade_command >> /cf/upgrade_log.txt 2>&1
 	fi
 
-	#exec </dev/console >/dev/console 2>/dev/console
-
-	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
-
+	echo "Firmware upgrade in progress..."  >> /cf/upgrade_log.txt 2>&1
+	echo "Firmware upgrade in progress..."  | wall
+	
+	# mount /cf
+	/etc/rc.conf_mount_rw
 	# backup config
 	/bin/mkdir -p /tmp/configbak
 	cp -p /conf/* /tmp/configbak 2>/dev/null
-	# mount /cf
-	/etc/rc.conf_mount_rw
-	/sbin/mount -w -o noatime /cf 2>/dev/null
-	/sbin/mount -w -o noatime /   2>/dev/null
 
 	# tar explode image onto hd
-	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
-	cd / && /usr/bin/tar xzUPf $IMG | logger -p daemon.info -i -t Upgrade
+	echo "Installing $IMG." >> /cf/upgrade_log.txt 2>&1
+	cd / && /usr/bin/tar xzUPf $IMG >> /cf/upgrade_log.txt 2>&1
 	/usr/bin/find / -name CVS -exec rm -fr {} \;
-	echo "Image installed $IMG." | logger -p daemon.info -i -t Upgrade
+	echo "Image installed $IMG." >> /cf/upgrade_log.txt 2>&1
 
     # process custom image if its passed
     if [ $# -eq 3 ]; then
 	    if [ -f $CUSTOMIMG ]; then
-	        echo "Custom image $CUSTOMIMG found." | logger -p daemon.info -i -t Upgrade
-	        echo "Custom image ($CUSTOMIMG) found."
+	        echo "Custom image $CUSTOMIMG found." >> /cf/upgrade_log.txt 2>&1
+	        echo "Custom image ($CUSTOMIMG) found." >> /cf/upgrade_log.txt 2>&1
 	        PWD_DIR=`pwd`
-	        cd / && /usr/bin/tar xzPUf $CUSTOMIMG | logger -p daemon.info -i -t Upgrade
+	        cd / && /usr/bin/tar xzPUf $CUSTOMIMG >> /cf/upgrade_log.txt 2>&1
 	        cd $PWD_DIR
-	        echo "Custom image $CUSTOMIMG installed." | logger -p daemon.info -i -t Upgrade
+	        echo "Custom image $CUSTOMIMG installed." >> /cf/upgrade_log.txt 2>&1
 	    fi
     fi
 
@@ -355,31 +310,26 @@ pfSenseupgrade)
 	rm -f $IMG
 
 	if [ -e /etc/init_bootloader.sh ]; then
-		sh /etc/init_bootloader.sh
+		sh /etc/init_bootloader.sh >> /cf/upgrade_log.txt 2>&1
 	fi
 
 	# If /tmp/post_upgrade_command exists after update
 	# then execute the command.
 	if [ -f /tmp/post_upgrade_command ]; then
-		sh /tmp/post_upgrade_command
+		sh /tmp/post_upgrade_command >> /cf/upgrade_log.txt 2>&1
 	fi
 
-	# remount /cf ro
+	# remove unused files
 	rm -rf /etc/rc.conf
 	rm -rf /etc/motd
-	find / -name CVS -type d -exec rm {} \;
 	rm -rf /usr/savecore/*
-	/etc/rc.conf_mount_ro
-	/sbin/umount -f /cf 2>/dev/null
-	/sbin/mount -r /cf 2>/dev/null
-	/sbin/umount -f / 2>/dev/null
-	/sbin/mount -r / 2>/dev/null
 
-	sleep 3
+	# remount /cf ro
+	/etc/rc.conf_mount_ro
+
+	# release the firmware lock
 	rm -f /var/run/firmware.lock
 	/bin/sync
-	sleep 2
-	echo "Done." | logger -p daemon.info -i -t Upgrade
 
 	# If the archive has unpacked a file called
 	# /tmp/no_upgrade_reboot_required then do

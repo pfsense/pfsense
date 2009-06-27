@@ -89,7 +89,9 @@ switch ($command) {
 				exec("rm -f /root/*.md5");
 			}
 			if(stristr($url,"bdiff"))
-				$type = "bdiff";			
+				$type = "bdiff";
+			if(stristr($url,"bdiff"))
+				$type = "nanobsd";				
 			if(file_exists("/root/firmware.tgz")) {
 				do_upgrade("/root/firmware.tgz", $type);
 				exit;
@@ -108,6 +110,8 @@ switch ($command) {
 		}
 		if(stristr($fp,"bdiff"))
 			$type = "bdiff";
+		if(stristr($fp,"bdiff"))
+			$type = "nanobsd";			
 		if(file_exists($path)) {
 			touch($d_fwupenabled_path);
 			do_upgrade($path, $type);

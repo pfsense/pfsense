@@ -150,6 +150,7 @@ pfSenseNanoBSDupgrade)
 		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
 		GLABEL_SLICE="pfsense1"
 		UFS_ID="1"
+		OLD_UFS_ID="0"
 	else
 		SLICE="1"
 		OLDSLICE="2"		
@@ -157,6 +158,7 @@ pfSenseNanoBSDupgrade)
 		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
 		GLABEL_SLICE="pfsense0"
 		UFS_ID="0"
+		OLD_UFS_ID="1"
 	fi
 
 	# Output specifc information that this script is using
@@ -232,7 +234,7 @@ ENDOFF
 	fi
 
 	# Update fstab
-	sed -i "" "s/pfsense${OLDSLICE}/pfsense${UFS_ID}/g" /tmp/$GLABEL_SLICE/etc/fstab
+	sed -i "" "s/pfsense${OLD_UFS_ID}/pfsense${UFS_ID}/g" /tmp/$GLABEL_SLICE/etc/fstab
 	echo "" >> /cf/upgrade_log.txt
 	cat /tmp/$GLABEL_SLICE/etc/fstab >> /cf/upgrade_log.txt
 

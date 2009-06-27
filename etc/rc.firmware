@@ -9,7 +9,7 @@
 
 #CFDEVICE=`cat /var/etc/cfdevice`
 
-exec 3>&2 2>>/tmp/firmware_update.log
+exec 3>&2 2>>/cf/firmware_update.log
 
 export ACTION=$1
 export IMG=$2
@@ -196,24 +196,27 @@ pfSenseNanoBSDupgrade)
 		GLABEL_SLICE="pfsense0"		
 	fi
 
-	echo $SLICE >> /cf/upgrade_log.txt
-	echo $TOFLASH >> /cf/upgrade_log.txt
-	echo $BOOT_DRIVE >> /cf/upgrade_log.txt
+	echo "SLICE $SLICE" >> /cf/upgrade_log.txt
+	echo "OLDSLICE $OLDSLICE" >> /cf/upgrade_log.txt
+	echo "TOFLASH $TOFLASH" >> /cf/upgrade_log.txt
+	echo "COMPLETE_PATH $COMPLETE_PATH" >> /cf/upgrade_log.txt
+	echo "GLABEL_SLICE $GLABEL_SLICE" >> /cf/upgrade_log.txt
 
 	# Foot shooting is fun!
-	/sbin/sysctl kern.geom.debugflags=16 >> /cf/upgrade_log.txt
+	echo "/sbin/sysctl kern.geom.debugflags=16" >> /cf/upgrade_log.txt
+	/sbin/sysctl kern.geom.debugflags=16 >> /cf/upgrade_log.txt 2>&1
 
 	# Remove TOFLASH and get ready for new flash image
-	dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1 
-	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1" >> /cf/upgrade_log.txt
+	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1" >> /cf/upgrade_log.txt	
+	dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1 >> /cf/upgrade_log.txt 2>&1
 
 	# Stream gzipped image to dd and explode image to new area
 	echo "/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k" >> /cf/upgrade_log.txt
-	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k 
+	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k >> /cf/upgrade_log.txt 2>&1
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
 	echo "/sbin/fsck_ffs -y /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
-	/sbin/fsck_ffs -y /dev/$COMPLETE_PATH
+	/sbin/fsck_ffs -y /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
 	if [ $? != 0 ]; then
 		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
 		<?php
@@ -228,11 +231,10 @@ ENDOFF
 
 	# Add back the corresponding glabel
 	echo "/sbin/tunefs -L pfsense${GLABEL_SLICE} /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
-	/sbin/tunefs -L pfsense${GLABEL_SLICE} /dev/$COMPLETE_PATH
+	/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
 
 	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /cf/upgrade_log.txt
-	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}
-	#>/dev/null 2>&1
+	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /cf/upgrade_log.txt 2>&1
 
 	# restore config
 	cp -p /tmp/configbak/* /conf 2>/dev/null
@@ -245,7 +247,7 @@ ENDOFF
 	# If /tmp/$TOFLASH/tmp/post_upgrade_command exists 
 	# after update then execute the command.
 	if [ -f /tmp/$TOFLASH/tmp/post_upgrade_command ]; then
-		sh /tmp/$TOFLASH/tmp/post_upgrade_command
+		sh /tmp/$TOFLASH/tmp/post_upgrade_command >> /cf/upgrade_log.txt 2>&1
 	fi
 	# Update fstab
 	sed -i "" "s/pfsense${OLDSLICE}/pfsense${SLICE}/g" /tmp/$TOFLASH/etc/fstab

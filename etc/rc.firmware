@@ -203,6 +203,7 @@ pfSenseNanoBSDupgrade)
 	echo "COMPLETE_PATH $COMPLETE_PATH" >> /cf/upgrade_log.txt
 	echo "GLABEL_SLICE $GLABEL_SLICE" >> /cf/upgrade_log.txt
 
+	ls -lah /dev/ >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
 	ls -lah $IMG >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
@@ -256,30 +257,35 @@ ENDOFF
 	# Remove upgrade file
 	rm -f $IMG
 
+	# Mount newly prepared slice
 	mkdir /tmp/$COMPLETE_PATH
 	mount /dev/$COMPLETE_PATH /tmp/$COMPLETE_PATH
+
 	# If /tmp/$TOFLASH/tmp/post_upgrade_command exists 
 	# after update then execute the command.
 	if [ -f /tmp/$TOFLASH/tmp/post_upgrade_command ]; then
 		sh /tmp/$TOFLASH/tmp/post_upgrade_command >> /cf/upgrade_log.txt 2>&1
 	fi
+
 	# Update fstab
 	sed -i "" "s/pfsense${OLDSLICE}/pfsense${SLICE}/g" /tmp/$TOFLASH/etc/fstab
 	echo "" >> /cf/upgrade_log.txt
 	cat /tmp/$TOFLASH/etc/fstab >> /cf/upgrade_log.txt
+
+	# Unmount newly prepared slice
 	umount /tmp/$TOFLASH
 
-	# remount /cf ro
+	# Remove extra stuff
 	rm -rf /etc/rc.conf
 	rm -rf /etc/motd
-	find / -name CVS -type d -exec rm {} \;
 	rm -rf /usr/savecore/*
-	/etc/rc.conf_mount_ro
 
-	rm -f /var/run/firmware.lock
+	# remount /cf ro
+	/etc/rc.conf_mount_ro
 	/bin/sync
 	echo "Done." | logger -p daemon.info -i -t Upgrade
 
+	rm -f /var/run/firmware.lock
 	sh /etc/rc.reboot
 
 	;;

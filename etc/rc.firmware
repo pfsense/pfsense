@@ -249,6 +249,9 @@ ENDOFF
 	date >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
 
+	# Trigger a package reinstallation on reobot
+	touch /cf/needs_package_sync
+
 	# remount /cf ro
 	/etc/rc.conf_mount_ro
 	/bin/sync

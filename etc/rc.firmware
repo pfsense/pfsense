@@ -211,23 +211,23 @@ pfSenseNanoBSDupgrade)
 	top >> /cf/upgrade_log.txt
 
 	# Foot shooting is fun!
-	echo "/sbin/sysctl kern.geom.debugflags=16" >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
+	echo "/sbin/sysctl kern.geom.debugflags=16" >> /cf/upgrade_log.txt
 	/sbin/sysctl kern.geom.debugflags=16 >> /cf/upgrade_log.txt 2>&1
 
 	# Remove TOFLASH and get ready for new flash image
-	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1" >> /cf/upgrade_log.txt	
 	echo "" >> /cf/upgrade_log.txt
+	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1" >> /cf/upgrade_log.txt	
 	dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1 >> /cf/upgrade_log.txt 2>&1
 
 	# Stream gzipped image to dd and explode image to new area
-	echo "/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k" >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
+	echo "/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k" >> /cf/upgrade_log.txt
 	/usr/bin/gunzip -S "" -c $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k >> /cf/upgrade_log.txt 2>&1
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
-	echo "/sbin/fsck_ffs -y /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
+	echo "/sbin/fsck_ffs -y /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
 	/sbin/fsck_ffs -y /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
 	if [ $? != 0 ]; then
 		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
@@ -242,12 +242,12 @@ ENDOFF
 	fi
 
 	# Add back the corresponding glabel
-	echo "/sbin/tunefs -L pfsense${GLABEL_SLICE} /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
+	echo "/sbin/tunefs -L pfsense${GLABEL_SLICE} /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
 	/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
 
-	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
+	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /cf/upgrade_log.txt
 	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /cf/upgrade_log.txt 2>&1
 
 	# restore config

@@ -19,6 +19,9 @@ if [ $ACTION != "upgrade" ]; then
 fi
 
 output_env_to_log() {
+	date >> /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
+	
 	ls -lah /dev/ >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
 
@@ -210,8 +213,8 @@ ENDOFF
 	rm -f $IMG
 
 	# Mount newly prepared slice
-	mkdir /tmp/$COMPLETE_PATH
-	mount /dev/$COMPLETE_PATH /tmp/$COMPLETE_PATH
+	mkdir /tmp/$GLABEL_SLICE
+	mount /dev/ufs/$GLABEL_SLICE /tmp/$GLABEL_SLICE
 
 	# If /tmp/$TOFLASH/tmp/post_upgrade_command exists 
 	# after update then execute the command.
@@ -220,17 +223,20 @@ ENDOFF
 	fi
 
 	# Update fstab
-	sed -i "" "s/pfsense${OLDSLICE}/pfsense${SLICE}/g" /tmp/$TOFLASH/etc/fstab
+	sed -i "" "s/pfsense${OLDSLICE}/pfsense${SLICE}/g" /tmp/$GLABEL_SLICE/etc/fstab
 	echo "" >> /cf/upgrade_log.txt
-	cat /tmp/$TOFLASH/etc/fstab >> /cf/upgrade_log.txt
+	cat /tmp/$GLABEL_SLICE/etc/fstab >> /cf/upgrade_log.txt
 
 	# Unmount newly prepared slice
-	umount /tmp/$COMPLETE_PATH
+	umount /tmp/$GLABEL_SLICE
 
 	# Remove extra stuff
 	rm -rf /etc/rc.conf
 	rm -rf /etc/motd
 	rm -rf /usr/savecore/*
+
+	date >> /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
 
 	# remount /cf ro
 	/etc/rc.conf_mount_ro
@@ -323,6 +329,9 @@ pfSenseupgrade)
 	rm -rf /etc/rc.conf
 	rm -rf /etc/motd
 	rm -rf /usr/savecore/*
+
+	date >> /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
 
 	# remount /cf ro
 	/etc/rc.conf_mount_ro

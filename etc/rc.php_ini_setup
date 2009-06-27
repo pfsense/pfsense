@@ -33,6 +33,8 @@ APCSHMEMSIZE="25"
 # Set upload directory
 if [ "$PLATFORM" = "embedded" ]; then
 	UPLOADTMPDIR="/root"
+elif [ "$PLATFORM" = "embedded" ] ; then
+	UPLOADTMPDIR="/root"
 else 
 	UPLOADTMPDIR="/tmp"
 fi

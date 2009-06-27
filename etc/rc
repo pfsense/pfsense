@@ -31,6 +31,10 @@ if [ "$PLATFORM" = "embedded" ]; then
 	/etc/rc.embedded
 fi
 
+if [ "$PLATFORM" = "nanobsd" ]; then
+	/etc/rc.embedded
+fi
+
 if [ "$PLATFORM" = "pfSense" ]; then
 	mdmfs -S -M -s 4m md /var/run
 fi
@@ -85,6 +89,8 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform
 elif [ "$PLATFORM" = "embedded" ] ; then
     # do nothing for embedded platform
+elif [ "$PLATFORM" = "nanobsd" ] ; then
+    # do nothing for nanobsd platform
 else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
     /sbin/swapon -a 2>/dev/null >/dev/null
@@ -94,6 +100,12 @@ echo " done."
 echo -n "Creating symlinks..."
 # Make sure symlink is correct on embedded
 if [ "$PLATFORM" = "embedded" ] ; then
+	rm /conf
+	ln -s /cf/conf/ /conf
+fi
+
+# Make sure symlink is correct on embedded
+if [ "$PLATFORM" = "nanobsd" ] ; then
 	rm /conf
 	ln -s /cf/conf/ /conf
 fi

@@ -181,10 +181,14 @@ pfSenseNanoBSDupgrade)
 	# test the slice.  if we are on slice 1 we need to flash 2 and vica versa
 	if [ `echo $REAL_BOOT_DEVICE | /usr/bin/grep "s1"` ]; then 
 		SLICE="2"
+		OLDSLICE="1"
 		TOFLASH="${BOOT_DRIVE}s${SLICE}"
+		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
 	else
 		SLICE="1"
+		OLDSLICE="2"		
 		TOFLASH="${BOOT_DRIVE}s${SLICE}"
+		COMPLETE_PATH="${BOOT_DRIVE}s${SLICE}a"
 	fi
 
 	echo $SLICE
@@ -205,8 +209,8 @@ pfSenseNanoBSDupgrade)
 	#>/dev/null 2>&1
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
-	echo "/sbin/fsck_ffs -n /dev/${TOFLASH}a"
-	/sbin/fsck_ffs -y /dev/${TOFLASH}a
+	echo "/sbin/fsck_ffs -y /dev/$COMPLETE_PATH"
+	/sbin/fsck_ffs -y /dev/$COMPLETE_PATH
 	if [ $? != 0 ]; then
 		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
 		<?php
@@ -219,8 +223,11 @@ ENDOFF
 		exit 1
 	fi
 
-	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${REAL_BOOT_DEVICE}"
-	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${REAL_BOOT_DEVICE}
+	# Add back the corresponding glabel
+	/sbin/tunefs -L pfsense${SLICE} /dev/$COMPLETE_PATH
+
+	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}"
+	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}
 	#>/dev/null 2>&1
 
 	# restore config
@@ -229,13 +236,16 @@ ENDOFF
 	# Remove upgrade file
 	rm -f $IMG
 
-	mkdir /tmp/$TOFLASH
-	mount /dev/$TOFLASH /tmp/$TOFLASH
+	mkdir /tmp/$COMPLETE_PATH
+	mount /dev/$COMPLETE_PATH /tmp/$COMPLETE_PATH
 	# If /tmp/$TOFLASH/tmp/post_upgrade_command exists 
 	# after update then execute the command.
 	if [ -f /tmp/$TOFLASH/tmp/post_upgrade_command ]; then
 		sh /tmp/$TOFLASH/tmp/post_upgrade_command
 	fi
+	# Update fstab
+	sed -i "" "s/pfsense${OLDSLICE}/pfsense${SLICE}/g" /tmp/$TOFLASH/etc/fstab
+	cat /tmp/$TOFLASH/etc/fstab
 	umount /tmp/$TOFLASH
 
 	# remount /cf ro

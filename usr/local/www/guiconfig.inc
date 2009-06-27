@@ -220,7 +220,7 @@ $medias = array("auto" => "autoselect", "100full" => "100BASE-TX full-duplex",
 	"10half" => "10BASE-T half-duplex");
 
 /* platforms that support firmware updating */
-$fwupplatforms = array('pfSense', 'net45xx', 'net48xx', 'generic-pc', 'embedded', 'wrap');
+$fwupplatforms = array('pfSense', 'net45xx', 'net48xx', 'generic-pc', 'embedded', 'wrap', 'nanobsd');
 
 function do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors) {
 

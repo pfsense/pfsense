@@ -161,7 +161,9 @@ function do_upgrade($path, $type) {
 	echo "\nOne moment please...\nInvoking firmware upgrade...";
 	if($type == "bdiff") 
 		mwexec_bg("/etc/rc.firmware delta_update $path");
-	else 
+	elseif($type == "nanobsd") 
+		mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade $path");
+	else
 		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");
 	sleep(10);
 	while(file_exists("{$g['varrun_path']}/firmware.lock")) {

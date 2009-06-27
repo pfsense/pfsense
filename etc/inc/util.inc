@@ -118,7 +118,7 @@ function lock($lock) {
 function unlock($cfglckkey = 0) {
         global $g, $cfglckkeyconsumers;
 
-        if (!$cfglckkey)
+        if ($cfglckkey == 0)
                 return;
 
 		// Rely on or own logging for errors here.

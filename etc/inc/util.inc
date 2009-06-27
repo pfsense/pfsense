@@ -373,7 +373,7 @@ function lock($lock) {
 function unlock($cfglckkey = 0) {
         global $g, $cfglckkeyconsumers;
 
-        if (!$cfglckkey)
+        if ($cfglckkey == 0)
                 return;
 
 		ini_set('error_reporting', E_NONE);

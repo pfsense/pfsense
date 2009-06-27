@@ -123,7 +123,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							output_menu_item("/system_advanced_admin.php", "Advanced");
 							output_menu_item("/system_firmware.php", "Firmware");
 							output_menu_item("/system.php", "General Setup");
-							if ($g['platform'] == "pfSense")
+							if ($g['platform'] == "pfSense" or $g['platform'] == "nanobsd")
 								output_menu_item("/pkg_mgr.php", "Packages");
 							output_menu_item("/wizard.php?xml=setup_wizard.xml", "Setup Wizard");
 							output_menu_item("/system_gateways.php", "Routing");

@@ -199,7 +199,7 @@ ENDOFF
 
 	# Add back the corresponding glabel
 	echo "" >> /cf/upgrade_log.txt
-	echo "/sbin/tunefs -L pfsense${GLABEL_SLICE} /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
+	echo "/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
 	/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
 
 	echo "" >> /cf/upgrade_log.txt

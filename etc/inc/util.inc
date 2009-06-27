@@ -376,6 +376,8 @@ function unlock($cfglckkey = 0) {
         if (!$cfglckkey)
                 return;
 
+		ini_set('error_reporting', E_NONE);
+
         if (!sem_release($cfglckkey))
                 log_error("WARNING: unlock() - Could not unlock lock.");
         else {
@@ -386,6 +388,8 @@ function unlock($cfglckkey = 0) {
 				ini_set('error_reporting', E_ALL  & ~E_NOTICE); 
         }
         $cfglckkeyconsumers--;
+
+		ini_set('error_reporting', E_ALL  & ~E_NOTICE);
 }
 
 /* wrapper for exec() */

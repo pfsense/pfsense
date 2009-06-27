@@ -2,12 +2,11 @@
 
 <?php
 
-echo ".";
+$g['booting'] = true;
 require("globals.inc");
 
 echo "Starting the {$g['product_name']} console firmware update system";
 
-$g['booting'] = true;
 require("functions.inc");
 echo ".";
 require("config.inc");
@@ -82,15 +81,21 @@ switch ($command) {
 				echo "Downloaded file MD5: $file_md5\n";
 				if($source_md5 <> $file_md5) {
 					echo "\n\nMD5 checksum does not match.  Cancelling upgrade.\n\n";
-					fclose($fp);
 					exec("rm -f /root/*.md5");
+					fclose($fp);
 					die -1;
 				}
 				echo "\nMD5 checksum matches.\n";
 				exec("rm -f /root/*.md5");
 			}
-			if(file_exists("/root/firmware.tgz"))
-				do_upgrade("/root/firmware.tgz");
+			if(stristr($url,"bdiff"))
+				$type = "bdiff";
+			if(stristr($url,"bdiff"))
+				$type = "nanobsd";				
+			if(file_exists("/root/firmware.tgz")) {
+				do_upgrade("/root/firmware.tgz", $type);
+				exit;
+			}
 		} else {
 			echo "\nCould not download update.\n\n";
 			fclose($fp);
@@ -103,9 +108,13 @@ switch ($command) {
 			fclose($fp);
 			die;
 		}
+		if(stristr($fp,"bdiff"))
+			$type = "bdiff";
+		if(stristr($fp,"bdiff"))
+			$type = "nanobsd";			
 		if(file_exists($path)) {
 			touch($d_fwupenabled_path);
-			do_upgrade($path);
+			do_upgrade($path, $type);
 		} else {
 			echo "\nCould not find file.\n\n";
 			fclose($fp);
@@ -149,15 +158,24 @@ function check_for_kernel_file() {
 	}
 }
 
-function do_upgrade($path) {
-	global $fp, $g;
-	touch($g['varrun_path'] . "/firmware.lock");
+function do_upgrade($path, $type) {
+	global $g;
+	touch($g['varrun_path'] . "/firmware.lock");	
 	check_for_kernel_file();
-	echo "\nOne moment please... Invoking firmware upgrade...\n";
-	exec("/etc/rc.firmware pfSenseupgrade $path");
-	unlink_if_exists($path);
-	unlink_if_exists($g['varrun_path'] . "/firmware.lock");
-	die;
+	echo "\nOne moment please...\nInvoking firmware upgrade...";
+	if($type == "bdiff") 
+		mwexec_bg("/etc/rc.firmware delta_update $path");
+	elseif($type == "nanobsd") 
+		mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade $path");
+	else
+		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");
+	sleep(10);
+	while(file_exists("{$g['varrun_path']}/firmware.lock")) {
+		sleep(1);
+		echo ".";
+	}
+	echo "Done.  Rebooting...\n\n";
+	unlink($g['varrun_path'] . "/firmware.lock");
 }
 
 exec("rm -f /root/*.md5");

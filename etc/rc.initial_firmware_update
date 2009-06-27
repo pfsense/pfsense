@@ -118,7 +118,7 @@ function check_for_kernel_file() {
 	$platform = file_get_contents("/etc/platform");
 	$platform = str_replace("\n", "", $platform);
 	$platform = str_replace("\r", "", $platform);
-	if($platform == "embedded" or $platform == "wrap") {
+	if($platform == "embedded" or $platform == "wrap" or $platform == "nanobsd") {
 		exec("echo wrap > /boot/kernel/pfsense_kernel.txt");
 		echo "\n";
 		return;

@@ -454,7 +454,7 @@ function conf_mount_rw() {
 	 *    compact flash cards root.
          */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
-	   or $g['platform'] == "embedded") {
+	   or $g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
 		$status = mwexec("/sbin/mount -u -w /");
 		/* we could not mount this correctly.  kick off fsck */
 		if($status <> 0) {
@@ -606,7 +606,7 @@ function write_config($desc="Unknown", $backup = true) {
         }
         fclose($fd);
 
-	if($g['platform'] == "embedded") {
+	if($g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
 		cleanup_backupcache(5, true);
 	} else {
 		cleanup_backupcache(30, true);

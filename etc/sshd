@@ -28,6 +28,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+	require_once("globals.inc");
 	require_once("config.inc");
 	require_once("notices.inc");
 
@@ -45,9 +46,9 @@
 	}
 
 	/* restore ssh data for nanobsd platform */
-	if($g['platform'] == "nanobsd" and file_exists("/conf/ssh/ssh_host_key")) {
+	if($g['platform'] == "nanobsd" and file_exists("/conf/sshd/ssh_host_key")) {
 		if(!file_exists("/etc/ssh/sshd_host_key.pub")) {
-			cp("/conf/ssh/* /etc/ssh/");
+			cp("/conf/sshd/* /etc/ssh/");
 		}
 	}
 

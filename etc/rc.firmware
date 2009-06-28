@@ -210,8 +210,8 @@ pfSenseNanoBSDupgrade)
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
 	echo "" >> /cf/upgrade_log.txt
-	echo "/sbin/fsck_ffs -y /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
-	/sbin/fsck_ffs -y /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
+	echo "/sbin/fsck_ffs -n /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
+	/sbin/fsck_ffs -n /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
 	if [ $? != 0 ]; then
 		file_notice "UpgradeFailure" "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state."
 		rm /var/run/firmware.lock
@@ -222,16 +222,6 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /cf/upgrade_log.txt
 	echo "/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
 	/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
-
-	# Set active mount slice in fdisk
-	echo "" >> /cf/upgrade_log.txt
-	echo "gpart set -a active -i ${SLICE} ${BOOT_DRIVE}" >> /cf/upgrade_log.txt
-	gpart set -a active -i ${SLICE} ${BOOT_DRIVE}
-
-	# Set active boot source
-	echo "" >> /cf/upgrade_log.txt
-	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /cf/upgrade_log.txt
-	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /cf/upgrade_log.txt 2>&1
 
 	# restore config
 	cp -p /tmp/configbak/* /conf 2>/dev/null
@@ -251,11 +241,28 @@ pfSenseNanoBSDupgrade)
 
 	# Update fstab
 	sed -i "" "s/pfsense${OLD_UFS_ID}/pfsense${UFS_ID}/g" /tmp/$GLABEL_SLICE/etc/fstab
+	if [ $? != 0 ]; then
+		echo "Something went wrong when trying to update the fstab entry.  Aborting upgrade."
+		file_notice "UpgradeFailure" "Something went wrong when trying to update the fstab entry.  Aborting upgrade."
+		rm /var/run/firmware.lock
+		umount /tmp/$GLABEL_SLICE
+		exit 1
+	fi
 	echo "" >> /cf/upgrade_log.txt
 	cat /tmp/$GLABEL_SLICE/etc/fstab >> /cf/upgrade_log.txt
 
 	# Unmount newly prepared slice
 	umount /tmp/$GLABEL_SLICE
+
+	# Set active mount slice in fdisk
+	echo "" >> /cf/upgrade_log.txt
+	echo "gpart set -a active -i ${SLICE} ${BOOT_DRIVE}" >> /cf/upgrade_log.txt
+	gpart set -a active -i ${SLICE} ${BOOT_DRIVE}
+
+	# Set active boot source
+	echo "" >> /cf/upgrade_log.txt
+	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /cf/upgrade_log.txt
+	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /cf/upgrade_log.txt 2>&1
 
 	# Remove extra stuff
 	rm -rf /etc/rc.conf

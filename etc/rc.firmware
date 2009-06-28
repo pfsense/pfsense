@@ -288,7 +288,7 @@ ENDOFF
 	echo "" >> /cf/upgrade_log.txt
 
 	# Trigger a package reinstallation on reobot
-	touch /config/needs_package_sync
+	touch /conf/needs_package_sync
 
 	# remount /cf ro
 	/etc/rc.conf_mount_ro

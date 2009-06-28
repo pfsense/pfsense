@@ -118,6 +118,19 @@ pfSenseNanoBSDupgrade)
 		exit 1
 	fi
 
+	# Prevent full upgrade file from being used to upgrade
+	if [ `echo $IMG | grep "full"` ]; then
+		echo "You cannot use a full file for upgrade.  Please use a file labeled upgrade."
+		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
+		<?php
+			require_once("globals.inc");		
+			require_once("functions.inc");
+			file_notice("NanoBSDUpgradeFailure", "You have attemped to use a full NanoBSD installation file as an upgrade.  Please use a NanoBSD file labeled 'upgrade' instead.", "NanoBSDUpgradeFailure", "");
+		?>
+ENDOFF
+		exit 1
+	fi
+
 	touch /var/run/firmware.lock
 
 	echo "Firmware upgrade in progress..."  >> /cf/upgrade_log.txt 2>&1

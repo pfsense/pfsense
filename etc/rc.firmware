@@ -243,10 +243,10 @@ pfSenseNanoBSDupgrade)
 	mkdir /tmp/$GLABEL_SLICE
 	mount /dev/ufs/$GLABEL_SLICE /tmp/$GLABEL_SLICE
 
-	# If /tmp/$TOFLASH/tmp/post_upgrade_command exists 
+	# If /tmp/$GLABEL_SLICE/tmp/post_upgrade_command exists 
 	# after update then execute the command.
-	if [ -f /tmp/$TOFLASH/tmp/post_upgrade_command ]; then
-		sh /tmp/$TOFLASH/tmp/post_upgrade_command >> /cf/upgrade_log.txt 2>&1
+	if [ -f /tmp/$GLABEL_SLICE/tmp/post_upgrade_command ]; then
+		sh /tmp/$GLABEL_SLICE/tmp/post_upgrade_command >> /cf/upgrade_log.txt 2>&1
 	fi
 
 	# Update fstab

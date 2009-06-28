@@ -18,6 +18,16 @@ if [ $ACTION != "upgrade" ]; then
 	/sbin/umount -f /ftmp > /dev/null 2>&1
 fi
 
+file_notice() {
+	/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
+	<?php
+		require_once("globals.inc");		
+		require_once("functions.inc");
+		file_notice("$1", "$2", "$1", "");
+	?>
+ENDOFF
+}
+
 output_env_to_log() {
 	date >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
@@ -121,13 +131,7 @@ pfSenseNanoBSDupgrade)
 	# Prevent full upgrade file from being used to upgrade
 	if [ `echo $IMG | grep "full"` ]; then
 		echo "You cannot use a full file for upgrade.  Please use a file labeled upgrade."
-		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
-		<?php
-			require_once("globals.inc");		
-			require_once("functions.inc");
-			file_notice("NanoBSDUpgradeFailure", "You have attemped to use a full NanoBSD installation file as an upgrade.  Please use a NanoBSD file labeled 'upgrade' instead.", "NanoBSDUpgradeFailure", "");
-		?>
-ENDOFF
+		file_notice "NanoBSDUpgradeFailure" "You have attemped to use a full NanoBSD installation file as an upgrade.  Please use a NanoBSD file labeled 'upgrade' instead."
 		exit 1
 	fi
 
@@ -209,13 +213,7 @@ ENDOFF
 	echo "/sbin/fsck_ffs -y /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
 	/sbin/fsck_ffs -y /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
 	if [ $? != 0 ]; then
-		/usr/local/bin/php -q -d auto_prepend_file=config.inc <<ENDOFF
-		<?php
-			require_once("globals.inc");		
-			require_once("functions.inc");
-			file_notice("UpgradeFailure", "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state.", "UpgradeFailure", "");
-		?>
-ENDOFF
+		file_notice "UpgradeFailure" "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state."
 		rm /var/run/firmware.lock
 		exit 1
 	fi

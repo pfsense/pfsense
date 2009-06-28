@@ -124,12 +124,15 @@ outputJavaScriptFileInline("filebrowser/browser.js");
 	function saveFile(file) {
 		$("fileStatus").innerHTML = "Saving file ...";
 		Effect.Appear("fileStatusBox", { duration: 0.5 });
-
+		
+		var fileContent = escape($("fileContent").value);
+		fileContent = fileContent.replace(/\+/g,"%2B");
+		
 		new Ajax.Request(
 			"<?=$_SERVER['SCRIPT_NAME'];?>", {
 				method:     "post",
 				postBody:   "action=save&file=" + $("fbTarget").value +
-							"&data=" + $("fileContent").value,
+							"&data=" + fileContent,
 				onComplete: function(req) {
 					var values = req.responseText.split("|");
 					$("fileStatus").innerHTML = values[1];

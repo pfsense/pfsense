@@ -175,7 +175,8 @@ function do_upgrade($path, $type) {
 		echo ".";
 	}
 	echo "Done.  Rebooting...\n\n";
-	unlink($g['varrun_path'] . "/firmware.lock");
+	if(file_exists($g['varrun_path'] . "/firmware.lock"))
+		unlink($g['varrun_path'] . "/firmware.lock");
 }
 
 exec("rm -f /root/*.md5");

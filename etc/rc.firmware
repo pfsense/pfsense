@@ -240,6 +240,7 @@ pfSenseNanoBSDupgrade)
 	fi
 
 	# Update fstab
+	cp /etc/fstab /tmp/$GLABEL_SLICE/etc/fstab
 	sed -i "" "s/pfsense${OLD_UFS_ID}/pfsense${UFS_ID}/g" /tmp/$GLABEL_SLICE/etc/fstab
 	if [ $? != 0 ]; then
 		echo "Something went wrong when trying to update the fstab entry.  Aborting upgrade."

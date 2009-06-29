@@ -122,9 +122,13 @@ auto)
 	;;
 pfSenseNanoBSDupgrade)
 
+	# mount /cf
+	/etc/rc.conf_mount_rw
+
 	# Sanity check - bail early if there's no firmware file!
 	if [ ! -r $IMG ]; then
 		echo "2nd parameter has not been passed or file does not exist. Exiting." >> /cf/upgrade_log.txt 2>&1
+		/etc/rc.conf_mount_ro
 		exit 1
 	fi
 
@@ -132,6 +136,7 @@ pfSenseNanoBSDupgrade)
 	if [ `echo $IMG | grep "full"` ]; then
 		echo "You cannot use a full file for upgrade.  Please use a file labeled upgrade."
 		file_notice "NanoBSDUpgradeFailure" "You have attemped to use a full NanoBSD installation file as an upgrade.  Please use a NanoBSD file labeled 'upgrade' instead."
+		/etc/rc.conf_mount_ro		
 		exit 1
 	fi
 
@@ -139,9 +144,6 @@ pfSenseNanoBSDupgrade)
 
 	echo "Firmware upgrade in progress..."  >> /cf/upgrade_log.txt 2>&1
 	echo "Firmware upgrade in progress..." | wall
-
-	# mount /cf
-	/etc/rc.conf_mount_rw
 
 	# backup config
 	/bin/mkdir -p /tmp/configbak
@@ -215,6 +217,7 @@ pfSenseNanoBSDupgrade)
 	if [ $? != 0 ]; then
 		file_notice "UpgradeFailure" "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state."
 		rm /var/run/firmware.lock
+		/etc/rc.conf_mount_ro		
 		exit 1
 	fi
 
@@ -247,6 +250,7 @@ pfSenseNanoBSDupgrade)
 		file_notice "UpgradeFailure" "Something went wrong when trying to update the fstab entry.  Aborting upgrade."
 		rm /var/run/firmware.lock
 		umount /tmp/$GLABEL_SLICE
+		/etc/rc.conf_mount_ro
 		exit 1
 	fi
 	echo "" >> /cf/upgrade_log.txt

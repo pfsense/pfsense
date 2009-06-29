@@ -142,8 +142,8 @@ pfSenseNanoBSDupgrade)
 
 	touch /var/run/firmware.lock
 
-	echo "Firmware upgrade in progress..."  >> /cf/upgrade_log.txt 2>&1
-	echo "Firmware upgrade in progress..." | wall
+	echo "NanoBSD Firmware upgrade in progress..."  >> /cf/upgrade_log.txt 2>&1
+	echo "NanoBSD Firmware upgrade in progress..." | wall
 
 	# backup config
 	/bin/mkdir -p /tmp/configbak

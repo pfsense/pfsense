@@ -295,15 +295,24 @@ pfSenseNanoBSDupgrade)
 
 	;;
 pfSenseupgrade)
-	
+
+	# mount /cf
+	/etc/rc.conf_mount_rw
+
 	# Sanity check - bail early if there's no firmware file!
 	if [ ! -r $IMG ]; then
 		echo "2nd parameter has not been passed or file does not exist. Exiting." >> /cf/upgrade_log.txt 2>&1
+		/etc/rc.conf_mount_ro
 		exit
 	fi
 
 	# wait 1 seconds before beginning
 	sleep 1
+
+	# Log that we are really doing a NanoBSD upgrade
+	echo "" >> /cf/upgrade_log.txt
+	echo "NanoBSD upgrade starting" >> /cf/upgrade_log.txt
+	echo "" >> /cf/upgrade_log.txt
 
 	touch /var/run/firmware.lock
 
@@ -325,9 +334,7 @@ pfSenseupgrade)
 
 	echo "Firmware upgrade in progress..."  >> /cf/upgrade_log.txt 2>&1
 	echo "Firmware upgrade in progress..."  | wall
-	
-	# mount /cf
-	/etc/rc.conf_mount_rw
+
 	# backup config
 	/bin/mkdir -p /tmp/configbak
 	cp -p /conf/* /tmp/configbak 2>/dev/null

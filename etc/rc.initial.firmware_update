@@ -88,10 +88,14 @@ switch ($command) {
 				echo "\nMD5 checksum matches.\n";
 				exec("rm -f /root/*.md5");
 			}
-			if(stristr($url,"bdiff"))
+			if(strstr($url,"bdiff")) {
+				echo "Binary DIFF upgrade file detected...\n";
 				$type = "bdiff";
-			if(stristr($url,"bdiff"))
-				$type = "nanobsd";				
+			}
+			if(strstr($url,"bdiff")) {}
+				echo "NanoBSD upgrade file detected...\n";			
+				$type = "nanobsd";	
+			}			
 			if(file_exists("/root/firmware.tgz")) {
 				do_upgrade("/root/firmware.tgz", $type);
 				exit;

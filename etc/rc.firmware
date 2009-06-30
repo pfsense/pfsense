@@ -6,6 +6,9 @@
 # Copyright (C) 2003 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
 
+# mount /cf
+/etc/rc.conf_mount_rw
+
 exec 3>&2 2>>/conf/firmware_update_misc.log
 
 export ACTION=$1
@@ -121,9 +124,6 @@ auto)
 	restore_chflags
 	;;
 pfSenseNanoBSDupgrade)
-
-	# mount /cf
-	/etc/rc.conf_mount_rw
 
 	# Sanity check - bail early if there's no firmware file!
 	if [ ! -r $IMG ]; then
@@ -295,9 +295,6 @@ pfSenseNanoBSDupgrade)
 
 	;;
 pfSenseupgrade)
-
-	# mount /cf
-	/etc/rc.conf_mount_rw
 
 	# Sanity check - bail early if there's no firmware file!
 	if [ ! -r $IMG ]; then

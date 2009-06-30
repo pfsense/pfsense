@@ -42,8 +42,6 @@ require_once("radius_accounting.inc");
 require_once("radius.inc");
 require_once("voucher.inc");
 
-$lockfile = "{$g['varrun_path']}/captiveportal.lock";
-
 function captiveportal_configure() {
 	global $config, $g;
 

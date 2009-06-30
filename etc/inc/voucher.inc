@@ -28,7 +28,7 @@
     
 /* include all configuration functions */
 require_once("config.inc");
-$dirtyfile = "{$g['varrun_path']}/voucher.dirty";
+$voucher_dirtyfile = "{$g['varrun_path']}/voucher.dirty";
 
 /* 
  *Authenticate a voucher and return the remaining time credit in minutes
@@ -37,7 +37,7 @@ $dirtyfile = "{$g['varrun_path']}/voucher.dirty";
  */
 function voucher_auth($voucher_received, $test = 0) {
 
-    global $g, $config, $dirtyfile;
+    global $g, $config, $voucher_dirtyfile;
 
     // if $test is set, simply test the voucher. Don't change anything
     // but return a more verbose error and result message back
@@ -163,7 +163,7 @@ function voucher_auth($voucher_received, $test = 0) {
     voucher_write_active_db($roll, $active_vouchers[$first_voucher_roll]);
 
     // mark the DB's as dirty.
-    if ($fd = fopen($dirtyfile, "w"))
+    if ($fd = fopen($voucher_dirtyfile, "w"))
         fclose($fd);
 
     unlock($voucherlck);
@@ -369,12 +369,12 @@ function voucher_log($priority, $message) {
  */
 function voucher_save_db_to_config() {
 
-    global $config, $g, $dirtyfile;
+    global $config, $g, $voucher_dirtyfile;
     
     if (!isset($config['voucher']['enable']) || $config['voucher']['saveinterval'] == 0) 
         return;   // no vouchers or don't want to save DB's
 
-    if (!file_exists($dirtyfile))
+    if (!file_exists($voucher_dirtyfile))
         return;     // nothing changed.
 
     $voucherlck = lock('voucher');
@@ -398,7 +398,7 @@ function voucher_save_db_to_config() {
         }
         $rollent['active'] = $db;
     }
-    unlink($dirtyfile);
+    unlink($voucher_dirtyfile);
     unlock($voucherlck);
     write_config();
     return;

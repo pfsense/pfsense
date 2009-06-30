@@ -1090,7 +1090,7 @@ function netbios_change() {
 						<td colspan="2" valign="top" class="listtopic">Advanced configuration</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell">Address Pool</td>
+						<td width="22%" valign="top" class="vncell">Advanced</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>

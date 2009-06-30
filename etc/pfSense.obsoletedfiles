@@ -5,3 +5,5 @@
 /usr/local/www/interfaces_wlan.inc
 /usr/local/www/ifstats.cgi
 /etc/rc.initial_firmware_update
+/usr/local/www/javascript/index/sajax.js
+/usr/local/www/sajax/index.sajax.php

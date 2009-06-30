@@ -43,7 +43,6 @@ if (!is_array($config['nat']['onetoone'])) {
 	$config['nat']['onetoone'] = array();
 }
 $a_1to1 = &$config['nat']['onetoone'];
-nat_1to1_rules_sort();
 
 if ($_POST) {
 

@@ -35,6 +35,15 @@
 ##|*MATCH=services_captiveportal_mac_edit.php*
 ##|-PRIV
 
+function passthrumacs_sort() {
+        global $g, $config;
+
+        function passthrumacscmp($a, $b) {
+                return strcmp($a['mac'], $b['mac']);
+        }
+
+        usort($config['captiveportal']['passthrumac'],"passthrumacscmp");
+}
 
 $pgtitle = array("Services","Captive portal","Edit pass-through MAC address");
 require("guiconfig.inc");
@@ -86,6 +95,7 @@ if ($_POST) {
 		$mac['mac'] = $_POST['mac'];
 		$mac['descr'] = $_POST['descr'];
 
+		passthrumacs_sort();
 		if (isset($id) && $a_passthrumacs[$id])
 			$a_passthrumacs[$id] = $mac;
 		else

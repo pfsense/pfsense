@@ -57,7 +57,6 @@ if (isAllowedPage("system_usermanager")) {
 	if (!is_array($config['system']['user'])) 
 		$config['system']['user'] = array();
 
-	admin_users_sort();
 	$a_user = &$config['system']['user'];
 
 	if ($_GET['act'] == "deluser") {

@@ -42,7 +42,6 @@ require("guiconfig.inc");
 if (!is_array($config['captiveportal']['allowedip']))
 	$config['captiveportal']['allowedip'] = array();
 
-allowedips_sort();
 $a_allowedips = &$config['captiveportal']['allowedip'] ;
 
 if ($_POST) {

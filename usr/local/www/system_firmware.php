@@ -89,11 +89,11 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 	}
 	if ($mode) {
 		if ($mode == "enable") {
-			exec_rc_script("/etc/rc.firmware enable");
+			mwexec("/etc/rc.firmware enable");
 			conf_mount_rw();
 			mark_subsystem_dirty('firmware');
 		} else if ($mode == "disable") {
-			exec_rc_script("/etc/rc.firmware disable");
+			mwexec("/etc/rc.firmware disable");
 			conf_mount_ro();
 			clear_subsystem_dirty('firmware');
 		} else if ($mode == "upgrade") {
@@ -104,7 +104,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 				else if (!file_exists($_FILES['ulfile']['tmp_name'])) {
 					/* probably out of memory for the MFS */
 					$input_errors[] = "Image upload failed (out of memory?)";
-					exec_rc_script("/etc/rc.firmware disable");
+					mwexec("/etc/rc.firmware disable");
 					clear_subsystem_dirty('firmware');
 				} else {
 					/* move the image so PHP won't delete it */

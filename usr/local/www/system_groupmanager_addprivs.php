@@ -35,6 +35,18 @@
 ##|*MATCH=system_groupmanager_addprivs.php*
 ##|-PRIV
 
+function admin_groups_sort() {
+        global $g, $config;
+
+        if (!is_array($config['system']['group']))
+                return;
+
+        function cpusercmp($a, $b) {
+                return strcasecmp($a['name'], $b['name']);
+        }
+
+        usort($config['system']['group'], "cpusercmp");
+}
 
 require("guiconfig.inc");
 
@@ -87,6 +99,8 @@ if ($_POST) {
 			if ($user)
 				local_user_set($user);
 		}
+
+		admin_groups_sort();
 
 		$retval = write_config();
 		$savemsg = get_std_save_message($retval);

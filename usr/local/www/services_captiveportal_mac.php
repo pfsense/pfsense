@@ -42,7 +42,6 @@ require("guiconfig.inc");
 if (!is_array($config['captiveportal']['passthrumac']))
 	$config['captiveportal']['passthrumac'] = array();
 
-passthrumacs_sort();
 $a_passthrumacs = &$config['captiveportal']['passthrumac'] ;
 
 if ($_POST) {

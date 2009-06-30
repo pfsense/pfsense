@@ -35,6 +35,18 @@
 ##|*MATCH=vpn_pppoe_users_edit.php*
 ##|-PRIV
 
+function pppoe_users_sort() {
+        global $g, $config;
+
+        if (!is_array($config['pppoe']['user']))
+                return;
+
+        function usercmp($a, $b) {
+                return strcasecmp($a['name'], $b['name']);
+        }
+
+        usort($config['pppoe']['user'], "usercmp");
+}
 
 require("guiconfig.inc");
 
@@ -103,6 +115,7 @@ if ($_POST) {
 		if ($_POST['password'])
 			$secretent['password'] = $_POST['password'];
 		
+		pppoe_users_sort();
 		if (isset($id) && $a_secret[$id])
 			$a_secret[$id] = $secretent;
 		else

@@ -45,7 +45,6 @@ if (!is_array($config['nat']['advancedoutbound']['rule']))
 	$config['nat']['advancedoutbound']['rule'] = array();
 
 $a_out = &$config['nat']['advancedoutbound']['rule'];
-//nat_out_rules_sort();
 
 $id = $_GET['id'];
 if (isset($_POST['id']))

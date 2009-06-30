@@ -44,7 +44,6 @@ require("guiconfig.inc");
 if (!is_array($config['proxyarp']['proxyarpnet'])) {
 	$config['proxyarp']['proxyarpnet'] = array();
 }
-proxyarp_sort();
 $a_proxyarp = &$config['proxyarp']['proxyarpnet'];
 
 if ($_POST) {

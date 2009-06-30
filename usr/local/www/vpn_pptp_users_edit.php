@@ -36,6 +36,19 @@
 ##|-PRIV
 
 
+function pptpd_users_sort() {
+        global $g, $config;
+
+        if (!is_array($config['ppptpd']['user']))
+                return;
+
+        function usercmp($a, $b) {
+                return strcasecmp($a['name'], $b['name']);
+        }
+
+        usort($config['pptpd']['user'], "usercmp");
+}
+
 require("guiconfig.inc");
 
 if (!is_array($config['pptpd']['user'])) {
@@ -103,6 +116,7 @@ if ($_POST) {
 		if ($_POST['password'])
 			$secretent['password'] = $_POST['password'];
 
+		pptpd_users_sort();
 		if (isset($id) && $a_secret[$id])
 			$a_secret[$id] = $secretent;
 		else

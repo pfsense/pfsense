@@ -49,7 +49,6 @@ require("guiconfig.inc");
 if (!is_array($config['schedules']['schedule']))
 	$config['schedules']['schedule'] = array();
 
-schedule_sort();
 $a_schedules = &$config['schedules']['schedule'];
 
 

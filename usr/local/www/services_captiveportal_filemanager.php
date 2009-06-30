@@ -36,6 +36,15 @@
 ##|*MATCH=services_captiveportal_filemanager.php*
 ##|-PRIV
 
+function cpelements_sort() {
+        global $g, $config;
+
+        function cpelementscmp($a, $b) {
+                return strcasecmp($a['name'], $b['name']);
+        }
+
+        usort($config['captiveportal']['element'],"cpelementscmp");
+}
 
 $pgtitle = array("Services","Captive portal");
 

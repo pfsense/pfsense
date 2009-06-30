@@ -35,6 +35,15 @@
 ##|*MATCH=services_captiveportal_ip_edit.php*
 ##|-PRIV
 
+function allowedips_sort() {
+        global $g, $config;
+
+        function allowedipscmp($a, $b) {
+                return strcmp($a['ip'], $b['ip']);
+        }
+
+        usort($config['captiveportal']['allowedip'],"allowedipscmp");
+}
 
 $pgtitle = array("Services","Captive portal","Edit allowed IP address");
 require("guiconfig.inc");
@@ -86,6 +95,7 @@ if ($_POST) {
 		$ip['descr'] = $_POST['descr'];
 		$ip['dir'] = $_POST['dir'];
 
+		allowedips_sort();
 		if (isset($id) && $a_allowedips[$id])
 			$a_allowedips[$id] = $ip;
 		else

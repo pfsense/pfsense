@@ -42,7 +42,6 @@ require("guiconfig.inc");
 if (!is_array($config['l2tp']['user'])) {
 	$config['l2tp']['user'] = array();
 }
-l2tp_users_sort();
 $a_secret = &$config['l2tp']['user'];
 
 if ($_POST) {

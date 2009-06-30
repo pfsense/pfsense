@@ -238,26 +238,6 @@ EOF2;
 	
 }
 
-function exec_rc_script($scriptname) {
-
-	global $d_sysrebootreqd_path;
-
-	$execoutput = "";
-	$retval = "";
-	exec($scriptname . " >/dev/null 2>&1", $execoutput, $retval);
-	return $retval;
-}
-
-function exec_rc_script_async($scriptname) {
-
-	global $d_sysrebootreqd_path;
-	$execoutput = "";
-	$retval = "";
-
-	exec("nohup " . $scriptname . " >/dev/null 2>&1 &", $execoutput, $retval);
-	return $retval;
-}
-
 function verify_gzip_file($fname) {
 
     $returnvar = mwexec("/usr/bin/gzip -t " . escapeshellarg($fname));
@@ -376,45 +356,6 @@ function pprint_port($port) {
 	return $pport;
 }
 
-function captiveportal_users_sort() {
-	global $g, $config;
-
-	if (!is_array($config['captiveportal']['user']))
-                return;
-
-	function cpusercmp($a, $b) {
-		return strcasecmp($a['name'], $b['name']);
-	}
-
-	usort($config['captiveportal']['user'], "cpusercmp");
-}
-
-function admin_groups_sort() {
-	global $g, $config;
-
-	if (!is_array($config['system']['group']))
-                return;
-
-	function cpusercmp($a, $b) {
-		return strcasecmp($a['name'], $b['name']);
-	}
-
-	usort($config['system']['group'], "cpusercmp");
-}
-
-function admin_users_sort() {
-	global $g, $config;
-
-	if (!is_array($config['system']['user']))
-                return;
-
-	function cpusercmp($a, $b) {
-		return strcasecmp($a['name'], $b['name']);
-	}
-
-	usort($config['system']['user'], "cpusercmp");
-}
-
 /* sort by interface only, retain the original order of rules that apply to
    the same interface */
 function filter_rules_sort() {
@@ -438,158 +379,6 @@ function filter_rules_sort() {
 		unset($config['filter']['rule'][$i]['seq']);
 }
 
-function nat_rules_sort() {
-	global $config;
-
-	if (!is_array($config['nat']['rule']))
-                return;
-
-	function natcmp($a, $b) {
-		if ($a['external-address'] == $b['external-address']) {
-			if ($a['protocol'] == $b['protocol']) {
-				if ($a['external-port'] == $b['external-port']) {
-					return 0;
-				} else {
-					return ($a['external-port'] - $b['external-port']);
-				}
-			} else {
-				return strcmp($a['protocol'], $b['protocol']);
-			}
-		} else if (!$a['external-address'])
-			return 1;
-		else if (!$b['external-address'])
-			return -1;
-		else
-			return ipcmp($a['external-address'], $b['external-address']);
-	}
-
-	usort($config['nat']['rule'], "natcmp");
-}
-
-function nat_1to1_rules_sort() {
-	global $g, $config;
-
-	if (!is_array($config['nat']['onetoone']))
-                return;
-
-	function nat1to1cmp($a, $b) {
-		return ipcmp($a['external'], $b['external']);
-	}
-
-	usort($config['nat']['onetoone'], "nat1to1cmp");
-}
-
-function nat_server_rules_sort() {
-	global $g, $config;
-
-	if (!is_array($config['nat']['servernat']))
-                return;
-
-	function natservercmp($a, $b) {
-		return ipcmp($a['ipaddr'], $b['ipaddr']);
-	}
-
-	usort($config['nat']['servernat'], "natservercmp");
-}
-
-function nat_out_rules_sort() {
-	global $g, $config;
-
-	function natoutcmp($a, $b) {
-		return strcmp($a['source']['network'], $b['source']['network']);
-	}
-
-	usort($config['nat']['advancedoutbound']['rule'], "natoutcmp");
-}
-
-function pptpd_users_sort() {
-	global $g, $config;
-
-	if (!is_array($config['ppptpd']['user']))
-                return;
-
-	function usercmp($a, $b) {
-		return strcasecmp($a['name'], $b['name']);
-	}
-
-	usort($config['pptpd']['user'], "usercmp");
-}
-
-function  l2tp_users_sort()  { 
-        global  $g,  $config; 
- 
-	if (!is_array($config['l2tp']['user']))
-		return;
-
-        function  usercmp($a,  $b)  { 
-                return  strcasecmp($a['name'],  $b['name']); 
-        } 
-	 
-        usort($config['l2tp']['user'],  "usercmp");  
-}
-
-function openvpn_users_sort() {
-	global $g, $config;
-
-	if (!is_array($config['openvpn']['user']))
-                return;
-
-	function usercmp($a, $b) {
-		return strcasecmp($a['name'], $b['name']);
-	}
-
-	usort($config['openvpn']['user'], "usercmp");
-}
-
-function pppoe_users_sort() {
-	global $g, $config;
-
-	if (!is_array($config['pppoe']['user']))
-                return;
-
-	function usercmp($a, $b) {
-		return strcasecmp($a['name'], $b['name']);
-	}
-
-	usort($config['pppoe']['user'], "usercmp");
-}
-
-function staticroutes_sort() {
-	global $g, $config;
-
-	if (!is_array($config['staticroutes']['route']))
-                return;
-
-	function staticroutecmp($a, $b) {
-		return strcmp($a['network'], $b['network']);
-	}
-
-	usort($config['staticroutes']['route'], "staticroutecmp");
-}
-
-function hosts_sort() {
-	global $g, $config;
-
-	if (!is_array($config['dnsmasq']['hosts']))
-                return;
-
-	function hostcmp($a, $b) {
-		return strcasecmp($a['host'], $b['host']);
-	}
-
-	usort($config['dnsmasq']['hosts'], "hostcmp");
-}
-
-function staticmaps_sort($ifgui) {
-	global $g, $config;
-
-	function staticmapcmp($a, $b) {
-		return ipcmp($a['ipaddr'], $b['ipaddr']);
-	}
-
-	usort($config['dhcpd'][$ifgui]['staticmap'], "staticmapcmp");
-}
-
 function aliases_sort() {
 	global $g, $config;
 
@@ -599,95 +388,6 @@ function aliases_sort() {
 
 	if($config['aliases'])
 		usort($config['aliases']['alias'], "aliascmp");
-}
-
-function schedule_sort(){
-	global $g, $config;
-
-	if (!is_array($config['schedules']['schedule']))
-                return;
-
-	function schedulecmp($a, $b) {
-		return strcmp($a['name'], $b['name']);
-	}
-
-	usort($config['schedules']['schedule'], "schedulecmp");
-
-}
-
-function ipsec_mobilekey_sort() {
-	global $g, $config;
-
-	function mobilekeycmp($a, $b) {
-		return strcmp($a['ident'][0], $b['ident'][0]);
-	}
-
-	usort($config['ipsec']['mobilekey'], "mobilekeycmp");
-}
-
-function proxyarp_sort() {
-	global $g, $config;
-
-	function proxyarpcmp($a, $b) {
-		if (isset($a['network']))
-			list($ast,$asn) = explode("/", $a['network']);
-		else if (isset($a['range'])) {
-			$ast = $a['range']['from'];
-			$asn = 32;
-		}
-		if (isset($b['network']))
-			list($bst,$bsn) = explode("/", $b['network']);
-		else if (isset($b['range'])) {
-			$bst = $b['range']['from'];
-			$bsn = 32;
-		}
-		if (ipcmp($ast, $bst) == 0)
-			return ($asn - $bsn);
-		else
-			return ipcmp($ast, $bst);
-	}
-
-	usort($config['proxyarp']['proxyarpnet'], "proxyarpcmp");
-}
-
-function passthrumacs_sort() {
-	global $g, $config;
-
-	function passthrumacscmp($a, $b) {
-		return strcmp($a['mac'], $b['mac']);
-	}
-
-	usort($config['captiveportal']['passthrumac'],"passthrumacscmp");
-}
-
-function cpelements_sort() {
-	global $g, $config;
-
-	function cpelementscmp($a, $b) {
-		return strcasecmp($a['name'], $b['name']);
-	}
-
-	usort($config['captiveportal']['element'],"cpelementscmp");
-}
-
-function allowedips_sort() {
-	global $g, $config;
-
-	function allowedipscmp($a, $b) {
-		return strcmp($a['ip'], $b['ip']);
-	}
-
-	usort($config['captiveportal']['allowedip'],"allowedipscmp");
-}
-
-function wol_sort() {
-	global $g, $config;
-
-	function wolcmp($a, $b) {
-		return strcmp($a['descr'], $b['descr']);
-	}
-
-	usort($config['wol']['wolentry'], "wolcmp");
 }
 
 function gentitle($title) {
@@ -893,16 +593,6 @@ function is_specialnet($net) {
                 return true;
         else
                 return false;
-}
-
-function ipsec_ca_sort() {
-        global $g, $config;
-
-        function ipseccacmp($a, $b) {
-                return strcmp($a['ident'], $b['ident']);
-        }
-
-        usort($config['ipsec']['cacert'], "ipseccacmp");
 }
 
 //function to create widget tabs when called

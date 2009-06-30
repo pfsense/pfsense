@@ -38,6 +38,18 @@
 ##|*MATCH=firewall_nat_server_edit.php*
 ##|-PRIV
 
+function nat_server_rules_sort() {
+        global $g, $config;
+
+        if (!is_array($config['nat']['servernat']))
+                return;
+
+        function natservercmp($a, $b) {
+                return ipcmp($a['ipaddr'], $b['ipaddr']);
+        }
+
+        usort($config['nat']['servernat'], "natservercmp");
+}
 
 require("guiconfig.inc");
 
@@ -99,7 +111,8 @@ if ($_POST) {
 		$natent = array();
 		$natent['ipaddr'] = $_POST['ipaddr'];
 		$natent['descr'] = $_POST['descr'];
-
+		
+		nat_server_rules_sort();
 		if (isset($id) && $a_snat[$id]) {
 			/* modify all inbound NAT rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {

@@ -36,6 +36,18 @@
 ##|*MATCH=system_routes_edit.php*
 ##|-PRIV
 
+function staticroutes_sort() {
+        global $g, $config;
+
+        if (!is_array($config['staticroutes']['route']))
+                return;
+
+        function staticroutecmp($a, $b) {
+                return strcmp($a['network'], $b['network']);
+        }
+
+        usort($config['staticroutes']['route'], "staticroutecmp");
+}
 
 require("guiconfig.inc");
 
@@ -112,6 +124,7 @@ if ($_POST) {
 		$route['gateway'] = $_POST['gateway'];
 		$route['descr'] = $_POST['descr'];
 
+		staticroutes_sort();
 		if (isset($id) && $a_routes[$id])
 			$a_routes[$id] = $route;
 		else

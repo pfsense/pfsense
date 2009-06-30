@@ -49,7 +49,6 @@ if (!is_array($config['dnsmasq']['hosts']))
 if (!is_array($config['dnsmasq']['domainoverrides'])) 
        $config['dnsmasq']['domainoverrides'] = array();
 
-hosts_sort();
 
 $a_hosts 	   = &$config['dnsmasq']['hosts'];
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];

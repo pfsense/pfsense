@@ -36,6 +36,16 @@
 ##|*MATCH=services_dhcp_edit.php*
 ##|-PRIV
 
+function staticmaps_sort($ifgui) {
+        global $g, $config;
+
+        function staticmapcmp($a, $b) {
+                return ipcmp($a['ipaddr'], $b['ipaddr']);
+        }
+
+        usort($config['dhcpd'][$ifgui]['staticmap'], "staticmapcmp");
+}
+
 require_once('globals.inc');
 
 if(!$g['services_dhcp_server_enable']) {
@@ -138,6 +148,7 @@ if ($_POST) {
 		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
 
+		staticmaps_sort($if);
 		if (isset($id) && $a_maps[$id])
 			$a_maps[$id] = $mapent;
 		else

@@ -45,7 +45,6 @@ if (!is_array($config['staticroutes']['route']))
 if (!is_array($config['gateways']['gateway_item']))
 	$config['gateways']['gateway_item'] = array();
 
-staticroutes_sort();
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = &$config['gateways']['gateway_item'];
 $changedesc = "Static Routes: ";

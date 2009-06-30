@@ -41,7 +41,6 @@ require("guiconfig.inc");
 if (!is_array($config['pppoe']['user'])) {
 	$config['pppoe']['user'] = array();
 }
-pppoe_users_sort();
 $a_secret = &$config['pppoe']['user'];
 
 if ($_POST) {

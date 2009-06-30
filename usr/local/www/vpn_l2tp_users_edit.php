@@ -37,6 +37,19 @@
 
 $pgtitle = array(gettext("VPN"),gettext("L2TP"),gettext("User"),gettext("Edit"));
 
+function  l2tp_users_sort()  {
+        global  $g,  $config;
+
+        if (!is_array($config['l2tp']['user']))
+                return;
+
+        function  usercmp($a,  $b)  {
+                return  strcasecmp($a['name'],  $b['name']);
+        }
+
+        usort($config['l2tp']['user'],  "usercmp");
+}
+
 require("guiconfig.inc");
 
 if (!is_array($config['l2tp']['user'])) {
@@ -110,6 +123,7 @@ if ($_POST) {
 		if ($_POST['passwordfld'])
 			$secretent['password'] = $_POST['passwordfld'];
 
+		l2tp_users_sort();
 		if (isset($id) && $a_secret[$id])
 			$a_secret[$id] = $secretent;
 		else

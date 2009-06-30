@@ -36,6 +36,18 @@
 ##|*MATCH=services_dnsmasq_edit.php*
 ##|-PRIV
 
+function hosts_sort() {
+        global $g, $config;
+
+        if (!is_array($config['dnsmasq']['hosts']))
+                return;
+
+        function hostcmp($a, $b) {
+                return strcasecmp($a['host'], $b['host']);
+        }
+
+        usort($config['dnsmasq']['hosts'], "hostcmp");
+}
 
 require("guiconfig.inc");
 
@@ -94,6 +106,7 @@ if ($_POST) {
 		$hostent['ip'] = $_POST['ip'];
 		$hostent['descr'] = $_POST['descr'];
 
+		hosts_sort();
 		if (isset($id) && $a_hosts[$id])
 			$a_hosts[$id] = $hostent;
 		else

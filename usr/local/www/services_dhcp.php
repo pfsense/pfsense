@@ -143,7 +143,6 @@ if (is_array($config['dhcpd'][$if])){
 	$pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
 	if (!is_array($config['dhcpd'][$if]['staticmap'])) 
         	$config['dhcpd'][$if]['staticmap'] = array();
-	staticmaps_sort($if);
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
 }
 

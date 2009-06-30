@@ -36,6 +36,15 @@
 ##|*MATCH=services_wol_edit.php*
 ##|-PRIV
 
+function wol_sort() {
+        global $g, $config;
+
+        function wolcmp($a, $b) {
+                return strcmp($a['descr'], $b['descr']);
+        }
+
+        usort($config['wol']['wolentry'], "wolcmp");
+}
 
 require("guiconfig.inc");
 
@@ -85,6 +94,7 @@ if ($_POST) {
 		$wolent['mac'] = $_POST['mac'];
 		$wolent['descr'] = $_POST['descr'];
 
+		wol_sort();
 		if (isset($id) && $a_wol[$id])
 			$a_wol[$id] = $wolent;
 		else

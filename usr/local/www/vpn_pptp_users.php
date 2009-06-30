@@ -41,7 +41,6 @@ require("guiconfig.inc");
 if (!is_array($config['pptpd']['user'])) {
 	$config['pptpd']['user'] = array();
 }
-pptpd_users_sort();
 $a_secret = &$config['pptpd']['user'];
 
 if ($_POST) {

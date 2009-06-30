@@ -42,7 +42,6 @@ require("guiconfig.inc");
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
 }
-wol_sort();
 $a_wol = &$config['wol']['wolentry'];
 
 if($_GET['wakeall'] <> "") {

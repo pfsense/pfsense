@@ -49,7 +49,6 @@ $pgtitle = array("System", "Group manager");
 if (!is_array($config['system']['group']))
 	$config['system']['group'] = array();
 
-admin_groups_sort();
 $a_group = &$config['system']['group'];
 
 $id = $_GET['id'];

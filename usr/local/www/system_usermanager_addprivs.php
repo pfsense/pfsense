@@ -35,6 +35,18 @@
 ##|*MATCH=system_usermanager_addprivs.php*
 ##|-PRIV
 
+function admin_users_sort() {
+        global $g, $config;
+
+        if (!is_array($config['system']['user']))
+                return;
+
+        function cpusercmp($a, $b) {
+                return strcasecmp($a['name'], $b['name']);
+        }
+
+        usort($config['system']['user'], "cpusercmp");
+}
 
 require("guiconfig.inc");
 
@@ -87,6 +99,7 @@ if ($_POST) {
 		else
 			$a_user['priv'] = array_merge($a_user['priv'], $pconfig['sysprivs']);
 
+		admin_users_sort();
 		local_user_set($a_user);
 		$retval = write_config();
 		$savemsg = get_std_save_message($retval);

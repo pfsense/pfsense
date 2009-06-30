@@ -43,7 +43,6 @@ if (!is_array($config['voucher'])) {
 if (!is_array($config['voucher']['roll'])) {
 	$config['voucher']['roll'] = array();
 }
-// captiveportal_users_sort();
 $a_roll = &$config['voucher']['roll'];
 
 $id = $_GET['id'];

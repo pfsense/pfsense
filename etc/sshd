@@ -51,7 +51,7 @@
 	if($g['platform'] == "nanobsd" and file_exists("/conf/sshd/ssh_host_key")) {
 		if(!file_exists("/etc/ssh/ssh_host_key.pub")) {
 			echo "Restoring SSH from /conf/sshd/";
-			cp("/conf/sshd/* /etc/ssh/");
+			exec("/conf/sshd/* /etc/ssh/");
 		}
 	}
 

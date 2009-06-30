@@ -212,8 +212,8 @@ pfSenseNanoBSDupgrade)
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
 	echo "" >> /cf/upgrade_log.txt
-	echo "/sbin/fsck_ffs -n /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
-	/sbin/fsck_ffs -n /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
+	echo "/sbin/fsck_ffs -y /dev/$COMPLETE_PATH" >> /cf/upgrade_log.txt
+	/sbin/fsck_ffs -y /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
 	if [ $? != 0 ]; then
 		file_notice "UpgradeFailure" "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state."
 		rm /var/run/firmware.lock

@@ -187,7 +187,7 @@ switch($_GET['mode']) {
 			$static_output .= "\n\nInstallation halted.";
 			update_output_window($static_output);
 		} else {
-			$filename = escapeshellcmd("/tmp/" . $_GET['pkg']  . ".info");
+			$filename = escapeshellcmd("/tmp/" . $_GET['id']  . ".info");
 			$fd = fopen($filename, "w");
 			$status_a = "Installation of " . htmlspecialchars($_GET['id']) . " completed.";
 			update_status($status_a);

@@ -263,7 +263,7 @@ if ($_POST) {
 							$savemsg = "The configuration area has been restored.  You may need to reboot the firewall.";
 						}
 					} else {
-						if(!stristr($data, $g['xml_rootobj'])) {
+						if(!stristr($data, "<" . $g['xml_rootobj'] . ">")) {
 							$input_errors[] = "You have selected to restore the full configuration but we could not locate a " . $g['xml_rootobj'] . " tag.";
 						} else {
 							/* restore the entire configuration */

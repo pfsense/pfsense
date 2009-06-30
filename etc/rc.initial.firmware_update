@@ -177,6 +177,7 @@ function do_upgrade($path, $type) {
 		sleep(1);
 		echo ".";
 	}
+	sleep(10);
 	echo "Done.  Rebooting...\n\n";
 	if(file_exists($g['varrun_path'] . "/firmware.lock"))
 		unlink($g['varrun_path'] . "/firmware.lock");

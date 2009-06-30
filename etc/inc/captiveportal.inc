@@ -40,6 +40,7 @@ require_once("util.inc");
 require_once("radius_authentication.inc");
 require_once("radius_accounting.inc");
 require_once("radius.inc");
+require_once("voucher.inc");
 
 $lockfile = "{$g['varrun_path']}/captiveportal.lock";
 

@@ -28,6 +28,7 @@
     
 /* include all configuration functions */
 require_once("config.inc");
+$dirtyfile = "{$g['varrun_path']}/voucher.dirty";
 
 /* 
  *Authenticate a voucher and return the remaining time credit in minutes
@@ -397,8 +398,8 @@ function voucher_save_db_to_config() {
         }
         $rollent['active'] = $db;
     }
-    unlock($voucherlck);
     unlink($dirtyfile);
+    unlock($voucherlck);
     write_config();
     return;
 }

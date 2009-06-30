@@ -53,7 +53,7 @@ foreach($a_roll as $rollent) {
     $minutes = $rollent['minutes'];
     $active_vouchers = file("{$g['vardb_path']}/voucher_active_$roll.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach($active_vouchers as $voucher => $line) {
-        list($timestamp, $minutes) = explode(",", $line);
+        list($voucher,$timestamp, $minutes) = explode(",", $line);
         $remaining = (($timestamp + 60*$minutes) - time());
         if ($remaining > 0) {
             $dbent[0] = $voucher;

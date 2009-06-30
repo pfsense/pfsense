@@ -89,7 +89,7 @@ switch ($command) {
 				echo "Binary DIFF upgrade file detected...\n";
 				$type = "bdiff";
 			}
-			if(strstr($url,"bdiff")) {}
+			if(strstr($url,"nanobsd")) {}
 				echo "NanoBSD upgrade file detected...\n";			
 				$type = "nanobsd";	
 			}			
@@ -110,7 +110,7 @@ switch ($command) {
 		}
 		if(stristr($fp,"bdiff"))
 			$type = "bdiff";
-		if(stristr($fp,"bdiff"))
+		if(stristr($fp,"nanobsd"))
 			$type = "nanobsd";			
 		if(file_exists($path)) {
 			mark_subsystem_dirty('firmware');

@@ -48,7 +48,7 @@
 	/* restore ssh data for nanobsd platform */
 	if($g['platform'] == "nanobsd" and file_exists("/conf/sshd/ssh_host_key")) {
 		if(!file_exists("/etc/ssh/sshd_host_key.pub")) {
-			cp("/conf/sshd/* /etc/ssh/");
+			exec("/conf/sshd/* /etc/ssh/");
 		}
 	}
 

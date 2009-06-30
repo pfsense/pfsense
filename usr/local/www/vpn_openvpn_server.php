@@ -85,6 +85,7 @@ if($_GET['act']=="edit"){
 		$pconfig['interface'] = $a_server[$id]['interface'];
 		$pconfig['local_port'] = $a_server[$id]['local_port'];
 		$pconfig['description'] = $a_server[$id]['description'];
+		$pconfig['ovpnadvanced'] = $a_server[$id]['ovpnadvanced'];
 
 		if ($pconfig['mode'] != "p2p_shared_key") {
 			if ($a_server[$id]['tls']) {
@@ -259,6 +260,7 @@ if ($_POST) {
 		$server['interface'] = $pconfig['interface'];
 		$server['local_port'] = $pconfig['local_port'];
 		$server['description'] = $pconfig['description'];
+		$server['ovpnadvanced'] = $pconfig['ovpnadvanced'];
 
 		if ($tls_mode) {
 			if ($pconfig['tlsauth_enable']) {
@@ -1073,6 +1075,28 @@ function netbios_change() {
 											Server #2:&nbsp;
 										</span>
 										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=$pconfig['wins_server2'];?>">
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="client_opts">
+					<tr>
+						<td colspan="2" class="list" height="12"></td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">Advanced configuration</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">Address Pool</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<textarea rows="6" cols="78" name="ovpnadvanced" id="ovpnadvanced"><?=$pconfig['ovpnadvanced'];?></textarea><br/>
+										Paste any additional options you would like to pass through to the openvpn server here.										
 									</td>
 								</tr>
 							</table>

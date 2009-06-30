@@ -43,6 +43,11 @@ if(!function_exists("update_status")) {
 		echo $status . "\n";
 	}
 }
+if(!function_exists("update_output_window")) {
+	function update_output_window($status) {
+		echo $status . "\n";
+	}
+}
 
 safe_mkdir("/var/db/pkg");
 

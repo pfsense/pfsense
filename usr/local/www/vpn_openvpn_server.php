@@ -85,7 +85,7 @@ if($_GET['act']=="edit"){
 		$pconfig['interface'] = $a_server[$id]['interface'];
 		$pconfig['local_port'] = $a_server[$id]['local_port'];
 		$pconfig['description'] = $a_server[$id]['description'];
-		$pconfig['ovpnadvanced'] = $a_server[$id]['ovpnadvanced'];
+		$pconfig['custom_options'] = $a_server[$id]['custom_options'];
 
 		if ($pconfig['mode'] != "p2p_shared_key") {
 			if ($a_server[$id]['tls']) {
@@ -260,7 +260,7 @@ if ($_POST) {
 		$server['interface'] = $pconfig['interface'];
 		$server['local_port'] = $pconfig['local_port'];
 		$server['description'] = $pconfig['description'];
-		$server['ovpnadvanced'] = $pconfig['ovpnadvanced'];
+		$server['custom_options'] = $pconfig['custom_options'];
 
 		if ($tls_mode) {
 			if ($pconfig['tlsauth_enable']) {
@@ -1095,7 +1095,7 @@ function netbios_change() {
 							<table border="0" cellpadding="2" cellspacing="0">
 								<tr>
 									<td>
-										<textarea rows="6" cols="78" name="ovpnadvanced" id="ovpnadvanced"><?=$pconfig['ovpnadvanced'];?></textarea><br/>
+										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
 										Paste any additional options you would like to pass through to the openvpn server here.										
 									</td>
 								</tr>

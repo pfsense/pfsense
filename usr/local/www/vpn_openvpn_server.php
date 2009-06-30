@@ -1104,6 +1104,8 @@ function netbios_change() {
 					</tr>
 				</table>
 
+				<br/>
+
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" id="client_opts">
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>

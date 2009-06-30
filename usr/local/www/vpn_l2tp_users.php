@@ -51,7 +51,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
+		if (!is_subsystem_dirty('rebootreq')) {
 			$retval = vpn_l2tp_configure();
 		}
 		$savemsg = get_std_save_message($retval);

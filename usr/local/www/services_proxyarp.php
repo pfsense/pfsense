@@ -54,17 +54,15 @@ if ($_POST) {
 	$retval = services_proxyarp_configure();
 	$savemsg = get_std_save_message($retval);
 
-	if ($retval == 0) {
-		if (file_exists($d_proxyarpdirty_path))
-			unlink($d_proxyarpdirty_path);
-	}
+	if ($retval == 0)
+		clear_subsystem_dirty('proxyarp');
 }
 
 if ($_GET['act'] == "del") {
 	if ($a_proxyarp[$_GET['id']]) {
 		unset($a_proxyarp[$_GET['id']]);
 		write_config();
-		touch($d_proxyarpdirty_path);
+		mark_subsystem_dirty('proxyarp');
 		header("Location: services_proxyarp.php");
 		exit;
 	}
@@ -79,7 +77,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <form action="services_proxyarp.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_proxyarpdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('proxyarp')): ?><p>
 <?php print_info_box_np("The proxy ARP configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
               <table width="100%" border="0" cellpadding="0" cellspacing="0">

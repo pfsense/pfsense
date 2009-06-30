@@ -58,11 +58,8 @@ if ($_POST) {
 		$retval |= filter_configure();
 
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			if (file_exists($d_staticroutesdirty_path)) {
-				unlink($d_staticroutesdirty_path);
-			}
-		}
+		if ($retval == 0)
+			clear_subsystem_dirty('staticroutes');
 	}
 }
 
@@ -71,7 +68,7 @@ if ($_GET['act'] == "del") {
 		$changedesc .= "removed gateway group {$_GET['id']}";
 		unset($a_gateway_groups[$_GET['id']]);
 		write_config($changedesc);
-		touch($d_staticroutesdirty_path);
+		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateway_groups.php");
 		exit;
 	}
@@ -87,7 +84,7 @@ include("head.inc");
 <form action="system_gateway_groups.php" method="post">
 <input type="hidden" name="y1" value="1">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_staticroutesdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('staticroutes')): ?><p>
 <?php print_info_box_np("The gateway configuration has been changed.<br>You must apply the changes in order for them to take 
 effect.");?><br>
 <?php endif; ?>

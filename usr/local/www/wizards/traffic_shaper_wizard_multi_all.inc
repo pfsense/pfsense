@@ -594,7 +594,7 @@ function step5_stepsubmitphpaction() {
 }
 
 function step8_stepsubmitphpaction() {
-		global $g, $config, $d_shaperconfdirty_path;
+		global $g, $config;
 
 		/* save the new configuration */
 		apply_all_choosen_items();
@@ -608,7 +608,7 @@ function step8_stepsubmitphpaction() {
 		filter_configure();
 
 		/* And we're no longer dirty! */
-		unlink_if_exists($d_shaperconfdirty_path);
+		clear_subsystem_dirty('shaper');
 
 		update_filter_reload_status("Initializing");
 

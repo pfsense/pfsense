@@ -114,7 +114,7 @@ if ($_POST) {
 
 		if ($changecount > 0) {
 			/* Mark virtual server dirty */
-			touch($d_vsconfdirty_path);
+			mark_subsystem_dirty('loadbalancer');
 			write_config($changedesc);
 		}
 

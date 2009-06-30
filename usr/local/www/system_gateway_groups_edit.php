@@ -126,7 +126,7 @@ if ($_POST) {
 		else
 			$a_gateway_groups[] = $gateway_group;
 		
-		touch($d_staticroutesdirty_path);
+		mark_subsystem_dirty('staticroutes');
 		
 		write_config();
 		

@@ -156,7 +156,7 @@ if ($_POST) {
 			}
 		}
 		
-		touch($d_staticroutesdirty_path);
+		mark_subsystem_dirty('staticroutes');
 		
 		write_config();
 		

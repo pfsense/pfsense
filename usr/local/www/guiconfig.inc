@@ -44,7 +44,6 @@ if (!$omit_nocacheheaders) {
 }
 
 /* parse the configuration and include all configuration functions */
-require_once("config.inc");
 require_once("functions.inc");
 
 /* Pull in all the gui related display classes) */
@@ -71,34 +70,6 @@ foreach($apple_ua as $useragent)
 	if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
 		$g['theme'] = "pfsense";
 
-$d_landirty_path = $g['varrun_path'] . "/lan.conf.dirty";
-$d_pppoeuserdirty_path = $g['varrun_path'] . "/vpn-pppoe-users-edit.dirty";
-$d_hostsdirty_path = $g['varrun_path'] . "/hosts.dirty";
-$d_natconfdirty_path = $g['varrun_path'] . "/nat.conf.dirty";
-$d_filterconfdirty_path = $g['varrun_path'] . "/filter.conf.dirty";
-$d_ipsecconfdirty_path = $g['varrun_path'] . "/ipsec.conf.dirty";
-$d_shaperconfdirty_path = $g['varrun_path'] . "/shaper.conf.dirty";
-$d_pptpuserdirty_path = $g['varrun_path'] . "/pptpd.user.dirty";
-$d_dnsmasqdirty_path = $g['varrun_path'] . "/dnsmasq.dirty";
-$d_staticmapsdirty_path = $g['varrun_path'] . "/staticmaps.dirty";
-$d_staticroutesdirty_path = $g['varrun_path'] . "/staticroutes.dirty";
-$d_aliasesdirty_path = $g['varrun_path'] . "/aliases.dirty";
-$d_proxyarpdirty_path = $g['varrun_path'] . "/proxyarp.dirty";
-$d_fwupenabled_path = $g['varrun_path'] . "/fwup.enabled";
-$d_firmwarelock_path = $g['varrun_path'] . "/firmware.lock";
-$d_sysrebootreqd_path = $g['varrun_path'] . "/sysreboot.reqd";
-$d_passthrumacsdirty_path = $g['varrun_path'] . "/passthrumacs.dirty";
-$d_allowedipsdirty_path = $g['varrun_path'] . "/allowedips.dirty";
-$d_ovpnclidirty_path = $g['varrun_path'] . "/ovpnclient.dirty";
-$d_vipconfdirty_path = $g['varrun_path'] . "/vip.conf.dirty";
-$d_sysctldirty_path = $g['varrun_path'] . "/sysctl.conf.dirty";
-$d_vsconfdirty_path = $g['varrun_path'] . "/vs.conf.dirty";
-$d_shaperconfdirty_path = $g['varrun_path'] . "/shaper.conf.dirty";
-
-/* OpenVPN Directories */
-$d_ovpnsrvdirty_path = "/tmp/ovpn-srv.dirty";
-$d_ovpncrldirty_path = "/tmp/ovpn-crl.dirty";
-$d_ovpnclidirty_path = "/tmp/ovpn-cli.dirty";
 /* used by progress bar */
 $lastseen = "-1";
 
@@ -106,7 +77,7 @@ $navlevelsep = ": ";	/* navigation level separator string */
 $mandfldhtml = "";		/* display this before mandatory input fields */
 $mandfldhtmlspc = "";	/* same as above, but with spacing */
 
-if (file_exists($d_firmwarelock_path)) {
+if (is_subsystem_dirty('firmwarelock')) {
 	if (!$d_isfwfile) {
 		header("Location: system_firmware.php");
 		exit;

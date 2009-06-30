@@ -448,7 +448,7 @@ if ($_POST) {
 		}
 
 		write_config();
-		touch($d_filterconfdirty_path);
+		mark_subsystem_dirty('filter');
 
 		if (isset($_POST['floating']))
 			header("Location: firewall_rules.php?if=FloatingRules");

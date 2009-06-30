@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	firewall_shaper.php
+	firewall_shaper_wizards.php
 	Copyright (C) 2004, 2005 Scott Ullrich
 	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
@@ -60,7 +60,7 @@ if ($_POST['apply']) {
                 system("rm -f /var/db/rrd/*queues.rrd");
                         enable_rrd_graphing();
 
-            unlink($d_shaperconfdirty_path);
+		clear_subsystem_dirty('shaper');
 }
 
 $pgtitle = array("Firewall", "Traffic Shaper", "Wizards");
@@ -84,7 +84,7 @@ include("fbegin.inc");
 <form action="firewall_shaper_wizards.php" method="post" id="iform" name="iform">
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_shaperconfdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('shaper')): ?><p>
 <?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

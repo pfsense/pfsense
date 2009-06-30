@@ -68,10 +68,8 @@ if ($_POST) {
 	$retval = services_dnsmasq_configure();
 	$savemsg = get_std_save_message($retval);
 
-	if ($retval == 0) {
-		if (file_exists($d_hostsdirty_path))
-			unlink($d_hostsdirty_path);
-	}
+	if ($retval == 0)
+		clear_subsystem_dirty('hosts');
 }
 
 if ($_GET['act'] == "del") {
@@ -79,7 +77,7 @@ if ($_GET['act'] == "del") {
                if ($a_hosts[$_GET['id']]) {
                        unset($a_hosts[$_GET['id']]);
                        write_config();
-                       touch($d_hostsdirty_path);
+			mark_subsystem_dirty('hosts');
                        header("Location: services_dnsmasq.php");
                        exit;
                }
@@ -88,7 +86,7 @@ if ($_GET['act'] == "del") {
                if ($a_domainOverrides[$_GET['id']]) {
                        unset($a_domainOverrides[$_GET['id']]);
                        write_config();
-                       touch($d_hostsdirty_path);
+			mark_subsystem_dirty('hosts');
                        header("Location: services_dnsmasq.php");
                        exit;
                }
@@ -115,7 +113,7 @@ function enable_change(enable_over) {
 <?php include("fbegin.inc"); ?>
 <form action="services_dnsmasq.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_hostsdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('hosts')): ?><p>
 <?php print_info_box_np("The DNS forwarder configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">

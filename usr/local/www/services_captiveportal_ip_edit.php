@@ -93,7 +93,7 @@ if ($_POST) {
 		
 		write_config();
 
-		touch($d_allowedipsdirty_path) ;
+		mark_subsystem_dirty('allowedips');
 		
 		header("Location: services_captiveportal_ip.php");
 		exit;

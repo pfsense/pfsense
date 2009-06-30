@@ -141,8 +141,8 @@ else if ($_POST) {
 		if(sizeof($dupes) == 0 && !$input_errors) {
 			$l7r->wconfig();
 			write_config();
-			touch($d_shaperconfdirty_path);
-		
+			mark_subsystem_dirty('shaper');
+
 			read_layer7_config();
 		}
 		else {
@@ -174,8 +174,8 @@ else if ($_POST) {
 		else
 			$savemsg = $retval;
 
-		unlink($d_shaperconfdirty_path);
-		
+		clear_subsystem_dirty('shaper');
+
 		if($container) {
 			$output_form .= $container->build_form();
 		} else {
@@ -185,7 +185,7 @@ else if ($_POST) {
 	} else if ($_POST['delete']) {
 		$container->delete_l7c();
 		write_config();
-		touch($d_shaperconfdirty_path);
+		mark_subsystem_dirty('shaper');
 		unset($container);
 		
 		header("Location: firewall_shaper_layer7.php");
@@ -386,7 +386,7 @@ include("fbegin.inc");
 <form action="firewall_shaper_layer7.php" method="post" id="iform" name="iform">
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_shaperconfdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('shaper')): ?><p>
 <?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

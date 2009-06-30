@@ -56,10 +56,8 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 
 		if ($retval == 0) {
-			if (file_exists($d_natconfdirty_path))
-				unlink($d_natconfdirty_path);
-			if (file_exists($d_filterconfdirty_path))
-				unlink($d_filterconfdirty_path);
+			clear_subsystem_dirty('natconf');
+			clear_subsystem_dirty('filter');
 		}
 	}
 }
@@ -79,7 +77,7 @@ if ($_GET['act'] == "del") {
 		if (!$input_errors) {
 			unset($a_snat[$_GET['id']]);
 			write_config();
-			touch($d_natconfdirty_path);
+			mark_subsystem_dirty('natconf');
 			header("Location: firewall_nat_server.php");
 			exit;
 		}
@@ -95,7 +93,7 @@ include("head.inc");
 <form action="firewall_nat_server.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_natconfdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('natconf')): ?><p>
 <?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>

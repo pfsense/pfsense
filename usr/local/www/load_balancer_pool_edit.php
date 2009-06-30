@@ -126,7 +126,7 @@ if ($_POST) {
 		if ($changecount > 0) {
 			/* Mark pool dirty */
 			conf_mount_rw();
-			touch($d_vsconfdirty_path);
+			mark_subsystem_dirty('loadbalancer');
 			write_config($changedesc);
 		}
 

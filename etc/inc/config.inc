@@ -478,7 +478,7 @@ function conf_mount_ro() {
 		return;
 
 	/* firmare upgrade in progress */
-	if(file_exists($g['varrun_path'] . "/firmware.lock"))
+	if (is_subsystem_dirty('firmwarelock'))
 		return;
 
 	/* do not umount if generating ssh keys */

@@ -53,8 +53,8 @@ if ($_POST) {
 		$retval = vpn_setup();
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
-			if (file_exists($d_pppoeuserdirty_path))
-				unlink($d_pppoeuserdirty_path);
+			if (is_subsystem_dirty('pppoeusers'))
+				clear_subsystem_dirty('pppoeusers');
 		}
 	}
 }
@@ -63,7 +63,7 @@ if ($_GET['act'] == "del") {
 	if ($a_secret[$_GET['id']]) {
 		unset($a_secret[$_GET['id']]);
 		write_config();
-		touch($d_pppoeuserdirty_path);
+		mark_subsystem_dirty('pppoeusers');
 		header("Location: vpn_pppoe_users.php");
 		exit;
 	}
@@ -80,7 +80,7 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (isset($config['pppoe']['radius']['enable']))
 	print_info_box("Warning: RADIUS is enabled. The local user database will not be used."); ?>
-<?php if (file_exists($d_pppoeuserdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('pppoeusers')): ?><p>
 <?php print_info_box_np("The PPPoE user list has been modified.<br>You must apply the changes in order for them to take effect.<br><b>Warning: this will terminate all current PPPoE sessions!</b>");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

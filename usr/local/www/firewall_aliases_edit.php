@@ -221,7 +221,7 @@ if ($_POST) {
 		else
 			$a_aliases[] = $alias;
 
-		touch($d_aliasesdirty_path);
+		mark_subsystem_dirty('aliases');
 
 		write_config();
 		filter_configure();

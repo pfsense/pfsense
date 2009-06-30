@@ -312,17 +312,13 @@ if ($_POST) {
 		if (isset($config['dnsmasq']['regdhcpstatic']))	{
 			$retvaldns = services_dnsmasq_configure();
 			if ($retvaldns == 0) {
-				if (file_exists($d_hostsdirty_path))
-					unlink($d_hostsdirty_path);
-				if (file_exists($d_staticmapsdirty_path))
-					unlink($d_staticmapsdirty_path);
+				clear_subsystem_dirty('hosts');
+				clear_subsystem_dirty('staticmaps');
 			}					
 		} else {
 			$retvaldhcp = services_dhcpd_configure();	
-			if ($retvaldhcp == 0) {
-				if (file_exists($d_staticmapsdirty_path))
-					unlink($d_staticmapsdirty_path);
-			}
+			if ($retvaldhcp == 0)
+				clear_subsystem_dirty('staticmaps');
 		}	
 		if($retvaldhcp == 1 || $retvaldns == 1)
 			$retval = 1;
@@ -335,9 +331,9 @@ if ($_GET['act'] == "del") {
 		unset($a_maps[$_GET['id']]);
 		write_config();
 		if(isset($config['dhcpd'][$if]['enable'])) {
-			touch($d_staticmapsdirty_path);
+			mark_subsystem_dirty('staticmaps');
 			if (isset($config['dnsmasq']['regdhcpstatic']))
-				touch($d_hostsdirty_path);
+				mark_subsystem_dirty('hosts');
 		}
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
@@ -426,7 +422,7 @@ function show_netboot_config() {
 		exit;
 	}
 ?>
-<?php if (file_exists($d_staticmapsdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('staticmaps')): ?><p>
 <?php print_info_box_np("The static mapping configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

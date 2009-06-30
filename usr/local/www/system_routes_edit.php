@@ -117,7 +117,7 @@ if ($_POST) {
 		else
 			$a_routes[] = $route;
 		
-		touch($d_staticroutesdirty_path);
+		mark_subsystem_dirty('staticroutes');
 		
 		write_config();
 		

@@ -86,7 +86,7 @@ if ($_GET) {
 			if ($queue) {
 				$queue->delete_queue();
 				write_config();
-				touch($d_shaperconfdirty_path);
+				mark_subsystem_dirty('shaper');
 			}
 			header("Location: firewall_shaper.php");
 			exit;
@@ -170,7 +170,7 @@ if ($_GET) {
 					$queue->SetEnabled("on");
 					$output_form .= $queue->build_form();
 					write_config();
-					touch($d_shaperconfdirty_path);
+					mark_subsystem_dirty('shaper');
 			} else
 					$input_errors[] = "Queue not found!";
 		break;
@@ -179,7 +179,7 @@ if ($_GET) {
 					$queue->SetEnabled("");
 					$output_form .= $queue->build_form();
 					write_config();
-					touch($d_shaperconfdirty_path);
+					mark_subsystem_dirty('shaper');
 			} else
 					$input_errors[] = "Queue not found!";
 		break;
@@ -222,7 +222,7 @@ if ($_GET) {
 			$altq->SetLink(&$tmppath);	
 			$altq->wconfig();
 			write_config();
-			touch($d_shaperconfdirty_path);
+			mark_subsystem_dirty('shaper');
 			$can_enable = true;
                         $can_add = true;
 		}
@@ -247,7 +247,7 @@ if ($_GET) {
 				} else
 					$can_add = false;
 				write_config();
-				touch($d_shaperconfdirty_path);
+				mark_subsystem_dirty('shaper');
 				$can_enable = true;
 				if ($altq->GetScheduler() != "PRIQ") /* XXX */
 					if ($tmp->GetDefault() <> "")
@@ -276,7 +276,7 @@ if ($_GET) {
                 system("rm -f /var/db/rrd/*queues.rrd");
 			enable_rrd_graphing();
 
-            unlink($d_shaperconfdirty_path);
+		clear_subsystem_dirty('shaper');
 			
 			if ($queue) {
 				$output_form .= $queue->build_form();
@@ -293,7 +293,7 @@ if ($_GET) {
                             $queue->update_altq_queue_data($_POST);
                             $queue->wconfig();
 							write_config();
-				touch($d_shaperconfdirty_path);
+				mark_subsystem_dirty('shaper');
 				$dontshow = false;
                 } 
 		read_altq_config();
@@ -408,7 +408,7 @@ include("fbegin.inc");
 <form action="firewall_shaper.php" method="post" id="iform" name="iform">
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_shaperconfdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('shaper')): ?><p>
 <?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

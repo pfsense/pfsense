@@ -67,7 +67,7 @@ if ($_POST) {
 		interfaces_carp_configure();
 		
 		$savemsg = get_std_save_message($retval);
-		unlink_if_exists($d_vipconfdirty_path);
+		clear_subsystem_dirty('vip');
 	}
 }
 
@@ -90,7 +90,7 @@ if ($_GET['act'] == "del") {
 				mwexec("/sbin/ifconfig " . get_real_interface($a_vip[$_GET['id']]['interface']) . " delete {$a_vip[$_GET['id']]['subnet']}");
 			unset($a_vip[$_GET['id']]);
 			write_config();
-			touch($d_vipconfdirty_path);
+			mark_subsystem_dirty('vip');
 			header("Location: firewall_virtual_ip.php");
 			exit;
 		}
@@ -111,7 +111,7 @@ include("head.inc");
 	if ($savemsg) 
 		print_info_box($savemsg); 
 	else
-	if (file_exists($d_vipconfdirty_path))
+	if (is_subsystem_dirty('vip'))
 		print_info_box_np("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect.");
 ?>
 <br>

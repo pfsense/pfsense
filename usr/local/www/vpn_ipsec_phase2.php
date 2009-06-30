@@ -189,7 +189,7 @@ if ($_POST) {
 		}
 
 		write_config();
-		touch($d_ipsecconfdirty_path);
+		mark_subsystem_dirty('ipsec');
 
 		header("Location: vpn_ipsec.php");
 		exit;

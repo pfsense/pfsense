@@ -197,7 +197,7 @@ if ($_POST) {
 				$a_nat[] = $natent;
 		}
 
-		touch($d_natconfdirty_path);
+		mark_subsystem_dirty('natconf');
 
 		if ($_POST['autoadd']) {
 			/* auto-generate a matching firewall rule */
@@ -224,7 +224,7 @@ if ($_POST) {
 
 			$config['filter']['rule'][] = $filterent;
 
-			touch($d_filterconfdirty_path);
+			mark_subsystem_dirty('filter');
 		}
 
 		write_config();

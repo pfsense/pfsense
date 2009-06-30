@@ -110,7 +110,7 @@ if ($_POST) {
 		} else
 			$a_snat[] = $natent;
 
-		touch($d_natconfdirty_path);
+		mark_subsystem_dirty('natconf');
 
 		write_config();
 

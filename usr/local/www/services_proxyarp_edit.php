@@ -130,7 +130,7 @@ if ($_POST) {
 		else
 			$a_proxyarp[] = $arpent;
 		
-		touch($d_proxyarpdirty_path);
+		mark_subsystem_dirty('proxyarp');
 		
 		write_config();
 		

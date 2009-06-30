@@ -53,7 +53,7 @@ if ($_POST) {
 		$retval |= filter_configure();
 		$retval |= relayd_configure();
 		$savemsg = get_std_save_message($retval);
-		unlink_if_exists($d_vsconfdirty_path);
+		clear_subsystem_dirty('loadbalancer');
 	}
 }
 
@@ -63,7 +63,7 @@ if ($_GET['act'] == "del") {
 		if (!$input_errors) {
 			unset($a_vs[$_GET['id']]);
 			write_config();
-			touch($d_vsconfdirty_path);
+			mark_subsystem_dirty('loadbalancer');
 			header("Location: load_balancer_virtual_server.php");
 			exit;
 		}
@@ -94,7 +94,7 @@ include("head.inc");
 <form action="load_balancer_virtual_server.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_vsconfdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('loadbalancer')): ?><p>
 <?php print_info_box_np("The virtual server configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

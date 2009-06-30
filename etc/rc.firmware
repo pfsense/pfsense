@@ -117,7 +117,7 @@ enable)
 	echo "" > /cf/upgrade_log.txt
 	;;
 auto)
-	touch /var/run/firmware.lock
+	touch /var/run/firmwarelock.dirty
 	backup_chflags
 	remove_chflags
 	/etc/rc.firmware_auto
@@ -140,7 +140,7 @@ pfSenseNanoBSDupgrade)
 		exit 1
 	fi
 
-	touch /var/run/firmware.lock
+	touch /var/run/firmwarelock.dirty
 
 	echo "NanoBSD Firmware upgrade in progress..."  >> /cf/upgrade_log.txt 2>&1
 	echo "NanoBSD Firmware upgrade in progress..." | wall
@@ -216,7 +216,7 @@ pfSenseNanoBSDupgrade)
 	/sbin/fsck_ffs -y /dev/$COMPLETE_PATH >> /cf/upgrade_log.txt 2>&1
 	if [ $? != 0 ]; then
 		file_notice "UpgradeFailure" "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state."
-		rm /var/run/firmware.lock
+		rm /var/run/firmwarelock.dirty
 		/etc/rc.conf_mount_ro		
 		exit 1
 	fi
@@ -248,7 +248,7 @@ pfSenseNanoBSDupgrade)
 	if [ $? != 0 ]; then
 		echo "Something went wrong when trying to update the fstab entry.  Aborting upgrade."
 		file_notice "UpgradeFailure" "Something went wrong when trying to update the fstab entry.  Aborting upgrade."
-		rm /var/run/firmware.lock
+		rm /var/run/firmwarelock.dirty
 		umount /tmp/$GLABEL_SLICE
 		/etc/rc.conf_mount_ro
 		exit 1
@@ -290,7 +290,7 @@ pfSenseNanoBSDupgrade)
 	echo "/sbin/sysctl kern.geom.debugflags=0" >> /cf/upgrade_log.txt
 	/sbin/sysctl kern.geom.debugflags=0 >> /cf/upgrade_log.txt 2>&1
 
-	rm -f /var/run/firmware.lock
+	rm -f /var/run/firmwarelock.dirty
 	sh /etc/rc.reboot
 
 	;;
@@ -311,7 +311,7 @@ pfSenseupgrade)
 	echo "NanoBSD upgrade starting" >> /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
 
-	touch /var/run/firmware.lock
+	touch /var/run/firmwarelock.dirty
 
 	touch /cf/upgrade_log.txt
 	echo "" >> /cf/upgrade_log.txt
@@ -388,7 +388,7 @@ pfSenseupgrade)
 	/etc/rc.conf_mount_ro
 
 	# release the firmware lock
-	rm -f /var/run/firmware.lock
+	rm -f /var/run/firmwarelock.dirty
 	/bin/sync
 
 	# If the archive has unpacked a file called
@@ -403,7 +403,7 @@ pfSenseupgrade)
 
 	;;
 delta_update)
-	touch /var/run/firmware.lock
+	touch /var/run/firmwarelock.dirty
 	backup_chflags
 	remove_chflags
 	binary_update $IMG

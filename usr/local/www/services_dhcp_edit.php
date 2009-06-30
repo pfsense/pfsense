@@ -146,9 +146,9 @@ if ($_POST) {
 		write_config();
 
 		if(isset($config['dhcpd'][$if]['enable'])) {
-			touch($d_staticmapsdirty_path);
+			mark_subsystem_dirty('staticmaps');
 			if (isset($config['dnsmasq']['regdhcpstatic']))	
-				touch($d_hostsdirty_path);
+				mark_subsystem_dirty('hosts');
 		}
 
 		header("Location: services_dhcp.php?if={$if}");

@@ -59,8 +59,8 @@ if ($_POST['apply']) {
 		$savemsg = $retval;
 
 	if ($retval == 0) {
-		unlink_if_exists($d_natconfdirty_path);
-		unlink_if_exists($d_filterconfdirty_path);
+		clear_subsystem_dirty('natconf');
+		clear_subsystem_dirty('filter');
         }
 }
 
@@ -112,7 +112,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 		break;
 	}
         write_config();
-        touch($d_natconfdirty_path);
+	mark_subsystem_dirty('natconf');
         header("Location: firewall_nat_out.php");
         exit;
 }
@@ -124,7 +124,7 @@ if (isset($_POST['del_x'])) {
                         unset($a_out[$rulei]);
                 }
                 write_config();
-                touch($d_natconfdirty_path);
+		mark_subsystem_dirty('natconf');
                 header("Location: firewall_nat_out.php");
                 exit;
         }
@@ -171,7 +171,7 @@ if (isset($_POST['del_x'])) {
 			unset($config['nat']['advancedoutbound']);
 
                 write_config();
-                touch($d_natconfdirty_path);
+		mark_subsystem_dirty('natconf');
                 header("Location: firewall_nat_out.php");
                 exit;
         }
@@ -188,7 +188,7 @@ include("head.inc");
 <script type="text/javascript" language="javascript" src="/javascript/row_toggle.js">
 </script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_natconfdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('natconf')): ?><p>
 <?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>

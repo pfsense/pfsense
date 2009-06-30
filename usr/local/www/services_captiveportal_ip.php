@@ -55,11 +55,8 @@ if ($_POST) {
 		$retval = captiveportal_allowedip_configure();
 
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			if (file_exists($d_allowedipsdirty_path)) {
-				unlink($d_allowedipsdirty_path);
-			}
-		}
+		if ($retval == 0)
+			clear_subsystem_dirty('allowedips');
 	}
 }
 
@@ -67,7 +64,7 @@ if ($_GET['act'] == "del") {
 	if ($a_allowedips[$_GET['id']]) {
 		unset($a_allowedips[$_GET['id']]);
 		write_config();
-		touch($d_allowedipsdirty_path);
+		mark_subsystem_dirty('allowedips');
 		header("Location: services_captiveportal_ip.php");
 		exit;
 	}
@@ -80,7 +77,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="services_captiveportal_ip.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_allowedipsdirty_path)): ?>
+<?php if (is_subsystem_dirty('allowedips')): ?>
 <?php print_info_box_np("The captive portal IP address configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

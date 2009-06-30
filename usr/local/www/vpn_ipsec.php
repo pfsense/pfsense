@@ -62,8 +62,8 @@ if ($_POST) {
 		filter_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
-			if (file_exists($d_ipsecconfdirty_path))
-				unlink($d_ipsecconfdirty_path);
+			if (is_subsystem_dirty('ipsec'))
+				clear_subsystem_dirty('ipsec');
 		}
 	} else if ($_POST['submit']) {
 		$pconfig = $_POST;
@@ -124,7 +124,7 @@ include("head.inc");
 <?php
 	if ($savemsg)
 		print_info_box($savemsg);
-	if ($pconfig['enable'] && file_exists($d_ipsecconfdirty_path))
+	if ($pconfig['enable'] && is_subsystem_dirty('ipsec'))
 		print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

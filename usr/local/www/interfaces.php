@@ -229,11 +229,11 @@ if (isset($wancfg['wireless'])) {
 
 if ($_POST['apply']) {
 	unset($input_errors);
-	if (!file_exists($d_landirty_path))
+	if (!is_subsystem_dirty('interfaces'))
 		$intput_errors[] = "You have already applied your settings!";
 	else {	
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
-		unlink_if_exists("{$d_landirty_path}");
+		clear_subsystem_dirty('interfaces');
 		interface_configure($if);
 		reset_carp();
 		/* restart snmp so that it binds to correct address */		
@@ -244,8 +244,7 @@ if ($_POST['apply']) {
 		/* sync filter configuration */
 		setup_gateways_monitor();
 
-		if (file_exists($d_staticroutesdirty_path)) 
-			unlink($d_staticroutesdirty_path);
+		clear_subsystem_dirty('staticroutes');
 	}
 	header("Location: interfaces.php?if={$if}");
 	exit;
@@ -255,7 +254,7 @@ if ($_POST && $_POST['enable'] == "no") {
 	unset($wancfg['enable']);
 	interface_bring_down($if);
 	write_config("Interface {$_POST['descr']}({$if}) is now disabled.");
-	touch($d_landirty_path);
+	mark_subsystem_dirty('interfaces');
 	header("Location: interfaces.php?if={$if}");
 	exit;
 } else
@@ -475,7 +474,7 @@ if ($_POST) {
 		if (isset($wancfg['wireless'])) 
 			handle_wireless_post();
 		write_config();
-		touch($d_landirty_path);
+		mark_subsystem_dirty('interfaces');
 		/* regenerate cron settings/crontab file */
 		configure_cron();
 		conf_mount_ro();
@@ -726,7 +725,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 	<?php include("fbegin.inc"); ?>
 	<form action="interfaces.php" method="post" name="iform" id="iform">
 		<?php if ($input_errors) print_input_errors($input_errors); ?>
-		<?php if (file_exists($d_landirty_path)): ?><p>
+		<?php if (is_subsystem_dirty('interfaces')): ?><p>
 		<?php print_info_box_np(gettext("The {$wancfg['descr']} configuration has been changed.<p>You must apply the changes in order for them to take effect.<p>Don't forget to adjust the DHCP Server range if needed before applying."));?><br />
 		<?php endif; ?>
 		<?php if ($savemsg) print_info_box($savemsg); ?>

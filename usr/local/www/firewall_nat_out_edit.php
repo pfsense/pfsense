@@ -234,7 +234,7 @@ if ($_POST) {
 				$a_out[] = $natent;
 		}
 
-        touch($d_natconfdirty_path);
+	mark_subsystem_dirty('natconf');
 
         write_config();
 

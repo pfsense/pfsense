@@ -99,7 +99,7 @@ if ($_POST) {
 		else
 			$a_hosts[] = $hostent;
 		
-		touch($d_hostsdirty_path);
+		mark_subsystem_dirty('hosts');
 		
 		write_config();
 		

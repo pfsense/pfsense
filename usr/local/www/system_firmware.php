@@ -50,7 +50,7 @@ ini_set('max_execution_time', '9999');
 ini_set('max_input_time', '9999');
 
 /* if upgrade in progress, alert user */
-if(file_exists($d_firmwarelock_path)) {
+if(is_subsystem_dirty('firmwarelock')) {
 	$pgtitle = array("System","Firmware","Manual Update");
 	include("head.inc");
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
@@ -72,7 +72,7 @@ if($_POST['kerneltype']) {
 }
 
 /* Handle manual upgrade */
-if ($_POST && !file_exists($d_firmwarelock_path)) {
+if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 	
 	unset($input_errors);
 	unset($sig_warning);
@@ -91,12 +91,11 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 		if ($mode == "enable") {
 			exec_rc_script("/etc/rc.firmware enable");
 			conf_mount_rw();
-			touch($d_fwupenabled_path);
+			mark_subsystem_dirty('firmware');
 		} else if ($mode == "disable") {
 			exec_rc_script("/etc/rc.firmware disable");
 			conf_mount_ro();
-			if (file_exists($d_fwupenabled_path))
-				unlink($d_fwupenabled_path);
+			clear_subsystem_dirty('firmware');
 		} else if ($mode == "upgrade") {
 			if (is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 				/* verify firmware image(s) */
@@ -106,8 +105,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 					/* probably out of memory for the MFS */
 					$input_errors[] = "Image upload failed (out of memory?)";
 					exec_rc_script("/etc/rc.firmware disable");
-					if (file_exists($d_fwupenabled_path))
-						unlink($d_fwupenabled_path);
+					clear_subsystem_dirty('firmware');
 				} else {
 					/* move the image so PHP won't delete it */
 					rename($_FILES['ulfile']['tmp_name'], "{$g['upload_path']}/firmware.tgz");
@@ -132,10 +130,10 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 			run_plugins("/usr/local/pkg/firmware_upgrade");
 
             /* Check for input errors, firmware locks, warnings, then check for firmware if sig_override is set */
-            if (!$input_errors && !file_exists($d_firmwarelock_path) && (!$sig_warning || $_POST['sig_override'])) {
+            if (!$input_errors && !is_subsystem_dirty('firmwarelock') && (!$sig_warning || $_POST['sig_override'])) {
                     if (file_exists("{$g['upload_path']}/firmware.tgz")) {
                             /* fire up the update script in the background */
-                            touch($d_firmwarelock_path);
+				mark_subsystem_dirty('firmwarelock');
                             $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";
 							if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 								mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
@@ -178,7 +176,7 @@ print_info_box($sig_warning);
 <input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" Yes ">
 <input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" No ">
 <?php else: ?>
-<?php if (!file_exists($d_firmwarelock_path)): ?>
+<?php if (!is_subsystem_dirty('firmwarelock')): ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td>
@@ -209,8 +207,8 @@ print_info_box($sig_warning);
 							Click &quot;Upgrade firmware&quot;
 							to start the upgrade process.
 						</p>
-						<?php if (!file_exists($d_sysrebootreqd_path)): ?>
-						<?php if (!file_exists($d_fwupenabled_path)): ?>
+						<?php if (!is_subsystem_dirty('rebootreq')): ?>
+						<?php if (!is_subsystem_dirty('firmware')): ?>
 							<input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
 						<?php else: ?>
 				  			<input name="Submit" type="submit" class="formbtn" value="Disable firmware upload">

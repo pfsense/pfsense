@@ -74,7 +74,7 @@ if ($act == "del") {
 		if (!$input_errors) {
 			unset($a_tunable[$id]);
 			write_config();
-			touch($d_sysctldirty_path);
+			mark_subsystem_dirty('sysctl');
 			pfSenseHeader("firewall_system_tunables.php");
 			exit;
 		}
@@ -96,7 +96,7 @@ if ($_POST) {
 		$retval = 0;
 		system_setup_sysctl();		
 		$savemsg = get_std_save_message($retval);
-		unlink_if_exists($d_sysctldirty_path);
+		clear_subsystem_dirty('sysctl');
 	}
 
 	if ($_POST['Submit'] == "Save") {
@@ -111,7 +111,7 @@ if ($_POST) {
 		else
 			$a_tunable[] = $tunableent;
 
-		touch($d_sysctldirty_path);
+		mark_subsystem_dirty('sysctl');
 
 		write_config();
 
@@ -135,7 +135,7 @@ include("head.inc");
 				print_input_errors($input_errors);
 			if ($savemsg)
 				print_info_box($savemsg);
-			if (file_exists($d_sysctldirty_path) && ($act != "edit" ))
+			if (is_subsystem_dirty('sysctl') && ($act != "edit" ))
 				print_info_box_np("The firewall tunables have changed.  You must apply the configuration to take affect.");
 		?>
 	</form>

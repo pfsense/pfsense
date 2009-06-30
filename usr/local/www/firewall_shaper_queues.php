@@ -75,7 +75,7 @@ if ($_GET) {
 			if ($qtmp) {
 				$qtmp->delete_queue(); 
 				write_config();
-				touch($d_shaperconfdirty_path);
+				mark_subsystem_dirty('shaper');
 			}
 			header("Location: firewall_shaper_queues.php");
 			exit;
@@ -113,7 +113,7 @@ if ($_GET) {
                                                 $config['shaper']['queue'][] = $newroot;
                                         }
                                         write_config();
-                                        touch($d_shaperconfdirty_path);
+					mark_subsystem_dirty('shaper');
                                         break;
                                 }
                         }
@@ -159,7 +159,7 @@ if ($_POST['apply']) {
                 system("rm -f /var/db/rrd/*queues.rrd");
 			enable_rrd_graphing();
 
-            unlink($d_shaperconfdirty_path);
+		clear_subsystem_dirty('shaper');
 }
 
 $pgtitle = "Firewall: Shaper: By Queues View";
@@ -175,7 +175,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="firewall_shaper_queues.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_shaperconfdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('shaper')): ?><p>
 <?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

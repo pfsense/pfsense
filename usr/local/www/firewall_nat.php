@@ -69,10 +69,8 @@ if ($_POST) {
 		$retval |= filter_configure();
 
 		if ($retval == 0) {
-			if (file_exists($d_natconfdirty_path))
-				unlink($d_natconfdirty_path);
-			if (file_exists($d_filterconfdirty_path))
-				unlink($d_filterconfdirty_path);
+			clear_subsystem_dirty('natconf');
+			clear_subsystem_dirty('filter');
 		}
 
 	}
@@ -86,7 +84,7 @@ if (isset($_POST['del_x'])) {
 	        unset($a_nat[$rulei]);
 	    }
 	    write_config();
-	    touch($d_natconfdirty_path);
+	    mark_subsystem_dirty('natconf');
 	    header("Location: firewall_nat.php");
 	    exit;
 	}
@@ -129,7 +127,7 @@ if (isset($_POST['del_x'])) {
                 }
                 $a_nat = $a_nat_new;
                 write_config();
-                touch($d_natconfdirty_path);
+		mark_subsystem_dirty('natconf');
                 header("Location: firewall_nat.php");
                 exit;
         }
@@ -148,7 +146,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <?php include("fbegin.inc"); ?>
 <form action="firewall_nat.php" method="post" name="iform">
 <script type="text/javascript" language="javascript" src="/javascript/row_toggle.js"></script>
-<?php if (file_exists($d_natconfdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('natconf')): ?><p>
 <?php
 	if($savemsg)
 		print_info_box_np("{$savemsg}<br>The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");

@@ -103,8 +103,8 @@ if ($_POST['apply']) {
 	$retval = vpn_ipsec_configure();
 	$savemsg = get_std_save_message($retval);
 	if ($retval == 0)
-		if (file_exists($d_ipsecconfdirty_path))
-			unlink($d_ipsecconfdirty_path);
+		if (is_subsystem_dirty('ipsec'))
+			clear_subsystem_dirty('ipsec');
 }
 
 if ($_POST['submit']) {
@@ -201,7 +201,7 @@ if ($_POST['submit']) {
 		$a_client = $client;
 		
 		write_config();
-		touch($d_ipsecconfdirty_path);
+		mark_subsystem_dirty('ipsec');
 		
 		header("Location: vpn_ipsec_mobile.php");
 		exit;
@@ -287,7 +287,7 @@ function login_banner_change() {
 <?php
 	if ($savemsg)
 		print_info_box($savemsg);
-	if (isset($config['ipsec']['enable']) && file_exists($d_ipsecconfdirty_path))
+	if (isset($config['ipsec']['enable']) && is_subsystem_dirty('ipsec'))
 		print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");
 	foreach ($a_phase1 as $ph1ent)
 		if (isset($ph1ent['mobile']))

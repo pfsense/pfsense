@@ -61,10 +61,8 @@ if ($_POST) {
 		    $savemsg = get_std_save_message($retval);
 		else
 		    $savemsg = $retval;
-		if ($retval == 0) {
-			if (file_exists($d_aliasesdirty_path))
-				unlink($d_aliasesdirty_path);
-		}
+		if ($retval == 0)
+			clear_subsystem_dirty('aliases');
 	}
 }
 
@@ -141,7 +139,7 @@ if ($_GET['act'] == "del") {
 			unset($a_aliases[$_GET['id']]);
 			write_config();
 			filter_configure();
-			touch($d_aliasesdirty_path);
+			mark_subsystem_dirty('aliases');
 			header("Location: firewall_aliases.php");
 			exit;
 		}
@@ -157,7 +155,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <form action="firewall_aliases.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_aliasesdirty_path)): ?><p>
+<?php if (is_subsystem_dirty('aliases')): ?><p>
 <?php print_info_box_np("The alias list has been changed.<br>You must apply the changes in order for them to take effect.");?>
 <?php endif; ?>
 

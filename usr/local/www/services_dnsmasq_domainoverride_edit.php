@@ -82,7 +82,7 @@ if ($_POST) {
                else
                        $a_domainOverrides[] = $doment;
 
-               touch($d_dnsmasqdirty_path);
+		mark_subsystem_dirty('dnsmasq');
 
                write_config();
 

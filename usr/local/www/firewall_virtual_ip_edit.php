@@ -205,7 +205,7 @@ if ($_POST) {
 		} else
 			$a_vip[] = $vipent;
 
-		touch($d_vipconfdirty_path);
+		mark_subsystem_dirty('vip');
 		
 		write_config();
 

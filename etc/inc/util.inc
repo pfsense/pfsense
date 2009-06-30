@@ -77,6 +77,31 @@ function killbyname($procname) {
 		mwexec("/usr/bin/killall " . escapeshellarg($procname));
 }
 
+function is_subsystem_dirty($subsystem = "") {
+	global $g;
+
+	if ($subsystem == "")
+		return false;
+
+	if (file_exists("{$g['varrun_path']}/{$subsystem}.dirty"))
+		return true;
+
+	return false;
+}
+
+function mark_subsystem_dirty($subsystem = "") {
+	global $g;
+
+	if (!file_put_contents("{$g['varrun_path']}/{$subsystem}.dirty", "DIRTY"))
+		log_error("WARNING: Could not mark subsystem: {$subsytem} dirty");
+}
+
+function clear_subsystem_dirty($subsystem = "") {
+	global $g;
+
+	@unlink("{$g['varrun_path']}/{$subsystem}.dirty");
+}
+
 function config_lock() {
 	log_error("config_lock() is depricated please use lock().");
 	return;

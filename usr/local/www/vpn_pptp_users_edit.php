@@ -109,7 +109,7 @@ if ($_POST) {
 			$a_secret[] = $secretent;
 
 		write_config();
-		touch($d_pptpuserdirty_path);
+		mark_subsystem_dirty('pptpusers');
 
 		header("Location: vpn_pptp_users.php");
 		exit;

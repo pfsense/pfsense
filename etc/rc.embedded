@@ -6,29 +6,33 @@
 # Size of memory file system /conf partition
 partsize="3m"
 
-echo -n "Setting up embedded specific environment..."
+# Size of /tmp
+tmpsize="40m"
+
+# Size of /var
+varsize="20m"
+
 # Run some initialization routines
 [ -f /etc/rc.d/uzip ] && /etc/rc.d/uzip start
 
-if [ -f /nanobuild ]; then
-# Init /etc and /var, /tmp to point towards /var/tmp
-# All these to be done by rc.initdiskless
+if [ `cat /etc/platform | grep "nanobsd"` ]; then
+	echo -n "Setting up NanoBSD/embedded specific environment..."
+	# Init /etc and /var, /tmp to point towards /var/tmp
+	# All these to be done by rc.initdiskless
     sh /etc/rc.initdiskless
 else
-# Initialize MFS for /tmp. Partly taken from /etc/rc.d/var
+	echo -n "Setting up embedded specific environment..."
+	# Initialize MFS for /tmp. Partly taken from /etc/rc.d/var
     if (/bin/mkdir -p /tmp/.diskless 2> /dev/null); then
-	rmdir /tmp/.diskless
+		rmdir /tmp/.diskless
     else
-        varsize="40m"
-	mdmfs -S -M -s ${varsize} md /tmp
+		mdmfs -S -M -s ${tmpsize} md /tmp
     fi
-
-# Initialize MFS for /var. Partly taken from /etc/rc.d/var
+	# Initialize MFS for /var. Partly taken from /etc/rc.d/var
     if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
-	rmdir /var/.diskless
+		rmdir /var/.diskless
     else
-        varsize="20m"
-	mdmfs -S -M -s ${varsize} md /var
+		mdmfs -S -M -s ${varsize} md /var
     fi
 fi
 

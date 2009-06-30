@@ -320,7 +320,8 @@ function presubmit() {
 						</tr>
 
 						<?php endif; ?>
-
+						<?php if($_GET['act'] != "new"): ?>
+						
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Assigned Privileges");?></td>
 							<td width="78%" class="vtable">
@@ -359,11 +360,14 @@ function presubmit() {
 											<a href="system_groupmanager_addprivs.php?groupid=<?=$id?>">
 												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="" />
 											</a>
+
 										</td>
 									</tr>
+
 								</table>
 							</td>
 						</tr>
+						<?php endif; ?>
 						<tr> 
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%"> 

@@ -28,9 +28,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-	require_once("globals.inc");
 	require_once("config.inc");
-	require_once("notices.inc");
 	
 	if(isset($config['system']['enablesshd'])) {
 		/* do nothing, we're enabled */
@@ -145,23 +143,21 @@
 	}
 
 	/* are we already running?  if so exit */
-	if(file_exists("/tmp/keys_generating")) {
+	if(is_subsystem_dirty('sshdkeys')) {
 		conf_mount_ro();
 		exit;
 	}
 	
-	if (!file_exists("$sshConfigDir/ssh_host_key") or file_exists("/etc/keys_generating")) {
+	if (!file_exists("$sshConfigDir/ssh_host_key")) {
 		/* remove previous keys and regen later */
 		file_notice("SSH", "{$g['product_name']} has started creating your SSH keys.  SSH Startup will be delayed.  Please note that reloading the filter rules and changes will be delayed until this operation is completed.", "SSH KeyGen", "");
 		mwexec("rm /etc/ssh/ssh_host_*");
-		touch("/etc/keys_generating");
-		touch("/tmp/keys_generating");
+		mark_subsystem_dirty('sshdkeys');
 		echo " Generating Keys:\n";
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
-		unlink("/etc/keys_generating");
-		unlink("/tmp/keys_generating");
+		clear_subsystem_dirty('sshdkeys');
 		file_notice("SSH", "{$g['product_name']} has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
 		echo "Starting SSH... ";
 	}

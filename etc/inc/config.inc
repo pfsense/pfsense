@@ -487,7 +487,7 @@ function conf_mount_ro() {
 		return;
 
 	/* do not umount if generating ssh keys */
-	if(file_exists("/tmp/keys_generating"))
+	if (is_subsystem_dirty('sshdkeys'))
 		return;
 
 	/* do not umount on cdrom or pfSense platforms */

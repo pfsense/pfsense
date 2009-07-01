@@ -1139,16 +1139,16 @@ function netbios_change() {
 							$disabled = "YES";
 				?>
 				<tr>
-					<td class="listlr">
+					<td class="listlr" ondblclick="document.location='vpn_openvpn_server.php?act=edit&id=<?=$i;?>'">
 						<?=$disabled;?>
 					</td>
-					<td class="listr">
+					<td class="listr" ondblclick="document.location='vpn_openvpn_server.php?act=edit&id=<?=$i;?>'">
 						<?=htmlspecialchars($server['protocol']);?>
 					</td>
-					<td class="listr">
+					<td class="listr" ondblclick="document.location='vpn_openvpn_server.php?act=edit&id=<?=$i;?>'">
 						<?=htmlspecialchars($server['tunnel_network']);?>
 					</td>
-					<td class="listbg">
+					<td class="listbg" ondblclick="document.location='vpn_openvpn_server.php?act=edit&id=<?=$i;?>'">
 						<?=htmlspecialchars($server['description']);?>
 					</td>
 					<td valign="middle" nowrap class="list">

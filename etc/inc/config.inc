@@ -442,6 +442,9 @@ function conf_mount_rw() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 		
+	if (is_subsystem_dirty('mount'))
+		return;
+
 	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
 	if($status <> 0) {
 		if($g['booting'])
@@ -463,6 +466,8 @@ function conf_mount_rw() {
 			$status = mwexec("/sbin/mount -u -w /");
 		}
 	}
+	
+	mark_subsystem_dirty('mount');
 }
 
 /****f* config/conf_mount_ro
@@ -489,6 +494,7 @@ function conf_mount_ro() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
+	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
 	mwexec("/bin/sync");
 	mwexec("/bin/sync");

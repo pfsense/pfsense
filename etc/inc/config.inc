@@ -273,7 +273,7 @@ function parse_config($parse = false) {
 	config_unlock();
 
 	/* process packager manager custom rules */
-	if(is_dir("/usr/local/pkg/parse_config/")) {
+	if(is_dir("/usr/local/pkg/parse_config")) {
 		update_filter_reload_status("Running plugins (parse_config)");
 		run_plugins("/usr/local/pkg/parse_config/");
 		update_filter_reload_status("Plugins completed.");
@@ -1098,7 +1098,7 @@ function write_config($desc="Unknown", $backup = true) {
 
 	config_unlock();
 
-	if(is_dir("/usr/local/pkg/write_config/")) {
+	if(is_dir("/usr/local/pkg/write_config")) {
 		/* process packager manager custom rules */
 		update_filter_reload_status("Running plugins");
 		run_plugins("/usr/local/pkg/write_config/");

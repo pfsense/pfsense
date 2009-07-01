@@ -631,7 +631,7 @@ function write_config($desc="Unknown", $backup = true) {
 	/* sync carp entries to other firewalls */
         carp_sync_client();
 
-	if(is_dir("/usr/local/pkg/write_config/")) {
+	if(is_dir("/usr/local/pkg/write_config")) {
 		/* process packager manager custom rules */
 		update_filter_reload_status("Running plugins");
 		run_plugins("/usr/local/pkg/write_config/");

@@ -274,8 +274,8 @@ function parse_config($parse = false) {
 
 	/* process packager manager custom rules */
 	if(is_dir("/usr/local/pkg/config_parse/")) {
-		update_filter_reload_status("Running plugins (config_parse)");
-		run_plugins("/usr/local/pkg/config_parse/");
+		update_filter_reload_status("Running plugins (parse_config)");
+		run_plugins("/usr/local/pkg/parse_config/");
 		update_filter_reload_status("Plugins completed.");
 	}
 

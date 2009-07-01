@@ -290,6 +290,8 @@ pfSenseNanoBSDupgrade)
 	echo "/sbin/sysctl kern.geom.debugflags=0" >> /cf/upgrade_log.txt
 	/sbin/sysctl kern.geom.debugflags=0 >> /cf/upgrade_log.txt 2>&1
 
+	sleep 10
+
 	rm -f /var/run/firmwarelock.dirty
 	sh /etc/rc.reboot
 
@@ -390,6 +392,9 @@ pfSenseupgrade)
 	# release the firmware lock
 	rm -f /var/run/firmwarelock.dirty
 	/bin/sync
+
+	# Sleep and allow disks to catch up
+	sleep 10
 
 	# If the archive has unpacked a file called
 	# /tmp/no_upgrade_reboot_required then do

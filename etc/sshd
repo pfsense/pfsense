@@ -69,7 +69,7 @@
 		mkdir("/var/empty", 0555);
 	}
 
-	if(!file_exists("")) {
+	if(!file_exists("/var/log/lastlog")) {
 		/* Login related files. */
 		touch("/var/log/lastlog");
 	}

@@ -122,7 +122,7 @@ require_once("notices.inc");
 							<li><a href="/system_advanced.php" class="navlnk">Advanced</a></li>
 							<li><a href="/system_firmware.php" class="navlnk">Firmware</a></li>
 							<li><a href="/system.php" class="navlnk">General Setup</a></li>
-						<?php if($g['platform'] == "pfSense"): ?>
+						<?php if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd"): ?>
 							<li><a href="/pkg_mgr.php" class="navlnk">Packages</a></li>
 						<?php endif; ?>
 							<li><a href="/wizard.php?xml=setup_wizard.xml" class="navlnk">Setup wizard</a></li>

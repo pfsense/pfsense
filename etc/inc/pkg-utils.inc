@@ -38,15 +38,20 @@ require_once("service-utils.inc");
 require_once("pfsense-utils.inc");
 require_once("globals.inc");
 
+
 safe_mkdir("/var/db/pkg");
+
 $g['platform'] = trim(file_get_contents("/etc/platform"));
 if($g['platform'] == "pfSense") {
 	safe_mkdir("/usr/local/pkg");
 	safe_mkdir("/usr/local/pkg/pf");
 } else {
+	if(!is_dir("/usr/local/pkg") or !is_dir("/usr/local/pkg/pf")) {
 	conf_mount_rw();
 	safe_mkdir("/usr/local/pkg");
 	safe_mkdir("/usr/local/pkg/pf");	
+	conf_mount_ro();
+	}
 }
 
 /****f* pkg-utils/remove_package

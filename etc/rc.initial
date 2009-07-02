@@ -156,7 +156,7 @@ case ${opmode} in
 		/usr/local/sbin/pfSsh.php
 		;;
 13) 
-		php -f /etc/rc.initial_firmware_update
+		php -f /etc/rc.initial.firmware_update
 		;;
 14) 
 		php -f /etc/rc.initial.toggle_sshd

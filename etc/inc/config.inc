@@ -273,9 +273,9 @@ function parse_config($parse = false) {
 	config_unlock();
 
 	/* process packager manager custom rules */
-	if(is_dir("/usr/local/pkg/config_parse/")) {
-		update_filter_reload_status("Running plugins (config_parse)");
-		run_plugins("/usr/local/pkg/config_parse/");
+	if(is_dir("/usr/local/pkg/parse_config")) {
+		update_filter_reload_status("Running plugins (parse_config)");
+		run_plugins("/usr/local/pkg/parse_config/");
 		update_filter_reload_status("Plugins completed.");
 	}
 
@@ -306,12 +306,9 @@ function parse_config($parse = false) {
 function generate_config_cache($config) {
 	global $g;
 	config_lock();
-	conf_mount_rw();
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
-	mwexec("sync");
-	conf_mount_ro();
 	config_unlock();
 	return true;
 }
@@ -444,7 +441,7 @@ function conf_mount_rw() {
 	 *    compact flash cards root.
          */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
-	   or $g['platform'] == "embedded") {
+	   or $g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
 		$status = mwexec("/sbin/mount -u -w /");
 		/* we could not mount this correctly.  kick off fsck */
 		if($status <> 0) {
@@ -1079,7 +1076,7 @@ function write_config($desc="Unknown", $backup = true) {
 		die("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
 	}
 
-	if($g['platform'] == "embedded") {
+	if($g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
 		cleanup_backupcache(5);
 	} else {
 		cleanup_backupcache(30);
@@ -1101,7 +1098,7 @@ function write_config($desc="Unknown", $backup = true) {
 
 	config_unlock();
 
-	if(is_dir("/usr/local/pkg/write_config/")) {
+	if(is_dir("/usr/local/pkg/write_config")) {
 		/* process packager manager custom rules */
 		update_filter_reload_status("Running plugins");
 		run_plugins("/usr/local/pkg/write_config/");

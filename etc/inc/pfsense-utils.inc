@@ -2224,7 +2224,7 @@ function run_plugins($directory) {
 						if(!stristr($file,"CVS")) {
 							if($g['booting'] == true)
 								echo "\t{$file}... ";
-							require_once($directory . $file);
+							require_once($directory . "/" . $file);
 						}
 					}
 				}

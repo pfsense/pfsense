@@ -28,6 +28,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+	require_once("globals.inc");
 	require_once("config.inc");
 	require_once("notices.inc");
 
@@ -42,6 +43,13 @@
 	function file_size($file) {
 	  $size = filesize($file);
 	  return $size;
+	}
+
+	/* restore ssh data for nanobsd platform */
+	if($g['platform'] == "nanobsd" and file_exists("/conf/sshd/ssh_host_key")) {
+		if(!file_exists("/etc/ssh/sshd_host_key.pub")) {
+			exec("cp /conf/sshd/* /etc/ssh/");
+		}
 	}
 
 	/*    if any of these files are 0 bytes then they are corrupted.
@@ -178,6 +186,13 @@
 		echo "error!\n";
 	} else {
 		echo "done.\n";
+	}
+
+	// NanoBSD
+	if($g['platform'] == "nanobsd") {
+		if(!is_dir("/conf/sshd"))
+			exec("mkdir /conf/sshd");
+		exec("cp /etc/ssh/ssh_host* /conf/sshd");
 	}
 
 	conf_mount_ro();

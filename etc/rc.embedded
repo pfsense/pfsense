@@ -3,9 +3,6 @@
 # rc.embedded - embedded system specific startup information
 # For pfSense
 
-# Size of memory file system /conf partition
-partsize="3m"
-
 # Size of /tmp
 tmpsize="40m"
 

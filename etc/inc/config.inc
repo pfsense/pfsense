@@ -1000,7 +1000,8 @@ EODD;
 				unset($config['nat']);				
 		}
 		if (preg_match($g['wireless_regex'], $lanif)) {
-			if (!is_array($config['interfaces']['lan']['wireless']))
+			if (is_array($config['interfaces']['lan']) &&
+				(!is_array($config['interfaces']['lan']['wireless'])))
 				$config['interfaces']['lan']['wireless'] = array();
 		} else {
 			unset($config['interfaces']['lan']['wireless']);
@@ -1008,7 +1009,8 @@ EODD;
 
 		$config['interfaces']['wan']['if'] = $wanif;
 		if (preg_match($g['wireless_regex'], $wanif)) {
-			if (!is_array($config['interfaces']['wan']['wireless']))
+			if (is_array($config['interfaces']['lan']) &&
+				(!is_array($config['interfaces']['wan']['wireless'])))
 				$config['interfaces']['wan']['wireless'] = array();
 		} else {
 			unset($config['interfaces']['wan']['wireless']);

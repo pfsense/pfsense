@@ -816,8 +816,8 @@ EOD;
 		echo "\n\nVLAN interfaces:\n\n";
 		foreach ($config['vlans']['vlan'] as $vlan) {
 
-			echo sprintf("% -8s%s\n", "vlan{$vlan['tag']}",
-				"VLAN tag {$vlan['tag']}, interface {$vlan['if']}");
+			echo sprintf("% -16s%s\n", "{$vlan['if']}_vlan{$vlan['tag']}",
+				"VLAN tag {$vlan['tag']}, parent interface {$vlan['if']}");
 
 			$iflist[$vlan['if'] . '_vlan' . $vlan['tag']] = array();
 		}

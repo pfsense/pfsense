@@ -312,6 +312,8 @@ function system_routing_configure() {
 		}
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
+			unset($gatewayip);
+			unset($interfacegw);
 			if(is_array($config['gateways']['gateway_item'])) {
 				foreach($config['gateways']['gateway_item'] as $gateway) {
 					if($rtent['gateway'] == $gateway['name']) {
@@ -324,7 +326,7 @@ function system_routing_configure() {
 				$gatewayip = $rtent['gateway'];
 				$interfacegw = $rtent['interface'];
 			}			
-			if(isset($rtent['interfacegateway'])) {
+			if((isset($rtent['interfacegateway'])) && (! is_ipaddr($gatewayip))){
 				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));
 			} else {

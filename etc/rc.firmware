@@ -193,6 +193,11 @@ pfSenseNanoBSDupgrade)
 	# Grab a before upgrade look at fdisk
 	echo "" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs2a >> /conf/upgrade_log.txt		
+	fdisk $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 	
 	# Log that we are really doing a NanoBSD upgrade
@@ -218,6 +223,11 @@ pfSenseNanoBSDupgrade)
 	# Grab a after upgrade look at fdisk
 	echo "" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs2a >> /conf/upgrade_log.txt		
+	fdisk $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
@@ -282,6 +292,11 @@ pfSenseNanoBSDupgrade)
 	# Grab a final look at fdisk
 	echo "" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVEs2a >> /conf/upgrade_log.txt		
+	fdisk $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 
 	# Remove extra stuff

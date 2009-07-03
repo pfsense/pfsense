@@ -208,7 +208,7 @@ pfSenseNanoBSDupgrade)
 	# Stream gzipped image to dd and explode image to new area
 	echo "" >> /cf/upgrade_log.txt
 	echo "/usr/bin/gzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k" >> /cf/upgrade_log.txt
-	/usr/bin/gzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k >> /cf/upgrade_log.txt 2>&1
+	/usr/bin/gzcat $IMG | /bin/dd of=/dev/${COMPLETE_PATH} bs=16k >> /cf/upgrade_log.txt 2>&1
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
 	echo "" >> /cf/upgrade_log.txt

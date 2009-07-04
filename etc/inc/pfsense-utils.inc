@@ -1638,4 +1638,15 @@ function compare_hostname_to_dnscache($hostname) {
 	}
 }
 
+/*
+ * load_glxsb() - Load the glxsb crypto module if enabled in config.
+ */
+function load_glxsb() {
+	global $config, $g;
+	$is_loaded = `/sbin/kldstat | /usr/bin/grep -c glxsb`;
+	if (isset($config['system']['glxsb_enable']) && ($is_loaded == 0)) {
+		mwexec("/sbin/kldload glxsb");
+	}
+}
+
 ?>

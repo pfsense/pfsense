@@ -47,6 +47,7 @@ $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
+$pconfig['glxsb_enable'] = isset($config['system']['glxsb_enable']);
 
 if ($_POST) {
 
@@ -71,6 +72,7 @@ if ($_POST) {
 
 		$config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
 		$config['system']['powerd_enable'] = $_POST['powerd_enable'] ? true : false;
+		$config['system']['glxsb_enable'] = $_POST['glxsb_enable'] ? true : false;
 
 		write_config();
 
@@ -82,6 +84,7 @@ if ($_POST) {
 		    $savemsg = $retval;
 		
 		activate_powerd();
+		load_glxsb();
 	}
 }
 
@@ -165,6 +168,28 @@ include("head.inc");
 								     the system appears idle and increasing it when the system is busy.  It
 								     offers a good balance between a small performance loss for greatly
 								     increased power savings.  The default mode for pfSense is adaptive.
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">glxsb Crypto Acceleration</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">glxsb</td>
+								<td width="78%" class="vtable">
+									<input name="glxsb_enable" type="checkbox" id="glxsb_enable" value="yes" <?php if ($pconfig['glxsb_enable']) echo "checked"; ?> />
+									<strong>Use glxsb</strong><br/>
+									<br />
+								     The AMD Geode LX Security Block will accelerate some cryptographic functions
+								     on systems which have the chip. Do not enable this option if you have a
+								     Hifn cryptographic acceleration card, as this will take precedence and the
+								     Hifn card will not be used. Acceleration should be automatic for IPsec 
+								     when using Rijndael (AES). OpenVPN should be set for AES-128-CBC.
+								     <br/><br/>
+								     If you do not have a glxsb chip in your system, this option will have no 
+								     effect. To unload the module, uncheck this option and then reboot.
 								</td>
 							</tr>
 							<tr>

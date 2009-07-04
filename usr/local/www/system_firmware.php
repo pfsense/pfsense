@@ -97,6 +97,8 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 			conf_mount_ro();
 			clear_subsystem_dirty('firmware');
 		} else if ($mode == "upgrade") {
+			if($_FILES['ulfile']['error'])
+				$errortext = "Error ({$_FILES['ulfile']['error']})";
 			if (is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 				/* verify firmware image(s) */
 				if (!stristr($_FILES['ulfile']['name'], $g['platform']) && !$_POST['sig_override'])
@@ -133,7 +135,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
             if (!$input_errors && !is_subsystem_dirty('firmwarelock') && (!$sig_warning || $_POST['sig_override'])) {
                     if (file_exists("{$g['upload_path']}/firmware.tgz")) {
                             /* fire up the update script in the background */
-				mark_subsystem_dirty('firmwarelock');
+							mark_subsystem_dirty('firmwarelock');
                             $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";
 							if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 								mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
@@ -142,7 +144,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 							else 
 								mwexec_bg("/etc/rc.firmware pfSenseupgrade {$g['upload_path']}/firmware.tgz");
                     } else {
-                            $savemsg = "Firmware image missing or other error, please try again.";
+                            $savemsg = "Firmware image missing or other error, please try again {$errortext}.";
                     }
             }
 		}

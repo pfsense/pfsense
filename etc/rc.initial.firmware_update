@@ -3,6 +3,7 @@
 <?php
 
 require("globals.inc");
+require("util.inc");
 $g['booting'] = true;
 
 echo "Starting the {$g['product_name']} console firmware update system";
@@ -159,7 +160,31 @@ function check_for_kernel_file() {
 }
 
 function do_upgrade($path, $type) {
-	global $g;
+	global $g, $fp;
+	
+	$sigchk = verify_digital_signature($path);
+	if ($sigchk == 1)
+		$sig_warning = "The digital signature on this image is invalid.";
+	else if ($sigchk == 2)
+		$sig_warning = "This image is not digitally signed.";
+	else if (($sigchk == 3) || ($sigchk == 4))
+		$sig_warning = "There has been an error verifying the signature on this image.";
+	if($sig_warning) {
+		$sig_warning = "WARNING! ACHTUNG! DANGER!\n\n{$sig_warning}\n\n" .
+			"This means that the image you uploaded is not an official/supported image and\n" .
+			"may lead to unexpected behavior or security compromises.\n\n" .
+			"Only install images that come from sources that you trust, and make sure\n".
+			"that the image has not been tampered with.\n\n".
+			"Do you want to install this image anyway at your own risk [n]?";
+		echo $sig_warning;
+		$command = strtoupper(chop(fgets($fp)));
+		if(strtoupper($command) == "Y" or strtoupper($command) == "Y" or strtoupper($command) == "YES") {
+			echo "\nContinuing upgrade...\n";
+		} else {
+			echo "\nUpgrade cancelled.\n\n";
+			die;
+		}
+	}
 	mark_subsystem_dirty('firmwarelock');
 	check_for_kernel_file();
 	echo "\nOne moment please...\nInvoking firmware upgrade...";

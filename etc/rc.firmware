@@ -223,13 +223,13 @@ pfSenseNanoBSDupgrade)
 
 	# Remove TOFLASH and get ready for new flash image
 	echo "" >> /conf/upgrade_log.txt
-	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1" >> /conf/upgrade_log.txt	
-	dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1 >> /conf/upgrade_log.txt 2>&1
+	echo "dd if=/dev/zero of=/dev/${TOFLASH} obs=64k count=1" >> /conf/upgrade_log.txt	
+	dd if=/dev/zero of=/dev/${TOFLASH} obs=64k count=1 >> /conf/upgrade_log.txt 2>&1
 
 	# Stream gzipped image to dd and explode image to new area
 	echo "" >> /conf/upgrade_log.txt
-	echo "/usr/bin/bzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=64k" >> /conf/upgrade_log.txt
-	/usr/bin/bzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=64k >> /conf/upgrade_log.txt 2>&1
+	echo "/usr/bin/gzip -dc $IMG | /bin/dd of=/dev/${TOFLASH} obs=64k" >> /conf/upgrade_log.txt
+	/usr/bin/gzip -dc $IMG | /bin/dd of=/dev/${TOFLASH} obs=64k >> /conf/upgrade_log.txt 2>&1
 
 	# Grab a after upgrade look at fdisk
 	echo "" >> /conf/upgrade_log.txt

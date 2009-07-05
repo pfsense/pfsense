@@ -156,7 +156,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
                             /* fire up the update script in the background */
 							mark_subsystem_dirty('firmwarelock');
                             $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";
-							if(stristr($_FILES['ulfile']['name'],"nanobsd"))
+							if(stristr($_FILES['ulfile']['name'],"nanobsd") or $_POST['isnano'] == "yes")
 								mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
 							else if(stristr($_FILES['ulfile']['name'],"bdiff"))
                             	mwexec_bg("/etc/rc.firmware delta_update {$g['upload_path']}/firmware.tgz");
@@ -193,6 +193,8 @@ include("head.inc");
 		"that the image has not been tampered with.<br><br>".
 		"Do you want to install this image anyway (on your own risk)?";
 print_info_box($sig_warning);
+if(stristr($_FILES['ulfile']['name'],"nanobsd"))
+	echo "<input type='hidden' name='isnano' id='isnano' value='yes'>\n";
 ?>
 <input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" Yes ">
 <input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" No ">

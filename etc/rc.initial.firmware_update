@@ -179,7 +179,7 @@ function do_upgrade($path, $type) {
 		echo $sig_warning;
 		$command = strtoupper(chop(fgets($fp)));
 		if(strtoupper($command) == "Y" or strtoupper($command) == "Y" or strtoupper($command) == "YES") {
-			echo "\nContinuing upgrade...\n";
+			echo "\nContinuing upgrade...";
 		} else {
 			echo "\nUpgrade cancelled.\n\n";
 			die;

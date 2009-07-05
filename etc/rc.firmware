@@ -228,8 +228,8 @@ pfSenseNanoBSDupgrade)
 
 	# Stream gzipped image to dd and explode image to new area
 	echo "" >> /conf/upgrade_log.txt
-	echo "/usr/bin/gzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=64k" >> /conf/upgrade_log.txt
-	/usr/bin/gzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=64k >> /conf/upgrade_log.txt 2>&1
+	echo "/usr/bin/bzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=64k" >> /conf/upgrade_log.txt
+	/usr/bin/bzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=64k >> /conf/upgrade_log.txt 2>&1
 
 	# Grab a after upgrade look at fdisk
 	echo "" >> /conf/upgrade_log.txt
@@ -298,11 +298,15 @@ pfSenseNanoBSDupgrade)
 
 	# Unmount newly prepared slice
 	umount /tmp/$GLABEL_SLICE
+	
+	sync
 
 	# Set active mount slice in fdisk
 	echo "" >> /conf/upgrade_log.txt
 	echo "gpart set -a active -i ${SLICE} ${BOOT_DRIVE}" >> /conf/upgrade_log.txt
 	gpart set -a active -i ${SLICE} ${BOOT_DRIVE}
+
+	sync
 
 	# Set active boot source - this might be too much. nanobsd does not need this.
 	#echo "" >> /conf/upgrade_log.txt

@@ -224,7 +224,7 @@ pfSenseNanoBSDupgrade)
 
 	# Stream gzipped image to dd and explode image to new area
 	echo "" >> /conf/upgrade_log.txt
-	echo "/usr/bin/gzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k" >> /conf/upgrade_log.txt
+	echo "/usr/bin/gzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=64k" >> /conf/upgrade_log.txt
 	/usr/bin/gzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=64k >> /conf/upgrade_log.txt 2>&1
 
 	# Grab a after upgrade look at fdisk

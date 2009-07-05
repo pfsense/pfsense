@@ -114,7 +114,9 @@ binary_update() {
 case $ACTION in
 enable)
 	touch /conf/upgrade_log.txt
-	echo "" > /conf/upgrade_log.txt
+	echo "" >> /conf/upgrade_log.txt
+	echo "Enable" >> /conf/upgrade_log.txt
+	echo "" >> /conf/upgrade_log.txt		
 	;;
 auto)
 	touch /var/run/firmwarelock.dirty
@@ -150,7 +152,7 @@ pfSenseNanoBSDupgrade)
 	cp -p /conf/* /tmp/configbak 2>/dev/null
 
 	touch /conf/upgrade_log.txt
-	echo "" > /conf/upgrade_log.txt
+	echo "" >> /conf/upgrade_log.txt
 
 	echo "Installing $IMG." >> /conf/upgrade_log.txt 2>&1
 	echo "Installing $IMG." >> /conf/upgrade_log.txt
@@ -192,6 +194,7 @@ pfSenseNanoBSDupgrade)
 	
 	# Grab a before upgrade look at fdisk
 	echo "" >> /conf/upgrade_log.txt
+	echo "Before upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
@@ -201,6 +204,7 @@ pfSenseNanoBSDupgrade)
 	bsdlabel -A $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
+	echo "---------------------------------------------------------------" >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 	
 	# Log that we are really doing a NanoBSD upgrade
@@ -225,6 +229,7 @@ pfSenseNanoBSDupgrade)
 
 	# Grab a after upgrade look at fdisk
 	echo "" >> /conf/upgrade_log.txt
+	echo "After upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
@@ -234,6 +239,7 @@ pfSenseNanoBSDupgrade)
 	bsdlabel -A $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
+	echo "---------------------------------------------------------------" >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
@@ -297,6 +303,7 @@ pfSenseNanoBSDupgrade)
 
 	# Grab a final look at fdisk
 	echo "" >> /conf/upgrade_log.txt
+	echo "Final upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
@@ -306,6 +313,7 @@ pfSenseNanoBSDupgrade)
 	bsdlabel -A $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
+	echo "---------------------------------------------------------------" >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 
 	# Remove extra stuff

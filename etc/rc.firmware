@@ -9,6 +9,10 @@
 # mount /cf
 /etc/rc.conf_mount_rw
 
+# Reset file(s)
+echo "" >/conf/upgrade_log.txt
+echo "" >/conf/firmware_update_misc.log
+
 exec 3>&2 2>>/conf/firmware_update_misc.log
 
 export ACTION=$1
@@ -114,7 +118,9 @@ binary_update() {
 case $ACTION in
 enable)
 	touch /conf/upgrade_log.txt
-	echo "" > /conf/upgrade_log.txt
+	echo "" >> /conf/upgrade_log.txt
+	echo "Enable" >> /conf/upgrade_log.txt
+	echo "" >> /conf/upgrade_log.txt		
 	;;
 auto)
 	touch /var/run/firmwarelock.dirty
@@ -150,7 +156,7 @@ pfSenseNanoBSDupgrade)
 	cp -p /conf/* /tmp/configbak 2>/dev/null
 
 	touch /conf/upgrade_log.txt
-	echo "" > /conf/upgrade_log.txt
+	echo "" >> /conf/upgrade_log.txt
 
 	echo "Installing $IMG." >> /conf/upgrade_log.txt 2>&1
 	echo "Installing $IMG." >> /conf/upgrade_log.txt
@@ -192,6 +198,7 @@ pfSenseNanoBSDupgrade)
 	
 	# Grab a before upgrade look at fdisk
 	echo "" >> /conf/upgrade_log.txt
+	echo "Before upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
@@ -201,6 +208,7 @@ pfSenseNanoBSDupgrade)
 	bsdlabel -A $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
+	echo "---------------------------------------------------------------" >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 	
 	# Log that we are really doing a NanoBSD upgrade
@@ -208,10 +216,10 @@ pfSenseNanoBSDupgrade)
 	echo "NanoBSD upgrade starting" >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 	
-	# Foot shooting is fun!
-	echo "" >> /conf/upgrade_log.txt
-	echo "/sbin/sysctl kern.geom.debugflags=16" >> /conf/upgrade_log.txt
-	/sbin/sysctl kern.geom.debugflags=16 >> /conf/upgrade_log.txt 2>&1
+	# Foot shooting is fun! - this might be too much. nanobsd does not need this.
+	#echo "" >> /conf/upgrade_log.txt
+	#echo "/sbin/sysctl kern.geom.debugflags=16" >> /conf/upgrade_log.txt
+	#/sbin/sysctl kern.geom.debugflags=16 >> /conf/upgrade_log.txt 2>&1
 
 	# Remove TOFLASH and get ready for new flash image
 	echo "" >> /conf/upgrade_log.txt
@@ -220,11 +228,12 @@ pfSenseNanoBSDupgrade)
 
 	# Stream gzipped image to dd and explode image to new area
 	echo "" >> /conf/upgrade_log.txt
-	echo "/usr/bin/gzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k" >> /conf/upgrade_log.txt
-	/usr/bin/gzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=16k >> /conf/upgrade_log.txt 2>&1
+	echo "/usr/bin/bzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=64k" >> /conf/upgrade_log.txt
+	/usr/bin/bzcat $IMG | /bin/dd of=/dev/${TOFLASH} bs=64k >> /conf/upgrade_log.txt 2>&1
 
 	# Grab a after upgrade look at fdisk
 	echo "" >> /conf/upgrade_log.txt
+	echo "After upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
@@ -234,12 +243,13 @@ pfSenseNanoBSDupgrade)
 	bsdlabel -A $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
+	echo "---------------------------------------------------------------" >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
 	echo "" >> /conf/upgrade_log.txt
-	echo "/sbin/fsck_ffs -y /dev/$COMPLETE_PATH" >> /conf/upgrade_log.txt
-	/sbin/fsck_ffs -y /dev/$COMPLETE_PATH >> /conf/upgrade_log.txt 2>&1
+	echo "/sbin/fsck_ufs -y /dev/$COMPLETE_PATH" >> /conf/upgrade_log.txt
+	/sbin/fsck_ufs -y /dev/$COMPLETE_PATH >> /conf/upgrade_log.txt 2>&1
 	if [ $? != 0 ]; then
 		file_notice "UpgradeFailure" "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state."
 		rm /var/run/firmwarelock.dirty
@@ -282,21 +292,30 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /conf/upgrade_log.txt
 	cat /tmp/$GLABEL_SLICE/etc/fstab >> /conf/upgrade_log.txt
 
+	echo "" >> /conf/upgrade_log.txt
+	find /tmp/$GLABEL_SLICE >> /conf/upgrade_log.txt
+	echo "" >> /conf/upgrade_log.txt
+
 	# Unmount newly prepared slice
 	umount /tmp/$GLABEL_SLICE
+	
+	sync
 
 	# Set active mount slice in fdisk
 	echo "" >> /conf/upgrade_log.txt
 	echo "gpart set -a active -i ${SLICE} ${BOOT_DRIVE}" >> /conf/upgrade_log.txt
 	gpart set -a active -i ${SLICE} ${BOOT_DRIVE}
 
-	# Set active boot source
+	sync
+
+	# Set active boot source - this might be too much. nanobsd does not need this.
 	echo "" >> /conf/upgrade_log.txt
 	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /conf/upgrade_log.txt
 	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /conf/upgrade_log.txt 2>&1
 
 	# Grab a final look at fdisk
 	echo "" >> /conf/upgrade_log.txt
+	echo "Final upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
@@ -306,6 +325,7 @@ pfSenseNanoBSDupgrade)
 	bsdlabel -A $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
 	bsdlabel -A $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
+	echo "---------------------------------------------------------------" >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 
 	# Remove extra stuff
@@ -319,10 +339,10 @@ pfSenseNanoBSDupgrade)
 	# Trigger a package reinstallation on reobot
 	touch /conf/needs_package_sync
 
-	# Enough fun for now.
-	echo "" >> /conf/upgrade_log.txt
-	echo "/sbin/sysctl kern.geom.debugflags=0" >> /conf/upgrade_log.txt
-	/sbin/sysctl kern.geom.debugflags=0 >> /conf/upgrade_log.txt 2>&1
+	# Enough fun for now. - this might be too much. nanobsd does not need this.
+	#echo "" >> /conf/upgrade_log.txt
+	#echo "/sbin/sysctl kern.geom.debugflags=0" >> /conf/upgrade_log.txt
+	#/sbin/sysctl kern.geom.debugflags=0 >> /conf/upgrade_log.txt 2>&1
 
 	# remount /cf ro
 	/etc/rc.conf_mount_ro

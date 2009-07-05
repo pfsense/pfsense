@@ -7,7 +7,7 @@
 tmpsize="40m"
 
 # Size of /var
-varsize="20m"
+varsize="60m"
 
 # Run some initialization routines
 [ -f /etc/rc.d/uzip ] && /etc/rc.d/uzip start

@@ -309,9 +309,9 @@ pfSenseNanoBSDupgrade)
 	sync
 
 	# Set active boot source - this might be too much. nanobsd does not need this.
-	#echo "" >> /conf/upgrade_log.txt
-	#echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /conf/upgrade_log.txt
-	#/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /conf/upgrade_log.txt 2>&1
+	echo "" >> /conf/upgrade_log.txt
+	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /conf/upgrade_log.txt
+	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /conf/upgrade_log.txt 2>&1
 
 	# Grab a final look at fdisk
 	echo "" >> /conf/upgrade_log.txt

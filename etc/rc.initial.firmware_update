@@ -2,18 +2,15 @@
 
 <?php
 
-$g['booting'] = true;
 require("globals.inc");
+$g['booting'] = true;
 
 echo "Starting the {$g['product_name']} console firmware update system";
 
 require("functions.inc");
 echo ".";
-require("config.inc");
-echo ".";
-$g['booting'] = false;
 
-$d_fwupenabled_path = $g['varrun_path'] . "/fwup.enabled";
+$g['booting'] = false;
 
 $fp = fopen('php://stdin', 'r');
 
@@ -46,7 +43,7 @@ switch ($command) {
 		$status = does_url_exist($url);
 		if($status) {
 			conf_mount_rw();
-			touch($d_fwupenabled_path);
+			mark_subsystem_dirty('firmware');
 			if(file_exists("/root/firmware.tgz"))
 				unlink("/root/firmware.tgz");
 			echo "\nFetching file size...\n";
@@ -92,12 +89,13 @@ switch ($command) {
 				echo "Binary DIFF upgrade file detected...\n";
 				$type = "bdiff";
 			}
-			if(strstr($url,"bdiff")) {}
+			if(strstr($url,"nanobsd")) {}
 				echo "NanoBSD upgrade file detected...\n";			
 				$type = "nanobsd";	
 			}			
 			if(file_exists("/root/firmware.tgz")) {
-				do_upgrade("/root/firmware.tgz", $type);
+				exec("mv /root/firmware.tgz /root/firmware.bz2");
+				do_upgrade("/root/firmware.bz2", $type);
 				exit;
 			} else {
 				echo "\nCould not download update.\n\n";
@@ -113,10 +111,10 @@ switch ($command) {
 		}
 		if(stristr($fp,"bdiff"))
 			$type = "bdiff";
-		if(stristr($fp,"bdiff"))
+		if(stristr($fp,"nanobsd"))
 			$type = "nanobsd";			
 		if(file_exists($path)) {
-			touch($d_fwupenabled_path);
+			mark_subsystem_dirty('firmware');
 			do_upgrade($path, $type);
 		} else {
 			echo "\nCould not find file.\n\n";
@@ -163,7 +161,7 @@ function check_for_kernel_file() {
 
 function do_upgrade($path, $type) {
 	global $g;
-	touch($g['varrun_path'] . "/firmware.lock");	
+	mark_subsystem_dirty('firmwarelock');
 	check_for_kernel_file();
 	echo "\nOne moment please...\nInvoking firmware upgrade...";
 	if($type == "bdiff") 
@@ -173,13 +171,13 @@ function do_upgrade($path, $type) {
 	else
 		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");
 	sleep(10);
-	while(file_exists("{$g['varrun_path']}/firmware.lock")) {
+	while(is_subsystem_dirty('firmwarelock')) {
 		sleep(1);
 		echo ".";
 	}
+	sleep(10);
 	echo "Done.  Rebooting...\n\n";
-	if(file_exists($g['varrun_path'] . "/firmware.lock"))
-		unlink($g['varrun_path'] . "/firmware.lock");
+	clear_subsystem_dirty('firmwarelock');
 }
 
 exec("rm -f /root/*.md5");

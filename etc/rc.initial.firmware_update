@@ -94,7 +94,6 @@ switch ($command) {
 				$type = "nanobsd";	
 			}			
 			if(file_exists("/root/firmware.tgz")) {
-				exec("mv /root/firmware.tgz /root/firmware.tgz");
 				do_upgrade("/root/firmware.tgz", $type);
 				exit;
 			} else {

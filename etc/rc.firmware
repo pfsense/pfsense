@@ -215,16 +215,11 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /conf/upgrade_log.txt
 	echo "NanoBSD upgrade starting" >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
-	
-	# Foot shooting is fun! - this might be too much. nanobsd does not need this.
-	#echo "" >> /conf/upgrade_log.txt
-	#echo "/sbin/sysctl kern.geom.debugflags=16" >> /conf/upgrade_log.txt
-	#/sbin/sysctl kern.geom.debugflags=16 >> /conf/upgrade_log.txt 2>&1
 
 	# Remove TOFLASH and get ready for new flash image
 	echo "" >> /conf/upgrade_log.txt
-	echo "dd if=/dev/zero of=/dev/${TOFLASH} obs=64k count=1" >> /conf/upgrade_log.txt	
-	dd if=/dev/zero of=/dev/${TOFLASH} obs=64k count=1 >> /conf/upgrade_log.txt 2>&1
+	echo "dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1" >> /conf/upgrade_log.txt	
+	dd if=/dev/zero of=/dev/${TOFLASH} bs=1m count=1 >> /conf/upgrade_log.txt 2>&1
 
 	# Stream gzipped image to dd and explode image to new area
 	echo "" >> /conf/upgrade_log.txt
@@ -308,7 +303,8 @@ pfSenseNanoBSDupgrade)
 
 	sync
 
-	# Set active boot source - this might be too much. nanobsd does not need this.
+	# Set active boot source - NanoBSD does not do this but otherwise we
+	# end up with the wrong partition being active.
 	echo "" >> /conf/upgrade_log.txt
 	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /conf/upgrade_log.txt
 	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /conf/upgrade_log.txt 2>&1
@@ -338,11 +334,6 @@ pfSenseNanoBSDupgrade)
 
 	# Trigger a package reinstallation on reobot
 	touch /conf/needs_package_sync
-
-	# Enough fun for now. - this might be too much. nanobsd does not need this.
-	#echo "" >> /conf/upgrade_log.txt
-	#echo "/sbin/sysctl kern.geom.debugflags=0" >> /conf/upgrade_log.txt
-	#/sbin/sysctl kern.geom.debugflags=0 >> /conf/upgrade_log.txt 2>&1
 
 	# remount /cf ro
 	/etc/rc.conf_mount_ro

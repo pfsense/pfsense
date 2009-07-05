@@ -170,7 +170,7 @@ function do_upgrade($path, $type) {
 	else if (($sigchk == 3) || ($sigchk == 4))
 		$sig_warning = "There has been an error verifying the signature on this image.";
 	if($sig_warning) {
-		$sig_warning = "WARNING! ACHTUNG! DANGER!\n\n{$sig_warning}\n\n" .
+		$sig_warning = "\nWARNING! ACHTUNG! DANGER!\n\n{$sig_warning}\n\n" .
 			"This means that the image you uploaded is not an official/supported image and\n" .
 			"may lead to unexpected behavior or security compromises.\n\n" .
 			"Only install images that come from sources that you trust, and make sure\n".

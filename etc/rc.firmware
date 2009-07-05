@@ -9,6 +9,10 @@
 # mount /cf
 /etc/rc.conf_mount_rw
 
+# Reset file(s)
+echo "" >/conf/upgrade_log.txt
+echo "" >/conf/firmware_update_misc.log
+
 exec 3>&2 2>>/conf/firmware_update_misc.log
 
 export ACTION=$1

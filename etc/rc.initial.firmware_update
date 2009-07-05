@@ -109,9 +109,9 @@ switch ($command) {
 			fclose($fp);
 			die;
 		}
-		if(stristr($fp,"bdiff"))
+		if(stristr($path,"bdiff"))
 			$type = "bdiff";
-		if(stristr($fp,"nanobsd"))
+		if(stristr($path,"nanobsd"))
 			$type = "nanobsd";			
 		if(file_exists($path)) {
 			mark_subsystem_dirty('firmware');

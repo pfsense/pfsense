@@ -64,6 +64,7 @@ if (isset($p1index) && $a_phase1[$p1index])
 	// don't copy the ikeid on dup
 	if (!isset($_GET['dup']))
 		$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
+
 	$old_ph1ent = $a_phase1[$p1index];
 
 	$pconfig['disabled'] = isset($a_phase1[$p1index]['disabled']);
@@ -266,8 +267,8 @@ if ($_POST) {
 		/* if the remote gateway changed and the interface is not WAN then remove route */
 		/* the vpn_ipsec_configure() handles adding the route */
 		if ($pconfig['interface'] <> "wan") {
-			if($ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
-				mwexec("/sbin/route delete -host {$ph1ent['remote-gateway']}");
+			if($old_ph1ent['remote-gateway'] <> $pconfig['remotegw']) {
+				mwexec("/sbin/route delete -host {$oldph1ent['remote-gateway']}");
 			}
 		}
 
@@ -313,7 +314,7 @@ if ($_POST) {
 		if (is_array($a_phase2) && (count($a_phase2))) {
 			foreach ($a_phase2 as $phase2) {
 				if($phase2['ikeid'] == $ph1ent['ikeid']) {
-					log_error("Reload {$ph1ent['descr']} tunnels");
+					log_error("Reload {$ph1ent['descr']} tunnel(s)");
 					$old_ph1ent['remote-gateway'] = resolve_retry($old_ph1ent['remote-gateway']);
 					$old_phase2 = $phase2;
 					reload_tunnel_spd_policy ($ph1ent, $phase2, $old_ph1ent, $old_phase2);

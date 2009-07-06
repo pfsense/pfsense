@@ -227,6 +227,8 @@ function local_sync_accounts() {
 function local_user_set(& $user) {
 	global $g, $debug;
 
+	conf_mount_rw();
+
 	$home_base = "/home/";	
 	$user_uid = $user['uid'];
 	$user_name = $user['name'];
@@ -312,10 +314,13 @@ function local_user_set(& $user) {
 		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
 		chown("{$user_home}/.ssh/authorized_keys", $user_name);
 	}
+	
+	conf_mount_ro();
 }
 
 function local_user_del($user) {
 	global $debug;
+
 	/* remove all memberships */
 	local_user_get_groups($user);
 
@@ -327,6 +332,7 @@ function local_user_del($user) {
 	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
+
 }
 
 function local_user_set_password(& $user, $password) {

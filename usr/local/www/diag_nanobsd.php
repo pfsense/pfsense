@@ -144,7 +144,7 @@ EOF;
 		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
 		$savemsg = "There was an error while duplicating the slice.  Operation aborted.";
 	} else {
-		$savemsg = "The slice has been duplicated";
+		$savemsg = "The slice has been duplicated.  If you would like to boot from this newly duplicated slice please set it using the bootup information area.";
 		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
 	}
 }

@@ -6,6 +6,8 @@ FMBASEURL=$1
 FMFILENAME=$2
 FETCHFILENAME=$1/$2
 
+product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
+
 # wait 5 seconds before beginning
 sleep 5
 
@@ -43,17 +45,24 @@ fi
 
 if [ "$PMD" = "$MD" ]; then
         echo "MD5's match."  | logger -p daemon.info -i -t AutoUpgrade
-		echo "Beginning pfSense upgrade." | wall
+		echo "Beginning ${product} upgrade." | wall
         if [ "$PLATFORM" = "net45xx" ]; then
             /usr/local/bin/php /etc/rc.conf_mount_rw
         fi
         if [ "$PLATFORM" = "wrap" ]; then
             /usr/local/bin/php /etc/rc.conf_mount_rw
         fi
+        if [ "$PLATFORM" = "nanobsd" ]; then
+            /usr/local/bin/php /etc/rc.conf_mount_rw
+        fi
         if [ -r "/tmp/custom.tgz" ]; then
             sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz /tmp/custom.tgz
         else
-            sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
+        	if [ "$PLATFORM" = "nanobsd" ]; then
+				sh /etc/rc.firmware pfSenseNanoBSDupgrade /tmp/latest.tgz            
+			else 
+				sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
+			fi
         fi
         if [ "$PLATFORM" = "wrap" ]; then
             /bin/sync

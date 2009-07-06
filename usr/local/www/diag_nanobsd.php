@@ -235,6 +235,8 @@ if ($savemsg)
 								echo file_get_contents("/conf/file_upgrade_log.txt");
 								echo "\nMisc log:\n";
 								echo file_get_contents("/conf/firmware_update_misc.log");
+								echo "\nfdisk/bsdlabel log:\n";
+								echo file_get_contents("/conf/fdisk_upgrade_log.txt");
 								echo "</textarea>";
 							} else {
 								echo "<form action='diag_nanobsd.php' method='post' name='iform'>";

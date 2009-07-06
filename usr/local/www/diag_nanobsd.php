@@ -107,8 +107,8 @@ EOF;
 		$AOLD_UFS_ID="1";
 		$ABOOTFLASH="{$ABOOT_DRIVE}s{$AOLDSLICE}";
 	}
-	exec("gpart set -a active -i {$ASLICE} {$ABOOT_DRIVE}");
-	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$ABOOT_DRIVE}");
+	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
+	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
 	exec("/bin/mkdir /tmp/{$AGLABEL_SLICE}");
 	exec("/sbin/fsck_ufs -y /dev/{$ACOMPLETE_PATH}");
 	exec("/sbin/mount /dev/ufs/{$AGLABEL_SLICE} /tmp/{$AGLABEL_SLICE}");

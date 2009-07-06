@@ -229,9 +229,9 @@ if ($savemsg)
 							if($_POST['viewupgradelog']) {
 								echo "<textarea name='log' cols='80' rows='40'>";
 								echo file_get_contents("/conf/upgrade_log.txt");
-								echo "\nFile list:\n"
+								echo "\nFile list:\n";
 								echo file_get_contents("/conf/file_upgrade_log.txt");
-								echo "\nMisc log:\n"
+								echo "\nMisc log:\n";
 								echo file_get_contents("/conf/firmware_update_misc.log");
 								echo "</textarea>";
 							} else {

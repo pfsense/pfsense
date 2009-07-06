@@ -12,6 +12,7 @@
 # Reset file(s)
 echo "" >/conf/upgrade_log.txt
 echo "" >/conf/firmware_update_misc.log
+echo "" >/conf/fdisk_upgrade_log.txt
 
 exec 3>&2 2>>/conf/firmware_update_misc.log
 
@@ -197,19 +198,19 @@ pfSenseNanoBSDupgrade)
 	output_env_to_log
 	
 	# Grab a before upgrade look at fdisk
-	echo "" >> /conf/upgrade_log.txt
-	echo "Before upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs2a >> /conf/upgrade_log.txt		
-	fdisk $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
-	echo "---------------------------------------------------------------" >> /conf/upgrade_log.txt
-	echo "" >> /conf/upgrade_log.txt
+	echo "" >> /conf/fdisk_upgrade_log.txt
+	echo "Before upgrade fdisk/bsdlabel" >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVE >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs1a >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs2a >> /conf/fdisk_upgrade_log.txt		
+	fdisk $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
+	echo "---------------------------------------------------------------" >> /conf/fdisk_upgrade_log.txt
+	echo "" >> /conf/fdisk_upgrade_log.txt
 	
 	# Log that we are really doing a NanoBSD upgrade
 	echo "" >> /conf/upgrade_log.txt
@@ -227,19 +228,19 @@ pfSenseNanoBSDupgrade)
 	/usr/bin/gzip -dc $IMG | /bin/dd of=/dev/${TOFLASH} obs=64k >> /conf/upgrade_log.txt 2>&1
 
 	# Grab a after upgrade look at fdisk
-	echo "" >> /conf/upgrade_log.txt
+	echo "" >> /conf/fdisk_upgrade_log.txt
 	echo "After upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs2a >> /conf/upgrade_log.txt		
-	fdisk $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
-	echo "---------------------------------------------------------------" >> /conf/upgrade_log.txt
-	echo "" >> /conf/upgrade_log.txt
+	fdisk $BOOT_DRIVE >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs1a >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs2a >> /conf/fdisk_upgrade_log.txt		
+	fdisk $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
+	echo "---------------------------------------------------------------" >> /conf/fdisk_upgrade_log.txt
+	echo "" >> /conf/fdisk_upgrade_log.txt
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
 	echo "" >> /conf/upgrade_log.txt
@@ -310,19 +311,19 @@ pfSenseNanoBSDupgrade)
 	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /conf/upgrade_log.txt 2>&1
 
 	# Grab a final look at fdisk
-	echo "" >> /conf/upgrade_log.txt
-	echo "Final upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVE >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs1a >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
-	fdisk $BOOT_DRIVEs2a >> /conf/upgrade_log.txt		
-	fdisk $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs1 >> /conf/upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs2 >> /conf/upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs3 >> /conf/upgrade_log.txt
-	echo "---------------------------------------------------------------" >> /conf/upgrade_log.txt
-	echo "" >> /conf/upgrade_log.txt
+	echo "" >> /conf/fdisk_upgrade_log.txt
+	echo "Final upgrade fdisk/bsdlabel" >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVE >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs1a >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
+	fdisk $BOOT_DRIVEs2a >> /conf/fdisk_upgrade_log.txt		
+	fdisk $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
+	echo "---------------------------------------------------------------" >> /conf/fdisk_upgrade_log.txt
+	echo "" >> /conf/fdisk_upgrade_log.txt
 
 	# Remove extra stuff
 	rm -rf /etc/rc.conf

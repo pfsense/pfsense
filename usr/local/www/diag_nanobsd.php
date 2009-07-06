@@ -108,6 +108,7 @@ EOF;
 	ob_implicit_flush(1);
 	exec("dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
 	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
+	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
 	exec("/bin/mkdir /tmp/{$GLABEL_SLICE}");
 	exec("/sbin/mount /dev/ufs/{$GLABEL_SLICE} /tmp/{$GLABEL_SLICE}");
 	exec("/bin/cp /etc/fstab /tmp/{$GLABEL_SLICE}/etc/fstab");

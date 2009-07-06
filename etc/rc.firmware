@@ -156,7 +156,6 @@ pfSenseNanoBSDupgrade)
 	/bin/mkdir -p /tmp/configbak
 	cp -p /conf/* /tmp/configbak 2>/dev/null
 
-	touch /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 
 	echo "Installing $IMG." >> /conf/upgrade_log.txt 2>&1

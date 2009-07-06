@@ -87,7 +87,7 @@ if($_POST['bootslice']) {
 EOF;
 	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
 	ob_implicit_flush(1);
-	if(strstr($_POST['bootslice'], "s1")) {
+	if(strstr($_POST['bootslice'], "s2")) {
 		$ASLICE="2";
 		$AOLDSLICE="1";
 		$ATOFLASH="{$BOOT_DRIVE}s{$SLICE}";

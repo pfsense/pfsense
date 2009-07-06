@@ -46,6 +46,7 @@ $BOOT_DEVICE=trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 
 $REAL_BOOT_DEVICE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);
 $BOOT_DRIVE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`);
 
+// Detect which slice is active and set information.
 if(strstr($REAL_BOOT_DEVICE, "s1")) {
 	$SLICE="2";
 	$OLDSLICE="1";
@@ -69,14 +70,16 @@ if(strstr($REAL_BOOT_DEVICE, "s1")) {
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
-<script src="/javascript/sorttable.js" type="text/javascript"></script>
+
 <?php include("fbegin.inc"); ?>
+
 <?php
 
 if($_POST['bootslice']) {
 	echo <<<EOF
 	 	<div id="loading">
-			<img src="/themes/metallic/images/misc/loader.gif"> Setting slice, please wait...
+			<img src="/themes/metallic/images/misc/loader.gif"> 
+			Setting slice information, please wait...
 			<p/>&nbsp;
 		</div>
 EOF;
@@ -100,7 +103,8 @@ if($_POST['destslice']) {
 
 echo <<<EOF
  	<div id="loading">
-		<img src="/themes/metallic/images/misc/loader.gif"> Duplicaating slice, please wait...
+		<img src="/themes/metallic/images/misc/loader.gif">
+		Duplicaating slice.  Please wait, this will take a moment...
 		<p/>&nbsp;
 	</div>
 EOF;
@@ -227,6 +231,7 @@ if ($savemsg)
 
 <?php
 
+// Clear the loading indicator
 echo "<script type=\"text/javascript\">";
 echo "$('loading').innerHTML = '';";
 echo "</script>";	

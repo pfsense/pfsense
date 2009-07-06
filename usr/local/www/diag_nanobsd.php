@@ -110,7 +110,7 @@ EOF;
 	exec("/sbin/fsck_ufs -y /dev/{$ACOMPLETE_PATH}");
 	exec("/sbin/mount /dev/ufs/{$AGLABEL_SLICE} /tmp/{$AGLABEL_SLICE}");
 	exec("/bin/cp /etc/fstab /tmp/{$AGLABEL_SLICE}/etc/fstab");
-	$status = exec("sed -i \"\" \"s/pfsense{$AOLD_UFS_ID}/pfsense{$AUFS_ID}/g\" /tmp/{$AGLABEL_SLICE}/etc/fstab");
+	$status = exec("sed -i \"\" \"s/pfsense{$OLD_UFS_ID}/pfsense{$UFS_ID}/g\" /tmp/{$AGLABEL_SLICE}/etc/fstab");
 	if($status) {
 		file_notice("UpgradeFailure","Something went wrong when trying to update the fstab entry.  Aborting upgrade.");
 		exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");

@@ -52,6 +52,7 @@ if(strstr($REAL_BOOT_DEVICE, "s1")) {
 	$OLDSLICE="1";
 	$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
 	$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
+	$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";	
 	$GLABEL_SLICE="pfsense1";
 	$UFS_ID="1";
 	$OLD_UFS_ID="0";
@@ -61,6 +62,7 @@ if(strstr($REAL_BOOT_DEVICE, "s1")) {
 	$OLDSLICE="2";
 	$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
 	$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
+	$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";
 	$GLABEL_SLICE="pfsense0";
 	$UFS_ID="0";
 	$OLD_UFS_ID="1";
@@ -182,7 +184,7 @@ if ($savemsg)
 										<?php echo $BOOTFLASH; ?>
 									</option>
 									<option value='<?php echo $TOFLASH; ?>'>
-										<?php echo $TOFLASH; ?>
+										<?php echo "{$TOFLASH}"; ?>
 									</option>
 								</select>
 								<br/>
@@ -205,7 +207,7 @@ if ($savemsg)
 								Destination slice:							
 								<select name='destslice'>
 									<option value='<?php echo $COMPLETE_PATH; ?>'>
-										<?php echo $COMPLETE_PATH; ?>
+										<?php echo "{$COMPLETE_BOOT_PATH} -> {$TOFLASH}"; ?>
 									</option>
 								</select>
 								<br/>

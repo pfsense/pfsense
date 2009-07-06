@@ -114,6 +114,7 @@ EOF;
 	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
 	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
 	exec("/bin/mkdir /tmp/{$GLABEL_SLICE}");
+	exec("/sbin/fsck_ufs -y /dev/{$COMPLETE_PATH}");
 	exec("/sbin/mount /dev/ufs/{$GLABEL_SLICE} /tmp/{$GLABEL_SLICE}");
 	exec("/bin/cp /etc/fstab /tmp/{$GLABEL_SLICE}/etc/fstab");
 	$status = exec("sed -i \"\" \"s/pfsense{$OLD_UFS_ID}/pfsense{$UFS_ID}/g\" /tmp/{$GLABEL_SLICE}/etc/fstab");
@@ -208,6 +209,10 @@ if ($savemsg)
 							if($_POST['viewupgradelog']) {
 								echo "<textarea name='log' cols='80' rows='40'>";
 								echo file_get_contents("/conf/upgrade_log.txt");
+								echo "\nFile list:\n"
+								echo file_get_contents("/conf/file_upgrade_log.txt");
+								echo "\nMisc log:\n"
+								echo file_get_contents("/conf/firmware_update_misc.log");
 								echo "</textarea>";
 							} else {
 								echo "<form action='diag_nanobsd.php' method='post' name='iform'>";

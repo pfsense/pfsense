@@ -262,7 +262,9 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							output_menu_item("/diag_dns.php", "DNS");
 							output_menu_item("/edit.php", "Edit File");
 							output_menu_item("/diag_defaults.php", "Factory Defaults");
-							output_menu_item("/halt.php", "Halt System");
+							output_menu_item("/halt.php", "Halt System");						
+							if($g['platform'] == "nanobsd")
+								output_menu_item("/diag_nanobsd.php", "NanoBSD");
 							output_menu_item("/diag_ping.php", "Ping");
 							output_menu_item("/diag_system_pftop.php", "pfTOP");
 							output_menu_item("/reboot.php", "Reboot");

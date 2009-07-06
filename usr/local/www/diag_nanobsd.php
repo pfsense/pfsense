@@ -142,7 +142,7 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr>
-						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Set'></form></td>
+						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Set bootup'></form></td>
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>
@@ -165,7 +165,7 @@ if ($savemsg)
 						</td>
 					</tr>
 					<tr>
-						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Duplicate'></form></td>
+						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Duplicate slice'></form></td>
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>

@@ -190,6 +190,29 @@ if ($savemsg)
 					<tr>
 						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Duplicate slice'></form></td>
 					</tr>
+<?php if(file_exists("/conf/upgrade_log.txt")): ?>
+					<tr>
+						<td colspan="2" valign="top" class="">&nbsp;</td>
+					</tr>					
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">View upgrade log</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">View previous upgrade log</td>
+						<td width="78%" class="vtable">
+						<?php
+							if($_POST['viewupgradelog']) {
+								echo "<textarea name='log' cols='80' rows='40'>";
+								echo file_get_contents("/conf/upgrade_log.txt");
+								echo "</textarea>";
+							} else {
+								echo "<form action='diag_nanobsd.php' method='post' name='iform'>";
+								echo "<input type='submit' name='viewupgradelog' value='View upgrade log'>";
+							}
+						?>
+						</td>
+					</tr>
+<?php endif; ?>
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>
 					</tr>					

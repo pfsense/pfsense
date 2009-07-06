@@ -52,10 +52,17 @@ if [ "$PMD" = "$MD" ]; then
         if [ "$PLATFORM" = "wrap" ]; then
             /usr/local/bin/php /etc/rc.conf_mount_rw
         fi
+        if [ "$PLATFORM" = "nanobsd" ]; then
+            /usr/local/bin/php /etc/rc.conf_mount_rw
+        fi
         if [ -r "/tmp/custom.tgz" ]; then
             sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz /tmp/custom.tgz
         else
-            sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
+        	if [ "$PLATFORM" = "nanobsd" ]; then
+				sh /etc/rc.firmware pfSenseNanoBSDupgrade /tmp/latest.tgz            
+			else 
+				sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
+			fi
         fi
         if [ "$PLATFORM" = "wrap" ]; then
             /bin/sync

@@ -823,7 +823,6 @@ EOD;
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
 			sleep("0.1");
-			log_error("IPSEC: Sent a reload signal to the IPsec process");
 			mwexec("/usr/local/sbin/racoonctl -s /var/run/racoon.sock reload-config", false);
 			/* load SPD without flushing to be safe on config additions or changes. */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
@@ -1652,7 +1651,7 @@ function reload_tunnel_spd_policy($phase1, $phase2, $old_phase1, $old_phase2) {
 		"{$phase2['protocol']}/tunnel/{$rgip}-" .
 		"{$ep}/unique;\n";
 
-	log_error("Reloading IPsec tunnel '{$tunnel['descr']}'. Previous IP '{$oldgw}', current IP '{$rgip}'. Reloading policy");
+	log_error("Reloading IPsec tunnel '{$phase1['descr']}'. Previous IP '{$old_gw}', current IP '{$rgip}'. Reloading policy");
 
 	$now = time();
 	$spdfile = tempnam("{$g['tmp_path']}", "spd.conf.reload.{$now}.");

@@ -66,32 +66,33 @@ if(strstr($REAL_BOOT_DEVICE, "s1")) {
 if($_POST['bootslice']) {
 	exec("gpart set -a active -i {$SLICE} {$BOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$SLICE} -v /dev/{$BOOT_DRIVE}");
-	exec("mkdir /tmp/{$GLABEL_SLICE}");
-	exec("mount /dev/ufs/{$GLABEL_SLICE} /tmp/{$GLABEL_SLICE}");
-	exec("cp /etc/fstab /tmp/{$GLABEL_SLICE}/etc/fstab");
+	exec("/bin/mkdir /tmp/{$GLABEL_SLICE}");
+	exec("/sbin/mount /dev/ufs/{$GLABEL_SLICE} /tmp/{$GLABEL_SLICE}");
+	exec("/bin/cp /etc/fstab /tmp/{$GLABEL_SLICE}/etc/fstab");
 	$status = exec("sed -i \"\" \"s/pfsense{$OLD_UFS_ID}/pfsense{$UFS_ID}/g\" /tmp/{$GLABEL_SLICE}/etc/fstab");
 	if($status) {
 		file_notice("UpgradeFailure","Something went wrong when trying to update the fstab entry.  Aborting upgrade.");
-		exec("umount /tmp/$GLABEL_SLICE");
+		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
 	}
-	exec("umount /tmp/$GLABEL_SLICE");	
+	exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
 	$savemsg = "The boot slice has been set to {$BOOT_DRIVE} {$SLICE}";
 }
 
 if($_POST['destslice']) {
 	exec("dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
 	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} obs=64k");
-	exec("gpart set -a active -i {$SLICE} {$BOOT_DRIVE}");
-	exec("mkdir /tmp/{$GLABEL_SLICE}");
-	exec("mount /dev/ufs/{$GLABEL_SLICE} /tmp/{$GLABEL_SLICE}");
-	exec("cp /etc/fstab /tmp/{$GLABEL_SLICE}/etc/fstab");
+	exec("/sbin/gpart set -a active -i {$SLICE} {$BOOT_DRIVE}");
+	exec("/bin/mkdir /tmp/{$GLABEL_SLICE}");
+	exec("/sbin/mount /dev/ufs/{$GLABEL_SLICE} /tmp/{$GLABEL_SLICE}");
+	exec("/bin/cp /etc/fstab /tmp/{$GLABEL_SLICE}/etc/fstab");
 	$status = exec("sed -i \"\" \"s/pfsense{$OLD_UFS_ID}/pfsense{$UFS_ID}/g\" /tmp/{$GLABEL_SLICE}/etc/fstab");
 	if($status) {
-		file_notice("UpgradeFailure","Something went wrong when trying to update the fstab entry.  Aborting upgrade.");
-		exec("umount /tmp/$GLABEL_SLICE");
+		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
+		$savemsg = "There was an error while duplicating the slice.  Operation aborted.";
+	} else {
+		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
+		exec("/usr/sbin/boot0cfg -s {$SLICE} -v /dev/{$BOOT_DRIVE}");
 	}
-	exec("umount /tmp/$GLABEL_SLICE");	
-	exec("/usr/sbin/boot0cfg -s {$SLICE} -v /dev/{$BOOT_DRIVE}");	
 }
 
 ?>
@@ -117,7 +118,7 @@ if ($savemsg)
 						<strong>NOTE:&nbsp</strong>
 					</span>
 					The options on this page are intended for use by advanced users only.
-					<br/>
+					<p/>&nbsp;
 				</span>
 				<br/>
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">

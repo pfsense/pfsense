@@ -587,6 +587,9 @@ function filter_nat_rules_generate()
 {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	$natrules .= "nat-anchor \"natearly/*\"\n";
+	if (file_exists("{$g['tmp_path']}/rules.natearly.packages"))
+		$natrules .= file_get_contents("{$g['tmp_path']}/rules.natearly.packages");
+	
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
 	update_filter_reload_status("Creating 1:1 rules...");
 
@@ -750,6 +753,9 @@ function filter_nat_rules_generate()
 	/* load balancer anchor */
 	$natrules .= "\n# Load balancing anchor\n";
 	$natrules .= "rdr-anchor \"relayd/*\"\n";
+
+	if (file_exists("{$g['tmp_path']}/rules.rdrearly.packages"))
+		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdrearly.packages");
 
 	update_filter_reload_status("Setting up TFTP helper");
 	$natrules .= "# TFTP proxy\n";
@@ -1033,6 +1039,12 @@ rdr on \${$FilterIflist['wan']['descr']} proto tcp from any to any port 1723 -> 
 EOD;
 		}
 	}
+
+	if (file_exists("{$g['tmp_path']}/rules.nat.packages"))
+		$natrules .= file_get_contents("{$g['tmp_path']}/rules.nat.packages");
+	if (file_exists("{$g['tmp_path']}/rules.rdr.packages"))
+		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdr.packages");
+
 	if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
 		require_once('squid.inc');
 		$natrules .= squid_generate_rules('nat');
@@ -1600,6 +1612,13 @@ block quick from any to <snort2c> label "Block snort2c hosts"
 # package manager early specific hook
 anchor "packageearly"
 
+EOD;
+
+	if (file_exists("{$g['tmp_path']}/rules.rulesearly.packages"))
+		$ipfrules .= file_get_contents("{$g['tmp_path']}/rules.rulesearly.packages");
+
+	$ipfrules .= <<<EOD
+
 # carp
 anchor "carp"
 
@@ -1818,12 +1837,6 @@ pass in inet tagged PFREFLECT keep state label "NAT REFLECT: Allow traffic to lo
 EOD;
 	}
 
-	$ipfrules .= <<<EOD
-# package manager late specific hook
-anchor "packagelate"
-
-EOD;
-	
 	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */
 		$rule_arr1 = array();
@@ -1862,6 +1875,14 @@ EOD;
 
 	update_filter_reload_status("Creating IPsec rules...");
 	$ipfrules .= generate_ipsec_filter_rules();
+
+        $ipfrules .= <<<EOD
+# package manager late specific hook
+anchor "packagelate"
+
+EOD;
+	if (file_exists("{$g['tmp_path']}/rules.packages"))
+		$ipfrules .= file_get_contents("{$g['tmp_path']}/rules.packages");
 
 	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
                 require_once('clamav.inc');

@@ -1034,51 +1034,45 @@ function pkg_build_filter_rules() {
 	$error = "";
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.natearly.packages");
         if ($status <> 0) {
-                log_error("There was an error while parsing the NAT early package rules.");
-                $error = "\nThere was an error while parsing the NAT early package rules.";
-        } else {
-                mwexec("/sbin/pfctl -a pkgnatearly -F rules");
-                mwexec("/sbin/pfctl -a pkgnatearly -f {$g['tmp_path']}/rules.natearly.packages");
+                $errornatearly = "There was an error while parsing the NAT early package rules.\n";
+		$error .= $errornatearly;
+                log_error($errornatearly);
+		file_put_contents("{$g['tmp_path']}/rules.natearly.packages", "#{$errornatearly}\n");
         }
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.nat.packages");
         if ($status <> 0) {
-                log_error("There was an error while parsing the NAT package rules.");
-                $error = "\nThere was an error while parsing the NAT package rules.";
-        } else {
-                mwexec("/sbin/pfctl -a pkgnat -F rules");
-                mwexec("/sbin/pfctl -a pkgnat -f {$g['tmp_path']}/rules.nat.packages");
+                $errornat = "There was an error while parsing the NAT package rules.\n";
+		$error .= $errornat;
+		log_error($errornat);
+                file_put_contents("{$g['tmp_path']}/rules.nat.packages", "#{$errornat}\n");
         }
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.rulesearly.packages");
 	if ($status <> 0) {
-		log_error("There was an error while parsing the package filter early rules.");
-		$error = "\nThere was an error while parsing the package filter early rules.";
-	} else {
-		mwexec("/sbin/pfctl -a packageearly -F rules");
-		mwexec("/sbin/pfctl -a packageearly -f {$g['tmp_path']}/rulesearly.packages");
+		$errorrulesearly = "There was an error while parsing the package filter early rules.\n";
+		$error .= $errorrulesearly;
+		log_error($errorrulesearly);
+                file_put_contents("{$g['tmp_path']}/rules.rulesearly.packages", "#{$errorrulesearly}\n");
 	}
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.packages");
 	if ($status <> 0) {
-		log_error("There was an error while parsing the package filter rules.");
-		$error = "\nThere was an error while parsing the package filter rules.";
-        } else {
-                mwexec("/sbin/pfctl -a packagelate -F rules");
-                mwexec("/sbin/pfctl -a packagelate -f {$g['tmp_path']}/rules.packages");
+		$errorrules = "There was an error while parsing the package filter rules.\n";
+		$error .= $errorrules;
+		log_error($errorrules);
+                file_put_contents("{$g['tmp_path']}/rules.packages", "#{$errorrules}\n");
         }
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.rdrearly.packages");
         if ($status <> 0) {
-                log_error("There was an error while parsing the RDR early package rules.");
-                $error = "\nThere was an error while parsing the RDR early package rules.";
-        } else {
-                mwexec("/sbin/pfctl -a pkgrdrearly -F rules");
-                mwexec("/sbin/pfctl -a pkgrdrearly -f {$g['tmp_path']}/rules.rdrearly.packages");
+                $errorrdrearly = "There was an error while parsing the RDR early package rules.\n";
+		$error .= $errorrdrearly;
+		log_error($errorrdrearly);
+                file_put_contents("{$g['tmp_path']}/rules.rdrearly.packages", "#{$errorrdrearly}\n");
         }
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.rdr.packages");
         if ($status <> 0) {
-		log_error("There was an error while parsing the RDR package rules.");
-		$error = "\nThere was an error while parsing the RDR package rules.";
-        } else {
-                mwexec("/sbin/pfctl -a pkgrdr -F rules");
-                mwexec("/sbin/pfctl -a pkgrdr -f {$g['tmp_path']}/rules.rdr.packages");
+		$errorrdr = "There was an error while parsing the RDR package rules.\n";
+		$error .= $errorrdr;
+		log_error($errorrdr);
+                file_put_contents("{$g['tmp_path']}/rules.rdr.packages", "#{$errorrdr}\n");
         }
 	if ($error <> "")
 		file_notice($error);

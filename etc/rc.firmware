@@ -288,7 +288,7 @@ pfSenseNanoBSDupgrade)
 	cat /tmp/$GLABEL_SLICE/etc/fstab >> /conf/upgrade_log.txt
 
 	echo "" >> /conf/upgrade_log.txt
-	find /tmp/$GLABEL_SLICE >> /conf/upgrade_log.txt
+	find /tmp/$GLABEL_SLICE >/conf/file_upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 
 	# Unmount newly prepared slice

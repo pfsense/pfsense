@@ -290,6 +290,7 @@ if ($_POST) {
 									unlink_if_exists("/tmp/config.cache");
 									write_config();
 									add_base_packages_menu_items();
+									convert_config();
 									conf_mount_ro();
 								}
 								if($m0n0wall_upgrade == true) {
@@ -305,6 +306,7 @@ if ($_POST) {
 									unlink_if_exists("/tmp/config.cache");
 									write_config();
 									add_base_packages_menu_items();									
+									convert_config();
 									conf_mount_ro();
 									$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense.<p>The firewall is now rebooting.";
 									$reboot_needed = true;

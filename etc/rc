@@ -317,13 +317,18 @@ nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status &
 # Start ping handler for every 240 seconds
 minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
-echo "Bootup complete"
-
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 
 # Reset the cache.  read-only requires this.
 rm /tmp/config.cache
 
+while [ "`ps awwux | grep -v grep | grep rc.newwanip`" ]; do
+	echo "Delaying startup while rc.newwanip finishes" | logger
+	sleep 5
+done
+
 /etc/rc.conf_mount_ro
+
+echo "Bootup complete"
 
 exit 0

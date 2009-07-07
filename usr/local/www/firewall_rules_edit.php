@@ -42,6 +42,10 @@
 require("guiconfig.inc");
 
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp");
+$ifdisp = get_configured_interface_with_descr();
+foreach ($ifdiscp as $kif => $kdescr)
+	$specialsrcdst[] = "{$kif}";
+	$specialsrcdst[] = "{$kif}ip";
 
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();
@@ -663,7 +667,6 @@ include("head.inc");
                                                                 <option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected"; } ?>>L2TP clients</option>
                                                                 <?php endif; ?>
 <?php
-								$ifdisp = get_configured_interface_with_descr();
 								foreach ($ifdisp as $ifent => $ifdesc): ?>
 								<?php if(have_ruleint_access($ifent)): ?>
 									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected"; } ?>><?=htmlspecialchars($ifdesc);?> subnet</option>
@@ -775,22 +778,15 @@ include("head.inc");
 								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>any</option>
 								<option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>Single host or alias</option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>>Network</option>
-								<?php if(have_ruleint_access("wan")): ?>
-								<option value="wanip" <?php if ($pconfig['dst'] == "wanip") { echo "selected"; } ?>>WAN address</option>
-								<?php endif; ?>
-								<?php if(have_ruleint_access("lan")): ?>
-								<option value="lanip" <?php if ($pconfig['dst'] == "lanip") { echo "selected"; } ?>>LAN address</option>
-								<?php endif; ?>
-								<?php if(have_ruleint_access("lan")): ?>
-								<option value="lan" <?php if ($pconfig['dst'] == "lan") { echo "selected"; } ?>>LAN subnet</option>
-								<?php endif; ?>
 								<?php if(have_ruleint_access("pptp")): ?>
 								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>>PPTP clients</option>
 								<?php endif; ?>
 								<?php if(have_ruleint_access("pppoe")): ?>
 								<option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>
 								<?php endif; ?>								
-								
+								<?php if(have_ruleint_access("l2tp")): ?>
+                                                                <option value="l2tp" <?php if ($pconfig['dst'] == "l2tp") { echo "selected"; } ?>>L2TP clients</option>
+                                                                <?php endif; ?>
 
 <?php 							foreach ($ifdisp as $if => $ifdesc): ?>
 								<?php if(have_ruleint_access($if)): ?>

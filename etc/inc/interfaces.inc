@@ -135,12 +135,12 @@ function interface_vlan_configure($vlan) {
 		//mwexec("/sbin/ifconfig {$vlanif} create");
         }
 	$tmpvlanif = exec("/sbin/ifconfig vlan create");
-	mwexec("/sbin/ifconfig {$tmpvlanif} name {$vlanif}");
 	
-        mwexec("/sbin/ifconfig {$vlanif} vlan " .
+        mwexec("/sbin/ifconfig {$tmpvlanif} vlan " .
                 escapeshellarg($tag) . " vlandev " .
                 escapeshellarg($if));
 
+	mwexec("/sbin/ifconfig {$tmpvlanif} name {$vlanif}");
 	interfaces_bring_up($vlanif);
 
         /* invalidate interface cache */

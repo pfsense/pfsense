@@ -322,11 +322,6 @@ minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 # Reset the cache.  read-only requires this.
 rm /tmp/config.cache
 
-while [ "`ps awwux | grep -v grep | grep rc.newwanip`" ]; do
-	echo "Delaying startup while rc.newwanip finishes" | logger
-	sleep 5
-done
-
 /etc/rc.conf_mount_ro
 
 echo "Bootup complete"

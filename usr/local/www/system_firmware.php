@@ -89,11 +89,9 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	}
 	if ($mode) {
 		if ($mode == "enable") {
-			exec_rc_script("/etc/rc.firmware enable");
 			conf_mount_rw();
 			touch($d_fwupenabled_path);
 		} else if ($mode == "disable") {
-			exec_rc_script("/etc/rc.firmware disable");
 			conf_mount_ro();
 			if (file_exists($d_fwupenabled_path))
 				unlink($d_fwupenabled_path);

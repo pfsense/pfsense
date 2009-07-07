@@ -285,7 +285,7 @@ function enablechange() {
 		    if ($field['type'] == "input") {
 			if ($field['displayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-                                echo $field['displayname']);
+                                echo $field['displayname'];
                                 echo ":</td>\n";
 			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
@@ -305,7 +305,7 @@ function enablechange() {
 		    } else if ($field['type'] == "inputalias") {
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-                                echo $field['displayname']);
+                                echo $field['displayname'];
                                 echo ":</td>\n";
 			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
@@ -387,7 +387,7 @@ function enablechange() {
 		    } else if ($field['type'] == "select") {
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-                                echo $field['displayname']);
+                                echo $field['displayname'];
                                 echo ":</td>\n";
 			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
@@ -408,13 +408,18 @@ function enablechange() {
 			foreach ($field['options']['option'] as $opt) {
 				$selected = "";
 				if($value == $opt['value']) $selected = " SELECTED";
-			    echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'" . $selected . ">" . $opt['name'] . "</option>\n";
+			    echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'" . $selected . ">";
+				if ($opt['displayname'])
+					echo $opt['displayname'];
+				else
+					echo $opt['name'];
+				echo "</option>\n";
 			}
 			echo "</select>\n";
 		    } else if ($field['type'] == "textarea") {
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-                                echo $field['displayname']);
+                                echo $field['displayname'];
                                 echo ":</td>\n";
 			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
@@ -434,7 +439,7 @@ function enablechange() {
 		    } else if ($field['type'] == "subnet_select") {
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-                                echo $field['displayname']);
+                                echo $field['displayname'];
                                 echo ":</td>\n";
 			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
@@ -454,7 +459,7 @@ function enablechange() {
 		    } else if ($field['type'] == "timezone_select") {
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-                                echo $field['displayname']);
+                                echo $field['displayname'];
                                 echo ":</td>\n";
 			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
@@ -475,7 +480,7 @@ function enablechange() {
 		    } else if ($field['type'] == "checkbox") {
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-                                echo $field['displayname']);
+                                echo $field['displayname'];
                                 echo ":</td>\n";
 			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";

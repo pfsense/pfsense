@@ -50,15 +50,14 @@ function step2_stepbeforeformdisplay() {
 
 		$numberofinterfaces = 0;
 		$iflist = array();
-		foreach ($config['interfaces'] as $if => $ifdesc) {
-			if (!is_altq_capable($ifdesc['if']))
-				continue;
-			if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan")
+		$iflisttmp = get_configured_interface_with_descr();
+		foreach ($iflisttmp as $if => $ifdesc) {
+			if (!is_altq_capable(get_real_interface($if)))
 				continue;
 			if ($if == "lan")
 				continue;
 			$numberofinterfaces++;
-			$iflist[] = $if;
+			$iflist[$if] = $ifdesc;
 		}
 		$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
 		if ($numberofconnections > $numberofinterfaces) {
@@ -78,50 +77,53 @@ function step2_stepbeforeformdisplay() {
 		*/
 		$fields = array();
 
-			$field = array();
-			$field['name'] = "Setup LAN scheduler";
-			$field['type'] = "listtopic";
-			$fields[] = $field;
-			$field = array();
-    	    $field['name'] = "downloadscheduler";
+		$field = array();
+		$field['name'] = "Setup LAN scheduler";
+		$field['type'] = "listtopic";
+		$fields[] = $field;
+		$field = array();
+		$field['displayname'] = "Download Scheduler";
+		$field['name'] = "downloadscheduler";
         	$field['type'] = "select";
 	        $field['typehint'] = "Queueing discipline to apply on the download of this connection.";
-    	    $field['options']['option'] = array();
-   			    $opts = array();
-            	$opts['name'] = "HFSC";
-	            $opts['value'] = "HFSC";
-    	    $field['options']['option'][] = $opts;
-        	    $opts = array();
-	            $opts['name'] = "CBQ";
-    	        $opts['value'] = "CBQ";
-        	$field['options']['option'][] = $opts;
-	            $opts = array();
-    	        $opts['name'] = "PRIQ";
-        	    $opts['value'] = "PRIQ";
-	        $field['options']['option'][] = $opts;
-    	    $field['bindstofield'] = "ezshaper->step2->downloadscheduler";
-        $fields[] = $field;
-	
-			$field = array();
-            $field['name'] = "Setup connections speeds";
-            $field['type'] = "listtopic";
-        $fields[] = $field;
+		$field['options']['option'] = array();
+			$opts = array();
+			$opts['name'] = "HFSC";
+			$opts['value'] = "HFSC";
+		$field['options']['option'][] = $opts;
+			$opts = array();
+			$opts['name'] = "CBQ";
+			$opts['value'] = "CBQ";
+		$field['options']['option'][] = $opts;
+			$opts = array();
+			$opts['name'] = "PRIQ";
+			$opts['value'] = "PRIQ";
+		$field['options']['option'][] = $opts;
+		$field['bindstofield'] = "ezshaper->step2->downloadscheduler";
+		$fields[] = $field;
+		$field = array();
+		$field['name'] = "Setup connections speeds";
+		$field['type'] = "listtopic";
+		$fields[] = $field;
 
 		for ($i = 0; $i < $numberofconnections; $i++) {
 			$field = array();
+			$field['displayname'] = "Interface";
 			$field['name'] = "conn{$i}interface";
 			$field['type'] = "select";
 			$field['typehint'] = "Interface of this connection.";
 			$field['options']['option'] = array();
-			foreach ($iflist as $ifname) {
-					$opts = array();
-					$opts['name'] = $ifname;
-					$opts['value'] = $ifname;
+			foreach ($iflist as $ifname => $ifdescr) {
+				$opts = array();
+				$opts['displayname'] = $ifdescr;
+				$opts['name'] = $ifname;
+				$opts['value'] = $ifname;
 				$field['options']['option'][] = $opts;
 			}
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}interface";
-		$fields[] = $field;
+			$fields[] = $field;
 
+			$field['displayname'] = "Upload Scheduler";
 			$field['name'] = "conn{$i}uploadscheduler";
 			$field['type'] = "select";
 			$field['typehint'] = "Queueing discipline to apply on the upload of this connection.";
@@ -139,14 +141,15 @@ function step2_stepbeforeformdisplay() {
 			$opts['value'] = "PRIQ";
 			$field['options']['option'][] = $opts;
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}uploadscheduler";
-		$fields[] = $field;
+			$fields[] = $field;
 
 			$field = array();
+			$field['displayname'] = "Connection Upload";
 			$field['name'] = "conn{$i}upload";
 			$field['type'] = "input";
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}upload";
 			$field['combinefieldsbegin'] = "true";
-		$fields[] = $field;
+			$fields[] = $field;
 
 			$field = array();
 			$field['combinefieldsend'] = "true";	
@@ -154,56 +157,57 @@ function step2_stepbeforeformdisplay() {
 			$field['dontcombinecells'] = "true";
 			$field['name'] = "conn{$i}uploadspeed";
 			$field['typehint'] = "Upload bandwidth on this connection.";
-            $field['type'] = "select";
-            $field['options']['option'] = array();
-     	       $opts = array();
-               $opts['value'] = "Kb";
-               $opts['name'] = "Kbit/s";
-            $field['options']['option'][] = $opts;
-               $opts = array();
-               $opts['value'] = "Mb";
-               $opts['name'] = "Mbit/s";
-            $field['options']['option'][] = $opts;
-               $opts = array();
-               $opts['value'] = "Gb";
-               $opts['name'] = "Gbit/s";
-            $field['options']['option'][] = $opts;
-            $field['bindstofield'] = "ezshaper->step2->conn{$i}uploadspeed";
-		$fields[] = $field;
+			$field['type'] = "select";
+			$field['options']['option'] = array();
+			$opts = array();
+			$opts['value'] = "Kb";
+			$opts['name'] = "Kbit/s";
+			$field['options']['option'][] = $opts;
+			$opts = array();
+			$opts['value'] = "Mb";
+			$opts['name'] = "Mbit/s";
+			$field['options']['option'][] = $opts;
+			$opts = array();
+			$opts['value'] = "Gb";
+			$opts['name'] = "Gbit/s";
+			$field['options']['option'][] = $opts;
+			$field['bindstofield'] = "ezshaper->step2->conn{$i}uploadspeed";
+			$fields[] = $field;
 
 			$field = array();
+			$field['displayname'] = "Connection Download";
 			$field['name'] = "conn{$i}download";
 			$field['type'] = "input";
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}download";
 			$field['combinefieldsbegin'] = "true";
-		$fields[] = $field;
+			$fields[] = $field;
 
 			$field = array();
-            $field['combinefieldsend'] = "true";
-            $field['dontdisplayname'] = "true";
-            $field['dontcombinecells'] = "true";
-            $field['name'] = "conn{$i}downloadspeed";
+			$field['combinefieldsend'] = "true";
+			$field['dontdisplayname'] = "true";
+			$field['dontcombinecells'] = "true";
+			$field['name'] = "conn{$i}downloadspeed";
 			$field['typehint'] = "Download bandwidth on this connection.";
-            $field['type'] = "select";
-            $field['options']['option'] = array();
-       	    	$opts = array();
-                $opts['value'] = "Kb";
-                $opts['name'] = "Kbit/s";
-            $field['options']['option'][] = $opts;
-                $opts = array();
-                $opts['value'] = "Mb";
-                $opts['name'] = "Mbit/s";
-            $field['options']['option'][] = $opts;
-                $opts = array();
-                $opts['value'] = "Gb";
-                $opts['name'] = "Gbit/s";
-            $field['options']['option'][] = $opts;
-            $field['bindstofield'] = "ezshaper->step2->conn{$i}downloadspeed";
-        $fields[] = $field;
+			$field['type'] = "select";
+			$field['options']['option'] = array();
+			$opts = array();
+			$opts['value'] = "Kb";
+			$opts['name'] = "Kbit/s";
+			$field['options']['option'][] = $opts;
+			$opts = array();
+			$opts['value'] = "Mb";
+			$opts['name'] = "Mbit/s";
+			$field['options']['option'][] = $opts;
+			$opts = array();
+			$opts['value'] = "Gb";
+			$opts['name'] = "Gbit/s";
+			$field['options']['option'][] = $opts;
+			$field['bindstofield'] = "ezshaper->step2->conn{$i}downloadspeed";
+			$fields[] = $field;
 		}
-			$field = array();
-			$field['name'] = "Next";
-			$field['type'] = "submit";
+		$field = array();
+		$field['name'] = "Next";
+		$field['type'] = "submit";
 		$fields[] = $field;
 
 }
@@ -336,6 +340,7 @@ function step3_stepbeforeformdisplay() {
 			
 		for ($i = 0; $i < $numberofconnections; $i++) {
 			$field = array();
+			$field['displayname'] = "Connection upload";
                         $field['name'] = "conn{$i}upload";
                         $field['type'] = "input";
                         $field['bindstofield'] = "ezshaper->step3->conn{$i}upload";

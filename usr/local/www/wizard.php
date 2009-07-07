@@ -283,7 +283,11 @@ function enablechange() {
 			echo "<tr>";
 
 		    if ($field['type'] == "input") {
-			if(!$field['dontdisplayname']) {
+			if ($field['displayname']) {
+				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+                                echo $field['displayname']);
+                                echo ":</td>\n";
+			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>\n";
@@ -299,7 +303,11 @@ function enablechange() {
 
 
 		    } else if ($field['type'] == "inputalias") {
-			if(!$field['dontdisplayname']) {
+			if ($field['displayname']) {
+                                echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+                                echo $field['displayname']);
+                                echo ":</td>\n";
+			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>\n";
@@ -319,7 +327,7 @@ function enablechange() {
 			$multiple = "";
 			$name = strtolower($name);
 			echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-			echo fixup_string($field['name']) . ":\n";
+			echo fixup_string($field['displayname'] ? $field['displayname'] : $field['name']) . ":\n";
 			echo "</td>";
 			echo "<td class=\"vtable\">\n";
 			if($field['size'] <> "") $size = "size=\"{$field['size']}\"";
@@ -377,7 +385,11 @@ function enablechange() {
 				echo "<td class=\"vtable\">";
 			echo "<input id='" . $name . "' name='" . $name . "' value='" . $value . "' type='password'>\n";
 		    } else if ($field['type'] == "select") {
-			if(!$field['dontdisplayname']) {
+			if ($field['displayname']) {
+                                echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+                                echo $field['displayname']);
+                                echo ":</td>\n";
+			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>\n";
@@ -400,7 +412,11 @@ function enablechange() {
 			}
 			echo "</select>\n";
 		    } else if ($field['type'] == "textarea") {
-			if(!$field['dontdisplayname']) {
+			if ($field['displayname']) {
+                                echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+                                echo $field['displayname']);
+                                echo ":</td>\n";
+			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>";
@@ -416,7 +432,11 @@ function enablechange() {
 			echo "<td>&nbsp;</td><tr>";
 			echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br></td>\n";
 		    } else if ($field['type'] == "subnet_select") {
-			if(!$field['dontdisplayname']) {
+			if ($field['displayname']) {
+                                echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+                                echo $field['displayname']);
+                                echo ":</td>\n";
+			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>";
@@ -432,7 +452,11 @@ function enablechange() {
 			}
 			echo "</select>\n";
 		    } else if ($field['type'] == "timezone_select") {
-			if(!$field['dontdisplayname']) {
+			if ($field['displayname']) {
+                                echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+                                echo $field['displayname']);
+                                echo ":</td>\n";
+			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>";
@@ -449,7 +473,11 @@ function enablechange() {
 			}
 			echo "</select>\n";
 		    } else if ($field['type'] == "checkbox") {
-			if(!$field['dontdisplayname']) {
+			if ($field['displayname']) {
+                                echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+                                echo $field['displayname']);
+                                echo ":</td>\n";
+			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo $field['name'];
 				echo ":</td>";

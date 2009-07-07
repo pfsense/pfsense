@@ -48,9 +48,6 @@ if (!is_array($config['ipsec']['phase2']))
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-if($config['interfaces']['lan']) 
-		$specialsrcdst = explode(" ", "lan");
-
 $p1index = $_GET['p1index'];
 if (isset($_POST['p1index']))
 	$p1index = $_POST['p1index'];

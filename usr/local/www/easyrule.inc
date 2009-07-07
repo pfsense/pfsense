@@ -29,16 +29,12 @@
 */
 
 $blockaliasname = 'EasyRuleBlockHosts';
-$specialsrcdst = explode(" ", "any wanip lanip lan pptp pppoe");
+
 
 function easyrule_find_rule_interface($int) {
 	global $config;
 	/* Borrowed from firewall_rules.php */
-	$iflist = array("lan" => "LAN", "wan" => "WAN");
-	
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-	}
+	$iflist = get_configured_interface_with_descr(false, true);
 	
 	if ($config['pptpd']['mode'] == "server")
 		$iflist['pptp'] = "PPTP VPN";
@@ -46,15 +42,14 @@ function easyrule_find_rule_interface($int) {
 	if ($config['pppoe']['mode'] == "server")
 		$iflist['pppoe'] = "PPPoE VPN";
 	
+	if ($config['l2tp']['mode'] == "server")
+                $iflist['l2tp'] = "L2TP VPN";
+
 	/* add ipsec interfaces */
 	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])){ 
 		$iflist["enc0"] = "IPSEC";
 	}
 	
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-	}
-
 	if (isset($iflist[$int]))
 		return $int;
 

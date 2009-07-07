@@ -179,7 +179,7 @@ $wkports = array(
 	69 => "TFTP",
 	5900 => "VNC");
 
-$specialnets = array("wanip" => "WAN address", "lanip" => "LAN address", "lan" => "LAN net", "pptp" => "PPTP clients");
+$specialnets = array("wanip" => "WAN address", "lanip" => "LAN address", "lan" => "LAN net", "pptp" => "PPTP clients", "pppoe" => "PPPoE client", "l2tp" => "L2TP clients");
 
 $spiflist = get_configured_interface_with_descr(true, true);
 foreach ($spiflist as $ifgui => $ifdesc) {
@@ -587,8 +587,9 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $p
 
 function is_specialnet($net) {
         global $specialsrcdst;
-		if(!$net) 
-			return false;
+
+	if(!$net) 
+		return false;
         if (in_array($net, $specialsrcdst) || strstr($net, "opt"))
                 return true;
         else

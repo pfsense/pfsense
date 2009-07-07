@@ -334,7 +334,7 @@ $kern_hz = trim($kern_hz, "\r\n");
 if($kern_hz == "1000") 
 	mwexec("sysctl net.inet.tcp.rexmit_min=30");
 
-/* start the igmpproxy daemon
+/* start the igmpproxy daemon */
 services_igmpproxy_configure();
 
 /* start the upnp daemon if it is enabled */

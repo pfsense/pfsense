@@ -136,6 +136,9 @@ if [ ! -h /tmp/tmp ]; then
     ln -hfs / /tmp/tmp
 fi
 
+# Make sure our /tmp is 777 + Sticky
+chmod 1777 /tmp
+
 # Malloc debugging check
 if [ ! -L /etc/malloc.conf ]; then
     ln -s aj /etc/malloc.conf
@@ -321,6 +324,6 @@ echo "Bootup complete"
 # Reset the cache.  read-only requires this.
 rm /tmp/config.cache
 
-etc/rc.conf_mount_ro
+/etc/rc.conf_mount_ro
 
 exit 0

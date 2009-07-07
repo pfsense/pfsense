@@ -43,9 +43,10 @@ require("guiconfig.inc");
 
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp");
 $ifdisp = get_configured_interface_with_descr();
-foreach ($ifdiscp as $kif => $kdescr)
+foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
 	$specialsrcdst[] = "{$kif}ip";
+}
 
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();

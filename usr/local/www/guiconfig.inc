@@ -590,10 +590,13 @@ function is_specialnet($net) {
 
 	if(!$net) 
 		return false;
-        if (in_array($net, $specialsrcdst) || strstr($net, "opt"))
+        if (in_array($net, $specialsrcdst)) {
+		echo "To test: {$net} ---- true";
                 return true;
-        else
+        } else {
+		echo "To test: {$net} ---- false";
                 return false;
+	}
 }
 
 //function to create widget tabs when called

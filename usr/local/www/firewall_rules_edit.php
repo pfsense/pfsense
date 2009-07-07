@@ -659,6 +659,9 @@ include("head.inc");
 								<?php if(have_ruleint_access("pppoe")): ?>
 								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>
 								<?php endif; ?>								
+								 <?php if(have_ruleint_access("l2tp")): ?>
+                                                                <option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected"; } ?>>L2TP clients</option>
+                                                                <?php endif; ?>
 <?php
 								$ifdisp = get_configured_interface_with_descr();
 								foreach ($ifdisp as $ifent => $ifdesc): ?>

@@ -123,7 +123,7 @@ function filter_configure_sync() {
 		echo "filter_configure_sync() being called $mt\n";
 	}
 	/* Get interface list to work with. */
-	generate_optcfg_array();
+	filter_generate_optcfg_array();
 	if ($g['booting'] == true)
 		echo "Configuring firewall";
 
@@ -177,7 +177,7 @@ function filter_configure_sync() {
 
 	$rules .= "{$aliases} \n";
 	update_filter_reload_status("Setting up logging information");
-	$rules .= setup_logging_interfaces();
+	$rules .= filter_setup_logging_interfaces();
 	if ($config['system']['optimization'] <> "") { 
 		$rules .= "set optimization {$config['system']['optimization']}\n";
 		if ($config['system']['optimization'] == "conservative") {
@@ -287,8 +287,6 @@ function filter_configure_sync() {
 
 	if ($g['booting'] == true)
 		echo ".";
-	system_routing_configure();
-
 	find_dns_aliases();
 
 	update_filter_reload_status("Done");
@@ -357,7 +355,7 @@ function filter_generate_aliases() {
 }
 
 /* returns space seperated list of vpn subnets */
-function get_vpns_list() {
+function filter_get_vpns_list() {
 	global $config;
 	/* build list of vpns */
 	$vpns = "";
@@ -385,7 +383,7 @@ function get_vpns_list() {
 }
 
 /* returns space seperated list of directly connected networks */
-function get_direct_networks_list() {
+function filter_get_direct_networks_list() {
 	global $config, $FilterIflist;
 	/* build list of directly connected interfaces and networks */
 	$networks = "";
@@ -401,12 +399,12 @@ function get_direct_networks_list() {
 	return $networks;
 }
 
-function generate_optcfg_array() 
+function filter_generate_optcfg_array() 
 {
 	global $config, $FilterIflist;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "generate_optcfg_array() being called $mt\n";
+		echo "filter_generate_optcfg_array() being called $mt\n";
 	}
 
 	read_layer7_config();
@@ -735,8 +733,8 @@ function filter_nat_rules_generate()
 	$natrules .= "rdr-anchor \"tftp-proxy/*\"\n";
 
 	$interface_counter = 0;
-	$vpns_list = get_vpns_list();
-	$direct_networks_list = get_direct_networks_list();
+	$vpns_list = filter_get_vpns_list();
+	$direct_networks_list = filter_get_direct_networks_list();
 	if($vpns_list)
 		$natrules .= "table <vpns> { $vpns_list }\n";
 	if($direct_networks_list) 
@@ -1018,7 +1016,7 @@ EOD;
 	if (file_exists("{$g['tmp_path']}/rules.rdr.packages"))
 		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdr.packages");
 
-	$natrules .= process_carp_nat_rules();
+	$natrules .= filter_process_carp_nat_rules();
 	$natrules .= "# UPnPd rdr anchor\n";
 	$natrules .= "rdr-anchor \"miniupnpd\"\n";
 	return $natrules;
@@ -1579,7 +1577,7 @@ anchor "carp"
 
 EOD;
 
-	$ipfrules .= process_carp_rules();
+	$ipfrules .= filter_process_carp_rules();
 
         $ipfrules .= "\n# SSH lockout\n";
         if (is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
@@ -2073,12 +2071,12 @@ function filter_tdr_month($schedule) {
         return false;
 }
 
-function setup_logging_interfaces() 
+function filter_setup_logging_interfaces() 
 {
 	global $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "setup_logging_interfaces() being called $mt\n";
+		echo "filter_setup_logging_interfaces() being called $mt\n";
 	}
 	$rules = "";
 	$i = 0;
@@ -2092,13 +2090,13 @@ function setup_logging_interfaces()
 	return $rules;
 }
 
-function process_carp_nat_rules() 
+function filter_process_carp_nat_rules() 
 {
 	global $g, $config;
 	update_filter_reload_status("Creating CARP NAT rules");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "process_carp_nat_rules() being called $mt\n";
+		echo "filter_process_carp_nat_rules() being called $mt\n";
 	}
 	$lines = "";
 	if (is_array($config['installedpackages']['carp']['config'])) {
@@ -2120,12 +2118,12 @@ function process_carp_nat_rules()
 	return $lines;
 }
 
-function process_carp_rules() 
+function filter_process_carp_rules() 
 {
 	global $g, $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "process_carp_rules() being called $mt\n";
+		echo "filter_process_carp_rules() being called $mt\n";
 	}
 	$lines = "";
 	/* return if there are no carp configured items */

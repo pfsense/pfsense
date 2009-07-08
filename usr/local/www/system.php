@@ -121,7 +121,7 @@ if ($_POST) {
 		$input_errors[] = "A valid TCP/IP port must be specified for the webConfigurator port.";
 	}
 
-	$direct_networks_list = explode(" ", get_direct_networks_list());
+	$direct_networks_list = explode(" ", filter_get_direct_networks_list());
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		$dnsitem = "dns{$dnscounter}";
 		$dnsgwitem = "dns{$dnscounter}gwint";

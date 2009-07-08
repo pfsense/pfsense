@@ -117,6 +117,9 @@ conf_mount_rw();
 /* resync password database to avoid out of sync issues */
 sync_webgui_passwords();
 
+// Note: sync_webgui_passwords() will send the image to RO on Nano.
+conf_mount_rw();
+
 switch($_GET['mode']) {
 	case "delete":
             $id = get_pkg_id(htmlspecialchars($_GET['pkg']));

@@ -1451,8 +1451,6 @@ function upgrade_051_to_052() {
 	if (!is_array($config['installedpackages']['carp']))
 		$config['installedpackages']['carp'] = array();
 
-	/* reconfigure openvpn services */
-	openvpn_resync_all();
 }
 
 

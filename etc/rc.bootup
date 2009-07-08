@@ -100,6 +100,7 @@ if($g['platform'] == "cdrom") {
 require_once("/etc/inc/config.inc");
 echo ".";
 require_once("/etc/inc/functions.inc");
+require_once("openvpn.inc");
 /* get system memory amount */
 $memory = get_memory();
 $avail = $memory[0];

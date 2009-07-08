@@ -36,6 +36,7 @@
 
 
 require("guiconfig.inc");
+require_once("openvpn.inc");
 
 $pgtitle = array("OpenVPN", "Client");
 

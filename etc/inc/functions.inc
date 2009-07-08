@@ -78,7 +78,6 @@ require_once("pfsense-utils.inc");
 require_once("captiveportal.inc");
 require_once("filter.inc");
 require_once("system.inc");
-require_once("openvpn.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");

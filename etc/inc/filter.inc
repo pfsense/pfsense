@@ -37,9 +37,7 @@
 /* DISABLE_PHP_LINT_CHECKING */
 
 /* include all configuration functions */
-require_once("functions.inc");
-require_once("pkg-utils.inc");
-require_once("notices.inc");
+require_once("config.inc");
 require_once ("shaper.inc");
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
@@ -278,12 +276,6 @@ function filter_configure_sync() {
 	if (file_exists("/tmp/commands.txt")) {
 		mwexec("sh /tmp/commands.txt &");
 		unlink("/tmp/commands.txt");
-	}
-	if(is_dir("/usr/local/pkg/pf/")) {
-		/* process packager manager custom rules */
-		update_filter_reload_status("Running plugins (pf)");
-		run_plugins("/usr/local/pkg/pf/");
-		update_filter_reload_status("Plugins completed.");
 	}
 	/* if time based rules are enabled then swap in the set */
 	if ($time_based_rules == true)
@@ -731,25 +723,6 @@ function filter_nat_rules_generate()
 	$natrules .= "\n#SSH Lockout Table\n";
 	$natrules .= "table <sshlockout> persist\n\n";
 
-	/* is SPAMD insalled? */
-	if (is_package_installed("spamd") == 1) {
-		$natrules .= "\n# spam table \n";
-		$wanif = $FilterIflist["wan"]['if'];
-		$natrules .= "table <whitelist> persist\n";
-		$natrules .= "table <blacklist> persist\n";
-		$natrules .= "table <spamd> persist\n";
-		if(file_exists("/var/db/whitelist.txt"))
-			$natrules .= "table <spamd-white> persist file \"/var/db/whitelist.txt\"\n";
-		$natrules .= "rdr pass on {$wanif} proto tcp from <blacklist> to port smtp -> 127.0.0.1 port spamd\n";
-		$natrules .= "rdr pass on {$wanif} proto tcp from <spamd> to port smtp -> 127.0.0.1 port spamd\n";
-		$natrules .= "rdr pass on {$wanif} proto tcp from !<spamd-white> to port smtp -> 127.0.0.1 port spamd\n";
-		if($config['installedpackages']['spamdsettings']['config'])
-			foreach($config['installedpackages']['spamdsettings']['config'] as $ss)
-				$nextmta = $ss['nextmta'];
-		if($nextmta <> "") {
-			$natrules .= "rdr pass on {$wanif} proto tcp from <spamd-white> to port smtp -> {$nextmta} port smtp\n";
-		}
-	}
 	/* load balancer anchor */
 	$natrules .= "\n# Load balancing anchor\n";
 	$natrules .= "rdr-anchor \"relayd/*\"\n";
@@ -1045,25 +1018,7 @@ EOD;
 	if (file_exists("{$g['tmp_path']}/rules.rdr.packages"))
 		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdr.packages");
 
-	if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
-		require_once('squid.inc');
-		$natrules .= squid_generate_rules('nat');
-	}
-	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
-		require_once('clamav.inc');
-		$natrules .= clamav_generate_rules('nat');
-	}
-	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
-		require_once ('frickin.inc');
-		$natrules .= frickin_generate_rules('nat');
-	}
-	if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/siproxd.inc')) {
-			require_once('siproxd.inc');
-			$natrules .= siproxd_generate_rules('nat');
-	}
 	$natrules .= process_carp_nat_rules();
-	$natrules .= "# IMSpector rdr anchor\n";
-	$natrules .= "rdr-anchor \"imspector\"\n";
 	$natrules .= "# UPnPd rdr anchor\n";
 	$natrules .= "rdr-anchor \"miniupnpd\"\n";
 	return $natrules;
@@ -1884,29 +1839,9 @@ EOD;
 	if (file_exists("{$g['tmp_path']}/rules.packages"))
 		$ipfrules .= file_get_contents("{$g['tmp_path']}/rules.packages");
 
-	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
-                require_once('clamav.inc');
-                $ipfrules .= clamav_generate_rules('filter');
-        }
-        if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
-                require_once('squid.inc');
-                $ipfrules .= squid_generate_rules('filter');
-        }
-        if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
-                require_once ('frickin.inc');
-                $ipfrules .= frickin_generate_rules('filter');
-        }
-        if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/siproxd.inc')) {
-                require_once('siproxd.inc');
-                $ipfrules .= siproxd_generate_rules('filter');
-        }
-
 	$ipfrules .= <<<EOD
 
 anchor "limitingesr"
-
-# IMSpector
-anchor "imspector"
 
 # uPnPd
 anchor "miniupnpd"

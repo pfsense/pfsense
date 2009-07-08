@@ -124,6 +124,7 @@ switch($_GET['mode']) {
 		update_status("Package deleted.");
 		$static_output .= "\nPackage deleted.";
 		update_output_window($static_output);
+		filter_configure();
 		break;
 	case "showlog":
 		$id = htmlspecialchars($_GET['pkg']);
@@ -139,6 +140,7 @@ switch($_GET['mode']) {
 		$static_output .= "\n\nPackage reinstalled.";
 		start_service(htmlspecialchars($_GET['pkg']));
 		update_output_window($static_output);
+		filter_configure();
 		break;
 	case "reinstallxml":
 		delete_package_xml(htmlspecialchars($_GET['pkg']));
@@ -146,6 +148,7 @@ switch($_GET['mode']) {
 		$static_output .= "\n\nPackage reinstalled.";
 		start_service(htmlspecialchars($_GET['pkg']));
 		update_output_window($static_output);
+		filter_configure();
 		break;
 	case "installedinfo":
 		$id = get_pkg_id(htmlspecialchars($_GET['pkg']));
@@ -179,6 +182,7 @@ switch($_GET['mode']) {
 		$static_output .= "\n\nAll packages reinstalled.";
 		start_service(htmlspecialchars($_GET['pkg']));
 		update_output_window($static_output);
+		filter_configure();
 		break;
 	default:
 		$status = install_package(htmlspecialchars($_GET['id']));
@@ -200,6 +204,8 @@ switch($_GET['mode']) {
 			fclose($fd);
 			echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['id']}\";</script>";
 		}
+		filter_configure();
+		break;
 }
 
 // Delete all temporary package tarballs and staging areas.

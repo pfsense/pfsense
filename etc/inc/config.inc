@@ -494,6 +494,9 @@ function conf_mount_ro() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
+	if (!is_subsystem_dirty('mount'))
+		return;
+
 	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
 	mwexec("/bin/sync");

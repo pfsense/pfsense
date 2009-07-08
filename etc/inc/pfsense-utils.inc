@@ -1649,4 +1649,21 @@ function load_glxsb() {
 	}
 }
 
+/****f* pfsense-utils/isvm
+ * NAME
+ *   isvm
+ * INPUTS
+ *	 none
+ * RESULT
+ *   returns true if machine is running under a virtual environment
+ ******/
+function isvm() {
+	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86");
+	$bios_vendor = strtolower(`/bin/kenv | /usr/bin/grep "bios.vendor" | /usr/bin/cut -d"=" -f2`);
+	if(in_array($bios_vendor, $virtualenvs)) 
+		return true;
+	else
+		return false;
+}
+
 ?>

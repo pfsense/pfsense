@@ -36,12 +36,12 @@
 ##|*MATCH=services_dhcp_edit.php*
 ##|-PRIV
 
+function staticmapcmp($a, $b) {
+        return ipcmp($a['ipaddr'], $b['ipaddr']);
+}
+
 function staticmaps_sort($ifgui) {
         global $g, $config;
-
-        function staticmapcmp($a, $b) {
-                return ipcmp($a['ipaddr'], $b['ipaddr']);
-        }
 
         usort($config['dhcpd'][$ifgui]['staticmap'], "staticmapcmp");
 }

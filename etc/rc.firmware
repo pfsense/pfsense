@@ -194,6 +194,18 @@ pfSenseNanoBSDupgrade)
 	echo "COMPLETE_PATH $COMPLETE_PATH" >> /conf/upgrade_log.txt
 	echo "GLABEL_SLICE $GLABEL_SLICE" >> /conf/upgrade_log.txt
 
+	# First ensure the new file can fit inside the 
+	# slice that we are going to be operating on.
+	NEW_IMG_SIZE=`echo $((\`gzip -l ${IMG} | grep -v compressed | awk '{ print $2}'\` / 1024 / 1024))`
+	SIZE=`/sbin/fdisk ${COMPLETE_PATH} | /usr/bin/grep Meg | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d"(" -f2`
+	if [ "$SIZE" -lt "$NEW_IMG_SIZE" ]; then
+		file_notice "UpgradeFailure" "Upgrade failed due to the upgrade image being larger than the partition that is configured on disk.  Halting."
+		echo "Upgrade failed.  Please check the system log file for more information" | wall
+		rm /var/run/firmwarelock.dirty
+		/etc/rc.conf_mount_ro		
+		exit 1
+	fi
+
 	# Output environment information to log file
 	output_env_to_log
 	
@@ -249,7 +261,8 @@ pfSenseNanoBSDupgrade)
 	if [ $? != 0 ]; then
 		file_notice "UpgradeFailure" "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state."
 		rm /var/run/firmwarelock.dirty
-		/etc/rc.conf_mount_ro		
+		/etc/rc.conf_mount_ro
+		echo "Upgrade failed.  Please check the system log file for more information" | wall
 		exit 1
 	fi
 
@@ -283,6 +296,7 @@ pfSenseNanoBSDupgrade)
 		rm /var/run/firmwarelock.dirty
 		umount /tmp/$GLABEL_SLICE
 		/etc/rc.conf_mount_ro
+		echo "Upgrade failed.  Please check the system log file for more information" | wall		
 		exit 1
 	fi
 	echo "" >> /conf/upgrade_log.txt

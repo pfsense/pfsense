@@ -36,8 +36,6 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
-$concurrent = `cat /var/db/captiveportal.db | wc -l`;
-
 ?>
 
 <script src="/javascript/sorttable.js"></script>
@@ -55,35 +53,36 @@ function clientcmp($a, $b) {
 }
 
 $cpdb = array();
-$wdgcplck = lock('captiveportal');
-$fp = @fopen("{$g['vardb_path']}/captiveportal.db","r");
+if (file_exists("{$g['vardb_path']}/captiveportal.db"))
+        $cpcontents = file("{$g['vardb_path']}/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+else
+        $cpcontents = array();
+
+$concurrent = count($cpcontents);
 
 if ($fp) {
-	while (!feof($fp)) {
-		$line = trim(fgets($fp));
-		if ($line) {
-			$cpent = explode(",", $line);
-			if ($_GET['showact'])
-				$cpent[4] = captiveportal_get_last_activity($cpent[1]);
-			$cpdb[] = $cpent;
-		}
+
+	foreach ($cpcontents as $cpcontent) {
+        	$cpent = explode(",", $cpcontent);
+        	if ($_GET['showact'])
+                	$cpent[5] = captiveportal_get_last_activity($cpent[1]);
+                	$cpdb[] = $cpent;
 	}
-	
-	fclose($fp);
-	
+
 	if ($_GET['order']) {
 		if ($_GET['order'] == "ip")
 			$order = 2;
 		else if ($_GET['order'] == "mac")
 			$order = 3;
+		else if ($_GET['order'] == "user")
+                	$order = 4;
 		else if ($_GET['order'] == "lastact")
-			$order = 4;
+			$order = 5;
 		else
 			$order = 0;
 		usort($cpdb, "clientcmp");
 	}
 }
-unlock($wdgcplck);
 ?>
 <table class="sortable" name="sortabletable" id="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
@@ -97,7 +96,7 @@ unlock($wdgcplck);
     <td class="listr"><?=$cpent[3];?>&nbsp;</td>
     <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
 	<?php if ($_GET['showact']): ?>
-    <td class="listr"><?php if ($cpent[4]) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[4]));?></td>
+    <td class="listr"><?php if ($cpent[5]) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[5]));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
 	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&id=<?=$cpent[1];?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>

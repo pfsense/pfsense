@@ -200,8 +200,10 @@ if ($_POST) {
 		    eval($pkg['custom_add_php_command_late']);
 		}
 
-		if (isset($pkg['filter_rules_needed']))
+		if (isset($pkg['filter_rules_needed'])) {
 			pkg_build_filter_rules();
+			filter_configure();
+		}
 
 		// resync the configuration file code if defined.
 		if($pkg['custom_php_resync_config_command'] <> "") {

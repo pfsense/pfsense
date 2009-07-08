@@ -13,6 +13,8 @@ echo ".";
 
 $g['booting'] = false;
 
+$d_fwupenabled_path = $g['varrun_path'] . "/fwup.enabled";
+
 $fp = fopen('php://stdin', 'r');
 
 echo ".\n\n";
@@ -44,7 +46,7 @@ switch ($command) {
 		$status = does_url_exist($url);
 		if($status) {
 			conf_mount_rw();
-			mark_subsystem_dirty('firmware');
+			touch($d_fwupenabled_path);
 			if(file_exists("/root/firmware.tgz"))
 				unlink("/root/firmware.tgz");
 			echo "\nFetching file size...\n";
@@ -114,7 +116,7 @@ switch ($command) {
 		if(stristr($path,"nanobsd"))
 			$type = "nanobsd";			
 		if(file_exists($path)) {
-			mark_subsystem_dirty('firmware');
+			touch($d_fwupenabled_path);
 			do_upgrade($path, $type);
 		} else {
 			echo "\nCould not find file.\n\n";
@@ -185,7 +187,7 @@ function do_upgrade($path, $type) {
 			die;
 		}
 	}
-	mark_subsystem_dirty('firmwarelock');
+	touch($d_fwupenabled_path);
 	check_for_kernel_file();
 	echo "\nOne moment please...\nInvoking firmware upgrade...";
 	if($type == "bdiff") 
@@ -195,13 +197,13 @@ function do_upgrade($path, $type) {
 	else
 		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");
 	sleep(10);
-	while(is_subsystem_dirty('firmwarelock')) {
+	while(file_exists($d_fwupenabled_path)) {
 		sleep(1);
 		echo ".";
 	}
 	sleep(10);
 	echo "Done.  Rebooting...\n\n";
-	clear_subsystem_dirty('firmwarelock');
+	unlink_if_exists($d_fwupenabled_path);
 }
 
 exec("rm -f /root/*.md5");

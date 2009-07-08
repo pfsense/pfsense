@@ -1024,12 +1024,12 @@ EOD;
 	return $natrules;
 }
 
-function generate_user_filter_rule_arr($rule) 
+function filter_generate_user_rule_arr($rule) 
 {
 	global $config;
 	update_filter_reload_status("Creating filter rule {$rule['descr']} ...");
 	$ret = array();
-	$line = generate_user_filter_rule($rule);
+	$line = filter_generate_user_rule($rule);
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
 	if($rule['descr'] != "" and $line != "")
@@ -1156,14 +1156,14 @@ function filter_generate_address(& $rule, $target = "source")
 	return $src;
 }
 
-function generate_user_filter_rule($rule) 
+function filter_generate_user_rule($rule) 
 {
 	global $config, $g, $FilterIflist, $GatewaysList, $GatewayGroupsList;
 	global $layer7_rules_list;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "generate_user_filter_rule() being called $mt\n";
+		echo "filter_generate_user_rule() being called $mt\n";
 	}
 	/* don't include disabled rules */
 	if (isset($rule['disabled'])) {
@@ -1803,9 +1803,9 @@ EOD;
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
 			if (!isset ($rule['disabled'])) {
 				if(isset($rule['floating'])) {
-					$rule_arr1[] = generate_user_filter_rule_arr($rule);
+					$rule_arr1[] = filter_generate_user_rule_arr($rule);
 				} else {
-					$rule_arr2[] = generate_user_filter_rule_arr($rule);
+					$rule_arr2[] = filter_generate_user_rule_arr($rule);
 				}
 				if ($rule['sched']) 
 					$time_based_rules = true;
@@ -1829,7 +1829,7 @@ EOD;
 	}
 
 	update_filter_reload_status("Creating IPsec rules...");
-	$ipfrules .= generate_ipsec_filter_rules();
+	$ipfrules .= filter_generate_ipsec_rules();
 
         $ipfrules .= <<<EOD
 # package manager late specific hook
@@ -2138,12 +2138,12 @@ function process_carp_rules()
 }
 
 /* Generate IPSEC Filter Items */
-function generate_ipsec_filter_rules() {
+function filter_generate_ipsec_rules() {
 	global $config, $g, $FilterIflist, $GatewaysList;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "generate_ipsec_filter_rules() being called $mt\n";
+		echo "filter_generate_ipsec_rules() being called $mt\n";
 	}
 
 	$ipfrules = "\n# VPN Rules\n";

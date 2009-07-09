@@ -89,11 +89,9 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	}
 	if ($mode) {
 		if ($mode == "enable") {
-			exec_rc_script("/etc/rc.firmware enable");
 			conf_mount_rw();
 			touch($d_fwupenabled_path);
 		} else if ($mode == "disable") {
-			exec_rc_script("/etc/rc.firmware disable");
 			conf_mount_ro();
 			if (file_exists($d_fwupenabled_path))
 				unlink($d_fwupenabled_path);
@@ -137,7 +135,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
                             /* fire up the update script in the background */
                             touch($d_firmwarelock_path);
                             $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";
-							if(stristr($_FILES['ulfile']['name'],"nanobsd"))
+							if(stristr($_FILES['ulfile']['name'],"nanobsd") or $_POST['isnano'] == "yes")
 								mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
 							else if(stristr($_FILES['ulfile']['name'],"bdiff"))
                             	mwexec_bg("/etc/rc.firmware delta_update {$g['upload_path']}/firmware.tgz");
@@ -170,6 +168,8 @@ $sig_warning = "<strong>" . $sig_warning . "</strong><br>This means that the ima
 	"that the image has not been tampered with.<br><br>".
 	"Do you want to install this image anyway (on your own risk)?";
 print_info_box($sig_warning);
+if(stristr($_FILES['ulfile']['name'],"nanobsd"))
+	echo "<input type='hidden' name='isnano' id='isnano' value='yes'>\n";
 ?>
 <input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" Yes ">
 <input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" No ">

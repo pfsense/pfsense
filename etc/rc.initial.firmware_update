@@ -2,15 +2,15 @@
 
 <?php
 
-$g['booting'] = true;
 require("globals.inc");
+require("util.inc");
+$g['booting'] = true;
 
 echo "Starting the {$g['product_name']} console firmware update system";
 
 require("functions.inc");
 echo ".";
-require("config.inc");
-echo ".";
+
 $g['booting'] = false;
 
 $d_fwupenabled_path = $g['varrun_path'] . "/fwup.enabled";
@@ -92,7 +92,7 @@ switch ($command) {
 				echo "Binary DIFF upgrade file detected...\n";
 				$type = "bdiff";
 			}
-			if(strstr($url,"bdiff")) {}
+			if(strstr($url,"nanobsd")) {}
 				echo "NanoBSD upgrade file detected...\n";			
 				$type = "nanobsd";	
 			}			
@@ -111,9 +111,9 @@ switch ($command) {
 			fclose($fp);
 			die;
 		}
-		if(stristr($fp,"bdiff"))
+		if(stristr($path,"bdiff"))
 			$type = "bdiff";
-		if(stristr($fp,"bdiff"))
+		if(stristr($path,"nanobsd"))
 			$type = "nanobsd";			
 		if(file_exists($path)) {
 			touch($d_fwupenabled_path);
@@ -162,8 +162,32 @@ function check_for_kernel_file() {
 }
 
 function do_upgrade($path, $type) {
-	global $g;
-	touch($g['varrun_path'] . "/firmware.lock");	
+	global $g, $fp, $d_fwupenabled_path;
+	
+	$sigchk = verify_digital_signature($path);
+	if ($sigchk == 1)
+		$sig_warning = "The digital signature on this image is invalid.";
+	else if ($sigchk == 2)
+		$sig_warning = "This image is not digitally signed.";
+	else if (($sigchk == 3) || ($sigchk == 4))
+		$sig_warning = "There has been an error verifying the signature on this image.";
+	if($sig_warning) {
+		$sig_warning = "\nWARNING! ACHTUNG! DANGER!\n\n{$sig_warning}\n\n" .
+			"This means that the image you uploaded is not an official/supported image and\n" .
+			"may lead to unexpected behavior or security compromises.\n\n" .
+			"Only install images that come from sources that you trust, and make sure\n".
+			"that the image has not been tampered with.\n\n".
+			"Do you want to install this image anyway at your own risk [n]?";
+		echo $sig_warning;
+		$command = strtoupper(chop(fgets($fp)));
+		if(strtoupper($command) == "Y" or strtoupper($command) == "Y" or strtoupper($command) == "YES") {
+			echo "\nContinuing upgrade...";
+		} else {
+			echo "\nUpgrade cancelled.\n\n";
+			die;
+		}
+	}
+	touch($d_fwupenabled_path);
 	check_for_kernel_file();
 	echo "\nOne moment please...\nInvoking firmware upgrade...";
 	if($type == "bdiff") 
@@ -173,13 +197,13 @@ function do_upgrade($path, $type) {
 	else
 		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");
 	sleep(10);
-	while(file_exists("{$g['varrun_path']}/firmware.lock")) {
+	while(file_exists($d_fwupenabled_path)) {
 		sleep(1);
 		echo ".";
 	}
+	sleep(10);
 	echo "Done.  Rebooting...\n\n";
-	if(file_exists($g['varrun_path'] . "/firmware.lock"))
-		unlink($g['varrun_path'] . "/firmware.lock");
+	unlink_if_exists($d_fwupenabled_path);
 }
 
 exec("rm -f /root/*.md5");

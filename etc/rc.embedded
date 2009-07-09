@@ -3,33 +3,27 @@
 # rc.embedded - embedded system specific startup information
 # For pfSense
 
-# Size of memory file system /conf partition
-partsize="3m"
+# Size of /tmp
+tmpsize="40m"
 
-echo -n "Setting up embedded specific environment..."
+# Size of /var
+varsize="60m"
+
 # Run some initialization routines
 [ -f /etc/rc.d/uzip ] && /etc/rc.d/uzip start
 
-if [ -f /nanobuild ]; then
-# Init /etc and /var, /tmp to point towards /var/tmp
-# All these to be done by rc.initdiskless
-    sh /etc/rc.initdiskless
-else
+echo -n "Setting up embedded specific environment..."
 # Initialize MFS for /tmp. Partly taken from /etc/rc.d/var
-    if (/bin/mkdir -p /tmp/.diskless 2> /dev/null); then
+if (/bin/mkdir -p /tmp/.diskless 2> /dev/null); then
 	rmdir /tmp/.diskless
-    else
-        varsize="40m"
-	mdmfs -S -M -s ${varsize} md /tmp
-    fi
-
+else
+	mdmfs -S -M -s ${tmpsize} md /tmp
+fi
 # Initialize MFS for /var. Partly taken from /etc/rc.d/var
-    if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
+if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
 	rmdir /var/.diskless
-    else
-        varsize="20m"
+else
 	mdmfs -S -M -s ${varsize} md /var
-    fi
 fi
 
 # Create some needed directories

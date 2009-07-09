@@ -1,5 +1,6 @@
 <?php
 
+require_once("globals.inc");
 require_once("notices.inc");
 /* $Id$ */
 	function return_ext_menu($section) {
@@ -237,6 +238,9 @@ require_once("notices.inc");
 							<li><a href="/edit.php" class="navlnk">Edit File</a></li>
 							<li><a href="/diag_defaults.php" class="navlnk">Factory defaults </a></li>
 							<li><a href="/halt.php" class="navlnk">Halt system</a></li>
+<?php if($g['platform']=="nanobsd"): ?>
+							<li><a href="/diag_nanobsd.php" class="navlnk">NanoBSD</a></li>	
+<?php endif; ?>
 							<li><a href="/diag_ping.php" class="navlnk">Ping</a></li>
 							<li><a href="/reboot.php" class="navlnk">Reboot system</a></li>
 							<li><a href="/diag_routes.php" class="navlnk">Routes</a></li>

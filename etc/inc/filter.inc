@@ -3278,6 +3278,7 @@ function carp_sync_client() {
 			    /* signal a carp reload */
 			    $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure');
 			    $cli->send($msg, "900");
+				break;
 		    }
 		}
 	    }

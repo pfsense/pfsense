@@ -567,6 +567,8 @@ function install_package_xml($pkg) {
 		$static_output .= "done.\n";
 		update_output_window($static_output);
 		$static_output .= "Configuring package components...\n";
+		if (!empty($pkg_config['filter_rules_needed']))
+			$config[['installedpackages']['package'][$pkgid]['filter_rule_function] = $pkg_config['filter_rules_needed'];
 		update_output_window($static_output);
 		/* modify system files */
 		if($pkg_config['modify_system']['item'] <> "") {

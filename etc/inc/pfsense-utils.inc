@@ -1680,9 +1680,11 @@ function notify_via_growl($message) {
 	$growl_settings = &$config['notifications']['growl'];
 	$growl_ip = $growl_settings['ipaddress'];
 	$growl_password = $growl_settings['password'];
-	$growl = new Growl($growl_ip, $growl_password);
-	$growl->register();
-	$growl->notify("pfSense growl alert", "", "{$message}", 1);
+	if($growl_ip) {
+		$growl = new Growl($growl_ip, $growl_password);
+		$growl->register();
+		$growl->notify("pfSense growl alert", "", "{$message}", 1);
+	}
 	return true;	// XXX: check for error?
 }
 

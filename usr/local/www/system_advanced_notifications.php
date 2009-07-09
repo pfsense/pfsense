@@ -61,21 +61,13 @@ if ($_POST) {
 		$retval = 0;
 		system_setup_sysctl();		
 		$savemsg = get_std_save_message($retval);
-		clear_subsystem_dirty('notifications');
 	}
 
 	if ($_POST['Submit'] == "Save") {
 		$tunableent = array();
 
-		$tunableent['ipaddress'] = $_POST['ipaddress'];
-		$tunableent['password'] = $_POST['password'];
-
-		if (isset($id) && $a_tunable[$id])
-			$a_tunable[$id] = $tunableent;
-		else
-			$a_tunable[] = $tunableent;
-
-		mark_subsystem_dirty('notifications');
+		$config['notifications']['ipaddress'] = $_POST['ipaddress'];
+		$config['notifications']['password'] = $_POST['password'];
 
 		write_config();
 
@@ -99,8 +91,6 @@ include("head.inc");
 				print_input_errors($input_errors);
 			if ($savemsg)
 				print_info_box($savemsg);
-			if (is_subsystem_dirty('notifications') && ($act != "edit" ))
-				print_info_box_np("The firewall notifications have changed.  You must apply the configuration to take affect.");
 		?>
 	</form>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">

@@ -27,6 +27,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
@@ -121,7 +122,9 @@ include("fbegin.inc");
 			    if(in_array($index['name'], $instpkgs)) continue;
           		$dot = strpos($index['required_version'], ".");
           		$index['major_version'] = substr($index['required_version'], 0, $dot);
-
+				if($g['platform'] == "nanobsd") 
+					if($index['noembedded']) 
+						continue;
           		if ($version <> "HEAD" &&
               		$index['required_version'] == "HEAD" &&
               		$requested_version <> "other") { continue; }

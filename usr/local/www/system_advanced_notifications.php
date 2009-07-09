@@ -129,14 +129,14 @@ include("head.inc");
 						<tr>
 							<td width="22%" valign="top" class="vncell">IP Address</td>
 							<td width="78%" class="vtable">
-								<input name='ipaddress' value=''><br/>
+								<input name='ipaddress' value='<?php echo $pconfig['ipaddress']; ?>'><br/>
 								This is the IP address that you would like to send growl notifications to.
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell">Password</td>
 							<td width="78%" class="vtable">
-								<input name='password' type='password' value=''><br/>
+								<input name='password' type='password' value='<?php echo $pconfig['password']; ?>'><br/>
 								Enter the password of the remote growl notification device.
 							</td>
 						</tr>

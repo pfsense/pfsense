@@ -51,6 +51,11 @@ if($config_inc_loaded == true)
 else
 	$config_inc_loaded = true;
 
+// Set the memory limit to 128M.  When someone has something like 500+ tunnels
+// the parser needs quite a bit of ram.   Do not remove this line unless you 
+// know what you are doing.  If in doubt, check with dev@ _/FIRST/_!
+ini_set("memory_limit","128M");
+
 /* include globals from notices.inc /utility/XML parser files */
 require_once("notices.inc");
 if($g['booting']) echo ".";

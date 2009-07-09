@@ -1666,4 +1666,23 @@ function isvm() {
 		return false;
 }
 
+/****f* pfsense-utils/notify_via_growl
+ * NAME
+ *   notify_via_growl
+ * INPUTS
+ *	 notification string to send
+ * RESULT
+ *   returns true if message was sent
+ ******/
+function notify_via_growl($message) {
+	require_once("growl.class");
+	global $config;
+	$growl_settings = &$config['notifications']['growl'];
+	$growl_ip = $growl_settings['ipaddress'];
+	$growl_password = $growl_settings['password'];
+	$growl = new Growl($growl_ip, $growl_password);
+	$growl->register();
+	$growl->notify("pfSense growl alert", "", "{$message}");
+}
+
 ?>

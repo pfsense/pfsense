@@ -37,18 +37,17 @@
 ##|*MATCH=firewall_schedule_edit.php*
 ##|-PRIV
 
+function schedulecmp($a, $b) {
+	return strcmp($a['name'], $b['name']);
+}
+
 function schedule_sort(){
         global $g, $config;
 
         if (!is_array($config['schedules']['schedule']))
                 return;
 
-        function schedulecmp($a, $b) {
-                return strcmp($a['name'], $b['name']);
-        }
-
         usort($config['schedules']['schedule'], "schedulecmp");
-
 }
 
 $pgtitle = array("Firewall","Schedules","Edit");

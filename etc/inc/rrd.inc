@@ -46,7 +46,6 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 function create_new_rrd($rrdcreatecmd) {
 	$rrdcreateoutput = array();
 	$rrdcreatereturn = 0;
-	exec("echo 'Converting RRD configuration to new format.  This might take a bit...' | wall");
 	exec("$rrdcreatecmd 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 	if ($rrdcreatereturn <> 0) {
 		$rrdcreateoutput = implode(" ", $rrdcreateoutput);
@@ -56,6 +55,7 @@ function create_new_rrd($rrdcreatecmd) {
 }
 
 function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
+	exec("echo 'Converting RRD configuration to new format.  This might take a bit...' | wall");
 	$numrraold = count($rrdoldxml['rra']);
 	$numdsold = count($rrdoldxml['ds']);
 	$numrranew = count($rrdnewxml['rra']);

@@ -988,15 +988,14 @@ function squash_from_bytes($size, $round = "") {
 }
 
 function pkg_build_filter_rules() {
-	global $config;
+	global $config, $g;
 
 	$pkgrules = "";
-	$pkgrulesearly = "";
-	$pkgnatrules = "";
-	$pkgnatrulesearly = "";
-	$pkgrdrrules = "";
-	$pkgrdrrules = "";
-	$pkgrdrrulesearly = "";
+        $pkgrulesearly = "";
+        $pkgnatrules = "";
+        $pkgnatrulesearly = "";
+        $pkgrdrrules = "";
+        $pkgrdrrulesearly = "";
 	if (is_array($config['installedpackages']['package'])) {
 		run_plugins("/usr/local/pkg");
                 foreach($config['installedpackages']['package'] as $pkg) {

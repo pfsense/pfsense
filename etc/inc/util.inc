@@ -890,7 +890,7 @@ function run_plugins($directory) {
                 foreach ($files as $file) {
 			if (stristr($file, ".sh") == true)
 				mwexec($directory . $file . " start");
-			else if (!stristr($file,"CVS")) {
+			else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) {
 				if ($g['booting'] == true)
 					echo "\t{$file}... ";
 				require_once($directory . "/" . $file);

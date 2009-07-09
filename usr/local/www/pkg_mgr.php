@@ -34,7 +34,7 @@
 ##|*MATCH=pkg_mgr.php*
 ##|-PRIV
 
-
+require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
@@ -122,6 +122,9 @@ include("head.inc");
 									$index = &$pkg_info[$key];
 									if(in_array($index['name'], $instpkgs)) 
 										continue;
+									if($g['platform'] == "nanobsd")
+										if($index['noembedded']) 
+											continue;
 									$dash = strpos($index['required_version'], "-");
 									$index['major_version'] = substr($index['required_version'], 0, $dash);
 									if ($version <> "HEAD" &&

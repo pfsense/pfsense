@@ -231,7 +231,9 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
                                 $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure');
                                 $cli->send($msg, "900");
                          }
+						 break;
                 }
         }
 }
+
 ?>

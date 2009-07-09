@@ -66,8 +66,8 @@ if ($_POST) {
 	if ($_POST['Submit'] == "Save") {
 		$tunableent = array();
 
-		$config['notifications']['ipaddress'] = $_POST['ipaddress'];
-		$config['notifications']['password'] = $_POST['password'];
+		$config['notifications']['growl']['ipaddress'] = $_POST['ipaddress'];
+		$config['notifications']['growl']['password'] = $_POST['password'];
 
 		write_config();
 

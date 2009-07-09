@@ -1677,9 +1677,8 @@ function isvm() {
 function notify_via_growl($message) {
 	require_once("growl.class");
 	global $config;
-	$growl_settings = &$config['notifications']['growl'];
-	$growl_ip = $growl_settings['ipaddress'];
-	$growl_password = $growl_settings['password'];
+	$growl_ip = $config['notifications']['growl']['ipaddress'];
+	$growl_password = $config['notifications']['growl']['password'];
 	if($growl_ip) {
 		$growl = new Growl($growl_ip, $growl_password);
 		$growl->register();

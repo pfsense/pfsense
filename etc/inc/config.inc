@@ -43,7 +43,7 @@
  * Setting the memory_limit parameter in the php.ini does not seem to
  * take any effect. Also, that would be too late in the boot process
  */
-ini_set("memory_limit","32M");
+ini_set("memory_limit","128M");
 
 if($g['booting']) echo ".";
 

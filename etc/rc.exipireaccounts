@@ -59,6 +59,6 @@
 	if($removed > 0)
 		write_config("Expired {$removed} user accounts");
 
-	print_r($config);
+	//print_r($config);
 
 ?>

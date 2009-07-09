@@ -337,7 +337,7 @@ nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status 2>/dev/null &
 minicron 240 /var/run/ping_hosts.pid /usr/local/bin/ping_hosts.sh
 
 # Start account expire handler every hour
-minicron 3600 /var/run/expire_accounts.pid /etc/inc/rc.exipireaccounts
+minicron 3600 /var/run/expire_accounts.pid /etc/rc.exipireaccounts
 
 /bin/chmod a+rw /tmp/.
 

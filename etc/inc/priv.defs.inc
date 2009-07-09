@@ -768,6 +768,12 @@ $priv_list['page-system-advancedfunctions']['descr'] = "Allow access to the 'Sys
 $priv_list['page-system-advancedfunctions']['match'] = array();
 $priv_list['page-system-advancedfunctions']['match'][] = "system_advanced.php*";
 
+$priv_list['page-system-advancedfunctions'] = array();
+$priv_list['page-system-advancedfunctions']['name'] = "WebCfg - System: Advanced: Notifications";
+$priv_list['page-system-advancedfunctions']['descr'] = "Allow access to the 'System: Advanced: Notifications' page.";
+$priv_list['page-system-advancedfunctions']['match'] = array();
+$priv_list['page-system-advancedfunctions']['match'][] = "system_advanced_notifications.php*";
+
 $priv_list['page-system-advancedfunctions-createcertificates'] = array();
 $priv_list['page-system-advancedfunctions-createcertificates']['name'] = "WebCfg - System: Advanced functions: Create Certificates page";
 $priv_list['page-system-advancedfunctions-createcertificates']['descr'] = "Allow access to the 'System: Advanced functions: Create Certificates' page.";

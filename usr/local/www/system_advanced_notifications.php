@@ -41,6 +41,11 @@ if (!is_array($config['notifications']['growls']))
 
 $a_tunable = &$config['notifications']['growl'];
 
+if($a_tunable['password']) 
+	$pconfig['password'] = $a_tunable['password'];
+if($a_tunable['ipaddress']) 
+	$pconfig['ipaddress'] = $a_tunable['ipaddress'];
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -124,14 +129,14 @@ include("head.inc");
 						<tr>
 							<td width="22%" valign="top" class="vncell">IP Address</td>
 							<td width="78%" class="vtable">
-								<input name='ipaddress'><br/>
+								<input name='ipaddress' value=''><br/>
 								This is the IP address that you would like to send growl notifications to.
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell">Password</td>
 							<td width="78%" class="vtable">
-								<input name='password'><br/>
+								<input name='password' type='password' value=''><br/>
 								Enter the password of the remote growl notification device.
 							</td>
 						</tr>
@@ -141,7 +146,7 @@ include("head.inc");
 							</td>
 							<td>
 								<br/>
-								<input type='submit' value='Save'></form>
+								<input type='submit' id='Submit' name='Submit' value='Save'></form>
 							</td>
 						</tr>
 					</table>

@@ -35,6 +35,7 @@
 require_once("globals.inc");
 require_once("config.inc");
 require_once("functions.inc");
+require_once("gwlb.inc");
 
 /* WAN IP address has changed */
 
@@ -107,7 +108,7 @@ filter_configure();
 enable_rrd_graphing();
 
 /* This is DHCP, update the gateway group items default gateway */
-//update_gateway_groups_defaultroute_dhclient($interface);
+update_gateway_groups_defaultroute_dhclient($interface);
 
 /* restart packages */
 if($old_ip <> "") {

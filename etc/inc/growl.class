@@ -13,7 +13,7 @@
         private $password;
         private $port;
 
-        public function __construct($address, $password = '', $app_name = 'PHP Growl')
+        public function __construct($address, $password = '', $app_name = 'PHP-Growl')
         {
             $this->appName       = utf8_encode($app_name);
             $this->address       = $address;

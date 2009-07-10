@@ -62,6 +62,7 @@ PHPMODULES="apc \
 	Reflection \
 	session \
 	shmop \
+	sockets \
 	standard \
 	suhosin \
 	sysvmsg \

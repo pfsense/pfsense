@@ -36,15 +36,10 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['notifications']['growls']))
-	$config['notifications']['growl'] = array();
-
-$a_tunable = &$config['notifications']['growl'];
-
-if($a_tunable['password']) 
-	$pconfig['password'] = $a_tunable['password'];
-if($a_tunable['ipaddress']) 
-	$pconfig['ipaddress'] = $a_tunable['ipaddress'];
+if($config['notifications']['growl']['password']) 
+	$pconfig['password'] = $config['notifications']['growl']['password'];
+if($config['notifications']['growl']['ipaddress']) 
+	$pconfig['ipaddress'] = $config['notifications']['growl']['ipaddress'];
 
 if ($_POST) {
 

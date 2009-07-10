@@ -70,7 +70,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	/* wrap */
 	if(file_exists("/dev/led/led2"))
 		exec("/bin/echo f5 > /dev/led/led2");
-
+	notify_via_growl($notice);
 	return $queuekey;
 }
 

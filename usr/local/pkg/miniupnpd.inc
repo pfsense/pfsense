@@ -30,6 +30,15 @@
 		return substr($uuid,0,8).'-'.substr($uuid,9,4).'-'.substr($uuid,13,4).'-'.substr($uuid,17,4).'-'.substr($uuid,21,12);
 	}
 
+	function upnp_validate_queue($qname) {
+		global $config;
+		$qlist = array();
+		foreach ($config['shaper']['queue'] as $q) {
+			$qlist[] = $q['name'];
+		}
+		return in_array($qname, $qlist);
+	}
+
 	function upnp_validate_ip($ip, $check_cdir) {
 		/* validate cdir */	
 		if($check_cdir)	{
@@ -90,6 +99,8 @@
 			$input_errors[] = 'You must specify a value greater than 0 in the \'Maximum Download Speed\' field';
 		if($post['upload'] && $post['upload'] <= 0)
 			$input_errors[] = 'You must specify a value greater than 0 in the \'Maximum Upload Speed\' field';
+		if($post['upnpqueue'] && !upnp_validate_queue($post['upnpqueue']))
+			$input_errors[] = 'You must specify a valid traffic shaping queue.';
 
 		/* user permissions validation */
 		for($i=1; $i<=4; $i++) {
@@ -207,6 +218,14 @@
 
 				if($upnp_config['permdefault'])
 					$config_text .= "deny 0-65535 0.0.0.0/0 0-65535\n";
+
+				/* Recheck if queue is valid */
+				if (!upnp_validate_queue($upnp_config['upnpqueue']))
+					unset($upnp_config['upnpqueue']);
+
+				/* Add shaper queue */
+				if($upnp_config['upnpqueue'])
+					$config_text .= "queue={$upnp_config['upnpqueue']}\n";
 
 				/* write out the configuration */
 				upnp_write_config($config_file, $config_text);

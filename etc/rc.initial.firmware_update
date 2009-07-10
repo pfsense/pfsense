@@ -92,7 +92,7 @@ switch ($command) {
 				echo "Binary DIFF upgrade file detected...\n";
 				$type = "bdiff";
 			}
-			if(strstr($url,"nanobsd")) {}
+			if(strstr($url,"nanobsd")) {
 				echo "NanoBSD upgrade file detected...\n";			
 				$type = "nanobsd";	
 			}			
@@ -104,6 +104,7 @@ switch ($command) {
 				fclose($fp);
 				die -1;
 			}
+		}
 	case "2":
 		echo "\nEnter the complete path to the .tgz update file: ";
 		$path = chop(fgets($fp));

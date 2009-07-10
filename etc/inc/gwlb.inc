@@ -308,18 +308,24 @@ function return_gateway_groups_array() {
 						continue;
 					}
 					if (preg_match("/down/i", $status['status'])) {
-						log_error("MONITOR: $gwname has high latency, removing from routing group");
+						$msg = "MONITOR: $gwname has high latency, removing from routing group";
+						log_error($msg);
+						notify_via_growl($msg);
 					} elseif (preg_match("/loss/i", $status['status'])) {
 						if (strstr($group['trigger'], "loss")) {
 							/* packet loss */
-							log_error("MONITOR: $gwname has packet loss, removing from routing group");
+							$msg = "MONITOR: $gwname has packet loss, removing from routing group";
+							log_error($msg);
+							notify_via_growl($msg);
 						} else {
 							$tiers[$tier][] = $gwname;
 						}
 					} elseif (preg_match("/delay/i", $status['status'])) {
 						if (strstr($group['trigger'] , "latency")) {
 							/* high latency */
-							log_error("MONITOR: $gwname has high latency, removing from routing group");
+							$msg = "MONITOR: $gwname has high latency, removing from routing group";
+							log_error($msg);
+							notify_via_growl($msg);
 						} else {
 							$tiers[$tier][] = $gwname;
 						}
@@ -332,7 +338,9 @@ function return_gateway_groups_array() {
 			$tiers_count = count($tiers);
 			if($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
-				log_error("All gateways are unavailable, proceeding with configured XML settings!");
+				$msg = "All gateways are unavailable, proceeding with configured XML settings!";
+				log_error($msg);
+				notify_via_growl($msg);
 				foreach($group['item'] as $item) {
 					foreach($group['item'] as $item) {
 						$itemsplit = explode("|", $item);

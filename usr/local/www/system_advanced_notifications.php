@@ -66,8 +66,9 @@ if ($_POST) {
 
 		write_config();
 
+		register_via_growl();
 		notify_via_growl("This is a test message form pfSense.  It is safe to ignore this message.");
-
+		
 		pfSenseHeader("system_advanced_notifications.php");
 		exit;
     }

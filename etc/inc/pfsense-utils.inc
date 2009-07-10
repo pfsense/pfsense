@@ -1681,10 +1681,27 @@ function notify_via_growl($message) {
 	$growl_password = $config['notifications']['growl']['password'];
 	if($growl_ip) {
 		$growl = new Growl($growl_ip, $growl_password);
-		$growl->register();
 		$growl->notify("pfSense growl alert", "pfSense", "{$message}");
 	}
-	return true;	// XXX: check for error?
+}
+
+/****f* pfsense-utils/register_via_growl
+ * NAME
+ *   register_via_growl
+ * INPUTS
+ *	 none
+ * RESULT
+ *   none
+ ******/
+function register_via_growl() {
+	require_once("growl.class");
+	global $config;
+	$growl_ip = $config['notifications']['growl']['ipaddress'];
+	$growl_password = $config['notifications']['growl']['password'];
+	if($growl_ip) {
+		$growl = new Growl($growl_ip, $growl_password);
+		$growl->register();
+	}
 }
 
 ?>

@@ -672,6 +672,7 @@ EOD;
 					$interval = $ipseccfg['dns-interval'];
 
 				$hostnames = "";
+				array_unique($dnswatch_list);
 				foreach ($dnswatch_list as $dns)
 					$hostnames .= " " . escapeshellarg($dns);
 				killbypid("{$g['varrun_path']}/dnswatch-ipsec.pid");

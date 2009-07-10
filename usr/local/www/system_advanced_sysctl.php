@@ -149,6 +149,7 @@ include("head.inc");
 					$tab_array[] = array("Networking", false, "system_advanced_network.php");
 					$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
 					$tab_array[] = array("System Tunables", true, "system_advanced_sysctl.php");
+					$tab_array[] = array("Notifications", false, "system_advanced_notifications.php");
 					display_top_tabs($tab_array);
 				?>
 			</td>

@@ -231,6 +231,10 @@ include("head.inc");
 ?>
 	<form action="system.php" method="post">
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+                        <tr>
+                                <td id="mainarea">
+                                        <div class="tabcont">
+			<table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tr>
 				<td colspan="2" valign="top" class="listtopic">System</td>
 			</tr>
@@ -413,6 +417,9 @@ include("head.inc");
 					<input name="Submit" type="submit" class="formbtn" value="Save">
 				</td>
 			</tr>
+		</table>
+		</div>
+		</td></tr>
 		</table>
 	</form>
 <?php include("fend.inc"); ?>

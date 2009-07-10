@@ -731,6 +731,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		<?php if ($savemsg) print_info_box($savemsg); ?>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
+                                <td id="mainarea">
+                                        <div class="tabcont">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<tr>
 			<td colspan="2" valign="top" class="listtopic">General configuration</td>
 		</tr>
 		<?php if ($if != "wan" && $if != "lan"): ?>
@@ -1427,6 +1431,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								</tr>
 							</table>
 						</td>
+					</table>
+					</div>
+					</td></tr>
 					</table>
 				</form>
 				<script type="text/javascript">

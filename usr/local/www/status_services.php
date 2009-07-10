@@ -35,6 +35,7 @@
 
 
 require("guiconfig.inc");
+require_once("service-utils.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;

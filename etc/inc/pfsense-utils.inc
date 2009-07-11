@@ -1704,4 +1704,8 @@ function register_via_growl() {
 	}
 }
 
+function get_freebsd_version() {
+	$version = `/usr/bin/uname -r | cut  -d'.' -f1`
+}
+
 ?>

@@ -277,7 +277,9 @@ function vpn_ipsec_configure($ipchg = false) {
 							/* if the remote gateway is in the local subnet, then don't add a route */
 							if(! ip_in_subnet($tunnel['remote-gateway'], "{$subnet_ip}/{$subnet_bits}")) {
 								if(is_ipaddr($gatewayip)) {
-									log_error("IPSEC interface is not WAN but {$parentinterface}, adding static route for VPN endpoint {$tunnel['remote-gateway']} via {$gatewayip}");
+									if($g['debug']) {
+										log_error("IPSEC interface is not WAN but {$parentinterface}, adding static route for VPN endpoint {$tunnel['remote-gateway']} via {$gatewayip}");
+									}
 									mwexec("/sbin/route delete -host {$tunnel['remote-gateway']}");
                                                                         mwexec("/sbin/route add -host {$tunnel['remote-gateway']} {$gatewayip}");
 								}
@@ -1242,7 +1244,6 @@ function reload_tunnel_spd_policy($tunnel, $oldtunnel) {
 	 * try to resolve it now and add it to the list for dnswatch */
 	if (!is_ipaddr($tunnel['remote-gateway'])) {
 		$rgip = resolve_retry($tunnel['remote-gateway']);
-		add_hostname_to_watch($tunnel['remote-gateway']);
 		if (!$rgip) {
 			log_error("Could not determine VPN endpoint for {$tunnel['descr']}");
 			return false;

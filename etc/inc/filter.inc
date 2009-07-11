@@ -189,10 +189,13 @@ function filter_configure_sync() {
 	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
 		$rules .= "set limit states {$config['system']['maximumstates']}\n";
+		mwexec("/usr/sbin/sysctl net.inet.ip.output_flowtable_size={$config['system']['maximumstates']}");		
 	} else {
 	  $max_states = pfsense_default_state_size();
 	  $rules .= "set limit states {$max_states}\n";
+	  mwexec("/usr/sbin/sysctl net.inet.ip.output_flowtable_size={$max_states}");
 	}
+		
 	$rules .= "\n";
 	$rules .= "set skip on pfsync0\n";
 	$rules .= "\n";

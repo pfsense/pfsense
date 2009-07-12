@@ -234,9 +234,6 @@ function enable_change(enable_over) {
 									This option will suppress ARP log messages when multiple interfaces reside on the same broadcast domain</strong>
 								</td>
 							</tr>
-							<tr>
-								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>
 <?php 
 	$version = get_freebsd_version();
 	if($version == "8"):
@@ -256,6 +253,7 @@ function enable_change(enable_over) {
 									 as well as providing stateful load balancing when used with RADIX_MPATH.
 								</td>
 							</tr>
+<?php endif; ?>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>							
@@ -263,7 +261,6 @@ function enable_change(enable_over) {
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
 							</tr>
-<?php endif; ?>
 						</table>
 					</div>
 				</td>

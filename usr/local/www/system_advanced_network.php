@@ -241,6 +241,7 @@ function enable_change(enable_over) {
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
 							</tr>
+<?php if(get_freebsd_version() == "8"): ?>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
@@ -256,6 +257,14 @@ function enable_change(enable_over) {
 									 as well as providing stateful load balancing when used with RADIX_MPATH.
 								</td>
 							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>							
+							<tr>
+								<td width="22%" valign="top">&nbsp;</td>
+								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
+							</tr>
+<?php endif; ?>
 						</table>
 					</div>
 				</td>

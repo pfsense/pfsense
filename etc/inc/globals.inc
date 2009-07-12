@@ -89,11 +89,12 @@ if(file_exists("/etc/platform")) {
 	$g['$platform'] = trim(file_get_contents("/etc/platform"));
 	if($g['platform'] == "nanobsd") {
 		$g['update_url']="http://updates.pfSense.com/nanobsd/_updaters";
-		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest",
+		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest";
 	} else {
 		$g['update_url']="http://updates.pfSense.com/_updaters";
-		$g['update_manifest']="http://updates.pfSense.com/manifest",
+		$g['update_manifest']="http://updates.pfSense.com/manifest";
 	}
 }
+
 
 ?>

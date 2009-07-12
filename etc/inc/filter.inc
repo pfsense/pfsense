@@ -38,7 +38,7 @@
 
 /* include all configuration functions */
 require_once("config.inc");
-require_once ("shaper.inc");
+require_once("shaper.inc");
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
@@ -48,6 +48,26 @@ $time_based_rules = false;
 
 /* Used to hold the interface list that will be used on ruleset creation. */
 $FilterIflist = array();
+
+function flowtable_configure() {
+	global $config, $g;
+	// Figure out how many flows we should reserve
+	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) 
+		$maxstates = $config['system']['maximumstates'];
+	else
+		$maxstates = "15000";
+	// Is flowtable enabled?
+	if($config['system']['flowtable'])
+		$flowtable_enable = 1;
+	else 
+		$flowtable_enable = 0;
+	// Flowtable currently only works on 8.0
+	if(get_freebsd_version() == "8") {
+		if($flowtable_enable == 1) 
+			mwexec("/usr/sbin/sysctl net.inet.flowtable.nmbflows={$config['system']['maximumstates']}");
+		mwexec("/usr/sbin/sysctl net.inet.flowtable.emable={$flowtable_enable}");		
+	}	
+}
 
 function filter_load_ipfw() 
 {
@@ -189,16 +209,13 @@ function filter_configure_sync() {
 	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
 		$rules .= "set limit states {$config['system']['maximumstates']}\n";
-	    if(get_freebsd_version() == "8")
-			if($config['system']['flowtable'])
-				mwexec("/usr/sbin/sysctl net.inet.flowtable.nmbflows={$config['system']['maximumstates']}");		
 	} else {
 	  $max_states = pfsense_default_state_size();
 	  $rules .= "set limit states {$max_states}\n";
-	  if(get_freebsd_version() == "8")
-			if($config['system']['flowtable'])	
-	  			mwexec("/usr/sbin/sysctl net.inet.flowtable.nmbflows={$max_states}");
 	}
+
+	// Configure flowtable support if enabled.
+	flowtable_configure();
 		
 	$rules .= "\n";
 	$rules .= "set skip on pfsync0\n";

@@ -40,8 +40,8 @@
 ##|*MATCH=system_advanced-network.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
+require("filter.inc");
 
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
@@ -110,8 +110,12 @@ if ($_POST) {
 			unset($config['system']['disablechecksumoffloading']);
                         setup_microcode();
 		}
-	
+
+		// Write out configuration (config.xml)
 		write_config();
+
+		// Configure flowtable support from filter.inc
+		flowtable_configure();
 
 		$retval = filter_configure();
 		if(stristr($retval, "error") <> true)

@@ -236,10 +236,6 @@ function enable_change(enable_over) {
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
-							</tr>							
-							<tr>
-								<td width="22%" valign="top">&nbsp;</td>
-								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
 							</tr>
 <?php 
 	$version = get_freebsd_version();

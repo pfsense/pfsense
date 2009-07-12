@@ -85,6 +85,11 @@ echo " done.\n";
 echo "Initializing...";
 echo ".";
 require_once("/etc/inc/globals.inc");
+require_once("/etc/inc/led.inc");
+led_normalize();
+if (led_count() >= 3) {
+	led_kitt();
+}
 echo ".";
 /* let the other functions know we're booting */
 $pkg_interface = 'console';
@@ -350,4 +355,5 @@ mwexec_bg("/usr/sbin/update_dns_cache.sh");
 unlink("{$g['varrun_path']}/booting");
 unset($g['booting']);
 
+led_normalize();
 ?>

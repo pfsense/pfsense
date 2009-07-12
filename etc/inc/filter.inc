@@ -58,16 +58,8 @@ function flowtable_configure() {
 	else
 		$maxstates = "150000";		
 	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = trim(`sysctl kern.smp.cpus | cut -d' ' -f2`);
+	$cpus = trim(`/usr/sbin/sysctl kern.smp.cpus | /usr/bin/cut -d' ' -f2`);
 	$nmbflows = ($cpus*($maxstates*2));
-	if(!file_exists("/boot/loader.conf")) 
-		touch("/boot/loader.conf");
-	$loader_conf_nmbflows = trim(`cat /boot/loader.conf | grep flowtable_size | cut -d'=' -f2`);
-	if($loader_conf_nmbflows <> $nmbflows) {
-		$loader_conf = trim(`cat /boot/loader_conf | grep -v nmbflows`);
-		$loader_conf .= "\nnet.inet.ip.output_flowtable_size={$nmbflows}\n";
-		file_put_contents("/boot/loader.conf", $loader_conf);
-	}
 	// Is flowtable enabled?
 	if($config['system']['flowtable'])
 		$flowtable_enable = 1;
@@ -75,8 +67,10 @@ function flowtable_configure() {
 		$flowtable_enable = 0;
 	// Flowtable currently only works on 8.0
 	if(get_freebsd_version() == "8") {
-		if($flowtable_enable == 1) 
+		if($flowtable_enable == 1) {
 			mwexec("/usr/sbin/sysctl net.inet.flowtable.nmbflows={$config['system']['maximumstates']}");
+			mwexec("/usr/sbin/sysctl net.inet.ip.output_flowtable_size={$nmbflows}");
+		}
 		mwexec("/usr/sbin/sysctl net.inet.flowtable.emable={$flowtable_enable}");		
 	}	
 }

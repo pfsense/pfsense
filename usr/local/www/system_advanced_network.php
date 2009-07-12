@@ -255,7 +255,6 @@ function enable_change(enable_over) {
 									<strong>Enable flowtable support</strong><br>
 									 Enables infrastructure for caching flows as a means of accelerating L3 and L2 lookups 
 									 as well as providing stateful load balancing when used with RADIX_MPATH.<br/>
-									<b>NOTE:</b> If you change the state limit with flowtable enabled, you must reboot pfSense for the flowtable changes to take effect.
 								</td>
 							</tr>
 <?php endif; ?>

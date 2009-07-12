@@ -49,6 +49,7 @@ $pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
+$pconfig['flowtable'] = isset($config['system']['flowtable']);
 
 if ($_POST) {
 
@@ -94,6 +95,12 @@ if ($_POST) {
 		} else {
 			unset($config['system']['polling']);
 			setup_polling();
+		}
+
+		if($_POST['flowtable'] == "yes") {
+			$config['system']['flowtable'] = $_POST['flowtable'];
+		} else {
+			unset($config['system']['flowtable']);
 		}
 
 		if($_POST['disablechecksumoffloading'] == "yes") {
@@ -233,6 +240,21 @@ function enable_change(enable_over) {
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
+							</tr>
+							<tr>
+								<td colspan="2" class="list" height="12">&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">Flowtable support</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Enable Flowtable</td>
+								<td width="78%" class="vtable">
+									<input name="flowtable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['flowtable']) echo "checked"; ?>>
+									<strong>Enable flowtable support</strong><br>
+									 Enables infrastructure for caching flows as a means of accelerating L3 and L2 lookups 
+									 as well as providing stateful load balancing when used with RADIX_MPATH.
+								</td>
 							</tr>
 						</table>
 					</div>

@@ -58,15 +58,15 @@ function flowtable_configure() {
 	else
 		$maxstates = "150000";		
 	// nmbflows cpu count * ($maxstates * 2)
-	$cpus = trim(`sysctl kern.smp.cpus`);
-	$nmbflows = $cpus*($maxstates*2);
+	$cpus = trim(`sysctl kern.smp.cpus | cut -d' ' -f2`);
+	$nmbflows = ($cpus*($maxstates*2));
 	if(!file_exists("/boot/loader.conf")) 
 		touch("/boot/loader.conf");
-	$loader_conf_nmbflows = trim(`cat /boot/loader_conf | grep nmbflows | cut -d'=' -f2`);
+	$loader_conf_nmbflows = trim(`cat /boot/loader.conf | grep flowtable_size | cut -d'=' -f2`);
 	if($loader_conf_nmbflows <> $nmbflows) {
 		$loader_conf = trim(`cat /boot/loader_conf | grep -v nmbflows`);
 		$loader_conf .= "\nnet.inet.ip.output_flowtable_size={$nmbflows}\n";
-		file_put_contents("/boot/loader.conf", trim($loader_conf));
+		file_put_contents("/boot/loader.conf", $loader_conf);
 	}
 	// Is flowtable enabled?
 	if($config['system']['flowtable'])

@@ -73,8 +73,6 @@ $g = array(
 	"captiveportal_element_sizelimit" => 262144,
 	"xmlrpcpath" => "/pfSense/xmlrpc.php",
 	"embeddedbootupslice" => "/dev/ad0a",
-	"update_url" => "http://updates.pfSense.com/_updaters",
-	"update_manifest" => "http://updates.pfSense.com/manifest",
 	"firmware_update_text" => "(pfSense-*.tgz)",
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan|rum)/",
 	"vlan_native_supp" => array("vge", "bfe", "dc", "fxp", "gem", "hme", "rl", "sis", "ste", "tl", "tx", "xl"),
@@ -86,5 +84,16 @@ $iptos = array("lowdelay", "throughput", "reliability");
 
 /* TCP flags */
 $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
+
+if(file_exists("/etc/platform")) {
+	$g['$platform'] = trim(file_get_contents("/etc/platform"));
+	if($g['platform'] == "nanobsd") {
+		$g['update_url']="http://updates.pfSense.com/nanobsd/_updaters";
+		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest",
+	} else {
+		$g['update_url']="http://updates.pfSense.com/_updaters";
+		$g['update_manifest']="http://updates.pfSense.com/manifest",
+	}
+}
 
 ?>

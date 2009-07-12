@@ -75,7 +75,6 @@ $g = array(
 	"xmlrpcpath" => "/pfSense/xmlrpc.php",
 	"embeddedbootupslice" => "/dev/ad0a",
 	"services_dhcp_server_enable" => true,
-	"update_url" => "http://updates.pfSense.com/_updaters",
 	"update_manifest" => "http://updates.pfSense.com/manifest",
 	"firmware_update_text" => "(pfSense-*.tgz)",
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan|rum)/",
@@ -88,5 +87,13 @@ $iptos = array("lowdelay", "throughput", "reliability");
 
 /* TCP flags */
 $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
+
+if(file_exists("/etc/platform")) {
+	$g['$platform'] = trim(file_get_contents("/etc/platform"));
+	if($g['platform'] == "nanobsd")
+		$g['update_url']="http://updates.pfSense.com/nanobsd/_updaters";
+	else 
+		$g['update_url']="http://updates.pfSense.com/_updaters";
+}
 
 ?>

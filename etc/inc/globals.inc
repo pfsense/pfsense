@@ -75,7 +75,6 @@ $g = array(
 	"xmlrpcpath" => "/pfSense/xmlrpc.php",
 	"embeddedbootupslice" => "/dev/ad0a",
 	"services_dhcp_server_enable" => true,
-	"update_manifest" => "http://updates.pfSense.com/manifest",
 	"firmware_update_text" => "(pfSense-*.tgz)",
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan|rum)/",
 	"vlan_native_supp" => array("bce", "bge", "bfe", "cxgb", "dc", "em", "fxp", "gem", "hme", "ixgb", "msk", "nge", "re", "rl", "sis", "ste", "stge", "ti", "tl", "tx", "txp", "vge", "vr", "xl", "lagg"),
@@ -90,10 +89,13 @@ $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
 
 if(file_exists("/etc/platform")) {
 	$g['$platform'] = trim(file_get_contents("/etc/platform"));
-	if($g['platform'] == "nanobsd")
+	if($g['platform'] == "nanobsd") {
 		$g['update_url']="http://updates.pfSense.com/nanobsd/_updaters";
-	else 
+		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest";
+	} else {
 		$g['update_url']="http://updates.pfSense.com/_updaters";
+		$g['update_manifest']="http://updates.pfSense.com/manifest";
+	}
 }
 
 ?>

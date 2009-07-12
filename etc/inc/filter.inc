@@ -52,10 +52,22 @@ $FilterIflist = array();
 function flowtable_configure() {
 	global $config, $g;
 	// Figure out how many flows we should reserve
+	// sized 2x larger than the number of unique connection destinations.
 	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) 
 		$maxstates = $config['system']['maximumstates'];
 	else
-		$maxstates = "15000";
+		$maxstates = "150000";		
+	// nmbflows cpu count * ($maxstates * 2)
+	$cpus = trim(`sysctl kern.smp.cpus`);
+	$nmbflows = $cpus*($maxstates*2);
+	if(!file_exists("/boot/loader.conf")) 
+		touch("/boot/loader.conf");
+	$loader_conf_nmbflows = trim(`cat /boot/loader_conf | grep nmbflows | cut -d'=' -f2`);
+	if($loader_conf_nmbflows <> $nmbflows) {
+		$loader_conf = trim(`cat /boot/loader_conf | grep -v nmbflows`);
+		$loader_conf .= "\nnet.inet.ip.output_flowtable_size={$nmbflows}\n";
+		file_put_contents("/boot/loader.conf", trim($loader_conf));
+	}
 	// Is flowtable enabled?
 	if($config['system']['flowtable'])
 		$flowtable_enable = 1;

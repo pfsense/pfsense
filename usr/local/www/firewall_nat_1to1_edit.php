@@ -36,15 +36,16 @@
 ##|*MATCH=firewall_nat_1to1_edit.php*
 ##|-PRIV
 
+function nat1to1cmp($a, $b) {
+	return ipcmp($a['external'], $b['external']);
+}
+
 function nat_1to1_rules_sort() {
         global $g, $config;
 
         if (!is_array($config['nat']['onetoone']))
                 return;
 
-        function nat1to1cmp($a, $b) {
-                return ipcmp($a['external'], $b['external']);
-        }
 
         usort($config['nat']['onetoone'], "nat1to1cmp");
 }

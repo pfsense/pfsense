@@ -38,15 +38,15 @@
 ##|*MATCH=firewall_nat_server_edit.php*
 ##|-PRIV
 
+function natservercmp($a, $b) {
+	return ipcmp($a['ipaddr'], $b['ipaddr']);
+}
+
 function nat_server_rules_sort() {
         global $g, $config;
 
         if (!is_array($config['nat']['servernat']))
                 return;
-
-        function natservercmp($a, $b) {
-                return ipcmp($a['ipaddr'], $b['ipaddr']);
-        }
 
         usort($config['nat']['servernat'], "natservercmp");
 }

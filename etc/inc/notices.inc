@@ -34,6 +34,7 @@
  */
 
 require_once("globals.inc");
+require_once("led.inc");
 
 $notice_path = $g['tmp_path'] . '/notices';
 
@@ -67,9 +68,8 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	/* soekris */
 	if(file_exists("/dev/led/error"))
 		exec("/bin/echo 1 > /dev/led/error");
-	/* wrap */
-	if(file_exists("/dev/led/led2"))
-		exec("/bin/echo f5 > /dev/led/led2");
+	/* wrap & alix */
+	led_morse(1, 'sos');
 	notify_via_growl($notice);
 	return $queuekey;
 }
@@ -98,9 +98,8 @@ function close_notice($id) {
 	/* soekris */
 	if(file_exists("/dev/led/error"))
 		exec("/bin/echo 0 > /dev/led/error");
-	/* wrap */
-	if(file_exists("/dev/led/led2"))
-		exec("/bin/echo 0 > /dev/led/led2");
+	/* wrap & alix */
+	led_normalize();
 	$ids = array();
 	if(!$notices = get_notices()) return;
 	if($id == "all") {

@@ -137,7 +137,6 @@
 		</item>
 	</sysctl>
 	<system>
-        <flowtable>yes</flowtable>		
 		<optimization>normal</optimization>
 		<hostname>pfSense</hostname>
 		<domain>local</domain>

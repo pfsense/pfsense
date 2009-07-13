@@ -158,6 +158,13 @@ iframe {
 	background-color: #FFFFFF;
 }
 
+/* style of disabled formelements */
+#wrap div {margin:1em 0}
+[disabled] {
+	color:#666666;
+	background:#eeeeee;
+}
+
 /* ID Based CSS Definitions */
 #wrapper {
 	width: 810px;
@@ -952,6 +959,12 @@ ul#tabnav li.tabact {
 	padding: 0px 5px 0px 5px;
 	width: 100%;
 	vertical-align: top;
+}
+
+/* style of disabled formelements */
+[disabled] {
+	color:#666666;
+	background:#eeeeee;
 }
 
 

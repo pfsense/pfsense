@@ -38,6 +38,7 @@
 
 
 require("guiconfig.inc");
+require("pkg-utils.inc");
 
 $a_gateways = return_gateways_array();
 $a_gateways_arr = array();

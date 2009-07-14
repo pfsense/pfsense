@@ -36,15 +36,15 @@
 ##|*MATCH=services_dnsmasq_edit.php*
 ##|-PRIV
 
+function hostcmp($a, $b) {
+	return strcasecmp($a['host'], $b['host']);
+}
+
 function hosts_sort() {
         global $g, $config;
 
         if (!is_array($config['dnsmasq']['hosts']))
                 return;
-
-        function hostcmp($a, $b) {
-                return strcasecmp($a['host'], $b['host']);
-        }
 
         usort($config['dnsmasq']['hosts'], "hostcmp");
 }

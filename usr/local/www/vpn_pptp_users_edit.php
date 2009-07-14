@@ -35,18 +35,17 @@
 ##|*MATCH=vpn_pptp_users_edit.php*
 ##|-PRIV
 
+function pptpusercmp($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
+}
 
 function pptpd_users_sort() {
-        global $g, $config;
+        global $config;
 
         if (!is_array($config['ppptpd']['user']))
                 return;
 
-        function usercmp($a, $b) {
-                return strcasecmp($a['name'], $b['name']);
-        }
-
-        usort($config['pptpd']['user'], "usercmp");
+        usort($config['pptpd']['user'], "pptpusercmp");
 }
 
 require("guiconfig.inc");

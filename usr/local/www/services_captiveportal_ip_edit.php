@@ -35,12 +35,12 @@
 ##|*MATCH=services_captiveportal_ip_edit.php*
 ##|-PRIV
 
+function allowedipscmp($a, $b) {
+	return strcmp($a['ip'], $b['ip']);
+}
+
 function allowedips_sort() {
         global $g, $config;
-
-        function allowedipscmp($a, $b) {
-                return strcmp($a['ip'], $b['ip']);
-        }
 
         usort($config['captiveportal']['allowedip'],"allowedipscmp");
 }

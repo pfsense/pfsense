@@ -35,17 +35,17 @@
 ##|*MATCH=vpn_pppoe_users_edit.php*
 ##|-PRIV
 
+function pppoeusercmp($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
+}
+
 function pppoe_users_sort() {
-        global $g, $config;
+        global $config;
 
         if (!is_array($config['pppoe']['user']))
                 return;
 
-        function usercmp($a, $b) {
-                return strcasecmp($a['name'], $b['name']);
-        }
-
-        usort($config['pppoe']['user'], "usercmp");
+        usort($config['pppoe']['user'], "pppoeusercmp");
 }
 
 require("guiconfig.inc");

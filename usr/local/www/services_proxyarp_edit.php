@@ -36,27 +36,27 @@
 ##|*MATCH=services_proxyarp_edit.php*
 ##|-PRIV
 
-function proxyarp_sort() {
-        global $g, $config;
+function proxyarpcmp($a, $b) {
+	if (isset($a['network']))
+		list($ast,$asn) = explode("/", $a['network']);
+	else if (isset($a['range'])) {
+		$ast = $a['range']['from'];
+		$asn = 32;
+	}
+	if (isset($b['network']))
+		list($bst,$bsn) = explode("/", $b['network']);
+	else if (isset($b['range'])) {
+		$bst = $b['range']['from'];
+		$bsn = 32;
+	}
+	if (ipcmp($ast, $bst) == 0)
+		return ($asn - $bsn);
+	else
+		return ipcmp($ast, $bst);
+}
 
-        function proxyarpcmp($a, $b) {
-                if (isset($a['network']))
-                        list($ast,$asn) = explode("/", $a['network']);
-                else if (isset($a['range'])) {
-                        $ast = $a['range']['from'];
-                        $asn = 32;
-                }
-                if (isset($b['network']))
-                        list($bst,$bsn) = explode("/", $b['network']);
-                else if (isset($b['range'])) {
-                        $bst = $b['range']['from'];
-                        $bsn = 32;
-                }
-                if (ipcmp($ast, $bst) == 0)
-                        return ($asn - $bsn);
-                else
-                        return ipcmp($ast, $bst);
-        }
+function proxyarp_sort() {
+        global $config;
 
         usort($config['proxyarp']['proxyarpnet'], "proxyarpcmp");
 }

@@ -37,17 +37,17 @@
 
 $pgtitle = array(gettext("VPN"),gettext("L2TP"),gettext("User"),gettext("Edit"));
 
+function  l2tpusercmp($a,  $b)  {
+	return  strcasecmp($a['name'],  $b['name']);
+}
+
 function  l2tp_users_sort()  {
-        global  $g,  $config;
+        global  $config;
 
         if (!is_array($config['l2tp']['user']))
                 return;
 
-        function  usercmp($a,  $b)  {
-                return  strcasecmp($a['name'],  $b['name']);
-        }
-
-        usort($config['l2tp']['user'],  "usercmp");
+        usort($config['l2tp']['user'],  "l2tpusercmp");
 }
 
 require("guiconfig.inc");

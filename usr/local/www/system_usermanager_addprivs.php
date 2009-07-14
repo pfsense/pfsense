@@ -35,17 +35,17 @@
 ##|*MATCH=system_usermanager_addprivs.php*
 ##|-PRIV
 
+function admusercmp($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
+}
+
 function admin_users_sort() {
         global $g, $config;
 
         if (!is_array($config['system']['user']))
                 return;
 
-        function cpusercmp($a, $b) {
-                return strcasecmp($a['name'], $b['name']);
-        }
-
-        usort($config['system']['user'], "cpusercmp");
+        usort($config['system']['user'], "admusercmp");
 }
 
 require("guiconfig.inc");

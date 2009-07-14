@@ -35,12 +35,12 @@
 ##|*MATCH=services_captiveportal_mac_edit.php*
 ##|-PRIV
 
-function passthrumacs_sort() {
-        global $g, $config;
+function passthrumacscmp($a, $b) {
+	return strcmp($a['mac'], $b['mac']);
+}
 
-        function passthrumacscmp($a, $b) {
-                return strcmp($a['mac'], $b['mac']);
-        }
+function passthrumacs_sort() {
+        global $config;
 
         usort($config['captiveportal']['passthrumac'],"passthrumacscmp");
 }

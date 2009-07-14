@@ -36,12 +36,12 @@
 ##|*MATCH=services_wol_edit.php*
 ##|-PRIV
 
-function wol_sort() {
-        global $g, $config;
+function wolcmp($a, $b) {
+	return strcmp($a['descr'], $b['descr']);
+}
 
-        function wolcmp($a, $b) {
-                return strcmp($a['descr'], $b['descr']);
-        }
+function wol_sort() {
+        global $config;
 
         usort($config['wol']['wolentry'], "wolcmp");
 }

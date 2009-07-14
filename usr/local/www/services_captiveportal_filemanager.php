@@ -36,12 +36,12 @@
 ##|*MATCH=services_captiveportal_filemanager.php*
 ##|-PRIV
 
-function cpelements_sort() {
-        global $g, $config;
+function cpelementscmp($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
+}
 
-        function cpelementscmp($a, $b) {
-                return strcasecmp($a['name'], $b['name']);
-        }
+function cpelements_sort() {
+        global $config;
 
         usort($config['captiveportal']['element'],"cpelementscmp");
 }

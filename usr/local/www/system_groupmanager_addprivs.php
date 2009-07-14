@@ -35,15 +35,15 @@
 ##|*MATCH=system_groupmanager_addprivs.php*
 ##|-PRIV
 
+function cpusercmp($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
+}
+
 function admin_groups_sort() {
-        global $g, $config;
+        global $config;
 
         if (!is_array($config['system']['group']))
                 return;
-
-        function cpusercmp($a, $b) {
-                return strcasecmp($a['name'], $b['name']);
-        }
 
         usort($config['system']['group'], "cpusercmp");
 }

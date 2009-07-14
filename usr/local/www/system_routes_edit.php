@@ -36,15 +36,15 @@
 ##|*MATCH=system_routes_edit.php*
 ##|-PRIV
 
+function staticroutecmp($a, $b) {
+	return strcmp($a['network'], $b['network']);
+}
+
 function staticroutes_sort() {
         global $g, $config;
 
         if (!is_array($config['staticroutes']['route']))
                 return;
-
-        function staticroutecmp($a, $b) {
-                return strcmp($a['network'], $b['network']);
-        }
 
         usort($config['staticroutes']['route'], "staticroutecmp");
 }

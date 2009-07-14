@@ -837,9 +837,6 @@ EOD;
  			sleep("0.1");
  			/* load SPD */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
- 			/* We are already online, reload */
- 			sleep("0.1");
-			mwexec("/usr/bin/killall -HUP racoon", false);
 
 			/* start dnswatch, if necessary */
 			if (count($dnswatch_list) > 0) {

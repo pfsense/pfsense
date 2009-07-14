@@ -69,6 +69,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	if(file_exists("/dev/led/error"))
 		exec("/bin/echo 1 > /dev/led/error");
 	/* wrap & alix */
+	led_normalize();
 	led_morse(1, 'sos');
 	notify_via_growl($notice);
 	return $queuekey;

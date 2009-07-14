@@ -675,11 +675,10 @@ EOD;
 
 				$hostnames = "";
 				array_unique($dnswatch_list);
-				foreach ($dnswatch_list as $dns)
-					$hostnames .= " " . escapeshellarg($dns);
+				$hostnames = implode("\n", $dnswatch_list);
+				file_put_contents("{$g['varetc_path']}/dnswatch-ipsec.hosts", $hostnames);
 				killbypid("{$g['varrun_path']}/dnswatch-ipsec.pid");
-				mwexec("/usr/local/sbin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval " .
-				escapeshellarg("/etc/rc.newipsecdns") . $hostnames, false);
+				mwexec("/usr/local/sbin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval /etc/rc.newipsecdns {$g['varetc_path']}/dnswatch-ipsec.hosts", false);
 			}
 
 

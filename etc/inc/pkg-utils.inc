@@ -1002,7 +1002,7 @@ function pkg_build_filter_rules() {
         @unlink("{$g['tmp_path']}/rules.nat.packages");
         @unlink("{$g['tmp_path']}/rules.packages");
         @unlink("{$g['tmp_path']}/rules.rdr.packages");
-        @unlink("{$g['tmp_path']}/rules.rdr.packages");
+        @unlink("{$g['tmp_path']}/rules.rdrearly.packages");
         @unlink("{$g['tmp_path']}/rules.rulesearly.packages");
 
 	if (is_array($config['installedpackages']['package'])) {
@@ -1042,7 +1042,7 @@ function pkg_build_filter_rules() {
 	if ($pkgrdrrules <> "")
                 file_put_contents("{$g['tmp_path']}/rules.rdr.packages", $pkgrdrrules);
 	if ($pkgrdrrulesearly <> "")
-                file_put_contents("{$g['tmp_path']}/rules.rdr.packages", $pkgrdrrulesearly);
+                file_put_contents("{$g['tmp_path']}/rules.rdrearly.packages", $pkgrdrrulesearly);
 	$error = "";
 	$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.natearly.packages");
         if ($status <> 0) {

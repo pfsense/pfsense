@@ -302,7 +302,7 @@ include("head.inc");
 										else
 											$spans = $spane = "";
 								?>
-								<tr valign="top" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$i;?>'">
+								<tr valign="top" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$j;?>'">
 
 									<td nowrap class="listlr">
 										<?=$spans;?>

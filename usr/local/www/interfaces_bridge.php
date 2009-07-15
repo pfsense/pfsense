@@ -28,6 +28,13 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+##|+PRIV
+##|*IDENT=page-interfaces-bridge
+##|*NAME=Interfaces: Bridge page
+##|*DESCR=Allow access to the 'Interfaces: Bridge' page.
+##|*MATCH=interfaces_bridge.php*
+##|-PRIV
+
 require("guiconfig.inc");
 
 if (!is_array($config['bridges']['bridged']))

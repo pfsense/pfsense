@@ -990,12 +990,21 @@ function squash_from_bytes($size, $round = "") {
 function pkg_build_filter_rules() {
 	global $config, $g;
 
+	
 	$pkgrules = "";
         $pkgrulesearly = "";
         $pkgnatrules = "";
         $pkgnatrulesearly = "";
         $pkgrdrrules = "";
         $pkgrdrrulesearly = "";
+
+	@unlink("{$g['tmp_path']}/rules.natearly.packages");
+        @unlink("{$g['tmp_path']}/rules.nat.packages");
+        @unlink("{$g['tmp_path']}/rules.packages");
+        @unlink("{$g['tmp_path']}/rules.rdr.packages");
+        @unlink("{$g['tmp_path']}/rules.rdr.packages");
+        @unlink("{$g['tmp_path']}/rules.rulesearly.packages");
+
 	if (is_array($config['installedpackages']['package'])) {
 		run_plugins("/usr/local/pkg");
                 foreach($config['installedpackages']['package'] as $pkg) {
@@ -1026,8 +1035,10 @@ function pkg_build_filter_rules() {
                 file_put_contents("{$g['tmp_path']}/rules.natearly.packages", $pkgnatrulesearly);
 	if ($pkgnatrules <> "")
 		file_put_contents("{$g['tmp_path']}/rules.nat.packages", $pkgnatrules);
+	if ($pkgrulesearly <> "")
+		file_put_contents("{$g['tmp_path']}/rules.rulesearly.packages", $pkgrulesearly);
 	if ($pkgrules <> "")
-		file_put_contents("{$g['tmp_path']}/rules.packages", $pkgrules);
+                file_put_contents("{$g['tmp_path']}/rules.packages", $pkgrules);
 	if ($pkgrdrrules <> "")
                 file_put_contents("{$g['tmp_path']}/rules.rdr.packages", $pkgrdrrules);
 	if ($pkgrdrrulesearly <> "")

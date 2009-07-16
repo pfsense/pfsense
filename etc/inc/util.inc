@@ -956,12 +956,19 @@ function get_memory() {
 }
 
 function mute_kernel_msgs() {
-        return;
-        exec("/sbin/conscontrol mute on");
+		// Do not mute serial console.  The kernel gets very very cranky
+		// and will start dishing you cannot control tty errors.
+		if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
+			return;
+		exec("/sbin/conscontrol mute on");
 }
 
 function unmute_kernel_msgs() {
-        exec("/sbin/conscontrol mute off");
+		// Do not mute serial console.  The kernel gets very very cranky
+		// and will start dishing you cannot control tty errors.
+		if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
+			return;
+		exec("/sbin/conscontrol mute off");
 }
 
 function start_devd() {

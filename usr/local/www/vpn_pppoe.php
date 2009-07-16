@@ -260,7 +260,7 @@ function enable_change(enable_over) {
                   </td>
 		</tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">No. PPPOE users</td>
+                  <td width="22%" valign="top" class="vncellreq">Number of PPPoE users</td>
                   <td width="78%" class="vtable">
 		    <select id="n_pppoe_units" name="n_pppoe_units">
 		    <?php

@@ -1816,10 +1816,18 @@ function backup_config() {
 }
 
 function mute_kernel_msgs() {
+	// Do not mute serial console.  The kernel gets very very cranky
+	// and will start dishing you cannot control tty errors.
+	if(trim(file_get_contents("/etc/platform")) == "nanobsd")
+		return;
 	exec("/sbin/conscontrol mute on");
 }
 
 function unmute_kernel_msgs() {
+	// Do not mute serial console.  The kernel gets very very cranky
+	// and will start dishing you cannot control tty errors.
+	if(trim(file_get_contents("/etc/platform")) == "nanobsd")
+		return;
 	exec("/sbin/conscontrol mute off");
 }
 

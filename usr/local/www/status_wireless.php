@@ -103,24 +103,14 @@ display_top_tabs($tab_array);
 
 	$counter=0;
 	foreach($states as $state) {
-		$state_fixed = str_replace("  ", " ", $state);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_split = split(" ", $state_fixed);
-		$items = count($state_split);
-		$starting_at = $items-8;
 		print "<tr>";
-		print "<td>{$state_split[$starting_at]}</td>";
-		print "<td>{$state_split[$starting_at+1]}</td>";
-		print "<td>{$state_split[$starting_at+2]}</td>";
-		print "<td>{$state_split[$starting_at+3]}</td>";
-		print "<td>{$state_split[$starting_at+4]}</td>";
-		print "<td>{$state_split[$starting_at+5]}</td>";
-		print "<td>{$state_split[$starting_at+6]}</td>";
+		print "<td>" . trim(substr($state, 0 , 16)) . "</td>";
+		print "<td>" . trim(substr($state, 16, 19)) . "</td>";
+		print "<td>" . trim(substr($state, 35, 5)) . "</td>";
+		print "<td>" . trim(substr($state, 40, 5)) . "</td>";
+		print "<td>" . trim(substr($state, 45, 9)) . "</td>";
+		print "<td>" . trim(substr($state, 54, 4)) . "</td>";
+		print "<td>" . trim(substr($state, 58)) . "</td>";
 		print "</tr>\n";
 		print "<!-- $state_fixed -->\n";
 	}

@@ -331,7 +331,7 @@ function enable_change(enable_over) {
                   </td>
 		</tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">No. PPPOE users</td>
+                  <td width="22%" valign="top" class="vncellreq">No. PPPoE users</td>
                   <td width="78%" class="vtable">
 		    <select id="n_pppoe_units" name="n_pppoe_units">
 		    <?php
@@ -370,7 +370,7 @@ function enable_change(enable_over) {
                     <br>
 			<input name="pppoe_dns2" type="text" class="formfld unknown" id="pppoe_dns2" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns2']);?>">
                     <br>
-                    If entered they will be given to all pppoe clients else lan dns and one wan dns will go to all clients<br>
+                    If entered they will be given to all PPPoE clients, else LAN DNS and one WAN DNS will go to all clients<br>
                     </td>
                 </tr>
                 <tr> 
@@ -391,21 +391,21 @@ function enable_change(enable_over) {
                       When set, if primary server fails all requests will be sent via backup server</td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">NAS IP ADDRESS</td>
+                  <td width="22%" valign="top" class="vncellreq">NAS IP Address</td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="radius_nasip" type="text" class="formfld unknown" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>">
                     <br>radius server NAS ip Address<br>
                     </td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Radius Accounting Update</td>
+                  <td width="22%" valign="top" class="vncellreq">RADIUS Accounting Update</td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="radius_acct_update" type="text" class="formfld unknown" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>">
                     <br>Radius accounting update period in seconds
                     </td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">RADIUS issued IP's</td>
+                  <td width="22%" valign="top" class="vncell">RADIUS issued IPs</td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
                       <br>Issue IP Addresses via RADIUS server.</td>
@@ -416,7 +416,7 @@ function enable_change(enable_over) {
                       <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>">
 			 <input name="radiusserverport" type="text" class="formfld unknown" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>">
 			 <input name="radiusserveracctport" type="text" class="formfld unknown" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>">
-                      <br>Enter the IP address and portof the RADIUS server. Format ip auth_port acct_port<br>
+                      <br>Enter the IP address and port of the RADIUS server. Format ip auth_port acct_port<br>
 			 <br> standard port 1812 and 1813 accounting</td>
                 </tr>
                 <tr> 

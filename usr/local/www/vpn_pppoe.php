@@ -273,7 +273,7 @@ function enable_change(enable_over) {
 		     }
 		    ?>
 		    </select>
-		    <br>Hint: 10 is TEN pppoe clients
+		    <br>Hint: 10 is ten PPPoE clients
                   </td>
 		</tr>
                 <tr> 
@@ -322,7 +322,7 @@ function enable_change(enable_over) {
                       to the RADIUS server.</td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">RADIUS issued IP's</td>
+                  <td width="22%" valign="top" class="vncell">RADIUS issued IPs</td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
                       <br>Issue IP Addresses via RADIUS server.
@@ -341,7 +341,7 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
-                    </strong></span>don't forget to add a firewall rule to permit 
+                    </strong></span>Don't forget to add a firewall rule to permit 
                     traffic from PPPoE clients!</span></td>
                 </tr>
               </table>

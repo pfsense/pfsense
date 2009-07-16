@@ -960,6 +960,8 @@ function mute_kernel_msgs() {
 		// and will start dishing you cannot control tty errors.
 		if(trim(file_get_contents("/etc/platform")) == "nanobsd") 
 			return;
+		if($config['system']['enableserial']) 
+			return;			
 		exec("/sbin/conscontrol mute on");
 }
 

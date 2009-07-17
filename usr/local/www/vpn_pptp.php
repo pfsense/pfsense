@@ -119,13 +119,6 @@ if ($_POST) {
 			$input_errors[] = "A valid target address must be specified.";
 		}
 	} else {
-		/* turning pptp off, lets dump any custom rules */
-		$rules = &$config['filter']['rule'];
-		for($x=0; $x<count($rules); $x++) {
-			if($rules[$x]['interface'] == "pptp") { 
-				unset($rules[$x]);
-			}
-		}
 		unset($config['pptpd']['mode']);
 	}
 

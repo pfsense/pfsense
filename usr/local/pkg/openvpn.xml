@@ -67,13 +67,13 @@
 		<field>
 			<fieldname>dynamic_ip</fieldname>
 			<fielddescr>Dynamic IP</fielddescr>
-			<description>Assume dynamic IPs, so that DHCP clients can connect.</description>
+			<description>Allow connected clients to retain their connections if their IP address changes.</description>
 			<type>checkbox</type>
 		</field>
 		<field>
 			<fieldname>local_port</fieldname>
 			<fielddescr>Local port</fielddescr>
-			<description>The port OpenVPN will listen on. You generally want 1194 here.</description>
+			<description>The port this OpenVPN server will listen on. 1194 is the default OpenVPN port. Each server requires a unique port.</description>
 			<required/>
 			<type>input</type>
 			<default_value>1194</default_value>

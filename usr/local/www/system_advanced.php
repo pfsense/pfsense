@@ -60,6 +60,7 @@ $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
+$pconfig['disableglxsb'] = isset($config['system']['disableglxsb']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['shapertype']             = $config['system']['shapertype'];
 $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
@@ -237,6 +238,14 @@ if ($_POST) {
 		} else {
 			unset($config['system']['disablechecksumoffloading']);
                         setup_microcode();
+		}
+                
+                if($_POST['disableglxsb'] == "yes") {
+			$config['system']['disableglxsb'] = $_POST['disableglxsb'];
+                        setup_glxsb();
+		} else {
+			unset($config['system']['disableglxsb']);
+                        setup_glxsb();
 		}
 
 		if($_POST['disablescrub'] == "yes") {
@@ -689,7 +698,7 @@ include("head.inc");
 			<td colspan="2" class="list" height="12">&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">Hardware Checksum Offloading</td>
+			<td colspan="2" valign="top" class="listtopic">Hardware Options</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Disable Hardware Checksum Offloading</td>
@@ -697,7 +706,17 @@ include("head.inc");
 				<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>Checking this option will disable hardware checksum offloading.  Checksum offloading is broken in some hardware, particularly some Realtek cards. Rarely, drivers may have problems with checksum offloading and some specific NICs.</strong>
 			</td>
+		</tr>
+       		<tr>
+			<td width="22%" valign="top" class="vncell">Disable glxsb loading</td>
+			<td width="78%" class="vtable">
+				<input name="disableglxsb" type="checkbox" id="disableglxsb" value="yes" <?php if (isset($config['system']['disableglxsb'])) echo "checked"; ?> onclick="enable_change(false)" />
+                                <span class="vexpl"><strong>Checking this option will disable loading of the glxsb driver.</strong></span>
+                                <br>
+                                <span>The glxsb crypto accelerator is found on some Geode platforms (PC Engines ALIX among others).  When using a better crypto card such as a Hifn, you will want to disable the glxsb. <strong>If this device is currently in use, YOU MUST REBOOT for it to be unloaded.</strong></span>
+			</td>
 		</tr>		
+
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>

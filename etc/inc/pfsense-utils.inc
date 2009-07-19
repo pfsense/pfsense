@@ -854,6 +854,25 @@ function get_interface_mac_address($interface) {
 	}
 }
 
+/****f* pfsense-utils/setup_glxsb
+ * NAME
+ *   setup_glxsb - loads or unloads glxsb module as needed
+ * INPUTS
+ *   null
+ * RESULT
+ *   null
+ ******/
+function setup_glxsb() {
+        global $config, $g;
+        $is_loaded = `/sbin/kldstat | /usr/bin/grep -c glxsb`;
+        if (!isset($config['system']['disableglxsb']) && ($is_loaded == 0)) {
+                mwexec("/sbin/kldload glxsb");
+        } elseif (isset($config['system']['disableglxsb']) && ($is_loaded > 0)) {
+                mwexec("/sbin/kldunload glxsb");
+        }
+        
+}
+
 /****f* pfsense-utils/return_dir_as_array
  * NAME
  *   return_dir_as_array - Return a directory's contents as an array.

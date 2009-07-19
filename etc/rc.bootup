@@ -149,6 +149,9 @@ function rescue_detect_keypress() {
 	echo "Cleaning backup cache...";
 	cleanup_backupcache(true);
 	echo "done.\n";
+	
+	/* load glxsb unless it's disabled */
+	setup_glxsb();
 
 	/* read in /etc/sysctl.conf and set values if needed */
 	echo "Setting up extended sysctls...";
@@ -304,9 +307,6 @@ function rescue_detect_keypress() {
 	echo "Setting up microcode and tx/rx offloading...";
 	setup_microcode();
 	echo "done.\n";
-	
-	/* load glxsb unless it's disabled */
-	setup_glxsb();
 
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 

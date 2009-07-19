@@ -104,17 +104,17 @@ function filter_configure_sync() {
 				mwexec("/sbin/kldload ipfw");
 				unmute_kernel_msgs();
 			}
-                        if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
-                                /* Set ipfw states to user defined maximum states in Advanced menu. */
-                                mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");
-                        } else {
-                                /* Set to default 10,000 */
-                                mwexec("sysctl net.inet.ip.fw.dyn_max=10000");
-                        }
-                        exec("/sbin/ipfw delete set 9");
+			if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
+			        /* Set ipfw states to user defined maximum states in Advanced menu. */
+			        mwexec("sysctl net.inet.ip.fw.dyn_max={$config['system']['maximumstates']}");
+			} else {
+			        /* Set to default 10,000 */
+			        mwexec("sysctl net.inet.ip.fw.dyn_max=10000");
+			}
+			exec("/sbin/ipfw delete set 9");
 			exec("/sbin/ipfw delete 2");
 			exec("/sbin/ipfw delete 3");
-		}
+			}
         }
 
 	$lan_if = $config['interfaces']['lan']['if'];
@@ -185,14 +185,13 @@ function filter_configure_sync() {
 		$rules .= "set optimization normal\n";
 	}
 
-	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
+    if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
 		$rules .= "set limit states {$config['system']['maximumstates']}\n";
-		mwexec("/usr/sbin/sysctl net.inet.ip.output_flowtable_size={$config['system']['maximumstates']}");
-	} else {
-		mwexec("/usr/sbin/sysctl net.inet.ip.output_flowtable_size=10000");
-	}
+    }
+
 	$rules .= "\n";
+	$rules .= "set skip on pfsync0\n";
 
 	update_filter_reload_status("Setting up SCRUB information");
 	/* get our wan interface? */

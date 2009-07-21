@@ -126,6 +126,9 @@ if ($_POST) {
 	if ($_POST['destination_not'])
             $input_errors[] = "Negating destination address of \"any\" is invalid.";
     }
+    if ($_POST['nonat'] && $_POST['staticnatport']) {
+	$input_errors[] = "Static port cannot be used with No NAT.";
+    }
     if ($_POST['dstport'] && !is_numericint($_POST['dstport'])) {
         $input_errors[] = "A valid destination port must be specified.";
     }
@@ -291,7 +294,7 @@ function sourcesel_change() {
             <form action="firewall_nat_out_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="1">
 	        <tr>
-                  <td width="22%" valign="top" class="vncellreq">No NAT (NOT)</td>
+                  <td width="22%" valign="top" class="vncell">No NAT (NOT)</td>
                   <td width="78%" class="vtable">
 			<input type="checkbox" name="nonat"<?php if(isset($pconfig['nonat'])) echo " CHECKED"; ?>>
                      <span class="vexpl">Enabling this option will disable NATing for the item and stop processing outgoing NAT rules.
@@ -426,7 +429,7 @@ function sourcesel_change() {
 				  <td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
 				  <td width="78%" class="vtable">
 					<input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-				   			 HINT: This prevents the rule from automatically syncing to other carp members.
+				   			 HINT: This prevents the rule from automatically syncing to other CARP members.
 				  </td>
 				</tr>
                 <tr>

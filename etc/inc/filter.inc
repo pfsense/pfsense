@@ -356,15 +356,33 @@ function filter_generate_scrubing()
 	return $scrubrules;
 }
 
+function filter_generate_nested_alias($alias) {
+	global $aliastable;
+	
+	$addresses = split(" ", $alias);
+	$finallist = "";
+	foreach ($addresses as $address) {
+		$linelength = strlen($finallist);
+		if (isset($aliastable[$address]))
+			$tmpline = filter_generate_nested_alias($aliastable[$address]);
+		else
+			$tmpline = " $address";
+		if ((strlen($tmpline)+ $linelength) > 4036)
+			$finallist .= "\n";
+		$finallist .= " {$tmpline}";
+	}
+	return $finallist;
+}
+
 function filter_generate_aliases() {
-	global $config, $FilterIflist;
+	global $config, $FilterIflist, $aliastable;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_generate_aliases() being called $mt\n";
 	}
 	$alias = "#System aliases\n ";
 	$aliases .= "loopback = \"{ lo0 }\"\n";
-	$bridgetracker = 0;
+
 	foreach ($FilterIflist as $if => $ifcfg) {
 		$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 		$aliases .= " }\"\n";
@@ -376,7 +394,12 @@ function filter_generate_aliases() {
 			$extraalias = "";
 			$ip = find_interface_ip($aliased['address']);
 			$extraalias = " " . link_ip_to_carp_interface($ip);
-			$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
+			$addrlist = filter_generate_nested_alias($aliased['address']);
+			if ($aliased['type'] == "host" || $aliased['type'] == "network") {
+				$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
+				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+			} else 
+				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
 		}
 	}
 	$result = "{$alias} \n";
@@ -1070,7 +1093,7 @@ function filter_generate_user_rule_arr($rule)
 
 function filter_generate_address(& $rule, $target = "source") 
 {
-	global $FilterIflist, $table_cache;
+	global $FilterIflist;
 	$src = "";
 
 	if (isset($rule[$target]['any'])) {
@@ -1130,29 +1153,7 @@ function filter_generate_address(& $rule, $target = "source")
                         $not = "!";
                 else
                         $not = "";
-                if (stristr($expsrc, "$")) {
-                        if($not) {
-                                $src = "{";
-                                foreach(preg_split("/[\s]+/", alias_expand_value($rule[$target]['address'])) as $item) {
-                                        if($item != "") {
-                                                $src .= " {$not}{$item}";
-                                        }
-                                }
-                                /* added support for tables */
-                                $src .= " 0/0 }";
-                                $src_table = "<not" . $rule[$target]['address'] . ">";
-                        }
-                        else {
-                                $src = "{ {$not} " . alias_expand_value($rule[$target]['address']) . " } ";
-                                $src_table = "<" . $rule[$target]['address'] . ">";
-                        }
-                        /* support for tables */
-                        $src_table_line = "table $src_table {$src}\n";
-                        $src = $src_table;
-			/* cache entries */
-                       	$table_cache[$src_table] = $src_table_line;
-                } else
-                        $src = "{ {$not} {$expsrc} }";
+		$src = " {$not} {$expsrc}";
         }
 
 	if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
@@ -1518,16 +1519,13 @@ function filter_generate_user_rule($rule)
 
 function filter_rules_generate() 
 {
-	global $config, $g, $table_cache, $FilterIflist, $time_based_rules;
+	global $config, $g, $FilterIflist, $time_based_rules;
 	
 	update_filter_reload_status("Creating default rules");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_rules_generate() being called $mt\n";
 	}
-
-	if (!is_array($table_cache))
-		$table_cache = array();
 
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
@@ -1841,10 +1839,6 @@ EOD;
 		}
 		$rule_arr = array_merge($rule_arr1,$rule_arr2);
 
-		$ipfrules .= "\n# User-defined aliases follow\n";
-		/* tables for aliases */
-		foreach($table_cache as $table)
-			$ipfrules .= $table;
 		$ipfrules .= "\n# User-defined rules follow\n";
 		/* Generate user rule lines */
 		foreach($rule_arr as $rule) {

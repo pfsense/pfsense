@@ -133,6 +133,9 @@ if ($_POST) {
 	if ($_POST['destination_not'])
             $input_errors[] = "Negating destination address of \"any\" is invalid.";
     }
+    if ($_POST['nonat'] && $_POST['staticnatport']) {
+        $input_errors[] = "Static port cannot be used with No NAT.";
+    }
     if ($_POST['dstport'] && !is_numericint($_POST['dstport'])) {
         $input_errors[] = "A valid destination port must be specified.";
     }

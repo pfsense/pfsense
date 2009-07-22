@@ -195,7 +195,7 @@ if ($_POST) {
 				if ($isfirst > 0)
 					$address .= " ";
 				$address .= $_POST["address{$x}"];
-				if($_POST["address_subnet{$x}"] <> "") 
+				if(is_ipaddr($_POST["address{$x}"]) && $_POST["address_subnet{$x}"] <> "") 
 					$address .= "/" . $_POST["address_subnet{$x}"];
 
 	       			if($_POST["detail{$x}"] <> "") {

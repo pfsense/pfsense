@@ -264,6 +264,8 @@ pfSenseNanoBSDupgrade)
 		exit 1
 	fi
 
+	sysctl kern.geom.debugflags=16
+
 	# Add back the corresponding glabel
 	echo "" >> /conf/upgrade_log.txt
 	echo "/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH" >> /conf/upgrade_log.txt
@@ -320,6 +322,8 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /conf/upgrade_log.txt
 	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /conf/upgrade_log.txt
 	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /conf/upgrade_log.txt 2>&1
+
+	sysctl kern.geom.debugflags=0
 
 	# Grab a final look at fdisk
 	echo "" >> /conf/fdisk_upgrade_log.txt

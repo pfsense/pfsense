@@ -978,10 +978,10 @@ function filter_nat_rules_generate() {
 
 			if (!$rule['interface'] || ($rule['interface'] == "wan"))
 				$natif = $wanif;
-			else if($rule['interface'] == "\$pptp")
-				$natif = "pptp";
-			else if($rule['interface'] == "\$pppoe")
-				$natif = "pppoe";
+			else if($rule['interface'] == "pptp")
+				$natif = "\$pptp";
+			else if($rule['interface'] == "pppoe")
+				$natif = "\$pppoe";
 			else
 				$natif = $config['interfaces'][$rule['interface']]['if'];
 

@@ -356,16 +356,21 @@ function filter_generate_scrubing()
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($alias) {
-	global $aliastable;
+function filter_generate_nested_alias($name, $alias) {
+	global $aliastable, $aliasnesting;
 	
 	$addresses = split(" ", $alias);
 	$finallist = "";
+	$aliasnesting[$name] = $name;
 	foreach ($addresses as $address) {
 		$linelength = strlen($finallist);
-		if (isset($aliastable[$address]))
-			$tmpline = filter_generate_nested_alias($aliastable[$address]);
-		else
+		if (isset($aliastable[$address])) {
+			if (!isset($aliasnesting[$address]))
+				/* We already expanded this alias so there 
+				 * is no neccessity to do it again.
+				 */
+				$tmpline = filter_generate_nested_alias($address, $aliastable[$address]);
+		} else
 			$tmpline = " $address";
 		if ((strlen($tmpline)+ $linelength) > 4036)
 			$finallist .= "\n";
@@ -375,7 +380,7 @@ function filter_generate_nested_alias($alias) {
 }
 
 function filter_generate_aliases() {
-	global $config, $FilterIflist, $aliastable;
+	global $config, $FilterIflist, $aliastable, $aliasnesting;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_generate_aliases() being called $mt\n";
@@ -394,7 +399,8 @@ function filter_generate_aliases() {
 			$extraalias = "";
 			$ip = find_interface_ip($aliased['address']);
 			$extraalias = " " . link_ip_to_carp_interface($ip);
-			$addrlist = filter_generate_nested_alias($aliased['address']);
+			$aliasnesting = array();
+			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address']);
 			if ($aliased['type'] == "host" || $aliased['type'] == "network") {
 				$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";

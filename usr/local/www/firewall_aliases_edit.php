@@ -50,6 +50,23 @@ if (!is_array($config['aliases']['alias']))
 aliases_sort();
 $a_aliases = &$config['aliases']['alias'];
 
+function alias_same_type($name, $type) {
+	global $config;
+	
+	foreach ($config['aliases']['alias'] as $alias) {
+		if ($name == $alias['name']) {
+			if (in_array($type, array("host", network")) &&
+				in_array($alias['type'], array("host", "network")))
+				return true;
+			if ($type  == $alias['type'])
+				return true;
+			else
+				return false;
+		}
+	}
+	return true;
+}
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -191,6 +208,7 @@ if ($_POST) {
 		$address = "";
 		$isfirst = 0;
 		/* item is a normal alias type */
+		$wrongaliases = "";
 		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
 				if ($isfirst > 0)
@@ -208,7 +226,13 @@ if ($_POST) {
 	       			$final_address_details .= "||";
 				$isfirst++;
 			}
+			if (is_alias($_POST["address{$x}"])) {
+				if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
+					$wrongaliases .= " " . $_POST["address{$x}"];
+			}
 		}
+		if ($wrongaliases <> "")
+			$input_errors[] = "The following aliases: {$wrongaliases} \ncannot be nested cause they are not of the same type.";
 	}
 
 	if (!$input_errors) {
@@ -555,6 +579,8 @@ EOD;
         $aliasesaddr = "";
         if(isset($config['aliases']['alias']) && is_array($config['aliases']['alias']))
                 foreach($config['aliases']['alias'] as $alias_name) {
+			if ($pconfig['name'] <> "" && $pconfig['name'] == $alias_name['name'])
+				continue;
 			if($addrisfirst == 1) $aliasesaddr .= ",";
 			$aliasesaddr .= "'" . $alias_name['name'] . "'";
 			$addrisfirst = 1;

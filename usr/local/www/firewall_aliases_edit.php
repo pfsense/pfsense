@@ -562,7 +562,6 @@ EOD;
 ?>
 
         var addressarray=new Array(<?php echo $aliasesaddr; ?>);
-        var customarray=new Array(<?php echo $aliases; ?>);
 
 <?php  
 	for ($jv = 0; $jv < $counter; $jv++)

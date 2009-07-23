@@ -244,6 +244,8 @@ include("head.inc");
 $jscriptstr = <<<EOD
 
 <script type="text/javascript">
+
+var objAlias = new Array(4999);
 function typesel_change() {
 	switch (document.iform.type.selectedIndex) {
 		case 0:	/* host */
@@ -300,6 +302,13 @@ function typesel_change() {
 	}
 }
 
+function add_alias_control() {
+	var name = "address" + (totalrows - 1);
+	obj = document.getElementById(name);
+	obj.setAttribute('class', 'formfldalias');
+	obj.setAttribute('autocomplete', 'off');
+	objAlias[totalrows - 1] = new AutoSuggestControl(obj, new StateSuggestions(addressarray));
+}
 EOD;
 
 $network_str = gettext("Network");
@@ -373,6 +382,10 @@ EOD;
 ?>
 
 <script type="text/javascript" src="/javascript/row_helper.js">
+</script>
+<script type="text/javascript" src="/javascript/autosuggest.js">
+</script>
+<script type="text/javascript" src="/javascript/suggestions.js">
 </script>
 
 <input type='hidden' name='address_type' value='textbox' />
@@ -480,7 +493,7 @@ EOD;
 	?>
           <tr>
             <td>
-              <input name="address<?php echo $tracker; ?>" type="text" class="formfld unknown" id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
+              <input autocomplete="off" name="address<?php echo $tracker; ?>" type="text" class="formfldalias" id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
             </td>
             <td>
 			        <select name="address_subnet<?php echo $tracker; ?>" class="formselect" id="address_subnet<?php echo $tracker; ?>">
@@ -508,7 +521,7 @@ EOD;
 
         </tfoot>
 		  </table>
-			<a onclick="javascript:addRowTo('maintable'); typesel_change(); return false;" href="#">
+			<a onclick="javascript:addRowTo('maintable', 'formfldalias'); typesel_change(); add_alias_control(this); return false;" href="#">
         <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="add another entry" />
       </a>
 		</td>
@@ -533,6 +546,29 @@ EOD;
 	loaded = <?php echo $counter; ?>;
 	typesel_change();
 	update_box_type();
+
+<?php
+        $isfirst = 0;
+        $aliases = "";
+        $addrisfirst = 0;
+        $aliasesaddr = "";
+        if(isset($config['aliases']['alias']) && is_array($config['aliases']['alias']))
+                foreach($config['aliases']['alias'] as $alias_name) {
+			if($addrisfirst == 1) $aliasesaddr .= ",";
+			$aliasesaddr .= "'" . $alias_name['name'] . "'";
+			$addrisfirst = 1;
+                }
+?>
+
+        var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+        var customarray=new Array(<?php echo $aliases; ?>);
+
+<?php  
+	for ($jv = 0; $jv < $counter; $jv++)
+		echo "objAlias[{$jv}] = new AutoSuggestControl(document.getElementById(\"address{$jv}\"), new StateSuggestions(addressarray));\n";
+?>
+
+
 </script>
 
 <?php include("fend.inc"); ?>

@@ -398,6 +398,24 @@ function filter_generate_aliases() {
 			if ($aliased['type'] == "host" || $aliased['type'] == "network") {
 				$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+			} else if ($aliased['type'] == "openvpn") {
+				$openvpncfg = array();
+				foreach ($config['openvpn']['user'] as $openvpn)
+					/* XXX: Check if we have a correct ip? */
+					$openvpncfg[$openvpn['name']] = $openvpn['ip'];
+				$vpn_lines = split("\n", $addrlist);
+				foreach ($vpn_lines as $vpn_line) {
+					$vpn_address_split = split(" ", $vpn_line);
+					foreach($vpn_address_split as $vpnsplit) {
+						if(isset($openvpncfg[$vpnsplit])) {
+							$newaddress .= " ";
+							$newaddress .= $openvpn[$vpnsplit];
+							break;
+						}
+					}
+				}
+				$aliases .= "table <{$aliased['name']}> { {$newaddress}{$extralias} } \n";
+                                $aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 			} else 
 				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
 		}

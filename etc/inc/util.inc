@@ -648,39 +648,6 @@ function is_alias($name) {
 	return isset($aliastable[$name]);
 }
 
-function alias_expand_value($name) {
-
-	global $aliastable, $config;
-
-	$newaddress = "";
-	if($config['aliases']['alias'])
-		foreach($config['aliases']['alias'] as $alias) {
-			if($alias['name'] == $name) {
-				if($alias['type'] == "openvpn") {
-					$openvpncfg = array();
-					foreach ($config['openvpn']['user'] as $openvpn)
-						/* XXX: Check if we have the right ip? */
-						$openvpncfg[$openvpn['name']] = $openvpn['ip'];
-					$vpn_addresses = filter_generate_nested_alias($alias['address']);
-					$vpn_lines = split("\n", $vpn_addresses);
-					foreach ($vpn_lines as $vpn_line) {
-						$vpn_address_split = split(" ", $vpn_line);
-						foreach($vpn_address_split as $vpnsplit) {
-							if(isset($openvpncfg[$vpnsplit])) {
-								$newaddress .= " ";
-								$newaddress .= $openvpn[$vpnsplit];
-								break;
-							}
-						}
-					}
-				} else
-					$newaddress = filter_generate_nested_alias($alias['address']);
-				break;
-			}
-		}
-		return $newaddress;
-}
-
 /* expand a host or network alias, if necessary */
 function alias_expand($name) {
 

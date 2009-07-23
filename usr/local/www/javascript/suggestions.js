@@ -22,7 +22,7 @@ StateSuggestions.prototype.requestSuggestions = function (oAutoSuggestControl /*
     
         //search for matching states
         for (var i=0; i < this.states.length; i++) { 
-            if (this.states[i].indexOf(sTextboxValue) == 0) {
+            if (this.states[i].toLowerCase().indexOf(sTextboxValue.toLowerCase()) == 0) {
                 aSuggestions.push(this.states[i]);
             } 
         }

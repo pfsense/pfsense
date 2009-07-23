@@ -192,6 +192,10 @@ include("head.inc");
 				echo "WAN";
 			else if(strtolower($natent['interface']) == "lan")
 				echo "LAN";
+			else if(strtolower($natent['interface']) == "pppoe")
+				echo "PPPoE";
+			else if(strtolower($natent['interface']) == "pptp")
+				echo "PPTP";
 			else
 				echo strtoupper($config['interfaces'][$natent['interface']]['descr']);
 		    ?>

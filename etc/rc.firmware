@@ -264,6 +264,7 @@ pfSenseNanoBSDupgrade)
 		exit 1
 	fi
 
+	# Enable foot shooting
 	sysctl kern.geom.debugflags=16
 
 	# Add back the corresponding glabel
@@ -313,7 +314,7 @@ pfSenseNanoBSDupgrade)
 	# Set active mount slice in fdisk
 	echo "" >> /conf/upgrade_log.txt
 	echo "gpart set -a active -i ${SLICE} ${BOOT_DRIVE}" >> /conf/upgrade_log.txt
-	gpart set -a active -i ${SLICE} ${BOOT_DRIVE}
+	gpart set -a active -i ${SLICE} ${BOOT_DRIVE} >> /conf/upgrade_log.txt 2>&1
 
 	sync
 
@@ -323,6 +324,7 @@ pfSenseNanoBSDupgrade)
 	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /conf/upgrade_log.txt
 	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /conf/upgrade_log.txt 2>&1
 
+	# Disable foot shooting
 	sysctl kern.geom.debugflags=0
 
 	# Grab a final look at fdisk

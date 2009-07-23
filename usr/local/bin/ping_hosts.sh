@@ -18,41 +18,15 @@
 if [ -f /var/db/ipsecpinghosts ]; then
 	IPSECHOSTS="/var/db/ipsecpinghosts"
 	CURRENTIPSECHOSTS="/var/db/currentipsecpinghosts"
-	echo -e "" > $CURRENTIPSECHOSTS
-	while read configline
-	do
-		if [ "$configline" = "<tunnel>" ]; then
-			VPNENABLED=1
-			while [ "$configline" != "</tunnel>" ];
-			do
-				if ! read configline ; then
-					break;
-				fi
-				if [ "$configline" = "<disabled/>" ]; then
-					VPNENABLED=0
-				elif [ -n "`echo -e "$configline" | grep "<interface>"`" ]; then
-					IFVPN=`echo -e "$configline" | sed -e 's/<[a-z]*>//' -e 's/<\/[a-z]*>//'`
-				elif [ -n "`echo -e "$configline" | grep "<pinghost>"`" ]; then
-					PINGIPVPN=`echo -e "$configline" | sed -e 's/<[a-z]*>//' -e 's/<\/[a-z]*>//'`
-				fi
-			done
-			if [ $VPNENABLED -eq 1 ]; then
-				IFVPNSTATE=`ifconfig $IFVPN | grep "carp: BACKUP vhid" | wc -l`
-				if [ $IFVPNSTATE -eq 1 ]; then
-					echo -e "$PINGIPVPN -> $IFVPN is BACKUP (not added)"
-				else
-					echo -e "$PINGIPVPN -> $IFVPN is MASTER or non CARP (added)"
-					while read dbipsechosts
-					do
-						if [ -n "`echo -e "$dbipsechosts" | grep "$PINGIPVPN"`" ]; then
-							echo -e "$dbipsechosts" >> $CURRENTIPSECHOSTS
-						fi
-					done < $IPSECHOSTS
-				fi
-			fi
-		fi
-	done < /conf/config.xml
-	IPSECHOSTS=$CURRENTIPSECHOSTS
+	IFVPNSTATE=`ifconfig $IFVPN | grep "carp: BACKUP vhid" | wc -l`
+	if [ $IFVPNSTATE -gt 1 ]; then
+		echo -e "CARP interface in BACKUP (not pinging ipsec hosts)"
+		rm -f $CURRENTIPSECHOSTS
+		touch $CURRENTIPSECHOSTS
+	else
+		echo -e "CARP interface is MASTER or non CARP (pinging ipsec hosts)"
+		cat < $IPSECHOSTS > $CURRENTIPSECHOSTS
+	fi
 fi
 
 # General file meant for user consumption
@@ -150,3 +124,4 @@ for TOPING in $PINGHOSTS ; do
 done
 
 exit 0
+

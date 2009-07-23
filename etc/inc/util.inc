@@ -651,26 +651,31 @@ function is_alias($name) {
 function alias_expand_value($name) {
 
 	global $aliastable, $config;
+
 	$newaddress = "";
-	$firstentry = true;
 	if($config['aliases']['alias'])
 		foreach($config['aliases']['alias'] as $alias) {
 			if($alias['name'] == $name) {
 				if($alias['type'] == "openvpn") {
-					$vpn_address_split = split(" ", $alias['address']);
-					foreach($vpn_address_split as $vpnsplit) {
-						foreach($config['openvpn']['user'] as $openvpn) {
-							if($openvpn['name'] == $vpnsplit) {
-								if($firstentry == false) 
-									$newaddress .= " ";
-								$newaddress .= $openvpn['ip'];
-								$firstentry = false;
+					$openvpncfg = array();
+					foreach ($config['openvpn']['user'] as $openvpn)
+						/* XXX: Check if we have the right ip? */
+						$openvpncfg[$openvpn['name']] = $openvpn['ip'];
+					$vpn_addresses = filter_generate_nested_alias($alias['address']);
+					$vpn_lines = split("\n", $vpn_addresses);
+					foreach ($vpn_lines as $vpn_line) {
+						$vpn_address_split = split(" ", $vpn_line);
+						foreach($vpn_address_split as $vpnsplit) {
+							if(isset($openvpncfg[$vpnsplit])) {
+								$newaddress .= " ";
+								$newaddress .= $openvpn[$vpnsplit];
+								break;
 							}
 						}
 					}
-				} else {
-					$newaddress = $alias['address'];
-				}
+				} else
+					$newaddress = filter_generate_nested_alias($alias['address']);
+				break;
 			}
 		}
 		return $newaddress;
@@ -685,36 +690,6 @@ function alias_expand($name) {
 		return "\${$name}";
 	else if (is_ipaddr($name) || is_subnet($name))
 		return "{$name}";
-	else
-		return null;
-}
-
-/* expand a host alias, if necessary */
-function alias_expand_host($name) {
-	global $aliastable;
-
-	if (isset($aliastable[$name])) {
-		$ip_arr = explode(" ", $aliastable[$name]);
-		foreach($ip_arr as $ip) {
-			if (!is_ipaddr($ip))
-				return null;
-		}
-		return $aliastable[$name];
-	} else if (is_ipaddr($name))
-		return $name;
-	else
-		return null;
-}
-
-/* expand a network alias, if necessary */
-function alias_expand_net($name) {
-
-	global $aliastable;
-
-	if (isset($aliastable[$name]) && is_subnet($aliastable[$name]))
-		return $aliastable[$name];
-	else if (is_subnet($name))
-		return $name;
 	else
 		return null;
 }

@@ -156,7 +156,6 @@ pfSenseNanoBSDupgrade)
 	/bin/mkdir -p /tmp/configbak
 	cp -p /conf/* /tmp/configbak 2>/dev/null
 
-	touch /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 
 	echo "Installing $IMG." >> /conf/upgrade_log.txt 2>&1
@@ -261,10 +260,12 @@ pfSenseNanoBSDupgrade)
 	if [ $? != 0 ]; then
 		file_notice "UpgradeFailure" "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state."
 		rm /var/run/firmwarelock.dirty
-		/etc/rc.conf_mount_ro
-		echo "Upgrade failed.  Please check the system log file for more information" | wall
+		/etc/rc.conf_mount_ro		
 		exit 1
 	fi
+
+	# Enable foot shooting
+	sysctl kern.geom.debugflags=16
 
 	# Add back the corresponding glabel
 	echo "" >> /conf/upgrade_log.txt
@@ -296,7 +297,6 @@ pfSenseNanoBSDupgrade)
 		rm /var/run/firmwarelock.dirty
 		umount /tmp/$GLABEL_SLICE
 		/etc/rc.conf_mount_ro
-		echo "Upgrade failed.  Please check the system log file for more information" | wall		
 		exit 1
 	fi
 	echo "" >> /conf/upgrade_log.txt
@@ -314,7 +314,7 @@ pfSenseNanoBSDupgrade)
 	# Set active mount slice in fdisk
 	echo "" >> /conf/upgrade_log.txt
 	echo "gpart set -a active -i ${SLICE} ${BOOT_DRIVE}" >> /conf/upgrade_log.txt
-	gpart set -a active -i ${SLICE} ${BOOT_DRIVE}
+	gpart set -a active -i ${SLICE} ${BOOT_DRIVE} >> /conf/upgrade_log.txt 2>&1
 
 	sync
 
@@ -323,6 +323,9 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /conf/upgrade_log.txt
 	echo "/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE}" >> /conf/upgrade_log.txt
 	/usr/sbin/boot0cfg -s ${SLICE} -v /dev/${BOOT_DRIVE} >> /conf/upgrade_log.txt 2>&1
+
+	# Disable foot shooting
+	sysctl kern.geom.debugflags=0
 
 	# Grab a final look at fdisk
 	echo "" >> /conf/fdisk_upgrade_log.txt

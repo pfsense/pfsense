@@ -356,20 +356,23 @@ function filter_generate_scrubing()
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($name, $alias) {
-	global $aliastable, $aliasnesting;
+function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
+	global $aliastable;
 	
 	$addresses = split(" ", $alias);
 	$finallist = "";
 	$aliasnesting[$name] = $name;
 	foreach ($addresses as $address) {
 		$linelength = strlen($finallist);
+		$tmpline = "";
 		if (is_alias($address)) {
 			/* We already expanded this alias so there is no neccessity to do it again. */
 			if (!isset($aliasnesting[$address]))
-				$tmpline = filter_generate_nested_alias($address, $aliastable[$address]);
-		} else
+				$tmpline = filter_generate_nested_alias($address, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
+		} else if (!isset($aliasaddrnesting[$address])) {
+			$aliasaddrnesting[$address] = $address;
 			$tmpline = " $address";
+		}
 		if ((strlen($tmpline)+ $linelength) > 4036)
 			$finallist .= "\n";
 		$finallist .= " {$tmpline}";
@@ -378,7 +381,7 @@ function filter_generate_nested_alias($name, $alias) {
 }
 
 function filter_generate_aliases() {
-	global $config, $FilterIflist, $aliasnesting;
+	global $config, $FilterIflist;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_generate_aliases() being called $mt\n";
@@ -398,7 +401,8 @@ function filter_generate_aliases() {
 			$ip = find_interface_ip($aliased['address']);
 			$extraalias = " " . link_ip_to_carp_interface($ip);
 			$aliasnesting = array();
-			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address']);
+			$aliasaddrnesting = array();
+			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
 			if ($aliased['type'] == "host" || $aliased['type'] == "network") {
 				$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
@@ -603,7 +607,6 @@ function filter_generate_reflection($rule, $extport, &$starting_localhost_port) 
 
 		update_filter_reload_status("Setting up reflection");
 		$natrules .= "\n# Reflection redirects\n";
-		print_r($FilterIfList);
 		foreach ($FilterIflist as $ifent => $ifname) {
 			/* do not process interfaces with gateways*/
 			if (interface_has_gateway($ifent))

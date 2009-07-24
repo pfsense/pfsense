@@ -55,7 +55,7 @@ function alias_same_type($name, $type) {
 	
 	foreach ($config['aliases']['alias'] as $alias) {
 		if ($name == $alias['name']) {
-			if (in_array($type, array("host", network")) &&
+			if (in_array($type, array("host", "network")) &&
 				in_array($alias['type'], array("host", "network")))
 				return true;
 			if ($type  == $alias['type'])

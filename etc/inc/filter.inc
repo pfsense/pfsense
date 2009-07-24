@@ -364,11 +364,9 @@ function filter_generate_nested_alias($name, $alias) {
 	$aliasnesting[$name] = $name;
 	foreach ($addresses as $address) {
 		$linelength = strlen($finallist);
-		if (isset($aliastable[$address])) {
+		if (is_alias($address)) {
+			/* We already expanded this alias so there is no neccessity to do it again. */
 			if (!isset($aliasnesting[$address]))
-				/* We already expanded this alias so there 
-				 * is no neccessity to do it again.
-				 */
 				$tmpline = filter_generate_nested_alias($address, $aliastable[$address]);
 		} else
 			$tmpline = " $address";
@@ -380,7 +378,7 @@ function filter_generate_nested_alias($name, $alias) {
 }
 
 function filter_generate_aliases() {
-	global $config, $FilterIflist, $aliastable, $aliasnesting;
+	global $config, $FilterIflist, $aliasnesting;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_generate_aliases() being called $mt\n";

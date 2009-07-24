@@ -3549,6 +3549,10 @@ function read_altq_config() {
 	global $altq_list_queues, $config;
 	$path = array();
 	
+	if (!is_array($config['shaper']))
+		$config['shaper'] = array();
+	if (!is_array($config['shaper']['queue']))
+		$config['shaper']['queue'] = array();
 	$a_int = &$config['shaper']['queue'];
 
 	$altq_list_queues = array();

@@ -10,11 +10,15 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">License</p>
 
-            <p><strong><?=$g['product_name']?> is Copyright &copy; 2004-2009 by Scott Ullrich
-              (<a href="mailto:geekgod@geekgod.com">geekgod@geekgod.com</a>).<br>
+            <p><strong><?=$g['product_name']?> is Copyright &copy; 2004-2009 by BSD Perimeter LLC
+              (<a href="mailto:info@bsdperimeter.com">info@bsdperimeter.com</a>).<br>
               All rights reserved.</strong></p>
+            
+            <p><strong>pfSense is a federally registered trademark in the United States of BSD Perimeter
+            LLC. Any unauthorized use of this trademark is prohibited by state and federal law
+            and international treaties.</strong></p>
 
-            <p><strong>m0n0wall is Copyright &copy; 2002-2009 by Manuel Kasper
+            <p><strong>Portions from m0n0wall, Copyright &copy; 2002-2009 by Manuel Kasper
               (<a href="mailto:mk@neon1.net">mk@neon1.net</a>).<br>
               All rights reserved.</strong></p>
             <p> Redistribution and use in source and binary forms, with or without<br>
@@ -137,7 +141,7 @@ include("head.inc");
               <br>
               PF (<a href="http://www.openbsd.org/faq/pf" target="_blank">http://www.openbsd.org</a>)<br>
 			  <br>
-              MPD - Multi-link PPP daemon for FreeBSD (<a href="http://www.dellroad.org/mpd" target="_blank">http://www.dellroad.org/mpd</a>)<br>
+              MPD - Multi-link PPP daemon for FreeBSD (<a href="http://mpd.sourceforge.net" target="_blank">http://mpd.sourceforge.net</a>)<br>
               Copyright &copy; 2003-2004, Archie L. Cobbs, Michael Bretterklieber, Alexander Motin<br>
 			  All rights reserved.<br>
               <br>

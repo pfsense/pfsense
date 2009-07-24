@@ -241,9 +241,15 @@ if ($_POST) {
 		$alias['type'] = $_POST['type'];
 		$alias['detail'] = $final_address_details;
 
-		if (isset($id) && $a_aliases[$id])
+		if (isset($id) && $a_aliases[$id]) {
+			if ($a_aliases[$id]['name'] <> $alias['name']) {
+				foreach ($a_aliases as $aliasid => $aliasd) {
+					if (strstr($aliasd['address'], $a_aliases[$id]['name']))
+						$a_aliases[$aliasid]['address'] = str_replace($a_aliases[$id]['name'], $alias['name'], $a_aliases[$aliasid]['address']);
+				}
+			}
 			$a_aliases[$id] = $alias;
-		else
+		} else
 			$a_aliases[] = $alias;
 
 		mark_subsystem_dirty('aliases');

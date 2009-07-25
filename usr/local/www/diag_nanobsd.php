@@ -73,6 +73,7 @@ if(strstr($REAL_BOOT_DEVICE, "s1")) {
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 
 <?php include("fbegin.inc"); ?>
 

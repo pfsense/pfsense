@@ -107,6 +107,7 @@ EOF;
 		$AOLD_UFS_ID="1";
 		$ABOOTFLASH="{$ABOOT_DRIVE}s{$AOLDSLICE}";
 	}
+	exec("sysctl kern.geom.debugflags=16");	
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
 	exec("/bin/mkdir /tmp/{$AGLABEL_SLICE}");
@@ -119,6 +120,7 @@ EOF;
 EOF;
 	file_put_contents("/tmp/{$AGLABEL_SLICE}/etc/fstab", $fstab);
 	exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
+	exec("sysctl kern.geom.debugflags=0");
 	$savemsg = "The boot slice has been set to {$ABOOT_DRIVE} {$AGLABEL_SLICE}";
 }
 
@@ -133,6 +135,7 @@ echo <<<EOF
 EOF;
 	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
 	ob_implicit_flush(1);
+	exec("sysctl kern.geom.debugflags=16");
 	exec("dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
 	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
 	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
@@ -148,6 +151,7 @@ EOF;
 		$savemsg = "The slice has been duplicated.<p/>If you would like to boot from this newly duplicated slice please set it using the bootup information area.";
 		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
 	}
+	exec("sysctl kern.geom.debugflags=0");
 }
 
 if ($savemsg)

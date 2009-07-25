@@ -106,6 +106,7 @@ EOF;
 		$AOLD_UFS_ID="1";
 		$ABOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
 	}
+	exec("sysctl kern.geom.debugflags=16");
 	exec("gpart set -a active -i {$ASLICE} {$ABOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$ABOOT_DRIVE}");
 	exec("/bin/mkdir /tmp/{$AGLABEL_SLICE}");
@@ -118,6 +119,7 @@ EOF;
 		exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
 	}
 	exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
+	exec("sysctl kern.geom.debugflags=0");
 	$savemsg = "The boot slice has been set to {$ABOOT_DRIVE} {$ASLICE}";
 }
 
@@ -132,6 +134,7 @@ echo <<<EOF
 EOF;
 	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
 	ob_implicit_flush(1);
+	exec("sysctl kern.geom.debugflags=16");
 	exec("dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
 	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
 	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
@@ -139,6 +142,7 @@ EOF;
 	exec("/sbin/fsck_ufs -y /dev/{$COMPLETE_PATH}");
 	exec("/sbin/mount /dev/ufs/{$GLABEL_SLICE} /tmp/{$GLABEL_SLICE}");
 	exec("/bin/cp /etc/fstab /tmp/{$GLABEL_SLICE}/etc/fstab");
+	exec("sysctl kern.geom.debugflags=0");
 	$status = exec("sed -i \"\" \"s/pfsense{$OLD_UFS_ID}/pfsense{$UFS_ID}/g\" /tmp/{$GLABEL_SLICE}/etc/fstab");
 	if($status) {
 		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");

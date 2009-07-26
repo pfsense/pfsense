@@ -3589,6 +3589,10 @@ function read_dummynet_config() {
 	$dnqueuenumber = 1;
 	$dnpipenumber = 1;
 
+	if (!is_array($config['dnshaper']))
+		$config['dnshaper'] = array();
+	if (!is_array($config['dnshaper']['queue']))
+		$config['dnshaper']['queue'] = array();
 	$a_int = &$config['dnshaper']['queue'];
 
 	$dummynet_pipe_list = array();

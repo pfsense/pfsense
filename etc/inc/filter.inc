@@ -1739,7 +1739,7 @@ EOD;
 	 *  interface in question to avoid problems with complicated routing
 	 *  topologies 
 	 */
-	if (isset($config['system']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
+	if (isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		$ipfrules .= "anchor \"staticrouted\" \n";
 		foreach ($config['staticroutes']['route'] as $route) {
 			$realif = guess_interface_from_ip(lookup_gateway_ip_by_name($route['gateway']));

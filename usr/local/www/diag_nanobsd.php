@@ -93,20 +93,20 @@ EOF;
 		$ASLICE="2";
 		$AOLDSLICE="1";
 		$ATOFLASH="{$BOOT_DRIVE}s{$ASLICE}";
-		$ACOMPLETE_PATH="{$ABOOT_DRIVE}s{$ASLICE}a";
+		$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
 		$AGLABEL_SLICE="pfsense1";
 		$AUFS_ID="1";
 		$AOLD_UFS_ID="0";
-		$ABOOTFLASH="{$ABOOT_DRIVE}s{$AOLDSLICE}";
+		$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
 	} else {
 		$ASLICE="1";
 		$AOLDSLICE="2";
-		$ATOFLASH="{$ABOOT_DRIVE}s{$ASLICE}";
-		$ACOMPLETE_PATH="{$ABOOT_DRIVE}s{$ASLICE}a";
+		$ATOFLASH="{$BOOT_DRIVE}s{$ASLICE}";
+		$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
 		$AGLABEL_SLICE="pfsense0";
 		$AUFS_ID="0";
 		$AOLD_UFS_ID="1";
-		$ABOOTFLASH="{$ABOOT_DRIVE}s{$AOLDSLICE}";
+		$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
 	}
 	exec("sysctl kern.geom.debugflags=16");	
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
@@ -122,7 +122,7 @@ EOF;
 	file_put_contents("/tmp/{$AGLABEL_SLICE}/etc/fstab", $fstab);
 	exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
 	exec("sysctl kern.geom.debugflags=0");
-	$savemsg = "The boot slice has been set to {$ABOOT_DRIVE} {$AGLABEL_SLICE}";
+	$savemsg = "The boot slice has been set to {$BOOT_DRIVE} {$AGLABEL_SLICE}";
 }
 
 if($_POST['destslice']) {

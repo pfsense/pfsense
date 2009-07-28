@@ -107,13 +107,13 @@ EOF;
 		$AOLD_UFS_ID="1";
 		$ABOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
 	}
+	conf_mount_rw();
 	exec("sysctl kern.geom.debugflags=16");
 	exec("gpart set -a active -i {$ASLICE} {$ABOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$ABOOT_DRIVE}");
 	exec("/bin/mkdir /tmp/{$AGLABEL_SLICE}");
 	exec("/sbin/fsck_ufs -y /dev/{$ACOMPLETE_PATH}");
 	exec("/sbin/mount /dev/ufs/{$AGLABEL_SLICE} /tmp/{$AGLABEL_SLICE}");
-	exec("/bin/cp /etc/fstab /tmp/{$AGLABEL_SLICE}/etc/fstab");
 	$status = exec("sed -i \"\" \"s/pfsense{$OLD_UFS_ID}/pfsense{$UFS_ID}/g\" /tmp/{$AGLABEL_SLICE}/etc/fstab");
 	if($status) {
 		file_notice("UpgradeFailure","Something went wrong when trying to update the fstab entry.  Aborting upgrade.");
@@ -121,6 +121,7 @@ EOF;
 	}
 	exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
 	exec("sysctl kern.geom.debugflags=0");
+	conf_mount_ro();
 	$savemsg = "The boot slice has been set to {$ABOOT_DRIVE} {$ASLICE}";
 }
 

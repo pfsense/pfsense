@@ -244,8 +244,14 @@ if ($_POST) {
 		if (isset($id) && $a_aliases[$id]) {
 			if ($a_aliases[$id]['name'] <> $alias['name']) {
 				foreach ($a_aliases as $aliasid => $aliasd) {
-					if (strstr($aliasd['address'], $a_aliases[$id]['name']))
-						$a_aliases[$aliasid]['address'] = str_replace($a_aliases[$id]['name'], $alias['name'], $a_aliases[$aliasid]['address']);
+					if ($aliasd['address'] <> "") {
+						$tmpaddr = explode(" ", $aliasd['address']);
+						foreach ($tmpaddr as $tmpidx => $tmpalias) {
+							if ($tmpalias == $a_aliases[$id]['name'])
+								$tmpaddr[$tmpidx] = $alias['name'];
+						}
+						$a_aliases[$aliasid]['address'] = implode(" ", $tmpaddr);
+					}
 				}
 			}
 			$a_aliases[$id] = $alias;

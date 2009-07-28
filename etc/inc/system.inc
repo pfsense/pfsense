@@ -519,7 +519,7 @@ function system_webgui_start() {
 	$key = "";
 
 	/* non-standard port? */
-	if ($config['system']['webgui']['port'])
+	if (isset($config['system']['webgui']['port']) && $config['system']['webgui']['port'] <> "")
 		$portarg = "{$config['system']['webgui']['port']}";
 
 	if ($config['system']['webgui']['protocol'] == "https") {

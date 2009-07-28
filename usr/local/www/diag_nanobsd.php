@@ -38,6 +38,7 @@ ini_set('implicit_flush', 1);
 ini_set('max_input_time', '9999');
 
 require_once("guiconfig.inc");
+require_once("config.inc");
 
 $pgtitle = array("Diagnostics","NanoBSD");
 include("head.inc");
@@ -91,38 +92,38 @@ EOF;
 	if(strstr($_POST['bootslice'], "s2")) {
 		$ASLICE="2";
 		$AOLDSLICE="1";
-		$ATOFLASH="{$BOOT_DRIVE}s{$SLICE}";
-		$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
+		$ATOFLASH="{$BOOT_DRIVE}s{$ASLICE}";
+		$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
 		$AGLABEL_SLICE="pfsense1";
 		$AUFS_ID="1";
 		$AOLD_UFS_ID="0";
-		$ABOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
+		$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
 	} else {
 		$ASLICE="1";
 		$AOLDSLICE="2";
-		$ATOFLASH="{$BOOT_DRIVE}s{$SLICE}";
-		$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
+		$ATOFLASH="{$BOOT_DRIVE}s{$ASLICE}";
+		$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
 		$AGLABEL_SLICE="pfsense0";
 		$AUFS_ID="0";
 		$AOLD_UFS_ID="1";
-		$ABOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
+		$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
 	}
 	conf_mount_rw();
 	exec("sysctl kern.geom.debugflags=16");
-	exec("gpart set -a active -i {$ASLICE} {$ABOOT_DRIVE}");
-	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$ABOOT_DRIVE}");
+	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
+	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
 	exec("/bin/mkdir /tmp/{$AGLABEL_SLICE}");
 	exec("/sbin/fsck_ufs -y /dev/{$ACOMPLETE_PATH}");
 	exec("/sbin/mount /dev/ufs/{$AGLABEL_SLICE} /tmp/{$AGLABEL_SLICE}");
-	$status = exec("sed -i \"\" \"s/pfsense{$OLD_UFS_ID}/pfsense{$UFS_ID}/g\" /tmp/{$AGLABEL_SLICE}/etc/fstab");
-	if($status) {
-		file_notice("UpgradeFailure","Something went wrong when trying to update the fstab entry.  Aborting upgrade.");
-		exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
-	}
+	$fstab = <<<EOF
+/dev/ufs/{$AGLABEL_SLICE} / ufs ro 1 1
+/dev/ufs/cf /cf ufs ro 1 1	
+EOF;
+	file_put_contents("/tmp/{$AGLABEL_SLICE}/etc/fstab", $fstab);
 	exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
 	exec("sysctl kern.geom.debugflags=0");
 	conf_mount_ro();
-	$savemsg = "The boot slice has been set to {$ABOOT_DRIVE} {$ASLICE}";
+	$savemsg = "The boot slice has been set to {$ABOOT_DRIVE} {$AGLABEL_SLICE}";
 }
 
 if($_POST['destslice']) {

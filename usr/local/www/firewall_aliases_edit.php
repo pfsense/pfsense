@@ -245,12 +245,16 @@ if ($_POST) {
 			if ($a_aliases[$id]['name'] <> $alias['name']) {
 				foreach ($a_aliases as $aliasid => $aliasd) {
 					if ($aliasd['address'] <> "") {
+						$tmpdirty = false;
 						$tmpaddr = explode(" ", $aliasd['address']);
 						foreach ($tmpaddr as $tmpidx => $tmpalias) {
-							if ($tmpalias == $a_aliases[$id]['name'])
+							if ($tmpalias == $a_aliases[$id]['name']) {
 								$tmpaddr[$tmpidx] = $alias['name'];
+								$tmpdirty = true;
+							}
 						}
-						$a_aliases[$aliasid]['address'] = implode(" ", $tmpaddr);
+						if ($tmpdirty == true)
+							$a_aliases[$aliasid]['address'] = implode(" ", $tmpaddr);
 					}
 				}
 			}

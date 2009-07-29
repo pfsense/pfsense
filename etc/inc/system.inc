@@ -459,12 +459,12 @@ EOD;
 		fclose($fd);
 		// Are we logging to a least one remote server ?
 		if(strpos($syslogconf, "@") != false)
-			$retval = system("/usr/sbin/syslogd -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -c -f {$g['varetc_path']}/syslog.conf");
 		else
-			$retval = system("/usr/sbin/syslogd -f {$g['varetc_path']}/syslog.conf");
+			$retval = system("/usr/sbin/syslogd -c -f {$g['varetc_path']}/syslog.conf");
 
 	} else {
-		$retval = mwexec("/usr/sbin/syslogd");
+		$retval = mwexec("/usr/sbin/syslogd -c");
 	}
 
 	if ($g['booting'])

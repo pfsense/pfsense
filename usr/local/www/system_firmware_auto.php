@@ -129,7 +129,13 @@ if($needs_system_upgrade == true) {
 }
 
 /* launch external upgrade helper */
-$external_upgrade_helper_text = "/etc/rc.firmware pfSenseupgrade ";
+$external_upgrade_helper_text = "/etc/rc.firmware ";
+
+if($g['platform'] == "nanobsd")
+	$external_upgrade_helper_text .= "pfSenseNanoBSDupgrade ";
+else
+	$external_upgrade_helper_text .= "pfSenseupgrade ";
+
 if($needs_system_upgrade == true)
 	$external_upgrade_helper_text .= "/tmp/latest.tgz";
 

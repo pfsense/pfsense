@@ -158,7 +158,8 @@ else if (($sigchk == 3) || ($sigchk == 4))
 if (!verify_gzip_file("/tmp/latest.tgz")) {
 	update_status("The image file is corrupt.");
 	update_output_window("Update cannot continue");
-	unlink("{$g['upload_path']}/latest.tgz");
+	if (file_exists("{$g['upload_path']}/latest.tgz"))
+		unlink("{$g['upload_path']}/latest.tgz");
 	require("fend.inc");
 	exit;
 }
@@ -166,7 +167,8 @@ if (!verify_gzip_file("/tmp/latest.tgz")) {
 if ($sigchk) {
 	update_status($sig_warning);
 	update_output_window("Update cannot continue");
-	unlink("{$g['upload_path']}/latest.tgz");
+	if (file_exists("{$g['upload_path']}/latest.tgz"))
+		unlink("{$g['upload_path']}/latest.tgz");
 	require("fend.inc");
 	exit;
 }

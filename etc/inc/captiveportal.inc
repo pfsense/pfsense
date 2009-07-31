@@ -464,6 +464,7 @@ function captiveportal_prune_old() {
      *  the loop would evalate count() on every iteration and since $i would increase and count() would decrement they
      *  would meet before we had a chance to iterate over all accounts.
      */
+    $unsetindexes = array();
     $no_users = count($cpdb);
     for ($i = 0; $i < $no_users; $i++) {
 
@@ -525,7 +526,7 @@ function captiveportal_prune_old() {
         if ($timedout) {
             captiveportal_disconnect($cpdb[$i], $radiusservers,$term_cause,$stop_time);
             captiveportal_logportalauth($cpdb[$i][4], $cpdb[$i][3], $cpdb[$i][2], "TIMEOUT");
-            unset($cpdb[$i]);
+	    $unsetindexes[$i] = $i;
         }
 
         /* do periodic RADIUS reauthentication? */
@@ -580,10 +581,13 @@ function captiveportal_prune_old() {
             if ($auth_list['auth_val'] == 3) {
                 captiveportal_disconnect($cpdb[$i], $radiusservers, 17);
                 captiveportal_logportalauth($cpdb[$i][4], $cpdb[$i][3], $cpdb[$i][2], "RADIUS_DISCONNECT", $auth_list['reply_message']);
-                unset($cpdb[$i]);
+	        $unsetindexes[$i] = $i;
             }
         }
     }
+    /* This is a kludge to overcome some php weirdness */
+    foreach($unsetindexes as $unsetindex)
+	unset($cpdb[$unsetindex]);
 
     /* write database */
     captiveportal_write_db($cpdb);

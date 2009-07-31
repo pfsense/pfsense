@@ -130,8 +130,10 @@ if($current_installed_pfsense_version <> $latest_version)
 
 if($needs_system_upgrade == true) {
 	update_status("Downloading updates ...");
-	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz", "/tmp/latest.tgz", "read_body_firmware");	
-	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz.sha256", "/tmp/latest.tgz.sha256");
+	conf_mount_rw();
+	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
+	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz.sha256", "{$g['upload_path']}/latest.tgz.sha256");
+	conf_mount_ro();
 	update_output_window("{$g['product_name']} download complete.");
 }
 
@@ -144,15 +146,15 @@ else
 	$external_upgrade_helper_text .= "pfSenseupgrade ";
 
 if($needs_system_upgrade == true)
-	$external_upgrade_helper_text .= "/tmp/latest.tgz";
+	$external_upgrade_helper_text .= "{$g['upload_path']}/latest.tgz";
 
-$downloaded_latest_tgz_sha256 = str_replace("\n", "", `sha256 /tmp/latest.tgz  | awk '{ print $4 }'`);
-$upgrade_latest_tgz_sha256 = str_replace("\n", "", `cat /tmp/latest.tgz.sha256 | awk '{ print $4 }'`);
+$downloaded_latest_tgz_sha256 = str_replace("\n", "", `sha256 {$g['upload_path']}/latest.tgz  | awk '{ print $4 }'`);
+$upgrade_latest_tgz_sha256 = str_replace("\n", "", `cat {$g['upload_path']}/latest.tgz.sha256 | awk '{ print $4 }'`);
 
 $sigchk = 0;
 
 if(!isset($curcfg['alturl']['enable']))
-	$sigchk = verify_digital_signature("/tmp/latest.tgz");
+	$sigchk = verify_digital_signature("{$g['upload_path']}/latest.tgz");
 
 if ($sigchk == 1)
 	$sig_warning = "The digital signature on this image is invalid.";
@@ -161,11 +163,14 @@ else if ($sigchk == 2)
 else if (($sigchk == 3) || ($sigchk == 4))
 	$sig_warning = "There has been an error verifying the signature on this image.";
 
-if (!verify_gzip_file("/tmp/latest.tgz")) {
+if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {
 	update_status("The image file is corrupt.");
 	update_output_window("Update cannot continue");
-	if (file_exists("{$g['upload_path']}/latest.tgz"))
+	if (file_exists("{$g['upload_path']}/latest.tgz")) {
+		conf_mount_rw();
 		unlink("{$g['upload_path']}/latest.tgz");
+		conf_mount_ro();
+	}
 	require("fend.inc");
 	exit;
 }
@@ -173,8 +178,11 @@ if (!verify_gzip_file("/tmp/latest.tgz")) {
 if ($sigchk) {
 	update_status($sig_warning);
 	update_output_window("Update cannot continue");
-	if (file_exists("{$g['upload_path']}/latest.tgz"))
+	if (file_exists("{$g['upload_path']}/latest.tgz")) {
+		conf_mount_rw();
 		unlink("{$g['upload_path']}/latest.tgz");
+		conf_mount_ro();
+	}
 	require("fend.inc");
 	exit;
 }

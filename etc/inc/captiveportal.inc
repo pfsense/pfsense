@@ -168,7 +168,7 @@ EOD;
 <b>
 Username and/or password invalid.
 <br><br>
-<a href="javascript:history.back()">Go back</a>
+<a href="javascript:history.back(); ">Go back</a>
 </b>
 </body>
 </html>

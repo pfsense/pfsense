@@ -41,7 +41,7 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	mdmfs -S -M -s 4m md /var/run
 fi
 
-product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
+product=`echo '<? include("/etc/inc/globals.inc"); die($g["product_name"]); ?>' | /usr/local/bin/php -q`
 hideplatform=`cat /etc/inc/globals.inc | grep hideplatform | wc -l`
 
 if [ "$hideplatform" -gt "0" ]; then

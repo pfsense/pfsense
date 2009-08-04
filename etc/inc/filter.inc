@@ -1552,7 +1552,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			}
 
 			/* do not process reply-to for gateway'd rules */
-			if(($rule['gateway'] == "") and ($ri != "") and ($rg != "")) {
+			if(($rule['gateway'] == "") and ($ri != "") and ($rg != "") and (!isset($config['filter']['disablereplyto']))) {
 				$aline['reply'] = "reply-to (" . $ri . " " . $rg . ") ";
 			}
 

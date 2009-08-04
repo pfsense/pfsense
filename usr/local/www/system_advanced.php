@@ -58,6 +58,7 @@ $pconfig['authorizedkeys'] = base64_decode($config['system']['ssh']['authorizedk
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
+$pconfig['disablereplyto'] = isset($config['filter']['disablereplyto']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disableglxsb'] = isset($config['system']['disableglxsb']);
@@ -258,6 +259,12 @@ if ($_POST) {
 			$config['system']['disablenatreflection'] = $_POST['disablenatreflection'];
 		} else {
 			unset($config['system']['disablenatreflection']);
+		}
+                
+                if($_POST['disablereplyto'] == "yes") {
+			$config['filter']['disablereplyto'] = $_POST['disablereplyto'];
+		} else {
+			unset($config['filter']['disablereplyto']);
 		}
 
 		// Traffic shaper
@@ -671,6 +678,17 @@ include("head.inc");
 				<br />
 				<span class="vexpl">Note:  This disables automatically added rules for IPsec, PPTP, and OpenVPN. 
 				</span>
+			</td>
+		</tr>
+                <tr>
+			<td width="22%" valign="top" class="vncell">Disable reply-to</td>
+			<td width="78%" class="vtable">
+				<input name="disablereplyto" type="checkbox" id="disablereplyto" value="yes" <?php if ($pconfig['disablereplyto']) echo "checked"; ?> />
+				<strong>Disable reply-to on WAN rules</strong>
+				<br />
+				With Multi-WAN you generally want to ensure traffic leaves the same interface it arrives on, hence reply-to is added automatically by default.
+                                When using bridging, you must disable this behavior if the WAN gateway IP is different from the gateway IP of the hosts behind the bridged interface. 
+				<br />
 			</td>
 		</tr>
 		<tr>

@@ -92,7 +92,12 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 elif [ "$PLATFORM" = "embedded" ] ; then
     # do nothing for embedded platform
 elif [ "$PLATFORM" = "nanobsd" ] ; then
-    # do nothing for nanobsd platform
+	/bin/mkdir -p /root/var/db/pkg
+	/bin/mkdir -p /root/var/tmp
+
+	# Ensure that packages can be persistent across reboots
+	ln -s /var/db/pkg /root/var/db/pkg
+	ln -s /var/tmp /root/var/tmp
 else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
     /sbin/swapon -a 2>/dev/null >/dev/null
@@ -126,13 +131,6 @@ fi
 echo -n "Creating symlinks..."
 # Make sure symlink is correct on embedded
 if [ "$PLATFORM" = "embedded" ] ; then
-	/bin/mkdir -p /root/var/db/pkg
-	/bin/mkdir -p /root/var/tmp
-
-	# Ensure that packages can be persistent across reboots
-	ln -s /var/db/pkg /root/var/db/pkg
-	ln -s /var/tmp /root/var/tmp
-
 	rm /conf
 	ln -s /cf/conf/ /conf
 fi

@@ -136,10 +136,10 @@ div.niceTitle p
 body {
   margin: 0px auto;
   align: left;
-  background: url('images/background.jpg') repeat-y;
+  background: url('images/background.jpg') no-repeat;
   background-position : left 0px;
   background-attachment: fixed;
-  background-color: #cccccc;
+  background-color: #7f7f7f;
 }
 a:link {
 	color: #550000;
@@ -181,7 +181,6 @@ iframe {
 	color:#666666;
 	background:#eeeeee;
 }
-
 
 /* ID Based CSS Definitions */
 /* margin: 0px auto makes the content centered, margin 0px 0px makes it aligned to the left */
@@ -339,13 +338,15 @@ table#marquee div#container div#scroller {
 
 #content {
 	position: relative;
-	top: 50px;
+	top: 0px;
 	left: 75px;
 	margin-top: 0px;
 	margin-left: 0px;
-	padding-top: 0px;
-	width: 810px;
+	padding-top: 50px;
+	padding-left: 20px;
+	width: 840px;
 	background-color: #ffffff;
+	background: url('images/horizontal.png') repeat-y;
 }
 
 
@@ -363,26 +364,26 @@ table#marquee div#container div#scroller {
 	margin-top: 0px;
 	margin-left: 5px;
 	margin-right: 5px;
-	padding-top: 5px;
+	padding-top: 20px;
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-bottom: 90px;
+	min-height: 400px;
 
 }
 
 #footer {
-	position: fixed;
-/*	margin-bottom: 20px; */
-	padding-top: 17px;
-/*	background: url('images/footer.png') repeat-x; /*
-/*	top: -18px; */
+	position: relative;
+/*	margin-bottom: 5px; */
+	background: url('images/footer.png') no-repeat;
+/*	top: -100px; */
 	bottom: 0px;
-	left: 890px;
+	left: 75px;
 /*	width: 1210px; */
-	width: 180px;
-	height: 100px;
-	color: #dddddd;
-	text-align: left;
+	width: 840px;
+	height: 60px;
+	color: #000000;
+	text-align: center;
 	font-size: 0.9em;
 	padding-top: 10px;
 	padding-left: 10px;
@@ -1058,7 +1059,6 @@ ul#tabnav li.tabact {
 }
 
 /* style of disabled formelements */
-
 [disabled] {
 	color:#666666;
 	background:#eeeeee;

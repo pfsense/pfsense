@@ -126,6 +126,13 @@ fi
 echo -n "Creating symlinks..."
 # Make sure symlink is correct on embedded
 if [ "$PLATFORM" = "embedded" ] ; then
+	/bin/mkdir -p /root/var/db/pkg
+	/bin/mkdir -p /root/var/tmp
+
+	# Ensure that packages can be persistent across reboots
+	ln -s /var/db/pkg /root/var/db/pkg
+	ln -s /var/tmp /root/var/tmp
+
 	rm /conf
 	ln -s /cf/conf/ /conf
 fi

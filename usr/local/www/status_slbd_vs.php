@@ -143,7 +143,7 @@ include("head.inc");
 			</table>
                   </td>
                   <td class="listbg" >
-				<font color="#FFFFFF"><?=$vipent['desc'];?></font>
+				<font color="#FFFFFF"><?=$vsent['desc'];?></font>
                   </td>
                 </tr>
 		<?php $i++; endforeach; ?>

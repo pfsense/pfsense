@@ -28,12 +28,6 @@ fi
 
 # Create some needed directories
 /bin/mkdir -p /var/db
-/bin/mkdir -p /root/var/db/pkg
-/bin/mkdir -p /root/var/tmp
-
-# Ensure that packages can be persistent across reboots
-ln -s /var/db/pkg /root/var/db/pkg
-ln -s /var/tmp /root/var/tmp
 
 # Ensure vi's recover directory is present
 /bin/mkdir -p /var/tmp/vi.recover/

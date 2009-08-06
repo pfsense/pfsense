@@ -96,9 +96,8 @@ elif [ "$PLATFORM" = "nanobsd" ] ; then
 	/bin/mkdir -p /root/var/tmp
 
 	# Ensure that packages can be persistent across reboots
-	rm -rf /var/db/pkg /var/tmp
+	rm -rf /var/db/pkg
 	ln -s /root/var/db/pkg/ /var/db/pkg
-	ln -s /root/var/tmp /var/tmp
 else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
     /sbin/swapon -a 2>/dev/null >/dev/null

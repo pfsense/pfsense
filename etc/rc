@@ -90,9 +90,8 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 elif [ "$PLATFORM" = "embedded" ] ; then
     # do nothing for embedded platform
 elif [ "$PLATFORM" = "nanobsd" ] ; then
-	/bin/mkdir -p /root/var/db/pkg
-
 	# Ensure that packages can be persistent across reboots
+	/bin/mkdir -p /root/var/db/pkg
 	rm -rf /var/db/pkg
 	ln -s /root/var/db/pkg/ /var/db/pkg
 else

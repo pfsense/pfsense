@@ -100,9 +100,9 @@ function vpn_ipsec_configure($ipchg = false) {
 	mwexec("/sbin/ifconfig enc0 create", true);
 	mwexec("/sbin/ifconfig enc0 up", true);
 	
-	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=0x00000000");
+	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=0x00000001");
 	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x00000001");
-	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x00000000");
+	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x00000002");
 	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x00000002");
 
 	/* get the automatic /etc/ping_hosts.sh ready */

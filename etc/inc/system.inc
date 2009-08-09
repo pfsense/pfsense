@@ -431,6 +431,12 @@ auth.info;authpriv.info;daemon.info		@{$syslogcfg['remoteserver']}
 
 EOD;
 		}
+                if (isset($syslogcfg['logall'])) {
+			$syslogconf .= <<<EOD
+*.*		                                @{$syslogcfg['remoteserver']}
+
+EOD;
+		}
 		fwrite($fd, $syslogconf);
 		fclose($fd);
 

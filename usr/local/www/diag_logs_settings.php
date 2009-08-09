@@ -41,6 +41,7 @@ $pconfig['dhcp'] = isset($config['syslog']['dhcp']);
 $pconfig['portalauth'] = isset($config['syslog']['portalauth']);
 $pconfig['vpn'] = isset($config['syslog']['vpn']);
 $pconfig['system'] = isset($config['syslog']['system']);
+$pconfig['logall'] = isset($config['syslog']['logall']);
 $pconfig['enable'] = isset($config['syslog']['enable']);
 $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
 $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
@@ -70,6 +71,7 @@ if ($_POST) {
 		$config['syslog']['dhcp'] = $_POST['dhcp'] ? true : false;
 		$config['syslog']['portalauth'] = $_POST['portalauth'] ? true : false;
 		$config['syslog']['vpn'] = $_POST['vpn'] ? true : false;
+		$config['syslog']['logall'] = $_POST['logall'] ? true : false;
 		$config['syslog']['system'] = $_POST['system'] ? true : false;
 		$config['syslog']['disablelocallogging'] = $_POST['disablelocallogging'] ? true : false;
 		$config['syslog']['enable'] = $_POST['enable'] ? true : false;
@@ -193,7 +195,9 @@ function enable_change(enable_over) {
                           firewall events<br> <input name="dhcp" id="dhcp" type="checkbox" value="yes" <?php if ($pconfig['dhcp']) echo "checked"; ?>>
                           DHCP service events<br> <input name="portalauth" id="portalauth" type="checkbox" value="yes" <?php if ($pconfig['portalauth']) echo "checked"; ?>>
                           Portal Auth<br> <input name="vpn" id="vpn" type="checkbox" value="yes" <?php if ($pconfig['vpn']) echo "checked"; ?>>
-                          VPN events</td>
+                          VPN events
+			<br> <input name="logall" id="logall" type="checkbox" value="yes" <?php if ($pconfig['logall']) echo "checked"; ?>>
+                          Everything</td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top">&nbsp;</td>

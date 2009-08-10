@@ -132,7 +132,7 @@ if($_POST['destslice']) {
 echo <<<EOF
  	<div id="loading">
 		<img src="/themes/metallic/images/misc/loader.gif">
-		Duplicaating slice.  Please wait, this will take a moment...
+		Duplicating slice.  Please wait, this will take a moment...
 		<p/>&nbsp;
 	</div>
 EOF;

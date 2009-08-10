@@ -32,12 +32,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
+require_once("globals.inc");
+require_once("config.inc");
 require_once("xmlrpc.inc");
 require_once("xmlparse.inc");
 require_once("service-utils.inc");
 require_once("pfsense-utils.inc");
-require_once("globals.inc");
-
 
 safe_mkdir("/var/db/pkg");
 

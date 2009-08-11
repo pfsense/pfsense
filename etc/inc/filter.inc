@@ -307,6 +307,8 @@ function filter_configure_sync() {
 		fclose($fda);	
 	}
 
+	unlock($filterlck);
+
 	if (file_exists("{$g['tmp_path']}/commands.txt")) {
 		mwexec("sh {$g['tmp_path']}/commands.txt &");
 		unlink("{$g['tmp_path']}/commands.txt");
@@ -316,8 +318,6 @@ function filter_configure_sync() {
 		filter_tdr_install_cron(true);
 	else
 		filter_tdr_install_cron(false);
-
-	unlock($filterlck);
 
 	if ($g['booting'] == true)
 		echo ".";

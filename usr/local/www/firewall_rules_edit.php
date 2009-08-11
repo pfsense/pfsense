@@ -116,7 +116,7 @@ if (isset($id) && $a_filter[$id]) {
 
 	if (isset($a_filter[$id]['tag']) && $a_filter[$id]['tag'] <> "") 
 		$pconfig['tag'] = $a_filter[$id]['tag'];
-	if (isset($a_filter[$id]['tagged']) && $a_filter[$id]['tag'] <> "")
+	if (isset($a_filter[$id]['tagged']) && $a_filter[$id]['tagged'] <> "")
         	$pconfig['tagged'] = $a_filter[$id]['tagged'];
 	if (isset($a_filter[$id]['quick']) && $a_filter[$id]['quick'])
 		$pconfig['quick'] = $a_filter[$id]['quick'];

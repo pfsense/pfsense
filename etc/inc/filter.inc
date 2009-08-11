@@ -292,20 +292,24 @@ function filter_configure_sync() {
 	layer7_start_l7daemon();
 
 	/* run items scheduled for after filter configure run */
-	$fda = fopen("/tmp/commands.txt", "w");
-	foreach($after_filter_configure_run as $afcr) 
-		fwrite($fda, $afcr . "\n");	
-	/*
-         *      we need a way to let a user run a shell cmd after each
-         *      filter_configure() call.  run this xml command after
-         *      each change.
-         */
-        if($config['system']['afterfilterchangeshellcmd'] <> "")
-                fwrite($fda, $config['system']['afterfilterchangeshellcmd'] . "\n");
-	fclose($fda);	
-	if (file_exists("/tmp/commands.txt")) {
-		mwexec("sh /tmp/commands.txt &");
-		unlink("/tmp/commands.txt");
+	$fda = fopen("{$g['tmp_path']}/commands.txt", "w");
+	if ($fda) {
+		foreach($after_filter_configure_run as $afcr) 
+			fwrite($fda, $afcr . "\n");	
+		/*
+         	 *      we need a way to let a user run a shell cmd after each
+         	 *      filter_configure() call.  run this xml command after
+         	 *      each change.
+         	 */
+        	if($config['system']['afterfilterchangeshellcmd'] <> "")
+                	fwrite($fda, $config['system']['afterfilterchangeshellcmd'] . "\n");
+
+		fclose($fda);	
+	}
+
+	if (file_exists("{$g['tmp_path']}/commands.txt")) {
+		mwexec("sh {$g['tmp_path']}/commands.txt &");
+		unlink("{$g['tmp_path']}/commands.txt");
 	}
 	/* if time based rules are enabled then swap in the set */
 	if ($time_based_rules == true)

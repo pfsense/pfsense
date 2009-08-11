@@ -1888,6 +1888,12 @@ function filter_rules_spoofcheck_generate($ifname, $if, $sa, $sn, $log)
 	return $ipfrules;
 }
 
+/* COMPAT Function */
+function tdr_install_cron($should_install) {
+	log_error("Please use filter_tdr_install_cron() function tdr_install_cron will be deprecated!");
+	filter_tdr_install_cron($should_install);
+}
+
 /****f* filter/filter_tdr_install_cron
  * NAME
  *   filter_tdr_install_cron

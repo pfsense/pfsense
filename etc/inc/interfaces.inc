@@ -1979,18 +1979,17 @@ function interface_group_setup($groupname /* The parameter is an array */) {
 	return;
 }
  
-/* XXX: stub for code that references the old functions(mostly packages) */
-/*
- * convert_friendly_interface_to_real_interface_name($interface): convert WAN to FXP0
- */
+/* COMPAT Function */
 function convert_friendly_interface_to_real_interface_name($interface) {
 	return get_real_interface($interface);
 }
 
+/* COMPAT Function */
 function get_real_wan_interface($interface = "wan") {
 	return get_real_interface($interface);
 }
 
+/* COMPAT Function */
 function get_current_wan_address($interface = "wan") {
 	return get_interface_ip($interface);
 }

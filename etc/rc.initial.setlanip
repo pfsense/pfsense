@@ -82,7 +82,7 @@
 				exit(0);
 			}
 		} while (!is_ipaddr($dhcpendip));
-
+		$restart_dhcpd = true;
 		$config['dhcpd']['lan']['enable'] = true;
 		$config['dhcpd']['lan']['range']['from'] = $dhcpstartip;
 		$config['dhcpd']['lan']['range']['to'] = $dhcpendip;
@@ -105,6 +105,9 @@
 
 	write_config("LAN IP configuration from console menu");
 	interfaces_lan_configure();
+
+	if($restart_dhcpd) 
+		services_dhcpd_configure();
 
 	echo <<<EOD
 

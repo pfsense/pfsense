@@ -59,77 +59,37 @@ function listtags_pkg() {
 	return $ret;
 }
 
-function startElement($parser, $name, $attrs) {
-	global $parsedcfg, $depth, $curpath, $havedata, $listtags;
+function add_elements(&$cfgarray, &$parser) {
+        global $listtags;
+        while ($parser->read()) {
+                switch ($parser->nodeType) {
+                case XMLReader::WHITESPACE:
+                        //$type = "WHITESPACE";
+                        break;
+                case XMLReader::SIGNIFICANT_WHITESPACE:
+                        //$type = "SIGNIFICANT_WHITESPACE";
+                        break;
+                case XMLReader::ELEMENT:
+                        if ($parser->isEmptyElement) {
+                                $cfgarray[$parser->name] = "";
+                        } else {
+                                if (in_array($parser->name, $listtags))
+                                        add_elements($cfgarray[$parser->name][count($cfgarray[$parser->name])], $parser);
+                                else
+                                        add_elements($cfgarray[$parser->name], $parser);
+                        }
+                        break;
+                case XMLReader::TEXT:
+                        $cfgarray = $parser->value;
+                        break;
+                case XMLReader::END_ELEMENT:
+                        return;
+                        break;
+                default:
+                        break;
+                }
 
-	array_push($curpath, strtolower($name));
-
-	$ptr =& $parsedcfg;
-	foreach ($curpath as $path) {
-		$ptr =& $ptr[$path];
-	}
-
-	/* is it an element that belongs to a list? */
-	if (in_array(strtolower($name), $listtags)) {
-
-		/* is there an array already? */
-		if (!is_array($ptr)) {
-			/* make an array */
-			$ptr = array();
-		}
-
-		array_push($curpath, count($ptr));
-
-	} else if (isset($ptr)) {
-		/* multiple entries not allowed for this element, bail out */
-		die(sprintf("XML error: %s at line %d cannot occur more than once\n",
-				$name,
-				xml_get_current_line_number($parser)));
-	}
-
-	$depth++;
-	$havedata = $depth;
-}
-
-function endElement($parser, $name) {
-	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
-
-	if ($havedata == $depth) {
-		$ptr =& $parsedcfg;
-		foreach ($curpath as $path) {
-			$ptr =& $ptr[$path];
-		}
-		$ptr = "";
-	}
-
-	array_pop($curpath);
-
-	if (in_array(strtolower($name), $listtags))
-		array_pop($curpath);
-
-	$depth--;
-}
-
-function cData($parser, $data) {
-	global $depth, $curpath, $parsedcfg, $havedata;
-
-	$data = trim($data, "\t\n\r");
-
-	if ($data != "") {
-		$ptr =& $parsedcfg;
-		foreach ($curpath as $path) {
-			$ptr =& $ptr[$path];
-		}
-
-		if (is_string($ptr)) {
-			$ptr .= $data;
-		} else {
-			if (trim($data, " ") != "") {
-				$ptr = $data;
-				$havedata++;
-			}
-		}
-	}
+        }
 }
 
 function parse_xml_config($cffile, $rootobj, $isstring = "false") {
@@ -140,7 +100,7 @@ function parse_xml_config($cffile, $rootobj, $isstring = "false") {
             $listtags[] = $tag;
           }
         }
-	return parse_xml_config_raw($cffile, $rootobj, $isstring);
+	return parse_xml_config_raw($cffile, $rootobj);
 }
 
 function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
@@ -156,34 +116,16 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 
 function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 
-	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
+	global $listtags;
+
 	$parsedcfg = array();
-	$curpath = array();
-	$depth = 0;
-	$havedata = 0;
 
-	$xml_parser = xml_parser_create();
+	$par = new XMLReader();
+	$par->open($cffile);
 
-	xml_set_element_handler($xml_parser, "startElement", "endElement");
-	xml_set_character_data_handler($xml_parser, "cdata");
-
-	if (!($fp = fopen($cffile, "r"))) {
-		die("Error: could not open XML input\n");
-	}
-
-	while ($data = fread($fp, 4096)) {
-		if (!xml_parse($xml_parser, $data, feof($fp))) {
-			log_error(sprintf("XML error: %s at line %d\n",
-						xml_error_string(xml_get_error_code($xml_parser)),
-						xml_get_current_line_number($xml_parser)));
-			return -1;
-		}
-	}
-	xml_parser_free($xml_parser);
-
-	if (!$parsedcfg[$rootobj]) {
-		die("XML error: no $rootobj object found!\n");
-	}
+	add_elements($parsedcfg, $par);
+	
+	$par->close();
 
 	return $parsedcfg[$rootobj];
 }

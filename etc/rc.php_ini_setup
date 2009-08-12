@@ -31,9 +31,7 @@ EXTENSIONSDIR="/usr/local/lib/php/20060613/"
 APCSHMEMSIZE="25"
 
 # Set upload directory
-if [ "$PLATFORM" = "embedded" ]; then
-	UPLOADTMPDIR="/root"
-elif [ "$PLATFORM" = "embedded" ] ; then
+if [ "$PLATFORM" = "embedded" -o "$PLATFORM" = "nanobsd" ]; then
 	UPLOADTMPDIR="/root"
 else 
 	UPLOADTMPDIR="/tmp"

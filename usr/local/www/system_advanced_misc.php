@@ -48,6 +48,7 @@ $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['glxsb_enable'] = isset($config['system']['glxsb_enable']);
+$pconfig['schedule_states'] = isset($config['system']['schedule_states']);
 
 if ($_POST) {
 
@@ -70,9 +71,25 @@ if ($_POST) {
 		else
 			unset($config['system']['lb_use_sticky']);
 
-		$config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
-		$config['system']['powerd_enable'] = $_POST['powerd_enable'] ? true : false;
-		$config['system']['glxsb_enable'] = $_POST['glxsb_enable'] ? true : false;
+		if($_POST['preferoldsa_enable'] == "yes")
+                        $config['system']['preferoldsa'] = true;
+                else
+                        unset($config['system']['preferoldsa']);
+
+		if($_POST['powerd_enable'] == "yes")
+                        $config['system']['powerd_enable'] = true;
+                else
+                        unset($config['system']['powerd_enable']);
+
+		if($_POST['glxsb_enable'] == "yes")
+                        $config['system']['glxsb_enable'] = true;
+                else
+                        unset($config['system']['glxsb_enable']);
+
+		if($_POST['schedule_states'] == "yes")
+                        $config['system']['schedule_states'] = true;
+                else
+                        unset($config['system']['schedule_states']);
 
 		write_config();
 
@@ -210,6 +227,21 @@ include("head.inc");
 									option to always prefer old SAs over new ones.
 								</td>
 							</tr>
+                                                        <tr>
+                                                                <td colspan="2" class="list" height="12">&nbsp;</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <td colspan="2" valign="top" class="listtopic">Schedules</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <td width="22%" valign="top" class="vncell">Schedule States</td>
+                                                                <td width="78%" class="vtable">
+                                                                        <input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked"; ?> />
+                                                                        <br />
+									By default schedules clear the states of existing connections when expiry time has come.
+									This option allows to override this setting by not clearing states for existing connections.
+                                                                </td>
+                                                        </tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>

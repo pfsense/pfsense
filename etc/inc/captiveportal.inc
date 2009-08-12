@@ -330,6 +330,7 @@ EOD;
 	}
 
 	$cprules .= <<<EOD
+add 1000 set 1 skipto 1200 all from any to any not layer2
 # layer 2: pass ARP
 add 1100 set 1 pass layer2 mac-type arp
 # pfsense requires for WPA

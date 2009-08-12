@@ -37,6 +37,11 @@ function opcode_cache_configuration() {
         if($g['platform'] == "cdrom")
         	return;
 
+	if($g['platform'] == "nanobsd" || $g['platform'] == "embedded")
+		$upload_tmp_dir = "/root";
+	else
+		$upload_tmp_dir = "/tmp";
+
         /* get system memory amount */
         $memory = get_memory();
         $avail = $memory[0];
@@ -64,7 +69,7 @@ memory_limit = 32M
 register_argc_argv = On
 file_uploads = On
 extension_dir=/usr/local/lib/php/extensions/no-debug-non-zts-20020429/
-upload_tmp_dir = /tmp
+upload_tmp_dir = {$upload_tmp_dir}
 upload_max_filesize = 100M
 post_max_size = 100M
 html_errors = Off

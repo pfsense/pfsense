@@ -58,6 +58,7 @@ function captiveportal_configure() {
 				continue;
 			$tmpif = get_real_interface($cpifgrp);
 			if (!empty($tmpif)) {
+				mwexec("/sbin/ifconfig {$tmpif} -ipfwfilter");
 				if ($firsttime > 0)
 					$cpinterface .= " or ";
 				$cpinterface .= "via {$tmpif}"; 
@@ -66,8 +67,7 @@ function captiveportal_configure() {
 				if (is_ipaddr($cpipm)) {
 					$cpips[] = $cpipm;
 					mwexec("/sbin/ifconfig {$tmpif} ipfwfilter");
-				} else
-					mwexec("/sbin/ifconfig {$tmpif} -ipfwfilter");
+				}
 			}
 		}
 		if (count($cpips) > 0) {
@@ -300,6 +300,9 @@ EOD;
 
 		/* unload ipfw */
 		mwexec("/sbin/kldunload ipfw.ko");
+		$listifs = get_configured_interface_list_by_realif();
+		foreach ($listifs as $listrealif => $listif)
+			mwexec("/sbin/ifconfig {$listrealif} -ipfwfilter");
 	}
 
 	unlock($captiveportallck);

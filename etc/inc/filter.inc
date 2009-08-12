@@ -1487,7 +1487,7 @@ function filter_generate_user_rule($rule)
                 foreach ($config['schedules']['schedule'] as $sched) {
                         if ($sched['name'] == $rule['sched']) {
                                 if (!filter_get_time_based_rule_status($sched)) {
-					if ($config['system']['schedule_states'])
+					if (!isset($config['system']['schedule_states']))
                                         	mwexec("/sbin/pfctl -y {$sched['schedlabel']}");
                                         return "# schedule finished - {$rule['descr']}";
                                 } else if ($g['debug'])

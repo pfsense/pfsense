@@ -49,14 +49,14 @@ function listtags() {
 		"serversdisabled earlyshellcmd shellcmd staticmap subqueue timerange ".
 		"tunnel user vip virtual_server vlan winsserver wolentry widget  "
 		);
-	return $ret;
+	return array_flip($ret);
 }
 
 /* Package XML tags that should be treat as a list not as a traditional array */
 function listtags_pkg() {
 	$ret = array("depends_on_package", "onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
 
-	return $ret;
+	return array_flip($ret);
 }
 
 function add_elements(&$cfgarray, &$parser) {
@@ -73,8 +73,8 @@ function add_elements(&$cfgarray, &$parser) {
                         if ($parser->isEmptyElement) {
                                 $cfgarray[$parser->name] = "";
                         } else {
-                                if (in_array($parser->name, $listtags))
-                                        add_elements($cfgarray[$parser->name][count($cfgarray[$parser->name])], $parser);
+                                if (isset($listtags[$parser->name]))
+                                        add_elements($cfgarray[$parser->name][], $parser);
                                 else
                                         add_elements($cfgarray[$parser->name], $parser);
                         }
@@ -97,7 +97,7 @@ function parse_xml_config($cffile, $rootobj, $isstring = "false") {
 	$listtags = listtags();
         if (isset($GLOBALS['custom_listtags'])) {
           foreach($GLOBALS['custom_listtags'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	return parse_xml_config_raw($cffile, $rootobj);
@@ -108,15 +108,13 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 	$listtags = listtags_pkg();
         if (isset($GLOBALS['custom_listtags_pkg'])) {
           foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	return parse_xml_config_raw($cffile, $rootobj, $isstring);
 }
 
 function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
-
-	global $listtags;
 
 	$parsedcfg = array();
 
@@ -139,7 +137,7 @@ function dump_xml_config_sub($arr, $indent) {
 	foreach ($arr as $ent => $val) {
 		if (is_array($val)) {
 			/* is it just a list of multiple values? */
-			if (in_array(strtolower($ent), $listtags)) {
+			if (isset($listtags[strtolower($ent)])) {
 				foreach ($val as $cval) {
 					if (is_array($cval)) {
 						$xmlconfig .= str_repeat("\t", $indent);
@@ -184,7 +182,7 @@ function dump_xml_config($arr, $rootobj) {
 	$listtags = listtags();
         if (isset($GLOBALS['custom_listtags'])) {
           foreach($GLOBALS['custom_listtags'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	return dump_xml_config_raw($arr, $rootobj);
@@ -195,7 +193,7 @@ function dump_xml_config_pkg($arr, $rootobj) {
 	$listtags = listtags_pkg();
         if (isset($GLOBALS['custom_listtags_pkg'])) {
           foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	return dump_xml_config_raw($arr, $rootobj);

@@ -44,26 +44,16 @@ if (!is_array($config['captiveportal']['allowedip']))
 
 $a_allowedips = &$config['captiveportal']['allowedip'] ;
 
-if ($_POST) {
-
-	$pconfig = $_POST;
-
-	if ($_POST['apply']) {
-		$retval = 0;
-
-		$retval = captiveportal_allowedip_configure();
-
-		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
-			clear_subsystem_dirty('allowedips');
-	}
-}
-
 if ($_GET['act'] == "del") {
 	if ($a_allowedips[$_GET['id']]) {
+		$ipent = $a_allowedips[$_GET['id']];
+		if ($ipent['dir'] == "from")
+			mwexec("/sbin/ipfw table 1 delete " . $ipent['ip']);
+		else
+			mwexec("/sbin/ipfw table 2 delete " . $ipent['ip']);
+			
 		unset($a_allowedips[$_GET['id']]);
 		write_config();
-		mark_subsystem_dirty('allowedips');
 		header("Location: services_captiveportal_ip.php");
 		exit;
 	}
@@ -76,9 +66,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="services_captiveportal_ip.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (is_subsystem_dirty('allowedips')): ?>
-<?php print_info_box_np("The captive portal IP address configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php

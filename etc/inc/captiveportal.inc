@@ -247,8 +247,8 @@ EOD;
 
 		/* generate passthru mac database */
 		captiveportal_passthrumac_configure(true);
-		/* create allowed ip database and insert ipfw rules to make it so */
-		captiveportal_allowedip_configure(true);
+		/* allowed ipfw rules to make allowed ip work */
+		captiveportal_allowedip_configure();
 
 		/* generate radius server database */
 		if ($config['captiveportal']['radiusip'] && (!isset($config['captiveportal']['auth_method']) ||
@@ -724,33 +724,16 @@ function captiveportal_passthrumac_configure($lock = false) {
 	return 0;
 }
 
-function captiveportal_allowedip_configure($lock = false) {
+function captiveportal_allowedip_configure() {
 	global $config, $g;
 
-	if (!$lock)
-		$captiveportallck = lock('captiveportal');
-
 	/* clear out existing allowed ips, if necessary */
+	mwexec("/sbin/ipfw table 1 flush");
+	mwexec("/sbin/ipfw table 2 flush");
 	if (file_exists("{$g['vardb_path']}/captiveportal_ip.db")) {
-		$fd = @fopen("{$g['vardb_path']}/captiveportal_ip.db", "r");
-		if ($fd) {
-			while (!feof($fd)) {
-				$line = trim(fgets($fd));
-				if ($line) {
-					list($ip,$rule) = explode(",",$line);
-					mwexec("/sbin/ipfw delete $rule");
-				}
-			}
-		}
-		fclose($fd);
-		unlink("{$g['vardb_path']}/captiveportal_ip.db");
+		$ruleno = intval(file_get_contents("{$g['vardb_path']}/captiveportal_ip.db"));
+		mwexec("/sbin/ipfw delete {$ruleno}");
 	}
-
-	/* get next ipfw rule number */
-	if (file_exists("{$g['vardb_path']}/captiveportal.nextrule"))
-		$ruleno = trim(file_get_contents("{$g['vardb_path']}/captiveportal.nextrule"));
-	if (!$ruleno)
-		$ruleno = 10000;	/* first rule number */
 
 	if (is_array($config['captiveportal']['allowedip'])) {
 
@@ -760,38 +743,43 @@ function captiveportal_allowedip_configure($lock = false) {
 			unlock($captiveportallck);
 			return 1;
 		}
+		/* get next ipfw rule number */
+		$ruleno = captiveportal_get_next_ipfw_ruleno();
 
+		/* if the pool is empty, return apprioriate message and fail */
+		if (is_null($ruleno)) {
+			printf("Error: system reached maximum login capacity, no free FW rulenos in captiveportal_allowedip_configure().\n");
+			fclose($fd);
+			unlock($captiveportallck);
+			return 1;
+		}
+		/* Keep the rule number where this will be stored */
+		fwrite($fd, $ruleno);
+		fclose($fd);
+
+		$numberofallowedip = count($config['captiveportal']['allowedip']);
+		$tableone = false;
+		$tabletwo = false;
 		foreach ($config['captiveportal']['allowedip'] as $ipent) {
-            /* get next ipfw rule number */
-            $ruleno = captiveportal_get_next_ipfw_ruleno();
+			/* insert address in ipfw table */
+			if ($ipent['dir'] == "from") {
+				mwexec("/sbin/ipfw table 1 add {$ipent['ip']}");
+				$tableone = true;
+			} else { 
+				mwexec("/sbin/ipfw table 2 add {$ipent['ip']}");
+				$tabletwo = true;
+			}
+		}
+		if ($tableone == true) {
+			mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from table\(1\) to any in");
+			mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to table\(1\) out");
+		}
+		if ($tabletwo == true) {
+			mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to table\(2\) in");
+			mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from table\(2\) to any out");
+		}
+	}
 
-            /* if the pool is empty, return apprioriate message and fail */
-            if (is_null($ruleno)) {
-                printf("Error: system reached maximum login capacity, no free FW rulenos in captiveportal_allowedip_configure().\n");
-                fclose($fd);
-                unlock($captiveportallck);
-                return 1;
-            }
-
-            /* record allowed ip so it can be recognized and removed later */
-            fwrite($fd, $ipent['ip'] . "," . $ruleno ."\n");
-
-            /* insert ipfw rule to allow ip thru */
-            if ($ipent['dir'] == "from") {
-                mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from " . $ipent['ip'] . " to any in");
-                mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to " . $ipent['ip'] . " out");
-            } else {
-                mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to " . $ipent['ip'] . " in");
-                mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from " . $ipent['ip'] . " to any out");
-            }
-
-        }
-
-        fclose($fd);
-    }
-
-	if (!$lock)
-    		unlock($captiveportallck);
     return 0;
 }
 

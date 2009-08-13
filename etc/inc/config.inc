@@ -243,7 +243,7 @@ function parse_config($parse = false) {
 	global $g;
 	
 	$lockkey = lock('config');
-	if (filesize("{$g['conf_path']}/config.xml") == 0) {
+	if (!file_exists("{$g['conf_path']}/config.xml") || filesize("{$g['conf_path']}/config.xml") == 0) {
 		$last_backup = discover_last_backup();
 		if($last_backup) {
 			log_error("No config.xml found, attempting last known config restore.");

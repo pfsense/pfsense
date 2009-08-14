@@ -3,6 +3,7 @@
     $Id$
     part of m0n0wall (http://m0n0.ch/wall)
 
+    Copyrigth (C) 2009	    Ermal Luçi
     Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
     All rights reserved.
 

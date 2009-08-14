@@ -230,15 +230,16 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                 <tr id="frheader">
                   <td width="3%" class="list">&nbsp;</td>
                   <td width="5%" class="list">&nbsp;</td>
+                  <td width="3%" class="listhdrr">ID</td>
                   <td width="6%" class="listhdrr">Proto</td>
-                  <td width="15%" class="listhdrr">Source</td>
+                  <td width="14%" class="listhdrr">Source</td>
                   <td width="7%" class="listhdrr">Port</td>
-                  <td width="15%" class="listhdrr">Destination</td>
+                  <td width="14%" class="listhdrr">Destination</td>
                   <td width="7%" class="listhdrr">Port</td>
 		  <td width="5%" class="listhdrr">Gateway</td>
 		  <td width="10%" class="listhdrr">Queue</td>
 		  <td width="5%" class="listhdrr">Schedule</td>
-                  <td width="22%" class="listhdr">Description</td>
+                  <td width="21%" class="listhdr">Description</td>
                   <td width="10%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			   <tr>
@@ -267,7 +268,8 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                 <tr valign="top" id="frrfc1918">
                   <td width="3%" class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
-                  <td class="listlr" style="background-color: #e0e0e0">*</td>
+                  <td class="listlr" style="background-color: #e0e0e0"></td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">RFC 1918 networks</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
@@ -294,7 +296,8 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                 <tr valign="top" id="frrfc1918">
                   <td width="3%" class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
-                  <td class="listlr" style="background-color: #e0e0e0">*</td>
+                  <td class="listlr" style="background-color: #e0e0e0"></td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">Reserved/not assigned by IANA</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
@@ -518,6 +521,9 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				}
 				?>
                   <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+                    <?=$textss;?><?php if (isset($filterent['id'])) echo $filterent['id']; else echo ""; ?><?=$textse;?>
+                  </td>
+                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php if (isset($filterent['protocol'])) echo strtoupper($filterent['protocol']); else echo "*"; ?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
@@ -581,6 +587,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                 <tr id="fr<?=$nrules;?>">
                   <td class="list"></td>
                   <td class="list"></td>
+                  <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>

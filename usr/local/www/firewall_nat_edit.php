@@ -61,6 +61,7 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['localbeginport'] = $a_nat[$id]['local-port'];
 	$pconfig['descr'] = $a_nat[$id]['descr'];
 	$pconfig['interface'] = $a_nat[$id]['interface'];
+	$pconfig['associated-filter-rule-id'] = $a_nat[$id]['associated-filter-rule-id'];
 	$pconfig['nosync'] = isset($a_nat[$id]['nosync']);
 	if (!$pconfig['interface'])
 		$pconfig['interface'] = "wan";
@@ -181,24 +182,18 @@ if ($_POST) {
 		$natent['local-port'] = $_POST['localbeginport'];
 		$natent['interface'] = $_POST['interface'];
 		$natent['descr'] = $_POST['descr'];
+		$natent['associated-filter-rule-id'] = $_POST['associated-filter-rule-id'];
 
 		if($_POST['nosync'] == "yes")
 			$natent['nosync'] = true;
 		else
 			unset($natent['nosync']);
 
-		if (isset($id) && $a_nat[$id])
-			$a_nat[$id] = $natent;
-		else {
-			if (is_numeric($after))
-				array_splice($a_nat, $after+1, 0, array($natent));
-			else
-				$a_nat[] = $natent;
-		}
+		if ($_POST['autoadd'] || $natent['associated-filter-rule-id']>0) {
+			// If we had a previous rule associated with this NAT rule, delete that
+			if( $natent['associated-filter-rule-id'] > 0 )
+				delete_id($natent['associated-filter-rule-id'], $config['filter']['rule']);
 
-		mark_subsystem_dirty('natconf');
-
-		if ($_POST['autoadd']) {
 			/* auto-generate a matching firewall rule */
 			$filterent = array();
 			$filterent['interface'] = $_POST['interface'];
@@ -221,10 +216,29 @@ if ($_POST) {
 			 */
 			$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 59);
 
+			// If we had a previous rule association, update this rule with that ID so we don't lose association
+			if ($natent['associated-filter-rule-id'] > 0)
+				$filterent['id'] = $natent['associated-filter-rule-id']; 
+			// Otherwise generate an ID for this rule, make sure the NAT entry is updated with the same ID
+			else
+				$natent['associated-filter-rule-id'] = $filterent['id'] = get_next_id($config['filter']['rule']);
+
 			$config['filter']['rule'][] = $filterent;
 
 			mark_subsystem_dirty('filter');
 		}
+
+		// Update NAT entry after creating/updating the firewall rule, so we have it's rule ID if one was created
+		if (isset($id) && $a_nat[$id])
+			$a_nat[$id] = $natent;
+		else {
+			if (is_numeric($after))
+				array_splice($a_nat, $after+1, 0, array($natent));
+			else
+				$a_nat[] = $natent;
+		}
+
+		mark_subsystem_dirty('natconf');
 
 		write_config();
 
@@ -390,13 +404,30 @@ include("fbegin.inc"); ?>
 						HINT: This prevents the rule from automatically syncing to other CARP members.
 					</td>
 				</tr>
+				<?php if (isset($id) && $a_nat[$id] && !isset($_GET['dup'])): ?>
+				<tr>
+					<td width="22%" valign="top" class="vncell">Automatically update firewall rule with this rule</td>
+					<td width="78%" class="vtable">
+						<select name="associated-filter-rule-id">
+							<option value="">Do not automatically update</option>
+							<?php foreach ($config['filter']['rule'] as $filter_rule): ?>
+								<?php if (isset($filter_rule['id']) && $filter_rule['id']>0): ?>
+									<option value="<?php echo $filter_rule['id']; ?>"<?php if($filter_rule['id']==$pconfig['associated-filter-rule-id']) echo " SELECTED"; ?>>
+									<?php echo htmlspecialchars('Rule ' . $filter_rule['id'] . ' - ' . $filter_rule['descr']); ?>
+									</option>
+								<?php endif; ?>
+							<?php endforeach; ?>
+						</select>
+					</td>
+				</tr>
+				<?php endif; ?>
                 <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
                     <input name="autoadd" type="checkbox" id="autoadd" value="yes" CHECKED>
                     <strong>Auto-add a firewall rule to permit traffic through
-                    this NAT rule</strong></td>
+                    this NAT rule and manage it with this NAT rule.</strong></td>
                 </tr><?php endif; ?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

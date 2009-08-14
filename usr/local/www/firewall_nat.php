@@ -81,6 +81,12 @@ if (isset($_POST['del_x'])) {
     if (is_array($_POST['rule']) && count($_POST['rule'])) {
 	    foreach ($_POST['rule'] as $rulei) {
 		$target = $rule['target'];
+			// Check for filter rule associations
+			if (isset($a_nat[$rulei]['associated-filter-rule-id'])){
+				delete_id($a_nat[$rulei]['associated-filter-rule-id'], $config['filter']['rule']);
+				
+				mark_subsystem_dirty('filter');
+			}
 	        unset($a_nat[$rulei]);
 	    }
 	    write_config();
@@ -217,7 +223,11 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 	?>
                 <tr valign="top" id="fr<?=$nnats;?>">
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
-                  <td class="listt" align="center"></td>
+                  <td class="listt" align="center">
+					<?php if(isset($natent['associated-filter-rule-id']) && $natent['associated-filter-rule-id']>0): ?>
+					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="Firewall rule ID <?=htmlspecialchars($natent['associated-filter-rule-id']); ?> is managed with this rule" border="0">
+					<?php endif; ?>
+				  </td>
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 		    <?php
 			if (!$natent['interface'] || ($natent['interface'] == "wan"))

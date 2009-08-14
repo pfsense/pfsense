@@ -103,7 +103,12 @@ if ($_POST) {
 		
 		write_config();
 
-		mark_subsystem_dirty('allowedips');
+		if (isset($config['captiveportal']['enable'])) {
+			if ($ip['dir'] == "from")
+				mwexec("/sbin/ipfw table 1 add " . $ip['ip']);
+			else
+				mwexec("/sbin/ipfw table 2 add " . $ip['ip']);	
+		}
 		
 		header("Location: services_captiveportal_ip.php");
 		exit;

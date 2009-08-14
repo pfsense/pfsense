@@ -958,7 +958,7 @@ function captiveportal_write_elements() {
  * within the range specified based on the actual logged on users
  *
  */
-function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_max = 29899) {
+function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_max = 49899) {
 	global $config, $g;
 
 	$ruleno = 0;

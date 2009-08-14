@@ -71,7 +71,7 @@ $concurrent = count($cpcontents);
 foreach ($cpcontents as $cpcontent) {
 	$cpent = explode(",", $cpcontent);
 	if ($_GET['showact'])
-		$cpent[5] = captiveportal_get_last_activity($cpent[1]);
+		$cpent[5] = captiveportal_get_last_activity($cpent[2]);
 		$cpdb[] = $cpent;
 }
 if ($_GET['order']) {

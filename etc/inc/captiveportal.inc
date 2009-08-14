@@ -333,7 +333,7 @@ EOD;
 	}
 
 	$cprules .= <<<EOD
-add 1000 set 1 skipto 1200 all from any to any not layer2
+add 1000 set 1 skipto 1150 all from any to any not layer2
 # layer 2: pass ARP
 add 1100 set 1 pass layer2 mac-type arp
 # pfsense requires for WPA
@@ -350,11 +350,11 @@ add 1100 set 1 pass layer2 mac-type 0x888e
 # layer 2: block anything else non-IP
 add 1101 set 1 deny layer2 not mac-type ip
 # layer 2: check if MAC addresses of authenticated clients are correct
-add 1102 set 1 skipto 20000 layer2
+add 1102 set 1 skipto 2000 layer2
 
 EOD;
 
-	$rulenum = 1200;
+	$rulenum = 1150;
 	foreach ($cpiparray as $cpip) {
 		//# allow access to our DHCP server (which needs to be able to ping clients as well)
 		$cprules .= "add {$rulenum} set 1 pass udp from any 68 to 255.255.255.255 67 in \n";
@@ -384,23 +384,33 @@ EOD;
 			$cprules .= "add {$rulenum} set 1 pass tcp from {$cpip} 8001 to any out \n";
 		}
 	}
-
 	$rulenum++;
-        $cprules .= <<<EOD
 
-# ... 10000-19899: rules per authenticated client go here...
+	if (isset($config['captiveportal']['peruserbw'])) {
+		$cprules .= "add {$rulenum} set 2 pipe tablearg ip from table(3) to any in\n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} set 2 pipe tablearg ip from any to table(4) out\n";
+		$rulenum++;
+	} else {
+		$cprules .= "add {$rulenum} set 2 skipto 50000 ip from table(3) to any in\n";
+                $rulenum++;
+                $cprules .= "add {$rulenum} set 2 skipto 50000 ip from any to table(4) out\n";
+                $rulenum++;
+	}
+	
+       $cprules .= <<<EOD
 
 # redirect non-authenticated clients to captive portal
-add 19902 set 1 fwd 127.0.0.1,8000 tcp from any to any 80 in
+add 1990 set 1 fwd 127.0.0.1,8000 tcp from any to any 80 in
 # let the responses from the captive portal web server back out
-add 19903 set 1 pass tcp from any 80 to any out
+add 1991 set 1 pass tcp from any 80 to any out
 # block everything else
-add 19904 set 1 deny all from any to any
+add 1992 set 1 deny all from any to any
 
-# ... 20000-29899: layer2 block rules per authenticated client go here...
+# ... 2000-49899: layer2 block rules per authenticated client go here...
 
 # pass everything else on layer2
-add 29900 set 1 pass all from any to any layer2
+add 49900 set 1 pass all from any to any layer2
 
 EOD;
 
@@ -473,7 +483,7 @@ function captiveportal_prune_old() {
         $idletimeout = (is_numeric($cpdb[$i][8])) ? $cpdb[$i][8] : $idletimeout;
         /* if an idle timeout is specified, get last activity timestamp from ipfw */
         if (!$timedout && $idletimeout) {
-            $lastact = captiveportal_get_last_activity($cpdb[$i][1]);
+            $lastact = captiveportal_get_last_activity($cpdb[$i][2]);
 			/*  if the user has logged on but not sent any trafic they will never be logged out.
 			 *  We "fix" this by setting lastact to the login timestamp 
 			 */
@@ -524,7 +534,8 @@ function captiveportal_prune_old() {
                                            $cpdb[$i][2], // clientip
                                            $cpdb[$i][3], // clientmac
                                            10); // NAS Request
-                    exec("/sbin/ipfw zero {$cpdb[$i][1]}");
+                    exec("/sbin/ipfw table 3 entryzerostats {$cpdb[$i][2]}");
+                    exec("/sbin/ipfw table 4 entryzerostats {$cpdb[$i][2]}");
                     RADIUS_ACCOUNTING_START($cpdb[$i][1], // ruleno
                                             $cpdb[$i][4], // username
                                             $cpdb[$i][5], // sessionid
@@ -596,18 +607,20 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 							   $stop_time);
 	}
 
-	mwexec("/sbin/ipfw delete " . $dbent[1] . " " . ($dbent[1]+10000));
+	mwexec("/sbin/ipfw table 4 delete {$dbent[2]}");
+	mwexec("/sbin/ipfw table 4 delete {$dbent[2]}");
+	mwexec("/sbin/ipfw delete {$dbent[1]}");
 
-    /* We need to delete +40500 and +45500 as well...
-     * these are the pipe numbers we use to control traffic shaping for each logged in user via captive portal
-     * We could get an error if the pipe doesn't exist but everything should still be fine
-     */
-    if (isset($config['captiveportal']['peruserbw'])) {
-        mwexec("/sbin/ipfw pipe " . ($dbent[1]+40500) . " delete");
-        mwexec("/sbin/ipfw pipe " . ($dbent[1]+45500) . " delete");
-    }
+	/* 
+	* These are the pipe numbers we use to control traffic shaping for each logged in user via captive portal
+	* We could get an error if the pipe doesn't exist but everything should still be fine
+	*/
+	if (isset($config['captiveportal']['peruserbw'])) {
+		mwexec("/sbin/ipfw pipe " . ($dbent[1]+20000) . " delete");
+		mwexec("/sbin/ipfw pipe " . ($dbent[1]+20001) . " delete");
+	}
 
-	/* pfSense: ensure all pf states are killed (pfSense) */
+	/* Ensure all pf(4) states are killed. */
 	mwexec("pfctl -k {$dbent[2]}");
 	mwexec("pfctl -K {$dbent[2]}");
 
@@ -713,8 +726,8 @@ function captiveportal_passthrumac_configure($lock = false) {
 		foreach($config['captiveportal']['passthrumac'] as $ptm) {
 			/* create the pass through mac entry */
 			//system("echo /sbin/ipfw add 50 skipto 65535 ip from any to any MAC {$ptm['mac']} any > /tmp/cp");
-			mwexec("/sbin/ipfw add 50 skipto 29900 ip from any to any MAC {$ptm['mac']} any keep-state");
-			mwexec("/sbin/ipfw add 50 skipto 29900 ip from any to any MAC any {$ptm['mac']} keep-state");
+			mwexec("/sbin/ipfw add 50 skipto 49900 ip from any to any MAC {$ptm['mac']} any keep-state");
+			mwexec("/sbin/ipfw add 50 skipto 49900 ip from any to any MAC any {$ptm['mac']} keep-state");
 		}
 	}
 
@@ -730,34 +743,8 @@ function captiveportal_allowedip_configure() {
 	/* clear out existing allowed ips, if necessary */
 	mwexec("/sbin/ipfw table 1 flush");
 	mwexec("/sbin/ipfw table 2 flush");
-	if (file_exists("{$g['vardb_path']}/captiveportal_ip.db")) {
-		$ruleno = intval(file_get_contents("{$g['vardb_path']}/captiveportal_ip.db"));
-		mwexec("/sbin/ipfw delete {$ruleno}");
-	}
 
 	if (is_array($config['captiveportal']['allowedip'])) {
-
-		$fd = @fopen("{$g['vardb_path']}/captiveportal_ip.db", "w");
-		if (!$fd) {
-			printf("Error: cannot open allowed ip DB file in captiveportal_allowedip_configure().\n");
-			unlock($captiveportallck);
-			return 1;
-		}
-		/* get next ipfw rule number */
-		$ruleno = captiveportal_get_next_ipfw_ruleno();
-
-		/* if the pool is empty, return apprioriate message and fail */
-		if (is_null($ruleno)) {
-			printf("Error: system reached maximum login capacity, no free FW rulenos in captiveportal_allowedip_configure().\n");
-			fclose($fd);
-			unlock($captiveportallck);
-			return 1;
-		}
-		/* Keep the rule number where this will be stored */
-		fwrite($fd, $ruleno);
-		fclose($fd);
-
-		$numberofallowedip = count($config['captiveportal']['allowedip']);
 		$tableone = false;
 		$tabletwo = false;
 		foreach ($config['captiveportal']['allowedip'] as $ipent) {
@@ -771,12 +758,12 @@ function captiveportal_allowedip_configure() {
 			}
 		}
 		if ($tableone == true) {
-			mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from table\(1\) to any in");
-			mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to table\(1\) out");
+			mwexec("/sbin/ipfw add 1890 set 2 skipto 50000 ip from table\(1\) to any in");
+			mwexec("/sbin/ipfw add 1891 set 2 skipto 50000 ip from any to table\(1\) out");
 		}
 		if ($tabletwo == true) {
-			mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to table\(2\) in");
-			mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from table\(2\) to any out");
+			mwexec("/sbin/ipfw add 1892 set 2 skipto 50000 ip from any to table\(2\) in");
+			mwexec("/sbin/ipfw add 1893 set 2 skipto 50000 ip from table\(2\) to any out");
 		}
 	}
 
@@ -784,17 +771,16 @@ function captiveportal_allowedip_configure() {
 }
 
 /* get last activity timestamp given ipfw rule number */
-function captiveportal_get_last_activity($ruleno) {
+function captiveportal_get_last_activity($ip) {
 
 	$ipfwoutput = "";
 
-	exec("/sbin/ipfw -T list {$ruleno} 2>/dev/null", $ipfwoutput);
-
-	/* in */
+	exec("/sbin/ipfw table 3 entrystats {$ip} 2>/dev/null", $ipfwoutput);
+	/* Reading only from one of the tables is enough of approximation. */
 	if ($ipfwoutput[0]) {
 		$ri = explode(" ", $ipfwoutput[0]);
-		if ($ri[1])
-			return $ri[1];
+		if ($ri[4])
+			return $ri[4];
 	}
 
 	return 0;
@@ -969,28 +955,31 @@ function captiveportal_write_elements() {
 
 /*
  * This function will calculate the lowest free firewall ruleno
- * within the range specified based on the actual installed rules
+ * within the range specified based on the actual logged on users
  *
  */
-function captiveportal_get_next_ipfw_ruleno($rulenos_start = 10000, $rulenos_range_max = 9899) {
+function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_max = 29899) {
+	global $config, $g;
 
-	$fwrules = "";
-	$matches = "";
-	exec("/sbin/ipfw show", $fwrules);
-	foreach ($fwrules as $fwrule) {
-		preg_match("/^(\d+)\s+/", $fwrule, $matches);
-		$rulenos_used[] = $matches[1];
+	$ruleno = 0;
+	if (file_exists("{$g['vardb_path']}/captiveportal.nextrule"))
+		$ruleno = intval(file_get_contents("{$g['vardb_path']}/captiveportal.nextrule"));
+	else
+		$ruleno = 1;
+	if ($ruleno > 0 && (($rulenos_start + $ruleno) < $rulenos_range_max)) {
+		/* 
+		 * This allows our traffic shaping pipes to be the in pipe the same as ruleno 
+		 * and the out pipe ruleno + 1. This removes limitation that where present in 
+		 * previous version of the peruserbw.
+		 */
+		if (isset($config['captiveportal']['peruserbw']))
+			$ruleno += 2;
+		else
+			$ruleno++;
+		file_put_contents("{$g['vardb_path']}/captiveportal.nextrule", $ruleno);
+		return $rulenos_start + $ruleno;
 	}
-	$rulenos_used = array_unique($rulenos_used);
-	$rulenos_range = count($rulenos_used);
-	if ($rulenos_range > $rulenos_range_max) {
-		return NULL;
-	}
-	$rulenos_pool = range($rulenos_start, ($rulenos_start + $rulenos_range));
-	$rulenos_free = array_diff($rulenos_pool, $rulenos_used);
-	$ruleno = array_shift($rulenos_free);
-
-	return $ruleno;
+	return NULL;
 }
 
 /**
@@ -1004,7 +993,7 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 10000, $rulenos_ran
  *
  */
 
-function getVolume($ruleno) {
+function getVolume($ip) {
 
     $volume = array();
 
@@ -1012,20 +1001,23 @@ function getVolume($ruleno) {
     $volume['input_pkts'] = $volume['input_bytes'] = $volume['output_pkts'] = $volume['output_bytes'] = 0 ;
 
     // Ingress
-    $ipfw = "";
-    $matches = "";
-    exec("/sbin/ipfw show {$ruleno}", $ipfw);
-    preg_match("/(\d+)\s+(\d+)\s+(\d+)\s+.*/", $ipfw[0], $matches);
-    $volume['input_pkts'] = $matches[2];
-    $volume['input_bytes'] = $matches[3];
+    $ipfwin = "";
+    $ipfwout = "";
+    $matchesin = "";
+    $matchesout = "";
+    exec("/sbin/ipfw table 3 entrystats {$ip}", $ipfwin);
+    if ($ipfwin[0]) {
+	$ipfwin = split(" ", $ipfwin[0]);
+	$volume['input_pkts'] = $ipfwin[2];
+	$volume['input_bytes'] = $ipfwin[3];
+    }
 
-    // Flush internal buffer
-    unset($matches);
-
-    // Outgress
-    preg_match("/(\d+)\s+(\d+)\s+(\d+)\s+.*/", $ipfw[1], $matches);
-    $volume['output_pkts'] = $matches[2];
-    $volume['output_bytes'] = $matches[3];
+    exec("/sbin/ipfw table 4 entrystats {$ip}", $ipfwout);
+    if ($ipfwout[0]) {
+        $ipfwout = split(" ", $ipfwout[0]);
+        $volume['output_pkts'] = $ipfwout[2];
+        $volume['output_bytes'] = $ipfwout[3];
+    }
 
     return $volume;
 }

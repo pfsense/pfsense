@@ -317,25 +317,24 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
         $bw_down = isset($attributes['bw_down']) ? trim($attributes['bw_down']) : $config['captiveportal']['bwdefaultdn'];
 
         if ($peruserbw && !empty($bw_up) && is_numeric($bw_up)) {
-            $bw_up_pipeno = $ruleno + 40500;
-            exec("/sbin/ipfw add $ruleno set 2 pipe $bw_up_pipeno ip from $clientip to any in");
-            exec("/sbin/ipfw pipe $bw_up_pipeno config bw {$bw_up}Kbit/s queue 100");
+            $bw_up_pipeno = $ruleno + 20000;
+            mwexec("/sbin/ipfw pipe $bw_up_pipeno config bw {$bw_up}Kbit/s queue 100");
+	    mwexec("/sbin/ipfw table 3 add {$clientip} {$bw_up_pipeno}");
         } else {
-            exec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from $clientip to any in");
+            mwexec("/sbin/ipfw table 3 add {$clientip}");
         }
         if ($peruserbw && !empty($bw_down) && is_numeric($bw_down)) {
-            $bw_down_pipeno = $ruleno + 45500;
-            exec("/sbin/ipfw add $ruleno set 2 pipe $bw_down_pipeno ip from any to $clientip out");
-            exec("/sbin/ipfw pipe $bw_down_pipeno config bw {$bw_down}Kbit/s queue 100");
+            $bw_down_pipeno = $ruleno + 20001;
+            mwexec("/sbin/ipfw pipe $bw_down_pipeno config bw {$bw_down}Kbit/s queue 100");
+	    mwexec("/sbin/ipfw table 4 add {$clientip} {$bw_down_pipeno}");
         } else {
-            exec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to $clientip out");
+            mwexec("/sbin/ipfw table 4 add {$clientip}");
         }
 
         /* add ipfw rules for layer 2 */
         if (!isset($config['captiveportal']['nomacfilter'])) {
-            $l2ruleno = $ruleno + 10000;
-            exec("/sbin/ipfw add $l2ruleno set 3 deny all from $clientip to any not MAC any $clientmac layer2 in");
-            exec("/sbin/ipfw add $l2ruleno set 3 deny all from any to $clientip not MAC $clientmac any layer2 out");
+            exec("/sbin/ipfw add $ruleno set 3 deny all from $clientip to any not MAC any $clientmac layer2 in");
+            exec("/sbin/ipfw add $ruleno set 3 deny all from any to $clientip not MAC $clientmac any layer2 out");
         }
 
 	if ($attributes['voucher'])

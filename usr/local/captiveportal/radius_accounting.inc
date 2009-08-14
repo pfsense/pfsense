@@ -157,7 +157,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     $radiusvendor = $config['captiveportal']['radiusvendor'] ? $config['captiveportal']['radiusvendor'] : null;
     $stop_time = (empty($stop_time)) ? time() : $stop_time;
     $session_time = $stop_time - $start_time;
-    $volume = getVolume($ruleno);
+    $volume = getVolume($clientip);
     $volume['input_bytes_radius'] = remainder($volume['input_bytes']);
     $volume['input_gigawords'] = gigawords($volume['input_bytes']);
     $volume['output_bytes_radius'] = remainder($volume['output_bytes']);

@@ -245,6 +245,12 @@ echo "done."
 # Recreate capabilities DB
 cap_mkdb /etc/login.conf
 
+if [ "$PLATFORM" = "nanobsd" -o "$PLATFORM" = "embedded" ]; then
+	upload_tmp_dir="/root"
+else
+	upload_tmp_dir="/tmp"
+fi
+
 if [ "$PLATFORM" != "cdrom" ]; then
 # Populate a dummy php.ini to avoid
 # the file being clobbered and the firewall
@@ -258,7 +264,7 @@ max_execution_time = 99999999
 max_input_time = 99999999
 register_argc_argv = Off
 file_uploads = On
-upload_tmp_dir = /tmp
+upload_tmp_dir = ${upload_tmp_dir}
 upload_max_filesize = 90M
 post_max_size = 90M
 html_errors = Off

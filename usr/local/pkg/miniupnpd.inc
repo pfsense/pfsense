@@ -33,10 +33,14 @@
 	function upnp_validate_queue($qname) {
 		global $config;
 		$qlist = array();
-		foreach ($config['shaper']['queue'] as $q) {
-			$qlist[] = $q['name'];
+		if (is_array($config['shaper']['queue'])) {
+			foreach ($config['shaper']['queue'] as $q) {
+				$qlist[] = $q['name'];
+			}
+			return in_array($qname, $qlist);
+		} else {
+			return false;
 		}
-		return in_array($qname, $qlist);
 	}
 
 	function upnp_validate_ip($ip, $check_cdir) {

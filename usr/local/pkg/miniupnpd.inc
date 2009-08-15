@@ -34,7 +34,11 @@
 	function upnp_validate_queue($qname) {
 		read_altq_config();
 		$qlist = get_altq_name_list();
-		return in_array($qname, $qlist);
+		if (is_array($qlist)) {
+			return in_array($qname, $qlist);
+		} else {
+			return false;
+		}
 	}
 
 	function upnp_validate_ip($ip, $check_cdir) {

@@ -189,7 +189,18 @@ if ($_POST) {
 		else
 			unset($natent['nosync']);
 
-		if ($_POST['autoadd'] || $natent['associated-filter-rule-id']>0) {
+		$need_filter_rule = false;
+		// Updating a rule with a filter rule associated
+		if( $natent['associated-filter-rule-id']>0 )
+			$need_filter_rule = true;
+		// If creating a new rule, where we want to add the filter rule, associated or not
+		else if( isset($_POST['filter-rule-association']) && 
+			($_POST['filter-rule-association']=='add-associated' || 
+			$_POST['filter-rule-association']=='add-unassociated') )
+			$need_filter_rule = true;
+
+		if ($need_filter_rule) {
+
 			// If we had a previous rule associated with this NAT rule, delete that
 			if( $natent['associated-filter-rule-id'] > 0 )
 				delete_id($natent['associated-filter-rule-id'], $config['filter']['rule']);
@@ -219,8 +230,8 @@ if ($_POST) {
 			// If we had a previous rule association, update this rule with that ID so we don't lose association
 			if ($natent['associated-filter-rule-id'] > 0)
 				$filterent['id'] = $natent['associated-filter-rule-id']; 
-			// Otherwise generate an ID for this rule, make sure the NAT entry is updated with the same ID
-			else
+			// If we wanted this rule to be associated, make sure the NAT entry is updated with the same ID
+			else if($_POST['filter-rule-association']=='add-associated')
 				$natent['associated-filter-rule-id'] = $filterent['id'] = get_next_id($config['filter']['rule']);
 
 			$config['filter']['rule'][] = $filterent;
@@ -406,10 +417,10 @@ include("fbegin.inc"); ?>
 				</tr>
 				<?php if (isset($id) && $a_nat[$id] && !isset($_GET['dup'])): ?>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Automatically update firewall rule with this rule</td>
+					<td width="22%" valign="top" class="vncell">Filter rule association</td>
 					<td width="78%" class="vtable">
 						<select name="associated-filter-rule-id">
-							<option value="">Do not automatically update</option>
+							<option value="">None</option>
 							<?php foreach ($config['filter']['rule'] as $filter_rule): ?>
 								<?php if (isset($filter_rule['id']) && $filter_rule['id']>0): ?>
 									<option value="<?php echo $filter_rule['id']; ?>"<?php if($filter_rule['id']==$pconfig['associated-filter-rule-id']) echo " SELECTED"; ?>>
@@ -423,11 +434,15 @@ include("fbegin.inc"); ?>
 				<?php endif; ?>
                 <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>
                 <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="22%" valign="top">Filter rule association</td>
                   <td width="78%">
-                    <input name="autoadd" type="checkbox" id="autoadd" value="yes" CHECKED>
-                    <strong>Auto-add a firewall rule to permit traffic through
-                    this NAT rule and manage it with this NAT rule.</strong></td>
+                    <select name="filter-rule-association" id="filter-rule-association">
+						<option value="">None</option>
+						<option value="add-associated" selected="selected">Add associated rule</option>
+						<option value="add-unassociated">Add unassociated rule</option>
+						<option value="pass">Pass</option>
+					</select>
+				  </td>
                 </tr><?php endif; ?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

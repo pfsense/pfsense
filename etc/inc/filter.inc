@@ -670,15 +670,18 @@ function filter_generate_reflection($rule, $extport, &$starting_localhost_port) 
 						case "udp":
 							$protocol = $rule['protocol'];
 							foreach($toadd_array as $tda){
-								if($protocol == "udp")
+								if($protocol == "udp") {
+									$socktype = "dgram";
 									$dash_u = "-u ";
-								else
+								} else {
+									$socktype = "stream";
 									$dash_u = "";
+								}
 								if($config['system']['reflectiontimeout'])
 									$reflectiontimeout = $config['system']['reflectiontimeout'];
 								else
 									$reflectiontimeout = "20";
-								fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n");
+								fwrite($inetd_fd, "{$starting_localhost_port}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n");
 								$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
 								$xxx++;
 								$starting_localhost_port++;

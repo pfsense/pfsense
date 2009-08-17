@@ -65,10 +65,7 @@ if(file_exists($d_firmwarelock_path)) {
 }
 
 if($_POST['kerneltype']) {
-	if($_POST['kerneltype'] == "single") 
-		system("touch /boot/kernel/pfsense_kernel.txt");
-	else 
-		system("echo {$_POST['kerneltype']} > /boot/kernel/pfsense_kernel.txt");
+	system("echo {$_POST['kerneltype']} > /boot/kernel/pfsense_kernel.txt");
 }
 
 /* Handle manual upgrade */
@@ -217,7 +214,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 								echo "Please select kernel type: ";
 								echo "<select name='kerneltype'>";
 								echo "<option value='SMP'>Multiprocessor kernel</option>";
-								echo "<option value='single'>Uniprocessor kernel</option>";
+								echo "<option value='UP'>Uniprocessor kernel</option>";
 								echo "<option value='wrap'>Embedded kernel</option>";
 								echo "<option value='Developers'>Developers kernel</option>";
 								echo "</select>";

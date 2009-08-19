@@ -148,7 +148,7 @@ else
 if($needs_system_upgrade == true)
 	$external_upgrade_helper_text .= "{$g['upload_path']}/latest.tgz";
 
-$downloaded_latest_tgz_sha256 = str_replace("\n", "", `sha256 {$g['upload_path']}/latest.tgz  | awk '{ print $4 }'`);
+$downloaded_latest_tgz_sha256 = str_replace("\n", "", `sha256 -q {$g['upload_path']}/latest.tgz`);
 $upgrade_latest_tgz_sha256 = str_replace("\n", "", `cat {$g['upload_path']}/latest.tgz.sha256 | awk '{ print $4 }'`);
 
 $sigchk = 0;

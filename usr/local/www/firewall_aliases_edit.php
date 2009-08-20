@@ -49,6 +49,43 @@ if (!is_array($config['aliases']['alias']))
 
 aliases_sort();
 $a_aliases = &$config['aliases']['alias'];
+	
+if($_POST)
+	$origname = $_POST['origname'];
+
+// Debugging
+exec("rm -f /tmp/print_r");
+
+function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb, $new_alias_name) {
+	global $config, $pconfig, $origname, $fd;
+	if(!$origname) 
+		return;
+
+	$fd = fopen("/tmp/print_r", "a");
+	if($debug) fwrite($fd, print_r($pconfig, true));
+
+	if($fieldb) {
+		if($debug) fwrite($fd, "fieldb exists\n");
+		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
+			if($debug) fwrite($fd, "$i\n");
+			if($config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] == $origname) {
+				if($debug) fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
+				$config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] = $new_alias_name;
+			} else { if($debug) fwrite($fd, "Field 1 Name was {$config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"]}\n"); }
+		}	
+	} else {
+		if($debug) fwrite($fd, "fieldb does not exist\n");
+		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
+			if($config["$section"]["$subsection"][$i]["$fielda"] == $origname) {
+				$config["$section"]["$subsection"][$i]["$fielda"] = $new_alias_name;
+				if($debug) fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
+			}  else { if($debug) fwrite($fd, "Field 2 Name was {$config["$section"]["$subsection"][$i]["$fielda"]}\n"); }
+		}
+	}
+
+	fclose($fd);
+
+}
 
 function alias_same_type($name, $type) {
 	global $config;
@@ -72,6 +109,7 @@ if (isset($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_aliases[$id]) {
+	$original_alias_name = $a_aliases[$id]['name'];
 	$pconfig['name'] = $a_aliases[$id]['name'];
 	$pconfig['detail'] = $a_aliases[$id]['detail'];
 	$pconfig['address'] = $a_aliases[$id]['address'];
@@ -240,6 +278,20 @@ if ($_POST) {
 		$alias['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
 		$alias['type'] = $_POST['type'];
 		$alias['detail'] = $final_address_details;
+
+		/*   Check to see if alias name needs to be
+		 *   renamed on referenced rules and such
+		 */
+		if ($_POST['name'] <> $_POST['origname']) {
+			// Firewall rules
+			update_alias_names_upon_change('filter', 'rule', 'source', 'address', $_POST['name']);
+			update_alias_names_upon_change('filter', 'rule', 'destination', 'address', $_POST['name']);
+			// NAT Rules
+			update_alias_names_upon_change('nat', 'rule', 'target', '', $_POST['name']);
+			update_alias_names_upon_change('nat', 'rule', 'external-port', '', $_POST['name']);
+			update_alias_names_upon_change('nat', 'rule', 'local-port', ''	, $_POST['name']);
+			// ??
+		}
 
 		if (isset($id) && $a_aliases[$id]) {
 			if ($a_aliases[$id]['name'] <> $alias['name']) {
@@ -454,20 +506,10 @@ EOD;
   <tr>
 	<td colspan="2" valign="top" class="listtopic">Alias Edit</td>
   </tr>
-<?php if(is_alias_inuse($pconfig['name']) == true): ?>
-  <tr>
-    <td valign="top" class="vncellreq">Name</td>
-    <td class="vtable"> <input name="name" type="hidden" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
-		  <?php echo $pconfig['name']; ?>
-      <p>
-        <span class="vexpl">NOTE: This alias is in use so the name may not be modified!</span>
-      </p>
-    </td>
-  </tr>
-<?php else: ?>
   <tr>
     <td valign="top" class="vncellreq">Name</td>
     <td class="vtable">
+      <input name="origname" type="hidden" id="origname" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
       <input name="name" type="text" id="name" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
       <br />
       <span class="vexpl">
@@ -475,7 +517,6 @@ EOD;
       </span>
     </td>
   </tr>
-<?php endif; ?>
   <tr>
     <td width="22%" valign="top" class="vncell">Description</td>
     <td width="78%" class="vtable">

@@ -390,7 +390,6 @@ local7.none					%{$g['varlog_path']}/system.log
 security.*					%{$g['varlog_path']}/system.log
 auth.info;authpriv.info;daemon.info		%{$g['varlog_path']}/system.log
 local1.*					%{$g['varlog_path']}/slbd.log
-auth.info;authpriv.info 			|exec /usr/local/sbin/sshlockout_pf
 *.emerg						*
 
 EOD;

@@ -262,7 +262,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							output_menu_item("/diag_arp.php", "ARP Tables");
 							output_menu_item("/diag_backup.php", "Backup/Restore");
 							output_menu_item("/exec.php", "Command Prompt");
-							output_menu_item("/diag_dns.php", "DNS");
+							output_menu_item("/diag_dns.php", "DNS Lookup");
 							output_menu_item("/edit.php", "Edit File");
 							output_menu_item("/diag_defaults.php", "Factory Defaults");
 							output_menu_item("/halt.php", "Halt System");						

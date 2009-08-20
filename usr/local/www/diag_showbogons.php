@@ -36,19 +36,23 @@
 
 require("guiconfig.inc");
 
-$bogons = `cat /etc/bogons`;
+if($_POST['Reload']) {
+	exec("/etc/rc.update_bogons.sh donotsleep");
+}
 
+$bogons = `cat /etc/bogons`;
 $pgtitle = "Diagnostics: Show Bogons";
 
 include("head.inc");
+include("fbegin.inc");
 
-include("fbegin.inc"); 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <style type="text/css">
 body { font-family: Verdana; font-size: 100%; }
 pre { font-size: 1.15em; }
 </style> 
+<form method="post" action="diag_showbogons.php">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  
   <tr>
     <td>
@@ -73,6 +77,8 @@ pre { font-size: 1.15em; }
     </td>
   </tr>
 </table>
+<br/>
+<input type="submit" name="Reload" value="Reload"> bogons table.
 </form>
 <?php include("fend.inc"); ?>
 </body>

@@ -292,7 +292,7 @@ if ($_POST) {
 			update_alias_names_upon_change('nat', 'rule', 'external-port', '', $_POST['name']);
 			update_alias_names_upon_change('nat', 'rule', 'local-port', ''	, $_POST['name']);
 			// Alias in an alias
-			update_alias_names_upon_change('aliases', 'alias', 'name', ''	, $_POST['name']);
+			update_alias_names_upon_change('aliases', 'alias', 'address', ''	, $_POST['name']);
 		}
 
 		if (isset($id) && $a_aliases[$id]) {

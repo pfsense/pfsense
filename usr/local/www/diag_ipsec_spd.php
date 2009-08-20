@@ -126,22 +126,19 @@ $spd = ipsec_dump_spd();
 							</td>
 						</tr>
 						<?php endif; ?>
-						<td colspan="4">
-							<p>
-								<span class="vexpl">
-									<span class="red">
-										<strong>Note:<br></strong>
-									</span>
-									You can configure your IPsec <a href="vpn_ipsec.php">here</a>.
-								</span>
-							</p>
-			  			</td>
 					</table>
 				</div>
 			</td>
 		</tr>
 	</table>
-	<?php include("fend.inc"); ?>
+
+<p>
+<span class="vexpl">
+<span class="red"><strong>Note:<br></strong></span>
+You can configure your IPsec <a href="vpn_ipsec.php">here</a>.
+</span>
+
+<?php include("fend.inc"); ?>
 </body>
 </html>
 

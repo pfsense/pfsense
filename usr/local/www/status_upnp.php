@@ -71,14 +71,14 @@ if(!$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
    <tr>
      <td class="tabcont" >
       <form action="status_upnp.php" method="post">
-      <b><input type="submit" name="clear" id="clear" value="Clear" /></b>
+      <input type="submit" name="clear" id="clear" value="Clear" /> all currently connected sessions.
     </form>
     </td>
    </tr>
    <tr>
     <td class="tabcont" >
-      <table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
+    	<tr>
           <td width="10%" class="listhdrr"><?=gettext("Port")?></td>
           <td width="10%" class="listhdrr"><?=gettext("Protocol")?></td>
           <td width="20%" class="listhdrr"><?=gettext("Internal IP")?></td>

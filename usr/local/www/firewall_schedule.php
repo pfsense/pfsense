@@ -88,7 +88,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="firewall_schedule.php" method="post">
-	<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 	  <td width="25%" class="listhdrr">Name</td>
 	  <td width="35%" class="listhdrr">Time Range(s)</td>

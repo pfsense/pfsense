@@ -106,7 +106,7 @@ if ($_GET['order']) {
 <td class="tabcont">
 <? endif; ?>
 
-<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr"><a href="?order=ip&amp;showact=<?=$_GET['showact'];?>"><?=gettext("IP address");?></a></td>
     <td class="listhdrr"><a href="?order=mac&amp;showact=<?=$_GET['showact'];?>"><?=gettext("MAC address");?></a></td>

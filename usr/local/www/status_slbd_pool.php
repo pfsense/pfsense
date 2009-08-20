@@ -57,6 +57,7 @@ include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
@@ -71,10 +72,10 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont" name="sortabletable" id="sortabletable">
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
-		  <td width="10%" class="listhdrr">Type</td>
+				  <td width="10%" class="listhdrr">Type</td>
                   <td width="10%" class="listhdrr">Gateways</td>
                   <td width="30%" class="listhdrr">Status</td>
                   <td width="30%" class="listhdr">Description</td>

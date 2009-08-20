@@ -141,7 +141,7 @@ include("head.inc");
 	</tr>
 	<tr>
 		<td>
-			<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td class="listhdrr" width="10%"><?=gettext("Proto");?></td>
 					<td class="listhdrr" width="65"><?=gettext("Source -> Router -> Destination");?></td>

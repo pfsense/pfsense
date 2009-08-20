@@ -1,3 +1,6 @@
+
+<script src="/javascript/sorttable.js"></script>
+
 <?php
 
 require_once("globals.inc");

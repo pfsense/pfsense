@@ -278,7 +278,7 @@ if ($_GET['order'])
 /* only print pool status when we have one */
 if(count($pools) > 0) {
 ?>
-<table class="sortable" id="sortabletable" name="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr">Failover Group</a></td>
     <td class="listhdrr">My State</a></td>

@@ -57,7 +57,6 @@ $sad = ipsec_dump_sad();
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
-<script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <div id="inputerrors"></div>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -75,7 +74,7 @@ $sad = ipsec_dump_sad();
 	<tr>
     	<td>
 			<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" class="sortable" name="sortabletable" id="sortabletable">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont">
 					<tr>
 						<td nowrap class="listhdrr">Local IP</td>
 						<td nowrap class="listhdrr">Remote IP</a></td>

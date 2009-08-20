@@ -40,8 +40,10 @@ if($_POST['Download']) {
 	exec("touch /var/run/donotsleep_bogons");
 	conf_mount_rw();
 	exec("/usr/bin/fetch -q -o /tmp/bogons 'http://files.pfsense.org/bogon-bn-nonagg.txt'");
-	if(file_exists("/tmp/bogons"))
-	exec("egrep -v '^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8' /tmp/bogons > /etc/bogons");
+	if(file_exists("/tmp/bogons")) {
+		$savemsg = "The bogons database has been updated.";
+		exec("egrep -v '^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8' /tmp/bogons > /etc/bogons");
+	}
 	exec("rm /tmp/bogons");
 }
 
@@ -57,6 +59,8 @@ include("fbegin.inc");
 body { font-family: Verdana; font-size: 100%; }
 pre { font-size: 1.15em; }
 </style> 
+<?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php if ($savemsg) print_info_box($savemsg); ?>
 <form method="post" action="diag_showbogons.php">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  
   <tr>

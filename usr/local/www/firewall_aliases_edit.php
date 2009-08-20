@@ -54,14 +54,15 @@ if($_POST)
 	$origname = $_POST['origname'];
 
 // Debugging
-exec("rm -f /tmp/print_r");
+if($debug)
+	exec("rm -f /tmp/print_r");
 
 function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb, $new_alias_name) {
-	global $config, $pconfig, $origname, $fd;
+	global $config, $pconfig, $origname, $debug;
 	if(!$origname) 
 		return;
 
-	$fd = fopen("/tmp/print_r", "a");
+	if($debug) $fd = fopen("/tmp/print_r", "a");
 	if($debug) fwrite($fd, print_r($pconfig, true));
 
 	if($fieldb) {
@@ -83,7 +84,7 @@ function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb,
 		}
 	}
 
-	fclose($fd);
+	if($debug) fclose($fd);
 
 }
 

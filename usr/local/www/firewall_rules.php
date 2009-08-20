@@ -344,7 +344,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 						continue;
 					$isadvset = check_for_advaned_options($filterent);
 					if($isadvset)
-						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" width=\"17\" height=\"17\" title=\"advanced settings set: $isadvset\" border=\"0\">";
+						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" title=\"advanced settings set: $isadvset\" border=\"0\">";
 					else 
 						$advanced_set = ""
 				?>

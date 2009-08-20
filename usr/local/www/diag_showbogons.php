@@ -36,7 +36,7 @@
 
 require("guiconfig.inc");
 
-if($_POST['Reload']) {
+if($_POST['Download']) {
 	exec("/etc/rc.update_bogons.sh donotsleep");
 }
 
@@ -77,8 +77,8 @@ pre { font-size: 1.15em; }
     </td>
   </tr>
 </table>
-<br/>
-<input type="submit" name="Reload" value="Reload"> bogons table.
+<p/>
+<input type="submit" name="Download" value="Download"> latest bogon data.
 </form>
 <?php include("fend.inc"); ?>
 </body>

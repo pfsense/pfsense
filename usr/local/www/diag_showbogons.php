@@ -37,7 +37,9 @@
 require("guiconfig.inc");
 
 if($_POST['Download']) {
+	exec("touch /var/run/donotsleep_bogons");
 	exec("/etc/rc.update_bogons.sh donotsleep");
+	exec("rm /var/run/donotsleep_bogons");
 }
 
 $bogons = `cat /etc/bogons`;

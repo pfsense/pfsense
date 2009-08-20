@@ -11,7 +11,9 @@ value=`od -A n -d -N2 /dev/random | awk '{ print $1 }'`
 
 # Sleep for that time, unless an argument is specified.
 if [ "$1" = "" ]; then
-	echo "rc.update_bogons.sh is sleeping for $value" | logger
+	if [ ! -f /var/run/donotsleep_bogons ]; then
+		echo "rc.update_bogons.sh is sleeping for $value" | logger
+	fi
     sleep $value
 fi    
 

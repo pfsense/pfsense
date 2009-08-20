@@ -124,11 +124,12 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['allowopts'] = true;
 
 	/* advanced */
-        $pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
-        $pconfig['max-src-states'] = $a_filter[$id]['max-src-states'];
-        $pconfig['statetype'] = $a_filter[$id]['statetype'];
+	$pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
+	$pconfig['max-src-states'] = $a_filter[$id]['max-src-states'];
+	$pconfig['statetype'] = $a_filter[$id]['statetype'];
 	$pconfig['statetimeout'] = $a_filter[$id]['statetimeout'];
 
+	/* advanced - nosync */
 	$pconfig['nosync'] = isset($a_filter[$id]['nosync']);
 
 	/* advanced - new connection per second banning*/

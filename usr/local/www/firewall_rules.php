@@ -42,6 +42,25 @@
 $pgtitle = array("Firewall", "Rules");
 require("guiconfig.inc");
 
+function check_for_advaned_options(&$item) {
+	$item_set = "";
+	if($item['max-src-nodes'])
+		$item_set .= "max-src-nodes {$item['max-src-nodes']} ";
+	if($item['max-src-states'])
+		$item_set .= "max-src-states {$item['max-src-states']} ";
+	if($item['statetype'] != "keep state" && $item['statetype'] != "")
+		$item_set .= "statetype {$item['statetype']} {$item['statetype']}";
+	if($item['statetimeout'])
+		$item_set .= "statetimeout {$item['statetimeout']}";
+	if($item['nosync'])
+		$item_set .= "nosync ";
+	if($item['max-src-conn-rate'])
+		$item_set .= "max-src-conn-rate {$item['max-src-conn-rate']} ";
+	if($item['max-src-conn-rates'])
+		$item_set .= "max-src-conn-rates {$item['max-src-conn-rates']} ";
+	return $item_set;
+}
+
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();
 }
@@ -247,8 +266,8 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					for ($i = 0; isset($a_filter[$i]); $i++) {
 						$filterent = $a_filter[$i];
 						if ($filterent['interface'] != $if && !isset($filterent['floating']))
-                                                       continue;
-                                               if (isset($filterent['floating']) && "FloatingRules" != $if)
+							continue;
+						if (isset($filterent['floating']) && "FloatingRules" != $if)
 							continue;
 						$nrules++;
 					}
@@ -320,12 +339,20 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				<?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++):
 					$filterent = $a_filter[$i];
 					if ($filterent['interface'] != $if && !isset($filterent['floating']))
-                                               continue;
-                                        if (isset($filterent['floating']) && "FloatingRules" != $if)
-                                                continue;
+						continue;
+					if (isset($filterent['floating']) && "FloatingRules" != $if)
+						continue;
+					$isadvset = check_for_advaned_options($filterent);
+					if($isadvset)
+						$advanced_set = "<img src=\"./themes/{$g['theme']}/images/icons/icon_advanced.gif\" width=\"17\" height=\"17\" title=\"advanced settings set: $isadvset\" border=\"0\">";
+					else 
+						$advanced_set = ""
 				?>
                 <tr valign="top" id="fr<?=$nrules;?>">
-                  <td class="listt"><input type="checkbox" id="frc<?=$nrules;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nrules;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
+                  <td class="listt">
+					<input type="checkbox" id="frc<?=$nrules;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nrules;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;">
+					<?php echo $advanced_set; ?>
+				  </td>
                   <td class="listt" align="center">
 				  <?php if ($filterent['type'] == "block")
 				  			$iconfn = "block";

@@ -43,8 +43,8 @@ if($_POST['Download']) {
 	if(file_exists("/tmp/bogons")) {
 		$savemsg = "The bogons database has been updated.";
 		exec("egrep -v '^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8' /tmp/bogons > /etc/bogons");
+		exec("rm /tmp/bogons");
 	}
-	exec("rm /tmp/bogons");
 }
 
 $bogons = `cat /etc/bogons`;

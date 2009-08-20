@@ -79,7 +79,7 @@ include("head.inc");
 <div id="mainlevel">
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-			<td class="tabcont">
+			<td>
 <?php
 			if(is_array($config['virtualip']['vip'])) {
 				foreach($config['virtualip']['vip'] as $carp) {
@@ -99,7 +99,7 @@ include("head.inc");
 ?>
 
 			<p>
-			<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
 					<td class="listhdrr"><b><center>Carp Interface</center></b></td>
 					<td class="listhdrr"><b><center>Virtual IP</center></b></td>
@@ -149,42 +149,30 @@ include("head.inc");
 					}
 				}
 ?>
-				<tr>
-					<td>
-						<center>
-<?php
-						echo "<br>pfSync nodes:<br>";
-						echo "<pre>";
-						system("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u");
-						echo "</pre>";
-?>
-						</center>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="4">
-						<p>
-						<span class="vexpl">
-						<span class="red">
-						<strong>
-						Note:
-        				</strong>
-						</span>
-						<br />
-						You can configure CARP settings <a href="pkg_edit.php?xml=carp_settings.xml&id=0">here</a>.
-						</span>
-						</p>
-					</td>
-				</tr>
 			</table>
-
 			</td>
 		</tr>
 	</table>
 </div>
 
-<?php include("fend.inc"); ?>
+<p/>
 
+<span class="vexpl">
+<span class="red"><strong>Note:</strong></span>
+<br />
+You can configure CARP settings <a href="pkg_edit.php?xml=carp_settings.xml&id=0">here</a>.
+</span>
+
+<p/>
+
+<?php
+	echo "<br>pfSync nodes:<br>";
+	echo "<pre>";
+	system("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u");
+	echo "</pre>";
+?>
+
+<?php include("fend.inc"); ?>
 
 </body>
 </html>

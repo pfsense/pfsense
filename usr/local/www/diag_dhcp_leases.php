@@ -309,7 +309,7 @@ foreach ($pools as $data) {
 
 <p>
 
-<table class="sortable" id="sortabletable" name="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr"><a href="#">IP address</a></td>
     <td class="listhdrr"><a href="#">MAC address</a></td>

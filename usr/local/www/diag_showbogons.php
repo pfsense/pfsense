@@ -38,6 +38,19 @@ require("guiconfig.inc");
 
 if($_POST['Download']) {
 	mwexec_bg("/etc/rc.update_bogons.sh now");
+	$maxtimetowait = 0;
+	$loading = true;
+	while($loading == true) {
+		$isrunning = `ps awwwux | grep -v grep | grep bogons`;
+		if($isrunning == "") 
+			$loading = false;
+		$maxtimetowait++;
+		if($maxtimetowait > 89) 
+			$loading = false;
+		sleep(1);
+	}
+	if($maxtimetowait < 90)
+		$savemsg = "The bogons database has been updated.";
 }
 
 $bogons = `cat /etc/bogons`;

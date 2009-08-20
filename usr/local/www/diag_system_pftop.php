@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-    diag_cpu_pftop.php
+    diag_system_pftop.php
     Copyright (C) 2008 Scott Ullrich
     All rights reserved.
 
@@ -31,7 +31,7 @@
 ##|*IDENT=page-diag-system-activity
 ##|*NAME=Diagnostics: System Activity
 ##|*DESCR=Allows access to the 'Diagnostics: System Activity' page
-##|*MATCH=diag_system_activity*
+##|*MATCH=diag_system_pftop*
 ##|-PRIV
 
 require("guiconfig.inc");

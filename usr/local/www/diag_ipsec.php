@@ -57,6 +57,7 @@ $sad = ipsec_dump_sad();
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
+<script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <div id="inputerrors"></div>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -74,7 +75,7 @@ $sad = ipsec_dump_sad();
 	<tr>
     	<td>
 			<div id="mainarea">
-				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0" class="sortable" name="sortabletable" id="sortabletable">
 					<tr>
 						<td nowrap class="listhdrr">Local IP</td>
 						<td nowrap class="listhdrr">Remote IP</a></td>
@@ -116,24 +117,22 @@ $sad = ipsec_dump_sad();
 							}
 						}
 					?>
-					<tr>
-						<td colspan="4">
-							<p>
-								<span class="vexpl">
-									<span class="red">
-										<strong>Note:<br /></strong>
-									</span>
-									You can configure your IPsec 
-									<a href="vpn_ipsec.php">here</a>.
-								</span>
-							</p>
-						</td>
-					</tr>
 				</table>
 			</div>
 		</td>
 	</tr>
 </table>
+
+<p/>
+
+<span class="vexpl">
+	<span class="red">
+		<strong>Note:<br /></strong>
+	</span>
+	You can configure your IPsec 
+	<a href="vpn_ipsec.php">here</a>.
+</span>
+
 
 <?php include("fend.inc"); ?>
 </body>

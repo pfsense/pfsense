@@ -961,10 +961,12 @@ div#log span.log-protocol-mini-header {
 
 /* Sortable tables */
 table.sortable thead {
-    background-color:#eee;
-    color:#666666;
-    font-weight: bold;
     cursor: default;
+	background-color: #EEEEEE;
+	padding-right: 12px;
+	padding-left: 12px;
+	padding-top: 12px;
+	padding-bottom: 12px;
 }
 
 #graph {

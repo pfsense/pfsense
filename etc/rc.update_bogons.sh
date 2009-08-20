@@ -7,13 +7,12 @@
 echo "rc.update_bogons.sh is starting up." | logger
 
 # Sleep for that time, unless an argument is specified.
+
 if [ "$1" = "" ]; then
-	if [ ! -f /var/run/donotsleep_bogons ]; then
-		# Grab a random value  
-		value=`od -A n -d -N2 /dev/random | awk '{ print $1 }'`
-		echo "rc.update_bogons.sh is sleeping for $value" | logger
-    	sleep $value
-	fi
+    # Grab a random value  
+    value=`od -A n -d -N2 /dev/random | awk '{ print $1 }'`
+    echo "rc.update_bogons.sh is sleeping for $value" | logger
+    sleep $value
 fi    
 
 echo "rc.update_bogons.sh is beginning the update cycle." | logger

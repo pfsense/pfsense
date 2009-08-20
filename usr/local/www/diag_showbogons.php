@@ -37,12 +37,7 @@
 require("guiconfig.inc");
 
 if($_POST['Download']) {
-	exec("touch /var/run/donotsleep_bogons");
-	conf_mount_rw();
-	exec("/usr/bin/fetch -q -o /tmp/bogons 'http://files.pfsense.org/bogon-bn-nonagg.txt'");
-	if(file_exists("/tmp/bogons"))
-	exec("egrep -v '^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8' /tmp/bogons > /etc/bogons");
-	exec("rm /tmp/bogons");
+	mwexec_bg("/etc/rc.update_bogons.sh now");
 }
 
 $bogons = `cat /etc/bogons`;

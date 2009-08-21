@@ -412,7 +412,7 @@ function filter_generate_aliases() {
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 			} else if ($aliased['type'] == "openvpn") {
 				$openvpncfg = array();
-				if(foreach ($config['openvpn']['user']) {
+				if($config['openvpn']['user']) {
 					/* XXX: Check if we have a correct ip? */
 					foreach ($config['openvpn']['user'] as $openvpn)
 						$openvpncfg[$openvpn['name']] = $openvpn['ip'];

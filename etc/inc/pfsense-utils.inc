@@ -2230,27 +2230,21 @@ function get_disk_info() {
 }
 
 function run_plugins($directory) {
-	global $config, $g;
-	/* process packager manager custom rules */
-	$files = return_dir_as_array($directory);
-	if($files <> "") {
-		foreach ($files as $file) {
-			if($file) {
-				$text = file_get_contents($directory . $file);
-				if($text) {
-					if(stristr($file, ".sh") == true) {
-						mwexec($directory . $file . " start");
-					} else {
-						if(!stristr($file,"CVS")) {
-							if($g['booting'] == true)
-								echo "\t{$file}... ";
-							require_once($directory . "/" . $file);
-						}
-					}
-				}
-			}
-		}
-	}	
+        global $config, $g;
+
+        /* process packager manager custom rules */
+        $files = return_dir_as_array($directory);
+        if (is_array($files)) {
+                foreach ($files as $file) {
+			if (stristr($file, ".sh") == true)
+				mwexec($directory . $file . " start");
+			else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) {
+				if ($g['booting'] == true)
+					echo "\t{$file}... ";
+				require_once($directory . "/" . $file);
+                        }
+                }
+        }
 }
 
 /****f* pfsense-utils/display_top_tabs

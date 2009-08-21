@@ -401,6 +401,12 @@ include("head.inc");
 		document.iform.denyunknown.disabled = endis;
 	}
 
+	function show_shownumbervalue() {
+		document.getElementById("shownumbervaluebox").innerHTML='';
+		aodiv = document.getElementById('shownumbervalue');
+		aodiv.style.display = "block";
+	}
+
 	function show_ddns_config() {
 		document.getElementById("showddnsbox").innerHTML='';
 		aodiv = document.getElementById('showddns');
@@ -716,6 +722,10 @@ include("head.inc");
 					Additional BOOTP/DHCP Options
 				</td>
 				<td width="78%" class="vtable">
+					<div id="shownumbervaluebox">
+						<input type="button" onClick="show_shownumbervalue()" value="Advanced"></input> - Show Additional BOOTP/DHCP Options</a>
+					</div>
+					<div id="shownumbervalue" style="display:none">
 			    <table id="maintable">
 			        <tbody>
 			          <tr>
@@ -764,7 +774,7 @@ include("head.inc");
 					totalrows = <?php echo $counter; ?>;
 					loaded = <?php echo $counter; ?>;
 				</script>
-
+				</div>
 
 				</td>
 			</tr>

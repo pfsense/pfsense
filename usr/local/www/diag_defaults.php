@@ -32,6 +32,7 @@
 */
 
 require("guiconfig.inc");
+require_once('globals.inc');
 
 if ($_POST) {
 	if ($_POST['Submit'] != " No ") {
@@ -62,8 +63,8 @@ include("head.inc");
 		  <li>System will be configured as a DHCP server on the default LAN interface</li>
 		  <li>Reboot after changes are installed</li>
 		  <li>WAN interface will be set to obtain an address automatically from a DHCP server</li>
-		  <li>Default webConfigurator password will be reset to 'pfsense'</li>
-		  <li>Default webConfigurator username will be reset to 'admin'</li>
+		  <li>Default webConfigurator username will be reset to '<?php echo $g['factory_shipped_username']; ?>'</li>
+		  <li>Default webConfigurator password will be reset to '<?php echo $g['factory_shipped_password']; ?>'</li>
 		</ul>
                 Are you sure you want to proceed?</strong></p>
         <p>

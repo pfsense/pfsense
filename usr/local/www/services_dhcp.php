@@ -733,10 +733,10 @@ include("head.inc");
 					?>
 			          <tr>
 			            <td>
-							<input autocomplete="off" name="number<?php echo $counter; ?>" type="text" class="formfldalias" id="number<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($number);?>" />
+							<input autocomplete="off" name="number<?php echo $counter; ?>" type="text" class="formfld" id="number<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($number);?>" />
 			            </td>
 			            <td>
-							<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfldalias" id="value<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($value);?>" />
+							<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfld" id="value<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($value);?>" />
 						</td>
 			            <td>
 			    		<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="Delete" />

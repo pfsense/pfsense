@@ -1511,7 +1511,8 @@ function is_altq_capable($int) {
      	$capable = array("an", "ath", "awi", "bfe", "bge", "dc", "de", "ed",
 			"em", "fxp", "hme", "le", "nve", "re", "rl", "ndis", "sf", "sis", "sk",
 			"tun", "vr", "wi", "xl", "vlan", "ste", "aue", "bce", "ep", "gem", "ipw", 
-			"iwi", "msk", "mxge", "my", "nfe", "npe", "ral", "rum", "stge", "udav", "ural");
+			"iwi", "msk", "mxge", "my", "nfe", "npe", "ral", "rum", "stge", "udav", "ural",
+			"vge");
 
 
         $int_family = preg_split("/[0-9]+/", $int);

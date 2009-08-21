@@ -169,7 +169,7 @@ if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 
 		    <p>
                     <strong><span class="red">Note:</span></strong><strong><br></strong>
 		      Queue graphs take 5 seconds to sample data.<br>
-                      You can configure the Traffic Shaper <a href="firewall_shaper.php?reset=true">here</a>.
+                      You can configure the Traffic Shaper <a href="/firewall_shaper_wizards.php">here</a>.
 		    </p>
             </form>
 <?php include("fend.inc"); ?>

@@ -299,9 +299,11 @@ if ($_POST) {
 		$numbervalue = array();
 		unset($config['dhcpd'][$if]['numberoptions']['item']);
 		for($x=0; $x<isset($_POST["number{$x}"]); $x++) {
-			$numbervalue['number'] = $_POST["number{$x}"];
-			$numbervalue['value'] = $_POST["value{$x}"];
-			$config['dhcpd'][$if]['numberoptions']['item'][] = $numbervalue;			
+			if(is_int($_POST["number{$x}"])) {
+				$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
+				$numbervalue['value'] = htmlspecialchars($_POST["value{$x}"]);
+				$config['dhcpd'][$if]['numberoptions']['item'][] = $numbervalue;
+			}
 		}
 		$pconfig['numberoptions'] = $config['dhcpd'][$if]['numberoptions'];
 

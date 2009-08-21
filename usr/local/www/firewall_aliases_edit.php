@@ -291,8 +291,9 @@ if ($_POST) {
 			update_alias_names_upon_change('nat', 'rule', 'target', '', $_POST['name']);
 			update_alias_names_upon_change('nat', 'rule', 'external-port', '', $_POST['name']);
 			update_alias_names_upon_change('nat', 'rule', 'local-port', ''	, $_POST['name']);
-			// Alias in an alias
-			update_alias_names_upon_change('aliases', 'alias', 'address', ''	, $_POST['name']);
+			// Alias in an alias;
+			// XXX: ermal - this is wrong since it is not that simple and code below this line does the right thing
+			//update_alias_names_upon_change('aliases', 'alias', 'address', ''	, $_POST['name']);
 		}
 
 		if (isset($id) && $a_aliases[$id]) {

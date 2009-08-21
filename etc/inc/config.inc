@@ -240,7 +240,7 @@ function encrypted_configxml() {
  *   $config      - array containing all configuration variables
  ******/
 function parse_config($parse = false) {
-	global $g;
+	global $g, $config_parsed;
 	
 	$lockkey = lock('config');
 	if (!file_exists("{$g['conf_path']}/config.xml") || filesize("{$g['conf_path']}/config.xml") == 0) {
@@ -304,10 +304,7 @@ function parse_config($parse = false) {
 	alias_make_table($config);
 	unlock($lockkey);
 
-	/* process packager manager custom rules */
-	if(is_dir("/usr/local/pkg/parse_config")) {
-		run_plugins("/usr/local/pkg/parse_config/");
-	}
+	$config_parsed = true;
 
 	return $config;
 }
@@ -1309,5 +1306,12 @@ function set_device_perms() {
 
 if($g['booting']) echo ".";
 $config = parse_config();
+
+if($config_parsed == true) {
+	/* process packager manager custom rules */
+	if(is_dir("/usr/local/pkg/parse_config")) {
+		run_plugins("/usr/local/pkg/parse_config/");
+	}
+}
 
 ?>

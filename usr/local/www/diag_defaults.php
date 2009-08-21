@@ -32,7 +32,6 @@
 */
 
 require("guiconfig.inc");
-require_once('globals.inc');
 
 if ($_POST) {
 	if ($_POST['Submit'] != " No ") {

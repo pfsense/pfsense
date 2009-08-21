@@ -55,14 +55,14 @@ if($_POST)
 
 // Debugging
 if($debug)
-	exec("rm -f /tmp/alias_rename_log.txt");
+	exec("rm -f {$g['tmp_path']}/alias_rename_log.txt");
 
 function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb, $new_alias_name) {
-	global $config, $pconfig, $origname, $debug;
+	global $g, $config, $pconfig, $origname, $debug;
 	if(!$origname) 
 		return;
 
-	if($debug) $fd = fopen("/tmp/print_r", "a");
+	if($debug) $fd = fopen("{$g['tmp_path']}/print_r", "a");
 	if($debug) fwrite($fd, print_r($pconfig, true));
 
 	if($fieldb) {
@@ -201,9 +201,9 @@ if ($_POST) {
 			if($_POST['address' . $x]) {
 				/* fetch down and add in */
 				$isfirst = 0;
-				$temp_filename = tempnam("/tmp/", "alias_import");
+				$temp_filename = tempnam("{$g['tmp_path]}/", "alias_import");
 				unlink($temp_filename);
-				$fda = fopen("/tmp/tmpfetch","w");
+				$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
 				fwrite($fda, "/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
 				fclose($fda);
 				mwexec("mkdir -p {$temp_filename}");

@@ -214,7 +214,7 @@ EOD;
  *   $config      - array containing all configuration variables
  ******/
 function parse_config($parse = false) {
-	global $g;
+	global $g, $config_parsed;
 	if(filesize("{$g['conf_path']}/config.xml") == 0) {
 		$last_backup = discover_last_backup();
 		if($last_backup) {
@@ -272,13 +272,6 @@ function parse_config($parse = false) {
 	alias_make_table($config);
 	config_unlock();
 
-	/* process packager manager custom rules */
-	if(is_dir("/usr/local/pkg/parse_config")) {
-		update_filter_reload_status("Running plugins (parse_config)");
-		run_plugins("/usr/local/pkg/parse_config/");
-		update_filter_reload_status("Plugins completed.");
-	}
-
 	/*    override some global configuration parms if they exist
 	 *    instead of hard coding these checks into the codebase
      */
@@ -291,6 +284,8 @@ function parse_config($parse = false) {
 		$g['n_pppoe_units'] = $config['pppoe']['n_pppoe_units'];
 	if($config['pppoe']['pppoe_subnet'])
 		$g['pppoe_subnet'] = $config['pppoe']['pppoe_subnet'];
+
+	$config_parsed = true;
 
 	return $config;
 }
@@ -1886,5 +1881,12 @@ function set_device_perms() {
 
 if($g['booting']) echo ".";
 $config = parse_config();
+
+if($config_parsed) {
+	/* process packager manager custom rules */
+	if(is_dir("/usr/local/pkg/parse_config")) {
+		run_plugins("/usr/local/pkg/parse_config/");
+	}
+}
 
 ?>

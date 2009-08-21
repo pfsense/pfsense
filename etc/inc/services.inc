@@ -94,13 +94,23 @@ function services_dhcpd_configure() {
 		return 1;
 	}
 
-
+	$optcounter = 0;
+	$custoptions = "";
+	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {	
+		if($dhcpifconf['numberoptions']['item']) {
+			foreach($dhcpifconf['numberoptions']['item'] as $item) {
+				$custoptions .= " option custom-opt-$optcounter code {$item['number']} = text;\n";
+				$optcounter++;
+			}
+		}
+	}
 
 	$dhcpdconf = <<<EOD
 	
 option domain-name "{$syscfg['domain']}";
 option ldap-server code 95 = text;
 option domain-search-list code 119 = text;
+{$custoptions}
 default-lease-time 7200;
 max-lease-time 86400;
 log-facility local7;
@@ -256,25 +266,43 @@ $dnscfg
 
 EOD;
     
-    		if ($dhcpifconf['defaultleasetime'])
+		// default-lease-time
+		if ($dhcpifconf['defaultleasetime'])
 			$dhcpdconf .= "	default-lease-time {$dhcpifconf['defaultleasetime']};\n";
+
+		// max-lease-time
 		if ($dhcpifconf['maxleasetime'])
 			$dhcpdconf .= "	max-lease-time {$dhcpifconf['maxleasetime']};\n";
 
+		// netbios-name*
 		if (is_array($dhcpifconf['winsserver']) && $dhcpifconf['winsserver'][0]) {
 			$dhcpdconf .= "	option netbios-name-servers " . join(",", $dhcpifconf['winsserver']) . ";\n";
 			$dhcpdconf .= "	option netbios-node-type 8;\n";
 		}
 
+		// ntp-servers
 		if (is_array($dhcpifconf['ntpserver']) && $dhcpifconf['ntpserver'][0])
 			$dhcpdconf .= "	option ntp-servers " . join(",", $dhcpifconf['ntpserver']) . ";\n";
 
+		// tftp-server-name
 		if ($dhcpifconf['tftp'] <> "")
 			$dhcpdconf .= "	option tftp-server-name \"{$dhcpifconf['tftp']}\";\n";
 
-    if ($dhcpifconf['ldap'] <> "")
+		// Handle option, number rowhelper values
+		$optcounter = 0;
+		$dhcpdconf .= "\n";
+		if($dhcpifconf['numberoptions']['item']) {
+			foreach($dhcpifconf['numberoptions']['item'] as $item) {
+				$dhcpdconf .= "	option custom-opt-$optcounter \"{$item['value']}\";\n";
+				$optcounter++;
+			}
+		}
+
+		// ldap-server
+		if ($dhcpifconf['ldap'] <> "")
 			$dhcpdconf .= "	option ldap-server \"{$dhcpifconf['ldap']}\";\n";
 
+		// net boot information
 		if(isset($dhcpifconf['netboot'])) {
 			if (($dhcpifconf['next-server'] <> "") && ($dhcpifconf['filename'] <> "")) {
 				$dhcpdconf .= "	next-server {$dhcpifconf['next-server']};\n";
@@ -282,7 +310,7 @@ EOD;
 			}
 			if ($dhcpifconf['rootpath'] <> "") {
 				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpath']}\";\n";
-      }
+      		}
 		}
 		
 		$dhcpdconf .= <<<EOD

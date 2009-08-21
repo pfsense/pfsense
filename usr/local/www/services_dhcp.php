@@ -141,6 +141,7 @@ if (is_array($config['dhcpd'][$if])){
 	$pconfig['rootpath'] = $config['dhcpd'][$if]['rootpath'];
 	$pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
 	$pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
+	$pconfig['numberoptions'] = $config['dhcpd'][$if]['numberoptions'];
 	if (!is_array($config['dhcpd'][$if]['staticmap'])) 
         	$config['dhcpd'][$if]['staticmap'] = array();
 	$a_maps = &$config['dhcpd'][$if]['staticmap'];
@@ -295,6 +296,15 @@ if ($_POST) {
 		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
 		$config['dhcpd'][$if]['rootpath'] = $_POST['rootpath'];
 
+		$numbervalue = array();
+		unset($config['dhcpd'][$if]['numberoptions']['item']);
+		for($x=0; $x<isset($_POST["number{$x}"]); $x++) {
+			$numbervalue['number'] = $_POST["number{$x}"];
+			$numbervalue['value'] = $_POST["value{$x}"];
+			$config['dhcpd'][$if]['numberoptions']['item'][] = $numbervalue;			
+		}
+		$pconfig['numberoptions'] = $config['dhcpd'][$if]['numberoptions'];
+
 		write_config();
 
 		/* static arp configuration */
@@ -344,67 +354,77 @@ include("head.inc");
 
 ?>
 
+<script type="text/javascript" src="/javascript/row_helper.js">
+</script>
+
+<script type="text/javascript">
+	rowname[0] = "number";
+	rowtype[0] = "textbox";
+	rowsize[0] = "30";
+	rowname[1] = "value";
+	rowtype[1] = "textbox";
+	rowsize[1] = "30";
+</script>
+
 <script type="text/javascript" language="JavaScript">
+	function enable_change(enable_over) {
+		var endis;
+		endis = !(document.iform.enable.checked || enable_over);
+		document.iform.range_from.disabled = endis;
+		document.iform.range_to.disabled = endis;
+		document.iform.wins1.disabled = endis;
+		document.iform.wins2.disabled = endis;
+		document.iform.dns1.disabled = endis;
+		document.iform.dns2.disabled = endis;
+		document.iform.deftime.disabled = endis;
+		document.iform.maxtime.disabled = endis;
+		document.iform.gateway.disabled = endis;
+		document.iform.failover_peerip.disabled = endis;
+		document.iform.domain.disabled = endis;
+		document.iform.domainsearchlist.disabled = endis;
+		document.iform.staticarp.disabled = endis;
+		document.iform.ddnsdomain.disabled = endis;
+		document.iform.ddnsupdate.disabled = endis;
+		document.iform.ntp1.disabled = endis;
+		document.iform.ntp2.disabled = endis;
+		document.iform.tftp.disabled = endis;
+		document.iform.ldap.disabled = endis;
+		document.iform.netboot.disabled = endis;
+		document.iform.nextserver.disabled = endis;
+		document.iform.filename.disabled = endis;
+		document.iform.rootpath.disabled = endis;
+		document.iform.denyunknown.disabled = endis;
+	}
 
-function enable_change(enable_over) {
-	var endis;
-	endis = !(document.iform.enable.checked || enable_over);
-	document.iform.range_from.disabled = endis;
-	document.iform.range_to.disabled = endis;
-	document.iform.wins1.disabled = endis;
-	document.iform.wins2.disabled = endis;
-	document.iform.dns1.disabled = endis;
-	document.iform.dns2.disabled = endis;
-	document.iform.deftime.disabled = endis;
-	document.iform.maxtime.disabled = endis;
-	document.iform.gateway.disabled = endis;
-	document.iform.failover_peerip.disabled = endis;
-	document.iform.domain.disabled = endis;
-	document.iform.domainsearchlist.disabled = endis;
-	document.iform.staticarp.disabled = endis;
-	document.iform.ddnsdomain.disabled = endis;
-	document.iform.ddnsupdate.disabled = endis;
-	document.iform.ntp1.disabled = endis;
-	document.iform.ntp2.disabled = endis;
-	document.iform.tftp.disabled = endis;
-	document.iform.ldap.disabled = endis;
-	document.iform.netboot.disabled = endis;
-	document.iform.nextserver.disabled = endis;
-	document.iform.filename.disabled = endis;
-	document.iform.rootpath.disabled = endis;
-	document.iform.denyunknown.disabled = endis;
-}
+	function show_ddns_config() {
+		document.getElementById("showddnsbox").innerHTML='';
+		aodiv = document.getElementById('showddns');
+		aodiv.style.display = "block";
+	}
 
-function show_ddns_config() {
-	document.getElementById("showddnsbox").innerHTML='';
-	aodiv = document.getElementById('showddns');
-	aodiv.style.display = "block";
-}
+	function show_ntp_config() {
+		document.getElementById("showntpbox").innerHTML='';
+		aodiv = document.getElementById('showntp');
+		aodiv.style.display = "block";
+	}
 
-function show_ntp_config() {
-	document.getElementById("showntpbox").innerHTML='';
-	aodiv = document.getElementById('showntp');
-	aodiv.style.display = "block";
-}
+	function show_tftp_config() {
+		document.getElementById("showtftpbox").innerHTML='';
+		aodiv = document.getElementById('showtftp');
+		aodiv.style.display = "block";
+	}
 
-function show_tftp_config() {
-	document.getElementById("showtftpbox").innerHTML='';
-	aodiv = document.getElementById('showtftp');
-	aodiv.style.display = "block";
-}
+	function show_ldap_config() {
+		document.getElementById("showldapbox").innerHTML='';
+		aodiv = document.getElementById('showldap');
+		aodiv.style.display = "block";
+	}
 
-function show_ldap_config() {
-	document.getElementById("showldapbox").innerHTML='';
-	aodiv = document.getElementById('showldap');
-	aodiv.style.display = "block";
-}
-
-function show_netboot_config() {
-	document.getElementById("shownetbootbox").innerHTML='';
-	aodiv = document.getElementById('shownetboot');
-	aodiv.style.display = "block";
-}
-
+	function show_netboot_config() {
+		document.getElementById("shownetbootbox").innerHTML='';
+		aodiv = document.getElementById('shownetboot');
+		aodiv.style.display = "block";
+	}
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -459,7 +479,7 @@ function show_netboot_config() {
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable">
-			  <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
+			  			<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
                           <strong>Enable DHCP server on
                           <?=htmlspecialchars($iflist[$if]);?>
                           interface</strong></td>
@@ -467,7 +487,7 @@ function show_netboot_config() {
 				  <tr>
 	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
                       <td width="78%" class="vtable">
-			<input name="denyunknown" id="denyunknown" type="checkbox" value="yes" <?php if ($pconfig['denyunknown']) echo "checked"; ?>>
+					  <input name="denyunknown" id="denyunknown" type="checkbox" value="yes" <?php if ($pconfig['denyunknown']) echo "checked"; ?>>
                       <strong>Deny unknown clients</strong><br>
                       If this is checked, only the clients defined below will get DHCP leases from this server. </td>
 		      		  </tr>
@@ -516,43 +536,43 @@ function show_netboot_config() {
                         <td width="78%" class="vtable">
                           <input name="range_from" type="text" class="formfld unknown" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
                           &nbsp;to&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
-			</td>
+					   </td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">WINS servers</td>
                         <td width="78%" class="vtable">
                           <input name="wins1" type="text" class="formfld unknown" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
                           <input name="wins2" type="text" class="formfld unknown" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>">
-			</td>
+					   </td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">DNS servers</td>
                         <td width="78%" class="vtable">
                           <input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
                           <input name="dns2" type="text" class="formfld unknown" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br>
-			  NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.  
-			</td>
+					   	  NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.  
+					   </td>
                       </tr>
                      <tr>
                        <td width="22%" valign="top" class="vncell">Gateway</td>
                        <td width="78%" class="vtable">
                          <input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
-			 The default is to use the IP on this interface of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
-			</td>
+			 			 The default is to use the IP on this interface of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
+					   </td>
                      </tr>
                       <tr>
                        <td width="22%" valign="top" class="vncell">Domain-Name</td>
                        <td width="78%" class="vtable">
                          <input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
-			 The default is to use the domainname of the router as DNS-Search string that is served via DHCP. Specify an alternate DNS-Search string here.
-			</td>
+			 			 The default is to use the domainname of the router as DNS-Search string that is served via DHCP. Specify an alternate DNS-Search string here.
+					 </td>
                      </tr>
                       <tr>
                        <td width="22%" valign="top" class="vncell">Domain-Searchlist</td>
                        <td width="78%" class="vtable">
                          <input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
-			 DNS-Searchlist: the DHCP server can serve a list of domains to be searched.
-			</td>
+			 				DNS-Searchlist: the DHCP server can serve a list of domains to be searched.
+						</td>
                      </tr>                     
                       <tr>
                         <td width="22%" valign="top" class="vncell">Default lease time</td>
@@ -562,7 +582,7 @@ function show_netboot_config() {
                           This is used for clients that do not ask for a specific
                           expiration time.<br>
                           The default is 7200 seconds.
-			</td>
+					   </td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">Maximum lease time</td>
@@ -572,7 +592,7 @@ function show_netboot_config() {
                           This is the maximum lease time for clients that ask
                           for a specific expiration time.<br>
                           The default is 86400 seconds.
-			</td>
+					   </td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">Failover peer IP:</td>
@@ -580,49 +600,53 @@ function show_netboot_config() {
 				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
 				Leave blank to disable.  Enter the REAL address of the other machine.  Machines must be using CARP.
 			</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">
+					Static ARP
+				</td>
+				<td width="78%" class="vtable">
+					<table>
+						<tr>
+							<td>
+								<input valign="middle" type="checkbox" value="yes" name="staticarp" id="staticarp" <?php if($pconfig['staticarp']) echo " checked"; ?>>&nbsp;
+							</td>
+							<td>
+								<b>Enable Static ARP entries</b>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								&nbsp;
+							</td>
+							<td>
+								<span class="red"><strong>Note:</strong></span> Only the machines listed below will be able to communicate with the firewall on this NIC.
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">
+					Dynamic DNS
+				</td>
+				<td width="78%" class="vtable">
+					<div id="showddnsbox">
+						<input type="button" onClick="show_ddns_config()" value="Advanced"></input> - Show Dynamic DNS</a>
+					</div>
+					<div id="showddns" style="display:none">
+						<input valign="middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if($pconfig['ddnsupdate']) echo " checked"; ?>>&nbsp;
+						<b>Enable registration of DHCP client names in DNS.</b><br />
+						<p>
+						<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
+						Note: Leave blank to disable dynamic DNS registration.<br />
+						Enter the dynamic DNS domain which will be used to register client names in the DNS server.
+					</div>
+				</td>
 		      </tr>
-                      <tr>
-                        <td width="22%" valign="top" class="vncell">Static ARP</td>
-                        <td width="78%" class="vtable">
-				<table>
-					<tr>
-						<td>
-							<input valign="middle" type="checkbox" value="yes" name="staticarp" id="staticarp" <?php if($pconfig['staticarp']) echo " checked"; ?>>&nbsp;
-						</td>
-						<td>
-							<b>Enable Static ARP entries</b>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							&nbsp;
-						</td>
-						<td>
-							<span class="red"><strong>Note:</strong></span> Only the machines listed below will be able to communicate with the firewall on this NIC.
-						</td>
-					</tr>
-				</table>
-			</td>
-                      </tr>
-                      <tr>
-                        <td width="22%" valign="top" class="vncell">Dynamic DNS</td>
-                        <td width="78%" class="vtable">
-				<div id="showddnsbox">
-					<input type="button" onClick="show_ddns_config()" value="Advanced"></input> - Show Dynamic DNS</a>
-				</div>
-				<div id="showddns" style="display:none">
-					<input valign="middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if($pconfig['ddnsupdate']) echo " checked"; ?>>&nbsp;
-					<b>Enable registration of DHCP client names in DNS.</b><br />
-					<p>
-					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
-					Note: Leave blank to disable dynamic DNS registration.<br />
-					Enter the dynamic DNS domain which will be used to register client names in the DNS server.
-				</div>
-			</td>
-		      </tr>
-                      <tr>
-                        <td width="22%" valign="top" class="vncell">NTP servers</td>
-                        <td width="78%" class="vtable">
+			<tr>
+				<td width="22%" valign="top" class="vncell">NTP servers</td>
+				<td width="78%" class="vtable">
 				<div id="showntpbox">
 					<input type="button" onClick="show_ntp_config()" value="Advanced"></input> - Show NTP configuration</a>
 				</div>
@@ -631,10 +655,12 @@ function show_netboot_config() {
 					<input name="ntp2" type="text" class="formfld unknown" id="ntp2" size="20" value="<?=htmlspecialchars($pconfig['ntp2']);?>">
 				</div>
 			</td>
-                      </tr>
-                      <tr>
-                        <td width="22%" valign="top" class="vncell">TFTP server</td>
-                        <td width="78%" class="vtable">
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">
+					TFTP server
+				</td>
+				<td width="78%" class="vtable">
 				<div id="showtftpbox">
 					<input type="button" onClick="show_tftp_config()" value="Advanced"></input> - Show TFTP configuration</a>
 				</div>
@@ -643,76 +669,133 @@ function show_netboot_config() {
 					Leave blank to disable.  Enter a full hostname or IP for the TFTP server.
 				</div>
 			</td>
-                      </tr>
-                      <tr>
-                        <td width="22%" valign="top" class="vncell">LDAP URI</td>
-                        <td width="78%" class="vtable">
-				<div id="showldapbox">
-					<input type="button" onClick="show_ldap_config()" value="Advanced"></input> - Show LDAP configuration</a>
-				</div>
-				<div id="showldap" style="display:none">
-					<input name="ldap" type="text" class="formfld unknown" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>"><br>
-					Leave blank to disable.  Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com
-				</div>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">LDAP URI</td>
+					<td width="78%" class="vtable">
+						<div id="showldapbox">
+							<input type="button" onClick="show_ldap_config()" value="Advanced"></input> - Show LDAP configuration</a>
+						</div>
+						<div id="showldap" style="display:none">
+							<input name="ldap" type="text" class="formfld unknown" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>"><br>
+							Leave blank to disable.  Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com
+						</div>
+					</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Enable Network booting</td>
+				<td width="78%" class="vtable">
+					<div id="shownetbootbox">
+						<input type="button" onClick="show_netboot_config()" value="Advanced"></input> - Show Network booting</a>
+					</div>
+					<div id="shownetboot" style="display:none">
+						<input valign="middle" type="checkbox" value="yes" name="netboot" id="netboot" <?php if($pconfig['netboot']) echo " checked"; ?>>&nbsp;
+						<b>Enables network booting.</b>
+						<p>
+						Enter the IP of the <b>next-server</b>
+						<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>">
+						and the filename					
+						<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
+						Note: You need both a filename and a boot server configured for this to work!
+					  	<p>
+						Enter the <b>root-path</b>-string
+	          			<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br>
+	          			Note: string-format: iscsi:(servername):(protocol):(port):(LUN):targetname
+        			</div>
 			</td>
-                      </tr>
-                      <tr>
-                        <td width="22%" valign="top" class="vncell">Enable Network booting</td>
-                        <td width="78%" class="vtable">
-				<div id="shownetbootbox">
-					<input type="button" onClick="show_netboot_config()" value="Advanced"></input> - Show Network booting</a>
-				</div>
-				<div id="shownetboot" style="display:none">
-					<input valign="middle" type="checkbox" value="yes" name="netboot" id="netboot" <?php if($pconfig['netboot']) echo " checked"; ?>>&nbsp;
-					<b>Enables network booting.</b>
-					<p>
-					Enter the IP of the <b>next-server</b>
-					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>">
-					and the filename					
-					<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
-					Note: You need both a filename and a boot server configured for this to work!
-				  <p>
-					Enter the <b>root-path</b>-string
-          <input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br>
-          Note: string-format: iscsi:(servername):(protocol):(port):(LUN):targetname
-        </div>
-			</td>
-		                  </tr>
-                      <tr>
-                        <td width="22%" valign="top">&nbsp;</td>
-                        <td width="78%">
-                          <input name="if" type="hidden" value="<?=$if;?>">
-                          <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
-                        </td>
-                      </tr>
-                      <tr>
-                        <td width="22%" valign="top">&nbsp;</td>
-                        <td width="78%"> <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                            </strong></span>The DNS servers entered in <a href="system.php">System:
-                            General setup</a> (or the <a href="services_dnsmasq.php">DNS
-                            forwarder</a>, if enabled) </span><span class="vexpl">will
-                            be assigned to clients by the DHCP server.<br>
-                            <br>
-                            The DHCP lease table can be viewed on the <a href="diag_dhcp_leases.php">Status:
-                            DHCP leases</a> page.<br>
-                            </span></p>
-			</td>
-                      </tr>
-                    </table>
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td width="25%" class="listhdrr">MAC address</td>
-                  <td width="15%" class="listhdrr">IP address</td>
-				  <td width="20%" class="listhdrr">Hostname</td>
-                  <td width="30%" class="listhdr">Description</td>
-                  <td width="10%" class="list">
-                    <table border="0" cellspacing="0" cellpadding="1">
-                      <tr>
+			</tr>
+			<tr>
+
+
+				<td width="22%" valign="top" class="vncell">
+					Additional BOOTP/DHCP Options
+				</td>
+				<td width="78%" class="vtable">
+			    <table id="maintable">
+			        <tbody>
+			          <tr>
+			            <td colspan="4">
+			      		    <div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp">Enter the DHCP option number and the value for each item you would like to include in the DHCP lease information.</div>
+			            </td>
+			          </tr>
+			          <tr>
+			            <td><div id="onecolumn">Number</div></td>
+			            <td><div id="twocolumn">Value</div></td>
+			          </tr>
+				<?php $counter = 0; ?>
+				<?php 
+					if($pconfig['numberoptions'])
+				 		foreach($pconfig['numberoptions']['item'] as $item): 
+				?>
+					<?php
+						$number = $item['number'];
+						$value = $item['value'];
+					?>
+			          <tr>
+			            <td>
+							<input autocomplete="off" name="number<?php echo $counter; ?>" type="text" class="formfldalias" id="number<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($number);?>" />
+			            </td>
+			            <td>
+							<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfldalias" id="value<?php echo $counter; ?>" size="30" value="<?=htmlspecialchars($value);?>" />
+						</td>
+			            <td>
+			    		<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="Delete" />
+				      </td>
+			          </tr>
+				<?php $counter++; ?>
+				<?php endforeach; ?>
+			        </tbody>
+			        <tfoot>
+			        </tfoot>
+				</table>
+				<a onclick="javascript:addRowTo('maintable', 'formfldalias'); return false;" href="#">
+					<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="add another entry" />
+				</a>
+				<script type="text/javascript">
+					field_counter_js = 2;
+					rows = 1;
+					totalrows = <?php echo $counter; ?>;
+					loaded = <?php echo $counter; ?>;
+				</script>
+
+
+				</td>
+			</tr>
+            <tr>
+              <td width="22%" valign="top">&nbsp;</td>
+              <td width="78%">
+                <input name="if" type="hidden" value="<?=$if;?>">
+                <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+              </td>
+            </tr>
+			<tr>
+				<td width="22%" valign="top">&nbsp;</td>
+				<td width="78%"> <p><span class="vexpl"><span class="red"><strong>Note:<br>
+					</strong></span>The DNS servers entered in <a href="system.php">System:
+					General setup</a> (or the <a href="services_dnsmasq.php">DNS
+					forwarder</a>, if enabled) </span><span class="vexpl">will
+					be assigned to clients by the DHCP server.<br>
+					<br>
+					The DHCP lease table can be viewed on the <a href="diag_dhcp_leases.php">Status:
+					DHCP leases</a> page.<br>
+					</span></p>
+				</td>
+			</tr>
+		</table>
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td width="25%" class="listhdrr">MAC address</td>
+			<td width="15%" class="listhdrr">IP address</td>
+			<td width="20%" class="listhdrr">Hostname</td>
+			<td width="30%" class="listhdr">Description</td>
+			<td width="10%" class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+		<tr>
 			<td valign="middle" width="17"></td>
-                        <td valign="middle"><a href="services_dhcp_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-                      </tr>
-                    </table>
-		  </td>
+			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+			</tr>
+			</table>
+			</td>
 		</tr>
 			  <?php if(is_array($a_maps)): ?>
 			  <?php $i = 0; foreach ($a_maps as $mapent): ?>

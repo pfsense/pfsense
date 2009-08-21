@@ -714,7 +714,7 @@ include("head.inc");
 			    <table id="maintable">
 			        <tbody>
 			          <tr>
-			            <td colspan="4">
+			            <td colspan="3">
 			      		    <div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp">Enter the DHCP option number and the value for each item you would like to include in the DHCP lease information.</div>
 			            </td>
 			          </tr>

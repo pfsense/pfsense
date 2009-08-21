@@ -296,6 +296,7 @@ if ($_POST) {
 		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
 		$config['dhcpd'][$if]['rootpath'] = $_POST['rootpath'];
 
+		// Handle the custom options rowhelper
 		$numbervalue = array();
 		unset($config['dhcpd'][$if]['numberoptions']['item']);
 		for($x=0; $x<isset($_POST["number{$x}"]); $x++) {
@@ -305,6 +306,8 @@ if ($_POST) {
 				$config['dhcpd'][$if]['numberoptions']['item'][] = $numbervalue;
 			}
 		}
+		
+		// Reload the new pconfig variable that the forum uses.
 		$pconfig['numberoptions'] = $config['dhcpd'][$if]['numberoptions'];
 
 		write_config();

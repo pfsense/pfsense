@@ -1505,14 +1505,15 @@ function get_current_wan_address($interface = "wan") {
 
 function is_altq_capable($int) {
         /* Per:
-         * http://www.freebsd.org/cgi/man.cgi?query=altq&manpath=FreeBSD+6.0-current&format=html
+         * http://www.freebsd.org/cgi/man.cgi?query=altq&manpath=FreeBSD+7.2-current&format=html
          * Only the following drivers have ALTQ support
          */
-     	$capable = array("an", "ath", "awi", "bfe", "bge", "dc", "de", "ed",
-			"em", "fxp", "hme", "le", "nve", "re", "rl", "ndis", "sf", "sis", "sk",
-			"tun", "vr", "wi", "xl", "vlan", "ste", "aue", "bce", "ep", "gem", "ipw", 
-			"iwi", "msk", "mxge", "my", "nfe", "npe", "ral", "rum", "stge", "udav", "ural",
-			"vge");
+     	$capable = array("age", "ale", "an", "ath", "aue", "awi", "bce",
+			"bfe", "bge", "dc", "de", "ed", "em", "ep", "fxp", "gem",
+			"hme", "ipw", "iwi", "jme", "le", "msk", "mxge", "my", "nfe",
+			"npe", "nve", "ral", "re", "rl", "rum", "sf", "sis", "sk",
+			"ste", "stge", "txp", "udav", "ural", "vge", "vr", "wi", "xl",
+			"ndis", "tun", "vlan");
 
 
         $int_family = preg_split("/[0-9]+/", $int);

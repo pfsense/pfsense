@@ -294,8 +294,9 @@ function filter_configure_sync() {
 	/* run items scheduled for after filter configure run */
 	$fda = fopen("{$g['tmp_path']}/commands.txt", "w");
 	if ($fda) {
-		foreach($after_filter_configure_run as $afcr) 
-			fwrite($fda, $afcr . "\n");	
+		if($after_filter_configure_run)
+			foreach($after_filter_configure_run as $afcr) 
+				fwrite($fda, $afcr . "\n");	
 		/*
          	 *      we need a way to let a user run a shell cmd after each
          	 *      filter_configure() call.  run this xml command after

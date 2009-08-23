@@ -86,7 +86,7 @@ include("head.inc");
 <?php print_info_box_np("The IGMP entry list has been changed.<br>You must apply the changes in order for them to take effect.");?>
 <?php endif; ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr>
   <td width="15%" class="listhdrr">Name</td>
   <td width="10%" class="listhdrr">Type</td>

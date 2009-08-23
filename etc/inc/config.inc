@@ -692,18 +692,22 @@ function config_restore($conffile) {
 	if (!file_exists($conffile))
 		return 1;
 
-	$lockkey = lock('config');
 	conf_mount_rw();
 
 	backup_config();
-	copy($conffile, "{$g['cf_conf_path']}/config.xml");
-	unlock($lockkey);
-	$config = parse_config(true);
+
 	$lockkey = lock('config');
+
+	copy($conffile, "{$g['cf_conf_path']}/config.xml");
+	unlink_if_exists("/tmp/config.cache");
+
+	unlock($lockkey);
+
+	$config = parse_config(true);
+
 	write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
 
 	conf_mount_ro();
-	unlock($lockkey);
 
 	return 0;
 }

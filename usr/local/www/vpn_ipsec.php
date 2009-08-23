@@ -36,7 +36,7 @@
 ##|*MATCH=vpn_ipsec.php*
 ##|-PRIV
 
-require("ipsec.inc");
+require("functions.inc");
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['phase1']))

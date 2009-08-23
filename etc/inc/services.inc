@@ -1,4 +1,4 @@
-<?php
+f<?php
 /* $Id$ */
 /*
 	services.inc
@@ -99,7 +99,7 @@ function services_dhcpd_configure() {
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {	
 		if($dhcpifconf['numberoptions']['item']) {
 			foreach($dhcpifconf['numberoptions']['item'] as $item) {
-				$custoptions .= " option custom-opt-$optcounter code {$item['number']} = text;\n";
+				$custoptions .= "option custom-opt-$optcounter code {$item['number']} = text;\n";
 				$optcounter++;
 			}
 		}

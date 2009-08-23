@@ -1124,7 +1124,7 @@ function netbios_change() {
 
 			<?php else: ?>
 
-			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td width="10%" class="listhdrr">Disabled</td>
 					<td width="10%" class="listhdrr">Protocol</td>
@@ -1173,14 +1173,9 @@ function netbios_change() {
 						</a>
 					</td>
 				</tr>
-				<tr>
-					<td colspan="4">
-						<p>
-							<?=gettext("Additional OpenVPN servers can be added here.");?>
-						</p>
-					</td>
-				</tr>
 			</table>
+
+			<?=gettext("Additional OpenVPN servers can be added here.");?>
 
 			<? endif; ?>
 

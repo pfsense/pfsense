@@ -201,7 +201,7 @@ if ($_POST) {
 			if($_POST['address' . $x]) {
 				/* fetch down and add in */
 				$isfirst = 0;
-				$temp_filename = tempnam("{$g['tmp_path]}/", "alias_import");
+				$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
 				unlink($temp_filename);
 				$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
 				fwrite($fda, "/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
@@ -292,8 +292,7 @@ if ($_POST) {
 			update_alias_names_upon_change('nat', 'rule', 'external-port', '', $_POST['name']);
 			update_alias_names_upon_change('nat', 'rule', 'local-port', ''	, $_POST['name']);
 			// Alias in an alias;
-			// XXX: ermal - this is wrong since it is not that simple and code below this line does the right thing
-			//update_alias_names_upon_change('aliases', 'alias', 'address', ''	, $_POST['name']);
+			update_alias_names_upon_change('aliases', 'alias', 'address', ''	, $_POST['name']);
 		}
 
 		if (isset($id) && $a_aliases[$id]) {

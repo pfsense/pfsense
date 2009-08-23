@@ -190,4 +190,42 @@ function are_notices_pending($category = "all") {
 	return false;
 }
 
+/****f* pfsense-utils/notify_via_growl
+ * NAME
+ *   notify_via_growl
+ * INPUTS
+ *	 notification string to send
+ * RESULT
+ *   returns true if message was sent
+ ******/
+function notify_via_growl($message) {
+	require_once("growl.class");
+	global $config;
+	$growl_ip = $config['notifications']['growl']['ipaddress'];
+	$growl_password = $config['notifications']['growl']['password'];
+	if($growl_ip) {
+		$growl = new Growl($growl_ip, $growl_password);
+		$growl->notify("pfSense growl alert", "pfSense", "{$message}");
+	}
+}
+
+/****f* pfsense-utils/register_via_growl
+ * NAME
+ *   register_via_growl
+ * INPUTS
+ *	 none
+ * RESULT
+ *   none
+ ******/
+function register_via_growl() {
+	require_once("growl.class");
+	global $config;
+	$growl_ip = $config['notifications']['growl']['ipaddress'];
+	$growl_password = $config['notifications']['growl']['password'];
+	if($growl_ip) {
+		$growl = new Growl($growl_ip, $growl_password);
+		$growl->register();
+	}
+}
+
 ?>

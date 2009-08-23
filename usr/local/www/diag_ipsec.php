@@ -74,7 +74,7 @@ $sad = ipsec_dump_sad();
 	<tr>
     	<td>
 			<div id="mainarea">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont sortable">
 					<tr>
 						<td nowrap class="listhdrr">Local IP</td>
 						<td nowrap class="listhdrr">Remote IP</a></td>

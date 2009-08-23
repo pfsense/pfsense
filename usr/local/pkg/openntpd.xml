@@ -9,7 +9,6 @@
 			<fielddescr>Enable</fielddescr>
 			<description>Check this to enable the NTP server.</description>
 			<type>checkbox</type>
-			<enablefields>interface</enablefields>
 		</field>
 		<field>
 			<fieldname>interface</fieldname>

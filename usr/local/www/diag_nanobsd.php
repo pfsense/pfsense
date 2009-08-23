@@ -47,28 +47,36 @@ $BOOT_DEVICE=trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 
 $REAL_BOOT_DEVICE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);
 $BOOT_DRIVE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`);
 
-// Detect which slice is active and set information.
-if(strstr($REAL_BOOT_DEVICE, "s1")) {
-	$SLICE="2";
-	$OLDSLICE="1";
-	$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
-	$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
-	$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";	
-	$GLABEL_SLICE="pfsense1";
-	$UFS_ID="1";
-	$OLD_UFS_ID="0";
-	$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
-} else {
-	$SLICE="1";
-	$OLDSLICE="2";
-	$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
-	$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
-	$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";
-	$GLABEL_SLICE="pfsense0";
-	$UFS_ID="0";
-	$OLD_UFS_ID="1";
-	$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
+function detect_slice_info() {
+	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+	global $GLABEL_SLIZE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+	// Detect which slice is active and set information.
+	if(strstr($REAL_BOOT_DEVICE, "s1")) {
+		$SLICE="2";
+		$OLDSLICE="1";
+		$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
+		$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
+		$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";	
+		$GLABEL_SLICE="pfsense1";
+		$UFS_ID="1";
+		$OLD_UFS_ID="0";
+		$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
+
+	} else {
+		$SLICE="1";
+		$OLDSLICE="2";
+		$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
+		$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
+		$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";
+		$GLABEL_SLICE="pfsense0";
+		$UFS_ID="0";
+		$OLD_UFS_ID="1";
+		$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
+	}
 }
+
+// Survey slice info
+detect_slice_info();
 
 ?>
 
@@ -124,6 +132,8 @@ EOF;
 	exec("sysctl kern.geom.debugflags=0");
 	conf_mount_ro();
 	$savemsg = "The boot slice has been set to {$ABOOT_DRIVE} {$AGLABEL_SLICE}";
+	// Survey slice info
+	detect_slice_info();
 }
 
 if($_POST['destslice']) {
@@ -154,6 +164,8 @@ EOF;
 		$savemsg = "The slice has been duplicated.<p/>If you would like to boot from this newly duplicated slice please set it using the bootup information area.";
 		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
 	}
+	// Survey slice info
+	detect_slice_info();
 }
 
 if ($savemsg)

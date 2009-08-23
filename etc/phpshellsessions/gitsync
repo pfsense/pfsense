@@ -202,6 +202,9 @@ function post_cvssync_commands() {
 	exec("pfctl -f /tmp/rules.debug");
 	echo "\n";
 
+	if(file_exists("/etc/rc.php_ini_setup"))
+		exec("/etc/rc.php_ini_setup");
+
 	echo "===> Signaling PHP and Lighty restart...";
 	$fd = fopen("/tmp/restart_lighty", "w");
 	fwrite($fd, "#!/bin/sh\n");
@@ -211,6 +214,7 @@ function post_cvssync_commands() {
 	fclose($fd);
 	mwexec_bg("sh /tmp/restart_lighty");
 	echo "\n";
+
 }
 
 function isUrl($url = "") {

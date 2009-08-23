@@ -286,7 +286,7 @@
                 </field>
 		<field>
                         <name>Address</name>
-			<type>input</type>
+			<type>inputalias</type>
 			<description>This allows you to just provide the IP address of the computer(s) to Penalize. NOTE: You can also use a Firewall Alias in this location.</description>
 			<bindstofield>ezshaper->step4->address</bindstofield>
 			<message>IP Address field is non-blank and doesn't look like an IP address.</message>

@@ -74,7 +74,7 @@ $spd = ipsec_dump_spd();
 		<tr>
 			<td>
 				<div id="mainarea" style="background:#eeeeee">
-					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (count($spd)): ?>
 						<tr>
 							<td nowrap class="listhdrr">Source</td>

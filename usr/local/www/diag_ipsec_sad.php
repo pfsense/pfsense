@@ -75,7 +75,7 @@ if ($_GET['act'] == "del") {
 		<tr>
 			<td>
 				<div id="mainarea">
-					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (count($sad)): ?>
 						<tr>
 							<td nowrap class="listhdrr">Source</td>

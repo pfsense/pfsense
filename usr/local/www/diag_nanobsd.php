@@ -50,7 +50,7 @@ $BOOT_DRIVE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/h
 function detect_slice_info() {
 	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
 	global $GLABEL_SLIZE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
-	global $BOOT_DRIVE, $REAL_BOOT_DEVICE;
+	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE;
 	
 	$BOOT_DEVICE=trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`);
 	$REAL_BOOT_DEVICE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);

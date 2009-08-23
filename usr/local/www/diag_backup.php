@@ -188,6 +188,7 @@ if ($_POST) {
 								touch("/needs_package_sync");
 							$reboot_needed = true;
 							$savemsg = "The configuration has been restored. The firewall is now rebooting.";
+							touch("/conf/needs_package_sync");
 							/* remove cache, we will force a config reboot */
 							if(file_exists("/tmp/config.cache"))
 								unlink("/tmp/config.cache");

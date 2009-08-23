@@ -1,4 +1,4 @@
-f<?php
+<?php
 /* $Id$ */
 /*
 	services.inc

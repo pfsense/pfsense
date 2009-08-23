@@ -314,6 +314,7 @@ if ($_POST) {
 								if(isset($config['captiveportal']['enable'])) {
 									/* for some reason ipfw doesn't init correctly except on bootup sequence */
 									$savemsg = "The configuration has been restored.<p>The firewall is now rebooting.";
+									touch("/conf/needs_package_sync");
 									$reboot_needed = true;
 								}
 								setup_serial_port();

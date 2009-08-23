@@ -99,7 +99,7 @@ include("head.inc");
 ?>
 
 			<p>
-			<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+			<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
 					<td class="listhdrr"><b><center>Carp Interface</center></b></td>
 					<td class="listhdrr"><b><center>Virtual IP</center></b></td>

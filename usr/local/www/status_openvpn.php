@@ -110,48 +110,54 @@ echo $buff;
 ?>
 	<?php foreach ($servers as $server): ?>
 
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td colspan="6" class="listtopic"> 
 				Client connections for <?=$server['name'];?>
 			</td>
 		</tr>
 		<tr>
-			<td class="listhdrr">Common Name</td>
-			<td class="listhdrr">Real Address</td>
-			<td class="listhdrr">Virtual Address</td>
-			<td class="listhdrr">Connected Since</td>
-			<td class="listhdrr">Bytes Sent</td>
-			<td class="listhdrr">Bytes Received</td>
-		</tr>
+			<td>
+				<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="listhdrr">Common Name</td>
+					<td class="listhdrr">Real Address</td>
+					<td class="listhdrr">Virtual Address</td>
+					<td class="listhdrr">Connected Since</td>
+					<td class="listhdrr">Bytes Sent</td>
+					<td class="listhdrr">Bytes Received</td>
+				</tr>
 
-		<?php foreach ($server['conns'] as $conn): ?>
-		<tr>
-			<td class="listlr">
-				<?=$conn['common_name'];?>
-			</td>
-			<td class="listr">
-				<?=$conn['remote_host'];?>
-			</td>
-			<td class="listr">
-				<?=$conn['virtual_addr'];?>
-			</td>
-			<td class="listr">
-				<?=$conn['connect_time'];?>
-			</td>
-			<td class="listr">
-				<?=$conn['bytes_sent'];?>
-			</td>
-			<td class="listr">
-				<?=$conn['bytes_recv'];?>
+				<?php foreach ($server['conns'] as $conn): ?>
+				<tr>
+					<td class="listlr">
+						<?=$conn['common_name'];?>
+					</td>
+					<td class="listr">
+						<?=$conn['remote_host'];?>
+					</td>
+					<td class="listr">
+						<?=$conn['virtual_addr'];?>
+					</td>
+					<td class="listr">
+						<?=$conn['connect_time'];?>
+					</td>
+					<td class="listr">
+						<?=$conn['bytes_sent'];?>
+					</td>
+					<td class="listr">
+						<?=$conn['bytes_recv'];?>
+					</td>
+				</tr>
+
+				<?php endforeach; ?>
+				<tr>
+					<td colspan="6" class="list" height="12"></td>
+				</tr>
+
+			</table>
 			</td>
 		</tr>
-
-		<?php endforeach; ?>
-		<tr>
-			<td colspan="6" class="list" height="12"></td>
-		</tr>
-
 	</table>
 
 	<?php endforeach; ?>

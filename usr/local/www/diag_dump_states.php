@@ -122,7 +122,7 @@ include("head.inc");
 	$current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 ?>
 
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table class="tabcont sortable" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>
 			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">

@@ -72,7 +72,7 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-              <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont" name="sortabletable" id="sortabletable">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont sortable" name="sortabletable" id="sortabletable">
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
 				  <td width="10%" class="listhdrr">Type</td>

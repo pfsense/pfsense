@@ -124,10 +124,10 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
-		  <td width="10%" class="listhdrr">Port</td>
+				  <td width="10%" class="listhdrr">Port</td>
                   <td width="10%" class="listhdrr">Servers</td>
                   <td width="30%" class="listhdrr">Status</td>
                   <td width="30%" class="listhdr">Description</td>

@@ -244,7 +244,7 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
                 <td>
-<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr">IP address</td>
     <td class="listhdrr">MAC address</td>

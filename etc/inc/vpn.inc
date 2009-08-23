@@ -38,6 +38,7 @@ require_once ("functions.inc");
 
 function vpn_ipsec_failover_configure() {
 	global $config, $g;
+	require_once ("ipsec.inc");
 
 	$sasyncd_text = "";
 
@@ -91,6 +92,7 @@ function find_last_gif_device() {
 function vpn_ipsec_configure($ipchg = false)
 {
 	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos;
+	require_once ("ipsec.inc");
 
 	mwexec("/sbin/ifconfig enc0 up");
 
@@ -871,6 +873,7 @@ EOD;
 function vpn_ipsec_force_reload() {
 	global $config;
 	global $g;
+	require_once ("ipsec.inc");
 
 	$ipseccfg = $config['ipsec'];
 

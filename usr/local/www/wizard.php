@@ -156,8 +156,9 @@ include("head.inc");
 	else 
 		echo "<link rel=\"stylesheet\" href=\"/themes/{$g['theme']}/all.css\" media=\"all\" />";
 ?>
+
 <?php if($pkg['step'][$stepid]['fields']['field'] <> "") { ?>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 
 function  FieldValidate(userinput,  regexp,  message)
@@ -248,6 +249,7 @@ function enablechange() {
     ?>
 
     <?php
+	$inputaliases = array();
 	if($pkg['step'][$stepid]['fields']['field'] <> "") {
 		foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
 
@@ -297,6 +299,7 @@ function enablechange() {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>\n";
+				$inputaliases[] = $name;
 			}
 			if(!$field['dontcombinecells'])
 				echo "<td class=\"vtable\">\n";
@@ -478,8 +481,7 @@ function enablechange() {
 <br>&nbsp;
 </div>
 </form>
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
 	if (typeof ext_change != 'undefined') {
 		ext_change();
 	}
@@ -512,12 +514,22 @@ function enablechange() {
 	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
 	var customarray=new Array(<?php echo $aliases; ?>);
 
-//-->
+	window.onload = function () {
+
+		<?php
+			$counter=0;
+			foreach($inputaliases as $alias) {
+				echo "var oTextbox$counter = new AutoSuggestControl(document.getElementById(\"$alias\"), new StateSuggestions(addressarray));\n";
+				$counter++;
+			}
+		?>
+
+	}
 </script>
 <script type="text/javascript">
-NiftyCheck();
-var bgcolor = document.getElementsByTagName("body")[0].style.backgroundColor;
-Rounded("div#roundme","all",bgcolor,"#FFFFFF","smooth");
+	NiftyCheck();
+	var bgcolor = document.getElementsByTagName("body")[0].style.backgroundColor;
+	Rounded("div#roundme","all",bgcolor,"#FFFFFF","smooth");
 </script>
 
 <?php

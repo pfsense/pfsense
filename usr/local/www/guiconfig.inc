@@ -910,50 +910,6 @@ function add_package_tabs($tabgroup, & $tab_array) {
         }
 }
 
-/*
- *   update_output_window: update bottom textarea dynamically.
- */
-function update_output_window($text) {
-        global $pkg_interface;
-        $log = ereg_replace("\n", "\\n", $text);
-        if($pkg_interface == "console") {
-                /* too chatty */
-        } else {
-                echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
-        }
-        /* ensure that contents are written out */
-        ob_flush();
-}
-
-/*
- *   update_output_window: update top textarea dynamically.
- */
-function update_status($status) {
-        global $pkg_interface;
-        if($pkg_interface == "console") {
-                echo $status . "\n";
-        } else {
-                echo "\n<script type=\"text/javascript\">this.document.forms[0].status.value=\"" . $status . "\";</script>";
-        }
-        /* ensure that contents are written out */
-        ob_flush();
-}
-
-/*
- * update_progress_bar($percent): updates the javascript driven progress bar.
- */
-function update_progress_bar($percent) {
-        global $pkg_interface;
-        if($percent > 100) $percent = 1;
-        if($pkg_interface <> "console") {
-                echo "\n<script type=\"text/javascript\" language=\"javascript\">";
-                echo "\ndocument.progressbar.style.width='" . $percent . "%';";
-                echo "\n</script>";
-        } else {
-                echo " {$percent}%";
-        }
-}
-
 function rule_popup($src,$srcport,$dst,$dstport){
 	global $config;
 	$aliases_array = array();

@@ -119,11 +119,11 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	$parsedcfg = array();
 
 	$par = new XMLReader();
-	$par->open($cffile);
-
-	add_elements($parsedcfg, $par);
-	
-	$par->close();
+	if ($par->open($cffile)) {
+		add_elements($parsedcfg, $par);
+		$par->close();
+	} else
+		log_error("Error returned while trying to parse {$cffile}");
 
 	return $parsedcfg[$rootobj];
 }

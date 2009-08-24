@@ -167,7 +167,7 @@ include("head.inc");
 ?>
 
 <?php if($pkg['step'][$stepid]['fields']['field'] <> "") { ?>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 
 function  FieldValidate(userinput,  regexp,  message)
@@ -254,6 +254,7 @@ function enablechange() {
     ?>
 
     <?php
+	$inputaliases = array();
 	if($pkg['step'][$stepid]['fields']['field'] <> "") {
 		foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
 
@@ -311,6 +312,7 @@ function enablechange() {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>\n";
+				$inputaliases[] = $name;
 			}
 			if(!$field['dontcombinecells'])
 				echo "<td class=\"vtable\">\n";
@@ -517,7 +519,7 @@ function enablechange() {
 <br>&nbsp;
 </div>
 </form>
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 	if (typeof ext_change != 'undefined') {
 		ext_change();
@@ -551,6 +553,18 @@ function enablechange() {
 	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
 	var customarray=new Array(<?php echo $aliases; ?>);
 
+	window.onload = function () {
+
+		<?php
+			$counter=0;
+			foreach($inputaliases as $alias) {
+				echo "var oTextbox$counter = new AutoSuggestControl(document.getElementById(\"$alias\"), new StateSuggestions(addressarray));\n";
+				$counter++;
+			}
+		?>
+
+	}
+
 //-->
 </script>
 <script type="text/javascript">
@@ -565,7 +579,7 @@ $fieldnames_array = Array();
 if($pkg['step'][$stepid]['disableallfieldsbydefault'] <> "") {
 	// create a fieldname loop that can be used with javascript
 	// hide and enable features.
-	echo "\n<script language=\"JavaScript\">\n";
+	echo "\n<script type=\"text/javascript\">\n";
 	echo "function disableall() {\n";
 	foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
 		if($field['type'] <> "submit" and $field['type'] <> "listtopic") {
@@ -618,7 +632,7 @@ if($pkg['step'][$stepid]['stepafterformdisplay'] <> "") {
 
 if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
 	// handle after form display event.
-        echo "\n<script language=\"JavaScript\">\n";
+        echo "\n<script type=\"text/javascript\">\n";
 	echo $pkg['step'][$stepid]['javascriptafterformdisplay'] . "\n";
 	echo "</script>\n\n";
 }

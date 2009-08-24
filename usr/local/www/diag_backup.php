@@ -319,6 +319,63 @@ if ($_POST) {
 									// in order to force the config upgrade code to 
 									// run through with all steps that are required.
 									$config['system']['version'] = "1.0";
+									// Deal with descriptions longer than 63 characters
+									for ($i = 0; isset($config["filter"]["rule"][$i]); $i++) {
+										if(count($config['filter']['rule'][$i]['descr']) > 63)
+											$config['filter']['rule'][$i]['descr'] = substr($config['filter']['rule'][$i]['descr'], 0, 63);
+									}
+									// Move interface from ipsec to enc0
+									for ($i = 0; isset($config["filter"]["rule"][$i]); $i++) {
+										if($config['filter']['rule'][$i]['interface'] == "ipsec")
+											$config['filter']['rule'][$i]['interface'] = "enc0";
+									}
+									// Convert icmp types
+									// http://www.openbsd.org/cgi-bin/man.cgi?query=icmp&sektion=4&arch=i386&apropos=0&manpath=OpenBSD+Current
+									for ($i = 0; isset($config["filter"]["rule"][$i]); $i++) {
+										if($config["filter"]["rule"][$i]['icmptype']) {
+											switch($config["filter"]["rule"][$i]['icmptype']) {
+												case "echo":
+													$config["filter"]["rule"][$i]['icmptype'] = "echoreq";
+													break;
+					                            case "unreach":
+													$config["filter"]["rule"][$i]['icmptype'] = "unreach";
+													break;
+					                            case "echorep":
+													$config["filter"]["rule"][$i]['icmptype'] = "echorep";
+													break;
+					                            case "squench":
+													$config["filter"]["rule"][$i]['icmptype'] = "squench";
+													break;
+					                            case "redir":
+													$config["filter"]["rule"][$i]['icmptype'] = "redir";
+													break;
+					                            case "timex":
+													$config["filter"]["rule"][$i]['icmptype'] = "timex";
+													break;
+					                            case "paramprob":
+													$config["filter"]["rule"][$i]['icmptype'] = "paramprob";
+													break;
+					                            case "timest":
+													$config["filter"]["rule"][$i]['icmptype'] = "timereq";
+													break;
+					                            case "timestrep":
+													$config["filter"]["rule"][$i]['icmptype'] = "timerep";
+													break;
+					                            case "inforeq":
+													$config["filter"]["rule"][$i]['icmptype'] = "inforeq";
+													break;
+					                            case "inforep":
+													$config["filter"]["rule"][$i]['icmptype'] = "inforep";
+													break;
+					                            case "maskreq":
+													$config["filter"]["rule"][$i]['icmptype'] = "maskreq";
+													break;
+					                            case "maskrep":
+													$config["filter"]["rule"][$i]['icmptype'] = "maskrep";
+													break;
+											}
+										}
+									}									
 									write_config();
 									add_base_packages_menu_items();									
 									convert_config();

@@ -55,7 +55,10 @@ function create_new_rrd($rrdcreatecmd) {
 }
 
 function migrate_rrd_format($rrdoldxml, $rrdnewxml) {
-	exec("echo 'Converting RRD configuration to new format.  This might take a bit...' | wall");
+	if(!file_exists("/tmp/rrd_notice_sent.txt")) {
+		exec("echo 'Converting RRD configuration to new format.  This might take a bit...' | wall");
+		touch("/tmp/rrd_notice_sent.txt");
+	}
 	$numrraold = count($rrdoldxml['rra']);
 	$numdsold = count($rrdoldxml['ds']);
 	$numrranew = count($rrdnewxml['rra']);

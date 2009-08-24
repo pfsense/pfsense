@@ -137,7 +137,7 @@ if ($_POST) {
 			$gateway['descr'] = $_POST['descr'];
 			$gateway['monitor'] = $_POST['monitor'];
 			
-			if ($_POST['defaultgw'] == "yes") {
+			if ($_POST['defaultgw'] == "yes" or $_POST['defaultgw'] == "on") {
 				$i = 0;
 				foreach($a_gateways as $gw) {
 					unset($config['gateways'][$i]['defaultgw']);

@@ -40,7 +40,6 @@ function remove_numbers($string) {
 function get_nics_with_capabilities($CAPABILITIES) {
 	$ifs = `ifconfig -l`;
 	$if_list = split(" ", $ifs);
-	$if_list = get_interface_list();
 	$vlan_native_supp = array();
 	foreach($if_list as $if => $iface) {
 		$capable = `ifconfig -m | grep -a1 $if | grep $CAPABILITIES`;

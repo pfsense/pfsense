@@ -694,7 +694,7 @@ function internalca_change() {
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td width="20%" class="listhdrr">Name</td>
-						<td width="20%" class="listhdrr">CA</td>
+						<td width="20%" class="listhdrr">Issuer</td>
 						<td width="40%" class="listhdrr">Distinguished Name</td>
 						<td width="10%" class="list"></td>
 					</tr>
@@ -704,8 +704,13 @@ function internalca_change() {
 							$name = htmlspecialchars($cert['name']);
 
 							if ($cert['crt']) {
-								$subj = htmlspecialchars(cert_get_subject($cert['crt']));
-								$caname = "<em>external</em>";
+								$subj = cert_get_subject($cert['crt']);
+								$issuer = cert_get_issuer($cert['crt']);
+								if($subj==$issuer)
+								  $caname = "<em>self-signed</em>";
+								else
+							    $caname = "<em>external</em>";
+							  $subj = htmlspecialchars($subj);
 							}
 
 							if ($cert['csr']) {

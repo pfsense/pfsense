@@ -265,7 +265,6 @@ if ($_POST) {
 						$data = str_replace("m0n0wall", "pfsense", $data);
 						$m0n0wall_upgrade = true;
 					}
-
 					if($_POST['restorearea']) {
 						/* restore a specific area of the configuration */
 						if(!stristr($data, $_POST['restorearea'])) {
@@ -316,6 +315,10 @@ if ($_POST) {
 										foreach($ifdescrs as $iface)
 											$config['interfaces'][$iface]['descr'] = remove_bad_chars($config['interfaces'][$iface]['descr']);
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
+									// Reset configuration version to something low
+									// in order to force the config upgrade code to 
+									// run through with all steps that are required.
+									$config['system']['version'] = "1.0";
 									write_config();
 									add_base_packages_menu_items();									
 									convert_config();

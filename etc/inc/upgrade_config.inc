@@ -1740,11 +1740,6 @@ function upgrade_058_to_059() {
 
 function upgrade_059_to_060() {
 	global $config;
-<<<<<<< HEAD:etc/inc/upgrade_config.inc
-	/* Insert upgrade code here */
-}
-
-=======
 
 	if (is_array($config['system']['ca']))
 	{
@@ -1761,9 +1756,8 @@ function upgrade_059_to_060() {
 		}
 		
 		/* Locate issuer for all certificates */
-		if (is_array($config['system']['cert']))
-			foreach ($config['system']['cert'] as & $cert)
-			{
+		if (is_array($config['system']['cert'])) {
+			foreach ($config['system']['cert'] as & $cert) {
 				$subject = cert_get_subject($cert['crt']);
 				$issuer = cert_get_issuer($cert['crt']);
 				if($issuer <> $subject) {
@@ -1772,7 +1766,7 @@ function upgrade_059_to_060() {
 						$cert['caref'] = $issuer_crt['refid'];
 				}
 			}
-			
+		}
 	}
 }
 

@@ -31,6 +31,26 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+function remove_numbers($string) {
+	$nums = array("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", " ");
+	$string = str_replace($nums, '', $string);
+	return $string;
+}
+
+function get_nics_with_capabilities($CAPABILITIES) {
+	$if_list = get_interface_list();
+	$vlan_native_supp = array();
+	foreach($if_list as $if => $iface) {
+		$capable = `ifconfig -m | grep -a1 $if | grep $CAPABILITIES`;
+		if($capable) {
+			$interfacenonum = remove_numbers($if);
+			if(!in_array($interfacenonum, $vlan_native_supp))
+				$vlan_native_supp[] = $interfacenonum;
+		}
+	}
+	return $vlan_native_supp;
+}
+
 $g = array(
 	"base_packages" => "AutoConfigBackup, siproxd", 
 	"factory_shipped_username" => "admin",
@@ -76,10 +96,22 @@ $g = array(
 	"embeddedbootupslice" => "/dev/ad0a",
 	"services_dhcp_server_enable" => true,
 	"firmware_update_text" => "(pfSense-*.tgz)",
-	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan|rum)/",
-	"vlan_native_supp" => array("bce", "bge", "bfe", "cxgb", "dc", "em", "fxp", "gem", "hme", "ixgb", "msk", "nge", "re", "rl", "sis", "ste", "stge", "ti", "tl", "tx", "txp", "vge", "vr", "xl", "lagg"),
-	"vlan_long_frame" => array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le",  "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg")
+	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan|rum)/"
 );
+
+// Loop through and set vlan_native_supp (native vlan tagging)
+$vlan_native_supp = get_nics_with_capabilities("HWTAGGING");
+if(count($vlan_native_supp) > 0)
+	$g['vlan_native_supp'] = $vlan_native_supp;
+else 
+	$g['vlan_native_supp'] = array("bce", "bge", "bfe", "cxgb", "dc", "em", "fxp", "gem", "hme", "ixgb", "msk", "nge", "re", "rl", "sis", "ste", "stge", "ti", "tl", "tx", "txp", "vge", "vr", "xl", "lagg");
+
+// Loop through and set vlan_long_frame VLAN_MTU
+$vlan_native_supp = get_nics_with_capabilities("VLAN_MTU");
+if(count($vlan_native_supp) > 0)
+	$g['vlan_long_frame'] = $vlan_native_supp;
+else 
+	$g['vlan_long_frame'] = array("vge", "bfe",  "bge",  "dc",  "em",  "fxp",  "gem",  "hme",  "ixgb",  "le",  "nge",  "re",  "rl",  "sis",  "sk",  "ste",  "ti",  "tl",  "tx",  "txp",  "vr", "xl", "lagg");
 
 /* IP TOS flags */
 $iptos = array("lowdelay", "throughput", "reliability");

@@ -604,7 +604,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 			  <?php if ($nrules == 0): ?>
               <td class="listt"></td>
 			  <td class="listt"></td>
-			  <td class="listlr" colspan="9" align="center" valign="middle">
+			  <td class="listlr" colspan="10" align="center" valign="middle">
 			  <span class="gray">
 			  No rules are currently defined for this interface.<br>
 			  All incoming connections on this interface will be blocked until you add pass rules.<br><br>

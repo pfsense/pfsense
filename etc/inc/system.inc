@@ -969,6 +969,9 @@ function system_ntp_configure() {
 	
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
 	exec("/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf");
+	
+	// Note that we are starting up
+	exec("echo 'OpenNTPD is starting up' >> {$g['varlog_path']}/ntpd.log");
 
 }
 

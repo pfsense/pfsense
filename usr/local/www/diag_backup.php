@@ -404,7 +404,7 @@ function decrypt_change() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('restore')): ?><p>
-<?php print_info_box_np("The firewall configuration has been changed.<br>You must click the apply button to restart the firewall in order for it to take effect.");?><br>
+<?php print_info_box_np("The firewall configuration has been changed.<br>You must apply the new config by restarting the firewall in order for changes to take effect.", "apply", "Reboot firewall");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>

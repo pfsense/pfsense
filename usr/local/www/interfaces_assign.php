@@ -317,7 +317,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 
 <?php if (file_exists("/tmp/reload_interfaces")): ?><p>
 	<?php print_info_box_np("The interface configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<?php elseif;
+<?php elseif; ?>
 	<?php if ($savemsg) print_info_box($savemsg); ?>
 <?php endif; ?>
 

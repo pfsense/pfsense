@@ -1741,11 +1741,9 @@ function upgrade_058_to_059() {
 function upgrade_059_to_060() {
 	global $config;
 
-	if (is_array($config['system']['ca']))
-	{
+	if (is_array($config['system']['ca'])) {
 		/* Locate issuer for all CAs */
-		foreach ($config['system']['ca'] as & $ca)
-		{
+		foreach ($config['system']['ca'] as & $ca) {
 			$subject = cert_get_subject($ca['crt']);
 			$issuer = cert_get_issuer($ca['crt']);
 			if($issuer <> $subject) {

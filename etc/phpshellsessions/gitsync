@@ -202,10 +202,11 @@ function post_cvssync_commands() {
 	exec("pfctl -f /tmp/rules.debug");
 	echo "\n";
 
-	echo "===> Running /etc/rc.php_ini_setup...";
-	if(file_exists("/etc/rc.php_ini_setup"))
+	if(file_exists("/etc/rc.php_ini_setup")) {
+		echo "===> Running /etc/rc.php_ini_setup...";
 		exec("/etc/rc.php_ini_setup");
-	echo "\n";
+		echo "\n";
+	}
 
 	echo "===> Signaling PHP and Lighty restart...";
 	$fd = fopen("/tmp/restart_lighty", "w");

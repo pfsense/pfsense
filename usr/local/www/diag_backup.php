@@ -52,9 +52,10 @@ function add_base_packages_menu_items() {
 	$base_packages = split($g['base_packages'], ",");
 	$modified_config = false;
 	foreach($base_packages as $bp) {
-		$basepkg_path = "/usr/local/pkg/";
-		if(file_exists($basepkg_path . $configfile)) {
-			$pkg_config = parse_xml_config_pkg($basepkg_path . $bp, "packagegui");
+		$basepkg_path = "/usr/local/pkg/{$bp}";
+		$tmpinfo = pathinfo($basepkg_path, PATHINFO_EXTENSION); 
+		if($tmpinfo['extension'] == "xml" && file_exists($basepkg_path)) {
+			$pkg_config = parse_xml_config_pkg($basepkg_path, "packagegui");
 			if($pkg_config['menu'] != "") {
 				if(is_array($pkg_config['menu'])) {
 					foreach($pkg_config['menu'] as $menu) {
@@ -130,6 +131,17 @@ function spit_out_select_items($area, $showall) {
 
 }
 
+if ($_POST['apply']) {
+        ob_flush();
+        flush();
+        sleep(5);
+	conf_mount_rw();
+	clear_subsystem_dirty("restore");
+	conf_mount_ro();
+        mwexec("/sbin/shutdown -r now");
+        exit;
+}
+
 if ($_POST) {
 	unset($input_errors);
 	if (stristr($_POST['Submit'], "Restore configuration"))
@@ -167,7 +179,7 @@ if ($_POST) {
 				$data = "";
 
 				if($options == "nopackages") {
-					$sfn = "/tmp/config.xml.nopkg";
+					$sfn = "{$g['tmp_path']}/config.xml.nopkg";
 					exec("sed '/<installedpackages>/,/<\/installedpackages>/d' /conf/config.xml > {$sfn}");
 					$data = file_get_contents($sfn);
 				} else {
@@ -180,6 +192,8 @@ if ($_POST) {
 						$name = "{$_POST['backuparea']}-{$name}";
 					}
 				}
+
+				unlock($lockbckp);
 
 				if ($_POST['encrypt']) {
 					$data = encrypt_data($data, $_POST['encrypt_password']);
@@ -213,7 +227,6 @@ if ($_POST) {
 				header("Content-Length: $size");
 				echo $data;
 
-				unlock($lockbckp);
 				exit;
 			}
 		}
@@ -271,14 +284,12 @@ if ($_POST) {
 							if (config_install($_FILES['conffile']['tmp_name']) == 0) {
 								/* this will be picked up by /index.php */
 								conf_mount_rw();
-								if($g['platform'] <> "cdrom")
-									touch("/needs_package_sync");
-								$reboot_needed = true;
-								$savemsg = "The configuration has been restored. The firewall is now rebooting.";
+								mark_subsystem_dirty("restore");
+								$savemsg = "The configuration has been restored. You need to reboot your firewall.";
 								touch("/conf/needs_package_sync");
 								/* remove cache, we will force a config reboot */
-								if(file_exists("/tmp/config.cache"))
-									unlink("/tmp/config.cache");
+								if(file_exists("{$g['tmp_path']}/config.cache"))
+									unlink("{$g['tmp_path']}/config.cache");
 								$config = parse_config(true);
 								/* extract out rrd items, unset from $confgi when done */
 								if($config['rrddata']) {
@@ -288,7 +299,7 @@ if ($_POST) {
 										fclose($rrd_fd);
 									}
 									unset($config['rrddata']);
-									unlink_if_exists("/tmp/config.cache");
+									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									write_config();
 									add_base_packages_menu_items();
 									convert_config();
@@ -304,23 +315,23 @@ if ($_POST) {
 									if(is_array($ifdescrs))
 										foreach($ifdescrs as $iface)
 											$config['interfaces'][$iface]['descr'] = remove_bad_chars($config['interfaces'][$iface]['descr']);
-									unlink_if_exists("/tmp/config.cache");
+									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									write_config();
 									add_base_packages_menu_items();									
 									convert_config();
 									conf_mount_ro();
-									$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense.<p>The firewall is now rebooting.";
-									$reboot_needed = true;
+									$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense. You need to reboot your firewall.";
+									mark_subsystem_dirty("restore");
 								}
 								if(isset($config['captiveportal']['enable'])) {
 									/* for some reason ipfw doesn't init correctly except on bootup sequence */
-									$savemsg = "The configuration has been restored.<p>The firewall is now rebooting.";
-									$reboot_needed = true;
+									$savemsg = "The configuration has been restored. You need to reboot your firewall.";
+									mark_subsystem_dirty("restore");
 								}
 								setup_serial_port();
 								if(is_interface_mismatch() == true) {
 									touch("/var/run/interface_mismatch_reboot_needed");
-									$reboot_needed = false;
+									clear_subsystem_dirty("restore");
 									header("Location: interfaces_assign.php");
 									exit;
 								}
@@ -344,8 +355,8 @@ if ($_POST) {
 			if ($ver2restore <> "") {
 				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
                                 if (config_install($conf_file) == 0) {
-									$reboot_needed = true;
-                                    $savemsg = "The configuration has been restored. The firewall is now rebooting.";
+					mark_subsystem_dirty("restore");
+					$savemsg = "The configuration has been restored. You need to reboot your firewall.";
                                 } else {
                                 	$input_errors[] = "The configuration could not be restored.";
                                 }
@@ -392,6 +403,9 @@ function decrypt_change() {
 <form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<?php if (is_subsystem_dirty('restore')): ?><p>
+<?php print_info_box_np("The firewall configuration has been changed.<br>You must click the apply button to restart the firewall in order for it to take effect.");?><br>
+<?php endif; ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>
@@ -538,17 +552,3 @@ decrypt_change();
 <?php include("fend.inc"); ?>
 </body>
 </html>
-
-<?php
-
-if($reboot_needed == true) {
-	ob_flush();
-	flush();
-	sleep(5);
-	while(file_exists("{$g['varrun_path']}/config.lock"))
-		sleep(3);
-	mwexec("/sbin/shutdown -r now");
-	exit;
-}
-
-?>

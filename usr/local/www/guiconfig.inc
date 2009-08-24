@@ -250,7 +250,7 @@ function verify_gzip_file($fname) {
 function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	global $g;
 	
-	if(stristr($msg, "apply") == true || stristr($msg, "save") || stristr($msg, "create")) {
+	if(stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
 		$savebutton = "<td class='infoboxsave'>";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">";
 		if($_POST['if']) 

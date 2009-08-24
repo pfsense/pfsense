@@ -128,7 +128,8 @@ function is_private_ip($iptocheck) {
  *   returns a temporary filename
  ******/
 function get_tmp_file() {
-	return "/tmp/tmp-" . time();
+	global $g;
+	return "{$g['tmp_path']}/tmp-" . time();
 }
 
 /****f* pfsense-utils/find_number_of_needed_carp_interfaces
@@ -893,9 +894,10 @@ Content-Length: $content_length
  *  php_check_syntax($code_tocheck, $errormessage): checks $code_to_check for errors
  */
 if (!function_exists('php_check_syntax')){
+	global $g;
 	function php_check_syntax($code_to_check, &$errormessage){
 		return false;
-		$fout = fopen("/tmp/codetocheck.php","w");
+		$fout = fopen("{$g['tmp_path']}/codetocheck.php","w");
 		$code = $_POST['content'];
 		$code = str_replace("<?php", "", $code);
 		$code = str_replace("?>", "", $code);
@@ -903,7 +905,7 @@ if (!function_exists('php_check_syntax')){
 		fwrite($fout, $code_to_check);
 		fwrite($fout, "\n\n?>\n");
 		fclose($fout);
-		$command = "/usr/local/bin/php -l /tmp/codetocheck.php";
+		$command = "/usr/local/bin/php -l {$g['tmp_path']}/codetocheck.php";
 		$output = exec_command($command);
 		if (stristr($output, "Errors parsing") == false) {
 			echo "false\n";
@@ -1084,7 +1086,7 @@ function reload_interfaces_sync() {
 		log_error("Removing {$g['tmp_path']}/reloading_all");
 
 	/* start devd back up */
-	mwexec("/bin/rm /tmp/reload*");
+	mwexec("/bin/rm {$g['tmp_path']}/reload*");
 }
 
 /****f* pfsense-utils/reload_all
@@ -1096,7 +1098,8 @@ function reload_interfaces_sync() {
  *   none
  ******/
 function reload_all() {
-	touch("/tmp/reload_all");
+	global $g;
+	touch("{$g['tmp_path']}/reload_all");
 }
 
 /****f* pfsense-utils/reload_interfaces
@@ -1108,7 +1111,8 @@ function reload_all() {
  *   none
  ******/
 function reload_interfaces() {
-	touch("/tmp/reload_interfaces");
+	global $g;
+	touch("{$g['tmp_path']}/reload_interfaces");
 }
 
 /****f* pfsense-utils/reload_all_sync
@@ -1167,12 +1171,12 @@ function reload_all_sync() {
 	conf_mount_ro();
 
 	/* restart sshd */
-	@touch("/tmp/start_sshd");
+	@touch("{$g['tmp_path']}/start_sshd");
 
 	/* restart webConfigurator if needed */
-	touch("/tmp/restart_webgui");
+	touch("{$g['tmp_path']}/restart_webgui");
 
-	mwexec("/bin/rm /tmp/reload*");
+	mwexec("/bin/rm {$g['tmp_path']}/reload*");
 }
 
 function auto_login($status) {

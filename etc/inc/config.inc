@@ -337,10 +337,12 @@ function discover_last_backup() {
 }
 
 function restore_backup($file) {
+	global $g;
+
 	if (file_exists($file)) {
 		conf_mount_rw();
 		copy("$file","/cf/conf/config.xml");
-		unlink_if_exists("/tmp/config.cache");
+		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		log_error("{$g['product_name']} is restoring the configuration $file");
 		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "pfSenseConfigurator", "");
 		conf_mount_ro();
@@ -699,7 +701,7 @@ function config_restore($conffile) {
 	$lockkey = lock('config');
 
 	copy($conffile, "{$g['cf_conf_path']}/config.xml");
-	unlink_if_exists("/tmp/config.cache");
+	unlink_if_exists("{$g['tmp_path']}/config.cache");
 
 	unlock($lockkey);
 
@@ -718,14 +720,16 @@ function config_install($conffile) {
 	if (!file_exists($conffile))
 		return 1;
 
-	if (!config_validate("{$g['conf_path']}/config.xml"))
+	if (!config_validate("{$conffile}"))
 		return 1;
 
 	if($g['booting'] == true)
 		echo "Installing configuration...\n";
+	else
+		log_error("Installing configuration ....");
 
-	$lockkey = lock('config');
 	conf_mount_rw();
+	$lockkey = lock('config');
 
 	copy($conffile, "{$g['conf_path']}/config.xml");
 
@@ -733,8 +737,8 @@ function config_install($conffile) {
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
 
-	conf_mount_ro();
 	unlock($lockkey);
+	conf_mount_ro();
 
     return 0;
 }

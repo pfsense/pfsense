@@ -332,6 +332,7 @@ if ($_POST) {
 								if(is_interface_mismatch() == true) {
 									touch("/var/run/interface_mismatch_reboot_needed");
 									clear_subsystem_dirty("restore");
+									convert_config();
 									header("Location: interfaces_assign.php");
 									exit;
 								}

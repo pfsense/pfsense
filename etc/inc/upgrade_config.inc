@@ -1,10 +1,10 @@
 <?php
 /*
-	Copyright (C) 2004-2006 Scott Ullrich
+	Copyright (C) 2004-2009 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
-Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

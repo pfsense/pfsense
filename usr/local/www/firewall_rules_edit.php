@@ -71,6 +71,9 @@ if (isset($_GET['dup'])) {
 if (isset($id) && $a_filter[$id]) {
 	$pconfig['interface'] = $a_filter[$id]['interface'];
 
+	if (isset($a_filter[$id]['id']))
+		$pconfig['ruleid'] = $a_filter[$id]['id'];
+
 	if (!isset($a_filter[$id]['type']))
 		$pconfig['type'] = "pass";
 	else
@@ -337,6 +340,8 @@ if ($_POST) {
 		else if ($dnpipe[0] == "?" && $pdnpipe[0] <> "?")
 			$input_errors[] = "You cannot select one queue and one virtual interface for IN and Out. both must be from the same type.";
 	}
+	if( !empty($_POST['ruleid']) && !ctype_digit($_POST['ruleid']))
+		$input_errors[] = 'ID must be an integer';
 	if($_POST['l7container'] && $_POST['l7container'] != "none") {
 		if(!($_POST['proto'] == "tcp" || $_POST['proto'] == "udp" || $_POST['proto'] == "tcp/udp"))
 			$input_errors[] = "You can only select a layer7 container for tcp and/or udp protocols";
@@ -346,6 +351,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$filterent = array();
+		$filterent['id'] = $_POST['ruleid']>0?$_POST['ruleid']:'';
 		$filterent['type'] = $_POST['type'];
 		if (isset($_POST['interface'] ))
 			$filterent['interface'] = $_POST['interface'];
@@ -492,6 +498,12 @@ include("head.inc");
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Edit Firewall rule</td>
 		</tr>	
+    	<tr>
+			<td width="22%" valign="top" class="vncell">ID</td>
+			<td width="78%" class="vtable">
+				<input name="ruleid" value="<?=(isset($pconfig['ruleid'])&&$pconfig['ruleid']>0)?htmlspecialchars($pconfig['ruleid']):''?>">
+			</td>
+		</tr>
     	<tr>
 			<td width="22%" valign="top" class="vncellreq">Action</td>
 			<td width="78%" class="vtable">

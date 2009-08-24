@@ -449,6 +449,7 @@
 			<target></target>
 			<local-port></local-port>
 			<descr></descr>
+			<associated-filter-rule-id></associated-filter-rule-id>
 		</rule>
 		-->
 		<!--
@@ -502,6 +503,7 @@
 		<!-- rule syntax:
 		<rule>
 			<disabled/>
+			<id>[0-9]*</id>
 			<type>pass|block|reject</type>
 			<descr>...</descr>
 			<interface>lan|opt[n]|wan|pptp</interface>

@@ -66,7 +66,7 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable'] && !is_ipaddr($_POST['remoteserver'])) {
-		$input_errors[] = "A valid IP address must be specified.";
+		$input_errors[] = "A valid IP address must be specified for remote syslog server #1.";
 	}
 	if ($_POST['enable'] && $_POST['remoteserver2'] && !is_ipaddr($_POST['remoteserver2'])) {
 		$input_errors[] = "A valid IP address must be specified for remote syslog server #2.";

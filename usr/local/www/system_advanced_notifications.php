@@ -36,10 +36,19 @@
 
 require("guiconfig.inc");
 
+// Growl
 if($config['notifications']['growl']['password']) 
 	$pconfig['password'] = $config['notifications']['growl']['password'];
 if($config['notifications']['growl']['ipaddress']) 
 	$pconfig['ipaddress'] = $config['notifications']['growl']['ipaddress'];
+
+// SMTP
+if($config['notifications']['smtp']['username']) 
+	$pconfig['smtpusername'] = $config['notifications']['smtp']['username'];
+if($config['notifications']['smtp']['password']) 
+	$pconfig['smtppassword'] = $config['notifications']['smtp']['password'];
+if($config['notifications']['smtp']['notifyemailaddress']) 
+	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
 
 if ($_POST) {
 
@@ -61,14 +70,23 @@ if ($_POST) {
 	if ($_POST['Submit'] == "Save") {
 		$tunableent = array();
 
+		// Growl
 		$config['notifications']['growl']['ipaddress'] = $_POST['ipaddress'];
 		$config['notifications']['growl']['password'] = $_POST['password'];
 
+		// SMTP
+		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
+		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
+
 		write_config();
 
+		// Send test message via growl
 		register_via_growl();
 		notify_via_growl("This is a test message form pfSense.  It is safe to ignore this message.");
-		
+
+		// Send test message via smtp
+		notify_via_smtp("This is a test message form pfSense.  It is safe to ignore this message.");
+
 		pfSenseHeader("system_advanced_notifications.php");
 		exit;
     }
@@ -111,6 +129,7 @@ include("head.inc");
 				<div class="tabcont">
 					<form action="system_advanced_notifications.php" method="post" name="iform">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
+						<!-- GROWL -->
 						<tr>
 							<td colspan="2" valign="top" class="listtopic">Growl</td>
 						</tr>
@@ -126,6 +145,24 @@ include("head.inc");
 							<td width="78%" class="vtable">
 								<input name='password' type='password' value='<?php echo $pconfig['password']; ?>'><br/>
 								Enter the password of the remote growl notification device.
+							</td>
+						</tr>
+						<!-- SMTP -->
+						<tr>
+							<td colspan="2" valign="top" class="listtopic">SMTP E-Mail</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell">IP Address of E-Mail server</td>
+							<td width="78%" class="vtable">
+								<input name='smtpipaddress' value='<?php echo $pconfig['smtpipaddress']; ?>'><br/>
+								This is the IP address that you would like to send growl notifications to.
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell">Notification E-Mail address</td>
+							<td width="78%" class="vtable">
+								<input name='smtpnotifyemailaddress' type='input' value='<?php echo $pconfig['smtpnotifyemailaddress']; ?>'><br/>
+								Enter the e-mail address that you would like email notifications sent to.
 							</td>
 						</tr>
 						<tr>

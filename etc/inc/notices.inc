@@ -72,6 +72,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	led_normalize();
 	led_morse(1, 'sos');
 	notify_via_growl($notice);
+	notify_via_smtp($notice);
 	return $queuekey;
 }
 
@@ -189,6 +190,49 @@ function are_notices_pending($category = "all") {
 	}
 	return false;
 }
+
+/****f* pfsense-utils/notify_via_smtp
+ * NAME
+ *   notify_via_smtp
+ * INPUTS
+ *	 notification string to send as an email
+ * RESULT
+ *   returns true if message was sent
+ ******/
+function notify_via_growl($message) {
+	require_once("smtp.inc");
+	global $config;
+
+	if(!$config['notifications']['smtp']['ipaddress'])
+		return;
+
+	$smtp = new smtp_class;
+
+	$from = "pfsense@{$config['system']['hostname']}.{$config['system']['domain']}";
+	$to = $config['notifications']['smtp']['notifyemailaddress'];
+
+	$smtp->host_name = $config['notifications']['smtp']['ipaddress'];
+	$smtp->host_port = 25;
+
+	$smtp->direct_delivery = 1;
+	$smtp->ssl = 0;
+	$smtp->debug = 1;
+	$smtp->html_debug = 0;
+
+	$headers = array(
+		"From: {$from}",
+		"To: {$to}",
+		"Subject: {$config['system']['hostname']}.{$config['system']['domain']} - Notification",
+		"Date: ".strftime("%a, %d %b %Y %H:%M:%S %Z")
+	);
+
+	if($smtp->SendMessage($from, array($to), $headers, $message))
+		echo "Message sent to {$to} OK.\n";
+	else
+		echo "Cound not send the message to {$to}.\nError: {$smtp->error}\n";
+
+}
+
 
 /****f* pfsense-utils/notify_via_growl
  * NAME

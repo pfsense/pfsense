@@ -336,8 +336,13 @@ function typesel_change() {
 					<?php if ($pconfig['mode'] == "other") echo "checked";?>> Other
 					<input name="mode" type="radio" onclick="enable_change(false)" value="ipalias"
 					<?php if ($pconfig['mode'] == "ipalias") echo "checked";?>> IP Alias
+<?php
+/*
 					<input name="mode" type="radio" onclick="enable_change(false)" value="carpdev-dhcp"
 					<?php if ($pconfig['mode'] == "carpdev-dhcp") echo "checked";?>> CarpDEV-DHCP
+*/
+?>
+
 				  </td>
 				</tr>
 				<tr>

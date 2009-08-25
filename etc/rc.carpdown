@@ -33,7 +33,7 @@ require_once("functions.inc");
 require_once("config.inc");
 require_once("notices.inc");
 
-$notificationmsg = "A carp cluster member has resumed the state 'DOWN'";
+$notificationmsg = "A carp cluster member has resumed the state 'BACKUP'";
 
 notify_via_smtp($notificationmsg);
 notify_via_growl($notificationmsg);

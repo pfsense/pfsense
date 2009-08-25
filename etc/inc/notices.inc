@@ -199,7 +199,7 @@ function are_notices_pending($category = "all") {
  * RESULT
  *   returns true if message was sent
  ******/
-function notify_via_growl($message) {
+function notify_via_smtp($message) {
 	global $config;
 
 	if(!$config['notifications']['smtp']['ipaddress'])

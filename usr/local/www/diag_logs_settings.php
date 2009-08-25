@@ -43,7 +43,7 @@ require("guiconfig.inc");
 $pconfig['reverse'] = isset($config['syslog']['reverse']);
 $pconfig['nentries'] = $config['syslog']['nentries'];
 $pconfig['remoteserver'] = $config['syslog']['remoteserver'];
-$pconfig['remoteserver3'] = $config['syslog']['remoteserver2'];
+$pconfig['remoteserver2'] = $config['syslog']['remoteserver2'];
 $pconfig['remoteserver3'] = $config['syslog']['remoteserver3'];
 $pconfig['filter'] = isset($config['syslog']['filter']);
 $pconfig['dhcp'] = isset($config['syslog']['dhcp']);

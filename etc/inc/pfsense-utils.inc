@@ -2240,7 +2240,7 @@ function run_plugins($directory) {
 				mwexec($directory . $file . " start");
 			else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) {
 				if ($g['booting'] == true)
-					echo "\t{$file}... ";
+					echo "{$file}...";
 				require_once($directory . "/" . $file);
                         }
                 }

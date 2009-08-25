@@ -494,16 +494,12 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="firewall_rules_edit.php" method="post" name="iform" id="iform">
+<input type='hidden' name="ruleid" value="<?=(isset($pconfig['ruleid'])&&$pconfig['ruleid']>0)?htmlspecialchars($pconfig['ruleid']):''?>">
+
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Edit Firewall rule</td>
 		</tr>	
-    	<tr>
-			<td width="22%" valign="top" class="vncell">ID</td>
-			<td width="78%" class="vtable">
-				<input name="ruleid" value="<?=(isset($pconfig['ruleid'])&&$pconfig['ruleid']>0)?htmlspecialchars($pconfig['ruleid']):''?>">
-			</td>
-		</tr>
     	<tr>
 			<td width="22%" valign="top" class="vncellreq">Action</td>
 			<td width="78%" class="vtable">

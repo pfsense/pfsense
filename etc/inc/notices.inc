@@ -200,11 +200,15 @@ function are_notices_pending($category = "all") {
  *   returns true if message was sent
  ******/
 function notify_via_growl($message) {
-	require_once("smtp.inc");
 	global $config;
 
 	if(!$config['notifications']['smtp']['ipaddress'])
 		return;
+
+	if(!$config['notifications']['smtp']['notifyemailaddress']) 
+		return;
+
+	require_once("smtp.inc");
 
 	$smtp = new smtp_class;
 

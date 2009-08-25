@@ -414,13 +414,25 @@ function system_syslogd_start() {
 		$syslogconf .= "!apinger\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/slbd.log\n";
-		if (isset($syslogcfg['vpn'])) 
-			$syslogconf .= "*.*					 @{$syslogcfg['remoteserver']}\n";
+		if (isset($syslogcfg['vpn'])) {
+			if($syslogcfg['remoteserver'])
+				$syslogconf .= "*.*					 @{$syslogcfg['remoteserver']}\n";
+			if($syslogcfg['remoteserver2'])
+				$syslogconf .= "*.*					 @{$syslogcfg['remoteserver2']}\n";
+			if($syslogcfg['remoteserver3'])
+				$syslogconf .= "*.*					 @{$syslogcfg['remoteserver3']}\n";
+		}
 		$syslogconf .= "!openvpn\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/openvpn.log\n";
-		if (isset($syslogcfg['vpn'])) 
-			$syslogconf .= "*.*					 @{$syslogcfg['remoteserver']}\n";
+		if (isset($syslogcfg['vpn'])) {
+			if($syslogcfg['remoteserver'])
+				$syslogconf .= "*.*					 @{$syslogcfg['remoteserver']}\n";
+			if($syslogcfg['remoteserver2'])
+				$syslogconf .= "*.*					 @{$syslogcfg['remoteserver3']}\n";
+			if($syslogcfg['remoteserver3'])
+				$syslogconf .= "*.*					 @{$syslogcfg['remoteserver3']}\n";
+		}
 		$syslogconf .= "!-{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= <<<EOD
@@ -438,16 +450,42 @@ auth.info;authpriv.info 						 |exec /usr/local/sbin/sshlockout_pf
 *.emerg											 *
 
 EOD;
-		if (isset($syslogcfg['filter'])) 
-			$syslogconf .= "local0.*			 @{$syslogcfg['remoteserver']}\n";
-		if (isset($syslogcfg['vpn'])) 
-			$syslogconf .= "local3.*			 @{$syslogcfg['remoteserver']}\n";
-		if (isset($syslogcfg['portalauth'])) 
-			$syslogconf .= "local4.*			 @{$syslogcfg['remoteserver']}\n";
-		if (isset($syslogcfg['dhcp'])) 
-			$syslogconf .= "local7.*			 @{$syslogcfg['remoteserver']}\n";
-		if (isset($syslogcfg['system'])) 
-			$syslogconf .= <<<EOD
+		if (isset($syslogcfg['filter'])) {
+			if($syslogcfg['remoteserver'])
+				$syslogconf .= "local0.*			 @{$syslogcfg['remoteserver']}\n";
+			if($syslogcfg['remoteserver2'])
+				$syslogconf .= "local0.*			 @{$syslogcfg['remoteserver2']}\n";
+			if($syslogcfg['remoteserver3'])
+				$syslogconf .= "local0.*			 @{$syslogcfg['remoteserver3']}\n";
+
+		}
+		if (isset($syslogcfg['vpn'])) {
+			if($syslogcfg['remoteserver'])
+				$syslogconf .= "local3.*			 @{$syslogcfg['remoteserver']}\n";
+			if($syslogcfg['remoteserver2'])
+				$syslogconf .= "local3.*			 @{$syslogcfg['remoteserver2']}\n";
+			if($syslogcfg['remoteserver3'])
+				$syslogconf .= "local3.*			 @{$syslogcfg['remoteserver3']}\n";
+		}
+		if (isset($syslogcfg['portalauth'])) {
+			if($syslogcfg['remoteserver'])
+				$syslogconf .= "local4.*			 @{$syslogcfg['remoteserver']}\n";
+			if($syslogcfg['remoteserver2'])
+				$syslogconf .= "local4.*			 @{$syslogcfg['remoteserver2']}\n";
+			if($syslogcfg['remoteserver3'])
+				$syslogconf .= "local4.*			 @{$syslogcfg['remoteserver3']}\n";
+		}
+		if (isset($syslogcfg['dhcp'])) {
+			if($syslogcfg['remoteserver'])
+				$syslogconf .= "local7.*			 @{$syslogcfg['remoteserver']}\n";
+			if($syslogcfg['remoteserver2'])
+				$syslogconf .= "local7.*			 @{$syslogcfg['remoteserver2']}\n";
+			if($syslogcfg['remoteserver3'])
+				$syslogconf .= "local7.*			 @{$syslogcfg['remoteserver3']}\n";
+		}
+		if (isset($syslogcfg['system'])) {
+			if($syslogcfg['remoteserver'])
+				$syslogconf .= <<<EOD
 *.notice;kern.debug;lpr.info;mail.crit;			 @{$syslogcfg['remoteserver']}
 news.err;local0.none;local3.none;local7.none	 @{$syslogcfg['remoteserver']}
 security.*										 @{$syslogcfg['remoteserver']}
@@ -455,12 +493,52 @@ auth.info;authpriv.info;daemon.info				 @{$syslogcfg['remoteserver']}
 *.emerg											 @{$syslogcfg['remoteserver']}
 
 EOD;
+
+		if (isset($syslogcfg['system'])) {
+			if($syslogcfg['remoteserver2'])
+				$syslogconf .= <<<EOD
+*.notice;kern.debug;lpr.info;mail.crit;			 @{$syslogcfg['remoteserver2']}
+news.err;local0.none;local3.none;local7.none	 @{$syslogcfg['remoteserver2']}
+security.*										 @{$syslogcfg['remoteserver2']}
+auth.info;authpriv.info;daemon.info				 @{$syslogcfg['remoteserver2']}
+*.emerg											 @{$syslogcfg['remoteserver2']}
+
+EOD;
+
+		if (isset($syslogcfg['system'])) {
+			if($syslogcfg['remoteserver3'])
+				$syslogconf .= <<<EOD
+*.notice;kern.debug;lpr.info;mail.crit;			 @{$syslogcfg['remoteserver3']}
+news.err;local0.none;local3.none;local7.none	 @{$syslogcfg['remoteserver3']}
+security.*										 @{$syslogcfg['remoteserver3']}
+auth.info;authpriv.info;daemon.info				 @{$syslogcfg['remoteserver3']}
+*.emerg											 @{$syslogcfg['remoteserver3']}
+
+EOD;
+
+}
 		if (isset($syslogcfg['logall'])) {
-			$syslogconf .= <<<EOD
+			if($syslogcfg['remoteserver'])
+				$syslogconf .= <<<EOD
 *.*								@{$syslogcfg['remoteserver']}
 
 EOD;
-		}
+
+}
+			if($syslogcfg['remoteserver2'])
+				$syslogconf .= <<<EOD
+*.*								@{$syslogcfg['remoteserver2']}
+
+EOD;
+
+}
+			if($syslogcfg['remoteserver3'])
+				$syslogconf .= <<<EOD
+*.*								@{$syslogcfg['remoteserver3']}
+
+EOD;
+
+}
 		fwrite($fd, $syslogconf);
 		fclose($fd);
 		// Are we logging to a least one remote server ?

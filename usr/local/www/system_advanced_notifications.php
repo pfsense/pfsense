@@ -44,10 +44,8 @@ if($config['notifications']['growl']['ipaddress'])
 	$pconfig['ipaddress'] = $config['notifications']['growl']['ipaddress'];
 
 // SMTP
-if($config['notifications']['smtp']['username']) 
-	$pconfig['smtpusername'] = $config['notifications']['smtp']['username'];
-if($config['notifications']['smtp']['password']) 
-	$pconfig['smtppassword'] = $config['notifications']['smtp']['password'];
+if($config['notifications']['smtp']['ipaddress']) 
+	$pconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
 if($config['notifications']['smtp']['notifyemailaddress']) 
 	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
 

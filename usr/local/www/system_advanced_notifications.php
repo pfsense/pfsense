@@ -146,6 +146,9 @@ include("head.inc");
 								Enter the password of the remote growl notification device.
 							</td>
 						</tr>
+						<tr>
+							<td colspan="2" class="list" height="12">&nbsp;</td>
+						</tr>	
 						<!-- SMTP -->
 						<tr>
 							<td colspan="2" valign="top" class="listtopic">SMTP E-Mail</td>

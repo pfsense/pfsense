@@ -828,19 +828,19 @@ function return_dir_as_array($dir) {
 function run_plugins($directory) {
         global $config, $g;
 
-        /* process packager manager custom rules */
-        $files = return_dir_as_array($directory);
-        if (is_array($files)) {
-                foreach ($files as $file) {
-			if (stristr($file, ".sh") == true)
-				mwexec($directory . $file . " start");
-			else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) {
-				if ($g['booting'] == true)
-					echo "\t{$file}... ";
-				require_once($directory . "/" . $file);
-                        }
-                }
-        }
+		/* process packager manager custom rules */
+		$files = return_dir_as_array($directory);
+		if (is_array($files)) {
+			foreach ($files as $file) {
+				if (stristr($file, ".sh") == true)
+					mwexec($directory . $file . " start");
+				else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) {
+					if ($g['booting'] == true)
+						echo "{$file}...";
+					require_once($directory . "/" . $file);
+				}
+			}
+		}
 }
 
 /*

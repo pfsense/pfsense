@@ -157,7 +157,7 @@ include("head.inc");
 							<td width="22%" valign="top" class="vncell">IP Address of E-Mail server</td>
 							<td width="78%" class="vtable">
 								<input name='smtpipaddress' value='<?php echo $pconfig['smtpipaddress']; ?>'><br/>
-								This is the IP address of the SMTP E-MAil server that will be used to send notifications to.
+								This is the IP address of the SMTP E-Mail server that will be used to send notifications to.
 							</td>
 						</tr>
 						<tr>

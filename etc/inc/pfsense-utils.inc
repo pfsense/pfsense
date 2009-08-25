@@ -2578,7 +2578,8 @@ function cleanup_opt_interfaces_after_removal($opt_interface_num) {
 	$config_file = file_get_contents("/cf/conf/config.xml");
 	/* loop through and reassign deleted items */
 	$orig = array('opt'.$opt_interface_num,'OPT'.$opt_interface_num);
-	$repl = array('optXXXX','OPTXXXX');
+	$datetime = date("YmdHis");
+	$repl = array('optXXXX',"OPT$datetime");
 	for ($i = $opt_interface_num+1; isset ($config['interfaces']['opt' . $i]); $i++) {
 		array_push($orig,'opt'.$i);
 		array_push($repl,'opt'.($i -1));

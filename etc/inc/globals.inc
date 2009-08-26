@@ -42,7 +42,7 @@ function get_nics_with_capabilities($CAPABILITIES) {
 	$if_list = split(" ", $ifs);
 	$vlan_native_supp = array();
 	foreach($if_list as $if => $iface) {
-		$capable = `ifconfig -m | grep -a1 $if | grep $CAPABILITIES`;
+		$capable = `ifconfig -m $if | grep "capabilities=.*{$CAPABILITIES}"`;
 		if($capable) {
 			$interfacenonum = remove_numbers($if);
 			if(!in_array($interfacenonum, $vlan_native_supp))

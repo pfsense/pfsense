@@ -218,7 +218,7 @@ function notify_via_smtp($message) {
 	$smtp->host_name = $config['notifications']['smtp']['ipaddress'];
 	$smtp->host_port = 25;
 
-	$smtp->direct_delivery = 1;
+	$smtp->direct_delivery = 0;
 	$smtp->ssl = 0;
 	$smtp->debug = 1;
 	$smtp->html_debug = 0;

@@ -6,7 +6,7 @@ FMBASEURL=$1
 FMFILENAME=$2
 FETCHFILENAME=$1/$2
 
-product=`echo '<? include("/etc/inc/globals.inc"); die($g["product_name"]); ?>' | /usr/local/bin/php -q`
+product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
 
 # wait 5 seconds before beginning
 sleep 5

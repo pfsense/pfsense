@@ -64,7 +64,7 @@ fi
 
 /etc/rc.banner
 
-product=`echo '<? include("/etc/inc/globals.inc"); die($g["product_name"]); ?>' | /usr/local/bin/php -q`
+product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
 hidebanner=`cat /etc/inc/globals.inc | grep hidebanner | cut -d'"' -f4`
 
 # display a cheap menu

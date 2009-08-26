@@ -30,10 +30,10 @@
 
 /* This file is included by the RRD graphing page and sets the colors */
 
-$colortrafficup = array("666666", "CCCCCC");
-$colortrafficdown = array("990000", "CC0000");
-$colorpacketsup = array("666666", "CCCCCC");
-$colorpacketsdown = array("990000", "CC0000");
+$colortrafficup = "666666";
+$colortrafficdown = "990000";
+$colorpacketsup = "666666";
+$colorpacketsdown = "990000";
 $colorstates = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 $colorprocessor = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 $colormemory = array('990000','a83c3c','b36666','bd9090','cccccc','000000');

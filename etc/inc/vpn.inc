@@ -641,11 +641,15 @@ EOD;
 									$key_hi = $p2_ealgos[$ealg_id]['keysel']['hi'];
 									$key_lo = $p2_ealgos[$ealg_id]['keysel']['lo'];
 									$key_step = $p2_ealgos[$ealg_id]['keysel']['step'];
-
-									for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
-										if ($ealgos)
-											$ealgos = $ealgos.", ";
-										$ealgos = $ealgos.$ealg_id." ".$keylen;
+									/* in some cases where include ordering is suspect these variables
+									   are somehow 0 and we enter this loop forever and timeout after 900
+									   seconds wrecking bootup */
+									if($keylen !=0 and $key_hi != 0 and $key_step !=0) {
+										for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
+											if ($ealgos)
+												$ealgos = $ealgos.", ";
+											$ealgos = $ealgos.$ealg_id." ".$keylen;
+										}
 									}
 								} else {
 									if ($ealgos)

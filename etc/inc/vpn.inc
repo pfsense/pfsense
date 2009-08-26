@@ -638,6 +638,12 @@ EOD;
 
 							if ($ealg_kl) {
 								if( $ealg_kl == "auto" ) {
+									/*   This seems to be required on my system and was not reproducable
+									 *   on other systems.   For some reason $p2_ealgos is not defined
+									 *   and needs to be read back in!?  -sullrich Aug 26, 2009 
+									 */
+									if(!$p2_ealgos)
+										require("ipsec.inc");
 									$key_hi = $p2_ealgos[$ealg_id]['keysel']['hi'];
 									$key_lo = $p2_ealgos[$ealg_id]['keysel']['lo'];
 									$key_step = $p2_ealgos[$ealg_id]['keysel']['step'];
@@ -646,6 +652,7 @@ EOD;
 									   seconds wrecking bootup */
 									if($key_hi != 0 and $key_lo !=0 and $key_step !=0) {
 										for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
+//											Uncomment the next line if you want to test the comment 5 lines up.											
 //											echo "$keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step \n";
 											if ($ealgos)
 												$ealgos = $ealgos.", ";

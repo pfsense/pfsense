@@ -646,7 +646,7 @@ EOD;
 									   seconds wrecking bootup */
 									if($key_hi != 0 and $key_lo !=0 and $key_step !=0) {
 										for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
-											echo "$keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step \n";
+//											echo "$keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step \n";
 											if ($ealgos)
 												$ealgos = $ealgos.", ";
 											$ealgos = $ealgos.$ealg_id." ".$keylen;

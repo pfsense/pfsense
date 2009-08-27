@@ -16,6 +16,7 @@
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
 
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -260,7 +261,7 @@ if ($queue) {
                                 $can_enable = true;
                         else
                                 $can_enable = false;
-                        if ($queue->CanHaveChilds()) { 
+                        if ($queue->CanHaveChildren()) { 
                        		$can_add = true;
                         } else
                                 $can_add = false;
@@ -319,7 +320,7 @@ if ($queue || $dnpipe || $newqueue) {
 	if ($queue)
 		if ($queue->GetEnabled() <> "")
        			$output .=  " CHECKED";
-	$output .= " ><span class=\"vexpl\"> Enable/Disable queue and its childs</span>";
+	$output .= " ><span class=\"vexpl\"> Enable/Disable queue and its children.</span>";
 	$output .= "</td></tr>";
 }
 }

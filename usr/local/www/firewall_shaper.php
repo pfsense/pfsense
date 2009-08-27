@@ -239,7 +239,7 @@ if ($_GET) {
 				array_pop($tmppath);
 				$tmp->wconfig();
 				$can_enable = true;
-				if ($tmp->CanHaveChilds() && $can_enable) {
+				if ($tmp->CanHaveChildren() && $can_enable) {
 					if ($tmp->GetDefault() <> "")
                              			$can_add = false;
                         		else
@@ -312,7 +312,7 @@ if ($queue) {
                                 $can_enable = true;
                         else
                                 $can_enable = false;
-                        if ($queue->CanHaveChilds() && $can_enable) { 
+                        if ($queue->CanHaveChildren() && $can_enable) { 
                                 if ($altq->GetQname() <> $queue->GetQname() && $queue->GetDefault() <> "")
                                         $can_add = false;
                                 else

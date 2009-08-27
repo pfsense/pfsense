@@ -252,7 +252,7 @@ class altq_root_queue {
 	function SetEnabled($value) {
 		$this->qenabled = $value;
 	}
-	function CanHaveChilds() {
+	function CanHaveChildren() {
 		return true;
 	}
 	function CanBeDeleted() {
@@ -615,8 +615,8 @@ nterface\">";
 		$form .= ">PRIQ</option>";
 		$form .= "</select>";
 		$form .= "<br> <span class=\"vexpl\">";
-		$form .= "NOTE: changing this changes all queues underneath!";
-		$form .= " Beaware you can lose information.";
+		$form .= "NOTE: changing this changes all child queues!";
+		$form .= " Beware you can lose information.";
 		$form .= "</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Bandwidth";
@@ -709,7 +709,7 @@ class priq_queue {
 	var $link;
 	var $available_bw; /* in b/s */
 
-	/* This is here to help on form building and building rules/lists */
+	/* This is here to help with form building and building rules/lists */
 		var $subqueues = array();
 
 	/* Accesor functions */
@@ -737,7 +737,7 @@ class priq_queue {
 	function SetEnabled($value) {
 			$this->qenabled = $value;
 	}
-	function CanHaveChilds() {
+	function CanHaveChildren() {
 			return false;
 	}
 	function CanBeDeleted() {
@@ -846,7 +846,7 @@ function GetEcn() {
 	function &add_queue($interface, &$qname, &$path, &$input_errors) { return; }
 
 	/* 
-	 * Currently this will not be called unless we decide to clonce whole 
+	 * Currently this will not be called unless we decide to clone a whole 
 	 * queue tree on the 'By Queues' view or support drag&drop on the tree/list
 	 */
 	 function copy_queue($interface, &$cflink) {
@@ -1051,7 +1051,7 @@ function GetEcn() {
 				$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"qlimit\" type=\"text\" id=\"qlimit\" size=\"5\" value=\"";
 				$form .= htmlspecialchars($this->GetQlimit());
 				$form .= "\">";
-		$form .= "<br> <span class=\"vexpl\">Queue limit in packet per second."; 
+		$form .= "<br> <span class=\"vexpl\">Queue limit in packets per second."; 
 				$form .= "</span></td>";
 				$form .= "<tr>";
 				$form .= "<td width=\"22%\" valign=\"top\" class=\"vncell\">Scheduler options</td>";
@@ -1165,7 +1165,7 @@ class hfsc_queue extends priq_queue {
 		 * HFSC can have nested queues.
 		 */
 
-	function CanHaveChilds() {
+	function CanHaveChildren() {
 				return true;
 		}
 	function GetRealtime() {
@@ -1363,7 +1363,7 @@ class hfsc_queue extends priq_queue {
 			}
 	
 			/*
-			 * Should search even its childs
+			 * Should search even its children
 			 */
 			function &find_queue($interface, $qname) {
 					if ($qname == $this->GetQname()) 
@@ -1417,7 +1417,7 @@ class hfsc_queue extends priq_queue {
                              break;
                 }
                 if ($parent->GetAvailableBandwidth() < $myBw)
-                        $input_errors[] = "The sum of child bandwidths exceeds that of the parent.";
+                        $input_errors[] = "The sum of children bandwidth exceeds that of the parent.";
 */
                 if ($data['priority'] > 7)
                         $input_errors[] = "Priority must be an integer between 1 and 7.";
@@ -1551,7 +1551,7 @@ class hfsc_queue extends priq_queue {
 		return $tree;
 	}
 
-		/* Even this should take childs in consideration */
+		/* Even this should take children into consideration */
 		function build_rules() {
 
 				$pfq_rule = " queue ". $this->qname;
@@ -1839,7 +1839,7 @@ class cbq_queue extends priq_queue {
 	function SetBorrow($borrow) {
 		$this->qborrow = $borrow;
 	}
-	function CanHaveChilds() {
+	function CanHaveChildren() {
 			return true;
 	}
 
@@ -1907,7 +1907,7 @@ class cbq_queue extends priq_queue {
 		}
 	
 		/*
-		 * Should search even its childs
+		 * Should search even its children
 		 */
 		function &find_queue($interface, $qname) {
 				if ($qname == $this->GetQname())
@@ -1976,7 +1976,7 @@ class cbq_queue extends priq_queue {
                              break;
            }
                 if ($parent->GetAvailableBandwidth() < floatval($myBw))
-                        $input_errors[] = "The sum of child bandwidths exceeds that of the parent.";
+                        $input_errors[] = "The sum of the children bandwidth exceeds that of the parent.";
 */
 	}
 		function ReadConfig(&$q) {
@@ -2006,7 +2006,7 @@ class cbq_queue extends priq_queue {
 			return $tree;
 	}
 		
-	/* Even this should take childs in consideration */
+	/* Even this should take children into consideration */
 	function build_rules() {
 		   $pfq_rule = "queue ". $this->qname;
 			if ($this->GetInterface())
@@ -2148,7 +2148,7 @@ class fairq_queue extends priq_queue {
 	function SetHogs($hogs) {
 		$this->hogs = $hogs;
 	}
-	function CanHaveChilds() {
+	function CanHaveChildren() {
 		return false;
 	}
 
@@ -2171,7 +2171,7 @@ class fairq_queue extends priq_queue {
 	}
 	
 	/*
-	 * Should search even its childs
+	 * Should search even its children
 	 */
 	function &find_queue($interface, $qname) {
 		if ($qname == $this->GetQname())
@@ -2223,7 +2223,7 @@ class fairq_queue extends priq_queue {
                              break;
            	}
                 if ($parent->GetAvailableBandwidth() < floatval($myBw))
-                        $input_errors[] = "The sum of child bandwidths exceeds that of the parent.";
+                        $input_errors[] = "The sum of children bandwidth exceeds that of the parent.";
 */
 	}
 	
@@ -2250,7 +2250,7 @@ class fairq_queue extends priq_queue {
 			return $tree;
 	}
 		
-	/* Even this should take childs in consideration */
+	/* Even this should take children into consideration */
 	function build_rules() {
 		$pfq_rule = "queue ". $this->qname;
 		if ($this->GetInterface())
@@ -2400,7 +2400,7 @@ class dummynet_class {
         var $mask;
         var $noerror;
 
-        /* Accesor functions */
+        /* Accessor functions */
         function SetLink($link) {
                 $this->link = $link;
         }
@@ -2425,7 +2425,7 @@ class dummynet_class {
         function SetEnabled($value) {
                 $this->qenabled = $value;
         }
-		function CanHaveChilds() {
+		function CanHaveChildren() {
                 return false;
         }
 		function CanBeDeleted() {
@@ -2508,7 +2508,7 @@ class dnpipe_class extends dummynet_class {
 		/* This is here to help on form building and building rules/lists */
         var $subqueues = array();
 
-	function CanHaveChilds() {
+	function CanHaveChildren() {
 	        return true;
         }
 	function SetDelay($delay) {
@@ -2567,7 +2567,7 @@ class dnpipe_class extends dummynet_class {
 	}
 		
         /*
-         * Should search even its childs
+         * Should search even its children
          */
         function &find_queue($pipe, $qname) {
                 if ($qname == $this->GetQname()) 
@@ -2749,7 +2749,7 @@ class dnpipe_class extends dummynet_class {
 		$form .= "<td valign=\"top\" class=\"vncellreq\">";
 		$form .= "<input name=\"delay\" type=\"text\" id=\"delay\" size=\"5\" value=\"";
 		$form .= $this->GetDelay() . "\">";
-		$form .= "&nbsp;ms<br> <span class=\"vexpl\">Hint: in most cases, you"; 
+		$form .= "&nbsp;ms<br> <span class=\"vexpl\">Hint: in most cases, you "; 
 		$form .= "should specify 0 here (or leave the field empty)</span>";
 		$form .= "</td></tr><br/>";
       		$form .= "<tr style=\"display:none\" id=\"sprtable1\" name=\"sprtable1\">";
@@ -2757,8 +2757,8 @@ class dnpipe_class extends dummynet_class {
 		$form .= "<td valign=\"top\" class=\"vncellreq\">";
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\">";
-		$form .= "&nbsp;<br> <span class=\"vexpl\">Hint: in most cases, you"; 
-        $form .= "should specify 0 here (or leave the field empty).";
+		$form .= "&nbsp;<br> <span class=\"vexpl\">Hint: in most cases, you "; 
+        	$form .= "should specify 0 here (or leave the field empty).";
 		$form .= "A value of 0.001 means one packet in 1000 gets dropped</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable2\" name=\"sprtable2\">";
@@ -2839,7 +2839,7 @@ class dnqueue_class extends dummynet_class {
 	}
 
         /*
-         * Should search even its childs
+         * Should search even its children
          */
         function &find_queue($pipe, $qname) {
                 if ($qname == $this->GetQname()) 
@@ -2959,7 +2959,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<td valign=\"top\" class=\"vncellreq\">";
 		$form .= "<input name=\"weight\" type=\"text\" id=\"weight\" size=\"5\" value=\"";
 		$form .= $this->GetWeight() . "\">";
-		$form .= "&nbsp;ms<br> <span class=\"vexpl\">Hint: For queues under the same parent"; 
+		$form .= "&nbsp;ms<br> <span class=\"vexpl\">Hint: For queues under the same parent "; 
 		$form .= "this specifies the share that a queue gets(values range from 1 to 100, you can leave it blank otherwise)</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable1\" name=\"sprtable1\">";
@@ -2967,7 +2967,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<td valign=\"top\" class=\"vncellreq\">";
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
 		$form .= $this->GetPlr() . "\">";
-		$form .= "&nbsp;<br> <span class=\"vexpl\">Hint: in most cases, you"; 
+		$form .= "&nbsp;<br> <span class=\"vexpl\">Hint: in most cases, you "; 
         	$form .= "should specify 0 here (or leave the field empty).";
 		$form .= "A value of 0.001 means one packet in 1000 gets dropped</span>";
 		$form .= "</td></tr>";
@@ -2978,8 +2978,8 @@ class dnqueue_class extends dummynet_class {
 		$form .= $this->GetQlimit() . "\">";
 		$form .= "&nbsp;slots<br>";
 		$form .= "<span class=\"vexpl\">Hint: in most cases, you ";
-		$form .= "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first,";
-        $form .= "then they are delayed by value specified in the Delay field, and then they ";
+		$form .= "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, ";
+        	$form .= "then they are delayed by value specified in the Delay field, and then they ";
 		$form .= "are delivered to their destination.</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr style=\"display:none\" id=\"sprtable5\" name=\"sprtable5\">";

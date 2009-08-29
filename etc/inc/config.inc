@@ -797,7 +797,7 @@ function set_networking_interfaces_ports() {
 
 /* Only present auto interface option if running from LiveCD and interface mismatch*/
 	if ((ereg("cdrom", $g['platform'])) && is_interface_mismatch())
-		$auto_assign = true;
+		$auto_assign = false;
 
 	echo <<<EOD
 
@@ -827,11 +827,12 @@ EOD;
 	
 	echo <<<EOD
 
-Do you want to set up VLANs first?
+Do you want to set up VLANs first? 
+
 If you are not going to use VLANs, or only for optional interfaces, you should
 say no here and use the webConfigurator to configure VLANs later, if required.
 
-Do you want to set up VLANs now [y|n]?
+Do you want to set up VLANs now [y|n]? 
 EOD;
 
 	if ($auto_assign) {
@@ -840,7 +841,7 @@ EOD;
 	} else
 		$key = chop(fgets($fp));
 
-	if (!isset($key)) {	// Auto Assign Interfaces
+	if (!isset($key) and $auto_assign) {	// Auto Assign Interfaces
 		do {
 			echo <<<EOD
 

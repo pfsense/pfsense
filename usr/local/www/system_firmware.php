@@ -49,6 +49,19 @@ require_once("xmlrpc_client.inc");
 ini_set('max_execution_time', '3600');
 ini_set('max_input_time', '3600');
 
+function file_is_for_platform($filename) {
+	global $g;
+	exec("tar xzf $fiename -C /tmp/ etc/platform");
+	if(!file_exists("/tmp/etc/platform")) 
+		return false;
+	$upgrade_is_for_platform = trim(file_get_contents("/tmp/etc/platform"));
+	if($g['platform'] == $upgrade_is_for_platform) {
+		unlink_file("/tmp/etc/platform");
+		return true;
+	}
+	return false;
+}
+
 /* if upgrade in progress, alert user */
 if(file_exists($d_firmwarelock_path)) {
 	$pgtitle = "System: Firmware: Manual Update";
@@ -95,7 +108,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 		} else if ($mode == "upgrade") {
 			if (is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 				/* verify firmware image(s) */
-				if (!stristr($_FILES['ulfile']['name'], $g['platform']) && !$_POST['sig_override'])
+				if (!file_is_for_platform($_FILES['ulfile']['tmp_name']) && !$_POST['sig_override'])
 					$input_errors[] = "The uploaded image file is not for this platform ({$g['platform']}).";
 				else if (!file_exists($_FILES['ulfile']['tmp_name'])) {
 					/* probably out of memory for the MFS */

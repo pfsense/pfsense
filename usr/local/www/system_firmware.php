@@ -52,7 +52,7 @@ ini_set('max_input_time', '9999');
 
 function file_is_for_platform($filename) {
 	global $g;
-	exec("tar xzf $fiename -C /tmp/ etc/platform");
+	exec("tar xzf $filename -C /tmp/ etc/platform");
 	if(!file_exists("/tmp/etc/platform")) 
 		return false;
 	$upgrade_is_for_platform = trim(file_get_contents("/tmp/etc/platform"));

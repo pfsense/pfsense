@@ -134,7 +134,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 			    $errortext = "(" . file_upload_error_message($_FILES['ulfile']['error']) . ")";
 			if (is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 				/* verify firmware image(s) */
-				if (!file_is_for_platform($_FILES['ulfile']['tmp_name']) && !$_POST['sig_override'])
+				if (file_is_for_platform($_FILES['ulfile']['tmp_name']) == false && !$_POST['sig_override'])
 					$input_errors[] = "The uploaded image file is not for this platform ({$g['platform']}).";
 				else if (!file_exists($_FILES['ulfile']['tmp_name'])) {
 					/* probably out of memory for the MFS */

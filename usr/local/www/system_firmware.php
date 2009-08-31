@@ -39,6 +39,7 @@
 ##|-PRIV
 
 $d_isfwfile = 1;
+require_once("globals.inc");
 require_once("guiconfig.inc");
 
 $curcfg = $config['system']['firmware'];
@@ -48,6 +49,19 @@ require_once("xmlrpc_client.inc");
 /* Allow additional execution time 0 = no limit. */
 ini_set('max_execution_time', '9999');
 ini_set('max_input_time', '9999');
+
+function file_is_for_platform($filename) {
+	global $g;
+	exec("tar xzf $fiename -C /tmp/ etc/platform");
+	if(!file_exists("/tmp/etc/platform")) 
+		return false;
+	$upgrade_is_for_platform = trim(file_get_contents("/tmp/etc/platform"));
+	if($g['platform'] == $upgrade_is_for_platform) {
+		unlink_file("/tmp/etc/platform");
+		return true;
+	}
+	return false;
+}
 
 function file_upload_error_message($error_code) {
     switch ($error_code) {
@@ -120,7 +134,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 			    $errortext = "(" . file_upload_error_message($_FILES['ulfile']['error']) . ")";
 			if (is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 				/* verify firmware image(s) */
-				if (!stristr($_FILES['ulfile']['name'], $g['platform']) && !$_POST['sig_override'])
+				if (!file_is_for_platform($_FILES['ulfile']['tmp_name']) && !$_POST['sig_override'])
 					$input_errors[] = "The uploaded image file is not for this platform ({$g['platform']}).";
 				else if (!file_exists($_FILES['ulfile']['tmp_name'])) {
 					/* probably out of memory for the MFS */

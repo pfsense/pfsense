@@ -632,7 +632,6 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 function return_clog($logfile, $tail, $grepfor = "", $grepinvert = "", $grepreverse = false) {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
-	$sor = isset($grepreverse) ? "-r" : "";
 	$logarr = "";
 	$grepline = "  ";
 	if(is_array($grepfor))

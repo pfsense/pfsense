@@ -431,7 +431,7 @@
 				<type>checkbox</type>
 				<typehint>Prioritize network gaming traffic</typehint>
 				<description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-				<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft,XBox360,ArchLord</enablefields>
+				<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft,XBox360</enablefields>
 				<donotdisable>true</donotdisable>
 				<bindstofield>ezshaper-&gt;step6-&gt;enable</bindstofield>
 			</field>
@@ -574,12 +574,6 @@
 				<type>checkbox</type>
 				<typehint>XBox 360</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;xbox360</bindstofield>
-			</field>
-			<field>
-				<name>ArchLord</name>
-				<type>checkbox</type>
-				<typehint>ArchLord</typehint>
-				<bindstofield>ezshaper-&gt;step6-&gt;archlord</bindstofield>
 			</field>
 			<field>
 				<name>Next</name>

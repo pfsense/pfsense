@@ -665,12 +665,12 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][3]['value'] =   "1";
 
 		$config['sysctl']['item'][4]['tunable'] = "net.inet.ip.redirect";
-		$config['sysctl']['item'][4]['desc'] =    "Disable sending IPv4 redirects";
-		$config['sysctl']['item'][4]['value'] =   "0";
+		$config['sysctl']['item'][4]['desc'] =    "Sending of IPv4 ICMP redirects";
+		$config['sysctl']['item'][4]['value'] =   "1";
 
 		$config['sysctl']['item'][5]['tunable'] = "net.inet6.ip6.redirect";
-		$config['sysctl']['item'][5]['desc'] =    "Disable sending IPv6 redirects";
-		$config['sysctl']['item'][5]['value'] =   "0";
+		$config['sysctl']['item'][5]['desc'] =    "Sending of IPv6 ICMP redirects";
+		$config['sysctl']['item'][5]['value'] =   "1";
 
 		$config['sysctl']['item'][6]['tunable'] = "net.inet.tcp.syncookies";
 		$config['sysctl']['item'][6]['desc'] =    "Generate SYN cookies for outbound SYN-ACK packets";

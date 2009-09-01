@@ -207,7 +207,7 @@ function vpn_ipsec_configure($ipchg = false)
 						$pfd = fopen("/var/db/ipsecpinghosts", "a");
 						$iflist = get_configured_interface_list();
 						foreach ($iflist as $ifent => $ifname) {
-							$interface_ip = get_interface_ip($ifnet);
+							$interface_ip = get_interface_ip($ifent);
 							$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
 							if (ip_in_subnet($interface_ip, $local_subnet))
 								$srcip = $interface_ip;

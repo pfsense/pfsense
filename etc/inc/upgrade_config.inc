@@ -727,6 +727,11 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][19]['tunable'] = "hw.bce.tso_enable";
 		$config['sysctl']['item'][19]['desc'] =    "TCP Offload engine - BCE";
 		$config['sysctl']['item'][19]['value'] =   "0";
+		
+		$config['sysctl']['item'][20]['tunable'] = "net.inet.ip.portrange.first";
+		$config['sysctl']['item'][20]['desc'] =    "Set the ephemeral port range starting port";
+		$config['sysctl']['item'][20]['value'] =   "1024";
+
 	}
 }
 

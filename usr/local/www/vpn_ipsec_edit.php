@@ -372,6 +372,7 @@ function methodsel_change() {
                     </select> <br>
                     <span class="vexpl">Select the interface for the local endpoint of this tunnel.</span></td>
                 </tr>
+<?php /*
 			   				<tr> 
                   <td width="22%" valign="top" class="vncell">NAT-T</td>
                   <td width="78%" class="vtable"> 
@@ -386,6 +387,8 @@ function methodsel_change() {
 			<input name="dpddelay" type="text" class="formfld" id="dpddelay" size="5" value="<?php echo htmlspecialchars($pconfig['dpddelay']); ?>"> seconds<br>
 			<span class="vexpl">Enter a value here to enable Dead Peer Detection (e.g. 60 seconds).</span></td>
 		</tr>
+*/
+?>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Local subnet</td>
                   <td width="78%" class="vtable">

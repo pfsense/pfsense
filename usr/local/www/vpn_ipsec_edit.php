@@ -373,7 +373,7 @@ function methodsel_change() {
                     <span class="vexpl">Select the interface for the local endpoint of this tunnel.</span></td>
                 </tr>
 <?php /*
-			   				<tr> 
+		<tr> 
                   <td width="22%" valign="top" class="vncell">NAT-T</td>
                   <td width="78%" class="vtable"> 
                     <input name="natt" type="checkbox" id="natt" value="yes" <?php if ($pconfig['natt']) echo "checked"; ?>>
@@ -381,14 +381,14 @@ function methodsel_change() {
                     <span class="vexpl">Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
                     	which can help with clients that are behind restrictive firewalls.</span></td>
                 </tr>
+                */
+?>
                 <tr> 
 		  <td width="22%" valign="top" class="vncell">DPD interval</td>
 		  <td width="78%" class="vtable"> 
 			<input name="dpddelay" type="text" class="formfld" id="dpddelay" size="5" value="<?php echo htmlspecialchars($pconfig['dpddelay']); ?>"> seconds<br>
 			<span class="vexpl">Enter a value here to enable Dead Peer Detection (e.g. 60 seconds).</span></td>
 		</tr>
-*/
-?>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Local subnet</td>
                   <td width="78%" class="vtable">

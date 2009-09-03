@@ -291,6 +291,7 @@ function methodsel_change() {
                     bit, 5 = 1536 bit</em><br>
                     Must match the setting chosen on the remote side. </span></td>
                 </tr>
+		<?php /*
                 <tr>
                   <td width="22%" class="vncellreq" valign="top">NAT Traversal</td>
                   <td width="78%" class="vtable">
@@ -299,6 +300,7 @@ function methodsel_change() {
                     <span class="vexpl">Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
                         which can help with clients that are behind restrictive firewalls.</span></td>
                 </tr>
+		      */ ?>
                 <tr>
                   <td width="22%" valign="top" class="vncell">DPD Interval</td>
                         <td width="78%" class="vtable">

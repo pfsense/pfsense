@@ -431,7 +431,7 @@ EOD;
 
 	rowname[2] = "detail";
 	rowtype[2] = "textbox";
-	rowsize[2] = "61";
+	rowsize[2] = "50";
 </script>
 
 <p class="pgtitle"><?=$pgtitle?></p>

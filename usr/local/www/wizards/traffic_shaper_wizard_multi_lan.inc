@@ -60,7 +60,7 @@ function step2_stepbeforeformdisplay() {
 			$numberofinterfaces++;
 			$iflist[] = $if;
 		}
-		$numberofconnections = intval($config['ezshaper']['step1']['enternumberoflantypeconnections']);
+		$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
 		if ($numberofconnections > $numberofinterfaces) {
 			$message=gettext("You do not have {$numberofconnections} of local interfaces!");
 			header("Location:wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=0&message={$message}");

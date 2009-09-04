@@ -148,7 +148,8 @@ function step2_stepbeforeformdisplay() {
 			$field = array();
 			$field['name'] = "conn{$i}interface";
 			$field['type'] = "select";
-			$field['typehint'] = "Interface of this connection.";
+			$interface_real = $i+1;
+			$field['typehint'] = "Select interface #{$interface_real} that you would like to shape";
 			$field['options']['option'] = array();
 			foreach ($iflist as $ifname) {
 					$opts = array();

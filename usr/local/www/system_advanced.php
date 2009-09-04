@@ -361,7 +361,7 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Authorizedkeys");?></td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
 			<td width="78%" class="vtable">
 				<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
 				<br />

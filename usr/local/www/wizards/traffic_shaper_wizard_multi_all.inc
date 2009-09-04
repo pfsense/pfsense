@@ -145,6 +145,13 @@ function step2_stepbeforeformdisplay() {
         	$fields[] = $field;
 
 		for ($i = 0; $i < $numberofconnections; $i++) {
+
+			$field = array();
+			$interface_friendly = $i+1;
+			$field['name'] = "Setup connection speed and scheduler information for interface #{$interface_friendly}";
+			$field['type'] = "listtopic";
+			$fields[] = $field;
+
 			$field = array();
 			$field['name'] = "conn{$i}interface";
 			$field['type'] = "select";

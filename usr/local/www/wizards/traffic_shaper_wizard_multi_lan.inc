@@ -141,33 +141,28 @@ function step2_stepbeforeformdisplay() {
 			$field['combinefieldsbegin'] = "true";
 		$fields[] = $field;
 
-			$field = array();
-            $field['combinefieldsend'] = "true";
-            $field['dontdisplayname'] = "true";
-            $field['dontcombinecells'] = "true";
-            $field['name'] = "conndownloadspeed";
-			$field['typehint'] = "Download bandwidth on this connection.";
-            $field['type'] = "select";
-            $field['options']['option'] = array();
-       	    	$opts = array();
-                $opts['value'] = "Kb";
-                $opts['name'] = "Kbit/s";
-            $field['options']['option'][] = $opts;
-                $opts = array();
-                $opts['value'] = "Mb";
-                $opts['name'] = "Mbit/s";
-            $field['options']['option'][] = $opts;
-                $opts = array();
-                $opts['value'] = "Gb";
-                $opts['name'] = "Gbit/s";
-            $field['options']['option'][] = $opts;
-            $field['bindstofield'] = "ezshaper->step2->conn{$i}downloadspeed";
-        $fields[] = $field;
-
-			$field = array();
-            $field['name'] = "Setup local interfaces schedulers";
-            $field['type'] = "listtopic";
-        $fields[] = $field;
+		$field = array();
+		$field['combinefieldsend'] = "true";
+		$field['dontdisplayname'] = "true";
+		$field['dontcombinecells'] = "true";
+		$field['name'] = "conndownloadspeed";
+		$field['typehint'] = "Download bandwidth on this connection.";
+		$field['type'] = "select";
+		$field['options']['option'] = array();
+		$opts = array();
+		$opts['value'] = "Kb";
+		$opts['name'] = "Kbit/s";
+		$field['options']['option'][] = $opts;
+		$opts = array();
+		$opts['value'] = "Mb";
+		$opts['name'] = "Mbit/s";
+		$field['options']['option'][] = $opts;
+		$opts = array();
+		$opts['value'] = "Gb";
+		$opts['name'] = "Gbit/s";
+		$field['options']['option'][] = $opts;
+		$field['bindstofield'] = "ezshaper->step2->conn{$i}downloadspeed";
+		$fields[] = $field;
 
 		for ($i = 0; $i < $numberofconnections; $i++) {
 

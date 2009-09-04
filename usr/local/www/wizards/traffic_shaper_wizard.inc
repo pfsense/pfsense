@@ -33,12 +33,12 @@
 
 function step1_submitphpaction() {
 
-		if (!isset($_POST['numberofconnections'])) {
+		if (!isset($_POST['enternumberofwanconnections'])) {
 			$message=gettext("You need to specify the number of connections.");
 			header("Location:wizard.php?xml=traffic_shaper_wizard.xml&stepid=0&message={$message}");
 			exit;
 		}			
-		if (intval($_POST['numberofconnections']) > 100 || intval($_POST['numberofconnections']) < 1) {
+		if (intval($_POST['enternumberofwanconnections']) > 100 || intval($_POST['enternumberofwanconnections']) < 1) {
 			$message=gettext("The number of connections supported is between 1 and 100.");
 			header("Location:wizard.php?xml=traffic_shaper_wizard.xml&stepid=0&message={$message}");
 			exit;
@@ -101,17 +101,21 @@ function step2_stepbeforeformdisplay() {
 		$field['options']['option'][] = $opts;
 		$field['bindstofield'] = "ezshaper->step2->downloadscheduler";
 		$fields[] = $field;
-		$field = array();
-		$field['name'] = "Setup connections speeds";
-		$field['type'] = "listtopic";
-		$fields[] = $field;
+
 
 		for ($i = 0; $i < $numberofconnections; $i++) {
+
+			$field = array();
+			$interface_friendly = $i+1;
+			$field['name'] = "Setup connection speed and scheduler information for interface #{$interface_friendly}";
+			$field['type'] = "listtopic";
+			$fields[] = $field;
+			
 			$field = array();
 			$field['displayname'] = "Interface";
 			$field['name'] = "conn{$i}interface";
 			$field['type'] = "select";
-			$field['typehint'] = "Interface of this connection.";
+			$field['typehint'] = "Interface of connection #{$interface_friendly}.";
 			$field['options']['option'] = array();
 			foreach ($iflist as $ifname => $ifdescr) {
 				$opts = array();

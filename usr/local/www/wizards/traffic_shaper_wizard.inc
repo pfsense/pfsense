@@ -342,38 +342,39 @@ function step3_stepbeforeformdisplay() {
 			$field['bindstofield'] = "ezshaper->step3->address";
 			$voipfields[] = $field;
 			
-		for ($i = 0; $i < $numberofconnections; $i++) {
-			$field = array();
-			$field['displayname'] = "Connection upload";
-                        $field['name'] = "conn{$i}upload";
-                        $field['type'] = "input";
-                        $field['bindstofield'] = "ezshaper->step3->conn{$i}upload";
-			$field['combinefieldsbegin'] = "true";
-                        $voipfields[] = $field;
+			for ($i = 0; $i < $numberofconnections; $i++) {
+				$field = array();
+				$field['displayname'] = "Connection upload";
+	                        $field['name'] = "conn{$i}upload";
+	                        $field['type'] = "input";
+	                        $field['bindstofield'] = "ezshaper->step3->conn{$i}upload";
+				$field['combinefieldsbegin'] = "true";
+	                        $voipfields[] = $field;
 
-			$field = array();
-                        $field['combinefieldsend'] = "true";
-                        $field['dontdisplayname'] = "true";
-                        $field['dontcombinecells'] = "true";
-                        $field['name'] = "conn{$i}uploadspeed";
-                        $field['typehint'] = "Upload bandwidth guarantee for VOIP phone(s) on connection {$i}.";
-                        $field['type'] = "select";
-                        $field['options']['option'] = array();
-                        $opts = array();
-                        $opts['value'] = "Kb";
-                        $opts['name'] = "Kbit/s";
-                        $field['options']['option'][] = $opts;
-                        $opts = array();
-                        $opts['value'] = "Mb";
-                        $opts['name'] = "Mbit/s";
-                        $field['options']['option'][] = $opts;
-                        $opts = array();
-                        $opts['value'] = "Gb";
-                        $opts['name'] = "Gbit/s";
-                        $field['options']['option'][] = $opts;
-                        $field['bindstofield'] = "ezshaper->step3->conn{$i}uploadspeed";
-                        $voipfields[] = $field;
-		}
+				$field = array();
+	                        $field['combinefieldsend'] = "true";
+	                        $field['dontdisplayname'] = "true";
+	                        $field['dontcombinecells'] = "true";
+	                        $field['name'] = "conn{$i}uploadspeed";
+							$friendly_interface = $i+1;
+	                        $field['typehint'] = "Upload bandwidth guarantee for VOIP phone(s) on connection {$friendly_interface}.";
+	                        $field['type'] = "select";
+	                        $field['options']['option'] = array();
+	                        $opts = array();
+	                        $opts['value'] = "Kb";
+	                        $opts['name'] = "Kbit/s";
+	                        $field['options']['option'][] = $opts;
+	                        $opts = array();
+	                        $opts['value'] = "Mb";
+	                        $opts['name'] = "Mbit/s";
+	                        $field['options']['option'][] = $opts;
+	                        $opts = array();
+	                        $opts['value'] = "Gb";
+	                        $opts['name'] = "Gbit/s";
+	                        $field['options']['option'][] = $opts;
+	                        $field['bindstofield'] = "ezshaper->step3->conn{$i}uploadspeed";
+	                        $voipfields[] = $field;
+			}
 			$field = array();
 			$field['name'] = "download";
 			$field['type'] = "input";
@@ -382,27 +383,27 @@ function step3_stepbeforeformdisplay() {
 			$voipfields[] = $field;
 
 			$field = array();
-                        $field['combinefieldsend'] = "true";
-                        $field['dontdisplayname'] = "true";
-                        $field['dontcombinecells'] = "true";
-                        $field['name'] = "downloadspeed";
+			$field['combinefieldsend'] = "true";
+			$field['dontdisplayname'] = "true";
+			$field['dontcombinecells'] = "true";
+			$field['name'] = "downloadspeed";
 			$field['typehint'] = "Download bandwidth guarantee for VOIP phone(s) on connections.";
-                        $field['type'] = "select";
-                        $field['options']['option'] = array();
-                        $opts = array();
-                        $opts['value'] = "Kb";
-                        $opts['name'] = "Kbit/s";
-                        $field['options']['option'][] = $opts;
-                        $opts = array();
-                        $opts['value'] = "Mb";
-                        $opts['name'] = "Mbit/s";
-                        $field['options']['option'][] = $opts;
-                        $opts = array();
-                        $opts['value'] = "Gb";
-                        $opts['name'] = "Gbit/s";
-                        $field['options']['option'][] = $opts;
-                        $field['bindstofield'] = "ezshaper->step3->downloadspeed";
-                        $voipfields[] = $field;
+			$field['type'] = "select";
+			$field['options']['option'] = array();
+			$opts = array();
+			$opts['value'] = "Kb";
+			$opts['name'] = "Kbit/s";
+			$field['options']['option'][] = $opts;
+			$opts = array();
+			$opts['value'] = "Mb";
+			$opts['name'] = "Mbit/s";
+			$field['options']['option'][] = $opts;
+			$opts = array();
+			$opts['value'] = "Gb";
+			$opts['name'] = "Gbit/s";
+			$field['options']['option'][] = $opts;
+			$field['bindstofield'] = "ezshaper->step3->downloadspeed";
+			$voipfields[] = $field;
 
 			$field = array();
                 $field['name'] = "Next";
@@ -437,7 +438,8 @@ function step3_stepsubmitphpaction() {
 			$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
 			$input_bw = $factor * floatval($_POST["conn{$i}upload"]);
 			if ((0.8 * $ifbw) < $input_bw) {
-				$message=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
+				$friendly_interface = $i+1;
+				$message=gettext("You cannot set the VoIP upload bandwidth on connection {$friendly_interface} higher than 80% of the connection.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
 				exit;
 			}	

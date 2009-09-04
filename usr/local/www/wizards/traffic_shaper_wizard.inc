@@ -107,7 +107,7 @@ function step2_stepbeforeformdisplay() {
 
 			$field = array();
 			$interface_friendly = $i+1;
-			$field['name'] = "Setup connection speed and scheduler information for interface #{$interface_friendly}";
+			$field['name'] = "Setup connection speed and scheduler information for WAN #{$interface_friendly}";
 			$field['type'] = "listtopic";
 			$fields[] = $field;
 			

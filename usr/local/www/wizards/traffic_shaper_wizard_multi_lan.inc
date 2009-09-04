@@ -33,12 +33,12 @@
 
 function step1_submitphpaction() {
 
-		if (!isset($_POST['numberofconnections'])) {
+		if (!isset($_POST['enternumberoflantypeconnections'])) {
 			$message=gettext("You need to specify the number of local interfaces connected.");
 			header("Location:wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=0&message={$message}");
 			exit;
 		}			
-		if (intval($_POST['numberofconnections']) > 100 || intval($_POST['numberofconnections']) < 1) {
+		if (intval($_POST['enternumberoflantypeconnections']) > 100 || intval($_POST['enternumberoflantypeconnections']) < 1) {
 			$message=gettext("The number of local interfaces supported is between 1 and 100.");
 			header("Location:wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=0&message={$message}");
 			exit;
@@ -60,7 +60,7 @@ function step2_stepbeforeformdisplay() {
 			$numberofinterfaces++;
 			$iflist[] = $if;
 		}
-		$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
+		$numberofconnections = intval($config['ezshaper']['step1']['enternumberoflantypeconnections']);
 		if ($numberofconnections > $numberofinterfaces) {
 			$message=gettext("You do not have {$numberofconnections} of local interfaces!");
 			header("Location:wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=0&message={$message}");
@@ -216,7 +216,7 @@ function step2_stepsubmitphpaction() {
 	$sumdownloads = 0;
 	
 	/* Input Validation */
-	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
+	$steps = intval($config['ezshaper']['step1']['enternumberoflantypeconnections']);
 	for ($i = 0; $i < $steps; $i++) {
 			for ($j = $j; $j < $steps; $j++) {
 				if ($_POST["conn{$i}interface"] == $_POST["conn{$j}interface"]) {
@@ -738,7 +738,7 @@ $othersplist = array();
 	unset($altq_list_queues);
 	$altq_list_queues = array();
 
-	$steps = floatval($config['ezshaper']['step1']['numberofconnections']);
+	$steps = floatval($config['ezshaper']['step1']['enternumberoflantypeconnections']);
 	for ($i = 0; $i < $steps; $i++) {
 
 		$tmppath = array();	

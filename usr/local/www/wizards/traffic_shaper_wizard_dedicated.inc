@@ -33,12 +33,12 @@
 
 function step1_submitphpaction() {
 
-		if (!isset($_POST['numberofconnections'])) {
+		if (!isset($_POST['enternumberofwanconnections'])) {
 			$message=gettext("You need to specify the number of connections.");
 			header("Location:wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=0&message={$message}");
 			exit;
 		}			
-		if (intval($_POST['numberofconnections']) > 100 || intval($_POST['numberofconnections']) < 1) {
+		if (intval($_POST['enternumberofwanconnections']) > 100 || intval($_POST['enternumberofwanconnections']) < 1) {
 			$message=gettext("The number of connections supported is between 1 and 100.");
 			header("Location:wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=0&message={$message}");
 			exit;

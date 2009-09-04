@@ -43,7 +43,7 @@
 				<name>Traffic shaper Wizard</name>
 			</field>
 			<field>
-				<name>numberofconnections</name>
+				<name>Enter number of WAN type connections</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
 				<description>Number of connections you have</description>

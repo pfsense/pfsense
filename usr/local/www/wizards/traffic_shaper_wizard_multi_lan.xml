@@ -39,7 +39,7 @@
 		<description>This wizard will guide you through setting up the pfSense traffic shaper.</description>
 		<fields>
 			<field>
-				<name>numberofconnections</name>
+				<name>Enter number of LAN type connections</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
 				<description>Number of local interfaces you have</description>

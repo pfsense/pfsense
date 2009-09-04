@@ -43,14 +43,14 @@
 				<name>Traffic shaper Wizard</name>
 			</field>
 			<field>
-				<name>numberofconnections</name>
+				<name>Enter number of WAN type connections</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
 				<description>Number of connections you have</description>
 				<bindstofield>ezshaper->step1->numberofconnections</bindstofield>
 			</field>
 			<field>
-				<name>numberoflocalinterfaces</name>
+				<name>Enter number of LAN type interfaces</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
 				<description>Number of local interfaces you have</description>

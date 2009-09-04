@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <pfsensewizard>
-	<copyright>/* $Id$ */
-
-	traffic_shaper_wizard.xml
+	<copyright>
+		traffic_shaper_wizard.xml
         part of pfSense (http://www.pfsense.org/)
 
         Copyright (C) 2005 Bill Marquette - bill.marquette@gmail.com.
@@ -30,7 +29,6 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 	*/</copyright>
-
 	<totalsteps>9</totalsteps>
 	<step>
 		<id>1</id>
@@ -39,7 +37,7 @@
 		<description>This wizard will guide you through setting up the pfSense traffic shaper.</description>
 		<fields>
 			<field>
-				<name>numberofconnections</name>
+				<name>Enter number of WAN connections</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
 				<description>Number of connections you have</description>

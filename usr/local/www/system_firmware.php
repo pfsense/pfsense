@@ -57,7 +57,7 @@ function file_is_for_platform($filename) {
 		return false;
 	$upgrade_is_for_platform = trim(file_get_contents("/tmp/etc/platform"));
 	if($g['platform'] == $upgrade_is_for_platform) {
-		unlink_file("/tmp/etc/platform");
+		unlink("/tmp/etc/platform");
 		return true;
 	}
 	return false;

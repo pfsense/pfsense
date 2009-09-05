@@ -209,9 +209,11 @@ function notify_via_smtp($message) {
 		return;
 
 	/* Do NOT send the same message twice */
-	$lastmsg = trim(file_get_contents("/var/db/notices_lastmsg.txt"));
-	if($lastmsg == $message)
-		return;
+	if(file_exists("/var/db/notices_lastmsg.txt")) {
+		$lastmsg = trim(file_get_contents("/var/db/notices_lastmsg.txt"));
+		if($lastmsg == $message)
+			return;
+	}
 
 	require_once("smtp.inc");
 

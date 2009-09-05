@@ -245,7 +245,7 @@ function notify_via_smtp($message) {
 	if($smtp->SendMessage($from, array($to), $headers, $message))
 		echo "Message sent to {$to} OK.\n";
 	else
-		echo "Cound not send the message to {$to}.\nError: {$smtp->error}\n";
+		echo "Could not send the message to {$to}.\nError: {$smtp->error}\n";
 
 }
 

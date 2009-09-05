@@ -608,7 +608,7 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 							   $stop_time);
 	}
 
-	mwexec("/sbin/ipfw table 4 delete {$dbent[2]}");
+	mwexec("/sbin/ipfw table 3 delete {$dbent[2]}");
 	mwexec("/sbin/ipfw table 4 delete {$dbent[2]}");
 	mwexec("/sbin/ipfw delete {$dbent[1]}");
 

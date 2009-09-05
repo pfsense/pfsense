@@ -188,8 +188,8 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 if ($g['booting'])
 	return;
 
-update_filter_reload_status("Building CARP sync information");
 if (is_array($config['installedpackages']['carpsettings']['config'])) {
+	update_filter_reload_status("Building CARP sync information");
 	foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
 		if ($carp['synchronizetoip'] != "" ) {
 			/*

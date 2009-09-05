@@ -100,6 +100,16 @@ $curcfg = $config['system']['firmware'];
 			<td width="75%" class="listr"><?=htmlspecialchars($g['platform']);?></td>
 		</tr>
 		<?php endif; ?>
+		<?php if ($g['platform'] == "nanobsd"): ?>
+			<?
+			$BOOT_DEVICE=trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`);
+			$REAL_BOOT_DEVICE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);
+			?>
+		<tr>
+			<td width="25%" class="vncellt">NanoBSD Boot Slice</td>
+			<td width="75%" class="listr"><?=htmlspecialchars($BOOT_DEVICE);?> / <?=htmlspecialchars($REAL_BOOT_DEVICE);?></td>
+		</tr>
+		<?php endif; ?>
 		<tr>
 			<td width="25%" class="vncellt">CPU Type</td>
 			<td width="75%" class="listr">

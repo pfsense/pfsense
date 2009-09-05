@@ -8,6 +8,7 @@
  *   $Id$
  ******
  *
+ * Copyright (C) 2009 Scott Ullrich (sullrich@gmail.com)
  * Copyright (C) 2005 Colin Smith (ethethlay@gmail.com)
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -38,14 +39,22 @@ require_once("led.inc");
 
 $notice_path = $g['tmp_path'] . '/notices';
 
-/*
- * $category - Category that this notice should be displayed under. This can be arbitrary,
- * 	       but a page must be set to receive this messages for it to be displayed.
- *
- * $priority - A notice's priority. Higher numbers indicate greater severity.
- *	       0 = informational, 1 = warning, 2 = error, etc. This may also be arbitrary,
- */
+/****f* notices/file_notice
+ * NAME
+ *   file_notice
+ * INPUTS
+ *	 $id, $notice, $category, $url, $priority
+ * RESULT
+ *   Files a notice and kicks off the various alerts, smtp, growl, system log, LED's, etc.
+ ******/
 function file_notice($id, $notice, $category = "General", $url = "", $priority = 1) {
+	/*
+	 * $category - Category that this notice should be displayed under. This can be arbitrary,
+	 * 	       but a page must be set to receive this messages for it to be displayed.
+	 *
+	 * $priority - A notice's priority. Higher numbers indicate greater severity.
+	 *	       0 = informational, 1 = warning, 2 = error, etc. This may also be arbitrary,
+	 */
 	global $notice_path;
 	if(!$queue = get_notices()) $queue = array();
 	$queuekey = time();
@@ -76,6 +85,14 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	return $queuekey;
 }
 
+/****f* notices/get_notices
+ * NAME
+ *   get_notices
+ * INPUTS
+ *	 $category
+ * RESULT
+ *   Returns a specific notices text
+ ******/
 function get_notices($category = "all") {
 	if(file_exists('/tmp/notices')) {
 		$queue = unserialize(file_get_contents('/tmp/notices'));
@@ -94,6 +111,14 @@ function get_notices($category = "all") {
 	}
 }
 
+/****f* notices/close_notice
+ * NAME
+ *   close_notice
+ * INPUTS
+ *	 $id
+ * RESULT
+ *   Removes a notice from the list
+ ******/
 function close_notice($id) {
 	global $notice_path;
 	require_once("util.inc");
@@ -134,6 +159,14 @@ function close_notice($id) {
 	return;
 }
 
+/****f* notices/dump_xml_notices
+ * NAME
+ *   dump_xml_notices
+ * INPUTS
+ *	 NONE
+ * RESULT
+ *   Outputs notices in XML formatted text
+ ******/
 function dump_xml_notices() {
 	require_once("xmlparse.inc");
 	global $notice_path, $listtags;
@@ -147,6 +180,14 @@ function dump_xml_notices() {
 	return $xml;
 }
 
+/****f* notices/print_notices
+ * NAME
+ *   print_notices
+ * INPUTS
+ *	 $notices, $category
+ * RESULT
+ *   prints notices to the GUI
+ ******/
 function print_notices($notices, $category = "all") {
 	foreach($notices as $notice) {
 		if($category != "all") {
@@ -175,6 +216,14 @@ function print_notices($notices, $category = "all") {
 	return $toreturn;
 }
 
+/****f* notices/print_notice_box
+ * NAME
+ *   print_notice_box
+ * INPUTS
+ *	 $category
+ * RESULT
+ *   prints an info box to the GUI
+ ******/
 function print_notice_box($category = "all") {
 	$notices = get_notices();
 	if(!$notices) return;
@@ -182,7 +231,14 @@ function print_notice_box($category = "all") {
 	return;
 }
 
-
+/****f* notices/are_notices_pending
+ * NAME
+ *   are_notices_pending
+ * INPUTS
+ *	 $category to check
+ * RESULT
+ *   returns true if notices are pending, false if they are not
+ ******/
 function are_notices_pending($category = "all") {
 	global $notice_path;
 	if(file_exists($notice_path)) {
@@ -191,7 +247,7 @@ function are_notices_pending($category = "all") {
 	return false;
 }
 
-/****f* pfsense-utils/notify_via_smtp
+/****f* notices/notify_via_smtp
  * NAME
  *   notify_via_smtp
  * INPUTS
@@ -250,7 +306,7 @@ function notify_via_smtp($message) {
 }
 
 
-/****f* pfsense-utils/notify_via_growl
+/****f* notices/notify_via_growl
  * NAME
  *   notify_via_growl
  * INPUTS
@@ -269,7 +325,7 @@ function notify_via_growl($message) {
 	}
 }
 
-/****f* pfsense-utils/register_via_growl
+/****f* notices/register_via_growl
  * NAME
  *   register_via_growl
  * INPUTS

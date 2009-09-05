@@ -208,6 +208,11 @@ function notify_via_smtp($message) {
 	if(!$config['notifications']['smtp']['notifyemailaddress']) 
 		return;
 
+	/* Do NOT send the same message twice */
+	$lastmsg = trim(file_get_contents("/var/db/notices_lastmsg.txt"));
+	if($lastmsg == $message)
+		return;
+
 	require_once("smtp.inc");
 
 	$smtp = new smtp_class;
@@ -229,6 +234,11 @@ function notify_via_smtp($message) {
 		"Subject: {$config['system']['hostname']}.{$config['system']['domain']} - Notification",
 		"Date: ".strftime("%a, %d %b %Y %H:%M:%S %Z")
 	);
+
+	/* Store last message sent to avoid spamming */
+	$fd = fopen("/var/db/notices_lastmsg.txt", "w");
+	fwrite($fd, $message);
+	fclose($fd);
 
 	if($smtp->SendMessage($from, array($to), $headers, $message))
 		echo "Message sent to {$to} OK.\n";

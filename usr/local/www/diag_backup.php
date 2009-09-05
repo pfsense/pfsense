@@ -375,7 +375,8 @@ if ($_POST) {
 													break;
 											}
 										}
-									}									
+									}
+									$config['diag']['ipv6nat'] = true;
 									write_config();
 									add_base_packages_menu_items();									
 									convert_config();

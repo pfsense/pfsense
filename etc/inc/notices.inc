@@ -243,9 +243,9 @@ function notify_via_smtp($message) {
 	fclose($fd);
 
 	if($smtp->SendMessage($from, array($to), $headers, $message))
-		log_error("Message sent to {$to} OK.\n");
+		log_error("Message sent to {$to} OK");
 	else
-		log_error("Could not send the message to {$to}.\nError: {$smtp->error}\n");
+		log_error("Could not send the message to {$to} -- Error: {$smtp->error}");
 
 }
 

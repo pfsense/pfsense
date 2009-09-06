@@ -52,16 +52,16 @@ ini_set('max_input_time', '9999');
 
 function file_is_for_platform($filename) {
 	global $g;
-	exec("tar xzf $filename -C /tmp/ etc/platform");
-	if(!file_exists("/tmp/etc/platform")) 
-		return false;
-	$upgrade_is_for_platform = trim(file_get_contents("/tmp/etc/platform"));
 	if($g['platform'] == "nanobsd") {
 		if(strstr($filename, "nanobsd"))
 			return true;
 		else
 			return false;		
 	}
+	exec("tar xzf $filename -C /tmp/ etc/platform");
+	if(!file_exists("/tmp/etc/platform")) 
+		return false;
+	$upgrade_is_for_platform = trim(file_get_contents("/tmp/etc/platform"));
 	if($g['platform'] == $upgrade_is_for_platform) {
 		unlink("/tmp/etc/platform");
 		return true;

@@ -52,7 +52,7 @@ ini_set('max_input_time', '3600');
 function file_is_for_platform($filename) {
 	global $g;
 	if($g['platform'] == "nanobsd") {
-		if(strstr($filename, "nanobsd"))
+		if(stristr($filename, "nanobsd"))
 			return true;
 		else
 			return false;		

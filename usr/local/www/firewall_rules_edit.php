@@ -789,6 +789,8 @@ include("head.inc");
 					foreach($config['load_balancer']['lbpool'] as $lb) {
 						if($lb['name'] == "") 
 							continue;
+						if($lb['type'] == "server")
+							continue;
 						if($pconfig['gateway'] == $lb['name']) {
 							echo "<option value=\"{$lb['name']}\" SELECTED>{$lb['name']}</option>\n";
 						} else {

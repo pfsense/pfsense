@@ -449,9 +449,10 @@ function captiveportal_prune_old() {
 
     $radiusservers = captiveportal_get_radius_servers();
 
- 	/*  To make sure we iterate over ALL accounts on every run the count($cpdb) is moved outside of the loop. Otherwise
-     *  the loop would evalate count() on every iteration and since $i would increase and count() would decrement they
-     *  would meet before we had a chance to iterate over all accounts.
+    /*  To make sure we iterate over ALL accounts on every run the count($cpdb) is moved
+     *  outside of the loop. Otherwise the loop would evaluate count() on every iteration
+     *  and since $i would increase and count() would decrement they would meet before we
+     *  had a chance to iterate over all accounts.
      */
     $unsetindexes = array();
     $no_users = count($cpdb);
@@ -485,8 +486,8 @@ function captiveportal_prune_old() {
         /* if an idle timeout is specified, get last activity timestamp from ipfw */
         if (!$timedout && $idletimeout) {
             $lastact = captiveportal_get_last_activity($cpdb[$i][2]);
-			/*  if the user has logged on but not sent any trafic they will never be logged out.
-			 *  We "fix" this by setting lastact to the login timestamp 
+			/*  If the user has logged on but not sent any traffic they will never be logged out.
+			 *  We "fix" this by setting lastact to the login timestamp. 
 			 */
 			$lastact = $lastact ? $lastact : $cpdb[$i][0];
             if ($lastact && ((time() - $lastact) >= $idletimeout)) {
@@ -607,9 +608,10 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 							   false,
 							   $stop_time);
 	}
-
+	/* Delete client's ip entry from tables 3 and 4. */
 	mwexec("/sbin/ipfw table 3 delete {$dbent[2]}");
 	mwexec("/sbin/ipfw table 4 delete {$dbent[2]}");
+	/* Delete client's ruleno */
 	mwexec("/sbin/ipfw delete {$dbent[1]}");
 
 	/* 
@@ -771,7 +773,7 @@ function captiveportal_allowedip_configure() {
     return 0;
 }
 
-/* get last activity timestamp given ipfw rule number */
+/* get last activity timestamp given client IP address */
 function captiveportal_get_last_activity($ip) {
 
 	$ipfwoutput = "";
@@ -843,7 +845,7 @@ function radius($username,$password,$clientip,$clientmac,$type) {
 
     $ruleno = captiveportal_get_next_ipfw_ruleno();
 
-    /* if the pool is empty, return apprioriate message and fail authentication */
+    /* If the pool is empty, return appropriate message and fail authentication */
     if (is_null($ruleno)) {
         $auth_list = array();
         $auth_list['auth_val'] = 1;

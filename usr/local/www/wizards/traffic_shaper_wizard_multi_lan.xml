@@ -2,7 +2,7 @@
 <pfsensewizard>
 	<copyright>/* $Id$ */
 
-	traffic_shaper_wizard_multi_lan2.xml
+	traffic_shaper_wizard_multi_lan.xml
         part of pfSense (http://www.pfsense.org/)
 
         Copyright (C) 2005 Bill Marquette - bill.marquette@gmail.com.
@@ -36,13 +36,13 @@
 		<id>1</id>
 		<title>pfSense Traffic Shaper Wizard</title>
 		<disableheader>true</disableheader>
-		<description>This wizard will guide you through setting up the pfSense traffic shaper.</description>
+		<description>This wizard will guide you through setting up the pfSense traffic shaper for the situation where you have 1 WAN connection and multiple LAN connections.</description>
 		<fields>
 			<field>
 				<name>Enter number of LAN type connections</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
-				<description>Number of local interfaces you have</description>
+				<description>Number of local(LAN) interfaces you have</description>
 				<bindstofield>ezshaper->step1->numberofconnections</bindstofield>
 			</field>
 			<field>
@@ -221,7 +221,7 @@
 			<field>
 				<name>Address</name>
 				<type>input</type>
-				<description>This allows you to just provide the IP address of the computer(s) or Penalize. NOTE: You can also use a Firewall Alias in this location.</description>
+				<description>This allows you to just provide the IP address of the computer(s) to penalize. NOTE: You can also use a Firewall Alias in this location.</description>
 				<bindstofield>ezshaper-&gt;step4-&gt;address</bindstofield>
 				<message>IP Address field is non-blank and doesn't look like an IP address.</message>
 			</field>
@@ -787,7 +787,7 @@
 						<value>L</value>
 					</option>
 				</options>
-				<typehint>Jabber instant messanger</typehint>
+				<typehint>Jabber instant messenger</typehint>
 			</field>
 			<field>
 				<name>ICQ</name>
@@ -1247,7 +1247,7 @@
             <value>L</value>
           </option>
           </options>
-       <typehint>HBCI</typehint>
+       <typehint>Home Banking Computer Interface, for communicating with your bank</typehint>
       </field>			
       <field>
 				<name>Next</name>

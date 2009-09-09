@@ -316,10 +316,10 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		 * The code is obviously wrong, but I'm not sure what it's supposed to do?
 		 */
 		if(isset($pkg_config['nosync'])) continue;
-		if($pkg_config['custom_php_global_functions'] <> "")
-		eval($pkg_config['custom_php_global_functions']);
-		if($pkg_config['custom_php_resync_config_command'] <> "")
-		eval($pkg_config['custom_php_resync_config_command']);
+		if(!empty($pkg_config['custom_php_global_functions']))
+			eval($pkg_config['custom_php_global_functions']);
+		if(!empty($pkg_config['custom_php_resync_config_command']))
+			eval($pkg_config['custom_php_resync_config_command']);
 		if($sync_depends == true) {
 			$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
 			if(is_array($depends)) {

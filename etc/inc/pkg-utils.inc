@@ -298,7 +298,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 
 		/* Bring in package include files */
-		if (isset($pkg_config['include_file']) && $pkg_config['include_file'] != "") {
+		if (!empty($pkg_config['include_file'])) {
 			$include_file = $pkg_config['include_file'];
 			if (file_exists($include_file))
 				require_once($include_file);

@@ -83,6 +83,7 @@ function add_elements(&$cfgarray, &$parser) {
                         }
                         break;
                 case XMLReader::TEXT:
+		case XMLReader::CDATA:
                         $cfgarray = $parser->value;
                         break;
                 case XMLReader::END_ELEMENT:

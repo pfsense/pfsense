@@ -302,16 +302,14 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 			$include_file = $pkg_config['include_file'];
 			if (file_exists($include_file))
 				require_once($include_file);
-			else
-				if (file_exists($include_file)) {
-					require_once($include_file);
-				} else {
-					log_error("Could not locate {$include_file}.");
-					install_package($package['name']);
-					uninstall_package_from_name($package['name']);
-					remove_freebsd_package($package['name']);
-					install_package($package['name']);
-				}
+			else {
+				/* XXX: What the heck is this?! */
+				log_error("Could not locate {$include_file}.");
+				install_package($package['name']);
+				uninstall_package_from_name($package['name']);
+				remove_freebsd_package($package['name']);
+				install_package($package['name']);
+			}
 		}
 
 		/* XXX: Zend complains about the next line "Wrong break depth"

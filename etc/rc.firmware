@@ -199,8 +199,9 @@ pfSenseNanoBSDupgrade)
 	SIZE=`/sbin/fdisk ${COMPLETE_PATH} | /usr/bin/grep Meg | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d"(" -f2`
 	if [ "$SIZE" -lt "$NEW_IMG_SIZE" ]; then
 		file_notice "UpgradeFailure" "Upgrade failed due to the upgrade image being larger than the partition that is configured on disk.  Halting. Size on disk: $SIZE < Size of new image: $NEW_IMG_SIZE"
-		rm /var/run/firmwarelock.dirty
-		/etc/rc.conf_mount_ro		
+		rm -f /var/run/firmwarelock.dirty
+		rm -f /var/run/firmware.lock
+		/etc/rc.conf_mount_ro
 		exit 1
 	fi
 
@@ -258,7 +259,8 @@ pfSenseNanoBSDupgrade)
 	/sbin/fsck_ufs -y /dev/$COMPLETE_PATH >> /conf/upgrade_log.txt 2>&1
 	if [ $? != 0 ]; then
 		file_notice "UpgradeFailure" "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state."
-		rm /var/run/firmwarelock.dirty
+		rm -f /var/run/firmwarelock.dirty
+		rm -f /var/run/firmware.lock		
 		/etc/rc.conf_mount_ro		
 		exit 1
 	fi
@@ -293,7 +295,8 @@ pfSenseNanoBSDupgrade)
 	if [ $? != 0 ]; then
 		echo "Something went wrong when trying to update the fstab entry.  Aborting upgrade."
 		file_notice "UpgradeFailure" "Something went wrong when trying to update the fstab entry.  Aborting upgrade."
-		rm /var/run/firmwarelock.dirty
+		rm -f /var/run/firmwarelock.dirty
+		rm -f /var/run/firmware.lock
 		umount /tmp/$GLABEL_SLICE
 		/etc/rc.conf_mount_ro
 		exit 1
@@ -359,6 +362,7 @@ pfSenseNanoBSDupgrade)
 	sleep 10
 
 	rm -f /var/run/firmwarelock.dirty
+	rm -f /var/run/firmware.lock
 	sh /etc/rc.reboot
 
 	;;
@@ -457,6 +461,7 @@ pfSenseupgrade)
 
 	# release the firmware lock
 	rm -f /var/run/firmwarelock.dirty
+	rm -f /var/run/firmware.lock
 	/bin/sync
 
 	# Sleep and allow disks to catch up

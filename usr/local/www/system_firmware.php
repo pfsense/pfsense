@@ -38,10 +38,10 @@
 */
 
 $d_isfwfile = 1;
+require_once("globals.inc");
 require_once("guiconfig.inc");
 
 $curcfg = $config['system']['firmware'];
-
 
 require_once("xmlrpc_client.inc");
 

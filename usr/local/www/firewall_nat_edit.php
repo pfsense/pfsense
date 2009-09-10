@@ -438,8 +438,8 @@ include("fbegin.inc"); ?>
                   <td width="78%">
                     <select name="filter-rule-association" id="filter-rule-association">
 						<option value="">None</option>
-						<option value="add-associated" selected="selected">Add associated rule</option>
-						<option value="add-unassociated">Add unassociated rule</option>
+						<option value="add-associated" selected="selected">Add associated filter rule</option>
+						<option value="add-unassociated">Add unassociated filter rule</option>
 						<option value="pass">Pass</option>
 					</select>
 				  </td>

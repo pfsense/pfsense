@@ -444,6 +444,10 @@ include("fbegin.inc"); ?>
 					</select>
 				  </td>
                 </tr><?php endif; ?>
+				<tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%">&nbsp;</td>
+				</tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

@@ -955,11 +955,8 @@ function is_interface_mismatch() {
 
 /* sync carp entries to other firewalls */
 function carp_sync_client() {
-	global $g, $config;
-	if (is_array($config['installedpackages']['carpsettings']['config'])) {
-		update_filter_reload_status("Syncing CARP data");
-		touch($g['tmp_path'] . "/filter_sync"); 
-	}
+	global $g;
+	touch($g['tmp_path'] . "/filter_sync"); 
 }
 
 /****f* util/isAjax

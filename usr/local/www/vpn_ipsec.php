@@ -115,8 +115,10 @@ if ($_GET['act'] == "delph2")
 $pgtitle = array("VPN","IPsec");
 include("head.inc");
 
-?>
+// Sort items
+$a_phase1 = msort($a_phase1, "descr");
 
+?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

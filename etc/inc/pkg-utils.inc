@@ -298,30 +298,28 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 
 		/* Bring in package include files */
-		if (isset($pkg_config['include_file']) && $pkg_config['include_file'] != "") {
+		if (!empty($pkg_config['include_file'])) {
 			$include_file = $pkg_config['include_file'];
 			if (file_exists($include_file))
 				require_once($include_file);
-			else
-				if (file_exists($include_file)) {
-					require_once($include_file);
-				} else {
-					log_error("Could not locate {$include_file}.");
-					install_package($package['name']);
-					uninstall_package_from_name($package['name']);
-					remove_freebsd_package($package['name']);
-					install_package($package['name']);
-				}
+			else {
+				/* XXX: What the heck is this?! */
+				log_error("Could not locate {$include_file}.");
+				install_package($package['name']);
+				uninstall_package_from_name($package['name']);
+				remove_freebsd_package($package['name']);
+				install_package($package['name']);
+			}
 		}
 
 		/* XXX: Zend complains about the next line "Wrong break depth"
 		 * The code is obviously wrong, but I'm not sure what it's supposed to do?
 		 */
 		if(isset($pkg_config['nosync'])) continue;
-		if($pkg_config['custom_php_global_functions'] <> "")
-		eval($pkg_config['custom_php_global_functions']);
-		if($pkg_config['custom_php_resync_config_command'] <> "")
-		eval($pkg_config['custom_php_resync_config_command']);
+		if(!empty($pkg_config['custom_php_global_functions']))
+			eval($pkg_config['custom_php_global_functions']);
+		if(!empty($pkg_config['custom_php_resync_config_command']))
+			eval($pkg_config['custom_php_resync_config_command']);
 		if($sync_depends == true) {
 			$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
 			if(is_array($depends)) {

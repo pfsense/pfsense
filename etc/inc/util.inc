@@ -513,7 +513,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
                 $alink = explode(" ", $link);
                 $ifname = rtrim(trim($alink[0]), '*');
                 /* trim out all numbers before checking for vfaces */
-		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces)) {
+		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces) &&
+			!stristr($ifname, "_vl")) {
 			$toput = array(
 					"mac" => trim($alink[1]),
 					"up" => in_array($ifname, $upints)
@@ -954,11 +955,8 @@ function is_interface_mismatch() {
 
 /* sync carp entries to other firewalls */
 function carp_sync_client() {
-	global $g, $config;
-	if (is_array($config['installedpackages']['carpsettings']['config'])) {
-		update_filter_reload_status("Syncing CARP data");
-		touch($g['tmp_path'] . "/filter_sync"); 
-	}
+	global $g;
+	touch($g['tmp_path'] . "/filter_sync"); 
 }
 
 /****f* util/isAjax

@@ -75,11 +75,15 @@ function add_elements(&$cfgarray, &$parser) {
                         } else {
                                 if (isset($listtags[$parser->name]))
                                         add_elements($cfgarray[$parser->name][], $parser);
-                                else
+                                else {
                                         add_elements($cfgarray[$parser->name], $parser);
+					if (!isset($cfgarray[$parser->name]))
+						$cfgarray[$parser->name] = array();
+				}
                         }
                         break;
                 case XMLReader::TEXT:
+		case XMLReader::CDATA:
                         $cfgarray = $parser->value;
                         break;
                 case XMLReader::END_ELEMENT:

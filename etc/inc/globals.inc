@@ -54,7 +54,7 @@ function get_nics_with_capabilities($CAPABILITIES) {
 }
 
 $g = array(
-	"base_packages" => "AutoConfigBackup, siproxd", 
+	"base_packages" => "siproxd", 
 	"factory_shipped_username" => "admin",
 	"factory_shipped_password" => "pfsense",
 	"upload_path" => "/root",

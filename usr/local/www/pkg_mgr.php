@@ -114,9 +114,11 @@ include("head.inc");
 								foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
 									$pkg_names = array_keys($pkg_info);
 							$pkg_keys = array();
+							
 							foreach($pkg_names as $name)
 								if(!in_array($name, $instpkgs)) $pkg_keys[] = $name;
-							sort($pkg_keys);
+							$pkg_keys = msort($pkg_keys);
+							print_r($pkg_keys);
 							if(count($pkg_keys) != 0) {
 								foreach($pkg_keys as $key) {
 									$index = &$pkg_info[$key];

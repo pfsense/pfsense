@@ -118,7 +118,6 @@ include("head.inc");
 							foreach($pkg_names as $name)
 								if(!in_array($name, $instpkgs)) $pkg_keys[] = $name;
 							$pkg_keys = msort($pkg_keys);
-							print_r($pkg_keys);
 							if(count($pkg_keys) != 0) {
 								foreach($pkg_keys as $key) {
 									$index = &$pkg_info[$key];

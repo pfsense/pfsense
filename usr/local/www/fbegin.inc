@@ -10,6 +10,7 @@ require_once("functions.inc");
 function return_ext_menu($section) {
 	global $config;
 	$htmltext = "";
+	$extarray = array();
 	if($config['installedpackages']['menu'] <> "") {
 		foreach($config['installedpackages']['menu'] as $menuitem) {
 			if($menuitem['section'] != $section) continue;
@@ -29,11 +30,144 @@ function return_ext_menu($section) {
 			} else {
 				$description = '/pkg.php?xml=' . $menuitem['configfile'];
 			}
-			$htmltext .= '<li><a href="' . $description . ' "class="navlnk">' . $menuitem['name'] . '</a></li>' . "\n";
+			$extarray[] = array($menuitem['name'], $description);
 		}
 	}
-	return $htmltext;
+	return $extarray;
 }
+
+function output_menu($arrayitem) {
+	foreach($arrayitem as $item) {
+		echo '<li><a href="' . $item[1] . ' "class="navlnk">' . $item[0] . '</a></li>' . "\n";
+	}
+}
+
+// System
+$system = array();
+$system[] = array("Advanced", "/system_advanced_admin.php");
+$system[] = array("Firmware", "/system_firmware.php");
+$system[] = array("General Setup", "/system.php");
+$system[] = array("Logout", "/index.php?logout");
+if ($g['platform'] == "pfSense" or $g['platform'] == "nanobsd")
+	$system[] = array("Packages", "/pkg_mgr.php");
+$system[] = array("Setup Wizard", "/wizard.php?xml=setup_wizard.xml");
+$system[] = array("Routing", "/system_gateways.php");
+$system[] = array("Cert Manager", "/system_camanager.php");
+$system[] = array("User Manager", "/system_usermanager.php");
+$system = msort(array_merge($system, return_ext_menu("System")),0);
+
+// Interfaces
+$interfaces = array();
+if (!isset($config['system']['webgui']['noassigninterfaces']))
+	$interfaces[] = array("(assign)", "/interfaces_assign.php");
+$opts = get_configured_interface_with_descr(false, true);
+foreach ($opts as $oif => $odescr)
+	if (!isset($config['interfaces'][$oif]['ovpn']))
+		$interfaces[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
+$interfaces = msort(array_merge($interfaces, return_ext_menu("Interfaces")),0);
+
+// Firewall
+$firewall = array();
+$firewall[] = array("Aliases", "/firewall_aliases.php");
+if($config['interfaces']['lan']) 
+	$firewall[] = array("NAT", "/firewall_nat.php");
+$firewall[] = array("Rules", "/firewall_rules.php");
+$firewall[] = array("Schedules", "/firewall_schedule.php");
+if($config['interfaces']['lan']) 
+	$firewall[] = array("Traffic Shaper", "/firewall_shaper.php");
+$firewall[] = array("Virtual IPs", "/firewall_virtual_ip.php");
+$firewall = msort(array_merge($firewall, return_ext_menu("Firewall")),0);
+
+// Services
+$services = array();
+$services[] = array("Captive Portal", "/services_captiveportal.php");
+$services[] = array("DNS Forwarder", "/services_dnsmasq.php");
+$services[] = array("DHCP Relay", "/services_dhcp_relay.php");
+if($g['services_dhcp_server_enable'])
+	$services[] = array("DHCP Server", "/services_dhcp.php");
+$services[] = array("Dynamic DNS", "/services_dyndns.php");
+$services[] = array("IGMP proxy", "/services_igmpproxy.php");
+$services[] = array("Load Balancer", "/load_balancer_pool.php");
+$services[] = array("OLSR", "/pkg_edit.php?xml=olsrd.xml&id=0");
+$services[] = array("PPPoE Server", "/vpn_pppoe.php");
+$services[] = array("RIP", "/pkg_edit.php?xml=routed/routed.xml&id=0");
+$services[] = array("SNMP", "/services_snmp.php");
+if($config['interfaces']['lan']) {
+	/* no use for UPnP in single-interface deployments
+	remove to reduce user confusion
+	*/
+	$services[] = array("UPnP", "/pkg_edit.php?xml=miniupnpd.xml&id=0");
+}
+$services[] = array("OpenNTPD", "/pkg_edit.php?xml=openntpd.xml&id=0");
+$services[] = array("Wake on LAN", "/services_wol.php");
+$services = msort(array_merge($services, return_ext_menu("Services")),0);
+
+// VPN
+$vpn = array();
+$vpn[] = array("IPsec", "/vpn_ipsec.php");
+$vpn[] = array("OpenVPN", "/vpn_openvpn_server.php");
+$vpn[] = array("PPTP", "/vpn_pptp.php");
+$vpn[] = array("L2TP", "/vpn_l2tp.php");
+$vpn = msort(array_merge($vpn, return_ext_menu("VPN")),0);
+
+// Status
+$status_menu = array();
+if (isset($config['captiveportal']['enable']))
+	$status_menu[] = array("Captive Portal", "/status_captiveportal.php");
+$status_menu[] = array("CARP (failover)", "/carp_status.php");
+$status_menu[] = array("Dashboard", "/index.php");
+$status_menu[] = array("Gateways", "/status_gateways.php");
+$status_menu[] = array("DHCP Leases", "/diag_dhcp_leases.php");
+$status_menu[] = array("Filter Reload", "/status_filter_reload.php");
+$status_menu[] = array("Interfaces", "/status_interfaces.php");
+$status_menu[] = array("IPsec", "/diag_ipsec.php");
+$status_menu[] = array("Load Balancer", "/status_slbd_pool.php");
+$status_menu[] = array("OpenVPN", "/status_openvpn.php");
+if ($g['platform'] == "pfSense")
+	$status_menu[] = array("Package Logs", "/diag_pkglogs.php");
+$status_menu[] = array("Queues", "/status_queues.php");
+$status_menu[] = array("RRD Graphs", "/status_rrd_graph.php");
+$status_menu[] = array("Services", "/status_services.php");
+$status_menu[] = array("System Logs", "/diag_logs.php");
+$status_menu[] = array("Traffic Graph", "/status_graph.php?if=wan");
+if($config['interfaces']['lan']) 
+	$status_menu[] = array("UPnP", "/status_upnp.php");
+$ifentries = get_configured_interface_with_descr();
+foreach ($ifentries as $ent => $entdesc) {
+	if (is_array($config['interfaces'][$ent]['wireless']) &&
+		preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if']))
+		$ifdescrs[$ent] = $entdesc;
+}
+if (count($ifdescrs) > 0)
+	$status_menu[] = array("Wireless", "/status_wireless.php");
+$status_menu = msort(array_merge($status_menu, return_ext_menu("Status")),0);
+
+// Diagnostics
+$diagnostics = array();
+$diagnostics[] = array("ARP Tables", "/diag_arp.php");
+$diagnostics[] = array("Backup/Restore", "/diag_backup.php");
+$diagnostics[] = array("Command Prompt", "/exec.php");
+$diagnostics[] = array("DNS Lookup", "/diag_dns.php");
+$diagnostics[] = array("Edit File", "/edit.php");
+$diagnostics[] = array("Factory Defaults", "/diag_defaults.php");
+$diagnostics[] = array("Halt System", "/halt.php" );
+$diagnostics[] = array("Ping", "/diag_ping.php");
+$diagnostics[] = array("pfTOP", "/diag_system_pftop.php");
+$diagnostics[] = array("Reboot", "/reboot.php");
+$diagnostics[] = array("Routes", "/diag_routes.php");
+$diagnostics[] = array("Show Bogons", "/diag_showbogons.php");
+$diagnostics[] = array("States", "/diag_dump_states.php");
+$diagnostics[] = array("System Activity", "/diag_system_activity.php");
+$diagnostics[] = array("Traceroute", "/diag_traceroute.php");
+$diagnostics[] = array("Packet Capture", "/diag_packet_capture.php");
+if($g['platform'] == "nanobsd")
+	$diagnostics[] = array("/diag_nanobsd.php", "NanoBSD");
+
+if (isset($config['system']['developer'])) {
+	echo "<li><hr width=\"80%\"/></li>";
+	$diagnostics[] = array("/restart_httpd.php", "Restart HTTPD");
+}
+$diagnostics = msort(array_merge($diagnostics, return_ext_menu("Diagnostics")),0);
 
 /* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */
 if ($_REQUEST['noticeaction'] == 'acknowledge') {
@@ -123,30 +257,15 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>System</div>
 						<ul class="subdrop">
 						<?php
-							output_menu_item("/system_advanced_admin.php", "Advanced");
-							output_menu_item("/system_firmware.php", "Firmware");
-							output_menu_item("/system.php", "General Setup");
-							if ($g['platform'] == "pfSense" or $g['platform'] == "nanobsd")
-								output_menu_item("/pkg_mgr.php", "Packages");
-							output_menu_item("/wizard.php?xml=setup_wizard.xml", "Setup Wizard");
-							output_menu_item("/system_gateways.php", "Routing");
-							output_menu_item("/system_camanager.php", "Cert Manager");
-							output_menu_item("/system_usermanager.php", "User Manager");
+							output_menu($system);
 						?>
-							<li><a href="/index.php?logout" class="navlnk">Logout</a></li>
 						</ul>
 					</li>
 					<li class="drop">
 						<div>Interfaces</div>
 						<ul class="subdrop">
 						<?php
-							if (!isset($config['system']['webgui']['noassigninterfaces']))
-								output_menu_item("/interfaces_assign.php", "(assign)");
-							$opts = get_configured_interface_with_descr(false, true);
-							foreach ($opts as $oif => $odescr)
-								if (!isset($config['interfaces'][$oif]['ovpn']))
-									output_menu_item("/interfaces.php?if={$oif}", htmlspecialchars($odescr));
-							echo return_ext_menu("Interfaces");
+							output_menu($interfaces);
 						?>
 						</ul>
 					</li>
@@ -154,24 +273,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>Firewall</div>
 						<ul class="subdrop">
 						<?php
-							output_menu_item("/firewall_aliases.php", "Aliases");
-							if($config['interfaces']['lan']) {
-								/* no use for NAT in single-interface deployments
-								remove to reduce user confusion
-								*/
-								output_menu_item("/firewall_nat.php", "NAT");	
-							}
-							output_menu_item("/firewall_rules.php", "Rules");
-							output_menu_item("/firewall_schedule.php", "Schedules");
-							if($config['interfaces']['lan']) {
-								/* no use for traffic shaper in single-interface
-								  deployments
-								remove to reduce user confusion
-								*/
-								output_menu_item("/firewall_shaper.php", "Traffic Shaper");
-							}
-							output_menu_item("/firewall_virtual_ip.php", "Virtual IPs");
-							echo return_ext_menu("Firewall");
+							output_menu($firewall);
 						?>
 						</ul>
 					</li>
@@ -179,27 +281,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>Services</div>
 						<ul class="subdrop">
 						<?
-							output_menu_item("/services_captiveportal.php", "Captive Portal");
-							output_menu_item("/services_dnsmasq.php", "DNS Forwarder");
-							output_menu_item("/services_dhcp_relay.php", "DHCP Relay");
-							if($g['services_dhcp_server_enable'])
-								output_menu_item("/services_dhcp.php", "DHCP Server");
-							output_menu_item("/services_dyndns.php", "Dynamic DNS");
-							output_menu_item("/services_igmpproxy.php", "IGMP proxy");
-							output_menu_item("/load_balancer_pool.php", "Load Balancer");
-							output_menu_item("/pkg_edit.php?xml=olsrd.xml&id=0", "OLSR");
-							output_menu_item("/vpn_pppoe.php", "PPPoE Server");
-							output_menu_item("/pkg_edit.php?xml=routed/routed.xml&id=0", "RIP");
-							output_menu_item("/services_snmp.php", "SNMP");
-							if($config['interfaces']['lan']) {
-								/* no use for UPnP in single-interface deployments
-								remove to reduce user confusion
-								*/
-								output_menu_item("/pkg_edit.php?xml=miniupnpd.xml&id=0", "UPnP");	
-							}
-							output_menu_item("/pkg_edit.php?xml=openntpd.xml&id=0", "OpenNTPD");
-							output_menu_item("/services_wol.php", "Wake on LAN");
-							echo return_ext_menu("Services");
+							output_menu($services);
 						?>
 						</ul>
 					</li>
@@ -207,11 +289,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>VPN</div>
 						<ul class="subdrop">
 						<?php
-							output_menu_item("/vpn_ipsec.php", "IPsec");
-							output_menu_item("/vpn_openvpn_server.php", "OpenVPN");
-							output_menu_item("/vpn_pptp.php", "PPTP");
-							output_menu_item("/vpn_l2tp.php", "L2TP");
-							echo return_ext_menu("VPN");
+							output_menu($vpn);
 						?>
 						</ul>
 					</li>
@@ -219,39 +297,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>Status</div>
 						<ul class="subdrop">
 						<?php
-							if (isset($config['captiveportal']['enable']))
-								output_menu_item("/status_captiveportal.php", "Captive Portal");
-							output_menu_item("/carp_status.php", "CARP (failover)");
-							output_menu_item("/index.php", "Dashboard");
-							output_menu_item("/status_gateways.php", "Gateways");
-							output_menu_item("/diag_dhcp_leases.php", "DHCP Leases");
-							output_menu_item("/status_filter_reload.php", "Filter Reload");
-							output_menu_item("/status_interfaces.php", "Interfaces");
-							output_menu_item("/diag_ipsec.php", "IPsec");
-							output_menu_item("/status_slbd_pool.php", "Load Balancer");
-							output_menu_item("/status_openvpn.php", "OpenVPN");
-							if ($g['platform'] == "pfSense")
-								output_menu_item("/diag_pkglogs.php", "Package Logs");
-							output_menu_item("/status_queues.php", "Queues");
-							output_menu_item("/status_rrd_graph.php", "RRD Graphs");
-							output_menu_item("/status_services.php", "Services");
-							output_menu_item("/diag_logs.php", "System Logs");
-							output_menu_item("/status_graph.php?if=wan", "Traffic Graph");
-							if($config['interfaces']['lan']) {
-								/* no use for UPnP in single-interface deployments
-								remove to reduce user confusion
-								*/
-								output_menu_item("/status_upnp.php", "UPnP");	
-							}
-							$ifentries = get_configured_interface_with_descr();
-							foreach ($ifentries as $ent => $entdesc) {
-								if (is_array($config['interfaces'][$ent]['wireless']) &&
-									preg_match($g['wireless_regex'], $config['interfaces'][$ent]['if']))
-									$ifdescrs[$ent] = $entdesc;
-							}
-							if (count($ifdescrs) > 0)
-								output_menu_item("/status_wireless.php", "Wireless");
-							echo return_ext_menu("Status");
+							output_menu($status_menu);
 						?>
 						</ul>
 					</li>
@@ -259,29 +305,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>Diagnostics</div>
 						<ul id="diag" class="subdrop">
 						<?
-							output_menu_item("/diag_arp.php", "ARP Tables");
-							output_menu_item("/diag_backup.php", "Backup/Restore");
-							output_menu_item("/exec.php", "Command Prompt");
-							output_menu_item("/diag_dns.php", "DNS Lookup");
-							output_menu_item("/edit.php", "Edit File");
-							output_menu_item("/diag_defaults.php", "Factory Defaults");
-							output_menu_item("/halt.php", "Halt System");						
-							if($g['platform'] == "nanobsd")
-								output_menu_item("/diag_nanobsd.php", "NanoBSD");
-							output_menu_item("/diag_ping.php", "Ping");
-							output_menu_item("/diag_system_pftop.php", "pfTOP");
-							output_menu_item("/reboot.php", "Reboot");
-							output_menu_item("/diag_routes.php", "Routes");
-							output_menu_item("/diag_showbogons.php", "Show Bogons");
-							output_menu_item("/diag_dump_states.php", "States");
-							output_menu_item("/diag_system_activity.php", "System Activity");
-							output_menu_item("/diag_traceroute.php", "Traceroute");
-							output_menu_item("/diag_packet_capture.php", "Packet Capture");
-							echo return_ext_menu("Diagnostics");
-							if (isset($config['system']['developer'])) {
-								echo "<li><hr width=\"80%\"/></li>";
-								output_menu_item("/restart_httpd.php", "Restart HTTPD");
-							}
+							output_menu($diagnostics);
 						?>
 						</ul>
 					</li>
@@ -316,7 +340,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 		echo "</div>";
 	}
 
-function output_menu_item($url, $name) {
+function add_to_menu($url, $name) {
 	if (isAllowedPage($url))
 		echo "<li><a href=\"{$url}\" class=\"navlnk\">{$name}</a></li>\n";
 }

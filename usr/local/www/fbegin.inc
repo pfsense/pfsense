@@ -43,72 +43,72 @@ function output_menu($arrayitem) {
 }
 
 // System
-$system = array();
-$system[] = array("Advanced", "/system_advanced_admin.php");
-$system[] = array("Firmware", "/system_firmware.php");
-$system[] = array("General Setup", "/system.php");
-$system[] = array("Logout", "/index.php?logout");
+$system_menu = array();
+$system_menu[] = array("Advanced", "/system_advanced_admin.php");
+$system_menu[] = array("Firmware", "/system_firmware.php");
+$system_menu[] = array("General Setup", "/system.php");
+$system_menu[] = array("Logout", "/index.php?logout");
 if ($g['platform'] == "pfSense" or $g['platform'] == "nanobsd")
-	$system[] = array("Packages", "/pkg_mgr.php");
-$system[] = array("Setup Wizard", "/wizard.php?xml=setup_wizard.xml");
-$system[] = array("Routing", "/system_gateways.php");
-$system[] = array("Cert Manager", "/system_camanager.php");
-$system[] = array("User Manager", "/system_usermanager.php");
-$system = msort(array_merge($system, return_ext_menu("System")),0);
+	$system_menu[] = array("Packages", "/pkg_mgr.php");
+$system_menu[] = array("Setup Wizard", "/wizard.php?xml=setup_wizard.xml");
+$system_menu[] = array("Routing", "/system_gateways.php");
+$system_menu[] = array("Cert Manager", "/system_camanager.php");
+$system_menu[] = array("User Manager", "/system_usermanager.php");
+$system_menu = msort(array_merge($system_menu, return_ext_menu("System")),0);
 
 // Interfaces
-$interfaces = array();
+$interfaces_menu = array();
 if (!isset($config['system']['webgui']['noassigninterfaces']))
-	$interfaces[] = array("(assign)", "/interfaces_assign.php");
+	$interfaces_menu[] = array("(assign)", "/interfaces_assign.php");
 $opts = get_configured_interface_with_descr(false, true);
 foreach ($opts as $oif => $odescr)
 	if (!isset($config['interfaces'][$oif]['ovpn']))
-		$interfaces[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
-$interfaces = msort(array_merge($interfaces, return_ext_menu("Interfaces")),0);
+		$interfaces_menu[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
+$interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")),0);
 
 // Firewall
-$firewall = array();
-$firewall[] = array("Aliases", "/firewall_aliases.php");
+$firewall_menu = array();
+$firewall_menu[] = array("Aliases", "/firewall_aliases.php");
 if($config['interfaces']['lan']) 
-	$firewall[] = array("NAT", "/firewall_nat.php");
-$firewall[] = array("Rules", "/firewall_rules.php");
-$firewall[] = array("Schedules", "/firewall_schedule.php");
+	$firewall_menu[] = array("NAT", "/firewall_nat.php");
+$firewall_menu[] = array("Rules", "/firewall_rules.php");
+$firewall_menu[] = array("Schedules", "/firewall_schedule.php");
 if($config['interfaces']['lan']) 
-	$firewall[] = array("Traffic Shaper", "/firewall_shaper.php");
-$firewall[] = array("Virtual IPs", "/firewall_virtual_ip.php");
-$firewall = msort(array_merge($firewall, return_ext_menu("Firewall")),0);
+	$firewall_menu[] = array("Traffic Shaper", "/firewall_shaper.php");
+$firewall_menu[] = array("Virtual IPs", "/firewall_virtual_ip.php");
+$firewall_menu = msort(array_merge($firewall_menu, return_ext_menu("Firewall")),0);
 
 // Services
-$services = array();
-$services[] = array("Captive Portal", "/services_captiveportal.php");
-$services[] = array("DNS Forwarder", "/services_dnsmasq.php");
-$services[] = array("DHCP Relay", "/services_dhcp_relay.php");
+$services_menu = array();
+$services_menu[] = array("Captive Portal", "/services_captiveportal.php");
+$services_menu[] = array("DNS Forwarder", "/services_dnsmasq.php");
+$services_menu[] = array("DHCP Relay", "/services_dhcp_relay.php");
 if($g['services_dhcp_server_enable'])
-	$services[] = array("DHCP Server", "/services_dhcp.php");
-$services[] = array("Dynamic DNS", "/services_dyndns.php");
-$services[] = array("IGMP proxy", "/services_igmpproxy.php");
-$services[] = array("Load Balancer", "/load_balancer_pool.php");
-$services[] = array("OLSR", "/pkg_edit.php?xml=olsrd.xml&id=0");
-$services[] = array("PPPoE Server", "/vpn_pppoe.php");
-$services[] = array("RIP", "/pkg_edit.php?xml=routed/routed.xml&id=0");
-$services[] = array("SNMP", "/services_snmp.php");
+	$services_menu[] = array("DHCP Server", "/services_dhcp.php");
+$services_menu[] = array("Dynamic DNS", "/services_dyndns.php");
+$services_menu[] = array("IGMP proxy", "/services_igmpproxy.php");
+$services_menu[] = array("Load Balancer", "/load_balancer_pool.php");
+$services_menu[] = array("OLSR", "/pkg_edit.php?xml=olsrd.xml&id=0");
+$services_menu[] = array("PPPoE Server", "/vpn_pppoe.php");
+$services_menu[] = array("RIP", "/pkg_edit.php?xml=routed/routed.xml&id=0");
+$services_menu[] = array("SNMP", "/services_snmp.php");
 if($config['interfaces']['lan']) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
-	$services[] = array("UPnP", "/pkg_edit.php?xml=miniupnpd.xml&id=0");
+	$services_menu[] = array("UPnP", "/pkg_edit.php?xml=miniupnpd.xml&id=0");
 }
-$services[] = array("OpenNTPD", "/pkg_edit.php?xml=openntpd.xml&id=0");
-$services[] = array("Wake on LAN", "/services_wol.php");
-$services = msort(array_merge($services, return_ext_menu("Services")),0);
+$services_menu[] = array("OpenNTPD", "/pkg_edit.php?xml=openntpd.xml&id=0");
+$services_menu[] = array("Wake on LAN", "/services_wol.php");
+$services_menu = msort(array_merge($services_menu, return_ext_menu("Services")),0);
 
 // VPN
-$vpn = array();
-$vpn[] = array("IPsec", "/vpn_ipsec.php");
-$vpn[] = array("OpenVPN", "/vpn_openvpn_server.php");
-$vpn[] = array("PPTP", "/vpn_pptp.php");
-$vpn[] = array("L2TP", "/vpn_l2tp.php");
-$vpn = msort(array_merge($vpn, return_ext_menu("VPN")),0);
+$vpn_menu = array();
+$vpn_menu[] = array("IPsec", "/vpn_ipsec.php");
+$vpn_menu[] = array("OpenVPN", "/vpn_openvpn_server.php");
+$vpn_menu[] = array("PPTP", "/vpn_pptp.php");
+$vpn_menu[] = array("L2TP", "/vpn_l2tp.php");
+$vpn_menu = msort(array_merge($vpn_menu, return_ext_menu("VPN")),0);
 
 // Status
 $status_menu = array();
@@ -143,31 +143,31 @@ if (count($ifdescrs) > 0)
 $status_menu = msort(array_merge($status_menu, return_ext_menu("Status")),0);
 
 // Diagnostics
-$diagnostics = array();
-$diagnostics[] = array("ARP Tables", "/diag_arp.php");
-$diagnostics[] = array("Backup/Restore", "/diag_backup.php");
-$diagnostics[] = array("Command Prompt", "/exec.php");
-$diagnostics[] = array("DNS Lookup", "/diag_dns.php");
-$diagnostics[] = array("Edit File", "/edit.php");
-$diagnostics[] = array("Factory Defaults", "/diag_defaults.php");
-$diagnostics[] = array("Halt System", "/halt.php" );
-$diagnostics[] = array("Ping", "/diag_ping.php");
-$diagnostics[] = array("pfTOP", "/diag_system_pftop.php");
-$diagnostics[] = array("Reboot", "/reboot.php");
-$diagnostics[] = array("Routes", "/diag_routes.php");
-$diagnostics[] = array("Show Bogons", "/diag_showbogons.php");
-$diagnostics[] = array("States", "/diag_dump_states.php");
-$diagnostics[] = array("System Activity", "/diag_system_activity.php");
-$diagnostics[] = array("Traceroute", "/diag_traceroute.php");
-$diagnostics[] = array("Packet Capture", "/diag_packet_capture.php");
+$diagnostics_menu = array();
+$diagnostics_menu[] = array("ARP Tables", "/diag_arp.php");
+$diagnostics_menu[] = array("Backup/Restore", "/diag_backup.php");
+$diagnostics_menu[] = array("Command Prompt", "/exec.php");
+$diagnostics_menu[] = array("DNS Lookup", "/diag_dns.php");
+$diagnostics_menu[] = array("Edit File", "/edit.php");
+$diagnostics_menu[] = array("Factory Defaults", "/diag_defaults.php");
+$diagnostics_menu[] = array("Halt System", "/halt.php" );
+$diagnostics_menu[] = array("Ping", "/diag_ping.php");
+$diagnostics_menu[] = array("pfTOP", "/diag_system_pftop.php");
+$diagnostics_menu[] = array("Reboot", "/reboot.php");
+$diagnostics_menu[] = array("Routes", "/diag_routes.php");
+$diagnostics_menu[] = array("Show Bogons", "/diag_showbogons.php");
+$diagnostics_menu[] = array("States", "/diag_dump_states.php");
+$diagnostics_menu[] = array("System Activity", "/diag_system_activity.php");
+$diagnostics_menu[] = array("Traceroute", "/diag_traceroute.php");
+$diagnostics_menu[] = array("Packet Capture", "/diag_packet_capture.php");
 if($g['platform'] == "nanobsd")
-	$diagnostics[] = array("/diag_nanobsd.php", "NanoBSD");
+	$diagnostics_menu[] = array("/diag_nanobsd.php", "NanoBSD");
 
 if (isset($config['system']['developer'])) {
 	echo "<li><hr width=\"80%\"/></li>";
-	$diagnostics[] = array("/restart_httpd.php", "Restart HTTPD");
+	$diagnostics_menu[] = array("/restart_httpd.php", "Restart HTTPD");
 }
-$diagnostics = msort(array_merge($diagnostics, return_ext_menu("Diagnostics")),0);
+$diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
 
 /* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */
 if ($_REQUEST['noticeaction'] == 'acknowledge') {
@@ -257,7 +257,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>System</div>
 						<ul class="subdrop">
 						<?php
-							output_menu($system);
+							output_menu($system_menu);
 						?>
 						</ul>
 					</li>
@@ -265,7 +265,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>Interfaces</div>
 						<ul class="subdrop">
 						<?php
-							output_menu($interfaces);
+							output_menu($interfaces_menu);
 						?>
 						</ul>
 					</li>
@@ -273,7 +273,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>Firewall</div>
 						<ul class="subdrop">
 						<?php
-							output_menu($firewall);
+							output_menu($firewall_menu);
 						?>
 						</ul>
 					</li>
@@ -281,7 +281,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>Services</div>
 						<ul class="subdrop">
 						<?
-							output_menu($services);
+							output_menu($services_menu);
 						?>
 						</ul>
 					</li>
@@ -289,7 +289,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>VPN</div>
 						<ul class="subdrop">
 						<?php
-							output_menu($vpn);
+							output_menu($vpn_menu);
 						?>
 						</ul>
 					</li>
@@ -305,7 +305,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>Diagnostics</div>
 						<ul id="diag" class="subdrop">
 						<?
-							output_menu($diagnostics);
+							output_menu($diagnostics_menu);
 						?>
 						</ul>
 					</li>

@@ -1,8 +1,10 @@
 <?php
 /*
 	diag_arp.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	part of the pfSense project	(http://www.pfsense.org)
+	Copyright (C) 2009 Scott Ullrich <sullrich@gmail.com>
 
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -50,18 +52,23 @@ function adjust_gmt($dt) {
 }
 
 function remove_duplicate($array, $field) {
-foreach ($array as $sub)
-	$cmp[] = $sub[$field];
+	foreach ($array as $sub)
+		$cmp[] = $sub[$field];
 	$unique = array_unique($cmp);
 	foreach ($unique as $k => $rien)
 		$new[] = $array[$k];
 	return $new;
 }
 
-$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
+// Define path to AWK
 $awk = "/usr/bin/awk";
+
+// Read in leases file
+$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
+
 /* this pattern sticks comments into a single array item */
 $cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
+
 /* We then split the leases file by } */
 $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
 
@@ -190,7 +197,6 @@ if(count($pools) > 0) {
         asort($pools);
 }
 
-
 // Put this in an easy to use form
 $dhcpmac = array();
 $dhcpip = array();
@@ -240,12 +246,12 @@ function getHostName($mac,$ip)
 
 $pgtitle = array("Diagnostics","ARP Table");
 include("head.inc");
+
 ?>
+
 <body link="#000000" vlink="#000000" alink="#000000">
 	
-<?php
-	include("fbegin.inc"); 
-?>
+<?php include("fbegin.inc"); ?>
 
 <div id="loading">
 	<img src="/themes/metallic/images/misc/loader.gif"> Loading, please wait...
@@ -258,7 +264,9 @@ include("head.inc");
 for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
 ob_implicit_flush(1);
 
-// Resolve hostnames
+// Resolve hostnames and replace Z_ with "".  The intention
+// is to sort the list by hostnames, alpha and then the non
+// resolvable addresses will appear last in the list.
 foreach ($data as &$entry) {
 	$dns = trim(getHostName($entry['mac'], $entry['ip']));
 	if(trim($dns))
@@ -266,34 +274,38 @@ foreach ($data as &$entry) {
 	else 
 		$entry['dnsresolve'] = "Z_ ";
 }
+
+// Sort the data alpha first
 $data = msort($data, "dnsresolve");
 
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-        <tr>
-                <td>
-<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td class="listhdrr">IP address</td>
-    <td class="listhdrr">MAC address</td>
-    <td class="listhdrr">Hostname</td>
-    <td class="listhdr">Interface</td>
-    <td class="list"></td>
-  </tr>
-<?php foreach ($data as $entry): ?>
-  <tr>
-    <td class="listlr"><?=$entry['ip'];?></td>
-    <td class="listr"><?=$entry['mac'];?></td>
-    <td class="listr">
-		<?php
-			echo str_replace("Z_ ", "", $entry['dnsresolve']);
-		?>
-	</td>
-    <td class="listr"><?=$hwif[$entry['interface']];?></td>
-  </tr>
-<?php endforeach; ?>
+	<tr>
+		<td>
+			<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td class="listhdrr">IP address</td>
+					<td class="listhdrr">MAC address</td>
+					<td class="listhdrr">Hostname</td>
+					<td class="listhdr">Interface</td>
+					<td class="list"></td>
+				</tr>
+				<?php foreach ($data as $entry): ?>
+					<tr>
+						<td class="listlr"><?=$entry['ip'];?></td>
+						<td class="listr"><?=$entry['mac'];?></td>
+						<td class="listr">
+							<?php
+							echo str_replace("Z_ ", "", $entry['dnsresolve']);
+							?>
+						</td>
+						<td class="listr"><?=$hwif[$entry['interface']];?></td>
+					</tr>
+				<?php endforeach; ?>
+			</table>
+		</td>
+	</tr>
 </table>
-</td></tr></table>
 
 <?php include("fend.inc"); ?>
 

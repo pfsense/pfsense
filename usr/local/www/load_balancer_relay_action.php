@@ -98,6 +98,9 @@ if ($_GET['act'] == "del") {
 $pgtitle = array("Services", "Load Balancer","Relay Action");
 include("head.inc");
 
+// Sort items
+$a_vs = msort($a_action, "name");
+
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

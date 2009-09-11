@@ -35,6 +35,8 @@
 ##|*MATCH=diag_arp.php*
 ##|-PRIV
 
+@ini_set('zlib.output_compression', 0);
+@ini_set('implicit_flush', 1);
 
 require("guiconfig.inc");
 
@@ -251,6 +253,10 @@ include("head.inc");
 </div>
 
 <?php
+
+// Flush buffers out to client so that they see Loading, please wait....
+for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
+ob_implicit_flush(1);
 
 // Resolve hostnames
 foreach ($data as &$entry) {

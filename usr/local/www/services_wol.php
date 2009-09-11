@@ -50,7 +50,7 @@ if($_GET['wakeall'] <> "") {
 	foreach ($a_wol as $wolent) {
 		$mac = $wolent['mac'];
 		$if = $wolent['interface'];
-		$bcip = gen_subnet_max($get_interface_ip($if),
+		$bcip = gen_subnet_max(get_interface_ip($if),
 			get_interface_subnet($if));
 		mwexec("/usr/local/bin/wol -i {$bcip} {$mac}");
 		$savemsg .= "Sent magic packet to {$mac}.<br>";

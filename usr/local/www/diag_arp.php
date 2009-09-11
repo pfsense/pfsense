@@ -233,14 +233,36 @@ function getHostName($mac,$ip)
 	else if(gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip)
 		return gethostbyaddr($ip);
 	else 
-		return "&nbsp;";	
+		return "";	
 }
 
 $pgtitle = array("Diagnostics","ARP Table");
 include("head.inc");
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
-<? include("fbegin.inc"); ?>
+	
+<?php
+	include("fbegin.inc"); 
+?>
+
+<div id="loading">
+	<img src="/themes/metallic/images/misc/loader.gif"> Loading, please wait...
+	<p/>&nbsp;
+</div>
+
+<?php
+
+// Resolve hostnames
+foreach ($data as &$entry) {
+	$dns = trim(getHostName($entry['mac'], $entry['ip']));
+	if(trim($dns))
+		$entry['dnsresolve'] = "$dns";
+	else 
+		$entry['dnsresolve'] = "Z_ ";
+}
+$data = msort($data, "dnsresolve");
+
+?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
                 <td>
@@ -256,7 +278,11 @@ include("head.inc");
   <tr>
     <td class="listlr"><?=$entry['ip'];?></td>
     <td class="listr"><?=$entry['mac'];?></td>
-    <td class="listr"><?=getHostName($entry['mac'], $entry['ip']);?></td>
+    <td class="listr">
+		<?php
+			echo str_replace("Z_ ", "", $entry['dnsresolve']);
+		?>
+	</td>
     <td class="listr"><?=$hwif[$entry['interface']];?></td>
   </tr>
 <?php endforeach; ?>
@@ -264,3 +290,7 @@ include("head.inc");
 </td></tr></table>
 
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+	$('loading').innerHTML = '';
+</script>

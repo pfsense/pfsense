@@ -149,6 +149,9 @@ if ($_GET['act'] == "del") {
 $pgtitle = array("Firewall","Aliases");
 include("head.inc");
 
+// Sort list
+$a_aliases = msort($a_aliases, "name");
+
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

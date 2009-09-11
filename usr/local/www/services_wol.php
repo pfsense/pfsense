@@ -50,10 +50,16 @@ if($_GET['wakeall'] <> "") {
 	foreach ($a_wol as $wolent) {
 		$mac = $wolent['mac'];
 		$if = $wolent['interface'];
+		$description = $wolent['descr'];
 		$bcip = gen_subnet_max(get_interface_ip($if),
 			get_interface_subnet($if));
-		mwexec("/usr/local/bin/wol -i {$bcip} {$mac}");
-		$savemsg .= "Sent magic packet to {$mac}.<br>";
+		/* Execute wol command and check return code. */
+		if(!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")){
+			$savemsg .= "Sent magic packet to {$mac} ({$description}).<br>";
+		}
+		else {
+			$savemsg .= "Please check the <a href=\"/diag_logs.php\">system log</a>, the wol command for {$description} ({$mac}) did not complete successfully.<br>";
+		}
 	}
 }
 
@@ -82,9 +88,13 @@ if ($_POST || $_GET['mac']) {
 		/* determine broadcast address */
 		$bcip = gen_subnet_max(get_interface_ip($if),
 			get_interface_subnet($if));
-
-		mwexec("/usr/local/bin/wol -i {$bcip} {$mac}");
-		$savemsg = "Sent magic packet to {$mac}.";
+		/* Execute wol command and check return code. */
+		if(!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")){
+			$savemsg .= "Sent magic packet to {$mac}.";
+		}
+		else {
+			$savemsg .= "Please check the <a href=\"/diag_logs.php\">system log</a>, the wol command for {$mac} did not complete successfully.<br>";
+		}
 	}
 }
 

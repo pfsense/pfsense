@@ -31,6 +31,12 @@
 
 require("guiconfig.inc");
 
+if ($_GET['act'] == "del") {
+	captiveportal_disconnect_client($_GET['id']);
+	Header("status_captiveportal.php");
+	exit;
+}
+
 $captiveportallck = lock('captiveportal');
 $concurrent = `cat /var/db/captiveportal.db | wc -l`;
 $cpcontents = file("/var/db/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -47,10 +53,6 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php
-
-if ($_GET['act'] == "del") {
-	captiveportal_disconnect_client($_GET['id']);
-}
 
 flush();
 

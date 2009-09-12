@@ -9,7 +9,7 @@
  */
 /*
 	pfSense_BUILDER_BINARIES:	/bin/echo
-	pfSense_MODULE:	util
+	pfSense_MODULE:	utils
 */
 
 $led_root = "/dev/led/led";

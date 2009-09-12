@@ -1,7 +1,7 @@
 <?php
 
 /*
-	pfSense_MODULE:	util
+	pfSense_MODULE:	utils
 */
 
 /*

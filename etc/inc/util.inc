@@ -354,7 +354,7 @@ function lock($lock) {
                 @touch("{$g['tmp_path']}/{$lock}.lock");
 		ini_set('error_reporting', E_NONE);
         $config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
-        $cfglckkey = sem_get($config_lock_key, 1);
+        $cfglckkey = sem_get($config_lock_key, 1, 0666, true);
         $cfglckkeyconsumers++;
 		// Rely on or own logging for errors here.
         if (!sem_acquire($cfglckkey)) {

@@ -61,10 +61,13 @@ function clientcmp($a, $b) {
 }
 
 $cpdb = array();
-if (file_exists("{$g['vardb_path']}/captiveportal.db"))
-	$cpcontents = file("{$g['vardb_path']}/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-else
+if (file_exists("{$g['vardb_path']}/captiveportal.db")) {
+	$captiveportallck = lock('captiveportal');
+	$cpcontents = file("/var/db/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	unlock($captiveportallck);	
+} else {
 	$cpcontents = array();
+}
 
 $concurrent = count($cpcontents);
 

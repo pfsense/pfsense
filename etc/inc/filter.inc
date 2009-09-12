@@ -33,6 +33,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
+	pfSense_BUILDER_BINARIES:	/sbin/sysctl	/sbin/kldload	/usr/sbin/tcpdump	/sbin/pfctl	/bin/rm
+	pfSense_BUILDER_BINARIES:	/usr/sbin/inetd	
+	pfSense_MODULE:	filter
 */
 /* DISABLE_PHP_LINT_CHECKING */
 

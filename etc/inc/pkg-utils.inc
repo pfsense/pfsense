@@ -32,6 +32,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/cd	/usr/bin/tar	/bin/cat	/usr/sbin/fifolog_create	/bin/chmod
+	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/usr/sbin/pkg_info	/usr/sbin/pkg_delete	/bin/rm	/bin/ls
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl
+	pfSense_MODULE:	pkg
+*/
+
 require_once("xmlrpc.inc");
 require_once("xmlparse.inc");
 require_once("service-utils.inc");

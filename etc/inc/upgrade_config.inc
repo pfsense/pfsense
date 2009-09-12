@@ -29,6 +29,10 @@ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 	POSSIBILITY OF SUCH DAMAGE.
 	*/
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/find	/bin/cd	/usr/local/bin/rrdtool	/usr/bin/nice
+	pfSense_MODULE:	config
+*/
 
 /* Upgrade functions must be named:
 *    upgrade_XXX_to_YYY

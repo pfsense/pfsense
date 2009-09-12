@@ -4,6 +4,11 @@
  *
  */
 
+/*
+	pfSense_BUILDER_BINARIES:	
+	pfSense_MODULE:	auth
+*/
+
 $priv_list = array();
 
 $priv_list['page-all'] = array();

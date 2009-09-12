@@ -26,6 +26,7 @@
         POSSIBILITY OF SUCH DAMAGE.
 
 		DISABLE_PHP_LINT_CHECKING
+		pfSense_MODULE:	certificate_managaer
 */
 
 require_once("functions.inc");

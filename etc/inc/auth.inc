@@ -35,6 +35,8 @@
         POSSIBILITY OF SUCH DAMAGE.
 
 		DISABLE_PHP_LINT_CHECKING
+		pfSense_BUILDER_BINARIES:	/usr/sbin/pw	/bin/cp
+		pfSense_MODULE:	auth
 */
 
 /*

@@ -27,6 +27,11 @@
 
   */
 
+/*
+	pfSense_BUILDER_BINARIES:	/bin/rm	/usr/bin/nice	/usr/local/bin/rrdtool	/bin/cd
+	pfSense_MODULE:	rrd
+*/
+
 /* include all configuration functions */
 require_once("config.inc");
 

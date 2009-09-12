@@ -33,6 +33,13 @@
  *
  */
 
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/sysctl	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php /usr/bin/netstat
+	pfSense_BUILDER_BINARIES:	/bin/df	/usr/bin/grep	/usr/bin/awk	/bin/rm	/usr/sbin/pwd_mkdb	/usr/bin/host
+	pfSense_BUILDER_BINARIES:	/sbin/kldload
+	pfSense_MODULE:	utils
+*/
+
 /****f* pfsense-utils/have_natonetooneruleint_access
  * NAME
  *   have_natonetooneruleint_access

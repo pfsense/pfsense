@@ -40,6 +40,10 @@
 		DISABLE_PHP_LINT_CHECKING
 */
 
+/*
+	pfSense_MODULE:	auth
+*/
+
 require_once("priv.defs.inc");
 require_once("auth.inc");
 

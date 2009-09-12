@@ -6,6 +6,10 @@
  *
  */
 
+/*
+	pfSense_MODULE:	notifications
+*/
+
 class smtp_class
 {
 	var $user="";

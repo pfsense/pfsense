@@ -36,6 +36,9 @@
  * @link       http://pear.php.net/package/XML_RPC
  */
 
+/*
+	pfSense_MODULE:	utils
+*/
 
 /**
  * Pull in the XML_RPC class

@@ -33,6 +33,11 @@
 	via returned RADIUS attributes. This page has been modified to delete any
 	added rules which may have been created by other per-user code (index.php, etc).
 	These changes are (c) 2004 Keycom PLC.
+	
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/ipfw	/sbin/sysctl	/sbin/kldunload
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/lighttpd	/usr/local/bin/minicron	/sbin/pfctl
+	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/cp	
+	pfSense_MODULE:	captiveportal
 */
 
 /* include all configuration functions */
@@ -1010,9 +1015,9 @@ function getVolume($ip) {
     $matchesout = "";
     exec("/sbin/ipfw table 3 entrystats {$ip}", $ipfwin);
     if ($ipfwin[0]) {
-	$ipfwin = split(" ", $ipfwin[0]);
-	$volume['input_pkts'] = $ipfwin[2];
-	$volume['input_bytes'] = $ipfwin[3];
+		$ipfwin = split(" ", $ipfwin[0]);
+		$volume['input_pkts'] = $ipfwin[2];
+		$volume['input_bytes'] = $ipfwin[3];
     }
 
     exec("/sbin/ipfw table 4 entrystats {$ip}", $ipfwout);

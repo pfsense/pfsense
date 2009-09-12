@@ -28,6 +28,11 @@
 
  */
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/relayd
+	pfSense_MODULE:	routing
+*/
+
 /* DISABLE_PHP_LINT_CHECKING */
 
 /* include all configuration functions */

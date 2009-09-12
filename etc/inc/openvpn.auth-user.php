@@ -30,7 +30,10 @@
 
 	DISABLE_PHP_LINT_CHECKING
 */
-
+/*
+	pfSense_BUILDER_BINARIES:	
+	pfSense_MODULE:	openvpn
+*/
 /*
  * OpenVPN calls this script to authenticate a user
  * based on a username and password. We lookup these

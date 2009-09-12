@@ -29,6 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/sysctl	/sbin/route
+	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/bin/netstat	/usr/sbin/syslogd	
+	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
+	pfSense_BUILDER_BINARIES:	/usr/bin/tar	/bin/sync	/usr/local/sbin/ntpd	/usr/sbin/ntpdate
+	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit
+	pfSense_MODULE:	utils
+*/
 
 function activate_powerd() {
 	global $config, $g;
@@ -1095,7 +1103,7 @@ function system_halt() {
 
 	system_reboot_cleanup();
 
-	mwexec("nohup /etc/rc.halt > /dev/null 2>&1 &");
+	mwexec("/usr/bin/nohup /etc/rc.halt > /dev/null 2>&1 &");
 }
 
 function system_reboot() {

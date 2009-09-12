@@ -46,6 +46,10 @@
 
 */
 
+/*
+	pfSense_MODULE:	auth
+*/
+
 require_once("PEAR.inc");
 require_once("radius_authentication.inc");
 require_once("radius_accounting.inc");

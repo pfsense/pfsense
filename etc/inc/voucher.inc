@@ -25,7 +25,12 @@
     POSSIBILITY OF SUCH DAMAGE.
 
 */
-    
+
+/*
+	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher	/usr/local/bin/minicron
+	pfSense_MODULE:	captiveportal
+*/
+
 /* include all configuration functions */
 require_once("config.inc");
 

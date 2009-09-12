@@ -7,6 +7,10 @@
  * LED control library that wraps around the functionality of led(4)
  *
  */
+/*
+	pfSense_BUILDER_BINARIES:	/bin/echo
+	pfSense_MODULE:	util
+*/
 
 $led_root = "/dev/led/led";
 

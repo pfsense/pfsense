@@ -28,6 +28,11 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	
+	pfSense_MODULE:	utils
+*/
+
 require_once("xmlrpc_client.inc");
 
 /*

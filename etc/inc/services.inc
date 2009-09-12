@@ -30,6 +30,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/sh	/usr/local/sbin/dhcpd	/usr/local/sbin/igmpproxy
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/sbin/arp	/sbin/ifconfig	/usr/local/sbin/dnsmasq
+	pfSense_BUILDER_BINARIES:	/usr/sbin/bsnmpd	/usr/local/sbin/choparp	/sbin/route	/usr/local/sbin/olsrd
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	
+	pfSense_MODULE:	utils
+*/
+
 /* include all configuration functions */
 require_once("functions.inc");
 

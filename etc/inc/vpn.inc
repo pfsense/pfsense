@@ -33,6 +33,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/usr/local/sbin/sasyncd	/sbin/ifconfig	/sbin/sysctl
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey	/usr/bin/netstat	/sbin/route	/bin/mkdir
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/racoonctl	/usr/local/sbin/racoon
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/dnswatch	/usr/local/sbin/mpd4	
+	pfSense_MODULE:	vpn
+*/
+
 /* include all configuration functions */
 require_once ("functions.inc");
 
@@ -831,7 +839,7 @@ EOD;
 			mkdir("/var/db/racoon/");
 		
 		exec("/bin/mkdir -p /var/db/racoon");
-		
+
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
 			sleep("0.1");

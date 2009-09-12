@@ -33,6 +33,11 @@
  *
  */
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/sh	/bin/ps	
+	pfSense_MODULE:	utils
+*/
+
 function write_rcfile($params) {
 	$fileprefix = "/usr/local/etc/rc.d/";
 	if(!(is_writable($fileprefix . $params['file']) or $params['start'])) return false;

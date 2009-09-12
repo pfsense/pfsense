@@ -36,6 +36,9 @@
  * @link       http://pear.php.net/package/XML_RPC
  */
 
+/*
+	pfSense_MODULE:	utils
+*/
 
 if (!function_exists('xml_parser_create')) {
     include_once 'PEAR.inc';

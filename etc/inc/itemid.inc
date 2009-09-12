@@ -1,5 +1,9 @@
 <?php
-/* $Id$ */
+
+/*
+	pfSense_MODULE:	util
+*/
+
 /*
 		Copyright (C) 2009 Janne Enberg <janne.enberg@lietu.net>
 		All rights reserved.

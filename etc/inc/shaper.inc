@@ -23,6 +23,9 @@
 		CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 		ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 		POSSIBILITY OF SUCH DAMAGE.
+
+		pfSense_BUILDER_BINARIES:	/bin/kill	/sbin/kldload	/bin/rm	/bin/ps
+		pfSense_MODULE:	shaper
 */
 
 /* include all configuration functions */

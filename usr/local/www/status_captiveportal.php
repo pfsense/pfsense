@@ -37,10 +37,13 @@ if ($_GET['act'] == "del") {
 	exit;
 }
 
+// Lock and read in the captive portal DB
 $captiveportallck = lock('captiveportal');
-$concurrent = `cat /var/db/captiveportal.db | wc -l`;
 $cpcontents = file("/var/db/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 unlock($captiveportallck);
+
+// Set how many sessions are currently under flight
+$concurrent = count($cpcontents);
 
 $pgtitle = "Status: Captive portal ({$concurrent})";
 

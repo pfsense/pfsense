@@ -39,6 +39,10 @@
 */
 
 /*
+	pfSense_MODULE:	captiveportal
+*/
+
+/*
 RADIUS ACCOUNTING START 
 -----------------------
 */

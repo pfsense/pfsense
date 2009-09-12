@@ -38,6 +38,10 @@
 */
 
 /*
+	pfSense_MODULE:	captiveportal
+*/
+
+/*
 RADIUS AUTHENTICATION
 ---------------------
 */

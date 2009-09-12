@@ -123,7 +123,7 @@ function lock($lock) {
  			@touch("{$g['tmp_path']}/{$lock}.lock");
 
 		$config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
-		$cfglckkey = sem_get($config_lock_key, 1);
+		$cfglckkey = sem_get($config_lock_key, 1, 0666, true);
 		$cfglckkeyconsumers++;
 
 		// Rely on or own logging for errors here.

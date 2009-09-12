@@ -38,6 +38,13 @@
 
 require("guiconfig.inc");
 
+
+if ($_GET['act'] == "del") {
+	captiveportal_disconnect_client($_GET['id']);
+	Header("status_captiveportal.php");
+	exit;
+}
+
 $pgtitle = array("Status: Captive portal");
 
 include("head.inc");
@@ -48,10 +55,6 @@ include("head.inc");
 <script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <?php
-
-if ($_GET['act'] == "del") {
-	captiveportal_disconnect_client($_GET['id']);
-}
 
 flush();
 

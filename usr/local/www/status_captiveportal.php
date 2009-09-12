@@ -33,7 +33,7 @@ require("guiconfig.inc");
 
 if ($_GET['act'] == "del") {
 	captiveportal_disconnect_client($_GET['id']);
-	Header("status_captiveportal.php");
+	Header("Location: status_captiveportal.php");
 	exit;
 }
 

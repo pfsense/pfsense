@@ -31,7 +31,10 @@
 
 require("guiconfig.inc");
 
+$captiveportallck = lock('captiveportal');
 $concurrent = `cat /var/db/captiveportal.db | wc -l`;
+$cpcontents = file("/var/db/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+unlock($captiveportallck);
 
 $pgtitle = "Status: Captive portal ({$concurrent})";
 
@@ -57,7 +60,6 @@ function clientcmp($a, $b) {
 }
 
 $cpdb = array();
-$cpcontents = file("/var/db/captiveportal.db", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 foreach ($cpcontents as $cpcontent) {
         $cpent = explode(",", $cpcontent);
         if ($_GET['showact'])

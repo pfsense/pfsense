@@ -57,6 +57,10 @@ function captiveportal_configure() {
 	if (isset($config['captiveportal']['enable'])) {
 		$cpips = array();
 		$ifaces = get_configured_interface_list();
+		foreach ($ifaces as $kiface => $kiface2) {
+			$tmpif = get_real_interface($kiface);
+			mwexec("/sbin/ifconfig {$tmpif} -ipfwfilter");
+		}
 		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
 		$firsttime = 0;
 		foreach ($cpinterfaces as $cpifgrp) {
@@ -64,7 +68,6 @@ function captiveportal_configure() {
 				continue;
 			$tmpif = get_real_interface($cpifgrp);
 			if (!empty($tmpif)) {
-				mwexec("/sbin/ifconfig {$tmpif} -ipfwfilter");
 				if ($firsttime > 0)
 					$cpinterface .= " or ";
 				$cpinterface .= "via {$tmpif}"; 

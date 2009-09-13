@@ -118,6 +118,7 @@ function captiveportal_configure() {
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_mac.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_ip.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius.db");
+		mwexec("/sbin/ipfw table all flush");
 
 		/* write portal page */
 		if ($config['captiveportal']['page']['htmltext'])

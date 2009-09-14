@@ -352,13 +352,11 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
                 $attributes['idle_timeout'],
                 $attributes['session_terminate_time']);
 
-        if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
+        if (isset($config['captiveportal']['radacct_enable']) && !empty($radiusservers)) {
             $acct_val = RADIUS_ACCOUNTING_START($ruleno,
                                                             $username,
                                                             $sessionid,
-                                                            $radiusservers[0]['ipaddr'],
-                                                            $radiusservers[0]['acctport'],
-                                                            $radiusservers[0]['key'],
+                                                            $radiusservers,
                                                             $clientip,
                                                             $clientmac);
 

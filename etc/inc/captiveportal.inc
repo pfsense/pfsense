@@ -530,7 +530,7 @@ function captiveportal_prune_old() {
 
         /* do periodic RADIUS reauthentication? */
         if (!$timedout && isset($config['captiveportal']['reauthenticate']) &&
-            ($radiusservers !== false)) {
+            !empty($radiusservers)) {
 
             if (isset($config['captiveportal']['radacct_enable'])) {
                 if ($config['captiveportal']['reauthenticateacct'] == "stopstart") {
@@ -539,9 +539,7 @@ function captiveportal_prune_old() {
                                            $cpdb[$i][4], // username
                                            $cpdb[$i][5], // sessionid
                                            $cpdb[$i][0], // start time
-                                           $radiusservers[0]['ipaddr'],
-                                           $radiusservers[0]['acctport'],
-                                           $radiusservers[0]['key'],
+                                           $radiusservers,
                                            $cpdb[$i][2], // clientip
                                            $cpdb[$i][3], // clientmac
                                            10); // NAS Request
@@ -550,9 +548,7 @@ function captiveportal_prune_old() {
                     RADIUS_ACCOUNTING_START($cpdb[$i][1], // ruleno
                                             $cpdb[$i][4], // username
                                             $cpdb[$i][5], // sessionid
-                                            $radiusservers[0]['ipaddr'],
-                                            $radiusservers[0]['acctport'],
-                                            $radiusservers[0]['key'],
+                                            $radiusservers,
                                             $cpdb[$i][2], // clientip
                                             $cpdb[$i][3]); // clientmac
                 } else if ($config['captiveportal']['reauthenticateacct'] == "interimupdate") {
@@ -560,9 +556,7 @@ function captiveportal_prune_old() {
                                            $cpdb[$i][4], // username
                                            $cpdb[$i][5], // sessionid
                                            $cpdb[$i][0], // start time
-                                           $radiusservers[0]['ipaddr'],
-                                           $radiusservers[0]['acctport'],
-                                           $radiusservers[0]['key'],
+                                           $radiusservers,
                                            $cpdb[$i][2], // clientip
                                            $cpdb[$i][3], // clientmac
                                            10, // NAS Request
@@ -603,14 +597,12 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	$stop_time = (empty($stop_time)) ? time() : $stop_time;
 
 	/* this client needs to be deleted - remove ipfw rules */
-	if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
+	if (isset($config['captiveportal']['radacct_enable']) && !empty($radiusservers)) {
 		RADIUS_ACCOUNTING_STOP($dbent[1], // ruleno
 							   $dbent[4], // username
 							   $dbent[5], // sessionid
 							   $dbent[0], // start time
-							   $radiusservers[0]['ipaddr'],
-							   $radiusservers[0]['acctport'],
-							   $radiusservers[0]['key'],
+							   $radiusservers,
 							   $dbent[2], // clientip
 							   $dbent[3], // clientmac
 							   $term_cause, // Acct-Terminate-Cause
@@ -681,15 +673,13 @@ function captiveportal_radius_stop_all($lock = false) {
 	$cpdb = captiveportal_read_db();
 
 	$radiusservers = captiveportal_get_radius_servers();
-	if (isset($radiusservers[0])) {
+	if (!empty($radiusservers)) {
 		for ($i = 0; $i < count($cpdb); $i++) {
 			RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
 								   $cpdb[$i][4], // username
 								   $cpdb[$i][5], // sessionid
 								   $cpdb[$i][0], // start time
-								   $radiusservers[0]['ipaddr'],
-								   $radiusservers[0]['acctport'],
-								   $radiusservers[0]['key'],
+								   $radiusservers,
 								   $cpdb[$i][2], // clientip
 								   $cpdb[$i][3], // clientmac
 								   7); // Admin Reboot

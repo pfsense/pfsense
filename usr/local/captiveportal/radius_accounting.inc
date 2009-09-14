@@ -47,7 +47,7 @@ RADIUS ACCOUNTING START
 -----------------------
 */
 
-function RADIUS_ACCOUNTING_START($ruleno,$username,$sessionid,$radiusip,$radiusport,$radiuskey,$clientip,$clientmac) {
+function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers, $clientip, $clientmac) {
 
     global $config;
 
@@ -85,7 +85,15 @@ function RADIUS_ACCOUNTING_START($ruleno,$username,$sessionid,$radiusip,$radiusp
 
     // Construct data package
     $racct->username = $username;
-    $racct->addServer($radiusip, $radiusport, $radiuskey);
+    /*
+    Add support for more then one radiusserver.
+    At most 10 servers may be specified.
+    When multiple servers are given, they are tried in round-robin fashion until a valid response is received
+    */
+    foreach ($radiusservers as $radsrv) {
+        // Add a new server to our instance
+        $racct->addServer($radsrv['ipaddr'], $radsrv['acctport'], $radsrv['key']);
+    }
 
     if (PEAR::isError($racct->start())) {
         $retvalue['acct_val'] = 1;
@@ -150,7 +158,7 @@ RADIUS ACCOUNTING STOP/UPDATE
 -----------------------------
 */
 
-function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radiusip,$radiusport,$radiuskey,$clientip,$clientmac, $term_cause = 1, $interimupdate=false,$stop_time = null) {
+function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radiusservers,$clientip,$clientmac, $term_cause = 1, $interimupdate=false,$stop_time = null) {
 
     global $config;
 
@@ -186,25 +194,20 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
         $racct = new Auth_RADIUS_Acct_Stop;
 
     /*
-     * Currently disabled
     Add support for more then one radiusserver. 
     At most 10 servers may be specified. 
     When multiple servers are given, they are tried in round-robin fashion until a valid response is received 
-
-    foreach ($radiusservers as $radsrv) {
-
-        // Add a new server to our instance
-        $racct->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['key']);
-
-    }
     */
+    foreach ($radiusservers as $radsrv) {
+        // Add a new server to our instance
+        $racct->addServer($radsrv['ipaddr'], $radsrv['acctport'], $radsrv['key']);
+    }
 
     // See RADIUS_ACCOUNTING_START for info
     $racct->authentic = RADIUS_AUTH_RADIUS;
 
     // Construct data package
     $racct->username = $username;
-    $racct->addServer($radiusip, $radiusport, $radiuskey);
     // Set session_time
     $racct->session_time = $session_time;
 

@@ -30,6 +30,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/bin/kill	/sbin/ifconfig	
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppp
@@ -37,7 +41,6 @@
 ##|*DESCR=Allow access to the 'Interfaces: PPP' page.
 ##|*MATCH=interfaces_ppp.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -70,7 +73,7 @@ if ($_GET['act'] == "del") {
                         	$i++;
                 	if (file_exists("/var/run/ppp{$i}.pid")) {
                         	$pid = trim(file_get_contents("/var/run/ppp{$i}.pid"));
-                        	mwexec("kill {$pid}");
+                        	mwexec("/bin/kill {$pid}");
                 	}
         	}
 
@@ -83,7 +86,6 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
-
 
 $pgtitle = "Interfaces: PPP";
 include("head.inc");

@@ -27,6 +27,9 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	shell
+*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-command
@@ -34,7 +37,6 @@
 ##|*DESCR=Allow access to the 'Diagnostics: Command' page.
 ##|*MATCH=exec.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -235,7 +237,6 @@ if (!isBlank($_POST['txtPHPCommand'])) {
    echo eval($_POST['txtPHPCommand']);
    puts("</pre>");
 }
-
 
 ?>
 <div id="niftyOutter">

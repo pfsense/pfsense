@@ -30,6 +30,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-scanwireless
@@ -38,9 +42,7 @@
 ##|*MATCH=interfaces_wlan_scan.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
-
 
 $pgtitle = array("Interfaces","Scan Wireless");
 include("head.inc");
@@ -48,7 +50,9 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php 
+
+include("fbegin.inc");
 
 $interface = escapeshellarg($_GET['interface']);
 
@@ -60,5 +64,6 @@ echo $scan_nodes;
 echo "</PRE>";
 
 <?php include("fend.inc"); ?>
+
 </body>
 </html>

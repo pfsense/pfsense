@@ -28,6 +28,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-vlan
@@ -35,7 +39,6 @@
 ##|*DESCR=Allow access to the 'Interfaces: VLAN' page.
 ##|*MATCH=interfaces_vlan.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

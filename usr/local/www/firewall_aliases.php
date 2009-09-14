@@ -30,6 +30,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	aliases
+*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-aliases
@@ -37,7 +40,6 @@
 ##|*DESCR=Allow access to the 'Firewall: Aliases' page.
 ##|*MATCH=firewall_aliases.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

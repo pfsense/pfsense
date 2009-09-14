@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-vlan-edit
@@ -35,7 +38,6 @@
 ##|*DESCR=Allow access to the 'Interfaces: VLAN: Edit' page.
 ##|*MATCH=interfaces_vlan_edit.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

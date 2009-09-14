@@ -27,6 +27,17 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
+	pfSense_MODULE:	interfaces
+*/
+
+##|+PRIV
+##|*IDENT=page-interfacess-lagg
+##|*NAME=Interfaces: LAGG: page
+##|*DESCR=Edit Interface LAGG
+##|*MATCH=interfaces_lagg.php*
+##|-PRIV
 
 require("guiconfig.inc");
 
@@ -61,7 +72,6 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
-
 
 $pgtitle = array("Interfaces","LAGG");
 include("head.inc");

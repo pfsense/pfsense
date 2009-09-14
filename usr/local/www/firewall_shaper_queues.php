@@ -27,6 +27,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/killall
+	pfSense_MODULE:	shaper
+*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-queues
@@ -34,7 +38,6 @@
 ##|*DESCR=Allow access to the 'Firewall: Traffic Shaper: Queues' page.
 ##|*MATCH=firewall_shaper_queues.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

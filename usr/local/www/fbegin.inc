@@ -2,9 +2,13 @@
 <script src="/javascript/sorttable.js"></script>
 
 <?php
+/*
+	pfSense_MODULE:	header
+*/
 
 require_once("globals.inc");
 require_once("functions.inc");
+
 /* $Id$ */
 
 function return_ext_menu($section) {

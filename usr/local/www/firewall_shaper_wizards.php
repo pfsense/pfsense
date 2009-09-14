@@ -27,6 +27,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/killall
+	pfSense_MODULE:	shaper
+*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-wizard
@@ -35,11 +39,11 @@
 ##|*MATCH=firewall_shaper_wizards.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 if($_GET['reset'] <> "") {
-        mwexec("killall -9 pfctl php");
+	/* XXX: Huh, why are we killing php? */
+	mwexec("/usr/bin/killall -9 pfctl php");
 	exit;
 }
 

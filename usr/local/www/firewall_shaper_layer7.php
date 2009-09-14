@@ -26,6 +26,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/killall
+	pfSense_MODULE:	shaper
+*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-layer7
@@ -48,7 +52,6 @@ read_dummynet_config();
 $avail_behaviours_limiter = get_dummynet_name_list();
 $show_proto_form = false;
 
-
 //More variables
 $pgtitle = array("Firewall","Traffic Shaper", "Layer7");
 
@@ -63,8 +66,10 @@ $default_layer7shaper_msg .= "</td></tr>";
 read_layer7_config();
 
 if($_GET['reset'] <> "") {
-        mwexec("killall -9 pfctl php");
-	mwexec("killall -9 ipfw-classifyd"); //kill all ipfw-classifyd processes
+	/* XXX: Huh!? Why are we killing php here? */
+	mwexec("killall -9 pfctl php");
+	// kill all ipfw-classifyd processes
+	mwexec("killall -9 ipfw-classifyd"); 
 	exit;
 }
 

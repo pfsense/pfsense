@@ -1,4 +1,7 @@
 <?
+/*
+	pfSense_MODULE:	ajax
+*/
 
 if(Connection_Aborted()) {
 	exit;

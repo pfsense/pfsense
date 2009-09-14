@@ -28,6 +28,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/bin/rm
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-assignnetworkports
@@ -292,7 +296,7 @@ if ($_GET['act'] == "add") {
 	}
 	
         /* XXX: Do not remove this. */
-        mwexec("rm -f /tmp/config.cache");
+        mwexec("/bin/rm -f /tmp/config.cache");
 
 	write_config();
 

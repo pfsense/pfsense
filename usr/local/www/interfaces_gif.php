@@ -27,6 +27,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-gif
@@ -34,7 +38,6 @@
 ##|*DESCR=Allow access to the 'Interfaces: GIF' page.
 ##|*MATCH=interfaces_gif.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -69,7 +72,6 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
-
 
 $pgtitle = array("Interfaces","gif");
 include("head.inc");

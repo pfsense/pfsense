@@ -27,6 +27,16 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	interfaces
+*/
+
+##|+PRIV
+##|*IDENT=page-interfacess-lagg
+##|*NAME=Interfaces: LAGG: Edit page
+##|*DESCR=Edit Interface LAGG
+##|*MATCH=interfaces_lagg_edit.php*
+##|-PRIV
 
 require("guiconfig.inc");
 

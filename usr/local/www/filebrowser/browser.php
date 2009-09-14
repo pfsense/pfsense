@@ -1,4 +1,7 @@
 <?php
+/*
+	pfSense_MODULE:	shell
+*/
 // Fetch a list of directories and files inside a given directory
 function get_content($dir) {
 	$dirs  = array();

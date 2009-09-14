@@ -23,6 +23,9 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	header
+*/
 
 ##|+PRIV
 ##|*IDENT=page-requiredforjavascript
@@ -30,7 +33,6 @@
 ##|*DESCR=Allow access to the 'Required for javascript' page.
 ##|*MATCH=headjs.php*
 ##|-PRIV
-
 
 function getHeadJS() {
   global $_SERVER, $HTTP_SERVER_VARS, $g, $use_loader_tab_gif;

@@ -36,6 +36,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-virtualipaddresses
@@ -43,7 +47,6 @@
 ##|*DESCR=Allow access to the 'Firewall: Virtual IP Addresses' page.
 ##|*MATCH=firewall_virtual_ip.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

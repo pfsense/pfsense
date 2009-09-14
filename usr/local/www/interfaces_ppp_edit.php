@@ -30,6 +30,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppp-edit
@@ -38,14 +41,12 @@
 ##|*MATCH=interfaces_ppp_edit.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 if (!is_array($config['ppps']['ppp']))
 	$config['ppps']['ppp'] = array();
 
 $a_ppps = &$config['ppps']['ppp'];
-
 
 $id = $_GET['id'];
 if (isset($_POST['id']))

@@ -28,6 +28,9 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	routing
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-loadbalancer-monitor-edit
@@ -37,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+
 if (!is_array($config['load_balancer']['monitor_type'])) {
 	$config['load_balancer']['monitor_type'] = array();
 }

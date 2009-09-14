@@ -31,6 +31,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/bin/rm	/bin/mkdir	/usr/bin/fetch
+	pfSense_MODULE:	aliases
+*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-alias-edit
@@ -38,7 +42,6 @@
 ##|*DESCR=Allow access to the 'Firewall: Alias: Edit' page.
 ##|*MATCH=firewall_aliases_edit.php*
 ##|-PRIV
-
 
 $pgtitle = array("Firewall","Aliases","Edit");
 
@@ -206,7 +209,7 @@ if ($_POST) {
 				$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
 				fwrite($fda, "/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
 				fclose($fda);
-				mwexec("mkdir -p {$temp_filename}");
+				mwexec("/bin/mkdir -p {$temp_filename}");
 				mwexec("/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
 				/* if the item is tar gzipped then extract */
 				if(stristr($_POST['address' . $x], ".tgz"))
@@ -675,4 +678,5 @@ function process_alias_tgz($temp_filename) {
 	}
 	fclose($fd);
 }
+
 ?>

@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	shell
+*/
 
 ##|+PRIV
 ##|*IDENT=page-hidden-execraw
@@ -35,8 +38,6 @@
 ##|*DESCR=Allow access to the 'Hidden: Exec Raw' page.
 ##|*MATCH=exec_raw.php*
 ##|-PRIV
-
-
 
 header("Content-Type: text/plain");
 include("guiconfig.inc");

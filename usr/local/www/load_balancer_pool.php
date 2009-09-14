@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	routing
+*/
 
 ##|+PRIV
 ##|*IDENT=page-loadbalancer-pool
@@ -35,7 +38,6 @@
 ##|*DESCR=Allow access to the 'Load Balancer: Pool' page.
 ##|*MATCH=load_balancer_pool.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

@@ -25,6 +25,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-interfacess-groups
@@ -32,7 +36,6 @@
 ##|*DESCR=Edit Interface groups
 ##|*MATCH=interfaces_groups_edit.php*
 ##|-PRIV
-
 
 $pgtitle = array("Interfaces","Groups", "Edit");
 

@@ -25,6 +25,9 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	ajax
+*/
 
 ##|+PRIV
 ##|*IDENT=page-getstats
@@ -35,6 +38,7 @@
 
 require_once("guiconfig.inc");
 include_once("includes/functions.inc.php");
+
 echo get_stats();
 
 ?>

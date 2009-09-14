@@ -27,6 +27,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/killall
+	pfSense_MODULE:	shaper
+*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper
@@ -35,11 +39,11 @@
 ##|*MATCH=firewall_shaper.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 if($_GET['reset'] <> "") {
-        mwexec("killall -9 pfctl php");
+	/* XXX: Huh, why are we killing php? */
+	mwexec("killall -9 pfctl php");
 	exit;
 }
 
@@ -272,9 +276,9 @@ if ($_GET) {
 					$savemsg = $retval;
 
  		/* reset rrd queues */
-                system("rm -f /var/db/rrd/*queuedrops.rrd");
-                system("rm -f /var/db/rrd/*queues.rrd");
-			enable_rrd_graphing();
+		system("rm -f /var/db/rrd/*queuedrops.rrd");
+		system("rm -f /var/db/rrd/*queues.rrd");
+		enable_rrd_graphing();
 
 		clear_subsystem_dirty('shaper');
 			

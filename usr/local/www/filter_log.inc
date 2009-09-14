@@ -29,6 +29,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/bin/tail	/usr/sbin/clog
+	pfSense_MODULE:	filter
+*/
 
 /* format filter logs */
 function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "") {

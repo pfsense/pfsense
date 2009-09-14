@@ -30,6 +30,10 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-login/logout
@@ -37,7 +41,6 @@
 ##|*DESCR=Allow access to the 'System: Login / Logout' page.
 ##|*MATCH=index.php*
 ##|-PRIV
-
 
 	## Load Essential Includes
 	require_once('guiconfig.inc');

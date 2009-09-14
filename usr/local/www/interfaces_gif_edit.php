@@ -27,6 +27,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-gif-edit
@@ -34,7 +37,6 @@
 ##|*DESCR=Allow access to the 'Interfaces: GIF: Edit' page.
 ##|*MATCH=interfaces_gif_edit.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

@@ -1,3 +1,7 @@
+/*
+	pfSense_MODULE:	shell
+*/
+
 Event.observe(
 	window, "load",
 	function() {

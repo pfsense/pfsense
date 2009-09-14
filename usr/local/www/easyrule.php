@@ -27,6 +27,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	filter
+*/
 
 $pgtitle = "Status : EasyRule";
 require_once("guiconfig.inc");

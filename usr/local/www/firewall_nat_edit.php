@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	nat
+*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-portforward-edit
@@ -35,7 +38,6 @@
 ##|*DESCR=Allow access to the 'Firewall: NAT: Port Forward: Edit' page.
 ##|*MATCH=firewall_nat_edit.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

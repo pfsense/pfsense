@@ -1,4 +1,8 @@
 <?php
+/*
+	pfSense_MODULE:	header
+*/
+
 /* 
  *   if user has selected a custom template, use it.
  *   otherwise default to pfsense tempalte

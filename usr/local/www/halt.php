@@ -31,6 +31,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	header
+*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-haltsystem
@@ -38,7 +41,6 @@
 ##|*DESCR=Allow access to the 'Diagnostics: Halt system' page.
 ##|*MATCH=halt.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

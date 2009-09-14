@@ -1,3 +1,7 @@
+<!--
+	pfSense_MODULE:	footer
+-->
+
 		</div> <!-- Right DIV -->
 	
 	</div> <!-- Content DIV -->

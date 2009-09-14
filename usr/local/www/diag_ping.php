@@ -28,13 +28,17 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+	pfSense_BUILDER_BINARIES:	/sbin/ping
+	pfSense_MODULE:	routing
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-ping
 ##|*NAME=Diagnostics: Ping page
 ##|*DESCR=Allow access to the 'Diagnostics: Ping' page.
 ##|*MATCH=diag_ping.php*
 ##|-PRIV
-
 
 $pgtitle = array("Diagnostics", "Ping");
 require("guiconfig.inc");
@@ -136,6 +140,8 @@ include("head.inc"); ?>
 				 </td>
 				</tr>			
 			</table>
-</form>
-</td></tr></table>
+		</form>
+	</td>
+</tr>
+</table>
 <?php include("fend.inc"); ?>

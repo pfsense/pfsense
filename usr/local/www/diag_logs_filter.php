@@ -2,11 +2,12 @@
 /* $Id$ */
 /*
 	diag_logs_filter.php
-	part of pfSesne by Scott Ullrich
+	part of pfSense 
+	Copyright (C) 2004-2009 Scott Ullrich
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2009 Manuel Kasper <mk@neon1.net>,
-				Jim Pingle <myfirstname>@<mylastname>.org
+	Jim Pingle jim@pingle.org
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -29,6 +30,10 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*		
+	pfSense_MODULE:	filter
 */
 
 ##|+PRIV

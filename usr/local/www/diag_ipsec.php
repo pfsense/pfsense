@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	diag_ipsec.php
-	Copyright (C) 2007 Scott Ullrich
+	Copyright (C) 2004-2009 Scott Ullrich
 	Copyright (C) 2008 Shrew Soft Inc <mgrooms@shrew.net>.
 	All rights reserved.
 
@@ -29,6 +29,10 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*
+	pfSense_MODULE:	ipsec
 */
 
 ##|+PRIV
@@ -132,8 +136,6 @@ $sad = ipsec_dump_sad();
 	<a href="vpn_ipsec.php">here</a>.
 </span>
 
-
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

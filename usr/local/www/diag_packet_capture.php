@@ -23,13 +23,17 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+	pfSense_BUILDER_BINARIES:	/bin/ps	/usr/bin/grep	/usr/sbin/tcpdump
+	pfSense_MODULE:	routing
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-packetcapture
 ##|*NAME=Diagnostics: Packet Capture page
 ##|*DESCR=Allow access to the 'Diagnostics: Packet Capture' page.
 ##|*MATCH=diag_packet_capture.php*
 ##|-PRIV
-
 
 $pgtitle = array("Diagnostics", "Packet Capture");
 require_once("guiconfig.inc");
@@ -70,7 +74,7 @@ if ($_POST) {
 	elseif ($_POST['stopbtn']!= "")
 	{
 		$action = "Stop";
-		$processes_running = trim(shell_exec("ps axw -O pid= | grep tcpdump | grep $fn | grep -v pflog"));
+		$processes_running = trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep $fn | /usr/bin/grep -v pflog"));
 
 		//explode processes into an array, (delimiter is new line)
 		$processes_running_array = explode("\n", $processes_running);
@@ -181,7 +185,7 @@ include("head.inc"); ?>
                     <?php
 
                     /*check to see if packet capture tcpdump is already running*/
-					$processcheck = (trim(shell_exec("ps axw -O pid= | grep tcpdump | grep $fn | grep -v pflog")));
+					$processcheck = (trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep $fn | /usr/bin/grep -v pflog")));
 					
 					$processisrunning = false;
 

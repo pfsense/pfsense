@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     diag_cpu_activity.php
-    Copyright (C) 2008 Scott Ullrich
+    Copyright (C) 2008-2009 Scott Ullrich
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,11 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/top
+	pfSense_MODULE:	system
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diag-system-activity
 ##|*NAME=Diagnostics: System Activity
@@ -41,7 +46,7 @@ $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 $pgtitle = "Diagnostics: System Activity";
 
 if($_REQUEST['getactivity']) {
-	$text = `top`;
+	$text = `/usr/bin/top`;
 	echo $text;
 	exit;
 }

@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     diag_system_pftop.php
-    Copyright (C) 2008 Scott Ullrich
+    Copyright (C) 2008-2009 Scott Ullrich
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -25,6 +25,10 @@
     CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*
+	pfSense_MODULE:	filter
 */
 
 ##|+PRIV

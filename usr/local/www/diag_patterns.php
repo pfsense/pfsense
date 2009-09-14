@@ -26,13 +26,16 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+		pfSense_MODULE:	shaper
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-patters
 ##|*NAME=Diagnostics: Patterns page
 ##|*DESCR=Allow access to the 'Diagnostics: Patterns' page.
 ##|*MATCH=patterns.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -55,7 +58,6 @@ function fileExtension($nameFile) {
 $pgtitle = array("Diagnostics","Add layer7 pattern");
 include("head.inc");
 ?>
-
 
 <style>
 <!--
@@ -95,8 +97,6 @@ pre {
 <?php include("fbegin.inc"); ?>
 <p><strong>You can upload new layer7 patterns to your system!</strong></p>
 <?php if ($ulmsg) echo "<p class=\"red\"><strong>" . $ulmsg . "</strong></p>\n"; ?>
-
-
 <div id="niftyOutter">
 <form action="diag_patterns.php" method="POST" enctype="multipart/form-data" name="frmPattern">
   <table>
@@ -124,7 +124,3 @@ pre {
 </form>
 </body>
 </html>
-
-<?php
-
-?>

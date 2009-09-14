@@ -27,6 +27,10 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_MODULE:	dns
+*/
+
 $pgtitle = "Diagnostics: DNS";
 require("guiconfig.inc");
 

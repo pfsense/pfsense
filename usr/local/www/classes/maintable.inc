@@ -28,6 +28,10 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_MODULE:	guiutils
+*/
+
 /* DISABLE_PHP_LINT_CHECKING */
 
 class MainTable {
@@ -187,4 +191,5 @@ class MainTable {
 	}
 
 }
+
 ?>

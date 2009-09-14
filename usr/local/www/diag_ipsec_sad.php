@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	diag_ipsec_sad.php
-	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
 	originially part of m0n0wall (http://m0n0.ch/wall)
@@ -31,13 +31,17 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/setkey
+	pfSense_MODULE:	ipsec
+*/
+
 ##|+PRIV
 ##|*IDENT=page-status-ipsec-sad
 ##|*NAME=Status: IPsec: SAD page
 ##|*DESCR=Allow access to the 'Status: IPsec: SAD' page.
 ##|*MATCH=diag_ipsec_sad.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

@@ -1,7 +1,6 @@
 <?php
 /*
 	diag_logs_filter_summary.php
-
 	Copyright (C) 2009 Jim Pingle (jpingle@gmail.com)
 	All rights reserved.
 
@@ -25,6 +24,11 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*	
+	pfSense_BUILDER_BINARIES:	
+	pfSense_MODULE:	filter
 */
 
 $pgtitle = "Diagnostics: System logs: Firewall Log Summary";

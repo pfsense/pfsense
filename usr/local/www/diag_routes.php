@@ -29,13 +29,17 @@
 
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/netstat	
+	pfSense_MODULE:	routing
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-routingtables
 ##|*NAME=Diagnostics: Routing tables page
 ##|*DESCR=Allow access to the 'Diagnostics: Routing tables' page.
 ##|*MATCH=diag_routes.php*
 ##|-PRIV
-
 
 include('guiconfig.inc');
 

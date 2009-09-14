@@ -1,7 +1,8 @@
 <?php
 /*
 	diag_dump_states.php
-	Copyright (C) 2005 Scott Ullrich, Colin Smith
+	Copyright (C) 2005-2009 Scott Ullrich
+	Copyright (C) 2005 Colin Smith
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -26,6 +27,11 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl	
+	pfSense_MODULE:	filter
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-showstates
 ##|*NAME=Diagnostics: Show States page
@@ -33,9 +39,7 @@
 ##|*MATCH=diag_dump_states.php*
 ##|-PRIV
 
-
 require_once("guiconfig.inc");
-
 
 /* handle AJAX operations */
 if($_GET['action']) {

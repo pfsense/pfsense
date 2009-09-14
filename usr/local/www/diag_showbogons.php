@@ -27,6 +27,11 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/bin/ps	/usr/bin/grep
+	pfSense_MODULE:	filter
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diag-showbogons
 ##|*NAME=Diagnostics: System Activity
@@ -41,7 +46,7 @@ if($_POST['Download']) {
 	$maxtimetowait = 0;
 	$loading = true;
 	while($loading == true) {
-		$isrunning = `ps awwwux | grep -v grep | grep bogons`;
+		$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
 		if($isrunning == "") 
 			$loading = false;
 		$maxtimetowait++;
@@ -53,7 +58,7 @@ if($_POST['Download']) {
 		$savemsg = "The bogons database has been updated.";
 }
 
-$bogons = `cat /etc/bogons`;
+$bogons = file_get_contents(trim("/etc/bogons"));
 $pgtitle = "Diagnostics: Show Bogons";
 
 include("head.inc");

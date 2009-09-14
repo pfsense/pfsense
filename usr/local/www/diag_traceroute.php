@@ -28,6 +28,11 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+	pfSense_BUILDER_BINARIES:	/usr/sbin/traceroute
+	pfSense_MODULE:	routing
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-traceroute
 ##|*NAME=Diagnostics: Traceroute page
@@ -35,11 +40,11 @@
 ##|*MATCH=diag_traceroute.php*
 ##|-PRIV
 
-
-
 require("guiconfig.inc");
+
 $pgtitle = array("Diagnostics","Traceroute");
 include("head.inc");
+
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <? include("fbegin.inc"); ?>

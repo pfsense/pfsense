@@ -30,6 +30,10 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+	pfSense_MODULE:	routing
+*/
+
 ##|+PRIV
 ##|*IDENT=page-status-systemlogs-loadbalancer
 ##|*NAME=Status: System logs: Load Balancer page

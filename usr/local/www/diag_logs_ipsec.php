@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	diag_logs.php
-	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -31,6 +31,11 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/bin/awk	
+	pfSense_MODULE:	ipsec
+*/
+
 ##|+PRIV
 ##|*IDENT=page-status-systemlogs-ipsecvpn
 ##|*NAME=Status: System logs: IPsec VPN page
@@ -52,7 +57,7 @@ if(is_array($config['ipsec']['phase1']))
 		$replace[] = "$1<strong>[{$ph1ent['descr']}]</strong>: $2$3$4";
 	}
 /* collect all our own ip addresses */
-exec("/sbin/ifconfig|/usr/bin/awk '/inet / {print $2}'", $ip_address_list);
+exec("/sbin/ifconfig | /usr/bin/awk '/inet / {print $2}'", $ip_address_list);
 foreach($ip_address_list as $address) {
 	$search[] = "/(racoon: )([A-Z:].*?)({$address}\[[0-9].+\])(.*isakmp.*)/i";
 	$replace[] = "$1<strong>[Self]</strong>: $2$3$4";

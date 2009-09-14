@@ -37,6 +37,11 @@
 
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/netstat	
+	pfSense_MODULE:	pkgs
+*/
+
 ##|+PRIV
 ##|*IDENT=page-status-packagelogs
 ##|*NAME=Status: Package logs page
@@ -44,9 +49,7 @@
 ##|*MATCH=diag_pkglogs.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
-//require_once("pkg-utils.inc");
 
 if(!($nentries = $config['syslog']['nentries'])) $nentries = 50;
 

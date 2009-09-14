@@ -2,7 +2,7 @@
 /*
 	diag_arp.php
 	part of the pfSense project	(http://www.pfsense.org)
-	Copyright (C) 2009 Scott Ullrich <sullrich@gmail.com>
+	Copyright (C) 2004-2009 Scott Ullrich <sullrich@gmail.com>
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>.
@@ -28,6 +28,11 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*
+	pfSense_BUILDER_BINARIES:	/bin/cat		/usr/sbin/arp
+	pfSense_MODULE:	arp
 */
 
 ##|+PRIV

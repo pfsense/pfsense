@@ -26,6 +26,12 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/glabel	/usr/bin/grep	/usr/bin/cut	/usr/bin/head	/bin/cp
+	pfSense_BUILDER_BINARIES:	/usr/sbin/boot0cfg	/bin/mkdir	/sbin/fsck_ufs	/sbin/mount	/sbin/sysctl	/bin/dd	/sbin/tunefs
+	pfSense_MODULE:	nanobsd
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-nanobsd
 ##|*NAME=Diagnostics: NanoBSD
@@ -131,7 +137,7 @@ EOF;
 EOF;
 	file_put_contents("/tmp/{$AGLABEL_SLICE}/etc/fstab", $fstab);
 	exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
-	exec("sysctl kern.geom.debugflags=0");
+	exec("/sbin/sysctl kern.geom.debugflags=0");
 	conf_mount_ro();
 	$savemsg = "The boot slice has been set to {$BOOT_DRIVE} {$AGLABEL_SLICE}";
 	// Survey slice info
@@ -150,8 +156,8 @@ echo <<<EOF
 EOF;
 	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
 	ob_implicit_flush(1);
-	exec("sysctl kern.geom.debugflags=16");
-	exec("dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
+	exec("/sbin/sysctl kern.geom.debugflags=16");
+	exec("/bin/dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
 	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
 	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
 	exec("/bin/mkdir /tmp/{$GLABEL_SLICE}");
@@ -166,7 +172,7 @@ EOF;
 		$savemsg = "The slice has been duplicated.<p/>If you would like to boot from this newly duplicated slice please set it using the bootup information area.";
 		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
 	}
-	exec("sysctl kern.geom.debugflags=0");
+	exec("/sbin/sysctl kern.geom.debugflags=0");
 	// Re-Survey slice info
 	detect_slice_info();
 }

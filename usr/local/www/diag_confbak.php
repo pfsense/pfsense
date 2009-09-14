@@ -27,13 +27,16 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+	pfSense_MODULE:	config
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-configurationhistory
 ##|*NAME=Diagnostics: Configuration History page
 ##|*DESCR=Allow access to the 'Diagnostics: Configuration History' page.
 ##|*MATCH=diag_confbak.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

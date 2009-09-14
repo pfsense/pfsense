@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	diag_resetstate.php
-	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
 	originially part of m0n0wall (http://m0n0.ch/wall)
@@ -31,13 +31,16 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_MODULE:	filter
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-resetstate
 ##|*NAME=Diagnostics: Reset state page
 ##|*DESCR=Allow access to the 'Diagnostics: Reset state' page.
 ##|*MATCH=diag_resetstate.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

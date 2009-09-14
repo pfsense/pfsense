@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	diag_defaults.php
-	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
 	originially part of m0n0wall (http://m0n0.ch/wall)
@@ -31,13 +31,16 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_MODULE:	config
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-factorydefaults
 ##|*NAME=Diagnostics: Factory defaults page
 ##|*DESCR=Allow access to the 'Diagnostics: Factory defaults' page.
 ##|*MATCH=diag_defaults.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

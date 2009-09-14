@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	diag_logs.php
-	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -29,6 +29,10 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*		
+	pfSense_MODULE:	system
 */
 
 ##|+PRIV

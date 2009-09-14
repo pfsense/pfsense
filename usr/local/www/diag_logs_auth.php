@@ -29,6 +29,10 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*		
+	pfSense_MODULE:	captiveportal
+*/
+
 ##|+PRIV
 ##|*IDENT=page-status-systemlogs-portalauth
 ##|*NAME=Status: System logs: Portal Auth page
@@ -81,10 +85,10 @@ include("head.inc");
 		  </tr>
 		  <?php dump_clog($portal_logfile, $nentries, true); ?>
 		<tr><td><br><form action="diag_logs_auth.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
+			<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
 		</table>
 	</div>
-</form>
+	</form>
 	</td>
   </tr>
 </table>

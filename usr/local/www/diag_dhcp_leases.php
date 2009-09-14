@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	diag_dhcp_leases.php
-	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
 	originially part of m0n0wall (http://m0n0.ch/wall)
@@ -31,13 +31,17 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/bin/cat	/usr/sbin/arp	/usr/bin/wc	/usr/bin/grep
+	pfSense_MODULE:	dhcpserver
+*/
+
 ##|+PRIV
 ##|*IDENT=page-status-dhcpleases
 ##|*NAME=Status: DHCP leases page
 ##|*DESCR=Allow access to the 'Status: DHCP leases' page.
 ##|*MATCH=diag_dhcp_leases.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -111,9 +115,8 @@ $cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
 $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
 
 /* stuff the leases file in a proper format into a array by line */
-exec("cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
+exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
 $leases_count = count($leases_content);
-
 exec("/usr/sbin/arp -an", $rawdata);
 $arpdata = array();
 foreach ($rawdata as $line) {
@@ -272,9 +275,6 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 if ($_GET['order'])
 	usort($leases, "leasecmp");
 
-?>
-
-<?php
 /* only print pool status when we have one */
 if(count($pools) > 0) {
 ?>

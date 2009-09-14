@@ -29,6 +29,11 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/sbin/clog
+	pfSense_MODULE:	vpn
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-pptpvpn
 ##|*NAME=Diagnostics: Logs: PPTP VPN page

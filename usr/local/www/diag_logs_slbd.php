@@ -30,6 +30,10 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+	pfSense_MODULE:	routing
+*/
+
 ##|+PRIV
 ##|*IDENT=page-status-systemlogs-loadbalancer
 ##|*NAME=Status: System logs: Load Balancer page
@@ -82,7 +86,7 @@ include("head.inc");
 		  </tr>
 		  <?php dump_clog($slbd_logfile, $nentries); ?>
 		<tr><td><br><form action="diag_logs_slbd.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
+			<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
 		</table>
 	</div>
 </form>

@@ -29,6 +29,10 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*	
+	pfSense_MODULE:	ntpd
+*/
+
 ##|+PRIV
 ##|*IDENT=page-status-systemlogs-openntpd
 ##|*NAME=Status: System logs: OpenNTPD page

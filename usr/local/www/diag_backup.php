@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	diag_backup.php
-	Copyright (C) 2004,2005,2006 Scott Ullrich
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -31,13 +31,17 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/shutdown
+	pfSense_MODULE:	backup
+*/
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-backup/restore
 ##|*NAME=Diagnostics: Backup/restore page
 ##|*DESCR=Allow access to the 'Diagnostics: Backup/restore' page.
 ##|*MATCH=diag_backup.php*
 ##|-PRIV
-
 
 /* Allow additional execution time 0 = no limit. */
 ini_set('max_execution_time', '0');

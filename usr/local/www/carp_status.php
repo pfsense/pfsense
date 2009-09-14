@@ -33,6 +33,10 @@
 ##|*MATCH=carp_status.php*
 ##|-PRIV
 
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/sysctl	
+	pfSense_MODULE:	carp
+*/
 
 require_once("guiconfig.inc");
 require_once("xmlparse.inc");

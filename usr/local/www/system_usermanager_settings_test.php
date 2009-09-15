@@ -27,6 +27,9 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	auth
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-settings-testldap
@@ -34,7 +37,6 @@
 ##|*DESCR=Allow access to the 'System: User Manager: Settings: Test LDAP' page.
 ##|*MATCH=system_usermanager_settings_test.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

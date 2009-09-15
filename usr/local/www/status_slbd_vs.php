@@ -28,6 +28,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/relayctl
+	pfSense_MODULE:	routing
+*/
 
 ##|+PRIV
 ##|*IDENT=page-status-loadbalancer-virtualserver
@@ -35,7 +39,6 @@
 ##|*DESCR=Allow access to the 'Status: Load Balancer: Virtual Server' page.
 ##|*MATCH=status_slbd_vs.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

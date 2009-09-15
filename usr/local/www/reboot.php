@@ -36,7 +36,6 @@
 ##|*MATCH=reboot.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 
 if ($_POST) {
@@ -46,7 +45,6 @@ if ($_POST) {
 		Header("Location: /");
 	}
 }
-
 
 $pgtitle = array("Diagnostics","Reboot System");
 include("head.inc");
@@ -77,4 +75,5 @@ if ($_POST) {
 		exit;
 	}
 }
+
 ?>

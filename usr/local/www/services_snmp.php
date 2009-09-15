@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	snmp
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-snmp
@@ -35,7 +38,6 @@
 ##|*DESCR=Allow access to the 'Services: SNMP' page.
 ##|*MATCH=services_snmp.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

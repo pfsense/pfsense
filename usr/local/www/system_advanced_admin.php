@@ -32,6 +32,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/killall
+	pfSense_MODULE:	system
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-admin
@@ -39,7 +43,6 @@
 ##|*DESCR=Allow access to the 'System: Advanced: Admin Access' page.
 ##|*MATCH=system_advanced_admin.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -398,4 +401,5 @@ if ($restart_webgui) {
 	log_error("webConfigurator configuration has changed. Restarting webConfigurator.");
 	touch("{$g['tmp_path']}/restart_webgui");
 }
+
 ?>

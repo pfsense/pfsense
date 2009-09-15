@@ -28,6 +28,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/local/bin/wol	
+	pfSense_MODULE:	wol
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-wakeonlan
@@ -35,7 +39,6 @@
 ##|*DESCR=Allow access to the 'Services: Wake on LAN' page.
 ##|*MATCH=services_wol.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -148,10 +151,10 @@ include("head.inc");
 				</td>
 				</tr>
 			</table>
-&nbsp;<br>
-Wake all clients at once: <a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0"></a><p/>
-Or Click the MAC address to wake up an individual device:
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			&nbsp;<br>
+			Wake all clients at once: <a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0"></a><p/>
+			Or Click the MAC address to wake up an individual device:
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="15%" class="listhdrr">Interface</td>
                   <td width="25%" class="listhdrr">MAC address</td>
@@ -188,7 +191,7 @@ Or Click the MAC address to wake up an individual device:
                       </tr>
                     </table>
                   </td>
-		</tr>
+			</tr>
 	        <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="3"></td>
@@ -201,7 +204,7 @@ Or Click the MAC address to wake up an individual device:
                     </table>
                   </td>
                   			
-		</tr>
+			</tr>
               </table>
 			<span class="vexpl">
 					<span class="red">

@@ -25,6 +25,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/host	
+	pfSense_MODULE:	dyndns
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dynamicdnsclients
@@ -32,7 +36,6 @@
 ##|*DESCR=Allow access to the 'Services: Dynamic DNS clients' page.
 ##|*MATCH=services_dyndns.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -109,7 +112,7 @@ include("head.inc");
 						$real_int = get_real_interface($if);
 						$filename = "{$g['conf_path']}/dyndns_{$int}dyndns.cache";
 						if(file_exists($filename)) {
-							$dns_resolv = str_replace("\n", "", `host {$dyndns['host']} | awk '{ print $4 }'`);
+							$dns_resolv = str_replace("\n", "", `/usr/bin/host {$dyndns['host']} | awk '{ print $4 }'`);
 							$cached_ip_s = split(":", file_get_contents($filename));
 							$cached_ip = $cached_ip_s[0];
 							$int_ip = find_interface_ip($real_int);

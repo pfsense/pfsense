@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	routing
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-gateways-editgateway
@@ -35,7 +38,6 @@
 ##|*DESCR=Allow access to the 'System: Gateways: Edit Gateway' page.
 ##|*MATCH=system_gateways_edit.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 require("pkg-utils.inc");

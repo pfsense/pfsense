@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	routing
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-gateways
@@ -36,9 +39,7 @@
 ##|*MATCH=system_gateways.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
-
 
 $a_gateways = return_gateways_array();
 $a_gateways_arr = array();

@@ -28,6 +28,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/bin/rm
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcpserver
@@ -257,9 +261,9 @@ if ($_POST) {
 		$config['dhcpd'][$if]['maxleasetime'] = $_POST['maxtime'];
 		$config['dhcpd'][$if]['netmask'] = $_POST['netmask'];
 		$previous = $config['dhcpd'][$if]['failover_peerip'];
-		if($previous <> $_POST['failover_peerip']) {
-			mwexec("rm -rf /var/dhcpd/var/db/*");
-		}
+		if($previous <> $_POST['failover_peerip']) 
+			mwexec("/bin/rm -rf /var/dhcpd/var/db/*");
+
 		$config['dhcpd'][$if]['failover_peerip'] = $_POST['failover_peerip'];
 
 		unset($config['dhcpd'][$if]['winsserver']);

@@ -27,6 +27,9 @@
        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
        POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	dnsforwarder
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsforwarder-editdomainoverride
@@ -34,7 +37,6 @@
 ##|*DESCR=Allow access to the 'Services: DNS Forwarder: Edit Domain Override' page.
 ##|*MATCH=services_dnsmasq_domainoverride_edit.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

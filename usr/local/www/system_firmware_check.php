@@ -30,6 +30,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	firmware
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-firmware-autoupdate
@@ -37,7 +40,6 @@
 ##|*DESCR=Allow access to the 'System: Firmware: Auto Update' page.
 ##|*MATCH=system_firmware_check.php*
 ##|-PRIV
-
 
 $d_isfwfile = 1;
 require("guiconfig.inc");

@@ -27,6 +27,9 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /* DISABLE_PHP_LINT_CHECKING */
+/*	
+	pfSense_MODULE:	openvpn
+*/
 
 ##|+PRIV
 ##|*IDENT=page-status-openvpn
@@ -34,7 +37,6 @@
 ##|*DESCR=Allow access to the 'Status: OpenVPN' page.
 ##|*MATCH=status_openvpn.php*
 ##|-PRIV
-
 
 $pgtitle = array("Status", "OpenVPN");
 require("guiconfig.inc");

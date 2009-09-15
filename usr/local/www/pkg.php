@@ -26,6 +26,9 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	pkgs
+*/
 
 ##|+PRIV
 ##|*IDENT=page-package-settings
@@ -33,7 +36,6 @@
 ##|*DESCR=Allow access to the 'Package: Settings' page.
 ##|*MATCH=pkg.php*
 ##|-PRIV
-
 
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");

@@ -28,6 +28,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl
+	pfSense_MODULE:	upnp
+*/
 
 ##|+PRIV
 ##|*IDENT=page-status-upnpstatus
@@ -35,7 +39,6 @@
 ##|*DESCR=Allow access to the 'Status: UPnP Status' page.
 ##|*MATCH=status_upnp.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

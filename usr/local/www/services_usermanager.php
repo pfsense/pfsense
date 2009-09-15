@@ -31,6 +31,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-usermanager
@@ -40,6 +43,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+
 if(isset($_POST['save'])){
 	$_POST['username']=trim($_POST['username']);
 	if($_POST['old_username']!="" && $_POST['old_username']!=$_POST['username']){

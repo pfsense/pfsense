@@ -1,4 +1,5 @@
-#!/usr/local/bin/php?php
+<?php
+
 /* $Id$ */
 
 include("guiconfig.inc");
@@ -8,7 +9,6 @@ if($config['theme'] <> "")
 else
 	$g['theme'] = "pfsense";
 
-
 $url = 'progress.php?UPLOAD_IDENTIFIER='.  $_GET["UPLOAD_IDENTIFIER"] .'&e=1';
 
 function nice_value($x) {
@@ -17,7 +17,6 @@ function nice_value($x) {
    if ($x < 900000) return sprintf("%dKB", $x/1000);
    return sprintf("%.2fMB", $x/1000/1000);
 }
-
 
 $X = upload_progress_meter_get_info( $_GET["UPLOAD_IDENTIFIER"] );
 if (!$X) {
@@ -29,7 +28,7 @@ if (!$X) {
       echo ('<HTML><meta HTTP-EQUIV="Refresh" CONTENT="1; url='. $url .'"><BODY></BODY></HTML>');
    }
 
-}else{
+} else {
 
    $meter = sprintf("%.2f", $X['bytes_uploaded'] / $X['bytes_total'] * 100);
 
@@ -44,7 +43,7 @@ if (!$X) {
 
    if ($X['bytes_total'] > 1 && $X['bytes_uploaded'] >= $X['bytes_total'] && $X['est_sec'] == 0) {
       echo ('<HTML><BODY onLoad="window.close()"> UPLOAD completed!</BODY></HTML>');
-   }else{
+   } else {
 
 ?>
 
@@ -77,11 +76,6 @@ if (!$X) {
 	</td>
 	<td width="5" height="15" background="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" align="top"></td>
    </table>
-
-
-
-
-
 
    <br>
 

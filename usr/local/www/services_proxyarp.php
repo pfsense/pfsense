@@ -30,6 +30,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	proxyarp
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-proxyarp
@@ -37,7 +40,6 @@
 ##|*DESCR=Allow access to the 'Services: Proxy ARP' page.
 ##|*MATCH=services_proxyarp.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

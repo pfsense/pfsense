@@ -27,6 +27,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	captiveportal
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal
@@ -34,7 +37,6 @@
 ##|*DESCR=Allow access to the 'Services: Captive portal' page.
 ##|*MATCH=services_captiveportal.php*
 ##|-PRIV
-
 
 $pgtitle = array("Services","Captive portal");
 require("guiconfig.inc");

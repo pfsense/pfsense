@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*	
+	pfSense_MODULE:	routing
+*/
 
 ##|+PRIV
 ##|*IDENT=page-status-gateways
@@ -35,7 +38,6 @@
 ##|*DESCR=Allow access to the 'Status: Gateways' page.
 ##|*MATCH=status_gateways.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

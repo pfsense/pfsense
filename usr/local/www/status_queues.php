@@ -29,6 +29,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*	
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl
+	pfSense_MODULE:	shaper
+*/
 
 ##|+PRIV
 ##|*IDENT=page-status-trafficshaper-queues
@@ -36,7 +40,6 @@
 ##|*DESCR=Allow access to the 'Status: Traffic shaper: Queues' page.
 ##|*MATCH=status_queues.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

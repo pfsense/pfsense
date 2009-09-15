@@ -30,6 +30,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/tar	
+	pfSense_MODULE:	firmware
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-firmware-manualupdate
@@ -58,7 +62,7 @@ function file_is_for_platform($filename, $ul_name) {
 		else
 			return false;		
 	}
-	exec("tar xzf $filename -C /tmp/ etc/platform");
+	exec("/usr/bin/tar xzf $filename -C /tmp/ etc/platform");
 	if(!file_exists("/tmp/etc/platform")) 
 		return false;
 	$upgrade_is_for_platform = trim(file_get_contents("/tmp/etc/platform"));

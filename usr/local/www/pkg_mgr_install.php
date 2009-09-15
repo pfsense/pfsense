@@ -27,6 +27,10 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/bin/rm
+	pfSense_MODULE:	pkgs
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager-installpackage
@@ -34,7 +38,6 @@
 ##|*DESCR=Allow access to the 'System: Package Manager: Install Package' page.
 ##|*MATCH=pkg_mgr_install.php*
 ##|-PRIV
-
 
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");

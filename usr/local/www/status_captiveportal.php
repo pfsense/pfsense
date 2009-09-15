@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*	
+	pfSense_MODULE:	captiveportal
+*/
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal
@@ -37,7 +40,6 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-
 
 if ($_GET['act'] == "del") {
 	captiveportal_disconnect_client($_GET['id']);

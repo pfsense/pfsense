@@ -25,6 +25,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/bin/rm
+	pfSense_MODULE:	dyndns
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dynamicdnsclient
@@ -32,7 +36,6 @@
 ##|*DESCR=Allow access to the 'Services: Dynamic DNS client' page.
 ##|*MATCH=services_dyndns_edit.php*
 ##|-PRIV
-
 
 /* returns true if $uname is a valid DynDNS username */
 function is_dyndns_username($uname) {
@@ -111,7 +114,7 @@ if ($_POST) {
 		$retval = 0;
 
 		conf_mount_rw();
-		mwexec("rm {$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}.cache");
+		mwexec("/bin/rm {$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}.cache");
 		conf_mount_ro();
 
 		$retval = services_dyndns_configure_client($dyndns);

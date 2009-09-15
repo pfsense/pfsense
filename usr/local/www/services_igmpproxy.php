@@ -32,6 +32,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	dyndns
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-igmpproxy
@@ -39,7 +42,6 @@
 ##|*DESCR=Allow access to the 'Services: Igmpproxy' page.
 ##|*MATCH=services_igmpproxy.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

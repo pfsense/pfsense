@@ -27,6 +27,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*	
+	pfSense_MODULE:	system
+*/
 
 ##|+PRIV
 ##|*IDENT=page-status-cpuload
@@ -34,7 +37,6 @@
 ##|*DESCR=Allow access to the 'Status: CPU load' page.
 ##|*MATCH=status_graph_cpu.php*
 ##|-PRIV
-
 
 $pgtitle = array("Status", "CPU load");
 require("guiconfig.inc");

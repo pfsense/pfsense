@@ -25,6 +25,10 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/bin/chmod
+	pfSense_MODULE:	pkgs
+*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-restart-httpd
@@ -47,7 +51,7 @@ Mounting file systems read/write...
 <?php flush(); sleep(1); conf_mount_rw(); ?>
 Done.<br>
 Forcing all PHP file permissions to 0755...
-<?php flush(); sleep(1); system('chmod -R 0755 /usr/local/www/*.php'); ?>
+<?php flush(); sleep(1); system('/bin/chmod -R 0755 /usr/local/www/*.php'); ?>
 Done.<br>
 Mounting file systems read only...
 <?php flush(); sleep(1); conf_mount_ro(); ?>

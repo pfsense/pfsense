@@ -25,6 +25,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-wirelessstatus
@@ -32,7 +35,6 @@
 ##|*DESCR=Allow access to the 'Diagnostics: Wireless Status' page.
 ##|*MATCH=status_wireless.php*
 ##|-PRIV
-
 
 require_once("guiconfig.inc");
 

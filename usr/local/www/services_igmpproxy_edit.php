@@ -32,6 +32,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	igmpproxy
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-igmpproxy
@@ -39,7 +42,6 @@
 ##|*DESCR=Allow access to the 'Firewall: Igmpproxy' page.
 ##|*MATCH=services_igmpproxy_edit.php*
 ##|-PRIV
-
 
 $pgtitle = array("Firewall","IGMP Proxy", "Edit");
 

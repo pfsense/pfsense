@@ -30,6 +30,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/tar	/usr/bin/nohup	/bin/cat	/sbin/sha256
+	pfSense_MODULE:	firmware
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-firmware-checkforupdate
@@ -37,7 +41,6 @@
 ##|*DESCR=Allow access to the 'System: Firmware: Check For Update' page.
 ##|*MATCH=system_firmware_auto.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -148,8 +151,8 @@ else
 if($needs_system_upgrade == true)
 	$external_upgrade_helper_text .= "{$g['upload_path']}/latest.tgz";
 
-$downloaded_latest_tgz_sha256 = str_replace("\n", "", `sha256 -q {$g['upload_path']}/latest.tgz`);
-$upgrade_latest_tgz_sha256 = str_replace("\n", "", `cat {$g['upload_path']}/latest.tgz.sha256 | awk '{ print $4 }'`);
+$downloaded_latest_tgz_sha256 = str_replace("\n", "", `/sbin/sha256 -q {$g['upload_path']}/latest.tgz`);
+$upgrade_latest_tgz_sha256 = str_replace("\n", "", `/bin/cat {$g['upload_path']}/latest.tgz.sha256 | awk '{ print $4 }'`);
 
 $sigchk = 0;
 
@@ -193,7 +196,7 @@ if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 } else {
 	update_output_window("{$g['product_name']} is now upgrading.\\n\\nThe firewall will reboot once the operation is completed.");
 	echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
-	mwexec("nohup {$external_upgrade_helper_text}");
+	mwexec("/usr/bin/nohup {$external_upgrade_helper_text}");
 }
 
 /*

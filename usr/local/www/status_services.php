@@ -25,6 +25,10 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+/*	
+	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn	/usr/bin/killall	/bin/ps
+	pfSense_MODULE:	services
+*/
 
 ##|+PRIV
 ##|*IDENT=page-status-services
@@ -32,7 +36,6 @@
 ##|*DESCR=Allow access to the 'Status: Services' page.
 ##|*MATCH=status_services.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 require_once("service-utils.inc");
@@ -72,7 +75,7 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 			upnp_action('restart');	
 			break;
 		case 'racoon':
-			exec("killall -9 racoon");
+			exec("/usr/bin/killall -9 racoon");
 			sleep(1);
 			vpn_ipsec_force_reload();
 			break;
@@ -85,7 +88,7 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 					killbypid($pidfile);
 					sleep(1);
 					$configfile = $g['varetc_path'] . "/openvpn_{$vpnmode}{$id}.conf";
-					mwexec_bg("openvpn --config $configfile");
+					mwexec_bg("/usr/local/sbin/openvpn --config $configfile");
 				}
 			}
 			break;
@@ -128,7 +131,7 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 				$id = $_GET['id'];
 				if (is_numeric($id)) {
 					$configfile = $g['varetc_path'] . "/openvpn_{$vpnmode}{$id}.conf";
-					mwexec_bg("openvpn --config $configfile");
+					mwexec_bg("/usr/local/sbin/openvpn --config $configfile");
 				}
 			}
 			break;

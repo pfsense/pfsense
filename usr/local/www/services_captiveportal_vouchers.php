@@ -24,6 +24,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher
+	pfSense_MODULE:	captiveportal
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-vouchers

@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	dhcprelay
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcprelay
@@ -35,7 +38,6 @@
 ##|*DESCR=Allow access to the 'Services: DHCP Relay' page.
 ##|*MATCH=services_dhcp_relay.php*
 ##|-PRIV
-
 
 function get_wan_dhcp_server() {
 	global $config, $g;

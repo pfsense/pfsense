@@ -28,6 +28,11 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat	/usr/bin/netstat	/sbin/dmesg	/sbin/mount	/usr/local/sbin/setkey	/usr/local/sbin/pftop	
+	pfSense_BUILDER_BINARIES:	/sbin/pfctl	/sbin/sysctl	/usr/bin/top	/usr/bin/netstat	/sbin/pfctl	/sbin/ifconfig
+	pfSense_MODULE:	support
+*/
 
 ##|+PRIV
 ##|*IDENT=page-hidden-detailedstatus
@@ -124,7 +129,7 @@ global $g;
 defCmdT("System uptime","uptime");
 defCmdT("Interfaces","/sbin/ifconfig -a");
 
-defCmdT("PF Info","pfctl -s info");
+defCmdT("PF Info","/sbin/pfctl -s info");
 
 defCmdT("Routing tables","netstat -nr");
 
@@ -149,7 +154,7 @@ defCmdT("netstat -s -ppfsync","netstat -s -ppfsync");
 
 defCmdT("pfctl -vsq","/sbin/pfctl -vsq");
 
-defCmdT("pfctl -vs Tables","pfctl -vs Tables");
+defCmdT("pfctl -vs Tables","/sbin/pfctl -vs Tables");
 
 defCmdT("Load Balancer","/sbin/pfctl -a slb -s nat");
 
@@ -169,8 +174,8 @@ defCmdT("ez-ipupdate.cache","cat /conf/ez-ipupdate.cache");
 defCmdT("df","/bin/df");
 
 defCmdT("racoon.conf","cat /var/etc/racoon.conf");
-defCmdT("SPD","/sbin/setkey -DP");
-defCmdT("SAD","/sbin/setkey -D");
+defCmdT("SPD","/usr/local/sbin/setkey -DP");
+defCmdT("SAD","/usr/local/sbin/setkey -D");
 
 if(isset($config['system']['usefifolog']))  {
 	defCmdT("last 200 system log entries","/usr/sbin/fifolog_reader /var/log/system.log 2>&1 | tail -n 200");

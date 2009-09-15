@@ -27,6 +27,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/usr/bin/fetch
+	pfSense_MODULE:	firmware
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-firmware-settings
@@ -34,7 +38,6 @@
 ##|*DESCR=Allow access to the 'System: Firmware: Settings' page.
 ##|*MATCH=system_firmware_settings.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -58,7 +61,7 @@ $curcfg = $config['system']['firmware'];
 $pgtitle = array("System","Firmware","Settings");
 include("head.inc");
 
-exec("fetch -q -o /tmp/manifest \"{$g['update_manifest']}\"");
+exec("/usr/bin/fetch -q -o /tmp/manifest \"{$g['update_manifest']}\"");
 if(file_exists("/tmp/manifest")) {
 	$preset_urls_split = split("\n", file_get_contents("/tmp/manifest"));
 }

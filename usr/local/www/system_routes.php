@@ -28,6 +28,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	routing
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-staticroutes
@@ -35,7 +38,6 @@
 ##|*DESCR=Allow access to the 'System: Static Routes' page.
 ##|*MATCH=system_routes.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

@@ -31,6 +31,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*	
+	pfSense_MODULE:	interfaces
+*/
 
 ##|+PRIV
 ##|*IDENT=page-status-interfaces
@@ -38,7 +41,6 @@
 ##|*DESCR=Allow access to the 'Status: Interfaces' page.
 ##|*MATCH=status_interfaces.php*
 ##|-PRIV
-
 
 require_once("guiconfig.inc");
 

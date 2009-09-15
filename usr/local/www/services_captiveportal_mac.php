@@ -27,6 +27,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	captiveportal
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-macaddresses
@@ -34,7 +37,6 @@
 ##|*DESCR=Allow access to the 'Services: Captive portal: Mac Addresses' page.
 ##|*MATCH=services_captiveportal_mac.php*
 ##|-PRIV
-
 
 $pgtitle = array("Services","Captive portal");
 require("guiconfig.inc");

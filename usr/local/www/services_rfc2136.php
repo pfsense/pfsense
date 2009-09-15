@@ -25,6 +25,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	dnsupdate
+*/
 
 ##|+PRIV
 ##|*IDENT=page-services-rfc2136clients
@@ -32,7 +35,6 @@
 ##|*DESCR=Allow access to the 'Services: RFC 2136 clients' page.
 ##|*MATCH=services_rfc2136.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

@@ -32,6 +32,9 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_MODULE:	system
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-sysctl
@@ -39,7 +42,6 @@
 ##|*DESCR=Allow access to the 'System: Advanced: Tunables' page.
 ##|*MATCH=system_advanced-sysctrl.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

@@ -28,6 +28,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	pfSense_BUILDER_BINARIES:	/bin/kill	/usr/bin/tar
+	pfSense_MODULE:	system
+*/
 
 ##|+PRIV
 ##|*IDENT=page-system-generalsetup
@@ -35,7 +39,6 @@
 ##|*DESCR=Allow access to the 'System: General Setup' page.
 ##|*MATCH=system.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 
@@ -73,7 +76,7 @@ if($pconfig['timezone'] <> $_POST['timezone']) {
 	require_once("functions.inc");
 	$pid = `ps awwwux | grep -v "grep" | grep "tcpdump -v -l -n -e -ttt -i pflog0"  | awk '{ print $2 }'`;
 	if($pid) {
-		mwexec("kill $pid");
+		mwexec("/bin/kill $pid");
 		usleep(1000);
 	}		
 	filter_pflog_start();

@@ -27,6 +27,10 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+/*	
+	pfSense_BUILDER_BINARIES:	/usr/bin/find
+	pfSense_MODULE:	system
+*/
 
 ##|+PRIV
 ##|*IDENT=page-status-rrdgraphs
@@ -34,7 +38,6 @@
 ##|*DESCR=Allow access to the 'Status: RRD Graphs' page.
 ##|*MATCH=status_rrd_graph_settings.php*
 ##|-PRIV
-
 
 require("guiconfig.inc");
 

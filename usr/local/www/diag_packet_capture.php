@@ -27,7 +27,7 @@ $pgtitle = "Diagnostics: Packet Capture";
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
-$fp = "/tmp/";
+$fp = "/root/";
 $fn = "packetcapture.cap";
 $snaplen = 1500;//default packet length
 $count = 100;//default number of packets to capture
@@ -55,6 +55,8 @@ if ($_POST) {
 	$packetlength = $_POST['snaplen'];
 	$port = $_POST['port'];
 	$detail = $_POST['detail'];
+
+	conf_mount_rw();
 
 	if ($_POST['dnsquery'])//if dns lookup is checked
 	{
@@ -248,9 +250,7 @@ include("head.inc"); ?>
              			$searchcount = "";
              		}
 
-					$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
-				
-					
+					$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);					
 						
 					if ($action == "Start")
 					{
@@ -275,4 +275,10 @@ include("head.inc"); ?>
 		</table>
 </form>
 </td></tr></table>
-<?php include("fend.inc"); ?>
+<?php 
+
+conf_mount_ro();
+
+include("fend.inc"); 
+
+?>

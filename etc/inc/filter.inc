@@ -338,10 +338,14 @@ function filter_generate_aliases() {
 	$lan_carp_ints = link_ip_to_carp_interface($lanip);
 	$wan_carp_ints = link_ip_to_carp_interface($wanip);
 
+	/* start creating alias info */
 	$aliases .= "# System Aliases \n";
 	$aliases .= "loopback = \"{ lo0 }\"\n";
+	
+	/* lan */
 	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} {$lan_carp_ints} }\"\n";
 
+	/* wan */
     if($config['interfaces']['wan']['ipaddr'] == "pppoe" or $config['interfaces']['wan']['ipaddr'] == "pptp") {
 		$aliases .= "ng0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
 		$aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . " ng0 {$wan_carp_ints} }\"\n";
@@ -349,6 +353,7 @@ function filter_generate_aliases() {
 		$aliases .= "wan = \"{ " . get_real_wan_interface() . " {$wanaliases} {$wan_carp_ints} }\"\n";
 	}
 
+	/* IPSec */
 	$aliases .= "enc0 = \"{ enc0 }\"\n";
 
     /* used to count netgraph interfaces */

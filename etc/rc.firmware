@@ -203,6 +203,7 @@ pfSenseNanoBSDupgrade)
 		echo "Upgrade failed.  Please check the system log file for more information" | wall
 		rm -f /var/run/firmwarelock.dirty
 		rm -f /var/run/firmware.lock
+		rm -f ${IMG}
 		/etc/rc.conf_mount_ro		
 		exit 1
 	fi

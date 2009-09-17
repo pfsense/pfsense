@@ -701,27 +701,22 @@ function system_generate_lighty_config($filename,
 
 	if($avail > 65 and $avail < 98) {
 		$max_procs = 1;
-		$max_requests = 1;
 	}
 
 	if($avail > 97 and $avail < 128) {
 		$max_procs = 1;
-		$max_requests = 3;
 	}
 
 	if($avail > 127 and $avail < 256) {
 		$max_procs = 1;
-		$max_requests = 5;
 	}
 
 	if($avail > 255 and $avail < 384) {
 		$max_procs = 3;
-		$max_requests = 10;
 	}
 
 	if($avail > 383) {
 		$max_procs = 4;
-		$max_requests = 16;
 	}
 
 	if($captive_portal == true)  {	
@@ -736,8 +731,6 @@ EOC;
 		$bin_environment = <<<EOC
 	"bin-environment" => (
 		"PHP_FCGI_CHILDREN" => "1",
-		"PHP_FCGI_MAX_REQUESTS" => "{$max_requests}",
-        "PHP_FCGI_MAX_REQUESTS" => "{$max_requests}",
 			/*   This problem seems to stem from a little-known issue with PHP: 
 			 *   PHP stops accepting new FastCGI connections after handling 500 requests; 
 			 *   unfortunately, there is a potential race condition during the PHP cleanup

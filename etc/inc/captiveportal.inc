@@ -997,7 +997,9 @@ function captiveportal_write_elements() {
  */
 
 function captiveportal_get_next_ipfw_ruleno($rulenos_start = 10000, $rulenos_range_max = 9899) {
-
+	global $config;
+	if(!isset($config['captiveportal']['enable']))
+		return;
 	$fwrules = "";
 	$matches = "";
 	exec("/sbin/ipfw show", $fwrules);

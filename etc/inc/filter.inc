@@ -1740,26 +1740,9 @@ anchor "firewallout"
 
 EOD;
 
-        /* find out igmpproxy upstream interface name if igmpproxy installed/configured */
-        if (is_array($config['installedpackages']['igmpproxy']['config'])){
-		$igmp_upstr_int_real_name = "";
-                $igmp_cfg =& $config['installedpackages']['igmpproxy']['config'];
-                foreach($igmp_cfg as $igmp_int){
-                        if ($igmp_int['igmptype'] == 'upstream')
-                                $igmp_upstr_int_real_name = $config['interfaces'][$igmp_int['igmpname']]['if'];
-                }
-		if ($igmp_upstr_int_real_name != ""){
-				$ipfrules .= <<<EOD
-# let out IGMP with IP-options
-pass out on $igmp_upstr_int_real_name  all allow-opts keep state label "let out with IP-options on IGMP Upstream interface"
-
-EOD;
-
-		}
-        }
 	$ipfrules .= <<<EOD
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out all keep state label "let out anything from firewall host itself"
+pass out all keep state allow-opts label "let out anything from firewall host itself"
 
 EOD;
 

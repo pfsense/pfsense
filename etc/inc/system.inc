@@ -736,7 +736,17 @@ EOC;
 		$bin_environment = <<<EOC
 	"bin-environment" => (
 		"PHP_FCGI_CHILDREN" => "1",
-		"PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
+		"PHP_FCGI_MAX_REQUESTS" => "{$max_requests}",
+        "PHP_FCGI_MAX_REQUESTS" => "{$max_requests}",
+			/*   This problem seems to stem from a little-known issue with PHP: 
+			 *   PHP stops accepting new FastCGI connections after handling 500 requests; 
+			 *   unfortunately, there is a potential race condition during the PHP cleanup
+			 *   code in which PHP can be shutting down but still have the socket open, so
+			 *   lighty can send request number 501 to PHP and have it "accepted", but then 
+			 *   PHP appears to simply exit, causing a 500 return from lighty. 
+			 */
+			"PHP_FCGI_MAX_REQUESTS" => "500",
+			"PHP_FCGI_CHILDREN" => "50"
 	),
 
 EOC;
@@ -755,14 +765,6 @@ fastcgi.server = ( ".php" =>
 			"socket" => "/tmp/php-fastcgi.socket",
 			"min-procs" => 1,
 			"max-procs" => {$max_procs},
-			/*   This problem seems to stem from a little-known issue with PHP: 
-			 *   PHP stops accepting new FastCGI connections after handling 500 requests; 
-			 *   unfortunately, there is a potential race condition during the PHP cleanup
-			 *   code in which PHP can be shutting down but still have the socket open, so
-			 *   lighty can send request number 501 to PHP and have it "accepted", but then 
-			 *   PHP appears to simply exit, causing a 500 return from lighty. 
-			 */
-			"PHP_FCGI_MAX_REQUESTS" => "500",
 			{$bin_environment}			
 			"bin-path" => "/usr/local/bin/php"
 		)

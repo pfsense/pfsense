@@ -344,52 +344,29 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
         return $iflist;
 }
 
-/* lock configuration file */
 function lock($lock) {
-        global $g, $cfglckkeyconsumers;
-        
-        if (!$lock)
-                die("WARNING: You must give a name as parameter to lock() function.");
-        if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
-                @touch("{$g['tmp_path']}/{$lock}.lock");
-		ini_set('error_reporting', E_NONE);
-        $config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
-        $cfglckkey = sem_get($config_lock_key, 1, 0666, true);
-        $cfglckkeyconsumers++;
-		// Rely on or own logging for errors here.
-        if (!sem_acquire($cfglckkey)) {
-                log_error("WARNING: lock() -  Could not acquire {$lock} lock!");
-				ini_set('error_reporting', E_NONE);
-                sem_remove($cfglckkey);
-				ini_set('error_reporting', E_ALL  & ~E_NOTICE);
-                return NULL;
-        } else if ($g['debug'])
-                log_error("lock() -  Got {$file} lock.");
-		ini_set('error_reporting', E_ALL  & ~E_NOTICE);
-        return $cfglckkey;
+	global $g, $cfglckkeyconsumers;
+	if (!$lock)
+		die("WARNING: You must give a name as parameter to lock() function.");
+	if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
+		@touch("{$g['tmp_path']}/{$lock}.lock");
+	ini_set('error_reporting', E_NONE);
+	$config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
+	$cfglckkey = sem_get($config_lock_key, 1, 0666, true);
+	$cfglckkeyconsumers++;
+	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w+")) {
+		if (flock($fp, LOCK_EX))
+			return $fp;
+		else
+			fclose($fp);
+	}
 }
 
 /* unlock configuration file */
 function unlock($cfglckkey = 0) {
-        global $g, $cfglckkeyconsumers;
-
-        if ($cfglckkey == 0)
-                return;
-
-		ini_set('error_reporting', E_NONE);
-
-        if (!sem_release($cfglckkey))
-                log_error("WARNING: unlock() - Could not unlock lock.");
-        else {
-                if ($g['debug'])
-                        log_error("Released lock.");
-				ini_set('error_reporting', E_NONE);
-                sem_remove($cfglckkey);
-				ini_set('error_reporting', E_ALL  & ~E_NOTICE); 
-        }
-        $cfglckkeyconsumers--;
-
-		ini_set('error_reporting', E_ALL  & ~E_NOTICE);
+	global $g, $cfglckkeyconsumers;
+	flock($cfglckkey, LOCK_UN);
+	return;
 }
 
 /* wrapper for exec() */

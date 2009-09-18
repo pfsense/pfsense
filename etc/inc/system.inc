@@ -748,25 +748,17 @@ function system_generate_lighty_config($filename,
 		$max_procs = 4;
 	}
 
-		if($captive_portal == true)  {	
-			$bin_environment =  <<<EOC
-	        "bin-environment" => (
-	           "PHP_FCGI_CHILDREN" => "16",
-				/*   This problem seems to stem from a little-known issue with PHP: 
-				 *   PHP stops accepting new FastCGI connections after handling 500 requests; 
-				 *   unfortunately, there is a potential race condition during the PHP cleanup
-				 *   code in which PHP can be shutting down but still have the socket open, so
-				 *   lighty can send request number 501 to PHP and have it "accepted", but then 
-				 *   PHP appears to simply exit, causing a 500 return from lighty. 
-				 */
-				"PHP_FCGI_MAX_REQUESTS" => "500",
-				"PHP_FCGI_CHILDREN" => "50"
-	        ), 
+	if($captive_portal == true)  {	
+		$bin_environment =  <<<EOC
+        "bin-environment" => (
+			"PHP_FCGI_MAX_REQUESTS" => "500",
+			"PHP_FCGI_CHILDREN" => "$max_procs"
+        ), 
 EOC;
 
-		} else {
-			$bin_environment = "";
-		}
+	} else {
+		$bin_environment = "";
+	}
 		
 	if($fast_cgi_enable == true) {
 		$module = "\"mod_fastcgi\", \"mod_cgi\"";

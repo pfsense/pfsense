@@ -123,6 +123,9 @@ function captiveportal_configure() {
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius.db");
 		mwexec("/sbin/ipfw table all flush");
 
+		/* setup new database in case someone tries to access the status -> captive portal page */
+		touch("{$g['vardb_path']}/captiveportal.db");
+
 		/* write portal page */
 		if ($config['captiveportal']['page']['htmltext'])
 			$htmltext = base64_decode($config['captiveportal']['page']['htmltext']);

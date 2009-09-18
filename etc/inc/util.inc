@@ -127,9 +127,6 @@ function lock($lock) {
 		die("WARNING: You must give a name as parameter to lock() function.");
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
 		@touch("{$g['tmp_path']}/{$lock}.lock");
-	ini_set('error_reporting', E_NONE);
-	$config_lock_key = ftok("{$g['tmp_path']}/{$lock}.lock", 'a');
-	$cfglckkey = sem_get($config_lock_key, 1, 0666, true);
 	$cfglckkeyconsumers++;
 	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w+")) {
 		if (flock($fp, LOCK_EX))
@@ -143,6 +140,7 @@ function lock($lock) {
 function unlock($cfglckkey = 0) {
 	global $g, $cfglckkeyconsumers;
 	flock($cfglckkey, LOCK_UN);
+	fclose($cfglckkey);
 	return;
 }
 

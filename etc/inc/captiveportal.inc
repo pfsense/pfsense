@@ -963,7 +963,7 @@ function captiveportal_write_elements() {
 function captiveportal_get_next_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_max = 49899) {
 	global $config, $g;
 	if(!isset($config['captiveportal']['enable']))
-		return;
+		return NULL;
 	$ruleno = 0;
 	if (file_exists("{$g['vardb_path']}/captiveportal.nextrule"))
 		$ruleno = intval(file_get_contents("{$g['vardb_path']}/captiveportal.nextrule"));

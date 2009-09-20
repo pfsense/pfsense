@@ -335,16 +335,6 @@ function captiveportal_rules_generate($cpif, &$cpiparray) {
 	$cprules =  "add 500 set 1 allow pfsync from any to any\n";
 	$cprules .= "add 500 set 1 allow carp from any to any\n";
 
-	/* captive portal on LAN interface? */
-	if (stristr($cpifn,  "lan")) {
-		/* add anti-lockout rules */
-		$cprules .= <<<EOD
-add 500 set 1 pass all from $lanip to any out $cpif
-add 501 set 1 pass all from any to $lanip in $cpif
-
-EOD;
-	}
-
 	$cprules .= <<<EOD
 add 1000 set 1 skipto 1150 all from any to any not layer2
 # layer 2: pass ARP

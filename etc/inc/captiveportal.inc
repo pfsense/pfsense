@@ -203,8 +203,6 @@ EOD;
 
 		/* load rules */
 		mwexec("/sbin/ipfw -f delete set 1");
-		mwexec("/sbin/ipfw -f delete set 2");
-		mwexec("/sbin/ipfw -f delete set 3");
 
 		/* ipfw cannot accept rules directly on stdin,
 		   so we have to write them to a temporary file first */

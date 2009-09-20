@@ -324,22 +324,29 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
         if ($peruserbw && !empty($bw_up) && is_numeric($bw_up)) {
             $bw_up_pipeno = $ruleno + 20000;
             mwexec("/sbin/ipfw pipe $bw_up_pipeno config bw {$bw_up}Kbit/s queue 100");
-	    mwexec("/sbin/ipfw table 3 add {$clientip} {$bw_up_pipeno}");
+
+	    if (!isset($config['captiveportal']['nomacfilter']))
+		mwexec("/sbin/ipfw table 3 add {$clientip} mac {$clientmac} {$bw_up_pipeno}");
+	    else
+	    	mwexec("/sbin/ipfw table 3 add {$clientip} {$bw_up_pipeno}");
         } else {
-            mwexec("/sbin/ipfw table 3 add {$clientip}");
+	    if (!isset($config['captiveportal']['nomacfilter']))
+		mwexec("/sbin/ipfw table 3 add {$clientip} mac {$clientmac}");
+	    else
+            	mwexec("/sbin/ipfw table 3 add {$clientip}");
         }
         if ($peruserbw && !empty($bw_down) && is_numeric($bw_down)) {
             $bw_down_pipeno = $ruleno + 20001;
             mwexec("/sbin/ipfw pipe $bw_down_pipeno config bw {$bw_down}Kbit/s queue 100");
-	    mwexec("/sbin/ipfw table 4 add {$clientip} {$bw_down_pipeno}");
+	    if (!isset($config['captiveportal']['nomacfilter']))
+                mwexec("/sbin/ipfw table 4 add {$clientip} mac {$clientmac} {$bw_down_pipeno}");
+            else
+                mwexec("/sbin/ipfw table 4 add {$clientip} {$bw_down_pipeno}");
         } else {
-            mwexec("/sbin/ipfw table 4 add {$clientip}");
-        }
-
-        /* add ipfw rules for layer 2 */
-        if (!isset($config['captiveportal']['nomacfilter'])) {
-            exec("/sbin/ipfw add $ruleno set 3 deny all from $clientip to any not MAC any $clientmac layer2 in");
-            exec("/sbin/ipfw add $ruleno set 3 deny all from any to $clientip not MAC $clientmac any layer2 out");
+            if (!isset($config['captiveportal']['nomacfilter']))
+                mwexec("/sbin/ipfw table 4 add {$clientip} mac {$clientmac}");
+            else
+                mwexec("/sbin/ipfw table 4 add {$clientip}");
         }
 
 	if ($attributes['voucher'])

@@ -362,8 +362,6 @@ add 1100 set 1 pass layer2 mac-type 0x888e
 
 # layer 2: block anything else non-IP
 add 1101 set 1 deny layer2 not mac-type ip
-# layer 2: check if MAC addresses of authenticated clients are correct
-add 1102 set 1 skipto 2000 layer2
 
 EOD;
 
@@ -400,14 +398,14 @@ EOD;
 	$rulenum++;
 
 	if (isset($config['captiveportal']['peruserbw'])) {
-		$cprules .= "add {$rulenum} set 2 pipe tablearg ip from table(3) to any in\n";
+		$cprules .= "add {$rulenum} set 1 pipe tablearg ip from table(3) to any in\n";
 		$rulenum++;
-		$cprules .= "add {$rulenum} set 2 pipe tablearg ip from any to table(4) out\n";
+		$cprules .= "add {$rulenum} set 1 pipe tablearg ip from any to table(4) out\n";
 		$rulenum++;
 	} else {
-		$cprules .= "add {$rulenum} set 2 skipto 50000 ip from table(3) to any in\n";
+		$cprules .= "add {$rulenum} set 1 skipto 50000 ip from table(3) to any in\n";
                 $rulenum++;
-                $cprules .= "add {$rulenum} set 2 skipto 50000 ip from any to table(4) out\n";
+                $cprules .= "add {$rulenum} set 1 skipto 50000 ip from any to table(4) out\n";
                 $rulenum++;
 	}
 	
@@ -615,8 +613,6 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	/* Delete client's ip entry from tables 3 and 4. */
 	mwexec("/sbin/ipfw table 3 delete {$dbent[2]}");
 	mwexec("/sbin/ipfw table 4 delete {$dbent[2]}");
-	/* Delete client's ruleno */
-	mwexec("/sbin/ipfw delete {$dbent[1]}");
 
 	/* 
 	* These are the pipe numbers we use to control traffic shaping for each logged in user via captive portal

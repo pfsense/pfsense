@@ -90,13 +90,13 @@ function filter_load_ipfw()
 		 * make sure ipfw is the first hook to make CP and schedules work
 		 * correctly on Multi-WAN.
 		 */
-		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"ipfw,pf\"");
+		mwexec("/sbin/sysctl net.inet.ip.pfil.inbound=\"pf\"");
 		/*
 		 * TODO: Check if disabling ipfw hook
 		 * does not break accounting on CP.
 		 * XXX Not sure if we really do outbound filtering with ipfw!
 		 */
-		mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"ipfw,pf\"");
+		mwexec("/sbin/sysctl net.inet.ip.pfil.outbound=\"pf\"");
 	}
 	
 	/* Set ipfw state limit */

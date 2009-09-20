@@ -173,6 +173,14 @@ if (isset($config['system']['developer'])) {
 }
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
 
+$help_menu = array();
+$help_menu[] = array("Forum", "http://www.pfsense.org/j.php?jumpto=forum");
+$help_menu[] = array("Doc Site", "http://www.pfsense.org/j.php?jumpto=doc");
+$help_menu[] = array("DevWiki", "http://www.pfsense.org/j.php?jumpto=devwiki");
+$help_menu[] = array("Commercial Support", "http://www.pfsense.org/j.php?jumpto=portal");
+$help_menu[] = array("Book", "http://www.reedmedia.net/books/pfsense/");
+$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);
+
 /* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */
 if ($_REQUEST['noticeaction'] == 'acknowledge') {
 	$notice_id = $_REQUEST['noticeid'];
@@ -305,11 +313,19 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						?>
 						</ul>
 					</li>
-					<li class="lastdrop">
+					<li class="drop">
 						<div>Diagnostics</div>
 						<ul id="diag" class="subdrop">
 						<?
 							output_menu($diagnostics_menu);
+						?>
+						</ul>
+					</li>
+					<li class="lastdrop">
+						<div>Help</div>
+						<ul id="help" class="subdrop">
+						<?
+							output_menu($help_menu);
 						?>
 						</ul>
 					</li>

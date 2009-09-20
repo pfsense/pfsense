@@ -177,7 +177,7 @@ $help_menu = array();
 $help_menu[] = array("Forum", "http://www.pfsense.org/j.php?jumpto=forum");
 $help_menu[] = array("Doc Site", "http://www.pfsense.org/j.php?jumpto=doc");
 $help_menu[] = array("DevWiki", "http://www.pfsense.org/j.php?jumpto=devwiki");
-$help_menu[] = array("Commercial Support", "http://www.pfsense.org/j.php?jumpto=portal");
+$help_menu[] = array("Support", "http://www.pfsense.org/j.php?jumpto=portal");
 $help_menu[] = array("Book", "http://www.reedmedia.net/books/pfsense/");
 $help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);
 

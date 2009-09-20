@@ -978,7 +978,7 @@ function filter_nat_rules_generate()
                         else
                                 $natif = $rule['interface'];
 			if (alias_expand($rule['external-address']))
-				$extaddr = alias_expand($extaddr);
+				$extaddr = alias_expand($rule['external-address']);
 			else if ($rule['external-address'] <> "")
 				$extaddr = $rule['external-address'];
 			else

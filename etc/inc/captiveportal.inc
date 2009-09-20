@@ -749,12 +749,12 @@ function captiveportal_allowedip_configure() {
 			}
 		}
 		if ($tableone == true) {
-			mwexec("/sbin/ipfw add 1890 set 2 skipto 50000 ip from table\(1\) to any in");
-			mwexec("/sbin/ipfw add 1891 set 2 skipto 50000 ip from any to table\(1\) out");
+			mwexec("/sbin/ipfw add 1890 set 1 skipto 50000 ip from table\(1\) to any in");
+			mwexec("/sbin/ipfw add 1891 set 1 skipto 50000 ip from any to table\(1\) out");
 		}
 		if ($tabletwo == true) {
-			mwexec("/sbin/ipfw add 1892 set 2 skipto 50000 ip from any to table\(2\) in");
-			mwexec("/sbin/ipfw add 1893 set 2 skipto 50000 ip from table\(2\) to any out");
+			mwexec("/sbin/ipfw add 1892 set 1 skipto 50000 ip from any to table\(2\) in");
+			mwexec("/sbin/ipfw add 1893 set 1 skipto 50000 ip from table\(2\) to any out");
 		}
 	}
 

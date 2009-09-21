@@ -1798,8 +1798,8 @@ if(!function_exists("split")) {
 	}
 }
 
-function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb, $new_alias_name) {
-	global $g, $config, $pconfig, $origname, $debug;
+function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb, $new_alias_name, $origname) {
+	global $g, $config, $pconfig, $debug;
 	if(!$origname) 
 		return;
 

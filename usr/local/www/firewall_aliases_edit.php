@@ -257,14 +257,14 @@ if ($_POST) {
 		 */
 		if ($_POST['name'] <> $_POST['origname']) {
 			// Firewall rules
-			update_alias_names_upon_change('filter', 'rule', 'source', 'address', $_POST['name']);
-			update_alias_names_upon_change('filter', 'rule', 'destination', 'address', $_POST['name']);
+			update_alias_names_upon_change('filter', 'rule', 'source', 'address', $_POST['name'], $origname);
+			update_alias_names_upon_change('filter', 'rule', 'destination', 'address', $_POST['name'], $origname);
 			// NAT Rules
-			update_alias_names_upon_change('nat', 'rule', 'target', '', $_POST['name']);
-			update_alias_names_upon_change('nat', 'rule', 'external-port', '', $_POST['name']);
-			update_alias_names_upon_change('nat', 'rule', 'local-port', ''	, $_POST['name']);
+			update_alias_names_upon_change('nat', 'rule', 'target', '', $_POST['name'], $origname);
+			update_alias_names_upon_change('nat', 'rule', 'external-port', '', $_POST['name'], $origname);
+			update_alias_names_upon_change('nat', 'rule', 'local-port', ''	, $_POST['name'], $origname);
 			// Alias in an alias
-			update_alias_names_upon_change('aliases', 'alias', 'address', ''	, $_POST['name']);
+			update_alias_names_upon_change('aliases', 'alias', 'address', ''	, $_POST['name'], $origname);
 		}
 
 		if (isset($id) && $a_aliases[$id]) {

@@ -310,7 +310,8 @@ EOD;
 		mwexec("/sbin/sysctl net.link.ether.ipfw=0");
 
 		/* unload ipfw */
-		mwexec("/sbin/kldunload ipfw.ko");
+		if (is_module_loaded("ipfw.ko"))		
+			mwexec("/sbin/kldunload ipfw.ko");
 		$listifs = get_configured_interface_list_by_realif();
 		foreach ($listifs as $listrealif => $listif)
 			mwexec("/sbin/ifconfig {$listrealif} -ipfwfilter");

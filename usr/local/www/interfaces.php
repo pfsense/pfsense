@@ -290,7 +290,7 @@ if ($_POST) {
 			$input_errors[] = "An interface with the specified description already exists.";
 	}
 	/* input validation */
-	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]) && $_POST['type'] != "static")
+	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && $_POST['type'] != "static")
 		$input_errors[] = "Dhcpd service is active on this interface and it can be used only with a static ip configuration. Please disable the service first and than change the interface configuration.";
 
 	if ($_POST['type'] == "static") {

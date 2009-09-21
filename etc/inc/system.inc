@@ -445,8 +445,7 @@ function system_syslogd_start() {
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= <<<EOD
 local0.*										 {$log_directive}{$g['varlog_path']}/filter.log
-!mpd
-*.*										 {$log_directive}{$g['varlog_path']}/vpn.log
+local3.*										 {$log_directive}{$g['varlog_path']}/vpn.log
 local4.*										 {$log_directive}{$g['varlog_path']}/portalauth.log
 local7.*										 {$log_directive}{$g['varlog_path']}/dhcpd.log
 *.notice;kern.debug;lpr.info;mail.crit; 		 {$log_directive}{$g['varlog_path']}/system.log

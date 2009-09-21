@@ -60,37 +60,6 @@ if($_POST)
 if($debug)
 	exec("rm -f {$g['tmp_path']}/alias_rename_log.txt");
 
-function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb, $new_alias_name) {
-	global $g, $config, $pconfig, $origname, $debug;
-	if(!$origname) 
-		return;
-
-	if($debug) $fd = fopen("{$g['tmp_path']}/print_r", "a");
-	if($debug) fwrite($fd, print_r($pconfig, true));
-
-	if($fieldb) {
-		if($debug) fwrite($fd, "fieldb exists\n");
-		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
-			if($debug) fwrite($fd, "$i\n");
-			if($config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] == $origname) {
-				if($debug) fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
-				$config["$section"]["$subsection"][$i]["$fielda"]["$fieldb"] = $new_alias_name;
-			}
-		}	
-	} else {
-		if($debug) fwrite($fd, "fieldb does not exist\n");
-		for ($i = 0; isset($config["$section"]["$subsection"][$i]["$fielda"]); $i++) {
-			if($config["$section"]["$subsection"][$i]["$fielda"] == $origname) {
-				$config["$section"]["$subsection"][$i]["$fielda"] = $new_alias_name;
-				if($debug) fwrite($fd, "Setting old alias value $origname to $new_alias_name\n");
-			}
-		}
-	}
-
-	if($debug) fclose($fd);
-
-}
-
 function alias_same_type($name, $type) {
 	global $config;
 	

@@ -318,6 +318,24 @@ if ($_POST) {
 									if(is_array($ifdescrs))
 										foreach($ifdescrs as $iface)
 											$config['interfaces'][$iface]['descr'] = remove_bad_chars($config['interfaces'][$iface]['descr']);
+									/* check for interface names with an alias */
+									if(is_array($ifdescrs)) {
+										foreach($ifdescrs as $iface) {
+											if(is_alias($config['interfaces'][$iface]['descr'])) {
+												// Firewall rules
+												$origname = $config['interfaces'][$iface]['descr'];
+												$newname  = $config['interfaces'][$iface]['descr'] . "Alias";
+												update_alias_names_upon_change('filter', 'rule', 'source', 'address', $newname);
+												update_alias_names_upon_change('filter', 'rule', 'destination', 'address', $newname);
+												// NAT Rules
+												update_alias_names_upon_change('nat', 'rule', 'target', '', $newname);
+												update_alias_names_upon_change('nat', 'rule', 'external-port', '', $newname);
+												update_alias_names_upon_change('nat', 'rule', 'local-port', '', $newname);
+												// Alias in an alias
+												update_alias_names_upon_change('aliases', 'alias', 'address', '', $newname);
+											}
+										}
+									}
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									// Reset configuration version to something low
 									// in order to force the config upgrade code to 

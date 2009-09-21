@@ -176,11 +176,11 @@ if (isset($config['system']['developer'])) {
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
 
 $help_menu = array();
-$help_menu[] = array("Forum", "http://www.pfsense.org/j.php?jumpto=forum");
+$help_menu[] = array("User Forum", "http://www.pfsense.org/j.php?jumpto=forum");
 $help_menu[] = array("Documentation", "http://www.pfsense.org/j.php?jumpto=doc");
-$help_menu[] = array("DevWiki", "http://www.pfsense.org/j.php?jumpto=devwiki");
-$help_menu[] = array("Support", "http://www.pfsense.org/j.php?jumpto=portal");
-$help_menu[] = array("Book", "http://www.reedmedia.net/books/pfsense/");
+$help_menu[] = array("Developers Wiki", "http://www.pfsense.org/j.php?jumpto=devwiki");
+$help_menu[] = array("Paid Support", "http://www.pfsense.org/j.php?jumpto=portal");
+$help_menu[] = array("pfSense Book", "http://www.reedmedia.net/books/pfsense/");
 $help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);
 
 /* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */

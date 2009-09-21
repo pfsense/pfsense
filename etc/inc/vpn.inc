@@ -43,6 +43,7 @@
 
 /* include all configuration functions */
 require_once ("functions.inc");
+require_once("certs.inc");
 
 function vpn_ipsec_failover_configure() {
 	global $config, $g;

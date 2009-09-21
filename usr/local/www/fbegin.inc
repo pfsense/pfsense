@@ -40,9 +40,11 @@ function return_ext_menu($section) {
 	return $extarray;
 }
 
-function output_menu($arrayitem) {
+function output_menu($arrayitem, $target="") {
 	foreach($arrayitem as $item) {
-		echo '<li><a href="' . $item[1] . ' "class="navlnk">' . $item[0] . '</a></li>' . "\n";
+		if($target)
+			$targetinfo = "target='{$target}'";
+		echo '<li><a ' . $targetinfo. ' href="' . $item[1] . ' "class="navlnk">' . $item[0] . '</a></li>' . "\n";
 	}
 }
 
@@ -325,7 +327,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>Help</div>
 						<ul id="help" class="subdrop">
 						<?
-							output_menu($help_menu);
+							output_menu($help_menu, "_new");
 						?>
 						</ul>
 					</li>

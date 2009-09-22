@@ -89,7 +89,7 @@ echo " 8)  Shell"
 echo " 9)  PFtop"
 echo "10)  Filter Logs"
 echo "11)  Restart webConfigurator"
-echo "12)  ${product} developer shell"
+echo "12)  ${product} Developer Shell"
 echo "13)  Upgrade from console"
 SSHD=`netstat -an | grep "*.22" | wc -l`
 if [ "$SSHD" -gt 0 ]; then

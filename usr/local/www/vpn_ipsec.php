@@ -116,7 +116,7 @@ $pgtitle = array("VPN","IPsec");
 include("head.inc");
 
 // Sort items
-$a_phase1 = asort($a_phase1, "descr");
+#$a_phase1 = asort($a_phase1, "descr");
 
 ?>
 

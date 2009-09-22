@@ -58,7 +58,7 @@ if($command_split[2]) {
 		foreach($branches as $branchname => $branchdesc) {
 			echo "{$branchname} \t {$branchdesc}\n";
 		}
-		echo "\nOr alternatively you may enter a custom branch URL.\n\n";
+		echo "\nOr alternatively you may enter a custom RCS branch URL (HTTP).\n\n";
 		$branch = readline("> ");
 		echo "\n";
 	} else {

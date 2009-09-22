@@ -453,7 +453,7 @@ function filter_get_vpns_list() {
 	if (isset($config['ipsec']['enable']))
 		if (is_array($config['ipsec']['phase2']))
 			foreach ($config['ipsec']['phase2'] as $ph2ent)
-				if(!$ph2ent['mobile'])
+				if(!$ph2ent['mobile'] and !$ph2ent['mode']=='transport')
 					$vpns_arr[] = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
 	/* openvpn */
 	foreach (array('client', 'server') as $type)

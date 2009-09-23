@@ -242,7 +242,7 @@ function vpn_ipsec_configure($ipchg = false)
 					log_error("Error: Invalid certificate hash info for {$ca['name']}");
 					continue;
 				}
-				$fname = $g['varetc_path']."/".$x509cert['hash'];
+				$fname = $g['varetc_path']."/".$x509cert['hash'].".0";
 				if (!file_put_contents($fname, $cert)) {
 					log_error("Error: Cannot write IPsec CA file for {$ca['name']}");
 					continue;
@@ -527,7 +527,7 @@ function vpn_ipsec_configure($ipchg = false)
 						$keyfile = "cert-".$ikeid.".key";
 						$keypath = $g['varetc_path']."/".$keyfile;
 
-						if (!file_put_contents($keypath, base64_decode($cert['crt'])))
+						if (!file_put_contents($keypath, base64_decode($cert['prv'])))
 						{
 							log_error("Error: Cannot write phase1 key file for {$ph1ent['name']}");
 							continue;
@@ -535,7 +535,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 						chmod($keypath, 0600);
 
-						$certline = "certificate_type x509 \"{$certpath}\" \"{$keypath}.key\";";
+						$certline = "certificate_type x509 \"".basename($certpath)."\" \"".basename($keypath)."\";";
 					}
 
 					$ealgos = '';
@@ -606,7 +606,7 @@ EOD;
 					if (isset($ph2ent['mobile']) && !isset($a_client['enable']))
 						continue;
 
-					if ($ph2ent['mode'] == 'tunnel' or $ph2ent['mode'] == 'transport') {
+					if ($ph2ent['mode'] == 'tunnel') {
 
 						$localid_type = $ph2ent['localid']['type'];
 						if ($localid_type != "address")
@@ -630,9 +630,11 @@ EOD;
 						$rgip = $rgmap[$ph1ent['remote-gateway']];
 
 						$localid_data = ipsec_get_phase1_src($ph1ent);
+						if($ph2ent['mode'] == 'transport') { $localid_data="$localid_data any"; }
 						$localid_spec = "address {$localid_data}";
 
 						$remoteid_data = $rgmap[$ph1ent['remote-gateway']];
+						if($ph2ent['mode'] == 'transport') { $remoteid_data="$remoteid_data any"; }
 						$remoteid_spec = "address {$remoteid_data}";
 					}
 
@@ -792,11 +794,14 @@ EOD;
 
 				} else {
 
-					$spdconf .= "spdadd {$localid} {$remoteid} any -P out ipsec " .
-						"{$ph2ent['protocol']}/transport//unique;\n";
+					$localid_data = ipsec_get_phase1_src($ph1ent);
+					$remoteid_data = $rgmap[$ph1ent['remote-gateway']];
 
-					$spdconf .= "spdadd {$remoteid} {$localid} any -P in ipsec " .
-						"{$ph2ent['protocol']}/transport//unique;\n";
+					$spdconf .= "spdadd {$localid_data} {$remoteid_data} any -P out ipsec " .
+						"{$ph2ent['protocol']}/transport//require;\n";
+
+					$spdconf .= "spdadd {$remoteid_data} {$localid_data} any -P in ipsec " .
+						"{$ph2ent['protocol']}/transport//require;\n";
 
 				}
 

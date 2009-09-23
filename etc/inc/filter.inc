@@ -1370,8 +1370,10 @@ function filter_generate_user_rule($rule)
 	
 	/* source address */
 	$src = filter_generate_address($rule, "source");
-	if (empty($src) || ($src == "/")) 
+	if (empty($src) || ($src == "/")) {
+		file_put_contents('/tmp/rule_src.array', print_r($rule, 1));
 		return "# at the break!";
+	}
 	$aline['src'] = " from $src ";
 
 	/* OS signatures */
@@ -1380,8 +1382,10 @@ function filter_generate_user_rule($rule)
 
 	/* destination address */
 	$dst = filter_generate_address($rule, "destination");
-	if (empty($dst) || ($dst == "/"))
+	if (empty($dst) || ($dst == "/")) {
+		file_put_contents('/tmp/rule_dst.array', print_r($rule, 1));
 		return "# returning at dst $dst == \"/\"";
+	}
 	$aline['dst'] = "to $dst ";
 
 	//Layer7 support

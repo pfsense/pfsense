@@ -40,7 +40,7 @@ ini_set('max_input_time', '9999');
 require_once("guiconfig.inc");
 require_once("config.inc");
 
-$pgtitle = array("Diagnostics","NanoBSD");
+$pgtitle = "Diagnostics: NanoBSD";
 include("head.inc");
 
 $BOOT_DEVICE=trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`);
@@ -178,6 +178,7 @@ if ($savemsg)
 	print_info_box($savemsg)
 
 ?>
+<p class="pgtitle"><?=$pgtitle?></font></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>

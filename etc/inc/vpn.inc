@@ -606,7 +606,7 @@ EOD;
 					if (isset($ph2ent['mobile']) && !isset($a_client['enable']))
 						continue;
 
-					if ($ph2ent['mode'] == 'tunnel') {
+					if ($ph2ent['mode'] == 'tunnel' or $ph2ent['mode'] == 'transport') {
 
 						$localid_type = $ph2ent['localid']['type'];
 						if ($localid_type != "address")

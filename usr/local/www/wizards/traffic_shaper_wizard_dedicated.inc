@@ -251,10 +251,8 @@ function step2_stepsubmitphpaction() {
 				$upbw = $_POST["conn{$i}upload"];
 				$downbw = $_POST["conn{$i}download"];
 				if ($upbw == 0 || $downbw = 0) {
-                                        $message = gettext("You cannot specify 0 bandwidth!")
-;
-                                        header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=1&message
-={$message}");
+                                        $message = gettext("You cannot specify 0 bandwidth!");
+                                        header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=1&message={$message}");
                                         exit;
                                 }
 				if (intval($upbw) < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}scheduler"]) == "CBQ") {
@@ -285,8 +283,6 @@ function step2_stepsubmitphpaction() {
 		$config['ezshaper']['step2']["conn${i}interface"] = $_POST["conn{$i}interface"];
     }
 
-	/* Not needed, called by wizard.php */
-//	write_config();
 }
 
 function step3_stepbeforeformdisplay() {
@@ -497,7 +493,7 @@ function step4_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=3&message={$message}");	
 				exit;
 			}
-/*
+
 			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=3&message={$message}");
@@ -509,7 +505,6 @@ function step4_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=3&message={$message}");
 				exit;
 			}
-*/		
 
 			if($_POST['address'] <> "" && !is_ipaddr($_POST['address'])) {
 				if(!is_alias($_POST['address'])) {
@@ -523,7 +518,6 @@ function step4_stepsubmitphpaction() {
 }
 
 function step5_stepsubmitphpaction() {
-
 	if ( $_POST['enable'] ) {
 		if (isset($_POST['bandwidth']) && $_POST['bandwidth'] <> "") {
 			if(!is_numeric($_POST['bandwidth'])) {
@@ -531,19 +525,17 @@ function step5_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=4&message={$message}");
 
 			}
-/*
 			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=4&message={$message}");
 					exit;
 			}
-		$bw = wizard_get_bw($_POST['bandwidth']);
-		if($bw > 15 && $bw < 2) {
-			$message="Values should be between 2% and 15%!";
-			header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=3&message={$message}");
-			exit;
-		}
-*/
+			$bw = wizard_get_bw($_POST['bandwidth']);
+			if($bw > 15 && $bw < 2) {
+				$message="Values should be between 2% and 15%!";
+				header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=3&message={$message}");
+				exit;
+			}
 		} 
 	}
 }
@@ -570,6 +562,7 @@ function step8_stepsubmitphpaction() {
 		/* Head over and check out the groovy queue stats */
 		header("Location: status_filter_reload.php");
 }
+
 function step9_stepsubmitphpaction() {
 	global $g, $config;
 	header("status_filter_reload.php");
@@ -1007,15 +1000,14 @@ $othersplist = array();
 			}	
 			//echo "<br/>" .$remainbw . " <br/>";
 			$remainbw = round($remainbw / $upbw * 100, 2);
-			/*echo $remainbw;
+
 			if (intval($remainbw) > 0 && intval($remainbw) > 30) {
 				$message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=2&message={$message}");
 				exit;
 			} else {
-			*/
-				$remainbw = 100 - $remainbw;
-			//}
+				$remainbw = 100 - $remainbw;	
+			}
 
                         if ($sched != "PRIQ") {
                         if ($sched == "CBQ")
@@ -1415,15 +1407,13 @@ $othersplist = array();
 				$otherpriority = false;
 			}	
 			$remainbw = round($remainbw / $downbw * 100, 2);
-			/*echo $remainbw;
 			if (intval($remainbw) > 0 && intval($remainbw) > 40) {
 				$message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=2&message={$message}");
 				exit;
 			} else {
-			*/
 				$remainbw = 100 - $remainbw;
-			//}
+			}
 
                         if ($sched != "PRIQ") {
                         if ($sched == "CBQ")

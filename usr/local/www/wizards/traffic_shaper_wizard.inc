@@ -242,24 +242,22 @@ function step2_stepsubmitphpaction() {
 				$upbw = $_POST["conn{$i}upload"];
 				$downbw = $_POST["conn{$i}download"];
 				if ($upbw == 0 || $downbw = 0) {
-                                        $message = gettext("You cannot specify 0 bandwidth!")
-;
-                                        header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message
-={$message}");
+                                        $message = gettext("You cannot specify 0 bandwidth!");
+                                        header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
                                         exit;
                                 }
-/*
+
 				if ($upbw < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}scheduler"]) == "CBQ") {
 					$message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
 						exit;
 				}
 				if ($downbw < 128 && $_POST["conn{$i}downloadspeed"] == "Kb" && trim($_POST["downloadscheduler"]) == "CBQ") {
-                                        $message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
-                                        header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
-                                                exit;
-                                }
-*/
+					$message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
+					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
+					exit;
+				}
+
 			}
 	}		
 	/* This is necessary since the wizard expects predefined fields. */
@@ -486,7 +484,7 @@ function step4_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");	
 				exit;
 			}
-/*
+
 			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
@@ -498,7 +496,6 @@ function step4_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
 				exit;
 			}
-*/		
 
 			if($_POST['address'] <> "" && !is_ipaddr($_POST['address'])) {
 				if(!is_alias($_POST['address'])) {
@@ -520,7 +517,7 @@ function step5_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
 
 			}
-/*
+
 			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
@@ -532,7 +529,7 @@ function step5_stepsubmitphpaction() {
 			header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
 			exit;
 		}
-*/
+
 		} 
 	}
 }
@@ -997,15 +994,14 @@ $othersplist = array();
 				$otherpriority = false;
 			}	
 			$remainbw = round($remainbw / $upbw * 100, 2);
-			/*
+
 			if ($remainbw > 0 && $remainbw > 30) {
 				$message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
 				exit;
 			} else {
-			*/
 				$remainbw = 100 - $remainbw;
-			//}
+			}
 
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();
@@ -1365,15 +1361,14 @@ $othersplist = array();
 				$otherpriority = false;
 			}	
 			$remainbw = round($remainbw / $lanbw * 100, 2);
-			/*
+
 			if ($remainbw > 0 && $remainbw > 30) {
 				$message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
 				exit;
 			} else {
-			*/
 				$remainbw = 100 - $remainbw;
-			//}
+			}
 
                         if ($sched != "PRIQ") {
                         	if ($sched == "CBQ")

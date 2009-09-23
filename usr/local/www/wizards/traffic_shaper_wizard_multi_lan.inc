@@ -288,7 +288,7 @@ function step3_stepsubmitphpaction() {
 			}
 		}
 	}
-/*
+
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
 		if ($_POST["connupload"]) {
@@ -308,7 +308,6 @@ function step3_stepsubmitphpaction() {
 			}	
 		}
 	}
-*/
 }
 
 function step4_stepsubmitphpaction() {
@@ -325,7 +324,7 @@ function step4_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");	
 				exit;
 			}
-/*
+
 			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");
@@ -337,7 +336,6 @@ function step4_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");
 				exit;
 			}
-*/		
 
 			if($_POST['address'] <> "" && !is_ipaddr($_POST['address'])) {
 				if(!is_alias($_POST['address'])) {
@@ -351,7 +349,6 @@ function step4_stepsubmitphpaction() {
 }
 
 function step5_stepsubmitphpaction() {
-
 	if ( $_POST['enable'] ) {
 		if (isset($_POST['bandwidth']) && $_POST['bandwidth'] <> "") {
 			if(!is_numeric($_POST['bandwidth'])) {
@@ -359,19 +356,17 @@ function step5_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=4&message={$message}");
 
 			}
-/*
 			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=4&message={$message}");
 					exit;
 			}
-		$bw = wizard_get_bw($_POST['bandwidth']);
-		if($bw > 15 && $bw < 2) {
-			$message="Values should be between 2% and 15%!";
-			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");
-			exit;
-		}
-*/
+			$bw = wizard_get_bw($_POST['bandwidth']);
+			if($bw > 15 && $bw < 2) {
+				$message="Values should be between 2% and 15%!";
+				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=3&message={$message}");
+				exit;
+			}
 		} 
 	}
 }
@@ -829,15 +824,13 @@ function apply_all_choosen_items() {
 		}	
 
 		$remainbw = round($remainbw / $upbw * 100, 2);
-		/*
 		if ($remainbw > 0 && $remainbw > 30) {
 			$message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=2&message={$message}");
 			exit;
 		} else {
-		*/
 			$remainbw = 100 - $remainbw;
-		//}
+		}
 
 		if ($sched != "PRIQ") {
 			if ($sched == "CBQ")
@@ -1238,15 +1231,13 @@ function apply_all_choosen_items() {
 			$otherpriority = false;
 		}	
 		$remainbw = round($remainbw / $lanbw * 100, 2);
-		/*
 		if ($remainbw > 0 && $remainbw > 30) {
 			$message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=2&message={$message}");
 			exit;
 		} else {
-		*/
 			$remainbw = 100 - $remainbw;
-		//}
+		}
 
 
 		if ($sched == "PRIQ")

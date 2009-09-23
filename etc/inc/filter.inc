@@ -623,13 +623,23 @@ function filter_generate_reflection($rule, $extport, &$starting_localhost_port) 
 			/* do not process interfaces with gateways*/
 			if (interface_has_gateway($ifent))
 				continue;
-			if($extport[1])
+
+			if($extport[1]) {
 				$range_end = ($extport[1]);
-			else
+			} else {
 				$range_end = ($extport[0]);
+			}
 			$range_end++;
+			if (alias_expand($rule['external-address'])) {
+				$extaddr = alias_expand($extaddr);
+			} else if ($rule['external-address'] <> "") {
+				$extaddr = $rule['external-address'];
+			} else {
+				$extaddr = $FilterIflist[$rule['interface']]['ip'];
+			}
 			if($rule['local-port'])
 				$lrange_start = $rule['local-port'];
+
 			if($range_end - $extport[0] > 500) {
 				$range_end = $extport[0]+1;
 				log_error("Not installing nat reflection rules for a port range > 500");

@@ -1687,6 +1687,18 @@ function setup_bridge() {
 		foreach ($bridgearray[$x] as $bridgeif) {
 			mwexec("/sbin/ifconfig {$bridgeif} up");
 			fwrite($fd, "/sbin/ifconfig {$bridgeif} up \n");
+			if($wirelessbridge) {
+				// disable checksum offloading when a wireless interface is bridged
+				// but only do so on wired interfaces, wireless don't have checksum offload
+				// redmine ticket #88
+				$friendlyifname = convert_real_interface_to_friendly_interface_name($bridgeif);
+				if(!is_interface_wireless($friendlyifname)) {
+					mwexec("/sbin/ifconfig {$bridgeif} -txcsum");
+					mwexec("/sbin/ifconfig {$bridgeif} -rxcsum");
+					fwrite($fd, "/sbin/ifconfig {$bridgeif} -txcsum \n");
+					fwrite($fd, "/sbin/ifconfig {$bridgeif} -rxcsum \n");
+				}				
+			}
 		}
 		
 		// setup the bridge

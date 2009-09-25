@@ -1258,7 +1258,7 @@ function reload_tunnel_spd_policy($tunnel, $oldtunnel) {
 	$spdconf = "";
 
 	/* Delete old SPD policies if there are changes between the old and new */
-	if(($tunnel != $oldtunnel) && (is_ipaddr($oldgw))) {
+ 	if(($tunnel != $oldtunnel) && (is_ipaddr($oldgw)) || $tunnel['disabled']) {
 		$spdconf .= "spddelete {$oldsa}/{$oldsn} " .
 			"{$oldtunnel['remote-subnet']} any -P out ipsec " .
 			"{$oldtunnel['p2']['protocol']}/tunnel/{$oldep}-" .
@@ -1279,25 +1279,27 @@ function reload_tunnel_spd_policy($tunnel, $oldtunnel) {
 		}
 	}
 
-	/* Create new SPD entries for the new configuration */
-	/* zap any existing SA entries beforehand */
-	foreach($sad_arr as $sad) {
-		if(($sad['dst'] == $ep) && ($sad['src'] == $rgip)) {
-			$spdconf .= "delete {$rgip} {$ep} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+	if (!$tunnel['disabled']){
+		/* Create new SPD entries for the new configuration */
+		/* zap any existing SA entries beforehand */
+		foreach($sad_arr as $sad) {
+			if(($sad['dst'] == $ep) && ($sad['src'] == $rgip)) {
+				$spdconf .= "delete {$rgip} {$ep} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+			}
+			if(($sad['src'] == $ep) && ($sad['dst'] == $rgip)) {
+				$spdconf .= "delete {$ep} {$rgip} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
+			}
 		}
-		if(($sad['src'] == $ep) && ($sad['dst'] == $rgip)) {
-			$spdconf .= "delete {$ep} {$rgip} {$tunnel['p2']['protocol']} 0x{$sad['spi']};\n";
-		}
+		/* add new SPD policies to replace them */
+		$spdconf .= "spdadd {$sa}/{$sn} " .
+			"{$tunnel['remote-subnet']} any -P out ipsec " .
+			"{$tunnel['p2']['protocol']}/tunnel/{$ep}-" .
+			"{$rgip}/unique;\n";
+		$spdconf .= "spdadd {$tunnel['remote-subnet']} " .
+			"{$sa}/{$sn} any -P in ipsec " .
+			"{$tunnel['p2']['protocol']}/tunnel/{$rgip}-" .
+			"{$ep}/unique;\n";
 	}
-	/* add new SPD policies to replace them */
-	$spdconf .= "spdadd {$sa}/{$sn} " .
-		"{$tunnel['remote-subnet']} any -P out ipsec " .
-		"{$tunnel['p2']['protocol']}/tunnel/{$ep}-" .
-		"{$rgip}/unique;\n";
-	$spdconf .= "spdadd {$tunnel['remote-subnet']} " .
-		"{$sa}/{$sn} any -P in ipsec " .
-		"{$tunnel['p2']['protocol']}/tunnel/{$rgip}-" .
-		"{$ep}/unique;\n";
 
 	log_error("Reloading IPsec tunnel '{$tunnel['descr']}'. Previous IP '{$oldgw}', current IP '{$rgip}'. Reloading policy");
 

@@ -173,6 +173,8 @@ function resync_all_package_configs($show_message = false) {
 	if(!$config['installedpackages']['package']) return;
 	if($show_message == true) print "Syncing packages:";
 	foreach($config['installedpackages']['package'] as $package) {
+		if (empty($package['name']))
+			continue;
 		if($show_message == true) print " " . $package['name'];
 		get_pkg_depends($package['name'], "all");
 		stop_service($package['name']);

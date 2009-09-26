@@ -1295,8 +1295,8 @@ EOD;
 		$natrules .= frickin_generate_rules('nat');
 	}
 	
-	if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/sipproxd.inc')) {
-		require_once('sipproxd.inc');
+	if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/siproxd.inc')) {
+		require_once('siproxd.inc');
 		$natrules .= siproxd_generate_rules('nat');
 	}
 

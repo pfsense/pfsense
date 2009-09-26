@@ -191,6 +191,11 @@ function rescue_detect_keypress() {
 	/* start syslogd */
 	system_syslogd_start();
 
+	/* setup interface microcode which improves tcp/ip speed */
+	echo "Setting up microcode and tx/rx offloading...";
+	setup_microcode();
+	echo "done.\n";
+
 	/* set up VLAN virtual interfaces */
 	interfaces_vlan_configure();
 
@@ -239,7 +244,7 @@ function rescue_detect_keypress() {
 	slbd_configure();
 
 	/* start OpenVPN server & clients */
-    openvpn_resync_all();
+	openvpn_resync_all();
 
 	/* setup altq + pf */
 	echo "Configuring firewall...";
@@ -302,11 +307,6 @@ function rescue_detect_keypress() {
 
 	/* setup polling */
 	setup_polling();
-
-	/* setup interface microcode which improves tcp/ip speed */
-	echo "Setting up microcode and tx/rx offloading...";
-	setup_microcode();
-	echo "done.\n";
 
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 

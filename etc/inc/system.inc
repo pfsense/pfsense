@@ -337,6 +337,14 @@ function system_syslogd_start() {
 			printf("Error: cannot open syslog.conf in system_syslogd_start().\n");
 			return 1;
 		}
+
+                if (isset($syslogcfg['logall'])) {
+			$syslogconf .= <<<EOD
+*.*		                                @{$syslogcfg['remoteserver']}
+
+EOD;
+		}
+
 		$syslogconf .= "!ntpdate,!ntpd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
@@ -432,12 +440,6 @@ news.err;local0.none;local3.none;local7.none	@{$syslogcfg['remoteserver']}
 security.*					@{$syslogcfg['remoteserver']}
 auth.info;authpriv.info;daemon.info		@{$syslogcfg['remoteserver']}
 *.emerg						@{$syslogcfg['remoteserver']}
-
-EOD;
-		}
-                if (isset($syslogcfg['logall'])) {
-			$syslogconf .= <<<EOD
-*.*		                                @{$syslogcfg['remoteserver']}
 
 EOD;
 		}

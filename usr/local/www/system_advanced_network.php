@@ -52,6 +52,7 @@ $pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
+$pconfig['flowtable'] = false;
 $pconfig['flowtable'] = isset($config['system']['flowtable']);
 
 if ($_POST) {
@@ -242,9 +243,10 @@ function enable_change(enable_over) {
 								</td>
 							</tr>
 <?php 
+/*
 	$version = get_freebsd_version();
 	if($version == "8"):
-?>
+
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
@@ -261,6 +263,8 @@ function enable_change(enable_over) {
 								</td>
 							</tr>
 <?php endif; ?>
+*/
+?>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>							

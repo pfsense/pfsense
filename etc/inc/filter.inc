@@ -74,7 +74,7 @@ function flowtable_configure() {
 			mwexec("/sbin/sysctl net.inet.flowtable.nmbflows={$config['system']['maximumstates']}");
 			mwexec("/sbin/sysctl net.inet.ip.output_flowtable_size={$nmbflows}");
 		}
-		mwexec("/sbin/sysctl net.inet.flowtable.emable={$flowtable_enable}");		
+		mwexec("/sbin/sysctl net.inet.flowtable.enable={$flowtable_enable}");		
 	}	
 }
 

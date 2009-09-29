@@ -371,11 +371,10 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
                 captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
         }
 
-
+    	/* rewrite information to database */
+    	captiveportal_write_db($cpdb);
     }
 
-    /* rewrite information to database */
-    captiveportal_write_db($cpdb);
     if ($captiveshouldunlock == true)
 	unlock($cplock);
 

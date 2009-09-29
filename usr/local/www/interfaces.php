@@ -477,7 +477,10 @@ if ($_POST) {
 		else
 			unset($wancfg['blockbogons']);
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
-		$wancfg['mtu'] = $_POST['mtu'];
+		if (empty($_POST['mtu']))
+			unset($wancfg['mtu']);
+		else
+			$wancfg['mtu'] = $_POST['mtu'];
 		if (isset($wancfg['wireless'])) 
 			handle_wireless_post();
 		write_config();

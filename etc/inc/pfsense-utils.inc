@@ -1174,6 +1174,7 @@ function reload_all_sync() {
 
 	/* sync pw database */
 	conf_mount_rw();
+	unlink_if_exists("/etc/spwd.db.tmp");
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
 	conf_mount_ro();
 

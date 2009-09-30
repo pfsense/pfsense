@@ -85,9 +85,11 @@ function enable_altfirmwareurl(enable_over) {
 		<td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Manual Update", false, "system_firmware.php");
-	$tab_array[1] = array("Auto Update", false, "system_firmware_check.php");
-	$tab_array[2] = array("Updater Settings", true, "system_firmware_settings.php");
+	$tab_array[] = array("Manual Update", false, "system_firmware.php");
+	if($g['platform'] <> "nanobsd") {
+		$tab_array[] = array("Auto Update", false, "system_firmware_check.php");
+		$tab_array[] = array("Updater Settings", true, "system_firmware_settings.php");
+	}
 	display_top_tabs($tab_array);
 ?>
 		</td>

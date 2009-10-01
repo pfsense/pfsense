@@ -1007,10 +1007,15 @@ function interfaces_carp_setup() {
 		/*    install rules to alllow pfsync to sync up during boot
 		 *    carp interfaces will remain down until the bootup sequence finishes
 		 */
-		exec("echo pass quick proto carp all keep state > {$g['tmp_path']}/rules.boot");
-		exec("echo pass quick proto pfsync all >> {$g['tmp_path']}/rules.boot");
-		exec("echo pass out quick from any to any keep state >> {$g['tmp_path']}/rules.boot");
-		exec("/sbin/pfctl -f {$g['tmp_path']}/rules.boot");
+		$fd = fopen("{$g['tmp_path']}/rules.boot", "w");
+		if ($fd) {
+			fwrite($fd, "echo pass quick proto carp all keep state\n");
+			fwrite($fd, "echo pass quick proto pfsync all\n");
+			fwrite($fd, "echo pass out quick from any to any keep state\n");
+			fclose($fd);
+			mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.boot");
+		} else
+			log_error("Could not create rules.boot file!");
 	}
 
 	/* setup pfsync interface */

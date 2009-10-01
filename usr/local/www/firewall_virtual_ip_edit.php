@@ -141,7 +141,8 @@ if ($_POST) {
 		if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
 			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
 			$input_errors[] = "Sorry, we could not locate an interface with a matching subnet for {$cannot_find}.  Please add an IP alias in this subnet on this interface.";
-		}
+		} else if ($parent_sn != $_POST['subnet_bits'])
+			$input_errors[] = "Subnet bits needs to be the same as the parent interface.";
 	}
 
 	if (!$input_errors) {

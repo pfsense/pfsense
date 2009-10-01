@@ -202,7 +202,8 @@ if ($_POST) {
 		mark_subsystem_dirty('vip');
 		
 		write_config();
-
+		if (!$id)
+			$id = count($a_vip) - 1;
 		header("Location: firewall_virtual_ip.php?changes=mods&id={$id}");
 		exit;
 	}

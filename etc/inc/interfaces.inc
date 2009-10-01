@@ -1009,9 +1009,9 @@ function interfaces_carp_setup() {
 		 */
 		$fd = fopen("{$g['tmp_path']}/rules.boot", "w");
 		if ($fd) {
-			fwrite($fd, "echo pass quick proto carp all keep state\n");
-			fwrite($fd, "echo pass quick proto pfsync all\n");
-			fwrite($fd, "echo pass out quick from any to any keep state\n");
+			fwrite($fd, "pass quick proto carp all keep state\n");
+			fwrite($fd, "pass quick proto pfsync all\n");
+			fwrite($fd, "pass out quick from any to any keep state\n");
 			fclose($fd);
 			mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.boot");
 		} else

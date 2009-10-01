@@ -471,11 +471,9 @@ function dpdchkbox_change() {
 							<select name="interface" class="formselect">
 							<?php 
 								$interfaces = get_configured_interface_with_descr();
-								$carpips = find_number_of_needed_carp_interfaces();
-								for ($i=0; $i<$carpips; $i++) {
-									$carpip = find_interface_ip("carp" . $i);
-									$interfaces['carp' . $i] = "CARP{$i} ({$carpip})"; 
-								}
+								$carplist = get_configured_carp_interface_list();
+								foreach ($carplist as $cif => $carpip)
+									$interfaces[$cif] = strtoupper($cif) . " ({$carpip})";
 								foreach ($interfaces as $iface => $ifacename):
 							?>
 								<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>

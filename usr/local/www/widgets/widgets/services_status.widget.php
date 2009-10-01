@@ -102,13 +102,6 @@ if(isset($config['snmpd']['enable'])) {
 	unset($pconfig2);
 }
 
-if(isset($config['proxyarp']['proxyarpnet'])) {
-	$pconfig2['name'] = "choparp";
-	$pconfig2['description'] = "Proxy Arp";
-	$services[] = $pconfig2;
-	unset($pconfig2);
-}
-
 if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
     $pconfig2['name'] = "miniupnpd";
     $pconfig2['description'] = gettext("UPnP Service");

@@ -35,7 +35,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	pfSense_BUILDER_BINARIES:	/usr/sbin/pppd	/sbin/dhclient	/bin/sh	/usr/bin/grep	/usr/bin/xargs	/usr/bin/awk
+	pfSense_BUILDER_BINARIES:	/usr/sbin/pppd	/sbin/dhclient	/bin/sh	/usr/bin/grep	/usr/bin/xargs	/usr/bin/awk	/usr/local/sbin/choparp
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/route	/usr/sbin/ngctl	/usr/sbin/arp	/bin/kill	/usr/local/sbin/mpd4
 	pfSense_MODULE:	interfaces
 
@@ -102,7 +102,7 @@ function interfaces_vlan_configure() {
 	}
 }
 
-function interface_vlan_configure($vlan) {
+function interface_vlan_configure(&$vlan) {
         global $config, $g;
 
 	if (!is_array($vlan)) {
@@ -124,28 +124,17 @@ function interface_vlan_configure($vlan) {
 	mwexec("/sbin/ifconfig {$if} vlanhwtag");
 	mwexec("/sbin/ifconfig {$if} vlanmtu");
 
-        if ($g['booting'] || !(empty($vlanif))) {
-		/* before destroying, see if CARP is in use
-		  If an interface containing an active CARP IP is destroyed,
-		  the CARP interface will hang in INIT and must be destroyed
-		  itself before it will function again (which causes a panic).
-		  Trying to configure a CARP interface stuck in INIT will
-		  cause a panic as well.  -cmb
-		*/
-		$carpcount = find_number_of_needed_carp_interfaces();
-		/* will continue to destroy VLANs where CARP is not in use
-		  to retain previous behavior and avoid regressions */
-		if($carpcount < 1)
-			mwexec("/sbin/ifconfig {$vlanif} destroy");
-		//mwexec("/sbin/ifconfig {$vlanif} create");
-        }
-	$tmpvlanif = exec("/sbin/ifconfig vlan create");
+        if (!empty($vlanif) && does_interface_exist($vlanif))
+		mwexec("/sbin/ifconfig {$vlanif} delete");
+        else {
+		$tmpvlanif = exec("/sbin/ifconfig vlan create");
+		mwexec("/sbin/ifconfig {$tmpvlanif} name {$vlanif}");
+	}
 	
-        mwexec("/sbin/ifconfig {$tmpvlanif} vlan " .
+        mwexec("/sbin/ifconfig {$vlanif} vlan " .
                 escapeshellarg($tag) . " vlandev " .
                 escapeshellarg($if));
 
-	mwexec("/sbin/ifconfig {$tmpvlanif} name {$vlanif}");
 	interfaces_bring_up($vlanif);
 
         /* invalidate interface cache */
@@ -167,7 +156,7 @@ function interface_vlan_configure($vlan) {
         return $vlanif;
 }
 
-function interface_qinq_configure($vlan, $fd = NULL) {
+function interface_qinq_configure(&$vlan, $fd = NULL) {
         global $config, $g;
 
         if (!is_array($vlan)) {
@@ -194,19 +183,8 @@ function interface_qinq_configure($vlan, $fd = NULL) {
         mwexec("/sbin/ifconfig {$if} vlanhwtag\n");
         mwexec("/sbin/ifconfig {$if} vlanmtu\n");
 
-        if ($g['booting'] || !(empty($vlanif))) {
-                /* before destroying, see if CARP is in use
-                  If an interface containing an active CARP IP is destroyed,
-                  the CARP interface will hang in INIT and must be destroyed
-                  itself before it will function again (which causes a panic).
-                  Trying to configure a CARP interface stuck in INIT will
-                  cause a panic as well.  -cmb
-                */
-                $carpcount = find_number_of_needed_carp_interfaces();
-                /* will continue to destroy VLANs where CARP is not in use
-                  to retain previous behavior and avoid regressions */
-                if($carpcount < 1)
-                        fwrite($fd, "shutdown {$if}qinq:\n");
+        if (!empty($vlanif) && does_interface_exist($vlanif)) {
+                fwrite($fd, "shutdown {$if}qinq:\n");
                 exec("/usr/sbin/ngctl msg {$if}qinq: gettable", $result);
                 if (empty($result)) {
                         fwrite($fd, "mkpeer {$if}: vlan lower downstream\n");
@@ -280,7 +258,7 @@ function interfaces_qinq_configure() {
         }
 }
 
-function interface_qinq2_configure($qinq, $fd, $macaddr) {
+function interface_qinq2_configure(&$qinq, $fd, $macaddr) {
         global $config, $g;
 
         if (!is_array($qinq)) {
@@ -747,11 +725,8 @@ function interfaces_configure() {
 			echo "done.\n";
 	}
 
-	/* bring up carp interfaces */
-	interfaces_carp_configure();
-
-	/* bring ip IP aliases */
-	interfaces_ipalias_configure();
+	/* bring up vip interfaces */
+	interfaces_vips_configure();
 
 	/* configure interface groups */
 	interfaces_group_setup();
@@ -783,6 +758,26 @@ function interface_reconfigure($interface = "wan") {
 	interface_bring_down($interface);
 	sleep(1);
 	interface_configure($interface);
+}
+
+function interface_vip_bring_down(&$vip) {
+
+	switch ($vip['mode']) {
+	case "proxyarp":
+		interfaces_proxyarp_configure();
+		break;
+	case "ipalias":
+		mwexec("/sbin/ifconfig " . get_real_interface($vip['interface']) . " delete {$vip['subnet']}");
+		break;
+	case "carp":
+	case "carpdev-dhcp":
+		$vipif = "vip" . x{$vip['vhid'];
+		mwexec("/sbin/ifconfig {$vipif} delete");
+                mwexec("/sbin/ifconfig {$vipif} down");
+		mwexec("/sbin/ifconfig {$vipif} destroy");
+		break;
+	}
+
 }
 
 function interface_bring_down($interface = "wan", $destroy = false) {
@@ -859,7 +854,7 @@ function interfaces_ppp_configure() {
         }
 }
 
-function interface_ppp_configure($ifcfg) {
+function interface_ppp_configure(&$ifcfg) {
 	global $config, $g;
 	
 	/* Remove  the /dev/ from the device name. */
@@ -962,163 +957,327 @@ function interface_ppp_configure($ifcfg) {
 	return $realif;
 }
 
-function interfaces_carp_configure() {
+function interfaces_carp_setup() {
 	global $g, $config;
+
 	$balanacing = "";
 	$pfsyncinterface = "";
 	$pfsyncenabled = "";
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "interfaces_carp_configure() being called $mt\n";
+		echo "interfaces_carp_setup() being called $mt\n";
 	}
+
 	// Prepare CmdCHAIN that will be used to execute commands.
 	$cmdchain = new CmdCHAIN();	
-	$carp_instances_counter = 0;
-	$total_carp_interfaces_defined = find_number_of_created_carp_interfaces();
-	/* destroy previous interfaces */
-	for($x=0; $x<$total_carp_interfaces_defined; $x++) 
-		$cmdchain->add("Delete CARP interface", "/sbin/ifconfig carp{$x} delete", false);
+
 	if ($g['booting']) {
-		echo "Configuring CARP interfaces...";
+		echo "Configuring CARP settings...";
 		mute_kernel_msgs();
 	}
+
 	/* suck in configuration items */
-	if($config['installedpackages']['carpsettings']) 
+	if($config['installedpackages']['carpsettings']) {
 		if($config['installedpackages']['carpsettings']['config']) {
-		foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
-			$pfsyncenabled = $carp['pfsyncenabled'];
-			$balanacing = $carp['balancing'];
-			$pfsyncinterface = $carp['pfsyncinterface'];
-			$pfsyncpeerip = $carp['pfsyncpeerip'];
+			foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
+				$pfsyncenabled = $carp['pfsyncenabled'];
+				$balanacing = $carp['balancing'];
+				$pfsyncinterface = $carp['pfsyncinterface'];
+				$pfsyncpeerip = $carp['pfsyncpeerip'];
+			}
 		}
 	} else {
 		unset($pfsyncinterface);
 		unset($balanacing);
 		unset($pfsyncenabled);
 	}
+
 	$cmdchain->add("Allow CARP", "/sbin/sysctl net.inet.carp.allow=1", true);			
 	if($balanacing) {
 		$cmdchain->add("Enable CARP ARP-balancing", "/sbin/sysctl net.inet.carp.arpbalance=1", true);
 		$cmdchain->add("Disallow CARP preemption", "/sbin/sysctl net.inet.carp.preempt=0", true);
-	} else {
+	} else
 		$cmdchain->add("Enable CARP preemption", "/sbin/sysctl net.inet.carp.preempt=1", true);		
-	}
+
 	$cmdchain->add("Enable CARP logging", "/sbin/sysctl net.inet.carp.log=2", true);
-	$carp_sync_int = get_real_interface($pfsyncinterface);
+	if (!empty($pfsyncinterface))
+		$carp_sync_int = get_real_interface($pfsyncinterface);
+
 	if($g['booting']) {
 		/*    install rules to alllow pfsync to sync up during boot
 		 *    carp interfaces will remain down until the bootup sequence finishes
 		 */
-		exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
-		exec("echo pass quick proto pfsync all >> /tmp/rules.boot");
-		exec("echo pass out quick from any to any keep state >> /tmp/rules.boot");
-		exec("/sbin/pfctl -f /tmp/rules.boot");
+		exec("echo pass quick proto carp all keep state > {$g['tmp_path']}/rules.boot");
+		exec("echo pass quick proto pfsync all >> {$g['tmp_path']}/rules.boot");
+		exec("echo pass out quick from any to any keep state >> {$g['tmp_path']}/rules.boot");
+		exec("/sbin/pfctl -f {$g['tmp_path']}/rules.boot");
 	}
+
 	/* setup pfsync interface */
 	if($carp_sync_int and $pfsyncenabled) {
-		if($pfsyncpeerip) {
+		if (is_ipaddr($pfsyncpeerip))
 			$cmdchain->add("Bring up pfsync0 syncpeer", "/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} syncpeer {$pfsyncpeerip} up", false);						
-		} else {
+		else
 			$cmdchain->add("Bring up pfsync0 syncdev", "/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up", false);			
-		}
-	} else {
+	} else
 		$cmdchain->add("Bring up pfsync0", "/sbin/ifconfig pfsync0 syncdev lo0 up", false);						
-	}
-	//$fd = fopen("/tmp/carp.sh", "w");
-	$viparr = &$config['virtualip']['vip'];
-	if($config['virtualip']['vip']) {
+
+	if($config['virtualip']['vip'])
 		$cmdchain->add("Allow CARP.", "/sbin/sysctl net.inet.carp.allow=1", true);				
-	} else {
-		$viparr = array();
+	else
 		$cmdchain->add("Disallow CARP.", "/sbin/sysctl net.inet.carp.allow=0", true);		
-	}
-	if(!$viparr and $config['interfaces']['wan']['ipaddr'] == "carpdev-dhcp") {
-		/* no vips exist but we need to bring up carpdev... */
-		$viparr_temp = array();
-		$viparr_temp['advskew'] = "200";
-		$viparr_temp['vhid'] = "1";
-		$viparr_temp['mode'] = "carpdev-dhcp";
-		$viparr_temp['password'] = $config['system']['hostname'] . "pfS";
-		$viparr = $viparr_temp;
-	}
 	
 	if($g['debug'])
 		$cmdchain->setdebug(); // optional for verbose logging
+
 	$cmdchain->execute();
-	
-	// Reset CmdCHAIN
 	$cmdchain->clear();
 
-	if(is_array($viparr))
-	foreach ($viparr as $vip) {
-		$vip_password = $vip['password'];
-		$vip_password = str_replace(" ", "", $vip_password);
-		if($vip['password'] != "")
-                	$password = " pass \"" . $vip_password . "\"";
-		$interface = interface_translate_type_to_real($vip['interface']);
-		$carpint = "carp" . $carp_instances_counter;
+	if ($g['booting']) {
+		unmute_kernel_msgs();
+		echo "done.\n";
+	}
+}
 
-		switch ($vip['mode']) {
-		case "carp":
-			/* ensure CARP IP really exists prior to loading up */
-			$found = false;
-			$iflist = get_configured_interface_list();
-			foreach($iflist as $if) {
-				$ww_subnet_ip = $config['interfaces'][$if]['ipaddr'];
-				$ww_subnet_bits = $config['interfaces'][$if]['subnet'];
-				if (ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits))
-					$found = true;
-			}
-			if($found == false) {
-				file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
-				continue;
-			}
-			/* ensure the interface containing the VIP really exists
-			  prevents a panic if the interface is missing or invalid
-			*/
-			$realif = get_real_interface($vip['interface']);
-			$intcount = exec("/sbin/ifconfig | grep $realif | wc -l | awk '{print $1}'");
-			if($intcount < 1) {
-				file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
-				continue;
-			}
-			/* create the carp interface and setup */
-			$cmdchain->add("create CARP interface", "/sbin/ifconfig {$carpint} create", false);
+function interfaces_proxyarp_configure() {
+        global $config, $g;
+        if(isset($config['system']['developerspew'])) {
+                $mt = microtime();
+                echo "interfaces_proxyarp_configure() being called $mt\n";
+        }
 
-			/* invalidate interface cache */
-			get_interface_arr(true);
-			$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-			$cmdchain->add("config CARP interface", "/sbin/ifconfig {$carpint} " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password, false);
-			$cmdchain->add("bring CARP interface UP", "/sbin/ifconfig {$carpint} up", false);
-			$carp_instances_counter++;
+        /* kill any running choparp */
+        killbyname("choparp");
+
+        if (isset($config['virtualip']) && is_array($config['virtualip']['vip'])) {
+                $paa = array();
+
+                /* group by interface */
+                foreach ($config['virtualip']['vip'] as $vipent) {
+                        if ($vipent['mode'] === "proxyarp") {
+                                if ($vipent['interface'])
+                                        $proxyif = $vipent['interface'];
+                                else
+                                        $proxyif = "wan";
+
+                                if (!is_array($paa[$if]))
+                                        $paa[$proxyif] = array();
+
+                                $paa[$proxyif][] = $vipent;
+                        }
+                }
+
+                if (count($paa))
+                foreach ($paa as $paif => $paents) {
+                        $paaifip = get_interface_ip($paif);
+                        if (!(is_ipaddr($paaifip)))
+                               continue;
+
+                        $args = get_real_interface($paif) . " auto";
+
+                        foreach ($paents as $paent) {
+
+                                if (isset($paent['subnet']))
+                                        $args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");
+                                else if (isset($paent['range']))
+                                        $args .= " " . escapeshellarg($paent['range']['from'] . "-" .
+                                                $paent['range']['to']);
+                        }
+
+                        mwexec_bg("/usr/local/sbin/choparp " . $args);
+                }
+        }
+}
+
+function interfaces_vips_configure() {
+	global $g, $config;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "interfaces_ipalias_configure() being called $mt\n";
+	}
+	$paa = array();
+	if(is_array($config['virtualip']['vip'])) {
+		$carp_setuped = false;
+		foreach ($config['virtualip']['vip'] as $vip) {
+			switch ($vip['mode']) {
+			case "proxyarp":
+				/* nothing it is handled on interfaces_proxyarp_configure() */
+				break;
+			case "ipalias":
+				interface_ipalias_configure(&$vip);
+				break;
+			case "carp":
+				if ($carp_setuped == false) {
+					interfaces_carp_setup();
+					$carp_setuped = true;
+				}
+				interface_carp_configure($vip);
+				break;
+			case "carpdev-dhcp":
+				interface_carpdev_configure($vip);
+				break;
+			}
+		}
+		
+		interfaces_proxyarp_configure();
+	}
+}
+
+function interface_ipalias_configure(&$vip) {
+
+	if ($vip['mode'] == "ipalias") {
+		$if = get_real_interface($vip['interface']);
+		mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias");
+	}
+}
+
+function interface_reload_carps($cif) {
+	global $config;
+
+	$carpifs = link_ip_to_carp_interface(find_interface_ip($cif));
+        if (empty($carpifs))
+		return;
+
+	$carps = explode(" ", $carpifs);
+	if(is_array($config['virtualip']['vip'])) {
+                $viparr = &$config['virtualip']['vip'];
+                foreach ($viparr as $vip) {
+			if (in_array($vip['carpif'], $carps)) {
+                        	switch ($vip['mode']) {
+                        	case "carp":
+					interface_vip_bring_down($vip);
+					sleep(1);
+                                	interface_carp_configure($vip);
+                                	break;
+                        	case "carpdev-dhcp":
+					interface_vip_bring_down($vip);
+					sleep(1);
+                                	interface_carpdev_configure($vip);
+                                	break;
+				}
+                        }
+                }
+        }
+}
+
+function interface_carp_configure(&$vip) {
+	global $config, $g;
+	if(isset($config['system']['developerspew'])) {
+                $mt = microtime();
+                echo "interfaces_carp_configure() being called $mt\n";
+        }
+
+	if ($vip['mode'] != "carp")
+		return;
+
+	$vip_password = $vip['password'];
+	$vip_password = str_replace(" ", "", $vip_password);
+	if ($vip['password'] != "")
+		$password = " pass \"" . $vip_password . "\"";
+	$vipif = "vip" . $vip['vhid'];
+	$interface = interface_translate_type_to_real($vip['interface']);
+	/*
+	 * ensure the interface containing the VIP really exists
+         * prevents a panic if the interface is missing or invalid
+         */
+        $realif = get_real_interface($vip['interface']);
+        if (!does_interface_exist($realif)) {
+                file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
+                return;
+        }
+
+	/* ensure CARP IP really exists prior to loading up */
+	/* XXX: this can be bound to only the interface choosen in the carp creation. Not yet since upgrade is needed! */
+	$found = false;
+	$iflist = get_configured_interface_list();
+	foreach($iflist as $if) {
+		$ww_subnet_ip = get_interface_ip($if);
+		$ww_subnet_bits = get_interface_subnet($if);
+		if (ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits)) {
+			$found = true;
 			break;
-		case "carpdev-dhcp":
-			log_error("Found carpdev interface {$vip['interface']} on top of interface {$interface}");
-			if(!empty($interface)) {
-				
-					$cmdchain->add("bring CARP parent interface UP", "/sbin/ifconfig {$interface} up", false);			
-					$cmdchain->add("create CARP interface", "/sbin/ifconfig {$carpint} create", false);
-					$cmdchain->add("bring CARP interface UP", "/sbin/ifconfig {$carpint} up", false);
-					$cmdchain->add("assign CARP CarpDEV directive", "/sbin/ifconfig {$carpint} carpdev ". $interface . " vhid " . $vip['vhid'] . " advskew " . $vip['advskew'] . $password, false);
-					$cmdchain->add("bring CARP interface UP", "/sbin/ifconfig {$carpint} up", false);
+		}
+	}
+	if($found == false) {
+		file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
+		return;
+	}
 
-					/*
-					 * XXX: BIG HACK but carpdev needs ip services active
-					 * 	before even starting something as dhclient.
-					 * 	I do not know if this is a feature or a bug
-					 * 	but better than track it make it work ;) .
-					 */
-					//$fakeiptouse = "10.254.254." . ($carp_instances_counter+1);
-					//$cmdchain->add("CarpDEV hack", "/sbin/ifconfig {$carpint} inet {$fakeiptouse}", false);
+	/* invalidate interface cache */
+	get_interface_arr(true);
 
-        			/* generate dhclient_wan.conf */
-        			$fd = fopen("{$g['varetc_path']}/dhclient_{$carpint}.conf", "w");
-        			if ($fd) {
+	/* create the carp interface and setup */
+	if (does_interface_exist($vipif))
+		mwexec("/sbin/ifconfig {$vipif} delete");
+	else {
+		$carpif = exec("/sbin/ifconfig carp create");
+		mwexec("/sbin/ifconfig {$carpif} name {$vipif}");
+	}
 
-        				$dhclientconf = "";
+	/* invalidate interface cache */
+	get_interface_arr(true);
 
-        				$dhclientconf .= <<<EOD
-interface "{$carpint}" {
+	$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
+	mwexec("/sbin/ifconfig {$carpif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
+
+	interfaces_bring_up($vipif);
+	
+	return $vipif;
+}
+
+function interface_carpdev_configure(&$vip) {
+	global $g;
+
+	if ($vip['mode'] != "carpdev-dhcp")
+                return;
+
+        $vip_password = $vip['password'];
+        $vip_password = str_replace(" ", "", $vip_password);
+        if($vip['password'] != "")
+                $password = " pass \"" . $vip_password . "\"";
+
+	log_error("Found carpdev interface {$vip['interface']} on top of interface {$interface}");
+	if (empty($vip['interface']))
+		return;
+
+	$vipif = "vip" . $vip['vhid'];
+	$realif = interface_translate_type_to_real($vip['interface']);
+	interface_bring_up($realif);
+        /*
+         * ensure the interface containing the VIP really exists
+         * prevents a panic if the interface is missing or invalid
+         */
+        if (!does_interface_exist($realif)) {
+                file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
+                return;
+        }
+
+	if (does_interface_exist($vipif))
+		mwexec("/sbin/ifconfig {$vipif} delete");
+	else  {
+		$carpdevif = exec("/sbin/ifconfig carp create");
+		mwexec("/sbin/ifconfig {$carpdevif} name {$vipif}");
+	}
+
+	mwexec("/sbin/ifconfig {$vipif} carpdev {$realif} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
+	interface_bring_up($vipif);
+
+	/*
+	 * XXX: BIG HACK but carpdev needs ip services active
+	 *      before even starting something as dhclient.
+	 *      I do not know if this is a feature or a bug
+	 *      but better than track it make it work ;) .
+	 */
+	//$fakeiptouse = "10.254.254." . ($carp_instances_counter+1);
+	//$cmdchain->add("CarpDEV hack", "/sbin/ifconfig {$carpint} inet {$fakeiptouse}", false);
+
+	/* generate dhclient_wan.conf */
+	$fd = fopen("{$g['varetc_path']}/dhclient_{$vipif}.conf", "w");
+	if ($fd) {
+		$dhclientconf = "";
+
+		$dhclientconf .= <<<EOD
+interface "{$vipif}" {
 timeout 60;
 retry 1;
 select-timeout 0;
@@ -1128,62 +1287,24 @@ script "/sbin/dhclient-script";
 
 EOD;
 
- 			        fwrite($fd, $dhclientconf);
-        			fclose($fd);
+		fwrite($fd, $dhclientconf);
+		fclose($fd);
 
-        			/* fire up dhclient */
-					$cmdchain->add("bring CARP dhclient UP", "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$carpint}.conf {$carpint} >/tmp/{$carpint}_output >/tmp/{$carpint}_error_output", false);
-				} else {
-					log_error("Error: cannot open dhclient_{$carpint}.conf in interfaces_carp_configure() for writing.\n");
-					$cmdchain->add("bring CARP dhclient UP in background", "/sbin/dhclient -b {$carpint}", false);					
-				}
-
-        		$fout = fopen("/tmp/ifconfig_{$carpint}","w");
-        		fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$carpint}.conf {$carpint}");
-        		fclose($fout);
-
-			} else {
-				log_error("Could not determine CarpDEV parent interface for {$vip['descr']}.");
-			}
-			$carp_instances_counter++;
-			break;
-		}
+		/* fire up dhclient */
+		mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif} >/tmp/{$vipif}_output >/tmp/{$vipif}_error_output", false);
+	} else {
+		log_error("Error: cannot open dhclient_{$vipif}.conf in interfaces_carpdev_configure() for writing.\n");
+		mwexec("/sbin/dhclient -b {$vipif}");
 	}
 
-	if($g['debug'])
-		$cmdchain->setdebug(); // optional for verbose logging
-	// Execute built up command chain.
-	$cmdchain->execute();	
+	$fout = fopen("/tmp/ifconfig_{$vipif}","w");
+	fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif}");
+	fclose($fout);
 
-	if ($g['booting']) {
-		unmute_kernel_msgs();
-		echo "done.\n";
-	}
-
-	/* update cache */
-	if ($carp_instances_counter != find_number_of_created_carp_interfaces())
-		find_number_of_created_carp_interfaces(true);
-
+	return $vipif;
 }
 
-function interfaces_ipalias_configure() {
-	global $g, $config;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "interfaces_ipalias_configure() being called $mt\n";
-	}
-	$viparr = &$config['virtualip']['vip'];
-	if(is_array($viparr)) {
-		foreach ($viparr as $vip) {
-			if ($vip['mode'] == "ipalias") {
-				$if = get_real_interface($vip['interface']);
-				mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $vip['subnet'] . "/" . escapeshellarg($vip['subnet_bits']) . " alias"); 
-			}
-		}
-	}
-}
-
-function interface_wireless_configure($if, $wlcfg) {
+function interface_wireless_configure($if, &$wlcfg) {
 	global $config, $g;
 
 	/*    open up a shell script that will be used to output the commands.
@@ -1536,6 +1657,8 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	else 
 		log_error("Could not bring wancfg['if'] up -- variable not defined in interface_configure()");
 	
+	interface_reload_carps($realif);
+
 	if (!$g['booting']) {
 		if (link_interface_to_gre($interface)) {
 			foreach ($config['gres']['gre'] as $gre)
@@ -1969,7 +2092,7 @@ function interfaces_group_setup() {
 	return;
 }
 
-function interface_group_setup($groupname /* The parameter is an array */) {
+function interface_group_setup(&$groupname /* The parameter is an array */) {
 	global $config;
 
 	if (!is_array($groupname))
@@ -2205,12 +2328,84 @@ function find_ip_interface($ip)
         $ifdescrs = get_configured_interface_list();
 
         foreach ($ifdescrs as $ifdescr => $ifname) {
-                $int = get_real_interface($ifname);
-                $ifconfig = `/sbin/ifconfig {$int}`;
-                if(stristr($ifconfig,$ip) <> false)
-                        return $int;
+		if ($ip == get_interface_ip($ifname)) {
+                	$int = get_real_interface($ifname);
+			return $int;
+		}
         }
         return false;
+}
+
+/*
+ * find_carp_interface($ip): return the carp interface where an ip is defined
+ */
+function find_carp_interface($ip) {
+        global $config;
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $vip) {
+			if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
+				$carp_ip = find_interface_ip($vip['carpif']);
+				if ($ip == $carp_ip)
+					return $vip['carpif'];
+			}
+		}
+	}
+}
+
+function link_carp_interface_to_parent($interface) {
+        global $config;
+
+        if ($interface == "")
+                return;
+
+        $carp_ip = find_interface_ip($interface);
+        if (!is_ipaddr($carp_ip))
+                return;
+
+        /* if list */
+        $ifdescrs = get_configured_interface_list();
+        foreach ($ifdescrs as $ifdescr => $ifname) {
+                $interfaceip = get_interface_ip($ifname);
+                $subnet_bits = get_interface_subnet($ifname);
+                $subnet_ip = gen_subnet("{$interfaceip}", "{$subnet_bits}");
+                if(ip_in_subnet($carp_ip, "{$subnet_ip}/{$subnet_bits}"))
+                        return $ifname;
+        }
+
+        return "";
+}
+
+/****f* interfaces/link_ip_to_carp_interface
+ * NAME
+ *   link_ip_to_carp_interface - Find where a CARP interface links to.
+ * INPUTS
+ *   $ip
+ * RESULT
+ *   $carp_ints
+ ******/
+function link_ip_to_carp_interface($ip) {
+        global $config;
+
+        if (!is_ipaddr($ip))
+                return;
+
+        $carp_ints = "";
+        if (is_array($config['virtualip']['vip'])) {
+                foreach ($config['virtualip']['vip'] as $vip) {
+                        if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
+                                $carp_ip = $vip['subnet']);
+                                $carp_sn = $vip['subnet_bits'];
+                                $carp_nw = gen_subnet($carp_ip, $carp_sn);
+                                if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}")) {
+                                        if (!stristr($carp_ints, $carp_int))
+                                                $carp_ints .= " {$carp_int}";
+                                }
+                        }
+                }
+        }
+
+        return $carp_ints;
 }
 
 /****f* interfaces/link_interface_to_bridge

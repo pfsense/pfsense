@@ -339,6 +339,28 @@ function is_valid_shaperbw($val) {
 	return (preg_match("/^(\d+(?:\.\d+)?)([MKG]?b|%)$/", $val));
 }
 
+/* return the configured carp interface list */
+function get_configured_carp_interface_list() {
+	global $config;
+
+	$iflist = array();
+
+	if(is_array($config['virtualip']['vip'])) {
+                $viparr = &$config['virtualip']['vip'];
+                foreach ($viparr as $vip) {
+                        switch ($vip['mode']) {
+                        case "carp":
+                        case "carpdev-dhcp":
+                        	$iflist[$vip['carpif']] = $vip['subnet'];
+                                interface_carpdev_configure($vip);
+                                break;
+                        }
+                }
+        }
+
+	return $iflist;
+}
+
 /* return the configured interfaces list. */
 function get_configured_interface_list($only_opt = false, $withdisabled = false) {
 	global $config;

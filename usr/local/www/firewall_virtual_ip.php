@@ -59,17 +59,29 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
-		$retval = 0;
-		$retval = services_proxyarp_configure();
-		/* Bring up any configured CARP interfaces */
-		reset_carp();
-		$retval |= filter_configure();
-		interfaces_ipalias_configure();
-		/* reset carp states */
-		reset_carp();
-		interfaces_carp_configure();
 		
+		if ($a_vip[$_POST['id']]) {
+                switch ($a_vip[$_POST['id']]['mode']) {
+                case "ipalias":
+                        interface_ipalias_configure($a_vip[$_POST['id']]);
+                        break;
+                case "proxyarp":
+                        services_proxyarp_configure();
+                        break;
+                case "carp":
+                        interface_carp_configure($a_vip[$_POST['id']]);
+			break;
+                case "carpdev-dhcp":
+                        interface_carpdev_configure($a_vip[$_POST['id']]);
+                        break;
+                default:
+                        break;
+                }
+        	}
+		$retval = 0;
+		$retval |= filter_configure();
 		$savemsg = get_std_save_message($retval);
+
 		clear_subsystem_dirty('vip');
 	}
 }
@@ -98,7 +110,8 @@ if ($_GET['act'] == "del") {
 			exit;
 		}
 	}
-}
+} else if ($_GET['changes'] == "mods")
+	$id = $_GET['id'];
 
 $pgtitle = array("Firewall","Virtual IP Addresses");
 include("head.inc");
@@ -128,6 +141,9 @@ include("head.inc");
         display_top_tabs($tab_array);
   ?>
   </td></tr>
+  <tr>
+	<td><input type="hidden" id="id" name="id" value="<? echo $id; ?>"></td>
+  </tr>
   <tr>
     <td>
 	<div id="mainarea">

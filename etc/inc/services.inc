@@ -33,7 +33,7 @@
 /*
 	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/sh	/usr/local/sbin/dhcpd	/usr/local/sbin/igmpproxy
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/sbin/arp	/sbin/ifconfig	/usr/local/sbin/dnsmasq
-	pfSense_BUILDER_BINARIES:	/usr/sbin/bsnmpd	/usr/local/sbin/choparp	/sbin/route	/usr/local/sbin/olsrd
+	pfSense_BUILDER_BINARIES:	/usr/sbin/bsnmpd	/sbin/route	/usr/local/sbin/olsrd
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	
 	pfSense_MODULE:	utils
 */
@@ -827,56 +827,6 @@ EOD;
 	}
 
 	return 0;
-}
-
-function services_proxyarp_configure() {
-	global $config, $g;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "services_proxyarp_configure() being called $mt\n";
-	}
-
-	/* kill any running choparp */
-	killbyname("choparp");
-
-	if (isset($config['virtualip']) && is_array($config['virtualip']['vip'])) {
-		$paa = array();
-
-		/* group by interface */
-		foreach ($config['virtualip']['vip'] as $vipent) {
-			if ($vipent['mode'] === "proxyarp") {
-				if ($vipent['interface'])
-					$if = $vipent['interface'];
-				else
-					$if = "wan";
-
-				if (!is_array($paa[$if]))
-					$paa[$if] = array();
-
-				$paa[$if][] = $vipent;
-			}
-		}
-
-		if (count($paa))
-		foreach ($paa as $paif => $paents) {
-			$paaifip = get_interface_ip($paif);
-			if (!(is_ipaddr($paaifip)))
-                               continue;
-
-			$args = get_real_interface($paif) . " auto";
-
-			foreach ($paents as $paent) {
-
-				if (isset($paent['subnet']))
-					$args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");
-				else if (isset($paent['range']))
-					$args .= " " . escapeshellarg($paent['range']['from'] . "-" .
-						$paent['range']['to']);
-			}
-
-			mwexec_bg("/usr/local/sbin/choparp " . $args);
-		}
-	}
 }
 
 function services_dnsupdate_process() {

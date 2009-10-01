@@ -617,23 +617,11 @@ $priv_list['page-services-dynamicdnsclient']['descr'] = "Allow access to the 'Se
 $priv_list['page-services-dynamicdnsclient']['match'] = array();
 $priv_list['page-services-dynamicdnsclient']['match'][] = "services_dyndns_edit.php*";
 
-$priv_list['page-services-proxyarp'] = array();
-$priv_list['page-services-proxyarp']['name'] = "WebCfg - Services: Proxy ARP page";
-$priv_list['page-services-proxyarp']['descr'] = "Allow access to the 'Services: Proxy ARP' page.";
-$priv_list['page-services-proxyarp']['match'] = array();
-$priv_list['page-services-proxyarp']['match'][] = "services_proxyarp.php*";
-
 $priv_list['page-services-snmp'] = array();
 $priv_list['page-services-snmp']['name'] = "WebCfg - Services: SNMP page";
 $priv_list['page-services-snmp']['descr'] = "Allow access to the 'Services: SNMP' page.";
 $priv_list['page-services-snmp']['match'] = array();
 $priv_list['page-services-snmp']['match'][] = "services_snmp.php*";
-
-$priv_list['page-services-proxyarp-edit'] = array();
-$priv_list['page-services-proxyarp-edit']['name'] = "WebCfg - Services: Proxy ARP: Edit page";
-$priv_list['page-services-proxyarp-edit']['descr'] = "Allow access to the 'Services: Proxy ARP: Edit' page.";
-$priv_list['page-services-proxyarp-edit']['match'] = array();
-$priv_list['page-services-proxyarp-edit']['match'][] = "services_proxyarp_edit.php*";
 
 $priv_list['page-services-rfc2136clients'] = array();
 $priv_list['page-services-rfc2136clients']['name'] = "WebCfg - Services: RFC 2136 clients page";

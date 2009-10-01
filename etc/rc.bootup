@@ -267,9 +267,6 @@ services_dnsmasq_configure();
 /* start DHCP relay */
 services_dhcrelay_configure();
 
-/* start proxy ARP service */
-services_proxyarp_configure();
-
 /* setup pppoe and pptp */
 vpn_setup();
 

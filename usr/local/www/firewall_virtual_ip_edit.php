@@ -119,7 +119,7 @@ if ($_POST) {
 			}
 		}
 	}
-	
+
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */
@@ -135,22 +135,13 @@ if ($_POST) {
 		}
 		if($_POST['password'] == "")
 			$input_errors[] = "You must specify a CARP password that is shared between the two VHID members.";
-		$can_post = true;
-		$found = false;
-		$subnet_ip = return_first_two_octets($_POST['subnet']);
-		$iflist = get_configured_interface_list_by_realif(false, true);
-		foreach($iflist as $realif => $if) {
-			$ww_subnet_ip = get_interface_ip($if);
-			$ww_subnet_bits = get_interface_subnet($if);
-			if (ip_in_subnet($_POST['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits))
-				$found = true;
-		}
-		if($found == false) {
+
+		$parent_ip = get_interface_ip($_POST['interface']);
+		$parent_sn = get_interface_subnet($_POST['interface']);
+		if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
 			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
-			$can_post = false;
-		}
-		if($can_post == false)
 			$input_errors[] = "Sorry, we could not locate an interface with a matching subnet for {$cannot_find}.  Please add an IP alias in this subnet on this interface.";
+		}
 	}
 
 	if (!$input_errors) {
@@ -198,7 +189,7 @@ if ($_POST) {
 
 		if (isset($id) && $a_vip[$id]) {
 			if ($_POST['mode'] == "ipalias")
-				mwexec("/sbin/ifconfig " . get_real_interface($a_vip[$id]['interface']) . " delete {$a_vip[$id]['subnet']}");
+				interface_vip_bring_down($a_vip[$id]);
 			/* modify all virtual IP rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
 				if ($config['nat']['rule'][$i]['external-address'] == $a_vip[$id]['subnet'])
@@ -212,7 +203,7 @@ if ($_POST) {
 		
 		write_config();
 
-		header("Location: firewall_virtual_ip.php");
+		header("Location: firewall_virtual_ip.php?changes=mods&id={$id}");
 		exit;
 	}
 }

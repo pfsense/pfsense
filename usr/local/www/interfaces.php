@@ -239,7 +239,7 @@ if ($_POST['apply']) {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
 		interface_configure($if);
-		reset_carp();
+		
 		/* restart snmp so that it binds to correct address */		
 		services_snmpd_configure();		
 		if ($if == "lan") 		

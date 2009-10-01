@@ -182,11 +182,9 @@ include("head.inc");
 							<?php
 								if ($ph1ent['interface']) {
 									$iflabels = get_configured_interface_with_descr();
-									$carpips = find_number_of_needed_carp_interfaces();
-									for( $j=0; $j<$carpips; $j++ ) {
-										$carpip = find_interface_ip("carp" . $j);
-										$iflabels['carp' . $j] = "CARP{$j} ({$carpip})"; 
-									}
+									$carplist = get_configured_carp_interface_list();
+									foreach ($carplist as $cif => $carpip)
+										$iflabels[$cif] = strtoupper($cif) . " ({$carpip})"; 
 									$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
 								}
 								else

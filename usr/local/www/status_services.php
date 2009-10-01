@@ -292,13 +292,6 @@ if(isset($config['snmpd']['enable'])) {
 	unset($pconfig);
 }
 
-if(isset($config['proxyarp']['proxyarpnet'])) {
-	$pconfig['name'] = "choparp";
-	$pconfig['description'] = "Proxy ARP";
-	$services[] = $pconfig;
-	unset($pconfig);
-}
-
 if (count($config['igmpproxy']['igmpentry']) > 0) {
 	$pconfig['name'] = "igmpproxy";
 	$pconfig['descritption'] = "IGMP proxy";

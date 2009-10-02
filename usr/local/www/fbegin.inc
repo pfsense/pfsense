@@ -180,7 +180,8 @@ $help_menu[] = array("User Forum", "http://www.pfsense.org/j.php?jumpto=forum");
 $help_menu[] = array("Documentation", "http://www.pfsense.org/j.php?jumpto=doc");
 $help_menu[] = array("Developers Wiki", "http://www.pfsense.org/j.php?jumpto=devwiki");
 $help_menu[] = array("Paid Support", "http://www.pfsense.org/j.php?jumpto=portal");
-$help_menu[] = array("pfSense Book", "http://www.reedmedia.net/books/pfsense/");
+$help_menu[] = array("pfSense Book", "http://www.pfsense.org/j.php?jumpto=book");
+$help_menu[] = array("Search portal", "http://www.pfsense.org/j.php?jumpto=searchportal");
 $help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);
 
 /* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */

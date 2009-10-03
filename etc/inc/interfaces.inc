@@ -2399,7 +2399,7 @@ function link_ip_to_carp_interface($ip) {
         if (is_array($config['virtualip']['vip'])) {
                 foreach ($config['virtualip']['vip'] as $vip) {
                         if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
-                                $carp_ip = $vip['subnet']);
+                                $carp_ip = $vip['subnet'];
                                 $carp_sn = $vip['subnet_bits'];
                                 $carp_nw = gen_subnet($carp_ip, $carp_sn);
                                 if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}")) {

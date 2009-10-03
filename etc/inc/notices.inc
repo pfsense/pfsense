@@ -303,10 +303,13 @@ function notify_via_smtp($message) {
 	fwrite($fd, $message);
 	fclose($fd);
 
-	if($smtp->SendMessage($from, array($to), $headers, $message))
+	if($smtp->SendMessage($from, array($to), $headers, $message)) {
 		log_error("Message sent to {$to} OK");
-	else
+		return;
+	} else {
 		log_error("Could not send the message to {$to} -- Error: {$smtp->error}");
+		return("Could not send the message to {$to} -- Error: {$smtp->error}");
+	}
 
 }
 

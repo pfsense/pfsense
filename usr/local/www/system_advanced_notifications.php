@@ -87,7 +87,7 @@ if ($_POST) {
 		notify_via_growl("This is a test message form pfSense.  It is safe to ignore this message.");
 
 		// Send test message via smtp
-		notify_via_smtp("This is a test message form pfSense.  It is safe to ignore this message.");
+		$savemsg = notify_via_smtp("This is a test message form pfSense.  It is safe to ignore this message.");
 
 		pfSenseHeader("system_advanced_notifications.php");
 		exit;
@@ -103,6 +103,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<?php if ($savemsg) print_info_box($savemsg); ?>
 	<form action="system_advanced_notifications.php" method="post">
 		<?php
 			if ($input_errors)

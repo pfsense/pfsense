@@ -771,7 +771,7 @@ function interface_vip_bring_down(&$vip) {
 		break;
 	case "carp":
 	case "carpdev-dhcp":
-		$vipif = "vip" . x{$vip['vhid'];
+		$vipif = "vip" . $vip['vhid'];
 		mwexec("/sbin/ifconfig {$vipif} delete");
                 mwexec("/sbin/ifconfig {$vipif} down");
 		mwexec("/sbin/ifconfig {$vipif} destroy");

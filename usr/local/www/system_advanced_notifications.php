@@ -103,7 +103,6 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
 	<form action="system_advanced_notifications.php" method="post">
 		<?php
 			if ($input_errors)
@@ -120,7 +119,7 @@ include("head.inc");
 					$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
 					$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
 					$tab_array[] = array("Networking", false, "system_advanced_network.php");
-					$tab_array[] = array("Miscellaneous", false, "system_advanced_notifications.php");
+					$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
 					$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
 					$tab_array[] = array("Notifications", true, "system_advanced_notifications.php");
 					display_top_tabs($tab_array);

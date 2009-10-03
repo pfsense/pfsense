@@ -62,12 +62,16 @@ $bogons = file_get_contents(trim("/etc/bogons"));
 $pgtitle = "Diagnostics: Show Bogons";
 
 include("head.inc");
+?>
+<body link="#000000" vlink="#000000" alink="#000000">
+
+<?php
+
 include("fbegin.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <style type="text/css">
-body { font-family: Verdana; font-size: 100%; }
 pre { font-size: 1.15em; }
 </style> 
 <?php if ($input_errors) print_input_errors($input_errors); ?>

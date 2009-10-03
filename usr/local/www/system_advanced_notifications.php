@@ -94,8 +94,6 @@ if ($_POST) {
     }
 }
 
-include("head.inc");
-
 $pgtitle = array("System","Advanced: Notifications");
 include("head.inc");
 

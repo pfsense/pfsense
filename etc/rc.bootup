@@ -191,13 +191,13 @@ function rescue_detect_keypress() {
 	/* start syslogd */
 	system_syslogd_start();
 
+	/* set up VLAN virtual interfaces */
+	interfaces_vlan_configure();
+
 	/* setup interface microcode which improves tcp/ip speed */
 	echo "Setting up microcode and tx/rx offloading...";
 	setup_microcode();
 	echo "done.\n";
-
-	/* set up VLAN virtual interfaces */
-	interfaces_vlan_configure();
 
 	/* set up LAN interface */
 	echo "Configuring LAN interface...";

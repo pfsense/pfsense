@@ -291,7 +291,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
         }
         elseif ((isset($config['captiveportal']['noconcurrentlogins'])) && ($username != 'unauthenticated')) {
             /* on the same username */
-            if ($cpdb[$i][4] == $username) {
+            if (strcasecmp($cpdb[$i][4], $username) == 0) {
                 /* This user was already logged in so we disconnect the old one */
                 captiveportal_disconnect($cpdb[$i],$radiusservers,13);
                 captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");

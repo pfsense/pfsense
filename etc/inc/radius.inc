@@ -33,7 +33,7 @@
     any other GPL-like (LGPL, GPL2) License.
 
         This version of RADIUS.php has been modified by
-        Jonathan De Graeve <jonathan@imelda.be> to integrate with M0n0wall <http://www.m0n0.ch/wall>
+        Jonathan De Graeve <m0n0wall@esstec.be> to integrate with M0n0wall <http://www.m0n0.ch/wall>
 
         Changes made include:
         * StandardAttributes for M0n0wall use
@@ -43,6 +43,7 @@
         * Adding of VENDOR Bay Networks (Nortel)
         * Adding of VENDOR Nomadix
         * Adding of VENDOR WISPr (Wi-Fi Alliance)
+	* Adding of VENDOR ChilliSpot (bandwidth-attributes only)
 
 */
 
@@ -62,7 +63,7 @@ require_once("radius_accounting.inc");
 * @package Auth_RADIUS
 * @author  Michael Bretterklieber <michael@bretterklieber.com>
 * @access  public
-* @version $Revision$
+* @version $Revision: 1.5 $
 */
 
 PEAR::loadExtension('radius');
@@ -157,7 +158,7 @@ class Auth_RADIUS extends PEAR {
      * @param  integer $maxtries     Max. retries for each request
      * @return void
      */
-    function addServer($servername = 'localhost', $port = 0, $sharedSecret = 'testing123', $timeout = 5, $maxtries = 3) 
+    function addServer($servername = 'localhost', $port = 0, $sharedSecret = 'testing123', $timeout = 3, $maxtries = 2) 
     {
         $this->_servers[] = array($servername, $port, $sharedSecret, $timeout, $maxtries);
     }
@@ -583,44 +584,55 @@ class Auth_RADIUS extends PEAR {
                     }
                 } 
 
-        if ($vendor == 14122) { /* RADIUS_VENDOR_WISPr Wi-Fi Alliance */
+        	if ($vendor == 14122) { /* RADIUS_VENDOR_WISPr Wi-Fi Alliance */
 
-            switch ($attrv) {
-            case 1: /* WISPr-Location-ID */
-            $this->attributes['location_id'] = radius_cvt_string($datav);
-            break;
-            case 2: /* WISPr-Location-Name */
-            $this->attributes['location_name'] = radius_cvt_string($datav);
-            break;
-            case 3: /* WISPr-Logoff-URL */
-            $this->attributes['url_logoff'] = radius_cvt_string($datav);
-            break;
-            case 4: /* WISPr-Redirection-URL */
-            $this->attributes['url_redirection'] = radius_cvt_string($datav);
-            break;
-            case 5: /* WISPr-Bandwidth-Min-Up */
-            $this->attributes['bw_up_min'] = radius_cvt_int($datav);
-            break;
-            case 6: /* WISPr-Bandwidth-Min-Down */
-            $this->attributes['bw_down_min'] = radius_cvt_int($datav);
-            break;
-            case 7: /* WIPSr-Bandwidth-Max-Up */
-            $this->attributes['bw_up'] = radius_cvt_int($datav);
-            break;
-            case 8: /* WISPr-Bandwidth-Max-Down */
-            $this->attributes['bw_down'] = radius_cvt_int($datav);
-            break;
-            case 9: /* WISPr-Session-Terminate-Time */
-            $this->attributes['session_terminate_time'] = radius_cvt_string($datav);
-            break;
-            case 10: /* WISPr-Session-Terminate-End-Of-Day */
-            $this->attributes['session_terminate_endofday'] = radius_cvt_int($datav);
-            break;
-            case 11: /* WISPr-Billing-Class-Of-Service */
-            $this->attributes['billing_class_of_service'] = radius_cvt_string($datav);
-            break;
-           }
-        }
+            		switch ($attrv) {
+            		case 1: /* WISPr-Location-ID */
+            			$this->attributes['location_id'] = radius_cvt_string($datav);
+            			break;
+            		case 2: /* WISPr-Location-Name */
+            			$this->attributes['location_name'] = radius_cvt_string($datav);
+            			break;
+            		case 3: /* WISPr-Logoff-URL */
+            			$this->attributes['url_logoff'] = radius_cvt_string($datav);
+            			break;
+            		case 4: /* WISPr-Redirection-URL */
+            			$this->attributes['url_redirection'] = radius_cvt_string($datav);
+            			break;
+            		case 5: /* WISPr-Bandwidth-Min-Up */
+            			$this->attributes['bw_up_min'] = radius_cvt_int($datav);
+            			break;
+            		case 6: /* WISPr-Bandwidth-Min-Down */
+            			$this->attributes['bw_down_min'] = radius_cvt_int($datav);
+            			break;
+            		case 7: /* WIPSr-Bandwidth-Max-Up */
+            			$this->attributes['bw_up'] = radius_cvt_int($datav);
+            			break;
+            		case 8: /* WISPr-Bandwidth-Max-Down */
+            			$this->attributes['bw_down'] = radius_cvt_int($datav);
+            			break;
+            		case 9: /* WISPr-Session-Terminate-Time */
+            			$this->attributes['session_terminate_time'] = radius_cvt_string($datav);
+            			break;
+            		case 10: /* WISPr-Session-Terminate-End-Of-Day */
+            			$this->attributes['session_terminate_endofday'] = radius_cvt_int($datav);
+            			break;
+            		case 11: /* WISPr-Billing-Class-Of-Service */
+            			$this->attributes['billing_class_of_service'] = radius_cvt_string($datav);
+            			break;
+           		}
+        	}
+
+		if ($vendor == 14559) { /* RADIUS_VENDOR_ChilliSpot */
+			switch ($attrv) {
+			case 4: /* ChilliSpot-Bandwidth-Max-Up */
+				$this->attributes['bw_up'] = radius_cvt_int($datav);
+				break;
+			case 5: /* ChilliSpot-Bandwidth-Max-Down */
+				$this->attributes['bw_down'] = radius_cvt_int($datav);
+				break;
+			}
+		}
 
                 break;
 
@@ -1040,7 +1052,8 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
             $this->putAttribute(RADIUS_USER_NAME, $this->username);
         }
         $this->putAttribute(RADIUS_ACCT_STATUS_TYPE, $this->status_type);
-        if (isset($this->session_time) && $this->status_type == RADIUS_STOP) {
+        //if (isset($this->session_time) && $this->status_type == RADIUS_STOP) {
+	if (isset($this->session_time)) {
             $this->putAttribute(RADIUS_ACCT_SESSION_TIME, $this->session_time);
         }
         if (isset($this->authentic)) {

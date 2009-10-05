@@ -465,7 +465,7 @@ if ($pkg['tabs'] <> "") {
 			if (isset($pkga['all_interfaces']))
 				$ifaces = explode(' ', trim(shell_exec('ifconfig -l')));
 			else
-				$ifaces = $config['interfaces'];
+				$ifaces = get_configured_interface_with_descr();
 			$additional_ifaces = $pkga['add_to_interfaces_selection'];
 			if (!empty($additional_ifaces))
 				$ifaces = array_merge($ifaces, explode(',', $additional_ifaces));

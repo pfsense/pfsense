@@ -343,32 +343,15 @@ function enablechange() {
 				if($field['add_to_interfaces_selection'] == $value) $SELECTED = " SELECTED";
 				echo "<option value='" . $field['add_to_interfaces_selection'] . "'" . $SELECTED . ">" . $field['add_to_interfaces_selection'] . "</option>\n";
 			}
-			$interfaces = $config['interfaces'];
-			if($field['all_interfaces'] <> "") {
-				$ints = split(" ", `/sbin/ifconfig -l`);
-				$interfaces = array();
-				foreach ($ints as $int) {
-					$interfaces[]['descr'] = $int;
-					$interfaces[] = $int;
-				}
-			}
+			$interfaces = get_configured_interface_with_descr();
 			foreach ($interfaces as $ifname => $iface) {
-			  if ($iface['descr'])
-				  $ifdescr = $iface['descr'];
-			  else
-				  $ifdescr = strtoupper($ifname);
-			  $ip = "";
-			  if($field['all_interfaces'] <> "") {
-				$ifdescr = $iface;
-				$ip = " " . find_interface_ip($iface);
-			  }
 			  $SELECTED = "";
 			  if ($value == $ifname) $SELECTED = " SELECTED";
-			  $to_echo = "<option value='" . $ifname . "'" . $SELECTED . ">" . $ifdescr . $ip . "</option>\n";
+			  $to_echo = "<option value='" . $ifname . "'" . $SELECTED . ">" . $iface . "</option>\n";
 			  $to_echo .= "<!-- {$value} -->";
 			  $canecho = 0;
 			  if($field['interface_filter'] <> "") {
-				if(stristr($iface, $field['interface_filter']) == true)
+				if(stristr($ifname, $field['interface_filter']) == true)
 					$canecho = 1;
 			  } else {
 				$canecho = 1;

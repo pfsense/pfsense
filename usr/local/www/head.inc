@@ -30,6 +30,7 @@ $pagetitle = gentitle( $pgtitle );
 <head>
 	<title><?=$pagetitle;?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel=”apple-touch-icon” href=”/themes/<?php echo $g['theme']; ?>/apple-touch-icon.png”/>
         <?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
                   file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
 					<?php outputCSSFileInline("{$g['www_path']}/themes/{$g['theme']}/wizard.css"); ?>

@@ -1223,7 +1223,7 @@ function interface_carp_configure(&$vip) {
 	get_interface_arr(true);
 
 	$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
-	mwexec("/sbin/ifconfig {$carpif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
+	mwexec("/sbin/ifconfig {$vipif} {$vip['subnet']}/{$vip['subnet_bits']} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
 
 	interfaces_bring_up($vipif);
 	

@@ -450,7 +450,7 @@ if ($pkg['tabs'] <> "") {
 		  if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";
 		  if($pkga['cols']) $cols = " cols='" . $pkga['cols'] . "' ";
 		  if($pkga['wrap'] == "off") { $wrap = 'wrap="off" style="white-space:nowrap;"'; } else { $wrap = ''; }		  
-          if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) $value = base64_decode($value);
+		  if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) $value = base64_decode($value);
 			echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "' ".$wrap.">" . $value . "</textarea>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 		  } else if($pkga['type'] == "interfaces_selection") {
@@ -462,10 +462,7 @@ if ($pkg['tabs'] <> "") {
 				$multiple = 'multiple';
 			}
 			print("<select id='" . $pkga['fieldname'] . "' name=\"$fieldname\" $size $multiple>\n");
-			if (isset($pkga['all_interfaces']))
-				$ifaces = explode(' ', trim(shell_exec('ifconfig -l')));
-			else
-				$ifaces = get_configured_interface_with_descr();
+			$ifaces = get_configured_interface_with_descr();
 			$additional_ifaces = $pkga['add_to_interfaces_selection'];
 			if (!empty($additional_ifaces))
 				$ifaces = array_merge($ifaces, explode(',', $additional_ifaces));
@@ -474,14 +471,8 @@ if ($pkg['tabs'] <> "") {
 			else
 				$values  =  explode(',',  $value);
 			foreach($ifaces as $ifname => $iface) {
-				if($iface['descr'] <> "")
-					$ifdescr = $iface['descr'];
-				else
-					$ifdescr = strtoupper($ifname);
-				if ($ip = find_interface_ip($iface))
-					$ip = " ($ip)";
 				$selected = (in_array($ifname, $values) ? 'selected' : '');
-				print("<option value=\"$ifname\" $selected>$ifdescr</option>\n");
+				print("<option value=\"$ifname\" $selected>$iface</option>\n");
 			}
 			print("</select>\n<br />" . fixup_string($pkga['description']) . "\n");
 	      } else if($pkga['type'] == "radio") {

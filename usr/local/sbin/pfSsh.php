@@ -276,7 +276,9 @@ function str_replace_all($search,$replace,$subject) {
 
 function playback_text($playback_file_contents) {
 	$playback_file_split = split("\n", $playback_file_contents);
-	$playback_text = "";
+	$playback_text  = "require_once('functions.inc');\n";
+	$playback_text .= "require_once('globals.inc');\n";
+	$playback_text .= "require_once('config.inc');\n";
 	$toquote = '"';
 	$toquotereplace = '\\"';	
 	foreach($playback_file_split as $pfs) {

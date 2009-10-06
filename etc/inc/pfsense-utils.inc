@@ -792,7 +792,7 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 	if($ip == $g['product_website'])
 		return false;
 
-	$xmlrpc_base_url = $g['xmlrpcbaseurl'];
+	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 	$xmlrpc_path = $g['xmlrpcpath'];
 	$msg = new XML_RPC_Message($method, array(XML_RPC_Encode($params)));
 	$cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url);

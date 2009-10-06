@@ -51,7 +51,8 @@ if($pkg_info) {
 } else {
 	$using_cache = true;
 	if(file_exists("{$g['tmp_path']}/pkg_info.cache")) {
-		$savemsg = "Unable to retrieve package info from {$g['xmlrpcbaseurl']}. Cached data will be used.";
+		$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+		$savemsg = "Unable to retrieve package info from {$xmlrpc_base_url}. Cached data will be used.";
 		$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
 	} else {
 		$savemsg = "Unable to communicate to {$g['product_website']}.  Please check DNS, default gateway, etc.";

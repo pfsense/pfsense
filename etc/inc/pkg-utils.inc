@@ -152,7 +152,8 @@ function get_pkg_sizes($pkgs = 'all') {
 	global $g;
 	$params = array("pkg" => $pkgs);
 	$msg = new XML_RPC_Message('pfsense.get_pkg_sizes', array(php_value_to_xmlrpc($params)));
-	$cli = new XML_RPC_Client($g['xmlrpcpath'], $g['xmlrpcbaseurl']);
+	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
+	$cli = new XML_RPC_Client($g['xmlrpcpath'], $xmlrpc_base_url);
 	$resp = $cli->send($msg, 10);
 	if($resp and !$resp->faultCode()) {
 		$raw_versions = $resp->value();

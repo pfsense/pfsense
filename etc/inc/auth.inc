@@ -44,7 +44,7 @@
  * file courtesy of Michael Retterklieber.
  */
 
-require_once("config.inc");
+require_once("config.gui.inc");
 
 $groupindex = index_groups();
 $userindex = index_users();

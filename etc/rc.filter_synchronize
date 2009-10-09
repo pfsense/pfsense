@@ -89,58 +89,44 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
         if (is_array($config_copy['nat']['advancedoutbound']['rule']))
         for ($x = 0; $x < count($config_copy['nat']['advancedoutbound']['rule']); $x++) {
                 $config_copy['nat']['advancedoutbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['advancedoutbound']['rule'][$x]['descr']);
-                if (isset ($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync'])) {
-                	array_splice($config_copy['nat']['advancedoutbound']['rule'],$x,1);
-                	$x--;
-				}
+                if (isset ($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']))
+                        unset ($config_copy['nat']['advancedoutbound']['rule'][$x]);
         }
         if (is_array($config_copy['nat']['rule']))
         for ($x = 0; $x < count($config_copy['nat']['rule']); $x++) {
                 $config_copy['nat']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['rule'][$x]['descr']);
-                if (isset ($config_copy['nat']['rule'][$x]['nosync'])) {
-                	array_splice($config_copy['nat']['rule'],$x,1);
-                	$x--;
-				}
+                if (isset ($config_copy['nat']['rule'][$x]['nosync']))
+                        unset ($config_copy['nat']['rule'][$x]);
         }
         if (is_array($config_copy['filter']['rule']))
         for ($x = 0; $x < count($config_copy['filter']['rule']); $x++) {
                 $config_copy['filter']['rule'][$x]['descr'] = remove_special_characters($config_copy['filter']['rule'][$x]['descr']);
-                if (isset ($config_copy['filter']['rule'][$x]['nosync'])) {
-                	array_splice($config_copy['filter']['rule'],$x,1);
-                	$x--;
-				}
+                if (isset ($config_copy['filter']['rule'][$x]['nosync']))
+                        unset ($config_copy['filter']['rule'][$x]);
         }
         if (is_array($config_copy['aliases']['alias']))
         for ($x = 0; $x < count($config_copy['aliases']['alias']); $x++) {
                 $config_copy['aliases']['alias'][$x]['descr'] = remove_special_characters($config_copy['aliases']['alias'][$x]['descr']);
-                if (isset ($config_copy['aliases']['alias'][$x]['nosync'])) {
-                	array_splice($config_copy['aliases']['alias'],$x,1);
-                	$x--;
-				}
+                if (isset ($config_copy['aliases']['alias'][$x]['nosync']))
+                        unset ($config_copy['aliases']['alias'][$x]);
         }
         if (is_array($config_copy['dnsmasq']['hosts']))
         for ($x = 0; $x < count($config_copy['dnsmasq']['hosts']); $x++) {
                 $config_copy['dnsmasq']['hosts'][$x]['descr'] = remove_special_characters($config_copy['dnsmasq']['hosts'][$x]['descr']);
-                if (isset ($config_copy['dnsmasq']['hosts'][$x]['nosync'])) {
-                	array_splice($config_copy['dnsmasq']['hosts'],$x,1);
-                	$x--;
-				}
+                if (isset ($config_copy['dnsmasq']['hosts'][$x]['nosync']))
+                        unset ($config_copy['dnsmasq']['hosts'][$x]);
         }
         if (is_array($config_copy['virtualip']['vip']))
         for ($x = 0; $x < count($config_copy['virtualip']['vip']); $x++) {
                 $config_copy['virtualip']['vip'][$x]['descr'] = remove_special_characters($config_copy['virtualip']['vip'][$x]['descr']);
-                if (isset ($config_copy['virtualip']['vip'][$x]['nosync']) or $config_copy['virtualip']['vip'][$x]['mode'] == "proxyarp") {
-                	array_splice($config_copy['virtualip']['vip'],$x,1);
-                	$x--;
-				}
+                if (isset ($config_copy['virtualip']['vip'][$x]['nosync']) or $config_copy['virtualip']['vip'][$x]['mode'] == "proxyarp")
+                        unset ($config_copy['virtualip']['vip'][$x]);
         }
         if (is_array($config_copy['ipsec']['tunnel']))
         for ($x = 0; $x < count($config_copy['ipsec']['tunnel']); $x++) {
                 $config_copy['ipsec']['tunnel'][$x]['descr'] = remove_special_characters($config_copy['ipsec']['tunnel'][$x]['descr']);
-                if (isset ($config_copy['ipsec']['tunnel'][$x]['nosync'])) {
-                	array_splice($config_copy['ipsec']['tunnel'],$x,1);
-                	$x--;
-				}
+                if (isset ($config_copy['ipsec']['tunnel'][$x]['nosync']))
+                        unset ($config_copy['ipsec']['tunnel'][$x]);
         }
 
         foreach ($sections as $section) {

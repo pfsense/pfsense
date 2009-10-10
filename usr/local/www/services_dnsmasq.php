@@ -168,7 +168,7 @@ function enable_change(enable_over) {
                 </tr>
         </table>
         &nbsp;<br>
-        <table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="20%" class="listhdrr">Host</td>
                   <td width="25%" class="listhdrr">Domain</td>

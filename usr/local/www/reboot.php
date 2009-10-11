@@ -63,7 +63,7 @@ include("head.inc");
 <?php
 if ($_POST) {
 	if ($_POST['Submit'] == " Yes ") {
-		echo "<meta http-equiv=\"refresh\" content=\"40;url=/\">";
+		echo "<meta http-equiv=\"refresh\" content=\"70;url=/\">";
 		system_reboot();
 		$rebootmsg = "The system is rebooting now. This may take one minute.";
 	} else {

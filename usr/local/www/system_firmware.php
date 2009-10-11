@@ -228,6 +228,8 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
                     <br><br>
 					<strong>Firmware image file: </strong>&nbsp;
 					<input name="ulfile" type="file" class="formfld">
+					<br><br>
+					<b>NOTE: You must upload a .tgz image, not a uncompressed image!</b> 
                     <br><br>
 					  <?php
 				  		if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {

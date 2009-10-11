@@ -729,7 +729,7 @@ EOC;
 	} else if ($avail > 0 and $avail < 128) {
 		$bin_environment = <<<EOC
 	"bin-environment" => (
-			"PHP_FCGI_CHILDREN" => "$max_procs"
+			"PHP_FCGI_CHILDREN" => "$max_procs",
 			"PHP_FCGI_MAX_REQUESTS" => "500",
 	),
 

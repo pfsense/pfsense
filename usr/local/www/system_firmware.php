@@ -251,8 +251,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 							upload&quot; below, then choose the image file (<?=$g['firmware_update_text'];?>)
 							to be uploaded.
 							<br>
-							Click &quot;Upgrade firmware&quot;
-							to start the upgrade process.
+							Click &quot;Upgrade firmware&quot; to start the upgrade process.
 						</p>
 						<?php if (!is_subsystem_dirty('rebootreq')): ?>
 						<?php if (!is_subsystem_dirty('firmware')): ?>
@@ -262,6 +261,8 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 							<br><br>
 							<strong>Firmware image file: </strong>&nbsp;
 							<input name="ulfile" type="file" class="formfld">
+							<br><br>
+							<b>NOTE: You must upload a .tgz image, not a uncompressed image!</b> 
 							<br><br>
 							<?php
 						  		if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {

@@ -67,7 +67,6 @@ function detect_slice_info() {
 		$UFS_ID="1";
 		$OLD_UFS_ID="0";
 		$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
-
 	} else {
 		$SLICE="1";
 		$OLDSLICE="2";
@@ -122,6 +121,9 @@ EOF;
 		$AOLD_UFS_ID="1";
 		$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
 	}
+
+	$NANOBSD_SIZE = file_get_contents("/etc/nanosize.txt");
+
 	conf_mount_rw();
 	exec("sysctl kern.geom.debugflags=16");
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
@@ -203,7 +205,7 @@ if ($savemsg)
 					<tr>						
 						<td width="22%" valign="top" class="vncell">NanoBSD Image size</td>
 						<td width="78%" class="vtable">
-							<?php echo format_bytes($NANOBSD_SIZE); ?>
+							<?php echo "$NANOBSD_SIZE"; ?>
 						</td>
 					</tr>
 					<tr>

@@ -126,6 +126,7 @@ EOF;
 	exec("sysctl kern.geom.debugflags=16");
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
+	exec("/sbin/tunefs -L ${AGLABEL_SLICE} /dev/$ACOMPLETE_PATH");
 	exec("/bin/mkdir /tmp/{$AGLABEL_SLICE}");
 	exec("/sbin/fsck_ufs -y /dev/{$ACOMPLETE_PATH}");
 	exec("/sbin/mount /dev/ufs/{$AGLABEL_SLICE} /tmp/{$AGLABEL_SLICE}");

@@ -122,8 +122,6 @@ EOF;
 		$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
 	}
 
-	$NANOBSD_SIZE = file_get_contents("/etc/nanosize.txt");
-
 	conf_mount_rw();
 	exec("sysctl kern.geom.debugflags=16");
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
@@ -143,6 +141,8 @@ EOF;
 	// Survey slice info
 	detect_slice_info();
 }
+
+$NANOBSD_SIZE = file_get_contents("/etc/nanosize.txt");
 
 if($_POST['destslice']) {
 

@@ -200,6 +200,12 @@ if ($savemsg)
 					<tr>
 						<td colspan="2" valign="top" class="listtopic">Bootup information</td>
 					</tr>
+					<tr>						
+						<td width="22%" valign="top" class="vncell">NanoBSD Image size</td>
+						<td width="78%" class="vtable">
+							<?php echo format_bytes($NANOBSD_SIZE); ?>
+						</td>
+					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell">Bootup</td>
 						<td width="78%" class="vtable">

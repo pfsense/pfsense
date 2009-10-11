@@ -58,8 +58,6 @@ function detect_slice_info() {
 	$REAL_BOOT_DEVICE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);
 	$BOOT_DRIVE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`);
 
-	$NANOBSD_SIZE = trim(`/sbin/fdisk ${COMPLETE_PATH} | /usr/bin/grep Meg | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d"(" -f2`);
-
 	// Detect which slice is active and set information.
 	if(strstr($REAL_BOOT_DEVICE, "s1")) {
 		$SLICE="2";
@@ -96,6 +94,8 @@ detect_slice_info();
 <?php include("fbegin.inc"); ?>
 
 <?php
+
+$NANOBSD_SIZE = file_get_contents("/etc/nanosize.txt");
 
 if($_POST['bootslice']) {
 	echo <<<EOF

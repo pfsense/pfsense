@@ -95,7 +95,7 @@ detect_slice_info();
 
 <?php
 
-$NANOBSD_SIZE = file_get_contents("/etc/nanosize.txt");
+$NANOBSD_SIZE = strtoupper(file_get_contents("/etc/nanosize.txt"));
 
 if($_POST['bootslice']) {
 	echo <<<EOF

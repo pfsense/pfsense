@@ -125,7 +125,7 @@ $iptos = array("lowdelay", "throughput", "reliability");
 $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
 
 if(file_exists("/etc/platform")) {
-	$g['$platform'] = trim(file_get_contents("/etc/platform"));
+	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if($g['platform'] == "nanobsd") {
 		$g['update_url']="http://updates.pfSense.com/nanobsd/_updaters";
 		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest";

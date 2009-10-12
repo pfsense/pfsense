@@ -463,6 +463,10 @@ function conf_mount_ro() {
 	if(file_exists($g['varrun_path'] . "/firmware.lock"))
 		return;
 
+	/* Disk mounted RW (NanoBSD) */
+	if(file_exists($g['varrun_path'] . "/fwup.enabled";))
+		return;
+
 	/* do not umount if generating ssh keys */
 	if(file_exists("/tmp/keys_generating"))
 		return;

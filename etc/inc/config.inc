@@ -464,7 +464,7 @@ function conf_mount_ro() {
 		return;
 
 	/* Disk mounted RW (NanoBSD) */
-	if(file_exists($g['varrun_path'] . "/fwup.enabled";))
+	if(file_exists($g['varrun_path'] . "/fwup.enabled"))
 		return;
 
 	/* do not umount if generating ssh keys */

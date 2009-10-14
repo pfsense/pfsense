@@ -71,19 +71,13 @@ function slbd_configure() {
 					$svrcnt = 0;
 					$svrtxt = "";
 					$svrtxt = "\t:service-port={$config['load_balancer']['lbpool'][$i]['port']}:\\\n";
-					if($config['load_balancer']['lbpool']) {
-						if(is_array($config['load_balancer']['lbpool'][$i]['servers'])) {
+					if($config['load_balancer']['lbpool'])
+						if(is_array($config['load_balancer']['lbpool'][$i]['servers']))
 							foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
 								$svrtxt .= "\t:{$svrcnt}={$lbsvr}:\\\n";
 								$svrcnt++;
 							}
-						}
-					}
-					if($config['load_balancer']['lbpool'][$i]['behaviour'])
-						$lb_pool_behaviour = $config['load_balancer']['lbpool'][$i]['behaviour'];
-					else 
-						$lb_pool_behaviour = "round-robin";
-					$slbdconf .= "\t:method={$lb_pool_behaviour}:\\\n";
+					$slbdconf .= "\t:method=round-robin:\\\n";
 					$slbdconf .= "\t:services={$svrcnt}:\\\n";
 					$slbdconf .= $svrtxt;
 					if($config['load_balancer']['lbpool'][$i]['monitor'] == "ICMP") {

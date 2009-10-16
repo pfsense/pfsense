@@ -231,6 +231,12 @@ function updateType(t){
 			</td>
 		</tr>
 		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq">Description</td>
+			<td width="78%" class="vtable" colspan="2">
+				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
+			</td>
+		</tr>
+		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">Type</td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="type" name="type">
@@ -335,12 +341,6 @@ function updateType(t){
 						</td>
 					</tr>
 				</table>
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Description</td>
-			<td width="78%" class="vtable" colspan="2">
-				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
 			</td>
 		</tr>
 		<tr align="left">

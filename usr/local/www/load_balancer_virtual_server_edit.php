@@ -166,42 +166,44 @@ document.observe("dom:loaded", function() {
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="load_balancer_virtual_server_edit.php" method="post" name="iform" id="iform">
-
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-		<tr>
-			<td colspan="2" valign="top" class="listtopic">Edit Load Balancer - Virtual Server entry</td>
-		</tr>
+				<tr>
+					<td colspan="3" valign="top" class="listtopic">Edit Load Balancer - Virtual Server entry</td>
+				</tr>
                 <tr align="left">
-		  <td width="22%" valign="top" class="vncellreq">Name</td>
+		  			<td width="22%" valign="top" class="vncellreq">Name</td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?>size="32" maxlength="32">
                   </td>
-		</tr>
+			</tr>
                 <tr align="left">
-		  <td width="22%" valign="top" class="vncellreq">Description</td>
+		  			<td width="22%" valign="top" class="vncellreq">Description</td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
                   </td>
-		</tr>
+			</tr>
                 <tr align="left">
-		  <td width="22%" valign="top" class="vncellreq">IP Address</td>
+		  			<td width="22%" valign="top" class="vncellreq">IP Address</td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"{$pconfig['ipaddr']}\"";?> size="16" maxlength="16">
-		    <br><b>NOTE:</b> This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster.
-		    <br><b>NOTE:</b> DO NOT USE RELAY MODE WITH PROXY ARP - IT WILL NOT WORK - TODO for 2.0 to fix.
+		    		<br>This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster.
+		    		<br><b>NOTE:</b> DO NOT USE RELAY MODE WITH PROXY ARP - IT WILL NOT WORK - TODO for 2.0 to fix.
                   </td>
-		</tr>
+			</tr>
                 <tr align="left">
-		  <td width="22%" valign="top" class="vncellreq">Port</td>
+		  			<td width="22%" valign="top" class="vncellreq">Port</td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
-		    <br><b>NOTE:</b> This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster.
+		    		<br>This is the port that the clients will connect to.  All connections to this port will be forwarded to the pool cluster.
                   </td>
-		</tr>
+			</tr>
                 <tr align="left">
-		  <td width="22%" valign="top" class="vncellreq">Virtual Server Pool</td>
-                  <td width="78%" class="vtable" colspan="2">
-                    <select id="pool" name="pool">
+		  			<td width="22%" valign="top" class="vncellreq">Virtual Server Pool</td>
+					<td width="78%" class="vtable" colspan="2">
+			<?php if(count($config['load_balancer']['lbpool']) == 0): ?>
+				<b>NOTE:</b> Please add a pool on the Pools tab to use this feature.    
+			<?php else: ?>
+				<select id="pool" name="pool">
 			<?php
 				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 					$selected = "";
@@ -210,14 +212,18 @@ document.observe("dom:loaded", function() {
 					echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
 				}
 			?>
-			</select>
-                  </td>
-		</tr>
+			<?php endif; ?>
+				</select>
+				</td>
+			</tr>
                 <tr align="left">
-		  <td width="22%" valign="top" class="vncellreq">Fall Back Pool</td>
-                  <td width="78%" class="vtable" colspan="2">
-                                <select id="sitedown" name="sitedown">
-                                <option value=""<?=$pconfig['sitedown'] == '' ? ' selected' : ''?>>none</option>
+		  			<td width="22%" valign="top" class="vncellreq">Fall Back Pool</td>
+					<td width="78%" class="vtable" colspan="2">
+					<?php if(count($config['load_balancer']['lbpool']) == 0): ?>
+						<b>NOTE:</b> Please add a pool on the Pools tab to use this feature.    
+					<?php else: ?>
+						<select id="sitedown" name="sitedown">
+							<option value=""<?=$pconfig['sitedown'] == '' ? ' selected' : ''?>>none</option>
             			<?php
             				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
             					$selected = "";
@@ -227,20 +233,21 @@ document.observe("dom:loaded", function() {
             				}
             			?>
             			</select>
-                  <br><b>NOTE:</b> This is the server that clients will be redirected to if *ALL* servers in the pool are offline.
+                  		<br><b>NOTE:</b> This is the server that clients will be redirected to if *ALL* servers in the pool are offline.
+				  <?php endif; ?>
                   </td>
-		</tr>
+				</tr>
                 <tr align="left">
-		  <td width="22%" valign="top" class="vncellreq">Mode</td>
+		  			<td width="22%" valign="top" class="vncellreq">Mode</td>
                   <td width="78%" class="vtable" colspan="2">
                     <input id="redirect_mode" type="radio" name="mode" value="redirect"<?=$pconfig['mode'] == 'redirect' ? ' checked="checked"': ''?>> Redirect
                     <input id="relay_mode" type="radio" name="mode" value="relay"<?=$pconfig['mode'] == 'relay' ? ' checked="checked"': ''?>> Relay
                              
                   <br>
                   </td>
-		</tr>
+				</tr>
                 <tr id="relay" align="left" style="display:none;">
-		  <td width="22%" valign="top" class="vncellreq">Relay Protocol</td>
+		  			<td width="22%" valign="top" class="vncellreq">Relay Protocol</td>
                   <td width="78%" class="vtable" colspan="2">
                   <select id="relay_protocol" name="relay_protocol">
                 <?php
@@ -254,19 +261,20 @@ document.observe("dom:loaded", function() {
             			</select>
                   <br>
                   </td>
-		</tr>
-		
+				</tr>
                 <tr align="left">
                   <td align="left" valign="bottom">
-			<input name="Submit" type="submit" class="formbtn" value="Submit"><input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+					<input name="Submit" type="submit" class="formbtn" value="Submit"> 
+					<input type="button" class="formbtn" value="Cancel" onclick="history.back()">
 			<?php if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup'): ?>
-			<input name="id" type="hidden" value="<?=$id;?>">
+				<input name="id" type="hidden" value="<?=$id;?>">
 			<?php endif; ?>
-		  </td>
-		</tr>
-              </table>
-</form>
-<br><span class="red"><strong>Note:</strong></span> Don't forget to add a firewall rule for the virtual server/pool after you're finished setting it up.
+		  	</td>
+			</tr>
+		</table>
+	</form>
+	<br/>
+	<span class="red"><strong>Note:</strong></span> Don't forget to add a firewall rule for the virtual server/pool after you're finished setting it up.
 <?php include("fend.inc"); ?>
 </body>
 </html>

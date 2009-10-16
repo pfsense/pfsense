@@ -180,6 +180,12 @@ function clearcombo(){
 				<div id="monitorport_desc">This is the port your servers are listening on.</div>
 			</td>
 		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Add item to pool</td>
+		</tr>
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">Monitor</td>
 			<td width="78%" class="vtable" colspan="2">
@@ -204,7 +210,7 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">Server IP Address</td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="ipaddr" type="text" size="16" style="float: left;">
+				<input name="ipaddr" type="text" size="16" style="float: left;"> 
 				<input class="formbtn" type="button" name="button1" value="Add to pool" onclick="AddServerToPool(document.iform);"><br>
 			</td>
 		</tr>
@@ -212,7 +218,7 @@ function clearcombo(){
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">Pool Members</td>
+			<td colspan="2" valign="top" class="listtopic">Current Pool Members</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Members</td>
@@ -265,12 +271,10 @@ echo "</select>";
 				</table>
 			</td>
 		</tr>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
+				<br/>
 				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);"> 
 				<input type="button" class="formbtn" value="Cancel" onclick="history.back()">
 				<?php if (isset($id) && $a_pool[$id] && $_GET['act'] != 'dup'): ?>

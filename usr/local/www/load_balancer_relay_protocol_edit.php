@@ -207,6 +207,18 @@ document.observe('dom:loaded', function(){
 				</select>
 			</td>
 		</tr>
+		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq">Description</td>
+			<td width="78%" class="vtable" colspan="2">
+				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Add / remove available actions</td>
+		</tr>
 		<tr align="left" id="actions">
 			<td width="22%" valign="top" class="vncellreq">Actions</td>
 			<td width="78%" class="vtable" colspan="2">
@@ -214,7 +226,9 @@ document.observe('dom:loaded', function(){
 					<tbody>
 					<tr>
 						<td>
-							Available Actions<br/>
+							<center>
+							<b>Available Actions</b>
+							<br/>
 							<select id="available_action" name="available_action[]" multiple="true" size="5">
 <?php
 if (is_array($config['load_balancer']['lbaction'])) {
@@ -227,12 +241,16 @@ echo "</select>";
 							<br/>
 						</td>
 						<td valign="middle">
-							<input class="formbtn" type="button" name="copyToEnabled" value=">" onclick="copyOption($('available_action'), $('lbaction'));" /><br/>
-							<input class="formbtn" type="button" name="removeFromEnabled" value="X" onclick="deleteOption($('lbaction'));" />
+							<center>
+								<input class="formbtn" type="button" name="copyToEnabled" value="Add" onclick="copyOption($('available_action'), $('lbaction'));" /><br/>
+								<input class="formbtn" type="button" name="removeFromEnabled" value="Remove" onclick="deleteOption($('lbaction'));" />
+							</center>
 						</td>
 
 						<td>
-							Enabled Actions<br/>
+							<center>
+							<b>Enabled Actions</b>
+							<br/>
 							<select id="lbaction" name="lbaction[]" multiple="true" size="5">
 <?php
 if (is_array($pconfig['lbaction'])) {
@@ -247,12 +265,6 @@ echo "</select>";
 					</tr>
 					</tbody>
 				</table>
-			</td>
-		</tr>
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Description</td>
-			<td width="78%" class="vtable" colspan="2">
-				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
 			</td>
 		</tr>
 		<tr align="left">

@@ -105,8 +105,8 @@ $a_monitor = msort($a_monitor, "name");
         $tab_array[] = array("Monitors", true, "load_balancer_monitor.php");
         $tab_array[] = array("Pools", false, "load_balancer_pool.php");
         $tab_array[] = array("Virtual Servers", false, "load_balancer_virtual_server.php");
-        $tab_array[] = array("Relay Protocols", false, "load_balancer_relay_protocol.php");
         $tab_array[] = array("Relay Actions", false, "load_balancer_relay_action.php");
+        $tab_array[] = array("Relay Protocols", false, "load_balancer_relay_protocol.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>

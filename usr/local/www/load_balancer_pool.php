@@ -111,9 +111,9 @@ include("head.inc");
   <?php
         /* active tabs */
         $tab_array = array();
+        $tab_array[] = array("Monitors", false, "load_balancer_monitor.php");
         $tab_array[] = array("Pools", true, "load_balancer_pool.php");
         $tab_array[] = array("Virtual Servers", false, "load_balancer_virtual_server.php");
-        $tab_array[] = array("Monitors", false, "load_balancer_monitor.php");
         $tab_array[] = array("Relay Protocols", false, "load_balancer_relay_protocol.php");
         $tab_array[] = array("Relay Actions", false, "load_balancer_relay_action.php");
         display_top_tabs($tab_array);

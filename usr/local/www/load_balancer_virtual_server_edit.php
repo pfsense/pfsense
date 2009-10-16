@@ -109,11 +109,13 @@ if ($_POST) {
 		update_if_changed("mode", $vsent['mode'], $_POST['mode']);
 		update_if_changed("relay protocol", $vsent['relay_protocol'], $_POST['relay_protocol']);
 
+		if($_POST['sitedown'] == "")
+			unset($vsent['sitedown']);
+
 		if (isset($id) && $a_vs[$id])
 			$a_vs[$id] = $vsent;
 		else
 			$a_vs[] = $vsent;
-
 
 		if ($changecount > 0) {
 			/* Mark virtual server dirty */

@@ -235,8 +235,9 @@ function relayd_configure() {
           $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
 
           # sitedown MUST use the same port as the primary pool - sucks, but it's a relayd thing
-          if (isset($vs_a[$i]['sitedown']) &&  $vs_a[$i]['sitedown'] != "")
+          if (isset($vs_a[$i]['sitedown']) && strlen($vs_a[$i]['sitedown']) > 0)
             $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
+
           $conf .= "}\n";
           break;
         }
@@ -246,7 +247,7 @@ function relayd_configure() {
           $conf .= "  protocol \"{$vs_a[$i]['relay_protocol']}\"\n";
           $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
 
-          if (isset($vs_a[$i]['sitedown']) &&  $vs_a[$i]['sitedown'] != "")
+          if (isset($vs_a[$i]['sitedown']) &&  strlen($vs_a[$i]['sitedown']) > 0)
             $conf .= "  forward to <{$vs_a[$i]['sitedown']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
           $conf .= "}\n";
           break;

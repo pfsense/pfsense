@@ -241,14 +241,14 @@ function updateType(t){
 			<td width="78%" class="vtable" colspan="2">
 				<select id="type" name="type">
 <?
-	foreach ($types as $key => $val) {
-		if(isset($pconfig['type']) && $pconfig['type'] == $key) {
-			$selected = " selected";
-		} else {
-			$selected = "";
-		}
-		echo "<option value=\"{$key}\" onclick=\"updateType('{$key}');\"{$selected}>{$val}</option>\n";
-	}
+					foreach ($types as $key => $val) {
+						if(isset($pconfig['type']) && $pconfig['type'] == $key) {
+							$selected = " selected";
+						} else {
+							$selected = "";
+						}
+						echo "<option value=\"{$key}\" onclick=\"updateType('{$key}');\"{$selected}>{$val}</option>\n";
+					}
 ?>
 				</select>
 			</td>
@@ -262,20 +262,20 @@ function updateType(t){
 			<td width="78%" class="vtable" colspan="2">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr align="left">
-						<td width="22%" valign="top" class="vncellreq">Path</td>
-						<td width="78%" class="vtable" colspan="2">
+						<td valign="top" align="right" class="vtable">Path</td>
+						<td class="vtable" colspan="2">
 							<input name="http_options_path" type="text" <?if(isset($pconfig['options']['path'])) echo "value=\"{$pconfig['options']['path']}\"";?>size="64">
 						</td>
 					</tr>
 					<tr align="left">
-						<td width="22%" valign="top" class="vncell">Host</td>
-						<td width="78%" class="vtable" colspan="2">
+						<td valign="top"  align="right" class="vtable">Host</td>
+						<td class="vtable" colspan="2">
 							<input name="http_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"{$pconfig['options']['host']}\"";?>size="64"><br/>Hostname for Host: header if needed.
 						</td>
 					</td>
 					<tr align="left">
-						<td width="22%" valign="top" class="vncellreq">HTTP Code</td>
-						<td width="78%" class="vtable" colspan="2">
+						<td valign="top"  align="right" class="vtable">HTTP Code</td>
+						<td class="vtable" colspan="2">
 							<?= print_rfc2616_select("http_options_code", $pconfig['options']['code']); ?>
 						</td>
 					</tr>
@@ -295,20 +295,20 @@ function updateType(t){
 			<td width="78%" class="vtable" colspan="2">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr align="left">
-						<td width="22%" valign="top" class="vncellreq">Path</td>
-						<td width="78%" class="vtable" colspan="2">
+						<td valign="top"  align="right" class="vtable">Path</td>
+						<td class="vtable" colspan="2">
 							<input name="https_options_path" type="text" <?if(isset($pconfig['options']['path'])) echo "value=\"{$pconfig['options']['path']}\"";?>size="64">
 						</td>
 					</tr>
 					<tr align="left">
-						<td width="22%" valign="top" class="vncellreq">Host</td>
-						<td width="78%" class="vtable" colspan="2">
+						<td valign="top"  align="right" class="vtable">Host</td>
+						<td class="vtable" colspan="2">
 							<input name="https_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"{$pconfig['options']['host']}\"";?>size="64"><br/>Hostname for Host: header if needed.
 						</td>
 					</td>
 					<tr align="left">
-						<td width="22%" valign="top" class="vncellreq">HTTP Code</td>
-						<td width="78%" class="vtable" colspan="2">
+						<td valign="top"  align="right" class="vtable">HTTP Code</td>
+						<td class="vtable" colspan="2">
 							<?= print_rfc2616_select("https_options_code", $pconfig['options']['code']); ?>
 						</td>
 					</tr>
@@ -329,14 +329,14 @@ function updateType(t){
 			<td width="78%" class="vtable" colspan="2">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr align="left">
-						<td width="22%" valign="top" class="vncellreq">Send string</td>
-						<td width="78%" class="vtable" colspan="2">
+						<td valign="top"  align="right" class="vtable">Send string</td>
+						<td class="vtable" colspan="2">
 							<input name="send_options_send" type="text" <?if(isset($pconfig['options']['send'])) echo "value=\"{$pconfig['options']['send']}\"";?>size="64">
 						</td>
 					</tr>
 					<tr align="left">
-						<td width="22%" valign="top" class="vncellreq">Expect string</td>
-						<td width="78%" class="vtable" colspan="2">
+						<td valign="top" align="right"  class="vtable">Expect string</td>
+						<td class="vtable" colspan="2">
 							<input name="send_options_expect" type="text" <?if(isset($pconfig['options']['expect'])) echo "value=\"{$pconfig['options']['expect']}\"";?>size="64">
 						</td>
 					</tr>

@@ -158,7 +158,7 @@ function clearcombo(){
 	<form action="load_balancer_pool_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">Edit Load Balancer - Pool entry</td>
+			<td colspan="2" valign="top" class="listtopic">Add/edit Load Balancer - Pool entry</td>
 		</tr>
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">Name</td>
@@ -183,8 +183,9 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">Monitor</td>
 			<td width="78%" class="vtable" colspan="2">
+				<?php if(count($config['load_balancer']['monitor_type'])): ?>
 				<select id="monitor" name="monitor">
-					<?
+					<?php
 						foreach ($config['load_balancer']['monitor_type'] as $monitor) {
 							if ($monitor['name'] == $pconfig['monitor']) {
 								$selected=" selected";
@@ -194,35 +195,46 @@ function clearcombo(){
 							echo "<option value=\"{$monitor['name']}\"{$selected}>{$monitor['name']}</option>";
 						}
 					?>
+				<?php else: ?>
+					<b>NOTE:</b> Please add a monitor IP address on the monitors tab if you wish to use this feature.
+				<?php endif; ?>
 				</select>
 			</td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq"></td>
+			<td width="22%" valign="top" class="vncellreq">Server IP Address</td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="ipaddr" type="text" size="16" style="float: left;">
 				<input class="formbtn" type="button" name="button1" value="Add to pool" onclick="AddServerToPool(document.iform);"><br>
 			</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncellreq">List</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Pool Members</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">Members</td>
 			<td width="78%" class="vtable" colspan="2" valign="top">
 				<table>
 					<tbody>
 					<tr>
 						<td>
-							Disabled<br/>
+							<center>
+								<b>Pool Disabled</b>
+							<p/>
 							<select id="serversDisabledSelect" name="serversdisabled[]" multiple="true" size="5">
 							
 <?php
-if (is_array($pconfig['serversdisabled'])) {
-	foreach($pconfig['serversdisabled'] as $svrent) {
-		if($svrent != '') echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";
+	if (is_array($pconfig['serversdisabled'])) {
+		foreach($pconfig['serversdisabled'] as $svrent) {
+			if($svrent != '') echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";
+		}
 	}
-}
-echo "</select>";
+	echo "</select>";
 ?>
-							<br/>
+							<p/>
 							<input class="formbtn" type="button" name="removeDisabled" value="Remove" onclick="RemoveServerFromPool(document.iform, 'serversdisabled[]');" />
 						</td>
 
@@ -232,7 +244,9 @@ echo "</select>";
 						</td>
 
 						<td>
-							Enabled (default)<br/>
+							<center>
+								<b>Enabled (default)</b>
+							<p/>
 							<select id="serversSelect" name="servers[]" multiple="true" size="5">
 							
 <?php
@@ -243,7 +257,7 @@ if (is_array($pconfig['servers'])) {
 }
 echo "</select>";
 ?>
-							<br/>
+							<p/>
 							<input class="formbtn" type="button" name="removeEnabled" value="Remove" onclick="RemoveServerFromPool(document.iform, 'servers[]');" />
 						</td>
 					</tr>
@@ -251,10 +265,14 @@ echo "</select>";
 				</table>
 			</td>
 		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);"><input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);"> 
+				<input type="button" class="formbtn" value="Cancel" onclick="history.back()">
 				<?php if (isset($id) && $a_pool[$id] && $_GET['act'] != 'dup'): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">
 				<?php endif; ?>

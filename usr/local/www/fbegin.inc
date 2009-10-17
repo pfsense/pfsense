@@ -55,7 +55,7 @@ $system_menu[] = array("Firmware", "/system_firmware.php");
 $system_menu[] = array("General Setup", "/system.php");
 $system_menu[] = array("Logout", "/index.php?logout");
 if ($g['platform'] == "pfSense" or $g['platform'] == "nanobsd")
-	$system_menu[] = array("Packages", "/pkg_mgr.php");
+	$system_menu[] = array("Packages", "/pkg_mgr_installed.php");
 $system_menu[] = array("Setup Wizard", "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array("Routing", "/system_gateways.php");
 $system_menu[] = array("Cert Manager", "/system_camanager.php");

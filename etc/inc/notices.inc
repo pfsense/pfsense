@@ -261,7 +261,9 @@ function are_notices_pending($category = "all") {
  *   returns true if message was sent
  ******/
 function notify_via_smtp($message) {
-	global $config;
+	global $config, $g;
+	if($g['booting'])
+		return;
 
 	if(!$config['notifications']['smtp']['ipaddress'])
 		return;

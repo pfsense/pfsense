@@ -85,9 +85,6 @@ if ($_GET['act'] == "del") {
 $pgtitle = array("Services", "Load Balancer","Monitor");
 include("head.inc");
 
-// Sort items
-$a_monitor = msort($a_monitor, "name");
-
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

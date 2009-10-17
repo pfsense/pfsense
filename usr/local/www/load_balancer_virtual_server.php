@@ -90,9 +90,6 @@ for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 	}
 }
 
-// Sort items
-$a_vs = msort($a_vs, "name");
-
 $pgtitle = array("Services","Load Balancer","Virtual Servers");
 include("head.inc");
 

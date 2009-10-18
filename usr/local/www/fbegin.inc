@@ -167,11 +167,11 @@ $diagnostics_menu[] = array("System Activity", "/diag_system_activity.php");
 $diagnostics_menu[] = array("Traceroute", "/diag_traceroute.php");
 $diagnostics_menu[] = array("Packet Capture", "/diag_packet_capture.php");
 if($g['platform'] == "nanobsd")
-	$diagnostics_menu[] = array("/diag_nanobsd.php", "NanoBSD");
+	$diagnostics_menu[] = array("NanoBSD", "/diag_nanobsd.php");
 
 if (isset($config['system']['developer'])) {
 	echo "<li><hr width=\"80%\"/></li>";
-	$diagnostics_menu[] = array("/restart_httpd.php", "Restart HTTPD");
+	$diagnostics_menu[] = array("Restart HTTPD", "/restart_httpd.php");
 }
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
 

@@ -15,7 +15,7 @@ unset($config["interfaces"]["wan"]["blockpriv"]);
 unlink_if_exists("/tmp/config.cache");
 write_config("pfSsh.php added allow all wan rule");
 unlink_if_exists("/tmp/config.cache");
-unset(unset($config['interfaces']['wan']['blockbogons']);
+unset($config['interfaces']['wan']['blockbogons']);
 $config = parse_config(true);
 echo "Reloading the filter configuration...";
 filter_configure_sync();

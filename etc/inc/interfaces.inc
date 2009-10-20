@@ -904,8 +904,14 @@ function interface_ppp_configure($ifcfg) {
 		}
     }
 
+	$rclinkup = "default:\n";
+	$rclinkup.= "! /etc/rc.filter_configure_sync";
+
 	// Write out configuration for ppp.conf
 	file_put_contents("/etc/ppp/ppp.conf", $peerfile);
+
+	// Write out linkup file
+	file_put_contents("/etc/ppp/ppp.linkup", $rclinkup);
 
 	// Launch specified ppp instance
 	mwexec("/usr/sbin/ppp -background {$orig_dev}");

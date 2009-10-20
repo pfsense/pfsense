@@ -1130,6 +1130,8 @@ function get_interface_info($ifdescr) {
     	foreach ($iflist as $if => $ifname) {
     	if ($ifdescr == $if || $ifdescr == $ifname) {
 			$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
+			if($config['interfaces'][$if]['serialport'])
+				$ifinfo['hwif'] =  get_real_interface($if);
 			$ifinfo['if'] = get_real_interface($if);
 			$found = true;
 			break;

@@ -249,6 +249,8 @@ if ($_POST['apply']) {
 		setup_gateways_monitor();
 
 		clear_subsystem_dirty('staticroutes');
+		
+		filter_configure();
 	}
 	header("Location: interfaces.php?if={$if}");
 	exit;
@@ -269,7 +271,7 @@ if ($_POST) {
 	conf_mount_rw();
 	/* filter out spaces from descriptions  */
 	$_POST['descr'] = remove_bad_chars($_POST['descr']);
-	/* okay first of all, cause we are just hidding the PPPoE HTML
+	/* okay first of all, cause we are just hiding the PPPoE HTML
 	 * fields releated to PPPoE resets, we are going to unset $_POST
 	 * vars, if the reset feature should not be used. Otherwise the
 	 * data validation procedure below, may trigger a false error

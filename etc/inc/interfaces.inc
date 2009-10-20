@@ -124,36 +124,36 @@ function interface_vlan_configure(&$vlan) {
 	mwexec("/sbin/ifconfig {$if} vlanhwtag");
 	mwexec("/sbin/ifconfig {$if} vlanmtu");
 
-        if (!empty($vlanif) && does_interface_exist($vlanif))
+	if (!empty($vlanif) && does_interface_exist($vlanif)) {
 		mwexec("/sbin/ifconfig {$vlanif} delete");
-        else {
+	} else {
 		$tmpvlanif = exec("/sbin/ifconfig vlan create");
 		mwexec("/sbin/ifconfig {$tmpvlanif} name {$vlanif}");
 	}
 	
-        mwexec("/sbin/ifconfig {$vlanif} vlan " .
-                escapeshellarg($tag) . " vlandev " .
-                escapeshellarg($if));
+	mwexec("/sbin/ifconfig {$vlanif} vlan " .
+		escapeshellarg($tag) . " vlandev " .
+		escapeshellarg($if));
 
 	interfaces_bring_up($vlanif);
 
-        /* invalidate interface cache */
-        get_interface_arr(true);
+    /* invalidate interface cache */
+    get_interface_arr(true);
 
-        /*   all vlans need to spoof their parent mac address, too.  see
-         *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
-         */
-        foreach($config['interfaces'] as $interfaces) {
-                if($interfaces['if'] == $if && $interfaces['spoofmac']) {
-                        mwexec("/sbin/ifconfig " . escapeshellarg($vlanif) .
-                                " link " . escapeshellarg($interfaces['spoofmac']));
-                }
-        }
+    /*   all vlans need to spoof their parent mac address, too.  see
+     *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
+     */
+    foreach($config['interfaces'] as $interfaces) {
+		if($interfaces['if'] == $if && $interfaces['spoofmac']) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($vlanif) .
+				" link " . escapeshellarg($interfaces['spoofmac']));
+		}
+	}
 
-        /* XXX: ermal -- for now leave it here at the moment it does not hurt. */
+	/* XXX: ermal -- for now leave it here at the moment it does not hurt. */
 	interfaces_bring_up($if);
 
-        return $vlanif;
+	return $vlanif;
 }
 
 function interface_qinq_configure(&$vlan, $fd = NULL) {
@@ -652,7 +652,7 @@ function interfaces_configure() {
 	global $config, $g;
 
 	/* Set up our loopback interface */
-        interfaces_loopback_configure();
+	interfaces_loopback_configure();
 
 	/* set up LAGG virtual interfaces */
 	interfaces_lagg_configure();
@@ -840,121 +840,75 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 }
 
 function interfaces_ppp_configure() {
-        global $config;
-
-        $i = 0;
-        if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-                foreach ($config['ppps']['ppp'] as $ppp) {
-                        if(empty($ppp['pppif']))
-                                $ppp['pppif'] = "ppp{$i}";
-                        /* XXX: Maybe we should report any errors?! */
-                        interface_ppp_configure($ppp);
-                        $i++;
-                }
-        }
+	global $config;
+	if($g['booting']) 
+		conf_mount_rw();
+	foreach ($config['ppps']['ppp'] as $ppp) {
+		$dev = substr($ppp['port'], 5);
+		interface_ppp_configure($dev);
+	}
+	if(!$g['booting']) 
+		conf_mount_ro();
 }
 
-function interface_ppp_configure(&$ifcfg) {
+function interface_ppp_configure($ifcfg) {
 	global $config, $g;
 	
 	/* Remove  the /dev/ from the device name. */
-	$dev = substr($ifcfg['port'], 5);
+	$orig_dev = $ifcfg;
 
-	$realif  = $ifcfg['pppif'];
-	if ($realif <> "") {
-		$i = 0;
-		while ($realif != "ppp{$i}")
-			$i++;
-		if(file_exists("/var/run/ppp{$i}.pid")) {
-			$pid = trim(file_get_contents("/var/run/ppp{$i}.pid"));
-			mwexec("kill {$pid}");
-		}
+	// ppp (userland) requires a /var/spool/lock directory
+	if(!is_dir("/var/spool/lock")) {
+		exec("mkdir -p /var/spool/lock");
+		exec("chmod a+rw /var/spool/lock/.");
 	}
+
+	// Construct the ppp.conf file
+	$peerfile .= "default:\n";
+	$peerfile .= " set log Phase Chat LCP IPCP CCP tun command\n";
+	$peerfile .= " ident user-ppp VERSION (built COMPILATIONDATE)\n";
+	$peerfile .= " set dial \"ABORT BUSY ABORT NO\\\sCARRIER TIMEOUT 5 \\\n";
+	$peerfile .= " 		\\\"\\\" AT OK-AT-OK ATE1Q0 OK \\\dATDT\\\T TIMEOUT 40 CONNECT\"\n";
+	$peerfile .= " enable dns\n";
+	$peerfile .= " nat enable yes\n";
+	$peerfile .= " set reconnect {$ifcfg['connect-max-attempts']} 5\n";
+	$peerfile .= " allow users root\n\n";
+
+	// Loop variables
+    $i = 0;
+	$startingip = 1;
 	
-	if ($g['booting'] || $realif <> "") {
-                mwexec("/sbin/ifconfig {$realif} destroy");
-                mwexec("/sbin/ifconfig {$realif} create");
-        } else
-                $realif = exec("/sbin/ifconfig ppp create");
+    if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+		foreach ($config['ppps']['ppp'] as $ppp) {
+			$dev = substr($ppp['port'], 5);
+			$realif  = $ppp['port'];
+			$peerfile .= "{$dev}:\n";
+			$peerfile .= " set device {$realif}\n";
+			if($ppp['dialcmd'])
+				$peerfile .= " set dial {$ppp['dialcmd']}\n";
+			$peerfile .= " set speed \"{$ppp['linespeed']}\"\n";
+			$peerfile .= " add default HISADDR\n";
+			$peerfile .= " set timeout 0\n";
+			$endingip = $startingip+1;
+			if($ppp['localip'])
+				$startingip = $ppp['localip'];
+			if($ppp['gateway'])
+				$endingip = $ppp['gateway'];
+			$peerfile .= " set ifaddr 10.0.0.{$startingip}/0 10.0.0.{$endingip}/0 255.255.255.0 0.0.0.0\n";
+			$peerfile .= " set phone \"{$ppp['phone']}\"\n";
+			$peerfile .= " set authname \"{$ppp['username']}\"\n";
+			$peerfile .= " set authkey \"{$ppp['password']}\"\n";
+			$peerfile .= "\n";
+			$i++;
+			$startingip++;
+		}
+    }
 
+	// Write out configuration for ppp.conf
+	file_put_contents("/etc/ppp/ppp.conf", $peerfile);
 
-	$peerfile = "lcp-echo-failure 0\n";
-	$peerfile .= "lcp-echo-interval 0\n";
-	$peerfile .= "connect /etc/ppp/peers/ppp{$dev}-connect-chat\n";
-	//$peerfile .= "disconnect /etc/ppp/peers/ppp{$dev}-disconnect-chat\n";
-	$peerfile .= "{$ifcfg['port']} {$ifcfg['linespeed']}\n";
-	$peerfile .= "crtscts\n";
-	if ($ifcfg['connect-max-attempts'] <> "")
-		$peerfile .= "connect-max-attempts {$ifcfg['connect-max-attempts']}";
-	$peerfile .= "local\n";
-	if ($ifcfg['localip'] <> "") {
-		$peerfile .= ":{$ifcfg['gateway']}\n";
-		$peerfile .= "{$ifcfg['localip']}:{$ifcfg['gateway']}";
-	} else if ($ifcfg['gateway'] <> "") {
-		$peerfile .= ":{$ifcfg['gateway']}\n";
-		$peerfile .= "noipdefault\n";
-	} else 
-		$peerfile .= "noipdefault\n";
-	$peerfile .= "ipcp-accept-local\n";
-	$peerfile .= "novj\n";
-	$peerfile .= "nobsdcomp\n";
-	$peerfile .= "novjccomp\n";
-	$peerfile .= "nopcomp\n";
-	$peerfile .= "noaccomp\n";
-	$peerfile .= "noauth\n";
-	//$peerfile .= "nodetach\n";
-	$peerfile .= "persist\n";
-	$peerfile .= "debug\n";
-	// KD - test
-	//$peerfile .= "defaultroute\n";
-	//$peerfile .= "nodetach\n";
-	// KD - so I know where to look!
-	$peerfile .= "# created by /etc/inc/interfaces.inc\n";
-
-	// Added single quotes to some strings below:
-	// the \rAT is *always* going to need it
-	// and the phone number on a GSM connection ends in a # char
-	// Kevin Dawson, 22 Jan 2008
-	// Refer Andrew Curtis
-			
-	$chatfile = "#!/bin/sh\n";
-	$chatfile .= "exec chat \\\n";
-	$chatfile .= "TIMEOUT 5 \\\n";
-	$chatfile .= "ECHO ON \\\n";
-	$chatfile .= "ABORT '\\nBUSY\\r' \\\n";
-	$chatfile .= "ABORT '\\nERROR\\r' \\\n";
-	$chatfile .= "ABORT '\\nNO ANSWER\\r' \\\n";
-	$chatfile .= "ABORT '\\nNO CARRIER\\r' \\\n";
-	$chatfile .= "ABORT '\\nNO DIALTONE\\r' \\\n";
-	$chatfile .= "ABORT '\\nRINGING\\r\\n\\r\\nRINGING\\r' \\\n";
-	// KD
-	$chatfile .= "'' '\\rAT' \\\n";
-	$chatfile .= "TIMEOUT 12 \\\n";
-	$chatfile .= "OK ATH \\\n";
-	$chatfile .= "OK ATE1 \\\n";
-	$chatfile .= "OK 'AT+CGDCONT=1,\"IP\",\"{$ifcfg['ap']}\"' \\\n";
-	// KD
-	$chatfile .= "OK 'ATD{$ifcfg['phone']}' \\\n";
-	$chatfile .= "TIMEOUT 22 \\\n";
-	if ($ifcfg['username'] <> "") {
-		$chatfile .= "CONNECT \"\" TIMEOUT 10 \\\n";
-		$chatfile .= "ogin:-\\r-ogin: {$ifcfg['username']}\\\n";
-		$chatfile .= " TIMEOUT 5 sword: {$ifcfg['password']} \\\n";
-	} else
-		$chatfile .= "CONNECT \"\" \\\n";
-	$chatfile .= "SAY \"\\nConnected.\"\n";
-
-	conf_mount_rw();
-	safe_mkdir("/etc/ppp/peers", "0755");
-	file_put_contents("/etc/ppp/peers/ppp_{$dev}", $peerfile);
-	file_put_contents("/etc/ppp/peers/ppp{$dev}-connect-chat", $chatfile);
-	chmod("/etc/ppp/peers/ppp{$dev}-connect-chat", 0755);
-	conf_mount_ro();
-	
-	sleep(1);
-	mwexec("/usr/sbin/pppd call ppp_{$dev}");
-
-	return $realif;
+	// Launch specified ppp instance
+	mwexec("/usr/sbin/ppp -background {$orig_dev}");
 }
 
 function interfaces_carp_setup() {

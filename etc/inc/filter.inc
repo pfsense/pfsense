@@ -504,6 +504,8 @@ function filter_generate_optcfg_array()
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdetail) {
 		$oc = $config['interfaces'][$if];
+		if($oc['serialport']) 
+			continue;
 		$oic = array();
 		$oic['if'] = get_real_interface($if);
 		$oic['ip'] = get_interface_ip($if);
@@ -583,7 +585,7 @@ function filter_generate_optcfg_array()
 		$FilterIflist['openvpn'] = $oic;
 	}
 	/* add interface groups */
-	if (is_array($config['ifgroups']['ifgroupentry']))
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach($config['ifgroups']['ifgroupentry'] as $ifgen) {
 			$oc = array();
 			$oc['if'] = $ifgen['ifname'];
@@ -591,6 +593,32 @@ function filter_generate_optcfg_array()
 			$oc['virtual'] = true;
 			$FilterIflist[$ifgen['ifname']] = $oc;
 		}
+	}
+	if($config['ppps']) {
+		$ppp=0;
+		$startingip = 1;
+		foreach($config['ppps']['ppp'] as $ifgen) {
+			$dev = substr($ifgen['port'], 5);
+			$ps = trim(`ps awux | grep -v grep | grep "$dev" | awk '{ print \$2 }'`);
+			if($ps) {
+				$interface = trim(`ifconfig | grep -v grep | grep -B2 "$ps" | head -n1 | cut -d: -f1`);
+				if($interface) {
+					foreach ($config['interfaces'] as $ifdescr => $ifname) {
+						if($ifname['serialport'] == $dev) {
+							$oc = array();
+							$oc['if'] = $interface;
+							$oc['descr'] = $ifname['descr'];
+							$oc['virtual'] = true;
+							unset($FilterIflist[$ifname['descr']]);
+							$FilterIflist[$ifname['descr']] = $oc;
+							$ppp++;
+
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 function filter_flush_nat_table() 

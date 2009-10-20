@@ -7,6 +7,7 @@
 	Changes by Chris Buechler <cmb at pfsense dot org> 
 	
 	Copyright (C) 2004-2008 BSD Perimeter LLC.
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -51,13 +52,11 @@ $a_ppps = &$config['ppps']['ppp'] ;
 
 function ppp_inuse($num) {
 	global $config, $g;
-
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
 		if ($config['interfaces'][$if]['if'] == "ppp{$num}")
 			return true;
 	}
-
 	return false;
 }
 
@@ -66,22 +65,9 @@ if ($_GET['act'] == "del") {
 	if (ppp_inuse($_GET['id'])) {
 		$input_errors[] = "This PPP interface cannot be deleted because it is still being used as an interface.";
 	} else {
-		$realif  = $a_ppps[$_GET['id']]['pppif'];
- 	       	if ($realif <> "") {
-        	        $i = 0;
-                	while ($realif != "ppp{$i}")
-                        	$i++;
-                	if (file_exists("/var/run/ppp{$i}.pid")) {
-                        	$pid = trim(file_get_contents("/var/run/ppp{$i}.pid"));
-                        	mwexec("/bin/kill {$pid}");
-                	}
-        	}
-
-		mwexec("/sbin/ifconfig  {$realif} destroy");
 		unset($a_ppps[$_GET['id']]);
-
 		write_config();
-
+		interfaces_ppp_configure();
 		header("Location: interfaces_ppp.php");
 		exit;
 	}
@@ -104,8 +90,8 @@ include("head.inc");
 	$tab_array[2] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[3] = array("QinQs", false, "interfaces_qinq.php");
 	$tab_array[4] = array("PPP", true, "interfaces_ppp.php");
-        $tab_array[5] = array("GRE", false, "interfaces_gre.php");
-        $tab_array[6] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[5] = array("GRE", false, "interfaces_gre.php");
+	$tab_array[6] = array("GIF", false, "interfaces_gif.php");
 	$tab_array[7] = array("Bridges", false, "interfaces_bridge.php");
 	$tab_array[8] = array("LAGG", false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
@@ -116,16 +102,12 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="20%" class="listhdrr">Interface</td>
                   <td width="20%" class="listhdrr">Serial Port</td>
                   <td width="50%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
                 <tr>
-                  <td class="listlr">
-					<?=htmlspecialchars($ppp['pppif']);?>
-                  </td>
                   <td class="listr">
 					<?=htmlspecialchars($ppp['port']);?>
                   </td>
@@ -137,7 +119,7 @@ include("head.inc");
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="3">&nbsp;</td>
+                  <td class="list" colspan="2">&nbsp;</td>
                   <td class="list"> <a href="interfaces_ppp_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>

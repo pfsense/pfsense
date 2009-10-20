@@ -540,6 +540,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				$toput['dmesg'] = $dmesg[1][0];
 				$iflist[$ifname] = $toput;
 				break;
+			case "ppp":
+				
 			case "friendly":
 				if($friendly != "") {
 					$toput['if'] = $ifname;

@@ -2210,16 +2210,27 @@ function get_real_interface($interface = "wan") {
 	case "enc0":
 		$wanif = "enc0";
 		break;
-	/* XXX: dial in support?!
 	case "ppp":
 		$wanif = "ppp";
 		break;
-	*/
 	default:
 		$iflist = get_configured_interface_with_descr(false, true);
 
 		foreach ($iflist as $if => $ifdesc) {
 			if ($interface == $if || $interface == $ifdesc) {
+
+			// PPP Support
+			if($config['interfaces'][$if]['serialport']) {
+				$dev = $config['interfaces'][$if]['serialport'];
+				$ps = trim(`ps awux | grep -v grep | grep "$dev" | awk '{ print \$2 }'`);
+				if($ps) {
+					$int = trim(`ifconfig | grep -v grep | grep -B2 "$ps" | head -n1 | cut -d: -f1`);
+					if($int) {
+						$wanif = $int;
+						break;
+					}
+				}
+			}
 
 			$cfg = $config['interfaces'][$if];
 

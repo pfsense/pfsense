@@ -905,7 +905,7 @@ function interface_ppp_configure($ifcfg) {
     }
 
 	$rclinkup = "default:\n";
-	$rclinkup.= "! /etc/rc.filter_configure_sync";
+	$rclinkup.= "! sh -c \"/etc/rc.filter_configure_sync\"";
 
 	// Write out configuration for ppp.conf
 	file_put_contents("/etc/ppp/ppp.conf", $peerfile);

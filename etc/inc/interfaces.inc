@@ -914,7 +914,9 @@ function interface_ppp_configure($ifcfg) {
 	file_put_contents("/etc/ppp/ppp.linkup", $rclinkup);
 
 	// Launch specified ppp instance
-	mwexec("/usr/sbin/ppp -background {$orig_dev}");
+	$running = `ps awux | grep ppp | grep -v grep | grep $orig_dev`;
+	if(!$running)
+		mwexec("/usr/sbin/ppp -background {$orig_dev}");
 }
 
 function interfaces_carp_setup() {

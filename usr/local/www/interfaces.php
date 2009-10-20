@@ -178,6 +178,10 @@ if ($wancfg['ipaddr'] == "dhcp") {
 } else
 	$pconfig['type'] = "none";
 
+// Handle PPP type interfaces
+if($wancfg['serialport']) 
+	$pconfig['type'] = "none";
+
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
@@ -768,6 +772,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					<br><span class="vexpl">Enter a description (name) for the interface here.</span>
 				</td>
 			</tr>
+		<?
+		 if(!$wancfg['serialport']):
+		?>
 			<tr>
 				<td valign="middle" class="vncell"><strong>Type</strong></td>
 				<td class="vtable"> 
@@ -784,6 +791,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 					</select>
 				</td>
 			</tr>
+			<?php endif; ?>
 			<tr>
 				<td valign="top" class="vncell">MAC address</td>
 				<td class="vtable">

@@ -1125,7 +1125,7 @@ function get_interface_info($ifdescr) {
 	$ifinfo = array();
 	/* if list */
 	$iflist = get_configured_interface_with_descr(false,true);
-	
+
 	$found = false;
     	foreach ($iflist as $if => $ifname) {
     	if ($ifdescr == $if || $ifdescr == $ifname) {

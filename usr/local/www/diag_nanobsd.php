@@ -208,7 +208,7 @@ if ($savemsg)
 					<tr>						
 						<td width="22%" valign="top" class="vncell">NanoBSD Image size</td>
 						<td width="78%" class="vtable">
-							<?php echo format_bytes($NANOBSD_SIZE); ?>
+							<?php echo $NANOBSD_SIZE; ?>
 						</td>
 					</tr>
 					<tr>

@@ -64,6 +64,9 @@ if ($_POST) {
 
 	$savemsg = get_std_save_message($retval);
 
+	// Relaod filter (we might need to sync to CARP hosts)
+	filter_configure();
+
 	if ($retval == 0) {
 		if (file_exists($d_hostsdirty_path))
 			unlink($d_hostsdirty_path);

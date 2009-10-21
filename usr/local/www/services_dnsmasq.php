@@ -69,6 +69,9 @@ if ($_POST) {
 	$retval = services_dnsmasq_configure();
 	$savemsg = get_std_save_message($retval);
 
+	// Relaod filter (we might need to sync to CARP hosts)
+	filter_configure();
+
 	if ($retval == 0)
 		clear_subsystem_dirty('hosts');
 }

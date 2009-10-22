@@ -451,24 +451,36 @@ function filter_get_vpns_list() {
 	$vpns = "";
 	$vpns_arr = array();
 	/* ipsec */
-	if (isset($config['ipsec']['enable']))
-		if (is_array($config['ipsec']['phase2']))
-			foreach ($config['ipsec']['phase2'] as $ph2ent)
-				if(!$ph2ent['mobile'] and !$ph2ent['mode']=='transport')
+	if (isset($config['ipsec']['enable'])){
+		if (is_array($config['ipsec']['phase2'])) {
+			foreach ($config['ipsec']['phase2'] as $ph2ent) {
+				if((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
 					$vpns_arr[] = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
+				}
+			}
+		}
+	}
 	/* openvpn */
-	foreach (array('client', 'server') as $type)
-		if (is_array($$config['openvpn']["openvpn-$type"]))
-			foreach ($config['openvpn']["openvpn-$type"] as & $settings)
-				if (is_array($settings))
-					if(is_subnet($settings['remote-subnet']))
+	foreach (array('client', 'server') as $type) {
+		if (is_array($$config['openvpn']["openvpn-$type"])) {
+			foreach ($config['openvpn']["openvpn-$type"] as & $settings) {
+				if (is_array($settings)) {
+					if(is_subnet($settings['remote-subnet'])) {
 						$vpns_arr[] = $tunnel['remote_network'];
+					}
+				}
+			}
+		}
+	}
 	/* pppoe */
-	if ($config['pppoe']['remoteip'])
-		if(is_subnet($tunnel['remote-subnet']))
+	if ($config['pppoe']['remoteip']) {
+		if(is_subnet($tunnel['remote-subnet'])) {
 			$vpns_arr[] = $config['pppoe']['remoteip'] ."/". $config['pppoe']['pppoe_subnet'];
-	if(!empty($vpns_arr))
+		}
+	}
+	if(!empty($vpns_arr)) {
 		$vpns = implode(" ", $vpns_arr);
+	}
 	return $vpns;
 }
 

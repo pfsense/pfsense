@@ -387,7 +387,7 @@ pfSenseupgrade)
 
 	# Log that we are really doing a NanoBSD upgrade
 	echo "" >> /conf/upgrade_log.txt
-	echo "NanoBSD upgrade starting" >> /conf/upgrade_log.txt
+	echo "pfSenseupgrade upgrade starting" >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt
 
 	touch /var/run/firmwarelock.dirty

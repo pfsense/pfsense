@@ -462,7 +462,7 @@ function filter_get_vpns_list() {
 	}
 	/* openvpn */
 	foreach (array('client', 'server') as $type) {
-		if (is_array($$config['openvpn']["openvpn-$type"])) {
+		if (is_array($config['openvpn']["openvpn-$type"])) {
 			foreach ($config['openvpn']["openvpn-$type"] as & $settings) {
 				if (is_array($settings)) {
 					if(is_subnet($settings['remote-subnet'])) {

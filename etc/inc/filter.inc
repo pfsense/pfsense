@@ -490,8 +490,9 @@ function filter_get_direct_networks_list() {
 	/* build list of directly connected interfaces and networks */
 	$networks = "";
 	$networks_arr = array();
-	if (!isset($FilterIflist))
+	if (empty($FilterIflist)) {
 		filter_generate_optcfg_array();
+	}
 	foreach ($FilterIflist as $ifent => $ifcfg) {
 		if(is_subnet($ifcfg['sa'])) {
 			$networks_arr[] = $subnet;

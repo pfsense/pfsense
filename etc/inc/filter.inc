@@ -494,7 +494,8 @@ function filter_get_direct_networks_list() {
 		filter_generate_optcfg_array();
 	}
 	foreach ($FilterIflist as $ifent => $ifcfg) {
-		if(is_subnet($ifcfg['sa'])) {
+		$subnet = "{$ifcfg['sa']}/{$ifcfg['sn']}";
+		if(is_subnet($subnet)) {
 			$networks_arr[] = $subnet;
 		}
 	}

@@ -2318,14 +2318,14 @@ function find_ip_interface($ip)
  * find_carp_interface($ip): return the carp interface where an ip is defined
  */
 function find_carp_interface($ip) {
-        global $config;
-
+	global $config;
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
-				$carp_ip = find_interface_ip($vip['carpif']);
-				if ($ip == $carp_ip)
-					return $vip['carpif'];
+				$carp_ip = find_interface_ip($vip['interface']);
+				$if = `ifconfig | grep '$ip' -B1 | head -n1 | cut -d: -f1`;
+				if ($if)
+					return $if;
 			}
 		}
 	}

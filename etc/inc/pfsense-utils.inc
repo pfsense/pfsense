@@ -425,17 +425,14 @@ function get_carp_interface_status($carpinterface) {
 	to speed up this routine */
 	global $carp_query;
 	if($carp_query == "")
-	$carp_query = split("\n", `/sbin/ifconfig | /usr/bin/grep carp`);
-	$found_interface = 0;
+		$carp_query = split("\n", `/sbin/ifconfig $carpinterface | grep carp`);
 	foreach($carp_query as $int) {
-		if($found_interface == 1) {
-			if(stristr($int, "MASTER")) return "MASTER";
-			if(stristr($int, "BACKUP")) return "BACKUP";
-			if(stristr($int, "INIT")) return "INIT";
-			return false;
-		}
-		if(stristr($int, $carpinterface) == true)
-		$found_interface=1;
+		if(stristr($int, "MASTER")) 
+			return "MASTER";
+		if(stristr($int, "BACKUP")) 
+			return "BACKUP";
+		if(stristr($int, "INIT")) 
+			return "INIT";
 	}
 	return;
 }

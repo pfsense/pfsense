@@ -2441,7 +2441,9 @@ function find_interface_ip($interface, $flush = false)
 	global $interface_ip_arr_cache;
 
 	$interface = str_replace("\n", "", $interface);
-	$interface = convert_friendly_interface_to_real_interface_name($interface);
+	
+	if (does_interface_exist($interface) == false)
+		$interface = convert_friendly_interface_to_real_interface_name($interface);
 
 	if (does_interface_exist($interface) == false)
 		return;

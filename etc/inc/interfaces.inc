@@ -1127,12 +1127,21 @@ function interface_reload_carps($cif) {
         }
 }
 
+// Returns the first available vhid interface
+function find_next_available_vip() {
+	for($x=0; $x<9999; $x++) {
+		if(!does_interface_exist("vip{$x}")) 
+			return "vip{$x}";
+	}
+	return false;
+}
+
 function interface_carp_configure(&$vip) {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
-                $mt = microtime();
-                echo "interfaces_carp_configure() being called $mt\n";
-        }
+		$mt = microtime();
+		echo "interfaces_carp_configure() being called $mt\n";
+	}
 
 	if ($vip['mode'] != "carp")
 		return;
@@ -1141,17 +1150,23 @@ function interface_carp_configure(&$vip) {
 	$vip_password = str_replace(" ", "", $vip_password);
 	if ($vip['password'] != "")
 		$password = " pass \"" . $vip_password . "\"";
-	$vipif = "vip" . $vip['vhid'];
+
+	// Setting the VIP to the VHID ID has to be the 
+	// single most brain-headed decision in the history
+	// of man-kind.  Do this correctly by finding the first
+	// available vip interface.
+	$vipif = find_next_available_vip();
+
 	$interface = interface_translate_type_to_real($vip['interface']);
 	/*
 	 * ensure the interface containing the VIP really exists
-         * prevents a panic if the interface is missing or invalid
-         */
-        $realif = get_real_interface($vip['interface']);
-        if (!does_interface_exist($realif)) {
-                file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
-                return;
-        }
+ 	 * prevents a panic if the interface is missing or invalid
+	 */
+	$realif = get_real_interface($vip['interface']);
+	if (!does_interface_exist($realif)) {
+		file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
+		return;
+	}
 
 	/* ensure CARP IP really exists prior to loading up */
 	/* XXX: this can be bound to only the interface choosen in the carp creation. Not yet since upgrade is needed! */

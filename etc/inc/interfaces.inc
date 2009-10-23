@@ -843,9 +843,11 @@ function interfaces_ppp_configure() {
 	global $config;
 	if($g['booting']) 
 		conf_mount_rw();
-	foreach ($config['ppps']['ppp'] as $ppp) {
-		$dev = substr($ppp['port'], 5);
-		interface_ppp_configure($dev);
+	if($config['ppps']['ppp']) {
+		foreach($config['ppps']['ppp'] as $ppp) {
+			$dev = substr($ppp['port'], 5);
+			interface_ppp_configure($dev);
+		}
 	}
 	if(!$g['booting']) 
 		conf_mount_ro();

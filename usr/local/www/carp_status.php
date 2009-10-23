@@ -54,11 +54,12 @@ unset($interface_ip_arr_cache);
 $status = get_carp_status();
 if($_POST['disablecarp'] <> "") {
 	if($status == true) {
-		$carp_counter=find_number_of_created_carp_interfaces();
+		$carp_ints = get_all_carp_interfaces();
 		mwexec("/sbin/sysctl net.inet.carp.allow=0");
-		for($x=0; $x<$carp_counter; $x++) {
-			mwexec("/sbin/ifconfig carp{$x} down");
-			mwexec("/sbin/ifconfig carp{$x} destroy");
+		$carp_counter = find_number_of_created_carp_interfaces();
+		foreach($carp_ints as $int) {
+			mwexec("/sbin/ifconfig $int down");
+			mwexec("/sbin/ifconfig $int destroy");
 		}
 		$savemsg = "{$carp_counter} IPs have been disabled.";
 	} else {

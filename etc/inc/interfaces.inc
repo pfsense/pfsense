@@ -2315,6 +2315,18 @@ function find_ip_interface($ip)
 }
 
 /*
+ *   find_number_of_created_carp_interfaces: return the number of carp interfaces
+ */
+function find_number_of_created_carp_interfaces() {
+	return `/sbin/ifconfig | grep "carp:" | wc -l`;
+}
+
+function get_all_carp_interfaces() {
+	$ints = str_replace("\n", " ", `ifconfig | grep "carp:" -B2 | grep ": flag" | cut -d: -f1`);
+	return $ints;
+}
+
+/*
  * find_carp_interface($ip): return the carp interface where an ip is defined
  */
 function find_carp_interface($ip) {

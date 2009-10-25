@@ -184,39 +184,41 @@ function enable_hardware_offloading($interface) {
 		return;
 
 	/* translate wan, lan, opt -> real interface if needed */
-	$int = interface_translate_type_to_real($interface);
-	if($int <> "") $interface = $int;
-	$int_family = preg_split("/[0-9]+/", $int);
+	$int = get_real_interface($interface);
+	if($int <> "") 
+		$interface = $int;
+	$int_family = preg_split("/[0-9]+/", $interface);
 	$options = strtolower(`/sbin/ifconfig -m {$interface} | grep capabilities`);
 	$supported_ints = array('fxp');
 	if (in_array($int_family, $supported_ints)) {
-        	if(isset($config['system']['do_not_use_nic_microcode']))
-                        continue;
-		mwexec("/sbin/ifconfig {$interface} link0");
-        }
+		if(isset($config['system']['do_not_use_nic_microcode']))
+			continue;
+		if(does_interface_exist($interface)) 
+			mwexec("/sbin/ifconfig {$interface} link0");
+	}
 
 	/* skip vlans for checksumming and polling */
 	if(stristr($interface, "vlan")) 
 		return;
 
 	if($config['system']['disablechecksumoffloading']) {
-                if(stristr($options, "txcsum") == true)
-                        mwexec("/sbin/ifconfig {$interface} -txcsum 2>/dev/null");
-                if(stristr($options, "rxcsum") == true)
-                        mwexec("/sbin/ifconfig {$interface} -rxcsum 2>/dev/null");
+		if(stristr($options, "txcsum") == true)
+			mwexec("/sbin/ifconfig {$interface} -txcsum 2>/dev/null");
+		if(stristr($options, "rxcsum") == true)
+			mwexec("/sbin/ifconfig {$interface} -rxcsum 2>/dev/null");
 	} else {
-               	if(stristr($options, "txcsum") == true)
-                        mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
-        	if(stristr($options, "rxcsum") == true)
-                        mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");
-        }
+		if(stristr($options, "txcsum") == true)
+			mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
+		if(stristr($options, "rxcsum") == true)
+			mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");
+	}
 
 	/* if the NIC supports polling *AND* it is enabled in the GUI */
 	if(interface_supports_polling($interface)) {
 		$polling = isset($config['system']['polling']);	
 		if($polling) {
 			mwexec("sysctl kern.polling.enable=1");
-                        mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
+			mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
 		} else {
 			mwexec("sysctl kern.polling.enable=0");
 		}

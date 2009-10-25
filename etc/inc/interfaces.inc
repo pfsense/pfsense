@@ -1306,7 +1306,10 @@ function interface_wireless_clone($if, $wlcfg) {
 		// Setup wireless nic
 		if($wlcfg['wireless']['mode'] == "hostap") 
 			$mode = "wlanmode hostap";
+		// Create the new wlan interface. FreeBSD returns the new interface name.
+		// example:  wlan2
 		$newif = trim(`/sbin/ifconfig wlan create wlandev {$wlcfg['if']} {$mode}`);
+		// Rename the interface to $parentnic_wlan$parentnic#: EX: ath0_wlan0
 		exec("/sbin/ifconfig wlan{$newif} name {$wlcfg['if']}_wlan{$interface_num}");
 	}
 }
@@ -1321,10 +1324,13 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
      *    do not change this routine from a shell script to individul exec commands.  -sullrich
 	 */
 
+	// Make read / writable (nano)
 	conf_mount_rw();
 
+	// Remove script file
 	unlink_if_exists("{$g['tmp_path']}/{$if}_setup.sh");
 
+	// Clone wireless nic if needed.
 	interface_wireless_clone($if, $wl);
 	
 	$fd_set = fopen("/tmp/{$if}_setup.sh","w");
@@ -1594,17 +1600,17 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 
 	if ($wancfg['spoofmac']) {
-		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 	}  else {
-		$mac = get_interface_mac($wancfg['if']);
+		$mac = get_interface_mac(get_real_interface(get_real_interface($wancfg['if'])));
 		if($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.
 			 */
 			echo "Generating new MAC address.";
 			$random_mac = generate_random_mac_address();
-			mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .
+			mwexec("/sbin/ifconfig " . escapeshellarg(get_real_interface($wancfg['if'])) .
 				" link " . escapeshellarg($random_mac));
 			$wancfg['spoofmac'] = $random_mac;
 			write_config();
@@ -1614,7 +1620,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 
 	/* media */
 	if ($wancfg['media'] || $wancfg['mediaopt']) {
-		$cmd = "/sbin/ifconfig " . escapeshellarg($wancfg['if']);
+		$cmd = "/sbin/ifconfig " . escapeshellarg(get_real_interface($wancfg['if']));
 		if ($wancfg['media'])
 			$cmd .= " media " . escapeshellarg($wancfg['media']);
 		if ($wancfg['mediaopt'])
@@ -1662,7 +1668,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 				file_put_contents("/tmp/{$realif}_router", $wancfg['gateway']);
 	}
 	if($wancfg['if'])
-		interfaces_bring_up($wancfg['if']);
+		interfaces_bring_up(get_real_interface($wancfg['if']));
 	else 
 		log_error("Could not bring wancfg['if'] up -- variable not defined in interface_configure()");
 	
@@ -1685,7 +1691,6 @@ function interface_configure($interface = "wan", $reloadall = false) {
 					interface_bridge_configure($bridge);
 		}
 
-		/* XXX: Shouldn't the caller do all this reconfiguring?! */
 		if ($interface == "lan")
 			/* make new hosts file */
                		system_hosts_generate();
@@ -1714,7 +1719,6 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			filter_configure();
 		}
 	}
-
 
 	unmute_kernel_msgs();
 
@@ -2274,7 +2278,7 @@ function get_real_interface($interface = "wan") {
 				$dev = $config['interfaces'][$if]['serialport'];
 				$ps = trim(`ps awux | grep -v grep | grep "$dev" | awk '{ print \$2 }'`);
 				if($ps) {
-					$int = trim(`ifconfig | grep -v grep | grep -B2 "$ps" | head -n1 | cut -d: -f1`);
+					$int = trim(`/sbin/ifconfig | grep -v grep | grep -B2 "$ps" | head -n1 | cut -d: -f1`);
 					if($int) {
 						$wanif = $int;
 						break;
@@ -2284,6 +2288,9 @@ function get_real_interface($interface = "wan") {
 
 			$cfg = $config['interfaces'][$if];
 
+			// Wireless cloned NIC support (FreeBSD 8+)
+			// interface name format: $parentnic_wlanparentnic#
+			// example: ath0_wlan0
 			if(is_interface_wireless($interface)) {
 				$interface_num = substr($cfg['if'], 3);
 				$wanif = $cfg['if'] . "_wlan" . $interface_num;
@@ -2296,39 +2303,39 @@ function get_real_interface($interface = "wan") {
 			}
 
 			switch ($cfg['ipaddr']) {
-			case "carpdev-dhcp":
-				$viparr = &$config['virtualip']['vip'];
-				$counter = 0;
-				if(is_array($viparr))
-				foreach ($viparr as $vip) {
-					if ($vip['mode'] == "carpdev-dhcp") {
-						if($vip['interface'] == $if) {
-							$wanif =  "carp{$counter}";
-							break;
-						}
-						$counter++;
-					} else if ($vip['mode'] = "carp") 
-						$counter++;
+				case "carpdev-dhcp":
+					$viparr = &$config['virtualip']['vip'];
+					$counter = 0;
+					if(is_array($viparr))
+					foreach ($viparr as $vip) {
+						if ($vip['mode'] == "carpdev-dhcp") {
+							if($vip['interface'] == $if) {
+								$wanif =  "carp{$counter}";
+								break;
+							}
+							$counter++;
+						} else if ($vip['mode'] = "carp") 
+							$counter++;
+					}
+					break;
+				case "pppoe": 
+					if ($if == "wan")
+						$wanif = "pppoe0";
+					else
+						$wanif = "pppoe" . substr($if,3);
+					break;
+				case "pptp": 
+					if ($if == "wan")
+						$wanif = "pptp0";
+					else
+						$wanif = "pptp" . substr($if, 3);
+					break;
+				default:
+					$wanif = $cfg['if'];
+					break;
 				}
-				break;
-			case "pppoe": 
-				if ($if == "wan")
-					$wanif = "pppoe0";
-				else
-					$wanif = "pppoe" . substr($if,3);
-				break;
-			case "pptp": 
-				if ($if == "wan")
-					$wanif = "pptp0";
-				else
-					$wanif = "pptp" . substr($if, 3);
-				break;
-			default:
-				$wanif = $cfg['if'];
-				break;
-			}
 			
-			break;
+				break;
 			}
 		}
 		break;

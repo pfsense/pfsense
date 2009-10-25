@@ -518,8 +518,6 @@ function filter_generate_optcfg_array()
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdetail) {
 		$oc = $config['interfaces'][$if];
-		if($oc['serialport']) 
-			continue;
 		$oic = array();
 		$oic['if'] = get_real_interface($if);
 		$oic['ip'] = get_interface_ip($if);
@@ -929,13 +927,13 @@ function filter_nat_rules_generate()
 			}
 		}
 		/* L2TP subnet */
-                if (isset($FilterIflist['l2tp']) && $FilterIflist['l2tp']['mode'] == "server") {
-                        $l2tp_subnet = $FilterIflist['l2tp']['sn'];
-                        if (is_private_ip($FilterIflist['l2tp']['sa']) && !empty($l2tp_subnet)) {
-                                $numberofnathosts++;
-                                $tonathosts .= "{$FilterIflist['l2tp']['sa']}/{$l2tp_subnet} ";
-                        }
-                }
+		if (isset($FilterIflist['l2tp']) && $FilterIflist['l2tp']['mode'] == "server") {
+			$l2tp_subnet = $FilterIflist['l2tp']['sn'];
+			if (is_private_ip($FilterIflist['l2tp']['sa']) && !empty($l2tp_subnet)) {
+				$numberofnathosts++;
+				$tonathosts .= "{$FilterIflist['l2tp']['sa']}/{$l2tp_subnet} ";
+			}
+		}
 		$natrules .= "\n# Subnets to NAT \n";
 		if ($numberofnathosts > 4) {
 			$natrules .= "table <tonatsubnets> { {$tonathosts} }\n";
@@ -947,7 +945,7 @@ function filter_nat_rules_generate()
 		if ($numberofnathosts > 0):
 			foreach ($FilterIflist as $if => $ifcfg) {
 				update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
-				if (interface_has_gateway($if)) {
+				if (interface_has_gateway($if) or $config['interfaces'][$if]['serialport']) {
 					$target = $ifcfg['ip'];
 					/* do not nat tftp proxy */
 					$natrules .= "no nat on \${$ifcfg['descr']} to port tftp\n";

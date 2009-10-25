@@ -46,8 +46,8 @@ require_once("globals.inc");
 
 function interfaces_bring_up($interface) {
 	if(!$interface) {
-		log_error("bring_interface_up was called but no variable defined.");
-		log_error( "Backtrace: " . var_dump(debug_backtrace()) );
+		log_error("interfaces_bring_up() was called but no variable defined.");
+		log_error( "Backtrace: " . debug_backtrace() );
 		return;
 	}
 	mwexec("/sbin/ifconfig " . escapeshellarg($interface) . " up");
@@ -1226,7 +1226,7 @@ function interface_carpdev_configure(&$vip) {
 
 	$vipif = "vip" . $vip['vhid'];
 	$realif = interface_translate_type_to_real($vip['interface']);
-	interface_bring_up($realif);
+	interfaces_bring_up($realif);
         /*
          * ensure the interface containing the VIP really exists
          * prevents a panic if the interface is missing or invalid
@@ -1244,7 +1244,7 @@ function interface_carpdev_configure(&$vip) {
 	}
 
 	mwexec("/sbin/ifconfig {$vipif} carpdev {$realif} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
-	interface_bring_up($vipif);
+	interfaces_bring_up($vipif);
 
 	/*
 	 * XXX: BIG HACK but carpdev needs ip services active
@@ -1668,7 +1668,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 				file_put_contents("/tmp/{$realif}_router", $wancfg['gateway']);
 	}
 	if($wancfg['if'])
-		interfaces_bring_up(get_real_interface($wancfg['if']));
+		interfaces_bring_up(get_real_interface(get_real_interface($wancfg['if'])));
 	else 
 		log_error("Could not bring wancfg['if'] up -- variable not defined in interface_configure()");
 	
@@ -1792,7 +1792,7 @@ EOD;
 
 	/* bring wan interface up before starting dhclient */
 	if($realwanif)
-		interfaces_bring_up($realwanif);
+		interfaces_bring_up(get_real_interface($realwanif));
 	else 
 		log_error("Could not bring realwanif up in interface_dhcp_configure()");
 
@@ -1951,7 +1951,7 @@ EOD;
 
 		/* Bring the parent interface up */
 		if($wancfg['if'])
-			interfaces_bring_up($wancfg['if']);
+			interfaces_bring_up(get_real_interface($wancfg['if']));
 		else 
 			log_error("Could not bring wancfg['if'] up in interface_pppoe_configure()");
 

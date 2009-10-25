@@ -1296,7 +1296,7 @@ function interface_wireless_clone($if, $wlcfg) {
 	$needs_clone = true;
 	$interface_num = substr($wlcfg['if'], 3);
 	if(does_interface_exist("{$wlcfg['if']}_wlan{$interface_num}")) {
-		$hostap_enabled = `/sbin/ifconfig {$wlcfg['if']}_wlan{$interface_num} | grep hostap`;
+		$hostap_enabled = `/sbin/ifconfig | grep {$wlcfg['if']}_wlan{$interface_num} | grep hostap`;
 		if($hostap_enabled) 
 			$needs_clone = false;
 		else 
@@ -1310,7 +1310,7 @@ function interface_wireless_clone($if, $wlcfg) {
 		// example:  wlan2
 		$newif = trim(`/sbin/ifconfig wlan create wlandev {$wlcfg['if']} {$mode}`);
 		// Rename the interface to $parentnic_wlan$parentnic#: EX: ath0_wlan0
-		exec("/sbin/ifconfig wlan{$newif} name {$wlcfg['if']}_wlan{$interface_num}");
+		exec("/sbin/ifconfig {$newif} name {$wlcfg['if']}_wlan{$interface_num}");
 	}
 }
 

@@ -1306,8 +1306,8 @@ function interface_wireless_clone($if, $wlcfg) {
 		// Setup wireless nic
 		if($wlcfg['wireless']['mode'] == "hostap") 
 			$mode = "wlanmode hostap";
-		exec("/sbin/ifconfig wlan{$interface_num} create wlandev {$wlcfg['if']} {$mode}");
-		exec("/sbin/ifconfig wlan{$interface_num} name {$wlcfg['if']}_wlan{$interface_num}");
+		$newif = trim(`/sbin/ifconfig wlan create wlandev {$wlcfg['if']} {$mode}`);
+		exec("/sbin/ifconfig wlan{$newif} name {$wlcfg['if']}_wlan{$interface_num}");
 	}
 }
 

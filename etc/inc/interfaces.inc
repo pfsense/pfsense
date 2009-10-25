@@ -1302,6 +1302,15 @@ function interface_wireless_configure($if, &$wlcfg) {
 
 	unlink_if_exists("{$g['tmp_path']}/{$if}_setup.sh");
 
+	/*   Check to see if interface has been cloned as of yet.  
+	 *   If it has not been cloned then go ahead and clone it.
+	 */
+	if(!does_interface_exist($if)) {
+		$ifr = $wlcfg['if'];
+		$interface_num = substr($wlcfg['if'], 4);
+		exec("/sbin/ifconfig wlan{$interface_num} create wlandev {$ifr}");
+	}
+
 	$fd_set = fopen("/tmp/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");
 	fwrite($fd_set, "# {$g['product_name']} wireless configuration script.\n\n");
@@ -2259,6 +2268,12 @@ function get_real_interface($interface = "wan") {
 
 			$cfg = $config['interfaces'][$if];
 
+			if(is_interface_wireless($interface)) {
+				$interface_num = substr($cfg['if'], 3);
+				$wanif = $cfg['if'] . "_wlan" . $interface_num;
+				break;
+			}
+
 			if (empty($cfg['ipaddr'])) {
 				$wanif = $cfg['if'];
 				break;
@@ -2609,7 +2624,7 @@ function is_interface_wireless($interface) {
         global $config, $g;
 
         $friendly = convert_real_interface_to_friendly_interface_name($interface);
-        if(!is_array($config['interfaces'][$friendly]['wireless'])) {
+        if(!isset($config['interfaces'][$friendly]['wireless'])) {
                 if (preg_match($g['wireless_regex'], $interface)) {
                         $config['interfaces'][$friendly]['wireless'] = array();
                         return true;
@@ -2625,10 +2640,11 @@ function get_wireless_modes($interface) {
 	$wireless_modes = array();
 
 	if(is_interface_wireless($interface)) {
+		$cloned_interface = get_real_interface($interface);
 		$wi = 1;
 		$ifconfig = "/sbin/ifconfig";
 		$awk = "/usr/bin/awk";
-		$chan_list = "$ifconfig $interface list chan";
+		$chan_list = "$ifconfig $cloned_interface list chan";
 		$stack_list = "$awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
 		$format_list = "$awk '{print \$5 \" \" \$6 \",\" \$1}'";
 

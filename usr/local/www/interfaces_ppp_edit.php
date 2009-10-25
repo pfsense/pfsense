@@ -128,6 +128,22 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="interfaces_ppp_edit.php" method="post" name="iform" id="iform">
+	<script src="/javascript/scriptaculous/prototype.js" type="text/javascript">
+	</script>
+	<script type="text/javascript">
+	function prefill_att() {
+		$('dialcmd').value = '"ABORT BUSY ABORT NO\\sCARRIER TIMEOUT 5 \\"\" AT OK-AT-OK ATQ0V1E1S0=0&C1&D2+FCLASS=0 OK \AT+CGDCONT=1,\\\"IP\\\",\\\"ISP.CINGULAR\\\" OK \\dATDT\\T \TIMEOUT 40 CONNECT"';
+		$('phone').value = "*99#";
+		$('username').value = "att";
+		$('password').value = "att";
+	}
+	function prefill_sprint() {
+		$('dialcmd').value = '"ABORT BUSY ABORT NO\\sCARRIER TIMEOUT 5 \\"\" AT OK-AT-OK ATE1Q0 OK \\dATDT\\T TIMEOUT 40 CONNECT"';
+		$('phone').value = "#777";
+		$('username').value = "sprint";
+		$('password').value = "sprint";		
+	}
+	</script>
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">PPP configuration</td>
@@ -148,12 +164,16 @@ include("head.inc");
 					}
 				?>
 				</select>
+				<p/>
+				Pre-fill connection information: 
+				<a href='#' onClick='javascript:prefill_att();'>ATT</A>
+				<a href='#' onClick='javascript:prefill_sprint();'>Sprint</A>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Init String</td>
 			<td width="78%" class="vtable">
-				<textarea name="initstr"><?=htmlspecialchars($pconfig['initstr']);?></textarea>
+				<textarea id="initstr" name="initstr"><?=htmlspecialchars($pconfig['initstr']);?></textarea>
 				<br><span class="vexpl">Enter the modem initialization string here</span>
 			</td>
 		</tr>

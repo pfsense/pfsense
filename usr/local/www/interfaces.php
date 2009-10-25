@@ -190,6 +190,7 @@ $pconfig['mtu'] = $wancfg['mtu'];
 /* Wireless interface? */
 if (isset($wancfg['wireless'])) {
 	/* Get wireless modes */
+	interface_wireless_clone($if, $wancfg);
 	$curif = convert_friendly_interface_to_real_interface_name($if);
 	$wlanif = get_real_interface($if);
 	$wl_modes = get_wireless_modes($if);

@@ -1288,6 +1288,30 @@ EOD;
 	return $vipif;
 }
 
+function interface_wireless_clone($if, &$wlcfg) {
+	global $config;
+	/*   Check to see if interface has been cloned as of yet.  
+	 *   If it has not been cloned then go ahead and clone it.
+	 */
+	$interface_num = substr($wlcfg['if'], 3);
+	$needs_clone = true;
+	if(does_interface_exist($wlcfg['if'] . "_wlan{$interface_num}")) {
+		$hostap_enabled = `/sbin/ifconfig {$wlcfg['if']} . "_wlan{$interface_num}" | grep hostap`;
+		if($hostap_enabled) {
+			$needs_clone = false;		
+		} else {
+			exec("/sbin/ifconfig $if destroy");
+		}
+	}
+	if($needs_clone) {
+		// Setup wireless nic
+		if($wlcfg['wireless']['mode'] == "hostap") 
+			$mode = "wlanmode hostap";
+		exec("/sbin/ifconfig wlan{$interface_num} create wlandev {$wlcfg['if']} $mode");
+		exec("/sbin/ifconfig wlan{$interface_num} name {$wlcfg['if']}_wlan{$interface_num}");
+	}
+}
+
 function interface_wireless_configure($if, &$wlcfg) {
 	global $config, $g;
 
@@ -1302,15 +1326,8 @@ function interface_wireless_configure($if, &$wlcfg) {
 
 	unlink_if_exists("{$g['tmp_path']}/{$if}_setup.sh");
 
-	/*   Check to see if interface has been cloned as of yet.  
-	 *   If it has not been cloned then go ahead and clone it.
-	 */
-	if(!does_interface_exist($if)) {
-		$ifr = $wlcfg['if'];
-		$interface_num = substr($wlcfg['if'], 4);
-		exec("/sbin/ifconfig wlan{$interface_num} create wlandev {$ifr}");
-	}
-
+	interface_wireless_clone($if, $wlcfg);
+	
 	$fd_set = fopen("/tmp/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");
 	fwrite($fd_set, "# {$g['product_name']} wireless configuration script.\n\n");

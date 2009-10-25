@@ -1288,31 +1288,30 @@ EOD;
 	return $vipif;
 }
 
-function interface_wireless_clone($if, &$wlcfg) {
+function interface_wireless_clone($if, $wlcfg) {
 	global $config;
 	/*   Check to see if interface has been cloned as of yet.  
 	 *   If it has not been cloned then go ahead and clone it.
 	 */
-	$interface_num = substr($wlcfg['if'], 3);
 	$needs_clone = true;
-	if(does_interface_exist($wlcfg['if'] . "_wlan{$interface_num}")) {
-		$hostap_enabled = `/sbin/ifconfig {$wlcfg['if']} . "_wlan{$interface_num}" | grep hostap`;
-		if($hostap_enabled) {
-			$needs_clone = false;		
-		} else {
-			exec("/sbin/ifconfig $if destroy");
-		}
+	$interface_num = substr($wlcfg['if'], 3);
+	if(does_interface_exist("{$wlcfg['if']}_wlan{$interface_num}")) {
+		$hostap_enabled = `/sbin/ifconfig {$wlcfg['if']}_wlan{$interface_num} | grep hostap`;
+		if($hostap_enabled) 
+			$needs_clone = false;
+		else 
+			exec("/sbin/ifconfig {$wlcfg['if']}_wlan{$interface_num} destroy");
 	}
-	if($needs_clone) {
+	if($needs_clone == true) {
 		// Setup wireless nic
 		if($wlcfg['wireless']['mode'] == "hostap") 
 			$mode = "wlanmode hostap";
-		exec("/sbin/ifconfig wlan{$interface_num} create wlandev {$wlcfg['if']} $mode");
+		exec("/sbin/ifconfig wlan{$interface_num} create wlandev {$wlcfg['if']} {$mode}");
 		exec("/sbin/ifconfig wlan{$interface_num} name {$wlcfg['if']}_wlan{$interface_num}");
 	}
 }
 
-function interface_wireless_configure($if, &$wlcfg) {
+function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	global $config, $g;
 
 	/*    open up a shell script that will be used to output the commands.
@@ -1326,7 +1325,7 @@ function interface_wireless_configure($if, &$wlcfg) {
 
 	unlink_if_exists("{$g['tmp_path']}/{$if}_setup.sh");
 
-	interface_wireless_clone($if, $wlcfg);
+	interface_wireless_clone($if, $wl);
 	
 	$fd_set = fopen("/tmp/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");
@@ -1592,7 +1591,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 
 	/* wireless configuration? */
 	if (is_array($wancfg['wireless']))
-		interface_wireless_configure($realif, $wancfg['wireless']);
+		interface_wireless_configure($realif, $wancfg, $wancfg['wireless']);
 
 	if ($wancfg['spoofmac']) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .

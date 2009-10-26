@@ -9,11 +9,11 @@ if [ -f /var/etc/nameserver_$2 ]; then
 fi
 
 # DNS1
-if [ "$3" != "" ]; then 
+if [ "$3" != "DNS0" ]; then 
 	echo $3 >> /var/etc/nameserver_$2
 fi
 
 # DNS2
-if [ "$4" != "DNS2" ]; then 
+if [ "$4" != "DNS1" ]; then 
 	echo $4 >> /var/etc/nameserver_$2
 fi

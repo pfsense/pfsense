@@ -927,7 +927,7 @@ function interface_ppp_configure($ifcfg) {
 			$i++;
 			$startingip++;
 			$rclinkup.= "{$dev}:\n";
-			$rclinkup.= "	! sh -c \"/sbin/ppp-script HISADDR INTERFACE DNS1 DNS2 \"\n";
+			$rclinkup.= "	! sh -c \"/sbin/ppp-script HISADDR INTERFACE DNS0 DNS1 \"\n";
 			$rclinkup.= "	! sh -c \"/etc/rc.linkup INTERFACE start\"\n";
 		}
     }

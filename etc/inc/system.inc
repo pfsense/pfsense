@@ -69,19 +69,19 @@ function system_resolvconf_generate($dynupdate = false) {
 		echo "system_resolvconf_generate() being called $mt\n";
 	}
 
-        $syscfg = $config['system'];
+	$syscfg = $config['system'];
 
-        $fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
-        if (!$fd) {
-                printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
-                return 1;
-        }
+	$fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
+	if (!$fd) {
+		printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
+		return 1;
+	}
 
-        $resolvconf = "domain {$syscfg['domain']}\n";
+	$resolvconf = "domain {$syscfg['domain']}\n";
 
-        $havedns = false;
+	$havedns = false;
 
-        if (isset($syscfg['dnsallowoverride'])) {
+	if (isset($syscfg['dnsallowoverride'])) {
 		/* get dynamically assigned DNS servers (if any) */
 		$ns = array_unique(get_nameservers());
 		foreach($ns as $nameserver) {
@@ -90,8 +90,8 @@ function system_resolvconf_generate($dynupdate = false) {
 				$havedns = true;
 			}
 		}
-        }
-        if (!$havedns && is_array($syscfg['dnsserver'])) {
+	}
+	if (!$havedns && is_array($syscfg['dnsserver'])) {
 		foreach ($syscfg['dnsserver'] as $ns) {
 			if ($ns) {
 				$resolvconf .= "nameserver $ns\n";
@@ -100,14 +100,14 @@ function system_resolvconf_generate($dynupdate = false) {
 		}
 	}
 
-        fwrite($fd, $resolvconf);
-        fclose($fd);
+	fwrite($fd, $resolvconf);
+	fclose($fd);
 
-        if (!$g['booting']) {
+	if (!$g['booting']) {
 		/* restart dhcpd (nameservers may have changed) */
 		if (!$dynupdate)
 			services_dhcpd_configure();
-        }
+	}
 
 	/* setup static routes for DNS servers. */
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
@@ -133,6 +133,16 @@ function system_resolvconf_generate($dynupdate = false) {
 function get_nameservers() {
 	global $config, $g;
 	$master_list = array();
+	
+	// Read in ppp resolv.conf item
+	$ppp_resolv_conf = $g["varetc_path"] . "/ppp_resolv.conf";
+	if(file_exists($ppp_resolv_conf)) {
+		$dns_items = split("\n", `cat $ppp_resolv_conf | grep nameserver | cut -d' ' -f2`);
+		foreach($dns_items as $dns_item) 
+			if($dns_item)
+				$master_list[] = $dns_item;
+	}
+	
 	$dns_lists = split("\n", `ls /var/etc/nameserver_* 2>/dev/null`);
 	if(is_array($dns_lists)) {
 		foreach($dns_lists as $dns) {

@@ -927,7 +927,7 @@ function interface_ppp_configure($ifcfg) {
     }
 
 	$rclinkup = "default:\n";
-	$rclinkup.= "! sh -c \"echo HISADDR\" > /tmp/INTERFACE_router\"\n";
+	$rclinkup.= "! sh -c \"echo HISADDR\" > /tmp/INTERFACE_router\n";
 	$rclinkup.= "! sh -c \"/etc/rc.linkup INTERFACE start\"\n";
 
 	// Write out configuration for ppp.conf

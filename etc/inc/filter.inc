@@ -945,7 +945,7 @@ function filter_nat_rules_generate()
 		if ($numberofnathosts > 0):
 			foreach ($FilterIflist as $if => $ifcfg) {
 				update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
-				if (interface_has_gateway($if) or $config['interfaces'][$if]['serialport']) {
+				if (interface_has_gateway($if)) {
 					$target = $ifcfg['ip'];
 					/* do not nat tftp proxy */
 					$natrules .= "no nat on \${$ifcfg['descr']} to port tftp\n";

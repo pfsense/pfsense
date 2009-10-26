@@ -2572,28 +2572,32 @@ function get_interface_subnet($interface = "wan")
 
 /* return outside interfaces with a gateway */
 function get_interfaces_with_gateway() {
-        global $config;
+	global $config;
 
 	$ints = array();
 
 	/* loop interfaces, check config for outbound */
-        foreach ($config['interfaces'] as $ifdescr => $ifname) {
-                switch ($ifname['ipaddr']) {
-                	case "dhcp":
-                	case "carpdev-dhcp":
-                	case "pppoe":
-                	case "pptp":
-                        $ints[] = $ifdescr;
-                        break;
-                default:
-                        if ($ifname['pointtopoint'])
-                                $ints[] = $ifdescr;
-                        else if (!empty($ifname['gateway']))
-                                $ints[] = $ifdescr;
-                        break;
-                }
-        }
-        return $ints;
+	foreach($config['interfaces'] as $ifdescr => $ifname) {
+		if($ifname['serialport']) {
+			$ints[] = $ifdescr;
+			continue;
+		}
+		switch ($ifname['ipaddr']) {
+			case "dhcp":
+			case "carpdev-dhcp":
+			case "pppoe":
+			case "pptp":
+			$ints[] = $ifdescr;
+			break;
+			default:
+			if ($ifname['pointtopoint'])
+				$ints[] = $ifdescr;
+			else if (!empty($ifname['gateway']))
+				$ints[] = $ifdescr;
+			break;
+		}
+	}
+	return $ints;
 }
 
 /* return true if interface has a gateway */

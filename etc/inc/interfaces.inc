@@ -927,14 +927,17 @@ function interface_ppp_configure($ifcfg) {
     }
 
 	$rclinkup = "default:\n";
-	$rclinkup.= "! sh -c \"echo HISADDR\" > /tmp/INTERFACE_router\"";
-	$rclinkup.= "! sh -c \"/etc/rc.linkup INTERFACE start\"";
+	$rclinkup.= "! sh -c \"echo HISADDR\" > /tmp/INTERFACE_router\"\n";
+	$rclinkup.= "! sh -c \"/etc/rc.linkup INTERFACE start\"\n";
 
 	// Write out configuration for ppp.conf
 	file_put_contents("/etc/ppp/ppp.conf", $peerfile);
 
 	// Write out linkup file
 	file_put_contents("/etc/ppp/ppp.linkup", $rclinkup);
+
+	// Make executable
+	exec("chmod a+rx /etc/ppp/ppp.linkup");
 
 	// Launch specified ppp instance
 	$running = `ps awux | grep ppp | grep -v grep | grep $orig_dev`;

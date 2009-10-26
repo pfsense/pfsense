@@ -96,7 +96,7 @@ function interfaces_loopback_configure() {
 
 function interfaces_vlan_configure() {
 	global $config, $g;
-	if($g['booting')
+	if($g['booting'])
 		echo "Configuring VLAN interfaces...";
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
@@ -106,7 +106,7 @@ function interfaces_vlan_configure() {
 			interface_vlan_configure($vlan);
 		}
 	}
-	if($g['booting')
+	if($g['booting'])
 		echo "done.\n";
 }
 

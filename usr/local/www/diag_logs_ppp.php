@@ -91,10 +91,6 @@ include("head.inc");
 		  		</tr>
 				<?php
 				foreach($ppp_logarr as $logent){
-					foreach($search as $string) {
-						if(preg_match($string, $logent))
-							$match = true;
-					}
 					if(isset($match)) {
 						$logent = preg_replace($search, $replace, $logent);
 					} else {

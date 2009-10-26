@@ -1694,7 +1694,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 				file_put_contents("/tmp/{$realif}_router", $wancfg['gateway']);
 	}
 	if($wancfg['if'])
-		interfaces_bring_up(get_real_interface(get_real_interface($wancfg['if'])));
+		interfaces_bring_up($wancfg['if']);
 	else 
 		log_error("Could not bring wancfg['if'] up -- variable not defined in interface_configure()");
 	
@@ -1818,7 +1818,7 @@ EOD;
 
 	/* bring wan interface up before starting dhclient */
 	if($realwanif)
-		interfaces_bring_up(get_real_interface($realwanif));
+		interfaces_bring_up($realwanif);
 	else 
 		log_error("Could not bring realwanif up in interface_dhcp_configure()");
 
@@ -1977,7 +1977,7 @@ EOD;
 
 		/* Bring the parent interface up */
 		if($wancfg['if'])
-			interfaces_bring_up(get_real_interface($wancfg['if']));
+			interfaces_bring_up($wancfg['if']);
 		else 
 			log_error("Could not bring wancfg['if'] up in interface_pppoe_configure()");
 

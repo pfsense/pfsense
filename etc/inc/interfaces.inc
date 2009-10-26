@@ -896,6 +896,7 @@ function interface_ppp_configure($ifcfg) {
 				$startingip = $ppp['localip'];
 			if($ppp['gateway'])
 				$endingip = $ppp['gateway'];
+			$peerfile .= " enable dns\n";
 			$peerfile .= " set ifaddr 10.0.0.{$startingip}/0 10.0.0.{$endingip}/0 255.255.255.0 0.0.0.0\n";
 			$peerfile .= " set phone \"{$ppp['phone']}\"\n";
 			$peerfile .= " set authname \"{$ppp['username']}\"\n";
@@ -1289,13 +1290,18 @@ EOD;
 }
 
 function interface_wireless_clone($if, $wlcfg) {
-	global $config;
+	global $config, $g;
+	// On bootup pause a sec and let serial catch up
+	if($g['booting'])
+		usleep(100);
 	/*   Check to see if interface has been cloned as of yet.  
 	 *   If it has not been cloned then go ahead and clone it.
 	 */
 	$needs_clone = true;
 	$interface_num = substr($wlcfg['if'], 3);
 	if(does_interface_exist("{$wlcfg['if']}_wlan{$interface_num}")) {
+		if($g['booting'])
+			echo "\n";
 		$hostap_enabled = `/sbin/ifconfig | grep {$wlcfg['if']}_wlan{$interface_num} | grep hostap`;
 		if($hostap_enabled) 
 			$needs_clone = false;
@@ -2272,6 +2278,15 @@ function get_real_interface($interface = "wan") {
 
 		foreach ($iflist as $if => $ifdesc) {
 			if ($interface == $if || $interface == $ifdesc) {
+
+			// If a real interface was alread passed simply
+			// pass the real interface back.  This encourages
+			// the usage of this function in more cases so that
+			// we can combine logic for more flexibility.
+			if($config['interfaces'][$if]['if'] == $interface) {
+				$wanif = $interface;
+				break;
+			}
 
 			// PPP Support
 			if($config['interfaces'][$if]['serialport']) {

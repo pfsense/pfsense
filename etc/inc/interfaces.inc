@@ -898,7 +898,10 @@ function interface_ppp_configure($ifcfg) {
 	// Loop variables
     $i = 0;
 	$startingip = 1;
-	
+
+	// Start ppp.linkup file
+	$rclinkup = "default:\n";
+
     if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		foreach ($config['ppps']['ppp'] as $ppp) {
 			$dev = substr($ppp['port'], 5);
@@ -923,12 +926,11 @@ function interface_ppp_configure($ifcfg) {
 			$peerfile .= "\n";
 			$i++;
 			$startingip++;
+			$rclinkup.= "{$dev}:\n";
+			$rclinkup.= "	! sh -c \"/sbin/ppp-script HISADDR INTERFACE\"\n";
+			$rclinkup.= "	! sh -c \"/etc/rc.linkup INTERFACE start\"\n";
 		}
     }
-
-	$rclinkup = "default:\n";
-	$rclinkup.= "! sh -c \"echo HISADDR > /tmp/INTERFACE_router\"\n";
-	$rclinkup.= "! sh -c \"/etc/rc.linkup INTERFACE start\"\n";
 
 	// Write out configuration for ppp.conf
 	file_put_contents("/etc/ppp/ppp.conf", $peerfile);

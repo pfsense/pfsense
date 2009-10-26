@@ -136,12 +136,14 @@ include("head.inc");
 		$('phone').value = "*99#";
 		$('username').value = "att";
 		$('password').value = "att";
+		$('linespeed').value = "921600";
 	}
 	function prefill_sprint() {
 		$('dialcmd').value = '"ABORT BUSY ABORT NO\\sCARRIER TIMEOUT 5 \\"\" AT OK-AT-OK ATE1Q0 OK \\dATDT\\T TIMEOUT 40 CONNECT"';
 		$('phone').value = "#777";
 		$('username').value = "sprint";
-		$('password').value = "sprint";		
+		$('password').value = "sprint";
+		$('linespeed').value = "921600";
 	}
 	</script>
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">

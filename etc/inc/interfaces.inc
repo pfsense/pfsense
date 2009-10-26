@@ -1693,10 +1693,9 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			if (is_ipaddr($wancfg['gateway']))
 				file_put_contents("/tmp/{$realif}_router", $wancfg['gateway']);
 	}
-	if($wancfg['if'])
+
+	if(get_real_interface($wancfg['if']) && does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);
-	else 
-		log_error("Could not bring wancfg['if'] up -- variable not defined in interface_configure()");
 	
 	interface_reload_carps($realif);
 
@@ -1719,7 +1718,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 
 		if ($interface == "lan")
 			/* make new hosts file */
-               		system_hosts_generate();
+			system_hosts_generate();
 
 		if ($reloadall == true) {
 
@@ -1832,8 +1831,7 @@ EOD;
 	return 0;
 }
 
-function interface_pppoe_configure($interface = "wan") 
-{
+function interface_pppoe_configure($interface = "wan") {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];

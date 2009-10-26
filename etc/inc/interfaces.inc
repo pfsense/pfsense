@@ -2297,16 +2297,18 @@ function get_real_interface($interface = "wan") {
 		$iflist = get_configured_interface_with_descr(false, true);
 
 		foreach ($iflist as $if => $ifdesc) {
-			if ($interface == $if || $interface == $ifdesc) {
-
 			// If a real interface was alread passed simply
 			// pass the real interface back.  This encourages
 			// the usage of this function in more cases so that
 			// we can combine logic for more flexibility.
 			if($config['interfaces'][$if]['if'] == $interface) {
-				$wanif = $interface;
-				break;
+				if(does_interface_exist($interface)) {
+					$wanif = $interface;
+					break;
+				}
 			}
+
+			if ($interface == $if || $interface == $ifdesc) {
 
 			// PPP Support
 			if($config['interfaces'][$if]['serialport']) {

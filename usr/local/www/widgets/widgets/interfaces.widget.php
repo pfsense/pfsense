@@ -46,7 +46,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 						$iswireless = is_interface_wireless($ifdescr);
 				?>
 				<tr> 
-				<td class="vncellt" width="30%">
+				<td class="vncellt" width="40%">
 				<?php if($iswireless) {
 						 if($ifinfo['status'] == "associated") { ?> 
 		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan.gif" />
@@ -64,7 +64,7 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 						echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(DHCP)";
 				?>
 				</td>
-				<td width="70%"  class="listr">
+				<td width="60%"  class="listr">
 	                 <?php if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") { ?> 
 	                 		<table>
 								<tr>

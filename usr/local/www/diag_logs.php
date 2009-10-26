@@ -62,7 +62,7 @@ if ($_POST['filtertext'])
 if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";
 
-$pgtitle = array("Status","System logs","PPP");
+$pgtitle = array("Status","System logs","System");
 include("head.inc");
 
 ?>

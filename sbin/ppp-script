@@ -1,3 +1,19 @@
 #!/bin/sh
 
+# Set the router for this interface
 /sbin/ifconfig $2 | grep "$1" | awk '{ print $2 }' > /tmp/$2_router
+
+# Remove file if it exists
+if [ -f /var/etc/nameserver_$2 ]; then 
+	rm -f /var/etc/nameserver_$2
+fi
+
+# DNS1
+if [ "$3" != "" ]; then 
+	echo $3 >> /var/etc/nameserver_$2
+fi
+
+# DNS2
+if [ "$4" != "DNS2" ]; then 
+	echo $4 >> /var/etc/nameserver_$2
+fi

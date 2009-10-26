@@ -134,15 +134,6 @@ function get_nameservers() {
 	global $config, $g;
 	$master_list = array();
 	
-	// Read in ppp resolv.conf item
-	$ppp_resolv_conf = $g["varetc_path"] . "/ppp_resolv.conf";
-	if(file_exists($ppp_resolv_conf)) {
-		$dns_items = split("\n", `cat $ppp_resolv_conf | grep nameserver | cut -d' ' -f2`);
-		foreach($dns_items as $dns_item) 
-			if($dns_item)
-				$master_list[] = $dns_item;
-	}
-	
 	// Read in dhclient nameservers
 	$dns_lists = split("\n", `ls /var/etc/nameserver_* 2>/dev/null`);
 	if(is_array($dns_lists)) {

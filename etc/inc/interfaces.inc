@@ -1291,9 +1291,6 @@ EOD;
 
 function interface_wireless_clone($if, $wlcfg) {
 	global $config, $g;
-	// On bootup pause a sec and let serial catch up
-	if($g['booting']) 
-		echo "\n";
 	/*   Check to see if interface has been cloned as of yet.  
 	 *   If it has not been cloned then go ahead and clone it.
 	 */

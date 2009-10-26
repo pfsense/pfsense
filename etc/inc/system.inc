@@ -430,6 +430,9 @@ function system_syslogd_start() {
 		$syslogconf .= "!ntpdate,!ntpd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ntpd.log\n";
+		$syslogconf .= "!ppp\n";
+		if (!isset($syslogcfg['disablelocallogging'])) 
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ppp.log\n";
 		$syslogconf .= "!racoon\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ipsec.log\n";

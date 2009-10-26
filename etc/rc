@@ -234,6 +234,7 @@ if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then
 	touch /var/log/openvpn.log
 	touch /var/log/portalauth.log
 	touch /var/log/ipsec.log
+	touch /var/log/ppp.log
 	touch /var/log/relayd.log
 	touch /var/log/lighttpd.log
 	touch /var/log/ntpd.log
@@ -248,6 +249,7 @@ else
 		/usr/sbin/fifolog_create -s 50688 /var/log/openvpn.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/portalauth.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/ipsec.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/ppp.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/relayd.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/lighttpd.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/ntpd.log
@@ -259,6 +261,7 @@ else
 		/usr/sbin/clog -i -s 65535 /var/log/openvpn.log
 		/usr/sbin/clog -i -s 65535 /var/log/portalauth.log
 		/usr/sbin/clog -i -s 65535 /var/log/ipsec.log
+		/usr/sbin/clog -i -s 65535 /var/log/ppp.log
 		/usr/sbin/clog -i -s 65535 /var/log/slbd.log
 		/usr/sbin/clog -i -s 65535 /var/log/lighttpd.log
 		/usr/sbin/clog -i -s 65535 /var/log/ntpd.log

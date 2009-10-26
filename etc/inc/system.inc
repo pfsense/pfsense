@@ -143,6 +143,7 @@ function get_nameservers() {
 				$master_list[] = $dns_item;
 	}
 	
+	// Read in dhclient nameservers
 	$dns_lists = split("\n", `ls /var/etc/nameserver_* 2>/dev/null`);
 	if(is_array($dns_lists)) {
 		foreach($dns_lists as $dns) {
@@ -154,13 +155,16 @@ function get_nameservers() {
 					$master_list[] = $item;
 		}
 	}
-	if(!file_exists("/var/etc/nameservers.conf"))
-		return $master_list;
-	$dns = `cat /var/etc/nameservers.conf`;
-	$dns_s = split("\n", $dns);
-	if(is_array($dns_s))
-		foreach($dns_s as $dns)
-			$master_list[] = $dns;
+
+	// Read in any extra nameservers
+	if(file_exists("/var/etc/nameservers.conf")) {
+		$dns = `cat /var/etc/nameservers.conf`;
+		$dns_s = split("\n", $dns);
+		if(is_array($dns_s))
+			foreach($dns_s as $dns)
+				$master_list[] = $dns;
+	}
+
 	return $master_list;
 }
 

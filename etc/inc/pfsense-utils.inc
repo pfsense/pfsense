@@ -1156,7 +1156,7 @@ function get_interface_info($ifdescr) {
 		$ifinfo['status'] = "up";
 	else
 		$ifinfo['status'] = "down";
-
+	
 	if (preg_match("/^enc|^tun|^ppp|^pptp|^ovpn/i", $ifinfo['if'])) {
 		$ifinfo['inpkts'] = $linkinfo[3];
 		$ifinfo['outpkts'] = $linkinfo[6];
@@ -1285,6 +1285,8 @@ function get_interface_info($ifdescr) {
 			if (preg_match("/status: (.*)$/", $ici, $matches)) {
 				if ($matches[1] != "active")
 					$ifinfo['status'] = $matches[1];
+				if($ifinfo['status'] == "running")
+					$ifinfo['status'] = "up";
 			}
 			if (preg_match("/channel (\S*)/", $ici, $matches)) {
 				$ifinfo['channel'] = $matches[1];

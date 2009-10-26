@@ -84,14 +84,20 @@ function does_interface_exist($interface) {
 }
 
 function interfaces_loopback_configure() {
+	if($g['booting'])
+		echo "Configuring loopback interface...";
 	mwexec("/sbin/ifconfig lo0 127.0.0.1");
 	interfaces_bring_up("lo0");
 	exec("/sbin/route add 127.0.0.2 127.0.0.1");
+	if($g['booting'])
+		echo "done.\n";
 	return 0;
 }
 
 function interfaces_vlan_configure() {
-	global $config;
+	global $config, $g;
+	if($g['booting')
+		echo "Configuring VLAN interfaces...";
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if(empty($vlan['vlanif']))
@@ -100,6 +106,8 @@ function interfaces_vlan_configure() {
 			interface_vlan_configure($vlan);
 		}
 	}
+	if($g['booting')
+		echo "done.\n";
 }
 
 function interface_vlan_configure(&$vlan) {
@@ -246,16 +254,20 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
 }
 
 function interfaces_qinq_configure() {
-        global $config, $g;
-        if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
-                $fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
-                foreach ($config['qinqs']['qinqentry'] as $qinq) {
-                        /* XXX: Maybe we should report any errors?! */
-                        interface_qinq_configure($qinq, $fd);
-                }
-                fclose($fd);
-                mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd");
-        }
+	global $config, $g;
+	if($g['booting'])
+		echo "Configuring QinQ interfaces...";
+	if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
+		$fd = fopen("{$g['tmp_path']}/netgraphcmd", "w");
+		foreach ($config['qinqs']['qinqentry'] as $qinq) {
+			/* XXX: Maybe we should report any errors?! */
+			interface_qinq_configure($qinq, $fd);
+		}
+		fclose($fd);
+		mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd");
+		}
+		if($g['booting'])
+			echo "done.\n";
 }
 
 function interface_qinq2_configure(&$qinq, $fd, $macaddr) {
@@ -475,18 +487,21 @@ function interface_bridge_configure(&$bridge) {
 
 function interfaces_lagg_configure() 
 {
-        global $config;
-
+        global $config, $g;
+		if($g['booting']) 
+			echo "Configuring LAGG interfaces...";
         $i = 0;
-        if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
-                foreach ($config['laggs']['lagg'] as $lagg) {
-                        if(empty($lagg['laggif']))
-                                $lagg['laggif'] = "lagg{$i}";
-                        /* XXX: Maybe we should report any errors?! */
-                        interface_lagg_configure($lagg);
-                        $i++;
-                }
-        }
+		if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
+			foreach ($config['laggs']['lagg'] as $lagg) {
+				if(empty($lagg['laggif']))
+					$lagg['laggif'] = "lagg{$i}";
+				/* XXX: Maybe we should report any errors?! */
+				interface_lagg_configure($lagg);
+				$i++;
+			}
+		}
+		if($g['booting']) 
+			echo "done.\n";
 }
 
 function interface_lagg_configure(&$lagg) {
@@ -840,9 +855,11 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 }
 
 function interfaces_ppp_configure() {
-	global $config;
-	if($g['booting']) 
+	global $config, $g;
+	if(!$g['booting']) 
 		conf_mount_rw();
+	if($g['booting'])
+		echo "Configuring PPP interfaces...";
 	if($config['ppps']['ppp']) {
 		foreach($config['ppps']['ppp'] as $ppp) {
 			$dev = substr($ppp['port'], 5);
@@ -851,6 +868,8 @@ function interfaces_ppp_configure() {
 	}
 	if(!$g['booting']) 
 		conf_mount_ro();
+	if($g['booting'])
+		echo "done.\n";
 }
 
 function interface_ppp_configure($ifcfg) {
@@ -908,6 +927,7 @@ function interface_ppp_configure($ifcfg) {
     }
 
 	$rclinkup = "default:\n";
+	$rclinkup.= "! sh -c \"echo HISADDR\" > /tmp/INTERFACE_router\"";
 	$rclinkup.= "! sh -c \"/etc/rc.linkup INTERFACE start\"";
 
 	// Write out configuration for ppp.conf

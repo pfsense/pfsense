@@ -801,18 +801,14 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		$nat = "nat";
 		$target = "-> {$tgt}";
 	}
-
 	/* outgoing static-port option, hamachi, Grandstream, VOIP, etc */
-	if($staticnatport) {
+	if($staticnatport)
 		$staticnatport_txt = " static-port";
+	else
 		if(!$natport)
 			$staticnatport_txt = " port 1024:65535"; // set source port range
 		else
-			$staticnatport_txt = ""; 
-	} else {
-		$staticnatport_txt = "";
-	}
-
+		 	$staticnatport_txt = "";
 	$if_friendly = convert_friendly_interface_to_friendly_descr($if);
 	/* Put all the pieces together */
 	if ($if_friendly)

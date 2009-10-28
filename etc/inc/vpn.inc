@@ -858,6 +858,7 @@ EOD;
  			sleep("0.1");
 			mwexec("/usr/local/sbin/setkey -F", false);
  			sleep("0.1");
+			exec("sysctl net.inet.ip.ipsec_in_use=1");
  			/* start racoon */
 			mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf", false);
  			sleep("0.1");

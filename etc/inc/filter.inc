@@ -1527,26 +1527,24 @@ function filter_generate_user_rule($rule)
 		/* special reject packet */
 		$aline['flags'] .= "flags S/SA ";
 	}
-	if ($type == "pass") {
-		if ($rule['defaultqueue'] <> "") {
-			$aline['queue'] = " queue (".$rule['defaultqueue'];
-			if ($rule['ackqueue'] <> "")
-				$aline['queue'] .= ",".$rule['ackqueue'];
-			$aline['queue'] .= ") ";
+	if ($rule['defaultqueue'] <> "") {
+		$aline['queue'] = " queue (".$rule['defaultqueue'];
+		if ($rule['ackqueue'] <> "")
+			$aline['queue'] .= ",".$rule['ackqueue'];
+		$aline['queue'] .= ") ";
+	}
+	if ($rule['dnpipe'] <> "") {
+		if ($rule['dnpipe'][0] == "?") {
+			$aline['dnpipe'] = " dnqueue( ";
+			$aline['dnpipe'] .= substr($rule['dnpipe'],1);
+			if ($rule['pdnpipe'] <> "")
+				$aline['dnpipe'] .= ",".substr($rule['pdnpipe'], 1);
+		} else {
+			$aline['dnpipe'] = " dnpipe ( " . $rule['dnpipe'];
+			if ($rule['pdnpipe'] <> "")
+				$aline['dnpipe'] .= ", " . $rule['pdnpipe'];
 		}
-		if ($rule['dnpipe'] <> "") {
-			if ($rule['dnpipe'][0] == "?") {
-				$aline['dnpipe'] = " dnqueue( ";
-				$aline['dnpipe'] .= substr($rule['dnpipe'],1);
-				if ($rule['pdnpipe'] <> "")
-					$aline['dnpipe'] .= ",".substr($rule['pdnpipe'], 1);
-			} else {
-				$aline['dnpipe'] = " dnpipe ( " . $rule['dnpipe'];
-				if ($rule['pdnpipe'] <> "")
-					$aline['dnpipe'] .= ", " . $rule['pdnpipe'];
-			}
-			$aline['dnpipe'] .= ") ";
-		}
+		$aline['dnpipe'] .= ") ";
 	}
 
 	/* is a time based rule schedule attached? */

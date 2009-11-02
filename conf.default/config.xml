@@ -752,4 +752,49 @@
 	<rrd>
 		<enable/>
 	</rrd>
+	<load_balancer>
+		<monitor_type>
+			<name>ICMP</name>
+			<type>icmp</type>
+			<desc>ICMP</desc>
+			<options>
+			</options>
+		</monitor_type>
+		<monitor_type>
+			<name>TCP</name>
+			<type>tcp</type>
+			<desc>Generic TCP</desc>
+			<options>
+			</options>
+		</monitor_type>
+		<monitor_type>
+			<name>HTTP</name>
+			<type>http</type>
+			<desc>Generic HTTP</desc>
+			<options>
+				<path>/</path>
+				<host/>
+				<code>200</code>
+			</options>
+		</monitor_type>
+		<monitor_type>
+			<name>HTTPS</name>
+			<type>https</type>
+			<desc>Generic HTTPS</desc>
+			<options>
+				<path>/</path>
+				<host/>
+				<code>200</code>
+			</options>
+		</monitor_type>
+		<monitor_type>
+			<name>SMTP</name>
+			<type>send</type>
+			<desc>Generic SMTP</desc>
+			<options>
+				<send>EHLO nosuchhost</send>
+				<expect>250-</expect>
+			</options>
+		</monitor_type>
+	</load_balancer>
 </pfsense>

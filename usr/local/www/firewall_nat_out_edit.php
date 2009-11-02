@@ -43,14 +43,16 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['nat']['advancedoutbound']['rule']))
+if (!is_array($config['nat']['advancedoutbound']['rule'])) {
 	$config['nat']['advancedoutbound']['rule'] = array();
+}
 
 $a_out = &$config['nat']['advancedoutbound']['rule'];
 
 $id = $_GET['id'];
-if (isset($_POST['id']))
+if (isset($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($_GET['dup']))  {
 	$id  =  $_GET['dup'];
@@ -58,50 +60,51 @@ if (isset($_GET['dup']))  {
 }
 
 if (isset($id) && $a_out[$id]) {
-    list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
-    $pconfig['sourceport'] = $a_out[$id]['sourceport'];
-    address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
-	   $pconfig['destination_subnet'], $pconfig['destination_not'],
-	   $none, $none);
-    $pconfig['dstport'] = $a_out[$id]['dstport'];
-    $pconfig['natport'] = $a_out[$id]['natport'];
-    $pconfig['target'] = $a_out[$id]['target'];
-    $pconfig['interface'] = $a_out[$id]['interface'];
-	if (!$pconfig['interface'])
+	list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
+	$pconfig['sourceport'] = $a_out[$id]['sourceport'];
+	address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
+		$pconfig['destination_subnet'], $pconfig['destination_not'],
+		$none, $none);
+	$pconfig['dstport'] = $a_out[$id]['dstport'];
+	$pconfig['natport'] = $a_out[$id]['natport'];
+	$pconfig['target'] = $a_out[$id]['target'];
+	$pconfig['interface'] = $a_out[$id]['interface'];
+	if (!$pconfig['interface']) {
 		$pconfig['interface'] = "wan";
-    $pconfig['descr'] = $a_out[$id]['descr'];
-    $pconfig['nonat'] = $a_out[$id]['nonat'];
-    $pconfig['staticnatport'] = isset($a_out[$id]['staticnatport']);
-    $pconfig['nosync'] = isset($a_out[$id]['nosync']);
+	}
+	$pconfig['descr'] = $a_out[$id]['descr'];
+	$pconfig['nonat'] = $a_out[$id]['nonat'];
+	$pconfig['staticnatport'] = isset($a_out[$id]['staticnatport']);
+	$pconfig['nosync'] = isset($a_out[$id]['nosync']);
 } else {
-    $pconfig['source_subnet'] = 24;
-    $pconfig['destination'] = "any";
-    $pconfig['destination_subnet'] = 24;
+	$pconfig['source_subnet'] = 24;
+	$pconfig['destination'] = "any";
+	$pconfig['destination_subnet'] = 24;
 	$pconfig['interface'] = "wan";
 }
 
-if (isset($_GET['dup']))
+if (isset($_GET['dup'])) {
         unset($id);
+}
 
 if ($_POST) {
+	if ($_POST['destination_type'] == "any") {
+		$_POST['destination'] = "any";
+		$_POST['destination_subnet'] = 24;
+	}
+	if ($_POST['source_type'] == "any") {
+		$_POST['source'] = "any";
+		$_POST['source_subnet'] = 24;
+	}
 
-    if ($_POST['destination_type'] == "any") {
-        $_POST['destination'] = "any";
-        $_POST['destination_subnet'] = 24;
-    }
-    if ($_POST['source_type'] == "any") {
-        $_POST['source'] = "any";
-        $_POST['source_subnet'] = 24;
-    }
+	unset($input_errors);
+	$pconfig = $_POST;
 
-    unset($input_errors);
-    $pconfig = $_POST;
+	/* input validation */
+	$reqdfields = explode(" ", "interface source source_subnet destination destination_subnet");
+	$reqdfieldsn = explode(",", "Interface,Source,Source bit count,Destination,Destination bit count");
 
-    /* input validation */
-    $reqdfields = explode(" ", "interface source source_subnet destination destination_subnet");
-    $reqdfieldsn = explode(",", "Interface,Source,Source bit count,Destination,Destination bit count");
-
-    do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if($_POST['sourceport'] <> "" and !is_numericint($_POST['sourceport']))
 		$input_errors[] = "You must supply either a valid port for the source port entry.";
@@ -112,56 +115,59 @@ if ($_POST) {
 	if($_POST['natport'] <> "" and !is_numericint($_POST['natport']))
 		$input_errors[] = "You must supply either a valid port for the nat port entry.";
 
-    if ($_POST['source_type'] != "any") {
-        if ($_POST['source'] && !is_ipaddr($_POST['source']) && $_POST['source'] <> "any") {
-            $input_errors[] = "A valid source must be specified.";
-        }
-        if ($_POST['source_subnet'] && !is_numericint($_POST['source_subnet'])) {
-            $input_errors[] = "A valid source bit count must be specified.";
-        }
-    }
-    if ($_POST['sourceport'] && !is_numericint($_POST['sourceport'])) {
-        $input_errors[] = "A valid source port must be specified.";
-    }
-    if ($_POST['destination_type'] != "any") {
-        if ($_POST['destination'] && !is_ipaddr($_POST['destination'])) {
-            $input_errors[] = "A valid destination must be specified.";
-        }
+	if ($_POST['source_type'] != "any") {
+		if ($_POST['source'] && !is_ipaddr($_POST['source']) && $_POST['source'] <> "any") {
+			$input_errors[] = "A valid source must be specified.";
+		}
+	}
+	if ($_POST['source_subnet'] && !is_numericint($_POST['source_subnet'])) {
+		$input_errors[] = "A valid source bit count must be specified.";
+	}
+	if ($_POST['sourceport'] && !is_numericint($_POST['sourceport'])) {
+		$input_errors[] = "A valid source port must be specified.";
+	}
+	if ($_POST['destination_type'] != "any") {
+        	if ($_POST['destination'] && !is_ipaddr($_POST['destination'])) {
+			$input_errors[] = "A valid destination must be specified.";
+		}
+	}
         if ($_POST['destination_subnet'] && !is_numericint($_POST['destination_subnet'])) {
             $input_errors[] = "A valid destination bit count must be specified.";
         }
-    }
-    if ($_POST['destination_type'] == "any") {
-	if ($_POST['destination_not'])
-            $input_errors[] = "Negating destination address of \"any\" is invalid.";
-    }
-    if ($_POST['nonat'] && $_POST['staticnatport']) {
-        $input_errors[] = "Static port cannot be used with No NAT.";
-    }
-    if ($_POST['dstport'] && !is_numericint($_POST['dstport'])) {
-        $input_errors[] = "A valid destination port must be specified.";
-    }
-    if ($_POST['natport'] && !is_numericint($_POST['natport'])) {
-        $input_errors[] = "A valid NAT port must be specified.";
-    }
+	if ($_POST['destination_type'] == "any") {
+		if ($_POST['destination_not']) {
+			$input_errors[] = "Negating destination address of \"any\" is invalid.";
+		}
+	}
 
-    if ($_POST['target'] && !is_ipaddr($_POST['target'])) {
-        $input_errors[] = "A valid target IP address must be specified.";
-    }
+	if ($_POST['nonat'] && $_POST['staticnatport']) {
+		$input_errors[] = "Static port cannot be used with No NAT.";
+	}
+	if ($_POST['dstport'] && !is_numericint($_POST['dstport'])) {
+		$input_errors[] = "A valid destination port must be specified.";
+	}
 
-    /* if user has selected any as source, set it here */
-    if($_POST['source_type'] == "any") {
-	$osn = "any";
-    } else {
-	$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
-    }
+	if ($_POST['natport'] && !is_numericint($_POST['natport'])) {
+		$input_errors[] = "A valid NAT port must be specified.";
+	}
 
-    /* check for existing entries */
-    if ($_POST['destination_type'] == "any")
-        $ext = "any";
-    else
-        $ext = gen_subnet($_POST['destination'], $_POST['destination_subnet']) . "/"
-            . $_POST['destination_subnet'];
+	if ($_POST['target'] && !is_ipaddr($_POST['target'])) {
+		$input_errors[] = "A valid target IP address must be specified.";
+	}
+
+	/* if user has selected any as source, set it here */
+	if($_POST['source_type'] == "any") {
+		$osn = "any";
+	} else {
+		$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
+	}
+
+	/* check for existing entries */
+	if ($_POST['destination_type'] == "any") {
+		$ext = "any";
+	} else {
+		$ext = gen_subnet($_POST['destination'], $_POST['destination_subnet']) . "/" . $_POST['destination_subnet'];
+	}
 
 	if ($_POST['target']) {
 		/* check for clashes with 1:1 NAT (NAT Addresses is OK) */
@@ -175,76 +181,88 @@ if ($_POST) {
 		}
 	}
 
-    foreach ($a_out as $natent) {
-        if (isset($id) && ($a_out[$id]) && ($a_out[$id] === $natent))
-            continue;
+	foreach ($a_out as $natent) {
+		if (isset($id) && ($a_out[$id]) && ($a_out[$id] === $natent)) {
+			continue;
+		}
 
-		if (!$natent['interface'])
+		if (!$natent['interface']) {
 			$natent['interface'] == "wan";
-
+		}
 		if (($natent['interface'] == $_POST['interface']) && ($natent['source']['network'] == $osn)) {
 			if (isset($natent['destination']['not']) == isset($_POST['destination_not'])) {
 				if ((isset($natent['destination']['any']) && ($ext == "any")) ||
 						($natent['destination']['address'] == $ext)) {
-					//$input_errors[] = "There is already an outbound NAT rule with the specified settings.";
+					$input_errors[] = "There is already an outbound NAT rule with the specified settings.";
 					break;
 				}
 			}
 		}
-    }
+	}
 
-    if (!$input_errors) {
-        $natent = array();
-        $natent['source']['network'] = $osn;
-        $natent['sourceport'] = $_POST['sourceport'];
-        $natent['descr'] = $_POST['descr'];
-        $natent['target'] = $_POST['target'];
-        $natent['interface'] = $_POST['interface'];
+	if (!$input_errors) {
+	        $natent = array();
+		$natent['source']['network'] = $osn;
+		$natent['sourceport'] = $_POST['sourceport'];
+		$natent['descr'] = $_POST['descr'];
+		$natent['target'] = $_POST['target'];
+		$natent['interface'] = $_POST['interface'];
 
 		/* static-port */
-		if(isset($_POST['staticnatport']))
+		if(isset($_POST['staticnatport'])) {
 			$natent['staticnatport'] = true;
-		else
+		} else {
 			unset($natent['staticnatport']);
-
-		/* if user has selected not nat, set it here */
-		if(isset($_POST['nonat']))
-			$natent['nonat'] = true;
-		else
-			unset($natent['nonat']);
-
-        if ($ext == "any")
-            $natent['destination']['any'] = true;
-        else
-            $natent['destination']['address'] = $ext;
-
-        $natent['natport'] = $_POST['natport'];
-        $natent['dstport'] = $_POST['dstport'];
-
-		if($_POST['nosync'] == "yes")
-			$natent['nosync'] = true;
-		else
-			unset($natent['nosync']);
-
-        if (isset($_POST['destination_not']) && $ext != "any")
-            $natent['destination']['not'] = true;
-
-		if (isset($id) && $a_out[$id])
-			$a_out[$id] = $natent;
-		else {
-			if (is_numeric($after))
-				array_splice($a_out, $after+1, 0, array($natent));
-			else
-				$a_out[] = $natent;
 		}
 
+		/* if user has selected not nat, set it here */
+		if(isset($_POST['nonat'])) {
+			$natent['nonat'] = true;
+		} else {
+			unset($natent['nonat']);
+		}
+
+	        if ($ext == "any") {
+			$natent['destination']['any'] = true;
+		} else {
+			$natent['destination']['address'] = $ext;
+		}
+		if($_POST['natport'] != "") {
+	        	$natent['natport'] = $_POST['natport'];
+		} else {
+			unset($natent['natport']);
+		}
+		if($_POST['dstport'] != "") {
+			$natent['dstport'] = $_POST['dstport'];
+		} else {
+			unset($natent['dstport']);
+		}
+
+		if($_POST['nosync'] == "yes") {
+			$natent['nosync'] = true;
+		} else {
+			unset($natent['nosync']);
+		}
+
+		if (isset($_POST['destination_not']) && $ext != "any") {
+			$natent['destination']['not'] = true;
+		}
+
+		if (isset($id) && $a_out[$id]) {
+			$a_out[$id] = $natent;
+		} else {
+			if (is_numeric($after)) {
+				array_splice($a_out, $after+1, 0, array($natent));
+			} else {
+				$a_out[] = $natent;
+			}
+		}
+	}
+
 	mark_subsystem_dirty('natconf');
-
         write_config();
-
-        header("Location: firewall_nat_out.php");
-        exit;
-    }
+	header("Location: firewall_nat_out.php");
+	exit;
 }
 
 $pgtitle = array("Firewall","NAT","Outbound","Edit");
@@ -299,6 +317,7 @@ function sourcesel_change() {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php echo $array; ?>
             <form action="firewall_nat_out_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="1">
 				<tr>

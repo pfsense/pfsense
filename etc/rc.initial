@@ -64,8 +64,8 @@ fi
 
 /etc/rc.banner
 
-product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
-hidebanner=`cat /etc/inc/globals.inc | grep hidebanner | cut -d'"' -f4`
+product=`grep product_name /etc/inc/globals.inc | cut -d'"' -f4`
+hidebanner=`grep hidebanner /etc/inc/globals.inc | cut -d'"' -f4`
 
 # display a cheap menu
 echo

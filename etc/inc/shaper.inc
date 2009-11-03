@@ -351,7 +351,7 @@ class altq_root_queue {
 			$this->SetQlimit($conf['qlimit']);
 		if (isset($conf['name']))
 			$this->SetQname($conf['name']);		
-		if (!empty($conf['enabled']) && $conf['enabled'] == "enabled")
+		if (!empty($conf['enabled']))
 			$this->SetEnabled($conf['enabled']);
 	}
 
@@ -957,15 +957,15 @@ class priq_queue {
 			$this->SetQPriority($q['priority']);
 		if (!empty($q['description']))
 			$this->SetDescription($q['description']);
-		if (!empty($q['red']) && $q['red'] == "red")
+		if (!empty($q['red']))
 			$this->SetRed($q['red']);
-		if (!empty($q['rio']) && $q['rio'] == "rio")
+		if (!empty($q['rio']))
 			$this->SetRio($q['rio']);
-		if (!empty($q['ecn']) && $q['ecn'] == "ecn")
+		if (!empty($q['ecn']))
 			$this->SetEcn($q['ecn']);
-		if (!empty($q['default']) && $q['default'] == "default")
+		if (!empty($q['default']))
 			$this->SetDefault($q['default']);
-		if (!empty($q['enabled']) && $q['enabled'] == "enabled")
+		if (!empty($q['enabled']))
 			$this->SetEnabled($q['enabled']);
 
 	}

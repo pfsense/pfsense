@@ -375,7 +375,7 @@ if ($queue || $altq || $newqueue) {
 	$output .= "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
 	$output .= "Enable/Disable";
 	$output .= "</td><td class=\"vncellreq\">";
-	$output .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\"";
+	$output .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"enabled\"";
 	if ($queue)
 		if ($queue->GetEnabled())
        			$output .=  " CHECKED";

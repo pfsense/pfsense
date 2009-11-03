@@ -485,12 +485,12 @@ function step4_stepsubmitphpaction() {
 				exit;
 			}
 
-			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
+			if ($_POST['bandwidthspeed'] <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
 					exit;
 			}
-			$bw = wizard_get_bw($_POST['bandwidth']);
+			$bw = $_POST['bandwidth'];
 			if($bw > 15 && $bw < 2) {
 				$message="Values should be between 2% and 15%!";
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
@@ -518,12 +518,12 @@ function step5_stepsubmitphpaction() {
 
 			}
 
-			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
+			if ($_POST['bandwidthspeed'] <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
 					exit;
 			}
-		$bw = wizard_get_bw($_POST['bandwidth']);
+		$bw = $_POST['bandwidth'];
 		if($bw > 15 && $bw < 2) {
 			$message="Values should be between 2% and 15%!";
 			header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");

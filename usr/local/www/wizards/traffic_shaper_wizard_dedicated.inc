@@ -494,7 +494,7 @@ function step4_stepsubmitphpaction() {
 				exit;
 			}
 
-			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
+			if ($_POST['bandwidthspeed'] <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=3&message={$message}");
 					exit;
@@ -525,7 +525,7 @@ function step5_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=4&message={$message}");
 
 			}
-			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
+			if ($_POST['bandwidthspeed'] <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=4&message={$message}");
 					exit;

@@ -894,6 +894,13 @@ function get_memory() {
                         $real = $matches[1];
                 if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
                         $avail = $matches[1];
+				if(!$real && !$avail) {
+					$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
+					$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
+					$real_mem = $real / 1024;
+					$avail_mem = $avail / 1024;
+					return($real_mem,$avail_mem);
+				}
                 return array($real[0],$avail[0]);
         } else {
                 $mem = `dmesg -a`;
@@ -902,6 +909,13 @@ function get_memory() {
                         $real = $matches[1];
                 if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
                         $avail = $matches[1];
+				if(!$real && !$avail) {
+					$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
+					$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
+					$real_mem = $real / 1024;
+					$avail_mem = $avail / 1024;
+					return($real_mem,$avail_mem);
+				}
                 return array($real[0],$avail[0]);
         }
 }

@@ -899,7 +899,7 @@ function get_memory() {
 					$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
 					$real_mem = $real / 1024;
 					$avail_mem = $avail / 1024;
-					return($real_mem,$avail_mem);
+					return array($real_mem,$avail_mem);
 				}
                 return array($real[0],$avail[0]);
         } else {
@@ -914,7 +914,7 @@ function get_memory() {
 					$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
 					$real_mem = $real / 1024;
 					$avail_mem = $avail / 1024;
-					return($real_mem,$avail_mem);
+					return array($real_mem,$avail_mem);
 				}
                 return array($real[0],$avail[0]);
         }

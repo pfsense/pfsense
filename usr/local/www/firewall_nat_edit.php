@@ -185,6 +185,9 @@ if ($_POST) {
 		$natent['interface'] = $_POST['interface'];
 		$natent['descr'] = $_POST['descr'];
 		$natent['associated-filter-rule-id'] = $_POST['associated-filter-rule-id'];
+		
+		if($_POST['filter-rule-association'] = "pass")
+			$natent['associated-filter-rule-id'] = "pass";
 
 		if($_POST['nosync'] == "yes")
 			$natent['nosync'] = true;

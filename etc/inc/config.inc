@@ -66,7 +66,10 @@ require_once("notices.inc");
 if($g['booting']) echo ".";
 require_once("util.inc");
 if($g['booting']) echo ".";
-require_once("xmlparse.inc");
+if(file_exists("/cf/conf/use_xmlreader"))
+	require_once("xmlreader.inc");
+else
+	require_once("xmlparse.inc");
 if($g['booting']) echo ".";
 require_once("crypt.inc");
 

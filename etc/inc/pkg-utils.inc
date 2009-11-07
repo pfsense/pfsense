@@ -41,7 +41,10 @@
 */
 
 require_once("xmlrpc.inc");
-require_once("xmlparse.inc");
+if(file_exists("/cf/conf/use_xmlreader"))
+	require_once("xmlreader.inc");
+else
+	require_once("xmlparse.inc");
 require_once("service-utils.inc");
 require_once("pfsense-utils.inc");
 require_once("globals.inc");

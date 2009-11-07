@@ -1,5 +1,19 @@
 #!/bin/sh
 
+# $Id$
+# /etc/rc.initial
+# part of pfSense by Scott Ullrich
+# Copyright (C) 2004 Scott Ullrich, All rights reserved.
+# originally based on m0n0wall (http://neon1.net/m0n0wall)
+# Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+# All rights reserved.
+
+# make sure the user can't kill us by pressing Ctrl-C,
+# ctrl-z, etc.
+#trap : 2
+#trap : 3
+#trap : 4
+
 # If recovery console shell option has been specified
 if [ -f "/tmp/donotbootup" ]; then
 	/usr/bin/env prompt="%B[%n@%m]%b%/(%h)||RecoveryConsoleShell: " /bin/tcsh
@@ -9,44 +23,6 @@ if [ -f "/tmp/donotbootup" ]; then
 	/etc/rc.reboot
 	exit
 fi
-
-# $Id$
-# /etc/rc.initial
-# part of pfSense by Scott Ullrich
-# Copyright (C) 2004 Scott Ullrich, All rights reserved.
-# originally based on m0n0wall (http://neon1.net/m0n0wall)
-# Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-# All rights reserved.
-
-if [ -e /usr/local/etc/rc.d/dev_bootstrap.sh ]; then
-	echo
-	echo "A developer bootstrap is most likely in progress."
-	echo "This operation bootstraps all developer files from"
-	echo "pfSense.com and also FreeBSD.org and builds a ISO"
-	echo "to verify the environment is sane."
-	echo
-	echo "During this process, /usr/src is automatically downloaded"
-	echo "and many supporting files are built, installed, etc."
-	echo
-	echo -n "Would you like to tail the progress (y/n) [n]? "
-	read ANSWER
-	if [ "$ANSWER" = "y" ]; then
-		echo
-		echo "Tailing developer bootstrap process."
-		echo
-		echo "Press CTRL-C to abort."
-		echo
-		echo "Note, this tailing process will exit once the operation is completed."
-		echo
-		tail -f /tmp/bootup_messages
-	fi
-fi
-
-# make sure the user can't kill us by pressing Ctrl-C,
-# ctrl-z, etc.
-#trap : 2
-#trap : 3
-#trap : 4
 
 CONFIG="/cf/conf/config.xml"
 WORD="https"

@@ -30,6 +30,10 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+	pfSense_MODULE:	utils
+*/
+
 /* The following items will be treated as arrays in config.xml */
 function listtags() {
   /* Please keep this list alpha sorted and no longer than 80 characters
@@ -49,87 +53,51 @@ function listtags() {
 		"serversdisabled earlyshellcmd shellcmd staticmap subqueue timerange ".
 		"tunnel user vip virtual_server vlan winsserver wolentry widget  "
 		);
-	return $ret;
+	return array_flip($ret);
 }
 
 /* Package XML tags that should be treat as a list not as a traditional array */
 function listtags_pkg() {
 	$ret = array("depends_on_package", "onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
 
-	return $ret;
+	return array_flip($ret);
 }
 
-function startElement($parser, $name, $attrs) {
-	global $parsedcfg, $depth, $curpath, $havedata, $listtags;
+function add_elements(&$cfgarray, &$parser) {
+        global $listtags;
+        while ($parser->read()) {
+                switch ($parser->nodeType) {
+                case XMLReader::WHITESPACE:
+                        //$type = "WHITESPACE";
+                        break;
+                case XMLReader::SIGNIFICANT_WHITESPACE:
+                        //$type = "SIGNIFICANT_WHITESPACE";
+                        break;
+                case XMLReader::ELEMENT:
+                        if ($parser->isEmptyElement) {
+                                $cfgarray[$parser->name] = "";
+                        } else {
+                                if (isset($listtags[$parser->name]))
+                                        add_elements($cfgarray[$parser->name][], $parser);
+                                else {
+                                        add_elements($cfgarray[$parser->name], $parser);
+					if (!isset($cfgarray[$parser->name]))
+						$cfgarray[$parser->name] = array();
+				}
+                        }
+                        break;
+                case XMLReader::TEXT:
+		case XMLReader::CDATA:
+                        $cfgarray = $parser->value;
+                        break;
+                case XMLReader::END_ELEMENT:
+                        return;
+                        break;
+                default:
+                        break;
+                }
 
-	array_push($curpath, strtolower($name));
-
-	$ptr =& $parsedcfg;
-	foreach ($curpath as $path) {
-		$ptr =& $ptr[$path];
-	}
-
-	/* is it an element that belongs to a list? */
-	if (in_array(strtolower($name), $listtags)) {
-
-		/* is there an array already? */
-		if (!is_array($ptr)) {
-			/* make an array */
-			$ptr = array();
-		}
-
-		array_push($curpath, count($ptr));
-
-	} else if (isset($ptr)) {
-		/* multiple entries not allowed for this element, bail out */
-		die(sprintf("XML error: %s at line %d cannot occur more than once\n",
-				$name,
-				xml_get_current_line_number($parser)));
-	}
-
-	$depth++;
-	$havedata = $depth;
-}
-
-function endElement($parser, $name) {
-	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
-
-	if ($havedata == $depth) {
-		$ptr =& $parsedcfg;
-		foreach ($curpath as $path) {
-			$ptr =& $ptr[$path];
-		}
-		$ptr = "";
-	}
-
-	array_pop($curpath);
-
-	if (in_array(strtolower($name), $listtags))
-		array_pop($curpath);
-
-	$depth--;
-}
-
-function cData($parser, $data) {
-	global $depth, $curpath, $parsedcfg, $havedata;
-
-	$data = trim($data, "\t\n\r");
-
-	if ($data != "") {
-		$ptr =& $parsedcfg;
-		foreach ($curpath as $path) {
-			$ptr =& $ptr[$path];
-		}
-
-		if (is_string($ptr)) {
-			$ptr .= $data;
-		} else {
-			if (trim($data, " ") != "") {
-				$ptr = $data;
-				$havedata++;
-			}
-		}
-	}
+        }
 }
 
 function parse_xml_config($cffile, $rootobj, $isstring = "false") {
@@ -137,10 +105,10 @@ function parse_xml_config($cffile, $rootobj, $isstring = "false") {
 	$listtags = listtags();
         if (isset($GLOBALS['custom_listtags'])) {
           foreach($GLOBALS['custom_listtags'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
-	return parse_xml_config_raw($cffile, $rootobj, $isstring);
+	return parse_xml_config_raw($cffile, $rootobj);
 }
 
 function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
@@ -148,7 +116,7 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 	$listtags = listtags_pkg();
         if (isset($GLOBALS['custom_listtags_pkg'])) {
           foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	return parse_xml_config_raw($cffile, $rootobj, $isstring);
@@ -156,34 +124,14 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 
 function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 
-	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
 	$parsedcfg = array();
-	$curpath = array();
-	$depth = 0;
-	$havedata = 0;
 
-	$xml_parser = xml_parser_create();
-
-	xml_set_element_handler($xml_parser, "startElement", "endElement");
-	xml_set_character_data_handler($xml_parser, "cdata");
-
-	if (!($fp = fopen($cffile, "r"))) {
-		die("Error: could not open XML input\n");
-	}
-
-	while ($data = fread($fp, 4096)) {
-		if (!xml_parse($xml_parser, $data, feof($fp))) {
-			log_error(sprintf("XML error: %s at line %d\n",
-						xml_error_string(xml_get_error_code($xml_parser)),
-						xml_get_current_line_number($xml_parser)));
-			return -1;
-		}
-	}
-	xml_parser_free($xml_parser);
-
-	if (!$parsedcfg[$rootobj]) {
-		die("XML error: no $rootobj object found!\n");
-	}
+	$par = new XMLReader();
+	if ($par->open($cffile)) {
+		add_elements($parsedcfg, $par);
+		$par->close();
+	} else
+		log_error("Error returned while trying to parse {$cffile}");
 
 	return $parsedcfg[$rootobj];
 }
@@ -197,7 +145,7 @@ function dump_xml_config_sub($arr, $indent) {
 	foreach ($arr as $ent => $val) {
 		if (is_array($val)) {
 			/* is it just a list of multiple values? */
-			if (in_array(strtolower($ent), $listtags)) {
+			if (isset($listtags[strtolower($ent)])) {
 				foreach ($val as $cval) {
 					if (is_array($cval)) {
 						$xmlconfig .= str_repeat("\t", $indent);
@@ -242,7 +190,7 @@ function dump_xml_config($arr, $rootobj) {
 	$listtags = listtags();
         if (isset($GLOBALS['custom_listtags'])) {
           foreach($GLOBALS['custom_listtags'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	return dump_xml_config_raw($arr, $rootobj);
@@ -253,7 +201,7 @@ function dump_xml_config_pkg($arr, $rootobj) {
 	$listtags = listtags_pkg();
         if (isset($GLOBALS['custom_listtags_pkg'])) {
           foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
-            $listtags[] = $tag;
+            $listtags[$tag] = $tag;
           }
         }
 	return dump_xml_config_raw($arr, $rootobj);

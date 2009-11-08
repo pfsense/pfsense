@@ -87,6 +87,8 @@ if ($_POST) {
 		notify_via_growl("This is a test message form pfSense.  It is safe to ignore this message.");
 
 		// Send test message via smtp
+		if(file_exists("/var/db/notices_lastmsg.txt"))
+			unlink("/var/db/notices_lastmsg.txt");
 		$savemsg = notify_via_smtp("This is a test message form pfSense.  It is safe to ignore this message.");
 
 		pfSenseHeader("system_advanced_notifications.php");

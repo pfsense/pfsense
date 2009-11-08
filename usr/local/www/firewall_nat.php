@@ -229,6 +229,9 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					<?php if(isset($natent['associated-filter-rule-id']) && $natent['associated-filter-rule-id']>0): ?>
 					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="Firewall rule ID <?=htmlspecialchars($natent['associated-filter-rule-id']); ?> is managed with this rule" border="0">
 					<?php endif; ?>
+					<?php if($natent['associated-filter-rule-id'] == "pass"): ?>
+					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" title="All traffic matching this NAT entry is passed" border="0">
+					<?php endif; ?>
 				  </td>
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 		    <?php

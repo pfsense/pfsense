@@ -426,6 +426,7 @@ include("fbegin.inc"); ?>
 					<td width="78%" class="vtable">
 						<select name="associated-filter-rule-id">
 							<option value="">None</option>
+							<option value="pass" <?php if($pconfig['associated-filter-rule-id'] == "pass") echo " SELECTED"; ?>>Pass</option>
 							<?php foreach ($config['filter']['rule'] as $filter_rule): ?>
 								<?php if (isset($filter_rule['id']) && $filter_rule['id']>0): ?>
 									<option value="<?php echo $filter_rule['id']; ?>"<?php if($filter_rule['id']==$pconfig['associated-filter-rule-id']) echo " SELECTED"; ?>>

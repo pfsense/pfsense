@@ -439,7 +439,7 @@ function enable_change(enable_over) {
                       <input name="radiusserverport" type="text" class="formfld unknown" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>">
                       <input name="radiusserveracctport" type="text" class="formfld unknown" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>">
                       <br>
-                      Enter the IP address of the RADIUS server.</td>
+                      Enter the IP address, RADIUS port, and RADIUS accounting port of the RADIUS server.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS shared secret</td>
@@ -456,7 +456,7 @@ function enable_change(enable_over) {
                       <input name="radiusserver2port" type="text" class="formfld unknown" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>">
                       <input name="radiusserver2acctport" type="text" class="formfld unknown" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>">
                       <br>
-                      Enter the IP address of the secondary RADIUS server.</td>
+                      Enter the IP address, RADIUS port, and RADIUS accounting port of the RADIUS server.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Secondary RADIUS shared secret</td>

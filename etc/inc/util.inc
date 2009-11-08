@@ -112,11 +112,9 @@ function clear_subsystem_dirty($subsystem = "") {
 }
 
 function config_lock() {
-	log_error("config_lock() is depricated please use lock().");
 	return;
 }
 function config_unlock() {
-	log_error("config_unlock() is depricated please use unlock().");
 	return;
 }
 

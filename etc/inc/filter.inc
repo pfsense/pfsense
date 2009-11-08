@@ -543,15 +543,6 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
         if ($dstport != "")
 		$dst .= " port {$dstport}";
 
-	/* Allow for negating NAT entries */
-	if ($nonat) {
-		$nat = "no nat";
-		$target = "";
-	} else {
-		$nat = "nat";
-		$target = "-> {$tgt}";
-	}
-
 	/* outgoing static-port option, hamachi, Grandstream, VOIP, etc */
 	if($staticnatport)
 		$staticnatport_txt = " static-port";
@@ -560,6 +551,16 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 			$staticnatport_txt = " port 1024:65535"; // set source port range
 		else
 			$staticnatport_txt = "";
+
+	/* Allow for negating NAT entries */
+	if ($nonat) {
+		$nat = "no nat";
+		$target = "";
+		$staticnatport_txt = "";
+	} else {
+		$nat = "nat";
+		$target = "-> {$tgt}";
+	}
 
 	$if_friendly = convert_real_interface_to_friendly_descr($if);
 

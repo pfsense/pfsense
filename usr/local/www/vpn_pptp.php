@@ -384,12 +384,6 @@ function enable_change(enable_over) {
 
                    primary and secondary DNS servers assigned to PPTP clients<br>
                 </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">RADIUS issued IPs</td>
-                  <td width="78%" valign="top" class="vtable">
-                      <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if(isset($pconfig['radiusissueips'])) echo " checked=\"checked\""; ?> />
-                  </td>
-                </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">WINS Server</td>
                   <td width="78%" valign="top" class="vtable">
@@ -411,27 +405,26 @@ function enable_change(enable_over) {
 			 <br>
                       <input name="radiussecenable" type="checkbox" id="radiussecenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiussecenable']) echo "checked"; ?>>
                       <strong>Secondary RADIUS server for failover authentication</strong><br>
-                      When set, all requests will go to the secondary server when primary fails</td>
+                      When set, all requests will go to the secondary server when primary fails<br>
+		      <br>
+                      <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
+		      <strong>RADIUS issued IPs</strong>
+                      <br>Issue IP addresses via RADIUS server.
+		      </td>
+                 </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS NAS IP</td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radius_nasip" class="formfld unknown" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>">
                   </td>
-		  </tr>
+		</tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS Accounting Update</td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radius_acct_update" class="formfld unknown" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>">
                   </td>
-		  </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncell">RADIUS issued IPs</td>
-                  <td width="78%" valign="top" class="vtable">
-                      <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
-                      <br>Issue IP addresses via RADIUS server.
-                 </td>
-                </tr>
+		</tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS Server </td>
                   <td width="78%" class="vtable">

@@ -71,6 +71,7 @@ $sad = ipsec_dump_sad();
 				$tab_array[0] = array("Overview", true, "diag_ipsec.php");
 				$tab_array[1] = array("SAD", false, "diag_ipsec_sad.php");
 				$tab_array[2] = array("SPD", false, "diag_ipsec_spd.php");
+				$tab_array[3] = array("Logs", false, "diag_logs_ipsec.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>

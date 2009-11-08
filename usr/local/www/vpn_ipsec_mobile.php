@@ -305,6 +305,7 @@ function login_banner_change() {
 				$tab_array = array();
 				$tab_array[0] = array("Tunnels", false, "vpn_ipsec.php");
 				$tab_array[1] = array("Mobile clients", true, "vpn_ipsec_mobile.php");
+				$tab_array[2] = array("Logs", false, "diag_logs_ipsec.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>

@@ -954,8 +954,6 @@ function filter_nat_rules_generate()
 					$natrules .= filter_nat_rules_generate_if($if,
 						"{$macroortable}", 500, "", 500, $target, 500, false);
 					$natrules .= filter_nat_rules_generate_if($if,
-						"{$macroortable}", 4500, "", 4500, $target, 4500, false);
-					$natrules .= filter_nat_rules_generate_if($if,
 						"{$macroortable}", 5060, "", 5060, $target, 5060, false);
 					$natrules .= filter_nat_rules_generate_if($if,
 						"{$macroortable}", null, "", null, $target, null, isset($ifcfg['nonat']));

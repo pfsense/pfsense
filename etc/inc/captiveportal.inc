@@ -74,6 +74,16 @@ function captiveportal_configure() {
 				$firsttime = 1;
 				$cpipm = get_interface_ip($cpifgrp);
 				if (is_ipaddr($cpipm)) {
+					$carpif = link_ip_to_carp_interface($cpipm);
+					if (!empty($carpif)) {
+						$carpsif = explode(" ", $carpif);
+						foreach ($carpsif as $cpcarp) {
+							mwexec("/sbin/ifconfig {$cpcarp} ipfwfilter");
+							$carpip = find_interface_ip($cpcarp);
+							if (is_ipaddr($carpip))
+								$cpips[] = $carpip;
+						}
+					}
 					$cpips[] = $cpipm;
 					mwexec("/sbin/ifconfig {$tmpif} ipfwfilter");
 				}
@@ -313,8 +323,15 @@ EOD;
 		if (is_module_loaded("ipfw.ko"))		
 			mwexec("/sbin/kldunload ipfw.ko");
 		$listifs = get_configured_interface_list_by_realif();
-		foreach ($listifs as $listrealif => $listif)
+		foreach ($listifs as $listrealif => $listif) {
 			mwexec("/sbin/ifconfig {$listrealif} -ipfwfilter");
+			$carpif = link_ip_to_carp_interface(find_interface_ip($listrealif));
+                        if (!empty($carpif)) {
+				$carpsif = explode(" ", $carpif);
+				foreach ($carpsif as $cpcarp)
+					mwexec("/sbin/ifconfig {$cpcarp} -ipfwfilter");
+			}
+		}
 	}
 
 	unlock($captiveportallck);
@@ -368,9 +385,9 @@ EOD;
 		$cprules .= "add {$rulenum} set 1 pass icmp from any to {$cpip} in icmptype 0 \n";
 		$rulenum++;
 		//# allow access to our DNS forwarder
-		$cprules .= "add {$rulenum} set 1 fwd 127.0.0.1 udp from any to any 53 in \n";
+		$cprules .= "add {$rulenum} set 1 pass udp from any to any 53 in \n";
 		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} 53 to any out \n";
+		$cprules .= "add {$rulenum} set 1 pass udp from any 53 to any out \n";
 		$rulenum++;
 		# allow access to our web server
 		$cprules .= "add {$rulenum} set 1 pass tcp from any to {$cpip} 8000 in \n";

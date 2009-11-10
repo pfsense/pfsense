@@ -2,6 +2,7 @@
 # Pattern attributes: good notsofast notsofast
 # Protocol groups: streaming_video ietf_proposed_standard
 # Wiki: http://www.protocolinfo.org/wiki/RTSP
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # usually runs on port 554
 #

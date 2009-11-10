@@ -2,6 +2,7 @@
 # Pattern attributes: good veryfast fast
 # Protocol groups: game proprietary
 # Wiki: http://www.protocolinfo.org/wiki/Counter-Strike
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # By adam.randazzoATgmail.com
 

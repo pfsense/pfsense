@@ -2,6 +2,7 @@
 # Pattern attributes: ok notsofast notsofast
 # Protocol groups: remote_access proprietary
 # Wiki: http://www.protocolinfo.org/wiki/RDP
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # This pattern was submitted by Michael Leong.  It has been tested under the 
 # following conditions: "WinXP Pro with all the patches, rdesktop server 

@@ -2,6 +2,7 @@
 # Pattern attributes: good veryfast fast superset
 # Protocol groups: networking ietf_internet_standard
 # Wiki: http://www.protocolinfo.org/wiki/SNMP
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Usually runs on UDP ports 161 (monitoring) and 162 (traps).
 #

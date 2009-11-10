@@ -2,6 +2,7 @@
 # Pattern attributes: good fast fast
 # Protocol groups: chat proprietary
 # Wiki: http://www.protocolinfo.org/wiki/Yahoo_Messenger
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Usually runs on port 5050 
 #

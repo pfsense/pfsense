@@ -1,7 +1,8 @@
 # eDonkey2000 - P2P filesharing - http://edonkey2000.com and others
-# Pattern attributes: good veryfast fast overmatch
+# Pattern attributes: good fast fast overmatch
 # Protocol groups: p2p
 # Wiki: http://www.protocolinfo.org/wiki/EDonkey
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Tested recently (April/May 2006) with eMule 0.47a and eDonkey2000 1.4
 # and a long time ago with something else. 

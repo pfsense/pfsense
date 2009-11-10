@@ -2,6 +2,7 @@
 # Pattern attributes: good fast notsofast
 # Protocol groups: document_retrieval networking proprietary
 # Wiki: http://www.protocolinfo.org/wiki/SMB
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # "This protocol is sometimes also referred to as the Common Internet File 
 # System (CIFS), LanManager or NetBIOS protocol." -- "man samba"

@@ -2,6 +2,7 @@
 # Pattern attributes: ok veryfast fast
 # Protocol groups: networking ietf_draft_standard
 # Wiki: http://www.protocolinfo.org/wiki/ZMAAP
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # http://files.zeroconf.org/draft-ietf-zeroconf-zmaap-02.txt
 # (Note that this reference is an Internet-Draft, and therefore must

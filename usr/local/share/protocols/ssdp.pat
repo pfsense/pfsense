@@ -2,6 +2,7 @@
 # Pattern attributes: good slow notsofast
 # Protocol groups: networking ietf_draft_standard
 # Wiki: http://www.protocolinfo.org/wiki/SSDP
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 # This pattern was tested only by listening to a Linksys WRT54G. However,
 # I expect it works in general given the simplicity of the protocol.

@@ -2,6 +2,7 @@
 # Pattern attributes: good fast fast
 # Protocol groups: p2p
 # Wiki: http://www.protocolinfo.org/wiki/Napster
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # All my tests show that this pattern is fast, but one user has reported that
 # it is slow.  Your milage may vary.

@@ -2,6 +2,7 @@
 # Pattern attributes: good notsofast notsofast
 # Protocol groups: networking ietf_proposed_standard
 # Wiki: http://www.protocolinfo.org/wiki/SOCKS
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Usually runs on port 1080
 # Also useful: http://www.iana.org/assignments/socks-methods

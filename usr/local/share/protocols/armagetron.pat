@@ -2,6 +2,7 @@
 # Pattern attributes: good slow notsofast
 # Protocol groups: open_source game
 # Wiki: http://protocolinfo.org/wiki/Armagetron
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 # Contributed to protocolinfo.org, possibly by joda.bot, who says "The 
 # filter matches the initial transfer of configuration data. Very early 

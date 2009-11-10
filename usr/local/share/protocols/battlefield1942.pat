@@ -2,6 +2,7 @@
 # Pattern attributes: ok veryfast fast
 # Protocol groups: game proprietary
 # Wiki: http://www.protocolinfo.org/wiki/Battlefield_1942
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Contributed by Myles Uyema <mylesuyema AT gmail.com>
 #

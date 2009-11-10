@@ -2,6 +2,7 @@
 # Pattern attributes: great slow fast
 # Protocol groups: networking ietf_internet_standard
 # Wiki: http://www.protocolinfo.org/wiki/DNS
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 # Thanks to Sebastien Bechet <s.bechet AT av7.net> for TLD detection
 # improvements

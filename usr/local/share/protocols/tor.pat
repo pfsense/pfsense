@@ -2,6 +2,7 @@
 # Pattern attributes: good notsofast notsofast
 # Protocol groups: networking
 # Wiki: http://protocolinfo.org/wiki/Tor
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # This pattern has been tested and is believed to work well.
 #

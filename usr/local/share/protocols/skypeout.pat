@@ -2,6 +2,7 @@
 # Pattern attributes: ok slow notsofast overmatch
 # Protocol groups: voip p2p proprietary
 # Wiki: http://www.protocolinfo.org/wiki/Skype
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 # Thanks to Myles Uyema, mylesuyema AT gmail.com
 

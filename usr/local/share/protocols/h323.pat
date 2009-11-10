@@ -2,6 +2,7 @@
 # Pattern attributes: ok veryfast fast
 # Protocol groups: voip itu-t_standard
 # Wiki: http://www.protocolinfo.org/wiki/H.323
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # This pattern is written without knowledge of the principles of H.323.
 # It has only been tested with gnomemeeting and may not work for other

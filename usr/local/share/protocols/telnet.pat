@@ -2,6 +2,7 @@
 # Pattern attributes: good veryfast fast
 # Protocol groups: remote_access obsolete ietf_internet_standard
 # Wiki: http://www.protocolinfo.org/wiki/Telnet
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Usually runs on port 23
 #

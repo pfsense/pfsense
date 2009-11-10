@@ -1,7 +1,8 @@
 # Tencent QQ Protocol - Chinese instant messenger protocol - http://www.qq.com
-# Pattern attributes: good fast fast
+# Pattern attributes: good notsofast fast
 # Protocol groups: chat
 # Wiki: http://www.protocolinfo.org/wiki/QQ
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Over six million people use QQ in China, according to wsgtrsys.
 # 

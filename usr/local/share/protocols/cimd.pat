@@ -2,6 +2,7 @@
 # Pattern attributes: good notsofast notsofast subset
 # Protocol groups: proprietary chat
 # Wiki: http://www.protocolinfo.org/wiki/CIMD
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 # I don't know whether CIMD is ever found by itself in a TCP connection. 
 # I have only seen it myself as part of the Chikka login process, in 

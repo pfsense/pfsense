@@ -2,6 +2,7 @@
 # Pattern attributes: good slow notsofast
 # Protocol groups: streaming_audio
 # Wiki: http://www.protocolinfo.org/wiki/Icecast
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # usually runs on port 80
 #

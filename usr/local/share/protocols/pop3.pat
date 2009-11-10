@@ -1,7 +1,8 @@
 # POP3 - Post Office Protocol version 3 (popular e-mail protocol) - RFC 1939
-# Pattern attributes: great veryfast fast
+# Pattern attributes: great fast fast
 # Protocol groups: mail ietf_internet_standard
 # Wiki: http://www.protocolinfo.org/wiki/POP
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # This pattern has been tested somewhat.
 

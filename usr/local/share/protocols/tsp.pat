@@ -2,6 +2,7 @@
 # Pattern attributes: good veryfast fast overmatch
 # Protocol groups: time_synchronization open_source
 # Wiki: http://www.protocolinfo.org/wiki/TSP
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # http://ftp.svbug.com/ftp/pub/manuals/pdf/smm.22.timed.pdf
 # http://docs.freebsd.org/44doc/smm/12.timed/paper.pdf

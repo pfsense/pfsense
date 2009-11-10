@@ -2,6 +2,7 @@
 # Pattern attributes: good slow notsofast undermatch
 # Protocol groups: document_retrieval obsolete ietf_rfc_documented
 # Wiki: http://www.protocolinfo.org/wiki/Gopher
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Gopher servers usually run on TCP port 70.
 #

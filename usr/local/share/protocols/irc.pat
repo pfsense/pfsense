@@ -1,7 +1,8 @@
 # IRC - Internet Relay Chat - RFC 1459
-# Pattern attributes: great veryfast fast
+# Pattern attributes: great fast fast
 # Protocol groups: chat ietf_proposed_standard
 # Wiki: http://www.protocolinfo.org/wiki/IRC
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Usually runs on port 6666 or 6667
 # Note that chat traffic runs on these ports, but IRC-DCC traffic (which

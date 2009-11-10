@@ -2,6 +2,7 @@
 # Pattern attributes: great veryfast fast
 # Protocol groups: remote_access secure ietf_draft_standard
 # Wiki: http://www.protocolinfo.org/wiki/SSH
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # usually runs on port 22
 #

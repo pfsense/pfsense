@@ -2,6 +2,7 @@
 # Pattern attributes: good veryfast fast
 # Protocol groups: networking ietf_draft_standard
 # Wiki: http://www.protocolinfo.org/wiki/DHCP
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Usually runs on ports 67 (server) and 68 (client)
 #

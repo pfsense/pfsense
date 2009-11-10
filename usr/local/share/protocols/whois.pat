@@ -2,6 +2,7 @@
 # Pattern attributes: good notsofast notsofast overmatch
 # Protocol groups: networking ietf_draft_standard
 # Wiki: http://www.protocolinfo.org/wiki/Whois
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Usually runs on TCP port 43
 # 

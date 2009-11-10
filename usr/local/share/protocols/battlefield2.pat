@@ -2,6 +2,7 @@
 # Pattern attributes: ok slow notsofast
 # Protocol groups: game proprietary
 # Wiki: http://www.protocolinfo.org/wiki/Battlefield_2
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # This pattern is unconfirmed except implicitly by a comment on protocolinfo.
 

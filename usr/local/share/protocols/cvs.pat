@@ -2,6 +2,7 @@
 # Pattern attributes: good veryfast fast
 # Protocol groups: version_control open_source
 # Wiki: http://www.protocolinfo.org/wiki/CVS
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 cvs
 

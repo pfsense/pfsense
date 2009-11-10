@@ -2,6 +2,7 @@
 # Pattern attributes: ok veryfast fast
 # Protocol groups: remote_access proprietary
 # Wiki: http://www.protocolinfo.org/wiki/Radmin
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # This pattern has been verified with Radmin v1.1 and v3.0beta on Win2000/XP
 # It has only been tested between a single pair of computers.

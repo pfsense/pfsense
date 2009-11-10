@@ -1,7 +1,8 @@
 # Battlefield 2142 - An EA game.
 # Pattern attributes: ok fast fast
-# Protocol groups: proprietary game 
+# Protocol groups: proprietary game
 # Wiki: http://protocolinfo.org/wiki/Battlefield_2142
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 # Submitted by Telsin.  Not confirmed.
 

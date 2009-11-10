@@ -2,6 +2,7 @@
 # Pattern attributes: poor veryfast fast
 # Protocol groups: p2p document_retrieval open_source
 # Wiki: http://www.protocolinfo.org/wiki/Freenet
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 freenet
 # Freenet is intentionally hard to identify...

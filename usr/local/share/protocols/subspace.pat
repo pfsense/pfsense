@@ -2,6 +2,7 @@
 # Pattern attributes: marginal veryfast fast
 # Protocol groups: game
 # Wiki: http://www.protocolinfo.org/wiki/Subspace
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # By Myles Uyema <mylesuyema AT gmail.com>
 #

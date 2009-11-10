@@ -2,6 +2,7 @@
 # Pattern attributes: good slow notsofast
 # Protocol groups: p2p
 # Wiki: http://www.protocolinfo.org/wiki/Soribada
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 # I am told that there are three versions of this protocol, the first no
 # longer being used.  That would probably explain why incoming searches

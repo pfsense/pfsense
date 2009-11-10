@@ -2,6 +2,7 @@
 # Pattern attributes: good slow slow undermatch overmatch
 # Protocol groups: ietf_draft_standard
 # Wiki: http://www.protocolinfo.org/wiki/Finger
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # Usually runs on port 79
 #

@@ -1,7 +1,8 @@
 # iMesh - the native protocol of iMesh, a P2P application - http://imesh.com
-# Pattern attributes: ok notsofast notsofast
+# Pattern attributes: ok fast notsofast
 # Protocol groups: p2p
 # Wiki:   http://protocolinfo.org/wiki/iMesh
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # depending on the version of iMesh (the program), it can also use fasttrack,
 # gnutella and edonkey in addition to iMesh (the protocol).

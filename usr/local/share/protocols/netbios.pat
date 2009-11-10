@@ -2,6 +2,7 @@
 # Pattern attributes: marginal notsofast notsofast
 # Protocol groups: networking ietf_internet_standard proprietary
 # Wiki: http://www.protocolinfo.org/wiki/NetBIOS
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # As mentioned in smb.pat:
 #

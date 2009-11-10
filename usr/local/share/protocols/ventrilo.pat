@@ -2,6 +2,7 @@
 # Pattern attributes: good fast fast
 # Protocol groups: voip proprietary
 # Wiki: http://www.protocolinfo.org/wiki/Ventrilo
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # I have tested this with Ventrilo client 2.3.0 on Windows talking to
 # Ventrilo server 2.3.1 (the public version) on Linux.  I've done this

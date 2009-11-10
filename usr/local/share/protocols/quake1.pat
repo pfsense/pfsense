@@ -2,6 +2,7 @@
 # Pattern attributes: marginal veryfast fast
 # Protocol groups: game proprietary
 # Wiki: http://www.protocolinfo.org/wiki/Quake
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 #
 # This pattern is untested and unconfirmed.
 

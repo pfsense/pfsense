@@ -2,6 +2,7 @@
 # Pattern attributes: ok veryfast fast
 # Protocol groups: game proprietary
 # Wiki: http://www.protocolinfo.org/wiki/World_of_Warcraft
+# Copyright (C) 2008 Matthew Strait, Ethan Sommer; See ../LICENSE
 
 worldofwarcraft
 ^\x06\xec\x01

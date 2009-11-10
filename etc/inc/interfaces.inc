@@ -2177,6 +2177,16 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
                         return "opt{$index}";
                 else
                         return "wan";
+	} else if (stristr($interface, "vip")) {
+                $index = substr($interface, 3);
+                $counter = 0;
+                foreach ($config['virtualip']['vip'] as $vip) {
+                        if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
+                                if (intval($index) == $counter)
+                                        return $vip['interface'];
+                                $counter++;
+                        }
+                }
         } else if (stristr($interface, "carp")) {
                 $index = substr($interface, 4);
                 $counter = 0;
@@ -2424,7 +2434,7 @@ function find_carp_interface($ip) {
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
-				$carp_ip = find_interface_ip($vip['interface']);
+				$carp_ip = get_interface_ip($vip['interface']);
 				$if = `ifconfig | grep '$ip' -B1 | head -n1 | cut -d: -f1`;
 				if ($if)
 					return $if;
@@ -2439,7 +2449,7 @@ function link_carp_interface_to_parent($interface) {
         if ($interface == "")
                 return;
 
-        $carp_ip = find_interface_ip($interface);
+        $carp_ip = get_interface_ip($interface);
         if (!is_ipaddr($carp_ip))
                 return;
 
@@ -2533,9 +2543,6 @@ function find_interface_ip($interface, $flush = false)
 	$interface = str_replace("\n", "", $interface);
 	
 	if (does_interface_exist($interface) == false)
-		$interface = convert_friendly_interface_to_real_interface_name($interface);
-
-	if (does_interface_exist($interface) == false)
 		return;
 
 	/* Setup IP cache */
@@ -2569,6 +2576,8 @@ function get_interface_ip($interface = "wan")
 	if (!$realif) {
 		if (preg_match("/^carp/i", $interface))
 			$realif = $interface;
+		else if (preg_match("/^vip/i", $interface))
+			$realif = $interface;
 		else
 			return null;
 	}
@@ -2589,6 +2598,8 @@ function get_interface_subnet($interface = "wan")
 	$realif = get_real_interface($interface);
 	if (!$realif) {
                 if (preg_match("/^carp/i", $interface))
+                        $realif = $interface;
+                else if (preg_match("/^vip/i", $interface))
                         $realif = $interface;
                 else
                         return null;

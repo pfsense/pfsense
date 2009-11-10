@@ -3277,7 +3277,7 @@ class layer7 {
     //Add a tuple (rule,sctructure,element) to the $rsets
     
     function add_rule($l7set) {
-        $this->rsets[] = $l7set;
+       	$this->rsets[] = $l7set;
     }
     
     // Build the layer7 rules
@@ -3302,6 +3302,7 @@ class layer7 {
         $rsets = $q['l7rules'];
         //Put individual rules in the array
 	if(is_array($rsets)) {
+	    $this->rsets = array(); // XXX: ugly hack
 	    foreach($rsets as $l7r) {
 	        $l7obj = new l7rule();
 	        $l7obj->SetRProtocol($l7r['protocol']);

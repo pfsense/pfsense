@@ -66,8 +66,6 @@ $default_layer7shaper_msg .= "</td></tr>";
 read_layer7_config();
 
 if($_GET['reset'] <> "") {
-	/* XXX: Huh!? Why are we killing php here? */
-	mwexec("killall -9 pfctl php");
 	// kill all ipfw-classifyd processes
 	mwexec("killall -9 ipfw-classifyd"); 
 	exit;
@@ -124,8 +122,13 @@ else if ($_POST) {
 	unset($input_errors);
 	
 	if($_POST['submit']) {
-		$l7r =& new layer7();
-		$_POST['divert_port'] = $l7r->gen_divert_port();
+		if (isset($layer7_rules_list[$name])) {
+			$l7r = $layer7_rules_list[$name];
+			$_POST['divert_port'] = $l7r->GetRPort();
+		} else {
+			$l7r =& new layer7();
+			$_POST['divert_port'] = $l7r->gen_divert_port();
+		}
 		for($i=0; $_POST['protocol'][$i] <> ""; $i++) {
 			$_POST['l7rules'][$i]['protocol'] = $_POST['protocol'][$i];
 			$_POST['l7rules'][$i]['structure'] = $_POST['structure'][$i];

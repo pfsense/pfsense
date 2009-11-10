@@ -1179,10 +1179,10 @@ function interface_carp_configure(&$vip) {
 	if ($vip['password'] != "")
 		$password = " pass \"" . $vip_password . "\"";
 
-	// Setting the VIP to the VHID ID has to be the 
-	// single most brain-headed decision in the history
-	// of man-kind.  Do this correctly by finding the first
-	// available vip interface.
+	// This is the most brain dead decision taken for carp
+	// Carp vhid is confirmed by GUI to be sequencial and limited to 256
+	// eri@ I am leaving the comment but not touching the code
+	//      since someone thinks he/she knows better.
 	$vipif = find_next_available_vip();
 
 	$interface = interface_translate_type_to_real($vip['interface']);

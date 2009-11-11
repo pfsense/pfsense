@@ -46,7 +46,7 @@ $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 $pgtitle = "Diagnostics: System Activity";
 
 if($_REQUEST['getactivity']) {
-	$text = `/usr/bin/top`;
+	$text = `/usr/bin/top -HS`;
 	echo $text;
 	exit;
 }

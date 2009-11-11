@@ -3316,20 +3316,10 @@ class layer7 {
     //Generate a random port for the divert socket
     function gen_divert_port() {
         $dports = get_divert_ports(); //array of used ports
-        $divert_port = rand(40000, 60000);
-        while(true) {
-            foreach($dports as $dport) {
-                $dupe = false;
-                if($dport == $divert_port) {
-                    $divert_port = rand(40000, 60000);
-                    $dupe = true;
-                    break;
-                }
-            }
-            if(!$dupe) {
-                break;
-            }
-        }
+	$divert_port = 1; // Initialize
+	while (($divert_port % 2) != 0 || in_array($divert_port, $dports)) {
+		$divert_port = rand(40000, 60000);
+	}
         return $divert_port;
     }
     

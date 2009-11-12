@@ -137,6 +137,7 @@ function interface_vlan_configure(&$vlan) {
 	} else {
 		$tmpvlanif = exec("/sbin/ifconfig vlan create");
 		mwexec("/sbin/ifconfig {$tmpvlanif} name {$vlanif}");
+		mwexec("/usr/sbin/ngctl name {$tmpvlanif}: {$vlanif}");
 	}
 	
 	mwexec("/sbin/ifconfig {$vlanif} vlan " .
@@ -1222,6 +1223,7 @@ function interface_carp_configure(&$vip) {
 	else {
 		$carpif = exec("/sbin/ifconfig carp create");
 		mwexec("/sbin/ifconfig {$carpif} name {$vipif}");
+		mwexec("/usr/sbin/ngctl name {$carpif}: {$vipif}");
 	}
 
 	/* invalidate interface cache */
@@ -1267,6 +1269,7 @@ function interface_carpdev_configure(&$vip) {
 	else  {
 		$carpdevif = exec("/sbin/ifconfig carp create");
 		mwexec("/sbin/ifconfig {$carpdevif} name {$vipif}");
+		mwexec("/usr/sbin/ngctl name {$carpdevif}: {$vipif}");
 	}
 
 	mwexec("/sbin/ifconfig {$vipif} carpdev {$realif} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
@@ -1337,6 +1340,7 @@ function interface_wireless_clone($if, $wlcfg) {
 		$newif = trim(`/sbin/ifconfig wlan create wlandev {$wlcfg['if']} {$mode}`);
 		// Rename the interface to $parentnic_wlan$parentnic#: EX: ath0_wlan0
 		exec("/sbin/ifconfig {$newif} name {$wlcfg['if']}_wlan{$interface_num}");
+		mwexec("/usr/sbin/ngctl name {$newif}: {$wlcfg['if']}_wlan{$interface_num}");
 	}
 }
 

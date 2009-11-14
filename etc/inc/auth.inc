@@ -1,6 +1,7 @@
 <?php
 /* $Id$ */
 /*
+		Copyright (C) 2009 Scott Ullrich <sullrich@gmail.com>
         Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
         All rights reserved.
 
@@ -84,6 +85,11 @@ function passwd_backed_basic_auth() {
 	return false;
 }
 
+function sanitize_username($str) {
+    // return letters, spaces and numbers only
+    return preg_replace('/[^A-Za-z0-9\s ]/', '', $str);
+}
+
 function htpasswd_backed_basic_auth() {
         global $HTTP_SERVER_VARS;
 		
@@ -111,7 +117,7 @@ function htpasswd_backed_basic_auth() {
 				continue;
 
 			/* Check to see if user even exists */
-			$username = $HTTP_SERVER_VARS['AUTH_USER'];
+			$username = sanitize_username($HTTP_SERVER_VARS['AUTH_USER']);
 			if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
 				continue;
 

@@ -103,11 +103,11 @@ function htpasswd_backed_basic_auth() {
 			}
 
 			// Disallow blank usernames
-			if (!isset($HTTP_SERVER_VARS['AUTH_USER']))
+			if (!$HTTP_SERVER_VARS['AUTH_USER'])
 				continue;
 
 			// Disallow blank passwords
-			if(!isset($HTTP_SERVER_VARS['AUTH_PW'])) 
+			if(!$HTTP_SERVER_VARS['AUTH_PW']) 
 				continue;
 
 			/* Check to see if user even exists */

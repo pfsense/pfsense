@@ -86,7 +86,7 @@ function passwd_backed_basic_auth() {
 
 function htpasswd_backed_basic_auth() {
         global $HTTP_SERVER_VARS;
-
+		
         $authfile = file("/var/run/htpasswd");
 
 		/* sanity check to ensure that /usr/local/www/.htpasswd doesn't exist */
@@ -94,35 +94,41 @@ function htpasswd_backed_basic_auth() {
 
         /* Prompt three times and give up */
         for($attempt = 0; $attempt <= 3; basic_auth_prompt()){
-                $attempt++;
-                
-        /* Check for AUTH_USER */
-		if ($HTTP_SERVER_VARS['PHP_AUTH_USER'] <> "") {
-			$HTTP_SERVER_VARS['AUTH_USER'] = $HTTP_SERVER_VARS['PHP_AUTH_USER'];
-			$HTTP_SERVER_VARS['AUTH_PW'] = $HTTP_SERVER_VARS['PHP_AUTH_PW'];
-		}
-                if (!isset($HTTP_SERVER_VARS['AUTH_USER']))
-                        continue;
+			$attempt++;
 
-                /* Check to see if user even exists */
-                $username = $HTTP_SERVER_VARS['AUTH_USER'];
-                if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
-                        continue;
+			/* Check for AUTH_USER */
+			if ($HTTP_SERVER_VARS['PHP_AUTH_USER'] <> "") {
+				$HTTP_SERVER_VARS['AUTH_USER'] = $HTTP_SERVER_VARS['PHP_AUTH_USER'];
+				$HTTP_SERVER_VARS['AUTH_PW'] = $HTTP_SERVER_VARS['PHP_AUTH_PW'];
+			}
 
-                /* Get crypted password */
-                $matches = "";
-                preg_match("/^$username:((\\$1\\$[.\d\w_\/]{8}\\$)[.\d\w_\/]{22})$/", $line, $matches);
-                $pass = $matches[1];
-                $salt = $matches[2];
+			// Disallow blank usernames
+			if (!isset($HTTP_SERVER_VARS['AUTH_USER']))
+				continue;
 
-                /* Encrypt entered password with salt */
-                $authpass = crypt($HTTP_SERVER_VARS['AUTH_PW'], $salt);
+			// Disallow blank passwords
+			if(!isset($HTTP_SERVER_VARS['AUTH_PW'])) 
+				continue;
 
-                /* And finally validate password */
-                if($authpass == $pass)
-                        return true;
-                else
-                        continue;
+			/* Check to see if user even exists */
+			$username = $HTTP_SERVER_VARS['AUTH_USER'];
+			if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
+				continue;
+
+			/* Get crypted password */
+			$matches = "";
+			preg_match("/^$username:((\\$1\\$[.\d\w_\/]{8}\\$)[.\d\w_\/]{22})$/", $line, $matches);
+			$pass = $matches[1];
+			$salt = $matches[2];
+
+			/* Encrypt entered password with salt */
+			$authpass = crypt($HTTP_SERVER_VARS['AUTH_PW'], $salt);
+
+			/* And finally validate password */
+			if($authpass == $pass)
+				return true;
+			else
+				continue;
         }
 
         /* Should only get here if user fails login three times */

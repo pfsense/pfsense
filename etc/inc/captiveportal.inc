@@ -422,7 +422,7 @@ EOD;
 # redirect non-authenticated clients to captive portal
 add 1990 set 1 fwd 127.0.0.1,8000 tcp from any to any in
 # let the responses from the captive portal web server back out
-add 1991 set 1 pass tcp from any 80 to any out
+add 1991 set 1 pass tcp from any to any 80 out
 # block everything else
 add 1992 set 1 deny all from any to any
 

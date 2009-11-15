@@ -654,12 +654,10 @@ function captiveportal_disconnect_client($id,$term_cause = 1) {
 		if ($cpdb[$i][1] == $id) {
 			captiveportal_disconnect($cpdb[$i], $radiusservers, $term_cause);
 			captiveportal_logportalauth($cpdb[$i][4], $cpdb[$i][3], $cpdb[$i][2], "DISCONNECT");
-			$tmpindex = $i;
+			unset($cpdb[$i]);
 			break;
 		}
-	}
-	if ($tmpindex > 0)
-		unset($cpdb[$tmpindex]);
+	}		
 
 	/* write database */
 	captiveportal_write_db($cpdb);

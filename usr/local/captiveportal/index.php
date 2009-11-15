@@ -48,7 +48,7 @@ $clientip = $_SERVER['REMOTE_ADDR'];
 if (!$clientip) {
     /* not good - bail out */
     echo "An error occured.  Please check the system logs for more information.";
-    log_error("Captive portal could not deterimine clients ip address.");
+    log_error("Captive portal could not deterimine client's IP address.");
     exit;
 }
 

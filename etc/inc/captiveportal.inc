@@ -1093,6 +1093,16 @@ function portal_ip_from_client_ip($cliip) {
 			return $ip;
 	}
 
+	// doesn't match up to any particular interface
+	// so let's set the portal IP to what PHP says 
+	// the server IP issuing the request is. 
+	// allows same behavior as 1.2.x where IP isn't 
+	// in the subnet of any CP interface (static routes, etc.)
+	// rather than forcing to DNS hostname resolution
+	$ip = $_SERVER['SERVER_ADDR'];
+	if (is_ipaddr($ip))
+		return $ip;
+
 	return false;
 }
 

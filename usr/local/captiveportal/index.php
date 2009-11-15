@@ -47,8 +47,8 @@ $clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {
     /* not good - bail out */
-    echo "An error occured.  Please check the system logs for more information.";
-    log_error("Captive portal could not deterimine client's IP address.");
+    echo "An error occurred.  Please check the system logs for more information.";
+    log_error("Captive portal could not determine client's IP address.");
     exit;
 }
 
@@ -86,7 +86,7 @@ $clientmac = arp_get_mac_by_ip($clientip);
 if (!$clientmac && $macfilter) {
     /* unable to find MAC address - shouldn't happen! - bail out */
     captiveportal_logportalauth("unauthenticated","noclientmac",$clientip,"ERROR");
-    echo "An error occured.  Please check the system logs for more information.";
+    echo "An error occurred.  Please check the system logs for more information.";
     log_error("Captive portal could not determine client's MAC address.  Disable MAC address filtering in captive portal if you do not need this functionality.");
     exit;
 }

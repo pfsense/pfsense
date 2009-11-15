@@ -87,7 +87,7 @@ if (!$clientmac && $macfilter) {
     /* unable to find MAC address - shouldn't happen! - bail out */
     captiveportal_logportalauth("unauthenticated","noclientmac",$clientip,"ERROR");
     echo "An error occured.  Please check the system logs for more information.";
-    log_error("Captive portal could not deterimine clients MAC address.  Disable MAC address filtering in captive portal if you do not needs this functionality.");
+    log_error("Captive portal could not determine client's MAC address.  Disable MAC address filtering in captive portal if you do not need this functionality.");
     exit;
 }
 
@@ -141,7 +141,7 @@ EOD;
         if (portal_allow($clientip, $clientmac,$voucher,null,$attr)) {
 
             // YES: user is good for $timecredit minutes.
-            captiveportal_logportalauth($voucher,$clientmac,$clientip,"VOUCHER LOGIN good for $timecredit min.");
+            captiveportal_logportalauth($voucher,$clientmac,$clientip,"Voucher login good for $timecredit min.");
         } else {
             portal_reply_page($redirurl, "error", $config['voucher']['msgexpired']);
         }

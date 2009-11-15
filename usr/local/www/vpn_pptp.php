@@ -375,7 +375,7 @@ function enable_change(enable_over) {
                   </td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">PPTP DNS Servers</td>
+                  <td width="22%" valign="top" class="vncell">PPTP DNS Servers</td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="pptp_dns1" type="text" class="formfld unknown" id="pptp_dns1" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns1']);?>">
                     <br>

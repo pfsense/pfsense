@@ -11,6 +11,39 @@ require_once("functions.inc");
 
 /* $Id$ */
 
+
+/* Determine automated help URL. Should output the page name and
+   parameters separately */
+$uri_split = "";
+preg_match("/\/(.*)\?(.*)/", $_SERVER["REQUEST_URI"], $uri_split);
+
+/* If there was no match, there were no parameters, just grab the filename
+   Otherwise, use the matched filename from above. */
+if (empty($uri_split[0])) {
+	$pagename = ltrim($_SERVER["REQUEST_URI"], '/');
+} else {
+	$pagename = $uri_split[1];
+}
+/* If the page name is still empty, the user must have requested / (index.php) */
+if (empty($pagename)) {
+	$pagename = "index.php";
+}
+
+/* If the filename is pkg_edit.php or wizard.php, reparse looking
+	for the .xml filename */
+if (($pagename == "pkg_edit.php") || ($pagename == "wizard.php")) {
+	$param_split = explode('&', $uri_split[2]);
+	foreach ($param_split as $param) {
+		if (substr($param, 0, 4) == "xml=") {
+			$xmlfile = explode('=', $param);
+			$pagename = $xmlfile[1];
+		}
+	}
+}
+
+/* Build the full help URL. */
+$helpurl .= "{$g['help_base_url']}?page={$pagename}";
+
 function return_ext_menu($section) {
 	global $config;
 	$htmltext = "";
@@ -176,6 +209,7 @@ if (isset($config['system']['developer'])) {
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
 
 $help_menu = array();
+$help_menu[] = array("About this Page", $helpurl);
 $help_menu[] = array("User Forum", "http://www.pfsense.org/j.php?jumpto=forum");
 $help_menu[] = array("Documentation", "http://www.pfsense.org/j.php?jumpto=doc");
 $help_menu[] = array("Developers Wiki", "http://www.pfsense.org/j.php?jumpto=devwiki");
@@ -367,11 +401,10 @@ function add_to_menu($url, $name) {
 	if (isAllowedPage($url))
 		echo "<li><a href=\"{$url}\" class=\"navlnk\">{$name}</a></li>\n";
 }
-	
 ?>
 
+<div style="text-align: right; display: block;"><a href="<?php echo $helpurl; ?>" title="Help for items on this page."><img src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a></div>
 <p class="pgtitle"><?=genhtmltitle($pgtitle);?></font></p>
-
 <?php
 	$pgtitle_output = true;
 ?>

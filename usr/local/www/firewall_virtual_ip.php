@@ -66,7 +66,7 @@ if ($_POST) {
                         interface_ipalias_configure($a_vip[$_POST['id']]);
                         break;
                 case "proxyarp":
-                        services_proxyarp_configure();
+                        interface_proxyarp_configure();
                         break;
                 case "carp":
                         interface_carp_configure($a_vip[$_POST['id']]);

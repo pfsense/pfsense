@@ -82,7 +82,7 @@ function sigkillbyname($procname, $sig) {
 
 /* kill a process by name */
 function killbyname($procname) {
-	if(isvalidproc($procname))
+	if(isvalidproc($procname)) 
 		mwexec("/usr/bin/killall " . escapeshellarg($procname));
 }
 

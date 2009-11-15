@@ -777,10 +777,10 @@ function interface_reconfigure($interface = "wan") {
 }
 
 function interface_vip_bring_down(&$vip) {
-
+	
 	switch ($vip['mode']) {
 	case "proxyarp":
-		interfaces_proxyarp_configure();
+		interface_proxyarp_configure();
 		break;
 	case "ipalias":
 		mwexec("/sbin/ifconfig " . get_real_interface($vip['interface']) . " delete {$vip['subnet']}");
@@ -1040,13 +1040,13 @@ function interfaces_carp_setup() {
 	}
 }
 
-function interfaces_proxyarp_configure() {
+function interface_proxyarp_configure() {
         global $config, $g;
         if(isset($config['system']['developerspew'])) {
                 $mt = microtime();
-                echo "interfaces_proxyarp_configure() being called $mt\n";
+                echo "interface_proxyarp_configure() being called $mt\n";
         }
-
+	
         /* kill any running choparp */
         killbyname("choparp");
 
@@ -1094,7 +1094,7 @@ function interfaces_vips_configure() {
 	global $g, $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "interfaces_ipalias_configure() being called $mt\n";
+		echo "interfaces_vips_configure() being called $mt\n";
 	}
 	$paa = array();
 	if(is_array($config['virtualip']['vip'])) {
@@ -1102,7 +1102,7 @@ function interfaces_vips_configure() {
 		foreach ($config['virtualip']['vip'] as $vip) {
 			switch ($vip['mode']) {
 			case "proxyarp":
-				/* nothing it is handled on interfaces_proxyarp_configure() */
+				/* nothing it is handled on interface_proxyarp_configure() */
 				break;
 			case "ipalias":
 				interface_ipalias_configure(&$vip);
@@ -1120,7 +1120,7 @@ function interfaces_vips_configure() {
 			}
 		}
 		
-		interfaces_proxyarp_configure();
+		interface_proxyarp_configure();
 	}
 }
 
@@ -1159,15 +1159,6 @@ function interface_reload_carps($cif) {
                         }
                 }
         }
-}
-
-// Returns the first available vhid interface
-function find_next_available_vip() {
-	for($x=0; $x<9999; $x++) {
-		if(!does_interface_exist("vip{$x}")) 
-			return "vip{$x}";
-	}
-	return false;
 }
 
 function interface_carp_configure(&$vip) {

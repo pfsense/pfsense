@@ -403,7 +403,7 @@ function add_to_menu($url, $name) {
 }
 ?>
 
-<div style="text-align: right; display: block;"><a href="<?php echo $helpurl; ?>" title="Help for items on this page."><img src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a></div>
+<div style="text-align: right; display: block;"><a href="<?php echo $helpurl; ?>" target="_new" title="Help for items on this page."><img src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a></div>
 <p class="pgtitle"><?=genhtmltitle($pgtitle);?></font></p>
 <?php
 	$pgtitle_output = true;

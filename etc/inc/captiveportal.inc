@@ -387,6 +387,8 @@ EOD;
 		//# allow access to our DNS forwarder
 		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} to any 53 in \n";
 		$rulenum++;
+		$cprules .= "add {$rulenum} set 1 pass udp from any to {$cpip} 53 in \n";
+		$rulenum++;
 		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} 53 to any out \n";
 		$rulenum++;
 		# allow access to our web server

@@ -101,8 +101,10 @@ if ($_GET['act'] == "del") {
 		}
 
 		if (!$input_errors) {
+			// Special case since every proxyarp vip is handled by the same daemon.
+			if ($a_vip[$_GET['id']]['mode'] == "proxyarp")
+				unset($a_vip[$_GET['id']]);
 			interface_vip_bring_down($a_vip[$_GET['id']]);
-			unset($a_vip[$_GET['id']]);
 			write_config();
 			mark_subsystem_dirty('vip');
 			header("Location: firewall_virtual_ip.php");

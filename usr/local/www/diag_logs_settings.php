@@ -138,6 +138,7 @@ function enable_change(enable_over) {
 		document.iform.portalauth.disabled = 0;
 		document.iform.vpn.disabled = 0;
 		document.iform.system.disabled = 0;
+		document.iform.logall.disabled = 0;
 	} else {
 		document.iform.remoteserver.disabled = 1;
 		document.iform.remoteserver2.disabled = 1;
@@ -147,6 +148,7 @@ function enable_change(enable_over) {
 		document.iform.portalauth.disabled = 1;
 		document.iform.vpn.disabled = 1;
 		document.iform.system.disabled = 1;
+		document.iform.logall.disabled = 1;
 	}
 }
 // -->
@@ -208,7 +210,7 @@ function enable_change(enable_over) {
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable"> <input name="disablelocallogging" type="checkbox" id="disablelocallogging" value="yes" <?php if ($pconfig['disablelocallogging']) echo "checked"; ?> onClick="enable_change(false)">
-                          <strong>Disable writing log files to the local ram disk</strong></td>
+                          <strong>Disable writing log files to the local RAM disk</strong></td>
                        </tr>
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>

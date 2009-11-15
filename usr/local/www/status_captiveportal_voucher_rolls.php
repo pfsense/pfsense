@@ -53,7 +53,7 @@ include("fbegin.inc");
 <tr><td class="tabnavtbl">
 <?php 
 	$tab_array = array();
-        $tab_array[] = array("Users", false, "status_captiveportal.php");
+        $tab_array[] = array("Active Users", false, "status_captiveportal.php");
         $tab_array[] = array("Active Vouchers", false, "status_captiveportal_vouchers.php");
         $tab_array[] = array("Voucher Rolls", true, "status_captiveportal_voucher_rolls.php");
         $tab_array[] = array("Test Vouchers", false, "status_captiveportal_test.php");

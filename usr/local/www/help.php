@@ -5,10 +5,97 @@
  */
 
 /* Define hash of jumpto url maps */
+
+/* Links to categories could probably be more specific. */
 $helppages = array(
-  'index.php' => 'http://doc.pfsense.org/index.php/Dashboard_package',
+  'index.php' => 'http://doc.pfsense.org/index.php/Dashboard_package',   /* Needs cleanup */
   'license.php' => 'http://www.pfsense.org/index.php?option=com_content&task=view&id=42&Itemid=62',
-  'miniupnpd.xml' => 'http://doc.pfsense.org/index.php/What_is_UPNP%3F'
+  'miniupnpd.xml' => 'http://doc.pfsense.org/index.php/What_is_UPNP%3F',
+  'firewall_virtual_ip.php' => 'http://doc.pfsense.org/index.php/What_are_Virtual_IP_Addresses%3F',
+  'firewall_virtual_ip_edit.php' => 'http://doc.pfsense.org/index.php/What_are_Virtual_IP_Addresses%3F',
+  'firewall_aliases.php' => 'http://doc.pfsense.org/index.php/Aliases',
+  'firewall_aliases_edit.php' => 'http://doc.pfsense.org/index.php/Aliases',
+  'firewall_aliases_import.php' => 'http://doc.pfsense.org/index.php/Aliases',
+  'firewall_nat_out.php' => 'http://doc.pfsense.org/index.php/Advanced_Outbound_NAT',  /* Needs cleanup */
+  'firewall_nat_out_edit.php' => 'http://doc.pfsense.org/index.php/Advanced_Outbound_NAT',  /* Needs cleanup */
+
+  'diag_packet_capture.php' => 'http://doc.pfsense.org/index.php/Sniffers,_Packet_Capture',   /* Needs Embellishment */
+
+  'status_rrd_graph.php' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",   /* Probably needs a real RRD graph doc */
+  'status_rrd_graph_img.php' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",  /* Probably needs a real RRD graph doc */
+  'status_rrd_graph_settings.php' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",  /* Probably needs a real RRD graph doc */
+
+  'diag_ipsec.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'diag_ipsec_sad.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'diag_ipsec_spd.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'diag_logs_ipsec.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'vpn_ipsec.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'vpn_ipsec_ca.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'vpn_ipsec_ca_edit.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'vpn_ipsec_ca_edit_create_cert.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'vpn_ipsec_edit.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'vpn_ipsec_keys.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'vpn_ipsec_keys_edit.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'vpn_ipsec_mobile.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'vpn_ipsec_phase1.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+  'vpn_ipsec_phase2.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
+
+  'diag_logs_openvpn.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'status_openvpn.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_ccd.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_ccd_edit.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_cli.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_cli_edit.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_client.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_create_certs.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_crl.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_crl_edit.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_csc.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_server.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_srv.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'vpn_openvpn_srv_edit.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+  'openvpn-client-export.xml' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
+
+  'services_captiveportal.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'services_captiveportal_filemanager.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'services_captiveportal_ip.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'services_captiveportal_ip_edit.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'services_captiveportal_mac.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'services_captiveportal_mac_edit.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'services_captiveportal_users.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'services_captiveportal_users_edit.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'services_captiveportal_vouchers.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'services_captiveportal_vouchers_edit.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'status_captiveportal.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'status_captiveportal_test.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'status_captiveportal_voucher_rolls.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+  'status_captiveportal_vouchers.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+
+  'carp_status.php' => 'http://doc.pfsense.org/index.php/Category:CARP',
+  'carp.xml' => 'http://doc.pfsense.org/index.php/Category:CARP',
+  'carp_settings.xml' => 'http://doc.pfsense.org/index.php/Category:CARP',
+
+  'autoconfigbackup.xml' => 'http://doc.pfsense.org/index.php/AutoConfigBackup',
+  'phpservice.xml' => 'http://doc.pfsense.org/index.php/PHPService',
+  'squid.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
+  'squid_auth.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
+  'squid_cache.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
+  'squid_extauth.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
+  'squid_nac.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
+  'squid_ng.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
+  'squid_traffic.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
+  'squid_upstream.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
+  'squid_users.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
+  'squidGuard.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
+  'squidguard.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
+  'squidguard_acl.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
+  'squidguard_default.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
+  'squidguard_dest.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
+  'squidguard_log.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
+  'squidguard_rewr.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
+  'squidguard_time.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
+
 );
 
 /*
@@ -18,8 +105,6 @@ be removed.(e.g. xmlrpc.php)
 
 Below this is a list of .xml files from built-in and add-on packages
 
-bandwidth_by_ip.php
-carp_status.php
 diag_arp.php
 diag_backup.php
 diag_confbak.php
@@ -27,25 +112,19 @@ diag_defaults.php
 diag_dhcp_leases.php
 diag_dns.php
 diag_dump_states.php
-diag_ipsec.php
-diag_ipsec_sad.php
-diag_ipsec_spd.php
 diag_logs.php
 diag_logs_auth.php
 diag_logs_dhcp.php
 diag_logs_filter.php
 diag_logs_filter_dynamic.php
 diag_logs_filter_summary.php
-diag_logs_ipsec.php
 diag_logs_ntpd.php
-diag_logs_openvpn.php
 diag_logs_ppp.php
 diag_logs_relayd.php
 diag_logs_settings.php
 diag_logs_slbd.php
 diag_logs_vpn.php
 diag_nanobsd.php
-diag_packet_capture.php
 diag_patterns.php
 diag_ping.php
 diag_pkglogs.php
@@ -58,16 +137,10 @@ diag_traceroute.php
 easyrule.php
 edit.php
 exec.php
-exec_raw.php
-firewall_aliases.php
-firewall_aliases_edit.php
-firewall_aliases_import.php
 firewall_nat.php
 firewall_nat_1to1.php
 firewall_nat_1to1_edit.php
 firewall_nat_edit.php
-firewall_nat_out.php
-firewall_nat_out_edit.php
 firewall_nat_server.php
 firewall_nat_server_edit.php
 firewall_rules.php
@@ -82,8 +155,6 @@ firewall_shaper_queues.php
 firewall_shaper_queues_edit.php
 firewall_shaper_vinterface.php
 firewall_shaper_wizards.php
-firewall_virtual_ip.php
-firewall_virtual_ip_edit.php
 getstats.php
 graph.php
 graph_cpu.php
@@ -129,16 +200,6 @@ preload.php
 progress.php
 reboot.php
 restart_httpd.php
-services_captiveportal.php
-services_captiveportal_filemanager.php
-services_captiveportal_ip.php
-services_captiveportal_ip_edit.php
-services_captiveportal_mac.php
-services_captiveportal_mac_edit.php
-services_captiveportal_users.php
-services_captiveportal_users_edit.php
-services_captiveportal_vouchers.php
-services_captiveportal_vouchers_edit.php
 services_dhcp.php
 services_dhcp_edit.php
 services_dhcp_relay.php
@@ -158,22 +219,13 @@ services_usermanager.php
 services_wol.php
 services_wol_edit.php
 stats.php
-status.php
-status_captiveportal.php
-status_captiveportal_test.php
-status_captiveportal_voucher_rolls.php
-status_captiveportal_vouchers.php
 status_filter_reload.php
 status_gateway_groups.php
 status_gateways.php
 status_graph.php
 status_graph_cpu.php
 status_interfaces.php
-status_openvpn.php
 status_queues.php
-status_rrd_graph.php
-status_rrd_graph_img.php
-status_rrd_graph_settings.php
 status_services.php
 status_slbd_pool.php
 status_slbd_vs.php
@@ -210,34 +262,9 @@ system_usermanager_addprivs.php
 system_usermanager_settings.php
 system_usermanager_settings_ldapacpicker.php
 system_usermanager_settings_test.php
-upload_progress.php
-uploadconfig.php
-vpn_ipsec.php
-vpn_ipsec_ca.php
-vpn_ipsec_ca_edit.php
-vpn_ipsec_ca_edit_create_cert.php
-vpn_ipsec_edit.php
-vpn_ipsec_keys.php
-vpn_ipsec_keys_edit.php
-vpn_ipsec_mobile.php
-vpn_ipsec_phase1.php
-vpn_ipsec_phase2.php
 vpn_l2tp.php
 vpn_l2tp_users.php
 vpn_l2tp_users_edit.php
-vpn_openvpn.php
-vpn_openvpn_ccd.php
-vpn_openvpn_ccd_edit.php
-vpn_openvpn_cli.php
-vpn_openvpn_cli_edit.php
-vpn_openvpn_client.php
-vpn_openvpn_create_certs.php
-vpn_openvpn_crl.php
-vpn_openvpn_crl_edit.php
-vpn_openvpn_csc.php
-vpn_openvpn_server.php
-vpn_openvpn_srv.php
-vpn_openvpn_srv_edit.php
 vpn_pppoe.php
 vpn_pppoe_users.php
 vpn_pppoe_users_edit.php
@@ -246,8 +273,6 @@ vpn_pptp_users.php
 vpn_pptp_users_edit.php
 wizard.php
 
-carp.xml
-carp_settings.xml
 olsrd.xml
 openntpd.xml
 sasyncd.xml
@@ -261,7 +286,6 @@ arpwatch.xml
 assp.xml
 authng.xml
 authng_wizard.xml
-autoconfigbackup.xml
 avahi.xml
 backup.xml
 bandwidthd.xml
@@ -340,7 +364,6 @@ open-vm-tools.xml
 openbgpd.xml
 openbgpd_groups.xml
 openbgpd_neighbors.xml
-openvpn-client-export.xml
 ovpnenhance.xml
 p3scan-pf-emer.xml
 p3scan-pf-emer.xml
@@ -358,7 +381,6 @@ per-user-bandwidth-distribution.xml
 pfflowd.xml
 pfstat.xml
 phpmrss.xml
-phpservice.xml
 phpsysinfo.xml
 postfix.xml
 powerdns.xml
@@ -378,53 +400,14 @@ shellcmd.xml
 siproxd.xml
 siproxdusers.xml
 snort.xml
-snort.xml
-snort.xml
-snort_advanced.xml
 snort_advanced.xml
 snort_define_servers.xml
-snort_define_servers.xml
 snort_threshold.xml
-snort_threshold.xml
-snort_whitelist.xml
 snort_whitelist.xml
 spamd.xml
 spamd_outlook.xml
 spamd_settings.xml
 spamd_whitelist.xml
-squid.xml
-squid.xml
-squid.xml
-squidGuard.xml
-squid_auth.xml
-squid_auth.xml
-squid_auth.xml
-squid_cache.xml
-squid_cache.xml
-squid_cache.xml
-squid_extauth.xml
-squid_extauth.xml
-squid_nac.xml
-squid_nac.xml
-squid_nac.xml
-squid_ng.xml
-squid_ng.xml
-squid_traffic.xml
-squid_traffic.xml
-squid_traffic.xml
-squid_upstream.xml
-squid_upstream.xml
-squid_upstream.xml
-squid_users.xml
-squid_users.xml
-squid_users.xml
-squidguard.xml
-squidguard_acl.xml
-squidguard_default.xml
-squidguard_dest.xml
-squidguard_log.xml
-squidguard_rewr.xml
-squidguard_time.xml
 sshterm.xml
 stunnel.xml
 stunnel_certs.xml

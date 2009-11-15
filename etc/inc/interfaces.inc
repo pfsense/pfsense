@@ -786,6 +786,11 @@ function interface_vip_bring_down(&$vip) {
 		mwexec("/sbin/ifconfig " . get_real_interface($vip['interface']) . " delete {$vip['subnet']}");
 		break;
 	case "carp":
+		$vipif = "vip" . $vip['vhid'];
+		mwexec("/sbin/ifconfig {$vipif} delete");
+                mwexec("/sbin/ifconfig {$vipif} down");
+		mwexec("/sbin/ifconfig {$vipif} destroy");
+		break;
 	case "carpdev-dhcp":
 		$vipif = "vip" . $vip['vhid'];
 		mwexec("/sbin/ifconfig {$vipif} delete");
@@ -1180,11 +1185,8 @@ function interface_carp_configure(&$vip) {
 	if ($vip['password'] != "")
 		$password = " pass \"" . $vip_password . "\"";
 
-	// This is the most brain dead decision taken for carp
-	// Carp vhid is confirmed by GUI to be sequencial and limited to 256
-	// eri@ I am leaving the comment but not touching the code
-	//      since someone thinks he/she knows better.
-	$vipif = find_next_available_vip();
+	// set the vip interface to the vhid
+	$vipif = "vip{$vip['vhid']}";
 
 	$interface = interface_translate_type_to_real($vip['interface']);
 	/*

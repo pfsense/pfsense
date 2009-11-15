@@ -101,7 +101,8 @@ $g = array(
 	"embeddedbootupslice" => "/dev/ad0a",
 	"services_dhcp_server_enable" => true,
 	"firmware_update_text" => "(pfSense-*.tgz)",
-	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan|rum)/"
+	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan|rum)/",
+	"help_base_url" => "/help.php"
 );
 
 // Loop through and set vlan_native_supp (native vlan tagging)

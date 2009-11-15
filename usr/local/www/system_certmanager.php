@@ -151,7 +151,7 @@ if ($_POST) {
 			$reqdfields = explode(" ",
 					"name cert key");
 			$reqdfieldsn = explode(",",
-					"Desriptive name,Certificate data,Key data");
+					"Descriptive name,Certificate data,Key data");
 		}
 
 		if ($pconfig['method'] == "internal") {
@@ -159,7 +159,7 @@ if ($_POST) {
 					"name caref keylen lifetime dn_country dn_state dn_city ".
 					"dn_organization dn_email dn_commonname");
 			$reqdfieldsn = explode(",",
-					"Desriptive name,Certificate authority,Key length,Lifetime,".
+					"Descriptive name,Certificate authority,Key length,Lifetime,".
 					"Distinguished name Country Code,".
 					"Distinguished name State or Province,".
 					"Distinguished name City,".
@@ -173,7 +173,7 @@ if ($_POST) {
 					"name csr_keylen csr_dn_country csr_dn_state csr_dn_city ".
 					"csr_dn_organization csr_dn_email csr_dn_commonname");
 			$reqdfieldsn = explode(",",
-					"Desriptive name,Key length,".
+					"Descriptive name,Key length,".
 					"Distinguished name Country Code,".
 					"Distinguished name State or Province,".
 					"Distinguished name City,".
@@ -245,7 +245,7 @@ if ($_POST) {
 
 		/* input validation */
 		$reqdfields = explode(" ", "name cert");
-		$reqdfieldsn = explode(",", "Desriptive name,Final Certificate data");
+		$reqdfieldsn = explode(",", "Descriptive name,Final Certificate data");
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

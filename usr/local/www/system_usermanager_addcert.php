@@ -79,14 +79,14 @@ if ($_POST) {
 		$reqdfields = explode(" ",
 				"name cert key");
 		$reqdfieldsn = explode(",",
-				"Desriptive name,Certificate data,Key data");
+				"Descriptive name,Certificate data,Key data");
 	}
 
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",
 				"name caref keylen lifetime");
 		$reqdfieldsn = explode(",",
-				"Desriptive name,Certificate authority,Key length,Lifetime");
+				"Descriptive name,Certificate authority,Key length,Lifetime");
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);

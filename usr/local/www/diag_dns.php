@@ -31,7 +31,7 @@
 	pfSense_MODULE:	dns
 */
 
-$pgtitle = "Diagnostics: DNS";
+$pgtitle = array("Diagnostics","DNS Lookup");
 require("guiconfig.inc");
 
 /* Cheap hack to support both $_GET and $_POST */

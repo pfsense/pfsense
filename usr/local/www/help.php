@@ -469,7 +469,7 @@ if (empty($pagename)) {
 	}
 
 	/* If the filename is pkg_edit.php or wizard.php, reparse looking
-   		for the .xml filename */
+		for the .xml filename */
 	if (($pagename == "pkg_edit.php") || ($pagename == "wizard.php")) {
 		$param_split = explode('&', $uri_split[2]);
 		foreach ($param_split as $param) {

@@ -116,7 +116,7 @@ function voucher_auth($voucher_received, $test = 0) {
                 $test_result[] = "$voucher ($roll/$nr): not found on any registererd Roll";
             }
         } else {
-            // hmm, thats weired ... not what I expected
+            // hmm, thats weird ... not what I expected
             $test_result[] = "$voucher invalid: $result !!";
             $error++;
         }

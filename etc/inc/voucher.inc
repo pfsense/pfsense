@@ -46,8 +46,7 @@ function voucher_auth($voucher_received, $test = 0) {
     // if $test is set, simply test the voucher. Don't change anything
     // but return a more verbose error and result message back
 
-    if (! $test)
-        $voucherlck = lock('voucher');
+    $voucherlck = lock('voucher');
 
     // read rolls into assoc array with rollid as key and minutes as value
     $a_roll = &$config['voucher']['roll'];

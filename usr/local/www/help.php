@@ -11,6 +11,7 @@ $helppages = array(
   'index.php' => 'http://doc.pfsense.org/index.php/Dashboard_package',   /* Needs cleanup */
   'license.php' => 'http://www.pfsense.org/index.php?option=com_content&task=view&id=42&Itemid=62',
   'miniupnpd.xml' => 'http://doc.pfsense.org/index.php/What_is_UPNP%3F',
+  'status_upnp.php' => 'http://doc.pfsense.org/index.php/What_is_UPNP%3F',
   'firewall_virtual_ip.php' => 'http://doc.pfsense.org/index.php/What_are_Virtual_IP_Addresses%3F',
   'firewall_virtual_ip_edit.php' => 'http://doc.pfsense.org/index.php/What_are_Virtual_IP_Addresses%3F',
   'firewall_aliases.php' => 'http://doc.pfsense.org/index.php/Aliases',
@@ -18,7 +19,12 @@ $helppages = array(
   'firewall_aliases_import.php' => 'http://doc.pfsense.org/index.php/Aliases',
   'firewall_nat_out.php' => 'http://doc.pfsense.org/index.php/Advanced_Outbound_NAT',  /* Needs cleanup */
   'firewall_nat_out_edit.php' => 'http://doc.pfsense.org/index.php/Advanced_Outbound_NAT',  /* Needs cleanup */
-
+  'firewall_rules.php' => 'http://doc.pfsense.org/index.php/Category:Firewall_Rules',
+  'firewall_rules_edit.php' => 'http://doc.pfsense.org/index.php/Category:Firewall_Rules',
+  'firewall_rules_schedule_logic.php' => 'http://doc.pfsense.org/index.php/Category:Firewall_Rules',
+  'interfaces_vlan.php' => 'http://doc.pfsense.org/index.php/VLAN_Trunking',
+  'interfaces_vlan_edit.php' => 'http://doc.pfsense.org/index.php/VLAN_Trunking',
+  'diag_routes.php' => 'http://doc.pfsense.org/index.php/What_do_the_flags_on_the_routing_table_mean%3F', /* May need a more general page with this linked */
   'diag_packet_capture.php' => 'http://doc.pfsense.org/index.php/Sniffers,_Packet_Capture',   /* Needs Embellishment */
 
   'status_rrd_graph.php' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",   /* Probably needs a real RRD graph doc */
@@ -76,8 +82,33 @@ $helppages = array(
   'carp.xml' => 'http://doc.pfsense.org/index.php/Category:CARP',
   'carp_settings.xml' => 'http://doc.pfsense.org/index.php/Category:CARP',
 
+  'firewall_shaper.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+  'firewall_shaper_edit.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+  'firewall_shaper_layer7.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+  'firewall_shaper_queues.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+  'firewall_shaper_queues_edit.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+  'firewall_shaper_vinterface.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+  'firewall_shaper_wizards.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+  'status_queues.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+
+  'load_balancer_monitor.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'load_balancer_monitor_edit.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'load_balancer_pool.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'load_balancer_pool_edit.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'load_balancer_relay_action.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'load_balancer_relay_action_edit.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'load_balancer_relay_protocol.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'load_balancer_relay_protocol_edit.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'load_balancer_virtual_server.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'load_balancer_virtual_server_edit.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'status_slbd_pool.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+  'status_slbd_vs.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+
+
   'autoconfigbackup.xml' => 'http://doc.pfsense.org/index.php/AutoConfigBackup',
   'phpservice.xml' => 'http://doc.pfsense.org/index.php/PHPService',
+  'anyterm.xml' => 'http://doc.pfsense.org/index.php/AnyTerm_package',
+  'avahi.xml' => 'http://doc.pfsense.org/index.php/Avahi_package',
   'squid.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
   'squid_auth.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
   'squid_cache.xml' => 'http://doc.pfsense.org/index.php/Category:Squid',
@@ -95,6 +126,48 @@ $helppages = array(
   'squidguard_log.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
   'squidguard_rewr.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
   'squidguard_time.xml' => 'http://doc.pfsense.org/index.php/SquidGuard_package',
+  'bandwidthd.xml' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",
+  'pfflowd.xml' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",
+  'darkstat.xml' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",
+  'rate.xml' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",
+  'ntop.xml' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",
+  'vnstat.xml' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",
+  'widentd.xml' => 'http://doc.pfsense.org/index.php/Widentd_package',
+  'tinydns.xml' => 'http://doc.pfsense.org/index.php/Tinydns_package',
+  'tinydns_domains.xml' => 'http://doc.pfsense.org/index.php/Tinydns_package',
+  'tinydns_sync.xml' => 'http://doc.pfsense.org/index.php/Tinydns_package',
+  'blinkled.xml' => 'http://doc.pfsense.org/index.php/BlinkLED_Package',
+  'freeswitch.xml' => 'http://doc.pfsense.org/index.php/FreeSWITCH',
+  'freeswitch_modules.xml' => 'http://doc.pfsense.org/index.php/FreeSWITCH',
+  'dialplan.default.xml' => 'http://doc.pfsense.org/index.php/FreeSWITCH',
+  'dialplan.public.xml' => 'http://doc.pfsense.org/index.php/FreeSWITCH',
+  'havp.xml' => 'http://doc.pfsense.org/index.php/HAVP_Package_for_HTTP_Anti-Virus_Scanning',
+  'havp_avset.xml' => 'http://doc.pfsense.org/index.php/HAVP_Package_for_HTTP_Anti-Virus_Scanning',
+  'havp_blacklist.xml' => 'http://doc.pfsense.org/index.php/HAVP_Package_for_HTTP_Anti-Virus_Scanning',
+  'havp_fscan.xml' => 'http://doc.pfsense.org/index.php/HAVP_Package_for_HTTP_Anti-Virus_Scanning',
+  'havp_trans_exclude.xml' => 'http://doc.pfsense.org/index.php/HAVP_Package_for_HTTP_Anti-Virus_Scanning',
+  'havp_whitelist.xml' => 'http://doc.pfsense.org/index.php/HAVP_Package_for_HTTP_Anti-Virus_Scanning',
+  'snort.xml' => 'http://doc.pfsense.org/index.php/Setup_Snort_Package',
+  'snort_advanced.xml' => 'http://doc.pfsense.org/index.php/Setup_Snort_Package',
+  'snort_define_servers.xml' => 'http://doc.pfsense.org/index.php/Setup_Snort_Package',
+  'snort_threshold.xml' => 'http://doc.pfsense.org/index.php/Setup_Snort_Package',
+  'snort_whitelist.xml' => 'http://doc.pfsense.org/index.php/Setup_Snort_Package',
+  'stunnel.xml' => 'http://doc.pfsense.org/index.php/Stunnel_package',
+  'stunnel_certs.xml' => 'http://doc.pfsense.org/index.php/Stunnel_package',
+  'openbgpd.xml' => 'http://doc.pfsense.org/index.php/OpenBGPD_package',
+  'openbgpd_groups.xml' => 'http://doc.pfsense.org/index.php/OpenBGPD_package',
+  'openbgpd_neighbors.xml' => 'http://doc.pfsense.org/index.php/OpenBGPD_package',
+  'iperf.xml' => 'http://doc.pfsense.org/index.php/Iperf_package',
+  'iperfserver.xml' => 'http://doc.pfsense.org/index.php/Iperf_package',
+  'jail_template.xml' => 'http://doc.pfsense.org/index.php/PfJailctl_package',
+  'jailctl.xml' => 'http://doc.pfsense.org/index.php/PfJailctl_package',
+  'jailctl.xml' => 'http://doc.pfsense.org/index.php/PfJailctl_package',
+  'jailctl_defaults.xml' => 'http://doc.pfsense.org/index.php/PfJailctl_package',
+  'jailctl_settings.xml' => 'http://doc.pfsense.org/index.php/PfJailctl_package',
+  'siproxd.xml' => 'http://doc.pfsense.org/index.php/Siproxd_package',
+  'siproxdusers.xml' => 'http://doc.pfsense.org/index.php/Siproxd_package',
+  'open-vm-tools.xml' => 'http://doc.pfsense.org/index.php/Open_VM_Tools_package',
+  'arping.xml' => 'http://doc.pfsense.org/index.php/Arping_package',
 
 );
 
@@ -129,7 +202,6 @@ diag_patterns.php
 diag_ping.php
 diag_pkglogs.php
 diag_resetstate.php
-diag_routes.php
 diag_showbogons.php
 diag_system_activity.php
 diag_system_pftop.php
@@ -143,24 +215,9 @@ firewall_nat_1to1_edit.php
 firewall_nat_edit.php
 firewall_nat_server.php
 firewall_nat_server_edit.php
-firewall_rules.php
-firewall_rules_edit.php
-firewall_rules_schedule_logic.php
 firewall_schedule.php
 firewall_schedule_edit.php
-firewall_shaper.php
-firewall_shaper_edit.php
-firewall_shaper_layer7.php
-firewall_shaper_queues.php
-firewall_shaper_queues_edit.php
-firewall_shaper_vinterface.php
-firewall_shaper_wizards.php
-getstats.php
-graph.php
-graph_cpu.php
 halt.php
-headjs.php
-ifstats.php
 interfaces.php
 interfaces_assign.php
 interfaces_bridge.php
@@ -177,27 +234,13 @@ interfaces_ppp.php
 interfaces_ppp_edit.php
 interfaces_qinq.php
 interfaces_qinq_edit.php
-interfaces_vlan.php
-interfaces_vlan_edit.php
 interfaces_wlan_scan.php
-load_balancer_monitor.php
-load_balancer_monitor_edit.php
-load_balancer_pool.php
-load_balancer_pool_edit.php
-load_balancer_relay_action.php
-load_balancer_relay_action_edit.php
-load_balancer_relay_protocol.php
-load_balancer_relay_protocol_edit.php
-load_balancer_virtual_server.php
-load_balancer_virtual_server_edit.php
 pkg.php
 pkg_edit.php
 pkg_mgr.php
 pkg_mgr_install.php
 pkg_mgr_installed.php
 pkg_mgr_settings.php
-preload.php
-progress.php
 reboot.php
 restart_httpd.php
 services_dhcp.php
@@ -218,18 +261,13 @@ services_snmp.php
 services_usermanager.php
 services_wol.php
 services_wol_edit.php
-stats.php
 status_filter_reload.php
 status_gateway_groups.php
 status_gateways.php
 status_graph.php
 status_graph_cpu.php
 status_interfaces.php
-status_queues.php
 status_services.php
-status_slbd_pool.php
-status_slbd_vs.php
-status_upnp.php
 status_wireless.php
 system.php
 system_advanced.php
@@ -278,76 +316,33 @@ openntpd.xml
 sasyncd.xml
 
 Package .xml files (some may not be needed)
-anyterm.xml
 apache_mod_security.xml
 apache_mod_security_settings.xml
-arping.xml
 arpwatch.xml
 assp.xml
-authng.xml
-authng_wizard.xml
-avahi.xml
 backup.xml
-bandwidthd.xml
-blinkled.xml
 bsdstats.xml
-clamav.xml
-clamsmtp.xml
-config.xml
-config.xml
 cron.xml
-darkstat.xml
-dashboard.xml
 ddns.xml
 denyhosts.xml
-developers.xml
-diag_new_states.xml
-dialplan.default.xml
-dialplan.default.xml
-dialplan.public.xml
-dialplan.public.xml
 dnsblacklist.xml
-doorman.xml
-doormanusers.xml
-dspam.xml
-dspam_alerts.xml
-dspam_wizard.xml
 dyntables.xml
 fit123.xml
-freenas.xml
 freeradius.xml
 freeradiusclients.xml
 freeradiussettings.xml
-freeswitch.xml
-freeswitch.xml
-freeswitch_modules.xml
 frickin.xml
 haproxy.xml
-havp.xml
-havp.xml
-havp_avset.xml
-havp_blacklist.xml
-havp_fscan.xml
-havp_trans_exclude.xml
-havp_whitelist.xml
 hula.xml
 ifdepd.xml
 ifstated.xml
 igmpproxy.xml
 imspector.xml
-iperf.xml
-iperfserver.xml
-jail_template.xml
-jailctl.xml
-jailctl.xml
-jailctl_defaults.xml
-jailctl_settings.xml
 lcdproc.xml
 lcdproc_screens.xml
 lightsquid.xml
 messages_de.xml
 messages_en.xml
-miniupnpd.xml
 mtr-nox11.xml
 netio-newpkg.xml
 netio.xml
@@ -357,71 +352,25 @@ new_zone_wizard.xml
 nmap.xml
 notes.xml
 nrpe2.xml
-ntop.xml
 nut.xml
-onatproto.xml
-open-vm-tools.xml
-openbgpd.xml
-openbgpd_groups.xml
-openbgpd_neighbors.xml
-ovpnenhance.xml
-p3scan-pf-emer.xml
-p3scan-pf-emer.xml
-p3scan-pf-msg.xml
-p3scan-pf-msg.xml
-p3scan-pf-spam.xml
-p3scan-pf-spam.xml
-p3scan-pf-transex.xml
-p3scan-pf-vir.xml
-p3scan-pf-vir.xml
-p3scan-pf.xml
-p3scan-pf.xml
-p3scan.xml
 per-user-bandwidth-distribution.xml
-pfflowd.xml
 pfstat.xml
 phpmrss.xml
 phpsysinfo.xml
-postfix.xml
 powerdns.xml
-pubkey.xml
 pure-ftpd.xml
 pure-ftpdsettings.xml
 quagga.xml
-rate.xml
 routed.xml
-sample.xml
-sample_ui.xml
-sample_ui2.xml
-sassassin.xml
-sassassin_bl.xml
-sassassin_wl.xml
 shellcmd.xml
-siproxd.xml
-siproxdusers.xml
-snort.xml
-snort_advanced.xml
-snort_define_servers.xml
-snort_threshold.xml
-snort_whitelist.xml
 spamd.xml
 spamd_outlook.xml
 spamd_settings.xml
 spamd_whitelist.xml
 sshterm.xml
-stunnel.xml
-stunnel_certs.xml
-test_package.xml
 tftp.xml
-tinydns.xml
-tinydns_domains.xml
-tinydns_sync.xml
 upclient.xml
 viralator.xml
-vnstat.xml
-widentd.xml
-widget-havp.xml
-widget-snort.xml
 zabbix-agent.xml
 
  */

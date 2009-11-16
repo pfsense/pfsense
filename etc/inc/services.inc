@@ -340,8 +340,10 @@ EOD;
 				if ($sm['ipaddr'])
 					$dhcpdconf .= "	fixed-address {$sm['ipaddr']};\n";
 
-				if ($sm['hostname'])
-					$dhcpdconf .= "	option host-name {$sm['hostname']};\n";
+				if ($sm['hostname']) {
+					$dhhostname = str_replace(" ", "_", $sm['hostname']);
+					$dhcpdconf .= "	option host-name {$dhhostname};\n";
+				}
 
 				$dhcpdconf .= "}\n";
 				$i++;

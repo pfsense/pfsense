@@ -48,6 +48,8 @@ function check_for_advaned_options(&$item) {
 	$item_set = "";
 	if($item['max-src-nodes'])
 		$item_set .= "max-src-nodes {$item['max-src-nodes']} ";
+	if($item['max-src-conn'])
+		$item_set .= "max-src-conn {$item['max-src-conn']} ";
 	if($item['max-src-states'])
 		$item_set .= "max-src-states {$item['max-src-states']} ";
 	if($item['statetype'] != "keep state" && $item['statetype'] != "")

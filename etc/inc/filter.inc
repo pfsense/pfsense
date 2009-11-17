@@ -1464,7 +1464,7 @@ function filter_generate_user_rule($rule)
 	if ($type == "pass") {
 		if (isset($rule['allowopts']))
 			$aline['allowopts'] = " allow-opts ";
-		if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
+		if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-conn']) or isset($rule['max-src-states']) )
 			if($rule['protocol'] == "tcp")
 				$aline['flags'] = "flags S/SA ";
 		/*
@@ -1501,6 +1501,7 @@ function filter_generate_user_rule($rule)
 		if ($noadvoptions == false || $l7_present)
 			if( isset($rule['source-track']) and $rule['source-track'] <> "" or
 				isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
+				isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "" or
 				isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or
 				isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or
 				isset($rule['max-src-states']) and $rule['max-src-states'] <> "" or
@@ -1511,6 +1512,8 @@ function filter_generate_user_rule($rule)
 						$aline['flags'] .= "source-track rule ";
 					if(isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "")
 						$aline['flags'] .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
+					if(isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "")
+						$aline['flags'] .= "max-src-conn " . $rule['max-src-conn'] . " ";
 					if(isset($rule['max-src-states']) and $rule['max-src-states'] <> "")
 						$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
 					if(isset($rule['statetimeout']) and $rule['statetimeout'] <> "")

@@ -190,190 +190,190 @@ be removed.(e.g. xmlrpc.php)
 
 Below this is a list of .xml files from built-in and add-on packages
 
-diag_defaults.php
-diag_dhcp_leases.php
-diag_dns.php
-diag_dump_states.php
-diag_logs.php
-diag_logs_auth.php
-diag_logs_dhcp.php
-diag_logs_filter.php
-diag_logs_filter_dynamic.php
-diag_logs_filter_summary.php
-diag_logs_ntpd.php
-diag_logs_ppp.php
-diag_logs_relayd.php
-diag_logs_settings.php
-diag_logs_slbd.php
-diag_logs_vpn.php
-diag_nanobsd.php
-diag_patterns.php
-diag_ping.php
-diag_pkglogs.php
-diag_resetstate.php
-diag_showbogons.php
-diag_system_activity.php
-diag_traceroute.php
-easyrule.php
-edit.php
-exec.php
-firewall_nat_1to1.php
-firewall_nat_1to1_edit.php
-halt.php
-interfaces.php
-interfaces_assign.php
-interfaces_bridge.php
-interfaces_bridge_edit.php
-interfaces_gif.php
-interfaces_gif_edit.php
-interfaces_gre.php
-interfaces_gre_edit.php
-interfaces_groups.php
-interfaces_groups_edit.php
-interfaces_lagg.php
-interfaces_lagg_edit.php
-interfaces_ppp.php
-interfaces_ppp_edit.php
-interfaces_qinq.php
-interfaces_qinq_edit.php
-interfaces_wlan_scan.php
-pkg.php
-pkg_edit.php
-pkg_mgr.php
-pkg_mgr_install.php
-pkg_mgr_installed.php
-pkg_mgr_settings.php
-reboot.php
-restart_httpd.php
-services_dhcp.php
-services_dhcp_edit.php
-services_dhcp_relay.php
-services_dnsmasq.php
-services_dnsmasq_domainoverride_edit.php
-services_dnsmasq_edit.php
-services_dyndns.php
-services_dyndns_edit.php
-services_igmpproxy.php
-services_igmpproxy_edit.php
-services_proxyarp.php
-services_proxyarp_edit.php
-services_rfc2136.php
-services_rfc2136_edit.php
-services_snmp.php
-services_usermanager.php
-services_wol.php
-services_wol_edit.php
-status_filter_reload.php
-status_gateway_groups.php
-status_gateways.php
-status_graph.php
-status_graph_cpu.php
-status_interfaces.php
-status_services.php
-status_wireless.php
-system.php
-system_advanced.php
-system_advanced_admin.php
-system_advanced_create_certs.php
-system_advanced_firewall.php
-system_advanced_misc.php
-system_advanced_network.php
-system_advanced_notifications.php
-system_advanced_sysctl.php
-system_authservers.php
-system_camanager.php
-system_certmanager.php
-system_firmware.php
-system_firmware_auto.php
-system_firmware_check.php
-system_firmware_settings.php
-system_gateway_groups.php
-system_gateway_groups_edit.php
-system_gateways.php
-system_gateways_edit.php
-system_gateways_settings.php
-system_groupmanager.php
-system_groupmanager_addprivs.php
-system_routes.php
-system_routes_edit.php
-system_usermanager.php
-system_usermanager_addcert.php
-system_usermanager_addprivs.php
-system_usermanager_settings.php
-system_usermanager_settings_ldapacpicker.php
-system_usermanager_settings_test.php
-vpn_l2tp.php
-vpn_l2tp_users.php
-vpn_l2tp_users_edit.php
-vpn_pppoe.php
-vpn_pppoe_users.php
-vpn_pppoe_users_edit.php
-vpn_pptp.php
-vpn_pptp_users.php
-vpn_pptp_users_edit.php
-wizard.php
+	'diag_defaults.php' => '',
+	'diag_dhcp_leases.php' => '',
+	'diag_dns.php' => '',
+	'diag_dump_states.php' => '',
+	'diag_logs.php' => '',
+	'diag_logs_auth.php' => '',
+	'diag_logs_dhcp.php' => '',
+	'diag_logs_filter.php' => '',
+	'diag_logs_filter_dynamic.php' => '',
+	'diag_logs_filter_summary.php' => '',
+	'diag_logs_ntpd.php' => '',
+	'diag_logs_ppp.php' => '',
+	'diag_logs_relayd.php' => '',
+	'diag_logs_settings.php' => '',
+	'diag_logs_slbd.php' => '',
+	'diag_logs_vpn.php' => '',
+	'diag_nanobsd.php' => '',
+	'diag_patterns.php' => '',
+	'diag_ping.php' => '',
+	'diag_pkglogs.php' => '',
+	'diag_resetstate.php' => '',
+	'diag_showbogons.php' => '',
+	'diag_system_activity.php' => '',
+	'diag_traceroute.php' => '',
+	'easyrule.php' => '',
+	'edit.php' => '',
+	'exec.php' => '',
+	'firewall_nat_1to1.php' => '',
+	'firewall_nat_1to1_edit.php' => '',
+	'halt.php' => '',
+	'interfaces.php' => '',
+	'interfaces_assign.php' => '',
+	'interfaces_bridge.php' => '',
+	'interfaces_bridge_edit.php' => '',
+	'interfaces_gif.php' => '',
+	'interfaces_gif_edit.php' => '',
+	'interfaces_gre.php' => '',
+	'interfaces_gre_edit.php' => '',
+	'interfaces_groups.php' => '',
+	'interfaces_groups_edit.php' => '',
+	'interfaces_lagg.php' => '',
+	'interfaces_lagg_edit.php' => '',
+	'interfaces_ppp.php' => '',
+	'interfaces_ppp_edit.php' => '',
+	'interfaces_qinq.php' => '',
+	'interfaces_qinq_edit.php' => '',
+	'interfaces_wlan_scan.php' => '',
+	'pkg.php' => '',
+	'pkg_edit.php' => '',
+	'pkg_mgr.php' => '',
+	'pkg_mgr_install.php' => '',
+	'pkg_mgr_installed.php' => '',
+	'pkg_mgr_settings.php' => '',
+	'reboot.php' => '',
+	'restart_httpd.php' => '',
+	'services_dhcp.php' => '',
+	'services_dhcp_edit.php' => '',
+	'services_dhcp_relay.php' => '',
+	'services_dnsmasq.php' => '',
+	'services_dnsmasq_domainoverride_edit.php' => '',
+	'services_dnsmasq_edit.php' => '',
+	'services_dyndns.php' => '',
+	'services_dyndns_edit.php' => '',
+	'services_igmpproxy.php' => '',
+	'services_igmpproxy_edit.php' => '',
+	'services_proxyarp.php' => '',
+	'services_proxyarp_edit.php' => '',
+	'services_rfc2136.php' => '',
+	'services_rfc2136_edit.php' => '',
+	'services_snmp.php' => '',
+	'services_usermanager.php' => '',
+	'services_wol.php' => '',
+	'services_wol_edit.php' => '',
+	'status_filter_reload.php' => '',
+	'status_gateway_groups.php' => '',
+	'status_gateways.php' => '',
+	'status_graph.php' => '',
+	'status_graph_cpu.php' => '',
+	'status_interfaces.php' => '',
+	'status_services.php' => '',
+	'status_wireless.php' => '',
+	'system.php' => '',
+	'system_advanced.php' => '',
+	'system_advanced_admin.php' => '',
+	'system_advanced_create_certs.php' => '',
+	'system_advanced_firewall.php' => '',
+	'system_advanced_misc.php' => '',
+	'system_advanced_network.php' => '',
+	'system_advanced_notifications.php' => '',
+	'system_advanced_sysctl.php' => '',
+	'system_authservers.php' => '',
+	'system_camanager.php' => '',
+	'system_certmanager.php' => '',
+	'system_firmware.php' => '',
+	'system_firmware_auto.php' => '',
+	'system_firmware_check.php' => '',
+	'system_firmware_settings.php' => '',
+	'system_gateway_groups.php' => '',
+	'system_gateway_groups_edit.php' => '',
+	'system_gateways.php' => '',
+	'system_gateways_edit.php' => '',
+	'system_gateways_settings.php' => '',
+	'system_groupmanager.php' => '',
+	'system_groupmanager_addprivs.php' => '',
+	'system_routes.php' => '',
+	'system_routes_edit.php' => '',
+	'system_usermanager.php' => '',
+	'system_usermanager_addcert.php' => '',
+	'system_usermanager_addprivs.php' => '',
+	'system_usermanager_settings.php' => '',
+	'system_usermanager_settings_ldapacpicker.php' => '',
+	'system_usermanager_settings_test.php' => '',
+	'vpn_l2tp.php' => '',
+	'vpn_l2tp_users.php' => '',
+	'vpn_l2tp_users_edit.php' => '',
+	'vpn_pppoe.php' => '',
+	'vpn_pppoe_users.php' => '',
+	'vpn_pppoe_users_edit.php' => '',
+	'vpn_pptp.php' => '',
+	'vpn_pptp_users.php' => '',
+	'vpn_pptp_users_edit.php' => '',
+	'wizard.php' => '',
 
-olsrd.xml
-openntpd.xml
-sasyncd.xml
+	'olsrd.xml' => '',
+	'openntpd.xml' => '',
+	'sasyncd.xml' => '',
 
 Package .xml files (some may not be needed)
-apache_mod_security.xml
-apache_mod_security_settings.xml
-arpwatch.xml
-assp.xml
-backup.xml
-bsdstats.xml
-cron.xml
-ddns.xml
-denyhosts.xml
-dnsblacklist.xml
-dyntables.xml
-fit123.xml
-freeradius.xml
-freeradiusclients.xml
-freeradiussettings.xml
-frickin.xml
-haproxy.xml
-hula.xml
-ifdepd.xml
-ifstated.xml
-igmpproxy.xml
-imspector.xml
-lcdproc.xml
-lcdproc_screens.xml
-lightsquid.xml
-messages_de.xml
-messages_en.xml
-mtr-nox11.xml
-netio-newpkg.xml
-netio.xml
-netioserver-newpkg.xml
-netioserver.xml
-new_zone_wizard.xml
-nmap.xml
-notes.xml
-nrpe2.xml
-nut.xml
-per-user-bandwidth-distribution.xml
-pfstat.xml
-phpmrss.xml
-phpsysinfo.xml
-powerdns.xml
-pure-ftpd.xml
-pure-ftpdsettings.xml
-quagga.xml
-routed.xml
-shellcmd.xml
-spamd.xml
-spamd_outlook.xml
-spamd_settings.xml
-spamd_whitelist.xml
-sshterm.xml
-tftp.xml
-upclient.xml
-viralator.xml
-zabbix-agent.xml
+	'apache_mod_security.xml' => '',
+	'apache_mod_security_settings.xml' => '',
+	'arpwatch.xml' => '',
+	'assp.xml' => '',
+	'backup.xml' => '',
+	'bsdstats.xml' => '',
+	'cron.xml' => '',
+	'ddns.xml' => '',
+	'denyhosts.xml' => '',
+	'dnsblacklist.xml' => '',
+	'dyntables.xml' => '',
+	'fit123.xml' => '',
+	'freeradius.xml' => '',
+	'freeradiusclients.xml' => '',
+	'freeradiussettings.xml' => '',
+	'frickin.xml' => '',
+	'haproxy.xml' => '',
+	'hula.xml' => '',
+	'ifdepd.xml' => '',
+	'ifstated.xml' => '',
+	'igmpproxy.xml' => '',
+	'imspector.xml' => '',
+	'lcdproc.xml' => '',
+	'lcdproc_screens.xml' => '',
+	'lightsquid.xml' => '',
+	'messages_de.xml' => '',
+	'messages_en.xml' => '',
+	'mtr-nox11.xml' => '',
+	'netio-newpkg.xml' => '',
+	'netio.xml' => '',
+	'netioserver-newpkg.xml' => '',
+	'netioserver.xml' => '',
+	'new_zone_wizard.xml' => '',
+	'nmap.xml' => '',
+	'notes.xml' => '',
+	'nrpe2.xml' => '',
+	'nut.xml' => '',
+	'per-user-bandwidth-distribution.xml' => '',
+	'pfstat.xml' => '',
+	'phpmrss.xml' => '',
+	'phpsysinfo.xml' => '',
+	'powerdns.xml' => '',
+	'pure-ftpd.xml' => '',
+	'pure-ftpdsettings.xml' => '',
+	'quagga.xml' => '',
+	'routed.xml' => '',
+	'shellcmd.xml' => '',
+	'spamd.xml' => '',
+	'spamd_outlook.xml' => '',
+	'spamd_settings.xml' => '',
+	'spamd_whitelist.xml' => '',
+	'sshterm.xml' => '',
+	'tftp.xml' => '',
+	'upclient.xml' => '',
+	'viralator.xml' => '',
+	'zabbix-agent.xml' => '',
 
  */
 

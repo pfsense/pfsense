@@ -38,6 +38,20 @@ $helppages = array(
 	'diag_arp.php' => 'http://doc.pfsense.org/index.php/ARP_Table',
 	'diag_backup.php' => 'http://doc.pfsense.org/index.php/Configuration_Backup_and_Restore',
 	'diag_confbak.php' => 'http://doc.pfsense.org/index.php/Configuration_History',
+	'diag_defaults.php' => 'http://doc.pfsense.org/index.php/Factory_Defaults',
+	'firewall_shaper.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+	'firewall_shaper_edit.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+	'firewall_shaper_layer7.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+	'firewall_shaper_queues.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+	'firewall_shaper_queues_edit.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+	'firewall_shaper_vinterface.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+	'firewall_shaper_wizards.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+	'status_queues.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
+	'diag_dhcp_leases.php' => 'http://doc.pfsense.org/index.php/DHCP_Leases',
+	'diag_dns.php' => 'http://doc.pfsense.org/index.php/DNS_Lookup',
+	'diag_dump_states.php' => 'http://doc.pfsense.org/index.php/Show_States',
+	'diag_resetstate.php' => 'http://doc.pfsense.org/index.php/Reset_States',
+
 
 	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
 
@@ -91,15 +105,6 @@ $helppages = array(
 	'carp_status.php' => 'http://doc.pfsense.org/index.php/Category:CARP',
 	'carp.xml' => 'http://doc.pfsense.org/index.php/Category:CARP',
 	'carp_settings.xml' => 'http://doc.pfsense.org/index.php/Category:CARP',
-
-	'firewall_shaper.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
-	'firewall_shaper_edit.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
-	'firewall_shaper_layer7.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
-	'firewall_shaper_queues.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
-	'firewall_shaper_queues_edit.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
-	'firewall_shaper_vinterface.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
-	'firewall_shaper_wizards.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
-	'status_queues.php' => 'http://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
 
 	'load_balancer_monitor.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
 	'load_balancer_monitor_edit.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
@@ -190,10 +195,6 @@ be removed.(e.g. xmlrpc.php)
 
 Below this is a list of .xml files from built-in and add-on packages
 
-	'diag_defaults.php' => '',
-	'diag_dhcp_leases.php' => '',
-	'diag_dns.php' => '',
-	'diag_dump_states.php' => '',
 	'diag_logs.php' => '',
 	'diag_logs_auth.php' => '',
 	'diag_logs_dhcp.php' => '',
@@ -210,7 +211,6 @@ Below this is a list of .xml files from built-in and add-on packages
 	'diag_patterns.php' => '',
 	'diag_ping.php' => '',
 	'diag_pkglogs.php' => '',
-	'diag_resetstate.php' => '',
 	'diag_showbogons.php' => '',
 	'diag_system_activity.php' => '',
 	'diag_traceroute.php' => '',

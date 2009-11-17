@@ -35,6 +35,9 @@ $helppages = array(
 	'status_rrd_graph_settings.php' => "http://doc.pfsense.org/index.php/RRD_Graphs",
 	'firewall_nat.php' => 'http://doc.pfsense.org/index.php/How_can_I_forward_ports_with_pfSense%3F',
 	'firewall_nat_edit.php' => 'http://doc.pfsense.org/index.php/How_can_I_forward_ports_with_pfSense%3F',
+	'diag_arp.php' => 'http://doc.pfsense.org/index.php/ARP_Table',
+	'diag_backup.php' => 'http://doc.pfsense.org/index.php/Configuration_Backup_and_Restore',
+	'diag_confbak.php' => 'http://doc.pfsense.org/index.php/Configuration_History',
 
 	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
 
@@ -187,9 +190,6 @@ be removed.(e.g. xmlrpc.php)
 
 Below this is a list of .xml files from built-in and add-on packages
 
-diag_arp.php
-diag_backup.php
-diag_confbak.php
 diag_defaults.php
 diag_dhcp_leases.php
 diag_dns.php

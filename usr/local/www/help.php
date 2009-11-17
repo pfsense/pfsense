@@ -8,7 +8,8 @@
 
 /* Links to categories could probably be more specific. */
 $helppages = array(
-  'index.php' => 'http://doc.pfsense.org/index.php/Dashboard_package',   /* Needs cleanup */
+  /* These pages are confirmed to work and have usable content */
+  'index.php' => 'http://doc.pfsense.org/index.php/Dashboard',
   'license.php' => 'http://www.pfsense.org/index.php?option=com_content&task=view&id=42&Itemid=62',
   'miniupnpd.xml' => 'http://doc.pfsense.org/index.php/What_is_UPNP%3F',
   'status_upnp.php' => 'http://doc.pfsense.org/index.php/What_is_UPNP%3F',
@@ -17,19 +18,23 @@ $helppages = array(
   'firewall_aliases.php' => 'http://doc.pfsense.org/index.php/Aliases',
   'firewall_aliases_edit.php' => 'http://doc.pfsense.org/index.php/Aliases',
   'firewall_aliases_import.php' => 'http://doc.pfsense.org/index.php/Aliases',
-  'firewall_nat_out.php' => 'http://doc.pfsense.org/index.php/Advanced_Outbound_NAT',  /* Needs cleanup */
-  'firewall_nat_out_edit.php' => 'http://doc.pfsense.org/index.php/Advanced_Outbound_NAT',  /* Needs cleanup */
-  'firewall_rules.php' => 'http://doc.pfsense.org/index.php/Category:Firewall_Rules',
-  'firewall_rules_edit.php' => 'http://doc.pfsense.org/index.php/Category:Firewall_Rules',
-  'firewall_rules_schedule_logic.php' => 'http://doc.pfsense.org/index.php/Category:Firewall_Rules',
+  'firewall_nat_out.php' => 'http://doc.pfsense.org/index.php/Outbound_NAT',
+  'firewall_nat_out_edit.php' => 'http://doc.pfsense.org/index.php/Outbound_NAT',
+  'firewall_rules.php' => 'http://doc.pfsense.org/index.php/Firewall_Rule_Basics',
+  'firewall_rules_edit.php' => 'http://doc.pfsense.org/index.php/Firewall_Rule_Basics',
+  'firewall_rules_schedule_logic.php' => 'http://doc.pfsense.org/index.php/Firewall_Rule_Schedules',
+  'firewall_schedule.php' => 'http://doc.pfsense.org/index.php/Firewall_Rule_Schedules',
+  'firewall_schedule_edit.php' => 'http://doc.pfsense.org/index.php/Firewall_Rule_Schedules',
   'interfaces_vlan.php' => 'http://doc.pfsense.org/index.php/VLAN_Trunking',
   'interfaces_vlan_edit.php' => 'http://doc.pfsense.org/index.php/VLAN_Trunking',
-  'diag_routes.php' => 'http://doc.pfsense.org/index.php/What_do_the_flags_on_the_routing_table_mean%3F', /* May need a more general page with this linked */
-  'diag_packet_capture.php' => 'http://doc.pfsense.org/index.php/Sniffers,_Packet_Capture',   /* Needs Embellishment */
+  'diag_routes.php' => 'http://doc.pfsense.org/index.php/Viewing_Routes',
+  'diag_packet_capture.php' => 'http://doc.pfsense.org/index.php/Sniffers,_Packet_Capture',
+  'diag_system_pftop.php' => 'http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F#pftop',
+  'status_rrd_graph.php' => "http://doc.pfsense.org/index.php/RRD_Graphs",
+  'status_rrd_graph_img.php' => "http://doc.pfsense.org/index.php/RRD_Graphs",
+  'status_rrd_graph_settings.php' => "http://doc.pfsense.org/index.php/RRD_Graphs",
 
-  'status_rrd_graph.php' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",   /* Probably needs a real RRD graph doc */
-  'status_rrd_graph_img.php' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",  /* Probably needs a real RRD graph doc */
-  'status_rrd_graph_settings.php' => "http://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage%3F",  /* Probably needs a real RRD graph doc */
+  /* Below here are pages that may need some cleanup or have not been fully looked at yet */
 
   'diag_ipsec.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
   'diag_ipsec_sad.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
@@ -204,7 +209,6 @@ diag_pkglogs.php
 diag_resetstate.php
 diag_showbogons.php
 diag_system_activity.php
-diag_system_pftop.php
 diag_traceroute.php
 easyrule.php
 edit.php
@@ -215,8 +219,6 @@ firewall_nat_1to1_edit.php
 firewall_nat_edit.php
 firewall_nat_server.php
 firewall_nat_server_edit.php
-firewall_schedule.php
-firewall_schedule_edit.php
 halt.php
 interfaces.php
 interfaces_assign.php
@@ -430,4 +432,3 @@ if (empty($helppage)) {
 header("Location: {$helppage}");
 
 ?>
-

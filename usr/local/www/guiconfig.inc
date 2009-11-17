@@ -394,11 +394,11 @@ function aliases_sort() {
 }
 
 function gentitle($title) {
-	global $config, $navlevelsep;
+	global $navlevelsep;
 	if(!is_array($title))
-		return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $title;
+		return $title;
 	else
-		return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . join($navlevelsep, $title);
+		return join($navlevelsep, $title);
 }
 
 function genhtmltitle($title) {

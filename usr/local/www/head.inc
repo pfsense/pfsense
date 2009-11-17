@@ -28,7 +28,7 @@ $pagetitle = gentitle( $pgtitle );
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title><?=$pagetitle;?></title>
+	<title><?php echo($config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pagetitle); ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<link rel=”apple-touch-icon” href=”/themes/<?php echo $g['theme']; ?>/apple-touch-icon.png”/>
         <?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&

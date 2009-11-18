@@ -229,7 +229,7 @@ if ($_POST) {
 			$input_errors[] = "A valid domain name must be specified for the DNS domain.";
     }
 		if (($_POST['tftp'] && !is_ipaddr($_POST['tftp']))) {
-			$input_errors[] = "A valid IP address must be specified for the tftp server.";
+			$input_errors[] = "A valid IP address must be specified for the TFTP server.";
 		}
 		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver']))) {
 			$input_errors[] = "A valid IP address must be specified for the network boot server.";
@@ -581,17 +581,17 @@ include("head.inc");
 					   </td>
                      </tr>
                       <tr>
-                       <td width="22%" valign="top" class="vncell">Domain-Name</td>
+                       <td width="22%" valign="top" class="vncell">Domain name</td>
                        <td width="78%" class="vtable">
                          <input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
-			 			 The default is to use the domainname of the router as DNS-Search string that is served via DHCP. Specify an alternate DNS-Search string here.
+			 			 The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here.
 					 </td>
                      </tr>
                       <tr>
-                       <td width="22%" valign="top" class="vncell">Domain-Searchlist</td>
+                       <td width="22%" valign="top" class="vncell">Domain search list</td>
                        <td width="78%" class="vtable">
                          <input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
-			 				DNS-Searchlist: the DHCP server can serve a list of domains to be searched.
+			 				The DHCP server can optionally provide a domain search list.
 						</td>
                      </tr>                     
                       <tr>
@@ -618,7 +618,7 @@ include("head.inc");
                         <td width="22%" valign="top" class="vncell">Failover peer IP:</td>
                         <td width="78%" class="vtable">
 				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
-				Leave blank to disable.  Enter the REAL address of the other machine.  Machines must be using CARP.
+				Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.
 			</td>
 			</tr>
 			<tr>
@@ -703,7 +703,7 @@ include("head.inc");
 					</td>
 			</tr>
 			<tr>
-				<td width="22%" valign="top" class="vncell">Enable Network booting</td>
+				<td width="22%" valign="top" class="vncell">Enable network booting</td>
 				<td width="78%" class="vtable">
 					<div id="shownetbootbox">
 						<input type="button" onClick="show_netboot_config()" value="Advanced"></input> - Show Network booting</a>

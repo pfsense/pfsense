@@ -31,7 +31,7 @@ if (empty($pagename)) {
 
 /* If the filename is pkg_edit.php or wizard.php, reparse looking
 	for the .xml filename */
-if (($pagename == "pkg_edit.php") || ($pagename == "wizard.php")) {
+if (($pagename == "pkg.php") || ($pagename == "pkg_edit.php") || ($pagename == "wizard.php")) {
 	$param_split = explode('&', $uri_split[2]);
 	foreach ($param_split as $param) {
 		if (substr($param, 0, 4) == "xml=") {
@@ -408,6 +408,7 @@ function add_to_menu($url, $name) {
 <span style="float:right; margin: 0 0 20px 20px;"><a href="<?php echo $helpurl; ?>" target="_new" title="Help for items on this page."><img src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a></span>
 </div>
 <br />
+
 <?php
 	$pgtitle_output = true;
 ?>

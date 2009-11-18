@@ -7,3 +7,5 @@
 /etc/rc.initial_firmware_update
 /usr/local/www/javascript/index/sajax.js
 /usr/local/www/sajax/index.sajax.php
+/usr/local/www/interfaces_wlan_scan.php
+/usr/local/www/firewall_nat_server.php

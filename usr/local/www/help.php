@@ -91,6 +91,22 @@ $helppages = array(
 	'pkg_mgr_install.php' => 'http://doc.pfsense.org/index.php/Package_Manager',
 	'pkg_mgr_installed.php' => 'http://doc.pfsense.org/index.php/Package_Manager',
 	'pkg_mgr_settings.php' => 'http://doc.pfsense.org/index.php/Package_Manager_Settings',
+	'interfaces.php' => 'http://doc.pfsense.org/index.php/Interface_Settings',
+	'interfaces_assign.php' => 'http://doc.pfsense.org/index.php/Assign_Interfaces',
+	'interfaces_bridge.php' => 'http://doc.pfsense.org/index.php/Interface_Bridges',
+	'interfaces_bridge_edit.php' => 'http://doc.pfsense.org/index.php/Interface_Bridges',
+	'interfaces_gif.php' => 'http://doc.pfsense.org/index.php/GIF_Interfaces',
+	'interfaces_gif_edit.php' => 'http://doc.pfsense.org/index.php/GIF_Interfaces',
+	'interfaces_gre.php' => 'http://doc.pfsense.org/index.php/GRE_Interfaces',
+	'interfaces_gre_edit.php' => 'http://doc.pfsense.org/index.php/GRE_Interfaces',
+	'interfaces_groups.php' => 'http://doc.pfsense.org/index.php/Interface_Groups',
+	'interfaces_groups_edit.php' => 'http://doc.pfsense.org/index.php/Interface_Groups',
+	'interfaces_lagg.php' => 'http://doc.pfsense.org/index.php/LAGG_Interfaces',
+	'interfaces_lagg_edit.php' => 'http://doc.pfsense.org/index.php/LAGG_Interfaces',
+	'interfaces_ppp.php' => 'http://doc.pfsense.org/index.php/PPP_Interfaces',
+	'interfaces_ppp_edit.php' => 'http://doc.pfsense.org/index.php/PPP_Interfaces',
+	'interfaces_qinq.php' => 'http://doc.pfsense.org/index.php/QinQ_Interfaces',
+	'interfaces_qinq_edit.php' => 'http://doc.pfsense.org/index.php/QinQ_Interfaces',
 
 
 	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
@@ -233,23 +249,7 @@ be removed.(e.g. xmlrpc.php)
 
 Below this is a list of .xml files from built-in and add-on packages
 
-	'interfaces.php' => '',
-	'interfaces_assign.php' => '',
-	'interfaces_bridge.php' => '',
-	'interfaces_bridge_edit.php' => '',
-	'interfaces_gif.php' => '',
-	'interfaces_gif_edit.php' => '',
-	'interfaces_gre.php' => '',
-	'interfaces_gre_edit.php' => '',
-	'interfaces_groups.php' => '',
-	'interfaces_groups_edit.php' => '',
-	'interfaces_lagg.php' => '',
-	'interfaces_lagg_edit.php' => '',
-	'interfaces_ppp.php' => '',
-	'interfaces_ppp_edit.php' => '',
-	'interfaces_qinq.php' => '',
-	'interfaces_qinq_edit.php' => '',
-	'interfaces_wlan_scan.php' => '',
+
 	'services_dhcp.php' => '',
 	'services_dhcp_edit.php' => '',
 	'services_dhcp_relay.php' => '',

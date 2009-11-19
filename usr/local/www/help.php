@@ -132,6 +132,17 @@ $helppages = array(
 	'system_advanced_sysctl.php' => 'http://doc.pfsense.org/index.php/Advanced_Setup_(2.0)#System_Tunables',
 	'system_advanced.php' => 'http://doc.pfsense.org/index.php/Advanced_Setup_(1.2.x)', # 1.2.x only
 	'system_advanced_create_certs.php' => 'http://doc.pfsense.org/index.php/Advanced_Setup_(1.2.x)', # 1.2.x only
+	'system_firmware.php' => 'http://doc.pfsense.org/index.php/Firmware_Updates',
+	'system_firmware_auto.php' => 'http://doc.pfsense.org/index.php/Firmware_Updates',
+	'system_firmware_check.php' => 'http://doc.pfsense.org/index.php/Firmware_Updates',
+	'system_firmware_settings.php' => 'http://doc.pfsense.org/index.php/Firmware_Updates',
+	'system_gateway_groups.php' => 'http://doc.pfsense.org/index.php/Gateway_Settings',
+	'system_gateway_groups_edit.php' => 'http://doc.pfsense.org/index.php/Gateway_Settings',
+	'system_gateways.php' => 'http://doc.pfsense.org/index.php/Gateway_Settings',
+	'system_gateways_edit.php' => 'http://doc.pfsense.org/index.php/Gateway_Settings',
+	'system_gateways_settings.php' => 'http://doc.pfsense.org/index.php/Gateway_Settings',
+	'system_routes.php' => 'http://doc.pfsense.org/index.php/Static_Routes',
+	'system_routes_edit.php' => 'http://doc.pfsense.org/index.php/Static_Routes',
 
 	'services_captiveportal_vouchers.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Vouchers',
 	'services_captiveportal_vouchers_edit.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Vouchers',
@@ -277,17 +288,6 @@ be removed.(e.g. xmlrpc.php)
 
 Below this is a list of .xml files from built-in and add-on packages
 
-	'system_firmware.php' => '',
-	'system_firmware_auto.php' => '',
-	'system_firmware_check.php' => '',
-	'system_firmware_settings.php' => '',
-	'system_gateway_groups.php' => '',
-	'system_gateway_groups_edit.php' => '',
-	'system_gateways.php' => '',
-	'system_gateways_edit.php' => '',
-	'system_gateways_settings.php' => '',
-	'system_routes.php' => '',
-	'system_routes_edit.php' => '',
 
 	'system_authservers.php' => '',
 	'system_camanager.php' => '',

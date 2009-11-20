@@ -165,6 +165,20 @@ $helppages = array(
 	'vpn_pptp_users_edit.php' => 'http://doc.pfsense.org/index.php/PPTP_VPN_Settings',
 	'olsrd.xml' => 'http://doc.pfsense.org/index.php/OLSR_Daemon',
 	'openntpd.xml' => 'http://doc.pfsense.org/index.php/NTP_Server_(OpenNTPD)',
+	'diag_ipsec.php' => 'http://doc.pfsense.org/index.php/IPsec_Status',
+	'diag_ipsec_sad.php' => 'http://doc.pfsense.org/index.php/IPsec_Status',
+	'diag_ipsec_spd.php' => 'http://doc.pfsense.org/index.php/IPsec_Status',
+	'vpn_ipsec.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
+	'vpn_ipsec_mobile.php' => 'http://doc.pfsense.org/index.php/IPsec_Mobile_Clients',
+	'vpn_ipsec_phase1.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
+	'vpn_ipsec_phase2.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
+	/* These last few IPsec files seem to be from 1.2.x only */
+	'vpn_ipsec_ca.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
+	'vpn_ipsec_ca_edit.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
+	'vpn_ipsec_ca_edit_create_cert.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
+	'vpn_ipsec_edit.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
+	'vpn_ipsec_keys.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
+	'vpn_ipsec_keys_edit.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
 
 	'services_captiveportal_vouchers.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Vouchers',
 	'services_captiveportal_vouchers_edit.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Vouchers',
@@ -172,22 +186,6 @@ $helppages = array(
 	'status_captiveportal_vouchers.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Vouchers',
 
 	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
-
-	'diag_ipsec.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'diag_ipsec_sad.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'diag_ipsec_spd.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'vpn_ipsec.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'vpn_ipsec_mobile.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'vpn_ipsec_phase1.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'vpn_ipsec_phase2.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	/* These seem to be from 1.2.x only */
-	'vpn_ipsec_ca.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'vpn_ipsec_ca_edit.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'vpn_ipsec_ca_edit_create_cert.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'vpn_ipsec_edit.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'vpn_ipsec_keys.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-	'vpn_ipsec_keys_edit.php' => 'http://doc.pfsense.org/index.php/Category:IPsec',
-
 
 	'status_openvpn.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
 	'vpn_openvpn_client.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',

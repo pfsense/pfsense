@@ -85,7 +85,7 @@ PHPMODULES="apc \
 	zlib"
 
 # Modules previously included.
-# can be turned on my touching
+# can be turned on by touching
 # /etc/php_dynamodules/$modulename
 #	shmop \
 #	sysvmsg \

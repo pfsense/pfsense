@@ -96,7 +96,7 @@ display_top_tabs($tab_array);
 
 
 	/* table header */
-	print "\n<tr><!-- " . count($state_split) . " -->";
+	print "\n<tr>";
 	print "<tr bgcolor='#990000'>";
 	print "<td><b><font color='#ffffff'>SSID</td>";
 	print "<td><b><font color='#ffffff'>BSSID</td>";
@@ -107,38 +107,39 @@ display_top_tabs($tab_array);
 	print "<td><b><font color='#ffffff'>CAPS</td>";
 	print "</tr>\n\n";
 
-	$states=split("\n",`/sbin/ifconfig {$if} list scan | grep -v "CHAN RATE"`);
+	exec("/sbin/ifconfig {$if}_wlan0 list scan 2>&1", $states, $ret);
+	/* Skip Header */
+	array_shift($states);
 
 	$counter=0;
 	foreach($states as $state) {
-		$state_fixed = str_replace("  ", " ", $state);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_split = split(" ", $state_fixed);
+		/* Split by Mac address for the SSID Field */
+		$split = preg_split("/[ ]+[0-9a-f][[0-9a-f]\:[0-9a-f][[0-9a-f]\:/i", $state);
+		$ssid = $split[0];
+		/* Split the rest by using spaces for this line using the 2nd part */
+		$split = preg_split("/[ ]+/i", $split[1]);
+		$bssid = $split[0];
+		$channel = $split[1];
+		$rate = $split[2];
+		$rssi = $split[3];
+		$int = $split[4];
+		$caps = "$split[5] $split[6] $split[7] $split[8] $split[9] $split[10] $split[11] ";
+
 		print "<tr>";
-		$state_split = split(" ", $state_fixed);
-		$items = count($state_split);
-		$starting_at = $items-8;
-		print "<tr>";
-		print "<td>{$state_split[$starting_at]}</td>";
-		print "<td>{$state_split[$starting_at+1]}</td>";
-		print "<td>{$state_split[$starting_at+2]}</td>";
-		print "<td>{$state_split[$starting_at+3]}</td>";
-		print "<td>{$state_split[$starting_at+4]}</td>";
-		print "<td>{$state_split[$starting_at+5]}</td>";
-		print "<td>{$state_split[$starting_at+6]}</td>";
+		print "<td>{$ssid}</td>";
+		print "<td>{$bssid}</td>";
+		print "<td>{$channel}</td>";
+		print "<td>{$rate}</td>";
+		print "<td>{$rssi}</td>";
+		print "<td>{$int}</td>";
+		print "<td>{$caps}</td>";
 		print "</tr>\n";
-		print "<!-- $state_fixed -->\n";
 	}
 
 	print "</table><table class=\"tabcont\" colspan=\"3\" cellpadding=\"3\" width=\"100%\">";
 
 	/* table header */
-	print "\n<tr><!-- " . count($state_split) . " -->";
+	print "\n<tr>";
 	print "<tr bgcolor='#990000'>";
 	print "<td><b><font color='#ffffff'>ADDR</td>";
 	print "<td><b><font color='#ffffff'>AID</td>";
@@ -152,7 +153,8 @@ display_top_tabs($tab_array);
 	print "<td><b><font color='#ffffff'>ERP</td>";
 	print "</tr>\n\n";
 
-	$states=split("\n",`/sbin/ifconfig {$if} list sta | grep -v "AID CHAN"`);
+	exec("/sbin/ifconfig {$if}_wlan0 list sta 2>&1", $states, $ret);
+	array_shift($states);
 
 	$counter=0;
 	foreach($states as $state) {

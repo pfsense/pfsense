@@ -42,6 +42,12 @@
 ##|*MATCH=index.php*
 ##|-PRIV
 
+	// Turn on buffering to speed up rendering
+	ini_set('output_buffering','true');
+	
+	// Start buffering with a cache size of 10094
+	ob_start(null, "10094");
+
 	## Load Essential Includes
 	require_once('guiconfig.inc');
 	require_once('notices.inc');

@@ -167,8 +167,7 @@ function swap_usage()
 	return $swapUsage;
 }
 
-function mem_usage()
-{
+function mem_usage() {
 	$memory = "";
 	exec("/sbin/sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_inactive_count " .
 		"vm.stats.vm.v_cache_count vm.stats.vm.v_free_count", $memory);
@@ -187,7 +186,7 @@ function update_date_time() {
 	return $datetime;
 }
 
-function get_interfacestats(){
+function get_interfacestats() {
 	
 	global $config;
 	//build interface list for widget use
@@ -222,16 +221,13 @@ function get_interfacestats(){
 				$new_data .= htmlspecialchars($ifinfo['collisions']) . ",";
 			else
 				$new_data .= "0,";
-		
-				
-		
 	}//end for
 	
 	return $new_data;
 
 }
 
-function get_interfacestatus(){
+function get_interfacestatus() {
 	$data = "";
 	global $config;
 

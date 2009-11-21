@@ -138,6 +138,12 @@ extension_dir=${EXTENSIONSDIR}
 ; Extensions
 EOF
 
+# Ensure directory exists
+if [ ! -d /etc/php_dynamodules ]; then
+	mkdir /etc/php_dynamodules
+fi
+
+# Read in dynamodules
 if [ -d /etc/php_dynamodules ]; then
 	DYNA_MODULES=`ls /etc/php_dynamodules/`
 	PHPMODULES="$PHPMODULES $DYNA_MODULES"

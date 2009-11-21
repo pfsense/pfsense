@@ -736,15 +736,20 @@ EOC;
 
 	} else if ($avail > 0 and $avail < 128) {
 		$bin_environment = <<<EOC
-	"bin-environment" => (
+		"bin-environment" => (
 			"PHP_FCGI_CHILDREN" => "$max_procs",
-			"PHP_FCGI_MAX_REQUESTS" => "500",
+			"PHP_FCGI_MAX_REQUESTS" => "2",
 	),
 
 EOC;
 	} else
-		$bin_environment = "";
-		
+		$bin_environment =  <<<EOC
+        "bin-environment" => (
+           "PHP_FCGI_CHILDREN" => "$max_procs",
+           "PHP_FCGI_MAX_REQUESTS" => "500"
+        ), 
+EOC;
+
 	if($fast_cgi_enable == true) {
 		$module = "\"mod_fastcgi\", \"mod_cgi\"";
 		$cgi_config = "";
@@ -755,7 +760,7 @@ fastcgi.server = ( ".php" =>
 	( "localhost" =>
 		(
 			"socket" => "/tmp/php-fastcgi.socket",
-			"min-procs" => 1,
+			"min-procs" => 0,
 			"max-procs" => {$max_procs},
 			{$bin_environment}			
 			"bin-path" => "/usr/local/bin/php"

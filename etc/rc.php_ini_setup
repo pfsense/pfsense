@@ -33,7 +33,7 @@ AVAILMEM=`cat /var/log/dmesg.boot | grep "memory" | grep "avail" | awk '{ print 
 # Calculate APC SHM size according 
 # to detected memory values
 if [ "$AVAILMEM" -lt "128" ]; then
-	APCSHMEMSIZE="5"
+	APCSHMEMSIZE="10"
 fi
 if [ "$AVAILMEM" -gt "128" ]; then
 	APCSHMEMSIZE="25"

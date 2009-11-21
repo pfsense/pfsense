@@ -28,7 +28,28 @@
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
 EXTENSIONSDIR="/usr/local/lib/php/20060613/"
-APCSHMEMSIZE="25"
+AVAILMEM=`cat /var/log/dmesg.boot | grep "memory" | grep "avail" | awk '{ print $5 }' | cut -d'(' -f2 | cut -d'M' -f1`
+
+# Calculate APC SHM size according 
+# to detected memory values
+if [ "$AVAILMEM" -lt "128" ]; then
+	APCSHMEMSIZE="5"
+fi
+if [ "$AVAILMEM" -gt "128" ]; then
+	APCSHMEMSIZE="25"
+fi
+if [ "$AVAILMEM" -gt "256" ]; then
+	APCSHMEMSIZE="45"
+fi
+if [ "$AVAILMEM" -gt "384" ]; then
+	APCSHMEMSIZE="65"
+fi
+if [ "$AVAILMEM" -gt "512" ]; then
+	APCSHMEMSIZE="80"
+fi
+if [ "$AVAILMEM" -gt "784" ]; then
+	APCSHMEMSIZE="100"
+fi
 
 # Set upload directory
 if [ "$PLATFORM" = "embedded" -o "$PLATFORM" = "nanobsd" ]; then

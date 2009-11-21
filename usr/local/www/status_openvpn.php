@@ -40,6 +40,7 @@
 
 $pgtitle = array("Status", "OpenVPN");
 require("guiconfig.inc");
+require_once("vpn.inc");
 
 $servers = array();
 

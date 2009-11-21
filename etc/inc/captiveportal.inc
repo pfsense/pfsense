@@ -41,8 +41,6 @@
 */
 
 /* include all configuration functions */
-require_once("globals.inc");
-require_once("util.inc");
 require_once("radius_authentication.inc");
 require_once("radius_accounting.inc");
 require_once("radius.inc");

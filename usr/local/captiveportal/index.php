@@ -35,6 +35,7 @@
 
 require_once("auth.inc");
 require_once("functions.inc");
+require_once("captiveportal.inc");
 
 header("Expires: 0");
 header("Cache-Control: no-store, no-cache, must-revalidate");

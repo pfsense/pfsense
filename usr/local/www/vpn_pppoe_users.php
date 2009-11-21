@@ -35,8 +35,8 @@
 ##|*MATCH=vpn_pppoe_users.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
+require_once("vpn.inc");
 
 if (!is_array($config['pppoe']['user'])) {
 	$config['pppoe']['user'] = array();

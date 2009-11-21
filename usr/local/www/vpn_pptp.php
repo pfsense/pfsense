@@ -35,8 +35,8 @@
 ##|*MATCH=vpn_pptp.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
+require_once("vpn.inc");
 
 if (!is_array($config['pptpd']['radius'])) {
 	$config['pptpd']['radius'] = array();

@@ -33,7 +33,6 @@
 */
 
 /* include all configuration functions */
-require_once("config.inc");
 
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";

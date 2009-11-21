@@ -32,7 +32,6 @@
 */
 
 /* include all configuration functions */
-require_once("config.inc");
 
 /* 
  *Authenticate a voucher and return the remaining time credit in minutes

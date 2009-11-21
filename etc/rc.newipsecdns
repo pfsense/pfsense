@@ -32,7 +32,9 @@
 
 	/* parse the configuration and include all functions used below */
 	require_once("functions.inc");
-	
+	require_once("ipsec.inc");
+	require_once("vpn.inc");
+
 	/* make sure to wait until the boot scripts have finished */
 	while (file_exists("{$g['varrun_path']}/booting")) {
 		sleep(1);

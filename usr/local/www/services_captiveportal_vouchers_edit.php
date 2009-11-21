@@ -37,6 +37,7 @@
 
 $pgtitle = array("Services", "Captive portal", "Edit Voucher Rolls");
 require("guiconfig.inc");
+require_once("captiveportal.inc");
 require_once("voucher.inc");
 
 if (!is_array($config['voucher'])) {

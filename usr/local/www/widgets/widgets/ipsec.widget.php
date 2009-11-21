@@ -30,9 +30,10 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
+
 require_once("guiconfig.inc");
-require_once("pfsense-utils.inc");
 require_once("functions.inc");
+require_once("ipsec.inc");
 
 	if (isset($config['ipsec']['phase1'])){?>
 	<div>&nbsp;</div>

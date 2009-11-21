@@ -37,6 +37,7 @@
 		pfSense_MODULE: authgui
 */
 
+include_once("auth.inc");
 include_once("priv.inc");
 
 /* We only support htpasswd backed HTTP Basic auth and session

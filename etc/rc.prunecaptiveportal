@@ -30,10 +30,12 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-	/* parse the configuration and include all functions used below */
-	/* config.inc retrives the util.inc and globals.inc */
-	require_once("config.inc");
-	require_once("captiveportal.inc");
-	
-	captiveportal_prune_old();
+/* parse the configuration and include all functions used below */
+/* config.inc retrives the util.inc and globals.inc */
+require_once("config.inc");
+require_once("functions.inc");
+require_once("captiveportal.inc");
+
+captiveportal_prune_old();
+
 ?>

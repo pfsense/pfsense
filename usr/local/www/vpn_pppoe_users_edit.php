@@ -49,6 +49,7 @@ function pppoe_users_sort() {
 }
 
 require("guiconfig.inc");
+require_once("vpn.inc");
 
 if (!is_array($config['pppoe']['user'])) {
 	$config['pppoe']['user'] = array();

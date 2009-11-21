@@ -54,7 +54,6 @@ if ($_POST['height'])
 else
 	$height = "200";
 
-
 if ($_GET['if'])
 	$curif = $_GET['if'];
 else
@@ -142,7 +141,7 @@ function updateBandwidthHosts(data){
         }
     }
     
-    setTimeout('updateBandwidth()', 3000);
+    setTimeout('updateBandwidth()', 10);
 }
 
 

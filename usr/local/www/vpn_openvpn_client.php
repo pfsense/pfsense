@@ -34,7 +34,6 @@
 ##|*MATCH=vpn_openvpn_client.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
 require_once("openvpn.inc");
 

@@ -885,37 +885,18 @@ function make_dirs($path, $mode = 0755) {
  *     [0]real and [1]available
  */
 function get_memory() {
-        if(file_exists("/var/log/dmesg.boot")) {
-                $mem = `cat /var/log/dmesg.boot | grep memory`;
-                $matches = "";
-                if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
-                        $real = $matches[1];
-                if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
-                        $avail = $matches[1];
-				if(!$real && !$avail) {
-					$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
-					$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
-					$real_mem = $real / 1024;
-					$avail_mem = $avail / 1024;
-					return array($real_mem,$avail_mem);
-				}
-                return array($real[0],$avail[0]);
-        } else {
-                $mem = `dmesg -a`;
-                $matches = "";
-                if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
-                        $real = $matches[1];
-                if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
-                        $avail = $matches[1];
-				if(!$real && !$avail) {
-					$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
-					$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
-					$real_mem = $real / 1024;
-					$avail_mem = $avail / 1024;
-					return array($real_mem,$avail_mem);
-				}
-                return array($real[0],$avail[0]);
-        }
+		$matches = "";
+        if(file_exists("/var/log/dmesg.boot"))
+			$mem = `cat /var/log/dmesg.boot | grep memory`;
+		else
+			$mem = `dmesg -a | grep memory`;			
+		if (preg_match_all("/avail memory.* \((.*)MB\)/", $mem, $matches)) 
+			return array($matches[1][0], $matches[1][0]);
+		if(!$real && !$avail) {
+			$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
+			$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
+			return array(($real/1024),($avail/1024));
+		}
 }
 
 function mute_kernel_msgs() {

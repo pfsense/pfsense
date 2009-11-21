@@ -44,6 +44,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require("ipsec.inc");
 
 $ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
 

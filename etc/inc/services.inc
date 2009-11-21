@@ -39,7 +39,6 @@
 */
 
 /* include all configuration functions */
-require_once("functions.inc");
 
 function services_dhcpd_configure() {
 	global $config, $g;

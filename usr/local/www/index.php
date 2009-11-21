@@ -158,7 +158,6 @@ while (false !== ($filename = readdir($dirhandle))) {
 		$widgetfiles[] = $filename;   		
 }
 
-
 ##sort widgets alphabetically
 sort($widgetfiles);
 
@@ -206,12 +205,10 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
     }   
 	
 	$widgetlist = $savedwidgetfiles;	
-} 
-##no saved widget sequence found, build default list.
-else{
+} else{
+	// no saved widget sequence found, build default list.
 	$widgetlist = $widgetfiles;
 }
-
 
 ##build list of php include files
 $phpincludefiles = array();

@@ -40,8 +40,6 @@
 /* DISABLE_PHP_LINT_CHECKING */
 
 /* include all configuration functions */
-require_once("config.inc");
-require_once("shaper.inc");
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();

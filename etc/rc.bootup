@@ -85,12 +85,14 @@ echo " done.\n";
 echo "Initializing...";
 echo ".";
 require_once("/etc/inc/globals.inc");
+echo ".";
 require_once("/etc/inc/led.inc");
 led_normalize();
+echo ".";
 if (led_count() >= 3) {
 	led_kitt();
 }
-echo ".";
+
 /* let the other functions know we're booting */
 $pkg_interface = 'console';
 $g['booting'] = true;
@@ -106,7 +108,15 @@ require_once("/etc/inc/config.inc");
 echo ".";
 require_once("/etc/inc/functions.inc");
 echo ".";
+require_once("/etc/inc/ipsec.inc");
+echo ".";
+require_once("/etc/inc/vpn.inc");
+echo ".";
 require_once("openvpn.inc");
+echo ".";
+require_once("/etc/inc/captiveportal.inc");
+echo ".";
+require_once("/etc/inc/rrd.inc");
 echo ".";
 
 /* get system memory amount */

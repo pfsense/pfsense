@@ -35,8 +35,8 @@
 ##|*MATCH=vpn_pppoe.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
+require_once("vpn.inc");
 
 if (!is_array($config['pppoe']['radius'])) {
 	$config['pppoe']['radius'] = array();

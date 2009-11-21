@@ -42,10 +42,10 @@
 ##|*MATCH=diag_logs_openvpn.php*
 ##|-PRIV
 
-
 $pgtitle = array("Status","System logs","OpenVPN");
 
 require("guiconfig.inc");
+require_once("vpn.inc");
 
 $openvpn_logfile = "{$g['varlog_path']}/openvpn.log";
 

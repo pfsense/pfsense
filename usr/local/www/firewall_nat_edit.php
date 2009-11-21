@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("itemid.inc");
 
 if (!is_array($config['nat']['rule'])) {
 	$config['nat']['rule'] = array();

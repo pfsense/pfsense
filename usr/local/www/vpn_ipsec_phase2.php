@@ -38,6 +38,8 @@
 
 require("functions.inc");
 require("guiconfig.inc");
+require_once("ipsec.inc");
+require_once("vpn.inc");
 
 if (!is_array($config['ipsec']['client']))
 	$config['ipsec']['client'] = array();

@@ -40,6 +40,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("rrd.inc");
 
 /* if the rrd graphs are not enabled redirect to settings page */
 if(! isset($config['rrd']['enable'])) {

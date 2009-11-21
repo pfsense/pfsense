@@ -30,7 +30,7 @@
 */
 
 require_once("config.inc");
-require_once("filter.inc");
+require_once("functions.inc");
 
 /* invalidate interface cache */
 get_interface_arr(true);

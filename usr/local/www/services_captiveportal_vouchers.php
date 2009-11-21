@@ -38,6 +38,7 @@
 
 $pgtitle = array("Services", "Captive portal", "Vouchers");
 require("guiconfig.inc");
+require_once("captiveportal.inc");
 require_once("voucher.inc");
 
 if (!is_array($config['voucher'])) {

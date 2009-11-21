@@ -38,6 +38,7 @@
 $pgtitle = array(gettext("VPN"),gettext("L2TP"),gettext("Users"));
 
 require("guiconfig.inc");
+require_once("vpn.inc");
 
 if (!is_array($config['l2tp']['user'])) {
 	$config['l2tp']['user'] = array();

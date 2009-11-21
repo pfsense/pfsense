@@ -43,6 +43,7 @@
 
 /* include all configuration functions */
 require_once("globals.inc");
+require_once("cmd_chain.inc");
 
 function interfaces_bring_up($interface) {
 	if(!$interface) {

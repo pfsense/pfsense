@@ -43,6 +43,7 @@
 
 $pgtitle = array("Status","System logs","PPTP VPN");
 require("guiconfig.inc");
+require_once("vpn.inc");
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)

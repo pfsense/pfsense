@@ -44,6 +44,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require("ipsec.inc");
 
 $pgtitle = array("Status","IPsec","SPD");
 include("head.inc");

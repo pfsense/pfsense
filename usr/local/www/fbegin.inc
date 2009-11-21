@@ -57,13 +57,10 @@ function return_ext_menu($section) {
 				if ($colonpos !== False){
 					//my url is actually just the IP address of the pfsense box
 					$myurl = substr($addresswithport, 0, $colonpos);
-				}
-				else
-				{
+				} else {
 					$myurl = $addresswithport;
 				}
-
-				$description = str_replace('$myurl', $myurl, $menuitem['url']);
+				$description = str_replace('\$myurl', $myurl, $menuitem['url']);
 			} else {
 				$description = '/pkg.php?xml=' . $menuitem['configfile'];
 			}

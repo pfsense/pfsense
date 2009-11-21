@@ -43,6 +43,8 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require("functions.inc");
+require("captiveportal.inc");
 
 if ($_POST) {
 	if ($_POST['Submit'] != " No ") {

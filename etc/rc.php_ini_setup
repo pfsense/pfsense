@@ -28,11 +28,14 @@
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
 EXTENSIONSDIR="/usr/local/lib/php/20060613/"
+
+# Grab amount of memory that is deteceted
 if [ -f /var/log/dmesg.boot ]; then
 	AVAILMEM=`cat /var/log/dmesg.boot | grep "memory" | grep "avail" | awk '{ print $5 }' | cut -d'(' -f2 | cut -d'M' -f1`
 else 
 	AVAILMEM=`dmesg -a | grep "memory" | grep "avail" | awk '{ print $5 }' | cut -d'(' -f2 | cut -d'M' -f1`
 fi
+
 # Calculate APC SHM size according 
 # to detected memory values
 if [ "$AVAILMEM" -lt "128" ]; then
@@ -64,35 +67,23 @@ fi
 # Define php modules.  Do not add .so, it will  
 # be done automatically by the script below.
 PHPMODULES="apc \
-	bcmath \
-	bz2 \
-	ctype \
 	curl \
 	date \
-	json \
 	gettext \
 	ldap \
-	libxml \
-	mbstring \
-	mhash \
-	mysql \
 	openssl \
 	pcntl \
 	pcre \
 	posix \
 	readline \
-	Reflection \
 	session \
 	shmop \
-	sockets \
 	standard \
 	suhosin \
 	sysvmsg \
 	sysvsem \
 	sysvshm \
-	sqlite \
-	tokenizer \ 
-	uploadprogress \
+	libxml \
 	xml \
 	xmlreader \
 	zlib"
@@ -126,11 +117,15 @@ html_errors = Off
 zlib.output_compression = On
 zlib.output_compression_level = 1
 include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
-uploadprogress.file.filename_template = /tmp/uploadprogress_%s.txt
 extension_dir=${EXTENSIONSDIR}
 
 ; Extensions
 EOF
+
+if [ -d /etc/php_dynamodules ]; then
+	DYNA_MODULES=`ls /etc/php_dynamodules/`
+	PHPMODULES="$PHPMODULES $DYNA_MODULES"
+fi
 
 # Loop through and generate modules to load.
 # Take into account modules built into php.

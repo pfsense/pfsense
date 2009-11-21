@@ -77,16 +77,32 @@ PHPMODULES="apc \
 	posix \
 	readline \
 	session \
-	shmop \
 	standard \
 	suhosin \
-	sysvmsg \
-	sysvsem \
-	sysvshm \
 	libxml \
 	xml \
 	xmlreader \
 	zlib"
+
+# Modules previously included.
+# can be turned on my touching
+# /etc/php_dynamodules/$modulename
+#	shmop \
+#	sysvmsg \
+#	sysvsem \
+#	sysvshm \
+#	bcmath \
+#	sqlite \
+#	tokenizer \
+#	uploadprogress \
+#	sockets \
+#	Reflection \
+#	mysql \
+#	mhash \
+#	mbstring \
+#	bz2	\
+#	ctype \
+#	json \
 
 # Get a loaded module list in the stock php
 if [ -f /usr/local/etc/php.ini ]; then

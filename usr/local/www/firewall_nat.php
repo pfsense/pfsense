@@ -316,6 +316,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                     </table>
 		  </td>
 		</tr>
+		<tr><td>&nbsp;</td></tr>
           <tr>
             <td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11"></td>
             <td colspan="3">pass</td>

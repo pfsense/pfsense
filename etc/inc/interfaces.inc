@@ -840,13 +840,11 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		sleep(1);
 		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete");
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
 		}
 		break;
 	default:
 		if(does_interface_exist("$realif")) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete");
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
 		}
 		break;

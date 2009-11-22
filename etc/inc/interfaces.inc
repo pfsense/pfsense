@@ -127,14 +127,14 @@ function interface_vlan_configure(&$vlan) {
 		return;
 	}
 
-        /* make sure the parent interface is up */
+	/* make sure the parent interface is up */
 	interfaces_bring_up($if);
 	/* Since we are going to add vlan(4) try to enable all that hardware supports. */
 	mwexec("/sbin/ifconfig {$if} vlanhwtag");
 	mwexec("/sbin/ifconfig {$if} vlanmtu");
 
 	if (!empty($vlanif) && does_interface_exist($vlanif)) {
-		mwexec("/sbin/ifconfig {$vlanif} delete");
+		interface_bring_down($vlanif);
 	} else {
 		$tmpvlanif = exec("/sbin/ifconfig vlan create");
 		mwexec("/sbin/ifconfig {$tmpvlanif} name {$vlanif}");
@@ -778,33 +778,25 @@ function interface_reconfigure($interface = "wan") {
 }
 
 function interface_vip_bring_down(&$vip) {
-	
 	switch ($vip['mode']) {
 	case "proxyarp":
 		interface_proxyarp_configure();
 		break;
 	case "ipalias":
-		if(does_interface_exist("$vip['interface']"))
+		if(does_interface_exist($vip['interface']))
 			mwexec("/sbin/ifconfig " . get_real_interface($vip['interface']) . " delete {$vip['subnet']}");
 		break;
 	case "carp":
 		$vipif = "vip" . $vip['vhid'];
-		if(does_interface_exist("$vipif")) {
-			mwexec("/sbin/ifconfig {$vipif} delete");
-			mwexec("/sbin/ifconfig {$vipif} down");
-			mwexec("/sbin/ifconfig {$vipif} destroy");
-		}
+		if(does_interface_exist("$vipif")) 
+			interface_bring_down($vipif);
 		break;
 	case "carpdev-dhcp":
 		$vipif = "vip" . $vip['vhid'];
-		if(does_interface_exist("$vipif")) {
-			mwexec("/sbin/ifconfig {$vipif} delete");
-			mwexec("/sbin/ifconfig {$vipif} down");
-			mwexec("/sbin/ifconfig {$vipif} destroy");
-		}
+		if(does_interface_exist("$vipif")) 
+			interface_bring_down($vipif);
 		break;
 	}
-
 }
 
 function interface_bring_down($interface = "wan", $destroy = false) {
@@ -819,11 +811,10 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 
 	mwexec("/usr/sbin/arp -d -i {$realif} -a");
 
-        /* remove interface up file if it exists */
-        unlink_if_exists("{$g['tmp_path']}/{$realif}up");
-        unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
-		unlink_if_exists("/tmp/{$realif}_router");
-        //unlink_if_exists("{$g['varetc_path']}/nameservers.conf");
+	/* remove interface up file if it exists */
+	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
+	unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
+	unlink_if_exists("/tmp/{$realif}_router");
 
 	switch ($ifcfg['ipaddr']) {
 	case "pppoe":
@@ -841,7 +832,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	case "carpdev-dhcp":
 		/* 
 		 * NB: When carpdev gets enabled it would be better to be handled as all
-		 *	other interfaces! 
+		 *	   other interfaces! 
 		 */
 	case "dhcp":
 		$pid = find_dhclient_process($interface);
@@ -1220,9 +1211,9 @@ function interface_carp_configure(&$vip) {
 	get_interface_arr(true);
 
 	/* create the carp interface and setup */
-	if (does_interface_exist($vipif))
-		mwexec("/sbin/ifconfig {$vipif} delete");
-	else {
+	if (does_interface_exist($vipif)) {
+		interface_bring_down($vipif);
+	} else {
 		$carpif = exec("/sbin/ifconfig carp create");
 		mwexec("/sbin/ifconfig {$carpif} name {$vipif}");
 		mwexec("/usr/sbin/ngctl name {$carpif}: {$vipif}");
@@ -1267,7 +1258,7 @@ function interface_carpdev_configure(&$vip) {
         }
 
 	if (does_interface_exist($vipif)) {
-		mwexec("/sbin/ifconfig {$vipif} delete");
+		interface_bring_down($vipif);
 	} else {
 		$carpdevif = exec("/sbin/ifconfig carp create");
 		mwexec("/sbin/ifconfig {$carpdevif} name {$vipif}");

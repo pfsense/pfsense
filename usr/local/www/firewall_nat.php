@@ -315,15 +315,14 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                       </tr>
                     </table>
 		  </td>
-                </tr>
-	</table>
-	<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+		</tr>
           <tr>
             <td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11"></td>
-            <td>pass</td>
-            <td width="14"></td>
-            <td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="11" height="11"></td>
-            <td>linked rule</td>
+            <td colspan="3">pass</td>
+			</tr>
+		   <tr>
+            <td width="14"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="11" height="11"></td>
+            <td colspan="3">linked rule</td>
           </tr>
     </table>
 	</div>

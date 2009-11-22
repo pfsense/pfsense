@@ -612,57 +612,57 @@ function interface_gre_configure(&$gre) {
 }
 
 function interfaces_gif_configure() {
-        global $config;
-
-        $i = 0;
-        if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
-                foreach ($config['gifs']['gif'] as $gif) {
-                        if(empty($gif['gifif']))
-                                $gre['gifif'] = "gif{$i}";
-                        /* XXX: Maybe we should report any errors?! */
-                        interface_gif_configure($gif);
-                        $i++;
-                }
-        }
+	global $config;
+	$i = 0;
+	if (is_array($config['gifs']['gif']) && count($config['gifs']['gif'])) {
+		foreach ($config['gifs']['gif'] as $gif) {
+			if(empty($gif['gifif']))
+				$gre['gifif'] = "gif{$i}";
+			/* XXX: Maybe we should report any errors?! */
+			interface_gif_configure($gif);
+			$i++;
+		}
+	}
 }
 
 function interface_gif_configure(&$gif) {
-        global $config, $g;
+	global $config, $g;
 
-        if (!is_array($gif))
-                return -1;
+	if (!is_array($gif))
+		return -1;
 
-        $realif = get_real_interface($gif['if']);
-        $realifip = get_interface_ip($gif['if']);
+	$realif = get_real_interface($gif['if']);
+	$realifip = get_interface_ip($gif['if']);
 
-        /* make sure the parent interface is up */
-		if($realif)
-			interfaces_bring_up($realif);
-		else 
-			log_error("could not bring realif up -- variable not defined -- interface_gif_configure()");
+	/* make sure the parent interface is up */
+	if($realif)
+		interfaces_bring_up($realif);
+	else 
+		log_error("could not bring realif up -- variable not defined -- interface_gif_configure()");
 
-        if ($g['booting'] || !(empty($gif['gifif']))) {
-                mwexec("/sbin/ifconfig {$gif['gifif']} destroy");
-                mwexec("/sbin/ifconfig {$gif['gifif']} create");
-                $gifif = $gif['gifif'];
-        } else
-                $gifif = exec("/sbin/ifconfig gif create");
+	if ($g['booting'] || !(empty($gif['gifif']))) {
+		mwexec("/sbin/ifconfig {$gif['gifif']} destroy");
+		mwexec("/sbin/ifconfig {$gif['gifif']} create");
+		$gifif = $gif['gifif'];
+	} else
+		$gifif = exec("/sbin/ifconfig gif create");
 
-        /* Do not change the order here for more see gif(4) NOTES section. */
-        mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} {$gif['remote-addr']}");
-        mwexec("/sbin/ifconfig {$gifif} {$gif['tunnel-local-addr']} {$gif['tunnel-remote-addr']} netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
-        if (isset($gif['link0']) && $gif['link0'])
-                mwexec("/sbin/ifconfig {$gifif} link0");
-        if (isset($gif['link1']) && $gif['link1'])
-                mwexec("/sbin/ifconfig {$gifif} link1");
-		if($gifif)
-			interfaces_bring_up($gifif);
-		else
-		 	log_error("could not bring gifif up -- variable not defined");
-        mwexec("/sbin/route add {$gif['remote-addr']}/{$gif['tunnel-remote-net']} {$realifip}");
-		file_put_contents("/tmp/{$gifif}_router", $gif['tunnel-remote-addr']);
+	/* Do not change the order here for more see gif(4) NOTES section. */
+	mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} {$gif['remote-addr']}");
+	mwexec("/sbin/ifconfig {$gifif} {$gif['tunnel-local-addr']} {$gif['tunnel-remote-addr']} netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
+	if (isset($gif['link0']) && $gif['link0'])
+		mwexec("/sbin/ifconfig {$gifif} link0");
+	if (isset($gif['link1']) && $gif['link1'])
+		mwexec("/sbin/ifconfig {$gifif} link1");
+	if($gifif)
+		interfaces_bring_up($gifif);
+	else
+		log_error("could not bring gifif up -- variable not defined");
 
-        return $gifif;
+	mwexec("/sbin/route add {$gif['remote-addr']}/{$gif['tunnel-remote-net']} {$realifip}");
+	file_put_contents("/tmp/{$gifif}_router", $gif['tunnel-remote-addr']);
+
+	return $gifif;
 }
 
 function interfaces_configure() {
@@ -701,7 +701,7 @@ function interfaces_configure() {
 		else {
 			if ($g['booting'])
 				echo "Configuring {$ifname} interface...";
-        		if($g['debug'])
+			if($g['debug'])
 				log_error("Configuring {$ifname}");
 			interface_configure($if, true);
 			if ($g['booting']) 
@@ -773,7 +773,6 @@ function interfaces_configure() {
 
 function interface_reconfigure($interface = "wan") {
 	interface_bring_down($interface);
-	sleep(1);
 	interface_configure($interface);
 }
 
@@ -819,15 +818,15 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	switch ($ifcfg['ipaddr']) {
 	case "pppoe":
 		killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");
-        	sleep(2);
-                unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-                unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
+		sleep(2);
+		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
+		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
 		break;
 	case "pptp":
 		killbypid("{$g['varrun_path']}/pptp_{$interface}.pid");
-        	sleep(2);
-                unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-                unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
+		sleep(2);
+		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
+		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
 		break;
 	case "carpdev-dhcp":
 		/* 
@@ -857,6 +856,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		if (preg_match("/^tun|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $realif))
 			mwexec("/sbin/ifconfig {$realif} destroy");
 	}	
+
 	return;
 }
 
@@ -1041,53 +1041,51 @@ function interfaces_carp_setup() {
 }
 
 function interface_proxyarp_configure() {
-        global $config, $g;
-        if(isset($config['system']['developerspew'])) {
-                $mt = microtime();
-                echo "interface_proxyarp_configure() being called $mt\n";
-        }
-	
-        /* kill any running choparp */
-        killbyname("choparp");
+	global $config, $g;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "interface_proxyarp_configure() being called $mt\n";
+	}
 
-        if (isset($config['virtualip']) && is_array($config['virtualip']['vip'])) {
-                $paa = array();
+	/* kill any running choparp */
+	killbyname("choparp");
 
-                /* group by interface */
-                foreach ($config['virtualip']['vip'] as $vipent) {
-                        if ($vipent['mode'] === "proxyarp") {
-                                if ($vipent['interface'])
-                                        $proxyif = $vipent['interface'];
-                                else
-                                        $proxyif = "wan";
+	if (isset($config['virtualip']) && is_array($config['virtualip']['vip'])) {
+		$paa = array();
 
-                                if (!is_array($paa[$if]))
-                                        $paa[$proxyif] = array();
+		/* group by interface */
+		foreach ($config['virtualip']['vip'] as $vipent) {
+			if ($vipent['mode'] === "proxyarp") {
+				if ($vipent['interface'])
+					$proxyif = $vipent['interface'];
+				else
+					$proxyif = "wan";
 
-                                $paa[$proxyif][] = $vipent;
-                        }
-                }
+				if (!is_array($paa[$if]))
+					$paa[$proxyif] = array();
 
-                if (count($paa))
-                foreach ($paa as $paif => $paents) {
-                        $paaifip = get_interface_ip($paif);
-                        if (!(is_ipaddr($paaifip)))
-                               continue;
+				$paa[$proxyif][] = $vipent;
+			}
+	}
 
-                        $args = get_real_interface($paif) . " auto";
+	if (count($paa))
+		foreach ($paa as $paif => $paents) {
+			$paaifip = get_interface_ip($paif);
+			if (!(is_ipaddr($paaifip)))
+				continue;
+			$args = get_real_interface($paif) . " auto";
+			foreach ($paents as $paent) {
 
-                        foreach ($paents as $paent) {
+				if (isset($paent['subnet']))
+					$args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");
+				else if (isset($paent['range']))
+					$args .= " " . escapeshellarg($paent['range']['from'] . "-" .
+					$paent['range']['to']);
+			}
+			mwexec_bg("/usr/local/sbin/choparp " . $args);
+		}
+	}
 
-                                if (isset($paent['subnet']))
-                                        $args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");
-                                else if (isset($paent['range']))
-                                        $args .= " " . escapeshellarg($paent['range']['from'] . "-" .
-                                                $paent['range']['to']);
-                        }
-
-                        mwexec_bg("/usr/local/sbin/choparp " . $args);
-                }
-        }
 }
 
 function interfaces_vips_configure() {
@@ -1136,29 +1134,29 @@ function interface_reload_carps($cif) {
 	global $config;
 
 	$carpifs = link_ip_to_carp_interface(find_interface_ip($cif));
-        if (empty($carpifs))
+	if (empty($carpifs))
 		return;
 
 	$carps = explode(" ", $carpifs);
 	if(is_array($config['virtualip']['vip'])) {
-                $viparr = &$config['virtualip']['vip'];
-                foreach ($viparr as $vip) {
+		$viparr = &$config['virtualip']['vip'];
+		foreach ($viparr as $vip) {
 			if (in_array($vip['carpif'], $carps)) {
-                        	switch ($vip['mode']) {
-                        	case "carp":
+				switch ($vip['mode']) {
+					case "carp":
 					interface_vip_bring_down($vip);
 					sleep(1);
-                                	interface_carp_configure($vip);
-                                	break;
-                        	case "carpdev-dhcp":
+					interface_carp_configure($vip);
+					break;
+					case "carpdev-dhcp":
 					interface_vip_bring_down($vip);
 					sleep(1);
-                                	interface_carpdev_configure($vip);
-                                	break;
+					interface_carpdev_configure($vip);
+					break;
 				}
-                        }
-                }
-        }
+			}
+		}
+	}
 }
 
 function interface_carp_configure(&$vip) {
@@ -1234,12 +1232,12 @@ function interface_carpdev_configure(&$vip) {
 	global $g;
 
 	if ($vip['mode'] != "carpdev-dhcp")
-                return;
+		return;
 
-        $vip_password = $vip['password'];
-        $vip_password = str_replace(" ", "", $vip_password);
-        if($vip['password'] != "")
-                $password = " pass \"" . $vip_password . "\"";
+	$vip_password = $vip['password'];
+	$vip_password = str_replace(" ", "", $vip_password);
+	if($vip['password'] != "")
+		$password = " pass \"" . $vip_password . "\"";
 
 	log_error("Found carpdev interface {$vip['interface']} on top of interface {$interface}");
 	if (empty($vip['interface']))
@@ -1248,14 +1246,14 @@ function interface_carpdev_configure(&$vip) {
 	$vipif = "vip" . $vip['vhid'];
 	$realif = interface_translate_type_to_real($vip['interface']);
 	interfaces_bring_up($realif);
-        /*
-         * ensure the interface containing the VIP really exists
-         * prevents a panic if the interface is missing or invalid
-         */
-        if (!does_interface_exist($realif)) {
-                file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
-                return;
-        }
+	/*
+	 * ensure the interface containing the VIP really exists
+	 * prevents a panic if the interface is missing or invalid
+	 */
+	if (!does_interface_exist($realif)) {
+		file_notice("CARP", "Interface specified for the virtual IP address {$vip['subnet']} does not exist. Skipping this VIP.", "Firewall: Virtual IP", "");
+		return;
+	}
 
 	if (does_interface_exist($vipif)) {
 		interface_bring_down($vipif);

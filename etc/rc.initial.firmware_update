@@ -4,6 +4,7 @@
 
 require("globals.inc");
 require("util.inc");
+
 $g['booting'] = true;
 
 echo "Starting the {$g['product_name']} console firmware update system";

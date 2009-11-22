@@ -82,6 +82,8 @@ PHPMODULES="apc \
 	libxml \
 	xml \
 	xmlreader \
+# user manager
+	mhash \
 	zlib"
 
 # Modules previously included.
@@ -98,7 +100,6 @@ PHPMODULES="apc \
 #	sockets \
 #	Reflection \
 #	mysql \
-#	mhash \
 #	mbstring \
 #	bz2	\
 #	ctype \

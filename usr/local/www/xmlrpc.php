@@ -38,11 +38,12 @@
 ##|*MATCH=xmlrpc.php*
 ##|-PRIV
 
-
+require("guiconfig.inc");
+require_once("functions.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
 require_once("xmlrpc_server.inc");
 require_once("xmlrpc.inc");
-require_once("config.inc");
-require_once("functions.inc");
 require_once("array_intersect_key.inc");
 
 /* grab sync to ip if enabled */

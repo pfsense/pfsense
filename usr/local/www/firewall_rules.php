@@ -43,6 +43,9 @@
 
 $pgtitle = array("Firewall", "Rules");
 require("guiconfig.inc");
+require_once("functions.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
 
 function check_for_advaned_options(&$item) {
 	$item_set = "";

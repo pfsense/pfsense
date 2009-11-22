@@ -40,6 +40,9 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("functions.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
 
 $a_gateways = return_gateways_array();
 $a_gateways_arr = array();

@@ -55,6 +55,9 @@ function schedule_sort(){
 
 $pgtitle = array("Firewall","Schedules","Edit");
 require("guiconfig.inc");
+require_once("functions.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
 
 $starttimehr = 00;
 $starttimemin = 00;

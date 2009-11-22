@@ -30,9 +30,10 @@
 */
 
 	require_once("globals.inc");
-	require_once("functions.inc");
 	require_once("config.inc");
-	
+	require_once("functions.inc");
+	require_once("shaper.inc");
+
 	if(isset($config['system']['enablesshd'])) {
 		/* do nothing, we're enabled */
 	} else {

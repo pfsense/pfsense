@@ -784,19 +784,24 @@ function interface_vip_bring_down(&$vip) {
 		interface_proxyarp_configure();
 		break;
 	case "ipalias":
-		mwexec("/sbin/ifconfig " . get_real_interface($vip['interface']) . " delete {$vip['subnet']}");
+		if(does_interface_exist("$vip['interface']"))
+			mwexec("/sbin/ifconfig " . get_real_interface($vip['interface']) . " delete {$vip['subnet']}");
 		break;
 	case "carp":
 		$vipif = "vip" . $vip['vhid'];
-		mwexec("/sbin/ifconfig {$vipif} delete");
-                mwexec("/sbin/ifconfig {$vipif} down");
-		mwexec("/sbin/ifconfig {$vipif} destroy");
+		if(does_interface_exist("$vipif")) {
+			mwexec("/sbin/ifconfig {$vipif} delete");
+			mwexec("/sbin/ifconfig {$vipif} down");
+			mwexec("/sbin/ifconfig {$vipif} destroy");
+		}
 		break;
 	case "carpdev-dhcp":
 		$vipif = "vip" . $vip['vhid'];
-		mwexec("/sbin/ifconfig {$vipif} delete");
-                mwexec("/sbin/ifconfig {$vipif} down");
-		mwexec("/sbin/ifconfig {$vipif} destroy");
+		if(does_interface_exist("$vipif")) {
+			mwexec("/sbin/ifconfig {$vipif} delete");
+			mwexec("/sbin/ifconfig {$vipif} down");
+			mwexec("/sbin/ifconfig {$vipif} destroy");
+		}
 		break;
 	}
 
@@ -839,25 +844,28 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		 *	other interfaces! 
 		 */
 	case "dhcp":
-        	$pid = find_dhclient_process($interface);
-        	if($pid)
-                	mwexec("kill {$pid}");
-               	sleep(1);
-                unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
-		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete");
-		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
+		$pid = find_dhclient_process($interface);
+		if($pid)
+			mwexec("kill {$pid}");
+		sleep(1);
+		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
+		if(does_interface_exist("$realif")) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete");
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
+		}
 		break;
 	default:
-		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete");
-		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
+		if(does_interface_exist("$realif")) {
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete");
+			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
+		}
 		break;
 	}
 
 	if ($destroy == true) {
 		if (preg_match("/^tun|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $realif))
-                	mwexec("/sbin/ifconfig {$realif} destroy");
-	}
-	
+			mwexec("/sbin/ifconfig {$realif} destroy");
+	}	
 	return;
 }
 
@@ -1258,9 +1266,9 @@ function interface_carpdev_configure(&$vip) {
                 return;
         }
 
-	if (does_interface_exist($vipif))
+	if (does_interface_exist($vipif)) {
 		mwexec("/sbin/ifconfig {$vipif} delete");
-	else  {
+	} else {
 		$carpdevif = exec("/sbin/ifconfig carp create");
 		mwexec("/sbin/ifconfig {$carpdevif} name {$vipif}");
 		mwexec("/usr/sbin/ngctl name {$carpdevif}: {$vipif}");

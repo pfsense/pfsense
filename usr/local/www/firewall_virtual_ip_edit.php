@@ -50,6 +50,9 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require("filter.inc");
+require("shaper.inc");
+
 if (!is_array($config['virtualip']['vip'])) {
         $config['virtualip']['vip'] = array();
 }

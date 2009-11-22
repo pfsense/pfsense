@@ -39,14 +39,14 @@
 ##|*MATCH=firewall_schedule.php*
 ##|-PRIV
 
-
-
 $pgtitle = array("Firewall","Schedules");
 
 $dayArray = array ('Mon','Tues','Wed','Thur','Fri','Sat','Sun');
 $monthArray = array ('January','February','March','April','May','June','July','August','September','October','November','December');
 
 require("guiconfig.inc");
+require("filter.inc");
+require("shaper.inc");
 
 if (!is_array($config['schedules']['schedule']))
 	$config['schedules']['schedule'] = array();

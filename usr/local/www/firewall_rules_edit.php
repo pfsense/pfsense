@@ -41,8 +41,9 @@
 ##|*MATCH=firewall_rules_edit.php*
 ##|-PRIV
 
-
 require("guiconfig.inc");
+require("filter.inc");
+require("shaper.inc");
 
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp");
 $ifdisp = get_configured_interface_with_descr();

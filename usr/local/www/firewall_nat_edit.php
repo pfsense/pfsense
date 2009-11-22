@@ -41,6 +41,8 @@
 
 require("guiconfig.inc");
 require_once("itemid.inc");
+require("filter.inc");
+require("shaper.inc");
 
 if (!is_array($config['nat']['rule'])) {
 	$config['nat']['rule'] = array();

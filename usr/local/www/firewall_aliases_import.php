@@ -40,6 +40,8 @@
 $pgtitle = array("Firewall","Aliases","Import");
 
 require("guiconfig.inc");
+require("filter.inc");
+require("shaper.inc");
 
 aliases_sort();
 $a_aliases = &$config['aliases']['alias'];

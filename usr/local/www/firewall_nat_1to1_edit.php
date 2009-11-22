@@ -54,6 +54,8 @@ function nat_1to1_rules_sort() {
 }
 
 require("guiconfig.inc");
+require("filter.inc");
+require("shaper.inc");
 
 if (!is_array($config['nat']['onetoone'])) {
 	$config['nat']['onetoone'] = array();

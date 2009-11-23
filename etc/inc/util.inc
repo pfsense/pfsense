@@ -1066,15 +1066,36 @@ function color($color = "0m") {
 		 46m set background color to cyan
 		 47m set background color to white
 		 49m set background color to default (black)
-	*/
+	*/	
 	// Allow caching of TERM to 
 	// speedup subequence requests.
 	global $TERM;
 	if(!$TERM) 
 		$TERM=`/usr/bin/env | grep color`;
 	$ESCAPE=chr(27);
-	if($TERM) 
+	if($TERM) {
+		switch ($color) {
+		case "black":
+			return "{$ESCAPE}[30m"; 
+		case "red":
+			return "{$ESCAPE}[31m"; 
+		case "green":
+			return "{$ESCAPE}[32m"; 
+		case "yellow":
+			return "{$ESCAPE}[33m"; 
+		case "blue":
+			return "{$ESCAPE}[34m"; 
+		case "magenta":
+			return "{$ESCAPE}[35m"; 
+		case "cyan":
+			return "{$ESCAPE}[36m"; 
+		case "white":
+			return "{$ESCAPE}[37m"; 
+		case "default":
+			return "{$ESCAPE}[39m"; 
+		}
 		return "{$ESCAPE}[{$color}";
+	}
 }
 
 ?>

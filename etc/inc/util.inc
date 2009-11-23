@@ -978,7 +978,6 @@ function isAjax() {
  * RESULT
  *   returns 1 char of user input or null if no input.
  ******/
-
 function timeout($timer = 9) {
 	while(!isset($key)) {
 		if ($timer >= 9) { echo chr(8) . chr(8) . ($timer==9 ? chr(32) : null)  . "{$timer}";  }
@@ -995,6 +994,14 @@ function timeout($timer = 9) {
 	return $key;	
 }
 
+/****f* util/msort
+ * NAME
+ *   msort - sort array
+ * INPUTS
+ *   $array to be sorted, field to sort by, direction of sort
+ * RESULT
+ *   returns newly sorted array
+ ******/
 function msort($array, $id="id", $sort_ascending=true) {
 	$temp_array = array();
 	while(count($array)>0) {
@@ -1018,6 +1025,56 @@ function msort($array, $id="id", $sort_ascending=true) {
 	} else {
     	return array_reverse($temp_array);
 	}
+}
+
+/****f* util/color
+ * NAME
+ *   color - outputs a color code to the ansi terminal if supported
+ * INPUTS
+ *   color code
+ * RESULT
+ *   Outputs the ansi color sequence for the color specified.  Default resets terminal.
+ ******/
+function color($color = "0m") {
+	/*
+		Color codes available:
+		 0m reset; clears all colors and styles (to white on black)
+		 1m bold on (see below)
+		 3m italics on
+		 4m underline on
+		 7m inverse on; reverses foreground & background colors
+		 9m strikethrough on
+		 22m bold off (see below)
+		 23m italics off
+		 24m underline off
+		 27m inverse off
+		 29m strikethrough off
+		 30m set foreground color to black
+		 31m set foreground color to red
+		 32m set foreground color to green
+		 33m set foreground color to yellow
+		 34m set foreground color to blue
+		 35m set foreground color to magenta (purple)
+		 36m set foreground color to cyan
+		 37m set foreground color to white
+		 40m  set background color to black
+		 41m set background color to red
+		 42m set background color to green
+		 43m set background color to yellow
+		 44m set background color to blue
+		 45m set background color to magenta (purple)
+		 46m set background color to cyan
+		 47m set background color to white
+		 49m set background color to default (black)
+	*/
+	// Allow caching of TERM to 
+	// speedup subequence requests.
+	global $TERM;
+	if(!$TERM) 
+		$TERM=`/usr/bin/env | grep color`;
+	$ESCAPE=chr(27);
+	if($TERM) 
+		echo "{$ESCAPE}[{$color}";
 }
 
 ?>

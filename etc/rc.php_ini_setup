@@ -94,6 +94,8 @@ PHPMODULES="apc \
 	libxml \
 # user manager
 	mhash \
+# firewall_rules_edit.php
+	mbstring \
 # Page compression
 	zlib"
 
@@ -111,7 +113,7 @@ PHPMODULES="apc \
 #	sockets \
 #	Reflection \
 #	mysql \
-#	mbstring \
+
 #	bz2	\
 #	json \
 

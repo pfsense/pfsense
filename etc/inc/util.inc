@@ -1031,7 +1031,7 @@ function msort($array, $id="id", $sort_ascending=true) {
  * NAME
  *   color - outputs a color code to the ansi terminal if supported
  * INPUTS
- *   color code
+ *   color code or color name
  * RESULT
  *   Outputs the ansi color sequence for the color specified.  Default resets terminal.
  ******/
@@ -1072,27 +1072,27 @@ function color($color = "0m") {
 	global $TERM;
 	if(!$TERM) 
 		$TERM=`/usr/bin/env | grep color`;
-	$ESCAPE=chr(27);
 	if($TERM) {
+		$ESCAPE=chr(27);
 		switch ($color) {
-		case "black":
-			return "{$ESCAPE}[30m"; 
-		case "red":
-			return "{$ESCAPE}[31m"; 
-		case "green":
-			return "{$ESCAPE}[32m"; 
-		case "yellow":
-			return "{$ESCAPE}[33m"; 
-		case "blue":
-			return "{$ESCAPE}[34m"; 
-		case "magenta":
-			return "{$ESCAPE}[35m"; 
-		case "cyan":
-			return "{$ESCAPE}[36m"; 
-		case "white":
-			return "{$ESCAPE}[37m"; 
-		case "default":
-			return "{$ESCAPE}[39m"; 
+			case "black":
+				return "{$ESCAPE}[30m"; 
+			case "red":
+				return "{$ESCAPE}[31m"; 
+			case "green":
+				return "{$ESCAPE}[32m"; 
+			case "yellow":
+				return "{$ESCAPE}[33m"; 
+			case "blue":
+				return "{$ESCAPE}[34m"; 
+			case "magenta":
+				return "{$ESCAPE}[35m"; 
+			case "cyan":
+				return "{$ESCAPE}[36m"; 
+			case "white":
+				return "{$ESCAPE}[37m"; 
+			case "default":
+				return "{$ESCAPE}[39m"; 
 		}
 		return "{$ESCAPE}[{$color}";
 	}

@@ -1074,7 +1074,7 @@ function color($color = "0m") {
 		$TERM=`/usr/bin/env | grep color`;
 	$ESCAPE=chr(27);
 	if($TERM) 
-		echo "{$ESCAPE}[{$color}";
+		return "{$ESCAPE}[{$color}";
 }
 
 ?>

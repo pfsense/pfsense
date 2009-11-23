@@ -1311,25 +1311,58 @@ function interface_wireless_clone($if, $wlcfg) {
 	/*   Check to see if interface has been cloned as of yet.  
 	 *   If it has not been cloned then go ahead and clone it.
 	 */
-	$needs_clone = true;
-	$interface_num = substr($wlcfg['if'], 3);
-	if(does_interface_exist("{$wlcfg['if']}_wlan{$interface_num}")) {
-		$hostap_enabled = `/sbin/ifconfig | grep {$wlcfg['if']}_wlan{$interface_num} | grep hostap`;
-		if($hostap_enabled) 
-			$needs_clone = false;
-		else 
-			exec("/sbin/ifconfig {$wlcfg['if']}_wlan{$interface_num} destroy");
-	}
-	if($needs_clone == true) {
-		// Setup wireless nic
-		if($wlcfg['wireless']['mode'] == "hostap") 
+	$needs_clone = false;
+	/* FIXME: Interface num needs to be something else when we
+	 * integrate the wireless VAP support */
+	/* Setting it to 0 for the time being. */
+	$interface_num = 0;
+	switch($wlcfg['wireless']['mode']) {
+		 case "hostap":
 			$mode = "wlanmode hostap";
+			break;
+		 case "adhoc":
+			$mode = "wlanmode adhoc";
+			break;
+		 default:
+			$mode = "";
+			break;
+	}
+	if(does_interface_exist("{$wlcfg['if']}_wlan{$interface_num}")) {
+		exec("/sbin/ifconfig {$wlcfg['if']}_wlan{$interface_num}", $output, $ret);
+		$ifconfig_str = implode($output);
+		if(($wlcfg['wireless']['mode'] == "hostap") && (! preg_match("/hostap/si", $ifconfig_str))) {
+			log_error("Interface {$wlcfg['if']}_wlan{$interface_num} changed to hostap mode");
+			$needs_clone = true;
+		}
+		if(($wlcfg['wireless']['mode'] == "adhoc") && (! preg_match("/adhoc/si", $ifconfig_str))) {
+			log_error("Interface {$wlcfg['if']}_wlan{$interface_num} changed to adhoc mode");
+			$needs_clone = true;
+		}
+		if(($wlcfg['wireless']['mode'] == "bss") && (preg_match("/hostap|adhoc/si", $ifconfig_str))) {
+			log_error("Interface {$wlcfg['if']}_wlan{$interface_num} changed to infrastructure mode");
+			$needs_clone = true;
+		}
+	} else {
+		$needs_clone = true;
+	}
+
+	if($needs_clone == true) {
+		/* remove previous instance if it exists */
+		if(does_interface_exist("{$wlcfg['if']}_wlan{$interface_num}")) {
+			mwexec("/sbin/ifconfig {$wlcfg['if']}_wlan{$interface_num} destroy");			
+		}
+		log_error("Cloning new wireless interface {$wlcfg['if']}_wlan{$interface_num}");
 		// Create the new wlan interface. FreeBSD returns the new interface name.
 		// example:  wlan2
-		$newif = trim(`/sbin/ifconfig wlan create wlandev {$wlcfg['if']} {$mode}`);
-		// Rename the interface to $parentnic_wlan$parentnic#: EX: ath0_wlan0
-		exec("/sbin/ifconfig {$newif} name {$wlcfg['if']}_wlan{$interface_num}");
-		mwexec("/usr/sbin/ngctl name {$newif}: {$wlcfg['if']}_wlan{$interface_num}");
+		exec("/sbin/ifconfig wlan create wlandev {$wlcfg['if']} {$mode} 2>&1", $out, $ret);
+		if($ret <> 0) {
+			log_error("Failed to clone interface {$wlcfg['if']} with error code {$ret}, output {$out[0]}");
+		}
+		$newif = trim($out[0]);
+		// Rename the interface to {$parentnic}_wlan{$number}#: EX: ath0_wlan0
+		mwexec("/sbin/ifconfig {$newif} name {$wlcfg['if']}_wlan{$interface_num} 2>&1", false);
+		// FIXME: not sure what ngctl is for. Doesn't work.
+		// mwexec("/usr/sbin/ngctl name {$newif}: {$wlcfg['if']}_wlan{$interface_num}", false);
 	}
 }
 
@@ -1343,21 +1376,15 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
      *    do not change this routine from a shell script to individul exec commands.  -sullrich
 	 */
 
-	// Make read / writable (nano)
-	conf_mount_rw();
-
 	// Remove script file
 	unlink_if_exists("{$g['tmp_path']}/{$if}_setup.sh");
 
 	// Clone wireless nic if needed.
 	interface_wireless_clone($if, $wl);
-	
+
 	$fd_set = fopen("/tmp/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");
 	fwrite($fd_set, "# {$g['product_name']} wireless configuration script.\n\n");
-
-	fwrite($fd_set, "# enable shell debugging\n");
-	fwrite($fd_set, "set -x\n");
 
 	/* set values for /path/program */
 	$hostapd = "/usr/sbin/hostapd";
@@ -1367,100 +1394,119 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 
 	/* Set all wireless ifconfig variables (splitt up to get rid of needed checking) */
 
+	$wlcmd = array();
+	/* Make sure it's up */
+	$wlcmd[] = "up";
 	/* Set a/b/g standard */
-	$standard = "mode " . escapeshellarg($wlcfg['standard']);
+	$wlcmd[] = "mode " . escapeshellarg($wlcfg['standard']);
+
+	/* Set ssid */
+	if($wlcfg['ssid'])
+		$wlcmd[] = "ssid " .escapeshellarg($wlcfg['ssid']);
 
 	/* Set 802.11g protection mode */
-	$protmode = "protmode " . escapeshellarg($wlcfg['protmode']);
+	$wlcmd[] = "protmode " . escapeshellarg($wlcfg['protmode']);
 
 	/* set wireless channel value */
-	if(isset($wlcfg['channel']))
-		if($wlcfg['channel'] == "0")
-			$channel = "channel any";
-		else
-			$channel = "channel " . escapeshellarg($wlcfg['channel']);
+	if(isset($wlcfg['channel'])) {
+		if($wlcfg['channel'] == "0") {
+			$wlcmd[] = "channel any";
+		} else {
+			$wlcmd[] = "channel " . escapeshellarg($wlcfg['channel']);
+		}
+	}
 
 	/* set Distance value */
 	if($wlcfg['distance'])
 		$distance = escapeshellarg($wlcfg['distance']);
 
-	/* Set ssid */
-	if($wlcfg['ssid'])
-		$ssid = "ssid " . escapeshellarg($wlcfg['ssid']);
-
 	/* Set wireless hostap mode */
-	if ($wlcfg['mode'] == "hostap")
-		$hostapmode = "mediaopt hostap";
-	else
-		$hostapmode = "-mediaopt hostap";
+	if ($wlcfg['mode'] == "hostap") {
+		$wlcmd[] = "mediaopt hostap";
+	} else {
+		$wlcmd[] = "-mediaopt hostap";
+	}
 
 	/* Set wireless adhoc mode */
-	if ($wlcfg['mode'] == "adhoc")
-		$adhocmode = "mediaopt adhoc";
-	else
-		$adhocmode = "-mediaopt adhoc";
+	if ($wlcfg['mode'] == "adhoc") {
+		$wlcmd[] = "mediaopt adhoc";
+	} else {
+		$wlcmd[] = "-mediaopt adhoc";
+	}
 
 	/* Not neccesary to set BSS mode as this is default if adhoc and/or hostap is NOT set */
 
 	/* handle hide ssid option */
-	if(isset($wlcfg['hidessid']['enable']))
-		$hidessid = "hidessid";
-	else
-		$hidessid = "-hidessid";
+	if(isset($wlcfg['hidessid']['enable'])) {
+		$wlcmd[] = "hidessid";
+	} else {
+		$wlcmd[] = "-hidessid";
+	}
 
 	/* handle pureg (802.11g) only option */
-	if(isset($wlcfg['pureg']['enable']))
-		$pureg = "mode 11g pureg";
-	else
-		$pureg = "-pureg";
+	if(isset($wlcfg['pureg']['enable'])) {
+		$wlcmd[] = "mode 11g pureg";
+	} else {
+		$wlcmd[] = "-pureg";
+	}
 
 	/* enable apbridge option */
-	if(isset($wlcfg['apbridge']['enable']))
-		$apbridge = "apbridge";
-	else
-		$apbridge = "-apbridge";
+	if(isset($wlcfg['apbridge']['enable'])) {
+		$wlcmd[] = "apbridge";
+	} else {
+		$wlcmd[] = "-apbridge";
+	}
 
 	/* handle turbo option */
-	if(isset($wlcfg['turbo']['enable']))
-		$turbo = "mediaopt turbo";
-	else
-		$turbo = "-mediaopt turbo";
+	if(isset($wlcfg['turbo']['enable'])) {
+		$wlcmd[] = "mediaopt turbo";
+	} else {
+		$wlcmd[] = "-mediaopt turbo";
+	}
 
 	/* handle txpower setting */
-	if($wlcfg['txpower'] <> "")
-		$txpower = "txpower " . escapeshellarg($wlcfg['txpower']);
-
+	/* if($wlcfg['txpower'] <> "")
+		$wlcmd[] = "txpower " . escapeshellarg($wlcfg['txpower']);
+	*/
 	/* handle wme option */
-	if(isset($wlcfg['wme']['enable']))
-		$wme = "wme";
-	else
-		$wme = "-wme";
+	if(isset($wlcfg['wme']['enable'])) {
+		$wlcmd[] = "wme";
+	} else {
+		$wlcmd[] = "-wme";
+	}
 
 	/* set up wep if enabled */
-    if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
-		if($wlcfg['wpa']['auth_algs'] == "1")
-			$wepset .= "authmode open wepmode on ";
-		else if($wlcfg['wpa']['auth_algs'] == "2")
-			$wepset .= "authmode shared wepmode on ";
-		else if($wlcfg['wpa']['auth_algs'] == "3")
-			$wepset .= "authmode mixed wepmode on ";
+	$wepset = "";
+	if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
+		switch($wlcfg['wpa']['auth_algs']) {
+			case "1":
+				$wepset .= "authmode open wepmode on ";
+				break;
+			case "2":
+				$wepset .= "authmode shared wepmode on ";
+				break;
+			case "3":
+				$wepset .= "authmode mixed wepmode on ";
+		}
 		$i = 1;
 		foreach ($wlcfg['wep']['key'] as $wepkey) {
 			$wepset .= "wepkey " . escapeshellarg("{$i}:{$wepkey['value']}") . " ";
-			if (isset($wepkey['txkey']))
-				$wepset .= "weptxkey {$i} ";
+			if (isset($wepkey['txkey'])) {
+				$wlcmd[] = "weptxkey {$i} ";
+			}
 			$i++;
 		}
-    } else {
-    	$wepset .= "authmode open wepmode off ";
+		$wlcmd[] = $wepset;
+	} else {
+		$wlcmd[] = "authmode open wepmode off ";
 	}
 
 	/* generate wpa_supplicant/hostap config if wpa is enabled */
+	conf_mount_rw();
 
 	switch ($wlcfg['mode']) {
 		case 'bss':
 			if (isset($wlcfg['wpa']['enable'])) {
-
 				$wpa .= <<<EOD
 ctrl_interface={$g['varrun_path']}/wpa_supplicant
 ctrl_interface_group=0
@@ -1481,10 +1527,9 @@ EOD;
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
-				fwrite($fd_set, kill_wpasupplicant($if));
+				mwexec(kill_wpasupplicant("{$if}"));
 			}
-		break;
-
+			break;
 		case 'hostap':
 			if (isset($wlcfg['wpa']['enable'])) {
 				$wpa .= <<<EOD
@@ -1520,19 +1565,18 @@ EOD;
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
-				fwrite($fd_set, kill_hostapd($if));
 			}
-		break;
-
+			mwexec(kill_hostapd("{$if}"));
+			break;
 		case 'adhoc':
-			fwrite($fd_set, kill_hostapd($if));
-			fwrite($fd_set, kill_wpasupplicant($if));
-		break;
+			mwexec(kill_hostapd("{$if}"));
+			mwexec(kill_wpasupplicant("{$if}"));
+			break;
 	}
 
 	/*
 	 *    all variables are set, lets start up everything
-     */
+	 */
 
 	/* set ack timers according to users preference (if he/she has any) */
 	if($distance) {
@@ -1542,45 +1586,27 @@ EOD;
 
 	$standard_no_turbo = str_replace(" Turbo", "", $standard);
 
-	$settings = <<<EOD
-
-{$ifconfig} {$if} down
-{$ifconfig} {$if} {$standard_no_turbo}
-{$ifconfig} {$if} {$channel}
-{$ifconfig} {$if} {$turbo}
-{$ifconfig} {$if} {$ssid}
-{$ifconfig} {$if} {$hidessid}
-{$ifconfig} {$if} {$adhocmode}
-{$ifconfig} {$if} {$protmode}
-{$ifconfig} {$if} {$pureg}
-{$ifconfig} {$if} {$apbridge}
-{$ifconfig} {$if} {$wme}
-{$ifconfig} {$if} {$wepset}
-{$ifconfig} {$if} {$txpower}
-{$ifconfig} {$if} {$hostapmode}
-{$ifconfig} {$if} up
-
-EOD;
-
-	/* write out above <<EOD stuff */
-	fwrite($fd_set, $settings);
-
 	if (isset($wlcfg['wpa']['enable'])) {
-		if ($wlcfg['mode'] == "bss")
+		if ($wlcfg['mode'] == "bss") {
 			fwrite($fd_set, "{$wpa_supplicant} -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf\n");
-		if ($wlcfg['mode'] == "hostap")
+		}
+		if ($wlcfg['mode'] == "hostap") {
 			fwrite($fd_set, "{$hostapd} -B {$g['varetc_path']}/hostapd_{$if}.conf\n");
+		}
 	}
 
 	fclose($fd_set);
-
 	conf_mount_ro();
 
-	/* execute commands now in shell */
+	/* configure wireless */
+	$wlcmd_args = implode(" ", $wlcmd);
+	log_error("running $wlcmd_args");
+	mwexec("/sbin/ifconfig {$if} $wlcmd_args", false);
+
+	
+	sleep(1);
+	/* execute hostapd and wpa_supplicant if required in shell */
 	mwexec("/bin/sh /tmp/{$if}_setup.sh");
-	sleep(2);
-	// XXX: ermal - This seems like not needed!? 
-	//mwexec("/bin/sh /tmp/{$if}_setup.sh");
 
 	return 0;
 

@@ -79,7 +79,7 @@ if ($_POST) {
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 	
-	if (($_POST['host'] && !is_hostname($_POST['host']))) {
+	if (($_POST['hostname'] && !is_hostname($_POST['hostname']))) {
 		$input_errors[] = "A valid host name must be specified.";
 	}
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {

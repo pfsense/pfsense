@@ -80,6 +80,8 @@ PHPMODULES="apc \
 	standard \
 	suhosin \
 	libxml \
+# Firewall rules edit
+	ctype \
 	xml \
 	xmlreader \
 # user manager
@@ -102,7 +104,6 @@ PHPMODULES="apc \
 #	mysql \
 #	mbstring \
 #	bz2	\
-#	ctype \
 #	json \
 
 # Get a loaded module list in the stock php

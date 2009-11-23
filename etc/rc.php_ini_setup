@@ -67,25 +67,34 @@ fi
 # Define php modules.  Do not add .so, it will  
 # be done automatically by the script below.
 PHPMODULES="apc \
+# Downloading via HTTP/FTP (pkg mgr, etc)
 	curl \
 	date \
+# Internationalization 
 	gettext \
+# User manager
 	ldap \
 	openssl \
 	pcntl \
+# Regexs, PERL style!
 	pcre \
+# The mighty posix!
 	posix \
 	readline \
+# Login sessions
 	session \
 	standard \
+# Extra sanity seatbelts
 	suhosin \
-	libxml \
 # Firewall rules edit
 	ctype \
+# Config read/write
 	xml \
 	xmlreader \
+	libxml \
 # user manager
 	mhash \
+# Page compression
 	zlib"
 
 # Modules previously included.

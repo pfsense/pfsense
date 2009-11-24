@@ -345,7 +345,7 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= "\n";
 				$rrdupdatesh .= "# polling wireless for interface $ifname $realif \n";
 				$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$wireless N:\\\n";
-				$rrdupdatesh .= "`$ifconfig {$realif} list ap| $awk 'gsub(\"M\", \"\") {getline 2;print substr(\$5, 0, length(\$5)-2) \":\" $4 \":\" $3}'`\n";
+				$rrdupdatesh .= "`$ifconfig {$realif} list sta| $awk 'gsub(\"M\", \"\") {getline 2;print substr(\$5, 0, length(\$5)-2) \":\" $4 \":\" $3}'`\n";
 			}
 
 				/* QUEUES, set up the queues databases */

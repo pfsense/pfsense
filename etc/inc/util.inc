@@ -1072,6 +1072,8 @@ function color($color = "0m") {
 	global $TERM;
 	if(!$TERM) 
 		$TERM=`/usr/bin/env | grep color`;
+	if(!$TERM)
+		$TERM=`/usr/bin/env | grep cons25`;
 	if($TERM) {
 		$ESCAPE=chr(27);
 		switch ($color) {

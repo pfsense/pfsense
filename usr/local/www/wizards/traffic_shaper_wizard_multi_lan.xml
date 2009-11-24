@@ -39,7 +39,8 @@
 		<description>This wizard will guide you through setting up the pfSense traffic shaper for the situation where you have 1 WAN connection and multiple LAN connections.</description>
 		<fields>
 			<field>
-				<name>Enter number of LAN type connections</name>
+				<displayname>Enter number of LAN type connections</displayname>
+				<name>numberofconnections</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
 				<description>Number of local(LAN) interfaces you have</description>

@@ -218,12 +218,12 @@
 	<custom_php_command_before_form>
 	</custom_php_command_before_form>
 	<custom_add_php_command_late>
-	    interfaces_carp_configure();
+		interfaces_carp_setup();
 	</custom_add_php_command_late>	
 	<custom_php_resync_config_command>
 	</custom_php_resync_config_command>
 	<custom_delete_php_command>
-	    interfaces_carp_configure();
+		interfaces_carp_setup();
 	</custom_delete_php_command>
 	<custom_php_deinstall_command>
 	    unlink_if_exists("/usr/local/pkg/carp*");

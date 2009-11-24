@@ -1161,7 +1161,7 @@ function interface_carp_configure(&$vip) {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "interfaces_carp_configure() being called $mt\n";
+		echo "interface_carp_configure() being called $mt\n";
 	}
 
 	if ($vip['mode'] != "carp")

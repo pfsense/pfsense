@@ -33,6 +33,7 @@
 */
 
 require("guiconfig.inc");
+require_once("shaper.inc");
 require_once("rrd.inc");
 
 $pgtitle = array("System","RRD Graphs","Image viewer");

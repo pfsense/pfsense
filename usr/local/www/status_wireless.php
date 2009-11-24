@@ -153,28 +153,26 @@ display_top_tabs($tab_array);
 	print "<td><b><font color='#ffffff'>ERP</td>";
 	print "</tr>\n\n";
 
+	$states = array();
 	exec("/sbin/ifconfig {$if}_wlan0 list sta 2>&1", $states, $ret);
 	array_shift($states);
 
 	$counter=0;
 	foreach($states as $state) {
-		$state_fixed = str_replace("  ", " ", $state);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_fixed = str_replace("  ", " ", $state_fixed);
-		$state_split = split(" ", $state_fixed);
+		$split = preg_split("/[ ]+/i", $state);
+		/* Split the rest by using spaces for this line using the 2nd part */
 		print "<tr>";
-		print "<td>{$state_split[0]}</td>";
-		print "<td>{$state_split[1]}</td>";
-		print "<td>{$state_split[2]}</td>";
-		print "<td>{$state_split[3]}</td>";
-		print "<td>{$state_split[4]}</td>";
-		print "<td>{$state_split[5]}</td>";
-		print "<td>{$state_split[6]}</td>";
-		print "<td>{$state_split[7]}</td>";
-		print "<td>{$state_split[8]}</td>";
-		print "<td>{$state_split[9]}</td>";
+		print "<td>{$split[0]}</td>";
+		print "<td>{$split[1]}</td>";
+		print "<td>{$split[2]}</td>";
+		print "<td>{$split[3]}</td>";
+		print "<td>{$split[4]}</td>";
+		print "<td>{$split[5]}</td>";
+		print "<td>{$split[6]}</td>";
+		print "<td>{$split[7]}</td>";
+		print "<td>{$split[8]}</td>";
+		print "<td>{$split[9]}</td>";
 		print "</tr>\n";
-		print "<!-- $state_fixed -->\n";
 	}
 
 /* XXX: what stats to we get for adhoc mode? */ 

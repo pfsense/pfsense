@@ -643,7 +643,6 @@ function filter_flush_nat_table()
 
 function filter_flush_state_table() 
 {
-	global $config, $g;
 	return mwexec("/sbin/pfctl -F state");
 }
 

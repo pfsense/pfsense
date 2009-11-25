@@ -3607,8 +3607,10 @@ function layer7_start_l7daemon() {
 function generate_protocols_array() {
 	$protocols = return_dir_as_array("/usr/local/share/protocols");
 	if(is_array($protocols)) {
-		foreach($protocols as $key => $proto)
-			$protocols[$key] =& str_replace(".pat", "", $proto);
+		foreach($protocols as $key => $proto) {
+			if (strstr($proto, ".pat") != false)
+				$protocols[$key] =& str_replace(".pat", "", $proto);
+		}
 		sort($protocols);
 	}		
 	return $protocols;

@@ -1600,7 +1600,6 @@ EOD;
 
 	/* configure wireless */
 	$wlcmd_args = implode(" ", $wlcmd);
-	log_error("running $wlcmd_args");
 	mwexec("/sbin/ifconfig {$if} $wlcmd_args", false);
 
 	

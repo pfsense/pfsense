@@ -51,7 +51,10 @@ function allowedips_sort() {
 
 $pgtitle = array("Services","Captive portal","Edit allowed IP address");
 require("guiconfig.inc");
-require_once("captiveportal.inc");
+require("functions.inc");
+require("filter.inc");
+require("shaper.inc");
+require("captiveportal.inc");
 
 if (!is_array($config['captiveportal']['allowedip']))
 	$config['captiveportal']['allowedip'] = array();

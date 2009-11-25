@@ -40,6 +40,10 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require("functions.inc");
+require("filter.inc");
+require("shaper.inc");
+require("captiveportal.inc");
 
 if ($_GET['act'] == "del") {
 	captiveportal_disconnect_client($_GET['id']);

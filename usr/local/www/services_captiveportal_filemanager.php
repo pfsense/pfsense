@@ -51,8 +51,11 @@ function cpelements_sort() {
 
 $pgtitle = array("Services","Captive portal");
 
-require_once("guiconfig.inc");
-require_once("captiveportal.inc");
+require("guiconfig.inc");
+require("functions.inc");
+require("filter.inc");
+require("shaper.inc");
+require("captiveportal.inc");
 
 if (!is_array($config['captiveportal']['element']))
 	$config['captiveportal']['element'] = array();

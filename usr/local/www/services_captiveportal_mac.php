@@ -40,7 +40,10 @@
 
 $pgtitle = array("Services","Captive portal");
 require("guiconfig.inc");
-require_once("captiveportal.inc");
+require("functions.inc");
+require("filter.inc");
+require("shaper.inc");
+require("captiveportal.inc");
 
 if (!is_array($config['captiveportal']['passthrumac']))
 	$config['captiveportal']['passthrumac'] = array();

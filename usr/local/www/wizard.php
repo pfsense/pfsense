@@ -36,6 +36,8 @@
 
 
 require("guiconfig.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;

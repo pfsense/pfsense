@@ -49,16 +49,15 @@ function step2_stepbeforeformdisplay() {
 
 		$numberofinterfaces = 0;
 		$iflist = array();
-		foreach ($config['interfaces'] as $if => $ifdesc) {
-			if (!is_altq_capable($ifdesc['if']))
-				continue;
-			if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan")
-				continue;
-			if ($if == "wan")
-				continue;
-			$numberofinterfaces++;
-			$iflist[] = $if;
-		}
+		$iflisttmp = get_configured_interface_with_descr();
+                foreach ($iflisttmp as $if => $ifdesc) {
+                        if (!is_altq_capable(get_real_interface($if)))
+                                continue;
+                        if ($if == "lan")
+                                continue;
+                        $numberofinterfaces++;
+                        $iflist[$if] = $ifdesc;
+                }
 		$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
 		if ($numberofconnections > $numberofinterfaces) {
 			$message=gettext("You do not have {$numberofconnections} of local interfaces!");
@@ -176,12 +175,13 @@ function step2_stepbeforeformdisplay() {
 			$field['type'] = "select";
 			$field['typehint'] = "Interface of this connection.";
 			$field['options']['option'] = array();
-			foreach ($iflist as $ifname) {
-				$opts = array();
-				$opts['name'] = $ifname;
-				$opts['value'] = $ifname;
-				$field['options']['option'][] = $opts;
-			}
+			foreach ($iflist as $ifname => $ifdescr) {
+                                $opts = array();
+                                $opts['displayname'] = $ifdescr;
+                                $opts['name'] = $ifname;
+                                $opts['value'] = $ifname;
+                                $field['options']['option'][] = $opts;
+                        }
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}interface";
 			$fields[] = $field;
 

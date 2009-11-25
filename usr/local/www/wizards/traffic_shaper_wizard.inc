@@ -107,7 +107,7 @@ function step2_stepbeforeformdisplay() {
 
 			$field = array();
 			$interface_friendly = $i+1;
-			$field['name'] = "Setup connection speed and scheduler information for WAN #{$interface_friendly}";
+			$field['name'] = "Setup connection speed and scheduler information for WAN ({$interface_friendly})";
 			$field['type'] = "listtopic";
 			$fields[] = $field;
 			
@@ -115,7 +115,7 @@ function step2_stepbeforeformdisplay() {
 			$field['displayname'] = "Interface";
 			$field['name'] = "conn{$i}interface";
 			$field['type'] = "select";
-			$field['typehint'] = "Interface of connection #{$interface_friendly}.";
+			$field['typehint'] = "Interface of connection ({$interface_friendly}).";
 			$field['options']['option'] = array();
 			foreach ($iflist as $ifname => $ifdescr) {
 				$opts = array();

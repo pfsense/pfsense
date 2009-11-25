@@ -45,6 +45,9 @@ require("guiconfig.inc");
 require("filter.inc");
 require("shaper.inc");
 
+if (!is_array($config['nat']['advancedoutbound']))
+        $config['nat']['advancedoutbound'] = array();
+
 if (!is_array($config['nat']['advancedoutbound']['rule'])) {
 	$config['nat']['advancedoutbound']['rule'] = array();
 }

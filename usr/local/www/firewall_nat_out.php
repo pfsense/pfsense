@@ -46,6 +46,9 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+if (!is_array($config['nat']['advancedoutbound']))
+	$config['nat']['advancedoutbound'] = array();
+
 if (!is_array($config['nat']['advancedoutbound']['rule']))
 	$config['nat']['advancedoutbound']['rule'] = array();
 

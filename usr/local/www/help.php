@@ -179,20 +179,27 @@ $helppages = array(
 	'vpn_ipsec_edit.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
 	'vpn_ipsec_keys.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
 	'vpn_ipsec_keys_edit.php' => 'http://doc.pfsense.org/index.php/IPsec_Tunnels',
-
+	'services_captiveportal.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
+	'services_captiveportal_filemanager.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
+	'services_captiveportal_ip.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
+	'services_captiveportal_ip_edit.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
+	'services_captiveportal_mac.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
+	'services_captiveportal_mac_edit.php' => 'http://doc.pfsense.org/index.php/Captive_Portal',
+	'status_captiveportal.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Status',
+	'status_captiveportal_test.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Status',
+	'services_captiveportal_users.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal', # 1.2.x only
+	'services_captiveportal_users_edit.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal', # 1.2.x only
 	'services_captiveportal_vouchers.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Vouchers',
 	'services_captiveportal_vouchers_edit.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Vouchers',
 	'status_captiveportal_voucher_rolls.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Vouchers',
 	'status_captiveportal_vouchers.php' => 'http://doc.pfsense.org/index.php/Captive_Portal_Vouchers',
-
-	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
-
-	'status_openvpn.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
-	'vpn_openvpn_client.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
-	'vpn_openvpn_csc.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
-	'vpn_openvpn_server.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
-	'openvpn-client-export.xml' => 'http://doc.pfsense.org/index.php/Category:OpenVPN', /* Package */
-	/* These seem to be from 1.2.x only */
+	'status_openvpn.php' => 'http://doc.pfsense.org/index.php/OpenVPN_Status',
+	'vpn_openvpn_client.php' => 'http://doc.pfsense.org/index.php/OpenVPN_Settings',
+	'vpn_openvpn_csc.php' => 'http://doc.pfsense.org/index.php/OpenVPN_Settings',
+	'vpn_openvpn_server.php' => 'http://doc.pfsense.org/index.php/OpenVPN_Settings',
+	'openvpn-client-export.xml' => 'http://doc.pfsense.org/index.php/OpenVPN_Client_Exporter', /* Package */
+	'vpn_openvpn_export.php' => 'http://doc.pfsense.org/index.php/OpenVPN_Client_Exporter', /* Package */
+	/* These last few OpenVPN files seem to be from 1.2.x only */
 	'vpn_openvpn.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
 	'vpn_openvpn_ccd.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
 	'vpn_openvpn_ccd_edit.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
@@ -204,16 +211,7 @@ $helppages = array(
 	'vpn_openvpn_srv.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
 	'vpn_openvpn_srv_edit.php' => 'http://doc.pfsense.org/index.php/Category:OpenVPN',
 
-	'services_captiveportal.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
-	'services_captiveportal_filemanager.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
-	'services_captiveportal_ip.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
-	'services_captiveportal_ip_edit.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
-	'services_captiveportal_mac.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
-	'services_captiveportal_mac_edit.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
-	'services_captiveportal_users.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal', # 1.2.x only
-	'services_captiveportal_users_edit.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal', # 1.2.x only
-	'status_captiveportal.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
-	'status_captiveportal_test.php' => 'http://doc.pfsense.org/index.php/Category:Captive_Portal',
+	/* Below here are pages that may need some cleanup or have not been fully looked at yet */
 
 	'carp_status.php' => 'http://doc.pfsense.org/index.php/Category:CARP',
 	'carp.xml' => 'http://doc.pfsense.org/index.php/Category:CARP',

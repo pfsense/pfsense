@@ -183,6 +183,10 @@ if ($_POST['apply']) {
 				(substr($ifname, 0, 3) == 'opt')) {
 				
 				if (!is_array($ifport)) {
+					$reloadif = false;
+					if (!empty($config['interfaces']['if']) && $config['interfaces']['if'] <> $ifport)
+						/* Mark this to be reconfigured in any case. */
+						$reloadif = true;
 					$config['interfaces'][$ifname]['if'] = $ifport;
 					if (preg_match('/^ppp_(.+)$/', $ifport, $matches)) {
 						$config['interfaces'][$ifname]['pointtopoint'] = true;
@@ -200,6 +204,9 @@ if ($_POST['apply']) {
 					/* make sure there is a descr for all interfaces */
 					if (!isset($config['interfaces'][$ifname]['descr']))
 						$config['interfaces'][$ifname]['descr'] = strtoupper($ifname);
+					if ($reloadif == true)
+						/* Reload all for the interface. */
+						interface_configure($ifname, true);
 				}
 			}
 		}

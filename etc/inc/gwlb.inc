@@ -225,13 +225,17 @@ function return_gateways_status() {
 	return($status);
 }
 
-function return_gateways_array() {
+function return_gateways_array($disabled = false) {
 	global $config;
 
 	$gateways_arr = array();
 
 	/* Loop through all interfaces with a gateway and add it to a array */
-	$iflist = get_configured_interface_with_descr();
+	if ($disabled == false)
+		$iflist = get_configured_interface_with_descr();
+	else
+		$iflist = get_configured_interface_with_descr(false, true);
+		
 	foreach($iflist as $ifname => $friendly ) {
 		if(interface_has_gateway($ifname)) {
 			$gateway = array();

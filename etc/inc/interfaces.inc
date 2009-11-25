@@ -2276,7 +2276,7 @@ function convert_real_interface_to_friendly_descr($interface) {
         $ifdesc = convert_real_interface_to_friendly_interface_name("{$interface}");
 
         if ($ifdesc) {
-                $iflist = get_configured_interface_with_descr();
+                $iflist = get_configured_interface_with_descr(false, true);
                 return $iflist[$ifdesc];
         }
 

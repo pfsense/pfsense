@@ -184,7 +184,7 @@ if ($_POST['apply']) {
 				
 				if (!is_array($ifport)) {
 					$reloadif = false;
-					if (!empty($config['interfaces']['if']) && $config['interfaces']['if'] <> $ifport)
+					if (!empty($config['interfaces'][$ifname]['if']) && $config['interfaces'][$ifname]['if'] <> $ifport)
 						/* Mark this to be reconfigured in any case. */
 						$reloadif = true;
 					$config['interfaces'][$ifname]['if'] = $ifport;
@@ -212,8 +212,6 @@ if ($_POST['apply']) {
 		}
 	
 		write_config();
-		
-		touch("/tmp/reload_interfaces");
 	}
 }
 

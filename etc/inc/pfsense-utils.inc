@@ -1268,7 +1268,12 @@ function get_interface_info($ifdescr) {
 	if ($ifinfo['status'] == "up") {
 		/* try to determine media with ifconfig */
 		unset($ifconfiginfo);
-		exec("/sbin/ifconfig " . $ifinfo['hwif'], $ifconfiginfo);
+		exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
+		$wifconfiginfo = array();
+		if(is_interface_wireless($ifdescr)) {
+			exec("/sbin/ifconfig {$ifinfo['if']} list sta", $wifconfiginfo);
+			array_shift($wifconfiginfo);
+		}
 		$matches = "";
 		foreach ($ifconfiginfo as $ici) {
 
@@ -1297,6 +1302,19 @@ function get_interface_info($ifdescr) {
 				else
 					$ifinfo['ssid'] = $matches[1];
 			}
+		}
+		foreach($wifconfiginfo as $ici) {
+			$elements = preg_split("/[ ]+/i", $ici);
+			if ($elements[0] != "") {
+				$ifinfo['bssid'] = $elements[0];
+			}
+			if ($elements[3] != "") {
+				$ifinfo['rate'] = $elements[3];
+			}
+			if ($elements[4] != "") {
+				$ifinfo['rssi'] = $elements[4];
+			}
+
 		}
 		/* lookup the gateway */
 		if (interface_has_gateway($if)) 

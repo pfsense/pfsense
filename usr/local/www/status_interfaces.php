@@ -183,6 +183,24 @@ include("head.inc");
                 <td width="78%" class="listr">
                   <?=htmlspecialchars($ifinfo['ssid']);?>
                 </td>
+              </tr><?php endif; ?><?php if ($ifinfo['bssid']): ?>
+              <tr>
+                <td width="22%" class="vncellt">BSSID</td>
+                <td width="78%" class="listr">
+                  <?=htmlspecialchars($ifinfo['bssid']);?>
+                </td>
+              </tr><?php endif; ?><?php if ($ifinfo['rate']): ?>
+              <tr>
+                <td width="22%" class="vncellt">Rate</td>
+                <td width="78%" class="listr">
+                  <?=htmlspecialchars($ifinfo['rate']);?>
+                </td>
+              </tr><?php endif; ?><?php if ($ifinfo['rssi']): ?>
+              <tr>
+                <td width="22%" class="vncellt">RSSI</td>
+                <td width="78%" class="listr">
+                  <?=htmlspecialchars($ifinfo['rssi']);?>
+                </td>
               </tr><?php endif; ?>
               <tr>
                 <td width="22%" class="vncellt">In/out packets</td>

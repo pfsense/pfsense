@@ -33,6 +33,8 @@
 	/* parse the configuration and include all functions used below */
 	require_once("config.inc");
 	require_once("functions.inc");
+	require_once("filter.inc");
+	require_once("captiveportal.inc");
 
 	$fp = fopen('php://stdin', 'r');
 

@@ -174,7 +174,7 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
                 return;
         }
 
-        $if = $vlan['if'];
+        $qinqif = $vlan['if'];
         $vlanif = empty($vlan['vlanif']) ? "vlan{$vlan['tag']}" : $vlan['vlanif'];
         $tag = $vlan['tag'];
         if(empty($if)) {
@@ -188,23 +188,23 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
         } else
                 $exec = false;
         /* make sure the parent is converted to ng_vlan(4) and is up */
-        interfaces_bring_up($if);
+        interfaces_bring_up($qinqif);
         /* Since we are going to add ng_vlan(4) try to enable all that hardware supports. */
-        mwexec("/sbin/ifconfig {$if} vlanhwtag\n");
-        mwexec("/sbin/ifconfig {$if} vlanmtu\n");
+        mwexec("/sbin/ifconfig {$qinqif} vlanhwtag\n");
+        mwexec("/sbin/ifconfig {$qinqif} vlanmtu\n");
 
         if (!empty($vlanif) && does_interface_exist($vlanif)) {
-                fwrite($fd, "shutdown {$if}qinq:\n");
-                exec("/usr/sbin/ngctl msg {$if}qinq: gettable", $result);
+                fwrite($fd, "shutdown {$qinqif}qinq:\n");
+                exec("/usr/sbin/ngctl msg {$qinqif}qinq: gettable", $result);
                 if (empty($result)) {
-                        fwrite($fd, "mkpeer {$if}: vlan lower downstream\n");
-                        fwrite($fd, "name {$if}:lower {$if}qinq\n");
-                        fwrite($fd, "connect {$if}: {$if}qinq: upper nomatch\n");
+                        fwrite($fd, "mkpeer {$qinqif}: vlan lower downstream\n");
+                        fwrite($fd, "name {$qinqif}:lower {$qinqif}qinq\n");
+                        fwrite($fd, "connect {$qinqif}: {$qinqif}qinq: upper nomatch\n");
                 }
         } else {
-                fwrite($fd, "mkpeer {$if}: vlan lower downstream\n");
-                fwrite($fd, "name {$if}:lower {$if}qinq\n");
-                fwrite($fd, "connect {$if}: {$if}qinq: upper nomatch\n");
+                fwrite($fd, "mkpeer {$qinqif}: vlan lower downstream\n");
+                fwrite($fd, "name {$qinqif}:lower {$qinqif}qinq\n");
+                fwrite($fd, "connect {$qinqif}: {$qinqif}qinq: upper nomatch\n");
         }
 
         if (!$g['booting']) {
@@ -216,11 +216,11 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
                 }
                 fwrite($fd, "shutdown vlanh{$tag}:\n");
         }
-        fwrite($fd, "mkpeer {$if}qinq: eiface vlan{$tag} ether\n");
-        fwrite($fd, "name {$if}qinq:vlan{$tag} vlanh{$tag}\n");
-        fwrite($fd, "msg {$if}qinq: addfilter { vlan={$tag} hook=\"vlan{$tag}\" }\n");
+        fwrite($fd, "mkpeer {$qinqif}qinq: eiface vlan{$tag} ether\n");
+        fwrite($fd, "name {$qinqif}qinq:vlan{$tag} vlanh{$tag}\n");
+        fwrite($fd, "msg {$qinqif}qinq: addfilter { vlan={$tag} hook=\"vlan{$tag}\" }\n");
         fwrite($fd, "msg vlanh{$tag}: setifname \"{$vlanif}\"\n");
-        $macaddr = get_interface_mac($if);
+        $macaddr = get_interface_mac($qinqif);
         fwrite($fd, "msg {$vlanif}: setenaddr {$macaddr}\n");
 
         interfaces_bring_up($vlanif);
@@ -228,8 +228,8 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
         /* invalidate interface cache */
         get_interface_arr(true);
 
-        if (!stristr($if, "vlan"))
-                mwexec("/sbin/ifconfig {$if} promisc\n");
+        if (!stristr($qinqif, "vlan"))
+                mwexec("/sbin/ifconfig {$qinqif} promisc\n");
 
         if (!empty($vlan['members'])) {
                 $members = explode(" ", $vlan['members']);
@@ -245,7 +245,7 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
                 mwexec("/usr/sbin/ngctl -f {$g['tmp_path']}/netgraphcmd");
         }
 
-        interfaces_bring_up($if);
+        interfaces_bring_up($qinqif);
         if (!empty($vlan['members'])) {
                 $members = explode(" ", $vlan['members']);
                 foreach ($members as $qif)
@@ -2776,8 +2776,8 @@ function get_interface_mtu($interface) {
 function get_interface_mac($interface) {
 	$mac = array();
         exec("/sbin/ifconfig {$interface} | /usr/bin/awk '/ether/ {print $2}'", $mac);
-        if(is_macaddr($mac)) {
-                return trim($mac);
+        if(is_macaddr($mac[0])) {
+                return trim($mac[0]);
         } else {
                 return "";
         }

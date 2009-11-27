@@ -186,9 +186,18 @@ if ($_POST) {
 				$data = "";
 
 				if($options == "nopackages") {
+					if(!$_POST['backuparea']) {
+						/* backup entire configuration */
+						$data = file_get_contents("{$g['conf_path']}/config.xml");
+					} else {
+						/* backup specific area of configuration */
+						$data = backup_config_section($_POST['backuparea']);
+						$name = "{$_POST['backuparea']}-{$name}";
+					}
 					$sfn = "{$g['tmp_path']}/config.xml.nopkg";
-					exec("sed '/<installedpackages>/,/<\/installedpackages>/d' /conf/config.xml > {$sfn}");
-					$data = file_get_contents($sfn);
+					file_put_contents($sfn, $data);
+					exec("sed '/<installedpackages>/,/<\/installedpackages>/d' {$sfn} > {$sfn}-new");
+					$data = file_get_contents($sfn . "-new");					
 				} else {
 					if(!$_POST['backuparea']) {
 						/* backup entire configuration */

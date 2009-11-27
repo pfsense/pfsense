@@ -837,6 +837,16 @@ function radius_backed($username, $passwd){
 	return $ret;
 }
 
+function get_user_expiration_date($username) {
+	global $config;
+	foreach($config['system']['user']  as $user) {
+		if($user == $username) {
+			if($user['expires']) 
+				return $user['expires'];
+		}
+	}
+}
+
 function session_auth($backing) {
 	global $g, $debug, $HTTP_SERVER_VARS, $userindex, $config;
 
@@ -845,10 +855,17 @@ function session_auth($backing) {
 	/* Validate incoming login request */
 	if (isset($_POST['login'])) {
 		if ($backing($_POST['usernamefld'], $_POST['passwordfld'])) {
-			$_SESSION['Logged_In'] = "True";
-			$_SESSION['Username'] = $_POST['usernamefld'];
-			$_SESSION['last_access'] = time();
-			log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
+			$acct_expires = get_user_expiration_date($_POST['usernamefld']);
+			if($acct_expires) {
+				if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($acct_expires)))) {
+					log_error("Account is now expired.");
+				}
+			} else {
+				$_SESSION['Logged_In'] = "True";
+				$_SESSION['Username'] = $_POST['usernamefld'];
+				$_SESSION['last_access'] = time();
+				log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
+			}
 		} else {
 			/* give the user a more detailed error message */
 			if (isset($userindex[$_POST['usernamefld']])) {

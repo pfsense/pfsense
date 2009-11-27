@@ -48,6 +48,7 @@ require("shaper.inc");
 require("ipsec.inc");
 require("vpn.inc");
 require("captiveportal.inc");
+require("rrd.inc");
 
 /*
 	In this file, "port" refers to the physical port name,
@@ -215,6 +216,8 @@ if ($_POST['apply']) {
 		}
 	
 		write_config();
+		
+		enable_rrd_graphing();
 	}
 }
 

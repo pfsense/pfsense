@@ -109,8 +109,14 @@ if ($_POST) {
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 	
-	if (($_POST['hostname'] && !is_hostname($_POST['hostname']))) {
-		$input_errors[] = "A valid host name must be specified.";
+	if ($_POST['hostname']) {
+		if (!is_hostname($_POST['hostname'])) {
+			$input_errors[] = "A valid host name must be specified.";
+		} else {
+			if (strpos($_POST['hostname'],'.')) {
+				$input_errors[] = "A valid hostname is specified, but the domain name part should be omitted";
+			}
+		}
 	}
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 		$input_errors[] = "A valid IP address must be specified.";

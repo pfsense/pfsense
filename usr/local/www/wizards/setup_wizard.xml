@@ -323,11 +323,17 @@
 		</field>
 	</fields>
 	<stepsubmitbeforesave>
-		if($_POST['selectedtype'] == "Static") { } else {
-			$_POST['ipaddress'] = $_POST['selectedtype'];
-			$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
-			write_config();
-		}
+		<![CDATA[
+			if($_POST['selectedtype'] == "Static") { 
+			
+			} else {
+				$_POST['ipaddress'] = $_POST['selectedtype'];
+				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
+				write_config();
+				if(!$config['interfaces']['lan']) 
+					Header("/wizard.php?xml=setup_wizard.xml&stepid=5&next=Next");
+			}
+		]]>
 	</stepsubmitbeforesave>
 </step>
 <step>

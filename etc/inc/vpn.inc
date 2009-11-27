@@ -1057,12 +1057,14 @@ EOD;
 				$acctport = $authport + 1;
 				$mpdconf .=<<<EOD
 	set radius server {$pptpdcfg['radius']['server']['ip']} "{$pptpdcfg['radius']['server']['secret']}" {$authport} {$acctport}
+
 EOD;
 			if (isset ($pptpdcfg['radius']['server2']['enable'])) {
 				$authport = (isset($pptpdcfg['radius']['server2']['port']) && strlen($pptpdcfg['radius']['server2']['port']) > 1) ? $pptpdcfg['radius']['server2']['port'] : 1812;
 				$acctport = $authport + 1;
 				$mpdconf .=<<<EOD
 	set radius server {$pptpdcfg['radius']['server2']['ip']} "{$pptpdcfg['radius']['server2']['secret']}" {$authport} {$acctport}
+
 EOD;
 			}
 			$mpdconf .=<<<EOD

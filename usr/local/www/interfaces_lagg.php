@@ -130,7 +130,7 @@ include("head.inc");
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
 				  Note:<br>
 				  </strong></span>
-				  To add an interface to a lagg, it must be un-assigned.
+				  Lagg allows for link aggregation, for bonding and fault tolerance. Only un-assigned interfaces can be added to lagg.
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

@@ -937,7 +937,6 @@ function is_interface_mismatch() {
                         $i++;
                 }
                 else if (does_interface_exist($ifcfg['if']) == false) {
-                        file_notice("interfaces", "{$ifcfg['if']} is not present anymore on the system, you need to reassign interfaces or take appropriate actions.", "System", "", 2);
                         $do_assign = true;
                 } else
                         $i++;

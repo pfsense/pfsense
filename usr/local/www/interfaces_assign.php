@@ -42,9 +42,11 @@
 
 $pgtitle = array("Interfaces", "Assign network ports");
 require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
+require("functions.inc");
+require("filter.inc");
+require("shaper.inc");
+require("ipsec.inc");
+require("vpn.inc");
 
 /*
 	In this file, "port" refers to the physical port name,

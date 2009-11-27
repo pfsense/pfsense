@@ -93,6 +93,11 @@ if ($_POST) {
 	if ($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) {
 		$input_errors[] = "A valid gateway IP address must be specified.";
 	}
+	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) {
+		if(! ip_in_subnet($_POST['gateway']), get_interface_subnet($interface)) {
+			$input_errors[] = "The Address {$_POST['gateway']} does not lie in the interface subnet";                
+		}
+	}
 	if ((($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']))) {
 		$input_errors[] = "A valid monitor IP address must be specified.";
 	}

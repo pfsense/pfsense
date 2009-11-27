@@ -285,7 +285,7 @@ function enable_change(enable_change) {
 	<tr>
 	  <td width="22%" valign="top" class="vncellreq">Interface</td>
 	  <td width="78%" class="vtable">
-		<select name="cinterface[]" multiple="true" size="3" class="formselect" id="cinterface">
+		<select name="cinterface[]" multiple="true" size="<?count($config['interfaces'])?>" class="formselect" id="cinterface">
 		  <?php 
 		  $interfaces = get_configured_interface_with_descr();
 		  foreach ($interfaces as $iface => $ifacename): ?>

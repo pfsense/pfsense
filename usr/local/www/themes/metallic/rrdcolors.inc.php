@@ -43,7 +43,7 @@ $colorqueuesdropup = array('000000','7B0000','990000','BB0000','CC0000','D90000'
 $colorqueuesdropdown = array('000000','7B7B7B','999999','BBBBBB','CCCCCC','D9D9D9','EEEEEE','FFFFFF','CCCCCC');
 $colorqualityrtt = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 $colorqualityloss = "ee0000";
-$colorwireless = array('990000','a83c3c','b36666');
+$colorwireless = array('333333','a83c3c','999999');
 $colorspamdtime = array('DDDDFF', 'AAAAFF', 'DDDDFF', '000066');
 $colorspamdconn = array('00AA00BB', 'FFFFFFFF', '00660088', 'FFFFFF88', '006600');
 

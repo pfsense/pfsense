@@ -169,7 +169,7 @@ if(file_exists($rrdcolors)) {
 	$colorqueuesdropdown = array('000000','7B7B7B','999999','BBBBBB','CCCCCC','D9D9D9','EEEEEE','FFFFFF','CCCCCC');
 	$colorqualityrtt = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 	$colorqualityloss = "ee0000";
-	$colorwireless = array('990000','a83c3c','b36666');
+	$colorwireless = array('333333','a83c3c','999999');
 	$colorspamdtime = array('DDDDFF', 'AAAAFF', 'DDDDFF', '000066'); 
 	$colorspamdconn = array('00AA00BB', 'FFFFFFFF', '00660088', 'FFFFFF88', '006600');
 }
@@ -483,25 +483,25 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 	$graphcmd .= "DEF:\"$curif-snr=$rrddbpath$curdatabase:snr:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-rate=$rrddbpath$curdatabase:rate:AVERAGE\" ";
 	$graphcmd .= "DEF:\"$curif-channel=$rrddbpath$curdatabase:channel:AVERAGE\" ";
-	$graphcmd .= "LINE1:\"$curif-snr#{$colorwireless[0]}:$curif-snr\" ";
-	$graphcmd .= "LINE1:\"$curif-rate#{$colorwireless[1]}:$curif-rate\" ";
-	$graphcmd .= "LINE1:\"$curif-channel#{$colorwireless[2]}:$curif-channel\" ";
+	$graphcmd .= "LINE2:\"$curif-snr#{$colorwireless[0]}:$curif-snr\" ";
+	$graphcmd .= "LINE2:\"$curif-rate#{$colorwireless[1]}:$curif-rate\" ";
+	$graphcmd .= "LINE2:\"$curif-channel#{$colorwireless[2]}:$curif-channel\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t  maximum       average       current        period\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t   maximum\t\t average\t     current\\n\" ";
 	$graphcmd .= "COMMENT:\"SNR\t\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-snr:MAX:%7.2lf %s dBi\" ";
-	$graphcmd .= "GPRINT:\"$curif-snr:AVERAGE:%7.2lf %S dBi\" ";
-	$graphcmd .= "GPRINT:\"$curif-snr:LAST:%7.2lf %S dBi\" ";
+	$graphcmd .= "GPRINT:\"$curif-snr:MAX:%7.2lf dBi  \" ";
+	$graphcmd .= "GPRINT:\"$curif-snr:AVERAGE:%7.2lf dBi  \" ";
+	$graphcmd .= "GPRINT:\"$curif-snr:LAST:%7.2lf dBi\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"RATE\t\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-rate:MAX:%7.2lf %s Mb \" ";
-	$graphcmd .= "GPRINT:\"$curif-rate:AVERAGE:%7.2lf %S Mb \" ";
-	$graphcmd .= "GPRINT:\"$curif-rate:LAST:%7.2lf %S Mb \" ";
+	$graphcmd .= "GPRINT:\"$curif-rate:MAX:%7.2lf Mb   \" ";
+	$graphcmd .= "GPRINT:\"$curif-rate:AVERAGE:%7.2lf Mb   \" ";
+	$graphcmd .= "GPRINT:\"$curif-rate:LAST:%7.2lf Mb\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"Channel\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-channel:MAX:%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-channel:AVERAGE:%7.2lf %s    \" ";
-	$graphcmd .= "GPRINT:\"$curif-channel:LAST:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-channel:MAX:%7.2lf      \" ";
+	$graphcmd .= "GPRINT:\"$curif-channel:AVERAGE:%7.2lf      \" ";
+	$graphcmd .= "GPRINT:\"$curif-channel:LAST:%7.2lf\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
 }

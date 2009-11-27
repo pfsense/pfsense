@@ -213,7 +213,7 @@ if (isAllowedPage("system_usermanager")) {
 		if ($_POST['expires']){
 			if(strtotime($_POST['expires']) > 0){
 				if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($_POST['expires'])))) {
-					$input_errors[] = "The expiration date lies in the past.";
+					// Allow items to lie in the past which ends up disabling.
 				} else {
 					//convert from any strtotime compatible date to MM/DD/YYYY
 					$expdate = strtotime($_POST['expires']);

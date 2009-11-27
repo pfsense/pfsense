@@ -859,6 +859,7 @@ function session_auth($backing) {
 			if($acct_expires) {
 				if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($acct_expires)))) {
 					log_error("Account is now expired.");
+					return;
 				}
 			} else {
 				$_SESSION['Logged_In'] = "True";

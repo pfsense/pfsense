@@ -103,15 +103,15 @@ if ($_POST) {
 			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway))
 				continue;
 
-			if (($gateway['name'] <> "") && (in_array($gateway, $_POST['name']))) {
+			if (($gateway['name'] <> "") && (in_array($_POST['name'], $gateway))) {
 				$input_errors[] = "The name \"{$_POST['name']}\" already exists.";
 				break;
 			}
-			if (($gateway['gateway'] <> "") && (in_array($gateway, $_POST['gateway']))) {
+			if (($gateway['gateway'] <> "") && (in_array($_POST['gateway'], $gateway))) {
 				$input_errors[] = "The IP address \"{$_POST['gateway']}\" already exists.";
 				break;
 			}
-			if (($gateway['monitor'] <> "") && (in_array($gateway, $gateway['monitor']))) {
+			if (($gateway['monitor'] <> "") && (in_array($_POST['monitor'], $gateway))) {
 				$input_errors[] = "The IP address \"{$_POST['monitor']}\" already exists.";
 				break;
 			}

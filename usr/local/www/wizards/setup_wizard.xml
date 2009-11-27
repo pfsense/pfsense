@@ -331,7 +331,7 @@
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
 				write_config();
 				if(!$config['interfaces']['lan']) 
-					Header("/wizard.php?xml=setup_wizard.xml&stepid=5&next=Next");
+					Header("Location: /wizard.php?xml=setup_wizard.xml&stepid=5&next=Next");
 			}
 		]]>
 	</stepsubmitbeforesave>

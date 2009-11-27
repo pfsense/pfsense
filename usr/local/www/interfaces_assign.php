@@ -47,6 +47,7 @@ require("filter.inc");
 require("shaper.inc");
 require("ipsec.inc");
 require("vpn.inc");
+require("captiveportal.inc");
 
 /*
 	In this file, "port" refers to the physical port name,

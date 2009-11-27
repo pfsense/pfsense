@@ -143,7 +143,7 @@ include("head.inc");
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-	<p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Interface Groups allow you to create rules that apply to multiple interface at once. If you remove members from an interface group the rules do not apply anymore to that interface.</span></p>
+	<p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.</span></p>
 	</td>
 </tr>
 	</table>

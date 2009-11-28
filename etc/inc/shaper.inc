@@ -3606,14 +3606,15 @@ function layer7_start_l7daemon() {
 // This function uses /usr/local/share/protocols as a default directory for searching .pat files
 function generate_protocols_array() {
 	$protocols = return_dir_as_array("/usr/local/share/protocols");
+	$protocols_new = array();
 	if(is_array($protocols)) {
 		foreach($protocols as $key => $proto) {
 			if (strstr($proto, ".pat"))
-				$protocols[$key] =& str_replace(".pat", "", $proto);
+				$protocols_new[$key] =& str_replace(".pat", "", $proto);
 		}
-		sort($protocols);
+		sort($protocols_new);
 	}		
-	return $protocols;
+	return $protocols_new;
 }
 
 function get_l7_unique_list() {

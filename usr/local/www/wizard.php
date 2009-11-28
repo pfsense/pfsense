@@ -232,7 +232,7 @@ function enablechange() {
 
 <?php
 	if($title == "Reload in progress") {
-		$ip = "http://" . get_interface_ip("lan");
+		$ip = "http://" . $_SERVER['HTTP_HOST'];
 	} else {
 		$ip = "/";
 	}

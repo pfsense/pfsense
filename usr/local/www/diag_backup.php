@@ -284,7 +284,7 @@ if ($_POST) {
 					if($_POST['restorearea']) {
 						/* restore a specific area of the configuration */
 						if(!stristr($data, $_POST['restorearea'])) {
-							$input_errors[] = "You have selected to restore a area but we could not locate the correct xml tag.";
+							$input_errors[] = "You have selected to restore an area but we could not locate the correct xml tag.";
 						} else {
 							restore_config_section($_POST['restorearea'], $data);
 							filter_configure();

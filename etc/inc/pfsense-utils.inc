@@ -217,10 +217,9 @@ function enable_hardware_offloading($interface) {
 	if(interface_supports_polling($interface)) {
 		$polling = isset($config['system']['polling']);	
 		if($polling) {
-			mwexec("sysctl kern.polling.enable=1");
 			mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
 		} else {
-			mwexec("sysctl kern.polling.enable=0");
+			mwexec("/sbin/ifconfig {$interface} -polling 2>/dev/null");
 		}
 	}
 	return;

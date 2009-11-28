@@ -662,7 +662,7 @@ EOD;
 		$iflist = array();
 	} else {
 		foreach ($iflist as $iface => $ifa) {
-			echo sprintf("% -5s%s%s\t%s\n", $iface, $ifa['mac'],
+			echo sprintf("% -6s%s%s\t%s\n", $iface, $ifa['mac'],
 				$ifa['up'] ? "   (up)" : "   (down)", $ifa['dmesg']);
 		}
 	}

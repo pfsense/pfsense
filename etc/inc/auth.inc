@@ -849,11 +849,10 @@ function get_user_expiration_date($username) {
 
 function is_account_disabled($username) {
 	global $config;
-	foreach($config['system']['user']  as $user) {
-		if(isset($user['disabled'])) {
-			return true;
-		}
-	}
+	foreach($config['system']['user']  as $user)
+		if($user == $username) 
+			if(isset($user['disabled'])) 
+				return true;
 	return false;
 }
 

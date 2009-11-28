@@ -414,7 +414,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				$a_schedules = &$config['schedules']['schedule'];
 				$schedule_span_begin = "";
 				$schedule_span_end = "";
-				$sched_caption = "";
+				$sched_caption_escaped = "";
 				$sched_content = "";
 				$schedstatus = false;
 				$dayArray = array ('Mon','Tues','Wed','Thur','Fri','Sat','Sun');
@@ -514,8 +514,8 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 									$sched_content .= $dayFriendly . "; " . $timeFriendly . "<br>";
 								}
 							}
-							$sched_caption = $schedule['descr'];
-							$schedule_span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>$sched_caption</h1><p>$sched_content</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
+							$sched_caption_escaped = str_replace("'", "\'", $schedule['descr']);
+							$schedule_span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>{$sched_caption_escaped}</h1><p>{$sched_content}</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
 							$schedule_span_end = "</U></span>";
 						}
 					}

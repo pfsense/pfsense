@@ -88,7 +88,8 @@ if($_GET['act']=="edit"){
 		$pconfig['proxy_addr'] = $a_client[$id]['proxy_addr'];
 		$pconfig['proxy_port'] = $a_client[$id]['proxy_port'];
 		$pconfig['description'] = $a_client[$id]['description'];
-
+		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
+		
 		if ($pconfig['mode'] != "p2p_shared_key") {
 			$pconfig['caref'] = $a_client[$id]['caref'];
 			$pconfig['certref'] = $a_client[$id]['certref'];
@@ -204,6 +205,7 @@ if ($_POST) {
 		$client['proxy_port'] = $pconfig['proxy_port'];
 		$client['description'] = $pconfig['description'];
 		$client['mode'] = $pconfig['mode'];
+		$client['custom_options'] = $pconfig['custom_options'];
 
         if ($tls_mode) {
             $client['caref'] = $pconfig['caref'];
@@ -664,6 +666,26 @@ function autotls_change() {
 							</table>
 						</td>
 					</tr>
+					<tr>
+						<td colspan="2" class="list" height="12"></td>
+					</tr>
+					<tr>
+						<td colspan="2" valign="top" class="listtopic">Advanced configuration</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">Advanced</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
+										Paste any additional options you would like to pass through to the OpenVPN server here seperated by a semicolon<br/>
+										EXAMPLE: push "route 10.0.0.0 255.255.255.0";
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>					
 					<tr>
 						<td width="22%" valign="top">&nbsp;</td>
 						<td width="78%"> 

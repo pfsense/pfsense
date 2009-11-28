@@ -44,6 +44,3 @@ fi
 
 echo "rc.update_bogons.sh is ending the update cycle." | logger
 
-# Mount RO if needed
-/etc/rc.conf_mount_ro
-

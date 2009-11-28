@@ -858,7 +858,7 @@ function is_account_disabled($username) {
 }
 
 function session_auth($backing) {
-	global $g, $debug, $HTTP_SERVER_VARS, $userindex, $config;
+	global $g, $debug, $HTTP_SERVER_VARS, $userindex, $config, $_SESSION;
 
 	session_start();
 
@@ -868,12 +868,19 @@ function session_auth($backing) {
 			$acct_expires = get_user_expiration_date($_POST['usernamefld']);
 			if($acct_expires) {
 				if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($acct_expires)))) {
-					echo "showajaxmessage('{$_SESSION['Login_Error']}');";
-					return;
+					log_error("Attempted login for invalid user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
+					if(isAjax()) {
+						echo "showajaxmessage('{$_SESSION['Login_Error']}');";
+						return;
+					}
 				}
 			} else {
 				if(is_account_disabled($_POST['usernamefld'])) {
-					echo "showajaxmessage('{$_SESSION['Login_Error']}');";
+					log_error("Attempted login for invalid user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
+					if(isAjax()) {
+						echo "showajaxmessage('{$_SESSION['Login_Error']}');";
+						return;
+					}
 				} else {
 					$_SESSION['Logged_In'] = "True";
 					$_SESSION['Username'] = $_POST['usernamefld'];

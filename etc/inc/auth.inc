@@ -840,7 +840,7 @@ function radius_backed($username, $passwd){
 function get_user_expiration_date($username) {
 	global $config;
 	foreach($config['system']['user']  as $user) {
-		if($user == $username) {
+		if($user['name'] == $username) {
 			if($user['expires']) 
 				return $user['expires'];
 		}
@@ -849,8 +849,8 @@ function get_user_expiration_date($username) {
 
 function is_account_disabled($username) {
 	global $config;
-	foreach($config['system']['user']  as $user)
-		if($user == $username) 
+	foreach($config['system']['user'] as $user)
+		if($user['name'] == $username) 
 			if(isset($user['disabled'])) 
 				return true;
 	return false;

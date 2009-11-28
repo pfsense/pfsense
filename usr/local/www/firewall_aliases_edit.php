@@ -164,7 +164,7 @@ if ($_POST) {
 	/* Check for reserved keyword names */
 	foreach($reserved_keywords as $rk) 
 		if($rk == $_POST['name'])
-			$intput_errors[] = "Cannot use a reserved keyword as alias name $rk";
+			$input_errors[] = "Cannot use a reserved keyword as alias name $rk";
 
 	/* check for name interface description conflicts */
 	foreach($config['interfaces'] as $interface) {

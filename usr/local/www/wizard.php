@@ -653,7 +653,7 @@ function fixup_string($string) {
 			$urlport = "";
 		}
 	}
-	$myurl = $proto . "://" . get_interface_ip("lan") . $urlport . "/";
+	$myurl = $proto . "://" . $_SERVER['HTTP_HOST'] . $urlport . "/";
 	$newstring = str_replace("\$myurl", $myurl, $newstring);
 	// fixup #2: $wanip
 	$curwanip = get_interface_ip();

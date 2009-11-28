@@ -125,6 +125,12 @@ function show_aodiv() {
 	aodiv.style.display = "block";
 }
 
+function show_dsdiv() {
+	document.getElementById("dsadv").innerHTML='';
+	dsdiv = document.getElementById('dsdivmain');
+	dsdiv.style.display = "block";
+}
+
 function show_advanced_state() {
 	document.getElementById("showadvstatebox").innerHTML='';
 	aodiv = document.getElementById('showstateadv');

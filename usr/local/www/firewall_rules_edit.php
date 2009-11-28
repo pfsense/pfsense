@@ -873,14 +873,6 @@ include("head.inc");
 				</span>
 			</td>
 		</tr>
-                <tr>
-                        <td width="22%" valign="top" class="vncell">Diffserv Code Point</td>
-                        <td width="78%" class="vtable">
-                                <input name="dscp" id="dscp" value="<?=htmlspecialchars($pconfig['dscp']);?>">
-                                        <br />
-                                <span class="vexpl">Valid values are: af11, af12, af13, af21, af22, af23, af31, af32, af33, af41, af42, af43, EF, 1-64, 0x04-0xfc.</span>
-                        </td>
-                </tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Log</td>
 			<td width="78%" class="vtable">
@@ -888,6 +880,22 @@ include("head.inc");
 				<strong>Log packets that are handled by this rule</strong>
 					<br />
 				<span class="vexpl">Hint: the firewall has limited local log space. Don't turn on logging for everything. If you want to do a lot of logging, consider using a remote syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: Settings</a> page).</span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Diffserv Code Point</td>
+			<td width="78%" class="vtable">
+				<div id="dsadv" name="dsadv">
+					<input type="button" onClick="show_dsdiv();" value="Advanced"> - Show advanced options
+				</div>
+				<div id="dsdivmain" name="dsdivmain" style="display:none">
+					<select name="dscp" id="dscp">
+						<option value=""></option>
+						<?php foreach($firewall_rules_dscp_types as $frdt): ?>
+							<option value="<?=$frdt?>"<?php if($pconfig['dscp'] == $frdt) echo " SELECTED"; ?>><?=$frdt?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
 			</td>
 		</tr>
 		<tr>

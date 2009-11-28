@@ -109,15 +109,15 @@ if ($_POST) {
 
 		write_config();
 
-
-		/* XXX: Make this with a touch file */
 		$retval = 0;
 
 		conf_mount_rw();
+
 		mwexec("/bin/rm {$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}.cache");
-		conf_mount_ro();
 
 		$retval = services_dyndns_configure_client($dyndns);
+
+		conf_mount_ro();
 
 		header("Location: services_dyndns.php");
 		exit;

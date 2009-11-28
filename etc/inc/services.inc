@@ -538,19 +538,19 @@ function services_dyndns_reset($interface = "wan" ) {
 
 	$dyndnscfg = $config['dyndnses']['dyndns'];
 
-        if (is_array($dyndnscfg)) {
-                foreach ($dyndnscfg as $dyndns) {
-                        if (!isset($dyndns['enable']))
-                                continue;
+	if (is_array($dyndnscfg)) {
+		foreach ($dyndnscfg as $dyndns) {
+			if (!isset($dyndns['enable']))
+				continue;
 			if ($dyndns['interface'] != $interface)
 				continue;
 
-                        services_dyndns_configure_client($dyndns);
+			services_dyndns_configure_client($dyndns);
 
-                        sleep(1);
-                }
+			sleep(1);
+		}
 
-        }
+	}
 
 	return 0;
 }
@@ -567,7 +567,8 @@ function services_dyndns_configure_client($conf) {
 		$dnsUser = $conf['username'],
 		$dnsPass = $conf['password'],
 		$dnsWilcard = $conf['wildcard'],
-		$dnsMX = $conf['mx'], $dnsIf = "{$conf['interface']}");
+		$dnsMX = $conf['mx'], 
+		$dnsIf = "{$conf['interface']}");
 
 }
 

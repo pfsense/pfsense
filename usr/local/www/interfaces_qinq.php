@@ -68,10 +68,10 @@ if ($_GET['act'] == "del") {
 		$delmembers = explode(" ", $qinq['members']);
                 if (count($delmembers) > 0) {
 			foreach ($delmembers as $tag)
-				mwexec("/usr/sbin/ngctl shutdown vlan{$qinq['tag']}h{$tag}:");
+				mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}h{$tag}:");
                 }
-		mwexec("/usr/sbin/ngctl shutdown vlanh{$qinq['tag']}:");
-		mwexec("/usr/sbin/ngctl shutdown {$qinq['if']}qinq:");
+		mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}qinq:");
+		mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}:");
 		unset($a_qinqs[$id]);
 
 		write_config();
@@ -127,7 +127,7 @@ include("head.inc");
                   <td class="listr">
 					<?php
 					if (strlen($qinq['members']) > 20)
-						echo substr(htmlspecialchars($qinq['members']), 1, 20) . "...";
+						echo substr(htmlspecialchars($qinq['members']), 0, 20) . "...";
 					else
 						echo htmlspecialchars($qinq['members']);
 					?>

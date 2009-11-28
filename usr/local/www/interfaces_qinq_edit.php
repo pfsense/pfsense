@@ -143,7 +143,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$qinqentry['members'] = $members;
 		$qinqentry['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
-		$qinqentry['vlanif'] = "vlan{$_POST['tag']}";
+		$qinqentry['vlanif'] = "{$_POST['if']}_{$_POST['tag']}";
 		$nmembers = explode(" ", $members);
 
 		if (isset($id) && $a_qinqs[$id]) {
@@ -151,21 +151,19 @@ if ($_POST) {
 			$delmembers = array_diff($omembers, $nmembers);
 			if (count($delmembers) > 0) {
 				foreach ($delmembers as $tag) {
-					mwexec("/usr/sbin/ngctl shutdown vlan{$_POST['tag']}h{$tag}:");
-					mwexec("/usr/sbin/ngctl msg vlan{$_POST['tag']}qinq: delfilter \\\"vlan{$_POST['tag']}{$tag}\\\"");
+					mwexec("/usr/sbin/ngctl shutdown {$qinqentry['vlanif']}h{$tag}:");
+					mwexec("/usr/sbin/ngctl msg {$qinqentry['vlanif']}qinq: delfilter \\\"{$qinqentry['vlanif']}{$tag}\\\"");
 				}
 			}
 			$addmembers = array_diff($nmembers, $omembers);
 			if (count($addmembers) > 0) {
 				foreach ($addmembers as $member) {
-					$if = "vlan{$_POST['tag']}";
-					$vlanif = "{$if}_{$member}";
-					$macaddr = get_interface_mac($if);
-					mwexec("/usr/sbin/ngctl mkpeer {$if}qinq: eiface {$if}{$member} ether");
-					mwexec("/usr/sbin/ngctl name {$if}qinq:{$if}{$tag} {$if}h{$member}");
-					mwexec("/usr/sbin/ngctl msg {$if}qinq: addfilter '{ vlan={$member} hook=\\\"{$if}{$member}\\\" }'");
-					mwexec("/usr/sbin/ngctl msg {$if}h{$tag}: setifname \\\"{$vlanif}\\\"");
-					mwexec("/usr/sbin/ngctl msg {$vlanif}: setenaddr {$macaddr}");
+					$macaddr = get_interface_mac($qinqentry['vlanif']);
+					mwexec("/usr/sbin/ngctl mkpeer {$$qinqentry['vlanif']}qinq: eiface {$$qinqentry['vlanif']}{$member} ether");
+					mwexec("/usr/sbin/ngctl name {$qinqentry['vlanif']}qinq:{$qinqentry['vlanif']}{$tag} {$qinqentry['vlanif']}h{$member}");
+					mwexec("/usr/sbin/ngctl msg {$qinqentry['vlanif']}qinq: addfilter '{ vlan={$member} hook=\\\"{$qinqentry['vlanif']}{$member}\\\" }'");
+					mwexec("/usr/sbin/ngctl msg {$qinqentry['vlanif']}h{$tag}: setifname \\\"{$qinqentry['vlanif']}_{$member}\\\"");
+					mwexec("/usr/sbin/ngctl msg {$qinqentry['vlanif']}h{$member}: set {$macaddr}");
 				}
 			}
 			$a_qinqs[$id] = $qinqentry;
@@ -184,8 +182,8 @@ if ($_POST) {
 			}
 			$additions = "";
 			foreach($nmembers as $qtag)
-				$additions .= "vlan{$qinqentry['tag']}_{$qtag} ";
-			$additions .= "vlan{$qinqentry['tag']} ";
+				$additions .= "{$qinqentry['vlanif']}_{$qtag} ";
+			$additions .= "{$qinqentry['vlanif']}";
 			if ($found == true)
 				$config['ifgroups']['ifgroupentry'][$gid]['members'] .= " {$additions}";
 			else {

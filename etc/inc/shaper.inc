@@ -3608,9 +3608,7 @@ function generate_protocols_array() {
 	$protocols = return_dir_as_array("/usr/local/share/protocols");
 	if(is_array($protocols)) {
 		foreach($protocols as $key => $proto) {
-			if($proto == "LICENSE")
-				continue;
-			if (strstr($proto, ".pat") != false)
+			if (strstr($proto, ".pat"))
 				$protocols[$key] =& str_replace(".pat", "", $proto);
 		}
 		sort($protocols);

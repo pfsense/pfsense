@@ -377,11 +377,11 @@
 					break;
 				case 'dnsexit':
 					$needsIP = TRUE;
-                                        curl_setopt($ch, CURLOPT_URL, 'http://www.dnsexit.com/RemoteUpdate.sv?login='.$this->_dnsUser. '&password='.$this->_dnsPass.'&host='.$this->_dnsHost.'&myip='.$this->_dnsIP);
-                                        $data = curl_exec($ch);
-                                        if (@curl_error($ch)) log_error("Curl error occurred:" . curl_error($ch));
-                                        curl_close($ch);
-                                        $this->_checkStatus($data);
+					curl_setopt($ch, CURLOPT_URL, 'http://www.dnsexit.com/RemoteUpdate.sv?login='.$this->_dnsUser. '&password='.$this->_dnsPass.'&host='.$this->_dnsHost.'&myip='.$this->_dnsIP);
+					$data = curl_exec($ch);
+					if (@curl_error($ch)) log_error("Curl error occurred:" . curl_error($ch));
+					curl_close($ch);
+					$this->_checkStatus($data);
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
@@ -412,20 +412,18 @@
 					$this->_checkStatus($data);
 					break;
 
-	            		case 'staticcling':
-                    			$needsIP = FALSE;
-                    			curl_setopt($ch, CURLOPT_URL, 'http://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
-                    			$data = curl_exec($ch);
-                    			if (@curl_error($ch)) log_error("Curl error occured: " . curl_error($ch));
-                    			curl_close($ch);
-                    			$this->_checkStatus($data);
-                    			break;	                    
+				case 'staticcling':
+					$needsIP = FALSE;
+					curl_setopt($ch, CURLOPT_URL, 'http://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
+					$data = curl_exec($ch);
+					if (@curl_error($ch)) log_error("Curl error occured: " . curl_error($ch));
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;	                    
 				case 'dnsomatic':
-				
 					/* Example syntax 
 						https://username:password@updates.dnsomatic.com/nic/update?hostname=yourhostname&myip=ipaddress&wildcard=NOCHG&mx=NOCHG&backmx=NOCHG
 					*/
-					
 					$needsIP = FALSE;
 					log_error("DNS-O-Matic: DNS update() starting.");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
@@ -721,30 +719,30 @@
 						$this->_debug($data);
 					}
 					break;
-                                case 'staticcling':
-                                        if (preg_match("/invalid ip/i", $data)) {
-                                                $status = "phpDynDNS: (Error) Bad Request - The IP provided was invalid.";
-                                        } else if (preg_match('/required info missing/i', $data)) {
-                                                $status = "phpDynDNS: (Error) Bad Request - Required parameters were not provided.";
-                                        } else if (preg_match('/invalid characters/i', $data)) {
-                                                $status = "phpDynDNS: (Error) Bad Request - Illegal characters in either the username or the password.";
-                                        } else if (preg_match('/bad password/i', $data)) {
-                                                $status = "phpDynDNS: (Error) Invalid password.";
-                                        } else if (preg_match('/account locked/i', $data)) {
-                                                $status = "phpDynDNS: (Error) This account has been administratively locked.";
-                                        } else if (preg_match('/update too frequent/i', $data)) {
-                                                $status = "phpDynDNS: (Error) Updating too frequently.";
-                                        } else if (preg_match('/DB error/i', $data)) {
-                                                $status = "phpDynDNS: (Error) Server side error.";
-                                        } else if (preg_match('/success/i', $data)) {
-                                                $status = "phpDynDNS: (Success) IP Address Updated Successfully!";
-                                                $successful_update = true;
-                                        } else {
-                                                $status = "phpDynDNS: (Unknown Response)";
-                                                log_error("phpDynDNS: PAYLOAD: {$data}");
-                                                $this->_debug($data);
-                                        }
-                                        break;
+                 case 'staticcling':
+					if (preg_match("/invalid ip/i", $data)) {
+					        $status = "phpDynDNS: (Error) Bad Request - The IP provided was invalid.";
+					} else if (preg_match('/required info missing/i', $data)) {
+					        $status = "phpDynDNS: (Error) Bad Request - Required parameters were not provided.";
+					} else if (preg_match('/invalid characters/i', $data)) {
+					        $status = "phpDynDNS: (Error) Bad Request - Illegal characters in either the username or the password.";
+					} else if (preg_match('/bad password/i', $data)) {
+					        $status = "phpDynDNS: (Error) Invalid password.";
+					} else if (preg_match('/account locked/i', $data)) {
+					        $status = "phpDynDNS: (Error) This account has been administratively locked.";
+					} else if (preg_match('/update too frequent/i', $data)) {
+					        $status = "phpDynDNS: (Error) Updating too frequently.";
+					} else if (preg_match('/DB error/i', $data)) {
+					        $status = "phpDynDNS: (Error) Server side error.";
+					} else if (preg_match('/success/i', $data)) {
+					        $status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+					        $successful_update = true;
+					} else {
+					        $status = "phpDynDNS: (Unknown Response)";
+					        log_error("phpDynDNS: PAYLOAD: {$data}");
+					        $this->_debug($data);
+					}
+					break;
 			}
 			
 			if($successful_update == true) {

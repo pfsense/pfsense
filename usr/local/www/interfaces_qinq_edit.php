@@ -191,7 +191,7 @@ if ($_POST) {
 				$gentry['ifname'] = "QinQ";
 				$gentry['members'] = "{$additions}";
 				$gentry['descr'] = "QinQ VLANs group";
-				$config['ifgroup']['ifgroupentry'][] = $gentry;
+				$config['ifgroups']['ifgroupentry'][] = $gentry;
 			}
 		}
 

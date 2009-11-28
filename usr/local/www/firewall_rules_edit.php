@@ -874,7 +874,7 @@ include("head.inc");
 			</td>
 		</tr>
                 <tr>
-                        <td width="22%" valign="top" class="vncellreq">Diffserv Code Point</td>
+                        <td width="22%" valign="top" class="vncell">Diffserv Code Point</td>
                         <td width="78%" class="vtable">
                                 <input name="dscp" id="dscp" value="<?=htmlspecialchars($pconfig['dscp']);?>">
                                         <br />

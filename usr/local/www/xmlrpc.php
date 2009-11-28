@@ -38,13 +38,13 @@
 ##|*MATCH=xmlrpc.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("functions.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("xmlrpc_server.inc");
-require_once("xmlrpc.inc");
-require_once("array_intersect_key.inc");
+require("config.inc");
+require("functions.inc");
+require("filter.inc");
+require("shaper.inc");
+require("xmlrpc_server.inc");
+require("xmlrpc.inc");
+require("array_intersect_key.inc");
 
 /* grab sync to ip if enabled */
 if($config['installedpackages']['carpsettings']) {
@@ -224,7 +224,7 @@ function filter_configure_xmlrpc($raw_params) {
 	global $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
-	require_once("vslb.inc");
+	require("vslb.inc");
 	filter_configure();
 	system_routing_configure();
 	setup_gateways_monitor();
@@ -278,7 +278,7 @@ function get_notices_xmlrpc($raw_params) {
 	global $g, $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
-	require_once("notices.inc");
+	require("notices.inc");
 	if(!$params) {
 		$toreturn = get_notices();
 	} else {

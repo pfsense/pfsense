@@ -45,6 +45,9 @@
 
 $pgtitle = array("Firewall","Aliases","Edit");
 
+// Keywords not allowed in names
+$reserved_keywords = array("pass", "out", "queue", "max", "min");
+
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -155,6 +158,11 @@ if ($_POST) {
 			break;
 		}
 	}
+
+	/* Check for reserved keyword names */
+	foreach($reserved_keywords as $rk) 
+		if($rk == $_POST['name'])
+			$intput_errors[] = "Cannot use a reserved keyword as alias name $rk";
 
 	/* check for name interface description conflicts */
 	foreach($config['interfaces'] as $interface) {

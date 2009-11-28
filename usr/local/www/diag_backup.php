@@ -275,7 +275,7 @@ if ($_POST) {
 						$data = decrypt_data($data, $_POST['decrypt_password']);
 					}
 
-					if(stristr($data, "m0n0wall")) {
+					if(stristr($data, "<m0n0wall>")) {
 						log_error("Upgrading m0n0wall configuration to pfsense.");
 						/* m0n0wall was found in config.  convert it. */
 						$data = str_replace("m0n0wall", "pfsense", $data);

@@ -177,7 +177,7 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
         $qinqif = $vlan['if'];
         $vlanif = empty($vlan['vlanif']) ? "vlan{$vlan['tag']}" : $vlan['vlanif'];
         $tag = $vlan['tag'];
-        if(empty($if)) {
+        if(empty($qinqif)) {
                 log_error("interface_qinq_confgure called with if undefined.\n");
                 return;
         }

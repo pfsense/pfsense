@@ -46,14 +46,15 @@
 $pgtitle = array("Firewall","Aliases","Edit");
 
 // Keywords not allowed in names
-$reserved_keywords = array("pass", "out", "queue", "max", "min", "lan", "wan");
-for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) 
-	$reserved_keywords[] = "opt{$j}";
+$reserved_keywords = array("pass", "out", "queue", "max", "min");
 
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+
+$reserved_ifs = get_configured_interface_list(false, true);
+$reserved_keywords = array_merge($reserved_keywords, $reserved_ifs);
 
 if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();

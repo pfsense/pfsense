@@ -91,6 +91,7 @@ $pconfig['radiuskey'] = $config['captiveportal']['radiuskey'];
 $pconfig['radiuskey2'] = $config['captiveportal']['radiuskey2'];
 $pconfig['radiusvendor'] = $config['captiveportal']['radiusvendor'];
 $pconfig['radiussession_timeout'] = isset($config['captiveportal']['radiussession_timeout']);
+$pconfig['radmac_format'] = $config['captiveportal']['radmac_format'];
 
 if ($_POST) {
 
@@ -187,6 +188,7 @@ if ($_POST) {
 		$config['captiveportal']['radiuskey2'] = $_POST['radiuskey2'];
 		$config['captiveportal']['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
+        $config['captiveportal']['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 
 		/* file upload? */
 		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))
@@ -236,6 +238,7 @@ function enable_change(enable_change) {
 	document.iform.auth_method[2].disabled = endis;
 	document.iform.radmac_enable.disabled = radius_endis;
 	document.iform.httpslogin_enable.disabled = endis;
+	document.iform.radmac_format.disabled = radius_endis;
 	document.iform.httpsname.disabled = endis;
 	document.iform.cert.disabled = endis;
 	document.iform.key.disabled = endis;
@@ -516,6 +519,29 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 			</tr>
 		</table>
 	</tr>
+    <tr>
+        <td class="vncell" valign="top">MAC address format</td>
+        <td class="vtable">
+        <select name="radmac_format" id="radmac_format">
+        <option>default</option>
+        <?php
+        $macformats = array("singledash","ietf","cisco","unformatted");
+        foreach ($macformats as $macformat) {
+            if ($pconfig['radmac_format'] == $macformat)
+                echo "<option selected value=\"$macformat\">$macformat</option>\n";
+            else
+                echo "<option value=\"$macformat\">$macformat</option>\n";
+        }
+        ?>
+        </select></br>
+        This option changes the MAC address format used in the whole RADIUS system. Change this if you also
+        need to change the username format for RADIUS MAC authentication.<br>
+        default: 00:11:22:33:44:55<br>
+        singledash: 001122-334455<br>
+        ietf: 00-11-22-33-44-55<br>
+        cisco: 0011.2233.4455<br>
+        unformatted: 001122334455
+    </tr>
 	<tr>
       <td valign="top" class="vncell">HTTPS login</td>
       <td class="vtable">

@@ -119,8 +119,12 @@
 			$this->_dnsWildcard = $dnsWildcard;
 			$this->_dnsMX = $dnsMX;
 			$this->_if = get_real_interface($dnsIf);
-			
-			$this->_dnsIP = get_interface_ip($dnsIf);
+			$this->_dnsIP = get_interface_ip($this->_if);
+
+			// Ensure that we where able to lookup the IP
+			if(!$this->_dnsIP)
+				log_error("There was an error trying to determine the IP for interface - {$dnsIf} - {$this->_if}.");
+
 			$this->_debugID = rand(1000000, 9999999);
 			
 			if ($this->_detectChange() == FALSE) {
@@ -141,8 +145,7 @@
 					$this->_dnsService == 'loopia' ||
 					$this->_dnsService == 'staticcling'||
 					$this->_dnsService == 'dnsexit' ||
-					$this->_dnsService == 'opendns')
-				{
+					$this->_dnsService == 'opendns') {
 					$this->_update();
 				} else {
 					$this->_error(6);

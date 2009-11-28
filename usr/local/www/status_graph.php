@@ -141,7 +141,7 @@ function updateBandwidthHosts(data){
         }
     }
     
-    setTimeout('updateBandwidth()', 10);
+    setTimeout('updateBandwidth()', 1000);
 }
 
 

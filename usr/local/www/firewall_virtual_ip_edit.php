@@ -68,6 +68,16 @@ function return_first_two_octets($ip) {
 	return $ip_split[0] . "." . $ip_split[1];
 }
 
+function find_last_used_vhid() {
+	global $config, $g;
+	$vhid = 0;
+	foreach($config['virtualip']['vip'] as $vip) {
+		if($vip['vhid'] > $vhid) 
+			$vhid = $vip['vhid'];
+	}
+	return $vhid;
+}
+
 if (isset($id) && $a_vip[$id]) {
 	$pconfig['mode'] = $a_vip[$id]['mode'];
 	$pconfig['vhid'] = $a_vip[$id]['vhid'];
@@ -79,6 +89,10 @@ if (isset($id) && $a_vip[$id]) {
 	$pconfig['descr'] = $a_vip[$id]['descr'];
 	$pconfig['type'] = $a_vip[$id]['type'];
 	$pconfig['interface'] = $a_vip[$id]['interface'];
+} else {
+	$lastvhid = find_last_used_vhid();
+	$lastvhid++;
+	$pconfig['vhid'] = $lastvhid;
 }
 
 if ($_POST) {

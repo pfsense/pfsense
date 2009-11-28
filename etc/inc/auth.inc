@@ -847,6 +847,16 @@ function get_user_expiration_date($username) {
 	}
 }
 
+function is_account_disabled($username) {
+	global $config;
+	foreach($config['system']['user']  as $user) {
+		if(isset($user['disabled'])) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function session_auth($backing) {
 	global $g, $debug, $HTTP_SERVER_VARS, $userindex, $config;
 
@@ -858,14 +868,18 @@ function session_auth($backing) {
 			$acct_expires = get_user_expiration_date($_POST['usernamefld']);
 			if($acct_expires) {
 				if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($acct_expires)))) {
-					log_error("Account is now expired.");
+					echo "showajaxmessage('{$_SESSION['Login_Error']}');";
 					return;
 				}
 			} else {
-				$_SESSION['Logged_In'] = "True";
-				$_SESSION['Username'] = $_POST['usernamefld'];
-				$_SESSION['last_access'] = time();
-				log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
+				if(is_account_disabled($_POST['usernamefld'])) {
+					echo "showajaxmessage('{$_SESSION['Login_Error']}');";
+				} else {
+					$_SESSION['Logged_In'] = "True";
+					$_SESSION['Username'] = $_POST['usernamefld'];
+					$_SESSION['last_access'] = time();
+					log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
+				}
 			}
 		} else {
 			/* give the user a more detailed error message */

@@ -158,6 +158,7 @@ if (isAllowedPage("system_usermanager")) {
 			$pconfig['uid'] = $a_user[$id]['uid'];
 			$pconfig['authorizedkeys'] = base64_decode($a_user[$id]['authorizedkeys']);
 			$pconfig['priv'] = $a_user[$id]['priv'];
+			$pconfig['disabled'] = isset($a_user[$id]['disabled']);
 		}
 	}
 
@@ -252,6 +253,11 @@ if (isAllowedPage("system_usermanager")) {
 			$userent['fullname'] = $_POST['fullname'];
 			$userent['expires'] = $_POST['expires'];
 			$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
+			
+			if($_POST['disabled'])
+				$userent['disabled'] = true;
+			else 
+				unset($userent['disabled']);
 
 			if (isset($id) && $a_user[$id])
 				$a_user[$id] = $userent;
@@ -371,6 +377,12 @@ function presubmit() {
 								<input name="utype" type="hidden" value="<?=$pconfig['utype']?>"/>
 	                        </td>
 	                    </tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled");?></td>
+							<td width="78%" class="vtable">
+								<input name="disabled" type="checkbox" id="disabled" <?php if($pconfig['disabled']) echo "CHECKED"; ?>>
+							</td>
+						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
 							<td width="78%" class="vtable">
@@ -601,7 +613,8 @@ function presubmit() {
 					<tr>
 						<td width="25%" class="listhdrr">Username</td>
 						<td width="25%" class="listhdrr">Full name</td>
-						<td width="30%" class="listhdrr">Groups</td>
+						<td width="5%" class="listhdrr">Disabled</td>
+						<td width="25%" class="listhdrr">Groups</td>
 						<td width="10%" class="list"></td>
 					</tr>
 					<?php
@@ -628,6 +641,7 @@ function presubmit() {
 							</table>
 						</td>
 						<td class="listr"><?=htmlspecialchars($userent['fullname']);?>&nbsp;</td>
+						<td class="listr"><?php if(isset($userent['disabled'])) echo "*"; ?></td>
 						<td class="listbg">
 								<?=implode(",",local_user_get_groups($userent));?>
 							&nbsp;
@@ -649,7 +663,7 @@ function presubmit() {
 						endforeach;
 					?>
 					<tr>
-						<td class="list" colspan="3"></td>
+						<td class="list" colspan="4"></td>
 						<td class="list">
 							<a href="system_usermanager.php?act=new">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="add user" alt="add user" width="17" height="17" border="0" />
@@ -657,7 +671,7 @@ function presubmit() {
 						</td>
 					</tr>
 					<tr>
-						<td colspan="3">
+						<td colspan="4">
 							<p>
 								<?=gettext("Additional webConfigurator users can be added here.");?>
 								<?=gettext("User permissions can be assinged diretly or inherited from group memberships.");?>

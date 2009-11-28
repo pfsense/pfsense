@@ -1099,4 +1099,19 @@ function color($color = "0m") {
 	}
 }
 
+/****f* util/is_URL
+ * NAME
+ *   is_URL
+ * INPUTS
+ *   string to check
+ * RESULT
+ *   Returns true if item is a URL
+ ******/
+function is_URL($url) {
+	$match = preg_match("'\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))'", $url);
+	if($match)
+		return true;	
+	return false;
+}
+
 ?>

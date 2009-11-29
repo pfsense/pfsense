@@ -649,35 +649,35 @@ function filter_flush_state_table()
 function filter_generate_reflection($rule, $extport, &$starting_localhost_port) {
 	global $FilterIflist, $config;
 
+	// Initialize natrules holder string
 	$natrules = "";
+
+	// Keeps track of items already seen to avoid duplicates in inetd.conf
+	$reflection_seen = array();
+
 	if(!isset($config['system']['disablenatreflection'])) {
 		$inetd_fd = fopen("/var/etc/inetd.conf","w");
 		/* add tftp protocol helper */
 		fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy -v\n");
-
-		update_filter_reload_status("Setting up reflection");
+		update_filter_reload_status("Setting up NAT Reflection");
 		$natrules .= "\n# Reflection redirects\n";
 		foreach ($FilterIflist as $ifent => $ifname) {
 			/* do not process interfaces with gateways*/
 			if (interface_has_gateway($ifent))
 				continue;
-
-			if($extport[1]) {
+			if($extport[1]) 
 				$range_end = ($extport[1]);
-			} else {
+			else
 				$range_end = ($extport[0]);
-			}
 			$range_end++;
-			if (alias_expand($rule['external-address'])) {
+			if (alias_expand($rule['external-address'])) 
 				$extaddr = alias_expand($extaddr);
-			} else if ($rule['external-address'] <> "") {
+			else if ($rule['external-address'] <> "") 
 				$extaddr = $rule['external-address'];
-			} else {
+			else 
 				$extaddr = $FilterIflist[$rule['interface']]['ip'];
-			}
 			if($rule['local-port'])
 				$lrange_start = $rule['local-port'];
-
 			if($range_end - $extport[0] > 500) {
 				$range_end = $extport[0]+1;
 				log_error("Not installing nat reflection rules for a port range > 500");
@@ -712,11 +712,19 @@ function filter_generate_reflection($rule, $extport, &$starting_localhost_port) 
 						switch($rule['protocol']) {
 						case "tcp/udp":
 							$protocol = "{ tcp udp }";
-							foreach($toadd_array as $tda){
-								fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w {$reflectiontimeout}{$target} {$tda}\n");
+							foreach($toadd_array as $tda) {
+								$reflection_txt = "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w {$reflectiontimeout}{$target} {$tda}\n";
+								if(!in_array($reflection_txt, $reflection_seen)) {
+									fwrite($inetd_fd, $reflection_txt);
+									$reflection_seen[] = $reflection_txt;
+								}
 								$natrules .= "rdr on {$ifname['if']} proto tcp from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
 								$starting_localhost_port++;
-								fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -u -w {$reflectiontimeout} {$target} {$tda}\n");
+								$reflection_txt = "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -u -w {$reflectiontimeout} {$target} {$tda}\n";
+								if(!in_array($reflection_txt, $reflection_seen)) {
+									fwrite($inetd_fd, $reflection_txt);
+									$reflection_seen[] = $reflection_txt;
+								}
 								$natrules .= "rdr on { {$ifname['if']} } proto udp from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
 								$xxx++;
 								$starting_localhost_port++;
@@ -737,7 +745,11 @@ function filter_generate_reflection($rule, $extport, &$starting_localhost_port) 
 									$reflectiontimeout = $config['system']['reflectiontimeout'];
 								else
 									$reflectiontimeout = "20";
-								fwrite($inetd_fd, "{$starting_localhost_port}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n");
+								$reflection_txt = "{$starting_localhost_port}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
+								if(!in_array($reflection_txt, $reflection_seen)) {
+									fwrite($inetd_fd, $reflection_txt);
+									$reflection_seen[] = $reflection_txt;
+								}
 								$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
 								$xxx++;
 								$starting_localhost_port++;

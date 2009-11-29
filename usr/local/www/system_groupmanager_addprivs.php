@@ -123,6 +123,8 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript">
+</script>
 <script type="text/javascript">
 <!--
 
@@ -179,6 +181,8 @@ function update_description() {
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("System Privileges");?></td>
 							<td width="78%" class="vtable">
+								<table>
+									<tr><td>
 								<select name="sysprivs[]" id="sysprivs" class="formselect" onchange="update_description();" multiple>
 									<?php
 										foreach($priv_list as $pname => $pdata):
@@ -190,6 +194,22 @@ function update_description() {
 								</select>
 								<br/>
 								<?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
+								</td><td>
+								<a href='#'onClick="selectAll();">Select all</a>
+								<script type="text/javascript">
+									function selectAll() {
+										var options = $$('select#sysprivs option');
+										var len = options.length;
+										for (var i = 0; i < len; i++) {
+										    options[i].selected = true;
+										}
+									}
+									selectAll();
+								</script>
+								<br/>
+								</td>
+								</tr>
+								</table>
 							</td>
 						</tr>
 						<tr height="60">

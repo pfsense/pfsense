@@ -300,7 +300,6 @@ if ($_POST) {
 								/* this will be picked up by /index.php */
 								conf_mount_rw();
 								mark_subsystem_dirty("restore");
-								$savemsg = "The configuration has been restored. You need to reboot your firewall.";
 								touch("/conf/needs_package_sync");
 								/* remove cache, we will force a config reboot */
 								if(file_exists("{$g['tmp_path']}/config.cache"))
@@ -415,12 +414,11 @@ if ($_POST) {
 									add_base_packages_menu_items();									
 									convert_config();
 									conf_mount_ro();
-									$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense. You need to reboot your firewall.";
+									$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense.";
 									mark_subsystem_dirty("restore");
 								}
 								if(isset($config['captiveportal']['enable'])) {
 									/* for some reason ipfw doesn't init correctly except on bootup sequence */
-									$savemsg = "The configuration has been restored. You need to reboot your firewall.";
 									mark_subsystem_dirty("restore");
 								}
 								setup_serial_port();
@@ -450,15 +448,14 @@ if ($_POST) {
 			$input_errors[] = "XXX - this feature may hose your config (do NOT backrev configs!) - billm";
 			if ($ver2restore <> "") {
 				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
-                                if (config_install($conf_file) == 0) {
-					mark_subsystem_dirty("restore");
-					$savemsg = "The configuration has been restored. You need to reboot your firewall.";
-                                } else {
-                                	$input_errors[] = "The configuration could not be restored.";
-                                }
+				if (config_install($conf_file) == 0) {
+						mark_subsystem_dirty("restore");
                         } else {
-                                $input_errors[] = "No version selected.";
+                        	$input_errors[] = "The configuration could not be restored.";
                         }
+                } else {
+                        $input_errors[] = "No version selected.";
+                }
 		}
 	}
 }

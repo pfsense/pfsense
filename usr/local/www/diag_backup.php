@@ -144,7 +144,6 @@ if ($_POST['apply']) {
 		conf_mount_rw();
 		clear_subsystem_dirty("restore");
 		conf_mount_ro();
-        Header("Location: reboot.php?")
         exit;
 }
 

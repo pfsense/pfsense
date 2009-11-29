@@ -46,8 +46,9 @@
 ##|*MATCH=system_usermanager.php*
 ##|-PRIV
 
-require_once("certs.inc");
+require("certs.inc");
 require("guiconfig.inc");
+require("priv.defs.inc");
 
 if (isAllowedPage("system_usermanager")) {
 

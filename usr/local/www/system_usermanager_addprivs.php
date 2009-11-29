@@ -52,6 +52,7 @@ function admin_users_sort() {
 }
 
 require("guiconfig.inc");
+require("priv.defs.inc");
 
 $pgtitle = array("System","User manager","Add privileges");
 

@@ -39,6 +39,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require("priv.defs.inc");
 
 $ldapserver = $config['system']['webgui']['ldapserver'];
 $ldapbindun = $config['system']['webgui']['ldapbindun'];

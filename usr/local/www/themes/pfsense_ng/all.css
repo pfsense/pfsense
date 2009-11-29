@@ -615,7 +615,7 @@ ul#wzdnav a:active {
 
 #graph {
 	position: relative;
-	z-index: 10;
+	z-index: 1;
 }
 
 #logoutbtn {
@@ -623,14 +623,6 @@ ul#wzdnav a:active {
   left: 95%;
   vertical-align: middle;
 }
-
-
-#graph {
-	position: relative;
-	z-index: 10;
-}
-
-
 
 /* Class Based CSS Definitions */
 .pgtitle {

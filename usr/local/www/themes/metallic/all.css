@@ -503,14 +503,6 @@ ul#wzdnav a:active {
   vertical-align: middle;
 }
 
-
-#graph {
-	position: relative;
-	z-index: -10;
-}
-
-
-
 /* Class Based CSS Definitions */
 .pgtitle {
 	font-size: 18px;

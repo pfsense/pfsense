@@ -31,14 +31,12 @@
 		<rcfile>miniupnpd.sh</rcfile>
 		<executable>miniupnpd</executable>
 	</service>
-	<tabs>
-		<tab>
-			<text>UPnP Settings</text>
-			<url>/pkg_edit.php?xml=miniupnpd.xml&amp;id=0</url>
-			<active/>
-		</tab>
-	</tabs>
 	<fields>
+		<field>
+			<name>UPnP Settings</name>
+			<type>listtopic</type>
+			<enablefields>iface_array,overridewanip,upnpqueue,logpackets,sysuptime,permdefault,permuser1,permuser2,permuser3,permuser4</enablefields>
+		</field>
 		<field>
 			<fielddescr>Enable UPnP</fielddescr>
 			<fieldname>enable</fieldname>

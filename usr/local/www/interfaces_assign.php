@@ -265,7 +265,10 @@ if ($_GET['act'] == "del") {
 
 		write_config();
 	
-		/* XXX: What is this for?!?! */
+		/* If we are in firewall/routing mode (not single interface)
+		 * then ensure that we are not running DHCP on the wan which
+		 * will make a lot of ISP's unhappy.
+		 */
 		if($config['interfaces']['lan']) {
 			unset($config['dhcpd']['wan']);		
 		}

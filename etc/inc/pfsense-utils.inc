@@ -2591,23 +2591,25 @@ function cleanup_opt_interfaces_after_removal($opt_interface_num) {
 	fwrite($fd, $config_file);
 	fclose($fd);
 	$config = parse_config(true);
-	/* loop through and delete old rules */
+	unset($config['dhcpd']["optXXXX"]);
+	unset($config['dhcpd']["optxxxx"]);
+	unset($config['dhcpd']["opt$datetime"]);
 	$num_rules = count($config['filter']['rule']);
 	for($x = $num_rules; $x > 0; $x--) {
 		if($config['filter']['rule'][$x])
-			if($config['filter']['rule'][$x]['interface'] == "optXXXX")
+			if(strtoupper($config['filter']['rule'][$x]['interface']) == "OPTXXXX")
 		 		unset($config['filter']['rule'][$x]['interface']);
 	}
 	$num_rules = count($config['nat']['advancedoutbound']['rule']);
 	for($x = $num_rules; $x > 0; $x--) {
 		if($config['nat']['advancedoutbound']['rule'][$x])
-			if($config['nat']['advancedoutbound']['rule'][$x]['interface'] == "optXXXX")
+			if(strtoupper($config['nat']['advancedoutbound']['rule'][$x]['interface']) == "OPTXXXX")
 		 		unset($config['nat']['advancedoutbound']['rule'][$x]['interface']);
 	}
 	$num_rules = count($config['nat']['rule']);
 	for($x = $num_rules; $x > 0; $x--) {
 		if($config['nat']['rule'][$x])
-			if($config['nat']['rule'][$x]['interface'] == "optXXXX")
+			if(strtoupper($config['nat']['rule'][$x]['interface']) == "OPTXXXX")
 		 		unset($config['nat']['rule'][$x]['interface']);
 	}
 	write_config();

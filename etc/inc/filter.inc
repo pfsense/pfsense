@@ -1693,8 +1693,13 @@ EOD;
                 $ipfrules .= "block in log quick proto tcp from <sshlockout> to any port ";
                 $ipfrules .= $config['system']['ssh']['port'];
                 $ipfrules .= " label \"sshlockout\"\n";
-        } else
-                $ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n";
+        } else {
+			if($config['system']['ssh']['port'] <> "") 
+				$sshport = $config['system']['ssh']['port'];
+			else 
+				$sshport = 22;
+			$ipfrules .= "block in log quick proto tcp from <sshlockout> to \$LANIPS port {$sshport} label \"sshlockout\"\n";
+		}
 
 	/*
 	 * Support for allow limiting of TCP connections by establishment rate

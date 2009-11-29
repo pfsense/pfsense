@@ -141,11 +141,10 @@ function spit_out_select_items($area, $showall) {
 if ($_POST['apply']) {
         ob_flush();
         flush();
-        sleep(5);
-	conf_mount_rw();
-	clear_subsystem_dirty("restore");
-	conf_mount_ro();
-        mwexec("/sbin/shutdown -r now");
+		conf_mount_rw();
+		clear_subsystem_dirty("restore");
+		conf_mount_ro();
+        Header("Location: reboot.php?")
         exit;
 }
 
@@ -493,12 +492,16 @@ function decrypt_change() {
 
 //-->
 </script>
-<form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
+
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('restore')): ?><p>
+<form action="reboot.php" method="post">
+<input name="Submit" type="hidden" value=" Yes ">
 <?php print_info_box_np("The firewall configuration has been changed.<br>You must apply the new config by restarting the firewall in order for changes to take effect.", "apply", "Reboot firewall");?><br>
+</form>
 <?php endif; ?>
+<form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>

@@ -33,6 +33,7 @@
 
 require("guiconfig.inc");
 require("priv.defs.inc");
+require("priv.inc");
 
 if($_POST) {
 		print_r($_POST);

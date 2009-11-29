@@ -49,6 +49,7 @@
 require("certs.inc");
 require("guiconfig.inc");
 require("priv.defs.inc");
+require("priv.inc");
 
 if (isAllowedPage("system_usermanager")) {
 

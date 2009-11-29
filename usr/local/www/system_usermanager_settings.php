@@ -46,6 +46,7 @@ if($_POST['savetest'])
 
 require("guiconfig.inc");
 require("priv.defs.inc");
+require("priv.inc");
 
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
 $pconfig['ldapserver'] = &$config['system']['webgui']['ldapserver'];

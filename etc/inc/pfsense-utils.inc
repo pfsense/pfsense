@@ -1064,7 +1064,7 @@ function setup_serial_port() {
 	$ttys_split = split("\n", $ttys);
 	$fd = fopen("/etc/ttys", "w");
 	foreach($ttys_split as $tty) {
-		if(stristr($tty, "ttyd0")) {
+		if(stristr($tty, "ttyd0") or stristr($tty, "ttyu0")) {
 			if(isset($config['system']['enableserial'])) {
 				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	dialup	on	secure\n");
 			} else {

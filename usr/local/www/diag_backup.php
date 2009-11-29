@@ -177,7 +177,7 @@ if ($_POST) {
 
 			if (!$input_errors) {
 
-				$lockbckp = lock('config');
+				//$lockbckp = lock('config');
 
 				$host = "{$config['system']['hostname']}.{$config['system']['domain']}";
 				$name = "config-{$host}-".date("YmdHis").".xml";
@@ -207,7 +207,7 @@ if ($_POST) {
 					}
 				}
 
-				unlock($lockbckp);
+				//unlock($lockbckp);
 
 				if ($_POST['encrypt']) {
 					$data = encrypt_data($data, $_POST['encrypt_password']);

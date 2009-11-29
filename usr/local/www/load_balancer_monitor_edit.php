@@ -106,7 +106,7 @@ if ($_POST) {
 			if (is_array($pconfig['options'])) {
 				if (isset($pconfig['options']['host']) && $pconfig['options']['host'] != "") {
 					if (!is_hostname($pconfig['options']['host'])) {
-						$input_errors[] = "Invalid hostname.";
+						$input_errors[] = "The hostname can only contain the characters A-Z, 0-9 and '-'.";
 					}
 				}
 				if (isset($pconfig['options']['code']) && $pconfig['options']['code'] != "") {

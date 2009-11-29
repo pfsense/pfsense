@@ -83,7 +83,7 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
 	if (($_POST['host'] && !is_hostname($_POST['host']))) 
-		$input_errors[] = "A valid host must be specified.";
+		$input_errors[] = "The hostname can only contain the characters A-Z, 0-9 and '-'.";
 
 	if (($_POST['domain'] && !is_domain($_POST['domain']))) 
 		$input_errors[] = "A valid domain must be specified.";

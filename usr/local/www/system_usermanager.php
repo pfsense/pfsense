@@ -379,7 +379,7 @@ function presubmit() {
 	                        </td>
 	                    </tr>
 						<tr>
-							<td width="22%" valign="top" class="vncellreq"><?=gettext("Disabled");?></td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Disabled");?></td>
 							<td width="78%" class="vtable">
 								<input name="disabled" type="checkbox" id="disabled" <?php if($pconfig['disabled']) echo "CHECKED"; ?>>
 							</td>

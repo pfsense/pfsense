@@ -97,11 +97,6 @@ if (led_count() >= 3) {
 $pkg_interface = 'console';
 $g['booting'] = true;
 touch("{$g['varrun_path']}/booting");
-if($g['platform'] == "cdrom") {
-	$motd = trim(file_get_contents("/etc/motd"));
-	if (strlen($motd) > 2) 
-		echo "\n{$motd}\n\n";
-}
 
 /* parse the configuration and include all functions used below */
 require_once("/etc/inc/config.inc");

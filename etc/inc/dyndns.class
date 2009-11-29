@@ -119,7 +119,7 @@
 			$this->_dnsWildcard = $dnsWildcard;
 			$this->_dnsMX = $dnsMX;
 			$this->_if = get_real_interface($dnsIf);
-			$this->_dnsIP = get_interface_ip($this->_if);
+			$this->_dnsIP = get_interface_ip($dnsIf);
 
 			// Ensure that we where able to lookup the IP
 			if(!$this->_dnsIP)

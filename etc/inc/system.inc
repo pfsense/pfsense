@@ -1131,6 +1131,7 @@ function system_reboot_sync() {
 
 function system_reboot_cleanup() {
 	mwexec("/usr/local/bin/beep.sh stop");
+	require_once("captiveportal.inc");
 	captiveportal_radius_stop_all();
 	require_once("voucher.inc");
 	voucher_save_db_to_config();

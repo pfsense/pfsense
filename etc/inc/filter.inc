@@ -713,16 +713,16 @@ function filter_generate_reflection($rule, $extport, &$starting_localhost_port) 
 						case "tcp/udp":
 							$protocol = "{ tcp udp }";
 							foreach($toadd_array as $tda) {
-								$reflection_txt = "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w {$reflectiontimeout}{$target} {$tda}\n";
+								$reflection_txt = "\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w {$reflectiontimeout}{$target} {$tda}\n";
 								if(!in_array($reflection_txt, $reflection_seen)) {
-									fwrite($inetd_fd, $reflection_txt);
+									fwrite($inetd_fd, $starting_localhost_port . $reflection_txt);
 									$reflection_seen[] = $reflection_txt;
 								}
 								$natrules .= "rdr on {$ifname['if']} proto tcp from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
 								$starting_localhost_port++;
-								$reflection_txt = "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -u -w {$reflectiontimeout} {$target} {$tda}\n";
+								$reflection_txt = "\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -u -w {$reflectiontimeout} {$target} {$tda}\n";
 								if(!in_array($reflection_txt, $reflection_seen)) {
-									fwrite($inetd_fd, $reflection_txt);
+									fwrite($inetd_fd, $starting_localhost_port . $reflection_txt);
 									$reflection_seen[] = $reflection_txt;
 								}
 								$natrules .= "rdr on { {$ifname['if']} } proto udp from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
@@ -745,9 +745,9 @@ function filter_generate_reflection($rule, $extport, &$starting_localhost_port) 
 									$reflectiontimeout = $config['system']['reflectiontimeout'];
 								else
 									$reflectiontimeout = "20";
-								$reflection_txt = "{$starting_localhost_port}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
+								$reflection_txt = "\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
 								if(!in_array($reflection_txt, $reflection_seen)) {
-									fwrite($inetd_fd, $reflection_txt);
+									fwrite($inetd_fd, $starting_localhost_port . $reflection_txt);
 									$reflection_seen[] = $reflection_txt;
 								}
 								$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";

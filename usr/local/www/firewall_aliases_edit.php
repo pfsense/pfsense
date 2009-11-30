@@ -250,14 +250,23 @@ if ($_POST) {
 	       			}
 	       			$final_address_details .= "||";
 				$isfirst++;
-			}
-			if (is_alias($_POST["address{$x}"])) {
-				if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
-					$wrongaliases .= " " . $_POST["address{$x}"];
+				
+				if (is_alias($_POST["address{$x}"])) {
+					if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
+						$wrongaliases .= " " . $_POST["address{$x}"];
+				} else if ($_POST['type'] == "port") {
+					if (preg_match("/[^[[:digit:]]]/", $_POST["address{$x}"]) || strlen($_POST["address{$x}"]) > 5)
+						$input_errors[] = $_POST["address{$x}"] . " is not a valid {$_POST['type']} alias.";
+					else if (intval($_POST["address{$x}"]) < 0 || intval($_POST["address{$x}"]) > 65535)
+						$input_errors[] = $_POST["address{$x}"] . " is not a valid port alias.";
+				} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
+					if (!is_ipaddr($_POST["address{$x}"]) && !is_hostname($_POST["address{$x}"]))
+						$input_errors[] = $_POST["address{$x}"] . " is not a valid {$_POST['type']} alias.";
+				}
 			}
 		}
 		if ($wrongaliases <> "")
-			$input_errors[] = "The following aliases: {$wrongaliases} \ncannot be nested cause they are not of the same type.";
+			$input_errors[] = "The alias(es): {$wrongaliases} \ncannot be nested cause they are not of the same type.";
 	}
 
 	if (!$input_errors) {

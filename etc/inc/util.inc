@@ -349,7 +349,8 @@ function get_configured_carp_interface_list() {
                         switch ($vip['mode']) {
                         case "carp":
                         case "carpdev-dhcp":
-                        	$iflist[$vip['carpif']] = $vip['subnet'];
+				$vipif = "vip" . $vip['vhid'];
+                        	$iflist[$vipif] = $vip['subnet'];
                                 break;
                         }
                 }

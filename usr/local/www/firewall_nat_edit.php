@@ -480,21 +480,28 @@ $addrisfirst = 0;
 $aliasesaddr = "";
 if($config['aliases']['alias'] <> "")
 	foreach($config['aliases']['alias'] as $alias_name) {
-		if(!stristr($alias_name['address'], ".")) {
-			if($isfirst == 1) $aliases .= ",";
-			$aliases .= "'" . $alias_name['name'] . "'";
-			$isfirst = 1;
-		} else {
-			if($addrisfirst == 1) $aliasesaddr .= ",";
-			$aliasesaddr .= "'" . $alias_name['name'] . "'";
-			$addrisfirst = 1;
+		switch ($alias_name['type']) {
+                        case "port":
+                                if($isfirst == 1) $portaliases .= ",";
+                                $portaliases .= "'" . $alias_name['name'] . "'";
+                                $isfirst = 1;
+                                break;
+                        case "host":
+                        case "network":
+                        case "openvpn":
+                                if($addrisfirst == 1) $aliasesaddr .= ",";
+                                $aliasesaddr .= "'" . $alias_name['name'] . "'";
+                                $addrisfirst = 1;
+                                break;
+                        default:
+                                break;
 		}
 	}
 ?>
 <script language="JavaScript">
 <!--
 	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
-	var customarray=new Array(<?php echo $aliases; ?>);
+	var customarray=new Array(<?php echo $portaliases; ?>);
 
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("localip"), new StateSuggestions(addressarray));
         var oTextbox2 = new AutoSuggestControl(document.getElementById("beginport_cust"), new StateSuggestions(customarray));

@@ -90,12 +90,4 @@ function proto_change() {
 		document.iform.localbeginport.disabled = 0;
 	}
 }
-
-window.onload = function () {
-	var oTextbox1 = new AutoSuggestControl(document.getElementById("localip"), new StateSuggestions(addressarray));
-	var oTextbox2 = new AutoSuggestControl(document.getElementById("beginport_cust"), new StateSuggestions(customarray));
-	var oTextbox3 = new AutoSuggestControl(document.getElementById("endport_cust"), new StateSuggestions(customarray));
-	var oTextbox4 = new AutoSuggestControl(document.getElementById("localbeginport_cust"), new StateSuggestions(customarray));
-}
-
 //-->

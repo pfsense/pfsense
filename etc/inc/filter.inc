@@ -1698,7 +1698,7 @@ EOD;
 				$sshport = $config['system']['ssh']['port'];
 			else 
 				$sshport = 22;
-			$ipfrules .= "block in log quick proto tcp from <sshlockout> to \$LANIPS port {$sshport} label \"sshlockout\"\n";
+			$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
 		}
 
 	/*

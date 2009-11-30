@@ -132,6 +132,7 @@ function interface_vlan_configure(&$vlan) {
 	/* Since we are going to add vlan(4) try to enable all that hardware supports. */
 	mwexec("/sbin/ifconfig {$if} vlanhwtag");
 	mwexec("/sbin/ifconfig {$if} vlanmtu");
+	mwexec("/sbin/ifconfig {$if} vlanhwfilter");
 
 	if (!empty($vlanif) && does_interface_exist($vlanif)) {
 		interface_bring_down($vlanif);

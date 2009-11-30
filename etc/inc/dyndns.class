@@ -895,17 +895,23 @@
 
 			log_error("DynDns: _checkIP() starting.");
 
-			$ip_ch = curl_init('http://checkip.dyndns.org');
-			curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-			curl_setopt($ip_ch, CURLOPT_INTERFACE, $this->_if);
-			$ip_result_page = curl_exec($ip_ch);
-			curl_close($ip_ch);
-			$ip_result_decoded = urldecode($ip_result_page);
-			preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
-			$ip_address = trim($matches[1]);
-
-			log_error("DynDns debug information: {$ip_address}");
+			$hosttocheck = "checkip.dyndns.org";
+			$checkip = gethostbyname($hosttocheck);
+			if ($hosttocheck == $checkip) {
+				$ip_address = find_interface_ip($this->_if);
+				log_error("DynDns debug information: {$ip_address} extracted from local system.");
+			} else {
+				$ip_ch = curl_init("http://{$checkip}");
+				curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+				curl_setopt($ip_ch, CURLOPT_INTERFACE, $this->_if);
+				$ip_result_page = curl_exec($ip_ch);
+				curl_close($ip_ch);
+				$ip_result_decoded = urldecode($ip_result_page);
+				preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
+				$ip_address = trim($matches[1]);
+				log_error("DynDns debug information: {$ip_address} extracted from {$hosttocheck}");
+			}
 
 			return $ip_address;
 		}

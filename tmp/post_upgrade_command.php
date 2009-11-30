@@ -1,22 +1,19 @@
 #!/usr/local/bin/php -f 
 <?php
+
 	/* upgrade embedded users serial console */
 	require_once("globals.inc");
-	require_once("functions.inc");
 	require_once("config.inc");
+	require_once("functions.inc");
+
 	if($g['platform'] == "embedded") {
 		$config['system']['enableserial'] = true;
 		write_config();
 	}
+
 	setup_serial_port();
-	if(file_exists("/usr/local/www/index.html"))
-		unlink("/usr/local/www/index.html"); 
-	if(file_exists("/usr/local/www/fred.png"))
-		unlink("/usr/local/www/fred.png"); 
-	if(file_exists("/usr/local/www/dfuife.cgi"))
-		unlink("/usr/local/www/dfuife.cgi");
 		
-	if($g['platform'] == "pfSense")
+	if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd")
 		touch("/conf/needs_package_sync");
 
 	$files_to_process = split("\n", file_get_contents("/etc/pfSense.obsoletedfiles"));

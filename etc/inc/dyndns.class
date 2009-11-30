@@ -130,27 +130,30 @@
 			if ($this->_detectChange() == FALSE) {
 				$this->_error(10);
 			} else {
-				if ($this->_dnsService == 'dnsomatic' ||
-					$this->_dnsService == 'dyndns' ||
-					$this->_dnsService == 'dyndns-static' ||
-					$this->_dnsService == 'dyndns-custom' ||
-					$this->_dnsService == 'dhs' ||
-					$this->_dnsService == 'noip' ||
-					$this->_dnsService == 'easydns' ||
-					$this->_dnsService == 'hn' ||
-					$this->_dnsService == 'zoneedit' ||
-					$this->_dnsService == 'dyns' ||
-					$this->_dnsService == 'ods' ||
-					$this->_dnsService == 'freedns' ||
-					$this->_dnsService == 'loopia' ||
-					$this->_dnsService == 'staticcling'||
-					$this->_dnsService == 'dnsexit' ||
-					$this->_dnsService == 'opendns') {
-					$this->_update();
-				} else {
+				switch ($this->_dnsService) {
+				case 'dnsomatic':
+				case 'dyndns':
+				case 'dyndns-static':
+				case 'dyndns-custom':
+				case 'dhs':
+				case 'noip':
+				case 'easydns':
+				case 'hn':
+				case 'zoneedit':
+				case 'dyns':
+				case 'ods':
+				case 'freedns':
+				case 'loopia':
+				case 'staticcling':
+				case 'dnsexit':
+				case 'opendns':
+					$this->_update();	
+					break;
+				default:
 					$this->_error(6);
+					break;
 				}
-			}					
+			}
 		}
 			
 		/*
@@ -181,7 +184,7 @@
 						$server = $this->_dnsServer;
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
-					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP.'&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
+					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					$data = curl_exec($ch);
 					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
 					curl_close($ch);

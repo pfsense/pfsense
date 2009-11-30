@@ -71,7 +71,6 @@
 		var $_dnsWildcard;
 		var $_dnsMX;
 		var $_dnsBackMX;
-		var $_dnsWanip;
 		var $_dnsServer;
 		var $_dnsPort;
 		var $_dnsUpdateURL;
@@ -84,7 +83,7 @@
 		 *   - Gets the dice rolling for the update. 
 		 */
 		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '',
-				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '', $dnsWanip = '',
+				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
 				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '') {
 			
 			global $config;
@@ -113,7 +112,6 @@
 			$this->_dnsUser = $dnsUser;
 			$this->_dnsPass = $dnsPass;
 			$this->_dnsHost = $dnsHost;
-			$this->_dnsWanip = $dnsWanip;
 			$this->_dnsServer = $dnsServer;
 			$this->_dnsPort = $dnsPort;
 			$this->_dnsWildcard = $dnsWildcard;

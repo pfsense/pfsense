@@ -85,7 +85,6 @@ if ($_POST) {
 				$a_domainOverrides[] = $doment;
 
 			$retval = services_dnsmasq_configure();
-			$savemsg = get_std_save_message($retval);
 
 			write_config();
 

@@ -74,22 +74,23 @@ if ($_POST) {
        }
 
        if (!$input_errors) {
-               $doment = array();
-               $doment['domain'] = $_POST['domain'];
-               $doment['ip'] = $_POST['ip'];
-               $doment['descr'] = $_POST['descr'];
+			$doment = array();
+			$doment['domain'] = $_POST['domain'];
+			$doment['ip'] = $_POST['ip'];
+			$doment['descr'] = $_POST['descr'];
 
-               if (isset($id) && $a_domainOverrides[$id])
-                       $a_domainOverrides[$id] = $doment;
-               else
-                       $a_domainOverrides[] = $doment;
+			if (isset($id) && $a_domainOverrides[$id])
+				$a_domainOverrides[$id] = $doment;
+			else
+				$a_domainOverrides[] = $doment;
 
-		mark_subsystem_dirty('dnsmasq');
+			$retval = services_dnsmasq_configure();
+			$savemsg = get_std_save_message($retval);
 
-               write_config();
+			write_config();
 
-               header("Location: services_dnsmasq.php");
-               exit;
+			header("Location: services_dnsmasq.php");
+			exit;
        }
 }
 

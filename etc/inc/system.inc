@@ -636,7 +636,7 @@ function system_webgui_start() {
 			echo "Importaing default SSL Certificate...";
 			$cert_file = "/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.crt";
 			$key_file  = "/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.key";
-			if(file_exists($cert_file && $key_file)) {
+			if(file_exists($cert_file) && file_exists($key_file)) {
 				$cert = array();
 				$cert['refid'] = uniqid();
 				$crt = file_get_contents("/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.crt");

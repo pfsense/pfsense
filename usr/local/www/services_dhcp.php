@@ -128,7 +128,7 @@ if (is_array($config['dhcpd'][$if])){
 	if (is_array($config['dhcpd'][$if]['range'])) {
 		$pconfig['range_from'] = $config['dhcpd'][$if]['range']['from'];
 		$pconfig['range_to'] = $config['dhcpd'][$if]['range']['to'];
-	}
+	}	
 	$pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
 	$pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
 	$pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
@@ -158,7 +158,6 @@ if (is_array($config['dhcpd'][$if])){
 
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);
-
 
 /*   set the enabled flag which will tell us if DHCP relay is enabled
  *   on any interface.   We will use this to disable DHCP server since
@@ -198,42 +197,36 @@ if ($_POST) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		
-		if (($_POST['range_from'] && !is_ipaddr($_POST['range_from']))) {
+		if (($_POST['range_from'] && !is_ipaddr($_POST['range_from']))) 
 			$input_errors[] = "A valid range must be specified.";
-		}
-		if (($_POST['range_to'] && !is_ipaddr($_POST['range_to']))) {
+		if (($_POST['range_to'] && !is_ipaddr($_POST['range_to']))) 
 			$input_errors[] = "A valid range must be specified.";
-		}
-		if (($_POST['gateway'] && !is_ipaddr($_POST['gateway']))) {
+		if (($_POST['gateway'] && !is_ipaddr($_POST['gateway']))) 
 			$input_errors[] = "A valid IP address must be specified for the gateway.";
-		}
-		if (($_POST['wins1'] && !is_ipaddr($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddr($_POST['wins2']))) {
+		if (($_POST['wins1'] && !is_ipaddr($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddr($_POST['wins2']))) 
 			$input_errors[] = "A valid IP address must be specified for the primary/secondary WINS servers.";
-		}
-		if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2']))) {
+		if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2']))) 
 			$input_errors[] = "A valid IP address must be specified for the primary/secondary DNS servers.";
-		}
-		if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
+
+		if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) 
 			$input_errors[] = "The default lease time must be at least 60 seconds.";
-		}
-		if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
+		if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) 
 			$input_errors[] = "The maximum lease time must be at least 60 seconds and higher than the default lease time.";
-		}
-		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain']))) {
+		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain']))) 
 			$input_errors[] = "A valid domain name must be specified for the dynamic DNS registration.";
-		}
-		if (($_POST['ntp1'] && !is_ipaddr($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddr($_POST['ntp2']))) {
+		if (($_POST['ntp1'] && !is_ipaddr($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddr($_POST['ntp2']))) 
 			$input_errors[] = "A valid IP address must be specified for the primary/secondary NTP servers.";
-		}
-		if (($_POST['domain'] && !is_domain($_POST['domain']))) {
+		if (($_POST['domain'] && !is_domain($_POST['domain'])))
 			$input_errors[] = "A valid domain name must be specified for the DNS domain.";
-    }
-		if (($_POST['tftp'] && !is_ipaddr($_POST['tftp']))) {
+		if (($_POST['tftp'] && !is_ipaddr($_POST['tftp'])))
 			$input_errors[] = "A valid IP address must be specified for the TFTP server.";
-		}
-		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver']))) {
+		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver']))) 
 			$input_errors[] = "A valid IP address must be specified for the network boot server.";
-		}
+	
+		if(gen_subnet($ifcfgip, $ifcfgsn) == $_POST['range_from'])
+			$input_errors[] = "You cannot use the network address in the starting subnet range.";
+		if(gen_subnet_max($ifcfgip, $ifcfgsn) == $_POST['range_to'])
+			$input_errors[] = "You cannot use the broadcast address in the ending subnet range.";
 
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */

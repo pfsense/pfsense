@@ -633,14 +633,12 @@ function system_webgui_start() {
 			if(file_exists($cert_file && $key_file)) {
 				$cert = array();
 				$cert['refid'] = uniqid();
-				$cert_txt = file_get_contents("/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.crt");
-				$key_txt = file_get_contents("/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.key");
-				cert_import($cert, $cert_txt, $key_txt);
+				$crt = file_get_contents("/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.crt");
+				$key = file_get_contents("/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.key");
+				cert_import($cert, $crt, $key);
 				$a_cert[] = $cert;
 				$config['system']['webgui']['ssl-certref'] = $cert['refid'];
 				write_config("Importing default HTTPS certificate from /etc/default_ssl_certs/");
-				$crt = base64_decode($cert['crt']);
-				$key = base64_decode($cert['prv']);
 				if(!$config['system']['webgui']['port'])
 					$portarg = "443";
 				$ca = ca_chain($cert);

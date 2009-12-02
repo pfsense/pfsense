@@ -100,15 +100,15 @@ if ($_POST) {
 		}
 		
 		if (!$input_errors) {	
-			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pptp_subnet']);
+			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $g['pptp_subnet']);
 			$subnet_start = ip2long($_POST['remoteip']);
-			$subnet_end = ip2long($_POST['remoteip']) + $_POST['n_pptp_units'] - 1;
+			$subnet_end = ip2long($_POST['remoteip']) + $g['n_pptp_units'] - 1;
 						
 			if ((ip2long($_POST['localip']) >= $subnet_start) && 
 			    (ip2long($_POST['localip']) <= $subnet_end)) {
 				$input_errors[] = "The specified server address lies in the remote subnet.";	
 			}
-			if ($_POST['localip'] == get_interface_ip("lan")) {
+			if ($_POST['localip'] == $config['interfaces']['lan']['ipaddr']) {
 				$input_errors[] = "The specified server address is equal to the LAN interface address.";	
 			}
 		}
@@ -344,47 +344,39 @@ function enable_change(enable_over) {
                     Specify the starting address for the client IP subnet.<br>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Subnet netmask</td>
-                  <td width="78%" class="vtable">
-		    <select id="pptp_subnet" name="pptp_subnet">
-		    <?php
-		     for($x=0; $x<33; $x++) {
-			if($x == $pconfig['pptp_subnet'])
-				$SELECTED = " SELECTED";
-			else
-				$SELECTED = "";
-			echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";			
-		     }
-		    ?>
-		    </select>
-		    <br>Hint: 24 is 255.255.255.0
+                  <td width="22%" valign="top" class="vncellreq">Max. concurrent 
+                    connections</td>
+                  <td width="78%" class="vtable"> 
+                    <?=$g['n_pptp_units'];?>
                   </td>
-		</tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">No. PPTP users</td>
-                  <td width="78%" class="vtable">
-		    <select id="n_pptp_units" name="n_pptp_units">
-		    <?php
-		     for($x=0; $x<255; $x++) {
-			if($x == $pconfig['n_pptp_units'])
-				$SELECTED = " SELECTED";
-			else
-				$SELECTED = "";
-			echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";			
-		     }
-		    ?>
-		    </select>
-		    <br>Hint: 10 is TEN pptp clients
-                  </td>
+                  <td width="22%" valign="top" class="vncellreq">Server address</td>
+                  <td width="78%" class="vtable"> 
+                    <?=$mandfldhtml;?><input name="localip" type="text" class="formfld" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>"> 
+                    <br>
+                    Enter the IP address the PPTP server should use on its side 
+                    for all clients.</td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq">Remote address 
+                    range</td>
+                  <td width="78%" class="vtable"> 
+                    <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>">
+                    / 
+                    <?=$g['pptp_subnet'];?>
+                    <br>
+                    Specify the starting address for the client IP address subnet.<br>
+                    The PPTP server will assign 
+                    <?=$g['n_pptp_units'];?>
+                    addresses, starting at the address entered above, to clients.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">PPTP DNS Servers</td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="pptp_dns1" type="text" class="formfld unknown" id="pptp_dns1" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns1']);?>">
                     <br>
-			<input name="pptp_dns2" type="text" class="formfld unknown" id="pptp_dns2" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns2']);?>">
+					<input name="pptp_dns2" type="text" class="formfld unknown" id="pptp_dns2" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns2']);?>">
                     <br>
-
                    primary and secondary DNS servers assigned to PPTP clients<br>
                 </tr>
                 <tr> 

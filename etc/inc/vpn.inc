@@ -976,30 +976,25 @@ function vpn_pptpd_configure() {
 				return 1;
 			}
 
-			$mpdconf =<<<EOD
+			$mpdconf = <<<EOD
 pptpd:
 
 EOD;
 
-			for ($i = 0; $i < $pptpdcfg['n_pptp_units']; $i++) {
+			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 				$mpdconf .= "	load pt{$i}\n";
 			}
 
-			for ($i = 0; $i < $pptpdcfg['n_pptp_units']; $i++) {
+			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
+				$ngif = "ng" . ($i+1);
 
-				if(isset($pptpdcfg['radius']['radiusissueips']) && isset($pptpdcfg['radius']['server']['enable'])) {
-					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 0.0.0.0/0";
-				} else {
-					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 {$clientip}/32";
-				}
-
-				$mpdconf .=<<<EOD
+				$mpdconf .= <<<EOD
 
 pt{$i}:
-	new pt{$i} pt{$i}
-	{$isssue_ip_type}
+	new -i {$ngif} pt{$i} pt{$i}
+	set ipcp ranges {$pptpdcfg['localip']}/32 {$clientip}/32
 	load pts
 
 EOD;

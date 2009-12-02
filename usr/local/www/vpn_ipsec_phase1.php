@@ -58,8 +58,7 @@ if (isset($_GET['dup'])) {
 	$p1index = $_GET['dup'];
 }
 
-if (isset($p1index) && $a_phase1[$p1index])
-{
+if (isset($p1index) && $a_phase1[$p1index]) {
 	// don't copy the ikeid on dup
 	if (!isset($_GET['dup']))
 		$pconfig['ikeid'] = $a_phase1[$p1index]['ikeid'];
@@ -91,7 +90,7 @@ if (isset($p1index) && $a_phase1[$p1index])
 	$pconfig['lifetime'] = $a_phase1[$p1index]['lifetime'];
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
 
-	if (($pconfig['authentication_method'] == "pre_shared_key")||
+	if (($pconfig['authentication_method'] == "pre_shared_key") || 
 		($pconfig['authentication_method'] == "xauth_psk_server")) {
 		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
 	} else {
@@ -106,9 +105,7 @@ if (isset($p1index) && $a_phase1[$p1index])
 		$pconfig['dpd_delay'] = $a_phase1[$p1index]['dpd_delay'];
 		$pconfig['dpd_maxfail'] = $a_phase1[$p1index]['dpd_maxfail'];
 	}
-}
-else
-{
+} else {
 	/* defaults */
 	$pconfig['interface'] = "wan";
 	if($config['interfaces']['lan']) 

@@ -208,6 +208,14 @@ function post_cvssync_commands() {
 		echo "\n";
 	}
 
+	/* lock down console if necessary */
+	echo "Locking down the console if needed...\n";
+	if(isset($config['system']['disableconsolemenu'])) {
+		auto_login(false);
+	} else {
+		auto_login(true);
+	}
+	
 	echo "===> Signaling PHP and Lighty restart...";
 	$fd = fopen("/tmp/restart_lighty", "w");
 	fwrite($fd, "#!/bin/sh\n");

@@ -79,6 +79,8 @@ if ($_GET['act'] == "del") {
 		write_config();
 
 		interfaces_vlan_configure();
+		reload_interfaces_sync();
+		filter_configure_sync();
 
 		header("Location: interfaces_vlan.php");
 		exit;

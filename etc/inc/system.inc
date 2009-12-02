@@ -669,6 +669,9 @@ function system_generate_lighty_config($filename,
 
 	global $config, $g;
 
+	if(!is_dir("/tmp/lighttpdcompress"))
+		mkdir("/tmp/lighttpdcompress");
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_generate_lighty_config() being called $mt\n";
@@ -798,13 +801,13 @@ server.network-backend 	= "writev"
 ## modules to load
 server.modules              =   (
 									{$captive_portal_module}
-									"mod_access", "mod_accesslog", "mod_expire", "mod_compress",
+									"mod_access", "mod_accesslog", "mod_expire", "mod_compress", 
 									{$module}{$captiveportal}
 								)
 
 ## Unused modules
 #                               "mod_setenv",
-#                               "mod_compress"
+
 #				"mod_redirect",
 #                               "mod_rewrite",
 #                               "mod_ssi",
@@ -928,6 +931,10 @@ debug.log-response-header  = "disable"
 debug.log-request-handling = "disable"
 debug.log-file-not-found   = "disable"
 
+# gzip compression
+compress.cache-dir = "/tmp/lighttpdcompress/"
+compress.filetype  = ("text/plain","text/css", "text/xml", "text/javascript" )
+
 {$server_upload_dirs}
 
 {$server_max_request_size}
@@ -937,10 +944,6 @@ debug.log-file-not-found   = "disable"
 {$cgi_config}
 
 {$captive_portal_mod_evasive}
-
-# Turn on Lighty caching directives
-compress.cache-dir         = "/tmp/"
-compress.filetype          = ("text/plain", "text/html", "text/javascript", "text/css")
 
 expire.url = (
 				"" => "access 50 hours",	

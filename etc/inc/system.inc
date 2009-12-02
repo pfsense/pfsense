@@ -648,7 +648,6 @@ function system_webgui_start() {
 				if(!$config['system']['webgui']['port'])
 					$portarg = "443";
 				$ca = ca_chain($cert);
-				echo "Done.\n";
 			} else {
 				log_error("ERROR: Could not locate a default certificate file in /etc/default_ssl/certs/ for import $cert_file - $key_file");
 			}

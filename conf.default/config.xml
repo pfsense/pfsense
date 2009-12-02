@@ -173,14 +173,6 @@
 		<timeservers>0.pfsense.pool.ntp.org</timeservers>
 		<webgui>
 			<protocol>http</protocol>
-			<!--
-			<port></port>
-			<certificate></certificate>
-			<private-key></private-key>
-			<noassigninterfaces/>
-			<expanddiags/>
-			<noantilockout></noantilockout>
-			-->
 		</webgui>
                 <disablenatreflection>yes</disablenatreflection>
 		<!-- <disableconsolemenu/> -->

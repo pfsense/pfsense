@@ -627,7 +627,7 @@ function system_webgui_start() {
 		// Ensure that we have a webConfigurator CERT
 		$cert =& lookup_cert($config['system']['webgui']['ssl-certref']);
 		if(!is_array($cert) && !$cert['crt'] && !$cert['prv']) {
-			echo "Importaing default SSL Certificate for webConfigurator...";
+			echo "Importaing default SSL Certificate...";
 			$cert_file = "/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.crt";
 			$key_file  = "/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.key";
 			if(file_exists($cert_file && $key_file)) {
@@ -639,6 +639,11 @@ function system_webgui_start() {
 				$a_cert[] = $cert;
 				$config['system']['webgui']['ssl-certref'] = $cert['refid'];
 				write_config("Importing default HTTPS certificate from /etc/default_ssl_certs/");
+				$crt = base64_decode($cert['crt']);
+				$key = base64_decode($cert['prv']);
+				if(!$config['system']['webgui']['port'])
+					$portarg = "443";
+				$ca = ca_chain($cert);
 				echo "Done.\n";
 			} else {
 				log_error("ERROR: Could not locate a default certificate file in /etc/default_ssl/certs/ for import $cert_file - $key_file");

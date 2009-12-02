@@ -627,6 +627,12 @@ function system_webgui_start() {
 		// Ensure that we have a webConfigurator CERT
 		$cert =& lookup_cert($config['system']['webgui']['ssl-certref']);
 		if(!is_array($cert) && !$cert['crt'] && !$cert['prv']) {
+			if (!is_array($config['system']['ca']))
+				$config['system']['ca'] = array();
+			$a_ca =& $config['system']['ca'];
+			if (!is_array($config['system']['cert']))
+				$config['system']['cert'] = array();
+			$a_cert =& $config['system']['cert'];
 			echo "Importaing default SSL Certificate...";
 			$cert_file = "/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.crt";
 			$key_file  = "/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.key";

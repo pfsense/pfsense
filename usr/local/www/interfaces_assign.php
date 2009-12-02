@@ -212,6 +212,8 @@ if ($_POST['apply']) {
 						/* Reload all for the interface. */
 						interface_configure($ifname, true);
 				}
+
+				touch("/tmp/reload_interfaces");
 			}
 		}
 	

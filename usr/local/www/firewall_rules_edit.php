@@ -833,7 +833,7 @@ include("head.inc");
 				<br />
 				<span class="vexpl">
 					Specify the port or port range for the destination of the packet for this rule.
-						<br />
+					<br />
 					Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port
 				</span>
 			</td>
@@ -843,34 +843,41 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="log" type="checkbox" id="log" value="yes" <?php if ($pconfig['log']) echo "checked"; ?>>
 				<strong>Log packets that are handled by this rule</strong>
-					<br />
+				<br />
 				<span class="vexpl">Hint: the firewall has limited local log space. Don't turn on logging for everything. If you want to do a lot of logging, consider using a remote syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: Settings</a> page).</span>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Source OS</td>
 			<td width="78%" class="vtable">OS Type:&nbsp;
-				<select name="os" id="os" class="formselect">
+				<div id="showadvsourceosbox">
+					<input type="button" onClick="show_advanced_sourceos()" value="Advanced"></input> - Show advanced option</a>
+				</div>
+				<div id="showgatewayadv" style="display:none">
+					<select name="os" id="os" class="formselect">
 <?php
-					$ostypes = array(
-						 "" => "any",
-						"AIX" => "AIX",
-						"Linux" => "Linux",
-						"FreeBSD" => "FreeBSD",
-						"NetBSD" => "NetBSD",
-						"OpenBSD" => "OpenBSD",
-						"Solaris" => "Solaris",
-						"MacOS" => "MacOS",
-						"Windows" => "Windows",
-						"Novell" => "Novell",
-						"NMAP" => "NMAP"
-		           );
-					foreach ($ostypes as $ostype => $descr): ?>
-						<option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected"; ?>><?=htmlspecialchars($descr);?></option>
-<?php				endforeach; ?>
-				</select>
-				<br />
-				Note: this only works for TCP rules
+						$ostypes = array(
+							 "" => "any",
+							"AIX" => "AIX",
+							"Linux" => "Linux",
+							"FreeBSD" => "FreeBSD",
+							"NetBSD" => "NetBSD",
+							"OpenBSD" => "OpenBSD",
+							"Solaris" => "Solaris",
+							"MacOS" => "MacOS",
+							"Windows" => "Windows",
+							"Novell" => "Novell",
+							"NMAP" => "NMAP"
+			           );
+						foreach ($ostypes as $ostype => $descr): ?>
+							<option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected"; ?>><?=htmlspecialchars($descr);?></option>
+<?php
+					endforeach; 
+?>
+					</select>
+					<br />
+					Note: this only works for TCP rules
+				</div>
 			</td>
 		</tr>
 		<tr>

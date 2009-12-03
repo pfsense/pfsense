@@ -149,6 +149,12 @@ function show_advanced_gateway() {
 	aodiv.style.display = "block";
 }
 
+function show_advanced_gateway() {
+	document.getElementById("showadvsourceosbox").innerHTML='';
+	aodiv = document.getElementById('showsourceosadv');
+	aodiv.style.display = "block";
+}
+
 function show_advanced_ackqueue() {
 	document.getElementById("showadvackqueuebox").innerHTML='';
 	aodiv = document.getElementById('showackqueueadv');

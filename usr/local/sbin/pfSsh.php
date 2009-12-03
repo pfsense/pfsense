@@ -154,6 +154,14 @@ echo ".\n\n";
 $pkg_interface='console';
 
 $shell_active = true;
+$tccommands = array();
+
+function completion($string, $index) {
+	global $tccommands;
+	return $tccommands;
+}
+
+readline_completion_function("completion");
 
 if($argc < 2) {
 	echo "Welcome to the {$g['product_name']} php shell system\n";
@@ -161,9 +169,15 @@ if($argc < 2) {
 	echo "\nType \"help\" to show common usage scenarios.\n";
 	echo "\nAvailable playback commands:\n     ";
 	$files = scandir("/etc/phpshellsessions/");
+	$tccommands[] = "playback";
 	foreach($files as $file) {
-		if($file <> "." and $file <> "..")
+		if($file <> "." and $file <> "..") {
 			echo $file . " ";
+			if(function_exists("readline_add_history")) {
+				readline_add_history("playback $file");
+				$tccommands[] = "$file";
+			}
+		}
 	}
 	echo "\n\n";
 }
@@ -180,6 +194,17 @@ if($argv[1]=="playback" or $argv[1]=="run") {
 	playback_file($argv[2]);
 	exit;
 }
+
+// Define more commands
+$tccommands[] = "exit";
+$tccommands[] = "quit";
+$tccommands[] = "?";
+$tccommands[] = "exec";
+$tccommands[] = "startrecording";
+$tccommands[] = "stoprecording";
+$tccommands[] = "showrecordings";
+$tccommands[] = "record";
+$tccommands[] = "reset";
 
 while($shell_active == true) {
 	$command = readline("{$g['product_name']} shell: ");

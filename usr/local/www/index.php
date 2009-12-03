@@ -49,6 +49,7 @@
 	ob_start(null, "100000");
 
 	## Load Essential Includes
+	require("priv.inc");
 	require_once('guiconfig.inc');
 	require_once('notices.inc');
 

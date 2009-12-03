@@ -667,6 +667,8 @@ function system_webgui_start() {
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
 		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/");
 
+	sleep(1);
+
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
 

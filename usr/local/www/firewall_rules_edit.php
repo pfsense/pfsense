@@ -273,18 +273,14 @@ if ($_POST) {
 		$_POST['dstendport'] = 0;
 	}
 
-	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
+	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) 
 		$input_errors[] = "The start source port must be an alias or integer between 1 and 65535.";
-	}
-	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) {
+	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) 
 		$input_errors[] = "The end source port must be an alias or integer between 1 and 65535.";
-	}
-	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport'])) {
+	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport'])) 
 		$input_errors[] = "The start destination port must be an alias or integer between 1 and 65535.";
-	}
-	if ($_POST['dstendport'] && !is_portoralias($_POST['dstbeginport'])) {
+	if ($_POST['dstendport'] && !is_portoralias($_POST['dstbeginport'])) 
 		$input_errors[] = "The end destination port must be an alias or integer between 1 and 65535.";
-	}
 
 	/* if user enters an alias and selects "network" then disallow. */
 	if($_POST['srctype'] == "network") {
@@ -365,13 +361,13 @@ if ($_POST) {
 			if (isset($_POST['tag']))
 				$filterent['tag'] = $_POST['tag'];
 			if (isset($_POST['tagged']))
-            			$filterent['tagged'] = $_POST['tagged'];
+				$filterent['tagged'] = $_POST['tagged'];
 			$filterent['direction'] = $_POST['direction'];
 			if (isset($_POST['quick']) && $_POST['quick'] <> "")
 				$filterent['quick'] = $_POST['quick'];
 			$filterent['floating'] = "yes";
 			if (isset($_POST['interface']) && count($_POST['interface']) > 0)  {
-					$filterent['interface'] = implode(",", $_POST['interface']);
+				$filterent['interface'] = implode(",", $_POST['interface']);
 			}
 		}
 
@@ -420,18 +416,18 @@ if ($_POST) {
 			$_POST['dstmask'], $_POST['dstnot'],
 			$_POST['dstbeginport'], $_POST['dstendport']);
 
-                if ($_POST['disabled'])
-                        $filterent['disabled'] = true;
-                else
-                        unset($filterent['disabled']);
-		
+		if ($_POST['disabled'])
+			$filterent['disabled'] = true;
+		else
+			unset($filterent['disabled']);
+
 		if ($_POST['dscp'])
 			$filterent['dscp'] = $_POST['dscp'];
 
-                if ($_POST['log'])
-                        $filterent['log'] = true;
-                else
-                        unset($filterent['log']);
+		if ($_POST['log'])
+			$filterent['log'] = true;
+		else
+			unset($filterent['log']);
 		strncpy($filterent['descr'], $_POST['descr'], 52);
 
 		if ($_POST['gateway'] != "") {
@@ -533,13 +529,15 @@ include("head.inc");
 		</tr>
 <?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
 		<tr>
-                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Quick");?></td>
-                        <td width="78%" class="vtable">
-                                <input name="quick" type="checkbox" id="quick" value="yes" <?php if ($pconfig['quick']) echo "checked=\"checked\""; ?> />
-                                <strong><?=gettext("Apply the action immediately on match.");?></strong><br />
-                                <span class="vexpl"><?=gettext("Set this option if you need to apply this action to traffic that matches this rule immediately.");?></span>
-                        </td>
-                </tr>
+			<td width="22%" valign="top" class="vncellreq">
+				<?=gettext("Quick");?>
+			</td>
+			<td width="78%" class="vtable">
+				<input name="quick" type="checkbox" id="quick" value="yes" <?php if ($pconfig['quick']) echo "checked=\"checked\""; ?> />
+				<strong><?=gettext("Apply the action immediately on match.");?></strong><br />
+				<span class="vexpl"><?=gettext("Set this option if you need to apply this action to traffic that matches this rule immediately.");?></span>
+			</td>
+		</tr>
 <? endif; ?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Interface</td>
@@ -551,21 +549,17 @@ include("head.inc");
 <?php
    endif;
 				/* add group interfaces */
-                                if (is_array($config['ifgroups']['ifgroupentry']))
+				if (is_array($config['ifgroups']['ifgroupentry']))
 					foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
 						if (have_ruleint_access($ifgen['ifname']))
 							$interfaces[$ifgen['ifname']] = $ifgen['ifname'];
-
 				$ifdescs = get_configured_interface_with_descr();
-
 				foreach ($ifdescs as $ifent => $ifdesc)
         				if(have_ruleint_access($ifent))
-                				$interfaces[$ifent] = $ifdesc;
-
+							$interfaces[$ifent] = $ifdesc;
 					if ($config['l2tp']['mode'] == "server")
-                                                if(have_ruleint_access("l2tp"))
-                                                        $interfaces['l2tp'] = "L2TP VPN";
-
+						if(have_ruleint_access("l2tp"))
+							$interfaces['l2tp'] = "L2TP VPN";
 					if ($config['pptpd']['mode'] == "server")
 						if(have_ruleint_access("pptp")) 
 							$interfaces['pptp'] = "PPTP VPN";
@@ -573,16 +567,13 @@ include("head.inc");
 					if ($config['pppoe']['mode'] == "server")
 						if(have_ruleint_access("pppoe")) 
 							$interfaces['pppoe'] = "PPPoE VPN";
-					
 					/* add ipsec interfaces */
 					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
 						if(have_ruleint_access("enc0")) 
 							$interfaces["enc0"] = "IPsec";
-		
 					/* add openvpn/tun interfaces */
 					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
        					$interfaces["openvpn"] = "OpenVPN";
-
 					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && stristr($pconfig['interface'], $iface)) echo "selected"; ?>><?=gettext($ifacename);?></option>
 <?php 				endforeach; ?>
@@ -592,22 +583,24 @@ include("head.inc");
 			</td>
 		</tr>
 <?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-                <tr>
-                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Direction");?></td>
-                        <td width="78%" class="vtable">
-                                 <select name="direction" class="formselect">
-                                  <?php      $directions = array('any', 'in', 'out');
-                                        foreach ($directions as $direction): ?>
-                                                <option value="<?=$direction;?>"
-                                                <?php if ($direction == $pconfig['direction']): ?>
-                                                        selected="selected" 
-						<?php endif; ?>
-                                                ><?=$direction;?></option>
-                  	                <?php endforeach; ?>      
-                                </select>
-                		<input type="hidden" id="floating" name="floating" value="floating">
-                        </td>
-                <tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">
+				<?=gettext("Direction");?>
+			</td>
+			<td width="78%" class="vtable">
+				<select name="direction" class="formselect">
+					<?php      $directions = array('any', 'in', 'out');
+				foreach ($directions as $direction): ?>
+				<option value="<?=$direction;?>"
+					<?php if ($direction == $pconfig['direction']): ?>
+						selected="selected" 
+					<?php endif; ?>
+					><?=$direction;?></option>
+				<?php endforeach; ?>      
+				</select>
+				<input type="hidden" id="floating" name="floating" value="floating">
+			</td>
+		<tr>
 <?php endif; ?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Protocol</td>
@@ -751,33 +744,6 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncell">Source OS</td>
-			<td width="78%" class="vtable">OS Type:&nbsp;
-				<select name="os" id="os" class="formselect">
-<?php
-		           $ostypes = array(
-						 "" => "any",
-		                 "AIX" => "AIX",
-		                 "Linux" => "Linux",
-		                 "FreeBSD" => "FreeBSD",
-		                 "NetBSD" => "NetBSD",
-		                 "OpenBSD" => "OpenBSD",
-		                 "Solaris" => "Solaris",
-		                 "MacOS" => "MacOS",
-		                 "Windows" => "Windows",
-		                 "Novell" => "Novell",
-		                 "NMAP" => "NMAP"
-		           );
-
-					foreach ($ostypes as $ostype => $descr): ?>
-						<option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected"; ?>><?=htmlspecialchars($descr);?></option>
-<?php				endforeach; ?>
-				</select>
-				<br />
-				Note: this only works for TCP rules
-			</td>
-		</tr>
-		<tr>
 			<td width="22%" valign="top" class="vncellreq">Destination</td>
 			<td width="78%" class="vtable">
 				<input name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
@@ -831,7 +797,6 @@ include("head.inc");
 						</td>
 					</tr>
 				</table>
-
 			</td>
 		</tr>
 		<tr id="dprtr" name="dprtr">
@@ -883,6 +848,32 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
+			<td width="22%" valign="top" class="vncell">Source OS</td>
+			<td width="78%" class="vtable">OS Type:&nbsp;
+				<select name="os" id="os" class="formselect">
+<?php
+					$ostypes = array(
+						 "" => "any",
+						"AIX" => "AIX",
+						"Linux" => "Linux",
+						"FreeBSD" => "FreeBSD",
+						"NetBSD" => "NetBSD",
+						"OpenBSD" => "OpenBSD",
+						"Solaris" => "Solaris",
+						"MacOS" => "MacOS",
+						"Windows" => "Windows",
+						"Novell" => "Novell",
+						"NMAP" => "NMAP"
+		           );
+					foreach ($ostypes as $ostype => $descr): ?>
+						<option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected"; ?>><?=htmlspecialchars($descr);?></option>
+<?php				endforeach; ?>
+				</select>
+				<br />
+				Note: this only works for TCP rules
+			</td>
+		</tr>
+		<tr>
 			<td width="22%" valign="top" class="vncell">Diffserv Code Point</td>
 			<td width="78%" class="vtable">
 				<div id="dsadv" name="dsadv">
@@ -905,16 +896,15 @@ include("head.inc");
 				<input type="button" onClick="show_aodiv();" value="Advanced"> - Show advanced option
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
-
-                                <input type="checkbox" id="allowopts" value="yes" name="allowopts"<?php if($pconfig['allowopts'] == true) echo " checked"; ?>>
-                                <br/><span class="vexpl"><?=gettext("This allows packets with ip options to pass otherwise they are blocked by default i.e. with multicast routing/proxing.");?>
+				<input type="checkbox" id="allowopts" value="yes" name="allowopts"<?php if($pconfig['allowopts'] == true) echo " checked"; ?>>
+				<br/><span class="vexpl"><?=gettext("This allows packets with ip options to pass otherwise they are blocked by default i.e. with multicast routing/proxing.");?>
 				</span><p>
-                                <input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>">
-                                <br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other nat/filter rules. It is called <b>Policy filtering</b>");?>
-                                </span><p>
-                                <input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
-                                <br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
-                                </span> <p>
+				<input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>">
+				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other nat/filter rules. It is called <b>Policy filtering</b>");?>
+				</span><p>
+				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
+				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
+				</span> <p>
 				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
 				<input name="max-src-conn" id="max-src-conn" value="<?php echo $pconfig['max-src-conn'] ?>"><br> Maximum established TCP connections per host<p>	 
 				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
@@ -1268,9 +1258,6 @@ include("head.inc");
         var oTextbox6 = new AutoSuggestControl(document.getElementById("dstendport_cust"), new StateSuggestions(customarray));
 //-->
 </script>
-
-
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

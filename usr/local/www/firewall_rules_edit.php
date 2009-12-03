@@ -962,8 +962,13 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-				HINT: This prevents the rule from automatically syncing to other carp members.
+				<div id="showadvnoxmlrpcsyncbox">
+					<input type="button" onClick="show_advanced_noxmlrpc()" value="Advanced"></input> - Show state</a>
+				</div>
+				<div id="shownoxmlrpcadv" style="display:none">
+					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
+					HINT: This prevents the rule from automatically syncing to other carp members.
+				</div>
 			</td>
 		</tr>
 		<?php
@@ -980,22 +985,28 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Schedule</td>
 			<td width="78%" class="vtable">
-				<select name='sched'>
+				<div id="showadvschedulebox">
+					<input type="button" onClick="show_advanced_schedule()" value="Advanced"></input> - Show state</a>
+				</div>
+				<div id="showscheduleadv" style="display:none">
+					<select name='sched'>
 <?php
-				foreach($schedules as $schedule) {
-					if($schedule == $pconfig['sched']) {
-						$selected = " SELECTED";
-					} else {
-						$selected = "";
+					foreach($schedules as $schedule) {
+						if($schedule == $pconfig['sched']) {
+							$selected = " SELECTED";
+						} else {
+							$selected = "";
+						}
+						if ($schedule == "none") {
+							echo "<option value=\"\" {$selected}>{$schedule}</option>\n";
+						} else {
+							echo "<option value=\"{$schedule}\" {$selected}>{$schedule}</option>\n";
+						}
 					}
-					if ($schedule == "none") {
-						echo "<option value=\"\" {$selected}>{$schedule}</option>\n";
-					} else {
-						echo "<option value=\"{$schedule}\" {$selected}>{$schedule}</option>\n";
-					}
-				}?>
-				</select>
-				<p>Leave as 'none' to leave the rule enabled all the time.</p>
+?>
+					</select>
+					<p>Leave as 'none' to leave the rule enabled all the time.</p>
+				</div>
 			</td>
 		</tr>
 		
@@ -1014,51 +1025,56 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Gateway</td>
 			<td width="78%" class="vtable">
-				<select name='gateway'>
+				<div id="showadvgatewaybox">
+					<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show state</a>
+				</div>
+				<div id="showgatewayadv" style="display:none">
+					<select name='gateway'>
 <?php
-				foreach($gateways as $gw) {
-					if($gw == "") 
-						continue;
-					if($gw == $pconfig['gateway']) {
-						$selected = " SELECTED";
-					} else {
-						$selected = "";
-					}
-					if ($gw == "default") {
-						echo "<option value=\"\" {$selected}>{$gw}</option>\n";
-					} else {
-						$gwip = lookup_gateway_ip_by_name($gw);
-						echo "<option value=\"{$gw}\" {$selected}>{$gw} - {$gwip}</option>\n";
-					}
-				}
-				/* add gateway groups to the list */
-				if (is_array($config['gateways']['gateway_group'])) {
-					foreach($config['gateways']['gateway_group'] as $gw_group) {
-						if($gw_group['name'] == "")
+					foreach($gateways as $gw) {
+						if($gw == "") 
 							continue;
-						if($pconfig['gateway'] == $gw_group['name']) {
-							echo "<option value=\"{$gw_group['name']}\" SELECTED>{$gw_group['name']}</option>\n";
-						} else {
-							echo "<option value=\"{$gw_group['name']}\">{$gw_group['name']}</option>\n";
-						}
-					}
-				}
-				$iflist = get_configured_interface_with_descr();
-				foreach ($iflist as $ifent => $ifdesc) {
-					if (in_array($config['interfaces'][$ifent]['ipaddr'],
-						 array("dhcp", "pppoe", "pptp"))) {
-						if ($pconfig['gateway'] == $ifent) {
+						if($gw == $pconfig['gateway']) {
 							$selected = " SELECTED";
 						} else {
 							$selected = "";
 						}
-						if($ifdesc <> "") 
-							echo "<option value=\"{$ifent}\" {$selected}>".strtoupper($if)." - {$ifdesc}</option>\n";
+						if ($gw == "default") {
+							echo "<option value=\"\" {$selected}>{$gw}</option>\n";
+						} else {
+							$gwip = lookup_gateway_ip_by_name($gw);
+							echo "<option value=\"{$gw}\" {$selected}>{$gw} - {$gwip}</option>\n";
+						}
 					}
-				}
+					/* add gateway groups to the list */
+					if (is_array($config['gateways']['gateway_group'])) {
+						foreach($config['gateways']['gateway_group'] as $gw_group) {
+							if($gw_group['name'] == "")
+								continue;
+							if($pconfig['gateway'] == $gw_group['name']) {
+								echo "<option value=\"{$gw_group['name']}\" SELECTED>{$gw_group['name']}</option>\n";
+							} else {
+								echo "<option value=\"{$gw_group['name']}\">{$gw_group['name']}</option>\n";
+							}
+						}
+					}
+					$iflist = get_configured_interface_with_descr();
+					foreach ($iflist as $ifent => $ifdesc) {
+						if (in_array($config['interfaces'][$ifent]['ipaddr'],
+							 array("dhcp", "pppoe", "pptp"))) {
+							if ($pconfig['gateway'] == $ifent) {
+								$selected = " SELECTED";
+							} else {
+								$selected = "";
+							}
+							if($ifdesc <> "") 
+								echo "<option value=\"{$ifent}\" {$selected}>".strtoupper($if)." - {$ifdesc}</option>\n";
+						}
+					}
 ?>
-				</select>
-				<p><strong>Leave as 'default' to use the system routing table.  Or choose a gateway to utilize policy based routing.</strong></p>
+					</select>
+					<p><strong>Leave as 'default' to use the system routing table.  Or choose a gateway to utilize policy based routing.</strong></p>
+				</div>
 			</td>
 		</tr>
 		<tr>
@@ -1109,68 +1125,75 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Ackqueue/Queue</td>
 			<td width="78%" class="vtable">
-			<select name="ackqueue">
+			<div id="showadvackqueuebox">
+				<input type="button" onClick="show_advanced_ackqueue()" value="Advanced"></input> - Show state</a>
+			</div>
+			<div id="showackqueueadv" style="display:none">
+				<select name="ackqueue">
 <?php
-		if (!is_array($qlist))
-			$qlist = array();
-		echo "<option value=\"none\"";
-		if (!$qselected) echo " SELECTED";
-		echo " >none</option>";
-		foreach ($qlist as $q => $qkey) {
-			if($q == "")
-				continue;
-			echo "<option value=\"$q\"";
-			if ($q == $pconfig['ackqueue']) {
-				$qselected = 1;
-				echo " SELECTED";
+			if (!is_array($qlist))
+				$qlist = array();
+			echo "<option value=\"none\"";
+			if (!$qselected) echo " SELECTED";
+			echo " >none</option>";
+			foreach ($qlist as $q => $qkey) {
+				if($q == "")
+					continue;
+				echo "<option value=\"$q\"";
+				if ($q == $pconfig['ackqueue']) {
+					$qselected = 1;
+					echo " SELECTED";
+				}
+				echo ">{$q}</option>"; 
 			}
-			echo ">{$q}</option>"; 
-		}
 ?>
-			</select> / 			
-			<select name="defaultqueue">
+				</select> / 			
+				<select name="defaultqueue">
 <?php
-		$qselected = 0;
-		echo "<option value=\"none\"";
-		if (!$qselected) echo " SELECTED";
-		echo " >none</option>";
-		foreach ($qlist as $q => $qkey) {
-			if($q == "")
-				continue;
-			echo "<option value=\"$q\"";
-			if ($q == $pconfig['defaultqueue']) {
-				$qselected = 1;
-				echo " SELECTED";
+			$qselected = 0;
+			echo "<option value=\"none\"";
+			if (!$qselected) echo " SELECTED";
+			echo " >none</option>";
+			foreach ($qlist as $q => $qkey) {
+				if($q == "")
+					continue;
+				echo "<option value=\"$q\"";
+				if ($q == $pconfig['defaultqueue']) {
+					$qselected = 1;
+					echo " SELECTED";
+				}
+				echo ">{$q}</option>"; 
 			}
-			echo ">{$q}</option>"; 
-		}
 ?>
-			</select>
-				<br />
-				<span class="vexpl">Choose the Acknowledge Queue only if you have selected Queue.</span>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Layer7</td>
-			<td width="78%" class="vtable">
-			<select name="l7container">
+				</select>
+					<br />
+					<span class="vexpl">Choose the Acknowledge Queue only if you have selected Queue.</span>
+				</td>
+			</tr>
+			<tr>
+				<td width="22%" valign="top" class="vncell">Layer7</td>
+				<td width="78%" class="vtable">
+				<select name="l7container">
 <?php
-		if (!is_array($l7clist))
-			$dnqlist = array();
-		echo "<option value=\"none\"";
-		echo " >none</option>";
-		foreach ($l7clist as $l7ckey) {
-			echo "<option value=\"{$l7ckey}\"";
-			if ($l7ckey == $pconfig['l7container']) {
-				echo " SELECTED";
-			}
-			echo ">{$l7ckey}</option>"; 
-		}
+					if (!is_array($l7clist))
+						$dnqlist = array();
+					echo "<option value=\"none\"";
+					echo " >none</option>";
+					foreach ($l7clist as $l7ckey) {
+						echo "<option value=\"{$l7ckey}\"";
+						if ($l7ckey == $pconfig['l7container']) {
+							echo " SELECTED";
+						}
+						echo ">{$l7ckey}</option>"; 
+					}
 ?>
-			</select>			
+				</select>			
 				<br/>
-				<span class="vexpl">Choose a Layer7 container to apply application protocol inspection rules.
-				This rule are valid for tcp and udp protocols for now.</span>
+				<span class="vexpl">
+					Choose a Layer7 container to apply application protocol inspection rules.
+					This rule are valid for tcp and udp protocols for now.
+				</span>
+			  </div>
 			</td>
 		</tr>
 		<tr>

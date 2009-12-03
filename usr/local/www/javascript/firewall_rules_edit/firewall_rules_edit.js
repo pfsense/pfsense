@@ -131,6 +131,30 @@ function show_dsdiv() {
 	dsdiv.style.display = "block";
 }
 
+function show_advanced_noxmlrpc() {
+	document.getElementById("showadvnoxmlrpcsyncbox").innerHTML='';
+	aodiv = document.getElementById('shownoxmlrpcadv');
+	aodiv.style.display = "block";	
+}
+
+function show_advanced_schedule() {
+	document.getElementById("showadvschedulebox").innerHTML='';
+	aodiv = document.getElementById('showscheduleadv');
+	aodiv.style.display = "block";
+}
+
+function show_advanced_gateway() {
+	document.getElementById("showadvgatewaybox").innerHTML='';
+	aodiv = document.getElementById('showgatewayadv');
+	aodiv.style.display = "block";
+}
+
+function show_advanced_ackqueue() {
+	document.getElementById("showadvackqueuebox").innerHTML='';
+	aodiv = document.getElementById('showackqueueadv');
+	aodiv.style.display = "block";
+}
+
 function show_advanced_state() {
 	document.getElementById("showadvstatebox").innerHTML='';
 	aodiv = document.getElementById('showstateadv');
@@ -140,7 +164,9 @@ function show_advanced_state() {
 function src_rep_change() {
 	document.iform.srcendport.selectedIndex = document.iform.srcbeginport.selectedIndex;
 }
+
 function dst_rep_change() {
 	document.iform.dstendport.selectedIndex = document.iform.dstbeginport.selectedIndex;
 }
+
 //-->

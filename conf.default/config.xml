@@ -172,7 +172,7 @@
 		<time-update-interval>300</time-update-interval>
 		<timeservers>0.pfsense.pool.ntp.org</timeservers>
 		<webgui>
-			<protocol>http</protocol>
+			<protocol>https</protocol>
 		</webgui>
                 <disablenatreflection>yes</disablenatreflection>
 		<!-- <disableconsolemenu/> -->

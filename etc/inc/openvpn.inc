@@ -302,7 +302,13 @@ function openvpn_reconfigure($mode,& $settings) {
 	if (!$interface)
 		$interface = 'WAN';
 
-	$iface = convert_friendly_interface_to_real_interface_name($interface);
+	/* For a carp interface, the name is well known:vip1, vip2, ...*/
+	if (!strncmp($interface, "vip", 3)) {
+		$iface=$interface;
+	} else {
+		$iface=convert_friendly_interface_to_real_interface_name($interface);
+	}
+	
 	$lines = explode(' ', trim(shell_exec("ifconfig {$iface} | grep inet | grep -v inet6")));
 	$iface_ip = $lines[1];
 

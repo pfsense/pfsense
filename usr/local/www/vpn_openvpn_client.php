@@ -387,7 +387,10 @@ function autotls_change() {
 							<select name="interface" class="formselect">
 								<?php
 									$interfaces = get_configured_interface_with_descr();
-										foreach ($interfaces as $iface => $ifacename):
+									$carplist = get_configured_carp_interface_list();
+									foreach ($carplist as $cif => $carpip)
+										$interfaces[$cif] = strtoupper($cif) . " ({$carpip})";
+									foreach ($interfaces as $iface => $ifacename):
 										$selected = "";
 										if ($iface == $pconfig['interface'])
 											$selected = "selected";

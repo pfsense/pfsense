@@ -191,7 +191,9 @@ function relayd_configure() {
 	break;
       }
     }
-    $check_a[$type['name']] = $mon->p();
+    if($mon) {
+      $check_a[$type['name']] = $mon->p();
+    }
   }
 
 

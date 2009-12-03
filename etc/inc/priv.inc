@@ -45,8 +45,7 @@
 */
 
 /* Load and process custom privs. */
-function load_custom_privs($directory) {
-	global $priv_list;
+function get_priv_files($directory) {
 	$dir_array = array();
 	if(!is_dir($directory)) 
 		return;
@@ -64,16 +63,23 @@ function load_custom_privs($directory) {
 	}
 	if(!is_array($dir_array))
 		return;
-	foreach ($dir_array as $file) 
-		if (!is_dir("{$directory}/{$file}") && stristr($file,".inc")) 
-			include("{$directory}/{$file}");
+	return $dir_array;
 }
 
 // Load and sort privs
-load_custom_privs("/etc/inc/priv");
-if(is_dir("/usr/local/pkg/priv"))
-	load_custom_privs("/usr/local/pkg/priv");
-sort_privs($priv_list);
+$dir_array = get_priv_files("/etc/inc/priv");
+foreach ($dir_array as $file) 
+	if (!is_dir("/etc/inc/priv/{$file}") && stristr($file,".inc")) 
+		include("/etc/inc/priv/{$file}");
+if(is_dir("/usr/local/pkg/priv")) {
+	$dir_array = get_priv_files("/usr/local/pkg/priv");
+	foreach ($dir_array as $file) 
+		if (!is_dir("/usr/local/pkg/priv/{$file}") && stristr($file,".inc")) 
+			include("/usr/local/pkg/priv/{$file}");
+}
+
+if(is_array($priv_list))
+	sort_privs($priv_list);
 
 function cmp_privkeys($a, $b) {
 	/* user privs at the top */

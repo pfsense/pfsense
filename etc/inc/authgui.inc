@@ -38,6 +38,7 @@
 */
 
 include_once("auth.inc");
+include_once("priv.defs.inc");
 include_once("priv.inc");
 
 /* We only support htpasswd backed HTTP Basic auth and session
@@ -55,8 +56,7 @@ include_once("priv.inc");
 
 /* enable correct auth backend, default to htpasswd_backed */
 $ldapcase = $config['system']['webgui']['backend'];
-switch($ldapcase)
-{
+switch($ldapcase) {
 	case ldap:
 		$backing_method="ldap_backed";
 		break;

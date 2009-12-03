@@ -886,7 +886,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">Diffserv Code Point</td>
 			<td width="78%" class="vtable">
 				<div id="dsadv" name="dsadv">
-					<input type="button" onClick="show_dsdiv();" value="Advanced"> - Show advanced options
+					<input type="button" onClick="show_dsdiv();" value="Advanced"> - Show advanced option
 				</div>
 				<div id="dsdivmain" name="dsdivmain" style="display:none">
 					<select name="dscp" id="dscp">
@@ -902,7 +902,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">Advanced Options</td>
 			<td width="78%" class="vtable">
 			<div id="aoadv" name="aoadv">
-				<input type="button" onClick="show_aodiv();" value="Advanced"> - Show advanced options
+				<input type="button" onClick="show_aodiv();" value="Advanced"> - Show advanced option
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
 
@@ -941,7 +941,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">State Type</td>
 			<td width="78%" class="vtable">
 				<div id="showadvstatebox">
-					<input type="button" onClick="show_advanced_state()" value="Advanced"></input> - Show state</a>
+					<input type="button" onClick="show_advanced_state()" value="Advanced"></input> - Show advanced option</a>
 				</div>
 				<div id="showstateadv" style="display:none">
 					<select name="statetype">
@@ -963,7 +963,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
 			<td width="78%" class="vtable">
 				<div id="showadvnoxmlrpcsyncbox">
-					<input type="button" onClick="show_advanced_noxmlrpc()" value="Advanced"></input> - Show state</a>
+					<input type="button" onClick="show_advanced_noxmlrpc()" value="Advanced"></input> - Show advanced option</a>
 				</div>
 				<div id="shownoxmlrpcadv" style="display:none">
 					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
@@ -986,7 +986,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">Schedule</td>
 			<td width="78%" class="vtable">
 				<div id="showadvschedulebox">
-					<input type="button" onClick="show_advanced_schedule()" value="Advanced"></input> - Show state</a>
+					<input type="button" onClick="show_advanced_schedule()" value="Advanced"></input> - Show advanced option</a>
 				</div>
 				<div id="showscheduleadv" style="display:none">
 					<select name='sched'>
@@ -1026,7 +1026,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">Gateway</td>
 			<td width="78%" class="vtable">
 				<div id="showadvgatewaybox">
-					<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show state</a>
+					<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show advanced option</a>
 				</div>
 				<div id="showgatewayadv" style="display:none">
 					<select name='gateway'>
@@ -1081,7 +1081,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">In/Out</td>
 			<td width="78%" class="vtable">
 				<div id="showadvinoutbox">
-					<input type="button" onClick="show_advanced_inout()" value="Advanced"></input> - Show state</a>
+					<input type="button" onClick="show_advanced_inout()" value="Advanced"></input> - Show advanced option</a>
 				</div>
 				<div id="showinoutadv" style="display:none">
 					<select name="dnpipe">
@@ -1131,7 +1131,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">Ackqueue/Queue</td>
 			<td width="78%" class="vtable">
 			<div id="showadvackqueuebox">
-				<input type="button" onClick="show_advanced_ackqueue()" value="Advanced"></input> - Show state</a>
+				<input type="button" onClick="show_advanced_ackqueue()" value="Advanced"></input> - Show advanced option</a>
 			</div>
 			<div id="showackqueueadv" style="display:none">
 				<select name="ackqueue">
@@ -1179,7 +1179,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncell">Layer7</td>
 				<td width="78%" class="vtable">
 					<div id="showadvlayer7box">
-						<input type="button" onClick="show_advanced_layer7()" value="Advanced"></input> - Show state</a>
+						<input type="button" onClick="show_advanced_layer7()" value="Advanced"></input> - Show advanced option</a>
 					</div>
 					<div id="showlayer7adv" style="display:none">
 				<select name="l7container">

@@ -50,7 +50,7 @@
  ******/
 function have_natonetooneruleint_access($if) {
 	$security_url = "firewall_nat_1to1_edit.php?if=". strtolower($if);
-	if(isAllowedPage($security_url, $allowed)) 
+	if(isAllowedPage($security_url, $_SESSION['Username'])) 
 		return true;
 	return false;
 }

@@ -175,7 +175,7 @@ function get_user_privdesc(& $user) {
 	return $privs;
 }
 
-function isAllowedPage($page, $username = "") {
+function isAllowedPage($page, $username) {
 	global $_SESSION;
 
 	if($username == "")

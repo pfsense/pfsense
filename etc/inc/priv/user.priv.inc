@@ -1,6 +1,6 @@
 <?php
 
-?>/*
+/*
  * USER PRIVILEGE DEFINITIONS
  */
 

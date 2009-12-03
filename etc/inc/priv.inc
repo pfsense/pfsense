@@ -45,8 +45,33 @@
 */
 
 /* Load and process custom privs. */
-run_plugins("/etc/inc/priv/");
+function load_custom_privs() {
+	global $priv_list;
+	$directory = "/etc/inc/priv";
+	$dir_array = array();
+	if(!is_dir($directory)) 
+		return;
+	if ($dh = opendir($directory)) {
+		while (($file = readdir($dh)) !== false) {
+			$canadd = 0;
+			if($file == ".") 
+				$canadd = 1;
+			if($file == "..") 
+				$canadd = 1;
+			if($canadd == 0)
+				array_push($dir_array, $file);
+		}
+		closedir($dh);
+	}
+	if(!is_array($dir_array))
+		return;
+	foreach ($dir_array as $file) 
+		if (!is_dir("{$directory}/{$file}") && stristr($file,".inc")) 
+			include("{$directory}/{$file}");
+}
 
+// Load and sort privs
+load_custom_privs();
 sort_privs($priv_list);
 
 function cmp_privkeys($a, $b) {

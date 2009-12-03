@@ -2,10 +2,6 @@
 
 global $priv_list;
 
-/*
- * USER PRIVILEGE DEFINITIONS
- */
-
 $priv_list['user-shell-access'] = array();
 $priv_list['user-shell-access']['name']  = "User - Shell account access";
 $priv_list['user-shell-access']['descr'] = "Indicates whether the user is able to login for ".

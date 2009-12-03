@@ -222,15 +222,20 @@ if ($_POST) {
 			$input_errors[] = "A valid IP address must be specified for the TFTP server.";
 		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver']))) 
 			$input_errors[] = "A valid IP address must be specified for the network boot server.";
-	
+
 		if(gen_subnet($ifcfgip, $ifcfgsn) == $_POST['range_from'])
 			$input_errors[] = "You cannot use the network address in the starting subnet range.";
 		if(gen_subnet_max($ifcfgip, $ifcfgsn) == $_POST['range_to'])
 			$input_errors[] = "You cannot use the broadcast address in the ending subnet range.";
 
-		//if(is_inrange($ifcfgip, $_POST['range_from'], $_POST['range_to'])) 
-		//	$input_errors[] = "Address range includes the interface IP $ifcfgip.";
-			
+		// Disallow a range that includes the virtualip
+		foreach($config['virtualip']['vip'] as $vip) {
+			if(strtoupper($vip['interface']) == strtoupper($if)) 
+				if($vip['subnet'])
+					if(is_inrange($vip['subnet'], $_POST['range_from'], $_POST['range_to'])) 
+						$input_errors[] = "The virtual IP address {$vip['subnet']} falls within the subnet range.";
+		}
+
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
 			$subnet_start = (ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn));

@@ -444,7 +444,7 @@ include("fbegin.inc"); ?>
                 <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Filter rule association</td>
-                  <td width="78%">
+                  <td width="78%" class="vtable">
                     <select name="filter-rule-association" id="filter-rule-association">
 						<option value="">None</option>
 						<option value="add-associated" selected="selected">Add associated filter rule</option>

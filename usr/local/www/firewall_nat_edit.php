@@ -62,6 +62,8 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['extaddr'] = $a_nat[$id]['external-address'];
 	$pconfig['proto'] = $a_nat[$id]['protocol'];
 	list($pconfig['beginport'],$pconfig['endport']) = explode("-", $a_nat[$id]['external-port']);
+	if(!$pconfig['endport'])
+		$pconfig['endport'] = $pconfig['beginport'];
 	$pconfig['localip'] = $a_nat[$id]['target'];
 	$pconfig['localbeginport'] = $a_nat[$id]['local-port'];
 	$pconfig['descr'] = $a_nat[$id]['descr'];

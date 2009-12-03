@@ -45,9 +45,8 @@
 */
 
 /* Load and process custom privs. */
-function load_custom_privs() {
+function load_custom_privs($directory) {
 	global $priv_list;
-	$directory = "/etc/inc/priv";
 	$dir_array = array();
 	if(!is_dir($directory)) 
 		return;
@@ -71,7 +70,9 @@ function load_custom_privs() {
 }
 
 // Load and sort privs
-load_custom_privs();
+load_custom_privs("/etc/inc/priv");
+if(is_dir("/usr/local/pkg/priv"))
+	load_custom_privs("/usr/local/pkg/priv");
 sort_privs($priv_list);
 
 function cmp_privkeys($a, $b) {

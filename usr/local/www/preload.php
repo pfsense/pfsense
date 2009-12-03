@@ -23,11 +23,8 @@ $files=array("functions.inc",
 	"notices.inc",
 	"system.inc",
 	"filter.inc",
-	"openvpn.auth-user.php",
 	"upgrade_config.inc",
-	"vauth.inc.orig",
 	"openvpn.inc",
-	"vutil.inc",
 	"authgui.inc",
 	"vpfsense-utils.inc",
 	"vuuid.php",
@@ -62,5 +59,8 @@ foreach($files as $file)
 	require_once($file);
 
 require("guiconfig.inc");
+include('/usr/local/www/includes/functions.inc.php');
+include("fbegin.inc");
+include("fend.inc"); 
 
 ?>

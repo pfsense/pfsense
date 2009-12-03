@@ -102,7 +102,7 @@ if ($_POST) {
 		if (!$input_errors) {	
 			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $g['pptp_subnet']);
 			$subnet_start = ip2long($_POST['remoteip']);
-			$subnet_end = ip2long($_POST['remoteip']) + $g['n_pptp_units'] - 1;
+			$subnet_end = ip2long($_POST['remoteip']) + $_POST['n_pptp_units'] - 1;
 						
 			if ((ip2long($_POST['localip']) >= $subnet_start) && 
 			    (ip2long($_POST['localip']) <= $subnet_end)) {
@@ -327,6 +327,23 @@ function enable_change(enable_over) {
 			<input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked"; ?>>
                     Enable PPTP server</td>
                 </tr>
+				<tr>
+					<td width="22%" valign="top" class="vncellreq">No. PPTP users</td>
+					<td width="78%" class="vtable">
+						<select id="n_pptp_units" name="n_pptp_units">
+							<?php
+								for($x=0; $x<255; $x++) {
+									if($x == $pconfig['n_pptp_units'])
+										$SELECTED = " SELECTED";
+									else
+										$SELECTED = "";
+									echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";
+								}
+							?>
+						</select>
+						<br>Hint: 10 is TEN pptp clients
+					</td>
+				</tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Server address</td>
                   <td width="78%" class="vtable"> 
@@ -347,7 +364,7 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vncellreq">Max. concurrent 
                     connections</td>
                   <td width="78%" class="vtable"> 
-                    <?=$g['n_pptp_units'];?>
+                    <?=$_POST['n_pptp_units'];?>
                   </td>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Server address</td>
@@ -367,7 +384,7 @@ function enable_change(enable_over) {
                     <br>
                     Specify the starting address for the client IP address subnet.<br>
                     The PPTP server will assign 
-                    <?=$g['n_pptp_units'];?>
+                    <?=$_POST['n_pptp_units'];?>
                     addresses, starting at the address entered above, to clients.</td>
                 </tr>
                 <tr> 

@@ -981,11 +981,11 @@ pptpd:
 
 EOD;
 
-			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
+			for ($i = 0; $i < $pptpdcfg['n_pptp_units']; $i++) {
 				$mpdconf .= "	load pt{$i}\n";
 			}
 
-			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
+			for ($i = 0; $i < $pptpdcfg['n_pptp_units']; $i++) {
 
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
 				$ngif = "ng" . ($i+1);

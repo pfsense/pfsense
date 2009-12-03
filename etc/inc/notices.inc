@@ -293,7 +293,7 @@ function notify_via_smtp($message) {
 
 	$smtp->direct_delivery = 0;
 	$smtp->ssl = 0;
-	$smtp->debug = 1;
+	$smtp->debug = 0;
 	$smtp->html_debug = 0;
 
 	$headers = array(

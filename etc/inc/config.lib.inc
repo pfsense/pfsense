@@ -395,6 +395,7 @@ function convert_config() {
 	// Save off config version
 	$prev_version = $config['version'];
 	
+	include_once('auth.inc');
 	include_once('upgrade_config.inc');
 	/* Loop and run upgrade_VER_to_VER() until we're at current version */
 	while ($config['version'] < $g['latest_config']) {

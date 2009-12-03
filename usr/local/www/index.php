@@ -45,8 +45,8 @@
 	// Turn on buffering to speed up rendering
 	ini_set('output_buffering','true');
 	
-	// Start buffering with a cache size of 10094
-	ob_start(null, "10094");
+	// Start buffering with a cache size of 100000
+	ob_start(null, "100000");
 
 	## Load Essential Includes
 	require_once('guiconfig.inc');
@@ -76,7 +76,6 @@
 		if(stristr($swapinfo,'%') == true) $showswap=true;
 	}
 
-
 	## User recently restored his config.
 	## If packages are installed lets resync
 	if(file_exists('/conf/needs_package_sync')) {
@@ -91,12 +90,9 @@
 		}
 	}
 
-
 	## If it is the first time webConfigurator has been
 	## accessed since initial install show this stuff.
 	if(file_exists('/conf/trigger_initial_wizard')) {
-
-
 		echo <<<EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -504,8 +500,6 @@ echo $jscriptstr;
 	</div>
 </div>
 
-
-
 <input type="hidden" value="" name="sequence" id="sequence">
 <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="Click here to add widgets" style="cursor: pointer;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 
@@ -687,8 +681,6 @@ echo $jscriptstr;
 		</div>
 	<div style="clear:both;"></div>
 </div>
-
-
 
 <?php include("fend.inc"); ?>
 	    

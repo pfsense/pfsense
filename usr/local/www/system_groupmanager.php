@@ -44,9 +44,9 @@
 ##|*MATCH=system_groupmanager.php*
 ##|-PRIV
 
-require("guiconfig.inc");
 require("priv.defs.inc");
 require("priv.inc");
+require("guiconfig.inc");
 
 $pgtitle = array("System", "Group manager");
 

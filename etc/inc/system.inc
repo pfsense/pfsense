@@ -43,7 +43,8 @@ function activate_powerd() {
 	if(isset($config['system']['powerd_enable'])) {
 		exec("/usr/sbin/powerd -b adp -a adp");
 	} else {
-		exec("/usr/bin/killall powerd");
+		if(is_process_running("powerd"))
+			exec("/usr/bin/killall powerd");
 	}
 }
 

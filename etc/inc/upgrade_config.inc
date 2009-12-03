@@ -818,6 +818,9 @@ function upgrade_045_to_046() {
 			}
 		}
 	}
+	if(count($config['load_balancer']) == 0) {
+		unset($config['load_balancer']);
+	}
 }
 
 
@@ -1529,6 +1532,9 @@ function upgrade_053_to_054() {
 	// Unset lbpool if we no longer have any server pools
 	if (count($lbpool_srv_arr) == 0) {
 		unset($config['load_balancer']['lbpool']);
+		if(count($config['load_balancer']) == 0) {
+			unset($config['load_balancer']);
+		}
 	} else {
 		$config['load_balancer']['lbpool'] = $lbpool_srv_arr;
 	}

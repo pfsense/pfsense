@@ -45,7 +45,7 @@ require("guiconfig.inc");
 require("filter.inc");
 require("shaper.inc");
 
-$specialsrcdst = explode(" ", "any pptp pppoe l2tp");
+$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
@@ -273,16 +273,16 @@ if ($_POST) {
 		$_POST['dstendport'] = 0;
 	}
 
-	if (($_POST['srcbeginport'] && !alias_expand($_POST['srcbeginport']) && !is_port($_POST['srcbeginport']))) {
+	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
 		$input_errors[] = "The start source port must be an alias or integer between 1 and 65535.";
 	}
-	if (($_POST['srcendport'] && !alias_expand($_POST['srcendport']) && !is_port($_POST['srcendport']))) {
+	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) {
 		$input_errors[] = "The end source port must be an alias or integer between 1 and 65535.";
 	}
-	if (($_POST['dstbeginport'] && !alias_expand($_POST['dstbeginport']) && !is_port($_POST['dstbeginport']))) {
+	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport'])) {
 		$input_errors[] = "The start destination port must be an alias or integer between 1 and 65535.";
 	}
-	if (($_POST['dstendport'] && !alias_expand($_POST['dstbeginport']) && !is_port($_POST['dstendport']))) {
+	if ($_POST['dstendport'] && !is_portoralias($_POST['dstbeginport'])) {
 		$input_errors[] = "The end destination port must be an alias or integer between 1 and 65535.";
 	}
 
@@ -297,7 +297,7 @@ if ($_POST) {
 	}
 
 	if (!is_specialnet($_POST['srctype'])) {
-		if (($_POST['src'] && !is_ipaddroranyalias($_POST['src']))) {
+		if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
 			$input_errors[] = "A valid source IP address or alias must be specified.";
 		}
 		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
@@ -305,7 +305,7 @@ if ($_POST) {
 		}
 	}
 	if (!is_specialnet($_POST['dsttype'])) {
-		if (($_POST['dst'] && !is_ipaddroranyalias($_POST['dst']))) {
+		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
 			$input_errors[] = "A valid destination IP address or alias must be specified.";
 		}
 		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {

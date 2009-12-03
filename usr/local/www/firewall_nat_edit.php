@@ -125,15 +125,15 @@ if ($_POST) {
 	/* only validate the ports if the protocol is TCP, UDP or TCP/UDP */
 	if(strtoupper($_POST['proto']) == "TCP" or strtoupper($_POST['proto']) == "UDP" or strtoupper($_POST['proto']) == "TCP/UDP") {
 
-		if (($_POST['beginport'] && !is_ipaddroralias($_POST['beginport']) && !is_port($_POST['beginport']))) {
+		if ($_POST['beginport'] && !is_portoralias($_POST['beginport'])) {
 			$input_errors[] = "The start port must be an integer between 1 and 65535.";
 		}
 
-		if (($_POST['endport'] && !is_ipaddroralias($_POST['endport']) && !is_port($_POST['endport']))) {
+		if ($_POST['endport'] && !is_portoralias($_POST['endport'])) {
 			$input_errors[] = "The end port must be an integer between 1 and 65535.";
 		}
 
-		if (($_POST['localbeginport'] && !is_ipaddroralias($_POST['localbeginport']) && !is_port($_POST['localbeginport']))) {
+		if ($_POST['localbeginport'] && !is_portoralias($_POST['localbeginport'])) {
 			$input_errors[] = "The local port must be an integer between 1 and 65535.";
 		}
 

@@ -201,32 +201,19 @@ function is_ipaddr($ipaddr) {
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
 function is_ipaddroralias($ipaddr) {
+	global $config;
 
-	global $aliastable, $config;
-
-	if(is_array($config['aliases']['alias'])) {
-		foreach($config['aliases']['alias'] as $alias) {
-			if($alias['name'] == $ipaddr)
-				return true;
-		}
-	}
-
-	if (isset($aliastable[$ipaddr]) && is_ipaddr($aliastable[$ipaddr]))
-		return true;
-	else
+	if (is_alias($ipaddr)) {
+		if (is_array($config['aliases']['alias'])) {
+			foreach ($config['aliases']['alias'] as $alias) {
+                        	if ($alias['name'] == $ipaddr && $alias['type'] != "port")
+					return true;
+			}
+                }
+		return false;
+	} else
 		return is_ipaddr($ipaddr);
 
-}
-
-/* returns true if $ipaddr is a valid dotted IPv4 address or any alias */
-function is_ipaddroranyalias($ipaddr) {
-
-	global $aliastable;
-
-	if (isset($aliastable[$ipaddr]))
-		return true;
-	else
-		return is_ipaddr($ipaddr);
 }
 
 /* returns true if $subnet is a valid subnet in CIDR format */
@@ -330,6 +317,23 @@ function is_portrange($portrange) {
                 return true;
         else
                 return false;
+}
+
+/* returns true if $port is a valid port number or an alias thereof */
+function is_portoralias($port) {
+	global $config;
+
+        if (is_alias($port)) {
+                if (is_array($config['aliases']['alias'])) {
+                        foreach ($config['aliases']['alias'] as $alias) {
+                                if ($alias['name'] == $port && $alias['type'] == "port")
+                                        return true;
+                        }
+                }
+                return false;
+        } else
+                return is_port($ipaddr);
+
 }
 
 /* returns true if $val is a valid shaper bandwidth value */

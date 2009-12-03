@@ -44,8 +44,6 @@
 	pfSense_MODULE:	auth
 */
 
-require_once("util.inc");
-
 /* Load and process custom privs. */
 run_plugins("/etc/inc/priv/");
 
@@ -63,7 +61,6 @@ function cmp_privkeys($a, $b) {
 }
 
 function sort_privs(& $privs) {
-
 	uksort($privs, "cmp_privkeys");
 }
 

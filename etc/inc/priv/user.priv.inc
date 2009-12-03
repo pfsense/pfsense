@@ -1,5 +1,7 @@
 <?php
 
+global $priv_list;
+
 /*
  * USER PRIVILEGE DEFINITIONS
  */

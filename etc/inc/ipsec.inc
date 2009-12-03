@@ -76,8 +76,8 @@ $p2_halgos = array(
 
 $p1_authentication_methods = array(
 	'hybrid_rsa_server' => array( 'name' => 'Hybrid RSA + Xauth', 'mobile' => true ),
-	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => false ),
-	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => false ),
+	'xauth_rsa_server' => array( 'name' => 'Mutual RSA + Xauth', 'mobile' => true ),
+	'xauth_psk_server' => array( 'name' => 'Mutual PSK + Xauth', 'mobile' => true ),
 	'rsasig' => array( 'name' => 'Mutual RSA', 'mobile' => false ),
 	'pre_shared_key' => array( 'name' => 'Mutual PSK', 'mobile' => false ) );
 

@@ -1881,7 +1881,8 @@ function WakeOnLan($addr, $mac)
  *                             NOTE: this command takes 5 seconds to run
  */
 function gather_altq_queue_stats($dont_return_root_queues) {
-	mwexec("/usr/bin/killall -9 pfctl", true);
+	if(is_process_running("pfctl"))
+		mwexec("/usr/bin/killall -9 pfctl", true);
 	$stats = `/sbin/pfctl -vvsq & /bin/sleep 5;/usr/bin/killall pfctl 2>/dev/null`;
 	$stats_array = split("\n", $stats);
 	$queue_stats = array();
@@ -3416,7 +3417,8 @@ function enable_rrd_graphing() {
 }
 
 function kill_traffic_collector() {
-		mwexec("/usr/bin/killall -9 rrdtool");
+		if(is_process_running("rrdtool"))
+			mwexec("/usr/bin/killall -9 rrdtool");
 		mwexec("ps awwwux | grep '/[u]pdaterrd.sh' | awk '{print $2}' | xargs kill -9");
 }
 

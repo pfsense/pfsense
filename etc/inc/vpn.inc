@@ -71,7 +71,8 @@ function vpn_ipsec_failover_configure() {
 	fclose($fd);
 	chmod("{$g['varetc_path']}/sasyncd.conf", 0600);
 
-	mwexec("killall sasyncd", true);
+	if(is_process_running("sasyncd"))
+		mwexec("killall sasyncd", true);
 
 	/* launch sasyncd, oh wise one */
 	/* mwexec_bg("/usr/local/sbin/sasyncd -d -v -v -v"); */
@@ -1145,7 +1146,8 @@ function vpn_ipsec_force_reload() {
 	$ipseccfg = $config['ipsec'];
 
 	/* kill racoon */
-	mwexec("/usr/bin/killall racoon", true);
+	if(is_process_running("racoon"))
+		mwexec("/usr/bin/killall racoon", true);
 
 	/* wait for process to die */
 	sleep(4);

@@ -1607,7 +1607,8 @@ function system_start_ftp_helpers() {
 	require_once("interfaces.inc");
 	global $config, $g;
 
-	mwexec("/usr/bin/killall ftpsesame", true);
+	if(is_process_running("ftpsesame"))
+		mwexec("/usr/bin/killall ftpsesame", true);
 
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "lan");

@@ -49,9 +49,8 @@
 	ob_start(null, "100000");
 
 	## Load Essential Includes
+	require_once('functions.inc');
 	require_once('guiconfig.inc');
-	require("priv.defs.inc");
-	require("priv.inc");
 	require_once('notices.inc');
 
 	if ($_POST && $_POST['submit']) {

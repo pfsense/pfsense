@@ -1550,9 +1550,9 @@ function vpn_ipsec_refresh_policies() {
 					continue;
 				}
 				foreach ($a_phase2 as $phase2) {
-					if($phase2['ikeid'] == $phase1['ikeid']) {
-						reload_tunnel_spd_policy ($phase1, $phase2, $oldphase1, $oldphase2);
-					}
+					//if($phase2['ikeid'] == $phase1['ikeid']) {
+					reload_tunnel_spd_policy ($phase1, $phase2, $oldphase1, $oldphase2);
+					//}
 				}
 			}
 		}

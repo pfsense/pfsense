@@ -149,7 +149,7 @@ function show_advanced_gateway() {
 	aodiv.style.display = "block";
 }
 
-function show_advanced_gateway() {
+function show_advanced_sourceos() {
 	document.getElementById("showadvsourceosbox").innerHTML='';
 	aodiv = document.getElementById('showsourceosadv');
 	aodiv.style.display = "block";
@@ -178,7 +178,6 @@ function show_advanced_layer7() {
 	aodiv = document.getElementById('showlayer7adv');
 	aodiv.style.display = "block";
 }
-
 
 function src_rep_change() {
 	document.iform.srcendport.selectedIndex = document.iform.srcbeginport.selectedIndex;

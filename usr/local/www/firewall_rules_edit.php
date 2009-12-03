@@ -849,11 +849,12 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Source OS</td>
+			<td width="78%" class="vtable">
 				<div id="showadvsourceosbox">
 					<input type="button" onClick="show_advanced_sourceos()" value="Advanced"></input> - Show advanced option</a>
 				</div>
 				<div id="showsourceosadv" style="display:none">
-				  <td width="78%" class="vtable">OS Type:&nbsp;
+					OS Type:&nbsp;
 					<select name="os" id="os" class="formselect">
 <?php
 						$ostypes = array(

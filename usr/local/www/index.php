@@ -46,7 +46,7 @@
 	ini_set('output_buffering','true');
 	
 	// Start buffering with a cache size of 100000
-	ob_start(null, "100000");
+	ob_start(null, "500000");
 
 	## Load Essential Includes
 	require_once('functions.inc');

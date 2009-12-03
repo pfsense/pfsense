@@ -205,6 +205,8 @@ $tccommands[] = "stoprecording";
 $tccommands[] = "showrecordings";
 $tccommands[] = "record";
 $tccommands[] = "reset";
+$tccommands[] = "master";
+$tccommands[] = "RELENG_1_2";
 
 while($shell_active == true) {
 	$command = readline("{$g['product_name']} shell: ");

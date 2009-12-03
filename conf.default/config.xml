@@ -174,7 +174,7 @@
 		<webgui>
 			<protocol>https</protocol>
 		</webgui>
-                <disablenatreflection>yes</disablenatreflection>
+		<disablenatreflection>yes</disablenatreflection>
 		<!-- <disableconsolemenu/> -->
 		<!-- <disablefirmwarecheck/> -->
 		<!-- <shellcmd></shellcmd> -->

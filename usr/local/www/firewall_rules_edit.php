@@ -1080,7 +1080,11 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">In/Out</td>
 			<td width="78%" class="vtable">
-			<select name="dnpipe">
+				<div id="showadvinoutbox">
+					<input type="button" onClick="show_advanced_inout()" value="Advanced"></input> - Show state</a>
+				</div>
+				<div id="showinoutadv" style="display:none">
+					<select name="dnpipe">
 <?php
 		if (!is_array($dnqlist))
 			$dnqlist = array();
@@ -1116,9 +1120,10 @@ include("head.inc");
 			echo ">{$dnq}</option>"; 
 		}
 ?>
-			</select>
+				</select>
 				<br />
 				<span class="vexpl">Choose the Out queue/Virtual interface only if you have selected In too. <br/> The Out selection is applied to traffic going out the interface the rule is created, In is the incoming one. <br/> If you are creating a rule on the Floating tab if the direction is In then the same rules apply, if the direction is out the selections are reverted Out is for incoming and In is for outgoing and if you do not select any direction use only the In since the Out selection does not make sense in there to prevent oddities.</span>
+				</div>
 			</td>
 		</tr>
 
@@ -1173,6 +1178,10 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncell">Layer7</td>
 				<td width="78%" class="vtable">
+					<div id="showadvlayer7box">
+						<input type="button" onClick="show_advanced_layer7()" value="Advanced"></input> - Show state</a>
+					</div>
+					<div id="showlayer7adv" style="display:none">
 				<select name="l7container">
 <?php
 					if (!is_array($l7clist))

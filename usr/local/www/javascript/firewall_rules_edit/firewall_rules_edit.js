@@ -155,11 +155,24 @@ function show_advanced_ackqueue() {
 	aodiv.style.display = "block";
 }
 
+function show_advanced_inout() {
+	document.getElementById("showadvinoutbox").innerHTML='';
+	aodiv = document.getElementById('showinoutadv');
+	aodiv.style.display = "block";
+}
+
 function show_advanced_state() {
 	document.getElementById("showadvstatebox").innerHTML='';
 	aodiv = document.getElementById('showstateadv');
 	aodiv.style.display = "block";
 }
+
+function show_advanced_layer7() {
+	document.getElementById("showadvlayer7box").innerHTML='';
+	aodiv = document.getElementById('showlayer7adv');
+	aodiv.style.display = "block";
+}
+
 
 function src_rep_change() {
 	document.iform.srcendport.selectedIndex = document.iform.srcbeginport.selectedIndex;

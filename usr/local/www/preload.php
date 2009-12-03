@@ -8,6 +8,7 @@ if($ip <> "127.0.0.1")
 /* preload */
 
 $files=array("functions.inc",
+	"config.inc",
 	"IPv6.inc",
 	"itemid.inc",
 	"shaper.inc",

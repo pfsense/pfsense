@@ -644,7 +644,7 @@ function services_dnsmasq_configure() {
 		//}
 
 		/* run dnsmasq */
-		mwexec("/usr/local/sbin/dnsmasq --all-servers --cache-size=10000 {$args}");
+		mwexec("/usr/local/sbin/dnsmasq --all-servers --dns-forward-max=5000 --cache-size=10000 {$args}");
 
 		if ($g['booting'])
 			echo "done.\n";

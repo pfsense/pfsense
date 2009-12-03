@@ -44,6 +44,8 @@
 	pfSense_MODULE:	auth
 */
 
+require_once("util.inc");
+
 /* Load and process custom privs. */
 run_plugins("/etc/inc/priv/");
 

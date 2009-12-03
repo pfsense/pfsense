@@ -228,6 +228,9 @@ if ($_POST) {
 		if(gen_subnet_max($ifcfgip, $ifcfgsn) == $_POST['range_to'])
 			$input_errors[] = "You cannot use the broadcast address in the ending subnet range.";
 
+		//if(is_inrange($ifcfgip, $_POST['range_from'], $_POST['range_to'])) 
+		//	$input_errors[] = "Address range includes the interface IP $ifcfgip.";
+			
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
 			$subnet_start = (ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn));
@@ -511,19 +514,25 @@ include("head.inc");
                         </td>
                       </tr>
                       <tr>
-                        <td width="22%" valign="top" class="vncellreq">Subnet
-                          mask</td>
+                        <td width="22%" valign="top" class="vncellreq">Subnet mask</td>
                         <td width="78%" class="vtable">
                           <?=gen_subnet_mask($ifcfgsn);?>
                         </td>
                       </tr>
                       <tr>
-                        <td width="22%" valign="top" class="vncellreq">Available
-                          range</td>
+                        <td width="22%" valign="top" class="vncellreq">Available range</td>
                         <td width="78%" class="vtable">
-                          <?=long2ip(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn));?>
+                          <?php 
+								$range_from = ip2long(long2ip(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn))); 
+								$range_from++;
+								echo long2ip($range_from);
+							?>
                           -
-                          <?=long2ip(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))); ?>
+                          <?php
+								$range_to = ip2long(long2ip(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
+								$range_to--;
+								echo long2ip($range_to);
+						  ?>
                         </td>
                       </tr>
 					  <?php if($is_olsr_enabled): ?>

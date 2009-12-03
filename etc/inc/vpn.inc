@@ -134,7 +134,8 @@ function vpn_ipsec_configure($ipchg = false) {
 		mwexec("/sbin/ifconfig enc0 destroy");
 
 		/* kill racoon */
-		mwexec("/usr/bin/killall racoon", true);
+		if(is_process_running("racoon"))
+			mwexec("/usr/bin/killall racoon", true);
 		killbypid("{$g['varrun_path']}/dnswatch-ipsec.pid");
 
 

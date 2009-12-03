@@ -844,11 +844,8 @@ function run_plugins($directory) {
 			foreach ($files as $file) {
 				if (stristr($file, ".sh") == true)
 					mwexec($directory . $file . " start");
-				else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) {
-					if ($g['booting'] == true)
-						echo "{$file}...";
+				else if (!is_dir($directory . "/" . $file) && stristr($file,".inc")) 
 					require_once($directory . "/" . $file);
-				}
 			}
 		}
 }

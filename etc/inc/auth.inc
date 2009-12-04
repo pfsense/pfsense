@@ -885,8 +885,6 @@ function session_auth($backing) {
 					$_SESSION['Username'] = $_POST['usernamefld'];
 					$_SESSION['last_access'] = time();
 					log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
-					require_once("functions.inc");
-					pfSenseHeader("/{$page}");
 				}
 			}
 		} else {

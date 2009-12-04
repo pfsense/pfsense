@@ -85,7 +85,6 @@ if (!isAllowedPage($_SERVER['SCRIPT_NAME'], $_SESSION['Username'])) {
 	if (count($allowedpages) > 0) {
 		$page = str_replace('*', '', $allowedpages[0]);
 		$_SESSION['Post_Login'] = true;
-		require_once("functions.inc");
 		pfSenseHeader("/{$page}");
 		exit;
 	} else {
@@ -100,8 +99,7 @@ if (!isAllowedPage($_SERVER['SCRIPT_NAME'], $_SESSION['Username'])) {
  * taking action in reponse to a POST request
  */
 if (!$_SESSION['Post_Login']) {
-	$_SESSION['Post_Login'] = true;	
-	require_once("functions.inc");
+	$_SESSION['Post_Login'] = true;
 	pfSenseHeader($_SERVER['REQUEST_URI']);
 	exit;
 }

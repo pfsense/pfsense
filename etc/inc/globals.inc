@@ -129,12 +129,12 @@ if(file_exists("/etc/platform")) {
 	if($g['platform'] == "nanobsd") {
 		$g['update_url']="http://updates.pfSense.com/nanobsd/_updaters";
 		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest";
-		$g['firmware_update_text']="pfSense-*.img.gz",
+		$g['firmware_update_text']="pfSense-*.img.gz";
 
 	} else {
 		$g['update_url']="http://updates.pfSense.com/_updaters";
 		$g['update_manifest']="http://updates.pfSense.com/manifest";
-		$g['firmware_update_text']="pfSense-*.tgz",
+		$g['firmware_update_text']="pfSense-*.tgz";
 	}
 }
 

@@ -300,10 +300,7 @@ function is_validaliasname($name) {
 
 /* returns true if $port is a valid TCP/UDP port */
 function is_port($port) {
-	if (!is_numericint($port))
-		return false;
-
-	if (($port < 1) || ($port > 65535))
+	if ((intval($port) < 1) || (intval($port) > 65535))
 		return false;
 	else
 		return true;
@@ -332,8 +329,7 @@ function is_portoralias($port) {
                 }
                 return false;
         } else
-                return is_port($ipaddr);
-
+                return is_port($port);
 }
 
 /* returns true if $val is a valid shaper bandwidth value */

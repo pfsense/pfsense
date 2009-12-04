@@ -273,14 +273,14 @@ if ($_POST) {
 		$_POST['dstendport'] = 0;
 	}
 
-	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) 
-		$input_errors[] = "The start source port must be an alias or integer between 1 and 65535.";
-	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) 
-		$input_errors[] = "The end source port must be an alias or integer between 1 and 65535.";
-	if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport'])) 
-		$input_errors[] = "The start destination port must be an alias or integer between 1 and 65535.";
-	if ($_POST['dstendport'] && !is_portoralias($_POST['dstbeginport'])) 
-		$input_errors[] = "The end destination port must be an alias or integer between 1 and 65535.";
+	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport']))
+                $input_errors[] = "{$_POST['srcbeginport']} is not a valid start source port. It must be a port alias or integer between 1 and 65535.";
+        if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport']))
+                $input_errors[] = "{$_POST['srcendport']} is not a valid end source port. It must be a port alias or integer between 1 and 65535.";
+        if ($_POST['dstbeginport'] && !is_portoralias($_POST['dstbeginport']))
+                $input_errors[] = "{$_POST['dstbeginport']} is not a valid start destination port. It must be a port alias or integer between 1 and 65535.";
+        if ($_POST['dstendport'] && !is_portoralias($_POST['dstendport']))
+                $input_errors[] = "{$_POST['dstendport']} is not a valid end destination port. It must be a port alias or integer between 1 and 65535.";
 
 	/* if user enters an alias and selects "network" then disallow. */
 	if($_POST['srctype'] == "network") {
@@ -294,7 +294,7 @@ if ($_POST) {
 
 	if (!is_specialnet($_POST['srctype'])) {
 		if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
-			$input_errors[] = "A valid source IP address or alias must be specified.";
+			$input_errors[] = "{$_POST['src']} is not a valid source IP address or alias.";
 		}
 		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
 			$input_errors[] = "A valid source bit count must be specified.";
@@ -302,7 +302,7 @@ if ($_POST) {
 	}
 	if (!is_specialnet($_POST['dsttype'])) {
 		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
-			$input_errors[] = "A valid destination IP address or alias must be specified.";
+			$input_errors[] = "{$_POST['dst']} is not a valid destination IP address or alias.";
 		}
 		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
 			$input_errors[] = "A valid destination bit count must be specified.";

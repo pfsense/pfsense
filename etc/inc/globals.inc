@@ -100,7 +100,6 @@ $g = array(
 	"xmlrpcpath" => "/pfSense/xmlrpc.php",
 	"embeddedbootupslice" => "/dev/ad0a",
 	"services_dhcp_server_enable" => true,
-	"firmware_update_text" => "(pfSense-*.tgz)",
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan|rum)/",
 	"help_base_url" => "/help.php"
 );
@@ -130,9 +129,12 @@ if(file_exists("/etc/platform")) {
 	if($g['platform'] == "nanobsd") {
 		$g['update_url']="http://updates.pfSense.com/nanobsd/_updaters";
 		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest";
+		$g['firmware_update_text']="pfSense-*.img.gz",
+
 	} else {
 		$g['update_url']="http://updates.pfSense.com/_updaters";
 		$g['update_manifest']="http://updates.pfSense.com/manifest";
+		$g['firmware_update_text']="pfSense-*.tgz",
 	}
 }
 

@@ -194,9 +194,6 @@ system_hosts_generate();
 /* configure loopback interface */
 interfaces_loopback_configure();
 
-/* start syslogd */
-system_syslogd_start();
-
 /* set up interfaces */
 if(!$debugging)
 	mute_kernel_msgs();
@@ -206,6 +203,9 @@ if(!$debugging)
 
 /* generate resolv.conf */
 system_resolvconf_generate();
+
+/* start syslogd */
+system_syslogd_start();
 
 /* setup altq + pf */
 filter_configure_sync();

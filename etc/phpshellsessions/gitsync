@@ -122,9 +122,13 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	echo "===> Fetching updates...\n";
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git fetch");
 	if($branch == "master") {
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard HEAD");
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rebase origin");
 		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset $branch --hard");
 	} else {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset origin/$branch --hard");
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard $branch");
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rebase origin/$branch");
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset origin/$branch");
 	}
 } else {
     exec("mkdir -p $CODIR/pfSenseGITREPO");

@@ -134,15 +134,12 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/mainline")) 
 		exec("mv $CODIR/pfSenseGITREPO/mainline $CODIR/pfSenseGITREPO/pfSenseGITREPO");
+	if($branch == "master") {
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout master");
+	} else {
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch");
+	}
 }
-
-/*
-if($branch == "master") {
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout master");
-} else {
-	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch");
-}
-*/
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 

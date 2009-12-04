@@ -649,7 +649,7 @@ function interfaces_configure() {
 	interfaces_qinq_configure();
 
 	/* Set up PPP interfaces */
-	interfaces_ppp_configure();
+	//interfaces_ppp_configure();
 
 	$iflist = get_configured_interface_with_descr();
 	$delayed_list = array();
@@ -783,6 +783,8 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
 	unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
 	unlink_if_exists("/tmp/{$realif}_router");
+	
+	interface_ppp_bring_down($realif);
 
 	switch ($ifcfg['ipaddr']) {
 	case "pppoe":
@@ -836,7 +838,7 @@ function interfaces_ppp_configure() {
 	if($config['ppps']['ppp']) {
 		foreach($config['ppps']['ppp'] as $ppp) {
 			$dev = substr($ppp['port'], 5);
-			interface_ppp_configure($dev);
+			interface_ppp_configure($dev,true);
 		}
 	}
 	if(!$g['booting']) 
@@ -845,7 +847,7 @@ function interfaces_ppp_configure() {
 		echo "done.\n";
 }
 
-function interface_ppp_configure($ifcfg) {
+function interface_ppp_configure($ifcfg,$edit=false) {
 	global $config, $g;
 	
 	/* Remove  the /dev/ from the device name. */
@@ -856,68 +858,84 @@ function interface_ppp_configure($ifcfg) {
 		exec("mkdir -p /var/spool/lock");
 		exec("chmod a+rw /var/spool/lock/.");
 	}
+	if ($edit){
+		// Construct the ppp.conf file
+		$peerfile .= "default:\n";
+		$peerfile .= " set log Phase Chat LCP IPCP CCP tun command\n";
+		$peerfile .= " ident user-ppp VERSION (built COMPILATIONDATE)\n";
+		$peerfile .= " set dial \"ABORT BUSY ABORT NO\\\sCARRIER TIMEOUT 5 \\\n";
+		$peerfile .= " 		\\\"\\\" AT OK-AT-OK ATE1Q0 OK \\\dATDT\\\T TIMEOUT 40 CONNECT\"\n";
+		$peerfile .= " enable dns\n";
+		$peerfile .= " nat enable yes\n";
+		$peerfile .= " set reconnect {$ifcfg['connect-max-attempts']} 5\n";
+		$peerfile .= " allow users root\n\n";
+	
+		// Loop variables
+    		$i = 0;
+		$startingip = 1;
 
-	// Construct the ppp.conf file
-	$peerfile .= "default:\n";
-	$peerfile .= " set log Phase Chat LCP IPCP CCP tun command\n";
-	$peerfile .= " ident user-ppp VERSION (built COMPILATIONDATE)\n";
-	$peerfile .= " set dial \"ABORT BUSY ABORT NO\\\sCARRIER TIMEOUT 5 \\\n";
-	$peerfile .= " 		\\\"\\\" AT OK-AT-OK ATE1Q0 OK \\\dATDT\\\T TIMEOUT 40 CONNECT\"\n";
-	$peerfile .= " enable dns\n";
-	$peerfile .= " nat enable yes\n";
-	$peerfile .= " set reconnect {$ifcfg['connect-max-attempts']} 5\n";
-	$peerfile .= " allow users root\n\n";
+		// Start ppp.linkup file
+		$rclinkup = "default:\n";
 
-	// Loop variables
-    $i = 0;
-	$startingip = 1;
+ 	   	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $ppp) {
+				$dev = substr($ppp['port'], 5);
+				$realif  = $ppp['port'];
+				$peerfile .= "{$dev}:\n";
+				$peerfile .= " set device {$realif}\n";
+				if($ppp['dialcmd']) {
+					$peerfile .= " set dial {$ppp['dialcmd']}\n";
+				} else
+					$peerfile .= " set dial \"\"\n";
+				$peerfile .= " set speed \"{$ppp['linespeed']}\"\n";
+				$peerfile .= " add default HISADDR\n";
+				$peerfile .= " set timeout 0\n";
+				$peerfile .= " enable dns\n";
+				$endingip = $startingip+1;
+				if($ppp['localip'] && $ppp['gateway'])
+					$peerfile .= " set ifaddr {$ppp['localip']}/0 {$ppp['gateway']}/0 255.255.255.0 0.0.0.0\n";
+				if(!$ppp['localip'] && $ppp['gateway'])
+					$peerfile .= " set ifaddr 10.0.0.{$startingip}/0 {$ppp['gateway']}/0 255.255.255.0 0.0.0.0\n";
+				if($ppp['localip'] and !$ppp['gateway'])
+					$peerfile .= " set ifaddr {$ppp['localip']}/0 10.0.0.{$endingip}/0 255.255.255.0 0.0.0.0\n";
+				if(!$ppp['localip'] and !$ppp['gateway'])	
+					$peerfile .= " set ifaddr 10.0.0.{$startingip}/0 10.0.0.{$endingip}/0 255.255.255.0 0.0.0.0\n";
+				$peerfile .= " set phone \"{$ppp['phone']}\"\n";
+				$peerfile .= " set authname \"{$ppp['username']}\"\n";
+				$peerfile .= " set authkey \"{$ppp['password']}\"\n";
+				// Add a local socket for the daemon so we can query it later
+				$peerfile .= " set server /var/run/{$dev}.sock \"\" 0177\n";
+				$peerfile .= "\n";
+				$i++;
+				$startingip++;
+				$rclinkup.= "{$dev}:\n";
+				$rclinkup.= "	! sh -c \"/sbin/ppp-script HISADDR INTERFACE DNS0 DNS1 \"\n";
+				$rclinkup.= "	! sh -c \"/etc/rc.linkup INTERFACE start\"\n";
+			}	
+    		}
 
-	// Start ppp.linkup file
-	$rclinkup = "default:\n";
+		// Write out configuration for ppp.conf
+		file_put_contents("/etc/ppp/ppp.conf", $peerfile);
 
-    if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-		foreach ($config['ppps']['ppp'] as $ppp) {
-			$dev = substr($ppp['port'], 5);
-			$realif  = $ppp['port'];
-			$peerfile .= "{$dev}:\n";
-			$peerfile .= " set device {$realif}\n";
-			if($ppp['dialcmd'])
-				$peerfile .= " set dial {$ppp['dialcmd']}\n";
-			$peerfile .= " set speed \"{$ppp['linespeed']}\"\n";
-			$peerfile .= " add default HISADDR\n";
-			$peerfile .= " set timeout 0\n";
-			$endingip = $startingip+1;
-			if($ppp['localip'])
-				$startingip = $ppp['localip'];
-			if($ppp['gateway'])
-				$endingip = $ppp['gateway'];
-			$peerfile .= " enable dns\n";
-			$peerfile .= " set ifaddr 10.0.0.{$startingip}/0 10.0.0.{$endingip}/0 255.255.255.0 0.0.0.0\n";
-			$peerfile .= " set phone \"{$ppp['phone']}\"\n";
-			$peerfile .= " set authname \"{$ppp['username']}\"\n";
-			$peerfile .= " set authkey \"{$ppp['password']}\"\n";
-			$peerfile .= "\n";
-			$i++;
-			$startingip++;
-			$rclinkup.= "{$dev}:\n";
-			$rclinkup.= "	! sh -c \"/sbin/ppp-script HISADDR INTERFACE DNS0 DNS1 \"\n";
-			$rclinkup.= "	! sh -c \"/etc/rc.linkup INTERFACE start\"\n";
-		}
-    }
+		// Write out linkup file
+		file_put_contents("/etc/ppp/ppp.linkup", $rclinkup);
 
-	// Write out configuration for ppp.conf
-	file_put_contents("/etc/ppp/ppp.conf", $peerfile);
-
-	// Write out linkup file
-	file_put_contents("/etc/ppp/ppp.linkup", $rclinkup);
-
-	// Make executable
-	exec("chmod a+rx /etc/ppp/ppp.linkup");
-
+		// Make executable
+		exec("chmod a+rx /etc/ppp/ppp.linkup");
+	}
 	// Launch specified ppp instance
-	$running = `ps awux | grep ppp | grep -v grep | grep $orig_dev`;
-	if(!$running)
-		mwexec("/usr/sbin/ppp -background {$orig_dev}");
+	if( !$edit){
+		$running = `ps awux | grep ppp | grep -v grep | grep $orig_dev`;
+		if(!$running)
+			mwexec("/usr/sbin/ppp -background {$orig_dev}");
+	}
+}
+
+function interface_ppp_bring_down($if) {
+	if(file_exists("/var/run/{$if}.pid")) {
+		$pid = trim(file_get_contents("/var/run/{$if}.pid"));
+		mwexec("kill -QUIT {$pid}");
+	}
 }
 
 function interfaces_carp_setup() {
@@ -1683,9 +1701,12 @@ function interface_configure($interface = "wan", $reloadall = false) {
 
 	if(get_real_interface($wancfg['if']) && does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);
-	
+ 	
 	interface_reload_carps($realif);
-
+	
+	if($wancfg['serialport'])
+		interface_ppp_configure($realif);
+	
 	if (!$g['booting']) {
 		if (link_interface_to_gre($interface)) {
 			foreach ($config['gres']['gre'] as $gre)
@@ -2308,13 +2329,12 @@ function get_real_interface($interface = "wan") {
 			// PPP Support
 			if($config['interfaces'][$if]['serialport']) {
 				$dev = $config['interfaces'][$if]['serialport'];
-				$ps = trim(`ps awux | grep -v grep | grep "$dev" | awk '{ print \$2 }'`);
-				if($ps) {
-					$int = trim(`/sbin/ifconfig | grep -v grep | grep -B2 "$ps" | head -n1 | cut -d: -f1`);
-					if($int) {
-						$wanif = $int;
-						break;
-					}
+				if(file_exists("/var/run/{$dev}.if")) {
+                                        $wanif = trim(file_get_contents("/var/run/{$dev}.if"));
+					break;
+				} else {
+					$wanif = $dev;
+					break;
 				}
 			}
 

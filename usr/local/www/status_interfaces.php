@@ -126,6 +126,20 @@ include("head.inc");
 			  <?php endif; ?>
 			  </a>
                 </td>
+		</tr><?php  endif; if (preg_match("/cua|^tun/i",$ifinfo['if'])): ?>
+              <tr>
+                <td width="22%" class="vncellt">PPP</td>
+                <td width="78%" class="listr">
+                  <?=htmlspecialchars($ifinfo['hwif']);?>&nbsp;&nbsp;
+                          <?php if ($ifinfo['status'] == "up"): ?>
+                          <a href="status_interfaces.php?action=Disconnect&if=<?php echo $ifdescr; ?>">
+                          <input type="button" name="<?php echo $ifdescr; ?>" value="Disconnect" class="formbtns">
+                          <?php else: ?>
+                          <a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
+                          <input type="button" name="<?php echo $ifdescr; ?>" value="Connect" class="formbtns">
+                          <?php endif; ?>
+                          </a>
+                </td>
               </tr><?php  endif; if ($ifinfo['macaddr']): ?>
               <tr>
                 <td width="22%" class="vncellt">MAC address</td>

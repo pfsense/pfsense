@@ -6,18 +6,11 @@
 
 conf_mount_rw();
 
-exec("rm -rf /home/pfsense /root/pfsense /pfSenseGITREPO/");
-
 $GIT_REPO="http://gitweb.pfsense.org/pfsense/mainline.git";
 $CODIR =  "/root/pfsense/";
 
 global $argv;
 global $command_split;
-
-echo "\nRemoving downloaded cvssync data, please wait...";
-exec("/bin/rm -rf /home/pfsense");
-exec("mkdir -p /home/pfsense");
-echo " done.\n";
 
 unlink_if_exists("/tmp/config.cache");
 
@@ -125,9 +118,14 @@ echo "===> Checking out $branch\n";
 exec("mkdir -p /root/pfsense/$branch");
 
 // Git 'er done!
-if(is_dir("$CODIR/pfSenseGITREPO")) {
-	exec("cd $CODIR/pfSenseGITREPO && git fetch");
-	exec("cd $CODIR/pfSenseGITREPO && git merge $branch");	
+if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
+	echo "===> Fetching updates...\n";
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git fetch");
+	if($branch == "master") {
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset $branch --hard");
+	} else {
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset origin/$branch --hard");
+	}
 } else {
     exec("mkdir -p $CODIR/pfSenseGITREPO");
     echo "Executing cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO\n";
@@ -138,11 +136,13 @@ if(is_dir("$CODIR/pfSenseGITREPO")) {
 		exec("mv $CODIR/pfSenseGITREPO/mainline $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 }
 
+/*
 if($branch == "master") {
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout master");
 } else {
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch");
 }
+*/
 
 exec("mkdir -p /tmp/lighttpd/cache/compress/");
 

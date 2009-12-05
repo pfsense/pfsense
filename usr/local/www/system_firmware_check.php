@@ -151,7 +151,7 @@ if(!$latest_version) {
 		$txt  = "A new version is now available \\n\\n";
 		$txt .= "New version:     {$latest_version}\\n";
 		$txt .= "Current version: {$current_installed_pfsense_version}\\n";
-		$txt .= "Update source:   {$g['update_url']}\\n";
+		$txt .= "Update source:   {$updater_url}\\n";
 		update_output_window($txt);
 	} else {
 		update_output_window("You are on the latest version.");

@@ -246,8 +246,10 @@ function isUrl($url = "") {
 }
 
 function run_cmds($cmds) {
+	global $debug;
 	foreach($cmds as $cmd) {
-		echo "Running $cmd";
+		if($debug)
+			echo "Running $cmd";
 		exec($cmd);
 	}
 }

@@ -121,6 +121,7 @@ exec("mkdir -p /root/pfsense/$branch");
 if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	echo "===> Fetching updates...\n";
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git fetch");
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git clean -f -f -x -d");
 	if($branch == "master") {
 		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard HEAD");
 		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rebase origin");

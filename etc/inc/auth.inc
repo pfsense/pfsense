@@ -857,7 +857,7 @@ function is_account_disabled($username) {
 }
 
 function session_auth($backing) {
-	global $g, $debug, $HTTP_SERVER_VARS, $userindex, $config, $_SESSION;
+	global $g, $debug, $HTTP_SERVER_VARS, $userindex, $config, $_SESSION, $page;
 
 	session_start();
 

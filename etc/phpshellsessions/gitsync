@@ -123,12 +123,18 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git fetch");
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git clean -f -f -x -d");
 	if($branch == "master") {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard HEAD");
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rebase origin");
+		$git_cmd = array(
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset HEAD --hard", 
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rebase origin"
+		);
+		run_cmds($git_cmd);
 	} else {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard HEAD");
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rebase origin/$branch");
+		$git_cmd = array(
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset HEAD --hard", 
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rebase origin/$branch"
+		);
 	}
+	run_cmds($git_cmd);
 } else {
     exec("mkdir -p $CODIR/pfSenseGITREPO");
     echo "Executing cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO\n";
@@ -178,6 +184,8 @@ else
 exec($command);
 
 post_cvssync_commands();
+
+run_cmds($git_cmd);
 
 echo "===> Checkout complete.\n";
 echo "\n";
@@ -235,6 +243,13 @@ function isUrl($url = "") {
 				strstr($url, ".git"))
 					return true;
 	return false;
+}
+
+function run_cmds($cmds) {
+	foreach($cmds as $cmd) {
+		echo "Running $cmd";
+		exec($cmd);
+	}
 }
 
 conf_mount_ro();

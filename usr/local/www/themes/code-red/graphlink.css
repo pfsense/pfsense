@@ -1,0 +1,43 @@
+/*******************************************************************************
+  $Id$
+
+  This file is part of the GraphLink software.
+  GraphLink is distributed under the MIT License.
+  Copyright (C) 2005-2006 Max Khitrov <max@mxsoft.org>
+*******************************************************************************/
+
+/**
+ * Defines the background image used for the graph, as well as the actual data
+ * locations.
+ * Use padding-left and padding-top to align the data area correctly with your
+ * background image.
+ * Width and height should same as the dimensions of the image, minus the
+ * padding values in both directions.
+ */
+div.GraphLink {
+  width: 212px;
+  height: 60px;
+  padding-left: 38px;
+  padding-top: 10px;
+  background-image: url(/themes/nervecenter/images/misc/graph.png);
+  overflow: hidden;
+}
+
+/**
+ * Defines the data display area. Modify to fit your background image.
+ */
+div.GraphLinkData {
+  width: 200px;
+  height: 50px;
+  overflow: hidden;
+}
+
+/**
+ * Defines the look of one bar. Nothing to change here other than the color.
+ */
+span.GraphLinkBar {
+  background-color: #990000;
+  height: 100%;
+  float: left;
+  overflow: hidden;
+}

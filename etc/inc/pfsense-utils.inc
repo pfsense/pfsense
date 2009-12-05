@@ -1258,7 +1258,10 @@ function get_interface_info($ifdescr) {
 			$ifinfo['pptplink'] = "up";
 		else
 			$ifinfo['pptplink'] = "down";
-
+		break;
+	case "":
+		if ($config['interfaces'][$if]['serialport'])
+			$ifinfo['ppplink'] = $config['interfaces'][$if]['serialport'];
 		break;
 	default:
 		break;

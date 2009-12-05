@@ -649,7 +649,7 @@ function interfaces_configure() {
 	interfaces_qinq_configure();
 
 	/* Set up PPP interfaces */
-	//interfaces_ppp_configure();
+	interfaces_ppp_configure(false);
 
 	$iflist = get_configured_interface_with_descr();
 	$delayed_list = array();
@@ -829,7 +829,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	return;
 }
 
-function interfaces_ppp_configure() {
+function interfaces_ppp_configure($write_config=true) {
 	global $config, $g;
 	if(!$g['booting']) 
 		conf_mount_rw();
@@ -838,7 +838,7 @@ function interfaces_ppp_configure() {
 	if($config['ppps']['ppp']) {
 		foreach($config['ppps']['ppp'] as $ppp) {
 			$dev = substr($ppp['port'], 5);
-			interface_ppp_configure($dev,true);
+			interface_ppp_configure($dev,$write_config);
 		}
 	}
 	if(!$g['booting']) 

@@ -150,7 +150,10 @@ include("head.inc"); ?>
 		<tr>
 			<td width="22%" valign="top"  class="vncell">More Information:</td>
 			<td width="78%" class="vtable">
-				NOTE: These links are to external services, so their reliability cannot be guaranteed.<br/><br/>
+				<a target="_new" href ="/diag_ping.php?host=<?=$host?>&interface=wan&count=3">Ping</a> <br/>
+				<a target="_new" href ="/diag_traceroute.php?host=<?=$host?>&ttl=18">Traceroute</a>
+				<p/>
+				NOTE: The following links are to external services, so their reliability cannot be guaranteed.<br/><br/>
 				<a target="_new" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>">IP WHOIS @ DNS Stuff</a><br />
 				<a target="_new" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>">IP Info @ DNS Stuff</a>
 			</td>

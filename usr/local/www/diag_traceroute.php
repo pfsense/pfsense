@@ -53,23 +53,23 @@ include("head.inc");
 define('MAX_TTL', 64);
 define('DEFAULT_TTL', 18);
 
-if ($_POST) {
+if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
 	unset($do_traceroute);
 
 	/* input validation */
 	$reqdfields = explode(" ", "host ttl");
 	$reqdfieldsn = explode(",", "Host,ttl");
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if (($_POST['ttl'] < 1) || ($_POST['ttl'] > MAX_TTL)) {
+	if (($_REQUEST['ttl'] < 1) || ($_REQUEST['ttl'] > MAX_TTL)) {
 		$input_errors[] = "Maximum number of hops must be between 1 and {MAX_TTL}";
 	}
 
 	if (!$input_errors) {
 		$do_traceroute = true;
-		$host = $_POST['host'];
-		$ttl = $_POST['ttl'];
+		$host = $_REQUEST['host'];
+		$ttl = $_REQUEST['ttl'];
 
 	}
 }
@@ -80,7 +80,7 @@ if (!isset($do_traceroute)) {
 }
 ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-			<form action="diag_traceroute.php" method="post" name="iform" id="iform">
+			<form action="diag_traceroute.php" method="get" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic">Traceroute</td>
@@ -103,7 +103,7 @@ if (!isset($do_traceroute)) {
 				<tr>
 				  <td width="22%" valign="top" class="vncellreq">Use ICMP</td>
 				  <td width="78%" class="vtable">
-					<input name="useicmp" type="checkbox"<?php if($_POST['useicmp']) echo " CHECKED"; ?>>
+					<input name="useicmp" type="checkbox"<?php if($_REQUEST['useicmp']) echo " CHECKED"; ?>>
 					</td>
 				</tr>
 				<tr>
@@ -120,7 +120,7 @@ if (!isset($do_traceroute)) {
 					echo("<br><strong>Traceroute output:</strong><br>");
 					echo('<pre>');
 					ob_end_flush();
-					if($_POST['useicmp'])
+					if($_REQUEST['useicmp'])
 						$useicmp = "-I";
 					else
 						$useicmp = "";

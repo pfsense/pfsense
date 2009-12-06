@@ -46,24 +46,24 @@ require("guiconfig.inc");
 define('MAX_COUNT', 10);
 define('DEFAULT_COUNT', 3);
 
-if ($_POST) {
+if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
 	unset($do_ping);
 
 	/* input validation */
 	$reqdfields = explode(" ", "host count");
 	$reqdfieldsn = explode(",", "Host,Count");
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if (($_POST['count'] < 1) || ($_POST['count'] > MAX_COUNT)) {
+	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
 		$input_errors[] = "Count must be between 1 and {MAX_COUNT}";
 	}
 
 	if (!$input_errors) {
 		$do_ping = true;
-		$host = $_POST['host'];
-		$interface = $_POST['interface'];
-		$count = $_POST['count'];
+		$host = $_REQUEST['host'];
+		$interface = $_REQUEST['interface'];
+		$count = $_REQUEST['count'];
 	}
 }
 if (!isset($do_ping)) {
@@ -145,3 +145,4 @@ include("head.inc"); ?>
 </tr>
 </table>
 <?php include("fend.inc"); ?>
+

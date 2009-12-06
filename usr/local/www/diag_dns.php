@@ -46,7 +46,8 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	$host = trim($_POST['host']);
-
+	$host_esc = escapeshellarg(trim($_POST['host']));
+	
 	if (!is_hostname($host) || is_ipaddr($host)) 
 		$input_errors[] = "Host must be a valid hostname or IP address.";
 
@@ -56,7 +57,7 @@ if ($_POST) {
 		list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $config['system']['dnsserver'];
 		for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 			$dns_server = $pconfig['dns' . $dnscounter];
-			$query_time = `dig {$host} @{$dns_server} | grep Query | cut -d':' -f2`;
+			$query_time = `dig {$host_esc} @{$dns_server} | grep Query | cut -d':' -f2`;
 			if($query_time == "")
 				$query_time = "No response";
 			$new_qt = array();
@@ -155,10 +156,10 @@ include("head.inc"); ?>
 			</td>
 		</tr>
 		<?php } ?>
-		<tr><td>&nbsp;</td></tr>
 		<tr>
 		  <td width="22%" valign="top">&nbsp;</td>
 		  <td width="78%">
+			<br/>&nbsp;
             <input name="Submit" type="submit" class="formbtn" value="DNS Lookup">
 		</td>
 		</tr>

@@ -130,8 +130,12 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 		run_cmds($git_cmd);
 	} else {
 		$git_cmd = array(
-			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset HEAD --hard", 
-			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rebase origin/$branch"
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset HEAD --hard",
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout master",
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch -D $branch",
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git fetch",
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rebase origin",
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch"
 		);
 	}
 	run_cmds($git_cmd);

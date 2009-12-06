@@ -222,7 +222,7 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors
 	}
 
 	for ($i = 0; $i < count($reqdfields); $i++) {
-		if ($_POST[$reqdfields[$i]] == "") {
+		if ($_POST[$reqdfields[$i]] == "" && $_REQUEST[$reqdfields[$i]] == "") {
 			$input_errors[] = "The field '" . $reqdfieldsn[$i] . "' is required.";
 		}
 	}

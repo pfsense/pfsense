@@ -56,7 +56,7 @@ if ($_POST) {
 		list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $config['system']['dnsserver'];
 		for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 			$dns_server = $pconfig['dns' . $dnscounter];
-			$query_time = `dig google.com @{$dns_server} | grep Query | cut -d':' -f2`;
+			$query_time = `dig {$host} @{$dns_server} | grep Query | cut -d':' -f2`;
 			if($query_time == "")
 				$query_time = "No response";
 			$new_qt = array();

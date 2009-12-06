@@ -102,8 +102,8 @@ include("head.inc"); ?>
 			<td width="22%" valign="top"  class="vncell">More Information:</td>
 			<td width="78%" class="vtable">
 				NOTE: These links are to external services, so their reliability cannot be guaranteed.<br/><br/>
-				<a href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>">IP WHOIS @ DNS Stuff</a><br />
-				<a href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>">IP Info @ DNS Stuff</a>
+				<a target="_new" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>">IP WHOIS @ DNS Stuff</a><br />
+				<a target="_new" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>">IP Info @ DNS Stuff</a>
 			</td>
 		</tr>
 		<?php } ?>

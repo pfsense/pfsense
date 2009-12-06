@@ -117,7 +117,7 @@ include("head.inc"); ?>
 		<tr>
 		  <td width="22%" valign="top" class="vncellreq">Resolution time per server</td>
 		  <td width="78%" class="vtable">
-				<table border="1" cellpadding="2" style="border-width: 1px 1px 1px 1px; border-collapse: collapse;">
+				<table width="170" border="1" cellpadding="2" style="border-width: 1px 1px 1px 1px; border-collapse: collapse;">
 					<tr>
 						<td>
 							<b>Server</b>

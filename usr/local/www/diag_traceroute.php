@@ -80,7 +80,7 @@ if (!isset($do_traceroute)) {
 }
 ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-			<form action="diag_traceroute.php" method="get" name="iform" id="iform">
+			<form action="diag_traceroute.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic">Traceroute</td>

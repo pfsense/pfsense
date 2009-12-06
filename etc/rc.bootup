@@ -188,9 +188,6 @@ function rescue_detect_keypress() {
 	/* configure loopback interface */
 	interfaces_loopback_configure();
 
-	/* start syslogd */
-	system_syslogd_start();
-
 	/* set up VLAN virtual interfaces */
 	interfaces_vlan_configure();
 
@@ -205,6 +202,9 @@ function rescue_detect_keypress() {
 	interfaces_lan_configure();
 	unmute_kernel_msgs();
 	echo "done.\n";
+
+	/* start syslogd - needs to be after LAN bringup. */
+	system_syslogd_start();
 
 	/* set up WAN interface */
 	echo "Configuring WAN interface...";
@@ -339,7 +339,7 @@ function rescue_detect_keypress() {
 
 	/*   start DHCP service again now that CARP has settled
 	 *   incase user is using primary/backup failover dhcp mode
-         */
+	 */
 	services_dhcpd_configure();
 
 	/* startup OLSR if needed */
@@ -353,7 +353,7 @@ function rescue_detect_keypress() {
 	if($config['system']['afterbootupshellcmd'] <> "")
 		mwexec($config['system']['afterbootupshellcmd']);
 
-	if($avail < 126) {
+	if($avail < 121) {
 		require_once("/etc/inc/notices.inc");
 		file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires atleast 128 megabytes of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
 		mwexec("sysctl net.inet.tcp.recvspace=4096");

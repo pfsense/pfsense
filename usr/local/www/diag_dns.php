@@ -85,6 +85,9 @@ include("head.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="diag_dns.php" method="post" name="iform" id="iform">
 	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Resolve DNS hostname or IP</td>
+		</tr>
         <tr>
 		  <td width="22%" valign="top" class="vncellreq">Hostname or IP</td>
 		  <td width="78%" class="vtable">

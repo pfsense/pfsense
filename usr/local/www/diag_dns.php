@@ -90,13 +90,13 @@ include("head.inc"); ?>
 		  <td width="78%" class="vtable">
             <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
 			<? if ($resolved && $type) { ?>
-			=  <?php echo $resolved; ?>
+			=  <font size="+1"><?php echo $resolved; ?><font size="-1>">
 			<?	} ?>
 		  </td>
 		</tr>
 		<?php if (!$input_errors && $ipaddr) { ?>
 		<tr>
-			<td width="22%" valign="top">More Information:</td>
+			<td width="22%" valign="top"  class="vncell">More Information:</td>
 			<td width="78%" class="vtable">
 				NOTE: These links are to external services, so their reliability cannot be guaranteed.<br/><br/>
 				<a href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>">IP WHOIS @ DNS Stuff</a><br />
@@ -104,6 +104,7 @@ include("head.inc"); ?>
 			</td>
 		</tr>
 		<?php } ?>
+		<tr><td>&nbsp;</td></tr>
 		<tr>
 		  <td width="22%" valign="top">&nbsp;</td>
 		  <td width="78%">

@@ -132,6 +132,13 @@ function filter_configure() {
 	touch($g['tmp_path'] . "/filter_dirty");
 }
 
+function delete_states_for_down_gateways() {
+	$a_gateways = return_gateways_array();
+	foreach ($a_gateways as $gateway) 
+		if($gateway['monitor'] == "down") 
+			mwexec("/sbin/pfctl -b {$gateway['gateway']}");
+}
+
 /* reload filter sync */
 function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $GatewayGroupsList;
@@ -325,6 +332,9 @@ function filter_configure_sync() {
 	if ($g['booting'] == true)
 		echo ".";
 	find_dns_aliases();
+
+	update_filter_reload_status("Processing down interface states");
+	delete_states_for_down_gateways();
 
 	update_filter_reload_status("Done");
 	if ($g['booting'] == true)

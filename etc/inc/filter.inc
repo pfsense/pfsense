@@ -133,10 +133,21 @@ function filter_configure() {
 }
 
 function delete_states_for_down_gateways() {
+	global $config;
 	$a_gateways = return_gateways_array();
-	foreach ($a_gateways as $gateway) 
-		if($gateway['monitor'] == "down") 
-			mw8exec("/sbin/pfctl -b {$gateway['gateway']}");
+	foreach ($a_gateways as $gateway) {
+		if($gateway['monitor'] == "down") {
+			// Find the interface IP of this gateway
+			foreach ($config['interfaces'] as $ifdescr => $ifname) {
+				$int_gw = get_interface_gateway($ifdescr);
+				if($int_gw == $gateway['gateway']) {
+					$int_ip = get_interface_ip($ifdescr);
+					if($int_ip)
+						mwexec("/sbin/pfctl -b {$int_ip}");
+				}
+			}
+		}
+	}
 }
 
 /* reload filter sync */

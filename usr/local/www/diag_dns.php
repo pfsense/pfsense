@@ -57,9 +57,11 @@ if ($_POST) {
 		for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 			$dns_server = $pconfig['dns' . $dnscounter];
 			$query_time = `dig google.com @{$dns_server} | grep Query | cut -d':' -f2`;
+			if($query_time == "")
+				$query_time = "No response";
 			$new_qt = array();
 			$new_qt['dns_server'] = $dns_server;
-			$new_qt['query_time'] = $query_time;
+			$new_qt['query_time'] = $query_time;			
 			$dns_speeds[] = $new_qt;
 			unset($new_qt);
 		}

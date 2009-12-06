@@ -96,7 +96,7 @@ include("head.inc");
 					</table>
 		      <br>                      
 		      <!-- command output box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='80' rows='7' name='output' id='output' wrap='hard'>
+		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='90' rows='7' name='output' id='output' wrap='hard'>
 		      </textarea>                      
 		      </center>
  			<p>

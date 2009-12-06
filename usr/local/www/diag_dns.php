@@ -113,6 +113,7 @@ include("head.inc"); ?>
 			<?	} ?>
 		  </td>
 		</tr>
+<?php		if($_POST): ?>
 		<tr>
 		  <td width="22%" valign="top" class="vncellreq">Resolution time per server</td>
 		  <td width="78%" class="vtable">
@@ -143,6 +144,7 @@ include("head.inc"); ?>
 				</table>
 		  </td>
 		</tr>
+		<?php endif; ?>
 		<?php if (!$input_errors && $ipaddr) { ?>
 		<tr>
 			<td width="22%" valign="top"  class="vncell">More Information:</td>

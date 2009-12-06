@@ -86,11 +86,12 @@ pre { font-size: 1.15em; }
 				<table>
 					<tr>
 						<td>
-<b>Currently loaded bogons table:</b><p/>
-<pre>
-
+							<font size="+1">
+								<b>Currently loaded bogons table:</b><p/>
+								<pre>
 <?php echo $bogons; ?>
-</pre>
+								</pre>
+							</font>
 						</td>
 					</tr>
 				</table>

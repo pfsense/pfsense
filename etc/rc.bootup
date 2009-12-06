@@ -203,9 +203,6 @@ function rescue_detect_keypress() {
 	unmute_kernel_msgs();
 	echo "done.\n";
 
-	/* start syslogd - needs to be after LAN bringup. */
-	system_syslogd_start();
-
 	/* set up WAN interface */
 	echo "Configuring WAN interface...";
 	mute_kernel_msgs();
@@ -224,6 +221,9 @@ function rescue_detect_keypress() {
 
 	/* bring up carp interfaces */
 	interfaces_carp_configure();
+
+	/* start syslogd - needs to be after LAN bringup. */
+	system_syslogd_start();
 
 	/* generate resolv.conf */
 	system_resolvconf_generate();

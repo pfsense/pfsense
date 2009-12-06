@@ -47,8 +47,22 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	$host = trim($_POST['host']);
 
-	if (!(is_hostname($host) || is_ipaddr($host))) {
+	if (!is_hostname($host) || is_ipaddr($host)) 
 		$input_errors[] = "Host must be a valid hostname or IP address.";
+
+	// Test resolution speed of each DNS server.
+	if ((is_hostname($host) || is_ipaddr($host))) {
+		$dns_speeds = array();
+		list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $config['system']['dnsserver'];
+		for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
+			$dns_server = $pconfig['dns' . $dnscounter];
+			$query_time = `dig google.com @{$dns_server} | grep Query | cut -d':' -f2`;
+			$new_qt = array();
+			$new_qt['dns_server'] = $dns_server;
+			$new_qt['query_time'] = $query_time;
+			$dns_speeds[] = $new_qt;
+			unset($new_qt);
+		}
 	}
 
 	$type = "unknown";
@@ -95,6 +109,36 @@ include("head.inc"); ?>
 			<? if ($resolved && $type) { ?>
 			=  <font size="+1"><?php echo $resolved; ?><font size="-1>">
 			<?	} ?>
+		  </td>
+		</tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncellreq">Resolution time per server</td>
+		  <td width="78%" class="vtable">
+				<table border="1" cellpadding="2" style="border-width: 1px 1px 1px 1px; border-collapse: collapse;">
+					<tr>
+						<td>
+							<b>Server</b>
+						</td>
+						<td>
+							<b>Query time</b>
+						</td>
+					</tr>
+<?php
+					if(is_array($dns_speeds)) 
+						foreach($dns_speeds as $qt):
+?>
+					<tr>
+						<td>
+							<?=$qt['dns_server']?>
+						</td>
+						<td>
+							<?=$qt['query_time']?>
+						</td>
+					</tr>
+<?php
+					endforeach;
+?>
+				</table>
 		  </td>
 		</tr>
 		<?php if (!$input_errors && $ipaddr) { ?>

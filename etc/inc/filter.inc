@@ -136,7 +136,7 @@ function delete_states_for_down_gateways() {
 	$a_gateways = return_gateways_array();
 	foreach ($a_gateways as $gateway) 
 		if($gateway['monitor'] == "down") 
-			mwexec("/sbin/pfctl -b {$gateway['gateway']}");
+			mw8exec("/sbin/pfctl -b {$gateway['gateway']}");
 }
 
 /* reload filter sync */

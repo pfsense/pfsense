@@ -848,6 +848,31 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
+			<td width="22%" valign="top" class="vncell">Description</td>
+			<td width="78%" class="vtable">
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>">
+				<br />
+				<span class="vexpl">You may enter a description here for your reference.</span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%">
+				&nbsp;<br>&nbsp;
+				<input name="Submit" type="submit" class="formbtn" value="Save">  <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+<?php			if (isset($id) && $a_filter[$id]): ?>
+					<input name="id" type="hidden" value="<?=$id;?>">
+<?php 			endif; ?>
+				<input name="after" type="hidden" value="<?=$after;?>">
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Advanced features</td>
+		</tr>	
+		<tr>
 			<td width="22%" valign="top" class="vncell">Source OS</td>
 			<td width="78%" class="vtable">
 				<div id="showadvsourceosbox">
@@ -1204,16 +1229,9 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncell">Description</td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>">
-				<br />
-				<span class="vexpl">You may enter a description here for your reference.</span>
-			</td>
-		</tr>
-		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
+				&nbsp;<br>&nbsp;
 				<input name="Submit" type="submit" class="formbtn" value="Save">  <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
 <?php			if (isset($id) && $a_filter[$id]): ?>
 					<input name="id" type="hidden" value="<?=$id;?>">

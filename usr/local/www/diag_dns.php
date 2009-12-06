@@ -115,7 +115,7 @@ include("head.inc"); ?>
 		</tr>
 <?php		if($_POST): ?>
 		<tr>
-		  <td width="22%" valign="top" class="vncellreq">Resolution time per server</td>
+		  <td width="22%" valign="top" class="vncell">Resolution time per server</td>
 		  <td width="78%" class="vtable">
 				<table width="170" border="1" cellpadding="2" style="border-width: 1px 1px 1px 1px; border-collapse: collapse;">
 					<tr>

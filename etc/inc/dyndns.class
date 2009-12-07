@@ -846,7 +846,7 @@
 			$time = '2160000';
 
 			$needs_updating = FALSE;
-			/* lets deterimine if the item needs updating */
+			/* lets determine if the item needs updating */
 			if ($cacheIP != $wan_ip) {
 				$needs_updating = TRUE;
 				log_error("DynDns: cacheIP != wan_ip.  Updating.");

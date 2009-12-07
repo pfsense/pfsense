@@ -73,7 +73,7 @@ if($old_ip) {
 	if($helpers)
 	    mwexec("kill " . trim($helpers));
 } else {
-	log_error("WARNING! /etc/rc.newwanip could not deterimine the previous ip address ( $interface ).");
+	log_error("WARNING! /etc/rc.newwanip could not determine the previous IP address ( $interface ).");
 }
 
 /* reconfigure IPsec tunnels */

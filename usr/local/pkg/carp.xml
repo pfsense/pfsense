@@ -81,7 +81,7 @@
 		<field>
 			<fielddescr>Bind Virtual IP to interface</fielddescr>
 			<fieldname>interface</fieldname>
-			<description>Select the interface that this IP should bind to (carpdev).  Leave this set to AUTO for the system to automatically deterimine where to setup the IP.</description>
+			<description>Select the interface that this IP should bind to (carpdev).  Leave this set to AUTO for the system to automatically determine where to setup the IP.</description>
 			<add_to_interfaces_selection>AUTO</add_to_interfaces_selection>
 			<size>3</size>
 			<value>AUTO</value>

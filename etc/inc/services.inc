@@ -137,7 +137,7 @@ EOD;
 
 	$dhcpdifs = array();
 
-	/*    loop through and deterimine if we need to setup
+	/*    loop through and determine if we need to setup
 	 *    failover peer "bleh" entries
 	 */
 	$dhcpnum = 0;

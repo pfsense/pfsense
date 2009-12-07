@@ -724,7 +724,7 @@ function presubmit() {
 		}
 	}
 
-	/* deterimine if user is not local to system */
+	/* determine if user is not local to system */
 	$islocal = false;
 	foreach($config['system']['user'] as $user) 
 		if($user['name'] == $_SESSION['Username'])

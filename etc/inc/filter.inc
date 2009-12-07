@@ -2083,7 +2083,7 @@ function filter_get_time_based_rule_status($schedule) {
         if (empty($schedule))
                 return true;
         /*
-         * iterate through time blocks and deterimine
+         * iterate through time blocks and determine
          * if the rule should be installed or not.
          */
         foreach($schedule['timerange'] as $timeday) {

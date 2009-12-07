@@ -658,6 +658,9 @@ function services_dnsmasq_configure() {
 			$return = 1;
 	}
 
+	// restart isc-dhcpd parser
+	services_parse_dhcpd_hostnames();
+
 	return $return;
 }
 

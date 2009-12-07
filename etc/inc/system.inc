@@ -640,7 +640,7 @@ function system_webgui_start() {
 			if (!is_array($config['system']['cert']))
 				$config['system']['cert'] = array();
 			$a_cert =& $config['system']['cert'];
-			echo "Importaing default SSL Certificate...";
+			echo "Importing default SSL Certificate... ";
 			$cert_file = "/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.crt";
 			$key_file  = "/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.key";
 			if(file_exists($cert_file) && file_exists($key_file)) {

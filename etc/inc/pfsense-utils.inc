@@ -1100,7 +1100,7 @@ function setup_polling() {
  		}
 		if(isset($config['system']['polling'])) {
 			mwexec("/sbin/ifconfig {$real_interface} polling");
-			mwexec("/sbin/sysctl kern.polling.idle_poll=1");
+			mwexec("/sbin/sysctl kern.polling.idle_poll=0");
 		} else {
 			mwexec("/sbin/ifconfig {$real_interface} -polling");
 		}

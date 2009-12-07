@@ -322,8 +322,10 @@ EOD;
 			mwexec("/sbin/kldunload ipfw.ko");
 		$listifs = get_configured_interface_list_by_realif();
 		foreach ($listifs as $listrealif => $listif) {
-			mwexec("/sbin/ifconfig {$listrealif} -ipfwfilter");
-			$carpif = link_ip_to_carp_interface(find_interface_ip($listrealif));
+			if (!empty($listrealif)) {
+				mwexec("/sbin/ifconfig {$listrealif} -ipfwfilter");
+				$carpif = link_ip_to_carp_interface(find_interface_ip($listrealif));
+			}
                         if (!empty($carpif)) {
 				$carpsif = explode(" ", $carpif);
 				foreach ($carpsif as $cpcarp)

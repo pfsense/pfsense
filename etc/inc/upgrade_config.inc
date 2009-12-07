@@ -784,8 +784,8 @@ function upgrade_043_to_044() {
 function upgrade_044_to_045() {
 	global $config;
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-		foreach ($config['vlans']['vlan'] as $id => &$vlan)
-			$vlan['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
+		foreach ($config['vlans']['vlan'] as $id => $vlan)
+			$config['vlan']['vlan'][$id]['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
 	}
 }
 

@@ -258,7 +258,10 @@ function enable_rrd_graphing() {
 		foreach ($ifdescrs as $realif => $ifdescr) {
 			$ifname = $ifdescr['friendly'];
 			$state = $ifdescr['up'];
-			$realif = get_real_interface($ifname);
+			$temp = get_real_interface($ifname);
+			if($temp <> "") {
+				$realif = $temp;
+			}
 
 			/* skip interfaces that do not have a friendly name */
 			if ("$ifname" == "") {

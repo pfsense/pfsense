@@ -38,7 +38,10 @@
 	pfSense_MODULE:	utils
 */
 
-/* include all configuration functions */
+function services_parse_dhcpd_hostnames() {
+	exec("kill `ps awux | grep isc | grep parse | awk '{ print $2 }'`");
+	mwexec_bg("sh /etc/rc.parse-isc-dhcpd");
+}
 
 function services_dhcpd_configure() {
 	global $config, $g;

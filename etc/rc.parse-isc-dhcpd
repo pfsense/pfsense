@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# This script will monitor dhcpd.leases and parse 
+# out active leases and ensure they are present 
+# in /etc/hosts
+
+update_hosts_file() {
+	# $1 = host
+	# $2 = ip
+	cat /etc/hosts | grep -v "$1" > /tmp/hosts.tmp
+	if [ "$3" != "" ]; then
+		echo "$2	$1" >> /tmp/hosts.tmp
+	fi
+	mv /tmp/hosts.tmp /etc/hosts
+	killall -HUP dnsmasq
+}
+
+# Parse file on initial run
+cat /var/dhcpd/var/db/dhcpd.leases | grep "lease" -A8 | while read LINE 
+do
+	HOSTNAMEA=`echo "$LINE" | grep client-hostname | awk '{ print $2 }' | cut -d'"' -f2`
+	ACTIVEA=`echo "$LINE" | grep active`
+	IPADDRA=`echo "$LINE" | grep lease | awk '{ print $2 }'`
+	if [ "$HOSTNAMEA" != "" ]; then
+		HOSTNAME="$HOSTNAMEA"
+	fi
+	if [ "$ACTIVEA" != "" ]; then
+		ACTIVE="$ACTIVEA"
+	fi
+	if [ "$IPADDRA" != "" ]; then
+		IPADDR="$IPADDRA"
+	fi
+	if [ "$HOSTNAME" != "" ]; then
+		if [ "$IPADDR" != "" ]; then
+			update_hosts_file "$HOSTNAME" "$IPADDR" "$ACTIVE"
+			HOSTNAME=""
+			ACTIVE=""
+			IPADDR=""
+		fi
+	fi
+done
+
+# After processed go ahead and tail file looking for changes.
+tail -F /var/dhcpd/var/db/dhcpd.leases | grep "lease" -A8 | while read LINE 
+do
+	HOSTNAMEA=`echo "$LINE" | grep client-hostname | awk '{ print $2 }' | cut -d'"' -f2`
+	ACTIVEA=`echo "$LINE" | grep active`
+	IPADDRA=`echo "$LINE" | grep lease | awk '{ print $2 }'`
+	if [ "$HOSTNAMEA" != "" ]; then
+		HOSTNAME="$HOSTNAMEA"
+	fi
+	if [ "$ACTIVEA" != "" ]; then
+		ACTIVE="$ACTIVEA"
+	fi
+	if [ "$IPADDRA" != "" ]; then
+		IPADDR="$IPADDRA"
+	fi
+	if [ "$HOSTNAME" != "" ]; then
+		if [ "$IPADDR" != "" ]; then
+			update_hosts_file "$HOSTNAME" "$IPADDR" "$ACTIVE"
+			HOSTNAME=""
+			ACTIVE=""
+			IPADDR=""
+		fi
+	fi
+done

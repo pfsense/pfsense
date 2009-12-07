@@ -9,7 +9,7 @@ update_hosts_file() {
 	# $2 = ip
 	cat /etc/hosts | grep -v "$1" > /tmp/hosts.tmp
 	if [ "$3" != "" ]; then
-		echo "$2	$1" >> /tmp/hosts.tmp
+		echo "$2	$1	# dynamic entry created by rc.parse-isc-dhcpd" >> /tmp/hosts.tmp
 	fi
 	mv /tmp/hosts.tmp /etc/hosts
 	killall -HUP dnsmasq

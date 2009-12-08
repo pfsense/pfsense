@@ -797,7 +797,7 @@ function upgrade_045_to_046() {
 		$vs_a = &$config['load_balancer']['virtual_server'];
 		$pool_a = &$config['load_balancer']['lbpool'];
 		$pools = array();
-		/* Index pools by name and */
+		/* Index pools by name */
 		if(is_array($pool_a)) {
 			for ($i = 0; isset($pool_a[$i]); $i++) {
 				if($pool_a[$i]['type'] == "server") {
@@ -1668,6 +1668,7 @@ function upgrade_054_to_055() {
 
 	}
 	enable_rrd_graphing();
+	echo "Updating configuration...";
 }
 
 

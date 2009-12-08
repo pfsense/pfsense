@@ -404,7 +404,8 @@ function convert_config() {
 		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur, $next);
 		$migration_function();
 		$config['version'] = sprintf('%.1f', $next / 10);
-		echo ".";
+		if($g['booting'])
+			echo ".";
 	}
 
 	$now = date("H:i:s");
@@ -412,6 +413,9 @@ function convert_config() {
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
+
+	if($g['booting'])
+		echo "Loading new configuration...";
 }
 
 /****f* config/write_config

@@ -391,7 +391,7 @@ include("head.inc");
 							$i++;
 						}
 					if(!$counter)
-						show_ipsec_header();
+						show_ipsec_header($ph1ent);
 					?>
 					<tr>
 						<td class="list" colspan="5"></td>
@@ -441,7 +441,8 @@ function show_phase2(id, buttonid) {
 
 function show_ipsec_header($ph1ent) {
 	global $g;
-	if (isset($ph1ent['mobile'])) $mobile = "&mobile=true";
+	if (isset($ph1ent['mobile'])) 
+		$mobile = "&mobile=true";
 	echo <<<EOF
 	<tr>
 		<td class="listhdrr">Remote Gateway</td>

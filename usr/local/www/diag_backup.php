@@ -497,7 +497,7 @@ function decrypt_change() {
 <?php if (is_subsystem_dirty('restore')): ?><p>
 <form action="reboot.php" method="post">
 <input name="Submit" type="hidden" value=" Yes ">
-<?php print_info_box_np("The firewall configuration has been changed.<br>You must apply the new config by restarting the firewall in order for changes to take effect.", "apply", "Reboot firewall");?><br>
+<?php print_info_box("The firewall configuration has been changed.<br/>The firewall is now rebooting.");?><br>
 </form>
 <?php endif; ?>
 <form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
@@ -612,7 +612,7 @@ function decrypt_change() {
 							</tr>
 						</table>
 						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration"></p>
-                      	<p><strong><span class="red">Note:</span></strong><br />The firewall may need a reboot after restoring the configuration.<br /></p>
+                      	<p><strong><span class="red">Note:</span></strong><br />The firewall will reboot after restoring the configuration.<br /></p>
 					</td>
 				</tr>
 				<?php if($config['installedpackages']['package'] != "") { ?>
@@ -647,3 +647,9 @@ decrypt_change();
 <?php include("fend.inc"); ?>
 </body>
 </html>
+<?php
+
+if (is_subsystem_dirty('restore'))
+	exec("/etc/rc.reboot");
+
+?>

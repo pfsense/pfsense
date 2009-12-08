@@ -90,7 +90,7 @@ if ($_GET['act'] == "delph1")
 	if ($a_phase1[$_GET['p1index']]) {
 		/* remove static route if interface is not WAN */
 		if ($a_phase1[$_GET['p1index']]['interface'] <> "wan")
-			mwexec("/sbin/route delete -host {$$a_phase1[$_GET['p1index']]['remote-gateway']}");
+			mwexec("/sbin/route delete -host {$a_phase1[$_GET['p1index']]['remote-gateway']}");
 
 		/* remove all phase2 entries that match the ikeid */
 		$ikeid = $a_phase1[$_GET['p1index']]['ikeid'];

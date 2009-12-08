@@ -30,6 +30,8 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 
 function get_default_sysctl_value($id) {
 	global $sysctls;
+	if(!is_array($sysctls))
+		return;
 	foreach($sysctls as $sysctl => $value) {
 		if($sysctl == $id)
 			return $value;

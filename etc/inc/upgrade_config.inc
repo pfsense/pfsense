@@ -796,12 +796,11 @@ function upgrade_045_to_046() {
 	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server'])) {
 		$vs_a = &$config['load_balancer']['virtual_server'];
 		$pool_a = &$config['load_balancer']['lbpool'];
-		$new_gateways = &$config['gateways']['gateway_group'];
 		$pools = array();
-		/* Index pools by name */
+		/* Index pools by name and */
 		if(is_array($pool_a)) {
 			for ($i = 0; isset($pool_a[$i]); $i++) {
-				if ($pool_a[$i]['type'] == "server") {
+				if($pool_a[$i]['type'] == "server") {
 					$pools[$pool_a[$i]['name']] = $pool_a[$i];
 				}
 			}
@@ -821,21 +820,6 @@ function upgrade_045_to_046() {
 				$pool_a[] = $pool;
 				$vs_a[$i]['sitedown'] = $pool['name'];
 			}
-		}
-	}
-	foreach($config['load_balancer']['lbpool'] as $lbpool) {
-		if($lbpool['type'] == "gateway") {
-			$new_lbpool = array();
-			$new_lbpool['name'] = $lbpool['name'];
-			$new_lbpool['descr'] = $lbpool['desc'];
-			$new_lbpool['trigger'] = "downlosslatency";
-			$new_lbpool['item'] = array();
-			foreach($lbpool['servers'] as $server) {
-				$server_split = split("\|", $server);
-				$new_lbpool['item'][] = $server_split[0] . "|" . "1";
-			}
-			$new_gateways[] = $new_lbpool;
-			unset($new_lbpool);
 		}
 	}
 	if(count($config['load_balancer']) == 0) {
@@ -1532,7 +1516,7 @@ function upgrade_053_to_054() {
 				$gateway_group['descr'] = $lbpool['desc'];
 				$gateway_group['trigger'] = "down";
 				$gateway_group['item'] = array();
-				$i=0;
+				$i = 0;
 				foreach($lbpool['servers'] as $member) {
 					$split = split("\|", $member);
 					$interface = $split[0];
@@ -1594,6 +1578,7 @@ function upgrade_054_to_055() {
 	/* the roundtrip times need to be divided by 1000 to get seconds, really */
 	$databases = array();
 	exec("cd $rrddbpath;/usr/bin/find *-quality.rrd", $databases);
+	echo "done.\n";
 	rsort($databases);
 	foreach($databases as $database) {
 		$xmldump = "{$database}.old.xml";

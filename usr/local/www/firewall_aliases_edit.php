@@ -147,6 +147,8 @@ if ($_POST) {
 	$x = is_validaliasname($_POST['name']);
 	if (!isset($x)) {
 		$input_errors[] = "Reserved word used for alias name.";
+	} else if ($_POST['type'] == "port" && (getservbyname($_POST['name'], "tcp") || getservbyname($_POST['name'], "udp"))) {
+		$input_errors[] = "Reserved word used for alias name.";
 	} else {
 		if (is_validaliasname($_POST['name']) == false)
 			$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9, _.";

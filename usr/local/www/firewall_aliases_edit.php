@@ -257,9 +257,7 @@ if ($_POST) {
 					if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
 						$wrongaliases .= " " . $_POST["address{$x}"];
 				} else if ($_POST['type'] == "port") {
-					if (preg_match("/[^[[:digit:]]]/", $_POST["address{$x}"]) || strlen($_POST["address{$x}"]) > 5)
-						$input_errors[] = $_POST["address{$x}"] . " is not a valid {$_POST['type']} alias.";
-					else if (intval($_POST["address{$x}"]) < 0 || intval($_POST["address{$x}"]) > 65535)
+					if (!is_port($_POST["address{$x}"])
 						$input_errors[] = $_POST["address{$x}"] . " is not a valid port alias.";
 				} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
 					if (!is_ipaddr($_POST["address{$x}"]) && !is_hostname($_POST["address{$x}"]))

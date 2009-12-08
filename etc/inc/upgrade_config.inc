@@ -1506,8 +1506,8 @@ function upgrade_052_to_053() {
 
 function upgrade_053_to_054() {
 	global $config;
-	if(is_array($config['loadbalancer']['lbpool'])) {
-		$lbpool_arr = $config['loadbalancer']['lbpool'];
+	if(is_array($config['load_balancer']['lbpool'])) {
+		$lbpool_arr = $config['load_balancer']['lbpool'];
 		$lbpool_srv_arr = array();
 		$gateway_group_arr = array();
 		foreach($lbpool_arr as $lbpool) {
@@ -1530,7 +1530,7 @@ function upgrade_053_to_054() {
 				$lbpool_srv_arr[] = $lbpool;
 			}
 		}
-		$config['loadbalancer']['lbpool'] = $lbpool_srv_arr;
+		$config['load_balancer']['lbpool'] = $lbpool_srv_arr;
 		$config['gateways']['gateway_group'] = $gateway_group_arr;
 	}
 	// Unset lbpool if we no longer have any server pools

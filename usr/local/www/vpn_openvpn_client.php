@@ -153,8 +153,9 @@ if ($_POST) {
 			$input_errors[] = $result;
 	}
 
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network'))
-		$input_errors[] = $result;
+	if($pconfig['tunnel_network'])
+		if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network'))
+			$input_errors[] = $result;
 
 	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'Remote network'))
 		$input_errors[] = $result;
@@ -179,9 +180,6 @@ if ($_POST) {
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = explode(",", "Certificate Authority,Certificate");;
 	}
-
-    $reqdfields[] = 'tunnel_network';
-    $reqdfieldsn[] = 'Tunnel network';
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
@@ -595,7 +593,7 @@ function autotls_change() {
 						<td colspan="2" valign="top" class="listtopic">Tunnel Settings</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncellreq">Tunnel Network</td>
+						<td width="22%" valign="top" class="vncell">Tunnel Network</td>
 						<td width="78%" class="vtable">
 							<input name="tunnel_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['tunnel_network']);?>">
 							<br>

@@ -83,11 +83,8 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 			unset($config['nat']['advancedoutbound']['rule']);
 		break;
 	case "advancedoutboundnat":
-        	$was_enabled = isset($config['nat']['advancedoutbound']['enable']);
-		$config['nat']['advancedoutbound']['enable'] = true;
-		if (isset($config['nat']['ipsecpassthru']['enable']))
-			unset($config['nat']['ipsecpassthru']['enable']);
-		if($was_enabled == false) {
+        	if (!isset($config['nat']['advancedoutbound']['enable'])) {
+			$config['nat']['advancedoutbound']['enable'] = true;
 			/*
 			 *    user has enabled advanced outbound nat -- lets automatically create entries
 			 *    for all of the interfaces to make life easier on the pip-o-chap
@@ -97,22 +94,56 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 			foreach($ifdescrs as $if => $ifdesc) {
 				if (interface_has_gateway($if))
 					continue;
-				if($ifdesc == "wan")
-					continue;
-				$natent = array();
 				$osipaddr = get_interface_ip($if);
 				$ossubnet = get_interface_subnet($if);
 				if (!is_ipaddr($osipaddr) || empty($ossubnet))
 					continue;
 				$osn = gen_subnet($osipaddr, $ossubnet);
-				$natent['source']['network'] = "{$osn}/{$ossubnet}";
-				$natent['sourceport'] = "";
-				$natent['descr'] = "Auto created rule for {$ifdesc}";
-				$natent['target'] = "";
-				$natent['interface'] = "wan";
-				$natent['destination']['any'] = true;
-				$natent['natport'] = "";
-				$a_out[] = $natent;
+				foreach ($ifdescrs as $if2 => $ifdesc2) {
+					if (!interface_has_gateway($if2))
+						continue;
+					/* XXX: Not yet.
+					$natent = array();
+					$natent['nonat'] = true;
+                                        $natent['source']['network'] = "any";
+                                        $natent['sourceport'] = "";
+                                        $natent['descr'] = "Auto nonat TFTP proxy created rule for {$ifdesc2}";
+                                        $natent['target'] = "tftp";
+                                        $natent['interface'] = $if2;
+                                        $natent['destination']['any'] = true;
+                                        $natent['natport'] = "";
+                                        $a_out[] = $natent;
+					*/
+					$natent = array();
+					$natent['source']['network'] = "{$osn}/{$ossubnet}";
+					$natent['sourceport'] = "500";
+					$natent['descr'] = "Auto NAT-T created rule for {$ifdesc2}";
+					$natent['target'] = "";
+					$natent['interface'] = $if2;
+					$natent['destination']['any'] = true;
+					$natent['natport'] = "500";
+					$a_out[] = $natent;
+
+					$natent = array();
+					$natent['source']['network'] = "{$osn}/{$ossubnet}";
+                                        $natent['sourceport'] = "5060";
+                                        $natent['descr'] = "Auto NAT-T created rule for {$ifdesc2}";
+                                        $natent['target'] = "";
+                                        $natent['interface'] = $if2;
+                                        $natent['destination']['any'] = true;
+                                        $natent['natport'] = "5060";
+                                        $a_out[] = $natent;
+					
+					$natent = array();
+                                        $natent['source']['network'] = "{$osn}/{$ossubnet}";
+                                        $natent['sourceport'] = "";
+                                        $natent['descr'] = "Auto created rule for {$ifdesc2}";
+                                        $natent['target'] = "";
+                                        $natent['interface'] = $if2;
+                                        $natent['destination']['any'] = true;
+                                        $natent['natport'] = "";
+                                        $a_out[] = $natent;
+				}	
 			}
 			$savemsg = "Default rules for each interface have been created.";
 		}

@@ -62,7 +62,8 @@ if (isset($_POST['id'])) {
 if (isset($_GET['dup']))  {
 	$id  =  $_GET['dup'];
 	$after  =  $_GET['dup'];
-}
+} else
+	unset($after);
 
 if (isset($id) && $a_out[$id]) {
 	list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
@@ -111,13 +112,13 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if($_POST['sourceport'] <> "" and !is_numericint($_POST['sourceport']))
+	if($_POST['sourceport'] <> "" && !is_port($_POST['sourceport']))
 		$input_errors[] = "You must supply either a valid port for the source port entry.";
 
-	if($_POST['dstport'] <> "" and !is_numericint($_POST['dstport']))
+	if($_POST['dstport'] <> "" and !is_port($_POST['dstport']))
 		$input_errors[] = "You must supply either a valid port for the destination port entry.";
 
-	if($_POST['natport'] <> "" and !is_numericint($_POST['natport']))
+	if($_POST['natport'] <> "" and !is_port($_POST['natport']))
 		$input_errors[] = "You must supply either a valid port for the nat port entry.";
 
 	if ($_POST['source_type'] != "any") {
@@ -147,13 +148,6 @@ if ($_POST) {
 
 	if ($_POST['nonat'] && $_POST['staticnatport']) {
 		$input_errors[] = "Static port cannot be used with No NAT.";
-	}
-	if ($_POST['dstport'] && !is_numericint($_POST['dstport'])) {
-		$input_errors[] = "A valid destination port must be specified.";
-	}
-
-	if ($_POST['natport'] && !is_numericint($_POST['natport'])) {
-		$input_errors[] = "A valid NAT port must be specified.";
 	}
 
 	if ($_POST['target'] && !is_ipaddr($_POST['target'])) {
@@ -262,12 +256,12 @@ if ($_POST) {
 				$a_out[] = $natent;
 			}
 		}
-	}
 
-	mark_subsystem_dirty('natconf');
-        write_config();
-	header("Location: firewall_nat_out.php");
-	exit;
+		mark_subsystem_dirty('natconf');
+        	write_config();
+		header("Location: firewall_nat_out.php");
+		exit;
+	}
 }
 
 $pgtitle = array("Firewall","NAT","Outbound","Edit");

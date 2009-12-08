@@ -39,7 +39,9 @@
 */
 
 function services_parse_dhcpd_hostnames() {
-	exec("kill `ps awux | grep isc | grep -v grep | grep parse | awk '{ print $2 }'`");
+	$ps = `ps awux | grep isc | grep -v grep | grep parse | awk '{ print $2 }'`;
+	if($ps)
+		exec("kill {$ps}");
 	mwexec_bg("sh /etc/rc.parse-isc-dhcpd");
 }
 

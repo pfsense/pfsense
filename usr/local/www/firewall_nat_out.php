@@ -79,7 +79,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 	case "ipsecpassthru":
                	$config['nat']['ipsecpassthru']['enable'] = true;
                	unset($config['nat']['advancedoutbound']['enable']);
-               	if(count($config['nat']['advancedoutbound']['rule']) == 0)
+               	if(count($config['nat']['advancedoutbound']['rule']) > 0)
 			unset($config['nat']['advancedoutbound']['rule']);
 		break;
 	case "advancedoutboundnat":

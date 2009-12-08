@@ -302,6 +302,8 @@ function is_validaliasname($name) {
 function is_port($port) {
 	if ((intval($port) < 1) || (intval($port) > 65535))
 		return false;
+	else if (!getservbyname($port, "tcp") && !getservbyname($port, "udp"))
+		return false;
 	else
 		return true;
 }

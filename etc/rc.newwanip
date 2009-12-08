@@ -56,7 +56,7 @@ if(empty($argument)) {
                 $curwanip = get_interface_ip($interface);
 }
 
-log_error("rc.newwanip working with (IP address: {$curwanip}) (interface: {$interface}) (interface real: {$interface_real}).");
+log_error("rc.newwanip working with (IP address: {$curwanip}) (interface: {$interface}) (real interface: {$interface_real}).");
 
 if($curwanip == "0.0.0.0") {
         log_error("Failed to update WAN IP, restarting dhclient.");
@@ -65,15 +65,14 @@ if($curwanip == "0.0.0.0") {
 }
 
 /* fallback to rc.newwanip ip if needed */
-if(!$old_ip)
-	if(file_exists("{$g['vardb_path']}/{$interface}_ip"))
-		$old_ip = trim(file_get_contents("{$g['vardb_path']}/{$interface}_ip", "\r"));
+if(file_exists("{$g['vardb_path']}/{$interface_real}_ip"))
+    $old_ip = trim(file_get_contents("{$g['vardb_path']}/{$interface_real}_ip", "\r"));
 if($old_ip) {
-	$helpers = exec("/bin/ps awux | grep \"{$old_ip}\" | grep -v \"grep\" | awk '{ print $2 }'");
-	if($helpers)
-	    mwexec("kill " . trim($helpers));
+    $helpers = exec("/bin/ps awux | grep \"{$old_ip}\" | grep -v \"grep\" | awk '{ print $2 }'");
+    if($helpers)
+	mwexec("kill " . trim($helpers));
 } else {
-	log_error("WARNING! /etc/rc.newwanip could not determine the previous IP address ( $interface ).");
+    log_error("WARNING! /etc/rc.newwanip could not determine the previous IP address ( $interface_real ).");
 }
 
 /* reconfigure IPsec tunnels */
@@ -82,10 +81,9 @@ vpn_ipsec_force_reload();
 /* start OpenVPN server & clients */
 exec("killall -HUP openvpn 2>/dev/null");
 
-/* regenerate resolv.conf if DNS overrides are allowed or the BigPond
-   client is enabled */
+/* regenerate resolv.conf if DNS overrides are allowed */
 if (isset($config['system']['dnsallowoverride'])) 
-		system_resolvconf_generate(true);
+    system_resolvconf_generate(true);
 
 /* perform RFC 2136 DNS update */
 services_dnsupdate_process();

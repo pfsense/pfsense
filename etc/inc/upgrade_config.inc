@@ -796,6 +796,7 @@ function upgrade_045_to_046() {
 	if (is_array($config['load_balancer']['virtual_server']) && count($config['load_balancer']['virtual_server'])) {
 		$vs_a = &$config['load_balancer']['virtual_server'];
 		$pool_a = &$config['load_balancer']['lbpool'];
+		$new_gateways = &$config['gateways']['gateway_group'];
 		$pools = array();
 		/* Index pools by name */
 		if(is_array($pool_a)) {
@@ -820,6 +821,21 @@ function upgrade_045_to_046() {
 				$pool_a[] = $pool;
 				$vs_a[$i]['sitedown'] = $pool['name'];
 			}
+		}
+	}
+	foreach($config['load_balancer']['lbpool'] as $lbpool) {
+		if($lbpool['type'] == "gateway") {
+			$new_lbpool = array();
+			$new_lbpool['name'] = $lbpool['name'];
+			$new_lbpool['descr'] = $lbpool['desc'];
+			$new_lbpool['trigger'] = "downlosslatency";
+			$new_lbpool['item'] = array();
+			foreach($lbpool['servers'] as $server) {
+				$server_split = split("\|", $server);
+				$new_lbpool['item'][] = $server_split[0] . "|" . "1";
+			}
+			$new_gateways[] = $new_lbpool;
+			unset($new_lbpool);
 		}
 	}
 	if(count($config['load_balancer']) == 0) {

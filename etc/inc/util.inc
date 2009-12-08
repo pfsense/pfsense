@@ -300,6 +300,8 @@ function is_validaliasname($name) {
 
 /* returns true if $port is a valid TCP/UDP port */
 function is_port($port) {
+	if (getservbyname($port, "tcp") || getservbyname($port, "udp"))
+                return true;
 	if ((intval($port) < 1) || (intval($port) > 65535))
 		return false;
 	else

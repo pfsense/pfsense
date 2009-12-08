@@ -439,7 +439,8 @@ function show_phase2(id, buttonid) {
 
 <?php
 
-function show_ipsec_header() {
+function show_ipsec_header($ph1ent) {
+	global $g;
 	if (isset($ph1ent['mobile'])) $mobile = "&mobile=true";
 	echo <<<EOF
 	<tr>

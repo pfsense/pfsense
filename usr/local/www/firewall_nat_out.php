@@ -102,7 +102,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 				foreach ($ifdescrs as $if2 => $ifdesc2) {
 					if (!interface_has_gateway($if2))
 						continue;
-					/* XXX: Not yet.
+
 					$natent = array();
 					$natent['nonat'] = true;
                                         $natent['source']['network'] = "any";
@@ -113,7 +113,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
                                         $natent['destination']['any'] = true;
                                         $natent['natport'] = "";
                                         $a_out[] = $natent;
-					*/
+
 					$natent = array();
 					$natent['source']['network'] = "{$osn}/{$ossubnet}";
 					$natent['sourceport'] = "500";

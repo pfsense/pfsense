@@ -141,7 +141,7 @@ pfSenseNanoBSDupgrade)
 
 	# Prevent full upgrade file from being used to upgrade
 	if [ `echo $IMG | grep "full"` ]; then
-		echo "You cannot use a full file for upgrade.  Please use a file labeled upgrade."
+		echo "You cannot use a full file for upgrade.  Please use a file labeled nanobsd upgrade."
 		file_notice "NanoBSDUpgradeFailure" "You have attemped to use a full NanoBSD installation file as an upgrade.  Please use a NanoBSD file labeled 'upgrade' instead."
 		rm -f $IMG
 		/etc/rc.conf_mount_ro		

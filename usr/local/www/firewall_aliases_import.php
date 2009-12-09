@@ -87,6 +87,14 @@ if($_POST['aliasimport'] <> "") {
                 }
         }
 
+	if ($_POST['aliasimport']) {
+		$toimport = split("\n", $_POST['aliasimport']);
+		foreach ($toimport as $impip) {
+			if (!is_ipaddr(trim($impip)))
+				$input_errors[] = "$impip is not an ip address. Please correct the error to continue";
+		}
+	}
+
 	if (!$input_errors) {			
 		$alias = array();
 		$alias['address'] = str_replace("\n", " ", $_POST['aliasimport']);
@@ -113,6 +121,9 @@ include("head.inc");
 <div id="inputerrors"></div>
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
+	  <td colspan="2" valign="top" class="listtopic">Alias Import</td>
+	</tr>
+	<tr>
 	  <td valign="top" class="vncellreq">Alias Name</td>
 	  <td class="vtable"> <input name="name" type="text" class="formfld unknown" id="name" size="40" value="<?=htmlspecialchars($_POST['name']);?>" />
 	    <br /> <span class="vexpl">
@@ -127,7 +138,8 @@ include("head.inc");
 	<tr>
 	  <td valign="top" class="vncellreq">Aliases to import</td>
 	  <td class="vtable"><textarea name="aliasimport" ROWS="15" COLS="40"><?php echo $_POST['aliasimport']; ?></textarea>
-	    <br /> <span class="vexpl">Paste in the aliases to import seperated by a carriage return.  Common examples are list of ips, networks, blacklists, etc.</span></td>
+	    <br /> <span class="vexpl">Paste in the aliases to import seperated by a carriage return.  Common examples are list of ips, networks, blacklists, etc. 
+	    <br /> The list may contain only ip addresses. </span></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
@@ -151,4 +163,3 @@ include("head.inc");
 
 </body>
 </html>
-

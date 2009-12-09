@@ -39,9 +39,17 @@
 
 $pgtitle = array("Firewall","Aliases","Import");
 
+$reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp");
+
 require("guiconfig.inc");
 require("filter.inc");
 require("shaper.inc");
+
+$reserved_ifs = get_configured_interface_list(false, true);
+$reserved_keywords = array_merge($reserved_keywords, $reserved_ifs);
+
+if (!is_array($config['aliases']['alias']))
+        $config['aliases']['alias'] = array();
 
 aliases_sort();
 $a_aliases = &$config['aliases']['alias'];
@@ -52,10 +60,38 @@ if($_POST['aliasimport'] <> "") {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		
+	if (is_validaliasname($_POST['name']) == false)
+		$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9, _.";
+
+	/* check for name conflicts */
+        foreach ($a_aliases as $alias) {
+                if (isset($id) && ($a_aliases[$id]) && ($a_aliases[$id] === $alias))
+                        continue;
+
+                if ($alias['name'] == $_POST['name']) {
+                        $input_errors[] = "An alias with this name already exists.";
+                        break;
+                }
+        }
+
+	/* Check for reserved keyword names */
+        foreach($reserved_keywords as $rk)
+                if ($rk == $_POST['name'])
+                        $input_errors[] = "Cannot use a reserved keyword as alias name $rk";
+
+        /* check for name interface description conflicts */
+        foreach($config['interfaces'] as $interface) {
+                if($interface['descr'] == $_POST['name']) {
+                        $input_errors[] = "An interface description with this name already exists.";
+                        break;
+                }
+        }
+
 	if (!$input_errors) {			
 		$alias = array();
 		$alias['address'] = str_replace("\n", " ", $_POST['aliasimport']);
 		$alias['name'] = $_POST['name'];
+		$alias['type'] = "network";
 		$alias['descr'] = $_POST['descr'];
 		$a_aliases[] = $alias;
 		write_config();

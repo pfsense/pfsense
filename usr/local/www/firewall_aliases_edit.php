@@ -46,7 +46,7 @@
 $pgtitle = array("Firewall","Aliases","Edit");
 
 // Keywords not allowed in names
-$reserved_keywords = array("pass", "out", "queue", "max", "min");
+$reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp");
 
 require("guiconfig.inc");
 require_once("functions.inc");
@@ -141,8 +141,6 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if(strtolower($_POST['name']) == "pptp")
-		$input_errors[] = gettext("Aliases may not be named PPTP.");
 
 	$x = is_validaliasname($_POST['name']);
 	if (!isset($x)) {

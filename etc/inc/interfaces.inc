@@ -1155,9 +1155,9 @@ function interface_carp_configure(&$vip) {
 		return;
 
 	$vip_password = $vip['password'];
-	$vip_password = str_replace(" ", "", $vip_password);
+	$vip_password = escapeshellarg(addslashes(str_replace(" ", "", $vip_password)));
 	if ($vip['password'] != "")
-		$password = " pass \"" . $vip_password . "\"";
+		$password = " pass {$vip_password}";
 
 	// set the vip interface to the vhid
 	$vipif = "vip{$vip['vhid']}";

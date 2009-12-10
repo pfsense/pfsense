@@ -142,11 +142,13 @@ function get_pkg_id($pkg_name) {
 function get_pkg_info($pkgs = 'all', $info = 'all') {
 	global $g;
 	$freebsd_version = str_replace("\n", "", `uname -r | cut -d'-' -f1 | cut -d'.' -f1`);
+	$freebsd_machine = str_replace("\n", "", `uname -m`);
 	$params = array(
 		"pkg" => $pkgs, 
 		"info" => $info, 
-		"freebsd_version" => $freebsd_version
-		);
+		"freebsd_version" => $freebsd_version,
+		"freebsd_machine" => $freebsd_machine
+	);
 	$resp = call_pfsense_method('pfsense.get_pkgs', $params, 10);
 	return $resp ? $resp : array();
 }

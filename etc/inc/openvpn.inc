@@ -299,18 +299,22 @@ function openvpn_reconfigure($mode,& $settings) {
 	$cipher = $settings['crypto'];
 
 	$interface = $settings['interface'];
-	if (!$interface)
-		$interface = 'WAN';
+	$ipaddr = $settings['ipaddr'];
 
-	/* For a carp interface, the name is well known:vip1, vip2, ...*/
-	if (!strncmp($interface, "vip", 3)) {
-		$iface=$interface;
+	// If a specific ip address (VIP) is requested, use it.
+	// Otherwise, if a specific interface is requested, use it
+	// If "any" interface was selected, local directive will be ommited.
+	if (!empty($ipaddr)) {
+		$iface_ip=$ipaddr;
 	} else {
-		$iface=convert_friendly_interface_to_real_interface_name($interface);
+		if ((!empty($interface)) && (strcmp($interface, "any"))) {
+			$iface=convert_friendly_interface_to_real_interface_name($interface);
+
+			// Get ip address for the requested interface
+			$lines = explode(' ', trim(shell_exec("ifconfig {$iface} | grep inet | grep -v inet6")));
+			$iface_ip = $lines[1];		
+		}
 	}
-	
-	$lines = explode(' ', trim(shell_exec("ifconfig {$iface} | grep inet | grep -v inet6")));
-	$iface_ip = $lines[1];
 
 	$conf  = "dev {$devname}\n";
 	$conf .= "dev-type tun\n";
@@ -327,10 +331,12 @@ function openvpn_reconfigure($mode,& $settings) {
 	$conf .= "cipher {$cipher}\n";
 	$conf .= "up /etc/rc.filter_configure\n";
 	$conf .= "down /etc/rc.filter_configure\n";
-	$conf .= "local {$iface_ip}\n";
+
+	if (!empty($iface_ip)) {
+		$conf .= "local {$iface_ip}\n";	
+	}
 
 	// server specific settings
-
 	if ($mode == 'server') {
 
 		list($ip, $mask) = explode('/', $settings['tunnel_network']);

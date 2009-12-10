@@ -361,6 +361,25 @@ function get_configured_carp_interface_list() {
 	return $iflist;
 }
 
+/* return the configured IP aliases list */
+function get_configured_ip_aliases_list() {
+        global $config;
+
+        $alias_list=array();
+
+        if(is_array($config['virtualip']['vip'])) {
+                $viparr = &$config['virtualip']['vip'];
+                foreach ($viparr as $vip) {
+                        if ($vip['mode']=="ipalias") {
+                                $alias_list[$vip['subnet']] = $vip['interface'];
+                        }
+                }
+        }
+
+        return $alias_list;
+}
+
+
 /* return the configured interfaces list. */
 function get_configured_interface_list($only_opt = false, $withdisabled = false) {
 	global $config;

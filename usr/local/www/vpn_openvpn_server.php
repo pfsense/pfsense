@@ -83,6 +83,9 @@ if($_GET['act']=="edit"){
 		$pconfig['mode'] = $a_server[$id]['mode'];
 		$pconfig['protocol'] = $a_server[$id]['protocol'];
 		$pconfig['interface'] = $a_server[$id]['interface'];
+		if (!empty($a_server[$id]['ipaddr'])) {
+			$pconfig['interface'] = $pconfig['interface'] . '|' . $a_server[$id]['ipaddr'];
+		}
 		$pconfig['local_port'] = $a_server[$id]['local_port'];
 		$pconfig['description'] = $a_server[$id]['description'];
 		$pconfig['custom_options'] = $a_server[$id]['custom_options'];
@@ -257,7 +260,7 @@ if ($_POST) {
 		$server['disable'] = $pconfig['disable'];
 		$server['mode'] = $pconfig['mode'];
 		$server['protocol'] = $pconfig['protocol'];
-		$server['interface'] = $pconfig['interface'];
+		list($server['interface'], $server['ipaddr']) = explode ("|",$pconfig['interface']);
 		$server['local_port'] = $pconfig['local_port'];
 		$server['description'] = $pconfig['description'];
 		$server['custom_options'] = $pconfig['custom_options'];
@@ -550,7 +553,11 @@ function netbios_change() {
 									$interfaces = get_configured_interface_with_descr();
 									$carplist = get_configured_carp_interface_list();
 									foreach ($carplist as $cif => $carpip)
-										$interfaces[$cif] = strtoupper($cif) . " ({$carpip})";
+										$interfaces[$cif.'|'.$carpip] = strtoupper($cif) . " ({$carpip})";
+									$aliaslist = get_configured_ip_aliases_list();
+									foreach ($aliaslist as $aliasip => $aliasif)
+										$interfaces[$aliasif.'|'.$aliasip] = strtoupper($aliasif) . " ({$aliasip})";
+									$interfaces['any'] = "any";
 									foreach ($interfaces as $iface => $ifacename):
 										$selected = "";
 										if ($iface == $pconfig['interface'])

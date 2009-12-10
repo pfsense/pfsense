@@ -81,6 +81,9 @@ if($_GET['act']=="edit"){
 		$pconfig['mode'] = $a_client[$id]['mode'];
 		$pconfig['protocol'] = $a_client[$id]['protocol'];
 		$pconfig['interface'] = $a_client[$id]['interface'];
+		if (!empty($a_client[$id]['ipaddr'])) {
+			$pconfig['interface'] = $pconfig['interface'] . '|' . $a_client[$id]['ipaddr'];
+		}
 		$pconfig['local_port'] = $a_client[$id]['local_port'];
 		$pconfig['server_addr'] = $a_client[$id]['server_addr'];
 		$pconfig['server_port'] = $a_client[$id]['server_port'];
@@ -194,7 +197,7 @@ if ($_POST) {
 
 		$client['disable'] = $pconfig['disable'];
 		$client['protocol'] = $pconfig['protocol'];
-		$client['interface'] = $pconfig['interface'];
+		list($client['interface'], $client['ipaddr']) = explode ("|",$pconfig['interface']);
 		$client['local_port'] = $pconfig['local_port'];
 		$client['server_addr'] = $pconfig['server_addr'];
 		$client['server_port'] = $pconfig['server_port'];
@@ -387,7 +390,11 @@ function autotls_change() {
 									$interfaces = get_configured_interface_with_descr();
 									$carplist = get_configured_carp_interface_list();
 									foreach ($carplist as $cif => $carpip)
-										$interfaces[$cif] = strtoupper($cif) . " ({$carpip})";
+										$interfaces[$cif.'|'.$carpip] = strtoupper($cif) . " ({$carpip})";
+									$aliaslist = get_configured_ip_aliases_list();
+									foreach ($aliaslist as $aliasip => $aliasif)
+										$interfaces[$aliasif.'|'.$aliasip] = strtoupper($aliasif) . " ({$aliasip})";
+									$interfaces['any'] = "any";
 									foreach ($interfaces as $iface => $ifacename):
 										$selected = "";
 										if ($iface == $pconfig['interface'])

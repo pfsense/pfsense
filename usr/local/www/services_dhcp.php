@@ -229,11 +229,12 @@ if ($_POST) {
 			$input_errors[] = "You cannot use the broadcast address in the ending subnet range.";
 
 		// Disallow a range that includes the virtualip
-		foreach($config['virtualip']['vip'] as $vip) {
-			if(strtoupper($vip['interface']) == strtoupper($if)) 
-				if($vip['subnet'])
-					if(is_inrange($vip['subnet'], $_POST['range_from'], $_POST['range_to'])) 
+		if (is_array($config['virtualip']['vip'])) {
+			foreach($config['virtualip']['vip'] as $vip) {
+				if(strtoupper($vip['interface']) == strtoupper($if)) 
+					if($vip['subnet'] && is_inrange($vip['subnet'], $_POST['range_from'], $_POST['range_to'])) 
 						$input_errors[] = "The virtual IP address {$vip['subnet']} falls within the subnet range.";
+			}
 		}
 
 		if (!$input_errors) {

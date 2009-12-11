@@ -120,7 +120,7 @@ function parse_filter_line($line) {
 	if ($flent['dstport'])
 		$flent['dst'] .= ':' . $flent['dstport'];
 
-	$flent['interface'] = convert_log_interface_to_friendly_interface_name($flent['realint']);
+	$flent['interface']  = convert_log_interface_to_friendly_interface_name($flent['realint']);
 
 	$tmp = split("/", $rule);
 	$flent['rulenum'] = $tmp[0];
@@ -157,6 +157,22 @@ function parse_filter_line($line) {
 		}
 		return "";
 	}
+}
+
+function convert_log_interface_to_friendly_interface_name($int) {
+	global $config;
+
+	$iflist = get_configured_interface_with_descr();
+	foreach ($iflist as $if => $ifdesc)
+		$iftable[get_real_interface($if)] = $ifdesc;
+
+	/* Check for WAN first, pppoe (ng0) doesn't return properly otherwise */
+	if ($int == get_real_wan_interface($int))
+		$int = 'wan';
+	else
+		$int = empty($iftable[$int]) ? $int : $iftable[$int];
+
+	return $int;
 }
 
 function parse_ipport($addr) {

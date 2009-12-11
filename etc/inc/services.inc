@@ -577,7 +577,7 @@ function services_dyndns_configure_client($conf) {
 
 }
 
-function services_dyndns_configure() {
+function services_dyndns_configure($int = "") {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -594,9 +594,15 @@ function services_dyndns_configure() {
 			if (!isset($dyndns['enable']))
 				continue;
 
+			if (!empty($int) && $int != $dyndns['interface'])
+				continue;
+
 			services_dyndns_configure_client($dyndns);
 
 			sleep(1);
+
+			if (!empty($int))
+				break;
 		}
 
 		if ($g['booting'])

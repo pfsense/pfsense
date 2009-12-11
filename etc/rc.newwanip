@@ -38,7 +38,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-/* WAN IP address has changed */
+/* Interface IP address has changed */
 
 $argument = str_replace("\n", "", $argv[1]);
 
@@ -72,7 +72,7 @@ if($old_ip) {
     if($helpers)
 	mwexec("kill " . trim($helpers));
 } else {
-    log_error("WARNING! /etc/rc.newwanip could not determine the previous IP address ( $interface_real ).");
+    log_error("WARNING! /etc/rc.newwanip could not determine the previous IP address of {$interface}( {$interface_real} ).");
 }
 
 /* reconfigure IPsec tunnels */
@@ -95,9 +95,9 @@ if ($fd) {
 	fclose($fd);
 }
 
-log_error("Informational: DHClient spawned /etc/rc.newwanip and the new ip is {$interface} - {$curwanip}.");
+log_error("Informational: DHClient spawned /etc/rc.newwanip for interface {$interface} with new ip {$curwanip}.");
 
-touch("/tmp/update_dyndns");
+file_put_contents("/tmp/update_dyndns", $interface);
 
 /* signal filter reload */
 unlink_if_exists("/tmp/config.cache");

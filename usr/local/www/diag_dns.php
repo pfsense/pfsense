@@ -48,7 +48,7 @@ if ($_POST) {
 	$host = trim($_POST['host']);
 	$host_esc = escapeshellarg(trim($_POST['host']));
 	
-	if (!is_hostname($host) || !is_ipaddr($host)) 
+	if (!is_hostname($host) && !is_ipaddr($host)) 
 		$input_errors[] = "Host must be a valid hostname or IP address.";
 
 	// Test resolution speed of each DNS server.

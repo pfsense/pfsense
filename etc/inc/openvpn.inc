@@ -308,11 +308,7 @@ function openvpn_reconfigure($mode,& $settings) {
 		$iface_ip=$ipaddr;
 	} else {
 		if ((!empty($interface)) && (strcmp($interface, "any"))) {
-			$iface=convert_friendly_interface_to_real_interface_name($interface);
-
-			// Get ip address for the requested interface
-			$lines = explode(' ', trim(shell_exec("ifconfig {$iface} | grep inet | grep -v inet6")));
-			$iface_ip = $lines[1];		
+			$iface_ip=get_interface_ip($interface);
 		}
 	}
 

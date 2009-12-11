@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	system_advanced_network.php
 	part of pfSense

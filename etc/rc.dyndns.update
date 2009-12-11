@@ -34,6 +34,13 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-services_dyndns_configure();
+/* Interface IP address has changed */
+
+$argument = str_replace("\n", "", $argv[1]);
+
+if(empty($argument))
+	services_dyndns_configure();
+else
+	services_dyndns_configure($argument);
 
 ?>

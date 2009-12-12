@@ -1,5 +1,6 @@
 <!--
 var portsenabled = 1;
+var dstenabled = 1;
 
 function ext_change() {
 	if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled) {
@@ -14,13 +15,13 @@ function ext_change() {
 		document.iform.srcendport_cust.value = "";
 		document.iform.srcendport_cust.disabled = 1;
 	}
-	if ((document.iform.dstbeginport.selectedIndex == 0) && portsenabled) {
+	if ((document.iform.dstbeginport.selectedIndex == 0) && portsenabled && dstenabled) {
 		document.iform.dstbeginport_cust.disabled = 0;
 	} else {
 		document.iform.dstbeginport_cust.value = "";
 		document.iform.dstbeginport_cust.disabled = 1;
 	}
-	if ((document.iform.dstendport.selectedIndex == 0) && portsenabled) {
+	if ((document.iform.dstendport.selectedIndex == 0) && portsenabled && dstenabled) {
 		document.iform.dstendport_cust.disabled = 0;
 	} else {
 		document.iform.dstendport_cust.value = "";
@@ -35,8 +36,10 @@ function ext_change() {
 	} else {
 		document.iform.srcbeginport.disabled = 0;
 		document.iform.srcendport.disabled = 0;
-		document.iform.dstbeginport.disabled = 0;
-		document.iform.dstendport.disabled = 0;
+		if( dstenabled ) {
+			document.iform.dstbeginport.disabled = 0;
+			document.iform.dstendport.disabled = 0;
+		}
 	}
 }
 
@@ -63,22 +66,25 @@ function typesel_change() {
 			document.iform.srcmask.disabled = 1;
 			break;
 	}
-	switch (document.iform.dsttype.selectedIndex) {
-		case 1:	/* single */
-			document.iform.dst.disabled = 0;
-			document.iform.dstmask.value = "";
-			document.iform.dstmask.disabled = 1;
-			break;
-		case 2:	/* network */
-			document.iform.dst.disabled = 0;
-			document.iform.dstmask.disabled = 0;
-			break;
-		default:
-			document.iform.dst.value = "";
-			document.iform.dst.disabled = 1;
-			document.iform.dstmask.value = "";
-			document.iform.dstmask.disabled = 1;
-			break;
+	if( dstenabled )
+	{
+		switch (document.iform.dsttype.selectedIndex) {
+			case 1:	/* single */
+				document.iform.dst.disabled = 0;
+				document.iform.dstmask.value = "";
+				document.iform.dstmask.disabled = 1;
+				break;
+			case 2:	/* network */
+				document.iform.dst.disabled = 0;
+				document.iform.dstmask.disabled = 0;
+				break;
+			default:
+				document.iform.dst.value = "";
+				document.iform.dst.disabled = 1;
+				document.iform.dstmask.value = "";
+				document.iform.dstmask.disabled = 1;
+				break;
+		}
 	}
 }
 

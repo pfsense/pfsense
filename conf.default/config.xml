@@ -491,6 +491,7 @@
 			<destination>
 				<any/>
 			</destination>
+			<associated-nat-rule-id></associated-nat-rule-id>
 		</rule>
 		<!-- rule syntax:
 		<rule>

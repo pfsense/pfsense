@@ -64,6 +64,36 @@ function delete_id($id, &$array){
 
 }
 
+/****f* itemid/get_id
+ * NAME
+ *   get_id - Get an item with ['id'] = $id from $array by reference
+ * INPUTS
+ *   $id       - int: The ID to get
+ *   $array    - array to get the item from
+ * RESULT
+ *   mixed   - The item, NULL if not found
+ ******/
+function &get_id($id, &$array) {
+	// Use $foo = &get_id('id', array('id'=>'value'));
+	// Index to delete
+	$get_index = NULL;
+
+	// Search for the item in the array
+	foreach ($array as $key => $item){
+		// If this item is the one we want to delete
+		if(isset($item['id']) && $item['id']==$id ){
+			$get_index = $key;
+			break;
+		}
+	}
+
+	// If we found the item, unset it
+	if( $get_index!==NULL)
+		return $array[$get_index];
+	else
+		return false;
+}
+
 /****f* itemid/get_next_id
  * NAME
  *   get_next_id - find the next available id from an item list

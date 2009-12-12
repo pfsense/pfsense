@@ -199,27 +199,57 @@ if ($_POST) {
 		else
 			unset($natent['nosync']);
 
+		// If we used to have an associated filter rule, but no-longer should have one
+		if( $a_nat[$id]>0 && ($natent['associated-filter-rule-id']>0)===false ) {
+			// Delete the previous rule
+			delete_id($a_nat[$id]['associated-filter-rule-id'], $config['filter']['rule']);
+			mark_subsystem_dirty('filter');
+		}
+
 		$need_filter_rule = false;
 		// Updating a rule with a filter rule associated
 		if( $natent['associated-filter-rule-id']>0 )
 			$need_filter_rule = true;
+		// Create a rule or if we want to create a new one
+		if( $natent['associated-filter-rule-id']=='new' ) {
+			$need_filter_rule = true;
+			unset( $natent['associated-filter-rule-id'] );
+			$_POST['filter-rule-association']='add-associated';
+		}
 		// If creating a new rule, where we want to add the filter rule, associated or not
-		else if( isset($_POST['filter-rule-association']) && 
-			($_POST['filter-rule-association']=='add-associated' || 
+		else if( isset($_POST['filter-rule-association']) &&
+			($_POST['filter-rule-association']=='add-associated' ||
 			$_POST['filter-rule-association']=='add-unassociated') )
 			$need_filter_rule = true;
 
-		if ($need_filter_rule) {
+		// Determine NAT entry ID now, we need it for the firewall rule
+		if (isset($id) && $a_nat[$id])
+			$a_nat[$id] = $natent;
+		else {
+			if (is_numeric($after))
+				$id = $after + 1;
+			else
+				$id = count($a_nat);
+		}
 
-			// If we had a previous rule associated with this NAT rule, delete that
-			if( $natent['associated-filter-rule-id'] > 0 )
-				delete_id($natent['associated-filter-rule-id'], $config['filter']['rule']);
+		if ($need_filter_rule) {
 
 			/* auto-generate a matching firewall rule */
 			$filterent = array();
+
+			// If a rule already exists, load it
+			if( $natent['associated-filter-rule-id'] > 0 )
+				$filterent = &get_id($natent['associated-filter-rule-id'], $config['filter']['rule']);
+			else
+				// Create the default source entry for new filter entries
+				$filterent['source']['any'] = "";
+
+			// Update associated nat rule ID
+			$filterent['associated-nat-rule-id'] = $id;
+
+			// Update interface, protocol and destination
 			$filterent['interface'] = $_POST['interface'];
 			$filterent['protocol'] = $_POST['proto'];
-			$filterent['source']['any'] = "";
 			$filterent['destination']['address'] = $_POST['localip'];
 
 			$dstpfrom = $_POST['localbeginport'];
@@ -237,19 +267,17 @@ if ($_POST) {
 			 */
 			$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 59);
 
-			// If we had a previous rule association, update this rule with that ID so we don't lose association
-			if ($natent['associated-filter-rule-id'] > 0)
-				$filterent['id'] = $natent['associated-filter-rule-id']; 
-			// If we wanted this rule to be associated, make sure the NAT entry is updated with the same ID
-			else if($_POST['filter-rule-association']=='add-associated')
+			// If this is a new rule, create an ID and add the rule
+			if( $_POST['filter-rule-association']=='add-associated' ) {
 				$natent['associated-filter-rule-id'] = $filterent['id'] = get_next_id($config['filter']['rule']);
 
-			$config['filter']['rule'][] = $filterent;
+				$config['filter']['rule'][] = $filterent;
+			}
 
 			mark_subsystem_dirty('filter');
 		}
 
-		// Update NAT entry after creating/updating the firewall rule, so we have it's rule ID if one was created
+		// Update the NAT entry now
 		if (isset($id) && $a_nat[$id])
 			$a_nat[$id] = $natent;
 		else {
@@ -433,13 +461,28 @@ include("fbegin.inc"); ?>
 							<option value="">None</option>
 							<option value="pass" <?php if($pconfig['associated-filter-rule-id'] == "pass") echo " SELECTED"; ?>>Pass</option>
 							<?php foreach ($config['filter']['rule'] as $filter_rule): ?>
-								<?php if (isset($filter_rule['id']) && $filter_rule['id']>0): ?>
+								<?php if (isset($filter_rule['id']) && $filter_rule['id']>0 && ( isset($filter_rule['associated-nat-rule-id'])===false || $filter_rule['id']==$pconfig['associated-filter-rule-id'])): ?>
 									<option value="<?php echo $filter_rule['id']; ?>"<?php if($filter_rule['id']==$pconfig['associated-filter-rule-id']) echo " SELECTED"; ?>>
 									<?php echo htmlspecialchars('Rule ' . $filter_rule['id'] . ' - ' . $filter_rule['descr']); ?>
 									</option>
 								<?php endif; ?>
 							<?php endforeach; ?>
+							<?php if ( ($pconfig['associated-filter-rule-id']>0)===false ): ?>
+								<option value="new">Create new associated filter rule</option>
+							<?php endif; ?>
 						</select>
+						<?php if($pconfig['associated-filter-rule-id']>0): ?>
+							<?php
+							foreach( $config['filter']['rule'] as $index => $filter_rule ) {
+								if( $filter_rule['id']==$pconfig['associated-filter-rule-id'] ) {
+									?>
+									<a href="firewall_rules_edit.php?id=<?=$index;?>">View the filter rule</a>
+									<?php
+									break;
+								}
+							}
+							?>
+						<?php endif; ?>
 					</td>
 				</tr>
 				<?php endif; ?>

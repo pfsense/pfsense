@@ -156,6 +156,7 @@ if (isset($id) && $a_filter[$id]) {
 
 	//schedule support
 	$pconfig['sched'] = $a_filter[$id]['sched'];
+	$pconfig['associated-nat-rule-id'] = $a_filter[$id]['associated-nat-rule-id'];
 
 } else {
 	/* defaults */
@@ -243,8 +244,12 @@ if ($_POST) {
 	}
 
 	/* input validation */
-	$reqdfields = explode(" ", "type proto src dst");
-	$reqdfieldsn = explode(",", "Type,Protocol,Source,Destination");
+	$reqdfields = explode(" ", "type proto src");
+	if ( isset($a_filter[$id]['associated-nat-rule-id'])===false )
+		$redqfields[] = "dst";
+	$reqdfieldsn = explode(",", "Type,Protocol,Source");
+	if ( isset($a_filter[$id]['associated-nat-rule-id'])===false )
+		$reqdfieldsn[] = "Destination";
 
 	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
 		if( $_POST['proto'] != "tcp" )
@@ -257,7 +262,8 @@ if ($_POST) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = "Source bit count";
 	}
-	if (!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single"))) {
+	if ( isset($a_filter[$id]['associated-nat-rule-id'])===false &&
+	(!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single"))) ) {
 		$reqdfields[] = "dstmask";
 		$reqdfieldsn[] = "Destination bit count";
 	}
@@ -452,6 +458,12 @@ if ($_POST) {
 		
 		if ($_POST['sched'] != "") {
 			$filterent['sched'] = $_POST['sched'];
+		}
+
+		// If we have an associated nat rule, make sure the destination doesn't change
+		if( isset($a_filter[$id]['associated-nat-rule-id']) ) {
+			$filterent['destination'] = $a_filter[$id]['destination'];
+			$filterent['associated-nat-rule-id'] = $a_filter[$id]['associated-nat-rule-id'];
 		}
 
 		if (isset($id) && $a_filter[$id])
@@ -746,7 +758,19 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Destination</td>
 			<td width="78%" class="vtable">
-				<input name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
+				<?php $dst_disabled=false; ?>
+				<?php if( isset($pconfig['associated-nat-rule-id']) ): ?>
+					<span class="red"><strong>NOTE: </strong></span> This is an associated to a NAT rule.<br />
+					You cannot edit the destination of associated filter rules.<br />
+					<br />
+					<a href="firewall_nat_edit.php?id=<?=$pconfig['associated-nat-rule-id'];?>">View the NAT rule</a><br />
+					<br />
+					<?php $dst_disabled=true; ?>
+					<script type="text/javascript">
+					dstenabled = 0;
+					</script>
+				<?php endif; ?>
+				<input<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
 				<strong>not</strong>
 					<br />
 				Use this option to invert the sense of the match.
@@ -756,7 +780,7 @@ include("head.inc");
 					<tr>
 						<td>Type:&nbsp;&nbsp;</td>
 						<td>
-							<select name="dsttype" class="formselect" onChange="typesel_change()">
+							<select<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dsttype" class="formselect" onChange="typesel_change()">
 <?php
 								$sel = is_specialnet($pconfig['dst']); ?>
 								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>any</option>
@@ -786,9 +810,9 @@ include("head.inc");
 					<tr>
 						<td>Address:&nbsp;&nbsp;</td>
 						<td>
-							<input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+							<input<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
-							<select name="dstmask" class="formselect" id="dstmask">
+							<select<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dstmask" class="formselect" id="dstmask">
 <?php
 							for ($i = 31; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
@@ -806,27 +830,27 @@ include("head.inc");
 					<tr>
 						<td>from:&nbsp;&nbsp;</td>
 						<td>
-							<select name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
+							<select<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
 								<option value="">(other)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected"; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>">
+							<input<?php echo ($dst_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>">
 						</td>
 					</tr>
 					<tr>
 						<td>to:</td>
 						<td>
-							<select name="dstendport" class="formselect" onchange="ext_change()">
+							<select<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dstendport" class="formselect" onchange="ext_change()">
 								<option value="">(other)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>">
+							<input<?php echo ($dst_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>">
 						</td>
 					</tr>
 				</table>

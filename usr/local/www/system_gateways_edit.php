@@ -95,7 +95,7 @@ if ($_POST) {
 	}
 	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) {
 		if(! ip_in_subnet($_POST['gateway'], get_interface_subnet($interface))) {
-			$input_errors[] = "The Address {$_POST['gateway']} does not lie in the interface subnet";                
+			$input_errors[] = "The Address {$_POST['gateway']} does not lie within the chosen interface's subnet";
 		}
 	}
 	if ((($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']))) {

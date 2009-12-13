@@ -476,7 +476,7 @@ include("fbegin.inc"); ?>
 							foreach( $config['filter']['rule'] as $index => $filter_rule ) {
 								if( $filter_rule['id']==$pconfig['associated-filter-rule-id'] ) {
 									?>
-									<a href="firewall_rules_edit.php?id=<?=$index;?>">View the filter rule</a>
+									<a href="firewall_rules_edit.php?id=<?=$filter_rule['id'];?>">View the filter rule</a>
 									<?php
 									break;
 								}

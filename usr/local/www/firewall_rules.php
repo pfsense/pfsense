@@ -49,6 +49,8 @@ require_once("shaper.inc");
 
 function check_for_advaned_options(&$item) {
 	$item_set = "";
+	if($item['max'])
+		$item_set .= "max {$item['max']} ";
 	if($item['max-src-nodes'])
 		$item_set .= "max-src-nodes {$item['max-src-nodes']} ";
 	if($item['max-src-conn'])

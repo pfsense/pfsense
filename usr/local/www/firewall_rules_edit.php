@@ -131,6 +131,7 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['allowopts'] = true;
 
 	/* advanced */
+	$pconfig['max'] = $a_filter[$id]['max'];
 	$pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
 	$pconfig['max-src-conn'] = $a_filter[$id]['max-src-conn'];
 	$pconfig['max-src-states'] = $a_filter[$id]['max-src-states'];
@@ -382,6 +383,7 @@ if ($_POST) {
 			$filterent['allowopts'] = true;
 		else
 			unset($filterent['allowopts']);
+		$filterent['max'] = $_POST['max'];
 		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
 		$filterent['max-src-conn'] = $_POST['max-src-conn'];
 		$filterent['max-src-states'] = $_POST['max-src-states'];
@@ -962,8 +964,9 @@ include("head.inc");
 				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
 				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
 				</span> <p>
-				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
-				<input name="max-src-conn" id="max-src-conn" value="<?php echo $pconfig['max-src-conn'] ?>"><br> Maximum established TCP connections per host<p>	 
+				<input name="max" id="max" value="<?php echo $pconfig['max'] ?>"><br> Maximum state entries this rule can create<p>
+				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Maximum number of unique source host<p>
+				<input name="max-src-conn" id="max-src-conn" value="<?php echo $pconfig['max-src-conn'] ?>"><br> Maximum number of established TCP connections per host<p>	 
 				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
 				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /
 				<select name="max-src-conn-rates" id="max-src-conn-rates">

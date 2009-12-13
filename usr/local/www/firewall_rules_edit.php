@@ -762,7 +762,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<?php $dst_disabled=false; ?>
 				<?php if( isset($pconfig['associated-nat-rule-id']) ): ?>
-					<span class="red"><strong>NOTE: </strong></span> This is an associated to a NAT rule.<br />
+					<span class="red"><strong>NOTE: </strong></span> This is associated to a NAT rule.<br />
 					You cannot edit the destination of associated filter rules.<br />
 					<br />
 					<a href="firewall_nat_edit.php?id=<?=$pconfig['associated-nat-rule-id'];?>">View the NAT rule</a><br />

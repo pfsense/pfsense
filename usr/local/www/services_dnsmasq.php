@@ -228,7 +228,7 @@ function enable_change(enable_over) {
 	       <tr><td>&nbsp;</td></tr>
                <tr>
                  <td><p>Below you can override an entire domain by specifying an
-                        authoritative dns server to be queried for that domain.</p></td>
+                        authoritative DNS server to be queried for that domain.</p></td>
                </tr>
         </table>
 	&nbsp;<br>

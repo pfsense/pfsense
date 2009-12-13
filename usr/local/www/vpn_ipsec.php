@@ -152,7 +152,6 @@ include("head.inc");
 	<tr>
 		<td>
 			<div id="mainarea">
-				<table border='1'>
 				<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
 						<td class="vtable">

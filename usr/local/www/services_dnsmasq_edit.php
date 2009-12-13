@@ -135,7 +135,7 @@ include("head.inc");
         <form action="services_dnsmasq_edit.php" method="post" name="iform" id="iform">
         <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Edit DNS Forwareder entry</td>
+					<td colspan="2" valign="top" class="listtopic">Edit DNS Forwarder entry</td>
 				</tr>	
                 <tr>
                   <td width="22%" valign="top" class="vncell">Host</td>
@@ -150,7 +150,7 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
                     <input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
                     <br> <span class="vexpl">Domain of the host<br>
-                    e.g. <em>blah.com</em></span></td>
+                    e.g. <em>example.com</em></span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">IP address</td>

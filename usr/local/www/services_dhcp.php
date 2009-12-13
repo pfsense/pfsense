@@ -233,7 +233,7 @@ if ($_POST) {
 			foreach($config['virtualip']['vip'] as $vip) {
 				if(strtoupper($vip['interface']) == strtoupper($if)) 
 					if($vip['subnet'] && is_inrange($vip['subnet'], $_POST['range_from'], $_POST['range_to'])) 
-						$input_errors[] = "The virtual IP address {$vip['subnet']} falls within the subnet range.";
+						$input_errors[] = "The subnet range cannot overlap with virtual IP address {$vip['subnet']}.";
 			}
 		}
 

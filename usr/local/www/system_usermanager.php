@@ -227,9 +227,6 @@ if (isAllowedPage("system_usermanager")) {
 			}
 		}
 
-		if (isset($config['system']['ssh']['sshdkeyonly']) && empty($_POST['authorizedkeys']))
-			$input_errors[] = gettext("You must provide an authorized key otherwise you won't be able to login into this system.");
-
 		/* if this is an AJAX caller then handle via JSON */
 		if (isAjax() && is_array($input_errors)) {
 			input_errors2Ajax($input_errors);

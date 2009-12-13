@@ -97,7 +97,7 @@ if ($_POST) {
 		$parent_ip = get_interface_ip($_POST['interface']);
 		$parent_sn = get_interface_subnet($_POST['interface']);
 		if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
-			$input_errors[] = "The Address {$_POST['gateway']} does not lie within the chosen interface's subnet.";
+			$input_errors[] = "The gateway address {$_POST['gateway']} does not lie within the chosen interface's subnet.";
 		}
 	}
 	if ((($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']))) {
@@ -246,9 +246,9 @@ include("head.inc");
 		  <td width="78%" class="vtable">
 			<input name="monitor" type="text" id="monitor" value="<?php echo ($pconfig['monitor']) ; ?>" />
 			<strong>Alternative monitor IP</strong> <br />
-			Enter a alternative address here to be used to monitor the link. This is used for the
+			Enter an alternative address here to be used to monitor the link. This is used for the
 			quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond
-			to icmp requests.</strong>
+			to ICMP echo requests (pings).</strong>
 			<br />
 		  </td>
 		</tr>

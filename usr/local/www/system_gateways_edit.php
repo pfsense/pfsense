@@ -111,15 +111,15 @@ if ($_POST) {
 				continue;
 
 			if (($gateway['name'] <> "") && (in_array($_POST['name'], $gateway))) {
-				$input_errors[] = "The name \"{$_POST['name']}\" already exists.";
+				$input_errors[] = "The gateway name \"{$_POST['name']}\" already exists.";
 				break;
 			}
 			if (($gateway['gateway'] <> "") && (in_array($_POST['gateway'], $gateway))) {
-				$input_errors[] = "The IP address \"{$_POST['gateway']}\" already exists.";
+				$input_errors[] = "The gateway IP address \"{$_POST['gateway']}\" already exists.";
 				break;
 			}
 			if (($gateway['monitor'] <> "") && (in_array($_POST['monitor'], $gateway))) {
-				$input_errors[] = "The IP address \"{$_POST['monitor']}\" already exists.";
+				$input_errors[] = "The monitor IP address \"{$_POST['monitor']}\" is already in use. You must choose a different monitor IP.";
 				break;
 			}
 		}

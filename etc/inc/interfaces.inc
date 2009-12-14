@@ -2398,7 +2398,7 @@ function get_real_interface($interface = "wan") {
 
 /* Guess the physical interface by providing a IP address */
 function guess_interface_from_ip($ipaddress) {
-	if(! is_ipaddress($ipaddress)) {
+	if(! is_ipaddr($ipaddress)) {
 		return false;
 	}
 	/* create a route table we can search */

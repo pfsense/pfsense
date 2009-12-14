@@ -378,13 +378,23 @@ function filter_generate_scrubing()
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
+function filter_generate_nested_alias($name, $alias, $type, &$aliasnesting, &$aliasaddrnesting) {
 	global $aliastable;
 	
 	$addresses = split(" ", $alias);
 	$finallist = "";
 	$aliasnesting[$name] = $name;
 	foreach ($addresses as $address) {
+		/* make sure to skip hostnames that do not resolve */
+		if(($type == "network") || ($type == host)) {
+			$explode = explode("/", $address);
+                        if(! is_ipaddr($explode[0])) {
+				if(! is_ipaddr(gethostbyname($explode[0]))) {
+					log_error("The hostname {$explode[0]} does not currently resolve, skipping");
+					continue;
+				}
+			}
+		}
 		$linelength = strlen($finallist);
 		$tmpline = "";
 		if (is_alias($address)) {
@@ -424,7 +434,7 @@ function filter_generate_aliases() {
 			$extraalias = " " . link_ip_to_carp_interface($ip);
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
-			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
+			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliased['type'], $aliasnesting, $aliasaddrnesting);
 			if ($aliased['type'] == "host" || $aliased['type'] == "network") {
 				$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";

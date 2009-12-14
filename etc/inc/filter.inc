@@ -1426,15 +1426,8 @@ function filter_generate_user_rule($rule)
 				$gwip = $gateway;
 				$int = guess_interface_from_ip($gwip);
 			}
-			if (is_ipaddr($gwip)) {
-				if($int == "") {
-					$int = guess_interface_from_ip($gwip);
-				}
-				if($int <> "") {
-					$aline['route'] = " route-to ( {$int} {$gwip} ) ";
-				} else {
-					log_error("Could not find gateway ({$rule['gateway']}) for rule {$rule['descr']} - {$rule['interface']}.");
-				}
+			if ((is_ipaddr($gwip)) && ($int <> "")) {
+				$aline['route'] = " route-to ( {$int} {$gwip} ) ";
 			} else {
 				log_error("Could not find gateway ({$rule['gateway']}) for rule {$rule['descr']} - {$rule['interface']}.");
 			}

@@ -100,7 +100,7 @@ if ($_POST) {
 		}
 		
 		if (!$input_errors) {	
-			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $g['pptp_subnet']);
+			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pptp_subnet']);
 			$subnet_start = ip2long($_POST['remoteip']);
 			$subnet_end = ip2long($_POST['remoteip']) + $_POST['n_pptp_units'] - 1;
 						
@@ -380,7 +380,7 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>">
                     / 
-                    <?=$g['pptp_subnet'];?>
+                    <?=$pconfig['pptp_subnet'];?>
                     <br>
                     Specify the starting address for the client IP address subnet.<br>
                     The PPTP server will assign 

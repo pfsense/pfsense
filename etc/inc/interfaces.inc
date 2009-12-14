@@ -2396,12 +2396,26 @@ function get_real_interface($interface = "wan") {
     return $wanif;
 }
 
+/* Guess the physical interface by providing a IP address */
 function guess_interface_from_ip($ipaddress) {
-        $ret = `/usr/bin/netstat -rn | /usr/bin/awk '/^{$ipaddress}/ {printf "%s", \$6}'`;
-        if (empty($ret))
-                return false;
-
-        return $ret;
+	if(! is_ipaddress($ipaddress)) {
+		return false;
+	}
+	/* create a route table we can search */
+	exec("netstat -rn", $output, $ret);
+	foreach($output as $line) {
+		if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+link[#]/", $line)) {
+			$fields = preg_split("/[ ]+/", $line);
+			if(ip_in_subnet($ipaddress, $fields[0])) {
+				return $fields[5];
+			}
+		}
+	}
+	$ret = exec_command("/sbin/route -n get {$ipaddress} | /usr/bin/awk '/interface/ { print \$2; };'");
+	if(empty($ret)) {
+        	return false;
+	}
+	return $ret;
 }
 
 /*

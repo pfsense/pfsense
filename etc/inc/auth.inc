@@ -263,6 +263,7 @@ function local_user_set(& $user) {
 		fwrite($fd, $user['password']);
 		pclose($fd);
 		$user_group = "wheel";
+		$user_home = "/root";
 	}
 
 	/* admin user special handling */

@@ -264,6 +264,7 @@ function system_routing_configure() {
 		unlink("{$g['vardb_path']}/routes.db");
 	}
 
+	if (false) {
 	/* if list */
 	$iflist = get_configured_interface_list();
 
@@ -284,6 +285,7 @@ function system_routing_configure() {
 	if ($dont_remove_route == false) {
 		/* remove default route */
 		mwexec("/sbin/route delete default", true);
+	}
 	}
 
 	$dont_add_route = false;

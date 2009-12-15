@@ -34,6 +34,8 @@
 	pfSense_MODULE:	filter
 */
 
+require 'config.inc';
+
 /* format filter logs */
 function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "") {
 	global $config, $g;

@@ -141,8 +141,8 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git rebase origin",
 			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch"
 		);
+		run_cmds($git_cmd);
 	}
-	run_cmds($git_cmd);
 } else {
     exec("mkdir -p $CODIR/pfSenseGITREPO");
     echo "Executing cd $CODIR/pfSenseGITREPO && git clone $GIT_REPO pfSenseGITREPO\n";

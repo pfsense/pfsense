@@ -32,12 +32,12 @@
 */
 
 function step1_submitphpaction() {
-		if (!isset($_POST['enternumberoflantypeconnections'])) {
+		if (!isset($_POST['numberofconnections'])) {
 			$message=gettext("You need to specify the number of local interfaces connected.");
 			header("Location:wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=0&message={$message}");
 			exit;
 		}			
-		if (intval($_POST['enternumberoflantypeconnections']) > 100 || intval($_POST['enternumberoflantypeconnections']) < 1) {
+		if (intval($_POST['numberofconnections']) > 100 || intval($_POST['numberofconnections']) < 1) {
 			$message=gettext("The number of local interfaces supported is between 1 and 100.");
 			header("Location:wizard.php?xml=traffic_shaper_wizard_multi_lan.xml&stepid=0&message={$message}");
 			exit;

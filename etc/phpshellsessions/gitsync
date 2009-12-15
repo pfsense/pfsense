@@ -4,10 +4,6 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("rrd.inc");
-
 conf_mount_rw();
 
 exec("rm -rf /home/pfsense /root/pfsense /pfSenseGITREPO/");

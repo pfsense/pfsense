@@ -2,16 +2,16 @@
 
 # This script will monitor dhcpd.leases and parse 
 # out active leases and ensure they are present 
-# in /etc/hosts
+# in /var/etc/hosts
 
 update_hosts_file() {
 	# $1 = host
 	# $2 = ip
-	cat /etc/hosts | grep -v "$1" > /tmp/hosts.tmp
+	cat /var/etc/hosts | grep -v "$1" > /tmp/hosts.tmp
 	if [ "$3" != "" ]; then
 		echo "$2	$1		# dynamic entry created by rc.parse-isc-dhcpd" >> /tmp/hosts.tmp
 	fi
-	mv /tmp/hosts.tmp /etc/hosts
+	mv /tmp/hosts.tmp /var/etc/hosts
 	killall -HUP dnsmasq
 }
 

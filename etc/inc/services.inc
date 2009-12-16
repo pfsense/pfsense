@@ -42,7 +42,10 @@ function services_parse_dhcpd_hostnames() {
 	$ps = `ps awux | grep isc | grep -v grep | grep parse | awk '{ print $2 }'`;
 	if($ps)
 		exec("kill {$ps}");
-	mwexec_bg("sh /etc/rc.parse-isc-dhcpd");
+	// Launch if option enabled
+	if (isset($config['dnsmasq']['regdhcp'])) {
+		mwexec_bg("sh /etc/rc.parse-isc-dhcpd");
+	}
 }
 
 function services_dhcpd_configure() {
@@ -637,10 +640,10 @@ function services_dnsmasq_configure() {
 
 		$args = "";
 
-		if (isset($config['dnsmasq']['regdhcp'])) {
-			$args .= " -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases" .
-				" -s {$config['system']['domain']}";
-		}
+		//if (isset($config['dnsmasq']['regdhcp'])) {
+		//	$args .= " -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases" .
+		//		" -s {$config['system']['domain']}";
+		//}
 
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			foreach($config['dnsmasq']['domainoverrides'] as $override) {

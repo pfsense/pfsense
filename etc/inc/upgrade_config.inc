@@ -1531,7 +1531,12 @@ function upgrade_053_to_054() {
 					$split = split("\|", $member);
 					$interface = $split[0];
 					$monitor = $split[1];
-					if($lbpool['behaviour'] == "failover") { $i++; }
+					/* on failover increment tier. Else always assign 1 */
+					if($lbpool['behaviour'] == "failover") {
+						$i++;
+					} else {
+						$i = 1;
+					}
 					$gateway_group['item'][] = "$interface|$i";
 					$config['interfaces'][$interface]['monitorip'] = "$monitor";
 				}

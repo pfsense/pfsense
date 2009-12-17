@@ -85,6 +85,7 @@ $g = array(
 	"product_email" => "coreteam@pfsense.org",
 	"hideplatform" => false,
 	"disablethemeselection" => false,
+	"disablehelpmenu" => false,
 	"debug" => false,
 	"latest_config" => "6.0",
 	"nopkg_platforms" => array("cdrom"),

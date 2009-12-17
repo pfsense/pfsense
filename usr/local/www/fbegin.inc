@@ -205,15 +205,17 @@ if (isset($config['system']['developer'])) {
 }
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")),0);
 
-$help_menu = array();
-$help_menu[] = array("About this Page", $helpurl);
-$help_menu[] = array("User Forum", "http://www.pfsense.org/j.php?jumpto=forum");
-$help_menu[] = array("Documentation", "http://www.pfsense.org/j.php?jumpto=doc");
-$help_menu[] = array("Developers Wiki", "http://www.pfsense.org/j.php?jumpto=devwiki");
-$help_menu[] = array("Paid Support", "http://www.pfsense.org/j.php?jumpto=portal");
-$help_menu[] = array("pfSense Book", "http://www.pfsense.org/j.php?jumpto=book");
-$help_menu[] = array("Search portal", "http://www.pfsense.org/j.php?jumpto=searchportal");
-$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);
+if(! $g['disablehelpmenu']) {
+	$help_menu = array();
+	$help_menu[] = array("About this Page", $helpurl);
+	$help_menu[] = array("User Forum", "http://www.pfsense.org/j.php?jumpto=forum");
+	$help_menu[] = array("Documentation", "http://www.pfsense.org/j.php?jumpto=doc");
+	$help_menu[] = array("Developers Wiki", "http://www.pfsense.org/j.php?jumpto=devwiki");
+	$help_menu[] = array("Paid Support", "http://www.pfsense.org/j.php?jumpto=portal");
+	$help_menu[] = array("pfSense Book", "http://www.pfsense.org/j.php?jumpto=book");
+	$help_menu[] = array("Search portal", "http://www.pfsense.org/j.php?jumpto=searchportal");
+	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);	
+}
 
 /* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */
 if ($_REQUEST['noticeaction'] == 'acknowledge') {
@@ -355,6 +357,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						?>
 						</ul>
 					</li>
+					<?php if(! $g['disablehelpmenu']): ?>
 					<li class="lastdrop">
 						<div>Help</div>
 						<ul id="help" class="subdrop">
@@ -363,6 +366,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						?>
 						</ul>
 					</li>
+					<?php endif; ?>
 				</ul>
 			</div>
 

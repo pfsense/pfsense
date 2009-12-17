@@ -84,6 +84,7 @@ $g = array(
 	"product_website_footer" => "http://www.pfsense.org/?gui20",
 	"product_email" => "coreteam@pfsense.org",
 	"hideplatform" => false,
+	"disablethemeselection" => false,
 	"debug" => false,
 	"latest_config" => "6.0",
 	"nopkg_platforms" => array("cdrom"),

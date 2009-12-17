@@ -385,6 +385,7 @@ include("head.inc");
 			<tr>
 				<td colspan="2" class="list" height="12">&nbsp;</td>
 			</tr>
+			<?php if (! $g['disablethemeselection']): ?>
 			<tr>
 				<td colspan="2" valign="top" class="listtopic">Theme</td>
 			</tr>
@@ -415,6 +416,7 @@ include("head.inc");
 					</strong>
 				</td>
 			</tr>
+			<?php endif; ?>
 			<tr>
 				<td colspan="2" class="list" height="12">&nbsp;</td>
 			</tr>			

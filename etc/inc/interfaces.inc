@@ -1076,7 +1076,7 @@ function interface_proxyarp_configure() {
 
 }
 
-function interfaces_vips_configure() {
+function interfaces_vips_configure($interface = "") {
 	global $g, $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -1085,15 +1085,23 @@ function interfaces_vips_configure() {
 	$paa = array();
 	if(is_array($config['virtualip']['vip'])) {
 		$carp_setuped = false;
+		$anyproxyarp = false;
 		foreach ($config['virtualip']['vip'] as $vip) {
 			switch ($vip['mode']) {
 			case "proxyarp":
 				/* nothing it is handled on interface_proxyarp_configure() */
+				if ($interface <> "" && $vip['interface'] <> $interface)
+					continue;
+				$anyproxyarp = true;
 				break;
 			case "ipalias":
+				if ($interface <> "" && $vip['interface'] <> $interface)
+					continue;
 				interface_ipalias_configure(&$vip);
 				break;
 			case "carp":
+				if ($interface <> "" && $vip['interface'] <> $interface)
+					continue;
 				if ($carp_setuped == false) {
 					interfaces_carp_setup();
 					$carp_setuped = true;
@@ -1101,12 +1109,15 @@ function interfaces_vips_configure() {
 				interface_carp_configure($vip);
 				break;
 			case "carpdev-dhcp":
+				if ($interface <> "" && $vip['interface'] <> $interface)
+					continue;
 				interface_carpdev_configure($vip);
 				break;
 			}
 		}
 		
-		interface_proxyarp_configure();
+		if ($anyproxyarp == true)
+			interface_proxyarp_configure();
 	}
 }
 
@@ -1726,6 +1737,9 @@ function interface_configure($interface = "wan", $reloadall = false) {
 				if (stristr($bridge['members'], "{$interface}"))
 					interface_bridge_configure($bridge);
 		}
+
+		if (link_interface_to_vip($interface))
+			interfaces_vips_configure($interface);
 
 		if ($interface == "lan")
 			/* make new hosts file */
@@ -2520,6 +2534,15 @@ function link_ip_to_carp_interface($ip) {
         }
 
         return $carp_ints;
+}
+
+function link_interface_to_vips($int) {
+        global $config;
+
+        if (is_array($config['virtualip']['vip']))
+                foreach ($config['virtualip']['vip'] as $vip)
+                        if($int == $vip['interface'])
+                                return $vip;
 }
 
 /****f* interfaces/link_interface_to_bridge

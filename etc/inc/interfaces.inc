@@ -1738,7 +1738,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 					interface_bridge_configure($bridge);
 		}
 
-		if (link_interface_to_vip($interface))
+		if (link_interface_to_vips($interface))
 			interfaces_vips_configure($interface);
 
 		if ($interface == "lan")

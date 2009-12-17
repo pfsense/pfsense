@@ -50,6 +50,9 @@ $time_based_rules = false;
 /* Used to hold the interface list that will be used on ruleset creation. */
 $FilterIflist = array();
 
+/* Used for the hostname dns resolver */
+$filterdns = "";
+
 function flowtable_configure() {
 	global $config, $g;
 	return;
@@ -147,10 +150,11 @@ function delete_states_for_down_gateways() {
 /* reload filter sync */
 function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $GatewayGroupsList;
-	global $time_based_rules;
+	global $time_based_rules, $filterdns;
 
 	/* Use config lock to not allow recursion and config changes during this run. */
 	$filterlck = lock('config');
+
 
 	filter_pflog_start();
 	update_filter_reload_status("Initializing");
@@ -305,6 +309,16 @@ function filter_configure_sync() {
 	update_filter_reload_status("Starting up layer7 daemon");
 	layer7_start_l7daemon();
 
+	if (!empty($filterdns)) {
+		$filterdnsfd = fopen("{$g['varetc_path']}/filterdns.conf", "w");
+		if ($filterdnsfd) {
+			fwrite($filterdns);
+			fclose($filterdnsfd);
+		}
+		killbypid(trim(file_get_contents("{$g['tmp_path']}/filterdns.pid"), " \n"));
+		mwexec("/usr/local/sbin/filterdns {$g['tmp_path']}/filterdns.pid 300 {$g['varetc_path']}/filterdns.conf");
+	}
+
 	/* run items scheduled for after filter configure run */
 	$fda = fopen("{$g['tmp_path']}/commands.txt", "w");
 	if ($fda) {
@@ -336,7 +350,6 @@ function filter_configure_sync() {
 
 	if ($g['booting'] == true)
 		echo ".";
-	find_dns_aliases();
 
 	update_filter_reload_status("Processing down interface states");
 	delete_states_for_down_gateways();
@@ -379,7 +392,7 @@ function filter_generate_scrubing()
 }
 
 function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
-	global $aliastable;
+	global $aliastable, $filterdns;
 	
 	$addresses = split(" ", $alias);
 	$finallist = "";
@@ -392,6 +405,10 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			if (!isset($aliasnesting[$address]))
 				$tmpline = filter_generate_nested_alias($address, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if (!isset($aliasaddrnesting[$address])) {
+			if (!is_ipaddr($address) && !is_subnet($address)) {
+				$filterdns .= "{$address} = {$name}\n";
+				continue;
+			}
 			$aliasaddrnesting[$address] = $address;
 			$tmpline = " $address";
 		}
@@ -426,7 +443,12 @@ function filter_generate_aliases() {
 			$aliasaddrnesting = array();
 			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
 			if ($aliased['type'] == "host" || $aliased['type'] == "network") {
-				$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
+				$tableaddrs = "{$addrlist}{$extralias}";
+				if (empty($tableaddrs))
+					$aliases .= "table <{$aliased['name']}> persist\n";
+				else
+					$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
+				
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 			} else if ($aliased['type'] == "openvpn") {
 				$openvpncfg = array();

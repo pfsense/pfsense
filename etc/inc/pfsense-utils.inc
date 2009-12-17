@@ -1395,24 +1395,6 @@ function add_hostname_to_watch($hostname) {
 	}
 }
 
-function find_dns_aliases() {
-	global $config, $g;
-	foreach((array) $config['aliases']['alias'] as $alias) {
-		$alias_value = $alias['address'];
-		$alias_name = $alias['name'];
-		if(stristr($alias_value, " ")) {
-			$alias_split = split(" ", $alias_value);
-			foreach($alias_split as $as) {
-				if(is_fqdn($as)) 
-					add_hostname_to_watch($as);			
-			}
-		} else {
-			if(is_fqdn($alias_value)) 
-				add_hostname_to_watch($alias_value);
-		}
-	}
-}
-
 function is_fqdn($fqdn) {
 	$hostname = false;
 	if(preg_match("/[-A-Z0-9\.]+\.[-A-Z0-9\.]+/i", $fqdn)) {

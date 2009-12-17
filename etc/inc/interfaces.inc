@@ -751,8 +751,9 @@ function interface_vip_bring_down(&$vip) {
 		interface_proxyarp_configure();
 		break;
 	case "ipalias":
-		if(does_interface_exist($vip['interface']))
-			mwexec("/sbin/ifconfig " . get_real_interface($vip['interface']) . " delete {$vip['subnet']}");
+		$vipif = get_real_interface($vip['interface']);
+		if(does_interface_exist($vipif))
+			mwexec("/sbin/ifconfig {$vipif} delete {$vip['subnet']}");
 		break;
 	case "carp":
 		$vipif = "vip" . $vip['vhid'];
@@ -1701,7 +1702,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 				file_put_contents("/tmp/{$realif}_router", $wancfg['gateway']);
 	}
 
-	if(get_real_interface($wancfg['if']) && does_interface_exist($wancfg['if']))
+	if(does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);
  	
 	interface_reload_carps($realif);

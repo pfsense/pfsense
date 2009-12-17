@@ -1093,7 +1093,7 @@ function system_ntp_configure() {
 		$xmlsettings = $config['installedpackages']['openntpd']['config'][0];
 		if ($xmlsettings['enable'] == 'on') {
 			$ifaces = explode(',', $xmlsettings['interface']);
-			$ifaces = array_map('convert_friendly_interface_to_real_interface_name', $ifaces);
+			$ifaces = array_map('get_real_interface', $ifaces);
 			$ifaces = array_filter($ifaces, 'does_interface_exist');
 			$ips = array_map('find_interface_ip', $ifaces);
 			foreach ($ips as $ip) {

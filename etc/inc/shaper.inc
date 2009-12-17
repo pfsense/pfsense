@@ -3909,14 +3909,14 @@ function build_iface_without_this_queue($iface, $qname) {
 
 
 $default_shaper_msg =	"<tr><td align=\"center\" width=\"80%\" >";
-$default_shaper_msg .= "<span class=\"vexpl\"><strong><p><b>Welcome to the pfSense Traffic Shaper.</b><br />";
+$default_shaper_msg .= "<span class=\"vexpl\"><strong><p><b>Welcome to the {$g['product_name']} Traffic Shaper.</b><br />";
 $default_shaper_msg .= "The tree on the left helps you navigate through the queues <br />";
 $default_shaper_msg .= "buttons at the bottom represent queue actions and are activated accordingly.";
 $default_shaper_msg .= " </p></strong></span>";
 $default_shaper_msg .= "</td></tr>";
 
 $dn_default_shaper_msg =	"<tr><td align=\"center\" width=\"80%\" >";
-$dn_default_shaper_msg .= "<span class=\"vexpl\"><strong><p><b>Welcome to the pfSense Traffic Shaper.</b><br />";
+$dn_default_shaper_msg .= "<span class=\"vexpl\"><strong><p><b>Welcome to the {$g['product_name']} Traffic Shaper.</b><br />";
 $dn_default_shaper_msg .= "The tree on the left helps you navigate through the queues <br />";
 $dn_default_shaper_msg .= "buttons at the bottom represent queue actions and are activated accordingly.";
 $dn_default_shaper_msg .= " </p></strong></span>";

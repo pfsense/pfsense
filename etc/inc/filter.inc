@@ -312,7 +312,7 @@ function filter_configure_sync() {
 	if (!empty($filterdns)) {
 		$filterdnsfd = fopen("{$g['varetc_path']}/filterdns.conf", "w");
 		if ($filterdnsfd) {
-			fwrite($filterdns);
+			fwrite($filterdnsfd, $filterdns);
 			fclose($filterdnsfd);
 		}
 		killbypid(trim(file_get_contents("{$g['tmp_path']}/filterdns.pid"), " \n"));

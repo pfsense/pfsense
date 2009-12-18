@@ -160,14 +160,25 @@ effect.");?><br>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
                     <?=htmlspecialchars($gateway['monitor']);?>&nbsp;
                   </td>
-                  <td class="listbg" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
+		<?php if($gateway['attribute'] == "system") : ?>
+                  <td class="listbgns" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
+		<?php else : ?>
+                  <td class="listbgr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
+		<?php endif; ?>
                     <?=htmlspecialchars($gateway['descr']);?>&nbsp;
                   </td>
+
                   <td valign="middle" nowrap class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			   <tr>
 				<td><a href="system_gateways_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-				<td><a href="system_gateways.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this gateway?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+				<?php
+				if ($gateway['attribute'] != "system") : ?>
+					<td><a href="system_gateways.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this 
+gateway?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+				<?php else : ?>
+					<td width='17'></td>
+				<?php endif; ?>
 			   </tr>
 			   <tr>
 				<td width="17"></td>

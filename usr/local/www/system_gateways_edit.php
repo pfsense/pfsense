@@ -110,15 +110,15 @@ if ($_POST) {
 			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway))
 				continue;
 
-			if (($gateway['name'] <> "") && (in_array($_POST['name'], $gateway))) {
+			if (($gateway['name'] <> "") && (in_array($_POST['name'], $gateway)) && ($gateway['attribute'] != "system")) {
 				$input_errors[] = "The gateway name \"{$_POST['name']}\" already exists.";
 				break;
 			}
-			if (($gateway['gateway'] <> "") && (in_array($_POST['gateway'], $gateway))) {
+			if (($gateway['gateway'] <> "") && (in_array($_POST['gateway'], $gateway)) && ($gateway['attribute'] != "system")) {
 				$input_errors[] = "The gateway IP address \"{$_POST['gateway']}\" already exists.";
 				break;
 			}
-			if (($gateway['monitor'] <> "") && (in_array($_POST['monitor'], $gateway))) {
+			if (($gateway['monitor'] <> "") && (in_array($_POST['monitor'], $gateway)) && ($gateway['attribute'] != "system")) {
 				$input_errors[] = "The monitor IP address \"{$_POST['monitor']}\" is already in use. You must choose a different monitor IP.";
 				break;
 			}
@@ -190,7 +190,8 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
 	<?php
-	/* If this is a automatically added system gateway we need this var */
+
+	/* If this is a system gateway we need this var */
 	if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
 		echo "<input type='hidden' name='attribute' id='attribute' value='{$pconfig['attribute']}' >\n";
 	}

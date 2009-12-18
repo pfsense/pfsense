@@ -265,6 +265,9 @@ include("head.inc"); ?>
 						<textarea style="width:98%" name="code" rows="15" cols="66" wrap="off" readonly="readonly">
 						<?php
 						system ("/usr/sbin/tcpdump $disabledns $detail -r $fp$fn");?>
+
+						conf_mount_ro();
+
 						</textarea><?php
 					}
 				}?>
@@ -276,8 +279,6 @@ include("head.inc"); ?>
 </form>
 </td></tr></table>
 <?php 
-
-conf_mount_ro();
 
 include("fend.inc"); 
 

@@ -256,7 +256,7 @@ if(!$pconfig['backend'])
                         <td width="22%" valign="top" class="vncell">Authentication primary backend</td>
                         <td width="78%" class="vtable">
 							<select name='backend' id='backend' onchange='ldap_typechange()'>
-								<option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>pfSense</option>
+								<option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>Local User Database</option>
 								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP (Active Directory)</option>
 								<option value="ldapother"<?php if ($pconfig['backend'] == "ldapother") echo " SELECTED";?>>LDAP OTHER (eDir, etc)</option>
 							</select>
@@ -329,7 +329,7 @@ if(!$pconfig['backend'])
                         <td width="22%" valign="top" class="vncell">LDAP Search base</td>
                         <td width="78%" class="vtable">
 							<input name="ldapsearchbase" size="65" value="<?=htmlspecialchars($pconfig['ldapsearchbase']);?>">
-							<br/>Example: DC=pfsense,DC=com
+							<br/>Example: DC=example,DC=com
 						</td>
 					</tr>
 					<tr>
@@ -338,7 +338,7 @@ if(!$pconfig['backend'])
 							<input name="ldapauthcontainers" id="ldapauthcontainers" size="65" value="<?=htmlspecialchars($pconfig['ldapauthcontainers']);?>">
 							<input type="button" onClick="javascript:if(openwindow('system_usermanager_settings_ldapacpicker.php') == false) alert('Popup blocker detected.  Action aborted.');" value="Select"> 
 							<br/>NOTE: Semi-Colon separated.
-							<br/>EXAMPLE: CN=Users,DC=pfsense,DC=com;CN=OtherUsers,DC=pfsense,DC=com
+							<br/>EXAMPLE: CN=Users,DC=example,DC=com;CN=OtherUsers,DC=example,DC=com
 						</td>
 					</tr>
                 	<tr>

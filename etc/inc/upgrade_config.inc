@@ -767,6 +767,10 @@ function upgrade_042_to_043() {
 			$config['gateways']['gateway_item'][$i]['gateway'] = $config['interfaces'][$ifname]['gateway'];
 			$config['gateways']['gateway_item'][$i]['interface'] = $ifname;
 			$config['gateways']['gateway_item'][$i]['name'] = strtoupper($ifname) ."_GW";
+			/* add default gateway bit for wan on upgrade */
+			if($ifname == "wan") {
+				 $config['gateways']['gateway_item'][$i]['defaultgw'] = true;
+			}
 			if(is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
 				$config['gateways']['gateway_item'][$i]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
 				unset($config['interfaces'][$ifname]['use_rrd_gateway']);

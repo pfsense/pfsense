@@ -122,7 +122,7 @@ function parse_filter_line($line) {
 	if ($flent['dstport'])
 		$flent['dst'] .= ':' . $flent['dstport'];
 
-	$flent['interface']  = convert_real_interface_to_friendly_interface_name($flent['realint']);
+	$flent['interface']  = convert_real_interface_to_friendly_descr($flent['realint']);
 
 	$tmp = split("/", $rule);
 	$flent['rulenum'] = $tmp[0];

@@ -163,7 +163,7 @@ effect.");?><br>
 		<?php if($gateway['attribute'] == "system") : ?>
                   <td class="listbgns" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
 		<?php else : ?>
-                  <td class="listbgr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
+                  <td class="listbg" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
 		<?php endif; ?>
                     <?=htmlspecialchars($gateway['descr']);?>&nbsp;
                   </td>

@@ -762,14 +762,25 @@ function upgrade_042_to_043() {
 	$old_gateways = get_interfaces_with_gateway();
 	foreach($old_gateways as $ifname => $interface) {
 		if(is_ipaddr($config['interfaces'][$ifname]['gateway'])) {
-			$config['gateways'][$i][$ifname]['gateway'] = $config['interfaces'][$ifname]['gateway'];
-			$config['gateways'][$i][$ifname]['interface'] = $ifname;
-			$config['gateways'][$i][$ifname]['name'] = $ifname ."-". $config['interfaces'][$ifname]['gateway'];
+			$config['gateways']['gateway_item'][$i]['gateway'] = $config['interfaces'][$ifname]['gateway'];
+			$config['gateways']['gateway_item'][$i]['interface'] = $ifname;
+			$config['gateways']['gateway_item'][$i]['name'] = $ifname ."_GW";
 			if(is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
-				$config['gateways'][$i][$ifname]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
+				$config['gateways']['gateway_item'}[$i]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
 				unset($config['interfaces'][$ifname]['use_rrd_gateway']);
 			}
-			$config['interfaces'][$ifname]['gateway'] = $config['gateways'][$i][$ifname]['name'];
+			$config['interfaces'][$ifname]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+
+			/* Update all filter rules which might reference this gateway */
+			$j = 0;
+			foreach($config['filter']['rule'] as $rule) {
+				if(is_ipaddr($rule['gateway']) && ($rule['gateway'] == $config['gateways']['gateway_item'][$i]['gateway'])) {
+                                        $config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+				}
+				$j++;
+			}
+
+			/* any other gateway upgrades here */
 			$i++;
 		}
 	}
@@ -1523,7 +1534,7 @@ function upgrade_053_to_054() {
 		foreach($lbpool_arr as $lbpool) {
 			if($lbpool['type'] == "gateway") {
 				$gateway_group['name'] = $lbpool['name'];
-				$gateway_group['descr'] = $lbpool['descr'];
+				$gateway_group['descr'] = $lbpool['desc'];
 				$gateway_group['trigger'] = "down";
 				$gateway_group['item'] = array();
 				$i = 0;

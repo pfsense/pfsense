@@ -1547,6 +1547,8 @@ function upgrade_053_to_054() {
 				foreach($lbpool['servers'] as $member) {
 					$split = split("\|", $member);
 					$interface = $split[0];
+					/* on a upgraded configuration we automatically append _GW */
+					$interface = strtoupper($interface) . "_GW";
 					$monitor = $split[1];
 					/* on failover increment tier. Else always assign 1 */
 					if($lbpool['behaviour'] == "failover") {

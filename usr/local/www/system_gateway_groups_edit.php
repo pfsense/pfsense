@@ -180,7 +180,7 @@ include("head.inc");
 				echo "<option value='3' $selected[3] >Tier 3</option>";
 				echo "<option value='4' $selected[4] >Tier 4</option>";
 				echo "<option value='5' $selected[5] >Tier 5</option>";
-				echo "</select> <strong>{$gateway['descr']}</strong><br/>";
+				echo "</select> <strong>{$name} - {$gateway['descr']}</strong><br/>";
 		 	}
 		?>
 			<br/><span class="vexpl">

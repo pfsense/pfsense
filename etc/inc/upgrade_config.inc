@@ -756,17 +756,19 @@ function upgrade_041_to_042() {
 function upgrade_042_to_043() {
 	global $config;
 	/* migrate old interface gateway to the new gateways config */
-	$old_gateways = array();
+	$iflist = get_configured_interface_list();
 	$gateways = array();
 	$i = 0;
-	$old_gateways = get_interfaces_with_gateway();
-	foreach($old_gateways as $ifname => $interface) {
+	foreach($iflist as $ifname => $interface) {
+		if(! interface_has_gateway($ifname)) {
+			continue;
+		}
 		if(is_ipaddr($config['interfaces'][$ifname]['gateway'])) {
 			$config['gateways']['gateway_item'][$i]['gateway'] = $config['interfaces'][$ifname]['gateway'];
 			$config['gateways']['gateway_item'][$i]['interface'] = $ifname;
-			$config['gateways']['gateway_item'][$i]['name'] = $ifname ."_GW";
+			$config['gateways']['gateway_item'][$i]['name'] = strtoupper($ifname) ."_GW";
 			if(is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
-				$config['gateways']['gateway_item'}[$i]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
+				$config['gateways']['gateway_item'][$i]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
 				unset($config['interfaces'][$ifname]['use_rrd_gateway']);
 			}
 			$config['interfaces'][$ifname]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];

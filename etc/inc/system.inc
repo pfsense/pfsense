@@ -308,6 +308,10 @@ function system_routing_configure() {
 				}
 			}
 			if(($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
+				preg_match("/default[ ]+([0-9].*?)[ ]+/i", $route_str, $elements);
+				if(trim($elements[1]) != "$gatewayip") {
+					mwexec("/sbin/route delete default " . escapeshellarg($gatewayip), false);
+				}
 				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
 			}
 		} else {

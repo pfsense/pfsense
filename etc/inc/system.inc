@@ -307,10 +307,11 @@ function system_routing_configure() {
 					$interfacegw = $gateway['interface'];
 				}
 			}
-			if(($interfacegw <> "bgpd") && (is_ipaddr($gatewayip)))
+			if(($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
 				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
+			}
 		} else {
-			/* FIXME */
+			log_error("SYSTEM: We do not have a gateways array in our XML. Is this configuration damaged?");
 			/* adding gateway for 1.2-style configs without the new
 			  gateway setup configured.
 			  Force WAN to be default gateway because that is the

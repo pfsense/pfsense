@@ -146,7 +146,7 @@ include("head.inc");
                         <div id="mainarea">
                         <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 			<tr>
-                        	<td width="22%" valign="top" class="vncellreq">Latency boundaries</td>
+                        	<td width="22%" valign="top" class="vncellreq">Latency thresholds</td>
 	                        <td width="78%" class="vtable">
 				From 
 				    <input name="latencylow" type="text" class="formfld unknown" id="latencylow" size="2" 
@@ -158,7 +158,7 @@ include("head.inc");
 				</td>
 			</tr>
 			<tr>
-                        	<td width="22%" valign="top" class="vncellreq">Packet Loss boundaries</td>
+                        	<td width="22%" valign="top" class="vncellreq">Packet Loss thresholds</td>
 	                        <td width="78%" class="vtable">
 				From 
 				    <input name="losslow" type="text" class="formfld unknown" id="losslow" size="2" 

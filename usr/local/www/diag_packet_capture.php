@@ -55,26 +55,22 @@ if ($_POST) {
 	
 	conf_mount_rw();
 
-	if ($_POST['dnsquery'])//if dns lookup is checked
-	{
+	if ($_POST['dnsquery']) {
+		//if dns lookup is checked
 		$disabledns = "";
-	}
-	else //if dns lookup is unchecked
-	{
+	} else {
+		//if dns lookup is unchecked
 		$disabledns = "-n";
 	}
 
-	if ($_POST['startbtn'] != "" )
-	{
+	if ($_POST['startbtn'] != "" ) {
 		$action = "Start";
 		
 	 	//delete previous packet capture if it exists
 	 	if (file_exists($fp.$fn))
 	 		unlink ($fp.$fn);
 
-	}
-	elseif ($_POST['stopbtn']!= "")
-	{
+	} elseif ($_POST['stopbtn']!= "") {
 		$action = "Stop";
 		$processes_running = trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep $fn | /usr/bin/grep -v pflog"));
 
@@ -82,32 +78,31 @@ if ($_POST) {
 		$processes_running_array = explode("\n", $processes_running);
 
 		//kill each of the packetcapture processes
-		foreach ($processes_running_array as $process)
-		{
+		foreach ($processes_running_array as $process) {
 			$process_id_pos = strpos($process, ' ');
 			$process_id = substr($process, 0, $process_id_pos);
 			exec("kill $process_id");
 		}
 
-	}
-	else //download file
-	{
+	} else {
+		//download file
 		$fs = filesize($fp.$fn);
 		header("Content-Type: application/octet-stream");
         header("Content-Disposition: attachment; filename=$fn");
 		header("Content-Length: $fs");
 		readfile($fp.$fn);
 	}
-}
-else
-{
+} else {
 	$do_tcpdump = false;
-
 }
 $pgtitle = "Diagnostics: Packet Capture";
 include("head.inc"); ?>
+
 <body link="#000000" vlink="#0000CC" alink="#0000CC">
-<? include("fbegin.inc"); ?>
+
+<?php
+include("fbegin.inc"); 
+?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
@@ -121,8 +116,10 @@ include("head.inc"); ?>
 				  <td width="17%" valign="top" class="vncellreq">Interface</td>
 				  <td width="83%" class="vtable">
 				<select name="interface">
-                     <?php $interfaces = get_configured_interface_with_descr();
-					  foreach ($interfaces as $iface => $ifacename): ?>
+<?php 
+					$interfaces = get_configured_interface_with_descr();
+					foreach ($interfaces as $iface => $ifacename): 
+?>
                       <option value="<?=$iface;?>" <?php if (!link_interface_to_bridge($iface) && $selectedif == $iface) echo "selected"; ?>>
                       <?php echo $ifacename;?>
                       </option>
@@ -184,9 +181,9 @@ include("head.inc"); ?>
 				<tr>
 				  <td width="17%" valign="top">&nbsp;</td>
 				  <td width="83%">
-                    <?php
+<?php
 
-                    /*check to see if packet capture tcpdump is already running*/
+                    /* check to see if packet capture tcpdump is already running */
 					$processcheck = (trim(shell_exec("/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep $fn | /usr/bin/grep -v pflog")));
 					
 					$processisrunning = false;
@@ -196,86 +193,76 @@ include("head.inc"); ?>
 						
 					if (($action == "Stop" or $action == "") and $processisrunning != true)
 						echo "<input type=\"submit\" name=\"startbtn\" value=\"Start\">&nbsp;";
-				  	else{
+				  	else {
 					  	echo "<input type=\"submit\" name=\"stopbtn\" value=\"Stop\">&nbsp;";
 				  	}
-					if (file_exists($fp.$fn) and $processisrunning != true){
+					if (file_exists($fp.$fn) and $processisrunning != true) {
 						echo "<input type=\"submit\" name=\"downloadbtn\" value=\"Download Capture\">";
 						echo "&nbsp;&nbsp;(The packet capture file was last updated: " . date("F jS, Y g:i:s a.", filemtime($fp.$fn)) . ")";
 					}
-					?>
+?>
 				  </td>
 				</tr>
 				<tr>
 				<td valign="top" colspan="2">
-				<?php
+<?php
 				echo "<font face='terminal' size='2'>";
 				if ($processisrunning == true)
 						echo("<strong>Packet Capture is running.</strong><br/>");
 						
 				if ($do_tcpdump) {					
 
-					if ($port != "")
-                    {
+					if ($port != "") {
                        $searchport = "and port ".$port;
                        if($host <> "")                        
 							$searchport = "and port ".$port;
 						else
 							$searchport = "port ".$port;
-                    }
-                    else
-                    {
+                    } else {
                         $searchport = "";
                     }
 
-       				if ($host != "")
-         	       {
+       				if ($host != "") {
              	       $searchhost = "host " . $host;
-            	   }
-             	   else
-                	{
+					} else {
                        $searchhost = "";
              		}
-             		if ($count != "0" )
-             		{
+             		if ($count != "0" ) {
              			 $searchcount = "-c " . $count;
-             		}
-             		else
-             		{
+             		} else {
              			$searchcount = "";
              		}
 
 					$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
-				
-					
-						
-					if ($action == "Start")
-					{
+	
+					if ($action == "Start") {
 						echo("<strong>Packet Capture is running.</strong><br/>");
 					 	mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fp$fn $searchhost $searchport");
-						}
-					else  //action = stop
-					{
-
+					} else  {
+						//action = stop
 						echo("<strong>Packet Capture stopped. <br/><br/>Packets Captured:</strong><br/>");
-						?>
+?>
 						<textarea style="width:98%" name="code" rows="15" cols="66" wrap="off" readonly="readonly">
-						<?php
-						system ("/usr/sbin/tcpdump $disabledns $detail -r $fp$fn");?>
-						</textarea><?php
+<?php
+						system ("/usr/sbin/tcpdump $disabledns $detail -r $fp$fn");
+
+						conf_mount_ro();
+?>
+						</textarea>
+<?php
 					}
-				}?>
+				}
+?>
 				</td>
 				</tr>
 				<tr>
 
 		</table>
 </form>
-</td></tr></table>
+</td>
+</tr>
+</table>
+
 <?php 
-
-conf_mount_ro();
-
 include("fend.inc"); 
-
 ?>

@@ -1523,7 +1523,7 @@ function upgrade_053_to_054() {
 		foreach($lbpool_arr as $lbpool) {
 			if($lbpool['type'] == "gateway") {
 				$gateway_group['name'] = $lbpool['name'];
-				$gateway_group['descr'] = $lbpool['desc'];
+				$gateway_group['descr'] = $lbpool['descr'];
 				$gateway_group['trigger'] = "down";
 				$gateway_group['item'] = array();
 				$i = 0;

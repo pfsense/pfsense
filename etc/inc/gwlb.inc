@@ -267,7 +267,7 @@ function return_gateways_array($disabled = false) {
 			}
 			$gateway['interface'] = get_real_interface($ifname);
 			$gateway['name'] = "{$ifname}";
-			$gateway['descr'] = "Interface {$friendly} Gateway";
+			$gateway['descr'] = "Interface {$friendly} Auto added Gateway";
 			$gateway['attribute'] = "system";
 			$gateways_arr[$ifname] = $gateway;
 		}

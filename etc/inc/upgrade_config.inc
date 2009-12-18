@@ -1537,6 +1537,7 @@ function upgrade_053_to_054() {
 		$lbpool_arr = $config['load_balancer']['lbpool'];
 		$lbpool_srv_arr = array();
 		$gateway_group_arr = array();
+		$gateways = return_gateways_array();
 		foreach($lbpool_arr as $lbpool) {
 			if($lbpool['type'] == "gateway") {
 				$gateway_group['name'] = $lbpool['name'];
@@ -1547,9 +1548,10 @@ function upgrade_053_to_054() {
 				foreach($lbpool['servers'] as $member) {
 					$split = split("\|", $member);
 					$interface = $split[0];
-					/* on a upgraded configuration we automatically append _GW */
-					/* FIXME: This won't work for dhcp or pppoe ofcourse, it needs the plain interface name for that. */
-					$interface = strtoupper($interface) . "_GW";
+					/* on static upgraded configuration we automatically append _GW */
+					if(is_array($gateways['{$interface}_GW'])) {
+						$interface = strtoupper($interface) . "_GW";
+					}
 					$monitor = $split[1];
 					/* on failover increment tier. Else always assign 1 */
 					if($lbpool['behaviour'] == "failover") {

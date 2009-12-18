@@ -1548,6 +1548,7 @@ function upgrade_053_to_054() {
 					$split = split("\|", $member);
 					$interface = $split[0];
 					/* on a upgraded configuration we automatically append _GW */
+					/* FIXME: This won't work for dhcp or pppoe ofcourse, it needs the plain interface name for that. */
 					$interface = strtoupper($interface) . "_GW";
 					$monitor = $split[1];
 					/* on failover increment tier. Else always assign 1 */

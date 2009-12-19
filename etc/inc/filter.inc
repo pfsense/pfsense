@@ -614,7 +614,7 @@ function filter_generate_optcfg_array()
 		$FilterIflist['pppoe'] = $oic;
 	}
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable'])) {
+	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) {
 		$oic = array();
 		$oic['if'] = 'enc0';
 		$oic['descr'] = 'IPsec';

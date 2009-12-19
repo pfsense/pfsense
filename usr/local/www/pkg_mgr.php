@@ -50,12 +50,12 @@ if($pkg_info) {
 	//$pkg_sizes = get_pkg_sizes();
 } else {
 	$using_cache = true;
+	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 	if(file_exists("{$g['tmp_path']}/pkg_info.cache")) {
-		$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 		$savemsg = "Unable to retrieve package info from {$xmlrpc_base_url}. Cached data will be used.";
 		$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
 	} else {
-		$savemsg = "Unable to communicate to {$g['product_website']}.  Please check DNS, default gateway, etc.";
+		$savemsg = "Unable to communicate with {$xmlrpc_base_url}. Please verify DNS and interface configuration, and that {$g['product_name']} has functional Internet connectivity.";
 	}
 }
 

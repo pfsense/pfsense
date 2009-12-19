@@ -130,7 +130,7 @@ include("head.inc");
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
 				  Note:<br>
 				  </strong></span>
-				  Something meaningful here.
+				  GIF tunnels are configured here. 
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

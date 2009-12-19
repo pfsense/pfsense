@@ -142,7 +142,7 @@ include("head.inc");
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
 				  Note:<br>
 				  </strong></span>
-				  Something meaningful here.
+				  Here you can configure bridging of interfaces.
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

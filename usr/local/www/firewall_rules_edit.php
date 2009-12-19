@@ -753,8 +753,7 @@ include("head.inc");
 					</tr>
 				</table>
 				<br />
-				<span class="vexpl">Specify the port or port range for the source of the packet for this rule. This is usually not equal to the destination port range (and is often &quot;any&quot;). <br /> Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port</span><br/>
-				<span class="vexpl"><B>NOTE:</B> You will not need to enter anything here in 99.99999% of the circumstances.  If you're unsure, do not enter anything here!</span>
+				<span class="vexpl">Specify the source port or port range for this rule. <b>This is almost never equal to the destination port range (and is usually &quot;any&quot;)</b>. <br /> Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port</span><br/>
 			</td>
 		</tr>
 		<tr>
@@ -956,10 +955,10 @@ include("head.inc");
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
 				<input type="checkbox" id="allowopts" value="yes" name="allowopts"<?php if($pconfig['allowopts'] == true) echo " checked"; ?>>
-				<br/><span class="vexpl"><?=gettext("This allows packets with ip options to pass otherwise they are blocked by default i.e. with multicast routing/proxing.");?>
+				<br/><span class="vexpl"><?=gettext("This allows packets with IP options to pass. Otherwise they are blocked by default. This is usually only seen with multicast traffic.");?>
 				</span><p>
 				<input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>">
-				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other nat/filter rules. It is called <b>Policy filtering</b>");?>
+				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other NAT/filter rules. It is called <b>Policy filtering</b>");?>
 				</span><p>
 				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
 				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
@@ -1017,7 +1016,7 @@ include("head.inc");
 				</div>
 				<div id="shownoxmlrpcadv" style="display:none">
 					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-					HINT: This prevents the rule from automatically syncing to other carp members.
+					HINT: This prevents the rule from automatically syncing to other CARP members.
 				</div>
 			</td>
 		</tr>
@@ -1250,7 +1249,7 @@ include("head.inc");
 				<br/>
 				<span class="vexpl">
 					Choose a Layer7 container to apply application protocol inspection rules.
-					This rule are valid for tcp and udp protocols for now.
+					These are valid for TCP and UDP protocols only.
 				</span>
 			  </div>
 			</td>

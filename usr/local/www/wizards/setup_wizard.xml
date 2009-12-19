@@ -345,7 +345,7 @@
 			<name>LAN IP Address</name>
 			<type>input</type>
 			<bindstofield>interfaces->lan->ipaddr</bindstofield>
-			<description>Type dhcp if this interface uses dhcp to obtain its ip address.</description>
+			<description>Type dhcp if this interface uses DHCP to obtain its IP address.</description>
 		</field>
 				<field>
 			<name>Subnet Mask</name>

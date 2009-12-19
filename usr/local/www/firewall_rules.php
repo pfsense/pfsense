@@ -369,10 +369,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				  <?php if ($filterent['type'] == "block")
 				  			$iconfn = "block";
 						else if ($filterent['type'] == "reject") {
-							if ($filterent['protocol'] == "tcp" || $filterent['protocol'] == "udp" || $filterent['protocol'] == "tcp/udp")
-								$iconfn = "reject";
-							else
-								$iconfn = "block";
+							$iconfn = "reject";
 						} else
 							$iconfn = "pass";
 						if (isset($filterent['disabled'])) {

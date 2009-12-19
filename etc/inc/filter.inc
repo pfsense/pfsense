@@ -1361,16 +1361,7 @@ function filter_generate_user_rule($rule)
 		$type = "pass ";
 	}
 	if ($type == "reject") {
-		/* special reject packet */
-		if ($rule['protocol'] == "tcp") {
-			$aline['type'] = "block return-rst ";
-		} else if ($rule['protocol'] == "udp") {
-			$aline['type'] = "block return-icmp ";
-		} else if ($rule['protocol'] == "tcp/udp") {
-			$aline['type'] = "block return ";
-		} else {
-			$aline['type'] = "block ";
-		}
+		$aline['type'] = "block return ";
 	} else 
 		$aline['type'] = $type . " ";
 	if (isset($rule['floating']) && $rule['floating'] == "yes") {

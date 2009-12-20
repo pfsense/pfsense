@@ -145,6 +145,13 @@ include("head.inc");
 		$('password').value = "sprint";
 		$('linespeed').value = "921600";
 	}
+	function prefill_vzw() {
+		$('dialcmd').value = '"ABORT BUSY ABORT NO\\sCARRIER TIMEOUT 5 \\"\" AT OK-AT-OK ATQ0V1E1S0=0&C1&D2+FCLASS=0 OK \AT+CGDCONT=1,\\\"IP\\\",\\\"ISP.CINGULAR\\\" OK \\dATDT\\T \TIMEOUT 40 CONNECT"';
+		$('phone').value = "#777";
+		$('username').value = "123@vzw3g.com";
+		$('password').value = "vzw";
+		$('linespeed').value = "921600";
+	}
 	</script>
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
@@ -170,6 +177,7 @@ include("head.inc");
 				Pre-fill connection information: 
 				<a href='#' onClick='javascript:prefill_att();'>ATT</A>
 				<a href='#' onClick='javascript:prefill_sprint();'>Sprint</A>
+				<a href='#' onClick='javascript:prefill_vzw();'>Verizon</A>
 			</td>
 		</tr>
 		<tr>

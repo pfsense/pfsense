@@ -341,9 +341,9 @@ if($config['system']['afterbootupshellcmd'] <> "") {
 	mwexec($config['system']['afterbootupshellcmd']);
 }
 
-if($avail < 126) {
+if($avail < $g['minimum_ram_warning']) {
 	require_once("/etc/inc/notices.inc");
-	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires atleast 128 megabytes of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
+	file_notice("{$g['product_name']}MemoryRequirements", "{$g['product_name']} requires at least {$g['minimum_ram_warning_text']} of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
 	mwexec("sysctl net.inet.tcp.recvspace=4096");
 	mwexec("sysctl net.inet.tcp.sendspace=4096");
 }

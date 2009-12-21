@@ -118,7 +118,7 @@ if ($_POST) {
 				$input_errors[] = "The gateway IP address \"{$_POST['gateway']}\" already exists.";
 				break;
 			}
-			if (($gateway['monitor'] <> "") && (in_array($_POST['monitor'], $gateway)) && ($gateway['attribute'] != "system")) {
+			if (($gateway['monitorip'] <> "") && (in_array($_POST['monitor'], $gateway)) && ($gateway['attribute'] != "system")) {
 				$input_errors[] = "The monitor IP address \"{$_POST['monitor']}\" is already in use. You must choose a different monitor IP.";
 				break;
 			}

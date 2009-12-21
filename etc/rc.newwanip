@@ -86,7 +86,7 @@ if (isset($config['system']['dnsallowoverride']))
     system_resolvconf_generate(true);
 
 /* perform RFC 2136 DNS update */
-services_dnsupdate_process();
+services_dnsupdate_process($interface);
 
 /* write current WAN IP to file */
 $fd = fopen("{$g['vardb_path']}/{$interface}_ip", "w");

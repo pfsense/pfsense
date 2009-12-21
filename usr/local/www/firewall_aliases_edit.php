@@ -95,6 +95,7 @@ if (isset($id) && $a_aliases[$id]) {
 	$pconfig['name'] = $a_aliases[$id]['name'];
 	$pconfig['detail'] = $a_aliases[$id]['detail'];
 	$pconfig['address'] = $a_aliases[$id]['address'];
+	$pconfig['type'] = $a_aliases[$id]['type'];
 	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
 
 	/* optional if list */
@@ -103,20 +104,6 @@ if (isset($id) && $a_aliases[$id]) {
 		if($ifdesc == $pconfig['descr']) 
 			$input_errors[] = "Sorry, an interface is already named {$pconfig['descr']}.";
 
-	$addresses = explode(' ', $pconfig['address']);
-	$address = explode("/", $addresses[0]);
-	if ($address[1])
-		$addresssubnettest = true;
-	else
-		$addresssubnettest = false;	
-	
-	if ($addresssubnettest)
-		$pconfig['type'] = "network";
-	else
-		if (is_ipaddr($address[0]))
-			$pconfig['type'] = "host";
-		else
-			$pconfig['type'] = "port";
 
 	if($a_aliases[$id]['aliasurl'] <> "") {
 		$pconfig['type'] = "url";
@@ -239,7 +226,7 @@ if ($_POST) {
 				if ($isfirst > 0)
 					$address .= " ";
 				$address .= $_POST["address{$x}"];
-				if(is_ipaddr($_POST["address{$x}"]) && $_POST["address_subnet{$x}"] <> "") 
+				if(($_POST['type'] == "network" || is_ipaddr($_POST["address{$x}"])) && $_POST["address_subnet{$x}"] <> "")
 					$address .= "/" . $_POST["address_subnet{$x}"];
 
 	       			if($_POST["detail{$x}"] <> "") {

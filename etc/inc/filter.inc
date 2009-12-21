@@ -641,6 +641,7 @@ function filter_generate_optcfg_array()
 			$FilterIflist[$ifgen['ifname']] = $oc;
 		}
 	}
+	/*  this just duplicates the PPP interface, as it's handled above
 	if($config['ppps']) {
 		$ppp=0;
 		foreach($config['ppps']['ppp'] as $ifgen) {
@@ -667,6 +668,7 @@ function filter_generate_optcfg_array()
 			}
 		}
 	}
+	*/
 }
 
 function filter_flush_nat_table() 

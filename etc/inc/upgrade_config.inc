@@ -763,32 +763,34 @@ function upgrade_042_to_043() {
 		if(! interface_has_gateway($ifname)) {
 			continue;
 		}
-		if(is_ipaddr($config['interfaces'][$ifname]['gateway'])) {
+		if(is_ipaddr($interface['gateway'])) {
 			$config['gateways']['gateway_item'][$i]['gateway'] = $config['interfaces'][$ifname]['gateway'];
-			$config['gateways']['gateway_item'][$i]['interface'] = $ifname;
-			$config['gateways']['gateway_item'][$i]['name'] = strtoupper($ifname) ."_GW";
-			/* add default gateway bit for wan on upgrade */
-			if($ifname == "wan") {
-				 $config['gateways']['gateway_item'][$i]['defaultgw'] = true;
-			}
-			if(is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
-				$config['gateways']['gateway_item'][$i]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
-				unset($config['interfaces'][$ifname]['use_rrd_gateway']);
-			}
-			$config['interfaces'][$ifname]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
-
-			/* Update all filter rules which might reference this gateway */
-			$j = 0;
-			foreach($config['filter']['rule'] as $rule) {
-				if(is_ipaddr($rule['gateway']) && ($rule['gateway'] == $config['gateways']['gateway_item'][$i]['gateway'])) {
-                                        $config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
-				}
-				$j++;
-			}
-
-			/* any other gateway upgrades here */
-			$i++;
+			$config['gateways']['gateway_item'][$i]['descr'] = "Interface $ifname Static Gateway";			
+		} else {
+			$config['gateways']['gateway_item'][$i]['gateway'] = "dynamic";
+			$config['gateways']['gateway_item'][$i]['descr'] = "Interface $ifname Dynamic Gateway";			
 		}
+		$config['gateways']['gateway_item'][$i]['interface'] = $ifname;
+		$config['gateways']['gateway_item'][$i]['name'] = "GW_" . strtoupper($ifname);
+		/* add default gateway bit for wan on upgrade */
+		if($ifname == "wan") {
+			 $config['gateways']['gateway_item'][$i]['defaultgw'] = true;
+		}
+		if(is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
+			$config['gateways']['gateway_item'][$i]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
+			unset($config['interfaces'][$ifname]['use_rrd_gateway']);
+		}
+		$config['interfaces'][$ifname]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+
+		/* Update all filter rules which might reference this gateway */
+		$j = 0;
+		foreach($config['filter']['rule'] as $rule) {
+			if(is_ipaddr($rule['gateway']) && ($rule['gateway'] == $config['gateways']['gateway_item'][$i]['gateway'])) {
+				$config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+			}
+			$j++;
+		}
+		$i++;
 	}
 }
 
@@ -1548,8 +1550,8 @@ function upgrade_053_to_054() {
 				foreach($lbpool['servers'] as $member) {
 					$split = split("\|", $member);
 					$interface = $split[0];
-					/* on static upgraded configuration we automatically append _GW */
-					$static_name = strtoupper($ifname) . "_GW";
+					/* on static upgraded configuration we automatically prepend GW_ */
+					$static_name = "GW_" . strtoupper($interface);
 					if(is_array($gateways[$static_name])) {
 						$interface = $static_name;
 					}
@@ -1561,7 +1563,9 @@ function upgrade_053_to_054() {
 						$i = 1;
 					}
 					$gateway_group['item'][] = "$interface|$i";
-					$config['interfaces'][$interface]['monitorip'] = "$monitor";
+					if(is_ipaddr($monitor)) {
+						$config['interfaces'][$interface]['monitorip'] = "$monitor";
+					}
 				}
 				$gateway_group_arr[] = $gateway_group;
 			} else {

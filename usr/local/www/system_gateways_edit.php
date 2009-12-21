@@ -90,7 +90,7 @@ if ($_POST) {
 		$input_errors[] = "The gateway name must not contain invalid characters.";
 	}
 	/* skip system gateways which have been automatically added */
-	if ($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) {
+	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) && (! $_POST['gateway'] == "dynamic")) {
 		$input_errors[] = "A valid gateway IP address must be specified.";
 	}
 	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) {
@@ -107,20 +107,26 @@ if ($_POST) {
 	if (isset($_POST['name'])) {
 		/* check for overlaps */
 		foreach ($a_gateways as $gateway) {
-			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway))
+			if (isset($id) && ($a_gateways[$id]) && ($a_gateways[$id] === $gateway)) {
 				continue;
-
-			if (($gateway['name'] <> "") && (in_array($_POST['name'], $gateway)) && ($gateway['attribute'] != "system")) {
-				$input_errors[] = "The gateway name \"{$_POST['name']}\" already exists.";
-				break;
 			}
-			if (($gateway['gateway'] <> "") && (in_array($_POST['gateway'], $gateway)) && ($gateway['attribute'] != "system")) {
-				$input_errors[] = "The gateway IP address \"{$_POST['gateway']}\" already exists.";
-				break;
+			if($_POST['name'] <> "") {
+				if (($gateway['name'] <> "") && (in_array($_POST['name'], $gateway)) && ($gateway['attribute'] != "system")) {
+					$input_errors[] = "The gateway name \"{$_POST['name']}\" already exists.";
+					break;
+				}
 			}
-			if (($gateway['monitorip'] <> "") && (in_array($_POST['monitor'], $gateway)) && ($gateway['attribute'] != "system")) {
-				$input_errors[] = "The monitor IP address \"{$_POST['monitor']}\" is already in use. You must choose a different monitor IP.";
-				break;
+			if(is_ipaddr($_POST['gateway'])) {
+				if (($gateway['gateway'] <> "") && (in_array($_POST['gateway'], $gateway)) && ($gateway['attribute'] != "system")) {
+					$input_errors[] = "The gateway IP address \"{$_POST['gateway']}\" already exists.";
+					break;
+				}
+			}
+			if(is_ipaddr($_POST['monitor'])) {
+				if (($gateway['monitor'] <> "") && (in_array($_POST['monitor'], $gateway)) && ($gateway['attribute'] != "system")) {
+					$input_errors[] = "The monitor IP address \"{$_POST['monitor']}\" is already in use. You must choose a different monitor IP.";
+					break;
+				}
 			}
 		}
 	}
@@ -179,6 +185,7 @@ if ($_POST) {
 		exit;
 	}
 }
+
 
 $pgtitle = array("System","Gateways","Edit gateway");
 include("head.inc");

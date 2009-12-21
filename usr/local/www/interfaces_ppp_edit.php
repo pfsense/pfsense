@@ -132,21 +132,21 @@ include("head.inc");
 	</script>
 	<script type="text/javascript">
 	function prefill_att() {
-		$('dialcmd').value = '"ABORT BUSY ABORT NO\\sCARRIER TIMEOUT 5 \\"\" AT OK-AT-OK ATQ0V1E1S0=0&C1&D2+FCLASS=0 OK \AT+CGDCONT=1,\\\"IP\\\",\\\"ISP.CINGULAR\\\" OK \\dATDT\\T \TIMEOUT 40 CONNECT"';
+		$('dialcmd').value = '"ABORT BUSY ABORT NO/\/\sCARRIER TIMEOUT 5 /\/\"\" AT OK-AT-OK ATQ0V1E1S0=0&C1&D2+FCLASS=0 OK \AT+CGDCONT=1,\\\"IP\\\",\\\"ISP.CINGULAR\\\" OK \\dATDT\\T \TIMEOUT 40 CONNECT"';
 		$('phone').value = "*99#";
 		$('username').value = "att";
 		$('password').value = "att";
 		$('linespeed').value = "921600";
 	}
 	function prefill_sprint() {
-		$('dialcmd').value = '"ABORT BUSY ABORT NO\\sCARRIER TIMEOUT 5 \\"\" AT OK-AT-OK ATE1Q0 OK \\dATDT\\T TIMEOUT 40 CONNECT"';
+		$('dialcmd').value = '"ABORT BUSY ABORT NO/\/\sCARRIER TIMEOUT 5 /\/\"\" AT OK-AT-OK ATE1Q0 OK /\/\dATDT/\/\T TIMEOUT 40 CONNECT"';
 		$('phone').value = "#777";
 		$('username').value = "sprint";
 		$('password').value = "sprint";
 		$('linespeed').value = "921600";
 	}
 	function prefill_vzw() {
-		$('dialcmd').value = '"ABORT BUSY ABORT NO\\sCARRIER TIMEOUT 5 \\"\" AT OK-AT-OK ATQ0V1E1S0=0&C1&D2+FCLASS=0 OK \AT+CGDCONT=1,\\\"IP\\\",\\\"ISP.CINGULAR\\\" OK \\dATDT\\T \TIMEOUT 40 CONNECT"';
+		$('dialcmd').value = '"ABORT BUSY ABORT NO/\/\sCARRIER TIMEOUT 5 \"\" AT OK-AT-OK ATE1Q0s7=60 OK /\/\dATDT/\/\T TIMEOUT 40 CONNECT"';
 		$('phone').value = "#777";
 		$('username').value = "123@vzw3g.com";
 		$('password').value = "vzw";

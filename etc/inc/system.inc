@@ -650,7 +650,7 @@ function system_webgui_start() {
 			echo "Creating SSL Certificate... ";
 			mwexec("openssl genrsa 1024 > /etc/ssl.key");
 			mwexec("chmod 400 /etc/ssl.key");
-			mwexec("openssl req -new -x509 -nodes -sha1 -days 365 -key /etc/ssl.key > /etc/ssl.crt");
+			mwexec("openssl req -new -x509 -nodes -sha1 -days 3650 -key /etc/ssl.key > /etc/ssl.crt");
 			mwexec("chmod 400 /etc/ssl.crt");
 			$cert_file = "/etc/ssl.crt";
 			$key_file  = "/etc/ssl.key";

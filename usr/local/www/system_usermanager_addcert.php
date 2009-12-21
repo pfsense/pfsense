@@ -67,7 +67,7 @@ foreach ($a_ca as $ca)
 
 if ($_GET) {
 	$pconfig['keylen'] = "2048";
-	$pconfig['lifetime'] = "365";
+	$pconfig['lifetime'] = "3650";
 }
 
 if ($_POST) {

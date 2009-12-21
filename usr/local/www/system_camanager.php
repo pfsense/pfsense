@@ -88,7 +88,7 @@ if ($act == "del") {
 if ($act == "new") {
 	$pconfig['method'] = $_GET['method'];
 	$pconfig['keylen'] = "2048";
-	$pconfig['lifetime'] = "365";
+	$pconfig['lifetime'] = "3650";
 	$pconfig['dn_commonname'] = "internal-ca";
 }
 

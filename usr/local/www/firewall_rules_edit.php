@@ -964,8 +964,8 @@ include("head.inc");
 				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
 				</span> <p>
 				<input name="max" id="max" value="<?php echo $pconfig['max'] ?>"><br> Maximum state entries this rule can create<p>
-				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Maximum number of unique source host<p>
-				<input name="max-src-conn" id="max-src-conn" value="<?php echo $pconfig['max-src-conn'] ?>"><br> Maximum number of established TCP connections per host<p>	 
+				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Maximum number of unique source hosts<p>
+				<input name="max-src-conn" id="max-src-conn" value="<?php echo $pconfig['max-src-conn'] ?>"><br> Maximum number of established connections per host<p>	 
 				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
 				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /
 				<select name="max-src-conn-rates" id="max-src-conn-rates">
@@ -975,14 +975,14 @@ include("head.inc");
 						echo "<option value=\"{$x}\"{$selected}>{$x}</option>\n";
 					} ?>
 				</select><br />
-				Maximum new connections / per second
+				Maximum new connections / per second(s)
 				<p>
 
 				<input name="statetimeout" value="<?php echo $pconfig['statetimeout'] ?>"><br>
 				State Timeout in seconds
 				<p />
 
-				<p><strong>NOTE: Leave these fields blank to disable this feature.</strong>
+				<p><strong>NOTE: Leave fields blank to disable that feature.</strong>
 			  </div>
 			</td>
 		</tr>

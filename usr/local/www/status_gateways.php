@@ -76,7 +76,9 @@ include("head.inc");
                   <td width="30%" class="listhdrr">Status</td>
                   <td width="30%" class="listhdr">Description</td>
 				</tr>
-			  <?php $i = 0; foreach ($a_gateways as $gateway) { ?>
+			  <?php foreach ($a_gateways as $gateway) {
+				$i = 2;
+			?>
                 <tr>
                   <td class="listlr">
 				<?=strtoupper($gateway['name']);?>
@@ -90,6 +92,10 @@ include("head.inc");
                   <td class="listr" >
 			<table border="0" cellpadding="0" cellspacing="2">
                         <?php
+				if($gateway['gateway'] == "dynamic") {
+					$gateway['monitor'] = "127.0.0.{$i}";
+					$i++;
+				}
 				$monitor = $gateway['monitor'];
 				if(empty($monitor)) {
 					$monitor = $gateway['gateway'];
@@ -132,10 +138,7 @@ include("head.inc");
 						<?=$gateway['descr'];?></font>
                   </td>
                 </tr>
-		<?php
-			$i++;
-		}
-		 ?>
+		<?php } ?>
               </table>
 	   </div>
 	</table>

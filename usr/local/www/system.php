@@ -161,7 +161,9 @@ if ($_POST) {
 		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
 
 		/* pfSense themes */
-		update_if_changed("System Theme", $config['theme'], $_POST['theme']);
+		if (! $g['disablethemeselection']) {
+			update_if_changed("System Theme", $config['theme'], $_POST['theme']);	
+		}
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		unset($config['system']['dnsserver']);

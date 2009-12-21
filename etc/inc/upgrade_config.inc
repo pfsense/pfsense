@@ -1549,8 +1549,9 @@ function upgrade_053_to_054() {
 					$split = split("\|", $member);
 					$interface = $split[0];
 					/* on static upgraded configuration we automatically append _GW */
-					if(is_array($gateways['{$interface}_GW'])) {
-						$interface = strtoupper($interface) . "_GW";
+					$static_name = strtoupper($ifname) . "_GW";
+					if(is_array($gateways[$static_name])) {
+						$interface = $static_name;
 					}
 					$monitor = $split[1];
 					/* on failover increment tier. Else always assign 1 */

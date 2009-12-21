@@ -647,24 +647,28 @@ function system_webgui_start() {
 			if (!is_array($config['system']['cert']))
 				$config['system']['cert'] = array();
 			$a_cert =& $config['system']['cert'];
-			echo "Importing default SSL Certificate... ";
-			$cert_file = "/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.crt";
-			$key_file  = "/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.key";
+			echo "Creating SSL Certificate... ";
+			mwexec("openssl genrsa 1024 > /etc/ssl.key");
+			mwexec("chmod 400 /etc/ssl.key");
+			mwexec("openssl req -new -x509 -nodes -sha1 -days 365 -key /etc/ssl.key > /etc/ssl.crt");
+			mwexec("chmod 400 /etc/ssl.crt");
+			$cert_file = "/etc/ssl.crt";
+			$key_file  = "/etc/ssl.key";
 			if(file_exists($cert_file) && file_exists($key_file)) {
 				$cert = array();
 				$cert['refid'] = uniqid();
-				$cert['name'] = "pfSense webConfigurator default";
-				$crt = file_get_contents("/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.crt");
-				$key = file_get_contents("/etc/default_ssl_certs/pfSense_webConfigurator_HTTPS_Certificate.key");
+				$cert['name'] = "webConfigurator default";
+				$crt = file_get_contents($cert_file);
+				$key = file_get_contents($key_file);
 				cert_import($cert, $crt, $key);
 				$a_cert[] = $cert;
 				$config['system']['webgui']['ssl-certref'] = $cert['refid'];
-				write_config("Importing default HTTPS certificate from /etc/default_ssl_certs/");
+				write_config("Importing HTTPS certificate");
 				if(!$config['system']['webgui']['port'])
 					$portarg = "443";
 				$ca = ca_chain($cert);
 			} else {
-				log_error("ERROR: Could not locate a default certificate file in /etc/default_ssl/certs/ for import $cert_file - $key_file");
+				log_error("ERROR: Could not locate a certificate file for import $cert_file - $key_file");
 			}
 		} else
 			$crt = base64_decode($cert['crt']);

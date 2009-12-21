@@ -2347,7 +2347,7 @@ function get_real_interface($interface = "wan") {
 			if($config['interfaces'][$if]['serialport']) {
 				$dev = $config['interfaces'][$if]['serialport'];
 				if(file_exists("/var/run/{$dev}.if")) {
-                                        $wanif = trim(file_get_contents("/var/run/{$dev}.if"));
+					$wanif = trim(file_get_contents("/var/run/{$dev}.if"));
 					break;
 				} else {
 					$wanif = $dev;

@@ -1107,6 +1107,14 @@ include("head.inc");
 							}
 							if($ifdesc <> "") 
 								echo "<option value=\"{$ifent}\" {$selected}>".strtoupper($ifent)." - {$ifdesc}</option>\n";
+						} else if ($config['interfaces'][$ifent]['serialport'] <> "") {
+							if ($pconfig['gateway'] == $ifent) {
+								$selected = " SELECTED";
+							} else {
+								$selected = "";
+							}
+							if($ifdesc <> "") 
+								echo "<option value=\"{$ifent}\" {$selected}>".strtoupper($ifent)." - {$ifdesc}</option>\n";							
 						}
 					}
 					/* add gateway groups to the list */

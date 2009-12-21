@@ -455,7 +455,12 @@ function lookup_gateway_monitor_ip_by_name($name) {
         global $config;
         $gateways_arr = return_gateways_array();
 
+	$i = 2;
         foreach($gateways_arr as $gateway) {
+		if($gateway['gateway'] == "dynamic") {
+			$gateway['monitor'] = "127.0.0.{$i}";
+			$i++;
+		}
                 if($gateway['name'] == "$name") {
                         $monitorip = $gateway['monitor'];
                         if($monitorip == "")

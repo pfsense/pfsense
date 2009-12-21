@@ -1755,10 +1755,10 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			vpn_ipsec_configure();
 
 			/* update dyndns */
-			services_dyndns_configure();
+			services_dyndns_configure($interface);
 
 			/* force DNS update */
-			services_dnsupdate_process();
+			services_dnsupdate_process($interface);
 
 			/* restart dnsmasq */
 			services_dnsmasq_configure();

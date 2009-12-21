@@ -537,32 +537,6 @@ function services_dhcrelay_configure() {
 	return 0;
 }
 
-function services_dyndns_reset($interface = "wan" ) {
-	global $config, $g;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "services_dyndns_reset() being called $mt\n";
-	}
-
-	$dyndnscfg = $config['dyndnses']['dyndns'];
-
-	if (is_array($dyndnscfg)) {
-		foreach ($dyndnscfg as $dyndns) {
-			if (!isset($dyndns['enable']))
-				continue;
-			if ($dyndns['interface'] != $interface)
-				continue;
-
-			services_dyndns_configure_client($dyndns);
-
-			sleep(1);
-		}
-
-	}
-
-	return 0;
-}
-
 function services_dyndns_configure_client($conf) {
 
 	/* load up the dyndns.class */
@@ -849,7 +823,7 @@ EOD;
 	return 0;
 }
 
-function services_dnsupdate_process() {
+function services_dnsupdate_process($int = "") {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -859,15 +833,14 @@ function services_dnsupdate_process() {
 	/* Dynamic DNS updating active? */
 	if (is_array($config['dnsupdates']['dnsupdate'])) {
 		foreach ($config['dnsupdates']['dnsupdate'] as $i => $dnsupdate) {
-		if (!isset($dyndns['enable']))
+			if (!isset($dyndns['enable']))
 				continue;
-			/* determine interface name */
-			if ($dyndns['interface'] == "wan")
-				$if = get_real_interface();
-			else
-				$if = convert_friendly_interface_to_real_interface_name($dyndns['interface']);
+			if (!empty($int) && $int != $dyndns['interface'])
+				continue;
 
-			$wanip = get_interface_ip($if);
+			/* determine interface name */
+			$if = get_real_interface($dyndns['interface']);
+			$wanip = get_interface_ip($dyndns['interface']);
 			if ($wanip) {
 
 				$keyname = $dnsupdate['keyname'];

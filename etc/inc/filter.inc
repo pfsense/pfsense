@@ -643,12 +643,14 @@ function filter_generate_optcfg_array()
 	}
 	if($config['ppps']) {
 		$ppp=0;
-		$startingip = 1;
 		foreach($config['ppps']['ppp'] as $ifgen) {
+			// get the device name for this PPP connection minus /dev/  (e.g. cuaU0)
 			$dev = substr($ifgen['port'], 5);
+			// $ps is the PID of the ppp process matching this device
 			$ps = trim(`ps awux | grep -v grep | grep "$dev" | awk '{ print \$2 }'`);
 			if($ps) {
-				$interface = trim(`ifconfig | grep -v grep | grep -B2 "$ps" | head -n1 | cut -d: -f1`);
+				// $interface is the device in use by the PID of the ppp process found above (e.g. tun0)
+				$interface = trim(`ifconfig | grep -B2 "$ps" | head -n1 | cut -d: -f1`);
 				if($interface) {
 					foreach ($config['interfaces'] as $ifdescr => $ifname) {
 						if($ifname['serialport'] == $dev) {
@@ -659,7 +661,6 @@ function filter_generate_optcfg_array()
 							unset($FilterIflist[$ifname['descr']]);
 							$FilterIflist[$ifname['descr']] = $oc;
 							$ppp++;
-
 						}
 					}
 				}

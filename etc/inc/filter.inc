@@ -997,8 +997,6 @@ function filter_nat_rules_generate()
 				update_filter_reload_status("Creating outbound rules {$if} - ({$ifcfg['descr']})");
 				if (interface_has_gateway($if)) {
 					$target = $ifcfg['ip'];
-					/* do not nat tftp proxy */
-					$natrules .= "no nat on \${$ifcfg['descr']} to port tftp\n";
 					/* create outbound nat entries for all local networks */
 					$natrules .= filter_nat_rules_generate_if($if,
 						"{$macroortable}", 500, "", 500, $target, 500, false);

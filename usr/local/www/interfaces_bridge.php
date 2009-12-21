@@ -122,7 +122,7 @@ include("head.inc");
 							echo $ifdescrs[$member];
 							$j++;
 						}
-						if ($j > 1)
+						if ($j > 0 && $j < count($members))
 							echo ", ";
 					}
 					?>

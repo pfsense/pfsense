@@ -41,7 +41,7 @@ function handle_argument_group($iface, $argument2) {
 
 	$ipaddr = $config['interfaces'][$iface]['ipaddr'];
 	if (is_ipaddr($ipaddr)) {
-		log_error("Hotplug event detected for {$iface} but ignoring since interface is configured with static ip({$ipaddr})");
+		log_error("Hotplug event detected for {$iface} but ignoring since interface is configured with static IP ({$ipaddr})");
 		$iface = get_real_interface($iface);
 		exec("/usr/sbin/arp -d -i {$iface} -a");
 	} else {

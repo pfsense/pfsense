@@ -1080,6 +1080,7 @@ include("head.inc");
 				<div id="showgatewayadv" style="display:none">
 					<select name='gateway'>
 <?php
+					// add statically configured gateways to list
 					foreach($gateways as $gw) {
 						if($gw == "") 
 							continue;
@@ -1095,6 +1096,19 @@ include("head.inc");
 							echo "<option value=\"{$gw}\" {$selected}>{$gw} - {$gwip}</option>\n";
 						}
 					}
+					// add dynamic gateways to list
+					$iflist = get_configured_interface_with_descr();
+					foreach ($iflist as $ifent => $ifdesc) {
+						if (in_array($config['interfaces'][$ifent]['ipaddr'], array("dhcp", "pppoe", "pptp"))) {
+							if ($pconfig['gateway'] == $ifent) {
+								$selected = " SELECTED";
+							} else {
+								$selected = "";
+							}
+							if($ifdesc <> "") 
+								echo "<option value=\"{$ifent}\" {$selected}>".strtoupper($ifent)." - {$ifdesc}</option>\n";
+						}
+					}
 					/* add gateway groups to the list */
 					if (is_array($config['gateways']['gateway_group'])) {
 						foreach($config['gateways']['gateway_group'] as $gw_group) {
@@ -1105,19 +1119,6 @@ include("head.inc");
 							} else {
 								echo "<option value=\"{$gw_group['name']}\">{$gw_group['name']}</option>\n";
 							}
-						}
-					}
-					$iflist = get_configured_interface_with_descr();
-					foreach ($iflist as $ifent => $ifdesc) {
-						if (in_array($config['interfaces'][$ifent]['ipaddr'],
-							 array("dhcp", "pppoe", "pptp"))) {
-							if ($pconfig['gateway'] == $ifent) {
-								$selected = " SELECTED";
-							} else {
-								$selected = "";
-							}
-							if($ifdesc <> "") 
-								echo "<option value=\"{$ifent}\" {$selected}>".strtoupper($if)." - {$ifdesc}</option>\n";
 						}
 					}
 ?>

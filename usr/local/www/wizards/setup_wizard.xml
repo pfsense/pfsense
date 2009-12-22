@@ -223,12 +223,12 @@
 		<field>
 			<name>PPPoE Username</name>
 			<type>input</type>
-			<bindstofield>pppoe->username</bindstofield>
+			<bindstofield>interfaces->wan->pppoe_username</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Password</name>
 			<type>input</type>
-			<bindstofield>pppoe->password</bindstofield>
+			<bindstofield>interfaces->wan->pppoe_password</bindstofield>
 		</field>
 		<field>
 			<name>PPPoE Service name</name>
@@ -253,12 +253,12 @@
 		<field>
 			<name>PPTP Username</name>
 			<type>input</type>
-			<bindstofield>pptp->username</bindstofield>
+			<bindstofield>interfaces->wan->pptp_username</bindstofield>
 		</field>
 		<field>
 			<name>PPTP Password</name>
 			<type>input</type>
-			<bindstofield>pptp->password</bindstofield>
+			<bindstofield>interfaces->wan->pptp_password</bindstofield>
 		</field>
 		<field>
 			<combinefieldsbegin>true</combinefieldsbegin>

@@ -59,7 +59,7 @@ if(empty($argument)) {
 log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (real interface: {$interface_real}).");
 
 if($curwanip == "0.0.0.0") {
-        log_error("rc.newwanip: Failed to update WAN IP, restarting...");
+        log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
 	interface_configure($interface);
         exit;
 }

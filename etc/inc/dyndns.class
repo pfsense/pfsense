@@ -125,7 +125,7 @@
 
 			$this->_debugID = rand(1000000, 9999999);
 			
-			if ($this->_detectChange() == FALSE) {
+			if ($this->_detectChange() == false) {
 				$this->_error(10);
 			} else {
 				switch ($this->_dnsService) {
@@ -848,31 +848,29 @@
 			$needs_updating = FALSE;
 			/* lets determine if the item needs updating */
 			if ($cacheIP != $wan_ip) {
-				$needs_updating = TRUE;
-				log_error("DynDns: cacheIP != wan_ip.  Updating.");
+				$needs_updating = true;
+				$update_reason = "DynDns: cacheIP != wan_ip.  Updating. ";
+				$update_reason .= "Cached IP: {$cacheIP} WAN IP: {$wan_ip} ";
 			}
-			$update_reason = "Cached IP: {$cacheIP} WAN IP: {$wan_ip} ";
 			if (($currentTime - $cacheTime) > $time ) {
 				$needs_updating = TRUE;
-				log_error("DynDns: More than 25 days.  Updating.");
+				$update_reason = "DynDns: More than 25 days.  Updating. ";
+				$update_reason .= "{$currentTime} - {$cacheTime} > {$time} ";
 			}
-			$update_reason .= "{$currentTime} - {$cacheTime} > {$time} ";
-			if ($initial == TRUE) {
-				$needs_updating = TRUE;
+			if ($initial == true) {
+				$needs_updating = true;
 				$update_reason .= "Inital update. ";
-				log_error("DynDns: Initial run.   Updating.");
 			}
+
 			/*   finally if we need updating then store the
 			 *   new cache value and return true
                          */
-			if($needs_updating == TRUE) {
-				return TRUE;
-			} else {
-				return FALSE;			
+			if ($needs_updating == true) {
+				log_error("DynDns debug information: {$update_reason}");
+				return true;
 			}
-			
-			log_error("DynDns debug information: {$update_reason}");
-			
+
+			return false;			
 		}
 
 		/*

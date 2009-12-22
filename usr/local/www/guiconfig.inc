@@ -564,7 +564,7 @@ function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendp
                 list($pbeginport, $pendport) = explode("-", $adr['port']);
                 if (!$pendport)
                         $pendport = $pbeginport;
-	else if (!is_alias($pbeginport) && !is_alias($pendport)) {
+	} else if (!is_alias($pbeginport) && !is_alias($pendport)) {
 		$pbeginport = "any";
 		$pendport = "any";
         }

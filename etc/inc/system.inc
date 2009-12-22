@@ -648,28 +648,22 @@ function system_webgui_start() {
 				$config['system']['cert'] = array();
 			$a_cert =& $config['system']['cert'];
 			echo "Creating SSL Certificate... ";
-			mwexec("openssl genrsa 1024 > /etc/ssl.key");
-			mwexec("chmod 400 /etc/ssl.key");
-			mwexec("openssl req -new -x509 -nodes -sha1 -days 3650 -key /etc/ssl.key > /etc/ssl.crt");
-			mwexec("chmod 400 /etc/ssl.crt");
-			$cert_file = "/etc/ssl.crt";
-			$key_file  = "/etc/ssl.key";
-			if(file_exists($cert_file) && file_exists($key_file)) {
-				$cert = array();
-				$cert['refid'] = uniqid();
-				$cert['name'] = "webConfigurator default";
-				$crt = file_get_contents($cert_file);
-				$key = file_get_contents($key_file);
-				cert_import($cert, $crt, $key);
-				$a_cert[] = $cert;
-				$config['system']['webgui']['ssl-certref'] = $cert['refid'];
-				write_config("Importing HTTPS certificate");
-				if(!$config['system']['webgui']['port'])
-					$portarg = "443";
-				$ca = ca_chain($cert);
-			} else {
-				log_error("ERROR: Could not locate a certificate file for import $cert_file - $key_file");
-			}
+			$cert = array();
+			$cert['refid'] = uniqid();
+			$cert['name'] = "webConfigurator default";
+			mwexec("/usr/bin/openssl genrsa 1024 > /tmp/ssl.key");
+			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha1 -days 2000 -key ssl.key > /tmp/ssl.crt");
+			$crt = file_get_contents("/tmp/ssl.crt");
+			$key = file_get_contents("/tmp/ssl.key");
+			unlink("/tmp/ssl.key");
+			unlink("/tmp/ssl.crt");
+			cert_import($cert, $crt, $key);
+			$a_cert[] = $cert;
+			$config['system']['webgui']['ssl-certref'] = $cert['refid'];
+			write_config("Importing HTTPS certificate");
+			if(!$config['system']['webgui']['port'])
+				$portarg = "443";
+			$ca = ca_chain($cert);
 		} else
 			$crt = base64_decode($cert['crt']);
 			$key = base64_decode($cert['prv']);
@@ -681,8 +675,6 @@ function system_webgui_start() {
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
 		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/");
-
-	sleep(1);
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");

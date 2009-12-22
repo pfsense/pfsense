@@ -316,7 +316,7 @@ function filter_configure_sync() {
 			fclose($filterdnsfd);
 		}
 		killbypid("{$g['tmp_path']}/filterdns.pid");
-		mwexec("/usr/local/sbin/filterdns {$g['tmp_path']}/filterdns.pid 300 {$g['varetc_path']}/filterdns.conf");
+		mwexec("/usr/local/sbin/filterdns {$g['tmp_path']}/filterdns.pid 300 {$g['varetc_path']}/filterdns.conf 1");
 	}
 
 	/* run items scheduled for after filter configure run */

@@ -750,13 +750,7 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 							log_error("Reflection processing: {$loc_pt} is not a vaild port alias.");
 							continue;
 						}
-						if(stristr($loc_pt_translated, " ")) {
-							/* XXX: we should deal with multiple ports */
-							$loc_pt_translated_split = split(" ", $loc_pt_translated);
-							foreach($loc_pt_translated_split as $lpts)
-								$toadd_array[] = $lpts;
-						} else
-							$toadd_array[] = $loc_pt_translated;
+						$toadd_array = split(" ", $loc_pt_translated);
 					} else {
 						$loc_pt_translated = $loc_pt;
 						$toadd_array[] = $loc_pt_translated;

@@ -42,7 +42,7 @@ require_once("shaper.inc");
 
 $argument = str_replace("\n", "", $argv[1]);
 
-log_error("Informational: rc.newwanip is starting {$argument}.");
+log_error("rc.newwanip: Informational is starting {$argument}.");
 
 if(empty($argument)) {
     $curwanip = get_interface_ip();
@@ -56,23 +56,23 @@ if(empty($argument)) {
                 $curwanip = get_interface_ip($interface);
 }
 
-log_error("rc.newwanip working with (IP address: {$curwanip}) (interface: {$interface}) (real interface: {$interface_real}).");
+log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (real interface: {$interface_real}).");
 
 if($curwanip == "0.0.0.0") {
-        log_error("Failed to update WAN IP, restarting dhclient.");
-        exec("dhclient $interface_real");
+        log_error("rc.newwanip: Failed to update WAN IP, restarting...");
+	interface_configure($interface);
         exit;
 }
 
 /* fallback to rc.newwanip ip if needed */
 if(file_exists("{$g['vardb_path']}/{$interface_real}_ip"))
-    $old_ip = trim(file_get_contents("{$g['vardb_path']}/{$interface_real}_ip", "\r"));
+    $old_ip = trim(file_get_contents("{$g['vardb_path']}/{$interface_real}_ip"), " \r\n");
 if($old_ip) {
     $helpers = exec("/bin/ps awux | grep \"{$old_ip}\" | grep -v \"grep\" | awk '{ print $2 }'");
     if($helpers)
 	mwexec("kill " . trim($helpers));
 } else {
-    log_error("WARNING! /etc/rc.newwanip could not determine the previous IP address of {$interface}( {$interface_real} ).");
+    log_error("rc.newwanip: WARNING! could not determine the previous IP address of {$interface}( {$interface_real} ).");
 }
 
 /* reconfigure IPsec tunnels */
@@ -89,14 +89,9 @@ if (isset($config['system']['dnsallowoverride']))
 services_dnsupdate_process($interface);
 
 /* write current WAN IP to file */
-$fd = fopen("{$g['vardb_path']}/{$interface}_ip", "w");
-if ($fd) {
-	fwrite($fd, $curwanip);
-	fclose($fd);
-}
+file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 
-log_error("Informational: DHClient spawned /etc/rc.newwanip for interface {$interface} with new ip {$curwanip}.");
-
+/* signal dyndns update */
 file_put_contents("/tmp/update_dyndns", $interface);
 
 /* signal filter reload */
@@ -106,7 +101,7 @@ filter_configure();
 /* reload graphing functions */
 enable_rrd_graphing();
 
-/* This is DHCP, update the gateway group items default gateway */
+/* update the gateway group items gateway */
 update_gateway_groups_defaultroute_dhclient($interface);
 
 /* restart packages */

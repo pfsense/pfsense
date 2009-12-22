@@ -564,13 +564,9 @@ function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendp
                 list($pbeginport, $pendport) = explode("-", $adr['port']);
                 if (!$pendport)
                         $pendport = $pbeginport;
-        } else {
-                if(alias_expand($pbeginport) <> "" || alias_expand($pendport) <> "") {
-                        /* Item is a port alias */
-                } else {
-                        $pbeginport = "any";
-                        $pendport = "any";
-                }
+	else if (!is_alias($pbeginport) && !is_alias($pendport)) {
+		$pbeginport = "any";
+		$pendport = "any";
         }
 }
 
@@ -600,7 +596,7 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $p
                         $adr['port'] = $pbeginport;
         }
 
-        if(alias_expand($pbeginport)) {
+        if(is_alias($pbeginport)) {
                 $adr['port'] = $pbeginport;
         }
 }

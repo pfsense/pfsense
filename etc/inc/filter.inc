@@ -391,7 +391,8 @@ function filter_generate_scrubing()
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
+function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting)
+{
 	global $aliastable, $filterdns;
 	
 	$addresses = split(" ", $alias);
@@ -417,6 +418,21 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		$finallist .= " {$tmpline}";
 	}
 	return $finallist;
+}
+
+function filter_expand_alias($alias_name)
+{
+	global $config;
+
+	if (isset($config['aliases']['alias'])) {
+                foreach ($config['aliases']['alias'] as $aliased) {
+			if ($aliased['name'] == $alias_name) {
+				$aliasnesting = array();
+                        	$aliasaddrnesting = array();
+				return filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
+			}
+		}
+	}
 }
 
 function filter_generate_aliases() {
@@ -686,128 +702,112 @@ function filter_flush_state_table()
 	return mwexec("/sbin/pfctl -F state");
 }
 
-function filter_generate_reflection($rule, $extport, &$starting_localhost_port) {
+function filter_generate_reflection($rule, $target, $extport, &$starting_localhost_port) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
 	$natrules = "";
 
-	// Keeps track of items already seen to avoid duplicates in inetd.conf
-	$reflection_seen = array();
+	if (!isset($config['system']['disablenatreflection'])) {
+		if($config['system']['reflectiontimeout'])
+			$reflectiontimeout = $config['system']['reflectiontimeout'];
+		else
+			$reflectiontimeout = "2000";
 
-	if(!isset($config['system']['disablenatreflection'])) {
-		$inetd_fd = fopen("/var/etc/inetd.conf","w");
-		/* add tftp protocol helper */
-		fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy -v\n");
 		update_filter_reload_status("Setting up NAT Reflection");
+
+		$reflection_txt = array();
 		$natrules .= "\n# Reflection redirects\n";
 		foreach ($FilterIflist as $ifent => $ifname) {
 			/* do not process interfaces with gateways*/
 			if (interface_has_gateway($ifent))
 				continue;
+
+			update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
+
 			if($extport[1]) 
 				$range_end = ($extport[1]);
 			else
 				$range_end = ($extport[0]);
 			$range_end++;
-			if (alias_expand($rule['external-address'])) 
-				$extaddr = alias_expand($extaddr);
-			else if ($rule['external-address'] <> "") 
-				$extaddr = $rule['external-address'];
-			else 
+			$extaddr = alias_expand($rule['external-address']);
+			if (!$extaddr)
 				$extaddr = $FilterIflist[$rule['interface']]['ip'];
-			if($rule['local-port'])
+			if ($rule['local-port'])
 				$lrange_start = $rule['local-port'];
-			if($range_end - $extport[0] > 500) {
+			if ($range_end - $extport[0] > 500) {
 				$range_end = $extport[0]+1;
 				log_error("Not installing nat reflection rules for a port range > 500");
-			} else {
-				/* only install reflection rules for < 19991 items */
-				if($starting_localhost_port < 19991) {
-					$loc_pt = $lrange_start;
-					for($x=$extport[0]; $x<$range_end; $x++) {
-						$xxx = $x;
-						update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
-						if($config['system']['reflectiontimeout'])
-							$reflectiontimeout = $config['system']['reflectiontimeout'];
-						else
-							$reflectiontimeout = "2000";
-						$toadd_array = array();
-						if(is_alias($loc_pt)) {
-							$loc_pt_translated = alias_expand($loc_pt);
-							add_hostname_to_watch($loc_pt_translated);
-							if(stristr($loc_pt_translated, " ")) {
-								/* XXX: we should deal with multiple ports */
-								$loc_pt_translated_split = split(" ", $loc_pt_translated);
-								foreach($loc_pt_translated_split as $lpts)
+			/* only install reflection rules for < 19991 items */
+			} else if ($starting_localhost_port < 19991) {
+				$loc_pt = $lrange_start;
+				for($x=$extport[0]; $x<$range_end; $x++) {
+					$xxx = $x;
+					$toadd_array = array();
+					if(is_alias($loc_pt)) {
+						$loc_pt_translated = filter_expand_alias($loc_pt);
+						if (!$loc_pt_translated) {
+							log_error("Reflection processing: {$loc_pt} is not a vaild port alias.");
+							continue;
+						}
+						if(stristr($loc_pt_translated, " ")) {
+							/* XXX: we should deal with multiple ports */
+							$loc_pt_translated_split = split(" ", $loc_pt_translated);
+							foreach($loc_pt_translated_split as $lpts)
 								$toadd_array[] = $lpts;
-							} else {
-								$toadd_array[] = $loc_pt_translated;
-							}
-						} else {
-							$loc_pt_translated = $loc_pt;
+						} else
 							$toadd_array[] = $loc_pt_translated;
-						}
+					} else {
+						$loc_pt_translated = $loc_pt;
+						$toadd_array[] = $loc_pt_translated;
+					}
 
-						switch($rule['protocol']) {
-						case "tcp/udp":
-							$protocol = "{ tcp udp }";
-							foreach($toadd_array as $tda) {
-								$reflection_txt = "\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc -w {$reflectiontimeout}{$target} {$tda}\n";
-								if(!in_array($reflection_txt, $reflection_seen)) {
-									fwrite($inetd_fd, $starting_localhost_port . $reflection_txt);
-									$reflection_seen[] = $reflection_txt;
-								}
-								$natrules .= "rdr on {$ifname['if']} proto tcp from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
-								$starting_localhost_port++;
-								$reflection_txt = "\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc -u -w {$reflectiontimeout} {$target} {$tda}\n";
-								if(!in_array($reflection_txt, $reflection_seen)) {
-									fwrite($inetd_fd, $starting_localhost_port . $reflection_txt);
-									$reflection_seen[] = $reflection_txt;
-								}
-								$natrules .= "rdr on { {$ifname['if']} } proto udp from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
-								$xxx++;
-								$starting_localhost_port++;
-							}
-							break;
-						case "tcp":
-						case "udp":
-							$protocol = $rule['protocol'];
-							foreach($toadd_array as $tda){
-								if($protocol == "udp") {
-									$socktype = "dgram";
-									$dash_u = "-u ";
-								} else {
-									$socktype = "stream";
-									$dash_u = "";
-								}
-								if($config['system']['reflectiontimeout'])
-									$reflectiontimeout = $config['system']['reflectiontimeout'];
-								else
-									$reflectiontimeout = "20";
-								$reflection_txt = "\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
-								if(!in_array($reflection_txt, $reflection_seen)) {
-									fwrite($inetd_fd, $starting_localhost_port . $reflection_txt);
-									$reflection_seen[] = $reflection_txt;
-								}
-								$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
-								$xxx++;
-								$starting_localhost_port++;
-							}
-							break;
-						default:
-							break;
+					switch($rule['protocol']) {
+					case "tcp/udp":
+						$protocol = "{ tcp udp }";
+						foreach($toadd_array as $tda) {
+							$reflection_txt[] = "{$starting_localhost_port}\tstream\ttcp\tnowait/0\tnobody\t/usr/bin/nc -w {$reflectiontimeout} {$target} {$tda}\n";
+							$reflection_txt[] = "{$starting_localhost_port}\tdgram\tudp\tnowait/0\tnobody\t/usr/bin/nc -u -w {$reflectiontimeout} {$target} {$tda}\n";
+							$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
 						}
-						$loc_pt++;
-						if($starting_localhost_port > 19990) {
-							log_error("Not installing nat reflection rules. Maximum 1,000 reached.");
-							$x = $range_end+1;
+						break;
+					case "tcp":
+					case "udp":
+						$protocol = $rule['protocol'];
+						if($protocol == "udp") {
+							$socktype = "dgram";
+							$dash_u = "-u ";
+						} else {
+							$socktype = "stream";
+							$dash_u = "";
 						}
+						foreach($toadd_array as $tda){
+							$reflection_txt[] = "{$starting_localhost_port}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
+							$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
+						}
+						break;
+					}
+					$loc_pt++;
+					$xxx++;
+					$starting_localhost_port++;
+					if ($starting_localhost_port > 19990) {
+						log_error("Not installing nat reflection rules. Maximum 1,000 reached.");
+						$x = $range_end+1;
 					}
 				}
 			}
 		}
+		
+		$inetd_fd = fopen("/var/etc/inetd.conf","w");
+
+		/* add tftp protocol helper */
+		fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy -v\n");
+		$reflection_txt = array_unique($reflection_txt);
+		foreach ($reflection_txt as $txtline)
+			fwrite($inetd_fd, $txtline);
+		fclose($inetd_fd);
 	}
+
 	return $natrules;
 }
 
@@ -1056,15 +1056,15 @@ function filter_nat_rules_generate()
 			update_filter_reload_status("Creating NAT rule {$rule['descr']}");
 			/* if item is an alias, expand */
 			$extport = "";
-			if(alias_expand($rule['external-port']))
-				$extport[0] = alias_expand($rule['external-port']);
-			else
+			$extport[0] = alias_expand($rule['external-port']);
+			if (!$extport[0])
 				$extport = explode("-", $rule['external-port']);
 			/* if item is an alias, expand */
-			if(alias_expand($rule['local-port']))
+			$localport = alias_expand($rule['local-port']);
+			if(!$localport)
 				$localport = "";
 			else
-				$localport = " port {$rule['local-port']}";
+				$localport = " port {$localport}";
 			$target = alias_expand($rule['target']);
 			if (!$target) {
 				$natrules .= "# Unresolvable alias {$rule['target']}\n";
@@ -1078,12 +1078,9 @@ function filter_nat_rules_generate()
                                 $natif = "wan";
                         else
                                 $natif = $rule['interface'];
-			if (alias_expand($rule['external-address']))
-				$extaddr = alias_expand($rule['external-address']);
-			else if ($rule['external-address'] <> "")
-				$extaddr = $rule['external-address'];
-			else
-				$extaddr = $FilterIflist[$rule['interface']]['ip'];
+			$extaddr = alias_expand($rule['external-address']);
+			if (!$extaddr)
+				$extaddr = $FilterIflist[$natif]['ip'];
 			$natif = $FilterIflist[$natif]['if'];
 
 			if ($extaddr <> "") {
@@ -1146,7 +1143,7 @@ function filter_nat_rules_generate()
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$extport[0]} -> ({$natif})\n";
 				}
 			}
-			$natrules .= filter_generate_reflection($rule, $extport, $starting_localhost_port);
+			$natrules .= filter_generate_reflection($rule, $target, $extport, $starting_localhost_port);
 			$natrules .= "\n";
 		}
 	}
@@ -1275,19 +1272,15 @@ function filter_generate_address(& $rule, $target = "source")
 	if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
                 if ($rule[$target]['port']) {
                         $srcport = explode("-", $rule[$target]['port']);
-                        if (alias_expand($srcport[0]))
-                                $srcporta = alias_expand($srcport[0]);
-                        else
-                                $srcporta = $srcport[0];
-                        if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
-                                if(alias_expand($srcport[0]))
-                                        $src .= " port {$srcporta} ";
-                                else
-                                        $src .= " port = {$srcporta} ";
+			$srcporta = alias_expand($srcport[0]);
+			if (!$srcporta)
+				log_error("filter_generate_address: {$srcport[0]} is not a valid source port.");
+                        else if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+				$src .= " port {$srcporta} ";
                         } else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
                                 /* no need for a port statement here */
-                        } else if ($srcport[1] == 65535) {
-                                $src .= " port >= {$srcport[0]} ";
+                        } else if (is_port($srcporta) && $srcport[1] == 65535) {
+                                $src .= " port >= {$srcporta} ";
                         } else if ($srcport[0] == 1) {
                                 $src .= " port <= {$srcport[1]} ";
                         } else {

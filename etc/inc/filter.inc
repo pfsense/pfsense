@@ -316,6 +316,10 @@ function filter_configure_sync() {
 			fclose($filterdnsfd);
 		}
 		killbypid("{$g['tmp_path']}/filterdns.pid");
+		/* 
+		 * FilterDNS has three debugging levels. The default choosen is 1.
+		 * Availabe are level 2 and greater then 2.
+		 */
 		mwexec("/usr/local/sbin/filterdns {$g['tmp_path']}/filterdns.pid 300 {$g['varetc_path']}/filterdns.conf 1");
 	}
 

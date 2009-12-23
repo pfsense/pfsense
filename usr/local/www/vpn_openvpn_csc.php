@@ -68,7 +68,7 @@ if ($_GET['act'] == "del") {
 if($_GET['act']=="edit"){
 
 	if (isset($id) && $a_csc[$id]) {
-
+		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
 		$pconfig['disable'] = $a_csc[$id]['disable'];
 		$pconfig['common_name'] = $a_csc[$id]['common_name'];
 		$pconfig['block'] = $a_csc[$id]['block'];
@@ -167,6 +167,7 @@ if ($_POST) {
 
 		$csc = array();
 
+		$csc['custom_options'] = $pconfig['custom_options'];
 		$csc['disable'] = $pconfig['disable'];
 		$csc['common_name'] = $pconfig['common_name'];
 		$csc['block'] = $pconfig['block'];
@@ -628,6 +629,20 @@ function netbios_change() {
 											Server #2:&nbsp;
 										</span>
 										<input name="wins_server2" type="text" class="formfld unknown" id="wins_server2" size="20" value="<?=$pconfig['wins_server2'];?>">
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">Advanced</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
+										Paste any additional options you would like to pass through to the OpenVPN server here seperated by a semicolon<br/>
+										EXAMPLE: push "route 10.0.0.0 255.255.255.0";
 									</td>
 								</tr>
 							</table>

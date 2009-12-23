@@ -1739,8 +1739,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 					interface_bridge_configure($bridge);
 		}
 
-		if (link_interface_to_vips($interface))
-			interfaces_vips_configure($interface);
+		link_interface_to_vips($interface, "update");
 
 		if ($interface == "lan")
 			/* make new hosts file */
@@ -2537,13 +2536,40 @@ function link_ip_to_carp_interface($ip) {
         return $carp_ints;
 }
 
-function link_interface_to_vips($int) {
+function link_interface_to_vlans($int, $action = "") {
+	global $config;
+
+	if (empty($int))
+		return;
+
+	$real_if = get_real_interface($int);
+	if (is_array($config['vlans']['vlan'])) {
+                foreach ($config['vlans']['vlan'] as $vlan) {
+			if ($real_int == $vlan['if']) {
+				if ($action == "update") {
+					foreach ($config['interafces'] as $ifname => $ifcfg) {
+						if ($ifcfg['if'] == $vlan['vlanif'])
+							interface_vlan_configure($vlan);
+							interface_configure($ifname);
+					}
+				} else if ($action == "")
+					return $vlan;
+			}
+		}
+	}
+}
+
+function link_interface_to_vips($int, $action = "") {
         global $config;
 
         if (is_array($config['virtualip']['vip']))
                 foreach ($config['virtualip']['vip'] as $vip)
-                        if($int == $vip['interface'])
-                                return $vip;
+                        if ($int == $vip['interface']) {
+				if ($action == "update")
+					interfaces_vips_configure($int);
+				else
+                                	return $vip;
+			}
 }
 
 /****f* interfaces/link_interface_to_bridge

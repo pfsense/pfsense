@@ -745,53 +745,64 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 			/* only install reflection rules for < 19991 items */
 			} else if ($starting_localhost_port < 19991) {
 				$loc_pt = $lrange_start;
-				for($x=$extport[0]; $x<$range_end; $x++) {
-					$xxx = $x;
-					$toadd_array = array();
-					if(is_alias($loc_pt)) {
-						$loc_pt_translated = filter_expand_alias($loc_pt);
-						if (!$loc_pt_translated) {
-							log_error("Reflection processing: {$loc_pt} is not a vaild port alias.");
-							continue;
-						}
-						$toadd_array = split(" ", $loc_pt_translated);
+				$rflctnorange = true;
+				if(is_alias($loc_pt)) {
+					$loc_pt_translated = filter_expand_alias($loc_pt);
+					if (!$loc_pt_translated) {
+						log_error("Reflection processing: {$loc_pt} is not a vaild port alias.");
+						continue;
+					}
+					$toadd_array = split(" ", $loc_pt_translated);
+					$rflctnorange = false;
+				}
+					
+				if (($range_end - 1) > $extport[0]) {
+					$rflctrange = "{$starting_localhost_port}";
+					$delta = $range_end - $extport[0] - 1;
+					if (($starting_localhost_port + $delta) > 19990) {
+                                        	log_error("Installing partial nat reflection rules. Maximum 1,000 reached.");
+                                        	$delta = 19990 - $starting_localhost_port;
+                                	}
+					$starting_localhost_port = $starting_localhost_port + $delta;
+					$rflctrange .= ":{$starting_localhost_port}";
+					$rflctintrange = "{$extport[0]}:{$range_end}";
+					if ($rflctnorange)
+						$toadd_array = range($loc_pt, $loc_pt + $delta);
+				} else {
+					$rflctrange = $starting_localhost_port;
+					$rflctintrange = $extport[0];
+					if ($rflctnorange)
+						$toadd_array = array($loc_pt);
+				}
+						
+				switch($rule['protocol']) {
+				case "tcp/udp":
+					$protocol = "{ tcp udp }";
+					foreach($toadd_array as $tda) {
+						$reflection_txt[] = "{$starting_localhost_port}\tstream\ttcp\tnowait/0\tnobody\t/usr/bin/nc -w {$reflectiontimeout} {$target} {$tda}\n";
+						$reflection_txt[] = "{$starting_localhost_port}\tdgram\tudp\tnowait/0\tnobody\t/usr/bin/nc -u -w {$reflectiontimeout} {$target} {$tda}\n";
+					}
+					$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
+					break;
+				case "tcp":
+				case "udp":
+					$protocol = $rule['protocol'];
+					if($protocol == "udp") {
+						$socktype = "dgram";
+						$dash_u = "-u ";
 					} else {
-						$loc_pt_translated = $loc_pt;
-						$toadd_array[] = $loc_pt_translated;
+						$socktype = "stream";
+						$dash_u = "";
 					}
-
-					switch($rule['protocol']) {
-					case "tcp/udp":
-						$protocol = "{ tcp udp }";
-						foreach($toadd_array as $tda) {
-							$reflection_txt[] = "{$starting_localhost_port}\tstream\ttcp\tnowait/0\tnobody\t/usr/bin/nc -w {$reflectiontimeout} {$target} {$tda}\n";
-							$reflection_txt[] = "{$starting_localhost_port}\tdgram\tudp\tnowait/0\tnobody\t/usr/bin/nc -u -w {$reflectiontimeout} {$target} {$tda}\n";
-							$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
-						}
-						break;
-					case "tcp":
-					case "udp":
-						$protocol = $rule['protocol'];
-						if($protocol == "udp") {
-							$socktype = "dgram";
-							$dash_u = "-u ";
-						} else {
-							$socktype = "stream";
-							$dash_u = "";
-						}
-						foreach($toadd_array as $tda){
-							$reflection_txt[] = "{$starting_localhost_port}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
-							$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$xxx} tag PFREFLECT -> 127.0.0.1 port {$starting_localhost_port}\n";
-						}
-						break;
+					foreach($toadd_array as $tda){
+						$reflection_txt[] = "{$starting_localhost_port}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
 					}
-					$loc_pt++;
-					$xxx++;
-					$starting_localhost_port++;
-					if ($starting_localhost_port > 19990) {
-						log_error("Not installing nat reflection rules. Maximum 1,000 reached.");
-						$x = $range_end+1;
-					}
+					$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
+					break;
+				}
+				if ($starting_localhost_port > 19990) {
+					log_error("Not installing nat reflection rules. Maximum 1,000 reached.");
+					$x = $range_end+1;
 				}
 			}
 		}

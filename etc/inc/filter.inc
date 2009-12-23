@@ -452,7 +452,16 @@ function filter_generate_aliases() {
 		$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
 		$aliases .= " }\"\n";
 	}
-	$aliases .= "# User Aliases \n";
+
+	$aliases .= "\n#SSH Lockout Table\n";
+	$aliases .= "table <sshlockout> persist\n";
+
+	$aliases .= "#Snort2C table\n";
+	$aliases .= "table <snort2c>\n";
+
+	$aliases .= "\ntable <virusprot>\n";
+
+	$aliases .= "\n# User Aliases \n";
 	/* Setup pf groups */
 	if (isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
@@ -1018,8 +1027,6 @@ function filter_nat_rules_generate()
 			}		
 		endif;
 	}
-	$natrules .= "\n#SSH Lockout Table\n";
-	$natrules .= "table <sshlockout> persist\n\n";
 
 	/* load balancer anchor */
 	$natrules .= "\n# Load balancing anchor\n";
@@ -1702,7 +1709,6 @@ EOD;
         $ipfrules .= <<<EOD
 	
 # snort2c
-table <snort2c> persist
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
 
@@ -1729,22 +1735,18 @@ EOD;
                 $ipfrules .= $config['system']['ssh']['port'];
                 $ipfrules .= " label \"sshlockout\"\n";
         } else {
-			if($config['system']['ssh']['port'] <> "") 
-				$sshport = $config['system']['ssh']['port'];
-			else 
-				$sshport = 22;
-			$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
-		}
+		if($config['system']['ssh']['port'] <> "")
+			$sshport = $config['system']['ssh']['port'];
+		else 
+			$sshport = 22;
+		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port {$sshport} label \"sshlockout\"\n";
+	}
 
 	/*
 	 * Support for allow limiting of TCP connections by establishment rate
 	 * Useful for protecting against sudden outburts, etc.
 	 */
-	$ipfrules .= <<<EODF
-table <virusprot>
-block in quick from <virusprot> to any label "virusprot overload table"
-
-EODF;
+	$ipfrules .= "block in quick from <virusprot> to any label \"virusprot overload table\"\n";
 
 	$bogontableinstalled = 0;
 	foreach ($FilterIflist as $on => $oc) {

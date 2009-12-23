@@ -214,6 +214,7 @@ if(! $g['disablehelpmenu']) {
 	$help_menu[] = array("Paid Support", "http://www.pfsense.org/j.php?jumpto=portal");
 	$help_menu[] = array("pfSense Book", "http://www.pfsense.org/j.php?jumpto=book");
 	$help_menu[] = array("Search portal", "http://www.pfsense.org/j.php?jumpto=searchportal");
+	$help_menu[] = array("FreeBSD Handbook", "http://www.pfsense.org/j.php?jumpto=fbsdhandbook");
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")),0);	
 }
 

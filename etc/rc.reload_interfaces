@@ -37,6 +37,7 @@ require_once("openvpn.inc");
 
 reload_interfaces_sync();
 filter_configure_sync();
-ovpn_config_server("pfreload");
+/* XXX: needs fixing */
+//ovpn_config_server("pfreload");
 
 ?>

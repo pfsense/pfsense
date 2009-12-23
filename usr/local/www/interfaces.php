@@ -1497,6 +1497,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 						var defaultgw = $('defaultgw').getValue();
 						var url = "system_gateways_edit.php";
 						var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip) + '&type=' + escape(addrtype);
+						alert(pars);
 						var myAjax = new Ajax.Request(
 							url,
 							{

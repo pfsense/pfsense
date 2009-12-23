@@ -93,7 +93,8 @@ if ($_POST) {
 	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) && (! $_POST['gateway'] == "dynamic")) {
 		$input_errors[] = "A valid gateway IP address must be specified.";
 	}
-	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) {
+
+	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system") && !$_REQUEST['isAjax']) {
 		$parent_ip = get_interface_ip($_POST['interface']);
 		$parent_sn = get_interface_subnet($_POST['interface']);
 		if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {

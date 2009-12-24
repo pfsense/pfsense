@@ -2419,7 +2419,7 @@ function discover_pkg_rules($ruletype) {
 		if(function_exists($pkg_generate_rules)) {
 			update_filter_reload_status("Processing early {$ruletype} rules for package {$pkg_inc}");
 			$rules .= $pkg_generate_rules("$ruletype");
-				file_put_contents("{$g['tmp_path']}/rules.packages", $rules);
+			file_put_contents("{$g['tmp_path']}/rules.packages", $rules);
 			$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.packages");
 			if ($status <> 0) {
 				$errorrules = "There was an error while parsing the package filter rules for {$pkg_inc}.\n";

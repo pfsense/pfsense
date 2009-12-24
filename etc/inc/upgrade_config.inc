@@ -1550,12 +1550,15 @@ function upgrade_053_to_054() {
 				foreach($lbpool['servers'] as $member) {
 					$split = split("\|", $member);
 					$interface = $split[0];
+					$monitor = $split[1];
+					if(is_ipaddr($monitor)) {
+						$config['interfaces'][$interface]['monitorip'] = "$monitor";
+					}
 					/* on static upgraded configuration we automatically prepend GW_ */
 					$static_name = "GW_" . strtoupper($interface);
 					if(is_array($gateways[$static_name])) {
 						$interface = $static_name;
 					}
-					$monitor = $split[1];
 					/* on failover increment tier. Else always assign 1 */
 					if($lbpool['behaviour'] == "failover") {
 						$i++;
@@ -1563,9 +1566,6 @@ function upgrade_053_to_054() {
 						$i = 1;
 					}
 					$gateway_group['item'][] = "$interface|$i";
-					if(is_ipaddr($monitor)) {
-						$config['interfaces'][$interface]['monitorip'] = "$monitor";
-					}
 				}
 				$gateway_group_arr[] = $gateway_group;
 			} else {

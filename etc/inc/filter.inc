@@ -240,6 +240,8 @@ function filter_configure_sync() {
 	if(is_dir("/usr/local/pkg")) {
 		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
 		foreach($files as $pkg_inc) {
+			if($pkg_inc == "ls: No match.") 
+				continue;
 			update_filter_reload_status("Checking for early PF hooks in package {$pkg}");
 			require_once($pkg_inc);
 			$pkg = basename($pkg_inc);
@@ -268,6 +270,8 @@ function filter_configure_sync() {
 	if(is_dir("/usr/local/pkg")) {
 		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
 		foreach($files as $pkg_inc) {
+			if($pkg_inc == "ls: No match.") 
+				continue;
 			update_filter_reload_status("Checking for late PF hooks in package {$pkg}");
 			require_once($pkg_inc);
 			$pkg = basename($pkg_inc);
@@ -1230,6 +1234,8 @@ EOD;
 	if(is_dir("/usr/local/pkg/")) {
 		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
 		foreach($files as $pkg_inc) {
+			if($pkg_inc == "ls: No match.") 
+				continue;
 			update_filter_reload_status("Checking for filter hooks in package {$pkg}");
 			require_once($pkg_inc);
 			$pkg = basename($pkg_inc);
@@ -1701,6 +1707,8 @@ function filter_rules_generate() {
 	if(is_dir("/usr/local/pkg")) {
 		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
 		foreach($files as $pkg_inc) {
+			if($pkg_inc == "ls: No match.") 
+				continue;
 			update_filter_reload_status("Checking for filter hooks in package {$pkg}");
 			require_once($pkg_inc);
 			$pkg = basename($pkg_inc);

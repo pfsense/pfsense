@@ -53,7 +53,6 @@ $pconfig['mode'] = $pptpcfg['mode'];
 $pconfig['wins'] = $pptpcfg['wins'];
 $pconfig['req128'] = isset($pptpcfg['req128']);
 $pconfig['n_pptp_units'] = $pptpcfg['n_pptp_units'];
-$pconfig['pptp_subnet'] = $pptpcfg['pptp_subnet'];
 $pconfig['pptp_dns1'] = $pptpcfg['dns1'];
 $pconfig['pptp_dns2'] = $pptpcfg['dns2'];
 $pconfig['radiusenable'] = isset($pptpcfg['radius']['server']['enable']);
@@ -92,7 +91,7 @@ if ($_POST) {
 		if (($_POST['localip'] && !is_ipaddr($_POST['localip']))) {
 			$input_errors[] = "A valid server address must be specified.";
 		}
-		if (($_POST['pptp_subnet'] && !is_ipaddr($_POST['remoteip']))) {
+		if (!is_ipaddr($_POST['remoteip'])) {
 			$input_errors[] = "A valid remote start address must be specified.";
 		}
 		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver']))) {
@@ -100,7 +99,6 @@ if ($_POST) {
 		}
 		
 		if (!$input_errors) {	
-			$_POST['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pptp_subnet']);
 			$subnet_start = ip2long($_POST['remoteip']);
 			$subnet_end = ip2long($_POST['remoteip']) + $_POST['n_pptp_units'] - 1;
 						
@@ -108,6 +106,7 @@ if ($_POST) {
 			    (ip2long($_POST['localip']) <= $subnet_end)) {
 				$input_errors[] = "The specified server address lies in the remote subnet.";	
 			}
+			// TODO: Should this check be for any local IP address?
 			if ($_POST['localip'] == $config['interfaces']['lan']['ipaddr']) {
 				$input_errors[] = "The specified server address is equal to the LAN interface address.";	
 			}
@@ -132,7 +131,6 @@ if ($_POST) {
 		$pptpcfg['mode'] = $_POST['mode'];
 		$pptpcfg['wins'] = $_POST['wins'];
 		$pptpcfg['n_pptp_units'] = $_POST['n_pptp_units'];	
-		$pptpcfg['pptp_subnet'] = $_POST['pptp_subnet'];
 		$pptpcfg['radius']['server']['ip'] = $_POST['radiusserver'];
 		$pptpcfg['radius']['server']['port'] = $_POST['radiusserverport'];
 		$pptpcfg['radius']['server']['acctport'] = $_POST['radiusserveracctport'];
@@ -216,7 +214,6 @@ function enable_change(enable_over) {
 		document.iform.radiusissueips.disabled = 0;
 		document.iform.wins.disabled = 0;
 		document.iform.n_pptp_units.disabled = 0;
-		document.iform.pptp_subnet.disabled = 0;	
 		document.iform.pptp_dns1.disabled = 0;
 		document.iform.pptp_dns2.disabled = 0;	
 		
@@ -259,7 +256,6 @@ function enable_change(enable_over) {
 		document.iform.localip.disabled = 1;
 		document.iform.req128.disabled = 1;
 		document.iform.n_pptp_units.disabled = 1;
-		document.iform.pptp_subnet.disabled = 1;	
 		document.iform.pptp_dns1.disabled = 1;
 		document.iform.pptp_dns2.disabled = 1;
 		document.iform.radiusenable.disabled = 1;
@@ -359,20 +355,6 @@ function enable_change(enable_over) {
                     <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>">
                     <br>
                     Specify the starting address for the client IP subnet.<br>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Max. concurrent 
-                    connections</td>
-                  <td width="78%" class="vtable"> 
-                    <?=$_POST['n_pptp_units'];?>
-                  </td>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Server address</td>
-                  <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="localip" type="text" class="formfld" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>"> 
-                    <br>
-                    Enter the IP address the PPTP server should use on its side 
-                    for all clients.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">PPTP DNS Servers</td>

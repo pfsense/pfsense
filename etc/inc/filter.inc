@@ -1207,9 +1207,24 @@ EOD;
 	if (file_exists("{$g['tmp_path']}/rules.rdr.packages"))
 		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdr.packages");
 
+	if(is_dir("/usr/local/pkg/")) {
+		$files = split(" ", trim(`/usr/local/pkg/*.inc`));
+		foreach($files as $pkg_inc) {
+			update_filter_reload_status("Checking for filter hooks in package {$pkg}");
+			require_once($pkg_inc);
+			$pkg = basename($pkg_inc);
+			$pkg_generate_rules = "${pkg}_generate_rules";
+			if (function_exists($pkg_generate_rules)) {
+				update_filter_reload_status("Running nat hooks in package {$pkg}");
+				$natrules .= $pkg_generate_rules('nat');
+			}
+		}
+	}
+
 	$natrules .= filter_process_carp_nat_rules();
 	$natrules .= "# UPnPd rdr anchor\n";
 	$natrules .= "rdr-anchor \"miniupnpd\"\n";
+
 	return $natrules;
 }
 
@@ -1666,6 +1681,20 @@ function filter_rules_generate()
 
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
+
+	if(is_dir("/usr/local/pkg")) {
+		$files = split(" ", trim(`/usr/local/pkg/*.inc`));
+		foreach($files as $pkg_inc) {
+			update_filter_reload_status("Checking for filter hooks in package {$pkg}");
+			require_once($pkg_inc);
+			$pkg = basename($pkg_inc);
+			$pkg_generate_rules = "{$pkg}_generate_rules";
+			if (function_exists($pkg_generate_rules)) {
+				update_filter_reload_status("Processing filter rules for package {$pkg}");
+				$ipfrules .= $pkg_generate_rules ('filter');
+			}
+		}
+	}
 
 	/* if captive portal is enabled, ensure that access to this port
 	 * is allowed on a locked down interface

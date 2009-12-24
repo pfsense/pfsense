@@ -49,6 +49,11 @@ foreach($a_gateways as $gw) {
 }
 $a_gateways = $a_gateways_arr;
 
+if (!is_array($config['gateways']['gateway_item']))
+        $config['gateways']['gateway_item'] = array();
+        
+$a_gateway_item = &$config['gateways']['gateway_item'];
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -62,7 +67,11 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = $a_gateways[$id]['defaultgw'];
-	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
+	if($a_gateway_item[$id]['monitor'] <> "") {
+		$pconfig['monitor'] = $a_gateway_item[$id]['monitor'];
+	} else {
+		$pconfig['monitor'] == "";
+	}
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 }
@@ -151,8 +160,11 @@ if ($_POST) {
 			$gateway['name'] = $_POST['name'];
 			$gateway['gateway'] = $_POST['gateway'];
 			$gateway['descr'] = $_POST['descr'];
-			$gateway['monitor'] = $_POST['monitor'];
-			
+			if(is_ipaddr($_POST['monitor'])) {
+				$gateway['monitor'] = $_POST['monitor'];
+			} else {
+				unset($gateway['monitor']);
+			}			
 			if ($_POST['defaultgw'] == "yes" or $_POST['defaultgw'] == "on") {
 				$i = 0;
 				foreach($a_gateways as $gw) {
@@ -239,7 +251,14 @@ include("head.inc");
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Gateway</td>
                   <td width="78%" class="vtable"> 
-                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+			<?php
+				if(is_numeric($gateway['attribute']) && ($a_gateway_item[$gateway['attribute']]['gateway'] == dynamic)) {
+					$gateway = "dynamic";
+				} else {
+					$gateway = htmlspecialchars($pconfig['gateway']);
+				}
+			?>
+                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php echo $gateway; ?>">
                     <br> <span class="vexpl">Gateway IP address</span></td>
                 </tr>
 		<tr>
@@ -253,7 +272,14 @@ include("head.inc");
 		<tr>
 		  <td width="22%" valign="top" class="vncell">Monitor IP</td>
 		  <td width="78%" class="vtable">
-			<input name="monitor" type="text" id="monitor" value="<?php echo ($pconfig['monitor']) ; ?>" />
+			<?php
+				if(is_numeric($pconfig['attribute']) && ($pconfig['gateway'] == dynamic) && ($pconfig['monitor'] == "")) {
+					$monitor = "";
+				} else {
+					$monitor = htmlspecialchars($pconfig['monitor']);
+				}
+			?>
+			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" />
 			<strong>Alternative monitor IP</strong> <br />
 			Enter an alternative address here to be used to monitor the link. This is used for the
 			quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond

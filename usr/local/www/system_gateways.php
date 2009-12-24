@@ -50,6 +50,13 @@ foreach($a_gateways as $gw) {
 	$a_gateways_arr[] = $gw;
 }
 $a_gateways = $a_gateways_arr;
+
+
+if (!is_array($config['gateways']['gateway_item']))
+        $config['gateways']['gateway_item'] = array();
+
+$a_gateway_item = &$config['gateways']['gateway_item'];
+
 $changedesc = "Gateways: ";
 
 if ($_POST) {
@@ -153,12 +160,22 @@ effect.");?><br>
 					if(isset($gateway['interfacegateway'])) {
 						echo strtoupper($gateway['interface']) . " ";
 					} else {
-						echo $gateway['gateway'] . " ";
+						if(is_numeric($gateway['attribute']) && ($a_gateway_item[$gateway['attribute']]['gateway'] == dynamic)) {
+							echo "dynamic";
+						} else {
+							echo $gateway['gateway'] . " ";
+						}
 					}
 				  ?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
-                    <?=htmlspecialchars($gateway['monitor']);?>&nbsp;
+                    <?php
+			if(is_numeric($gateway['attribute']) && ($a_gateway_item[$gateway['attribute']]['gateway'] == dynamic) && ($a_gateway_item[$gateway['attribute']]['gateway'] == "")) {
+				echo "dynamic";
+			} else {
+				echo htmlspecialchars($gateway['monitor']) . " ";
+			}
+		    ?>
                   </td>
 		<?php if($gateway['attribute'] == "system") : ?>
                   <td class="listbgns" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">

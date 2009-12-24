@@ -237,22 +237,8 @@ function filter_configure_sync() {
 	  $rules .= "set limit states {$max_states}\n";
 	}
 
-	if(is_dir("/usr/local/pkg")) {
-		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
-		foreach($files as $pkg_inc) {
-			if($pkg_inc == "ls: No match.") 
-				continue;
-			update_filter_reload_status("Checking for early PF hooks in package {$pkg}");
-			require_once($pkg_inc);
-			$pkg = basename($pkg_inc);
-			$pkg_generate_rules = "{$pkg}_generate_pf_early";
-			if(function_exists($pkg_generate_rules)) {
-				update_filter_reload_status("Processing early PF rules for package {$pkg}");
-				$rules .= $pkg_generate_rules('pfearly');
-			}
-		}
-	}
-
+	$rules .= discover_pkg_rules("pfearly");
+	
 	// Configure flowtable support if enabled.
 	flowtable_configure();
 		
@@ -267,21 +253,7 @@ function filter_configure_sync() {
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";
 	
-	if(is_dir("/usr/local/pkg")) {
-		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
-		foreach($files as $pkg_inc) {
-			if($pkg_inc == "ls: No match.") 
-				continue;
-			update_filter_reload_status("Checking for late PF hooks in package {$pkg}");
-			require_once($pkg_inc);
-			$pkg = basename($pkg_inc);
-			$pkg_generate_rules = "{$pkg}_generate_pf_late";
-			if(function_exists($pkg_generate_rules)) {
-				update_filter_reload_status("Processing late PF rules for package {$pkg}");
-				$rules .= $pkg_generate_rules('pflate');
-			}
-		}
-	}
+	$rules .= discover_pkg_rules("pflate");
 
 	if(!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");
@@ -1231,21 +1203,7 @@ EOD;
 	if(file_exists("{$g['tmp_path']}/rules.rdr.packages"))
 		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdr.packages");
 
-	if(is_dir("/usr/local/pkg/")) {
-		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
-		foreach($files as $pkg_inc) {
-			if($pkg_inc == "ls: No match.") 
-				continue;
-			update_filter_reload_status("Checking for filter hooks in package {$pkg}");
-			require_once($pkg_inc);
-			$pkg = basename($pkg_inc);
-			$pkg_generate_rules = "${pkg}_generate_rules";
-			if(function_exists($pkg_generate_rules)) {
-				update_filter_reload_status("Running nat hooks in package {$pkg}");
-				$natrules .= $pkg_generate_rules('nat');
-			}
-		}
-	}
+	$natrules .= discover_pkg_rules("nat");
 
 	$natrules .= filter_process_carp_nat_rules();
 	$natrules .= "# UPnPd rdr anchor\n";
@@ -1704,21 +1662,7 @@ function filter_rules_generate() {
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
 
-	if(is_dir("/usr/local/pkg")) {
-		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
-		foreach($files as $pkg_inc) {
-			if($pkg_inc == "ls: No match.") 
-				continue;
-			update_filter_reload_status("Checking for filter hooks in package {$pkg}");
-			require_once($pkg_inc);
-			$pkg = basename($pkg_inc);
-			$pkg_generate_rules = "{$pkg}_generate_rules";
-			if(function_exists($pkg_generate_rules)) {
-				update_filter_reload_status("Processing filter rules for package {$pkg}");
-				$ipfrules .= $pkg_generate_rules ('filter');
-			}
-		}
-	}
+	$ipfrules .= discover_pkg_rules("filter");
 
 	/* if captive portal is enabled, ensure that access to this port
 	 * is allowed on a locked down interface
@@ -2458,6 +2402,35 @@ EOD;
 		}
 	}
 	return($ipfrules);
+}
+
+function discover_pkg_rules($ruletype) {
+	global $config, $g;
+	if(is_dir("/usr/local/pkg")) {
+		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
+		foreach($files as $pkg_inc) {
+			if($pkg_inc == "ls: No match.") 
+				continue;
+			update_filter_reload_status("Checking for {$ruletype} PF hooks in package {$pkg_inc}");
+			require_once($pkg_inc);
+			$pkg = basename($pkg_inc);
+			$pkg_generate_rules = "{$pkg}_generate_rules";
+			if(function_exists($pkg_generate_rules)) {
+				update_filter_reload_status("Processing early {$ruletype} rules for package {$pkg_inc}");
+				$rules .= $pkg_generate_rules("$ruletype");
+ 				file_put_contents("{$g['tmp_path']}/rules.packages", $rules);
+				$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.packages");
+				if ($status <> 0) {
+					$errorrules = "There was an error while parsing the package filter rules for {$pkg_inc}.\n";
+					log_error($errorrules);
+					file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg_inc}", "#{$errorrules}\n");
+					return "";
+				} else {
+					return $rules;
+				}
+			}
+		}
+	}
 }
 
 ?>

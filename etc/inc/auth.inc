@@ -234,7 +234,7 @@ function local_user_set(& $user) {
 	$home_base = "/home/";	
 	$user_uid = $user['uid'];
 	$user_name = $user['name'];
-	$user_home = "{$home_base}/$user_name";
+	$user_home = "{$home_base}{$user_name}";
 	$user_shell = "/etc/rc.initial";
 	$user_group = "nobody";
 

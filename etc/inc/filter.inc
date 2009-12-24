@@ -247,7 +247,7 @@ function filter_configure_sync() {
 			$pkg_generate_rules = "{$pkg}_generate_pf_early";
 			if (function_exists($pkg_generate_rules)) {
 				update_filter_reload_status("Processing early PF rules for package {$pkg}");
-				$rules .= $pkg_generate_rules ('pfearly');
+				$rules .= $pkg_generate_rules('pfearly');
 			}
 		}
 	}
@@ -265,6 +265,20 @@ function filter_configure_sync() {
 	$rules .= "{$altq_queues}\n";
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";
+	
+	if(is_dir("/usr/local/pkg")) {
+		$files = split(" ", trim(`/usr/local/pkg/*.inc`));
+		foreach($files as $pkg_inc) {
+			update_filter_reload_status("Checking for late PF hooks in package {$pkg}");
+			require_once($pkg_inc);
+			$pkg = basename($pkg_inc);
+			$pkg_generate_rules = "{$pkg}_generate_pf_late";
+			if (function_exists($pkg_generate_rules)) {
+				update_filter_reload_status("Processing late PF rules for package {$pkg}");
+				$rules .= $pkg_generate_rules('pflate');
+			}
+		}
+	}
 
 	if (!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");

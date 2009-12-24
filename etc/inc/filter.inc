@@ -358,6 +358,15 @@ function filter_configure_sync() {
 	update_filter_reload_status("Processing down interface states");
 	delete_states_for_down_gateways();
 
+	update_filter_reload_status("Running plugins");
+
+	if(is_dir("/usr/local/pkg/pf/")) {
+		/* process packager manager custom rules */
+		update_filter_reload_status("Running plugins (pf)");
+		run_plugins("/usr/local/pkg/pf/");
+		update_filter_reload_status("Plugins completed.");
+	}
+
 	update_filter_reload_status("Done");
 	if ($g['booting'] == true)
 		echo "done.\n";

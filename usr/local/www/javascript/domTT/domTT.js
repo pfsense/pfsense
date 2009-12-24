@@ -1,4 +1,4 @@
-/** $Id$ */
+/** $Id: domTT.js 2324 2006-06-12 07:06:39Z dallen $ */
 // {{{ license
 
 /*
@@ -95,10 +95,10 @@ if (typeof(domTT_dragEnabled) == 'undefined')
 // }}}
 // {{{ globals (DO NOT EDIT)
 
-var domTT_predefined = new TTHash();
+var domTT_predefined = new Hash();
 // tooltips are keyed on both the tip id and the owner id,
 // since events can originate on either object
-var domTT_tooltips = new TTHash();
+var domTT_tooltips = new Hash();
 var domTT_lastOpened = 0;
 var domTT_documentLoaded = false;
 var domTT_mousePosition = null;
@@ -211,7 +211,7 @@ function domTT_activate(in_this, in_event)
 	}
 
 	// setup the default options hash
-	var options = new TTHash(
+	var options = new Hash(
 		'caption',		'',
 		'content',		'',
 		'clearMouse',	true,
@@ -946,7 +946,7 @@ function domTT_mousemove(in_owner, in_event)
 
 function domTT_addPredefined(in_id)
 {
-	var options = new TTHash();
+	var options = new Hash();
 	for (var i = 1; i < arguments.length; i += 2)
 	{
 		options.set(arguments[i], arguments[i + 1]);

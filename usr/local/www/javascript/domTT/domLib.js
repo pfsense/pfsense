@@ -1,4 +1,4 @@
-/** $Id$ */
+/** $Id: domLib.js 2321 2006-06-12 06:45:41Z dallen $ */
 // {{{ license
 
 /*
@@ -50,7 +50,7 @@ var domLib_isSafari = domLib_userAgent.indexOf('safari') != -1;
 var domLib_isKonq = domLib_userAgent.indexOf('konqueror') != -1;
 // Both konqueror and safari use the khtml rendering engine
 var domLib_isKHTML = (domLib_isKonq || domLib_isSafari || domLib_userAgent.indexOf('khtml') != -1);
-var domLib_isIE = (!domLib_isKHTML && !domLib_isOpera && (domLib_userAgent.indexOf('msie 5') != -1 || domLib_userAgent.indexOf('msie 6') != -1 || domLib_userAgent.indexOf('msie 7') != -1));
+var domLib_isIE = (!domLib_isKHTML && !domLib_isOpera && (domLib_userAgent.indexOf('msie 5') != -1 || domLib_userAgent.indexOf('msie 6') != -1 || domLib_userAgent.indexOf('msie 7') != -1 || domLib_userAgent.indexOf('msie 8') != -1));
 var domLib_isIE5up = domLib_isIE;
 var domLib_isIE50 = (domLib_isIE && domLib_userAgent.indexOf('msie 5.0') != -1);
 var domLib_isIE55 = (domLib_isIE && domLib_userAgent.indexOf('msie 5.5') != -1);
@@ -87,7 +87,7 @@ var domLib_collisionElements;
 var domLib_collisionsCached = false;
 
 var domLib_timeoutStateId = 0;
-var domLib_timeoutStates = new TTHash();
+var domLib_timeoutStates = new Hash();
 
 // }}}
 // {{{ DOM enhancements
@@ -128,9 +128,9 @@ function domLib_clone(obj)
 }
 
 // }}}
-// {{{ class TTHash()
+// {{{ class Hash()
 
-function TTHash()
+function Hash()
 {
 	this.length = 0;
 	this.numericLength = 0; 
@@ -150,7 +150,7 @@ function TTHash()
 }
 
 // using prototype as opposed to inner functions saves on memory 
-TTHash.prototype.get = function(in_key)
+Hash.prototype.get = function(in_key)
 {
 	if (typeof(this.elementData[in_key]) != 'undefined') {
 		return this.elementData[in_key];
@@ -159,7 +159,7 @@ TTHash.prototype.get = function(in_key)
 	return null;
 }
 
-TTHash.prototype.set = function(in_key, in_value)
+Hash.prototype.set = function(in_key, in_value)
 {
 	if (typeof(in_value) != 'undefined')
 	{
@@ -178,7 +178,7 @@ TTHash.prototype.set = function(in_key, in_value)
 	return false;
 }
 
-TTHash.prototype.remove = function(in_key)
+Hash.prototype.remove = function(in_key)
 {
 	var tmp_value;
 	if (typeof(this.elementData[in_key]) != 'undefined')
@@ -196,17 +196,17 @@ TTHash.prototype.remove = function(in_key)
 	return tmp_value;
 }
 
-TTHash.prototype.size = function()
+Hash.prototype.size = function()
 {
 	return this.length;
 }
 
-TTHash.prototype.has = function(in_key)
+Hash.prototype.has = function(in_key)
 {
 	return typeof(this.elementData[in_key]) != 'undefined';
 }
 
-TTHash.prototype.find = function(in_obj)
+Hash.prototype.find = function(in_obj)
 {
 	for (var tmp_key in this.elementData) 
 	{
@@ -219,7 +219,7 @@ TTHash.prototype.find = function(in_obj)
 	return null;
 }
 
-TTHash.prototype.merge = function(in_hash)
+Hash.prototype.merge = function(in_hash)
 {
 	for (var tmp_key in in_hash.elementData) 
 	{
@@ -236,7 +236,7 @@ TTHash.prototype.merge = function(in_hash)
 	}
 }
 
-TTHash.prototype.compare = function(in_hash)
+Hash.prototype.compare = function(in_hash)
 {
 	if (this.length != in_hash.length) 
 	{
@@ -342,7 +342,7 @@ function domLib_detectCollisions(in_object, in_recover, in_useCache)
 
 			if (!thisElement.hideList)
 			{
-				thisElement.hideList = new TTHash();
+				thisElement.hideList = new Hash();
 			}
 
 			thisElement.hideList.remove(in_object.id);
@@ -387,7 +387,7 @@ function domLib_detectCollisions(in_object, in_recover, in_useCache)
 
 		if (!thisElement.hideList)
 		{
-			thisElement.hideList = new TTHash();
+			thisElement.hideList = new Hash();
 		}
 
 		var selectOffsets = domLib_getOffsets(thisElement); 
@@ -462,7 +462,7 @@ function domLib_getOffsets(in_object, in_preserveScroll)
 		offsetTop += 10;
 	}
 
-	return new TTHash(
+	return new Hash(
 		'left',		offsetLeft,
 		'top',		offsetTop,
 		'right',	offsetLeft + originalWidth,
@@ -504,7 +504,7 @@ function domLib_setTimeout(in_function, in_timeout, in_args)
 	else
 	{
 		var id = domLib_timeoutStateId++;
-		var data = new TTHash();
+		var data = new Hash();
 		data.set('function', in_function);
 		data.set('args', args);
 		domLib_timeoutStates.set(id, data);
@@ -540,7 +540,7 @@ function domLib_clearTimeout(in_id)
 
 function domLib_getEventPosition(in_eventObj)
 {
-	var eventPosition = new TTHash('x', 0, 'y', 0, 'scrollX', 0, 'scrollY', 0);
+	var eventPosition = new Hash('x', 0, 'y', 0, 'scrollX', 0, 'scrollY', 0);
 
 	// IE varies depending on standard compliance mode
 	if (domLib_isIE)

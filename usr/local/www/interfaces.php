@@ -50,10 +50,11 @@ require("filter.inc");
 require("shaper.inc");
 require("rrd.inc");
 
-if ($_REQUEST['if'])
+if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
-else
+} else {
 	$if = "wan";
+}
 
 define("CRON_PPPOE_CMD_FILE", "/conf/pppoe{$if}restart");
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
@@ -62,25 +63,26 @@ define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 
 function getMPDCRONSettings() {
-  global $config;
-  if (is_array($config['cron']['item'])) {
-    for ($i = 0; $i < count($config['cron']['item']); $i++) {
-      $item = $config['cron']['item'][$i];
-      if (strpos($item['command'], CRON_PPPOE_CMD_FILE) !== false) {
-        return array("ID" => $i, "ITEM" => $item);
-      }
-    }
-  }
-  return NULL;
+	global $config;
+	if (is_array($config['cron']['item'])) {
+		for ($i = 0; $i < count($config['cron']['item']); $i++) {
+			$item = $config['cron']['item'][$i];
+			if (strpos($item['command'], CRON_PPPOE_CMD_FILE) !== false) {
+				return array("ID" => $i, "ITEM" => $item);
+			}
+		}
+	}
+	return NULL;
 }
 
 function getMPDResetTimeFromConfig() {
 	$itemhash = getMPDCRONSettings();
 	$cronitem = $itemhash['ITEM'];
-	if (isset($cronitem)) 
+	if (isset($cronitem)) {
 		return "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
-	else 
+	} else {
 		return NULL;
+	}
 }
 
 function remove_bad_chars($string) {
@@ -149,10 +151,11 @@ $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
 
 // Populate page descr if it does not exist.
-if($if == "wan" && !$wancfg['descr'])
+if($if == "wan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "WAN";
-else if ($if == "lan" && !$wancfg['descr'])
+} else if ($if == "lan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "LAN";
+}
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
 
 if ($if == "wan" || $if == "lan")
@@ -160,27 +163,40 @@ if ($if == "wan" || $if == "lan")
 else
 	$pconfig['enable'] = isset($wancfg['enable']);
 
-if (is_array($config['aliases']['alias']))
-foreach($config['aliases']['alias'] as $alias)
-	if($alias['name'] == $wancfg['descr'])
-		$input_errors[] = gettext("Sorry, an alias with the name {$wancfg['descr']} already exists.");
-if ($wancfg['ipaddr'] == "dhcp") {
-	$pconfig['type'] = "dhcp";
-} else if ($wancfg['ipaddr'] == "carpdev-dhcp") {
-	$pconfig['type'] = "carpdev-dhcp";
-	$pconfig['ipaddr'] = "";	    
-} else if ($wancfg['ipaddr'] == "pppoe") {
-	$pconfig['type'] = "pppoe";
-} else if ($wancfg['ipaddr'] == "pptp") {
-	$pconfig['type'] = "pptp";
-} else if ($wancfg['ipaddr'] != "") {
-	$pconfig['type'] = "static";
-	$pconfig['ipaddr'] = $wancfg['ipaddr'];
-	$pconfig['subnet'] = $wancfg['subnet'];
-	$pconfig['gateway'] = $wancfg['gateway'];
-	$pconfig['pointtopoint'] = $wancfg['pointtopoint'];
-} else
-	$pconfig['type'] = "none";
+if (is_array($config['aliases']['alias'])) {
+	foreach($config['aliases']['alias'] as $alias) {
+		if($alias['name'] == $wancfg['descr']) {
+			$input_errors[] = gettext("Sorry, an alias with the name {$wancfg['descr']} already exists.");
+		}
+	}
+}
+
+switch($wancfg['ipaddr']) {
+	case "dhcp":
+		$pconfig['type'] = "dhcp";
+		break;
+	case "carpdev-dhcp":
+		$pconfig['type'] = "carpdev-dhcp";
+		$pconfig['ipaddr'] = "";
+		break;
+	case "pppoe":
+		$pconfig['type'] = "pppoe";
+		break;
+	case "pptp":
+		$pconfig['type'] = "pptp";
+		break;
+	default:
+		if(is_ipaddr($wancfg['ipaddr'])) {
+			$pconfig['type'] = "static";
+			$pconfig['ipaddr'] = $wancfg['ipaddr'];
+			$pconfig['subnet'] = $wancfg['subnet'];
+			$pconfig['gateway'] = $wancfg['gateway'];
+			$pconfig['pointtopoint'] = $wancfg['pointtopoint'];
+		} else {
+			$pconfig['type'] = "none";
+		}
+		break;
+}
 
 // Handle PPP type interfaces
 if($wancfg['serialport']) 
@@ -307,29 +323,34 @@ if ($_POST) {
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && $_POST['type'] != "static")
 		$input_errors[] = "Dhcpd service is active on this interface and it can be used only with a static ip configuration. Please disable the service first and than change the interface configuration.";
 
-	if ($_POST['type'] == "static") {
-		$reqdfields = explode(" ", "ipaddr subnet gateway");
-		$reqdfieldsn = explode(",", "IP address,Subnet bit count,Gateway");
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	} else if ($_POST['type'] == "PPPoE") {
-		if ($_POST['pppoe_dialondemand']) {
-			$reqdfields = explode(" ", "pppoe_username pppoe_password pppoe_dialondemand pppoe_idletimeout");
-			$reqdfieldsn = explode(",", "PPPoE username,PPPoE password,Dial on demand,Idle timeout value");
-		} else {
-			$reqdfields = explode(" ", "pppoe_username pppoe_password");
-			$reqdfieldsn = explode(",", "PPPoE username,PPPoE password");
-		}
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	} else if ($_POST['type'] == "PPTP") {
-		if ($_POST['pptp_dialondemand']) {
-			$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote pptp_dialondemand pptp_idletimeout");
-			$reqdfieldsn = explode(",", "PPTP username,PPTP password,PPTP local IP address,PPTP subnet,PPTP remote IP address,Dial on demand,Idle timeout value");
-		} else {
-			$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote");
-			$reqdfieldsn = explode(",", "PPTP username,PPTP password,PPTP local IP address,PPTP subnet,PPTP remote IP address");
-		}
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	switch($_POST['type']) {
+		case "static":
+			$reqdfields = explode(" ", "ipaddr subnet gateway");
+			$reqdfieldsn = explode(",", "IP address,Subnet bit count,Gateway");
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			break;
+		case "PPPoE":
+			if ($_POST['pppoe_dialondemand']) {
+				$reqdfields = explode(" ", "pppoe_username pppoe_password pppoe_dialondemand pppoe_idletimeout");
+				$reqdfieldsn = explode(",", "PPPoE username,PPPoE password,Dial on demand,Idle timeout value");
+			} else {
+				$reqdfields = explode(" ", "pppoe_username pppoe_password");
+				$reqdfieldsn = explode(",", "PPPoE username,PPPoE password");
+			}
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			break;
+		case "PPTP":
+			if ($_POST['pptp_dialondemand']) {
+				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote pptp_dialondemand pptp_idletimeout");
+				$reqdfieldsn = explode(",", "PPTP username,PPTP password,PPTP local IP address,PPTP subnet,PPTP remote IP address,Dial on demand,Idle timeout value");
+			} else {
+				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote");
+				$reqdfieldsn = explode(",", "PPTP username,PPTP password,PPTP local IP address,PPTP subnet,PPTP remote IP address");
+			}
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			break;
 	}
+
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) 
@@ -342,11 +363,14 @@ if ($_POST) {
 		$input_errors[] = "A valid alias subnet bit count must be specified.";
 	if ($_POST['gateway'] != "none") {
 		$match = false;
-		foreach($a_gateways as $gateway) 
-			if(in_array($_POST['gateway'], $gateway)) 
+		foreach($a_gateways as $gateway) {
+			if(in_array($_POST['gateway'], $gateway)) {
 				$match = true;
-		if(!$match)
+			}
+		}
+		if(!$match) {
 			$input_errors[] = "A valid gateway must be specified.";
+		}
 	}
 	if (($_POST['pointtopoint'] && !is_ipaddr($_POST['pointtopoint']))) 
 		$input_errors[] = "A valid point-to-point IP address must be specified.";
@@ -435,43 +459,89 @@ if ($_POST) {
 		unset($wancfg['remote']);
 
 		$wancfg['descr'] = remove_bad_chars($_POST['descr']);
-		if ($if == "wan" || $if == "lan")
+		if ($if == "wan" || $if == "lan") {
 			$wancfg['enable'] = true;
-		else
+		} else {
 			$wancfg['enable'] =  $_POST['enable']  == "yes" ? true : false;
-		if ($_POST['type'] == "static") {
-			$wancfg['ipaddr'] = $_POST['ipaddr'];
-			$wancfg['subnet'] = $_POST['subnet'];
-			if ($_POST['gateway'] != "none")
-				$wancfg['gateway'] = $_POST['gateway'];
-			if (isset($wancfg['ispointtopoint']))
-				$wancfg['pointtopoint'] = $_POST['pointtopoint'];
-		} else if ($_POST['type'] == "dhcp") {
-			$wancfg['ipaddr'] = "dhcp";
-			$wancfg['dhcphostname'] = $_POST['dhcphostname'];
-			$wancfg['alias-address'] = $_POST['alias-address'];
-			$wancfg['alias-subnet'] = $_POST['alias-subnet'];
-		} else if ($_POST['type'] == "carpdev-dhcp") {
-			$wancfg['ipaddr'] = "carpdev-dhcp";
-			$wancfg['dhcphostname'] = $_POST['dhcphostname'];
-			$wancfg['alias-address'] = $_POST['alias-address'];
-			$wancfg['alias-subnet'] = $_POST['alias-subnet'];			
-		} else if ($_POST['type'] == "pppoe") {
-			$wancfg['ipaddr'] = "pppoe";
-			$wancfg['pppoe_username'] = $_POST['pppoe_username'];
-			$wancfg['pppoe_password'] = $_POST['pppoe_password'];
-			$wancfg['provider'] = $_POST['provider'];
-			$wancfg['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
-			$wancfg['timeout'] = $_POST['pppoe_idletimeout'];
-		} else if ($_POST['type'] == "pptp") {
-			$wancfg['ipaddr'] = "pptp";
-			$wancfg['pptp_username'] = $_POST['pptp_username'];
-			$wancfg['pptp_password'] = $_POST['pptp_password'];
-			$wancfg['local'] = $_POST['pptp_local'];
-			$wancfg['subnet'] = $_POST['pptp_subnet'];
-			$wancfg['remote'] = $_POST['pptp_remote'];
-			$wancfg['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
-			$wancfg['timeout'] = $_POST['pptp_idletimeout'];
+		}
+
+		/* for dynamic interfaces we tack a gateway item onto the array to prevent system
+		 * log messages from appearing. They can also manually add these items */
+		/* 1st added gateway gets a default bit */
+		$gateway_item = array();
+		if(empty($a_gateways)) {
+			$gateway_item['defaultgw'] = "true";
+		} else {
+			/* check for duplicates */
+			$skip = false;
+			foreach($a_gateways as $item) {
+				if(($item['interface'] == "$if") && ($item['gateway'] == "dynamic")) {
+					$skip = true;
+				}
+			}
+			if($skip == false) {
+				$gateway_item['gateway'] = "dynamic";
+				$gateway_item['descr'] = "Interface {$if} dynamic gateway";
+				$gateway_item['name'] = "GW_" . strtoupper($if);
+				$gateway_item['interface'] = "{$if}";
+			} else {
+				unset($gateway_item);
+			}
+		}
+
+		switch($_POST['type']) {
+			case "static":
+				$wancfg['ipaddr'] = $_POST['ipaddr'];
+				$wancfg['subnet'] = $_POST['subnet'];
+				if ($_POST['gateway'] != "none") {
+					$wancfg['gateway'] = $_POST['gateway'];
+				}
+				if (isset($wancfg['ispointtopoint'])) {
+					$wancfg['pointtopoint'] = $_POST['pointtopoint'];
+				}
+				break;
+			case "dhcp":
+				$wancfg['ipaddr'] = "dhcp";
+				$wancfg['dhcphostname'] = $_POST['dhcphostname'];
+				$wancfg['alias-address'] = $_POST['alias-address'];
+				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
+				if($gateway_item) {
+					$a_gateways[] = $gateway_item;
+				}
+				break;
+			case "carpdev-dhcp":
+				$wancfg['ipaddr'] = "carpdev-dhcp";
+				$wancfg['dhcphostname'] = $_POST['dhcphostname'];
+				$wancfg['alias-address'] = $_POST['alias-address'];
+				$wancfg['alias-subnet'] = $_POST['alias-subnet'];
+				if($gateway_item) {
+					$a_gateways[] = $gateway_item;
+				}
+				break;
+			case "pppoe":
+				$wancfg['ipaddr'] = "pppoe";
+				$wancfg['pppoe_username'] = $_POST['pppoe_username'];
+				$wancfg['pppoe_password'] = $_POST['pppoe_password'];
+				$wancfg['provider'] = $_POST['provider'];
+				$wancfg['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
+				$wancfg['timeout'] = $_POST['pppoe_idletimeout'];
+				if($gateway_item) {
+					$a_gateways[] = $gateway_item;
+				}
+				break;
+			case "pptp":
+				$wancfg['ipaddr'] = "pptp";
+				$wancfg['pptp_username'] = $_POST['pptp_username'];
+				$wancfg['pptp_password'] = $_POST['pptp_password'];
+				$wancfg['local'] = $_POST['pptp_local'];
+				$wancfg['subnet'] = $_POST['pptp_subnet'];
+				$wancfg['remote'] = $_POST['pptp_remote'];
+				$wancfg['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
+				$wancfg['timeout'] = $_POST['pptp_idletimeout'];
+				if($gateway_item) {
+					$a_gateways[] = $gateway_item;
+				}
+				break;
 		}
 		handle_pppoe_reset();
 		/* reset cron items if necessary */
@@ -482,21 +552,25 @@ if ($_POST) {
 			if (isset($item))
 				unset($config['cron']['item'][$itemhash['ID']]); 
 		}
-		if($_POST['blockpriv'] == "yes")
+		if($_POST['blockpriv'] == "yes") {
 			$wancfg['blockpriv'] = true;
-		else
+		} else {
 			unset($wancfg['blockpriv']);
-		if($_POST['blockbogons'] == "yes")
+		}
+		if($_POST['blockbogons'] == "yes") {
 			$wancfg['blockbogons'] = true;
-		else
+		} else {
 			unset($wancfg['blockbogons']);
+		}
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
-		if (empty($_POST['mtu']))
+		if (empty($_POST['mtu'])) {
 			unset($wancfg['mtu']);
-		else
+		} else {
 			$wancfg['mtu'] = $_POST['mtu'];
-		if (isset($wancfg['wireless'])) 
+		}
+		if (isset($wancfg['wireless'])) {
 			handle_wireless_post();
+		}
 		write_config();
 		mark_subsystem_dirty('interfaces');
 		/* regenerate cron settings/crontab file */

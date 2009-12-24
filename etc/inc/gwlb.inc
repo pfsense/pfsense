@@ -163,11 +163,11 @@ EOD;
 				 * route as this will break the routing table */
 				continue;
 			} else {
-				mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']));
-				if(! stristr("127.0.0", $gateway['gateway'])) {
+				if(($gateway['gateway'] != "dynamic") && (is_ipaddr($gateway['gateway']))) {
+					mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']));
 					mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
 						" " . escapeshellarg($gateway['gateway']));
-				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
+					log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
 				}
 			}
 		}

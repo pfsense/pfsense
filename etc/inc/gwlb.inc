@@ -37,6 +37,10 @@ function setup_gateways_monitor() {
 	global $config;
 	global $g;
 	$gateways_arr = return_gateways_array();
+	if (!is_array($config['gateways']['gateway_item']))
+		$config['gateways']['gateway_item'] = array();
+
+	$a_gateway_item = &$config['gateways']['gateway_item'];
 
 	if (is_array($config['gateways']['settings'])) {
 		$a_settings = &$config['gateways']['settings'];
@@ -146,12 +150,16 @@ EOD;
 		$i = 2;
 		foreach($gateways_arr as $name => $gateway) {
 			/* for dynamic gateways without an IP address we subtitute a local one */
-			if($gateway['gateway'] == "dynamic") {
-				$gateway['monitor'] = "127.0.0.{$i}";
-				$i++;
-			}
-			if($gateway['monitor'] == "") {
-				$gateway['monitor'] = $gateway['gateway'];
+			if((is_numeric($gateway['attribute'])) && ($a_gateway_item[$gateway['attribute']]['monitor'] <> "")) {
+				$gateway['monitor'] = $a_gateway_item[$gateway['attribute']]['monitor'];
+			} else {
+				if(($gateway['gateway'] == "dynamic") && ($gateway['monitor'])) {
+					$gateway['monitor'] = "127.0.0.{$i}";
+					$i++;
+				}
+				if($gateway['monitor'] == "") {
+					$gateway['monitor'] = $gateway['gateway'];
+				}
 			}
 			$apingerconfig .= "target \"{$gateway['monitor']}\" {\n";
 			$apingerconfig .= "	description \"{$gateway['name']}\"\n";

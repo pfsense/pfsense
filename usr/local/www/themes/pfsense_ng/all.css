@@ -1217,7 +1217,7 @@ div#log span.log-protocol {
 	text-indent: 10px;
 }
 
-#login #username, #password {
+#login #username, #password, #password2 {
 	font-size: 1em;
 	width: 60%;
 	padding: 3px;

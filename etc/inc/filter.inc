@@ -239,7 +239,7 @@ function filter_configure_sync() {
 	}
 
 	if(is_dir("/usr/local/pkg")) {
-		$files = split(" ", trim(`/usr/local/pkg/*.inc`));
+		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
 		foreach($files as $pkg_inc) {
 			update_filter_reload_status("Checking for early PF hooks in package {$pkg}");
 			require_once($pkg_inc);
@@ -267,7 +267,7 @@ function filter_configure_sync() {
 	$rules .= "{$pfrules}\n";
 	
 	if(is_dir("/usr/local/pkg")) {
-		$files = split(" ", trim(`/usr/local/pkg/*.inc`));
+		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
 		foreach($files as $pkg_inc) {
 			update_filter_reload_status("Checking for late PF hooks in package {$pkg}");
 			require_once($pkg_inc);
@@ -1236,7 +1236,7 @@ EOD;
 		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdr.packages");
 
 	if(is_dir("/usr/local/pkg/")) {
-		$files = split(" ", trim(`/usr/local/pkg/*.inc`));
+		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
 		foreach($files as $pkg_inc) {
 			update_filter_reload_status("Checking for filter hooks in package {$pkg}");
 			require_once($pkg_inc);
@@ -1711,7 +1711,7 @@ function filter_rules_generate()
 	$pppoecfg = $config['pppoe'];
 
 	if(is_dir("/usr/local/pkg")) {
-		$files = split(" ", trim(`/usr/local/pkg/*.inc`));
+		$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
 		foreach($files as $pkg_inc) {
 			update_filter_reload_status("Checking for filter hooks in package {$pkg}");
 			require_once($pkg_inc);

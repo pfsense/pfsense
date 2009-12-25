@@ -30,7 +30,7 @@ $intip = explode (".", $intip);
 //use class A subnet to make sure we capture all traffic on specified interface
 $intsubnet = $intip[0] . ".0.0.0/8";
 
-exec("rate -i {$real_interface} -nlq 1 -A -c {$intsubnet}", $listedIPs);
+exec("rate -i {$real_interface} -nlq 1 -Aa 10 -c {$intsubnet} | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $5,  $8,  $11 }'", $listedIPs);
 
 unset($bandwidthinfo);
 unset($receivebytesarray);
@@ -44,30 +44,9 @@ for ($x=2; $x<12; $x++){
    // echo $bandwidthinfo;
     $emptyinfocounter = 1;
     if ($bandwidthinfo != "") {
-        $splitinfo = explode ("|",$bandwidthinfo);
-        $receivebytesarray = explode(" ",$splitinfo[0]);
+        $infoarray = explode (":",$bandwidthinfo);
         //print IP of host;
-        echo $receivebytesarray[0] . ";";
-
-        //skip empty array elements until first element found with data
-        while ($receivebytesarray[$emptyinfocounter] == "")
-        {
-            $emptyinfocounter++;
-        }
-        //print received bytes for host
-        echo $receivebytesarray[$emptyinfocounter] . ";";
-
-        $transmitbytesarray = explode(" ",$splitinfo[1]);
-
-        $emptyinfocounter = 1;
-
-        //skip empty array elements until first element found with data
-        while ($transmitbytesarray[$emptyinfocounter] == "")
-        {
-            $emptyinfocounter++;
-        }
-        //print transmitted bytes for host
-        echo $transmitbytesarray[$emptyinfocounter] . "|";
+        echo $infoarray[0] . ";" . $infoarray[1] . ";" . $infoarray[2] . "|";
 
         //mark that we collected information
         $someinfo = true;

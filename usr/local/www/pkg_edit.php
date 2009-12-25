@@ -671,7 +671,7 @@ function fixup_string($string) {
 	else
 		$urlport = "";
 
-	if($config['system']['webguiproto'] == "https") $https = "s";
+	if($config['system']['webgui']['protocol'] == "https") $https = "s";
 	$myurl = "http" . $https . "://" . getenv("HTTP_HOST") . $urlport;
 	$newstring = str_replace("\$myurl", $myurl, $string);
 	$string = $newstring;

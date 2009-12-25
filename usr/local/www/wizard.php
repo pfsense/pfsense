@@ -232,7 +232,7 @@ function enablechange() {
 
 <?php
 	if($title == "Reload in progress") {
-		$ip = "http://" . $_SERVER['HTTP_HOST'];
+		$ip = fixup_string($_SERVER['HTTP_HOST']);
 	} else {
 		$ip = "/";
 	}
@@ -632,7 +632,7 @@ function fixup_string($string) {
 	global $config, $myurl;
 	$newstring = $string;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
-	switch($config['system']['webguiproto']) {
+	switch($config['system']['webgui']['protocol']) {
 		case "http":
 			$proto = "http";
 			break;
@@ -643,7 +643,7 @@ function fixup_string($string) {
 			$proto = "http";
 			break;
 	}
-	$port = $config['system']['webguiport'];
+	$port = $config['system']['webgui']['port'];
 	if($port != "") {
 		if(($port == "443" and $proto != "https") or ($port == "80" and $proto != "http")) {
 			$urlport = ":" . $port;

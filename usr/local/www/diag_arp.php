@@ -259,7 +259,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <div id="loading">
-	<img src="/themes/metallic/images/misc/loader.gif"> Loading, please wait...
+	<img src="/themes/{$g['theme'])/images/misc/loader.gif"> Loading, please wait...
 	<p/>&nbsp;
 </div>
 

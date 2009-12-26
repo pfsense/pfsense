@@ -143,7 +143,7 @@ include("head.inc");
 				  </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Disable</td>
+                  <td width="22%" valign="top" class="vncell">Disable</td>
 				  <td width="78%" class="vtable">
 				    <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
 				  </td>
@@ -197,7 +197,7 @@ include("head.inc");
                     all services support this.</td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Wildcards</td>
+                  <td width="22%" valign="top" class="vncell">Wildcards</td>
                   <td width="78%" class="vtable">
                     <input name="wildcard" type="checkbox" id="wildcard" value="yes" <?php if ($pconfig['wildcard']) echo "checked"; ?>>
                     Enable Wildcard</td>
@@ -215,7 +215,7 @@ include("head.inc");
                   </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Description</td>
+                  <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>">
                   </td>

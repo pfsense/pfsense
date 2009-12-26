@@ -964,7 +964,6 @@ function is_interface_mismatch() {
         }
 
         if ($g['minimum_nic_count'] > $i) {
-                file_notice("interfaces", "Minimum allowed interfaces is set to {$g['minimum_nic_count']} but system has only {$i} interfaces!", "", "System", 2);
                 $do_assign = true;
         } else if (file_exists("{$g['tmp_path']}/assign_complete"))
                 $do_assign = false;

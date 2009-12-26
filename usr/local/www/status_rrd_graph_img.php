@@ -795,7 +795,33 @@ elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "GPRINT:\"consavg:AVERAGE:\"Avg\\:%6.2lf\\t\" ";
 	$graphcmd .= "GPRINT:\"consmax:MAX:\"Max\\:%6.2lf\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
-} else {
+}
+elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png ";
+	$graphcmd .= "--start -$seconds -e -$average ";
+	$graphcmd .= "--vertical-label \"signal\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--title \"`hostname` - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
+	$graphcmd .= "DEF:\"$curif-signal1=$rrddbpath$curdatabase:signal1:AVERAGE\" ";
+	$graphcmd .= "DEF:\"$curif-signal2=$rrddbpath$curdatabase:signal2:AVERAGE\" ";
+	$graphcmd .= "LINE2:\"$curif-signal1#{$colorwireless[0]}:$curif-signal1\" ";
+	$graphcmd .= "LINE2:\"$curif-signal2#{$colorwireless[1]}:$curif-signal2\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t   maximum\t\t average\t     current\\n\" ";
+	$graphcmd .= "COMMENT:\"Signal1\t\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-signal1:MAX:%7.2lf dBm  \" ";
+	$graphcmd .= "GPRINT:\"$curif-signal1:AVERAGE:%7.2lf dBm  \" ";
+	$graphcmd .= "GPRINT:\"$curif-signal1:LAST:%7.2lf dBm\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Signal2\t\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-signal2:MAX:%7.2lf dBm  \" ";
+	$graphcmd .= "GPRINT:\"$curif-signal2:AVERAGE:%7.2lf dBm  \" ";
+	$graphcmd .= "GPRINT:\"$curif-signal2:LAST:%7.2lf dBm\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\" ";
+}
+else {
 	$data = false;
 	log_error("Sorry we do not have data to graph for $curdatabase");
 } 

@@ -107,6 +107,7 @@ rsort($databases);
 $dbheader = array("allgraphs-traffic.rrd",
 		"allgraphs-quality.rrd",
 		"allgraphs-wireless.rrd",
+		"allgraphs-cellular.rrd",
 		"allgraphs-packets.rrd",
 		"system-allgraphs.rrd",
 		"system-throughput.rrd",
@@ -148,6 +149,8 @@ include("head.inc");
                                 $tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
 				if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
+				if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
 				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Settings", $tabactive, "status_rrd_graph_settings.php");
 			        display_top_tabs($tab_array);

@@ -173,6 +173,7 @@ function enable_rrd_graphing() {
 	$spamd = "-spamd.rrd";
 	$proc = "-processor.rrd";
 	$mem = "-memory.rrd";
+	$cellular = "-cellular.rrd";
 
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
@@ -195,6 +196,7 @@ function enable_rrd_graphing() {
 	$rrdlbpoolinterval = 60;
 	$rrdprocinterval = 60;
 	$rrdmeminterval = 60;
+	$rrdcellularinterval = 60;
 
 	$trafficvalid = $rrdtrafficinterval * 2;
 	$wirelessvalid = $rrdwirelessinterval * 2;
@@ -206,6 +208,7 @@ function enable_rrd_graphing() {
 	$lbpoolvalid = $rrdlbpoolinterval * 2;
 	$procvalid = $rrdlbpoolinterval * 2;
 	$memvalid = $rrdmeminterval * 2;
+	$cellularvalid = $rrdcellularinterval * 2;
 
 	/* Asume GigE for now */
 	$downstream = 125000000;
@@ -594,6 +597,34 @@ function enable_rrd_graphing() {
 
 			}
 		/* End System statistics */
+
+		/* 3G WIRELESS, set up the rrd file */
+		if(isset($config['ppps']['ppp'])) {
+			$ifname = "ppp";
+			if (!file_exists("$rrddbpath$ifname$cellular")) {
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$cellular --step $rrdcellularinterval ";
+				$rrdcreate .= "DS:signal1:GAUGE:$cellularvalid:-200:200 ";
+				$rrdcreate .= "DS:signal2:GAUGE:$cellularvalid:-200:200 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:3000 ";
+
+				create_new_rrd($rrdcreate);
+			}
+
+			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+			if($g['booting']) {
+				exec("$rrdtool update $rrddbpath$ifname$cellular N:U:U");
+			}
+
+			$rrdupdatesh .= "\n";
+			$rrdupdatesh .= "# polling 3G\n";
+			$rrdupdatesh .= "dev=`usbconfig show_ifdrv | awk -F. '/ u3g/ {print \"/dev/\" $1 \".\" $2}'`\n";
+			$rrdupdatesh .= "if [ -n \"\$dev\" ]; then $rrdtool update $rrddbpath$ifname$cellular N:`3gstat -s -d \$dev`\n";
+			$rrdupdatesh .= "else $rrdtool update $rrddbpath$ifname$cellular N:U:U; fi\n";
+		}
+
 
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";

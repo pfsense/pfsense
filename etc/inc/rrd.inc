@@ -620,7 +620,7 @@ function enable_rrd_graphing() {
 
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling 3G\n";
-			$rrdupdatesh .= "dev=`usbconfig show_ifdrv | awk -F. '/ u3g/ {print \"/dev/\" $1 \".\" $2}'`\n";
+			$rrdupdatesh .= "dev=`usbconfig show_ifdrv | awk -F. '/ u3g|umodem/ {print \"/dev/\" $1 \".\" $2}'`\n";
 			$rrdupdatesh .= "if [ -n \"\$dev\" ]; then $rrdtool update $rrddbpath$ifname$cellular N:`3gstat -s -d \$dev`\n";
 			$rrdupdatesh .= "else $rrdtool update $rrddbpath$ifname$cellular N:U:U; fi\n";
 		}

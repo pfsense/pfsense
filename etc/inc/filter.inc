@@ -772,6 +772,7 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 					$rflctnorange = false;
 				}
 					
+				$inetdport = $starting_localhost_port;
 				if(($range_end - 1) > $extport[0]) {
 					$rflctrange = "{$starting_localhost_port}";
 					$delta = $range_end - $extport[0] - 1;
@@ -794,7 +795,6 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 				switch($rule['protocol']) {
 				case "tcp/udp":
 					$protocol = "{ tcp udp }";
-					$inetdport = $extport[0];
 					foreach($toadd_array as $tda) {
 						$reflection_txt[] = "{$inetdport}\tstream\ttcp\tnowait/0\tnobody\t/usr/bin/nc -w {$reflectiontimeout} {$target} {$tda}\n";
 						$reflection_txt[] = "{$inetdport}\tdgram\tudp\tnowait/0\tnobody\t/usr/bin/nc -u -w {$reflectiontimeout} {$target} {$tda}\n";
@@ -812,9 +812,8 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 						$socktype = "stream";
 						$dash_u = "";
 					}
-					$inetdport = $extport[0];
 					foreach($toadd_array as $tda){
-						$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
+						$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
 						$inetdport++;
 					}
 					$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";

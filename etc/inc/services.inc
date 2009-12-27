@@ -1263,7 +1263,7 @@ function upnp_start() {
 	if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 		if($g['booting']) {
 			echo "Starting UPnP service... ";
-			include('/usr/local/pkg/miniupnpd.inc');
+			require_once('/usr/local/pkg/miniupnpd.inc');
 			sync_package_miniupnpd();
 			echo "done.\n";
 		}

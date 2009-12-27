@@ -275,7 +275,7 @@ if ($_GET['act'] == "del") {
 			unset($config['dhcpd']['wan']);		
 		}
 
-		link_interface_to_vlan($id, "update");
+		link_interface_to_vlans($id, "update");
 	
 		$savemsg = "Interface has been deleted.";
 	}

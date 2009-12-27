@@ -294,10 +294,12 @@ function enable_change(enable_change) {
 	<?php $i++; endforeach; ?>
 		<tr> 
 			  <td class="list" colspan="4"></td>
-              <?php if ($pconfig['enable']): ?> 
-			  <td class="list"> <a href="services_captiveportal_vouchers_edit.php"><img src="plus.gif" title="add voucher" width="17" height="17" border="0" alt="add voucher"></a></td>
-              <?php endif;?>
-		      </tr>
+              <?php
+	      if ($pconfig['enable']) {
+		echo "<td class=\"list\"> <a href=\"services_captiveportal_vouchers_edit.php\"><img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" title=\"add voucher\" width=\"17\" height=\"17\" border=\"0\" alt=\"add voucher\"></a></td>";
+              }
+	      ?>
+	    </tr>
         </table>     
 <?php if ($pconfig['enable']): ?> 
 Create, generate and activate Rolls with Vouchers that allow access through the 
@@ -358,20 +360,20 @@ Enable Voucher support first using the checkbox above and hit Save at the bottom
          <br>
          Magic number stored in every voucher. Verified during voucher check. Size depends on how many bits are left by Roll+Ticket+Checksum bits. If all bits are used, no magic number will be used and checked.</td>
     </tr>
-	<tr> 
+    <tr> 
        <td width="22%" valign="top" class="vncellreq">Save Interval</td>
        <td width="78%" class="vtable">
          <input name="saveinterval" type="text" class="formfld" id="saveinterval" size="4" value="<?=htmlspecialchars($pconfig['saveinterval']);?>">
          Minutes<br>
          The list of active and used vouchers can be stored in the system's configuration file once every x minutes to survive power outages. No save is done if no new vouchers have been activated.  Enter 0 to never write runtime state to XML config.</td>
     </tr>
-	<tr> 
+    <tr> 
        <td width="22%" valign="top" class="vncellreq">Invalid Voucher Message</td>
        <td width="78%" class="vtable">
          <input name="msgnoaccess" type="text" class="formfld" id="msgnoaccess" size="80" value="<?=htmlspecialchars($pconfig['msgnoaccess']);?>">
          <br>Error message displayed for invalid vouchers on captive portal error page ($PORTAL_MESSAGE$).</td>
     </tr>
-	<tr> 
+    <tr> 
        <td width="22%" valign="top" class="vncellreq">Expired Voucher Message</td>
        <td width="78%" class="vtable">
          <input name="msgexpired" type="text" class="formfld" id="msgexpired" size="80" value="<?=htmlspecialchars($pconfig['msgexpired']);?>">

@@ -1025,10 +1025,12 @@ EOD;
 	}
 	
 	if ($config['system']['webgui']['protocol'] == "https" && !isset($config['system']['webgui']['disablehttpredirect'])) {
+		if($lighty_port != "443") 
+			$redirectport = ":{$lighty_port}";
 		$lighty_config .= <<<EOD
 \$SERVER["socket"] == ":80" {
 	\$HTTP["host"] =~ "(.*)" {
-		url.redirect = ( "^/(.*)" => "https://%1/$1" )
+		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
 	}
 }
 EOD;

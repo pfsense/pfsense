@@ -840,14 +840,12 @@ server.network-backend 	= "writev"
 ## modules to load
 server.modules              =   (
 									{$captive_portal_module}
-									"mod_access", "mod_accesslog", "mod_expire", "mod_compress", 
+									"mod_access", "mod_accesslog", "mod_expire", "mod_compress", "mod_redirect",
 									{$module}{$captiveportal}
 								)
 
 ## Unused modules
 #                               "mod_setenv",
-
-#				"mod_redirect",
 #                               "mod_rewrite",
 #                               "mod_ssi",
 #                               "mod_usertrack",
@@ -862,7 +860,6 @@ server.modules              =   (
 #                               "mod_evhost",
 #                               "mod_userdir",
 #                               "mod_cgi",
-#                                "mod_accesslog"
 
 server.max-keep-alive-requests = 15
 server.max-keep-alive-idle = 30
@@ -1025,6 +1022,16 @@ EOD;
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
 		if($ca <> "")
 			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
+	}
+	
+	if ($config['system']['webgui']['protocol'] == "https" && !isset($config['system']['webgui']['disablehttpredirect'])) {
+		$lighty_config .= <<<EOD
+\$SERVER["socket"] == ":80" {
+	\$HTTP["host"] =~ "(.*)" {
+		url.redirect = ( "^/(.*)" => "https://%1/$1" )
+	}
+}
+EOD;
 	}
 
 	$fd = fopen("{$filename}", "w");

@@ -102,7 +102,7 @@ filter_configure();
 enable_rrd_graphing();
 
 /* update the gateway group items gateway */
-update_gateway_groups_defaultroute_dhclient($interface);
+update_gateway_groups_defaultroute($interface);
 
 /* restart packages */
 if($old_ip <> "") {

@@ -285,9 +285,9 @@ function enable_change(enable_change) {
                   </td>
                   <td valign="middle" nowrap class="list"> 
                   <?php if ($pconfig['enable']): ?> 
-                    <a href="services_captiveportal_vouchers_edit.php?id=<?=$i; ?>"><img src="e.gif" title="edit voucher" width="17" height="17" border="0" alt="edit voucher"></a>
-                    <a href="services_captiveportal_vouchers.php?act=del&amp;id=<?=$i; ?>" onclick="return confirm('Do you really want to delete this voucher? This makes all vouchers from this roll invalid')"><img src="x.gif" title="delete vouchers" width="17" height="17" border="0" alt="delete vouchers"></a>
-                    <a href="services_captiveportal_vouchers.php?act=csv&amp;id=<?=$i; ?>"><img src="log_s.gif" title="generate vouchers for this roll to CSV file" width="11" height="15" border="0" alt="generate vouchers for this roll to CSV file"></a>
+                    <a href="services_captiveportal_vouchers_edit.php?id=<?=$i; ?>"><img src="/themes/<?=$g['theme']; ?>/images/icons/icon_e.gif" title="edit voucher" width="17" height="17" border="0" alt="edit voucher"></a>
+                    <a href="services_captiveportal_vouchers.php?act=del&amp;id=<?=$i; ?>" onclick="return confirm('Do you really want to delete this voucher? This makes all vouchers from this roll invalid')"><img src="/themes/<?=$g['theme']; ?>/images/icons/icon_x.gif" title="delete vouchers" width="17" height="17" border="0" alt="delete vouchers"></a>
+                    <a href="services_captiveportal_vouchers.php?act=csv&amp;id=<?=$i; ?>"><img src="/themes/<?=$g['theme']; ?>/images/icons/icon_log_s.gif" title="generate vouchers for this roll to CSV file" width="11" height="15" border="0" alt="generate vouchers for this roll to CSV file"></a>
                     <?php endif;?>
                   </td>
 		</tr>

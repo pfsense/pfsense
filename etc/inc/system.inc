@@ -651,12 +651,12 @@ function system_webgui_start() {
 			$cert = array();
 			$cert['refid'] = uniqid();
 			$cert['name'] = "webConfigurator default";
-			mwexec("/usr/bin/openssl genrsa 1024 > /tmp/ssl.key");
-			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha1 -days 2000 -key /tmp/ssl.key > /tmp/ssl.crt");
-			$crt = file_get_contents("/tmp/ssl.crt");
-			$key = file_get_contents("/tmp/ssl.key");
-			unlink("/tmp/ssl.key");
-			unlink("/tmp/ssl.crt");
+			mwexec("/usr/bin/openssl genrsa 1024 > {$g['tmp_path']}/ssl.key");
+			mwexec("/usr/bin/openssl req -new -x509 -nodes -sha1 -days 2000 -key {$g['tmp_path']}/ssl.key > {$g['tmp_path']}/ssl.crt");
+			$crt = file_get_contents("{$g['tmp_path']}/ssl.crt");
+			$key = file_get_contents("{$g['tmp_path']}/ssl.key");
+			unlink("{$g['tmp_path']}/ssl.key");
+			unlink("{$g['tmp_path']}/ssl.crt");
 			cert_import($cert, $crt, $key);
 			$a_cert[] = $cert;
 			$config['system']['webgui']['ssl-certref'] = $cert['refid'];
@@ -708,8 +708,8 @@ function system_generate_lighty_config($filename,
 
 	global $config, $g;
 
-	if(!is_dir("/tmp/lighttpdcompress"))
-		mkdir("/tmp/lighttpdcompress");
+	if(!is_dir("{$g['tmp_path']}/lighttpdcompress"))
+		mkdir("{$g['tmp_path']}/lighttpdcompress");
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -725,14 +725,14 @@ function system_generate_lighty_config($filename,
 			$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
 		else
 			$captive_portal_mod_evasive = "";
-		$server_upload_dirs = "server.upload-dirs = ( \"/tmp/captiveportal/\" )\n";
-		exec("mkdir -p /tmp/captiveportal");
-		exec("chmod a-w /tmp/captiveportal");
+		$server_upload_dirs = "server.upload-dirs = ( \"{$g['tmp_path']}/captiveportal/\" )\n";
+		exec("mkdir -p {$g['tmp_path']}/captiveportal");
+		exec("chmod a-w {$g['tmp_path']}/captiveportal");
 		$server_max_request_size = "server.max-request-size    = 384";
 	} else {
 		$captive_portal_module = "";
 		$captive_portal_mod_evasive = "";
-		$server_upload_dirs = "server.upload-dirs = ( \"{$g['upload_path']}/\", \"/tmp/\", \"/var/\" )\n";
+		$server_upload_dirs = "server.upload-dirs = ( \"{$g['upload_path']}/\", \"{$g['tmp_path']}/\", \"/var/\" )\n";
 		$server_max_request_size = "server.max-request-size    = 2097152";
 	}
 	
@@ -801,7 +801,7 @@ EOC;
 fastcgi.server = ( ".php" =>
 	( "localhost" =>
 		(
-			"socket" => "/tmp/php-fastcgi.socket",
+			"socket" => "{$g['tmp_path']}/php-fastcgi.socket",
 			"min-procs" => 0,
 			"max-procs" => {$max_procs},
 			{$bin_environment}			
@@ -968,7 +968,7 @@ debug.log-request-handling = "disable"
 debug.log-file-not-found   = "disable"
 
 # gzip compression
-compress.cache-dir = "/tmp/lighttpdcompress/"
+compress.cache-dir = "{$g['tmp_path']}/lighttpdcompress/"
 compress.filetype  = ("text/plain","text/css", "text/xml", "text/javascript" )
 
 {$server_upload_dirs}

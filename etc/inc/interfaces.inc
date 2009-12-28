@@ -575,7 +575,7 @@ function interface_gre_configure(&$gre) {
 		log_error("Could not bring greif up -- variable not defined.");
 
 	mwexec("/sbin/route add {$gre['remote-addr']}/{$gre['tunnel-remote-net']} {$realifip}");
-	file_put_contents("/tmp/{$greif}_router", $gre['tunnel-remote-addr']);
+	file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr']);
 
 	return $greif;
 }
@@ -629,7 +629,7 @@ function interface_gif_configure(&$gif) {
 		log_error("could not bring gifif up -- variable not defined");
 
 	mwexec("/sbin/route add {$gif['remote-addr']}/{$gif['tunnel-remote-net']} {$realifip}");
-	file_put_contents("/tmp/{$gifif}_router", $gif['tunnel-remote-addr']);
+	file_put_contents("{$g['tmp_path']}/{$gifif}_router", $gif['tunnel-remote-addr']);
 
 	return $gifif;
 }
@@ -783,7 +783,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	/* remove interface up file if it exists */
 	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
 	unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
-	unlink_if_exists("/tmp/{$realif}_router");
+	unlink_if_exists("{$g['tmp_path']}/{$realif}_router");
 	
 	interface_ppp_bring_down($realif);
 
@@ -1295,15 +1295,11 @@ EOD;
 		fclose($fd);
 
 		/* fire up dhclient */
-		mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif} >/tmp/{$vipif}_output >/tmp/{$vipif}_error_output", false);
+		mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif} > {$g['tmp_path']}/{$vipif}_output > {$g['tmp_path']}/{$vipif}_error_output", false);
 	} else {
 		log_error("Error: cannot open dhclient_{$vipif}.conf in interfaces_carpdev_configure() for writing.\n");
 		mwexec("/sbin/dhclient -b {$vipif}");
 	}
-
-	$fout = fopen("/tmp/ifconfig_{$vipif}","w");
-	fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$vipif}.conf {$vipif}");
-	fclose($fout);
 
 	return $vipif;
 }
@@ -1384,7 +1380,7 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	// Clone wireless nic if needed.
 	interface_wireless_clone($if, $wl);
 
-	$fd_set = fopen("/tmp/{$if}_setup.sh","w");
+	$fd_set = fopen("{$g['tmp_path']}/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");
 	fwrite($fd_set, "# {$g['product_name']} wireless configuration script.\n\n");
 
@@ -1607,7 +1603,7 @@ EOD;
 	
 	sleep(1);
 	/* execute hostapd and wpa_supplicant if required in shell */
-	mwexec("/bin/sh /tmp/{$if}_setup.sh");
+	mwexec("/bin/sh {$g['tmp_path']}/{$if}_setup.sh");
 
 	return 0;
 
@@ -1711,7 +1707,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			}
 
 			if (is_ipaddr($wancfg['gateway']))
-				file_put_contents("/tmp/{$realif}_router", $wancfg['gateway']);
+				file_put_contents("{$g['tmp_path']}/{$realif}_router", $wancfg['gateway']);
 	}
 
 	if(does_interface_exist($wancfg['if']))
@@ -1847,11 +1843,7 @@ EOD;
 		log_error("Could not bring realwanif up in interface_dhcp_configure()");
 
 	/* fire up dhclient */
-	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} >/tmp/{$wanif}_output >/tmp/{$wanif}_error_output");
-
-	$fout = fopen("/tmp/ifconfig_{$wanif}","w");
-	fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif}");
-	fclose($fout);
+	mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$wanif} > {$g['tmp_path']}/{$wanif}_output > {$g['tmp_path']}/{$wanif}_error_output");
 
 	return 0;
 }

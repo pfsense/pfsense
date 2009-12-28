@@ -99,8 +99,10 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
  *   Returns a specific notices text
  ******/
 function get_notices($category = "all") {
-	if(file_exists('/tmp/notices')) {
-		$queue = unserialize(file_get_contents('/tmp/notices'));
+	global $g;
+
+	if(file_exists("{$g['tmp_path']}/notices")) {
+		$queue = unserialize(file_get_contents("{$g['tmp_path']}/notices"));
 		if(!$queue) return false;
 		if($category != 'all') {
 			foreach($queue as $time => $notice) {

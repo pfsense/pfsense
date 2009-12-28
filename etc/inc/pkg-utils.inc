@@ -374,7 +374,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	global $pkgent, $static_output, $g, $fd_log;
 	$pkg_extension = strrchr($filename, '.');
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
-	$fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
+	$fetchto = "{$g['tmp_path']}/apkg_" . $pkgname . $pkg_extension;
 	download_file_with_progress_bar($base_url . '/' . $filename, $fetchto);
 	$static_output .= " (extracting)";
 	update_output_window($static_output);
@@ -777,6 +777,7 @@ function delete_package_recursive($pkg) {
 
 function delete_package_xml($pkg) {
 	global $g, $config, $fd_log, $static_output, $pkg_interface;
+
 	if(($pkgid = get_pkg_id($pkg)) == -1) {
 		$static_output .= "The {$pkg} package is not installed.\n\nDeletion aborted.";
 		update_output_window($static_output);
@@ -929,12 +930,12 @@ function delete_package_xml($pkg) {
 	foreach($ctag as $line) {
 		if(trim($line) != "") $towrite[] = $line;
 	}
-	$tmptab = fopen("/tmp/crontab", "w");
+	$tmptab = fopen("{$g['tmp_path']}/crontab", "w");
 	foreach($towrite as $line) {
 		fwrite($tmptab, $line);
 	}
 	fclose($tmptab);
-	rename("/tmp/crontab", "/etc/crontab");
+	rename("{$g['tmp_path']}/crontab", "/etc/crontab");
 }
 
 function expand_to_bytes($size) {

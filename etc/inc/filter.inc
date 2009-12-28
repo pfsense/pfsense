@@ -303,7 +303,7 @@ function filter_configure_sync() {
 		if(strstr("$rules_error", "busy")) {
 			exec("/sbin/pfctl -d");
 			exec("/sbin/pfctl -e");
-			exec("/sbin/pfctl -f /tmp/rules.debug");
+			exec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 			file_notice("pf_busy", "PF was wedged/busy and has been reset.", "pf_busy", "");
 			log_error("PF was wedged/busy and has been reset.");
 		}
@@ -1477,7 +1477,6 @@ function filter_generate_user_rule($rule) {
 	/* source address */
 	$src = filter_generate_address($rule, "source");
 	if(empty($src) || ($src == "/")) {
-		file_put_contents('/tmp/rule_src.array', print_r($rule, 1));
 		return "# at the break!";
 	}
 	$aline['src'] = " from $src ";
@@ -1489,9 +1488,6 @@ function filter_generate_user_rule($rule) {
 	/* destination address */
 	$dst = filter_generate_address($rule, "destination");
 	if(empty($dst) || ($dst == "/")) {
-		global $FilterIflist;
-		file_put_contents('/tmp/rule_dst.array', print_r($rule, 1));
-		file_put_contents('/tmp/filterIflist.dmp', print_r($FilterIflist, 1));
 		return "# returning at dst $dst == \"/\"";
 	}
 	$aline['dst'] = "to $dst ";

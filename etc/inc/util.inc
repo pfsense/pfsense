@@ -941,10 +941,12 @@ function unmute_kernel_msgs() {
 }
 
 function start_devd() {
+	global $g;
+
         exec("/sbin/devd");
         sleep(1);
-        if(file_exists("/tmp/rc.linkup"))
-                unlink("/tmp/rc.linkup");
+        if(file_exists("{$g['tmp_path']}/rc.linkup"))
+                unlink("{$g['tmp_path']}/rc.linkup");
 }
 
 function is_interface_mismatch() {

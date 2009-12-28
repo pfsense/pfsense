@@ -3550,7 +3550,7 @@ function read_layer7_config() {
 }
 
 function generate_layer7_files() {
-    global $layer7_rules_list;
+    global $layer7_rules_list, $g;
     
     read_layer7_config();
     
@@ -3558,13 +3558,13 @@ function generate_layer7_files() {
 	if (!is_module_loaded("ipdivert.ko"))
 		mwexec("/sbin/kldload ipdivert.ko");
 
-	mwexec("rm -f /tmp/*.l7");
+	mwexec("rm -f {$g['tmp_path']}/*.l7");
     }
     
     foreach($layer7_rules_list as $l7rules) {
         if($l7rules->GetREnabled()) {
             $filename = $l7rules->GetRName() . ".l7";
-            $path = "/tmp/" . $filename;
+            $path = "{$g['tmp_path']}/" . $filename;
         
             $rules = $l7rules->build_l7_rules();
         
@@ -3576,7 +3576,7 @@ function generate_layer7_files() {
 }
 
 function layer7_start_l7daemon() {
-    global $layer7_rules_list;
+    global $layer7_rules_list, $g;
 
     /*
      * XXX: ermal - Needed ?!
@@ -3586,7 +3586,7 @@ function layer7_start_l7daemon() {
     foreach($layer7_rules_list as $l7rules) {
         if($l7rules->GetREnabled()) {
             $filename = $l7rules->GetRName() . ".l7";
-            $path = "/tmp/" . $filename;
+            $path = "{$g['tmp_path']}/" . $filename;
 
 	    unset($l7pid);
 	    /* Only reread the configuration rather than restart to avoid loosing information. */

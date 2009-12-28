@@ -74,7 +74,7 @@ function services_dhcpd_configure() {
 					$is_olsr_enabled = true;
 
 	/* configure DHCPD chroot */
-	$fd = fopen("/tmp/dhcpd.sh","w");
+	$fd = fopen("{$g['tmp_path']}/dhcpd.sh","w");
 	$status = `mount | grep "{$g['dhcpd_chroot_path']}/dev"`;
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}\n");
 	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/dev\n");
@@ -92,7 +92,7 @@ function services_dhcpd_configure() {
 	if(!trim($status))
 		fwrite($fd, "mount -t devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	fclose($fd);
-	mwexec("/bin/sh /tmp/dhcpd.sh");
+	mwexec("/bin/sh {$g['tmp_path']}/dhcpd.sh");
 
 	$syscfg = $config['system'];
 	$dhcpdcfg = $config['dhcpd'];

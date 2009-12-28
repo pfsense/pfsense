@@ -441,6 +441,7 @@ function vpn_ipsec_configure($ipchg = false)
 							break;
 
 						case "dyn_dns":
+							$myid_type = "address";
 							$myid_data = gethostbyname($ph1ent['myid_data']);
 							break;
 

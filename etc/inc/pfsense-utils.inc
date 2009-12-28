@@ -999,7 +999,10 @@ function auto_login($status) {
 	$gettytab = file_get_contents("/etc/gettytab");
 	$getty_split = split("\n", $gettytab);
 	conf_mount_rw();
-	$fd = fopen("/etc/gettytab", "w");
+	$fd = false;
+	while (!$fd) {
+		$fd = fopen("/etc/gettytab", "w");
+	}
 	foreach($getty_split as $gs) {
 		if(stristr($gs, ":ht:np:sp#115200") ) {
 			if($status == true) {

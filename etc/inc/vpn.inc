@@ -992,12 +992,11 @@ EOD;
 			for ($i = 0; $i < $pptpdcfg['n_pptp_units']; $i++) {
 
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
-				$ngif = "ng" . ($i+1);
 
 				$mpdconf .= <<<EOD
 
 pt{$i}:
-	new -i {$ngif} pt{$i} pt{$i}
+	new -i pptpd{$i} pt{$i} pt{$i}
 	set ipcp ranges {$pptpdcfg['localip']}/32 {$clientip}/32
 	load pts
 
@@ -1210,7 +1209,7 @@ EOD;
 				$mpdconf .=<<<EOD
 
 pppoe{$i}:
-	new pppoe{$i} pppoe{$i}
+	new -i ppoed{$i} pppoe{$i} pppoe{$i}
 	{$isssue_ip_type}
 	load pppoe_standart
 

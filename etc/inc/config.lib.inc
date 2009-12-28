@@ -444,7 +444,7 @@ function write_config($desc="Unknown", $backup = true) {
 		$changetime = time();
 
 	/* Log the running script so it's not entirely unlogged what changed */
-    if ($desc == "Unknown")
+	if ($desc == "Unknown")
 		$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";
 
 	$config['revision']['description'] = $desc;
@@ -458,7 +458,7 @@ function write_config($desc="Unknown", $backup = true) {
 	conf_mount_rw();
 
 	/* write new configuration */
-	$fd = fopen("{$g['cf_conf_path']}/config.xml", "w");
+	$fd = fopen("{$g['conf_path']}/config.xml", "w");
         if (!$fd) {
                 // Unable to open temporary file for writing
 		log_error("WARNING: Config contents could not be save. Could not open file!");
@@ -493,6 +493,7 @@ function write_config($desc="Unknown", $backup = true) {
 	/* tell kernel to sync fs data */
 	if (!$g['booting'])
 		conf_mount_ro();
+
 	unlock($lockkey);
 
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");

@@ -149,6 +149,13 @@ include("head.inc");
 			</a>
 		</td>
 	</tr>
+	<?php  endif; if ($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated']): ?>
+	<tr>
+                <td width="22%" class="vncellt">PPP uptime</td>
+                <td width="78%" class="listr">
+                        <?=htmlspecialchars($ifinfo['ppp_uptime']);?>&nbsp;&nbsp;Previous Sessions:&nbsp;<?=htmlspecialchars($ifinfo['ppp_uptime_accumulated']);?>&nbsp;&nbsp;
+                </td>
+        </tr>
 	<?php  endif; if ($ifinfo['macaddr']): ?>
 	<tr>
 		<td width="22%" class="vncellt">MAC address</td>

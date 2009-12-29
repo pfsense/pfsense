@@ -1119,6 +1119,45 @@ function is_dhcp_server_enabled()
 	return $dhcpdenable;
 }
 
+/* Compute the total uptime from the ppp uptime log file in the conf directory */
+/* Written by: gnoahb@gmail.com */
+
+function get_ppp_uptime($serialport){
+	if (file_exists("/conf/ppp-up.".$serialport . ".log")){
+        	$saved_time = file_get_contents("/conf/ppp-up." . $serialport . ".log");
+        	$uptime_data = explode("\n",$saved_time);
+    		$sec=0;
+		$min=0;
+		$hrs=0;
+		foreach($uptime_data as $upt) {
+        	        $time = substr($upt, 1 + strpos($upt, " "));
+        	        if ($time != "00:00:00"){
+        	                $hms = explode(":",$time);
+        	                $hrs += $hms[0];
+        	                $min += $hms[1];
+        	                $sec += $hms[2];
+               		 }
+ 		}
+        	if ($sec != 0){
+                	$min += floor($sec/60);
+                	$sec %= 60;
+        	}
+        	if($min !=0){
+                	$hrs += floor($min/60);
+                	$min %= 60;
+        	}
+		$total_time = $hrs.":".$min.":".$sec;
+		return $total_time;
+
+	} else {
+		$total_time = "No session history data found!";
+		return $total_time;
+	}
+}
+
+
+
+
 //returns interface information
 function get_interface_info($ifdescr) {
 	global $config, $linkinfo, $netstatrninfo;
@@ -1262,9 +1301,26 @@ function get_interface_info($ifdescr) {
 		else
 			$ifinfo['pptplink'] = "down";
 		break;
+	/* PPP interface? -> get uptime for this session and cumulative uptime from the persistant log file in conf */
 	case "":
-		if ($config['interfaces'][$if]['serialport'])
-			$ifinfo['ppplink'] = $config['interfaces'][$if]['serialport'];
+		if ($config['interfaces'][$if]['serialport']){
+			$dev = $config['interfaces'][$if]['serialport'];
+			if (file_exists("/dev/{$dev}")){
+				$ifinfo['ppplink'] = $dev;
+				
+				if (file_exists("/var/run/{$dev}.sock") && file_exists("/var/run/{$dev}.if")){
+					$ifinfo['ppp_uptime'] = `/usr/sbin/pppctl /var/run/$dev.sock show physical | grep 'Connect time' | cut -c 15-`;
+				} //else if (`/sbin/ifconfig 
+				$ifinfo['missing_device'] = 0;
+			}
+			else{
+				$ifinfo['ppplink'] = $dev . " device not present! Is the modem attached to the system?";
+				$ifinfo['missing_device'] = 1;	
+			}
+			// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
+			$ifinfo['ppp_uptime_accumulated'] = get_ppp_uptime($dev);
+		}
+
 		break;
 	default:
 		break;

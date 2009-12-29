@@ -879,6 +879,8 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 
 		// Start ppp.linkup file
 		$rclinkup = "default:\n";
+		// Start ppp.linkdown file
+		$rclinkdown = "default:\n";
 
  	   	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $ppp) {
@@ -911,10 +913,17 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 				$peerfile .= "\n";
 				$i++;
 				$startingip++;
-				$rclinkup.= "{$dev}:\n";
-				$rclinkup.= "	! sh -c \"/sbin/ppp-script HISADDR INTERFACE DNS0 DNS1 \"\n";
-				$rclinkup.= "	! sh -c \"/etc/rc.linkup INTERFACE start\"\n";
-				$rclinkup.= "	! sh -c \"/etc/rc.filter_configure_sync\"\n";
+				$rclinkup .= "{$dev}:\n";
+				$rclinkup .= "	! sh -c \"/etc/rc.conf_mount_rw\"\n";
+ 				$rclinkup .= "	! sh -c \"/bin/echo `date -j +%Y.%m.%d-%H:%M:%S` 00:00:00 >> /conf/ppp-up.{$dev}.log\"\n";
+				$rclinkup .= "	! sh -c \"/sbin/ppp-script HISADDR INTERFACE DNS0 DNS1\"\n";
+				$rclinkup .= "	! sh -c \"/etc/rc.linkup INTERFACE start\"\n";
+				$rclinkup .= "	! sh -c \"/etc/rc.conf_mount_ro\"\n";
+				// Link down file
+				$rclinkdown .= "{$dev}:\n";
+				$rclinkdown .= "	! sh -c \"/etc/rc.conf_mount_rw\"\n";
+				$rclinkdown .= "	! sh -c \"/bin/echo `date -j +%Y.%m.%d-%H:%M:%S` UPTIME >> /conf/ppp-up.{$dev}.log\"\n";
+				$rclinkdown .= "	! sh -c \"/etc/rc.conf_mount_ro\"\n";
 			}	
     		}
 
@@ -923,12 +932,13 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 
 		// Write out linkup file
 		file_put_contents("/etc/ppp/ppp.linkup", $rclinkup);
-
+		file_put_contents("/etc/ppp/ppp.linkdown", $rclinkdown);
 		// Make executable
 		exec("chmod a+rx /etc/ppp/ppp.linkup");
+		exec("chmod a+rx /etc/ppp/ppp.linkdown");
 	}
 	// Launch specified ppp instance
-	if( !$edit){
+	if( !$edit && file_exists("/dev/{$orig_dev}")){
 		$running = `ps awux | grep ppp | grep -v grep | grep $orig_dev`;
 		if(!$running)
 			mwexec("/usr/sbin/ppp -background {$orig_dev}");

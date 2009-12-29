@@ -242,8 +242,13 @@ if ($_POST) {
 					if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
 						$wrongaliases .= " " . $_POST["address{$x}"];
 				} else if ($_POST['type'] == "port") {
-					if (!is_port($_POST["address{$x}"]))
-						$input_errors[] = $_POST["address{$x}"] . " is not a valid port alias.";
+					$testports = explode(":", $_POST["address{$x}"]);
+					foreach ($testports as $port) {
+						if (!is_port($port)) {
+							$input_errors[] = $_POST["address{$x}"] . " is not a valid port or alias.";
+							break;
+						}
+					}
 				} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
 					if (!is_ipaddr($_POST["address{$x}"]) && !is_hostname($_POST["address{$x}"]))
 						$input_errors[] = $_POST["address{$x}"] . " is not a valid {$_POST['type']} alias.";

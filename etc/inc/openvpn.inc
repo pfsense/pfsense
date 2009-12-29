@@ -318,6 +318,7 @@ function openvpn_reconfigure($mode,& $settings) {
 	$conf .= "writepid {$pfile}\n";
 	$conf .= "#user nobody\n";
 	$conf .= "#group nobody\n";
+	$conf .= "script-security 2\n";
 	$conf .= "daemon\n";
 	$conf .= "keepalive 10 60\n";
 	$conf .= "ping-timer-rem\n";

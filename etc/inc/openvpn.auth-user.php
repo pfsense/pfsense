@@ -53,9 +53,9 @@ function & lookup_user($name) {
 /* setup syslog logging */
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
-/* read data from command line */
-$username = $_SERVER['argv']['1'];
-$password = $_SERVER['argv']['2'];
+/* read data from environment */
+$username = getenv("username");
+$password = getenv("password");
 
 if (!$username || !$password) {
 	syslog(LOG_ERR, "invalid user authentication environment");

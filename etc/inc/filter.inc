@@ -420,7 +420,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			if(!isset($aliasnesting[$address]))
 				$tmpline = filter_generate_nested_alias($address, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
 		} else if(!isset($aliasaddrnesting[$address])) {
-			if(!is_ipaddr($address) && !is_subnet($address)) {
+			if(!is_ipaddr($address) && !is_subnet($address) && !is_port($address)) {
 				$filterdns .= "{$address} = {$name}\n";
 				continue;
 			}

@@ -300,14 +300,16 @@ function is_validaliasname($name) {
 
 /* returns true if $port is a valid TCP/UDP port */
 function is_port($port) {
-	if (getservbyname($port, "tcp") || getservbyname($port, "udp"))
-                return true;
-	if (!ctype_digit($port))
-                return false;
-	if ((intval($port) < 1) || (intval($port) > 65535))
-		return false;
-	else
-		return true;
+	$tmpports = explode(":", $port);
+	foreach($tmpports as $tmpport) {
+		if (getservbyname($tmpport, "tcp") || getservbyname($tmpport, "udp"))
+                	continue;
+		if (!ctype_digit($tmpport))
+			return false;
+		else if ((intval($port) < 1) || (intval($port) > 65535))
+			return false;
+	}
+	return true;
 }
 
 /* returns true if $portrange is a valid TCP/UDP portrange ("<port>:<port>") */

@@ -306,7 +306,7 @@ function is_port($port) {
                 	continue;
 		if (!ctype_digit($tmpport))
 			return false;
-		else if ((intval($port) < 1) || (intval($port) > 65535))
+		else if ((intval($tmpport) < 1) || (intval($tmpport) > 65535))
 			return false;
 	}
 	return true;

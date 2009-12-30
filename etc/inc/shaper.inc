@@ -353,6 +353,8 @@ class altq_root_queue {
 			$this->SetQname($conf['name']);		
 		if (!empty($conf['enabled']))
 			$this->SetEnabled($conf['enabled']);
+		else
+			$this->SetEnabled("");
 	}
 
 	function copy_queue($interface, &$cflink) {
@@ -953,20 +955,36 @@ class priq_queue {
 		}
 		if (!empty($q['qlimit']))
 			$this->SetQlimit($q['qlimit']);
+		else
+			$this->SetQlimit(""); // Default
 		if (!empty($q['priority']))
 			$this->SetQPriority($q['priority']);
+		else
+			$this->SetQpriority("");
 		if (!empty($q['description']))
 			$this->SetDescription($q['description']);
+		else
+			$this->SetDescritption("");
 		if (!empty($q['red']))
 			$this->SetRed($q['red']);
+		else
+			$this->SetRed();
 		if (!empty($q['rio']))
 			$this->SetRio($q['rio']);
+		else
+			$this->SetRio();
 		if (!empty($q['ecn']))
 			$this->SetEcn($q['ecn']);
+		else
+			$this->SetEcn();
 		if (!empty($q['default']))
 			$this->SetDefault($q['default']);
+		else
+			$this->SetDefault();
 		if (!empty($q['enabled']))
 			$this->SetEnabled($q['enabled']);
+		else
+			$this->SetEnabled("");
 
 	}
 

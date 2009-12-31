@@ -674,6 +674,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd .= "--height 200 --width 620 -x \"$scale\" ";
 	if ($altq) {
 		$a_queues =& $altq->get_queue_list();
+		$t = 0; 
 	} else {
 		$a_queues = array();
 		$i = 0;

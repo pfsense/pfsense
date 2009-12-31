@@ -83,9 +83,12 @@ function exec_php_xmlrpc($raw_params) {
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	$exec_php = $params[0];
 	eval($exec_php);
-	return $xmlrpc_g['return']['true'];
+	if($toreturn) {
+		$response = XML_RPC_encode($toreturn);
+		return new XML_RPC_Response($response);
+	} else
+		return $xmlrpc_g['return']['true'];
 }
-
 
 
 /*****************************/

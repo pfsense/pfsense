@@ -51,6 +51,12 @@ if($config['notifications']['smtp']['ipaddress'])
 	$pconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
 if($config['notifications']['smtp']['notifyemailaddress']) 
 	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
+if($config['notifications']['smtp']['username']) 
+	$pconfig['smtpusername'] = $config['notifications']['smtp']['username'];
+if($config['notifications']['smtp']['password']) 
+	$pconfig['smtppassword'] = $config['notifications']['smtp']['password'];
+if($config['notifications']['smtp']['fromaddress']) 
+	$pconfig['smtpfromaddress'] = $config['notifications']['smtp']['fromaddress'];
 
 if ($_POST) {
 
@@ -79,12 +85,18 @@ if ($_POST) {
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
+		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
+		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
+		$config['notifications']['smtp']['fromaddress'] = $_POST['smtpfromaddress'];
 
 		write_config();
 
 		// Send test message via growl
-		register_via_growl();
-		notify_via_growl("This is a test message form pfSense.  It is safe to ignore this message.");
+		if($config['notifications']['growl']['ipaddress'] && 
+		   $config['notifications']['growl']['password'] = $_POST['password']) {
+			register_via_growl();
+			notify_via_growl("This is a test message form pfSense.  It is safe to ignore this message.");
+		}
 
 		// Send test message via smtp
 		if(file_exists("/var/db/notices_lastmsg.txt"))
@@ -164,10 +176,31 @@ include("head.inc");
 							</td>
 						</tr>
 						<tr>
+							<td width="22%" valign="top" class="vncell">From e-mail address</td>
+							<td width="78%" class="vtable">
+								<input name='smtpfromaddress' type='input' value='<?php echo $pconfig['smtpfromaddress']; ?>'><br/>
+								This is the e-mail address that will appear in the from field.
+							</td>
+						</tr>
+						<tr>
 							<td width="22%" valign="top" class="vncell">Notification E-Mail address</td>
 							<td width="78%" class="vtable">
 								<input name='smtpnotifyemailaddress' type='input' value='<?php echo $pconfig['smtpnotifyemailaddress']; ?>'><br/>
 								Enter the e-mail address that you would like email notifications sent to.
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell">Notification E-Mail auth username (optional)</td>
+							<td width="78%" class="vtable">
+								<input name='smtpusername' type='input' value='<?php echo $pconfig['smtpusername']; ?>'><br/>
+								Enter the e-mail address username for SMTP authentication.
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell">Notification E-Mail auth password</td>
+							<td width="78%" class="vtable">
+								<input name='smtppassword' type='password' value='<?php echo $pconfig['smtppassword']; ?>'><br/>
+								Enter the e-mail address password for SMTP authentication.
 							</td>
 						</tr>
 						<tr>

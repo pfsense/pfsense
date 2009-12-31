@@ -297,6 +297,17 @@ function notify_via_smtp($message) {
 	$smtp->ssl = 0;
 	$smtp->debug = 0;
 	$smtp->html_debug = 0;
+	
+	if($config['notifications']['smtp']['fromaddress'])
+		$from = $config['notifications']['smtp']['fromaddress'];
+	
+	// Use SMTP Auth if fields are filled out
+	if($config['notifications']['smtp']['username'] && 
+	   $config['notifications']['smtp']['password']) {
+		$smtp->authentication_mechanism = "PLAIN";
+		$smtp->username = $config['notifications']['smtp']['username'];
+		$smtp->password = $config['notifications']['smtp']['password'];
+	}
 
 	$headers = array(
 		"From: {$from}",

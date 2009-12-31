@@ -424,7 +424,6 @@ $closehead = false;
 ## Set Page Title and Include Header
 $pgtitle = array("{$g['product_name']} Dashboard");
 include("head.inc");
-outputJavaScriptFileInline("javascript/scriptaculous/prototype.js");
 outputJavaScriptFileInline("javascript/domTT/domLib.js");
 outputJavaScriptFileInline("javascript/domTT/domTT.js");
 outputJavaScriptFileInline("javascript/domTT/behaviour.js");

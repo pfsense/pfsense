@@ -138,8 +138,8 @@ include("head.inc");
 	<tr>
 	  <td valign="top" class="vncellreq">Aliases to import</td>
 	  <td class="vtable"><textarea name="aliasimport" ROWS="15" COLS="40"><?php echo $_POST['aliasimport']; ?></textarea>
-	    <br /> <span class="vexpl">Paste in the aliases to import seperated by a carriage return.  Common examples are list of ips, networks, blacklists, etc. 
-	    <br /> The list may contain only ip addresses. </span></td>
+	    <br /> <span class="vexpl">Paste in the aliases to import separated by a carriage return.  Common examples are lists of IPs, networks, blacklists, etc. 
+	    <br /> The list may contain only IP addresses. </span></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>

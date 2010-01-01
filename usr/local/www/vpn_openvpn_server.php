@@ -1106,7 +1106,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<textarea rows="6" cols="78" name="custom_options" id="custom_options"><?=$pconfig['custom_options'];?></textarea><br/>
-										Paste any additional options you would like to pass through to the OpenVPN server here seperated by a semicolon<br/>
+										Enter any additional options you would like to add to the OpenVPN server configuration here, separated by a semicolon<br/>
 										EXAMPLE: push "route 10.0.0.0 255.255.255.0";
 									</td>
 								</tr>

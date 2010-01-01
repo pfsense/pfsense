@@ -518,7 +518,7 @@ function filter_generate_aliases() {
 	return $result;
 }
 
-/* returns space seperated list of vpn subnets */
+/* returns space separated list of vpn subnets */
 function filter_get_vpns_list() {
 	global $config;
 	/* build list of vpns */
@@ -558,7 +558,7 @@ function filter_get_vpns_list() {
 	return $vpns;
 }
 
-/* returns space seperated list of directly connected networks */
+/* returns space separated list of directly connected networks */
 function filter_get_direct_networks_list() {
 	global $config, $FilterIflist;
 	/* build list of directly connected interfaces and networks */

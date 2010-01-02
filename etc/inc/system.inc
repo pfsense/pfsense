@@ -690,7 +690,7 @@ function system_generate_lighty_config($filename,
 	$port = 80,
 	$document_root = "/usr/local/www/",
 	$cert_location = "cert.pem",
-	$max_procs = 2,
+	$max_procs = 4,
 	$max_requests = "1",
 	$fast_cgi_enable = true,
 	$captive_portal = false) {
@@ -735,19 +735,19 @@ function system_generate_lighty_config($filename,
 	}
 
 	if($avail > 97 and $avail < 128) {
-		$max_procs = 1;
+		$max_procs = 2;
 	}
 
 	if($avail > 127 and $avail < 256) {
-		$max_procs = 1;
-	}
-
-	if($avail > 255 and $avail < 384) {
 		$max_procs = 3;
 	}
 
-	if($avail > 384) {
+	if($avail > 255 and $avail < 384) {
 		$max_procs = 4;
+	}
+
+	if($avail > 384) {
+		$max_procs = 5;
 	}
 
 	if($captive_portal == true)  {	

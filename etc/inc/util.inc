@@ -498,7 +498,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'faith',
 				'lo',
 				'ng',
-				'vlan',
+				'_vlan',
 				'pflog',
 				'plip',
 				'pfsync',
@@ -538,8 +538,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
                 $alink = explode(" ", $link);
                 $ifname = rtrim(trim($alink[0]), '*');
                 /* trim out all numbers before checking for vfaces */
-		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces) &&
-			!stristr($ifname, "_vl")) {
+		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces)) }
 			$toput = array(
 					"mac" => trim($alink[1]),
 					"up" => in_array($ifname, $upints)

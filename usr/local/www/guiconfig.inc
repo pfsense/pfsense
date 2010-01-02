@@ -91,12 +91,15 @@ $d_ovpnclidirty_path = "/tmp/ovpn-cli.dirty";
 /* used by progress bar */
 $lastseen = "-1";
 
-if (file_exists($d_firmwarelock_path)) {
-	if (!$d_isfwfile) {
-		header("Location: system_firmware.php");
-		exit;
-	} else {
-		return;
+/* Some ajax scripts still need access to GUI */
+if(!$ignorefirmwarelock) {
+	if (file_exists($d_firmwarelock_path)) {
+		if (!$d_isfwfile) {
+			header("Location: system_firmware.php");
+			exit;
+		} else {
+			return;
+		}
 	}
 }
 

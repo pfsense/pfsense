@@ -753,19 +753,19 @@ function system_generate_lighty_config($filename,
 	}
 
 	if($avail > 97 and $avail < 128) {
-		$max_procs = 1;
+		$max_procs = 2;
 	}
 
 	if($avail > 127 and $avail < 256) {
-		$max_procs = 1;
-	}
-
-	if($avail > 255 and $avail < 384) {
 		$max_procs = 3;
 	}
 
-	if($avail > 383) {
+	if($avail > 255 and $avail < 384) {
 		$max_procs = 4;
+	}
+
+	if($avail > 383) {
+		$max_procs = 5;
 	}
 
 	if($captive_portal == true)  {	

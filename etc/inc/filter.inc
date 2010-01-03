@@ -2254,7 +2254,8 @@ function filter_process_carp_nat_rules() {
 		echo "filter_process_carp_nat_rules() being called $mt\n";
 	}
 	$lines = "";
-	if(is_array($config['installedpackages']['carp']['config'])) {
+	if(isset($config['installedpackages']['carp']['config']) && 
+			is_array($config['installedpackages']['carp']['config'])) {
 		foreach($config['installedpackages']['carp']['config'] as $carp) {
 			$ip = $carp['ipaddress'];
 			if($ip <> "any") {
@@ -2281,8 +2282,9 @@ function filter_process_carp_rules() {
 	}
 	$lines = "";
 	/* return if there are no carp configured items */
-	if($config['installedpackages']['carpsettings']['config'] <> "" or
-		$config['virtualip']['vip'] <> "") {
+	if(isset($config['installedpackages']['carp']['config']) &&
+			 $config['installedpackages']['carpsettings']['config'] <> "" or
+			 $config['virtualip']['vip'] <> "") {
 		$lines .= "pass quick proto carp\n";
 		$lines .= "pass quick proto pfsync\n";
 	}

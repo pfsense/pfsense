@@ -55,7 +55,9 @@ if($_REQUEST['action']) {
 			if(strlen($_REQUEST['file']) < 1) {
 				echo "|No file name specified.|";
 			} else {
+				conf_mount_rw();
 				$ret = file_put_contents($_REQUEST['file'], $_REQUEST['data']);
+				conf_mount_ro();
 				if($_REQUEST['file'] == "config.xml")
 					if(file_exists("/tmp/config.cache"))
 						unlink("/tmp/config.cache");

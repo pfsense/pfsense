@@ -75,15 +75,34 @@ if ($_GET['option']) {
 			break;
 		case "queuedrops":
 			$curoption = "queuedrops";
-			case "quality":
-		foreach($databases as $database) {
-			if(preg_match("/[-]quality\.rrd/i", $database)) {
-				/* pick off the 1st database we find that matches the quality graph */
-				$name = explode("-", $database);
-				$curoption = "$name[0]";
-				continue 2;
+			break;
+		case "quality":
+			foreach($databases as $database) {
+				if(preg_match("/[-]quality\.rrd/i", $database)) {
+					/* pick off the 1st database we find that matches the quality graph */
+					$name = explode("-", $database);
+					$curoption = "$name[0]";
+					continue 2;
+				}
 			}
-		}
+		case "wireless":
+			foreach($databases as $database) {
+				if(preg_match("/[-]wireless\.rrd/i", $database)) {
+					/* pick off the 1st database we find that matches the wireless graph */
+					$name = explode("-", $database);
+					$curoption = "$name[0]";
+					continue 2;
+				}
+			}
+		case "cellular":
+			foreach($databases as $database) {
+				if(preg_match("/[-]cellular\.rrd/i", $database)) {
+					/* pick off the 1st database we find that matches the celullar graph */
+					$name = explode("-", $database);
+					$curoption = "$name[0]";
+					continue 2;
+				}
+			}
 		default:
 			$curoption = "wan";
 			break;
@@ -115,6 +134,17 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"outbound-packets.rrd",
 		"outbound-traffic.rrd");
 
+foreach($databases as $database) {
+	if(stristr($database, "wireless")) {
+		$wireless = true;
+	}
+	if(stristr($database, "queues")) {
+		$queues = true;
+	}
+	if(stristr($database, "cellular")) {
+		$cellular = true;
+	}
+}
 /* append the existing array to the header */
 $ui_databases = array_merge($dbheader, $databases);
 
@@ -143,14 +173,20 @@ include("head.inc");
 			        $tab_array[] = array("Packets", $tabactive, "status_rrd_graph.php?cat=packets");
 				if($curcat == "quality") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
-				if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
-				if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
-				if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
-				if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
+				if($queues) {
+					if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
+					$tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
+					if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
+					$tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
+				}
+				if($wireless) {
+					if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
+				        $tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
+				}
+				if($cellular) {
+					if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
+				        $tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
+				}
 				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Settings", $tabactive, "status_rrd_graph_settings.php");
 			        display_top_tabs($tab_array);

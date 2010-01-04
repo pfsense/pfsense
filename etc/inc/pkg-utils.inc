@@ -777,6 +777,7 @@ function delete_package_recursive($pkg) {
 
 function delete_package_xml($pkg) {
 	global $g, $config, $fd_log, $static_output, $pkg_interface;
+	conf_mount_rw();
 
 	if(($pkgid = get_pkg_id($pkg)) == -1) {
 		$static_output .= "The {$pkg} package is not installed.\n\nDeletion aborted.";
@@ -935,7 +936,11 @@ function delete_package_xml($pkg) {
 		fwrite($tmptab, $line);
 	}
 	fclose($tmptab);
+
+	// Go RW again since the write_config above will put it back to RO
+	conf_mount_rw();
 	rename("{$g['tmp_path']}/crontab", "/etc/crontab");
+	conf_mount_ro();
 }
 
 function expand_to_bytes($size) {

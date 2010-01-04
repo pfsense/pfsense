@@ -309,7 +309,8 @@ if ($_POST) {
 
 		// Handle the custom options rowhelper
 		$numbervalue = array();
-		unset($config['dhcpd'][$if]['numberoptions']['item']);
+		if(isset($config['dhcpd'][$if]['numberoptions']['item']))
+			unset($config['dhcpd'][$if]['numberoptions']['item']);
 		for($x=0; $x<isset($_POST["number{$x}"]); $x++) {
 			if(is_int(intval($_POST["number{$x}"]))) {
 				$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);

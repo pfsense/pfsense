@@ -79,8 +79,6 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 	case "ipsecpassthru":
                	$config['nat']['ipsecpassthru']['enable'] = true;
                	unset($config['nat']['advancedoutbound']['enable']);
-               	if(count($config['nat']['advancedoutbound']['rule']) > 0)
-			unset($config['nat']['advancedoutbound']['rule']);
 		break;
 	case "advancedoutboundnat":
         	if (!isset($config['nat']['advancedoutbound']['enable'])) {
@@ -104,20 +102,9 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 						continue;
 
 					$natent = array();
-					$natent['nonat'] = true;
-                                        $natent['source']['network'] = "any";
-                                        $natent['sourceport'] = "";
-                                        $natent['descr'] = "Auto nonat TFTP proxy created rule for {$ifdesc2}";
-                                        $natent['target'] = "tftp";
-                                        $natent['interface'] = $if2;
-                                        $natent['destination']['any'] = true;
-                                        $natent['natport'] = "";
-                                        $a_out[] = $natent;
-
-					$natent = array();
 					$natent['source']['network'] = "{$osn}/{$ossubnet}";
 					$natent['sourceport'] = "500";
-					$natent['descr'] = "Auto NAT-T created rule for {$ifdesc2}";
+					$natent['descr'] = "Auto created rule for {$ifdesc} to {$ifdesc2}";
 					$natent['target'] = "";
 					$natent['interface'] = $if2;
 					$natent['destination']['any'] = true;
@@ -127,7 +114,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$natent = array();
 					$natent['source']['network'] = "{$osn}/{$ossubnet}";
                                         $natent['sourceport'] = "5060";
-                                        $natent['descr'] = "Auto NAT-T created rule for {$ifdesc2}";
+                                        $natent['descr'] = "Auto created rule for {$ifdesc} to {$ifdesc2}";
                                         $natent['target'] = "";
                                         $natent['interface'] = $if2;
                                         $natent['destination']['any'] = true;
@@ -137,7 +124,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$natent = array();
                                         $natent['source']['network'] = "{$osn}/{$ossubnet}";
                                         $natent['sourceport'] = "";
-                                        $natent['descr'] = "Auto created rule for {$ifdesc2}";
+                                        $natent['descr'] = "Auto created rule for {$ifdesc} to {$ifdesc2}";
                                         $natent['target'] = "";
                                         $natent['interface'] = $if2;
                                         $natent['destination']['any'] = true;

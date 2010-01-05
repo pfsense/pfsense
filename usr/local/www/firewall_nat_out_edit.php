@@ -188,15 +188,6 @@ if ($_POST) {
 		if (!$natent['interface']) {
 			$natent['interface'] == "wan";
 		}
-		if (($natent['interface'] == $_POST['interface']) && ($natent['source']['network'] == $osn)) {
-			if (isset($natent['destination']['not']) == isset($_POST['destination_not'])) {
-				if ((isset($natent['destination']['any']) && ($ext == "any")) ||
-						($natent['destination']['address'] == $ext)) {
-					$input_errors[] = "There is already an outbound NAT rule with the specified settings.";
-					break;
-				}
-			}
-		}
 	}
 
 	if (!$input_errors) {

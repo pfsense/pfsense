@@ -190,6 +190,7 @@ var Class = (function() {
   }
 
   function toQueryString(object) {
+    //console.debug(object);
     return $H(object).toQueryString();
   }
 

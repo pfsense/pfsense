@@ -87,7 +87,7 @@ var domLib_collisionElements;
 var domLib_collisionsCached = false;
 
 var domLib_timeoutStateId = 0;
-var domLib_timeoutStates = new Hash();
+var domLib_timeoutStates = new domTT_Hash();
 
 // }}}
 // {{{ DOM enhancements
@@ -128,9 +128,9 @@ function domLib_clone(obj)
 }
 
 // }}}
-// {{{ class Hash()
+// {{{ class domTT_Hash()
 
-function Hash()
+function domTT_Hash()
 {
 	this.length = 0;
 	this.numericLength = 0; 
@@ -150,7 +150,7 @@ function Hash()
 }
 
 // using prototype as opposed to inner functions saves on memory 
-Hash.prototype.get = function(in_key)
+domTT_Hash.prototype.get = function(in_key)
 {
 	if (typeof(this.elementData[in_key]) != 'undefined') {
 		return this.elementData[in_key];
@@ -159,7 +159,7 @@ Hash.prototype.get = function(in_key)
 	return null;
 }
 
-Hash.prototype.set = function(in_key, in_value)
+domTT_Hash.prototype.set = function(in_key, in_value)
 {
 	if (typeof(in_value) != 'undefined')
 	{
@@ -178,7 +178,7 @@ Hash.prototype.set = function(in_key, in_value)
 	return false;
 }
 
-Hash.prototype.remove = function(in_key)
+domTT_Hash.prototype.remove = function(in_key)
 {
 	var tmp_value;
 	if (typeof(this.elementData[in_key]) != 'undefined')
@@ -196,17 +196,17 @@ Hash.prototype.remove = function(in_key)
 	return tmp_value;
 }
 
-Hash.prototype.size = function()
+domTT_Hash.prototype.size = function()
 {
 	return this.length;
 }
 
-Hash.prototype.has = function(in_key)
+domTT_Hash.prototype.has = function(in_key)
 {
 	return typeof(this.elementData[in_key]) != 'undefined';
 }
 
-Hash.prototype.find = function(in_obj)
+domTT_Hash.prototype.find = function(in_obj)
 {
 	for (var tmp_key in this.elementData) 
 	{
@@ -219,7 +219,7 @@ Hash.prototype.find = function(in_obj)
 	return null;
 }
 
-Hash.prototype.merge = function(in_hash)
+domTT_Hash.prototype.merge = function(in_hash)
 {
 	for (var tmp_key in in_hash.elementData) 
 	{
@@ -236,7 +236,7 @@ Hash.prototype.merge = function(in_hash)
 	}
 }
 
-Hash.prototype.compare = function(in_hash)
+domTT_Hash.prototype.compare = function(in_hash)
 {
 	if (this.length != in_hash.length) 
 	{
@@ -342,7 +342,7 @@ function domLib_detectCollisions(in_object, in_recover, in_useCache)
 
 			if (!thisElement.hideList)
 			{
-				thisElement.hideList = new Hash();
+				thisElement.hideList = new domTT_Hash();
 			}
 
 			thisElement.hideList.remove(in_object.id);
@@ -387,7 +387,7 @@ function domLib_detectCollisions(in_object, in_recover, in_useCache)
 
 		if (!thisElement.hideList)
 		{
-			thisElement.hideList = new Hash();
+			thisElement.hideList = new domTT_Hash();
 		}
 
 		var selectOffsets = domLib_getOffsets(thisElement); 
@@ -462,7 +462,7 @@ function domLib_getOffsets(in_object, in_preserveScroll)
 		offsetTop += 10;
 	}
 
-	return new Hash(
+	return new domTT_Hash(
 		'left',		offsetLeft,
 		'top',		offsetTop,
 		'right',	offsetLeft + originalWidth,
@@ -504,7 +504,7 @@ function domLib_setTimeout(in_function, in_timeout, in_args)
 	else
 	{
 		var id = domLib_timeoutStateId++;
-		var data = new Hash();
+		var data = new domTT_Hash();
 		data.set('function', in_function);
 		data.set('args', args);
 		domLib_timeoutStates.set(id, data);
@@ -540,7 +540,7 @@ function domLib_clearTimeout(in_id)
 
 function domLib_getEventPosition(in_eventObj)
 {
-	var eventPosition = new Hash('x', 0, 'y', 0, 'scrollX', 0, 'scrollY', 0);
+	var eventPosition = new domTT_Hash('x', 0, 'y', 0, 'scrollX', 0, 'scrollY', 0);
 
 	// IE varies depending on standard compliance mode
 	if (domLib_isIE)

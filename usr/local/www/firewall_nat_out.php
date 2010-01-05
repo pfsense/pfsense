@@ -83,8 +83,12 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 	case "advancedoutboundnat":
         	if (!isset($config['nat']['advancedoutbound']['enable'])) {
 			$config['nat']['advancedoutbound']['enable'] = true;
+			// if there are already AON rules configured, don't generate default ones
+			if(!empty($a_out))
+				continue;
 			/*
-			 *    user has enabled advanced outbound nat -- lets automatically create entries
+			 *    user has enabled advanced outbound NAT and doesn't have rules
+			 *    lets automatically create entries
 			 *    for all of the interfaces to make life easier on the pip-o-chap
 			 */
 			$ifdescrs = get_configured_interface_with_descr();

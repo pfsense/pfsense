@@ -103,22 +103,22 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 
 					$natent = array();
 					$natent['source']['network'] = "{$osn}/{$ossubnet}";
-					$natent['sourceport'] = "500";
-					$natent['descr'] = "Auto created rule for {$ifdesc} to {$ifdesc2}";
+					$natent['dstport'] = "500";
+					$natent['descr'] = "Auto created rule for ISAKMP - {$ifdesc} to {$ifdesc2}";
 					$natent['target'] = "";
 					$natent['interface'] = $if2;
 					$natent['destination']['any'] = true;
-					$natent['natport'] = "500";
+					$natent['staticnatport'] = true;
 					$a_out[] = $natent;
 
 					$natent = array();
 					$natent['source']['network'] = "{$osn}/{$ossubnet}";
-                                        $natent['sourceport'] = "5060";
-                                        $natent['descr'] = "Auto created rule for {$ifdesc} to {$ifdesc2}";
+                                        $natent['dstport'] = "5060";
+                                        $natent['descr'] = "Auto created rule for SIP - {$ifdesc} to {$ifdesc2}";
                                         $natent['target'] = "";
                                         $natent['interface'] = $if2;
                                         $natent['destination']['any'] = true;
-                                        $natent['natport'] = "5060";
+                                        $natent['staticnatport'] = true;
                                         $a_out[] = $natent;
 					
 					$natent = array();

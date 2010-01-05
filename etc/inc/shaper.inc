@@ -964,7 +964,7 @@ class priq_queue {
 		if (!empty($q['description']))
 			$this->SetDescription($q['description']);
 		else
-			$this->SetDescritption("");
+			$this->SetDescription("");
 		if (!empty($q['red']))
 			$this->SetRed($q['red']);
 		else
@@ -2677,7 +2677,7 @@ class dummynet_class {
                 return $this->description;
         }
         function SetDescription($str) {
-                $this->descritpion = trim($str);
+                $this->description = trim($str);
         }
         function GetFirstime() {
                 return $this->firsttime;
@@ -3095,7 +3095,7 @@ class dnqueue_class extends dummynet_class {
               		$this->SetMask($q['mask']);
        		if (isset($q['weight']) && $q['weight'] <> "")
             		$this->SetWeight($q['weight']);
-            	if (isset($q['descritption']) && $q['description'] <> "")
+            	if (isset($q['description']) && $q['description'] <> "")
 			$this->SetDescription($q['description']);
 		$this->SetEnabled($q['enabled']);
         }

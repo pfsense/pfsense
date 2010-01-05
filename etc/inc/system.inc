@@ -1023,8 +1023,9 @@ EOD;
 		if($ca <> "")
 			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
 	}
-	
-	if ($config['system']['webgui']['protocol'] == "https" && !isset($config['system']['webgui']['disablehttpredirect'])) {
+
+	// Add HTTP to HTTPS redirect	
+	if ($captive_portal == false && $config['system']['webgui']['protocol'] == "https" && !isset($config['system']['webgui']['disablehttpredirect'])) {
 		if($lighty_port != "443") 
 			$redirectport = ":{$lighty_port}";
 		$lighty_config .= <<<EOD

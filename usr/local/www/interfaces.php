@@ -321,7 +321,7 @@ if ($_POST) {
 	}
 	/* input validation */
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && $_POST['type'] != "static")
-		$input_errors[] = "Dhcpd service is active on this interface and it can be used only with a static ip configuration. Please disable the service first and than change the interface configuration.";
+		$input_errors[] = "The DHCP Server is active on this interface and it can be used only with a static IP configuration. Please disable the DHCP Server service on this interface first, then change the interface configuration.";
 
 	switch($_POST['type']) {
 		case "static":
@@ -434,7 +434,7 @@ if ($_POST) {
 				}
 				if(strlen($_POST['key' . $i]) == 28)
 					continue;
-				$input_errors[] =  "Invalid wep key size.   Sizes should be 40 (64) bit keys or 104 (128) bit.";
+				$input_errors[] =  "Invalid WEP key size.   Sizes should be 40 (64) bit keys or 104 (128) bit.";
 				break;
 			}
 		}

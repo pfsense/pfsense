@@ -1033,7 +1033,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncellreq">Alias IP address</td>
+								<td width="22%" valign="top" class="vncell">Alias IP address</td>
 								<td width="78%" class="vtable"> 
 									<input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
 									<select name="alias-subnet" class="formselect" id="alias-subnet">

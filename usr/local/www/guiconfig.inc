@@ -854,15 +854,20 @@ function display_top_tabs(& $tab_array) {
         // then show a select item dropdown menubox.
         if($tabcharcount > 82) {
                 echo "Currently viewing: ";
-                echo "<select name='TabSelect'>\n";
+                echo "<select name='TabSelect' onchange='tabs_will_go(this)'>\n";
                 foreach ($tab_array as $ta) {
                         if($ta[1]=="true")
                                 $selected = " SELECTED";
                         else
                                 $selected = "";
-                        echo "<option onClick=\"document.location='{$ta[2]}';\"{$selected}>{$ta['0']}</option>\n";
+                        // Onclick in option will not work in some browser
+                        // echo "<option onClick=\"document.location='{$ta[2]}';\"{$selected}>{$ta['0']}</option>\n";
+                        echo "<option value=\"{$ta[2]}\"{$selected}>{$ta['0']}</option>\n";
                 }
                 echo "</select>\n<p/>";
+                echo "<script type=\"text/javascript\">";
+                echo " function tabs_will_go(obj){ document.location = obj.value; }";
+                echo "</script>";
         }  else {
                 echo "<table cellpadding='0' cellspacing='0'>\n";
                 echo " <tr>\n";

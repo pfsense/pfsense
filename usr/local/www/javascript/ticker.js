@@ -29,15 +29,17 @@ function populatescroller(){
     try {
 	    scroller=document.getElementById? document.getElementById("scroller") : document.all.scroller;
 	    scroller.style.left=parseInt(width)+8+"px";
+	    scroller.style.width = parseInt(document.getElementById("marquee-text").offsetWidth) + 40 + "px";
 	    scroller.innerHTML=content;
-	    document.getElementById("marquee-text");
+	    document.getElementById("marquee-text");	    
 	    actualwidth=document.all? document.getElementById("marquee-text").offsetWidth : document.getElementById("marquee-text").offsetWidth;
 	    lefttime=setInterval("scrollmarquee()",20);
 	}catch(e){}
 }
 
 function scrollmarquee(){
-    try {
+	 
+   try {
 	    if (parseInt(scroller.style.left)>(actualwidth*(-1)+8))
 		    scroller.style.left=parseInt(scroller.style.left)-copyspeed+"px";
 	    else
@@ -46,11 +48,11 @@ function scrollmarquee(){
 }
 
 if (iedom){
-	document.write('<table id="marquee"><td>');
+	document.write('<table id="marquee"><tr><td>');
 	document.write('<div id="container" onMouseover="copyspeed=pausespeed" onMouseout="copyspeed=speed">');
 	document.write('<div id="scroller"></div>');
 	document.write('</div>');
-	document.write('</td></table>');
+	document.write('</td></tr></table>');
 }
 
 //-->

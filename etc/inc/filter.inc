@@ -3229,6 +3229,12 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
 			$numberofruns = 3;
 		}
+		$parsed_response =  XML_RPC_Decode($resp->value());
+		if(trim($parsed_response) == "Authentication failed") {
+			$error = "A authentication failure occurred while trying to access {$url}:{$port} (pfsense.exec_php).";
+			log_error($error);
+			$numberofruns = 5;
+		}
 		$numberofruns++;
 	}
 }

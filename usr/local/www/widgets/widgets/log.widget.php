@@ -30,7 +30,6 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
-
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
@@ -41,6 +40,15 @@ require_once("filter_log.inc");
 if($_POST['filterlogentries']) {
 	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 	write_config("Saved Filter Log Entries via Dashboard");
+  $filename = $_SERVER['HTTP_REFERER'];
+  if(headers_sent($file, $line)){
+    echo '<script type="text/javascript">';
+    echo 'window.location.href="'.$filename.'";';
+    echo '</script>';
+    echo '<noscript>';
+    echo '<meta http-equiv="refresh" content="0;url='.$filename.'" />';
+    echo '</noscript>';  
+  } 
 	Header("Location: /");
 }
 

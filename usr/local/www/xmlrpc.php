@@ -46,6 +46,8 @@ require("xmlrpc_server.inc");
 require("xmlrpc.inc");
 require("array_intersect_key.inc");
 
+$GLOBALS['XML_RPC_erruser'] = 800;
+
 /* grab sync to ip if enabled */
 if($config['installedpackages']['carpsettings']) {
 	if ($config['installedpackages']['carpsettings']['config']) {
@@ -66,7 +68,7 @@ $xmlrpc_g = array(
 			"return" => array(
 						"true" => new XML_RPC_Response(new XML_RPC_Value(true, $XML_RPC_Boolean)),
 						"false" => new XML_RPC_Response(new XML_RPC_Value(false, $XML_RPC_Boolean)),
-						"authfail" => new XML_RPC_Response(0, $XML_RPC_erruser+1, "Authentication failure")
+						"authfail" => new XML_RPC_Response(new XML_RPC_Value("Authentication failed", $XML_RPC_String))
 				)
 		);
 
@@ -343,4 +345,5 @@ $server = new XML_RPC_Server(
 							'signature' => $get_notices_sig)
         )
 );
+
 ?>

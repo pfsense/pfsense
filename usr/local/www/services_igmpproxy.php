@@ -69,7 +69,7 @@ if ($_GET['act'] == "del") {
 	if ($a_igmpproxy[$_GET['id']]) {
 		unset($a_igmpproxy[$_GET['id']]);
 		write_config();
-		touch($d_igmpproxydirty_path);
+		mark_subsystem_dirty('igmpproxy');
 		header("Location: services_igmpproxy.php");
 		exit;
 	}
@@ -84,7 +84,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <form action="services_igmpproxy.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_igmpproxydirty_path)): ?><p>
+<?php if (is_subsystem_dirty('igmpproxy')): ?><p>
 <?php print_info_box_np("The IGMP entry list has been changed.<br>You must apply the changes in order for them to take effect.");?>
 <?php endif; ?>
 

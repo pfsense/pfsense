@@ -3,7 +3,7 @@
 	$Id$
 
         xmlrpc.php
-        Copyright (C) 2009 Scott Ullrich
+        Copyright (C) 2009, 2010 Scott Ullrich
         Copyright (C) 2005 Colin Smith
         All rights reserved.
 

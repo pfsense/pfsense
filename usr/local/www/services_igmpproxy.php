@@ -63,6 +63,8 @@ if ($_POST) {
 	    $savemsg = get_std_save_message($retval);
 	else
 	    $savemsg = $retval;
+
+	clear_subsystem_dirty('igmpproxy');
 }
 
 if ($_GET['act'] == "del") {

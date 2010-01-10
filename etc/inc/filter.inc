@@ -1102,6 +1102,10 @@ function filter_nat_rules_generate() {
                                 $natif = "wan";
                         else
                                 $natif = $rule['interface'];
+
+			if (!isset($FilterIflist[$natif]))
+				continue;
+
 			$extaddr = alias_expand($rule['external-address']);
 			if(!$extaddr)
 				$extaddr = $FilterIflist[$natif]['ip'];

@@ -932,6 +932,10 @@ function filter_nat_rules_generate() {
 					$natif = "wan";
 				else 
 					$natif = $obent['interface'];
+
+				if (!isset($FilterIflist[$natif]))
+					continue;
+
 				$natrules .= filter_nat_rules_generate_if($natif,
 					$src,
 					$obent['sourceport'],

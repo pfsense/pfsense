@@ -722,11 +722,12 @@ function filter_flush_state_table() {
 	return mwexec("/sbin/pfctl -F state");
 }
 
-function filter_generate_reflection($rule, $target, $extport, &$starting_localhost_port) {
+function filter_generate_reflection($rule, $target, $extport, &$starting_localhost_port, &$reflection_txt) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
 	$natrules = "";
+	$reflection_txt = array();
 
 	if(!isset($config['system']['disablenatreflection'])) {
 		if($config['system']['reflectiontimeout'])
@@ -736,7 +737,6 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 
 		update_filter_reload_status("Setting up NAT Reflection");
 
-		$reflection_txt = array();
 		$natrules .= "\n# Reflection redirects\n";
 		foreach ($FilterIflist as $ifent => $ifname) {
 			/* do not process interfaces with gateways*/
@@ -796,8 +796,8 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 				case "tcp/udp":
 					$protocol = "{ tcp udp }";
 					foreach($toadd_array as $tda) {
-						$reflection_txt[] = "{$inetdport}\tstream\ttcp\tnowait/0\tnobody\t/usr/bin/nc -w {$reflectiontimeout} {$target} {$tda}\n";
-						$reflection_txt[] = "{$inetdport}\tdgram\tudp\tnowait/0\tnobody\t/usr/bin/nc -u -w {$reflectiontimeout} {$target} {$tda}\n";
+						$reflection_txt[] = "{$inetdport}\tstream\ttcp\tnowait/0\tnobody\t/usr/bin/nc\tnc -w {$reflectiontimeout} {$target} {$tda}\n";
+						$reflection_txt[] = "{$inetdport}\tdgram\tudp\tnowait/0\tnobody\t/usr/bin/nc\tnc -u -w {$reflectiontimeout} {$target} {$tda}\n";
 						$inetdport++;
 					}
 					$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
@@ -813,7 +813,7 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 						$dash_u = "";
 					}
 					foreach($toadd_array as $tda){
-						$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
+						$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
 						$inetdport++;
 					}
 					$natrules .= "rdr on { {$ifname['if']} } proto {$protocol} from any to {$extaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
@@ -822,14 +822,7 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 			}
 		}
 		
-		$inetd_fd = fopen("/var/etc/inetd.conf","w");
-
-		/* add tftp protocol helper */
-		fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy -v\n");
 		$reflection_txt = array_unique($reflection_txt);
-		foreach ($reflection_txt as $txtline)
-			fwrite($inetd_fd, $txtline);
-		fclose($inetd_fd);
 	}
 
 	return $natrules;
@@ -1068,7 +1061,7 @@ function filter_nat_rules_generate() {
 	// Open inetd.conf write handle
 	$inetd_fd = fopen("/var/etc/inetd.conf","w");
 	/* add tftp protocol helper */
-	fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy -v\n");
+	fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy\ttftp-proxy -v\n");
 
 	if(isset($config['nat']['rule'])) {
 		if(!isset($config['system']['disablenatreflection'])) {
@@ -1171,8 +1164,11 @@ function filter_nat_rules_generate() {
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$extport[0]} -> ({$natif})\n";
 				}
 			}
-			$natrules .= filter_generate_reflection($rule, $target, $extport, $starting_localhost_port);
+			$natrules .= filter_generate_reflection($rule, $target, $extport, $starting_localhost_port, $reflection_rules);
 			$natrules .= "\n";
+		
+			foreach ($reflection_rules as $txtline)
+                        	fwrite($inetd_fd, $txtline);
 		}
 	}
 	fclose($inetd_fd);		// Close file handle

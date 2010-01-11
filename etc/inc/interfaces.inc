@@ -2323,6 +2323,7 @@ function get_real_interface($interface = "wan") {
 	case "openvpn":
 		$wanif = "openvpn";
 		break;
+	case "ipsec":
 	case "enc0":
 		$wanif = "enc0";
 		break;

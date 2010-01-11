@@ -249,31 +249,13 @@ function enable_rrd_graphing() {
 		$rrdupdatesh .= "";
 
 		$i = 0;
-		$vfaces = array (
-			"vlan.?*",
-			"enc.?*"
-		);
-		$ifdescrs = get_interface_list(true, true, $vfaces);
-		$ifdescrs['enc0']['friendly'] = "ipsec";
-		$ifdescrs['enc0']['descr'] = "IPsec";
-		$ifdescrs['enc0']['up'] = true;
+		$ifdescrs = get_configured_interface_with_descr();
+		$ifdescrs['ipsec'] = "IPsec";
 
-		foreach ($ifdescrs as $realif => $ifdescr) {
-			$ifname = $ifdescr['friendly'];
-			$state = $ifdescr['up'];
+		foreach ($ifdescrs as $ifname => $ifdescr) {
 			$temp = get_real_interface($ifname);
 			if($temp <> "") {
 				$realif = $temp;
-			}
-
-			/* skip interfaces that do not have a friendly name */
-			if ("$ifname" == "") {
-				continue;
-			}
-
-			/* or are down */
-			if (!$state) {
-				continue;
 			}
 
 			/* TRAFFIC, set up the rrd file */

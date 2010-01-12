@@ -757,13 +757,13 @@ function interface_vip_bring_down(&$vip) {
 		break;
 	case "carp":
 		$vipif = "vip" . $vip['vhid'];
-		if(does_interface_exist("$vipif")) 
-			interface_bring_down($vipif);
+		if(does_interface_exist($vipif)) 
+			mwexec("/sbin/ifconfig {$vipif} destroy");
 		break;
 	case "carpdev-dhcp":
 		$vipif = "vip" . $vip['vhid'];
-		if(does_interface_exist("$vipif")) 
-			interface_bring_down($vipif);
+		if(does_interface_exist($vipif)) 
+			mwexec("/sbin/ifconfig {$vipif} destroy");
 		break;
 	}
 }

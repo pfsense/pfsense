@@ -77,6 +77,22 @@ if ($_POST) {
 	}
 }
 
+$rrddbpath = "/var/db/rrd/";
+/* XXX: (billm) do we have an exec() type function that does this type of thing? */
+exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
+
+foreach($databases as $database) {
+	if(stristr($database, "wireless")) {
+		$wireless = true;
+	}
+	if(stristr($database, "queues")) {
+		$queues = true;
+	}
+	if(stristr($database, "cellular")) {
+		$cellular = true;
+	}
+}
+
 $pgtitle = array("Status","RRD Graphs");
 include("head.inc");
 
@@ -99,14 +115,20 @@ include("head.inc");
                                 $tab_array[] = array("Packets", $tabactive, "status_rrd_graph.php?cat=packets");
                                 if($curcat == "quality") { $tabactive = True; } else { $tabactive = False; }
                                 $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
-                                if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
-                                if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
-                                if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
-                                $tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
-				if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
-			        $tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
+				if($queues) {
+	                                if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
+					$tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
+					if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
+					$tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
+				}
+				if($wireless) {
+	                                if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
+					$tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
+				}
+				if($cellular) {
+					if($curcat == "cellular") { $tabactive = True; } else { $tabactive = False; }
+					$tab_array[] = array("Cellular", $tabactive, "status_rrd_graph.php?cat=cellular");
+				}
                                 if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
                                 $tab_array[] = array("Settings", $tabactive, "status_rrd_graph_settings.php");
                                 display_top_tabs($tab_array);

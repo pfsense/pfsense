@@ -474,7 +474,8 @@ include("head.inc");
 	$i = 0;
 	foreach ($iflist as $ifent => $ifname) {
         	$oc = $config['interfaces'][$ifent];
-        	if (!is_ipaddr($oc['ipaddr']))
+		if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddr($oc['ipaddr']))) || 
+			(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddr($oc['ipaddr']))))
 			continue;
 		if ($ifent == $if)
 			$active = true;

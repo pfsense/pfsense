@@ -736,7 +736,7 @@ function verify_digital_signature($fname) {
 	global $g;
 
 	if(!file_exists("/usr/local/sbin/gzsig"))
-		return 1;
+		return 4;
 
 	return mwexec("/usr/local/sbin/gzsig verify {$g['etc_path']}/pubkey.pem < " . escapeshellarg($fname));
 }

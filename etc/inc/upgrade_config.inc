@@ -1339,8 +1339,10 @@ function upgrade_051_to_052() {
 				$server['interface'] = 'wan';
 			$server['tunnel_network'] = $server['addresspool'];
 			unset($server['addresspool']);
-			$server['compress'] = $server['use_lzo'];
-			unset($server['use_lzo']);
+			if (isset($server['use_lzo'])) {
+				$server['compress'] = true;
+				unset($server['use_lzo']);
+			}
 			if ($server['nopool'])
 				$server['pool_enable'] = false;
 			else
@@ -1433,8 +1435,10 @@ function upgrade_051_to_052() {
 			unset($client['serverport']);
 			$client['proxy_addr'] = $client['poxy_hostname'];
 			unset($client['proxy_addr']);
-			$client['compress'] = $client['use_lzo'];
-			unset($client['use_lzo']);
+			if (isset($client['use_lzo'])) {
+				$client['compress'] = true;
+				unset($client['use_lzo']);
+			}
 			$client['resolve_retry'] = $client['infiniteresolvretry'];
 			unset($client['infiniteresolvretry']);
 

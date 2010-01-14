@@ -1413,7 +1413,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 														</td>
 													</tr>
 												</table>
-												<br/>Passphrase must be from 8 to 63 chars.
+												<br/>Passphrase must be from 8 to 63 characters.
 											</td>
 										</tr>
 										<tr>

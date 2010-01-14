@@ -49,6 +49,7 @@ require("functions.inc");
 require("filter.inc");
 require("shaper.inc");
 require("rrd.inc");
+require("vpn.inc");
 
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
@@ -264,7 +265,7 @@ if ($_POST['apply']) {
 	else {	
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
-		interface_configure($if);
+		interface_configure($if, true);
 		
 		/* restart snmp so that it binds to correct address */		
 		services_snmpd_configure();		

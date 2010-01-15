@@ -439,6 +439,12 @@ if ($_POST) {
 				break;
 			}
 		}
+
+		if ($_POST['passphrase']) {
+                	$passlen = strlen($_POST['passphrase']);
+                	if ($passlen < 8 || $passlen > 64)
+                        	$input_errors[] = "The length of the passphrase should be between 8 and 63 characters.";
+		}
 	}
 	if (!$input_errors) {
 		unset($wancfg['ipaddr']);

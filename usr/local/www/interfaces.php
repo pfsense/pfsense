@@ -46,6 +46,7 @@
 
 require("guiconfig.inc");
 require("functions.inc");
+require("captiveportal.inc");
 require("filter.inc");
 require("shaper.inc");
 require("rrd.inc");

@@ -94,7 +94,7 @@ function parse_config($parse = false) {
 	global $g, $config_parsed;
 	
 	$lockkey = lock('config');
-	$config_parsed == false;
+	$config_parsed = false;
 	if (!file_exists("{$g['conf_path']}/config.xml") || filesize("{$g['conf_path']}/config.xml") == 0) {
 		$last_backup = discover_last_backup();
 		if($last_backup) {
@@ -156,7 +156,6 @@ function parse_config($parse = false) {
 	alias_make_table($config);
 	$config_parsed = true;
 	unlock($lockkey);
-
 
 	return $config;
 }

@@ -673,7 +673,7 @@ function presubmit() {
 						<td colspan="4">
 							<p>
 								<?=gettext("Additional webConfigurator users can be added here.");?>
-								<?=gettext("User permissions can be assinged diretly or inherited from group memberships.");?>
+								<?=gettext("User permissions can be assigned directly or inherited from group memberships.");?>
 								<?=gettext("An icon that appears grey indicates that it is a system defined object.");?>
 								<?=gettext("Some system object properties can be modified but they cannot be deleted.");?>
 							</p>

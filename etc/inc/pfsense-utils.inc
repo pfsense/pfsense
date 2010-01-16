@@ -794,6 +794,13 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 	$xmlrpc_path = $g['xmlrpcpath'];
 	$msg = new XML_RPC_Message($method, array(XML_RPC_Encode($params)));
 	$cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url);
+	// If the ALT PKG Repo has a username/password set, use it.
+	if($config['system']['altpkgrepo']['username'] && 
+	   $config['system']['altpkgrepo']['password']) {
+		$username = $config['system']['altpkgrepo']['username'];
+		$password = $config['system']['altpkgrepo']['password'];
+		$cli->setCredentials($username, $password);
+	}
 	$resp = $cli->send($msg, $timeout);
 	if(!$resp) {
 		log_error("XMLRPC communication error: " . $cli->errstr);

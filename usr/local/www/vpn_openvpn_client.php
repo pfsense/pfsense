@@ -224,6 +224,7 @@ if ($_POST) {
 		$client['tunnel_network'] = $pconfig['tunnel_network'];
 		$client['remote_network'] = $pconfig['remote_network'];
 		$client['compression'] = $pconfig['compression'];
+		$client['passtos'] = $pconfig['passtos'];
 
 		if (isset($id) && $a_client[$id])
 			$a_client[$id] = $client;

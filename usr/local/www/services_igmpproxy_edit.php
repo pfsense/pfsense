@@ -71,10 +71,14 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if ($_POST['type'] == "upstream")
-		foreach ($a_igmpproxy as $proxyentry)
+	if ($_POST['type'] == "upstream") {
+		foreach ($a_igmpproxy as $pid => $proxyentry) {
+			if (isset($id) && $id == $pid)
+				continue;
 			if ($proxyentry['type'] == "upstream" && $proxyentry['ifname'] != $_POST['interface'])
 				$input_errors[] = "Only one 'upstream' interface can be configured.";
+		}
+	}
 	$igmpentry = array();
 	$igmpentry['ifname'] = $_POST['ifname'];
 	$igmpentry['threshold'] = $_POST['threshold'];

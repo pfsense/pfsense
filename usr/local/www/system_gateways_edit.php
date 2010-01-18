@@ -67,6 +67,8 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = $a_gateways[$id]['defaultgw'];
+	if (isset($a_gateways[$id]['dynamic']))
+		$pconfig['dynamic'] = true;
 	if($a_gateway_item[$id]['monitor'] <> "") {
 		$pconfig['monitor'] = $a_gateway_item[$id]['monitor'];
 	} else {
@@ -258,7 +260,7 @@ include("head.inc");
 					$gateway = htmlspecialchars($pconfig['gateway']);
 				}
 			?>
-                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php echo $gateway; ?>">
+                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php echo $gateway; ?>" <?php if ($pconfig['dynamic'] == true) echo "disabled"; ?>>
                     <br> <span class="vexpl">Gateway IP address</span></td>
                 </tr>
 		<tr>

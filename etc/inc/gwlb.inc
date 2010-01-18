@@ -275,6 +275,7 @@ function return_gateways_array($disabled = false) {
 				if(! is_ipaddr($gateway['gateway'])) {
 					$gateway['gateway'] = "dynamic";
 				}
+				$gateway['dynamic'] = true;
 			}
 			if($gateway['monitor'] == "") {
 				$gateway['monitor'] = $gateway['gateway'];
@@ -292,7 +293,8 @@ function return_gateways_array($disabled = false) {
 				continue;
 			}
 			$gateway = array();
-			$gateway['gateway'] = get_interface_gateway($ifname);
+			$gateway['dynamic'] = false;
+			$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
 			$gateway['interface'] = get_real_interface($ifname);
 			$gateway['name'] = "{$ifname}";
 			$gateway['attribute'] = "system";
@@ -494,7 +496,7 @@ function lookup_gateway_interface_by_name($name) {
         return(false);
 }
 
-function get_interface_gateway($interface) {
+function get_interface_gateway($interface, &$dynamic = false) {
         global $config, $g;
 
         $iflist = get_configured_interface_with_descr();
@@ -524,6 +526,7 @@ function get_interface_gateway($interface) {
                 if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
                         $gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
                         $gw = rtrim($gw);
+			$dynamic = true;
                 }
         }
 

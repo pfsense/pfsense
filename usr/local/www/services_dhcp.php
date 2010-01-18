@@ -306,11 +306,11 @@ if ($_POST) {
 		$config['dhcpd'][$if]['rootpath'] = $_POST['rootpath'];
 
 		// Handle the custom options rowhelper
-		$numbervalue = array();
 		if(isset($config['dhcpd'][$if]['numberoptions']['item']))
 			unset($config['dhcpd'][$if]['numberoptions']['item']);
-		for($x=0; $x<isset($_POST["number{$x}"]); $x++) {
-			if(is_int(intval($_POST["number{$x}"]))) {
+		for($x=0; $x<99; $x++) {
+			if(isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
+				$numbervalue = array();
 				$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
 				$numbervalue['value'] = htmlspecialchars($_POST["value{$x}"]);
 				$config['dhcpd'][$if]['numberoptions']['item'][] = $numbervalue;

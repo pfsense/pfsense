@@ -226,7 +226,7 @@ include("head.inc");
 				  <select name="interface" class="formselect">
                       <?php $interfaces = get_configured_interface_with_descr(false, true);
 					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo " selected"; ?>> 
+                      <option value="<?=$iface;?>" <?php if (get_real_interface($iface) == $pconfig['interface']) echo " selected"; ?>> 
                       <?=htmlspecialchars($ifacename);?>
                       </option>
 					iface = <?=$iface?> ;  pconfig = <?=$pconfig['interface']?>  ;  ifacename = <?=$ifacename?>

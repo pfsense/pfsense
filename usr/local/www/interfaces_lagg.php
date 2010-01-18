@@ -47,7 +47,7 @@ if (!is_array($config['laggs']['lagg']))
 $a_laggs = &$config['laggs']['lagg'] ;
 
 function lagg_inuse($num) {
-	global $config;
+	global $config, $a_laggs;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
@@ -55,6 +55,12 @@ function lagg_inuse($num) {
 			return true;
 	}
 
+	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+                foreach ($config['vlans']['vlan'] as $vlan) {
+                        if($vlan['if'] == $a_laggs[$num]['laggif'])
+				return true;
+                }
+        }
 	return false;
 }
 
@@ -63,7 +69,7 @@ if ($_GET['act'] == "del") {
 	if (lagg_inuse($_GET['id'])) {
 		$input_errors[] = "This lagg interface cannot be deleted because it is still being used.";
 	} else {
-		mwexec("/sbin/ifconfig " . $a_laggs[$_GET['id']]['laggif'] . " destroy");
+		mwexec_bg("/sbin/ifconfig " . $a_laggs[$_GET['id']]['laggif'] . " destroy");
 		unset($a_laggs[$_GET['id']]);
 
 		write_config();

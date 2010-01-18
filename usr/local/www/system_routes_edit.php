@@ -5,6 +5,7 @@
 	part of m0n0wall (http://m0n0.ch/wall)
 	
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2010 Scott Ullrich
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -172,15 +173,68 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Gateway</td>
                   <td width="78%" class="vtable">
-			<select name="gateway" class="formselect">
+			<select name="gateway" id="gateway" class="formselect">
 			<?php
 				foreach ($a_gateways as $gateway): ?>
 	                      <option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>> 
 	                      <?=htmlspecialchars($gateway['name']);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br>
-                    <span class="vexpl">Choose which gateway this route applies to.</span></td>
+                    </select> <br />
+			<div id='addgwbox'>
+				Choose which gateway this route applies to or <a OnClick="show_add_gateway();" href="#">add a new one</a>.
+								</div>
+								<div id='notebox'>
+								</div>
+								<div style="display:none" name ="status" id="status">
+								</div>								
+								<div style="display:none" id="addgateway" name="addgateway">
+									<p> 
+									<table border="1" style="background:#990000; border-style: none none none none; width:225px;"><tr><td>
+										<table bgcolor="#990000" cellpadding="1" cellspacing="1">
+											<tr><td>&nbsp;</td>
+											<tr>
+												<td colspan="2"><center><b><font color="white">Add new gateway:</b></center></td>
+											</tr>
+											<tr><td>&nbsp;</td>
+											<tr>
+												<td width="45%" align="right"><font color="white">Default  gateway:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
+											</tr>												
+											<tr>
+												<td width="45%" align="right"><font color="white">Interface:</td>
+												<td><select name="addinterfacegw" id="addinterfacegw">
+												<?php $gwifs = get_configured_interface_with_descr();
+													foreach($gwifs as $fif => $dif)
+														echo "<option value=\"{$fif}\">{$dif}</option>\n";
+												?>
+												</select></td>
+											</tr>
+											<tr>
+												<td align="right"><font color="white">Gateway Name:</td><td><input id="name" name="name" value="GW"></td>
+											</tr>
+											<tr>
+												<td align="right"><font color="white">Gateway IP:</td><td><input id="gatewayip" name="gatewayip"></td>
+											</tr>
+											<tr>
+												<td align="right"><font color="white">Description:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
+											</tr>
+											<tr><td>&nbsp;</td>
+											<tr>
+												<td colspan="2">
+													<center>
+														<div id='savebuttondiv'>
+															<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
+															<input id="gwsave" type="Button" value="Save Gateway" onClick='hide_add_gatewaysave();'> 
+															<input id="gwcancel" type="Button" value="Cancel" onClick='hide_add_gateway();'>
+														</div>
+													</center>
+												</td>
+											</tr>
+											<tr><td>&nbsp;</td>
+										</table>
+										</td></tr></table>
+									<p/>
+								</div>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
@@ -192,7 +246,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" class="formbtn"  onclick="history.back()">
+                    <input id="save" name="Submit" type="submit" class="formbtn" value="Save"> <input id="cancel" type="button" value="Cancel" class="formbtn"  onclick="history.back()">
                     <?php if (isset($id) && $a_routes[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>
@@ -200,9 +254,73 @@ include("head.inc");
                 </tr>
               </table>
 </form>
+<script type="text/javascript">
+					var gatewayip;
+					var name;
+					function show_add_gateway() {
+						document.getElementById("addgateway").style.display = '';
+						document.getElementById("addgwbox").style.display = 'none';
+						document.getElementById("gateway").style.display = 'none';
+						document.getElementById("save").style.display = 'none';
+						document.getElementById("cancel").style.display = 'none';
+						document.getElementById("gwsave").style.display = '';
+						document.getElementById("gwcancel").style.display = '';
+						$('notebox').innerHTML="";
+					}
+					function hide_add_gateway() {
+						document.getElementById("addgateway").style.display = 'none';
+						document.getElementById("addgwbox").style.display = '';	
+						document.getElementById("gateway").style.display = '';
+						document.getElementById("save").style.display = '';
+						document.getElementById("cancel").style.display = '';
+						document.getElementById("gwsave").style.display = '';
+						document.getElementById("gwcancel").style.display = '';
+					}
+					function hide_add_gatewaysave() {
+						document.getElementById("addgateway").style.display = 'none';
+						$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> One moment please...';
+						var iface = $('addinterfacegw').getValue();
+						name = $('name').getValue();
+						var descr = $('gatewaydescr').getValue();
+						gatewayip = $('gatewayip').getValue();
+						addrtype = $('addrtype').getValue();
+						var defaultgw = $('defaultgw').getValue();
+						var url = "system_gateways_edit.php";
+						var pars = 'isAjax=true&defaultgw=' + escape(defaultgw) + '&interface=' + escape(iface) + '&name=' + escape(name) + '&descr=' + escape(descr) + '&gateway=' + escape(gatewayip) + '&type=' + escape(addrtype);
+						var myAjax = new Ajax.Request(
+							url,
+							{
+								method: 'post',
+								parameters: pars,
+								onFailure: report_failure,
+								onComplete: save_callback
+							});	
+					}
+					function addOption(selectbox,text,value)
+					{
+						var optn = document.createElement("OPTION");
+						optn.text = text;
+						optn.value = value;
+						selectbox.options.add(optn);
+						selectbox.selectedIndex = (selectbox.options.length-1);
+						$('notebox').innerHTML="<p/><strong>NOTE:</strong> You can manage Gateways <a target='_new' href='system_gateways.php'>here</a>.";
+					}				
+					function report_failure() {
+						alert("Sorry, we could not create your gateway at this time.");
+						hide_add_gateway();
+					}
+					function save_callback(transport) {
+						var response = transport.responseText;
+						if (response) {
+							document.getElementById("addgateway").style.display = 'none';
+							hide_add_gateway();
+							$('status').innerHTML = '';
+							addOption($('gateway'), name, name);
+						} else {
+							report_failure();
+						}
+					}
+				</script>
 <?php include("fend.inc"); ?>
-<script language="JavaScript">
-	enable_change();
-</script>
 </body>
 </html>

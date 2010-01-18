@@ -63,18 +63,17 @@ if (isset($_GET['dup'])) {
 }
 
 if (isset($id) && $a_gateways[$id]) {
-	$pconfig['name'] = $a_gateway_item[$id]['name'];
-	$pconfig['interface'] = $a_gateway_item[$id]['interface'];
-	$pconfig['gateway'] = $a_gateway_item[$id]['gateway'];
-	$pconfig['defaultgw'] = $a_gateway_item[$id]['defaultgw'];
-
+	$pconfig['name'] = $a_gateways[$id]['name'];
+	$pconfig['interface'] = $a_gateways[$id]['interface'];
+	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
+	$pconfig['defaultgw'] = $a_gateways[$id]['defaultgw'];
 	if($a_gateway_item[$id]['monitor'] <> "") {
 		$pconfig['monitor'] = $a_gateway_item[$id]['monitor'];
 	} else {
 		$pconfig['monitor'] == "";
 	}
-	$pconfig['descr'] = $a_gateway_item[$id]['descr'];
-	$pconfig['attribute'] = $a_gateway_item[$id]['attribute'];
+	$pconfig['descr'] = $a_gateways[$id]['descr'];
+	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
 }
 
 if (isset($_GET['dup'])) {

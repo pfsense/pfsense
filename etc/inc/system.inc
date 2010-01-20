@@ -48,15 +48,22 @@ function activate_powerd() {
 	}
 }
 
+function get_default_sysctl_value($id) {
+	global $sysctls;
+	foreach($sysctls as $sysctl => $value) {
+		if($sysctl == $id)
+			return $value;
+	}
+}
+
 function activate_sysctls() {
 	global $config, $g;
-	require("sysctl.inc");
 	exec("/sbin/sysctl net.enc.out.ipsec_bpf_mask=0x00000001");
 	exec("/sbin/sysctl net.enc.out.ipsec_filter_mask=0x00000001");
 	exec("/sbin/sysctl net.enc.in.ipsec_bpf_mask=0x00000002");
 	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x00000002");
 
-	if (is_array($config['sysctl'])) {
+	if(is_array($config['sysctl'])) {
 		foreach($config['sysctl']['item'] as $tunable) {
 			if($tunable['value'] == "default") {
 				$value = get_default_sysctl_value($tunable['tunable']);

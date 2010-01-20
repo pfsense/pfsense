@@ -322,7 +322,7 @@ function is_schedule_inuse($schedule) {
 
 /****f* pfsense-utils/setup_polling_defaults
  * NAME
- *   sets up sysctls for pollingS
+ *   sets up sysctls for polling
  * INPUTS
  *
  * RESULT

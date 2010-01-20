@@ -57,11 +57,10 @@ function activate_sysctls() {
 	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x00000002");
 
 	if (is_array($config['sysctl'])) {
-		foreach ($config['sysctl']['item'] as $tunable) {
+		foreach($config['sysctl'] as $tunable) {
 			if($tunable['value'] == "default")
 				$tunable['value'] = get_default_sysctl_value($tunable['tunable']);
-			mwexec("sysctl " . $tunable['tunable'] . "=\"" 
-				. $tunable['value'] .  "\"");
+				mwexec("/sbin/sysctl " . $tunable['tunable'] . "=\"" . $tunable['value'] .  "\"");
 		}
 	}
 }

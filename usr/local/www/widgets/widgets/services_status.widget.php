@@ -54,22 +54,27 @@ $services = $config['installedpackages']['service'];
  *
  */
 if(isset($config['dnsmasq']['enable'])) {
-	$pconfig2['name'] = "dnsmasq";
-	$pconfig2['description'] = "DNS Forwarder";
-	$services[] = $pconfig2;
-	unset($pconfig2);
+	$pconfig['name'] = "dnsmasq";
+	$pconfig['description'] = "DNS Forwarder";
+	$services[] = $pconfig;
+	unset($pconfig);
 }
+
+$pconfig['name'] = "ntpd";
+$pconfig['description'] = "NTP clock sync";
+$services[] = $pconfig;
+unset($pconfig);
 
 if(isset($config['captiveportal']['enable'])) {
-	$pconfig2['name'] = "lighttpd";
-	$pconfig2['description'] = "Captive Portal";
-	$services[] = $pconfig2;
-	$pconfig2 = "";
-	unset($pconfig2);
+	$pconfig['name'] = "lighttpd";
+	$pconfig['description'] = "Captive Portal";
+	$services[] = $pconfig;
+	$pconfig = "";
+	unset($pconfig);
 }
 
-$iflist = array("lan" => "LAN");
-$ifdescrs = get_configured_interface_list(true);
+$iflist = array();
+$ifdescrs = get_configured_interface_list();
 foreach ($ifdescrs as $if) {
 	$oc = $config['interfaces'][$if];
 	if ($oc['if'] && (!link_interface_to_bridge($if)))
@@ -82,38 +87,61 @@ foreach($iflist as $if) {
 }
 
 if($show_dhcprelay == true) {
-	$pconfig2['name'] = "dhcrelay";
-	$pconfig2['description'] = "DHCP Relay";
-	$services[] = $pconfig2;
-	unset($pconfig2);
+	$pconfig['name'] = "dhcrelay";
+	$pconfig['description'] = "DHCP Relay";
+	$services[] = $pconfig;
+	unset($pconfig);
 }
 
 if(is_dhcp_server_enabled()) {
-	$pconfig2['name'] = "dhcpd";
-	$pconfig2['description'] = "DHCP Service";
-	$services[] = $pconfig2;
-	unset($pconfig2);
+	$pconfig['name'] = "dhcpd";
+	$pconfig['description'] = "DHCP Service";
+	$services[] = $pconfig;
+	unset($pconfig);
 }
 
 if(isset($config['snmpd']['enable'])) {
-	$pconfig2['name'] = "bsnmpd";
-	$pconfig2['description'] = "SNMP Service";
-	$services[] = $pconfig2;
-	unset($pconfig2);
+	$pconfig['name'] = "bsnmpd";
+	$pconfig['description'] = "SNMP Service";
+	$services[] = $pconfig;
+	unset($pconfig);
+}
+
+if (count($config['igmpproxy']['igmpentry']) > 0) {
+	$pconfig['name'] = "igmpproxy";
+	$pconfig['descritption'] = "IGMP proxy";
+	$services[] = $pconfig;
+	unset($pconfig);
 }
 
 if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
-    $pconfig2['name'] = "miniupnpd";
-    $pconfig2['description'] = gettext("UPnP Service");
-    $services[] = $pconfig2;
-    unset($pconfig2);
+	$pconfig['name'] = "miniupnpd";
+	$pconfig['description'] = gettext("UPnP Service");
+	$services[] = $pconfig;
+	unset($pconfig);
 }
 
 if (isset($config['ipsec']['enable'])) {
-    $pconfig2['name'] = "racoon";
-    $pconfig2['description'] = gettext("IPsec VPN");
-    $services[] = $pconfig2;
-    unset($pconfig2);
+	$pconfig['name'] = "racoon";
+	$pconfig['description'] = gettext("IPsec VPN");
+	$services[] = $pconfig;
+	unset($pconfig);
+}
+
+foreach (array('server', 'client') as $mode) {
+	if (is_array($config['installedpackages']["openvpn$mode"]['config'])) {
+		foreach ($config['installedpackages']["openvpn$mode"]['config'] as $id => $settings) {
+			$setting = $config['installedpackages']["openvpn$mode"]['config'][$id];
+			if (!$setting['disable']) {
+				$pconfig['name'] = "openvpn";
+				$pconfig['mode'] = $mode;
+				$pconfig['id'] = $id;
+				$pconfig['description'] = "OpenVPN ".$mode.": ".htmlspecialchars($setting['description']);
+				$services[] = $pconfig;
+				unset($pconfig);
+			}
+		}
+	}
 }
 
 if(isset($_POST['servicestatusfilter'])) {

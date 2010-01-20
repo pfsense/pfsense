@@ -57,7 +57,7 @@ function activate_sysctls() {
 	exec("/sbin/sysctl net.enc.in.ipsec_filter_mask=0x00000002");
 
 	if (is_array($config['sysctl'])) {
-		foreach($config['sysctl'] as $tunable) {
+		foreach($config['sysctl']['item'] as $tunable) {
 			if($tunable['value'] == "default") {
 				$value = get_default_sysctl_value($tunable['tunable']);
 				mwexec("/sbin/sysctl " . $tunable['tunable'] . "=\"" . $value .  "\"");

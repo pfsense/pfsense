@@ -507,16 +507,16 @@ function services_dhcrelay_configure() {
 			link_interface_to_bridge($dhcrelayif))))
 			continue;
 
-		$dhcrelayifs[] = get_real_interface($dhcprelayif);
+		$dhcrelayifs[] = get_real_interface($dhcrelayif);
 	}
 
 	/* In order for the relay to work, it needs to be active on the
 	   interface in which the destination server sits */
-	$dhrelayifs = get_configured_interface_list();
-	foreach ($dhrelayifs as $ifname) {
+	$iflist = get_configured_interface_list();
+	foreach ($iflist as $ifname) {
 		$subnet = get_interface_ip($ifname) . "/" . get_interface_subnet($ifname);
 		if (ip_in_subnet($dhcrelaycfg['server'],$subnet))
-			$destif = $ifname['if'];
+			$destif = get_real_interface($ifname);
 	}
 
 	if (!isset($destif))

@@ -269,6 +269,9 @@ if (isAllowedPage("system_usermanager")) {
 			local_user_set_groups($userent,$_POST['groups']);
 			write_config();
 
+			if(is_dir("/etc/inc/privhooks"))
+				run_plugins("/etc/inc/privhooks");
+
 			conf_mount_ro();
 			
 			pfSenseHeader("system_usermanager.php");

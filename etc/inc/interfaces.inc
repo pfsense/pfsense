@@ -940,7 +940,7 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 		exec("chmod a+rx /etc/ppp/ppp.linkdown");
 	}
 	// Launch specified ppp instance
-	if( !$edit && file_exists("/dev/{$orig_dev}")){
+	if( (!$edit || $g['booting']) && file_exists("/dev/{$orig_dev}")){
 		$running = `ps awux | grep ppp | grep -v grep | grep $orig_dev`;
 		if(!$running)
 			mwexec("/usr/sbin/ppp -background {$orig_dev}");

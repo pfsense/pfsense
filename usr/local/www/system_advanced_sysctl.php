@@ -126,7 +126,6 @@ include("head.inc");
 
 $pgtitle = array("System","Advanced: Miscellaneous");
 include("head.inc");
-require("sysctl.inc");
 
 ?>
 

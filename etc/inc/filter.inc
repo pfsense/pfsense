@@ -1681,6 +1681,12 @@ function filter_rules_generate() {
                                         $cpiplist[] = $cpipm;
                         }
                 }
+		 if (count($cpiplist) > 0 && count($cpiflist) > 0) {
+                        $cpinterface = implode(" ", $cpiflist);
+                       $cpaddresses = implode(" ", $cpiplist);
+                       $ipfrules .= "pass in quick on {$cpinterface} proto tcp from any to {$cpaddresses} port { 8000 8001 } no state\n";
+                       $ipfrules .= "pass out quick on {$cpinterface} proto tcp from {$cpaddresses} port { 8000 8001 } to any no state\n";
+                }
 	}
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";

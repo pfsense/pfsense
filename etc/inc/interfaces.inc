@@ -649,7 +649,7 @@ function interfaces_configure() {
 	interfaces_qinq_configure();
 
 	/* Set up PPP interfaces */
-	interfaces_ppp_configure(false);
+	interfaces_ppp_configure();
 
 	$iflist = get_configured_interface_with_descr();
 	$delayed_list = array();

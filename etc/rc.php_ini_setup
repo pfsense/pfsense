@@ -137,6 +137,7 @@ implicit_flush = true
 magic_quotes_gpc = Off
 max_execution_time = 99999999
 max_input_time = 99999999
+set_time_limit = 0
 register_argc_argv = On
 file_uploads = On
 upload_tmp_dir = ${UPLOADTMPDIR}

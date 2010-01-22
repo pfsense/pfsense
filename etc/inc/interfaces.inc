@@ -905,6 +905,7 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 					$peerfile .= " set ifaddr {$ppp['localip']}/0 10.0.0.{$endingip}/0 255.255.255.0 0.0.0.0\n";
 				if(!$ppp['localip'] and !$ppp['gateway'])	
 					$peerfile .= " set ifaddr 10.0.0.{$startingip}/0 10.0.0.{$endingip}/0 255.255.255.0 0.0.0.0\n";
+				$peerfile .= " iface name {$ppp['if']}\n";
 				$peerfile .= " set phone \"{$ppp['phone']}\"\n";
 				$peerfile .= " set authname \"{$ppp['username']}\"\n";
 				$peerfile .= " set authkey \"{$ppp['password']}\"\n";

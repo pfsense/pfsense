@@ -48,9 +48,11 @@ function gentitle_pkg($pgname) {
 
 function get_pkg_descr($package_name) {
 	global $config;
-	foreach($config['installedpackages']['package'] as $pkg) {
-		if($pkg['name'] == $package_name)
-			return $pkg['descr'];
+	if (is_array($config['installedpackages']['package'])) {
+		foreach($config['installedpackages']['package'] as $pkg) {
+			if($pkg['name'] == $package_name)
+				return $pkg['descr'];
+		}
 	}
 	return "Not available.";
 }

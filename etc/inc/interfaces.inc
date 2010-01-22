@@ -2348,18 +2348,6 @@ function get_real_interface($interface = "wan") {
 
 			if ($interface == $if || $interface == $ifdesc) {
 
-			// PPP Support
-			if($config['interfaces'][$if]['serialport']) {
-				$dev = $config['interfaces'][$if]['serialport'];
-				if(file_exists("/var/run/{$dev}.if")) {
-					$wanif = trim(file_get_contents("/var/run/{$dev}.if"));
-					break;
-				} else {
-					$wanif = $dev;
-					break;
-				}
-			}
-
 			$cfg = $config['interfaces'][$if];
 
 			// Wireless cloned NIC support (FreeBSD 8+)

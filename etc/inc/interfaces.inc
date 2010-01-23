@@ -892,7 +892,7 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 					$peerfile .= " set dial {$ppp['dialcmd']}\n";
 				} else
 					$peerfile .= " set dial \"\"\n";
-				$peerfile .= " set speed \"{$ppp['linespeed']}\"\n";
+				$peerfile .= " set speed {$ppp['linespeed']}\n";
 				$peerfile .= " add default HISADDR\n";
 				$peerfile .= " set timeout 0\n";
 				$peerfile .= " enable dns\n";

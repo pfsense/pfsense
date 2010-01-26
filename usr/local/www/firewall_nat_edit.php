@@ -68,7 +68,7 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['localbeginport'] = $a_nat[$id]['local-port'];
 	$pconfig['descr'] = $a_nat[$id]['descr'];
 	$pconfig['interface'] = $a_nat[$id]['interface'];
-	$pconfig['associated-filter-rule-id'] = $a_nat[$id]['associated-filter-rule-id'];
+	$pconfig['associated-rule-id'] = $a_nat[$id]['associated-rule-id'];
 	$pconfig['nosync'] = isset($a_nat[$id]['nosync']);
 	if (!$pconfig['interface'])
 		$pconfig['interface'] = "wan";
@@ -189,10 +189,10 @@ if ($_POST) {
 		$natent['local-port'] = $_POST['localbeginport'];
 		$natent['interface'] = $_POST['interface'];
 		$natent['descr'] = $_POST['descr'];
-		$natent['associated-filter-rule-id'] = $_POST['associated-filter-rule-id'];
+		$natent['associated-rule-id'] = $_POST['associated-rule-id'];
 		
 		if($_POST['filter-rule-association'] == "pass")
-			$natent['associated-filter-rule-id'] = "pass";
+			$natent['associated-rule-id'] = "pass";
 
 		if($_POST['nosync'] == "yes")
 			$natent['nosync'] = true;
@@ -200,20 +200,20 @@ if ($_POST) {
 			unset($natent['nosync']);
 
 		// If we used to have an associated filter rule, but no-longer should have one
-		if( $a_nat[$id]>0 && ($natent['associated-filter-rule-id']>0)===false ) {
+		if ($a_nat[$id]>0 && empty($natent['associated-rule-id'])) {
 			// Delete the previous rule
-			delete_id($a_nat[$id]['associated-filter-rule-id'], $config['filter']['rule']);
+			delete_id($a_nat[$id]['associated-rule-id'], $config['filter']['rule']);
 			mark_subsystem_dirty('filter');
 		}
 
 		$need_filter_rule = false;
 		// Updating a rule with a filter rule associated
-		if( $natent['associated-filter-rule-id']>0 )
+		if (!empty($natent['associated-rule-id']))
 			$need_filter_rule = true;
 		// Create a rule or if we want to create a new one
-		if( $natent['associated-filter-rule-id']=='new' ) {
+		if( $natent['associated-rule-id']=='new' ) {
 			$need_filter_rule = true;
-			unset( $natent['associated-filter-rule-id'] );
+			unset( $natent['associated-rule-id'] );
 			$_POST['filter-rule-association']='add-associated';
 		}
 		// If creating a new rule, where we want to add the filter rule, associated or not
@@ -232,20 +232,22 @@ if ($_POST) {
 				$id = count($a_nat);
 		}
 
-		if ($need_filter_rule) {
+		if ($need_filter_rule == true) {
 
 			/* auto-generate a matching firewall rule */
 			$filterent = array();
-
+			unset($filterentid);
 			// If a rule already exists, load it
-			if( $natent['associated-filter-rule-id'] > 0 )
-				$filterent = &get_id($natent['associated-filter-rule-id'], $config['filter']['rule']);
-			else
+			if (!empty($natent['associated-rule-id'])) {
+				$filterentid = get_id($natent['associated-rule-id'], $config['filter']['rule']);
+				if ($filterentid == false) {
+					$filterent['source']['any'] = "";
+					$filterent['associated-rule-id'] = $natent['associated-rule-id'];
+				} else
+					$filterent =& $config['filter']['rule'][$filterentid];
+			} else
 				// Create the default source entry for new filter entries
 				$filterent['source']['any'] = "";
-
-			// Update associated nat rule ID
-			$filterent['associated-nat-rule-id'] = $id;
 
 			// Update interface, protocol and destination
 			$filterent['interface'] = $_POST['interface'];
@@ -260,17 +262,15 @@ if ($_POST) {
 			else
 				$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
 
-			$filterent['descr'] = "NAT " . $_POST['descr'];
 			/*
 			 * Our firewall filter description may be no longer than
 			 * 63 characters, so don't let it be.
 			 */
-			$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 59);
+			$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 62);
 
 			// If this is a new rule, create an ID and add the rule
 			if( $_POST['filter-rule-association']=='add-associated' ) {
-				$natent['associated-filter-rule-id'] = $filterent['id'] = get_next_id($config['filter']['rule']);
-
+				$filterent['associated-rule-id'] = $natent['associated-rule-id'] = get_unique_id();
 				$config['filter']['rule'][] = $filterent;
 			}
 
@@ -457,32 +457,33 @@ include("fbegin.inc"); ?>
 				<tr>
 					<td width="22%" valign="top" class="vncell">Filter rule association</td>
 					<td width="78%" class="vtable">
-						<select name="associated-filter-rule-id">
+						<select name="associated-rule-id">
 							<option value="">None</option>
-							<option value="pass" <?php if($pconfig['associated-filter-rule-id'] == "pass") echo " SELECTED"; ?>>Pass</option>
-							<?php foreach ($config['filter']['rule'] as $filter_rule): ?>
-								<?php if (isset($filter_rule['id']) && $filter_rule['id']>0 && ( isset($filter_rule['associated-nat-rule-id'])===false || $filter_rule['id']==$pconfig['associated-filter-rule-id'])): ?>
-									<option value="<?php echo $filter_rule['id']; ?>"<?php if($filter_rule['id']==$pconfig['associated-filter-rule-id']) echo " SELECTED"; ?>>
-									<?php echo htmlspecialchars('Rule ' . $filter_rule['id'] . ' - ' . $filter_rule['descr']); ?>
-									</option>
-								<?php endif; ?>
-							<?php endforeach; ?>
-							<?php if ( ($pconfig['associated-filter-rule-id']>0)===false ): ?>
-								<option value="new">Create new associated filter rule</option>
-							<?php endif; ?>
-						</select>
-						<?php if($pconfig['associated-filter-rule-id']>0): ?>
-							<?php
+							<option value="pass" <?php if($pconfig['associated-rule-id'] == "pass") echo " SELECTED"; ?>>Pass</option>
+							<?php 
+							if (is_array($config['filter']['rule'])) {
+							      foreach ($config['filter']['rule'] as $filter_rule) {
+								if (isset($filter_rule['associated-rule-id'])) {
+									echo "<option value=\"{$filter_rule['associated-rule-id']}\"";
+									if ($filter_rule['associated-rule-id']==$pconfig['associated-rule-id'])
+										echo " SELECTED";
+									echo ">". htmlspecialchars('Rule ' . $filter_rule['descr']) . "</option>\n";
+									
+								}
+							      }
+							}
+							if (isset($pconfig['associated-rule-id']))
+								echo "<option value=\"new\">Create new associated filter rule</option>\n";
+						echo "</select>\n";
+						if(isset($pconfig['associated-rule-id']) && is_array($config['filter']['rule'])) {
 							foreach( $config['filter']['rule'] as $index => $filter_rule ) {
-								if( $filter_rule['id']==$pconfig['associated-filter-rule-id'] ) {
-									?>
-									<a href="firewall_rules_edit.php?id=<?=$filter_rule['id'];?>">View the filter rule</a>
-									<?php
+								if( $filter_rule['assocaited-rule-id']==$pconfig['associated-rule-id'] ) {
+									echo "<a href=\"firewall_rules_edit.php?id={$filter_rule[$index]}\">View the filter rule</a>";
 									break;
 								}
 							}
-							?>
-						<?php endif; ?>
+						}
+						?>
 					</td>
 				</tr>
 				<?php endif; ?>

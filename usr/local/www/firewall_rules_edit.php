@@ -157,7 +157,7 @@ if (isset($id) && $a_filter[$id]) {
 
 	//schedule support
 	$pconfig['sched'] = $a_filter[$id]['sched'];
-	$pconfig['associated-nat-rule-id'] = $a_filter[$id]['associated-nat-rule-id'];
+	$pconfig['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 
 } else {
 	/* defaults */
@@ -246,10 +246,10 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "type proto src");
-	if ( isset($a_filter[$id]['associated-nat-rule-id'])===false )
+	if ( isset($a_filter[$id]['associated-rule-id'])===false )
 		$redqfields[] = "dst";
 	$reqdfieldsn = explode(",", "Type,Protocol,Source");
-	if ( isset($a_filter[$id]['associated-nat-rule-id'])===false )
+	if ( isset($a_filter[$id]['associated-rule-id'])===false )
 		$reqdfieldsn[] = "Destination";
 
 	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
@@ -263,7 +263,7 @@ if ($_POST) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = "Source bit count";
 	}
-	if ( isset($a_filter[$id]['associated-nat-rule-id'])===false &&
+	if ( isset($a_filter[$id]['associated-rule-id'])===false &&
 	(!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single"))) ) {
 		$reqdfields[] = "dstmask";
 		$reqdfieldsn[] = "Destination bit count";
@@ -463,9 +463,9 @@ if ($_POST) {
 		}
 
 		// If we have an associated nat rule, make sure the destination doesn't change
-		if( isset($a_filter[$id]['associated-nat-rule-id']) ) {
+		if( isset($a_filter[$id]['associated-rule-id']) ) {
 			$filterent['destination'] = $a_filter[$id]['destination'];
-			$filterent['associated-nat-rule-id'] = $a_filter[$id]['associated-nat-rule-id'];
+			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 		}
 
 		if (isset($id) && $a_filter[$id])
@@ -760,11 +760,19 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncellreq">Destination</td>
 			<td width="78%" class="vtable">
 				<?php $dst_disabled=false; ?>
-				<?php if( isset($pconfig['associated-nat-rule-id']) ): ?>
+				<?php if( isset($pconfig['associated-rule-id']) ): ?>
 					<span class="red"><strong>NOTE: </strong></span> This is associated to a NAT rule.<br />
 					You cannot edit the destination of associated filter rules.<br />
 					<br />
-					<a href="firewall_nat_edit.php?id=<?=$pconfig['associated-nat-rule-id'];?>">View the NAT rule</a><br />
+                                        <?php
+							if (is_array($config['nat']['rule'])) {
+                                                        	foreach( $config['nat']['rule'] as $index => $nat_rule ) {
+                                                                	if( $nat_rule['assocaited-rule-id']==$pconfig['associated-rule-id'])
+                                                                        	echo "<a href=\"firewall_nat_edit.php?id={$nat_rule[$index]}\">View the NAT rule</a>\n";
+                                                                        break;
+                                                        	}
+							}
+					?>
 					<br />
 					<?php $dst_disabled=true; ?>
 					<script type="text/javascript">

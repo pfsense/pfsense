@@ -441,7 +441,7 @@
 			<target></target>
 			<local-port></local-port>
 			<descr></descr>
-			<associated-filter-rule-id></associated-filter-rule-id>
+			<associated-rule-id></associated-rule-id>
 		</rule>
 		-->
 		<!--
@@ -491,7 +491,7 @@
 			<destination>
 				<any/>
 			</destination>
-			<associated-nat-rule-id></associated-nat-rule-id>
+			<associated-rule-id></associated-rule-id>
 		</rule>
 		<!-- rule syntax:
 		<rule>

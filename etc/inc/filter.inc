@@ -1087,7 +1087,7 @@ function filter_nat_rules_generate() {
 				$natrules .= "# Unresolvable alias {$rule['target']}\n";
 				continue;		/* unresolvable alias */
 			}
-			if($rule['associated-filter-rule-id'] == "pass")
+			if($rule['associated-rule-id'] == "pass")
 				$rdrpass = "pass";
 			else
 				$rdrpass = "";	

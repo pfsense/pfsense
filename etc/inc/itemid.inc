@@ -45,10 +45,13 @@ function delete_id($id, &$array){
 	// Index to delete
 	$delete_index = NULL;
 
+	if (!is_array($array))
+		return false;
+
 	// Search for the item in the array
 	foreach ($array as $key => $item){
 		// If this item is the one we want to delete
-		if(isset($item['id']) && $item['id']==$id ){
+		if(isset($item['associated-rule-id']) && $item['associated-rule-id']==$id ){
 			$delete_index = $key;
 			break;
 		}
@@ -66,54 +69,38 @@ function delete_id($id, &$array){
 
 /****f* itemid/get_id
  * NAME
- *   get_id - Get an item with ['id'] = $id from $array by reference
+ *   get_id - Get an item id with ['associated-rule-id'] = $id from $array
  * INPUTS
- *   $id       - int: The ID to get
+ *   $id       - string: The ID to get
  *   $array    - array to get the item from
  * RESULT
- *   mixed   - The item, NULL if not found
+ *   mixed   - The id, NULL if not found
  ******/
-function &get_id($id, &$array) {
+function get_id($id, &$array) {
 	// Use $foo = &get_id('id', array('id'=>'value'));
-	// Index to delete
-	$get_index = NULL;
+
+	if (!is_array($array))
+		return false;
 
 	// Search for the item in the array
 	foreach ($array as $key => $item){
 		// If this item is the one we want to delete
-		if(isset($item['id']) && $item['id']==$id ){
-			$get_index = $key;
-			break;
-		}
+		if (isset($item['associated-rule-id']) && $item['associated-rule-id']==$id)
+			return $key;
 	}
 
-	// If we found the item, unset it
-	if( $get_index!==NULL)
-		return $array[$get_index];
-	else
-		return false;
+	return false;
 }
 
-/****f* itemid/get_next_id
+/****f* itemid/get_unique_id
  * NAME
- *   get_next_id - find the next available id from an item list
- * INPUTS
- *   $array      - array of items to get the id for
+ *   get_unique_id - get a unique identifier
  * RESULT
- *   integer     - the next available id
+ *   string     - unique id
  ******/
-function get_next_id($array){
-	// Default value
-	$next_id = 1;
+function get_unique_id(){
 
-	// Search for IDs
-	foreach ($array as $item){
-		// If this item has an ID, and it's higher or equal to the current "next ID", use that + 1 as the next ID
-		if(isset($item['id']) && $item['id']>=$next_id ){
-			$next_id = $item['id'] + 1;
-		}
-	}
-	return $next_id;
+	return uniqid("nat_", true);
 }
 
 ?>

@@ -63,7 +63,7 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['gateway'] = $a_ppps[$id]['gateway'];
 	$pconfig['localip'] = $a_ppps[$id]['localip'];
 	$pconfig['phone'] = $a_ppps[$id]['phone'];
-	$pconfig['dialcmd'] = $a_ppps[$id]['dialcmd'];
+	$pconfig['dialcmd'] = base64_decode($a_ppps[$id]['dialcmd']);
 	$pconfig['connect-max-attempts'] = $a_ppps[$id]['connect-max-attempts'];
 	$pconfig['linespeed'] = $a_ppps[$id]['linespeed'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
@@ -96,7 +96,7 @@ if ($_POST) {
 		$ppp['initstr'] = $_POST['initstr'];
 		$ppp['ap'] = $_POST['ap'];
 		$ppp['phone'] = $_POST['phone'];
-		$ppp['dialcmd'] = $_POST['dialcmd'];
+		$ppp['dialcmd'] = base64_encode($_POST['dialcmd']);
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = $_POST['password'];
 		$ppp['localip'] = $_POST['localip'];

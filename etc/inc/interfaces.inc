@@ -889,7 +889,7 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 				$peerfile .= "{$dev}:\n";
 				$peerfile .= " set device {$realif}\n";
 				if($ppp['dialcmd']) {
-					$peerfile .= " set dial {$ppp['dialcmd']}\n";
+					$peerfile .= " set dial " . base64_decode($ppp['dialcmd']) . "\n";
 				} else
 					$peerfile .= " set dial \"\"\n";
 				$peerfile .= " set speed {$ppp['linespeed']}\n";

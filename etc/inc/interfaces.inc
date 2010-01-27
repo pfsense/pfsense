@@ -1729,7 +1729,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	interface_reload_carps($realif);
 	
 	if($wancfg['serialport'])
-		interface_ppp_configure($realif);
+		interface_ppp_configure($wancfg['serialport']);
 	
 	if (!$g['booting']) {
 		if (link_interface_to_gre($interface)) {

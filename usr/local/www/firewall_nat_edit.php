@@ -461,28 +461,27 @@ include("fbegin.inc"); ?>
 							<option value="">None</option>
 							<option value="pass" <?php if($pconfig['associated-rule-id'] == "pass") echo " SELECTED"; ?>>Pass</option>
 							<?php 
+							$linkedrule = "";
 							if (is_array($config['filter']['rule'])) {
+								$filter_id = 0;
 							      foreach ($config['filter']['rule'] as $filter_rule) {
 								if (isset($filter_rule['associated-rule-id'])) {
 									echo "<option value=\"{$filter_rule['associated-rule-id']}\"";
-									if ($filter_rule['associated-rule-id']==$pconfig['associated-rule-id'])
+									if ($filter_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
 										echo " SELECTED";
+										$linkedrule = "<br /><a href=\"firewall_rules_edit.php?id={$filter_id}\">View the filter rule</a><br/>";
+									}
 									echo ">". htmlspecialchars('Rule ' . $filter_rule['descr']) . "</option>\n";
 									
 								}
+								if ($filter_rule['interface'] == $pconfig['interface'])
+									$filter_id++;
 							      }
 							}
 							if (isset($pconfig['associated-rule-id']))
 								echo "<option value=\"new\">Create new associated filter rule</option>\n";
 						echo "</select>\n";
-						if(isset($pconfig['associated-rule-id']) && is_array($config['filter']['rule'])) {
-							foreach( $config['filter']['rule'] as $index => $filter_rule ) {
-								if( $filter_rule['assocaited-rule-id']==$pconfig['associated-rule-id'] ) {
-									echo "<a href=\"firewall_rules_edit.php?id={$filter_rule[$index]}\">View the filter rule</a>";
-									break;
-								}
-							}
-						}
+						echo $linkedrule;
 						?>
 					</td>
 				</tr>

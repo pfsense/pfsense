@@ -593,6 +593,8 @@ function filter_generate_optcfg_array() {
 		$oc = $config['interfaces'][$if];
 		$oic = array();
 		$oic['if'] = get_real_interface($if);
+		if (!does_interface_exist($oic['if']))
+			continue;
 		$oic['ip'] = get_interface_ip($if);
 		if(!is_ipaddr($oc['ipaddr']) && !empty($oc['ipaddr']))
 			$oic['type'] = $oc['ipaddr'];
@@ -2239,19 +2241,15 @@ function filter_tdr_month($schedule) {
 }
 
 function filter_setup_logging_interfaces() {
-	global $config;
+	global $config, $FilterIflist;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_setup_logging_interfaces() being called $mt\n";
 	}
 	$rules = "";
-	$i = 0;
-	/* if list */
-	$ifdescrs = get_configured_interface_list();
-	foreach ($ifdescrs as $ifdescr => $ifname) {
+	foreach ($FilterIflist as $ifdescr => $ifname) {
 		/* do not work with tun interfaces */
-		$int = get_real_interface($ifname);
-		$rules .= "set loginterface {$int}\n";
+		$rules .= "set loginterface {$ifname['if']}\n";
 	}
 	return $rules;
 }

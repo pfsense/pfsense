@@ -905,7 +905,7 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 					$peerfile .= " set ifaddr {$ppp['localip']}/0 10.0.0.{$endingip}/0 255.255.255.0 0.0.0.0\n";
 				if(!$ppp['localip'] and !$ppp['gateway'])	
 					$peerfile .= " set ifaddr 10.0.0.{$startingip}/0 10.0.0.{$endingip}/0 255.255.255.0 0.0.0.0\n";
-				$peerfile .= " iface name ppp_{$orig_dev}\n";
+				//$peerfile .= " iface name ppp_{$orig_dev}\n";
 				$peerfile .= " set phone \"{$ppp['phone']}\"\n";
 				$peerfile .= " set authname \"{$ppp['username']}\"\n";
 				$peerfile .= " set authkey \"{$ppp['password']}\"\n";
@@ -926,6 +926,7 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 				$rclinkdown .= "	! sh -c \"/etc/rc.conf_mount_rw\"\n";
 				$rclinkdown .= "	! sh -c \"/bin/echo `date -j +%Y.%m.%d-%H:%M:%S` UPTIME >> /conf/ppp-up.{$dev}.log\"\n";
 				$rclinkdown .= "	! sh -c \"/etc/rc.conf_mount_ro\"\n";
+				$rclinkdown .= "	! sh -c \"/bin/rm -f /var/run/{$dev}.if\"\n";
 			}	
     		}
 
@@ -2353,11 +2354,10 @@ function get_real_interface($interface = "wan") {
 				$dev = $config['interfaces'][$if]['serialport'];
 				if(file_exists("/var/run/{$dev}.if")) {
 					$wanif = trim(file_get_contents("/var/run/{$dev}.if"));
-					break;
-				} else {
-					$wanif = $dev;
-					break;
-				}
+				} else
+					$wanif = "Not connected";
+
+				break;
 			}
 
 			$cfg = $config['interfaces'][$if];

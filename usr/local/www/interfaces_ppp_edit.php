@@ -132,7 +132,7 @@ include("head.inc");
 	</script>
 	<script type="text/javascript">
 	function prefill_att() {
-		$('dialcmd').value = '"ABORT BUSY ABORT NO\\\\sCARRIER TIMEOUT 5 \\"\\" AT OK-AT-OK ATQ0V1E1S0=0&C1&D2+FCLASS=0 OK \AT+CGDCONT=1,\\\"IP\\\",\\\"ISP.CINGULAR\\\" OK \\dATDT\\T \TIMEOUT 40 CONNECT"';
+		$('dialcmd').value = '"ABORT BUSY ABORT NO\\\\sCARRIER TIMEOUT 5 \\"\\" AT OK-AT-OK ATQ0V1E1S0=0&C1&D2+FCLASS=0 OK \AT+CGDCONT=1,\\\\"IP\\\\",\\\\\"ISP.CINGULAR\\\\\" OK \\dATDT\\T \TIMEOUT 40 CONNECT"';
 		$('phone').value = "*99#";
 		$('username').value = "att";
 		$('password').value = "att";

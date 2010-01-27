@@ -893,7 +893,8 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 				} else
 					$peerfile .= " set dial \"\"\n";
 				$peerfile .= " set speed {$ppp['linespeed']}\n";
-				$peerfile .= " add default HISADDR\n";
+				if (isset($ppp['defaultgw']))
+					$peerfile .= " add default HISADDR\n";
 				$peerfile .= " set timeout 0\n";
 				$peerfile .= " enable dns\n";
 				$endingip = $startingip+1;

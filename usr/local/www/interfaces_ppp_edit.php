@@ -62,6 +62,8 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['password'] = $a_ppps[$id]['password'];
 	$pconfig['gateway'] = $a_ppps[$id]['gateway'];
 	$pconfig['localip'] = $a_ppps[$id]['localip'];
+	if (isset($a_ppps[$id]['defaultgw']))
+		$pconfig['defaultgw'] = true;
 	$pconfig['phone'] = $a_ppps[$id]['phone'];
 	$pconfig['dialcmd'] = base64_decode($a_ppps[$id]['dialcmd']);
 	$pconfig['connect-max-attempts'] = $a_ppps[$id]['connect-max-attempts'];
@@ -101,6 +103,10 @@ if ($_POST) {
 		$ppp['password'] = $_POST['password'];
 		$ppp['localip'] = $_POST['localip'];
 		$ppp['gateway'] = $_POST['gateway'];
+		if ($_POST['defaultgw'] == "on")
+			$ppp['defaultgw'] = true;
+		else
+			unset($ppp['defaultgw']);
 		$ppp['linespeed'] = $_POST['linespeed'];
 		$ppp['connect-max-attempts'] = $_POST['connect-max-attempts'];
 		$ppp['descr'] = $_POST['descr'];
@@ -178,6 +184,12 @@ include("head.inc");
 				<a href='#' onClick='javascript:prefill_att();'>ATT</A>
 				<a href='#' onClick='javascript:prefill_sprint();'>Sprint</A>
 				<a href='#' onClick='javascript:prefill_vzw();'>Verizon</A>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Link Type</td>
+			<td width="78%" class="vtable">
+				<input type="checkbox" value="on" id="defaultgw" name="defaultgw" <?php if (isset($pconfig['defaultgw'])) "echo checked"; ?>>This link will be used as default gateway.
 			</td>
 		</tr>
 		<tr>

@@ -153,7 +153,7 @@ include("head.inc");
 	<tr>
                 <td width="22%" class="vncellt">PPP uptime</td>
                 <td width="78%" class="listr">
-                        <?=htmlspecialchars($ifinfo['ppp_uptime']);?>&nbsp;&nbsp;Previous Sessions:&nbsp;<?=htmlspecialchars($ifinfo['ppp_uptime_accumulated']);?>&nbsp;&nbsp;
+                        <?=htmlspecialchars($ifinfo['ppp_uptime']);?>Previous Sessions:&nbsp;<?=htmlspecialchars($ifinfo['ppp_uptime_accumulated']);?>&nbsp;&nbsp;
                 </td>
         </tr>
 	<?php  endif; if ($ifinfo['macaddr']): ?>

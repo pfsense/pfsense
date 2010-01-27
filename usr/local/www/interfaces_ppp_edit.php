@@ -169,6 +169,8 @@ include("head.inc");
 				<select name="port" id="port" class="formselect">
 				<?php
 					$portlist = glob("/dev/cua*");
+					$modems = glob("/dev/modem*");
+					$portlist = array_merge($portlist, $modems);
 					foreach ($portlist as $port) {
 						if(preg_match("/\.(lock|init)$/", $port))
 							continue;

@@ -792,6 +792,7 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 					$rflctintrange = $extport[0];
 					if($rflctnorange)
 						$toadd_array = array($loc_pt);
+					$starting_localhost_port++;
 				}
 						
 				switch($rule['protocol']) {

@@ -1687,8 +1687,8 @@ function filter_rules_generate() {
 		 if (count($cpiplist) > 0 && count($cpiflist) > 0) {
                         $cpinterface = implode(" ", $cpiflist);
                        $cpaddresses = implode(" ", $cpiplist);
-                       $ipfrules .= "pass in quick on {$cpinterface} proto tcp from any to {$cpaddresses} port { 8000 8001 } no state\n";
-                       $ipfrules .= "pass out quick on {$cpinterface} proto tcp from {$cpaddresses} port { 8000 8001 } to any no state\n";
+                       $ipfrules .= "pass in quick on {$cpinterface} proto tcp from any to {$cpaddresses} port { 8000 8001 } keep state(sloppy)\n";
+                       $ipfrules .= "pass out quick on {$cpinterface} proto tcp from {$cpaddresses} port { 8000 8001 } to any keep state(sloppy)\n";
                 }
 	}
 	/* relayd */
@@ -1894,10 +1894,10 @@ EOD;
 				}
 				if($sa) {
 				$ipfrules .= <<<EOD
-pass in quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
-pass in quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
-pass out quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
-pass out quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
+pass in quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass in quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass out quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass out quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} keep state(sloppy) label "pass traffic between statically routed subnets"
 
 EOD;
 				}

@@ -945,7 +945,7 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 	if( (!$edit || $g['booting']) && file_exists("/dev/{$orig_dev}")){
 		$running = `ps awux | grep ppp | grep -v grep | grep $orig_dev`;
 		if(!$running)
-			mwexec("/usr/sbin/ppp -background {$orig_dev}");
+			mwexec_bg("/usr/sbin/ppp -background {$orig_dev}");
 	}
 }
 

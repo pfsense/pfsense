@@ -115,8 +115,6 @@ function vpn_ipsec_configure($ipchg = false)
 	for ($x = 0; $x < $number_of_gifs; $x++)
 		mwexec("/sbin/ifconfig gif" . $x . " delete");
 
-	$curwanip = get_interface_ip();
-
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
 	$a_phase1 = $config['ipsec']['phase1'];
@@ -155,13 +153,6 @@ function vpn_ipsec_configure($ipchg = false)
 
 		/* fastforwarding is not compatible with ipsec tunnels */
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=0");
-
-		if (!$curwanip) {
-			/* IP address not configured yet, exit */
-			if ($g['booting'])
-				echo "done\n";
-			return 0;
-		}
 
 		/* this loads a route table which is used to determine if a route needs to be removed. */
 		exec("/usr/bin/netstat -rn", $route_arr, $retval);

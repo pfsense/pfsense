@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Set the router for this interface
-/sbin/ifconfig $2 | grep "$1" | awk '{ print $4 }' > /tmp/$2_router
+echo $1 > /tmp/$2_router
 
 # Remove file if it exists
 if [ -f /var/etc/nameserver_$2 ]; then 

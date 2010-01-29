@@ -107,9 +107,11 @@ if ($_POST) {
 
 	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system") && !$_REQUEST['isAjax']) {
 		$parent_ip = get_interface_ip($_POST['interface']);
-		$parent_sn = get_interface_subnet($_POST['interface']);
-		if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
-			$input_errors[] = "The gateway address {$_POST['gateway']} does not lie within the chosen interface's subnet.";
+		if (is_ipaddr($parent_ip)) {
+			$parent_sn = get_interface_subnet($_POST['interface']);
+			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
+				$input_errors[] = "The gateway address {$_POST['gateway']} does not lie within the chosen interface's subnet.";
+			}
 		}
 	}
 	if (($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {

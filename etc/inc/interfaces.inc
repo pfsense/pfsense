@@ -2368,7 +2368,10 @@ function get_real_interface($interface = "wan") {
 			// interface name format: $parentnic_wlanparentnic#
 			// example: ath0_wlan0
 			if(is_interface_wireless($interface)) {
-				$interface_num = substr($cfg['if'], 3);
+				if ($interface == "wan")
+					$interface_num = 0;
+				else
+					$interface_num = substr($interface, 3);
 				$wanif = $cfg['if'] . "_wlan" . $interface_num;
 				break;
 			}

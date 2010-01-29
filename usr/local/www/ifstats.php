@@ -58,9 +58,9 @@
 	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
 	if (preg_match("/^enc|^tun|^pppoe|^pptp/i", $realif)) {
 		$ifinfo['inpkts'] = $linkinfo[3];
-		$ifinfo['inbytes'] = $linkinfo[5];
-		$ifinfo['outpkts'] = $linkinfo[6];
-		$ifinfo['outbytes'] = $linkinfo[8];
+		$ifinfo['inbytes'] = $linkinfo[6];
+		$ifinfo['outpkts'] = $linkinfo[7];
+		$ifinfo['outbytes'] = $linkinfo[9];
 	} else {
 		$ifinfo['inpkts'] = $linkinfo[4];
 		$ifinfo['inbytes'] = $linkinfo[7];

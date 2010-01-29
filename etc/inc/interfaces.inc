@@ -1319,16 +1319,12 @@ EOD;
 	return $vipif;
 }
 
-function interface_wireless_clone($if, $wlcfg) {
+function interface_wireless_clone($realif, $wlcfg) {
 	global $config, $g;
 	/*   Check to see if interface has been cloned as of yet.  
 	 *   If it has not been cloned then go ahead and clone it.
 	 */
 	$needs_clone = false;
-	/* FIXME: Interface num needs to be something else when we
-	 * integrate the wireless VAP support */
-	/* Setting it to 0 for the time being. */
-	$interface_num = 0;
 	switch($wlcfg['wireless']['mode']) {
 		 case "hostap":
 			$mode = "wlanmode hostap";
@@ -1340,8 +1336,8 @@ function interface_wireless_clone($if, $wlcfg) {
 			$mode = "";
 			break;
 	}
-	if(does_interface_exist("{$wlcfg['if']}_wlan{$interface_num}")) {
-		exec("/sbin/ifconfig {$wlcfg['if']}_wlan{$interface_num}", $output, $ret);
+	if(does_interface_exist($realif)) {
+		exec("/sbin/ifconfig {$realif}", $output, $ret);
 		$ifconfig_str = implode($output);
 		if(($wlcfg['wireless']['mode'] == "hostap") && (! preg_match("/hostap/si", $ifconfig_str))) {
 			log_error("Interface {$wlcfg['if']}_wlan{$interface_num} changed to hostap mode");
@@ -1361,10 +1357,10 @@ function interface_wireless_clone($if, $wlcfg) {
 
 	if($needs_clone == true) {
 		/* remove previous instance if it exists */
-		if(does_interface_exist("{$wlcfg['if']}_wlan{$interface_num}")) {
+		if(does_interface_exist($realif))
 			mwexec("/sbin/ifconfig {$wlcfg['if']}_wlan{$interface_num} destroy");			
-		}
-		log_error("Cloning new wireless interface {$wlcfg['if']}_wlan{$interface_num}");
+
+		log_error("Cloning new wireless interface {$realif}");
 		// Create the new wlan interface. FreeBSD returns the new interface name.
 		// example:  wlan2
 		exec("/sbin/ifconfig wlan create wlandev {$wlcfg['if']} {$mode} 2>&1", $out, $ret);
@@ -1373,7 +1369,7 @@ function interface_wireless_clone($if, $wlcfg) {
 		}
 		$newif = trim($out[0]);
 		// Rename the interface to {$parentnic}_wlan{$number}#: EX: ath0_wlan0
-		mwexec("/sbin/ifconfig {$newif} name {$wlcfg['if']}_wlan{$interface_num} 2>&1", false);
+		mwexec("/sbin/ifconfig {$newif} name {$realif} 2>&1", false);
 		// FIXME: not sure what ngctl is for. Doesn't work.
 		// mwexec("/usr/sbin/ngctl name {$newif}: {$wlcfg['if']}_wlan{$interface_num}", false);
 	}

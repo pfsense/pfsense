@@ -30,11 +30,9 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-	/* don't parse the config so we can restore in case it's broken */
-	$noparseconfig = 1;
-
 	/* parse the configuration and include all functions used below */
-	require_once("config.inc");
+	require_once("util.inc");
+	require_once("config.lib.inc");
 	require_once("functions.inc");
 
 	$fp = fopen('php://stdin', 'r');

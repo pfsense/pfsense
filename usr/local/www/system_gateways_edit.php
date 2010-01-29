@@ -244,7 +244,7 @@ function enable_change(obj) {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-				  <select name="interface" class="formselect" <?php if ($pconfig['dynamic'] == true) echo "disabled"; ?>>
+				  <select name="interface" class="formselect" <?php if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") echo "disabled"; ?>>
 		<?php 
                       	$interfaces = get_configured_interface_with_descr(false, true);
 			foreach ($interfaces as $iface => $ifacename) {
@@ -272,7 +272,7 @@ function enable_change(obj) {
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Gateway</td>
                   <td width="78%" class="vtable"> 
-                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php echo $pconfig['gateway']; ?>" <?php if ($pconfig['dynamic'] == true) echo "disabled"; ?>>
+                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php echo $pconfig['gateway']; ?>" <?php if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") echo "disabled"; ?>>
                     <br> <span class="vexpl">Gateway IP address</span></td>
                 </tr>
 		<tr>

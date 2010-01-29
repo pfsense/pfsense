@@ -35,6 +35,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("captiveportal.inc");
 
 log_error("rc.reload_all: Reloading all configuration settings.");
 reload_all_sync();

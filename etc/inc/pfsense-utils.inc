@@ -1211,8 +1211,8 @@ function get_interface_info($ifdescr) {
 	} else {
 		$ifinfo['macaddr'] = $linkinfo[3];
 		$ifinfo['inerrs'] = $linkinfo[5];
-		$ifinfo['outerrs'] = $linkinfo[8];
-		$ifinfo['collisions'] = $linkinfo[10];
+		$ifinfo['outerrs'] = $linkinfo[9];
+		$ifinfo['collisions'] = $linkinfo[11];
 	}
 
 	/* Use pfctl for non wrapping 64 bit counters */

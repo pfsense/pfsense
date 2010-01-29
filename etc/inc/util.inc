@@ -539,7 +539,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
                 $ifname = rtrim(trim($alink[0]), '*');
                 /* trim out all numbers before checking for vfaces */
 		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces) &&
-			!stristr($ifname, "_vlan")) {
+			!stristr($ifname, "_vlan") && !stristr($ifname, "_wlan")) {
 			$toput = array(
 					"mac" => trim($alink[1]),
 					"up" => in_array($ifname, $upints)

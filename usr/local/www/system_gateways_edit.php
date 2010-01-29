@@ -101,7 +101,7 @@ if ($_POST) {
 		$input_errors[] = "The gateway name must not contain invalid characters.";
 	}
 	/* skip system gateways which have been automatically added */
-	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($_POST['attribute'] != "system")) && (! $_POST['gateway'] == "dynamic")) {
+	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($_POST['attribute'] != "system")) && ($_POST['gateway'] != "dynamic")) {
 		$input_errors[] = "A valid gateway IP address must be specified.";
 	}
 

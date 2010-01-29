@@ -778,7 +778,6 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 
 	$realif = get_real_interface($interface);
 
-	mwexec("/usr/sbin/arp -d -i {$realif} -a");
 
 	/* remove interface up file if it exists */
 	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
@@ -814,12 +813,14 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
+			mwexec("/usr/sbin/arp -d -i {$realif} -a");
 		}
 		break;
 	default:
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
+			mwexec("/usr/sbin/arp -d -i {$realif} -a");
 		}
 		break;
 	}

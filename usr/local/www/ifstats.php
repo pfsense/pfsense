@@ -63,9 +63,9 @@
 		$ifinfo['outbytes'] = $linkinfo[8];
 	} else {
 		$ifinfo['inpkts'] = $linkinfo[4];
-		$ifinfo['inbytes'] = $linkinfo[6];
-		$ifinfo['outpkts'] = $linkinfo[7];
-		$ifinfo['outbytes'] = $linkinfo[9];
+		$ifinfo['inbytes'] = $linkinfo[7];
+		$ifinfo['outpkts'] = $linkinfo[8];
+		$ifinfo['outbytes'] = $linkinfo[10];
 	}
 	$temp = gettimeofday();
 	$timing = (double)$temp["sec"] + (double)$temp["usec"] / 1000000.0;

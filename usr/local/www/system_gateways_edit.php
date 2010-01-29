@@ -65,12 +65,13 @@ if (isset($_GET['dup'])) {
 if (isset($id) && $a_gateways[$id]) {
 	$pconfig['name'] = $a_gateways[$id]['name'];
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
+	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
-	$pconfig['defaultgw'] = $a_gateways[$id]['defaultgw'];
+	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
 	if (isset($a_gateways[$id]['dynamic']))
 		$pconfig['dynamic'] = true;
-	if($a_gateway_item[$id]['monitor'] <> "") {
-		$pconfig['monitor'] = $a_gateway_item[$id]['monitor'];
+	if($a_gateways[$id]['monitor'] <> "") {
+		$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	} else {
 		$pconfig['monitor'] == "";
 	}
@@ -86,14 +87,13 @@ if (isset($_GET['dup'])) {
 if ($_POST) {
 
 	unset($input_errors);
-	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "interface name gateway");
-	$reqdfieldsn = explode(",", "Interface,Name,Gateway");		
-	
+	$reqdfields = explode(" ", "name");
+	$reqdfieldsn = explode(",", "Name");
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	
+
 	if (! isset($_POST['name'])) {
 		$input_errors[] = "A valid gateway name must be specified.";
 	}
@@ -101,7 +101,7 @@ if ($_POST) {
 		$input_errors[] = "The gateway name must not contain invalid characters.";
 	}
 	/* skip system gateways which have been automatically added */
-	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system")) && (! $_POST['gateway'] == "dynamic")) {
+	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($_POST['attribute'] != "system")) && (! $_POST['gateway'] == "dynamic")) {
 		$input_errors[] = "A valid gateway IP address must be specified.";
 	}
 
@@ -112,7 +112,7 @@ if ($_POST) {
 			$input_errors[] = "The gateway address {$_POST['gateway']} does not lie within the chosen interface's subnet.";
 		}
 	}
-	if ((($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']))) {
+	if (($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
 		$input_errors[] = "A valid monitor IP address must be specified.";
 	}
 
@@ -123,19 +123,19 @@ if ($_POST) {
 				continue;
 			}
 			if($_POST['name'] <> "") {
-				if (($gateway['name'] <> "") && (in_array($_POST['name'], $gateway)) && ($gateway['attribute'] != "system")) {
+				if (($gateway['name'] <> "") && ($_POST['name'] == $gateway['name']) && ($gateway['attribute'] != "system")) {
 					$input_errors[] = "The gateway name \"{$_POST['name']}\" already exists.";
 					break;
 				}
 			}
 			if(is_ipaddr($_POST['gateway'])) {
-				if (($gateway['gateway'] <> "") && (in_array($_POST['gateway'], $gateway)) && ($gateway['attribute'] != "system")) {
+				if (($gateway['gateway'] <> "") && ($_POST['gateway'] == $gateway['gateway']) && ($gateway['attribute'] != "system")) {
 					$input_errors[] = "The gateway IP address \"{$_POST['gateway']}\" already exists.";
 					break;
 				}
 			}
 			if(is_ipaddr($_POST['monitor'])) {
-				if (($gateway['monitor'] <> "") && (in_array($_POST['monitor'], $gateway)) && ($gateway['attribute'] != "system")) {
+				if (($gateway['monitor'] <> "") && ($_POST['monitor'] == $gateway['monitor']) && ($gateway['attribute'] != "system")) {
 					$input_errors[] = "The monitor IP address \"{$_POST['monitor']}\" is already in use. You must choose a different monitor IP.";
 					break;
 				}
@@ -145,18 +145,23 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		/* if we are processing a system gateway only save the monitorip */
-		if($pconfig['attribute'] == "system") {
-			$config['interfaces'][$_POST['interface']]['monitorip'] = $_POST['monitor'];
-		}
+		if(($_POST['attribute'] == "system" && empty($_POST['defaultgw'])) || (empty($_POST['interface']) && empty($_POST['gateway']) && empty($_POST['defaultgw']))) {
+			if (is_ipaddr($_POST['monitor'])) {
+				if (empty($_POST['interface']))
+					$interface = $pconfig['interface'];
+				else
+					$interface = $_POST['interface'];
+				$config['interfaces'][$interface]['monitorip'] = $_POST['monitor'];
+			}
+			/* when dynamic gateway is not anymore a default the entry is no more needed. */
+                        if (isset($id) && $a_gateway_item[$id]) {
+                                unset($a_gateway_item[$id]);
+                        }
+		} else {
 
-		/* Manual gateways are handled differently */
-		/* rebuild the array with the manual entries only */
-		if (!is_array($config['gateways']['gateway_item']))
-			$config['gateways']['gateway_item'] = array();
+			/* Manual gateways are handled differently */
+			/* rebuild the array with the manual entries only */
 
-		$a_gateways = &$config['gateways']['gateway_item'];
-
-		if ($pconfig['attribute'] != "system") {
 			$gateway = array();
 			$gateway['interface'] = $_POST['interface'];
 			$gateway['name'] = $_POST['name'];
@@ -169,8 +174,8 @@ if ($_POST) {
 			}			
 			if ($_POST['defaultgw'] == "yes" or $_POST['defaultgw'] == "on") {
 				$i = 0;
-				foreach($a_gateways as $gw) {
-					unset($config['gateways'][$i]['defaultgw']);
+				foreach($a_gateway_item as $gw) {
+					unset($config['gateways']['gateway_item'][$i]['defaultgw']);
 					$i++;
 				}
 				$gateway['defaultgw'] = true;
@@ -179,11 +184,10 @@ if ($_POST) {
 			}
 
 			/* when saving the manual gateway we use the attribute which has the corresponding id */
-			$id = $pconfig['attribute'];
-			if (isset($id) && $a_gateways[$id]) {
-				$a_gateways[$id] = $gateway;
+			if (isset($id) && $a_gateway_item[$id]) {
+				$a_gateway_item[$id] = $gateway;
 			} else {
-				$a_gateways[] = $gateway;
+				$a_gateway_item[] = $gateway;
 			}
 		}
 		
@@ -198,7 +202,8 @@ if ($_POST) {
 		
 		header("Location: system_gateways.php");
 		exit;
-	}
+	}  else
+		$pconfig = $_POST;
 }
 
 
@@ -209,6 +214,17 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<script language="JavaScript">
+function enable_change(obj) {
+	if (document.iform.gateway.disabled) {
+		if (obj.checked)
+			document.iform.interface.disabled=false;
+		else
+			document.iform.interface.disabled=true;
+	}	
+	
+}
+</script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
 	<?php
@@ -217,6 +233,7 @@ include("head.inc");
 	if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
 		echo "<input type='hidden' name='attribute' id='attribute' value='{$pconfig['attribute']}' >\n";
 	}
+	echo "<input type='hidden' name='friendlyiface' id='friendlyiface' value='{$pconfig['friendlyiface']}' >\n";
 	?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
@@ -225,22 +242,22 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-				  <select name="interface" class="formselect">
-                      <?php $interfaces = get_configured_interface_with_descr(false, true);
-					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if (get_real_interface($iface) == $pconfig['interface']) echo " selected"; ?>> 
-                      <?=htmlspecialchars($ifacename);?>
-                      </option>
-					iface = <?=$iface?> ;  pconfig = <?=$pconfig['interface']?>  ;  ifacename = <?=$ifacename?>
-                      <?php 
-						endforeach;
-						if (is_package_installed("openbgpd") == 1) {
-							echo "<option value=\"bgpd\"";
-							if($pconfig['interface'] == "bgpd") 
-								echo " selected";
-							echo ">Use BGPD</option>";
-						}
- 					  ?>
+				  <select name="interface" class="formselect" <?php if ($pconfig['dynamic'] == true) echo "disabled"; ?>>
+		<?php 
+                      	$interfaces = get_configured_interface_with_descr(false, true);
+			foreach ($interfaces as $iface => $ifacename) {
+				echo "<option value=\"{$iface}\"";
+				if ($iface == $pconfig['friendlyiface'])
+					echo " selected";
+				echo ">" . htmlspecialchars($ifacename) . "</option>";
+			}
+			if (is_package_installed("openbgpd") == 1) {
+				echo "<option value=\"bgpd\"";
+				if ($pconfig['interface'] == "bgpd") 
+					echo " selected";
+				echo ">Use BGPD</option>";
+			}
+ 		  ?>
                     </select> <br>
                     <span class="vexpl">Choose which interface this gateway applies to.</span></td>
                 </tr>
@@ -253,20 +270,13 @@ include("head.inc");
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Gateway</td>
                   <td width="78%" class="vtable"> 
-			<?php
-				if(is_numeric($gateway['attribute']) && ($a_gateway_item[$gateway['attribute']]['gateway'] == dynamic)) {
-					$gateway = "dynamic";
-				} else {
-					$gateway = htmlspecialchars($pconfig['gateway']);
-				}
-			?>
-                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php echo $gateway; ?>" <?php if ($pconfig['dynamic'] == true) echo "disabled"; ?>>
+                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php echo $pconfig['gateway']; ?>" <?php if ($pconfig['dynamic'] == true) echo "disabled"; ?>>
                     <br> <span class="vexpl">Gateway IP address</span></td>
                 </tr>
 		<tr>
 		  <td width="22%" valign="top" class="vncell">Default Gateway</td>
 		  <td width="78%" class="vtable">
-			<input name="defaultgw" type="checkbox" id="defaultgw" value="yes" <?php if (isset($pconfig['defaultgw'])) echo "checked"; ?> onclick="enable_change(false)" />
+			<input name="defaultgw" type="checkbox" id="defaultgw" value="yes" <?php if ($pconfig['defaultgw'] == true) echo "checked"; ?> onclick="enable_change(this)" />
 			<strong>Default Gateway</strong><br />
 			This will select the above gateway as the default gateway
 		  </td>
@@ -309,7 +319,7 @@ include("head.inc");
 </form>
 <?php include("fend.inc"); ?>
 <script language="JavaScript">
-	enable_change();
+enable_change(document.iform.defaultgw);
 </script>
 </body>
 </html>

@@ -51,7 +51,6 @@ foreach($a_gateways as $gw) {
 }
 $a_gateways = $a_gateways_arr;
 
-
 if (!is_array($config['gateways']['gateway_item']))
         $config['gateways']['gateway_item'] = array();
 
@@ -82,10 +81,9 @@ if ($_GET['act'] == "del") {
 	if ($a_gateways[$_GET['id']]) {
 		/* remove the real entry */
 		$realid = $a_gateways[$_GET['id']]['attribute'];
-		$a_gateways = &$config['gateways']['gateway_item'];
 
 		$changedesc .= "removed gateway {$realid}";
-		unset($a_gateways[$realid]);
+		unset($a_gateway_item[$realid]);
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateways.php");
@@ -160,7 +158,7 @@ effect.");?><br>
 					if(isset($gateway['interfacegateway'])) {
 						echo strtoupper($gateway['interface']) . " ";
 					} else {
-						if(is_numeric($gateway['attribute']) && ($a_gateway_item[$gateway['attribute']]['gateway'] == dynamic)) {
+						if(is_numeric($gateway['attribute']) && ($a_gateway_item[$gateway['attribute']]['gateway'] == "dynamic")) {
 							echo "dynamic";
 						} else {
 							echo $gateway['gateway'] . " ";
@@ -170,7 +168,7 @@ effect.");?><br>
                   </td>
                   <td class="listr" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
                     <?php
-			if(is_numeric($gateway['attribute']) && ($a_gateway_item[$gateway['attribute']]['gateway'] == dynamic) && ($a_gateway_item[$gateway['attribute']]['gateway'] == "")) {
+			if(is_numeric($gateway['attribute']) && ($a_gateway_item[$gateway['attribute']]['monitor'] == "dynamic")) {
 				echo "dynamic";
 			} else {
 				echo htmlspecialchars($gateway['monitor']) . " ";

@@ -281,53 +281,52 @@ function return_gateways_array($disabled = false) {
 				$gateway['monitor'] = $gateway['gateway'];
 			}
 			/* include the gateway index as the attribute */
+			$gateway['friendlyiface'] = $gateway['interface'];
 			$gateway['interface'] = convert_friendly_interface_to_real_interface_name($gateway['interface']);
 			$gateway['attribute'] = "$i";
 
 			$gateways_arr[$gateway['name']] = $gateway;
 			$i++;
 		}
-	} else {
-		foreach($iflist as $ifname => $friendly ) {
-			if(! interface_has_gateway($ifname)) {
-				continue;
-			}
-			$gateway = array();
-			$gateway['dynamic'] = false;
-			$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
-			$gateway['interface'] = get_real_interface($ifname);
-			$gateway['name'] = "{$ifname}";
-			$gateway['attribute'] = "system";
-		
-			/* Loopback dummy for dynamic interfaces without a IP */
-			if(!is_ipaddr(trim($gateway['gateway']))) {
-				 $gateway['gateway'] = "dynamic";
-			}
-	
-			/* automatically skip known static and dynamic gateways we have a array entry for */
-			if(is_array($config['gateways']['gateway_item'])) {
-				foreach($config['gateways']['gateway_item'] as $gateway_item) {
-					if($gateway_item['gateway'] == $gateway['gateway']) {
-						continue 2;
-					}
-					if(($gateway_item['gateway'] == "dynamic") && ($gateway_item['interface'] == $gateway['interface'])) {
-						continue 2;
-					}
-				}
-			}
+	} 
 
-			/* retrieve a proper monitor IP? */
-			if(is_ipaddr($interface['monitorip'])) {
-				$gateway['monitor'] = $interface['monitorip'];
-			} else {
-				$gateway['monitor'] = $gateway['gateway'];
-			}
-			$gateway['descr'] = "Interface $ifname Dynamic Gateway";
-
-			$gateways_arr[$ifname] = $gateway;
-			$i++;
+	foreach($iflist as $ifname => $friendly ) {
+		if(! interface_has_gateway($ifname)) {
+			continue;
 		}
+		$gateway = array();
+		$gateway['dynamic'] = false;
+		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
+		$gateway['interface'] = get_real_interface($ifname);
+		$gateway['friendlyiface'] = $ifname;
+		$gateway['name'] = "{$ifname}";
+		$gateway['attribute'] = "system";
+	
+		/* Loopback dummy for dynamic interfaces without a IP */
+		if(!is_ipaddr(trim($gateway['gateway']))) {
+			 $gateway['gateway'] = "dynamic";
+		}
+
+		/* automatically skip known static and dynamic gateways we have a array entry for */
+		foreach($gateways_arr as $gateway_item) {
+			if($gateway_item['gateway'] == $gateway['gateway'] && ($ifname == $gateway_item['friendlyiface']))
+				continue 2;
+			if(($gateway_item['gateway'] == "dynamic") && ($ifname == $gateway_item['friendlyiface']))
+				continue 2;
+		}
+
+		/* retrieve a proper monitor IP? */
+		$interface = $config['interfaces'][$ifname];
+		if(is_ipaddr($interface['monitorip'])) {
+			$gateway['monitor'] = $interface['monitorip'];
+		} else {
+			$gateway['monitor'] = $gateway['gateway'];
+		}
+		$gateway['descr'] = "Interface $ifname Dynamic Gateway";
+		$gateways_arr[$ifname] = $gateway;
+		$i++;
 	}
+
 	return($gateways_arr);
 }
 

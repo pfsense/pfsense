@@ -285,11 +285,12 @@ function prot_change() {
 									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
 									<strong>Disable webConfigurator anti-lockout rule</strong>
 									<br/>
-									By default, access to the webConfigurator on the <?=$lockout_interface;?>
-									interface is always permitted, regardless of the user-defined filter
-									rule set. Enable this feature to control webConfigurator access (make
-									sure to have a filter rule in place that allows you in, or you will
-									lock yourself out!). <em> Hint: the &quot;set configure IP address&quot;
+									When this is unchecked, access to the webConfigurator on the <?=$lockout_interface;?>
+									interface is always permitted, regardless of the user-defined firewall
+									rule set. Check this box to disable this automatically added rule, so access
+									to the webConfigurator is controlled by the user-defined firewall rules 
+									(ensure you have a firewall rule in place that allows you in, or you will
+									lock yourself out!). <em> Hint: the &quot;Set interface(s) IP address&quot;
 									option in the console menu resets this setting as well. </em>
 								</td>
 							</tr>

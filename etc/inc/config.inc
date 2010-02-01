@@ -49,7 +49,7 @@
 if($g['booting']) echo ".";
 
 /* do not load this file twice. */
-if (is_file_included("/etc/inc/config.inc"))
+if (in_array("/etc/inc/config.inc", get_included_files()))
 	return;
 
 // Set the memory limit to 128M.  When someone has something like 500+ tunnels

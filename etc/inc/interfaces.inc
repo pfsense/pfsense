@@ -338,13 +338,13 @@ function interface_bridge_configure(&$bridge) {
 	foreach ($members as $member) {
 		if (!array_key_exists($member, $checklist))
 			continue;
-		$realif = get_real_interface($member);
-		$realif =  escapeshellarg($realif);
+		$realif1 = get_real_interface($member);
+		$realif =  escapeshellarg($realif1);
 		/* make sure the parent interface is up */
 		mwexec("/sbin/ifconfig {$realif} mtu {$smallermtu}");
 		if(!$realif) 
 			log_error("realif not defined in interfaces bridge - up");
-		interfaces_bring_up($realif);
+		interfaces_bring_up($realif1);
 		mwexec("/sbin/ifconfig {$bridgeif} addm {$realif}");	
 	}
 

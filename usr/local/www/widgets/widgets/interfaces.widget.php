@@ -42,20 +42,24 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 	         <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<?php 
 				foreach ($ifdescrs as $ifdescr => $ifname) {
-						$ifinfo = get_interface_info($ifdescr);
-						$iswireless = is_interface_wireless($ifdescr);
+					$ifinfo = get_interface_info($ifdescr);
+					$iswireless = is_interface_wireless($ifdescr);
+					$isserial = is_interface_ppp($ifdescr);
 				?>
 				<tr> 
 				<td class="vncellt" width="40%">
-				<?php if($iswireless) {
-						 if($ifinfo['status'] == "associated") { ?> 
-		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan.gif" />
-		                  <? } else { ?>
-		                  	<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan_d.gif" />
-		                  	<? } ?>
-		              <? } else { ?>
-		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif"/>
-		                  <? } ?>&nbsp; 
+				<?php 
+					if($isserial) {
+						echo "<img src='./themes/{$g['theme']}/images/icons/icon_3g.gif' />";
+				} else if($iswireless) {
+					if($ifinfo['status'] == "associated") { ?> 
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan.gif" />
+					<? } else { ?>
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan_d.gif" />
+					<? } ?>
+				<? } else { ?>
+						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif"/>
+				<? } ?>&nbsp; 
 				<strong><u>
 				<span onClick="location.href='/interfaces.php?if=<?=$ifdescr; ?>'" style="cursor:pointer">
 				<?=htmlspecialchars($ifname);?></span></u></strong>

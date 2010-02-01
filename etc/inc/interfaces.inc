@@ -2767,6 +2767,22 @@ function is_altq_capable($int) {
                 return false;
 }
 
+/****f* interfaces/is_interface_ppp
+ * NAME
+ *   is_interface_ppp - Returns if an interface is ppp
+ * RESULT
+ *   $tmp       - Returns if an interface is ppp
+ ******/
+function is_interface_ppp($interface) {
+	global $config, $g;
+
+	$friendly = convert_real_interface_to_friendly_interface_name($interface);
+	if(!isset($config['interfaces'][$friendly]['serialport'])) 
+		return true;
+
+	return false;
+}
+
 /****f* interfaces/is_interface_wireless
  * NAME
  *   is_interface_wireless - Returns if an interface is wireless

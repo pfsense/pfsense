@@ -2363,7 +2363,7 @@ function get_real_interface($interface = "wan") {
 			// Wireless cloned NIC support (FreeBSD 8+)
 			// interface name format: $parentnic_wlanparentnic#
 			// example: ath0_wlan0
-			if(is_interface_wireless($interface)) {
+			if(is_interface_wireless($cfg['if'])) {
 				if ($interface == "wan")
 					$interface_num = 0;
 				else

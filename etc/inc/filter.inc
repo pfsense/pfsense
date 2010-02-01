@@ -752,8 +752,12 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 			else
 				$range_end = ($extport[0]);
 			$range_end++;
-			$extaddr = alias_expand($rule['external-address']);
-			if(!$extaddr)
+			/* TODO: support multiple ip's in an alias. */
+			if (is_alias($rule['external-address']))
+				$extaddr = filter_expand_alias($rule['external-address']);
+			else if(is_ipaddr($rule['external-address']))
+				$extaddr = $rule['external-address'];
+			else if (is_ipaddr($FilterIflist[$rule['interface']]['ip']))
 				$extaddr = $FilterIflist[$rule['interface']]['ip'];
 			if($rule['local-port'])
 				$lrange_start = $rule['local-port'];

@@ -1358,7 +1358,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 	if($needs_clone == true) {
 		/* remove previous instance if it exists */
 		if(does_interface_exist($realif))
-			mwexec("/sbin/ifconfig {$wlcfg['if']}_wlan{$interface_num} destroy");			
+			mwexec("/sbin/ifconfig {$realif} destroy");			
 
 		log_error("Cloning new wireless interface {$realif}");
 		// Create the new wlan interface. FreeBSD returns the new interface name.
@@ -2808,13 +2808,13 @@ function get_wireless_modes($interface) {
 	/* return wireless modes and channels */
 	$wireless_modes = array();
 
-	if(is_interface_wireless($interface)) {
+	$wlif = interface_translate_type_to_real($interface);
+
+	if(is_interface_wireless($wlif)) {
 		$cloned_interface = get_real_interface($interface);
 		$wi = 1;
-		$ifconfig = "/sbin/ifconfig";
-		$awk = "/usr/bin/awk";
-		$chan_list = "$ifconfig $cloned_interface list chan";
-		$stack_list = "$awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
+		$chan_list = "/sbin/ifconfig {$cloned_interface} list chan";
+		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
 		$format_list = "$awk '{print \$5 \" \" \$6 \",\" \$1}'";
 
 		$interface_channels = "";

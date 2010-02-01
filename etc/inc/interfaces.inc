@@ -574,7 +574,7 @@ function interface_gre_configure(&$gre) {
 	else 
 		log_error("Could not bring greif up -- variable not defined.");
 
-	mwexec("/sbin/route add {$gre['remote-addr']}/{$gre['tunnel-remote-net']} {$realifip}");
+	mwexec("/sbin/route add {$gre['remote-addr']}/{$gre['tunnel-remote-net']} -iface {$greif}");
 	file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr']);
 
 	return $greif;
@@ -628,7 +628,7 @@ function interface_gif_configure(&$gif) {
 	else
 		log_error("could not bring gifif up -- variable not defined");
 
-	mwexec("/sbin/route add {$gif['remote-addr']}/{$gif['tunnel-remote-net']} {$realifip}");
+	mwexec("/sbin/route add {$gif['remote-addr']}/{$gif['tunnel-remote-net']} -iface {$gifif}");
 	file_put_contents("{$g['tmp_path']}/{$gifif}_router", $gif['tunnel-remote-addr']);
 
 	return $gifif;
@@ -1738,7 +1738,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		if (link_interface_to_gif($interface)) {
                 	foreach ($config['gifs']['gif'] as $gif)
 				if ($gif['if'] == $interface)
-                        		interface_gre_configure($gif);
+                        		interface_gif_configure($gif);
         	}
 		if (link_interface_to_bridge($interface)) {
 			foreach ($config['bridges']['bridged'] as $bridge)

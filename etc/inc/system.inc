@@ -360,7 +360,7 @@ function system_routing_configure() {
 				$gatewayip = $rtent['gateway'];
 				$interfacegw = $rtent['interface'];
 			}			
-			if((isset($rtent['interfacegateway'])) && (! is_ipaddr($gatewayip))){
+			if((isset($rtent['interfacegateway'])) && (! is_ipaddr($gatewayip))) {
 				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));
 			} else {

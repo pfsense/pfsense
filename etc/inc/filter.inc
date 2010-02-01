@@ -2252,9 +2252,15 @@ function filter_setup_logging_interfaces() {
 		echo "filter_setup_logging_interfaces() being called $mt\n";
 	}
 	$rules = "";
-	foreach ($FilterIflist as $ifdescr => $ifname) {
-		/* do not work with tun interfaces */
-		$rules .= "set loginterface {$ifname['if']}\n";
+	foreach ($FilterIflist as $ifdescr => $ifcfg) {
+		/* 
+		 * XXX: This should be cleared out after a discussion
+		 * between pf(4) devs is cleared out. This breaks 
+		 * compatibility with OpenBSD.
+		 */ 
+		if(isset($ifcfg['virtual']))
+                        continue;
+		$rules .= "set loginterface {$ifcfg['if']}\n";
 	}
 	return $rules;
 }

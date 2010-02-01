@@ -45,6 +45,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require("ipsec.inc");
 require("functions.inc");
 require("captiveportal.inc");
 require("filter.inc");

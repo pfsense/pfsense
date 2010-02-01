@@ -49,10 +49,8 @@
 if($g['booting']) echo ".";
 
 /* do not load this file twice. */
-if($config_inc_loaded == true)
+if (is_file_included("/etc/inc/config.inc"))
 	return;
-else
-	$config_inc_loaded = true;
 
 // Set the memory limit to 128M.  When someone has something like 500+ tunnels
 // the parser needs quite a bit of ram.   Do not remove this line unless you 

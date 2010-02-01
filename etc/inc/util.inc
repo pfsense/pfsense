@@ -1138,4 +1138,12 @@ function is_URL($url) {
 	return false;
 }
 
+function is_file_included($file = "") {
+	$files = get_included_files();
+	if (in_array($file, $files))
+		return true;
+	
+	return false;
+}
+
 ?>

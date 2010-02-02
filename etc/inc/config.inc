@@ -41,16 +41,12 @@
 	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/sysctl	/sbin/umount	/sbin/halt	/sbin/fsck	/bin/sync
 	pfSense_MODULE:	config
 */
-/*
- * XXX: Hack around the cvs syntax checks. 
- * DISABLE_PHP_LINT_CHECKING
- */
 
 if($g['booting']) echo ".";
 
 /* do not load this file twice. */
-if (in_array("/etc/inc/config.inc", get_included_files()))
-	return;
+//if (in_array("/etc/inc/config.inc", get_included_files()))
+//	return;
 
 // Set the memory limit to 128M.  When someone has something like 500+ tunnels
 // the parser needs quite a bit of ram.   Do not remove this line unless you 

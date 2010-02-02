@@ -493,7 +493,7 @@ function eval_once($toeval) {
 	if(!$evaled) $evaled = array();
 	$evalmd5 = md5($toeval);
 	if(!in_array($evalmd5, $evaled)) {
-		eval($toeval);
+		@eval($toeval);
 		$evaled[] = $evalmd5;
 	}
 	return;
@@ -813,14 +813,13 @@ function delete_package_xml($pkg) {
 		if(is_array($pkg_config['tabs'])) {
 			$static_output .= "\tMenu items... ";
 			update_output_window($static_output);
-			if(is_array($tabs))
-				foreach($tabs as $tab)
-					$insttabs[] = $tab['name'];
-			if($pkg_config['tabs']['tab'])
-				foreach($pkg_config['tabs']['tab'] as $tab)
-					foreach($insttabs as $key => $insttab)
-						if($insttab == $tab['name'])
+			if(is_array($pkg_config['tabs']['tab']) && is_array($tabs)) {
+				foreach($pkg_config['tabs']['tab'] as $tab) {
+					foreach($tabs as $key => $insttab)
+						if($insttab['name'] == $tab['name'])
 							unset($tabs[$key]);
+				}
+			}
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
@@ -828,12 +827,13 @@ function delete_package_xml($pkg) {
 		if(is_array($pkg_config['menu'])) {
 			$static_output .= "\tMenu items... ";
 			update_output_window($static_output);
-			foreach($menus as $menu)
-				$instmenus[] = $menu['name'];
-			foreach($pkg_config['menu'] as $menu)
-				foreach($instmenus as $key => $instmenu)
-					if($instmenu == $menu['name'])
-						unset($menus[$key]);
+			if (is_array($pkg_config['menu']) && is_array($menus)) {
+				foreach($pkg_config['menu'] as $menu) {
+					foreach($menus as $key => $instmenu)
+						if($instmenu['name'] == $menu['name'])
+							unset($menus[$key]);
+				}
+			}
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
@@ -841,12 +841,13 @@ function delete_package_xml($pkg) {
 		if(is_array($pkg_config['service'])) {
 			$static_output .= "\tServices... ";
 			update_output_window($static_output);
-			foreach($services as $service) $instservices[] = $service['name'];
-			foreach($pkg_config['service'] as $service) {
-				foreach($instservices as $key => $instservice) {
-					if($instservice == $service['name']) {
-						stop_service($service['name']);
-						unset($services[$key]);
+			if (is_array($pkg_config['service']) && is_array($services)) {
+				foreach($pkg_config['service'] as $service) {
+					foreach($services as $key => $instservice) {
+						if($instservice['name'] == $service['name']) {
+							stop_service($service['name']);
+							unset($services[$key]);
+						}
 					}
 				}
 			}
@@ -860,10 +861,10 @@ function delete_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
 			$static_output = "Loading package instructions...";
 			update_output_window($static_output);
-			fwrite($fd_log, "require_once('include_file')\n");
-			if(file_exists($pkg_config['include_file']))
-				require_once($pkg_config['include_file']);
-			fwrite($fd_log, "require_once('include_file') included\n");
+			fwrite($fd_log, "require_once(\"{$pkg_config['include_file']}\")\n");
+			if(file_exists($pkg_config['include_file']) && !in_array($pkg_config['include_file'], get_included_files()))
+				require($pkg_config['include_file']);
+			fwrite($fd_log, "require_once(\"{$pkg_config['include_file']}\") included\n");
 		}
 		/* evalate this package's global functions and pre deinstall commands */
 		if($pkg_config['custom_php_global_functions'] <> "")
@@ -871,7 +872,7 @@ function delete_package_xml($pkg) {
 		if($pkg_config['custom_php_pre_deinstall_command'] <> "")
 			eval_once($pkg_config['custom_php_pre_deinstall_command']);
 		/* remove all additional files */
-		if($pkg_config['additional_files_needed'] <> "") {
+		if(is_array($pkg_config['additional_files_needed'])) {
 			$static_output .= "\tAuxiliary files... ";
 			update_output_window($static_output);
 			foreach($pkg_config['additional_files_needed'] as $afn) {
@@ -889,7 +890,7 @@ function delete_package_xml($pkg) {
 			update_output_window($static_output);
 		}
 		/* system files */
-		if($pkg_config['modify_system']['item'] <> "") {
+		if(is_array($pkg_config['modify_system']['item'])) {
 			$static_output .= "\tSystem files... ";
 			update_output_window($static_output);
 			foreach($pkg_config['modify_system']['item'] as $ms) {

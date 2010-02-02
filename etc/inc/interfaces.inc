@@ -2815,7 +2815,7 @@ function get_wireless_modes($interface) {
 		$wi = 1;
 		$chan_list = "/sbin/ifconfig {$cloned_interface} list chan";
 		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
-		$format_list = "$awk '{print \$5 \" \" \$6 \",\" \$1}'";
+		$format_list = "/usr/bin/awk '{print \$5 \" \" \$6 \",\" \$1}'";
 
 		$interface_channels = "";
 		exec("$chan_list | $stack_list | sort -u | $format_list 2>&1", $interface_channels);

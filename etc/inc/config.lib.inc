@@ -887,8 +887,8 @@ EOD;
 		echo "\nThe interfaces will be assigned as follows: \n\n";
 	
 		if ($lanif != "")
-			echo "LAN  ->" . $lanif . "\n";
-		echo "WAN  ->" . $wanif . "\n";
+			echo "LAN  -> " . $lanif . "\n";
+		echo "WAN  -> " . $wanif . "\n";
 		for ($i = 0; $i < count($optif); $i++) {
 			echo "OPT" . ($i+1) . " -> " . $optif[$i] . "\n";
 		}

@@ -724,7 +724,7 @@ function filter_flush_state_table() {
 	return mwexec("/sbin/pfctl -F state");
 }
 
-function filter_generate_reflection($rule, $target, $extport, &$starting_localhost_port, &$reflection_txt) {
+function filter_generate_reflection($rule, $extport, &$starting_localhost_port, &$reflection_txt) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
@@ -759,6 +759,14 @@ function filter_generate_reflection($rule, $target, $extport, &$starting_localho
 				$extaddr = $rule['external-address'];
 			else if (is_ipaddr($FilterIflist[$rule['interface']]['ip']))
 				$extaddr = $FilterIflist[$rule['interface']]['ip'];
+
+			if (is_alias($rule['target'))
+                                $target = filter_expand_alias($rule['target']);
+                        else if(is_ipaddr($rule['target']))
+                                $target = $rule['target'];
+                        else if (is_ipaddr($FilterIflist[$rule['target']]['ip']))
+                                $target = $FilterIflist[$rule['target']]['ip'];
+
 			if($rule['local-port'])
 				$lrange_start = $rule['local-port'];
 			if($range_end - $extport[0] > 500) {
@@ -1171,7 +1179,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$extport[0]} -> ({$natif})\n";
 				}
 			}
-			$natrules .= filter_generate_reflection($rule, $target, $extport, $starting_localhost_port, $reflection_rules);
+			$natrules .= filter_generate_reflection($rule, $extport, $starting_localhost_port, $reflection_rules);
 			$natrules .= "\n";
 		
 			foreach ($reflection_rules as $txtline)

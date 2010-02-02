@@ -458,6 +458,8 @@ function install_package($package, $pkg_info = "") {
 		$changedesc = "Overwrote previous installation of {$pkg_info['name']}.";
 		$to_output = "overwrite!\n";
 	}
+	/* XXX: Fix inclusion of config.inc that causes data loss! */
+	write_config();
 	$static_output .= $to_output;
 	update_output_window($static_output);
 	/* install other package components */

@@ -2760,7 +2760,7 @@ function is_altq_capable($int) {
 			"hme", "ipw", "iwi", "jme", "le", "msk", "mxge", "my", "nfe",
 			"npe", "nve", "ral", "re", "rl", "rum", "sf", "sis", "sk",
 			"ste", "stge", "txp", "udav", "ural", "vge", "vr", "wi", "xl",
-			"ndis", "tun", "vlan", "pppoe", "pptp", "ng", "ppp");
+			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng", "ppp");
 
         $int_family = preg_split("/[0-9]+/", $int);
 

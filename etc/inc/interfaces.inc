@@ -2777,7 +2777,7 @@ function is_interface_ppp($interface) {
 	global $config, $g;
 
 	$friendly = convert_real_interface_to_friendly_interface_name($interface);
-	if(!isset($config['interfaces'][$friendly]['serialport'])) 
+	if(isset($config['interfaces'][$friendly]['serialport'])) 
 		return true;
 
 	return false;

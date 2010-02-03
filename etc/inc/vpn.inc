@@ -206,13 +206,15 @@ function vpn_ipsec_configure($ipchg = false)
 
 					/* add an ipsec pinghosts entry */
 					if ($ph2ent['pinghost']) {
-						$pfd = fopen("/var/db/ipsecpinghosts", "a");
+						$pfd = fopen("{$g['vardb_path']}/ipsecpinghosts", "a");
 						$iflist = get_configured_interface_list();
 						foreach ($iflist as $ifent => $ifname) {
 							$interface_ip = get_interface_ip($ifent);
 							$local_subnet = ipsec_idinfo_to_cidr($ph2ent['localid'], true);
-							if (ip_in_subnet($interface_ip, $local_subnet))
+							if (ip_in_subnet($interface_ip, $local_subnet)) {
 								$srcip = $interface_ip;
+								break;
+							}
 						}
 						$dstip = $ph2ent['pinghost'];
 						fwrite($pfd, "$srcip|$dstip|3\n");

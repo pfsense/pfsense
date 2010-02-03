@@ -760,7 +760,7 @@ function filter_generate_reflection($rule, $extport, &$starting_localhost_port, 
 			else if (is_ipaddr($FilterIflist[$rule['interface']]['ip']))
 				$extaddr = $FilterIflist[$rule['interface']]['ip'];
 
-			if (is_alias($rule['target'))
+			if (is_alias($rule['target']))
                                 $target = filter_expand_alias($rule['target']);
                         else if(is_ipaddr($rule['target']))
                                 $target = $rule['target'];

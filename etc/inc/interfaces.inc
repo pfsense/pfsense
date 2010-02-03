@@ -575,7 +575,7 @@ function interface_gre_configure(&$gre) {
 		log_error("Could not bring greif up -- variable not defined.");
 
 	if (isset($gre['link1']) && $gre['link1'])
-		mwexec("/sbin/route add {$gre['tunnel-remote-addr']}/{$gre['tunnel-remote-net']} {$gre[tunnel-local-addr']}");
+		mwexec("/sbin/route add {$gre['tunnel-remote-addr']}/{$gre['tunnel-remote-net']} {$gre['tunnel-local-addr']}");
 	file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr']);
 
 	return $greif;
@@ -631,7 +631,7 @@ function interface_gif_configure(&$gif) {
 
 	/* XXX: Needed?! */
 	//mwexec("/sbin/route add {$gif['tunnel-remote-addr']}/{$gif['tunnel-remote-net']} -iface {$gifif}");
-	file_put_contents("{$g['tmp_path']}/{$gifif}_router", $gif['tunnel-remote-addr']");
+	file_put_contents("{$g['tmp_path']}/{$gifif}_router", $gif['tunnel-remote-addr']);
 
 	return $gifif;
 }

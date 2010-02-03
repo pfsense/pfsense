@@ -576,7 +576,7 @@ function interface_gre_configure(&$gre) {
 
 	if (isset($gre['link1']) && $gre['link1'])
 		mwexec("/sbin/route add {$gre['tunnel-remote-addr']}/{$gre['tunnel-remote-net']} {$gre[tunnel-local-addr']}");
-	file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr']");
+	file_put_contents("{$g['tmp_path']}/{$greif}_router", $gre['tunnel-remote-addr']);
 
 	return $greif;
 }

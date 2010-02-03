@@ -2645,7 +2645,7 @@ function find_interface_subnet($interface, $flush = false)
 		return;
 
 	if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
-		if (preg_match("/^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre|^lagg|^bridge|*vlan/i", $interface))
+		if (preg_match("/^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre/i", $interface))
 			$interface_sn_arr_cache[$interface] = `/sbin/ifconfig {$interface} | /usr/bin/grep -w "inet" | /usr/bin/cut -d" " -f 6 | /usr/bin/head -1`;
 		else
 			$interface_sn_arr_cache[$interface] = `/sbin/ifconfig {$interface} | /usr/bin/grep -w "inet" | /usr/bin/cut -d" " -f 4 | /usr/bin/head -1`;

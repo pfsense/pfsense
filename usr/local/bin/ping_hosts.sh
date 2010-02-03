@@ -76,7 +76,6 @@ for TOPING in $PINGHOSTS ; do
 		if [ "$PREVIOUSSTATUS" = "DOWN" ]; then
 			# Service restored
 			if [ "$SERVICERESTOREDSCRIPT" != "" ]; then
-				echo "UP" > /var/db/pingstatus/$DSTIP
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT"
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT" | logger -p daemon.info -i -t PingMonitor
 				sh -c $SERVICERESTOREDSCRIPT
@@ -89,7 +88,6 @@ for TOPING in $PINGHOSTS ; do
 		if [ "$PREVIOUSSTATUS" = "UP" ]; then
 			# Service is down
 			if [ "$FAILURESCRIPT" != "" ]; then
-				echo "DOWN" > /var/db/pingstatus/$DSTIP
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT"
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
 				sh -c $FAILURESCRIPT

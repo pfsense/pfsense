@@ -101,7 +101,7 @@ function vpn_ipsec_configure($ipchg = false)
 
 	mwexec("/sbin/ifconfig enc0 up");
 
-	/* get the automatic /etc/ping_hosts.sh ready */
+	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
 

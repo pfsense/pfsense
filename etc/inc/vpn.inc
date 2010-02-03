@@ -46,9 +46,9 @@
 function vpn_ipsec_failover_configure() {
 	global $config, $g;
 
-	$sasyncd_text = "";
 
-	if ($config['installedpackages']['sasyncd'] <> "")
+	if (is_array($config['installedpackages']['sasyncd'])) {
+		$sasyncd_text = "";
 		foreach ($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 			$enabled = isset ($sasyncd['enable']);
 			if (!$enabled)
@@ -67,16 +67,15 @@ function vpn_ipsec_failover_configure() {
 				$sasyncd_text .= "flushmode sync {$sasyncd['flushmodesync']}\n";
 		}
 
-	$fd = fopen("{$g['varetc_path']}/sasyncd.conf", "w");
-	fwrite($fd, $sasyncd_text);
-	fclose($fd);
-	chmod("{$g['varetc_path']}/sasyncd.conf", 0600);
+		file_put_contents("{$g['varetc_path']}/sasyncd.conf", $sasyncd_text);
+		chmod("{$g['varetc_path']}/sasyncd.conf", 0600);
 
-	if(is_process_running("sasyncd"))
-		mwexec("killall sasyncd", true);
+		if(is_process_running("sasyncd"))
+			mwexec("killall sasyncd", true);
 
-	/* launch sasyncd, oh wise one */
-	mwexec_bg("/usr/local/sbin/sasyncd -d -v -v -v");
+		/* launch sasyncd, oh wise one */
+		mwexec_bg("/usr/local/sbin/sasyncd -d -v -v -v");
+	}
 }
 
 function find_last_gif_device() {

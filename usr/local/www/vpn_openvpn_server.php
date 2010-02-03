@@ -654,6 +654,8 @@ function netbios_change() {
 							<?php
 								foreach ($config['system']['cert'] as $cert):
 									$selected = "";
+									if (strstr($cert['name'], "webConfigurator"))
+										continue;
 									if ($pconfig['certref'] == $cert['refid'])
 										$selected = "selected";
 							?>

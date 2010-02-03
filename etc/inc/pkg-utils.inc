@@ -90,7 +90,7 @@ $g['version'] = intval($ver[1]);
  *   
  ******/
 function remove_freebsd_package($packagestring) {
-	exec("cd /var/db/pkg && echo y | pkg_delete `ls | grep $packagestring`");
+	exec("echo y | /usr/sbin/pkg_delete -x {$packagestring}");
 }
 
 /****f* pkg-utils/is_package_installed
@@ -201,7 +201,8 @@ function resync_all_package_configs($show_message = false) {
  */
 function is_freebsd_pkg_installed($pkg) {
 	global $g;
-	if(in_array($pkg, return_dir_as_array("{$g['vardb_path']}/pkg"))) return true;
+	if(in_array($pkg, return_dir_as_array("{$g['vardb_path']}/pkg")))
+		return true;
 	return false;
 }
 
@@ -277,10 +278,15 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 function uninstall_package_from_name($pkg_name) {
 	global $config;
 	$id = get_pkg_id($pkg_name);
-	$todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
+	$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package'];
+	$todel = substr(reverse_strrchr($pkg_depends[0], "."), 0, -1);
 	delete_package($todel, $pkg_name);
+	if (is_array($pkg_depends)) {
+		foreach ($pkg_depends as $pkg_depend)
+			$todel = substr(reverse_strrchr($pkg_depend, "."), 0, -1);	
+			remove_freebsd_package($todel);
+	}
 	delete_package_xml($pkg_name);
-	remove_freebsd_package($pkg_name);
 }
 
 function force_remove_package($pkg_name) {
@@ -553,17 +559,19 @@ function install_package_xml($pkg) {
 			} else {
 				$pkg_installed = is_freebsd_pkg_installed($pkg_name);
 			}
-			if($pkg_installed == false) pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url']);
+			if($pkg_installed == false)
+				pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url']);
 			$static_output = $static_orig . "done.\nChecking for successful package installation... ";
 			update_output_window($static_output);
 			/* make sure our package was successfully installed */
-			if($pkg_installed == false) $pkg_installed = is_freebsd_pkg_installed($pkg_name);
+			if($pkg_installed == false)
+				$pkg_installed = is_freebsd_pkg_installed($pkg_name);
 			if($pkg_installed == true) {
 				$static_output .= "done.\n";
 				update_output_window($static_output);
 				fwrite($fd_log, "pkg_add successfully completed.\n");
 			} else {
-				$static_output .= "failed!\n\nInstallation aborted.";
+				$static_output .= "of {$pkg_name} failed!\n\nInstallation aborted.";
 				update_output_window($static_output);
 				fwrite($fd_log, "Package WAS NOT installed properly.\n");
 				fclose($fd_log);
@@ -588,7 +596,7 @@ function install_package_xml($pkg) {
 			$config['installedpackages']['package'][$pkgid]['filter_rule_function'] = $pkg_config['filter_rules_needed'];
 		update_output_window($static_output);
 		/* modify system files */
-		if($pkg_config['modify_system']['item'] <> "") {
+		if(is_array($pkg_config['modify_system']['item'])) {
 			$static_output .= "\tSystem files... ";
 			update_output_window($static_output);
 			foreach($pkg_config['modify_system']['item'] as $ms) {
@@ -600,7 +608,7 @@ function install_package_xml($pkg) {
 			update_output_window($static_output);
 		}
 		/* download additional files */
-		if($pkg_config['additional_files_needed'] <> "") {
+		if(is_array($pkg_config['additional_files_needed'])) {
 			$static_output .= "\tAdditional files... ";
 			$static_orig = $static_output;
 			update_output_window($static_output);
@@ -645,43 +653,39 @@ function install_package_xml($pkg) {
 		if($pkg_config['include_file'] <> "") {
 			$static_output = "Loading package instructions...";
 			update_output_window($static_output);
-			fwrite($fd_log, "require_once('include_file')\n");
+			fwrite($fd_log, "require_once('{$pkg_config['include_file']}')\n");
 			require_once($pkg_config['include_file']);
 		}
 		/* sidebar items */
-		if($pkg_config['menu'] != "") {
+		if(is_array($pkg_config['menu'])) {
 			$static_output .= "\tMenu items... ";
 			update_output_window($static_output);
-			if(is_array($pkg_config['menu'])) {
-				foreach($pkg_config['menu'] as $menu) {
-					if(is_array($config['installedpackages']['menu']))
-						foreach($config['installedpackages']['menu'] as $amenu)
-							if($amenu['name'] == $menu['name'])
-								continue 2;
-					$config['installedpackages']['menu'][] = $menu;
-				}
+			foreach($pkg_config['menu'] as $menu) {
+				if(is_array($config['installedpackages']['menu']))
+					foreach($config['installedpackages']['menu'] as $amenu)
+						if($amenu['name'] == $menu['name'])
+							continue 2;
+				$config['installedpackages']['menu'][] = $menu;
 			}
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
 		/* integrated tab items */
-		if($pkg_config['tabs'] != "") {
+		if(is_array($pkg_config['tabs']['tab'])) {
 			$static_output .= "\tIntegrated Tab items... ";
 			update_output_window($static_output);
-			if(is_array($pkg_config['tabs']['tab'])) {
-				foreach($pkg_config['tabs']['tab'] as $tab) {
-					if(is_array($config['installedpackages']['tab']))
-						foreach($config['installedpackages']['tab'] as $atab)
-							if($atab['name'] == $tab['name'])
-								continue 2;
-					$config['installedpackages']['tab'][] = $tab;
-				}
+			foreach($pkg_config['tabs']['tab'] as $tab) {
+				if(is_array($config['installedpackages']['tab']))
+					foreach($config['installedpackages']['tab'] as $atab)
+						if($atab['name'] == $tab['name'])
+							continue 2;
+				$config['installedpackages']['tab'][] = $tab;
 			}
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
 		/* services */
-		if($pkg_config['service'] != "") {
+		if(is_array($pkg_config['service'])) {
 			$static_output .= "\tServices... ";
 			update_output_window($static_output);
 			foreach($pkg_config['service'] as $service) {
@@ -749,8 +753,8 @@ function delete_package($pkg, $pkgid) {
 	}
 	$static_output .= "\nStarting package deletion for {$pkg_info['name']}...\n";
 	update_output_window($static_output);
-	delete_package_recursive($pkg);
-	remove_freebsd_package($pkg);
+	if (!empty($pkg))
+		delete_package_recursive($pkg);
 	$static_output .= "done.\n";
 	update_output_window($static_output);
 	return;
@@ -765,7 +769,6 @@ function delete_package_recursive($pkg) {
 	fclose($fd);
 	$info = "";
 	exec("/usr/sbin/pkg_info -r " . $pkg . " 2>&1", $info);
-	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_delete " . $pkg ." > /dev/null 2>&1");
 	remove_freebsd_package($pkg);
 	$pkgdb = "";
 	exec("/bin/ls /var/db/pkg", $pkgdb);
@@ -862,8 +865,8 @@ function delete_package_xml($pkg) {
 			$static_output = "Loading package instructions...";
 			update_output_window($static_output);
 			fwrite($fd_log, "require_once(\"{$pkg_config['include_file']}\")\n");
-			if(file_exists($pkg_config['include_file']) && !in_array($pkg_config['include_file'], get_included_files()))
-				require($pkg_config['include_file']);
+			if(file_exists($pkg_config['include_file']))
+				require_once($pkg_config['include_file']);
 			fwrite($fd_log, "require_once(\"{$pkg_config['include_file']}\") included\n");
 		}
 		/* evalate this package's global functions and pre deinstall commands */
@@ -915,6 +918,15 @@ function delete_package_xml($pkg) {
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
+		if($pkg_config['include_file'] <> "") {
+                        $static_output = "\tRemoving pacakge instructions...";
+                        update_output_window($static_output);
+                        fwrite($fd_log, "Remove '{$pkg_config['include_file']}'\n");
+                        unlink_if_exists("/usr/local/pkg/" . $pkg_config['include_file']);
+			$static_output .= "done.\n";
+                        update_output_window($static_output);
+			
+                }
 		/* package XML file */
 		$static_output .= "\tPackage XML... ";
 		update_output_window($static_output);
@@ -968,8 +980,12 @@ function get_pkg_db() {
 }
 
 function walk_depend($depend, $pkgdb = "", $alreadyseen = "") {
-	if(!$pkgdb) $pkgdb = get_pkg_db();
-	if(!$alreadyseen) $alreadyseen = array();
+	if(!$pkgdb)
+		$pkgdb = get_pkg_db();
+	if(!is_array($alreadyseen))
+		$alreadyseen = array();
+	if (!is_array($depend))
+		$depend = array();
 	foreach($depend as $adepend) {
 		$pkgname = reverse_strrchr($adepend['name'], '.');
 		if(in_array($pkgname, $alreadyseen)) {
@@ -978,8 +994,6 @@ function walk_depend($depend, $pkgdb = "", $alreadyseen = "") {
 			$size += expand_to_bytes($adepend['size']);
 			$alreadyseen[] = $pkgname;
 			if(is_array($adepend['depend'])) $size += walk_depend($adepend['depend'], $pkgdb, $alreadyseen);
-		} else {
-			continue;
 		}
 	}
 	return $size;
@@ -987,9 +1001,11 @@ function walk_depend($depend, $pkgdb = "", $alreadyseen = "") {
 
 function get_package_install_size($pkg = 'all', $pkg_info = "") {
 	global $config, $g;
-	if((!is_array($pkg)) and ($pkg != 'all')) $pkg = array($pkg);
+	if((!is_array($pkg)) and ($pkg != 'all'))
+		$pkg = array($pkg);
 	$pkgdb = get_pkg_db();
-	if(!$pkg_info) $pkg_info = get_pkg_sizes($pkg);
+	if(!$pkg_info)
+		$pkg_info = get_pkg_sizes($pkg);
 	foreach($pkg as $apkg) {
 		if(!$pkg_info[$apkg]) continue;
 		$toreturn[$apkg] = expand_to_bytes(walk_depend(array($pkg_info[$apkg]), $pkgdb));

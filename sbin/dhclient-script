@@ -196,6 +196,8 @@ add_new_resolv_conf() {
 		echo $new_domain_name >/var/etc/defaultdomain.conf
 	fi
 
+	echo $interface > /tmp/rc.newwanip
+
 	return 0
 }
 

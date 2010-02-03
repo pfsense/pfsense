@@ -128,7 +128,7 @@ conf_mount_rw();
 switch($_GET['mode']) {
 	case "delete":
 		$id = get_pkg_id($_GET['pkg']);
-		delete_package_xml(htmlspecialchars($_GET['pkg']));
+		uninstall_package_from_name($_GET['pkg']);
 		update_status("Package deleted.");
 		$static_output .= "\nPackage deleted.";
 		update_output_window($static_output);

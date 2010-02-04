@@ -607,6 +607,8 @@ function gather_altq_queue_stats($dont_return_root_queues) {
  *					 Useful for finding paths and stripping file extensions.
  */
 function reverse_strrchr($haystack, $needle) {
+	if (!is_string($haystack))
+		return;
 	return strrpos($haystack, $needle) ? substr($haystack, 0, strrpos($haystack, $needle) +1 ) : false;
 }
 

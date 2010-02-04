@@ -101,6 +101,8 @@ touch("{$g['varrun_path']}/booting");
 /* parse the configuration and include all functions used below */
 require_once("/etc/inc/config.inc");
 echo ".";
+require_once("/etc/inc/auth.inc");
+echo ".";
 require_once("/etc/inc/functions.inc");
 echo ".";
 require("/etc/inc/filter.inc");

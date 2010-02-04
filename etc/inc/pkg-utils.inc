@@ -90,7 +90,8 @@ $g['version'] = intval($ver[1]);
  *   
  ******/
 function remove_freebsd_package($packagestring) {
-	exec("echo y | /usr/sbin/pkg_delete -x {$packagestring}");
+	$todel = substr(reverse_strrchr($packagestring, "."), 0, -1);
+	exec("echo y | /usr/sbin/pkg_delete -x {$todel}");
 }
 
 /****f* pkg-utils/is_package_installed
@@ -279,12 +280,10 @@ function uninstall_package_from_name($pkg_name) {
 	global $config;
 	$id = get_pkg_id($pkg_name);
 	$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package'];
-	$todel = substr(reverse_strrchr($pkg_depends[0], "."), 0, -1);
-	delete_package($todel, $pkg_name);
+	delete_package($pkg_depends[0], $pkg_name);
 	if (is_array($pkg_depends)) {
 		foreach ($pkg_depends as $pkg_depend)
-			$todel = substr(reverse_strrchr($pkg_depend, "."), 0, -1);	
-			remove_freebsd_package($todel);
+			remove_freebsd_package($pkg_depend);
 	}
 	delete_package_xml($pkg_name);
 }
@@ -329,7 +328,6 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 				log_error("Could not locate {$include_file}.");
 				install_package($package['name']);
 				uninstall_package_from_name($package['name']);
-				remove_freebsd_package($package['name']);
 				install_package($package['name']);
 			}
 		}
@@ -351,7 +349,6 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 						log_error("Could not find {$item}. Reinstalling package.");
 						install_package($pkg_name);
 						uninstall_package_from_name($pkg_name);
-						remove_freebsd_package($pkg_name);						
 						install_package($pkg_name);
 					} else {
 						$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
@@ -767,8 +764,9 @@ function delete_package_recursive($pkg) {
 		fwrite($fd, "y\n");
 	}
 	fclose($fd);
+	$pkg = substr(reverse_strrchr($pkg, "."), 0, -1);
 	$info = "";
-	exec("/usr/sbin/pkg_info -r " . $pkg . " 2>&1", $info);
+	exec("/usr/sbin/pkg_info -r {$pkg} 2>&1", $info);
 	remove_freebsd_package($pkg);
 	$pkgdb = "";
 	exec("/bin/ls /var/db/pkg", $pkgdb);

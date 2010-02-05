@@ -121,7 +121,7 @@ include("head.inc"); ?>
 				  <td width="17%" valign="top" class="vncellreq">Interface</td>
 				  <td width="83%" class="vtable">
 				<select name="interface" class="formfld">
-                     <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+<?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					    if (isset($config['interfaces']['opt' . $i]['enable']) &&
 							!$config['interfaces']['opt' . $i]['bridge'])
@@ -129,9 +129,9 @@ include("head.inc"); ?>
 					  }
 					  foreach ($interfaces as $iface => $ifacename): ?>
                       <option value="<?=$iface;?>" <?php if ($selectedif == $iface) echo "selected"; ?>>
-                      <?php echo $ifacename;?>
+<?php echo $ifacename;?>
                       </option>
-                      <?php endforeach;?>
+<?php endforeach;?>
                     </select>
                     <br/>Select the interface the traffic will be passing through. Typically this will be the WAN interface.
 				  </td>
@@ -189,7 +189,7 @@ include("head.inc"); ?>
 				<tr>
 				  <td width="17%" valign="top">&nbsp;</td>
 				  <td width="83%">
-                    <?php
+<?php
 
                     /*check to see if packet capture tcpdump is already running*/
 					$processcheck = (trim(shell_exec("ps axw -O pid= | grep tcpdump | grep $fn | grep -v pflog")));
@@ -208,7 +208,7 @@ include("head.inc"); ?>
 						echo "<input type=\"submit\" name=\"downloadbtn\" value=\"Download Capture\">";
 						echo "&nbsp;&nbsp;(The packet capture file was last updated: " . date("F jS, Y g:i:s a.", filemtime($fp.$fn)) . ")";
 					}
-					?>
+?>
 				  </td>
 				</tr>
 				<tr>
@@ -217,57 +217,48 @@ include("head.inc"); ?>
 				echo "<font face='terminal' size='2'>";
 				if ($processisrunning == true)
 						echo("<strong>Packet Capture is running.</strong><br/>");
-						
-				if ($do_tcpdump) {					
 
-					if ($port != "")
-                    {
+				if ($do_tcpdump) {
+					if ($port != "") {
                        $searchport = "and port ".$port;
-                       if($host <> "")                        
-							$searchport = "and port ".$port;
-						else
-							$searchport = "port ".$port;
-                    }
-                    else
-                    {
+					if($host <> "")                        
+						$searchport = "and port ".$port;
+					else
+						$searchport = "port ".$port;
+                    } else {
                         $searchport = "";
                     }
 
-       				if ($host != "")
-         	       {
+					if ($host != "") {
              	       $searchhost = "host " . $host;
-            	   }
-             	   else
-                	{
+					} else {
                        $searchhost = "";
              		}
-             		if ($count != "0" )
-             		{
+             		if ($count != "0" ) {
              			 $searchcount = "-c " . $count;
-             		}
-             		else
-             		{
+             		} else {
              			$searchcount = "";
              		}
 
-					$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);					
-						
-					if ($action == "Start")
-					{
+					$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
+
+					if ($action == "Start") {
 						echo("<strong>Packet Capture is running.</strong><br/>");
 					 	mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fp$fn $searchhost $searchport");
-						}
-					else  //action = stop
-					{
-
+					} else {
+ 						//action = stop
 						echo("<strong>Packet Capture stopped. <br/><br/>Packets Captured:</strong><br/>");
-						?>
+?>
 						<textarea style="width:98%" name="code" rows="15" cols="66" wrap="off" readonly="readonly">
-						<?php
-						system ("/usr/sbin/tcpdump $disabledns $detail -r $fp$fn");?>
-						</textarea><?php
+<?php
+						system ("/usr/sbin/tcpdump $disabledns $detail -r $fp$fn");
+						conf_mount_ro();
+?>
+						</textarea>
+<?php
 					}
-				}?>
+				}
+?>
 				</td>
 				</tr>
 				<tr>
@@ -276,8 +267,6 @@ include("head.inc"); ?>
 </form>
 </td></tr></table>
 <?php 
-
-conf_mount_ro();
 
 include("fend.inc"); 
 

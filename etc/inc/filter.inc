@@ -3217,6 +3217,11 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			$cli->setDebug(1);
 		/* send our XMLRPC message and timeout after 240 seconds */
 		$resp = $cli->send($msg, "240");
+		if($resp->faultCode()) {
+			$error = "A communications error occurred while attempting communication with {$url}:{$port} (pfsense.exec_php).";
+			log_error($error);
+			return;	
+		}
 		if(!$resp) {
 			$error = "A communications error occured while attempting XMLRPC sync with username {$username} {$url}:{$port}.";
 			log_error($error);
@@ -3228,6 +3233,12 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 		} else {
 			log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
 			$numberofruns = 3;
+		}
+		$parsed_response =  XML_RPC_Decode($resp->value());
+		if(!is_array($firewall_info) && trim($firewall_info) == "Authentication failed") {
+			$error = "A authentication failure occurred while trying to access {$url}:{$port} (pfsense.exec_php).";
+			log_error($error);
+			$numberofruns = 5;
 		}
 		$numberofruns++;
 	}

@@ -456,6 +456,21 @@ function interface_bridge_configure(&$bridge) {
 	return $bridgeif;
 }
 
+function interface_bridge_add_member($bridgeif, $interface) {
+
+	if (!does_interface_exist($bridgeif) || !does_interface_exist($interface))
+		return;
+
+	$mtu = get_interface_mtu($brigeif);
+	$mtum = get_interface_mtu($interface);
+	
+	if ($mtu != $mtum)
+		mwexec("/sbin/ifconfig {$interface} mtu {$mtu}");
+
+	interfaces_bring_up($interface);
+	mwexec("/sbin/ifconfig {$bridgeif} addm {$interface}");
+}
+
 function interfaces_lagg_configure() 
 {
         global $config, $g;
@@ -1745,7 +1760,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		if (link_interface_to_bridge($interface)) {
 			foreach ($config['bridges']['bridged'] as $bridge)
 				if (stristr($bridge['members'], "{$interface}"))
-					interface_bridge_configure($bridge);
+					interface_bridge_add_member($bridge['bridgeif'], $realif);
 		}
 
 		link_interface_to_vips($interface, "update");

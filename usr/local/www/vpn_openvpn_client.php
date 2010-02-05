@@ -92,7 +92,9 @@ if($_GET['act']=="edit"){
 		$pconfig['proxy_port'] = $a_client[$id]['proxy_port'];
 		$pconfig['description'] = $a_client[$id]['description'];
 		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
-		
+		$pconfig['ns_cert_type'] = $a_client[$id]['ns_cert_type'];
+		$pconfig['dev_mode'] = $a_client[$id]['dev_mode'];
+	
 		if ($pconfig['mode'] != "p2p_shared_key") {
 			$pconfig['caref'] = $a_client[$id]['caref'];
 			$pconfig['certref'] = $a_client[$id]['certref'];
@@ -197,6 +199,7 @@ if ($_POST) {
 
 		$client['disable'] = $pconfig['disable'];
 		$client['protocol'] = $pconfig['protocol'];
+		$client['dev_mode'] = $pconfig['dev_mode'];
 		list($client['interface'], $client['ipaddr']) = explode ("|",$pconfig['interface']);
 		$client['local_port'] = $pconfig['local_port'];
 		$client['server_addr'] = $pconfig['server_addr'];
@@ -383,6 +386,21 @@ function autotls_change() {
 							</select>
 							</td>
 					</tr>
+                                        <tr>
+                                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Device mode");?></td>
+                                                        <td width="78%" class="vtable">
+                                                        <select name='dev_mode' class="formselect">
+                                                        <?php
+                                                                foreach ($openvpn_dev_mode as $mode):
+                                                                        $selected = "";
+                                                                        if ($pconfig['dev_mode'] == $mode)
+                                                                                $selected = "selected";
+                                                        ?>
+                                                                <option value="<?=$mode;?>" <?=$selected;?>><?=$mode;?></option>
+                                                        <?php endforeach; ?>
+                                                        </select>
+                                                        </td>
+                                        </tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq">Interface</td>
 						<td width="78%" class="vtable">

@@ -52,6 +52,8 @@ require_once('pfsense-utils.inc');
 
 $openvpn_prots = array("UDP", "TCP");
 
+$openvpn_dev_mode = array("tun", "tap");
+
 /* 
  * The User Auth mode below is disabled because
  * OpenVPN erroneously requires that we provide
@@ -246,7 +248,7 @@ function openvpn_add_custom(& $settings, & $conf) {
 	}
 }
 
-function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive) {
+function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") {
 	global $g;
 
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.{$directive}";
@@ -254,7 +256,7 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive) {
 	chown($fpath, 'nobody');
 	chgrp($fpath, 'nobody');
 
-	$conf .= "{$directive} {$fpath}\n";
+	$conf .= "{$directive} {$fpath} {$opt}\n";
 }
 
 function openvpn_reconfigure($mode,& $settings) {
@@ -274,7 +276,13 @@ function openvpn_reconfigure($mode,& $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
-	$tunname = "tun{$vpnid}";
+	if (isset($settings['dev_mode']))
+		$tunname = "{$settings['dev_mode']}{$vpnid}";
+	else {	/* defaults to tun */
+		$tunname = "tun{$vpnid}";
+		$settings['dev_mode'] = "tun";
+	}
+
 	if ($mode == "server")
 		$devname = "ovpns{$vpnid}";
 	else
@@ -313,7 +321,7 @@ function openvpn_reconfigure($mode,& $settings) {
 	}
 
 	$conf  = "dev {$devname}\n";
-	$conf .= "dev-type tun\n";
+	$conf .= "dev-type {$settings['dev_mode']}\n";
 	$conf .= "dev-node /dev/{$tunname}\n";
 	$conf .= "writepid {$pfile}\n";
 	$conf .= "#user nobody\n";
@@ -465,7 +473,7 @@ function openvpn_reconfigure($mode,& $settings) {
 			if ($settings['crl'])
 				openvpn_add_keyfile($settings['crl'], $conf, $mode_id, "crl-verify");
 			if ($settings['tls'])
-				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth");
+				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth", $settings['mode'] == "server_tls" ? "0" : "1");
 			break;
 	}
 

@@ -45,6 +45,8 @@
 exec("/sbin/pfctl -s state", $states);
 
 $srcipinfo = array();
+$dstipinfo = array();
+$pairipinfo = array();
 
 $row = 0;
 if(count($states) > 0) {
@@ -57,11 +59,20 @@ if(count($states) > 0) {
 
 		/* break up info and extract $srcip and $dstip */
 		$ends = preg_split("/\<?-\>?/", $info);
-		$parts = split(":", $ends[0]);
+
+		if (strpos($info, '->') === FALSE) {
+			$srcinfo = $ends[count($ends) - 1];
+			$dstinfo = $ends[0];
+		} else {
+			$srcinfo = $ends[0];
+			$dstinfo = $ends[count($ends) - 1];
+		}
+
+		$parts = split(":", $srcinfo);
 		$srcip = trim($parts[0]);
 		$srcport = trim($parts[1]);
 
-		$parts = split(":", $ends[count($ends) - 1]);
+		$parts = split(":", $dstinfo);
 		$dstip = trim($parts[0]);
 		$dstport = trim($parts[1]);
 
@@ -72,6 +83,24 @@ if(count($states) > 0) {
 		}
 		if (!empty($dstport)) {
 			$srcipinfo[$srcip]['protos'][$proto]['dstports'][$dstport]++;
+		}
+
+		$dstipinfo[$dstip]['seen']++;
+		$dstipinfo[$dstip]['protos'][$proto]['seen']++;
+		if (!empty($srcport)) {
+			$dstipinfo[$dstip]['protos'][$proto]['srcports'][$srcport]++;
+		}
+		if (!empty($dstport)) {
+			$dstipinfo[$dstip]['protos'][$proto]['dstports'][$dstport]++;
+		}
+
+		$pairipinfo["{$srcip} -> {$dstip}"]['seen']++;
+		$pairipinfo["{$srcip} -> {$dstip}"]['protos'][$proto]['seen']++;
+		if (!empty($srcport)) {
+			$pairipinfo["{$srcip} -> {$dstip}"]['protos'][$proto]['srcports'][$srcport]++;
+		}
+		if (!empty($dstport)) {
+			$pairipinfo["{$srcip} -> {$dstip}"]['protos'][$proto]['dstports'][$dstport]++;
 		}
 	}
 }
@@ -85,6 +114,7 @@ require_once("guiconfig.inc");
 include("head.inc");
 include("fbegin.inc");
 ?>
+<h3>By Source IP</h3>
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td class="listhdrr">IP</td>
@@ -117,5 +147,72 @@ include("fbegin.inc");
 <?php } ?>
 
 </table>
+
+
+<h3>By Destination IP</h3>
+<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="listhdrr">IP</td>
+		<td class="listhdrr"># States</td>
+		<td class="listhdrr">Proto</td>
+		<td class="listhdrr"># States</td>
+		<td class="listhdrr">Src Ports</td>
+		<td class="listhdrr">Dst Ports</td>
+	</tr>
+<?php   uksort($dstipinfo, "sort_by_ip");
+	foreach($dstipinfo as $ip => $ipinfo) { ?>
+	<tr>
+		<td class='vncell'><?php echo $ip; ?></td>
+		<td class='vncell'><?php echo $ipinfo['seen']; ?></td>
+		<td class='vncell'>&nbsp;</td>
+		<td class='vncell'>&nbsp;</td>
+		<td class='vncell'>&nbsp;</td>
+		<td class='vncell'>&nbsp;</td>
+	</tr>
+	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
+	<tr>
+		<td class='list'>&nbsp;</td>
+		<td class='list'>&nbsp;</td>
+		<td class='listlr'><?php echo $proto; ?></td>
+		<td class='listr' align="center"><?php echo $protoinfo['seen']; ?></td>
+		<td class='listr' align="center"><?php echo count($protoinfo['srcports']); ?></td>
+		<td class='listr' align="center"><?php echo count($protoinfo['dstports']); ?></td>
+	</tr>
+	<?php } ?>
+<?php } ?>
+</table>
+
+<h3>By IP Pair</h3>
+<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="listhdrr">IP</td>
+		<td class="listhdrr"># States</td>
+		<td class="listhdrr">Proto</td>
+		<td class="listhdrr"># States</td>
+		<td class="listhdrr">Src Ports</td>
+		<td class="listhdrr">Dst Ports</td>
+	</tr>
+<?php   foreach($pairipinfo as $ip => $ipinfo) { ?>
+	<tr>
+		<td class='vncell'><?php echo $ip; ?></td>
+		<td class='vncell'><?php echo $ipinfo['seen']; ?></td>
+		<td class='vncell'>&nbsp;</td>
+		<td class='vncell'>&nbsp;</td>
+		<td class='vncell'>&nbsp;</td>
+		<td class='vncell'>&nbsp;</td>
+	</tr>
+	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
+	<tr>
+		<td class='list'>&nbsp;</td>
+		<td class='list'>&nbsp;</td>
+		<td class='listlr'><?php echo $proto; ?></td>
+		<td class='listr' align="center"><?php echo $protoinfo['seen']; ?></td>
+		<td class='listr' align="center"><?php echo count($protoinfo['srcports']); ?></td>
+		<td class='listr' align="center"><?php echo count($protoinfo['dstports']); ?></td>
+	</tr>
+	<?php } ?>
+<?php } ?>
+</table>
+
 
 <?php include("fend.inc"); ?>

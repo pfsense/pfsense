@@ -135,7 +135,9 @@ if ($_POST) {
 		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
 
 		/* pfSense themes */
-		update_if_changed("System Theme", $config['theme'], $_POST['theme']);
+		if (! $g['disablethemeselection']) {
+			update_if_changed("System Theme", $config['theme'], $_POST['theme']);
+		}
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		unset($config['system']['dnsserver']);
@@ -292,6 +294,7 @@ include("head.inc");
 				<tr>
 					<td colspan="2" class="list" height="12">&nbsp;</td>
 				</tr>
+				<?php if (! $g['disablethemeselection']): ?>
 				<tr>
 					<td colspan="2" valign="top" class="listtopic">Theme</td>
 				</tr>
@@ -316,6 +319,7 @@ include("head.inc");
 					<strong>This will change the look and feel of <?=$g['product_name']?></strong>
 				</td>
 				</tr>
+				<?php endif; ?>
 				<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> <input name="Submit" type="submit" class="formbtn" value="Save">

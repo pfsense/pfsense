@@ -193,6 +193,7 @@ $diagnostics_menu[] = array("Reboot", "/reboot.php");
 $diagnostics_menu[] = array("Routes", "/diag_routes.php");
 $diagnostics_menu[] = array("Show Bogons", "/diag_showbogons.php");
 $diagnostics_menu[] = array("States", "/diag_dump_states.php");
+$diagnostics_menu[] = array("States Summary", "/diag_states_summary.php");
 $diagnostics_menu[] = array("System Activity", "/diag_system_activity.php");
 $diagnostics_menu[] = array("Traceroute", "/diag_traceroute.php");
 $diagnostics_menu[] = array("Packet Capture", "/diag_packet_capture.php");

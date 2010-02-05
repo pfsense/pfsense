@@ -46,7 +46,19 @@ exec("/sbin/pfctl -s state", $states);
 
 $srcipinfo = array();
 $dstipinfo = array();
+$allipinfo = array();
 $pairipinfo = array();
+
+function addipinfo(&$iparr, $ip, $proto, $srcport, $dstport) {
+	$iparr[$ip]['seen']++;
+	$iparr[$ip]['protos'][$proto]['seen']++;
+	if (!empty($srcport)) {
+		$iparr[$ip]['protos'][$proto]['srcports'][$srcport]++;
+	}
+	if (!empty($dstport)) {
+		$iparr[$ip]['protos'][$proto]['dstports'][$dstport]++;
+	}
+}
 
 $row = 0;
 if(count($states) > 0) {
@@ -76,32 +88,13 @@ if(count($states) > 0) {
 		$dstip = trim($parts[0]);
 		$dstport = trim($parts[1]);
 
-		$srcipinfo[$srcip]['seen']++;
-		$srcipinfo[$srcip]['protos'][$proto]['seen']++;
-		if (!empty($srcport)) {
-			$srcipinfo[$srcip]['protos'][$proto]['srcports'][$srcport]++;
-		}
-		if (!empty($dstport)) {
-			$srcipinfo[$srcip]['protos'][$proto]['dstports'][$dstport]++;
-		}
+		addipinfo($srcipinfo, $srcip, $proto, $srcport, $dstport);
+		addipinfo($dstipinfo, $dstip, $proto, $srcport, $dstport);
+		addipinfo($pairipinfo, "{$srcip} -> {$dstip}", $proto, $srcport, $dstport);
 
-		$dstipinfo[$dstip]['seen']++;
-		$dstipinfo[$dstip]['protos'][$proto]['seen']++;
-		if (!empty($srcport)) {
-			$dstipinfo[$dstip]['protos'][$proto]['srcports'][$srcport]++;
-		}
-		if (!empty($dstport)) {
-			$dstipinfo[$dstip]['protos'][$proto]['dstports'][$dstport]++;
-		}
+		addipinfo($allipinfo, $srcip, $proto, $srcport, $dstport);
+		addipinfo($allipinfo, $dstip, $proto, $srcport, $dstport);
 
-		$pairipinfo["{$srcip} -> {$dstip}"]['seen']++;
-		$pairipinfo["{$srcip} -> {$dstip}"]['protos'][$proto]['seen']++;
-		if (!empty($srcport)) {
-			$pairipinfo["{$srcip} -> {$dstip}"]['protos'][$proto]['srcports'][$srcport]++;
-		}
-		if (!empty($dstport)) {
-			$pairipinfo["{$srcip} -> {$dstip}"]['protos'][$proto]['dstports'][$dstport]++;
-		}
 	}
 }
 
@@ -109,110 +102,56 @@ function sort_by_ip($a, $b) {
 	return sprintf("%u", ip2long($a)) < sprintf("%u", ip2long($b)) ? -1 : 1;
 }
 
+function print_summary_table($label, $iparr, $sort = TRUE) { ?>
+
+<h3><?php echo $label; ?></h3>
+<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="listhdrr">IP</td>
+		<td class="listhdrr"># States</td>
+		<td class="listhdrr">Proto</td>
+		<td class="listhdrr"># States</td>
+		<td class="listhdrr">Src Ports</td>
+		<td class="listhdrr">Dst Ports</td>
+	</tr>
+<?php   if ($sort)
+		uksort($iparr, "sort_by_ip");
+	foreach($iparr as $ip => $ipinfo) { ?>
+	<tr>
+		<td class='vncell'><?php echo $ip; ?></td>
+		<td class='vncell'><?php echo $ipinfo['seen']; ?></td>
+		<td class='vncell'>&nbsp;</td>
+		<td class='vncell'>&nbsp;</td>
+		<td class='vncell'>&nbsp;</td>
+		<td class='vncell'>&nbsp;</td>
+	</tr>
+	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
+	<tr>
+		<td class='list'>&nbsp;</td>
+		<td class='list'>&nbsp;</td>
+		<td class='listlr'><?php echo $proto; ?></td>
+		<td class='listr' align="center"><?php echo $protoinfo['seen']; ?></td>
+		<td class='listr' align="center"><?php echo count($protoinfo['srcports']); ?></td>
+		<td class='listr' align="center"><?php echo count($protoinfo['dstports']); ?></td>
+	</tr>
+	<?php } ?>
+<?php } ?>
+
+</table>
+
+<?
+}
+
 $pgtitle = array("Diagnostics", "State Table Summary");
 require_once("guiconfig.inc");
 include("head.inc");
 include("fbegin.inc");
+
+
+print_summary_table("By Source IP", $srcipinfo);
+print_summary_table("By Destination IP", $dstipinfo);
+print_summary_table("Total per IP", $allipinfo);
+print_summary_table("By IP Pair", $pairipinfo, FALSE);
 ?>
-<h3>By Source IP</h3>
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td class="listhdrr">IP</td>
-		<td class="listhdrr"># States</td>
-		<td class="listhdrr">Proto</td>
-		<td class="listhdrr"># States</td>
-		<td class="listhdrr">Src Ports</td>
-		<td class="listhdrr">Dst Ports</td>
-	</tr>
-<?php   uksort($srcipinfo, "sort_by_ip");
-	foreach($srcipinfo as $ip => $ipinfo) { ?>
-	<tr>
-		<td class='vncell'><?php echo $ip; ?></td>
-		<td class='vncell'><?php echo $ipinfo['seen']; ?></td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-	</tr>
-	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
-	<tr>
-		<td class='list'>&nbsp;</td>
-		<td class='list'>&nbsp;</td>
-		<td class='listlr'><?php echo $proto; ?></td>
-		<td class='listr' align="center"><?php echo $protoinfo['seen']; ?></td>
-		<td class='listr' align="center"><?php echo count($protoinfo['srcports']); ?></td>
-		<td class='listr' align="center"><?php echo count($protoinfo['dstports']); ?></td>
-	</tr>
-	<?php } ?>
-<?php } ?>
-
-</table>
-
-
-<h3>By Destination IP</h3>
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td class="listhdrr">IP</td>
-		<td class="listhdrr"># States</td>
-		<td class="listhdrr">Proto</td>
-		<td class="listhdrr"># States</td>
-		<td class="listhdrr">Src Ports</td>
-		<td class="listhdrr">Dst Ports</td>
-	</tr>
-<?php   uksort($dstipinfo, "sort_by_ip");
-	foreach($dstipinfo as $ip => $ipinfo) { ?>
-	<tr>
-		<td class='vncell'><?php echo $ip; ?></td>
-		<td class='vncell'><?php echo $ipinfo['seen']; ?></td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-	</tr>
-	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
-	<tr>
-		<td class='list'>&nbsp;</td>
-		<td class='list'>&nbsp;</td>
-		<td class='listlr'><?php echo $proto; ?></td>
-		<td class='listr' align="center"><?php echo $protoinfo['seen']; ?></td>
-		<td class='listr' align="center"><?php echo count($protoinfo['srcports']); ?></td>
-		<td class='listr' align="center"><?php echo count($protoinfo['dstports']); ?></td>
-	</tr>
-	<?php } ?>
-<?php } ?>
-</table>
-
-<h3>By IP Pair</h3>
-<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td class="listhdrr">IP</td>
-		<td class="listhdrr"># States</td>
-		<td class="listhdrr">Proto</td>
-		<td class="listhdrr"># States</td>
-		<td class="listhdrr">Src Ports</td>
-		<td class="listhdrr">Dst Ports</td>
-	</tr>
-<?php   foreach($pairipinfo as $ip => $ipinfo) { ?>
-	<tr>
-		<td class='vncell'><?php echo $ip; ?></td>
-		<td class='vncell'><?php echo $ipinfo['seen']; ?></td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-		<td class='vncell'>&nbsp;</td>
-	</tr>
-	<?php foreach($ipinfo['protos'] as $proto => $protoinfo) { ?>
-	<tr>
-		<td class='list'>&nbsp;</td>
-		<td class='list'>&nbsp;</td>
-		<td class='listlr'><?php echo $proto; ?></td>
-		<td class='listr' align="center"><?php echo $protoinfo['seen']; ?></td>
-		<td class='listr' align="center"><?php echo count($protoinfo['srcports']); ?></td>
-		<td class='listr' align="center"><?php echo count($protoinfo['dstports']); ?></td>
-	</tr>
-	<?php } ?>
-<?php } ?>
-</table>
-
 
 <?php include("fend.inc"); ?>

@@ -2442,12 +2442,12 @@ function guess_interface_from_ip($ipaddress) {
 		return false;
 	}
 	/* create a route table we can search */
-	exec("netstat -rn", $output, $ret);
+	exec("netstat -rnW", $output, $ret);
 	foreach($output as $line) {
 		if(preg_match("/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+[ ]+link[#]/", $line)) {
 			$fields = preg_split("/[ ]+/", $line);
 			if(ip_in_subnet($ipaddress, $fields[0])) {
-				return $fields[5];
+				return $fields[6];
 			}
 		}
 	}

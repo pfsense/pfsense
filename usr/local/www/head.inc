@@ -37,14 +37,9 @@ $pagetitle = gentitle( $pgtitle );
         <?php else: ?>
         	<link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
         <?php endif; ?>
-		<?php 
-			if(file_exists("{$g['www_path']}/niftycssCode.css")) 
-				echo "<style type=\"text/css\" src=\"{$g['www_path']}/niftycssCode.css\"></style>";
-			if(file_exists("{$g['www_path']}/niftycssprintCode.css")) 
-				echo "<style type=\"text/css\" src=\"{$g['www_path']}/niftycssprintCode.css\"></style>";
-			if(file_exists("{$g['www_path']}/javascript/niftyjsCode.js")) 
-				echo "\t<script type=\"text/javascript\" src=\"{$g['www_path']}/javascript/niftyjsCode.js\"></script>\n";
-		?>
+		<link rel="stylesheet" type="text/css" href="/niftycssCode.css">
+		<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
+		<script type="text/javascript" src="/javascript/niftyjsCode.js"></script>
 		<script type="text/javascript">
 			var theme = "<?php echo $g['theme']; ?>";
 		</script>

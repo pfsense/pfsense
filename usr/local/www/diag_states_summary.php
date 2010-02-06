@@ -102,6 +102,20 @@ function sort_by_ip($a, $b) {
 	return sprintf("%u", ip2long($a)) < sprintf("%u", ip2long($b)) ? -1 : 1;
 }
 
+function build_port_info($portarr, $proto) {
+	$ports = array();
+	asort($portarr);
+	foreach (array_reverse($portarr, TRUE) as $port => $count) {
+		$str = "";
+		$service = getservbyport($port, strtolower($proto));
+		$port = "{$proto}/{$port}";
+		if ($service)
+			$port = "{$port} ({$service})";
+		$ports[] = "{$port}: {$count}";
+	}
+	return implode($ports, ', ');
+}
+
 function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 
 <h3><?php echo $label; ?></h3>
@@ -131,8 +145,8 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 		<td class='list'>&nbsp;</td>
 		<td class='listlr'><?php echo $proto; ?></td>
 		<td class='listr' align="center"><?php echo $protoinfo['seen']; ?></td>
-		<td class='listr' align="center"><?php echo count($protoinfo['srcports']); ?></td>
-		<td class='listr' align="center"><?php echo count($protoinfo['dstports']); ?></td>
+		<td class='listr' align="center"><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
+		<td class='listr' align="center"><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
 	</tr>
 	<?php } ?>
 <?php } ?>

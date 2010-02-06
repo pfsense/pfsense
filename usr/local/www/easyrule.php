@@ -35,6 +35,7 @@ $pgtitle = "Status : EasyRule";
 require_once("guiconfig.inc");
 require_once("easyrule.inc");
 require_once("filter.inc");
+require_once("shaper.inc");
 
 $retval = 0;
 $message = "";

@@ -424,10 +424,12 @@ $closehead = false;
 ## Set Page Title and Include Header
 $pgtitle = array("{$g['product_name']} Dashboard");
 include("head.inc");
-outputJavaScriptFileInline("javascript/domTT/domLib.js");
-outputJavaScriptFileInline("javascript/domTT/domTT.js");
-outputJavaScriptFileInline("javascript/domTT/behaviour.js");
-outputJavaScriptFileInline("javascript/domTT/fadomatic.js");
+
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domLib.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/domTT.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/behaviour.js\"></script>\n";
+echo "\t<script type=\"text/javascript\" src=\"javascript/domTT/fadomatic.js\"></script>\n";
+
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

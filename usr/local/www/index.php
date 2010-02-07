@@ -696,7 +696,8 @@ echo $jscriptstr;
 			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');		
 	<?php } ?>
 	});
-	<?php
+</script>
+<?php
 	//build list of javascript include files
 	$jsincludefiles = array();
 	$directory = "widgets/javascript/";
@@ -707,10 +708,10 @@ echo $jscriptstr;
 	}
 	foreach($jsincludefiles as $jsincludename) {
 		if(!stristr($jsincludename, ".js"))
-			continue;	
-		include($directory . $jsincludename);
+			continue;
+		echo "<script src='{$directory}{$jsincludename}' type='text/javascript'></script>\n";	
 	}
-	?>
+?>
 </script>
 </form>
 </body>

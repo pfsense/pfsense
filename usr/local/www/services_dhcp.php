@@ -113,7 +113,7 @@ if($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if'])
-	$savemsg = "<b>The DHCP Server can only be enabled on interfaces configured with static IP addresses.<p> The interfaces not configured with static ip will not be shown.</p></b>";
+	$savemsg = "<b>The DHCP Server can only be enabled on interfaces configured with static IP addresses.<p> The interfaces not configured with a static IP will not be shown.</p></b>";
 
 $iflist = get_configured_interface_with_descr();
 

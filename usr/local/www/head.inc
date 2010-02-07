@@ -33,7 +33,7 @@ $pagetitle = gentitle( $pgtitle );
 	<link rel="apple-touch-icon" href="/themes/<?php echo $g['theme']; ?>/apple-touch-icon.png"/>
         <?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
                   file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
-					<?php echo "<style type=\"text/css\" src=\"{$g['www_path']}/themes/{$g['theme']}/wizard.css\"></style>"; ?>
+					<?php echo "<style type=\"text/css\" src=\"/themes/{$g['theme']}/wizard.css\"></style>"; ?>
         <?php else: ?>
         	<link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
         <?php endif; ?>
@@ -43,18 +43,18 @@ $pagetitle = gentitle( $pgtitle );
 		<script type="text/javascript">
 			var theme = "<?php echo $g['theme']; ?>";
 		</script>
-		<?php echo "\t<script type=\"text/javascript\" src=\"{$g['www_path']}/themes/{$g['theme']}/loader.js\"></script>\n"; ?>
+		<?php echo "\t<script type=\"text/javascript\" src=\"/themes/{$g['theme']}/loader.js\"></script>\n"; ?>
 <?php
 		if($_GET['enablefirebuglite']) {
-			echo "\t<script type=\"text/javascript\" src=\"{$g['www_path']}/javascript/pi.js\"></script>\n";
-			echo "\t<script type=\"text/javascript\" src=\"{$g['www_path']}/javascript/firebug-lite.js\"></script>\n";
+			echo "\t<script type=\"text/javascript\" src=\"/javascript/pi.js\"></script>\n";
+			echo "\t<script type=\"text/javascript\" src=\"/javascript/firebug-lite.js\"></script>\n";
 		}
-		echo "\t<script type=\"text/javascript\" src=\"{$g['www_path']}/javascript/scriptaculous/prototype.js\"></script>\n";
-		echo "\t<script type=\"text/javascript\" src=\"{$g['www_path']}/javascript/scriptaculous/scriptaculous.js\"></script>\n";
-		echo "\t<script type=\"text/javascript\" src=\"{$g['www_path']}/javascript/scriptaculous/effects.js\"></script>\n";
-		echo "\t<script type=\"text/javascript\" src=\"{$g['www_path']}/javascript/scriptaculous/dragdrop.js\"></script>\n";
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/prototype.js\"></script>\n";
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/scriptaculous.js\"></script>\n";
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/effects.js\"></script>\n";
+		echo "\t<script type=\"text/javascript\" src=\"/javascript/scriptaculous/dragdrop.js\"></script>\n";
 		if(file_exists("{$g['www_path']}/javascript/global.js"))
-			echo "\t<script type=\"text/javascript\" src=\"{$g['www_path']}/javascript/global.js\"></script>\n";
+			echo "\t<script type=\"text/javascript\" src=\"/javascript/global.js\"></script>\n";
 	/*
 	 *	Find all javascript files that need to be included
 	 *	for this page ... from the arrays ... :)
@@ -68,7 +68,7 @@ $pagetitle = gentitle( $pgtitle );
 			while (($file = readdir($dh)) !== false) {
 		   		if (is_dir($file)) 
 					continue;
-				echo "\t<script type=\"text/javascript\" src=\"{$g['www_path']}/javascript/{$dir}/{$file}\"></script>\n";
+				echo "\t<script type=\"text/javascript\" src=\"/javascript/{$dir}/{$file}\"></script>\n";
 			}
 			closedir($dh);
 		}

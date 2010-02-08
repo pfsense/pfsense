@@ -38,24 +38,20 @@
 
 require_once("guiconfig.inc");
 
-function gentitle_pkg($pgname) {
-	global $config;
-	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
-}
-
 $pgtitle = array("Diagnostics","Wireless Status");
 include("head.inc");
 
 $if = $_POST['if'];
 if($_GET['if'] <> "")
 	$if = $_GET['if'];
-if($if == "") {
+
+$ciflist = get_configured_interface_with_descr();
+if(empty($if)) {
 	/* Find the first interface
 	   that is wireless */
-	foreach($config['interfaces'] as $interface) {
-		if($interface['wireless'] <> "") {
-			$if = $interface['if'];
-		}
+	foreach($ciflist as $interface => $ifdescr) {
+		if(is_interface_wireless($interface))
+			$if = $interface;
 	}
 }
 ?>
@@ -71,21 +67,14 @@ include("fbegin.inc");
 <tr><td>
 <?php
 $tab_array = array();
-$mode = "";
-foreach($config['interfaces'] as $interface) {
-	if($interface['wireless'] <> "") {
-		if($if == $interface['if']) {
+foreach($ciflist as $interface => $ifdescr) {
+	if (is_interface_wireless($interface)) {
+		$enabled = false;
+		if($if == get_real_interface($interface))
 			$enabled = true;
-			$mode = $interface['wireless']['mode'];
-		} else
-			$enabled = false;
-		$friendly = convert_real_interface_to_friendly_interface_name($interface['if']);
-		if($interface['descr'] <> "")
-			$friendly = $interface['descr'];
-		$tab_array[] = array("Status ($friendly)", $enabled, "status_wireless.php?if={$interface['if']}");
+		$tab_array[] = array("Status ($ifdescr)", $enabled, "status_wireless.php?if={$interface}");
 	}
 }
-/* XXX: add other wireless interfaces here */
 display_top_tabs($tab_array);
 ?>
 </td></tr>
@@ -96,6 +85,7 @@ display_top_tabs($tab_array);
 
 
 	/* table header */
+	print "<tr><td colspan=7><b>Nearby access points or ad-hoc peers.<br/></td></tr>\n";
 	print "\n<tr>";
 	print "<tr bgcolor='#990000'>";
 	print "<td><b><font color='#ffffff'>SSID</td>";
@@ -107,7 +97,8 @@ display_top_tabs($tab_array);
 	print "<td><b><font color='#ffffff'>CAPS</td>";
 	print "</tr>\n\n";
 
-	exec("/sbin/ifconfig {$if}_wlan0 list scan 2>&1", $states, $ret);
+	$rwlif = get_real_interface($if);
+	exec("/sbin/ifconfig {$rwlif} list scan 2>&1", $states, $ret);
 	/* Skip Header */
 	array_shift($states);
 
@@ -142,6 +133,7 @@ display_top_tabs($tab_array);
 
 	/* table header */
 	print "\n<tr>";
+	print "<tr><td colspan=7><b>Associated or ad-hoc peers.<br/></td></tr>\n";
 	print "<tr bgcolor='#990000'>";
 	print "<td><b><font color='#ffffff'>ADDR</td>";
 	print "<td><b><font color='#ffffff'>AID</td>";
@@ -156,7 +148,7 @@ display_top_tabs($tab_array);
 	print "</tr>\n\n";
 
 	$states = array();
-	exec("/sbin/ifconfig {$if}_wlan0 list sta 2>&1", $states, $ret);
+	exec("/sbin/ifconfig {$rwlif} list sta 2>&1", $states, $ret);
 	array_shift($states);
 
 	$counter=0;

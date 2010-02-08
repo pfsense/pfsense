@@ -772,7 +772,7 @@ function netbios_change() {
 						<td width="78%" class="vtable">
 							<input name="local_network" type="text" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['local_network']);?>">
 							<br>
-							This is the network that will be accessable
+							This is the network that will be accessible
 							from the remote endpoint. Expressed as a CIDR
 							range. You may leave this blank if you don't
 							want to add a route to the local network

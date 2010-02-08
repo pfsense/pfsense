@@ -111,7 +111,6 @@ if ($_POST) {
 		$ppp['connect-max-attempts'] = $_POST['connect-max-attempts'];
 		$ppp['descr'] = $_POST['descr'];
 
-		interfaces_ppp_configure();
 
 		if (isset($id) && $a_ppps[$id])
 			$a_ppps[$id] = $ppp;
@@ -119,6 +118,8 @@ if ($_POST) {
 			$a_ppps[] = $ppp;
 
 		write_config();
+
+		interfaces_ppp_configure();
 
 		header("Location: interfaces_ppp.php");
 		exit;
@@ -191,7 +192,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Link Type</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="defaultgw" name="defaultgw" <?php if (isset($pconfig['defaultgw'])) "echo checked"; ?>>This link will be used as default gateway.
+				<input type="checkbox" value="on" id="defaultgw" name="defaultgw" <?php if (isset($pconfig['defaultgw'])) echo "checked"; ?>>This link will be used as default gateway.
 			</td>
 		</tr>
 		<tr>

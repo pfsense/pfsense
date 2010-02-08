@@ -405,7 +405,7 @@ function filter_rules_sort() {
 function aliases_sort() {
 	global $g, $config;
 
-	function aliascmp($a, $b) {
+	function aliascmp(&$a, $b) {
 		return strcmp($a['name'], $b['name']);
 	}
 

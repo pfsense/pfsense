@@ -74,7 +74,6 @@ if (!is_array($config['dhcpd'][$if]['staticmap'])) {
 
 $static_map_enabled=isset($config['dhcpd'][$if]['staticarp']);
 
-staticmaps_sort($if);
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
 $ifcfgip = get_interface_ip($if);
 $ifcfgsn = get_interface_subnet($if);

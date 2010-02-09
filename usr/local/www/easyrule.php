@@ -39,6 +39,7 @@ require_once("shaper.inc");
 
 $retval = 0;
 $message = "";
+$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 
 if ($_GET && isset($_GET['action'])) {
 	switch ($_GET['action']) {

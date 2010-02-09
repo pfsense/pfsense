@@ -70,7 +70,7 @@ $tab_array = array();
 foreach($ciflist as $interface => $ifdescr) {
 	if (is_interface_wireless($interface)) {
 		$enabled = false;
-		if($if == get_real_interface($interface))
+		if($if == $interface)
 			$enabled = true;
 		$tab_array[] = array("Status ($ifdescr)", $enabled, "status_wireless.php?if={$interface}");
 	}

@@ -42,6 +42,7 @@ $pgtitle = array("Firewall","Aliases","Import");
 $reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp");
 
 require("guiconfig.inc");
+require_once("util.inc");
 require("filter.inc");
 require("shaper.inc");
 
@@ -63,16 +64,10 @@ if($_POST['aliasimport'] <> "") {
 	if (is_validaliasname($_POST['name']) == false)
 		$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9, _.";
 
-	/* check for name conflicts */
-        foreach ($a_aliases as $alias) {
-                if (isset($id) && ($a_aliases[$id]) && ($a_aliases[$id] === $alias))
-                        continue;
+	/* check for name duplicates */
+	if (is_alias($_POST['name']))
+		$input_errors[] = "An alias with this name already exists.";
 
-                if ($alias['name'] == $_POST['name']) {
-                        $input_errors[] = "An alias with this name already exists.";
-                        break;
-                }
-        }
 
 	/* Check for reserved keyword names */
         foreach($reserved_keywords as $rk)
@@ -90,7 +85,7 @@ if($_POST['aliasimport'] <> "") {
 	if ($_POST['aliasimport']) {
 		$toimport = split("\n", $_POST['aliasimport']);
 		foreach ($toimport as $impip) {
-			if (!is_ipaddr(trim($impip)))
+			if (!is_ipaddr(trim($impip)) && !is_subnet(trim($impip)))
 				$input_errors[] = "$impip is not an ip address. Please correct the error to continue";
 		}
 	}

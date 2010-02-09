@@ -254,8 +254,6 @@ function show_source_port_range() {
 				  <select name="members[]" multiple="true" class="formselect" size="3">
                       <?php
 					  	foreach ($ifacelist as $ifn => $ifinfo) {
-							if (strstr(get_real_interface($ifn), "gif") != FALSE) 
-								continue; /* gif(4) cannot be part of bridge since it does not know about layer2 */
 							echo "<option value=\"{$ifn}\"";
 							if (stristr($pconfig['members'], $ifn))
 								echo "selected";

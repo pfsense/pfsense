@@ -112,6 +112,8 @@ if ($_GET['act'] == "del") {
 				interface_vip_bring_down($a_vip[$_GET['id']]);
 				unset($a_vip[$_GET['id']]);
 			}
+			if (count($config['virtualip']['vip']) == 0)
+				unset($config['virtualip']['vip']);
 			write_config();
 			mark_subsystem_dirty('vip');
 			header("Location: firewall_virtual_ip.php");

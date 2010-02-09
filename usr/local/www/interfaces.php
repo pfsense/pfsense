@@ -266,7 +266,10 @@ if ($_POST['apply']) {
 	else {	
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
-		interface_configure($if, true);
+		if (isset($pconfig['enable']))
+			interface_configure($if, true);
+		else
+			interface_bring_down($if);
 		
 		/* restart snmp so that it binds to correct address */		
 		services_snmpd_configure();		

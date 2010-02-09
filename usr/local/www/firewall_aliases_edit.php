@@ -58,8 +58,6 @@ $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs);
 
 if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
-
-aliases_sort();
 $a_aliases = &$config['aliases']['alias'];
 	
 if($_POST)
@@ -297,6 +295,9 @@ if ($_POST) {
 			$a_aliases[] = $alias;
 
 		mark_subsystem_dirty('aliases');
+
+		// Sort list
+		$a_aliases = msort($a_aliases, "name");
 
 		write_config();
 		filter_configure();

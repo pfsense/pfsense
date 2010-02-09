@@ -48,8 +48,6 @@ require_once("shaper.inc");
 
 if (!is_array($config['aliases']['alias']))
 	$config['aliases']['alias'] = array();
-
-aliases_sort();
 $a_aliases = &$config['aliases']['alias'];
 
 if ($_POST) {

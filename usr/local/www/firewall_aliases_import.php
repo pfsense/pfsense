@@ -51,8 +51,6 @@ $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs);
 
 if (!is_array($config['aliases']['alias']))
         $config['aliases']['alias'] = array();
-
-aliases_sort();
 $a_aliases = &$config['aliases']['alias'];
 
 if($_POST['aliasimport'] <> "") {
@@ -97,6 +95,10 @@ if($_POST['aliasimport'] <> "") {
 		$alias['type'] = "network";
 		$alias['descr'] = $_POST['descr'];
 		$a_aliases[] = $alias;
+
+		// Sort list
+		$a_aliases = msort($a_aliases, "name");
+
 		write_config();
 		
 		pfSenseHeader("firewall_aliases.php");

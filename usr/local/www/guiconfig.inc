@@ -402,17 +402,6 @@ function filter_rules_sort() {
 		unset($config['filter']['rule'][$i]['seq']);
 }
 
-function aliases_sort() {
-	global $g, $config;
-
-	function aliascmp(&$a, $b) {
-		return strcmp($a['name'], $b['name']);
-	}
-
-	if($config['aliases'])
-		usort($config['aliases']['alias'], "aliascmp");
-}
-
 function gentitle($title) {
 	global $navlevelsep;
 	if(!is_array($title))

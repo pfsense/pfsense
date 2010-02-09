@@ -194,6 +194,7 @@ function vpn_ipsec_configure($ipchg = false)
 				$rgmap[$ph1ent['remote-gateway']] = $rg;
 
 				/* step through each phase2 entry */
+				$ipsecpinghosts = "";
 				foreach ($a_phase2 as $ph2ent) {
 
 					$ikeid = $ph2ent['ikeid'];
@@ -206,7 +207,6 @@ function vpn_ipsec_configure($ipchg = false)
 
 					/* add an ipsec pinghosts entry */
 					if ($ph2ent['pinghost']) {
-						$pfd = fopen("{$g['vardb_path']}/ipsecpinghosts", "a");
 						$iflist = get_configured_interface_list();
 						foreach ($iflist as $ifent => $ifname) {
 							$interface_ip = get_interface_ip($ifent);
@@ -217,10 +217,16 @@ function vpn_ipsec_configure($ipchg = false)
 							}
 						}
 						$dstip = $ph2ent['pinghost'];
-						fwrite($pfd, "$srcip|$dstip|3\n");
-						fclose($pfd);
+						if (is_ipaddr($srcip))
+							$ipsecpinghosts .= "{$srcip}|{$dstip}|3\n";
 					}
 				}
+				$pfd = fopen("{$g['vardb_path']}/ipsecpinghosts", "w");
+				if ($pfd) {
+					fwrite($pfd, $ipsecpinghosts);
+					fclose($pfd);
+				}
+				
 			}
 		}
 

@@ -822,7 +822,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		 *	   other interfaces! 
 		 */
 	case "dhcp":
-		$pid = find_dhclient_process($interface);
+		$pid = find_dhclient_process($realif);
 		if($pid)
 			mwexec("kill {$pid}");
 		sleep(1);

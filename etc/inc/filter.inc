@@ -1917,7 +1917,7 @@ EOD;
 		}
 	}
 	if(!isset($config['system']['webgui']['noantilockout'])) {
-		if(count($config['interfaces']) > 1) {
+		if(count($config['interfaces']) > 1 && !empty($FilterIflist['lan']['if'])) {
 				/* if antilockout is enabled, LAN exists and has
 				 * an IP and subnet mask assigned 
 				 */
@@ -1928,7 +1928,7 @@ anchor "anti-lockout"
 pass in quick on {$lanif} from any to ({$lanif}) keep state label "anti-lockout rule"
 
 EOD;
-		} else {
+		} else if (count($config['interfaces']) == 1) {
 			/* single-interface deployment, add to WAN	*/
 			$wanif = $FilterIflist["wan"]['if'];
 			$ipfrules .= <<<EOD

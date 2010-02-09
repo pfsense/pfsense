@@ -1491,6 +1491,20 @@ function upgrade_051_to_052() {
 		unset($config['installedpackages']['openvpncsc']);
 	}
 
+	if (count($config['openvpn']['openvpn-server']) > 0 ||
+		count($config['openvpn']['openvpn-client']) > 0) {
+		$ovpnrule = array();
+                $ovpnrule['type'] = "pass";
+                $ovpnrule['interface'] = "openvpn";
+                $ovpnrule['statetype'] = "keep state";
+                $ovpnrule['source'] = array();
+                $ovpnrule['destination'] = array();
+                $ovpnrule['source']['any'] = true;
+                $ovpnrule['destination']['any'] = true;
+                $ovpnrule['descr'] = "Auto added OpenVPN rule from config upgrade.";
+		$config['filter']['rule'][] = $ovpnrule;
+	}
+
 	/*
 		* FIXME: hack to keep things working with no installedpackages
 		* or carp array in the configuration data.

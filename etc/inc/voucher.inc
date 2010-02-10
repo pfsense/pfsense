@@ -323,7 +323,7 @@ function voucher_used_count($roll) {
     for ($i = 1; $i <= $max; $i++) {
         // check if ticket already used or not. 
         $pos = $i >> 3;            // divide by 8 -> octet
-        $mask = 1 << (($i % 8)-1);  // mask to test bit in octet
+        $mask = 1 << ($i % 8);  // mask to test bit in octet
         if (ord($bitstring[$pos]) & $mask)
             $used++;
     }   

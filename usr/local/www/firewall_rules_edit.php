@@ -129,6 +129,8 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['quick'] = $a_filter[$id]['quick'];
 	if (isset($a_filter[$id]['allowopts']))
 		$pconfig['allowopts'] = true;
+	if (isset($a_filter[$id]['disablereplyto']))
+		$pconfig['disablereplyto'] = true;
 
 	/* advanced */
 	$pconfig['max'] = $a_filter[$id]['max'];
@@ -383,6 +385,10 @@ if ($_POST) {
 			$filterent['allowopts'] = true;
 		else
 			unset($filterent['allowopts']);
+		if ($_POST['disablereplyto'] == "yes")
+			$filterent['disablereplyto'] = true;
+		else
+			unset($filterent['disablereplyto']);
 		$filterent['max'] = $_POST['max'];
 		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
 		$filterent['max-src-conn'] = $_POST['max-src-conn'];
@@ -964,6 +970,9 @@ include("head.inc");
 			<div id="aodivmain" name="aodivmain" style="display:none">
 				<input type="checkbox" id="allowopts" value="yes" name="allowopts"<?php if($pconfig['allowopts'] == true) echo " checked"; ?>>
 				<br/><span class="vexpl"><?=gettext("This allows packets with IP options to pass. Otherwise they are blocked by default. This is usually only seen with multicast traffic.");?>
+				</span><p>
+				<input type="checkbox" id="disablereplyto" value="yes" name="disablereplyto"<?php if($pconfig['disablereplyto'] == true) echo " checked"; ?>>
+				<br/><span class="vexpl"><?=gettext("This will disable auto generated reply-to for this rule.");?>
 				</span><p>
 				<input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>">
 				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other NAT/filter rules. It is called <b>Policy filtering</b>");?>

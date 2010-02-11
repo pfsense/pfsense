@@ -86,6 +86,8 @@ PHPMODULES="apc \
 	standard \
 # Extra sanity seatbelts
 	suhosin \
+# pfSense helper modules
+        pfSense \
 # Firewall rules edit
 	ctype \
 # Config read/write

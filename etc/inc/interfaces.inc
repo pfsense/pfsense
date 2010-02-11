@@ -1353,19 +1353,26 @@ function interface_wireless_clone($realif, $wlcfg) {
 			$mode = "";
 			break;
 	}
+	if(!stristr($wlcfg['if'], "_wlan")) {
+		$baseif = $wlcfg['if'];
+		$bssid = "";
+	} else {
+		$baseif = substr($wlcfg['if'], 0, stripos($wlcfg['if'], "_wlan"));
+		$bssid = "bssid";
+	}
 	if(does_interface_exist($realif)) {
 		exec("/sbin/ifconfig {$realif}", $output, $ret);
 		$ifconfig_str = implode($output);
 		if(($wlcfg['wireless']['mode'] == "hostap") && (! preg_match("/hostap/si", $ifconfig_str))) {
-			log_error("Interface {$wlcfg['if']}_wlan{$interface_num} changed to hostap mode");
+			log_error("Interface {$realif} changed to hostap mode");
 			$needs_clone = true;
 		}
 		if(($wlcfg['wireless']['mode'] == "adhoc") && (! preg_match("/adhoc/si", $ifconfig_str))) {
-			log_error("Interface {$wlcfg['if']}_wlan{$interface_num} changed to adhoc mode");
+			log_error("Interface {$realif} changed to adhoc mode");
 			$needs_clone = true;
 		}
 		if(($wlcfg['wireless']['mode'] == "bss") && (preg_match("/hostap|adhoc/si", $ifconfig_str))) {
-			log_error("Interface {$wlcfg['if']}_wlan{$interface_num} changed to infrastructure mode");
+			log_error("Interface {$realif} changed to infrastructure mode");
 			$needs_clone = true;
 		}
 	} else {
@@ -1380,15 +1387,15 @@ function interface_wireless_clone($realif, $wlcfg) {
 		log_error("Cloning new wireless interface {$realif}");
 		// Create the new wlan interface. FreeBSD returns the new interface name.
 		// example:  wlan2
-		exec("/sbin/ifconfig wlan create wlandev {$wlcfg['if']} {$mode} 2>&1", $out, $ret);
+		exec("/sbin/ifconfig wlan create wlandev {$baseif} {$mode} {$bssid} 2>&1", $out, $ret);
 		if($ret <> 0) {
-			log_error("Failed to clone interface {$wlcfg['if']} with error code {$ret}, output {$out[0]}");
+			log_error("Failed to clone interface {$baseif} with error code {$ret}, output {$out[0]}");
 		}
 		$newif = trim($out[0]);
 		// Rename the interface to {$parentnic}_wlan{$number}#: EX: ath0_wlan0
 		mwexec("/sbin/ifconfig {$newif} name {$realif} 2>&1", false);
 		// FIXME: not sure what ngctl is for. Doesn't work.
-		// mwexec("/usr/sbin/ngctl name {$newif}: {$wlcfg['if']}_wlan{$interface_num}", false);
+		// mwexec("/usr/sbin/ngctl name {$newif}: {$realif}", false);
 	}
 }
 
@@ -2381,11 +2388,11 @@ function get_real_interface($interface = "wan") {
 			// interface name format: $parentnic_wlanparentnic#
 			// example: ath0_wlan0
 			if(is_interface_wireless($cfg['if'])) {
-				if ($interface == "wan")
-					$interface_num = 0;
-				else
-					$interface_num = substr($interface, 3);
-				$wanif = $cfg['if'] . "_wlan" . $interface_num;
+				if(!stristr($cfg['if'], "_wlan")) {
+					$wanif = $cfg['if'] . "_wlan0";
+				} else {
+					$wanif = $cfg['if'];
+				}
 				break;
 			}
 

@@ -2660,8 +2660,11 @@ function find_interface_subnet($interface, $flush = false)
 		return;
 
 	if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
-		$ifinfo = pfSense_get_interface_addresses($interface);
-		$interface_sn_arr_cache[$interface] = $ifinfo['subnet'];
+		if (preg_match("/^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre/i", $interface))
+			$interface_sn_arr_cache[$interface] = `/sbin/ifconfig {$interface} | /usr/bin/grep -w "inet" | /usr/bin/cut -d" " -f 6 | /usr/bin/head -1`;
+		else
+			$interface_sn_arr_cache[$interface] = `/sbin/ifconfig {$interface} | /usr/bin/grep -w "inet" | /usr/bin/cut -d" " -f 4 | /usr/bin/head -1`;
+		$interface_sn_arr_cache[$interface] = strlen(str_replace("0", "", base_convert(str_replace("\n", "", $interface_sn_arr_cache[$interface]),16, 2)));
         }
 
 	return $interface_sn_arr_cache[$interface];

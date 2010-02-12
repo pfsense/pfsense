@@ -122,7 +122,7 @@ if ($_POST) {
 	{
 		switch ($pconfig['localid_type']) {
 			case "network":
-				if (!$pconfig['localid_netbits'] || !is_numeric($pconfig['localid_netbits']))
+				if (($pconfig['localid_netbits'] != 0 && !$pconfig['localid_netbits']) || !is_numeric($pconfig['localid_netbits']))
 					$input_errors[] = "A valid local network bit count must be specified.";
 			case "address":
 				if (!$pconfig['localid_address'] || !is_ipaddr($pconfig['localid_address']))
@@ -132,7 +132,7 @@ if ($_POST) {
 
 		switch ($pconfig['remoteid_type']) {
 			case "network":
-				if (!$pconfig['remoteid_netbits'] || !is_numeric($pconfig['remoteid_netbits']))
+				if (($pconfig['remoteid_netbits'] != 0 && !$pconfig['remoteid_netbits']) || !is_numeric($pconfig['remoteid_netbits']))
 					$input_errors[] = "A valid remote network bit count must be specified.";
 			case "address":
 				if (!$pconfig['remoteid_address'] || !is_ipaddr($pconfig['remoteid_address']))
@@ -401,11 +401,12 @@ function change_protocol() {
 										<input name="remoteid_address" type="text" class="formfld unknown" id="remoteid_address" size="20" value="<?=$pconfig['remoteid_address'];?>">
 										/
 										<select name="remoteid_netbits" class="formselect" id="remoteid_netbits">
-										<?php for ($i = 32; $i >= 0; $i--): ?>
-											<option value="<?=$i;?>" <?php if ($i == $pconfig['remoteid_netbits']) echo "selected"; ?>>
-												<?=$i;?>
-											</option>
-										<?php endfor; ?>
+										<?php for ($i = 32; $i >= 0; $i--) { 
+											
+											echo "<option value=\"{$i}\"";
+											if ($i == $pconfig['remoteid_netbits']) echo " selected";
+											echo ">{$i}</option>\n";
+											} ?>
 										</select>
 									</td>
 								</tr>

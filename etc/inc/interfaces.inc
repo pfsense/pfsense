@@ -2869,8 +2869,8 @@ function get_interface_mtu($interface) {
 }
 
 function get_interface_mac($interface) {
+
 	$macinfo = pfSense_get_interface_addresses($interface);
-	
 	return $macinfo["macaddr"];
 }
 

@@ -123,7 +123,7 @@ if ($_POST) {
 		switch ($pconfig['localid_type']) {
 			case "network":
 				if (!$pconfig['localid_netbits'] || !is_numeric($pconfig['localid_netbits']))
-					$input_errors[] = "A valid local network bit count must be specified..";
+					$input_errors[] = "A valid local network bit count must be specified.";
 			case "address":
 				if (!$pconfig['localid_address'] || !is_ipaddr($pconfig['localid_address']))
 					$input_errors[] = "A valid local network IP address must be specified.";
@@ -133,7 +133,7 @@ if ($_POST) {
 		switch ($pconfig['remoteid_type']) {
 			case "network":
 				if (!$pconfig['remoteid_netbits'] || !is_numeric($pconfig['remoteid_netbits']))
-					$input_errors[] = "A valid remote network bit count must be specified..";
+					$input_errors[] = "A valid remote network bit count must be specified.";
 			case "address":
 				if (!$pconfig['remoteid_address'] || !is_ipaddr($pconfig['remoteid_address']))
 					$input_errors[] = "A valid remote network IP address must be specified.";

@@ -228,6 +228,9 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['apbridge_enable'] = isset($wancfg['wireless']['apbridge']['enable']);
 	$pconfig['authmode'] = $wancfg['wireless']['authmode'];
 	$pconfig['hidessid_enable'] = isset($wancfg['wireless']['hidessid']['enable']);
+	$pconfig['auth_server_addr'] = $wancfg['wireless']['auth_server_addr'];
+	$pconfig['auth_server_port'] = $wancfg['wireless']['auth_server_port'];
+	$pconfig['auth_server_shared_secret'] = $wancfg['wireless']['auth_server_shared_secret'];
 	if (is_array($wancfg['wireless']['wpa'])) {
 		$pconfig['debug_mode'] = $wancfg['wireless']['wpa']['debug_mode'];
 		$pconfig['macaddr_acl'] = $wancfg['wireless']['wpa']['macaddr_acl'];
@@ -703,6 +706,9 @@ function handle_wireless_post() {
 	$wancfg['wireless']['wpa']['wpa_gmk_rekey'] = $_POST['wpa_gmk_rekey'];
 	$wancfg['wireless']['wpa']['passphrase'] = $_POST['passphrase'];
 	$wancfg['wireless']['wpa']['ext_wpa_sw'] = $_POST['ext_wpa_sw'];
+	$wancfg['wireless']['auth_server_addr'] = $_POST['auth_server_addr'];
+	$wancfg['wireless']['auth_server_port'] = $_POST['auth_server_port'];
+	$wancfg['wireless']['auth_server_shared_secret'] = $_POST['auth_server_shared_secret'];
 	if ($_POST['hidessid_enable'] == "yes")
 		$wancfg['wireless']['hidessid']['enable'] = true;
 	else if (isset($wancfg['wireless']['hidessid']['enable']))
@@ -1490,10 +1496,31 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											</td>
 										</tr>
 										<tr>
-											<td valign="top" class="vncell">Enable IEEE802.1X</td>
+											<td valign="top" class="vncell">Enable IEEE802.1X Authentication</td>
 											<td class="vtable">
 												<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <? if ($pconfig['ieee8021x']) echo "checked";?>>
 												<br/>Setting this option will enable 802.1x authentication.
+											</td>
+										</tr>
+										<tr>
+											<td valign="top" class="vncell">802.1X Authentication Server IP Address</td>
+											<td class="vtable">
+												<input name="auth_server_addr" id="auth_server_addr" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_addr']);?>">
+												<br/>Enter the IP address of the 802.1X Authentication Server.  This is commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)
+											</td>
+										</tr>
+										<tr>
+											<td valign="top" class="vncell">802.1X Authentication Server Port</td>
+											<td class="vtable">
+												<input name="auth_server_port" id="auth_server_port" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port']);?>">
+												<br/>Leave blank for the default 1812 port.
+											</td>
+										</tr>
+										<tr>
+											<td valign="top" class="vncell">802.1X Authentication Server Shared Secret</td>
+											<td class="vtable">
+												<input name="auth_server_shared_secret" id="auth_server_shared_secret" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret']);?>">
+												<br/>
 											</td>
 										</tr>
 									<? endif; ?>

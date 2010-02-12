@@ -1581,11 +1581,24 @@ wpa_group_rekey={$wlcfg['wpa']['wpa_group_rekey']}
 wpa_gmk_rekey={$wlcfg['wpa']['wpa_gmk_rekey']}
 wpa_strict_rekey={$wlcfg['wpa']['wpa_strict_rekey']}
 wpa_passphrase={$wlcfg['wpa']['passphrase']}
-ieee8021x={$wlcfg['wpa']['ieee8021x']}
 #Enable the next lines for preauth when roaming. Interface = wired or wireless interface talking to the AP you want to roam from/to
 #rsn_preauth=1
 #rsn_preauth_interfaces=eth0
 EOD;
+
+				if($wlcfg['auth_server_addr'] && $wlcfg['auth_server_shared_secret']) {
+					$auth_server_port = "1812";
+					if($wlcfg['auth_server_port']) 
+						$auth_server_port = $wlcfg['auth_server_port'];
+					$wpa .= <<<EOD
+ieee8021x=1
+auth_server_addr={$wlcfg['auth_server_addr']}
+auth_server_port={$auth_server_port}
+auth_server_shared_secret={$wlcfg['auth_server_shared_secret']}
+EOD;
+				} else {
+					$wpa .= "ieee8021x={$wlcfg['wpa']['ieee8021x']}\n";
+				}
 
 				$fd = fopen("{$g['varetc_path']}/hostapd_{$if}.conf", "w");
 				fwrite($fd, "{$wpa}");

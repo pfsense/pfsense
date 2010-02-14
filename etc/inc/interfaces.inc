@@ -2904,7 +2904,7 @@ function get_interface_mac($interface) {
 
 function get_interface_bssid($interface) {
 	$mac = array();
-        exec("/sbin/ifconfig {$interface} | /usr/bin/awk '/bssid/ {print $NF}'", $mac);
+        exec("/sbin/ifconfig {$interface} | /usr/bin/awk '/bssid/ {print \$NF}'", $mac);
         if(is_macaddr($mac[0])) {
                 return trim($mac[0]);
         } else {

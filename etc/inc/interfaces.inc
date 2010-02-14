@@ -1631,7 +1631,7 @@ EOD;
 				mwexec("/sbin/ifconfig " . escapeshellarg($if) . " down");
 			}
 			if(!is_macaddr($if_bssid)) {
-				$if_bssid = baseif_mac;
+				$if_bssid = $baseif_mac;
 			}
 			/* XXX: Workaround because hostapd won't properly detect BSSID of
 			 * clone interfaces and uses base interface's MAC instead
@@ -2904,7 +2904,7 @@ function get_interface_mac($interface) {
 
 function get_interface_bssid($interface) {
 	$mac = array();
-        exec("/sbin/ifconfig {$interface} | /usr/bin/awk '/bssid/ {print $2}'", $mac);
+        exec("/sbin/ifconfig {$interface} | /usr/bin/awk '/bssid/ {print $NF}'", $mac);
         if(is_macaddr($mac[0])) {
                 return trim($mac[0]);
         } else {

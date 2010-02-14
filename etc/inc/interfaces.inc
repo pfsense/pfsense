@@ -1630,7 +1630,7 @@ EOD;
 			$baseif_mac = get_interface_mac($baseif);
 			$if_bssid = get_interface_bssid($if);
 			if(!is_macaddr($if_bssid)) {
-				$if_bssid = $baseif_mac;
+				$if_bssid = get_interface_mac($if);
 			}
 			/* XXX: Workaround because hostapd won't properly detect BSSID of
 			 * clone interfaces and uses base interface's MAC instead

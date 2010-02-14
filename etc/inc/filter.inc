@@ -529,6 +529,7 @@ function filter_get_vpns_list() {
 		if(is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
+					require_once("ipsec.inc");
 					$vpns_arr[] = ipsec_idinfo_to_cidr($ph2ent['remoteid']);
 				}
 			}
@@ -681,34 +682,6 @@ function filter_generate_optcfg_array() {
 			$FilterIflist[$ifgen['ifname']] = $oc;
 		}
 	}
-	/*  this just duplicates the PPP interface, as it's handled above
-	if($config['ppps']) {
-		$ppp=0;
-		foreach($config['ppps']['ppp'] as $ifgen) {
-			// get the device name for this PPP connection minus /dev/  (e.g. cuaU0)
-			$dev = substr($ifgen['port'], 5);
-			// $ps is the PID of the ppp process matching this device
-			$ps = trim(`ps awux | grep -v grep | grep "$dev" | awk '{ print \$2 }'`);
-			if($ps) {
-				// $interface is the device in use by the PID of the ppp process found above (e.g. tun0)
-				$interface = trim(`ifconfig | grep -B2 "$ps" | head -n1 | cut -d: -f1`);
-				if($interface) {
-					foreach ($config['interfaces'] as $ifdescr => $ifname) {
-						if($ifname['serialport'] == $dev) {
-							$oc = array();
-							$oc['if'] = $interface;
-							$oc['descr'] = $ifname['descr'];
-							$oc['virtual'] = true;
-							unset($FilterIflist[$ifname['descr']]);
-							$FilterIflist[$ifname['descr']] = $oc;
-							$ppp++;
-						}
-					}
-				}
-			}
-		}
-	}
-	*/
 }
 
 function filter_flush_nat_table() {

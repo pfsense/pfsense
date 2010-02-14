@@ -966,7 +966,7 @@ function is_interface_mismatch() {
                         if(stristr($baseif, "_wlan")) {
                                 $baseif = substr($baseif, 0, stripos($baseif, "_wlan"));
                         }
-                        if (does_interface_exist($ifcfg['if']) == false) {
+                        if (does_interface_exist($baseif) == false) {
                                 $do_assign = true;
                         } else
                                 $i++;

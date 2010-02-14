@@ -68,9 +68,10 @@ function encrypted_configxml() {
 					if(!strstr($data, "<pfsense>"))
 						$data = "";
 					if($data) {
-						$fd = fopen($g['conf_path'] . "/config.xml", "w");
+						$fd = fopen($g['conf_path'] . "/config.xml.tmp", "w");
 						fwrite($fd, $data);
 						fclose($fd);
+						exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
 						echo "\nConfig.xml unlocked.\n";
 						fclose($fp);
 					} else {
@@ -456,22 +457,25 @@ function write_config($desc="Unknown", $backup = true) {
 
 	conf_mount_rw();
 
-	/* write new configuration */
-	$fd = fopen("{$g['conf_path']}/config.xml", "w");
-        if (!$fd) {
-                // Unable to open temporary file for writing
+	/* write new configuration to a .tmp file first and then move into place */
+	$fd = fopen("{$g['conf_path']}/config.xml.tmp", "w");
+	if (!$fd) {
+		// Unable to open temporary file for writing
 		log_error("WARNING: Config contents could not be save. Could not open file!");
 		unlock($lockkey);
-                return false;
-        }
-        if (!fwrite($fd, $xmlconfig)) {
-                // Unable to write to temporary file
+		return false;
+	}
+	if (!fwrite($fd, $xmlconfig)) {
+		// Unable to write to temporary file
 		log_error("WARNING: Config contents could not be written on file.");
-                fclose($fd);
+		fclose($fd);
 		unlock($lockkey);
-                return false;
-        }
-        fclose($fd);
+		return false;
+	}
+	fclose($fd);
+
+	// Move completely written file into place
+	exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
 
 	if($g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
 		cleanup_backupcache(5, true);

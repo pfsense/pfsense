@@ -1624,12 +1624,9 @@ EOD;
 		if ($wlcfg['mode'] == "hostap") {
 			$baseif = substr($if, 0, stripos($if, "_wlan"));
 			$baseif_mac = get_interface_mac($baseif);
+			mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
 			$if_bssid = get_interface_bssid($if);
-			if(!is_macaddr($if_bssid)) {
-				mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
-				$if_bssid = get_interface_bssid($if);
-				mwexec("/sbin/ifconfig " . escapeshellarg($if) . " down");
-			}
+			mwexec("/sbin/ifconfig " . escapeshellarg($if) . " down");
 			if(!is_macaddr($if_bssid)) {
 				$if_bssid = $baseif_mac;
 			}

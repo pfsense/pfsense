@@ -1617,6 +1617,10 @@ EOD;
 
 	$standard_no_turbo = str_replace(" Turbo", "", $standard);
 
+	/* configure wireless */
+	$wlcmd_args = implode(" ", $wlcmd);
+	mwexec("/sbin/ifconfig {$if} $wlcmd_args", false);
+
 	if (isset($wlcfg['wpa']['enable'])) {
 		if ($wlcfg['mode'] == "bss") {
 			fwrite($fd_set, "{$wpa_supplicant} -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf\n");
@@ -1624,9 +1628,7 @@ EOD;
 		if ($wlcfg['mode'] == "hostap") {
 			$baseif = substr($if, 0, stripos($if, "_wlan"));
 			$baseif_mac = get_interface_mac($baseif);
-			mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
 			$if_bssid = get_interface_bssid($if);
-			mwexec("/sbin/ifconfig " . escapeshellarg($if) . " down");
 			if(!is_macaddr($if_bssid)) {
 				$if_bssid = $baseif_mac;
 			}
@@ -1641,10 +1643,6 @@ EOD;
 
 	fclose($fd_set);
 	conf_mount_ro();
-
-	/* configure wireless */
-	$wlcmd_args = implode(" ", $wlcmd);
-	mwexec("/sbin/ifconfig {$if} $wlcmd_args", false);
 
 	
 	sleep(1);

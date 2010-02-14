@@ -1622,7 +1622,23 @@ EOD;
 			fwrite($fd_set, "{$wpa_supplicant} -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf\n");
 		}
 		if ($wlcfg['mode'] == "hostap") {
+			$baseif = substr($if, 0, stripos($if, "_wlan"));
+			$baseif_mac = get_interface_mac($baseif);
+			$if_bssid = get_interface_bssid($if);
+			if(!is_macaddr($if_bssid)) {
+				mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up");
+				$if_bssid = get_interface_bssid($if);
+				mwexec("/sbin/ifconfig " . escapeshellarg($if) . " down");
+			}
+			if(!is_macaddr($if_bssid)) {
+				$if_bssid = baseif_mac;
+			}
+			/* XXX: Workaround because hostapd won't properly detect BSSID of
+			 * clone interfaces and uses base interface's MAC instead
+			 * wpa_supplicant may also need this, but that needs to be tested */
+			fwrite($fd_set, "/sbin/ifconfig {$baseif} ether {$if_bssid}\n");
 			fwrite($fd_set, "{$hostapd} -B {$g['varetc_path']}/hostapd_{$if}.conf\n");
+			fwrite($fd_set, "/sbin/ifconfig {$baseif} ether {$baseif_mac}\n");
 		}
 	}
 
@@ -2879,6 +2895,16 @@ function get_interface_mtu($interface) {
 function get_interface_mac($interface) {
 	$mac = array();
         exec("/sbin/ifconfig {$interface} | /usr/bin/awk '/ether/ {print $2}'", $mac);
+        if(is_macaddr($mac[0])) {
+                return trim($mac[0]);
+        } else {
+                return "";
+        }
+}
+
+function get_interface_bssid($interface) {
+	$mac = array();
+        exec("/sbin/ifconfig {$interface} | /usr/bin/awk '/bssid/ {print $2}'", $mac);
         if(is_macaddr($mac[0])) {
                 return trim($mac[0]);
         } else {

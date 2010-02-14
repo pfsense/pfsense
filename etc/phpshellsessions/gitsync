@@ -4,6 +4,7 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
+require_once("globals.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
@@ -64,7 +65,7 @@ if($command_split[2]) {
 }
 
 if($argv[4] == "NOBACKUP") 
-	$nobackup=true;
+	$nobackup = true;
 else 
 	$nobackup = false;
 

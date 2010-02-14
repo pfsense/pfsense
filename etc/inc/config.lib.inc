@@ -487,8 +487,9 @@ function write_config($desc="Unknown", $backup = true) {
 	unlock($lockkey);
 
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
+
 	/* sync carp entries to other firewalls */
-        carp_sync_client();
+	carp_sync_client();
 
 	if(is_dir("/usr/local/pkg/write_config")) {
 		/* process packager manager custom rules */

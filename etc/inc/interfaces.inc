@@ -1628,6 +1628,7 @@ EOD;
 		if ($wlcfg['mode'] == "hostap") {
 			$baseif = substr($if, 0, stripos($if, "_wlan"));
 			$baseif_mac = get_interface_mac($baseif);
+			sleep(1);
 			$if_bssid = get_interface_bssid($if);
 			if(!is_macaddr($if_bssid)) {
 				$if_bssid = get_interface_mac($if);

@@ -2,7 +2,8 @@
 
 FILENAME="pfSense-full-backup-`date "+%Y%m%d-%H%M"`.tgz"
 echo ">>> Creating full backup to $FILENAME"
-tar czPf /root/$FILENAME --exclude dev/* \
+tar czPf /root/$FILENAME \
+	--exclude dev/* \
 	--exclude tmp/* \
 	--exclude var/db \
 	--exclude var/run/* \

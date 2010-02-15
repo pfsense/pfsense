@@ -279,6 +279,27 @@ function interface_qinq2_configure(&$qinq, $fd, $macaddr) {
         return $vlanif;
 }
 
+function interfaces_create_wireless_clones() {
+	global $config;
+
+	if($g['booting'])
+		echo "Creating other wireless clone interfaces...";
+	if (is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
+		foreach ($config['wireless']['clone'] as $clone) {
+			if(empty($clone['cloneif']))
+				continue;
+			if(does_interface_exist($clone['cloneif']))
+				continue;
+			/* XXX: Maybe we should report any errors?! */
+			if(interface_wireless_clone($clone['cloneif'], $clone))
+				if($g['booting'])
+					echo " " . $clone['cloneif'];
+		}
+	}
+	if($g['booting'])
+		echo " done.\n";
+}
+
 function interfaces_bridge_configure() {
         global $config;
 
@@ -694,6 +715,9 @@ function interfaces_configure() {
 				echo "done.\n";
 		}
 	}
+
+	/* create the unconfigured wireless clones */
+	interfaces_create_wireless_clones();
 
 	/* set up GRE virtual interfaces */
 	interfaces_gre_configure();
@@ -1342,7 +1366,11 @@ function interface_wireless_clone($realif, $wlcfg) {
 	 *   If it has not been cloned then go ahead and clone it.
 	 */
 	$needs_clone = false;
-	switch($wlcfg['wireless']['mode']) {
+	if(is_array($wlcfg['wireless']))
+		$wlcfg_mode = $wlcfg['wireless']['mode'];
+	else
+		$wlcfg_mode = $wlcfg['mode'];
+	switch($wlcfg_mode) {
 		 case "hostap":
 			$mode = "wlanmode hostap";
 			break;
@@ -1361,15 +1389,15 @@ function interface_wireless_clone($realif, $wlcfg) {
 	if(does_interface_exist($realif)) {
 		exec("/sbin/ifconfig {$realif}", $output, $ret);
 		$ifconfig_str = implode($output);
-		if(($wlcfg['wireless']['mode'] == "hostap") && (! preg_match("/hostap/si", $ifconfig_str))) {
+		if(($wlcfg_mode == "hostap") && (! preg_match("/hostap/si", $ifconfig_str))) {
 			log_error("Interface {$realif} changed to hostap mode");
 			$needs_clone = true;
 		}
-		if(($wlcfg['wireless']['mode'] == "adhoc") && (! preg_match("/adhoc/si", $ifconfig_str))) {
+		if(($wlcfg_mode == "adhoc") && (! preg_match("/adhoc/si", $ifconfig_str))) {
 			log_error("Interface {$realif} changed to adhoc mode");
 			$needs_clone = true;
 		}
-		if(($wlcfg['wireless']['mode'] == "bss") && (preg_match("/hostap|adhoc/si", $ifconfig_str))) {
+		if(($wlcfg_mode == "bss") && (preg_match("/hostap|adhoc/si", $ifconfig_str))) {
 			log_error("Interface {$realif} changed to infrastructure mode");
 			$needs_clone = true;
 		}
@@ -1388,6 +1416,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 		exec("/sbin/ifconfig wlan create wlandev {$baseif} {$mode} bssid 2>&1", $out, $ret);
 		if($ret <> 0) {
 			log_error("Failed to clone interface {$baseif} with error code {$ret}, output {$out[0]}");
+			return false;
 		}
 		$newif = trim($out[0]);
 		// Rename the interface to {$parentnic}_wlan{$number}#: EX: ath0_wlan0
@@ -1395,6 +1424,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 		// FIXME: not sure what ngctl is for. Doesn't work.
 		// mwexec("/usr/sbin/ngctl name {$newif}: {$realif}", false);
 	}
+	return true;
 }
 
 function interface_wireless_configure($if, &$wl, &$wlcfg) {

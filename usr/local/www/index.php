@@ -553,7 +553,7 @@ echo $jscriptstr;
 					$inputdisplay = "hide";		
 					$showWidget = "inline";
 					$mindiv = "none";
-					berak;
+					break;
 				case "close":
 					$divdisplay = "none";
 					$display = "block";

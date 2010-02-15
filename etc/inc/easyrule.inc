@@ -61,6 +61,9 @@ function easyrule_find_rule_interface($int) {
 			return $if;
 	}
 	
+	if (substr($int, 0, 4) == "ovpn")
+		return "openvpn";
+
 	return false;
 }
 

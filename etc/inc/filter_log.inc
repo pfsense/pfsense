@@ -88,6 +88,8 @@ function match_filter_line($flent, $filtertext = "") {
 function collapse_filter_lines($logarr) {
 	$lastline = "";
 	$collapsed = array();
+	/* Stick a blank entry at the end to be sure we always fully parse the last entry */
+	$logarr[] = "";
 	foreach ($logarr as $logent) {
 		$line_split = "";
 		preg_match("/.*\spf:\s(.*)/", $logent, $line_split);

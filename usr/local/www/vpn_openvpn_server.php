@@ -79,7 +79,7 @@ if($_GET['act']=="edit"){
 
 	if (isset($id) && $a_server[$id]) {
 
-		$pconfig['disable'] = $a_server[$id]['disable'];
+		$pconfig['disable'] = isset($a_server[$id]['disable']);
 		$pconfig['mode'] = $a_server[$id]['mode'];
 		$pconfig['protocol'] = $a_server[$id]['protocol'];
 		$pconfig['interface'] = $a_server[$id]['interface'];
@@ -257,7 +257,8 @@ if ($_POST) {
 		else
 			$server['vpnid'] = openvpn_vpnid_next();
 
-		$server['disable'] = $pconfig['disable'];
+		if ($_POST['disable'] == "yes")
+			$server['disable'] = true;
 		$server['mode'] = $pconfig['mode'];
 		$server['protocol'] = $pconfig['protocol'];
 		list($server['interface'], $server['ipaddr']) = explode ("|",$pconfig['interface']);
@@ -1147,7 +1148,7 @@ function netbios_change() {
 					$i = 0;
 					foreach($a_server as $server):
 						$disabled = "NO";
-						if ($server['disable'])
+						if (isset($server['disable']))
 							$disabled = "YES";
 				?>
 				<tr>

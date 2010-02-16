@@ -109,7 +109,7 @@ if(isset($config['snmpd']['enable'])) {
 
 if (count($config['igmpproxy']['igmpentry']) > 0) {
 	$sconfig['name'] = "igmpproxy";
-	$sconfig['descritption'] = "IGMP proxy";
+	$sconfig['description'] = "IGMP proxy";
 	$services[] = $sconfig;
 	unset($sconfig);
 }

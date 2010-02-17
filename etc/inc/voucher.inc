@@ -390,12 +390,14 @@ function voucher_save_db_to_config() {
         $rollent['used'] = base64_encode($bitmask);
         $active_vouchers = voucher_read_active_db($roll);
         $db = array();
+	$dbi = 1;
         foreach($active_vouchers as $voucher => $line) {
             list($timestamp,$minutes) = explode(",", $line);
             $activent['voucher'] = $voucher;
             $activent['timestamp'] = $timestamp;
             $activent['minutes'] = $minutes;
-            $db[] = $activent;
+            $db["v{$dbi}"] = $activent;
+	    $dbi++;
         }
         $rollent['active'] = $db;
     }

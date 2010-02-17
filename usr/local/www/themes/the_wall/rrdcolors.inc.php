@@ -36,6 +36,7 @@ $colorpacketsup = array("666666", "CCCCCC");
 $colorpacketsdown = array("990000", "CC0000");
 $colorstates = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 $colorprocessor = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
+$colormemory = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 $colorqueuesup = array('000000','7B0000','990000','BB0000','CC0000','D90000','EE0000','FF0000','CC0000');
 $colorqueuesdown = array('000000','7B7B7B','999999','BBBBBB','CCCCCC','D9D9D9','EEEEEE','FFFFFF','CCCCCC');
 $colorqueuesdropup = array('000000','7B0000','990000','BB0000','CC0000','D90000','EE0000','FF0000','CC0000');

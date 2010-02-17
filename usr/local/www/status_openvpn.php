@@ -148,8 +148,8 @@ if (is_array($config['openvpn']['openvpn-server'])) {
 		} else {
 			$conn = array();
 			$conn['common_name'] = "[error]";
-			$conn['remote_host'] = "No Management Daemon";
-			$conn['virtual_addr'] = "See Note Below";
+			$conn['remote_host'] = "Management Daemon Unreachable";
+			$conn['virtual_addr'] = "";
 			$conn['bytes_recv'] = 0;
 			$conn['bytes_sent'] = 0;
 			$conn['connect_time'] = 0;
@@ -157,6 +157,91 @@ if (is_array($config['openvpn']['openvpn-server'])) {
 		}
 
 		$servers[] = $server;
+	}
+}
+
+
+if (is_array($config['openvpn']['openvpn-client'])) {
+	foreach ($config['openvpn']['openvpn-client'] as & $settings) {
+
+		$prot = $settings['protocol'];
+		$port = $settings['local_port'];
+
+		$client = array();
+		$client['port'] = $settings['local_port'];
+		if ($settings['description'])
+			$client['name'] = "{$settings['description']} {$prot}:{$port}";
+		else
+			$client['name'] = "Client {$prot}:{$port}";
+
+		$tcpcli = "tcp://127.0.0.1:{$port}";
+		$errval;
+		$errstr;
+
+		$client['status']="down";
+
+		/* open a tcp connection to the management port of each cli */
+		$fp = @stream_socket_client($tcpcli, $errval, $errstr, 1);
+		if ($fp) {
+
+			/* send our status request */
+			fputs($fp, "state 1\n");
+
+			/* recv all response lines */
+			while (!feof($fp)) {
+				/* read the next line */
+				$line = fgets($fp, 1024);
+
+				/* Get the client state */
+				if (strstr($line,"CONNECTED")) {
+					$client['status']="up";
+					$list = explode(",", $line);
+
+					$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
+					$client['virtual_addr']  = $list[3];
+					$client['remote_host'] = $list[4];
+				}
+				/* parse end of output line */
+				if (strstr($line, "END"))
+					break;
+			}
+
+			/* If up, get read/write stats */
+			if (strcmp($client['status'], "up") == 0) {
+				fputs($fp, "status 2\n");
+				/* recv all response lines */
+				while (!feof($fp)) {
+					/* read the next line */
+					$line = fgets($fp, 1024);
+
+					if (strstr($line,"TCP/UDP read bytes")) {
+						$list = explode(",", $line);
+						$client['bytes_recv'] = $list[1];
+					}
+
+					if (strstr($line,"TCP/UDP write bytes")) {
+						$list = explode(",", $line);
+						$client['bytes_sent'] = $list[1];
+					}
+
+					/* parse end of output line */
+					if (strstr($line, "END"))
+						break;
+				}
+			}
+
+			fclose($fp);
+
+		} else {
+			$DisplayNote=true;
+			$client['remote_host'] = "No Management Daemon";
+			$client['virtual_addr'] = "See Note Below";
+			$client['bytes_recv'] = 0;
+			$client['bytes_sent'] = 0;
+			$client['connect_time'] = 0;
+		}
+
+		$clients[] = $client;
 	}
 }
 include("head.inc"); ?>
@@ -254,5 +339,65 @@ include("head.inc"); ?>
 </table>
 
 <?php endforeach; ?>
+<br>
+
+
+<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="6" class="listtopic">
+			OpenVPN client instances statistics
+		</td>
+	</tr>
+	<tr>
+		<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td class="listhdrr">Name</td>
+			<td class="listhdrr">Status</td>
+			<td class="listhdrr">Connected Since</td>
+			<td class="listhdrr">Virtual Addr</td>
+			<td class="listhdrr">Remote Host</td>
+			<td class="listhdrr">Bytes Sent</td>
+			<td class="listhdrr">Bytes Received</td>
+		</tr>
+
+<?php foreach ($clients as $client): ?>
+		<tr name='<?php echo "r:{$client['port']}:{$conn['remote_host']}"; ?>'>
+			<td class="listlr">
+				<?=$client['name'];?>
+			</td>
+			<td class="listlr">
+				<?=$client['status'];?>
+			</td>
+			<td class="listr">
+				<?=$client['connect_time'];?>
+			</td>
+			<td class="listr">
+				<?=$client['virtual_addr'];?>
+			</td>
+			<td class="listr">
+				<?=$client['remote_host'];?>
+			</td>
+			<td class="listr">
+				<?=$client['bytes_sent'];?>
+			</td>
+			<td class="listr">
+				<?=$client['bytes_recv'];?>
+			</td>
+		</tr>
+<?php endforeach; ?>
+		</table>
+	</tr>
+</table>
+
+<?php if ($DisplayNote) {
+	echo "<br/><b>NOTE:</b> You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen";
+}
+?>
+
+<? if ((!isset($clients)) && (!isset($servers))) {
+	echo "No OpenVPN instance defined";
+}
+?>
+
 
 <?php include("fend.inc"); ?>

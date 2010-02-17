@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	
+	pfSense_BUILDER_BINARIES:
 	pfSense_MODULE:	filter
 */
 
@@ -38,21 +38,21 @@ function easyrule_find_rule_interface($int) {
 	global $config;
 	/* Borrowed from firewall_rules.php */
 	$iflist = get_configured_interface_with_descr(false, true);
-	
+
 	if ($config['pptpd']['mode'] == "server")
 		$iflist['pptp'] = "PPTP VPN";
-	
+
 	if ($config['pppoe']['mode'] == "server")
 		$iflist['pppoe'] = "PPPoE VPN";
-	
+
 	if ($config['l2tp']['mode'] == "server")
                 $iflist['l2tp'] = "L2TP VPN";
 
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])){ 
+	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])){
 		$iflist["enc0"] = "IPSEC";
 	}
-	
+
 	if (isset($iflist[$int]))
 		return $int;
 
@@ -60,7 +60,10 @@ function easyrule_find_rule_interface($int) {
 		if (strtolower($int) == strtolower($ifd))
 			return $if;
 	}
-	
+
+	if (substr($int, 0, 4) == "ovpn")
+		return "openvpn";
+
 	return false;
 }
 
@@ -100,7 +103,7 @@ function easyrule_block_rule_create($int = 'wan') {
 	/* Make up a new rule */
 	$filterent = array();
 	$filterent['type'] = 'block';
-	$filterent['interface'] = $int; 
+	$filterent['interface'] = $int;
 	$filterent['source']['address'] = $blockaliasname . strtoupper($int);
 	$filterent['destination']['any'] = '';
 	$filterent['descr'] = "Easy Rule: Blocked from Firewall Log View";

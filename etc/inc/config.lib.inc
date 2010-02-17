@@ -68,9 +68,10 @@ function encrypted_configxml() {
 					if(!strstr($data, "<pfsense>"))
 						$data = "";
 					if($data) {
-						$fd = fopen($g['conf_path'] . "/config.xml", "w");
+						$fd = fopen($g['conf_path'] . "/config.xml.tmp", "w");
 						fwrite($fd, $data);
 						fclose($fd);
+						exec("/bin/mv {$g['conf_path']}/config.xml.tmp {$g['conf_path']}/config.xml");
 						echo "\nConfig.xml unlocked.\n";
 						fclose($fp);
 					} else {
@@ -457,22 +458,12 @@ function write_config($desc="Unknown", $backup = true) {
 	conf_mount_rw();
 
 	/* write new configuration */
-	$fd = fopen("{$g['conf_path']}/config.xml", "w");
-        if (!$fd) {
-                // Unable to open temporary file for writing
+	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig, false)) {
 		log_error("WARNING: Config contents could not be save. Could not open file!");
 		unlock($lockkey);
-                return false;
-        }
-        if (!fwrite($fd, $xmlconfig)) {
-                // Unable to write to temporary file
-		log_error("WARNING: Config contents could not be written on file.");
-                fclose($fd);
-		unlock($lockkey);
-                return false;
-        }
-        fclose($fd);
-
+		die("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
+	}
+	
 	if($g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
 		cleanup_backupcache(5, true);
 	} else {
@@ -496,8 +487,9 @@ function write_config($desc="Unknown", $backup = true) {
 	unlock($lockkey);
 
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
+
 	/* sync carp entries to other firewalls */
-        carp_sync_client();
+	carp_sync_client();
 
 	if(is_dir("/usr/local/pkg/write_config")) {
 		/* process packager manager custom rules */

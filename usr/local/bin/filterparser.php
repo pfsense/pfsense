@@ -73,7 +73,9 @@ while(!feof($log)) {
 	 dstip      - Destination IP
 	 dstport    - Destination Port
 	*/
-	if ($flent != "")
+	if ($flent != "") {
 		echo "{$flent['time']} {$flent['act']} {$flent['realint']} {$flent['proto']} {$flent['src']} {$flent['dst']}\n";
+		$flent = "";
+	}
 }
 fclose($log); ?>

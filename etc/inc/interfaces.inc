@@ -2676,11 +2676,8 @@ function find_interface_subnet($interface, $flush = false)
 		return;
 
 	if (!isset($interface_sn_arr_cache[$interface]) or $flush) {
-		if (preg_match("/^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre/i", $interface))
-			$interface_sn_arr_cache[$interface] = `/sbin/ifconfig {$interface} | /usr/bin/grep -w "inet" | /usr/bin/cut -d" " -f 6 | /usr/bin/head -1`;
-		else
-			$interface_sn_arr_cache[$interface] = `/sbin/ifconfig {$interface} | /usr/bin/grep -w "inet" | /usr/bin/cut -d" " -f 4 | /usr/bin/head -1`;
-		$interface_sn_arr_cache[$interface] = strlen(str_replace("0", "", base_convert(str_replace("\n", "", $interface_sn_arr_cache[$interface]),16, 2)));
+		$ifinfo = pfSense_get_interface_addresses($interface);
+		$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
         }
 
 	return $interface_sn_arr_cache[$interface];
@@ -2883,8 +2880,8 @@ function get_wireless_modes($interface) {
  *   $tmp       - Returns the mtu of an interface
  ******/
 function get_interface_mtu($interface) {
-        $mtu = `/sbin/ifconfig {$interface} | /usr/bin/grep mtu | /usr/bin/cut -d" " -f6`;
-        return $mtu;
+        $mtu = pfSense_get_interface_addresses($interface);
+        return $mtu['mtu'];
 }
 
 function get_interface_mac($interface) {

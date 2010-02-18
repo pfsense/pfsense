@@ -314,7 +314,7 @@ function vpn_ipsec_configure($ipchg = false)
 			if (count($ipmap)) {
 				$racoonconf .= "\nlisten\n";
 				$racoonconf .= "{\n";
-				$racoonconf .= "	adminsock \"/var/run/racoon.sock\" \"root\" \"wheel\" 0660;\n";
+				$racoonconf .= "	adminsock \"/var/db/racoon/racoon.sock\" \"root\" \"wheel\" 0660;\n";
 				foreach ($ipmap as $addr) {
 					$racoonconf .= "\tisakmp {$addr} [500];\n";
 					$racoonconf .= "\tisakmp_natt {$addr} [4500];\n";
@@ -846,12 +846,10 @@ EOD;
 		if (!is_dir("/var/db/racoon"))
 			mkdir("/var/db/racoon/");
 		
-		exec("/bin/mkdir -p /var/db/racoon");
-
 		/* mange racoon process */
 		if (is_process_running("racoon")) {
 			sleep("0.1");
-			mwexec("/usr/local/sbin/racoonctl -s /var/run/racoon.sock reload-config", false);
+			mwexec("/usr/local/sbin/racoonctl -s /var/db/racoon/racoon.sock reload-config", false);
 			/* load SPD without flushing to be safe on config additions or changes. */
 			mwexec("/usr/local/sbin/setkey -f {$g['varetc_path']}/spd.conf", false);
 		} else {
@@ -1551,9 +1549,9 @@ function vpn_ipsec_refresh_policies() {
 					continue;
 				}
 				foreach ($a_phase2 as $phase2) {
-					//if($phase2['ikeid'] == $phase1['ikeid']) {
-					reload_tunnel_spd_policy ($phase1, $phase2, $oldphase1, $oldphase2);
-					//}
+					if($phase2['ikeid'] == $phase1['ikeid']) {
+						reload_tunnel_spd_policy ($phase1, $phase2, $oldphase1, $oldphase2);
+					}
 				}
 			}
 		}
@@ -1565,7 +1563,7 @@ function vpn_ipsec_refresh_policies() {
 	$tmpfiles = array();
 	$dh  = opendir($g['tmp_path']);
 	while (false !== ($filename = readdir($dh))) {
-		if(preg_match("/^spd.conf.reload./", $tmpfile)) {
+		if(preg_match("/^spd.conf.reload./", $filename)) {
 			$tmpfiles[] = $filename;
 		}
 	}

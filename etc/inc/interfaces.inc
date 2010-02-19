@@ -1663,33 +1663,21 @@ EOD;
 
 	$standard_no_turbo = str_replace(" Turbo", "", $standard);
 
-	/* configure wireless */
-	$wlcmd_args = implode(" ", $wlcmd);
-	mwexec("/sbin/ifconfig {$if} $wlcmd_args", false);
-
 	if (isset($wlcfg['wpa']['enable'])) {
 		if ($wlcfg['mode'] == "bss") {
 			fwrite($fd_set, "{$wpa_supplicant} -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf\n");
 		}
 		if ($wlcfg['mode'] == "hostap") {
-			$baseif = substr($if, 0, stripos($if, "_wlan"));
-			$baseif_mac = get_interface_mac($baseif);
-			sleep(1);
-			$if_bssid = get_interface_bssid($if);
-			if(!is_macaddr($if_bssid)) {
-				$if_bssid = get_interface_mac($if);
-			}
-			/* XXX: Workaround because hostapd won't properly detect BSSID of
-			 * clone interfaces and uses base interface's MAC instead
-			 * wpa_supplicant may also need this, but that needs to be tested */
-			fwrite($fd_set, "/sbin/ifconfig {$baseif} ether {$if_bssid}\n");
 			fwrite($fd_set, "{$hostapd} -B {$g['varetc_path']}/hostapd_{$if}.conf\n");
-			fwrite($fd_set, "/sbin/ifconfig {$baseif} ether {$baseif_mac}\n");
 		}
 	}
 
 	fclose($fd_set);
 	conf_mount_ro();
+
+	/* configure wireless */
+	$wlcmd_args = implode(" ", $wlcmd);
+	mwexec("/sbin/ifconfig {$if} $wlcmd_args", false);
 
 	
 	sleep(1);
@@ -2935,16 +2923,6 @@ function get_interface_mac($interface) {
 
 	$macinfo = pfSense_get_interface_addresses($interface);
 	return $macinfo["macaddr"];
-}
-
-function get_interface_bssid($interface) {
-	$mac = array();
-        exec("/sbin/ifconfig {$interface} | /usr/bin/awk '/bssid/ {print \$NF}'", $mac);
-        if(is_macaddr($mac[0])) {
-                return trim($mac[0]);
-        } else {
-                return "";
-        }
 }
 
 /****f* pfsense-utils/generate_random_mac_address

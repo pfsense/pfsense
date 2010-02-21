@@ -266,7 +266,7 @@ function show_source_port_range() {
 			</td>
             </tr>
 			<tr>
-                  <td width="22%" valign="top" class="vncellreq">Description</td>
+                  <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
 				  <input type="text" name="descr" id="descr" class="formfld unknown" size="50" value="<?=$pconfig['descr'];?>">
 				 	</td>

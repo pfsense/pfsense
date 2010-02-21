@@ -380,9 +380,9 @@ EOD;
 		$rulenum++;
 		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} 67 to any 68 out \n";
 		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass icmp from {$cpip} to any out icmptype 8\n";
+		$cprules .= "add {$rulenum} set 1 pass icmp from {$cpip} to any out icmptype 0\n";
 		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass icmp from any to {$cpip} in icmptype 0 \n";
+		$cprules .= "add {$rulenum} set 1 pass icmp from any to {$cpip} in icmptype 8 \n";
 		$rulenum++;
 		//# allow access to our DNS forwarder
 		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} to any 53 in \n";

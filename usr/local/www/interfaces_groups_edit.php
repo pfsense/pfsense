@@ -203,7 +203,7 @@ function removeRow(el) {
 	<td colspan="2" valign="top" class="listtopic">Interface Groups Edit</td>
   </tr>
   <tr>
-    <td valign="top" class="vncellreq">Interface</td>
+    <td valign="top" class="vncellreq">Group Name</td>
     <td class="vtable">
 	<input class="formfld unknown" name="ifname" id="ifname" value="<?=$pconfig['ifname'];?>" />
 	<br />

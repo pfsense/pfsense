@@ -110,7 +110,7 @@ if ($_POST) {
 
 	$natiflist = get_configured_interface_with_descr();
 	foreach ($natiflist as $natif => $natdescr)
-		if ($_POST['ipaddr'] == get_interface_ip($natif))
+		if ($_POST['subnet'] == get_interface_ip($natif))
 			$input_errors[] = "The {$natdescr} IP address may not be used in a virtual entry.";
 
 	if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
@@ -130,7 +130,7 @@ if ($_POST) {
 	/* check for overlaps with 1:1 NAT */
 	if (is_array($config['nat']['onetoone'])) {
 		foreach ($config['nat']['onetoone'] as $natent) {
-			if (check_subnets_overlap($_POST['ipaddr'], 32, $natent['external'], $natent['subnet'])) {
+			if (check_subnets_overlap($_POST['subnet'], 32, $natent['external'], $natent['subnet'])) {
 				$input_errors[] = "A 1:1 NAT mapping overlaps with the specified IP address.";
 				break;
 			}

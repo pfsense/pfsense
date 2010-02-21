@@ -69,7 +69,7 @@ if ($_POST) {
 				$input_errors[] = "Group name already exists!";
 	}
 	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match))
-		$input_errors[] = "Only characters in a-z A-Z are allowed as interface name.";
+		$input_errors[] = "Only letters A-Z are allowed as the group name.";
 
 	$ifgroupentry = array();
 	$ifgroupentry['ifname'] = $_POST['ifname'];

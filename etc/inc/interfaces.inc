@@ -1448,7 +1448,7 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 		} else {
 			$baseif2 = substr($config['interfaces'][$if]['if'], 0, stripos($config['interfaces'][$if]['if'], "_wlan"));
 		}
-		if ($baseif1 != $baseif2 && is_array($config['interfaces'][$if]['wireless'])) {
+		if ($baseif1 == $baseif2 && $ifcfg['if'] != $config['interfaces'][$if]['if']) {
 			if (isset($config['interfaces'][$if]['wireless']['standard']) || $sync_changes) {
 				foreach ($shared_settings as $setting) {
 					if ($sync_changes) {

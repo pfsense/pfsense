@@ -48,7 +48,7 @@ $a_clones = &$config['wireless']['clone'] ;
 function clone_inuse($cloneif) {
 	global $config;
 
-	$iflist = get_configured_interface_list(false, true);
+	$iflist = get_configured_interface_list();
 	foreach ($iflist as $if) {
 		if ($config['interfaces'][$if]['if'] == $cloneif)
 			return true;

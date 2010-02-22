@@ -310,8 +310,10 @@ if ($_GET['act'] == "add") {
 		}
 		if (!$portused) {
 			$config['interfaces'][$newifname]['if'] = $portname;
-			if (preg_match($g['wireless_regex'], $portname))
+			if (preg_match($g['wireless_regex'], $portname)) {
 				$config['interfaces'][$newifname]['wireless'] = array();
+				interface_sync_wireless_clones($config['interfaces'][$newifname], false);
+			}
 			break;
 		}
 	}

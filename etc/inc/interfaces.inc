@@ -1427,6 +1427,40 @@ function interface_wireless_clone($realif, $wlcfg) {
 	return true;
 }
 
+function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
+	global $config, $g;
+
+	$shared_settings = array('standard', 'turbo', 'protmode', 'channel', 'txpower');
+
+	if(!stristr($ifcfg['if'], "_wlan")) {
+		$baseif1 = $ifcfg['if'];
+	} else {
+		$baseif1 = substr($ifcfg['if'], 0, stripos($ifcfg['if'], "_wlan"));
+	}
+
+	$iflist = get_configured_interface_list();
+	foreach ($iflist as $if) {
+		if(!stristr($config['interfaces'][$if]['if'], "_wlan")) {
+			$baseif2 = $config['interfaces'][$if]['if'];
+		} else {
+			$baseif2 = substr($config['interfaces'][$if]['if'], 0, stripos($config['interfaces'][$if]['if'], "_wlan"));
+		}
+		if ($baseif1 != $baseif2) {
+			if (isset($config['interfaces'][$if]['wireless']['standard']) || $sync_changes) {
+				foreach ($shared_settings as $setting) {
+					if ($sync_changes) {
+						$config['interfaces'][$if]['wireless'][$setting] = $ifcfg['wireless'][$setting];
+					} else {
+						$ifcfg['wireless'][$setting] = $config['interfaces'][$if]['wireless'][$setting];
+					}
+				}
+				if (!$sync_changes)
+					break;
+			}
+		}
+	}
+}
+
 function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	global $config, $g;
 
@@ -1442,6 +1476,9 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 
 	// Clone wireless nic if needed.
 	interface_wireless_clone($if, $wl);
+
+	// Reject inadvertent changes to shared settings in case the interface hasn't been configured.
+	interface_sync_wireless_clones($wl, false);
 
 	$fd_set = fopen("{$g['tmp_path']}/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");

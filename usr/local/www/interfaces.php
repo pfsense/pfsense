@@ -295,6 +295,9 @@ if ($_POST['apply']) {
 if ($_POST && $_POST['enable'] == "no") {
 	unset($wancfg['enable']);
 	interface_bring_down($if);
+	if (isset($wancfg['wireless'])) {
+		interface_sync_wireless_clones($wancfg, false);
+	}
 	write_config("Interface {$_POST['descr']}({$if}) is now disabled.");
 	mark_subsystem_dirty('interfaces');
 	header("Location: interfaces.php?if={$if}");
@@ -773,6 +776,7 @@ function handle_wireless_post() {
 			$wancfg['wireless']['wep']['key'][] = $newkey;
 		}
 	}
+	interface_sync_wireless_clones($wancfg, true);
 }
 
 $pgtitle = array("Interfaces", $pconfig['descr']);

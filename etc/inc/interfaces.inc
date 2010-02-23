@@ -2584,7 +2584,7 @@ function link_interface_to_vlans($int, $action = "") {
 	$real_if = get_real_interface($int);
 	if (is_array($config['vlans']['vlan'])) {
                 foreach ($config['vlans']['vlan'] as $vlan) {
-			if ($real_int == $vlan['if']) {
+			if ($real_if == $vlan['if']) {
 				if ($action == "update") {
 					foreach ($config['interfaces'] as $ifname => $ifcfg) {
 						if ($ifcfg['if'] == $vlan['vlanif'])

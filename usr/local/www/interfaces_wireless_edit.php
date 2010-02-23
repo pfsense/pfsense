@@ -113,17 +113,18 @@ if ($_POST) {
 		if (isset($id) && $a_clones[$id]) {
 			if (clone_inuse($a_clones[$id]['if'])) {
 				if ($clone['if'] != $a_clones[$id]['if'])
-					$input_errors[] = "This wireless clone cannot be modified because it is still being used as an interface.";
+					$input_errors[] = "This wireless clone cannot be modified because it is still assigned as an interface.";
 				else if ($clone['mode'] != $a_clones[$id]['mode'])
 					$input_errors[] = "Use the configuration page for the assigned interface to change the mode.";
-			} else if ($clone['if'] != $a_clones[$id]['if'])
-				$input_errors[] = "Changing the parent interface is not currently supported.  Create a new clone on the new parent and delete the old clone on the previous parent.";
+			}
 		}
 		if (!$input_errors) {
 			if (!interface_wireless_clone($clone['cloneif'], $clone)) {
 				$input_errors[] = "Error creating interface with mode {$clone['mode']}.  The {$clone['if']} interface may not support creating more clones with the selected mode.";
 			} else {
 				if (isset($id) && $a_clones[$id]) {
+					if ($clone['if'] != $a_clones[$id]['if'])
+						mwexec("/sbin/ifconfig " . $a_clones[$id]['cloneif'] . " destroy");
 					$input_errors[] = "Created with id {$id}";
 					$a_clones[$id] = $clone;
 				} else {

@@ -215,6 +215,11 @@ if (isset($wancfg['wireless'])) {
 	/* Get wireless modes */
 	$wlanif = get_real_interface($if);
 	interface_wireless_clone($wlanif, $wancfg);
+	if(!stristr($wancfg['if'], "_wlan")) {
+		$wlanbaseif = $wancfg['if'];
+	} else {
+		$wlanbaseif = substr($wancfg['if'], 0, stripos($wancfg['if'], "_wlan"));
+	}
 	$wl_modes = get_wireless_modes($if);
 	$pconfig['standard'] = $wancfg['wireless']['standard'];
 	$pconfig['mode'] = $wancfg['wireless']['mode'];
@@ -1236,7 +1241,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<td colspan="2" valign="top" height="16"></td>
 										</tr>										
 										<tr>
-											<td colspan="2" valign="top" class="listtopic">Wireless configuration</td>
+											<td colspan="2" valign="top" class="listtopic">Common wireless configuration</td>
+										</tr>
+										<tr>
+											<td colspan="2" valign="top" class="vtable">These settings apply to all wireless networks on <?=$wlanbaseif;?>.</td>
 										</tr>
 										<tr>
 											<td valign="top" class="vncellreq">Standard</td>
@@ -1254,16 +1262,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										</td>
 									</tr>
 									<tr>
-										<td valign="top" class="vncellreq">Mode</td>
-										<td class="vtable">
-											<select name="mode" class="formselect" id="mode">
-												<option <? if ($pconfig['mode'] == 'bss') echo "selected";?> value="bss">Infrastructure (BSS)</option>
-												<option <? if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc">Ad-hoc (IBSS)</option>
-												<option <? if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap">Access Point</option>
-											</select>
-										</td>
-									</tr>
-									<tr>
 										<td valign="top" class="vncellreq">802.11g OFDM Protection Mode</td>
 										<td class="vtable">
 											<select name="protmode" class="formselect" id="protmode">
@@ -1274,6 +1272,61 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<br/>
 											For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network.
 											<br/>
+										</td>
+									</tr>
+										<tr>
+											<td valign="top" class="vncellreq">Transmit power</td>
+											<td class="vtable">
+												<select name="txpower" class="formselect" id="txpower">
+													<?
+													for($x = 99; $x > 0; $x--) {
+														if($pconfig["txpower"] == $x)
+															$SELECTED = " SELECTED";
+														else
+															$SELECTED = "";
+														echo "<option {$SELECTED}>{$x}</option>\n";
+													}
+													?>
+												</select><br/>
+												Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adaptors support changing the transmit power setting.
+											</td>
+										</tr>
+										<tr>
+											<td valign="top" class="vncellreq">Channel</td>
+											<td class="vtable">
+												<select name="channel" class="formselect" id="channel">
+													<option <? if ($pconfig['channel'] == 0) echo "selected"; ?> value="0">Auto</option>
+													<?php
+													foreach($wl_modes as $wl_standard => $wl_channels) {
+														if($wl_standard == "11g") { $wl_standard = "11b/g"; }
+														foreach($wl_channels as $wl_channel) {
+															echo "<option ";
+															if ($pconfig['channel'] == "$wl_channel") {
+																echo "selected ";
+															}
+															echo "value=\"$wl_channel\">$wl_standard - $wl_channel</option>\n";
+														}
+													}
+													?>
+												</select>
+												<br/>
+												Note: Not all channels may be supported by your card
+											</td>
+										</tr>
+										<tr>
+											<td colspan="2" valign="top" height="16"></td>
+										</tr>										
+										<tr>
+											<td colspan="2" valign="top" class="listtopic">Wireless configuration</td>
+										</tr>
+									<tr>
+										<td valign="top" class="vncellreq">Mode</td>
+										<td class="vtable">
+											<select name="mode" class="formselect" id="mode">
+												<option <? if ($pconfig['mode'] == 'bss') echo "selected";?> value="bss">Infrastructure (BSS)</option>
+												<option <? if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc">Ad-hoc (IBSS)</option>
+												<option <? if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap">Access Point</option>
+											</select>
 										</td>
 									</tr>
 									<tr>
@@ -1314,45 +1367,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											Setting this option will force the card to NOT broadcast its SSID
 											<br/>
 											(this might create problems for some clients). </td>
-										</tr>
-										<tr>
-											<td valign="top" class="vncellreq">Transmit power</td>
-											<td class="vtable">
-												<select name="txpower" class="formselect" id="txpower">
-													<?
-													for($x = 99; $x > 0; $x--) {
-														if($pconfig["txpower"] == $x)
-															$SELECTED = " SELECTED";
-														else
-															$SELECTED = "";
-														echo "<option {$SELECTED}>{$x}</option>\n";
-													}
-													?>
-												</select><br/>
-												Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adaptors support changing the transmit power setting.
-											</td>
-										</tr>
-										<tr>
-											<td valign="top" class="vncellreq">Channel</td>
-											<td class="vtable">
-												<select name="channel" class="formselect" id="channel">
-													<option <? if ($pconfig['channel'] == 0) echo "selected"; ?> value="0">Auto</option>
-													<?php
-													foreach($wl_modes as $wl_standard => $wl_channels) {
-														if($wl_standard == "11g") { $wl_standard = "11b/g"; }
-														foreach($wl_channels as $wl_channel) {
-															echo "<option ";
-															if ($pconfig['channel'] == "$wl_channel") {
-																echo "selected ";
-															}
-															echo "value=\"$wl_channel\">$wl_standard - $wl_channel</option>\n";
-														}
-													}
-													?>
-												</select>
-												<br/>
-												Note: Not all channels may be supported by your card
-											</td>
 										</tr>
 										<tr>
 											<td valign="top" class="vncell">Distance setting</td>

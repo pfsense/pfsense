@@ -2400,7 +2400,7 @@ function interface_translate_type_to_real($interface) {
 		return $interface;
 }
 
-function interface_get_wireless_base($wlif)
+function interface_get_wireless_base($wlif) {
 	if(!stristr($wlif, "_wlan")) {
 		return $wlif;
 	} else {
@@ -2408,7 +2408,7 @@ function interface_get_wireless_base($wlif)
 	}
 }
 
-function interface_get_wireless_clone($wlif)
+function interface_get_wireless_clone($wlif) {
 	if(!stristr($wlif, "_wlan")) {
 		return $wlif . "_wlan0";
 	} else {

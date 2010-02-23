@@ -132,7 +132,7 @@ include("head.inc");
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
 				  Note:<br>
 				  </strong></span>
-				  Here you can configure clones of wireless interfaces, which can be assigned as separate independent interfaces. Only available on wireless chipsets that support this.
+				  Here you can configure clones of wireless interfaces, which can be assigned as separate independent interfaces. Only available on wireless chipsets that support this, with limitations on the number that can be created in each mode.
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

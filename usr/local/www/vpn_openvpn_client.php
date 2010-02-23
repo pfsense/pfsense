@@ -90,6 +90,9 @@ if($_GET['act']=="edit"){
 		$pconfig['resolve_retry'] = $a_client[$id]['resolve_retry'];
 		$pconfig['proxy_addr'] = $a_client[$id]['proxy_addr'];
 		$pconfig['proxy_port'] = $a_client[$id]['proxy_port'];
+		$pconfig['proxy_user'] = $a_client[$id]['proxy_user'];
+		$pconfig['proxy_passwd'] = $a_client[$id]['proxy_passwd'];
+		$pconfig['proxy_authtype'] = $a_client[$id]['proxy_authtype'];
 		$pconfig['description'] = $a_client[$id]['description'];
 		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
 		$pconfig['ns_cert_type'] = $a_client[$id]['ns_cert_type'];
@@ -156,6 +159,11 @@ if ($_POST) {
 
 		if ($result = openvpn_validate_port($pconfig['proxy_port'], 'Proxy port'))
 			$input_errors[] = $result;
+
+		if ($pconfig['proxy_authtype'] != "none") {
+			if (empty($pconfig['proxy_user']) || empty($pconfig['proxy_passwd']))
+				$input_errors[] = "User name and password are required for proxy with authentication.";
+		}
 	}
 
 	if($pconfig['tunnel_network'])
@@ -207,6 +215,9 @@ if ($_POST) {
 		$client['resolve_retry'] = $pconfig['resolve_retry'];
 		$client['proxy_addr'] = $pconfig['proxy_addr'];
 		$client['proxy_port'] = $pconfig['proxy_port'];
+		$client['proxy_authtype'] = $pconfig['proxy_authtype'];
+		$client['proxy_user'] = $pconfig['proxy_user'];
+		$client['proxy_passwd'] = $pconfig['proxy_passwd'];
 		$client['description'] = $pconfig['description'];
 		$client['mode'] = $pconfig['mode'];
 		$client['custom_options'] = $pconfig['custom_options'];
@@ -275,6 +286,15 @@ function autokey_change() {
 		document.getElementById("autokey_opts").style.display="none";
 	else
 		document.getElementById("autokey_opts").style.display="";
+}
+
+function useproxy_changed() {
+
+	if ($('proxy_authtype').value != 'none') {
+                $('proxy_authtype_opts').show();
+        } else {
+                $('proxy_authtype_opts').hide();
+        }
 }
 
 function tlsauth_change() {
@@ -456,6 +476,50 @@ function autotls_change() {
 						<td width="22%" valign="top" class="vncell"><?=gettext("Proxy port");?></td>
 						<td width="78%" class="vtable">
 							<input name="proxy_port" type="text" class="formfld unknown" size="5" value="<?=htmlspecialchars($pconfig['proxy_port']);?>"/>
+						</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?=gettext("Proxy authentication extra options");?></td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+                                                                        <td align="right" width="25%">
+                                                                                <span class="vexpl">
+                                                                                         &nbsp;Authentication method :&nbsp;
+                                                                                </span>
+                                                                        </td>
+                                                                        <td>
+										<select name="proxy_authtype" id="proxy_authtype" class="formfld select" onChange="useproxy_changed()">
+											<option value="none" <?php if ($pconfig['proxy_authtype'] == "none") echo "selected"; ?>>none</option>
+											<option value="basic" <?php if ($pconfig['proxy_authtype'] == "basic") echo "selected"; ?>>basic</option>
+											<option value="ntlm" <?php if ($pconfig['proxy_authtype'] == "ntlm") echo "selected"; ?>>ntlm</option>
+										</select>
+									</td>
+								</tr>
+							</table>
+							<br />
+							 <table border="0" cellpadding="2" cellspacing="0" id="proxy_authtype_opts" style="display:none">
+                                                                <tr>
+                                                                        <td align="right" width="25%">
+                                                                                <span class="vexpl">
+                                                                                         &nbsp;Username :&nbsp;
+                                                                                </span>
+                                                                        </td>
+                                                                        <td>
+                                                                                <input name="proxy_user" id="proxy_user" class="formfld unknown" size="20" value="<?=htmlspecialchars($pconfig['proxy_user']);?>" />
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td align="right" width="25%">
+                                                                                <span class="vexpl">
+                                                                                         &nbsp;Password :&nbsp;
+                                                                                </span>
+                                                                        </td>
+                                                                        <td>
+                                                                                <input name="proxy_passwd" id="proxy_passwd" type="password" class="formfld pwd" size="20" value="<?=htmlspecialchars($pconfig['proxy_passwd']);?>" />
+                                                                        </td>
+                                                                </tr>
+                                                        </table>
 						</td>
 					</tr>
 					<tr>
@@ -797,6 +861,7 @@ function autotls_change() {
 mode_change();
 autokey_change();
 tlsauth_change();
+useproxy_changed();
 //-->
 </script>
 </body>

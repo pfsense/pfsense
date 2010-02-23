@@ -446,8 +446,16 @@ function openvpn_reconfigure($mode,& $settings) {
 			$conf .= "ifconfig $ip2 $ip1\n";
 		}
 
-		if ($settings['proxy_addr'])
-			$conf .= "http-proxy {$settings['proxy_addr']} {$settings['proxy_port']}\n";
+		if ($settings['proxy_addr']) {
+			$conf .= "http-proxy {$settings['proxy_addr']} {$settings['proxy_port']}";
+			if ($settings['proxy_authtype'] != "none") {
+				$conf .= " {$g['varetc_path']}/openvpn/{$mode_id}.pas {$settings['proxy_authtype']}";
+				$proxypas = "{$settings['proxy_user']}\n";
+				$proxypas .= "{$settings['proxy_passwd']}\n";
+				file_put_contents("{$g['varetc_path']}/openvpn/{$mode_id}.pas", $proxypas);
+			}
+			$conf .= " \n";
+		}
 	}
 
 	// Add a remote network route if set

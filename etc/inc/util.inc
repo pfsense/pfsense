@@ -961,16 +961,10 @@ function is_interface_mismatch() {
                 if (preg_match("/^enc|^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $ifcfg['if'])) {
                         $i++;
                 }
-                else {
-                        $baseif = $ifcfg['if'];
-                        if(stristr($baseif, "_wlan")) {
-                                $baseif = substr($baseif, 0, stripos($baseif, "_wlan"));
-                        }
-                        if (does_interface_exist($baseif) == false) {
-                                $do_assign = true;
-                        } else
-                                $i++;
-                }
+                else if (does_interface_exist(interface_get_wireless_base($ifcfg['if'])) == false) {
+                        $do_assign = true;
+                } else
+                        $i++;
         }
 
         if ($g['minimum_nic_count'] > $i) {

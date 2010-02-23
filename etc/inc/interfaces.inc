@@ -1381,11 +1381,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 			$mode = "";
 			break;
 	}
-	if(!stristr($wlcfg['if'], "_wlan")) {
-		$baseif = $wlcfg['if'];
-	} else {
-		$baseif = substr($wlcfg['if'], 0, stripos($wlcfg['if'], "_wlan"));
-	}
+	$baseif = interface_get_wireless_base($wlcfg['if']);
 	if(does_interface_exist($realif)) {
 		exec("/sbin/ifconfig {$realif}", $output, $ret);
 		$ifconfig_str = implode($output);
@@ -1435,20 +1431,11 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	if(!is_array($ifcfg['wireless']))
 		return;
 
-	if(!stristr($ifcfg['if'], "_wlan")) {
-		$baseif1 = $ifcfg['if'];
-	} else {
-		$baseif1 = substr($ifcfg['if'], 0, stripos($ifcfg['if'], "_wlan"));
-	}
+	$baseif = interface_get_wireless_base($ifcfg['if']);
 
 	$iflist = get_configured_interface_list();
 	foreach ($iflist as $if) {
-		if(!stristr($config['interfaces'][$if]['if'], "_wlan")) {
-			$baseif2 = $config['interfaces'][$if]['if'];
-		} else {
-			$baseif2 = substr($config['interfaces'][$if]['if'], 0, stripos($config['interfaces'][$if]['if'], "_wlan"));
-		}
-		if ($baseif1 == $baseif2 && $ifcfg['if'] != $config['interfaces'][$if]['if']) {
+		if ($baseif == interface_get_wireless_base($config['interfaces'][$if]['if']) && $ifcfg['if'] != $config['interfaces'][$if]['if']) {
 			if (isset($config['interfaces'][$if]['wireless']['standard']) || $sync_changes) {
 				foreach ($shared_settings as $setting) {
 					if ($sync_changes) {
@@ -2413,6 +2400,22 @@ function interface_translate_type_to_real($interface) {
 		return $interface;
 }
 
+function interface_get_wireless_base($wlif)
+	if(!stristr($wlif, "_wlan")) {
+		return $wlif;
+	} else {
+		return substr($wlif, 0, stripos($wlif, "_wlan"));
+	}
+}
+
+function interface_get_wireless_clone($wlif)
+	if(!stristr($wlif, "_wlan")) {
+		return $wlif . "_wlan0";
+	} else {
+		return $wlif;
+	}
+}
+
 function get_real_interface($interface = "wan") {
     global $config;
 
@@ -2472,11 +2475,7 @@ function get_real_interface($interface = "wan") {
 			// interface name format: $parentnic_wlanparentnic#
 			// example: ath0_wlan0
 			if(is_interface_wireless($cfg['if'])) {
-				if(!stristr($cfg['if'], "_wlan")) {
-					$wanif = $cfg['if'] . "_wlan0";
-				} else {
-					$wanif = $cfg['if'];
-				}
+				$wanif = interface_get_wireless_clone($cfg['if']);
 				break;
 			}
 

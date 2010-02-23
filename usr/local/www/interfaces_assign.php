@@ -58,6 +58,14 @@ require("rrd.inc");
 /* get list without VLAN interfaces */
 $portlist = get_interface_list();
 
+/* add wireless clone interfaces */
+if (is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
+	foreach ($config['wireless']['clone'] as $clone) {
+		$portlist[$clone['cloneif']] = $clone;
+		$portlist[$clone['cloneif']]['iswlclone'] = true;
+	}
+}
+
 /* add VLAN interfaces */
 if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	foreach ($config['vlans']['vlan'] as $vlan) {
@@ -393,6 +401,11 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		if ($portinfo['descr'])
 			$descr .= " (" . $portinfo['descr'] . ")";
 			echo htmlspecialchars($descr);
+                } elseif ($portinfo['iswlclone']) {
+                        $descr = $portinfo['cloneif'];
+                        if ($portinfo['descr'])
+				$descr .= " (" . $portinfo['descr'] . ")";
+                        echo htmlspecialchars($descr);
 		} elseif ($portinfo['isppp']) {
 			$descr = "PPP {$portinfo['port']}";
 			if ($portinfo['descr'])

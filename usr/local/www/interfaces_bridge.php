@@ -47,7 +47,7 @@ if (!is_array($config['bridges']['bridged']))
 $a_bridges = &$config['bridges']['bridged'] ;
 
 function bridge_inuse($num) {
-	global $config;
+	global $config, $a_bridges;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {

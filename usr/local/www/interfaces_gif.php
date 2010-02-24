@@ -47,7 +47,7 @@ if (!is_array($config['gifs']['gif']))
 $a_gifs = &$config['gifs']['gif'] ;
 
 function gif_inuse($num) {
-	global $config;
+	global $config, $a_gifs;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {

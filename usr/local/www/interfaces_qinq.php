@@ -46,7 +46,7 @@ if (!is_array($config['qinqs']['qinqentry']))
 $a_qinqs = &$config['qinqs']['qinqentry'];
 
 function qinq_inuse($num) {
-	global $config, $g;
+	global $config, $a_qinqs;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {

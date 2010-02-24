@@ -48,7 +48,7 @@ if (!is_array($config['vlans']['vlan']))
 $a_vlans = &$config['vlans']['vlan'] ;
 
 function vlan_inuse($num) {
-	global $config, $g;
+	global $config, $a_vlans;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {

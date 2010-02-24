@@ -47,7 +47,7 @@ if (!is_array($config['gres']['gre']))
 $a_gres = &$config['gres']['gre'] ;
 
 function gre_inuse($num) {
-	global $config;
+	global $config, $a_gres;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {

@@ -924,7 +924,7 @@ function session_auth($backing) {
 	if ( $config['system']['webgui']['session_timeout'] == 0 ||
 		$config['system']['webgui']['session_timeout'] == "") {
 		$_SESSION['last_access'] = time();	
-	} elseif (!isset($config['system']['webgui']['session_timeout']) {
+	} elseif (!isset($config['system']['webgui']['session_timeout'])) {
 		/* Default to 4 hour timeout if one is not set */
 		if ($_SESSION['last_access'] < (time() - 14400)) {
 			$_GET['logout'] = true;

@@ -44,6 +44,10 @@ if (!is_array($config['openvpn']['openvpn-server']))
 
 $a_server = &$config['openvpn']['openvpn-server'];
 
+if (!is_array($config['system']['authserver']))
+	$config['system']['authserver'] = array();
+$auth_servers =& $config['system']['authserver'];
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -82,6 +86,7 @@ if($_GET['act']=="edit"){
 		$pconfig['disable'] = isset($a_server[$id]['disable']);
 		$pconfig['mode'] = $a_server[$id]['mode'];
 		$pconfig['protocol'] = $a_server[$id]['protocol'];
+		$pconfig['authmode'] = $a_server[$id]['authmode'];
 		$pconfig['interface'] = $a_server[$id]['interface'];
 		if (!empty($a_server[$id]['ipaddr'])) {
 			$pconfig['interface'] = $pconfig['interface'] . '|' . $a_server[$id]['ipaddr'];
@@ -238,7 +243,7 @@ if ($_POST) {
 	if (!$tls_mode && !$pconfig['autokey_enable']) {
 		$reqdfields = array('shared_key');
 		$reqdfieldsn = array('Shared key');
-    } else {
+	} else {
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = explode(",", "Certificate Authority,Certificate");;
 	}
@@ -260,6 +265,7 @@ if ($_POST) {
 		if ($_POST['disable'] == "yes")
 			$server['disable'] = true;
 		$server['mode'] = $pconfig['mode'];
+		$server['authmode'] = $pconfig['authmode'];
 		$server['protocol'] = $pconfig['protocol'];
 		list($server['interface'], $server['ipaddr']) = explode ("|",$pconfig['interface']);
 		$server['local_port'] = $pconfig['local_port'];
@@ -370,7 +376,12 @@ function mode_change() {
 		case "p2p_shared_key":
 			document.getElementById("client_opts").style.display="none";
 			document.getElementById("remote_opts").style.display="";
+			document.getElementById("authmodetr").style.display="none";
 			break;
+		case "server_user":
+                case "server_tls_user":
+			document.getElementById("authmodetr").style.display="";
+			/* FALL THROUGH */
 		default:
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
@@ -531,6 +542,22 @@ function netbios_change() {
 							</select>
 						</td>
 					</tr>
+					<tr id="authmodetr" style="display:none">
+                                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Backend for authentication");?></td>
+                                                        <td width="78%" class="vtable">
+                                                        <select name='authmode' id='authmode' class="formselect">
+                                                                <option value="local" <?php if ($pconfig['authmode'] == "local") echo "selected";?>>Local authentication database</option>
+                                                        <?php
+                                                                foreach ($auth_servers as $auth_server):
+                                                                        $selected = "";
+                                                                        if ($pconfig['authmode'] == $auth_server['name'])
+                                                                                $selected = "selected";
+                                                        ?>
+                                                                <option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>
+                                                        <?php 	endforeach; ?>
+                                                        </select>
+                                                </td>
+                                        </tr>
 					<tr>
 						<td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
 							<td width="78%" class="vtable">

@@ -379,7 +379,29 @@ function openvpn_reconfigure($mode,& $settings) {
 				$conf .= "client-cert-not-required\n";
 			case 'server_tls_user':
 				$conf .= "username-as-common-name\n";
-				$conf .= "auth-user-pass-verify /etc/inc/openvpn.auth-user.php via-env\n";
+				if ($settings['authmode'] == "local")
+					$conf .= "auth-user-pass-verify /etc/inc/openvpn.auth-user.php via-env\n";
+				else {
+					$authcfg = system_get_authserver($settings['authmode']);
+					if ($authcfg) {
+						switch ($authcfg['type']) {
+						case 'ldap':
+							$sed = "\$ldaphost={$authcfg['host']};";
+							$sed .= "\$ldapport={$authcfg['ldap_port']};";
+							$sed .= "\$ldapuserattr={$authcfg['ldap_attr_user']};";
+							$sed .= "\$ldapbasedn={$authcfg['ldap_basedn']};";
+							break;
+						case 'radius':
+							$sed = "\$radsrv={$authcfg['host']};";
+							$sed .= "\$radport={$authcfg['radius_auth_port']};";
+							$sed .= "\$radsecret={$authcfg['radius_secret']};";
+							break;
+						}
+						mwexec("/bin/cat /etc/inc/openvpn.auth-{$authcfg['type']}.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");
+						mwexec("/bin/chmod a+x {$g['varetc_path']}/openvpn/{$mode_id}.php");
+						$conf .= "auth-user-pass-verify {$g['varetc_path']}/openvpn/{$mode_id}.php via-env\n";
+					}
+				}
 				break;
 		}
 

@@ -1356,4 +1356,14 @@ function enable_watchdog() {
 	}
 }
 
+function system_get_authserver($name) {
+	global $config;
+
+	if (is_array($config['system']['authserver'])) {
+		foreach ($config['system']['authserver'] as $authcfg) {
+			if ($authcfg['name'] == $name)
+				return $authcfg;
+		}
+	}
+}
 ?>

@@ -95,6 +95,7 @@ if ($act == "edit") {
 			$pconfig['radius_host'] = $a_server[$id]['host'];
 			$pconfig['radius_auth_port'] = $a_server[$id]['radius_auth_port'];
 			$pconfig['radius_acct_port'] = $a_server[$id]['radius_acct_port'];
+			$pconfig['radius_secret'] = $a_server[$id]['radius_secret'];
 
 			if ($pconfig['radius_auth_port'] &&
 				$pconfig['radius_acct_port'] ) {

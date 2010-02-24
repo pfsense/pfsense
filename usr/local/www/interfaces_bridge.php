@@ -46,12 +46,12 @@ if (!is_array($config['bridges']['bridged']))
 
 $a_bridges = &$config['bridges']['bridged'] ;
 
-function bridge_inuse($bridgeif) {
+function bridge_inuse($num) {
 	global $config;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $bridgeif)
+		if ($config['interfaces'][$if]['if'] == $a_bridges[$num]['bridgeif'])
 			return true;
 	}
 
@@ -60,7 +60,7 @@ function bridge_inuse($bridgeif) {
 
 if ($_GET['act'] == "del") {
 	/* check if still in use */
-	if (bridge_inuse($a_bridges[$_GET['id']]['bridgeif'])) {
+	if (bridge_inuse($_GET['id'])) {
 		$input_errors[] = "This bridge TUNNEL cannot be deleted because it is still being used as an interface.";
 	} else {
 		mwexec("/sbin/ifconfig " . $a_bridges[$_GET['id']]['bridgeif'] . " destroy");

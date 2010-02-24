@@ -119,7 +119,6 @@ function vpn_ipsec_configure($ipchg = false)
 	$a_phase1 = $config['ipsec']['phase1'];
 	$a_phase2 = $config['ipsec']['phase2'];
 	$a_client = $config['ipsec']['client'];
-	$lancfg = $config['interfaces']['lan'];
 	$lanip = get_interface_ip("lan");
 	$lansn = get_interface_subnet("lan");
 	$lansa = gen_subnet($lanip, $lansn);
@@ -743,11 +742,11 @@ EOD;
 
 			$spdconf = "";
 
-			/* What are these SPD entries for?
-			 * -mgrooms 07/10/2008
-			 */
-			$spdconf .= "spdadd {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
-			$spdconf .= "spdadd {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
+			/* Try to prevent people from locking themselves out of webgui. Just in case. */
+			if ($config['interfaces']['lan']) {
+				$spdconf .= "spdadd {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
+				$spdconf .= "spdadd {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
+			}
 
 			foreach ($a_phase2 as $ph2ent) {
 
@@ -783,7 +782,8 @@ EOD;
 						}
 					}
 					mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $rgip);
-					mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
+					if ($config['interfaces']['lan'])
+						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
 				}
 
 				if($ph2ent['mode'] == "tunnel") {

@@ -45,12 +45,12 @@ if (!is_array($config['wireless']['clone']))
 
 $a_clones = &$config['wireless']['clone'];
 
-function clone_inuse($cloneif) {
-	global $config;
+function clone_inuse($num) {
+	global $config, $a_clones;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $cloneif)
+		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif'])
 			return true;
 	}
 
@@ -111,7 +111,7 @@ if ($_POST) {
 		}
 
 		if (isset($id) && $a_clones[$id]) {
-			if (clone_inuse($a_clones[$id]['if'])) {
+			if (clone_inuse($id)) {
 				if ($clone['if'] != $a_clones[$id]['if'])
 					$input_errors[] = "This wireless clone cannot be modified because it is still assigned as an interface.";
 				else if ($clone['mode'] != $a_clones[$id]['mode'])

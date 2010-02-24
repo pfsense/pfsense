@@ -43,14 +43,14 @@ require("guiconfig.inc");
 if (!is_array($config['wireless']['clone']))
 	$config['wireless']['clone'] = array();
 
-$a_clones = &$config['wireless']['clone'] ;
+$a_clones = &$config['wireless']['clone'];
 
-function clone_inuse($cloneif) {
-	global $config;
+function clone_inuse($num) {
+	global $config, $a_clones;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $cloneif)
+		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif'])
 			return true;
 	}
 
@@ -59,7 +59,7 @@ function clone_inuse($cloneif) {
 
 if ($_GET['act'] == "del") {
 	/* check if still in use */
-	if (clone_inuse($a_clones[$_GET['id']]['cloneif'])) {
+	if (clone_inuse($_GET['id'])) {
 		$input_errors[] = "This wireless clone cannot be deleted because it is still being used as an interface.";
 	} else {
 		mwexec("/sbin/ifconfig " . $a_clones[$_GET['id']]['cloneif'] . " destroy");

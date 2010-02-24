@@ -215,6 +215,10 @@ function dump_xml_config_sub($arr, $indent) {
 					}
 				}
 				}
+			} else if (empty($val)) {
+				$xmlconfig .= str_repeat("\t", $indent);
+				$xmlconfig .= "<$ent/>\n";
+				$xmlconfig .= str_repeat("\t", $indent);
 			} else {
 				/* it's an array */
 				$xmlconfig .= str_repeat("\t", $indent);

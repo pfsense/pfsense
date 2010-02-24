@@ -121,7 +121,10 @@ function spit_out_select_items($area, $showall) {
 				   "wol" => "Wake on LAN"
 	);
 
-	$select  = "<select name=\"{$area}\">\n";
+	$select  = "<select name=\"{$area}\" id=\"{$aread}\" ";
+	if ($area == "backuparea")
+		$select .= " onChange=backuparea_change(this)";
+	$select .= " >\n";
 	$select .= "<option VALUE=\"\">ALL</option>";
 
 	if($showall == true) 
@@ -489,6 +492,13 @@ function decrypt_change() {
 		document.getElementById("decrypt_opts").style.display="";
 }
 
+function backuparea_change(obj) {
+
+        if (obj.value == "")
+                document.getElementById("dotnotbackuprrd").checked = false;
+        else
+                document.getElementById("dotnotbackuprrd").checked = true;
+}
 //-->
 </script>
 

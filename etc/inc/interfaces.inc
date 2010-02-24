@@ -1433,7 +1433,7 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 
 	$baseif = interface_get_wireless_base($ifcfg['if']);
 
-	$iflist = get_configured_interface_list();
+	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
 		if ($baseif == interface_get_wireless_base($config['interfaces'][$if]['if']) && $ifcfg['if'] != $config['interfaces'][$if]['if']) {
 			if (isset($config['interfaces'][$if]['wireless']['standard']) || $sync_changes) {

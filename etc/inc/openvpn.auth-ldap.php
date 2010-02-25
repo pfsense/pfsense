@@ -59,7 +59,7 @@ ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
 
 /* ok, its up.  now, lets bind as the bind user so we can search it */
-if (!($res = @ldap_bind($ldap, "{$ldapuserattr={$username}{$ldapbasedn}", $password))) {
+if (!($res = @ldap_bind($ldap, "{$ldapuserattr}={$username}{$ldapbasedn}", $password))) {
 	syslog(LOG_WARNING, "user {$username} could not authenticate\n");
 	ldap_close($ldap);
 	exit(-3);

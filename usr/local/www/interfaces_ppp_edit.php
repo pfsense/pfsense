@@ -1,6 +1,6 @@
 <?php
 /*
-	interfaces_lan.php
+	interfaces_ppp_edit.php
 	part of pfSense(http://pfsense.org)
 
 	Originally written by Adam Lebsack <adam at holonyx dot com>

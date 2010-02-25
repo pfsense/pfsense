@@ -2,7 +2,7 @@
 <?php
 /* $Id$ */
 /*
-    openvpn.auth-ldap.php
+    openvpn.auth-radius.php
 
     Copyright (C) 2010 Ermal Luci
     All rights reserved.
@@ -32,6 +32,8 @@
 	pfSense_BUILDER_BINARIES:	
 	pfSense_MODULE:	openvpn
 */
+
+require_once("radius.inc");
 
 /* setup syslog logging */
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);

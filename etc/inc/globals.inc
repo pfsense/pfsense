@@ -106,13 +106,6 @@ $g = array(
 	"help_base_url" => "/help.php"
 );
 
-// Loop through and set vlan_native_supp (native vlan tagging)
-$vlan_native_supp = get_nics_with_capabilities("vlanhwtag");
-if(count($vlan_native_supp) > 0)
-	$g['vlan_native_supp'] = $vlan_native_supp;
-else 
-	$g['vlan_native_supp'] = array("bce", "bge", "bfe", "cxgb", "dc", "em", "fxp", "gem", "hme", "ixgb", "msk", "nge", "re", "rl", "sis", "ste", "stge", "ti", "tl", "tx", "txp", "vge", "vr", "xl", "lagg");
-
 // Loop through and set vlan_long_frame VLAN_MTU
 $vlan_native_supp = get_nics_with_capabilities("vlanmtu");
 if(count($vlan_native_supp) > 0)
@@ -135,7 +128,7 @@ if(file_exists("/etc/platform")) {
 		$g['firmware_update_text']="pfSense-*.img.gz";
 
 	} else {
-		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_0/{$arch}/pfSense_HEAD/.updaters/";
+		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_1/{$arch}/pfSense_HEAD/.updaters/";
 		$g['update_manifest']="http://updates.pfSense.com/manifest";
 		$g['firmware_update_text']="pfSense-*.tgz";
 	}

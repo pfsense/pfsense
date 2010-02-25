@@ -148,13 +148,13 @@ function interface_vlan_configure(&$vlan) {
 
 	interfaces_bring_up($vlanif);
 
-    /* invalidate interface cache */
-    get_interface_arr(true);
+	/* invalidate interface cache */
+	get_interface_arr(true);
 
-    /*   all vlans need to spoof their parent mac address, too.  see
-     *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
-     */
-    foreach($config['interfaces'] as $interfaces) {
+	/*   all vlans need to spoof their parent mac address, too.  see
+	 *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
+	 */
+	foreach($config['interfaces'] as $interfaces) {
 		if($interfaces['if'] == $if && $interfaces['spoofmac']) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($vlanif) .
 				" link " . escapeshellarg($interfaces['spoofmac']));

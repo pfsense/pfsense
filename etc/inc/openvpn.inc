@@ -386,15 +386,15 @@ function openvpn_reconfigure($mode,& $settings) {
 					if ($authcfg) {
 						switch ($authcfg['type']) {
 						case 'ldap':
-							$sed = "\$ldaphost={$authcfg['host']};";
-							$sed .= "\$ldapport={$authcfg['ldap_port']};";
-							$sed .= "\$ldapuserattr={$authcfg['ldap_attr_user']};";
-							$sed .= "\$ldapbasedn={$authcfg['ldap_basedn']};";
+							$sed = "\$ldaphost=\"{$authcfg['host']}\";";
+							$sed .= "\$ldapport=\"{$authcfg['ldap_port']}\";";
+							$sed .= "\$ldapuserattr=\"{$authcfg['ldap_attr_user']}\";";
+							$sed .= "\$ldapbasedn=\"{$authcfg['ldap_basedn']}\";";
 							break;
 						case 'radius':
-							$sed = "\$radsrv={$authcfg['host']};";
-							$sed .= "\$radport={$authcfg['radius_auth_port']};";
-							$sed .= "\$radsecret={$authcfg['radius_secret']};";
+							$sed = "\$radsrv=\"{$authcfg['host']}\";";
+							$sed .= "\$radport=\"{$authcfg['radius_auth_port']}\";";
+							$sed .= "\$radsecret=\"{$authcfg['radius_secret']}\";";
 							break;
 						}
 						mwexec("/bin/cat /etc/inc/openvpn.auth-{$authcfg['type']}.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");

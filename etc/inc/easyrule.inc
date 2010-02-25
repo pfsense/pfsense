@@ -136,7 +136,6 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 	if (!is_array($config['aliases']['alias']))
 		$config['aliases']['alias'] = array();
 
-	aliases_sort();
 	$a_aliases = &$config['aliases']['alias'];
 
 	/* Try to get the ID if the alias already exists */
@@ -172,6 +171,9 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 		$a_aliases[$id] = $alias;
 	else
 		$a_aliases[] = $alias;
+
+	// Sort list
+	$a_aliases = msort($a_aliases, "name");
 
 	return true;
 }

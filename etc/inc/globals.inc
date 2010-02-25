@@ -107,7 +107,7 @@ $g = array(
 );
 
 // Loop through and set vlan_native_supp (native vlan tagging)
-$vlan_native_supp = get_nics_with_capabilities("HWTAGGING");
+$vlan_native_supp = get_nics_with_capabilities("vlanhwtag");
 if(count($vlan_native_supp) > 0)
 	$g['vlan_native_supp'] = $vlan_native_supp;
 else 

@@ -1713,6 +1713,8 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			$cmd .= " mediaopt " . escapeshellarg($wancfg['mediaopt']);
 		mwexec($cmd);
 	}
+	if (!empty($wancfg['mtu']))
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " mtu {$wancfg['mtu']}");
 
 	/* invalidate interface/ip/sn cache */
 	get_interface_arr(true);

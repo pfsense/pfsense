@@ -53,6 +53,26 @@ if ($_GET['act'] == "del") {
 		exit;
 }
 
+function dyndnsCheckIP($int) {
+
+	$ip_address = get_interface_ip($int);
+	if (is_private_ip($ip_address)) {
+		$hosttocheck = "checkip.dyndns.org";
+		$checkip = gethostbyname($hosttocheck);
+		$ip_ch = curl_init("http://{$checkip}");
+		curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($ip_ch, CURLOPT_INTERFACE, $ip_address);
+		$ip_result_page = curl_exec($ip_ch);
+		curl_close($ip_ch);
+		$ip_result_decoded = urldecode($ip_result_page);
+		preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
+		$ip_address = trim($matches[1]);
+	}
+
+	return $ip_address;
+}
+
 $pgtitle = array("Services", "Dynamic DNS clients");
 include("head.inc");
 
@@ -76,22 +96,22 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-				  <td width="5%"  class="listhdrr"></td>
-				  <td width="15%" class="listhdrr">Service</td>
+		  <td width="5%"  class="listhdrr"></td>
+		  <td width="15%" class="listhdrr">Service</td>
                   <td width="20%" class="listhdrr">Hostname</td>
                   <td width="20%" class="listhdrr">Cached IP</td>
                   <td width="50%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
-				</tr>
-			  <?php $i = 0; foreach ($a_dyndns as $dyndns): ?>
+		</tr>
+		  <?php $i = 0; foreach ($a_dyndns as $dyndns): ?>
                 <tr>
-				  <td class="listlr">
-				  <?php $iflist = get_configured_interface_with_descr();
-				  		foreach ($iflist as $if => $ifdesc):
-							if ($dyndns['interface'] == $if): ?>
-								<?=$ifdesc; break;?>
-					<?php endif; endforeach; ?>
-				  </td>
+		  <td class="listlr">
+		  <?php $iflist = get_configured_interface_with_descr();
+	  		foreach ($iflist as $if => $ifdesc):
+				if ($dyndns['interface'] == $if): ?>
+					<?=$ifdesc; break;?>
+		  <?php endif; endforeach; ?>
+		  </td>
                   <td class="listlr">
 				  <?php
 						$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS");
@@ -107,26 +127,23 @@ include("head.inc");
 					<?=htmlspecialchars($dyndns['host']);?>
                   </td>
                   <td class="listlr">
-					<?php
-						$int = strtolower($if);
-						$real_int = get_real_interface($if);
-						$filename = "{$g['conf_path']}/dyndns_{$int}dyndns.cache";
-						if(file_exists($filename)) {
-							$dns_resolv = str_replace("\n", "", `/usr/bin/host {$dyndns['host']} | awk '{ print $4 }'`);
-							$cached_ip_s = split(":", file_get_contents($filename));
-							$cached_ip = $cached_ip_s[0];
-							$int_ip = find_interface_ip($real_int);
-							if($int_ip <> $cached_ip or $dns_resolv <> $int_ip) 
-								echo "<font color='red'>";
-							else 
-								echo "<font color='green'>";
-							echo htmlspecialchars($cached_ip);
-							echo "</font>";
-						} else {
-							echo "N/A";
-						}
-					?>
-				  </td>
+			<?php
+				$filename = "{$g['conf_path']}/dyndns_{$if}{$dyndns['type']}.cache";
+				$ipaddr = dyndnsCheckIP($if);
+				if(file_exists($filename)) {
+					$cached_ip_s = split(":", file_get_contents($filename));
+					$cached_ip = $cached_ip_s[0];
+					if($ipaddr <> $cached_ip) 
+						echo "<font color='red'>";
+					else 
+						echo "<font color='green'>";
+						echo htmlspecialchars($cached_ip);
+						echo "</font>";
+				} else {
+					echo "N/A";
+				}
+			?>
+		  </td>
                   <td class="listbg">
                     <?=htmlspecialchars($dyndns['descr']);?>&nbsp;
                   </td>

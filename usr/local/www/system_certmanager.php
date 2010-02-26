@@ -668,7 +668,7 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<textarea name="csr" id="csr" cols="65" rows="7" class="formfld_cert" readonly><?=$pconfig['csr'];?></textarea>
 								<br>
-								Copy the certificate signing data from here and forward it to your certificate authority for singing.</td>
+								Copy the certificate signing data from here and forward it to your certificate authority for signing.</td>
 							</td>
 						</tr>
 						<tr>

@@ -325,11 +325,11 @@ EOD;
 			if (!empty($listrealif)) {
 				mwexec("/sbin/ifconfig {$listrealif} -ipfwfilter");
 				$carpif = link_ip_to_carp_interface(find_interface_ip($listrealif));
-			}
-                        if (!empty($carpif)) {
-				$carpsif = explode(" ", $carpif);
-				foreach ($carpsif as $cpcarp)
-					mwexec("/sbin/ifconfig {$cpcarp} -ipfwfilter");
+                        	if (!empty($carpif)) {
+					$carpsif = explode(" ", $carpif);
+					foreach ($carpsif as $cpcarp)
+						mwexec("/sbin/ifconfig {$cpcarp} -ipfwfilter");
+				}
 			}
 		}
 	}

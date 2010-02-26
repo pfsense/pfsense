@@ -104,7 +104,7 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 		</tr>
 		  <?php $i = 0; foreach ($a_dyndns as $dyndns): ?>
-                <tr>
+                <tr  ondblclick="document.location='services_dyndns_edit.php?id=<?=$i;?>'">
 		  <td class="listlr">
 		  <?php $iflist = get_configured_interface_with_descr();
 	  		foreach ($iflist as $if => $ifdesc):

@@ -110,7 +110,7 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_vlans as $vlan): ?>
-                <tr>
+                <tr ondblclick="document.location='interfaces_vlan_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
 					<?=htmlspecialchars($vlan['if']);?>
                   </td>

@@ -110,7 +110,7 @@ include("head.inc");
 				</tr>
 			  <?php $i = 0; $ifdescrs = get_configured_interface_with_descr();
 					foreach ($a_bridges as $bridge): ?>
-                <tr>
+                <tr  ondblclick="document.location='interfaces_bridge_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
 					<?=htmlspecialchars(strtoupper($bridge['bridgeif']));?>
                   </td>

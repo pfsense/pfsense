@@ -117,7 +117,7 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_qinqs as $qinq): ?>
-                <tr>
+                <tr  ondblclick="document.location='interfaces_qinq_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
 					<?=htmlspecialchars($qinq['if']);?>
                   </td>

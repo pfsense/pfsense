@@ -108,7 +108,7 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_gifs as $gif): ?>
-                <tr>
+                <tr  ondblclick="document.location='interfaces_gif_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
 					<?=htmlspecialchars($gif['if']);?>
                   </td>

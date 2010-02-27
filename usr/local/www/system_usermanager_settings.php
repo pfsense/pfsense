@@ -78,7 +78,7 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		if($_POST['session_timeout'])
-			$pconfig['session_timeout'] = $_POST['session_timeout'];
+			$pconfig['session_timeout'] = intval($_POST['session_timeout']);
 		else
 			unset($config['system']['webgui']['session_timeout']);
 

@@ -108,9 +108,9 @@ include("head.inc");
                   <td width="50%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
-			  <?php $i = 0; $ifdescrs = get_configured_interface_with_descr();
+			  <?php $i = 0;
 					foreach ($a_clones as $clone): ?>
-                <tr>
+                <tr ondblclick="document.location='interfaces_wireless_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
 					<?=htmlspecialchars($clone['cloneif']);?>
                   </td>

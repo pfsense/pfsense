@@ -105,12 +105,12 @@ function slbd_configure() {
 	$fda = fopen("{$g['varetc_path']}/apinger.conf", "w");
 	$apingerconfig = <<<EOD
 # pfSense apinger configuration file. Automatically Generated!
-user "nobody"
-group "nobody"
+user "root"
+group "wheel"
 pid_file "{$g['varrun_path']}/apinger.pid"
 status {
 	file "/tmp/apinger.status"
-	interval 10s
+	interval 1s
 }
 alarm default { 
 	command on "/usr/bin/touch /tmp/filter_dirty"

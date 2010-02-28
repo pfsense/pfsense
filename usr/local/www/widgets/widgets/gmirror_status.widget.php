@@ -1,7 +1,7 @@
 <?php
 /*
     gmirror_status.widget.php
-    Copyright (C) 2009 Jim Pingle
+    Copyright (C) 2009-2010 Jim Pingle
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
@@ -27,35 +27,21 @@
 
 require_once("/usr/local/www/widgets/include/gmirror_status.inc");
 
-$mirrors = get_gmirror_status();
-
+if ($_GET['textonly'] == "true") {
+	header("Cache-Control: no-cache");
+	echo gmirror_html_status();
+	exit;
+}
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tbody>
-<?php if (count($mirrors) > 0) { ?>
-		<tr>
-			<td width="40%" class="vncellt">Name</td>
-			<td width="40%" class="vncellt">Status</td>
-			<td width="20%" class="vncellt">Component</td>
-		</tr>
-	<?php foreach ($mirrors as $mirror => $name) { ?>
-		<tr>
-			<td width="40%" rowspan="<?= count($name["components"]) ?>" class="listr"><?= $name["name"] ?></td>
-			<td width="40%" rowspan="<?= count($name["components"]) ?>" class="listr"><?= $name["status"] ?></td>
-			<td width="20%" class="listr"><?= $name["components"][0] ?></td>
-		</tr>
-		<?php
-		if (count($name["components"]) > 1) {
-			$morecomponents = array_slice($name["components"], 1);
-			foreach ($morecomponents as $component) { ?>
-		<tr>
-			<td width="20%" class="listr"><?= $component ?></td>
-		</tr>
-		<?php	}
-		} ?>
-	<?php } ?>
-<?php } else { ?>
-		<tr><td colspan="3" class="listr">No Mirrors Found</td></tr>
-<?php } ?>
+	<tbody id="gmirror_status_table">
+		<?php echo gmirror_html_status(); ?>
 	</tbody>
 </table>
+
+<script type="text/javascript" language="javascript">
+  // <![CDATA[
+	var gmirrorupdater = new Ajax.PeriodicalUpdater('gmirror_status_table', '/widgets/widgets/gmirror_status.widget.php?textonly=true',
+	  { method: 'get', frequency: 5 } );
+  // ]]>
+</script>

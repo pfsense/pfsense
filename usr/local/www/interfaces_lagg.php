@@ -115,7 +115,7 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_laggs as $lagg): ?>
-                <tr>
+                <tr  ondblclick="document.location='interfaces_lagg_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
 					<?=htmlspecialchars(strtoupper($lagg['laggif']));?>
                   </td>

@@ -921,11 +921,16 @@ function session_auth($backing) {
 	}
 
 	/* If session timeout isn't set, we don't mark sessions stale */
-	if (!isset($config['system']['webgui']['session_timeout']) ||
-		$config['system']['webgui']['session_timeout'] == 0 ||
-		$config['system']['webgui']['session_timeout'] == "")
-		$_SESSION['last_access'] = time();
-	else {
+	if ( $config['system']['webgui']['session_timeout'] == 0 ||
+		$config['system']['webgui']['session_timeout'] == "") {
+		$_SESSION['last_access'] = time();	
+	} elseif (!isset($config['system']['webgui']['session_timeout'])) {
+		/* Default to 4 hour timeout if one is not set */
+		if ($_SESSION['last_access'] < (time() - 14400)) {
+			$_GET['logout'] = true;
+			$_SESSION['Logout'] = true;
+		}
+	} else {
 		/* Check for stale session */
 		if ($_SESSION['last_access'] < (time() - ($config['system']['webgui']['session_timeout'] * 60))) {
 			$_GET['logout'] = true;

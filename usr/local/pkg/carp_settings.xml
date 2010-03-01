@@ -73,7 +73,7 @@
 			<fieldname>pfsyncpeerip</fieldname>
 			<type>input</type>
 			<description>
-				Setting this option will force pfsync to synchronize its stable table to this IP address.  The default is directed multicast.
+				Setting this option will force pfsync to synchronize its state table to this IP address.  The default is directed multicast.
 			</description>
 		</field>
 		<field>

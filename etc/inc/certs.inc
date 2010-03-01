@@ -224,7 +224,7 @@ function csr_generate(& $cert, $keylen, $dn) {
 
 	$args = array(
 		"digest_alg" => "sha1",
-		"private_key_bits" => $keylen,
+		"private_key_bits" => (int)$keylen,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 		"encrypt_key" => false);
 

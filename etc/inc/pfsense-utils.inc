@@ -1192,26 +1192,24 @@ function get_interface_info($ifdescr) {
 	/* run netstat to determine link info */
 
 	unset($linkinfo);
-	if ($ifinfo['if'] != $ifinfo['hwif'])
-		$chkif = $ifinfo['hwif'];
-	else
-		$chkif = $ifinfo['if'];
+	$chkif = $ifinfo['if'];
 
 	exec("/usr/bin/netstat -I {$chkif} -nWb -f link", $linkinfo);
-
 	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-	if ("{$chkif}*" == $linkinfo[0])
-		$ifinfo['status'] = "down";
-	else if ($chkif == $linkinfo[0])
-		$ifinfo['status'] = "up";
-	else
-		$ifinfo['status'] = "down";
+
+	$ifinfotmp = pfSense_get_interface_addresses($chkif);
+	$ifinfo['status'] = $ifinfotmp['status'];
+	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
+	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
+	$ifinfo['subnet'] = $ifinfotmp['subnet'];
+	if (isset($ififnotmp['link0']))
+		$link0 = "down";
+
 	
-	if (preg_match("/^enc|^tun|^ppp|^pptp|^ovpn/i", $ifinfo['if'])) {
+	if (preg_match("/^enc|^tun|^ppp|^pptp|^ovpn/i", $chkif)) {
 		$ifinfo['inpkts'] = $linkinfo[3];
 		$ifinfo['outpkts'] = $linkinfo[6];
 	} else {
-		$ifinfo['macaddr'] = $linkinfo[3];
 		$ifinfo['inerrs'] = $linkinfo[5];
 		$ifinfo['outerrs'] = $linkinfo[9];
 		$ifinfo['collisions'] = $linkinfo[11];
@@ -1219,7 +1217,7 @@ function get_interface_info($ifdescr) {
 
 	/* Use pfctl for non wrapping 64 bit counters */
 	/* Pass */
-	exec("/sbin/pfctl -vvsI -i {$ifinfo['if']}", $pfctlstats);
+	exec("/sbin/pfctl -vvsI -i {$chkif}", $pfctlstats);
 	$pf_in4_pass = preg_split("/ +/ ", $pfctlstats[3]);
 	$pf_out4_pass = preg_split("/ +/", $pfctlstats[5]);
 	$in4_pass = $pf_in4_pass[5];
@@ -1249,32 +1247,9 @@ function get_interface_info($ifdescr) {
 	$ifinfo['outpkts'] = $in4_pass_packets + $out4_block_packets;
 		
 	$ifconfiginfo = "";
-	unset($ifconfiginfo, $link0);
-	exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
-	foreach ($ifconfiginfo as $ici) {
-		if (preg_match("/inet (\S+)/", $ici, $matches)) {
-			$ifinfo['ipaddr'] = $matches[1];
-		}
-		if (preg_match("/netmask (\S+)/", $ici, $matches)) {
-			if (preg_match("/^0x/", $matches[1])) {
-				$ifinfo['subnet'] = long2ip(hexdec($matches[1]));
-			}
-		}
-		if (strpos($ici, 'LINK0') !== false) {
-			$link0 = "down";
-		}
-	}
-
-	switch ($config['interfaces'][$if]['ipaddr']) {
-	/* DHCP? -> see if dhclient is up */
+	switch ($config['interfaces'][$ifdescr]['ipaddr']) {
+	 /* DHCP? -> see if dhclient is up */
 	case "dhcp":
-		/* see if dhclient is up */
-		if (find_dhclient_process($ifinfo['if']) <> "")
-			$ifinfo['dhcplink'] = "up";
-		else
-			$ifinfo['dhcplink'] = "down";
-
-		break;
 	case "carpdev-dhcp":
 		/* see if dhclient is up */
 		if (find_dhclient_process($ifinfo['if']) <> "")

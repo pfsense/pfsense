@@ -88,10 +88,10 @@
 				    $dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
 				    $dnsServer = '', $dnsPort = '', $dnsUpdateURL = '') {
 			
-			global $config;
+			global $config, $g;
 			
-			$this->_cacheFile = "/cf/conf/dyndns_{$dnsIf}{$dnsService}.cache";
-			$this->_debugFile = "/var/etc/dyndns_{$dnsIf}{$dnsService}.debug";
+			$this->_cacheFile = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}.cache";
+			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}.debug";
 
 			log_error("DynDns: updatedns() starting");
 			

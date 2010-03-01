@@ -39,6 +39,7 @@
 */
 
 function services_parse_dhcpd_hostnames() {
+	global $config;
 	$ps = `ps awux | grep isc | grep -v grep | grep parse | awk '{ print $2 }'`;
 	if($ps)
 		exec("kill {$ps}");

@@ -47,7 +47,7 @@ if (!is_array($config['bridges']['bridged']))
 $a_bridges = &$config['bridges']['bridged'] ;
 
 function bridge_inuse($num) {
-	global $config;
+	global $config, $a_bridges;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
@@ -111,7 +111,7 @@ include("head.inc");
 				</tr>
 			  <?php $i = 0; $ifdescrs = get_configured_interface_with_descr();
 					foreach ($a_bridges as $bridge): ?>
-                <tr>
+                <tr  ondblclick="document.location='interfaces_bridge_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
 					<?=htmlspecialchars(strtoupper($bridge['bridgeif']));?>
                   </td>

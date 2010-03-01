@@ -47,7 +47,7 @@ if (!is_array($config['gifs']['gif']))
 $a_gifs = &$config['gifs']['gif'] ;
 
 function gif_inuse($num) {
-	global $config;
+	global $config, $a_gifs;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
@@ -109,7 +109,7 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_gifs as $gif): ?>
-                <tr>
+                <tr  ondblclick="document.location='interfaces_gif_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
 					<?=htmlspecialchars($gif['if']);?>
                   </td>

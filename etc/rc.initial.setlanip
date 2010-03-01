@@ -187,8 +187,10 @@
 	        $good = true;
 	    } while (!$good);
 
-		if ($yn == "y")
+		if ($yn == "y") {
 			$config['system']['webgui']['protocol'] = "http";
+			$restart_webgui = true;
+		}
 	}
 
 	if (isset($config['system']['webgui']['noantilockout'])) {
@@ -221,6 +223,10 @@
 	if($restart_dhcpd) {
 		echo " DHCPD..."; 
 		services_dhcpd_configure();
+	}
+	if($restart_webgui) {
+		echo " restarting webConfigurator... ";
+		mwexec("/etc/rc.restart_webgui");
 	}
 	
 	if ($intip != '') {

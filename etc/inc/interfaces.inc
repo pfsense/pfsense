@@ -148,13 +148,13 @@ function interface_vlan_configure(&$vlan) {
 
 	interfaces_bring_up($vlanif);
 
-    /* invalidate interface cache */
-    get_interface_arr(true);
+	/* invalidate interface cache */
+	get_interface_arr(true);
 
-    /*   all vlans need to spoof their parent mac address, too.  see
-     *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
-     */
-    foreach($config['interfaces'] as $interfaces) {
+	/*   all vlans need to spoof their parent mac address, too.  see
+	 *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
+	 */
+	foreach($config['interfaces'] as $interfaces) {
 		if($interfaces['if'] == $if && $interfaces['spoofmac']) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($vlanif) .
 				" link " . escapeshellarg($interfaces['spoofmac']));
@@ -1775,6 +1775,8 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			$cmd .= " mediaopt " . escapeshellarg($wancfg['mediaopt']);
 		mwexec($cmd);
 	}
+	if (!empty($wancfg['mtu']))
+		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " mtu {$wancfg['mtu']}");
 
 	/* invalidate interface/ip/sn cache */
 	get_interface_arr(true);
@@ -2658,7 +2660,7 @@ function link_interface_to_vlans($int, $action = "") {
 	$real_if = get_real_interface($int);
 	if (is_array($config['vlans']['vlan'])) {
                 foreach ($config['vlans']['vlan'] as $vlan) {
-			if ($real_int == $vlan['if']) {
+			if ($real_if == $vlan['if']) {
 				if ($action == "update") {
 					foreach ($config['interfaces'] as $ifname => $ifcfg) {
 						if ($ifcfg['if'] == $vlan['vlanif'])

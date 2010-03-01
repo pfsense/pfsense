@@ -108,7 +108,7 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
-                <tr>
+                <tr  ondblclick="document.location='interfaces_ppp_edit.php?id=<?=$i;?>'">
                   <td class="listr">
 					<?=htmlspecialchars($ppp['port']);?>
                   </td>

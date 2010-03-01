@@ -74,6 +74,7 @@ $pconfig['reauthenticateacct'] = $config['captiveportal']['reauthenticateacct'];
 $pconfig['httpslogin_enable'] = isset($config['captiveportal']['httpslogin']);
 $pconfig['httpsname'] = strtolower($config['captiveportal']['httpsname']);
 $pconfig['cert'] = base64_decode($config['captiveportal']['certificate']);
+$pconfig['cacert'] = base64_decode($config['captiveportal']['cacertificate']);
 $pconfig['key'] = base64_decode($config['captiveportal']['private-key']);
 $pconfig['logoutwin_enable'] = isset($config['captiveportal']['logoutwin_enable']);
 $pconfig['peruserbw'] = isset($config['captiveportal']['peruserbw']);
@@ -116,6 +117,8 @@ if ($_POST) {
 			} else {
 				if (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))
 					$input_errors[] = "This certificate does not appear to be valid.";
+				if (!strstr($_POST['cacert'], "BEGIN CERTIFICATE") || !strstr($_POST['cacert'], "END CERTIFICATE"))
+					$input_errors[] = "This intermmediate certificate does not appear to be valid.";
 				if (!strstr($_POST['key'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['key'], "END RSA PRIVATE KEY"))
 					$input_errors[] = "This key does not appear to be valid.";
 			}
@@ -174,6 +177,7 @@ if ($_POST) {
 		$config['captiveportal']['bwdefaultdn'] = $_POST['bwdefaultdn'];
 		$config['captiveportal']['bwdefaultup'] = $_POST['bwdefaultup'];
 		$config['captiveportal']['certificate'] = base64_encode($_POST['cert']);
+		$config['captiveportal']['cacertificate'] = base64_encode($_POST['cacert']);
 		$config['captiveportal']['private-key'] = base64_encode($_POST['key']);
 		$config['captiveportal']['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
 		$config['captiveportal']['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
@@ -569,6 +573,13 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
         <br>
     Paste an RSA private key in PEM format here.</td>
 	  </tr>
+        <tr>
+      <td valign="top" class="vncell">HTTPS intermmediate certificate</td>
+      <td class="vtable">
+        <textarea name="cacert" cols="65" rows="7" id="cacert" class="formpre"><?=htmlspecialchars($pconfig['cacert']);?></textarea>
+        <br>
+    Paste a certificate in X.509 PEM format here.</td>
+          </tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncellreq">Portal page contents</td>
 	  <td width="78%" class="vtable">

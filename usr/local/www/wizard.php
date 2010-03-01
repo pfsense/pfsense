@@ -654,13 +654,19 @@ function fixup_string($string) {
 		}
 	}
 	$myurl = $proto . "://" . $_SERVER['HTTP_HOST'] . $urlport . "/";
-	$newstring = str_replace("\$myurl", $myurl, $newstring);
+
+	if (strstr($newstring, "\$myurl"))
+		$newstring = str_replace("\$myurl", $myurl, $newstring);
 	// fixup #2: $wanip
-	$curwanip = get_interface_ip();
-	$newstring = str_replace("\$wanip", $curwanip, $newstring);
+	if (strstr($newstring, "\$wanip")) {
+		$curwanip = get_interface_ip();
+		$newstring = str_replace("\$wanip", $curwanip, $newstring);
+	}
 	// fixup #3: $lanip
-	$lanip = get_interface_ip("lan");
-	$newstring = str_replace("\$lanip", $lanip, $newstring);
+	if (strstr($newstring, "\$lanip")) {
+		$lanip = get_interface_ip("lan");
+		$newstring = str_replace("\$lanip", $lanip, $newstring);
+	}
 	// fixup #4: fix'r'up here.
 	return $newstring;
 }

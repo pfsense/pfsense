@@ -303,7 +303,7 @@ function return_gateways_array($disabled = false) {
 		$gateway['attribute'] = "system";
 	
 		/* Loopback dummy for dynamic interfaces without a IP */
-		if(!is_ipaddr(trim($gateway['gateway']))) {
+		if(!is_ipaddr(trim($gateway['gateway'])) && $gateway['dynamic'] == true) {
 			 $gateway['gateway'] = "dynamic";
 		}
 
@@ -520,7 +520,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
                 $gw = lookup_gateway_ip_by_name($gwcfg['gateway']);
 
         // for dynamic interfaces we handle them through the $interface_router file.
-        if (!is_ipaddr($gw)) {
+        if (!is_ipaddr($gw) && !is_ipaddr($gwcfg['ipaddr'])) {
                 $realif = get_real_interface($interface);
                 if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
                         $gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");

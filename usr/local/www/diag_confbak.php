@@ -58,6 +58,20 @@ if($_GET['rmver'] != "") {
 	conf_mount_ro();
 }
 
+if($_GET['getcfg'] != "") {
+	$file = $g['conf_path'] . '/backup/config-' . $_GET['getcfg'] . '.xml';
+
+	$exp_name = urlencode("config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_GET['getcfg']}.xml");
+	$exp_data = file_get_contents($file);
+	$exp_size = strlen($exp_data);
+
+	header("Content-Type: application/octet-stream");
+	header("Content-Disposition: attachment; filename={$exp_name}");
+	header("Content-Length: $exp_size");
+	echo $exp_data;
+	exit;
+}
+
 cleanup_backupcache();
 $confvers = get_backups();
 unset($confvers['versions']);
@@ -110,13 +124,18 @@ include("head.inc");
 							<td class="listlr"> <?= $date ?></td>
 							<td class="listr"> <?= $desc ?></td>
 							<td valign="middle" class="list" nowrap>
-								<a href="diag_confbak.php?newver=<?=$version['time'];?>">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0">
+								<a href="diag_confbak.php?newver=<?=$version['time'];?>" onclick="return confirm('Revert to this configuration?')">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="Revert to this configuration" title="Revert to this configuration">
 								</a>
 							</td>
 							<td valign="middle" class="list" nowrap>
-								<a href="diag_confbak.php?rmver=<?=$version['time'];?>">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+								<a href="diag_confbak.php?rmver=<?=$version['time'];?>" onclick="return confirm('Delete this configuration backup?')">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="Remove this backup" title="Remove this backup">
+								</a>
+							</td>
+							<td valign="middle" class="list" nowrap>
+								<a href="diag_confbak.php?getcfg=<?=$version['time'];?>">
+									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_down.gif" width="17" height="17" border="0" alt="Download this backup" title="Download this backup">
 								</a>
 							</td>
 						</tr>

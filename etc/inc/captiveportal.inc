@@ -41,6 +41,8 @@
 */
 
 /* include all configuration functions */
+require_once("config.inc");
+require_once("functions.inc");
 require_once("radius_authentication.inc");
 require_once("radius_accounting.inc");
 require_once("radius.inc");
@@ -241,10 +243,14 @@ EOD;
 
 		if(isset($config['captiveportal']['httpslogin'])) {
 			$cert = base64_decode($config['captiveportal']['certificate']);
+			if (isset($config['captiveportal']['cacertificate']))
+				$cacert = base64_decode($config['captiveportal']['cacertificate']);
+			else
+				$cacert = "";
 			$key = base64_decode($config['captiveportal']['private-key']);
 			/* generate lighttpd configuration */
 			system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal-SSL.conf",
-				$cert, $key, "", "lighty-CaptivePortal-ssl.pid", "8001", "/usr/local/captiveportal/",
+				$cert, $key, $cacert, "lighty-CaptivePortal-ssl.pid", "8001", "/usr/local/captiveportal/",
 					"cert-portal.pem", "ca-portal.pem", "1", $maxproc, $use_fastcgi, true);
 		}
 
@@ -325,11 +331,11 @@ EOD;
 			if (!empty($listrealif)) {
 				mwexec("/sbin/ifconfig {$listrealif} -ipfwfilter");
 				$carpif = link_ip_to_carp_interface(find_interface_ip($listrealif));
-			}
-                        if (!empty($carpif)) {
-				$carpsif = explode(" ", $carpif);
-				foreach ($carpsif as $cpcarp)
-					mwexec("/sbin/ifconfig {$cpcarp} -ipfwfilter");
+                        	if (!empty($carpif)) {
+					$carpsif = explode(" ", $carpif);
+					foreach ($carpsif as $cpcarp)
+						mwexec("/sbin/ifconfig {$cpcarp} -ipfwfilter");
+				}
 			}
 		}
 	}
@@ -380,9 +386,9 @@ EOD;
 		$rulenum++;
 		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} 67 to any 68 out \n";
 		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass icmp from {$cpip} to any out icmptype 8\n";
+		$cprules .= "add {$rulenum} set 1 pass icmp from {$cpip} to any out icmptype 0\n";
 		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass icmp from any to {$cpip} in icmptype 0 \n";
+		$cprules .= "add {$rulenum} set 1 pass icmp from any to {$cpip} in icmptype 8 \n";
 		$rulenum++;
 		//# allow access to our DNS forwarder
 		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} to any 53 in \n";

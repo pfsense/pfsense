@@ -223,7 +223,7 @@ function change_mode() {
 
 function typesel_change_local(bits) {
 
-	if (!bits)
+	if (typeof(bits)=="undefined")
 		bits = 24;
 
 	switch (document.iform.localid_type.selectedIndex) {
@@ -258,7 +258,7 @@ function typesel_change_remote(bits) {
 
 function typesel_change_remote(bits) {
 
-	if (!bits)
+	if (typeof(bits)=="undefined")
 		bits = 24;
 
 	switch (document.iform.remoteid_type.selectedIndex) {

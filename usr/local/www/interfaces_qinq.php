@@ -46,7 +46,7 @@ if (!is_array($config['qinqs']['qinqentry']))
 $a_qinqs = &$config['qinqs']['qinqentry'];
 
 function qinq_inuse($num) {
-	global $config, $g;
+	global $config, $a_qinqs;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
@@ -118,7 +118,7 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_qinqs as $qinq): ?>
-                <tr>
+                <tr  ondblclick="document.location='interfaces_qinq_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
 					<?=htmlspecialchars($qinq['if']);?>
                   </td>

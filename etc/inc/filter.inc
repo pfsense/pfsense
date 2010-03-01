@@ -413,6 +413,8 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 	$finallist = "";
 	$aliasnesting[$name] = $name;
 	foreach ($addresses as $address) {
+		if (empty($address))
+			continue;
 		$linelength = strlen($finallist);
 		$tmpline = "";
 		if(is_alias($address)) {
@@ -2349,7 +2351,7 @@ function filter_generate_ipsec_rules() {
 				}
 			}
 
-			if(preg_match("/^carp/i", $ph1ent['interface'])) {
+			if(preg_match("/^vip/i", $ph1ent['interface'])) {
 				$parentinterface = link_carp_interface_to_parent($ph1ent['interface']);
 			} else {
 				$parentinterface = $ph1ent['interface'];

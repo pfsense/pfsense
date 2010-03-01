@@ -379,7 +379,36 @@ function openvpn_reconfigure($mode,& $settings) {
 				$conf .= "client-cert-not-required\n";
 			case 'server_tls_user':
 				$conf .= "username-as-common-name\n";
-				$conf .= "auth-user-pass-verify /etc/inc/openvpn.auth-user.php via-env\n";
+				if ($settings['authmode'] == "local")
+					$conf .= "auth-user-pass-verify /etc/inc/openvpn.auth-user.php via-env\n";
+				else {
+					$authcfg = system_get_authserver($settings['authmode']);
+					if ($authcfg) {
+						switch ($authcfg['type']) {
+						case 'ldap':
+							$basednrplc = array("dc=", "DC=");
+							$ldapbasedn = str_replace($basednrplc, "", $authcfg['ldap_basedn']);
+							$ldapbasedn = str_replace(",", ".", $ldapbasedn);
+							$sed = "\$ldapport=\"{$authcfg['ldap_port']}\";";
+							if (strstr($authcfg['ldap_urltype'], "Standard"))
+								$ldapproto = "ldap";
+							else
+								$ldapproto = "ldaps";
+							$sed .= "\$ldaphost=\"{$ldapproto}:\/\/{$authcfg['host']}\";";
+							$sed .= "\$ldapbasedn=\"@{$ldapbasedn}\";";
+							$sed .= "\$ldapver={$authcfg['ldap_protver']};";
+							break;
+						case 'radius':
+							$sed = "\$radsrv=\"{$authcfg['host']}\";";
+							$sed .= "\$radport=\"{$authcfg['radius_auth_port']}\";";
+							$sed .= "\$radsecret=\"{$authcfg['radius_secret']}\";";
+							break;
+						}
+						mwexec("/bin/cat /etc/inc/openvpn.auth-{$authcfg['type']}.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");
+						mwexec("/bin/chmod a+x {$g['varetc_path']}/openvpn/{$mode_id}.php");
+						$conf .= "auth-user-pass-verify {$g['varetc_path']}/openvpn/{$mode_id}.php via-env\n";
+					}
+				}
 				break;
 		}
 
@@ -446,8 +475,16 @@ function openvpn_reconfigure($mode,& $settings) {
 			$conf .= "ifconfig $ip2 $ip1\n";
 		}
 
-		if ($settings['proxy_addr'])
-			$conf .= "http-proxy {$settings['proxy_addr']} {$settings['proxy_port']}\n";
+		if ($settings['proxy_addr']) {
+			$conf .= "http-proxy {$settings['proxy_addr']} {$settings['proxy_port']}";
+			if ($settings['proxy_authtype'] != "none") {
+				$conf .= " {$g['varetc_path']}/openvpn/{$mode_id}.pas {$settings['proxy_authtype']}";
+				$proxypas = "{$settings['proxy_user']}\n";
+				$proxypas .= "{$settings['proxy_passwd']}\n";
+				file_put_contents("{$g['varetc_path']}/openvpn/{$mode_id}.pas", $proxypas);
+			}
+			$conf .= " \n";
+		}
 	}
 
 	// Add a remote network route if set
@@ -475,8 +512,13 @@ function openvpn_reconfigure($mode,& $settings) {
 				$conf .= "dh {$g['etc_path']}/dh-parameters.{$settings['dh_length']}\n";
 			if ($settings['crl'])
 				openvpn_add_keyfile($settings['crl'], $conf, $mode_id, "crl-verify");
-			if ($settings['tls'])
-				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth", $settings['mode'] == "server_tls" ? "0" : "1");
+			if ($settings['tls']) {
+				if ($settings['mode'] == "server_tls" || $settings['mode'] == "server_tls_user")
+					$tlsopt = 0;
+				else
+					$tlsopt = 1;
+				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth", $tlsopt);
+			}
 			break;
 	}
 

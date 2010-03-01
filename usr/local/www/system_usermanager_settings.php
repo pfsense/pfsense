@@ -72,18 +72,12 @@ if ($_POST) {
 	if($_POST['session_timeout']) {
 		$timeout = intval($_POST['session_timeout']);
 		if ($timeout != "" && !is_numeric($timeout))
-			$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
-
-		if ($timeout < 1)
-			$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
-
-		if ($timeout > 999)
-			$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
+			$input_errors[] = gettext("Session timeout must be an integer value.");
 	}
 
 	if (!$input_errors) {
 
-		if($_POST['session_timeout'] && $_POST['session_timeout'] != "0")
+		if($_POST['session_timeout'])
 			$pconfig['session_timeout'] = intval($_POST['session_timeout']);
 		else
 			unset($config['system']['webgui']['session_timeout']);
@@ -200,7 +194,7 @@ include("head.inc");
 				document.iform.ldapserver.disabled = 0;
 				document.iform.ldapbindun.disabled = 0;
 				document.iform.ldapbindpw.disabled = 0;
-				document.iform.ldapfilter.value = "(samaccountname=$username)";
+				document.iform.ldapfilter.value = "(samaccountname=*)";
 				document.iform.ldapnameattribute.value = "samaccountname";	
 				document.iform.ldapgroupattribute.value = "memberOf";
 				break;							
@@ -214,7 +208,7 @@ include("head.inc");
 				document.iform.ldapserver.disabled = 0;
 				document.iform.ldapbindun.disabled = 0;
 				document.iform.ldapbindpw.disabled = 0;
-				document.iform.ldapfilter.value = "(cn=$username)";		
+				document.iform.ldapfilter.value = "(cn=*)";		
 				document.iform.ldapnameattribute.value = "CN";
 				document.iform.ldapgroupattribute.value = "groupMembership";
 				break;				
@@ -249,7 +243,7 @@ if(!$pconfig['backend'])
                         <td width="78%" class="vtable">
 							<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
                           <br />
-                          <?=gettext("Time in minutes to expire idle management sessions.");?><br />
+                          <?=gettext("Time in minutes to expire idle management sessions. The default is four hours (240 minutes). <br/> Enter 0 to never expire sessions. NOTE: This is a security risk!");?><br />
 						</td>
                       </tr>
 					<tr>
@@ -260,7 +254,7 @@ if(!$pconfig['backend'])
 								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP (Active Directory)</option>
 								<option value="ldapother"<?php if ($pconfig['backend'] == "ldapother") echo " SELECTED";?>>LDAP OTHER (eDir, etc)</option>
 							</select>
-							<br/>NOTE: login failures or server not available issues will fall back to pfSense internal users/group authentication.
+							<br/>NOTE: login failures or server not available issues will fall back to <?=$g['product_name'];?> internal users/group authentication.
 						</td>
 					</tr>
 					<tr>

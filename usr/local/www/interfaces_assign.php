@@ -196,9 +196,11 @@ if ($_POST['apply']) {
 				
 				if (!is_array($ifport)) {
 					$reloadif = false;
-					if (!empty($config['interfaces'][$ifname]['if']) && $config['interfaces'][$ifname]['if'] <> $ifport)
+					if (!empty($config['interfaces'][$ifname]['if']) && $config['interfaces'][$ifname]['if'] <> $ifport) {
+						interface_bring_down($ifname);
 						/* Mark this to be reconfigured in any case. */
 						$reloadif = true;
+					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
 					if (preg_match('/^ppp_(.+)$/', $ifport, $matches)) {
 						$config['interfaces'][$ifname]['pointtopoint'] = true;

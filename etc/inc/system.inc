@@ -134,7 +134,7 @@ function system_resolvconf_generate($dynupdate = false) {
 				if(is_ipaddr($gatewayip)) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
-					mwexec("route delete -host {$syscfg['dnsserver'][$dnscountermo]}");
+					mwexec("route delete -host {$syscfg['dnsserver'][$dnscountermo]}", true);
 					mwexec("route add -host {$syscfg['dnsserver'][$dnscountermo]} {$gatewayip}");
 				}
 			}
@@ -1356,4 +1356,14 @@ function enable_watchdog() {
 	}
 }
 
+function system_get_authserver($name) {
+	global $config;
+
+	if (is_array($config['system']['authserver'])) {
+		foreach ($config['system']['authserver'] as $authcfg) {
+			if ($authcfg['name'] == $name)
+				return $authcfg;
+		}
+	}
+}
 ?>

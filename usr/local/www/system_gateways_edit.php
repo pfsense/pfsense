@@ -192,7 +192,7 @@ if ($_POST) {
 				$a_gateway_item[] = $gateway;
 			}
 		}
-		system_recolv_conf_generate();
+		system_resolvconf_generate();
 		mark_subsystem_dirty('staticroutes');
 		
 		write_config();

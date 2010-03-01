@@ -48,6 +48,9 @@ if (empty($username) || empty($password)) {
 /* Replaced by a sed with propper variables used below(ldap parameters). */
 //<template>
 
+if (!strstr($username, "@") && !strstr($username, "\\"))
+	$username .= $ldapbasedn;
+
 /* Make sure we can connect to LDAP */
 putenv('LDAPTLS_REQCERT=never');
 if (!($ldap = @ldap_connect($ldaphost, $ldapport))) {
@@ -56,16 +59,18 @@ if (!($ldap = @ldap_connect($ldaphost, $ldapport))) {
 }
 
 ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 
 /* ok, its up.  now, lets bind as the bind user so we can search it */
-if (!($res = @ldap_bind($ldap, "{$ldapuserattr}={$username}{$ldapbasedn}", $password))) {
+if (!($res = @ldap_bind($ldap, $username, $password))) {
 	syslog(LOG_WARNING, "user {$username} could not authenticate\n");
 	ldap_close($ldap);
 	exit(-3);
 }
 
 syslog(LOG_WARNING, "user {$username} authenticated\n");
+ldap_unbind($ldap);
+
 exit(0);
 
 ?>

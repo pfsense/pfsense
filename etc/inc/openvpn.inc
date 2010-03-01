@@ -386,10 +386,17 @@ function openvpn_reconfigure($mode,& $settings) {
 					if ($authcfg) {
 						switch ($authcfg['type']) {
 						case 'ldap':
-							$sed = "\$ldaphost=\"{$authcfg['host']}\";";
-							$sed .= "\$ldapport=\"{$authcfg['ldap_port']}\";";
-							$sed .= "\$ldapuserattr=\"{$authcfg['ldap_attr_user']}\";";
-							$sed .= "\$ldapbasedn=\"{$authcfg['ldap_basedn']}\";";
+							$basednrplc = array("dc=", "DC=");
+							$ldapbasedn = str_replace($basednrplc, "", $authcfg['ldap_basedn']);
+							$ldapbasedn = str_replace(",", ".", $ldapbasedn);
+							$sed = "\$ldapport=\"{$authcfg['ldap_port']}\";";
+							if (strstr($authcfg['ldap_urltype'], "Standard"))
+								$ldapproto = "ldap";
+							else
+								$ldapproto = "ldaps";
+							$sed .= "\$ldaphost=\"{$ldapproto}:\/\/{$authcfg['host']}\";";
+							$sed .= "\$ldapbasedn=\"@{$ldapbasedn}\";";
+							$sed .= "\$ldapver={$authcfg['ldap_protver']};";
 							break;
 						case 'radius':
 							$sed = "\$radsrv=\"{$authcfg['host']}\";";

@@ -512,8 +512,13 @@ function openvpn_reconfigure($mode,& $settings) {
 				$conf .= "dh {$g['etc_path']}/dh-parameters.{$settings['dh_length']}\n";
 			if ($settings['crl'])
 				openvpn_add_keyfile($settings['crl'], $conf, $mode_id, "crl-verify");
-			if ($settings['tls'])
-				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth", $settings['mode'] == "server_tls" ? "0" : "1");
+			if ($settings['tls']) {
+				if ($settings['mode'] == "server_tls" || $settings['mode'] == "server_tls_user")
+					$tlsopt = 0;
+				else
+					$tlsopt = 1;
+				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth", $tlsopt);
+			}
 			break;
 	}
 

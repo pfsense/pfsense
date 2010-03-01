@@ -134,7 +134,7 @@ function system_resolvconf_generate($dynupdate = false) {
 				if(is_ipaddr($gatewayip)) {
 					/* dns server array starts at 0 */
 					$dnscountermo = $dnscounter - 1;
-					mwexec("route delete -host {$syscfg['dnsserver'][$dnscountermo]}");
+					mwexec("route delete -host {$syscfg['dnsserver'][$dnscountermo]}", true);
 					mwexec("route add -host {$syscfg['dnsserver'][$dnscountermo]} {$gatewayip}");
 				}
 			}

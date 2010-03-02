@@ -1428,7 +1428,7 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 
 	$shared_settings = array('standard', 'turbo', 'protmode', 'channel', 'txpower');
 
-	if(!is_array($ifcfg['wireless']))
+	if(!is_interface_wireless($ifcfg['if']))
 		return;
 
 	$baseif = interface_get_wireless_base($ifcfg['if']);
@@ -1446,6 +1446,19 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 				}
 				if (!$sync_changes)
 					break;
+			}
+		}
+	}
+
+	if (interface_is_wireless_clone($ifcfg['if'])) {
+		foreach ($config['wireless']['clone'] as &$clone) {
+			if ($clone['cloneif'] == $ifcfg['if']) {
+				if ($sync_changes) {
+					$clone['mode'] = $ifcfg['wireless']['mode'];
+				} else {
+					$ifcfg['wireless']['mode'] = $clone['mode'];
+				}
+				break;
 			}
 		}
 	}
@@ -2400,6 +2413,14 @@ function interface_translate_type_to_real($interface) {
                 return $config['interfaces'][$interface]['if'];
         else
 		return $interface;
+}
+
+function interface_is_wireless_clone($wlif) {
+	if(!stristr($wlif, "_wlan")) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 function interface_get_wireless_base($wlif) {

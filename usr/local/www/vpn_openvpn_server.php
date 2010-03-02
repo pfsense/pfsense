@@ -173,6 +173,13 @@ if ($_POST) {
 	else
 		$tls_mode = false;
 
+	if (!empty($pconfig['authmode'])) {
+		foreach ($pconfig['authmode'] as $pauthmode) {
+			if ($pauthmode != "local" && $pconfig['mode'] == "server_tls_user") 
+				$input_errors[] = "Only 'Local authentication database'  is allowed with " . $openvpn_server_modes[$pconfig['mode']];
+		}
+	}
+
 	/* input validation */
 	if ($result = openvpn_validate_port($pconfig['local_port'], 'Local port'))
 		$input_errors[] = $result;
@@ -382,7 +389,11 @@ function mode_change() {
 		case "server_user":
                 case "server_tls_user":
 			document.getElementById("authmodetr").style.display="";
-			/* FALL THROUGH */
+			document.getElementById("client_opts").style.display="";
+			document.getElementById("remote_opts").style.display="none";
+			break;
+		case "server_tls":
+			document.getElementById("authmodetr").style.display="none";
 		default:
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";

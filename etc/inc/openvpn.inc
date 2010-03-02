@@ -75,7 +75,7 @@ $openvpn_server_modes = array(
 	'p2p_tls' => "Peer to Peer ( SSL/TLS )",
 	'p2p_shared_key' => "Peer to Peer ( Shared Key )",
 	'server_tls' => "Remote Access ( SSL/TLS )",
-//	'server_user' => "Remote Access ( User Auth )",
+	'server_user' => "Remote Access ( User Auth )",
 	'server_tls_user' => "Remote Access ( SSL/TLS + User Auth )");
 
 $openvpn_client_modes = array(
@@ -392,7 +392,7 @@ function openvpn_reconfigure($mode,& $settings) {
 				$sed .= ");";
 				mwexec("/bin/cat /etc/inc/openvpn.auth-user.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");
 				mwexec("/bin/chmod a+x {$g['varetc_path']}/openvpn/{$mode_id}.php");
-				$conf .= "auth-user-pass-verify {$g['varetc_path']}/openvpn//{$mode_id}.php via-env\n";
+				$conf .= "auth-user-pass-verify {$g['varetc_path']}/openvpn/{$mode_id}.php via-env\n";
 				break;
 		}
 

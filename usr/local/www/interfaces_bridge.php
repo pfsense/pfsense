@@ -61,7 +61,7 @@ function bridge_inuse($num) {
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (bridge_inuse($_GET['id'])) {
-		$input_errors[] = "This bridge TUNNEL cannot be deleted because it is still being used as an interface.";
+		$input_errors[] = "This bridge cannot be deleted because it is assigned as an interface.";
 	} else {
 		mwexec("/sbin/ifconfig " . $a_bridges[$_GET['id']]['bridgeif'] . " destroy");
 		unset($a_bridges[$_GET['id']]);
@@ -131,7 +131,7 @@ include("head.inc");
                     <?=htmlspecialchars($bridge['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="interfaces_bridge_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_bridge.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this bridge tunnel?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="interfaces_bridge.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this bridge?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>

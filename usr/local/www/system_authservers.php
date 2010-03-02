@@ -2,6 +2,7 @@
 /*
     system_authservers.php
 
+    Copyright (C) 2010 Ermal Luçi
     Copyright (C) 2008 Shrew Soft Inc.
     All rights reserved.
 

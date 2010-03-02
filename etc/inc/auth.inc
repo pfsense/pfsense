@@ -1,8 +1,11 @@
 <?php
 /* $Id$ */
 /*
-		Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
-		All rights reserved.
+	Copyright (C) 2010 Ermal Luçi
+	All rights reserved.
+
+	Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
+	All rights reserved.
 
         Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
         All rights reserved.

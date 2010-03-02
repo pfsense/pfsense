@@ -265,7 +265,7 @@ if ($_POST) {
 		if ($_POST['disable'] == "yes")
 			$server['disable'] = true;
 		$server['mode'] = $pconfig['mode'];
-		$server['authmode'] = $pconfig['authmode'];
+		$server['authmode'] = implode(",", $pconfig['authmode']);
 		$server['protocol'] = $pconfig['protocol'];
 		list($server['interface'], $server['ipaddr']) = explode ("|",$pconfig['interface']);
 		$server['local_port'] = $pconfig['local_port'];
@@ -338,6 +338,7 @@ if ($_POST) {
 		header("Location: vpn_openvpn_server.php");
 		exit;
 	}
+	$pconfig['authmode'] = implode(",", $pconfig['authmode']);
 }
 
 include("head.inc");
@@ -545,12 +546,13 @@ function netbios_change() {
 					<tr id="authmodetr" style="display:none">
                                                 <td width="22%" valign="top" class="vncellreq"><?=gettext("Backend for authentication");?></td>
                                                         <td width="78%" class="vtable">
-                                                        <select name='authmode' id='authmode' class="formselect">
-                                                                <option value="local" <?php if ($pconfig['authmode'] == "local") echo "selected";?>>Local authentication database</option>
+                                                        <select name='authmode[]' id='authmode' class="formselect" multiple="true" size="<?php echo count($auth_servers) + 1; ?>">
+							<?php $authmodes = explode(",", $pconfig['authmode']); ?>
+                                                                <option value="local" <?php if (in_array("local", $authmodes)) echo "selected";?>>Local authentication database</option>
                                                         <?php
                                                                 foreach ($auth_servers as $auth_server):
                                                                         $selected = "";
-                                                                        if ($pconfig['authmode'] == $auth_server['name'])
+                                                                        if (in_array($auth_server['name'], $authmodes))
                                                                                 $selected = "selected";
                                                         ?>
                                                                 <option value="<?=$auth_server['name'];?>" <?=$selected;?>><?=$auth_server['name'];?></option>

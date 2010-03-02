@@ -36,24 +36,23 @@ require("priv.defs.inc");
 require("priv.inc");
 
 if($_POST) {
-		print_r($_POST);
-		$ous = ldap_get_user_ous(true);
-		$values = "";
-		$isfirst = true;
-		foreach($ous as $ou) {		
-			if(in_array($ou, $_POST['ou'])) {
-				if($isfirst == false) 
-					$values .= ";";
-				$isfirst = false;
-				$values .= $ou;
-			}	
-		}
-		echo "<script language=\"JavaScript\">\n";
-		echo "<!--\n";
-		echo "	opener.document.forms[0].ldapauthcontainers.value='$values'\n";
-		echo "	this.close();\n";
-		echo "-->\n";
-		echo "</script>\n";
+	$ous = ldap_get_user_ous(true);
+	$values = "";
+	$isfirst = true;
+	foreach($ous as $ou) {		
+		if(in_array($ou, $_POST['ou'])) {
+			if($isfirst == false) 
+				$values .= ";";
+			$isfirst = false;
+			$values .= $ou;
+		}	
+	}
+	echo "<script language=\"JavaScript\">\n";
+	echo "<!--\n";
+	echo "	opener.document.forms[0].ldapauthcontainers.value='$values'\n";
+	echo "	this.close();\n";
+	echo "-->\n";
+	echo "</script>\n";
 }
 
 ?>

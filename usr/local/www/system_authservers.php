@@ -81,6 +81,7 @@ if ($act == "edit") {
 			$pconfig['ldap_protver'] = $a_server[$id]['ldap_protver'];
 			$pconfig['ldap_scope'] = $a_server[$id]['ldap_scope'];
 			$pconfig['ldap_basedn'] = $a_server[$id]['ldap_basedn'];
+			$pconfig['ldap_authcn'] = $a_server[$id]['ldap_authcn'];
 			$pconfig['ldap_binddn'] = $a_server[$id]['ldap_binddn'];
 			$pconfig['ldap_bindpw'] = $a_server[$id]['ldap_bindpw'];
 			$pconfig['ldap_attr_user'] = $a_server[$id]['ldap_attr_user'];
@@ -135,11 +136,11 @@ if ($_POST) {
 	if ($pconfig['type'] == "ldap") {
 		$reqdfields = explode(" ", "name type ldap_host ldap_port ".
 						"ldap_urltype ldap_protver ldap_scope ldap_basedn ".
-						"ldap_attr_user ldap_attr_group ldap_attr_member");
+						"ldap_attr_user ldap_attr_group ldap_attr_member ldapauthcontainers");
 		$reqdfieldsn = explode(",", "Descriptive name,Type,Hostname or IP,".
 						"Port value,Transport,Protocol version,Search level,".
 						"Search Base DN,User naming Attribute,".
-						"Group naming Attribute,Group member attribute");
+						"Group naming Attribute,Group member attribute,Authentication container");
 
 		if (!$pconfig['ldap_anon']) {
 			$reqdfields[] = "ldap_binddn";
@@ -200,6 +201,7 @@ if ($_POST) {
 			$server['ldap_protver'] = $pconfig['ldap_protver'];
 			$server['ldap_scope'] = $pconfig['ldap_scope'];
 			$server['ldap_basedn'] = $pconfig['ldap_basedn'];
+			$server['ldap_authcn'] = $pconfig['ldapauthcontainers'];
 			$server['ldap_attr_user'] = $pconfig['ldap_attr_user'];
 			$server['ldap_attr_group'] = $pconfig['ldap_attr_group'];
 			$server['ldap_attr_member'] = $pconfig['ldap_attr_member'];
@@ -469,6 +471,24 @@ function radius_srvcschange(){
 							</td>
 						</tr>
 						<tr>
+                                                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication containers");?></td>
+                                                        <td width="78%" class="vtable">
+                                                                <table border="0" cellspacing="0" cellpadding="2">
+                                                                        <tr>
+                                                                                <td>Containers: &nbsp;</td>
+                                                                                <td>
+                                                                                        <input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
+											<input type="button" onClick="javascript:if(openwindow('system_usermanager_settings_ldapacpicker.php') == false) alert('Popup blocker detected.  Action aborted.');" value="Select">
+											<br />NOTE: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.
+											<br />EXAMPLE: CN=Users;DC=example
+											<br />EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com 
+                                                                                </td>
+                                                                        </tr>
+                                                                </table>
+
+                                                        </td>
+                                                </tr>
+						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Bind credentials");?></td>
 							<td width="78%" class="vtable">
 								<table border="0" cellspacing="0" cellpadding="2">
@@ -658,6 +678,13 @@ function radius_srvcschange(){
 <?php include("fend.inc");?>
 <script type="text/javascript">
 <!--
+function openwindow(url) {
+	var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
+	if (oWin==null || typeof(oWin)=="undefined")
+		return false;
+	else
+		return true;
+}
 server_typechange('<?=$pconfig['type'];?>');
 <?php if (!isset($id) || $pconfig['type'] == "ldap"): ?>
 ldap_bindchange();

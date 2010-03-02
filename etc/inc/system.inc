@@ -1355,15 +1355,4 @@ function enable_watchdog() {
 		exec("/usr/sbin/watchdogd");
 	}
 }
-
-function system_get_authserver($name) {
-	global $config;
-
-	if (is_array($config['system']['authserver'])) {
-		foreach ($config['system']['authserver'] as $authcfg) {
-			if ($authcfg['name'] == $name)
-				return $authcfg;
-		}
-	}
-}
 ?>

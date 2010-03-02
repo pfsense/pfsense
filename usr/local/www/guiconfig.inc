@@ -134,9 +134,9 @@ $ldap_templates = array(
 
 	'msad' => array(
 				'desc' => "Microsoft AD",
-				'attr_user' => "samAccountNAme",
+				'attr_user' => "samAccountName",
 				'attr_group' => "cn",
-				'attr_member' => "member"),
+				'attr_member' => "memberOf"),
 
 	'edir' => array(
 				'desc' => "Novell eDirectory",

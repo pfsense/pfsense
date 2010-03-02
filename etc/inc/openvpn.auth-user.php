@@ -55,10 +55,21 @@ if (!$username || !$password) {
 	exit(-1);
 }
 
-/* lookup user object by name */
-if (!local_backed($username, $password)) {
-	syslog(LOG_WARNING, "user {$username} supplied an invalid password\n");
-	exit(-2);
+/* Replaced by a sed with propper variables used below(ldap parameters). */
+//<template>
+
+$authenticated = false;
+foreach ($authmodes as $authmode) {
+	$authcfg = auth_get_authserver($authmode);
+	if (!$authcfg)
+		continue;
+
+	$authenticated = authenticate_user($username, $password, $authcfg);
+}
+
+if ($authenticated == false) {
+	syslog(LOG_WARNING, "user {$username} could not authenticate.\n");
+	exit(-1);
 }
 
 syslog(LOG_WARNING, "user {$username} authenticated\n");

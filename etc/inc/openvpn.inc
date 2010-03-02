@@ -384,27 +384,7 @@ function openvpn_reconfigure($mode,& $settings) {
 				else {
 					$authcfg = system_get_authserver($settings['authmode']);
 					if ($authcfg) {
-						switch ($authcfg['type']) {
-						case 'ldap':
-							$basednrplc = array("dc=", "DC=");
-							$ldapbasedn = str_replace($basednrplc, "", $authcfg['ldap_basedn']);
-							$ldapbasedn = str_replace(",", ".", $ldapbasedn);
-							$sed = "\$ldapport=\"{$authcfg['ldap_port']}\";";
-							if (strstr($authcfg['ldap_urltype'], "Standard"))
-								$ldapproto = "ldap";
-							else
-								$ldapproto = "ldaps";
-							$sed .= "\$ldaphost=\"{$ldapproto}:\/\/{$authcfg['host']}\";";
-							$sed .= "\$ldapbasedn=\"@{$ldapbasedn}\";";
-							$sed .= "\$ldapver={$authcfg['ldap_protver']};";
-							break;
-						case 'radius':
-							$sed = "\$radsrv=\"{$authcfg['host']}\";";
-							$sed .= "\$radport=\"{$authcfg['radius_auth_port']}\";";
-							$sed .= "\$radsecret=\"{$authcfg['radius_secret']}\";";
-							break;
-						}
-						mwexec("/bin/cat /etc/inc/openvpn.auth-{$authcfg['type']}.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");
+						mwexec("/bin/cat /etc/inc/openvpn.auth-{$authcfg['type']}.php | /usr/bin/sed 's/\/\/<template>/\$authmode=\"{$authcfg['name']}\";/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");
 						mwexec("/bin/chmod a+x {$g['varetc_path']}/openvpn/{$mode_id}.php");
 						$conf .= "auth-user-pass-verify {$g['varetc_path']}/openvpn/{$mode_id}.php via-env\n";
 					}

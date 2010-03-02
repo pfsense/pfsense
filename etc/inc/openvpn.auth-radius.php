@@ -33,6 +33,8 @@
 	pfSense_MODULE:	openvpn
 */
 
+require_once("config.inc");
+require_once("system.inc");
 require_once("radius.inc");
 
 /* setup syslog logging */
@@ -50,19 +52,24 @@ if (empty($username) || empty($password)) {
 /* Replaced by a sed with propper variables used below(server parameters). */
 //<template>
 
+$authcfg = system_get_authserver($authmode);
+$radsrv="{$authcfg['host']}";
+$radport="{$authcfg['radius_auth_port']}";
+$radsecret="{$authcfg['radius_secret']}";
+
 $rauth = new Auth_RADIUS_PAP($username, $password);
 /* Add server to our instance */
 $rauth->addServer($radsrv, $radport, $radsecret);
 
 if (!$rauth->start()) {
-	syslog(LOG_ERROR, "ERROR! . $rauth->getError());
+	syslog(LOG_ERROR, "ERROR! " . $rauth->getError());
 	exit(-2);
 }
 
 /* Send request */
 $result = $rauth->send();
 if (PEAR::isError($result)) {
-	syslog(LOG_WARNING, "Something went wrong trying to authenticate {$username}. " . $result->getMessage() . " \n");
+	syslog(LOG_WARNING, "Something went wrong trying to authenticate {$username}: " . $result->getMessage() . " \n");
 	exit(-1);
 } else if ($result === true) {
 	syslog(LOG_WARNING, "user {$username} authenticated\n");

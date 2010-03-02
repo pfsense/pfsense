@@ -61,10 +61,12 @@ if (!$username || !$password) {
 $authenticated = false;
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
-	if (!$authcfg)
+	if (!$authcfg && $authmode != "local")
 		continue;
 
 	$authenticated = authenticate_user($username, $password, $authcfg);
+	if ($authenticated == true)
+		break;
 }
 
 if ($authenticated == false) {

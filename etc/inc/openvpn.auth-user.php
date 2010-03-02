@@ -42,8 +42,43 @@
  */
 
 require_once("config.inc");
+require_once("radius.inc");
 require_once("auth.inc");
+require_once("interfaces.inc");
 
+/**
+ * Get the NAS-Identifier
+ *
+ * We will use our local hostname to make up the nas_id
+ */
+if (!function_exists("getNasID")) {
+function getNasID()
+{
+    global $g;
+
+    $nasId = "";
+    exec("/bin/hostname", $nasId);
+    if(!$nasId[0])
+        $nasId[0] = "{$g['product_name']}";
+    return $nasId[0];
+}
+}
+
+/**
+ * Get the NAS-IP-Address based on the current wan address
+ *
+ * Use functions in interfaces.inc to find this out
+ *
+ */
+if (!function_exists("getNasIP")) {
+function getNasIP()
+{
+    $nasIp = get_interface_ip();
+    if(!$nasIp)
+        $nasIp = "0.0.0.0";
+    return $nasIp;
+}
+}
 /* setup syslog logging */
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 

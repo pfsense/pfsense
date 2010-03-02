@@ -1002,7 +1002,7 @@ function radius_backed($username, $passwd, $authcfg = NULL){
 	foreach ($radiusservers as $radsrv)
 		$rauth->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['sharedsecret']);
 
-	if (!$rauth->start()) {
+	if (PEAR::iserError($rauth->start())) {
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $rauth->getError();
 		if ($debug)

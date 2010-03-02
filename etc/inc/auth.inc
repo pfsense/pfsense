@@ -653,7 +653,7 @@ function ldap_backed($username, $passwd) {
 	$ldapnameattribute  = $config['system']['webgui']['ldapnameattribute'];  
 	$ldapfilter         = $config['system']['webgui']['ldapfilter'];
 	$ldaptype           = $config['system']['webgui']['backend'];
-	$ldapfilter = str_replace("<username>", $username, $ldapfilter);
+	$ldapfilter = str_replace("_username_", $username, $ldapfilter);
 
 	/* first check if there is even an LDAP server populated */ 
 	if(!$ldapserver) {

@@ -279,6 +279,27 @@ function interface_qinq2_configure(&$qinq, $fd, $macaddr) {
         return $vlanif;
 }
 
+function interfaces_create_wireless_clones() {
+	global $config;
+
+	if($g['booting'])
+		echo "Creating other wireless clone interfaces...";
+	if (is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
+		foreach ($config['wireless']['clone'] as $clone) {
+			if(empty($clone['cloneif']))
+				continue;
+			if(does_interface_exist($clone['cloneif']))
+				continue;
+			/* XXX: Maybe we should report any errors?! */
+			if(interface_wireless_clone($clone['cloneif'], $clone))
+				if($g['booting'])
+					echo " " . $clone['cloneif'];
+		}
+	}
+	if($g['booting'])
+		echo " done.\n";
+}
+
 function interfaces_bridge_configure() {
         global $config;
 
@@ -694,6 +715,9 @@ function interfaces_configure() {
 				echo "done.\n";
 		}
 	}
+
+	/* create the unconfigured wireless clones */
+	interfaces_create_wireless_clones();
 
 	/* set up GRE virtual interfaces */
 	interfaces_gre_configure();
@@ -1342,7 +1366,11 @@ function interface_wireless_clone($realif, $wlcfg) {
 	 *   If it has not been cloned then go ahead and clone it.
 	 */
 	$needs_clone = false;
-	switch($wlcfg['wireless']['mode']) {
+	if(is_array($wlcfg['wireless']))
+		$wlcfg_mode = $wlcfg['wireless']['mode'];
+	else
+		$wlcfg_mode = $wlcfg['mode'];
+	switch($wlcfg_mode) {
 		 case "hostap":
 			$mode = "wlanmode hostap";
 			break;
@@ -1353,19 +1381,20 @@ function interface_wireless_clone($realif, $wlcfg) {
 			$mode = "";
 			break;
 	}
+	$baseif = interface_get_wireless_base($wlcfg['if']);
 	if(does_interface_exist($realif)) {
 		exec("/sbin/ifconfig {$realif}", $output, $ret);
 		$ifconfig_str = implode($output);
-		if(($wlcfg['wireless']['mode'] == "hostap") && (! preg_match("/hostap/si", $ifconfig_str))) {
-			log_error("Interface {$wlcfg['if']}_wlan{$interface_num} changed to hostap mode");
+		if(($wlcfg_mode == "hostap") && (! preg_match("/hostap/si", $ifconfig_str))) {
+			log_error("Interface {$realif} changed to hostap mode");
 			$needs_clone = true;
 		}
-		if(($wlcfg['wireless']['mode'] == "adhoc") && (! preg_match("/adhoc/si", $ifconfig_str))) {
-			log_error("Interface {$wlcfg['if']}_wlan{$interface_num} changed to adhoc mode");
+		if(($wlcfg_mode == "adhoc") && (! preg_match("/adhoc/si", $ifconfig_str))) {
+			log_error("Interface {$realif} changed to adhoc mode");
 			$needs_clone = true;
 		}
-		if(($wlcfg['wireless']['mode'] == "bss") && (preg_match("/hostap|adhoc/si", $ifconfig_str))) {
-			log_error("Interface {$wlcfg['if']}_wlan{$interface_num} changed to infrastructure mode");
+		if(($wlcfg_mode == "bss") && (preg_match("/hostap|adhoc/si", $ifconfig_str))) {
+			log_error("Interface {$realif} changed to infrastructure mode");
 			$needs_clone = true;
 		}
 	} else {
@@ -1380,15 +1409,45 @@ function interface_wireless_clone($realif, $wlcfg) {
 		log_error("Cloning new wireless interface {$realif}");
 		// Create the new wlan interface. FreeBSD returns the new interface name.
 		// example:  wlan2
-		exec("/sbin/ifconfig wlan create wlandev {$wlcfg['if']} {$mode} 2>&1", $out, $ret);
+		exec("/sbin/ifconfig wlan create wlandev {$baseif} {$mode} bssid 2>&1", $out, $ret);
 		if($ret <> 0) {
-			log_error("Failed to clone interface {$wlcfg['if']} with error code {$ret}, output {$out[0]}");
+			log_error("Failed to clone interface {$baseif} with error code {$ret}, output {$out[0]}");
+			return false;
 		}
 		$newif = trim($out[0]);
 		// Rename the interface to {$parentnic}_wlan{$number}#: EX: ath0_wlan0
 		mwexec("/sbin/ifconfig {$newif} name {$realif} 2>&1", false);
 		// FIXME: not sure what ngctl is for. Doesn't work.
-		// mwexec("/usr/sbin/ngctl name {$newif}: {$wlcfg['if']}_wlan{$interface_num}", false);
+		// mwexec("/usr/sbin/ngctl name {$newif}: {$realif}", false);
+	}
+	return true;
+}
+
+function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
+	global $config, $g;
+
+	$shared_settings = array('standard', 'turbo', 'protmode', 'channel', 'txpower');
+
+	if(!is_array($ifcfg['wireless']))
+		return;
+
+	$baseif = interface_get_wireless_base($ifcfg['if']);
+
+	$iflist = get_configured_interface_list(false, true);
+	foreach ($iflist as $if) {
+		if ($baseif == interface_get_wireless_base($config['interfaces'][$if]['if']) && $ifcfg['if'] != $config['interfaces'][$if]['if']) {
+			if (isset($config['interfaces'][$if]['wireless']['standard']) || $sync_changes) {
+				foreach ($shared_settings as $setting) {
+					if ($sync_changes) {
+						$config['interfaces'][$if]['wireless'][$setting] = $ifcfg['wireless'][$setting];
+					} else {
+						$ifcfg['wireless'][$setting] = $config['interfaces'][$if]['wireless'][$setting];
+					}
+				}
+				if (!$sync_changes)
+					break;
+			}
+		}
 	}
 }
 
@@ -1407,6 +1466,9 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 
 	// Clone wireless nic if needed.
 	interface_wireless_clone($if, $wl);
+
+	// Reject inadvertent changes to shared settings in case the interface hasn't been configured.
+	interface_sync_wireless_clones($wl, false);
 
 	$fd_set = fopen("{$g['tmp_path']}/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");
@@ -2340,6 +2402,22 @@ function interface_translate_type_to_real($interface) {
 		return $interface;
 }
 
+function interface_get_wireless_base($wlif) {
+	if(!stristr($wlif, "_wlan")) {
+		return $wlif;
+	} else {
+		return substr($wlif, 0, stripos($wlif, "_wlan"));
+	}
+}
+
+function interface_get_wireless_clone($wlif) {
+	if(!stristr($wlif, "_wlan")) {
+		return $wlif . "_wlan0";
+	} else {
+		return $wlif;
+	}
+}
+
 function get_real_interface($interface = "wan") {
     global $config;
 
@@ -2399,11 +2477,7 @@ function get_real_interface($interface = "wan") {
 			// interface name format: $parentnic_wlanparentnic#
 			// example: ath0_wlan0
 			if(is_interface_wireless($cfg['if'])) {
-				if ($interface == "wan")
-					$interface_num = 0;
-				else
-					$interface_num = substr($interface, 3);
-				$wanif = $cfg['if'] . "_wlan" . $interface_num;
+				$wanif = interface_get_wireless_clone($cfg['if']);
 				break;
 			}
 

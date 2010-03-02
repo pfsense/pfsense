@@ -58,6 +58,14 @@ require("rrd.inc");
 /* get list without VLAN interfaces */
 $portlist = get_interface_list();
 
+/* add wireless clone interfaces */
+if (is_array($config['wireless']['clone']) && count($config['wireless']['clone'])) {
+	foreach ($config['wireless']['clone'] as $clone) {
+		$portlist[$clone['cloneif']] = $clone;
+		$portlist[$clone['cloneif']]['iswlclone'] = true;
+	}
+}
+
 /* add VLAN interfaces */
 if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	foreach ($config['vlans']['vlan'] as $vlan) {
@@ -312,8 +320,10 @@ if ($_GET['act'] == "add") {
 		}
 		if (!$portused) {
 			$config['interfaces'][$newifname]['if'] = $portname;
-			if (preg_match($g['wireless_regex'], $portname))
+			if (preg_match($g['wireless_regex'], $portname)) {
 				$config['interfaces'][$newifname]['wireless'] = array();
+				interface_sync_wireless_clones($config['interfaces'][$newifname], false);
+			}
 			break;
 		}
 	}
@@ -356,13 +366,14 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	$tab_array = array();
 	$tab_array[0] = array("Interface assignments", true, "interfaces_assign.php");
 	$tab_array[1] = array("Interface Groups", false, "interfaces_groups.php");
-	$tab_array[2] = array("VLANs", false, "interfaces_vlan.php");
-	$tab_array[3] = array("QinQs", false, "interfaces_qinq.php");
-	$tab_array[4] = array("PPP", false, "interfaces_ppp.php");
-        $tab_array[5] = array("GRE", false, "interfaces_gre.php");
-        $tab_array[6] = array("GIF", false, "interfaces_gif.php");
-	$tab_array[7] = array("Bridges", false, "interfaces_bridge.php");
-	$tab_array[8] = array("LAGG", false, "interfaces_lagg.php");
+	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
+	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
+	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
+	$tab_array[5] = array("PPP", false, "interfaces_ppp.php");
+        $tab_array[6] = array("GRE", false, "interfaces_gre.php");
+        $tab_array[7] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
+	$tab_array[9] = array("LAGG", false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>  
   </td></tr>
@@ -392,6 +403,11 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		if ($portinfo['descr'])
 			$descr .= " (" . $portinfo['descr'] . ")";
 			echo htmlspecialchars($descr);
+                } elseif ($portinfo['iswlclone']) {
+                        $descr = $portinfo['cloneif'];
+                        if ($portinfo['descr'])
+				$descr .= " (" . $portinfo['descr'] . ")";
+                        echo htmlspecialchars($descr);
 		} elseif ($portinfo['isppp']) {
 			$descr = "PPP {$portinfo['port']}";
 			if ($portinfo['descr'])

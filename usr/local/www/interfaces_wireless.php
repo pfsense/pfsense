@@ -1,10 +1,9 @@
 <?php
 /* $Id$ */
 /*
-	interfaces_vlan.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	interfaces_wireless.php
 
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2010 Erik Fonnesbeck
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -29,30 +28,29 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE:	interfaces
+	pfSense_MODULE:	interfaces_assign
 */
 
 ##|+PRIV
-##|*IDENT=page-interfaces-vlan
-##|*NAME=Interfaces: VLAN page
-##|*DESCR=Allow access to the 'Interfaces: VLAN' page.
-##|*MATCH=interfaces_vlan.php*
+##|*IDENT=page-interfaces-wireless
+##|*NAME=Interfaces: Wireless page
+##|*DESCR=Allow access to the 'Interfaces: Wireless' page.
+##|*MATCH=interfaces_wireless.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 
-if (!is_array($config['vlans']['vlan']))
-	$config['vlans']['vlan'] = array();
+if (!is_array($config['wireless']['clone']))
+	$config['wireless']['clone'] = array();
 
-$a_vlans = &$config['vlans']['vlan'] ;
+$a_clones = &$config['wireless']['clone'];
 
-function vlan_inuse($num) {
-	global $config, $a_vlans;
+function clone_inuse($num) {
+	global $config, $a_clones;
 
 	$iflist = get_configured_interface_list(false, true);
 	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_vlans[$num]['vlanif'])
+		if ($config['interfaces'][$if]['if'] == $a_clones[$num]['cloneif'])
 			return true;
 	}
 
@@ -61,21 +59,21 @@ function vlan_inuse($num) {
 
 if ($_GET['act'] == "del") {
 	/* check if still in use */
-	if (vlan_inuse($_GET['id'])) {
-		$input_errors[] = "This VLAN cannot be deleted because it is still being used as an interface.";
+	if (clone_inuse($_GET['id'])) {
+		$input_errors[] = "This wireless clone cannot be deleted because it is still being used as an interface.";
 	} else {
-		mwexec("/sbin/ifconfig " . $a_vlans[$_GET['id']]['vlanif'] . " destroy");
-		unset($a_vlans[$_GET['id']]);
+		mwexec("/sbin/ifconfig " . $a_clones[$_GET['id']]['cloneif'] . " destroy");
+		unset($a_clones[$_GET['id']]);
 
 		write_config();
 
-		header("Location: interfaces_vlan.php");
+		header("Location: interfaces_wireless.php");
 		exit;
 	}
 }
 
 
-$pgtitle = array("Interfaces","VLAN");
+$pgtitle = array("Interfaces","Wireless");
 include("head.inc");
 
 ?>
@@ -89,12 +87,12 @@ include("head.inc");
 	$tab_array = array();
 	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
 	$tab_array[1] = array("Interface Groups", false, "interfaces_groups.php");
-	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
-	$tab_array[3] = array("VLANs", true, "interfaces_vlan.php");
+	$tab_array[2] = array("Wireless", true, "interfaces_wireless.php");
+	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
 	$tab_array[5] = array("PPP", false, "interfaces_ppp.php");
-        $tab_array[6] = array("GRE", false, "interfaces_gre.php");
-        $tab_array[7] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[6] = array("GRE", false, "interfaces_gre.php");
+	$tab_array[7] = array("GIF", false, "interfaces_gif.php");
 	$tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
 	$tab_array[9] = array("LAGG", false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
@@ -106,34 +104,35 @@ include("head.inc");
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="20%" class="listhdrr">Interface</td>
-                  <td width="20%" class="listhdrr">VLAN tag</td>
+                  <td width="20%" class="listhdrr">Mode</td>
                   <td width="50%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
-			  <?php $i = 0; foreach ($a_vlans as $vlan): ?>
-                <tr ondblclick="document.location='interfaces_vlan_edit.php?id=<?=$i;?>'">
+			  <?php $i = 0;
+					foreach ($a_clones as $clone): ?>
+                <tr ondblclick="document.location='interfaces_wireless_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
-					<?=htmlspecialchars($vlan['if']);?>
+					<?=htmlspecialchars($clone['cloneif']);?>
                   </td>
                   <td class="listr">
-					<?=htmlspecialchars($vlan['tag']);?>
+					<?=htmlspecialchars($clone['mode']);?>
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($vlan['descr']);?>&nbsp;
+                    <?=htmlspecialchars($clone['descr']);?>&nbsp;
                   </td>
-                  <td valign="middle" nowrap class="list"> <a href="interfaces_vlan_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_vlan.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this VLAN?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                  <td valign="middle" nowrap class="list"> <a href="interfaces_wireless_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
+                     &nbsp;<a href="interfaces_wireless.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this wireless clone?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="3">&nbsp;</td>
-                  <td class="list"> <a href="interfaces_vlan_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                  <td class="list"> <a href="interfaces_wireless_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
 				  Note:<br>
 				  </strong></span>
-				  Not all drivers/NICs support 802.1Q VLAN tagging properly. On cards that do not explicitly support it, VLAN tagging will still work, but the reduced MTU may cause problems. See the <?=$g['product_name']?> handbook for information on supported cards. </p>
+				  Here you can configure clones of wireless interfaces, which can be assigned as separate independent interfaces. Only available on wireless chipsets that support this, with limitations on the number that can be created in each mode.
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

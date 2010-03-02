@@ -499,6 +499,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'lo',
 				'ng',
 				'_vlan',
+				'_wlan',
 				'pflog',
 				'plip',
 				'pfsync',
@@ -958,7 +959,7 @@ function is_interface_mismatch() {
         $do_assign = false;
         $i = 0;
         foreach ($config['interfaces'] as $ifname => $ifcfg) {
-                if (preg_match("/^enc|^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $ifcfg['if'])) {
+                if (preg_match("/^enc|^tun|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
                         $i++;
                 }
                 else if (does_interface_exist($ifcfg['if']) == false) {

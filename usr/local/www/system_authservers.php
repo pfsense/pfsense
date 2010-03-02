@@ -39,6 +39,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("auth.inc");
 
 $pgtitle = array("System", "Authentication Servers");
 
@@ -107,13 +108,13 @@ if ($act == "edit") {
 			if ( $pconfig['radius_auth_port'] &&
 				!$pconfig['radius_acct_port'] ) {
 				$pconfig['radius_srvcs'] = "auth";
-				$pconfig['radius_acct_port'] = 813;
+				$pconfig['radius_acct_port'] = 1813;
 			}
 
 			if (!$pconfig['radius_auth_port'] &&
 				 $pconfig['radius_acct_port'] ) {
 				$pconfig['radius_srvcs'] = "acct";
-				$pconfig['radius_auth_port'] = 812;
+				$pconfig['radius_auth_port'] = 1812;
 			}
 
 		}
@@ -124,8 +125,8 @@ if ($act == "new") {
 	$pconfig['ldap_protver'] = 3;
 	$pconfig['ldap_anon'] = true;
 	$pconfig['radius_srvcs'] = "both";
-	$pconfig['radius_auth_port'] = "812";
-	$pconfig['radius_acct_port'] = "813";
+	$pconfig['radius_auth_port'] = "1812";
+	$pconfig['radius_acct_port'] = "1813";
 }
 
 if ($_POST) {
@@ -149,6 +150,7 @@ if ($_POST) {
 			$reqdfieldsn[] = "Bind user DN";
 			$reqdfieldsn[] = "Bind Password";
 		}
+
 	}
 
 	if ($pconfig['type'] == "radius") {
@@ -178,6 +180,9 @@ if ($_POST) {
 
 	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['host']))
 		$input_errors[] = gettext("The host name contains invalid characters.");
+
+	if (auth_get_authserver($pconfig['name']))
+		$input_errors[] = "A authentication server with the same name already exists.";
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {

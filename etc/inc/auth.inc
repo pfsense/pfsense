@@ -653,7 +653,7 @@ function ldap_backed($username, $passwd) {
 	$ldapnameattribute  = $config['system']['webgui']['ldapnameattribute'];  
 	$ldapfilter         = $config['system']['webgui']['ldapfilter'];
 	$ldaptype           = $config['system']['webgui']['backend'];
-	$ldapfilter = str_replace("\$username", $username, $ldapfilter);
+	$ldapfilter = str_replace("<username>", $username, $ldapfilter);
 
 	/* first check if there is even an LDAP server populated */ 
 	if(!$ldapserver) {
@@ -784,7 +784,7 @@ function ldap_backed($username, $passwd) {
 	
 	/* Now lets bind as the user we found */
 	if (!($res = @ldap_bind($ldap, $binduser, $passwd))) {
-		log_error("ERROR!  ldap_backed() could not bind to {$ldapserver} - {$username} - {$passwd}.  Defaulting to built-in local_backed().    Visit System -> User Manager -> Settings.");
+		log_error("ERROR!  ldap_backed() could not bind to {$ldapserver} - {$username}.  Defaulting to built-in local_backed().    Visit System -> User Manager -> Settings.");
 		$status = local_backed($username, $passwd);
 		return $status;
 	}

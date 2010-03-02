@@ -194,7 +194,7 @@ include("head.inc");
 				document.iform.ldapserver.disabled = 0;
 				document.iform.ldapbindun.disabled = 0;
 				document.iform.ldapbindpw.disabled = 0;
-				document.iform.ldapfilter.value = "(samaccountname=*)";
+				document.iform.ldapfilter.value = "(samaccountname=<username>)";
 				document.iform.ldapnameattribute.value = "samaccountname";	
 				document.iform.ldapgroupattribute.value = "memberOf";
 				break;							
@@ -208,7 +208,7 @@ include("head.inc");
 				document.iform.ldapserver.disabled = 0;
 				document.iform.ldapbindun.disabled = 0;
 				document.iform.ldapbindpw.disabled = 0;
-				document.iform.ldapfilter.value = "(cn=*)";		
+				document.iform.ldapfilter.value = "(cn=<username>)";		
 				document.iform.ldapnameattribute.value = "CN";
 				document.iform.ldapgroupattribute.value = "groupMembership";
 				break;				
@@ -287,8 +287,8 @@ if(!$pconfig['backend'])
 							</div>
 							<div id="filteradvdiv" name="filteradvdiv" style="display:none">	
 								<input name="ldapfilter" id="ldapfilter" size="65" value="<?=htmlspecialchars($pconfig['ldapfilter']);?>">
-								<br/>Example: For Active Directory you would want to use (samaccountname=$username)
-								<br/>Example: For eDirectory you would want to use (cn=$username)
+								<br/>Example: For Active Directory you would want to use (samaccountname=<username>)
+								<br/>Example: For eDirectory you would want to use (cn=<username>)
 							</div>
 						</td>
 					</tr>

@@ -41,14 +41,7 @@
  */
 
 require_once("config.inc");
-
-function & lookup_user($name) {
-	global $config;
-
-	foreach($config['system']['user'] as & $userent)
-		if ($userent['name'] == $name)
-			return $userent;
-}
+require_once("auth.inc");
 
 /* setup syslog logging */
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
@@ -63,22 +56,13 @@ if (!$username || !$password) {
 }
 
 /* lookup user object by name */
-$user =& lookup_user($username);
-
-if (!$user) {
-	syslog(LOG_WARNING, "user {$username} is unknown");
+if (!local_backed($username, $password)) {
+	syslog(LOG_WARNING, "user {$username} supplied an invalid password\n");
 	exit(-2);
 }
 
-/* authenticate the user */
-$password = crypt($password, $user['password']);
-
-if ($password != $user['password']) {
-	syslog(LOG_WARNING, "user {$username} supplied an invalid password\n");
-	exit(-3);
-}
-
 syslog(LOG_WARNING, "user {$username} authenticated\n");
+
 exit(0);
 
 ?>

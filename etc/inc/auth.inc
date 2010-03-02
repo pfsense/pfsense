@@ -148,6 +148,9 @@ function local_backed($username, $passwd) {
 	if (!$user)
 		return false;
 
+	if (is_account_disabled($username))
+		return false;
+
 	if ($user['password'])
 	{
 		$passwd = crypt($passwd, $user['password']);
@@ -796,7 +799,7 @@ function ldap_backed($username, $passwd) {
 }
 
 function radius_backed($username, $passwd){
-	global $debug, $config, $debug;
+	global $debug, $config;
 	$ret = false;
 	$radiusservers = $config['system']['radius']['servers'];
 
@@ -839,73 +842,59 @@ function radius_backed($username, $passwd){
 }
 
 function get_user_expiration_date($username) {
-	global $config;
-	foreach($config['system']['user']  as $user) {
-		if($user['name'] == $username) {
-			if($user['expires']) 
-				return $user['expires'];
-		}
+	$user = getUserEntry($username);
+	if ($user['expires']) 
+		return $user['expires'];
+}
+
+function is_account_expired($username) {
+	$expirydate = get_user_expiration_date($username);
+	if ($expirydate) {
+		if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($expirydate))))
+			return true;
 	}
+
+	return false;
 }
 
 function is_account_disabled($username) {
-	global $config;
-	foreach($config['system']['user'] as $user)
-		if($user['name'] == $username) 
-			if(isset($user['disabled'])) 
-				return true;
+	$user = getUserEntry($username);
+	if (isset($user['disabled']))
+		return true;
+
 	return false;
 }
 
 function session_auth($backing) {
-	global $g, $debug, $HTTP_SERVER_VARS, $userindex, $config, $_SESSION, $page;
+	global $debug, $HTTP_SERVER_VARS, $config, $_SESSION, $page;
 
 	session_start();
 
 	/* Validate incoming login request */
 	if (isset($_POST['login'])) {
 		if ($backing($_POST['usernamefld'], $_POST['passwordfld'])) {
-			$acct_expires = get_user_expiration_date($_POST['usernamefld']);
-			if($acct_expires) {
-				if (strtotime("-1 day") > strtotime(date("m/d/Y",strtotime($acct_expires)))) {
-					log_error("Attempted login for invalid user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
-					if(isAjax()) {
-						echo "showajaxmessage('{$_SESSION['Login_Error']}');";
-						return;
-					}
+			if(is_account_disabled($_POST['usernamefld']) || is_account_disabled($_POST['usernamefld'])) {
+				$_SESSION['Login_Error'] = "Username or Password incorrect";
+				log_error("Login attempt with user: '{$_POST['usernamefld']}' from: '{$_SERVER['REMOTE_ADDR']}' failed.");
+				if(isAjax()) {
+					echo "showajaxmessage('{$_SESSION['Login_Error']}');";
+					return;
 				}
 			} else {
-				if(is_account_disabled($_POST['usernamefld'])) {
-					log_error("Attempted login for invalid user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
-					if(isAjax()) {
-						echo "showajaxmessage('{$_SESSION['Login_Error']}');";
-						return;
-					}
-				} else {
-					$_SESSION['Logged_In'] = "True";
-					$_SESSION['Username'] = $_POST['usernamefld'];
-					$_SESSION['last_access'] = time();
-					log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
-					require_once("functions.inc");
-					pfSenseHeader("/{$page}");
-				}
+				$_SESSION['Logged_In'] = "True";
+				$_SESSION['Username'] = $_POST['usernamefld'];
+				$_SESSION['last_access'] = time();
+				log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
+				require_once("functions.inc");
+				pfSenseHeader("/{$page}");
 			}
 		} else {
-			/* give the user a more detailed error message */
-			if (isset($userindex[$_POST['usernamefld']])) {
-				$_SESSION['Login_Error'] = "Username or Password incorrect";
-				log_error("Wrong password entered for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
-				if(isAjax()) {
-					echo "showajaxmessage('{$_SESSION['Login_Error']}');";
-					return;
-				}
-			} else {
-				$_SESSION['Login_Error'] = "Username or Password incorrect";
-				log_error("Attempted login for invalid user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
-				if(isAjax()) {
-					echo "showajaxmessage('{$_SESSION['Login_Error']}');";
-					return;
-				}
+			/* give the user an error message */
+			$_SESSION['Login_Error'] = "Username or Password incorrect";
+			log_error("Login attempt with user: '{$_POST['usernamefld']}' from: '{$_SERVER['REMOTE_ADDR']}' failed.");
+			if(isAjax()) {
+				echo "showajaxmessage('{$_SESSION['Login_Error']}');";
+				return;
 			}
 		}
 	}

@@ -1073,14 +1073,8 @@ function session_auth() {
 	}
 
 	/* Show login page if they aren't logged in */
-	if (empty($_SESSION['Logged_In'])) {
-		/* Don't display login forms to AJAX */
-		//if (isAjax())
-		//	return false;
-		//require_once("authgui.inc");
-		//display_login_form();
+	if (empty($_SESSION['Logged_In']))
 		return false;
-	}
 
 	/* If session timeout isn't set, we don't mark sessions stale */
 	if (!isset($config['system']['webgui']['session_timeout'])) {

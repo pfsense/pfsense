@@ -1340,6 +1340,15 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											</td>
 										</tr>
 										<tr>
+											<td valign="top" class="vncell">Distance setting</td>
+											<td class="vtable">
+												<input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">
+												<br/>
+												Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client<br/>
+												(measured in Meters and works only for Atheros based cards !)
+											</td>
+										</tr>
+										<tr>
 											<td colspan="2" valign="top" height="16"></td>
 										</tr>										
 										<tr>
@@ -1393,15 +1402,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											Setting this option will force the card to NOT broadcast its SSID
 											<br/>
 											(this might create problems for some clients). </td>
-										</tr>
-										<tr>
-											<td valign="top" class="vncell">Distance setting</td>
-											<td class="vtable">
-												<input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">
-												<br/>
-												Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client<br/>
-												(measured in Meters and works only for Atheros based cards !)
-											</td>
 										</tr>
 										<tr>
 											<td valign="top" class="vncell">WEP</td>

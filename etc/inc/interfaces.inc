@@ -1426,7 +1426,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	global $config, $g;
 
-	$shared_settings = array('standard', 'turbo', 'protmode', 'channel', 'txpower');
+	$shared_settings = array('standard', 'turbo', 'protmode', 'txpower', 'channel', 'distance');
 
 	if(!is_interface_wireless($ifcfg['if']))
 		return;
@@ -1698,8 +1698,9 @@ EOD;
 
 	/* set ack timers according to users preference (if he/she has any) */
 	if($distance) {
+		$baseif = interface_get_wireless_base($if);
 		fwrite($fd_set, "# Enable ATH distance settings\n");
-		fwrite($fd_set, "/sbin/athctrl.sh -i {$if} -d {$distance}\n");
+		fwrite($fd_set, "/sbin/athctrl.sh -i {$baseif} -d {$distance}\n");
 	}
 
 	$standard_no_turbo = str_replace(" Turbo", "", $standard);

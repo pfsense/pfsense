@@ -145,11 +145,6 @@ include("head.inc");
 	<td valign="middle" width="17">&nbsp;</td>
         <td valign="middle"><a href="services_igmpproxy_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new igmpentry"></a></td>
         </td>
-	      <td valign="middle">
-          <a href="services_igmpproxy_import.php">
-            <img src="/themes/<?= $g['theme']; ?>/images/icons/icon_import_igmpentry.gif" width="17" height="17" border="0" title="<?=gettext("import igmpproxy from list");?>" alt="" />
-          </a>
-        </td>
       </tr>
     </table>
   </td>

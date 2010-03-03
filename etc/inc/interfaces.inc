@@ -1461,6 +1461,7 @@ function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 				break;
 			}
 		}
+		unset($clone);
 	}
 }
 

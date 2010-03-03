@@ -82,6 +82,8 @@ if ($_GET['act'] == "del") {
 		/* remove the real entry */
 		$realid = $a_gateways[$_GET['id']]['attribute'];
 
+		if ($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway'] == $a_gateways[$_GET['id']]['name'])
+			unset($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway']);
 		$changedesc .= "removed gateway {$realid}";
 		unset($a_gateway_item[$realid]);
 		write_config($changedesc);

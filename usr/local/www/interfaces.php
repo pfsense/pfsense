@@ -415,6 +415,7 @@ if ($_POST) {
 		$reqdfields = explode(" ", "mode ssid");
 		$reqdfieldsn = explode(",", "Mode,SSID");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		check_wireless_mode();
 		/* loop through keys and enforce size */
 		for ($i = 1; $i <= 4; $i++) {
 			if ($_POST['key' . $i]) {
@@ -778,6 +779,34 @@ function handle_wireless_post() {
 		}
 	}
 	interface_sync_wireless_clones($wancfg, true);
+}
+
+function check_wireless_mode() {
+	global $_POST, $config, $g, $wancfg, $if, $wlanif, $wlanbaseif, $old_wireless_mode, $input_errors;
+
+	if ($wancfg['wireless']['mode'] == $_POST['mode'])
+		return;
+
+	if (does_interface_exist(interface_get_wireless_clone($wlanbaseif)))
+		$clone_count = 1;
+	else
+		$clone_count = 0;
+	if (is_array($config['wireless']['clone'])) {
+		foreach ($config['wireless']['clone'] as $clone) {
+			if ($clone['if'] == $wlanbaseif)
+				$clone_count++;
+		}
+	}
+	if ($clone_count > 1) {
+		$old_wireless_mode = $wancfg['wireless']['mode'];
+		$wancfg['wireless']['mode'] = $_POST['mode'];
+		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
+			$input_errors[] = "Unable to change mode to {$wancfg['wireless']['mode']}.  You may already have the maximum number of wireless clones supported in this mode.";
+		} else {
+			mwexec("/sbin/ifconfig {$wlanif}_ destroy");
+		}
+		$wancfg['wireless']['mode'] = $old_wireless_mode;
+	}
 }
 
 $pgtitle = array("Interfaces", $pconfig['descr']);

@@ -60,7 +60,7 @@ function clone_inuse($num) {
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (clone_inuse($_GET['id'])) {
-		$input_errors[] = "This wireless clone cannot be deleted because it is still being used as an interface.";
+		$input_errors[] = "This wireless clone cannot be deleted because it is assigned as an interface.";
 	} else {
 		mwexec("/sbin/ifconfig " . $a_clones[$_GET['id']]['cloneif'] . " destroy");
 		unset($a_clones[$_GET['id']]);
@@ -115,7 +115,14 @@ include("head.inc");
 					<?=htmlspecialchars($clone['cloneif']);?>
                   </td>
                   <td class="listr">
-					<?=htmlspecialchars($clone['mode']);?>
+					<?php
+						if ($clone['mode'] == 'bss')
+							echo "Infrastructure (BSS)";
+						else if ($clone['mode'] == 'adhoc')
+							echo "Ad-hoc (IBSS)";
+						else if ($clone['mode'] == 'hostap')
+							echo "Access Point";
+					?>
                   </td>
                   <td class="listbg">
                     <?=htmlspecialchars($clone['descr']);?>&nbsp;

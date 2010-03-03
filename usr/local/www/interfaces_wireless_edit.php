@@ -161,7 +161,7 @@ include("head.inc");
                     <select name="if" class="formselect">
                       <?php
                       foreach ($portlist as $ifn => $ifinfo)
-                        if (is_interface_wireless($ifn)) {
+                        if (preg_match($g['wireless_regex'], $ifn)) {
                             echo "<option value=\"{$ifn}\"";
                             if ($ifn == $pconfig['if'])
                                 echo "selected";

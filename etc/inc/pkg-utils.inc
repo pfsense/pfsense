@@ -62,17 +62,11 @@ if(!function_exists("update_output_window")) {
 
 safe_mkdir("/var/db/pkg");
 
+conf_mount_rw();
 $g['platform'] = trim(file_get_contents("/etc/platform"));
-if($g['platform'] == "pfSense") {
-	safe_mkdir("/usr/local/pkg");
-	safe_mkdir("/usr/local/pkg/pf");
-} else {
-	if(!is_dir("/usr/local/pkg") or !is_dir("/usr/local/pkg/pf")) {
-	conf_mount_rw();
+if(!is_dir("/usr/local/pkg") or !is_dir("/usr/local/pkg/pf")) {
 	safe_mkdir("/usr/local/pkg");
 	safe_mkdir("/usr/local/pkg/pf");	
-	conf_mount_ro();
-	}
 }
 
 $version = split("-", trim(file_get_contents("/etc/version")));
@@ -410,6 +404,9 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 
 function install_package($package, $pkg_info = "") {
 	global $g, $config, $pkg_interface, $fd_log, $static_output, $pkg_interface, $restart_sync;
+	/* safe side. Write config below will send to ro again. */
+	conf_mount_rw();
+
 	if($pkg_interface == "console") 	
 		echo "\n";
 	/* open logfiles and begin installation */
@@ -651,7 +648,8 @@ function install_package_xml($pkg) {
 			$static_output = "Loading package instructions...";
 			update_output_window($static_output);
 			fwrite($fd_log, "require_once('{$pkg_config['include_file']}')\n");
-			require_once($pkg_config['include_file']);
+			if (file_exists($pkg_config['include_file']))
+				require_once($pkg_config['include_file']);
 		}
 		/* sidebar items */
 		if(is_array($pkg_config['menu'])) {
@@ -745,7 +743,8 @@ function delete_package($pkg, $pkgid) {
 		if($pkg_config['include_file'] <> "") {
 			$static_output .= "\nLoading package instructions...\n";
 			update_output_window($static_output);
-			require_once($pkg_config['include_file']);
+			if (file_exists($pkg_config['include_file']))
+				require_once($pkg_config['include_file']);
 		}
 	}
 	$static_output .= "\nStarting package deletion for {$pkg_info['name']}...\n";

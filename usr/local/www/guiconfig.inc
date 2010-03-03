@@ -213,6 +213,9 @@ $medias = array("auto" => "autoselect", "100full" => "100BASE-TX full-duplex",
 	"100half" => "100BASE-TX half-duplex", "10full" => "10BASE-T full-duplex",
 	"10half" => "10BASE-T half-duplex");
 
+$wlan_modes = array("bss" => "Infrastructure (BSS)", "adhoc" => "Ad-hoc (IBSS)",
+	"hostap" => "Access Point");
+
 /* platforms that support firmware updating */
 $fwupplatforms = array('pfSense', 'net45xx', 'net48xx', 'generic-pc', 'embedded', 'wrap', 'nanobsd');
 

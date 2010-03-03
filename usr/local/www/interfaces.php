@@ -782,7 +782,7 @@ function handle_wireless_post() {
 }
 
 function check_wireless_mode() {
-	global $_POST, $config, $g, $wancfg, $if, $wlanif, $wlanbaseif, $old_wireless_mode, $input_errors;
+	global $_POST, $config, $g, $wlan_modes, $wancfg, $if, $wlanif, $wlanbaseif, $old_wireless_mode, $input_errors;
 
 	if ($wancfg['wireless']['mode'] == $_POST['mode'])
 		return;
@@ -801,7 +801,7 @@ function check_wireless_mode() {
 		$old_wireless_mode = $wancfg['wireless']['mode'];
 		$wancfg['wireless']['mode'] = $_POST['mode'];
 		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
-			$input_errors[] = "Unable to change mode to {$wancfg['wireless']['mode']}.  You may already have the maximum number of wireless clones supported in this mode.";
+			$input_errors[] = "Unable to change mode to {$wlan_modes[$wancfg['wireless']['mode']]}.  You may already have the maximum number of wireless clones supported in this mode.";
 		} else {
 			mwexec("/sbin/ifconfig {$wlanif}_ destroy");
 		}

@@ -115,14 +115,7 @@ include("head.inc");
 					<?=htmlspecialchars($clone['cloneif']);?>
                   </td>
                   <td class="listr">
-					<?php
-						if ($clone['mode'] == 'bss')
-							echo "Infrastructure (BSS)";
-						else if ($clone['mode'] == 'adhoc')
-							echo "Ad-hoc (IBSS)";
-						else if ($clone['mode'] == 'hostap')
-							echo "Access Point";
-					?>
+					<?= $wlan_modes[$clone['mode']]; ?>
                   </td>
                   <td class="listbg">
                     <?=htmlspecialchars($clone['descr']);?>&nbsp;

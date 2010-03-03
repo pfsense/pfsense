@@ -83,6 +83,12 @@
 			<arraynum>1</arraynum>
 		</field>
 		<field>
+			<name>Override DNS</name>
+			<description>Allow DNS servers to be overridden by DHCP/PPP on WAN</description>
+			<type>checkbox</type>
+			<bindstofield>system->dnsallowoverride</bindstofield>
+		</field>
+		<field>
 			<name>Next</name>
 			<type>submit</type>
 		</field>

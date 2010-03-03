@@ -468,6 +468,18 @@ $priv_list['page-interfaces-vlan-edit']['descr'] = "Allow access to the 'Interfa
 $priv_list['page-interfaces-vlan-edit']['match'] = array();
 $priv_list['page-interfaces-vlan-edit']['match'][] = "interfaces_vlan_edit.php*";
 
+$priv_list['page-interfaces-wireless'] = array();
+$priv_list['page-interfaces-wireless']['name'] = "WebCfg - Interfaces: Wireless page";
+$priv_list['page-interfaces-wireless']['descr'] = "Allow access to the 'Interfaces: Wireless' page.";
+$priv_list['page-interfaces-wireless']['match'] = array();
+$priv_list['page-interfaces-wireless']['match'][] = "interfaces_wireless.php*";
+
+$priv_list['page-interfaces-wireless-edit'] = array();
+$priv_list['page-interfaces-wireless-edit']['name'] = "WebCfg - Interfaces: Wireless edit page";
+$priv_list['page-interfaces-wireless-edit']['descr'] = "Allow access to the 'Interfaces: Wireless : Edit' page.";
+$priv_list['page-interfaces-wireless-edit']['match'] = array();
+$priv_list['page-interfaces-wireless-edit']['match'][] = "interfaces_wireless_edit.php*";
+
 $priv_list['page-system-license'] = array();
 $priv_list['page-system-license']['name'] = "WebCfg - System: License page";
 $priv_list['page-system-license']['descr'] = "Allow access to the 'System: License' page.";

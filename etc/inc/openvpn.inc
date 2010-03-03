@@ -353,6 +353,7 @@ function openvpn_reconfigure($mode,& $settings) {
 		switch($settings['mode']) {
 			case 'p2p_tls':
 			case 'server_tls':
+			case 'server_user':
 			case 'server_tls_user':
 				$conf .= "tls-server\n";
 				break;
@@ -487,23 +488,6 @@ function openvpn_reconfigure($mode,& $settings) {
 		case 'p2p_tls':
 		case 'server_tls':
 		case 'server_tls_user':
-			$ca = lookup_ca($settings['caref']);
-			openvpn_add_keyfile($ca['crt'], $conf, $mode_id, "ca");
-			$cert = lookup_cert($settings['certref']);
-			openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
-			openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
-			if ($mode == 'server')
-				$conf .= "dh {$g['etc_path']}/dh-parameters.{$settings['dh_length']}\n";
-			if ($settings['crl'])
-				openvpn_add_keyfile($settings['crl'], $conf, $mode_id, "crl-verify");
-			if ($settings['tls']) {
-				if ($settings['mode'] == "server_tls" || $settings['mode'] == "server_tls_user")
-					$tlsopt = 0;
-				else
-					$tlsopt = 1;
-				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth", $tlsopt);
-			}
-			break;
 		case 'server_user':
 			$ca = lookup_ca($settings['caref']);
 			openvpn_add_keyfile($ca['crt'], $conf, $mode_id, "ca");
@@ -514,6 +498,13 @@ function openvpn_reconfigure($mode,& $settings) {
 				$conf .= "dh {$g['etc_path']}/dh-parameters.{$settings['dh_length']}\n";
 			if ($settings['crl'])
 				openvpn_add_keyfile($settings['crl'], $conf, $mode_id, "crl-verify");
+			if ($settings['tls']) {
+				if (stristr($settings['mode'], "server"))
+					$tlsopt = 0;
+				else
+					$tlsopt = 1;
+				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth", $tlsopt);
+			}
 			break;
 	}
 

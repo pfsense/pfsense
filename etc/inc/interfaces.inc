@@ -1835,7 +1835,8 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if(does_interface_exist($wancfg['if']))
 		interfaces_bring_up($wancfg['if']);
  	
-	interface_reload_carps($realif);
+	if (!$g['booting'])
+		interface_reload_carps($realif);
 	
 	if($wancfg['serialport'])
 		interface_ppp_configure($wancfg['serialport']);

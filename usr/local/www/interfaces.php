@@ -296,7 +296,6 @@ if ($_POST['apply']) {
 
 if ($_POST && $_POST['enable'] != "yes") {
 	unset($wancfg['enable']);
-	interface_bring_down($if);
 	if (isset($wancfg['wireless'])) {
 		interface_sync_wireless_clones($wancfg, false);
 	}

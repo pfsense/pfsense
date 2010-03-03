@@ -214,7 +214,8 @@ $pconfig['mtu'] = $wancfg['mtu'];
 if (isset($wancfg['wireless'])) {
 	/* Get wireless modes */
 	$wlanif = get_real_interface($if);
-	interface_wireless_clone($wlanif, $wancfg);
+	if (!does_interface_exist($wlanif))
+		interface_wireless_clone($wlanif, $wancfg);
 	$wlanbaseif = interface_get_wireless_base($wancfg['if']);
 	$wl_modes = get_wireless_modes($if);
 	$pconfig['standard'] = $wancfg['wireless']['standard'];

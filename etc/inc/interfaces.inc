@@ -1738,8 +1738,11 @@ function kill_wpasupplicant($interface) {
 }
 
 function find_dhclient_process($interface) {
-	if($interface)
+	if($interface) {
 		$pid = `ps awwwux | grep dhclient | grep -v grep | grep {$interface} | awk '{ print \$2 }'`;
+		$pid = explode("\n", $pid);
+		$pid = $pid[0];
+	}
 	return $pid;
 }
 

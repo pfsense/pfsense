@@ -44,10 +44,6 @@ if (!is_array($config['openvpn']['openvpn-server']))
 
 $a_server = &$config['openvpn']['openvpn-server'];
 
-if (!is_array($config['system']['authserver']))
-	$config['system']['authserver'] = array();
-$auth_servers =& $config['system']['authserver'];
-
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -557,10 +553,10 @@ function netbios_change() {
 					<tr id="authmodetr" style="display:none">
                                                 <td width="22%" valign="top" class="vncellreq"><?=gettext("Backend for authentication");?></td>
                                                         <td width="78%" class="vtable">
-                                                        <select name='authmode[]' id='authmode' class="formselect" multiple="true" size="<?php echo count($auth_servers) + 1; ?>">
+                                                        <select name='authmode[]' id='authmode' class="formselect" multiple="true" size="<?php echo count($auth_servers); ?>">
 							<?php $authmodes = explode(",", $pconfig['authmode']); ?>
-                                                                <option value="local" <?php if (in_array("local", $authmodes)) echo "selected";?>>Local authentication database</option>
                                                         <?php
+								$auth_servers = auth_get_authserver_list();
                                                                 foreach ($auth_servers as $auth_server):
                                                                         $selected = "";
                                                                         if (in_array($auth_server['name'], $authmodes))

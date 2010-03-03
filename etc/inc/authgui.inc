@@ -38,38 +38,13 @@
 */
 
 include_once("auth.inc");
-include_once("priv.defs.inc");
 include_once("priv.inc");
 
-/* We only support htpasswd backed HTTP Basic auth and session
- * based backing methods at the moment.
- * 		session_auth - this will use session based authentication and timeout
- * 		htpasswd_backed - this uses the "standard" .htpasswd file
- * 		passwd_backed - this will use the system passwd file in /etc
- * 		radius_backed - this will allow you to use a radius server
- *		pam_backed - this uses the system's PAM facility .htpasswd file
- */
-
-//log_error("debug: FILE_NAME = {$_SERVER['REQUEST_URI']}");
-//log_error("debug: FILE_NAME = {$_SERVER['SCRIPT_FILENAME']}");
-//log_error("debug: SCRIPT_NAME = {$_SERVER['SCRIPT_NAME']}");
-
-/* enable correct auth backend, default to htpasswd_backed */
-$ldapcase = $config['system']['webgui']['backend'];
-switch($ldapcase) {
-	case ldap:
-		$backing_method="ldap_backed";
-		break;
-	case ldapother:
-		$backing_method="ldap_backed";
-		break;
-	default:
-		$backing_method="local_backed";
-}
-
 /* Authenticate user - exit if failed */
-if (!session_auth($backing_method))
+if (!session_auth()) {
+	display_login_form();
 	exit;
+}
 
 /*
  * Once here, the user has authenticated with the web server.

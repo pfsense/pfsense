@@ -151,7 +151,7 @@ function local_backed($username, $passwd) {
 	if (!$user)
 		return false;
 
-	if (is_account_disabled($username))
+	if (is_account_disabled($username) || is_account_expired($username))
 		return false;
 
 	if ($user['password'])
@@ -464,7 +464,7 @@ function local_group_del($group) {
 
 }
 
-function ldap_test_connection($authcfg = NULL) {
+function ldap_test_connection($authcfg) {
 	global $debug, $config, $g;
 
 	if ($authcfg) {
@@ -477,11 +477,8 @@ function ldap_test_connection($authcfg = NULL) {
                 $ldapbasedn         = $authcfg['ldap_basedn'];
                 $ldapbindun         = $authcfg['ldap_binddn'];
                 $ldapbindpw         = $authcfg['ldap_bindpw'];
-        } else {
-                $ldapserver = $config['system']['webgui']['ldapserver'];
-                $ldapbindun = $config['system']['webgui']['ldapbindun'];
-                $ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-        }
+        } else
+		return false;
 
         /* first check if there is even an LDAP server populated */
         if(!$ldapserver)
@@ -504,7 +501,7 @@ function ldap_test_connection($authcfg = NULL) {
 	return true;
 }
 
-function ldap_test_bind($authcfg = NULL) {
+function ldap_test_bind($authcfg) {
 	global $debug, $config, $g;
 
 	if ($authcfg) {
@@ -522,13 +519,8 @@ function ldap_test_bind($authcfg = NULL) {
                         $ldapanon = true;
                 else
                         $ldapanon = false;
-	} else {
-		$ldapserver = $config['system']['webgui']['ldapserver'];
-		$ldapbindun = $config['system']['webgui']['ldapbindun'];
-		$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-		$ldapver            = 3;
-                $ldapanon           = false;
-    	}
+	} else
+		return false;
 
 	/* first check if there is even an LDAP server populated */
         if(!$ldapserver)
@@ -552,17 +544,21 @@ function ldap_test_bind($authcfg = NULL) {
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
  
 	if ($ldapanon == true) {
-		if (!($res = @ldap_bind($ldap)))
+		if (!($res = @ldap_bind($ldap))) {
+			@ldap_close($ldap);
 			return false;
-	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw)))
+		}
+	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
+		@ldap_close($ldap);
 		return false;
+	}
 
-	$ldap_unbind($ldap);
+	@ldap_unbind($ldap);
 
 	return true;
 }
 
-function ldap_get_user_ous($show_complete_ou=true, $authcfg = NULL) {
+function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	global $debug, $config, $g;
 
 	if(!function_exists("ldap_connect"))
@@ -586,18 +582,8 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg = NULL) {
                 $ldapname           = $authcfg['name'];
                 $ldapfallback       = false;
 		$ldapscope          = $authcfg['ldap_scope'];
-        } else {
-                $ldapserver         = $config['system']['webgui']['ldapserver'];
-                $ldapport           = "";
-                $ldapbasedn         = $config['system']['webgui']['ldapsearchbase'];
-                $ldapbindun         = $config['system']['webgui']['ldapbindun'];
-                $ldapbindpw         = $config['system']['webgui']['ldapbindpw'];
-                $ldapver            = 3;
-                $ldapanon           = false;
-                $ldapname           = "system-settings";
-                $ldapfallback       = true;
-		$ldapscope	    = "all";
-        }
+        } else
+		return false;
 
 	$ous = array();
 
@@ -628,11 +614,13 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg = NULL) {
 
 	if ($ldapanon == true) {
                 if (!($res = @ldap_bind($ldap))) {
-			log_error("ERROR! ldap_get_user_ous() could not bind to server {$ldapname}.");
+			log_error("ERROR! ldap_get_user_ous() could not bind anonymously to server {$ldapname}.");
+			@ldap_close($ldap);
                         return $ous;
 		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 		log_error("ERROR! ldap_get_user_ous() could not bind to server {$ldapname}.");
+		@ldap_close($ldap);
 		return $ous;
 	}
 
@@ -659,10 +647,12 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg = NULL) {
 		}
 	}
 
+	@ldap_unbind($ldap);
+
 	return $ous;
 }
 
-function ldap_get_groups($username, $authcfg = NULL) {
+function ldap_get_groups($username, $authcfg) {
 	global $debug, $config;
 	
 	if(!function_exists("ldap_connect"))
@@ -705,21 +695,8 @@ function ldap_get_groups($username, $authcfg = NULL) {
                 $ldapname           = $authcfg['name'];
                 $ldapfallback       = false;
 		$ldapscope          = $authcfg['ldap_scope'];
-	} else {
-		$ldapserver         = $config['system']['webgui']['ldapserver'];
-                $ldapport           = "";
-                $ldapbasedn         = $config['system']['webgui']['ldapsearchbase'];
-		$ldapbindun         = $config['system']['webgui']['ldapbindun'];
-		$ldapbindpw         = $config['system']['webgui']['ldapbindpw'];
-		$ldapfilter         = $config['system']['webgui']['ldapfilter'];
-		$ldapfilter         = str_replace("_username_", $username, $ldapfilter);
-		$ldapgroupattribute = $config['system']['webgui']['ldapgroupattribute'];
-                $ldapver            = 3;
-                $ldapanon           = false;
-                $ldapname           = "system-settings";
-                $ldapfallback       = true;
-		$ldapscope	    = "all";
-	} 	
+	} else
+		return false;
 
 	$ldapdn             = $_SESSION['ldapdn'];
 
@@ -746,10 +723,14 @@ function ldap_get_groups($username, $authcfg = NULL) {
 
 	/* bind as user that has rights to read group attributes */
 	if ($ldapanon == true) {
-                if (!($res = @ldap_bind($ldap)))
+                if (!($res = @ldap_bind($ldap))) {
+			log_error("ERROR! ldap_get_groups() could not bind anonymously to server {$ldapname}.");
+			@ldap_close($ldap);
                         return false;
+		}
 	} else if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 		log_error("ERROR! ldap_get_groups() could not bind to server {$ldapname}.");
+		@ldap_close($ldap);
 		return memberof;
 	}
 
@@ -778,7 +759,7 @@ function ldap_get_groups($username, $authcfg = NULL) {
 	}
 	
 	/* Time to close LDAP connection */
-	ldap_unbind($ldap);
+	@ldap_unbind($ldap);
 	
 	$groups = print_r($memberof,true);
 	
@@ -787,7 +768,7 @@ function ldap_get_groups($username, $authcfg = NULL) {
 	return $memberof;
 }
 
-function ldap_backed($username, $passwd, $authcfg = NULL) {
+function ldap_backed($username, $passwd, $authcfg) {
 	global $debug, $config;
 	
 	if(!$username) 
@@ -825,26 +806,9 @@ function ldap_backed($username, $passwd, $authcfg = NULL) {
                 $ldaptype           = "";
                 $ldapver            = $authcfg['ldap_protver'];
 		$ldapname	    = $authcfg['name'];
-		$ldapfallback	    = false;
 		$ldapscope	    = $authcfg['ldap_scope'];
-	} else {
-		$ldapserver         = $config['system']['webgui']['ldapserver'];
-		$ldapport	    = "";
-		$ldapbasedn	    = $config['system']['webgui']['ldapsearchbase'];
-		$ldapbindun         = $config['system']['webgui']['ldapbindun'];
-		$ldapbindpw         = $config['system']['webgui']['ldapbindpw'];
-		$ldapauthcont       = $config['system']['webgui']['ldapauthcontainers'];   
-		$ldapnameattribute  = $config['system']['webgui']['ldapnameattribute'];  
-		$ldapfilter         = $config['system']['webgui']['ldapfilter'];
-		$ldaptype           = $config['system']['webgui']['backend'];
-		$ldapver	    = 3;
-		$ldapfilter	    = str_replace("_username_", $username, $ldapfilter);
-		$ldapanon	    = false;
-		$ldapname	    = "system-settings";
-		$ldapfallback	    = true;
-		$ldapscope	    = "all";
-	}
-
+	} else
+		return false;
 
 	/* first check if there is even an LDAP server populated */ 
 	if(!$ldapserver) {
@@ -870,12 +834,7 @@ function ldap_backed($username, $passwd, $authcfg = NULL) {
 		$error = true;
 
 	if ($error == true) {
-		if ($ldapfallback) {
-			log_error("ERROR!  Could not connect to server {$ldapname}.  Defaulting to built-in local user database. Visit System -> User Manager for correcting it.");
-			return local_backed($username, $passwd);		
-		} else
-			log_error("ERROR!  Could not connect to server {$ldapname}.");
-
+		log_error("ERROR!  Could not connect to server {$ldapname}.");
 		return false;
 	}
 
@@ -888,13 +847,8 @@ function ldap_backed($username, $passwd, $authcfg = NULL) {
 		$error = true;
 
 	if ($error == true) {
-		ldap_close($ldap);
-		if ($ldapfallback) {
-			log_error("ERROR! ldap_backed() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in local_backed()");
-			return local_backed($username, $passwd);
-		} else
-			log_error("ERROR! Could not bind to server {$ldapname}.");
-
+		@ldap_close($ldap);
+		log_error("ERROR! Could not bind to server {$ldapname}.");
 		return false;
 	}
 	
@@ -941,39 +895,27 @@ function ldap_backed($username, $passwd, $authcfg = NULL) {
 	}
 
 	if ($usercount != 1){
-		ldap_unbind($ldap);
-		if ($ldapfallback) {
-			log_error("ERROR! Either LDAP search failed, or multiple users were found. Falling back to local user database.");
-			$status = local_backed($username, $passwd);
-			$_SESSION['ldapon'] = "false";
-			return $status;
-		} else
-			log_error("ERROR! Either LDAP search failed, or multiple users were found.");
+		@ldap_unbind($ldap);
+		log_error("ERROR! Either LDAP search failed, or multiple users were found.");
 		return false;                         
 	}
 
 	/* Now lets bind as the user we found */
 	if (!($res = @ldap_bind($ldap, $userdn, $passwd))) {
-		if ($ldapfallback) {
-			log_error("ERROR! Could not login to server {$ldapname} as user {$username}. Defaulting to local user database. Visit System -> User Manager.");
-			$status = local_backed($username, $passwd);
-			$_SESSION['ldapon'] = "false";
-			return $status;
-		} else
-			log_error("ERROR! Could not login to server {$ldapname} as user {$username}.");
-		
+		log_error("ERROR! Could not login to server {$ldapname} as user {$username}.");
+		@ldap_unbind($ldap);
 		return false;
 	}
 
 	log_error("Logged in succesfully as {$username} via LDAP server {$ldapname} with DN = {$userdn}.");
 
 	/* At this point we are bound to LDAP so the user was auth'd okay. Close connection. */
-	ldap_unbind($ldap);
+	@ldap_unbind($ldap);
 
 	return true;
 }
 
-function radius_backed($username, $passwd, $authcfg = NULL){
+function radius_backed($username, $passwd, $authcfg){
 	global $debug, $config;
 	$ret = false;
 
@@ -984,7 +926,7 @@ function radius_backed($username, $passwd, $authcfg = NULL){
 		$radiusservers[0]['port'] = $authcfg['radius_auth_port'];
 		$radiusservers[0]['sharedsecret'] = $authcfg['radius_secret'];
 	} else
-		$radiusservers = $config['system']['radius']['servers'];
+		return false;
 
 	/* Add a new servers to our instance */
 	foreach ($radiusservers as $radsrv)
@@ -1056,6 +998,24 @@ function auth_get_authserver($name) {
                                 return $authcfg;
                 }
         }
+	if ($name == "Local Database")
+		return array("name" => "Local Database", "type" => "Local Auth", "host" => $config['system']['hostname']);
+}
+
+function auth_get_authserver_list() {
+        global $config;
+
+	$list = array();
+
+        if (is_array($config['system']['authserver'])) {
+                foreach ($config['system']['authserver'] as $authcfg) {
+			/* Add support for disabled entries? */
+			$list[$authcfg['name']] = $authcfg;
+                }
+        }
+
+	$list["Local Database"] = array( "name" => "Local Database", "type" => "Local Auth", "host" => $config['system']['hostname']);
+	return $list;
 }
 
 function authenticate_user($username, $password, $authcfg = NULL) {
@@ -1084,29 +1044,23 @@ function authenticate_user($username, $password, $authcfg = NULL) {
 	return $authenticated;
 }
 
-function session_auth($backing) {
-	global $debug, $HTTP_SERVER_VARS, $config, $_SESSION, $page;
+function session_auth() {
+	global $HTTP_SERVER_VARS, $config, $_SESSION, $page;
 
 	session_start();
 
 	/* Validate incoming login request */
 	if (isset($_POST['login'])) {
-		if ($backing($_POST['usernamefld'], $_POST['passwordfld'])) {
-			if(is_account_disabled($_POST['usernamefld']) || is_account_disabled($_POST['usernamefld'])) {
-				$_SESSION['Login_Error'] = "Username or Password incorrect";
-				log_error("Login attempt with user: '{$_POST['usernamefld']}' from: '{$_SERVER['REMOTE_ADDR']}' failed.");
-				if(isAjax()) {
-					echo "showajaxmessage('{$_SESSION['Login_Error']}');";
-					return;
-				}
-			} else {
-				$_SESSION['Logged_In'] = "True";
-				$_SESSION['Username'] = $_POST['usernamefld'];
-				$_SESSION['last_access'] = time();
-				log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
-				require_once("functions.inc");
-				pfSenseHeader("/{$page}");
-			}
+		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+		/* Should check backend type for fallback. */
+		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg) || 
+		    authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
+			$_SESSION['Logged_In'] = "True";
+			$_SESSION['Username'] = $_POST['usernamefld'];
+			$_SESSION['last_access'] = time();
+			log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
+			require_once("functions.inc");
+			pfSenseHeader("/{$page}");
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = "Username or Password incorrect";
@@ -1121,23 +1075,22 @@ function session_auth($backing) {
 	/* Show login page if they aren't logged in */
 	if (empty($_SESSION['Logged_In'])) {
 		/* Don't display login forms to AJAX */
-		if (isAjax())
-			return false;
-		require_once("authgui.inc");
-		display_login_form();
+		//if (isAjax())
+		//	return false;
+		//require_once("authgui.inc");
+		//display_login_form();
 		return false;
 	}
 
 	/* If session timeout isn't set, we don't mark sessions stale */
-	if ( $config['system']['webgui']['session_timeout'] == 0 ||
-		$config['system']['webgui']['session_timeout'] == "") {
-		$_SESSION['last_access'] = time();	
-	} elseif (!isset($config['system']['webgui']['session_timeout'])) {
+	if (!isset($config['system']['webgui']['session_timeout'])) {
 		/* Default to 4 hour timeout if one is not set */
 		if ($_SESSION['last_access'] < (time() - 14400)) {
 			$_GET['logout'] = true;
 			$_SESSION['Logout'] = true;
 		}
+	} else if (empty($config['system']['webgui']['session_timeout'])) {
+		$_SESSION['last_access'] = time();	
 	} else {
 		/* Check for stale session */
 		if ($_SESSION['last_access'] < (time() - ($config['system']['webgui']['session_timeout'] * 60))) {
@@ -1149,9 +1102,6 @@ function session_auth($backing) {
 				$_SESSION['last_access'] = time();
 		}
 	}
-
-	/* obtain user object */
-	$user = getUserEntry($_SESSION['Username']);
 
 	/* user hit the logout button */
 	if (isset($_GET['logout'])) {

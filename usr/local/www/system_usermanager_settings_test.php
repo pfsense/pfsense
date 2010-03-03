@@ -39,13 +39,12 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("auth.inc");
 require("priv.defs.inc");
 require("priv.inc");
 
-$ldapserver = $config['system']['webgui']['ldapserver'];
-$ldapbindun = $config['system']['webgui']['ldapbindun'];
-$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-$ldapfilter = $config['system']['webgui']['ldapfilter'];
+$authserver = $_GET['authserver'];
+$authcfg = auth_get_authserver($authserver);
 
 ?>
 
@@ -74,44 +73,53 @@ $ldapfilter = $config['system']['webgui']['ldapfilter'];
 		<form method="post" name="iform" id="iform">
 			
 <?php
-echo "Testing pfSense LDAP settings... One moment please...<p/>";
 
-echo "<table width='100%'>";
+if (!$authcfg) {
+	echo "Could not find settings for {$authserver}<p/>";
+} else {
+	echo "Testing pfSense LDAP settings... One moment please...<p/>";
 
-echo "<tr><td>Attempting connection to {$ldapserver}</td><td>";
-if(ldap_test_connection()) 
-	echo "<td><font color=green>OK</td></tr>";
-else 
-	echo "<td><font color=red>failed</td></tr>";
-
-echo "<tr><td>Attempting bind to {$ldapserver}</td><td>";
-if(ldap_test_bind()) 
-	echo "<td><font color=green>OK</td></tr>";
-else 
-	echo "<td><font color=red>failed</td></tr>";
-
-echo "<tr><td>Attempting to fetch Organizational Units from {$ldapserver}</td><td>";
-$ous = ldap_get_user_ous(true);
-if(count($ous)>1) 
-	echo "<td><font color=green>OK</td></tr>";
-else 
-	echo "<td><font color=red>failed</td></tr>";
-
-echo "</table><p/>";
-
-if(is_array($ous)) {
-	echo "Organization units found:<p/>";
 	echo "<table width='100%'>";
-	foreach($ous as $ou) {
-		echo "<tr><td>" . $ou . "</td></tr>";
+
+	echo "<tr><td>Attempting connection to {$ldapserver}</td><td>";
+	if(ldap_test_connection($authcfg)) {
+		echo "<td><font color=green>OK</td></tr>";
+
+		echo "<tr><td>Attempting bind to {$ldapserver}</td><td>";
+		if(ldap_test_bind($authcfg)) {
+			echo "<td><font color=green>OK</td></tr>";
+
+			echo "<tr><td>Attempting to fetch Organizational Units from {$ldapserver}</td><td>";
+			$ous = ldap_get_user_ous(true, $authcfg);
+			if(count($ous)>1) {
+				echo "<td><font color=green>OK</td></tr>";
+				echo "</table>";
+				if(is_array($ous)) {
+					echo "Organization units found:<p/>";
+					echo "<table width='100%'>";
+					foreach($ous as $ou) {
+						echo "<tr><td>" . $ou . "</td></tr>";
+					}
+				}
+			} else
+				echo "<td><font color=red>failed</td></tr>";
+
+			echo "</table><p/>";
+
+		} else {
+			echo "<td><font color=red>failed</td></tr>";
+			echo "</table><p/>";
+		}
+	} else {
+		echo "<td><font color=red>failed</td></tr>";
+		echo "</table><p/>";
 	}
-	echo "</table>";
 }
 
 ?>
-			<p/>
-			<input type="Button" value="Close" onClick='Javascript:window.close();'>
+	<p/>
+	<input type="Button" value="Close" onClick='Javascript:window.close();'>
 
-		</form>
-	</body>
+	</form>
+</body>
 </html>

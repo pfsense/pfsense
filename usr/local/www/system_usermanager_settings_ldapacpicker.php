@@ -32,30 +32,41 @@
 */
 
 require("guiconfig.inc");
+require_once("auth.inc");
 require("priv.defs.inc");
 require("priv.inc");
-
-if($_POST) {
-	$ous = ldap_get_user_ous(true);
-	$values = "";
-	$isfirst = true;
-	foreach($ous as $ou) {		
-		if(in_array($ou, $_POST['ou'])) {
-			if($isfirst == false) 
-				$values .= ";";
-			$isfirst = false;
-			$values .= $ou;
-		}	
-	}
-	echo "<script language=\"JavaScript\">\n";
-	echo "<!--\n";
-	echo "	opener.document.forms[0].ldapauthcontainers.value='$values'\n";
-	echo "	this.close();\n";
-	echo "-->\n";
-	echo "</script>\n";
+$ous = array();
+if($_GET) {
+	$authcfg = array();
+	$authcfg['ldap_port'] = $_GET['port'];
+	$authcfg['ldap_basedn'] = $_GET['basedn'];
+	$authcfg['host'] = $_GET['host'];
+	$authcfg['ldap_scope'] = $_GET['scope'];
+	$authcfg['ldap_binddn'] = $_GET['binddn'];
+	$authcfg['ldap_bindpw'] = $_GET['bindpw'];
+	$authcfg['ldap_urltype'] = $_GET['urltype'];
+	$authcfg['ldap_protver'] = $_GET['proto'];
+	$authcfg['ldap_authcn'] = explode(";", $_GET['authcn']);
+	$ous = ldap_get_user_ous(true, $authcfg);
 }
-
 ?>
+<script language="JavaScript">
+function post_choices() {
+
+	var ous = <?php echo count($ous); ?>;
+	var i;
+	for (i = 0; i < ous; i++) {
+		if (document.forms[0].ou[i].checked) {
+			opener.document.forms[0].ldapauthcontainers.value="";
+			if (opener.document.forms[0].ldapauthcontainers.value != "")
+				opener.document.forms[0].ldapauthcontainers.value+=";";
+			opener.document.forms[0].ldapauthcontainers.value+=document.forms[0].ou[i].value;
+		}
+	}
+	//this.close();
+-->
+}
+</script>
 
 <html>
 	<head>
@@ -78,7 +89,7 @@ if($_POST) {
 			}
 	    </STYLE>		
 	</head>
- <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
+ <body link="#000000" vlink="#000000" alink="#000000" >
  <form method="post" action="system_usermanager_settings_ldapacpicker.php">	
 	<b>Please select which containers to Authenticate against:</b>
 	<p/>
@@ -87,19 +98,17 @@ if($_POST) {
     	<td class="tabnavtbl">
 			<table width="100%">
 <?php
-	$ous = ldap_get_user_ous(true);
-	$pconfig['ldapauthcontainers'] = split(";",$config['system']['webgui']['ldapauthcontainers']);
 	if(!is_array($ous)) {
 		echo "Sorry, we could not connect to the LDAP server.  Please try later.";
-		exit;
+		//exit;
 	}
-	if(is_array($ous)) {	
+	else if(is_array($ous)) {	
 		foreach($ous as $ou) {
-			if(in_array($ou, $pconfig['ldapauthcontainers']))
+			if(in_array($ou, $authcfg['ldap_authcn']))
 				$CHECKED=" CHECKED";
 			else 
 				$CHECKED="";
-			echo "			<tr><td><input type='checkbox' value='{$ou}' name='ou[]'{$CHECKED}> {$ou}<br/></td></tr>\n";
+			echo "			<tr><td><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br/></td></tr>\n";
 		}
 	}
 ?>	
@@ -110,7 +119,7 @@ if($_POST) {
 
 	<p/>
 
-	<input type='submit' value='Save'>
+	<input type='button' value='Save' onClick="post_choices();">
 
  </body>
 </html>

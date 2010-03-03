@@ -44,6 +44,8 @@
 	pfSense_MODULE:	auth
 */
 
+require_once("priv.defs.inc");
+
 /* Load and process custom privs. */
 function get_priv_files($directory) {
 	$dir_array = array();
@@ -253,24 +255,18 @@ function getAllowedPages($username) {
 	$allowed_pages = array();
 	$allowed_groups = array();
 	
-	$ldapon = $_SESSION['ldapon'];
-
-	// search for a local user by name
-	$local_user = getUserEntry($username);
-
-	// obtain local groups if we have a local user
-	if ($local_user) {
-		$allowed_groups = local_user_get_groups($local_user);
-		getPrivPages($local_user, $allowed_pages);
-	}
-
+	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
 	// obtain ldap groups if we are in ldap mode
-	if ($config['system']['webgui']['backend'] == "ldap" && !$local_user)
-		$allowed_groups = ldap_get_groups($username);
+	if ($authcfg['type'] == "ldap")
+		$allowed_groups = @ldap_get_groups($username, $authcfg);
+	else {
+		// search for a local user by name
+		$local_user = getUserEntry($username);
 
-	// obtain ldapother groups if we are in ldap mode
-	if ($config['system']['webgui']['backend'] == "ldapother" && !$local_user)
-		$allowed_groups = ldap_get_groups($username);
+		// obtain local groups if we have a local user
+		if ($local_user)
+			$allowed_groups = local_user_get_groups($local_user);
+	}
 
 	// build a list of allowed pages
 	if (is_array($config['system']['group']) && is_array($allowed_groups))

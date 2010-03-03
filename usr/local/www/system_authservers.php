@@ -50,7 +50,9 @@ if (isset($_POST['id']))
 if (!is_array($config['system']['authserver']))
 	$config['system']['authserver'] = array();
 
-$a_server =& $config['system']['authserver'];
+$a_servers = auth_get_authserver_list();
+foreach ($a_servers as $servers)
+	$a_server[] = $servers;
 
 $act = $_GET['act'];
 if ($_POST['act'])
@@ -181,7 +183,7 @@ if ($_POST) {
 	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['host']))
 		$input_errors[] = gettext("The host name contains invalid characters.");
 
-	if (auth_get_authserver($pconfig['name']))
+	if (auth_get_authserver($pconfig['name']) && !isset($id))
 		$input_errors[] = "A authentication server with the same name already exists.";
 
 	/* if this is an AJAX caller then handle via JSON */
@@ -244,10 +246,10 @@ if ($_POST) {
 			}
 		}
 
-		if (isset($id) && $a_server[$id])
-			$a_server[$id] = $server;
+		if (isset($id) && $config['system']['authserver'][$id])
+			$config['system']['authserver'][$id] = $server;
 		else
-			$a_server[] = $server;
+			$config['system']['authserver'][] = $server;
 
 		write_config();
 
@@ -263,14 +265,15 @@ include("head.inc");
 <script type="text/javascript">
 <!--
 
-function server_typechange(type) {
+function server_typechange(typ) {
 
-	if (!type) {
-		index = document.iform.type.selectedIndex;
-		type = document.iform.type.options[index].value;
+	var idx = 0;
+	if (!typ) {
+		idx = document.getElementById("type").selectedIndex;
+		typ = document.getElementById("type").options[idx].value;
 	}
 
-    switch (type) {
+    	switch (typ) {
 		case "ldap":
 			document.getElementById("ldap").style.display="";
 			document.getElementById("radius").style.display="none";
@@ -283,13 +286,13 @@ function server_typechange(type) {
 }
 
 function ldap_urlchange() {
-    switch (document.iform.ldap_urltype.selectedIndex) {
+    switch (document.getElementById("ldap_urltype").selectedIndex) {
 <?php
 	$index = 0;
 	foreach ($ldap_urltypes as $urltype => $urlport):
 ?>
 		case <?=$index;?>:
-			document.iform.ldap_port.value = "<?=$urlport;?>";
+			document.getElementById("ldap_port").value = "<?=$urlport;?>";
 			break;
 <?php
 		$index++;
@@ -300,22 +303,22 @@ function ldap_urlchange() {
 
 function ldap_bindchange() {
 
-	if (document.iform.ldap_anon.checked)
+	if (document.getElementById("ldap_anon").checked)
 		document.getElementById("ldap_bind").style.display="none";
     else
 		document.getElementById("ldap_bind").style.display="";
 }
 
 function ldap_tmplchange(){
-    switch (document.iform.ldap_tmpltype.selectedIndex) {
+    switch (document.getElementById("ldap_tmpltype").selectedIndex) {
 <?php
 	$index = 0;
 	foreach ($ldap_templates as $tmpldata):
 ?>
 		case <?=$index;?>:
-			document.iform.ldap_attr_user.value = "<?=$tmpldata['attr_user'];?>";
-			document.iform.ldap_attr_group.value = "<?=$tmpldata['attr_group'];?>";
-			document.iform.ldap_attr_member.value = "<?=$tmpldata['attr_member'];?>";
+			document.getElementById("ldap_attr_user").value = "<?=$tmpldata['attr_user'];?>";
+			document.getElementById("ldap_attr_group").value = "<?=$tmpldata['attr_group'];?>";
+			document.getElementById("ldap_attr_member").value = "<?=$tmpldata['attr_member'];?>";
 			break;
 <?php
 		$index++;
@@ -325,7 +328,7 @@ function ldap_tmplchange(){
 }
 
 function radius_srvcschange(){
-    switch (document.iform.radius_srvcs.selectedIndex) {
+    switch (document.getElementById("radius_srvcs").selectedIndex) {
 		case 0: // both
 			document.getElementById("radius_auth").style.display="";
 			document.getElementById("radius_acct").style.display="";
@@ -341,6 +344,22 @@ function radius_srvcschange(){
 	}
 }
 
+function select_clicked() {
+        var url = 'system_usermanager_settings_ldapacpicker.php?';
+        url += 'port=' + document.getElementById("ldap_port").value;
+        url += '&host=' + document.getElementById("ldap_host").value;
+        url += '&scope=' + document.getElementById("ldap_scope").value;
+        url += '&basedn=' + document.getElementById("ldap_basedn").value;
+        url += '&binddn=' + document.getElementById("ldap_binddn").value;
+        url += '&bindpw=' + document.getElementById("ldap_bindpw").value;
+        url += '&urltype=' + document.getElementById("ldap_urltype").value;
+        url += '&proto=' + document.getElementById("ldap_protver").value;
+	url += '&authcn=' + document.getElementById("ldapauthcontainers").value;
+
+        var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
+        if (oWin==null || typeof(oWin)=="undefined")
+                alert('Popup blocker detected.  Action aborted.');
+}
 //-->
 </script>
 <?php
@@ -484,7 +503,7 @@ function radius_srvcschange(){
                                                                                 <td>Containers: &nbsp;</td>
                                                                                 <td>
                                                                                         <input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
-											<input type="button" onClick="javascript:if(openwindow('system_usermanager_settings_ldapacpicker.php') == false) alert('Popup blocker detected.  Action aborted.');" value="Select">
+											<input type="button" onClick="select_clicked();" value="Select">
 											<br />NOTE: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.
 											<br />EXAMPLE: CN=Users;DC=example
 											<br />EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com 
@@ -640,11 +659,12 @@ function radius_srvcschange(){
 							$type = htmlspecialchars($auth_server_types[$server['type']]);
 							$host = htmlspecialchars($server['host']);
 					?>
-					<tr ondblclick="document.location='system_authservers.php?act=edit&id=<?=$i;?>'">
+					<tr <?php if ($i < (count($a_server) - 1)): ?> ondblclick="document.location='system_authservers.php?act=edit&id=<?=$i;?>'" <?php endif; ?>>
 						<td class="listlr"><?=$name?>&nbsp;</td>
 						<td class="listr"><?=$type;?>&nbsp;</td>
 						<td class="listr"><?=$host;?>&nbsp;</td>
 						<td valign="middle" nowrap class="list">
+						<?php if ($i < (count($a_server) - 1)): ?>
 							<a href="system_authservers.php?act=edit&id=<?=$i;?>">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="edit server" alt="edit server" width="17" height="17" border="0" />
 							</a>
@@ -652,11 +672,11 @@ function radius_srvcschange(){
 							<a href="system_authservers.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Server?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete server" alt="delete server" width="17" height="17" border="0" />
 							</a>
+						<?php endif; ?>
 						</td>
 					</tr>
 					<?php
-							$i++;
-						endforeach;
+						$i++; endforeach;
 					?>
 					<tr>
 						<td class="list" colspan="3"></td>
@@ -681,26 +701,22 @@ function radius_srvcschange(){
 		</td>
 	</tr>
 </table>
-<?php include("fend.inc");?>
+<?php include("fend.inc");
+if ($act == "edit"): ?>
 <script type="text/javascript">
 <!--
-function openwindow(url) {
-	var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
-	if (oWin==null || typeof(oWin)=="undefined")
-		return false;
-	else
-		return true;
-}
 server_typechange('<?=$pconfig['type'];?>');
 <?php if (!isset($id) || $pconfig['type'] == "ldap"): ?>
 ldap_bindchange();
 ldap_urlchange();
+<?php if (!isset($id)): ?>
 ldap_tmplchange();
+<? endif; ?>
 <? endif; ?>
 <?php if (!isset($id) || $pconfig['type'] == "radius"): ?>
 radius_srvcschange();
 <? endif; ?>
 //-->
 </script>
-
+<?php endif; ?>
 </body>

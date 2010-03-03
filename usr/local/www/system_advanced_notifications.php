@@ -38,7 +38,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-require("notices.inc");
+require_once("notices.inc");
 
 // Growl
 if($config['notifications']['growl']['password']) 

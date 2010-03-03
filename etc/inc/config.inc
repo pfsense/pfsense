@@ -83,7 +83,7 @@ if(file_exists("/debugging")) {
 }
 
 if($g['booting']) echo ".";
-if(file_exists("/cf/conf/config.xml")) {
+if($g['booting'] && file_exists("/cf/conf/config.xml")) {
 	$config_contents = file_get_contents("/cf/conf/config.xml");
 	if(stristr($config_contents, "<m0n0wall>") == true) {
 		if($g['booting']) echo ".";
@@ -101,7 +101,7 @@ if(file_exists("/cf/conf/config.xml")) {
 }
 
 /* if our config file exists bail out, we're already set. */
-if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
+else if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 	if($g['booting']) echo ".";
 	/* find the device where config.xml resides and write out an fstab */
 	unset($cfgdevice);

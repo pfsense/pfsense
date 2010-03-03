@@ -796,8 +796,6 @@ function ldap_backed($username, $passwd, $authcfg = NULL) {
 	if(!function_exists("ldap_connect"))
 		return;
 
-	$adbindas = $username;
-    
 	if(stristr($username, "@")) {
 		$username_split=split("\@", $username);
 		$username = $username_split[0];        
@@ -906,16 +904,6 @@ function ldap_backed($username, $passwd, $authcfg = NULL) {
 	/* setup the usercount so we think we havn't found anyone yet */
 	$usercount  = 0;
 
-	/******************************/
-	/* Currently LDAP Types are   */
-	/* LDAP = Active Directory    */
-	/* LDAPOTHER = eDir/Openldap  */
-	/******************************/      
-        
-	/*****************************************************************/
-	/* Now Active Directory We keep this seperate for future addons. */
-	/*****************************************************************/
-	/* Now LDAP other.  eDirectory or Netscape or Sunone or OpenLDAP */
 	/*****************************************************************/
 	/*  We First find the user based on username and filter          */
 	/*  Then, once we find the first occurance of that person        */

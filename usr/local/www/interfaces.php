@@ -270,7 +270,7 @@ if ($_POST['apply']) {
 	else {	
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
-		if (isset($pconfig['enable']))
+		if ($pconfig['enable'])
 			interface_configure($if, true);
 		else
 			interface_bring_down($if);
@@ -293,7 +293,7 @@ if ($_POST['apply']) {
 	exit;
 } else
 
-if ($_POST && $_POST['enable'] == "no") {
+if ($_POST && $_POST['enable'] != "yes") {
 	unset($wancfg['enable']);
 	interface_bring_down($if);
 	if (isset($wancfg['wireless'])) {

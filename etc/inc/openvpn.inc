@@ -254,8 +254,9 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") 
 
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.{$directive}";
 	file_put_contents($fpath, base64_decode($data));
-	chown($fpath, 'nobody');
-	chgrp($fpath, 'nobody');
+	//chown($fpath, 'nobody');
+	//chgrp($fpath, 'nobody');
+	chmod($fpath, 0600);
 
 	$conf .= "{$directive} {$fpath} {$opt}\n";
 }
@@ -488,7 +489,6 @@ function openvpn_reconfigure($mode,& $settings) {
 		case 'server_tls_user':
 			$ca = lookup_ca($settings['caref']);
 			openvpn_add_keyfile($ca['crt'], $conf, $mode_id, "ca");
-		case 'server_user':
 			$cert = lookup_cert($settings['certref']);
 			openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
 			openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
@@ -503,6 +503,17 @@ function openvpn_reconfigure($mode,& $settings) {
 					$tlsopt = 1;
 				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth", $tlsopt);
 			}
+			break;
+		case 'server_user':
+			$ca = lookup_ca($settings['caref']);
+			openvpn_add_keyfile($ca['crt'], $conf, $mode_id, "ca");
+			$cert = lookup_cert($settings['certref']);
+			openvpn_add_keyfile($cert['crt'], $conf, $mode_id, "cert");
+			openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
+			if ($mode == 'server')
+				$conf .= "dh {$g['etc_path']}/dh-parameters.{$settings['dh_length']}\n";
+			if ($settings['crl'])
+				openvpn_add_keyfile($settings['crl'], $conf, $mode_id, "crl-verify");
 			break;
 	}
 
@@ -524,8 +535,12 @@ function openvpn_reconfigure($mode,& $settings) {
 
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.conf";
 	file_put_contents($fpath, $conf);
-	chown($fpath, 'nobody');
-	chgrp($fpath, 'nobody');
+	//chown($fpath, 'nobody');
+	//chgrp($fpath, 'nobody');
+	chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);
+	chmod("{$g['varetc_path']}/openvpn/{$mode_id}.key", 0600);
+	chmod("{$g['varetc_path']}/openvpn/{$mode_id}.tls-auth", 0600);
+	chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);
 }
 
 function openvpn_restart($mode, & $settings) {

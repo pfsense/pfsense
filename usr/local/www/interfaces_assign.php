@@ -205,6 +205,9 @@ if ($_POST['apply']) {
 					if (preg_match('/^ppp_(.+)$/', $ifport, $matches)) {
 						$config['interfaces'][$ifname]['pointtopoint'] = true;
 						$config['interfaces'][$ifname]['serialport'] = $matches[1];
+					} else {
+						unset($config['interfaces'][$ifname]['pointtopoint']);
+						unset($config['interfaces'][$ifname]['serialport']);
 					}
 
 					/* check for wireless interfaces, set or clear ['wireless'] */

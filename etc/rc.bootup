@@ -98,10 +98,6 @@ $pkg_interface = 'console';
 $g['booting'] = true;
 touch("{$g['varrun_path']}/booting");
 
-/* Create a shared memory for counting the consumers of conf_mount_rw. */
-if ($g['platform'] != "cdrom" || $g['platform'] != "pfSense")
-	$g['confmountshmid'] = shmop_open($g['confmountshm'], "c", 0666, 10);
-
 /* parse the configuration and include all functions used below */
 require_once("/etc/inc/config.inc");
 echo ".";

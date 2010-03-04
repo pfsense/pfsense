@@ -1052,7 +1052,6 @@ function session_auth() {
 	/* Validate incoming login request */
 	if (isset($_POST['login'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-		/* Should check backend type for fallback. */
 		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg) || 
 		    authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
 			$_SESSION['Logged_In'] = "True";

@@ -78,11 +78,6 @@ if ($_POST) {
 		else
 			unset($config['system']['webgui']['authmode']);
 
-		if($_POST['backend'])
-			$config['system']['webgui']['backend'] = $_POST['backend'];
-		else
-			unset($config['system']['webgui']['backend']);
-
 		write_config();
 
 	}
@@ -154,16 +149,6 @@ if(!$pconfig['backend'])
                                 </select>
 			</td>
 		</tr>
-                <tr>
-                        <td width="22%" valign="top" class="vncell">Authentication fallback backend</td>
-                        <td width="78%" class="vtable">
-                                <select name='backend' id='backend' onchange='ldap_typechange()'>
-                                        <option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>Local User Database</option>
-                                        <option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP (Directory server)</option>
-                                </select>
-                                <br/>NOTE: login failures or server not available issues will fall back to <?=$g['product_name'];?> this type of authenticator.
-                        </td>
-                </tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">

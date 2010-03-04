@@ -3,6 +3,7 @@
 /*
     diag_confbak.php
     Copyright (C) 2005 Colin Smith
+    Copyright (C) 2010 Jim Pingle
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -72,6 +73,23 @@ if($_GET['getcfg'] != "") {
 	exit;
 }
 
+if (($_GET['diff'] == 'Diff') && isset($_GET['oldtime']) && isset($_GET['newtime'])
+      && is_numeric($_GET['oldtime']) && (is_numeric($_GET['newtime']) || ($_GET['newtime'] == 'current'))) {
+	$diff = "";
+	$oldfile = $g['conf_path'] . '/backup/config-' . $_GET['oldtime'] . '.xml';
+	$oldtime = $_GET['oldtime'];
+	if ($_GET['newtime'] == 'current') {
+		$newfile = $g['conf_path'] . '/config.xml';
+		$newtime = $config['revision']['time'];
+	} else {
+		$newfile = $g['conf_path'] . '/backup/config-' . $_GET['newtime'] . '.xml';
+		$newtime = $_GET['newtime'];
+	}
+	if (file_exists($oldfile) && file_exists($newfile)) {
+		exec("/usr/bin/diff -u " . escapeshellarg($oldfile) . " " . escapeshellarg($newfile), $diff);
+	}
+}
+
 cleanup_backupcache();
 $confvers = get_backups();
 unset($confvers['versions']);
@@ -87,6 +105,16 @@ include("head.inc");
 		if($savemsg)
 			print_info_box($savemsg);
 	?>
+	<? if ($diff) { ?>
+	<table align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+		<tr><td>Configuration diff from <?php echo date("n/j/y H:i:s", $oldtime); ?> to <?php echo date("n/j/y H:i:s", $newtime); ?></td></tr>
+		<tr>
+			<td>
+				<pre><?php echo htmlentities(implode($diff, "\n"));?></pre>
+			</td>
+		</tr>
+	</table>
+	<? } ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td>
@@ -101,18 +129,25 @@ include("head.inc");
 		<tr>
 			<td>
 				<div id="mainarea">
+					<form action="diag_confbak.php" method="GET">
 					<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (is_array($confvers)): ?>
 						<tr>
+							<td colspan="2" valign="middle" align="center" class="list" nowrap><b>Diff</b></td>
 							<td width="30%" class="listhdrr">Date</td>
 							<td width="70%" class="listhdrr">Configuration Change</td>
 						</tr>
 						<tr valign="top">
+							<td valign="middle" class="list" nowrap></td>
+							<td class="list">
+								<input type="radio" name="newtime" value="current">
+							</td>
 							<td class="listlr"> <?= date("n/j/y H:i:s", $config['revision']['time']) ?></td>
 							<td class="listr"> <?= $config['revision']['description'] ?></td>
-							<td colspan="2" valign="middle" class="list" nowrap><b>Current</b></td>
+							<td colspan="3" valign="middle" class="list" nowrap><b>Current</b></td>
 						</tr>
 						<?php
+							$c = 0;
 							foreach($confvers as $version):
 								if($version['time'] != 0)
 									$date = date("n/j/y H:i:s", $version['time']);
@@ -121,6 +156,17 @@ include("head.inc");
 								$desc = $version['description'];
 						?>
 						<tr valign="top">
+							<td class="list">
+								<input type="radio" name="oldtime" value="<?php echo $version['time'];?>">
+							</td>
+							<td class="list">
+								<?php if ($c < (count($confvers) - 1)) { ?>
+								<input type="radio" name="newtime" value="<?php echo $version['time'];?>">
+								<? } else { ?>
+								&nbsp;
+								<? } 
+								$c++; ?>
+							</td>
 							<td class="listlr"> <?= $date ?></td>
 							<td class="listr"> <?= $desc ?></td>
 							<td valign="middle" class="list" nowrap>
@@ -140,6 +186,10 @@ include("head.inc");
 							</td>
 						</tr>
 						<?php endforeach; ?>
+						<tr>
+							<td colspan="2"><input type="submit" name="diff" value="Diff"></td>
+							<td colspan="5"></td>
+						</tr>
 						<?php else: ?>
 						<tr>
 							<td>
@@ -148,6 +198,7 @@ include("head.inc");
 						</tr>
 						<?php endif; ?>
 					</table>
+					</form>
 				</div>
 			</td>
 		</tr>

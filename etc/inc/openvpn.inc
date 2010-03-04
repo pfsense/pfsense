@@ -256,7 +256,7 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") 
 	file_put_contents($fpath, base64_decode($data));
 	//chown($fpath, 'nobody');
 	//chgrp($fpath, 'nobody');
-	chmod($fpath, 0600);
+	@chmod($fpath, 0600);
 
 	$conf .= "{$directive} {$fpath} {$opt}\n";
 }
@@ -528,10 +528,10 @@ function openvpn_reconfigure($mode,& $settings) {
 	file_put_contents($fpath, $conf);
 	//chown($fpath, 'nobody');
 	//chgrp($fpath, 'nobody');
-	chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);
-	chmod("{$g['varetc_path']}/openvpn/{$mode_id}.key", 0600);
-	chmod("{$g['varetc_path']}/openvpn/{$mode_id}.tls-auth", 0600);
-	chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);
+	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);
+	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.key", 0600);
+	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.tls-auth", 0600);
+	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);
 }
 
 function openvpn_restart($mode, & $settings) {

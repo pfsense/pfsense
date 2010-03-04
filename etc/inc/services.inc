@@ -834,14 +834,14 @@ function services_dnsupdate_process($int = "") {
 	/* Dynamic DNS updating active? */
 	if (is_array($config['dnsupdates']['dnsupdate'])) {
 		foreach ($config['dnsupdates']['dnsupdate'] as $i => $dnsupdate) {
-			if (!isset($dyndns['enable']))
+			if (!isset($dnsupdate['enable']))
 				continue;
-			if (!empty($int) && $int != $dyndns['interface'])
+			if (!empty($int) && $int != $dnsupdate['interface'])
 				continue;
 
 			/* determine interface name */
-			$if = get_real_interface($dyndns['interface']);
-			$wanip = get_interface_ip($dyndns['interface']);
+			$if = get_real_interface($dnsupdate['interface']);
+			$wanip = get_interface_ip($dnsupdate['interface']);
 			if ($wanip) {
 
 				$keyname = $dnsupdate['keyname'];
@@ -879,7 +879,7 @@ EOD;
 					$proto = 2;
 				}
 
-				$fd = fopen("{$g['varetc_path']}/K{$keyname}+157+00000.key", "w");
+				$fd = fopen("{$g['varetc_path']}/K{$i}{$keyname}+157+00000.key", "w");
 				fwrite($fd, "{$keyname} IN KEY {$flags} {$proto} 157 {$dnsupdate['keydata']}\n");
 				fclose($fd);
 

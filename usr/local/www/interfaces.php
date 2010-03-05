@@ -894,6 +894,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 			<strong>Enable Interface</strong>
 			</td>
 		</tr>
+		<?php else: ?>
+		<input name="enable" type="hidden" value="yes">
 		<?php endif; ?>
 		</table>
 		<div style="display:none;" name="allcfg" id="allcfg">

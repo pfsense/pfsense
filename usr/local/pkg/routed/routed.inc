@@ -39,28 +39,25 @@ function setup_routed() {
 	if (isset($config['installedpackages']['routed']['config'][0]['enable']) &&
 		$config['installedpackages']['routed']['config'][0]['enable'] == "on") {
 		/* if user selected individual interfaces */
-		$ifdescrs = array ("wan", "lan");
-		for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-			if(isset($config['interfaces']['opt' . $j]['enable']))
-				$ifdescrs['opt' . $j] = "opt" . $j;
-		}
-
+		$ifdescrs = get_configured_interface_with_descr();
 		$ifarr = explode(",", $config['installedpackages']['routed']['config'][0]['iface_array']);
                 if (count($ifarr) != 0) {
 			foreach($ifdescrs as $ifdescr => $ifname) {
 				if (in_array($ifname, $ifarr)) {
-					$gw .= setup_etc_gateways($ifname, 'enable');
+					$gw .= setup_etc_gateways($ifdescr, 'enable');
 				} else {
-					$gw .= setup_etc_gateways($ifname, 'disable');
+					$gw .= setup_etc_gateways($ifdescr, 'disable');
 				}
 			}
 		} else {
 			/* setup for all interfaces */
 			$gw = setup_etc_gateways();
 		}
+		conf_mount_rw();
 		$fd = fopen("/etc/gateways", "w");
 		fwrite($fd, $gw);
 		fclose($fd);
+		conf_mount_ro();
 		restart_routed();
 	} else {
 		stop_routed();
@@ -70,9 +67,11 @@ function setup_routed() {
 function setup_etc_gateways($iface="", $mode="") {
 	global $config;
 
+	$ret = "";
 	if ($iface != "") {
-		$realif=convert_friendly_interface_to_real_interface_name(strtoupper($iface));
-		$ret = "if={$realif} ";
+		$realif=convert_friendly_interface_to_real_interface_name($iface);
+		if ($realif)
+			$ret = "if={$realif} ";
 	}
 
 	switch($mode) {

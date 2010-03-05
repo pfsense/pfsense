@@ -32,8 +32,12 @@ function setup_routed() {
 	global $config;
 	$gw = "";
 
+	if (!is_array($config['installedpackages']['routed']))
+		return;
+	if (!is_array($config['installedpackages']['routed']['config']))
+		return;
 	if (isset($config['installedpackages']['routed']['config'][0]['enable']) &&
-      $config['installedpackages']['routed']['config'][0]['enable'] == "on") {
+		$config['installedpackages']['routed']['config'][0]['enable'] == "on") {
 		/* if user selected individual interfaces */
 		$ifdescrs = array ("wan", "lan");
 		for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {

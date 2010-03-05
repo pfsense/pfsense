@@ -127,10 +127,10 @@ function lock($lock) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 	$cfglckkeyconsumers++;
 	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w+")) {
-		if (flock($fp, LOCK_EX))
+		//if (flock($fp, LOCK_EX))
 			return $fp;
-		else
-			fclose($fp);
+		//else
+		//	fclose($fp);
 	}
 }
 

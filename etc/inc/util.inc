@@ -492,6 +492,9 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		$vfaces = array (
 				'bridge',
 				'ppp',
+				'pppoe',
+				'pptp',
+				'l2tp',
 				'sl',
 				'gif',
 				'gre',

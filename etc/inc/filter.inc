@@ -1098,6 +1098,8 @@ function filter_nat_rules_generate() {
 				continue;
 
 			$extaddr = alias_expand($rule['external-address']);
+			if($rule['external-address'] == "any")
+				$extaddr = "any";
 			if(!$extaddr)
 				$extaddr = $FilterIflist[$natif]['ip'];
 			$natif = $FilterIflist[$natif]['if'];

@@ -163,4 +163,5 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 		 "hw.bce.tso_enable" => "0"
 		  );
 
+$config_inc_loaded = false;
 ?>

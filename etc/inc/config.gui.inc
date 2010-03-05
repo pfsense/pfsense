@@ -46,6 +46,8 @@
  * DISABLE_PHP_LINT_CHECKING
  */
 
+require_once("globals.inc");
+
 /* do not load this file twice. */
 if($config_inc_loaded == true)
 	return;

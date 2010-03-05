@@ -218,6 +218,7 @@ function filter_configure_sync() {
 	if(file_exists("{$g['tmp_path']}/rules.debug"))
 		copy("{$g['tmp_path']}/rules.debug", "{$g['tmp_path']}/rules.debug.old");
 
+	$rules = "";
 	$rules .= "{$aliases} \n";
 	update_filter_reload_status("Setting up logging information");
 	$rules .= filter_setup_logging_interfaces();
@@ -458,7 +459,7 @@ function filter_generate_aliases() {
 		echo "filter_generate_aliases() being called $mt\n";
 	}
 	$alias = "#System aliases\n ";
-	$aliases .= "loopback = \"{ lo0 }\"\n";
+	$aliases = "loopback = \"{ lo0 }\"\n";
 
 	foreach ($FilterIflist as $if => $ifcfg) {
 		$aliases .= "{$ifcfg['descr']} = \"{ {$ifcfg['if']}";
@@ -884,7 +885,8 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 
 function filter_nat_rules_generate() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
-	$natrules .= "nat-anchor \"natearly/*\"\n";
+
+	$natrules = "nat-anchor \"natearly/*\"\n";
 	if(file_exists("{$g['tmp_path']}/rules.natearly.packages"))
 		$natrules .= file_get_contents("{$g['tmp_path']}/rules.natearly.packages");
 	
@@ -1021,7 +1023,7 @@ function filter_nat_rules_generate() {
 						"{$macroortable}", 5060, "", 5060, $target, 5060, false);
 					$natrules .= filter_nat_rules_generate_if($if,
 						"{$macroortable}", null, "", null, $target, null, isset($ifcfg['nonat']));
-					$natrule .= "\n";
+					$natrules .= "\n";
 				}
 			}		
 		endif;
@@ -1622,6 +1624,7 @@ function filter_generate_user_rule($rule) {
                 }
         }
 
+	$line = "";
 	/* exception(s) to a user rules can go here. */
 	/* rules with a gateway or pool should create another rule for routing to vpns */
 	if(($aline['route'] <> "") && (trim($aline['type']) == "pass") && strstr($dst, "any")) {

@@ -43,6 +43,7 @@
 	pfSense_MODULE:	config
 */
 
+$config_parsed = false;
 
 /****f* config/encrypted_configxml
  * NAME

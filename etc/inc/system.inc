@@ -740,6 +740,8 @@ function system_generate_lighty_config($filename,
 		exec("chmod a-w {$g['tmp_path']}/captiveportal");
 		$server_max_request_size = "server.max-request-size    = 384";
 	} else {
+		$captiveportal = "";
+		$captive_portal_rewrite = "";
 		$captive_portal_module = "";
 		$captive_portal_mod_evasive = "";
 		$server_upload_dirs = "server.upload-dirs = ( \"{$g['upload_path']}/\", \"{$g['tmp_path']}/\", \"/var/\" )\n";
@@ -835,6 +837,7 @@ cgi.assign                 = ( ".php"  => "/usr/local/bin/php",
 EOD;
 	}
 
+	$lighty_config = "";
 	$lighty_config .= <<<EOD
 #
 # lighttpd configuration file

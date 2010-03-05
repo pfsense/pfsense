@@ -264,10 +264,10 @@ function return_gateways_array($disabled = false) {
 	} else {
 		$iflist = get_configured_interface_with_descr(false, true);
 	}
-		
+
+	$i = 0;
 	/* tack on all the hard defined gateways as well */
 	if(is_array($config['gateways']['gateway_item'])) {
-		$i = 0;
 		foreach($config['gateways']['gateway_item'] as $gateway) {
 			if($gateway['gateway'] == "dynamic") {
 				$gateway['gateway'] = get_interface_gateway($gateway['interface']);

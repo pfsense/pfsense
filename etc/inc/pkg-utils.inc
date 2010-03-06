@@ -238,34 +238,36 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 			} else {
 				$prefix = "/usr/local/pkg/";
 			}
+			// Ensure that the prefix exists to avoid installation errors.
+			if(!is_dir($prefix)) 
+				exec("mkdir -p {$prefix}");
 			if(!file_exists($prefix . $depend_file))
 				log_error("The {$package['name']} package is missing required dependencies and must be reinstalled.");
 			switch ($format) {
 				case "files":
-				$depends[] = $depend_file;
-			break;
-            			case "names":
-                		switch ($filetype) {
-
-				case "all":
-				if(preg_match("/\.xml/i", $depend_file)) {
-					$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-					$depends[] = $depend_xml['name'];
+					$depends[] = $depend_file;
 					break;
-				} else {
-					$depends[] = $depend_name; // If this dependency isn't package XML, use the stripped filename.
-				break;
-				}
-				case ".xml":
-				$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-				$depends[] = $depend_xml['name'];
-				break;
-				default:
-				$depends[] = $depend_name; // If we aren't looking for XML, use the stripped filename (it's all we have).
-				break;
-				}
+				case "names":
+					switch ($filetype) {
+						case "all":
+						if(preg_match("/\.xml/i", $depend_file)) {
+							$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+							$depends[] = $depend_xml['name'];
+							break;
+						} else {
+							$depends[] = $depend_name; // If this dependency isn't package XML, use the stripped filename.
+							break;
+						}
+						case ".xml":
+							$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+							$depends[] = $depend_xml['name'];
+							break;
+						default:
+							$depends[] = $depend_name; // If we aren't looking for XML, use the stripped filename (it's all we have).
+							break;
+						}
+					}
 			}
-		}
 		return $depends;
 	}
 }

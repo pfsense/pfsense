@@ -221,20 +221,25 @@ if ($_POST) {
 		$wrongaliases = "";
 		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
+				$count = 0;
 				if ($isfirst > 0)
 					$address .= " ";
-				$address .= $_POST["address{$x}"];
-				if(($_POST['type'] == "network" || is_ipaddr($_POST["address{$x}"])) && $_POST["address_subnet{$x}"] <> "")
-					$address .= "/" . $_POST["address_subnet{$x}"];
-
-	       			if($_POST["detail{$x}"] <> "") {
-	       				$final_address_details .= $_POST["detail{$x}"];
-	       			} else {
-		       			$final_address_details .= "Entry added" . " ";
-		       			$final_address_details .= date('r');
-	       			}
-	       			$final_address_details .= "||";
-				$isfirst++;
+				if (is_iprange($_POST["address{$x}"])) {
+					list($startip, $endip) = explode('-', $_POST["address{$x}"]);
+					$rangesubnets = ip_range_to_subnet_array($startip, $endip);
+					$count = count($rangesubnets);
+					$address .= implode($rangesubnets, ' ');
+				} else {
+					$address .= $_POST["address{$x}"];
+					if(($_POST['type'] == "network" || is_ipaddr($_POST["address{$x}"])) && $_POST["address_subnet{$x}"] <> "")
+						$address .= "/" . $_POST["address_subnet{$x}"];
+				}
+				if($_POST["detail{$x}"] <> "") {
+					$final_address_details .= str_repeat($_POST["detail{$x}"] . "||", $count);
+				} else {
+					$final_address_details .= str_repeat("Entry added " . date('r') . "||", $count);
+				}
+				$isfirst += $count;
 				
 				if (is_alias($_POST["address{$x}"])) {
 					if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
@@ -243,7 +248,9 @@ if ($_POST) {
 					if (!is_port($_POST["address{$x}"]))
 						$input_errors[] = $_POST["address{$x}"] . " is not a valid port or alias.";
 				} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
-					if (!is_ipaddr($_POST["address{$x}"]) && !is_hostname($_POST["address{$x}"]))
+					if (!is_ipaddr($_POST["address{$x}"])
+					 && !is_hostname($_POST["address{$x}"])
+					 && !is_iprange($_POST["address{$x}"]))
 						$input_errors[] = $_POST["address{$x}"] . " is not a valid {$_POST['type']} alias.";
 				}
 			}

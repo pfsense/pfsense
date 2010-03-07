@@ -1535,7 +1535,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<td class="vtable">
 												<select name="wpa_pairwise" class="formselect" id="wpa_pairwise">
 													<option <? if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected";?> value="CCMP TKIP">Both</option>
-													<option <? if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected";?> value="CCMP">AES</option>
+													<option <? if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected";?> value="CCMP">AES (recommended)</option>
 													<option <? if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected";?> value="TKIP">TKIP</option>
 												</select>
 											</td>

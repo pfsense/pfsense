@@ -1552,6 +1552,13 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 		$wlcmd[] = "-pureg";
 	}
 
+	/* handle puren (802.11n) only option */
+	if(isset($wlcfg['puren']['enable'])) {
+		$wlcmd[] = "puren";
+	} else {
+		$wlcmd[] = "-puren";
+	}
+
 	/* enable apbridge option */
 	if(isset($wlcfg['apbridge']['enable'])) {
 		$wlcmd[] = "apbridge";

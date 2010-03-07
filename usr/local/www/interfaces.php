@@ -227,6 +227,7 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['distance'] = $wancfg['wireless']['distance'];
 	$pconfig['wme_enable'] = isset($wancfg['wireless']['wme']['enable']);
 	$pconfig['pureg_enable'] = isset($wancfg['wireless']['pureg']['enable']);
+	$pconfig['puren_enable'] = isset($wancfg['wireless']['puren']['enable']);
 	$pconfig['apbridge_enable'] = isset($wancfg['wireless']['apbridge']['enable']);
 	$pconfig['authmode'] = $wancfg['wireless']['authmode'];
 	$pconfig['hidessid_enable'] = isset($wancfg['wireless']['hidessid']['enable']);
@@ -756,6 +757,12 @@ function handle_wireless_post() {
 		$wancfg['wireless']['pureg']['enable'] = $_POST['pureg_enable'] = true;
 	} else if (isset($wancfg['wireless']['pureg']['enable']))
 		unset($wancfg['wireless']['pureg']['enable']);
+	if ($_POST['puren_enable'] == "yes") {
+		if (!is_array($wancfg['wireless']['puren']))
+			$wancfg['wireless']['puren'] = array();
+		$wancfg['wireless']['puren']['enable'] = $_POST['puren_enable'] = true;
+	} else if (isset($wancfg['wireless']['puren']['enable']))
+		unset($wancfg['wireless']['puren']['enable']);
 	if ($_POST['apbridge_enable'] == "yes") {
 		if (!is_array($wancfg['wireless']['apbridge']))
 			$wancfg['wireless']['apbridge'] = array();
@@ -1288,6 +1295,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											</select>
 										</td>
 									</tr>
+									<?php if (isset($wl_modes['11g'])): ?>
 									<tr>
 										<td valign="top" class="vncellreq">802.11g OFDM Protection Mode</td>
 										<td class="vtable">
@@ -1301,6 +1309,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<br/>
 										</td>
 									</tr>
+									<?php else: ?>
+									<input name="protmode" type="hidden" id="protmode" value="off">
+									<?php endif; ?>
 										<tr>
 											<td valign="top" class="vncellreq">Transmit power</td>
 											<td class="vtable">
@@ -1373,6 +1384,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>">
 										</td>
                 					</tr>
+									<?php if (isset($wl_modes['11g'])): ?>
 									<tr>
 										<td valign="top" class="vncell">802.11g only</td>
 										<td class="vtable">
@@ -1380,6 +1392,16 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<br/>When operating as an access point in 802.11g mode allow only 11g-capable stations to associate (11b-only stations are not permitted to associate).
 										</td>
 									</tr>
+									<?php endif; ?>
+									<?php if (isset($wl_modes['11ng']) || isset($wl_modes['11na'])): ?>
+									<tr>
+										<td valign="top" class="vncell">802.11n only</td>
+										<td class="vtable">
+											<input name="puren_enable" type="checkbox" value="yes"  class="formfld" id="puren_enable" <? if ($pconfig['puren_enable']) echo "checked";?>>
+											<br/>When operating as an access point in 802.11n mode allow only 11n-capable stations to associate (legacy stations are not permitted to associate).
+										</td>
+									</tr>
+									<?php endif; ?>
 									<tr>
 										<td valign="top" class="vncell">Allow intra-BSS communication</td>
 										<td class="vtable">

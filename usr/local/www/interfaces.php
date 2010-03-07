@@ -1275,10 +1275,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<td colspan="2" valign="top" height="16"></td>
 										</tr>										
 										<tr>
-											<td colspan="2" valign="top" class="listtopic">Common wireless configuration</td>
-										</tr>
-										<tr>
-											<td colspan="2" valign="top" class="vtable">These settings apply to all wireless networks on <?=$wlanbaseif;?>.</td>
+											<td colspan="2" valign="top" class="listtopic">Common wireless configuration - Settings apply to all wireless networks on <?=$wlanbaseif;?>.</td>
 										</tr>
 										<tr>
 											<td valign="top" class="vncellreq">Standard</td>

@@ -1640,6 +1640,8 @@ EOD;
 			}
 			break;
 		case 'hostap':
+			if($wlcfg['wpa']['passphrase']) 
+				$wpa_passphrase = "wpa_passphrase={$wlcfg['wpa']['passphrase']}\n";
 			if (isset($wlcfg['wpa']['enable'])) {
 				$wpa .= <<<EOD
 interface={$if}
@@ -1663,7 +1665,7 @@ wpa_pairwise={$wlcfg['wpa']['wpa_pairwise']}
 wpa_group_rekey={$wlcfg['wpa']['wpa_group_rekey']}
 wpa_gmk_rekey={$wlcfg['wpa']['wpa_gmk_rekey']}
 wpa_strict_rekey={$wlcfg['wpa']['wpa_strict_rekey']}
-wpa_passphrase={$wlcfg['wpa']['passphrase']}
+{$wpa_passphrase}
 #Enable the next lines for preauth when roaming. Interface = wired or wireless interface talking to the AP you want to roam from/to
 #rsn_preauth=1
 #rsn_preauth_interfaces=eth0

@@ -1500,11 +1500,12 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	/* Make sure it's up */
 	$wlcmd[] = "up";
 	/* Set a/b/g standard */
-	$wlcmd[] = "mode " . escapeshellarg($wlcfg['standard']);
+	$standard = str_replace(" Turbo", "", $wlcfg['standard']);
+	$wlcmd[] = "mode " . escapeshellarg($standard);
 
 	/* XXX: Disable ampdu for now on mwl when running in 11n mode
 	 * to prevent massive packet loss under certain conditions. */
-	if(preg_match("/^mwl/i", $if) && ($wlcfg['standard'] == "11ng" || $wlcfg['standard'] == "11na"))
+	if(preg_match("/^mwl/i", $if) && ($standard == "11ng" || $standard == "11na"))
 		$wlcmd[] = "-ampdu";
 
 	/* Set ssid */
@@ -1719,8 +1720,6 @@ EOD;
 		fwrite($fd_set, "/sbin/athctrl.sh -i {$baseif} -d {$distance}\n");
 	}
 
-	$standard_no_turbo = str_replace(" Turbo", "", $standard);
-
 	if (isset($wlcfg['wpa']['enable'])) {
 		if ($wlcfg['mode'] == "bss") {
 			fwrite($fd_set, "{$wpa_supplicant} -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf\n");
@@ -1735,7 +1734,7 @@ EOD;
 
 	/* The mode must be specified in a separate command before ifconfig
 	 * will allow the mode and channel at the same time in the next. */
-	mwexec("/sbin/ifconfig {$if} mode " . escapeshellarg($wlcfg['standard']));
+	mwexec("/sbin/ifconfig {$if} mode " . escapeshellarg($standard));
 
 	/* configure wireless */
 	$wlcmd_args = implode(" ", $wlcmd);

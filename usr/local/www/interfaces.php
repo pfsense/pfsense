@@ -769,7 +769,7 @@ function handle_wireless_post() {
 		$wancfg['wireless']['apbridge']['enable'] = $_POST['apbridge_enable'] = true;
 	} else if (isset($wancfg['wireless']['apbridge']['enable']))
 		unset($wancfg['wireless']['apbridge']['enable']);
-	if ($_POST['standard'] == "11a Turbo") {
+	if ($_POST['standard'] == "11g Turbo" || $_POST['standard'] == "11a Turbo") {
 		if (!is_array($wancfg['wireless']['turbo']))
 			$wancfg['wireless']['turbo'] = array();
 		$wancfg['wireless']['turbo']['enable'] = true;

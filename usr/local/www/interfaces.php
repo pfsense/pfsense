@@ -1285,8 +1285,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													echo "value=\"$wl_standard\">802.$wl_standard</option>\n";
 												}
 												?>
-											</select><br/>
-											Note: A reboot may be required for this to take effect if multiple wireless networks are defined on <?=$wlanbaseif;?>.
+											</select>
 										</td>
 									</tr>
 									<tr>

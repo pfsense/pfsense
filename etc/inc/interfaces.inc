@@ -1642,6 +1642,8 @@ EOD;
 		case 'hostap':
 			if($wlcfg['wpa']['passphrase']) 
 				$wpa_passphrase = "wpa_passphrase={$wlcfg['wpa']['passphrase']}\n";
+			else 
+				$wpa_passphrase = "";
 			if (isset($wlcfg['wpa']['enable'])) {
 				$wpa .= <<<EOD
 interface={$if}

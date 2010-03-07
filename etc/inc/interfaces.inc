@@ -1502,6 +1502,11 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 	/* Set a/b/g standard */
 	$wlcmd[] = "mode " . escapeshellarg($wlcfg['standard']);
 
+	/* XXX: Disable ampdu for now on mwl when running in 11n mode
+	 * to prevent massive packet loss under certain conditions. */
+	if(preg_match("/^mwl/i", $if) && ($wlcfg['standard'] == "11ng" || $wlcfg['standard'] == "11na"))
+		$wlcmd[] = "-ampdu";
+
 	/* Set ssid */
 	if($wlcfg['ssid'])
 		$wlcmd[] = "ssid " .escapeshellarg($wlcfg['ssid']);

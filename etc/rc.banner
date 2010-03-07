@@ -72,11 +72,12 @@
 		$realif = get_real_interface($ifname);
 		$tobanner = "{$friendly} ({$ifname})";
 
-		printf("\n  %-25s -> %-10s -> %s%s",
+		printf("\n  %-25s -> %-10s -> %s %s",
 			$tobanner,
 			$realif,
 			$ipaddr ? $ipaddr : "NONE",
 			$class
 		);
 	}
+
 ?>

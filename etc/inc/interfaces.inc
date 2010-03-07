@@ -1717,6 +1717,10 @@ EOD;
 	fclose($fd_set);
 	conf_mount_ro();
 
+	/* The mode must be specified in a separate command before ifconfig
+	 * will allow the mode and channel at the same time in the next. */
+	mwexec("/sbin/ifconfig {$if} mode " . escapeshellarg($wlcfg['standard']));
+
 	/* configure wireless */
 	$wlcmd_args = implode(" ", $wlcmd);
 	mwexec("/sbin/ifconfig {$if} $wlcmd_args", false);

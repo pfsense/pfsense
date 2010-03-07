@@ -2967,6 +2967,13 @@ function get_wireless_modes($interface) {
 				/* if we only have 11g also set 11b channels */
 				if($wireless_mode == "11g") {
 					$wireless_modes["11b"] = array();
+				} else if($wireless_mode == "11g ht") {
+					$wireless_modes["11b"] = array();
+					$wireless_modes["11g"] = array();
+					$wireless_mode = "11ng";
+				} else if($wireless_mode == "11a ht") {
+					$wireless_modes["11a"] = array();
+					$wireless_mode = "11na";
 				}
 				$wireless_modes["$wireless_mode"]["$c"] = $wireless_channel;
 			}

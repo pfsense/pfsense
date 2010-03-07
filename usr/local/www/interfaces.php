@@ -1327,6 +1327,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													<?php
 													foreach($wl_modes as $wl_standard => $wl_channels) {
 														if($wl_standard == "11g") { $wl_standard = "11b/g"; }
+														else if($wl_standard == "11ng") { $wl_standard = "11b/g/n"; }
+														else if($wl_standard == "11na") { $wl_standard = "11a/n"; }
 														foreach($wl_channels as $wl_channel) {
 															echo "<option ";
 															if ($pconfig['channel'] == "$wl_channel") {

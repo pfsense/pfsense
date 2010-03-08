@@ -525,9 +525,12 @@ if ($pkg['tabs'] <> "") {
 							$options = "";
 							$type = $rowhelper['type'];
 							$fieldname = $rowhelper['fieldname'];
-							if($type == "option") $options = &$rowhelper['options']['option'];
+							if($type == "option")
+								$options = &$rowhelper['options']['option'];
 							if($rowhelper['size']) 
 								$size = $rowhelper['size'];
+							else if ($pkga['size'])
+								$size = $pkga['size'];
 							else
 								$size = "8";
 							display_row($rowcounter, $value, $fieldname, $type, $rowhelper, $size);
@@ -561,8 +564,12 @@ if ($pkg['tabs'] <> "") {
 						$type = $rowhelper['type'];
 						$fieldname = $rowhelper['fieldname'];
 						if($type == "option") $options = &$rowhelper['options']['option'];
-						$size = "8";
-						if($rowhelper['size'] <> "") $size = $rowhelper['size'];
+						if($rowhelper['size'] <> "")
+							$size = $rowhelper['size'];
+						else if ($pkga['size'])
+							$size = $pkga['size'];
+						else
+							$size = 8;
 						display_row($rowcounter, $value, $fieldname, $type, $rowhelper, $size);
 						// javascript helpers for row_helper_dynamic.js
 						echo "</td>\n";
@@ -576,13 +583,21 @@ if ($pkg['tabs'] <> "") {
 					}
 
 					$rowcounter++;
+					echo "<td>";
+					echo "<input type=\"image\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"" . gettext("Delete") . "\">";
+					echo "</td>\n";
+					echo "</tr>\n";
 				}
 			?>
 
 			  <tbody></tbody>
 			</table>
 
-		<br><a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>
+		<?php if ($pkga['size']): ?>
+			<br><a onClick="javascript:addRowTo('maintable', <?=$pkga['size'];?>); return false;" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>
+		<?php else: ?>
+			<br><a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>
+		<?php endif; ?>
 		<script language="JavaScript">
 		<!--
 		field_counter_js = <?= $fieldcounter ?>;

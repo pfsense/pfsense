@@ -220,11 +220,11 @@ switch($_GET['mode']) {
 unlink_if_exists("/tmp/apkg_*");
 rmdir_recursive("/var/tmp/instmp*");
 
-/* read only fs */
-conf_mount_ro();
-
 // close log
 if($fd_log)
 	fclose($fd_log);
+
+/* read only fs */
+conf_mount_ro();
 
 ?>

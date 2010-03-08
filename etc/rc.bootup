@@ -374,4 +374,6 @@ unset($g['booting']);
 
 led_normalize();
 
+conf_mount_ro();
+
 ?>

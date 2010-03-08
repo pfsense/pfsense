@@ -693,7 +693,7 @@ function system_webgui_start() {
 	$proto = "http";
 	if ($config['system']['webgui']['protocol'])
 		$proto = $config['system']['webgui']['protocol'];
-	mwexec("/usr/bin/fetch -o /dev/null -q {$proto}://localhost:{$portarg}/preload.php &");
+	mwexec_bg("/usr/bin/fetch -o /dev/null -q {$proto}://localhost:{$portarg}/preload.php");
 
 	if ($g['booting']) {
 		if ($res == 0)

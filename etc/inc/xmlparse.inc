@@ -166,6 +166,7 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 
 	xml_set_element_handler($xml_parser, "startElement", "endElement");
 	xml_set_character_data_handler($xml_parser, "cdata");
+	xml_parser_set_option($xml_parser,XML_OPTION_SKIP_WHITE, 1); 
 
 	if (!($fp = fopen($cffile, "r"))) {
 		die("Error: could not open XML input\n");

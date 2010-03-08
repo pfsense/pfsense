@@ -1261,6 +1261,10 @@ function upnp_action ($action) {
 
 function upnp_start() {
 	global $config, $g;
+
+	if(!isset($config['installedpackages']['miniupnpd']['config']))
+		return;
+
 	if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 		if($g['booting']) {
 			echo "Starting UPnP service... ";

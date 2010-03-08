@@ -175,4 +175,3 @@ include("head.inc");
 <?php include("fend.inc"); ?>
 </body>
 </html>
-<?php conf_mount_ro(); ?>

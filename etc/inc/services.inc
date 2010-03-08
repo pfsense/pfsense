@@ -1236,8 +1236,7 @@ function configure_cron() {
 	/* please maintain the newline at the end of file */
 	file_put_contents("/etc/crontab", $crontab_contents);
 	
-	if (!$g['booting'])
-		conf_mount_ro();
+	conf_mount_ro();
 }
 
 function upnp_action ($action) {

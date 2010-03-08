@@ -2030,7 +2030,8 @@ EOD;
 	}
 	
 	$mpdconf .= <<<EOD
-	new -i {$realif} pppoeclient pppoeclient
+	create bundle static {$interface}
+	set iface name {$realif}
 
 EOD;
 	if ($interface == "wan")
@@ -2062,29 +2063,6 @@ EOD;
 		}
 	}
 
-	$mpdconf .= <<<EOD
-	set bundle disable multilink
-	set auth authname "{$wancfg['pppoe_username']}"
-	set auth password "{$wancfg['pppoe_password']}"
-	set link keep-alive 10 60
-	set link max-redial 0
-	set link no acfcomp protocomp
-	set link disable pap chap
-	set link accept chap
-	
-EOD;
-	if (empty($wancfg['mtu']))
-		$mpdmtu = "1492";
-	else 
-		$mpdmtu = "{$wancfg['mtu']}";
-
-	$mpdconf .= <<<EOD
-	set link mtu {$mpdmtu}
-	set ipcp yes vjcomp
-	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
-
-EOD;
-
 	if (isset($config['system']['dnsallowoverride'])) {
 		$mpdconf .= <<<EOD
 	set ipcp enable req-pri-dns
@@ -2100,27 +2078,33 @@ EOD;
 	}
 	
 	$mpdconf .= <<<EOD
-	open
+	set ipcp yes vjcomp
+	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
+	create link static {$interface}L1 pppoe
+	set link action bundle {$interface}
+	set auth authname "{$wancfg['pppoe_username']}"
+	set auth password "{$wancfg['pppoe_password']}"
+	set link keep-alive 10 60
+	set link max-redial 0
+	set link no acfcomp protocomp
+	set link disable pap chap
+	set link accept chap
+	set pppoe iface {$wancfg['if']}
+	set pppoe service "{$wancfg['provider']}"
+	
+EOD;
+	if (empty($wancfg['mtu']))
+		$mpdmtu = "1492";
+	else 
+		$mpdmtu = "{$wancfg['mtu']}";
+
+	$mpdconf .= <<<EOD
+	set link mtu {$mpdmtu}
 
 EOD;
 
-	fwrite($fd, $mpdconf);
-	fclose($fd);
-
-	/* generate mpd.links */
-	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.links", "w");
-	if (!$fd) {
-		printf("Error: cannot open mpd_{$interface}.links in interface_pppoe_configure().\n");
-		return 1;
-	}
-
-	$mpdconf = <<<EOD
-pppoeclient:
-	set link type pppoe
-	set pppoe iface {$wancfg['if']}
-	set pppoe service "{$wancfg['provider']}"
-	set pppoe enable originate
-	set pppoe disable incoming
+	$mpdconf .= <<<EOD
+	open
 
 EOD;
 
@@ -2195,7 +2179,8 @@ EOD;
 	}
 
         $mpdconf .= <<<EOD
-        new -i {$realif} pptp pptp 
+	create bundle static {$interface}
+	set iface name {$realif}
 
 EOD;
         if ($interface == "wan")
@@ -2219,8 +2204,24 @@ EOD;
 EOD;
 	}
 
+        if (isset($config['system']['dnsallowoverride'])) {
+                $mpdconf .= <<<EOD
+        set ipcp enable req-pri-dns
+
+EOD;
+        }
+
+        if (!isset($wancfg['dnsnosec']) && isset($config['system']['dnsallowoverride'])) {
+                        $mpdconf .= <<<EOD
+        set ipcp enable req-sec-dns
+
+EOD;
+        }
+
 	$mpdconf .= <<<EOD
-	set bundle disable multilink
+	set ipcp no vjcomp
+	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
+	create link static {$interface}L1 pptp
 	set auth authname "{$wancfg['pptp_username']}"
 	set auth password "{$wancfg['pptp_password']}"
 	set bundle no noretry
@@ -2229,39 +2230,13 @@ EOD;
 	set link no acfcomp protocomp
 	set link disable pap chap
 	set link accept chap
-	set ipcp no vjcomp
-	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
-
-EOD;
-	if (isset($config['system']['dnsallowoverride'])) {
-		$mpdconf .= <<<EOD
-	set ipcp enable req-pri-dns
-
-EOD;
-	}
-
-	$mpdconf .= <<<EOD
-	open
-
-EOD;
-
-	fwrite($fd, $mpdconf);
-	fclose($fd);
-
-	/* generate mpd.links */
-	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.links", "w");
-	if (!$fd) {
-		printf("Error: cannot open mpd_{$interface}.links in interface_pptp_configure().\n");
-		return 1;
-	}
-
-	$mpdconf = <<<EOD
-pptp:
-	set link type pptp
-	set pptp enable originate outcall
-	set pptp disable windowing
 	set pptp self {$wancfg['local']}
 	set pptp peer {$wancfg['remote']}
+	set pptp disable windowing
+
+EOD;
+	$mpdconf .= <<<EOD
+	open
 
 EOD;
 
@@ -2275,7 +2250,7 @@ EOD;
 	else 
 		log_error("Could not bring interface wancfg['if'] up in interface_pptp_configure()");
 	/* fire up mpd */
-	mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pptp_{$interface}.pid pptp");
+	mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/pptp_{$interface}.pid pptp");
 
 	return 0;
 }

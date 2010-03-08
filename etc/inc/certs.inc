@@ -31,6 +31,8 @@
 
 require_once("functions.inc");
 
+putenv("OPENSSL_CONF=/etc/ssl/openssl.cnf");
+
 function & lookup_ca($refid) {
 	global $config;
 

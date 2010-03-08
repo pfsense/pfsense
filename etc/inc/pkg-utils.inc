@@ -68,6 +68,7 @@ if(!is_dir("/usr/local/pkg") or !is_dir("/usr/local/pkg/pf")) {
 	safe_mkdir("/usr/local/pkg");
 	safe_mkdir("/usr/local/pkg/pf");	
 }
+conf_mount_ro();
 
 $version = split("-", trim(file_get_contents("/etc/version")));
 $ver = split("\.", $version[0]);
@@ -435,12 +436,14 @@ function install_package($package, $pkg_info = "") {
 		if(!file_exists('/usr/local/pkg/' . $fetchto)) {
 			@fwrite($fd_log, "ERROR! Unable to fetch package configuration file. Aborting installation.\n");
 			if($pkg_interface == "console") {
+				conf_mount_ro();
 				print "\nERROR! Unable to fetch package configuration file. Aborting package installation.\n";
 				return;
 			} else {
 				$static_output .= "failed!\n\nInstallation aborted.";
 				update_output_window($static_output);
 				echo "<br>Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
+				conf_mount_ro();
 			 	return -1;
 			}
 		}
@@ -461,6 +464,7 @@ function install_package($package, $pkg_info = "") {
 		$to_output = "overwrite!\n";
 	}
 	/* XXX: Fix inclusion of config.inc that causes data loss! */
+	conf_mount_ro();
 	write_config();
 	$static_output .= $to_output;
 	update_output_window($static_output);
@@ -792,6 +796,7 @@ function delete_package_xml($pkg) {
 		}
 		ob_flush();
 		sleep(1);
+		conf_mount_ro();
 		return;
 	}
 	/* set up logging if needed */
@@ -934,6 +939,7 @@ function delete_package_xml($pkg) {
 		update_output_window($static_output);
 	}
 	/* remove config.xml entries */
+	conf_mount_ro();
 	$static_output .= "\tConfiguration... ";
 	update_output_window($static_output);
 	unset($config['installedpackages']['package'][$pkgid]);

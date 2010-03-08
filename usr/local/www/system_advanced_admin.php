@@ -101,10 +101,10 @@ if ($_POST) {
 
 		if($_POST['disableconsolemenu'] == "yes") {
 			$config['system']['disableconsolemenu'] = true;
-			auto_login(true);
+			auto_login();
 		} else {
 			unset($config['system']['disableconsolemenu']);
-			auto_login(false);
+			auto_login();
 		}
 
 		if ($_POST['noantilockout'] == "yes")

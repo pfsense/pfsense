@@ -313,11 +313,7 @@ services_snmpd_configure();
 system_set_harddisk_standby();
 
 /* lock down console if necessary */
-if(isset($config['system']['disableconsolemenu'])) {
-	auto_login(false);
-} else {
-	auto_login(true);
-}
+auto_login();
 
 /* Run a filter configure now that most all services have started */
 filter_configure_sync();

@@ -1004,7 +1004,12 @@ function reload_all_sync() {
 	mwexec("/bin/rm {$g['tmp_path']}/reload*");
 }
 
-function auto_login($status) {
+function auto_login() {
+	global $config;
+
+	if(isset($config['system']['disableconsolemenu']))
+		return;
+		
 	$gettytab = file_get_contents("/etc/gettytab");
 	$getty_split = split("\n", $gettytab);
 	conf_mount_rw();
@@ -1087,11 +1092,8 @@ function setup_serial_port() {
 		}
 	}
 	fclose($fd);
-	if(isset($config['system']['disableconsolemenu'])) {
-		auto_login(false);
-	} else {
-		auto_login(true);
-	}
+	auto_login();
+
 	conf_mount_ro();
 	return;
 }

@@ -525,7 +525,7 @@ function install_package_xml($pkg) {
 	/* set up package logging streams */
 	if($pkg_info['logging']) {
 		mwexec("/usr/sbin/fifolog_create -s 32768 {$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
-		chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
+		@chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
 		@fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
 		if(is_process_running("syslogd"))
 			mwexec("killall syslogd");
@@ -633,7 +633,7 @@ function install_package_xml($pkg) {
 				}
 				if($pkg_chmod <> "") {
 					fwrite($fd_log, "Changing file mode to {$pkg_chmod} for {$prefix}{$filename}\n");
-					chmod($prefix . $filename, $pkg_chmod);
+					@chmod($prefix . $filename, $pkg_chmod);
 					system("/bin/chmod {$pkg_chmod} {$prefix}{$filename}");
 				}
 				$static_output = $static_orig;

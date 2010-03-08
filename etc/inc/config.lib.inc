@@ -337,16 +337,16 @@ function conf_mount_ro() {
 	if($g['booting'] == true)
 		return;
 
+	/* do not umount on cdrom or pfSense platforms */
+	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
+		return;
+
 	/* firmare upgrade in progress */
 	if (is_subsystem_dirty('firmwarelock'))
 		return;
 
 	/* do not umount if generating ssh keys */
 	if (is_subsystem_dirty('sshdkeys'))
-		return;
-
-	/* do not umount on cdrom or pfSense platforms */
-	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
 	if (!is_subsystem_dirty('mount'))

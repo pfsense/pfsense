@@ -84,7 +84,7 @@
 			conf_mount_rw();
 			unlink('/conf/needs_package_sync');
 			conf_mount_ro();
-			if($g['platform'] == "pfSense") {
+			if($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
 				header('Location: pkg_mgr_install.php?mode=reinstallall');
 				exit;
 			}

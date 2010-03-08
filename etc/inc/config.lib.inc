@@ -595,9 +595,9 @@ function config_restore($conffile) {
 
 	$config = parse_config(true);
 
-	write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
-
 	conf_mount_ro();
+
+	write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
 
 	return 0;
 }

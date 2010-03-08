@@ -122,6 +122,7 @@ enable)
 	echo "" >> /conf/upgrade_log.txt
 	echo "Enable" >> /conf/upgrade_log.txt
 	echo "" >> /conf/upgrade_log.txt		
+	/etc/rc.conf_mount_ro
 	;;
 auto)
 	touch /var/run/firmwarelock.dirty
@@ -129,6 +130,7 @@ auto)
 	remove_chflags
 	/etc/rc.firmware_auto
 	restore_chflags
+	/etc/rc.conf_mount_ro
 	;;
 pfSenseNanoBSDupgrade)
 
@@ -506,5 +508,4 @@ delta_update)
 
 	;;
 esac
-
 

@@ -142,6 +142,35 @@ function unlock($cfglckkey = 0) {
 	return;
 }
 
+function refcount_init($reference) {
+	$shmid = shmop_open(1000, "c", 0644, 10);
+	shmop_write($shmid, 0, 0);
+	shmop_close($shmid);
+}
+
+function refcount_reference($reference) {
+	$shmid = shmop_open(1000, "w", 0644, 10);
+	$shm_data = shmop_read($shmid, 0, 10);
+	$shm_data = intval($shm_data) + 1;
+	shmop_write($shmid, $shm_data, 0);
+	shmop_close($shmid);
+	
+	return $shm_data;
+}
+
+function refcount_unreference($reference) {
+	/* We assume that the shared memory exists. */
+	$shmid = shmop_open(1000, "w", 0644, 10);
+	$shm_data = shmop_read($shmid, 0, 10);
+	$shm_data = intval($shm_data) - 1;
+	if ($shm_data < 0) {
+		//debug_backtrace();
+		log_error("Reference {$reference} is going negative, not doing unreference.");
+	} else
+		shmop_write($shmid, $shm_data, 0);
+	shmop_close($shmid);
+}
+
 function is_module_loaded($module_name) {
 	$running = `/sbin/kldstat | grep {$module_name} | /usr/bin/grep -v grep | /usr/bin/wc -l`;
 	if (intval($running) >= 1)

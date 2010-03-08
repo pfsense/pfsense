@@ -171,7 +171,7 @@ if ($_POST) {
 
 	if (!empty($pconfig['authmode'])) {
 		foreach ($pconfig['authmode'] as $pauthmode) {
-			if ($pauthmode != "local" && $pconfig['mode'] == "server_tls_user") 
+			if ($pauthmode != "Local Database" && $pconfig['mode'] == "server_tls_user") 
 				$input_errors[] = "Only 'Local authentication database'  is allowed with " . $openvpn_server_modes[$pconfig['mode']];
 		}
 	}

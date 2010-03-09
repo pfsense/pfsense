@@ -55,9 +55,9 @@ function post_choices() {
 
 	var ous = <?php echo count($ous); ?>;
 	var i;
+		opener.document.forms[0].ldapauthcontainers.value="";
 	for (i = 0; i < ous; i++) {
 		if (document.forms[0].ou[i].checked) {
-			opener.document.forms[0].ldapauthcontainers.value="";
 			if (opener.document.forms[0].ldapauthcontainers.value != "")
 				opener.document.forms[0].ldapauthcontainers.value+=";";
 			opener.document.forms[0].ldapauthcontainers.value+=document.forms[0].ou[i].value;

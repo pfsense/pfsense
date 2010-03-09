@@ -1018,6 +1018,33 @@ function auth_get_authserver_list() {
 	return $list;
 }
 
+function getUserGroups($username, $authcfg) {
+	global $config;
+
+	$allowed_groups = array();
+
+	switch($authcfg['type']) {
+        case 'ldap':
+		$allowed_groups = @ldap_get_groups($username, $authcfg);
+		break;
+	case 'radius':
+		break;
+	default:
+		$user = getUserEntry($username);
+		$allowed_groups = @local_user_get_groups($user, true);
+		break;
+	}
+
+	$member_groups = array();
+        if (is_array($config['system']['group'])) {
+                foreach ($config['system']['group'] as $group)
+                        if (in_array($group['name'], $allowed_groups))
+				$member_groups[] = $group['name'];
+	}
+
+	return $member_groups;
+}
+
 function authenticate_user($username, $password, $authcfg = NULL) {
 
 	if (!$authcfg) {

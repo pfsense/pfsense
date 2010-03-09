@@ -56,10 +56,16 @@ if ($_POST) {
 		$input_errors[] = "A valid username and password must be specified.";
 
 	if (!$input_errors) {
-		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg))
-			$savemsg = "User authenticated sucessfully.";
-		else
+		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg)) {
+			$savemsg = "User: {$_POST['username']} authenticated sucessfully.";
+			$groups = getUserGroups($_POST['username'], $authcfg);
+			$savemsg .= "<br />This user is member of this groups: <br />";
+			foreach ($groups as $group)
+				$savemsg .= "{$group} ";
+		} else {
+			var_dump($authcfg);
 			$input_errors[] = "User did not authenticate succesfully.";
+		}
 	}
 }
 $pgtitle = array("Diagnostics","Authentication");

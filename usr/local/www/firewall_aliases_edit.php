@@ -221,7 +221,7 @@ if ($_POST) {
 		$wrongaliases = "";
 		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
-				$count = 0;
+				$count = 1;
 				if ($isfirst > 0)
 					$address .= " ";
 				if (is_iprange($_POST["address{$x}"])) {

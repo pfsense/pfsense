@@ -422,7 +422,7 @@ function select_clicked() {
 						</tr>
 					</table>
 
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="ldap">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="ldap" style="display:none">
 						<tr>
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
@@ -587,7 +587,7 @@ function select_clicked() {
 						</tr>
 					</table>
 
-					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="radius">
+					<table width="100%" border="0" cellpadding="6" cellspacing="0" id="radius" style="display:none">
 						<tr>
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
@@ -706,8 +706,7 @@ function select_clicked() {
 		</td>
 	</tr>
 </table>
-<?php include("fend.inc");
-if ($act == "edit"): ?>
+<?php include("fend.inc"); ?>
 <script type="text/javascript">
 <!--
 server_typechange('<?=$pconfig['type'];?>');
@@ -723,5 +722,4 @@ radius_srvcschange();
 <? endif; ?>
 //-->
 </script>
-<?php endif; ?>
 </body>

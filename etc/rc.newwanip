@@ -64,17 +64,6 @@ if($curwanip == "0.0.0.0") {
         exit;
 }
 
-/* fallback to rc.newwanip ip if needed */
-if(file_exists("{$g['vardb_path']}/{$interface_real}_ip"))
-    $old_ip = trim(file_get_contents("{$g['vardb_path']}/{$interface_real}_ip"), " \r\n");
-if($old_ip) {
-    $helpers = exec("/bin/ps awux | grep \"{$old_ip}\" | grep -v \"grep\" | awk '{ print $2 }'");
-    if($helpers)
-	mwexec("kill " . trim($helpers));
-} else {
-    log_error("rc.newwanip: WARNING! could not determine the previous IP address of {$interface}( {$interface_real} ).");
-}
-
 /* reconfigure IPsec tunnels */
 vpn_ipsec_force_reload();
 
@@ -105,13 +94,9 @@ enable_rrd_graphing();
 update_gateway_groups_defaultroute($interface);
 
 /* restart packages */
-if($old_ip <> "") {
-	if($old_ip <> $curwanip) {
-		mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
-		exec("/etc/rc.start_packages");
-		log_error("{$g['product_name']} package system has detected an ip change $old_ip ->  $curwanip ... Restarting packages.");		
-	}
-}
+mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
+exec("/etc/rc.start_packages");
+log_error("{$g['product_name']} package system has detected an ip change $old_ip ->  $curwanip ... Restarting packages.");		
 
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();

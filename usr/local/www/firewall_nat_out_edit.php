@@ -431,9 +431,18 @@ any)</td>
 			  <td><select name="target" class="formselect">
 				<option value=""<?php if (!$pconfig['target']) echo " selected"; ?>>Interface address</option>
 <?php	if (is_array($config['virtualip']['vip'])):
-		foreach ($config['virtualip']['vip'] as $sn): ?>
+		foreach ($config['virtualip']['vip'] as $sn):
+			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
+				$baseip = ip2long($sn['subnet']) & ip2long(gen_subnet_mask($sn['subnet_bits']));
+				for ($i = $sn['subnet_bits']; $i <= 32; $i++):
+					$baseip = $baseip + 1;
+					$snip = long2ip($baseip);
+?>
+				<option value="<?=$snip;?>" <?php if ($snip == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
+				<?php endfor; ?>
+			<?php else: ?>
 				<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
-<?php 		endforeach;
+<?php 		endif; endforeach;
 	endif;
 ?>
 				<option value=""<?php if($pconfig['target'] == "any") echo " selected"; ?>>any</option>

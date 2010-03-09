@@ -1003,6 +1003,23 @@ function filter_nat_rules_generate() {
 				$tonathosts .= "{$FilterIflist['l2tp']['sa']}/{$l2tp_subnet} ";
 			}
 		}
+		/* add openvpn interfaces */
+        	if(is_array($config['openvpn']['openvpn-server'])) {
+			foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv) {
+				if (!empty($ovpnsrv['tunnel_network'])) {
+					$numberofnathosts++;
+					$tonathosts .= "{$ovpnsrv['tunnel_network']} ";
+				}
+			}
+		}
+        	if(is_array($config['openvpn']['openvpn-client'])) {
+			foreach ($config['openvpn']['openvpn-client'] as $ovpnsrv) {
+				if (!empty($ovpnsrv['tunnel_network'])) {
+					$numberofnathosts++;
+					$tonathosts .= "{$ovpnsrv['tunnel_network']} ";
+				}
+			}
+		}
 		$natrules .= "\n# Subnets to NAT \n";
 		if($numberofnathosts > 4) {
 			$natrules .= "table <tonatsubnets> { {$tonathosts} }\n";

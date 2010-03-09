@@ -66,6 +66,7 @@ if (isset($_GET['dup']))  {
 	unset($after);
 
 if (isset($id) && $a_out[$id]) {
+	$pconfig['protocol'] = $a_out[$id]['protocol'];
 	list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
 	$pconfig['sourceport'] = $a_out[$id]['sourceport'];
 	address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
@@ -107,8 +108,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "interface source source_subnet destination destination_subnet");
-	$reqdfieldsn = explode(",", "Interface,Source,Source bit count,Destination,Destination bit count");
+	$reqdfields = explode(" ", "interface protocol source source_subnet destination destination_subnet");
+	$reqdfieldsn = explode(",", "Interface,Protocol,Source,Source bit count,Destination,Destination bit count");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -211,6 +212,11 @@ if ($_POST) {
 		} else {
 			unset($natent['nonat']);
 		}
+
+		if ($_POST['protocol'] && $_POST['protocol'] != "any")
+			$natent['protocol'] = $_POST['protocol'];
+		else
+			unset($natent['protocol']);
 
 	        if ($ext == "any") {
 			$natent['destination']['any'] = true;
@@ -334,6 +340,18 @@ function sourcesel_change() {
                      <span class="vexpl">Choose which interface this rule applies to.<br>
                      Hint: in most cases, you'll want to use WAN here.</span></td>
                 </tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">Protocol</td>
+			<td width="78%" class="vtable">
+				<select name="proto" class="formselect">
+				<?php $protocols = explode(" ", "any TCP UDP TCP/UDP ICMP ESP AH GRE IGMP carp pfsync");
+                                foreach ($protocols as $proto): ?>
+                                        <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
+				<?php endforeach; ?>
+				 </select> <br> <span class="vexpl">Choose which protocol this rule should match.<br />
+				 Hint: in most cases, you should specify <em>any</em> &nbsp;here.</span>
+			</td>
+		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Source</td>
                   <td width="78%" class="vtable">

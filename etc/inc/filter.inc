@@ -828,7 +828,7 @@ function filter_generate_reflection($rule, $extport, &$starting_localhost_port, 
 }
 
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
-function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false) {
+function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false, $proto = "") {
 	global $config;
 	/* XXX: billm - any idea if this code is needed? */
 	if($src == "/32" || $src{0} == "/")
@@ -842,6 +842,11 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		else
 			$tgt = "($if)";
 	}
+	 /* Add the protocol, if defined */
+	if (!empty($proto) && $proto != "any")
+		$protocol = " proto {$proto}";
+	else
+		$protocol = "";
 	/* Add the hard set source port (useful for ISAKMP) */
 	if($natport != "")
 		$tgt .= " port {$natport}";
@@ -877,7 +882,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	$if_friendly = convert_friendly_interface_to_friendly_descr($if);
 	/* Put all the pieces together */
 	if($if_friendly)
-		$natrule = "{$nat} on \${$if_friendly} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";
+		$natrule = "{$nat} on \${$if_friendly} {$protocol} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";
 	else
 		$natrule .= "# Could not convert {$if} to friendly name(alias)\n";
 	return $natrule;
@@ -937,7 +942,8 @@ function filter_nat_rules_generate() {
 					$obent['target'],
 					$obent['natport'],
 					isset($obent['nonat']),
-					isset($obent['staticnatport'])
+					isset($obent['staticnatport']),
+					$obent['protocol']
 				);
 			}
 		}

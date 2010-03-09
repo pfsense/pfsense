@@ -349,8 +349,18 @@ include("fbegin.inc"); ?>
 					<select name="extaddr" class="formselect">
 						<option value="" <?php if (!$pconfig['extaddr']) echo "selected"; ?>>Interface address</option>
 <?php					if (is_array($config['virtualip']['vip'])):
-						foreach ($config['virtualip']['vip'] as $sn): ?>
+						foreach ($config['virtualip']['vip'] as $sn): 
+							if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
+								$baseip = ip2long($sn['subnet']) & ip2long(gen_subnet_mask($sn['subnet_bits']));
+								for ($i = $sn['subnet_bits']; $i <= 32; $i++): 
+									$baseip = $baseip + 1;
+									$snip = long2ip($baseip);
+								?>
+						<option value="<?=$snip;?>" <?php if ($snip == $pconfig['extaddr']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
+								<?php endfor; 
+							else: ?>
 						<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['extaddr']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
+						<?php endif; ?>
 <?php					endforeach;
 						endif; ?>
 						<option value="any" <?php if($pconfig['extaddr'] == "any") echo "selected"; ?>>any</option>

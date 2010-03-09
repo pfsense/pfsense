@@ -95,6 +95,7 @@ if ($_GET['act'] == "del") {
 	    }
 }
 
+$iflist = get_configured_interface_with_descr(false, true);
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if($pkg['custom_php_global_functions'] <> "")
@@ -173,6 +174,8 @@ if ($pkg['tabs'] <> "") {
 							} else {
 							    echo gettext("Yes");
 							}
+						    } else if ($column['type'] == "interface") {
+							echo  $column['prefix'] . $iflist[$fieldname] . $column['suffix'];
 						    } else {
 							echo $column['prefix'] . $fieldname . $column['suffix'];
 						    }

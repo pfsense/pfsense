@@ -89,6 +89,7 @@ function kill_client($port, $remipp) {
 }
 
 $servers = array();
+$clients = array();
 
 if (is_array($config['openvpn']['openvpn-server'])) {
 	foreach ($config['openvpn']['openvpn-server'] as & $settings) {
@@ -342,6 +343,7 @@ include("head.inc"); ?>
 <br>
 
 
+<?php if (!empty($clients)) { ?>
 <table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="6" class="listtopic">
@@ -389,12 +391,14 @@ include("head.inc"); ?>
 	</tr>
 </table>
 
-<?php if ($DisplayNote) {
+<?php 
+}
+
+if ($DisplayNote) {
 	echo "<br/><b>NOTE:</b> You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen";
 }
-?>
 
-<? if ((!isset($clients)) && (!isset($servers))) {
+if ((empty($clients)) && (empty($servers))) {
 	echo "No OpenVPN instance defined";
 }
 ?>

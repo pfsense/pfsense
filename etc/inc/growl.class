@@ -77,16 +77,22 @@
         {
             if(function_exists('socket_create') && function_exists('socket_sendto'))
             {
-                $sck = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-                socket_sendto($sck, $data, strlen($data), 0x100, $this->address, $this->port);
-                return true;
+                $sck = @socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+		if ($sck) {
+                	socket_sendto($sck, $data, strlen($data), 0x100, $this->address, $this->port);
+                	return true;
+		}
             }
             elseif(function_exists('fsockopen'))
             {
-                $fp = fsockopen('udp://' . $this->address, $this->port);
-                fwrite($fp, $data);
-                fclose($fp);
-                return true;
+		if ($this->address) {
+                	$fp = @fsockopen('udp://' . $this->address, $this->port);
+			if ($fp) {
+                		fwrite($fp, $data);
+                		fclose($fp);
+                		return true;
+			}
+		}
             }
 
             return false;

@@ -345,7 +345,7 @@ function notify_via_growl($message) {
 	global $config;
 	$growl_ip = $config['notifications']['growl']['ipaddress'];
 	$growl_password = $config['notifications']['growl']['password'];
-	if($growl_ip) {
+	if(!empty($growl_ip)) {
 		$growl = new Growl($growl_ip, $growl_password);
 		$growl->notify("pfSense growl alert", "pfSense", "{$message}");
 	}

@@ -164,6 +164,7 @@ if ($_POST) {
 			/* Manual gateways are handled differently */
 			/* rebuild the array with the manual entries only */
 
+			$reloadif = false;
 			$gateway = array();
 			$gateway['interface'] = $_POST['interface'];
 			$gateway['name'] = $_POST['name'];
@@ -181,6 +182,7 @@ if ($_POST) {
 					$i++;
 				}
 				$gateway['defaultgw'] = true;
+				$reloadif = true;
 			} else {
 				unset($gateway['defaultgw']);
 			}
@@ -200,7 +202,8 @@ if ($_POST) {
 		if($_REQUEST['isAjax']) {
 			echo $_POST['name'];
 			exit;
-		}
+		} else if ($reloadif == true)
+			interface_configure($_POST['interface']);
 		
 		header("Location: system_gateways.php");
 		exit;

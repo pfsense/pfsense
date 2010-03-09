@@ -2034,7 +2034,20 @@ EOD;
 	set iface name {$realif}
 
 EOD;
-	if ($interface == "wan")
+	$setdefaultgw = false;
+	$founddefaultgw = false;
+	if (is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if($interface == $gateway['interface'] && isset($gateway['defaultgw'])) {
+				$setdefaultgw = true;
+				break;
+			} else if (isset($gateway['defaultgw'])) {
+				$founddefaultgw = true;
+				break;
+			}
+		}
+	}
+	if (($interface == "wan" && $founddefaultgw == false) || $setdefaultgw == true)
 		$mpdconf .= <<<EOD
 	set iface route default
 
@@ -2183,7 +2196,20 @@ EOD;
 	set iface name {$realif}
 
 EOD;
-        if ($interface == "wan")
+	$setdefaultgw = false;
+        $founddefaultgw = false;
+        if (is_array($config['gateways']['gateway_item'])) {
+                foreach($config['gateways']['gateway_item'] as $gateway) {
+                        if($interface == $gateway['interface'] && isset($gateway['defaultgw'])) {
+                                $setdefaultgw = true;
+                                break;
+                        } else if (isset($gateway['defaultgw'])) {
+                                $founddefaultgw = true;
+                                break;
+                        }
+		}
+        }
+        if (($interface == "wan" && $founddefaultgw == false) || $setdefaultgw == true)
                 $mpdconf .= <<<EOD
         set iface route default
 

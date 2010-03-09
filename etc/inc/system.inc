@@ -314,6 +314,10 @@ function system_routing_configure() {
 		        	if(isset($gateway['defaultgw'])) {
 					$gatewayip = $gateway['gateway'];
 					$interfacegw = $gateway['interface'];
+					/* This handles the case where a dynamic gateway is choosen as default. */
+					if (!is_ipaddr($gatewayip))
+						$gatewayip = get_interface_gateway($interfacegw);
+					break;
 				}
 			}
 			if(($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
@@ -353,13 +357,17 @@ function system_routing_configure() {
 					if($rtent['gateway'] == $gateway['name']) {
 						$gatewayip = $gateway['gateway'];
 						$interfacegw = $gateway['interface'];
+						/* This handles the case where a dynamic gateway is choosen. */
+                                        	if (!is_ipaddr($gatewayip))
+                                                	$gatewayip = get_interface_gateway($interfacegw);
+						break;
 					}
 				}
 			}
-			if((is_ipaddr($rtent['gateway'])) && ($gatewayip == ""))  {
+			if((is_ipaddr($rtent['gateway'])) && empty($gatewayip))  {
 				$gatewayip = $rtent['gateway'];
 				$interfacegw = $rtent['interface'];
-			}			
+			}
 			if((isset($rtent['interfacegateway'])) && (! is_ipaddr($gatewayip))) {
 				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));

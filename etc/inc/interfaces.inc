@@ -2127,7 +2127,7 @@ EOD;
 			log_error("Could not bring wancfg['if'] up in interface_pppoe_configure()");
 
 		/* fire up mpd */
-		mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -l mpd_{$interface}.links -p {$g['varrun_path']}/pppoe_{$interface}.pid pppoeclient");
+		mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/pppoe_{$interface}.pid pppoeclient");
 	}
 
 	/* sleep until wan is up - or 30 seconds, whichever comes first */

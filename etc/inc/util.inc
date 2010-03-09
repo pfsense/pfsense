@@ -169,6 +169,8 @@ function refcount_unreference($reference) {
 	} else
 		shmop_write($shmid, $shm_data, 0);
 	shmop_close($shmid);
+	
+	return $shm_data;
 }
 
 function is_module_loaded($module_name) {

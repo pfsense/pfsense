@@ -75,6 +75,7 @@ if ($_POST) {
                        $a_domainOverrides[] = $doment;
 
                touch($d_dnsmasqdirty_path);
+			   touch($d_hostsdirty_path);
 
                write_config();
 

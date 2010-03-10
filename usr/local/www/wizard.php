@@ -88,15 +88,20 @@ if($pkg['step'][$stepid]['stepsubmitbeforesave']) {
 
 if ($_POST) {
     foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
-        if($field['bindstofield'] <> "" and $field['type'] <> "submit") {
+        if(!empty($field['bindstofield']) and $field['type'] <> "submit") {
 		$fieldname = $field['name'];
-		$unset_fields = "";
 		$fieldname = ereg_replace(" ", "", $fieldname);
 		$fieldname = strtolower($fieldname);
 		// update field with posted values.
-                if($field['unsetfield'] <> "") $unset_fields = "yes";
-		if($field['arraynum'] <> "") $arraynum = $field['arraynum'];
-		if($field['bindstofield'])
+                if($field['unsetfield'] <> "")
+			$unset_fields = "yes";
+		else
+			$unset_fields = "";
+		if($field['arraynum'] <> "")
+			$arraynum = $field['arraynum'];
+		else
+			$arraynum = "";
+		if(!empty($field['bindstofield']))
 			update_config_field( $field['bindstofield'], $_POST[$fieldname], $unset_fields, $arraynum, $field['type']);
         }
 

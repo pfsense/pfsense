@@ -199,7 +199,9 @@
 	}
 
 	if($config['interfaces']['lan']) {
-		unset($config['dhcpd']['wan']);		
+		if($config['dhcpd'])
+			if($config['dhcpd']['wan'])
+				unset($config['dhcpd']['wan']);		
 	}
 
 	if(!$config['interfaces']['lan']) {

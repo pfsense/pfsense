@@ -377,15 +377,15 @@
 		<field>
                         <type>checkbox</type>
                         <name>uselist</name>
-                        <enablefields>name,keylength,lifetime,country,state,city,organization,email,cn</enablefields>
+                        <enablefields>name,keylength,lifetime,country,state,city,organization,email,cn,ca</enablefields>
                         <description>Use authentication server from list</description>
                         <displayname>Server from list</displayname>
                 </field>
 		<field>
 			<type>cert_selection</type>
-			<name>cert</name>
+			<name>certname</name>
 			<displayname>Certificate</displayname>
-			<bindstofield>ovpnserver->step6->cert</bindstofield>
+			<bindstofield>ovpnserver->step6->certname</bindstofield>
 		</field>
 		<field>
 			<name>Next</name>

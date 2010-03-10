@@ -32,22 +32,20 @@ function step3_stepbeforeformdisplay() {
 }
 
 function step3_submitphpaction() {
+	global $stepid;
+
 	if (!$_POST['uselist'] && empty($_POST['authserv'])) {
 		$message = "Please choose an authentication server or create a new one.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=1&message={$message}");
 		exit;
 	} else if (!$_POST['uselist'] && !empty($_POST['authserv'])) {
-		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=3");
-		exit;
-	}
-		
-	if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['port']) ||
+		$stepid = 2;
+	} else if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['port']) ||
 	    empty($_POST['transport']) || empty($_POST['scope']) || empty($_POST['authscope']) || empty($_POST['nameattr'])) {
 		$message = "Please enter all information for authentication server.";
 		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=1&message={$message}");
 		exit;
 	}
-		
 }
 
 function step4_stepbeforeformdisplay() {
@@ -69,68 +67,60 @@ function step4_stepbeforeformdisplay() {
 }
 
 function step4_submitphpaction() {
+	global $stepid;
+
         if ($_POST['uselist'] == "yes" && !empty($_POST['authserv'])) {
                 $message = "Please choose an authentication server or create a new one.";
                 header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=2&message={$message}");
                 exit;
         } else if (!$_POST['uselist'] && !empty($_POST['authserv'])) {
-                header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=3");
-                exit;
-        }
-
-        if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['port']) ||
+		$stepid = 2;
+        } else if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['port']) ||
             empty($_POST['passowrd'])) {
                 $message = "Please enter all information for authentication server.";
                 header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=2&message={$message}");
                 exit;
         }
-
 }
 
 function step5_submitphpaction() {
+	global $stepid;
+
         if ($_POST['uselist'] == "yes" && !empty($_POST['certca'])) {
                 $message = "Please choose an certificate authority or create a new one.";
                 header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=3&message={$message}");
                 exit;
         } else if (!$_POST['uselist'] && !empty($_POST['certca'])) {
-                header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=4");
-                exit;
-        }
-
-        if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
+		$stepid = 3;
+        } else if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
 	    empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
 	    empty($_POST['organization']) || empty($_POST['email']) || empty($_POST['cn'])) {
                 $message = "Please enter all information for the new CA authority.";
                 header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=3&message={$message}");
                 exit;
         }
-
 }
 
 function step6_submitphpaction() {
+	global $stepid;
+
         if ($_POST['uselist'] == "yes" && !empty($_POST['certname'])) {
                 $message = "Please choose an certificate or create a new one.";
                 header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=4&message={$message}");
                 exit;
         } else if (!$_POST['uselist'] && !empty($_POST['certname'])) {
-                header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5");
-                exit;
-        }
-
-        if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
+		$stepid = 4;
+        } else if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
             empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
             empty($_POST['organization']) || empty($_POST['email']) || empty($_POST['cn'])) {
                 $message = "Please enter all information for the new certificate.";
                 header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=4&message={$message}");
                 exit;
         }
-
 }
 
 function step7_submitphpaction() {
 
-}
-function step8_submitphpaction() {
 }
 
 function step9_submitphpaction() {

@@ -86,7 +86,7 @@
                         <name>authserv</name>
                         <displayname>Authentication servers</displayname>
                         <type>select</type>
-                        <bindstofield>ovpnserver->step2->authtype</bindstofield>
+                        <bindstofield>ovpnserver->step2->authserv</bindstofield>
 			<options>
                                 <option>
                                         <name>dummy</name>
@@ -202,7 +202,7 @@
                         <name>authserv</name>
                         <displayname>Authentication servers</displayname>
                         <type>select</type>
-                        <bindstofield>ovpnserver->step2->authtype</bindstofield>
+                        <bindstofield>ovpnserver->step2->authserv</bindstofield>
                         <options>
                                 <option>
                                         <name>dummy</name>
@@ -270,7 +270,7 @@
 			<type>certca_selection</type>
 			<name>certca</name>
 			<displayname>Certificate Authority</displayname>
-			<bindstofield>ovpnserver->step5->certca</bindstofield>
+			<bindstofield>ovpnserver->step5->authcertca</bindstofield>
 		</field>
 		<field>
 			<name>Next</name>
@@ -385,7 +385,7 @@
 			<type>cert_selection</type>
 			<name>certname</name>
 			<displayname>Certificate</displayname>
-			<bindstofield>ovpnserver->step6->certname</bindstofield>
+			<bindstofield>ovpnserver->step6->authcertname</bindstofield>
 		</field>
 		<field>
 			<name>Next</name>
@@ -736,9 +736,6 @@
 			<type>submit</type>
 		</field>
 	</fields>
-	<stepsubmitphpaction>step8_submitphpaction();</stepsubmitphpaction>
-	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
-	<javascriptafterformdisplay>enablechange();</javascriptafterformdisplay>
 </step>
 <step>
 	<id>8</id>

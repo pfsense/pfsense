@@ -382,19 +382,21 @@ function openvpn_reconfigure($mode,& $settings) {
 				$conf .= "client-cert-not-required\n";
 			case 'server_tls_user':
 				$conf .= "username-as-common-name\n";
-				$authcfgs = explode(",", $settings['authmode']);
-				$sed = "\$authmodes=array(";
-				$firstsed = 0;
-				foreach ($authcfgs as $authcfg) {
-					if ($firstsed > 0)
-						$sed .= ",";
-					$firstsed = 1;
-					$sed .= "\"{$authcfg}\"";
+				if (!empty($settings['authmode'])) {
+					$authcfgs = explode(",", $settings['authmode']);
+					$sed = "\$authmodes=array(";
+					$firstsed = 0;
+					foreach ($authcfgs as $authcfg) {
+						if ($firstsed > 0)
+							$sed .= ",";
+						$firstsed = 1;
+						$sed .= "\"{$authcfg}\"";
+					}
+					$sed .= ");";
+					mwexec("/bin/cat /etc/inc/openvpn.auth-user.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");
+					mwexec("/bin/chmod a+x {$g['varetc_path']}/openvpn/{$mode_id}.php");
+					$conf .= "auth-user-pass-verify {$g['varetc_path']}/openvpn/{$mode_id}.php via-env\n";
 				}
-				$sed .= ");";
-				mwexec("/bin/cat /etc/inc/openvpn.auth-user.php | /usr/bin/sed 's/\/\/<template>/{$sed}/g' >  {$g['varetc_path']}/openvpn/{$mode_id}.php");
-				mwexec("/bin/chmod a+x {$g['varetc_path']}/openvpn/{$mode_id}.php");
-				$conf .= "auth-user-pass-verify {$g['varetc_path']}/openvpn/{$mode_id}.php via-env\n";
 				break;
 		}
 

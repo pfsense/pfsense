@@ -268,7 +268,8 @@ if ($_POST) {
 		if ($_POST['disable'] == "yes")
 			$server['disable'] = true;
 		$server['mode'] = $pconfig['mode'];
-		$server['authmode'] = implode(",", $pconfig['authmode']);
+		if (!empty($pconfig['authmode']))
+			$server['authmode'] = implode(",", $pconfig['authmode']);
 		$server['protocol'] = $pconfig['protocol'];
 		list($server['interface'], $server['ipaddr']) = explode ("|",$pconfig['interface']);
 		$server['local_port'] = $pconfig['local_port'];
@@ -341,7 +342,8 @@ if ($_POST) {
 		header("Location: vpn_openvpn_server.php");
 		exit;
 	}
-	$pconfig['authmode'] = implode(",", $pconfig['authmode']);
+	if (!empty($pconfig['authmode']))
+		$pconfig['authmode'] = implode(",", $pconfig['authmode']);
 }
 
 include("head.inc");

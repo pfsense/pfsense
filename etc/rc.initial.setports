@@ -37,6 +37,7 @@
 	require_once("shaper.inc");
 	require_once("ipsec.inc");
 	require_once("vpn.inc");
+	require_once("captiveportal.inc");
 	require_once("rrd.inc");
 
 	set_networking_interfaces_ports();

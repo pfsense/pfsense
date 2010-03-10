@@ -52,9 +52,10 @@ if (isset($_POST['stepid']))
 if (!$stepid) $stepid = "0";
 
 $xml = htmlspecialchars($_GET['xml']);
-if($_POST['xml']) $xml = htmlspecialchars($_POST['xml']);
+if($_POST['xml'])
+	$xml = htmlspecialchars($_POST['xml']);
 
-if($xml == "") {
+if(empty($xml)) {
 	$xml = "not_defined";
 	print_info_box_np("ERROR:  Could not open " . $xml . ".");
 	die;
@@ -67,20 +68,17 @@ if($xml == "") {
 	}
 }
 
+if (!is_array($pkg)) {
+	print_info_box_np("ERROR: Could not parse {$g['www_path']}/wizards/{$xml} file.");
+	die;
+}
+
 $title          = $pkg['step'][$stepid]['title'];
 $description    = $pkg['step'][$stepid]['description'];
 $totalsteps     = $pkg['totalsteps'];
 
-exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
-$timezonelist = array_filter($timezonelist, 'is_timezone');
-sort($timezonelist);
-
-/* kill carriage returns */
-for($x=0; $x<count($timezonelist); $x++)
-		$timezonelist[$x] = str_replace("\n", "", $timezonelist[$x]);
-
 if ($pkg['step'][$stepid]['includefile'])
-	require($pkg['step'][$stepid]['includefile']);
+	require_once($pkg['step'][$stepid]['includefile']);
 
 if($pkg['step'][$stepid]['stepsubmitbeforesave']) {
 		eval($pkg['step'][$stepid]['stepsubmitbeforesave']);
@@ -451,6 +449,14 @@ function enablechange() {
 			}
 			echo "</select>\n";
 		    } else if ($field['type'] == "timezone_select") {
+			exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
+			$timezonelist = array_filter($timezonelist, 'is_timezone');
+			sort($timezonelist);
+
+			/* kill carriage returns */
+			for($x=0; $x<count($timezonelist); $x++)
+				$timezonelist[$x] = str_replace("\n", "", $timezonelist[$x]);
+
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
                                 echo $field['displayname'];

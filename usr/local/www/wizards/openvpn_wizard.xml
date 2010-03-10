@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pfsensewizard>
+<copyright>
+/* $Id$ */
+/*
+	setup.xml
+        part of pfSense (http://www.pfsense.org/)
+
+	Copyright (C) 2010 Ermal Luci
+        All rights reserved.
+
+        Redistribution and use in source and binary forms, with or without
+        modification, are permitted provided that the following conditions are met:
+
+        1. Redistributions of source code must retain the above copyright notice,
+           this list of conditions and the following disclaimer.
+
+        2. Redistributions in binary form must reproduce the above copyright
+           notice, this list of conditions and the following disclaimer in the
+           documentation and/or other materials provided with the distribution.
+
+        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+        POSSIBILITY OF SUCH DAMAGE.
+*/
+</copyright>
+<totalsteps>8</totalsteps>
+<step>
+	<title>OpenVPN Server Setup Wizard</title>
+	<id>1</id>
+	<description>Choose type of user authentication you wish to use.</description>
+	<fields>
+		<field>
+			<type>select</type>
+			<displayname>Type of Server</displayname>
+			<name>authtype</name>
+			<description>Choose authentication backend type.</description>
+			<bindstofield>ovpnserver->step2->authtype</bindstofield>
+			<options>
+				<option>
+					<name>Local User Access</name>
+					<value>local</value>
+				</option>
+				<option>
+					<name>LDAP</name>
+					<value>ldap</value>
+				</option>
+				<option>
+					<name>Radius</name>
+					<value>radius</value>
+				</option>
+			</options>
+		</field>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+		</field>
+	</fields>
+	<stepsubmitphpaction>step2_submitphpaction();</stepsubmitphpaction>
+        <includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
+</step>
+<step>
+	<id>2</id>
+	<title>Add an authentication server</title>
+	<description>Add an LDAP authentication server</description>
+	<fields>
+		<field>
+			<type>listtopic</type>
+			<name>Authentication Servers list</name>
+		</field>
+		<field>
+			<type>checkbox</type>
+			<name>uselist</name>
+			<enablefields>name,ip,port,transport,scope,authscope,userdn,passdn,nameattr</enablefields>
+			<description>Use authentication server from list</description>
+			<displayname>Server from list</displayname>
+		</field>
+		<field>
+                        <name>authserv</name>
+                        <displayname>Authentication servers</displayname>
+                        <type>select</type>
+                        <bindstofield>ovpnserver->step2->authtype</bindstofield>
+			<options>
+                                <option>
+                                        <name>dummy</name>
+                                        <value>dummy</value>
+                                </option>
+                        </options>
+                </field>
+		<field>
+			<type>submit</type>
+			<name>Next</name>
+		</field>
+		<field>
+			<type>listtopic</type>
+			<name>Add a new authentication server</name>
+		</field>
+		<field>
+			<name>name</name>
+			<displayname>Name</displayname>
+			<type>input</type>
+			<bindstofield>ovpnserver->step2->authtype</bindstofield>
+		</field>
+		<field>
+			<name>ip</name>
+			<displayname>Hostname or IP address</displayname>
+			<type>input</type>
+			<bindstofield>ovpnserver->step2->ip</bindstofield>
+		</field>
+		<field>
+			<name>port</name>
+			<displayname>Port</displayname>
+			<type>input</type>
+			<size>8</size>
+			<bindstofield>ovpnserver->step2->port</bindstofield>
+		</field>
+		<field>
+			<name>transport</name>
+			<displayname>Transport</displayname>
+			<type>select</type>
+			<bindstofield>ovpnserver->step2->transport</bindstofield>
+			<options>
+				<option>
+					<name>TCP - Standard</name>
+					<value>tcp</value>
+				</option>
+				<option>
+					<name>SSL - Encrypted</name>
+					<value>ssl</value>
+				</option>
+			</options>
+		</field>
+		<field>
+			<name>scope</name>
+			<displayname>Search Scope</displayname>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step2->scope</bindstofield>
+		</field>
+		<field>
+			<name>authscope</name>
+			<displayname>Authentication Containers</displayname>
+			<type>input</type>
+			<size>40</size>
+			<bindstofield>ovpnserver->step2->authscope</bindstofield>
+		</field>
+		<field>
+			<name>userdn</name>
+			<displayname>User DN</displayname>
+			<type>input</type>
+			<size>20</size>
+			<description>If you leave it blank an anonymous bind will be done.</description>
+			<bindstofield>ovpnserver->step2->user</bindstofield>
+		</field>
+		<field>
+			<name>passdn</name>
+			<displayname>Password</displayname>
+			<type>password</type>
+			<size>20</size>
+			<bindstofield>ovpnserver->step2->password</bindstofield>
+		</field>
+		<field>
+			<name>nameattr</name>
+			<displayname>User naming attribute</displayname>
+			<type>input</type>
+			<bindstofield>ovpnserver->step2->nameattr</bindstofield>
+		</field>
+		<field>
+			<type>submit</type>
+			<name>Add new Server</name>
+		</field>
+	</fields>
+	<stepbeforeformdisplay>step3_stepbeforeformdisplay();</stepbeforeformdisplay>
+	<stepsubmitphpaction>step3_submitphpaction();</stepsubmitphpaction>
+	<javascriptafterformdisplay>enablechange();</javascriptafterformdisplay>
+	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
+</step>
+<step>
+        <id>3</id>
+        <title>Add an RADIUS authentication server</title>
+        <description>Add an RADIUS authentication server</description>
+        <fields>
+		<field>
+                        <type>listtopic</type>
+                        <name>Authentication Servers list</name>
+                </field>
+                <field>
+                        <type>checkbox</type>
+                        <name>uselist</name>
+                        <enablefields>name,ip,port,secret</enablefields>
+                        <description>Use authentication server from list</description>
+                        <displayname>Server from list</displayname>
+                </field>
+                <field>
+                        <name>authserv</name>
+                        <displayname>Authentication servers</displayname>
+                        <type>select</type>
+                        <bindstofield>ovpnserver->step2->authtype</bindstofield>
+                        <options>
+                                <option>
+                                        <name>dummy</name>
+                                        <value>dummy</value>
+                                </option>
+                        </options>
+                </field>
+                <field>
+                        <type>submit</type>
+                        <name>Next</name>
+                </field>
+                <field>
+                        <type>listtopic</type>
+                        <name>Add a new authentication server</name>
+                </field>
+                <field>
+                        <name>name</name>
+                        <displayname>Name</displayname>
+                        <type>input</type>
+			<bindstofield>ovpnserver->step2->authtype</bindstofield>
+                </field>
+                <field>
+                        <name>ip</name>
+                        <displayname>Hostname or IP address</displayname>
+                        <type>input</type>
+			<bindstofield>ovpnserver->step2->ip</bindstofield>
+                </field>
+                <field>
+                        <name>port</name>
+                        <displayname>Authentication Port</displayname>
+                        <type>input</type>
+                        <size>8</size>
+			<bindstofield>ovpnserver->step2->port</bindstofield>
+                </field>
+                <field>
+                        <name>secret</name>
+                        <displayname>Shared Secret</displayname>
+                        <type>password</type>
+                        <size>20</size>
+			<bindstofield>ovpnserver->step2->password</bindstofield>
+                </field>
+		<field>
+			<name>Add new Server</name>
+			<type>submit</type>
+		</field>
+	</fields>
+	<stepbeforeformdisplay>step4_stepbeforeformdisplay();</stepbeforeformdisplay>
+	<stepsubmitphpaction>step4_submitphpaction();</stepsubmitphpaction>
+	<javascriptafterformdisplay>enablechange();</javascriptafterformdisplay>
+	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
+</step>
+<step>
+	<id>4</id>
+	<title>Select Certificate Authority</title>
+	<description>Please choose or create a certificate authority.</description>
+	<fields>
+		<field>
+                        <type>checkbox</type>
+                        <name>uselist</name>
+                        <enablefields>name,keylength,lifetime,country,state,city,organization,email,cn</enablefields>
+                        <description>Use authentication server from list</description>
+                        <displayname>Server from list</displayname>
+                </field>
+		<field>
+			<type>certca_selection</type>
+			<name>certca</name>
+			<displayname>Certificate Authority</displayname>
+			<bindstofield>ovpnserver->step5->certca</bindstofield>
+		</field>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+		</field>
+		<field>
+			<name>Create a new CA certificate</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<name>name</name>
+			<displayname>Descriptive name</displayname>
+			<type>input</type>
+			<bindstofield>ovpnserver->step5->certca</bindstofield>
+		</field>
+		<field>
+			<name>keylength</name>
+			<displayname>Key length</displayname>
+			<type>select</type>
+			<bindstofield>ovpnserver->step5->keylength</bindstofield>
+			<options>
+                                <option>
+                                        <name>512</name>
+                                        <value>512</value>
+                                </option>
+                                <option>
+                                        <name>1024</name>
+                                        <value>1024</value>
+                                </option>
+                                <option>
+                                        <name>2048</name>
+                                        <value>2048</value>
+                                </option>
+                                <option>
+                                        <name>4096</name>
+                                        <value>4096</value>
+                                </option>
+                        </options>
+		</field>
+		<field>
+			<name>lifetime</name>
+			<displayname>Lifetime</displayname>
+			<type>input</type>
+			<size>10</size>
+			<description>Lifetime in days</description>
+			<bindstofield>ovpnserver->step5->lifetime</bindstofield>
+		</field>
+		<field>
+			<name>country</name>
+			<displayname>Country Code</displayname>
+			<type>input</type>
+			<size>5</size>
+			<bindstofield>ovpnserver->step5->country</bindstofield>
+		</field>
+		<field>
+			<name>state</name>
+			<displayname>State or Province</displayname>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step5->state</bindstofield>
+		</field>
+		<field>
+			<name>city</name>
+			<displayname>City</displayname>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step5->city</bindstofield>
+		</field>
+		<field>
+			<name>organization</name>
+			<displayname>Organization</displayname>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step5->organization</bindstofield>
+		</field>
+		<field>
+			<name>email</name>
+			<displayname>E-mail</displayname>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step5->email</bindstofield>
+		</field>
+		<field>
+			<name>cn</name>
+			<displayname>Common name</displayname>
+			<type>input</type>
+			<size>20</size>
+			<bindstofield>ovpnserver->step5->cn</bindstofield>
+		</field>
+		<field>
+			<name>Add new CA</name>
+			<type>submit</type>
+		</field>
+	</fields>
+	<stepsubmitphpaction>step5_submitphpaction();</stepsubmitphpaction>
+	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
+	<javascriptafterformdisplay>enablechange();</javascriptafterformdisplay>
+</step>
+<step>
+	<id>5</id>
+	<title>Choose Server Certificate</title>
+	<description>Create a certificate to be used by server.</description>
+	<fields>
+		<field>
+                        <type>checkbox</type>
+                        <name>uselist</name>
+                        <enablefields>name,keylength,lifetime,country,state,city,organization,email,cn</enablefields>
+                        <description>Use authentication server from list</description>
+                        <displayname>Server from list</displayname>
+                </field>
+		<field>
+			<type>cert_selection</type>
+			<name>cert</name>
+			<displayname>Certificate</displayname>
+			<bindstofield>ovpnserver->step6->cert</bindstofield>
+		</field>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+		</field>
+		<field>
+			<name>Create a new certificate</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<name>name</name>
+			<displayname>Descriptive name</displayname>
+			<type>input</type>
+			<bindstofield>ovpnserver->step6->certname</bindstofield>
+		</field>
+		<field>
+			<name>ca</name>
+			<type>certca_selection</type>
+			<displayname>Certificate authority</displayname>
+			<bindstofield>ovpnserver->step6->ca</bindstofield>
+		</field>
+		<field>
+			<name>keylength</name>
+			<displayname>Key length</displayname>
+			<type>select</type>
+			<bindstofield>ovpnserver->step6->keylength</bindstofield>
+			<options>
+                                <option>
+                                        <name>512</name>
+                                        <value>512</value>
+                                </option>
+                                <option>
+                                        <name>1024</name>
+                                        <value>1024</value>
+                                </option>
+                                <option>
+                                        <name>2048</name>
+                                        <value>2048</value>
+                                </option>
+                                <option>
+                                        <name>4096</name>
+                                        <value>4096</value>
+                                </option>
+                        </options>
+		</field>
+		<field>
+			<name>lifetime</name>
+			<displayname>Lifetime</displayname>
+			<type>input</type>
+			<size>10</size>
+			<description>Lifetime in days</description>
+			<bindstofield>ovpnserver->step6->lifetime</bindstofield>
+		</field>
+		<field>
+			<name>country</name>
+			<displayname>Country Code</displayname>
+			<type>input</type>
+			<size>5</size>
+			<bindstofield>ovpnserver->step6->country</bindstofield>
+		</field>
+		<field>
+			<name>state</name>
+			<displayname>State or Province</displayname>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step6->state</bindstofield>
+		</field>
+		<field>
+			<name>city</name>
+			<displayname>City</displayname>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step6->city</bindstofield>
+		</field>
+		<field>
+			<name>organization</name>
+			<displayname>Organization</displayname>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step6->organization</bindstofield>
+		</field>
+		<field>
+			<name>email</name>
+			<displayname>E-mail</displayname>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step6->email</bindstofield>
+		</field>
+		<field>
+			<name>cn</name>
+			<displayname>Common name</displayname>
+			<type>input</type>
+			<size>20</size>
+			<bindstofield>ovpnserver->step6->cn</bindstofield>
+		</field>
+		<field>
+			<name>Create new Certificate</name>
+			<type>submit</type>
+		</field>
+	</fields>
+	<stepsubmitphpaction>step6_submitphpaction();</stepsubmitphpaction>
+	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
+	<javascriptafterformdisplay>enablechange();</javascriptafterformdisplay>
+</step>
+<step>
+	<id>6</id>
+	<title>Other needed parameters</title>
+	<description>On this screen we will configure the Local Area Network information.</description>
+	<fields>
+		<field>
+			<type>listtopic</type>
+			<name>General Information</name>
+		</field>
+		<field>
+			<name>interface</name>
+			<type>interfaces_selection</type>
+			<displayname>Interface</displayname>
+			<bindstofield>ovpnserver->step7->interface</bindstofield>
+		</field>
+		<field>
+			<name>Protocol</name>
+			<type>select</type>
+			<bindstofield>ovpnserver->step7->protocol</bindstofield>
+			<options>
+                                <option>
+                                        <name>UDP</name>
+                                        <value>udp</value>
+                                </option>
+                                <option>
+                                        <name>TCP</name>
+                                        <value>tcp</value>
+                                </option>
+                        </options>
+		</field>
+		<field>
+			<name>localport</name>
+			<displayname>Local port</displayname>
+			<type>input</type>
+			<size>10</size>
+			<bindstofield>ovpnserver->step7->localport</bindstofield>
+		</field>
+		<field>
+			<name>description</name>
+			<displayname>Description</displayname>
+			<type>input</type>
+			<size>30</size>
+			<bindstofield>ovpnserver->step7->descr</bindstofield>
+		</field>
+		<field>
+			<type>listtopic</type>
+			<name>Cryptographic Settings</name>
+		</field>
+		<field>
+			<name>TLS Authentication</name>
+			<type>checkbox</type>
+			<description>Enable authentication of TLS packets.</description>
+			<combinefieldsbegin>true</combinefieldsbegin>
+			<bindstofield>ovpnserver->step7->tlsauth</bindstofield>
+		</field>
+		<field>
+			<displayname>Automatically generate a TLS key</displayname>
+			<name>generatetlskey</name>
+			<enablefields>tlssharedkey</enablefields>
+			<type>checkbox</type>
+			<description>Automatically generate a shared TLS authentication key.</description>
+			<bindstofield>ovpnserver->step7->gentlskey</bindstofield>
+		</field>
+		<field>
+			<name>tlssharedkey</name>
+			<type>textarea</type>
+			<cols>30</cols>
+			<rows>5</rows>
+			<combinefieldsbegin>true</combinefieldsbegin>
+			<bindstofield>ovpnserver->step7->tlskey</bindstofield>
+		</field>
+		<field>
+			<displayname>DH Parameters Length</displayname>
+			<name>dhparameters</name>
+			<type>select</type>
+			<bindstofield>ovpnserver->step7->dhkey</bindstofield>
+			<options>
+                                <option>
+                                        <name>1024</name>
+                                        <value>1024</value>
+                                </option>
+                                <option>
+                                        <name>2048</name>
+                                        <value>2048</value>
+                                </option>
+                                <option>
+                                        <name>4096</name>
+                                        <value>4096</value>
+                                </option>
+                        </options>
+		</field>
+		<field>
+			<type>listtopic</type>
+			<name>Tunnel Settings</name>
+		</field>
+		<field>
+			<displayname>Tunnel network</displayname>
+			<name>tunnel</name>
+			<type>input</type>
+			<size>20</size>
+			<bindstofield>ovpnserver->step7->tunnelnet</bindstofield>
+		</field>
+		<field>
+			<displayname>Redirect Gateway</displayname>
+			<name>redirectgw</name>
+			<type>checkbox</type>
+			<description>Force all client generated traffic through the tunnel.</description>
+			<bindstofield>ovpnserver->step7->rdrgw</bindstofield>
+		</field>
+		<field>
+			<displayname>Local network</displayname>
+			<name>local</name>
+			<type>input</type>
+			<size>20</size>
+			<bindstofield>ovpnserver->step7->local</bindstofield>
+		</field>
+		<field>
+			<displayname>Concurrent Connections</displayname>
+			<name>concurrentcon</name>
+			<description>Specify the maximum number of clients allowed to concurrently connect to this server.</description>
+			<type>input</type>
+			<size>10</size>
+			<bindstofield>ovpnserver->step7->concurrentcon</bindstofield>
+		</field>
+		<field>
+                        <displayname>Compression</displayname>
+                        <name>compression</name>
+                        <type>checkbox</type>
+                        <description>Compress tunnel packets using the LZO algorithm.</description>
+			<bindstofield>ovpnserver->step7->compression</bindstofield>
+                </field>
+		<field>
+                        <displayname>Type-of-Service</displayname>
+                        <name>tos</name>
+                        <type>checkbox</type>
+                        <description>Set the TOS IP header value of tunnel packets to match the encapsulated packet value.</description>
+			<bindstofield>ovpnserver->step7->tos</bindstofield>
+                </field>
+		<field>
+                        <displayname>Inter-client communication</displayname>
+                        <name>interclient</name>
+                        <type>checkbox</type>
+                        <description>Allow communication between clients connected to this server.</description>
+			<bindstofield>ovpnserver->step7->interclient</bindstofield>
+                </field>
+		<field>
+			<type>listtopic</type>
+			<name>Client Settings</name>
+		</field>
+		<field>
+                        <displayname>Address Pool</displayname>
+                        <name>addrpool</name>
+                        <type>checkbox</type>
+                        <description>Provide a virtual adapter IP address to clients (see Tunnel Network).</description>
+			<bindstofield>ovpnserver->step7->addrpool</bindstofield>
+                </field>
+                <field>
+                        <displayname>DNS Default Domain</displayname>
+                        <name>defaultdomain</name>
+                        <type>input</type>
+                        <description>Provide a default domain name to clients.</description>
+			<bindstofield>ovpnserver->step7->defaultdomain</bindstofield>
+                </field>
+                <field>
+                        <displayname>DNS Server 1</displayname>
+                        <name>dnsserver1</name>
+                        <type>input</type>
+			<bindstofield>ovpnserver->step7->dns1</bindstofield>
+		</field>
+		<field>
+                        <displayname>DNS Server 2</displayname>
+			<name>dnserver2</name>
+			<type>input</type>
+			<bindstofield>ovpnserver->step7->dns2</bindstofield>
+		</field>
+		<field>
+                        <displayname>DNS Server 3</displayname>
+			<name>dnserver3</name>
+			<type>input</type>
+			<bindstofield>ovpnserver->step7->dns3</bindstofield>
+		</field>
+		<field>
+                        <displayname>DNS Server 4</displayname>
+			<name>dnserver4</name>
+			<type>input</type>
+			<bindstofield>ovpnserver->step7->dns4</bindstofield>
+                </field>
+		<field>
+                        <displayname>NTP Server</displayname>
+                        <name>ntpserver1</name>
+                        <type>input</type>
+			<bindstofield>ovpnserver->step7->ntp1</bindstofield>
+                </field>
+                <field>
+                        <displayname>NTP Server 2</displayname>
+                        <name>ntpserver2</name>
+			<type>input</type>
+			<bindstofield>ovpnserver->step7->ntp2</bindstofield>
+                </field>
+		<field>
+			<name>Advanced</name>
+			<type>textarea</type>
+			<cols>30</cols>
+			<rows>5</rows>
+			<description>Enter any additional options you would like to add to the OpenVPN server configuration here, separated by a semicolon. EXAMPLE: push "route 10.0.0.0 255.255.255.0"</description>
+			<bindstofield>ovpnserver->step7->advanced</bindstofield>
+		</field>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+		</field>
+	</fields>
+	<stepsubmitphpaction>step7_submitphpaction();</stepsubmitphpaction>
+	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
+</step>
+<step>
+	<id>7</id>
+	<title>Firewall Rules</title>
+	<fields>
+		<field>
+			<type>listtopic</type>
+			<name>Traffic from clients to server</name>
+		</field>
+		<field>
+			<name>ovpnrule</name>
+			<displayname>Firewall Rule</displayname>
+			<description>Automatically add rule to permit</description>
+			<type>checkbox</type>
+			<bindstofield>ovpnserver->step8->ovpnrule</bindstofield>
+		</field>
+		<field>
+			<type>listtopic</type>
+			<name>Traffic from clients through VPN</name>
+		</field>
+		<field>
+			<name>ovpnallow</name>
+			<displayname>OpenVPN rule</displayname>
+			<description>Add a rule to allow all traffic from connected clients</description>
+			<type>checkbox</type>
+			<bindstofield>ovpnserver->step8->ovpnallow</bindstofield>
+		</field>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+		</field>
+	</fields>
+	<stepsubmitphpaction>step8_submitphpaction();</stepsubmitphpaction>
+	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
+	<javascriptafterformdisplay>enablechange();</javascriptafterformdisplay>
+</step>
+<step>
+	<id>8</id>
+	<fields>
+		<field>
+			<type>text</type>
+			<description>Configuration Complete</description>
+		</field>
+		<field>
+			<type>submit</type>
+			<name>Finish</name>
+		</field>
+	</fields>
+	<stepsubmitphpaction>step9_submitphpaction();</stepsubmitphpaction>
+	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
+</step>
+</pfsensewizard>

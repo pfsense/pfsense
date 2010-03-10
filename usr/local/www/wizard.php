@@ -49,7 +49,8 @@ function gentitle_pkg($pgname) {
 $stepid = htmlspecialchars($_GET['stepid']);
 if (isset($_POST['stepid']))
     $stepid = htmlspecialchars($_POST['stepid']);
-if (!$stepid) $stepid = "0";
+if (!$stepid)
+	$stepid = "0";
 
 $xml = htmlspecialchars($_GET['xml']);
 if($_POST['xml'])
@@ -88,7 +89,7 @@ if ($_POST) {
     foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
         if(!empty($field['bindstofield']) and $field['type'] <> "submit") {
 		$fieldname = $field['name'];
-		$fieldname = ereg_replace(" ", "", $fieldname);
+		$fieldname = str_replace(" ", "", $fieldname);
 		$fieldname = strtolower($fieldname);
 		// update field with posted values.
                 if($field['unsetfield'] <> "")
@@ -99,8 +100,8 @@ if ($_POST) {
 			$arraynum = $field['arraynum'];
 		else
 			$arraynum = "";
-		if(!empty($field['bindstofield']))
-			update_config_field( $field['bindstofield'], $_POST[$fieldname], $unset_fields, $arraynum, $field['type']);
+
+		update_config_field( $field['bindstofield'], $_POST[$fieldname], $unset_fields, $arraynum, $field['type']);
         }
 
     }
@@ -110,18 +111,21 @@ if ($_POST) {
     }
 	write_config();
     $stepid++;
-    if($stepid > $totalsteps) $stepid = $totalsteps;
+    if($stepid > $totalsteps)
+	$stepid = $totalsteps;
 }
 
 $title          = $pkg['step'][$stepid]['title'];
 $description    = $pkg['step'][$stepid]['description'];
 
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
-	global $config;
+	global $config, $savemsg;
 	$field_split = split("->",$field);
-	foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
-	if($field_conv == "") return;
-	if($field_type == "checkbox" and $updatetext <> "on") {
+	foreach ($field_split as $f)
+		$field_conv .= "['" . $f . "']";
+	if($field_conv == "")
+		return;
+	if(($field_type == "checkbox" and $updatetext <> "on") || $updatetext == "") {
 		/*
 		    item is a checkbox, it should have the value "on"
 		    if it was checked
@@ -639,7 +643,7 @@ function enablechange() {
 			}
 			$checked = "";
 			if($value <> "") $checked = " CHECKED";
-			echo "<td class=\"vtable\"><input value=\"yes\" type='checkbox' id='" . $name . "' name='" . $name . "' " . $checked;
+			echo "<td class=\"vtable\"><input value=\"on\" type='checkbox' id='" . $name . "' name='" . $name . "' " . $checked;
 			if(isset($field['enablefields']) or isset($field['checkenablefields']))
 				echo " onClick=\"enablechange()\"";
 			echo ">\n";

@@ -343,7 +343,7 @@ function sourcesel_change() {
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Protocol</td>
 			<td width="78%" class="vtable">
-				<select name="proto" class="formselect">
+				<select name="protocol" class="formselect">
 				<?php $protocols = explode(" ", "any TCP UDP TCP/UDP ICMP ESP AH GRE IGMP carp pfsync");
                                 foreach ($protocols as $proto): ?>
                                         <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>

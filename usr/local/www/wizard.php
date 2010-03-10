@@ -243,8 +243,8 @@ function enablechange() {
 ?>
 <img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
 <p>
-<div style="width:700px;background-color:#ffffff" id="roundme">
-<table bgcolor="#ffffff" width="600" cellspacing="0" cellpadding="3">
+<div style="width:800px;background-color:#ffffff" id="roundme">
+<table bgcolor="#ffffff" width="95%" border="0" cellspacing="0" cellpadding="2">
     <!-- wizard goes here -->
     <tr><td>&nbsp;</td></tr>
     <tr><td colspan='2'>
@@ -254,7 +254,11 @@ function enablechange() {
 	if ($_POST['message'] != "")
 		print_info_box(htmlspecialchars($_POST['message']));
 ?></td></tr>
-    <tr><td colspan='2'><center><b><?= fixup_string($description) ?></b></center></td></tr><tr><td>&nbsp;</td></tr>
+ <tr>
+	<td class="tabcont">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0">
+
+    <tr><td colspan='2'><center><font size="2"><b><?= fixup_string($description) ?></b></font></center></td></tr><tr><td>&nbsp;</td></tr>
     <?php
 	if(!$pkg['step'][$stepid]['disableheader'])
 		echo "<tr><td colspan=\"2\" class=\"listtopic\">" . fixup_string($title) . "</td></tr>";
@@ -290,7 +294,8 @@ function enablechange() {
 		    if(!$field['combinefieldsend'])
 			echo "<tr>";
 
-		    if ($field['type'] == "input") {
+		    switch ($field['type']) {
+		    case "input":
 			if ($field['displayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
                                 echo $field['displayname'];
@@ -313,12 +318,14 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-		    } else if ($field['type'] == "text") {
+			break;
+		    case "text":
 			echo "<td colspan=\"2\" align=\"center\" class=\"vncell\">\n";
 			if($field['description'] <> "") {
-                                echo "<br /> " . $field['description'];
+                                echo "<center><br /> " . $field['description'] . "</center>";
                         }
-		    } else if ($field['type'] == "inputalias") {
+			break;
+		    case "inputalias":
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
                                 echo $field['displayname'];
@@ -342,7 +349,8 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-		    } else if($field['type'] == "interfaces_selection") {
+			break;
+		    case "interfaces_selection":
 			$size = "";
 			$multiple = "";
 			$name = strtolower($name);
@@ -382,7 +390,9 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-		    } else if ($field['type'] == "password") {
+
+			break;
+		    case "password":
 			if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
@@ -398,7 +408,9 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-		    } else if($field['type'] == "certca_selection") {
+
+			break;
+		    case "certca_selection":
                         $size = "";
                         $multiple = "";
                         $name = strtolower($name);
@@ -434,7 +446,9 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-		    } else if($field['type'] == "cert_selection") {
+
+			break;
+		    case "cert_selection":
                         $size = "";
                         $multiple = "";
                         $name = strtolower($name);
@@ -472,7 +486,9 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-		    } else if ($field['type'] == "select") {
+
+			break;
+		    case "select":
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
                                 echo $field['displayname'];
@@ -508,7 +524,9 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo $field['description'];
 		    	}
-		    } else if ($field['type'] == "textarea") {
+
+			break;
+		    case "textarea":
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
                                 echo $field['displayname'];
@@ -531,7 +549,9 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-		    } else if ($field['type'] == "submit") {
+
+			break;
+		    case "submit":
 			echo "<td>&nbsp;<br></td></tr>";
 			echo "<tr><td colspan='2'><center>";
 			echo "<input type='submit' name='" . $name . "' value='" . $field['name'] . "'>\n";
@@ -539,10 +559,14 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-		    } else if ($field['type'] == "listtopic") {
-			echo "<td>&nbsp;</td><tr>";
-			echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br></td>\n";
-		    } else if ($field['type'] == "subnet_select") {
+
+			break;
+		    case "listtopic":
+			echo "<td>&nbsp;</td></tr>";
+			echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br ></td>\n";
+
+			break;
+		    case "subnet_select":
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
                                 echo $field['displayname'];
@@ -566,7 +590,9 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-		    } else if ($field['type'] == "timezone_select") {
+
+			break;
+		    case "timezone_select":
 			exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
 			$timezonelist = array_filter($timezonelist, 'is_timezone');
 			sort($timezonelist);
@@ -599,7 +625,9 @@ function enablechange() {
 			if($field['description'] <> "") {
 				echo "<br /> " . $field['description'];
 		    	}
-		    } else if ($field['type'] == "checkbox") {
+
+			break;
+		    case "checkbox":
 			if ($field['displayname']) {
                                 echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
                                 echo $field['displayname'];
@@ -612,12 +640,15 @@ function enablechange() {
 			$checked = "";
 			if($value <> "") $checked = " CHECKED";
 			echo "<td class=\"vtable\"><input value=\"yes\" type='checkbox' id='" . $name . "' name='" . $name . "' " . $checked;
-			if(isset($field['enablefields']) or isset($field['checkenablefields'])) echo " onClick=\"enablechange()\"";
+			if(isset($field['enablefields']) or isset($field['checkenablefields']))
+				echo " onClick=\"enablechange()\"";
 			echo ">\n";
 
 			if($field['description'] <> "") {
 				echo $field['description'];
 		    	}
+
+			break;
 		    }
 
 		    echo "</td>";
@@ -629,12 +660,14 @@ function enablechange() {
 			 echo "</tr>\n";
 
 		    if($field['warning'] <> "") {
-			echo "<br><b><font color=\"red\">" . $field['warning'] . "</font></b>";
+			echo "<br ><b><font color=\"red\">" . $field['warning'] . "</font></b>";
 		    }
 
 		}
 	}
     ?>
+	</table>
+	</td></tr>
 </table>
 <br>&nbsp;
 </div>

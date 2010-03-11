@@ -485,7 +485,7 @@ function step12_submitphpaction() {
                 $rule['source']['any'] = TRUE;
                 $rule['destination']['any'] = TRUE;
                 $rule['interface'] = "openvpn";
-                $rule['protocol'] = $server['protocol'];
+                //$rule['protocol'] = $server['protocol'];
                 $rule['type'] = "pass";
                 $rule['enabled'] = "on";
                 $config['filter']['rule'][] = $rule;

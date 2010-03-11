@@ -127,6 +127,11 @@ if ($_POST) {
 
 	/* input validation */
 
+	$reqdfields = explode(" ", "name");
+	$reqdfieldsn = explode(",", "Name");
+
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
 	$x = is_validaliasname($_POST['name']);
 	if (!isset($x)) {
 		$input_errors[] = "Reserved word used for alias name.";

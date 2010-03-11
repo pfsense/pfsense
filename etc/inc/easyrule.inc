@@ -2,8 +2,8 @@
 /*
 	easyrule.inc.php
 
-	Copyright (C) 2009 Jim Pingle (jpingle@gmail.com)
-	Sponsored By Anathematic @ pfSense Forums
+	Copyright (C) 2009-2010 Jim Pingle (jpingle@gmail.com)
+	Originally Sponsored By Anathematic @ pfSense Forums
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -251,7 +251,7 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport) {
 
 	$a_filter[] = $filterent;
 
-	write_config();
+	write_config($filterent['descr']);
 	$retval = filter_configure();
 	header("Location: firewall_rules.php?if={$int}");
 	exit;

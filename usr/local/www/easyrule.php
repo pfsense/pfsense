@@ -2,8 +2,8 @@
 /*
 	easyrule.php
 
-	Copyright (C) 2009 Jim Pingle (jpingle@gmail.com)
-	Sponsored By Anathematic @ pfSense Forums
+	Copyright (C) 2009-2010 Jim Pingle (jpingle@gmail.com)
+	Originally Sponsored By Anathematic @ pfSense Forums
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@ require_once("shaper.inc");
 $retval = 0;
 $message = "";
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
+$protocols_with_ports = array('tcp', 'udp');
 
 if ($_GET && isset($_GET['action'])) {
 	switch ($_GET['action']) {
@@ -85,16 +86,17 @@ if ($_GET && isset($_GET['action'])) {
 					$message .= "Tried to pass invalid destination IP: " . htmlspecialchars($_GET['dst']) . "<br/>";
 					break;
 				}
-				if (($_GET['proto'] != 'icmp') && !isset($_GET['dstport'])) {
-					$message .= "Missing destination port: " . htmlspecialchars($_GET['dstport']) . "<br/>";
-					break;
-				}
-				if ($_GET['proto'] == 'icmp') {
+				if (in_array($_GET['proto'], $protocols_with_ports)) {
+					if (!isset($_GET['dstport'])) {
+						$message .= "Missing destination port: " . htmlspecialchars($_GET['dstport']) . "<br/>";
+						break;
+					}
+					if (!is_port($_GET['dstport'])) {
+						$message .= "Tried to pass invalid destination port: " . htmlspecialchars($_GET['dstport']) . "<br/>";
+						break;
+					}
+				} else {
 					$_GET['dstport'] = 0;
-				}
-				if (!is_numeric($_GET['dstport']) || ($_GET['dstport'] < 0) || ($_GET['dstport'] > 65536)) {
-					$message .= "Tried to pass invalid destination port: " . htmlspecialchars($_GET['dstport']) . "<br/>";
-					break;
 				}
 				/* Should have valid input... */
 				if (easyrule_pass_rule_add($_GET['int'], $_GET['proto'], $_GET['src'], $_GET['dst'], $_GET['dstport'])) {

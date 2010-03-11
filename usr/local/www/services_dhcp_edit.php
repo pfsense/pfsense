@@ -157,11 +157,11 @@ if ($_POST) {
 		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
 
-		staticmaps_sort($if);
 		if (isset($id) && $a_maps[$id])
 			$a_maps[$id] = $mapent;
 		else
 			$a_maps[] = $mapent;
+		staticmaps_sort($if);
 		
 		write_config();
 

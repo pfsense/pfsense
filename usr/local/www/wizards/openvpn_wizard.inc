@@ -471,7 +471,6 @@ function step12_submitphpaction() {
 		$rule['descr'] = gettext("OpenVPN {$server['description']} wizard rules.");
 		$rule['direction'] = "in";
 		$rule['source']['any'] = TRUE;
-		$rule['source']['address']['any'] = TRUE;
 		$rule['destination']['network'] = $server['interface'] . "ip";
 		$rule['destination']['port'] = $server['local_port'];
 		$rule['interface'] = $server['interface'];

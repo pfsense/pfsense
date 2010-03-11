@@ -186,8 +186,8 @@ include("head.inc");
 
 function  FieldValidate(userinput,  regexp,  message)
 {
-                if(!userinput.match(regexp))
-                                alert(message);
+	if(!userinput.match(regexp))
+		alert(message);
 }
 
 function enablechange() {
@@ -211,12 +211,14 @@ function enablechange() {
                         }
                         print "\t" . '} else {' . "\n";
                         if(isset($field['enablefields'])) {
+                                $enablefields = explode(',', $field['enablefields']);
                                 foreach($enablefields as $enablefield) {
                                         $enablefield = strtolower($enablefield);
                                         print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 0;' . "\n";
                                 }
                         }
                         if(isset($field['checkenablefields'])) {
+                                $checkenablefields = explode(',', $field['checkenablefields']);
                                 foreach($checkenablefields as $checkenablefield) {
                                         $checkenablefield = strtolower($checkenablefield);
                                         print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 1;' . "\n";
@@ -225,6 +227,46 @@ function enablechange() {
                         print "\t" . '}' . "\n";
                 }
         }
+?>
+}
+
+function showchange() {
+<?php
+        foreach($pkg['step'][$stepid]['fields']['field'] as $field) {
+                if(isset($field['showfields']) or isset($field['checkshowfields'])) {
+                        print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked == false) {' . "\n";
+                        if(isset($field['showfields'])) {
+                                $showfields = explode(',', $field['showfields']);
+                                foreach($showfields as $showfield) {
+                                        $showfield = strtolower($showfield);
+                                        print "\t\t" . 'document.iform.' . $showfield . '.display =\"none\";' . "\n";
+                                }
+                        }
+			if(isset($field['checkshowfields'])) {
+                                $checkshowfields = explode(',', $field['checkshowfields']);
+                                foreach($checkshowfields as $checkshowfield) {
+                                        $checkshowfield = strtolower($checkshowfield);
+                                        print "\t\t" . 'document.iform.' . $checkshowfield . '.display = \"none\";' . "\n";
+                                }
+                        }
+                        print "\t" . '} else {' . "\n";
+                        if(isset($field['showfields'])) {
+                                $showfields = explode(',', $field['showfields']);
+                                foreach($showfields as $showfield) {
+                                        $showfield = strtolower($showfield);
+                                        print "\t\t" . 'document.iform.' . $showfield . '.display =\"\";' . "\n";
+                                }
+                        }
+                        if(isset($field['checkenablefields'])) {
+                                $checkshowfields = explode(',', $field['checkshowfields']);
+                                foreach($checkshowfields as $checkshowfield) {
+                                        $checkshowfield = strtolower($checkshowfield);
+                                        print "\t\t" . 'document.iform.' . $checkshowfield . '.display =\"\";' . "\n";
+                                }
+                        }
+                        print "\t" . '}' . "\n";
+                }
+	}
 ?>
 }
 //-->

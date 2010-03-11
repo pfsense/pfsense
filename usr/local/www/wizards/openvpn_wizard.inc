@@ -314,7 +314,7 @@ function step12_submitphpaction() {
 	if (isset($pconfig['step6']['uselist'])) {
 		$ca = array();
 		$ca['refid'] = uniqid();
-		$ca['name'] = $pconfig['step6']['certname'];
+		$ca['name'] = $pconfig['step6']['certca'];
 		$dn = array(
 			'countryName' => $pconfig['step6']['country'],
 			'stateOrProvinceName' => $pconfig['step6']['state'],

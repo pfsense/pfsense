@@ -309,7 +309,7 @@ if ($_GET['act'] == "add") {
 		$descr = "OPT{$i}";
 		$config['interfaces'][$newifname] = array();
 		$config['interfaces'][$newifname]['descr'] = $descr;
-		ksort($config['interfaces']);
+		uksort($config['interfaces'], "strnatcmp");
 	}
 	
 	/* Find an unused port for this interface */

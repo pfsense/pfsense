@@ -58,7 +58,7 @@ function clone_inuse($num) {
 }
 
 function clone_compare($a, $b) {
-	return strcmp($a['cloneif'], $b['cloneif']);
+	return strnatcmp($a['cloneif'], $b['cloneif']);
 }
 
 $portlist = get_interface_list();

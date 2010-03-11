@@ -20,21 +20,21 @@ function step2_stepbeforeformdisplay() {
 
 	$fields =& $pkg['step'][1]['fields']['field'];
 	
-	$count = 0;
+	$found = false;
 	$authlist = auth_get_authserver_list();
 	$fields[1]['options']['option'] = array();
 	foreach ($authlist as $i => $auth) {
-		if ($auth['type'] != "ldap") {
-			$count++;
+		if ($auth['type'] != "ldap")
 			continue;
-		}
+		$found = true;
                	$opts = array();
                	$opts['name'] = $auth['name'];
                	$opts['value'] = $auth['name'];
                	$fields[1]['options']['option'][] = $opts;
 	}
-	if ($count < 1)
+	if ($found == true) {
                 $stepid = 2;
+	}
 }
 
 function step2_submitphpaction() {
@@ -68,20 +68,19 @@ function step4_stepbeforeformdisplay() {
 
         $fields =& $pkg['step'][3]['fields']['field'];
 
-	$count = 0;
+	$found = false;
         $authlist = auth_get_authserver_list();
        	$fields[1]['options']['option'] = array();
        	foreach ($authlist as $i => $auth) {
-               	if ($auth['type'] != "radius") {
-			$count++;
+               	if ($auth['type'] != "radius")
                        	continue;
-		}
+		$found = true;
                	$opts = array();
                	$opts['name'] = $auth['name'];
                	$opts['value'] = $auth['name'];
                	$fields[1]['options']['option'][] = $opts;
         }
-	if ($count < 1)
+	if ($found == true)
                 $stepid = 4;
 }
 

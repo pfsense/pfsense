@@ -57,7 +57,6 @@ require("guiconfig.inc");
 if (!is_array($config['dnsmasq']['hosts'])) 
 	$config['dnsmasq']['hosts'] = array();
 
-hosts_sort();
 $a_hosts = &$config['dnsmasq']['hosts'];
 
 $id = $_GET['id'];
@@ -109,11 +108,11 @@ if ($_POST) {
 		$hostent['ip'] = $_POST['ip'];
 		$hostent['descr'] = $_POST['descr'];
 
-		hosts_sort();
 		if (isset($id) && $a_hosts[$id])
 			$a_hosts[$id] = $hostent;
 		else
 			$a_hosts[] = $hostent;
+		hosts_sort();
 		
 		mark_subsystem_dirty('hosts');
 		

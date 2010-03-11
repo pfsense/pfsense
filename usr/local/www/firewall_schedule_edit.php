@@ -71,7 +71,6 @@ $monthArray = array ('January','February','March','April','May','June','July','A
 if (!is_array($config['schedules']['schedule']))
 	$config['schedules']['schedule'] = array();
 
-schedule_sort();
 $a_schedules = &$config['schedules']['schedule'];
 
 
@@ -176,13 +175,13 @@ if ($_POST) {
 		else
 			$schedule['schedlabel'] = uniqid();
 
-		schedule_sort();
 		if (isset($id) && $a_schedules[$id]){
 			$a_schedules[$id] = $schedule;
 		}
 		else{
 			$a_schedules[] = $schedule;
 		}
+		schedule_sort();
 		write_config();
 		
 		filter_configure();

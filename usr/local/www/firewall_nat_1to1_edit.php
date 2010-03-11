@@ -60,7 +60,6 @@ require("shaper.inc");
 if (!is_array($config['nat']['onetoone'])) {
 	$config['nat']['onetoone'] = array();
 }
-nat_1to1_rules_sort();
 $a_1to1 = &$config['nat']['onetoone'];
 
 $id = $_GET['id'];
@@ -141,11 +140,11 @@ if ($_POST) {
 		$natent['descr'] = $_POST['descr'];
 		$natent['interface'] = $_POST['interface'];
 
-		nat_1to1_rules_sort();
 		if (isset($id) && $a_1to1[$id])
 			$a_1to1[$id] = $natent;
 		else
 			$a_1to1[] = $natent;
+		nat_1to1_rules_sort();
 
 		mark_subsystem_dirty('natconf');
 

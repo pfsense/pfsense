@@ -54,7 +54,6 @@ require("guiconfig.inc");
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
 }
-wol_sort();
 $a_wol = &$config['wol']['wolentry'];
 
 $id = $_GET['id'];
@@ -97,11 +96,11 @@ if ($_POST) {
 		$wolent['mac'] = $_POST['mac'];
 		$wolent['descr'] = $_POST['descr'];
 
-		wol_sort();
 		if (isset($id) && $a_wol[$id])
 			$a_wol[$id] = $wolent;
 		else
 			$a_wol[] = $wolent;
+		wol_sort();
 		
 		write_config();
 		

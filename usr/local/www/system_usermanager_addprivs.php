@@ -61,7 +61,6 @@ $userid = $_GET['userid'];
 if (isset($_POST['userid']))
 	$userid = $_POST['userid'];
 
-admin_users_sort();
 $a_user = & $config['system']['user'][$userid];
 if (!is_array($a_user)) {
 	pfSenseHeader("system_usermanager.php?id={$userid}");

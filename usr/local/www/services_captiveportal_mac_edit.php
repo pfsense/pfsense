@@ -58,7 +58,6 @@ require("captiveportal.inc");
 if (!is_array($config['captiveportal']['passthrumac']))
 	$config['captiveportal']['passthrumac'] = array();
 
-passthrumacs_sort();
 $a_passthrumacs = &$config['captiveportal']['passthrumac'];
 
 $id = $_GET['id'];
@@ -102,11 +101,11 @@ if ($_POST) {
 		$mac['mac'] = $_POST['mac'];
 		$mac['descr'] = $_POST['descr'];
 
-		passthrumacs_sort();
 		if (isset($id) && $a_passthrumacs[$id])
 			$a_passthrumacs[$id] = $mac;
 		else
 			$a_passthrumacs[] = $mac;
+		passthrumacs_sort();
 		
 		write_config();
 

@@ -56,7 +56,6 @@ require_once("vpn.inc");
 if (!is_array($config['l2tp']['user'])) {
 	$config['l2tp']['user'] = array();
 }
-l2tp_users_sort();
 $a_secret = &$config['l2tp']['user'];
 
 $id = $_GET['id'];
@@ -124,11 +123,11 @@ if ($_POST) {
 		if ($_POST['passwordfld'])
 			$secretent['password'] = $_POST['passwordfld'];
 
-		l2tp_users_sort();
 		if (isset($id) && $a_secret[$id])
 			$a_secret[$id] = $secretent;
 		else
 			$a_secret[] = $secretent;
+		l2tp_users_sort();
 
 		write_config();
 

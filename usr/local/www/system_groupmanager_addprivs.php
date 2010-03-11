@@ -61,7 +61,6 @@ $groupid = $_GET['groupid'];
 if (isset($_POST['groupid']))
 	$groupid = $_POST['groupid'];
 
-admin_groups_sort();
 $a_group = & $config['system']['group'][$groupid];
 
 if (!is_array($a_group)) {

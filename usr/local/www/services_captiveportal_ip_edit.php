@@ -59,7 +59,6 @@ require("captiveportal.inc");
 if (!is_array($config['captiveportal']['allowedip']))
 	$config['captiveportal']['allowedip'] = array();
 
-allowedips_sort();
 $a_allowedips = &$config['captiveportal']['allowedip'];
 
 $id = $_GET['id'];
@@ -103,11 +102,11 @@ if ($_POST) {
 		$ip['descr'] = $_POST['descr'];
 		$ip['dir'] = $_POST['dir'];
 
-		allowedips_sort();
 		if (isset($id) && $a_allowedips[$id])
 			$a_allowedips[$id] = $ip;
 		else
 			$a_allowedips[] = $ip;
+		allowedips_sort();
 		
 		write_config();
 

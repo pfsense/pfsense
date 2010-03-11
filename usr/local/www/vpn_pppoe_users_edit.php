@@ -54,7 +54,6 @@ require_once("vpn.inc");
 if (!is_array($config['pppoe']['user'])) {
 	$config['pppoe']['user'] = array();
 }
-pppoe_users_sort();
 $a_secret = &$config['pppoe']['user'];
 
 $id = $_GET['id'];
@@ -116,11 +115,11 @@ if ($_POST) {
 		if ($_POST['password'])
 			$secretent['password'] = $_POST['password'];
 		
-		pppoe_users_sort();
 		if (isset($id) && $a_secret[$id])
 			$a_secret[$id] = $secretent;
 		else
 			$a_secret[] = $secretent;
+		pppoe_users_sort();
 		
 		write_config();
 		

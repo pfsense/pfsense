@@ -54,7 +54,6 @@ require_once("vpn.inc");
 if (!is_array($config['pptpd']['user'])) {
 	$config['pptpd']['user'] = array();
 }
-pptpd_users_sort();
 $a_secret = &$config['pptpd']['user'];
 
 $id = $_GET['id'];
@@ -116,11 +115,11 @@ if ($_POST) {
 		if ($_POST['password'])
 			$secretent['password'] = $_POST['password'];
 
-		pptpd_users_sort();
 		if (isset($id) && $a_secret[$id])
 			$a_secret[$id] = $secretent;
 		else
 			$a_secret[] = $secretent;
+		pptpd_users_sort();
 
 		write_config();
 		mark_subsystem_dirty('pptpusers');

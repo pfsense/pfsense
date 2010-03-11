@@ -60,7 +60,6 @@ if (!is_array($config['staticroutes']['route']))
 if (!is_array($config['gateways']['gateway_item']))
 	$config['gateways']['gateway_item'] = array();
 
-staticroutes_sort();
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = &$config['gateways']['gateway_item'];
 
@@ -128,11 +127,11 @@ if ($_POST) {
 		$route['gateway'] = $_POST['gateway'];
 		$route['descr'] = $_POST['descr'];
 
-		staticroutes_sort();
 		if (isset($id) && $a_routes[$id])
 			$a_routes[$id] = $route;
 		else
 			$a_routes[] = $route;
+		staticroutes_sort();
 		
 		mark_subsystem_dirty('staticroutes');
 		

@@ -60,7 +60,6 @@ require("captiveportal.inc");
 if (!is_array($config['captiveportal']['element']))
 	$config['captiveportal']['element'] = array();
 
-cpelements_sort();
 $a_element = &$config['captiveportal']['element'];
 
 // Calculate total size of all files
@@ -101,6 +100,7 @@ if ($_POST) {
 			$element['content'] = base64_encode(file_get_contents($_FILES['new']['tmp_name']));
 
 			$a_element[] = $element;
+			cpelements_sort();
 
 			write_config();
 			captiveportal_write_elements();

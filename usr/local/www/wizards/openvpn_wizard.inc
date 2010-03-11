@@ -138,7 +138,7 @@ function step7_submitphpaction() {
 		$stepid--;
                 $savemsg = "Please enter all information for the new CA authority.";
         } else {
-		$config['ovpnserver']['step7']['uselist'] = "on";
+		$config['ovpnserver']['step6']['uselist'] = "on";
 		$_POST['uselist'] = "on";
 	}
 }

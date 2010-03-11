@@ -42,7 +42,7 @@
 			<displayname>Type of Server</displayname>
 			<name>authtype</name>
 			<description>Choose authentication backend type.</description>
-			<bindstofield>ovpnserver->step2->authtype</bindstofield>
+			<bindstofield>ovpnserver->step1->type</bindstofield>
 			<options>
 				<option>
 					<name>Local User Access</name>
@@ -81,6 +81,7 @@
 			<enablefields>name,ip,port,transport,scope,authscope,userdn,passdn,nameattr</enablefields>
 			<description>Use authentication server from list</description>
 			<displayname>Server from list</displayname>
+                        <bindstofield>ovpnserver->step2->uselist</bindstofield>
 		</field>
 		<field>
                         <name>authserv</name>
@@ -157,14 +158,14 @@
 			<type>input</type>
 			<size>20</size>
 			<description>If you leave it blank an anonymous bind will be done.</description>
-			<bindstofield>ovpnserver->step2->user</bindstofield>
+			<bindstofield>ovpnserver->step2->userdn</bindstofield>
 		</field>
 		<field>
 			<name>passdn</name>
 			<displayname>Password</displayname>
 			<type>password</type>
 			<size>20</size>
-			<bindstofield>ovpnserver->step2->password</bindstofield>
+			<bindstofield>ovpnserver->step2->passdn</bindstofield>
 		</field>
 		<field>
 			<name>nameattr</name>
@@ -172,6 +173,18 @@
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->nameattr</bindstofield>
 		</field>
+		<field>
+                        <name>memberattr</name>
+                        <displayname>Member naming attribute</displayname>
+                        <type>input</type>
+                        <bindstofield>ovpnserver->step2->memberattr</bindstofield>
+                </field>
+		<field>
+                        <name>groupattr</name>
+                        <displayname>Group naming attribute</displayname>
+                        <type>input</type>
+                        <bindstofield>ovpnserver->step2->groupattr</bindstofield>
+                </field>
 		<field>
 			<type>submit</type>
 			<name>Add new Server</name>
@@ -197,6 +210,7 @@
                         <enablefields>name,ip,port,secret</enablefields>
                         <description>Use authentication server from list</description>
                         <displayname>Server from list</displayname>
+                        <bindstofield>ovpnserver->step2->uselist</bindstofield>
                 </field>
                 <field>
                         <name>authserv</name>
@@ -265,6 +279,7 @@
                         <enablefields>name,keylength,lifetime,country,state,city,organization,email,cn</enablefields>
                         <description>Use authentication server from list</description>
                         <displayname>Server from list</displayname>
+                        <bindstofield>ovpnserver->step5->uselist</bindstofield>
                 </field>
 		<field>
 			<type>certca_selection</type>
@@ -380,6 +395,7 @@
                         <enablefields>name,keylength,lifetime,country,state,city,organization,email,cn,ca</enablefields>
                         <description>Use authentication server from list</description>
                         <displayname>Server from list</displayname>
+                        <bindstofield>ovpnserver->step6->uselist</bindstofield>
                 </field>
 		<field>
 			<type>cert_selection</type>
@@ -541,14 +557,15 @@
 		<field>
 			<name>TLS Authentication</name>
 			<type>checkbox</type>
+			<value>on</value>
 			<description>Enable authentication of TLS packets.</description>
-			<combinefieldsbegin>true</combinefieldsbegin>
 			<bindstofield>ovpnserver->step7->tlsauth</bindstofield>
 		</field>
 		<field>
 			<displayname>Automatically generate a TLS key</displayname>
 			<name>generatetlskey</name>
 			<enablefields>tlssharedkey</enablefields>
+			<value>on</value>
 			<type>checkbox</type>
 			<description>Automatically generate a shared TLS authentication key.</description>
 			<bindstofield>ovpnserver->step7->gentlskey</bindstofield>
@@ -558,7 +575,6 @@
 			<type>textarea</type>
 			<cols>30</cols>
 			<rows>5</rows>
-			<combinefieldsbegin>true</combinefieldsbegin>
 			<bindstofield>ovpnserver->step7->tlskey</bindstofield>
 		</field>
 		<field>
@@ -582,12 +598,24 @@
                         </options>
 		</field>
 		<field>
+			<name>crypto</name>
+			<type>select</type>
+			<displayname>Encryption algorithm</displayname>
+			<bindstofield>ovpnserver->step7->crypto</bindstofield>
+			<options>
+                                <option>
+                                        <name>dummy</name>
+                                        <value>dummy</value>
+                                </option>
+			</options>
+		</field>
+		<field>
 			<type>listtopic</type>
 			<name>Tunnel Settings</name>
 		</field>
 		<field>
 			<displayname>Tunnel network</displayname>
-			<name>tunnel</name>
+			<name>tunnelnet</name>
 			<type>input</type>
 			<size>20</size>
 			<bindstofield>ovpnserver->step7->tunnelnet</bindstofield>
@@ -600,11 +628,18 @@
 			<bindstofield>ovpnserver->step7->rdrgw</bindstofield>
 		</field>
 		<field>
+                        <displayname>Remote network</displayname>
+                        <name>remotenet</name>
+                        <type>input</type>
+                        <size>20</size>
+                        <bindstofield>ovpnserver->step7->remotenet</bindstofield>
+                </field>
+		<field>
 			<displayname>Local network</displayname>
-			<name>local</name>
+			<name>localnet</name>
 			<type>input</type>
 			<size>20</size>
-			<bindstofield>ovpnserver->step7->local</bindstofield>
+			<bindstofield>ovpnserver->step7->localnet</bindstofield>
 		</field>
 		<field>
 			<displayname>Concurrent Connections</displayname>
@@ -690,6 +725,41 @@
 			<bindstofield>ovpnserver->step7->ntp2</bindstofield>
                 </field>
 		<field>
+			<name>nbtenable</name>
+			<type>checkbox</type>
+			<displayname>Enable NetBios option</displayname>
+		</field>
+		<field>
+                        <displayname>NetBios Node Type</displayname>
+                        <name>nbttype</name>
+                        <type>select</type>
+                        <bindstofield>ovpnserver->step7->nbttype</bindstofield>
+                        <options>
+                                <option>
+                                        <name>dummy</name>
+                                        <value>dummy</value>
+                                </option>
+                        </options>
+                </field>
+		<field>
+                        <displayname>NetBios Scope</displayname>
+                        <name>nbtscope</name>
+                        <type>input</type>
+                        <bindstofield>ovpnserver->step7->nbtscope</bindstofield>
+                </field>
+		<field>
+                        <displayname>WINS Server 1</displayname>
+                        <name>winsserver1</name>
+                        <type>input</type>
+                        <bindstofield>ovpnserver->step7->wins1</bindstofield>
+                </field>
+                <field>
+                        <displayname>WINS Server 2</displayname>
+                        <name>winsserver2</name>
+                        <type>input</type>
+                        <bindstofield>ovpnserver->step7->wins2</bindstofield>
+                </field>
+		<field>
 			<name>Advanced</name>
 			<type>textarea</type>
 			<cols>30</cols>
@@ -702,6 +772,7 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepbeforeformdisplay>step7_stepbeforeformdisplay();</stepbeforeformdisplay>
 	<stepsubmitphpaction>step7_submitphpaction();</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
 </step>

@@ -119,7 +119,7 @@ $title          = $pkg['step'][$stepid]['title'];
 $description    = $pkg['step'][$stepid]['description'];
 
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
-	global $config, $savemsg;
+	global $config;
 	$field_split = split("->",$field);
 	foreach ($field_split as $f)
 		$field_conv .= "['" . $f . "']";
@@ -231,7 +231,6 @@ function enablechange() {
 <form action="wizard.php" method="post" name="iform" id="iform">
 <input type="hidden" name="xml" value="<?= $xml ?>">
 <input type="hidden" name="stepid" value="<?= $stepid ?>">
-<?php if ($savemsg) print_info_box($savemsg); ?>
 
 <center>
 
@@ -253,6 +252,8 @@ function enablechange() {
     <tr><td>&nbsp;</td></tr>
     <tr><td colspan='2'>
 <?php
+	if ($savemsg)
+		print_info_box($savemsg);
 	if ($_GET['message'] != "")
 		print_info_box(htmlspecialchars($_GET['message']));
 	if ($_POST['message'] != "")
@@ -642,7 +643,8 @@ function enablechange() {
 				echo ":</td>";
 			}
 			$checked = "";
-			if($value <> "") $checked = " CHECKED";
+			if($value <> "")
+				$checked = " CHECKED";
 			echo "<td class=\"vtable\"><input value=\"on\" type='checkbox' id='" . $name . "' name='" . $name . "' " . $checked;
 			if(isset($field['enablefields']) or isset($field['checkenablefields']))
 				echo " onClick=\"enablechange()\"";

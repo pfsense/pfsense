@@ -42,7 +42,7 @@ function step2_submitphpaction() {
 
 	if (isset($_POST['next'])) {
 		$_POST['uselist'] = "";
-		$stepid++;
+		$stepid +=3;
 	}
 }
 

@@ -331,7 +331,7 @@ function local_user_del($user) {
 	global $debug;
 
 	/* remove all memberships */
-	local_user_get_groups($user);
+	local_user_set_groups($user);
 
 	/* delete from pw db */
 	$cmd = "/usr/sbin/pw userdel {$user['name']}";

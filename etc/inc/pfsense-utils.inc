@@ -1008,8 +1008,10 @@ function auto_login() {
 	global $config;
 
 	if(isset($config['system']['disableconsolemenu']))
-		return;
-		
+		$status = false;
+	else
+		$status = true;
+
 	$gettytab = file_get_contents("/etc/gettytab");
 	$getty_split = split("\n", $gettytab);
 	conf_mount_rw();

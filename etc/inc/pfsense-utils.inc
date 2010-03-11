@@ -1016,8 +1016,16 @@ function auto_login() {
 	$getty_split = split("\n", $gettytab);
 	conf_mount_rw();
 	$fd = false;
-	while (!$fd) {
+	$tries = 0;
+	while (!$fd && $tries < 100) {
 		$fd = fopen("/etc/gettytab", "w");
+		$tries++;
+		
+	}
+	if (!$fd) {
+		conf_mount_ro();
+		log_error("Enableing auto login was not possible.");
+		return;
 	}
 	foreach($getty_split as $gs) {
 		if(stristr($gs, ":ht:np:sp#115200") ) {

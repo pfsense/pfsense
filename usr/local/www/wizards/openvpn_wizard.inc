@@ -16,7 +16,7 @@ function step1_submitphpaction() {
 }
 
 function step2_stepbeforeformdisplay() {
-	global $pkg;
+	global $pkg, $stepid;
 
 	$fields =& $pkg['step'][1]['fields']['field'];
 	
@@ -64,7 +64,7 @@ function step3_submitphpaction() {
 }
 
 function step4_stepbeforeformdisplay() {
-        global $pkg;
+        global $pkg, $stepid;
 
         $fields =& $pkg['step'][3]['fields']['field'];
 

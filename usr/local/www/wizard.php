@@ -78,6 +78,9 @@ $title          = $pkg['step'][$stepid]['title'];
 $description    = $pkg['step'][$stepid]['description'];
 $totalsteps     = $pkg['totalsteps'];
 
+if ($pkg['includefile'])
+        require_once($pkg['includefile']);
+
 if ($pkg['step'][$stepid]['includefile'])
 	require_once($pkg['step'][$stepid]['includefile']);
 

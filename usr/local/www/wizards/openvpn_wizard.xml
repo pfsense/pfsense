@@ -31,7 +31,7 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 </copyright>
-<totalsteps>8</totalsteps>
+<totalsteps>12</totalsteps>
 <step>
 	<id>1</id>
 	<title>OpenVPN Remote Access Server Setup Wizard</title>
@@ -87,6 +87,10 @@
                                 </option>
                         </options>
                 </field>
+		<field>
+			<type>submit</type>
+			<name>Add new LDAP server</name>
+		</field>
 		<field>
 			<type>submit</type>
 			<name>Next</name>
@@ -193,7 +197,6 @@
 			<name>Add new Server</name>
 		</field>
 	</fields>
-	<stepbeforeformdisplay>step3_stepbeforeformdisplay();</stepbeforeformdisplay>
 	<stepsubmitphpaction>step3_submitphpaction();</stepsubmitphpaction>
 	<javascriptafterformdisplay>enablechange();</javascriptafterformdisplay>
 	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
@@ -218,6 +221,10 @@
                                         <value>dummy</value>
                                 </option>
                         </options>
+                </field>
+		<field>
+                        <type>submit</type>
+                        <name>Add new RADIUS server</name>
                 </field>
                 <field>
                         <type>submit</type>
@@ -269,7 +276,6 @@
 			<type>submit</type>
 		</field>
 	</fields>
-	<stepbeforeformdisplay>step5_stepbeforeformdisplay();</stepbeforeformdisplay>
 	<stepsubmitphpaction>step5_submitphpaction();</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
 </step>
@@ -284,6 +290,10 @@
 			<displayname>Certificate Authority</displayname>
 			<bindstofield>ovpnserver->step6->authcertca</bindstofield>
 		</field>
+		<field>
+                        <type>submit</type>
+                        <name>Add new CA</name>
+                </field>
 		<field>
 			<name>Next</name>
 			<type>submit</type>
@@ -394,7 +404,7 @@
 <step>
 	<id>8</id>
 	<title>OpenVPN Remote Access Server Setup Wizard</title>
-	<description>Create a certificate to be used by server.</description>
+	<description>Select certificate to be used with server.</description>
 	<fields>
 		<field>
 			<type>cert_selection</type>
@@ -402,6 +412,10 @@
 			<displayname>Certificate</displayname>
 			<bindstofield>ovpnserver->step9->authcertname</bindstofield>
 		</field>
+		<field>
+                        <type>submit</type>
+                        <name>Add new Certificate</name>
+                </field>
 		<field>
 			<name>Next</name>
 			<type>submit</type>
@@ -507,7 +521,6 @@
 	</fields>
 	<stepsubmitphpaction>step9_submitphpaction();</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
-	<javascriptafterformdisplay>enablechange();</javascriptafterformdisplay>
 </step>
 <step>
 	<id>10</id>

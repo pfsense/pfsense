@@ -4,19 +4,14 @@ require_once("openvpn.inc");
 function step1_submitphpaction() {
 	global $stepid, $config;
 	if ($_POST['authtype'] == "local") {
+		$stepid = 5;
 		$config['ovpnserver']['step1']['type'] = "local";
-        	write_config();
-        	header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5");
-        	exit;
 	} else if ($_POST['authtype'] == "ldap") {
 		$stepid = 0;
 	} else if ($_POST['authtype'] == "radius") {
-		$stepid = 1;
+		$stepid = 2;
 		$config['ovpnserver']['step1']['type'] = "radius";
 		unset($config['ovpnserver']['step1']['uselist']);
-                write_config();
-                header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=2");
-                exit;
 	}
 }
 
@@ -27,7 +22,7 @@ function step2_stepbeforeformdisplay() {
 	
 	$count = 0;
 	$authlist = auth_get_authserver_list();
-	$fields[0]['options']['option'] = array();
+	$fields[1]['options']['option'] = array();
 	foreach ($authlist as $i => $auth) {
 		if ($auth['type'] != "ldap") {
 			$count++;
@@ -36,31 +31,33 @@ function step2_stepbeforeformdisplay() {
                	$opts = array();
                	$opts['name'] = $auth['name'];
                	$opts['value'] = $auth['name'];
-               	$fields[2]['options']['option'][] = $opts;
+               	$fields[1]['options']['option'][] = $opts;
 	}
 	if ($count < 1)
                 $stepid = 2;
 }
 
 function step2_submitphpaction() {
-	global $stepid, $config;
+	global $stepid;
 
-	$config['ovpnserver']['step2']['authserv'] = $_POST['authserv'];
-	unset($config['ovpnserver']['step2']['uselist']);
-	write_config();
-	header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=3");
-	exit;
+	if (isset($_POST['next']))
+		$stepid++;
 }
 
 function step3_submitphpaction() {
+	global $stepid, $savemsg;
 
 	if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['port']) ||
 	    empty($_POST['transport']) || empty($_POST['scope']) || empty($_POST['authscope']) || empty($_POST['nameattr'])) {
-		$message = "Please enter all information for authentication server.";
-		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=1&message={$message}");
-		exit;
+		$stepid--;
+		$savemsg = "Please enter all information for authentication server.";
+	} else if (count(($authcfg = auth_get_authserver($_POST['name']))) > 0) {
+		$stepid--;
+		$savemsg = "Please choose a different name because an authentication server with this name already exists.";
+	} else {
+		$_POST['uselist'] = "on";
+		$stepid += 2;
 	}
-	$_POST['uselist'] = "on";
 }
 
 function step4_stepbeforeformdisplay() {
@@ -70,7 +67,7 @@ function step4_stepbeforeformdisplay() {
 
 	$count = 0;
         $authlist = auth_get_authserver_list();
-       	$fields[0]['options']['option'] = array();
+       	$fields[1]['options']['option'] = array();
        	foreach ($authlist as $i => $auth) {
                	if ($auth['type'] != "radius") {
 			$count++;
@@ -79,63 +76,58 @@ function step4_stepbeforeformdisplay() {
                	$opts = array();
                	$opts['name'] = $auth['name'];
                	$opts['value'] = $auth['name'];
-               	$fields[2]['options']['option'][] = $opts;
+               	$fields[1]['options']['option'][] = $opts;
         }
 	if ($count < 1)
                 $stepid = 4;
 }
 
 function step4_submitphpaction() {
-        global $stepid, $config;
+        global $stepid;
 
-        $config['ovpnserver']['step2']['authserv'] = $_POST['authserv'];
-        unset($config['ovpnserver']['step2']['uselist']);
-	write_config();
-        header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=4");
-        exit;
+	if (isset($_POST['next']))
+		$stepid++;
 }
 
 function step5_submitphpaction() {
-	global $stepid;
+	global $stepid, $savemsg;
 
         if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['port']) ||
-            empty($_POST['passowrd'])) {
-                $message = "Please enter all information for authentication server.";
-                header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=4&message={$message}");
-                exit;
-        }
-	$_POST['uselist'] = "on";
+            empty($_POST['secret'])) {
+		$stepid--;
+                $savemsg = "Please enter all information for authentication server.";
+	} else if (count(($authcfg = auth_get_authserver($_POST['name']))) > 0) {
+		$stepid--;
+		$savemsg = "Please choose a different name because an authentication server with this name already exists.";
+        } else
+		$_POST['uselist'] = "on";
 }
 
 function step6_stepbeforeformdisplay() {
 	global $stepid, $config;
 
 	if (count($config['system']['ca']) < 1) {
-		header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=6");
-                exit;
+		$stepid++;
 	}
 }
 
 function step6_submitphpaction() {
-	global $config;
+	global $stepid;
 
-	$config['ovpnserver']['step6']['authcertca'] = $_POST['authcertca'];
-        unset($config['ovpnserver']['step6']['uselist']);
-	write_config();
-        header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=7");
-        exit;
+	if (isset($_POST['next']))
+                $stepid++;
 }
 
 function step7_submitphpaction() {
-	
+	global $stepid, $savemsg, $_POST;
+
 	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
             empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
             empty($_POST['organization']) || empty($_POST['email']) || empty($_POST['cn'])) {
-                $message = "Please enter all information for the new CA authority.";
-                header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=6&message={$message}");
-                exit;
-        }
-	$_POST['uselist'] = "on";
+		$stepid--;
+                $savemsg = "Please enter all information for the new CA authority.";
+        } else
+		$_POST['uselist'] = "on";
 }
 
 function step8_stepbeforeformdisplay() {
@@ -143,32 +135,28 @@ function step8_stepbeforeformdisplay() {
 
         if (count($config['system']['cert']) < 1 ||
 		(count($config['system']['cert']) == 1 && stristr($config['system']['cert'][0]['name'], "webconf"))) {
-                header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=8");
-                exit;
+		$stepid++;
         }
 }
 
 function step8_submitphpaction() {
-	global $config;
+	global $stepid, $_POST;
 
-        $config['ovpnserver']['step9']['authcertname'] = $_POST['authcertname'];
-        unset($config['ovpnserver']['step6']['uselist']);
-        write_config();
-        header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=9");
-        exit;
+	if (isset($_POST['next']))
+                $stepid += 1;
 }
 
 function step9_submitphpaction() {
-	global $stepid;
+	global $stepid, $savemsg, $_POST;
 
         if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
 	    empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
 	    empty($_POST['organization']) || empty($_POST['email']) || empty($_POST['cn'])) {
-                $message = "Please enter all information for the new certificate.";
-                header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=8&message={$message}");
-                exit;
-        }
-	$_POST['uselist'] = "on";
+		$stepid--;
+                $savemsg = "Please enter all information for the new certificate.";
+        } else {
+		$_POST['uselist'] = "on";
+	}
 }
 
 function step10_stepbeforeformdisplay() {
@@ -377,7 +365,7 @@ function step12_submitphpaction() {
 	$server['protocol'] = $pconfig['step10']['protocol'];
 	$server['interface'] = $pconfig['step10']['interface'];
 	if (isset($pconfig['step10']['localport']))
-		$server['localport'] = $pconfig['step10']['localport'];
+		$server['local_port'] = $pconfig['step10']['localport'];
 	$server['description'] = $pconfig['step10']['descr'];
 	$server['custom_options'] = $pconfig['step10']['advanced'];
 	if (isset($pconfig['step10']['tlsauth'])) {
@@ -430,6 +418,33 @@ function step12_submitphpaction() {
 		$server['netbios_enable'] = $pconfig['step10']['nbtenable'];
 	}
 	$server['crypto'] = $pconfig['step10']['crypto'];
+
+	if (isset($pconfig['step11']['ovpnrule'])) {
+		$rule = array();
+		$rule['descr'] = gettext("OpenVPN {$server['description']} wizard rules.");
+		$rule['direction'] = "in";
+		$rule['source']['any'] = TRUE;
+		$rule['source']['address']['any'] = TRUE;
+		$rule['destination']['network'] = $server['interface'] . "ip";
+		$rule['destination']['port'] = $server['local_port'];
+		$rule['interface'] = $server['interface'];
+		$rule['protocol'] = $server['protocol'];
+		$rule['type'] = "pass";
+		$rule['enabled'] = "on";
+		$config['filter']['rule'][] = $rule;
+	}
+	if (isset($pconfig['step11']['ovpnallow'])) {
+                $rule = array();
+                $rule['descr'] = gettext("OpenVPN {$server['description']} wizard rules.");
+                $rule['source']['any'] = TRUE;
+                $rule['source']['address']['any'] = TRUE;
+                $rule['destination']['address']['any'] = TRUE;
+                $rule['interface'] = "openvpn";
+                $rule['protocol'] = "any";
+                $rule['type'] = "pass";
+                $rule['enabled'] = "on";
+                $config['filter']['rule'][] = $rule;
+        }
 	
 	if (!is_array($config['openvpn']['openvpn-server']))
 		$config['openvpn']['openvpn-server'] = array();

@@ -32,7 +32,7 @@ function step2_stepbeforeformdisplay() {
                	$opts['value'] = $auth['name'];
                	$fields[1]['options']['option'][] = $opts;
 	}
-	if ($found == true) {
+	if ($found == false) {
                 $stepid = 2;
 	}
 }
@@ -80,7 +80,7 @@ function step4_stepbeforeformdisplay() {
                	$opts['value'] = $auth['name'];
                	$fields[1]['options']['option'][] = $opts;
         }
-	if ($found == true)
+	if ($found == false)
                 $stepid = 4;
 }
 

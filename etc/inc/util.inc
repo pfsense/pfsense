@@ -50,7 +50,7 @@ function isvalidpid($pid) {
 }
 
 function is_process_running($process) {
-        $running = (trim(shell_exec("ps axwu | grep '\b{$process}\b' | grep -v 'grep'")) != '');
+        $running = (shell_exec("pgrep -x {$process}") != '');
 
         return $running;
 }

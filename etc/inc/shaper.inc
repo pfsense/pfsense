@@ -3442,7 +3442,7 @@ class layer7 {
     }
     
     function delete_l7c() {
-	$l7pid = `/bin/ps -ax | /usr/bin/grep ipfw-classifyd | /usr/bin/grep ". $l7rules->GetRPort() . " | /usr/bin/grep -v grep | /usr/bin/awk '{ print $1 }'`;
+	$l7pid = `"/bin/pgrep -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'"`;
 	mwexec("/bin/kill {$l7pid}");
 	unset_l7_object_by_reference($this->GetRName());
 	cleanup_l7_from_rules($this->GetRName());
@@ -3608,7 +3608,7 @@ function layer7_start_l7daemon() {
 
 	    unset($l7pid);
 	    /* Only reread the configuration rather than restart to avoid loosing information. */
-	    exec("/bin/ps -ax | /usr/bin/grep ipfw-classifyd | /usr/bin/grep ". $l7rules->GetRPort() . " | /usr/bin/grep -v grep | /usr/bin/awk '{ print $1}'", $l7pid);
+	    exec("/bin/pgrep -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'", $l7pid);
 	    if (count($l7pid) > 0) {
 		log_error("Sending HUP signal to {$l7pid[0]}");
 		mwexec("/bin/kill -HUP {$l7pid[0]}");

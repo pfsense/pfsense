@@ -634,7 +634,7 @@ function enable_rrd_graphing() {
 }
 
 function kill_traffic_collector() {
-	mwexec("ps awwwux | grep '/[u]pdaterrd.sh' | awk '{print $2}' | xargs kill 2>&1");
+	mwexec("/bin/pkill -f '/[u]pdaterrd.sh'");
 }
 
 /* This xml 2 array function is courtesy of the php.net comment section on xml_parse.

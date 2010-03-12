@@ -444,7 +444,7 @@ function get_carp_interface_status($carpinterface) {
 function get_pfsync_interface_status($pfsyncinterface) {
     $result = does_interface_exist($pfsyncinterface);
     if($result <> true) return;
-    $status = exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/grep \"pfsync:\" | /usr/bin/cut -d\" \" -f5");
+    $status = exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/awk '/pfsync:/ {print \$5}'");
     return $status;
 }
 
@@ -1543,7 +1543,7 @@ function load_glxsb() {
  ******/
 function isvm() {
 	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86");
-	$bios_vendor = strtolower(`/bin/kenv | /usr/bin/grep "bios.vendor" | /usr/bin/cut -d"=" -f2`);
+	$bios_vendor = strtolower(`/bin/kenv | /usr/bin/awk -F= '/smbios.bios.vendor/ {print $2}'`);
 	if(in_array($bios_vendor, $virtualenvs)) 
 		return true;
 	else

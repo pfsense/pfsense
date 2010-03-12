@@ -985,7 +985,7 @@ function interface_ppp_configure($ifcfg,$edit=false) {
 	}
 	// Launch specified ppp instance
 	if( (!$edit || $g['booting']) && file_exists("/dev/{$orig_dev}")){
-		$running = `ps awux | grep ppp | grep -v grep | grep $orig_dev`;
+		$running = `/bin/pgrep -f "ppp .* $orig_dev"`;
 		if(!$running)
 			mwexec_bg("/usr/sbin/ppp -background {$orig_dev}");
 	}
@@ -1750,18 +1750,16 @@ EOD;
 }
 
 function kill_hostapd($interface) {
-	return "/bin/ps awwuxx | grep hostapd | grep $interface | awk '{ print \$2 }' | xargs kill\n";
+	return "/bin/pkill -f \"hostapd .*{$interface}\"\n";
 }
 
 function kill_wpasupplicant($interface) {
-	return "/bin/ps awwuxx | grep wpa_supplicant | grep $interface | awk '{ print \$2 }' | xargs kill\n";
+	return "/bin/pkill -f \"wpa_supplicant .*{$interface}\"\n";
 }
 
 function find_dhclient_process($interface) {
 	if($interface) {
-		$pid = `ps awwwux | grep dhclient | grep -v grep | grep {$interface} | awk '{ print \$2 }'`;
-		$pid = explode("\n", $pid);
-		$pid = $pid[0];
+		$pid = `/bin/pgrep -xf "dhclient: {$interface}"`;
 	}
 	return $pid;
 }

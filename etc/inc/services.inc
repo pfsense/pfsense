@@ -40,7 +40,7 @@
 
 function services_parse_dhcpd_hostnames() {
 	global $config;
-	$ps = `ps awux | grep isc | grep -v grep | grep parse | awk '{ print $2 }'`;
+	$ps = `/bin/pgrep -f rc.parse-isc-dhcpd`;
 	if($ps)
 		exec("kill {$ps}");
 	// Launch if option enabled

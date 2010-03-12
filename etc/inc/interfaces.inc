@@ -2092,6 +2092,7 @@ EOD;
 	set ipcp yes vjcomp
 	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
 	create link static {$interface}L1 pppoe
+	set link disable incoming
 	set link action bundle {$interface}
 	set auth authname "{$wancfg['pppoe_username']}"
 	set auth password "{$wancfg['pppoe_password']}"
@@ -2249,6 +2250,7 @@ EOD;
 	set auth authname "{$wancfg['pptp_username']}"
 	set auth password "{$wancfg['pptp_password']}"
 	set bundle no noretry
+	set link disable incoming
 	set link keep-alive 10 60
 	set link max-redial 0
 	set link no acfcomp protocomp

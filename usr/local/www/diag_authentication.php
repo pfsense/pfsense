@@ -65,7 +65,6 @@ if ($_POST) {
 			foreach ($groups as $group)
 				$savemsg .= "{$group} ";
 		} else {
-			var_dump($authcfg);
 			$input_errors[] = "User did not authenticate succesfully.";
 		}
 	}

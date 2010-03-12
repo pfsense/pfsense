@@ -146,7 +146,7 @@ function restart_service($name) {
 
 function is_pid_running($pidfile) {
 	$pid = trim(file_get_contents($pidfile));
-	$running = (trim(shell_exec("ps -p {$pid}")) != '');
+	$running = (trim(shell_exec("/usr/bin/procstat {$pid} 2>/dev/null")) != '');
 	return $running;
 }
 

@@ -66,7 +66,7 @@ require_once("radius_accounting.inc");
 * @version $Revision: 1.5 $
 */
 
-//PEAR::loadExtension('radius');
+PEAR::loadExtension('radius');
 
 /**
  * class Auth_RADIUS

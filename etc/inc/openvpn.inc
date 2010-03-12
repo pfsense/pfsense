@@ -340,7 +340,8 @@ function openvpn_reconfigure($mode,& $settings) {
 	$conf .= "down /etc/rc.filter_configure\n";
 
 	if (!empty($iface_ip)) {
-		$conf .= "local {$iface_ip}\n";	
+		if ($mode == "server" || ($mode == "client" && !empty($settings['local_port'])))
+			$conf .= "local {$iface_ip}\n";	
 	}
 
 	// server specific settings

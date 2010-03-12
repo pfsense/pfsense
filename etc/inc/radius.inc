@@ -296,13 +296,21 @@ class Auth_RADIUS extends PEAR {
      */
     function putStandardAttributes()
     {
+	global $g;
 
+	if (!function_exists("getNasIp"))
+		$ipaddr = "0.0.0.0";
+	else
+		$ipaddr = getNasIP();
         // Add support for sending NAS-IP-Address, set this explicitly as an ip_addr
-        $this->putAttribute(RADIUS_NAS_IP_ADDRESS, getNasIP(), "addr");
+        $this->putAttribute(RADIUS_NAS_IP_ADDRESS, $ipaddr, "addr");
 
         // Add support for sending NAS-Identifier
-        $this->putAttribute(RADIUS_NAS_IDENTIFIER, getNasID());
-
+	$nasId = "";
+	exec("/bin/hostname", $nasId);
+	if(!$nasId[0])
+		$nasId[0] = "{$g['product_name']}";
+        $this->putAttribute(RADIUS_NAS_IDENTIFIER, $nasId[0]);
     }
 
     /**

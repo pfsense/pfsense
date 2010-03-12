@@ -2112,10 +2112,6 @@ EOD;
 
 	$mpdconf .= <<<EOD
 	set link mtu {$mpdmtu}
-
-EOD;
-
-	$mpdconf .= <<<EOD
 	open
 
 EOD;
@@ -2259,9 +2255,6 @@ EOD;
 	set pptp self {$wancfg['local']}
 	set pptp peer {$wancfg['remote']}
 	set pptp disable windowing
-
-EOD;
-	$mpdconf .= <<<EOD
 	open
 
 EOD;

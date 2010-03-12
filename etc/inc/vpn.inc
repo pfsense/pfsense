@@ -153,7 +153,7 @@ function vpn_ipsec_configure($ipchg = false)
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=0");
 
 		/* this loads a route table which is used to determine if a route needs to be removed. */
-		exec("/usr/bin/netstat -rn", $route_arr, $retval);
+		exec("/usr/bin/netstat -rnf inet", $route_arr, $retval);
 		$route_str = implode("\n", $route_arr);
 
 		/* resolve all local, peer addresses and setup pings */

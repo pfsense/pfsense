@@ -660,7 +660,7 @@ function sshkeyClicked(obj) {
 						<tr id="usercert" name="usercert" style="display:none">
 							<td width="22%" valign="top" class="vncell"><?=gettext("Certificate");?></td>
                                                 	<td width="78%" class="vtable">
-							<table width="100%" border="0" cellpadding="0" cellspacing="3">
+							<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
                                                         	<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
                                                         	<td width="78%" class="vtable">

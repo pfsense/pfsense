@@ -81,16 +81,21 @@ if($_POST['aliasimport'] <> "") {
         }
 
 	if ($_POST['aliasimport']) {
-		$toimport = split("\n", $_POST['aliasimport']);
-		foreach ($toimport as $impip) {
-			if (!is_ipaddr(trim($impip)) && !is_subnet(trim($impip)))
+		$tocheck = explode("\n", $_POST['aliasimport']);
+		$imported = array();
+		foreach ($tocheck as $impip) {
+			$impip = trim($impip);
+			if (!is_ipaddr($impip) && !is_subnet($impip) && !empty($impip)) {
 				$input_errors[] = "$impip is not an ip address. Please correct the error to continue";
+			} elseif (!empty($impip)) {
+				$imported[] = $impip;
+			}
 		}
 	}
 
-	if (!$input_errors) {			
+	if (!$input_errors && is_array($imported)) {
 		$alias = array();
-		$alias['address'] = str_replace("\n", " ", $_POST['aliasimport']);
+		$alias['address'] = implode(" ", $imported);
 		$alias['name'] = $_POST['name'];
 		$alias['type'] = "network";
 		$alias['descr'] = $_POST['descr'];

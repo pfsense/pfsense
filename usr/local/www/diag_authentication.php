@@ -52,10 +52,10 @@ if ($_POST) {
 
 	$authcfg = auth_get_authserver($_POST['authmode']);
 	if (!$authcfg)
-		$input_errors[] = "Not valid authentication server {$_POST['authmode']}";
+		$input_errors[] = "{$_POST['authmode']} is not a valid authentication server ";
 
 	if (empty($_POST['username']) || empty($_POST['password']))
-		$input_errors[] = "A valid username and password must be specified.";
+		$input_errors[] = "A username and password must be specified.";
 
 	if (!$input_errors) {
 		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg)) {
@@ -65,7 +65,7 @@ if ($_POST) {
 			foreach ($groups as $group)
 				$savemsg .= "{$group} ";
 		} else {
-			$input_errors[] = "User did not authenticate succesfully.";
+			$input_errors[] = "Authentication failed.";
 		}
 	}
 }
@@ -120,7 +120,7 @@ include("head.inc");
 	<tr>
 		<td width="22%" valign="top">&nbsp;</td>
 		<td width="78%">
-			<input id="save" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+			<input id="save" name="save" type="submit" class="formbtn" value="<?=gettext("Test");?>" />
 		</td>
 	</tr>
 	</table>

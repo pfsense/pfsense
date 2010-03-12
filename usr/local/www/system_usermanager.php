@@ -183,8 +183,14 @@ if (isAllowedPage("system_usermanager")) {
 			$reqdfields = explode(" ", "usernamefld");
 			$reqdfieldsn = explode(",", "Username");
 		} else {
-			$reqdfields = explode(" ", "usernamefld passwordfld1");
-			$reqdfieldsn = explode(",", "Username,Password");
+			if (empty($_POST['name'])) {
+				$reqdfields = explode(" ", "usernamefld passwordfld1");
+				$reqdfieldsn = explode(",", "Username,Password");
+			} else {
+				$reqdfields = explode(" ", "usernamefld passwordfld1 name caref keylen lifetime");
+				$reqdfieldsn = explode(",", "Username,Password,Descriptive name,Certificate authority,Key length,Lifetime");
+
+			}
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -227,6 +233,12 @@ if (isAllowedPage("system_usermanager")) {
 			}
 		}
 
+		if (!empty($_POST['name'])) {
+			$ca = lookup_ca($_POST['caref']);
+        		if (!$ca)
+                		$input_errors[] = "Invalid internal Certificate Authority\n";
+		}
+
 		/* if this is an AJAX caller then handle via JSON */
 		if (isAjax() && is_array($input_errors)) {
 			input_errors2Ajax($input_errors);
@@ -261,6 +273,27 @@ if (isAllowedPage("system_usermanager")) {
 			if (isset($id) && $a_user[$id])
 				$a_user[$id] = $userent;
 			else {
+				if (!empty($_POST['name'])) {
+					$cert = array();
+                        		$userent['cert'] = array();
+
+            				$cert['name'] = $_POST['name'];
+
+                			$subject = cert_get_subject_array($ca['crt']);
+
+                			$dn = array(
+                        			'countryName' => $subject[0]['v'],
+                        			'stateOrProvinceName' => $subject[1]['v'],
+                        			'localityName' => $subject[2]['v'],
+                        			'organizationName' => $subject[3]['v'],
+                        			'emailAddress' => $subject[4]['v'],
+                        			'commonName' => $userent['name']);
+
+					cert_create($cert, $_POST['caref'], $_POST['keylen'],
+						(int)$_POST['lifetime'], $dn);
+
+					$userent['cert'][] = $cert;
+				}
 				$userent['uid'] = $config['system']['nextuid']++;
 				$a_user[] = $userent;
 			}
@@ -338,6 +371,25 @@ function presubmit() {
 	setall_selected('groups');
 }
 
+function usercertClicked(obj) {
+	if (obj.checked) {
+		document.getElementById("usercertchck").style.display="none";
+		document.getElementById("usercert").style.display="";
+	} else {
+		document.getElementById("usercert").style.display="none";
+		document.getElementById("usercertchck").style.display="";
+	}
+}
+
+function sshkeyClicked(obj) {
+        if (obj.checked) {
+                document.getElementById("sshkeychck").style.display="none";
+                document.getElementById("sshkey").style.display="";
+        } else {
+                document.getElementById("sshkey").style.display="none";
+                document.getElementById("sshkeychck").style.display="";
+        }
+}
 //-->
 </script>
 <?php
@@ -587,9 +639,82 @@ function presubmit() {
 							</td>
 						</tr>
 
+						<?php else : ?>
+						<?php 	if (is_array($config['system']['ca']) && count($config['system']['ca']) > 0): ?>
+						<?php		$i = 0; foreach( $config['system']['ca'] as $ca) {
+                                                                        	if (!$ca['prv'])
+                                                                                	continue;
+										$i++;
+									}
+						?>
+
+						<tr id="usercertchck" name="usercertchck" >
+							<td width="22%" valign="top" class="vncell"><?=gettext("Certificate");?></td>
+                                                	<td width="78%" class="vtable">
+							<input type="checkbox" onClick="javascript:usercertClicked(this)"> Click to create a user certificate.
+							</td>
+						</tr>
+
+						<?php		if ($i > 0): ?>
+
+						<tr id="usercert" name="usercert" style="display:none">
+							<td width="22%" valign="top" class="vncell"><?=gettext("Certificate");?></td>
+                                                	<td width="78%" class="vtable">
+							<table width="100%" border="0" cellpadding="0" cellspacing="3">
+							<tr>
+                                                        	<td width="22%" valign="top" class="vncellreq"><?=gettext("Descriptive name");?></td>
+                                                        	<td width="78%" class="vtable">
+                                                                	<input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"/>
+                                                        	</td>
+                                                	</tr>
+                                                	<tr>
+                                                        	<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate authority");?></td>
+                                                        	<td width="78%" class="vtable">
+                                                                	<select name='caref' id='caref' class="formselect" onChange='internalca_change()'>
+                                                                <?php
+                                                                        foreach( $config['system']['ca'] as $ca):
+                                                                        if (!$ca['prv'])
+                                                                                continue;
+                                                                ?>
+                                                                        <option value="<?=$ca['refid'];?>"><?=$ca['name'];?></option>
+                                                                <?php endforeach; ?>
+                                                                	</select>
+                                                        	</td>
+                                                	</tr>
+                                                	<tr>
+                                                        	<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>
+                                                        	<td width="78%" class="vtable">
+                                                                	<select name='keylen' class="formselect">
+                                                                <?php
+									$cert_keylens = array( "512", "1024", "2048", "4096");
+                                                                        foreach( $cert_keylens as $len):
+                                                                ?>
+                                                                        <option value="<?=$len;?>"><?=$len;?></option>
+                                                                <?php endforeach; ?>
+                                                                	</select>
+                                                                	bits
+                                                        	</td>
+                                                	</tr>
+							<tr>
+                                                        	<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
+                                                        	<td width="78%" class="vtable">
+                                                                	<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>days
+                                                        	</td>
+                                                	</tr>
+						</table>
+							</td>
+						</tr>
+
+						<?php 	endif; endif; ?>
 						<?php endif; ?>
 
-						<tr>
+						<tr id="sshkeychck" name="sshkeychck" >
+                                                        <td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
+                                                        <td width="78%" class="vtable">
+                                                        <input type="checkbox" onClick="javascript:sshkeyClicked(this)"> Click to paste a authorized key.
+                                                        </td>
+                                                </tr>
+						<tr id="sshkey" name="sshkey" style="display:none">
 							<td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>

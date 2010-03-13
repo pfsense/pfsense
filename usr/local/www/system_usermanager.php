@@ -711,7 +711,7 @@ function sshkeyClicked(obj) {
 						<tr id="sshkeychck" name="sshkeychck" >
                                                         <td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
                                                         <td width="78%" class="vtable">
-                                                        <input type="checkbox" onClick="javascript:sshkeyClicked(this)"> Click to paste a authorized key.
+                                                        <input type="checkbox" onClick="javascript:sshkeyClicked(this)"> Click to paste an authorized key.
                                                         </td>
                                                 </tr>
 						<tr id="sshkey" name="sshkey" style="display:none">

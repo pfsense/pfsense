@@ -86,7 +86,7 @@ if($_POST['aliasimport'] <> "") {
 		foreach ($tocheck as $impip) {
 			$impip = trim($impip);
 			if (!is_ipaddr($impip) && !is_subnet($impip) && !empty($impip)) {
-				$input_errors[] = "$impip is not an ip address. Please correct the error to continue";
+				$input_errors[] = "$impip is not an IP address. Please correct the error to continue";
 			} elseif (!empty($impip)) {
 				$imported[] = $impip;
 			}

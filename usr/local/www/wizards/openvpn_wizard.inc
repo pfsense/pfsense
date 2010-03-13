@@ -163,7 +163,7 @@ function step7_submitphpaction() {
             empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
             empty($_POST['organization']) || empty($_POST['email']) || empty($_POST['cn'])) {
 		$stepid--;
-                $savemsg = "Please enter all information for the new CA authority.";
+                $savemsg = "Please enter all information for the new Certificate Authority.";
         } else {
 		$config['ovpnserver']['step6']['uselist'] = "on";
 		$_POST['uselist'] = "on";
@@ -356,11 +356,11 @@ function step12_submitphpaction() {
 
 		$config['system']['ca'][] = $ca;
 	} else if (!isset($pconfig['step6']['uselist']) && empty($pconfig['step6']['authcertca'])) {
-		$message = "Please choose a CA authority.";
+		$message = "Please choose a Certificate Authority.";
                 header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
                 exit;
 	} else if (!($ca = lookup_ca($pconfig['step6']['authcertca']))) {
-		$message = "Not a valid CA authority specified.";
+		$message = "Not a valid Certificate Authority specified.";
                 header("Location:wizard.php?xml=openvpn_wizard.xml&stepid=5&message={$message}");
                 exit;
 	}

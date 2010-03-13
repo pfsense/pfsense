@@ -1024,7 +1024,7 @@ function auto_login() {
 	}
 	if (!$fd) {
 		conf_mount_ro();
-		log_error("Enableing auto login was not possible.");
+		log_error("Enabling auto login was not possible.");
 		return;
 	}
 	foreach($getty_split as $gs) {

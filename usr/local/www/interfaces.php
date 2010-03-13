@@ -226,8 +226,12 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['txpower'] = $wancfg['wireless']['txpower'];
 	$pconfig['distance'] = $wancfg['wireless']['distance'];
 	$pconfig['wme_enable'] = isset($wancfg['wireless']['wme']['enable']);
-	$pconfig['pureg_enable'] = isset($wancfg['wireless']['pureg']['enable']);
-	$pconfig['puren_enable'] = isset($wancfg['wireless']['puren']['enable']);
+	if (isset($wancfg['wireless']['puren']['enable']))
+		$pconfig['puremode'] = '11n';
+	else if (isset($wancfg['wireless']['pureg']['enable']))
+		$pconfig['puremode'] = '11g';
+	else
+		$pconfig['puremode'] = 'any';
 	$pconfig['apbridge_enable'] = isset($wancfg['wireless']['apbridge']['enable']);
 	$pconfig['authmode'] = $wancfg['wireless']['authmode'];
 	$pconfig['hidessid_enable'] = isset($wancfg['wireless']['hidessid']['enable']);
@@ -751,18 +755,20 @@ function handle_wireless_post() {
 		$wancfg['wireless']['wme']['enable'] = $_POST['wme_enable'] = true;
 	} else if (isset($wancfg['wireless']['wme']['enable']))
 		unset($wancfg['wireless']['wme']['enable']);
-	if ($_POST['pureg_enable'] == "yes") {
+	if ($_POST['puremode'] == "11g") {
 		if (!is_array($wancfg['wireless']['pureg']))
 			$wancfg['wireless']['pureg'] = array();
-		$wancfg['wireless']['pureg']['enable'] = $_POST['pureg_enable'] = true;
-	} else if (isset($wancfg['wireless']['pureg']['enable']))
-		unset($wancfg['wireless']['pureg']['enable']);
-	if ($_POST['puren_enable'] == "yes") {
+		$wancfg['wireless']['pureg']['enable'] = true;
+	} else if ($_POST['puremode'] == "11n") {
 		if (!is_array($wancfg['wireless']['puren']))
 			$wancfg['wireless']['puren'] = array();
-		$wancfg['wireless']['puren']['enable'] = $_POST['puren_enable'] = true;
-	} else if (isset($wancfg['wireless']['puren']['enable']))
-		unset($wancfg['wireless']['puren']['enable']);
+		$wancfg['wireless']['puren']['enable'] = true;
+	} else {
+		if (isset($wancfg['wireless']['pureg']))
+			unset($wancfg['wireless']['pureg']);
+		if (isset($wancfg['wireless']['puren']))
+			unset($wancfg['wireless']['puren']);
+	}
 	if ($_POST['apbridge_enable'] == "yes") {
 		if (!is_array($wancfg['wireless']['apbridge']))
 			$wancfg['wireless']['apbridge'] = array();
@@ -1381,21 +1387,27 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>">
 										</td>
                 					</tr>
-									<?php if (isset($wl_modes['11g'])): ?>
+									<?php if (isset($wl_modes['11ng']) || isset($wl_modes['11na'])): ?>
+									<tr>
+										<td valign="top" class="vncell">Minimum wireless standard</td>
+										<td class="vtable">
+											<select name="puremode" class="formselect" id="puremode">
+												<option <? if ($pconfig['puremode'] == 'any') echo "selected";?> value="any">Any</option>
+												<?php if (isset($wl_modes['11g'])): ?>
+												<option <? if ($pconfig['puremode'] == '11g') echo "selected";?> value="11g">802.11g</option>
+												<?php endif; ?>
+												<option <? if ($pconfig['puremode'] == '11n') echo "selected";?> value="11n">802.11n</option>
+											</select>
+											<br/>
+											When operating as an access point, allow only stations capable of the selected wireless standard to associate (stations not capable are not permitted to associate).
+										</td>
+									</tr>
+									<?php elseif (isset($wl_modes['11g'])): ?>
 									<tr>
 										<td valign="top" class="vncell">802.11g only</td>
 										<td class="vtable">
-											<input name="pureg_enable" type="checkbox" value="yes"  class="formfld" id="pureg_enable" <? if ($pconfig['pureg_enable']) echo "checked";?>>
-											<br/>When operating as an access point in 802.11g mode allow only 11g-capable stations to associate (11b-only stations are not permitted to associate).
-										</td>
-									</tr>
-									<?php endif; ?>
-									<?php if (isset($wl_modes['11ng']) || isset($wl_modes['11na'])): ?>
-									<tr>
-										<td valign="top" class="vncell">802.11n only</td>
-										<td class="vtable">
-											<input name="puren_enable" type="checkbox" value="yes"  class="formfld" id="puren_enable" <? if ($pconfig['puren_enable']) echo "checked";?>>
-											<br/>When operating as an access point in 802.11n mode allow only 11n-capable stations to associate (legacy stations are not permitted to associate).
+											<input name="puremode" type="checkbox" value="11g"  class="formfld" id="puremode" <? if ($pconfig['puremode'] == '11g') echo "checked";?>>
+											<br/>When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate).
 										</td>
 									</tr>
 									<?php endif; ?>

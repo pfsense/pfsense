@@ -40,75 +40,15 @@ require_once("shaper.inc");
 $retval = 0;
 $message = "";
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
-$protocols_with_ports = array('tcp', 'udp');
 
 if ($_GET && isset($_GET['action'])) {
 	switch ($_GET['action']) {
 		case 'block':
 			/* Check that we have a valid host */
-			if (isset($_GET['src']) && isset($_GET['int'])) {
-				if (!is_ipaddr($_GET['src'])) {
-					$message .= "Tried to block invalid IP: " . htmlspecialchars($_GET['src']) . "<br/>";
-					break;
-				}
-				$_GET['int'] = easyrule_find_rule_interface($_GET['int']);
-				if ($_GET['int'] === false) {
-					$message .= "Invalid interface for block rule: " . htmlspecialchars($_GET['int']) . "<br/>";
-					break;
-				}
-				if (easyrule_block_host_add($_GET['src'], $_GET['int'])) {
-					/* shouldn't get here, the function will redirect */
-					$message .= "Host added successfully" . "<br/>";
-				} else {
-					$message .= "Failed to create block rule, alias, or add host." . "<br/>";
-				}
-			} else {
-				$message .= "Tried to block but had no host IP or interface<br/>";
-			}
+			easyrule_parse_block($_GET['int'], $_GET['src']);
 			break;
 		case 'pass':
-			/* Check for valid int, srchost, dsthost, dstport, and proto */
-			if (isset($_GET['int']) && isset($_GET['proto']) && isset($_GET['src']) && isset($_GET['dst'])) {
-				$_GET['int'] = easyrule_find_rule_interface($_GET['int']);
-				if ($_GET['int'] === false) {
-					$message .= "Invalid interface for pass rule: " . htmlspecialchars($_GET['int']) . "<br/>";
-					break;
-				}
-				if (getprotobyname($_GET['proto']) == -1) {
-					$message .= "Invalid protocol for pass rule: " . htmlspecialchars($_GET['proto']) . "<br/>";
-					break;
-				}
-				if (!is_ipaddr($_GET['src'])) {
-					$message .= "Tried to pass invalid source IP: " . htmlspecialchars($_GET['src']) . "<br/>";
-					break;
-				}
-				if (!is_ipaddr($_GET['dst'])) {
-					$message .= "Tried to pass invalid destination IP: " . htmlspecialchars($_GET['dst']) . "<br/>";
-					break;
-				}
-				if (in_array($_GET['proto'], $protocols_with_ports)) {
-					if (!isset($_GET['dstport'])) {
-						$message .= "Missing destination port: " . htmlspecialchars($_GET['dstport']) . "<br/>";
-						break;
-					}
-					if (!is_port($_GET['dstport'])) {
-						$message .= "Tried to pass invalid destination port: " . htmlspecialchars($_GET['dstport']) . "<br/>";
-						break;
-					}
-				} else {
-					$_GET['dstport'] = 0;
-				}
-				/* Should have valid input... */
-				if (easyrule_pass_rule_add($_GET['int'], $_GET['proto'], $_GET['src'], $_GET['dst'], $_GET['dstport'])) {
-					/* Shouldn't get here, the function should redirect. */
-					$message .= "Successfully added pass rule!" . "<br/>";
-				} else {
-					$message .= "Failed to add pass rule." . "<br/>";
-				}
-			} else {
-				$message = "Missing parameters for pass rule";
-				break;
-			}
+			easyrule_parse_pass($_GET['int'], $_GET['proto'], $_GET['src'], $_GET['dst'], $_GET['dstport']);
 			break;
 	}
 }
@@ -129,12 +69,12 @@ include("head.inc"); ?>
 Message: <?php echo $message; ?>
 <br/>
 <? } else { ?>
-This is the Easy Rule status page, mainly used to display errors when adding rules. 
+This is the Easy Rule status page, mainly used to display errors when adding rules.
 If you are seeing this, there apparently was not an error, and you navigated to the
 page directly without telling it what to do.<br/><br/>
 This page is meant to be called from the block/pass buttons on the Firewall Logs page, <a href="diag_logs_filter.php">Status &gt; System Logs,
 Firewall Tab</a>.
-<br />      
+<br />
 <? } ?>
 </td></tr></table>
 <?php include("fend.inc"); ?>

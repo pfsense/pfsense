@@ -33,6 +33,10 @@
 */
 
 $blockaliasname = 'EasyRuleBlockHosts';
+$protocols_with_ports = array('tcp', 'udp');
+require_once("functions.inc");
+require_once("util.inc");
+require_once("config.inc");
 
 function easyrule_find_rule_interface($int) {
 	global $config;
@@ -212,8 +216,12 @@ function easyrule_block_host_add($host, $int = 'wan') {
 	if ($dirty) {
 		write_config();
 		$retval = filter_configure();
-		header("Location: firewall_aliases.php");
-		exit;
+		if (!empty($_SERVER['DOCUMENT_ROOT'])) {
+			header("Location: firewall_aliases.php");
+			exit;
+		} else {
+			return true;
+		}
 	} else {
 		return false;
 	}
@@ -253,7 +261,70 @@ function easyrule_pass_rule_add($int, $proto, $srchost, $dsthost, $dstport) {
 
 	write_config($filterent['descr']);
 	$retval = filter_configure();
-	header("Location: firewall_rules.php?if={$int}");
-	exit;
+	if (!empty($_SERVER['DOCUMENT_ROOT'])) {
+		header("Location: firewall_rules.php?if={$int}");
+		exit;
+	} else {
+		return true;
+	}
+}
+
+function easyrule_parse_block($int, $src) {
+	if (!empty($src) && !empty($int)) {
+		if (!is_ipaddr($src)) {
+			return "Tried to block invalid IP: " . htmlspecialchars($src);
+		}
+		$int = easyrule_find_rule_interface($int);
+		if ($int === false) {
+			return "Invalid interface for block rule: " . htmlspecialchars($int);
+		}
+		if (easyrule_block_host_add($src, $int)) {
+			return "Host added successfully";
+		} else {
+			return "Failed to create block rule, alias, or add host.";
+		}
+	} else {
+		return "Tried to block but had no host IP or interface";
+	}
+	return "Unknown block error.";
+}
+function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0) {
+	/* Check for valid int, srchost, dsthost, dstport, and proto */
+	global $protocols_with_ports;
+
+	if (!empty($int) && !empty($proto) && !empty($src) && !empty($dst)) {
+		$int = easyrule_find_rule_interface($int);
+		if ($int === false) {
+			return "Invalid interface for pass rule: " . htmlspecialchars($int);
+		}
+		if (getprotobyname($proto) == -1) {
+			return "Invalid protocol for pass rule: " . htmlspecialchars($proto);
+		}
+		if (!is_ipaddr($src)) {
+			return "Tried to pass invalid source IP: " . htmlspecialchars($src);
+		}
+		if (!is_ipaddr($dst)) {
+			return "Tried to pass invalid destination IP: " . htmlspecialchars($dst);
+		}
+		if (in_array($proto, $protocols_with_ports)) {
+			if (empty($dstport)) {
+				return "Missing destination port: " . htmlspecialchars($dstport);
+			}
+			if (!is_port($dstport)) {
+				return "Tried to pass invalid destination port: " . htmlspecialchars($dstport);
+			}
+		} else {
+			$dstport = 0;
+		}
+		/* Should have valid input... */
+		if (easyrule_pass_rule_add($int, $proto, $src, $dst, $dstport)) {
+			return "Successfully added pass rule!";
+		} else {
+			return "Failed to add pass rule.";
+		}
+	} else {
+		return "Missing parameters for pass rule.";
+	}
+	return "Unknown pass error.";
 }
 ?>

@@ -134,7 +134,7 @@ include("fbegin.inc");
                     <input name="host" type="text" class="formfld host" id="host" size="20" value="<?=htmlspecialchars($host);?>">
 					<br/>This value is either the Source or Destination IP address. The packet capture will look for this address in either field.
 					<br/>This value can be a domain name or IP address.
-					<br/>If you leave this field blank all packets on the specified interface will be captured 
+					<br/>If you leave this field blank, all packets on the specified interface will be captured. 
 					</td>
 				</tr>
 				<tr>
@@ -142,7 +142,7 @@ include("fbegin.inc");
 				  <td width="83%" class="vtable">
                     <input name="port" type="text" class="formfld unknown" id="port" size="5" value="<?=$port;?>">
 					<br/>The port can be either the source or destination port. The packet capture will look for this port in either field.
-					<br/>Leave blank if you do not want to the capture to filter by port.
+					<br/>Leave blank if you do not want to filter by port.
 					</td>
 				</tr>
 				<tr>
@@ -150,7 +150,6 @@ include("fbegin.inc");
 				  <td width="83%" class="vtable">
                     <input name="snaplen" type="text" class="formfld unknown" id="snaplen" size="5" value="<?=$snaplen;?>">
 					<br/>The Packet length is the number of bytes the packet will capture for each payload. Default value is 1500.
-					<br/>This value should be the same as the MTU of the Interface selected above.
 					</td>
 				</tr>
 				<tr>
@@ -175,7 +174,7 @@ include("fbegin.inc");
 				  <td width="83%" class="vtable">
 					<input name="dnsquery" type="checkbox"<?php if($_POST['dnsquery']) echo " CHECKED"; ?>>
 					<br/>This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.
-					<br/><b>Note: </b>This option can be CPU intensive for large packet captures.
+					<br/><b>Note: </b>This option can cause delays for large packet captures.
 					</td>
 				</tr>
 				<tr>

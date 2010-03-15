@@ -36,7 +36,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pppd	/sbin/dhclient	/bin/sh	/usr/bin/grep	/usr/bin/xargs	/usr/bin/awk	/usr/local/sbin/choparp
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/route	/usr/sbin/ngctl	/usr/sbin/arp	/bin/kill	/usr/local/sbin/mpd4
+	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/route	/usr/sbin/ngctl	/usr/sbin/arp	/bin/kill	/usr/local/sbin/mpd5
 	pfSense_MODULE:	interfaces
 
 */

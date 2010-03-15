@@ -191,8 +191,8 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn) {
 	$ca_str_crt = base64_decode($ca['crt']);
 	$ca_str_key = base64_decode($ca['prv']);
 	$ca_res_crt = openssl_x509_read($ca_str_crt);
-	$ca_res_key = openssl_pkey_get_private($ca_str_key);
-	$ca_serial = $ca['serial']++;
+	$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
+	$ca_serial = ++$ca['serial'];
 
 	$args = array(
 		"digest_alg" => "sha1",

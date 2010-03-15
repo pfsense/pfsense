@@ -171,6 +171,7 @@ if (isAllowedPage("system_usermanager")) {
 		 * setting.
 		 */
 		$pconfig['utype'] = "user";
+		$pconfig['lifetime'] = 3650;
 	}
 
 	if ($_POST) {

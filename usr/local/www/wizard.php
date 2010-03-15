@@ -349,8 +349,8 @@ function showchange() {
 		    case "input":
 			if ($field['displayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-                                echo $field['displayname'];
-                                echo ":</td>\n";
+				echo $field['displayname'];
+				echo ":</td>\n";
 			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
@@ -703,18 +703,19 @@ function showchange() {
 			break;
 		    }
 
-		    echo "</td>";
 		    if($field['typehint'] <> "") {
 			echo $field['typehint'];
 		    }
-
-		    if(!$field['combinefieldsbegin'])
-			 echo "</tr>\n";
-
 		    if($field['warning'] <> "") {
 			echo "<br ><b><font color=\"red\">" . $field['warning'] . "</font></b>";
 		    }
 
+		    if(!$field['combinefieldsbegin']) {
+		    	if (!$field['dontcombinecells'])
+		    		echo "</td>";
+
+			 echo "</tr>\n";
+		    }
 		}
 	}
     ?>

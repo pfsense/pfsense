@@ -5,7 +5,6 @@
 require("globals.inc");
 require("config.inc");
 require("functions.inc");
-require("util.inc");
 
 $g['booting'] = true;
 

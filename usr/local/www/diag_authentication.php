@@ -42,9 +42,6 @@
 require("guiconfig.inc");
 require_once("PEAR.inc");
 require_once("radius.inc");
-require_once("auth.inc");
-require("priv.defs.inc");
-require("priv.inc");
 
 if ($_POST) {
 	$pconfig = $_POST;

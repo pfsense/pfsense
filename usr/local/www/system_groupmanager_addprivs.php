@@ -52,8 +52,6 @@ function admin_groups_sort() {
 }
 
 require("guiconfig.inc");
-require("priv.defs.inc");
-require("priv.inc");
 
 $pgtitle = array("System","Group manager","Add privileges");
 

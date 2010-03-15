@@ -45,9 +45,6 @@ if($_POST['savetest'])
 	$save_and_test = true;
 
 require("guiconfig.inc");
-require_once("auth.inc");
-require("priv.defs.inc");
-require("priv.inc");
 
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
 $pconfig['authmode'] = &$config['system']['webgui']['authmode'];

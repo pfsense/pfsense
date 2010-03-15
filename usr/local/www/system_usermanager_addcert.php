@@ -39,8 +39,6 @@
 
 require("guiconfig.inc");
 require("certs.inc");
-require("priv.defs.inc");
-require("priv.inc");
 
 $cert_keylens = array( "512", "1024", "2048", "4096");
 

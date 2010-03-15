@@ -33,8 +33,6 @@
 
 require("guiconfig.inc");
 require_once("auth.inc");
-require("priv.defs.inc");
-require("priv.inc");
 $ous = array();
 if($_GET) {
 	$authcfg = array();

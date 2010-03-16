@@ -1353,7 +1353,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													?>
 												</select>
 												<br/>
-												Note: Not all channels may be supported by your card
+												Note: Not all channels may be supported by your card.  Auto may override the wireless standard selected above.
 											</td>
 										</tr>
 										<tr>

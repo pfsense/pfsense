@@ -183,9 +183,10 @@ include("head.inc");
   </td>
   <td class="listr" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
       <?php
-	$addresses = implode(", ", array_slice(explode(" ", $alias['address']), 0, 10));
+	$tmpaddr = explode(" ", $alias['address']);
+	$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
 	echo $addresses;
-	if(count($addresses) < 10) {
+	if(count($tmpaddr) < 10) {
 		echo " ";
 	} else {
 		echo "...";

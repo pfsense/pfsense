@@ -610,11 +610,13 @@ EOD;
 					if ($ph2ent['mode'] == 'tunnel') {
 
 						$localid_type = $ph2ent['localid']['type'];
-						if ($localid_type != "address")
-							$localid_type = "subnet";
-
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
-						$localid_spec = $localid_type." ".$localid_data." any";
+						if ($localid_type == "none")
+							$localid_spec = " ";
+						else if ($localid_type != "address") {
+							$localid_type = "subnet";
+							$localid_spec = $localid_type." ".$localid_data." any";
+						}
 
 						if (!isset($ph2ent['mobile'])) {
 							$remoteid_type = $ph2ent['remoteid']['type'];
@@ -808,7 +810,7 @@ EOD;
 				}
 
 				/* static route needed? */
-				if (preg_match("/^carp/i", $ph1ent['interface']))
+				if (preg_match("/^carp|^vip/i", $ph1ent['interface']))
 					$parentinterface = link_carp_interface_to_parent($ph1ent['interface']);
 				else
 					$parentinterface = $ph1ent['interface'];

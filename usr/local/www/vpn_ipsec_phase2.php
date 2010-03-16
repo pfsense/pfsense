@@ -237,6 +237,10 @@ function typesel_change_local(bits) {
 			document.iform.localid_netbits.value = bits;
 			document.iform.localid_netbits.disabled = 0;
 			break;
+		case 3:	/* none */
+			document.iform.localid_address.disabled = 1;
+			document.iform.localid_netbits.disabled = 1;
+			break;
 		default:
 			document.iform.localid_address.value = "";
 			document.iform.localid_address.disabled = 1;
@@ -356,6 +360,7 @@ function change_protocol() {
 											<option value="address" <?php if ($pconfig['localid_type'] == "address") echo "selected";?>>Address</option>
 											<option value="network" <?php if ($pconfig['localid_type'] == "network") echo "selected";?>>Network</option>
 											<option value="lan" <?php if ($pconfig['localid_type'] == "lan" ) echo "selected";?>>LAN subnet</option>
+											<option value="none" <?php if ($pconfig['localid_type'] == "none" ) echo "selected";?>>None</option>
 										</select>
 									</td>
 								</tr>

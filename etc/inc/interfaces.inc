@@ -1426,7 +1426,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 function interface_sync_wireless_clones(&$ifcfg, $sync_changes = false) {
 	global $config, $g;
 
-	$shared_settings = array('standard', 'turbo', 'protmode', 'txpower', 'channel', 'distance');
+	$shared_settings = array('standard', 'turbo', 'protmode', 'txpower', 'channel', 'distance', 'regdomain', 'regcountry', 'reglocation');
 
 	if(!is_interface_wireless($ifcfg['if']))
 		return;

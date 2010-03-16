@@ -52,6 +52,7 @@ require("filter.inc");
 require("shaper.inc");
 require("rrd.inc");
 require("vpn.inc");
+require('regdomain.inc');
 
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
@@ -218,6 +219,7 @@ if (isset($wancfg['wireless'])) {
 		interface_wireless_clone($wlanif, $wancfg);
 	$wlanbaseif = interface_get_wireless_base($wancfg['if']);
 	$wl_modes = get_wireless_modes($if);
+	$wl_regdomains = parse_xml_regdomain();
 	$pconfig['standard'] = $wancfg['wireless']['standard'];
 	$pconfig['mode'] = $wancfg['wireless']['mode'];
 	$pconfig['protmode'] = $wancfg['wireless']['protmode'];
@@ -225,6 +227,9 @@ if (isset($wancfg['wireless'])) {
 	$pconfig['channel'] = $wancfg['wireless']['channel'];
 	$pconfig['txpower'] = $wancfg['wireless']['txpower'];
 	$pconfig['distance'] = $wancfg['wireless']['distance'];
+	$pconfig['regdomain'] = $wancfg['wireless']['regdomain'];
+	$pconfig['regcountry'] = $wancfg['wireless']['regcountry'];
+	$pconfig['reglocation'] = $wancfg['wireless']['reglocation'];
 	$pconfig['wme_enable'] = isset($wancfg['wireless']['wme']['enable']);
 	if (isset($wancfg['wireless']['puren']['enable']))
 		$pconfig['puremode'] = '11n';
@@ -694,7 +699,7 @@ function handle_pppoe_reset() {
 }
 
 function handle_wireless_post() {
-	global $_POST, $config, $g, $wancfg, $if;
+	global $_POST, $config, $g, $wancfg, $if, $wl_regdomains;
 	if (!is_array($wancfg['wireless']))
 		$wancfg['wireless'] = array();
 	$wancfg['wireless']['standard'] = $_POST['standard'];
@@ -705,6 +710,17 @@ function handle_wireless_post() {
 	$wancfg['wireless']['authmode'] = $_POST['authmode'];
 	$wancfg['wireless']['txpower'] = $_POST['txpower'];
 	$wancfg['wireless']['distance'] = $_POST['distance'];
+	$wancfg['wireless']['regdomain'] = $_POST['regdomain'];
+	$wancfg['wireless']['regcountry'] = $_POST['regcountry'];
+	$wancfg['wireless']['reglocation'] = $_POST['reglocation'];
+	if (!empty($wancfg['wireless']['regdomain']) && !empty($wancfg['wireless']['regcountry'])) {
+		foreach($wl_regdomains['country-codes']['country'] as $wl_country) {
+			if ($wancfg['wireless']['regcountry'] == $wl_country['attributes']['ID']) {
+				$wancfg['wireless']['regdomain'] = $wl_country['rd'][0]['attributes']['REF'];
+				break;
+			}
+		}
+	}
 	if (!is_array($wancfg['wireless']['wpa']))
 		$wancfg['wireless']['wpa'] = array();
 	$wancfg['wireless']['wpa']['macaddr_acl'] = $_POST['macaddr_acl'];
@@ -1363,6 +1379,49 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												<br/>
 												Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client<br/>
 												(measured in Meters and works only for Atheros based cards !)
+											</td>
+										</tr>
+										<tr>
+											<td valign="top" class="vncell">Regulatory settings</td>
+											<td class="vtable">
+												Regulatory domain<br/>
+												<select name="regdomain" class="formselect" id="regdomain">
+													<option <? if (empty($pconfig['regdomain'])) echo "selected"; ?> value="">Default</option>
+													<?php
+													foreach($wl_regdomains['regulatory-domains']['rd'] as $wl_regdomain) {
+														echo "<option ";
+														if ($pconfig['regdomain'] == $wl_regdomain['attributes']['ID']) {
+															echo "selected ";
+														}
+														echo "value=\"{$wl_regdomain['attributes']['ID']}\">{$wl_regdomain['name']}</option>\n";
+													}
+													?>
+												</select>
+												<br/><br/>
+												Country (listed with country code and regulatory domain)<br/>
+												<select name="regcountry" class="formselect" id="regcountry">
+													<option <? if (empty($pconfig['regcountry'])) echo "selected"; ?> value="">Default</option>
+													<?php
+													foreach($wl_regdomains['country-codes']['country'] as $wl_country) {
+														echo "<option ";
+														if ($pconfig['regcountry'] == $wl_country['attributes']['ID']) {
+															echo "selected ";
+														}
+														echo "value=\"{$wl_country['attributes']['ID']}\">{$wl_country['name']} -- ({$wl_country['attributes']['ID']}, " . strtoupper($wl_country['rd'][0]['attributes']['REF']) . ")</option>\n";
+													}
+													?>
+												</select>
+												<br/>
+												Note: Any country setting other than "Default" will override the regulatory domain setting.
+												<br/><br/>
+												Location<br/>
+												<select name="reglocation" class="formselect" id="reglocation">
+													<option <? if ($pconfig['reglocation'] == 'indoor') echo "selected"; ?> value="indoor">Indoor</option>
+													<option <? if ($pconfig['reglocation'] == 'outdoor') echo "selected"; ?> value="outdoor">Outdoor</option>
+													<option <? if ($pconfig['reglocation'] == 'anywhere') echo "selected"; ?> value="anywhere">Anywhere</option>
+												</select>
+												<br/><br/>
+												These settings may affect which channels are available and the maximum transmit power allowed on those channels.  Using the correct settings to comply with local regulatory requirements is recommended.
 											</td>
 										</tr>
 										<tr>

@@ -298,6 +298,9 @@ EOD;
 				if ($sm['ipaddr'])
 					$dhcpdconf .= "	fixed-address {$sm['ipaddr']};\n";
 
+				if ($sm['hostname'])
+					$dhcpdconf .= " option host-name {$sm['hostname']};\n";
+				
 				$dhcpdconf .= "}\n";
 				$i++;
 			}

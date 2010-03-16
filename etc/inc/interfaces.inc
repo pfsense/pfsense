@@ -1713,9 +1713,10 @@ EOD;
 	 *    all variables are set, lets start up everything
 	 */
 
+	$baseif = interface_get_wireless_base($if);
+
 	/* set ack timers according to users preference (if he/she has any) */
 	if($distance) {
-		$baseif = interface_get_wireless_base($if);
 		fwrite($fd_set, "# Enable ATH distance settings\n");
 		fwrite($fd_set, "/sbin/athctrl.sh -i {$baseif} -d {$distance}\n");
 	}
@@ -1731,6 +1732,75 @@ EOD;
 
 	fclose($fd_set);
 	conf_mount_ro();
+
+	/* Making sure regulatory settings have actually changed
+	 * before applying, because changing them requires bringing
+	 * down all wireless networks on the interface. */
+	exec("{$ifconfig} " . escapeshellarg($if), $output);
+	$ifconfig_str = implode($output);
+	unset($output);
+	$reg_changing = false;
+
+	if ($wlcfg['regdomain'] && !preg_match("/\sregdomain\s+{$wlcfg['regdomain']}\s/si", $ifconfig_str))
+		$reg_changing = true;
+	else if ($wlcfg['regcountry'] && !preg_match("/\scountry\s+{$wlcfg['regcountry']}\s/si", $ifconfig_str))
+		$reg_changing = true;
+	/* anywhere needs a special case, since it is not included in the ifconfig output.
+	 * Do not combine this if with the one inside. */
+	else if ($wlcfg['reglocation'] == 'anywhere') {
+		if (preg_match("/\s(indoor|outdoor)\s/si", $ifconfig_str))
+			$reg_changing = true;
+	} else if ($wlcfg['reglocation'] && !preg_match("/\s{$wlcfg['reglocation']}\s/si", $ifconfig_str))
+		$reg_changing = true;
+
+	/* special case for the debug country code */
+	if ($wlcfg['regcountry'] == 'DEBUG' && preg_match("/\sregdomain\s+DEBUG\s/si", $ifconfig_str))
+		$reg_changing = false;
+
+	if ($reg_changing) {
+		/* set regulatory domain */
+		if($wlcfg['regdomain'])
+			$wlregcmd[] = "regdomain " . escapeshellarg($wlcfg['regdomain']);
+
+		/* set country */
+		if($wlcfg['regcountry'])
+			$wlregcmd[] = "country " . escapeshellarg($wlcfg['regcountry']);
+
+		/* set location */
+		if($wlcfg['reglocation'])
+			$wlregcmd[] = escapeshellarg($wlcfg['reglocation']);
+
+		$wlregcmd_args = implode(" ", $wlregcmd);
+
+		/* build a complete list of the wireless clones for this interface */
+		$clone_list = array();
+		if (does_interface_exist(interface_get_wireless_clone($baseif)))
+			$clone_list[] = interface_get_wireless_clone($baseif);
+		if (is_array($config['wireless']['clone'])) {
+			foreach ($config['wireless']['clone'] as $clone) {
+				if ($clone['if'] == $baseif)
+					$clone_list[] = $clone['cloneif'];
+			}
+		}
+
+		/* find which clones are up and bring them down */
+		$clones_up = array();
+		foreach ($clone_list as $clone_if) {
+			$clone_status = pfSense_get_interface_stats($clone_if);
+			if ($clone_status['status'] == 'up') {
+				$clones_up[] = $clone_if;
+				mwexec("{$ifconfig} " . escapeshellarg($clone_if) . " down");
+			}
+		}
+
+		/* apply the regulatory settings */
+		mwexec("{$ifconfig} " . escapeshellarg($if) . " {$wlregcmd_args}");
+
+		/* bring the clones back up that were previously up */
+		foreach ($clones_up as $clone_if) {
+			mwexec("{$ifconfig} " . escapeshellarg($clone_if) . " up");
+		}
+	}
 
 	/* The mode must be specified in a separate command before ifconfig
 	 * will allow the mode and channel at the same time in the next. */

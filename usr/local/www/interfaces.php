@@ -1422,6 +1422,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												</select>
 												<br/><br/>
 												These settings may affect which channels are available and the maximum transmit power allowed on those channels.  Using the correct settings to comply with local regulatory requirements is recommended.
+												<br/>
+												Note: All wireless networks on this interface will be temporarily brought down when changing regulatory settings.  Some of the regulatory domains or country codes may not be allowed by some cards.  These settings may not be able to add additional channels that are not already supported.
 											</td>
 										</tr>
 										<tr>

@@ -158,9 +158,7 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 		 "hw.syscons.kbd_reboot" => "0", 
 		 "net.inet.tcp.inflight.enable" => "1", 
 		 "net.inet.tcp.log_debug" => "0", 
-		 "net.inet.icmp.icmplim" => "750", 
-		 "net.inet.tcp.tso" => "0", 
-		 "hw.bce.tso_enable" => "0",
+		 "net.inet.tcp.tso" => "1", 
 		 "net.inet.icmp.icmplim" => "0"
 		  );
 

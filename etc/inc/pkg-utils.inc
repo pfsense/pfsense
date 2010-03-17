@@ -246,7 +246,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 				log_error("The {$package['name']} package is missing required dependencies and must be reinstalled.");
 			switch ($format) {
 				case "files":
-					$depends[] = $depend_file;
+					$depends[] = $prefix . $depend_file;
 					break;
 				case "names":
 					switch ($filetype) {
@@ -341,14 +341,14 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 			$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
 			if(is_array($depends)) {
 				foreach($depends as $item) {
-					if(!file_exists("/usr/local/pkg/" . $item)) {
+					if(!file_exists($item)) {
 						file_notice($package['name'], "The {$package['name']} package is missing required dependencies and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
 						log_error("Could not find {$item}. Reinstalling package.");
 						install_package($pkg_name);
 						uninstall_package_from_name($pkg_name);
 						install_package($pkg_name);
 					} else {
-						$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
+						$item_config = parse_xml_config_pkg($item, "packagegui");
 						if(isset($item_config['nosync'])) continue;
 						if($item_config['custom_php_command_before_form'] <> "") {
 							eval($item_config['custom_php_command_before_form']);

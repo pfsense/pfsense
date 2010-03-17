@@ -118,11 +118,12 @@ if (!$_GET['if'])
 $iflist = get_configured_interface_with_descr();
 
 /* set the starting interface */
-if($config['interfaces']['lan']) {
-	if (!$if || !isset($iflist[$if]))
+if (!$if || !isset($iflist[$if])) {
+	if($config['interfaces']['lan'])
 		$if = "lan";
-} else
-	$if = "wan";
+	else
+		$if = "wan";
+}
 
 if (is_array($config['dhcpd'][$if])){
 	if (is_array($config['dhcpd'][$if]['range'])) {
@@ -229,7 +230,7 @@ if ($_POST) {
 		// Disallow a range that includes the virtualip
 		if (is_array($config['virtualip']['vip'])) {
 			foreach($config['virtualip']['vip'] as $vip) {
-				if(strtoupper($vip['interface']) == strtoupper($if)) 
+				if($vip['interface'] == $if) 
 					if($vip['subnet'] && is_inrange($vip['subnet'], $_POST['range_from'], $_POST['range_to'])) 
 						$input_errors[] = "The subnet range cannot overlap with virtual IP address {$vip['subnet']}.";
 			}

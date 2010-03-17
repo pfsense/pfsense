@@ -43,8 +43,6 @@
 	pfSense_MODULE:	config
 */
 
-$config_parsed = false;
-
 /****f* config/encrypted_configxml
  * NAME
  *   encrypted_configxml - Checks to see if config.xml is encrypted and if so, prompts to unlock.
@@ -296,8 +294,8 @@ function conf_mount_rw() {
 	/* do not mount on cdrom platform */
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
-		
-	if (is_subsystem_dirty('mount'))
+
+	if (refcount_reference(1000) > 1)
 		return;
 
 	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
@@ -311,15 +309,12 @@ function conf_mount_rw() {
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
 	 *    compact flash cards root.
          */
-	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
-	   or $g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
+	$status = mwexec("/sbin/mount -u -w /");
+	/* we could not mount this correctly.  kick off fsck */
+	if($status <> 0) {
+		log_error("File system is dirty.  Launching FSCK for /");
+		mwexec("/sbin/fsck -y /");
 		$status = mwexec("/sbin/mount -u -w /");
-		/* we could not mount this correctly.  kick off fsck */
-		if($status <> 0) {
-			log_error("File system is dirty.  Launching FSCK for /");
-			mwexec("/sbin/fsck -y /");
-			$status = mwexec("/sbin/mount -u -w /");
-		}
 	}
 	
 	mark_subsystem_dirty('mount');
@@ -334,22 +329,11 @@ function conf_mount_rw() {
 function conf_mount_ro() {
 	global $g;
 
-	if($g['booting'] == true)
-		return;
-
 	/* do not umount on cdrom or pfSense platforms */
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
-	/* firmare upgrade in progress */
-	if (is_subsystem_dirty('firmwarelock'))
-		return;
-
-	/* do not umount if generating ssh keys */
-	if (is_subsystem_dirty('sshdkeys'))
-		return;
-
-	if (!is_subsystem_dirty('mount'))
+	if (refcount_unreference(1000) > 0)
 		return;
 
 	clear_subsystem_dirty('mount');

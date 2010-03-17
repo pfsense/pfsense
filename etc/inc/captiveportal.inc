@@ -378,37 +378,47 @@ add 1101 set 1 deny layer2 not mac-type ip
 EOD;
 
 	$rulenum = 1150;
-	foreach ($cpiparray as $cpip) {
-		//# allow access to our DHCP server (which needs to be able to ping clients as well)
-		$cprules .= "add {$rulenum} set 1 pass udp from any 68 to 255.255.255.255 67 in \n";
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass udp from any 68 to {$cpip} 67 in \n";
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} 67 to any 68 out \n";
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass icmp from {$cpip} to any out icmptype 0\n";
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass icmp from any to {$cpip} in icmptype 8 \n";
-		$rulenum++;
-		//# allow access to our DNS forwarder
-		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} to any 53 in \n";
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass udp from any to {$cpip} 53 in \n";
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass udp from {$cpip} 53 to any out \n";
-		$rulenum++;
-		# allow access to our web server
-		$cprules .= "add {$rulenum} set 1 pass tcp from any to {$cpip} 8000 in \n";
-		$rulenum++;
-		$cprules .= "add {$rulenum} set 1 pass tcp from {$cpip} 8000 to any out \n";
+	$ips = "255.255.255.255 ";
+	foreach ($cpiparray as $cpip)
+		$ips .= "or {$cpip} ";
+	$ips = "{ {$ips} }";
+	//# allow access to our DHCP server (which needs to be able to ping clients as well)
+	$cprules .= "add {$rulenum} set 1 pass udp from any 68 to {$ips} 67 in \n";
+	$rulenum++;
+	$cprules .= "add {$rulenum} set 1 pass udp from any 68 to {$ips} 67 in \n";
+	$rulenum++;
+	$cprules .= "add {$rulenum} set 1 pass udp from {$ips} 67 to any 68 out \n";
+	$rulenum++;
+	$cprules .= "add {$rulenum} set 1 pass icmp from {$ips} to any out icmptype 0\n";
+	$rulenum++;
+	$cprules .= "add {$rulenum} set 1 pass icmp from any to {$ips} in icmptype 8 \n";
+	$rulenum++;
+	//# allow access to our DNS forwarder
+	$cprules .= "add {$rulenum} set 1 pass udp from any to {$ips} 53 in \n";
+	$rulenum++;
+	$cprules .= "add {$rulenum} set 1 pass udp from {$ips} 53 to any out \n";
+	$rulenum++;
+	# allow access to our web server
+	$cprules .= "add {$rulenum} set 1 pass tcp from any to {$ips} 8000 in \n";
+	$rulenum++;
+	$cprules .= "add {$rulenum} set 1 pass tcp from {$ips} 8000 to any out \n";
 
-		if (isset($config['captiveportal']['httpslogin'])) {
-			$rulenum++;
-			$cprules .= "add {$rulenum} set 1 pass tcp from any to {$cpip} 8001 in \n";
-			$rulenum++;
-			$cprules .= "add {$rulenum} set 1 pass tcp from {$cpip} 8001 to any out \n";
-		}
+	if (isset($config['captiveportal']['httpslogin'])) {
+		$rulenum++;
+		$cprules .= "add {$rulenum} set 1 pass tcp from any to {$ips} 8001 in \n";
+		$rulenum++;
+		$cprules .= "add {$rulenum} set 1 pass tcp from {$ips} 8001 to any out \n";
 	}
+	if (!empty($config['system']['webgui']['port']))
+		$port = $config['system']['webgui']['port'];
+	else if ($config['system']['webgui']['proto'] == "https")
+		$port = 443;
+	else
+		$port = 80;
+	$rulenum++;
+	$cprules .= "add {$rulenum} set 1 pass tcp from any to {$ips} {$port} in \n";
+	$rulenum++;
+	$cprules .= "add {$rulenum} set 1 pass tcp from {$ips} {$port} to any out \n";
 	$rulenum++;
 
 	if (isset($config['captiveportal']['peruserbw'])) {

@@ -52,6 +52,7 @@ require("filter.inc");
 require("shaper.inc");
 require("rrd.inc");
 require("vpn.inc");
+require('regdomain.inc');
 
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
@@ -218,11 +219,7 @@ if (isset($wancfg['wireless'])) {
 		interface_wireless_clone($wlanif, $wancfg);
 	$wlanbaseif = interface_get_wireless_base($wancfg['if']);
 	$wl_modes = get_wireless_modes($if);
-	$wl_regdomain_xml = parse_xml_regdomain($wl_regdomain_xml_attr);
-	$wl_regdomains = &$wl_regdomain_xml['regulatory-domains']['rd'];
-	$wl_regdomains_attr = &$wl_regdomain_xml_attr['regulatory-domains']['rd'];
-	$wl_countries = &$wl_regdomain_xml['country-codes']['country'];
-	$wl_countries_attr = &$wl_regdomain_xml_attr['country-codes']['country'];
+	$wl_regdomains = parse_xml_regdomain();
 	$pconfig['standard'] = $wancfg['wireless']['standard'];
 	$pconfig['mode'] = $wancfg['wireless']['mode'];
 	$pconfig['protmode'] = $wancfg['wireless']['protmode'];
@@ -702,7 +699,7 @@ function handle_pppoe_reset() {
 }
 
 function handle_wireless_post() {
-	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr;
+	global $_POST, $config, $g, $wancfg, $if, $wl_regdomains;
 	if (!is_array($wancfg['wireless']))
 		$wancfg['wireless'] = array();
 	$wancfg['wireless']['standard'] = $_POST['standard'];
@@ -717,9 +714,9 @@ function handle_wireless_post() {
 	$wancfg['wireless']['regcountry'] = $_POST['regcountry'];
 	$wancfg['wireless']['reglocation'] = $_POST['reglocation'];
 	if (!empty($wancfg['wireless']['regdomain']) && !empty($wancfg['wireless']['regcountry'])) {
-		foreach($wl_countries_attr as $wl_country) {
-			if ($wancfg['wireless']['regcountry'] == $wl_country['ID']) {
-				$wancfg['wireless']['regdomain'] = $wl_country['rd'][0]['REF'];
+		foreach($wl_regdomains['country-codes']['country'] as $wl_country) {
+			if ($wancfg['wireless']['regcountry'] == $wl_country['attributes']['ID']) {
+				$wancfg['wireless']['regdomain'] = $wl_country['rd'][0]['attributes']['REF'];
 				break;
 			}
 		}
@@ -1391,12 +1388,12 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												<select name="regdomain" class="formselect" id="regdomain">
 													<option <? if (empty($pconfig['regdomain'])) echo "selected"; ?> value="">Default</option>
 													<?php
-													foreach($wl_regdomains as $wl_regdomain_key => $wl_regdomain) {
+													foreach($wl_regdomains['regulatory-domains']['rd'] as $wl_regdomain) {
 														echo "<option ";
-														if ($pconfig['regdomain'] == $wl_regdomains_attr[$wl_regdomain_key]['ID']) {
+														if ($pconfig['regdomain'] == $wl_regdomain['attributes']['ID']) {
 															echo "selected ";
 														}
-														echo "value=\"{$wl_regdomains_attr[$wl_regdomain_key]['ID']}\">{$wl_regdomain['name']}</option>\n";
+														echo "value=\"{$wl_regdomain['attributes']['ID']}\">{$wl_regdomain['name']}</option>\n";
 													}
 													?>
 												</select>
@@ -1405,12 +1402,12 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												<select name="regcountry" class="formselect" id="regcountry">
 													<option <? if (empty($pconfig['regcountry'])) echo "selected"; ?> value="">Default</option>
 													<?php
-													foreach($wl_countries as $wl_country_key => $wl_country) {
+													foreach($wl_regdomains['country-codes']['country'] as $wl_country) {
 														echo "<option ";
-														if ($pconfig['regcountry'] == $wl_countries_attr[$wl_country_key]['ID']) {
+														if ($pconfig['regcountry'] == $wl_country['attributes']['ID']) {
 															echo "selected ";
 														}
-														echo "value=\"{$wl_countries_attr[$wl_country_key]['ID']}\">{$wl_country['name']} -- ({$wl_countries_attr[$wl_country_key]['ID']}, " . strtoupper($wl_countries_attr[$wl_country_key]['rd'][0]['REF']) . ")</option>\n";
+														echo "value=\"{$wl_country['attributes']['ID']}\">{$wl_country['name']} -- ({$wl_country['attributes']['ID']}, " . strtoupper($wl_country['rd'][0]['attributes']['REF']) . ")</option>\n";
 													}
 													?>
 												</select>

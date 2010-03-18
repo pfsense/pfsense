@@ -261,6 +261,9 @@ function step10_stepbeforeformdisplay() {
 				$opt['value'] = $type;
                         $pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
 			}
+		} else if ($field['name'] == "localport") {
+			if (count($config['openvpn']['openvpn-server']) < 1)
+				$pkg['step'][$stepid]['fields']['field'][$idx]['value'] = 1194;
 		}
 	}
 }

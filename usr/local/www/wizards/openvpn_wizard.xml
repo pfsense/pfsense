@@ -33,7 +33,7 @@
 <totalsteps>12</totalsteps>
 <step>
 	<id>1</id>
-	<title>Choose the type of user authentication you wish to use.</title>
+	<title>Choose the type of user authentication you wish to use and click Next.</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<fields>
 		<field>
@@ -798,6 +798,14 @@
 	<fields>
 		<field>
 			<type>listtopic</type>
+			<name>Firewall Rules configuration</name>
+		</field>
+		<field>
+			<type>text</type>
+			<description>Firewall Rules control what network traffic is permitted. You must add rules to allow traffic to the OpenVPN server's IP and port, as well as allowing traffic from connected clients through the tunnel. These rules can be auto-added here, or configured manually after completing the wizardr.</description>
+		</field>
+		<field>
+			<type>listtopic</type>
 			<name>Traffic from clients to server</name>
 		</field>
 		<field>
@@ -830,8 +838,16 @@
 	<disableheader>on</disableheader>
 	<fields>
 		<field>
+			<type>listtopic</type>
+			<name>Configuration Complete!</name>
+		</field>
+		<field>
 			<type>text</type>
-			<description>Configuration Complete</description>
+			<description>Your configuration is now complete.</description>
+		</field>
+		<field>
+			<type>text</type>
+			<description>To be able to export client configurations, browse to System->Packages and install the OpenVPN Client Export package.</description>
 		</field>
 		<field>
 			<type>submit</type>

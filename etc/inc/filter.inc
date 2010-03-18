@@ -412,11 +412,12 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 	
 	$addresses = split(" ", $alias);
 	$finallist = "";
+	$builtlist = "";
 	$aliasnesting[$name] = $name;
 	foreach ($addresses as $address) {
 		if (empty($address))
 			continue;
-		$linelength = strlen($finallist);
+		$linelength = strlen($builtlist);
 		$tmpline = "";
 		if(is_alias($address)) {
 			/* We already expanded this alias so there is no neccessity to do it again. */
@@ -430,9 +431,11 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			$aliasaddrnesting[$address] = $address;
 			$tmpline = " $address";
 		}
-		if((strlen($tmpline)+ $linelength) > 4036)
-			$finallist .= "\n";
-		$finallist .= " {$tmpline}";
+		if ((strlen($tmpline)+ $linelength) > 4036) {
+			$finallist .= "{$builtlist} \\\n";
+			$builtlist = "";
+		}
+		$builtlist .= " {$tmpline}";
 	}
 	return $finallist;
 }

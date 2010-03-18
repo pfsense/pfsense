@@ -247,11 +247,12 @@ function step10_stepbeforeformdisplay() {
 		if ($field['name'] == "crypto") {
                         $pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
 			$cipherlist = openvpn_get_cipherlist();
-			foreach ($cipherlist as $name => $desc)
+			foreach ($cipherlist as $name => $desc) {
 				$opt = array();
                                 $opt['name'] = $desc;
                                 $opt['value'] = $name;
                         $pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
+			}
 		} else if ($field['name'] == "nbttype") {
                         $pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'] = array();
 			foreach ($netbios_nodetypes as $type => $name) {

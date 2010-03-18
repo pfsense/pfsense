@@ -685,7 +685,7 @@ function sshkeyClicked(obj) {
                                                         	<td width="78%" class="vtable">
                                                                 	<select name='keylen' class="formselect">
                                                                 <?php
-									$cert_keylens = array( "512", "1024", "2048", "4096");
+									$cert_keylens = array( "2048", "512", "1024", "4096");
                                                                         foreach( $cert_keylens as $len):
                                                                 ?>
                                                                         <option value="<?=$len;?>"><?=$len;?></option>

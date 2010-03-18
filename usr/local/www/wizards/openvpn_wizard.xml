@@ -579,7 +579,7 @@
 		<field>
 			<displayname>Automatically generate a TLS key</displayname>
 			<name>generatetlskey</name>
-			<enablefields>tlssharedkey</enablefields>
+			<disablefields>tlssharedkey</disablefields>
 			<value>on</value>
 			<type>checkbox</type>
 			<description>Automatically generate a shared TLS authentication key.</description>

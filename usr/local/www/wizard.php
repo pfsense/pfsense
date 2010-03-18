@@ -173,7 +173,7 @@ $pgtitle = array($title);
 include("head.inc");
 
 ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onLoad="enablechange();">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
 
 <?php
 	if(file_exists("/usr/local/www/themes/{$g['theme']}/wizard.css")) 
@@ -232,23 +232,57 @@ function enablechange() {
 ?>
 }
 
+function disablechange() {
+<?php
+        foreach($pkg['step'][$stepid]['fields']['field'] as $field) {
+                if(isset($field['disablefields']) or isset($field['checkdisablefields'])) {
+                        print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked) {' . "\n";
+                        if(isset($field['disablefields'])) {
+                                $enablefields = explode(',', $field['disablefields']);
+                                foreach($enablefields as $enablefield) {
+                                        $enablefield = strtolower($enablefield);
+                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 1;' . "\n";
+                                }
+                        }
+                        if(isset($field['checkdisablefields'])) {
+                                $checkenablefields = explode(',', $field['checkdisablefields']);
+                                foreach($checkenablefields as $checkenablefield) {
+                                        $checkenablefield = strtolower($checkenablefield);
+                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 0;' . "\n";
+                                }
+                        }
+                        print "\t" . '} else {' . "\n";
+                        if(isset($field['disablefields'])) {
+                                $enablefields = explode(',', $field['disablefields']);
+                                foreach($enablefields as $enablefield) {
+                                        $enablefield = strtolower($enablefield);
+                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 0;' . "\n";
+                                }
+                        }
+                        if(isset($field['checkdisablefields'])) {
+                                $checkenablefields = explode(',', $field['checkdisablefields']);
+                                foreach($checkenablefields as $checkenablefield) {
+                                        $checkenablefield = strtolower($checkenablefield);
+                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 1;' . "\n";
+                                }
+                        }
+                        print "\t" . '}' . "\n";
+                }
+        }
+?>
+}
+
 function showchange() {
 <?php
         foreach($pkg['step'][$stepid]['fields']['field'] as $field) {
-                if(isset($field['showfields']) or isset($field['checkshowfields'])) {
+                if(isset($field['showfields'])) {
                         print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked == false) {' . "\n";
                         if(isset($field['showfields'])) {
                                 $showfields = explode(',', $field['showfields']);
                                 foreach($showfields as $showfield) {
                                         $showfield = strtolower($showfield);
-                                        print "\t\t" . 'document.iform.' . $showfield . '.display =\"none\";' . "\n";
-                                }
-                        }
-			if(isset($field['checkshowfields'])) {
-                                $checkshowfields = explode(',', $field['checkshowfields']);
-                                foreach($checkshowfields as $checkshowfield) {
-                                        $checkshowfield = strtolower($checkshowfield);
-                                        print "\t\t" . 'document.iform.' . $checkshowfield . '.display = \"none\";' . "\n";
+                                        //print "\t\t" . 'document.iform.' . $showfield . ".display =\"none\";\n";
+					print "\t\t \$('". $showfield . "').hide();";
                                 }
                         }
                         print "\t" . '} else {' . "\n";
@@ -256,14 +290,8 @@ function showchange() {
                                 $showfields = explode(',', $field['showfields']);
                                 foreach($showfields as $showfield) {
                                         $showfield = strtolower($showfield);
-                                        print "\t\t" . 'document.iform.' . $showfield . '.display =\"\";' . "\n";
-                                }
-                        }
-                        if(isset($field['checkenablefields'])) {
-                                $checkshowfields = explode(',', $field['checkshowfields']);
-                                foreach($checkshowfields as $checkshowfield) {
-                                        $checkshowfield = strtolower($checkshowfield);
-                                        print "\t\t" . 'document.iform.' . $checkshowfield . '.display =\"\";' . "\n";
+                                        #print "\t\t" . 'document.iform.' . $showfield . ".display =\"\";\n";
+					print "\t\t \$('". $showfield . "').show();";
                                 }
                         }
                         print "\t" . '}' . "\n";
@@ -695,6 +723,8 @@ function showchange() {
 			echo "<td class=\"vtable\"><input value=\"on\" type='checkbox' id='" . $name . "' name='" . $name . "' " . $checked;
 			if(isset($field['enablefields']) or isset($field['checkenablefields']))
 				echo " onClick=\"enablechange()\"";
+			else if(isset($field['disablefields']) or isset($field['checkdisablefields']))
+				echo " onClick=\"disablechange()\"";
 			echo ">\n";
 
 			if($field['description'] <> "") {
@@ -717,6 +747,7 @@ function showchange() {
 
 			 echo "</tr>\n";
 		    }
+
 		}
 	}
     ?>
@@ -778,6 +809,9 @@ function showchange() {
 NiftyCheck();
 var bgcolor = document.getElementsByTagName("body")[0].style.backgroundColor;
 Rounded("div#roundme","all",bgcolor,"#FFFFFF","smooth");
+enablechange();
+disablechange();
+showchange();
 </script>
 
 <?php
@@ -827,7 +861,6 @@ if($pkg['step'][$stepid]['disableallfieldsbydefault'] <> "") {
 		echo "\t}\n";
 	}
 	echo "}\n";
-	echo "disableall();\n";
 	echo "</script>\n\n";
 }
 

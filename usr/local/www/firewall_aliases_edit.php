@@ -143,13 +143,12 @@ if ($_POST) {
 			$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9, _.";
 	}
 	/* check for name conflicts */
-	foreach ($a_aliases as $alias) {
-		if (isset($id) && ($a_aliases[$id]) && ($a_aliases[$id] === $alias))
-			continue;
-
-		if ($alias['name'] == $_POST['name']) {
-			$input_errors[] = "An alias with this name already exists.";
-			break;
+	if (!isset($id)) {
+		foreach ($a_aliases as $alias) {
+			if ($alias['name'] == $_POST['name']) {
+				$input_errors[] = "An alias with this name already exists.";
+				break;
+			}
 		}
 	}
 

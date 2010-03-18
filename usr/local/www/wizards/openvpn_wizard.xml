@@ -517,6 +517,7 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepbeforeformdisplay>step9_stepbeforeformdisplay();</stepbeforeformdisplay>
 	<stepsubmitphpaction>step9_submitphpaction();</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/openvpn_wizard.inc</includefile>
 </step>

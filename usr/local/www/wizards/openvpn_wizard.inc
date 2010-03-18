@@ -189,7 +189,7 @@ function step8_submitphpaction() {
 }
 
 function step9_stepbeforeformdisplay() {
-	global $pkg, $stepid;
+	global $config, $pkg, $stepid;
 
 	$pconfig = $config['ovpnserver'];
 

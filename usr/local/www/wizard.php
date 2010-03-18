@@ -86,7 +86,7 @@ if ($pkg['step'][$stepid]['includefile'])
 	require_once($pkg['step'][$stepid]['includefile']);
 
 if($pkg['step'][$stepid]['stepsubmitbeforesave']) {
-		eval($pkg['step'][$stepid]['stepsubmitbeforesave']);
+	eval($pkg['step'][$stepid]['stepsubmitbeforesave']);
 }
 
 if ($_POST) {
@@ -162,11 +162,12 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	}
 }
 
-if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
-	// handle before form display event.
-        // good for modifying posted values, etc.
-	eval($pkg['step'][$stepid]['stepbeforeformdisplay']);
-}
+// handle before form display event.
+do {
+	$oldstepid = $stepid;
+	if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "")
+		eval($pkg['step'][$stepid]['stepbeforeformdisplay']);
+} while ($oldstepid != $stepid);
 
 $pgtitle = array($title);
 include("head.inc");
@@ -332,14 +333,12 @@ function showchange() {
 				$field_split = split("->", $field['bindstofield']);
 				// arraynum is used in cases where there is an array of the same field
 				// name such as dnsserver (2 of them)
-				if($field['arraynum'] <> "") $arraynum = "[" . $field['arraynum'] . "]";
-				foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
-					$toeval = "\$value = \$config" . $field_conv . $arraynum . ";";
-					eval($toeval);
-					if ($field['type'] == "checkbox") {
-						$toeval = "if(isset(\$config" . $field_conv . $arraynum . ")) \$value = \" CHECKED\";";
-						eval($toeval);
-					}
+				if($field['arraynum'] <> "")
+					$arraynum = "[" . $field['arraynum'] . "]";
+				foreach ($field_split as $f)
+					$field_conv .= "['" . $f . "']";
+				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) \$value = \$config" . $field_conv . $arraynum . ";";
+				eval($toeval);
 		    }
 
 		    if(!$field['combinefieldsend'])
@@ -572,6 +571,7 @@ function showchange() {
 				echo "</option>\n";
 			}
 			echo "</select>\n";
+                        echo "<!-- {$value} -->\n";
 
 			if($field['description'] <> "") {
 				echo $field['description'];

@@ -188,6 +188,44 @@ function step8_submitphpaction() {
         }
 }
 
+function step9_stepbeforeformdisplay() {
+	global $pkg, $stepid;
+
+	$pconfig = $config['ovpnserver'];
+
+	if (isset($pconfig['step6']['uselist'])) {
+                $country = $pconfig['step6']['country'];
+                $state = $pconfig['step6']['state'];
+                $city = $pconfig['step6']['city'];
+                $org = $pconfig['step6']['organization'];
+        } else {
+		$ca = lookup_ca($pconfig['step6']['authcertca']);
+		$cavl = cert_get_subject_array($ca['crt']);
+		$country = $cavl[0]['v'];
+		$state = $cavl[1]['v'];
+		$city = $cavl[2]['v'];
+		$org = $cavl[3]['v'];
+        }
+	$fields =& $pkg['step'][$stepid]['fields']['field'];
+
+	foreach ($fields as $idx => $field) {
+		switch ($field['name']) {
+		case 'country':
+			$fields[$idx]['value'] = $country;
+			break;
+		case 'state':
+			$fields[$idx]['value'] = $state;
+			break;
+		case 'city':
+			$fields[$idx]['value'] = $city;
+			break;
+		case 'organization':
+			$fields[$idx]['value'] = $org;
+			break;
+		}
+	}
+}
+
 function step9_submitphpaction() {
 	global $stepid, $savemsg, $_POST, $config;
 

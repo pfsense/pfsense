@@ -97,13 +97,13 @@ PHPMODULES="apc \
 	mhash \
 # firewall_rules_edit.php
 	mbstring \
+	shmop \
 # Page compression
 	zlib"
 
 # Modules previously included.
 # can be turned on by touching
 # /etc/php_dynamodules/$modulename
-#	shmop \
 #	sysvmsg \
 #	sysvsem \
 #	sysvshm \

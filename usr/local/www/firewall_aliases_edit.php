@@ -237,7 +237,7 @@ if ($_POST) {
 				if (is_iprange($_POST["address{$x}"])) {
 					list($startip, $endip) = explode('-', $_POST["address{$x}"]);
 					$rangesubnets = ip_range_to_subnet_array($startip, $endip);
-					array_merge($address, $rangesubnets); //$address .= implode($rangesubnets, ' ');
+					$address = array_merge($address, $rangesubnets);
 				} else {
 					$tmpaddress = $_POST["address{$x}"];
 					if(($_POST['type'] == "network" || is_ipaddr($_POST["address{$x}"])) && $_POST["address_subnet{$x}"] <> "")

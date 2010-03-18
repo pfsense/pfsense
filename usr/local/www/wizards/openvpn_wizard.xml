@@ -318,6 +318,7 @@
 		<field>
 			<name>name</name>
 			<displayname>Descriptive name</displayname>
+			<description>This is the same as common-name for Certificates</description>
 			<type>input</type>
 			<bindstofield>ovpnserver->step6->certca</bindstofield>
 		</field>
@@ -325,6 +326,7 @@
 			<name>keylength</name>
 			<displayname>Key length</displayname>
 			<type>select</type>
+			<value>2048</value>
 			<bindstofield>ovpnserver->step6->keylength</bindstofield>
 			<options>
                                 <option>
@@ -350,6 +352,7 @@
 			<displayname>Lifetime</displayname>
 			<type>input</type>
 			<size>10</size>
+			<value>3650</value>
 			<description>Lifetime in days</description>
 			<bindstofield>ovpnserver->step6->lifetime</bindstofield>
 		</field>
@@ -387,13 +390,6 @@
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step6->email</bindstofield>
-		</field>
-		<field>
-			<name>cn</name>
-			<displayname>Common name</displayname>
-			<type>input</type>
-			<size>20</size>
-			<bindstofield>ovpnserver->step6->cn</bindstofield>
 		</field>
 		<field>
 			<name>Add new CA</name>
@@ -451,6 +447,7 @@
 			<name>keylength</name>
 			<displayname>Key length</displayname>
 			<type>select</type>
+			<value>2048</value>
 			<bindstofield>ovpnserver->step9->keylength</bindstofield>
 			<options>
                                 <option>
@@ -476,6 +473,7 @@
 			<displayname>Lifetime</displayname>
 			<type>input</type>
 			<size>10</size>
+			<value>3650</value>
 			<description>Lifetime in days</description>
 			<bindstofield>ovpnserver->step9->lifetime</bindstofield>
 		</field>
@@ -513,13 +511,6 @@
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step9->email</bindstofield>
-		</field>
-		<field>
-			<name>cn</name>
-			<displayname>Common name</displayname>
-			<type>input</type>
-			<size>20</size>
-			<bindstofield>ovpnserver->step9->cn</bindstofield>
 		</field>
 		<field>
 			<name>Create new Certificate</name>

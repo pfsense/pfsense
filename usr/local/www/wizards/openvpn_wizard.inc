@@ -161,7 +161,7 @@ function step7_submitphpaction() {
 
 	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
             empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
-            empty($_POST['organization']) || empty($_POST['email']) || empty($_POST['cn'])) {
+            empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
                 $savemsg = "Please enter all information for the new Certificate Authority.";
         } else {
@@ -193,7 +193,7 @@ function step9_submitphpaction() {
 
         if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
 	    empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
-	    empty($_POST['organization']) || empty($_POST['email']) || empty($_POST['cn'])) {
+	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
                 $savemsg = "Please enter all information for the new certificate.";
         } else {
@@ -348,7 +348,7 @@ function step12_submitphpaction() {
 			'localityName' => $pconfig['step6']['city'],
 			'organizationName' => $pconfig['step6']['organization'],
 			'emailAddress' => $pconfig['step6']['email'],
-			'commonName' => $pconfig['step6']['cn']);
+			'commonName' => $pconfig['step6']['certca']);
 
 		ca_create($ca, $pconfig['step6']['keylength'], $pconfig['step6']['lifetime'], $dn);
 		if (!is_array($config['system']['ca']))
@@ -375,7 +375,7 @@ function step12_submitphpaction() {
                         'localityName' => $pconfig['step9']['city'],
                         'organizationName' => $pconfig['step9']['organization'],
                         'emailAddress' => $pconfig['step9']['email'],
-                        'commonName' => $pconfig['step9']['cn']);
+                        'commonName' => $pconfig['step9']['certname']);
 
                 cert_create($cert, $ca['refid'], $pconfig['step9']['keylength'], $pconfig['step9']['lifetime'], $dn);
                 if (!is_array($config['system']['cert']))

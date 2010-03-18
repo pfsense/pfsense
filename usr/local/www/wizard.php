@@ -562,8 +562,9 @@ function showchange() {
 			echo "<select class='formselect' " . $onchange . $multiple . $size . "id='" . $name . "' name='" . $name . "'>\n";
 			foreach ($field['options']['option'] as $opt) {
 				$selected = "";
-				if($value == $opt['value']) $selected = " SELECTED";
-			    echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'" . $selected . ">";
+				if($value == $opt['value'])
+					$selected = " SELECTED";
+				echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'" . $selected . ">";
 				if ($opt['displayname'])
 					echo $opt['displayname'];
 				else

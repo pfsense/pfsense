@@ -151,6 +151,7 @@ include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pk
 extension_dir=${EXTENSIONSDIR}
 
 ; Extensions
+
 EOF
 
 # Ensure directory exists
@@ -193,6 +194,17 @@ if [  $RAM -gt 96 ]; then
 apc.enabled="1"
 apc.enable_cli="1"
 apc.shm_size="${APCSHMEMSIZE}"
+
+[suhosin]
+suhosin.get.max_array_depth = 5000
+suhosin.get.max_array_index_length = 256
+suhosin.get.max_vars = 5000
+suhosin.post.max_array_depth = 5000
+suhosin.post.max_array_index_length = 256
+suhosin.post.max_vars = 5000
+suhosin.request.max_array_depth = 5000
+suhosin.request.max_array_index_length = 256
+suhosin.request.max_vars = 5000
 
 EOF
 

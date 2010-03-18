@@ -106,14 +106,29 @@ include("head.inc");
 			print_info_box($savemsg);
 	?>
 	<? if ($diff) { ?>
-	<table align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table align="center" valign="middle" width="100%" border="0" cellspacing="0" style="padding-top: 4px; padding-bottom: 4px;">
 		<tr><td>Configuration diff from <?php echo date("n/j/y H:i:s", $oldtime); ?> to <?php echo date("n/j/y H:i:s", $newtime); ?></td></tr>
+		<?php foreach ($diff as $line) {
+			switch (substr($line, 0, 1)) {
+				case "+":
+					$color = "#caffd3";
+					break;
+				case "-":
+					$color = "#ffe8e8";
+					break;
+				case "@":
+					$color = "#a0a0a0";
+					break;
+				default:
+					$color = "";
+			}
+			?>
 		<tr>
-			<td>
-				<pre><?php echo htmlentities(implode($diff, "\n"));?></pre>
-			</td>
+			<td valign="middle" bgcolor="<?php echo $color; ?>" style="white-space: pre-wrap;"><?php echo htmlentities($line);?></td>
 		</tr>
+		<?php } ?>
 	</table>
+	<br />
 	<? } ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
@@ -133,7 +148,7 @@ include("head.inc");
 					<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (is_array($confvers)): ?>
 						<tr>
-							<td colspan="2" valign="middle" align="center" class="list" nowrap><b>Diff</b></td>
+							<td colspan="2" valign="middle" align="center" class="list" nowrap><input type="submit" name="diff" value="Diff"></td>
 							<td width="30%" class="listhdrr">Date</td>
 							<td width="70%" class="listhdrr">Configuration Change</td>
 						</tr>

@@ -186,9 +186,7 @@ include("head.inc");
 	$tmpaddr = explode(" ", $alias['address']);
 	$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
 	echo $addresses;
-	if(count($tmpaddr) < 10) {
-		echo " ";
-	} else {
+	if(count($tmpaddr) > 10) {
 		echo "...";
 	}
     ?>

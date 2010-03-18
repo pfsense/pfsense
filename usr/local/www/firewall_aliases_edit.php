@@ -124,7 +124,6 @@ if (isset($id) && $a_aliases[$id]) {
 if ($_POST) {
 
 	unset($input_errors);
-	$pconfig = $_POST;
 
 	/* input validation */
 
@@ -143,7 +142,7 @@ if ($_POST) {
 			$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9, _.";
 	}
 	/* check for name conflicts */
-	if (!isset($id)) {
+	if (empty($a_aliases[$id])) {
 		foreach ($a_aliases as $alias) {
 			if ($alias['name'] == $_POST['name']) {
 				$input_errors[] = "An alias with this name already exists.";
@@ -166,9 +165,10 @@ if ($_POST) {
 	}
 	
 	$alias = array();
+	$address = array();
+	$final_address_details = array();
 	$alias['name'] = $_POST['name'];
 	if($_POST['type'] == "url") {
-		$address = "";
 		$isfirst = 0;
 		$address_count = 2;
 
@@ -198,9 +198,7 @@ if ($_POST) {
 							$tmp = trim($tmp_split[0]);
 						}
 						if(trim($tmp) <> "") {
-							if($isfirst == 1)
-								$address .= " ";
-							$address .= $tmp;
+							$address[] = $tmp;
 							$isfirst = 1;
 						}
 					}
@@ -220,32 +218,10 @@ if ($_POST) {
 			}
 		}
 	} else {
-		$address = "";
-		$isfirst = 0;
 		/* item is a normal alias type */
 		$wrongaliases = "";
 		for($x=0; $x<4999; $x++) {
 			if($_POST["address{$x}"] <> "") {
-				$count = 1;
-				if ($isfirst > 0)
-					$address .= " ";
-				if (is_iprange($_POST["address{$x}"])) {
-					list($startip, $endip) = explode('-', $_POST["address{$x}"]);
-					$rangesubnets = ip_range_to_subnet_array($startip, $endip);
-					$count = count($rangesubnets);
-					$address .= implode($rangesubnets, ' ');
-				} else {
-					$address .= $_POST["address{$x}"];
-					if(($_POST['type'] == "network" || is_ipaddr($_POST["address{$x}"])) && $_POST["address_subnet{$x}"] <> "")
-						$address .= "/" . $_POST["address_subnet{$x}"];
-				}
-				if($_POST["detail{$x}"] <> "") {
-					$final_address_details .= str_repeat($_POST["detail{$x}"] . "||", $count);
-				} else {
-					$final_address_details .= str_repeat("Entry added " . date('r') . "||", $count);
-				}
-				$isfirst += $count;
-				
 				if (is_alias($_POST["address{$x}"])) {
 					if (!alias_same_type($_POST["address{$x}"], $_POST['type']))
 						$wrongaliases .= " " . $_POST["address{$x}"];
@@ -258,6 +234,20 @@ if ($_POST) {
 					 && !is_iprange($_POST["address{$x}"]))
 						$input_errors[] = $_POST["address{$x}"] . " is not a valid {$_POST['type']} alias.";
 				}
+				if (is_iprange($_POST["address{$x}"])) {
+					list($startip, $endip) = explode('-', $_POST["address{$x}"]);
+					$rangesubnets = ip_range_to_subnet_array($startip, $endip);
+					array_merge($address, $rangesubnets); //$address .= implode($rangesubnets, ' ');
+				} else {
+					$tmpaddress = $_POST["address{$x}"];
+					if(($_POST['type'] == "network" || is_ipaddr($_POST["address{$x}"])) && $_POST["address_subnet{$x}"] <> "")
+						$tmpaddress .= "/" . $_POST["address_subnet{$x}"];
+					$address[] = $tmpaddress;
+				}
+				if ($_POST["detail{$x}"] <> "")
+					$final_address_details[] = $_POST["detail{$x}"];
+				else
+					$final_address_details[] = "Entry added " . date('r');
 			}
 		}
 		if ($wrongaliases <> "")
@@ -265,10 +255,10 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$alias['address'] = $address;
+		$alias['address'] = implode(" ", $address);
 		$alias['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
 		$alias['type'] = $_POST['type'];
-		$alias['detail'] = $final_address_details;
+		$alias['detail'] = implode("||", $final_address_details);
 
 		/*   Check to see if alias name needs to be
 		 *   renamed on referenced rules and such
@@ -321,9 +311,9 @@ if ($_POST) {
 	else
 	{
 		$pconfig['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
-		$pconfig['address'] = $address;
+		$pconfig['address'] = implode(" ", $address);
 		$pconfig['type'] = $_POST['type'];
-		$pconfig['detail'] = $final_address_details;
+		$pconfig['detail'] = implode("||", $final_address_details);
 	}
 }
 
@@ -506,6 +496,9 @@ EOD;
     <td class="vtable">
       <input name="origname" type="hidden" id="origname" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
       <input name="name" type="text" id="name" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
+      <?php if (isset($id) && $a_aliases[$id]): ?>
+      <input name="id" type="hidden" value="<?=$id;?>" />
+      <?php endif; ?>
       <br />
       <span class="vexpl">
         The name of the alias may only consist of the characters a-z, A-Z and 0-9.
@@ -564,6 +557,7 @@ EOD;
 					$address = $item2[0];
 					$address_subnet = $item2[1];
 				}
+				
 			}
 			$item4 = $item3[$counter];
 			$tracker = $counter;
@@ -574,7 +568,7 @@ EOD;
             </td>
             <td>
 			        <select name="address_subnet<?php echo $tracker; ?>" class="formselect" id="address_subnet<?php echo $tracker; ?>">
-			          <option></option>
+				<option></option>
 			          <?php for ($i = 32; $i >= 1; $i--): ?>
 			          <option value="<?=$i;?>" <?php if ($i == $address_subnet) echo "selected"; ?>><?=$i;?></option>
 			          <?php endfor; ?>
@@ -608,9 +602,6 @@ EOD;
     <td width="78%">
       <input id="submit" name="submit" type="submit" class="formbtn" value="Save" />
       <a href="firewall_aliases.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" /></a>
-      <?php if (isset($id) && $a_aliases[$id]): ?>
-      <input name="id" type="hidden" value="<?=$id;?>" />
-      <?php endif; ?>
     </td>
   </tr>
 </table>
@@ -641,11 +632,14 @@ EOD;
 
         var addressarray=new Array(<?php echo $aliasesaddr; ?>);
 
+function createAutoSuggest() {
 <?php  
 	for ($jv = 0; $jv < $counter; $jv++)
 		echo "objAlias[{$jv}] = new AutoSuggestControl(document.getElementById(\"address{$jv}\"), new StateSuggestions(addressarray));\n";
 ?>
+}
 
+setTimeOut("createAutoSuggest();", 500);
 
 </script>
 

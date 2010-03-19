@@ -437,6 +437,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 		}
 		$builtlist .= " {$tmpline}";
 	}
+	$finallist .= $builtlist;
 	return $finallist;
 }
 

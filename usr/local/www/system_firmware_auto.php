@@ -123,21 +123,36 @@ include("head.inc");
 <?php
 
 update_status("Downloading current version information...");
-$latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
-
-$current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version"));
-$latest_version = str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version"));
-
-if($current_installed_pfsense_version <> $latest_version) 
-	$needs_system_upgrade = true;
-
-if($needs_system_upgrade == true) {
-	update_status("Downloading updates ...");
-	conf_mount_rw();
-	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
-	$status = download_file_with_progress_bar("{$updater_url}/latest.tgz.sha256", "{$g['upload_path']}/latest.tgz.sha256");
-	conf_mount_ro();
-	update_output_window("{$g['product_name']} download complete.");
+download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
+$latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
+if(!$latest_version) {
+	update_output_window("Unable to check for updates.");
+	require("fend.inc");
+	exit;
+} else {
+	$current_installed_pfsense_version = str_replace("\n", "", @file_get_contents("/etc/version.buildtime"));
+	$current_installed_pfsense = strtotime($current_installed_pfsense_version);
+	$latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
+	$latest_version_pfsense = strtotime($latest_version);
+	if(!$latest_version) {
+		update_output_window("Unable to check for updates.");
+		require("fend.inc");
+		exit;
+	} else {
+		$needs_system_upgrade = false;
+		if($current_installed_pfsense_version < $latest_version_pfsense) {
+			update_status("Downloading updates ...");
+			conf_mount_rw();
+			$status = download_file_with_progress_bar("{$updater_url}/latest.tgz", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
+			$status = download_file_with_progress_bar("{$updater_url}/latest.tgz.sha256", "{$g['upload_path']}/latest.tgz.sha256");
+			conf_mount_ro();
+			update_output_window("{$g['product_name']} download complete.");
+		} else {
+			update_output_window("You are on the latest version.");
+			require("fend.inc");
+			exit;
+		}
+	}
 }
 
 /* launch external upgrade helper */
@@ -214,8 +229,8 @@ function read_body_firmware($ch, $string) {
 	$c = $downloadProgress;
 	$text  = "  Auto Update Download Status\\n";
 	$text .= "----------------------------------------------------\\n";
-	$text .= "  Latest Version  : {$latest_version}\\n";
 	$text .= "  Current Version : {$current_installed_pfsense_version}\\n";
+	$text .= "  Latest Version  : {$latest_version}\\n";
 	$text .= "  File size       : {$a}\\n";
 	$text .= "  Downloaded      : {$b}\\n";
 	$text .= "  Percent         : {$c}%\\n";

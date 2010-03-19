@@ -43,6 +43,7 @@
 
 $d_isfwfile = 1;
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $curcfg = $config['system']['firmware'];
 $pgtitle=array("System", "Firmware", "Auto Update");
@@ -96,7 +97,7 @@ include("head.inc");
 					</table>
 		      <br>                      
 		      <!-- command output box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='90' rows='7' name='output' id='output' wrap='hard'>
+		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='90' rows='9' name='output' id='output' wrap='hard'>
 		      </textarea>                      
 		      </center>
  			<p>
@@ -113,59 +114,54 @@ include("head.inc");
 <?php
 
 /* Define necessary variables. */
-$firmware_version =	trim(file_get_contents('/etc/version'));
-
-$static_text = "Downloading current version information... ";
-update_output_window($static_text);
-
-$static_text .= "done.\n";
-update_output_window($static_text);
-
 if(isset($curcfg['alturl']['enable']))
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
 else 
 	$updater_url = $g['update_url'];
-
-update_output_window("Downloading current version information...");
-$latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
-
-if(strstr($latest_version,"404")) {
-	update_output_window("Could not download version information file {$updater_url}/version");
-	include("fend.inc");
-	exit;	
-}
-
-$current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version"));
-$latest_version = str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version"));
-
 $needs_system_upgrade = false;
-if($current_installed_pfsense_version <> $latest_version) 
-	$needs_system_upgrade = true;
-
-if(!$latest_version) {
+$static_text = "Downloading current version information... ";
+update_output_window($static_text);
+download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
+$latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
+$static_text .= "done.\n";
+if(!$latest_version)
+	$static_text .= "Unable to check for updates.\n";
+else {
+	$static_text .= "Downloading current version information...";
+	update_output_window($static_text);
+        $current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version.buildtime"));
+        $current_installed_pfsense = strtotime($current_installed_pfsense_version);
+        $latest_build_version = strtotime($latest_version);
+	$static_text .= "done\n";
+	update_output_window($static_text);
+        if(!$latest_build_version) {
+                $static_text .= "Unable to check for updates.\n";
 		if(isset($curcfg['alturl']['enable']))
-			update_output_window("Could not contact custom update server.");
+			$static_text .= "Could not contact custom update server.\n";
 		else 
-			update_output_window("Could not contact {$g['product_name']} update server {$updater_url}.");
-} else {
-	if($needs_system_upgrade) {
-		echo "\n<script>$('invokeupgrade').style.visibility = 'visible';</script>";
-		$txt  = "A new version is now available \\n\\n";
-		$txt .= "New version:     {$latest_version}\\n";
-		$txt .= "Current version: {$current_installed_pfsense_version}\\n";
-		$txt .= "Update source:   {$updater_url}\\n";
-		update_output_window($txt);
-	} else {
-		update_output_window("You are on the latest version.");
-	}
+			$static_text .= "Could not contact {$g['product_name']} update server {$updater_url}.\n";
+        } else {
+                if($current_installed_pfsense < $latest_build_version) {
+                	$needs_system_upgrade = true;
+                } else {
+			$static_text .= "You are on the latest version.\n";
+                }
+        }
 }
-?>
+update_output_window($static_text);
+if ($needs_system_upgrade == false) {
+	require("fend.inc");
+	exit;
+}
 
+echo "\n<script>$('invokeupgrade').style.visibility = 'visible';</script>";
+$txt  = "A new version is now available \\n\\n";
+$txt .= "Current version: {$current_installed_pfsense_version}\\n";
+$txt .= "New version:     {$latest_version}\\n\\n";
+$txt .= "Update source:   {$updater_url}\\n";
+update_output_window($txt);
+?>
 </form>
 <?php include("fend.inc"); ?>
-</body>
-</html>
-
-
 </body>
 </html>

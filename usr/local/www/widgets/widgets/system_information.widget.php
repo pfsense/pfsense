@@ -40,35 +40,28 @@ if($_REQUEST['getupdatestatus']) {
 		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
 	else 
 		$updater_url = $g['update_url'];
-	/* ensure we can obtain the DNS information quickly */
-	$host = split("/", $updater_url);
-	$test_dns = `/usr/bin/host -W1 {$host[2]} | grep "has address" | awk '{ print $4 }' | wc -l`;
-	if($test_dns)
-		$latest_version = download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
-	else 
-		$latest_version ="404";
-	if(strstr($latest_version,"404")) {
+	download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
+	$latest_version = file_get_contents("/tmp/{$g['product_name']}_version");
+	if(empty($latest_version))
 		echo "<br /><br />Unable to check for updates.";
-	} else {					
-		$current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version"));
-		$latest_version = str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version"));	
-		$needs_system_upgrade = false;
-		if($current_installed_pfsense_version <> $latest_version) 
-			$needs_system_upgrade = true; 						
+	else {
+		$current_installed_pfsense_version = strtotime(str_replace("\n", "", file_get_contents("/etc/version.buildtime")));
+
+		$latest_version = strtotime(str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version")));
 		if(!$latest_version) {
 			echo "<br /><br />Unable to check for updates.";							
 		}
 		else {
-			if($needs_system_upgrade) {
+			$needs_system_upgrade = false;
+			if($current_installed_pfsense_version < $latest_version) {
 				echo "<br/><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
 				echo "<script type=\"text/javascript\">";
 				echo "Effect.Pulsate('updatealert', { pulses: 30, duration: 10});";
 				echo "</script>";
-			} else {
+			} else
 				echo "<br /><br />You are on the latest version.";
-			}
-		} 
-	} 
+		}
+	}
 	exit;
 }
 

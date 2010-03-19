@@ -892,7 +892,6 @@ function ip_in_subnet($addr,$subnet) {
 
 /* verify (and remove) the digital signature on a file - returns 0 if OK */
 function verify_digital_signature($fname) {
-
 	global $g;
 
 	if(!file_exists("/usr/local/sbin/gzsig"))

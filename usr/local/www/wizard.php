@@ -412,12 +412,12 @@ function showchange() {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>\n";
-				$inputaliases[] = $name;
 			}
 			if(!$field['dontcombinecells'])
 				echo "<td class=\"vtable\">\n";
 
-			echo "<input class='formfld unknown' autocomplete='off' class='formfldalias' id='" . $name . "' name='" . $name . "' value='" . $value . "'";
+			$inputaliases[] = $name;
+			echo "<input class='formfldalias' autocomplete='off' class='formfldalias' id='" . $name . "' name='" . $name . "' value='" . $value . "'";
 			if($field['size'])
 				echo " size='" . $field['size'] . "' ";
 			if($field['validate'])
@@ -776,19 +776,13 @@ function showchange() {
 	$aliasesaddr = "";
 	if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
 		foreach($config['aliases']['alias'] as $alias_name) {
-			if(!stristr($alias_name['address'], ".")) {
-				if($isfirst == 1) $aliases .= ",";
+				if($isfirst == 1)
+					$aliases .= ",";
 				$aliases .= "'" . $alias_name['name'] . "'";
 				$isfirst = 1;
-			} else {
-				if($addrisfirst == 1) $aliasesaddr .= ",";
-				$aliasesaddr .= "'" . $alias_name['name'] . "'";
-				$addrisfirst = 1;
-			}
 		}
 ?>
 
-	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
 	var customarray=new Array(<?php echo $aliases; ?>);
 
 	window.onload = function () {
@@ -796,7 +790,7 @@ function showchange() {
 		<?php
 			$counter=0;
 			foreach($inputaliases as $alias) {
-				echo "var oTextbox$counter = new AutoSuggestControl(document.getElementById(\"$alias\"), new StateSuggestions(addressarray));\n";
+				echo "var oTextbox$counter = new AutoSuggestControl(document.getElementById(\"$alias\"), new StateSuggestions(customarray));\n";
 				$counter++;
 			}
 		?>

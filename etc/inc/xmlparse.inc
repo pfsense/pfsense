@@ -173,7 +173,8 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
             $listtags[] = $tag;
           }
         }
-	return parse_xml_config_raw($cffile, $rootobj, $isstring);
+	if (parse_xml_config_raw($cffile, $rootobj, $isstring) == -1)
+		die("XML error: not $rootboj object found!\n");
 }
 
 function parse_xml_regdomain(&$rdattributes, $rdfile = '/etc/regdomain.xml', $rootobj = 'regulatory-data') {
@@ -208,7 +209,8 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	xml_parser_set_option($xml_parser,XML_OPTION_SKIP_WHITE, 1); 
 
 	if (!($fp = fopen($cffile, "r"))) {
-		die("Error: could not open XML input\n");
+		log_error("Error: could not open XML input\n");
+		return -1;
 	}
 
 	while ($data = fread($fp, 4096)) {
@@ -222,7 +224,8 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	xml_parser_free($xml_parser);
 
 	if (!$parsedcfg[$rootobj]) {
-		die("XML error: no $rootobj object found!\n");
+		log_error("XML error: no $rootobj object found!\n");
+		return -1;
 	}
 
 	return $parsedcfg[$rootobj];

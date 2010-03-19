@@ -465,14 +465,13 @@ function write_config($desc="Unknown", $backup = true) {
 		backup_config();
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
-		$changetime = time();
+		$config['revision']['time'] = time();
 
 	/* Log the running script so it's not entirely unlogged what changed */
 	if ($desc == "Unknown")
 		$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";
 
 	$config['revision']['description'] = $desc;
-	$config['revision']['time'] = $changetime;
 
 	$lockkey = lock('config');
 
@@ -485,7 +484,8 @@ function write_config($desc="Unknown", $backup = true) {
 	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig, false)) {
 		log_error("WARNING: Config contents could not be save. Could not open file!");
 		unlock($lockkey);
-		die("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
+		file_notice("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
+		return -1;
 	}
 	
 	if($g['platform'] == "embedded" or $g['platform'] == "nanobsd") {
@@ -495,6 +495,7 @@ function write_config($desc="Unknown", $backup = true) {
 	}
 
 	/* re-read configuration */
+	/* NOTE: We assume that the file can be parsed since we wrote it. */
 	$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
 
 	/* write config cache */

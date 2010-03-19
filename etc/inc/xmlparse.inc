@@ -173,8 +173,11 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
             $listtags[] = $tag;
           }
         }
-	if (parse_xml_config_raw($cffile, $rootobj, $isstring) == -1)
+	$cfg =parse_xml_config_raw($cffile, $rootobj, $isstring);
+	if ($cfg == -1)
 		die("XML error: not $rootboj object found!\n");
+	
+	return $cfg;
 }
 
 function parse_xml_regdomain(&$rdattributes, $rdfile = '/etc/regdomain.xml', $rootobj = 'regulatory-data') {

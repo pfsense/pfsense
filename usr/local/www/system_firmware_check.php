@@ -119,8 +119,6 @@ if(isset($curcfg['alturl']['enable']))
 else 
 	$updater_url = $g['update_url'];
 $needs_system_upgrade = false;
-$static_text = "Downloading current version information... ";
-update_output_window($static_text);
 download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
 $latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
 $static_text .= "done.\n";

@@ -523,6 +523,7 @@ EOD;
         <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>>Network(s)</option>
         <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>>Port(s)</option>
         <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>>OpenVPN Users</option>
+        <option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>>Use data from a URL</option>
       </select>
     </td>
   </tr>
@@ -646,21 +647,3 @@ setTimeOut("createAutoSuggest();", 500);
 <?php include("fend.inc"); ?>
 </body>
 </html>
-
-<?php
-function process_alias_tgz($temp_filename) {
-	mwexec("/bin/mv {$temp_filename}/aliases {$temp_filename}/aliases.tgz");
-	mwexec("/usr/bin/tar xzf {$temp_filename}/aliases.tgz -C {$temp_filename}/aliases/");
-	unlink("{$temp_filename}/aliases.tgz");
-	$files_to_process = return_dir_as_array("{$temp_filename}/");
-	/* foreach through all extracted files and build up aliases file */
-	$fd = fopen("{$temp_filename}/aliases", "a");
-	foreach($files_to_process as $f2p) {
-		$file_contents = file_get_contents($f2p);
-		fwrite($fd, $file_contents);
-		unlink($f2p);
-	}
-	fclose($fd);
-}
-
-?>

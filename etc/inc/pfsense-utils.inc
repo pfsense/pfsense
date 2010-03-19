@@ -1700,4 +1700,73 @@ function update_alias_names_upon_change($section, $subsection, $fielda, $fieldb,
 	if($debug) fclose($fd);
 
 }
+
+function update_alias_url_data() {
+	global $config, $g;
+	/* item is a url type */
+	$lockkey = lock('config');
+	for($x=0; $x<count($config['aliases']['alias']); $x++) {
+		if($config['aliases']['alias'][$x]['aliasurl']) {
+			/* fetch down and add in */
+			$isfirst = 0;
+			$temp_filename = tempnam("{$g['tmp_path']}/", "alias_import");
+			unlink($temp_filename);
+			$fda = fopen("{$g['tmp_path']}/tmpfetch","w");
+			fwrite($fda, "/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
+			fclose($fda);
+			mwexec("/bin/mkdir -p {$temp_filename}");
+			mwexec("/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $config['aliases']['alias'][$x]['aliasurl'] . "\"");
+			/* if the item is tar gzipped then extract */
+			if(stristr($config['aliases']['alias'][$x]['aliasurl'], ".tgz"))
+				process_alias_tgz($temp_filename);
+			if(file_exists("{$temp_filename}/aliases")) {
+				$file_contents = file_get_contents("{$temp_filename}/aliases");
+				$file_contents = str_replace("#", "\n#", $file_contents);
+				$file_contents_split = split("\n", $file_contents);
+				foreach($file_contents_split as $fc) {
+					$tmp = trim($fc);
+					if(stristr($fc, "#")) {
+						$tmp_split = split("#", $tmp);
+						$tmp = trim($tmp_split[0]);
+					}
+					if(trim($tmp) <> "") {
+						if($isfirst == 1)
+							$address .= " ";
+						$address .= $tmp;
+						$isfirst = 1;
+					}
+				}
+				if($isfirst == 0) {
+					/* nothing was found */
+					$dont_update = true;
+					break;
+				}
+				if(!$dont_update) {
+					$config['aliases']['alias'][$x]['address'] = $address;
+					$updated = true;
+				}
+				mwexec("/bin/rm -rf {$temp_filename}");
+			}
+		}
+	}
+	if($updated)
+		write_config();
+	unlock($lockkey);
+}
+
+function process_alias_tgz($temp_filename) {
+	mwexec("/bin/mv {$temp_filename}/aliases {$temp_filename}/aliases.tgz");
+	mwexec("/usr/bin/tar xzf {$temp_filename}/aliases.tgz -C {$temp_filename}/aliases/");
+	unlink("{$temp_filename}/aliases.tgz");
+	$files_to_process = return_dir_as_array("{$temp_filename}/");
+	/* foreach through all extracted files and build up aliases file */
+	$fd = fopen("{$temp_filename}/aliases", "w");
+	foreach($files_to_process as $f2p) {
+		$file_contents = file_get_contents($f2p);
+		fwrite($fd, $file_contents);
+		unlink($f2p);
+	}
+	fclose($fd);
+}
+
 ?>

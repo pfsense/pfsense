@@ -119,10 +119,14 @@ $iflist = get_configured_interface_with_descr();
 
 /* set the starting interface */
 if (!$if || !isset($iflist[$if])) {
-	if($config['interfaces']['lan'])
-		$if = "lan";
-	else
-		$if = "wan";
+	foreach ($iflist as $ifent => $ifname) {
+        	$oc = $config['interfaces'][$ifent];
+		if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddr($oc['ipaddr']))) || 
+			(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddr($oc['ipaddr']))))
+			continue;
+		$if = $ifent;
+		break;
+	}
 }
 
 if (is_array($config['dhcpd'][$if])){

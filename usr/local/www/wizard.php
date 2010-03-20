@@ -313,7 +313,7 @@ function showchange() {
 
 <?php
 	if($title == "Reload in progress") {
-		$ip = fixup_string($_SERVER['HTTP_HOST']);
+		$ip = fixup_string("\$myurl");
 	} else {
 		$ip = "/";
 	}

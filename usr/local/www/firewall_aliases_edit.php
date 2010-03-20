@@ -523,7 +523,7 @@ EOD;
         <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>>Network(s)</option>
         <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>>Port(s)</option>
         <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>>OpenVPN Users</option>
-        <option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>>Use data from a URL</option>
+        <option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>>URL</option>
       </select>
     </td>
   </tr>

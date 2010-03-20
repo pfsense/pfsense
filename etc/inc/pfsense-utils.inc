@@ -1719,6 +1719,8 @@ function update_alias_url_data() {
 			/* if the item is tar gzipped then extract */
 			if(stristr($config['aliases']['alias'][$x]['aliasurl'], ".tgz"))
 				process_alias_tgz($temp_filename);
+			if(stristr($config['aliases']['alias'][$x]['aliasurl'], ".zip"))
+				process_alias_unzip($temp_filename);
 			if(file_exists("{$temp_filename}/aliases")) {
 				$file_contents = file_get_contents("{$temp_filename}/aliases");
 				$file_contents = str_replace("#", "\n#", $file_contents);
@@ -1754,7 +1756,26 @@ function update_alias_url_data() {
 	unlock($lockkey);
 }
 
+function process_alias_unzip($temp_filename) {
+	if(!file_exists("/usr/local/bin/unzip"))
+		return;
+	mwexec("/bin/mv {$temp_filename}/aliases {$temp_filename}/aliases.zip");
+	mwexec("/usr/local/bin/unzip {$temp_filename}/aliases.tgz -d {$temp_filename}/aliases/");
+	unlink("{$temp_filename}/aliases.zip");
+	$files_to_process = return_dir_as_array("{$temp_filename}/");
+	/* foreach through all extracted files and build up aliases file */
+	$fd = fopen("{$temp_filename}/aliases", "w");
+	foreach($files_to_process as $f2p) {
+		$file_contents = file_get_contents($f2p);
+		fwrite($fd, $file_contents);
+		unlink($f2p);
+	}
+	fclose($fd);
+}
+
 function process_alias_tgz($temp_filename) {
+	if(!file_exists("/usr/bin/tar"))
+		return;
 	mwexec("/bin/mv {$temp_filename}/aliases {$temp_filename}/aliases.tgz");
 	mwexec("/usr/bin/tar xzf {$temp_filename}/aliases.tgz -C {$temp_filename}/aliases/");
 	unlink("{$temp_filename}/aliases.tgz");

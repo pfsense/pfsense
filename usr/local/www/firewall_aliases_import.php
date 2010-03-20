@@ -37,7 +37,7 @@
 ##|*MATCH=firewall_aliases_import.php*
 ##|-PRIV
 
-$pgtitle = array("Firewall","Aliases","Import");
+$pgtitle = array("Firewall","Aliases","Bulk import");
 
 $reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp");
 

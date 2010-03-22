@@ -239,7 +239,7 @@ function update_description(itemnum) {
 										update_description(document.forms[0].optimization.selectedIndex);
 									</script>
 									<br/>
-									Select which type of state table optimization your would like to use
+									Select the type of state table optimization to use
 								</td>
 							</tr>
 							<tr>

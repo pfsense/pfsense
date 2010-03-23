@@ -567,11 +567,8 @@ function config_restore($conffile) {
 	if (!file_exists($conffile))
 		return 1;
 
-	conf_mount_rw();
-
 	backup_config();
 
-	// backup_config() will mount RO again when finished.
 	conf_mount_rw();
 	
 	$lockkey = lock('config');

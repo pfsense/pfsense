@@ -149,25 +149,21 @@ function get_nameservers() {
 	$master_list = array();
 	
 	// Read in dhclient nameservers
-	$dns_lists = split("\n", `ls /var/etc/nameserver_* 2>/dev/null`);
-	if(is_array($dns_lists)) {
+	$dns_lists = split("\n", `/bin/cat /var/etc/nameserver_* 2>/dev/null`);
+	if (is_array($dns_lists)) {
 		foreach($dns_lists as $dns) {
-			if(!$dns) 
-				continue;
-			$items = split("\n", file_get_contents($dns));
-			foreach($items as $item)
-				if($item <> "")
-					$master_list[] = $item;
+			if(is_ipaddr($dns)) 
+				$master_list[] = $item;
 		}
 	}
 
 	// Read in any extra nameservers
 	if(file_exists("/var/etc/nameservers.conf")) {
-		$dns = `cat /var/etc/nameservers.conf`;
-		$dns_s = split("\n", $dns);
+		$dns_lists = split("\n", `/bin/cat /var/etc/nameservers.conf`);
 		if(is_array($dns_s))
 			foreach($dns_s as $dns)
-				$master_list[] = $dns;
+				if (is_ipaddr($dns))
+					$master_list[] = $dns;
 	}
 
 	return $master_list;

@@ -1255,7 +1255,7 @@ function backup_config() {
 
 function set_device_perms() {
 	$devices = array(
-		'pf'	=> array(	'user'	=> 'proxy',
+		'pf'	=> array(	'user'	=> 'root',
 					'group'	=> 'proxy',
 					'mode'	=> 0660),
 		);

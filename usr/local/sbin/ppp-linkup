@@ -14,7 +14,7 @@ if [ "$6" = "dns1" ]
 	/sbin/route add $7 -if $1
 fi
 
-if [ "$8" = "dns1" ]
+if [ "$8" = "dns2" ]
 	echo $9 >> /var/etc/nameserver_$1
 	/sbin/route add $9 -if $1
 fi

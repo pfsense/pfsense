@@ -36,12 +36,12 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-pptpvpn
-##|*NAME=Diagnostics: Logs: PPTP VPN page
-##|*DESCR=Allow access to the 'Diagnostics: Logs: PPTP VPN' page.
+##|*NAME=Diagnostics: Logs: VPN page
+##|*DESCR=Allow access to the 'Diagnostics: Logs: VPN' page.
 ##|*MATCH=diag_logs_vpn.php*
 ##|-PRIV
 
-$pgtitle = array("Status","System logs","PPTP VPN");
+$pgtitle = array("Status","System logs","VPN");
 require("guiconfig.inc");
 require_once("vpn.inc");
 
@@ -49,8 +49,15 @@ $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
+if ($_GET['vpntype'])
+	$vpntype = $_GET['vpntype'];
+else
+	$vpntype = "pptp";
+if ($_POST['vpntype'])
+	$vpntype = $_POST['vpntype'];
+
 if ($_POST['clear']) 
-	clear_log_file("/var/log/vpn.log");
+	clear_log_file("/var/log/{$vpntype}.log");
 
 function dump_clog_vpn($logfile, $tail) {
 	global $g, $config;
@@ -97,7 +104,7 @@ include("head.inc");
 	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
 	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
 	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
-	$tab_array[] = array("PPTP VPN", true, "diag_logs_vpn.php");
+	$tab_array[] = array("VPN", true, "diag_logs_vpn.php");
 	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
 	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
@@ -107,9 +114,24 @@ include("head.inc");
   </td></tr>
   <tr>
     <td class="tabcont">
+<form action="diag_logs_vpn.php" method="post">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
 		  <td colspan="4" class="listtopic">
-			    Last <?=$nentries;?> PPTP VPN log entries</td>
+			Choose which type of VPN you want to view.
+		  </td></tr><tr>
+		  <td colspan="4">
+			<?php $vpns = array("pptp" => "PPTP", "pppoe" => "PPPoE", "l2tp" => "L2TP");
+				foreach ($vpns as $kvpn => $dvpn):
+			?>
+				<a href="/diag_logs_vpn.php?vpntype=<?=$kvpn;?>" >
+				<input type="button" name="<?=$dvpn;?>" value="<?=$dvpn;?>"> 
+				</a>
+			<?php endforeach; ?>
+			
+		  </td></tr>
+		  <tr>
+		  <td colspan="4" class="listtopic">
+			    Last <?=$nentries;?> <?=$vpns[$vpntype];?> VPN log entries</td>
 			</tr>
 			<tr>
 			  <td class="listhdrr">Time</td>
@@ -117,9 +139,10 @@ include("head.inc");
 			  <td class="listhdrr">User</td>
 			  <td class="listhdrr">IP address</td>
 			</tr>
-			<?php dump_clog_vpn("/var/log/vpn.log", $nentries); ?>
+			<?php dump_clog_vpn("/var/log/{$vpntype}.log", $nentries); ?>
           </table>
-		<br><form action="diag_logs_vpn.php" method="post">
+<br />
+<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype;?>">
 <input name="clear" type="submit" class="formbtn" value="Clear log">
 </form>
 	</td>

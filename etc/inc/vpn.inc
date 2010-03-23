@@ -1125,7 +1125,7 @@ EOD;
 			chmod("{$g['varetc_path']}/pptp-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pptp-vpn -p {$g['varrun_path']}/pptp-vpn.pid -f mpd.conf pptpd");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pptp-vpn -p {$g['varrun_path']}/pptp-vpn.pid -s pptp -f mpd.conf pptpd");
 
 			break;
 
@@ -1318,7 +1318,7 @@ EOD;
 			chmod("{$g['varetc_path']}/pppoe-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe-vpn -p {$g['varrun_path']}/pppoe-vpn.pid pppoe");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe-vpn -p {$g['varrun_path']}/pppoe-vpn.pid -s pppoe pppoe");
 
 			break;
 
@@ -1498,7 +1498,7 @@ EOD;
 			chmod("{$g['varetc_path']}/l2tp-vpn/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid l2tp");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tp l2tp");
 
 			break;
 

@@ -1151,9 +1151,14 @@ function config_restore($conffile) {
 		return 1;
 
     config_lock();
+
     conf_mount_rw();
 
     backup_config();
+
+	// backup_config() will mount ro again
+    conf_mount_rw();
+
     copy($conffile, "{$g['cf_conf_path']}/config.xml");
 	$config = parse_config(true);
     write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);

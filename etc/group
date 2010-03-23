@@ -18,7 +18,6 @@ bind:*:53:
 proxy:*:62:
 _pflogd:*:64:
 _dhcp:*:65:
-proxy:*:62:
 authpf:*:63:
 uucp:*:66:
 dialer:*:68:

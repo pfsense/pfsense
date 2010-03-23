@@ -571,6 +571,9 @@ function config_restore($conffile) {
 
 	backup_config();
 
+	// backup_config() will mount RO again when finished.
+	conf_mount_rw();
+	
 	$lockkey = lock('config');
 
 	copy($conffile, "{$g['cf_conf_path']}/config.xml");

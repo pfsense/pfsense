@@ -177,8 +177,6 @@ function system_hosts_generate() {
 	}
 
 	$syscfg = $config['system'];
-	$lancfg = $config['interfaces']['lan'];
-	$lancfgip = get_interface_ip("lan");
 	$dnsmasqcfg = $config['dnsmasq'];
 
 	if (!is_array($dnsmasqcfg['hosts'])) {
@@ -192,15 +190,14 @@ function system_hosts_generate() {
 		return 1;
 	}
 
-	$hosts = <<<EOD
-127.0.0.1	localhost localhost.{$syscfg['domain']}
+	$hosts .= "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
 
-EOD;
-	if (is_ipaddr($lancfgip))
-		$hosts .= <<<EOD
-{$lancfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}
-
-EOD;
+	$sysiflist = get_configured_interface_list();
+	foreach ($sysiflist as $sysif) {
+		$cfgip = get_interface_ip($sysif);
+		if (is_ipaddr($cfgip))
+			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+	}
 
 	foreach ($hostscfg as $host) {
 		if ($host['host'])

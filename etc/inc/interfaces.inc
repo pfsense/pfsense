@@ -2109,7 +2109,7 @@ EOD;
 			if($interface == $gateway['interface'] && isset($gateway['defaultgw'])) {
 				$setdefaultgw = true;
 				break;
-			} else if (isset($gateway['defaultgw'])) {
+			} else if (isset($gateway['defaultgw']) && !empty($gateway['interface'])) {
 				$founddefaultgw = true;
 				break;
 			}

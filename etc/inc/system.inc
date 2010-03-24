@@ -153,7 +153,7 @@ function get_nameservers() {
 	if (is_array($dns_lists)) {
 		foreach($dns_lists as $dns) {
 			if(is_ipaddr($dns)) 
-				$master_list[] = $item;
+				$master_list[] = $dns;
 		}
 	}
 

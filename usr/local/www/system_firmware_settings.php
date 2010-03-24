@@ -52,6 +52,11 @@ if ($_POST) {
 			unset($config['system']['firmware']['alturl']);
 			unset($config['system']['firmware']);			
 		}
+		if($_POST['allowinvalidsig'] == "yes")
+                        $config['system']['firmware']['allowinvalidsig'] = true;
+                else
+                        unset($config['system']['firmware']['allowinvalidsig']);
+
 		write_config();
 	}
 }
@@ -136,6 +141,20 @@ function enable_altfirmwareurl(enable_over) {
 				<b>NOTE:</b> When a custom URL is enabled the system will not verify the digital signature from <?php echo $g['product_website'] ?>.
 				</span>
 				</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="list" height="12">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2" valign="top" class="listtopic">Updates</td>
+	</tr>
+	<tr>
+		<td width="22%" valign="top" class="vncell">Not signed images.</td>
+		<td width="78%" class="vtable">
+			<input name="allowinvalidsig" type="checkbox" id="allowinvalidsig" value="yes" <?php if (isset($curcfg['allowinvalidsig'])) echo "checked"; ?> />
+			<br />
+			Allow to update the system with auto-updater and images with no signature.
+		</td>
 	</tr>
 	<script>enable_altfirmwareurl();</script>
                 <tr>

@@ -160,9 +160,9 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 
 					if ($sigchk == 1)
 						$sig_warning = "The digital signature on this image is invalid.";
-					else if ($sigchk == 2)
+					else if ($sigchk == 2 && !isset($config['system']['firmware']['allowinvalidsig']))
 						$sig_warning = "This image is not digitally signed.";
-					else if (($sigchk == 3) || ($sigchk == 4))
+					else if (($sigchk >= 3))
 						$sig_warning = "There has been an error verifying the signature on this image.";
 
 					if (!verify_gzip_file("{$g['upload_path']}/firmware.tgz")) {

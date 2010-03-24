@@ -77,7 +77,7 @@ if ($act == "del") {
 			unset($a_tunable[$id]);
 			write_config();
 			mark_subsystem_dirty('sysctl');
-			pfSenseHeader("firewall_system_tunables.php");
+			pfSenseHeader("system_advanced_sysctl.php");
 			exit;
 		}
 	}

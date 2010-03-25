@@ -456,7 +456,7 @@ function system_syslogd_start() {
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/pppoe.log\n";
 		$syslogconf .= "!l2tp\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
-			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/l2pp.log\n";
+			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/l2tp.log\n";
 		$syslogconf .= "!racoon\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= "*.*					 {$log_directive}{$g['varlog_path']}/ipsec.log\n";

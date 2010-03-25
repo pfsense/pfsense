@@ -174,34 +174,29 @@ $sigchk = 0;
 if(!isset($curcfg['alturl']['enable']))
 	$sigchk = verify_digital_signature("{$g['upload_path']}/latest.tgz");
 
-if ($sigchk == 1)
+$exitstatus = 0;
+if ($sigchk == 1) {
 	$sig_warning = "The digital signature on this image is invalid.";
-else if ($sigchk == 2)
+	$exitstatus = 1;
+} else if ($sigchk == 2) {
 	$sig_warning = "This image is not digitally signed.";
-else if (($sigchk >= 3)) {
+	if (!isset($config['system']['firmware']['allowinvalidsig']))
+		$exitstatus = 1;
+} else if (($sigchk >= 3)) {
 	$sig_warning = "There has been an error verifying the signature on this image.";
-	update_status($sig_warning);
+	$exitstatus = 1;
+}
+
+if ($exitstatus) {
+        update_status($sig_warning);
         update_output_window("Update cannot continue");
 	require("fend.inc");
         exit;
-}
+} else if ($sigchk == 2)
+        update_output_window("\nrImage has no signature but the system configured to allow unsigned images.\n");
 
 if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {
 	update_status("The image file is corrupt.");
-	update_output_window("Update cannot continue");
-	if (file_exists("{$g['upload_path']}/latest.tgz")) {
-		conf_mount_rw();
-		unlink("{$g['upload_path']}/latest.tgz");
-		conf_mount_ro();
-	}
-	require("fend.inc");
-	exit;
-}
-
-if ($sigchk == 2 && isset($config['system']['firmware']['allowinvalidsig']))
-	update_output_window("\nrImage has no signature but the system configured to allow unsigned images.\n");
-else if ($sigchk) {
-	update_status($sig_warning);
 	update_output_window("Update cannot continue");
 	if (file_exists("{$g['upload_path']}/latest.tgz")) {
 		conf_mount_rw();

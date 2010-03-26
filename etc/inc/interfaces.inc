@@ -1955,7 +1955,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 	}  else {
-		$mac = get_interface_mac(get_real_interface(get_real_interface($wancfg['if'])));
+		$mac = get_interface_mac(get_real_interface($wancfg['if']));
 		if($mac == "ff:ff:ff:ff:ff:ff") {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.

@@ -40,7 +40,7 @@
 ##|*IDENT=page-system-advanced-sysctl
 ##|*NAME=System: Advanced: Tunables page
 ##|*DESCR=Allow access to the 'System: Advanced: Tunables' page.
-##|*MATCH=system_advanced-sysctrl.php*
+##|*MATCH=system_advanced-sysctl.php*
 ##|-PRIV
 
 require("guiconfig.inc");

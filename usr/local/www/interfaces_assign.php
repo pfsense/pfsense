@@ -127,12 +127,11 @@ if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry
 
 /* add PPP interfaces */
 if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-	$i = 0;
 	foreach ($config['ppps']['ppp'] as $ppp) {
-		$portname = 'ppp_' . basename($ppp['port']);
+		$portname = "ppp{$ppp['pppid']}";
+		log_error("portname = " . $portname);
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
-		$i++;
 	}
 }
 
@@ -202,9 +201,10 @@ if ($_POST['apply']) {
 						$reloadif = true;
 					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
-					if (preg_match('/^ppp_(.+)$/', $ifport, $matches)) {
+					if (preg_match('/^ppp[0-9]+/',$ifport)){
+						$config['interfaces'][$ifname]['serialport'] =  basename($portlist[$ifport]['port']);
 						$config['interfaces'][$ifname]['pointtopoint'] = true;
-						$config['interfaces'][$ifname]['serialport'] = $matches[1];
+						$config['interfaces'][$ifname]['ipaddr'] = "ppp";
 					} else {
 						unset($config['interfaces'][$ifname]['pointtopoint']);
 						unset($config['interfaces'][$ifname]['serialport']);
@@ -415,7 +415,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 				$descr .= " (" . $portinfo['descr'] . ")";
                         echo htmlspecialchars($descr);
 		} elseif ($portinfo['isppp']) {
-			$descr = "PPP {$portinfo['port']}";
+			$descr = "{$portname} {$portinfo['port']}";
 			if ($portinfo['descr'])
 				$descr .= " (" . $portinfo['descr'] . ")";
 			echo htmlspecialchars($descr);

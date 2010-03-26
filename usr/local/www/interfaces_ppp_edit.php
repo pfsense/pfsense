@@ -56,18 +56,19 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_ppps[$id]) {
 	$pconfig['port'] = $a_ppps[$id]['port'];
-	$pconfig['ap'] = $a_ppps[$id]['ap'];
-	$pconfig['initstr'] = $a_ppps[$id]['initstr'];
+	$pconfig['initstr'] = base64_decode($a_ppps[$id]['initstr']);
+	$pconfig['simpin'] = $a_ppps[$id]['simpin'];
+	$pconfig['pin-wait'] = $a_ppps[$id]['pin-wait'];
+	$pconfig['apn'] = $a_ppps[$id]['apn'];
+	$pconfig['apnum'] = $a_ppps[$id]['apnum'];
+	$pconfig['phone'] = $a_ppps[$id]['phone'];
 	$pconfig['username'] = $a_ppps[$id]['username'];
 	$pconfig['password'] = $a_ppps[$id]['password'];
-	$pconfig['gateway'] = $a_ppps[$id]['gateway'];
 	$pconfig['localip'] = $a_ppps[$id]['localip'];
+	$pconfig['gateway'] = $a_ppps[$id]['gateway'];
 	if (isset($a_ppps[$id]['defaultgw']))
 		$pconfig['defaultgw'] = true;
-	$pconfig['phone'] = $a_ppps[$id]['phone'];
-	$pconfig['dialcmd'] = base64_decode($a_ppps[$id]['dialcmd']);
-	$pconfig['connect-max-attempts'] = $a_ppps[$id]['connect-max-attempts'];
-	$pconfig['linespeed'] = $a_ppps[$id]['linespeed'];
+	$pconfig['connect-timeout'] = $a_ppps[$id]['connect-timeout'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
 }
 
@@ -94,11 +95,37 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$ppp = array();
+		if (isset($id))
+			$ppp['pppid'] = $id;
+		else
+			$ppp['pppid'] = count($a_ppps);
+			
 		$ppp['port'] = $_POST['port'];
-		$ppp['initstr'] = $_POST['initstr'];
-		$ppp['ap'] = $_POST['ap'];
+		if ($_POST['initstr'] <> "")
+			$ppp['initstr'] = base64_encode($_POST['initstr']);
+		else
+			unset($ppp['initstr']);
+			
+		if ($_POST['simpin'] <> "") {
+			$ppp['simpin'] = $_POST['simpin'];
+			$ppp['pin-wait'] = $_POST['pin-wait'];
+		} else {
+			unset($ppp['simpin']);
+			unset($ppp['pin-wait']);
+		}
+		
+		$ppp['apn'] = $_POST['apn'];
+		if ($ppp['apn'] <> ""){
+			if ($_POST['apnum'] <> "")
+				$ppp['apnum'] = $_POST['apnum'];
+			else
+				$ppp['apnum'] = "1";
+		} else {
+			unset($ppp['apn']);
+			unset($ppp['apnum']);
+		}
+		
 		$ppp['phone'] = $_POST['phone'];
-		$ppp['dialcmd'] = base64_encode($_POST['dialcmd']);
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = $_POST['password'];
 		$ppp['localip'] = $_POST['localip'];
@@ -107,8 +134,10 @@ if ($_POST) {
 			$ppp['defaultgw'] = true;
 		else
 			unset($ppp['defaultgw']);
-		$ppp['linespeed'] = $_POST['linespeed'];
-		$ppp['connect-max-attempts'] = $_POST['connect-max-attempts'];
+		if ($_POST['connect-timeout'] <> "")
+			$ppp['connect-timeout'] = $_POST['connect-timeout'];
+		else
+			unset($ppp['connect-timeout']);
 		$ppp['descr'] = $_POST['descr'];
 
 
@@ -119,7 +148,7 @@ if ($_POST) {
 
 		write_config();
 
-		interfaces_ppp_configure();
+		interface_ppp_configure(-1,true);
 
 		header("Location: interfaces_ppp.php");
 		exit;
@@ -139,25 +168,28 @@ include("head.inc");
 	</script>
 	<script type="text/javascript">
 	function prefill_att() {
-		$('dialcmd').value = '"ABORT BUSY ABORT NO\\\\sCARRIER TIMEOUT 5 \\"\\" AT OK-AT-OK ATQ0V1E1S0=0&C1&D2+FCLASS=0 OK \AT+CGDCONT=1,\\\\\\"IP\\\\\\",\\\\\\"ISP.CINGULAR\\\\\\" OK \\\\dATDT\\\\T \TIMEOUT 40 CONNECT"';
+		$('initstr').value = "Q0V1E1S0=0&C1&D2+FCLASS=0";
+		$('apn').value = "ISP.CINGULAR";
+		$('apnum').value = "1";
 		$('phone').value = "*99#";
 		$('username').value = "att";
 		$('password').value = "att";
-		$('linespeed').value = "921600";
 	}
 	function prefill_sprint() {
-		$('dialcmd').value = '"ABORT BUSY ABORT NO\\\\sCARRIER TIMEOUT 5 \\"\\" AT OK-AT-OK ATE1Q0 OK \\\\dATDT\\\\T TIMEOUT 40 CONNECT"';
+		$('initstr').value = "E1Q0";
+		$('apn').value = "";
+		$('apnum').value = "";
 		$('phone').value = "#777";
 		$('username').value = "sprint";
 		$('password').value = "sprint";
-		$('linespeed').value = "921600";
 	}
 	function prefill_vzw() {
-		$('dialcmd').value = '"ABORT BUSY ABORT NO\\\\sCARRIER TIMEOUT 5 \\"\\" AT OK-AT-OK ATE1Q0s7=60 OK \\\\dATDT\\\\T TIMEOUT 40 CONNECT"';
+		$('initstr').value = "E1Q0s7=60";
+		$('apn').value = "";
+		$('apnum').value = "";
 		$('phone').value = "#777";
 		$('username').value = "123@vzw3g.com";
 		$('password').value = "vzw";
-		$('linespeed').value = "921600";
 	}
 	</script>
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -192,32 +224,47 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Link Type</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="defaultgw" name="defaultgw" <?php if (isset($pconfig['defaultgw'])) echo "checked"; ?>>This link will be used as default gateway.
+				<input type="checkbox" value="on" id="defaultgw" name="defaultgw" <?php if (isset($pconfig['defaultgw'])) echo "checked"; ?>>This link will be used as the default gateway.
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Init String</td>
 			<td width="78%" class="vtable">
 				<textarea id="initstr" name="initstr"><?=htmlspecialchars($pconfig['initstr']);?></textarea>
-				<br><span class="vexpl">Enter the modem initialization string here</span>
+				<br><span class="vexpl">Note: Enter the modem initialization string here. Do NOT include the "AT" string at the beginning of the command.</span>
 			</td>
 		</tr>
  		<tr>
- 		  <td width="22%" valign="top" class="vncell">AP Hostname</td>
+ 		  <td width="22%" valign="top" class="vncell">Sim PIN</td>
  		  <td width="78%" class="vtable">
- 		    <input name="ap" type="text" class="formfld unknown" id="ap" size="40" value="<?=htmlspecialchars($pconfig['ap']);?>">
+ 		    <input name="simpin" type="text" class="formfld unknown" id="simpin" size="12" value="<?=htmlspecialchars($pconfig['simpin']);?>">
+ 		</td>
+ 		</tr>
+  		<tr>
+ 		  <td width="22%" valign="top" class="vncell">Sim PIN wait</td>
+ 		  <td width="78%" class="vtable">
+ 		    <input name="pin-wait" type="text" class="formfld unknown" id="pin-wait" size="2" value="<?=htmlspecialchars($pconfig['pin-wait']);?>">
+ 		    <br><span class="vexpl">Note: Time to wait for SIM to discover network after PIN is sent to SIM (seconds).</span>
  		</td>
  		</tr>
  		<tr>
- 		  <td width="22%" valign="top" class="vncell">Dial command</td>
+ 		  <td width="22%" valign="top" class="vncell">Access Point Name (APN)</td>
  		  <td width="78%" class="vtable">
-			<textarea rows="4" cols="65" name="dialcmd" id="dialcmd"><?=htmlspecialchars($pconfig['dialcmd']);?></textarea>
- 		  </td>
+ 		    <input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>">
+ 		</td>
+ 		</tr>
+ 		<tr>
+ 		  <td width="22%" valign="top" class="vncell">APN number (optional)</td>
+ 		  <td width="78%" class="vtable">
+ 		    <input name="apnum" type="text" class="formfld unknown" id="apnum" size="2" value="<?=htmlspecialchars($pconfig['apnum']);?>">
+ 		    <br><span class="vexpl">Note: Defaults to 1 if you set APN above. Ignored if you set no APN above.</span>
+ 		</td>
  		</tr>
  		<tr>
  		  <td width="22%" valign="top" class="vncell">Phone Number</td>
  		  <td width="78%" class="vtable">
  		    <input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>">
+ 		    <br><span class="vexpl">Note: Typically (*99# or *99***# or *99***1#) for GSM networks and *777 for CDMA networks</span>
  		  </td>
  		</tr>
 		<tr>
@@ -236,33 +283,29 @@ include("head.inc");
  		  <td width="22%" valign="top" class="vncell">Local IP</td>
  		  <td width="78%" class="vtable">
 			<input name="localip" type="text" class="formfld unknown" id="localip" size="40" value="<?=htmlspecialchars($pconfig['localip']);?>">
-			<span><p>Note: Enter your IP address here if it is not automatically assigned.</span>
+			<br><span class="vexpl">Note: Enter your IP address here if it is not automatically assigned.</span>
  		  </td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncell">Remote IP</td>
+			<td width="22%" valign="top" class="vncell">Remote IP (Gateway)</td>
 			<td width="78%" class="vtable">
 				<input name="gateway" type="text" class="formfld unknown" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
-				<span><p>Note: Enter the remote IP here if not automatically assigned. This is where the packets will be routed, equivalent to the gateway.</span>
+				<br><span class="vexpl">Note: Enter the remote IP here if not automatically assigned. This is where the packets will be routed.</span>
 			</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncell">Line Speed</td>
-			<td width="78%" class="vtable">
-				<input name="linespeed" type="text" class="formfld unknown" id="linespeed" size="40" value="<?=htmlspecialchars($pconfig['linespeed']);?>">
-			</td>
-		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncell">Maximum connection retry</td>
+			<td width="22%" valign="top" class="vncell">Connection Timeout</td>
 			<td width="78%" class="vtable">
-				<input name="connect-max-attempts" type="text" class="formfld unknown" id="connect-max-attempts" size="2" value="<?=htmlspecialchars($pconfig['connect-max-attempts']);?>">
+				<input name="connect-timeout" type="text" class="formfld unknown" id="connect-timeout" size="2" value="<?=htmlspecialchars($pconfig['connect-timeout']);?>">
+				<br><span class="vexpl">Note: Enter timeout in seconds for connection to be established (sec.) Default is 45 sec.</span>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Description</td>
 			<td width="78%" class="vtable">
 				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-				<br> <span class="vexpl">You may enter a description here for your reference (not parsed).</span>
+				<br><span class="vexpl">You may enter a description here for your reference (not parsed).</span>
 			</td>
 		</tr>
 		<tr>

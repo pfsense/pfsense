@@ -67,7 +67,7 @@ if ($_GET['act'] == "del") {
 	} else {
 		unset($a_ppps[$_GET['id']]);
 		write_config();
-		interfaces_ppp_configure();
+		interface_ppp_configure(-1);
 		header("Location: interfaces_ppp.php");
 		exit;
 	}
@@ -103,12 +103,15 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
+                  <td width="10%" class="listhdrr">PPP Port</td>
                   <td width="20%" class="listhdrr">Serial Port</td>
-                  <td width="50%" class="listhdr">Description</td>
+                  <td width="40%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
                 <tr  ondblclick="document.location='interfaces_ppp_edit.php?id=<?=$i;?>'">
+                  <td class="listr">ppp<?=htmlspecialchars($ppp['pppid']);?>
+                  </td>
                   <td class="listr">
 					<?=htmlspecialchars($ppp['port']);?>
                   </td>
@@ -120,7 +123,7 @@ include("head.inc");
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="2">&nbsp;</td>
+                  <td class="list" colspan="3">&nbsp;</td>
                   <td class="list"> <a href="interfaces_ppp_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>

@@ -143,17 +143,19 @@ include("head.inc");
 				<a href="status_interfaces.php?action=Disconnect&if=<?php echo $ifdescr; ?>">
 				<input type="button" name="<?php echo $ifdescr; ?>" value="Disconnect" class="formbtns">
 			<?php else: ?>
-				<a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
-				<input type="button" name="<?php echo $ifdescr; ?>" value="Connect" class="formbtns">
+				<?php if (!$ifinfo['missing_device']): ?>
+					<a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
+					<input type="button" name="<?php echo $ifdescr; ?>" value="Connect" class="formbtns">
+				<?php endif; ?>
 			<?php endif; ?>
 			</a>
 		</td>
 	</tr>
 	<?php  endif; if ($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated']): ?>
 	<tr>
-                <td width="22%" class="vncellt">PPP uptime</td>
+                <td width="22%" class="vncellt">PPP uptime (historical)</td>
                 <td width="78%" class="listr">
-                        <?=htmlspecialchars($ifinfo['ppp_uptime']);?>Previous Sessions:&nbsp;<?=htmlspecialchars($ifinfo['ppp_uptime_accumulated']);?>&nbsp;&nbsp;
+			<span id="uptime"><?=htmlspecialchars($ifinfo['ppp_uptime']);?></span><span id="uptime_hist"> (<?=htmlspecialchars($ifinfo['ppp_uptime_accumulated']);?>)</span>&nbsp;&nbsp;
                 </td>
         </tr>
 	<?php  endif; if ($ifinfo['macaddr']): ?>

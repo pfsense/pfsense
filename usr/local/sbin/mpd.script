@@ -1,0 +1,1629 @@
+#################################################################
+#
+# $Id: mpd.script.sample,v 1.9 2009/10/04 19:36:04 amotin Exp $
+#
+# Copyright (c) 1995-1999 Whistle Communications, Inc. All rights reserved.
+# See ``COPYRIGHT.whistle''
+#
+#################################################################
+
+##
+## MPD Modem script variables:
+##
+##  $DialPrefix		Modem dialing prefix (eg. "DT")
+##  $Telephone		Telephone number to dial (not duplicated using &)
+##  $ConnectTimeout	Wait-for-connect timeout, in seconds (default 45 secs)
+##  $SpeakerOff		Set to "yes" to quiet modem speakers
+##  $Serial230K		If "yes", we can support 230K serial port speed
+##  $CountryCode	Country code for Winmodem
+##  $InitString		External initialization string
+##  $LoginScript	If "yes", look for script login
+##
+## pfSense specific variables:
+##	$APN			Access Point (host)Name for 3G connections
+##	$APNum			Access Point Number, typically "1", might not matter
+##	$SimPin			SIM card PIN number
+##	$PinWait		Wait for SIM to connect to network after PIN entered
+##
+## ISDN Terminal Adapter specific variables (all start with "TA_"):
+##
+##  $TA_Bonding		Bonding on TA: "yes" or "no"
+##  $TA_NoDoubleTelno	When $TA_Bonding, don't double the dialed number
+##  $TA_56K		Restrict to 56K on TA: "yes" or "no"
+##  $TA_VoiceCall	Originate calls using voice mode
+##  $TA_AuthChap	Tell TA to use CHAP: "yes" or "no"
+##  $TA_Dirno1		TA directory #1
+##  $TA_Dirno2		TA directory #2
+##  $TA_SPID1		SPID #1
+##  $TA_SPID2		SPID #2
+##  $TA_SwitchType	One of these values
+##				"NI-1"
+##				"DMS-100"
+##				"5ESS P2P"
+##				"5ESS MP"
+##  $TA_NewSwitch	Means the switch type is new, initiate auto-detect
+##			(3Com Impact IQ only)
+##
+## We set $OptimizeNextTime to "yes" after a successful connection so we
+## can avoid verifing configuration when things are working good.
+##
+## Internal variables:
+##
+##  $ModemSetupFunc	Routine to set up modem for dialing out
+##  $ModemAnsSetupFunc	Routine to set up modem for answer mode (if different)
+##  $ModemDetectRing	Routine to detect an incoming call for ringback
+##  $ModemIsAnalog	If "yes" modem is analog (ie, not terminal adapter)
+##
+
+#################################################################
+#
+#	MODEM DIALING
+#
+#################################################################
+
+DialPeer:
+	set $CallingID ""
+	set $CalledID $Telephone
+	if $Telephone == "00000" goto DialNullModem
+	set $optimize $OptimizeNextTime
+	set $OptimizeNextTime "no"
+
+	if $optimize == "yes" goto DialPeer2
+	call ModemFind
+	if $ErrorMsg == "" goto DialPeer1
+	log $ErrorMsg
+	failure
+DialPeer1:
+	set $ModTelephone $Telephone
+	call ModemIdent
+	if $ModemDescription != "" goto DialPeer2
+	log "The modem is not responding."
+	failure
+
+DialPeer2:
+	log "Detected $ModemDescription."
+	call $ModemSetupFunc
+	if $SimPin != "" goto DialPeerSetPin
+	if $APN != "" goto DialPeerSetAPN
+	log "Dialing server at $Telephone..."
+	call ModemDial
+	if $dialResult == "OK" goto DialPeerOK
+	set $optimize "no"
+	failure
+
+DialPeerOK:
+	if $ConnectionSpeed == "" log "Connected at an unknown speed."
+	if $ConnectionSpeed == "" goto DialPeer3
+	log "Connected at $ConnectionSpeed."
+DialPeer3:
+	if $LoginScript == "yes" call AutoLogin
+	set $OptimizeNextTime "yes"
+	success
+
+DialPeerSetPin:
+	set $modemCmd "+CPIN=$SimPin"
+	call ModemCmd2
+	wait $ConnectTimeout
+	return
+
+DialPeerSetAPN:
+	set $modemCmd "+CGDCONT=$APNum,\"IP\",\"$APN\""
+	call ModemCmd2
+	return
+	
+# Null-modem connection
+DialNullModem:
+	log "Connected via null modem connection."
+	success
+
+##
+## Dial modem
+##
+## Variables:
+##
+##  $DialPrefix		Modem dialing prefix (eg. "DT")
+##  $ModTelephone	Telephone number to dial
+##  $ConnectTimeout	Wait-for-connect timeout, in seconds (default 45 secs)
+##  $noDialToneSubr	(optional) Subroutine to call if NO DIALTONE
+##  $dialErrorSubr	(optional) Subroutine to call if ERR
+##
+## Returns:
+##
+##  $dialResult		"OK" or "FAIL"
+##  $ConnectionSpeed	Connection speed reported by modem (possibly empty)
+##
+
+ModemDial:
+	set $dialResult "FAIL"
+	set $ConnectionSpeed ""
+	if $ConnectTimeout == "" set $ConnectTimeout 45
+	print "AT${DialPrefix}${ModTelephone}\r\n"
+	match "NO CARRIER" DialAbortNoCar
+	match "NO DIAL" DialAbortNoDial
+	match "BUSY" DialAbortBusy
+	regex "CONNECT *([0-9]*).*$" DialConnect
+	match "ERR" DialError
+	wait $ConnectTimeout
+	log "No response from the modem after dialing."
+	return
+DialAbortNoCar:
+	log "The remote modem did not answer."
+	return
+DialAbortNoDial:
+	if $noDialToneSubr != "" goto $noDialToneSubr
+	log "No dialtone. Is the modem plugged in?"
+	return
+DialError:
+	if ${ModTelephone} != "" goto DialErrorInit
+	log "Invalid empty telephone number."
+	return
+DialErrorInit:
+	if $dialErrorSubr != "" goto $dialErrorSubr
+	log "Invalid dial init string."
+	return
+DialAbortBusy:
+	log "The line was busy."
+	return
+DialConnect:
+	set $ConnectionSpeed $matchedString1
+	set $dialResult "OK"
+	return
+
+#################################################################
+#
+#	MODEM ANSWERING
+#
+#################################################################
+
+##
+## This is an idle script that waits for an incoming call and answers it
+##
+## Variables:
+##
+##  $RingTimeout	How long to wait for a RING before giving up
+##  $ConnectTimeout	Wait-for-connect timeout, in seconds (default 45 secs)
+##
+
+AnswerCall:
+	set $CallingID ""
+	set $CalledID ""
+	set $optimize $OptimizeNextTime
+	set $OptimizeNextTime "no"
+
+# Skip modem detection if we connected successfully last time
+
+	if $optimize == "yes" goto AnswerCall2
+	call ModemFind
+	if $ErrorMsg == "" goto AnswerCall0
+	log $ErrorMsg
+	failure
+AnswerCall0:
+	call ModemIdent
+	if $ModemDescription != "" goto AnswerCall1
+	log "The modem is not responding."
+	failure
+AnswerCall1:
+	log "Detected $ModemDescription."
+
+AnswerCall2:
+	if $ModemAnsSetupFunc == "" set $ModemAnsSetupFunc $ModemSetupFunc
+	call $ModemAnsSetupFunc
+	log "Waiting for ring..."
+	call ModemAnswer
+	if $answerReturn == "OK" goto AnswerCallOK
+	set $IdleResult ""
+	set $optimize "no"
+	failure
+
+AnswerCallOK:
+	log "Connected at $ConnectionSpeed."
+	set $OptimizeNextTime "yes"
+	set $IdleResult "answer"
+	success
+
+#################################################################
+#
+#	MODEM RINGBACK
+#
+#################################################################
+
+##
+## This is an idle script that implements the ringback feature.
+## When we're idle, and we detect an incoming call, then call back
+## to bring up the link. For analog modems, we have to wait until
+## the ringing stops before dialing back (otherwise we'd answer the
+## call, which we don't want to do).
+##
+## Variables:
+##
+##  $RingbackTimeout	How long before giving up (reset and try again).
+##			Default: 60 minutes
+##  $RingStoppedTime	Max time between consecutive "RING"s (if analog)
+##			Default: 8 seconds
+##
+
+Ringback:
+	set $CallingID ""
+	set $CalledID ""
+	if $RingbackTimeout == "" set $RingbackTimeout "3600"
+	if $RingStoppedTime == "" set $RingStoppedTime "8"
+	set $ModemDetectRing RingbackWait
+	call ModemFind
+	if $ErrorMsg == "" goto Ringback1
+	log $ErrorMsg
+	failure
+Ringback1:
+	call ModemIdent
+	if $ModemDescription != "" goto Ringback2
+	log "The modem is not responding."
+	failure
+
+Ringback2:
+	log "Detected $ModemDescription."
+	goto $ModemDetectRing
+
+# Detect an incoming call by waiting for a "RING" indication
+# On an analog modem, we have to wait for the ringing to stop
+
+RingbackWait:
+	match "RING\r\n" RingbackGotRings
+	log "Remote Dial-Back mode enabled; waiting for incoming call."
+	wait $RingbackTimeout
+	failure
+
+# We saw it ring; wait for the ringing to stop (analog modems only).
+
+RingbackGotRings:
+	log "Incoming call detected..."
+	if $ModemIsAnalog != "yes" goto RingbackDone
+RingbackWaitStop:
+	match "RING\r\n" RingbackWaitStop
+	wait $RingStoppedTime
+RingbackDone:
+	set $IdleResult "ringback"
+	success
+
+# Strip leading and trailing spaces and log calling party number
+
+RingbackDetectCID:
+	if $cid match " *(.*) *" nop
+	set $cid $matchedString1
+	if $cid == "" goto RingbackDetectNoCID
+	log "Incoming call detected from $cid..."
+	success
+
+# We couldn't determine calling party number
+
+RingbackDetectNoCID:
+	log "Incoming call detected..."
+	success
+
+#################################################################
+#
+#	MODEM IDENTIFICATION
+#
+#################################################################
+
+##
+## Identify
+##
+## This is meant to be called from the top level, to just identify
+## what's on the serial port and print out some info about it.
+##
+
+Identify:
+	call ModemFind
+	if $ErrorMsg == "" goto Identify1
+	failure
+Identify1:
+	call ModemIdent
+	if $ModemDescription == "" failure
+	log "ANALOG=$ModemIsAnalog"
+	log "DESCRIPTION=$ModemDescription"
+	success
+
+##
+## ModemIdent
+##
+## This identifies the type of modem and sets these variables accordingly:
+##
+##	$ModemDescription
+##	$ModemSetupFunc
+##	$ModemAnsSetupFunc
+##	$ModemDetectRing
+##	$ModemIsAnalog
+##
+## If no response seen, this sets $ModemDescription to the empty string.
+##
+
+ModemIdent:
+	set $ModemDescription ""
+	set $ModemSetupFunc ""
+	set $ModemAnsSetupFunc ""
+	set $ModemDetectRing ""
+	set $ModemIsAnalog "yes"
+	if $InitString != "" goto ModemIdentCustom
+	print "ATI\r\n"
+	match "ADTRAN EXPRESS XR" ModemIdentAdtranXRT
+	match "Model: Ovation MC950D Card" ModemIdentMC950D
+	match "C885" ModemIdentC885
+	match "ERR" ModemIdentGeneric
+	match "OK\r\n" ModemIdentGeneric
+	wait 3
+	print "ATI8\r\n"
+	match "BitSURFR PRO\r" ModemIdentBitsurfr
+	match "BitSURFR PRO EZ" ModemIdentBitsurfrEZ
+	match "3C882" ModemIdentImpactIQ
+	match "ERR"
+	match "OK\r\n"
+	wait 3
+	print "ATI3\r\n"
+	match "Courier" ModemIdentUsr
+	match "Sportster" ModemIdentUsr
+	match "3ComImpact IQ" ModemIdentImpactIQ
+	match "U.S. Robotics 56K" ModemIdentUsr
+	match "ZOOM V.90" ModemIdentZoom56
+	match "LT V.90" ModemIdentLucent
+	match "ERR"
+	match "OK\r\n"
+	wait 3
+	print "ATI4\r\n"
+	match "AtermIT NEC Corporation" ModemIdentAterm
+	match "INSMATEV-7 NTT Corporation" ModemIdentAterm
+	match "MNP Class 10 V.34 Modem" ModemIdentDeskPorte
+	match "Smart One 56" ModemIdentSmartOne
+	match "ERR"
+	match "OK\r\n"
+	wait 3
+	print "ATI1\r\n"
+	match "NTK omni.net" ModemIdentNTK
+	match "ERR" ModemIdentGeneric
+	match "OK\r\n" ModemIdentGeneric
+	wait 3
+	log "The modem is not responding."
+	failure
+
+ModemIdentGeneric:
+	set $ModemDescription "Hayes compatible modem"
+	set $ModemSetupFunc GenericSetup
+	return
+
+ModemIdentCustom:
+	set $ModemDescription "Custom modem"
+	set $ModemSetupFunc CustomSetup
+	return
+
+ModemIdentUsr:
+	set $SportsterHack "no"
+	if $matchedString == "Sportster" set $SportsterHack "yes"
+	set $ModemDescription "USR $matchedString modem"
+	call GetOK
+	set $ModemSetupFunc UsrSetup
+	return
+ModemIdentC885:
+	set $ModemDescription "Sierra Wireless Compass $matchedString USB 3G modem"
+	set $ModemSetupFunc GenericSetup
+	return
+ModemIdentMC950D:
+	set $ModemDescription "Novatel Wireless $matchedString USB 3G modem"
+	set $ModemSetupFunc GenericSetup
+	return
+ModemIdentBitsurfrEZ:
+	set $bitsEZ "yes"
+ModemIdentBitsurfr:
+	set $ModemDescription "Motorola $matchedString"
+	call GetOK
+	set $ModemSetupFunc BitsurfrSetup
+	set $ModemIsAnalog "no"
+	set $ModemDetectRing BitsurfrDetectRing
+	return
+
+ModemIdentImpactIQ:
+	set $matchedString "3ComImpact IQ"
+	set $ModemDescription "$matchedString"
+	call GetOK
+	set $ModemSetupFunc ImpactIQSetup
+	set $ModemIsAnalog "no"
+	set $ModemDetectRing ImpactIQDetectRing
+	return
+
+ModemIdentAdtranXRT:
+	set $ModemDescription "AdTran Express XR/XRT"
+	call GetOK
+	set $ModemSetupFunc AdtranXRTSetup
+	set $ModemIsAnalog "no"
+	return
+
+ModemIdentAterm:
+	set $ModemDescription "NEC Aterm TA"
+	call GetOK
+	set $ModemSetupFunc AtermSetup
+	set $ModemIsAnalog "no"
+	return
+
+ModemIdentNTK:
+	set $ModemDescription "$matchedString"
+	call GetOK
+	set $ModemSetupFunc NTKSetup
+	set $ModemIsAnalog "no"
+	return
+
+ModemIdentDeskPorte:
+	set $ModemDescription "$matchedString"
+	call GetOK
+	set $ModemSetupFunc DeskPorteSetup
+	return
+
+ModemIdentZoom56:
+ModemIdentSmartOne:
+	set $ModemDescription "$matchedString"
+	call GetOK
+	set $ModemSetupFunc Modem56Setup
+	return
+
+# Support the Lucent Winmodem, Xircom 56k
+ModemIdentLucent:
+	set $ModemDescription "$matchedString"
+	call GetOK
+	set $ModemSetupFunc ModemLucentSetup
+	return
+
+#################################################################
+#
+#	GENERIC MODEM SETUP
+#
+#################################################################
+
+GenericSetup:
+	set $noDialToneSubr GenericNoDialtone
+	set $temp "M1"
+	if $SpeakerOff == "yes" set $temp "M0"
+	set $modemCmd "&F&C1&D2E0S0=0${temp}"
+	call ModemCmd2
+	return
+
+CustomSetup:
+	set $noDialToneSubr GenericNoDialtone
+	set $modemCmd "${InitString}"
+	call ModemCmd2
+	return
+
+GenericNoDialtone:
+	log "No dialtone. Is the modem plugged in?"
+	return
+
+#################################################################
+#
+#	USR MODEM SETUP
+#
+#################################################################
+
+UsrSetup:
+# Lower baudrate to 57600 for crappy internal Sportster modem
+	if $SportsterHack != "yes" goto UsrSetup2
+	if $modemDevice != "/dev/cuad2" goto UsrSetup2
+	set $Baudrate 57600
+	set $modemCmd ""
+	call ModemCmd2
+UsrSetup2:
+	set $noDialToneSubr GenericNoDialtone
+	set $temp "M1"
+	if $SpeakerOff == "yes" set $temp "M0"
+	set $modemCmd "&F1&C1&D2E0S0=0S13.0=1L0S6=5${temp}"
+	call ModemCmd2
+	return
+
+#################################################################
+#
+#	GENERAL 56K MODEM SETUP
+#
+#################################################################
+
+Modem56Setup:
+	set $noDialToneSubr GenericNoDialtone
+	set $temp "M1"
+	if $SpeakerOff == "yes" set $temp "M0"
+	set $modemCmd "&FL2W2E0${temp}"
+	call ModemCmd2
+	return
+
+#################################################################
+#
+#	LUCENT WINMODEM AND XIRCOM 56K SETUP
+#
+#################################################################
+
+ModemLucentSetup:
+	set $noDialToneSubr GenericNoDialtone
+	set $temp "M1"
+	if $SpeakerOff == "yes" set $temp "M0"
+	set $tempCountryCode ""
+	if $CountryCode != "" set $tempCountryCode "+GCI=${CountryCode}"
+	if $CountryCode != "" log "Use country ${CountryCode}"
+	set $modemCmd "&FL2W2E0${temp}${tempCountryCode}"
+	call ModemCmd2
+	return
+
+#################################################################
+#
+#	BITSURFR PRO AND BITSURFR PRO EZ SETUP
+#
+#################################################################
+
+BitsurfrSetup:
+	set $noDialToneSubr BitsurfrNoDialtone
+	set $factory "1"
+	if $bitsEZ == "yes" set $factory "0"
+	set $modemCmd "Z&F${factory}&C1&D2E0W1X2%A2=95S0=0"
+	call ModemCmd2
+
+# Set to 230K baud if we support it
+
+	if $bitsEZ != "yes" goto BitsurfrSetup1
+	set $modemCmd "@P2=230400"
+	set $newBaudrate "230400"
+	call SetBaudrate
+
+# Check software revision and ISDN settings
+
+BitsurfrSetup1:
+	if $optimize == "yes" goto BitsurfrSetup2
+	if $bitsEZ != "yes" call BitsurfrCheckRev
+	call BitsurfrCheckConfig
+
+# Set the PAP/CHAP, multi-link, and 56K/64K settings, and return
+
+BitsurfrSetup2:
+	set $authCmd "@M2=P"
+	if $TA_AuthChap == "yes" set $authCmd "@M2=C"
+	set $bondCmd "@B0=1"
+	if $TA_Bonding == "yes" set $bondCmd "@B0=2"
+	set $bearCmd "%A4=0"
+	if $TA_56K == "yes" set $bearCmd "%A4=1"
+	if $TA_VoiceCall == "yes" set $bearCmd "%A4=1"
+	set $voiceCmd "%A98=D%A96=0"
+	if $TA_VoiceCall == "yes" set $voiceCmd "%A98=S%A96=1"
+
+# BS PRO EZ changes
+
+	if $bitsEZ == "yes" set $authCmd "${authCmd}@M20=\"\""
+	set $modemCmd "$authCmd$bondCmd$bearCmd$voiceCmd"
+	call ModemCmd2
+	if $TA_NoDoubleTelno == "yes" return
+	if $TA_Bonding == "yes" set $ModTelephone "${Telephone}&${Telephone}"
+	return
+
+##
+## What to do when NO DIALTONE
+##
+
+BitsurfrNoDialtone:
+	log "ISDN initialization failed (or BitSURFR restarting). Please verify proper line connection and ISDN settings."
+	return
+
+##
+## BitsurfrCheckConfig
+##
+## Verify and adjust ISDN configuration as necessary
+##
+
+BitsurfrCheckConfig:
+	log "Checking the BitSURFR's ISDN configuration..."
+	set $valueChanged "no"
+
+# Check switch type
+
+	set $checkCmd "!C0"
+	set $checkValue "000"
+	set $checkValueNew "0"
+	if $TA_SwitchType == "DMS-100" set $checkValue "001"
+	if $TA_SwitchType == "DMS-100" set $checkValueNew "1"
+	if $TA_SwitchType == "NI-1" set $checkValue "002"
+	if $TA_SwitchType == "NI-1" set $checkValueNew "2"
+	set $checkMsg "Reprogramming switch type ($TA_SwitchType)..."
+	call ModemCheckValue
+
+	set $checkCmd "!C1"
+	set $checkValue "004"
+	set $checkValueNew "4"
+	if $TA_SwitchType == "DMS-100" set $checkValue "003"
+	if $TA_SwitchType == "DMS-100" set $checkValueNew "3"
+	if $TA_SwitchType == "5ESS P2P" set $checkValue "000"
+	if $TA_SwitchType == "5ESS P2P" set $checkValueNew "0"
+	if $TA_SwitchType == "5ESS MP" set $checkValue "001"
+	if $TA_SwitchType == "5ESS MP" set $checkValueNew "1"
+	set $checkMsg "Reprogramming switch software version..."
+	call ModemCheckValue
+
+# Check directory numbers
+
+	set $checkCmd "*1!N1"
+	set $checkValue $TA_Dirno1
+	set $checkValueNew $TA_Dirno1
+	set $checkMsg "Reprogramming voice line #1 directory number..."
+	call ModemCheckValue
+
+	set $checkCmd "*2!N1"
+	set $checkValue $TA_Dirno2
+	set $checkValueNew $TA_Dirno2
+	set $checkMsg "Reprogramming voice line #2 directory number..."
+	call ModemCheckValue
+	set $checkCmd "!N1"
+	set $checkMsg "Reprogramming data line directory number..."
+	call ModemCheckValue
+
+# Check SPIDs
+
+	set $checkCmd "*1!C6"
+	set $checkValue $TA_SPID1
+	set $checkValueNew $TA_SPID1
+	set $checkMsg "Reprogramming voice line #1 SPID..."
+	call ModemCheckValue
+
+	set $checkCmd "*2!C6"
+	set $checkValue $TA_SPID2
+	set $checkValueNew $TA_SPID2
+	set $checkMsg "Reprogramming voice line #2 SPID..."
+	call ModemCheckValue
+	set $checkCmd "!C6"
+	set $checkMsg "Reprogramming data line SPID..."
+	call ModemCheckValue
+
+# Restart if necessary
+
+	if $valueChanged == "no" return
+	log "Restarting BitSURFR Pro with new configuration..."
+	set $modemCmd ">W"
+	call ModemCmd2
+	set $modemCmd ">Z"
+	call ModemCmd2
+	failure
+
+##
+## Verify the BitSURFR's software revision. Only do this
+## once, the first time we try to dial.
+##
+
+BitsurfrCheckRev:
+	log "Checking the BitSURFR's software revision..."
+	print "ATI3\r\n"
+	match "-1A" BitsurfrCheckRevOld
+	match "-1B" BitsurfrCheckRevOld
+	match "-1C" BitsurfrCheckRevOld
+	match "-1D" BitsurfrCheckRevOld
+	match "-1E" BitsurfrCheckRevOld
+	match "-1F" BitsurfrCheckRevOld
+	match "-1G" BitsurfrCheckRevOld
+	match "-1H" BitsurfrCheckRevOld
+	match "-1I" BitsurfrCheckRevOld
+	match "OK\r\n" BitsurfrCheckRevOK
+	match "ERR"
+	wait 5
+	log "The BitSURFR did not properly answer ATI3."
+	failure
+BitsurfrCheckRevOK:
+	return
+BitsurfrCheckRevOld:
+	log "The BitSURFR Pro has an old software revision $matchedString. Please upgrade according to the manufacturer's instructions."
+	call GetOK
+	failure
+
+# This is how we detect an incoming call with a BitSURFR
+
+BitsurfrDetectRing:
+# First, we need to be properly configured
+	call BitsurfrSetup
+# Enable Caller-ID logging
+	set $modemCmd "@N0=1*1@N0=1*2@N0=1"
+	call ModemCmd
+	if $modemCmdResult != "OK" goto RingbackWait
+# A "RING" at any time is good enough
+	match ringset "RING\r\n" RingbackDone
+# Clear Caller-ID buffers
+	set $modemCmd "@L0*1@L0*2@L0"
+	call ModemCmd2
+# Read each buffer
+	call BitsurfrDetectReadCID
+	log "Remote Dial-Back mode enabled; waiting for incoming call."
+# Now wait indefinitely for one of those buffers to change
+BitsurfrDetectLoop:
+	wait 5
+	set $oldDataCID $dataCID
+	set $oldVoice1CID $voice1CID
+	set $oldVoice2CID $voice2CID
+	call BitsurfrDetectReadCID
+	if $oldDataCID != $dataCID goto BitsurfrDetectDone
+	if $oldVoice1CID != $voice1CID goto BitsurfrDetectDone
+	if $oldVoice2CID != $voice2CID goto BitsurfrDetectDone
+	goto BitsurfrDetectLoop
+
+# Examine the CID from each port
+BitsurfrDetectDone:
+	set $cid $dataCID
+	call BitsurfrDetectTryCID
+	set $cid $voice1CID
+	call BitsurfrDetectTryCID
+	set $cid $voice2CID
+	call BitsurfrDetectTryCID
+	goto RingbackDetectNoCID
+
+# Try to extract the calling party number
+BitsurfrDetectTryCID:
+# Strip the log number
+	if $cid match "[0-9] (.*)" set $cid $matchedString1
+# Check for various strings
+	if $cid match "BLOCKED" return
+	if $cid match "NO NUMBER" return
+	if $cid match "NO CID SERVICE" return
+	if $cid match "OUT OF AREA" return
+	goto RingbackDetectCID
+
+# Read Caller-ID buffers
+BitsurfrDetectReadCID:
+	set $modemCmd "@L1"
+	call ModemQueryStrip
+	set $dataCID $modemQuery
+	set $modemCmd "*1@L1"
+	call ModemQueryStrip
+	set $voice1CID $modemQuery
+	set $modemCmd "*2@L1"
+	call ModemQueryStrip
+	set $voice2CID $modemQuery
+	return
+
+#################################################################
+#
+#	3COM IMPACT IQ SETUP
+#
+#################################################################
+
+ImpactIQSetup:
+	set $noDialToneSubr ImpactIQNoDialtone
+	set $modemCmd "Z&F%C2E0"
+	call ModemCmd2
+
+# Set to 230K baud if we support it
+
+	set $modemCmd "$$B230400"
+	set $newBaudrate "230400"
+	call SetBaudrate
+
+# Check ISDN config and link status (XXX should we check revision too?)
+
+ImpactIQSetup1:
+	if $optimize == "yes" goto IQInitSetup2
+	call ImpactIQCheckConfig
+	call ImpactIQCheckLink
+
+# Now set the PAP/CHAP setting and voice/data originate mode setting
+
+IQInitSetup2:
+	set $authCmd "S84=1"
+	if $TA_AuthChap == "yes" set $authCmd "S84=0"
+	set $voiceCmd "S61=0"
+	if $TA_VoiceCall == "yes" set $voiceCmd "S61=1"
+	set $modemCmd "$authCmd$voiceCmd"
+	call ModemCmd2
+	if $TA_NoDoubleTelno == "yes" return
+	if $TA_Bonding == "yes" set $ModTelephone "${Telephone}&${Telephone}"
+	return
+
+##
+## What to do when NO DIALTONE
+##
+
+ImpactIQNoDialtone:
+	log "ISDN config problem (or modem restart). Check your ISDN switch type, directory numbers, and SPID settings."
+	return
+
+##
+## ImpactIQCheckLink
+##
+## Check the link status registers
+##
+
+ImpactIQCheckLink:
+	log "Checking the ISDN modem's link status..."
+	print "ATS59?\r\n"
+	match "000" IQSyncFail
+	match "001" IQSyncOK
+	match "ERR"
+	match "OK\r\n"
+	wait 3
+	call GetOK
+	log "The ISDN modem did not properly answer ATS59?"
+	failure
+IQSyncOK:
+	call GetOK
+	goto ImpactIQCheckInit
+IQSyncFail:
+	log "The ISDN modem is not receiving any ISDN signal. Please verify that it's connected to an ISDN line."
+	call GetOK
+	failure
+
+ImpactIQCheckInit:
+	set $impactInitReg "57"
+	call IQInitCheck
+	if $TA_Bonding == "yes" return
+	set $impactInitReg "58"
+	call IQInitCheck
+	return
+
+# A little subroutine
+
+IQInitCheck:
+	print "ATS${impactInitReg}?\r\n"
+	match "000" IQInitOK
+	match "001" IQInitOK
+	match "002" IQInitFail
+	match "ERR"
+	match "OK\r\n"
+	wait 3
+	call GetOK
+	log "The ISDN modem did not properly answer ATS${impactInitReg}?"
+	failure
+IQInitOK:
+	call GetOK
+	return
+IQInitFail:
+	log "ISDN initialization failed. Please check your ISDN switch type, directory numbers, and SPID settings."
+	call GetOK
+	failure
+
+##
+## ImpactIQCheckConfig
+##
+## Verify and adjust ISDN configuration as necessary
+##
+
+ImpactIQCheckConfig:
+	log "Checking the ISDN modem's ISDN configuration..."
+	set $valueChanged "no"
+
+# Check switch type XXX
+#
+# NOTE: The Impact IQ changes the value of this field as it auto-detects.
+# Not only that, but it cycles through each switch type as it is "trying
+# out" that type, so that reading this field is pretty much useless...
+# Our strategy is just to hope that auto-detect works!
+
+	if $TA_NewSwitch != "yes" goto ImpactIQCheckDirnos
+	log "Initiating switch type auto-detect..."
+	set $modemCmd "S50=0"
+	call ModemCmd2
+	set $TA_NewSwitch ""
+	set $valueChanged "yes"
+	set $iq_new_switch "yes"
+
+# Check directory numbers
+
+ImpactIQCheckDirnos:
+	set $checkCmd "S51"
+	set $checkValue $TA_Dirno1
+	set $checkValueNew $TA_Dirno1
+	set $checkMsg "Reprogramming line #1 directory number..."
+	call ModemCheckValue
+
+	set $checkCmd "S53"
+	set $checkValue $TA_Dirno2
+	set $checkValueNew $TA_Dirno2
+	set $checkMsg "Reprogramming line #2 directory number..."
+	call ModemCheckValue
+
+# Check SPIDs
+
+	set $checkCmd "S52"
+	set $checkValue $TA_SPID1
+	set $checkValueNew $TA_SPID1
+	set $checkMsg "Reprogramming line #1 SPID..."
+	call ModemCheckValue
+
+	set $checkCmd "S54"
+	set $checkValue $TA_SPID2
+	set $checkValueNew $TA_SPID2
+	set $checkMsg "Reprogramming line #2 SPID..."
+	call ModemCheckValue
+
+# Check 56K/64K setting
+
+	set $checkValue "064"
+	set $checkValueNew "64"
+	if $TA_56K == "yes" set $checkValue "056"
+	if $TA_56K == "yes" set $checkValueNew "56"
+	set $checkCmd "S60"
+	set $checkMsg "Reprogramming B channel data rate to ${checkValueNew}K..."
+	call ModemCheckValue
+	set $checkValueNew ""
+
+# Check Multi-link setting
+
+	set $checkValue "000"
+	set $checkValueNew "0"
+	if $TA_Bonding == "yes" set $checkValue "001"
+	if $TA_Bonding == "yes" set $checkValueNew "1"
+	set $checkCmd "S80"
+	set $checkMsg "Reprogramming mutli-link PPP setting..."
+	call ModemCheckValue
+
+# Restart if necessary, and wait extra long if the switch type changed
+
+	if $valueChanged == "no" return
+	log "Restarting ISDN modem with the new configuration..."
+	set $modemCmd "Z"
+	call ModemCmd2
+	failure
+
+##
+## Detect an incoming call with the 3Com
+##
+
+ImpactIQDetectRing:
+	call ImpactIQSetup
+	if $modemCmdResult != "OK" goto RingbackWait
+	match ringset "RING\r\n" RingbackDone
+# Clear Caller-ID buffers
+	set $modemCmd "\\N0"
+# We don't care if this command fails...
+	call ModemCmd
+# Read most recent incoming call
+	call ImpactIQDetectReadCID
+	log "Remote Dial-Back mode enabled; waiting for incoming call."
+# Now wait for a change
+ImpactIQDetectLoop:
+	wait 5
+	set $oldIncomingCall $incomingCall
+	call ImpactIQDetectReadCID
+	if $oldIncomingCall != $incomingCall goto ImpactIQDetectDone
+	goto ImpactIQDetectLoop
+
+# Examine the CID from each port
+ImpactIQDetectDone:
+	if $incomingCall !match "((.{14}).{10}) ((.{14}).{10}) ((.{14}).{10})" goto RingbackDetectNoCID
+	set $dataCID $matchedString2
+	set $voice1CID $matchedString4
+	set $voice2CID $matchedString6
+	set $cid $dataCID
+	call ImpactIQDetectTryCID
+	set $cid $voice1CID
+	call ImpactIQDetectTryCID
+	set $cid $voice2CID
+	call ImpactIQDetectTryCID
+	goto RingbackDetectNoCID
+
+# Look for a valid CID string
+ImpactIQDetectTryCID:
+	if $cid match " *" return
+	if $cid match " *N/A" return
+	goto RingbackDetectCID
+
+# Read first line of incoming call log (it's the 14th line of output)
+ImpactIQDetectReadCID:
+	set $modemCmd "\\N"
+	call ModemCmdSend
+	call ReadLine
+# Older version of the 3Com don't support this command
+	if $matchedString == "OK" return
+	if $matchedString match "ERR(O)?(R)?" return
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	call ReadLine
+	set $incomingCall $matchedString
+	call GetOK
+	return
+
+#################################################################
+#
+#	NEC ATERM SETUP
+#
+#################################################################
+
+AtermSetup:
+	if $AtermHardReset == "yes" goto AtermSetup2
+
+# Do hardware reset, which takes a while and doesn't give back "OK"
+
+	log "Initializing modem..."
+	print "ATZ98\r\n"
+	wait 6
+	set $AtermHardReset "yes"
+	failure
+
+AtermSetup2:
+
+# Set to 230K baud if we support it
+
+	set $modemCmd ""
+	set $newBaudrate "230400"
+	call SetBaudrate
+
+# Is this an IT55 or IT65?
+
+	set $atermIT65 ""
+	set $modemCmd "$$N14=0"
+	call ModemCmd
+	if $modemCmdResult == "OK" set $atermIT65 "yes"
+
+# Set normal stuff, PPP mode
+
+	set $modemCmd "&C1&D0&K3X4$$N1=1$$N9=0"
+	call ModemCmd2
+
+# Set the multi-link setting
+
+	set $bondCmd "$$N11=0"
+	if $TA_Bonding == "yes" set $bondCmd "$$N11=1"
+	set $modemCmd "$bondCmd"
+	call ModemCmd2
+
+# Additional settings for the IT65 go here...
+
+	if $atermIT65 != "yes" return
+	return
+
+#################################################################
+#
+#	MICROCOM DESKPORTE SETUP
+#
+#################################################################
+
+DeskPorteSetup:
+	set $noDialToneSubr GenericNoDialtone
+	set $temp "M1"
+	if $SpeakerOff == "yes" set $temp "M0"
+	set $modemCmd "Z&F&C1&D2X3E0S0=0${temp}"
+	call ModemCmd2
+	return
+
+#################################################################
+#
+#	KOREAN TERMINAL ADAPTER SETUP
+#
+#################################################################
+
+NTKSetup:
+	set $noDialToneSubr GenericNoDialtone
+	set $modemCmd "ZB40&J3"
+	call ModemCmd2
+	return
+
+#################################################################
+#
+#	ADTRAN EXPRESS XRT SETUP
+#
+#################################################################
+
+AdtranXRTSetup:
+	set $noDialToneSubr ImpactIQNoDialtone
+	set $dialErrorSubr AdtranXRTDialError
+	set $bonding "&F1"
+	if $TA_Bonding == "yes" set $bonding "&F2"
+	set $chap "S118=0"
+	if $TA_AuthChap == "yes" set $chap "S118=32"
+	set $origCmd "S53=3"
+	if $TA_56K == "yes" set $origCmd "S53=2"
+	if $TA_VoiceCall == "yes" set $origCmd "S53=0"
+	set $modemCmd "ZE0${bonding}&C1&D2${chap}${origCmd}"
+	call ModemCmd2
+
+# Check ISDN config and link status (XXX should we check revision too?)
+
+	if $optimize == "yes" return
+	call AdtranXRTCheckConfig
+	call AdtranXRTCheckLink
+	return
+
+##
+## What to do when ERROR when dialing
+##
+## This is what the Adtran returns if the line is not ready yet.
+## So we look into the status buffer to see if we recognize the
+## error condition.
+##
+
+AdtranXRTDialError:
+	call AdtranXRTDiagnose
+	failure
+
+##
+## Check the last status bufffer entry for what the problem is
+## XXX Figure out more stuff to look for and when it can happen
+##
+
+AdtranXRTDiagnose:
+	log "Checking the Adtran status buffer..."
+	print "AT!S\r\n"
+	match "\r\n\r\n" AdtranXRTDiagBlank
+	match "END OF STATUS BUFFER" AdtranXRTDiagBlank
+	match "L1 not up." AdtranXRTDiagL1
+	match "FACILITY_NOT_SUBSCRIBED" AdtranXRTDiagFNS
+	match "Unknown AT cmd" IQSyncOK
+	match "ERR"
+	match "OK\r\n"
+	wait 3
+	call GetOK
+	log "The ISDN modem did not properly answer ATS59?"
+	failure
+	goto ImpactIQCheckInit
+
+AdtranXRTDiagFNS:
+	log "ISDN initialization failed. Please check your ISDN switch type, directory numbers, and SPID settings."
+	failure
+
+AdtranXRTDiagL1:
+	log "The ISDN modem is not receiving any ISDN signal. Please verify that it's connected to an ISDN line."
+	failure
+
+AdtranXRTDiagBlank:
+	log "ISDN initialization failed or restarting link. Please verify proper line connection and ISDN settings."
+	failure
+
+##
+## AdtranXRTCheckLink
+##
+## Check the link status registers
+##
+
+AdtranXRTCheckLink:
+	log "Checking the ISDN modem's link status..."
+	print "AT!S1\r\n"
+	match "Link In Sync" AdtranXRTSyncReg
+	match "Getting" AdtranXRTSyncReg
+	match "Register" AdtranXRTSyncReg
+	match "Ready" AdtranXRTSyncOK
+	match "Down" AdtranXRTSyncFail
+	match "ERR"
+	match "OK\r\n"
+	wait 3
+	call GetOK
+	log "The ISDN modem did not properly answer AT!S1."
+	failure
+AdtranXRTSyncOK:
+	return
+AdtranXRTSyncFail:
+	print "ATDT1\r\n"
+	wait 1
+	goto AdtranXRTDiagnose
+AdtranXRTSyncReg:
+	log "The ISDN modem is initializing itself."
+	failure
+
+##
+## AdtranXRTCheckConfig
+##
+## Verify and adjust ISDN configuration as necessary
+##
+
+AdtranXRTCheckConfig:
+	log "Checking the ISDN modem's ISDN configuration..."
+	set $valueChanged "no"
+
+	set $checkCmd "S52"
+	set $checkValue "000"
+	set $checkValueNew "0"
+	if $TA_SwitchType == "DMS-100" set $checkValue "001"
+	if $TA_SwitchType == "DMS-100" set $checkValueNew "1"
+	if $TA_SwitchType == "NI-1" set $checkValue "002"
+	if $TA_SwitchType == "NI-1" set $checkValueNew "2"
+	set $checkMsg "Reprogramming switch type ($TA_SwitchType)..."
+	call ModemCheckValue
+
+# Check directory numbers
+
+AdtranXRTCheckDirnos:
+	set $checkCmd "SS62"
+	set $checkValue $TA_Dirno1
+	set $checkValueNew $TA_Dirno1
+	set $checkMsg "Reprogramming line #1 directory number..."
+	call ModemCheckValue
+
+	set $checkCmd "SS63"
+	set $checkValue $TA_Dirno2
+	set $checkValueNew $TA_Dirno2
+	set $checkMsg "Reprogramming line #2 directory number..."
+	call ModemCheckValue
+
+# Check SPIDs
+
+	set $checkCmd "SS60"
+	set $checkValue $TA_SPID1
+	set $checkValueNew $TA_SPID1
+	set $checkMsg "Reprogramming line #1 SPID..."
+	call ModemCheckValue
+
+	set $checkCmd "SS61"
+	set $checkValue $TA_SPID2
+	set $checkValueNew $TA_SPID2
+	set $checkMsg "Reprogramming line #2 SPID..."
+	call ModemCheckValue
+
+# Restart if necessary
+
+	if $valueChanged == "no" return
+	log "Restarting ISDN modem with the new configuration..."
+	set $modemCmd "&W"
+	call ModemCmd2
+	set $modemCmd "Z"
+	call ModemCmd2
+	failure
+
+#################################################################
+#
+#	BASIC MODEM STUFF
+#
+#################################################################
+
+##
+## ModemAnswer
+##
+## Wait for a RING and answer it. Variables:
+##
+##  $RingTimeout	How long for a RING before giving up (default 10 min)
+##  $ConnectTimeout	How long for connect after answering (default 45 secs)
+##
+## Returns:
+##
+##  $answerReturn	"OK" or "FAIL"
+##  $ConnectionSpeed	Connection speed reported by modem (possibly empty)
+##
+
+ModemAnswer:
+	if $RingTimeout == "" set $RingTimeout 600
+	if $ConnectTimeout == "" set $ConnectTimeout 45
+	match "RING\r" ModemAnswerGotRing
+	wait $RingTimeout
+	log "No RING detected after $RingTimeout seconds."
+	set $answerReturn "FAIL"
+	return
+ModemAnswerGotRing:
+	log "Incoming call detected..."
+	print "ATA\r\n"
+	regex "CONNECT *([0-9]*).*$" ModemAnswerConnect
+	wait $ConnectTimeout
+	log "Failed to connect incoming call."
+	set $answerReturn "FAIL"
+	return
+ModemAnswerConnect:
+	set $ConnectionSpeed $matchedString1
+	set $answerReturn "OK"
+	return
+
+##
+## ModemFind
+##
+## Just try to get where we are talking to the modem.
+## Returns with $ErrorMsg equal to the empty string if
+## we found the modem, or else some error message if not.
+##
+
+ModemFind:
+
+# Do a quick check first...
+
+	set $ErrorMsg ""
+	call ModemFind4
+	if $modemCmdResult == "OK" return
+	if $Serial230K != "yes" goto ModemFind1
+	set $newBaudrate 230400
+	if $Baudrate == "230400" set $newBaudrate 115200
+	set $Baudrate $newBaudrate
+	call ModemFind4
+	if $modemCmdResult == "OK" return
+
+# Now try possible baud rates more extensively
+
+ModemFind1:
+	set $Baudrate 115200
+	call ModemFind2
+	if $modemCmdResult == "OK" return
+	if $Serial230K != "yes" return
+	set $Baudrate 230400
+	wait 1
+	call ModemFind2
+	if $modemCmdResult == "OK" return
+	set $ErrorMsg "The modem is not responding."
+	return
+
+# This tries the +++ sequence in case the modem is in "on-line" mode
+
+ModemFind2:
+	call ModemFind3
+	if $modemCmdResult == "OK" return
+	call SendTriplePlus
+	call ModemFind3
+	return
+
+# This tries a few commands to see if the modem responds with "OK"
+
+ModemFind3:
+	set $modemCmd ""
+	set $modemCmdTimeout 1
+	call ModemCmd0
+	if $modemCmdResult == "OK" return
+	set $modemCmd "Z"
+	set $modemCmdTimeout 2
+	call ModemCmd0
+	if $modemCmdResult == "OK" return
+ModemFind4:
+	set $modemCmd ""
+	set $modemCmdTimeout 1
+	call ModemCmd0
+	return
+
+##
+## SetBaudrate
+##
+## Change baud rates (as allowed) and verify modem is still there.
+## If not, then fail the script.
+##
+##   $newBaudrate	New baud rate; if we don't support it, just return.
+##   $modemCmd		Command to send modem to jump to the new baud rate.
+##
+
+SetBaudrate:
+	if $Baudrate == $newBaudrate return
+	if $newBaudrate != 230400 goto SetBaudrate2
+	if $Serial230K != "yes" return
+SetBaudrate2:
+	log "Setting serial port speed to $newBaudrate..."
+	print "AT$modemCmd\r\n"
+	wait 1
+	set $Baudrate $newBaudrate
+	wait 1
+	set $modemCmd ""
+	goto ModemCmd2
+
+##
+## ModemCheckValue 
+##
+## Check the value in an S-register (or equivalent). If it is
+## not what we want, then change it and set $valueChanged to "yes",
+## and log $checkMsg (if not empty). The value $checkValueNew is
+## what we program the S-register to equal if it doesn't match.
+##
+## The $checkValue must match exactly on the first line of output.
+## If we get any wierd error, then fail the script.
+##
+
+ModemCheckValue:
+	set $modemCmd "${checkCmd}?"
+	call ModemQuery
+	if $modemQuery == $checkValue return
+	set $valueChanged "yes"
+	set $checkValueMyNew $checkValueNew
+	if $checkValueNew == "" set $checkValueMyNew $checkValue
+	set $modemCmd "${checkCmd}=${checkValueMyNew}"
+	if $checkMsg != "" log $checkMsg
+	goto ModemCmd2
+
+##
+## ModemCmd
+##
+## Do the modem command in $modemCmd. Set $modemCmdResult to
+##
+##	OK	The modem returned "OK"
+##	ERROR	The modem returned "ERR" or "ERROR"
+##	TIMEOUT	The modem did not respond within three seconds
+##
+## If ERR or TIMEOUT, also set $ErrorMsg to an appropriate message
+##
+
+ModemCmd:
+	set $modemCmdTimeout 3
+ModemCmd0:
+	print "AT$modemCmd\r\n"
+	match "OK\r\n" ModemCmdOk
+	match "ERR" ModemCmdErr
+	wait $modemCmdTimeout
+	set $modemCmdResult "TIMEOUT"
+ModemCmdTimeout:
+	set $ErrorMsg "The modem is not responding."
+	return
+ModemCmdOk:
+	set $modemCmdResult "OK"
+	return
+ModemCmdErr:
+	set $modemCmdResult "ERROR"
+	set $ErrorMsg "The modem did not accept the command AT$modemCmd."
+	return
+
+##
+## ModemCmd2
+##
+## Do the modem command in $modemCmd. If we don't get OK back,
+## fail the script and log an error message.
+##
+
+ModemCmd2:
+	call ModemCmd
+	if $modemCmdResult == "OK" return
+	log $ErrorMsg
+	failure
+
+##
+## ModemCmdSend
+##
+## Send a modem command and read the echo'ed CR-LF
+##
+
+ModemCmdSend:
+	print "AT$modemCmd\r\n"
+	match "\r\n" ModemCmdSend2
+	wait 3
+	goto ModemCmdTimeout
+ModemCmdSend2:
+	return
+
+##
+## ModemQuery
+##
+## Do the $modemCmd and expect exactly one line of response, then OK.
+## Return the response in $modemQuery. If anything goes wrong, die.
+##
+
+ModemQuery:
+	call ModemCmdSend
+	call ReadLine
+	set $modemQuery $matchedString
+	if $modemQuery == "ERR" goto ModemQueryError
+	if $modemQuery == "ERROR" goto ModemQueryError
+	goto GetOK
+ModemQueryError:
+	call ModemCmdErr
+	failure
+
+# Same thing, but strip leading and trailing blanks
+
+ModemQueryStrip:
+	call ModemQuery
+	if $modemQuery match " *(.*) *" nop
+	set $modemQuery $matchedString1
+	return
+
+##
+## ReadLine
+##
+## Read the next line of output. It should come within $modemCmdTimeout
+## seconds, or else we fail. Return it in $matchedString.
+##
+
+ReadLine:
+	regex "^.*$" ReadLineDone
+	wait $modemCmdTimeout
+	set $ErrorMsg "The modem is not responding."
+	log $ErrorMsg
+	failure
+ReadLineDone:
+	return
+
+##
+## Get an OK within 3 seconds or die
+##
+
+GetOK:
+	match "OK\r\n" GotOK
+	wait 3
+	log "The modem is not responding."
+	failure
+GotOK
+	return
+
+##
+## Send "+++" to get modem attention if on-line
+##
+
+SendTriplePlus:
+	print "\r\n"
+	wait 2
+	print "+++"
+	wait 2
+	return
+
+#################################################################
+#
+#	LOGIN AUTO-SCRIPTING
+#
+#################################################################
+
+##
+## AutoLogin
+##
+## Here we attempt to figure out what the remote server wants
+## from us. We do this by checking for bytes that correspond
+## to PPP packets (in which case we are done) as well as common
+## login type stuff like "name:", "ogin:", etc.
+##
+## This always returns. The hope is that when it returns, the
+## remote side has reached PPP mode.
+##
+## This has been crafted from empirical evidence. Lots of terminal
+## servers have various intelligent/stupid features which we
+## take advantage of/have to work around.
+##
+## Variables (set automatically by mpd):
+##
+##  $Login		Authorization login
+##  $Password		Authorization password
+##
+
+AutoLogin:
+	log "Initiating auto-login..."
+
+# Spend at most this long doing auto-login before giving up
+
+	timer autoLogin 5 AutoLoginTimeout
+
+# At any time if we see an LCP frame (not our own echo) then we're done
+
+	match autoLogin "\x7e\xff\x03\xc0\x21" AutoLoginFrame
+	match autoLogin "\x7e\xff\x7d\x23\xc0\x21\x7d\x21" AutoLoginFrame
+	match autoLogin "\x7e\xc0\x21" AutoLoginFrame
+
+# Now send a "fake" PPP frame (this is an empty config-reject with id# 172).
+# This should trigger any auto-detecting servers to jump into PPP mode,
+# which is good because it's faster (by avoiding human readable messages)
+# and more reliable (PPP framing).
+
+	print "\x7e\xff\x7d\x23\xc0\x21\x7d\x24\xac\x7d\x20\x7d\x24\x2e\x2b\x7e"
+
+# Wait one second for server to auto-detect PPP or send a login prompt.
+# After one second of neither, try sending a carriage return (some servers
+# require this). After that, we have to see something recognizable from
+# the peer, otherwise we'll just timeout.
+
+	match "ogin" AutoLoginPrompt
+	match "name" AutoLoginPrompt
+	wait 1
+	print "\r"
+	match "ogin" AutoLoginPrompt
+	match "name" AutoLoginPrompt
+	wait
+
+# At this point we've seen a login prompt; do the manual login
+
+AutoLoginPrompt:
+	log "Sending login..."
+	print "${Login}\r"
+	match "word"
+	wait
+	log "Sending password..."
+	print "${Password}\r"
+	match "\r"
+	wait
+	if $didLogin != "yes" match "ogin:" LoginAgain
+	match ">"
+	match "%"
+	match ":"
+	wait
+	log "Enabling PPP..."
+	print "ppp\r"
+	cancel all
+	return
+
+LoginAgain:
+	set $didLogin "yes"
+	goto AutoLoginPrompt
+
+# We saw a PPP frame
+
+AutoLoginFrame:
+	log "Detected PPP frame."
+	cancel all
+	return
+
+# We timed out before seeing a PPP frame. Cross your fingers and pray.
+
+AutoLoginTimeout:
+	log "Auto-login timeout."
+	cancel all
+	return
+

@@ -1177,12 +1177,29 @@ function get_ppp_uptime($serialport){
 	}
 }
 
-
+function convert_seconds_to_hms($sec){
+	if ($sec != 0){
+		$min = floor($sec/60);
+		$sec %= 60;
+	}
+	if ($min != 0){
+		$hrs = floor($min/60);
+		$min %= 60;
+	}
+	if ($sec < 10)
+		$sec = "0".$sec;
+	if ($min < 10)
+		$min = "0".$min;
+	if ($hrs < 10)
+		$hrs = "0".$hrs;
+	$result = $hrs.":".$min.":".$sec;
+	return $result;
+}
 
 
 //returns interface information
 function get_interface_info($ifdescr) {
-	global $config, $linkinfo, $netstatrninfo;
+	global $config, $linkinfo, $netstatrninfo, $g;
 
 	$ifinfo = array();
 	/* if list */
@@ -1299,15 +1316,17 @@ function get_interface_info($ifdescr) {
 			$ifinfo['pptplink'] = "down";
 		break;
 	/* PPP interface? -> get uptime for this session and cumulative uptime from the persistant log file in conf */
-	case "":
-		if ($config['interfaces'][$if]['serialport']){
+	case "ppp":
+			$ppp_int = $config['interfaces'][$if]['if'];
 			$dev = $config['interfaces'][$if]['serialport'];
+			if ($dev == "")
+				break;
 			if (file_exists("/dev/{$dev}")){
 				$ifinfo['ppplink'] = $dev;
-				
-				if (file_exists("/var/run/{$dev}.sock") && file_exists("/var/run/{$dev}.if")){
-					$ifinfo['ppp_uptime'] = `/usr/sbin/pppctl /var/run/$dev.sock show physical | grep 'Connect time' | cut -c 15-`;
-				} //else if (`/sbin/ifconfig 
+				if (file_exists("{$g['varrun_path']}/{$ppp_int}.pid") && file_exists("{$g['varetc_path']}/{$ppp_int}.query")){
+					$sec = trim(`/usr/bin/nc localhost 5005 < {$g['varetc_path']}/{$ppp_int}.query | grep 'Session time' | cut -f7 -d ' '`);
+        			$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
+				}  
 				$ifinfo['missing_device'] = 0;
 			}
 			else{
@@ -1316,7 +1335,6 @@ function get_interface_info($ifdescr) {
 			}
 			// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
 			$ifinfo['ppp_uptime_accumulated'] = get_ppp_uptime($dev);
-		}
 
 		break;
 	default:

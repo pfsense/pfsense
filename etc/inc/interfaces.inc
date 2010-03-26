@@ -966,6 +966,7 @@ EOD;
 					$ranges = "set ipcp ranges {$ppp['localip']}/0 10.0.0.{$endingip}/0";
 				if(!$ppp['localip'] and !$ppp['gateway'])	
 					$ranges = "set ipcp ranges 10.0.0.{$ip}/0 10.0.0.{$endingip}/0";
+				$ip++;
 				if ($ppp['username'] <> ""){
 					$user = "{$ppp['username']}";
 				} else {
@@ -997,7 +998,6 @@ EOD;
 	set modem var \$Telephone "{$ppp['phone']}"
 
 EOD;
-				$ip++;
 				if (isset($ppp['connect-timeout'])){
 					$mpdconf .= <<<EOD
 	set modem var \$ConnectTimeout "{$ppp['connect-timeout']}"

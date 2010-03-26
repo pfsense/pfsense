@@ -40,12 +40,20 @@
 
 function services_parse_dhcpd_hostnames() {
 	global $g, $config;
-	mwexec("/bin/pkill dhcpleases");
+
 	// Launch if option enabled
 	if (isset($config['dnsmasq']['regdhcp'])) {
 		mwexec("/bin/ln /etc/hosts {$g['varetc_path']}/hosts");
-		mwexec_bg("/usr/local/sbin/dhcpleases {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases {$config['system']['domain']} {$g['varrun_path']}/dnsmasq.pid {$g['varetc_path']}/hosts");
+		if (file_exists("{$g['varrun_path']}/dhcpleases.pid"))
+			sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
+		else
+			mwexec("/usr/local/sbin/dhcpleases {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases {$config['system']['domain']} {$g['varrun_path']}/dnsmasq.pid {$g['varetc_path']}/hosts");
+	} else {
+		@unlink("{$g['varetc_path']}/hosts");
+		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
+		@unlink("{$g['varrun_path']}/dhcpleases.pid");
 	}
+		
 }
 
 function services_dhcpd_configure() {

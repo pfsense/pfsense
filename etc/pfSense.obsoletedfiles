@@ -1,3 +1,4 @@
+/etc/rc.parse-isc-dhcpd
 /etc/phpshellsessions/cvssync
 /etc/inc/regdomain.inc
 /etc/inc/sysctl.inc

@@ -39,13 +39,12 @@
 */
 
 function services_parse_dhcpd_hostnames() {
-	global $config;
-	$ps = `/bin/pgrep -f rc.parse-isc-dhcpd`;
-	if($ps)
-		exec("kill {$ps}");
+	global $g, $config;
+	mwexec("/bin/pkill dhcpleases");
 	// Launch if option enabled
 	if (isset($config['dnsmasq']['regdhcp'])) {
-		mwexec_bg("sh /etc/rc.parse-isc-dhcpd");
+		mwexec("/bin/ln /etc/hosts /var/etc/hosts");
+		mwexec_bg("/usr/local/sbin/dhcpleases {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases {$config['system']['domain']} {$g['varrun_path']}/dnsmasq.pid");
 	}
 }
 

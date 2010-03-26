@@ -614,10 +614,9 @@ function services_dnsmasq_configure() {
 
 		$args = "";
 
-		//if (isset($config['dnsmasq']['regdhcp'])) {
-		//	$args .= " -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases" .
-		//		" -s {$config['system']['domain']}";
-		//}
+		if (isset($config['dnsmasq']['regdhcp'])) {
+			$args .= " --dhcp-hostsfile={$g['varetc_path']}/hosts ";
+		}
 
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			foreach($config['dnsmasq']['domainoverrides'] as $override) {

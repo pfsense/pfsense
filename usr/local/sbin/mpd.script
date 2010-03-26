@@ -101,7 +101,7 @@ DialPeer3:
 	success
 
 DialPeerSetPin:
-	set $modemCmd "+CPIN=$SimPin"
+	set $modemCmd "+CPIN=\"$SimPin\""
 	call ModemCmd2
 	wait $ConnectTimeout
 	return

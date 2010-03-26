@@ -43,8 +43,8 @@ function services_parse_dhcpd_hostnames() {
 	mwexec("/bin/pkill dhcpleases");
 	// Launch if option enabled
 	if (isset($config['dnsmasq']['regdhcp'])) {
-		mwexec("/bin/ln /etc/hosts /var/etc/hosts");
-		mwexec_bg("/usr/local/sbin/dhcpleases {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases {$config['system']['domain']} {$g['varrun_path']}/dnsmasq.pid");
+		mwexec("/bin/ln /etc/hosts {$g['varetc_path']}/hosts");
+		mwexec_bg("/usr/local/sbin/dhcpleases {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases {$config['system']['domain']} {$g['varrun_path']}/dnsmasq.pid {$g['varetc_path']}/hosts");
 	}
 }
 

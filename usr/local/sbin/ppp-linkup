@@ -11,12 +11,12 @@ unset SERVER_PORT SCRIPT_NAME SERVER_NAME
 # write nameservers to file
 if [ "$6" = "dns1" ]
 	echo $7 > /var/etc/nameserver_$1
-	/sbin/route add $7 -iface $1
+	/sbin/route add $7 $4
 fi
 
 if [ "$8" = "dns2" ]
 	echo $9 >> /var/etc/nameserver_$1
-	/sbin/route add $9 -iface $1
+	/sbin/route add $9 $4
 fi
 
 # let the configuration system know that the ip has changed.

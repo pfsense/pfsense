@@ -1321,7 +1321,8 @@ function get_interface_info($ifdescr) {
 		if (file_exists("/dev/{$dev}")) {
 			$ifinfo['ppplink'] = $dev;
 			if (file_exists("{$g['varrun_path']}/mpd_{$if}.pid") && file_exists("{$g['varetc_path']}/mpd_{$if}.query")) {
-				$sec = trim(`/usr/bin/nc localhost 5005 < {$g['varetc_path']}/mpd_{$if}.query | grep 'Session time' | cut -f7 -d ' '`);
+				$pppid = substr($ifinfo['if'], 3);
+				$sec = trim(`/usr/bin/nc 127.0.0.1 500{$pppid} < {$g['varetc_path']}/mpd_{$if}.query | grep 'Session time' | cut -f7 -d ' '`);
         			$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
 			}  
 			$ifinfo['missing_device'] = 0;

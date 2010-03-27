@@ -1851,6 +1851,13 @@ function upgrade_059_to_060() {
 	}
 }
 
+function upgrade_060_to_061() {
+	global $config;
 
+	if (is_array($config['interfaces']['wan']))
+		$config['interfaces']['wan']['enable'] = true;
+	if (is_array($config['interfaces']['lan']))
+		$config['interfaces']['lan']['enable'] = true;
+}
 
 ?>

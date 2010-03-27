@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>5.8</version>
+	<version>6.1</version>
 	<lastchange></lastchange>
 	<theme>pfsense_ng</theme>
 	<sysctl>

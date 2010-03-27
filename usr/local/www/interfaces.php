@@ -161,10 +161,7 @@ if($if == "wan" && !$wancfg['descr']) {
 }
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
 
-if ($if == "wan" || $if == "lan")
-	$pconfig['enable'] = true;
-else
-	$pconfig['enable'] = isset($wancfg['enable']);
+$pconfig['enable'] = isset($wancfg['enable']);
 
 if (is_array($config['aliases']['alias'])) {
 	foreach($config['aliases']['alias'] as $alias) {
@@ -491,11 +488,7 @@ if ($_POST) {
 		unset($wancfg['remote']);
 
 		$wancfg['descr'] = remove_bad_chars($_POST['descr']);
-		if ($if == "wan" || $if == "lan") {
-			$wancfg['enable'] = true;
-		} else {
-			$wancfg['enable'] =  $_POST['enable']  == "yes" ? true : false;
-		}
+		$wancfg['enable'] =  $_POST['enable']  == "yes" ? true : false;
 
 		/* for dynamic interfaces we tack a gateway item onto the array to prevent system
 		 * log messages from appearing. They can also manually add these items */
@@ -915,7 +908,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">General configuration</td>
 		</tr>
-		<?php if ($if != "wan" && $if != "lan"): ?>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Enable</td>
 			<td width="78%" class="vtable">
@@ -923,9 +915,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 			<strong>Enable Interface</strong>
 			</td>
 		</tr>
-		<?php else: ?>
-		<input name="enable" type="hidden" value="yes">
-		<?php endif; ?>
 		</table>
 		<div style="display:none;" name="allcfg" id="allcfg">
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">

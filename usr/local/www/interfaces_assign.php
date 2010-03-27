@@ -210,7 +210,6 @@ if ($_POST['apply']) {
 					if (preg_match($g['wireless_regex'], $ifport)) {
 						if (!is_array($config['interfaces'][$ifname]['wireless']))
 							$config['interfaces'][$ifname]['wireless'] = array();
-						interface_sync_wireless_clones($config['interfaces'][$ifname], false);
 					} else {
 						unset($config['interfaces'][$ifname]['wireless']);
 					}
@@ -218,9 +217,12 @@ if ($_POST['apply']) {
 					/* make sure there is a descr for all interfaces */
 					if (!isset($config['interfaces'][$ifname]['descr']))
 						$config['interfaces'][$ifname]['descr'] = strtoupper($ifname);
-					if ($reloadif == true)
+					if ($reloadif == true) {
+						if (preg_match($g['wireless_regex'], $ifport))
+							interface_sync_wireless_clones($config['interfaces'][$ifname], false);
 						/* Reload all for the interface. */
 						interface_configure($ifname, true);
+					}
 				}
 
 				touch("/tmp/reload_interfaces");

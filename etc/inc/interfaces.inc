@@ -1671,6 +1671,9 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 		$wlcmd[] = "authmode open wepmode off ";
 	}
 
+	mwexec(kill_hostapd("{$if}"));
+	mwexec(kill_wpasupplicant("{$if}"));
+
 	/* generate wpa_supplicant/hostap config if wpa is enabled */
 	conf_mount_rw();
 
@@ -1696,8 +1699,6 @@ EOD;
 				$fd = fopen("{$g['varetc_path']}/wpa_supplicant_{$if}.conf", "w");
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
-
-				mwexec(kill_wpasupplicant("{$if}"));
 			}
 			break;
 		case 'hostap':
@@ -1756,11 +1757,6 @@ EOD;
 				fclose($fd);
 
 			}
-			mwexec(kill_hostapd("{$if}"));
-			break;
-		case 'adhoc':
-			mwexec(kill_hostapd("{$if}"));
-			mwexec(kill_wpasupplicant("{$if}"));
 			break;
 	}
 

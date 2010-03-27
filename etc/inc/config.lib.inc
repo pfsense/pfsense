@@ -920,6 +920,7 @@ EOD;
 	if (in_array($key, array('y', 'Y'))) {
 		if($lanif) {
 			$config['interfaces']['lan']['if'] = $lanif;
+			$config['interfaces']['lan']['enable'] = true;
 		} elseif (!$g['booting'] && !$auto_assign) {
 
 echo <<<EODD
@@ -975,6 +976,7 @@ EODD;
 		}
 
 		$config['interfaces']['wan']['if'] = $wanif;
+		$config['interfaces']['wan']['enable'] = true;
 		if (preg_match($g['wireless_regex'], $wanif)) {
 			if (is_array($config['interfaces']['lan']) &&
 				(!is_array($config['interfaces']['wan']['wireless'])))

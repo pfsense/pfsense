@@ -188,13 +188,15 @@ switch($wancfg['ipaddr']) {
 	case "pptp":
 		$pconfig['type'] = "pptp";
 		break;
+	case "ppp":
+		$pconfig['type'] = "none";
+		break;
 	default:
 		if(is_ipaddr($wancfg['ipaddr'])) {
 			$pconfig['type'] = "static";
 			$pconfig['ipaddr'] = $wancfg['ipaddr'];
 			$pconfig['subnet'] = $wancfg['subnet'];
 			$pconfig['gateway'] = $wancfg['gateway'];
-			$pconfig['pointtopoint'] = $wancfg['pointtopoint'];
 		} else {
 			$pconfig['type'] = "none";
 		}
@@ -398,8 +400,6 @@ if ($_POST) {
 			$input_errors[] = "A valid gateway must be specified.";
 		}
 	}
-	if (($_POST['pointtopoint'] && !is_ipaddr($_POST['pointtopoint']))) 
-		$input_errors[] = "A valid point-to-point IP address must be specified.";
 	if (($_POST['provider'] && !is_domain($_POST['provider']))) 
 		$input_errors[] = "The service name contains invalid characters.";
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) 
@@ -476,7 +476,6 @@ if ($_POST) {
 		unset($wancfg['ipaddr']);
 		unset($wancfg['subnet']);
 		unset($wancfg['gateway']);
-		unset($wancfg['pointtopoint']);
 		unset($wancfg['dhcphostname']);
 		unset($wancfg['pppoe_username']);
 		unset($wancfg['pppoe_password']);
@@ -528,9 +527,6 @@ if ($_POST) {
 				$wancfg['subnet'] = $_POST['subnet'];
 				if ($_POST['gateway'] != "none") {
 					$wancfg['gateway'] = $_POST['gateway'];
-				}
-				if (isset($wancfg['ispointtopoint'])) {
-					$wancfg['pointtopoint'] = $_POST['pointtopoint'];
 				}
 				break;
 			case "dhcp":
@@ -1020,14 +1016,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								</select>
 							</td>
 						</tr>
-						<?php if (isset($wancfg['ispointtopoint'])): ?>
-							<tr>
-								<td width="22%" valign="top" class="vncellreq">Point-to-point IP address </td>
-								<td width"78%" class="vtable">
-									<input name="pointtopoint" type="text" class="formfld unknown" id="pointtopoint" size="20" value="<?=htmlspecialchars($pconfig['pointtopoint']);?>">
-								</td>
-							</tr>
-						<?php endif; ?>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq">Gateway</td>
 							<td width="78%" class="vtable">

@@ -44,13 +44,12 @@ require_once("/usr/local/www/widgets/include/interfaces.inc");
 				foreach ($ifdescrs as $ifdescr => $ifname) {
 					$ifinfo = get_interface_info($ifdescr);
 					$iswireless = is_interface_wireless($ifdescr);
-					$isserial = is_interface_ppp($ifdescr);
 				?>
 				<tr> 
 				<td class="vncellt" width="40%">
 				<?php 
-					if($isserial) {
-						echo "<img src='./themes/{$g['theme']}/images/icons/icon_3g.gif' />";
+				if($ifinfo['ppplink']) {
+					echo "<img src='./themes/{$g['theme']}/images/icons/icon_3g.gif' />";
 				} else if($iswireless) {
 					if($ifinfo['status'] == "associated") { ?> 
 						<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wlan.gif" />

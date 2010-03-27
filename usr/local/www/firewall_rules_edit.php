@@ -1116,7 +1116,7 @@ include("head.inc");
 					// add dynamic gateways to list
 					$iflist = get_configured_interface_with_descr();
 					foreach ($iflist as $ifent => $ifdesc) {
-						if (in_array($config['interfaces'][$ifent]['ipaddr'], array("dhcp", "pppoe", "pptp"))) {
+						if (in_array($config['interfaces'][$ifent]['ipaddr'], array("dhcp", "pppoe", "pptp", "ppp"))) {
 							if ($pconfig['gateway'] == $ifent) {
 								$selected = " SELECTED";
 							} else {
@@ -1124,14 +1124,6 @@ include("head.inc");
 							}
 							if($ifdesc <> "") 
 								echo "<option value=\"{$ifent}\" {$selected}>".strtoupper($ifent)." - {$ifdesc}</option>\n";
-						} else if ($config['interfaces'][$ifent]['serialport'] <> "") {
-							if ($pconfig['gateway'] == $ifent) {
-								$selected = " SELECTED";
-							} else {
-								$selected = "";
-							}
-							if($ifdesc <> "") 
-								echo "<option value=\"{$ifent}\" {$selected}>".strtoupper($ifent)." - {$ifdesc}</option>\n";							
 						}
 					}
 					/* add gateway groups to the list */

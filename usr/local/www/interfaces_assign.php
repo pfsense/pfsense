@@ -127,11 +127,11 @@ if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry
 
 /* add PPP interfaces */
 if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-	foreach ($config['ppps']['ppp'] as $ppp) {
-		$portname = "ppp{$ppp['pppid']}";
-		log_error("portname = " . $portname);
+	foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+		$portname = "ppp{$pppid}";
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
+		$portlist[$portname]['descr'] = "PPP {$ppp['port']}";
 	}
 }
 
@@ -202,12 +202,8 @@ if ($_POST['apply']) {
 					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
 					if (preg_match('/^ppp[0-9]+/',$ifport)){
-						$config['interfaces'][$ifname]['serialport'] =  basename($portlist[$ifport]['port']);
-						$config['interfaces'][$ifname]['pointtopoint'] = true;
+						$config['interfaces'][$ifname]['if'] =  basename($portlist[$ifport]['port']);
 						$config['interfaces'][$ifname]['ipaddr'] = "ppp";
-					} else {
-						unset($config['interfaces'][$ifname]['pointtopoint']);
-						unset($config['interfaces'][$ifname]['serialport']);
 					}
 
 					/* check for wireless interfaces, set or clear ['wireless'] */

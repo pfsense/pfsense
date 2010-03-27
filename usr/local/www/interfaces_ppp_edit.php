@@ -95,11 +95,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$ppp = array();
-		if (isset($id))
-			$ppp['pppid'] = $id;
-		else
-			$ppp['pppid'] = count($a_ppps);
-			
+
 		$ppp['port'] = $_POST['port'];
 		if ($_POST['initstr'] <> "")
 			$ppp['initstr'] = base64_encode($_POST['initstr']);
@@ -148,7 +144,11 @@ if ($_POST) {
 
 		write_config();
 
-		interface_ppp_configure(-1,true);
+        	$iflist = get_configured_interface_list();
+        	foreach ($iflist as $if) {
+                	if ($config['interfaces'][$if]['if'] == $a_ppps[$num]['port'])
+				interface_ppp_configure($if);
+		}
 
 		header("Location: interfaces_ppp.php");
 		exit;
@@ -230,7 +230,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Init String</td>
 			<td width="78%" class="vtable">
-				<textarea id="initstr" name="initstr"><?=htmlspecialchars($pconfig['initstr']);?></textarea>
+				<input type="text" size="40" class="formfld unknown" id="initstr" name="initstr"><?=htmlspecialchars($pconfig['initstr']);?></textarea>
 				<br><span class="vexpl">Note: Enter the modem initialization string here. Do NOT include the "AT" string at the beginning of the command.</span>
 			</td>
 		</tr>

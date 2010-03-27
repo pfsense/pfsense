@@ -1207,10 +1207,8 @@ function get_interface_info($ifdescr) {
 
 	$found = false;
     	foreach ($iflist as $if => $ifname) {
-    	if ($ifdescr == $if || $ifdescr == $ifname) {
+    		if ($ifdescr == $if || $ifdescr == $ifname) {
 			$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
-			if($config['interfaces'][$if]['serialport'])
-				$ifinfo['hwif'] =  get_real_interface($if);
 			$ifinfo['if'] = get_real_interface($if);
 			$found = true;
 			break;
@@ -1317,24 +1315,22 @@ function get_interface_info($ifdescr) {
 		break;
 	/* PPP interface? -> get uptime for this session and cumulative uptime from the persistant log file in conf */
 	case "ppp":
-			$ppp_int = $config['interfaces'][$if]['if'];
-			$dev = $config['interfaces'][$if]['serialport'];
-			if ($dev == "")
-				break;
-			if (file_exists("/dev/{$dev}")){
-				$ifinfo['ppplink'] = $dev;
-				if (file_exists("{$g['varrun_path']}/{$ppp_int}.pid") && file_exists("{$g['varetc_path']}/{$ppp_int}.query")){
-					$sec = trim(`/usr/bin/nc localhost 5005 < {$g['varetc_path']}/{$ppp_int}.query | grep 'Session time' | cut -f7 -d ' '`);
+		$dev = $config['interfaces'][$if]['if'];
+		if (empty($dev))
+			break;
+		if (file_exists("/dev/{$dev}")) {
+			$ifinfo['ppplink'] = $dev;
+			if (file_exists("{$g['varrun_path']}/mpd_{$if}.pid") && file_exists("{$g['varetc_path']}/mpd_{$if}.query")) {
+				$sec = trim(`/usr/bin/nc localhost 5005 < {$g['varetc_path']}/mpd_{$if}.query | grep 'Session time' | cut -f7 -d ' '`);
         			$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
-				}  
-				$ifinfo['missing_device'] = 0;
-			}
-			else{
-				$ifinfo['ppplink'] = $dev . " device not present! Is the modem attached to the system?";
-				$ifinfo['missing_device'] = 1;	
-			}
-			// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
-			$ifinfo['ppp_uptime_accumulated'] = get_ppp_uptime($dev);
+			}  
+			$ifinfo['missing_device'] = 0;
+		} else {
+			$ifinfo['ppplink'] = $dev . " device not present! Is the modem attached to the system?";
+			$ifinfo['missing_device'] = 1;	
+		}
+		// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
+		$ifinfo['ppp_uptime_accumulated'] = get_ppp_uptime($dev);
 
 		break;
 	default:

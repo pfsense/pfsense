@@ -2133,6 +2133,11 @@ function interface_pppoe_configure($interface = "wan") {
 
 	$mpdconf = <<<EOD
 startup:
+        # configure the web server
+	set console close
+        set web close
+
+default:
 pppoeclient:
 
 EOD;
@@ -2286,7 +2291,12 @@ function interface_pptp_configure($interface) {
 
 	$mpdconf = <<<EOD
 startup:
-pptp:
+        # configure the web server
+        set console close
+        set web close
+
+default:
+pptpclient:
 
 EOD;
 
@@ -2380,7 +2390,7 @@ EOD;
 	else 
 		log_error("Could not bring interface wancfg['if'] up in interface_pptp_configure()");
 	/* fire up mpd */
-	mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/pptp_{$interface}.pid -s {$interface} pptp");
+	mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/pptp_{$interface}.pid -s {$interface} pptpclient");
 
 	return 0;
 }

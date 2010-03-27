@@ -864,6 +864,13 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		break;
 	}
 
+	/* hostapd and wpa_supplicant do not need to be running when the interface is down.
+	 * They will also use 100% CPU if running after the wireless clone gets deleted. */
+	if (is_array($ifcfg['wireless'])) {
+		mwexec(kill_hostapd($realif));
+		mwexec(kill_wpasupplicant($realif));
+	}
+
 	if ($destroy == true) {
 		if (preg_match("/^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $realif))
 			mwexec("/sbin/ifconfig {$realif} destroy");

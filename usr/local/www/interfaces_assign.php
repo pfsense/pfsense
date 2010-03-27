@@ -210,6 +210,7 @@ if ($_POST['apply']) {
 					if (preg_match($g['wireless_regex'], $ifport)) {
 						if (!is_array($config['interfaces'][$ifname]['wireless']))
 							$config['interfaces'][$ifname]['wireless'] = array();
+						interface_sync_wireless_clones($config['interfaces'][$ifname], false);
 					} else {
 						unset($config['interfaces'][$ifname]['wireless']);
 					}

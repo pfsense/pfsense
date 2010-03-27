@@ -853,8 +853,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		}
 		break;
 	case "ppp":
-		killbypid("{$g['varrun_path']}/{$realif}.pid");
-		sleep(2);
+		killbypid("{$g['varrun_path']}/ppp_{$interface}.pid");
 		break;
 	default:
 		if(does_interface_exist("$realif")) {
@@ -866,7 +865,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	}
 
 	if ($destroy == true) {
-		if (preg_match("/^tun|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $realif))
+		if (preg_match("/^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $realif))
 			mwexec("/sbin/ifconfig {$realif} destroy");
 	}	
 

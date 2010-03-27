@@ -924,11 +924,11 @@ startup:
 	set user admin pfsense admin
 	set user user pfsense
 	# configure the console
-	set console self 127.0.0.1 5005
+	set console self 127.0.0.1 500{$pppid}
 	set console open
 	# configure the web server
 	set web close
-	#set web self 0.0.0.0 5006
+	#set web self 127.0.0.1 550{$pppid}
 	#set web open
 
 EOD;

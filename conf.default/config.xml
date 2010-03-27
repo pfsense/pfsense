@@ -76,14 +76,14 @@
 			<value>default</value>
 		</item>
 		<item>
-		        <desc>Set to 0 to disable filtering on the incoming and outgoing member interfaces.</desc>
-		        <tunable>net.link.bridge.pfil_member</tunable>
-		        <value>default</value>
+			<desc>Set to 0 to disable filtering on the incoming and outgoing member interfaces.</desc>
+			<tunable>net.link.bridge.pfil_member</tunable>
+			<value>default</value>
 		</item>
 		<item>
-		        <desc>Set to 1 to enable filtering on the bridge interface</desc>
-		        <tunable>net.link.bridge.pfil_bridge</tunable>
-		        <value>default</value>
+			<desc>Set to 1 to enable filtering on the bridge interface</desc>
+			<tunable>net.link.bridge.pfil_bridge</tunable>
+			<value>default</value>
 		</item>
 		<item>
 			<desc>Allow unprivileged access to tap(4) device nodes</desc>
@@ -572,7 +572,7 @@
 		-->
 	</shaper>
 	<ipsec>
-                <preferredoldsa/>
+		<preferredoldsa/>
 		<!-- <enable/> -->
 		<!-- syntax:
 		<tunnel>

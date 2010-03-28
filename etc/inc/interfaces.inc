@@ -892,10 +892,10 @@ function interface_ppp_configure($interface) {
 	if (!$ppp || empty($ppp['port']))
 		return;	
 
-	if ($ifname == "wan")
+	if ($interface == "wan")
 		$pppid = "0";
 	else
-		$pppid = substr($ifname, 3);
+		$pppid = substr($interface, 3);
 
 	$pppif = "ppp{$pppid}";
 
@@ -950,7 +950,7 @@ pppclient:
 	set iface up-script /usr/local/sbin/ppp-linkup
 	set iface down-script /usr/local/sbin/ppp-linkdown
 	set ipcp ranges {$localip}/0 {$localgw}/0
-	
+
 EOD;
 
 	if (isset($config['system']['dnsallowoverride'])) {
@@ -2227,7 +2227,7 @@ EOD;
 	set link accept chap
 	set pppoe iface {$wancfg['if']}
 	set pppoe service "{$wancfg['provider']}"
-	
+
 EOD;
 	if (empty($wancfg['mtu']))
 		$mpdmtu = "1492";

@@ -1053,7 +1053,7 @@ EOD;
 	}
 
 	// Launch specified ppp instance
-	if( (file_exists("{$ppp['port']}")) {
+	if (file_exists("{$ppp['port']}")) {
 		/* fire up mpd */
 		mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/ppp_{$interface}.pid -s {$interface} pppclient");
 	} else

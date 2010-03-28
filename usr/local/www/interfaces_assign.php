@@ -414,10 +414,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 				$descr .= " (" . $portinfo['descr'] . ")";
                         echo htmlspecialchars($descr);
 		} elseif ($portinfo['isppp']) {
-			$descr = "{$portname} {$portinfo['port']}";
-			if ($portinfo['descr'])
-				$descr .= " (" . $portinfo['descr'] . ")";
-			echo htmlspecialchars($descr);
+			echo htmlspecialchars($portinfo['descr']);
                 } elseif ($portinfo['isbridge']) {
                         $descr = strtoupper($portinfo['bridgeif']);
                         if ($portinfo['descr'])

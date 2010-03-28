@@ -83,8 +83,8 @@ DialPeer1:
 DialPeer2:
 	log "Detected $ModemDescription."
 	call $ModemSetupFunc
-	if $SimPin != "" goto DialPeerSetPin
-	if $APN != "" goto DialPeerSetAPN
+	if $SimPin != "" call DialPeerSetPin
+	if $APN != "" call DialPeerSetAPN
 	log "Dialing server at $Telephone..."
 	call ModemDial
 	if $dialResult == "OK" goto DialPeerOK
@@ -101,9 +101,15 @@ DialPeer3:
 	success
 
 DialPeerSetPin:
+	set $modemCmd "+CPIN=?"
+	log $modemCmd
+	call ModemQuery
+	log $modemQuery
+	if $modemQuery match ".*READY.*" PinReady
 	set $modemCmd "+CPIN=\"$SimPin\""
 	call ModemCmd2
-	wait $ConnectTimeout
+	wait $PinWait
+PinReady:
 	return
 
 DialPeerSetAPN:
@@ -1514,7 +1520,7 @@ GetOK:
 	wait 3
 	log "The modem is not responding."
 	failure
-GotOK
+GotOK:
 	return
 
 ##

@@ -201,7 +201,7 @@ if ($_POST['apply']) {
 						$reloadif = true;
 					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
-					if (preg_match('/^ppp[0-9]+/',$ifport)){
+					if (file_exists("/dev/{$ifport}")) {
 						$config['interfaces'][$ifname]['if'] =  basename($portlist[$ifport]['port']);
 						$config['interfaces'][$ifname]['ipaddr'] = "ppp";
 					}

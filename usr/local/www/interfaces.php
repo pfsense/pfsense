@@ -186,7 +186,7 @@ switch($wancfg['ipaddr']) {
 		$pconfig['type'] = "pptp";
 		break;
 	case "ppp":
-		$pconfig['type'] = "none";
+		$pconfig['type'] = "ppp";
 		break;
 	default:
 		if(is_ipaddr($wancfg['ipaddr'])) {
@@ -199,10 +199,6 @@ switch($wancfg['ipaddr']) {
 		}
 		break;
 }
-
-// Handle PPP type interfaces
-if($wancfg['serialport']) 
-	$pconfig['type'] = "none";
 
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
@@ -470,7 +466,8 @@ if ($_POST) {
 		}
 	}
 	if (!$input_errors) {
-		unset($wancfg['ipaddr']);
+		if ($wancfg['ipaddr'] != "ppp")
+			unset($wancfg['ipaddr']);
 		unset($wancfg['subnet']);
 		unset($wancfg['gateway']);
 		unset($wancfg['dhcphostname']);

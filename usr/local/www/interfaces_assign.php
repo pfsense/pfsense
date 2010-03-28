@@ -128,10 +128,10 @@ if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry
 /* add PPP interfaces */
 if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 	foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-		$portname = "ppp{$pppid}";
+		$portname = basename($ppp['port']);
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
-		$portlist[$portname]['descr'] = "PPP {$ppp['port']}";
+		$portlist[$portname]['descr'] = "PPP " . basename($ppp['port']);
 	}
 }
 

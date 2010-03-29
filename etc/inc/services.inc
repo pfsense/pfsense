@@ -43,7 +43,10 @@ function services_parse_dhcpd_hostnames() {
 
 	// Launch if option enabled
 	if (isset($config['dnsmasq']['regdhcp'])) {
-		mwexec("/bin/ln /etc/hosts {$g['varetc_path']}/hosts");
+		/* Make sure we do not error out */
+		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
+		if (!file_exists("{$g['varetc_path']}/hosts"))
+			mwexec("/bin/ln /etc/hosts {$g['varetc_path']}/hosts");
 		if (file_exists("{$g['varrun_path']}/dhcpleases.pid"))
 			sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
 		else

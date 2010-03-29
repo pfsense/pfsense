@@ -150,14 +150,14 @@ EOD;
 		$i = 2;
 		foreach($gateways_arr as $name => $gateway) {
 			/* for dynamic gateways without an IP address we subtitute a local one */
-			if((is_numeric($gateway['attribute'])) && ($a_gateway_item[$gateway['attribute']]['monitor'] <> "")) {
+			if((is_numeric($gateway['attribute'])) && is_ipaddr($a_gateway_item[$gateway['attribute']]['monitor'])) {
 				$gateway['monitor'] = $a_gateway_item[$gateway['attribute']]['monitor'];
 			} else {
 				if(($gateway['gateway'] == "dynamic") && ($gateway['monitor'])) {
 					$gateway['monitor'] = "127.0.0.{$i}";
 					$i++;
 				}
-				if($gateway['monitor'] == "") {
+				if(!is_ipaddr($gateway['monitor'])) {
 					$gateway['monitor'] = $gateway['gateway'];
 				}
 			}

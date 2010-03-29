@@ -251,7 +251,7 @@ else
 		/usr/sbin/fifolog_create -s 50688 /var/log/vpn.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/pptp.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/pppoe.log
-		/usr/sbin/fifolog_create -s 50688 /var/log/lt2p.log
+		/usr/sbin/fifolog_create -s 50688 /var/log/l2tp.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/openvpn.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/portalauth.log
 		/usr/sbin/fifolog_create -s 50688 /var/log/ipsec.log
@@ -266,7 +266,7 @@ else
 		/usr/sbin/clog -i -s 65535 /var/log/vpn.log
 		/usr/sbin/clog -i -s 50688 /var/log/pptp.log
 		/usr/sbin/clog -i -s 50688 /var/log/pppoe.log
-		/usr/sbin/clog -i -s 50688 /var/log/lt2p.log
+		/usr/sbin/clog -i -s 50688 /var/log/l2tp.log
 		/usr/sbin/clog -i -s 65535 /var/log/openvpn.log
 		/usr/sbin/clog -i -s 65535 /var/log/portalauth.log
 		/usr/sbin/clog -i -s 65535 /var/log/ipsec.log

@@ -138,12 +138,12 @@ include("head.inc");
 	<tr>
 		<td width="22%" class="vncellt">PPP</td>
 		<td width="78%" class="listr">
-			<?=htmlspecialchars($ifinfo['ppplink']);?>&nbsp;&nbsp;
-			<?php if ($ifinfo['status'] == "up"): ?>
+			<?=htmlspecialchars($ifinfo['pppinfo']);?>
+			<?php if ($ifinfo['ppplink'] == "up"): ?>
 				<a href="status_interfaces.php?action=Disconnect&if=<?php echo $ifdescr; ?>">
 				<input type="button" name="<?php echo $ifdescr; ?>" value="Disconnect" class="formbtns">
 			<?php else: ?>
-				<?php if (!$ifinfo['missing_device']): ?>
+				<?php if (!$ifinfo['nodevice']): ?>
 					<a href="status_interfaces.php?action=Connect&if=<?php echo $ifdescr; ?>">
 					<input type="button" name="<?php echo $ifdescr; ?>" value="Connect" class="formbtns">
 				<?php endif; ?>

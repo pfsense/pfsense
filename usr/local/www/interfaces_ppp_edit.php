@@ -137,12 +137,10 @@ if ($_POST) {
 		$ppp['descr'] = $_POST['descr'];
 
 
-        	$iflist = get_configured_interface_list();
-        	foreach ($iflist as $if) {
-                	if ($config['interfaces'][$if]['if'] == basename($a_ppps[$id]['port'])) {
+        $iflist = get_configured_interface_list();
+        foreach ($iflist as $if) {
+        	if ($config['interfaces'][$if]['if'] == basename($a_ppps[$id]['port']))
 				$config['interfaces'][$if]['if'] = basename($ppp['port']);
-				interface_ppp_configure($if);
-			}
 		}
 
 		if (isset($id) && $a_ppps[$id])

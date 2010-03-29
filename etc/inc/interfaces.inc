@@ -969,24 +969,27 @@ EOD;
 	}
 
 	$mpdconf .= <<<EOD
-# Create link.
 	create link static lnk{$interface} modem
 	set link disable chap pap
 	set link accept chap pap eap
 	set link enable no-orig-auth
-# To make Ringback work we should specify how to handle incoming calls originated by it.
 	#set link enable incoming
 	set link action bundle {$interface}
 
 EOD;
 
-	if (!empty($ppp['username'])) {
+	if (empty($ppp['username'])) {
+		$ppp['username'] = "user";
+		$ppp['password'] = "none";
+	}
+	if (empty($ppp['password']))
+		$ppp['password'] = "none";
+
 		$mpdconf .= <<<EOD
 	set auth authname "{$ppp['username']}"
-    set auth password "{$ppp['password']}"
+	set auth password {$ppp['password']}
 
 EOD;
-	}
 
 	$mpdconf .= <<<EOD
 	set modem device {$ppp['port']}

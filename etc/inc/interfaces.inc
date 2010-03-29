@@ -971,7 +971,6 @@ EOD;
 	$mpdconf .= <<<EOD
 # Create link.
 	create link static lnk{$interface} modem
-# We expect to be authenticated by peer using any protocol.
 	set link disable chap pap
 	set link accept chap pap eap
 	set link enable no-orig-auth
@@ -983,9 +982,8 @@ EOD;
 
 	if (!empty($ppp['username'])) {
 		$mpdconf .= <<<EOD
-# Configure the account name. Password will be taken from mpd.secret.
 	set auth authname "{$ppp['username']}"
-        set auth password "{$ppp['password']}"
+    set auth password "{$ppp['password']}"
 
 EOD;
 	}
@@ -1035,7 +1033,7 @@ EOD;
 
 	$fdlnkq = fopen("{$g['varetc_path']}/mpd_{$interface}.query", "w");
 	if (!$fdlnkq) {
-		/* NOTE: It is not fatal if we cannot write the query.");
+		/* NOTE: It is not fatal if we cannot write the query.") */
 		log_error("Error: cannot open mpd_{$interface}.query in interface_ppp_configure().\n");
 	} else {
 	$linkquery = <<<EOD

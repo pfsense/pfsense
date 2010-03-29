@@ -1230,7 +1230,7 @@ function get_interface_info($ifdescr) {
 	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
 	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
 	$ifinfo['subnet'] = $ifinfotmp['subnet'];
-	if (isset($ififnotmp['link0']))
+	if (isset($ifinfotmp['link0']))
 		$link0 = "down";
 
 	
@@ -1319,8 +1319,8 @@ function get_interface_info($ifdescr) {
 		if (empty($dev))
 			break;
 		if (file_exists("/dev/{$dev}")) {
-			$ifinfo['ppplink'] = $dev;
-			if (file_exists("{$g['varrun_path']}/mpd_{$if}.pid") && file_exists("{$g['varetc_path']}/mpd_{$if}.query")) {
+			$ifinfo['ppplink'] = $ifinfo['if'];
+			if (file_exists("{$g['varrun_path']}/ppp_{$if}.pid") && file_exists("{$g['varetc_path']}/mpd_{$if}.query")) {
 				$pppid = substr($ifinfo['if'], 3);
 				$sec = trim(`/usr/bin/nc 127.0.0.1 500{$pppid} < {$g['varetc_path']}/mpd_{$if}.query | grep 'Session time' | cut -f7 -d ' '`);
         			$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);

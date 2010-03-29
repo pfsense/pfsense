@@ -58,7 +58,6 @@ $helppages = array(
 	'diag_logs_filter_dynamic.php' => 'http://doc.pfsense.org/index.php/Firewall_Logs',
 	'diag_logs_filter_summary.php' => 'http://doc.pfsense.org/index.php/Firewall_Logs',
 	'diag_logs_ntpd.php' => 'http://doc.pfsense.org/index.php/NTP_Logs',
-	'diag_logs_ppp.php' => 'http://doc.pfsense.org/index.php/PPP_Logs',
 	'diag_logs_relayd.php' => 'http://doc.pfsense.org/index.php/Load_Balancer_Logs',
 	'diag_logs_settings.php' => 'http://doc.pfsense.org/index.php/Log_Settings',
 	'diag_logs_slbd.php' => 'http://doc.pfsense.org/index.php/Load_Balancer_Logs',

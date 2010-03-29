@@ -93,7 +93,7 @@ filter_configure();
 enable_rrd_graphing();
 
 /* update the gateway group items gateway */
-update_gateway_groups_defaultroute($interface);
+//update_gateway_groups_defaultroute($interface);
 
 /* restart packages */
 mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");

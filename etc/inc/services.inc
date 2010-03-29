@@ -46,13 +46,12 @@ function services_parse_dhcpd_hostnames() {
 		/* Make sure we do not error out */
 		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 		if (!file_exists("{$g['varetc_path']}/hosts"))
-			mwexec("/bin/ln /etc/hosts {$g['varetc_path']}/hosts");
+			system_hosts_generate();
 		if (file_exists("{$g['varrun_path']}/dhcpleases.pid"))
 			sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
 		else
 			mwexec("/usr/local/sbin/dhcpleases {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases {$config['system']['domain']} {$g['varrun_path']}/dnsmasq.pid {$g['varetc_path']}/hosts");
 	} else {
-		@unlink("{$g['varetc_path']}/hosts");
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");
 	}

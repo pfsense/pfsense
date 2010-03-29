@@ -245,7 +245,7 @@ function system_routing_configure() {
 	}
 
 	/* Enable fast routing, if enabled */
-	if(isset($config['staticroutes']['enablefastrouting']))
+	if(isset($config['staticroutes']['enablefastrouting']) && !isset($config['ipsec']['enable']))
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
 
 	$route_str = exec_command("/usr/bin/netstat -rnf inet");
@@ -316,7 +316,7 @@ function system_routing_configure() {
 			if(($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
 				preg_match("/default[ ]+([0-9].*?)[ ]+/i", $route_str, $elements);
 				if(trim($elements[1]) != "$gatewayip") {
-					mwexec("/sbin/route delete default " . escapeshellarg($gatewayip), false);
+					mwexec("/sbin/route delete default " . escapeshellarg($gatewayip), true);
 				}
 				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
 			}

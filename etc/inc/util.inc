@@ -1117,7 +1117,7 @@ function is_interface_mismatch() {
         $do_assign = false;
         $i = 0;
         foreach ($config['interfaces'] as $ifname => $ifcfg) {
-                if (preg_match("/^enc|^cua|^ppp|^pptp|^pppoe|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
+                if (preg_match("/^enc|^cua|^tun||^pptp|^ppp|^ovpn|^gif|^gre|^lagg|^bridge|vlan|_wlan/i", $ifcfg['if'])) {
                         $i++;
                 }
                 else if (does_interface_exist($ifcfg['if']) == false) {

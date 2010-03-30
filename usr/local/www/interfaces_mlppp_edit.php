@@ -55,8 +55,11 @@ if (isset($_POST['id']))
 if (isset($id) && $a_mlppps[$id]) {
 	$pconfig['if'] = $a_mlppps[$id]['if'];
 	$pconfig['mlpppif'] = $a_mlppps[$id]['mlpppif'];
-	$pconfig['tag'] = $a_mlppps[$id]['tag'];
-	$pconfig['descr'] = $a_mlppps[$id]['descr'];
+	$pconfig['username'] = $a_mlppps[$id]['username'];
+	$pconfig['password'] = $a_mlppps[$id]['password'];
+	$pconfig['service'] = $a_mlppps[$id]['service'];
+	$pconfig['ondemand'] = $a_mlppps[$id]['ondemand'];
+	$pconfig['timeout'] = $a_mlppps[$id]['timeout'];
 }
 
 if ($_POST) {
@@ -117,7 +120,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Firewall","mlppp","Edit");
+$pgtitle = array("Interfaces","MLPPP","Edit");
 include("head.inc");
 
 ?>
@@ -126,7 +129,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_mlppp_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table id="interfacetable" width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
 					<td colspan="2" valign="top" class="listtopic">mlppp configuration</td>
 				</tr>

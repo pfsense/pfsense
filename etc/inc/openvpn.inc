@@ -653,7 +653,7 @@ function openvpn_resync($mode, & $settings) {
 }
 
 // Resync and restart all VPNs
-function openvpn_resync_all() {
+function openvpn_resync_all($interface = "") {
 	global $g, $config;
 
 	// delay our setup until the system
@@ -682,13 +682,21 @@ function openvpn_resync_all() {
 	}
 */
 
-	if (is_array($config['openvpn']['openvpn-server']))
-		foreach ($config['openvpn']['openvpn-server'] as & $settings)
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
+			if (!empty($interface) && $interface != $settings['interface'])
+				continue;
 			openvpn_resync('server', $settings);
+		}
+	}
 
-	if (is_array($config['openvpn']['openvpn-client']))
-		foreach ($config['openvpn']['openvpn-client'] as & $settings)
+	if (is_array($config['openvpn']['openvpn-client'])) {
+		foreach ($config['openvpn']['openvpn-client'] as & $settings) {
+			if (!empty($interface) && $interface != $settings['interface'])
+				continue;
 			openvpn_resync('client', $settings);
+		}
+	}
 
 	if (is_array($config['openvpn']['openvpn-csc']))
 		foreach ($config['openvpn']['openvpn-csc'] as & $settings)

@@ -39,6 +39,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
+require_once("openvpn.inc");
 
 /* Interface IP address has changed */
 
@@ -82,7 +83,7 @@ file_put_contents("/tmp/update_dyndns", $interface);
 vpn_ipsec_force_reload();
 
 /* start OpenVPN server & clients */
-exec("killall -HUP openvpn 2>/dev/null");
+openvpn_resync_all($interface);
 
 /* signal filter reload */
 unlink_if_exists("/tmp/config.cache");
@@ -92,7 +93,7 @@ filter_configure();
 enable_rrd_graphing();
 
 /* update the gateway group items gateway */
-update_gateway_groups_defaultroute($interface);
+//update_gateway_groups_defaultroute($interface);
 
 /* restart packages */
 mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");

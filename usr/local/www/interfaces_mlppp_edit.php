@@ -153,18 +153,65 @@ include("head.inc");
 			<span class="vexpl">Only mlppp capable interfaces will be shown.</span></td>
                 </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">mlppp tag </td>
+                  <td valign="top" class="vncell">Username</td>
                   <td class="vtable">
-                    <input name="tag" type="text" class="formfld unknown" id="tag" size="6" value="<?=htmlspecialchars($pconfig['tag']);?>">
-                    <br>
-                    <span class="vexpl">802.1Q mlppp tag (between 1 and 4094) </span></td>
+                    <input name="username" type="text" class="formfld unknown" id="username" size="10" value="<?=htmlspecialchars($pconfig['username']);?>">
+                  </td>
+			    </tr>
+			    <tr>
+                  <td valign="top" class="vncell">Password</td>
+                  <td class="vtable">
+                    <input name="password" type="text" class="formfld unknown" id="password" size="2" value="<?=htmlspecialchars($pconfig['password']);?>">
+                  </td>
+			    </tr>
+			    <tr>
+                  <td valign="top" class="vncell">Service</td>
+                  <td class="vtable">
+                    <input name="service" type="text" class="formfld unknown" id="service" size="6" value="<?=htmlspecialchars($pconfig['service']);?>">
+                  </td>
+			    </tr>
+			    <tr>
+                  <td valign="top" class="vncell">Bandwidth</td>
+                  <td class="vtable">
+                    <input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="6" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">&nbsp;(bits/sec)
+                    <br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
+                  </td>
+			    </tr>
+			    <tr>
+                  <td valign="top" class="vncell">Link MTU</td>
+                  <td class="vtable">
+                    <input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="6" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
+                    <br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
+                  </td>
+			    </tr>
+			    <tr>
+                  <td valign="top" class="vncell">Link MRU</td>
+                  <td class="vtable">
+                    <input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="6" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
+                    <br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
+                  </td>
+			    </tr>
+			    <tr>
+                  <td valign="top" class="vncell">Dial 	On Demand</td>
+                  <td class="vtable">
+                    <input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked"; ?>> Enable Dial-on-Demand mode
+                    <br> <span class="vexpl">This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. 
+                    The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected. </span>
+                  </td>
+			    </tr>
+			    <tr>
+                  <td valign="top" class="vncell">Idle Timeout</td>
+                  <td class="vtable">
+                    <input name="timeout" type="text" class="formfld unknown" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['timeout']);?>">
+                    <br> <span class="vexpl">Idle Timeout goes with the OnDemand selection above. If OnDemand is not checked this is ignored.</span>
+                  </td>
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl">You may enter a description here for your reference (not parsed).</span>
+                  </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

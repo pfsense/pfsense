@@ -97,11 +97,11 @@ include("head.inc");
 	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
 	$tab_array[5] = array("PPP", false, "interfaces_ppp.php");
-	$tab_array[5] = array("MLPPP", false, "interfaces_mlppp.php");
-	$tab_array[6] = array("GRE", false, "interfaces_gre.php");
-	$tab_array[7] = array("GIF", false, "interfaces_gif.php");
-	$tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
-        $tab_array[9] = array("LAGG", true, "interfaces_lagg.php");
+	$tab_array[6] = array("MLPPP", false, "interfaces_mlppp.php");
+	$tab_array[7] = array("GRE", false, "interfaces_gre.php");
+	$tab_array[8] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[9] = array("Bridges", false, "interfaces_bridge.php");
+	$tab_array[10] = array("LAGG", true, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

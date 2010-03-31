@@ -2449,7 +2449,7 @@ function discover_pkg_rules($ruletype) {
 			continue;
 		update_filter_reload_status("Checking for {$ruletype} PF hooks in package {$pkg_inc}");
 		require_once($pkg_inc);
-		$pkg = basename($pkg_inc);
+		$pkg = basename($pkg_inc, ".inc");
 		$pkg_generate_rules = "{$pkg}_generate_rules";
 		if(function_exists($pkg_generate_rules)) {
 			update_filter_reload_status("Processing early {$ruletype} rules for package {$pkg_inc}");

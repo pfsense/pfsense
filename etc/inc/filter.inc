@@ -289,8 +289,7 @@ function filter_configure_sync() {
 		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 		$line_error = split("\:", $rules_error);
 		$line_number = $line_error[1];
-		$rules_file = `/bin/cat {$g['tmp_path']}/rules.debug`;
-		$line_split = split("\n", $rules_file);
+		$line_split = file("{$g['tmp_path']}/rules.debug");
 		if(is_array($line_split))
 			$line_error = "The line in question reads [{$line_number}]: {$line_split[$line_number-1]}";
 		if($line_error and $line_number) {

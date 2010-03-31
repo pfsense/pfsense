@@ -47,6 +47,7 @@ if (!is_array($config['mlppps']['mlppp']))
 $a_mlppps = &$config['mlppps']['mlppp'];
 
 $portlist = get_interface_list();
+$types = array("pppoe" => "PPPoE", "pptp" => "PPTP",  "l2tp" => "LT2TP", "tcp" => "TCP", "udp" => "UDP", "ng" => "Netgraph"  /* , "carpdev-dhcp" => "CarpDev"*/); 
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -130,28 +131,45 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_mlppp_edit.php" method="post" name="iform" id="iform">
               <table id="interfacetable" width="100%" border="0" cellpadding="6" cellspacing="0">
-				<tr>
-					<td colspan="2" valign="top" class="listtopic">mlppp configuration</td>
+              	<tr>
+					<td colspan="2" valign="top" class="listtopic">MLPPP configuration</td>
 				</tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncellreq">Parent interface</td>
+                  <td width="22%" valign="top" class="vncellreq">Member interfaces</td>
                   <td width="78%" class="vtable">
-                    <select name="if" class="formselect">
+				  <select name="members[]" multiple="true" class="formselect" size="5">
                       <?php
-					  foreach ($portlist as $ifn => $ifinfo)
+
+						foreach ($portlist as $ifn => $ifinfo)
 						if (is_jumbo_capable($ifn)) {
 							echo "<option value=\"{$ifn}\"";
 							if ($ifn == $pconfig['if'])
 								echo "selected";
 							echo ">";
-                      				        echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
-                      					echo "</option>";
+							echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
+							echo "</option>";
 						}
-		      ?>
+		      		?>
                     </select>
-			<br/>
-			<span class="vexpl">Only mlppp capable interfaces will be shown.</span></td>
-                </tr>
+				<br/><span class="vexpl">Interfaces participating in the multilink connection.</span>
+				</td>
+            	</tr>
+            	<tr>
+				<td valign="middle" class="vncell"><strong>Type</strong></td>
+				<td class="vtable"> 
+					<select name="type" onChange="updateType(this.value);" class="formselect" id="type">
+					<?php 
+						foreach ($types as $key => $opt) { 
+							echo "<option onClick=\"updateType('{$key}');\"";
+							if ($key == $pconfig['type']) 
+								echo " selected";
+							echo " value=\"{$key}\" >" . htmlspecialchars($opt);
+							echo "</option>";
+					    } 
+					?>
+					</select>
+				</td>
+			</tr>
 				<tr>
                   <td valign="top" class="vncell">Username</td>
                   <td class="vtable">
@@ -192,7 +210,8 @@ include("head.inc");
                   </td>
 			    </tr>
 			    <tr>
-                  <td valign="top" class="vncell">Dial 	On Demand</td>
+				<tr>
+            	<td valign="top" class="vncell">Dial 	On Demand</td>
                   <td class="vtable">
                     <input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked"; ?>> Enable Dial-on-Demand mode
                     <br> <span class="vexpl">This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. 
@@ -213,8 +232,7 @@ include("head.inc");
                     <br> <span class="vexpl">You may enter a description here for your reference (not parsed).</span>
                   </td>
                 </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
+				<td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
 		    <input type="hidden" name="mlpppif" value="<?=$pconfig['mlpppif']; ?>">
                     <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()">

@@ -60,7 +60,6 @@ $helppages = array(
 	'diag_logs_ntpd.php' => 'http://doc.pfsense.org/index.php/NTP_Logs',
 	'diag_logs_relayd.php' => 'http://doc.pfsense.org/index.php/Load_Balancer_Logs',
 	'diag_logs_settings.php' => 'http://doc.pfsense.org/index.php/Log_Settings',
-	'diag_logs_slbd.php' => 'http://doc.pfsense.org/index.php/Load_Balancer_Logs',
 	'diag_logs_vpn.php' => 'http://doc.pfsense.org/index.php/PPTP_VPN_Logs',
 	'diag_logs_ipsec.php' => 'http://doc.pfsense.org/index.php/IPsec_Logs',
 	'diag_logs_openvpn.php' => 'http://doc.pfsense.org/index.php/OpenVPN_Logs',

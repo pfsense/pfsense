@@ -896,8 +896,6 @@ function filter_nat_rules_generate() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 
 	$natrules = "nat-anchor \"natearly/*\"\n";
-	if(file_exists("{$g['tmp_path']}/rules.natearly.packages"))
-		$natrules .= file_get_contents("{$g['tmp_path']}/rules.natearly.packages");
 	
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
 	update_filter_reload_status("Creating 1:1 rules...");
@@ -1059,9 +1057,6 @@ function filter_nat_rules_generate() {
 	/* load balancer anchor */
 	$natrules .= "\n# Load balancing anchor\n";
 	$natrules .= "rdr-anchor \"relayd/*\"\n";
-
-	if(file_exists("{$g['tmp_path']}/rules.rdrearly.packages"))
-		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdrearly.packages");
 
 	update_filter_reload_status("Setting up TFTP helper");
 	$natrules .= "# TFTP proxy\n";
@@ -1225,11 +1220,6 @@ rdr on \${$FilterIflist['wan']['descr']} proto tcp from any to any port 1723 -> 
 EOD;
 		}
 	}
-
-	if(file_exists("{$g['tmp_path']}/rules.nat.packages"))
-		$natrules .= file_get_contents("{$g['tmp_path']}/rules.nat.packages");
-	if(file_exists("{$g['tmp_path']}/rules.rdr.packages"))
-		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdr.packages");
 
 	$natrules .= discover_pkg_rules("nat");
 
@@ -1754,9 +1744,6 @@ anchor "packageearly"
 
 EOD;
 
-	if(file_exists("{$g['tmp_path']}/rules.rulesearly.packages"))
-		$ipfrules .= file_get_contents("{$g['tmp_path']}/rules.rulesearly.packages");
-
 	$ipfrules .= <<<EOD
 
 # carp
@@ -2022,9 +2009,6 @@ EOD;
 anchor "packagelate"
 
 EOD;
-	if(file_exists("{$g['tmp_path']}/rules.packages"))
-		$ipfrules .= file_get_contents("{$g['tmp_path']}/rules.packages");
-
 	$ipfrules .= <<<EOD
 
 anchor "limitingesr"

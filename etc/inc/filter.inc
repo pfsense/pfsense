@@ -289,8 +289,7 @@ function filter_configure_sync() {
 		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 		$line_error = split("\:", $rules_error);
 		$line_number = $line_error[1];
-		$rules_file = `/bin/cat {$g['tmp_path']}/rules.debug`;
-		$line_split = split("\n", $rules_file);
+		$line_split = file("{$g['tmp_path']}/rules.debug");
 		if(is_array($line_split))
 			$line_error = "The line in question reads [{$line_number}]: {$line_split[$line_number-1]}";
 		if($line_error and $line_number) {
@@ -896,8 +895,6 @@ function filter_nat_rules_generate() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist;
 
 	$natrules = "nat-anchor \"natearly/*\"\n";
-	if(file_exists("{$g['tmp_path']}/rules.natearly.packages"))
-		$natrules .= file_get_contents("{$g['tmp_path']}/rules.natearly.packages");
 	
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
 	update_filter_reload_status("Creating 1:1 rules...");
@@ -1059,9 +1056,6 @@ function filter_nat_rules_generate() {
 	/* load balancer anchor */
 	$natrules .= "\n# Load balancing anchor\n";
 	$natrules .= "rdr-anchor \"relayd/*\"\n";
-
-	if(file_exists("{$g['tmp_path']}/rules.rdrearly.packages"))
-		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdrearly.packages");
 
 	update_filter_reload_status("Setting up TFTP helper");
 	$natrules .= "# TFTP proxy\n";
@@ -1225,11 +1219,6 @@ rdr on \${$FilterIflist['wan']['descr']} proto tcp from any to any port 1723 -> 
 EOD;
 		}
 	}
-
-	if(file_exists("{$g['tmp_path']}/rules.nat.packages"))
-		$natrules .= file_get_contents("{$g['tmp_path']}/rules.nat.packages");
-	if(file_exists("{$g['tmp_path']}/rules.rdr.packages"))
-		$natrules .= file_get_contents("{$g['tmp_path']}/rules.rdr.packages");
 
 	$natrules .= discover_pkg_rules("nat");
 
@@ -1754,9 +1743,6 @@ anchor "packageearly"
 
 EOD;
 
-	if(file_exists("{$g['tmp_path']}/rules.rulesearly.packages"))
-		$ipfrules .= file_get_contents("{$g['tmp_path']}/rules.rulesearly.packages");
-
 	$ipfrules .= <<<EOD
 
 # carp
@@ -2022,9 +2008,6 @@ EOD;
 anchor "packagelate"
 
 EOD;
-	if(file_exists("{$g['tmp_path']}/rules.packages"))
-		$ipfrules .= file_get_contents("{$g['tmp_path']}/rules.packages");
-
 	$ipfrules .= <<<EOD
 
 anchor "limitingesr"
@@ -2449,7 +2432,7 @@ function discover_pkg_rules($ruletype) {
 			continue;
 		update_filter_reload_status("Checking for {$ruletype} PF hooks in package {$pkg_inc}");
 		require_once($pkg_inc);
-		$pkg = basename($pkg_inc);
+		$pkg = basename($pkg_inc, ".inc");
 		$pkg_generate_rules = "{$pkg}_generate_rules";
 		if(function_exists($pkg_generate_rules)) {
 			update_filter_reload_status("Processing early {$ruletype} rules for package {$pkg_inc}");

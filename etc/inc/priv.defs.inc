@@ -132,12 +132,6 @@ $priv_list['page-diagnostics-logs-settings']['descr'] = "Allow access to the 'Di
 $priv_list['page-diagnostics-logs-settings']['match'] = array();
 $priv_list['page-diagnostics-logs-settings']['match'][] = "diag_logs_settings.php*";
 
-$priv_list['page-status-systemlogs-loadbalancer'] = array();
-$priv_list['page-status-systemlogs-loadbalancer']['name'] = "WebCfg - Status: System logs: Load Balancer page";
-$priv_list['page-status-systemlogs-loadbalancer']['descr'] = "Allow access to the 'Status: System logs: Load Balancer' page.";
-$priv_list['page-status-systemlogs-loadbalancer']['match'] = array();
-$priv_list['page-status-systemlogs-loadbalancer']['match'][] = "diag_logs_slbd.php*";
-
 $priv_list['page-diagnostics-logs-pptpvpn'] = array();
 $priv_list['page-diagnostics-logs-pptpvpn']['name'] = "WebCfg - Diagnostics: Logs: VPN page";
 $priv_list['page-diagnostics-logs-pptpvpn']['descr'] = "Allow access to the 'Diagnostics: Logs: VPN' page.";

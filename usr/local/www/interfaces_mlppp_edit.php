@@ -47,7 +47,6 @@ if (!is_array($config['mlppps']['mlppp']))
 $a_mlppps = &$config['mlppps']['mlppp'];
 
 $portlist = get_interface_list();
-$types = array("pppoe" => "PPPoE", "pptp" => "PPTP",  "l2tp" => "LT2TP", "tcp" => "TCP", "udp" => "UDP", "ng" => "Netgraph"  /* , "carpdev-dhcp" => "CarpDev"*/); 
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -120,12 +119,113 @@ if ($_POST) {
 		}
 	}
 }
-
+$closehead = false;
 $pgtitle = array("Interfaces","MLPPP","Edit");
 include("head.inc");
+$types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP"/*,  "l2tp" => "L2TP", "tcp" => "TCP", "udp" => "UDP", "ng" => "Netgraph" */); 
+
 
 ?>
 
+<script type="text/javascript">
+	function updateType(t){
+		switch(t) {
+	<?php
+		/* OK, so this is sick using php to generate javascript, but it needed to be done */
+		foreach ($types as $key => $val) {
+			echo "		case \"{$key}\": {\n";
+			$t = $types;
+			foreach ($t as $k => $v) {
+				if ($k != $key) {
+					echo "				$('{$k}').hide();\n";
+				}
+				
+			}
+			if ($key == "ppp"){
+					echo "				$('serialports').show();\n";
+					echo "				$('ports').hide();\n";
+			} else {
+					if ($key == "select") {
+						echo "				$('ports').hide();\n";
+						echo "				$('serialports').hide();\n";
+					}
+					else {
+						echo "				$('ports').show();\n";
+						echo "				$('serialports').hide();\n";
+					}
+			}
+			echo "			}\n";
+		}
+	?>
+		}
+		$(t).show();
+	}
+
+	function show_allcfg(obj) {
+		if (obj.checked)
+			$('allcfg').show();
+		else
+			$('allcfg').hide();
+	}
+	
+	function show_periodic_reset(obj) {
+		if (obj.checked)
+			$('presetwrap').show();
+		else
+			$('presetwrap').hide();
+	}
+
+	function show_mon_config() {
+		document.getElementById("showmonbox").innerHTML='';
+		aodiv = document.getElementById('showmon');
+		aodiv.style.display = "block";
+	}
+
+	function openwindow(url) {
+		var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
+		if (oWin==null || typeof(oWin)=="undefined") 
+			return false;
+		else 
+			return true;
+	}
+	function prefill_att() {
+		$('initstr').value = "Q0V1E1S0=0&C1&D2+FCLASS=0";
+		$('apn').value = "ISP.CINGULAR";
+		$('apnum').value = "1";
+		$('phone').value = "*99#";
+		$('username').value = "att";
+		$('password').value = "att";
+	}
+	function prefill_sprint() {
+		$('initstr').value = "E1Q0";
+		$('apn').value = "";
+		$('apnum').value = "";
+		$('phone').value = "#777";
+		$('username').value = "sprint";
+		$('password').value = "sprint";
+	}
+	function prefill_vzw() {
+		$('initstr').value = "E1Q0s7=60";
+		$('apn').value = "";
+		$('apnum').value = "";
+		$('phone').value = "#777";
+		$('username').value = "123@vzw3g.com";
+		$('password').value = "vzw";
+	}
+	var currentSwap = false;
+	function swapOptions(){
+
+				
+
+				document.getElementById("postMoreOptions").style.display = currentSwap ? "" : "none";
+
+				if (typeof(document.forms.postmodify) != "undefined")
+					document.forms.postmodify.additional_options.value = currentSwap ? "1" : "0";
+
+				currentSwap = !currentSwap;
+	}
+</script>
+</head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -135,41 +235,61 @@ include("head.inc");
 					<td colspan="2" valign="top" class="listtopic">MLPPP configuration</td>
 				</tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncellreq">Member interfaces</td>
-                  <td width="78%" class="vtable">
-				  <select name="members[]" multiple="true" class="formselect" size="5">
-                      <?php
-
-						foreach ($portlist as $ifn => $ifinfo)
-						if (is_jumbo_capable($ifn)) {
-							echo "<option value=\"{$ifn}\"";
-							if ($ifn == $pconfig['if'])
-								echo "selected";
-							echo ">";
-							echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
-							echo "</option>";
-						}
-		      		?>
-                    </select>
-				<br/><span class="vexpl">Interfaces participating in the multilink connection.</span>
-				</td>
+					<td valign="middle" class="vncell"><strong>Link Type</strong></td>
+					<td class="vtable"> 
+						<select name="type" onChange="updateType(this.value);" class="formselect" id="type">
+						<?php 
+							foreach ($types as $key => $opt) { 
+								echo "<option onClick=\"updateType('{$key}');\"";
+								if ($key == $pconfig['type']) 
+									echo " selected";
+								echo " value=\"{$key}\" >" . htmlspecialchars($opt);
+								echo "</option>";
+							} 
+						?>
+						</select>
+					</td>
+				</tr>
+				<tr style="display:none;" name="ports" id="ports" >
+					<td width="22%" valign="top" class="vncellreq">Member interface(s)</td>
+					<td width="78%" class="vtable">
+						<select name="members[]" multiple="true" class="formselect">
+							<?php
+								foreach ($portlist as $ifn => $ifinfo)
+								if (is_jumbo_capable($ifn)) {
+									echo "<option value=\"{$ifn}\"";
+									if ($ifn == $pconfig['if'])
+										echo "selected";
+									echo ">";
+									echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
+									echo "</option>";
+								}
+							?>
+						</select>
+						<br/><span class="vexpl">Interfaces participating in the multilink connection.</span>
+					</td>
             	</tr>
-            	<tr>
-				<td valign="middle" class="vncell"><strong>Type</strong></td>
-				<td class="vtable"> 
-					<select name="type" onChange="updateType(this.value);" class="formselect" id="type">
-					<?php 
-						foreach ($types as $key => $opt) { 
-							echo "<option onClick=\"updateType('{$key}');\"";
-							if ($key == $pconfig['type']) 
-								echo " selected";
-							echo " value=\"{$key}\" >" . htmlspecialchars($opt);
-							echo "</option>";
-					    } 
-					?>
-					</select>
-				</td>
-			</tr>
+            	<tr style="display:none;" name="serialports" id="serialports">
+					<td width="22%" valign="top" class="vncellreq">Member interface(s)</td>
+					<td width="78%" class="vtable">
+						<select name="serport" id="serport" multiple="true" class="formselect">
+						<?php
+							$serportlist = glob("/dev/cua*");
+							$modems = glob("/dev/modem*");
+							$serportlist = array_merge($serportlist, $modems);
+							foreach ($serportlist as $port) {
+								if(preg_match("/\.(lock|init)$/", $port))
+									continue;
+								echo "<option value=\"".trim($port)."\"";
+								if ($pconfig['port'] == $port)
+									echo "selected";
+								echo ">{$port}</option>";
+							}
+						?>
+						</select>
+					</td>
+				</tr>
+
 				<tr>
                   <td valign="top" class="vncell">Username</td>
                   <td class="vtable">
@@ -181,37 +301,15 @@ include("head.inc");
                   <td class="vtable">
                     <input name="password" type="text" class="formfld unknown" id="password" size="2" value="<?=htmlspecialchars($pconfig['password']);?>">
                   </td>
-			    </tr>
-			    <tr>
-                  <td valign="top" class="vncell">Service</td>
-                  <td class="vtable">
-                    <input name="service" type="text" class="formfld unknown" id="service" size="6" value="<?=htmlspecialchars($pconfig['service']);?>">
-                  </td>
-			    </tr>
-			    <tr>
-                  <td valign="top" class="vncell">Bandwidth</td>
-                  <td class="vtable">
-                    <input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="6" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">&nbsp;(bits/sec)
-                    <br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
-                  </td>
-			    </tr>
-			    <tr>
-                  <td valign="top" class="vncell">Link MTU</td>
-                  <td class="vtable">
-                    <input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="6" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
-                    <br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
-                  </td>
-			    </tr>
-			    <tr>
-                  <td valign="top" class="vncell">Link MRU</td>
-                  <td class="vtable">
-                    <input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="6" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
-                    <br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
-                  </td>
-			    </tr>
-			    <tr>
+				</tr>
 				<tr>
-            	<td valign="top" class="vncell">Dial 	On Demand</td>
+					<td width="22%" valign="top" class="vncell">Gateway</td>
+					<td width="78%" class="vtable">
+						<input type="checkbox" value="on" id="defaultgw" name="defaultgw" <?php if (isset($pconfig['defaultgw'])) echo "checked"; ?>>This link will be used as the default gateway.
+					</td>
+				</tr>
+				<tr>
+            	<td valign="top" class="vncell">Dial On Demand</td>
                   <td class="vtable">
                     <input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked"; ?>> Enable Dial-on-Demand mode
                     <br> <span class="vexpl">This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. 
@@ -232,9 +330,175 @@ include("head.inc");
                     <br> <span class="vexpl">You may enter a description here for your reference (not parsed).</span>
                   </td>
                 </tr>
+                <tr>
+					<td colspan="2" valign="top" height="16"></td>
+				</tr>
+
+			    <tr style="display:none;" name="select" id="select">
+				</tr>
+				<tr style="display:none;" name="ppp" id="ppp">
+					<td colspan="2" style="padding:0px;">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">PPP configuration</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Pre-fill Settings</td>
+								<td width="78%" class="vtable">
+								<a href='#' onClick='javascript:prefill_att();'>ATT</A>
+								<a href='#' onClick='javascript:prefill_sprint();'>Sprint</A>
+								<a href='#' onClick='javascript:prefill_vzw();'>Verizon</A>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Init String</td>
+								<td width="78%" class="vtable">
+									<input type="text" size="40" class="formfld unknown" id="initstr" name="initstr"><?=htmlspecialchars($pconfig['initstr']);?>
+									<br><span class="vexpl">Note: Enter the modem initialization string here. Do NOT include the "AT" string at the beginning of the command.</span>
+								</td>
+							</tr>
+							<tr>
+							  <td width="22%" valign="top" class="vncell">Sim PIN</td>
+							  <td width="78%" class="vtable">
+								<input name="simpin" type="text" class="formfld unknown" id="simpin" size="12" value="<?=htmlspecialchars($pconfig['simpin']);?>">
+							</td>
+							</tr>
+							<tr>
+							  <td width="22%" valign="top" class="vncell">Sim PIN wait</td>
+							  <td width="78%" class="vtable">
+								<input name="pin-wait" type="text" class="formfld unknown" id="pin-wait" size="2" value="<?=htmlspecialchars($pconfig['pin-wait']);?>">
+								<br><span class="vexpl">Note: Time to wait for SIM to discover network after PIN is sent to SIM (seconds).</span>
+							</td>
+							</tr>
+							<tr>
+							  <td width="22%" valign="top" class="vncell">Access Point Name (APN)</td>
+							  <td width="78%" class="vtable">
+								<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>">
+							</td>
+							</tr>
+							<tr>
+							  <td width="22%" valign="top" class="vncell">APN number (optional)</td>
+							  <td width="78%" class="vtable">
+								<input name="apnum" type="text" class="formfld unknown" id="apnum" size="2" value="<?=htmlspecialchars($pconfig['apnum']);?>">
+								<br><span class="vexpl">Note: Defaults to 1 if you set APN above. Ignored if you set no APN above.</span>
+							</td>
+							</tr>
+							<tr>
+							  <td width="22%" valign="top" class="vncell">Phone Number</td>
+							  <td width="78%" class="vtable">
+								<input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>">
+								<br><span class="vexpl">Note: Typically (*99# or *99***# or *99***1#) for GSM networks and *777 for CDMA networks</span>
+							  </td>
+							</tr>
+							<tr>
+							<tr>
+							  <td width="22%" valign="top" class="vncell">Local IP</td>
+							  <td width="78%" class="vtable">
+								<input name="localip" type="text" class="formfld unknown" id="localip" size="40" value="<?=htmlspecialchars($pconfig['localip']);?>">
+								<br><span class="vexpl">Note: Enter your IP address here if it is not automatically assigned.</span>
+							  </td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Remote IP (Gateway)</td>
+								<td width="78%" class="vtable">
+									<input name="gateway" type="text" class="formfld unknown" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+									<br><span class="vexpl">Note: Enter the remote IP here if not automatically assigned. This is where the packets will be routed.</span>
+								</td>
+							</tr>
+							<tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Connection Timeout</td>
+								<td width="78%" class="vtable">
+									<input name="connect-timeout" type="text" class="formfld unknown" id="connect-timeout" size="2" value="<?=htmlspecialchars($pconfig['connect-timeout']);?>">
+									<br><span class="vexpl">Note: Enter timeout in seconds for connection to be established (sec.) Default is 45 sec.</span>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr style="display:none;" name="pppoe" id="pppoe">
+					<td colspan="2" style="padding:0px;">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">PPPoE configuration</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Service name</td>
+								<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
+									<br> <span class="vexpl">Hint: this field can usually be left empty</span>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				
+				<tr style="display:none;" name="pptp" id="pptp">
+					<td colspan="2" style="padding:0px;">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td colspan="2" valign="top" class="listtopic">PPTP configuration</td>
+							</tr>
+							<tr>
+								<td width="22%" width="100" valign="top" class="vncellreq">Local IP address</td>
+								<td width="78%" class="vtable"> 
+									<input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20"  value="<?=htmlspecialchars($pconfig['pptp_local']);?>">
+									/
+									<select name="pptp_subnet" class="formselect" id="pptp_subnet">
+									<?php for ($i = 31; $i > 0; $i--): ?>
+										<option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet']) echo "selected"; ?>>
+											<?=$i;?>
+										</option>
+									<?php endfor; ?>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" width="100" valign="top" class="vncellreq">Remote IP address</td>
+								<td width="78%" class="vtable">
+									<input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote']);?>">
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			    <tr>
+					<td colspan="2" valign="top" height="16"></td>
+				</tr>
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Advanced Options <a href="javascript:swapOptions();" class="navlnk">-</a></td>
+				</tr>
+				<tr name="advanced" id="postMoreOptions">
+					<td colspan="2" style="padding:0px;">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0">
+							<tr>
+								<td width="22%" width="100" valign="top" class="vncell">Bandwidth</td>
+								<td class="vtable">
+								<input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="6" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">&nbsp;(bits/sec)
+								<br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
+							  </td>
+							</tr>
+							<tr>
+							  <td width="22%" width="100" valign="top" class="vncell">Link MTU</td>
+							  <td class="vtable">
+								<input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="6" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
+								<br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
+							  </td>
+							</tr>
+							<tr>
+							  <td width="22%" width="100" valign="top" class="vncell">Link MRU</td>
+							  <td class="vtable">
+								<input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="6" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
+								<br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
+							  </td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			    
+                <tr>
 				<td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-		    <input type="hidden" name="mlpppif" value="<?=$pconfig['mlpppif']; ?>">
+					<input type="hidden" name="mlpppif" value="<?=$pconfig['mlpppif']; ?>">
                     <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()">
                     <?php if (isset($id) && $a_mlppps[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">

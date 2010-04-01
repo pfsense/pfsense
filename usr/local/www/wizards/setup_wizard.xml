@@ -100,8 +100,8 @@
 	<description>Please enter the time, date and time zone.</description>
 	<fields>
 		<field>
-			<name>Time server dns name</name>
-			<description>Enter the name of the time server.</description>
+			<name>Time server hostname</name>
+			<description>Enter the hostname (FQDN) of the time server.</description>
 			<type>input</type>
 			<bindstofield>system->timeservers</bindstofield>
 		</field>

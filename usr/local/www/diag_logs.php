@@ -80,7 +80,7 @@ include("head.inc");
 	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
 	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
 	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
-	$tab_array[] = array("Load Balancer", false, "diag_logs_slbd.php");
+	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
 	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
 	$tab_array[] = array("Settings", false, "diag_logs_settings.php");

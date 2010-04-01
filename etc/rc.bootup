@@ -366,8 +366,6 @@ upnp_start();
 /* If powerd is enabled, lets launch it */
 activate_powerd();
 
-mwexec_bg("/usr/sbin/update_dns_cache.sh");
-
 /* done */
 unlink("{$g['varrun_path']}/booting");
 unset($g['booting']);

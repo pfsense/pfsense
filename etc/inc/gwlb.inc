@@ -355,11 +355,11 @@ function return_gateway_groups_array() {
 					if(($status['name'] != $gwname)) {
 						continue;
 					}
-					if (preg_match("/down/i", $status['status'])) {
+					if (stristr($status['status'], "down")) {
 						$msg = "MONITOR: $gwname has high latency, removing from routing group";
 						log_error($msg);
 						notify_via_growl($msg);
-					} elseif (preg_match("/loss/i", $status['status'])) {
+					} elseif (stristr($status['status'], "loss")) {
 						if (strstr($group['trigger'], "loss")) {
 							/* packet loss */
 							$msg = "MONITOR: $gwname has packet loss, removing from routing group";
@@ -368,7 +368,7 @@ function return_gateway_groups_array() {
 						} else {
 							$tiers[$tier][] = $gwname;
 						}
-					} elseif (preg_match("/delay/i", $status['status'])) {
+					} elseif (stristr($status['status'], $delay)) {
 						if (strstr($group['trigger'] , "latency")) {
 							/* high latency */
 							$msg = "MONITOR: $gwname has high latency, removing from routing group";
@@ -377,7 +377,7 @@ function return_gateway_groups_array() {
 						} else {
 							$tiers[$tier][] = $gwname;
 						}
-					} elseif (preg_match("/none/i", $status['status'])) {
+					} elseif (stristr($status['status'], "none")) {
 						/* Online add member */
 						$tiers[$tier][] = $gwname;
 					}

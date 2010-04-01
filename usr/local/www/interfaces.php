@@ -490,10 +490,8 @@ if ($_POST) {
 		/* for dynamic interfaces we tack a gateway item onto the array to prevent system
 		 * log messages from appearing. They can also manually add these items */
 		/* 1st added gateway gets a default bit */
-		$gateway_item = array();
-		if(empty($a_gateways)) {
-			$gateway_item['defaultgw'] = "true";
-		} else {
+		if(!empty($a_gateways)) {
+			$gateway_item = array();
 			/* check for duplicates */
 			$skip = false;
 			foreach($a_gateways as $item) {

@@ -50,7 +50,7 @@ function services_parse_dhcpd_hostnames() {
 		if (file_exists("{$g['varrun_path']}/dhcpleases.pid"))
 			sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
 		else
-			mwexec("/usr/local/sbin/dhcpleases {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases {$config['system']['domain']} {$g['varrun_path']}/dnsmasq.pid {$g['varetc_path']}/hosts");
+			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/dnsmasq.pid -h {$g['varetc_path']}/hosts");
 	} else {
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");

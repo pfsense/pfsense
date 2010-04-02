@@ -249,7 +249,8 @@ function filter_configure_sync() {
 	update_filter_reload_status("Setting up SCRUB information");
 	$rules .= filter_generate_scrubing();
 	$rules .= "\n";
-	$rules .= "{$dummynet_rules}\n";
+	/* NOTE: Disabled until we catch up with dummynet changes. */
+	//$rules .= "{$dummynet_rules}\n";
 	$rules .= "{$altq_queues}\n";
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";

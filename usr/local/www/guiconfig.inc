@@ -68,7 +68,7 @@ else
  *  If this device is an apple ipod/iphone
  *  switch the theme to one that works with it.
  */
-$apple_ua = array("iPhone","iPod");
+$apple_ua = array("iPhone","iPod", "iPad");
 foreach($apple_ua as $useragent)
 	if(strstr($_SERVER['HTTP_USER_AGENT'], $useragent))
 		$g['theme'] = "pfsense";

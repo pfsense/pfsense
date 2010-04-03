@@ -385,9 +385,9 @@ function typesel_change() {
                       <tr>
                         <td>Type:&nbsp;&nbsp;</td>
                         <td><select name="type" class="formselect" onChange="typesel_change()">
-                            <option value="single" <?php if ((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['ipaddr']))) echo "selected"; ?>>
+                            <option value="single" <?php if ((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) echo "selected"; ?>>
                             Single address</option>
-                            <option value="network" <?php if (!$pconfig['range'] && $pconfig['subnet_bits'] != 32 && isset($pconfig['ipaddr'])) echo "selected"; ?>>
+                            <option value="network" <?php if (!$pconfig['range'] && $pconfig['subnet_bits'] != 32 && isset($pconfig['subnet'])) echo "selected"; ?>>
                             Network</option>
                             <!-- XXX: Billm, don't let anyone choose this until NAT configuration screens are ready for it <option value="range" <?php if ($pconfig['range']) echo "selected"; ?>>
                             Range</option> -->
@@ -398,7 +398,7 @@ function typesel_change() {
                         <td><input name="subnet" type="text" class="formfld unknown" id="subnet" size="20" value="<?=htmlspecialchars($pconfig['subnet']);?>">
                           /<select name="subnet_bits" class="formselect" id="select">
                             <?php for ($i = 32; $i >= 1; $i--): ?>
-                            <option value="<?=$i;?>" <?php if (($i == $pconfig['subnet_bits']) || (!isset($pconfig['ipaddr']) && $i == 32)) echo "selected"; ?>>
+                            <option value="<?=$i;?>" <?php if (($i == $pconfig['subnet_bits']) || (!isset($pconfig['subnet']) && $i == 32)) echo "selected"; ?>>
                             <?=$i;?>
                       </option>
                             <?php endfor; ?>
@@ -471,7 +471,7 @@ function typesel_change() {
 				      		<span class="red">
 				      			<strong>Note:<br></strong>
 				      		</span>&nbsp;&nbsp;
-				      		ProxyARP type IP addresses *DO NOT* work with addon packages such as squid.  Use a CARP or IP Alias type address for these cases.
+				      		ProxyARP type IP addresses *DO NOT* work with add on packages such as Squid.  Use a CARP or IP Alias type address for these cases.
 				      		<p>&nbsp;&nbsp;&nbsp;For more information on CARP and the above values, visit the OpenBSD <a href='http://www.openbsd.org/faq/pf/carp.html'>CARP FAQ</A>.
 						</span>
 					  </p>

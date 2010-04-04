@@ -354,7 +354,7 @@ if ($_POST) {
 		$input_errors[] = 'ID must be an integer';
 	if($_POST['l7container'] && $_POST['l7container'] != "none") {
 		if(!($_POST['proto'] == "tcp" || $_POST['proto'] == "udp" || $_POST['proto'] == "tcp/udp"))
-			$input_errors[] = "You can only select a layer7 container for tcp and/or udp protocols";
+			$input_errors[] = "You can only select a layer7 container for TCP and/or UDP protocols";
 		if ($_POST['type'] <> "pass")
 			$input_errors[] = "You can only select a layer7 container for Pass type rules.";
 	}

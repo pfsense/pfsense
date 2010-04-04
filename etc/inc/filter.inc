@@ -249,7 +249,8 @@ function filter_configure_sync() {
 	update_filter_reload_status("Setting up SCRUB information");
 	$rules .= filter_generate_scrubing();
 	$rules .= "\n";
-	$rules .= "{$dummynet_rules}\n";
+	/* NOTE: Disabled until we catch up with dummynet changes. */
+	//$rules .= "{$dummynet_rules}\n";
 	$rules .= "{$altq_queues}\n";
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";
@@ -1903,10 +1904,10 @@ EOD;
 				}
 				if($sa) {
 				$ipfrules .= <<<EOD
-pass in quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
-pass in quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} keep state(sloppy) label "pass traffic between statically routed subnets"
-pass out quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
-pass out quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass in quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
+pass in quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
+pass out quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
+pass out quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
 
 EOD;
 				}

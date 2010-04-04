@@ -169,6 +169,9 @@ sorttable = {
     for (var i=0; i<table.tBodies[0].rows.length; i++) {
       text = sorttable.getInnerText(table.tBodies[0].rows[i].cells[column]);
       if (text != '') {
+      	if (text.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
+      	  return sorttable.sort_ipaddr;
+      	}
         if (text.match(/^-?[£$¤]?[\d,.]+%?$/)) {
           return sorttable.sort_numeric;
         }
@@ -298,6 +301,11 @@ sorttable = {
     if (dt1<dt2) return -1;
     return 1;
   },
+  sort_ipaddr: function(a,b) {
+    if (ip2ulong(a[0]) == ip2ulong(b[0])) return 0;
+    if (ip2ulong(a[0]) < ip2ulong(b[0])) return -1;
+    return 1;
+  },
   
   shaker_sort: function(list, comp_func) {
     // A stable sort function to allow multi-level sorting of data
@@ -334,6 +342,19 @@ sorttable = {
 /* ******************************************************************
    Supporting functions: bundled here to avoid depending on a library
    ****************************************************************** */
+
+function ip2ulong(ip) {
+	ip += "";
+	var ulip = false;
+	var octets = [];
+	if (ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
+		octets = ip.split('.');
+		for (i=0; i < 4; i++) {
+			ulip += octets[i] * Math.pow(256, (3-i));
+		}
+	}
+	return ulip;
+}
 
 // Dean Edwards/Matthias Miller/John Resig
 

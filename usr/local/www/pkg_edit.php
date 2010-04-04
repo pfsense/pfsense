@@ -96,6 +96,11 @@ if($pkg['custom_php_global_functions'] <> "")
 if(!is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']))
 	$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'] = array();
 
+// If the first entry in the array is an empty <config/> tag, kill it.
+if ((count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) 
+	&& ($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0] == ""))
+	array_shift($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']);
+
 $a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if($_GET['savemsg'] <> "")

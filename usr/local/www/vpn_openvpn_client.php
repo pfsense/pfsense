@@ -809,7 +809,7 @@ function autotls_change() {
 							$disabled = "YES";
 						$server = "{$client['server_addr']}:{$client['server_port']}";
 				?>
-				<tr>
+				<tr ondblclick="document.location='vpn_openvpn_client.php?act=edit&id=<?=$i;?>'">
 					<td class="listlr">
 						<?=$disabled;?>
 					</td>

@@ -73,7 +73,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("Interfaces","gif");
+$pgtitle = array("Interfaces","GIF");
 include("head.inc");
 
 ?>

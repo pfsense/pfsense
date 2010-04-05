@@ -196,7 +196,7 @@ if ($_POST) {
 		$input_errors[] = "The MTU must be greater than 576 bytes.";
 	if ($_POST['mru'] && ($_POST['mru'] < 576)) 
 		$input_errors[] = "The MRU must be greater than 576 bytes.";
-	/*	
+
 	foreach ($a_ppps as $ppp) {
 		if (isset($id) && ($a_ppps[$id]) && ($a_ppps[$id] === $ppp))
 			continue;
@@ -206,7 +206,7 @@ if ($_POST) {
 			break;
 		}
 	}
-	*/
+	
 
 	if (!$input_errors) {
 		$ppp = array();
@@ -214,11 +214,11 @@ if ($_POST) {
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = $_POST['password'];
 		$ppp['defaultgw'] = $_POST['defaultgw'] ? true : false;
-		/* if ($_POST['defaultgw'] == "on")
+		if ($_POST['defaultgw'] == "on")
 			$ppp['defaultgw'] = true;
 		else
 			unset($ppp['defaultgw']);
-		*/
+		
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if ($_POST['ondemand'])
 			$ppp['idletimeout'] = $_POST['idletimeout'];
@@ -227,7 +227,6 @@ if ($_POST) {
 		$ppp['descr'] = $_POST['descr'];
 		switch($_POST['type']) {
 			case "ppp":
-				$ppp['ipaddr'] = "ppp";
 				$ppp['serialports'] = implode(',', $_POST['serialports']);
 				if (!empty($_POST['initstr']))
 					$ppp['initstr'] = base64_encode($_POST['initstr']);
@@ -260,12 +259,10 @@ if ($_POST) {
 					unset($ppp['connect-timeout']);
 				break;
 			case "pppoe":
-				$ppp['ipaddr'] = "pppoe";
 				$ppp['interfaces'] = implode(',', $_POST['interfaces']);
 				$ppp['provider'] = $_POST['provider'];
 				break;
 			case "pptp":
-				$ppp['ipaddr'] = "pptp";
 				$ppp['interfaces'] = implode(',', $_POST['interfaces']);
 				$ppp['localip'] = $_POST['localip'];
 				$ppp['subnet'] = $_POST['subnet'];
@@ -388,18 +385,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		$('username').value = "123@vzw3g.com";
 		$('password').value = "vzw";
 	}
-	var currentSwap = false;
-	function swapOptions(){
-
-				
-
-				document.getElementById("postMoreOptions").style.display = currentSwap ? "" : "none";
-
-				if (typeof(document.forms.postmodify) != "undefined")
-					document.forms.postmodify.additional_options.value = currentSwap ? "1" : "0";
-
-				currentSwap = !currentSwap;
-	}
+	
 </script>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -472,16 +458,16 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				</tr>
 
 				<tr>
-                  <td valign="top" class="vncell">Username</td>
-                  <td class="vtable">
-                    <input name="username" type="text" class="formfld usr" id="username" size="10" value="<?=htmlspecialchars($pconfig['username']);?>">
-                  </td>
+					<td valign="top" class="vncell">Username</td>
+					<td class="vtable">
+					<input name="username" type="text" class="formfld usr" id="username" size="10" value="<?=htmlspecialchars($pconfig['username']);?>">
+					</td>
 			    </tr>
 			    <tr>
-                  <td valign="top" class="vncell">Password</td>
-                  <td class="vtable">
-                    <input name="password" type="text" class="formfld pwd" id="password" value="<?=htmlspecialchars($pconfig['password']);?>">
-                  </td>
+					<td valign="top" class="vncell">Password</td>
+					<td class="vtable">
+					<input name="password" type="text" class="formfld pwd" id="password" value="<?=htmlspecialchars($pconfig['password']);?>">
+					</td>
 				</tr>
 				<tr>
 					<td width="22%" valign="top" class="vncell">Gateway</td>
@@ -491,25 +477,25 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				</tr>
 				<tr>
             	<td valign="top" class="vncell">Dial On Demand</td>
-                  <td class="vtable">
-                    <input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked"; ?>> Enable Dial-on-Demand mode
-                    <br> <span class="vexpl">This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. 
-                    The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected. </span>
-                  </td>
+					<td class="vtable">
+						<input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked"; ?>> Enable Dial-on-Demand mode
+						<br> <span class="vexpl">This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. 
+						The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected. </span>
+					</td>
 			    </tr>
 			    <tr>
-                  <td valign="top" class="vncell">Idle Timeout</td>
-                  <td class="vtable">
-                    <input name="timeout" type="text" class="formfld unknown" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>">
-                    <br> <span class="vexpl">Idle Timeout goes with the OnDemand selection above. If OnDemand is not checked this is ignored.</span>
-                  </td>
+					<td valign="top" class="vncell">Idle Timeout</td>
+					<td class="vtable">
+						<input name="timeout" type="text" class="formfld unknown" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>">
+						<br> <span class="vexpl">Idle Timeout goes with the OnDemand selection above. If OnDemand is not checked this is ignored.</span>
+					</td>
 			    </tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here for your reference (not parsed).</span>
-                  </td>
+					<td width="22%" valign="top" class="vncell">Description</td>
+					<td width="78%" class="vtable">
+						<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+						<br> <span class="vexpl">You may enter a description here for your reference (not parsed).</span>
+					</td>
                 </tr>
                 <tr>
 					<td colspan="2" valign="top" height="16"></td>
@@ -696,31 +682,34 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					<td colspan="2" valign="top" class="listtopic">Advanced Options</td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Options</td>
-					<td width="39%" class="vtable">
-						<input type="checkbox" value="on" id="defaultgw" name="defaultgw" <?php if (isset($pconfig['defaultgw'])) echo "checked"; ?>>Disable vjcomp(compression).
+					<td width="22%" valign="top" class="vncell">Compression</td>
+					<td width="78%" class="vtable">
+						<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked"; ?>>&nbsp;Disable vjcomp(compression).
 					</td>
-					<td width="39%" class="vtable">
-						<input type="checkbox" value="on" id="defaultgw" name="defaultgw" <?php if (isset($pconfig['defaultgw'])) echo "checked"; ?>>Enable tcpmssfix.
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">TCPmssfix</td>
+					<td width="78%" class="vtable">
+						<input type="checkbox" value="on" id="tcpmssfix" name="tcpmssfix" <?php if (isset($pconfig['tcpmssfix'])) echo "checked"; ?>>&nbsp;Enable tcpmssfix.
 					</td>
 				</tr>
 				<tr>
 					<td width="22%" width="100" valign="top" class="vncell">Bandwidth</td>
 					<td width="78%" class="vtable">
-					<input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="6" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">&nbsp;(bits/sec)
-					<br> <span class="vexpl">Set Bandwidth for each link *if* links have different bandwidths, otherwise, leave blank.</span>
+					<input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="10" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">&nbsp;(bits/sec)
+					<br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
 				  </td>
 				</tr>
 				<tr>
-				  <td width="22%" width="100" valign="top" class="vncell">Link MTU/MRU</td>
-				  <td width="39%" class="vtable">
+				  <td width="22%" width="100" valign="top" class="vncell">Link MTU</td>
+				  <td width="78%" class="vtable">
 					<input name="mtu" type="text" class="formfld unknown" id="mtu" size="6" value="<?=htmlspecialchars($pconfig['mtu']);?>">
 					<br> <span class="vexpl">Set MTU for each link if links have different bandwidths, otherwise, leave blank.</span>
 				  </td>
-				<? /*</tr>
+				</tr>
 				<tr>
-				  <td width="22%" width="100" valign="top" class="vncell">Link MRU</td> */?>
-				  <td width="39%" class="vtable">
+				  <td width="22%" width="100" valign="top" class="vncell">Link MRU</td>
+				  <td width="78%" class="vtable">
 					<input name="mru" type="text" class="formfld unknown" id="mru" size="6" value="<?=htmlspecialchars($pconfig['mru']);?>">
 					<br> <span class="vexpl">Set MRU for each link separated by commas, otherwise, leave blank.</span>
 				  </td>
@@ -730,7 +719,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
                   <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()">
                     <?php if (isset($id) && $a_ppps[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
+                    	<input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>
                   </td>
                 </tr>

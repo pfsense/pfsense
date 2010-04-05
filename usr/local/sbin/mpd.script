@@ -77,7 +77,7 @@ DialPeer1:
 	set $ModTelephone $Telephone
 	call ModemIdent
 	if $ModemDescription != "" goto DialPeer2
-	log "The modem is not responding."
+	log "No match found in the ModemIdent function in the chat script."
 	failure
 
 DialPeer2:
@@ -352,16 +352,13 @@ ModemIdent:
 	print "ATI\r\n"
 	match "ADTRAN EXPRESS XR" ModemIdentAdtranXRT
 	match "Model: Ovation MC950D Card" ModemIdentMC950D
-	match "C885" ModemIdentC885
 	match "ERR" ModemIdentGeneric
 	match "OK\r\n" ModemIdentGeneric
 	wait 3
-	print "ATI8\r\n"
-	match "BitSURFR PRO\r" ModemIdentBitsurfr
-	match "BitSURFR PRO EZ" ModemIdentBitsurfrEZ
-	match "3C882" ModemIdentImpactIQ
-	match "ERR"
-	match "OK\r\n"
+	print "ATI1\r\n"
+	match "NTK omni.net" ModemIdentNTK
+	match "ERR" ModemIdentGeneric
+	match "OK\r\n" ModemIdentGeneric
 	wait 3
 	print "ATI3\r\n"
 	match "Courier" ModemIdentUsr
@@ -381,12 +378,19 @@ ModemIdent:
 	match "ERR"
 	match "OK\r\n"
 	wait 3
-	print "ATI1\r\n"
-	match "NTK omni.net" ModemIdentNTK
-	match "ERR" ModemIdentGeneric
+	print "ATI5\r\n"
+	match "C885" ModemIdentC885
+	match "ERR"
 	match "OK\r\n" ModemIdentGeneric
 	wait 3
-	log "The modem is not responding."
+	print "ATI8\r\n"
+	match "BitSURFR PRO\r" ModemIdentBitsurfr
+	match "BitSURFR PRO EZ" ModemIdentBitsurfrEZ
+	match "3C882" ModemIdentImpactIQ
+	match "ERR"
+	match "OK\r\n"
+	wait 3
+	log "The modem is not responding to any ATI[1,3-5,8] commands."
 	failure
 
 ModemIdentGeneric:
@@ -1432,14 +1436,14 @@ ModemCmd0:
 	wait $modemCmdTimeout
 	set $modemCmdResult "TIMEOUT"
 ModemCmdTimeout:
-	set $ErrorMsg "The modem is not responding."
+	set $ErrorMsg "The modem is not responding to \"AT$modemCmd\" at ModemCmd: label."
 	return
 ModemCmdOk:
 	set $modemCmdResult "OK"
 	return
 ModemCmdErr:
 	set $modemCmdResult "ERROR"
-	set $ErrorMsg "The modem did not accept the command AT$modemCmd."
+	set $ErrorMsg "The modem responded with \"ERROR\" to the command \"AT$modemCmd\" at ModemCmd: label."
 	return
 
 ##
@@ -1518,7 +1522,7 @@ ReadLineDone:
 GetOK:
 	match "OK\r\n" GotOK
 	wait 3
-	log "The modem is not responding."
+	log "The modem did not respond with \"OK\"."
 	failure
 GotOK:
 	return

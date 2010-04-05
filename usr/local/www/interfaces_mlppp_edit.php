@@ -304,6 +304,8 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				document.getElementById("pptp").style.display = 'none';
 				document.getElementById("interface").style.display = 'none';
 				document.getElementById("serialport").style.display = 'none';
+				document.getElementById("ipfields").style.display = 'none';
+				document.getElementById("subnet").style.display = 'none';
 				break;
 			}
 			case "ppp": {
@@ -312,6 +314,8 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				document.getElementById("pptp").style.display = 'none';
 				document.getElementById("interface").style.display = 'none';
 				document.getElementById("serialport").style.display = '';
+				document.getElementById("ipfields").style.display = '';
+				document.getElementById("subnet").style.display = 'none';
 				break;
 			}
 			case "pppoe": {
@@ -320,14 +324,17 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				document.getElementById("pptp").style.display = 'none';
 				document.getElementById("interface").style.display = 'none';
 				document.getElementById("serialport").style.display = 'none';
+				document.getElementById("ipfields").style.display = 'none';
 				break;
 			}
 			case "pptp": {
 				document.getElementById("select").style.display = 'none';
 				document.getElementById("ppp").style.display = 'none';
 				document.getElementById("pppoe").style.display = 'none';
-				document.getElementById("interface").style.display = 'none';
+				document.getElementById("interface").style.display = '';
 				document.getElementById("serialport").style.display = 'none';
+				document.getElementById("ipfields").style.display = '';
+				document.getElementById("subnet").style.display = '';
 				break;
 			}
 		}
@@ -459,13 +466,13 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				<tr>
 					<td valign="top" class="vncell">Username</td>
 					<td class="vtable">
-					<input name="username" type="text" class="formfld usr" id="username" size="10" value="<?=htmlspecialchars($pconfig['username']);?>">
+					<input name="username" type="text" class="formfld usr" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
 					</td>
 			    </tr>
 			    <tr>
 					<td valign="top" class="vncell">Password</td>
 					<td class="vtable">
-					<input name="password" type="text" class="formfld pwd" id="password" value="<?=htmlspecialchars($pconfig['password']);?>">
+					<input name="password" type="text" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
 					</td>
 				</tr>
 				<tr>
@@ -547,21 +554,6 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 								<input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>">
 								<br><span class="vexpl">Note: Typically (*99# or *99***# or *99***1#) for GSM networks and *777 for CDMA networks</span>
 							  </td>
-							</tr>
-							<tr>
-							<tr>
-							  <td width="22%" valign="top" class="vncell">Local IP</td>
-							  <td width="78%" class="vtable">
-								<input name="localip" type="text" class="formfld unknown" id="localip" size="40" value="<?=htmlspecialchars($pconfig['localip']);?>">
-								<br><span class="vexpl">Note: Enter your IP address here if it is not automatically assigned.</span>
-							  </td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell">Remote IP (Gateway)</td>
-								<td width="78%" class="vtable">
-									<input name="gateway" type="text" class="formfld unknown" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
-									<br><span class="vexpl">Note: Enter the remote IP here if not automatically assigned. This is where the packets will be routed.</span>
-								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell">Connection Timeout</td>
@@ -651,29 +643,36 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">PPTP configuration</td>
 							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr style="display:none" id="ipfields">
+					<td colspan="2" style="padding:0px;">
+						<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
-								<td width="22%" width="100" valign="top" class="vncellreq">Local IP address</td>
+								<td width="22%" valign="top" class="vncell">Local IP address</td>
 								<td width="78%" class="vtable"> 
 									<input name="localip" type="text" class="formfld unknown" id="localip" size="20"  value="<?=htmlspecialchars($pconfig['localip']);?>">
 									/
-									<select name="subnet" class="formselect" id="subnet">
+									<select style="display:none" class="formselect" id="subnet">
 									<?php for ($i = 31; $i > 0; $i--): ?>
 										<option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet']) echo "selected"; ?>>
 											<?=$i;?>
 										</option>
 									<?php endfor; ?>
 									</select>
+									<br><span class="vexpl">Note: Enter the local IP here if not automatically assigned. Subnet is ignored for PPP connections.</span>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" width="100" valign="top" class="vncellreq">Remote IP address</td>
+								<td width="22%" valign="top" class="vncell">Remote IP (Gateway)</td>
 								<td width="78%" class="vtable">
 									<input name="gateway" type="text" class="formfld unknown" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+									<br><span class="vexpl">Note: Enter the remote IP here if not automatically assigned. This is where the packets will be routed.</span>
 								</td>
 							</tr>
 						</table>
 					</td>
-				</tr>
 			    <tr>
 					<td colspan="2" valign="top" height="16"></td>
 				</tr>

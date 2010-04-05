@@ -2730,7 +2730,6 @@ class dummynet_class {
 }
 
 class dnpipe_class extends dummynet_class {
-        var $pipe_nr;
         var $delay;
 	var $qbandwidth;
 	var $qbandwidthtype;
@@ -2758,6 +2757,7 @@ class dnpipe_class extends dummynet_class {
 		foreach ($this->subqueues as $q)
 			$q->delete_queue();
 		unset_dn_object_by_reference($this->GetLink());
+		mwexec("/sbin/ipfw pipe delete " . $this->GetNumber());
         }
         function GetBandwidth() {
                 return $this->qbandwidth;
@@ -2865,9 +2865,9 @@ class dnpipe_class extends dummynet_class {
 		if ($this->GetEnabled() == "")
 			return;
 
-       		$pfq_rule = "\ndnpipe ". $this->GetNumber();
+       		$pfq_rule = "\npipe ". $this->GetNumber();
 		if ($this->GetBandwidth() && $this->GetBwscale())
-                    	$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
+                    	$pfq_rule .= " bw ".trim($this->GetBandwidth()).$this->GetBwscale();
 		if ($this->GetQlimit())
                     	$pfq_rule .= " queue " . $this->GetQlimit();
 		if ($this->GetPlr())
@@ -3058,6 +3058,7 @@ class dnqueue_class extends dummynet_class {
 	function delete_queue() {
 		cleanup_dnqueue_from_rules($this->GetQname());
 		unset_dn_object_by_reference($this->GetLink());
+		mwexec("/sbin/ipfw queue delete " . $this->GetNumber());
         }
 
 	function validate_input($data, &$input_errors) {
@@ -3114,7 +3115,7 @@ class dnqueue_class extends dummynet_class {
 			return; 
 
 		$parent =& $this->GetParent();
-            	$pfq_rule = "dnqueue ". $this->GetNumber() . " dnpipe " . $parent->GetNumber();
+            	$pfq_rule = "queue ". $this->GetNumber() . " dnpipe " . $parent->GetNumber();
 		if ($this->GetQlimit())
                     	$pfq_rule .= " queue " . $this->GetQimit();
 		if ($this->GetWeight())
@@ -3886,7 +3887,7 @@ function filter_generate_altq_queues() {
 }
 
 function filter_generate_dummynet_rules() {
-	global $dummynet_pipe_list;
+	global $g, $dummynet_pipe_list;
 	
 	read_dummynet_config();
 	
@@ -3901,7 +3902,11 @@ function filter_generate_dummynet_rules() {
 	foreach ($dummynet_pipe_list as $dn) 
 		$dn_rules .= $dn->build_rules();
 
-	return $dn_rules;
+	if (!empty($dnrules)) {
+		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
+		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
+	}
+	//return $dn_rules;
 }
 
 function build_iface_without_this_queue($iface, $qname) {

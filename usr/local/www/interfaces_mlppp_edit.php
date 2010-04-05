@@ -118,9 +118,8 @@ if (isset($id) && $a_ppps[$id]) {
 						break;
 				}
 			}
-	}
-		
-		
+		}
+	}	
 }
 
 if ($_POST) {

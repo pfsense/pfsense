@@ -1436,14 +1436,14 @@ ModemCmd0:
 	wait $modemCmdTimeout
 	set $modemCmdResult "TIMEOUT"
 ModemCmdTimeout:
-	set $ErrorMsg "The modem is not responding to AT$modemCmd."
+	set $ErrorMsg "The modem is not responding to \"AT$modemCmd\" at ModemCmd: label."
 	return
 ModemCmdOk:
 	set $modemCmdResult "OK"
 	return
 ModemCmdErr:
 	set $modemCmdResult "ERROR"
-	set $ErrorMsg "The modem did not accept the command AT$modemCmd."
+	set $ErrorMsg "The modem responded with \"ERROR\" to the command \"AT$modemCmd\" at ModemCmd: label."
 	return
 
 ##

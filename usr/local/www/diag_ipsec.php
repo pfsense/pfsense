@@ -91,8 +91,8 @@ $sad = ipsec_dump_sad();
 					</tr>
 					<?php
 						foreach ($a_phase2 as $ph2ent) {
-							if (!isset($ph2ent['disabled'])) {
-								ipsec_lookup_phase1($ph2ent,$ph1ent);
+							ipsec_lookup_phase1($ph2ent,$ph1ent);
+							if (!isset($ph2ent['disabled']) && !isset($ph1ent['disabled'])) {
 								if(ipsec_phase2_status($spd,$sad,$ph1ent,$ph2ent))
 									$icon = "pass";
 								else

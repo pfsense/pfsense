@@ -264,7 +264,7 @@ include("head.inc");
 					<span class="vexpl">
 						Do not use "local" as a domain name. It will cause local hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS.
 						<br/>
-						e.g. <em>mycorp.com</em>
+						e.g. <em>mycorp.com, home, office, private, etc.</em>
 					</span>
 				</td>
 			</tr>

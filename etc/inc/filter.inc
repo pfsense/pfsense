@@ -37,6 +37,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/sbin/inetd	
 	pfSense_MODULE:	filter
 */
+
 /* DISABLE_PHP_LINT_CHECKING */
 
 /* include all configuration functions */
@@ -234,8 +235,8 @@ function filter_configure_sync() {
 		/* User defined maximum states in Advanced menu. */
 		$rules .= "set limit states {$config['system']['maximumstates']}\n";
 	} else {
-	  $max_states = pfsense_default_state_size();
-	  $rules .= "set limit states {$max_states}\n";
+		$max_states = pfsense_default_state_size();
+		$rules .= "set limit states {$max_states}\n";
 	}
 
 	$rules .= discover_pkg_rules("pfearly");
@@ -334,12 +335,12 @@ function filter_configure_sync() {
 			foreach($after_filter_configure_run as $afcr) 
 				fwrite($fda, $afcr . "\n");	
 		/*
-         	 *      we need a way to let a user run a shell cmd after each
-         	 *      filter_configure() call.  run this xml command after
-         	 *      each change.
-         	 */
-        	if($config['system']['afterfilterchangeshellcmd'] <> "")
-                	fwrite($fda, $config['system']['afterfilterchangeshellcmd'] . "\n");
+		 *      we need a way to let a user run a shell cmd after each
+		 *      filter_configure() call.  run this xml command after
+		 *      each change.
+		 */
+		if($config['system']['afterfilterchangeshellcmd'] <> "")
+			fwrite($fda, $config['system']['afterfilterchangeshellcmd'] . "\n");
 
 		fclose($fda);	
 	}
@@ -446,10 +447,10 @@ function filter_expand_alias($alias_name)
 	global $config;
 
 	if(isset($config['aliases']['alias'])) {
-                foreach ($config['aliases']['alias'] as $aliased) {
+		foreach ($config['aliases']['alias'] as $aliased) {
 			if($aliased['name'] == $alias_name) {
 				$aliasnesting = array();
-                        	$aliasaddrnesting = array();
+				$aliasaddrnesting = array();
 				return filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
 			}
 		}
@@ -515,7 +516,7 @@ function filter_generate_aliases() {
 					}
 				}
 				$aliases .= "table <{$aliased['name']}> { {$newaddress}{$extralias} } \n";
-                                $aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 			} else 
 				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
 		}
@@ -646,7 +647,7 @@ function filter_generate_optcfg_array() {
 		$oic['mode'] = $config['l2tp']['mode'];
 		$oic['virtual'] = true;
 		$FilterIflist['l2tp'] = $oic;
-        }
+	}
 	if($config['pppoe']['mode'] == "server") {
 		$oic = array();
 		$oic['if'] = 'pppoe';
@@ -781,9 +782,9 @@ function filter_generate_reflection($rule, $extport, &$starting_localhost_port, 
 				$rflctrange = "{$starting_localhost_port}";
 				$delta = $range_end - $extport[0] - 1;
 				if(($starting_localhost_port + $delta) > 19990) {
-                                       	log_error("Installing partial nat reflection rules. Maximum 1,000 reached.");
-                                       	$delta = 19990 - $starting_localhost_port;
-                               	}
+					log_error("Installing partial nat reflection rules. Maximum 1,000 reached.");
+					$delta = 19990 - $starting_localhost_port;
+				}
 				$starting_localhost_port = $starting_localhost_port + $delta;
 				$rflctrange .= ":{$starting_localhost_port}";
 				$rflctintrange = "{$extport[0]}:{$range_end}";
@@ -846,7 +847,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		else
 			$tgt = "($if)";
 	}
-	 /* Add the protocol, if defined */
+	/* Add the protocol, if defined */
 	if (!empty($proto) && $proto != "any")
 		$protocol = " proto {$proto}";
 	else
@@ -873,7 +874,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		if(!$natport)
 			$staticnatport_txt = " port 1024:65535"; // set source port range
 		else
-		 	$staticnatport_txt = "";
+			$staticnatport_txt = "";
 	/* Allow for negating NAT entries */
 	if($nonat) {
 		$nat = "no nat";
@@ -959,7 +960,7 @@ function filter_nat_rules_generate() {
 			foreach ($config['staticroutes']['route'] as $route) {
 				$netip = explode("/", $route['network']);
 				if(is_array($config['gateways']['gateway_item'])) {
-				        foreach($config['gateways']['gateway_item'] as $gateway) {
+					foreach($config['gateways']['gateway_item'] as $gateway) {
 						if($route['gateway'] == $gateway['name']) {
 							$gatewayip = $gateway['gateway'];
 							$interfacegw = $gateway['interface'];
@@ -1012,7 +1013,7 @@ function filter_nat_rules_generate() {
 			}
 		}
 		/* add openvpn interfaces */
-        	if(is_array($config['openvpn']['openvpn-server'])) {
+		if(is_array($config['openvpn']['openvpn-server'])) {
 			foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv) {
 				if (!empty($ovpnsrv['tunnel_network'])) {
 					$numberofnathosts++;
@@ -1020,7 +1021,7 @@ function filter_nat_rules_generate() {
 				}
 			}
 		}
-        	if(is_array($config['openvpn']['openvpn-client'])) {
+		if(is_array($config['openvpn']['openvpn-client'])) {
 			foreach ($config['openvpn']['openvpn-client'] as $ovpnsrv) {
 				if (!empty($ovpnsrv['tunnel_network'])) {
 					$numberofnathosts++;
@@ -1114,9 +1115,9 @@ function filter_nat_rules_generate() {
 			else
 				$rdrpass = "";	
 			if(!$rule['interface'])
-                                $natif = "wan";
-                        else
-                                $natif = $rule['interface'];
+				$natif = "wan";
+			else
+				$natif = $rule['interface'];
 
 			if (!isset($FilterIflist[$natif]))
 				continue;
@@ -1187,7 +1188,7 @@ function filter_nat_rules_generate() {
 				$natrules .= "\n";
 
 				foreach ($reflection_rules as $txtline)
-                        		fwrite($inetd_fd, $txtline);
+					fwrite($inetd_fd, $txtline);
 			}
 		}
 	}
@@ -1250,86 +1251,86 @@ function filter_generate_address(& $rule, $target = "source") {
 	$src = "";
 
 	if(isset($rule[$target]['any'])) {
-                $src = "any";
-        } else if($rule[$target]['network']) {
-                if(strstr($rule[$target]['network'], "opt")) {
+		$src = "any";
+	} else if($rule[$target]['network']) {
+		if(strstr($rule[$target]['network'], "opt")) {
 			$optmatch = ""; 
 			$matches = "";
 			if(preg_match("/opt([0-9]*)/", $rule[$target]['network'], $optmatch)) {
-                                $opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
-                                if(!is_ipaddr($opt_ip))
-                                        return "";
-                        	$src = $opt_ip . "/" .
-                                	$FilterIflist["opt{$optmatch[1]}"]['sn'];
-                        /* check for opt$NUMip here */
-                        } else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
-                                $src = $FilterIflist["opt{$matches[1]}"]['ip'];
+				$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
+				if(!is_ipaddr($opt_ip))
+					return "";
+				$src = $opt_ip . "/" .
+				$FilterIflist["opt{$optmatch[1]}"]['sn'];
+			/* check for opt$NUMip here */
+			} else if(preg_match("/opt([0-9]*)ip/", $rule[$target]['network'], $matches)) {
+				$src = $FilterIflist["opt{$matches[1]}"]['ip'];
 				if(!is_ipaddr($src))
 					return "";
-                        }
+			}
 			if(isset($rule[$target]['not']))
 				$src = " !{$src}";
-                } else {
-                        switch ($rule[$target]['network']) {
-					case 'wan':
-						$wansa = $FilterIflist['wan']['sa'];
-                                                $wansn = $FilterIflist['wan']['sn'];
-                                                $src = "{$wansa}/{$wansn}";
-						break;
-                                        case 'wanip':
-                                                $src = $FilterIflist["wan"]['ip'];
-                                                break;
-                                        case 'lanip':
-                                                $src = $FilterIflist["lan"]['ip'];
-                                                break;
-                                        case 'lan':
-                                                $lansa = $FilterIflist['lan']['sa'];
-                                                $lansn = $FilterIflist['lan']['sn'];
-                                                $src = "{$lansa}/{$lansn}";
-                                                break;
-                                        case 'pptp':
-                                                $pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
-                                                $pptpsn = $FilterIflist['pptp']['sn'];
-                                                $src = "{$pptpsa}/{$pptpsn}";
-                                                break;
-                                        case 'pppoe':
-                                                $pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
-                                                $pppoesn = $FilterIflist['pppoe']['sn'];
-                                                $src = "{$pppoesa}/{$pppoesn}";
-                                                break;
-                                }
-                                if(isset($rule[$target]['not'])) $src = "!{$src}";
-                        }
+		} else {
+			switch ($rule[$target]['network']) {
+				case 'wan':
+					$wansa = $FilterIflist['wan']['sa'];
+					$wansn = $FilterIflist['wan']['sn'];
+					$src = "{$wansa}/{$wansn}";
+					break;
+				case 'wanip':
+					$src = $FilterIflist["wan"]['ip'];
+					break;
+				case 'lanip':
+					$src = $FilterIflist["lan"]['ip'];
+					break;
+				case 'lan':
+					$lansa = $FilterIflist['lan']['sa'];
+					$lansn = $FilterIflist['lan']['sn'];
+					$src = "{$lansa}/{$lansn}";
+					break;
+				case 'pptp':
+					$pptpsa = gen_subnet($FilterIflist['pptp']['ip'], $FilterIflist['pptp']['sn']);
+					$pptpsn = $FilterIflist['pptp']['sn'];
+					$src = "{$pptpsa}/{$pptpsn}";
+					break;
+				case 'pppoe':
+					$pppoesa = gen_subnet($FilterIflist['pppoe']['ip'], $FilterIflist['pppoe']['sn']);
+					$pppoesn = $FilterIflist['pppoe']['sn'];
+					$src = "{$pppoesa}/{$pppoesn}";
+					break;
+			}
+			if(isset($rule[$target]['not'])) $src = "!{$src}";
+		}
 	} else if($rule[$target]['address']) {
-                $expsrc = alias_expand($rule[$target]['address']);
-                if(isset($rule[$target]['not']))
-                        $not = "!";
-                else
-                        $not = "";
+		$expsrc = alias_expand($rule[$target]['address']);
+		if(isset($rule[$target]['not']))
+			$not = "!";
+		else
+			$not = "";
 		$src = " {$not} {$expsrc}";
-        }
+	}
 
 	if(in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
-                if($rule[$target]['port']) {
-                        $srcport = explode("-", $rule[$target]['port']);
+		if($rule[$target]['port']) {
+			$srcport = explode("-", $rule[$target]['port']);
 			$srcporta = alias_expand($srcport[0]);
 			if(!$srcporta)
 				log_error("filter_generate_address: {$srcport[0]} is not a valid source port.");
-                        else if((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+			else if((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
 				$src .= " port {$srcporta} ";
-                        } else if(($srcport[0] == 1) && ($srcport[1] == 65535)) {
-                                /* no need for a port statement here */
-                        } else if(is_port($srcporta) && $srcport[1] == 65535) {
-                                $src .= " port >= {$srcporta} ";
-                        } else if($srcport[0] == 1) {
-                                $src .= " port <= {$srcport[1]} ";
-                        } else {
-                                $srcport[0]--;
-                                $srcport[1]++;
-                                $src .= " port {$srcport[0]} >< {$srcport[1]} ";
-                        }
-                }
-        }
+			} else if(($srcport[0] == 1) && ($srcport[1] == 65535)) {
+			/* no need for a port statement here */
+			} else if(is_port($srcporta) && $srcport[1] == 65535) {
+				$src .= " port >= {$srcporta} ";
+			} else if($srcport[0] == 1) {
+				$src .= " port <= {$srcport[1]} ";
+			} else {
+				$srcport[0]--;
+				$srcport[1]++;
+				$src .= " port {$srcport[0]} >< {$srcport[1]} ";
+			}
+		}
+	}
 
 	return $src;
 }
@@ -1567,7 +1568,7 @@ function filter_generate_user_rule($rule) {
 
 		if($noadvoptions == false || $l7_present)
 			if( isset($rule['source-track']) and $rule['source-track'] <> "" or
-			    	isset($rule['max']) and $rule['max'] <> "" or
+				isset($rule['max']) and $rule['max'] <> "" or
 				isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
 				isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "" or
 				isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or
@@ -1588,8 +1589,10 @@ function filter_generate_user_rule($rule) {
 						$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
 					if(isset($rule['statetimeout']) and $rule['statetimeout'] <> "")
 						$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
-					if(isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> ""
-				   	 and isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "") {
+					if(isset($rule['max-src-conn-rate'])
+							and $rule['max-src-conn-rate'] <> ""
+							and isset($rule['max-src-conn-rates'])
+							and $rule['max-src-conn-rates'] <> "") {
 						$aline['flags'] .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
 						$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
 					}
@@ -1624,22 +1627,22 @@ function filter_generate_user_rule($rule) {
 	}
 
 	/* is a time based rule schedule attached? */
-        if(!empty($rule['sched']) && !empty($config['schedules'])) {
+	if(!empty($rule['sched']) && !empty($config['schedules'])) {
 		$aline['schedlabel'] = "";
-                foreach ($config['schedules']['schedule'] as $sched) {
-                        if($sched['name'] == $rule['sched']) {
-                                if(!filter_get_time_based_rule_status($sched)) {
+		foreach ($config['schedules']['schedule'] as $sched) {
+			if($sched['name'] == $rule['sched']) {
+				if(!filter_get_time_based_rule_status($sched)) {
 					if(!isset($config['system']['schedule_states']))
-                                        	mwexec("/sbin/pfctl -y {$sched['schedlabel']}");
-                                        return "# schedule finished - {$rule['descr']}";
-                                } else if($g['debug'])
-                                        log_error("[TDR DEBUG] status true -- rule type '$type'");
+						mwexec("/sbin/pfctl -y {$sched['schedlabel']}");
+					return "# schedule finished - {$rule['descr']}";
+				} else if($g['debug'])
+					log_error("[TDR DEBUG] status true -- rule type '$type'");
 
 				$aline['schedlabel'] = " schedule \"{$sched['schedlabel']}\" ";
-                                break;
-                        }
-                }
-        }
+				break;
+			}
+		}
+	}
 
 	$line = "";
 	/* exception(s) to a user rules can go here. */
@@ -1684,25 +1687,25 @@ function filter_rules_generate() {
 	 */
 	if(isset($config['captiveportal']['enable'])) {
 		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
-                $cpiflist = array();
+		$cpiflist = array();
 		$cpiplist = array();
-                foreach ($cpinterfaces as $cpifgrp) {
-                        if(!isset($FilterIflist[$cpifgrp]))
-                                continue;
-                        $tmpif = get_real_interface($cpifgrp);
-                        if(!empty($tmpif)) {
-                                $cpiflist[] = "{$tmpif}";
-                                $cpipm = get_interface_ip($cpifgrp);
-                                if(is_ipaddr($cpipm))
-                                        $cpiplist[] = $cpipm;
-                        }
-                }
-		 if (count($cpiplist) > 0 && count($cpiflist) > 0) {
-                        $cpinterface = implode(" ", $cpiflist);
-                       $cpaddresses = implode(" ", $cpiplist);
-                       $ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { 8000 8001 } keep state(sloppy)\n";
-                       $ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from { {$cpaddresses} } port { 8000 8001 } to any keep state(sloppy)\n";
-                }
+		foreach ($cpinterfaces as $cpifgrp) {
+			if(!isset($FilterIflist[$cpifgrp]))
+				continue;
+			$tmpif = get_real_interface($cpifgrp);
+			if(!empty($tmpif)) {
+				$cpiflist[] = "{$tmpif}";
+				$cpipm = get_interface_ip($cpifgrp);
+				if(is_ipaddr($cpipm))
+					$cpiplist[] = $cpipm;
+			}
+		}
+		if (count($cpiplist) > 0 && count($cpiflist) > 0) {
+			$cpinterface = implode(" ", $cpiflist);
+			$cpaddresses = implode(" ", $cpiplist);
+			$ipfrules .= "pass in quick on { {$cpinterface} } proto tcp from any to { {$cpaddresses} } port { 8000 8001 } keep state(sloppy)\n";
+			$ipfrules .= "pass out quick on { {$cpinterface} } proto tcp from { {$cpaddresses} } port { 8000 8001 } to any keep state(sloppy)\n";
+		}
 	}
 	/* relayd */
 	$ipfrules .= "anchor \"relayd/*\"\n";
@@ -1727,13 +1730,13 @@ block quick proto { tcp, udp } from any to any port = 0
 
 EOD;
 
-        if(!isset($config['system']['ipv6allow'])) {
-                $ipfrules .= "# Block all IPv6\n";
-                $ipfrules .= "block in quick inet6 all\n";
-                $ipfrules .= "block out quick inet6 all\n";
-        }
+	if(!isset($config['system']['ipv6allow'])) {
+		$ipfrules .= "# Block all IPv6\n";
+		$ipfrules .= "block in quick inet6 all\n";
+		$ipfrules .= "block out quick inet6 all\n";
+	}
 
-        $ipfrules .= <<<EOD
+	$ipfrules .= <<<EOD
 	
 # snort2c
 block quick from <snort2c> to any label "Block snort2c hosts"
@@ -1753,12 +1756,12 @@ EOD;
 
 	$ipfrules .= filter_process_carp_rules();
 
-        $ipfrules .= "\n# SSH lockout\n";
-        if(is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
-                $ipfrules .= "block in log quick proto tcp from <sshlockout> to any port ";
-                $ipfrules .= $config['system']['ssh']['port'];
-                $ipfrules .= " label \"sshlockout\"\n";
-        } else {
+	$ipfrules .= "\n# SSH lockout\n";
+	if(is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
+		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port ";
+		$ipfrules .= $config['system']['ssh']['port'];
+		$ipfrules .= " label \"sshlockout\"\n";
+	} else {
 		if($config['system']['ssh']['port'] <> "")
 			$sshport = $config['system']['ssh']['port'];
 		else 
@@ -1936,7 +1939,7 @@ pass in quick on {$wanif} from any to ({$wanif}) keep state label "anti-lockout 
 
 EOD;
 		}
-	 }
+	}
 	/* PPTPd enabled? */
 	if($pptpdcfg['mode'] && ($pptpdcfg['mode'] != "off")) {
 		if($pptpdcfg['mode'] == "server")
@@ -2004,7 +2007,7 @@ EOD;
 	update_filter_reload_status("Creating IPsec rules...");
 	$ipfrules .= filter_generate_ipsec_rules();
 
-        $ipfrules .= <<<EOD
+	$ipfrules .= <<<EOD
 # package manager late specific hook
 anchor "packagelate"
 
@@ -2047,50 +2050,51 @@ function tdr_install_cron($should_install) {
  *   none
  ******/
 function filter_tdr_install_cron($should_install) {
-        global $config, $g;
+	global $config, $g;
 
-        if($g['booting']==true)
-                return;
+	if($g['booting']==true)
+		return;
 
-        $is_installed = false;
+	$is_installed = false;
 
-        if(!$config['cron']['item'])
-                return;
+	if(!$config['cron']['item'])
+		return;
 
-        $x=0;
-        foreach($config['cron']['item'] as $item) {
-                if(strstr($item['command'], "filter_configure_sync")) {
-                        $is_installed = true;
-                        break;
-                }
-                $x++;
-        }
-        switch($should_install) {
-                case true:
-                        if(!$is_installed) {
-                                $cron_item = array();
-                                $cron_item['minute'] = "0,15,30,45";
-                                $cron_item['hour'] = "*";
-                                $cron_item['mday'] = "*";
-                                $cron_item['month'] = "*";
-                                $cron_item['wday'] = "*";
-                                $cron_item['who'] = "root";
-                                $cron_item['command'] = "/etc/rc.filter_configure_sync";
-                                $config['cron']['item'][] = $cron_item;
-                                write_config("Installed 15 minute filter reload for Time Based Rules");
-                                configure_cron();
-                        }
-                break;
-                case false:
-                        if($is_installed == true) {
-                                if($x > 0) {
-                                        unset($config['cron']['item'][$x]);
-                                        write_config();
-                                }
-                                configure_cron();
-                        }
-                break;
-        }
+	$x=0;
+	foreach($config['cron']['item'] as $item) {
+		if(strstr($item['command'], "filter_configure_sync")) {
+			$is_installed = true;
+			break;
+		}
+		$x++;
+	}
+
+	switch($should_install) {
+		case true:
+			if(!$is_installed) {
+				$cron_item = array();
+				$cron_item['minute'] = "0,15,30,45";
+				$cron_item['hour'] = "*";
+				$cron_item['mday'] = "*";
+				$cron_item['month'] = "*";
+				$cron_item['wday'] = "*";
+				$cron_item['who'] = "root";
+				$cron_item['command'] = "/etc/rc.filter_configure_sync";
+				$config['cron']['item'][] = $cron_item;
+				write_config("Installed 15 minute filter reload for Time Based Rules");
+				configure_cron();
+			}
+			break;
+		case false:
+			if($is_installed == true) {
+				if($x > 0) {
+					unset($config['cron']['item'][$x]);
+					write_config();
+				}
+				configure_cron();
+			}
+			break;
+	}
 }
 
 /****f* filter/filter_get_time_based_rule_status
@@ -2120,132 +2124,132 @@ function filter_tdr_install_cron($should_install) {
  </schedules>
 */
 function filter_get_time_based_rule_status($schedule) {
-        $should_add_rule = false;
-        /* no schedule? rule should be installed */
-        if(empty($schedule))
-                return true;
-        /*
-         * iterate through time blocks and determine
-         * if the rule should be installed or not.
-         */
-        foreach($schedule['timerange'] as $timeday) {
-                if($timeday['month'])
-                        $month = $timeday['month'];
-                else
-                        $week = "";
-                if($timeday['day'])
-                        $day = $timeday['day'];
-                else
-                        $day = "";
-                if($timeday['hour'])
-                        $hour = $timeday['hour'];
-                else
-                        $hour = "";
-                if($timeday['position'])
-                        $position = $timeday['position'];
-                else
-                        $position = "";
-                if($timeday['desc'])
-                        $desc = $timeday['desc'];
-                else
-                        $desc = "";
-                if($month) {
-                        $monthstatus = filter_tdr_month($month);
-                } else {
-                        $monthstatus = true;
-                }
-                if($day) {
-                        $daystatus = filter_tdr_day($day);
-                } else {
-                        $daystatus = true;
-                }
-                if($hour) {
-                        $hourstatus = filter_tdr_hour($hour);
-                } else {
-                        $hourstatus = true;
-                }
-                if($position) {
-                        $positionstatus = filter_tdr_position($position);
-                } else {
-                        $positionstatus = true;
-                }
+	$should_add_rule = false;
+	/* no schedule? rule should be installed */
+	if(empty($schedule))
+		return true;
+	/*
+	 * iterate through time blocks and determine
+	 * if the rule should be installed or not.
+	 */
+	foreach($schedule['timerange'] as $timeday) {
+		if($timeday['month'])
+			$month = $timeday['month'];
+		else
+			$week = "";
+		if($timeday['day'])
+			$day = $timeday['day'];
+		else
+			$day = "";
+		if($timeday['hour'])
+			$hour = $timeday['hour'];
+		else
+			$hour = "";
+		if($timeday['position'])
+			$position = $timeday['position'];
+		else
+			$position = "";
+		if($timeday['desc'])
+			$desc = $timeday['desc'];
+		else
+			$desc = "";
+		if($month) {
+			$monthstatus = filter_tdr_month($month);
+		} else {
+			$monthstatus = true;
+		}
+		if($day) {
+			$daystatus = filter_tdr_day($day);
+		} else {
+			$daystatus = true;
+		}
+		if($hour) {
+			$hourstatus = filter_tdr_hour($hour);
+		} else {
+			$hourstatus = true;
+		}
+		if($position) {
+			$positionstatus = filter_tdr_position($position);
+		} else {
+			$positionstatus = true;
+		}
 
-                if($monthstatus == true && $daystatus == true && $positionstatus == true && $hourstatus == true)
+		if($monthstatus == true && $daystatus == true && $positionstatus == true && $hourstatus == true)
 			$should_add_rule = true;
-        }
+	}
 
-        return $should_add_rule;
+	return $should_add_rule;
 }
 
 function filter_tdr_day($schedule) {
 	global $g;
-        /*
-         * Calculate day of month.
-         * IE: 29th of may
-         */
-        $weekday        = date("w");
-        if($weekday == 0)
-                $weekday = 7;
-        $date           = date("d");
-        $defined_days = split(",", $schedule);
+	/*
+	 * Calculate day of month.
+	 * IE: 29th of may
+	 */
+	$weekday = date("w");
+	if($weekday == 0)
+		$weekday = 7;
+	$date = date("d");
+	$defined_days = split(",", $schedule);
 	if($g['debug'])
-        	log_error("[TDR DEBUG] filter_tdr_day($schedule)");
-        foreach($defined_days as $dd) {
-                if($date == $dd)
-                        return true;
-        }
-        return false;
+		log_error("[TDR DEBUG] filter_tdr_day($schedule)");
+	foreach($defined_days as $dd) {
+		if($date == $dd)
+			return true;
+	}
+	return false;
 }
 function filter_tdr_hour($schedule) {
 	global $g;
-        /* $schedule should be a string such as 16:00-19:00 */
-        $tmp = split("-", $schedule);
-        $starting_time = strtotime($tmp[0]);
-        $ending_time = strtotime($tmp[1]);
-        $now = strtotime("now");
+	/* $schedule should be a string such as 16:00-19:00 */
+	$tmp = split("-", $schedule);
+	$starting_time = strtotime($tmp[0]);
+	$ending_time = strtotime($tmp[1]);
+	$now = strtotime("now");
 	if($g['debug'])
-        	log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
-        if($now >= $starting_time and $now <= $ending_time)
-                return true;
-        return false;
+		log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
+	if($now >= $starting_time and $now <= $ending_time)
+		return true;
+	return false;
 }
 
 function filter_tdr_position($schedule) {
 	global $g;
-        /*
-         * Calculate possition, ie: day of week.
-         * Sunday = 7, Monday = 1, Tuesday = 2
-         * Weds = 3, Thursday = 4, Friday = 5,
-         * Saturday = 6
-         * ...
-         */
-        $weekday = date("w");
+	/*
+	 * Calculate possition, ie: day of week.
+	 * Sunday = 7, Monday = 1, Tuesday = 2
+	 * Weds = 3, Thursday = 4, Friday = 5,
+	 * Saturday = 6
+	 * ...
+	 */
+	$weekday = date("w");
 	if($g['debug'])
-        	log_error("[TDR DEBUG] filter_tdr_position($schedule) $weekday");
-        if($weekday == 0)
-                $weekday = 7;
-        $schedule_days = split(",", $schedule);
-        foreach($schedule_days as $day) {
-                if($day == $weekday)
-                        return true;
-        }
-        return false;
+		log_error("[TDR DEBUG] filter_tdr_position($schedule) $weekday");
+	if($weekday == 0)
+		$weekday = 7;
+	$schedule_days = split(",", $schedule);
+	foreach($schedule_days as $day) {
+		if($day == $weekday)
+			return true;
+	}
+	return false;
 }
 
 function filter_tdr_month($schedule) {
 	global $g;
-        /*
-         * Calculate month
-         */
-        $todays_month = date("n");
-        $months = split(",", $schedule);
+	/*
+	 * Calculate month
+	 */
+	$todays_month = date("n");
+	$months = split(",", $schedule);
 	if($g['debug'])
-        	log_error("[TDR DEBUG] filter_tdr_month($schedule)");
-        foreach($months as $month) {
-                if($month == $todays_month)
-                        return true;
-        }
-        return false;
+		log_error("[TDR DEBUG] filter_tdr_month($schedule)");
+	foreach($months as $month) {
+		if($month == $todays_month)
+			return true;
+	}
+	return false;
 }
 
 function filter_setup_logging_interfaces() {
@@ -2262,7 +2266,7 @@ function filter_setup_logging_interfaces() {
 		 * compatibility with OpenBSD.
 		 */ 
 		if(isset($ifcfg['virtual']))
-                        continue;
+			continue;
 		$rules .= "set loginterface {$ifcfg['if']}\n";
 	}
 	return $rules;
@@ -2330,7 +2334,7 @@ function filter_generate_ipsec_rules() {
 		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
 
 	if(isset($config['ipsec']['enable']) && 
-	   is_array($config['ipsec']['phase1'])) {
+		is_array($config['ipsec']['phase1'])) {
 		/* step through all phase1 entries */
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
 			if(isset ($ph1ent['disabled']))
@@ -2452,4 +2456,5 @@ function discover_pkg_rules($ruletype) {
 	}
 }
 
+// vim: ts=4 sw=4 noexpandtab
 ?>

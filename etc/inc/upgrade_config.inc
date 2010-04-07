@@ -1860,4 +1860,35 @@ function upgrade_060_to_061() {
 		$config['interfaces']['lan']['enable'] = true;
 }
 
+function upgrade_061_to_062() {
+	global $config;
+
+	/* Convert NAT port forwarding rules */
+	if (is_array($config['nat']['rule'])) {
+		$a_nat = &$config['nat']['rule'];
+
+		foreach ($a_nat as $natent) {
+			$natent['disabled'] = false;
+			$natent['nordr']    = false;
+
+			$natent['source'] = array();
+			$natent['source'] = {
+				"not"     => false,
+				"any"     => true,
+				"port"    => ""
+			};
+
+			$natent['destination'] = array();
+			$natent['destination'] = {
+				"not"     => false,
+				"address" => $natent['external-address'],
+				"port"    => $natent['external-port']
+			};
+
+			unset($natent['external-address'];
+			unset($natent['external-port'];
+		}
+	}
+}
+
 ?>

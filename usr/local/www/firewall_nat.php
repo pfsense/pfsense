@@ -218,6 +218,11 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 
 		$alias_target_span_begin     = $alias_popup["dst"];
 		$alias_local_port_span_begin = $alias_popup["dstport"];
+
+		if (isset($natent['disabled'])) {
+			$textss = "<span class=\"gray\">";
+			$textse = "</span>";
+		}
 	
 		/* if user does not have access to edit an interface skip on to the next record */
 		if(!have_natpfruleint_access($natent['interface'])) 
@@ -234,6 +239,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					<?php endif; ?>
 				  </td>
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+                    <?=$textss;?>
 		    <?php
 			if (!$natent['interface'] || ($natent['interface'] == "wan"))
 				echo "WAN";
@@ -242,10 +248,11 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 			else
 				echo strtoupper($config['interfaces'][$natent['interface']]['descr']);
 		    ?>
+                    <?=$textse;?>
                   </td>
 
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-                    <?=strtoupper($natent['protocol']);?>
+					<?=$textss;?><?=strtoupper($natent['protocol']);?><?=$textse;?>
                   </td>
 
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
@@ -270,7 +277,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   </td>
 
                   <td class="listbg" onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-                    <?=htmlspecialchars($natent['descr']);?>&nbsp;
+				  <?=$textss;?><?=htmlspecialchars($natent['descr']);?>&nbsp;<?=$textse;?>
                   </td>
                   <td valign="middle" class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">

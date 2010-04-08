@@ -1109,25 +1109,11 @@ function filter_nat_rules_generate() {
 			if(!$srcport[0])
 				$srcport = explode("-", $rule['source']['port']);
 
-			if(!preg_match("/(tcp|udp)/i", $protocol))
-				$rdr_srcport = "";
-			else if(($srcport[1]) && ($srcport[0] != $srcport[1]))
-				$rdr_srcport = " port {$srcport[0]:$srcport[1]}";
-			else if ($srcport[0])
-				$rdr_srcport = " port $srcport[0]";
-
 			/* if item is an alias, expand */
 			$dstport = "";
 			$dstport[0] = alias_expand($rule['destination']['port']);
 			if(!$dstport[0])
 				$dstport = explode("-", $rule['destination']['port']);
-
-			if(!preg_match("/(tcp|udp)/i", $protocol))
-				$rdr_dstport = "";
-			else if(($dstport[1]) && ($dstport[0] != $dstport[1]))
-				$rdr_dstport = " port {$dstport[0]:$dstport[1]}";
-			else if ($dstport[0])
-				$rdr_dstport = " port $dstport[0]";
 
 			/* if item is an alias, expand */
 			$localport = alias_expand($rule['local-port']);
@@ -1157,8 +1143,8 @@ function filter_nat_rules_generate() {
 			if (!isset($FilterIflist[$natif]))
 				continue;
 
-			$srcaddr = filter_generate_address($rule, 'source');
-			$dstaddr = filter_generate_address($rule, 'destination');
+			$srcaddr = filter_generate_address($rule, 'source', true);
+			$dstaddr = filter_generate_address($rule, 'destination', true);
 
 			if(!$dstaddr)
 				$dstaddr = $FilterIflist[$natif]['ip'];
@@ -1166,12 +1152,12 @@ function filter_nat_rules_generate() {
 			$natif = $FilterIflist[$natif]['if'];
 
 			if ($rule['nordr'])
-				$nordr = "no";
+				$nordr = "no ";
 
 			if($srcaddr <> "" && $dstaddr <> "") {
 				/* is rule a port range? */
 				if($natif)
-					$natrules .= "{$nordr} rdr {$rdrpass} on {$natif} proto {$protocol} from {$srcaddr}{$rdr_srcport} to {$dstaddr}{$rdr_dstport} -> {$target}{$localport}";
+					$natrules .= "{$nordr}rdr {$rdrpass} on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr} -> {$target}{$localport}";
 
 				/* Does this rule redirect back to a internal host? */
 				if($dstaddr == "any" && !interface_has_gateway($rule['interface'])) {
@@ -1244,7 +1230,7 @@ function filter_generate_user_rule_arr($rule) {
 	return $ret;
 }
 
-function filter_generate_address(& $rule, $target = "source") {
+function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	global $FilterIflist;
 	$src = "";
 
@@ -1318,14 +1304,18 @@ function filter_generate_address(& $rule, $target = "source") {
 				$src .= " port {$srcporta} ";
 			} else if(($srcport[0] == 1) && ($srcport[1] == 65535)) {
 			/* no need for a port statement here */
-			} else if(is_port($srcporta) && $srcport[1] == 65535) {
-				$src .= " port >= {$srcporta} ";
-			} else if($srcport[0] == 1) {
-				$src .= " port <= {$srcport[1]} ";
+			} else if ($isnat) {
+				$src .= " port {$srcport[0]}:{$srcport[1]}";
 			} else {
-				$srcport[0]--;
-				$srcport[1]++;
-				$src .= " port {$srcport[0]} >< {$srcport[1]} ";
+				if(is_port($srcporta) && $srcport[1] == 65535) {
+					$src .= " port >= {$srcporta} ";
+				} else if($srcport[0] == 1) {
+					$src .= " port <= {$srcport[1]} ";
+				} else {
+					$srcport[0]--;
+					$srcport[1]++;
+					$src .= " port {$srcport[0]} >< {$srcport[1]} ";
+				}
 			}
 		}
 	}

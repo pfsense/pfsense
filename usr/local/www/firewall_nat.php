@@ -185,13 +185,13 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td width="3%" class="list">&nbsp;</td>
                   <td width="5%" class="listhdrr">If</td>
                   <td width="5%" class="listhdrr">Proto</td>
-                  <td width="20%" class="listhdrr">Src. addr</td>
-                  <td width="20%" class="listhdrr">Src. ports</td>
-                  <td width="20%" class="listhdrr">Dest. addr</td>
-                  <td width="20%" class="listhdrr">Dest. ports</td>
-                  <td width="20%" class="listhdrr">NAT IP</td>
-                  <td width="20%" class="listhdrr">NAT Ports</td>
-                  <td width="20%" class="listhdr">Description</td>
+                  <td width="11%" class="listhdrr">Src. addr</td>
+                  <td width="11%" class="listhdrr">Src. ports</td>
+                  <td width="11%" class="listhdrr">Dest. addr</td>
+                  <td width="11%" class="listhdrr">Dest. ports</td>
+                  <td width="11%" class="listhdrr">NAT IP</td>
+                  <td width="11%" class="listhdrr">NAT Ports</td>
+                  <td width="11%" class="listhdr">Description</td>
                   <td width="5%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
@@ -273,7 +273,12 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				    <?=$textss;?><?php echo $alias_target_span_begin;?><?php echo htmlspecialchars($natent['target']);?><?php echo $alias_target_span_end;?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-				    <?=$textss;?><?php echo $alias_local_port_span_begin;?><?php echo htmlspecialchars(pprint_port($natent['local-port']));?><?php echo $alias_local_port_span_end;?><?=$textse;?>
+					<?php
+						list($dstbeginport, $dstendport) = split("-", $natent['destination']['port']);
+						$localendport   = $natent['local-port'] + $dstendport - $dstbeginport;
+						$localport      = $natent['local-port'] . '-' . $localendport;
+					?>
+				    <?=$textss;?><?php echo $alias_local_port_span_begin;?><?php echo htmlspecialchars(pprint_port($localport));?><?php echo $alias_local_port_span_end;?><?=$textse;?>
                   </td>
 
                   <td class="listbg" onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">

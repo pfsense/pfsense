@@ -365,7 +365,7 @@ if ($_POST) {
 			$filterent['destination']['address'] = $_POST['localip'];
 
 			$dstpfrom = $_POST['localbeginport'];
-			$dstpto = $dstpfrom + $_POST['endport'] - $_POST['beginport'];
+			$dstpto = $dstpfrom + $_POST['dstendport'] - $_POST['dstbeginport'];
 
 			if ($dstpfrom == $dstpto)
 				$filterent['destination']['port'] = $dstpfrom;

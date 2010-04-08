@@ -86,6 +86,7 @@ $g = array(
 	"hideplatform" => false,
 	"disablethemeselection" => false,
 	"disablehelpmenu" => false,
+	"disablehelpicon" => false,
 	"debug" => false,
 	"latest_config" => "6.2",
 	"nopkg_platforms" => array("cdrom"),

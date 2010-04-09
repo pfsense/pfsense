@@ -1099,7 +1099,7 @@ function filter_nat_rules_generate() {
 				continue;
 
 			if (strtolower($rule['protocol']) == "tcp/udp")
-				$protocol = "tcp udp";
+				$protocol = "{ tcp udp }";
 			else
 				$protocol = strtolower($rule['protocol']);
 

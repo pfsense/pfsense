@@ -409,7 +409,9 @@ function add_to_menu($url, $name) {
 
 <div>
 <span class="pgtitle"><?=genhtmltitle($pgtitle);?></font></span>
+<?php if(! $g['disablehelpicon']): ?>
 <span style="float:right; margin: 0 0 20px 20px;"><a href="<?php echo $helpurl; ?>" target="_new" title="Help for items on this page."><img src="/themes/<?php echo $g['theme']; ?>/images/help.png" border="0"></a></span>
+<?php endif; ?>
 </div>
 <br />
 

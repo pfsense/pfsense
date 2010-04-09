@@ -43,6 +43,10 @@
 
 require("guiconfig.inc");
 
+function remove_bad_chars($string) {
+	return preg_replace('/[^a-z|_|0-9]/i','',$string);
+}
+
 if (!is_array($config['ppps']['ppp']))
 	$config['ppps']['ppp'] = array();
 
@@ -60,11 +64,20 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['password'] = $a_ppps[$id]['password'];
 	if (isset($a_ppps[$id]['defaultgw']))
 		$pconfig['defaultgw'] = true;
-	$pconfig['ondemand'] = $a_ppps[$id]['ondemand'];
-	$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
+	if (isset($a_ppps[$id]['ondemand'])){
+		$pconfig['ondemand'] = true;
+		$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
+	}
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
+	if (isset($a_ppps[$id]['vjcomp']))
+		$pconfig['vjcomp'] = true;
+	if (isset($a_ppps[$id]['tcpmssfix']))
+		$pconfig['tcpmssfix'] = true;
+	$pconfig['bandwidth'] = $a_ppps[$id]['bandwidth'];
+	$pconfig['mtu'] = $a_ppps[$id]['mtu'];
+	$pconfig['mru'] = $a_ppps[$id]['mru'];
 	if ($a_ppps[$id]['type'] == "ppp") {
-		$pconfig['serialports'] = $a_ppps[$id]['serialports'];
+		$pconfig['serialports'] = $a_ppps[$id]['ports'];
 		$pconfig['initstr'] = base64_decode($a_ppps[$id]['initstr']);
 		$pconfig['simpin'] = $a_ppps[$id]['simpin'];
 		$pconfig['pin-wait'] = $a_ppps[$id]['pin-wait'];
@@ -76,14 +89,14 @@ if (isset($id) && $a_ppps[$id]) {
 		$pconfig['gateway'] = $a_ppps[$id]['gateway'];
 	}
 	if ($a_ppps[$id]['type'] == "pptp") {
-		$pconfig['interfaces'] = $a_ppps[$id]['interfaces'];
+		$pconfig['interfaces'] = $a_ppps[$id]['ports'];
 		$pconfig['localip'] = $a_ppps[$id]['localip'];
 		$pconfig['subnet'] = $a_ppps[$id]['subnet'];
 		$pconfig['gateway'] = $a_ppps[$id]['gateway'];
 	}
 	if ($a_ppps[$id]['type'] == "pppoe") {
-		$pconfig['interfaces'] = $a_ppps[$id]['interfaces'];
-		$pconfig['provider'];
+		$pconfig['interfaces'] = $a_ppps[$id]['ports'];
+		$pconfig['provider'] = $a_ppps[$id]['provider'];
 		/* ================================================ */
 		/* = force a connection reset at a specific time? = */
 		/* ================================================ */
@@ -119,7 +132,8 @@ if (isset($id) && $a_ppps[$id]) {
 				}
 			}
 		}
-	}	
+	}
+	
 }
 
 if ($_POST) {
@@ -195,17 +209,17 @@ if ($_POST) {
 		$input_errors[] = "The MTU must be greater than 576 bytes.";
 	if ($_POST['mru'] && ($_POST['mru'] < 576)) 
 		$input_errors[] = "The MRU must be greater than 576 bytes.";
-
+/*
 	foreach ($a_ppps as $ppp) {
 		if (isset($id) && ($a_ppps[$id]) && ($a_ppps[$id] === $ppp))
 			continue;
 
 		if ($ppp['serialport'] == $_POST['serialport']) {
-			$input_errors[] = "Port is in use";
+			$input_errors[] = "Serial port is in use";
 			break;
 		}
 	}
-	
+*/	
 
 	if (!$input_errors) {
 		$ppp = array();
@@ -213,20 +227,9 @@ if ($_POST) {
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = $_POST['password'];
 		$ppp['defaultgw'] = $_POST['defaultgw'] ? true : false;
-		if ($_POST['defaultgw'] == "on")
-			$ppp['defaultgw'] = true;
-		else
-			unset($ppp['defaultgw']);
-		
-		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
-		if ($_POST['ondemand'])
-			$ppp['idletimeout'] = $_POST['idletimeout'];
-		else 
-			unset($ppp['idletimeout']);
-		$ppp['descr'] = $_POST['descr'];
 		switch($_POST['type']) {
 			case "ppp":
-				$ppp['serialports'] = implode(',', $_POST['serialports']);
+				$ppp['ports'] = implode(',', $_POST['serialports']);
 				if (!empty($_POST['initstr']))
 					$ppp['initstr'] = base64_encode($_POST['initstr']);
 				else
@@ -249,31 +252,57 @@ if ($_POST) {
 					unset($ppp['apn']);
 					unset($ppp['apnum']);
 				}
-				$ppp['phone'] = $_POST['phone'];			
-				$ppp['localip'] = $_POST['localip'];
-				$ppp['gateway'] = $_POST['gateway'];
+				$ppp['phone'] = $_POST['phone'];
+				if (!empty($_POST['localip']))
+					$ppp['localip'] = $_POST['localip'];
+				else
+					unset($ppp['localip']);
+				if (!empty($_POST['gateway']))
+					$ppp['gateway'] = $_POST['gateway'];
+				else
+					unset($ppp['gateway']);
 				if (!empty($_POST['connect-timeout']))
 					$ppp['connect-timeout'] = $_POST['connect-timeout'];
 				else
 					unset($ppp['connect-timeout']);
 				break;
 			case "pppoe":
-				$ppp['interfaces'] = implode(',', $_POST['interfaces']);
-				$ppp['provider'] = $_POST['provider'];
+				$ppp['ports'] = implode(',', $_POST['interfaces']);
+				if (!empty($_POST['provider']))
+					$ppp['provider'] = $_POST['provider'];
+				else
+					unset($ppp['provider']);
 				break;
 			case "pptp":
-				$ppp['interfaces'] = implode(',', $_POST['interfaces']);
+				$ppp['ports'] = implode(',', $_POST['interfaces']);
 				$ppp['localip'] = $_POST['localip'];
 				$ppp['subnet'] = $_POST['subnet'];
 				$ppp['gateway'] = $_POST['gateway'];
 				break;
 		}
+		if (!empty($_POST['descr']))
+			$ppp['descr'] = $_POST['descr'];
+		else
+			unset($ppp['descr']);
+		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
+		if (isset($ppp['ondemand']))
+			$ppp['idletimeout'] = $_POST['idletimeout'];
+		else 
+			unset($ppp['idletimeout']);
+		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
+		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
+		if (isset($_POST['bandwidth']))
+			$ppp['bandwidth'] = $_POST['bandwidth'];
+		else 
+			unset($ppp['bandwidth']);
+	
         $iflist = get_configured_interface_list();
+        /*
         foreach ($iflist as $if) {
         	if ($config['interfaces'][$if]['if'] == basename($a_ppps[$id]['port']))
 				$config['interfaces'][$if]['if'] = basename($ppp['port']);
 		}
-
+		*/
 		if (isset($id) && $a_ppps[$id])
 			$a_ppps[$id] = $ppp;
 		else
@@ -305,7 +334,6 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				document.getElementById("interface").style.display = 'none';
 				document.getElementById("serialport").style.display = 'none';
 				document.getElementById("ipfields").style.display = 'none';
-				document.getElementById("subnet").style.display = 'none';
 				break;
 			}
 			case "ppp": {
@@ -322,7 +350,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				document.getElementById("select").style.display = 'none';
 				document.getElementById("ppp").style.display = 'none';
 				document.getElementById("pptp").style.display = 'none';
-				document.getElementById("interface").style.display = 'none';
+				document.getElementById("interface").style.display = '';
 				document.getElementById("serialport").style.display = 'none';
 				document.getElementById("ipfields").style.display = 'none';
 				break;
@@ -394,7 +422,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 	
 </script>
 </head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onLoad="updateType(<?php echo "'{$pconfig['type']}'";?>)">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_mlppp_edit.php" method="post" name="iform" id="iform">
@@ -405,7 +433,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				<tr>
 					<td valign="middle" class="vncell"><strong>Link Type</strong></td>
 					<td class="vtable"> 
-						<select name="type" onChange="updateType(this.value);" class="formselect" id="type">
+						<select name="type" onChange="updateType(this.value);"  class="formselect" id="type">
 						<?php 
 							foreach ($types as $key => $opt) { 
 								echo "<option onClick=\"updateType('{$key}');\"";
@@ -492,7 +520,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			    <tr>
 					<td valign="top" class="vncell">Idle Timeout</td>
 					<td class="vtable">
-						<input name="timeout" type="text" class="formfld unknown" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>">
+						<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>">
 						<br> <span class="vexpl">Idle Timeout goes with the OnDemand selection above. If OnDemand is not checked this is ignored.</span>
 					</td>
 			    </tr>
@@ -656,7 +684,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 									/
 									<select style="display:none" class="formselect" id="subnet">
 									<?php for ($i = 31; $i > 0; $i--): ?>
-										<option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet']) echo "selected"; ?>>
+										<option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>>
 											<?=$i;?>
 										</option>
 									<?php endfor; ?>

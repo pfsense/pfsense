@@ -136,21 +136,22 @@ if ($_POST) {
 			unset($ppp['connect-timeout']);
 		$ppp['descr'] = $_POST['descr'];
 
-
+        $iflist = get_configured_interface_list();
+        foreach ($iflist as $if) {
+        	if ($config['interfaces'][$if]['if'] == basename($a_ppps[$id]['port'])) {
+				$config['interfaces'][$if]['if'] = basename($ppp['port']);
+				$thisif = $if;
+			}
+		}
 		if (isset($id) && $a_ppps[$id])
 			$a_ppps[$id] = $ppp;
 		else
 			$a_ppps[] = $ppp;
 		write_config();
-
-        $iflist = get_configured_interface_list();
-        foreach ($iflist as $if) {
-        	if ($config['interfaces'][$if]['if'] == basename($a_ppps[$id]['port'])) {
-				$config['interfaces'][$if]['if'] = basename($ppp['port']);
-				interface_ppp_configure($if);
-			}
-		}
-
+		
+		if (!empty($thisif))
+			interface_ppp_configure($thisif);
+		
 		header("Location: interfaces_ppp.php");
 		exit;
 	}
@@ -231,7 +232,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Init String</td>
 			<td width="78%" class="vtable">
-				<input type="text" size="40" class="formfld unknown" id="initstr" name="initstr"><?=htmlspecialchars($pconfig['initstr']);?></textarea>
+				<input type="text" size="40" class="formfld unknown" id="initstr" name="initstr" value="<?=htmlspecialchars($pconfig['initstr']);?>">
 				<br><span class="vexpl">Note: Enter the modem initialization string here. Do NOT include the "AT" string at the beginning of the command.</span>
 			</td>
 		</tr>

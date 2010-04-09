@@ -297,7 +297,7 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>" />
                     <br />
-                    <?=gettext("Enter the IP address the l2tp server should use on its side for all clients.");?></td>
+                    <?=gettext("Enter the IP address the L2TP server should use on its side for all clients.");?></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Remote address range");?></td>
@@ -325,7 +325,7 @@ function enable_change(enable_over) {
                   </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">No. L2TP users</td>
+                  <td width="22%" valign="top" class="vncellreq">Number of L2TP users</td>
                   <td width="78%" class="vtable">
                     <select id="n_l2tp_units" name="n_l2tp_units">
                     <?php
@@ -338,7 +338,7 @@ function enable_change(enable_over) {
                      }
                     ?>
                     </select>
-                    <br>Hint: 10 is TEN l2tp clients
+                    <br>Hint: 10 is ten L2TP clients
                   </td>
                 </tr>
 		<tr>

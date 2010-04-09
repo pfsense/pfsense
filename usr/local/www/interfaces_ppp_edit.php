@@ -137,18 +137,19 @@ if ($_POST) {
 		$ppp['descr'] = $_POST['descr'];
 
 
-        $iflist = get_configured_interface_list();
-        foreach ($iflist as $if) {
-        	if ($config['interfaces'][$if]['if'] == basename($a_ppps[$id]['port']))
-				$config['interfaces'][$if]['if'] = basename($ppp['port']);
-		}
-
 		if (isset($id) && $a_ppps[$id])
 			$a_ppps[$id] = $ppp;
 		else
 			$a_ppps[] = $ppp;
-
 		write_config();
+
+        $iflist = get_configured_interface_list();
+        foreach ($iflist as $if) {
+        	if ($config['interfaces'][$if]['if'] == basename($a_ppps[$id]['port'])) {
+				$config['interfaces'][$if]['if'] = basename($ppp['port']);
+				interface_ppp_configure($if);
+			}
+		}
 
 		header("Location: interfaces_ppp.php");
 		exit;

@@ -219,10 +219,12 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 		$alias_target_span_begin     = $alias_popup["dst"];
 		$alias_local_port_span_begin = $alias_popup["dstport"];
 
-		if (isset($natent['disabled'])) {
+		if (isset($natent['disabled']))
 			$textss = "<span class=\"gray\">";
-			$textse = "</span>";
-		}
+		else
+			$textss = "<span>";
+
+		$textse = "</span>";
 	
 		/* if user does not have access to edit an interface skip on to the next record */
 		if(!have_natpfruleint_access($natent['interface'])) 

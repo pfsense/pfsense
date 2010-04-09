@@ -233,11 +233,10 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                 <tr valign="top" id="fr<?=$nnats;?>">
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                   <td class="listt" align="center">
-					<?php if(!empty($natent['associated-rule-id'])): ?>
-					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="Firewall rule ID <?=htmlspecialchars($nnatid); ?> is managed with this rule" border="0">
-					<?php endif; ?>
 					<?php if($natent['associated-rule-id'] == "pass"): ?>
 					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" title="All traffic matching this NAT entry is passed" border="0">
+					<?php elseif (!empty($natent['associated-rule-id'])): ?>
+					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="Firewall rule ID <?=htmlspecialchars($nnatid); ?> is managed with this rule" border="0">
 					<?php endif; ?>
 				  </td>
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">

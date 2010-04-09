@@ -209,13 +209,9 @@ if ($_POST) {
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */
-	if($_POST['srctype'] == "network") {
-		if(is_alias($_POST['src']))
-			$input_errors[] = "You must specify single host or alias for alias entries.";
-	}
-	if($_POST['dsttype'] == "network") {
-		if(is_alias($_POST['dst']))
-			$input_errors[] = "You must specify single host or alias for alias entries.";
+	if( ($_POST['srctype'] == "network" && is_alias($_POST['src']) ) 
+	 || ($_POST['dsttype'] == "network" && is_alias($_POST['dst']) ) ) {
+		$input_errors[] = "You must specify single host or alias for alias entries.";
 	}
 
 	if (!is_specialnet($_POST['srctype'])) {
@@ -307,7 +303,7 @@ if ($_POST) {
 			unset($natent['nosync']);
 
 		// If we used to have an associated filter rule, but no-longer should have one
-		if ($a_nat[$id]>0 && empty($natent['associated-rule-id'])) {
+		if ($a_nat[$id]>0 && ( empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'] ) ) {
 			// Delete the previous rule
 			delete_id($a_nat[$id]['associated-rule-id'], $config['filter']['rule']);
 			mark_subsystem_dirty('filter');

@@ -70,6 +70,16 @@ function check_for_advaned_options(&$item) {
 	return $item_set;
 }
 
+function delete_nat_association(&$a_nat, $id) {
+	if (!$id || !is_array($a_nat))
+		return;
+
+	for ($pos = 0; $pos < sizeof($a_nat); $pos++) {
+		if ($a_nat[$pos]['associated-rule-id'] == $id)
+			$a_nat[$pos]['associated-rule-id'] = '';
+	}
+}
+
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();
 }
@@ -135,19 +145,25 @@ if ($_POST) {
 }
 
 if ($_GET['act'] == "del") {
-        if ($a_filter[$_GET['id']]) {
-                unset($a_filter[$_GET['id']]);
-                write_config();
+	if ($a_filter[$_GET['id']]) {
+		if (!empty($a_filter[$_GET['id']]['associated-rule-id'])) {
+			$a_nat = &$config['nat']['rule'];
+			delete_nat_association($a_nat, $a_filter[$_GET['id']]['associated-rule-id']);
+		}
+		unset($a_filter[$_GET['id']]);
+		write_config();
 		mark_subsystem_dirty('filter');
-                header("Location: firewall_rules.php?if={$if}");
-                exit;
-        }
+		header("Location: firewall_rules.php?if={$if}");
+		exit;
+	}
 }
 
 if (isset($_POST['del_x'])) {
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		$a_nat = &$config['nat']['rule'];
 		foreach ($_POST['rule'] as $rulei) {
+			delete_nat_association($a_nat, $a_filter[$rulei]['associated-rule-id']);
 			unset($a_filter[$rulei]);
 		}
 		write_config();
@@ -260,14 +276,14 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td width="5%" class="list">&nbsp;</td>
                   <td width="3%" class="listhdrr">ID</td>
                   <td width="6%" class="listhdrr">Proto</td>
-                  <td width="14%" class="listhdrr">Source</td>
-                  <td width="7%" class="listhdrr">Port</td>
-                  <td width="14%" class="listhdrr">Destination</td>
-                  <td width="7%" class="listhdrr">Port</td>
+                  <td width="12%" class="listhdrr">Source</td>
+                  <td width="6%" class="listhdrr">Port</td>
+                  <td width="12%" class="listhdrr">Destination</td>
+                  <td width="6%" class="listhdrr">Port</td>
 		  <td width="5%" class="listhdrr">Gateway</td>
-		  <td width="10%" class="listhdrr">Queue</td>
+		  <td width="8%" class="listhdrr">Queue</td>
 		  <td width="5%" class="listhdrr">Schedule</td>
-                  <td width="21%" class="listhdr">Description</td>
+                  <td width="19%" class="listhdr">Description</td>
                   <td width="10%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			   <tr>
@@ -294,7 +310,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 		</tr>
 <?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
                 <tr valign="top" id="frrfc1918">
-                  <td width="3%" class="list">&nbsp;</td>
+                  <td class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
                   <td class="listlr" style="background-color: #e0e0e0"></td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
@@ -322,7 +338,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <?php endif; ?>
 <?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
                 <tr valign="top" id="frrfc1918">
-                  <td width="3%" class="list">&nbsp;</td>
+                  <td class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
                   <td class="listlr" style="background-color: #e0e0e0"></td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>

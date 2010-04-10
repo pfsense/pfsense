@@ -816,24 +816,16 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 
 	$realif = get_real_interface($interface);
 
-
-	/* remove interface up file if it exists */
-	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
-	unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
-	unlink_if_exists("{$g['tmp_path']}/{$realif}_router");
-
 	switch ($ifcfg['ipaddr']) {
 	case "pppoe":
 		killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");
 		sleep(2);
 		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
 		break;
 	case "pptp":
 		killbypid("{$g['varrun_path']}/pptp_{$interface}.pid");
 		sleep(2);
 		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
 		break;
 	case "carpdev-dhcp":
 		/* 
@@ -854,6 +846,8 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		break;
 	case "ppp":
 		killbypid("{$g['varrun_path']}/ppp_{$interface}.pid");
+		sleep(2);
+		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
 		break;
 	default:
 		if(does_interface_exist("$realif")) {
@@ -864,6 +858,11 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		break;
 	}
 
+	/* remove interface up file if it exists */
+	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
+	unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
+	unlink_if_exists("{$g['tmp_path']}/{$realif}_router");
+	
 	/* hostapd and wpa_supplicant do not need to be running when the interface is down.
 	 * They will also use 100% CPU if running after the wireless clone gets deleted. */
 	if (is_array($ifcfg['wireless'])) {

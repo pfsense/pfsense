@@ -1033,25 +1033,6 @@ EOD;
 	fwrite($fd, $mpdconf);
 	fclose($fd);
 
-	$fdlnkq = fopen("{$g['varetc_path']}/mpd_{$interface}.query", "w");
-	if (!$fdlnkq) {
-		/* NOTE: It is not fatal if we cannot write the query.") */
-		log_error("Error: cannot open mpd_{$interface}.query in interface_ppp_configure().\n");
-	} else {
-	$linkquery = <<<EOD
-admin
-pfsense
-link lnk{$interface}
-show iface
-exit
-
-EOD;
-
-		// Write out linkquery file for each configured PPP interface.
-		fwrite($fdlnkq, $linkquery);
-		fclose($fdlnkq);
-	}
-
 	// Launch specified ppp instance
 	if (file_exists("{$ppp['port']}")) {
 		/* fire up mpd */

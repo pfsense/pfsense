@@ -1871,22 +1871,20 @@ function upgrade_061_to_062() {
 			$natent['disabled'] = false;
 			$natent['nordr']    = false;
 
-			$natent['source'] = array();
-			$natent['source'] = {
+			$natent['source'] = array(
 				"not"     => false,
 				"any"     => true,
 				"port"    => ""
-			};
+			);
 
-			$natent['destination'] = array();
-			$natent['destination'] = {
+			$natent['destination'] = array(
 				"not"     => false,
 				"address" => $natent['external-address'],
 				"port"    => $natent['external-port']
-			};
+			);
 
-			unset($natent['external-address'];
-			unset($natent['external-port'];
+			unset($natent['external-address']);
+			unset($natent['external-port']);
 		}
 
 		unset($natent);

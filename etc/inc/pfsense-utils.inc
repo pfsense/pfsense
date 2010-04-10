@@ -1169,8 +1169,6 @@ function get_ppp_uptime($port){
     	$saved_time = file_get_contents("/conf/{$port}.log");
     	$uptime_data = explode("\n",$saved_time);
 		$sec=0;
-		$min=0;
-		$hrs=0;
 		foreach($uptime_data as $upt) {
 			$sec += substr($upt, 1 + strpos($upt, " "));
  		}

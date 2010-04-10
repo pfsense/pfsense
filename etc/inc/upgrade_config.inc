@@ -1867,7 +1867,7 @@ function upgrade_061_to_062() {
 	if (is_array($config['nat']['rule'])) {
 		$a_nat = &$config['nat']['rule'];
 
-		foreach ($a_nat as $natent) {
+		foreach ($a_nat as &$natent) {
 			$natent['disabled'] = false;
 			$natent['nordr']    = false;
 
@@ -1888,6 +1888,8 @@ function upgrade_061_to_062() {
 			unset($natent['external-address'];
 			unset($natent['external-port'];
 		}
+
+		unset($natent);
 	}
 }
 

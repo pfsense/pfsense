@@ -149,7 +149,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$bridge = array();
 		$bridge['members'] = implode(',', $_POST['members']);
-		$bridge['enablestp'] = isset($_POST['enablestp']);
+		$bridge['enablestp'] = $_POST['enablestp'] ? true : false;
 		$bridge['descr'] = $_POST['descr'];
 		$bridge['maxaddr'] = $_POST['maxaddr'];
 		$bridge['timeout'] = $_POST['timeout'];
@@ -280,7 +280,7 @@ function show_source_port_range() {
                 <tr style="display:none" id="sprtable1" name="sprtable1">
                   <td valign="top" class="vncell" align="middle">RSTP/STP  </td>
                   <td class="vtable">
-					<input type="checkbox" name="enablestp" id="enablestp" <?php if ($pconfig['enablestp']) echo "selected";?>>
+					<input type="checkbox" name="enablestp" id="enablestp" <?php if ($pconfig['enablestp']) echo "checked";?>>
 					<span class="vexpl"><strong>Enable spanning tree options for this bridge. </strong></span>
 					<br/><br/>
 				  	<table id="stpoptions" name="stpoptions" border="0" cellpadding="6" cellspacing="0">

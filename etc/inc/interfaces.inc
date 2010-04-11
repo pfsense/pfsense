@@ -969,6 +969,8 @@ EOD;
 
 	$mpdconf .= <<<EOD
 	create link static lnk{$interface} modem
+	set link keep-alive 10 60
+	set link max-redial 0
 	set link disable chap pap
 	set link accept chap pap eap
 	set link enable no-orig-auth

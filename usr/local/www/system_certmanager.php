@@ -528,7 +528,7 @@ function internalca_change() {
 											&nbsp;
 											<em>ex:</em>
 											&nbsp;
-											www.pfsense.org
+											www.example.com
 										</td>
 									</tr>
 								</table>
@@ -625,7 +625,7 @@ function internalca_change() {
 											&nbsp;
 											<em>ex:</em>
 											&nbsp;
-											www.pfsense.org
+											www.example.com
 										</td>
 									</tr>
 								</table>

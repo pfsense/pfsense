@@ -1252,7 +1252,7 @@ include("head.inc");
 				<select name="l7container">
 <?php
 					if (!is_array($l7clist))
-						$dnqlist = array();
+						$l7clist = array();
 					echo "<option value=\"none\"";
 					echo " >none</option>";
 					foreach ($l7clist as $l7ckey) {

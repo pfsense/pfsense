@@ -169,10 +169,13 @@ function step6_submitphpaction() {
 
 function step7_submitphpaction() {
 	global $stepid, $savemsg, $_POST, $config;
-	
+
 	$canames = array();
+	$cacns = array();
 	foreach($config['system']['ca'] as $ca) {
 		$canames[] = $ca['name'];
+		$cainfo = cert_get_subject_hash($ca['crt']);
+		$cacns[] = $cainfo["CN"];
 	}
 
 	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
@@ -180,7 +183,7 @@ function step7_submitphpaction() {
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new Certificate Authority.";
-	} elseif (in_array($_POST['name'], $canames)) {
+	} elseif (in_array($_POST['name'], $canames) || in_array($_POST['name'], $cacns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certicicate Authority. A Certificate Authority with that name already exists.";
 	} else {
@@ -249,8 +252,11 @@ function step9_submitphpaction() {
 	global $stepid, $savemsg, $_POST, $config;
 
 	$certnames = array();
+	$certcns = array();
 	foreach($config['system']['cert'] as $cert) {
 		$certnames[] = $cert['name'];
+		$certinfo = cert_get_subject_hash($cert['crt']);
+		$certcns[] = $certinfo["CN"];
 	}
 
 	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
@@ -258,9 +264,9 @@ function step9_submitphpaction() {
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new certificate.";
-	} elseif (in_array($_POST['name'], $certnames)) {
+	} elseif (in_array($_POST['name'], $certnames) || in_array($_POST['name'], $certcns)) {
 		$stepid--;
-		$savemsg = "Please enter a different name for the Certicicate. A Certificate with that name already exists.";	
+		$savemsg = "Please enter a different name for the Certicicate. A Certificate with that name/common name already exists.";	
 	} else {
 		$config['ovpnserver']['step9']['uselist'] = "on";
 		$_POST['uselist'] = "on";

@@ -291,7 +291,9 @@ function is_alias_inuse($alias) {
 		foreach($config['nat']['rule'] as $rule) {
 			if($rule['target'] == $alias)
 				return true;
-			if($rule['external-address'] == $alias)
+			if($rule['source']['address'] == $alias)
+				return true;
+			if($rule['destination']['address'] == $alias)
 				return true;
 		}
 	return false;

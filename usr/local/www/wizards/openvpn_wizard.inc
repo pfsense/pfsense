@@ -31,7 +31,7 @@ require_once("openvpn.inc");
 function step1_submitphpaction() {
 	global $stepid, $config;
 	if ($_POST['authtype'] == "local") {
-		$stepid = 5;
+		$stepid = 4;
 		$config['ovpnserver']['step1']['type'] = "local";
 	} else if ($_POST['authtype'] == "ldap") {
 		$stepid = 0;
@@ -131,8 +131,11 @@ function step4_submitphpaction() {
 function step5_submitphpaction() {
 	global $stepid, $savemsg, $config;
 
-	if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['port']) ||
-	    empty($_POST['secret'])) {
+	/* Default RADIUS Auth port = 1812 */
+	if (empty($_POST['port']))
+		$_POST['port'] = 1812;
+
+	if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['secret'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for authentication server.";
 	} else if (count(($authcfg = auth_get_authserver($_POST['name']))) > 0) {

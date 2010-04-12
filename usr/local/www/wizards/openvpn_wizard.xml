@@ -72,11 +72,11 @@
 	<fields>
 		<field>
 			<type>listtopic</type>
-			<name>Authentication Servers list</name>
+			<name>LDAP Authentication Servers list</name>
 		</field>
 		<field>
 			<name>authserv</name>
-			<displayname>Authentication servers</displayname>
+			<displayname>LDAP servers</displayname>
 			<type>select</type>
 			<bindstofield>ovpnserver->step2->authserv</bindstofield>
 			<options>
@@ -232,11 +232,11 @@
 	<fields>
 		<field>
 			<type>listtopic</type>
-			<name>Authentication Servers list</name>
+			<name>RADIUS Authentication Servers list</name>
 		</field>
 		<field>
 			<name>authserv</name>
-			<displayname>Authentication servers</displayname>
+			<displayname>RADIUS servers</displayname>
 			<type>select</type>
 			<bindstofield>ovpnserver->step2->authserv</bindstofield>
 			<options>
@@ -274,12 +274,14 @@
 			<displayname>Name</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->authtype</bindstofield>
+			<description>Descriptive name for the RADIUS server, for your reference.</description>
 		</field>
 		<field>
 			<name>ip</name>
 			<displayname>Hostname or IP address</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->ip</bindstofield>
+			<description>Address of the RADIUS server.</description>
 		</field>
 		<field>
 			<name>port</name>
@@ -287,6 +289,7 @@
 			<type>input</type>
 			<size>8</size>
 			<bindstofield>ovpnserver->step2->port</bindstofield>
+			<description>Port used by the RADIUS server for accepting Authentication requests, typically 1812.</description>
 		</field>
 		<field>
 			<name>secret</name>
@@ -294,6 +297,7 @@
 			<type>password</type>
 			<size>20</size>
 			<bindstofield>ovpnserver->step2->password</bindstofield>
+			<description></description>
 		</field>
 		<field>
 			<name>Add new Server</name>

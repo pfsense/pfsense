@@ -1141,43 +1141,8 @@ function is_dhcp_server_enabled()
 	return $dhcpdenable;
 }
 
-/* Compute the total uptime from the ppp uptime log file in the conf directory */
-/* Written by: gnoahb@gmail.com */
-
-function get_ppp_uptime($serialport){
-	if (file_exists("/conf/ppp-up.".$serialport . ".log")){
-        	$saved_time = file_get_contents("/conf/ppp-up." . $serialport . ".log");
-        	$uptime_data = explode("\n",$saved_time);
-    		$sec=0;
-		$min=0;
-		$hrs=0;
-		foreach($uptime_data as $upt) {
-        	        $time = substr($upt, 1 + strpos($upt, " "));
-        	        if ($time != "00:00:00"){
-        	                $hms = explode(":",$time);
-        	                $hrs += $hms[0];
-        	                $min += $hms[1];
-        	                $sec += $hms[2];
-               		 }
- 		}
-        	if ($sec != 0){
-                	$min += floor($sec/60);
-                	$sec %= 60;
-        	}
-        	if($min !=0){
-                	$hrs += floor($min/60);
-                	$min %= 60;
-        	}
-		$total_time = $hrs.":".$min.":".$sec;
-		return $total_time;
-
-	} else {
-		$total_time = "No session history data found!";
-		return $total_time;
-	}
-}
-
 function convert_seconds_to_hms($sec){
+	$min=$hrs=0;
 	if ($sec != 0){
 		$min = floor($sec/60);
 		$sec %= 60;
@@ -1196,6 +1161,23 @@ function convert_seconds_to_hms($sec){
 	return $result;
 }
 
+/* Compute the total uptime from the ppp uptime log file in the conf directory */
+/* Written by: gnoahb@gmail.com */
+
+function get_ppp_uptime($port){
+	if (file_exists("/conf/{$port}.log")){
+    	$saved_time = file_get_contents("/conf/{$port}.log");
+    	$uptime_data = explode("\n",$saved_time);
+		$sec=0;
+		foreach($uptime_data as $upt) {
+			$sec += substr($upt, 1 + strpos($upt, " "));
+ 		}
+		return convert_seconds_to_hms($sec);
+	} else {
+		$total_time = "No session history data found!";
+		return $total_time;
+	}
+}
 
 //returns interface information
 function get_interface_info($ifdescr) {
@@ -1327,10 +1309,9 @@ function get_interface_info($ifdescr) {
 		if (empty($dev))
 			break;
 		if (file_exists("/dev/{$dev}")) {
-			if (file_exists("{$g['varrun_path']}/ppp_{$if}.pid") && file_exists("{$g['varetc_path']}/mpd_{$if}.query")) {
+			if (file_exists("{$g['varrun_path']}/ppp_{$if}.pid")) {
 				$ifinfo['pppinfo'] = "{$ifinfo['if']}";
-				$pppid = substr($ifinfo['if'], 3);
-				$sec = trim(`/usr/bin/nc 127.0.0.1 500{$pppid} < {$g['varetc_path']}/mpd_{$if}.query | grep 'Session time' | cut -f7 -d ' '`);
+				$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
         		$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
 			}
 		} else {
@@ -1338,7 +1319,7 @@ function get_interface_info($ifdescr) {
 			$ifinfo['pppinfo'] = $dev . " device not present! Is the modem attached to the system?";	
 		}
 		// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
-		$ifinfo['ppp_uptime_accumulated'] = get_ppp_uptime($dev);
+		$ifinfo['ppp_uptime_accumulated'] = get_ppp_uptime($ifinfo['if']);
 
 		break;
 	default:

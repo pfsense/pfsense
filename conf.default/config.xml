@@ -139,7 +139,7 @@
 	<system>
 		<optimization>normal</optimization>
 		<hostname>pfSense</hostname>
-		<domain>local</domain>
+		<domain>localdomain</domain>
 		<dnsserver></dnsserver>
 		<dnsallowoverride/>
 		<group>

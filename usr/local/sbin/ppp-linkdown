@@ -1,7 +1,8 @@
 #!/bin/sh
-
+if [ -f /tmp/$1up ] && [ -f /conf/$1.log ]; then
+        seconds=$((`date -j +%s` - `/usr/bin/stat -f %m /tmp/$1up`))
+        /usr/local/sbin/ppp-log-uptime.sh $seconds $1 &
+fi
 # delete the node just in case mpd cannot do that
-/usr/sbin/ngctl shutdown $1:
+#/usr/sbin/ngctl shutdown $1:
 /bin/rm -f /var/etc/nameserver_$1
-/bin/rm -f /tmp/$1_router
-/bin/rm -f /tmp/$1up

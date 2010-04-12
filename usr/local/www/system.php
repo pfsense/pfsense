@@ -252,7 +252,7 @@ include("head.inc");
 					<br/>
 					<span class="vexpl">
 						name of the firewall host, without domain part
-						<br>
+						<br/>
 						e.g. <em>firewall</em>
 					</span>
 				</td>
@@ -262,7 +262,9 @@ include("head.inc");
 				<td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
 					<br/>
 					<span class="vexpl">
-						e.g. <em>mycorp.com</em>
+						Do not use "local" as a domain name. It will cause local hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS.
+						<br/>
+						e.g. <em>mycorp.com, home, office, private, etc.</em>
 					</span>
 				</td>
 			</tr>

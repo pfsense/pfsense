@@ -1563,7 +1563,7 @@ function filter_generate_user_rule($rule) {
 				isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or
 				isset($rule['max-src-states']) and $rule['max-src-states'] <> "" or
 				isset($rule['statetimeout']) and $rule['statetimeout'] <> "" or
-				isset($rule['l7container']) and $rule['l7container'] != "none") {
+				$l7_present) {
 					$aline['flags'] .= "( ";
 					if(isset($rule['source-track']) and $rule['source-track'] <> "")
 						$aline['flags'] .= "source-track rule ";

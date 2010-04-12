@@ -70,14 +70,17 @@ function check_for_advaned_options(&$item) {
 	return $item_set;
 }
 
-function delete_nat_association(&$a_nat, $id) {
-	if (!$id || !is_array($a_nat))
+function delete_nat_association($id) {
+	global $config;
+
+	if (!$id || !is_array($config['nat']['rule']))
 		return;
 
-	for ($pos = 0; $pos < sizeof($a_nat); $pos++) {
-		if ($a_nat[$pos]['associated-rule-id'] == $id)
-			$a_nat[$pos]['associated-rule-id'] = '';
-	}
+	$a_nat = &$config['nat']['rule'];
+
+	foreach ($a_nat as &$natent)
+		if ($natent['associated-rule-id'] == $id)
+			$natent['associated-rule-id'] = '';
 }
 
 if (!is_array($config['filter']['rule'])) {
@@ -147,8 +150,7 @@ if ($_POST) {
 if ($_GET['act'] == "del") {
 	if ($a_filter[$_GET['id']]) {
 		if (!empty($a_filter[$_GET['id']]['associated-rule-id'])) {
-			$a_nat = &$config['nat']['rule'];
-			delete_nat_association($a_nat, $a_filter[$_GET['id']]['associated-rule-id']);
+			delete_nat_association($a_filter[$_GET['id']]['associated-rule-id']);
 		}
 		unset($a_filter[$_GET['id']]);
 		write_config();
@@ -161,9 +163,8 @@ if ($_GET['act'] == "del") {
 if (isset($_POST['del_x'])) {
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		$a_nat = &$config['nat']['rule'];
 		foreach ($_POST['rule'] as $rulei) {
-			delete_nat_association($a_nat, $a_filter[$rulei]['associated-rule-id']);
+			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
 			unset($a_filter[$rulei]);
 		}
 		write_config();

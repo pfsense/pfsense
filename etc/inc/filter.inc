@@ -741,10 +741,11 @@ function filter_generate_reflection($rule, $dstport, &$starting_localhost_port, 
 		$range_end++;
 
 		/* TODO: support multiple ip's in an alias. */
-
-		$dstaddr = filter_generate_address($rule, 'destination');
-
-		if (!$dstaddr && is_ipaddr($FilterIflist[$rule['interface']]['ip']))
+		if (is_alias($rule['destination']['address']))
+			$dstaddr = filter_expand_alias($rule['destination']['address']);
+		else if(is_ipaddr($rule['destination']['address']))
+			$dstaddr = $rule['destination']['address'];
+		else if (is_ipaddr($FilterIflist[$rule['interface']]['ip']))
 			$dstaddr = $FilterIflist[$rule['interface']]['ip'];
 		else
 			return "\n";

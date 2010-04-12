@@ -340,8 +340,11 @@ if ($_POST) {
 												update_alias_names_upon_change('filter', 'rule', 'source', 'address', $newname, $origname);
 												update_alias_names_upon_change('filter', 'rule', 'destination', 'address', $newname, $origname);
 												// NAT Rules
+												update_alias_names_upon_change('nat', 'rule', 'source', 'address', $newname, $origname);
+												update_alias_names_upon_change('nat', 'rule', 'source', 'port', $newname, $origname);
+												update_alias_names_upon_change('nat', 'rule', 'destination', 'address', $newname, $origname);
+												update_alias_names_upon_change('nat', 'rule', 'destination', 'port', $newname, $origname);
 												update_alias_names_upon_change('nat', 'rule', 'target', '', $newname, $origname);
-												update_alias_names_upon_change('nat', 'rule', 'external-port', '', $newname, $origname);
 												update_alias_names_upon_change('nat', 'rule', 'local-port', '', $newname, $origname);
 												// Alias in an alias
 												update_alias_names_upon_change('aliases', 'alias', 'address', '', $newname, $origname);

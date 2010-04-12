@@ -76,8 +76,16 @@ function step2_submitphpaction() {
 function step3_submitphpaction() {
 	global $stepid, $savemsg, $config;
 
-	if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['port']) ||
-	    empty($_POST['transport']) || empty($_POST['scope']) || empty($_POST['authscope']) || empty($_POST['nameattr'])) {
+	/* Default LDAP port is 389 for TCP and 636 for SSL */
+	if (empty($_POST['port'])) {
+		if ($_POST['transport'] == "tcp")
+			$_POST['port'] = 389;
+		elseif ($_POST['transport'] == "ssl")
+			$_POST['port'] = 636;
+	}
+
+	if (empty($_POST['name']) || empty($_POST['ip']) ||empty($_POST['transport']) ||
+	     empty($_POST['scope']) || empty($_POST['basedn']) || empty($_POST['authscope']) || empty($_POST['nameattr'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for authentication server.";
 	} else if (count(($authcfg = auth_get_authserver($_POST['name']))) > 0) {
@@ -358,6 +366,7 @@ function step12_submitphpaction() {
 				$auth['ldap_urltype'] = 'SSL - Encrypted';
 			$auth['ldap_protver'] = 3;
 			$auth['ldap_scope'] = $pconfig['step2']['scope'];
+			$auth['ldap_basedn'] = $pconfig['step2']['basedn'];
 			$auth['ldap_authcn'] = $pconfig['step2']['authscope'];
 			$auth['ldap_binddn'] = $pconfig['step2']['userdn'];
 			$auth['ldap_bindpw'] = $pconfig['step2']['passdn'];

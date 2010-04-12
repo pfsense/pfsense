@@ -114,12 +114,14 @@
 			<displayname>Name</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->authtype</bindstofield>
+			<description>Descriptive server name, for your own reference.</description>
 		</field>
 		<field>
 			<name>ip</name>
 			<displayname>Hostname or IP address</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->ip</bindstofield>
+			<description>Address of the LDAP server.</description>
 		</field>
 		<field>
 			<name>port</name>
@@ -127,6 +129,7 @@
 			<type>input</type>
 			<size>8</size>
 			<bindstofield>ovpnserver->step2->port</bindstofield>
+			<description>LDAP Server port, leave blank for the default (389 for TCP, 636 for SSL).</description>
 		</field>
 		<field>
 			<name>transport</name>
@@ -143,13 +146,30 @@
 					<value>ssl</value>
 				</option>
 			</options>
+			<description>&lt;br/&gt;The protocol used by your LDAP server. It can either be standard TCP or SSL encrypted.</description>
 		</field>
 		<field>
 			<name>scope</name>
-			<displayname>Search Scope</displayname>
-			<type>input</type>
-			<size>30</size>
+			<displayname>Search Scope Level</displayname>
+			<type>select</type>
+			<options>
+				<option>
+					<name>One Level</name>
+					<value>one</value>
+				</option>
+				<option>
+					<name>Entire Subtree</name>
+					<value>subtree</value>
+				</option>
+			</options>
 			<bindstofield>ovpnserver->step2->scope</bindstofield>
+		</field>
+		<field>
+			<name>basedn</name>
+			<displayname>Search Scope Base DN</displayname>
+			<type>input</type>
+			<size>40</size>
+			<bindstofield>ovpnserver->step2->basedn</bindstofield>
 		</field>
 		<field>
 			<name>authscope</name>
@@ -157,39 +177,44 @@
 			<type>input</type>
 			<size>40</size>
 			<bindstofield>ovpnserver->step2->authscope</bindstofield>
+			<description>Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.&lt;br/&gt;EXAMPLE: CN=Users;DC=example&lt;br/&gt;EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com </description>
 		</field>
 		<field>
 			<name>userdn</name>
-			<displayname>User DN</displayname>
+			<displayname>LDAP Bind User DN</displayname>
 			<type>input</type>
 			<size>20</size>
-			<description>If you leave it blank an anonymous bind will be done.</description>
+			<description>If left blank, an anonymous bind will be done.</description>
 			<bindstofield>ovpnserver->step2->userdn</bindstofield>
 		</field>
 		<field>
 			<name>passdn</name>
-			<displayname>Password</displayname>
+			<displayname>LDAP Bind Password</displayname>
 			<type>password</type>
 			<size>20</size>
 			<bindstofield>ovpnserver->step2->passdn</bindstofield>
+			<description>If a user DN was supplied above, this password will also be used when performing a bind operation.</description>
 		</field>
 		<field>
 			<name>nameattr</name>
 			<displayname>User naming attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->nameattr</bindstofield>
-		</field>
-		<field>
-			<name>memberattr</name>
-			<displayname>Member naming attribute</displayname>
-			<type>input</type>
-			<bindstofield>ovpnserver->step2->memberattr</bindstofield>
+			<description>Typically "cn" (OpenLDAP, Novell eDirectory), "samAccountName" (Microsoft AD), </description>
 		</field>
 		<field>
 			<name>groupattr</name>
 			<displayname>Group naming attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->groupattr</bindstofield>
+			<description>Typically "cn" (OpenLDAP, Microsoft AD, and Novell eDirectory)</description>
+		</field>
+		<field>
+			<name>memberattr</name>
+			<displayname>Member naming attribute</displayname>
+			<type>input</type>
+			<bindstofield>ovpnserver->step2->memberattr</bindstofield>
+			<description>Typically "member" (OpenLDAP), "memberOf" (Microsoft AD), "uniqueMember" (Novell eDirectory)</description>
 		</field>
 		<field>
 			<type>submit</type>

@@ -268,8 +268,11 @@ if ($_POST) {
 			update_alias_names_upon_change('filter', 'rule', 'source', 'address', $_POST['name'], $origname);
 			update_alias_names_upon_change('filter', 'rule', 'destination', 'address', $_POST['name'], $origname);
 			// NAT Rules
+			update_alias_names_upon_change('nat', 'rule', 'source', 'address', $_POST['name'], $origname);
+			update_alias_names_upon_change('nat', 'rule', 'source', 'port', $_POST['name'], $origname);
+			update_alias_names_upon_change('nat', 'rule', 'destination', 'address', $_POST['name'], $origname);
+			update_alias_names_upon_change('nat', 'rule', 'destination', 'port', $_POST['name'], $origname);
 			update_alias_names_upon_change('nat', 'rule', 'target', '', $_POST['name'], $origname);
-			update_alias_names_upon_change('nat', 'rule', 'external-port', '', $_POST['name'], $origname);
 			update_alias_names_upon_change('nat', 'rule', 'local-port', ''	, $_POST['name'], $origname);
 			// Alias in an alias
 			update_alias_names_upon_change('aliases', 'alias', 'address', ''	, $_POST['name'], $origname);

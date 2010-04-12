@@ -113,17 +113,27 @@ if ($_GET['act'] == "del") {
 		if($is_alias_referenced == false) {
 			if(is_array($config['nat']['rule'])) {
 				foreach($config['nat']['rule'] as $rule) {
+					if($rule['source']['address'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
+					if($rule['source']['port'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
+					if($rule['destination']['address'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
+					if($rule['destination']['port'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
 					if($rule['target'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
-					if($rule['external-address'] == $alias_name) {
-						$is_alias_referenced = true;
-						$referenced_by = $rule['descr'];
-						break;
-					}
-					if($rule['external-port'] == $alias_name) {
 						$is_alias_referenced = true;
 						$referenced_by = $rule['descr'];
 						break;

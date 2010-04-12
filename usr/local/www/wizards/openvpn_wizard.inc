@@ -169,12 +169,20 @@ function step6_submitphpaction() {
 
 function step7_submitphpaction() {
 	global $stepid, $savemsg, $_POST, $config;
+	
+	$canames = array();
+	foreach($config['system']['ca'] as $ca) {
+		$canames[] = $ca['name'];
+	}
 
 	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
 	    empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new Certificate Authority.";
+	} elseif (in_array($_POST['name'], $canames)) {
+		$stepid--;
+		$savemsg = "Please enter a different name for the Certicicate Authority. A Certificate Authority with that name already exists.";
 	} else {
 		$config['ovpnserver']['step6']['uselist'] = "on";
 		$_POST['uselist'] = "on";
@@ -240,11 +248,19 @@ function step9_stepbeforeformdisplay() {
 function step9_submitphpaction() {
 	global $stepid, $savemsg, $_POST, $config;
 
+	$certnames = array();
+	foreach($config['system']['cert'] as $cert) {
+		$certnames[] = $cert['name'];
+	}
+
 	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
 	    empty($_POST['country']) || empty($_POST['state']) || empty($_POST['city']) ||
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new certificate.";
+	} elseif (in_array($_POST['name'], $certnames)) {
+		$stepid--;
+		$savemsg = "Please enter a different name for the Certicicate. A Certificate with that name already exists.";	
 	} else {
 		$config['ovpnserver']['step9']['uselist'] = "on";
 		$_POST['uselist'] = "on";

@@ -92,7 +92,7 @@ if ($_GET['act'] == "del") {
 						$referenced_by = $rule['descr'];
 						break;
 					}
-					if($rule['source']['address'] == $alias_name) {
+					if($rule['destination']['address'] == $alias_name) {
 						$is_alias_referenced = true;
 						$referenced_by = $rule['descr'];
 						break;

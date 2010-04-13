@@ -171,12 +171,15 @@
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 				curl_setopt($ch, CURLOPT_INTERFACE, $this->_ifIP);
+				curl_setopt($ch, CURLOPT_TIMEOUT, 30); // Completely empirical
 			}
 
 			switch ($this->_dnsService) {
 				case 'dyndns':
+				case 'dyndns-static':
+				case 'dyndns-custom':
 					$needsIP = FALSE;
-					log_error("DynDns: DynDns _update() starting. Dynamic");
+					//log_error("DynDns: DynDns _update() starting. Dynamic");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
@@ -189,40 +192,6 @@
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					$data = curl_exec($ch);
 					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
-					break;
-				case 'dyndns-static':
-					$needsIP = FALSE;
-					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "https://members.dyndns.org/nic/update";
-					$port = "";
-					if($this->_dnsServer)
-						$server = $this->_dnsServer;
-					if($this->_dnsPort)
-						$port = ":" . $this->_dnsPort;
-					curl_setopt($ch, CURLOPT_URL, $server.$port.'?system=statdns&hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
-					break;
-				case 'dyndns-custom':
-					$needsIP = FALSE;
-					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "https://members.dyndns.org/nic/update";
-					$port = "";
-					if($this->_dnsServer)
-						$server = $this->_dnsServer;
-					if($this->_dnsPort)
-						$port = ":" . $this->_dnsPort;					
-					curl_setopt($ch, CURLOPT_URL, $server.$port.'?system=custom&hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -403,7 +372,6 @@
 					break;
 				case 'opendns':
 					$needsIP = FALSE;
-					log_error("DynDns: DynDns _update() starting. Dynamic");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
@@ -896,6 +864,7 @@
 			log_error("DynDns: _checkIP() starting.");
 
 			$ip_address = find_interface_ip($this->_if);
+			$this->_ifIP = $ip_address;
 			if (is_private_ip($ip_address)) {
 				$hosttocheck = "checkip.dyndns.org";
 				$checkip = gethostbyname($hosttocheck);

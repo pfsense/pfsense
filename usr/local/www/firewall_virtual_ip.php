@@ -95,7 +95,7 @@ if ($_GET['act'] == "del") {
 		if (is_array($config['nat']['rule'])) {
 			foreach ($config['nat']['rule'] as $rule) {
 				if($rule['external-address'] <> "") {
-					if ($rule['external-address'] == $a_vip[$_GET['id']]['ipaddr']) {
+					if ($rule['external-address'] == $a_vip[$_GET['id']]['subnet']) {
 						$input_errors[] = "This entry cannot be deleted because it is still referenced by at least one NAT mapping.";
 						break;
 					}

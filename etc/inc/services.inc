@@ -549,6 +549,9 @@ function services_dhcrelay_configure() {
 
 function services_dyndns_configure_client($conf) {
 
+	if (!isset($conf['enable']))
+		continue;
+
 	/* load up the dyndns.class */
 	require_once("dyndns.class");
 
@@ -578,9 +581,6 @@ function services_dyndns_configure($int = "") {
 			echo "Starting DynDNS clients...";
 
 		foreach ($dyndnscfg as $dyndns) {
-			if (!isset($dyndns['enable']))
-				continue;
-
 			if (!empty($int) && $int != $dyndns['interface'])
 				continue;
 

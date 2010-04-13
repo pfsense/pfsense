@@ -439,7 +439,6 @@
 			<target></target>
 			<local-port></local-port>
 			<descr></descr>
-			<associated-rule-id></associated-rule-id>
 		</rule>
 		-->
 		<!--
@@ -489,7 +488,6 @@
 			<destination>
 				<any/>
 			</destination>
-			<associated-rule-id></associated-rule-id>
 		</rule>
 		<!-- rule syntax:
 		<rule>

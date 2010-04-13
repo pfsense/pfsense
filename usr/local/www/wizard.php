@@ -471,14 +471,18 @@ function showchange() {
 
 			break;
 		    case "password":
-			if(!$field['dontdisplayname']) {
+			if ($field['displayname']) {
+				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+				echo $field['displayname'];
+				echo ":</td>\n";
+			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>\n";
 			}
 			if(!$field['dontcombinecells'])
 				echo "<td class=\"vtable\">";
-			echo "<input class='formfld password' id='" . $name . "' name='" . $name . "' value='" . $value . "' type='password' ";
+			echo "<input class='formfld pwd' id='" . $name . "' name='" . $name . "' value='" . $value . "' type='password' ";
 			if($field['size'])
 				echo " size='" . $field['size'] . "' ";
 			echo ">\n";

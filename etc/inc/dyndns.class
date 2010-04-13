@@ -857,7 +857,7 @@
 				$update_reason .= "Cached IP: {$cacheIP} WAN IP: {$wan_ip} ";
 			}
 			if (($currentTime - $cacheTime) > $time ) {
-				$needs_updating = TRUE;
+				$needs_updating = true;
 				$update_reason = "DynDns: More than 25 days.  Updating. ";
 				$update_reason .= "{$currentTime} - {$cacheTime} > {$time} ";
 			}
@@ -884,7 +884,7 @@
 		 *   - status is returned from a DynDNS service provider.
 		 */
 		function _debug ($data) {
-			$string = date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data.'\n';
+			$string = '\n'.date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data.'\n';
 			conf_mount_rw();
 			$file = fopen($this->_debugFile, 'a');
 			fwrite($file, $string);
@@ -906,7 +906,7 @@
 				$ip_result_page = curl_exec($ip_ch);
 				curl_close($ip_ch);
 				$ip_result_decoded = urldecode($ip_result_page);
-				preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
+				preg_match('/Current IP Address: (.*)<\/body>/', $ip_result_decoded, $matches);
 				$ip_address = trim($matches[1]);
 				log_error("DynDns debug information: {$ip_address} extracted from {$hosttocheck}");
 			} else

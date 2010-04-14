@@ -120,13 +120,11 @@ function services_dhcpd_configure() {
 		return 1;
 	}
 
-	$optcounter = 0;
 	$custoptions = "";
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {	
 		if(is_array($dhcpifconf['numberoptions']) && is_array($dhcpifconf['numberoptions']['item'])) {
-			foreach($dhcpifconf['numberoptions']['item'] as $item) {
-				$custoptions .= "option custom-opt-$optcounter code {$item['number']} = text;\n";
-				$optcounter++;
+			foreach($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
+				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = text;\n";
 			}
 		}
 	}
@@ -315,12 +313,10 @@ EOD;
 			$dhcpdconf .= "	option tftp-server-name \"{$dhcpifconf['tftp']}\";\n";
 
 		// Handle option, number rowhelper values
-		$optcounter = 0;
 		$dhcpdconf .= "\n";
 		if($dhcpifconf['numberoptions']['item']) {
-			foreach($dhcpifconf['numberoptions']['item'] as $item) {
-				$dhcpdconf .= "	option custom-opt-$optcounter \"{$item['value']}\";\n";
-				$optcounter++;
+			foreach($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
+				$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} \"{$item['value']}\";\n";
 			}
 		}
 
@@ -549,6 +545,9 @@ function services_dhcrelay_configure() {
 
 function services_dyndns_configure_client($conf) {
 
+	if (!isset($conf['enable']))
+		continue;
+
 	/* load up the dyndns.class */
 	require_once("dyndns.class");
 
@@ -578,9 +577,6 @@ function services_dyndns_configure($int = "") {
 			echo "Starting DynDNS clients...";
 
 		foreach ($dyndnscfg as $dyndns) {
-			if (!isset($dyndns['enable']))
-				continue;
-
 			if (!empty($int) && $int != $dyndns['interface'])
 				continue;
 

@@ -77,7 +77,7 @@ services_dnsupdate_process($interface);
 file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
 
 /* signal dyndns update */
-file_put_contents("/tmp/update_dyndns", $interface);
+file_put_contents("{$g['tmp_path']}/update_dyndns", $interface);
 
 /* reconfigure IPsec tunnels */
 vpn_ipsec_force_reload();

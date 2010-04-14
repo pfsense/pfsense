@@ -270,15 +270,15 @@ echo "done.\n";
 /* Launch on bootup and keep trying to sync.  Exit once time/date has been sync'd. */
 mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 
-/* start dyndns service */
-services_dyndns_configure();
-
 /* static IP address? -> attempt DNS update */
 if (is_ipaddr($config['interfaces']['wan']['ipaddr']))
 	services_dnsupdate_process();
 
 /* start dnsmasq service */
 services_dnsmasq_configure();
+
+/* start dyndns service */
+@touch("{$g['tmp_path']}/update_dyndns");
 
 /* start DHCP relay */
 services_dhcrelay_configure();

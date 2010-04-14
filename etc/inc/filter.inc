@@ -1870,6 +1870,14 @@ EOD;
 pass out all keep state allow-opts label "let out anything from firewall host itself"
 
 EOD;
+	foreach ($FilterIflist as $ifdescr => $ifcfg) {
+                if(isset($ifcfg['virtual']))
+                        continue;
+		$gw = get_interface_gateway($ifdescr);
+		if (is_ipaddr($gw) && is_ipaddr($ifcfg['ip']))
+                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to any keep state allow-opts label \"let out anything from firewall host itself\"\n";
+        }
+
 
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))

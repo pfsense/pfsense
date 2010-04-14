@@ -120,13 +120,11 @@ function services_dhcpd_configure() {
 		return 1;
 	}
 
-	$optcounter = 0;
 	$custoptions = "";
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {	
 		if(is_array($dhcpifconf['numberoptions']) && is_array($dhcpifconf['numberoptions']['item'])) {
-			foreach($dhcpifconf['numberoptions']['item'] as $item) {
-				$custoptions .= "option custom-opt-$optcounter code {$item['number']} = text;\n";
-				$optcounter++;
+			foreach($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
+				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = text;\n";
 			}
 		}
 	}
@@ -315,12 +313,10 @@ EOD;
 			$dhcpdconf .= "	option tftp-server-name \"{$dhcpifconf['tftp']}\";\n";
 
 		// Handle option, number rowhelper values
-		$optcounter = 0;
 		$dhcpdconf .= "\n";
 		if($dhcpifconf['numberoptions']['item']) {
-			foreach($dhcpifconf['numberoptions']['item'] as $item) {
-				$dhcpdconf .= "	option custom-opt-$optcounter \"{$item['value']}\";\n";
-				$optcounter++;
+			foreach($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
+				$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} \"{$item['value']}\";\n";
 			}
 		}
 

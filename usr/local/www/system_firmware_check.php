@@ -122,9 +122,13 @@ $needs_system_upgrade = false;
 download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
 $latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
 $static_text .= "done.\n";
-if(!$latest_version)
+if(!$latest_version) {
 	$static_text .= "Unable to check for updates.\n";
-else {
+	if(isset($curcfg['alturl']['enable']))
+		$static_text .= "Could not contact custom update server.\n";
+	else
+		$static_text .= "Could not contact {$g['product_name']} update server {$updater_url}.\n";
+} else {
 	$static_text .= "Downloading current version information...";
 	update_output_window($static_text);
 	$current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version.buildtime"));
@@ -133,11 +137,7 @@ else {
 	$static_text .= "done\n";
 	update_output_window($static_text);
 	if(!$latest_build_version) {
-		$static_text .= "Unable to check for updates.\n";
-		if(isset($curcfg['alturl']['enable']))
-			$static_text .= "Could not contact custom update server.\n";
-		else
-			$static_text .= "Could not contact {$g['product_name']} update server {$updater_url}.\n";
+		$needs_system_upgrade = true;
 	} else {
 		if($current_installed_pfsense < $latest_build_version) {
 			$needs_system_upgrade = true;

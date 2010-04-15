@@ -47,6 +47,8 @@ RADIUS ACCOUNTING START
 -----------------------
 */
 
+PEAR::loadExtension('bcmath');
+
 function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers, $clientip, $clientmac) {
 
     global $config;

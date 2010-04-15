@@ -4,7 +4,7 @@
 	system_firmware.php
 	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
-	
+
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
@@ -95,10 +95,10 @@ include("head.inc");
 							</td>
 						</tr>
 					</table>
-		      <br>                      
+		      <br>
 		      <!-- command output box -->
 		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='90' rows='9' name='output' id='output' wrap='hard'>
-		      </textarea>                      
+		      </textarea>
 		      </center>
  			<p>
 			<center><input id='invokeupgrade' style='visibility:hidden' type="submit" value="Invoke Auto Upgrade">
@@ -116,7 +116,7 @@ include("head.inc");
 /* Define necessary variables. */
 if(isset($curcfg['alturl']['enable']))
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-else 
+else
 	$updater_url = $g['update_url'];
 $needs_system_upgrade = false;
 download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
@@ -127,24 +127,24 @@ if(!$latest_version)
 else {
 	$static_text .= "Downloading current version information...";
 	update_output_window($static_text);
-        $current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version.buildtime"));
-        $current_installed_pfsense = strtotime($current_installed_pfsense_version);
-        $latest_build_version = strtotime($latest_version);
+	$current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version.buildtime"));
+	$current_installed_pfsense = strtotime($current_installed_pfsense_version);
+	$latest_build_version = strtotime($latest_version);
 	$static_text .= "done\n";
 	update_output_window($static_text);
-        if(!$latest_build_version) {
-                $static_text .= "Unable to check for updates.\n";
+	if(!$latest_build_version) {
+		$static_text .= "Unable to check for updates.\n";
 		if(isset($curcfg['alturl']['enable']))
 			$static_text .= "Could not contact custom update server.\n";
-		else 
+		else
 			$static_text .= "Could not contact {$g['product_name']} update server {$updater_url}.\n";
-        } else {
-                if($current_installed_pfsense < $latest_build_version) {
-                	$needs_system_upgrade = true;
-                } else {
+	} else {
+		if($current_installed_pfsense < $latest_build_version) {
+			$needs_system_upgrade = true;
+		} else {
 			$static_text .= "You are on the latest version.\n";
-                }
-        }
+		}
+	}
 }
 update_output_window($static_text);
 if ($needs_system_upgrade == false) {

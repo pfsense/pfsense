@@ -287,7 +287,7 @@ function update_description(itemnum) {
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
-							<?php if($config['interfaces']['lan']): ?>
+							<?php if(count($config['interfaces']) > 1): ?>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
 							</tr>		

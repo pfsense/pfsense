@@ -2460,11 +2460,10 @@ function discover_pkg_rules($ruletype) {
 				log_error($errorrules);
 				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg_inc}", "#{$errorrules}\n");
 				return "";
-			} else {
-				return $rules;
 			}
 		}
 	}
+	return $rules;
 }
 
 ?>

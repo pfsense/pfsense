@@ -1062,6 +1062,14 @@ function filter_nat_rules_generate() {
 	$natrules .= "# TFTP proxy\n";
 	$natrules .= "rdr-anchor \"tftp-proxy/*\"\n";
 
+	if (!empty($config['system']['tftpinterface'])) {
+		$tftpifs = explode(",", $config['system']['tftpinterface']);
+		foreach($tftpifs as $tftpif) {
+			if ($FilterIflist[$tftpif])
+				$natrules .= "rdr pass on {$FilterIflist[$tftpif]['if']} proto udp from any to any port tftp -> 127.0.0.1 port tftp\n";
+		}
+	}
+
 	$interface_counter = 0;
 	$vpns_list = filter_get_vpns_list();
 	$direct_networks_list = filter_get_direct_networks_list();
@@ -2016,8 +2024,7 @@ EOD;
 # package manager late specific hook
 anchor "packagelate"
 
-EOD;
-	$ipfrules .= <<<EOD
+anchor "tftp-proxy/*"
 
 anchor "limitingesr"
 

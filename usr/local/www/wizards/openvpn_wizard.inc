@@ -172,10 +172,12 @@ function step7_submitphpaction() {
 
 	$canames = array();
 	$cacns = array();
-	foreach($config['system']['ca'] as $ca) {
-		$canames[] = $ca['name'];
-		$cainfo = cert_get_subject_hash($ca['crt']);
-		$cacns[] = $cainfo["CN"];
+	if (is_array($config['system']['ca'])) {
+		foreach($config['system']['ca'] as $ca) {
+			$canames[] = $ca['name'];
+			$cainfo = cert_get_subject_hash($ca['crt']);
+			$cacns[] = $cainfo["CN"];
+		}
 	}
 
 	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||

@@ -33,14 +33,19 @@
 <totalsteps>12</totalsteps>
 <step>
 	<id>1</id>
-	<title>Choose the type of user authentication you wish to use and click Next.</title>
+	<title>OpenVPN Wizard: Authentication Type Selection</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
+	<disableheader>on</disableheader>
 	<fields>
+		<field>
+			<type>listtopic</type>
+			<name>Select an Authentication Backend Type</name>
+		</field>
 		<field>
 			<type>select</type>
 			<displayname>Type of Server</displayname>
 			<name>authtype</name>
-			<description>Choose authentication backend type. &lt;br/&gt;&lt;b&gt;NOTE:&lt;/b&gt; If you are unsure, leave this set to "Local User Aceess."</description>
+			<description>&lt;br/&gt;&lt;b&gt;NOTE:&lt;/b&gt; If you are unsure, leave this set to "Local User Aceess."</description>
 			<bindstofield>ovpnserver->step1->type</bindstofield>
 			<options>
 				<option>
@@ -67,12 +72,13 @@
 </step>
 <step>
 	<id>2</id>
+	<title>OpenVPN Wizard: LDAP Server Selection</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
-			<name>LDAP Authentication Servers list</name>
+			<name>LDAP Authentication Server List</name>
 		</field>
 		<field>
 			<name>authserv</name>
@@ -102,12 +108,13 @@
 </step>
 <step>
 	<id>3</id>
+	<title>OpenVPN Wizard: Add LDAP Server</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
-			<name>LDAP authentication server parameters</name>
+			<name>LDAP Authentication Server Parameters</name>
 		</field>
 		<field>
 			<name>name</name>
@@ -227,12 +234,13 @@
 </step>
 <step>
 	<id>4</id>
+	<title>OpenVPN Wizard: RADIUS Server Selection</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
-			<name>RADIUS Authentication Servers list</name>
+			<name>RADIUS Authentication Server List</name>
 		</field>
 		<field>
 			<name>authserv</name>
@@ -262,12 +270,13 @@
 </step>
 <step>
 	<id>5</id>
+	<title>OpenVPN Wizard: Add RADIUS Server</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
-			<name>Add a new authentication server</name>
+			<name>RADIUS Authentication Server Parameters</name>
 		</field>
 		<field>
 			<name>name</name>
@@ -309,11 +318,12 @@
 </step>
 <step>
 	<id>6</id>
+	<title>OpenVPN Wizard: Certificate Authority Selection</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>
 		<field>
-			<name>Choose Certificate Authority (CA)</name>
+			<name>Choose a Certificate Authority (CA)</name>
 			<type>listtopic</type>
 		</field>
 		<field>
@@ -337,11 +347,12 @@
 </step>
 <step>
 	<id>7</id>
+	<title>OpenVPN Wizard: Add Certificate Authority</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>
 		<field>
-			<name>Create a new Certificate Authority (CA) certificate</name>
+			<name>Create a New Certificate Authority (CA) Certificate</name>
 			<type>listtopic</type>
 		</field>
 		<field>
@@ -437,6 +448,7 @@
 </step>
 <step>
 	<id>8</id>
+	<title>OpenVPN Wizard: Server Certificate Selection</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>
@@ -465,11 +477,12 @@
 </step>
 <step>
 	<id>9</id>
+	<title>OpenVPN Wizard: Add a Server Certificate</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>
 		<field>
-			<name>Create a new server certificate</name>
+			<name>Create a New Server Certificate</name>
 			<type>listtopic</type>
 		</field>
 		<field>
@@ -565,12 +578,13 @@
 </step>
 <step>
 	<id>10</id>
+	<title>OpenVPN Wizard: Server Setup</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
-			<name>General Information</name>
+			<name>General OpenVPN Server Information</name>
 		</field>
 		<field>
 			<name>interface</name>
@@ -858,6 +872,7 @@
 </step>
 <step>
 	<id>11</id>
+	<title>OpenVPN Wizard: Firewall Rule Configuration</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>
@@ -899,6 +914,7 @@
 </step>
 <step>
 	<id>12</id>
+	<title>OpenVPN Wizard: Finished!</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
 	<disableheader>on</disableheader>
 	<fields>

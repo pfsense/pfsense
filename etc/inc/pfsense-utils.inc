@@ -1795,4 +1795,89 @@ function process_alias_tgz($temp_filename) {
 	fclose($fd);
 }
 
+function version_compare_dates($a, $b) {
+	$a_time = strtotime($a);
+	$b_time = strtotime($b);
+
+	if ((!$a_time) || (!$b_time)) {
+		return FALSE;
+	} else {
+		if ($a < $b)
+			return -1;
+		elseif ($a == $b)
+			return 0;
+		else
+			return 1;
+	}
+}
+function version_get_string_value($a) {
+	$strs = array(
+		0 => "ALPHA-ALPHA",
+		2 => "ALPHA",
+		3 => "BETA",
+		4 => "B",
+		5 => "RC",
+		6 => "RELEASE"
+	);
+	$major = 0;
+	$minor = 0;
+	foreach ($strs as $num => $str) {
+		if (substr($a, 0, strlen($str)) == $str) {
+			$major = $num;
+			$n = substr($a, strlen($str));
+			if (is_numeric($n))
+				$minor = $n;
+			break;
+		}
+	}
+	return "{$major}.{$minor}";
+}
+function version_compare_string($a, $b) {
+	return version_compare_numeric(version_get_string_value($a), version_get_string_value($b));
+}
+function version_compare_numeric($a, $b) {
+	$a_arr = explode('.', rtrim($a, '.0'));
+	$b_arr = explode('.', rtrim($b, '.0'));
+
+	foreach ($a_arr as $n => $val) {
+		if (array_key_exists($n, $b_arr)) {
+			// So far so good, both have values at this minor version level. Compare.
+			if ($val > $b_arr[$n])
+				return 1;
+			elseif ($val < $b_arr[$n])
+				return -1;
+		} else {
+			// a is greater, since b doesn't have any minor version here.
+			return 1;
+		}
+	}
+	if (count($b_arr) > count($a_arr)) {
+		// b is longer than a, so it must be greater.
+		return -1;
+	} else {
+		// Both a and b are of equal length and value.
+		return 0;
+	}
+}
+function pfs_version_compare($cur_time, $cur_text, $remote) {
+	// First try date compare
+	$v = version_compare_dates($cur_time, $b);
+	if ($v === FALSE) {
+		// If that fails, try to compare by string
+		// Before anything else, simply test if the strings are equal
+		if ($cur_text == $remote)
+			return 0;
+		list($cur_num, $cur_str) = explode('-', $cur_text);
+		list($rem_num, $rem_str) = explode('-', $remote);
+
+		// First try to compare the numeric parts of the version string.
+		$v = version_compare_numeric($cur_num, $rem_num);
+
+		// If the numeric parts are the same, compare the string parts.
+		if ($v == 0)
+			return version_compare_string($cur_str, $rem_str);
+	}
+	return $v;
+}
+
 ?>

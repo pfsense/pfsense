@@ -35,31 +35,32 @@ require_once("functions.inc");
 require_once("guiconfig.inc");
 require_once('notices.inc');
 
+
 if($_REQUEST['getupdatestatus']) {
 	if(isset($curcfg['alturl']['enable']))
 		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
 	else 
 		$updater_url = $g['update_url'];
 	download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
-	$latest_version = file_get_contents("/tmp/{$g['product_name']}_version");
-	if(empty($latest_version))
+	$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
+	if(empty($remote_version))
 		echo "<br /><br />Unable to check for updates.";
 	else {
-		$current_installed_pfsense_version = strtotime(str_replace("\n", "", file_get_contents("/etc/version.buildtime")));
+		$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
+		$current_installed_version = trim(file_get_contents("/etc/version"));
 
-		$latest_version = strtotime(str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version")));
-		if(!$latest_version) {
-			echo "<br /><br />Unable to check for updates.";							
+		if(!$remote_version) {
+			echo "<br /><br />Unable to check for updates.";
 		}
 		else {
 			$needs_system_upgrade = false;
-			if($current_installed_pfsense_version < $latest_version) {
+			if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
 				echo "<br/><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
 				echo "<script type=\"text/javascript\">";
 				echo "Effect.Pulsate('updatealert', { pulses: 30, duration: 10});";
 				echo "</script>";
 			} else
-				echo "<br /><br />You are on the latest version.";
+				echo "<br />You are on the latest version.";
 		}
 	}
 	exit;

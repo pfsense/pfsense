@@ -1066,7 +1066,7 @@ function filter_nat_rules_generate() {
 		$tftpifs = explode(",", $config['system']['tftpinterface']);
 		foreach($tftpifs as $tftpif) {
 			if ($FilterIflist[$tftpif])
-				$natrules .= "rdr pass on {$FilterIflist[$tftpif]['if']} proto udp from any to any port tftp -> 127.0.0.1 port tftp\n";
+				$natrules .= "rdr pass on {$FilterIflist[$tftpif]['if']} proto udp from any to any port tftp -> 127.0.0.1 port 6969\n";
 		}
 	}
 
@@ -1091,7 +1091,7 @@ function filter_nat_rules_generate() {
 	// Open inetd.conf write handle
 	$inetd_fd = fopen("/var/etc/inetd.conf","w");
 	/* add tftp protocol helper */
-	fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy\ttftp-proxy -v\n");
+	fwrite($inetd_fd, "tftp-proxy\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy\ttftp-proxy -v\n");
 
 	if(isset($config['nat']['rule'])) {
 		if(!isset($config['system']['disablenatreflection'])) {

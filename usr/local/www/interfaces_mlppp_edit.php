@@ -36,16 +36,18 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-mlppp-edit
-##|*NAME=Interfaces: mlppp: Edit page
-##|*DESCR=Allow access to the 'Interfaces: mlppp: Edit' page.
+##|*NAME=Interfaces: MLPPP: Edit page
+##|*DESCR=Allow access to the 'Interfaces: MLPPP: Edit' page.
 ##|*MATCH=interfaces_mlppp_edit.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 
-function remove_bad_chars($string) {
-	return preg_replace('/[^a-z|_|0-9]/i','',$string);
-}
+define("CRON_PPPOE_CMD_FILE", "/conf/pppoe{$if}restart");
+define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
+define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
+define("CRON_DAILY_PATTERN", "0 0 * * *");
+define("CRON_HOURLY_PATTERN", "0 * * * *");
 
 if (!is_array($config['ppps']['ppp']))
 	$config['ppps']['ppp'] = array();
@@ -54,9 +56,37 @@ $a_ppps = &$config['ppps']['ppp'];
 
 $portlist = get_interface_list();
 
+function getMPDCRONSettings() {
+	global $config;
+	if (is_array($config['cron']['item'])) {
+		for ($i = 0; $i < count($config['cron']['item']); $i++) {
+			$item = $config['cron']['item'][$i];
+			if (strpos($item['command'], CRON_PPPOE_CMD_FILE) !== false) {
+				return array("ID" => $i, "ITEM" => $item);
+			}
+		}
+	}
+	return NULL;
+}
+
+function getMPDResetTimeFromConfig() {
+	$itemhash = getMPDCRONSettings();
+	$cronitem = $itemhash['ITEM'];
+	if (isset($cronitem)) {
+		return "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
+	} else {
+		return NULL;
+	}
+}
+
+function remove_bad_chars($string) {
+	return preg_replace('/[^a-z|_|0-9]/i','',$string);
+}
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
+
 
 if (isset($id) && $a_ppps[$id]) {
 	$pconfig['type'] = $a_ppps[$id]['type'];
@@ -64,20 +94,26 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['password'] = $a_ppps[$id]['password'];
 	if (isset($a_ppps[$id]['defaultgw']))
 		$pconfig['defaultgw'] = true;
-	if (isset($a_ppps[$id]['ondemand'])){
+	if (isset($a_ppps[$id]['ondemand']))
 		$pconfig['ondemand'] = true;
-		$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
-	}
+	$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
+	$pconfig['bandwidth'] = $a_ppps[$id]['bandwidth'];
+	$pconfig['mtu'] = $a_ppps[$id]['mtu'];
+	$pconfig['mru'] = $a_ppps[$id]['mru'];
+	$pconfig['mrru'] = $a_ppps[$id]['mrru'];
+	if (isset($a_ppps[$id]['shortseq']))
+		$pconfig['shortseq'] = true;
+	if (isset($a_ppps[$id]['acfcomp']))
+		$pconfig['acfcomp'] = true;
+	if (isset($a_ppps[$id]['protocomp']))
+		$pconfig['protocomp'] = true;
 	if (isset($a_ppps[$id]['vjcomp']))
 		$pconfig['vjcomp'] = true;
 	if (isset($a_ppps[$id]['tcpmssfix']))
 		$pconfig['tcpmssfix'] = true;
-	$pconfig['bandwidth'] = $a_ppps[$id]['bandwidth'];
-	$pconfig['mtu'] = $a_ppps[$id]['mtu'];
-	$pconfig['mru'] = $a_ppps[$id]['mru'];
 	if ($a_ppps[$id]['type'] == "ppp") {
-		$pconfig['serialports'] = $a_ppps[$id]['ports'];
+		$pconfig['interfaces'] = $a_ppps[$id]['ports'];
 		$pconfig['initstr'] = base64_decode($a_ppps[$id]['initstr']);
 		$pconfig['simpin'] = $a_ppps[$id]['simpin'];
 		$pconfig['pin-wait'] = $a_ppps[$id]['pin-wait'];
@@ -101,10 +137,10 @@ if (isset($id) && $a_ppps[$id]) {
 		/* = force a connection reset at a specific time? = */
 		/* ================================================ */
 		
-		if (isset($wancfg['pppoe']['pppoe-reset-type'])) {
+		if (isset($a_ppps[$id]['pppoe-reset-type'])) {
 			$resetTime = getMPDResetTimeFromConfig();  
 			$pconfig['pppoe_preset'] = true;
-			if ($wancfg['pppoe']['pppoe-reset-type'] == "custom") {
+			if ($a_ppps[$id]['pppoe-reset-type'] == "custom") {
 				$resetTime_a = split(" ", $resetTime);
 				$pconfig['pppoe_pr_custom'] = true;
 				$pconfig['pppoe_resetminute'] = $resetTime_a[0];
@@ -114,7 +150,7 @@ if (isset($id) && $a_ppps[$id]) {
 				 */
 				if ($resetTime_a[2] <> "*" && $resetTime_a[3] <> "*") 
 					$pconfig['pppoe_resetdate'] = "{$resetTime_a[3]}/{$resetTime_a[2]}/" . date("Y");
-			} else if ($wancfg['pppoe']['pppoe-reset-type'] == "preset") {
+			} else if ($a_ppps[$id]['pppoe-reset-type'] == "preset") {
 				$pconfig['pppoe_pr_preset'] = true;
 				switch ($resetTime) {
 					case CRON_MONTHLY_PATTERN:
@@ -143,6 +179,7 @@ if ($_POST) {
 	
 	/* filter out spaces from descriptions  */
 	$_POST['descr'] = remove_bad_chars($_POST['descr']);
+	
 	/* okay first of all, cause we are just hiding the PPPoE HTML
 	 * fields releated to PPPoE resets, we are going to unset $_POST
 	 * vars, if the reset feature should not be used. Otherwise the
@@ -160,30 +197,33 @@ if ($_POST) {
 	/* input validation */
 
 	switch($_POST['type']) {
-		case "PPP":
-			$reqdfields = explode(" ", "serialports, phone");
-			$reqdfieldsn = explode(",", "Serial Port(s), Phone Number");
+		case "ppp":
+			$reqdfields = explode(" ", "interfaces phone");
+			$reqdfieldsn = explode(",", "Link Interface(s),Phone Number");
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
-		case "PPPoE":
+		case "pppoe":
 			if ($_POST['ondemand']) {
-				$reqdfields = explode(" ", "interfaces username password dialondemand idletimeout");
-				$reqdfieldsn = explode(",", "Link Interface(s),PPPoE username,PPPoE password,Dial on demand,Idle timeout value");
+				$reqdfields = explode(" ", "interfaces username password ondemand idletimeout");
+				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password,Dial on demand,Idle timeout value");
 			} else {
 				$reqdfields = explode(" ", "interfaces username password");
-				$reqdfieldsn = explode(",", "Link Interface(s),PPPoE username,PPPoE password");
+				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password");
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
-		case "PPTP":
+		case "pptp":
 			if ($_POST['ondemand']) {
-				$reqdfields = explode(" ", "interfaces username password localip subnet gateway dialondemand idletimeout");
-				$reqdfieldsn = explode(",", "Link Interface(s),PPTP username,PPTP password,PPTP local IP address,PPTP subnet,PPTP remote IP address,Dial on demand,Idle timeout value");
+				$reqdfields = explode(" ", "interfaces username password localip subnet gateway ondemand idletimeout");
+				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password,Local IP address,Subnet,Remote IP address,Dial on demand,Idle timeout value");
 			} else {
 				$reqdfields = explode(" ", "interfaces username password localip subnet gateway");
-				$reqdfieldsn = explode(",", "Link Interface(s),PPTP username,PPTP password,PPTP local IP address,PPTP subnet,PPTP remote IP address");
+				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password,Local IP address,Subnet,Remote IP address");
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			break;
+		default:
+			$input_errors[] = "Please choose a Link Type.";
 			break;
 	}
 	if (($_POST['provider'] && !is_domain($_POST['provider']))) 
@@ -227,9 +267,18 @@ if ($_POST) {
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = $_POST['password'];
 		$ppp['defaultgw'] = $_POST['defaultgw'] ? true : false;
+		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
+		if (!empty($_POST['idletimeout']))
+			$ppp['idletimeout'] = $_POST['idletimeout'];
+		else 
+			unset($ppp['idletimeout']);
+		if (!empty($_POST['descr']))
+			$ppp['descr'] = $_POST['descr'];
+		else
+			unset($ppp['descr']);
 		switch($_POST['type']) {
 			case "ppp":
-				$ppp['ports'] = implode(',', $_POST['serialports']);
+				$ppp['ports'] = implode(',', $_POST['interfaces']);
 				if (!empty($_POST['initstr']))
 					$ppp['initstr'] = base64_encode($_POST['initstr']);
 				else
@@ -272,6 +321,8 @@ if ($_POST) {
 					$ppp['provider'] = $_POST['provider'];
 				else
 					unset($ppp['provider']);
+				handle_pppoe_reset();
+				
 				break;
 			case "pptp":
 				$ppp['ports'] = implode(',', $_POST['interfaces']);
@@ -279,23 +330,37 @@ if ($_POST) {
 				$ppp['subnet'] = $_POST['subnet'];
 				$ppp['gateway'] = $_POST['gateway'];
 				break;
+			default:
+				break;
+			
 		}
-		if (!empty($_POST['descr']))
-			$ppp['descr'] = $_POST['descr'];
-		else
-			unset($ppp['descr']);
-		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
-		if (isset($ppp['ondemand']))
-			$ppp['idletimeout'] = $_POST['idletimeout'];
-		else 
-			unset($ppp['idletimeout']);
+		/* reset cron items if necessary */
+		if (empty($_POST['pppoe_preset'])) {
+			/* test whether a cron item exists and unset() it if necessary */
+			$itemhash = getMPDCRONSettings();
+			$item = $itemhash['ITEM'];
+			if (isset($item))
+				unset($config['cron']['item'][$itemhash['ID']]); 
+		}
+		$ppp['shortseq'] = $_POST['shortseq'] ? true : false;
+		$ppp['acfcomp'] = $_POST['acfcomp'] ? true : false;
+		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
 		if (isset($_POST['bandwidth']))
 			$ppp['bandwidth'] = $_POST['bandwidth'];
 		else 
 			unset($ppp['bandwidth']);
-	
+		if (isset($_POST['mtu']))
+			$ppp['mtu'] = $_POST['mtu'];
+		else 
+			unset($ppp['mtu']);
+		if (isset($_POST['mru']))
+			$ppp['mru'] = $_POST['mru'];
+		else 
+			unset($ppp['mru']);
+			
+			
         $iflist = get_configured_interface_list();
         /*
         foreach ($iflist as $if) {
@@ -313,66 +378,152 @@ if ($_POST) {
 		header("Location: interfaces_mlppp.php");
 		exit;
 	}
+} // end if($_POST)
+
+function handle_pppoe_reset() {
+	global $_POST, $config, $g, $ppp, $if;
+	/* perform a periodic reset? */
+	if(!isset($_POST['pppoe_preset'])) {
+		setup_pppoe_reset_file($if, false);		
+		return;
+	}
+	if (!is_array($config['cron']['item'])) 
+		$config['cron']['item'] = array(); 
+	$itemhash = getMPDCRONSettings();
+	$item = $itemhash['ITEM'];
+	if (empty($item)) 
+		$item = array();
+	if (isset($_POST['pppoe_pr_type']) && $_POST['pppoe_pr_type'] == "custom") {
+		$ppp['pppoe-reset-type'] = "custom";
+		$pconfig['pppoe_pr_custom'] = true;
+		$item['minute'] = $_POST['pppoe_resetminute'];
+		$item['hour'] = $_POST['pppoe_resethour'];
+		if (isset($_POST['pppoe_resetdate']) && $_POST['pppoe_resetdate'] <> "" && strlen($_POST['pppoe_resetdate']) == 10) {
+			$date = explode("/", $_POST['pppoe_resetdate']);
+			$item['mday'] = $date[1];
+			$item['month'] = $date[0];
+		} else {
+			$item['mday'] = "*";
+			$item['month'] = "*";
+		}
+		$item['wday'] = "*";
+		$item['who'] = "root";
+		$item['command'] = CRON_PPPOE_CMD_FILE;
+	} else if (isset($_POST['pppoe_pr_type']) && $_POST['pppoe_pr_type'] = "preset") {
+		$ppp['pppoe-reset-type'] = "preset";
+		$pconfig['pppoe_pr_preset'] = true;
+		switch ($_POST['pppoe_pr_preset_val']) {
+			case "monthly":
+				$item['minute'] = "0";
+				$item['hour'] = "0";
+				$item['mday'] = "1";
+				$item['month'] = "*";
+				$item['wday'] = "*";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE;
+				break;
+	        case "weekly":
+				$item['minute'] = "0";
+				$item['hour'] = "0";
+				$item['mday'] = "*";
+				$item['month'] = "*";
+				$item['wday'] = "0";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE;
+				break;
+			case "daily":
+				$item['minute'] = "0";
+				$item['hour'] = "0";
+				$item['mday'] = "*";
+				$item['month'] = "*";
+				$item['wday'] = "*";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE;
+				break;
+			case "hourly":
+				$item['minute'] = "0";
+				$item['hour'] = "*";
+				$item['mday'] = "*";
+				$item['month'] = "*";
+				$item['wday'] = "*";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE;
+				break;
+		} // end switch
+	} // end if
+	if (isset($itemhash['ID'])) 
+		$config['cron']['item'][$itemhash['ID']] = $item;
+	else 
+		$config['cron']['item'][] = $item;
+	/* finally install the pppoerestart file */
+	if (isset($_POST['pppoe_preset'])) {
+		setup_pppoe_reset_file($if, true);
+		//$ppp['pppoe_reset'] = true;
+		$ppp['pppoe_preset'] = true;
+		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
+	} else {
+		//unset($ppp['pppoe_reset']);
+		unset($ppp['pppoe_preset']);		
+		setup_pppoe_reset_file($if, false);	
+	}
 }
 
 $closehead = false;
 $pgtitle = array("Interfaces","MLPPP","Edit");
 include("head.inc");
-$types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP"/*,  "l2tp" => "L2TP", "tcp" => "TCP", "udp" => "UDP", "ng" => "Netgraph" */  ); 
 
+$types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP"/*,  "l2tp" => "L2TP", "tcp" => "TCP", "udp" => "UDP", "ng" => "Netgraph" */  ); 
 
 ?>
 
 <script type="text/javascript">
 
 	function updateType(t){
+		var ports = document.iform["interfaces[]"];
 		switch(t) {
 			case "select": {
-				document.getElementById("ppp").style.display = 'none';
-				document.getElementById("pppoe").style.display = 'none';
-				document.getElementById("pptp").style.display = 'none';
-				document.getElementById("interface").style.display = 'none';
-				document.getElementById("serialport").style.display = 'none';
-				document.getElementById("ipfields").style.display = 'none';
+				$('ppp','pppoe','pptp','ipfields').invoke('hide');
+				for(var j=0; j < document.iform["interfaces[]"].length; j++){
+					ports.options[j] = null;
+				}
 				break;
 			}
 			case "ppp": {
-				document.getElementById("select").style.display = 'none';
-				document.getElementById("pppoe").style.display = 'none';
-				document.getElementById("pptp").style.display = 'none';
-				document.getElementById("interface").style.display = 'none';
-				document.getElementById("serialport").style.display = '';
-				document.getElementById("ipfields").style.display = '';
-				document.getElementById("subnet").style.display = 'none';
+				for(var j=0; j < document.iform["interfaces[]"].length; j++){
+					if (document.iform["interfaces[]"].options[j].value.indexOf("/dev/") < 0){
+						ports.options[j] = null;
+					}
+				}
+				$('select','pppoe','pptp','subnet').invoke('hide');
+				$('ipfields').show();
+				
 				break;
 			}
 			case "pppoe": {
-				document.getElementById("select").style.display = 'none';
-				document.getElementById("ppp").style.display = 'none';
-				document.getElementById("pptp").style.display = 'none';
-				document.getElementById("interface").style.display = '';
-				document.getElementById("serialport").style.display = 'none';
-				document.getElementById("ipfields").style.display = 'none';
+			for(var j=0; j < document.iform["interfaces[]"].length; j++){
+					if (document.iform["interfaces[]"].options[j].value.indexOf("/dev/") > 0){
+						document.iform["interfaces[]"].options[j] = null;
+			}
+				}
+				$('select','ppp','pptp','ipfields').invoke('hide');
 				break;
 			}
 			case "pptp": {
-				document.getElementById("select").style.display = 'none';
-				document.getElementById("ppp").style.display = 'none';
-				document.getElementById("pppoe").style.display = 'none';
-				document.getElementById("interface").style.display = '';
-				document.getElementById("serialport").style.display = 'none';
-				document.getElementById("ipfields").style.display = '';
-				document.getElementById("subnet").style.display = '';
+			for(var j=0; j < document.iform["interfaces[]"].length; j++){
+					if (document.iform["interfaces[]"].options[j].value.indexOf("/dev/") > 0){
+						document.iform["interfaces[]"].options[j] = null;
+					}
+			}
+				$('select','ppp','pppoe').invoke('hide');
+				$('ipfields','subnet').invoke('show');
 				break;
 			}
+			default:
+				break;
 		}
+		
 		$(t).show();
-	}
-	function show_allcfg(obj) {
-		if (obj.checked)
-			$('allcfg').show();
-		else
-			$('allcfg').hide();
+		//history.go(0);
 	}
 	
 	function show_periodic_reset(obj) {
@@ -382,18 +533,9 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			$('presetwrap').hide();
 	}
 
-	function show_mon_config() {
-		document.getElementById("showmonbox").innerHTML='';
-		aodiv = document.getElementById('showmon');
-		aodiv.style.display = "block";
-	}
-
-	function openwindow(url) {
-		var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
-		if (oWin==null || typeof(oWin)=="undefined") 
-			return false;
-		else 
-			return true;
+	function show_bandwidth_input_boxes() {
+		var bboxes = $('interfaces').innerHTML;
+		alert("hello" . bboxes);
 	}
 	function prefill_att() {
 		$('initstr').value = "Q0V1E1S0=0&C1&D2+FCLASS=0";
@@ -419,10 +561,10 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		$('username').value = "123@vzw3g.com";
 		$('password').value = "vzw";
 	}
-	
+	//document.observe("dom:loaded", function() { updateType(<?php echo "'{$pconfig['type']}'";?>); });
 </script>
 </head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onLoad="updateType(<?php echo "'{$pconfig['type']}'";?>)">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="interfaces_mlppp_edit.php" method="post" name="iform" id="iform">
@@ -439,68 +581,50 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 								echo "<option onClick=\"updateType('{$key}');\"";
 								if ($key == $pconfig['type']) 
 									echo " selected";
-								echo " value=\"{$key}\" >" . htmlspecialchars($opt);
-								echo "</option>";
+								echo " value=\"{$key}\" >" . htmlspecialchars($opt) . "</option>";
 							} 
 						?>
 						</select>
 					</td>
 				</tr>
-				<tr style="display:none" name="interface" id="interface" >
+				<tr name="interface" id="interface" >
 					<td width="22%" valign="top" class="vncellreq">Member interface(s)</td>
 					<td width="78%" class="vtable">
 						<select name="interfaces[]" multiple="true" class="formselect">
 							<?php
-								foreach ($portlist as $ifn => $ifinfo)
-								if (is_jumbo_capable($ifn)) {
+								$serial = glob("/dev/cua*");
+								$modems = glob("/dev/modem*");
+								$ports = array_merge($serial, $modems);
+								foreach ($portlist as $ifn => $ifinfo){
+								//if (is_jumbo_capable($ifn)) {
 									echo "<option value=\"{$ifn}\"";
 									if (stristr($pconfig['interfaces'], $ifn))
-										echo "selected";
-									echo ">";
-									echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
-									echo "</option>";
+										echo " selected";
+									echo ">" . htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")") . "</option>";
+								}
+								foreach ($ports as $port) {
+									if(preg_match("/\.(lock|init)$/", $port))
+										continue;
+									echo "<option value=\"".trim($port)."\"";
+									if (stristr($pconfig['interfaces'], $port))
+										echo " selected";
+									echo ">{$port}</option>";
 								}
 							?>
 						</select>
 						<br/><span class="vexpl">Interfaces participating in the multilink connection.</span>
 					</td>
             	</tr>
-            	<tr style="display:none" name="serialport" id="serialport">
-					<td width="22%" valign="top" class="vncellreq">Member interface(s)</td>
-					<td width="78%" class="vtable">
-						<select name="serialports[]" multiple="true" class="formselect">
-						<?php
-							$serportlist = glob("/dev/cua*");
-							$modems = glob("/dev/modem*");
-							$serportlist = array_merge($serportlist, $modems);
-							foreach ($serportlist as $port) {
-								if(preg_match("/\.(lock|init)$/", $port))
-									continue;
-								echo "<option value=\"".trim($port)."\"";
-								if ($pconfig['port'] == $port)
-									echo "selected";
-								echo ">{$port}</option>";
-							}
-						?>
-						</select>
-						<br/><span class="vexpl">Serial Ports participating in the multilink connection.</span>
-						<p/>
-						<a href='#' onClick='javascript:prefill_att();'>ATT</A>
-						<a href='#' onClick='javascript:prefill_sprint();'>Sprint</A>
-						<a href='#' onClick='javascript:prefill_vzw();'>Verizon</A>
-					</td>
-				</tr>
-
 				<tr>
-					<td valign="top" class="vncell">Username</td>
-					<td class="vtable">
+					<td width="22%" valign="top" class="vncell">Username</td>
+					<td width="78%" class="vtable">
 					<input name="username" type="text" class="formfld usr" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
 					</td>
 			    </tr>
 			    <tr>
-					<td valign="top" class="vncell">Password</td>
-					<td class="vtable">
-					<input name="password" type="text" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+					<td width="22%" valign="top" class="vncell">Password</td>
+					<td width="78%" class="vtable">
+					<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
 					</td>
 				</tr>
 				<tr>
@@ -513,22 +637,24 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
             	<td valign="top" class="vncell">Dial On Demand</td>
 					<td class="vtable">
 						<input type="checkbox" value="on" id="ondemand" name="ondemand" <?php if (isset($pconfig['ondemand'])) echo "checked"; ?>> Enable Dial-on-Demand mode
-						<br> <span class="vexpl">This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. 
+						<br/> <span class="vexpl">This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. 
 						The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected. </span>
 					</td>
 			    </tr>
 			    <tr>
 					<td valign="top" class="vncell">Idle Timeout</td>
 					<td class="vtable">
-						<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>">
-						<br> <span class="vexpl">Idle Timeout goes with the OnDemand selection above. If OnDemand is not checked this is ignored.</span>
+						<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>"> seconds
+						<br/> <span class="vexpl">Sets the idle timeout value for the bundle. If no incoming or outgoing packets are transmitted for the set number of seconds 
+						the connection is brought down. An idle timeout of zero disables this feature. <bold>Default is 0.</bold>
+						<br/>When the idle timeout occurs, if the dial-on-demand option is enabled, mpd goes back into dial-on-demand mode. Otherwise, the interface is brought down and all associated routes removed.</span>
 					</td>
 			    </tr>
 				<tr>
 					<td width="22%" valign="top" class="vncell">Description</td>
 					<td width="78%" class="vtable">
 						<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-						<br> <span class="vexpl">You may enter a description here for your reference (not parsed).</span>
+						<br/> <span class="vexpl">You may enter a description here for your reference (not parsed).</span>
 					</td>
                 </tr>
                 <tr>
@@ -546,7 +672,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 								<td width="22%" valign="top" class="vncell">Init String</td>
 								<td width="78%" class="vtable">
 									<input type="text" size="40" class="formfld unknown" id="initstr" name="initstr" value="<?=htmlspecialchars($pconfig['initstr']);?>">
-									<br><span class="vexpl">Note: Enter the modem initialization string here. Do NOT include the "AT" string at the beginning of the command. Many modern USB 3G
+									<br/><span class="vexpl">Note: Enter the modem initialization string here. Do NOT include the "AT" string at the beginning of the command. Many modern USB 3G
 									modems don't need an initialization string.</span>
 								</td>
 							</tr>
@@ -560,7 +686,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 							  <td width="22%" valign="top" class="vncell">Sim PIN wait</td>
 							  <td width="78%" class="vtable">
 								<input name="pin-wait" type="text" class="formfld unknown" id="pin-wait" size="2" value="<?=htmlspecialchars($pconfig['pin-wait']);?>">
-								<br><span class="vexpl">Note: Time to wait for SIM to discover network after PIN is sent to SIM (seconds).</span>
+								<br/><span class="vexpl">Note: Time to wait for SIM to discover network after PIN is sent to SIM (seconds).</span>
 							</td>
 							</tr>
 							<tr>
@@ -573,21 +699,21 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 							  <td width="22%" valign="top" class="vncell">APN number (optional)</td>
 							  <td width="78%" class="vtable">
 								<input name="apnum" type="text" class="formfld unknown" id="apnum" size="2" value="<?=htmlspecialchars($pconfig['apnum']);?>">
-								<br><span class="vexpl">Note: Defaults to 1 if you set APN above. Ignored if you set no APN above.</span>
+								<br/><span class="vexpl">Note: Defaults to 1 if you set APN above. Ignored if you set no APN above.</span>
 							</td>
 							</tr>
 							<tr>
 							  <td width="22%" valign="top" class="vncell">Phone Number</td>
 							  <td width="78%" class="vtable">
 								<input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>">
-								<br><span class="vexpl">Note: Typically (*99# or *99***# or *99***1#) for GSM networks and *777 for CDMA networks</span>
+								<br/><span class="vexpl">Note: Typically (*99# or *99***# or *99***1#) for GSM networks and *777 for CDMA networks</span>
 							  </td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell">Connection Timeout</td>
 								<td width="78%" class="vtable">
 									<input name="connect-timeout" type="text" class="formfld unknown" id="connect-timeout" size="2" value="<?=htmlspecialchars($pconfig['connect-timeout']);?>">
-									<br><span class="vexpl">Note: Enter timeout in seconds for connection to be established (sec.) Default is 45 sec.</span>
+									<br/><span class="vexpl">Note: Enter timeout in seconds for connection to be established (sec.) Default is 45 sec.</span>
 								</td>
 							</tr>
 						</table>
@@ -602,13 +728,13 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 							<tr>
 								<td width="22%" valign="top" class="vncell">Service name</td>
 								<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
-									<br> <span class="vexpl">Hint: this field can usually be left empty</span>
+									<br/> <span class="vexpl">Hint: this field can usually be left empty</span>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Periodic reset");?></td>
 								<td width="78%" class="vtable">
-									<input name="pppoe_preset" type="checkbox" id="pppoe_preset" value="yes" <?php if ($pconfig['pppoe_preset']) echo "checked=\"checked\""; ?> onclick="show_periodic_reset(this);" />
+									<input name="pppoe_preset" type="checkbox" id="pppoe_preset" value="yes" <?php if ($pconfig['pppoe_preset']) echo "checked"; ?> onclick="show_periodic_reset(this);" />
 									<?= gettext("enable periodic PPPoE resets"); ?>
 									<br />
 									<?php if ($pconfig['pppoe_preset']): ?>
@@ -682,11 +808,9 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 								<td width="78%" class="vtable"> 
 									<input name="localip" type="text" class="formfld unknown" id="localip" size="20"  value="<?=htmlspecialchars($pconfig['localip']);?>">
 									/
-									<select style="display:none" class="formselect" id="subnet">
+									<select style="display:none" name="subnet" class="formselect" id="subnet">
 									<?php for ($i = 31; $i > 0; $i--): ?>
-										<option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>>
-											<?=$i;?>
-										</option>
+										<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet']) echo "selected"; ?>><?=$i;?></option>
 									<?php endfor; ?>
 									</select>
 									<br><span class="vexpl">Note: Enter the local IP here if not automatically assigned. Subnet is ignored for PPP connections.</span>
@@ -708,22 +832,14 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					<td colspan="2" valign="top" class="listtopic">Advanced Options</td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">Compression</td>
-					<td width="78%" class="vtable">
-						<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked"; ?>>&nbsp;Disable vjcomp(compression).
-					</td>
-				</tr>
-				<tr>
-					<td width="22%" valign="top" class="vncell">TCPmssfix</td>
-					<td width="78%" class="vtable">
-						<input type="checkbox" value="on" id="tcpmssfix" name="tcpmssfix" <?php if (isset($pconfig['tcpmssfix'])) echo "checked"; ?>>&nbsp;Enable tcpmssfix.
-					</td>
-				</tr>
-				<tr>
 					<td width="22%" width="100" valign="top" class="vncell">Bandwidth</td>
 					<td width="78%" class="vtable">
-					<input name="bandwidth" type="text" class="formfld unknown" id="bandwidth" size="10" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">&nbsp;(bits/sec)
-					<br> <span class="vexpl">Set Bandwidth for each link if links have different bandwidths, otherwise, leave blank.</span>
+					<input name="bandwiths" type="checkbox" id="bandwiths" value="yes" <?php if (isset($pconfig['bandwidth'])) echo "checked"; ?> onclick="show_bandwidth_input_boxes();" />
+					Set <bold>unequal</bold> bandwidths for links in this multilink connection.
+					<span id="bandwidth_input" style="display:none">
+						
+						<br> <span class="vexpl">Set Bandwidth for each link ONLY if links have different bandwidths.</span>
+					</span>
 				  </td>
 				</tr>
 				<tr>
@@ -739,6 +855,47 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					<input name="mru" type="text" class="formfld unknown" id="mru" size="6" value="<?=htmlspecialchars($pconfig['mru']);?>">
 					<br> <span class="vexpl">Set MRU for each link separated by commas, otherwise, leave blank.</span>
 				  </td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">Compression</td>
+					<td width="78%" class="vtable">
+						<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked"; ?>>&nbsp;Enable vjcomp(compression).
+						<br/> <span class="vexpl">This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet. 
+						You almost always want this option. This compression ineffective for TCP connections with enabled modern extensions like time 
+						stamping or SACK, which modify TCP options between sequential packets.</span>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">TCPmssFix</td>
+					<td width="78%" class="vtable">
+						<input type="checkbox" value="on" id="tcpmssfix" name="tcpmssfix" <?php if (isset($pconfig['tcpmssfix'])) echo "checked"; ?>>&nbsp;Enable tcpmssfix.
+						<br/> <span class="vexpl">This option causes mpd to adjust incoming and outgoing TCP SYN segments so that the requested maximum segment size is not greater than the amount 
+						allowed by the interface MTU. This is necessary in many setups to avoid problems caused by routers that drop ICMP Datagram Too Big messages. Without these messages,
+						the originating machine sends data, it passes the rogue router then hits a machine that has an MTU that is not big enough for the data. Because the IP Don't Fragment option is set,
+						this machine sends an ICMP Datagram Too Big message back to the originator and drops the packet. The rogue router drops the ICMP message and the originator never 
+						gets to discover that it must reduce the fragment size or drop the IP Don't Fragment option from its outgoing data.</span>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">ShortSeq</td>
+					<td width="78%" class="vtable">
+						<input type="checkbox" value="on" id="shortseq" name="shortseq" <?php if (isset($pconfig['shortseq'])) echo "checked"; ?>>&nbsp;Enable shortseq.
+						<br/> <span class="vexpl">This option is only meaningful if multi-link PPP is negotiated. It proscribes shorter multi-link fragment headers, saving two bytes on every frame.</span>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">ACFComp</td>
+					<td width="78%" class="vtable">
+						<input type="checkbox" value="on" id="acfcomp" name="acfcomp" <?php if (isset($pconfig['acfcomp'])) echo "checked"; ?>>&nbsp;Enable acfcomp.
+						<br/> <span class="vexpl">Address and control field compression. This option only applies to asynchronous link types. It saves two bytes per frame.</span>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">ProtoComp</td>
+					<td width="78%" class="vtable">
+						<input type="checkbox" value="on" id="protocomp" name="protocomp" <?php if (isset($pconfig['protocomp'])) echo "checked"; ?>>&nbsp;Enable protocomp(compression).
+						<br/> <span class="vexpl">Protocol field compression. This option saves one byte per frame for most frames.</span>
+					</td>
 				</tr>
                 <tr>
 				<td width="22%" valign="top">&nbsp;</td>

@@ -428,7 +428,7 @@ include("fbegin.inc"); ?>
                   <td width="22%" valign="top" class="vncell">No RDR (NOT)</td>
                   <td width="78%" class="vtable">
                     <input type="checkbox" name="nordr"<?php if($pconfig['nordr']) echo " CHECKED"; ?>>
-                    <span class="vexpl">Enabling this option will disable NATing for the item and stop processing outgoing NAT rules.
+                    <span class="vexpl">Enabling this option will disable redirection for this entry.
                     <br>Hint: this option is rarely needed, don't use this unless you know what you're doing.</span>
                   </td>
                 </tr>
@@ -667,7 +667,7 @@ include("fbegin.inc"); ?>
 			</td>
 		</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">NAT IP</td>
+                  <td width="22%" valign="top" class="vncellreq">Redirect IP</td>
                   <td width="78%" class="vtable">
                     <input autocomplete='off' name="localip" type="text" class="formfldalias" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>">
                     <br> <span class="vexpl">Enter the internal IP address of
@@ -675,7 +675,7 @@ include("fbegin.inc"); ?>
                     e.g. <em>192.168.1.12</em></span></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Local port</td>
+                  <td width="22%" valign="top" class="vncellreq">Redirect port</td>
                   <td width="78%" class="vtable">
                     <select name="localbeginport" class="formselect" onChange="ext_change();check_for_aliases();">
                       <option value="">(other)</option>

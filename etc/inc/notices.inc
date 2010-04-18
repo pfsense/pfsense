@@ -297,6 +297,7 @@ function notify_via_smtp($message) {
 	$smtp->ssl = 0;
 	$smtp->debug = 0;
 	$smtp->html_debug = 0;
+	$smtp->localhost=$config['system']['hostname'].".".$config['system']['domain'];
 	
 	if($config['notifications']['smtp']['fromaddress'])
 		$from = $config['notifications']['smtp']['fromaddress'];

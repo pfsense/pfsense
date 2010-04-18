@@ -414,7 +414,7 @@ include("fbegin.inc"); ?>
             <form action="firewall_nat_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Edit NAT entry</td>
+					<td colspan="2" valign="top" class="listtopic">Edit Redirect entry</td>
 				</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Disabled</td>
@@ -667,7 +667,7 @@ include("fbegin.inc"); ?>
 			</td>
 		</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Redirect IP</td>
+                  <td width="22%" valign="top" class="vncellreq">Redirect target IP</td>
                   <td width="78%" class="vtable">
                     <input autocomplete='off' name="localip" type="text" class="formfldalias" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>">
                     <br> <span class="vexpl">Enter the internal IP address of
@@ -675,7 +675,7 @@ include("fbegin.inc"); ?>
                     e.g. <em>192.168.1.12</em></span></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Redirect port</td>
+                  <td width="22%" valign="top" class="vncellreq">Redirect target port</td>
                   <td width="78%" class="vtable">
                     <select name="localbeginport" class="formselect" onChange="ext_change();check_for_aliases();">
                       <option value="">(other)</option>

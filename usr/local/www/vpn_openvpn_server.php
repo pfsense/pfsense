@@ -1178,7 +1178,7 @@ function netbios_change() {
 			<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td width="10%" class="listhdrr">Disabled</td>
-					<td width="10%" class="listhdrr">Protocol</td>
+					<td width="10%" class="listhdrr">Protocol / Port</td>
 					<td width="30%" class="listhdrr">Tunnel Network</td>
 					<td width="40%" class="listhdrr">Description</td>
 					<td width="10%" class="list"></td>
@@ -1195,7 +1195,7 @@ function netbios_change() {
 						<?=$disabled;?>
 					</td>
 					<td class="listr" ondblclick="document.location='vpn_openvpn_server.php?act=edit&id=<?=$i;?>'">
-						<?=htmlspecialchars($server['protocol']);?>
+						<?=htmlspecialchars($server['protocol']);?> / <?=htmlspecialchars($server['local_port']);?>
 					</td>
 					<td class="listr" ondblclick="document.location='vpn_openvpn_server.php?act=edit&id=<?=$i;?>'">
 						<?=htmlspecialchars($server['tunnel_network']);?>

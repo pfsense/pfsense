@@ -46,6 +46,17 @@ if($config['notifications']['growl']['password'])
 if($config['notifications']['growl']['ipaddress']) 
 	$pconfig['ipaddress'] = $config['notifications']['growl']['ipaddress'];
 
+if($config['notifications']['growl']['notification_name']) 
+	$pconfig['notification_name'] = $config['notifications']['growl']['notification_name'];
+else
+  $pconfig['notification_name'] = 'pfSense growl alert';
+  
+if($config['notifications']['growl']['name']) 
+	$pconfig['name'] = $config['notifications']['growl']['name'];
+else
+  $pconfig['name'] = 'PHP-Growl';
+
+
 // SMTP
 if($config['notifications']['smtp']['ipaddress']) 
 	$pconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
@@ -81,6 +92,8 @@ if ($_POST) {
 		// Growl
 		$config['notifications']['growl']['ipaddress'] = $_POST['ipaddress'];
 		$config['notifications']['growl']['password'] = $_POST['password'];
+		$config['notifications']['growl']['name'] = $_POST['name'];
+		$config['notifications']['growl']['notification_name'] = $_POST['notification_name'];
 
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
@@ -146,6 +159,20 @@ include("head.inc");
 						<!-- GROWL -->
 						<tr>
 							<td colspan="2" valign="top" class="listtopic">Growl</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell">Registration Name</td>
+							<td width="78%" class="vtable">
+								<input name='name' value='<?php echo $pconfig['name']; ?>'><br/>
+								Enter the name to register with the Growl server (default: PHP-Growl).
+							</td>
+						</tr>
+  					<tr>
+							<td width="22%" valign="top" class="vncell">Notification Name</td>
+							<td width="78%" class="vtable">
+								<input name='notification_name' value='<?php echo $pconfig['notification_name']; ?>'><br/>
+								Enter a name for the Growl notifications (default: pfSense growl alert).
+							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell">IP Address</td>

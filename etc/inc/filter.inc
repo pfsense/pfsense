@@ -1064,6 +1064,14 @@ function filter_nat_rules_generate() {
 	$natrules .= "# TFTP proxy\n";
 	$natrules .= "rdr-anchor \"tftp-proxy/*\"\n";
 
+	if (!empty($config['system']['tftpinterface'])) {
+		$tftpifs = explode(",", $config['system']['tftpinterface']);
+		foreach($tftpifs as $tftpif) {
+			if ($FilterIflist[$tftpif])
+				$natrules .= "rdr pass on {$FilterIflist[$tftpif]['if']} proto udp from any to any port tftp -> 127.0.0.1 port 6969\n";
+		}
+	}
+
 	$interface_counter = 0;
 	$vpns_list = filter_get_vpns_list();
 	$direct_networks_list = filter_get_direct_networks_list();
@@ -1085,7 +1093,7 @@ function filter_nat_rules_generate() {
 	// Open inetd.conf write handle
 	$inetd_fd = fopen("/var/etc/inetd.conf","w");
 	/* add tftp protocol helper */
-	fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy\ttftp-proxy -v\n");
+	fwrite($inetd_fd, "tftp-proxy\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy\ttftp-proxy -v\n");
 
 	if(isset($config['nat']['rule'])) {
 		if(!isset($config['system']['disablenatreflection'])) {
@@ -2008,8 +2016,7 @@ EOD;
 # package manager late specific hook
 anchor "packagelate"
 
-EOD;
-	$ipfrules .= <<<EOD
+anchor "tftp-proxy/*"
 
 anchor "limitingesr"
 
@@ -2446,11 +2453,10 @@ function discover_pkg_rules($ruletype) {
 				log_error($errorrules);
 				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg_inc}", "#{$errorrules}\n");
 				return "";
-			} else {
-				return $rules;
 			}
 		}
 	}
+	return $rules;
 }
 
 // vim: ts=4 sw=4 noexpandtab

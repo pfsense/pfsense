@@ -297,6 +297,7 @@ function notify_via_smtp($message) {
 	$smtp->ssl = 0;
 	$smtp->debug = 0;
 	$smtp->html_debug = 0;
+	$smtp->localhost=$config['system']['hostname'].".".$config['system']['domain'];
 	
 	if($config['notifications']['smtp']['fromaddress'])
 		$from = $config['notifications']['smtp']['fromaddress'];
@@ -345,9 +346,12 @@ function notify_via_growl($message) {
 	global $config;
 	$growl_ip = $config['notifications']['growl']['ipaddress'];
 	$growl_password = $config['notifications']['growl']['password'];
+	$growl_name = $config['notifications']['growl']['name'];
+	$growl_notification = $config['notifications']['growl']['notification_name'];
+	
 	if(!empty($growl_ip)) {
-		$growl = new Growl($growl_ip, $growl_password);
-		$growl->notify("pfSense growl alert", "pfSense", "{$message}");
+		$growl = new Growl($growl_ip, $growl_password, $growl_name);
+		$growl->notify("{$growl_notification}", "pfSense", "{$message}");
 	}
 }
 
@@ -364,8 +368,12 @@ function register_via_growl() {
 	global $config;
 	$growl_ip = $config['notifications']['growl']['ipaddress'];
 	$growl_password = $config['notifications']['growl']['password'];
+	$growl_name = $config['notifications']['growl']['name'];
+	$growl_notification = $config['notifications']['growl']['notification_name'];
+	
 	if($growl_ip) {
-		$growl = new Growl($growl_ip, $growl_password);
+	  $growl = new Growl($growl_ip, $growl_password, $growl_name);
+		$growl->addNotification($growl_notification);
 		$growl->register();
 	}
 }

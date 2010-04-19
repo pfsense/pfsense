@@ -275,9 +275,14 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
 					<?php
+						$localport = $natent['local-port'];
+
 						list($dstbeginport, $dstendport) = split("-", $natent['destination']['port']);
-						$localendport   = $natent['local-port'] + $dstendport - $dstbeginport;
-						$localport      = $natent['local-port'] . '-' . $localendport;
+
+						if ($dstendport) {
+							$localendport = $natent['local-port'] + $dstendport - $dstbeginport;
+							$localport   .= '-' . $localendport;
+						}
 					?>
 				    <?=$textss;?><?php echo $alias_local_port_span_begin;?><?php echo htmlspecialchars(pprint_port($localport));?><?php echo $alias_local_port_span_end;?><?=$textse;?>
                   </td>

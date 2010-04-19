@@ -1104,7 +1104,7 @@ function filter_nat_rules_generate() {
 		foreach ($config['nat']['rule'] as $rule) {
 			update_filter_reload_status("Creating NAT rule {$rule['descr']}");
 
-			if($rule['disabled'])
+			if(isset($rule['disabled']))
 				continue;
 
 			if (strtolower($rule['protocol']) == "tcp/udp")
@@ -1160,8 +1160,10 @@ function filter_nat_rules_generate() {
 
 			$natif = $FilterIflist[$natif]['if'];
 
-			if ($rule['nordr'])
+			if (isset($rule['nordr']))
 				$nordr = "no ";
+			else
+				$nordr = "";
 
 			if($srcaddr <> "" && $dstaddr <> "") {
 				/* is rule a port range? */

@@ -82,6 +82,9 @@ function step3_submitphpaction() {
 			$config['ovpnserver']['step2']['port'] = 389;
 		elseif ($_POST['transport'] == "ssl")
 			$config['ovpnserver']['step2']['port'] = 636;
+	} elseif (!is_port($_POST['port'])) {
+		$stepid--;
+		$savemsg = "Please enter a valid port number.";
 	}
 
 	if (empty($_POST['name']) || empty($_POST['ip']) ||empty($_POST['transport']) ||
@@ -91,6 +94,9 @@ function step3_submitphpaction() {
 	} else if (count(($authcfg = auth_get_authserver($_POST['name']))) > 0) {
 		$stepid--;
 		$savemsg = "Please choose a different name because an authentication server with this name already exists.";
+	} elseif (!is_fqdn($_POST['ip']) && !is_ipaddr($_POST['ip'])) {
+		$stepid--;
+		$savemsg = "Please enter a valid IP address or hostname for the authentication server.";
 	} else {
 		$config['ovpnserver']['step2']['uselist'] = "on";
 		$_POST['uselist'] = "on";
@@ -132,8 +138,12 @@ function step5_submitphpaction() {
 	global $stepid, $savemsg, $config;
 
 	/* Default RADIUS Auth port = 1812 */
-	if (empty($_POST['port']))
+	if (empty($_POST['port'])) {
 		$config['ovpnserver']['step2']['port'] = 1812;
+	} elseif (!is_port($_POST['port'])) {
+		$stepid--;
+		$savemsg = "Please enter a valid port number.";
+	}
 
 	if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['secret'])) {
 		$stepid--;
@@ -141,6 +151,9 @@ function step5_submitphpaction() {
 	} else if (count(($authcfg = auth_get_authserver($_POST['name']))) > 0) {
 		$stepid--;
 		$savemsg = "Please choose a different name because an authentication server with this name already exists.";
+	} elseif (!is_fqdn($_POST['ip']) && !is_ipaddr($_POST['ip'])) {
+		$stepid--;
+		$savemsg = "Please enter a valid IP address or hostname for the authentication server.";
 	} else {
 		$config['ovpnserver']['step2']['uselist'] = "on";
 		$_POST['uselist'] = "on";

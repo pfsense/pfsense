@@ -71,7 +71,7 @@ if($_GET['act']=="new"){
 	$pconfig['autotls_enable'] = "yes";
 	$pconfig['dh_length'] = 1024;
 	$pconfig['interface'] = "wan";
-	$pconfig['local_port'] = openvpn_port_next('UDP');
+	$pconfig['local_port'] = openvpn_port_next('udp');
 	$pconfig['pool_enable'] = "yes";
 }
 

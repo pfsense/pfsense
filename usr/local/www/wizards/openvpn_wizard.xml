@@ -600,11 +600,11 @@
 			<options>
 				<option>
 					<name>UDP</name>
-					<value>udp</value>
+					<value>UDP</value>
 				</option>
 				<option>
 					<name>TCP</name>
-					<value>tcp</value>
+					<value>TCP</value>
 				</option>
 			</options>
 			<description>&lt;br/&gt;Protocol to use for OpenVPN connections. If you are unsure, leave this set to UDP.</description>

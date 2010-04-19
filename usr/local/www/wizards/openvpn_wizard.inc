@@ -297,8 +297,7 @@ function step10_stepbeforeformdisplay() {
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
 			}
 		} else if ($field['name'] == "localport") {
-			if (count($config['openvpn']['openvpn-server']) < 1)
-				$pkg['step'][$stepid]['fields']['field'][$idx]['value'] = 1194;
+			$pkg['step'][$stepid]['fields']['field'][$idx]['value'] = openvpn_port_next('UDP');
 		}
 	}
 }
@@ -306,9 +305,9 @@ function step10_stepbeforeformdisplay() {
 function step10_submitphpaction() {
 	global $savemsg, $stepid;
 
-	/* Default OpenVPN port to 1194 if left empty. */
+	/* Default OpenVPN port to next available port if left empty. */
 	if (empty($_POST['localport']))
-		$_POST['localport'] = 1194;
+		$pconfig["step10"]["localport"] = openvpn_port_next('UDP');
 
 	/* input validation */
 	if ($result = openvpn_validate_port($_POST['localport'], 'Local port'))

@@ -1126,13 +1126,17 @@ function filter_nat_rules_generate() {
 
 			/* if item is an alias, expand */
 			$localport = alias_expand($rule['local-port']);
-			if(!$localport || $rule['destination']['port'] == $rule['local-port'])
+			if(!$localport || $rule['destination']['port'] == $rule['local-port']) {
 				$localport = "";
-			else
-				$localport = " port {$localport}";
+			} else {
+				if(($dstport[1]) && ($dstport[0] != $dstport[1])) {
+					$localendport = $localport + ($dstport[1] - $dstport[0]);
 
-			if(($dstport[1]) && ($dstport[0] != $dstport[1]))
-				$localport .= ":*";
+					$localport .= ":$localendport";
+				}
+
+				$localport = " port {$localport}";
+			}
 
 			$target = alias_expand($rule['target']);
 			if(!$target) {

@@ -188,6 +188,9 @@ function step7_submitphpaction() {
 	} elseif (in_array($_POST['name'], $canames) || in_array($_POST['name'], $cacns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certicicate Authority. A Certificate Authority with that name already exists.";
+	} elseif (strlen($_POST['country']) != 2) {
+		$stepid--;
+		$savemsg = "Please enter only a two-letter ISO country code";
 	} else {
 		$config['ovpnserver']['step6']['uselist'] = "on";
 		$_POST['uselist'] = "on";
@@ -269,6 +272,9 @@ function step9_submitphpaction() {
 	} elseif (in_array($_POST['name'], $certnames) || in_array($_POST['name'], $certcns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certicicate. A Certificate with that name/common name already exists.";	
+	} elseif (strlen($_POST['country']) != 2) {
+		$stepid--;
+		$savemsg = "Please enter only a two-letter ISO country code";
 	} else {
 		$config['ovpnserver']['step9']['uselist'] = "on";
 		$_POST['uselist'] = "on";

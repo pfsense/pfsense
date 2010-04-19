@@ -672,7 +672,28 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Source</td>
 			<td width="78%" class="vtable">
-				<input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
+				<?php $edit_disabled=false; ?>
+				<?php if( isset($pconfig['associated-rule-id']) ): ?>
+					<span class="red"><strong>NOTE: </strong></span> This is associated to a NAT rule.<br />
+					You cannot edit the source and destination of associated filter rules.<br />
+					<br />
+                                        <?php
+						$edit_disabled=true;
+						if (is_array($config['nat']['rule'])) {
+                                                       	foreach( $config['nat']['rule'] as $index => $nat_rule ) {
+                                                               	if( $nat_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
+                                                                       	echo "<a href=\"firewall_nat_edit.php?id={$nat_rule[$index]}\">View the NAT rule</a><br>";
+                                                                       	break;
+								}
+                                                       	}
+						}
+					?>
+					<br />
+					<script type="text/javascript">
+					editenabled = 0;
+					</script>
+				<?php endif; ?>
+				<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
 				<strong>not</strong>
 				<br />
 				Use this option to invert the sense of the match.
@@ -682,7 +703,7 @@ include("head.inc");
 					<tr>
 						<td>Type:&nbsp;&nbsp;</td>
 						<td>
-							<select name="srctype" class="formselect" onChange="typesel_change()">
+							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srctype" class="formselect" onChange="typesel_change()">
 <?php
 								$sel = is_specialnet($pconfig['src']); ?>
 								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>>any</option>
@@ -712,8 +733,8 @@ include("head.inc");
 					<tr>
 						<td>Address:&nbsp;&nbsp;</td>
 						<td>
-							<input autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
-							<select name="srcmask" class="formselect" id="srcmask">
+							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
+							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcmask" class="formselect" id="srcmask">
 <?php						for ($i = 31; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
 <?php 						endfor; ?>
@@ -723,7 +744,7 @@ include("head.inc");
 				</table>
 				<div id="showadvancedboxspr">
 					<p>
-					<input type="button" onClick="show_source_port_range()" value="Advanced"></input> - Show source port range</a>
+					<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> type="button" onClick="show_source_port_range()" value="Advanced"></input> - Show source port range</a>
 				</div>
 			</td>
 		</tr>
@@ -734,27 +755,27 @@ include("head.inc");
 					<tr>
 						<td>from:&nbsp;&nbsp;</td>
 						<td>
-							<select name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
+							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
 								<option value="">(other)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>">
+							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>">
 						</td>
 					</tr>
 					<tr>
 						<td>to:</td>
 						<td>
-							<select name="srcendport" class="formselect" onchange="ext_change()">
+							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcendport" class="formselect" onchange="ext_change()">
 								<option value="">(other)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php							endforeach; ?>
 							</select>
-							<input autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>">
+							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>">
 						</td>
 					</tr>
 				</table>
@@ -765,27 +786,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Destination</td>
 			<td width="78%" class="vtable">
-				<?php $dst_disabled=false; ?>
-				<?php if( isset($pconfig['associated-rule-id']) ): ?>
-					<span class="red"><strong>NOTE: </strong></span> This is associated to a NAT rule.<br />
-					You cannot edit the destination of associated filter rules.<br />
-					<br />
-                                        <?php
-							if (is_array($config['nat']['rule'])) {
-                                                        	foreach( $config['nat']['rule'] as $index => $nat_rule ) {
-                                                                	if( $nat_rule['assocaited-rule-id']==$pconfig['associated-rule-id'])
-                                                                        	echo "<a href=\"firewall_nat_edit.php?id={$nat_rule[$index]}\">View the NAT rule</a>\n";
-                                                                        break;
-                                                        	}
-							}
-					?>
-					<br />
-					<?php $dst_disabled=true; ?>
-					<script type="text/javascript">
-					dstenabled = 0;
-					</script>
-				<?php endif; ?>
-				<input<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
+				<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
 				<strong>not</strong>
 					<br />
 				Use this option to invert the sense of the match.
@@ -795,7 +796,7 @@ include("head.inc");
 					<tr>
 						<td>Type:&nbsp;&nbsp;</td>
 						<td>
-							<select<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dsttype" class="formselect" onChange="typesel_change()">
+							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dsttype" class="formselect" onChange="typesel_change()">
 <?php
 								$sel = is_specialnet($pconfig['dst']); ?>
 								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>any</option>
@@ -825,9 +826,9 @@ include("head.inc");
 					<tr>
 						<td>Address:&nbsp;&nbsp;</td>
 						<td>
-							<input<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
-							<select<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dstmask" class="formselect" id="dstmask">
+							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstmask" class="formselect" id="dstmask">
 <?php
 							for ($i = 31; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
@@ -845,27 +846,27 @@ include("head.inc");
 					<tr>
 						<td>from:&nbsp;&nbsp;</td>
 						<td>
-							<select<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
+							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
 								<option value="">(other)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected"; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input<?php echo ($dst_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>">
+							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>">
 						</td>
 					</tr>
 					<tr>
 						<td>to:</td>
 						<td>
-							<select<?php echo ($dst_disabled===true?' DISABLED':''); ?> name="dstendport" class="formselect" onchange="ext_change()">
+							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstendport" class="formselect" onchange="ext_change()">
 								<option value="">(other)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
-							<input<?php echo ($dst_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>">
+								<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>">
 						</td>
 					</tr>
 				</table>

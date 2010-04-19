@@ -79,9 +79,9 @@ function step3_submitphpaction() {
 	/* Default LDAP port is 389 for TCP and 636 for SSL */
 	if (empty($_POST['port'])) {
 		if ($_POST['transport'] == "tcp")
-			$_POST['port'] = 389;
+			$config['ovpnserver']['step2']['port'] = 389;
 		elseif ($_POST['transport'] == "ssl")
-			$_POST['port'] = 636;
+			$config['ovpnserver']['step2']['port'] = 636;
 	}
 
 	if (empty($_POST['name']) || empty($_POST['ip']) ||empty($_POST['transport']) ||
@@ -133,7 +133,7 @@ function step5_submitphpaction() {
 
 	/* Default RADIUS Auth port = 1812 */
 	if (empty($_POST['port']))
-		$_POST['port'] = 1812;
+		$config['ovpnserver']['step2']['port'] = 1812;
 
 	if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['secret'])) {
 		$stepid--;

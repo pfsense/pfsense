@@ -317,6 +317,11 @@ include("head.inc");
 											<?=$ph2ent['mode'];?>
 										<?=$spane;?>
 									</td>
+									<?php 
+										if($ph2ent['mode'] <> "tunnel") {
+											echo "<td nowrap class=\"listr\">&nbsp;</td><td nowrap class=\"listr\">&nbsp;</td>";
+										} 
+									?>
 									<?php if($ph2ent['mode'] == "tunnel"): ?>
 									<td nowrap class="listr">
 										<?=$spans;?>

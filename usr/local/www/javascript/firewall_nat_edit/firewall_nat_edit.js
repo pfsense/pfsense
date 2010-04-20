@@ -177,7 +177,7 @@ function dst_rep_change() {
 	document.iform.dstendport.selectedIndex = document.iform.dstbeginport.selectedIndex;
 }
 
-function change_dst( iface ) {
+function dst_change( iface ) {
 	document.iform.dsttype.value = iface.concat("ip");
 }
 //-->

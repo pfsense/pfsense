@@ -164,8 +164,12 @@ if ($_POST) {
 	if (is_specialnet($_POST['dsttype'])) {
 		$_POST['dst'] = $_POST['dsttype'];
 		$_POST['dstmask'] = 0;
-	}  else if ($_POST['dsttype'] == "single") {
+	} else if ($_POST['dsttype'] == "single") {
 		$_POST['dstmask'] = 32;
+	} else if (is_ipaddr($_POST['dsttype'])) {
+		$_POST['dst'] = $_POST['dsttype'];
+		$_POST['dstmask'] = 32;
+		$_POST['dsttype'] = "single";
 	}
 
 	unset($input_errors);
@@ -444,7 +448,7 @@ include("fbegin.inc"); ?>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-					<select name="interface" class="formselect" onChange="change_dst(this.value);typesel_change();">
+					<select name="interface" class="formselect" onChange="dst_change(this.value);typesel_change();">
 						<?php
 
 						$iflist = get_configured_interface_with_descr(false, true);
@@ -617,6 +621,25 @@ include("fbegin.inc"); ?>
 									</option>
 								<?php endif; ?>
 <?php 							endforeach; ?>
+
+<?php							if (is_array($config['virtualip']['vip'])):
+									foreach ($config['virtualip']['vip'] as $sn):
+										if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
+											$baseip = ip2long($sn['subnet']) & ip2long(gen_subnet_mask($sn['subnet_bits']));
+
+											for ($i = $sn['subnet_bits']; $i <= 32; $i++):
+												$baseip = $baseip + 1;
+												$snip = long2ip($baseip);
+?>
+												<option value="<?=$snip;?>" <?php if ($snip == $pconfig['dst']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
+<?php										endfor;
+										else:
+?>
+											<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['dst']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
+<?php									endif;
+									endforeach;
+								endif;
+?>
 							</select>
 						</td>
 					</tr>
@@ -783,6 +806,7 @@ include("fbegin.inc"); ?>
 	ext_change();
 	typesel_change();
 	proto_change();
+	dst_change();
 //-->
 </script>
 <?php
@@ -815,14 +839,14 @@ if($config['aliases']['alias'] <> "")
 	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
 	var customarray=new Array(<?php echo $portaliases; ?>);
 
-        var oTextbox1 = new AutoSuggestControl(document.getElementById("localip"), new StateSuggestions(addressarray));
-        var oTextbox2 = new AutoSuggestControl(document.getElementById("src"), new StateSuggestions(addressarray));
-        var oTextbox3 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
-        var oTextbox4 = new AutoSuggestControl(document.getElementById("dstbeginport_cust"), new StateSuggestions(customarray));
-        var oTextbox5 = new AutoSuggestControl(document.getElementById("dstendport_cust"), new StateSuggestions(customarray));
-        var oTextbox6 = new AutoSuggestControl(document.getElementById("srcbeginport_cust"), new StateSuggestions(customarray));
-        var oTextbox7 = new AutoSuggestControl(document.getElementById("srcendport_cust"), new StateSuggestions(customarray));
-        var oTextbox8 = new AutoSuggestControl(document.getElementById("localbeginport_cust"), new StateSuggestions(customarray));
+	var oTextbox1 = new AutoSuggestControl(document.getElementById("localip"), new StateSuggestions(addressarray));
+	var oTextbox2 = new AutoSuggestControl(document.getElementById("src"), new StateSuggestions(addressarray));
+	var oTextbox3 = new AutoSuggestControl(document.getElementById("dst"), new StateSuggestions(addressarray));
+	var oTextbox4 = new AutoSuggestControl(document.getElementById("dstbeginport_cust"), new StateSuggestions(customarray));
+	var oTextbox5 = new AutoSuggestControl(document.getElementById("dstendport_cust"), new StateSuggestions(customarray));
+	var oTextbox6 = new AutoSuggestControl(document.getElementById("srcbeginport_cust"), new StateSuggestions(customarray));
+	var oTextbox7 = new AutoSuggestControl(document.getElementById("srcendport_cust"), new StateSuggestions(customarray));
+	var oTextbox8 = new AutoSuggestControl(document.getElementById("localbeginport_cust"), new StateSuggestions(customarray));
 //-->
 </script>
 <?php include("fend.inc"); ?>

@@ -804,9 +804,9 @@ include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--
 	ext_change();
+	dst_change(document.iform.interface.value);
 	typesel_change();
 	proto_change();
-	dst_change();
 //-->
 </script>
 <?php

@@ -1011,7 +1011,7 @@ function captiveportal_get_ipfw_ruleno_byvalue($value) {
 
         if (file_exists("{$g['vardb_path']}/captiveportal.rules")) {
                 $rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal.rules"));
-		$ruleno = intval(`/sbin/ipfw show | /usr/bin/grep 00:0c:29:88:77:80 | /usr/bin/grep -v grep | /usr/bin/cut -d " " -f 1 | /usr/bin/head -n 1`);
+		$ruleno = intval(`/sbin/ipfw table 1 list | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d " " -f 1 | /usr/bin/head -n 1`);
 		if ($rules[$ruleno])
 			return $ruleno;
         }

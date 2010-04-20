@@ -173,8 +173,8 @@ if ($_POST) {
 
 	/* input validation */
 	if(strtoupper($_POST['proto']) == "TCP" or strtoupper($_POST['proto']) == "UDP" or strtoupper($_POST['proto']) == "TCP/UDP") {
-		$reqdfields = explode(" ", "interface proto dstbeginport dstendport localip localbeginport");
-		$reqdfieldsn = explode(",", "Interface,Protocol,Destination port from,Destination port to,NAT IP,Local port");
+		$reqdfields = explode(" ", "interface proto dstbeginport dstendport localip");
+		$reqdfieldsn = explode(",", "Interface,Protocol,Destination port from,Destination port to,NAT IP");
 	} else {
 		$reqdfields = explode(" ", "interface proto localip");
 		$reqdfieldsn = explode(",", "Interface,Protocol,NAT IP");
@@ -674,7 +674,7 @@ include("fbegin.inc"); ?>
                     the server on which you want to map the ports.<br>
                     e.g. <em>192.168.1.12</em></span></td>
                 </tr>
-                <tr>
+                <tr name="lprtr" id="lprtr">
                   <td width="22%" valign="top" class="vncellreq">Redirect target port</td>
                   <td width="78%" class="vtable">
                     <select name="localbeginport" class="formselect" onChange="ext_change();check_for_aliases();">

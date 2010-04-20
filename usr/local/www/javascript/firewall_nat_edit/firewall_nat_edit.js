@@ -54,7 +54,9 @@ function ext_change() {
 }
 
 function show_source() {
-	document.getElementById("sprtable").style.display = '';
+	if(portsenabled)
+		document.getElementById("sprtable").style.display = '';
+
 	document.getElementById("srctable").style.display = '';
 	document.getElementById("showadvancedboxsrc").style.display = 'none';
 	showsource = 1;
@@ -119,9 +121,11 @@ function proto_change() {
 	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 2) {
 		document.getElementById("sprtable").style.display = showsource == 1 ? '':'none';
 		document.getElementById("dprtr").style.display = '';
+		document.getElementById("lprtr").style.display = '';
 	} else {
 		document.getElementById("sprtable").style.display = 'none';
 		document.getElementById("dprtr").style.display = 'none';
+		document.getElementById("lprtr").style.display = 'none';
 	}
 }
 

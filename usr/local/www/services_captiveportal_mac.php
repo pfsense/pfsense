@@ -63,6 +63,28 @@ if ($_POST) {
 		if ($retval == 0)
 			clear_subsystem_dirty('passthrumac');
 	}
+
+	if ($_POST['delmac'] && $_POST['postafterlogin']) {
+		if (is_array($a_passthrumacs)) {
+			$found = false;
+			foreach ($a_passthrumacs as $idx => $macent) {
+				if ($macent['mac'] == $_POST['delmac']) {
+					$found = true;
+					break;
+				}
+			}
+			if ($found == true) {
+				$ip = captiveportal_get_ipfw_ruleno_byvalue($_POST['delmac']);
+				if ($ip) {
+					captiveportal_disconnect_client($ip);
+				}
+				unset($a_passthrumacs[$idx]);
+				write_config();
+				captiveportal_passthrumac_configure(true);
+			}
+		}
+		exit;
+	}
 }
 
 if ($_GET['act'] == "del") {

@@ -4,7 +4,6 @@
 
 require("config.inc");
 require("functions.inc");
-require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
 require("rrd.inc");

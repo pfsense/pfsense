@@ -2865,7 +2865,7 @@ class dnpipe_class extends dummynet_class {
 		if ($this->GetEnabled() == "")
 			return;
 
-       		$pfq_rule = "\npipe ". $this->GetNumber();
+       		$pfq_rule = "\npipe ". $this->GetNumber() . " config ";
 		if ($this->GetBandwidth() && $this->GetBwscale())
                     	$pfq_rule .= " bw ".trim($this->GetBandwidth()).$this->GetBwscale();
 		if ($this->GetQlimit())
@@ -3115,7 +3115,7 @@ class dnqueue_class extends dummynet_class {
 			return; 
 
 		$parent =& $this->GetParent();
-            	$pfq_rule = "queue ". $this->GetNumber() . " dnpipe " . $parent->GetNumber();
+            	$pfq_rule = "queue ". $this->GetNumber() . " config pipe " . $parent->GetNumber();
 		if ($this->GetQlimit())
                     	$pfq_rule .= " queue " . $this->GetQimit();
 		if ($this->GetWeight())

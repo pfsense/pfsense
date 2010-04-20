@@ -29,14 +29,23 @@ function ext_change() {
 		document.iform.dstendport_cust.disabled = 1;
 	}
 
+	if ((document.iform.localbeginport.selectedIndex == 0) && portsenabled) {
+		document.iform.localbeginport_cust.disabled = 0;
+	} else {
+		document.iform.localbeginport_cust.value = "";
+		document.iform.localbeginport_cust.disabled = 1;
+	}
+
 	if (!portsenabled) {
 		document.iform.srcbeginport.disabled = 1;
 		document.iform.srcendport.disabled = 1;
 		document.iform.dstbeginport.disabled = 1;
 		document.iform.dstendport.disabled = 1;
+		document.iform.localbeginport_cust.disabled = 1;
 	} else {
 		document.iform.srcbeginport.disabled = 0;
 		document.iform.srcendport.disabled = 0;
+		document.iform.localbeginport_cust.disabled = 0;
 		if( dstenabled ) {
 			document.iform.dstbeginport.disabled = 0;
 			document.iform.dstendport.disabled = 0;
@@ -96,6 +105,7 @@ function check_for_aliases() {
 			document.iform.localbeginport.disabled = 0;
 			document.iform.localbeginport_cust.disabled = 0;
 		}
+
 	}
 }
 

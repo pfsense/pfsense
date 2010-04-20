@@ -79,9 +79,12 @@ function step3_submitphpaction() {
 	/* Default LDAP port is 389 for TCP and 636 for SSL */
 	if (empty($_POST['port'])) {
 		if ($_POST['transport'] == "tcp")
-			$_POST['port'] = 389;
+			$config['ovpnserver']['step2']['port'] = 389;
 		elseif ($_POST['transport'] == "ssl")
-			$_POST['port'] = 636;
+			$config['ovpnserver']['step2']['port'] = 636;
+	} elseif (!is_port($_POST['port'])) {
+		$stepid--;
+		$savemsg = "Please enter a valid port number.";
 	}
 
 	if (empty($_POST['name']) || empty($_POST['ip']) ||empty($_POST['transport']) ||
@@ -91,6 +94,9 @@ function step3_submitphpaction() {
 	} else if (count(($authcfg = auth_get_authserver($_POST['name']))) > 0) {
 		$stepid--;
 		$savemsg = "Please choose a different name because an authentication server with this name already exists.";
+	} elseif (!is_fqdn($_POST['ip']) && !is_ipaddr($_POST['ip'])) {
+		$stepid--;
+		$savemsg = "Please enter a valid IP address or hostname for the authentication server.";
 	} else {
 		$config['ovpnserver']['step2']['uselist'] = "on";
 		$_POST['uselist'] = "on";
@@ -132,8 +138,12 @@ function step5_submitphpaction() {
 	global $stepid, $savemsg, $config;
 
 	/* Default RADIUS Auth port = 1812 */
-	if (empty($_POST['port']))
-		$_POST['port'] = 1812;
+	if (empty($_POST['port'])) {
+		$config['ovpnserver']['step2']['port'] = 1812;
+	} elseif (!is_port($_POST['port'])) {
+		$stepid--;
+		$savemsg = "Please enter a valid port number.";
+	}
 
 	if (empty($_POST['name']) || empty($_POST['ip']) || empty($_POST['secret'])) {
 		$stepid--;
@@ -141,6 +151,9 @@ function step5_submitphpaction() {
 	} else if (count(($authcfg = auth_get_authserver($_POST['name']))) > 0) {
 		$stepid--;
 		$savemsg = "Please choose a different name because an authentication server with this name already exists.";
+	} elseif (!is_fqdn($_POST['ip']) && !is_ipaddr($_POST['ip'])) {
+		$stepid--;
+		$savemsg = "Please enter a valid IP address or hostname for the authentication server.";
 	} else {
 		$config['ovpnserver']['step2']['uselist'] = "on";
 		$_POST['uselist'] = "on";
@@ -188,6 +201,9 @@ function step7_submitphpaction() {
 	} elseif (in_array($_POST['name'], $canames) || in_array($_POST['name'], $cacns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certicicate Authority. A Certificate Authority with that name already exists.";
+	} elseif (strlen($_POST['country']) != 2) {
+		$stepid--;
+		$savemsg = "Please enter only a two-letter ISO country code";
 	} else {
 		$config['ovpnserver']['step6']['uselist'] = "on";
 		$_POST['uselist'] = "on";
@@ -269,6 +285,9 @@ function step9_submitphpaction() {
 	} elseif (in_array($_POST['name'], $certnames) || in_array($_POST['name'], $certcns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certicicate. A Certificate with that name/common name already exists.";	
+	} elseif (strlen($_POST['country']) != 2) {
+		$stepid--;
+		$savemsg = "Please enter only a two-letter ISO country code";
 	} else {
 		$config['ovpnserver']['step9']['uselist'] = "on";
 		$_POST['uselist'] = "on";
@@ -297,8 +316,7 @@ function step10_stepbeforeformdisplay() {
 			$pkg['step'][$stepid]['fields']['field'][$idx]['options']['option'][] = $opt;
 			}
 		} else if ($field['name'] == "localport") {
-			if (count($config['openvpn']['openvpn-server']) < 1)
-				$pkg['step'][$stepid]['fields']['field'][$idx]['value'] = 1194;
+			$pkg['step'][$stepid]['fields']['field'][$idx]['value'] = openvpn_port_next('UDP');
 		}
 	}
 }
@@ -306,9 +324,9 @@ function step10_stepbeforeformdisplay() {
 function step10_submitphpaction() {
 	global $savemsg, $stepid;
 
-	/* Default OpenVPN port to 1194 if left empty. */
+	/* Default OpenVPN port to next available port if left empty. */
 	if (empty($_POST['localport']))
-		$_POST['localport'] = 1194;
+		$pconfig["step10"]["localport"] = openvpn_port_next('UDP');
 
 	/* input validation */
 	if ($result = openvpn_validate_port($_POST['localport'], 'Local port'))

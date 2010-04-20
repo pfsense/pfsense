@@ -50,6 +50,7 @@ if (!is_array($config['captiveportal']['passthrumac']))
 
 $a_passthrumacs = &$config['captiveportal']['passthrumac'] ;
 
+
 if ($_POST) {
 
 	$pconfig = $_POST;
@@ -57,7 +58,9 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = 0;
 
-		$retval = captiveportal_passthrumac_configure();
+		$rules = captiveportal_passthrumac_configure();
+		file_put_contents("{$g['tmp_path']}/passthru.mac", $rules);
+		mwexec("/sbin/ipfw {$g['tmp_path']}/passthru.mac");
 
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0)
@@ -67,10 +70,17 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_passthrumacs[$_GET['id']]) {
+		$ruleno = captiveportal_get_ipfw_ruleno_byvalue($a_passthrumacs[$_GET['id']]['mac']);
+		if ($ruleno) {
+			mwexec("/sbin/ipfw delete {$ruleno}");
+			captiveportal_free_ipfw_ruleno($ruleno);
+			$ruleno++;
+			mwexec("/sbin/ipfw delete {$ruleno}");
+		}
 		unset($a_passthrumacs[$_GET['id']]);
 		write_config();
-		mark_subsystem_dirty('passthrumac');
 		header("Location: services_captiveportal_mac.php");
+		//mark_subsystem_dirty('passthrumac');
 		exit;
 	}
 }

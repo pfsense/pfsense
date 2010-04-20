@@ -444,7 +444,7 @@ include("fbegin.inc"); ?>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-					<select name="interface" class="formselect">
+					<select name="interface" class="formselect" onChange="change_dst(this.value);typesel_change();">
 						<?php
 
 						$iflist = get_configured_interface_with_descr(false, true);

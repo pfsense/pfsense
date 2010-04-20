@@ -180,6 +180,15 @@ if ($_POST) {
 		$reqdfieldsn = explode(",", "Interface,Protocol,NAT IP");
 	}
 
+	if ($_POST['srctype'] == "single" || $_POST['srctype'] == "network") {
+		$reqdfields[] = "src";
+		$reqdfieldsn[] = "Source address";
+	}
+	if ($_POST['dsttype'] == "single" || $_POST['dsttype'] == "network") {
+		$reqdfields[] = "dst";
+		$reqdfieldsn[] = "Destination address";
+	}
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (!$_POST['srcbeginport']) {

@@ -81,10 +81,11 @@ if ($_POST['redirurl'])
     $redirurl = $_POST['redirurl'];
 
 $macfilter = !isset($config['captiveportal']['nomacfilter']);
+$passthrumac = isset($config['captiveportal']['passthrumacadd']);
 
 /* find MAC address for client */
 $clientmac = arp_get_mac_by_ip($clientip);
-if (!$clientmac && $macfilter) {
+if (!$clientmac && ($macfilter || $passthrumac)) {
     /* unable to find MAC address - shouldn't happen! - bail out */
     captiveportal_logportalauth("unauthenticated","noclientmac",$clientip,"ERROR");
     echo "An error occurred.  Please check the system logs for more information.";
@@ -117,6 +118,7 @@ setTimeout('window.close();',5000) ;
 </HTML>
 
 EOD;
+exit;
 /* The $macfilter can be removed safely since we first check if the $clientmac is present, if not we fail */
 } else if ($clientmac && portal_mac_fixed($clientmac)) {
     /* punch hole in ipfw for pass thru mac addresses */

@@ -118,7 +118,21 @@ if ($_POST) {
 		write_config();
 
 		if (isset($config['captiveportal']['enable'])) {
-			mwexec("/sbin/ipfw table 1 add " . $ip['ip']);
+			$bwup = "";
+			$bwdown = "";
+			$ruleno = captiveportal_get_next_ipfw_ruleno();
+			if (!empty($ip['bw_up'])) {
+				$pipeno = $ruleno + 20000;
+				mwexec("/sbin/ipfw pipe {$pipeno} config bw {$ip['bw_up']}Kbit/s queue 100")
+				$bwup = "pipe {$pipeno}";
+			}
+			if (!empty($ip['bw_down'])) {
+				$pipeno = $ruleno + 20001;
+				mwexec("/sbin/ipfw pipe {$pipeno} config bw {$ip['bw_down']}Kbit/s queue 100")
+				$bwdown = "pipe {$pipeno}";
+			}
+			mwexec("/sbin/ipfw table 1 add {$ip['ip']} {$bwup}");
+			mwexec("/sbin/ipfw table 2 add {$ip['ip']} {$bwdown}");
 		}
 		
 		header("Location: services_captiveportal_ip.php");

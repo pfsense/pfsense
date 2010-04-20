@@ -126,8 +126,7 @@ function captiveportal_configure() {
 		$cprules = captiveportal_rules_generate($cpinterface, $cpips);
 		$cprules .= "\n";
 		/* generate passthru mac database */
-		$cprules .= captiveportal_passthrumac_configure(true);
-		$cprules .= "\n";
+		captiveportal_passthrumac_configure(true);
 		/* allowed ipfw rules to make allowed ip work */
 		$cprules .= captiveportal_allowedip_configure();
 
@@ -485,10 +484,6 @@ function captiveportal_prune_old() {
         $timedout = false;
         $term_cause = 1;
 
-		/* no pruning for fixed mac address entry */
-		if (portal_mac_fixed($cpdb[$i][3])) {
-			continue; // check next value
-		}
         /* hard timeout? */
         if ($timeout) {
             if ((time() - $cpdb[$i][0]) >= $timeout) {
@@ -627,6 +622,7 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 	/* Delete client's ip entry from tables 3 and 4. */
 	mwexec("/sbin/ipfw table 1 delete {$dbent[2]}");
 	mwexec("/sbin/ipfw table 2 delete {$dbent[2]}");
+
 	/* Release the ruleno so it can be reallocated to new clients. */
 	captiveportal_free_ipfw_ruleno($dbent[1]);
 
@@ -712,64 +708,22 @@ function captiveportal_passthrumac_configure($lock = false) {
 	/* clear out passthru macs, if necessary */
 	unlink_if_exists("{$g['vardb_path']}/captiveportal_mac.db");
 
-	$rules = "";
 	if (is_array($config['captiveportal']['passthrumac'])) {
-
-		$fd = @fopen("{$g['vardb_path']}/captiveportal_mac.db", "w");
-		if (!$fd) {
-			printf("Error: cannot open passthru mac DB file in captiveportal_passthrumac_configure().\n");
-			unlock($captiveportallck);
-			return 1;
-		}
-
-		$peruserbw = isset($config['captiveportal']['peruserbw']);
-		$macdb = "";
+		$macdb = array();
 		foreach ($config['captiveportal']['passthrumac'] as $macent) {
-			$ruleno = captiveportal_get_next_ipfw_ruleno();
+			$macdb[$macent['mac']]['active']  = true;
+			if (isset($macent['bw_up']))
+				$macdb[$macent['mac']]['bw_up']  = $macent['bw_up'];
+			if (isset($macent['bw_down']))
+				$macdb[$macent['mac']]['bw_down']  = $macent['bw_down'];
 
-			$macdb .= $macent['mac'] . "\n";
-
-			/*    pfSense:
-	 		 * 	  pass through mac entries should always exist.  the reason
-	 		 *    for this is because we do not have native mac address filtering
-	 		 *    mechanisms.  this allows us to filter by mac address easily
-	 		 *    and get around this limitation.   I consider this a bug in
-	 		 *    m0n0wall and pfSense as m0n0wall does not have native mac
-	 		 *    filtering mechanisms as well. -Scott Ullrich
-			 * 
-			 * Add rules for traffic shaping.
-         		 * This assumes that net.inet.ip.fw.one_pass: 1 is set.
-         		 */
-
-			$actionup = "allow";
-			$actiondown = "allow";
-			if ($peruserbw) {
-				$bw_up = isset($macent['bw_up']) ? trim($macent['bw_up']) : $config['captiveportal']['bwdefaultup'];
-				$bw_down = isset($macent['bw_down']) ? trim($macent['bw_down']) : $config['captiveportal']['bwdefaultdn'];
-				if (!empty($bw_up) && is_numeric($bw_up)) {
-					$bw_up_pipeno = $ruleno + 20000;
-					$rules .= "pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100\n";
-					$actionup = "pipe {$bw_up_pipeno}";
-				}
-				if (!empty($bw_down) && is_numeric($bw_down)) {
-					$bw_down_pipeno = $ruleno + 20001;
-					$rules .= "pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100\n";
-					$actiondown = "pipe {$bw_down_pipeno}";
-        			}
-			}
-			$rules .= "add {$ruleno} {$actionup} ip from any to any MAC {$macent['mac']} any\n";
-			$ruleno++;
-			$rules .= "add {$ruleno} {$actiondown} ip from any to any MAC any {$macent['mac']}\n";
 		}
 		/* record passthru MACs so can be recognized and let thru */
-		fwrite($fd,  $macdb);
-		fclose($fd);
+		file_put_contents("{$g['vardb_path']}/captiveportal_mac.db", serialize($macdb));
 	}
 
 	if (!$lock)
 		unlock($captiveportallck);
-
-	return $rules;
 }
 
 function captiveportal_allowedip_configure() {
@@ -1139,18 +1093,9 @@ function portal_mac_fixed($clientmac) {
 
     /* open captive portal mac db */
     if (file_exists("{$g['vardb_path']}/captiveportal_mac.db")) {
-        $fd = @fopen("{$g['vardb_path']}/captiveportal_mac.db","r") ;
-        if (!$fd) {
-            return FALSE;
-        }
-        while (!feof($fd)) {
-            $mac = trim(fgets($fd)) ;
-            if(strcasecmp($clientmac, $mac) == 0) {
-                fclose($fd) ;
-                return TRUE ;
-            }
-        }
-        fclose($fd) ;
+	$macdb = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_mac.db"));
+	if (isset($macdb[$clientmac]))
+		return $macdb[$clientmac];
     }
     return FALSE ;
 }

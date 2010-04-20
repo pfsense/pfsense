@@ -117,13 +117,11 @@ setTimeout('window.close();',5000) ;
 </HTML>
 
 EOD;
-/* NOTE: This is not needed now that CP works only at layer2.
- * The $macfilter can be removed safely since we first check if the $clientmac is present, if not we fail 
+/* The $macfilter can be removed safely since we first check if the $clientmac is present, if not we fail */
 } else if ($clientmac && portal_mac_fixed($clientmac)) {
-    // punch hole in ipfw for pass thru mac addresses
+    /* punch hole in ipfw for pass thru mac addresses */
     portal_allow($clientip, $clientmac, "unauthenticated");
     exit;
-*/
 
 } else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip)) {
     /* radius functions handle everything so we exit here since we're done */
@@ -322,13 +320,22 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
          */
         $peruserbw = isset($config['captiveportal']['peruserbw']);
 	$passthrumacadd = isset($config['captiveportal']['passthrumacadd']);
-	
-        $bw_up = isset($attributes['bw_up']) ? trim($attributes['bw_up']) : $config['captiveportal']['bwdefaultup'];
-        $bw_down = isset($attributes['bw_down']) ? trim($attributes['bw_down']) : $config['captiveportal']['bwdefaultdn'];
+	$portalmac = NULL;
+	if (!empty($clientmac)) {
+		$portalmac = portal_mac_fixed($clientmac);
+		if ($portalmac) {
+			$attributes['bw_up'] = $portalmac['bw_up'];
+			$attributes['bw_down'] = $portalmac['bw_down'];
+		}
+	}
 
-	if ($passthrumacadd) {
+       	$bw_up = isset($attributes['bw_up']) ? trim($attributes['bw_up']) : $config['captiveportal']['bwdefaultup'];
+       	$bw_down = isset($attributes['bw_down']) ? trim($attributes['bw_down']) : $config['captiveportal']['bwdefaultdn'];
+
+	if ($passthrumacadd && $portalmac == NULL) {
 		$mac = array();
 		$mac['mac'] = $clientmac;
+		$mac['descr'] =  "Auto added mac passthrough with user {$username}";
 		if (!empty($bw_up))
 			$mac['bw_up'] = $bw_up;
 		if (!empty($bw_down))
@@ -343,18 +350,13 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
             $bw_up_pipeno = $ruleno + 20000;
 	    //$bw_up /= 1000; // Scale to Kbit/s
             mwexec("/sbin/ipfw pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
-            mwexec("echo 'pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100' > /tmp/testing");
 
-	    if ($passthrumacadd) {
-		mwexec("/sbin/ipfw add {$ruleno} pipe {$bw_up_pipeno} ip from any to any MAC {$clientmac} any");
-	    } else if (!isset($config['captiveportal']['nomacfilter']))
+	    if (!isset($config['captiveportal']['nomacfilter']) || $passthrumacadd)
 		mwexec("/sbin/ipfw table 1 add {$clientip} mac {$clientmac} {$bw_up_pipeno}");
 	    else
 	    	mwexec("/sbin/ipfw table 1 add {$clientip} {$bw_up_pipeno}");
         } else {
-	    if ($passthrumacadd) {
-		mwexec("/sbin/ipfw add {$ruleno} allow ip from any to any MAC {$clientmac} any");
-	    } else if (!isset($config['captiveportal']['nomacfilter']))
+	    if (!isset($config['captiveportal']['nomacfilter']) || $passthrumacadd)
 		mwexec("/sbin/ipfw table 1 add {$clientip} mac {$clientmac}");
 	    else
             	mwexec("/sbin/ipfw table 1 add {$clientip}");
@@ -362,21 +364,14 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
         if ($peruserbw && !empty($bw_down) && is_numeric($bw_down)) {
             $bw_down_pipeno = $ruleno + 20001;
 	    //$bw_down /= 1000; // Scale to Kbit/s
-            mwexec("/sbin/ipfw pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
-            mwexec("echo 'pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100' > /tmp/testing");
+	    mwexec("/sbin/ipfw pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
 
-	    if ($passthrumacadd) {
-		$ruledown = $ruleno + 1;
-		mwexec("/sbin/ipfw add {$ruledown} pipe {$bw_down_pipeno} ip from any to any MAC any {$clientmac}");
-	    } else if (!isset($config['captiveportal']['nomacfilter']))
+	    if (!isset($config['captiveportal']['nomacfilter']) || $passthrumacadd)
                 mwexec("/sbin/ipfw table 2 add {$clientip} mac {$clientmac} {$bw_down_pipeno}");
             else
                 mwexec("/sbin/ipfw table 2 add {$clientip} {$bw_down_pipeno}");
         } else {
-	    if ($passthrumacadd) {
-		$ruledown = $ruleno + 1;
-		mwexec("/sbin/ipfw add {$ruleno} allow ip from any to any MAC {$clientmac} any");
-            } else if (!isset($config['captiveportal']['nomacfilter']))
+            if (!isset($config['captiveportal']['nomacfilter']) || $passthrumacadd)
                 mwexec("/sbin/ipfw table 2 add {$clientip} mac {$clientmac}");
             else
                 mwexec("/sbin/ipfw table 2 add {$clientip}");
@@ -411,8 +406,10 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
     if ($captiveshouldunlock == true)
 	unlock($cplock);
 
-    if ($writecfg == true)
+    if ($writecfg == true) {
 	write_config();
+	captiveportal_passthrumac_configure(true);
+    }
 
     /* redirect user to desired destination */
     if ($url_redirection)

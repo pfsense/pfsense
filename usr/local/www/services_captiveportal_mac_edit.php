@@ -120,7 +120,7 @@ if ($_POST) {
 		
 		write_config();
 
-		//mark_subsystem_dirty('passthrumac');
+		mark_subsystem_dirty('passthrumac');
 		
 		header("Location: services_captiveportal_mac.php");
 		exit;

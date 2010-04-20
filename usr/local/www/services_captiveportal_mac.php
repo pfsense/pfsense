@@ -59,8 +59,8 @@ if ($_POST) {
 		$retval = 0;
 
 		$rules = captiveportal_passthrumac_configure();
-		file_put_contents("{$g['tmp_path']}/passthru.mac", $rules);
-		mwexec("/sbin/ipfw {$g['tmp_path']}/passthru.mac");
+		//file_put_contents("{$g['tmp_path']}/passthru.mac", $rules);
+		//mwexec("/sbin/ipfw {$g['tmp_path']}/passthru.mac");
 
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0)
@@ -80,7 +80,7 @@ if ($_GET['act'] == "del") {
 		unset($a_passthrumacs[$_GET['id']]);
 		write_config();
 		header("Location: services_captiveportal_mac.php");
-		//mark_subsystem_dirty('passthrumac');
+		mark_subsystem_dirty('passthrumac');
 		exit;
 	}
 }

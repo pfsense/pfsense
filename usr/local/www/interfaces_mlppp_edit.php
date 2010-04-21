@@ -90,6 +90,7 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_ppps[$id]) {
 	$pconfig['type'] = $a_ppps[$id]['type'];
+	$pconfig['interfaces'] = $a_ppps[$id]['ports'];
 	$pconfig['username'] = $a_ppps[$id]['username'];
 	$pconfig['password'] = $a_ppps[$id]['password'];
 	if (isset($a_ppps[$id]['defaultgw']))
@@ -97,6 +98,7 @@ if (isset($id) && $a_ppps[$id]) {
 	if (isset($a_ppps[$id]['ondemand']))
 		$pconfig['ondemand'] = true;
 	$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
+	$pconfig['uptime'] = $a_ppps[$id]['uptime'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
 	$pconfig['bandwidth'] = $a_ppps[$id]['bandwidth'];
 	$pconfig['mtu'] = $a_ppps[$id]['mtu'];
@@ -113,7 +115,6 @@ if (isset($id) && $a_ppps[$id]) {
 	if (isset($a_ppps[$id]['tcpmssfix']))
 		$pconfig['tcpmssfix'] = true;
 	if ($a_ppps[$id]['type'] == "ppp") {
-		$pconfig['interfaces'] = $a_ppps[$id]['ports'];
 		$pconfig['initstr'] = base64_decode($a_ppps[$id]['initstr']);
 		$pconfig['simpin'] = $a_ppps[$id]['simpin'];
 		$pconfig['pin-wait'] = $a_ppps[$id]['pin-wait'];
@@ -125,13 +126,11 @@ if (isset($id) && $a_ppps[$id]) {
 		$pconfig['gateway'] = $a_ppps[$id]['gateway'];
 	}
 	if ($a_ppps[$id]['type'] == "pptp") {
-		$pconfig['interfaces'] = $a_ppps[$id]['ports'];
 		$pconfig['localip'] = $a_ppps[$id]['localip'];
 		$pconfig['subnet'] = $a_ppps[$id]['subnet'];
 		$pconfig['gateway'] = $a_ppps[$id]['gateway'];
 	}
 	if ($a_ppps[$id]['type'] == "pppoe") {
-		$pconfig['interfaces'] = $a_ppps[$id]['ports'];
 		$pconfig['provider'] = $a_ppps[$id]['provider'];
 		/* ================================================ */
 		/* = force a connection reset at a specific time? = */
@@ -264,6 +263,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$ppp = array();
 		$ppp['type'] = $_POST['type'];
+		$ppp['ports'] = implode(',', $_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = $_POST['password'];
 		$ppp['defaultgw'] = $_POST['defaultgw'] ? true : false;
@@ -272,13 +272,13 @@ if ($_POST) {
 			$ppp['idletimeout'] = $_POST['idletimeout'];
 		else 
 			unset($ppp['idletimeout']);
+		$ppp['uptime'] = $_POST['uptime'] ? true : false;
 		if (!empty($_POST['descr']))
 			$ppp['descr'] = $_POST['descr'];
 		else
 			unset($ppp['descr']);
 		switch($_POST['type']) {
 			case "ppp":
-				$ppp['ports'] = implode(',', $_POST['interfaces']);
 				if (!empty($_POST['initstr']))
 					$ppp['initstr'] = base64_encode($_POST['initstr']);
 				else
@@ -316,16 +316,13 @@ if ($_POST) {
 					unset($ppp['connect-timeout']);
 				break;
 			case "pppoe":
-				$ppp['ports'] = implode(',', $_POST['interfaces']);
 				if (!empty($_POST['provider']))
 					$ppp['provider'] = $_POST['provider'];
 				else
 					unset($ppp['provider']);
 				handle_pppoe_reset();
-				
 				break;
 			case "pptp":
-				$ppp['ports'] = implode(',', $_POST['interfaces']);
 				$ppp['localip'] = $_POST['localip'];
 				$ppp['subnet'] = $_POST['subnet'];
 				$ppp['gateway'] = $_POST['gateway'];
@@ -477,66 +474,65 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 ?>
 
 <script type="text/javascript">
-
+	function update_select_list(new_options, select_list){
+		var option_array = new_options.split("|");
+		select_list.options.length = 0;
+		for(var j=0; j < option_array.length-1; j++){
+			var option = option_array[j].split(",");
+			var selected = Boolean(parseInt(option[2]));
+			select_list.options[j] = new Option("&nbsp;"+option[0]+"&nbsp;", option[1], false, selected);
+			//select_list.options[option_array.length-1+j] = new Option(option[2].toString() +" "+ selected.toString());
+		}
+	}
+	
+	function show_bandwidth_input() {
+		var bboxes = $('bandwidth_input').innerHTML;
+		$('bandwidth_input').show();
+	}
+	
 	function updateType(t){
-		var ports = document.iform["interfaces[]"];
+		var serialports = $('serialports').innerHTML;
+		var ports = $('ports').innerHTML;
+		var select_list = document.iform["interfaces[]"];
 		switch(t) {
 			case "select": {
 				$('ppp','pppoe','pptp','ipfields').invoke('hide');
-				for(var j=0; j < document.iform["interfaces[]"].length; j++){
-					ports.options[j] = null;
-				}
+				select_list.options.length = 0;
+				select_list.options[0] = new Option("Select Link Type First","");
 				break;
 			}
 			case "ppp": {
-				for(var j=0; j < document.iform["interfaces[]"].length; j++){
-					if (document.iform["interfaces[]"].options[j].value.indexOf("/dev/") < 0){
-						ports.options[j] = null;
-					}
-				}
+				update_select_list(serialports, select_list);
 				$('select','pppoe','pptp','subnet').invoke('hide');
 				$('ipfields').show();
 				
 				break;
 			}
 			case "pppoe": {
-			for(var j=0; j < document.iform["interfaces[]"].length; j++){
-					if (document.iform["interfaces[]"].options[j].value.indexOf("/dev/") > 0){
-						document.iform["interfaces[]"].options[j] = null;
-			}
-				}
+				update_select_list(ports, select_list);
 				$('select','ppp','pptp','ipfields').invoke('hide');
 				break;
 			}
 			case "pptp": {
-			for(var j=0; j < document.iform["interfaces[]"].length; j++){
-					if (document.iform["interfaces[]"].options[j].value.indexOf("/dev/") > 0){
-						document.iform["interfaces[]"].options[j] = null;
-					}
-			}
+				update_select_list(ports, select_list);
 				$('select','ppp','pppoe').invoke('hide');
 				$('ipfields','subnet').invoke('show');
 				break;
 			}
 			default:
+				select_list.options.length = 0;
 				break;
 		}
-		
 		$(t).show();
-		//history.go(0);
 	}
 	
-	function show_periodic_reset(obj) {
+	function show_more_settings(obj,element_id) {
 		if (obj.checked)
-			$('presetwrap').show();
+			$(element_id).show();
 		else
-			$('presetwrap').hide();
+			$(element_id).hide();
 	}
-
-	function show_bandwidth_input_boxes() {
-		var bboxes = $('interfaces').innerHTML;
-		alert("hello" . bboxes);
-	}
+	
 	function prefill_att() {
 		$('initstr').value = "Q0V1E1S0=0&C1&D2+FCLASS=0";
 		$('apn').value = "ISP.CINGULAR";
@@ -561,7 +557,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		$('username').value = "123@vzw3g.com";
 		$('password').value = "vzw";
 	}
-	//document.observe("dom:loaded", function() { updateType(<?php echo "'{$pconfig['type']}'";?>); });
+	document.observe("dom:loaded", function() { updateType(<?php echo "'{$pconfig['type']}'";?>); });
 </script>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
@@ -588,32 +584,40 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					</td>
 				</tr>
 				<tr name="interface" id="interface" >
-					<td width="22%" valign="top" class="vncellreq">Member interface(s)</td>
+					<td width="22%" valign="top" class="vncellreq">Link interface(s)</td>
 					<td width="78%" class="vtable">
-						<select name="interfaces[]" multiple="true" class="formselect">
-							<?php
-								$serial = glob("/dev/cua*");
-								$modems = glob("/dev/modem*");
-								$ports = array_merge($serial, $modems);
-								foreach ($portlist as $ifn => $ifinfo){
-								//if (is_jumbo_capable($ifn)) {
-									echo "<option value=\"{$ifn}\"";
-									if (stristr($pconfig['interfaces'], $ifn))
-										echo " selected";
-									echo ">" . htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")") . "</option>";
-								}
-								foreach ($ports as $port) {
-									if(preg_match("/\.(lock|init)$/", $port))
-										continue;
-									echo "<option value=\"".trim($port)."\"";
-									if (stristr($pconfig['interfaces'], $port))
-										echo " selected";
-									echo ">{$port}</option>";
-								}
-							?>
+						<select name="interfaces[]" multiple="true" class="formselect" size="4">
+							<option>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 						</select>
 						<br/><span class="vexpl">Interfaces participating in the multilink connection.</span>
 					</td>
+            	</tr>
+            	<tr style="display:none" name="portlists" id="portlists">
+            		<td id="serialports"><?php
+							$serial = glob("/dev/cua*");
+							$modems = glob("/dev/modem*");
+							$serialports = array_merge($serial, $modems);
+							foreach ($serialports as $port) {
+								if(preg_match("/\.(lock|init)$/", $port))
+									continue;
+								echo $port.",".trim($port);
+								if (stristr($pconfig['interfaces'], $port))
+									echo ",1|";
+								else
+									echo ",0|";
+							}
+					?></td>
+            		<td id="ports"><?php
+							foreach ($portlist as $ifn => $ifinfo){
+							//if (is_jumbo_capable($ifn)) {
+								echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")") . ",{$ifn}";
+								//echo "\"{$ifn}\"";
+								if (stristr($pconfig['interfaces'], $ifn))
+									echo ",1|";
+								else
+									echo ",0|";
+							}
+					?></td>
             	</tr>
 				<tr>
 					<td width="22%" valign="top" class="vncell">Username</td>
@@ -648,6 +652,13 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 						<br/> <span class="vexpl">Sets the idle timeout value for the bundle. If no incoming or outgoing packets are transmitted for the set number of seconds 
 						the connection is brought down. An idle timeout of zero disables this feature. <bold>Default is 0.</bold>
 						<br/>When the idle timeout occurs, if the dial-on-demand option is enabled, mpd goes back into dial-on-demand mode. Otherwise, the interface is brought down and all associated routes removed.</span>
+					</td>
+			    </tr>
+			    <tr>
+            	<td valign="top" class="vncell">Uptime Logging</td>
+					<td class="vtable">
+						<input type="checkbox" value="on" id="uptime" name="uptime" <?php if (isset($pconfig['uptime'])) echo "checked"; ?>> Enable persistent logging of connection uptime.
+						<br/> <span class="vexpl">This option causes cumulative uptime to be recorded and displayed on the Status Interfaces page.</span>
 					</td>
 			    </tr>
 				<tr>
@@ -734,7 +745,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("Periodic reset");?></td>
 								<td width="78%" class="vtable">
-									<input name="pppoe_preset" type="checkbox" id="pppoe_preset" value="yes" <?php if ($pconfig['pppoe_preset']) echo "checked"; ?> onclick="show_periodic_reset(this);" />
+									<input name="pppoe_preset" type="checkbox" id="pppoe_preset" value="yes" <?php if ($pconfig['pppoe_preset']) echo "checked"; ?> onclick="show_more_settings(this,presetwrap);" />
 									<?= gettext("enable periodic PPPoE resets"); ?>
 									<br />
 									<?php if ($pconfig['pppoe_preset']): ?>
@@ -813,14 +824,14 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 										<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet']) echo "selected"; ?>><?=$i;?></option>
 									<?php endfor; ?>
 									</select>
-									<br><span class="vexpl">Note: Enter the local IP here if not automatically assigned. Subnet is ignored for PPP connections.</span>
+									<br><span class="vexpl">Note: Local IP/subnet is required for PPTP connections. LocalIP is automatically assigned for PPP links if this field is empty.</span>
 								</td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell">Remote IP (Gateway)</td>
 								<td width="78%" class="vtable">
 									<input name="gateway" type="text" class="formfld unknown" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>">
-									<br><span class="vexpl">Note: Enter the remote IP here if not automatically assigned. This is where the packets will be routed.</span>
+									<br><span class="vexpl">Note: This is where the packets will be routed. Remote IP is required for PPTP connections. Remote IP is automatically assigned for PPP links if this field is empty.</span>
 								</td>
 							</tr>
 						</table>
@@ -834,11 +845,10 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				<tr>
 					<td width="22%" width="100" valign="top" class="vncell">Bandwidth</td>
 					<td width="78%" class="vtable">
-					<input name="bandwiths" type="checkbox" id="bandwiths" value="yes" <?php if (isset($pconfig['bandwidth'])) echo "checked"; ?> onclick="show_bandwidth_input_boxes();" />
+					<input name="bandwidths" type="checkbox" id="bandwidths" value="yes" <?php if (isset($pconfig['bandwidth'])) echo "checked"; ?> onclick="show_more_settings(this,bandwidth_input);" />
 					Set <bold>unequal</bold> bandwidths for links in this multilink connection.
-					<span id="bandwidth_input" style="display:none">
-						
-						<br> <span class="vexpl">Set Bandwidth for each link ONLY if links have different bandwidths.</span>
+					<span style="display:none" id="bandwidth_input"><input name="bandwidth[]" type="text" class="formfld unknown" id="bandwidth" size="40" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
+					<br/> <span class="vexpl">Set Bandwidth for each link ONLY when links have different bandwidths.</span>
 					</span>
 				  </td>
 				</tr>

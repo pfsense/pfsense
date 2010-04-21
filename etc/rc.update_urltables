@@ -1,0 +1,49 @@
+#!/usr/local/bin/php -q
+<?php
+require_once("config.inc");
+require_once("util.inc");
+require_once("pfsense-utils.inc");
+
+if (!is_array($config['aliases']['alias'])) {
+	// No aliases
+	exit;
+}
+
+// Gather list of urltable aliases
+$todo = array();
+foreach ($config['aliases']['alias'] as $alias) {
+	if ($alias['type'] == 'urltable') {
+		$tmp = array();
+		$tmp['name'] = $alias['name'];
+		$tmp['url']  = $alias['url'];
+		$tmp['freq'] = $alias['updatefreq'];
+		$todo[] = $tmp;
+	}
+}
+
+if (count($todo) > 0) {
+	log_error("{$argv[0]}: Starting up.");
+
+	if ($argv[1] != "now") {
+		// Wait a little before updating.
+		$wait = mt_rand(5, 60);
+		log_error("{$argv[0]}: Sleeping for {$wait} seconds.");
+		sleep($wait);
+	}
+
+	log_error("{$argv[0]}: Starting URL table alias updates");
+
+	foreach ($todo as $t) {
+		$r = process_alias_urltable($t['name'], $t['url'], $t['freq']);
+		if ($r == 1) {
+			$result = "";
+			exec("/sbin/pfctl -t " . escapeshellarg($t['name']) . " -T replace -f /var/db/aliastables/" . escapeshellarg($t['name']) . ".txt 2>&1", $result);
+			log_error("{$argv[0]}: Updated {$t['name']} content from {$t['url']}: {$result[0]}");
+		} elseif ($r == -1) {
+			log_error("{$argv[0]}: {$t['name']} does not need updated.");
+		} else {
+			log_error("{$argv[0]}: ERROR: could not update {$t['name']} content from {$t['url']}");
+		}
+	}
+}
+?>

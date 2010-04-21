@@ -1877,5 +1877,42 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	}
 	return $v;
 }
+function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
+	$urltable_prefix = "/var/db/aliastables/";
+	$urltable_filename = $urltable_prefix . $name . ".txt";
+
+	// Make the aliases directory if it doesn't exist
+	if (!file_exists($urltable_prefix)) {
+		mkdir($urltable_prefix);
+	} elseif (!is_dir($urltable_prefix)) {
+		unlink($urltable_prefix);
+		mkdir($urltable_prefix);
+	}
+
+	// If the file doesn't exist or is older than update_freq days, fetch a new copy.
+	if (!file_exists($urltable_filename)
+		|| ((time() - filemtime($urltable_filename)) > ($freq * 86400))
+		|| $forceupdate) {
+
+		// Try to fetch the URL supplied
+		conf_mount_rw();
+		unlink_if_exists($urltable_filename . ".tmp");
+		// Use fetch to grab data since these may be large files, we don't want to process them through PHP if we can help it.
+		mwexec("/usr/bin/fetch -q -o " . escapeshellarg($urltable_filename . ".tmp") . " " . escapeshellarg($url));
+		// Remove comments. Might need some grep-fu to only allow lines that look like IPs/subnets
+		mwexec("/usr/bin/grep -v '^#' " . escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
+		unlink_if_exists($urltable_filename . ".tmp");
+		conf_mount_ro();
+		if (filesize($urltable_filename)) {
+			return true;
+		} else {
+			// If it's unfetchable or an empty file, bail
+			return false;
+		}
+	} else {
+		// File exists, and it doesn't need updated.
+		return -1;
+	}
+}
 
 ?>

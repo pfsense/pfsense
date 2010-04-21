@@ -488,7 +488,7 @@ function filter_generate_aliases() {
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
 			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
-			if($aliased['type'] == "host" || $aliased['type'] == "network") {
+			if($aliased['type'] == "host" || $aliased['type'] == "network" || $aliased['type'] == "url") {
 				$tableaddrs = "{$addrlist}{$extralias}";
 				if(empty($tableaddrs))
 					$aliases .= "table <{$aliased['name']}> persist\n";
@@ -516,6 +516,12 @@ function filter_generate_aliases() {
 				}
 				$aliases .= "table <{$aliased['name']}> { {$newaddress}{$extralias} } \n";
                                 $aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+			} elseif($aliased['type'] == "urltable") {
+				$urlfn = alias_expand_urltable($aliased['name']);
+				if ($urlfn) {
+					$aliases .= "table <{$aliased['name']}> persist file \"{$urlfn}\"\n";
+					$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+				}
 			} else 
 				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
 		}

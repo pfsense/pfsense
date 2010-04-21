@@ -947,6 +947,9 @@ function rule_popup($src,$srcport,$dst,$dstport){
                 	$alias_details = explode ("||", $alias_name['detail']);
                 	$alias_objects_with_details = "";
                 	$counter = 0;
+			if ($alias_name['url']) {
+				$alias_objects_with_details .= $alias_name['url'] . "<br/>";
+			}
                 	foreach($alias_addresses as $alias_ports_address)
                 	{
                         	$alias_objects_with_details .= $alias_addresses[$counter];

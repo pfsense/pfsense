@@ -121,6 +121,11 @@ if ($_POST) {
 		else
 			unset($config['system']['disablescrub']);
 
+		if ($_POST['tftpinterface'])
+			$config['system']['tftpinterface'] = implode(",", $_POST['tftpinterface']);
+		else
+			unset($config['system']['tftpinterface']);
+	
 		write_config();
 
 		/* 
@@ -287,7 +292,7 @@ function update_description(itemnum) {
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
-							<?php if($config['interfaces']['lan']): ?>
+							<?php if(count($config['interfaces']) > 1): ?>
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
 							</tr>		
@@ -303,6 +308,20 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" /><br/>
 									<strong>Enter value for Reflection timeout in seconds.</strong>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">TFTP Proxy</td>
+								<td width="78%" class="vtable">
+									<select name="tftpinterface[]" multiple="true" class="formselect" size="3">
+<?php
+                                					$ifdescs = get_configured_interface_with_descr();
+                                					foreach ($ifdescs as $ifent => $ifdesc):
+?>
+										<option value="<?=$ifent;?>" <?php if (stristr($pconfig['tftpinterface'], $ifent)) echo "selected"; ?>><?=gettext($ifdesc);?></option>
+<?php                           						endforeach; ?>
+                                					</select>
+									<strong>Choose the interfaces where you want TFTP proxy help to be enabled.</strong>
 								</td>
 							</tr>
 							<tr>

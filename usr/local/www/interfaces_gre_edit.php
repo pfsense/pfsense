@@ -76,7 +76,7 @@ if ($_POST) {
 
 	if ((!is_ipaddr($_POST['tunnel-local-addr'])) || (!is_ipaddr($_POST['tunnel-remote-addr'])) ||
 			(!is_ipaddr($_POST['remote-addr']))) {
-		$input_errors[] = "All fildes must have valid ip addresses.";
+		$input_errors[] = "The tunnel local and tunnel remote fields must have valid IP addresses.";
 	}
 
 	foreach ($a_gres as $gre) {

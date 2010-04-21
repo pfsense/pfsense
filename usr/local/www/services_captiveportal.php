@@ -92,6 +92,7 @@ $pconfig['radiuskey'] = $config['captiveportal']['radiuskey'];
 $pconfig['radiuskey2'] = $config['captiveportal']['radiuskey2'];
 $pconfig['radiusvendor'] = $config['captiveportal']['radiusvendor'];
 $pconfig['radiussession_timeout'] = isset($config['captiveportal']['radiussession_timeout']);
+$pconfig['passthrumacadd'] = isset($config['captiveportal']['passthrumacadd']);
 $pconfig['radmac_format'] = $config['captiveportal']['radmac_format'];
 
 if ($_POST) {
@@ -192,7 +193,8 @@ if ($_POST) {
 		$config['captiveportal']['radiuskey2'] = $_POST['radiuskey2'];
 		$config['captiveportal']['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
-        $config['captiveportal']['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
+		$config['captiveportal']['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
+		$config['captiveportal']['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 
 		/* file upload? */
 		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))
@@ -360,6 +362,15 @@ to access after they've authenticated.</td>
     If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in.
     This is required when the MAC address of the client cannot be determined (usually because there are routers between <?php echo $g['product_name'] ?> and the clients).
     If this is enabled, RADIUS MAC authentication cannot be used.</td>
+	</tr>
+	<tr>
+      <td valign="top" class="vncell">MAC passthrough</td>
+      <td class="vtable">
+        <input name="passthrumacadd" type="checkbox" class="formfld" id="passthrumacadd" value="yes" <?php if ($pconfig['passthrumacadd']) echo "checked"; ?>>
+        <strong>MAC passthrough authentication</strong><br>
+    If this option is set, after a user is authenticated a mac passthrough entry will be added.
+    To remove the passthrough MAC entry you either have to log in and remove it manually from the MAC passthrough tab or send a POST to remove it from some other system.
+    If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.</td>
 	</tr>
 	<tr>
       <td valign="top" class="vncell">Per-user bandwidth restriction</td>

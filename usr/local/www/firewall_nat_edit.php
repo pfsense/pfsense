@@ -544,6 +544,7 @@ if($config['aliases']['alias'] <> "")
                         case "host":
                         case "network":
                         case "openvpn":
+			case "urltable":
                                 if($addrisfirst == 1) $aliasesaddr .= ",";
                                 $aliasesaddr .= "'" . $alias_name['name'] . "'";
                                 $addrisfirst = 1;

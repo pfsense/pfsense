@@ -54,10 +54,11 @@ $a_allowedips = &$config['captiveportal']['allowedip'] ;
 if ($_GET['act'] == "del") {
 	if ($a_allowedips[$_GET['id']]) {
 		$ipent = $a_allowedips[$_GET['id']];
-		if ($ipent['dir'] == "from")
+		
+		if (isset($config['captiveportal']['enable'])) {
 			mwexec("/sbin/ipfw table 1 delete " . $ipent['ip']);
-		else
 			mwexec("/sbin/ipfw table 2 delete " . $ipent['ip']);
+		}
 			
 		unset($a_allowedips[$_GET['id']]);
 		write_config();

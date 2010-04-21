@@ -785,8 +785,11 @@ function upgrade_042_to_043() {
 		/* Update all filter rules which might reference this gateway */
 		$j = 0;
 		foreach($config['filter']['rule'] as $rule) {
-			if(is_ipaddr($rule['gateway']) && ($rule['gateway'] == $config['gateways']['gateway_item'][$i]['gateway'])) {
-				$config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+			if(is_ipaddr($rule['gateway'])) {
+				if ($rule['gateway'] == $config['gateways']['gateway_item'][$i]['gateway'])
+					$config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+				else if ($rule['gateway'] == $ifname)
+					$config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
 			}
 			$j++;
 		}

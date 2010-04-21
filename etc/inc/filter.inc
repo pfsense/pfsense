@@ -55,7 +55,7 @@ $filterdns = "";
 
 function flowtable_configure() {
 	global $config, $g;
-	return;
+
 	// Figure out how many flows we should reserve
 	// sized 2x larger than the number of unique connection destinations.
 	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) 
@@ -488,7 +488,7 @@ function filter_generate_aliases() {
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
 			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
-			if($aliased['type'] == "host" || $aliased['type'] == "network") {
+			if($aliased['type'] == "host" || $aliased['type'] == "network" || $aliased['type'] == "url") {
 				$tableaddrs = "{$addrlist}{$extralias}";
 				if(empty($tableaddrs))
 					$aliases .= "table <{$aliased['name']}> persist\n";
@@ -516,6 +516,12 @@ function filter_generate_aliases() {
 				}
 				$aliases .= "table <{$aliased['name']}> { {$newaddress}{$extralias} } \n";
                                 $aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+			} elseif($aliased['type'] == "urltable") {
+				$urlfn = alias_expand_urltable($aliased['name']);
+				if ($urlfn) {
+					$aliases .= "table <{$aliased['name']}> persist file \"{$urlfn}\"\n";
+					$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+				}
 			} else 
 				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
 		}
@@ -1062,6 +1068,14 @@ function filter_nat_rules_generate() {
 	$natrules .= "# TFTP proxy\n";
 	$natrules .= "rdr-anchor \"tftp-proxy/*\"\n";
 
+	if (!empty($config['system']['tftpinterface'])) {
+		$tftpifs = explode(",", $config['system']['tftpinterface']);
+		foreach($tftpifs as $tftpif) {
+			if ($FilterIflist[$tftpif])
+				$natrules .= "rdr pass on {$FilterIflist[$tftpif]['if']} proto udp from any to any port tftp -> 127.0.0.1 port 6969\n";
+		}
+	}
+
 	$interface_counter = 0;
 	$vpns_list = filter_get_vpns_list();
 	$direct_networks_list = filter_get_direct_networks_list();
@@ -1083,7 +1097,7 @@ function filter_nat_rules_generate() {
 	// Open inetd.conf write handle
 	$inetd_fd = fopen("/var/etc/inetd.conf","w");
 	/* add tftp protocol helper */
-	fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy\ttftp-proxy -v\n");
+	fwrite($inetd_fd, "tftp-proxy\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy\ttftp-proxy -v\n");
 
 	if(isset($config['nat']['rule'])) {
 		if(!isset($config['system']['disablenatreflection'])) {
@@ -1878,6 +1892,14 @@ EOD;
 pass out all keep state allow-opts label "let out anything from firewall host itself"
 
 EOD;
+	foreach ($FilterIflist as $ifdescr => $ifcfg) {
+                if(isset($ifcfg['virtual']))
+                        continue;
+		$gw = get_interface_gateway($ifdescr);
+		if (is_ipaddr($gw) && is_ipaddr($ifcfg['ip']))
+                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to any keep state allow-opts label \"let out anything from firewall host itself\"\n";
+        }
+
 
 	/* add ipsec interfaces */
 	if(isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) 
@@ -2008,8 +2030,7 @@ EOD;
 # package manager late specific hook
 anchor "packagelate"
 
-EOD;
-	$ipfrules .= <<<EOD
+anchor "tftp-proxy/*"
 
 anchor "limitingesr"
 
@@ -2445,11 +2466,10 @@ function discover_pkg_rules($ruletype) {
 				log_error($errorrules);
 				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg_inc}", "#{$errorrules}\n");
 				return "";
-			} else {
-				return $rules;
 			}
 		}
 	}
+	return $rules;
 }
 
 ?>

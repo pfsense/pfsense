@@ -92,7 +92,7 @@ if ($_GET['act'] == "del") {
 						$referenced_by = $rule['descr'];
 						break;
 					}
-					if($rule['source']['address'] == $alias_name) {
+					if($rule['destination']['address'] == $alias_name) {
 						$is_alias_referenced = true;
 						$referenced_by = $rule['descr'];
 						break;
@@ -183,6 +183,12 @@ include("head.inc");
   </td>
   <td class="listr" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
       <?php
+	if ($alias["url"]) {
+		echo $alias["url"] . "<br/>";
+	}
+	if ($alias["aliasurl"]) {
+		echo $alias["aliasurl"] . "<br/>";
+	}
 	$tmpaddr = explode(" ", $alias['address']);
 	$addresses = implode(", ", array_slice($tmpaddr, 0, 10));
 	echo $addresses;

@@ -50,6 +50,7 @@ if (!is_array($config['captiveportal']['passthrumac']))
 
 $a_passthrumacs = &$config['captiveportal']['passthrumac'] ;
 
+
 if ($_POST) {
 
 	$pconfig = $_POST;
@@ -57,20 +58,45 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = 0;
 
-		$retval = captiveportal_passthrumac_configure();
-
+		$rules = captiveportal_passthrumac_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0)
 			clear_subsystem_dirty('passthrumac');
+	}
+
+	if ($_POST['delmac'] && $_POST['postafterlogin']) {
+		if (is_array($a_passthrumacs)) {
+			$found = false;
+			foreach ($a_passthrumacs as $idx => $macent) {
+				if ($macent['mac'] == $_POST['delmac']) {
+					$found = true;
+					break;
+				}
+			}
+			if ($found == true) {
+				$ip = captiveportal_get_ipfw_ruleno_byvalue($_POST['delmac']);
+				if ($ip) {
+					captiveportal_disconnect_client($ip);
+				}
+				unset($a_passthrumacs[$idx]);
+				write_config();
+				captiveportal_passthrumac_configure(true);
+			}
+		}
+		exit;
 	}
 }
 
 if ($_GET['act'] == "del") {
 	if ($a_passthrumacs[$_GET['id']]) {
+		$ip = captiveportal_get_ipfw_ruleno_byvalue($a_passthrumacs[$_GET['id']]['mac']);
+		if ($ip) {
+			captiveportal_disconnect_client($ip);
+		}
 		unset($a_passthrumacs[$_GET['id']]);
 		write_config();
-		mark_subsystem_dirty('passthrumac');
 		header("Location: services_captiveportal_mac.php");
+		mark_subsystem_dirty('passthrumac');
 		exit;
 	}
 }

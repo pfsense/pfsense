@@ -307,6 +307,12 @@ function cert_get_subject_array($crt) {
 	return $subject_array;
 }
 
+function cert_get_subject_hash($crt) {
+	$str_crt = base64_decode($crt);
+	$inf_crt = openssl_x509_parse($str_crt);
+	return $inf_crt['subject'];
+}
+
 function cert_get_issuer($str_crt, $decode = true) {
 
 	if ($decode)

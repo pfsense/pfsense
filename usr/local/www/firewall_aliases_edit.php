@@ -197,7 +197,8 @@ if ($_POST) {
 							$tmp_split = split("#", $tmp);
 							$tmp = trim($tmp_split[0]);
 						}
-						if(trim($tmp) <> "") {
+						$tmp = trim($tmp);
+						if(!empty($tmp) && (is_ipaddr($tmp) || is_subnet($tmp))) {
 							$address[] = $tmp;
 							$isfirst = 1;
 						}

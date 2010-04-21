@@ -1086,7 +1086,10 @@ function session_auth() {
 			$_SESSION['last_access'] = time();
 			log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
 			require_once("functions.inc");
-			pfSenseHeader("/{$page}");
+			if (isset($_POST['postafterlogin']))
+				return true;
+			else
+				pfSenseHeader("/{$page}");
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = "Username or Password incorrect";

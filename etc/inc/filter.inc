@@ -489,7 +489,7 @@ function filter_generate_aliases() {
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
 			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
-			if($aliased['type'] == "host" || $aliased['type'] == "network") {
+			if($aliased['type'] == "host" || $aliased['type'] == "network" || $aliased['type'] == "url") {
 				$tableaddrs = "{$addrlist}{$extralias}";
 				if(empty($tableaddrs))
 					$aliases .= "table <{$aliased['name']}> persist\n";
@@ -517,7 +517,13 @@ function filter_generate_aliases() {
 				}
 				$aliases .= "table <{$aliased['name']}> { {$newaddress}{$extralias} } \n";
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
-			} else
+			} elseif($aliased['type'] == "urltable") {
+				$urlfn = alias_expand_urltable($aliased['name']);
+				if ($urlfn) {
+					$aliases .= "table <{$aliased['name']}> persist file \"{$urlfn}\"\n";
+					$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
+				}
+			} else 
 				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
 		}
 	}
@@ -1889,7 +1895,7 @@ EOD;
                         continue;
 		$gw = get_interface_gateway($ifdescr);
 		if (is_ipaddr($gw) && is_ipaddr($ifcfg['ip']))
-                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to any keep state allow-opts label \"let out anything from firewall host itself\"\n";
+                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
         }
 
 

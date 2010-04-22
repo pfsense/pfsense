@@ -3902,7 +3902,7 @@ function filter_generate_dummynet_rules() {
 	foreach ($dummynet_pipe_list as $dn) 
 		$dn_rules .= $dn->build_rules();
 
-	if (!empty($dnrules)) {
+	if (!empty($dn_rules)) {
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
 		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
 	}

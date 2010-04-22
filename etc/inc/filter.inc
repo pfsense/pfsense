@@ -1897,7 +1897,7 @@ EOD;
                         continue;
 		$gw = get_interface_gateway($ifdescr);
 		if (is_ipaddr($gw) && is_ipaddr($ifcfg['ip']))
-                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to any keep state allow-opts label \"let out anything from firewall host itself\"\n";
+                	$ipfrules .= "pass out route-to ( {$ifcfg['if']} {$gw} ) from {$ifcfg['ip']} to !{$ifcfg['sa']}/{$ifcfg['sn']} keep state allow-opts label \"let out anything from firewall host itself\"\n";
         }
 
 

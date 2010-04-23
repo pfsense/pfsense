@@ -95,12 +95,20 @@ $curcfg = $config['system']['firmware'];
 		<?php endif; ?>
 		<?php if ($g['platform'] == "nanobsd"): ?>
 			<?
-			$BOOT_DEVICE=trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`);
-			$REAL_BOOT_DEVICE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);
+			global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+			global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+			global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+			nanobsd_detect_slice_info();
 			?>
 		<tr>
 			<td width="25%" class="vncellt">NanoBSD Boot Slice</td>
-			<td width="75%" class="listr"><?=htmlspecialchars($BOOT_DEVICE);?> / <?=htmlspecialchars($REAL_BOOT_DEVICE);?></td>
+			<td width="75%" class="listr">
+				<?=htmlspecialchars($BOOT_DEVICE);?> / <?=htmlspecialchars($BOOTFLASH);?>
+				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
+				<br/><br/>Next Boot:<br/>
+				<?=htmlspecialchars($GLABEL_SLICE);?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
+				<?php endif; ?>
+			</td>
 		</tr>
 		<?php endif; ?>
 		<tr>

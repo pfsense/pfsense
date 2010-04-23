@@ -78,8 +78,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "ip dir");
-	$reqdfieldsn = explode(",", "Allowed IP address,Direction");
+	$reqdfields = explode(" ", "ip");
+	$reqdfieldsn = explode(",", "Allowed IP address");
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
@@ -95,7 +95,7 @@ if ($_POST) {
 		if (isset($id) && ($a_allowedips[$id]) && ($a_allowedips[$id] === $ipent))
 			continue;
 		
-		if (($ipent['dir'] == $_POST['dir']) && ($ipent['ip'] == $_POST['ip'])){
+		if ($ipent['ip'] == $_POST['ip']){
 			$input_errors[] = "[" . $_POST['ip'] . "] already allowed." ;
 			break ;
 		}	
@@ -123,12 +123,12 @@ if ($_POST) {
 			$ruleno = captiveportal_get_next_ipfw_ruleno();
 			if (!empty($ip['bw_up'])) {
 				$pipeno = $ruleno + 20000;
-				mwexec("/sbin/ipfw pipe {$pipeno} config bw {$ip['bw_up']}Kbit/s queue 100")
+				mwexec("/sbin/ipfw pipe {$pipeno} config bw {$ip['bw_up']}Kbit/s queue 100");
 				$bwup = "pipe {$pipeno}";
 			}
 			if (!empty($ip['bw_down'])) {
 				$pipeno = $ruleno + 20001;
-				mwexec("/sbin/ipfw pipe {$pipeno} config bw {$ip['bw_down']}Kbit/s queue 100")
+				mwexec("/sbin/ipfw pipe {$pipeno} config bw {$ip['bw_down']}Kbit/s queue 100");
 				$bwdown = "pipe {$pipeno}";
 			}
 			mwexec("/sbin/ipfw table 1 add {$ip['ip']} {$bwup}");
@@ -148,24 +148,6 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_captiveportal_ip_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-<?php if (false): ?>
-		<tr>
-                  <td width="22%" valign="top" class="vncellreq">Direction</td>
-                  <td width="78%" class="vtable"> 
-					<select name="dir" class="formselect">
-					<?php 
-					$dirs = explode(" ", "From To") ;
-					foreach ($dirs as $dir): ?>
-					<option value="<?=strtolower($dir);?>" <?php if (strtolower($dir) == strtolower($pconfig['dir'])) echo "selected";?> >
-					<?=htmlspecialchars($dir);?>
-					</option>
-					<?php endforeach; ?>
-					</select>
-                    <br> 
-                    <span class="vexpl">Use <em>From</em> to always allow an IP address through the captive portal (without authentication). 
-                    Use <em>To</em> to allow access from all clients (even non-authenticated ones) behind the portal to this IP address.</span></td>
-                </tr>
-<?php endif; ?>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
                   <td width="78%" class="vtable"> 

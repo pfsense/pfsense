@@ -56,7 +56,7 @@ $filterdns = "";
 
 function flowtable_configure() {
 	global $config, $g;
-
+	return;
 	// Figure out how many flows we should reserve
 	// sized 2x larger than the number of unique connection destinations.
 	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates']))

@@ -1914,5 +1914,119 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 		return -1;
 	}
 }
+function get_real_slice_from_glabel($label) {
+	$label = escapeshellarg($label);
+	return trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$label} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);
+}
+function nanobsd_get_boot_slice() {
+	return trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`);
+}
+function nanobsd_get_boot_drive() {
+	return trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`);
+}
+function nanobsd_get_active_slice() {
+	$boot_drive = nanobsd_get_boot_drive();
+	$active = trim(`gpart show $boot_drive | grep '\[active\]' | awk '{print $3;}'`);
 
+	return "{$boot_drive}s{$active}";
+}
+function nanobsd_get_size() {
+	return strtoupper(file_get_contents("/etc/nanosize.txt"));
+}
+function nanobsd_set_boot_slice($slice) {
+	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+	nanobsd_detect_slice_info();
+
+	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
+	ob_implicit_flush(1);
+	if(strstr($slice, "s2")) {
+		$ASLICE="2";
+		$AOLDSLICE="1";
+		$AGLABEL_SLICE="pfsense1";
+		$AUFS_ID="1";
+		$AOLD_UFS_ID="0";
+	} else {
+		$ASLICE="1";
+		$AOLDSLICE="2";
+		$AGLABEL_SLICE="pfsense0";
+		$AUFS_ID="0";
+		$AOLD_UFS_ID="1";
+	}
+	$ATOFLASH="{$BOOT_DRIVE}s{$ASLICE}";
+	$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
+	$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
+	conf_mount_rw();
+	exec("sysctl kern.geom.debugflags=16");
+	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
+	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
+	exec("/sbin/tunefs -L ${AGLABEL_SLICE} /dev/$ACOMPLETE_PATH");
+	exec("/bin/mkdir /tmp/{$AGLABEL_SLICE}");
+	exec("/sbin/fsck_ufs -y /dev/{$ACOMPLETE_PATH}");
+	exec("/sbin/mount /dev/ufs/{$AGLABEL_SLICE} /tmp/{$AGLABEL_SLICE}");
+	$fstab = <<<EOF
+/dev/ufs/{$AGLABEL_SLICE} / ufs ro 1 1
+/dev/ufs/cf /cf ufs ro 1 1
+EOF;
+	file_put_contents("/tmp/{$AGLABEL_SLICE}/etc/fstab", $fstab);
+	exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
+	exec("/sbin/sysctl kern.geom.debugflags=0");
+	conf_mount_ro();
+}
+function nanobsd_clone_slice($dstslice) {
+	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+	nanobsd_detect_slice_info();
+
+	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
+	ob_implicit_flush(1);
+	exec("/sbin/sysctl kern.geom.debugflags=16");
+	exec("/bin/dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
+	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
+	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
+	exec("/bin/mkdir /tmp/{$GLABEL_SLICE}");
+	exec("/sbin/fsck_ufs -y /dev/{$COMPLETE_PATH}");
+	exec("/sbin/mount /dev/ufs/{$GLABEL_SLICE} /tmp/{$GLABEL_SLICE}");
+	exec("/bin/cp /etc/fstab /tmp/{$GLABEL_SLICE}/etc/fstab");
+	$status = exec("sed -i \"\" \"s/pfsense{$OLD_UFS_ID}/pfsense{$UFS_ID}/g\" /tmp/{$GLABEL_SLICE}/etc/fstab");
+	exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
+	exec("/sbin/sysctl kern.geom.debugflags=0");
+	if($status) {
+		return false;
+	} else {
+		return true;
+	}
+}
+function nanobsd_detect_slice_info() {
+	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+
+	$BOOT_DEVICE=nanobsd_get_boot_slice();
+	$REAL_BOOT_DEVICE=get_real_slice_from_glabel($BOOT_DEVICE);
+	$BOOT_DRIVE=nanobsd_get_boot_drive();
+	$ACTIVE_SLICE=nanobsd_get_active_slice();
+
+	// Detect which slice is active and set information.
+	if(strstr($REAL_BOOT_DEVICE, "s1")) {
+		$SLICE="2";
+		$OLDSLICE="1";
+		$GLABEL_SLICE="pfsense1";
+		$UFS_ID="1";
+		$OLD_UFS_ID="0";
+
+	} else {
+		$SLICE="1";
+		$OLDSLICE="2";
+		$GLABEL_SLICE="pfsense0";
+		$UFS_ID="0";
+		$OLD_UFS_ID="1";
+	}
+	$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
+	$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
+	$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";
+	$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
+}
 ?>

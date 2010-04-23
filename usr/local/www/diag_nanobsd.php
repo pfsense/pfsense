@@ -74,7 +74,7 @@ if($_POST['bootslice']) {
 			<p/>&nbsp;
 		</div>
 EOF;
-	nanobsd_set_boot_slice($_POST['bootslice']);
+	nanobsd_switch_boot_slice();
 	$savemsg = "The boot slice has been set to " . nanobsd_get_active_slice();
 	// Survey slice info
 	nanobsd_detect_slice_info();
@@ -133,21 +133,12 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell">Bootup</td>
 						<td width="78%" class="vtable">
 							<form action="diag_nanobsd.php" method="post" name="iform">
-								Bootup slice:
-								<select name='bootslice'>
-									<option value='<?php echo $BOOTFLASH; ?>'<?php if ($BOOTFLASH == $ACTIVE_SLICE) {?> selected<?php } ?>>
-										<?php echo $BOOTFLASH; ?>
-									</option>
-									<option value='<?php echo $TOFLASH; ?>'<?php if ($TOFLASH == $ACTIVE_SLICE) {?> selected<?php } ?>>
-										<?php echo $TOFLASH; ?>
-									</option>
-								</select>
+								Bootup slice is currently: <?php echo $ACTIVE_SLICE; ?>
+								<br/><br/>This will switch the bootup slice to the alternate slice.
 								<br/>
-								This will set the bootup slice.
+								<input type='hidden' name='bootslice' value='switch'>
+								<input type='submit' value='Switch Slice'></form>
 						</td>
-					</tr>
-					<tr>
-						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Set bootup'></form></td>
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>

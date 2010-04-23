@@ -1933,11 +1933,17 @@ function nanobsd_get_active_slice() {
 function nanobsd_get_size() {
 	return strtoupper(file_get_contents("/etc/nanosize.txt"));
 }
-function nanobsd_set_boot_slice($slice) {
+function nanobsd_switch_boot_slice() {
 	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
 	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
 	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
 	nanobsd_detect_slice_info();
+
+	if ($BOOTFLASH == $ACTIVE_SLICE) {
+		$slice = $TOFLASH;
+	} else {
+		$slice = $BOOTFLASH;
+	}
 
 	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
 	ob_implicit_flush(1);
@@ -1961,20 +1967,15 @@ function nanobsd_set_boot_slice($slice) {
 	exec("sysctl kern.geom.debugflags=16");
 	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
-	exec("/sbin/tunefs -L ${AGLABEL_SLICE} /dev/$ACOMPLETE_PATH");
-	exec("/bin/mkdir /tmp/{$AGLABEL_SLICE}");
-	exec("/sbin/fsck_ufs -y /dev/{$ACOMPLETE_PATH}");
-	exec("/sbin/mount /dev/ufs/{$AGLABEL_SLICE} /tmp/{$AGLABEL_SLICE}");
-	$fstab = <<<EOF
-/dev/ufs/{$AGLABEL_SLICE} / ufs ro 1 1
-/dev/ufs/cf /cf ufs ro 1 1
-EOF;
-	file_put_contents("/tmp/{$AGLABEL_SLICE}/etc/fstab", $fstab);
-	exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
+	// We can't update these if they are mounted now.
+	if ($BOOTFLASH != $slice) {
+		exec("/sbin/tunefs -L ${AGLABEL_SLICE} /dev/$ACOMPLETE_PATH");
+		nanobsd_update_fstab($AGLABEL_SLICE, $ACOMPLETE_PATH, $AOLD_UFS_ID, $AUFS_ID);
+	}
 	exec("/sbin/sysctl kern.geom.debugflags=0");
 	conf_mount_ro();
 }
-function nanobsd_clone_slice($dstslice) {
+function nanobsd_clone_slice() {
 	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
 	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
 	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
@@ -1986,18 +1987,39 @@ function nanobsd_clone_slice($dstslice) {
 	exec("/bin/dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
 	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
 	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
-	exec("/bin/mkdir /tmp/{$GLABEL_SLICE}");
-	exec("/sbin/fsck_ufs -y /dev/{$COMPLETE_PATH}");
-	exec("/sbin/mount /dev/ufs/{$GLABEL_SLICE} /tmp/{$GLABEL_SLICE}");
-	exec("/bin/cp /etc/fstab /tmp/{$GLABEL_SLICE}/etc/fstab");
-	$status = exec("sed -i \"\" \"s/pfsense{$OLD_UFS_ID}/pfsense{$UFS_ID}/g\" /tmp/{$GLABEL_SLICE}/etc/fstab");
-	exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
+	$status = nanobsd_update_fstab($GLABEL_SLICE, $COMPLETE_PATH, $OLD_UFS_ID, $UFS_ID);
 	exec("/sbin/sysctl kern.geom.debugflags=0");
 	if($status) {
 		return false;
 	} else {
 		return true;
 	}
+}
+function nanobsd_update_fstab($gslice, $complete_path, $oldufs, $newufs) {
+	$tmppath = "/tmp/{$gslice}";
+	$fstabpath = "/tmp/{$gslice}/etc/fstab";
+
+	exec("/bin/mkdir {$tmppath}");
+	exec("/sbin/fsck_ufs -y /dev/{$complete_path}");
+	exec("/sbin/mount /dev/ufs/{$gslice} {$tmppath}");
+	exec("/bin/cp /etc/fstab {$fstabpath}");
+
+	if (!file_exists($fstabpath)) {
+		$fstab = <<<EOF
+/dev/ufs/{$gslice} / ufs ro 1 1
+/dev/ufs/cf /cf ufs ro 1 1
+EOF;
+		if (file_put_contents($fstabpath, $fstab))
+			$status = true;
+		else
+			$status = false;
+	} else {
+		$status = exec("sed -i \"\" \"s/pfsense{$oldufs}/pfsense{$newufs}/g\" {$fstabpath}");
+	}
+	exec("/sbin/umount {$tmppath}");
+	exec("/bin/rmdir {$tmppath}");
+
+	return $status;
 }
 function nanobsd_detect_slice_info() {
 	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;

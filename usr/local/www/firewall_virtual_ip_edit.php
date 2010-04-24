@@ -100,16 +100,6 @@ if ($_POST) {
 		}
 	}
 
-	/* check for overlaps with 1:1 NAT */
-	if (is_array($config['nat']['onetoone'])) {
-		foreach ($config['nat']['onetoone'] as $natent) {
-			if (check_subnets_overlap($_POST['ipaddr'], 32, $natent['external'], $natent['subnet'])) {
-				$input_errors[] = "A 1:1 NAT mapping overlaps with the specified IP address.";
-				break;
-			}
-		}
-	}
-
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */

@@ -100,12 +100,6 @@ if ($_POST) {
 		$input_errors[] = "A valid internal subnet must be specified.";
 	}
 
-	if (is_ipaddr($config['interfaces']['wan']['ipaddr'])) {
-		if (check_subnets_overlap($_POST['external'], $_POST['subnet'], 
-				get_interface_ip("wan"), 32))
-			$input_errors[] = "The WAN IP address may not be used in a 1:1 rule.";
-	}
-
 	/* check for overlaps with other 1:1 */
 	foreach ($a_1to1 as $natent) {
 		if (isset($id) && ($a_1to1[$id]) && ($a_1to1[$id] === $natent))

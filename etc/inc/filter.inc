@@ -711,7 +711,7 @@ function filter_flush_state_table() {
 	return mwexec("/sbin/pfctl -F state");
 }
 
-function filter_generate_reflection($rule, $dstport, &$starting_localhost_port, &$reflection_txt) {
+function filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, &$starting_localhost_port, &$reflection_txt) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
@@ -813,7 +813,7 @@ function filter_generate_reflection($rule, $dstport, &$starting_localhost_port, 
 					$reflection_txt[] = "{$inetdport}\tdgram\tudp\tnowait/0\tnobody\t/usr/bin/nc\tnc -u -w {$reflectiontimeout} {$target} {$tda}\n";
 						$inetdport++;
 					}
-				$natrules .= "rdr on {$rdr_if_list} proto {$protocol} from any to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
+				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
 				break;
 			case "tcp":
 			case "udp":
@@ -829,7 +829,7 @@ function filter_generate_reflection($rule, $dstport, &$starting_localhost_port, 
 					$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
 					$inetdport++;
 				}
-				$natrules .= "rdr on {$rdr_if_list} proto {$protocol} from any to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
+				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
 				break;
 			}
 		}
@@ -1189,7 +1189,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 				}
-				$natrules .= filter_generate_reflection($rule, $dstport, $starting_localhost_port, $reflection_rules);
+				$natrules .= filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, $starting_localhost_port, $reflection_rules);
 				$natrules .= "\n";
 
 				foreach ($reflection_rules as $txtline)

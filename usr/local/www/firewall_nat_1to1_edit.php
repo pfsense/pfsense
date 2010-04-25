@@ -114,17 +114,6 @@ if ($_POST) {
 		}
 	}
 
-	/* check for overlaps with advanced outbound NAT */
-	if (is_array($config['nat']['advancedoutbound']['rule'])) {
-		foreach ($config['nat']['advancedoutbound']['rule'] as $natent) {
-			if ($natent['target'] && 
-				check_subnets_overlap($_POST['external'], $_POST['subnet'], $natent['target'], 32)) {
-				$input_errors[] = "An advanced outbound NAT entry overlaps with the specified external subnet.";
-				break;
-			}
-		}
-	}
-
 	if (!$input_errors) {
 		$natent = array();
 

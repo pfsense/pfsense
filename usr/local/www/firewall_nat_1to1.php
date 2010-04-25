@@ -158,7 +158,9 @@ include("head.inc");
 		<tr>
 		  <td colspan="4">
 		        <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>Depending on the way your WAN connection is setup, you may also need a <a href="firewall_virtual_ip.php">Virtual IP</a>.</span></p>
+                      </strong></span>Depending on the way your WAN connection is setup, you may also need a <a href="firewall_virtual_ip.php">Virtual IP</a>.<br/>
+			If you add a 1:1 NAT entry for any of the interface IPs on this system, it will make this system inaccessible on that IP address. i.e. if
+			you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) using the WAN IP address will no longer function.</span></p>
 		  </td>
 		<tr>
               </table>

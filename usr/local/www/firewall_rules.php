@@ -327,7 +327,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				    <table border="0" cellspacing="0" cellpadding="1">
 					<tr>
 					  <td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected rules before this rule"></td>
-					  <td><a href="interfaces.php#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit rule" width="17" height="17" border="0"></a></td>
+					  <td><a href="interfaces.php?if=<?=$if?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit rule" width="17" height="17" border="0"></a></td>
 					</tr>
 					<tr>
 					  <td align="center" valign="middle"></td>
@@ -355,7 +355,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				    <table border="0" cellspacing="0" cellpadding="1">
 					<tr>
 					  <td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected rules before this rule"></td>
-					  <td><a href="interfaces.php#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit rule" width="17" height="17" border="0"></a></td>
+					  <td><a href="interfaces.php?if=<?=$if?>#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit rule" width="17" height="17" border="0"></a></td>
 					</tr>
 					<tr>
 					  <td align="center" valign="middle"></td>

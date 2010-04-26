@@ -239,7 +239,7 @@ function update_description(itemnum) {
 										<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected"; ?>>conservative</option>
 									</select>
 									<br/>
-									<textarea cols="60" rows="1" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
+									<textarea readonly="yes" cols="60" rows="1" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
 									<script language="javascript" type="text/javascript">
 										update_description(document.forms[0].optimization.selectedIndex);
 									</script>

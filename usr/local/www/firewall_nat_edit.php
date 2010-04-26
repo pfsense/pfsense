@@ -668,7 +668,6 @@ include("fbegin.inc"); ?>
 						<td>
 							<select name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
 								<option value="">(other)</option>
-								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected"; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
@@ -681,7 +680,6 @@ include("fbegin.inc"); ?>
 						<td>
 							<select name="dstendport" class="formselect" onchange="ext_change()">
 								<option value="">(other)</option>
-								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>

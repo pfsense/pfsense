@@ -169,18 +169,6 @@ if ($_POST) {
 		$ext = gen_subnet($_POST['destination'], $_POST['destination_subnet']) . "/" . $_POST['destination_subnet'];
 	}
 
-	if ($_POST['target']) {
-		/* check for clashes with 1:1 NAT (NAT Addresses is OK) */
-		if (is_array($config['nat']['onetoone'])) {
-			foreach ($config['nat']['onetoone'] as $natent) {
-				if (check_subnets_overlap($_POST['target'], 32, $natent['external'], $natent['subnet'])) {
-					$input_errors[] = "A 1:1 NAT mapping overlaps with the specified target IP address.";
-					break;
-				}
-			}
-		}
-	}
-
 	foreach ($a_out as $natent) {
 		if (isset($id) && ($a_out[$id]) && ($a_out[$id] === $natent)) {
 			continue;

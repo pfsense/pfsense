@@ -60,8 +60,8 @@ function setup_gateways_monitor() {
 # pfSense apinger configuration file. Automatically Generated!
 
 ## User and group the pinger should run as
-user "nobody"
-group "nobody"
+user "root"
+group "wheel"
 
 ## Mailer to use (default: "/usr/lib/sendmail -t")
 #mailer "/var/qmail/bin/qmail-inject" 

@@ -101,9 +101,9 @@ if ($_POST) {
 		$retval = 0;
 		$retval = filter_configure();
 		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
+		    $savemsg = get_std_save_message(gettext($retval));
 		else
-		    $savemsg = $retval;
+		    $savemsg = gettext($retval);
 		
 		activate_powerd();
 		load_glxsb();
@@ -144,44 +144,44 @@ include("head.inc");
 					<div class="tabcont">
 						<span class="vexpl">
 							<span class="red">
-								<strong>NOTE:&nbsp</strong>
+								<strong><?=gettext("NOTE:"); ?>&nbsp</strong>
 							</span>
-							The options on this page are intended for use by advanced users only.
+							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
 							<br/>
 						</span>
 						<br/>
 						<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">Load Balancing</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Load Balancing"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Load Balancing</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Load Balancing"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> />
-									<strong>Use sticky connections</strong><br/>
-									Successive connections will be redirected to the servers
+									<strong><?=gettext("Use sticky connections"); ?></strong><br/>
+									<?=gettext("Successive connections will be redirected to the servers
 									in a round-robin manner with connections from the same
-									source being sent to the same web server. This "sticky
-									connection" will exist as long as there are states that
+									source being sent to the same web server. This 'sticky
+									connection' will exist as long as there are states that
 									refer to this connection. Once the states expire, so will
 									the sticky connection. Further connections from that host
 									will be redirected to the next web server in the round
-									robin.
+									robin."); ?>
 								</td>
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">Power savings</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Power savings"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">PowerD</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("PowerD"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked"; ?> />
-									<strong>Use PowerD</strong><br/>
+									<strong><?=gettext("Use PowerD"); ?></strong><br/>
 									<br />
-								     The powerd utility monitors the system state and sets various power control 
+								     <?=gettext("The powerd utility monitors the system state and sets various power control 
 								     options accordingly.	It offers three modes (maximum, minimum, and
 								     adaptive) that can be individually selected while on AC power or batteries.  
 								     The modes maximum, minimum, and adaptive may be abbreviated max,
@@ -190,61 +190,61 @@ include("head.inc");
 								     Adaptive mode attempts to strike a balance by degrading performance when
 								     the system appears idle and increasing it when the system is busy.  It
 								     offers a good balance between a small performance loss for greatly
-								     increased power savings.  The default mode for pfSense is adaptive.
+								     increased power savings.  The default mode for pfSense is adaptive."); ?>
 								</td>
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">glxsb Crypto Acceleration</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("glxsb Crypto Acceleration"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">glxsb</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("glxsb"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="glxsb_enable" type="checkbox" id="glxsb_enable" value="yes" <?php if ($pconfig['glxsb_enable']) echo "checked"; ?> />
-									<strong>Use glxsb</strong><br/>
+									<strong><?=gettext("Use glxsb"); ?></strong><br/>
 									<br />
-								     The AMD Geode LX Security Block will accelerate some cryptographic functions
+								     <?=gettext("The AMD Geode LX Security Block will accelerate some cryptographic functions
 								     on systems which have the chip. Do not enable this option if you have a
 								     Hifn cryptographic acceleration card, as this will take precedence and the
 								     Hifn card will not be used. Acceleration should be automatic for IPsec 
-								     when using Rijndael (AES). OpenVPN should be set for AES-128-CBC.
+								     when using Rijndael (AES). OpenVPN should be set for AES-128-CBC."); ?>
 								     <br/><br/>
-								     If you do not have a glxsb chip in your system, this option will have no 
-								     effect. To unload the module, uncheck this option and then reboot.
+								     <?=gettext("If you do not have a glxsb chip in your system, this option will have no 
+								     effect. To unload the module, uncheck this option and then reboot."); ?>
 								</td>
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">IP Security</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("IP Security"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Security Assocications</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Security Assocications"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
-									<strong>Prefer older IPsec SAs</strong>
+									<strong><?=gettext("Prefer older IPsec SAs"); ?></strong>
 									<br />
-									By default, if several SAs match, the newest one is
+									<?=gettext("By default, if several SAs match, the newest one is
 									preferred if it's at least 30 seconds old. Select this
-									option to always prefer old SAs over new ones.
+									option to always prefer old SAs over new ones."); ?>
 								</td>
 							</tr>
                                                         <tr>
                                                                 <td colspan="2" class="list" height="12">&nbsp;</td>
                                                         </tr>
                                                         <tr>
-                                                                <td colspan="2" valign="top" class="listtopic">Schedules</td>
+                                                                <td colspan="2" valign="top" class="listtopic"><?=gettext("Schedules"); ?></td>
                                                         </tr>
                                                         <tr>
-                                                                <td width="22%" valign="top" class="vncell">Schedule States</td>
+                                                                <td width="22%" valign="top" class="vncell"><?=gettext("Schedule States"); ?></td>
                                                                 <td width="78%" class="vtable">
                                                                         <input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked"; ?> />
                                                                         <br />
-									By default schedules clear the states of existing connections when expiry time has come.
-									This option allows to override this setting by not clearing states for existing connections.
+									<?=gettext("By default schedules clear the states of existing connections when expiry time has come.
+									This option allows to override this setting by not clearing states for existing connections."); ?>
                                                                 </td>
                                                         </tr>
 							<tr>
@@ -252,27 +252,27 @@ include("head.inc");
 							</tr>
 							<?php if($g['platform'] == "pfSenseDISABLED"): ?>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">Hardware Settings</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Hardware Settings"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Hard disk standby time </td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Hard disk standby time "); ?></td>
 								<td width="78%" class="vtable">
 									<select name="harddiskstandby" class="formselect">
 										<?php
 										 	## Values from ATA-2 http://www.t13.org/project/d0948r3-ATA-2.pdf (Page 66)
 											$sbvals = explode(" ", "0.5,6 1,12 2,24 3,36 4,48 5,60 7.5,90 10,120 15,180 20,240 30,241 60,242");
 										?>
-										<option value="" <?php if(!$pconfig['harddiskstandby']) echo('selected');?>>Always on</option>
+										<option value="" <?php if(!$pconfig['harddiskstandby']) echo('selected');?>><?=gettext("Always on"); ?></option>
 										<?php
 											foreach ($sbvals as $sbval):
 												list($min,$val) = explode(",", $sbval);
 										?>
-										<option value="<?=$val;?>" <?php if($pconfig['harddiskstandby'] == $val) echo('selected');?>><?=$min;?> minutes</option>
+										<option value="<?=$val;?>" <?php if($pconfig['harddiskstandby'] == $val) echo('selected');?>><?=$min;?> <?=gettext("minutes"); ?></option>
 										<?php endforeach; ?>
 									</select>
 									<br/>
-									Puts the hard disk into standby mode when the selected amount of time after the last
-									access has elapsed. <em>Do not set this for CF cards.</em>
+									<?=gettext("Puts the hard disk into standby mode when the selected amount of time after the last
+									access has elapsed."); ?> <em><?=gettext("Do not set this for CF cards."); ?></em>
 								</td>
 							</tr>
 							<tr>

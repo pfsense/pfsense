@@ -76,32 +76,32 @@ function file_is_for_platform($filename, $ul_name) {
 function file_upload_error_message($error_code) {
     switch ($error_code) {
         case UPLOAD_ERR_INI_SIZE:
-            return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
+            return gettext('The uploaded file exceeds the upload_max_filesize directive in php.ini');
         case UPLOAD_ERR_FORM_SIZE:
-            return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
+            return gettext('The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form');
         case UPLOAD_ERR_PARTIAL:
-            return 'The uploaded file was only partially uploaded';
+            return gettext('The uploaded file was only partially uploaded');
         case UPLOAD_ERR_NO_FILE:
-            return 'No file was uploaded';
+            return gettext('No file was uploaded');
         case UPLOAD_ERR_NO_TMP_DIR:
-            return 'Missing a temporary folder';
+            return gettext('Missing a temporary folder');
         case UPLOAD_ERR_CANT_WRITE:
-            return 'Failed to write file to disk';
+            return gettext('Failed to write file to disk');
         case UPLOAD_ERR_EXTENSION:
-            return 'File upload stopped by extension';
+            return gettext('File upload stopped by extension');
         default:
-            return 'Unknown upload error';
+            return gettext('Unknown upload error');
     }
 }
 
 /* if upgrade in progress, alert user */
 if(is_subsystem_dirty('firmwarelock')) {
-	$pgtitle = array("System","Firmware","Manual Update");
+	$pgtitle = array(gettext("System"),gettext("Firmware"),gettext("Manual Update"));
 	include("head.inc");
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");
 	echo "<div>\n";
-	print_info_box("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.<p><center><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
+	print_info_box(gettext("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.") . "<p><center><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
 	echo "</div>\n";
 	include("fend.inc");
 	echo "</body>";
@@ -145,10 +145,10 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 			if (is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 				/* verify firmware image(s) */
 				if (file_is_for_platform($_FILES['ulfile']['tmp_name'], $_FILES['ulfile']['name']) == false && !$_POST['sig_override'])
-					$input_errors[] = "The uploaded image file is not for this platform ({$g['platform']}).";
+					$input_errors[] = gettext("The uploaded image file is not for this platform") . " ({$g['platform']})";
 				else if (!file_exists($_FILES['ulfile']['tmp_name'])) {
 					/* probably out of memory for the MFS */
-					$input_errors[] = "Image upload failed (out of memory?)";
+					$input_errors[] = gettext("Image upload failed (out of memory?)");
 					mwexec("/etc/rc.firmware disable");
 					clear_subsystem_dirty('firmware');
 				} else {
@@ -159,14 +159,14 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 					$sigchk = verify_digital_signature("{$g['upload_path']}/firmware.tgz");
 
 					if ($sigchk == 1)
-						$sig_warning = "The digital signature on this image is invalid.";
+						$sig_warning = gettext("The digital signature on this image is invalid.");
 					else if ($sigchk == 2 && !isset($config['system']['firmware']['allowinvalidsig']))
-						$sig_warning = "This image is not digitally signed.";
+						$sig_warning = gettext("This image is not digitally signed.");
 					else if (($sigchk >= 3))
-						$sig_warning = "There has been an error verifying the signature on this image.";
+						$sig_warning = gettext("There has been an error verifying the signature on this image.");
 
 					if (!verify_gzip_file("{$g['upload_path']}/firmware.tgz")) {
-						$input_errors[] = "The image file is corrupt.";
+						$input_errors[] = gettext("The image file is corrupt.");
 						unlink("{$g['upload_path']}/firmware.tgz");
 					}
 				}
@@ -179,7 +179,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
                     if (file_exists("{$g['upload_path']}/firmware.tgz")) {
                             /* fire up the update script in the background */
 							mark_subsystem_dirty('firmwarelock');
-                            $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";
+                            $savemsg = gettext("The firmware is now being updated. The firewall will reboot automatically.");
 							if(stristr($_FILES['ulfile']['name'],"nanobsd") or $_POST['isnano'] == "yes")
 								mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade {$g['upload_path']}/firmware.tgz");
 							else if(stristr($_FILES['ulfile']['name'],"bdiff"))
@@ -187,7 +187,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 							else 
 								mwexec_bg("/etc/rc.firmware pfSenseupgrade {$g['upload_path']}/firmware.tgz");
                     } else {
-                            $savemsg = "Firmware image missing or other error, please try again {$errortext}.";
+                            $savemsg = sprintf(gettext("Firmware image missing or other error, please try again %s."),$errortext);
                     }
             }
 		}
@@ -211,11 +211,11 @@ include("head.inc");
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
 <?php if ($sig_warning && !$input_errors): ?>
 <?php
-	$sig_warning = "<strong>" . $sig_warning . "</strong><br>This means that the image you uploaded " .
+	$sig_warning = "<strong>" . $sig_warning . "</strong><br>" . gettext("This means that the image you uploaded " .
 		"is not an official/supported image and may lead to unexpected behavior or security " .
 		"compromises. Only install images that come from sources that you trust, and make sure ".
-		"that the image has not been tampered with.<br><br>".
-		"Do you want to install this image anyway (on your own risk)?";
+		"that the image has not been tampered with.") . "<br><br>".
+		gettext("Do you want to install this image anyway (on your own risk)?");
 print_info_box($sig_warning);
 if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 	echo "<input type='hidden' name='isnano' id='isnano' value='yes'>\n";
@@ -229,9 +229,9 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 			<td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Manual Update", true, "system_firmware.php");
-	$tab_array[1] = array("Auto Update", false, "system_firmware_check.php");
-	$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
+	$tab_array[0] = array(gettext("Manual Update"), true, "system_firmware.php");
+	$tab_array[1] = array(gettext("Auto Update"), false, "system_firmware_check.php");
+	$tab_array[2] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
 	display_top_tabs($tab_array);
 ?>
 			</td>
@@ -247,36 +247,36 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 		  				<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
                   		<td width="78%" class="vtable">
 						<p>
-							Click &quot;Enable firmware
-							upload&quot; below, then choose the image file (<?=$g['firmware_update_text'];?>)
-							to be uploaded.
+							<?php printf(gettext('Click "Enable firmware
+							upload" below, then choose the image file (%s)
+							to be uploaded.'),$g['firmware_update_text']);?>
 							<br>
-							Click &quot;Upgrade firmware&quot; to start the upgrade process.
+							<?=gettext('Click "Upgrade firmware" to start the upgrade process.');?>
 						</p>
 						<?php if (!is_subsystem_dirty('rebootreq')): ?>
 						<?php if (!is_subsystem_dirty('firmware')): ?>
-							<input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Enable firmware upload");?>">
 						<?php else: ?>
-				  			<input name="Submit" type="submit" class="formbtn" value="Disable firmware upload">
+				  			<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Disable firmware upload");?>">
 							<br><br>
-							<strong>Firmware image file: </strong>&nbsp;
+							<strong><?=gettext("Firmware image file");?>: </strong>&nbsp;
 							<input name="ulfile" type="file" class="formfld">
 							<br><br>
 							<?php if ($g['platform'] == "nanobsd"): ?>
-							<b>NOTE: You must upload a .img.gz image, not an uncompressed image!</b>
+							<b><?=gettext("NOTE: You must upload a .img.gz image, not an uncompressed image!");?></b>
 							<?php else: ?>
-							<b>NOTE: You must upload a .tgz image, not an uncompressed image!</b>
+							<b><?=gettext("NOTE: You must upload a .tgz image, not an uncompressed image!");?></b>
 							<?php endif; ?>
 							<br><br>
 							<?php
 						  		if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
 						  			if($g['platform'] == "pfSense") { 
-										echo "Please select kernel type: ";
+										echo gettext("Please select kernel type: ");
 										echo "<select name='kerneltype'>";
-										echo "<option value='SMP'>Multiprocessor kernel</option>";
-										echo "<option value='single'>Uniprocessor kernel</option>";
-										echo "<option value='wrap'>Embedded kernel</option>";
-										echo "<option value='Developers'>Developers kernel</option>";
+										echo "<option value='SMP'>" . gettext("Multiprocessor kernel") . "</option>";
+										echo "<option value='single'>". gettext("Uniprocessor kernel") . "</option>";
+										echo "<option value='wrap'>" . gettext("Embedded kernel") . "</option>";
+										echo "<option value='Developers'>" . gettext("Developers kernel") . "</option>";
 										echo "</select>";
 										echo "<br><br>";
 									}
@@ -289,17 +289,17 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 							?>
 							<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
 						<?php endif; else: ?>
-							<strong>You must reboot the system before you can upgrade the firmware.</strong>
+							<strong><?=gettext("You must reboot the system before you can upgrade the firmware.");?></strong>
 						<?php endif; ?>
 					</td>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%"><span class="vexpl"><span class="red"><strong>Warning:<br>
-				</strong></span>DO NOT abort the firmware upgrade once it
+				<td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Warning:");?><br>
+				</strong></span><?=gettext("DO NOT abort the firmware upgrade once it
 				has started. The firewall will reboot automatically after
-				storing the new firmware. The configuration will be maintained.</span></td>
+				storing the new firmware. The configuration will be maintained.");?></span></td>
 			</table>
 		</div>
 	</tr>

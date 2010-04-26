@@ -813,7 +813,8 @@ function filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, &$startin
 					$reflection_txt[] = "{$inetdport}\tdgram\tudp\tnowait/0\tnobody\t/usr/bin/nc\tnc -u -w {$reflectiontimeout} {$target} {$tda}\n";
 						$inetdport++;
 					}
-				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
+				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT" .
+								($nordr == "" ? " -> 127.0.0.1 port {$rflctrange}" : "") . "\n";
 				break;
 			case "tcp":
 			case "udp":
@@ -829,7 +830,8 @@ function filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, &$startin
 					$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
 					$inetdport++;
 				}
-				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
+				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT" .
+								($nordr == "" ? " -> 127.0.0.1 port {$rflctrange}" : "") . "\n";
 				break;
 			}
 		}
@@ -1151,7 +1153,7 @@ function filter_nat_rules_generate() {
 			}
 
 			if($rule['associated-rule-id'] == "pass")
-				$rdrpass = "pass";
+				$rdrpass = "pass ";
 			else
 				$rdrpass = "";
 			if(!$rule['interface'])
@@ -1178,7 +1180,7 @@ function filter_nat_rules_generate() {
 			if($srcaddr <> "" && $dstaddr <> "") {
 				/* is rule a port range? */
 				if($natif)
-					$natrules .= "{$nordr}rdr {$rdrpass} on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr} -> {$target}{$localport}";
+					$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
 				if($dstaddr == "any" && !interface_has_gateway($rule['interface'])) {

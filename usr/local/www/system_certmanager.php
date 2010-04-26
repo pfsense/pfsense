@@ -47,7 +47,7 @@ $cert_methods = array(
 
 $cert_keylens = array( "512", "1024", "2048", "4096");
 
-$pgtitle = array("System", gettext("Certificate Manager"));
+$pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 
 $id = $_GET['id'];
 if (isset($_POST['id']))

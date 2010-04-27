@@ -67,7 +67,7 @@ if (!$pconfig['timezone'])
 if (!$pconfig['timeservers'])
 	$pconfig['timeservers'] = "pool.ntp.org";
 
-$changedesc = "System: ";
+$changedesc = gettext("System: ");
 $changecount = 0;
 
 function is_timezone($elt) {
@@ -427,7 +427,7 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="Save">
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>">
 				</td>
 			</tr>
 		</table>

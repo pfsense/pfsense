@@ -63,7 +63,7 @@ if ($_POST) {
 
 $curcfg = $config['system']['firmware'];
 
-$pgtitle = array("System","Firmware","Settings");
+$pgtitle = array(gettext("System"),gettext("Firmware"),gettext("Settings"));
 include("head.inc");
 
 exec("/usr/bin/fetch -q -o /tmp/manifest \"{$g['update_manifest']}\"");
@@ -99,9 +99,9 @@ function enable_altfirmwareurl(enable_over) {
 		<td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Manual Update", false, "system_firmware.php");
-	$tab_array[1] = array("Auto Update", false, "system_firmware_check.php");
-	$tab_array[2] = array("Updater Settings", true, "system_firmware_settings.php");
+	$tab_array[0] = array(gettext("Manual Update"), false, "system_firmware.php");
+	$tab_array[1] = array(gettext("Auto Update"), false, "system_firmware_check.php");
+	$tab_array[2] = array(gettext("Updater Settings"), true, "system_firmware_settings.php");
 	display_top_tabs($tab_array);
 ?>
 		</td>
@@ -109,11 +109,11 @@ function enable_altfirmwareurl(enable_over) {
 	<tr><td><div id=mainarea>
 	      <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
-		<td colspan="2" valign="top" class="listtopic">Firmware Branch</td>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("Firmware Branch"); ?></td>
 	</tr>
 <?php if(is_array($preset_urls_split)): ?>
 	<tr>
-		<td valign="top" class="vncell">Default Auto Update URLs</td>
+		<td valign="top" class="vncell"><?=gettext("Default Auto Update URLs"); ?></td>
 		<td class="vtable">
 			<select name='preseturls' id='preseturls' onChange="firmwareurl.value = preseturls.value; document.iform.firmwareurl.disabled = 0; alturlenable.checked=true; new Effect.Highlight(this.parentNode, { startcolor: '#ffff99', endcolor: '#fffffff' });">
 					<option></option>
@@ -129,16 +129,16 @@ function enable_altfirmwareurl(enable_over) {
 	</tr>
 <?php endif; ?>
 	<tr>
-		<td valign="top" class="vncell">Firmware Auto Update URL</td>
+		<td valign="top" class="vncell"><?=gettext("Firmware Auto Update URL"); ?></td>
 		<td class="vtable">
-			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onClick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked"; ?>> Use a different URL server for firmware upgrades other than <?php echo $g['product_website']; ?><br>
+			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onClick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked"; ?>> <?=gettext("Use a different URL server for firmware upgrades other than") . $g['product_website']; ?><br>
 			<table>
-			<tr><td>Base URL:</td><td><input name="firmwareurl" type="input" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>"></td></tr>
+			<tr><td><?=gettext("Base URL"); ?>:</td><td><input name="firmwareurl" type="input" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>"></td></tr>
 			</table>
 			<span class="vexpl">
-				This is where <?php echo $g['product_name'] ?> will check for newer firmware versions when the <a href="system_firmware_check.php">System: Firmware: Auto Update</a> page is viewed.
+				<?=gettext("This is where"); ?> <?php echo $g['product_name'] ?> <?=gettext("will check for newer firmware versions when the"); ?> <a href="system_firmware_check.php">System: Firmware: Auto Update</a> <?=gettext("page is viewed."); ?>
 				<p/>
-				<b>NOTE:</b> When a custom URL is enabled the system will not verify the digital signature from <?php echo $g['product_website'] ?>.
+				<b><?=gettext("NOTE"); ?>:</b> <?=gettext("When a custom URL is enabled the system will not verify the digital signature from"); ?> <?php echo $g['product_website'] ?>.
 				</span>
 				</td>
 	</tr>
@@ -146,21 +146,21 @@ function enable_altfirmwareurl(enable_over) {
 		<td colspan="2" class="list" height="12">&nbsp;</td>
 	</tr>
 	<tr>
-		<td colspan="2" valign="top" class="listtopic">Updates</td>
+		<td colspan="2" valign="top" class="listtopic"><?=gettext("Updates"); ?></td>
 	</tr>
 	<tr>
-		<td width="22%" valign="top" class="vncell">Not signed images.</td>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Not signed images."); ?></td>
 		<td width="78%" class="vtable">
 			<input name="allowinvalidsig" type="checkbox" id="allowinvalidsig" value="yes" <?php if (isset($curcfg['allowinvalidsig'])) echo "checked"; ?> />
 			<br />
-			Allow to update the system with auto-updater and images with no signature.
+			<?=gettext("Allow to update the system with auto-updater and images with no signature."); ?>
 		</td>
 	</tr>
 	<script>enable_altfirmwareurl();</script>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
                   </td>
                 </tr>
               </table></div></td></tr></table>

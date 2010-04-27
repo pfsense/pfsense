@@ -125,7 +125,7 @@ if(!$pconfig['backend'])
                         <td width="78%" class="vtable">
 				<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
                           	<br />
-                          	<?=gettext("Time in minutes to expire idle management sessions. The default is four hours (240 minutes). <br/> Leave blank to never expire sessions. NOTE: This is a security risk!");?><br />
+                          	<?=gettext("Time in minutes to expire idle management sessions. The default is 4 hours (240 minutes). <br/> 0 means to never expire sessions. NOTE: This is a security risk!");?><br />
 			</td>
 		</tr>
 		<tr>

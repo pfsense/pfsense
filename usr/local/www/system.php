@@ -111,20 +111,20 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if ($_POST['hostname'] && !is_hostname($_POST['hostname'])) {
-		$input_errors[] = "The hostname may only contain the characters a-z, 0-9 and '-'.";
+		$input_errors[] = gettext("The hostname may only contain the characters a-z, 0-9 and '-'.");
 	}
 	if ($_POST['domain'] && !is_domain($_POST['domain'])) {
-		$input_errors[] = "The domain may only contain the characters a-z, 0-9, '-' and '.'.";
+		$input_errors[] = gettext("The domain may only contain the characters a-z, 0-9, '-' and '.'.");
 	}
 	if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2']))) {
-		$input_errors[] = "A valid IP address must be specified for the primary/secondary DNS server.";
+		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS server.");
 	}
 	if (($_POST['dns3'] && !is_ipaddr($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddr($_POST['dns4']))) {
-		$input_errors[] = "A valid IP address must be specified for the primary/secondary DNS server.";
+		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS server.");
 	}	
 	if ($_POST['webguiport'] && (!is_numericint($_POST['webguiport']) ||
 			($_POST['webguiport'] < 1) || ($_POST['webguiport'] > 65535))) {
-		$input_errors[] = "A valid TCP/IP port must be specified for the webConfigurator port.";
+		$input_errors[] = gettext("A valid TCP/IP port must be specified for the webConfigurator port.");
 	}
 
 	$direct_networks_list = explode(" ", filter_get_direct_networks_list());
@@ -135,7 +135,7 @@ if ($_POST) {
 			if(interface_has_gateway($_POST[$dnsgwitem])) {
 				foreach($direct_networks_list as $direct_network) {
 					if(ip_in_subnet($_POST[$dnsitem], $direct_network)) {
-						$input_errors[] = "You can not assign a gateway to DNS '{$_POST[$dnsitem]}' server which is on a directly connected network.";
+						$input_errors[] = gettext("You can not assign a gateway to DNS '{$_POST[$dnsitem]}' server which is on a directly connected network.");
 					}
 				}
 			}
@@ -144,11 +144,11 @@ if ($_POST) {
 
 	$t = (int)$_POST['timeupdateinterval'];
 	if (($t < 0) || (($t > 0) && ($t < 6)) || ($t > 1440)) {
-		$input_errors[] = "The time update interval must be either 0 (disabled) or between 6 and 1440.";
+		$input_errors[] = gettext("The time update interval must be either 0 (disabled) or between 6 and 1440.");
 	}
 	foreach (explode(' ', $_POST['timeservers']) as $ts) {
 		if (!is_domain($ts)) {
-			$input_errors[] = "A NTP Time Server name may only contain the characters a-z, 0-9, '-' and '.'.";
+			$input_errors[] = gettext("A NTP Time Server name may only contain the characters a-z, 0-9, '-' and '.'.");
 		}
 	}
 
@@ -224,7 +224,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("System","General Setup");
+$pgtitle = array(gettext("System"),gettext("General Setup"));
 include("head.inc");
 
 ?>
@@ -244,39 +244,39 @@ include("head.inc");
                                         <div class="tabcont">
 			<table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tr>
-				<td colspan="2" valign="top" class="listtopic">System</td>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("System"); ?></td>
 			</tr>
 			<tr>
-				<td width="22%" valign="top" class="vncellreq">Hostname</td>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname"); ?></td>
 				<td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>">
 					<br/>
 					<span class="vexpl">
-						name of the firewall host, without domain part
+						<?=gettext("name of the firewall host, without domain part"); ?>
 						<br/>
-						e.g. <em>firewall</em>
+						<?=gettext("e.g."); ?> <em>firewall</em>
 					</span>
 				</td>
 			</tr>
 			<tr>
-				<td width="22%" valign="top" class="vncellreq">Domain</td>
+				<td width="22%" valign="top" class="vncellreq"><?=gettext("Domain"); ?></td>
 				<td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
 					<br/>
 					<span class="vexpl">
-						Do not use "local" as a domain name. It will cause local hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS.
+						<?=gettext("Do not use 'local' as a domain name. It will cause local hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve local hosts not running mDNS."); ?>
 						<br/>
-						e.g. <em>mycorp.com, home, office, private, etc.</em>
+						<?=gettext("e.g."); ?> <em><?=gettext("mycorp.com, home, office, private, etc."); ?></em>
 					</span>
 				</td>
 			</tr>
 			<tr>
-				<td width="22%" valign="top" class="vncell">DNS servers</td>
+				<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers"); ?></td>
 				<td width="78%" class="vtable">
 					<p>
 						<table>
 							<tr>
-								<td><b>DNS Server</b></td>
+								<td><b><?=gettext("DNS Server"); ?></b></td>
 								<?php if ($multiwan): ?>
-								<td><b>Use gateway</b></td>
+								<td><b><?=gettext("Use gateway"); ?></b></td>
 								<?php endif; ?>
 							</tr>
 							<?php
@@ -319,33 +319,33 @@ include("head.inc");
 						</table>
 						<br>
 						<span class="vexpl">
-							IP addresses; these are also used for the DHCP
-							service, DNS forwarder and for PPTP VPN clients.
+							<?=gettext("IP addresses; these are also used for the DHCP
+							service, DNS forwarder and for PPTP VPN clients."); ?>
 							<br/>
 							<?php if($multiwan): ?>
 							<br/>
-							In addition, select the gateway for each DNS server.
-							You should have a unique DNS server per gateway.
+							<?=gettext("In addition, select the gateway for each DNS server.
+							You should have a unique DNS server per gateway."); ?>
 							<br/>
 							<?php endif; ?>
 							<br/>
 							<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked"; ?>>
 							<strong>
-								Allow DNS server list to be overridden by DHCP/PPP
-								on WAN
+								<?=gettext("Allow DNS server list to be overridden by DHCP/PPP
+								on WAN"); ?>
 							</strong>
 							<br/>
-							If this option is set, <?=$g['product_name'];?> will
+							<?= sprintf("If this option is set, '%s' will
 							use DNS servers assigned by a DHCP/PPP server on WAN
 							for its own purposes (including the DNS forwarder).
 							However, they will not be assigned to DHCP and PPTP
-							VPN	clients.
+							VPN	clients.", $g['product_name']); ?>
 						</span>
 					</p>
 				</td>
 			</tr>
 			<tr>
-				<td width="22%" valign="top" class="vncell">Time zone</td>
+				<td width="22%" valign="top" class="vncell"><?=gettext("Time zone"); ?></td>
 				<td width="78%" class="vtable">
 					<select name="timezone" id="timezone">
 						<?php foreach ($timezonelist as $value): ?>
@@ -357,7 +357,7 @@ include("head.inc");
 					</select>
 					<br/>
 					<span class="vexpl">
-						Select the location closest to you
+						<?=gettext("Select the location closest to you"); ?>
 					</span>
 				</td>
 			</tr>
@@ -375,14 +375,14 @@ include("head.inc");
 			</tr>
 -->
 			<tr>
-				<td width="22%" valign="top" class="vncell">NTP time server</td>
+				<td width="22%" valign="top" class="vncell"><?=gettext("NTP time server"); ?></td>
 				<td width="78%" class="vtable">
 					<input name="timeservers" type="text" class="formfld unknown" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>">
 					<br/>
 					<span class="vexpl">
-						Use a space to separate multiple hosts (only one
+						<?=gettext("Use a space to separate multiple hosts (only one
 						required). Remember to set up at least one DNS server
-						if you enter a host name here!
+						if you enter a host name here!"); ?>
 					</span>
 				</td>
 			</tr>
@@ -391,7 +391,7 @@ include("head.inc");
 			</tr>
 			<?php if (! $g['disablethemeselection']): ?>
 			<tr>
-				<td colspan="2" valign="top" class="listtopic">Theme</td>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("Theme"); ?></td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top" class="vncell">&nbsp;</td>
@@ -415,7 +415,7 @@ include("head.inc");
 						<?php endforeach; ?>
 					</select>
 					<strong>
-						This will change the look and feel of
+						<?=gettext("This will change the look and feel of"); ?>
 						<?=$g['product_name'];?>.
 					</strong>
 				</td>

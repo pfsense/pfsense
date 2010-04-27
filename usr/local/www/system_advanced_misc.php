@@ -110,7 +110,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("System","Advanced: Miscellaneous");
+$pgtitle = array(gettext("System"),gettext("Advanced: Miscellaneous"));
 include("head.inc");
 
 ?>
@@ -129,12 +129,12 @@ include("head.inc");
 				<td>
 					<?php
 						$tab_array = array();
-						$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
-						$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
-						$tab_array[] = array("Networking", false, "system_advanced_network.php");
-						$tab_array[] = array("Miscellaneous", true, "system_advanced_misc.php");
-						$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
-						$tab_array[] = array("Notifications", false, "system_advanced_notifications.php");
+						$tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
+						$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
+						$tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
+						$tab_array[] = array(gettext("Miscellaneous"), true, "system_advanced_misc.php");
+						$tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
+						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 						display_top_tabs($tab_array);
 					?>
 				</td>

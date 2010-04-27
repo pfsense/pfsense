@@ -60,7 +60,7 @@ include("head.inc");
 				<?php
 					$version = file_get_contents("/etc/version");
 					$tab_array = array();
-					$tab_array[] = array("{$version}" . gettext("packages"), false, "pkg_mgr.php");
+					$tab_array[] = array("{$version} " . gettext("packages"), false, "pkg_mgr.php");
 //					$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
 //					$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
 					$tab_array[] = array(gettext("Installed packages"), true, "pkg_mgr_installed.php");
@@ -99,14 +99,14 @@ include("head.inc");
 										// we're running a newer version of the package
 										if(strcmp($pkg['version'], $latest_package) > 0) {
 											$tdclass = "listbggrey";
-											$pkgver  = gettext("Available:") . $latest_package . "<br/>";
-											$pkgver .= gettext("Installed:") . $pkg['version'];
+											$pkgver  = gettext("Available: ") . $latest_package . "<br/>";
+											$pkgver .= gettext("Installed: ") . $pkg['version'];
 										}
 										// we're running an older version of the package
 										if(strcmp($pkg['version'], $latest_package) < 0) {
 											$tdclass = "listbg";
-											$pkgver  = "<font color='#ffffff'>" . gettext("Available:") . $latest_package . "<br/>";
-											$pkgver .= gettext("Installed:") . $pkg['version'];
+											$pkgver  = "<font color='#ffffff'>" . gettext("Available: ") . $latest_package . "<br/>";
+											$pkgver .= gettext("Installed: ") . $pkg['version'];
 										}
 										// we're running the current version
 										if(!strcmp($pkg['version'], $latest_package)) {

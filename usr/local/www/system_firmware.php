@@ -241,7 +241,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 				<div id="mainarea">
 					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 	<tr>
-		 				<td colspan="2" class="listtopic"><?=gettext("Invoke") ." ". $g['product_name'] ." ".  gettext("Manual Upgrade"); ?></td>
+						<td colspan="2" class="listtopic"><?=gettext("Invoke") ." ". $g['product_name'] ." ".  gettext("Manual Upgrade"); ?></td>
 					</tr>
 					<tr>
 		  				<td width="22%" valign="baseline" class="vncell">&nbsp;</td>

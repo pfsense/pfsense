@@ -704,4 +704,167 @@ function openvpn_resync_all($interface = "") {
 
 }
 
+function openvpn_get_active_servers() {
+	$servers = array();
+	global $config;
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
+	
+			$prot = $settings['protocol'];
+			$port = $settings['local_port'];
+	
+			$server = array();
+			$server['port'] = $settings['local_port'];
+			if ($settings['description'])
+				$server['name'] = "{$settings['description']} {$prot}:{$port}";
+			else
+				$server['name'] = "Server {$prot}:{$port}";
+			$server['conns'] = array();
+	
+			$tcpsrv = "tcp://127.0.0.1:{$port}";
+			$errval;
+			$errstr;
+	
+			/* open a tcp connection to the management port of each server */
+			$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
+			if ($fp) {
+	
+				/* send our status request */
+				fputs($fp, "status 2\n");
+	
+				/* recv all response lines */
+				while (!feof($fp)) {
+	
+					/* read the next line */
+					$line = fgets($fp, 1024);
+	
+					/* parse header list line */
+					if (strstr($line, "HEADER"))
+						continue;
+	
+					/* parse end of output line */
+					if (strstr($line, "END"))
+						break;
+	
+					/* parse client list line */
+					if (strstr($line, "CLIENT_LIST")) {
+						$list = explode(",", $line);
+						$conn = array();
+						$conn['common_name'] = $list[1];
+						$conn['remote_host'] = $list[2];
+						$conn['virtual_addr'] = $list[3];
+						$conn['bytes_recv'] = $list[4];
+						$conn['bytes_sent'] = $list[5];
+						$conn['connect_time'] = $list[6];
+						$server['conns'][] = $conn;
+					}
+				}
+	
+				/* cleanup */
+				fclose($fp);
+			} else {
+				$conn = array();
+				$conn['common_name'] = "[error]";
+				$conn['remote_host'] = "Management Daemon Unreachable";
+				$conn['virtual_addr'] = "";
+				$conn['bytes_recv'] = 0;
+				$conn['bytes_sent'] = 0;
+				$conn['connect_time'] = 0;
+				$server['conns'][] = $conn;
+			}
+	
+			$servers[] = $server;
+		}
+	}
+	return $servers;
+}
+
+function openvpn_get_active_clients() {
+	$clients = array();
+	global $config;
+	if (is_array($config['openvpn']['openvpn-client'])) {
+		foreach ($config['openvpn']['openvpn-client'] as & $settings) {
+	
+			$prot = $settings['protocol'];
+			$port = $settings['local_port'];
+	
+			$client = array();
+			$client['port'] = $settings['local_port'];
+			if ($settings['description'])
+				$client['name'] = "{$settings['description']} {$prot}:{$port}";
+			else
+				$client['name'] = "Client {$prot}:{$port}";
+	
+			$tcpcli = "tcp://127.0.0.1:{$port}";
+			$errval;
+			$errstr;
+	
+			$client['status']="down";
+	
+			/* open a tcp connection to the management port of each cli */
+			$fp = @stream_socket_client($tcpcli, $errval, $errstr, 1);
+			if ($fp) {
+	
+				/* send our status request */
+				fputs($fp, "state 1\n");
+	
+				/* recv all response lines */
+				while (!feof($fp)) {
+					/* read the next line */
+					$line = fgets($fp, 1024);
+	
+					/* Get the client state */
+					if (strstr($line,"CONNECTED")) {
+						$client['status']="up";
+						$list = explode(",", $line);
+	
+						$client['connect_time']  = date("D M j G:i:s Y", $list[0]);
+						$client['virtual_addr']  = $list[3];
+						$client['remote_host'] = $list[4];
+					}
+					/* parse end of output line */
+					if (strstr($line, "END"))
+						break;
+				}
+	
+				/* If up, get read/write stats */
+				if (strcmp($client['status'], "up") == 0) {
+					fputs($fp, "status 2\n");
+					/* recv all response lines */
+					while (!feof($fp)) {
+						/* read the next line */
+						$line = fgets($fp, 1024);
+	
+						if (strstr($line,"TCP/UDP read bytes")) {
+							$list = explode(",", $line);
+							$client['bytes_recv'] = $list[1];
+						}
+	
+						if (strstr($line,"TCP/UDP write bytes")) {
+							$list = explode(",", $line);
+							$client['bytes_sent'] = $list[1];
+						}
+	
+						/* parse end of output line */
+						if (strstr($line, "END"))
+							break;
+					}
+				}
+	
+				fclose($fp);
+	
+			} else {
+				$DisplayNote=true;
+				$client['remote_host'] = "No Management Daemon";
+				$client['virtual_addr'] = "See Note Below";
+				$client['bytes_recv'] = 0;
+				$client['bytes_sent'] = 0;
+				$client['connect_time'] = 0;
+			}
+	
+			$clients[] = $client;
+		}
+	}
+	return $clients;
+}
 ?>

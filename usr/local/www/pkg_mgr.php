@@ -44,7 +44,7 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-$pkg_info = get_pkg_info('all', array('noembedded', 'name', 'category', 'website', 'version', 'status', 'descr', 'maintainer', 'required_version', 'maximum_version', 'pkginfolink'));
+$pkg_info = get_pkg_info('all', array(gettext("noembedded"), gettext("name"), gettext("category"), gettext("website"), gettext("version"), gettext("status"), gettext("descr"), gettext("maintainer"), gettext("required_version"), gettext("maximum_version"), gettext("pkginfolink")));
 if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 	fwrite($fout, serialize($pkg_info));
@@ -54,10 +54,10 @@ if($pkg_info) {
 	$using_cache = true;
 	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 	if(file_exists("{$g['tmp_path']}/pkg_info.cache")) {
-		$savemsg = "Unable to retrieve package info from {$xmlrpc_base_url}. Cached data will be used.";
+		$savemsg = sprintf(gettext("Unable to retrieve package info from '%s'. Cached data will be used."), $xmlrpc_base_url);
 		$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
 	} else {
-		$savemsg = "Unable to communicate with {$xmlrpc_base_url}. Please verify DNS and interface configuration, and that {$g['product_name']} has functional Internet connectivity.";
+		$savemsg = sprintf(gettext("Unable to communicate with '%s'. Please verify DNS and interface configuration, and that '%s' has functional Internet connectivity."), $xmlrpc_base_url, $g['product_name']);
 	}
 }
 
@@ -65,7 +65,7 @@ if (! empty($_GET))
 	if (isset($_GET['ver']))
 		$requested_version = htmlspecialchars($_GET['ver']);
 
-$pgtitle = array("System","Package Manager");
+$pgtitle = array(gettext("System"),gettext("Package Manager"));
 include("head.inc");
 
 ?>
@@ -88,10 +88,10 @@ include("head.inc");
 			$testing_version = substr($version, $hyphen + 1, strlen($version) - $hyphen);
 
 			$tab_array = array();
-			$tab_array[] = array("{$version} packages", $requested_version <> "" ? false : true, "pkg_mgr.php");
+			$tab_array[] = array($version . gettext("packages"), $requested_version <> "" ? false : true, "pkg_mgr.php");
 //			$tab_array[] = array("Packages for any platform", $requested_version == "none" ? true : false, "pkg_mgr.php?ver=none");
 //			$tab_array[] = array("Packages with a different version", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
-			$tab_array[] = array("Installed Packages", false, "pkg_mgr_installed.php");
+			$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 			display_top_tabs($tab_array);
 		?>
 		</td>
@@ -101,16 +101,16 @@ include("head.inc");
 			<div id="mainarea">
 				<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="10%" class="listhdrr">Package Name</td>
-						<td width="25%" class="listhdrr">Category</td>
+						<td width="10%" class="listhdrr"><?=gettext("Package Name"); ?></td>
+						<td width="25%" class="listhdrr"><?=gettext("Category"); ?></td>
 <!--					<td width="10%" class="listhdrr">Size</td>	-->
-						<td width="5%" class="listhdrr">Status</td>
-						<td width="5%" class="listhdrr">Package Info</td>
-						<td width="50%" class="listhdr">Description</td>
+						<td width="5%" class="listhdrr"><?=gettext("Status"); ?></td>
+						<td width="5%" class="listhdrr"><?=gettext("Package Info"); ?></td>
+						<td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
 					</tr>
 					<?php
 						if(!$pkg_info) {
-							echo "<tr><td colspan=\"5\"><center>There are currently no packages available for installation.</td></tr>";
+							echo "<tr><td colspan=\"5\"><center>" . gettext("There are currently no packages available for installation.") . "</td></tr>";
 						} else {
 							$installed_pfsense_version = rtrim(file_get_contents("/etc/version"));
 							$dash = strpos($installed_pfsense_version, "-");
@@ -181,13 +181,13 @@ include("head.inc");
 						</td>
 -->
 						<td class="listr">
-							<?= $index['status'] ?>
+							<?=$index['status'] ?>
 							<br/>
-							<?= $index['version'] ?>
+							<?=$index['version'] ?>
 							<br/>
-							platform: <?= $index['required_version'] ?>
+							<?=gettext("platform:") . $index['required_version'] ?>
 							<br/>
-							<?= $index['maximum_version']; ?>
+							<?=$index['maximum_version'] ?>
 						</td>
 						<td class="listr">
 						<?php
@@ -195,7 +195,7 @@ include("head.inc");
 							$pkginfolink = $index['pkginfolink'];
 							echo "<a target='_new' href='$pkginfolink'>Package Info</a>";
 						} else {
-							echo "No info, check the <a href='http://forum.pfsense.org/index.php/board,15.0.html'>forum</a>";
+							echo gettext("No info, check the") . "<a href='http://forum.pfsense.org/index.php/board,15.0.html'>" . gettext("forum") . "</a>";
 						}
 						?>
 						</td>
@@ -203,13 +203,13 @@ include("head.inc");
 							<?= $index['descr'] ?>
 						</td>
 						<td valign="middle" class="list" nowrap>
-							<a onclick="return confirm('Do you really want to install this package?')" href="pkg_mgr_install.php?id=<?=$index['name'];?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
+							<a onclick="return confirm('<?=gettext("Do you really want to install this package?"); ?>')" href="pkg_mgr_install.php?id=<?=$index['name'];?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
 						</td>
 					</tr>
 					<?php
 								}
 							} else {
-								echo '<tr><td colspan="5"><center>There are currently no packages available for installation.</center></td></tr>';
+								echo "<tr><td colspan='5'><center>" . gettext("There are currently no packages available for installation.") . "</center></td></tr>";
 							}
 						}
 					?>

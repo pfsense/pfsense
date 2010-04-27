@@ -246,6 +246,7 @@ if ($_GET['act'] == "del") {
 		$input_errors[] = "The interface is part of a gif tunnel. Please delete the tunnel to continue";
 	else {
 		unset($config['interfaces'][$id]['enable']);
+		$realid = get_real_interface($id);
 		interface_bring_down($id);   /* down the interface */
 		
 		unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
@@ -290,7 +291,7 @@ if ($_GET['act'] == "del") {
 			unset($config['dhcpd']['wan']);		
 		}
 
-		link_interface_to_vlans($id, "update");
+		link_interface_to_vlans($realid, "update");
 	
 		$savemsg = "Interface has been deleted.";
 	}

@@ -330,7 +330,7 @@ function update_description(itemnum) {
 							<?php endif; ?>
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
-								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
+								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>
 							</tr>
 						</table>
 					</td>

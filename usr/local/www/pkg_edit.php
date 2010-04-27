@@ -690,7 +690,7 @@ if($pkg['note'] != "")
  * ROW Helpers function
  */
 function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
-	global $text;
+	global $text, $config;
 	echo "<td>\n";
 	if($type == "input") {
 		echo "<input size='" . $size . "' name='" . $fieldname . $trc . "' id='" . $fieldname . $trc . "' value='" . $value . "'>\n";
@@ -712,6 +712,28 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			echo "<option value='" . $rowopt['value'] . "'" . $selected . ">" . $rowopt['name'] . "</option>\n";
 		}
 		echo "</select>\n";
+	} else if($type == "select_source") {
+		echo "<select id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "'>\n";
+	    $source_url = $rowhelper['source'];
+	    eval("\$pkg_source_txt = &$source_url;");
+		foreach($pkg_source_txt as $opt) {
+			$selected = "";
+		    if($rowhelper['source_name']) {
+				$source_name = $opt[$rowhelper['source_name']];
+		    } else {
+				$source_name = $opt[$rowhelper['name']];
+		    }
+		  	if($rowhelper['source_value']) {
+				$source_value = $opt[$rowhelper['source_value']];
+		  	} else {
+				$source_value = $opt[$rowhelper['value']];
+		  	}
+			if($opt['value'] == $value) 
+				$selected = " SELECTED";
+			$text .= "<option value='" . $source_value . "'" . $selected . ">" . $source_name . "</option>";
+			echo "<option value='" . $source_value . "'" . $selected . ">" . $source_name . "</option>\n";
+		}
+		echo "</select>\n";		
 	}
 }
 

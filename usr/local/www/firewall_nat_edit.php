@@ -448,7 +448,7 @@ include("fbegin.inc"); ?>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-					<select name="interface" class="formselect" onChange="dst_change(this.value);typesel_change();">
+					<select name="interface" class="formselect" onChange="dst_change(this.value,'<?=$pconfig['interface']?>','<?=$pconfig['dst']?>');typesel_change();">
 						<?php
 
 						$iflist = get_configured_interface_with_descr(false, true);
@@ -802,7 +802,7 @@ include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--
 	ext_change();
-	dst_change(document.iform.interface.value);
+	dst_change(document.iform.interface.value,'<?=$pconfig['interface']?>','<?=$pconfig['dst']?>');
 	typesel_change();
 	proto_change();
 //-->

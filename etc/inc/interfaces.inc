@@ -2196,7 +2196,7 @@ EOD;
 	}
 	
 	$mpdconf .= <<<EOD
-	set ipcp yes vjcomp
+	set ipcp no vjcomp
 	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
 	create link static {$interface}L1 pppoe
 	set link disable incoming

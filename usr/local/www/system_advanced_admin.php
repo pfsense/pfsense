@@ -157,7 +157,7 @@ if ($_POST) {
 	    $savemsg = get_std_save_message($retval);
 
 		if ($restart_webgui)
-			#$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."),{$url});
+			#$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to '%s' in 20 seconds."),{$url});
 			$savemsg .= "<br />" . gettext("One moment...redirecting to {$url} in 20 seconds.");
 
 		conf_mount_rw();
@@ -275,7 +275,7 @@ function prot_change() {
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Anti-lockout</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Anti-lockout"); ?></td>
 								<td width="78%" class="vtable">
 									<?php
 										if($config['interfaces']['lan']) 
@@ -302,7 +302,7 @@ function prot_change() {
 								<td colspan="2" valign="top" class="listtopic"><?=gettext("Secure Shell"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Secure Shell Server</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Secure Shell Server"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="enablesshd" type="checkbox" id="enablesshd" value="yes" <?php if (isset($pconfig['enablesshd'])) echo "checked"; ?> />
 									<strong><?=gettext("Enable Secure Shell"); ?></strong>

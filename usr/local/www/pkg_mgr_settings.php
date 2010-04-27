@@ -4,7 +4,7 @@
 	pkg_mgr_settings.php
 	part of pfSense
 	Copyright (C) 2009 Jim Pingle <jimp@pfsense.org>
-	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
+    Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
         Copyright (C) 2005 Colin Smith
 
 	Redistribution and use in source and binary forms, with or without

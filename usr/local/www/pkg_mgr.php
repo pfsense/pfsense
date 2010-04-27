@@ -185,7 +185,7 @@ include("head.inc");
 							<br/>
 							<?=$index['version'] ?>
 							<br/>
-							<?=gettext("platform:") . $index['required_version'] ?>
+							<?=gettext("platform") .": ". $index['required_version'] ?>
 							<br/>
 							<?=$index['maximum_version'] ?>
 						</td>

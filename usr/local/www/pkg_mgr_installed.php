@@ -99,14 +99,14 @@ include("head.inc");
 										// we're running a newer version of the package
 										if(strcmp($pkg['version'], $latest_package) > 0) {
 											$tdclass = "listbggrey";
-											$pkgver  = gettext("Available: ") . $latest_package . "<br/>";
-											$pkgver .= gettext("Installed: ") . $pkg['version'];
+											$pkgver  = gettext("Available") .": ". $latest_package . "<br/>";
+											$pkgver .= gettext("Installed") .": ". $pkg['version'];
 										}
 										// we're running an older version of the package
 										if(strcmp($pkg['version'], $latest_package) < 0) {
 											$tdclass = "listbg";
-											$pkgver  = "<font color='#ffffff'>" . gettext("Available: ") . $latest_package . "<br/>";
-											$pkgver .= gettext("Installed: ") . $pkg['version'];
+											$pkgver  = "<font color='#ffffff'>" . gettext("Available") .": ". $latest_package . "<br/>";
+											$pkgver .= gettext("Installed") .": ". $pkg['version'];
 										}
 										// we're running the current version
 										if(!strcmp($pkg['version'], $latest_package)) {

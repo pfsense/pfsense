@@ -197,7 +197,7 @@ function update_description(itemnum) {
 					<div class="tabcont">
 						<span class="vexpl">
 							<span class="red">
-								<strong><?=gettext("NOTE:");?>&nbsp</strong>
+								<strong><?=gettext("NOTE");?>:&nbsp</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only.");?>
 							<br/>
@@ -274,7 +274,7 @@ function update_description(itemnum) {
 									<br/>
 									<strong><?=gettext("Maximum number of connections to hold in the firewall state table.");?></strong>
 									<br/>
-									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default.  On your system the default size is:");?> <?= pfsense_default_state_size() ?></span>
+									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default.  On your system the default size is");?>: <?= pfsense_default_state_size() ?></span>
 								</td>
 							</tr>
 							<tr>

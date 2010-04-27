@@ -67,7 +67,7 @@ if (!$pconfig['timezone'])
 if (!$pconfig['timeservers'])
 	$pconfig['timeservers'] = "pool.ntp.org";
 
-$changedesc = gettext("System: ");
+$changedesc = gettext("System") . ": ";
 $changecount = 0;
 
 function is_timezone($elt) {

@@ -154,10 +154,10 @@ if ($needs_system_upgrade == false) {
 
 echo "\n<script>$('invokeupgrade').style.visibility = 'visible';</script>";
 $txt  = gettext("A new version is now available") . "\\n\\n";
-$txt .= gettext("Current version:") . $current_installed_version . "\\n";
-$txt .= "       " . gettext("Built On:") ." ".  $current_installed_buildtime . "\\n";
-$txt .= "    " . gettext("New version:") ." ".  $remote_version . "\\n\\n";
-$txt .= "  " . gettext("Update source:") ." ".  $updater_url . "\\n";
+$txt .= gettext("Current version") .": ". $current_installed_version . "\\n";
+$txt .= "       " . gettext("Built On") .": ".  $current_installed_buildtime . "\\n";
+$txt .= "    " . gettext("New version") .": ".  $remote_version . "\\n\\n";
+$txt .= "  " . gettext("Update source") .": ".  $updater_url . "\\n";
 update_output_window($txt);
 ?>
 </form>

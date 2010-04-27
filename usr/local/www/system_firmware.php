@@ -271,7 +271,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 							<?php
 						  		if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
 						  			if($g['platform'] == "pfSense") { 
-										echo gettext("Please select kernel type: ");
+										echo gettext("Please select kernel type") , ": ";
 										echo "<select name='kerneltype'>";
 										echo "<option value='SMP'>" . gettext("Multiprocessor kernel") . "</option>";
 										echo "<option value='single'>". gettext("Uniprocessor kernel") . "</option>";
@@ -296,7 +296,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 			</tr>
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
-				<td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Warning:");?><br>
+				<td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Warning");?>:<br>
 				</strong></span><?=gettext("DO NOT abort the firmware upgrade once it
 				has started. The firewall will reboot automatically after
 				storing the new firmware. The configuration will be maintained.");?></span></td>

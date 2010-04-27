@@ -52,7 +52,7 @@ if (!is_array($config['gateways']['gateway_item']))
 
 $a_routes = &$config['staticroutes']['route'];
 $a_gateways = &$config['gateways']['gateway_item'];
-$changedesc = gettext("Static Routes: ");
+$changedesc = gettext("Static Routes") . ": ";
 
 if ($_POST) {
 

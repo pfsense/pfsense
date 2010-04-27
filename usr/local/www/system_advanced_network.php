@@ -180,7 +180,7 @@ function enable_change(enable_over) {
 					<div class="tabcont">
 						<span class="vexpl">
 		    	        	<span class="red">
-								<strong><?=gettext("NOTE:"); ?>&nbsp</strong>
+								<strong><?=gettext("NOTE"); ?>:&nbsp</strong>
 							</span>
 							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
 							<br/>
@@ -209,7 +209,7 @@ function enable_change(enable_over) {
 									routing	infrastructures. If enabled, don't forget to
 									add a firewall rule to permit IPv6 packets."); ?><br/>
 									<br/>
-									<?=gettext("IP address :"); ?>&nbsp;
+									<?=gettext("IP address"); ?>&nbsp;:&nbsp;
 									<input name="ipv6nat_ipaddr" type="text" class="formfld unknown" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
 								</td>
 							</tr>

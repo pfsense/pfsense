@@ -94,7 +94,7 @@ if ($_GET['act'] == "del") {
 }
 
 
-$pgtitle = array("System","Gateways");
+$pgtitle = array(gettext("System"),gettext("Gateways"));
 include("head.inc");
 
 ?>
@@ -105,18 +105,18 @@ include("head.inc");
 <input type="hidden" name="y1" value="1">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np("The gateway configuration has been changed.<br>You must apply the changes in order for them to take 
-effect.");?><br>
+<?php print_info_box_np(gettext("The gateway configuration has been changed.<br>You must apply the changes in order for them to take 
+effect."));?><br>
 <?php endif; ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 		  <td>
 <?php
 			$tab_array = array();
-			$tab_array[0] = array("Gateways", true, "system_gateways.php");
-			$tab_array[1] = array("Routes", false, "system_routes.php");
-			$tab_array[2] = array("Groups", false, "system_gateway_groups.php");
-			$tab_array[3] = array("Settings", false, "system_gateways_settings.php");
+			$tab_array[0] = array(gettext("Gateways"), true, "system_gateways.php");
+			$tab_array[1] = array(gettext("Routes"), false, "system_routes.php");
+			$tab_array[2] = array(gettext("Groups"), false, "system_gateway_groups.php");
+			$tab_array[3] = array(gettext("Settings"), false, "system_gateways_settings.php");
 			display_top_tabs($tab_array);
 ?>
 </td></tr>
@@ -125,11 +125,11 @@ effect.");?><br>
 	<div id="mainarea">
              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="15%" class="listhdrr">Name</td>
-                  <td width="15%" class="listhdrr">Interface</td>
-                  <td width="20%" class="listhdrr">Gateway</td>
-                  <td width="20%" class="listhdrr">Monitor IP</td>
-                  <td width="30%" class="listhdr">Description</td>
+                  <td width="15%" class="listhdrr"><?=gettext("Name"); ?></td>
+                  <td width="15%" class="listhdrr"><?=gettext("Interface"); ?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Gateway"); ?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Monitor IP"); ?></td>
+                  <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
                   <td width="10%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			   <tr>
@@ -191,8 +191,8 @@ effect.");?><br>
 				<td><a href="system_gateways_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
 				<?php
 				if ($gateway['attribute'] != "system") : ?>
-					<td><a href="system_gateways.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this 
-gateway?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+					<td><a href="system_gateways.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this 
+gateway?"); ?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				<?php else : ?>
 					<td width='17'></td>
 				<?php endif; ?>

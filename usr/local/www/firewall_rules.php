@@ -557,15 +557,10 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					  else if ($filterent['sched'])
 					  { 
 					 	if ($iconfn == "block" || $iconfn == "reject")
-					 	{
 					 		$image = "icon_block_d";
-					 		$alttext = "Traffic matching this rule is currently being allowed";
-					 	}
 					 	else
-					 	{
 					 		$image = "icon_block";
-					 		$alttext = "Traffic matching this rule is currently being denied";
-					 	}
+					 	$alttext = "This rule is not currently active because its period has expired";
 					 	$printicon = true;				  	
 					  }
 				}

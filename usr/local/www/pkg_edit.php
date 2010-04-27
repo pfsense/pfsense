@@ -440,6 +440,40 @@ if ($pkg['tabs'] <> "") {
                   }
 
                   print("</select>\n<br />\n" . fixup_string($pkga['description']) . "\n");
+		  } else if($pkga['type'] == "select_source") {
+                  $fieldname = $pkga['fieldname'];
+                  if (isset($pkga['multiple'])) {
+                    $multiple = 'multiple="multiple"';
+                    $items = explode(',', $value);
+                    $fieldname .= "[]";
+                  }
+                  else {
+                    $multiple = '';
+                    $items = array($value);
+                  }
+                  $size = (isset($pkga['size']) ? "size=\"{$pkga['size']}\"" : '');
+                  $onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
+
+                  print("<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n");
+				  $source_url = $pkga['source'];
+				  eval("\$pkg_source_txt = &$source_url;");
+                  foreach ($pkg_source_txt as $opt) {
+                      $selected = '';
+					  if($pkga['source_name']) {
+						$source_name = $opt[$pkga['source_name']];
+					  } else {
+						$source_name = $opt[$pkga['name']];
+					  }
+					  if($pkga['source_value']) {
+						$source_value = $opt[$pkga['source_value']];
+					  } else {
+						$source_value = $opt[$pkga['value']];
+					  }
+                      if (in_array($opt['value'], $items)) $selected = 'selected="selected"';
+                      	print("\t<option name=\"{$source_name}\" value=\"{$source_value}\" $selected>{$source_name}</option>\n");
+                  }
+
+                  print("</select>\n<br />\n" . fixup_string($pkga['description']) . "\n");		
 	      } else if($pkga['type'] == "vpn_selection") {
 		    echo "<select id='" . $pkga['fieldname'] . "' name='" . $vpn['name'] . "'>\n";
 		    foreach ($config['ipsec']['phase1'] as $vpn) {

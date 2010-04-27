@@ -47,7 +47,7 @@ if(is_array($config['installedpackages']['package'])) {
 	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink'));
 }
 
-$pgtitle = array("System","Package Manager");
+$pgtitle = array(gettext("System"),gettext("Package Manager"));
 include("head.inc");
 
 ?>
@@ -60,10 +60,10 @@ include("head.inc");
 				<?php
 					$version = file_get_contents("/etc/version");
 					$tab_array = array();
-					$tab_array[] = array("{$version} packages", false, "pkg_mgr.php");
+					$tab_array[] = array("{$version}" . gettext("packages"), false, "pkg_mgr.php");
 //					$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
 //					$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
-					$tab_array[] = array("Installed packages", true, "pkg_mgr_installed.php");
+					$tab_array[] = array(gettext("Installed packages"), true, "pkg_mgr_installed.php");
 					display_top_tabs($tab_array);
 				?>
 			</td>
@@ -73,11 +73,11 @@ include("head.inc");
 				<div id="mainarea">
 					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
-							<td width="10%" class="listhdrr">Package Name</td>
-							<td width="20%" class="listhdrr">Category</td>
-							<td width="10%" class="listhdrr">Package Info</td>
-							<td width="15%" class="listhdrr">Package Version</td>
-							<td width="45%" class="listhdr">Description</td>
+							<td width="10%" class="listhdrr"><?=gettext("Package Name"); ?></td>
+							<td width="20%" class="listhdrr"><?=gettext("Category"); ?></td>
+							<td width="10%" class="listhdrr"><?=gettext("Package Info"); ?></td>
+							<td width="15%" class="listhdrr"><?=gettext("Package Version"); ?></td>
+							<td width="45%" class="listhdr"><?=gettext("Description"); ?></td>
 						</tr>
 						<?php
 							if(is_array($config['installedpackages']['package'])):
@@ -99,14 +99,14 @@ include("head.inc");
 										// we're running a newer version of the package
 										if(strcmp($pkg['version'], $latest_package) > 0) {
 											$tdclass = "listbggrey";
-											$pkgver  = "Available: {$latest_package}<br/>";
-											$pkgver .= "Installed: {$pkg['version']}";
+											$pkgver  = gettext("Available:") . $latest_package . "<br/>";
+											$pkgver .= gettext("Installed:") . $pkg['version'];
 										}
 										// we're running an older version of the package
 										if(strcmp($pkg['version'], $latest_package) < 0) {
 											$tdclass = "listbg";
-											$pkgver  = "<font color='#ffffff'>Available: {$latest_package}<br/>";
-											$pkgver .= "Installed: {$pkg['version']}";
+											$pkgver  = "<font color='#ffffff'>" . gettext("Available:") . $latest_package . "<br/>";
+											$pkgver .= gettext("Installed:") . $pkg['version'];
 										}
 										// we're running the current version
 										if(!strcmp($pkg['version'], $latest_package)) {
@@ -132,9 +132,9 @@ include("head.inc");
 							<?php
 							if($currentvers[$pkg['name']]['pkginfolink']) {
 								$pkginfolink = $currentvers[$pkg['name']]['pkginfolink'];
-								echo "<a target='_new' href='$pkginfolink'>Package Info</a>";
+								echo "<a target='_new' href='$pkginfolink'>" . gettext("Package Info") . "</a>";
 							} else {
-								echo "No info, check the <a href='http://forum.pfsense.org/index.php/board,15.0.html'>forum</a>";
+								echo gettext("No info, check the") . "<a href='http://forum.pfsense.org/index.php/board,15.0.html'>" . gettext("forum") . "</a>";
 							}
 							?>
 							</td>
@@ -145,15 +145,15 @@ include("head.inc");
 									<?=$pkg['descr'];?>
 							</td>
 							<td valign="middle" class="list" nowrap>
-								<a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>">
-									<img title="Remove this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+								<a onclick="return confirm('<?=gettext("Do you really want to remove this package?"); ?>')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>">
+									<img title="<?=gettext("Remove this package."); ?>" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
 								</a>
 								<br>
 								<a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>">
-									<img title="Reinstall this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0">
+									<img title="<?=gettext("Reinstall this package."); ?>" src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0">
 								</a>
 								<a href="pkg_mgr_install.php?mode=reinstallxml&pkg=<?= $pkg['name']; ?>">
-									<img title="Reinstall this package's GUI components." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_xml.gif" width="17" height="17" border="0">
+									<img title="<?=gettext("Reinstall this package's GUI components."); ?>" src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_xml.gif" width="17" height="17" border="0">
 								</a>
 							</td>
 						</tr>
@@ -163,7 +163,7 @@ include("head.inc");
 						 ?>
 						<tr>
 							<td colspan="5" align="center">
-								There are no packages currently installed.
+								<?=gettext("There are no packages currently installed."); ?>
 							</td>
 						</tr>
 						<?php endif; ?>

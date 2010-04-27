@@ -136,7 +136,7 @@ function enable_altfirmwareurl(enable_over) {
 			<tr><td><?=gettext("Base URL"); ?>:</td><td><input name="firmwareurl" type="input" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>"></td></tr>
 			</table>
 			<span class="vexpl">
-				<?=gettext("This is where"); ?> <?php echo $g['product_name'] ?> <?=gettext("will check for newer firmware versions when the"); ?> <a href="system_firmware_check.php">System: Firmware: Auto Update</a> <?=gettext("page is viewed."); ?>
+				<?=gettext("This is where"); ?> <?php echo $g['product_name'] ?> <?=gettext("will check for newer firmware versions when the"); ?> <a href="system_firmware_check.php"><?=gettext("System: Firmware: Auto Update"); ?></a> <?=gettext("page is viewed."); ?>
 				<p/>
 				<b><?=gettext("NOTE"); ?>:</b> <?=gettext("When a custom URL is enabled the system will not verify the digital signature from"); ?> <?php echo $g['product_website'] ?>.
 				</span>

@@ -122,11 +122,11 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 	unset($input_errors);
 	unset($sig_warning);
 
-	if (stristr($_POST['Submit'], "Enable"))
+	if (stristr($_POST['Submit'], gettext("Enable")))
 		$mode = "enable";
-	else if (stristr($_POST['Submit'], "Disable"))
+	else if (stristr($_POST['Submit'], gettext("Disable")))
 		$mode = "disable";
-	else if (stristr($_POST['Submit'], "Upgrade") || $_POST['sig_override'])
+	else if (stristr($_POST['Submit'], gettext("Upgrade")) || $_POST['sig_override'])
 		$mode = "upgrade";
 	else if ($_POST['sig_no']) {
 		if(file_exists("{$g['upload_path']}/firmware.tgz"))
@@ -194,7 +194,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 	}
 }
 
-$pgtitle = array("Diagnostics","Firmware");
+$pgtitle = array(gettext("Diagnostics"),gettext("Firmware"));
 include("head.inc");
 
 ?>
@@ -220,8 +220,8 @@ print_info_box($sig_warning);
 if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 	echo "<input type='hidden' name='isnano' id='isnano' value='yes'>\n";
 ?>
-<input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" Yes ">
-<input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" No ">
+<input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" <?=gettext("Yes");?> ">
+<input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" <?=gettext("No"); ?> ">
 <?php else: ?>
 <?php if (!is_subsystem_dirty('firmwarelock')): ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -241,7 +241,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 				<div id="mainarea">
 					<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 	<tr>
-		 				<td colspan="2" class="listtopic">Invoke <?=$g['product_name']?> Manual Upgrade</td>
+		 				<td colspan="2" class="listtopic"><?=gettext("Invoke") ." ". $g['product_name'] ." ".  gettext("Manual Upgrade"); ?></td>
 					</tr>
 					<tr>
 		  				<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
@@ -287,7 +287,7 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 								<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('upload_progress.php?upload_id=<?=$upload_id?>','UploadMeter','width=370,height=115', true); return true;">
 								*/
 							?>
-							<input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
+							<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upgrade firmware");?>">
 						<?php endif; else: ?>
 							<strong><?=gettext("You must reboot the system before you can upgrade the firmware.");?></strong>
 						<?php endif; ?>

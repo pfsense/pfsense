@@ -157,8 +157,7 @@ if ($_POST) {
 	    $savemsg = get_std_save_message($retval);
 
 		if ($restart_webgui)
-			#$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to '%s' in 20 seconds."),{$url});
-			$savemsg .= "<br />" . gettext("One moment...redirecting to {$url} in 20 seconds.");
+			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to '%s' in 20 seconds."),$url);
 
 		conf_mount_rw();
 		setup_serial_port();
@@ -166,7 +165,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("System","Advanced: Admin Access");
+$pgtitle = array(gettext("System"),gettext("Advanced: Admin Access"));
 include("head.inc");
 
 ?>
@@ -198,12 +197,12 @@ function prot_change() {
 				<td>
 					<?php
 						$tab_array = array();
-						$tab_array[] = array("Admin Access", true, "system_advanced_admin.php");
-						$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
-						$tab_array[] = array("Networking", false, "system_advanced_network.php");
-						$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
-						$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
-						$tab_array[] = array("Notifications", false, "system_advanced_notifications.php");
+						$tab_array[] = array(gettext("Admin Access"), true, "system_advanced_admin.php");
+						$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
+						$tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
+						$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
+						$tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
+						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 						display_top_tabs($tab_array);
 					?>
 				</td>
@@ -364,7 +363,7 @@ function prot_change() {
 							</tr>							
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
-								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
+								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>

@@ -101,7 +101,7 @@ if ($_POST) {
 		clear_subsystem_dirty('sysctl');
 	}
 
-	if ($_POST['Submit'] == "Save") {
+	if ($_POST['Submit'] == gettext("Save")) {
 		$tunableent = array();
 
 		$tunableent['tunable'] = $_POST['tunable'];
@@ -124,7 +124,7 @@ if ($_POST) {
 
 include("head.inc");
 
-$pgtitle = array("System","Advanced: Miscellaneous");
+$pgtitle = array(gettext("System"),gettext("Advanced: Miscellaneous"));
 include("head.inc");
 
 ?>
@@ -138,7 +138,7 @@ include("head.inc");
 			if ($savemsg)
 				print_info_box($savemsg);
 			if (is_subsystem_dirty('sysctl') && ($act != "edit" ))
-				print_info_box_np("The firewall tunables have changed.  You must apply the configuration to take affect.");
+				print_info_box_np(gettext("The firewall tunables have changed.  You must apply the configuration to take affect."));
 		?>
 	</form>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -146,12 +146,12 @@ include("head.inc");
 			<td>
 				<?php
 					$tab_array = array();
-					$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
-					$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
-					$tab_array[] = array("Networking", false, "system_advanced_network.php");
-					$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
-					$tab_array[] = array("System Tunables", true, "system_advanced_sysctl.php");
-					$tab_array[] = array("Notifications", false, "system_advanced_notifications.php");
+					$tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
+					$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
+					$tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
+					$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
+					$tab_array[] = array(gettext("System Tunables"), true, "system_advanced_sysctl.php");
+					$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 					display_top_tabs($tab_array);
 				?>
 			</td>
@@ -162,17 +162,17 @@ include("head.inc");
 				<div class="tabcont">
 					<span class="vexpl">
 						<span class="red">
-							<strong>NOTE:&nbsp</strong>
+							<strong><?=gettext("NOTE"); ?>:&nbsp</strong>
 						</span>
-						The options on this page are intended for use by advanced users only.
+						<?=gettext("The options on this page are intended for use by advanced users only."); ?>
 						<br/>
 					</span>
 					<br/>
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
-							<td width="20%" class="listhdrr">Tunable Name</td>
-							<td width="60%" class="listhdrr">Description</td>
-							<td width="20%" class="listhdrr">Value</td>
+							<td width="20%" class="listhdrr"><?=gettext("Tunable Name"); ?></td>
+							<td width="60%" class="listhdrr"><?=gettext("Description"); ?></td>
+							<td width="20%" class="listhdrr"><?=gettext("Value"); ?></td>
 						</tr>
 						<?php $i = 0; foreach ($config['sysctl']['item'] as $tunable): ?>
 						<tr>
@@ -198,7 +198,7 @@ include("head.inc");
 											</a>
 										</td>
 										<td valign="middle">
-											<a href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')">
+											<a href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?"); ?>')">
 												<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" />
 											</a>
 										</td>
@@ -233,22 +233,22 @@ include("head.inc");
 					<form action="system_advanced_sysctl.php" method="post" name="iform" id="iform">
 						<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">Edit system tunable</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit system tunable"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncellreq">Tunable</td>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Tunable"); ?></td>
 								<td width="78%" class="vtable">
 									<input size="65" name="tunable" value="<?php echo $pconfig['tunable']; ?>">
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncellreq">Description</td>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Description"); ?></td>
 								<td width="78%" class="vtable">
 									<textarea rows="7" cols="50" name="desc"><?php echo $pconfig['desc']; ?></textarea>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncellreq">Value</td>
+								<td width="22%" valign="top" class="vncellreq"><?=gettext("Value"); ?></td>
 								<td width="78%" class="vtable">
 									<input size="65" name="value" value="<?php echo $pconfig['value']; ?>">
 								</td>
@@ -256,8 +256,8 @@ include("head.inc");
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
 								<td width="78%">
-									<input id="submit" name="Submit" type="submit" class="formbtn" value="Save" />
-									<input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" onclick="history.back()" />
+									<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+									<input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 									<?php if (isset($id) && $a_tunable[$id]): ?>
 									<input name="id" type="hidden" value="<?=$id;?>" />
 									<?php endif; ?>

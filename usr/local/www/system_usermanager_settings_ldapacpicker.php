@@ -33,7 +33,9 @@
 
 require("guiconfig.inc");
 require_once("auth.inc");
+
 $ous = array();
+
 if($_GET) {
 	$authcfg = array();
 	$authcfg['ldap_port'] = $_GET['port'];
@@ -47,7 +49,29 @@ if($_GET) {
 	$authcfg['ldap_authcn'] = explode(";", $_GET['authcn']);
 	$ous = ldap_get_user_ous(true, $authcfg);
 }
+
 ?>
+<html>
+	<head>
+            <STYLE type="text/css">
+                        TABLE {
+                                border-width: 1px 1px 1px 1px;
+                                border-spacing: 0px;
+                                border-style: solid solid solid solid;
+                                border-color: gray gray gray gray;
+                                border-collapse: separate;
+                                background-color: collapse;
+                        }
+                        TD {
+                                border-width: 0px 0px 0px 0px;
+                                border-spacing: 0px;
+                                border-style: solid solid solid solid;
+                                border-color: gray gray gray gray;
+                                border-collapse: collapse;
+                                background-color: white;
+                        }
+            </STYLE>
+        </head>
 <script language="JavaScript">
 function post_choices() {
 
@@ -61,34 +85,17 @@ function post_choices() {
 			opener.document.forms[0].ldapauthcontainers.value+=document.forms[0].ou[i].value;
 		}
 	}
-	//this.close();
+	window.close();
 -->
 }
 </script>
 
-<html>
-	<head>
-	    <STYLE type="text/css">
-			TABLE { 
-				border-width: 1px 1px 1px 1px;
-				border-spacing: 0px;
-				border-style: solid solid solid solid;
-				border-color: gray gray gray gray;
-				border-collapse: separate;
-				background-color: collapse;
-	 		}
-			TD { 
-				border-width: 0px 0px 0px 0px;
-				border-spacing: 0px;
-				border-style: solid solid solid solid;
-				border-color: gray gray gray gray;
-				border-collapse: collapse;
-				background-color: white;
-			}
-	    </STYLE>		
-	</head>
  <body link="#000000" vlink="#000000" alink="#000000" >
  <form method="post" action="system_usermanager_settings_ldapacpicker.php">	
+<?php if (empty($ous)): ?>
+	<p>Sorry, we could not connect to the LDAP server.  Please try later.</p>
+	<input type='button' value='Close' onClick="window.close();">
+<?php else: ?>
 	<b>Please select which containers to Authenticate against:</b>
 	<p/>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -96,11 +103,7 @@ function post_choices() {
     	<td class="tabnavtbl">
 			<table width="100%">
 <?php
-	if(!is_array($ous)) {
-		echo "Sorry, we could not connect to the LDAP server.  Please try later.";
-		//exit;
-	}
-	else if(is_array($ous)) {	
+	if(is_array($ous)) {	
 		foreach($ous as $ou) {
 			if(in_array($ou, $authcfg['ldap_authcn']))
 				$CHECKED=" CHECKED";
@@ -109,7 +112,7 @@ function post_choices() {
 			echo "			<tr><td><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br/></td></tr>\n";
 		}
 	}
-?>	
+?>
 			</table>
       	</td>
      </tr>
@@ -118,7 +121,7 @@ function post_choices() {
 	<p/>
 
 	<input type='button' value='Save' onClick="post_choices();">
-
+<?php endif; ?>
+ </form>
  </body>
 </html>
-

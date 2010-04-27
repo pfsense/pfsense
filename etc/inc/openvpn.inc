@@ -266,7 +266,7 @@ function openvpn_reconfigure($mode,& $settings) {
 
 	if (empty($settings))
 		return;
-	if ($settings['disable']) 
+	if (isset($settings['disable'])) 
 		return;
 
 	/*
@@ -559,7 +559,7 @@ function openvpn_restart($mode, & $settings) {
 			usleep(250000);
 	}
 
-	if ($settings['disable'])
+	if (isset($settings['disable']))
 		return;
 
 	/* start the new process */
@@ -607,7 +607,7 @@ function openvpn_resync_csc(& $settings) {
 
 	$fpath = $g['varetc_path']."/openvpn-csc/".$settings['common_name'];
 
-	if ($settings['disable']) {
+	if (isset($settings['disable'])) {
 		unlink_if_exists($fpath);
 		return;
 	}

@@ -57,7 +57,7 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if($_POST['session_timeout']) {
+	if(isset($_POST['session_timeout'])) {
 		$timeout = intval($_POST['session_timeout']);
 		if ($timeout != "" && (!is_numeric($timeout) || $timeout <= 0))
 			$input_errors[] = gettext("Session timeout must be an integer value.");
@@ -65,7 +65,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		if($_POST['session_timeout'])
+		if(isset($_POST['session_timeout']))
 			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
 		else
 			unset($config['system']['webgui']['session_timeout']);
@@ -125,7 +125,7 @@ if(!$pconfig['backend'])
                         <td width="78%" class="vtable">
 				<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
                           	<br />
-                          	<?=gettext("Time in minutes to expire idle management sessions. The default is four hours (240 minutes). <br/> Leave blank to never expire sessions. NOTE: This is a security risk!");?><br />
+                          	<?=gettext("Time in minutes to expire idle management sessions. The default is 4 hours (240 minutes). <br/> 0 means to never expire sessions. NOTE: This is a security risk!");?><br />
 			</td>
 		</tr>
 		<tr>

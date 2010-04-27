@@ -345,6 +345,21 @@ function radius_srvcschange(){
 }
 
 function select_clicked() {
+	if (document.getElementById("ldap_port").value == '' ||
+	    document.getElementById("ldap_host").value == '' ||
+	    document.getElementById("ldap_scope").value == '' ||
+	    document.getElementById("ldap_basedn").value == '' ||
+	    document.getElementById("ldapauthcontainers").value == '') {
+		alert("Please fill the required values.");
+		return;
+	}
+	if (!document.getElementById("ldap_anon").checked) {
+		if (document.getElementById("ldap_binddn").value == '' ||
+		    document.getElementById("ldap_bindpw").value == '') {
+			alert("Please fill the bind username/password.");
+			return;
+		}
+	}
         var url = 'system_usermanager_settings_ldapacpicker.php?';
         url += 'port=' + document.getElementById("ldap_port").value;
         url += '&host=' + document.getElementById("ldap_host").value;

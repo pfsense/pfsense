@@ -91,7 +91,7 @@ if (isset($_POST['id']))
 if (isset($id) && $a_ppps[$id]) {
 	$pconfig['type'] = $a_ppps[$id]['type'];
 	$pconfig['interfaces'] = $a_ppps[$id]['ports'];
-	$pconfig['user'] = $a_ppps[$id]['username'];
+	$pconfig['username'] = $a_ppps[$id]['username'];
 	$pconfig['password'] = $a_ppps[$id]['password'];
 	if (isset($a_ppps[$id]['defaultgw']))
 		$pconfig['defaultgw'] = true;
@@ -203,20 +203,20 @@ if ($_POST) {
 			break;
 		case "pppoe":
 			if ($_POST['ondemand']) {
-				$reqdfields = explode(" ", "interfaces user password ondemand idletimeout");
+				$reqdfields = explode(" ", "interfaces username password ondemand idletimeout");
 				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password,Dial on demand,Idle timeout value");
 			} else {
-				$reqdfields = explode(" ", "interfaces user password");
+				$reqdfields = explode(" ", "interfaces username password");
 				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password");
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 		case "pptp":
 			if ($_POST['ondemand']) {
-				$reqdfields = explode(" ", "interfaces user password localip subnet gateway ondemand idletimeout");
+				$reqdfields = explode(" ", "interfaces username password localip subnet gateway ondemand idletimeout");
 				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password,Local IP address,Subnet,Remote IP address,Dial on demand,Idle timeout value");
 			} else {
-				$reqdfields = explode(" ", "interfaces user password localip subnet gateway");
+				$reqdfields = explode(" ", "interfaces username password localip subnet gateway");
 				$reqdfieldsn = explode(",", "Link Interface(s),Username,Password,Local IP address,Subnet,Remote IP address");
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -264,7 +264,7 @@ if ($_POST) {
 		$ppp = array();
 		$ppp['type'] = $_POST['type'];
 		$ppp['ports'] = implode(',', $_POST['interfaces']);
-		$ppp['username'] = $_POST['user'];
+		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = $_POST['password'];
 		$ppp['defaultgw'] = $_POST['defaultgw'] ? true : false;
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
@@ -480,8 +480,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		for(var j=0; j < option_array.length-1; j++){
 			var option = option_array[j].split(",");
 			var selected = Boolean(parseInt(option[2]));
-			select_list.options[j] = new Option(option[0], option[1], false, selected);
-			//this line for debugging the javascript above
+			select_list.options[j] = new Option("&nbsp;"+option[0]+"&nbsp;", option[1], false, selected);
 			//select_list.options[option_array.length-1+j] = new Option(option[2].toString() +" "+ selected.toString());
 		}
 	}
@@ -539,7 +538,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		$('apn').value = "ISP.CINGULAR";
 		$('apnum').value = "1";
 		$('phone').value = "*99#";
-		$('user').value = "att";
+		$('username').value = "att";
 		$('password').value = "att";
 	}
 	function prefill_sprint() {
@@ -547,7 +546,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		$('apn').value = "";
 		$('apnum').value = "";
 		$('phone').value = "#777";
-		$('user').value = "sprint";
+		$('username').value = "sprint";
 		$('password').value = "sprint";
 	}
 	function prefill_vzw() {
@@ -555,7 +554,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		$('apn').value = "";
 		$('apnum').value = "";
 		$('phone').value = "#777";
-		$('user').value = "123@vzw3g.com";
+		$('username').value = "123@vzw3g.com";
 		$('password').value = "vzw";
 	}
 	document.observe("dom:loaded", function() { updateType(<?php echo "'{$pconfig['type']}'";?>); });
@@ -588,13 +587,12 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					<td width="22%" valign="top" class="vncellreq">Link interface(s)</td>
 					<td width="78%" class="vtable">
 						<select name="interfaces[]" multiple="true" class="formselect" size="4">
-							<option></option>
+							<option>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 						</select>
-						<br/><span class="vexpl">Select one or more interfaces or ports to participate in the connection. Select more than one
-						interface to create a multilink (MLPPP) connection.</span>
+						<br/><span class="vexpl">Interfaces participating in the multilink connection.</span>
 					</td>
             	</tr>
-            	<tr style="display:none">
+            	<tr style="display:none" name="portlists" id="portlists">
             		<td id="serialports"><?php
 							$serial = glob("/dev/cua*");
 							$modems = glob("/dev/modem*");
@@ -606,7 +604,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 								if (stristr($pconfig['interfaces'], $port))
 									echo ",1|";
 								else
-									echo ",|";
+									echo ",0|";
 							}
 					?></td>
             		<td id="ports"><?php
@@ -617,14 +615,14 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 								if (stristr($pconfig['interfaces'], $ifn))
 									echo ",1|";
 								else
-									echo ",|";
+									echo ",0|";
 							}
 					?></td>
             	</tr>
 				<tr>
 					<td width="22%" valign="top" class="vncell">Username</td>
 					<td width="78%" class="vtable">
-					<input name="user" type="text" class="formfld usr" id="user" size="20" value="<?=htmlspecialchars($pconfig['user']);?>">
+					<input name="username" type="text" class="formfld usr" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
 					</td>
 			    </tr>
 			    <tr>
@@ -680,15 +678,6 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 						<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
 								<td colspan="2" valign="top" class="listtopic">PPP configuration</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell">Default PPP settings</td>
-							  <td width="22%" valign="top" class="vtable">
-								<a href='#' onClick='javascript:prefill_att();'>ATT</A>&nbsp;
-								<a href='#' onClick='javascript:prefill_sprint();'>Sprint</A>&nbsp;
-								<a href='#' onClick='javascript:prefill_vzw();'>Verizon</A>
-								<br/><span class="vexpl">Click the links to fill default connection settings for these carriers.</span>
-							  </td>
 							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell">Init String</td>
@@ -857,8 +846,8 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					<td width="22%" width="100" valign="top" class="vncell">Bandwidth</td>
 					<td width="78%" class="vtable">
 					<input name="bandwidths" type="checkbox" id="bandwidths" value="yes" <?php if (isset($pconfig['bandwidth'])) echo "checked"; ?> onclick="show_more_settings(this,bandwidth_input);" />
-					Set bandwidths for links in multilink connections.
-					<span style="display:none" id="bandwidth_input"><br/><input name="bandwidth[]" type="text" class="formfld unknown" id="bandwidth" size="40" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
+					Set <bold>unequal</bold> bandwidths for links in this multilink connection.
+					<span style="display:none" id="bandwidth_input"><input name="bandwidth[]" type="text" class="formfld unknown" id="bandwidth" size="40" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
 					<br/> <span class="vexpl">Set Bandwidth for each link ONLY when links have different bandwidths.</span>
 					</span>
 				  </td>

@@ -1,10 +1,13 @@
 <?php
-/* $Id$ */
 /*
-	interfaces_ppp.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	interfaces_lan.php
+	part of pfSense(http://pfsense.org)
 
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Originally written by Adam Lebsack <adam at holonyx dot com>
+	Changes by Chris Buechler <cmb at pfsense dot org> 
+	
+	Copyright (C) 2004-2008 BSD Perimeter LLC.
+	Copyright (C) 2004-2009 Scott Ullrich
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -29,14 +32,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 /*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
+	pfSense_BUILDER_BINARIES:	/bin/kill	/sbin/ifconfig	
 	pfSense_MODULE:	interfaces
 */
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppp
-##|*NAME=Interfaces: ppp page
-##|*DESCR=Allow access to the 'Interfaces: ppp' page.
+##|*NAME=Interfaces: PPP page
+##|*DESCR=Allow access to the 'Interfaces: PPP' page.
 ##|*MATCH=interfaces_ppp.php*
 ##|-PRIV
 
@@ -60,7 +63,7 @@ function ppp_inuse($num) {
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (ppp_inuse($_GET['id'])) {
-		$input_errors[] = "This interface cannot be deleted because it is still being used as an interface.";
+		$input_errors[] = "This PPP interface cannot be deleted because it is still being used as an interface.";
 	} else {
 		unset($a_ppps[$_GET['id']]);
 		write_config();
@@ -86,8 +89,8 @@ include("head.inc");
 	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
 	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
-	$tab_array[5] = array("PPP", false, "interfaces_ppp.php");
-	$tab_array[6] = array("MLPPP", true, "interfaces_mlppp.php");
+	$tab_array[5] = array("PPP", true, "interfaces_ppp.php");
+	$tab_array[6] = array("MLPPP", false, "interfaces_mlppp.php");
 	$tab_array[7] = array("GRE", false, "interfaces_gre.php");
 	$tab_array[8] = array("GIF", false, "interfaces_gif.php");
 	$tab_array[9] = array("Bridges", false, "interfaces_bridge.php");
@@ -100,18 +103,14 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                	<td width="20%" class="listhdrr">Type</td>
-                  <td width="20%" class="listhdrr">Interface(s)/Port(s)</td>
+                  <td width="20%" class="listhdrr">Serial Port</td>
                   <td width="40%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
                 <tr  ondblclick="document.location='interfaces_ppp_edit.php?id=<?=$i;?>'">
-                	<td class="listr">
-					<?=htmlspecialchars($ppp['type']);?>
-                  </td>
                   <td class="listr">
-					<?=htmlspecialchars($ppp['ports']);?>
+					<?=htmlspecialchars($ppp['port']);?>
                   </td>
                   <td class="listbg">
                     <?=htmlspecialchars($ppp['descr']);?>&nbsp;
@@ -121,7 +120,7 @@ include("head.inc");
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="3">&nbsp;</td>
+                  <td class="list" colspan="2">&nbsp;</td>
                   <td class="list"> <a href="interfaces_ppp_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>

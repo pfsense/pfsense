@@ -141,7 +141,7 @@ if ($act == "csr") {
 
 if ($_POST) {
 
-	if ($_POST['save'] == "Save") {
+	if ($_POST['save'] == gettext("Save")) {
 
 		unset($input_errors);
 		$pconfig = $_POST;
@@ -368,7 +368,7 @@ function internalca_change() {
 		<td id="mainarea">
 			<div class="tabcont">
 
-				<?php if ($act == "new" || (($_POST['save'] == "Save") && $input_errors)): ?>
+				<?php if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)): ?>
 
 				<form action="system_certmanager.php" method="post" name="iform" id="iform">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -637,7 +637,7 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
+								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_cert[$id]): ?>
 								<input name="id" type="hidden" value="<?=$id;?>" />
 								<?php endif;?>
@@ -646,7 +646,7 @@ function internalca_change() {
 					</table>
 				</form>
 
-				<?php elseif ($act == "csr" || (($_POST['save'] == "Update") && $input_errors)):?>
+				<?php elseif ($act == "csr" || (($_POST['save'] == gettext("Update")) && $input_errors)):?>
 
 				<form action="system_certmanager.php" method="post" name="iform" id="iform">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -682,7 +682,7 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<input id="submit" name="save" type="submit" class="formbtn" value="Update" />
+								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Update");?>" />
 								<?php if (isset($id) && $a_cert[$id]): ?>
 								<input name="id" type="hidden" value="<?=$id;?>" />
 								<input name="act" type="hidden" value="csr" />

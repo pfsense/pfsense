@@ -1106,13 +1106,17 @@ function session_auth() {
 		return false;
 
 	/* If session timeout isn't set, we don't mark sessions stale */
-	if (empty($config['system']['webgui']['session_timeout'])) {
+	if (!isset($config['system']['webgui']['session_timeout'])) {
 		/* Default to 4 hour timeout if one is not set */
 		if ($_SESSION['last_access'] < (time() - 14400)) {
 			$_GET['logout'] = true;
 			$_SESSION['Logout'] = true;
 		} else
 			$_SESSION['last_access'] = time();	
+	} else if (intval($config['system']['webgui']['session_timeout']) == 0) {
+		/* only update if it wasn't ajax */
+		if (!isAjax())
+			$_SESSION['last_access'] = time();
 	} else {
 		/* Check for stale session */
 		if ($_SESSION['last_access'] < (time() - ($config['system']['webgui']['session_timeout'] * 60))) {

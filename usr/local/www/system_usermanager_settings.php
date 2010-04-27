@@ -57,7 +57,7 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if($_POST['session_timeout']) {
+	if(isset($_POST['session_timeout'])) {
 		$timeout = intval($_POST['session_timeout']);
 		if ($timeout != "" && (!is_numeric($timeout) || $timeout <= 0))
 			$input_errors[] = gettext("Session timeout must be an integer value.");
@@ -65,7 +65,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		if($_POST['session_timeout'])
+		if(isset($_POST['session_timeout']))
 			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
 		else
 			unset($config['system']['webgui']['session_timeout']);

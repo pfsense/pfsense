@@ -564,6 +564,8 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	if(!function_exists("ldap_connect"))
 		return;
 
+	$ous = array();
+
 	if ($authcfg) {
                 if (strstr($authcfg['ldap_urltype'], "Standard"))
                         $ldapproto = "ldap";
@@ -584,8 +586,6 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 		$ldapscope          = $authcfg['ldap_scope'];
         } else
 		return false;
-
-	$ous = array();
 
         /* first check if there is even an LDAP server populated */
         if(!$ldapserver) {
@@ -629,8 +629,8 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	else
 		$ldapfunc = "ldap_search";
 
-	$search = $ldapfunc($ldap, $ldapbasedn, $ldapfilter);
-	$info = ldap_get_entries($ldap, $search);
+	$search = @$ldapfunc($ldap, $ldapbasedn, $ldapfilter);
+	$info = @ldap_get_entries($ldap, $search);
 
 	if (is_array($info)) {
 		foreach ($info as $inf) {
@@ -743,8 +743,8 @@ function ldap_get_groups($username, $authcfg) {
         else
                 $ldapfunc = "ldap_search";
 
-	$search    = $ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
-	$info      = ldap_get_entries($ldap, $search);
+	$search    = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
+	$info      = @ldap_get_entries($ldap, $search);
 
 	$countem = $info["count"];	
 	
@@ -876,9 +876,9 @@ function ldap_backed($username, $passwd, $authcfg) {
 			$ldapfunc = "ldap_search";
 		/* Support legacy auth container specification. */
 		if (stristr($ldac_split, "DC="))
-			$search	 = $ldapfunc($ldap,$ldac_split,$ldapfilter);
+			$search	 = @$ldapfunc($ldap,$ldac_split,$ldapfilter);
 		else
-			$search  = $ldapfunc($ldap,"{$ldac_split},{$ldapbasedn}",$ldapfilter);
+			$search  = @$ldapfunc($ldap,"{$ldac_split},{$ldapbasedn}",$ldapfilter);
 		if (!$search) {
 			log_error("Search resulted in error: " . ldap_error($ldap));
 			continue;
@@ -1106,13 +1106,17 @@ function session_auth() {
 		return false;
 
 	/* If session timeout isn't set, we don't mark sessions stale */
-	if (empty($config['system']['webgui']['session_timeout'])) {
+	if (!isset($config['system']['webgui']['session_timeout'])) {
 		/* Default to 4 hour timeout if one is not set */
 		if ($_SESSION['last_access'] < (time() - 14400)) {
 			$_GET['logout'] = true;
 			$_SESSION['Logout'] = true;
 		} else
 			$_SESSION['last_access'] = time();	
+	} else if (intval($config['system']['webgui']['session_timeout']) == 0) {
+		/* only update if it wasn't ajax */
+		if (!isAjax())
+			$_SESSION['last_access'] = time();
 	} else {
 		/* Check for stale session */
 		if ($_SESSION['last_access'] < (time() - ($config['system']['webgui']['session_timeout'] * 60))) {

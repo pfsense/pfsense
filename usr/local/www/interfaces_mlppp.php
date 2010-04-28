@@ -108,7 +108,7 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
                 <tr  ondblclick="document.location='interfaces_mlppp_edit.php?id=<?=$i;?>'">
                 	<td class="listr">
-					<?=htmlspecialchars($ppp['type']);?>
+					<?=htmlspecialchars($ppp['pppid']);?>-<?=htmlspecialchars($ppp['type']);?>
                   </td>
                   <td class="listr">
 					<?=htmlspecialchars($ppp['ports']);?>

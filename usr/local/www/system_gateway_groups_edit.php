@@ -47,10 +47,10 @@ if (!is_array($config['gateways']['gateway_group']))
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
 
-$categories = array('down' => 'Member Down',
-                'downloss' => 'Packet Loss',
-                'downlatency' => 'High Latency',
-                'downlosslatency' => 'Packet Loss or High Latency');
+$categories = array('down' => gettext("Member Down"),
+                'downloss' => gettext("Packet Loss"),
+                'downlatency' => gettext("High Latency"),
+                'downlosslatency' => gettext("Packet Loss or High Latency"));
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -82,10 +82,10 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
 	if (! isset($_POST['name'])) {
-		$input_errors[] = "A valid gateway group name must be specified.";
+		$input_errors[] = gettext("A valid gateway group name must be specified.");
 	}
 	if (! is_validaliasname($_POST['name'])) {
-		$input_errors[] = "The gateway name must not contain invalid characters.";
+		$input_errors[] = gettext("The gateway name must not contain invalid characters.");
 	}
 
 	if (isset($_POST['name'])) {
@@ -96,7 +96,7 @@ if ($_POST) {
 					continue;
 
 				if ($gateway_group['name'] == $_POST['name']) {
-					$input_errors[] = "A gateway group with this name \"{$_POST['name']}\" already exists.";
+					$input_errors[] = sprintf(gettext("A gateway group with this name \"%s\" already exists."), $_POST['name']);
 					break;
 				}
 			}
@@ -113,7 +113,7 @@ if ($_POST) {
 
 	}
 	if(count($pconfig['item']) == 0) {
-		$input_errors[] = "No gateway(s) have been selected to be used in this group";
+		$input_errors[] = gettext("No gateway(s) have been selected to be used in this group");
 	}
 
 	if (!$input_errors) {
@@ -137,7 +137,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("System","Gateways","Edit gateway");
+$pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
 include("head.inc");
 
 ?>
@@ -148,16 +148,16 @@ include("head.inc");
             <form action="system_gateway_groups_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Edit gateway entry</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway entry"); ?></td>
 				</tr>	
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Group Name</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Group Name"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"> 
-                    <br> <span class="vexpl">Group Name</span></td>
+                    <br> <span class="vexpl"><?=gettext("Group Name"); ?></span></td>
                 </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncellreq">Gateway Priority</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway Priority"); ?></td>
                   <td width="78%" class="vtable"> 
 		<?php
 			foreach($a_gateways as $gateway) {
@@ -174,27 +174,27 @@ include("head.inc");
 
 				}
 				echo "<select name='{$name}' class='formfldselect' id='{$name}'>";
-				echo "<option value='0' $selected[0] >Never</option>";
-				echo "<option value='1' $selected[1] >Tier 1</option>";
-				echo "<option value='2' $selected[2] >Tier 2</option>";
-				echo "<option value='3' $selected[3] >Tier 3</option>";
-				echo "<option value='4' $selected[4] >Tier 4</option>";
-				echo "<option value='5' $selected[5] >Tier 5</option>";
+				echo "<option value='0' $selected[0] >" . gettext("Never") . "</option>";
+				echo "<option value='1' $selected[1] >" . gettext("Tier 1") . "</option>";
+				echo "<option value='2' $selected[2] >" . gettext("Tier 2") . "</option>";
+				echo "<option value='3' $selected[3] >" . gettext("Tier 3") . "</option>";
+				echo "<option value='4' $selected[4] >" . gettext("Tier 4") . "</option>";
+				echo "<option value='5' $selected[5] >" . gettext("Tier 5") . "</option>";
 				echo "</select> <strong>{$name} - {$gateway['descr']}</strong><br/>";
 		 	}
 		?>
 			<br/><span class="vexpl">
-			<strong>Link Priority</strong> <br />
-			The priority selected here defines in what order failover and balancing of links will be done.
+			<strong><?=GETTEXT("Link Priority"); ?></strong> <br />
+			<?=gettext("The priority selected here defines in what order failover and balancing of links will be done.
 			Multiple links of the same priority will balance connections until all links in the priority will be exhausted.
-			If all links in a priority level are exhausted we will use the next available link(s) in the next priority level.
+			If all links in a priority level are exhausted we will use the next available link(s) in the next priority level.") ?>
 			</span><br />
 		   </td>
                 </tr>
 		  </td>
 		</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Trigger Level</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Trigger Level"); ?></td>
                   <td width="78%" class="vtable">
 			<select name='trigger' class='formfldselect' id='trigger'>
 			<?php
@@ -205,20 +205,20 @@ include("head.inc");
 				}
 			?>
 			</select>
-                    <br> <span class="vexpl">When to trigger exclusion of a member</span></td>
+                    <br> <span class="vexpl"><?=gettext("When to trigger exclusion of a member"); ?></span></td>
                 </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" 
 value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here
+                    for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" class="formbtn"  onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()">
                     <?php if (isset($id) && $a_gateway_groups[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

@@ -74,14 +74,14 @@ if ($_POST) {
 		if ($_POST['enablefastrouting'] == "") {
 			/* Only update config if something changed */
 			if (isset($config['staticroutes']['enablefastrouting'])) {
-				$changedesc .= " disable fast routing";
+				$changedesc .= " " . gettext("disable fast routing");
 				unset($config['staticroutes']['enablefastrouting']);
 				write_config($changedesc);
 			}
 		} else {
 			/* Only update config if something changed */
 			if (!isset($config['staticroutes']['enablefastrouting'])) {
-				$changedesc .= " enable fast routing";
+				$changedesc .= " " . gettext("enable fast routing");
 				$config['staticroutes']['enablefastrouting'] = "enabled";
 				write_config($changedesc);
 			}
@@ -91,7 +91,7 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_routes[$_GET['id']]) {
-		$changedesc .= "removed route to " . $a_routes[$_GET['id']['route']];
+		$changedesc .= gettext("removed route to") . " " . $a_routes[$_GET['id']['route']];
 		unset($a_routes[$_GET['id']]);
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
@@ -111,7 +111,7 @@ include("head.inc");
 <input type="hidden" name="y1" value="1">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(gettext("The static route configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(sprintf(gettext("The static route configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
 <?php endif; ?>
 
 	     <?php if($config['system']['disablefilter'] <> "") :?>
@@ -119,7 +119,7 @@ include("head.inc");
 
 		<tr><td width="2%"><input type="checkbox" name="enablefastrouting" id="enablefastrouting" <?php if($config['staticroutes']['enablefastrouting'] == "enabled") echo " checked"; ?>></td><td><b><?=gettext("Enable fast routing");?></td></tr>
 
-		<tr><td colspan=2><hr><input type="submit" value="Save"></td></tr>
+		<tr><td colspan=2><hr><input type="submit" value="<?=gettext("Save"); ?>"></td></tr>
 	       </table><br>
 	     <?php endif; ?>
 

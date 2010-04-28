@@ -251,7 +251,9 @@ if ($_POST) {
 
 		/* input validation */
 		$reqdfields = explode(" ", "name cert");
-		$reqdfieldsn = explode(",", gettext("Descriptive name") . "," . gettext("Final Certificate data"));
+		$reqdfieldsn = array(
+			gettext("Descriptive name"),
+			gettext("Final Certificate data"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

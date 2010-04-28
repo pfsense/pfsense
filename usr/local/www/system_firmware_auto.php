@@ -51,7 +51,7 @@ if(isset($curcfg['alturl']['enable']))
 else
 	$updater_url = $g['update_url'];
 	
-$pgtitle = array("Diagnostics","Firmware","Auto Update");
+$pgtitle = array(gettext("Diagnostics"),gettext("Firmware"),gettext("Auto Update"));
 include("head.inc");
 
 ?>
@@ -70,9 +70,9 @@ include("head.inc");
 		<td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Manual Update", false, "system_firmware.php");
-	$tab_array[1] = array("Auto Update", true, "system_firmware_check.php");
-	$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
+	$tab_array[0] = array(gettext("Manual Update"), false, "system_firmware.php");
+	$tab_array[1] = array(gettext("Auto Update"), true, "system_firmware_check.php");
+	$tab_array[2] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
 	display_top_tabs($tab_array);
 ?>
 		</td>
@@ -104,7 +104,7 @@ include("head.inc");
 						</table>
 						<br>
 						<!-- status box -->
-						<textarea cols="60" rows="1" name="status" id="status" wrap="hard">Beginning firmware upgrade.</textarea>
+						<textarea cols="60" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning firmware upgrade"); ?>.</textarea>
 						<!-- command output box -->
 						<textarea cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
 					</center>

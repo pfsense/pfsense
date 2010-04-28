@@ -46,7 +46,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array("System", "Group manager");
+$pgtitle = array(gettext("System"), gettext("Group manager"));
 
 if (!is_array($config['system']['group']))
 	$config['system']['group'] = array();
@@ -112,18 +112,18 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "groupname");
-	$reqdfieldsn = explode(",", "Group Name");
+	$reqdfieldsn = explode(",", gettext("Group Name"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
 	if (preg_match("/[^a-zA-Z0-9\.\-_ ]/", $_POST['groupname']))
-		$input_errors[] = "The group name contains invalid characters.";
+		$input_errors[] = gettext("The group name contains invalid characters.");
 		
 	if (!$input_errors && !(isset($id) && $a_group[$id])) {
 		/* make sure there are no dupes */
 		foreach ($a_group as $group) {
 			if ($group['name'] == $_POST['groupname']) {
-				$input_errors[] = "Another entry with the same group name already exists.";
+				$input_errors[] = gettext("Another entry with the same group name already exists.");
 				break;
 			}
 		}
@@ -252,17 +252,17 @@ function presubmit() {
 							</td>
 						</tr>
 						<tr> 
-							<td width="22%" valign="top" class="vncellreq">Group name</td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Group name");?></td>
 							<td width="78%" class="vtable"> 
 								<input name="groupname" type="text" class="formfld group" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" <?=$ro;?>> 
 							</td>
 						</tr>
 						<tr> 
-							<td width="22%" valign="top" class="vncell">Description</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 							<td width="78%" class="vtable"> 
 								<input name="description" type="text" class="formfld unknown" id="description" size="20" value="<?=htmlspecialchars($pconfig['description']);?>">
 								<br>
-								Group description, for your own information only
+								<?=gettext("Group description, for your own information only");?>
 							</td>
 						</tr>
 
@@ -274,7 +274,7 @@ function presubmit() {
 								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<td align="center" width="50%">
-											<strong>Not Members</strong><br/>
+											<strong><?=gettext("Not Members");?></strong><br/>
 											<br/>
 												<select size="10" style="width: 75%" name="notmembers[]" class="formselect" id="notmembers" onChange="clear_selected('members')" multiple>
 												<?php
@@ -292,15 +292,15 @@ function presubmit() {
 										<td>
 											<br/>
 											<a href="javascript:move_selected('notmembers','members')">
-												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="Add Members" alt="Add Members" width="17" height="17" border="0" />
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="<?=gettext("Add Members");?>" alt="<?=gettext("Add Members");?>" width="17" height="17" border="0" />
 											</a>
 											<br/><br/>
 											<a href="javascript:move_selected('members','notmembers')">
-												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="Remove Members" alt="Remove Members" width="17" height="17" border="0" />
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="<?=gettext("Remove Members");?>" alt="<?=gettext("Remove Members");?>" width="17" height="17" border="0" />
 											</a>
 										</td>
 										<td align="center" width="50%">
-											<strong>Members</strong><br/>
+											<strong><?=gettext("Members");?></strong><br/>
 											<br/>
 											<select size="10" style="width: 75%" name="members[]" class="formselect" id="members" onChange="clear_selected('notmembers')" multiple>
 												<?php
@@ -387,9 +387,9 @@ function presubmit() {
 
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="25%" class="listhdrr">Group name</td>
-						<td width="25%" class="listhdrr">Description</td>
-						<td width="30%" class="listhdrr">Member Count</td>
+						<td width="25%" class="listhdrr"><?=gettext("Group name");?></td>
+						<td width="25%" class="listhdrr"><?=gettext("Description");?></td>
+						<td width="30%" class="listhdrr"><?=gettext("Member Count");?></td>
 						<td width="10%" class="list"></td>
 					</tr>
 					<?php
@@ -406,7 +406,7 @@ function presubmit() {
 							<table border="0" cellpadding="0" cellspacing="0">
 								<tr>
 									<td align="left" valign="center">
-										<img src="<?=$grpimg;?>" alt="User" title="User" border="0" height="16" width="16" />
+										<img src="<?=$grpimg;?>" alt="<?=gettext("User");?>" title="<?=gettext("User");?>" border="0" height="16" width="16" />
 									</td>
 									</td>
 									<td align="left" valign="middle">
@@ -423,7 +423,7 @@ function presubmit() {
 						</td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_groupmanager.php?act=edit&id=<?=$i;?>">
-								<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="edit group" width="17" height="17" border="0">
+								<img src="./themes/<?=$g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit group");?>" width="17" height="17" border="0">
 							</a>
 							&nbsp;
 							<?php if($group['scope'] != "system"): ?>
@@ -440,7 +440,7 @@ function presubmit() {
 					<tr> 
 						<td class="list" colspan="3"></td>
 						<td class="list">
-							<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="add group" width="17" height="17" border="0">
+							<a href="system_groupmanager.php?act=new"><img src="./themes/<?=$g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add group");?>" width="17" height="17" border="0">
 							</a>
 						</td>
 					</tr>

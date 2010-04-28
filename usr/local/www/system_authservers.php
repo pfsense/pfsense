@@ -528,23 +528,22 @@ function select_clicked() {
 							</td>
 						</tr>
 						<tr>
-                                                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication containers");?></td>
-                                                        <td width="78%" class="vtable">
-                                                                <table border="0" cellspacing="0" cellpadding="2">
-                                                                        <tr>
-																				<td><?=gettext("Containers");?>: &nbsp;</td>
-                                                                                <td>
-                                                                                        <input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication containers");?></td>
+							<td width="78%" class="vtable">
+								<table border="0" cellspacing="0" cellpadding="2">
+									<tr>
+										<td><?=gettext("Containers");?>: &nbsp;</td>
+										<td>
+											<input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
 											<input type="button" onClick="select_clicked();" value="<?=gettext("Select");?>">
 											<br /><?=gettext("NOTE: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.");?>
 											<br /><?=gettext("EXAMPLE: CN=Users;DC=example");?>
 											<br /><?=gettext("EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com ");?>
-                                                                                </td>
-                                                                        </tr>
-                                                                </table>
-
-                                                        </td>
-                                                </tr>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Bind credentials");?></td>
 							<td width="78%" class="vtable">

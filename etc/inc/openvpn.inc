@@ -441,7 +441,7 @@ function openvpn_reconfigure($mode,& $settings) {
 		}
 
 		// The port we'll listen at
-		// If local_port is used, bing the management port
+		// If local_port is used, bind the management port
 		if ($settings['local_port']) {
 			$conf .= "lport {$settings['local_port']}\n";
 			$conf .= "management 127.0.0.1 {$settings['local_port']}\n";

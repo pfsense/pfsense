@@ -242,7 +242,7 @@ if (isAllowedPage("system_usermanager")) {
 		if (!empty($_POST['name'])) {
 			$ca = lookup_ca($_POST['caref']);
         		if (!$ca)
-                		$input_errors[] = sprintf("Invalid internal Certificate Authority%s", "\n");
+                		$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
 		}
 
 		/* if this is an AJAX caller then handle via JSON */

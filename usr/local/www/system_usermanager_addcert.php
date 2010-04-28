@@ -42,7 +42,7 @@ require("certs.inc");
 
 $cert_keylens = array( "512", "1024", "2048", "4096");
 
-$pgtitle = array("System", "User Manager: Add Certificate");
+$pgtitle = array(gettext("System"), gettext("User Manager: Add Certificate"));
 
 $userid = $_GET['userid'];
 if (isset($_POST['userid']))
@@ -78,22 +78,27 @@ if ($_POST) {
 	if ($pconfig['method'] == "existing") {
 		$reqdfields = explode(" ",
 				"name cert key");
-		$reqdfieldsn = explode(",",
-				"Descriptive name,Certificate data,Key data");
+		$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Certificate data"),
+				gettext("Key data"));
 	}
 
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",
 				"name caref keylen lifetime");
-		$reqdfieldsn = explode(",",
-				"Descriptive name,Certificate authority,Key length,Lifetime");
+		$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Certificate authority"),
+				gettext("Key length"),
+				gettext("Lifetime"));
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	$ca = lookup_ca($pconfig['caref']);
 	if (!$ca)
-		$input_errors[] = "Invalid internal Certificate Authority\n";
+		$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -197,9 +202,9 @@ function internalca_change() {
 
 						<tr>
 							<td colspan="2" align="center" class="vtable">
-								No internal Certificate Authorities have been defined. You must
-								<a href="system_camanager.php?act=new&method=internal">create</a>
-								an internal CA before creating an internal certificate.
+								<?=gettext("No internal Certificate Authorities have been defined. You must");?>
+								<a href="system_camanager.php?act=new&method=internal"><?=gettext("create");?></a>
+								<?=gettext("an internal CA before creating an internal certificate.");?>
 							</td>
 						</tr>
 
@@ -241,14 +246,14 @@ function internalca_change() {
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
 								<?php endforeach; ?>
 								</select>
-								bits
+								<?=gettext("bits");?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
 							<td width="78%" class="vtable">
 								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
-								days
+								<?=gettext("days");?>
 							</td>
 						</tr>
 
@@ -258,7 +263,7 @@ function internalca_change() {
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
 								<?php if ($internal_ca_count): ?>
-								<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
+								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<input id="cancelbutton" class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()" />
 								<?php endif; ?>
 								<?php if (isset($userid) && $a_user[$userid]): ?>

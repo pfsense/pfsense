@@ -851,7 +851,7 @@ function sshkeyClicked(obj) {
 			$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['password'] = crypt(trim($_POST['passwordfld1']));
 
 			write_config();
-			$savemsg = sprintf("Password successfully changed%s", "<br />");
+			$savemsg = gettext("Password successfully changed") . "<br />";
 		}
 	}
 

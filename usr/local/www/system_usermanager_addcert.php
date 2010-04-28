@@ -98,7 +98,7 @@ if ($_POST) {
 
 	$ca = lookup_ca($pconfig['caref']);
 	if (!$ca)
-		$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
+		$input_errors[] = sprintf(gettext("Invalid internal Certificate Authority%s"),"\n");
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {

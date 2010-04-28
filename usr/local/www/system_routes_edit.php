@@ -87,7 +87,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", gettext("network network_subnet gateway"));
+	$reqdfields = explode(" ", "network network_subnet gateway");
 	$reqdfieldsn = explode(",", gettext("Destination network,Destination network bit count,Gateway"));		
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);

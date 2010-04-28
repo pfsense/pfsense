@@ -76,7 +76,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "sysprivs");
-	$reqdfieldsn = explode(",", gettext("Selected priveleges"));
+	$reqdfieldsn = array(gettext("Selected priveleges"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

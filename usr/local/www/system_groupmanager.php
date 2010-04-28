@@ -112,7 +112,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "groupname");
-	$reqdfieldsn = explode(",", gettext("Group Name"));
+	$reqdfieldsn = array(gettext("Group Name"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	

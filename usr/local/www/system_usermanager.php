@@ -180,15 +180,22 @@ if (isAllowedPage("system_usermanager")) {
 		/* input validation */
 		if (isset($id) && ($a_user[$id])) {
 			$reqdfields = explode(" ", "usernamefld");
-			$reqdfieldsn = explode(",", gettext("Username"));
+			$reqdfieldsn = array(gettext("Username"));
 		} else {
 			if (empty($_POST['name'])) {
 				$reqdfields = explode(" ", "usernamefld passwordfld1");
-				$reqdfieldsn = explode(",", gettext("Username,Password"));
+				$reqdfieldsn = array(
+					gettext("Username"),
+					gettext("Password"));
 			} else {
 				$reqdfields = explode(" ", "usernamefld passwordfld1 name caref keylen lifetime");
-				$reqdfieldsn = explode(",", gettext("Username,Password,Descriptive name,Certificate authority,Key length,Lifetime"));
-
+				$reqdfieldsn = array(
+					gettext("Username"),
+					gettext("Password"),
+					gettext("Descriptive name"),
+					gettext("Certificate authority"),
+					gettext("Key length"),
+					gettext("Lifetime"));
 			}
 		}
 
@@ -832,7 +839,7 @@ function sshkeyClicked(obj) {
 
 		/* input validation */
 		$reqdfields = explode(" ", "passwordfld1");
-		$reqdfieldsn = explode(",", gettext("Password"));
+		$reqdfieldsn = array(gettext("Password"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

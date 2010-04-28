@@ -51,7 +51,7 @@ $pconfig['authmode'] = &$config['system']['webgui']['authmode'];
 $pconfig['backend'] = &$config['system']['webgui']['backend'];
 
 // Page title for main admin
-$pgtitle = array("System","User manager settings");
+$pgtitle = array(gettext("System"),gettext("User manager settings"));
 
 if ($_POST) {
 	unset($input_errors);
@@ -93,7 +93,7 @@ include("head.inc");
 		echo "<script language='javascript'>\n";
 		echo "myRef = window.open('system_usermanager_settings_test.php?authserver={$pconfig['authmode']}','mywin', ";
 		echo "'left=20,top=20,width=700,height=550,toolbar=1,resizable=0');\n";
-		echo "if (myRef==null || typeof(myRef)=='undefined') aleart('Popup blocker detected.  Action aborted.');\n";
+		echo "if (myRef==null || typeof(myRef)=='undefined') alert('" . gettext("Popup blocker detected.  Action aborted.") ."');\n";
 		echo "</script>\n";
 	}
 ?>
@@ -121,7 +121,7 @@ if(!$pconfig['backend'])
             <form id="iform" name="iform" action="system_usermanager_settings.php" method="post">
               <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 		<tr>
-                        <td width="22%" valign="top" class="vncell">Session Timeout</td>
+                        <td width="22%" valign="top" class="vncell"><?=gettext("Session Timeout"); ?></td>
                         <td width="78%" class="vtable">
 				<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
                           	<br />
@@ -129,7 +129,7 @@ if(!$pconfig['backend'])
 			</td>
 		</tr>
 		<tr>
-                        <td width="22%" valign="top" class="vncell">Authentication Server</td>
+                        <td width="22%" valign="top" class="vncell"><?=gettext("Authentication Server"); ?></td>
                         <td width="78%" class="vtable">
 				<select name='authmode' id='authmode' class="formselect" >
                                         <?php

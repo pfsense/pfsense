@@ -2196,7 +2196,7 @@ EOD;
 	}
 	
 	$mpdconf .= <<<EOD
-	set ipcp yes vjcomp
+	set ipcp no vjcomp
 	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
 	create link static {$interface}L1 pppoe
 	set link disable incoming
@@ -2798,16 +2798,11 @@ function link_interface_to_vlans($int, $action = "") {
 	if (empty($int))
 		return;
 
-	$real_if = get_real_interface($int);
 	if (is_array($config['vlans']['vlan'])) {
                 foreach ($config['vlans']['vlan'] as $vlan) {
-			if ($real_if == $vlan['if']) {
+			if ($int == $vlan['if']) {
 				if ($action == "update") {
-					foreach ($config['interfaces'] as $ifname => $ifcfg) {
-						if ($ifcfg['if'] == $vlan['vlanif'])
-							interface_vlan_configure($vlan);
-							interface_configure($ifname);
-					}
+					interfaces_bring_up($int);
 				} else if ($action == "")
 					return $vlan;
 			}

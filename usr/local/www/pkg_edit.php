@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     pkg_edit.php
-    Copyright (C) 2004 Scott Ullrich
+    Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without

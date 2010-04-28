@@ -106,7 +106,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = split(" ", "hostname domain");
-	$reqdfieldsn = split(",", "Hostname,Domain");
+	$reqdfieldsn = array(gettext("Hostname"),gettext("Domain"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

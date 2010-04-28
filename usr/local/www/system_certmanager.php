@@ -150,21 +150,26 @@ if ($_POST) {
 		if ($pconfig['method'] == "existing") {
 			$reqdfields = explode(" ",
 					"name cert key");
-			$reqdfieldsn = explode(",",
-					gettext("Descriptive name,Certificate data,Key data"));
+			$reqdfieldsn = array(
+					gettext("Descriptive name"),
+					gettext("Certificate data"),
+					gettext("Key data"));
 		}
 
 		if ($pconfig['method'] == "internal") {
 			$reqdfields = explode(" ",
 					"name caref keylen lifetime dn_country dn_state dn_city ".
 					"dn_organization dn_email dn_commonname");
-			$reqdfieldsn = explode(",",
-					gettext("Descriptive name,Certificate authority,Key length,Lifetime,").
-					gettext("Distinguished name Country Code,").
-					gettext("Distinguished name State or Province,").
-					gettext("Distinguished name City,").
-					gettext("Distinguished name Organization,").
-					gettext("Distinguished name Email Address,").
+			$reqdfieldsn = array(
+					gettext("Descriptive name"),
+					gettext("Certificate authority"),
+					gettext("Key length"),
+					gettext("Lifetime"),
+					gettext("Distinguished name Country Code"),
+					gettext("Distinguished name State or Province"),
+					gettext("Distinguished name City"),
+					gettext("Distinguished name Organization"),
+					gettext("Distinguished name Email Address"),
 					gettext("Distinguished name Common Name"));
 		}
 
@@ -172,13 +177,14 @@ if ($_POST) {
 			$reqdfields = explode(" ",
 					"name csr_keylen csr_dn_country csr_dn_state csr_dn_city ".
 					"csr_dn_organization csr_dn_email csr_dn_commonname");
-			$reqdfieldsn = explode(",",
-					gettext("Descriptive name,Key length,").
-					gettext("Distinguished name Country Code,").
-					gettext("Distinguished name State or Province,").
-					gettext("Distinguished name City,").
-					gettext("Distinguished name Organization,").
-					gettext("Distinguished name Email Address,").
+			$reqdfieldsn = array(
+					gettext("Descriptive name"),
+					gettext("Key length"),
+					gettext("Distinguished name Country Code"),
+					gettext("Distinguished name State or Province"),
+					gettext("Distinguished name City"),
+					gettext("Distinguished name Organization"),
+					gettext("Distinguished name Email Address"),
 					gettext("Distinguished name Common Name"));
 		}
 
@@ -245,7 +251,7 @@ if ($_POST) {
 
 		/* input validation */
 		$reqdfields = explode(" ", "name cert");
-		$reqdfieldsn = explode(",", gettext("Descriptive name,Final Certificate data"));
+		$reqdfieldsn = explode(",", gettext("Descriptive name") . "," . gettext("Final Certificate data"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

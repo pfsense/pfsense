@@ -118,19 +118,23 @@ if ($_POST) {
 	/* input validation */
 	if ($pconfig['method'] == "existing") {
 		$reqdfields = explode(" ", "name cert");
-		$reqdfieldsn = explode(",", "Descriptive name,Certificate data");
+		$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Certificate data"));
 	}
 	if ($pconfig['method'] == "internal") {
 		$reqdfields = explode(" ",
 				"name keylen lifetime dn_country dn_state dn_city ".
 				"dn_organization dn_email dn_commonname");
-		$reqdfieldsn = explode(",",
-				gettext("Descriptive name,Key length,Lifetime,").
-				gettext("Distinguished name Country Code,").
-				gettext("Distinguished name State or Province,").
-				gettext("Distinguished name City,").
-				gettext("Distinguished name Organization,").
-				gettext("Distinguished name Email Address,").
+		$reqdfieldsn = array(
+				gettext("Descriptive name"),
+				gettext("Key length"),
+				gettext("Lifetime"),
+				gettext("Distinguished name Country Code"),
+				gettext("Distinguished name State or Province"),
+				gettext("Distinguished name City"),
+				gettext("Distinguished name Organization"),
+				gettext("Distinguished name Email Address"),
 				gettext("Distinguished name Common Name"));
 	}
 

@@ -88,7 +88,10 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "network network_subnet gateway");
-	$reqdfieldsn = explode(",", gettext("Destination network,Destination network bit count,Gateway"));		
+	$reqdfieldsn = explode(",",
+			gettext("Destination network") . "," .
+			gettext("Destination network bit count") . "," .
+			gettext("Gateway"));		
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	

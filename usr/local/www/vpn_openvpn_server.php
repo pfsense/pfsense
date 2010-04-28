@@ -112,6 +112,7 @@ if($_GET['act']=="edit"){
 		$pconfig['passtos'] = $a_server[$id]['passtos'];
 		$pconfig['client2client'] = $a_server[$id]['client2client'];
 
+		$pconfig['dynamic_ip'] = $a_server[$id]['dynamic_ip'];
 		$pconfig['pool_enable'] = $a_server[$id]['pool_enable'];
 
 		$pconfig['dns_domain'] = $a_server[$id]['dns_domain'];
@@ -299,6 +300,7 @@ if ($_POST) {
 		$server['passtos'] = $pconfig['passtos'];
 		$server['client2client'] = $pconfig['client2client'];
 
+		$server['dynamic_ip'] = $pconfig['dynamic_ip'];
 		$server['pool_enable'] = $pconfig['pool_enable'];
 
 		if ($pconfig['dns_domain_enable'])
@@ -904,6 +906,24 @@ function netbios_change() {
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="listtopic">Client Settings</td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell">Dynamic IP</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['dynamic_ip'],$chk); ?>
+										<input name="dynamic_ip" type="checkbox" id="dynamic_ip" value="yes" <?=$chk;?>">
+									</td>
+									<td>
+										<span class="vexpl">
+											Provide a virtual adapter IP address to clients (see Tunnel Network)<br>
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
 					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell">Address Pool</td>

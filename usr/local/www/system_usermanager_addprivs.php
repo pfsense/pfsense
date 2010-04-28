@@ -81,7 +81,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "sysprivs");
-	$reqdfieldsn = explode(",", "Selected priveleges");
+	$reqdfieldsn = array(gettext("Selected priveleges"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -195,7 +195,7 @@ function update_description() {
 						<tr height="60">
 							<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 							<td width="78%" valign="top" class="vtable" id="pdesc">
-								<em>Select a privilege from the list above for a description</em>
+								<em><?=gettext("Select a privilege from the list above for a description"); ?></em>
 							</td>
 						</tr>
 						<tr>

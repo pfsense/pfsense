@@ -45,7 +45,7 @@ if (!is_array($config['gateways']['settings']))
 
 $a_settings = &$config['gateways']['settings'];
 
-$changedesc = "Gateways: ";
+$changedesc = gettext("Gateways") . ": ";
 $input_errors = array();
 
 if (empty($a_settings)) {
@@ -68,35 +68,35 @@ if ($_POST) {
 	/* input validation */
 	if($_POST['latencylow']) {
 		if (! is_numeric($_POST['latencylow'])) {
-			$input_errors[] = "The low latency watermark needs to be a numeric value.";
+			$input_errors[] = gettext("The low latency watermark needs to be a numeric value.");
 		}
 	}
 
 	if($_POST['latencyhigh']) {
 		if (! is_numeric($_POST['latencyhigh'])) {
-			$input_errors[] = "The high latency watermark needs to be a numeric value.";
+			$input_errors[] = gettext("The high latency watermark needs to be a numeric value.");
 		}
 	}
 	if($_POST['losslow']) {
 		if (! is_numeric($_POST['losslow'])) {
-			$input_errors[] = "The low loss watermark needs to be a numeric value.";
+			$input_errors[] = gettext("The low loss watermark needs to be a numeric value.");
 		}
 	}
 	if($_POST['losshigh']) {
 		if (! is_numeric($_POST['losshigh'])) {
-			$input_errors[] = "The high loss watermark needs to be a numeric value.";
+			$input_errors[] = gettext("The high loss watermark needs to be a numeric value.");
 		}
 	}
 
 	if(($_POST['latencylow']) && ($_POST['latencyhigh'])){
 		if(($_POST['latencylow'] > $_POST['latencyhigh'])) {
-			$input_errors[] = "The High latency watermark needs to be higher then the low latency watermark";
+			$input_errors[] = gettext("The High latency watermark needs to be higher then the low latency watermark");
 		}
 	}
 
 	if(($_POST['losslow']) && ($_POST['losshigh'])){
 		if($_POST['losslow'] > $_POST['losshigh']) {
-			$input_errors[] = "The High packet loss watermark needs to be higher then the low packet loss watermark";
+			$input_errors[] = gettext("The High packet loss watermark needs to be higher then the low packet loss watermark");
 		}
 	}
 
@@ -119,7 +119,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Gateways","Settings");
+$pgtitle = array(gettext("Gateways"),gettext("Settings"));
 include("head.inc");
 
 ?>
@@ -133,10 +133,10 @@ include("head.inc");
                 <td>
 			<?php
 				$tab_array = array();
-				$tab_array[0] = array("Gateways", false, "system_gateways.php");
-				$tab_array[1] = array("Routes", false, "system_routes.php");
-				$tab_array[2] = array("Groups", false, "system_gateway_groups.php");
-				$tab_array[3] = array("Settings", true, "system_gateways_settings.php");
+				$tab_array[0] = array(gettext("Gateways"), false, "system_gateways.php");
+				$tab_array[1] = array(gettext("Routes"), false, "system_routes.php");
+				$tab_array[2] = array(gettext("Groups"), false, "system_gateway_groups.php");
+				$tab_array[3] = array(gettext("Settings"), true, "system_gateways_settings.php");
 				display_top_tabs($tab_array);
 			?>
                 </td>
@@ -146,33 +146,33 @@ include("head.inc");
                         <div id="mainarea">
                         <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 			<tr>
-                        	<td width="22%" valign="top" class="vncellreq">Latency thresholds</td>
+                        	<td width="22%" valign="top" class="vncellreq"><?=gettext("Latency thresholds");?></td>
 	                        <td width="78%" class="vtable">
-				From 
+				<?=gettext("From");?> 
 				    <input name="latencylow" type="text" class="formfld unknown" id="latencylow" size="2" 
 					value="<?=htmlspecialchars($pconfig['latencylow']);?>">
-				To
+				<?=gettext("To");?>
 				    <input name="latencyhigh" type="text" class="formfld unknown" id="latencyhigh" size="2" 
 					value="<?=htmlspecialchars($pconfig['latencyhigh']);?>">
-				    <br> <span class="vexpl">These define the low and high water marks for latency in milliseconds.</span></td>
+				    <br> <span class="vexpl"><?=gettext("These define the low and high water marks for latency in milliseconds.");?></span></td>
 				</td>
 			</tr>
 			<tr>
-                        	<td width="22%" valign="top" class="vncellreq">Packet Loss thresholds</td>
+                        	<td width="22%" valign="top" class="vncellreq"><?=gettext("Packet Loss thresholds");?></td>
 	                        <td width="78%" class="vtable">
-				From 
+				<?=gettext("From");?> 
 				    <input name="losslow" type="text" class="formfld unknown" id="losslow" size="2" 
 					value="<?=htmlspecialchars($pconfig['losslow']);?>">
-				To
+				<?=gettext("To");?>
 				    <input name="losshigh" type="text" class="formfld unknown" id="losshigh" size="2" 
 					value="<?=htmlspecialchars($pconfig['losshigh']);?>">
-				    <br> <span class="vexpl">These define the low and high water marks for packet loss in %.</span></td>
+				    <br> <span class="vexpl"><?=gettext("These define the low and high water marks for packet loss in %.");?></span></td>
 				</td>
 			</tr>
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%">
-					<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+					<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
 				</td>
 			</tr>
 			</table>

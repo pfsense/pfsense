@@ -98,11 +98,11 @@ if ($_POST) {
 		$input_errors[] = "A valid gateway name must be specified.";
 	}
 	if (! is_validaliasname($_POST['name'])) {
-		$input_errors[] = "The gateway name must not contain invalid characters.";
+		$input_errors[] = gettext("The gateway name must not contain invalid characters.");
 	}
 	/* skip system gateways which have been automatically added */
 	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($_POST['attribute'] != "system")) && ($_POST['gateway'] != "dynamic")) {
-		$input_errors[] = "A valid gateway IP address must be specified.";
+		$input_errors[] = gettext("A valid gateway IP address must be specified.");
 	}
 
 	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system") && !$_REQUEST['isAjax']) {
@@ -110,12 +110,12 @@ if ($_POST) {
 		if (is_ipaddr($parent_ip)) {
 			$parent_sn = get_interface_subnet($_POST['interface']);
 			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
-				$input_errors[] = "The gateway address {$_POST['gateway']} does not lie within the chosen interface's subnet.";
+				$input_errors[] = sprint(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 			}
 		}
 	}
 	if (($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
-		$input_errors[] = "A valid monitor IP address must be specified.";
+		$input_errors[] = gettext("A valid monitor IP address must be specified.");
 	}
 
 	if (isset($_POST['name'])) {
@@ -126,19 +126,19 @@ if ($_POST) {
 			}
 			if($_POST['name'] <> "") {
 				if (($gateway['name'] <> "") && ($_POST['name'] == $gateway['name']) && ($gateway['attribute'] != "system")) {
-					$input_errors[] = "The gateway name \"{$_POST['name']}\" already exists.";
+					$input_errors[] = sprintf(gettext("The gateway name \"s\" already exists.)", $_POST['name']));
 					break;
 				}
 			}
 			if(is_ipaddr($_POST['gateway'])) {
 				if (($gateway['gateway'] <> "") && ($_POST['gateway'] == $gateway['gateway']) && ($gateway['attribute'] != "system")) {
-					$input_errors[] = "The gateway IP address \"{$_POST['gateway']}\" already exists.";
+					$input_errors[] = sprintf(gettext("The gateway IP address \"%s\" already exists."), $_POST['gateway']);
 					break;
 				}
 			}
 			if(is_ipaddr($_POST['monitor'])) {
 				if (($gateway['monitor'] <> "") && ($_POST['monitor'] == $gateway['monitor']) && ($gateway['attribute'] != "system")) {
-					$input_errors[] = "The monitor IP address \"{$_POST['monitor']}\" is already in use. You must choose a different monitor IP.";
+					$input_errors[] = sprintf(gettext("The monitor IP address \"%s\" is already in use. You must choose a different monitor IP."), $_POST['monitor']);
 					break;
 				}
 			}
@@ -215,7 +215,7 @@ if ($_POST) {
 }
 
 
-$pgtitle = array("System","Gateways","Edit gateway");
+$pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
 include("head.inc");
 
 ?>
@@ -245,10 +245,10 @@ function enable_change(obj) {
 	?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Edit gateway</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway"); ?></td>
 				</tr>	
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Interface</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
                   <td width="78%" class="vtable">
 				  <select name="interface" class="formselect" <?php if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") echo "disabled"; ?>>
 		<?php 
@@ -263,34 +263,34 @@ function enable_change(obj) {
 				echo "<option value=\"bgpd\"";
 				if ($pconfig['interface'] == "bgpd") 
 					echo " selected";
-				echo ">Use BGPD</option>";
+				echo ">" . gettext("Use BGPD") . "</option>";
 			}
  		  ?>
                     </select> <br>
-                    <span class="vexpl">Choose which interface this gateway applies to.</span></td>
+                    <span class="vexpl"><?=gettext("Choose which interface this gateway applies to."); ?></span></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Name</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"> 
-                    <br> <span class="vexpl">Gateway name</span></td>
+                    <br> <span class="vexpl"><?=gettext("Gateway name"); ?></span></td>
                 </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncellreq">Gateway</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php echo $pconfig['gateway']; ?>" <?php if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") echo "disabled"; ?>>
-                    <br> <span class="vexpl">Gateway IP address</span></td>
+                    <br> <span class="vexpl"><?=gettext("Gateway IP address"); ?></span></td>
                 </tr>
 		<tr>
-		  <td width="22%" valign="top" class="vncell">Default Gateway</td>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("Default Gateway"); ?></td>
 		  <td width="78%" class="vtable">
 			<input name="defaultgw" type="checkbox" id="defaultgw" value="yes" <?php if ($pconfig['defaultgw'] == true) echo "checked"; ?> onclick="enable_change(this)" />
-			<strong>Default Gateway</strong><br />
-			This will select the above gateway as the default gateway
+			<strong><?=gettext("Default Gateway"); ?></strong><br />
+			<?=gettext("This will select the above gateway as the default gateway"); ?>
 		  </td>
 		</tr>
 		<tr>
-		  <td width="22%" valign="top" class="vncell">Monitor IP</td>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("Monitor IP"); ?></td>
 		  <td width="78%" class="vtable">
 			<?php
 				if(is_numeric($pconfig['attribute']) && ($pconfig['gateway'] == dynamic) && ($pconfig['monitor'] == "")) {
@@ -300,19 +300,19 @@ function enable_change(obj) {
 				}
 			?>
 			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" />
-			<strong>Alternative monitor IP</strong> <br />
-			Enter an alternative address here to be used to monitor the link. This is used for the
+			<strong><?=gettext("Alternative monitor IP"); ?></strong> <br />
+			<?gettext("Enter an alternative address here to be used to monitor the link. This is used for the
 			quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond
-			to ICMP echo requests (pings).</strong>
+			to ICMP echo requests (pings)"); ?>.</strong>
 			<br />
 		  </td>
 		</tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here
+                    for your reference (not parsed)"); ?>.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

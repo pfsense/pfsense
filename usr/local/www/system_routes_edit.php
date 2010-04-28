@@ -87,16 +87,16 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "network network_subnet gateway");
-	$reqdfieldsn = explode(",", "Destination network,Destination network bit count,Gateway");		
+	$reqdfields = explode(" ", gettext("network network_subnet gateway"));
+	$reqdfieldsn = explode(",", gettext("Destination network,Destination network bit count,Gateway"));		
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
 	if (($_POST['network'] && !is_ipaddr($_POST['network']))) {
-		$input_errors[] = "A valid destination network must be specified.";
+		$input_errors[] = gettext("A valid destination network must be specified.");
 	}
 	if (($_POST['network_subnet'] && !is_numeric($_POST['network_subnet']))) {
-		$input_errors[] = "A valid destination network bit count must be specified.";
+		$input_errors[] = gettext("A valid destination network bit count must be specified.");
 	}
 	if ($_POST['gateway']) {
 		$match = false;
@@ -106,7 +106,7 @@ if ($_POST) {
 			}
 		}
 		if(!$match)
-			$input_errors[] = "A valid gateway must be specified.";
+			$input_errors[] = gettext("A valid gateway must be specified.");
 	}
 
 	/* check for overlaps */
@@ -116,7 +116,7 @@ if ($_POST) {
 			continue;
 
 		if ($route['network'] == $osn) {
-			$input_errors[] = "A route to this destination network already exists.";
+			$input_errors[] = gettext("A route to this destination network already exists.");
 			break;
 		}
 	}
@@ -142,7 +142,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("System","Static Routes","Edit route");
+$pgtitle = array(gettext("System"),gettext("Static Routes"),gettext("Edit route"));
 include("head.inc");
 
 ?>
@@ -153,10 +153,10 @@ include("head.inc");
             <form action="system_routes_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Edit route entry</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit route entry"); ?></td>
 				</tr>	
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Destination network</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Destination network"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="network" type="text" class="formfld unknown" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
 				  / 
@@ -167,10 +167,10 @@ include("head.inc");
                       </option>
                       <?php endfor; ?>
                     </select>
-                    <br> <span class="vexpl">Destination network for this static route</span></td>
+                    <br> <span class="vexpl"><?=gettext("Destination network for this static route"); ?></span></td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Gateway</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
                   <td width="78%" class="vtable">
 			<select name="gateway" id="gateway" class="formselect">
 			<?php
@@ -181,7 +181,7 @@ include("head.inc");
                       <?php endforeach; ?>
                     </select> <br />
 			<div id='addgwbox'>
-				Choose which gateway this route applies to or <a OnClick="show_add_gateway();" href="#">add a new one</a>.
+				<?=gettext("Choose which gateway this route applies to or"); ?> <a OnClick="show_add_gateway();" href="#">add a new one</a>.
 								</div>
 								<div id='notebox'>
 								</div>
@@ -193,14 +193,14 @@ include("head.inc");
 										<table bgcolor="#990000" cellpadding="1" cellspacing="1">
 											<tr><td>&nbsp;</td>
 											<tr>
-												<td colspan="2"><center><b><font color="white">Add new gateway:</b></center></td>
+												<td colspan="2"><center><b><font color="white"><?=gettext("Add new gateway"); ?>:</b></center></td>
 											</tr>
 											<tr><td>&nbsp;</td>
 											<tr>
-												<td width="45%" align="right"><font color="white">Default  gateway:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
+												<td width="45%" align="right"><font color="white"><?=gettext("Default  gateway"); ?>:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
 											</tr>												
 											<tr>
-												<td width="45%" align="right"><font color="white">Interface:</td>
+												<td width="45%" align="right"><font color="white"><?=gettext("Interface"); ?>:</td>
 												<td><select name="addinterfacegw" id="addinterfacegw">
 												<?php $gwifs = get_configured_interface_with_descr();
 													foreach($gwifs as $fif => $dif)
@@ -209,13 +209,13 @@ include("head.inc");
 												</select></td>
 											</tr>
 											<tr>
-												<td align="right"><font color="white">Gateway Name:</td><td><input id="name" name="name" value="GW"></td>
+												<td align="right"><font color="white"><?=gettext("Gateway Name"); ?>:</td><td><input id="name" name="name" value="GW"></td>
 											</tr>
 											<tr>
-												<td align="right"><font color="white">Gateway IP:</td><td><input id="gatewayip" name="gatewayip"></td>
+												<td align="right"><font color="white"><?=gettext("Gateway IP"); ?>:</td><td><input id="gatewayip" name="gatewayip"></td>
 											</tr>
 											<tr>
-												<td align="right"><font color="white">Description:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
+												<td align="right"><font color="white"><?=gettext("Description"); ?>:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
 											</tr>
 											<tr><td>&nbsp;</td>
 											<tr>
@@ -223,8 +223,8 @@ include("head.inc");
 													<center>
 														<div id='savebuttondiv'>
 															<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
-															<input id="gwsave" type="Button" value="Save Gateway" onClick='hide_add_gatewaysave();'> 
-															<input id="gwcancel" type="Button" value="Cancel" onClick='hide_add_gateway();'>
+															<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave();'> 
+															<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway();'>
 														</div>
 													</center>
 												</td>
@@ -236,16 +236,16 @@ include("head.inc");
 								</div>
                 </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here
+                    for your reference (not parsed)"); ?>.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input id="save" name="Submit" type="submit" class="formbtn" value="Save"> <input id="cancel" type="button" value="Cancel" class="formbtn"  onclick="history.back()">
+                    <input id="save" name="Submit" type="submit" class="formbtn" value="Save"> <input id="cancel" type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()">
                     <?php if (isset($id) && $a_routes[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>
@@ -277,7 +277,7 @@ include("head.inc");
 					}
 					function hide_add_gatewaysave() {
 						document.getElementById("addgateway").style.display = 'none';
-						$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> One moment please...';
+						$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> <?=gettext("One moment please..."); ?>';
 						var iface = $('addinterfacegw').getValue();
 						name = $('name').getValue();
 						var descr = $('gatewaydescr').getValue();
@@ -302,10 +302,10 @@ include("head.inc");
 						optn.value = value;
 						selectbox.options.add(optn);
 						selectbox.selectedIndex = (selectbox.options.length-1);
-						$('notebox').innerHTML="<p/><strong>NOTE:</strong> You can manage Gateways <a target='_new' href='system_gateways.php'>here</a>.";
+						$('notebox').innerHTML="<p/><strong>NOTE:</strong> <?=gettext("You can manage Gateways"); ?> <a target='_new' href='system_gateways.php'>here</a>.";
 					}				
 					function report_failure() {
-						alert("Sorry, we could not create your gateway at this time.");
+						alert("<?=gettext("Sorry, we could not create your gateway at this time"); ?>.");
 						hide_add_gateway();
 					}
 					function save_callback(transport) {

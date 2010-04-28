@@ -87,7 +87,7 @@ if (!$authcfg) {
 		if(ldap_test_bind($authcfg)) {
 			echo "<td><font color=green>OK</td></tr>";
 
-			echo "<tr><td>" . gettext("Attempting to fetch Organizational Units from") . " " . {$ldapserver} . "</td><td>";
+			echo "<tr><td>" . gettext("Attempting to fetch Organizational Units from") . " " . $ldapserver . "</td><td>";
 			$ous = ldap_get_user_ous(true, $authcfg);
 			if(count($ous)>1) {
 				echo "<td><font color=green>OK</td></tr>";

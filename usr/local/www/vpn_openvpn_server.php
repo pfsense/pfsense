@@ -918,7 +918,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Provide a virtual adapter IP address to clients (see Tunnel Network)<br>
+											Allow connected clients to retain their connections if their IP address changes.<br>
 										</span>
 									</td>
 								</tr>

@@ -3,7 +3,8 @@
 /*
     pkg_mgr_install.php
     part of pfSense (http://www.pfSense.com)
-    Copyright (C) 2005 Scott Ullrich and Colin Smith
+    Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
+ 	Copyright (C) 2005 Colin Smith
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without

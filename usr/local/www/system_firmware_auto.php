@@ -122,11 +122,11 @@ include("head.inc");
 
 <?php
 
-update_status("Downloading current version information...");
+update_status(gettext("Downloading current version information") . "...");
 download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
 $latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
 if(!$latest_version) {
-	update_output_window("Unable to check for updates.");
+	update_output_window(gettext("Unable to check for updates."));
 	require("fend.inc");
 	exit;
 } else {
@@ -135,20 +135,20 @@ if(!$latest_version) {
 	$latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
 	$latest_version_pfsense = strtotime($latest_version);
 	if(!$latest_version) {
-		update_output_window("Unable to check for updates.");
+		update_output_window(gettext("Unable to check for updates."));
 		require("fend.inc");
 		exit;
 	} else {
 		$needs_system_upgrade = false;
 		if($current_installed_pfsense_version < $latest_version_pfsense) {
-			update_status("Downloading updates ...");
+			update_status(gettext("Downloading updates") . "...");
 			conf_mount_rw();
 			$status = download_file_with_progress_bar("{$updater_url}/latest.tgz", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
 			$status = download_file_with_progress_bar("{$updater_url}/latest.tgz.sha256", "{$g['upload_path']}/latest.tgz.sha256");
 			conf_mount_ro();
 			update_output_window("{$g['product_name']} download complete.");
 		} else {
-			update_output_window("You are on the latest version.");
+			update_output_window(gettext("You are on the latest version."));
 			require("fend.inc");
 			exit;
 		}
@@ -176,28 +176,28 @@ if(!isset($curcfg['alturl']['enable']))
 
 $exitstatus = 0;
 if ($sigchk == 1) {
-	$sig_warning = "The digital signature on this image is invalid.";
+	$sig_warning = gettext("The digital signature on this image is invalid.");
 	$exitstatus = 1;
 } else if ($sigchk == 2) {
-	$sig_warning = "This image is not digitally signed.";
+	$sig_warning = gettext("This image is not digitally signed.");
 	if (!isset($config['system']['firmware']['allowinvalidsig']))
 		$exitstatus = 1;
 } else if (($sigchk >= 3)) {
-	$sig_warning = "There has been an error verifying the signature on this image.";
+	$sig_warning = gettext("There has been an error verifying the signature on this image.");
 	$exitstatus = 1;
 }
 
 if ($exitstatus) {
         update_status($sig_warning);
-        update_output_window("Update cannot continue");
+        update_output_window(gettext("Update cannot continue"));
 	require("fend.inc");
         exit;
 } else if ($sigchk == 2)
-        update_output_window("\nrImage has no signature but the system configured to allow unsigned images.\n");
+        update_output_window("\n" . gettext("Image has no signature but the system configured to allow unsigned images.") . "\n");
 
 if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {
-	update_status("The image file is corrupt.");
-	update_output_window("Update cannot continue");
+	update_status(gettext("The image file is corrupt."));
+	update_output_window(gettext("Update cannot continue"));
 	if (file_exists("{$g['upload_path']}/latest.tgz")) {
 		conf_mount_rw();
 		unlink("{$g['upload_path']}/latest.tgz");
@@ -208,10 +208,10 @@ if (!verify_gzip_file("{$g['upload_path']}/latest.tgz")) {
 }
 
 if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
-	update_status("Downloading complete but sha256 does not match.");
-	update_output_window("Auto upgrade aborted.  \n\nDownloaded SHA256: $downloaded_latest_tgz_sha256 \n\nNeeded SHA256: $upgrade_latest_tgz_sha256");	
+	update_status(gettext("Downloading complete but sha256 does not match."));
+	update_output_window(gettext("Auto upgrade aborted.") . "  \n\n" . gettext("Downloaded SHA256") . ": " . $downloaded_latest_tgz_sha256 . "\n\n" . gettext("Needed SHA256") . ": " . $upgrade_latest_tgz_sha256);
 } else {
-	update_output_window("{$g['product_name']} is now upgrading.\\n\\nThe firewall will reboot once the operation is completed.");
+	update_output_window($g['product_name'] . " " . gettext("is now upgrading.") . "\\n\\n" . gettext("The firewall will reboot once the operation is completed."));
 	echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
 	mwexec_bg("/usr/bin/nohup {$external_upgrade_helper_text}");
 }
@@ -229,13 +229,13 @@ function read_body_firmware($ch, $string) {
 	$a = $file_size;
 	$b = $downloaded;
 	$c = $downloadProgress;
-	$text  = "  Auto Update Download Status\\n";
+	$text  = "  " . gettext("Auto Update Download Status") . "\\n";
 	$text .= "----------------------------------------------------\\n";
-	$text .= "  Current Version : {$current_installed_pfsense_version}\\n";
-	$text .= "  Latest Version  : {$latest_version}\\n";
-	$text .= "  File size       : {$a}\\n";
-	$text .= "  Downloaded      : {$b}\\n";
-	$text .= "  Percent         : {$c}%\\n";
+	$text .= "  " . gettext("Current Version") . " : {$current_installed_pfsense_version}\\n";
+	$text .= "  " . gettext("Latest Version") . "  : {$latest_version}\\n";
+	$text .= "  " . gettext("File size") . "       : {$a}\\n";
+	$text .= "  " . gettext("Downloaded") . "      : {$b}\\n";
+	$text .= "  " . gettext("Percent") . "         : {$c}%\\n";
 	$text .= "----------------------------------------------------\\n";
 	$counter++;
 	if($counter > 150) {

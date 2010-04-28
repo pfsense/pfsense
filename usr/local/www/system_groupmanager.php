@@ -427,8 +427,8 @@ function presubmit() {
 							</a>
 							&nbsp;
 							<?php if($group['scope'] != "system"): ?>
-							<a href="system_groupmanager.php?act=delgroup&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this group?')">
-								<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="delete group" width="17" height="17" border="0">
+							<a href="system_groupmanager.php?act=delgroup&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this group?"); ?>')">
+								<img src="/themes/<?=$g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete group"); ?>" width="17" height="17" border="0">
 							</a>
 							<?php endif; ?>
 						</td>
@@ -447,10 +447,10 @@ function presubmit() {
 					<tr>
 						<td colspan="3">
 							<p>
-								<?=gettext("Additional webConfigurator groups can be added here.");?>
-								<?=gettext("Group permissions can be assigned which are inherited by users who are members of the group.");?>
-								<?=gettext("An icon that appears grey indicates that it is a system defined object.");?>
-								<?=gettext("Some system object properties can be modified but they cannot be deleted.");?>
+								<?=gettext("Additional webConfigurator groups can be added here.
+								Group permissions can be assigned which are inherited by users who are members of the group.
+								An icon that appears grey indicates that it is a system defined object.
+								Some system object properties can be modified but they cannot be deleted.");?>
 							</p>
 						</td>
 					</tr>

@@ -53,7 +53,7 @@ function admin_groups_sort() {
 
 require("guiconfig.inc");
 
-$pgtitle = array("System","Group manager","Add privileges");
+$pgtitle = array(gettext("System"),gettext("Group manager"),gettext("Add privileges"));
 
 $groupid = $_GET['groupid'];
 if (isset($_POST['groupid']))
@@ -76,7 +76,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "sysprivs");
-	$reqdfieldsn = explode(",", "Selected priveleges");
+	$reqdfieldsn = explode(",", gettext("Selected priveleges"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -213,7 +213,7 @@ function update_description() {
 						<tr height="60">
 							<td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
 							<td width="78%" valign="top" class="vtable" id="pdesc">
-								<em>Select a privilege from the list above for a description</em>
+								<em><?=gettext("Select a privilege from the list above for a description");?></em>
 							</td>
 						</tr>
 						<tr>

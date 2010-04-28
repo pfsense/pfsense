@@ -503,7 +503,7 @@ function select_clicked() {
 							<td width="78%" class="vtable">
 								<table border="0" cellspacing="0" cellpadding="2">
 									<tr>
-										<td>Level: &nbsp;</td>
+										<td><?=gettext("Level");?>: &nbsp;</td>
 										<td>
 											<select name='ldap_scope' id='ldap_scope' class="formselect">
 											<?php
@@ -518,7 +518,7 @@ function select_clicked() {
 										</td>
 									</tr>
 									<tr>
-										<td>Base DN: &nbsp;</td>
+										<td><?=gettext("Base DN");?>: &nbsp;</td>
 										<td>
 											<input name="ldap_basedn" type="text" class="formfld unknown" id="ldap_basedn" size="40" value="<?=htmlspecialchars($pconfig['ldap_basedn']);?>"/>
 										</td>
@@ -532,7 +532,7 @@ function select_clicked() {
                                                         <td width="78%" class="vtable">
                                                                 <table border="0" cellspacing="0" cellpadding="2">
                                                                         <tr>
-                                                                                <td>Containers: &nbsp;</td>
+																				<td><?=gettext("Containers");?>: &nbsp;</td>
                                                                                 <td>
                                                                                         <input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
 											<input type="button" onClick="select_clicked();" value="<?=gettext("Select");?>">

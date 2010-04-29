@@ -262,17 +262,6 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$ppp = array();
-
-
-			$j=0;
-			foreach ($a_ppps as $p){
-				$a_ppps[$j]['pppid'] = $j;
-				$j++;
-			}
-		if (isset($id))
-			$ppp['pppid'] = $id;
-		else
-			$ppp['pppid'] = $j;
 		$ppp['type'] = $_POST['type'];
 		$ppp['ports'] = implode(',', $_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];

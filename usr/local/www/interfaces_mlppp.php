@@ -48,13 +48,13 @@ if (!is_array($config['ppps']['ppp']))
 $a_ppps = &$config['ppps']['ppp'] ;
 
 function ppp_inuse($num) {
-	global $config, $g, $a_ppps;
-	$iflist = get_configured_interface_list(false, true);
-	foreach ($iflist as $if) {
-		if ($config['interfaces'][$if]['if'] == $a_ppps[$num]['port'])
-			return true;
-	}
-	return false;
+	global $a_ppps;
+	//$iflist = get_configured_interface_list(false, true);
+	
+	if (isset($a_ppps[$num]['ifname']))
+		return true;
+	else
+		return false;
 }
 
 if ($_GET['act'] == "del") {
@@ -108,7 +108,7 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
                 <tr  ondblclick="document.location='interfaces_mlppp_edit.php?id=<?=$i;?>'">
                 	<td class="listr">
-					<?=htmlspecialchars($ppp['pppid']);?>-<?=htmlspecialchars($ppp['type']);?>
+					<?=htmlspecialchars($ppp['type']);?>
                   </td>
                   <td class="listr">
 					<?=htmlspecialchars($ppp['ports']);?>

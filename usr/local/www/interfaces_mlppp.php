@@ -49,7 +49,6 @@ $a_ppps = &$config['ppps']['ppp'] ;
 
 function ppp_inuse($num) {
 	global $a_ppps;
-	//$iflist = get_configured_interface_list(false, true);
 	
 	if (isset($a_ppps[$num]['ifname']))
 		return true;

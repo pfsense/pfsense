@@ -441,7 +441,7 @@ include("fbegin.inc"); ?>
                   <td width="22%" valign="top" class="vncell">No RDR (NOT)</td>
                   <td width="78%" class="vtable">
                     <input type="checkbox" name="nordr"<?php if($pconfig['nordr']) echo " CHECKED"; ?>>
-                    <span class="vexpl">Enabling this option will disable redirection for this entry.
+                    <span class="vexpl">Enabling this option will disable redirection for traffic matching this rule.
                     <br>Hint: this option is rarely needed, don't use this unless you know what you're doing.</span>
                   </td>
                 </tr>
@@ -690,9 +690,9 @@ include("fbegin.inc"); ?>
 				</table>
 				<br />
 				<span class="vexpl">
-					Specify the port or port range for the destination of the packet for this rule.
+					Specify the port or port range for the destination of the packet for this mapping.
 					<br />
-					Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port
+					Hint: you can leave the <em>'to'</em> field empty if you only want to map a single port
 				</span>
 			</td>
 		</tr>

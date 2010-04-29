@@ -545,10 +545,12 @@ function filter_generate_gateways() {
 		foreach ($GatewaysList as $gwname => $gateway) {
 			$int = $gateway['interface'];
 			$gwip = $gateway['gateway'];
+			$route = "";
 			if (!is_ipaddr($gwip))
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
 			if (is_ipaddr($gwip) && !empty($int))
-				$rules .= "{$gwname} = \" route-to ( {$int} {$gwip} ) \"\n";
+				$route = "route-to ( {$int} {$gwip} )\n";
+			$rules .= "{$gwname} = \" {$route} \"\n";
 		}
 	}
 
@@ -570,6 +572,7 @@ function filter_generate_gateways() {
                                 	} else
                                         	log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
                         	}
+				$route = "";
 				if ($foundlb > 0) {
                                 	$route = " route-to { {$routeto} } ";
 					if ($idx > 1) {
@@ -577,8 +580,8 @@ function filter_generate_gateways() {
                                 		if (isset($config['system']['lb_use_sticky']))
                                         		$route .= " sticky-address ";
 					}
-					$rules .= "{$gateway} = \" {$route} \"\n";
                         	}
+				$rules .= "{$gateway} = \" {$route} \"\n";
 			}
 		}
 	}

@@ -677,15 +677,15 @@ include("head.inc");
 					<span class="red"><strong>NOTE: </strong></span> This is associated to a NAT rule.<br />
 					You cannot edit the source and destination of associated filter rules.<br />
 					<br />
-                                        <?php
+					<?php
 						$edit_disabled=true;
 						if (is_array($config['nat']['rule'])) {
-                                                       	foreach( $config['nat']['rule'] as $index => $nat_rule ) {
-                                                               	if( $nat_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
-                                                                       	echo "<a href=\"firewall_nat_edit.php?id={$nat_rule[$index]}\">View the NAT rule</a><br>";
-                                                                       	break;
+							foreach( $config['nat']['rule'] as $index => $nat_rule ) {
+								if( $nat_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
+									echo "<a href=\"firewall_nat_edit.php?id={$nat_rule[$index]}\">View the NAT rule</a><br>";
+									break;
 								}
-                                                       	}
+							}
 						}
 					?>
 					<br />

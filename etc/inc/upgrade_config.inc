@@ -921,9 +921,9 @@ function upgrade_046_to_047() {
 					$ph1ent['myid_type'] = "fqdn";
 					$ph1ent['myid_data'] = $tunnel['p1']['myident']['fqdn'];
 				}
-				if (isset($tunnel['p1']['myident']['user_fqdn'])) {
+				if (isset($tunnel['p1']['myident']['ufqdn'])) {
 					$ph1ent['myid_type'] = "user_fqdn";
-					$ph1ent['myid_data'] = $tunnel['p1']['myident']['user_fqdn'];
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['ufqdn'];
 				}
 				if (isset($tunnel['p1']['myident']['asn1dn'])) {
 					$ph1ent['myid_type'] = "asn1dn";

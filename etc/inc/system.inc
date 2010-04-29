@@ -245,51 +245,24 @@ function system_routing_configure() {
 	}
 
 	/* Enable fast routing, if enabled */
+	/* XXX: More checks need to be done for subsystems that are not compatibel with fast routing. */
 	if(isset($config['staticroutes']['enablefastrouting']) && !isset($config['ipsec']['enable']))
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
 
-	$route_str = exec_command("/usr/bin/netstat -rnf inet");
-
-	/* clear out old routes, if necessary */
-	if (file_exists("{$g['vardb_path']}/routes.db")) {
-		$fd = fopen("{$g['vardb_path']}/routes.db", "r");
-		if (!$fd) {
-			printf("Error: cannot open routes DB file in system_routing_configure().\n");
-			return 1;
-		}
-		while (!feof($fd)) {
-			$oldrt = trim(fgets($fd));
-			if (($oldrt) && (stristr($route_str, $oldrt)))
-				mwexec("/sbin/route delete " . escapeshellarg($oldrt));
-		}
-		fclose($fd);
-		unlink("{$g['vardb_path']}/routes.db");
-	}
-
-	if (false) {
-	/* if list */
-	$iflist = get_configured_interface_list();
-
-	$dont_remove_route = false;
-	foreach ($iflist as $ifent => $ifname) {
-		/* 
-		 * XXX: The value of this is really when this function can take
-		 * 	an interface as parameter.
-		 */
-		/* do not process interfaces that will end up with gateways */
-		if (interface_has_gateway($ifent) || 
-			$config['interfaces'][$ifent]['ipaddr'] == "carpdev-dhcp") {
-			$dont_remove_route = true;
-			break;
+	$gatewayip = "";
+	$interfacegw = "";
+	/* tack on all the hard defined gateways as well */
+	if (is_array($config['gateways']['gateway_item'])) {
+		foreach	($config['gateways']['gateway_item'] as $gateway) {
+			if (isset($gateway['defaultgw'])) {
+				if ($gateway['gateway'] == "dynamic")
+					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
+				$gatewayip = $gateway['gateway'];
+				$interfacegw = $gateway['interface'];
+				break;
+			}
 		}
 	}
-
-	if ($dont_remove_route == false) {
-		/* remove default route */
-		mwexec("/sbin/route delete default", true);
-	}
-	}
-
 	$dont_add_route = false;
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
 	if($config['installedpackages']['olsrd']) {
@@ -300,33 +273,15 @@ function system_routing_configure() {
 			}
 		}
 	}
-
 	if($dont_add_route == false) {
-		if(is_array($config['gateways']['gateway_item'])) {
-			foreach($config['gateways']['gateway_item'] as $gateway) {
-		        	if(isset($gateway['defaultgw'])) {
-					$gatewayip = $gateway['gateway'];
-					$interfacegw = $gateway['interface'];
-					/* This handles the case where a dynamic gateway is choosen as default. */
-					if (!is_ipaddr($gatewayip))
-						$gatewayip = get_interface_gateway($interfacegw);
-					break;
-				}
-			}
-			if(($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
-				preg_match("/default[ ]+([0-9].*?)[ ]+/i", $route_str, $elements);
-				if(trim($elements[1]) != "$gatewayip") {
-					mwexec("/sbin/route delete default " . escapeshellarg($gatewayip), true);
-				}
-				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
-			}
-		} else {
-			log_error("SYSTEM: We do not have a gateways array in our XML. Is this configuration damaged?");
-			/* adding gateway for 1.2-style configs without the new
-			  gateway setup configured.
-			  Force WAN to be default gateway because that is the
-			  1.2 behavior.
-			*/
+		if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip)))
+			mwexec("/sbin/route delete default; /sbin/route add default " . escapeshellarg($gatewayip), true);
+		else {
+			/* Adding gateway for 1.2-style configs without the new
+		  	 * gateway setup configured.
+		  	 * Force WAN to be default gateway because that is the 1.2 behavior.
+			 */
+			log_error("SYSTEM: We do not have a default gateway in our config. Is this configuration damaged?");
 			if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
 				$gatewayip = $config['interfaces']['wan']['gateway'];
 				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
@@ -335,43 +290,35 @@ function system_routing_configure() {
 	}
 
 	if (is_array($config['staticroutes']['route'])) {
-
-		$fd = fopen("{$g['vardb_path']}/routes.db", "w");
-		if (!$fd) {
-			printf("Error: cannot open routes DB file in system_routing_configure().\n");
-			return 1;
-		}
+		$route_str = array();
+		exec("/usr/bin/netstat -rnf inet | /usr/bin/cut -d \" \" -f 1", $route_str);
+		$route_str = array_flip($route_str);
+		$gateways_arr = return_gateways_array();
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
-			unset($gatewayip);
-			unset($interfacegw);
-			if(is_array($config['gateways']['gateway_item'])) {
-				foreach($config['gateways']['gateway_item'] as $gateway) {
-					if($rtent['gateway'] == $gateway['name']) {
-						$gatewayip = $gateway['gateway'];
-						$interfacegw = $gateway['interface'];
-						/* This handles the case where a dynamic gateway is choosen. */
-                                        	if (!is_ipaddr($gatewayip))
-                                                	$gatewayip = get_interface_gateway($interfacegw);
-						break;
-					}
-				}
-			}
-			if((is_ipaddr($rtent['gateway'])) && empty($gatewayip))  {
+			$gatewayip = "";
+			if (isset($gateways_arr[$rtent['gateway']])) {
+				$gatewayip = $gateways_arr[$rtent['gateway']]['gateway'];
+				$interfacegw = get_real_interface($rtent['interface']);
+			} else if (is_ipaddr($rtent['gateway'])) {
 				$gatewayip = $rtent['gateway'];
-				$interfacegw = $rtent['interface'];
-			}
-			if((isset($rtent['interfacegateway'])) && (! is_ipaddr($gatewayip))) {
-				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));
 			} else {
-				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-					" " . escapeshellarg($gatewayip));
+				log_error("Static Routes: Gateway ip could not be found for {$rtent['network']}");
+				continue;
 			}
-			/* record route so it can be easily removed later (if necessary) */
-			fwrite($fd, $rtent['network'] . "\n");
+
+			$action = "add";
+			if (isset($route_str[$rtent['network']]))
+				$action = "change";
+
+			if (is_ipaddr($gatewayip)) {
+				mwexec("/sbin/route {$action} " . escapeshellarg($rtent['network']) .
+					" " . escapeshellarg($gatewayip));
+			} else if (!empty($interfacegw)) {
+				mwexec("/sbin/route {$action} " . escapeshellarg($rtent['network']) .
+					" -iface " . escapeshellarg($interfacegw));
+			}
 		}
-		fclose($fd);
 	}
 
 	return 0;

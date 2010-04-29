@@ -136,6 +136,77 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
                                         $a_out[] = $natent;
 				}	
 			}
+			/* PPTP subnet */
+                	if($config['pptpd']['mode'] == "server") {
+				if (is_ipaddr($config['pptpd']['localip'])) {
+					if($config['pptpd']['pptp_subnet'] <> "")
+                        			$ossubnet = $config['pptpd']['pptp_subnet'];
+                			else
+                        			$ossubnet = "32";
+					$osn = gen_subnet($config['pptpd']['localip'], $osn);
+					$natent = array();
+                                        $natent['source']['network'] = "{$osn}/{$ossubnet}";
+                                        $natent['sourceport'] = "";
+                                        $natent['descr'] = "Auto created rule for PPTP server";
+                                        $natent['target'] = "";
+                                        $natent['interface'] = "pptp";
+                                        $natent['destination']['any'] = true;
+                                        $natent['natport'] = "";
+                                        $a_out[] = $natent;
+                        	}
+                	}
+                	/* PPPoE subnet */
+			if($config['pppoe']['mode'] == "server") {
+                                if (is_ipaddr($config['pppoe']['localip'])) {
+                                        if($config['pppoe']['pppoe_subnet'] <> "")
+                                                $ossubnet = $config['pppoe']['pptp_subnet'];
+                                        else
+                                                $ossubnet = "32";
+                                        $osn = gen_subnet($config['pppoe']['localip'], $osn);
+                                        $natent = array();
+                                        $natent['source']['network'] = "{$osn}/{$ossubnet}";
+                                        $natent['sourceport'] = "";
+                                        $natent['descr'] = "Auto created rule for PPPoE server";
+                                        $natent['target'] = "";
+                                        $natent['interface'] = "pppoe";
+                                        $natent['destination']['any'] = true;
+                                        $natent['natport'] = "";
+                                        $a_out[] = $natent;
+                                }
+                        }
+                	/* L2TP subnet */
+			if($config['l2tp']['mode'] == "server") {
+                                if (is_ipaddr($config['l2tp']['localip'])) {
+                                        if($config['l2tp']['l2tp_subnet'] <> "")
+                                                $ossubnet = $config['l2tp']['pptp_subnet'];
+                                        else
+                                                $ossubnet = "32";
+                                        $osn = gen_subnet($config['l2tp']['localip'], $osn);
+                                        $natent = array();
+                                        $natent['source']['network'] = "{$osn}/{$ossubnet}";
+                                        $natent['sourceport'] = "";
+                                        $natent['descr'] = "Auto created rule for L2TP server";
+                                        $natent['target'] = "";
+                                        $natent['interface'] = "l2tp";
+                                        $natent['destination']['any'] = true;
+                                        $natent['natport'] = "";
+                                        $a_out[] = $natent;
+                                }
+                        }
+                	/* add openvpn interfaces */
+			if($config['openvpn']['openvpn-server']) {
+                                foreach ($config['openvpn']['openvpn-server'] as $ovpnsrv) {
+                                        $natent = array();
+                                        $natent['source']['network'] = $ovpnsrv['tunnel_network'];
+                                        $natent['sourceport'] = "";
+                                        $natent['descr'] = "Auto created rule for OpenVPN server";
+                                        $natent['target'] = "";
+                                        $natent['interface'] = "openvpn";
+                                        $natent['destination']['any'] = true;
+                                        $natent['natport'] = "";
+                                        $a_out[] = $natent;
+                                }
+                        }
 			$savemsg = "Default rules for each interface have been created.";
 		}
 		break;

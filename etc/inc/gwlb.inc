@@ -299,7 +299,7 @@ function return_gateways_array($disabled = false) {
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
 		$gateway['interface'] = get_real_interface($ifname);
 		$gateway['friendlyiface'] = $ifname;
-		$gateway['name'] = "{$ifname}";
+		$gateway['name'] = "{$friendly}_GW";
 		$gateway['attribute'] = "system";
 	
 		/* Loopback dummy for dynamic interfaces without a IP */

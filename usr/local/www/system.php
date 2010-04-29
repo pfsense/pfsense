@@ -331,8 +331,7 @@ include("head.inc");
 							<br/>
 							<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked"; ?>>
 							<strong>
-								<?=gettext("Allow DNS server list to be overridden by DHCP/PPP " .
-								"on WAN"); ?>
+								<?=gettext("Allow DNS server list to be overridden by DHCP/PPP on WAN"); ?>
 							</strong>
 							<br/>
 							<?php sprintf(gettext("If this option is set, '%s' will " .

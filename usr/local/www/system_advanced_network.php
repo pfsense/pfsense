@@ -204,10 +204,10 @@ function enable_change(enable_over) {
 								<td width="78%" class="vtable">
 									<input name="ipv6nat_enable" type="checkbox" id="ipv6nat_enable" value="yes" <?php if ($pconfig['ipv6nat_enable']) echo "checked"; ?> onclick="enable_change(false)" />
 									<strong><?=gettext("Enable IPv4 NAT encapsulation of IPv6 packets"); ?></strong><br/>
-									<?=gettext("This provides an RFC 2893 compatibility mechanism
-									that can be used to tunneling IPv6 packets over IPv4
-									routing	infrastructures. If enabled, don't forget to
-									add a firewall rule to permit IPv6 packets."); ?><br/>
+									<?=gettext("This provides an RFC 2893 compatibility mechanism ".
+									"that can be used to tunneling IPv6 packets over IPv4 ".
+									"routing	infrastructures. If enabled, don't forget to ".
+									"add a firewall rule to permit IPv6 packets."); ?><br/>
 									<br/>
 									<?=gettext("IP address"); ?>&nbsp;:&nbsp;
 									<input name="ipv6nat_ipaddr" type="text" class="formfld unknown" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />

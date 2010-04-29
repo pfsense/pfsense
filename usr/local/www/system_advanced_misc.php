@@ -243,8 +243,8 @@ include("head.inc");
                                                                 <td width="78%" class="vtable">
                                                                         <input name="schedule_states" type="checkbox" id="schedule_states" value="yes" <?php if ($pconfig['schedule_states']) echo "checked"; ?> />
                                                                         <br />
-									<?=gettext("By default schedules clear the states of existing connections when expiry time has come.
-									This option allows to override this setting by not clearing states for existing connections."); ?>
+									<?=gettext("By default schedules clear the states of existing connections when expiry time has come. ".
+									"This option allows to override this setting by not clearing states for existing connections."); ?>
                                                                 </td>
                                                         </tr>
 							<tr>
@@ -271,8 +271,8 @@ include("head.inc");
 										<?php endforeach; ?>
 									</select>
 									<br/>
-									<?=gettext("Puts the hard disk into standby mode when the selected amount of time after the last
-									access has elapsed."); ?> <em><?=gettext("Do not set this for CF cards."); ?></em>
+									<?=gettext("Puts the hard disk into standby mode when the selected amount of time after the last ".
+									"access has elapsed."); ?> <em><?=gettext("Do not set this for CF cards."); ?></em>
 								</td>
 							</tr>
 							<tr>

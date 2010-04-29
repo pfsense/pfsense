@@ -247,9 +247,9 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 		  				<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
                   		<td width="78%" class="vtable">
 						<p>
-							<?php printf(gettext('Click "Enable firmware
-							upload" below, then choose the image file (%s)
-							to be uploaded.'),$g['firmware_update_text']);?>
+							<?php printf(gettext('Click "Enable firmware '.
+							'upload" below, then choose the image file (%s) '.
+							'to be uploaded.'),$g['firmware_update_text']);?>
 							<br>
 							<?=gettext('Click "Upgrade firmware" to start the upgrade process.');?>
 						</p>

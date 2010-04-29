@@ -1097,7 +1097,7 @@ function filter_nat_rules_generate() {
 	// Open inetd.conf write handle
 	$inetd_fd = fopen("/var/etc/inetd.conf","w");
 	/* add tftp protocol helper */
-	fwrite($inetd_fd, "tftp-proxy\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy\ttftp-proxy -v\n");
+	fwrite($inetd_fd, "tftp-proxy\tdgram\tudp\twait\t\troot\t/usr/libexec/tftp-proxy\ttftp-proxy -v\n");
 
 	if(isset($config['nat']['rule'])) {
 		if(!isset($config['system']['disablenatreflection'])) {

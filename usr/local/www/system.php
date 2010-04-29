@@ -319,12 +319,12 @@ include("head.inc");
 						</table>
 						<br>
 						<span class="vexpl">
-							<?=gettext("IP addresses; these are also used for the DHCP " .
+							<?=gettext("IP addresses: these are also used for the DHCP " .
 							"service, DNS forwarder and for PPTP VPN clients."); ?>
 							<br/>
 							<?php if($multiwan): ?>
 							<br/>
-							<?=gettext("In addition, select the gateway for each DNS server." .
+							<?=gettext("In addition, select the gateway for each DNS server. " .
 							"You should have a unique DNS server per gateway."); ?>
 							<br/>
 							<?php endif; ?>
@@ -335,11 +335,11 @@ include("head.inc");
 								"on WAN"); ?>
 							</strong>
 							<br/>
-							<?= sprintf("If this option is set, '%s' will " .
+							<?php sprintf(gettext("If this option is set, '%s' will " .
 							"use DNS servers assigned by a DHCP/PPP server on WAN " .
 							"for its own purposes (including the DNS forwarder). " .
 							"However, they will not be assigned to DHCP and PPTP " .
-							"VPN	clients.", $g['product_name']); ?>
+							"VPN	clients."), $g['product_name']); ?>
 						</span>
 					</p>
 				</td>

@@ -59,7 +59,7 @@ if ($_POST) {
 
 $curcfg = $config['system']['altpkgrepo'];
 
-$pgtitle = array("System","Package Settings");
+$pgtitle = array(gettext("System"),gettext("Package Settings"));
 include("head.inc");
 ?>
 <script language="JavaScript">

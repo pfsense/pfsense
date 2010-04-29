@@ -47,11 +47,8 @@ require_once("shaper.inc");
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();
 
-if (!is_array($config['gateways']['gateway_item']))
-	$config['gateways']['gateway_item'] = array();
-
 $a_routes = &$config['staticroutes']['route'];
-$a_gateways = &$config['gateways']['gateway_item'];
+$a_gateways = return_gateways_array(true);
 $changedesc = gettext("Static Routes") . ": ";
 
 if ($_POST) {
@@ -92,6 +89,7 @@ if ($_POST) {
 if ($_GET['act'] == "del") {
 	if ($a_routes[$_GET['id']]) {
 		$changedesc .= gettext("removed route to") . " " . $a_routes[$_GET['id']['route']];
+		mwexec("/sbin/route delete " . escapeshellarg($a_routes[$_GET['id']]['network']));
 		unset($a_routes[$_GET['id']]);
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
@@ -160,17 +158,12 @@ include("head.inc");
                   </td>
                   <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
 			<?php
-				echo $route['gateway'] . " ";
+				echo $a_gateways[$route['gateway']]['name'] . " ";
 			?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
 			<?php
-				foreach($a_gateways as $gateway) {
-					if($gateway['name'] == $route['gateway']) {
-						echo strtoupper($gateway['interface']) . " ";
-					}
-				}
-
+				echo convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface']) . " ";
 			?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">

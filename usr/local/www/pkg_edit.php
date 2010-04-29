@@ -245,7 +245,7 @@ if ($_POST) {
 }
 
 if($pkg['title'] <> "") {
-	$edit = ($only_edit ? '' : ': Edit');
+	$edit = ($only_edit ? '' : sprintf(gettext(": %s"), "Edit"));
 	$title = $pkg['title'] . $edit;
 }
 else

@@ -48,10 +48,18 @@ if(file_exists("/root/cvssync_backup.tgz")) {
 	$branches = array_merge($branches, $tmp);
 }
 
+if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url", $output_str, $ret);
+	if(is_array($output_str) && !empty($output_str[0]))
+		$GIT_REPO = $output_str[0];
+	unset($output_str);
+}
+
 if($command_split[2]) {
 	$branch = $command_split[2];
 } else {
 	if(!$argv[3]) {
+		echo "\nCurrent repository is $GIT_REPO\n";
 		echo "\nPlease select which branch you would like to sync against:\n\n";
 		foreach($branches as $branchname => $branchdesc) {
 			echo "{$branchname} \t {$branchdesc}\n";

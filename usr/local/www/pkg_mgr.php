@@ -54,10 +54,10 @@ if($pkg_info) {
 	$using_cache = true;
 	$xmlrpc_base_url = isset($config['system']['altpkgrepo']['enable']) ? $config['system']['altpkgrepo']['xmlrpcbaseurl'] : $g['xmlrpcbaseurl'];
 	if(file_exists("{$g['tmp_path']}/pkg_info.cache")) {
-		$savemsg = sprintf(gettext("Unable to retrieve package info from '%s'. Cached data will be used."), $xmlrpc_base_url);
+		$savemsg = sprintf(gettext("Unable to retrieve package info from %s. Cached data will be used."), $xmlrpc_base_url);
 		$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
 	} else {
-		$savemsg = sprintf(gettext("Unable to communicate with '%s'. Please verify DNS and interface configuration, and that '%s' has functional Internet connectivity."), $xmlrpc_base_url, $g['product_name']);
+		$savemsg = sprintf(gettext("Unable to communicate with %s. Please verify DNS and interface configuration, and that %s has functional Internet connectivity."), $xmlrpc_base_url, $g['product_name']);
 	}
 }
 

@@ -319,27 +319,27 @@ include("head.inc");
 						</table>
 						<br>
 						<span class="vexpl">
-							<?=gettext("IP addresses; these are also used for the DHCP
-							service, DNS forwarder and for PPTP VPN clients."); ?>
+							<?=gettext("IP addresses; these are also used for the DHCP " .
+							"service, DNS forwarder and for PPTP VPN clients."); ?>
 							<br/>
 							<?php if($multiwan): ?>
 							<br/>
-							<?=gettext("In addition, select the gateway for each DNS server.
-							You should have a unique DNS server per gateway."); ?>
+							<?=gettext("In addition, select the gateway for each DNS server." .
+							"You should have a unique DNS server per gateway."); ?>
 							<br/>
 							<?php endif; ?>
 							<br/>
 							<input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked"; ?>>
 							<strong>
-								<?=gettext("Allow DNS server list to be overridden by DHCP/PPP
-								on WAN"); ?>
+								<?=gettext("Allow DNS server list to be overridden by DHCP/PPP " .
+								"on WAN"); ?>
 							</strong>
 							<br/>
-							<?= sprintf("If this option is set, '%s' will
-							use DNS servers assigned by a DHCP/PPP server on WAN
-							for its own purposes (including the DNS forwarder).
-							However, they will not be assigned to DHCP and PPTP
-							VPN	clients.", $g['product_name']); ?>
+							<?= sprintf("If this option is set, '%s' will " .
+							"use DNS servers assigned by a DHCP/PPP server on WAN " .
+							"for its own purposes (including the DNS forwarder). " .
+							"However, they will not be assigned to DHCP and PPTP " .
+							"VPN	clients.", $g['product_name']); ?>
 						</span>
 					</p>
 				</td>
@@ -380,9 +380,9 @@ include("head.inc");
 					<input name="timeservers" type="text" class="formfld unknown" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>">
 					<br/>
 					<span class="vexpl">
-						<?=gettext("Use a space to separate multiple hosts (only one
-						required). Remember to set up at least one DNS server
-						if you enter a host name here!"); ?>
+						<?=gettext("Use a space to separate multiple hosts (only one " .
+						"required). Remember to set up at least one DNS server " .
+						"if you enter a host name here!"); ?>
 					</span>
 				</td>
 			</tr>

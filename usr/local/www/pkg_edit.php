@@ -245,7 +245,7 @@ if ($_POST) {
 }
 
 if($pkg['title'] <> "") {
-	$edit = ($only_edit ? '' : ": " .  gettext(": Edit"));
+	$edit = ($only_edit ? '' : ": " .  gettext("Edit"));
 	$title = $pkg['title'] . $edit;
 }
 else

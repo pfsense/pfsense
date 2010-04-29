@@ -157,7 +157,7 @@ if ($_POST) {
 	    $savemsg = get_std_save_message($retval);
 
 		if ($restart_webgui)
-			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to '%s' in 20 seconds."),$url);
+			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."),$url);
 
 		conf_mount_rw();
 		setup_serial_port();
@@ -267,9 +267,9 @@ function prot_change() {
 									<input name="webguiport" type="text" class="formfld unknown" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
 									<br>
 									<span class="vexpl">
-										<?=gettext("Enter a custom port number for the webConfigurator
-										above if you want to override the default (80 for HTTP, 443
-										for HTTPS). Changes will take effect immediately after save."); ?>
+										<?=gettext("Enter a custom port number for the webConfigurator " .
+										"above if you want to override the default (80 for HTTP, 443 " .
+										"for HTTPS). Changes will take effect immediately after save."); ?>
 									</span>
 								</td>
 							</tr>
@@ -285,13 +285,13 @@ function prot_change() {
 									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
 									<strong><?=gettext("Disable webConfigurator anti-lockout rule"); ?></strong>
 									<br/>
-									<?=gettext("When this is unchecked, access to the webConfigurator on the $lockout_interface
-									interface is always permitted, regardless of the user-defined firewall
-									rule set. Check this box to disable this automatically added rule, so access
-									to the webConfigurator is controlled by the user-defined firewall rules 
-									(ensure you have a firewall rule in place that allows you in, or you will"); ?>
-									<?=gettext("lock yourself out!)"); ?>. <em> <?=gettext("Hint: the &quot;Set interface(s) IP address&quot;
-									option in the console menu resets this setting as well."); ?> </em>
+									<?=gettext("When this is unchecked, access to the webConfigurator on the $lockout_interface " .
+									"interface is always permitted, regardless of the user-defined firewall " .
+									"rule set. Check this box to disable this automatically added rule, so access " .
+									"to the webConfigurator is controlled by the user-defined firewall rules  " .
+									"(ensure you have a firewall rule in place that allows you in, or you will"); ?>
+									<?=gettext("lock yourself out!)"); ?>. <em> <?=gettext("Hint: the &quot;Set interface(s) IP address&quot; " .
+									"option in the console menu resets this setting as well."); ?> </em>
 								</td>
 							</tr>
 							<tr>

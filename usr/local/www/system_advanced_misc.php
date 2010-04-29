@@ -159,14 +159,14 @@ include("head.inc");
 								<td width="78%" class="vtable">
 									<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> />
 									<strong><?=gettext("Use sticky connections"); ?></strong><br/>
-									<?=gettext("Successive connections will be redirected to the servers
-									in a round-robin manner with connections from the same
-									source being sent to the same web server. This 'sticky
-									connection' will exist as long as there are states that
-									refer to this connection. Once the states expire, so will
-									the sticky connection. Further connections from that host
-									will be redirected to the next web server in the round
-									robin."); ?>
+									<?=gettext("Successive connections will be redirected to the servers " .
+									"in a round-robin manner with connections from the same " .
+									"source being sent to the same web server. This 'sticky " .
+									"connection' will exist as long as there are states that " .
+									"refer to this connection. Once the states expire, so will " .
+									"the sticky connection. Further connections from that host " .
+									"will be redirected to the next web server in the round " .
+									"robin."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -181,16 +181,16 @@ include("head.inc");
 									<input name="powerd_enable" type="checkbox" id="powerd_enable" value="yes" <?php if ($pconfig['powerd_enable']) echo "checked"; ?> />
 									<strong><?=gettext("Use PowerD"); ?></strong><br/>
 									<br />
-								     <?=gettext("The powerd utility monitors the system state and sets various power control 
-								     options accordingly.	It offers three modes (maximum, minimum, and
-								     adaptive) that can be individually selected while on AC power or batteries.  
-								     The modes maximum, minimum, and adaptive may be abbreviated max,
-								     min, adp.   Maximum mode chooses the highest performance values.  Minimum 
-								     mode selects the lowest performance values to get the most power savings.
-								     Adaptive mode attempts to strike a balance by degrading performance when
-								     the system appears idle and increasing it when the system is busy.  It
-								     offers a good balance between a small performance loss for greatly
-								     increased power savings.  The default mode for pfSense is adaptive."); ?>
+								     <?=gettext("The powerd utility monitors the system state and sets various power control " .
+								     "options accordingly.	It offers three modes (maximum, minimum, and " .
+								     "adaptive) that can be individually selected while on AC power or batteries. " . 
+								     "The modes maximum, minimum, and adaptive may be abbreviated max, " .
+								     "min, adp.   Maximum mode chooses the highest performance values.  Minimum " .
+								     "mode selects the lowest performance values to get the most power savings. " .
+								     "Adaptive mode attempts to strike a balance by degrading performance when " .
+								     "the system appears idle and increasing it when the system is busy.  It " .
+								     "offers a good balance between a small performance loss for greatly " .
+								     "increased power savings.  The default mode for pfSense is adaptive."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -205,14 +205,14 @@ include("head.inc");
 									<input name="glxsb_enable" type="checkbox" id="glxsb_enable" value="yes" <?php if ($pconfig['glxsb_enable']) echo "checked"; ?> />
 									<strong><?=gettext("Use glxsb"); ?></strong><br/>
 									<br />
-								     <?=gettext("The AMD Geode LX Security Block will accelerate some cryptographic functions
-								     on systems which have the chip. Do not enable this option if you have a
-								     Hifn cryptographic acceleration card, as this will take precedence and the
-								     Hifn card will not be used. Acceleration should be automatic for IPsec 
-								     when using Rijndael (AES). OpenVPN should be set for AES-128-CBC."); ?>
+								     <?=gettext("The AMD Geode LX Security Block will accelerate some cryptographic functions " .
+								     "on systems which have the chip. Do not enable this option if you have a " .
+								     "Hifn cryptographic acceleration card, as this will take precedence and the " .
+								     "Hifn card will not be used. Acceleration should be automatic for IPsec " .
+								     "when using Rijndael (AES). OpenVPN should be set for AES-128-CBC."); ?>
 								     <br/><br/>
-								     <?=gettext("If you do not have a glxsb chip in your system, this option will have no 
-								     effect. To unload the module, uncheck this option and then reboot."); ?>
+								     <?=gettext("If you do not have a glxsb chip in your system, this option will have no " .
+								     "effect. To unload the module, uncheck this option and then reboot."); ?>
 								</td>
 							</tr>
 							<tr>
@@ -227,9 +227,9 @@ include("head.inc");
 									<input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?> />
 									<strong><?=gettext("Prefer older IPsec SAs"); ?></strong>
 									<br />
-									<?=gettext("By default, if several SAs match, the newest one is
-									preferred if it's at least 30 seconds old. Select this
-									option to always prefer old SAs over new ones."); ?>
+									<?=gettext("By default, if several SAs match, the newest one is " .
+									"preferred if it's at least 30 seconds old. Select this " .
+									"option to always prefer old SAs over new ones."); ?>
 								</td>
 							</tr>
                                                         <tr>

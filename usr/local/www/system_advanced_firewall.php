@@ -213,10 +213,10 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="scrubnodf" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubnodf'])) echo "checked"; ?> />
 									<strong><?=gettext("Clear invalid DF bits instead of dropping the packets");?></strong><br/>
-									<?=gettext("This allows for communications with hosts that generate fragmented
-									packets with the don't fragment (DF) bit set. Linux NFS is known to
-									do this. This will cause the filter to not drop such packets but
-									instead clear the don't fragment bit.");?>
+									<?=gettext("This allows for communications with hosts that generate fragmented " .
+									"packets with the don't fragment (DF) bit set. Linux NFS is known to " .
+									"do this. This will cause the filter to not drop such packets but " .
+									"instead clear the don't fragment bit.");?>
 								</td>
 							</tr>
 							<tr>
@@ -224,10 +224,10 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="scrubrnid" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubrnid'])) echo "checked"; ?> />
 									<strong><?=gettext("Insert a stronger id into IP header of packets passing through the filter.");?></strong><br/>
-									<?=gettext("Replaces the IP identification field of packets with random values to
-									compensate for operating systems that use predicatable values.
-									This option only applies to packets that are not fragmented after the
-									optional packet reassembly.");?>
+									<?=gettext("Replaces the IP identification field of packets with random values to " .
+									"compensate for operating systems that use predicatable values. " .
+									"This option only applies to packets that are not fragmented after the " .
+									"optional packet reassembly.");?>
 								</td>
 							</tr>
 							<tr>
@@ -284,9 +284,9 @@ function update_description(itemnum) {
 									<input name="bypassstaticroutes" type="checkbox" id="bypassstaticroutes" value="yes" <?php if ($pconfig['bypassstaticroutes']) echo "checked"; ?> />
 									<strong><?=gettext("Bypass firewall rules for traffic on the same interface");?></strong>
 									<br/>
-									<?=gettext("This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and
-					 				leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where
-									multiple subnets are connected to the same interface.");?>
+									<?=gettext("This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and " .
+					 				"leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where " .
+									"multiple subnets are connected to the same interface.");?>
 									<br/>
 								</td>
 							</tr>

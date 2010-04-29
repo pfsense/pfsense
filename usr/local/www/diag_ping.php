@@ -136,7 +136,6 @@ include("head.inc"); ?>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%"> 
-					<span class="vexpl"><strong>Note: </strong></span> Multi-wan is not supported from this utility currently.  
 				 </td>
 				</tr>			
 			</table>

@@ -59,6 +59,7 @@ $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 $pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
+$pconfig['tftpinterface'] = $config['system']['tftpinterface']; 
 
 if ($_POST) {
 
@@ -321,7 +322,7 @@ function update_description(itemnum) {
 										<option value="<?=$ifent;?>" <?php if (stristr($pconfig['tftpinterface'], $ifent)) echo "selected"; ?>><?=gettext($ifdesc);?></option>
 <?php                           						endforeach; ?>
                                 					</select>
-									<strong>Choose the interfaces where you want TFTP proxy help to be enabled.</strong>
+									<strong>Choose the interfaces where you want TFTP proxy helper to be enabled.</strong>
 								</td>
 							</tr>
 							<tr>

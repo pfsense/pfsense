@@ -757,6 +757,14 @@
 			<name>Client Settings</name>
 		</field>
 		<field>
+			<displayname>Dynamic IP</displayname>
+			<name>dynip</name>
+			<type>checkbox</type>
+			<value>on</value>
+			<description>Allow connected clients to retain their connections if their IP address changes.</description>
+			<bindstofield>ovpnserver->step10->dynip</bindstofield>
+		</field>
+		<field>
 			<displayname>Address Pool</displayname>
 			<name>addrpool</name>
 			<type>checkbox</type>

@@ -728,7 +728,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 		  	} else {
 				$source_value = $opt[$rowhelper['value']];
 		  	}
-			if($opt['value'] == $value) 
+			if($source_value == $value) 
 				$selected = " SELECTED";
 			$text .= "<option value='" . $source_value . "'" . $selected . ">" . $source_name . "</option>";
 			echo "<option value='" . $source_value . "'" . $selected . ">" . $source_name . "</option>\n";

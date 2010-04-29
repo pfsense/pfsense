@@ -538,6 +538,8 @@ function step12_submitphpaction() {
 		$server['passtos'] = $pconfig['step10']['tos'];
 	if (isset($pconfig['step10']['interclient']))
 		$server['client2client'] = $pconfig['step10']['interclient'];
+	if (isset($pconfig['step10']['dynip']))
+		$server['dynamic_ip'] = $pconfig['step10']['dynip'];
 	if (isset($pconfig['step10']['addrpool']))
 		$server['pool_enable'] = $pconfig['step10']['addrpool'];
 	if (isset($pconfig['step10']['defaultdomain']))

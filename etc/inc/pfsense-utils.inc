@@ -289,9 +289,11 @@ function is_alias_inuse($alias) {
 	/* loop through nat rules looking for alias in use */
 	if(is_array($config['nat']['rule']))
 		foreach($config['nat']['rule'] as $rule) {
-			if($rule['target'] == $alias)
+			if($rule['target'] && $rule['target'] == $alias)
 				return true;
-			if($rule['external-address'] == $alias)
+			if($rule['source']['address'] && $rule['source']['address'] == $alias)
+				return true;
+			if($rule['destination']['address'] && $rule['destination']['address'] == $alias)
 				return true;
 		}
 	return false;

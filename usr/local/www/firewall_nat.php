@@ -185,10 +185,13 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td width="3%" class="list">&nbsp;</td>
                   <td width="5%" class="listhdrr">If</td>
                   <td width="5%" class="listhdrr">Proto</td>
-                  <td width="20%" class="listhdrr">Ext. port range</td>
-                  <td width="20%" class="listhdrr">NAT IP</td>
-                  <td width="20%" class="listhdrr">Int. port range</td>
-                  <td width="20%" class="listhdr">Description</td>
+                  <td width="11%" class="listhdrr">Src. addr</td>
+                  <td width="11%" class="listhdrr">Src. ports</td>
+                  <td width="11%" class="listhdrr">Dest. addr</td>
+                  <td width="11%" class="listhdrr">Dest. ports</td>
+                  <td width="11%" class="listhdrr">NAT IP</td>
+                  <td width="11%" class="listhdrr">NAT Ports</td>
+                  <td width="11%" class="listhdr">Description</td>
                   <td width="5%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
@@ -202,26 +205,26 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 	<?php 
 	
 		//build Alias popup box
-		$span_begin = "";
-		$span_end = "";
-		$alias_src_port_span_begin = "";
-		$alias_dst_span_begin = "";
-		$alias_dst_port_span_begin = "";
-		
-		list($beginport, $endport) = split("-", $natent['external-port']);		
-		
-		$alias_popup = rule_popup("",$beginport,$natent['target'],$natent['local-port']);
 		$span_end = "</U></span>";
-			
-		 									
-		$alias_src_port_span_begin = $alias_popup["srcport"];
-											
-		$alias_dst_span_begin = $alias_popup["dst"];
-												
-		$alias_dst_port_span_begin = $alias_popup["dstport"];
-													
-		
 
+		$alias_popup = rule_popup($natent['source']['address'], pprint_port($natent['source']['port']), $natent['destination']['address'], pprint_port($natent['destination']['port']));
+
+		$alias_src_span_begin      = $alias_popup["src"];
+		$alias_src_port_span_begin = $alias_popup["srcport"];
+		$alias_dst_span_begin      = $alias_popup["dst"];
+		$alias_dst_port_span_begin = $alias_popup["dstport"];
+
+		$alias_popup = rule_popup("","",$natent['target'], pprint_port($natent['local-port']));
+
+		$alias_target_span_begin     = $alias_popup["dst"];
+		$alias_local_port_span_begin = $alias_popup["dstport"];
+
+		if (isset($natent['disabled']))
+			$textss = "<span class=\"gray\">";
+		else
+			$textss = "<span>";
+
+		$textse = "</span>";
 	
 		/* if user does not have access to edit an interface skip on to the next record */
 		if(!have_natpfruleint_access($natent['interface'])) 
@@ -230,14 +233,14 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                 <tr valign="top" id="fr<?=$nnats;?>">
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                   <td class="listt" align="center">
-					<?php if(!empty($natent['associated-rule-id'])): ?>
-					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="Firewall rule ID <?=htmlspecialchars($nnatid); ?> is managed with this rule" border="0">
-					<?php endif; ?>
 					<?php if($natent['associated-rule-id'] == "pass"): ?>
 					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" title="All traffic matching this NAT entry is passed" border="0">
+					<?php elseif (!empty($natent['associated-rule-id'])): ?>
+					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="Firewall rule ID <?=htmlspecialchars($nnatid); ?> is managed with this rule" border="0">
 					<?php endif; ?>
 				  </td>
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+                    <?=$textss;?>
 		    <?php
 			if (!$natent['interface'] || ($natent['interface'] == "wan"))
 				echo "WAN";
@@ -246,49 +249,46 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 			else
 				echo strtoupper($config['interfaces'][$natent['interface']]['descr']);
 		    ?>
+                    <?=$textse;?>
+                  </td>
+
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+					<?=$textss;?><?=strtoupper($natent['protocol']);?><?=$textse;?>
+                  </td>
+
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+				    <?=$textss;?><?php echo $alias_src_span_begin;?><?php echo htmlspecialchars(pprint_address($natent['source']));?><?php echo $alias_src_span_end;?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-                    <?=strtoupper($natent['protocol']);?>
+				    <?=$textss;?><?php echo $alias_src_port_span_begin;?><?php echo htmlspecialchars(pprint_port($natent['source']['port']));?><?php echo $alias_src_port_span_end;?><?=$textse;?>
+                  </td>
+
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+				    <?=$textss;?><?php echo $alias_dst_span_begin;?><?php echo htmlspecialchars(pprint_address($natent['destination']));?><?php echo $alias_dst_span_end;?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-                    <?php
-						list($beginport, $endport) = split("-", $natent['external-port']);
-						if ((!$endport) || ($beginport == $endport)) {
-							echo $alias_src_port_span_begin;
-				  			echo $beginport;
-							if ($wkports[$beginport])
-								echo " (" . $wkports[$beginport] . ")";
-							else
-								echo "&nbsp;";
-							echo $span_end;
-						} else
-							echo $beginport . " - " . $endport;
-				  ?>
+				    <?=$textss;?><?php echo $alias_dst_port_span_begin;?><?php echo htmlspecialchars(pprint_port($natent['destination']['port']));?><?php echo $alias_dst_port_span_end;?><?=$textse;?>
+                  </td>
+
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+				    <?=$textss;?><?php echo $alias_target_span_begin;?><?php echo htmlspecialchars($natent['target']);?><?php echo $alias_target_span_end;?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-                    <?php echo $alias_dst_span_begin;?><?=$natent['target'];?><?php echo $span_end;?>
-					<?php if ($natent['external-address'])
-						echo "<br>(ext.: " . $natent['external-address'] . ")";
-					      else
-						echo "<br>(ext.: " . find_interface_ip(convert_friendly_interface_to_real_interface_name($natent['interface'])) . ")";
+					<?php
+						$localport = $natent['local-port'];
+
+						list($dstbeginport, $dstendport) = split("-", $natent['destination']['port']);
+
+						if ($dstendport) {
+							$localendport = $natent['local-port'] + $dstendport - $dstbeginport;
+							$localport   .= '-' . $localendport;
+						}
 					?>
+				    <?=$textss;?><?php echo $alias_local_port_span_begin;?><?php echo htmlspecialchars(pprint_port($localport));?><?php echo $alias_local_port_span_end;?><?=$textse;?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-                    <?php if ((!$endport) || ($beginport == $endport)) {
-				  			echo $alias_dst_port_span_begin;
-                    		echo $natent['local-port'];
-							if ($wkports[$natent['local-port']])
-								echo " (" . $wkports[$natent['local-port']] . ")";
-							else
-								echo "&nbsp;";
-							echo $span_end;
-						} else
-							echo $natent['local-port'] . " - " .
-								($natent['local-port']+$endport-$beginport);
-				  ?>
-                  </td>
+
                   <td class="listbg" onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-                    <?=htmlspecialchars($natent['descr']);?>&nbsp;
+				  <?=$textss;?><?=htmlspecialchars($natent['descr']);?>&nbsp;<?=$textse;?>
                   </td>
                   <td valign="middle" class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
@@ -304,6 +304,9 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
   	     <?php $i++; $nnats++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="8"></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
                   <td class="list" valign="middle" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>

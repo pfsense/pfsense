@@ -206,8 +206,8 @@ if ($_POST) {
 				interface_vip_bring_down($a_vip[$id]);
 			/* modify all virtual IP rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
-				if ($config['nat']['rule'][$i]['external-address'] == $a_vip[$id]['subnet'])
-					$config['nat']['rule'][$i]['external-address'] = $vipent['subnet'];
+				if ($config['nat']['rule'][$i]['destination']['address'] == $a_vip[$id]['subnet'])
+					$config['nat']['rule'][$i]['destination']['address'] = $vipent['subnet'];
 			}
 			$a_vip[$id] = $vipent;
 		} else

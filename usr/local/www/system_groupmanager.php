@@ -373,7 +373,7 @@ function presubmit() {
 						<tr> 
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%"> 
-								<input name="save" type="submit" class="formbtn" value="Save"> 
+								<input name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>"> 
 								<?php if (isset($id) && $a_group[$id]): ?>
 								<input name="id" type="hidden" value="<?=$id;?>">
 								<input name="gid" type="hidden" value="<?=$pconfig['gid'];?>">

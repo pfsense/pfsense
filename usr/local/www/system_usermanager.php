@@ -731,7 +731,7 @@ function sshkeyClicked(obj) {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
+								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_user[$id]): ?>
 								<input name="id" type="hidden" value="<?=$id;?>" />
 								<?php endif;?>

@@ -96,7 +96,7 @@ if ($_POST) {
 					continue;
 
 				if ($gateway_group['name'] == $_POST['name']) {
-					$input_errors[] = sprintf(gettext("A gateway group with this name \"%s\" already exists."), $_POST['name']);
+					$input_errors[] = sprintf(gettext('A gateway group with this name "%s" already exists.'), $_POST['name']);
 					break;
 				}
 			}
@@ -185,9 +185,9 @@ include("head.inc");
 		?>
 			<br/><span class="vexpl">
 			<strong><?=gettext("Link Priority"); ?></strong> <br />
-			<?=gettext("The priority selected here defines in what order failover and balancing of links will be done.
-			Multiple links of the same priority will balance connections until all links in the priority will be exhausted.
-			If all links in a priority level are exhausted we will use the next available link(s) in the next priority level.") ?>
+			<?=gettext("The priority selected here defines in what order failover and balancing of links will be done. " .
+			"Multiple links of the same priority will balance connections until all links in the priority will be exhausted. " .
+			"If all links in a priority level are exhausted we will use the next available link(s) in the next priority level.") ?>
 			</span><br />
 		   </td>
                 </tr>
@@ -212,8 +212,7 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" 
 value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here
-                    for your reference (not parsed)."); ?></span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

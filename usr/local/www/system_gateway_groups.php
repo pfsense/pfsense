@@ -90,8 +90,7 @@ include("head.inc");
 <input type="hidden" name="y1" value="1">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take 
-effect."), "<br>"));?><br>
+<?php print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
 <?php endif; ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>

@@ -447,10 +447,10 @@ function presubmit() {
 					<tr>
 						<td colspan="3">
 							<p>
-								<?=gettext("Additional webConfigurator groups can be added here.
-								Group permissions can be assigned which are inherited by users who are members of the group.
-								An icon that appears grey indicates that it is a system defined object.
-								Some system object properties can be modified but they cannot be deleted.");?>
+								<?=gettext("Additional webConfigurator groups can be added here. " .
+								"Group permissions can be assigned which are inherited by users who are members of the group. " .
+								"An icon that appears grey indicates that it is a system defined object. " .
+								"Some system object properties can be modified but they cannot be deleted.");?>
 							</p>
 						</td>
 					</tr>

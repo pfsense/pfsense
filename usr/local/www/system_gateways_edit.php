@@ -126,19 +126,19 @@ if ($_POST) {
 			}
 			if($_POST['name'] <> "") {
 				if (($gateway['name'] <> "") && ($_POST['name'] == $gateway['name']) && ($gateway['attribute'] != "system")) {
-					$input_errors[] = sprintf(gettext("The gateway name \"%s\" already exists."), $_POST['name']);
+					$input_errors[] = sprintf(gettext('The gateway name "%s" already exists.'), $_POST['name']);
 					break;
 				}
 			}
 			if(is_ipaddr($_POST['gateway'])) {
 				if (($gateway['gateway'] <> "") && ($_POST['gateway'] == $gateway['gateway']) && ($gateway['attribute'] != "system")) {
-					$input_errors[] = sprintf(gettext("The gateway IP address \"%s\" already exists."), $_POST['gateway']);
+					$input_errors[] = sprintf(gettext('The gateway IP address "%s" already exists.'), $_POST['gateway']);
 					break;
 				}
 			}
 			if(is_ipaddr($_POST['monitor'])) {
 				if (($gateway['monitor'] <> "") && ($_POST['monitor'] == $gateway['monitor']) && ($gateway['attribute'] != "system")) {
-					$input_errors[] = sprintf(gettext("The monitor IP address \"%s\" is already in use. You must choose a different monitor IP."), $_POST['monitor']);
+					$input_errors[] = sprintf(gettext('The monitor IP address "%s" is already in use. You must choose a different monitor IP.'), $_POST['monitor']);
 					break;
 				}
 			}
@@ -301,9 +301,9 @@ function enable_change(obj) {
 			?>
 			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" />
 			<strong><?=gettext("Alternative monitor IP"); ?></strong> <br />
-			<?gettext("Enter an alternative address here to be used to monitor the link. This is used for the
-			quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond
-			to ICMP echo requests (pings)"); ?>.</strong>
+			<?gettext("Enter an alternative address here to be used to monitor the link. This is used for the " .
+			"quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond " .
+			"to ICMP echo requests (pings)"); ?>.</strong>
 			<br />
 		  </td>
 		</tr>
@@ -311,8 +311,7 @@ function enable_change(obj) {
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here
-                    for your reference (not parsed)"); ?>.</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

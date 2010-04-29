@@ -297,9 +297,9 @@ if(stristr($_FILES['ulfile']['name'],"nanobsd"))
 			<tr>
 				<td width="22%" valign="top">&nbsp;</td>
 				<td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Warning");?>:<br>
-				</strong></span><?=gettext("DO NOT abort the firmware upgrade once it
-				has started. The firewall will reboot automatically after
-				storing the new firmware. The configuration will be maintained.");?></span></td>
+				</strong></span><?=gettext("DO NOT abort the firmware upgrade once it " .
+				"has started. The firewall will reboot automatically after " .
+				"storing the new firmware. The configuration will be maintained.");?></span></td>
 			</table>
 		</div>
 	</tr>

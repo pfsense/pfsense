@@ -93,7 +93,7 @@ function post_choices() {
  <body link="#000000" vlink="#000000" alink="#000000" >
  <form method="post" action="system_usermanager_settings_ldapacpicker.php">	
 <?php if (empty($ous)): ?>
-	<p><?=gettext("Sorry, we could not connect to the LDAP server.  Please try later.");?></p>
+	<p><?=gettext("Sorry, we could not connect to the LDAP server. Please try later.");?></p>
 	<input type='button' value='<?=gettext("Close"); ?>' onClick="window.close();">
 <?php else: ?>
 	<b><?=gettext("Please select which containers to Authenticate against");?>:</b>

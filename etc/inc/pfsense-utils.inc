@@ -1094,9 +1094,9 @@ function setup_serial_port() {
 	foreach($ttys_split as $tty) {
 		if(stristr($tty, "ttyd0") or stristr($tty, "ttyu0")) {
 			if(isset($config['system']['enableserial'])) {
-				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	dialup	on	secure\n");
+				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	on	secure\n");
 			} else {
-				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	dialup	off	secure\n");
+				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	off	secure\n");
 			}
 		} else {
 			fwrite($fd, $tty . "\n");

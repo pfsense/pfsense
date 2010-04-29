@@ -206,7 +206,7 @@ function enable_change(enable_over) {
 									<strong><?=gettext("Enable IPv4 NAT encapsulation of IPv6 packets"); ?></strong><br/>
 									<?=gettext("This provides an RFC 2893 compatibility mechanism ".
 									"that can be used to tunneling IPv6 packets over IPv4 ".
-									"routing	infrastructures. If enabled, don't forget to ".
+									"routing infrastructures. If enabled, don't forget to ".
 									"add a firewall rule to permit IPv6 packets."); ?><br/>
 									<br/>
 									<?=gettext("IP address"); ?>&nbsp;:&nbsp;

@@ -182,7 +182,7 @@ include("head.inc");
 									<strong><?=gettext("Use PowerD"); ?></strong><br/>
 									<br />
 								     <?=gettext("The powerd utility monitors the system state and sets various power control " .
-								     "options accordingly.	It offers three modes (maximum, minimum, and " .
+								     "options accordingly. It offers three modes (maximum, minimum, and " .
 								     "adaptive) that can be individually selected while on AC power or batteries. " . 
 								     "The modes maximum, minimum, and adaptive may be abbreviated max, " .
 								     "min, adp.   Maximum mode chooses the highest performance values.  Minimum " .

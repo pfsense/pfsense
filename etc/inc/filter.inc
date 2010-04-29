@@ -149,7 +149,7 @@ function delete_states_for_down_gateways() {
 
 /* reload filter sync */
 function filter_configure_sync() {
-	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $GatewayGroupsList;
+	global $config, $g, $after_filter_configure_run, $FilterIflist;
 	global $time_based_rules, $filterdns;
 
 	/* Use config lock to not allow recursion and config changes during this run. */
@@ -171,24 +171,21 @@ function filter_configure_sync() {
 	if($g['booting'] == true)
 		echo "Configuring firewall";
 
-	/* Lookup Gateways to be used in filter rules once */
-	$GatewaysList = return_gateways_array();
-	$GatewayGroupsList = return_gateway_groups_array();
-
 	/* generate aliases */
 	if($g['booting'] == true)
 		echo ".";
 	update_filter_reload_status("Creating aliases");
 	$aliases = filter_generate_aliases();
-	/* generate nat rules */
+	$gateways = filter_generate_gateways();
 	if($g['booting'] == true)
 		echo ".";
 	update_filter_reload_status("Generating NAT rules");
+	/* generate nat rules */
 	$natrules = filter_nat_rules_generate();
-	/* generate pfctl rules */
 	if($g['booting'] == true)
 		echo ".";
 	update_filter_reload_status("Generating filter rules");
+	/* generate pfctl rules */
 	$pfrules = filter_rules_generate();
 	/* generate altq, limiter */
 	if($g['booting'] == true)
@@ -221,6 +218,7 @@ function filter_configure_sync() {
 
 	$rules = "";
 	$rules .= "{$aliases} \n";
+	$rules .= "{$gateways} \n";
 	update_filter_reload_status("Setting up logging information");
 	$rules .= filter_setup_logging_interfaces();
 	if($config['system']['optimization'] <> "") {
@@ -530,6 +528,64 @@ function filter_generate_aliases() {
 	$result = "{$alias} \n";
 	$result .= "{$aliases}";
 	return $result;
+}
+
+function filter_generate_gateways() {
+	global $config, $g;
+
+	$rules = "# Gateways\n";
+
+	update_filter_reload_status("Creating gateway group item...");
+
+	/* Lookup Gateways to be used in filter rules once */
+        $GatewaysList = return_gateways_array();
+        $GatewayGroupsList = return_gateway_groups_array();
+
+	if (is_array($GatewaysList)) {
+		foreach ($GatewaysList as $gwname => $gateway) {
+			$int = $gateway['interface'];
+			$gwip = $gateway['gateway'];
+			if (!is_ipaddr($gwip))
+				$gwip = get_interface_gateway($gateway['friendlyiface']);
+			if (is_ipaddr($gwip) && !empty($int))
+				$rules .= "{$gwname} = \" route-to ( {$int} {$gwip} ) \"\n";
+		}
+	}
+
+	if(is_array($GatewayGroupsList)) {
+		foreach ($GatewayGroupsList as $gateway => $members) {
+			if (count($members) > 0) {
+				$foundlb = 0;
+				$routeto = "";
+                        	foreach($members as $idx => $member) {
+                                	$int = $member['int'];
+                                	$gatewayip = $member['gwip'];
+                                	if (($int <> "") && is_ipaddr($gatewayip)) {
+                                        	if ($g['debug'])
+                                                	log_error("Setting up route with {$gatewayip} om $int");
+                                        	if ($idx > 1)
+                                                	$routeto .= ", ";
+                                        	$routeto .= "( {$int} {$gatewayip} ) ";
+						$foundlb = 1;
+                                	} else
+                                        	log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
+                        	}
+				if ($foundlb > 0) {
+                                	$route = " route-to { {$routeto} } ";
+					if ($idx > 1) {
+                                		$route .= " round-robin ";
+                                		if (isset($config['system']['lb_use_sticky']))
+                                        		$route .= " sticky-address ";
+					}
+					$rules .= "{$gateway} = \" {$route} \"\n";
+                        	}
+			}
+		}
+	}
+
+	$rules .= "\n";
+
+	return $rules;
 }
 
 /* returns space separated list of vpn subnets */
@@ -1347,7 +1403,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 }
 
 function filter_generate_user_rule($rule) {
-	global $config, $g, $FilterIflist, $GatewaysList, $GatewayGroupsList;
+	global $config, $g, $FilterIflist;
 	global $layer7_rules_list;
 
 	if(isset($config['system']['developerspew'])) {
@@ -1437,59 +1493,8 @@ function filter_generate_user_rule($rule) {
 	}
 	/* if user has selected a custom gateway, lets work with it */
 	else if($rule['gateway'] <> "") {
-		$foundlb = 0;
-		$routeto = " route-to { ";
-		update_filter_reload_status("Creating gateway group item...");
-		if(is_array($GatewayGroupsList[$rule['gateway']])) {
-			$gateway = $rule['gateway'];
-			$members = $GatewayGroupsList[$rule['gateway']];
-			$member_count = count($members);
-			foreach($members as $member) {
-				$int = $member['int'];
-				$gatewayip = $member['gwip'];
-				if(($int <> "") && is_ipaddr($gatewayip)) {
-					if($g['debug'])
-						log_error("Setting up route with {$gatewayip} om $int");
-					if($foundlb == 1)
-						$routeto .= ", ";
-					$routeto .=	 "( {$int} {$gatewayip} ) ";
-					$foundlb = 1;
-				} else {
-					log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
-				}
-			}
-			/* If we want failover just use route-to else round-robin */
-			if($member_count == 1) {
-				$routeto .= "} ";
-			} else {
-				$routeto .= "} round-robin ";
-				if(isset($config['system']['lb_use_sticky']))
-					$routeto .= " sticky-address ";
-			}
-		}
 		/* Add the load balanced gateways */
-		if($foundlb == 1)
-			$aline['route'] = $routeto;
-
-		/* we're not using load balancing, just setup gateway */
-		else if($foundlb == 0) {
-			$gateway = $rule['gateway'];
-			if(!is_ipaddr($gateway)) {
-				$gwip = $GatewaysList[$gateway]['gateway'];
-				if($GatewaysList[$gateway]['interface'])
-					$int = $GatewaysList[$gateway]['interface'];
-				else
-					$int = "";
-			} else {
-				$gwip = $gateway;
-				$int = guess_interface_from_ip($gwip);
-			}
-			if((is_ipaddr($gwip)) && ($int <> "")) {
-				$aline['route'] = " route-to ( {$int} {$gwip} ) ";
-			} else {
-				log_error("Could not find gateway ({$rule['gateway']}) for rule {$rule['descr']} - {$rule['interface']}.");
-			}
-		}
+		$aline['route'] = " \${$rule['gateway']} ";
 	}
 
 	if(isset($rule['protocol'])) {
@@ -2337,7 +2342,7 @@ function filter_process_carp_rules() {
 
 /* Generate IPSEC Filter Items */
 function filter_generate_ipsec_rules() {
-	global $config, $g, $FilterIflist, $GatewaysList;
+	global $config, $g, $FilterIflist;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();

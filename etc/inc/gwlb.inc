@@ -417,7 +417,7 @@ function return_gateway_groups_array() {
 					if (($int <> "") && is_ipaddr($gatewayip)) {
 						$gateway_groups_array[$group['name']][$tiernr]['int']  = "$int";
 						$gateway_groups_array[$group['name']][$tiernr]['gwip']  = "$gatewayip";
-						$gateway_groups_array[$group['name']][$tiernr]['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 0;
+						$gateway_groups_array[$group['name']][$tiernr]['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
 					}
 				}
 				/* we should have the 1st available tier now, exit stage left */

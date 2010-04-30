@@ -499,19 +499,6 @@ function lookup_gateway_interface_by_name($name) {
 function get_interface_gateway($interface, &$dynamic = false) {
         global $config, $g;
 
-        $iflist = get_configured_interface_with_descr();
-        /*
-         * XXX: BUG: This is silly at first, but we may be called with the interface
-         *      descr for no apparent reason!!!
-         *      Probably one of those silly strtoupper() legacy stuff!
-         */
-        foreach ($iflist as $ifent => $ifdesc) {
-                if ($ifent == $interface || $ifdesc == $interface) {
-                        $interface = $ifent;
-                        break;
-                }
-        }
-
         $gw = NULL;
 
         $gwcfg = $config['interfaces'][$interface];

@@ -237,7 +237,7 @@ function filter_configure_sync() {
 		$rules .= "set limit states {$max_states}\n";
 	}
 
-	$rules .= discover_pkg_rules("pfearly");
+	//$rules .= discover_pkg_rules("pfearly");
 
 	// Configure flowtable support if enabled.
 	flowtable_configure();
@@ -1701,7 +1701,7 @@ function filter_rules_generate() {
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
 
-	$ipfrules .= discover_pkg_rules("filter");
+	//$ipfrules .= discover_pkg_rules("filter");
 
 	/* if captive portal is enabled, ensure that access to this port
 	 * is allowed on a locked down interface

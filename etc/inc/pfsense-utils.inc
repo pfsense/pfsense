@@ -1408,25 +1408,6 @@ function get_cpu_speed() {
 	 return exec("sysctl hw.clockrate | awk '{ print $2 }'");
 }
 
-/* check if the wan interface is up
- * Wait for a maximum of 10 seconds
- * If the interface is up before then continue
- */
-function is_wan_interface_up($interface) {
-	global $g;
-	global $config;
-	$i = 0;
-	while($i < 10) {
-		if(get_interface_gateway($interface)) {
-			return true;
-		} else {
-			sleep(1);
-		}
-		$i++;
-	}
-	return false;
-}
-
 function add_hostname_to_watch($hostname) {
 	if(!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");

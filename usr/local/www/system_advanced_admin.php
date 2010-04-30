@@ -285,13 +285,13 @@ function prot_change() {
 									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
 									<strong><?=gettext("Disable webConfigurator anti-lockout rule"); ?></strong>
 									<br/>
-									<?php sprintf(gettext("When this is unchecked, access to the webConfigurator on the %s
-									interface is always permitted, regardless of the user-defined firewall
-									rule set. Check this box to disable this automatically added rule, so access
-									to the webConfigurator is controlled by the user-defined firewall rules
-									(ensure you have a firewall rule in place that allows you in, or you will"), $lockout_interface); ?>
-									<?=gettext("lock yourself out!)"); ?>. <em> <?=gettext("Hint: the &quot;Set interface(s) IP address&quot; " .
-									"option in the console menu resets this setting as well."); ?> </em>
+									<?php sprintf(gettext("When this is unchecked, access to the webConfigurator " .
+									"on the %s interface is always permitted, regardless of the user-defined firewall " .
+									"rule set. Check this box to disable this automatically added rule, so access " .
+									"to the webConfigurator is controlled by the user-defined firewall rules " .
+									"(ensure you have a firewall rule in place that allows you in, or you will " .
+									"lock yourself out!)"), $lockout_interface); ?>
+									<em> <?=gettext("Hint: the &quot;Set interface(s) IP address&quot; option in the console menu resets this setting as well."); ?> </em>
 								</td>
 							</tr>
 							<tr>

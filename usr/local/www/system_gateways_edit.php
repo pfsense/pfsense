@@ -149,7 +149,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$reloadif = false;
 		/* if we are processing a system gateway only save the monitorip */
-		if($_POST['weight'] == 1 && (($_POST['attribute'] == "system" && empty($_POST['defaultgw'])) || (empty($_POST['interface']) && empty($_POST['gateway']) && empty($_POST['defaultgw'])))) {
+		if ($_POST['weight'] == 1 && (($_POST['attribute'] == "system" && empty($_POST['defaultgw'])) || (empty($_POST['interface']) && empty($_POST['gateway']) && empty($_POST['defaultgw'])))) {
 			if (is_ipaddr($_POST['monitor'])) {
 				if (empty($_POST['interface']))
 					$interface = $pconfig['friendlyiface'];

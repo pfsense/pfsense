@@ -806,10 +806,10 @@ function sshkeyClicked(obj) {
 					<tr>
 						<td colspan="4">
 							<p>
-								<?=gettext("Additional webConfigurator users can be added here. " .
-								"User permissions can be assigned directly or inherited from group memberships. " .
-								"An icon that appears grey indicates that it is a system defined object. " .
-								"Some system object properties can be modified but they cannot be deleted."); ?>
+								<?=gettext("Additional webConfigurator users can be added here.
+								User permissions can be assigned directly or inherited from group memberships.
+								An icon that appears grey indicates that it is a system defined object. 
+								Some system object properties can be modified but they cannot be deleted."); ?>
 							</p>
 						</td>
 					</tr>

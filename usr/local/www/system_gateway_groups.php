@@ -61,6 +61,8 @@ if ($_POST) {
 
 		$retval = system_routing_configure();
 		$retval |= filter_configure();
+		/* reconfigure our gateway monitor */
+		setup_gateways_monitor();
 
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0)

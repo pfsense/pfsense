@@ -340,8 +340,7 @@ function openvpn_reconfigure($mode,& $settings) {
 	$conf .= "down /etc/rc.filter_configure\n";
 
 	if (!empty($iface_ip)) {
-		if ($mode == "server" || ($mode == "client" && !empty($settings['local_port'])))
-			$conf .= "local {$iface_ip}\n";	
+		$conf .= "local {$iface_ip}\n";	
 	}
 
 	// server specific settings
@@ -446,8 +445,11 @@ function openvpn_reconfigure($mode,& $settings) {
 			$conf .= "lport {$settings['local_port']}\n";
 			$conf .= "management 127.0.0.1 {$settings['local_port']}\n";
 		}
-		else
+
+		// If there is no bind option at all (ip and/or port), add "nobind" directive
+		if ((empty($iface_ip)) && (!$settings['local_port'])) {
 			$conf .= "nobind\n";
+		}
 
 		// The remote server
 		$conf .= "remote {$settings['server_addr']} {$settings['server_port']}\n";

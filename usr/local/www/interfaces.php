@@ -1011,7 +1011,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												if($gateway['interface'] == $if) {
 										?>
 												<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>>
-													<?=htmlspecialchars($gateway['name']);?>
+													<?=htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']);?>
 												</option>
 										<?php
 												}

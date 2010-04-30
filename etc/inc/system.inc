@@ -324,7 +324,6 @@ function system_routing_configure() {
 	return 0;
 }
 
-
 function system_routing_enable() {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {

@@ -104,7 +104,6 @@ if ($_GET['act'] == "del") {
 			}
 		}
 		if ($remove == true) {
-			var_dump($config['interfaces']);
 			if ($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway'] == $a_gateways[$_GET['id']]['name'])
 				unset($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway']);
 			$changedesc .= "removed gateway {$realid}";

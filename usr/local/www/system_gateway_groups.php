@@ -74,6 +74,10 @@ if ($_GET['act'] == "del") {
 	if ($a_gateway_groups[$_GET['id']]) {
 		$changedesc .= "removed gateway group {$_GET['id']}";
 		unset($a_gateway_groups[$_GET['id']]);
+		foreach ($config['filter']['rule'] as $idx => $rule) {
+			if ($rule['gateway'] == $a_gateway_groups[$_GET['id']]['name'])
+				unset($config['filter']['rule'][$idx]['gateway']);
+		}
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
 		header("Location: system_gateway_groups.php");

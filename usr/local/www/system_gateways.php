@@ -46,9 +46,8 @@ require_once("shaper.inc");
 
 $a_gateways = return_gateways_array(true);
 $a_gateways_arr = array();
-foreach($a_gateways as $gw) {
+foreach ($a_gateways as $gw)
 	$a_gateways_arr[] = $gw;
-}
 $a_gateways = $a_gateways_arr;
 
 if (!is_array($config['gateways']['gateway_item']))
@@ -81,15 +80,40 @@ if ($_GET['act'] == "del") {
 	if ($a_gateways[$_GET['id']]) {
 		/* remove the real entry */
 		$realid = $a_gateways[$_GET['id']]['attribute'];
-
-		if ($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway'] == $a_gateways[$_GET['id']]['name'])
-			unset($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway']);
-		$changedesc .= "removed gateway {$realid}";
-		unset($a_gateway_item[$realid]);
-		write_config($changedesc);
-		mark_subsystem_dirty('staticroutes');
-		header("Location: system_gateways.php");
-		exit;
+		$remove = true;
+		if (is_array($config['gateways']['gateway_group'])) {
+			foreach ($config['gateways']['gateway_group'] as $group) {
+				foreach ($group['item'] as $item) {
+					$items = explode("|", $item);
+					if ($items[0] == $a_gateways[$_GET['id']]['name']) {
+						$input_errors[] = "Gateway cannot be deleted because it is in use on Gateway Group '{$group['name']}'";
+						$remove = false;
+						break;
+					}
+						
+				}
+			}
+		}
+		if (is_array($config['staticroutes']['route'])) {
+			foreach ($config['staticroutes']['route'] as $route) {
+				if ($route['gateway'] == $a_gateways[$_GET['id']]['name']) {
+					$input_errors[] = "Gateway cannot be deleted because it is in use on Static Routes '{$route['network']}'";
+						$remove = false;
+					break;
+				}
+			}
+		}
+		if ($remove == true) {
+			var_dump($config['interfaces']);
+			if ($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway'] == $a_gateways[$_GET['id']]['name'])
+				unset($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway']);
+			$changedesc .= "removed gateway {$realid}";
+			unset($a_gateway_item[$realid]);
+			write_config($changedesc);
+			mark_subsystem_dirty('staticroutes');
+			header("Location: system_gateways.php");
+			exit;
+		}
 	}
 }
 
@@ -101,6 +125,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="system_gateways.php" method="post">
 <input type="hidden" name="y1" value="1">
 <?php if ($savemsg) print_info_box($savemsg); ?>

@@ -807,6 +807,9 @@ include("fbegin.inc"); ?>
 	dst_change(document.iform.interface.value,'<?=$pconfig['interface']?>','<?=$pconfig['dst']?>');
 	typesel_change();
 	proto_change();
+	<?php if ($pconfig['srcnot'] || $pconfig['src'] != "any" || $pconfig['srcbeginport'] != "any" || $pconfig['srcendport'] != "any"): ?>
+	show_source();
+	<?php endif; ?>
 //-->
 </script>
 <?php

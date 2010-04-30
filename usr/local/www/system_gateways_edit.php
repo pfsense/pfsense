@@ -316,7 +316,7 @@ function enable_change(obj) {
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" class="formbtn"  onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()">
                     <?php if (isset($id) && $a_gateways[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

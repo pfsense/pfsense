@@ -224,7 +224,7 @@ function enable_change(enable_over) {
 								<td width="78%" class="vtable">
 									<input name="polling_enable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['polling_enable']) echo "checked"; ?>>
 									<strong><?=gettext("Enable device polling"); ?></strong><br>
-									<?printf("Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webConfigurator, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended. Not all NICs support polling; see the %s homepage for a list of supported cards.", $g['product_name']); ?>
+									<?printf(gettext("Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webConfigurator, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended. Not all NICs support polling; see the %s homepage for a list of supported cards."), $g['product_name']); ?>
 								</td>
 							</tr>
 							<tr>

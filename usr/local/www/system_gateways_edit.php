@@ -167,10 +167,15 @@ if ($_POST) {
 			/* rebuild the array with the manual entries only */
 
 			$gateway = array();
-			$gateway['interface'] = $_POST['interface'];
+			if ($_POST['attribute'] == "system") {
+				$gateway['interface'] = $pconfig['friendlyiface'];
+				$gateway['gateway'] = "dynamic";
+			} else {
+				$gateway['interface'] = $_POST['interface'];
+				$gateway['gateway'] = $_POST['gateway'];
+			}
 			$gateway['name'] = $_POST['name'];
 			$gateway['weight'] = $_POST['weight'];
-			$gateway['gateway'] = $_POST['gateway'];
 			$gateway['descr'] = $_POST['descr'];
 			if(is_ipaddr($_POST['monitor'])) {
 				$gateway['monitor'] = $_POST['monitor'];

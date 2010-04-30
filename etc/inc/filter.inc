@@ -550,7 +550,7 @@ function filter_generate_gateways() {
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
 			if (is_ipaddr($gwip) && !empty($int))
 				$route = "route-to ( {$int} {$gwip} )";
-			$rules .= "{$gwname} = \" {$route} \"\n";
+			$rules .= "GW{$gwname} = \" {$route} \"\n";
 		}
 	}
 
@@ -584,7 +584,7 @@ function filter_generate_gateways() {
 					}
                         	}
 			}
-			$rules .= "{$gateway} = \" {$route} \"\n";
+			$rules .= "GW{$gateway} = \" {$route} \"\n";
 		}
 	}
 
@@ -1499,7 +1499,7 @@ function filter_generate_user_rule($rule) {
 	/* if user has selected a custom gateway, lets work with it */
 	else if($rule['gateway'] <> "") {
 		/* Add the load balanced gateways */
-		$aline['route'] = " \${$rule['gateway']} ";
+		$aline['route'] = " \$GW{$rule['gateway']} ";
 	}
 
 	if(isset($rule['protocol'])) {

@@ -299,7 +299,7 @@ function return_gateways_array($disabled = false) {
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
 		$gateway['interface'] = get_real_interface($ifname);
 		$gateway['friendlyiface'] = $ifname;
-		$gateway['name'] = "{$friendly}_GW";
+		$gateway['name'] = "{$friendly}";
 		$gateway['attribute'] = "system";
 	
 		/* Loopback dummy for dynamic interfaces without a IP */
@@ -309,10 +309,12 @@ function return_gateways_array($disabled = false) {
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
-			if($gateway_item['gateway'] == $gateway['gateway'] && ($ifname == $gateway_item['friendlyiface']))
-				continue 2;
-			if(($gateway_item['gateway'] == "dynamic") && ($ifname == $gateway_item['friendlyiface']))
-				continue 2;
+			if ($ifname == $gateway_item['friendlyiface'] || $friendly == $gateway_item['name']) {
+				if ($gateway_item['gateway'] == $gateway['gateway'])
+					continue 2;
+				if ($gateway_item['gateway'] == "dynamic")
+					continue 2;
+			}
 		}
 
 		/* retrieve a proper monitor IP? */

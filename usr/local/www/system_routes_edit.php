@@ -176,7 +176,7 @@ include("head.inc");
 						if ($gateway['name'] == $pconfig['gateway'])
 							echo "selected";
 					}
-	                      		echo ">" . htmlspecialchars($gateway['name']) . "</option>\n";
+	                      		echo ">" . htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']) . "</option>\n";
 				}
 			?>
                     </select> <br />

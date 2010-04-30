@@ -881,22 +881,25 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 function interface_ppp_configure($interface) {
 	global $config, $g;
 	
-	$wancfg =& $config['interfaces'][$interface];
+	$wancfg = &$config['interfaces'][$interface];
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-		foreach ($config['ppps']['ppp'] as $ppp) {
-			if ($wancfg['if'] == basename($ppp['port']))
+		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+			//$ppp['port'] = $ppp['ports'];
+			if ($interface == $ppp['ifname'])
 				break;
 		}
 	}
-	if (!$ppp || empty($ppp['port']))
+	if (!$ppp || !isset($ppp['ifname']))
 		return;	
-
+/*
 	if ($interface == "wan")
 		$pppid = "0";
 	else
 		$pppid = substr($interface, 3);
 
 	$pppif = "ppp{$pppid}";
+*/
+	$pppif = $wancfg['if'];
 
 	// mpd5 requires a /var/spool/lock directory
 	if(!is_dir("/var/spool/lock")) {

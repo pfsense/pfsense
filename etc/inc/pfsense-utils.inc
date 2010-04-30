@@ -1304,11 +1304,17 @@ function get_interface_info($ifdescr) {
 			$ifinfo['ppplink'] = "down" ;
 		if (empty($ifinfo['status']))
 			$ifinfo['status'] = "down";
-
-		$dev = $config['interfaces'][$if]['if'];
+			
+		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+				if ($if == $ppp['ifname'])
+					break;
+			}
+		}
+		$dev = $ppp['port'];
 		if (empty($dev))
 			break;
-		if (file_exists("/dev/{$dev}")) {
+		if (file_exists($dev)) {
 			if (file_exists("{$g['varrun_path']}/ppp_{$if}.pid")) {
 				$ifinfo['pppinfo'] = "{$ifinfo['if']}";
 				$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);

@@ -254,7 +254,7 @@ function filter_configure_sync() {
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";
 
-	$rules .= discover_pkg_rules("pflate");
+	$rules .= discover_pkg_rules("filter");
 
 	if(!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");

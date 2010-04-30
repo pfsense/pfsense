@@ -549,13 +549,14 @@ function filter_generate_gateways() {
 			if (!is_ipaddr($gwip))
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
 			if (is_ipaddr($gwip) && !empty($int))
-				$route = "route-to ( {$int} {$gwip} )\n";
+				$route = "route-to ( {$int} {$gwip} )";
 			$rules .= "{$gwname} = \" {$route} \"\n";
 		}
 	}
 
-	if(is_array($GatewayGroupsList)) {
+	if (is_array($GatewayGroupsList)) {
 		foreach ($GatewayGroupsList as $gateway => $members) {
+			$route = "";
 			if (count($members) > 0) {
 				$foundlb = 0;
 				$routeto = "";
@@ -565,9 +566,10 @@ function filter_generate_gateways() {
                                 	if (($int <> "") && is_ipaddr($gatewayip)) {
                                         	if ($g['debug'])
                                                 	log_error("Setting up route with {$gatewayip} om $int");
-                                        	if ($idx > 1)
-                                                	$routeto .= ", ";
-                                        	$routeto .= "( {$int} {$gatewayip} ) ";
+						if ($member['weight'] > 1) {
+							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight']);
+						} else
+                                        		$routeto .= "( {$int} {$gatewayip} ) ";
 						$foundlb = 1;
                                 	} else
                                         	log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
@@ -581,8 +583,8 @@ function filter_generate_gateways() {
                                         		$route .= " sticky-address ";
 					}
                         	}
-				$rules .= "{$gateway} = \" {$route} \"\n";
 			}
+			$rules .= "{$gateway} = \" {$route} \"\n";
 		}
 	}
 

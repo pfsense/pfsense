@@ -64,6 +64,7 @@ if (isset($_GET['dup'])) {
 
 if (isset($id) && $a_gateways[$id]) {
 	$pconfig['name'] = $a_gateways[$id]['name'];
+	$pconfig['weight'] = $a_gateways[$id]['weight'];
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
@@ -168,6 +169,7 @@ if ($_POST) {
 			$gateway = array();
 			$gateway['interface'] = $_POST['interface'];
 			$gateway['name'] = $_POST['name'];
+			$gateway['weight'] = $_POST['weight'];
 			$gateway['gateway'] = $_POST['gateway'];
 			$gateway['descr'] = $_POST['descr'];
 			if(is_ipaddr($_POST['monitor'])) {
@@ -306,6 +308,22 @@ function enable_change(obj) {
 			to ICMP echo requests (pings).</strong>
 			<br />
 		  </td>
+		</tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncell">Weight</td>
+		  <td width="78%" class="vtable">
+			<select name='weight' class='formfldselect' id='weight'>
+			<?php
+                                for ($i = 1; $i < 6; $i++) {
+                                        $selected = "";
+                                        if ($pconfig['weight'] == $i)
+                                                $selected = "selected";
+                                        echo "<option value='{$i}' {$selected} >{$i}</option>";
+                                }
+			?>
+			</select>
+			<strong>Weight for this gateway when used in a Gateway Group.</strong> <br />
+		   </td>
 		</tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>

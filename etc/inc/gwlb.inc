@@ -403,22 +403,21 @@ function return_gateway_groups_array() {
 			/* we do not really foreach the tiers as we stop after the first tier */
 			foreach($tiers as $tiernr => $tier) {
 				/* process all gateways in this tier */
-				$member_count = count($tier);
 				foreach($tier as $tiernr => $member) {
 					/* determine interface gateway */
-					foreach($gateways_arr as $name => $gateway) {
-						if($gateway['name'] == $member) {
-							$int = $gateway['interface'];
-							if(is_ipaddr($gateway['gateway'])) 
-								$gatewayip = $gateway['gateway'];
-							else 
-								$gatewayip = lookup_gateway_ip_by_name($gateway['gateway']);
-							break;
-						}
+					if (isset($gateways_arr[$member])) {
+						$gateway = $gateways_arr[$member];
+						$int = $gateway['interface'];
+						$gatewayip = "";
+						if(is_ipaddr($gateway['gateway'])) 
+							$gatewayip = $gateway['gateway'];
+						else if ($int <> "")
+							$gatewayip = get_interface_gateway($gateway['friendlyiface']);
 					}
 					if (($int <> "") && is_ipaddr($gatewayip)) {
 						$gateway_groups_array[$group['name']][$tiernr]['int']  = "$int";
 						$gateway_groups_array[$group['name']][$tiernr]['gwip']  = "$gatewayip";
+						$gateway_groups_array[$group['name']][$tiernr]['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 0;
 					}
 				}
 				/* we should have the 1st available tier now, exit stage left */

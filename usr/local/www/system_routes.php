@@ -158,7 +158,7 @@ include("head.inc");
                   </td>
                   <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
 			<?php
-				echo $a_gateways[$route['gateway']]['name'] . " ";
+				echo htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway']);
 			?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">

@@ -458,7 +458,7 @@ function method_change() {
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export ca");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
 							<a href="system_camanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Authority and all associated Certificates?");?>')">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete ca" alt="<?=gettext("delete ca"); ?>" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete ca");?>" alt="<?=gettext("delete ca"); ?>" width="17" height="17" border="0" />
 							</a>
 						</td>
 					</tr>

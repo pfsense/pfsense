@@ -474,7 +474,7 @@ function sshkeyClicked(obj) {
 							<td width="78%" class="vtable">
 								<input name="expires" type="text" class="formfld unknown" id="expires" size="10" value="<?=$pconfig['expires'];?>">
 								<a href="javascript:NewCal('expires','mmddyyyy')">
-									<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="Pick a date">
+									<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="<?=gettext("Pick a date");?>">
 								</a>
 								<br>
 								<span class="vexpl"><?=gettext("Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy"); ?></span></td>
@@ -624,7 +624,7 @@ function sshkeyClicked(obj) {
 												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert"); ?>" alt="<?=gettext("export cert"); ?>" width="17" height="17" border="0" />
 											</a>
 											<a href="system_usermanager.php?act=delcert&id=<?=$id?>&certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this certificate?");?>')">
-												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete cert" />
+												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="<?=gettext("delete cert");?>" />
 											</a>
 										</td>
 									</tr>

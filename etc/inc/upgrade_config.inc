@@ -1886,6 +1886,13 @@ function upgrade_061_to_062() {
 				"port"    => $natent['external-port']
 			);
 
+			if (empty($natent['destination']['address'])) {
+				$natent['destination']['address'] = $natent['interface'] . 'ip';
+			} else if ($natent['destination']['address'] == 'any') {
+				unset($natent['destination']['address']);
+				$natent['destination']['any'] = true;
+			}
+
 			unset($natent['external-address']);
 			unset($natent['external-port']);
 		}

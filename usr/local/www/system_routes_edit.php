@@ -184,7 +184,7 @@ include("head.inc");
 			?>
                     </select> <br />
 			<div id='addgwbox'>
-				<?=gettext("Choose which gateway this route applies to or"); ?> <a OnClick="show_add_gateway();" href="#">add a new one</a>.
+				<?=gettext("Choose which gateway this route applies to or"); ?> <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one");?></a>.
 								</div>
 								<div id='notebox'>
 								</div>
@@ -247,7 +247,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input id="save" name="Submit" type="submit" class="formbtn" value="Save"> <input id="cancel" type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()">
+                    <input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input id="cancel" type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()">
                     <?php if (isset($id) && $a_routes[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

@@ -102,7 +102,7 @@ include("head.inc");
 	  </td>
 	</tr>
   <?php $i = 0; foreach ($a_allowedips as $ip): ?>
-	<tr>
+	<tr ondblclick="document.location='services_captiveportal_ip_edit.php?id=<?=$i;?>'">
 	  <td class="listlr">
 		<?=strtolower($ip['ip']);?>
 	  </td>

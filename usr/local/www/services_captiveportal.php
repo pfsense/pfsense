@@ -292,7 +292,7 @@ function enable_change(enable_change) {
 		<strong>Enable captive portal </strong></td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncellreq">Interface</td>
+	  <td width="22%" valign="top" class="vncellreq">Interfaces</td>
 	  <td width="78%" class="vtable">
 		<select name="cinterface[]" multiple="true" size="<?php echo count($config['interfaces']); ?>" class="formselect" id="cinterface">
 		  <?php 
@@ -303,7 +303,7 @@ function enable_change(enable_change) {
 		  </option>
 		  <?php endforeach; ?>
 		</select> <br>
-		<span class="vexpl">Choose which interface(s) to run the captive portal on.</span></td>
+		<span class="vexpl">Select the interface(s) to enable for captive portal.</span></td>
 	</tr>
 	<tr>
 	  <td valign="top" class="vncell">Maximum concurrent connections</td>
@@ -364,12 +364,12 @@ to access after they've authenticated.</td>
     If this is enabled, RADIUS MAC authentication cannot be used.</td>
 	</tr>
 	<tr>
-      <td valign="top" class="vncell">MAC passthrough</td>
+      <td valign="top" class="vncell">Pass-through MAC Auto Entry</td>
       <td class="vtable">
         <input name="passthrumacadd" type="checkbox" class="formfld" id="passthrumacadd" value="yes" <?php if ($pconfig['passthrumacadd']) echo "checked"; ?>>
-        <strong>MAC passthrough authentication</strong><br>
-    If this option is set, after a user is authenticated a mac passthrough entry will be added.
-    To remove the passthrough MAC entry you either have to log in and remove it manually from the MAC passthrough tab or send a POST to remove it from some other system.
+        <strong>Enable Pass-through MAC automatic additions</strong><br>
+    If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again. 
+    To remove the passthrough MAC entry you either have to log in and remove it manually from the <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> or send a POST from another system to remove it.
     If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.</td>
 	</tr>
 	<tr>
@@ -530,7 +530,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 				}
 				?></select><br>
 				If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-Id will be set to the client's IP address and
-				the Called-Station-Id to the client's MAC address. Default behaviour is Calling-Station-Id = client's MAC address and Called-Station-Id = <?=$g['product_name']?>'s WAN IP address.</td>
+				the Called-Station-Id to the client's MAC address. Default behavior is Calling-Station-Id = client's MAC address and Called-Station-Id = <?=$g['product_name']?>'s WAN IP address.</td>
 			</tr>
 		</table>
 	</tr>
@@ -585,7 +585,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
     Paste an RSA private key in PEM format here.</td>
 	  </tr>
         <tr>
-      <td valign="top" class="vncell">HTTPS intermmediate certificate</td>
+      <td valign="top" class="vncell">HTTPS intermediate certificate</td>
       <td class="vtable">
         <textarea name="cacert" cols="65" rows="7" id="cacert" class="formpre"><?=htmlspecialchars($pconfig['cacert']);?></textarea>
         <br>

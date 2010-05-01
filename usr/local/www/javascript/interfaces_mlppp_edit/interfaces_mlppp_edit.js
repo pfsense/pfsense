@@ -83,4 +83,3 @@ function prefill_vzw() {
 	$('username').value = "123@vzw3g.com";
 	$('password').value = "vzw";
 }
-document.observe("dom:loaded", function() { updateType(<?php echo "'{$pconfig['type']}'";?>); });

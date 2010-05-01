@@ -472,6 +472,9 @@ include("head.inc");
 $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP"/*,  "l2tp" => "L2TP", "tcp" => "TCP", "udp" => "UDP", "ng" => "Netgraph" */  ); 
 
 ?>
+<script type="text/javascript" >
+	document.observe("dom:loaded", function() { updateType(<?php echo "'{$pconfig['type']}'";?>); });
+</script>
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
 <?php include("fbegin.inc"); ?>
@@ -503,7 +506,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					<option></option>
 				</select>
 				<br/><span class="vexpl">Interfaces or ports participating in the multilink connection.</span>
-				<span id="prefil_ppp">
+				<span style="display:none" id="prefil_ppp">
 				<p/>Click a link to fill in defaults for these carriers:&nbsp;
 				<a href='#' onClick='javascript:prefill_att();'>ATT</A>
 				<a href='#' onClick='javascript:prefill_sprint();'>Sprint</A>

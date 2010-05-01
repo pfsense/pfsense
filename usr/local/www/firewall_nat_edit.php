@@ -627,11 +627,11 @@ include("fbegin.inc"); ?>
 										if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
 											$baseip = ip2long($sn['subnet']) & ip2long(gen_subnet_mask($sn['subnet_bits']));
 
-											for ($i = $sn['subnet_bits']; $i <= 32; $i++):
-												$baseip = $baseip + 1;
+											for ($i = $sn['subnet_bits'] - 1; $i <= 32; $i++):
 												$snip = long2ip($baseip);
 ?>
 												<option value="<?=$snip;?>" <?php if ($snip == $pconfig['dst']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
+												<?php $baseip = $baseip + 1; ?>
 <?php										endfor;
 										else:
 ?>

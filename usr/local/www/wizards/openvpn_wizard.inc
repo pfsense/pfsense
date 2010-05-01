@@ -271,10 +271,12 @@ function step9_submitphpaction() {
 
 	$certnames = array();
 	$certcns = array();
-	foreach($config['system']['cert'] as $cert) {
-		$certnames[] = $cert['name'];
-		$certinfo = cert_get_subject_hash($cert['crt']);
-		$certcns[] = $certinfo["CN"];
+	if (is_array($config['system']['cert'])) {
+		foreach($config['system']['cert'] as $cert) {
+			$certnames[] = $cert['name'];
+			$certinfo = cert_get_subject_hash($cert['crt']);
+			$certcns[] = $certinfo["CN"];
+		}	
 	}
 
 	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||

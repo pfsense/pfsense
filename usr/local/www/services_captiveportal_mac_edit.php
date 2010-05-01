@@ -151,13 +151,13 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncell">Bandwidth up</td>
                   <td width="78%" class="vtable"> 
                     <input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>">
-                    <br> <span class="vexpl">Enter a upload limit to be enforced on this mac-address in Kbit/s</span></td>
+                    <br> <span class="vexpl">Enter a upload limit to be enforced on this MAC address in Kbit/s</span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Bandwidth down</td>
                   <td width="78%" class="vtable"> 
                     <input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>">
-                    <br> <span class="vexpl">Enter a download limit to be enforced on this mac-address in Kbit/s</span></td>
+                    <br> <span class="vexpl">Enter a download limit to be enforced on this MAC address in Kbit/s</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

@@ -1190,17 +1190,6 @@ function filter_nat_rules_generate() {
 			if(isset($rule['disabled']))
 				continue;
 
-			if (strtolower($rule['protocol']) == "tcp/udp")
-				$protocol = "{ tcp udp }";
-			else
-				$protocol = strtolower($rule['protocol']);
-
-			/* if item is an alias, expand */
-			$srcport = "";
-			$srcport[0] = alias_expand($rule['source']['port']);
-			if(!$srcport[0])
-				$srcport = explode("-", $rule['source']['port']);
-
 			/* if item is an alias, expand */
 			$dstport = "";
 			$dstport[0] = alias_expand($rule['destination']['port']);
@@ -1209,8 +1198,10 @@ function filter_nat_rules_generate() {
 
 			/* if item is an alias, expand */
 			$localport = alias_expand($rule['local-port']);
-			if(!$localport || $rule['destination']['port'] == $rule['local-port']) {
+			if(!$localport || $dstport[0] == $localport) {
 				$localport = "";
+			} else if(is_alias($rule['destination']['port']) || is_alias($rule['local-port'])) {
+				$localport = " port {$localport}";
 			} else {
 				if(($dstport[1]) && ($dstport[0] != $dstport[1])) {
 					$localendport = $localport + ($dstport[1] - $dstport[0]);
@@ -1219,6 +1210,20 @@ function filter_nat_rules_generate() {
 				}
 
 				$localport = " port {$localport}";
+			}
+
+			switch(strtolower($rule['protocol'])) {
+			case "tcp/udp":
+				$protocol = "{ tcp udp }";
+				break;
+			case "tcp":
+			case "udp":
+				$protocol = strtolower($rule['protocol']);
+				break;
+			default:
+				$protocol = strtolower($rule['protocol']);
+				$localport = "";
+				break;
 			}
 
 			$target = alias_expand($rule['target']);

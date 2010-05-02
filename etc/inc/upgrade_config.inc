@@ -921,9 +921,9 @@ function upgrade_046_to_047() {
 					$ph1ent['myid_type'] = "fqdn";
 					$ph1ent['myid_data'] = $tunnel['p1']['myident']['fqdn'];
 				}
-				if (isset($tunnel['p1']['myident']['user_fqdn'])) {
+				if (isset($tunnel['p1']['myident']['ufqdn'])) {
 					$ph1ent['myid_type'] = "user_fqdn";
-					$ph1ent['myid_data'] = $tunnel['p1']['myident']['user_fqdn'];
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['ufqdn'];
 				}
 				if (isset($tunnel['p1']['myident']['asn1dn'])) {
 					$ph1ent['myid_type'] = "asn1dn";
@@ -1343,7 +1343,7 @@ function upgrade_051_to_052() {
 			$server['tunnel_network'] = $server['addresspool'];
 			unset($server['addresspool']);
 			if (isset($server['use_lzo'])) {
-				$server['compress'] = true;
+				$server['compression'] = "on";
 				unset($server['use_lzo']);
 			}
 			if ($server['nopool'])
@@ -1439,7 +1439,7 @@ function upgrade_051_to_052() {
 			$client['proxy_addr'] = $client['poxy_hostname'];
 			unset($client['proxy_addr']);
 			if (isset($client['use_lzo'])) {
-				$client['compress'] = true;
+				$client['compression'] = "on";
 				unset($client['use_lzo']);
 			}
 			$client['resolve_retry'] = $client['infiniteresolvretry'];
@@ -1861,6 +1861,44 @@ function upgrade_060_to_061() {
 		$config['interfaces']['wan']['enable'] = true;
 	if (is_array($config['interfaces']['lan']))
 		$config['interfaces']['lan']['enable'] = true;
+}
+
+function upgrade_061_to_062() {
+	global $config;
+
+	/* Convert NAT port forwarding rules */
+	if (is_array($config['nat']['rule'])) {
+		$a_nat = &$config['nat']['rule'];
+
+		foreach ($a_nat as &$natent) {
+			$natent['disabled'] = false;
+			$natent['nordr']    = false;
+
+			$natent['source'] = array(
+				"not"     => false,
+				"any"     => true,
+				"port"    => ""
+			);
+
+			$natent['destination'] = array(
+				"not"     => false,
+				"address" => $natent['external-address'],
+				"port"    => $natent['external-port']
+			);
+
+			if (empty($natent['destination']['address'])) {
+				$natent['destination']['address'] = $natent['interface'] . 'ip';
+			} else if ($natent['destination']['address'] == 'any') {
+				unset($natent['destination']['address']);
+				$natent['destination']['any'] = true;
+			}
+
+			unset($natent['external-address']);
+			unset($natent['external-port']);
+		}
+
+		unset($natent);
+	}
 }
 
 ?>

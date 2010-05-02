@@ -59,6 +59,7 @@ $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 $pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
+$pconfig['tftpinterface'] = $config['system']['tftpinterface']; 
 
 if ($_POST) {
 
@@ -239,7 +240,7 @@ function update_description(itemnum) {
 										<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " selected"; ?>>conservative</option>
 									</select>
 									<br/>
-									<textarea cols="60" rows="1" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
+									<textarea readonly="yes" cols="60" rows="1" id="info" name="info"style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000; font-size: 8pt;"></textarea>
 									<script language="javascript" type="text/javascript">
 										update_description(document.forms[0].optimization.selectedIndex);
 									</script>
@@ -321,7 +322,7 @@ function update_description(itemnum) {
 										<option value="<?=$ifent;?>" <?php if (stristr($pconfig['tftpinterface'], $ifent)) echo "selected"; ?>><?=gettext($ifdesc);?></option>
 <?php                           						endforeach; ?>
                                 					</select>
-									<strong>Choose the interfaces where you want TFTP proxy help to be enabled.</strong>
+									<strong>Choose the interfaces where you want TFTP proxy helper to be enabled.</strong>
 								</td>
 							</tr>
 							<tr>

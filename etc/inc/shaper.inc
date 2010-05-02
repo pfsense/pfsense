@@ -3443,8 +3443,7 @@ class layer7 {
     }
     
     function delete_l7c() {
-	$l7pid = `"/bin/pgrep -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'"`;
-	mwexec("/bin/kill {$l7pid}");
+	mwexec("/bin/pkill -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'", true);
 	unset_l7_object_by_reference($this->GetRName());
 	cleanup_l7_from_rules($this->GetRName());
     }
@@ -3902,7 +3901,7 @@ function filter_generate_dummynet_rules() {
 	foreach ($dummynet_pipe_list as $dn) 
 		$dn_rules .= $dn->build_rules();
 
-	if (!empty($dnrules)) {
+	if (!empty($dn_rules)) {
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
 		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
 	}

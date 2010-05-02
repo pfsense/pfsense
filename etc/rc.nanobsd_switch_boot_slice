@@ -1,0 +1,27 @@
+#!/usr/local/bin/php -q
+<?php
+require_once("globals.inc");
+require_once("config.inc");
+require_once("pfsense-utils.inc");
+
+global $g;
+global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+nanobsd_detect_slice_info();
+
+if ($g['platform'] != "nanobsd") {
+	echo "This script can only be used on NanoBSD (embedded) images.\n";
+	exit(1);
+}
+
+echo "Boot slice  : {$BOOTFLASH} ({$BOOT_DEVICE})\n";
+echo "Active slice: {$ACTIVE_SLICE}\n\n";
+
+echo "Switching active slice...";
+nanobsd_switch_boot_slice();
+echo "Done.\n\n";
+nanobsd_detect_slice_info();
+echo "Boot slice  : {$BOOTFLASH} ({$BOOT_DEVICE})\n";
+echo "Active slice: {$ACTIVE_SLICE}\n\n";
+?>

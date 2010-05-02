@@ -102,15 +102,9 @@ include("head.inc");
 	  </td>
 	</tr>
   <?php $i = 0; foreach ($a_allowedips as $ip): ?>
-	<tr>
+	<tr ondblclick="document.location='services_captiveportal_ip_edit.php?id=<?=$i;?>'">
 	  <td class="listlr">
-		<?php if($ip['dir'] == "to")
-			echo "any <img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\">";
-		?>
 		<?=strtolower($ip['ip']);?>
-		<?php if($ip['dir'] == "from")
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> any";
-		?>
 	  </td>
 	  <td class="listbg">
 		<?=htmlspecialchars($ip['descr']);?>&nbsp;

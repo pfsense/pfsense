@@ -105,10 +105,10 @@ if ($_POST) {
 
 	/* Build list of items in group with priority */
 	$pconfig['item'] = array();
-	foreach($a_gateways as $gateway) {
-		if($_POST[$gateway['name']] > 0) {
+	foreach($a_gateways as $gwname => $gateway) {
+		if($_POST[$gwname] > 0) {
 			/* we have a priority above 0 (disabled), add item to list */
-			$pconfig['item'][] = "{$gateway[name]}|{$_POST[$gateway['name']]}";
+			$pconfig['item'][] = "{$gwname}|{$_POST[$gwname]}";
 		}
 
 	}
@@ -160,27 +160,26 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq">Gateway Priority</td>
                   <td width="78%" class="vtable"> 
 		<?php
-			foreach($a_gateways as $gateway) {
+			foreach($a_gateways as $gwname => $gateway) {
 				$selected = array();
-				$name = $gateway['name'];
 				$interface = $gateway['interface'];
 				foreach((array)$pconfig['item'] as $item) {
 					$itemsplit = explode("|", $item);
-					if($itemsplit[0] == $name) {
+					if($itemsplit[0] == $gwname) {
 						$selected[$itemsplit[1]] = "selected";
+						break;
 					} else {
 						$selected[0] = "selected";
 					}
-
 				}
-				echo "<select name='{$name}' class='formfldselect' id='{$name}'>";
+				echo "<select name='{$gwname}' class='formfldselect' id='{$gwname}'>";
 				echo "<option value='0' $selected[0] >Never</option>";
 				echo "<option value='1' $selected[1] >Tier 1</option>";
 				echo "<option value='2' $selected[2] >Tier 2</option>";
 				echo "<option value='3' $selected[3] >Tier 3</option>";
 				echo "<option value='4' $selected[4] >Tier 4</option>";
 				echo "<option value='5' $selected[5] >Tier 5</option>";
-				echo "</select> <strong>{$name} - {$gateway['descr']}</strong><br/>";
+				echo "</select> <strong>{$gateway['name']} - {$gateway['descr']}</strong><br />";
 		 	}
 		?>
 			<br/><span class="vexpl">
@@ -218,7 +217,8 @@ value="<?=htmlspecialchars($pconfig['descr']);?>">
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" class="formbtn"  onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="Save"> 
+		    <a href="system_gateway_groups.php"><input type="button" value="Cancel" class="formbtn" ></a>
                     <?php if (isset($id) && $a_gateway_groups[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

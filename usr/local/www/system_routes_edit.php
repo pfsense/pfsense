@@ -57,11 +57,9 @@ require("guiconfig.inc");
 
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();
-if (!is_array($config['gateways']['gateway_item']))
-	$config['gateways']['gateway_item'] = array();
 
 $a_routes = &$config['staticroutes']['route'];
-$a_gateways = &$config['gateways']['gateway_item'];
+$a_gateways = return_gateways_array(true);
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -99,13 +97,7 @@ if ($_POST) {
 		$input_errors[] = "A valid destination network bit count must be specified.";
 	}
 	if ($_POST['gateway']) {
-		$match = false;
-		foreach($a_gateways as $gateway) {
-			if(in_array($_POST['gateway'], $gateway)) {
-				$match = true;
-			}
-		}
-		if(!$match)
+		if (!isset($a_gateways[$_POST['gateway']]))
 			$input_errors[] = "A valid gateway must be specified.";
 	}
 
@@ -174,11 +166,19 @@ include("head.inc");
                   <td width="78%" class="vtable">
 			<select name="gateway" id="gateway" class="formselect">
 			<?php
-				foreach ($a_gateways as $gateway): ?>
-	                      <option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>> 
-	                      <?=htmlspecialchars($gateway['name']);?>
-                      </option>
-                      <?php endforeach; ?>
+				foreach ($a_gateways as $gateway) {
+					if ($gateway['attribute'] == "system") {
+	                      			echo "<option value='{$gateway['friendlyiface']}' ";
+						if ($gateway['friendlyiface'] == $pconfig['gateway'])
+							echo "selected";
+					} else {
+	                      			echo "<option value='{$gateway['name']}' ";
+						if ($gateway['name'] == $pconfig['gateway'])
+							echo "selected";
+					}
+	                      		echo ">" . htmlspecialchars($gateway['name']) . " - " . htmlspecialchars($gateway['gateway']) . "</option>\n";
+				}
+			?>
                     </select> <br />
 			<div id='addgwbox'>
 				Choose which gateway this route applies to or <a OnClick="show_add_gateway();" href="#">add a new one</a>.

@@ -1,57 +1,11 @@
 <?php
-/*
-	status_ovpenvpn.php
-
-    Copyright (C) 2010 Jim Pingle
-    Copyright (C) 2008 Shrew Soft Inc.
-
-    AJAX bits borrowed from diag_dump_states.php
-    Copyright (C) 2005 Scott Ullrich, Colin Smith
-
-    All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
-/* DISABLE_PHP_LINT_CHECKING */
-/*
-	pfSense_MODULE:	openvpn
-*/
-
-##|+PRIV
-##|*IDENT=page-status-openvpn
-##|*NAME=Status: OpenVPN page
-##|*DESCR=Allow access to the 'Status: OpenVPN' page.
-##|*MATCH=status_openvpn.php*
-##|-PRIV
-
-$pgtitle = array("Status", "OpenVPN");
-require("guiconfig.inc");
 require_once("openvpn.inc");
 
 /* Handle AJAX */
 if($_GET['action']) {
 	if($_GET['action'] == "kill") {
-		$port  = $_GET['port'];
-		$remipp  = $_GET['remipp'];
+		$port = $_GET['port'];
+		$remipp = $_GET['remipp'];
 		if (!empty($port) and !empty($remipp)) {
 			$retval = kill_client($port, $remipp);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
@@ -90,12 +44,10 @@ function kill_client($port, $remipp) {
 
 $servers = openvpn_get_active_servers();
 $clients = openvpn_get_active_clients();
+?>
 
-include("head.inc"); ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?=$jsevents["body"]["onload"];?>">
 <script src="/javascript/sorttable.js" type="text/javascript"></script>
-<?php include("fbegin.inc"); ?>
+<br/>
 <form action="status_openvpn.php" method="get" name="iform">
 <script type="text/javascript">
 	function killClient(mport, remipp) {
@@ -139,14 +91,9 @@ include("head.inc"); ?>
 		<td>
 			<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
-				<td class="listhdrr">Common Name</td>
-				<td class="listhdrr">Real Address</td>
-				<td class="listhdrr">Virtual Address</td>
-				<td class="listhdrr">Connected Since</td>
-				<td class="listhdrr">Bytes Sent</td>
-				<td class="listhdrr">Bytes Received</td>
+				<td class="listhdrr">Name/Time</td>
+				<td class="listhdrr">Real/Virtual IP</td>
 			</tr>
-
 			<?php foreach ($server['conns'] as $conn): ?>
 			<tr name='<?php echo "r:{$server['port']}:{$conn['remote_host']}"; ?>'>
 				<td class="listlr">
@@ -155,23 +102,19 @@ include("head.inc"); ?>
 				<td class="listr">
 					<?=$conn['remote_host'];?>
 				</td>
-				<td class="listr">
-					<?=$conn['virtual_addr'];?>
-				</td>
-				<td class="listr">
-					<?=$conn['connect_time'];?>
-				</td>
-				<td class="listr">
-					<?=$conn['bytes_sent'];?>
-				</td>
-				<td class="listr">
-					<?=$conn['bytes_recv'];?>
-				</td>
-				<td class='list'>
+				<td class='list' rowspan="2">
 					<img src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' height='17' width='17' border='0'
 					   onclick="killClient('<?php echo $server['port']; ?>', '<?php echo $conn['remote_host']; ?>');" style='cursor:pointer;'
 					   name='<?php echo "i:{$server['port']}:{$conn['remote_host']}"; ?>'
 					   title='Kill client connection from <?php echo $conn['remote_host']; ?>' alt='' />
+				</td>
+			</tr>
+			<tr name='<?php echo "r:{$server['port']}:{$conn['remote_host']}"; ?>'>
+				<td class="listlr">
+					<?=$conn['connect_time'];?>
+				</td>
+				<td class="listr">
+					<?=$conn['virtual_addr'];?>
 				</td>
 			</tr>
 
@@ -186,7 +129,7 @@ include("head.inc"); ?>
 </table>
 
 <?php endforeach; ?>
-<br>
+<br/>
 
 
 <?php if (!empty($clients)) { ?>
@@ -199,13 +142,8 @@ include("head.inc"); ?>
 	<tr>
 		<table style="padding-top:0px; padding-bottom:0px; padding-left:0px; padding-right:0px" class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-			<td class="listhdrr">Name</td>
-			<td class="listhdrr">Status</td>
-			<td class="listhdrr">Connected Since</td>
-			<td class="listhdrr">Virtual Addr</td>
-			<td class="listhdrr">Remote Host</td>
-			<td class="listhdrr">Bytes Sent</td>
-			<td class="listhdrr">Bytes Received</td>
+			<td class="listhdrr">Name/Time</td>
+			<td class="listhdrr">Remote/Virtual IP</td>
 		</tr>
 
 <?php foreach ($clients as $client): ?>
@@ -213,23 +151,28 @@ include("head.inc"); ?>
 			<td class="listlr">
 				<?=$client['name'];?>
 			</td>
-			<td class="listlr">
-				<?=$client['status'];?>
-			</td>
 			<td class="listr">
+				<?=$client['remote_host'];?>
+			</td>
+			<td rowspan="2" align="center">
+			<?php
+			if ($client['status'] == "up") {
+				/* tunnel is up */
+				$iconfn = "interface_up";
+			} else {
+				/* tunnel is down */
+				$iconfn = "interface_down";
+			}
+			echo "<img src ='/themes/{$g['theme']}/images/icons/icon_{$iconfn}.gif'>";
+			?>
+			</td>
+		</tr>
+		<tr name='<?php echo "r:{$client['port']}:{$conn['remote_host']}"; ?>'>
+			<td class="listlr">
 				<?=$client['connect_time'];?>
 			</td>
 			<td class="listr">
 				<?=$client['virtual_addr'];?>
-			</td>
-			<td class="listr">
-				<?=$client['remote_host'];?>
-			</td>
-			<td class="listr">
-				<?=$client['bytes_sent'];?>
-			</td>
-			<td class="listr">
-				<?=$client['bytes_recv'];?>
 			</td>
 		</tr>
 <?php endforeach; ?>
@@ -237,7 +180,7 @@ include("head.inc"); ?>
 	</tr>
 </table>
 
-<?php 
+<?php
 }
 
 if ($DisplayNote) {
@@ -248,6 +191,3 @@ if ((empty($clients)) && (empty($servers))) {
 	echo "No OpenVPN instance defined";
 }
 ?>
-
-
-<?php include("fend.inc"); ?>

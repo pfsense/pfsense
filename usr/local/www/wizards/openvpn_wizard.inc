@@ -271,10 +271,12 @@ function step9_submitphpaction() {
 
 	$certnames = array();
 	$certcns = array();
-	foreach($config['system']['cert'] as $cert) {
-		$certnames[] = $cert['name'];
-		$certinfo = cert_get_subject_hash($cert['crt']);
-		$certcns[] = $certinfo["CN"];
+	if (is_array($config['system']['cert'])) {
+		foreach($config['system']['cert'] as $cert) {
+			$certnames[] = $cert['name'];
+			$certinfo = cert_get_subject_hash($cert['crt']);
+			$certcns[] = $certinfo["CN"];
+		}	
 	}
 
 	if (empty($_POST['name']) || empty($_POST['keylength']) || empty($_POST['lifetime']) ||
@@ -538,6 +540,8 @@ function step12_submitphpaction() {
 		$server['passtos'] = $pconfig['step10']['tos'];
 	if (isset($pconfig['step10']['interclient']))
 		$server['client2client'] = $pconfig['step10']['interclient'];
+	if (isset($pconfig['step10']['dynip']))
+		$server['dynamic_ip'] = $pconfig['step10']['dynip'];
 	if (isset($pconfig['step10']['addrpool']))
 		$server['pool_enable'] = $pconfig['step10']['addrpool'];
 	if (isset($pconfig['step10']['defaultdomain']))

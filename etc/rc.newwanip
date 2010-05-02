@@ -61,11 +61,15 @@ if(empty($argument)) {
 
 log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface}) (real interface: {$interface_real}).");
 
-if($curwanip == "0.0.0.0") {
+if($curwanip == "0.0.0.0" || !is_ipaddr($curwanip)) {
         log_error("rc.newwanip: Failed to update {$interface} IP, restarting...");
 	interface_configure($interface);
         exit;
 }
+
+$oldip = "0.0.0.0";
+if (file_exists("{$g['vardb_path']}/{$interface}_cacheip"))
+	$oldip = file_get_contents("{$g['vardb_path']}/{$interface}_cacheip");
 
 /* regenerate resolv.conf if DNS overrides are allowed */
 system_resolvconf_generate(true);
@@ -75,6 +79,10 @@ services_dnsupdate_process($interface);
 
 /* write current WAN IP to file */
 file_put_contents("{$g['vardb_path']}/{$interface}_ip", $curwanip);
+file_put_contents("{$g['vardb_path']}/{$interface}_cacheip", $curwanip);
+
+if (is_ipaddr($oldip) && $curwanip == $oldip)
+	exit;
 
 /* signal dyndns update */
 file_put_contents("{$g['tmp_path']}/update_dyndns", $interface);
@@ -98,7 +106,7 @@ enable_rrd_graphing();
 /* restart packages */
 mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh");
 mwexec_bg("/etc/rc.start_packages");
-log_error("{$g['product_name']} package system has detected an ip change $old_ip ->  $curwanip ... Restarting packages.");		
+log_error("{$g['product_name']} package system has detected an ip change $oldip ->  $curwanip ... Restarting packages.");		
 
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();

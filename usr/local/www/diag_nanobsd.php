@@ -49,42 +49,11 @@ require_once("config.inc");
 $pgtitle = array("Diagnostics","NanoBSD");
 include("head.inc");
 
-function detect_slice_info() {
-	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
-	global $GLABEL_SLIZE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
-	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE;
-
-	$BOOT_DEVICE=trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`);
-	$REAL_BOOT_DEVICE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);
-	$BOOT_DRIVE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`);
-
-	// Detect which slice is active and set information.
-	if(strstr($REAL_BOOT_DEVICE, "s1")) {
-		$SLICE="2";
-		$OLDSLICE="1";
-		$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
-		$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
-		$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";	
-		$GLABEL_SLICE="pfsense1";
-		$UFS_ID="1";
-		$OLD_UFS_ID="0";
-		$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
-
-	} else {
-		$SLICE="1";
-		$OLDSLICE="2";
-		$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
-		$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
-		$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";
-		$GLABEL_SLICE="pfsense0";
-		$UFS_ID="0";
-		$OLD_UFS_ID="1";
-		$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
-	}
-}
-
 // Survey slice info
-detect_slice_info();
+global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+nanobsd_detect_slice_info();
 
 ?>
 
@@ -95,7 +64,7 @@ detect_slice_info();
 
 <?php
 
-$NANOBSD_SIZE = strtoupper(file_get_contents("/etc/nanosize.txt"));
+$NANOBSD_SIZE = nanobsd_get_size();
 
 if($_POST['bootslice']) {
 	echo <<<EOF
@@ -105,51 +74,14 @@ if($_POST['bootslice']) {
 			<p/>&nbsp;
 		</div>
 EOF;
-	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
-	ob_implicit_flush(1);
-	if(strstr($_POST['bootslice'], "s2")) {
-		$ASLICE="2";
-		$AOLDSLICE="1";
-		$ATOFLASH="{$BOOT_DRIVE}s{$ASLICE}";
-		$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
-		$AGLABEL_SLICE="pfsense1";
-		$AUFS_ID="1";
-		$AOLD_UFS_ID="0";
-		$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
-	} else {
-		$ASLICE="1";
-		$AOLDSLICE="2";
-		$ATOFLASH="{$BOOT_DRIVE}s{$ASLICE}";
-		$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
-		$AGLABEL_SLICE="pfsense0";
-		$AUFS_ID="0";
-		$AOLD_UFS_ID="1";
-		$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
-	}
-	conf_mount_rw();
-	exec("sysctl kern.geom.debugflags=16");	
-	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
-	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
-	exec("/sbin/tunefs -L ${AGLABEL_SLICE} /dev/$ACOMPLETE_PATH");
-	exec("/bin/mkdir /tmp/{$AGLABEL_SLICE}");
-	exec("/sbin/fsck_ufs -y /dev/{$ACOMPLETE_PATH}");
-	exec("/sbin/mount /dev/ufs/{$AGLABEL_SLICE} /tmp/{$AGLABEL_SLICE}");
-	$fstab = <<<EOF
-/dev/ufs/{$AGLABEL_SLICE} / ufs ro 1 1
-/dev/ufs/cf /cf ufs ro 1 1	
-EOF;
-	file_put_contents("/tmp/{$AGLABEL_SLICE}/etc/fstab", $fstab);
-	exec("/sbin/umount /tmp/{$AGLABEL_SLICE}");
-	exec("/sbin/sysctl kern.geom.debugflags=0");
-	conf_mount_ro();
-	$savemsg = "The boot slice has been set to {$BOOT_DRIVE} {$AGLABEL_SLICE}";
+	nanobsd_switch_boot_slice();
+	$savemsg = "The boot slice has been set to " . nanobsd_get_active_slice();
 	// Survey slice info
-	detect_slice_info();
+	nanobsd_detect_slice_info();
 
 }
 
 if($_POST['destslice']) {
-
 echo <<<EOF
  	<div id="loading">
 		<img src="/themes/metallic/images/misc/loader.gif">
@@ -157,27 +89,13 @@ echo <<<EOF
 		<p/>&nbsp;
 	</div>
 EOF;
-	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
-	ob_implicit_flush(1);
-	exec("/sbin/sysctl kern.geom.debugflags=16");
-	exec("/bin/dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
-	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
-	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
-	exec("/bin/mkdir /tmp/{$GLABEL_SLICE}");
-	exec("/sbin/fsck_ufs -y /dev/{$COMPLETE_PATH}");
-	exec("/sbin/mount /dev/ufs/{$GLABEL_SLICE} /tmp/{$GLABEL_SLICE}");
-	exec("/bin/cp /etc/fstab /tmp/{$GLABEL_SLICE}/etc/fstab");
-	$status = exec("sed -i \"\" \"s/pfsense{$OLD_UFS_ID}/pfsense{$UFS_ID}/g\" /tmp/{$GLABEL_SLICE}/etc/fstab");
-	if($status) {
-		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
-		$savemsg = "There was an error while duplicating the slice.  Operation aborted.";
-	} else {
+	if(nanobsd_clone_slice($_POST['destslice'])) {
 		$savemsg = "The slice has been duplicated.<p/>If you would like to boot from this newly duplicated slice please set it using the bootup information area.";
-		exec("/sbin/umount /tmp/{$GLABEL_SLICE}");
+	} else {
+		$savemsg = "There was an error while duplicating the slice.  Operation aborted.";
 	}
-	exec("/sbin/sysctl kern.geom.debugflags=0");
 	// Re-Survey slice info
-	detect_slice_info();
+	nanobsd_detect_slice_info();
 }
 
 if ($savemsg)
@@ -215,21 +133,12 @@ if ($savemsg)
 						<td width="22%" valign="top" class="vncell">Bootup</td>
 						<td width="78%" class="vtable">
 							<form action="diag_nanobsd.php" method="post" name="iform">
-								Bootup slice:
-								<select name='bootslice'>
-									<option value='<?php echo $BOOTFLASH; ?>'>
-										<?php echo $BOOTFLASH; ?>
-									</option>
-									<option value='<?php echo $TOFLASH; ?>'>
-										<?php echo "{$TOFLASH}"; ?>
-									</option>
-								</select>
+								Bootup slice is currently: <?php echo $ACTIVE_SLICE; ?>
+								<br/><br/>This will switch the bootup slice to the alternate slice.
 								<br/>
-								This will set the bootup slice.
+								<input type='hidden' name='bootslice' value='switch'>
+								<input type='submit' value='Switch Slice'></form>
 						</td>
-					</tr>
-					<tr>
-						<td valign="top" class="">&nbsp;</td><td><br/><input type='submit' value='Set bootup'></form></td>
 					</tr>
 					<tr>
 						<td colspan="2" valign="top" class="">&nbsp;</td>

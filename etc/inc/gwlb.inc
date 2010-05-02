@@ -60,8 +60,8 @@ function setup_gateways_monitor() {
 # pfSense apinger configuration file. Automatically Generated!
 
 ## User and group the pinger should run as
-user "nobody"
-group "nobody"
+user "root"
+group "wheel"
 
 ## Mailer to use (default: "/usr/lib/sendmail -t")
 #mailer "/var/qmail/bin/qmail-inject" 
@@ -299,7 +299,7 @@ function return_gateways_array($disabled = false) {
 		$gateway['gateway'] = get_interface_gateway($ifname, $gateway['dynamic']);
 		$gateway['interface'] = get_real_interface($ifname);
 		$gateway['friendlyiface'] = $ifname;
-		$gateway['name'] = "{$ifname}";
+		$gateway['name'] = "{$friendly}";
 		$gateway['attribute'] = "system";
 	
 		/* Loopback dummy for dynamic interfaces without a IP */
@@ -309,10 +309,12 @@ function return_gateways_array($disabled = false) {
 
 		/* automatically skip known static and dynamic gateways we have a array entry for */
 		foreach($gateways_arr as $gateway_item) {
-			if($gateway_item['gateway'] == $gateway['gateway'] && ($ifname == $gateway_item['friendlyiface']))
-				continue 2;
-			if(($gateway_item['gateway'] == "dynamic") && ($ifname == $gateway_item['friendlyiface']))
-				continue 2;
+			if ($ifname == $gateway_item['friendlyiface'] || $friendly == $gateway_item['name']) {
+				if ($gateway_item['gateway'] == $gateway['gateway'])
+					continue 2;
+				if ($gateway_item['gateway'] == "dynamic")
+					continue 2;
+			}
 		}
 
 		/* retrieve a proper monitor IP? */
@@ -403,22 +405,21 @@ function return_gateway_groups_array() {
 			/* we do not really foreach the tiers as we stop after the first tier */
 			foreach($tiers as $tiernr => $tier) {
 				/* process all gateways in this tier */
-				$member_count = count($tier);
 				foreach($tier as $tiernr => $member) {
 					/* determine interface gateway */
-					foreach($gateways_arr as $name => $gateway) {
-						if($gateway['name'] == $member) {
-							$int = $gateway['interface'];
-							if(is_ipaddr($gateway['gateway'])) 
-								$gatewayip = $gateway['gateway'];
-							else 
-								$gatewayip = lookup_gateway_ip_by_name($gateway['gateway']);
-							break;
-						}
+					if (isset($gateways_arr[$member])) {
+						$gateway = $gateways_arr[$member];
+						$int = $gateway['interface'];
+						$gatewayip = "";
+						if(is_ipaddr($gateway['gateway'])) 
+							$gatewayip = $gateway['gateway'];
+						else if ($int <> "")
+							$gatewayip = get_interface_gateway($gateway['friendlyiface']);
 					}
 					if (($int <> "") && is_ipaddr($gatewayip)) {
 						$gateway_groups_array[$group['name']][$tiernr]['int']  = "$int";
 						$gateway_groups_array[$group['name']][$tiernr]['gwip']  = "$gatewayip";
+						$gateway_groups_array[$group['name']][$tiernr]['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
 					}
 				}
 				/* we should have the 1st available tier now, exit stage left */
@@ -497,19 +498,6 @@ function lookup_gateway_interface_by_name($name) {
 
 function get_interface_gateway($interface, &$dynamic = false) {
         global $config, $g;
-
-        $iflist = get_configured_interface_with_descr();
-        /*
-         * XXX: BUG: This is silly at first, but we may be called with the interface
-         *      descr for no apparent reason!!!
-         *      Probably one of those silly strtoupper() legacy stuff!
-         */
-        foreach ($iflist as $ifent => $ifdesc) {
-                if ($ifent == $interface || $ifdesc == $interface) {
-                        $interface = $ifent;
-                        break;
-                }
-        }
 
         $gw = NULL;
 

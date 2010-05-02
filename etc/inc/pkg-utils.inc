@@ -276,11 +276,13 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 function uninstall_package_from_name($pkg_name) {
 	global $config;
 	$id = get_pkg_id($pkg_name);
-	$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package'];
-	delete_package($pkg_depends[0], $pkg_name);
-	if (is_array($pkg_depends)) {
-		foreach ($pkg_depends as $pkg_depend)
-			remove_freebsd_package($pkg_depend);
+	if ($id >= 0) {
+		$pkg_depends =& $config['installedpackages']['package'][$id]['depends_on_package'];
+		delete_package($pkg_depends[0], $pkg_name);
+		if (is_array($pkg_depends)) {
+			foreach ($pkg_depends as $pkg_depend)
+				remove_freebsd_package($pkg_depend);
+		}
 	}
 	delete_package_xml($pkg_name);
 }

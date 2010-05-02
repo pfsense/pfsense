@@ -337,7 +337,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	if ($passthrumacadd && $portalmac == NULL) {
 		$mac = array();
 		$mac['mac'] = $clientmac;
-		$mac['descr'] =  "Auto added mac passthrough with user {$username}";
+		$mac['descr'] =  "Auto added pass-through MAC for user {$username}";
 		if (!empty($bw_up))
 			$mac['bw_up'] = $bw_up;
 		if (!empty($bw_down))

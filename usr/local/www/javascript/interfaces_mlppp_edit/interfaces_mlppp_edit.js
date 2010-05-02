@@ -6,10 +6,14 @@ function update_select_list(new_options, select_list){
 		var option = option_array[j].split(",");
 		var selected = Boolean(parseInt(option[2]));
 		select_list.options[j] = new Option(option[0], option[1], false, selected);
-		//this line for testing and debugging
+		var linklabel = "linklabel" + j.toString();
+		var label_text = $(linklabel).innerHTML;
+		$(linklabel).innerHTML = label_text + " (" + option[1] + ")";
+		//for testing and debugging
 		//select_list.options[option_array.length-1+j] = new Option(option[2].toString() +" "+ selected.toString());
+		//select_list.options[option_array.length-1+j] = new Option("Link Label: " + linklabel + " Label Text:" + label_text);
 	}
-	create_change_fields("","link_fields");
+	show_hide_linkfields();
 }
 
 function clear_selected(list_name){
@@ -17,33 +21,18 @@ function clear_selected(list_name){
 	for(var j=0; j < select_list.options.length; j++){
 		select_list.options[j].selected = 0;
 	}
-	
-	create_change_fields();
-
 }
 
-function create_change_fields(port, fields_template){
-
-	// First check if "port" has an associated row already created. If so, hide it. 
+function show_hide_linkfields(){
 	var select_list = document.iform["interfaces[]"].options;
-	var row_id = port + "_params";
-	var row = $(fields_template).innerHTML;
-	var rows_count = $('interfacetable').rows.length;
-	if (port == null)
-		for(var j=0; j < select_list.length-1; j++){
-			var row_id = select_list[j].value + "_params";
-			$('interfacetable').insertRow(rows_count -1);
-			$('interfacetable').rows[rows_count -1].id = row_id;
-			$(row_id).innerHTML = row;
+		for(var j=0; j < select_list.length; j++){
+			var linklabel = "link" + j.toString();
 			if (select_list[j].selected){
-				$(other_row).show();
-			} else {
-				$(row_id).hide();
+				$(linklabel).show();
+				continue;
 			}
-			name = $('interfacetable').rows[rows_count -1].cells[0].innerHTML;
-			$('interfacetable').rows[rows_count -1].cells[0].innerHTML = name + " (" + port + ")" + " " + row_id;
+			$(linklabel).hide();
 		}
-	}
 }
 
 
@@ -83,8 +72,8 @@ function updateType(t){
 	$(t).show();
 }
 
-function show_more_settings(obj,element_id) {
-	if (obj.checked)
+function show_more_settings(checkbox_obj,element_id) {
+	if (checkbox_obj.checked)
 		$(element_id).show();
 	else
 		$(element_id).hide();

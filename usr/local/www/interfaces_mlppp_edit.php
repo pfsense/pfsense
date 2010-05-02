@@ -100,9 +100,9 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
 	$pconfig['uptime'] = $a_ppps[$id]['uptime'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
-	$pconfig['bandwidth'] = $a_ppps[$id]['bandwidth'];
-	$pconfig['mtu'] = $a_ppps[$id]['mtu'];
-	$pconfig['mru'] = $a_ppps[$id]['mru'];
+	$pconfig['bandwidth'] = explode(",",$a_ppps[$id]['bandwidth']);
+	$pconfig['mtu'] = explode(",",$a_ppps[$id]['mtu']);
+	$pconfig['mru'] = explode(",",$a_ppps[$id]['mru']);
 	$pconfig['mrru'] = $a_ppps[$id]['mrru'];
 	if (isset($a_ppps[$id]['shortseq']))
 		$pconfig['shortseq'] = true;
@@ -505,7 +505,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr name="interface" id="interface" >
 			<td width="22%" valign="top" class="vncellreq">Link interface(s)</td>
 			<td width="78%" class="vtable">
-				<select valign="top" name="interfaces[]" multiple="true" class="formselect" size="4" onChange="create_change_fields(this.value, 'link_fields');">
+				<select valign="top" name="interfaces[]" multiple="true" class="formselect" size="4" onChange="show_hide_linkfields();">
 					<option></option>
 				</select>
 				<a href='#' onClick='javascript:clear_selected("interfaces[]");'>Click here</a> to clear selection(s).
@@ -524,18 +524,23 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				$serial = glob("/dev/cua*");
 				$modems = glob("/dev/modem*");
 				$serialports = array_merge($serial, $modems);
+				$serport_count = 0;
 				foreach ($serialports as $port) {
 					if(preg_match("/\.(lock|init)$/", $port))
 						continue;
+					$serport_count++;
 					echo $port.",".trim($port);
 					if (in_array($port,$selected_ports))
 						echo ",1|";
 					else
 						echo ",|";
 				}
+				echo $serport_count;
 			?></td>
 			<td id="ports"><?php
+				$port_count = 0;
 				foreach ($portlist as $ifn => $ifinfo){
+				$port_count++;
 				//if (is_jumbo_capable($ifn)) {
 					echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")") . ",{$ifn}";
 					//echo "\"{$ifn}\"";
@@ -544,6 +549,9 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					else
 						echo ",|";
 				}
+				echo $port_count;
+				if ($serport_count > $port_count)
+					$port_count=$serport_count;
 			?></td>
 		</tr>
 		<tr>
@@ -810,40 +818,37 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				<br/> <span class="vexpl">Protocol field compression. This option saves one byte per frame for most frames.</span>
 			</td>
 		</tr>
-		<tr style="display:none" >
-			<td id="bandwidths"><?=htmlspecialchars($pconfig['bandwidth']);?></td>
-			<td id="mtu"><?=htmlspecialchars($pconfig['mtu']);?></td>
-			<td id="mru"><?=htmlspecialchars($pconfig['mru']);?></td>
-		</tr>
 
-		<tr style="display:none" id="link_fields">
-			<td width="22%" valign="top" class="vncell"> Link Parameters</td>
+		<?php for($i=0; $i < $port_count; $i++) : ?>
+		<tr style="display:none" id="link<?=$i;?>">
+			<td width="22%" valign="top" id="linklabel<?=$i;?>" class="vncell"> Link Parameters</td>
 			<td class="vtable">
 				<table name="link_parameters" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="22%" valign="top" name="bandwidth_label" class="vncell"> Bandwidth</td>
+						<td width="22%" valign="top" id="bandwidth<?=$i;?>" class="vncell"> Bandwidth</td>
 						<td width="78%" class="vtable">
-						<br/><input name="bandwidth[]" type="text" class="formfld unknown" size="40" >
+						<br/><input name="bandwidth[]" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['bandwidth'][$i]);?>">
 						<br/> <span class="vexpl">Set Bandwidth for each link ONLY when links have different bandwidths.</span>
 					  </td>
 					</tr>
 					<tr>
-					  <td width="22%" valign="top" name="mtu_label" class="vncell"> MTU</td>
+					  <td width="22%" valign="top" id="mtu<?=$i;?>" class="vncell"> MTU</td>
 					  <td width="78%" class="vtable">
-						<input name="mtu[]" type="text" class="formfld unknown" size="6">
+						<input name="mtu[]" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mtu'][$i]);?>">
 						<br> <span class="vexpl">Set MTU for each link if links have different bandwidths, otherwise, mtu will default to 1492.</span>
 					  </td>
 					</tr>
 					<tr>
-					  <td width="22%" valign="top" name="mru_label" class="vncell"> MRU</td>
+					  <td width="22%" valign="top" id="mru<?=$i;?>" class="vncell"> MRU</td>
 					  <td width="78%" class="vtable">
-						<input name="mru[]" type="text" class="formfld unknown" size="6">
+						<input name="mru[]" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mru'][$i]);?>">
 						<br> <span class="vexpl">Set MRU for each link if links have different bandwidths, otherwise, mru will default to 1492.</span>
 					  </td>
 					</tr>
 				</table
 			</td>
 		</tr>
+		<?php endfor; ?>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">

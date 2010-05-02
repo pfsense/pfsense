@@ -1379,6 +1379,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													}
 													?>
 												</select>
+												<br/>
+												Note: Some cards have a default that is not recognized and require changing the regulatory domain to one in this list for the changes to other regulatory settings to work.
 												<br/><br/>
 												Country (listed with country code and regulatory domain)<br/>
 												<select name="regcountry" class="formselect" id="regcountry">

@@ -1244,7 +1244,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
-				if($dstaddr == "any" && !interface_has_gateway($rule['interface'])) {
+				if(isset($rule['destination']['any']) && !interface_has_gateway($rule['interface'])) {
 					$rule_interface_ip = find_interface_ip($natif);
 					$rule_interface_subnet = find_interface_subnet($natif);
 					$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);

@@ -772,7 +772,26 @@ function filter_flush_state_table() {
 	return mwexec("/sbin/pfctl -F state");
 }
 
-function filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, &$starting_localhost_port, &$reflection_txt) {
+function filter_get_reflection_interfaces($natif = "") {
+	global $FilterIflist;
+
+	$nat_if_list = array();
+
+	foreach ($FilterIflist as $ifent => $ifname) {
+		if($ifname['if'] == $natif)
+			continue;
+
+		/* Do not add reflection redirects for interfaces with gateways */
+		if(interface_has_gateway($ifent))
+			continue;
+
+		$nat_if_list[] = $ifname['if'];
+	}
+
+	return $nat_if_list;
+}
+
+function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstport, &$starting_localhost_port, &$reflection_txt) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
@@ -785,21 +804,16 @@ function filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, &$startin
 		else
 			$reflectiontimeout = "2000";
 
-		update_filter_reload_status("Setting up NAT Reflection");
+		update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
 
-		$natrules .= "\n# Reflection redirects\n";
-		$rdr_if_list = "";
-		foreach ($FilterIflist as $ifent => $ifname) {
-			/* do not process interfaces with gateways*/
-			if(interface_has_gateway($ifent))
-				continue;
+		if(empty($rdr_ifs))
+			return "";
 
-			$rdr_if_list .= " " . $ifname['if'];
-		}
-		if (!empty($rdr_if_list))
+		$rdr_if_list = implode(" ", $rdr_ifs);
+		if(count($rdr_ifs) > 1)
 			$rdr_if_list = "{ {$rdr_if_list} }";
 
-		update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
+		$natrules .= "\n# Reflection redirects\n";
 
 		if($dstport[1])
 			$range_end = ($dstport[1]);
@@ -1252,7 +1266,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 				}
-				$natrules .= filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, $starting_localhost_port, $reflection_rules);
+				$natrules .= filter_generate_reflection($rule, $nordr, filter_get_reflection_interfaces($natif), $srcaddr, $dstport, $starting_localhost_port, $reflection_rules);
 				$natrules .= "\n";
 
 				foreach ($reflection_rules as $txtline)

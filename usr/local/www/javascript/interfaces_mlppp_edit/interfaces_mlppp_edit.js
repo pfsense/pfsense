@@ -6,15 +6,46 @@ function update_select_list(new_options, select_list){
 		var option = option_array[j].split(",");
 		var selected = Boolean(parseInt(option[2]));
 		select_list.options[j] = new Option(option[0], option[1], false, selected);
-		//this line for debugging the javascript above
+		//this line for testing and debugging
 		//select_list.options[option_array.length-1+j] = new Option(option[2].toString() +" "+ selected.toString());
+	}
+	create_change_fields("","link_fields");
+}
+
+function clear_selected(list_name){
+	var select_list = document.iform[list_name];
+	for(var j=0; j < select_list.options.length; j++){
+		select_list.options[j].selected = 0;
+	}
+	
+	create_change_fields();
+
+}
+
+function create_change_fields(port, fields_template){
+
+	// First check if "port" has an associated row already created. If so, hide it. 
+	var select_list = document.iform["interfaces[]"].options;
+	var row_id = port + "_params";
+	var row = $(fields_template).innerHTML;
+	var rows_count = $('interfacetable').rows.length;
+	if (port == null)
+		for(var j=0; j < select_list.length-1; j++){
+			var row_id = select_list[j].value + "_params";
+			$('interfacetable').insertRow(rows_count -1);
+			$('interfacetable').rows[rows_count -1].id = row_id;
+			$(row_id).innerHTML = row;
+			if (select_list[j].selected){
+				$(other_row).show();
+			} else {
+				$(row_id).hide();
+			}
+			name = $('interfacetable').rows[rows_count -1].cells[0].innerHTML;
+			$('interfacetable').rows[rows_count -1].cells[0].innerHTML = name + " (" + port + ")" + " " + row_id;
+		}
 	}
 }
 
-function show_bandwidth_input() {
-	var bboxes = $('bandwidth_input').innerHTML;
-	$('bandwidth_input').show();
-}
 
 function updateType(t){
 	var serialports = $('serialports').innerHTML;

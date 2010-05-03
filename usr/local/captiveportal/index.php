@@ -119,12 +119,6 @@ setTimeout('window.close();',5000) ;
 
 EOD;
 exit;
-/* The $macfilter can be removed safely since we first check if the $clientmac is present, if not we fail */
-} else if ($clientmac && portal_mac_fixed($clientmac)) {
-    /* punch hole in ipfw for pass thru mac addresses */
-    portal_allow($clientip, $clientmac, "unauthenticated");
-    exit;
-
 } else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip)) {
     /* radius functions handle everything so we exit here since we're done */
     exit;
@@ -322,19 +316,11 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
          */
         $peruserbw = isset($config['captiveportal']['peruserbw']);
 	$passthrumacadd = isset($config['captiveportal']['passthrumacadd']);
-	$portalmac = NULL;
-	if (!empty($clientmac)) {
-		$portalmac = portal_mac_fixed($clientmac);
-		if ($portalmac) {
-			$attributes['bw_up'] = $portalmac['bw_up'];
-			$attributes['bw_down'] = $portalmac['bw_down'];
-		}
-	}
 
        	$bw_up = isset($attributes['bw_up']) ? trim($attributes['bw_up']) : $config['captiveportal']['bwdefaultup'];
        	$bw_down = isset($attributes['bw_down']) ? trim($attributes['bw_down']) : $config['captiveportal']['bwdefaultdn'];
 
-	if ($passthrumacadd && $portalmac == NULL) {
+	if ($passthrumacadd) {
 		$mac = array();
 		$mac['mac'] = $clientmac;
 		$mac['descr'] =  "Auto added pass-through MAC for user {$username}";

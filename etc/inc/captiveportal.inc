@@ -127,7 +127,8 @@ function captiveportal_configure() {
 		$cprules = captiveportal_rules_generate($cpinterface, $cpips);
 		$cprules .= "\n";
 		/* generate passthru mac database */
-		captiveportal_passthrumac_configure(true);
+		$cprules .= captiveportal_passthrumac_configure(true);
+		$cprules .= "\n";
 		/* allowed ipfw rules to make allowed ip work */
 		$cprules .= captiveportal_allowedip_configure();
 
@@ -719,31 +720,50 @@ function captiveportal_radius_stop_all($lock = false) {
 		unlock($captiveportallck);
 }
 
+function captiveportal_passthrumac_configure_entry($macent) {
+	$rules = "";
+        $enBwup = isset($macent['bw_up']);
+        $enBwdown = isset($macent['bw_down']);
+	$actionup = "allow";
+	$actiondown = "allow";
+
+        if ($enBwup && $enBwdown)
+                $ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, true);
+        else
+                $ruleno = captiveportal_get_next_ipfw_ruleno(2000, 49899, false);
+
+	if ($enBwup) {
+                $bw_up = $ruleno + 20000;
+                $rules .= "pipe {$bw_up} config bw {$macent['bw_up']}Kbit/s queue 100\n";
+		$actionup = "pipe {$bw_up}";
+        }
+        if ($enBwdown) {
+		$bw_down = $ruleno + 20001;
+		$rules .= "pipe {$bw_down} config bw {$macent['bw_down']}Kbit/s queue 100\n";
+		$actiondown = "pipe {$bw_down}";
+        }
+	$rules .= "add {$ruleno} {$actionup} ip from any to any MAC {$macent['mac']} any\n";
+	$ruleno++;
+	$rules .= "add {$ruleno} {$actiondown} ip from any to any MAC any {$macent['mac']}\n";
+
+	return $rules;
+}
+
 function captiveportal_passthrumac_configure($lock = false) {
 	global $config, $g;
 
-	if (!$lock)
-		$captiveportallck = lock('captiveportal');
-
-	/* clear out passthru macs, if necessary */
-	unlink_if_exists("{$g['vardb_path']}/captiveportal_mac.db");
+	$rules = "";
 
 	if (is_array($config['captiveportal']['passthrumac'])) {
 		$macdb = array();
 		foreach ($config['captiveportal']['passthrumac'] as $macent) {
+			$rules .= captiveportal_passthrumac_configure_entry($macent);
 			$macdb[$macent['mac']]['active']  = true;
-			if (isset($macent['bw_up']))
-				$macdb[$macent['mac']]['bw_up']  = $macent['bw_up'];
-			if (isset($macent['bw_down']))
-				$macdb[$macent['mac']]['bw_down']  = $macent['bw_down'];
 
 		}
-		/* record passthru MACs so can be recognized and let thru */
-		file_put_contents("{$g['vardb_path']}/captiveportal_mac.db", serialize($macdb));
 	}
 
-	if (!$lock)
-		unlock($captiveportallck);
+	return $rules;
 }
 
 /* 
@@ -1074,7 +1094,7 @@ function captiveportal_free_ipfw_ruleno($ruleno, $usedbw = false) {
 	}
 }
 
-function captiveportal_get_ipfw_ruleno_byvalue($value, $table = 1) {
+function captiveportal_get_ipfw_passthru_ruleno($value) {
 	global $config, $g;
 
 	if(!isset($config['captiveportal']['enable']))
@@ -1082,7 +1102,7 @@ function captiveportal_get_ipfw_ruleno_byvalue($value, $table = 1) {
 
         if (file_exists("{$g['vardb_path']}/captiveportal.rules")) {
                 $rules = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal.rules"));
-		$ruleno = intval(`/sbin/ipfw table {$table} list | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d " " -f 1 | /usr/bin/head -n 1`);
+		$ruleno = intval(`/sbin/ipfw show | /usr/bin/grep {$value} |  /usr/bin/grep -v grep | /usr/bin/cut -d " " -f 1 | /usr/bin/head -n 1`);
 		if ($rules[$ruleno])
 			return $ruleno;
         }
@@ -1157,18 +1177,6 @@ function getNasIP()
     if(!$nasIp)
         $nasIp = "0.0.0.0";
     return $nasIp;
-}
-
-function portal_mac_fixed($clientmac) {
-    global $g ;
-
-    /* open captive portal mac db */
-    if (file_exists("{$g['vardb_path']}/captiveportal_mac.db")) {
-	$macdb = unserialize(file_get_contents("{$g['vardb_path']}/captiveportal_mac.db"));
-	if (isset($macdb[$clientmac]))
-		return $macdb[$clientmac];
-    }
-    return FALSE ;
 }
 
 function portal_ip_from_client_ip($cliip) {

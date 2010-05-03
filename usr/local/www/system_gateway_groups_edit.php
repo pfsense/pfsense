@@ -172,7 +172,6 @@ include("head.inc");
 						$selected[0] = "selected";
 					}
 				}
-<<<<<<< HEAD
 				echo "<select name='{$gwname}' class='formfldselect' id='{$gwname}'>";
 				echo "<option value='0' $selected[0] >" . gettext("Never") . "</option>";
 				echo "<option value='1' $selected[1] >" . gettext("Tier 1") . "</option>";

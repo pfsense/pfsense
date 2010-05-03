@@ -192,11 +192,21 @@ function system_hosts_generate() {
 
 	$hosts .= "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
 
-	$sysiflist = get_configured_interface_list();
-	foreach ($sysiflist as $sysif) {
-		$cfgip = get_interface_ip($sysif);
+	if ($config['interfaces']['lan']) {
+		$cfgip = get_interface_ip("lan");
 		if (is_ipaddr($cfgip))
 			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+	} else {
+		$sysiflist = get_configured_interface_list();
+		foreach ($sysiflist as $sysif) {
+			if (!interface_has_gateway($sysif)) {
+				$cfgip = get_interface_ip($sysif);
+				if (is_ipaddr($cfgip)) {
+					$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+					break;
+				}
+			}
+		}
 	}
 
 	foreach ($hostscfg as $host) {

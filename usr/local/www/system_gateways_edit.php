@@ -315,7 +315,7 @@ function enable_change(obj) {
 		  </td>
 		</tr>
 		<tr>
-		  <td width="22%" valign="top" class="vncell">Weight</td>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("Weight");?></td>
 		  <td width="78%" class="vtable">
 			<select name='weight' class='formfldselect' id='weight'>
 			<?php
@@ -327,7 +327,7 @@ function enable_change(obj) {
                                 }
 			?>
 			</select>
-			<strong>Weight for this gateway when used in a Gateway Group.</strong> <br />
+			<strong><?=gettext("Weight for this gateway when used in a Gateway Group.");?></strong> <br />
 		   </td>
 		</tr>
 		<tr>

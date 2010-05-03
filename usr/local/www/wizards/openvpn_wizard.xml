@@ -204,21 +204,21 @@
 		</field>
 		<field>
 			<name>nameattr</name>
-			<displayname>User naming attribute</displayname>
+			<displayname>User Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->nameattr</bindstofield>
 			<description>Typically "cn" (OpenLDAP, Novell eDirectory), "samAccountName" (Microsoft AD), </description>
 		</field>
 		<field>
 			<name>groupattr</name>
-			<displayname>Group naming attribute</displayname>
+			<displayname>Group Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->groupattr</bindstofield>
 			<description>Typically "cn" (OpenLDAP, Microsoft AD, and Novell eDirectory)</description>
 		</field>
 		<field>
 			<name>memberattr</name>
-			<displayname>Member naming attribute</displayname>
+			<displayname>Member Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->memberattr</bindstofield>
 			<description>Typically "member" (OpenLDAP), "memberOf" (Microsoft AD), "uniqueMember" (Novell eDirectory)</description>

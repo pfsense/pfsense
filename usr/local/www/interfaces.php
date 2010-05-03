@@ -213,6 +213,7 @@ if (isset($wancfg['wireless'])) {
 		interface_wireless_clone($wlanif, $wancfg);
 	$wlanbaseif = interface_get_wireless_base($wancfg['if']);
 	$wl_modes = get_wireless_modes($if);
+	$wl_chaninfo = get_wireless_channel_info($if);
 	$wl_regdomain_xml_attr = array();
 	$wl_regdomain_xml = parse_xml_regdomain($wl_regdomain_xml_attr);
 	$wl_regdomains = &$wl_regdomain_xml['regulatory-domains']['rd'];
@@ -1339,11 +1340,16 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 															if ($pconfig['channel'] == "$wl_channel") {
 																echo "selected ";
 															}
-															echo "value=\"$wl_channel\">$wl_standard - $wl_channel</option>\n";
+															echo "value=\"$wl_channel\">$wl_standard - $wl_channel";
+															if(isset($wl_chaninfo[$wl_channel]))
+																echo " ({$wl_chaninfo[$wl_channel][1]} @ {$wl_chaninfo[$wl_channel][2]} / {$wl_chaninfo[$wl_channel][3]})";
+															echo "</option>\n";
 														}
 													}
 													?>
 												</select>
+												<br/>
+												Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)
 												<br/>
 												Note: Not all channels may be supported by your card.  Auto may override the wireless standard selected above.
 											</td>
@@ -1373,6 +1379,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 													}
 													?>
 												</select>
+												<br/>
+												Note: Some cards have a default that is not recognized and require changing the regulatory domain to one in this list for the changes to other regulatory settings to work.
 												<br/><br/>
 												Country (listed with country code and regulatory domain)<br/>
 												<select name="regcountry" class="formselect" id="regcountry">

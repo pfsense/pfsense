@@ -237,7 +237,7 @@ function filter_configure_sync() {
 		$rules .= "set limit states {$max_states}\n";
 	}
 
-	$rules .= discover_pkg_rules("pfearly");
+	//$rules .= discover_pkg_rules("pfearly");
 
 	// Configure flowtable support if enabled.
 	flowtable_configure();
@@ -254,7 +254,7 @@ function filter_configure_sync() {
 	$rules .= "{$natrules}\n";
 	$rules .= "{$pfrules}\n";
 
-	$rules .= discover_pkg_rules("pflate");
+	$rules .= discover_pkg_rules("filter");
 
 	if(!file_put_contents("{$g['tmp_path']}/rules.debug", $rules, LOCK_EX)) {
 		log_error("WARNING: Could not write new rules!");
@@ -549,13 +549,14 @@ function filter_generate_gateways() {
 			if (!is_ipaddr($gwip))
 				$gwip = get_interface_gateway($gateway['friendlyiface']);
 			if (is_ipaddr($gwip) && !empty($int))
-				$route = "route-to ( {$int} {$gwip} )\n";
-			$rules .= "{$gwname} = \" {$route} \"\n";
+				$route = "route-to ( {$int} {$gwip} )";
+			$rules .= "GW{$gwname} = \" {$route} \"\n";
 		}
 	}
 
-	if(is_array($GatewayGroupsList)) {
+	if (is_array($GatewayGroupsList)) {
 		foreach ($GatewayGroupsList as $gateway => $members) {
+			$route = "";
 			if (count($members) > 0) {
 				$foundlb = 0;
 				$routeto = "";
@@ -565,9 +566,10 @@ function filter_generate_gateways() {
                                 	if (($int <> "") && is_ipaddr($gatewayip)) {
                                         	if ($g['debug'])
                                                 	log_error("Setting up route with {$gatewayip} om $int");
-                                        	if ($idx > 1)
-                                                	$routeto .= ", ";
-                                        	$routeto .= "( {$int} {$gatewayip} ) ";
+						if ($member['weight'] > 1) {
+							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight']);
+						} else
+                                        		$routeto .= "( {$int} {$gatewayip} ) ";
 						$foundlb = 1;
                                 	} else
                                         	log_error("An error occurred while trying to find the interface got $gatewayip .  The rule has not been added.");
@@ -581,8 +583,8 @@ function filter_generate_gateways() {
                                         		$route .= " sticky-address ";
 					}
                         	}
-				$rules .= "{$gateway} = \" {$route} \"\n";
 			}
+			$rules .= "GW{$gateway} = \" {$route} \"\n";
 		}
 	}
 
@@ -770,7 +772,26 @@ function filter_flush_state_table() {
 	return mwexec("/sbin/pfctl -F state");
 }
 
-function filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, &$starting_localhost_port, &$reflection_txt) {
+function filter_get_reflection_interfaces($natif = "") {
+	global $FilterIflist;
+
+	$nat_if_list = array();
+
+	foreach ($FilterIflist as $ifent => $ifname) {
+		if($ifname['if'] == $natif)
+			continue;
+
+		/* Do not add reflection redirects for interfaces with gateways */
+		if(interface_has_gateway($ifent))
+			continue;
+
+		$nat_if_list[] = $ifname['if'];
+	}
+
+	return $nat_if_list;
+}
+
+function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstport, &$starting_localhost_port, &$reflection_txt) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
@@ -783,21 +804,16 @@ function filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, &$startin
 		else
 			$reflectiontimeout = "2000";
 
-		update_filter_reload_status("Setting up NAT Reflection");
+		update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
 
-		$natrules .= "\n# Reflection redirects\n";
-		$rdr_if_list = "";
-		foreach ($FilterIflist as $ifent => $ifname) {
-			/* do not process interfaces with gateways*/
-			if(interface_has_gateway($ifent))
-				continue;
+		if(empty($rdr_ifs))
+			return "";
 
-			$rdr_if_list .= " " . $ifname['if'];
-		}
-		if (!empty($rdr_if_list))
+		$rdr_if_list = implode(" ", $rdr_ifs);
+		if(count($rdr_ifs) > 1)
 			$rdr_if_list = "{ {$rdr_if_list} }";
 
-		update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
+		$natrules .= "\n# Reflection redirects\n";
 
 		if($dstport[1])
 			$range_end = ($dstport[1]);
@@ -1174,17 +1190,6 @@ function filter_nat_rules_generate() {
 			if(isset($rule['disabled']))
 				continue;
 
-			if (strtolower($rule['protocol']) == "tcp/udp")
-				$protocol = "{ tcp udp }";
-			else
-				$protocol = strtolower($rule['protocol']);
-
-			/* if item is an alias, expand */
-			$srcport = "";
-			$srcport[0] = alias_expand($rule['source']['port']);
-			if(!$srcport[0])
-				$srcport = explode("-", $rule['source']['port']);
-
 			/* if item is an alias, expand */
 			$dstport = "";
 			$dstport[0] = alias_expand($rule['destination']['port']);
@@ -1193,8 +1198,10 @@ function filter_nat_rules_generate() {
 
 			/* if item is an alias, expand */
 			$localport = alias_expand($rule['local-port']);
-			if(!$localport || $rule['destination']['port'] == $rule['local-port']) {
+			if(!$localport || $dstport[0] == $localport) {
 				$localport = "";
+			} else if(is_alias($rule['destination']['port']) || is_alias($rule['local-port'])) {
+				$localport = " port {$localport}";
 			} else {
 				if(($dstport[1]) && ($dstport[0] != $dstport[1])) {
 					$localendport = $localport + ($dstport[1] - $dstport[0]);
@@ -1203,6 +1210,20 @@ function filter_nat_rules_generate() {
 				}
 
 				$localport = " port {$localport}";
+			}
+
+			switch(strtolower($rule['protocol'])) {
+			case "tcp/udp":
+				$protocol = "{ tcp udp }";
+				break;
+			case "tcp":
+			case "udp":
+				$protocol = strtolower($rule['protocol']);
+				break;
+			default:
+				$protocol = strtolower($rule['protocol']);
+				$localport = "";
+				break;
 			}
 
 			$target = alias_expand($rule['target']);
@@ -1242,7 +1263,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
-				if($dstaddr == "any" && !interface_has_gateway($rule['interface'])) {
+				if(isset($rule['destination']['any']) && !interface_has_gateway($rule['interface'])) {
 					$rule_interface_ip = find_interface_ip($natif);
 					$rule_interface_subnet = find_interface_subnet($natif);
 					$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
@@ -1250,7 +1271,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 				}
-				$natrules .= filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, $starting_localhost_port, $reflection_rules);
+				$natrules .= filter_generate_reflection($rule, $nordr, filter_get_reflection_interfaces($natif), $srcaddr, $dstport, $starting_localhost_port, $reflection_rules);
 				$natrules .= "\n";
 
 				foreach ($reflection_rules as $txtline)
@@ -1497,7 +1518,7 @@ function filter_generate_user_rule($rule) {
 	/* if user has selected a custom gateway, lets work with it */
 	else if($rule['gateway'] <> "") {
 		/* Add the load balanced gateways */
-		$aline['route'] = " \${$rule['gateway']} ";
+		$aline['route'] = " \$GW{$rule['gateway']} ";
 	}
 
 	if(isset($rule['protocol'])) {
@@ -1699,7 +1720,7 @@ function filter_rules_generate() {
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
 
-	$ipfrules .= discover_pkg_rules("filter");
+	//$ipfrules .= discover_pkg_rules("filter");
 
 	/* if captive portal is enabled, ensure that access to this port
 	 * is allowed on a locked down interface

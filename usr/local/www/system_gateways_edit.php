@@ -64,6 +64,7 @@ if (isset($_GET['dup'])) {
 
 if (isset($id) && $a_gateways[$id]) {
 	$pconfig['name'] = $a_gateways[$id]['name'];
+	$pconfig['weight'] = $a_gateways[$id]['weight'];
 	$pconfig['interface'] = $a_gateways[$id]['interface'];
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
@@ -148,7 +149,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$reloadif = false;
 		/* if we are processing a system gateway only save the monitorip */
-		if(($_POST['attribute'] == "system" && empty($_POST['defaultgw'])) || (empty($_POST['interface']) && empty($_POST['gateway']) && empty($_POST['defaultgw']))) {
+		if ($_POST['weight'] == 1 && (($_POST['attribute'] == "system" && empty($_POST['defaultgw'])) || (empty($_POST['interface']) && empty($_POST['gateway']) && empty($_POST['defaultgw'])))) {
 			if (is_ipaddr($_POST['monitor'])) {
 				if (empty($_POST['interface']))
 					$interface = $pconfig['friendlyiface'];
@@ -166,9 +167,15 @@ if ($_POST) {
 			/* rebuild the array with the manual entries only */
 
 			$gateway = array();
-			$gateway['interface'] = $_POST['interface'];
+			if ($_POST['attribute'] == "system") {
+				$gateway['interface'] = $pconfig['friendlyiface'];
+				$gateway['gateway'] = "dynamic";
+			} else {
+				$gateway['interface'] = $_POST['interface'];
+				$gateway['gateway'] = $_POST['gateway'];
+			}
 			$gateway['name'] = $_POST['name'];
-			$gateway['gateway'] = $_POST['gateway'];
+			$gateway['weight'] = $_POST['weight'];
 			$gateway['descr'] = $_POST['descr'];
 			if(is_ipaddr($_POST['monitor'])) {
 				$gateway['monitor'] = $_POST['monitor'];
@@ -306,6 +313,22 @@ function enable_change(obj) {
 			"to ICMP echo requests (pings)"); ?>.</strong>
 			<br />
 		  </td>
+		</tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncell">Weight</td>
+		  <td width="78%" class="vtable">
+			<select name='weight' class='formfldselect' id='weight'>
+			<?php
+                                for ($i = 1; $i < 6; $i++) {
+                                        $selected = "";
+                                        if ($pconfig['weight'] == $i)
+                                                $selected = "selected";
+                                        echo "<option value='{$i}' {$selected} >{$i}</option>";
+                                }
+			?>
+			</select>
+			<strong>Weight for this gateway when used in a Gateway Group.</strong> <br />
+		   </td>
 		</tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>

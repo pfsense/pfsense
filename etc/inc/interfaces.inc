@@ -3037,7 +3037,6 @@ function get_wireless_modes($interface) {
 
 	if(is_interface_wireless($wlif)) {
 		$cloned_interface = get_real_interface($interface);
-		$wi = 1;
 		$chan_list = "/sbin/ifconfig {$cloned_interface} list chan";
 		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
 		$format_list = "/usr/bin/awk '{print \$5 \" \" \$6 \",\" \$1}'";
@@ -3074,6 +3073,30 @@ function get_wireless_modes($interface) {
 		}
 	}
 	return($wireless_modes);
+}
+
+/* return channel numbers, frequency, max txpower, and max regulation txpower */
+function get_wireless_channel_info($interface) {
+	$wireless_channels = array();
+
+	$wlif = interface_translate_type_to_real($interface);
+
+	if(is_interface_wireless($wlif)) {
+		$cloned_interface = get_real_interface($interface);
+		$chan_list = "/sbin/ifconfig {$cloned_interface} list txpower";
+		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
+		$format_list = "/usr/bin/awk '{print \$1 \",\" \$3 \" \" \$4 \",\" \$5 \",\" \$7}'";
+
+		$interface_channels = "";
+		exec("$chan_list | $stack_list | sort -u | $format_list 2>&1", $interface_channels);
+
+		foreach ($interface_channels as $channel_line) {
+			$channel_line = explode(",", $channel_line);
+			if(!isset($wireless_channels[$channel_line[0]]))
+				$wireless_channels[$channel_line[0]] = $channel_line;
+		}
+	}
+	return($wireless_channels);
 }
 
 /****f* interfaces/get_interface_mtu

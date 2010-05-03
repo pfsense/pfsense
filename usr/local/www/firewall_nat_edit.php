@@ -627,11 +627,11 @@ include("fbegin.inc"); ?>
 										if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
 											$baseip = ip2long($sn['subnet']) & ip2long(gen_subnet_mask($sn['subnet_bits']));
 
-											for ($i = $sn['subnet_bits']; $i <= 32; $i++):
-												$baseip = $baseip + 1;
+											for ($i = $sn['subnet_bits'] - 1; $i <= 32; $i++):
 												$snip = long2ip($baseip);
 ?>
 												<option value="<?=$snip;?>" <?php if ($snip == $pconfig['dst']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
+												<?php $baseip = $baseip + 1; ?>
 <?php										endfor;
 										else:
 ?>
@@ -668,7 +668,8 @@ include("fbegin.inc"); ?>
 						<td>
 							<select name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
 								<option value="">(other)</option>
-<?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
+<?php 							$bfound = 0;
+								foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected"; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
@@ -680,7 +681,8 @@ include("fbegin.inc"); ?>
 						<td>
 							<select name="dstendport" class="formselect" onchange="ext_change()">
 								<option value="">(other)</option>
-<?php							foreach ($wkports as $wkport => $wkportdesc): ?>
+<?php							$bfound = 0;
+								foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
 							</select>
@@ -805,6 +807,9 @@ include("fbegin.inc"); ?>
 	dst_change(document.iform.interface.value,'<?=$pconfig['interface']?>','<?=$pconfig['dst']?>');
 	typesel_change();
 	proto_change();
+	<?php if ($pconfig['srcnot'] || $pconfig['src'] != "any" || $pconfig['srcbeginport'] != "any" || $pconfig['srcendport'] != "any"): ?>
+	show_source();
+	<?php endif; ?>
 //-->
 </script>
 <?php

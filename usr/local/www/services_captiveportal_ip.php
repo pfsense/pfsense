@@ -56,8 +56,10 @@ if ($_GET['act'] == "del") {
 		$ipent = $a_allowedips[$_GET['id']];
 		
 		if (isset($config['captiveportal']['enable'])) {
-			mwexec("/sbin/ipfw table 1 delete " . $ipent['ip']);
-			mwexec("/sbin/ipfw table 2 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 3 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 4 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 5 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 6 delete " . $ipent['ip']);
 		}
 			
 		unset($a_allowedips[$_GET['id']]);
@@ -104,7 +106,13 @@ include("head.inc");
   <?php $i = 0; foreach ($a_allowedips as $ip): ?>
 	<tr ondblclick="document.location='services_captiveportal_ip_edit.php?id=<?=$i;?>'">
 	  <td class="listlr">
+		<?php if($ip['dir'] == "to") 
+			echo "any <img src=\"in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\">";
+		?>	
 		<?=strtolower($ip['ip']);?>
+		<?php if($ip['dir'] == "from") 
+			echo "<img src=\"in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> any";
+		?>
 	  </td>
 	  <td class="listbg">
 		<?=htmlspecialchars($ip['descr']);?>&nbsp;

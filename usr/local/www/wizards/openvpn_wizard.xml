@@ -207,7 +207,7 @@
 			<displayname>User Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->nameattr</bindstofield>
-			<description>Typically "cn" (OpenLDAP, Novell eDirectory), "samAccountName" (Microsoft AD), </description>
+			<description>Typically "cn" (OpenLDAP, Novell eDirectory), "samAccountName" (Microsoft AD)</description>
 		</field>
 		<field>
 			<name>groupattr</name>

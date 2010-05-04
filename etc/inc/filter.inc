@@ -791,31 +791,20 @@ function filter_get_reflection_interfaces($natif = "") {
 	return $nat_if_list;
 }
 
-function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_port, $dstport, &$starting_localhost_port, &$reflection_txt) {
+function filter_generate_reflection_nat($rule, $rdr_ifs, $protocol, $srcaddr, $dstaddr_port, $target) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
 	$natrules = "";
-	$reflection_txt = array();
 
 	if(!empty($rdr_ifs)) {
-		if($config['system']['reflectiontimeout'])
-			$reflectiontimeout = $config['system']['reflectiontimeout'];
-		else
-			$reflectiontimeout = "2000";
-
-		update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
+		update_filter_reload_status("Creating reflection NAT rule for {$rule['descr']}...");
 
 		$rdr_if_list = implode(" ", $rdr_ifs);
 		if(count($rdr_ifs) > 1)
 			$rdr_if_list = "{ {$rdr_if_list} }";
 
 		$natrules .= "\n# Reflection redirects\n";
-
-		if($dstport[1])
-			$range_end = ($dstport[1]);
-		else
-			$range_end = ($dstport[0]);
 
 		$dstaddr = explode(" ", $dstaddr_port);
 		if($dstaddr[2])
@@ -841,95 +830,16 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 				$dstaddr = gen_subnet($dstaddr, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
 		}
 
-		switch($rule['protocol']) {
-		case "tcp/udp":
-			$protocol = "{ tcp udp }";
-			$reflect_protos = array('tcp', 'udp');
-			break;
-		case "tcp":
-		case "udp":
-			$protocol = $rule['protocol'];
-			$reflect_protos = array($rule['protocol']);
-			break;
-		default:
-			return "";
-			break;
-		}
-
-		if(!empty($nordr)) {
-			$natrules .= "no rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange}\n";
-			return $natrules;
-		}
-
-		if (is_alias($rule['target']))
-			$target = filter_expand_alias($rule['target']);
+		if(is_alias($rule['target']))
+			$target_translated = filter_expand_alias($rule['target']);
 		else if(is_ipaddr($rule['target']))
-			$target = $rule['target'];
-		else if (is_ipaddr($FilterIflist[$rule['target']]['ip']))
-			$target = $FilterIflist[$rule['target']]['ip'];
+			$target_translated = $rule['target'];
+		else if(is_ipaddr($FilterIflist[$rule['target']]['ip']))
+			$target_translated = $FilterIflist[$rule['target']]['ip'];
+		else if($rule['target'])
+			$target_translated = $rule['target'];
 		else
 			return "";
-
-		if($rule['local-port'])
-			$lrange_start = $rule['local-port'];
-		if(($range_end + 1) - $dstport[0] > 500) {
-			log_error("Not installing nat reflection rules for a port range > 500");
-		/* only install reflection rules for < 19991 items */
-		} else if($starting_localhost_port < 19991) {
-			$loc_pt = $lrange_start;
-			$rflctnorange = true;
-			if(is_alias($loc_pt)) {
-				$loc_pt_translated = filter_expand_alias($loc_pt);
-				if(!$loc_pt_translated) {
-					log_error("Reflection processing: {$loc_pt} is not a vaild port alias.");
-					continue;
-				}
-				$toadd_array = split(" ", $loc_pt_translated);
-				$rflctnorange = false;
-			}
-
-			$inetdport = $starting_localhost_port;
-			if($range_end > $dstport[0]) {
-				$rflctrange = "{$starting_localhost_port}";
-				$delta = $range_end - $dstport[0];
-				if(($starting_localhost_port + $delta) > 19990) {
-					log_error("Installing partial nat reflection rules. Maximum 1,000 reached.");
-					$delta = 19990 - $starting_localhost_port;
-					$range_end = $dstport[0] + $delta;
-					$rflctintrange = "";
-				}
-				$starting_localhost_port = $starting_localhost_port + $delta;
-				$rflctrange .= ":{$starting_localhost_port}";
-				if(empty($rflctintrange))
-					$rflctintrange = "{$dstport[0]}:{$range_end}";
-				if($rflctnorange)
-					$toadd_array = range($loc_pt, $loc_pt + $delta);
-				$starting_localhost_port++;
-			} else {
-				$rflctrange = $starting_localhost_port;
-				if(empty($rflctintrange))
-					$rflctintrange = $dstport[0];
-				if($rflctnorange)
-					$toadd_array = array($loc_pt);
-				$starting_localhost_port++;
-			}
-
-			foreach($toadd_array as $tda){
-				foreach($reflect_protos as $reflect_proto) {
-					if($reflect_proto == "udp") {
-						$socktype = "dgram";
-						$dash_u = "-u ";
-					} else {
-						$socktype = "stream";
-						$dash_u = "";
-					}
-					$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
-				}
-				$inetdport++;
-			}
-			$natrules .= "rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
-		}
-		$reflection_txt = array_unique($reflection_txt);
 	}
 
 	return $natrules;
@@ -1198,10 +1108,6 @@ function filter_nat_rules_generate() {
 	fwrite($inetd_fd, "tftp-proxy\tdgram\tudp\twait\t\troot\t/usr/libexec/tftp-proxy\ttftp-proxy -v\n");
 
 	if(isset($config['nat']['rule'])) {
-		if(!isset($config['system']['disablenatreflection'])) {
-			/* start redirects on port 19000 of localhost */
-			$starting_localhost_port = 19000;
-		}
 		$natrules .= "# NAT Inbound Redirects\n";
 		foreach ($config['nat']['rule'] as $rule) {
 			update_filter_reload_status("Creating NAT rule {$rule['descr']}");
@@ -1298,11 +1204,9 @@ function filter_nat_rules_generate() {
 					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 				}
-				$natrules .= filter_generate_reflection($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $dstport, $starting_localhost_port, $reflection_rules);
+				if(!isset($rule['nordr']))
+					$natrules .= filter_generate_reflection_nat($rule, $nat_if_list, $protocol, $srcaddr, $dstaddr, "{$target}{$localport}");
 				$natrules .= "\n";
-
-				foreach ($reflection_rules as $txtline)
-					fwrite($inetd_fd, $txtline);
 			}
 		}
 	}
@@ -2036,15 +1940,6 @@ EOD;
 			 */
 			log_error("ERROR!  PPTP enabled but could not resolve the \$pptpdtarget");
 		}
-	}
-
-	$ipfrules .= "# NAT Reflection rules\n";
-	if(isset($config['nat']['rule']) &&
-		(!isset($config['system']['disablenatreflection']))) {
-		$ipfrules .= <<<EOD
-pass in inet tagged PFREFLECT keep state label "NAT REFLECT: Allow traffic to localhost"
-
-EOD;
 	}
 
 	if(isset($config['filter']['rule'])) {

@@ -914,22 +914,20 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 				$starting_localhost_port++;
 			}
 
-			if(!empty($reflect_protos)) {
-				foreach($toadd_array as $tda){
-					foreach($reflect_protos as $reflect_proto) {
-						if($reflect_proto == "udp") {
-							$socktype = "dgram";
-							$dash_u = "-u ";
-						} else {
-							$socktype = "stream";
-							$dash_u = "";
-						}
-						$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
+			foreach($toadd_array as $tda){
+				foreach($reflect_protos as $reflect_proto) {
+					if($reflect_proto == "udp") {
+						$socktype = "dgram";
+						$dash_u = "-u ";
+					} else {
+						$socktype = "stream";
+						$dash_u = "";
 					}
-					$inetdport++;
+					$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
 				}
-				$natrules .= "rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
+				$inetdport++;
 			}
+			$natrules .= "rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
 		}
 		$reflection_txt = array_unique($reflection_txt);
 	}

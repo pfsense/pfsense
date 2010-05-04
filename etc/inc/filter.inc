@@ -824,6 +824,23 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 			$rflctintrange = "";
 		$dstaddr = $dstaddr[0];
 
+		if(isset($rule['destination']['any'])) {
+			if(!$rule['interface'])
+				$natif = "wan";
+			else
+				$natif = $rule['interface'];
+
+			if(!isset($FilterIflist[$natif]))
+				return "";
+			if(is_ipaddr($FilterIflist[$natif]['ip']))
+				$dstaddr = $FilterIflist[$natif]['ip'];
+			else
+				return "";
+
+			if(!empty($FilterIflist[$natif]['sn']))
+				$dstaddr = gen_subnet($dstaddr, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
+		}
+
 		if (is_alias($rule['target']))
 			$target = filter_expand_alias($rule['target']);
 		else if(is_ipaddr($rule['target']))
@@ -831,7 +848,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 		else if (is_ipaddr($FilterIflist[$rule['target']]['ip']))
 			$target = $FilterIflist[$rule['target']]['ip'];
 		else
-			return "\n";
+			return "";
 
 		if($rule['local-port'])
 			$lrange_start = $rule['local-port'];

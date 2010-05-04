@@ -884,13 +884,14 @@ function interface_ppp_configure($interface) {
 	$wancfg = &$config['interfaces'][$interface];
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-			//$ppp['port'] = $ppp['ports'];
-			if ($interface == $ppp['ifname'])
+			if ($wancfg['ptpid'] == $ppp['ptpid'])
 				break;
 		}
 	}
-	if (!$ppp || !isset($ppp['ifname']))
-		return;	
+	if (!$ppp || $wancfg['ptpid'] != $ppp['ptpid'] || stristr($ppp['ports'], ",")){
+		log_error("PPP configuration error.");
+		return;
+	}
 /*
 	if ($interface == "wan")
 		$pppid = "0";
@@ -996,7 +997,7 @@ EOD;
 EOD;
 
 	$mpdconf .= <<<EOD
-	set modem device {$ppp['port']}
+	set modem device {$ppp['ports']}
 	set modem script DialPeer
 	set modem idle-script Ringback
 	set modem watch -cd
@@ -1039,11 +1040,11 @@ EOD;
 	fclose($fd);
 
 	// Launch specified ppp instance
-	if (file_exists("{$ppp['port']}")) {
+	if (file_exists("{$ppp['ports']}")) {
 		/* fire up mpd */
 		mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/ppp_{$interface}.pid -s {$interface} pppclient");
 	} else
-		log_error("Device {$ppp['port']} has disappeared.");
+		log_error("Device {$ppp['ports']} has disappeared.");
 }
 
 function interfaces_carp_setup() {
@@ -2640,7 +2641,7 @@ function get_real_interface($interface = "wan") {
 							$counter++;
 					}
 					break;
-				case "pppoe": 
+/*				case "pppoe": 
 					if ($if == "wan")
 						$wanif = "pppoe0";
 					else
@@ -2658,6 +2659,7 @@ function get_real_interface($interface = "wan") {
 					else
 						$wanif = "ppp" . substr($if, 3);
 					break;
+*/
 				default:
 					$wanif = $cfg['if'];
 					break;

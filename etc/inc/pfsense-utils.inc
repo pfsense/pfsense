@@ -1313,7 +1313,7 @@ function get_interface_info($ifdescr) {
 					break;
 			}
 		}
-		$dev = $ppp['port'];
+		$dev = $ppp['ports'];
 		if (empty($dev))
 			break;
 		if (file_exists($dev)) {

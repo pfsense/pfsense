@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	interfaces_mlppp_edit.php
+	interfaces_ppps_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -35,10 +35,10 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-interfaces-mlppp-edit
-##|*NAME=Interfaces: MLPPP: Edit page
-##|*DESCR=Allow access to the 'Interfaces: MLPPP: Edit' page.
-##|*MATCH=interfaces_mlppp_edit.php*
+##|*IDENT=page-interfaces-ppps-edit
+##|*NAME=Interfaces: PPPs: Edit page
+##|*DESCR=Allow access to the 'Interfaces: PPPs: Edit' page.
+##|*MATCH=interfaces_ppps_edit.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -77,10 +77,6 @@ function getMPDResetTimeFromConfig() {
 	} else {
 		return NULL;
 	}
-}
-
-function remove_bad_chars($string) {
-	return preg_replace('/[^a-z|_|0-9]/i','',$string);
 }
 
 $id = $_GET['id'];
@@ -176,9 +172,6 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 	
-	/* filter out spaces from descriptions  */
-	$_POST['descr'] = remove_bad_chars($_POST['descr']);
-	
 	/* okay first of all, cause we are just hiding the PPPoE HTML
 	 * fields releated to PPPoE resets, we are going to unset $_POST
 	 * vars, if the reset feature should not be used. Otherwise the
@@ -224,6 +217,8 @@ if ($_POST) {
 			$input_errors[] = "Please choose a Link Type.";
 			break;
 	}
+	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1)
+		$input_errors[] = "The PPP link type does not support multilink connections (MLPPP). Please select only one Link Interface.";
 	if (($_POST['provider'] && !is_domain($_POST['provider']))) 
 		$input_errors[] = "The service name contains invalid characters.";
 	if (($_POST['idletimeout'] != "") && !is_numericint($_POST['idletimeout'])) 
@@ -265,6 +260,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$ppp = array();
+		$ppp['ptpid'] = $_POST['ptpid'];
 		$ppp['type'] = $_POST['type'];
 		$ppp['ports'] = implode(',', $_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
@@ -359,23 +355,37 @@ if ($_POST) {
 			$ppp['mru'] = implode(',', $_POST['mru']);
 		else 
 			unset($ppp['mru']);
-			
-			
+		
         $iflist = get_configured_interface_list();
-        /*
+        
         foreach ($iflist as $if) {
-        	if ($config['interfaces'][$if]['if'] == basename($a_ppps[$id]['port']))
-				$config['interfaces'][$if]['if'] = basename($ppp['port']);
+        	if ($config['interfaces'][$if]['ptpid'] == $a_ppps[$id]['ptpid']){
+				$thisif = $if;
+				break;
+			}
 		}
-		*/
 		if (isset($id) && $a_ppps[$id])
 			$a_ppps[$id] = $ppp;
 		else
 			$a_ppps[] = $ppp;
-
+			
 		write_config();
-
-		header("Location: interfaces_mlppp.php");
+		
+		if (!empty($thisif)){
+			switch ($ppp['type']) {
+				case "pppoe": 
+					interface_pppoe_configure($thisif);
+					break;
+				case "pptp": 
+					interface_pptp_configure($thisif);
+					break;
+				case "ppp":
+					interface_ppp_configure($thisif);
+				default:
+					break;
+			}
+		}
+		header("Location: interfaces_ppps.php");
 		exit;
 	}
 } // end if($_POST)
@@ -469,7 +479,7 @@ function handle_pppoe_reset() {
 }
 
 $closehead = false;
-$pgtitle = array("Interfaces","MLPPP","Edit");
+$pgtitle = array("Interfaces","PPPs","Edit");
 include("head.inc");
 
 $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP"/*,  "l2tp" => "L2TP", "tcp" => "TCP", "udp" => "UDP", "ng" => "Netgraph" */  ); 
@@ -482,10 +492,10 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-	<form action="interfaces_mlppp_edit.php" method="post" name="iform" id="iform">
+	<form action="interfaces_ppps_edit.php" method="post" name="iform" id="iform">
 	  <table id="interfacetable" width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">MLPPP configuration</td>
+			<td colspan="2" valign="top" class="listtopic">PPPs configuration</td>
 		</tr>
 		<tr>
 			<td valign="middle" class="vncell"><strong>Link Type</strong></td>
@@ -847,13 +857,22 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					</tr>
 				</table
 			</td>
+		</tr><?php endfor; ?>
+		<tr style="display:none">
+			
 		</tr>
-		<?php endfor; ?>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="Save">
 				<input type="button" value="Cancel" onclick="history.back()">
+				<?php
+					if (isset($a_ppps[$id]['ptpid']))
+						$ptpid = $a_ppps[$id]['ptpid'];
+					else
+						$ptpid = uniqid('', true);
+				?>
+				<input name="ptpid" type="hidden" value="<?=$ptpid;?>">
 				<?php if (isset($id) && $a_ppps[$id]): ?>
 					<input name="id" type="hidden" value="<?=$id;?>">
 				<?php endif; ?>

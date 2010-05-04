@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	interfaces_mlppp.php
+	interfaces_ppps.php
 	part of m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -34,10 +34,10 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-interfaces-mlppp
-##|*NAME=Interfaces: mlppp page
-##|*DESCR=Allow access to the 'Interfaces: mlppp' page.
-##|*MATCH=interfaces_mlppp.php*
+##|*IDENT=page-interfaces-ppps
+##|*NAME=Interfaces: ppps page
+##|*DESCR=Allow access to the 'Interfaces: ppps' page.
+##|*MATCH=interfaces_ppps.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -48,27 +48,28 @@ if (!is_array($config['ppps']['ppp']))
 $a_ppps = &$config['ppps']['ppp'] ;
 
 function ppp_inuse($num) {
-	global $a_ppps;
-	
-	if (isset($a_ppps[$num]['ifname']))
-		return true;
-	else
-		return false;
+	global $config, $g, $a_ppps;
+	$iflist = get_configured_interface_list(false, true);
+	foreach ($iflist as $if) {
+		if (isset($config['interfaces'][$if]['ptpid']) && $config['interfaces'][$if]['ptpid'] == $a_ppps[$num]['ptpid'])
+			return true;
+	}
+	return false;
 }
 
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (ppp_inuse($_GET['id'])) {
-		$input_errors[] = "This MLPPP interface cannot be deleted because it is still being used as an interface.";
+		$input_errors[] = "This point-to-point link cannot be deleted because it is still being used as an interface.";
 	} else {
 		unset($a_ppps[$_GET['id']]);
 		write_config();
-		header("Location: interfaces_mlppp.php");
+		header("Location: interfaces_ppps.php");
 		exit;
 	}
 }
 
-$pgtitle = "Interfaces: MLPPP";
+$pgtitle = "Interfaces: PPPs";
 include("head.inc");
 
 ?>
@@ -85,12 +86,11 @@ include("head.inc");
 	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
 	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
-	$tab_array[5] = array("PPP", false, "interfaces_ppp.php");
-	$tab_array[6] = array("MLPPP", true, "interfaces_mlppp.php");
-	$tab_array[7] = array("GRE", false, "interfaces_gre.php");
-	$tab_array[8] = array("GIF", false, "interfaces_gif.php");
-	$tab_array[9] = array("Bridges", false, "interfaces_bridge.php");
-	$tab_array[10] = array("LAGG", false, "interfaces_lagg.php");
+	$tab_array[5] = array("PPPs", false, "interfaces_ppps.php");
+	$tab_array[6] = array("GRE", false, "interfaces_gre.php");
+	$tab_array[7] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
+	$tab_array[9] = array("LAGG", false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -105,9 +105,9 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
-                <tr  ondblclick="document.location='interfaces_mlppp_edit.php?id=<?=$i;?>'">
+                <tr  ondblclick="document.location='interfaces_ppps_edit.php?id=<?=$i;?>'">
                 	<td class="listr">
-					<?=htmlspecialchars($ppp['type'].$id);?>
+					<?=htmlspecialchars($ppp['type']);?>
                   </td>
                   <td class="listr">
 					<?=htmlspecialchars($ppp['ports']);?>
@@ -115,13 +115,13 @@ include("head.inc");
                   <td class="listbg">
                     <?=htmlspecialchars($ppp['descr']);?>&nbsp;
                   </td>
-                  <td valign="middle" nowrap class="list"> <a href="interfaces_mlppp_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_mlppp.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this PPP interface?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                  <td valign="middle" nowrap class="list"> <a href="interfaces_ppps_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
+                     &nbsp;<a href="interfaces_ppps.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this PPP interface?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="3">&nbsp;</td>
-                  <td class="list"> <a href="interfaces_mlppp_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                  <td class="list"> <a href="interfaces_ppps_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>
 	      </div>

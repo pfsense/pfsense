@@ -131,8 +131,10 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		$portname = $ppp['type'].$pppid;
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
-		$portlist[$portname]['pppid'] = $pppid;
-		$portlist[$portname]['descr'] = strtoupper($ppp['type']) . $pppid ." - ".$ppp['descr'];
+		if (isset($ppp['descr']))
+			$portlist[$portname]['descr'] = strtoupper($ppp['type']) . " - ". $ppp['descr'];
+		else
+			$portlist[$portname]['descr'] = strtoupper($ppp['type']) . " - ". $ppp['ports'];
 	}
 }
 
@@ -188,13 +190,6 @@ if ($_POST['apply']) {
 
 
 	if (!$input_errors) {
-		/* The 'ifname' must be unset for all PPPs before continuing or we can get legacy data
-		left in the ppps config sections */
-		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])){
-			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-				unset($config['ppps']['ppp'][$pppid]['ifname']);
-			}
-		}
 		/* No errors detected, so update the config */
 		foreach ($_POST as $ifname => $ifport) {
 		
@@ -213,12 +208,16 @@ if ($_POST['apply']) {
 					/*For PPP interfaces, write link type to IP address field to signal that IP 
 					addr is dynamic and comes from PPP, PPPoE, or PPTP */
 					if (isset($portlist[$ifport]['isppp'])){
+						if ($ifname == "wan")
+							$config['interfaces'][$ifname]['if'] = $portlist[$ifport]['type'] ."0";
+						else
+							$config['interfaces'][$ifname]['if'] = $portlist[$ifport]['type'] . substr($ifname,3);
+
 						$config['interfaces'][$ifname]['ipaddr'] = $portlist[$ifport]['type'];
-						foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-							if ($portlist[$ifport]['pppid'] == $pppid)
-								$config['ppps']['ppp'][$pppid]['ifname'] = $ifname;
-						}
-					}
+						$config['interfaces'][$ifname]['ptpid'] = $portlist[$ifport]['ptpid'];
+					} else
+						unset($config['interfaces'][$ifname]['ptpid']);
+					
 					/* check for wireless interfaces, set or clear ['wireless'] */
 					if (preg_match($g['wireless_regex'], $ifport)) {
 						if (!is_array($config['interfaces'][$ifname]['wireless']))
@@ -293,13 +292,6 @@ if ($_GET['act'] == "del") {
 				if($rule['interface'] == $id)
 					unset($config['nat']['rule'][$x]['interface']);
 			}
-        }
-        /* Clean up association with deleted interface in PPPs config section */
-        if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])){
-        	foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-        		if ($ppp['ifname'] == $id)
-        			unset($config['ppps']['ppp'][$pppid]['ifname']);
-        	}
         }
 
 		write_config();
@@ -396,8 +388,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
 	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
-	$tab_array[5] = array("PPP", false, "interfaces_ppp.php");
-	$tab_array[6] = array("MLPPP", false, "interfaces_mlppp.php");
+	$tab_array[5] = array("PPPs", false, "interfaces_ppps.php");
 	$tab_array[7] = array("GRE", false, "interfaces_gre.php");
 	$tab_array[8] = array("GIF", false, "interfaces_gif.php");
 	$tab_array[9] = array("Bridges", false, "interfaces_bridge.php");
@@ -427,7 +418,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
 			<option value="<?=$portname;?>" <?php 
 				if (isset($portinfo['isppp'])){
-					if ($portinfo['ifname'] == $ifname) echo "selected";
+					if ($portinfo['ptpid'] == $iface['ptpid']) echo "selected";
 				}
 				else
 					if ($portname == $iface['if']) echo "selected";

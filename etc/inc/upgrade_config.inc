@@ -1901,4 +1901,21 @@ function upgrade_061_to_062() {
 	}
 }
 
+function upgrade_062_to_063() {
+	global $config;
+	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+			if (isset($ppp['port'])){
+				$config['ppps']['ppp'][$pppid]['ports'] = $ppp['port'];
+				unset($config['ppps']['ppp'][$pppid]['port']);
+			}
+			if (!isset($ppp['type'])){
+				$config['ppps']['ppp'][$pppid]['type'] = "ppp";
+			}
+			if (!isset($ppp['ptpid'])){
+				$config['ppps']['ppp'][$pppid]['ptpid'] = uniqid('', true);
+			}
+		}
+	}
+}
 ?>

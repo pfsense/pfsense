@@ -295,7 +295,7 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell">Disable NAT Reflection</td>
 								<td width="78%" class="vtable">
 									<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> />
-									<strong>Disables the automatic creation of NAT redirect rules for access to your public IP addresses from within your internal networks.  Note: Reflection is only enabled for port forward entries and is skipped for ranges larger than 500 ports.</strong>
+									<strong>Disables the automatic creation of NAT redirect rules for access to your public IP addresses from within your internal networks.  Note: Reflection is only enabled for port forward entries.</strong>
 								</td>
 							</tr>
 							<tr>

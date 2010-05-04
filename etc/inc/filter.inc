@@ -852,7 +852,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 			$reflect_protos = array($rule['protocol']);
 			break;
 		default:
-			$reflect_protos = array();
+			return "";
 			break;
 		}
 

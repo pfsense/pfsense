@@ -798,16 +798,13 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstport,
 	$natrules = "";
 	$reflection_txt = array();
 
-	if(!isset($config['system']['disablenatreflection'])) {
+	if(!empty($rdr_ifs)) {
 		if($config['system']['reflectiontimeout'])
 			$reflectiontimeout = $config['system']['reflectiontimeout'];
 		else
 			$reflectiontimeout = "2000";
 
 		update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
-
-		if(empty($rdr_ifs))
-			return "";
 
 		$rdr_if_list = implode(" ", $rdr_ifs);
 		if(count($rdr_ifs) > 1)
@@ -1257,6 +1254,12 @@ function filter_nat_rules_generate() {
 			else
 				$nordr = "";
 
+			if(!isset($config['system']['disablenatreflection'])) {
+				$nat_if_list = filter_get_reflection_interfaces($natif);
+			} else {
+				$nat_if_list = array();
+			}
+
 			if($srcaddr <> "" && $dstaddr <> "") {
 				/* is rule a port range? */
 				if($natif)
@@ -1271,7 +1274,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 				}
-				$natrules .= filter_generate_reflection($rule, $nordr, filter_get_reflection_interfaces($natif), $srcaddr, $dstport, $starting_localhost_port, $reflection_rules);
+				$natrules .= filter_generate_reflection($rule, $nordr, $nat_if_list, $srcaddr, $dstport, $starting_localhost_port, $reflection_rules);
 				$natrules .= "\n";
 
 				foreach ($reflection_rules as $txtline)

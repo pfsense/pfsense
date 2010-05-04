@@ -56,7 +56,6 @@ $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['optimization'] = $config['filter']['optimization'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
-$pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['tftpinterface'] = $config['system']['tftpinterface']; 
@@ -72,9 +71,6 @@ if ($_POST) {
 	}
 	if ($_POST['tcpidletimeout'] && !is_numericint($_POST['tcpidletimeout'])) {
 		$input_errors[] = "The TCP idle timeout must be an integer.";
-	}
-	if ($_POST['reflectiontimeout'] && !is_numericint($_POST['reflectiontimeout'])) {
-		$input_errors[] = "The Reflection timeout must be an integer.";
 	}
 
     ob_flush();
@@ -110,8 +106,6 @@ if ($_POST) {
 		else
 			unset($config['system']['disablenatreflection']);
 		
-		$config['system']['reflectiontimeout'] = $_POST['reflectiontimeout'];
-
 		if($_POST['bypassstaticroutes'] == "yes")
 			$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'];
 		else
@@ -302,13 +296,6 @@ function update_description(itemnum) {
 								<td width="78%" class="vtable">
 									<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> />
 									<strong>Disables the automatic creation of NAT redirect rules for access to your public IP addresses from within your internal networks.  Note: Reflection is only enabled for port forward entries and is skipped for ranges larger than 500 ports.</strong>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncell">Reflection Timeout</td>
-								<td width="78%" class="vtable">
-									<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" /><br/>
-									<strong>Enter value for Reflection timeout in seconds.</strong>
 								</td>
 							</tr>
 							<tr>

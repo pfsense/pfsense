@@ -791,7 +791,7 @@ function filter_get_reflection_interfaces($natif = "") {
 	return $nat_if_list;
 }
 
-function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstport, &$starting_localhost_port, &$reflection_txt) {
+function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_port, $dstport, &$starting_localhost_port, &$reflection_txt) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
@@ -817,15 +817,12 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstport,
 		else
 			$range_end = ($dstport[0]);
 
-		/* TODO: support multiple ip's in an alias. */
-		if (is_alias($rule['destination']['address']))
-			$dstaddr = filter_expand_alias($rule['destination']['address']);
-		else if(is_ipaddr($rule['destination']['address']))
-			$dstaddr = $rule['destination']['address'];
-		else if (is_ipaddr($FilterIflist[$rule['interface']]['ip']))
-			$dstaddr = $FilterIflist[$rule['interface']]['ip'];
+		$dstaddr = explode(" ", $dstaddr_port);
+		if($dstaddr[2])
+			$rflctintrange = $dstaddr[2];
 		else
-			return "\n";
+			$rflctintrange = "";
+		$dstaddr = $dstaddr[0];
 
 		if (is_alias($rule['target']))
 			$target = filter_expand_alias($rule['target']);
@@ -862,16 +859,19 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstport,
 					log_error("Installing partial nat reflection rules. Maximum 1,000 reached.");
 					$delta = 19990 - $starting_localhost_port;
 					$range_end = $dstport[0] + $delta;
+					$rflctintrange = "";
 				}
 				$starting_localhost_port = $starting_localhost_port + $delta;
 				$rflctrange .= ":{$starting_localhost_port}";
-				$rflctintrange = "{$dstport[0]}:{$range_end}";
+				if(empty($rflctintrange))
+					$rflctintrange = "{$dstport[0]}:{$range_end}";
 				if($rflctnorange)
 					$toadd_array = range($loc_pt, $loc_pt + $delta);
 				$starting_localhost_port++;
 			} else {
 				$rflctrange = $starting_localhost_port;
-				$rflctintrange = $dstport[0];
+				if(empty($rflctintrange))
+					$rflctintrange = $dstport[0];
 				if($rflctnorange)
 					$toadd_array = array($loc_pt);
 				$starting_localhost_port++;
@@ -1261,6 +1261,9 @@ function filter_nat_rules_generate() {
 			}
 
 			if($srcaddr <> "" && $dstaddr <> "") {
+				$srcaddr = trim($srcaddr);
+				$dstaddr = trim($dstaddr);
+
 				/* is rule a port range? */
 				if($natif)
 					$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
@@ -1274,7 +1277,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 				}
-				$natrules .= filter_generate_reflection($rule, $nordr, $nat_if_list, $srcaddr, $dstport, $starting_localhost_port, $reflection_rules);
+				$natrules .= filter_generate_reflection($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $dstport, $starting_localhost_port, $reflection_rules);
 				$natrules .= "\n";
 
 				foreach ($reflection_rules as $txtline)

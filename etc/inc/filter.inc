@@ -841,6 +841,26 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 				$dstaddr = gen_subnet($dstaddr, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
 		}
 
+		switch($rule['protocol']) {
+		case "tcp/udp":
+			$protocol = "{ tcp udp }";
+			$reflect_protos = array('tcp', 'udp');
+			break;
+		case "tcp":
+		case "udp":
+			$protocol = $rule['protocol'];
+			$reflect_protos = array($rule['protocol']);
+			break;
+		default:
+			$reflect_protos = array();
+			break;
+		}
+
+		if(!empty($nordr)) {
+			$natrules .= "no rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange}\n";
+			return $natrules;
+		}
+
 		if (is_alias($rule['target']))
 			$target = filter_expand_alias($rule['target']);
 		else if(is_ipaddr($rule['target']))
@@ -894,21 +914,6 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 				$starting_localhost_port++;
 			}
 
-			switch($rule['protocol']) {
-			case "tcp/udp":
-				$protocol = "{ tcp udp }";
-				$reflect_protos = array('tcp', 'udp');
-				break;
-			case "tcp":
-			case "udp":
-				$protocol = $rule['protocol'];
-				$reflect_protos = array($rule['protocol']);
-				break;
-			default:
-				$reflect_protos = array();
-				break;
-			}
-
 			if(!empty($reflect_protos)) {
 				foreach($toadd_array as $tda){
 					foreach($reflect_protos as $reflect_proto) {
@@ -923,8 +928,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 					}
 					$inetdport++;
 				}
-				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT" .
-								($nordr == "" ? " -> 127.0.0.1 port {$rflctrange}" : "") . "\n";
+				$natrules .= "rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
 			}
 		}
 		$reflection_txt = array_unique($reflection_txt);

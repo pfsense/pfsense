@@ -816,7 +816,6 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstport,
 			$range_end = ($dstport[1]);
 		else
 			$range_end = ($dstport[0]);
-		$range_end++;
 
 		/* TODO: support multiple ip's in an alias. */
 		if (is_alias($rule['destination']['address']))
@@ -839,8 +838,7 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstport,
 
 		if($rule['local-port'])
 			$lrange_start = $rule['local-port'];
-		if($range_end - $dstport[0] > 500) {
-			$range_end = $dstport[0]+1;
+		if(($range_end + 1) - $dstport[0] > 500) {
 			log_error("Not installing nat reflection rules for a port range > 500");
 		/* only install reflection rules for < 19991 items */
 		} else if($starting_localhost_port < 19991) {
@@ -857,18 +855,20 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstport,
 			}
 
 			$inetdport = $starting_localhost_port;
-			if(($range_end - 1) > $dstport[0]) {
+			if($range_end > $dstport[0]) {
 				$rflctrange = "{$starting_localhost_port}";
-				$delta = $range_end - $dstport[0] - 1;
+				$delta = $range_end - $dstport[0];
 				if(($starting_localhost_port + $delta) > 19990) {
 					log_error("Installing partial nat reflection rules. Maximum 1,000 reached.");
 					$delta = 19990 - $starting_localhost_port;
+					$range_end = $dstport[0] + $delta;
 				}
 				$starting_localhost_port = $starting_localhost_port + $delta;
 				$rflctrange .= ":{$starting_localhost_port}";
 				$rflctintrange = "{$dstport[0]}:{$range_end}";
 				if($rflctnorange)
 					$toadd_array = range($loc_pt, $loc_pt + $delta);
+				$starting_localhost_port++;
 			} else {
 				$rflctrange = $starting_localhost_port;
 				$rflctintrange = $dstport[0];

@@ -1066,34 +1066,38 @@ function upgrade_046_to_047() {
 
 function upgrade_047_to_048() {
 	global $config;
-	$config['dyndnses']['dyndns'] = array();
-	if (isset($config['dyndns']['enable'])) {
+	if (!empty($config['dyndns'])) {
+		$config['dyndnses'] = array();
+		$config['dyndnses']['dyndns'] = array();
 		$tempdyn = array();
-		$tempdyn['enable'] = isset($config['dyndns']['enable']);
-		$tempdyn['type'] = $config['dyndns']['type'];
-		$tempdyn['wildcard'] = isset($config['dyndns']['wildcard']);
-		$tempdyn['usernamefld'] = $config['dyndns']['username'];
-		$tempdyn['passwordfld'] = $config['dyndns']['password'];
-		$tempdyn['host'] = $config['dyndns']['host'];
-		$tempdyn['mx'] = $config['dyndns']['mx'];		
+		$tempdyn['enable'] = isset($config['dyndns'][0]['enable']);
+		$tempdyn['type'] = $config['dyndns'][0]['type'];
+		$tempdyn['wildcard'] = isset($config['dyndns'][0]['wildcard']);
+		$tempdyn['usernamefld'] = $config['dyndns'][0]['username'];
+		$tempdyn['passwordfld'] = $config['dyndns'][0]['password'];
+		$tempdyn['host'] = $config['dyndns'][0]['host'];
+		$tempdyn['mx'] = $config['dyndns'][0]['mx'];		
+		$tempdyn['interface'] = "wan";
+		$tempdyn['descr'] = "Upgraded Dyndns {$tempdyn['type']}";
 		$config['dyndnses']['dyndns'][] = $tempdyn;
 		unset($config['dyndns']);
 	}		
-	$config['dnsupdates']['dnsupdate'] = array();
-	if (isset($config['dnsupdate']['enable'])) {
+	if (!empty($config['dnsupdate'])) {
+		$config['dnsupdates'][0]['dnsupdate'] = array();
 		$pconfig = array();
-		$pconfig['dnsupdate_enable'] = isset($config['dnsupdate']['enable']);
-		$pconfig['dnsupdate_host'] = $config['dnsupdate']['host'];
-		$pconfig['dnsupdate_ttl'] = $config['dnsupdate']['ttl'];
+		$pconfig['dnsupdate_enable'] = isset($config['dnsupdate'][0]['enable']);
+		$pconfig['dnsupdate_host'] = $config['dnsupdate'][0]['host'];
+		$pconfig['dnsupdate_ttl'] = $config['dnsupdate'][0]['ttl'];
 		if (!$pconfig['dnsupdate_ttl'])
 			$pconfig['dnsupdate_ttl'] = 60;
-		$pconfig['dnsupdate_keydata'] = $config['dnsupdate']['keydata'];
-		$pconfig['dnsupdate_keyname'] = $config['dnsupdate']['keyname'];
-		$pconfig['dnsupdate_keytype'] = $config['dnsupdate']['keytype'];
+		$pconfig['dnsupdate_keydata'] = $config['dnsupdate'][0]['keydata'];
+		$pconfig['dnsupdate_keyname'] = $config['dnsupdate'][0]['keyname'];
+		$pconfig['dnsupdate_keytype'] = $config['dnsupdate'][0]['keytype'];
 		if (!$pconfig['dnsupdate_keytype'])
 			$pconfig['dnsupdate_keytype'] = "zone";
-		$pconfig['dnsupdate_server'] = $config['dnsupdate']['server'];
-		$pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate']['usetcp']);
+		$pconfig['dnsupdate_server'] = $config['dnsupdate'][0]['server'];
+		$pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate'][0]['usetcp']);
+		$pconfig['interface'] = "wan";
 		$config['dnsupdates']['dnsupdate'][] = $pconfig;
 		unset($config['dnsupdate']);
 	}

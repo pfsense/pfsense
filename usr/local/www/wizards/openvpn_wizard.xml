@@ -204,21 +204,21 @@
 		</field>
 		<field>
 			<name>nameattr</name>
-			<displayname>User naming attribute</displayname>
+			<displayname>User Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->nameattr</bindstofield>
-			<description>Typically "cn" (OpenLDAP, Novell eDirectory), "samAccountName" (Microsoft AD), </description>
+			<description>Typically "cn" (OpenLDAP, Novell eDirectory), "samAccountName" (Microsoft AD)</description>
 		</field>
 		<field>
 			<name>groupattr</name>
-			<displayname>Group naming attribute</displayname>
+			<displayname>Group Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->groupattr</bindstofield>
 			<description>Typically "cn" (OpenLDAP, Microsoft AD, and Novell eDirectory)</description>
 		</field>
 		<field>
 			<name>memberattr</name>
-			<displayname>Member naming attribute</displayname>
+			<displayname>Member Naming Attribute</displayname>
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->memberattr</bindstofield>
 			<description>Typically "member" (OpenLDAP), "memberOf" (Microsoft AD), "uniqueMember" (Novell eDirectory)</description>
@@ -611,7 +611,7 @@
 		</field>
 		<field>
 			<name>localport</name>
-			<displayname>Local port</displayname>
+			<displayname>Local Port</displayname>
 			<description>Local port upon which OpenVPN will listen for connections. The default port is 1194. Leave this blank unless you need to use a different port.</description>
 			<type>input</type>
 			<size>10</size>
@@ -678,7 +678,7 @@
 		<field>
 			<name>crypto</name>
 			<type>select</type>
-			<displayname>Encryption algorithm</displayname>
+			<displayname>Encryption Algorithm</displayname>
 			<bindstofield>ovpnserver->step10->crypto</bindstofield>
 			<options>
 				<option>
@@ -693,7 +693,7 @@
 			<name>Tunnel Settings</name>
 		</field>
 		<field>
-			<displayname>Tunnel network</displayname>
+			<displayname>Tunnel Network</displayname>
 			<name>tunnelnet</name>
 			<type>input</type>
 			<size>20</size>
@@ -708,7 +708,7 @@
 			<bindstofield>ovpnserver->step10->rdrgw</bindstofield>
 		</field>
 		<field>
-			<displayname>Local network</displayname>
+			<displayname>Local Network</displayname>
 			<name>localnet</name>
 			<type>input</type>
 			<size>20</size>
@@ -716,7 +716,7 @@
 			<description>This is the network that will be accessible from the remote endpoint, expressed as a CIDR range. You may leave this blank if you don't want to add a route to the local network through this tunnel on the remote machine. This is generally set to your LAN network.</description>
 		</field>
 		<field>
-			<displayname>Remote network</displayname>
+			<displayname>Remote Network</displayname>
 			<name>remotenet</name>
 			<type>input</type>
 			<size>20</size>
@@ -746,7 +746,7 @@
 			<bindstofield>ovpnserver->step10->tos</bindstofield>
 		</field>
 		<field>
-			<displayname>Inter-client communication</displayname>
+			<displayname>Inter-Client Communication</displayname>
 			<name>interclient</name>
 			<type>checkbox</type>
 			<description>Allow communication between clients connected to this server.</description>

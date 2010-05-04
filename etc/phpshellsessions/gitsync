@@ -39,7 +39,8 @@ if(is_dir("/root/pfsense/HEAD"))
 /* NOTE: Set branches here */
 $branches = array(
 	"master" => "2.0 development branch",
-	"RELENG_1_2" => "1.2* release branch"
+	"RELENG_1_2" => "1.2* release branch",
+	"build_commit" => "The commit originally used to build the image"
 );
 
 if(file_exists("/root/cvssync_backup.tgz")) {
@@ -151,11 +152,19 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url $GIT_REPO");
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git fetch");
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git clean -f -f -x -d");
-	$git_cmd = array(
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch $branch origin/$branch 2>/dev/null",
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f $branch 2>/dev/null",
-		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard origin/$branch"
-	);
+	if($branch == "build_commit") {
+		$git_cmd = array(
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch $branch 2>/dev/null",
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f $branch 2>/dev/null",
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard `cat /etc/version.lastcommit`"
+		);
+	} else {
+		$git_cmd = array(
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch $branch origin/$branch 2>/dev/null",
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f $branch 2>/dev/null",
+			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard origin/$branch"
+		);
+	}
 	run_cmds($git_cmd);
 } else {
     exec("mkdir -p $CODIR/pfSenseGITREPO");
@@ -167,6 +176,8 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 		exec("mv $CODIR/pfSenseGITREPO/mainline $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 	if($branch == "master") {
 		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout master");
+	} else if($branch == "build_commit") {
+		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b build_commit `cat /etc/version.lastcommit`");
 	} else {
 		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch");
 	}

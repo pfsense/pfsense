@@ -74,13 +74,12 @@ if ($_POST) {
 				}
 			}
 			if ($found == true) {
-				$ip = captiveportal_get_ipfw_ruleno_byvalue($_POST['delmac']);
-				if ($ip) {
-					captiveportal_disconnect_client($ip);
+				$ruleno = captiveportal_get_ipfw_passthru_ruleno($_POST['delmac']);
+				if ($ruleno) {
+					mwexec("/sbin/ipfw delete {$ruleno}; /sbin/ipfw delete " . ++$ruleno);
 				}
 				unset($a_passthrumacs[$idx]);
 				write_config();
-				captiveportal_passthrumac_configure(true);
 			}
 		}
 		exit;
@@ -89,14 +88,13 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_passthrumacs[$_GET['id']]) {
-		$ip = captiveportal_get_ipfw_ruleno_byvalue($a_passthrumacs[$_GET['id']]['mac']);
-		if ($ip) {
-			captiveportal_disconnect_client($ip);
+		$ruleno = captiveportal_get_ipfw_passthru_ruleno($a_passthrumacs[$_GET['id']]['mac']);
+		if ($ruleno) {
+			mwexec("/sbin/ipfw delete {$ruleno}; /sbin/ipfw delete " . ++$ruleno);
 		}
 		unset($a_passthrumacs[$_GET['id']]);
 		write_config();
 		header("Location: services_captiveportal_mac.php");
-		mark_subsystem_dirty('passthrumac');
 		exit;
 	}
 }

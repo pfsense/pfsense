@@ -1273,9 +1273,10 @@ function filter_nat_rules_generate() {
 
 			$natif = $FilterIflist[$natif]['if'];
 
-			if (isset($rule['nordr']))
+			if (isset($rule['nordr'])) {
 				$nordr = "no ";
-			else
+				$rdrpass = "";
+			} else
 				$nordr = "";
 
 			if(!isset($config['system']['disablenatreflection'])) {

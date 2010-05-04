@@ -897,31 +897,34 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 			switch($rule['protocol']) {
 			case "tcp/udp":
 				$protocol = "{ tcp udp }";
-				foreach($toadd_array as $tda) {
-					$reflection_txt[] = "{$inetdport}\tstream\ttcp\tnowait/0\tnobody\t/usr/bin/nc\tnc -w {$reflectiontimeout} {$target} {$tda}\n";
-					$reflection_txt[] = "{$inetdport}\tdgram\tudp\tnowait/0\tnobody\t/usr/bin/nc\tnc -u -w {$reflectiontimeout} {$target} {$tda}\n";
-						$inetdport++;
-					}
-				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT" .
-								($nordr == "" ? " -> 127.0.0.1 port {$rflctrange}" : "") . "\n";
+				$reflect_protos = array('tcp', 'udp');
 				break;
 			case "tcp":
 			case "udp":
 				$protocol = $rule['protocol'];
-				if($protocol == "udp") {
-					$socktype = "dgram";
-					$dash_u = "-u ";
-				} else {
-					$socktype = "stream";
-					$dash_u = "";
-				}
+				$reflect_protos = array($rule['protocol']);
+				break;
+			default:
+				$reflect_protos = array();
+				break;
+			}
+
+			if(!empty($reflect_protos)) {
 				foreach($toadd_array as $tda){
-					$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
+					foreach($reflect_protos as $reflect_proto) {
+						if($reflect_proto == "udp") {
+							$socktype = "dgram";
+							$dash_u = "-u ";
+						} else {
+							$socktype = "stream";
+							$dash_u = "";
+						}
+						$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
+					}
 					$inetdport++;
 				}
 				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT" .
 								($nordr == "" ? " -> 127.0.0.1 port {$rflctrange}" : "") . "\n";
-				break;
 			}
 		}
 		$reflection_txt = array_unique($reflection_txt);

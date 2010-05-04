@@ -3355,8 +3355,8 @@ class layer7 {
         $form = "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
 	$form .= "Enable/Disable";
 	$form .= "</td><td class=\"vncellreq\">";
-	$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\"";
-	if ($this->GetREnabled()) {
+	$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\" ";
+	if ($this->GetREnabled() == "on") {
        	    $form .=  "checked = \"CHECKED\"";
 	}
 	$form .= " ><span class=\"vexpl\"> Enable/Disable layer7 Container</span>";

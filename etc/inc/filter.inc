@@ -1246,7 +1246,7 @@ function filter_nat_rules_generate() {
 			}
 
 			$target = alias_expand($rule['target']);
-			if(!$target) {
+			if(!$target && !isset($rule['nordr'])) {
 				$natrules .= "# Unresolvable alias {$rule['target']}\n";
 				continue;		/* unresolvable alias */
 			}
@@ -1292,7 +1292,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
-				if(isset($rule['destination']['any']) && !interface_has_gateway($rule['interface'])) {
+				if(isset($rule['destination']['any']) && !interface_has_gateway($rule['interface']) && !isset($rule['nordr'])) {
 					$rule_interface_ip = find_interface_ip($natif);
 					$rule_interface_subnet = find_interface_subnet($natif);
 					$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);

@@ -1283,13 +1283,11 @@ function filter_nat_rules_generate() {
 				$nat_if_list = array();
 			}
 
-			if($srcaddr <> "" && $dstaddr <> "") {
+			if($srcaddr <> "" && $dstaddr <> "" && $natif) {
 				$srcaddr = trim($srcaddr);
 				$dstaddr = trim($dstaddr);
 
-				/* is rule a port range? */
-				if($natif)
-					$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+				$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
 				if(isset($rule['destination']['any']) && !interface_has_gateway($rule['interface']) && !isset($rule['nordr'])) {

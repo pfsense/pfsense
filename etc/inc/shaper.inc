@@ -3443,7 +3443,7 @@ class layer7 {
     }
     
     function delete_l7c() {
-	mwexec("/bin/pkill -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'", true);
+	mwexec("/bin/pkill -f 'ipfw-classifyd .* -p ". $this->GetRPort() . "'", true);
 	unset_l7_object_by_reference($this->GetRName());
 	cleanup_l7_from_rules($this->GetRName());
     }

@@ -791,44 +791,14 @@ function filter_get_reflection_interfaces($natif = "") {
 	return $nat_if_list;
 }
 
-function filter_generate_reflection_nat($rule, $rdr_ifs, $protocol, $srcaddr, $dstaddr_port, $target) {
+function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $srcaddr, $dstaddr, $target) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
 	$natrules = "";
 
-	if(!empty($rdr_ifs)) {
+	if(!empty($nat_ifs)) {
 		update_filter_reload_status("Creating reflection NAT rule for {$rule['descr']}...");
-
-		$rdr_if_list = implode(" ", $rdr_ifs);
-		if(count($rdr_ifs) > 1)
-			$rdr_if_list = "{ {$rdr_if_list} }";
-
-		$natrules .= "\n# Reflection redirects\n";
-
-		$dstaddr = explode(" ", $dstaddr_port);
-		if($dstaddr[2])
-			$rflctintrange = $dstaddr[2];
-		else
-			$rflctintrange = "";
-		$dstaddr = $dstaddr[0];
-
-		if(isset($rule['destination']['any'])) {
-			if(!$rule['interface'])
-				$natif = "wan";
-			else
-				$natif = $rule['interface'];
-
-			if(!isset($FilterIflist[$natif]))
-				return "";
-			if(is_ipaddr($FilterIflist[$natif]['ip']))
-				$dstaddr = $FilterIflist[$natif]['ip'];
-			else
-				return "";
-
-			if(!empty($FilterIflist[$natif]['sn']))
-				$dstaddr = gen_subnet($dstaddr, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
-		}
 
 		if(is_alias($rule['target']))
 			$target_translated = filter_expand_alias($rule['target']);
@@ -1137,6 +1107,52 @@ function filter_nat_rules_generate() {
 				$localport = " port {$localport}";
 			}
 
+			$target = alias_expand($rule['target']);
+			if(!$target && !isset($rule['nordr'])) {
+				$natrules .= "# Unresolvable alias {$rule['target']}\n";
+				continue;		/* unresolvable alias */
+			}
+
+			if($rule['associated-rule-id'] == "pass")
+				$rdrpass = "pass ";
+			else
+				$rdrpass = "";
+
+			if (isset($rule['nordr'])) {
+				$nordr = "no ";
+				$rdrpass = "";
+			} else
+				$nordr = "";
+
+			if(!$rule['interface'])
+				$natif = "wan";
+			else
+				$natif = $rule['interface'];
+
+			if (!isset($FilterIflist[$natif]))
+				continue;
+
+			$srcaddr = filter_generate_address($rule, 'source', true);
+			$dstaddr = filter_generate_address($rule, 'destination', true);
+			$srcaddr = trim($srcaddr);
+			$dstaddr = trim($dstaddr);
+
+			if(!$dstaddr)
+				$dstaddr = $FilterIflist[$natif]['ip'];
+
+			$dstaddr_port = explode(" ", $dstaddr);
+			$dstaddr_reflect = $dstaddr;
+			if(isset($rule['destination']['any'])) {
+				$dstaddr_reflect = $FilterIflist[$natif]['ip'];
+				if(!empty($FilterIflist[$natif]['sn']))
+					$dstaddr_reflect = gen_subnet($dstaddr_reflect, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
+
+				if($dstaddr_port[2])
+					$dstaddr_reflect .= " port " . $dstaddr_port[2];
+			}
+
+			$natif = $FilterIflist[$natif]['if'];
+
 			switch(strtolower($rule['protocol'])) {
 			case "tcp/udp":
 				$protocol = "{ tcp udp }";
@@ -1151,37 +1167,9 @@ function filter_nat_rules_generate() {
 				break;
 			}
 
-			$target = alias_expand($rule['target']);
-			if(!$target && !isset($rule['nordr'])) {
-				$natrules .= "# Unresolvable alias {$rule['target']}\n";
-				continue;		/* unresolvable alias */
-			}
-
-			if($rule['associated-rule-id'] == "pass")
-				$rdrpass = "pass ";
-			else
-				$rdrpass = "";
-			if(!$rule['interface'])
-				$natif = "wan";
-			else
-				$natif = $rule['interface'];
-
-			if (!isset($FilterIflist[$natif]))
-				continue;
-
-			$srcaddr = filter_generate_address($rule, 'source', true);
-			$dstaddr = filter_generate_address($rule, 'destination', true);
-
-			if(!$dstaddr)
-				$dstaddr = $FilterIflist[$natif]['ip'];
-
-			$natif = $FilterIflist[$natif]['if'];
-
-			if (isset($rule['nordr'])) {
-				$nordr = "no ";
-				$rdrpass = "";
-			} else
-				$nordr = "";
+			$localport_nat = $localport;
+			if(empty($localport_nat) && $dstaddr_port[2])
+				$localport_nat = " port " . $dstaddr_port[2];
 
 			if(!isset($config['system']['disablenatreflection'])) {
 				$nat_if_list = filter_get_reflection_interfaces($natif);
@@ -1190,23 +1178,27 @@ function filter_nat_rules_generate() {
 			}
 
 			if($srcaddr <> "" && $dstaddr <> "" && $natif) {
-				$srcaddr = trim($srcaddr);
-				$dstaddr = trim($dstaddr);
+				$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}\n" : "\n");
 
-				$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+				if(!empty($nat_if_list)) {
+					$rdr_if_list = implode(" ", $nat_if_list);
+					if(count($nat_if_list) > 1)
+						$rdr_if_list = "{ {$rdr_if_list} }";
+
+					$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}\n" : "\n");
+				}
 
 				/* Does this rule redirect back to a internal host? */
 				if(isset($rule['destination']['any']) && !interface_has_gateway($rule['interface']) && !isset($rule['nordr'])) {
 					$rule_interface_ip = find_interface_ip($natif);
 					$rule_interface_subnet = find_interface_subnet($natif);
 					$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
-					$natrules .= "\n";
 					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 				}
+				$nat_if_list[] = $natif;
 				if(!isset($rule['nordr']))
-					$natrules .= filter_generate_reflection_nat($rule, $nat_if_list, $protocol, $srcaddr, $dstaddr, "{$target}{$localport}");
-				$natrules .= "\n";
+					$natrules .= filter_generate_reflection_nat($rule, $nat_if_list, $protocol, $srcaddr, $dstaddr_reflect, "{$target}{$localport_nat}");
 			}
 		}
 	}

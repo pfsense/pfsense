@@ -791,25 +791,41 @@ function filter_get_reflection_interfaces($natif = "") {
 	return $nat_if_list;
 }
 
-function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $srcaddr, $dstaddr, $target) {
-	global $FilterIflist, $config;
-
+function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
 	// Initialize natrules holder string
 	$natrules = "";
 
-	if(!empty($nat_ifs)) {
-		update_filter_reload_status("Creating reflection NAT rule for {$rule['descr']}...");
+	update_filter_reload_status("Creating reflection NAT rule for {$rule['descr']}...");
 
-		if(is_alias($rule['target']))
-			$target_translated = filter_expand_alias($rule['target']);
-		else if(is_ipaddr($rule['target']))
-			$target_translated = $rule['target'];
-		else if(is_ipaddr($FilterIflist[$rule['target']]['ip']))
-			$target_translated = $FilterIflist[$rule['target']]['ip'];
-		else if($rule['target'])
-			$target_translated = $rule['target'];
-		else
-			return "";
+	/* TODO: Add this option to port forwards page. */
+	if(isset($rule['staticnatport'])) {
+		$static_port = " static-port";
+	} else {
+		$static_port = " port 1024:65535";
+	}
+
+	if(!empty($protocol)) {
+		$protocol_text = " proto {$protocol}";
+	} else {
+		$protocol_text = "";
+	}
+
+	$target_if_list = array();
+	if(empty($target_subnet) || !is_numeric($target_subnet) || $target_subnet == 32) {
+		$target_if_list[] = guess_interface_from_ip($target_ip);
+	} else {
+		$target_if_list[] = guess_interface_from_ip(gen_subnet_max($target_ip, $target_subnet));
+	}
+
+	foreach ($target_if_list as $target_if) {
+		/* Only install additional NAT rules if the
+		 * target is in the list of source networks */
+		if(in_array($target_if, $nat_ifs)) {
+			$target_networks = "{$target_if}:network";
+
+			$natrules .= "no nat on {$target_if}{$protocol_text} from {$target_if} to {$target}\n";
+			$natrules .= "nat on {$target_if}{$protocol_text} from {$target_networks} to {$target} -> {$target_if}{$static_port}\n";
+		}
 	}
 
 	return $natrules;
@@ -1113,6 +1129,16 @@ function filter_nat_rules_generate() {
 				continue;		/* unresolvable alias */
 			}
 
+			if(is_alias($rule['target']))
+				$target_ip = filter_expand_alias($rule['target']);
+			else if(is_ipaddr($rule['target']))
+				$target_ip = $rule['target'];
+			else if(is_ipaddr($FilterIflist[$rule['target']]['ip']))
+				$target_ip = $FilterIflist[$rule['target']]['ip'];
+			else
+				$target_ip = $rule['target'];
+			$target_ip = trim($target_ip);
+
 			if($rule['associated-rule-id'] == "pass")
 				$rdrpass = "pass ";
 			else
@@ -1143,6 +1169,8 @@ function filter_nat_rules_generate() {
 			$dstaddr_port = explode(" ", $dstaddr);
 			$dstaddr_reflect = $dstaddr;
 			if(isset($rule['destination']['any'])) {
+				/* With reflection enabled, destination of 'any' has side effects
+				 * that most people would not expect, so change it on reflection rules. */
 				$dstaddr_reflect = $FilterIflist[$natif]['ip'];
 				if(!empty($FilterIflist[$natif]['sn']))
 					$dstaddr_reflect = gen_subnet($dstaddr_reflect, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
@@ -1185,6 +1213,10 @@ function filter_nat_rules_generate() {
 					if(count($nat_if_list) > 1)
 						$rdr_if_list = "{ {$rdr_if_list} }";
 
+					/* TODO: When using reflection, should all of the redirects be passed
+					 * if the port forward is set to pass through the firewall, or should
+					 * the port forward's configured interface be the only one to
+					 * automatically pass, or should the reflection redirects always pass? */
 					$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}\n" : "\n");
 				}
 
@@ -1198,7 +1230,7 @@ function filter_nat_rules_generate() {
 				}
 				$nat_if_list[] = $natif;
 				if(!isset($rule['nordr']))
-					$natrules .= filter_generate_reflection_nat($rule, $nat_if_list, $protocol, $srcaddr, $dstaddr_reflect, "{$target}{$localport_nat}");
+					$natrules .= filter_generate_reflection_nat($rule, $nat_if_list, $protocol, "{$target}{$localport_nat}", $target_ip);
 			}
 		}
 	}

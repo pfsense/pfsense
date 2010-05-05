@@ -66,7 +66,7 @@ echo -n "Mounting filesystems..."
 
 # Mount /. If it fails run a fsck.
 if [ ! "$PLATFORM" = "cdrom" ] ; then
-	/sbin/mount -a / || (/sbin/fsck -fy; /sbin/mount -uw /)
+	/sbin/mount -uw / || (/sbin/fsck -fy; /sbin/mount -uw /)
 
 	# If /conf is a directory, convert it to a symlink
 	# to /cf/conf

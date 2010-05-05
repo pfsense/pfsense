@@ -1047,6 +1047,326 @@ EOD;
 		log_error("Device {$ppp['ports']} has disappeared.");
 }
 
+/*	This function can configure PPPoE, MLPPP (PPPoE), PPtP.
+*	It writes the mpd config file to /var/etc every time the interfaces is brought up.
+*/
+
+function interface_ppps_configure($interface) {
+	global $config, $g;
+	
+	$wancfg = &$config['interfaces'][$interface];
+	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+			if ($wancfg['ptpid'] == $ppp['ptpid'])
+				break;
+		}
+	}
+	if (!$ppp || $wancfg['ptpid'] != $ppp['ptpid']){
+		log_error("PPP configuration error in interface_ppps_configure().");
+		return;
+	}
+
+	$pppif = $wancfg['if'];
+	if ($ppp['type'] == "ppp")
+		$type = "modem";
+	else
+		$type = $ppp['type'];
+	$upper_type = strtoupper($ppp['type']);
+	
+	if($g['booting'])
+		echo " configuring {$upper_type} on {$pppif} interface...\n";
+
+	/* generate mpd.conf */
+	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.conf", "w");
+	if (!$fd) {
+		log_error("Error: cannot open mpd_{$interface}.conf in interface_ppps_configure().\n");
+		return 1;
+	}
+	
+	$ports=explode(",",$ppp['ports']);
+	if (is_array($ports) && count($ports) > 1)
+		$multilink = "enable";
+	else
+		$multilink = "disable";
+	
+	if ($type == "modem"){
+		if (is_ipaddr($ppp['localip']))
+			$localip = $ppp['localip'];
+		else
+			$localip = '0.0.0.0';
+
+		if (is_ipaddr($ppp['gateway']))
+			$gateway = $ppp['gateway'];
+		else
+			$gateway = "10.0.0.{$pppid}";
+		$ranges = "{$localip}/0 {$gateway}/0";
+	}
+	else
+		$ranges = "0.0.0.0/0 0.0.0.0/0";
+		
+	if (isset($ppp['ondemand'])) 
+		$ondemand = "enable";
+	else
+		$ondemand = "disable";
+	if (!isset($ppp['idletimeout']))
+		$ppp['idletimeout'] = 0;
+	if (isset($ppp['tcpmssfix']))
+		$tcpmssfix = "enable";
+	else
+		$tcpmssfix = "disable";
+	
+	if (isset($ppp['vjcomp']))
+		$vjcomp = "enable";
+	else
+		$vjcomp = "disable";
+	if (isset($ppp['acfcomp']))
+		$acfcomp = "enable";
+	else
+		$acfcomp = "disable";
+	if (isset($ppp['protocomp']))
+		$protocomp = "enable";
+	else
+		$protocomp = "disable";
+	if ($multilink == "enable" && isset($ppp['shortseq']))
+		$shortseq = "enable";
+	else
+		$shortseq = "disable";
+	if (empty($ppp['username']) && $type == "modem"){
+		$ppp['username'] = "user";
+		$ppp['password'] = "none";
+	}
+	if (empty($ppp['password']) && $type == "modem")
+		$ppp['password'] = "none";
+
+	if (isset($ppp['incoming']))
+		$incoming = "enable";
+	else
+		$incoming = "disable";
+
+	// Construct the mpd.conf file
+	$mpdconf = <<<EOD
+startup:
+	# configure the console
+	set console close
+	# configure the web server
+	set web close
+
+default:
+{$ppp['type']}client:
+	create bundle static {$interface}
+	set iface name {$pppif}
+
+EOD;
+
+	if (isset($ppp['defaultgw'])) {
+		$mpdconf .= <<<EOD
+	set iface route default
+
+EOD;
+	}
+
+	$mpdconf .= <<<EOD
+	set iface {$ondemand} on-demand
+	set iface idle {$ppp['idletimeout']}
+
+EOD;
+
+	if (isset($ppp['ondemand'])) {
+		$mpdconf .= <<<EOD
+	set iface addrs 10.5.5.1 10.5.0.2
+
+EOD;
+	}
+	
+	$mpdconf .= <<<EOD
+	set iface {$tcpmssfix} tcpmssfix
+	set iface up-script /usr/local/sbin/ppp-linkup
+	set iface down-script /usr/local/sbin/ppp-linkdown
+	set ipcp ranges {$ranges}
+	set ipcp {$vjcomp} vjcomp
+
+EOD;
+	
+	if (isset($config['system']['dnsallowoverride'])) {
+		$mpdconf .= <<<EOD
+	set ipcp enable req-pri-dns
+
+EOD;
+	}
+
+	if (!isset($wancfg['dnsnosec']) && isset($config['system']['dnsallowoverride'])) {
+			$mpdconf .= <<<EOD
+	set ipcp enable req-sec-dns
+
+EOD;
+	}
+	
+	foreach($ports as $port){
+	$mpdconf .= <<<EOD
+
+	create link static lnk{$interface} {$type}
+	set link action bundle {$interface}
+	set link {$multilink} multilink
+	set link keep-alive 10 60
+	set link max-redial 0
+	set link {$shortseq} shortseq
+	set link {$acfcomp} acfcomp
+	set link {$protocomp} protocomp
+	set link {$incoming} incoming
+	set link disable chap pap
+	set link accept chap pap eap
+	#set link enable no-orig-auth
+
+EOD;
+/*
+	if (isset($ppp['mtu'])){
+		$mpdconf .= <<<EOD
+	set link mtu {$ppp['mtu']}
+
+EOD;
+	}
+	if (isset($ppp['mru'])){
+		$mpdconf .= <<<EOD
+	set link mtu {$ppp['mru']}
+
+EOD;
+	}
+*/
+	$passwd = base64_decode($ppp['password']);
+	$mpdconf .= <<<EOD
+	set auth authname "{$ppp['username']}"
+	set auth password {$passwd}
+
+EOD;
+	if ($type == "modem") {
+		$mpdconf .= <<<EOD
+	set modem device {$ppp['ports']}
+	set modem script DialPeer
+	set modem idle-script Ringback
+	set modem watch -cd
+	set modem var \$DialPrefix "DT"
+	set modem var \$Telephone "{$ppp['phone']}"
+
+EOD;
+	}
+	if (isset($ppp['connect-timeout']) && $type == "modem") {
+		$mpdconf .= <<<EOD
+	set modem var \$ConnectTimeout "{$ppp['connect-timeout']}"
+
+EOD;
+	}
+	if (isset($ppp['initstr']) && $type == "modem") {
+		$initstr = base64_decode($ppp['initstr']);
+		$mpdconf .= <<<EOD
+	set modem var \$InitString "{$initstr}"
+
+EOD;
+	}
+	if (isset($ppp['simpin']) && $type == "modem") {
+		$mpdconf .= <<<EOD
+	set modem var \$SimPin "{$ppp['simpin']}"
+	set modem var \$PinWait "{$ppp['pin-wait']}"
+
+EOD;
+	}
+	if (isset($ppp['apn']) && $type == "modem") {
+		$mpdconf .= <<<EOD
+	set modem var \$APN "{$ppp['apn']}"
+	set modem var \$APNum "{$ppp['apnum']}"
+
+EOD;
+	}
+
+	if ($type == "pppoe") {
+		$mpdconf .= <<<EOD
+	set pppoe iface {$port}
+
+EOD;
+	}
+	if (isset($ppp['provider']) && $type == "pppoe") {
+		$mpdconf .= <<<EOD
+	set pppoe service "{$ppp['provider']}"
+
+EOD;
+	}
+	if ($type == "pptp") {
+		$mpdconf .= <<<EOD
+	set pptp self {$ppp['localip']}
+	set pptp peer {$ppp['gateway']}
+	set pptp disable windowing
+	set bundle no noretry
+
+EOD;
+	}
+	$mpdconf .= "\topen\r\n";
+	} //end foreach($port)
+
+	// Write out configuration for mpd_ppp.conf and mpd.secret
+	fwrite($fd, $mpdconf);
+	fclose($fd);
+
+	// Create the uptime log if requested and if it doesn't exist already, or delete it if it is no longer requested.
+	if (isset($ppp['uptime'])) {
+		if (!file_exists("/conf/{$pppif}.log")) {
+			conf_mount_rw();
+			mwexec("echo /dev/null > /conf/{$pppif}.log");
+			conf_mount_ro();
+		}
+	} else {
+		if (file_exists("/conf/{$pppif}.log")) {
+			conf_mount_rw();
+			mwexec("rm -f /conf/{$pppif}.log");
+			conf_mount_ro();
+		}
+	}
+	if(file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid") and $g['booting']) {
+		/* if we are booting and mpd has already been started then don't start again. */
+	} else {
+		foreach($ports as $port){
+			switch ($ppp['type']) {
+				case "pppoe": 
+					/* Bring the parent interface up */
+					if($port)
+						interfaces_bring_up($port);
+					else 
+						log_error("Could not bring up interface {$port} for {$ppp['type']} link on {$interface} in interface_ppps_configure().");
+					break;
+				case "pptp": 
+					/* configure interface */
+					if($port)
+						mwexec("/sbin/ifconfig " . escapeshellarg($port) . " " .
+							escapeshellarg($ppp['localip'] . "/" . $ppp['subnet']) . " up");
+					else 
+						log_error("Could not bring up interface {$port} for {$ppp['type']} link on {$interface} in interface_ppps_configure().");
+					break;
+				case "ppp":
+					if (!file_exists("{$ppp['ports']}")) {
+						log_error("Device {$ppp['ports']} does not exist. PPP link cannot start without the modem device.");
+						return 1;
+					}
+					break;
+				default:
+					break;
+			}
+
+			/* fire up mpd */
+			mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/{$ppp['type']}_{$interface}.pid -s {$interface} {$ppp['type']}client");
+		}
+	}
+
+	/* sleep until wan is up - or 30 seconds, whichever comes first */
+	for ($count = 0; $count < 30; $count++) {
+		if(file_exists("{$g['tmp_path']}/{$realif}up")) {
+			break;
+		}
+		sleep(1);
+	}
+
+	//unlink_if_exists("{$g['tmp_path']}/{$realif}up");
+
+	return 0;
+}
+
 function interfaces_carp_setup() {
 	global $g, $config;
 

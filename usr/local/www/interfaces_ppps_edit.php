@@ -269,13 +269,12 @@ if ($_POST) {
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if (!empty($_POST['idletimeout']))
 			$ppp['idletimeout'] = $_POST['idletimeout'];
-		else 
-			unset($ppp['idletimeout']);
 		$ppp['uptime'] = $_POST['uptime'] ? true : false;
 		if (!empty($_POST['descr']))
 			$ppp['descr'] = $_POST['descr'];
 		else
 			unset($ppp['descr']);
+
 		switch($_POST['type']) {
 			case "ppp":
 				if (!empty($_POST['initstr']))
@@ -357,9 +356,8 @@ if ($_POST) {
 			unset($ppp['mru']);
 		
         $iflist = get_configured_interface_list();
-        
         foreach ($iflist as $if) {
-        	if ($config['interfaces'][$if]['ptpid'] == $a_ppps[$id]['ptpid']){
+        	if ($config['interfaces'][$if]['ptpid'] == $ppp['ptpid']){
 				$thisif = $if;
 				break;
 			}
@@ -372,15 +370,16 @@ if ($_POST) {
 		write_config();
 		
 		if (!empty($thisif)){
-			switch ($ppp['type']) {
+			switch ($_POST['type']) {
 				case "pppoe": 
-					interface_pppoe_configure($thisif);
+					interface_ppps_configure($thisif);
 					break;
 				case "pptp": 
 					interface_pptp_configure($thisif);
 					break;
 				case "ppp":
-					interface_ppp_configure($thisif);
+					interface_ppps_configure($thisif);
+					break;
 				default:
 					break;
 			}

@@ -1309,7 +1309,7 @@ function get_interface_info($ifdescr) {
 			
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-				if ($if == $ppp['ifname'])
+				if ($config['interfaces'][$if]['ptpid'] == $ppp['ptpid'])
 					break;
 			}
 		}

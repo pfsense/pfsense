@@ -405,10 +405,10 @@ EOD;
 	}
 	if (!empty($config['system']['webgui']['port']))
 		$port = $config['system']['webgui']['port'];
-	else if ($config['system']['webgui']['proto'] == "https")
-		$port = 443;
-	else
+	else if ($config['system']['webgui']['proto'] == "http")
 		$port = 80;
+	else
+		$port = 443;
 	$rulenum++;
 	$cprules .= "add {$rulenum} set 1 pass tcp from any to {$ips} {$port} in \n";
 	$rulenum++;

@@ -121,6 +121,15 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
 
+	if (isset($a_filter[$id]['tcpflags_any']))
+		$pconfig['tcpflags_any'] = true;
+	else {
+		if (isset($a_filter[$id]['tcpflags1']) && $a_filter[$id]['tcpflags1'] <> "") 
+			$pconfig['tcpflags1'] = $a_filter[$id]['tcpflags1'];
+		if (isset($a_filter[$id]['tcpflags2']) && $a_filter[$id]['tcpflags2'] <> "") 
+			$pconfig['tcpflags2'] = $a_filter[$id]['tcpflags2'];
+	}
+
 	if (isset($a_filter[$id]['tag']) && $a_filter[$id]['tag'] <> "") 
 		$pconfig['tag'] = $a_filter[$id]['tag'];
 	if (isset($a_filter[$id]['tagged']) && $a_filter[$id]['tagged'] <> "")
@@ -359,12 +368,43 @@ if ($_POST) {
 			$input_errors[] = "You can only select a layer7 container for Pass type rules.";
 	}
 
+	if (!$_POST['tcpflags_any']) {
+		$settcpflags = array();
+		$outoftcpflags = array();
+		foreach ($tcpflags as $tcpflag) {
+			if ($_POST['tcpflags1_' . $tcpflag] == "on")
+				$settcpflags[] = $tcpflag;
+			if ($_POST['tcpflags2_' . $tcpflag] == "on")
+				$outoftcpflags[] = $tcpflag;
+		}
+		if (empty($outoftcpflags) && !empty($settcpflags))
+			$input_errors[] = "If you specify TCP flags that should be set you should specify out of which flags as well.";
+	}
+
 	if (!$input_errors) {
 		$filterent = array();
 		$filterent['id'] = $_POST['ruleid']>0?$_POST['ruleid']:'';
 		$filterent['type'] = $_POST['type'];
 		if (isset($_POST['interface'] ))
 			$filterent['interface'] = $_POST['interface'];
+
+		if ($_POST['tcpflags_any']) {
+			$filterent['tcpflags_any'] = true;
+		} else {
+			$settcpflags = array();
+			$outoftcpflags = array();
+			foreach ($tcpflags as $tcpflag) {
+				if ($_POST['tcpflags1_' . $tcpflag] == "on")
+					$settcpflags[] = $tcpflag;
+				if ($_POST['tcpflags2_' . $tcpflag] == "on")
+					$outoftcpflags[] = $tcpflag;
+			}
+			if (!empty($outoftcpflags)) {
+				$filterent['tcpflags2'] = join(",", $outoftcpflags);
+				if (!empty($settcpflags))
+					$filterent['tcpflags1'] = join(",", $settcpflags);
+			}
+		}
 
 		if ($if == "FloatingRules" || isset($_POST['floating'])) {
 			if (isset($_POST['tag']))
@@ -1004,6 +1044,48 @@ include("head.inc");
 			  </div>
 			</td>
 		</tr>
+		<tr id="tcpflags" name="tcpflags"> 
+			<td width="22%" valign="top" class="vncell">TCP flags</td>
+			<td width="78%" class="vtable">
+			<div id="showtcpflagsbox">
+                        	<input type="button" onClick="show_advanced_tcpflags()" value="Advanced"></input> - Show advanced option</a>
+                        </div>
+                        <div id="showtcpflagsadv" style="display:none">
+			<div id="tcpheader" name="tcpheader">
+			<center>
+			<table border="0" cellspacing="0" cellpadding="0">
+			<?php 
+				$setflags = explode(",", $pconfig['tcpflags1']);
+				$outofflags = explode(",", $pconfig['tcpflags2']);
+				$header = "<td width='40' nowrap></td>";
+				$tcpflags1 = "<td width='40' nowrap>set</td>";
+				$tcpflags2 = "<td width='40' nowrap>out of</td>";
+				foreach ($tcpflags as $tcpflag) {
+					$header .= "<td  width='40' nowrap><strong>" . strtoupper($tcpflag) . "</strong></td>\n";
+					$tcpflags1 .= "<td  width='40' nowrap> <input type='checkbox' name='tcpflags1_{$tcpflag}' value='on' ";
+					if (array_search($tcpflag, $setflags) !== false)
+						$tcpflags1 .= "checked";
+					$tcpflags1 .= "></td>\n";
+					$tcpflags2 .= "<td  width='40' nowrap> <input type='checkbox' name='tcpflags2_{$tcpflag}' value='on' ";
+					if (array_search($tcpflag, $outofflags) !== false)
+						$tcpflags2 .= "checked";
+					$tcpflags2 .= "></td>\n";
+				}
+				echo "<tr id='tcpheader' name='tcpheader'>{$header}</tr>\n";
+				echo "<tr id='tcpflags1' name='tcpflags1'>{$tcpflags1}</tr>\n";
+				echo "<tr id='tcpflags2' name='tcpflags2'>{$tcpflags2}</tr>\n";
+			?>
+			</table>
+			<center>
+			</div>
+			<br/><center>
+			<input onClick='tcpflags_anyclick(this);' type='checkbox' name='tcpflags_any' value='on' <?php if ($pconfig['tcpflags_any']) echo "checked"; ?>><strong>Any flags.</strong><br/></center>
+			<br/>
+			<span class="vexpl">Use this to choose TCP flags that must 
+			be set or cleared for this rule to match.</span>
+			</div>
+			</td>
+		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">State Type</td>
 			<td width="78%" class="vtable">
@@ -1013,12 +1095,14 @@ include("head.inc");
 				<div id="showstateadv" style="display:none">
 					<select name="statetype">
 						<option value="keep state" <?php if(!isset($pconfig['statetype']) or $pconfig['statetype'] == "keep state") echo "selected"; ?>>keep state</option>
+						<option value="sloppy state" <?php if($pconfig['statetype'] == "sloppy state") echo "selected"; ?>>sloppy state</option>
 						<option value="synproxy state"<?php if($pconfig['statetype'] == "synproxy state")  echo "selected"; ?>>synproxy state</option>
 						<option value="none"<?php if($pconfig['statetype'] == "none") echo "selected"; ?>>none</option>
 					</select><br>HINT: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.
 					<p>
 					<table width="90%">
 						<tr><td width="25%"><ul><li>keep state</li></td><td>Works with all IP protocols.</ul></td></tr>
+						<tr><td width="25%"><ul><li>sloppy state</li></td><td>Works with all IP protocols.</ul></td></tr>
 						<tr><td width="25%"><ul><li>synproxy state</li></td><td>Proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.</ul></td></tr>
 						<tr><td width="25%"><ul><li>none</li></td><td>Do not use state mechanisms to keep track.  This is only useful if you're doing advanced queueing in certain situations.  Please check the documentation.</ul></td></tr>
 					</table>

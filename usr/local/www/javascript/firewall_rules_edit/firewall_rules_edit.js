@@ -90,8 +90,10 @@ function typesel_change() {
 function proto_change() {
 	if (document.iform.proto.selectedIndex < 3) {
 		portsenabled = 1;
+		document.getElementById("tcpflags").style.display = '';
 	} else {
 		portsenabled = 0;
+		document.getElementById("tcpflags").style.display = 'none';
 	}
 
 	/* Disable OS knob if the proto is not TCP. */
@@ -180,6 +182,12 @@ function show_advanced_state() {
 	aodiv.style.display = "block";
 }
 
+function show_advanced_tcpflags() {
+        document.getElementById("showtcpflagsbox").innerHTML='';
+        aodiv = document.getElementById('showtcpflagsadv');
+        aodiv.style.display = "block";
+}
+
 function show_advanced_layer7() {
 	document.getElementById("showadvlayer7box").innerHTML='';
 	aodiv = document.getElementById('showlayer7adv');
@@ -194,4 +202,11 @@ function dst_rep_change() {
 	document.iform.dstendport.selectedIndex = document.iform.dstbeginport.selectedIndex;
 }
 
+function tcpflags_anyclick(obj) {
+	if (obj.checked) {
+		document.getElementById('tcpheader').style.display= 'none';
+	} else {
+		document.getElementById('tcpheader').style.display= "";
+	}
+}
 //-->

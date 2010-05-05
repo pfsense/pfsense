@@ -1599,9 +1599,29 @@ function filter_generate_user_rule($rule) {
 	if($type == "pass") {
 		if(isset($rule['allowopts']))
 			$aline['allowopts'] = " allow-opts ";
-		if( isset($rule['source-track']) or isset($rule['max']) or isset($rule['max-src-nodes']) or isset($rule['max-src-conn']) or isset($rule['max-src-states']) )
-			if($rule['protocol'] == "tcp")
+
+		$aline['flags'] = "";
+		if($rule['protocol'] == "tcp") {
+			if (isset($rule['tcpflags_any']))
+				$aline['flags'] = "flags any ";
+			else if (!empty($rule['tcpflags2'])) {
+				$aline['flags'] = "flags ";
+				if (!empty($rule['tcpflags1'])) {
+					$flags1 = explode(",", $rule['tcpflags1']);
+					foreach ($flags1 as $flag1)
+						$aline['flags'] .= strtoupper($flag1[0]);
+				}
+				$aline['flags'] .= "/";
+				if (!empty($rule['tcpflags2'])) {
+					$flags2 = explode(",", $rule['tcpflags2']);
+					foreach ($flags2 as $flag2)
+						$aline['flags'] .= strtoupper($flag2[0]);
+				}
+				$aline['flags'] .= " ";
+			} else
 				$aline['flags'] = "flags S/SA ";
+		}
+
 		/*
 		 *	# keep state
 		 *		works with TCP, UDP, and ICMP.
@@ -1620,30 +1640,37 @@ function filter_generate_user_rule($rule) {
 			switch($rule['statetype']) {
 				case "none":
 					$noadvoptions = true;
-					$aline['flags'] = " no state ";
+					$aline['flags'] .= " no state ";
 					break;
 				case "modulate state":
 				case "synproxy state":
 					if($rule['protocol'] == "tcp")
-						$aline['flags'] = "{$rule['statetype']} ";
+						$aline['flags'] .= "{$rule['statetype']} ";
+					break;
+				case "sloppy state":
+					$aline['flags'] .= "keep state ";
+					$rule['sloppy'] = true;
 					break;
 				default:
-					$aline['flags'] = "{$rule['statetype']} ";
+					$aline['flags'] .= "{$rule['statetype']} ";
+					break;
 			}
 		} else
-			$aline['flags'] = "keep state ";
+			$aline['flags'] .= "keep state ";
 
 		if($noadvoptions == false || $l7_present)
-			if( isset($rule['source-track']) and $rule['source-track'] <> "" or
-				isset($rule['max']) and $rule['max'] <> "" or
-				isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
-				isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "" or
-				isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or
-				isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or
-				isset($rule['max-src-states']) and $rule['max-src-states'] <> "" or
-				isset($rule['statetimeout']) and $rule['statetimeout'] <> "" or
-				$l7_present) {
+			if( (isset($rule['source-track']) and $rule['source-track'] <> "") or
+			    (isset($rule['max']) and $rule['max'] <> "") or
+			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
+			    (isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
+			    (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
+			    (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "") or
+			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
+			    (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
+			    isset($rule['sloppy']) or $l7_present) {
 					$aline['flags'] .= "( ";
+					if (isset($rule['sloppy']))
+						$aline['flags'] .= "sloppy ";
 					if(isset($rule['source-track']) and $rule['source-track'] <> "")
 						$aline['flags'] .= "source-track rule ";
 					if(isset($rule['max']) and $rule['max'] <> "")

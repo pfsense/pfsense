@@ -2530,8 +2530,11 @@ EOD;
 
 function discover_pkg_rules($ruletype) {
 	global $config, $g;
+
 	if(!is_dir("/usr/local/pkg"))
 		return "";
+
+	$rules = "";
 	$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
 	foreach($files as $pkg_inc) {
 		if($pkg_inc == "ls: No match.")
@@ -2542,15 +2545,16 @@ function discover_pkg_rules($ruletype) {
 		$pkg_generate_rules = "{$pkg}_generate_rules";
 		if(function_exists($pkg_generate_rules)) {
 			update_filter_reload_status("Processing early {$ruletype} rules for package {$pkg_inc}");
-			$rules .= $pkg_generate_rules("$ruletype");
-			file_put_contents("{$g['tmp_path']}/rules.packages", $rules);
-			$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.packages");
+			$tmprules = $pkg_generate_rules("$ruletype");
+			file_put_contents("{$g['tmp_path']}/rules.test.packages", $tmprules);
+			$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.test.packages");
 			if ($status <> 0) {
 				$errorrules = "There was an error while parsing the package filter rules for {$pkg_inc}.\n";
 				log_error($errorrules);
 				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg_inc}", "#{$errorrules}\n");
-				return "";
+				continue;
 			}
+			$rules .= $tmprules;
 		}
 	}
 	return $rules;

@@ -955,10 +955,10 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Source OS</td>
 			<td width="78%" class="vtable">
-				<div id="showadvsourceosbox">
+				<div id="showadvsourceosbox" <? if ($pconfig['os']) echo "style='display:none'"; ?>>
 					<input type="button" onClick="show_advanced_sourceos()" value="Advanced"></input> - Show advanced option</a>
 				</div>
-				<div id="showsourceosadv" style="display:none">
+				<div id="showsourceosadv" <? if (empty($pconfig['os'])) echo "style='display:none'"; ?>>
 					OS Type:&nbsp;
 					<select name="os" id="os" class="formselect">
 <?php
@@ -989,10 +989,10 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Diffserv Code Point</td>
 			<td width="78%" class="vtable">
-				<div id="dsadv" name="dsadv">
+				<div id="dsadv" name="dsadv" <? if ($pconfig['dscp']) echo "style='display:none'"; ?>>
 					<input type="button" onClick="show_dsdiv();" value="Advanced"> - Show advanced option
 				</div>
-				<div id="dsdivmain" name="dsdivmain" style="display:none">
+				<div id="dsdivmain" name="dsdivmain" <? if (empty($pconfig['dscp'])) echo "style='display:none'"; ?>>
 					<select name="dscp" id="dscp">
 						<option value=""></option>
 						<?php foreach($firewall_rules_dscp_types as $frdt): ?>
@@ -1047,10 +1047,10 @@ include("head.inc");
 		<tr id="tcpflags" name="tcpflags"> 
 			<td width="22%" valign="top" class="vncell">TCP flags</td>
 			<td width="78%" class="vtable">
-			<div id="showtcpflagsbox">
+			<div id="showtcpflagsbox" <? if ($pconfig['tcpflags_any'] || $pconfig['tcpflags1'] || $pconfig['tcpflags2']) echo "style='display:none'"; ?>>
                         	<input type="button" onClick="show_advanced_tcpflags()" value="Advanced"></input> - Show advanced option</a>
                         </div>
-                        <div id="showtcpflagsadv" style="display:none">
+                        <div id="showtcpflagsadv" <? if (empty($pconfig['tcpflags_any']) && empty($pconfig['tcpflags1']) && empty($pconfig['tcpflags2'])) echo "style='display:none'"; ?>>
 			<div id="tcpheader" name="tcpheader">
 			<center>
 			<table border="0" cellspacing="0" cellpadding="0">
@@ -1089,10 +1089,10 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">State Type</td>
 			<td width="78%" class="vtable">
-				<div id="showadvstatebox">
+				<div id="showadvstatebox" <? if (!empty($pconfig['statetype']) && $pconfig['statetype'] != "keep state") echo "style='display:none'"; ?>>
 					<input type="button" onClick="show_advanced_state()" value="Advanced"></input> - Show advanced option</a>
 				</div>
-				<div id="showstateadv" style="display:none">
+				<div id="showstateadv" <? if (empty($pconfig['statetype']) || $pconfig['statetype'] == "keep state") echo "style='display:none'"; ?>>
 					<select name="statetype">
 						<option value="keep state" <?php if(!isset($pconfig['statetype']) or $pconfig['statetype'] == "keep state") echo "selected"; ?>>keep state</option>
 						<option value="sloppy state" <?php if($pconfig['statetype'] == "sloppy state") echo "selected"; ?>>sloppy state</option>
@@ -1113,10 +1113,10 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
 			<td width="78%" class="vtable">
-				<div id="showadvnoxmlrpcsyncbox">
+				<div id="showadvnoxmlrpcsyncbox" <? if ($pconfig['nosync']) echo "style='display:none'"; ?>>
 					<input type="button" onClick="show_advanced_noxmlrpc()" value="Advanced"></input> - Show advanced option</a>
 				</div>
-				<div id="shownoxmlrpcadv" style="display:none">
+				<div id="shownoxmlrpcadv" <? if (empty($pconfig['nosync'])) echo "style='display:none'"; ?>>
 					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
 					HINT: This prevents the rule from automatically syncing to other CARP members.
 				</div>
@@ -1136,10 +1136,10 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Schedule</td>
 			<td width="78%" class="vtable">
-				<div id="showadvschedulebox">
+				<div id="showadvschedulebox" <? if (!empty($pconfig['sched'])) echo "style='display:none'"; ?>>
 					<input type="button" onClick="show_advanced_schedule()" value="Advanced"></input> - Show advanced option</a>
 				</div>
-				<div id="showscheduleadv" style="display:none">
+				<div id="showscheduleadv" <? if (empty($pconfig['sched'])) echo "style='display:none'"; ?>>
 					<select name='sched'>
 <?php
 					foreach($schedules as $schedule) {
@@ -1176,10 +1176,10 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Gateway</td>
 			<td width="78%" class="vtable">
-				<div id="showadvgatewaybox">
+				<div id="showadvgatewaybox" <? if (!empty($pconfig['gateway'])) echo "style='display:none'"; ?>>
 					<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show advanced option</a>
 				</div>
-				<div id="showgatewayadv" style="display:none">
+				<div id="showgatewayadv" <? if (empty($pconfig['gateway'])) echo "style='display:none'"; ?>>
 					<select name='gateway'>
 <?php
 					// add statically configured gateways to list
@@ -1232,10 +1232,10 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">In/Out</td>
 			<td width="78%" class="vtable">
-				<div id="showadvinoutbox">
+				<div id="showadvinoutbox" <? if (!empty($pconfig['dnpipe'])) echo "style='display:none'"; ?>>
 					<input type="button" onClick="show_advanced_inout()" value="Advanced"></input> - Show advanced option</a>
 				</div>
-				<div id="showinoutadv" style="display:none">
+				<div id="showinoutadv" <? if (empty($pconfig['dnpipe'])) echo "style='display:none'"; ?>>
 					<select name="dnpipe">
 <?php
 		if (!is_array($dnqlist))
@@ -1282,10 +1282,10 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Ackqueue/Queue</td>
 			<td width="78%" class="vtable">
-			<div id="showadvackqueuebox">
+			<div id="showadvackqueuebox" <? if (!empty($pconfig['defaultqueue'])) echo "style='display:none'"; ?>>
 				<input type="button" onClick="show_advanced_ackqueue()" value="Advanced"></input> - Show advanced option</a>
 			</div>
-			<div id="showackqueueadv" style="display:none">
+			<div id="showackqueueadv" <? if (empty($pconfig['defaultqueue'])) echo "style='display:none'"; ?>>
 				<select name="ackqueue">
 <?php
 			if (!is_array($qlist))
@@ -1330,10 +1330,10 @@ include("head.inc");
 			<tr>
 				<td width="22%" valign="top" class="vncell">Layer7</td>
 				<td width="78%" class="vtable">
-					<div id="showadvlayer7box">
+					<div id="showadvlayer7box" <? if (!empty($pconfig['l7container'])) echo "style='display:none'"; ?>>
 						<input type="button" onClick="show_advanced_layer7()" value="Advanced"></input> - Show advanced option</a>
 					</div>
-					<div id="showlayer7adv" style="display:none">
+					<div id="showlayer7adv" <? if (empty($pconfig['l7container'])) echo "style='display:none'"; ?>>
 				<select name="l7container">
 <?php
 					if (!is_array($l7clist))

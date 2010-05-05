@@ -912,8 +912,27 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $natent['interface'];
 			$natif = $FilterIflist[$natif]['if'];
-			if($natif)
-				$natrules .= "binat on $natif from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
+
+			if($natif) {
+				/* If reflection is enabled, turn on extra redirections
+				 * for this rule by adding other interfaces to binat rule. */
+				if(isset($config['system']['enablebinatreflection'])) {
+					$nat_if_list = filter_get_reflection_interfaces($natif);
+				} else {
+					$nat_if_list = array();
+				}
+
+				$nat_if_list = array_merge(array($natif), $nat_if_list);
+				//$binat_if_list = implode(" ", $nat_if_list);
+				//if(count($nat_if_list) > 1)
+				//	$binat_if_list = "{ {$binat_if_list} }";
+
+				/* binat seems to currently only work with the first interface specified on the line */
+				// $natrules .= "binat on {$binat_if_list} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
+				foreach ($nat_if_list as $natifname)
+					$natrules .= "binat on {$natifname} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
+				$natrules .= filter_generate_reflection_nat($rule, $nat_if_list, "", "{$natent['internal']}/{$sn}", $natent['internal'], $sn);
+			}
 		}
 	}
 	$natrules .= "\n# Outbound NAT rules\n";
@@ -1199,13 +1218,15 @@ function filter_nat_rules_generate() {
 			if(empty($localport_nat) && $dstaddr_port[2])
 				$localport_nat = " port " . $dstaddr_port[2];
 
-			if(!isset($config['system']['disablenatreflection'])) {
-				$nat_if_list = filter_get_reflection_interfaces($natif);
-			} else {
-				$nat_if_list = array();
-			}
-
 			if($srcaddr <> "" && $dstaddr <> "" && $natif) {
+				/* If reflection is enabled, turn on extra redirections for
+				 * this rule by adding other interfaces to a similar rdr rule. */
+				if(!isset($config['system']['disablenatreflection'])) {
+					$nat_if_list = filter_get_reflection_interfaces($natif);
+				} else {
+					$nat_if_list = array();
+				}
+
 				$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}\n" : "\n");
 
 				if(!empty($nat_if_list)) {
@@ -1220,7 +1241,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr_reflect}" . ($nordr == "" ? " -> {$target}{$localport}\n" : "\n");
 				}
 
-				$nat_if_list[] = $natif;
+				$nat_if_list = array_merge(array($natif), $nat_if_list);
 				if(!isset($rule['nordr']))
 					$natrules .= filter_generate_reflection_nat($rule, $nat_if_list, $protocol, "{$target}{$localport_nat}", $target_ip);
 			}

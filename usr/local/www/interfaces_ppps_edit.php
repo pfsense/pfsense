@@ -218,7 +218,9 @@ if ($_POST) {
 			break;
 	}
 	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1)
-		$input_errors[] = "The PPP link type does not support multilink connections (MLPPP). Please select only one Link Interface.";
+		$input_errors[] = "Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.";
+	if ($_POST['type'] == "pptp" && count($_POST['interfaces']) > 1)
+		$input_errors[] = "Multilink connections (MLPPP) using the PPTP link type is not currently supported. Please select only one Link Interface.";
 	if (($_POST['provider'] && !is_domain($_POST['provider']))) 
 		$input_errors[] = "The service name contains invalid characters.";
 	if (($_POST['idletimeout'] != "") && !is_numericint($_POST['idletimeout'])) 
@@ -262,7 +264,7 @@ if ($_POST) {
 		$ppp = array();
 		$ppp['ptpid'] = $_POST['ptpid'];
 		$ppp['type'] = $_POST['type'];
-		$ppp['ports'] = implode(',', $_POST['interfaces']);
+		$ppp['ports'] = implode(',',$_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = base64_encode($_POST['password']);
 		$ppp['defaultgw'] = $_POST['defaultgw'] ? true : false;
@@ -370,19 +372,7 @@ if ($_POST) {
 		write_config();
 		
 		if (!empty($thisif)){
-			switch ($_POST['type']) {
-				case "pppoe": 
-					interface_ppps_configure($thisif);
-					break;
-				case "pptp": 
-					interface_pptp_configure($thisif);
-					break;
-				case "ppp":
-					interface_ppps_configure($thisif);
-					break;
-				default:
-					break;
-			}
+			interface_ppps_configure($thisif);
 		}
 		header("Location: interfaces_ppps.php");
 		exit;
@@ -529,7 +519,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		</tr>
 		<tr style="display:none" name="portlists" id="portlists">
 			<td id="serialports"><?php
-				$selected_ports = explode(",",$pconfig['interfaces']);
+				$selected_ports = explode(',',$pconfig['interfaces']);
 				$serial = glob("/dev/cua*");
 				$modems = glob("/dev/modem*");
 				$serialports = array_merge($serial, $modems);
@@ -550,10 +540,8 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				$port_count = 0;
 				foreach ($portlist as $ifn => $ifinfo){
 				$port_count++;
-				//if (is_jumbo_capable($ifn)) {
 					echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")") . ",{$ifn}";
-					//echo "\"{$ifn}\"";
-					if (stristr($pconfig['interfaces'], $ifn))
+					if (in_array($ifn,$selected_ports))
 						echo ",1|";
 					else
 						echo ",|";
@@ -592,9 +580,8 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr>
 			<td valign="top" class="vncell">Idle Timeout</td>
 			<td class="vtable">
-				<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>"> seconds
-				<br/> <span class="vexpl">Sets the idle timeout value for the bundle. If no incoming or outgoing packets are transmitted for the set number of seconds 
-				the connection is brought down. An idle timeout of zero disables this feature. <bold>Default is 0.</bold>
+				<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="12" value="<?=htmlspecialchars($pconfig['idletimeout']);?>"> (seconds)  <bold>Default is 0, which disables the timeout feature.</bold>
+				<br/> <span class="vexpl">If no incoming or outgoing packets are transmitted for the entered number of seconds the connection is brought down.
 				<br/>When the idle timeout occurs, if the dial-on-demand option is enabled, mpd goes back into dial-on-demand mode. Otherwise, the interface is brought down and all associated routes removed.</span>
 			</td>
 		</tr>
@@ -789,7 +776,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr>
 			<td width="22%" valign="top" class="vncell">Compression</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked"; ?>>&nbsp;Enable vjcomp(compression).
+				<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked"; ?>>&nbsp;Disable vjcomp(compression) (enabled by default).
 				<br/> <span class="vexpl">This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet. 
 				You almost always want this option. This compression ineffective for TCP connections with enabled modern extensions like time 
 				stamping or SACK, which modify TCP options between sequential packets.</span>
@@ -798,7 +785,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr>
 			<td width="22%" valign="top" class="vncell">TCPmssFix</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="tcpmssfix" name="tcpmssfix" <?php if (isset($pconfig['tcpmssfix'])) echo "checked"; ?>>&nbsp;Enable tcpmssfix.
+				<input type="checkbox" value="on" id="tcpmssfix" name="tcpmssfix" <?php if (isset($pconfig['tcpmssfix'])) echo "checked"; ?>>&nbsp;Enable tcpmssfix (disabled by default).
 				<br/> <span class="vexpl">This option causes mpd to adjust incoming and outgoing TCP SYN segments so that the requested maximum segment size is not greater than the amount 
 				allowed by the interface MTU. This is necessary in many setups to avoid problems caused by routers that drop ICMP Datagram Too Big messages. Without these messages,
 				the originating machine sends data, it passes the rogue router then hits a machine that has an MTU that is not big enough for the data. Because the IP Don't Fragment option is set,
@@ -809,21 +796,22 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr>
 			<td width="22%" valign="top" class="vncell">ShortSeq</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="shortseq" name="shortseq" <?php if (isset($pconfig['shortseq'])) echo "checked"; ?>>&nbsp;Enable shortseq.
-				<br/> <span class="vexpl">This option is only meaningful if multi-link PPP is negotiated. It proscribes shorter multi-link fragment headers, saving two bytes on every frame.</span>
+				<input type="checkbox" value="on" id="shortseq" name="shortseq" <?php if (isset($pconfig['shortseq'])) echo "checked"; ?>>&nbsp;Disable shortseq (enabled by default).
+				<br/> <span class="vexpl">This option is only meaningful if multi-link PPP is negotiated. It proscribes shorter multi-link fragment headers, saving two bytes on every frame. 
+				It is not necessary to disable this for connections that are not multi-link.</span>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">ACFComp</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="acfcomp" name="acfcomp" <?php if (isset($pconfig['acfcomp'])) echo "checked"; ?>>&nbsp;Enable acfcomp.
+				<input type="checkbox" value="on" id="acfcomp" name="acfcomp" <?php if (isset($pconfig['acfcomp'])) echo "checked"; ?>>&nbsp;Disable acfcomp(compression) (enabled by default).
 				<br/> <span class="vexpl">Address and control field compression. This option only applies to asynchronous link types. It saves two bytes per frame.</span>
 			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">ProtoComp</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="protocomp" name="protocomp" <?php if (isset($pconfig['protocomp'])) echo "checked"; ?>>&nbsp;Enable protocomp(compression).
+				<input type="checkbox" value="on" id="protocomp" name="protocomp" <?php if (isset($pconfig['protocomp'])) echo "checked"; ?>>&nbsp;Disable protocomp(compression) (enabled by default).
 				<br/> <span class="vexpl">Protocol field compression. This option saves one byte per frame for most frames.</span>
 			</td>
 		</tr>

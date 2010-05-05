@@ -56,6 +56,10 @@ $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['optimization'] = $config['filter']['optimization'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
+if (!isset($config['system']['enablebinatreflection']))
+	$pconfig['disablebinatreflection'] = "yes";
+else
+	$pconfig['disablebinatreflection'] = "";
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['tftpinterface'] = $config['system']['tftpinterface']; 
@@ -105,7 +109,12 @@ if ($_POST) {
 			$config['system']['disablenatreflection'] = $_POST['disablenatreflection'];
 		else
 			unset($config['system']['disablenatreflection']);
-		
+
+		if($_POST['disablebinatreflection'] == "yes")
+			unset($config['system']['enablebinatreflection']);
+		else
+			$config['system']['enablebinatreflection'] = "yes";
+
 		if($_POST['bypassstaticroutes'] == "yes")
 			$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'];
 		else
@@ -292,10 +301,17 @@ function update_description(itemnum) {
 								<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
 							</tr>		
 							<tr>
-								<td width="22%" valign="top" class="vncell">Disable NAT Reflection</td>
+								<td width="22%" valign="top" class="vncell">Disable NAT Reflection for port forwards</td>
 								<td width="78%" class="vtable">
 									<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> />
-									<strong>Disables the automatic creation of NAT redirect rules for access to your public IP addresses from within your internal networks.  Note: Reflection is only enabled for port forward entries.</strong>
+									<strong>Disables the automatic creation of additional NAT redirect rules for access to port forwards on your public IP addresses from within your internal networks.  Note: Reflection might not fully work in complex routing scenarios.</strong>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell">Disable NAT Reflection for 1:1 NAT</td>
+								<td width="78%" class="vtable">
+									<input name="disablebinatreflection" type="checkbox" id="disablebinatreflection" value="yes" <?php if (!isset($config['system']['enablebinatreflection'])) echo "checked"; ?> />
+									<strong>Disables the automatic creation of additional NAT 1:1 mappings for access to 1:1 mappings of your public IP addresses from within your internal networks.  Note: Reflection might not fully work in complex routing scenarios.</strong>
 								</td>
 							</tr>
 							<tr>

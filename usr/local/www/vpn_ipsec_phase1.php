@@ -442,7 +442,8 @@ function dpdchkbox_change() {
 				$tab_array = array();
 				$tab_array[0] = array("Tunnels", true, "vpn_ipsec.php");
 				$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array("Logs", false, "diag_logs_ipsec.php");
+				$tab_array[2] = array("Pre-shared keys", false, "vpn_ipsec_keys.php");
+				$tab_array[3] = array("Logs", false, "diag_logs_ipsec.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>
@@ -519,6 +520,26 @@ function dpdchkbox_change() {
 						</td>
 					</tr>
 					<tr>
+						<td width="22%" valign="top" class="vncellreq">Authentication method</td>
+						<td width="78%" class="vtable">
+							<select name="authentication_method" class="formselect" onChange="methodsel_change()">
+							<?php
+								foreach ($p1_authentication_methods as $method_type => $method_params):
+									if (!$pconfig['mobile'] && $method_params['mobile'])
+										continue;
+							?>
+								<option value="<?=$method_type;?>" <?php if ($method_type == $pconfig['authentication_method']) echo "selected"; ?>>
+									<?=htmlspecialchars($method_params['name']);?>
+								</option>
+							<?php endforeach; ?>
+							</select>
+							<br>
+							<span class="vexpl">
+								Must match the setting chosen on the remote side.
+							</span>
+						</td>
+					</tr>
+					<tr>
 						<td width="22%" valign="top" class="vncellreq">Negotiation mode</td>
 						<td width="78%" class="vtable">
 							<select name="mode" class="formselect">
@@ -561,6 +582,17 @@ function dpdchkbox_change() {
 							<?php endforeach; ?>
 							</select>
 							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=$pconfig['peerid_data'];?>">
+						</td>
+					</tr>
+					<tr id="opt_psk">
+						<td width="22%" valign="top" class="vncellreq">Pre-Shared Key</td>
+						<td width="78%" class="vtable">
+							<?=$mandfldhtml;?>
+							<input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=htmlspecialchars($pconfig['pskey']);?>">
+							<span class="vexpl">
+							<br>
+								Input your pre-shared key string.
+							</span>
 						</td>
 					</tr>
 					<tr>
@@ -621,37 +653,6 @@ function dpdchkbox_change() {
 						<td width="78%" class="vtable">
 							<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="20" value="<?=$pconfig['lifetime'];?>">
 							seconds
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncellreq">Authentication method</td>
-						<td width="78%" class="vtable">
-							<select name="authentication_method" class="formselect" onChange="methodsel_change()">
-							<?php
-								foreach ($p1_authentication_methods as $method_type => $method_params):
-									if (!$pconfig['mobile'] && $method_params['mobile'])
-										continue;
-							?>
-								<option value="<?=$method_type;?>" <?php if ($method_type == $pconfig['authentication_method']) echo "selected"; ?>>
-									<?=htmlspecialchars($method_params['name']);?>
-								</option>
-							<?php endforeach; ?>
-							</select>
-							<br>
-							<span class="vexpl">
-								Must match the setting chosen on the remote side.
-							</span>
-						</td>
-					</tr>
-					<tr id="opt_psk">
-						<td width="22%" valign="top" class="vncellreq">Pre-Shared Key</td>
-						<td width="78%" class="vtable">
-							<?=$mandfldhtml;?>
-							<input name="pskey" type="text" class="formfld unknown" id="pskey" size="40" value="<?=htmlspecialchars($pconfig['pskey']);?>">
-							<span class="vexpl">
-							<br>
-								Input your pre-shared key string.
-							</span>
 						</td>
 					</tr>
 					<tr id="opt_cert">

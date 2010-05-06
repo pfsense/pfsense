@@ -136,7 +136,8 @@ if ($_POST) {
 	/* input validation */
 
 	$method = $pconfig['authentication_method'];
-	if (($method == "pre_shared_key")||($method == "xauth_psk_server")) {
+	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
+	if ((($method == "pre_shared_key") && (!$pconfig['mobile']))||($method == "xauth_psk_server")) {
 		$reqdfields = explode(" ", "pskey");
 		$reqdfieldsn = explode(",", "Pre-Shared Key");
 	} else {
@@ -214,32 +215,35 @@ if ($_POST) {
 	if ($pconfig['myid_type'] == "peeraddress")
 		$pconfig['peerid_data'] = "";
 
-	if ($pconfig['peerid_type'] == "address" and $pconfig['peerid_data'] == "")
-		$input_errors[] = gettext("Please enter an address for 'Peer Identifier'");
+	// Only enforce peer ID if we are not dealing with a pure-psk mobile config.
+	if (!(($pconfig['authentication_method'] == "pre_shared_key") && ($pconfig['mobile']))) {
+		if ($pconfig['peerid_type'] == "address" and $pconfig['peerid_data'] == "")
+			$input_errors[] = gettext("Please enter an address for 'Peer Identifier'");
 
-	if ($pconfig['peerid_type'] == "keyid tag" and $pconfig['peerid_data'] == "")
-		$input_errors[] = gettext("Please enter a keyid tag for 'Peer Identifier'");
+		if ($pconfig['peerid_type'] == "keyid tag" and $pconfig['peerid_data'] == "")
+			$input_errors[] = gettext("Please enter a keyid tag for 'Peer Identifier'");
 
-	if ($pconfig['peerid_type'] == "fqdn" and $pconfig['peerid_data'] == "")
-		$input_errors[] = gettext("Please enter a fully qualified domain name for 'Peer Identifier'");
+		if ($pconfig['peerid_type'] == "fqdn" and $pconfig['peerid_data'] == "")
+			$input_errors[] = gettext("Please enter a fully qualified domain name for 'Peer Identifier'");
 
-	if ($pconfig['peerid_type'] == "user_fqdn" and $pconfig['peerid_data'] == "")
-		$input_errors[] = gettext("Please enter a user and fully qualified domain name for 'Peer Identifier'");
+		if ($pconfig['peerid_type'] == "user_fqdn" and $pconfig['peerid_data'] == "")
+			$input_errors[] = gettext("Please enter a user and fully qualified domain name for 'Peer Identifier'");
 
-	if ((($pconfig['peerid_type'] == "address") && !is_ipaddr($pconfig['peerid_data'])))
-		$input_errors[] = "A valid IP address for 'Peer identifier' must be specified.";
+		if ((($pconfig['peerid_type'] == "address") && !is_ipaddr($pconfig['peerid_data'])))
+			$input_errors[] = "A valid IP address for 'Peer identifier' must be specified.";
 
-	if ((($pconfig['peerid_type'] == "fqdn") && !is_domain($pconfig['peerid_data'])))
-		$input_errors[] = "A valid domain name for 'Peer identifier' must be specified.";
+		if ((($pconfig['peerid_type'] == "fqdn") && !is_domain($pconfig['peerid_data'])))
+			$input_errors[] = "A valid domain name for 'Peer identifier' must be specified.";
 
-	if ($pconfig['peerid_type'] == "fqdn")
-		if (is_domain($pconfig['peerid_data']) == false)
-			$input_errors[] = "A valid FQDN for 'Peer identifier' must be specified.";
+		if ($pconfig['peerid_type'] == "fqdn")
+			if (is_domain($pconfig['peerid_data']) == false)
+				$input_errors[] = "A valid FQDN for 'Peer identifier' must be specified.";
 
-	if ($pconfig['peerid_type'] == "user_fqdn") {
-		$user_fqdn = explode("@",$pconfig['peerid_data']);
-		if (is_domain($user_fqdn[1]) == false)
-			$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'Peer identifier' must be specified.";
+		if ($pconfig['peerid_type'] == "user_fqdn") {
+			$user_fqdn = explode("@",$pconfig['peerid_data']);
+			if (is_domain($user_fqdn[1]) == false)
+				$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'Peer identifier' must be specified.";
+		}
 	}
 
 	if ($pconfig['dpd_enable']) {
@@ -364,15 +368,25 @@ function methodsel_change() {
 	switch (value) {
 		case 'hybrid_rsa_server':
 			document.getElementById('opt_psk').style.display = 'none';
+			document.getElementById('opt_peerid').style.display = '';
 			document.getElementById('opt_cert').style.display = '';
 			break;
 		case 'xauth_rsa_server':
 		case 'rsasig':
 			document.getElementById('opt_psk').style.display = 'none';
+			document.getElementById('opt_peerid').style.display = '';
 			document.getElementById('opt_cert').style.display = '';
 			break;
+<?php if ($pconfig['mobile']) { ?>
+		case 'pre_shared_key':
+			document.getElementById('opt_psk').style.display = 'none';
+			document.getElementById('opt_peerid').style.display = 'none';
+			document.getElementById('opt_cert').style.display = 'none';
+			break;
+<?php } ?>
 		default: /* psk modes*/
 			document.getElementById('opt_psk').style.display = '';
+			document.getElementById('opt_peerid').style.display = '';
 			document.getElementById('opt_cert').style.display = 'none';
 			break;
 	}
@@ -567,7 +581,7 @@ function dpdchkbox_change() {
 							<input name="myid_data" type="text" class="formfld unknown" id="myid_data" size="30" value="<?=$pconfig['myid_data'];?>">
 						</td>
 					</tr>
-					<tr>
+					<tr id="opt_peerid">
 						<td width="22%" valign="top" class="vncellreq">Peer identifier</td>
 						<td width="78%" class="vtable">
 							<select name="peerid_type" class="formselect" onChange="peeridsel_change()">
@@ -582,6 +596,9 @@ function dpdchkbox_change() {
 							<?php endforeach; ?>
 							</select>
 							<input name="peerid_data" type="text" class="formfld unknown" id="peerid_data" size="30" value="<?=$pconfig['peerid_data'];?>">
+						<?php if ($pconfig['mobile']) { ?>
+							<br/><br/>NOTE: This is known as the "group" setting on some VPN client implementations.
+						<?php } ?>
 						</td>
 					</tr>
 					<tr id="opt_psk">

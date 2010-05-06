@@ -495,6 +495,7 @@ function vpn_ipsec_configure($ipchg = false)
 					$passive = "";
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "anonymous";
+						/* Mimic 1.2.3's behavior for pure-psk mobile tunnels */
 						if ($ph1ent['authentication_method'] == "pre_shared_key") {
 							$passive = "passive on;";
 							$pcheck = "obey";
@@ -632,6 +633,7 @@ EOD;
 
 						$localid_type = $ph2ent['localid']['type'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
+						/* Do not print localid in some cases, such as a pure-psk mobile tunnel */
 						if (($localid_type == "none") || ($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))
 							$localid_spec = " ";
 						else if ($localid_type != "address") {

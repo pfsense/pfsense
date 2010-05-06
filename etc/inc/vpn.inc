@@ -558,6 +558,11 @@ function vpn_ipsec_configure($ipchg = false)
 					if ($ph1ent['lifetime'])
 						$lifeline = "lifetime time {$ph1ent['lifetime']} secs;";
 
+					/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
+					if (!(($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))) {
+						$peerid_spec = "peers_identifier {$peerid_type} {$peerid_data};";
+					}
+
 					/* add remote section to configuration */
 
 					$racoonconf .=<<<EOD
@@ -567,7 +572,7 @@ remote {$rgip}
 	ph1id {$ikeid};
 	exchange_mode {$ph1ent['mode']};
 	my_identifier {$myid_type} {$myid_data};
-	peers_identifier {$peerid_type} {$peerid_data};
+	{$peerid_spec}
 	ike_frag on;
 	generate_policy = {$genp};
 	initial_contact = {$init};

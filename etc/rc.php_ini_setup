@@ -92,6 +92,7 @@ PHPMODULES="apc \
 # Config read/write
 	xml \
 	xmlreader \
+	xmlwriter \
 	libxml \
 # user manager
 	mhash \

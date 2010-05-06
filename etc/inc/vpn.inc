@@ -291,6 +291,13 @@ function vpn_ipsec_configure($ipchg = false)
 			}
 		}
 
+		/* add PSKs for mobile clients */
+		if (is_array($ipseccfg['mobilekey'])) {
+			foreach ($ipseccfg['mobilekey'] as $key) {
+				$pskconf .= "{$key['ident']}	{$key['pre-shared-key']}\n";
+			}
+		}
+
 		fwrite($fd, $pskconf);
 		fclose($fd);
 		chmod("{$g['varetc_path']}/psk.txt", 0600);

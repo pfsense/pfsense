@@ -1602,7 +1602,7 @@ function upgrade_053_to_054() {
 	}
 	// Unset lbpool if we no longer have any server pools
 	if (count($lbpool_srv_arr) == 0) {
-		if(count($config['load_balancer']) == 0) {
+		if(empty($config['load_balancer'])) {
 			unset($config['load_balancer']);
 		} else {
 			unset($config['load_balancer']['lbpool']);

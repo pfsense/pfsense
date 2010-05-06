@@ -1892,7 +1892,8 @@ function upgrade_061_to_062() {
 			);
 
 			if (empty($natent['destination']['address'])) {
-				$natent['destination']['address'] = $natent['interface'] . 'ip';
+				unset($natent['destination']['address']);
+				$natent['destination']['network'] = $natent['interface'] . 'ip';
 			} else if ($natent['destination']['address'] == 'any') {
 				unset($natent['destination']['address']);
 				$natent['destination']['any'] = true;

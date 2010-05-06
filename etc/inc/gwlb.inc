@@ -222,32 +222,13 @@ function return_gateways_status() {
 
 	}
 	foreach($apingerstatus as $line) {
-		$fields = explode(":", $line);
-		switch($fields[0]) {
-			case "Target":
-				$target = trim($fields[1]);
-				break;
-			case "Description":
-				if($target)
-		 			$status[$target]['name'] = trim($fields[1]);
-				break;
-			case "Last reply received":
-				if($target)
-					$status[$target]['lastcheck'] = trim($fields[1]) .":". trim($fields[2]) .":". trim($fields[3]);
-				break;
-			case "Average delay":
-				if($target)
-					$status[$target]['delay'] = trim($fields[1]);
-				break;
-			case "Average packet loss":
-				if($target)
-					$status[$target]['loss'] = trim($fields[1]);
-				break;
-			case "Active alarms":
-				if($target)
-					$status[$target]['status'] = trim($fields[1]);
-				break;
-		}
+		$info = explode("|", $line);
+		$target = $info[0];
+		$status[$target]['name'] = $info[1];
+		$status[$target]['lastcheck'] = $info[4] ? date('r', $info[4]) : date('r');
+		$status[$target]['delay'] = $info[5];
+		$status[$target]['loss'] = $info[6];
+		$status[$target]['status'] = trim($info[7]);
 	}
 	return($status);
 }

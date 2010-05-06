@@ -492,7 +492,7 @@ function vpn_ipsec_configure($ipchg = false)
 					$init = "on";
 					$genp = "off";
 					$pcheck = "claim";
-					$passive = ""
+					$passive = "";
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "anonymous";
 						if ($ph1ent['authentication_method'] == "pre_shared_key") {

@@ -424,6 +424,9 @@ function openvpn_reconfigure($mode,& $settings) {
 				openvpn_add_dhcpopts($settings, $conf);
 				break;
 		}
+
+		if ($settings['client2client'])
+			$conf .= "client-to-client\n";
 	}
 
 	// client specific settings

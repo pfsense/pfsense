@@ -494,7 +494,10 @@ function vpn_ipsec_configure($ipchg = false)
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "anonymous";
 						$init = "off";
-						$genp = "unique";
+						if ($ph1ent['authentication_method'] == "pre_shared_key")
+							$genp = "on";
+						else
+							$genp = "unique";
 					}
 
 					$dpdline1 = '';

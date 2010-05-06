@@ -1370,7 +1370,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		if(strstr($rule[$target]['network'], "opt")) {
 			$optmatch = "";
 			$matches = "";
-			if(preg_match("/opt([0-9]*)/", $rule[$target]['network'], $optmatch)) {
+			if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 				$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
 				if(!is_ipaddr($opt_ip))
 					return "";

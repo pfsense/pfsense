@@ -51,7 +51,7 @@ function listtags() {
 		"option ppp package passthrumac phase1 phase2 priv proxyarpnet qinqentry queue ".
 		"pages pipe roll route row rrddatafile rule schedule service servernat servers ".
 		"serversdisabled earlyshellcmd shellcmd staticmap subqueue timerange ".
-		"tunnel user vip virtual_server vlan winsserver wolentry widget  "
+		"tunnel user vip virtual_server vlan winsserver wolentry widget"
 		);
 	return array_flip($ret);
 }
@@ -68,36 +68,30 @@ function add_elements(&$cfgarray, &$parser) {
         while ($parser->read()) {
                 switch ($parser->nodeType) {
                 case XMLReader::WHITESPACE:
-                        //$type = "WHITESPACE";
-                        break;
                 case XMLReader::SIGNIFICANT_WHITESPACE:
-                        //$type = "SIGNIFICANT_WHITESPACE";
                         break;
                 case XMLReader::ELEMENT:
-                        if ($parser->isEmptyElement) {
-                                $cfgarray[$parser->name] = "";
-                        } else {
-                                if (isset($listtags[$parser->name]))
+                        if (isset($listtags[strtolower($parser->name)])) {
+                        	if (!$parser->isEmptyElement)
                                         add_elements($cfgarray[$parser->name][], $parser);
-                                else {
-                                        add_elements($cfgarray[$parser->name], $parser);
-					if (!isset($cfgarray[$parser->name]))
-						$cfgarray[$parser->name] = array();
-				}
-                        }
+                        } else {
+                        	if ($parser->isEmptyElement)
+					$cfgarray[$parser->name] = "";
+				else
+                        		add_elements($cfgarray[$parser->name], $parser);
+			}
                         break;
                 case XMLReader::TEXT:
 		case XMLReader::CDATA:
                         $cfgarray = $parser->value;
                         break;
                 case XMLReader::END_ELEMENT:
-                        return;
-                        break;
+			return;
+			break;
                 default:
                         break;
                 }
-
-        }
+	}
 }
 
 function parse_xml_config($cffile, $rootobj, $isstring = "false") {
@@ -108,6 +102,7 @@ function parse_xml_config($cffile, $rootobj, $isstring = "false") {
             $listtags[$tag] = $tag;
           }
         }
+
 	return parse_xml_config_raw($cffile, $rootobj);
 }
 
@@ -127,7 +122,7 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	$parsedcfg = array();
 
 	$par = new XMLReader();
-	if ($par->open($cffile)) {
+	if ($par->open($cffile, "UTF-8", LIBXML_NOERROR | LIBXML_NOWARNING)) {
 		add_elements($parsedcfg, $par);
 		$par->close();
 	} else
@@ -136,53 +131,45 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	return $parsedcfg[$rootobj];
 }
 
-function dump_xml_config_sub($arr, $indent) {
+function dump_xml_config_sub(& $writer, $arr) {
+        global $listtags;
 
-	global $listtags;
-
-	$xmlconfig = "";
-
-	foreach ($arr as $ent => $val) {
-		if (is_array($val)) {
-			/* is it just a list of multiple values? */
-			if (isset($listtags[strtolower($ent)])) {
-				foreach ($val as $cval) {
-					if (is_array($cval)) {
-						$xmlconfig .= str_repeat("\t", $indent);
-						$xmlconfig .= "<$ent>\n";
-						$xmlconfig .= dump_xml_config_sub($cval, $indent + 1);
-						$xmlconfig .= str_repeat("\t", $indent);
-						$xmlconfig .= "</$ent>\n";
-					} else {
-						$xmlconfig .= str_repeat("\t", $indent);
-						if($cval === false) continue;
-						if(($cval === true) || ($cval === "")) {
-							$xmlconfig .= "<$ent/>\n";
-						} else {
-							$xmlconfig .= "<$ent>" . htmlspecialchars($cval) . "</$ent>\n";
-					}
-				}
-				}
-			} else {
-				/* it's an array */
-				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent>\n";
-				$xmlconfig .= dump_xml_config_sub($val, $indent + 1);
-				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "</$ent>\n";
-			}
-		} else {
-			if ((is_bool($val) && ($val == true)) || ($val === "")) {
-				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent/>\n";
-			} else if (!is_bool($val)) {
-				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent>" . htmlspecialchars($val) . "</$ent>\n";
-			}
-		}
-	}
-
-	return $xmlconfig;
+        foreach ($arr as $ent => $val) {
+                if (is_array($val)) {
+                        /* is it just a list of multiple values? */
+                        if (isset($listtags[strtolower($ent)])) {
+                                foreach ($val as $cval) {
+                                        if (is_array($cval)) {
+                                                if (empty($cval))
+                                                        $writer->writeElement($ent);
+                                                else {
+                                                        $writer->startElement($ent);
+                                                        dump_xml_config_sub($writer, $cval);
+                                                        $writer->endElement();
+                                                }
+                                        } else {
+                                                if($cval === false) continue;
+                                                if ((is_bool($val) && ($val == true)) || ($val === ""))
+                                                        $writer->writeElement($ent);
+                                                else if (!is_bool($val))
+							$writer->writeElement($ent, $cval);
+                                        }
+                                }
+                        } else if (empty($val)) {
+                                $writer->writeElement($ent);
+                        } else {
+                                /* it's an array */
+                                $writer->startElement($ent);
+                                dump_xml_config_sub($writer, $val);
+                                $writer->endElement();
+                        }
+                } else {
+			if ((is_bool($val) && ($val == true)) || ($val === ""))
+                                $writer->writeElement($ent);
+                        else if (!is_bool($val))
+                                $writer->writeElement($ent, $val);
+                }
+        }
 }
 
 function dump_xml_config($arr, $rootobj) {
@@ -209,14 +196,19 @@ function dump_xml_config_pkg($arr, $rootobj) {
 
 function dump_xml_config_raw($arr, $rootobj) {
 
-	$xmlconfig = "<?xml version=\"1.0\"?" . ">\n";
-	$xmlconfig .= "<$rootobj>\n";
+        $writer = new XMLWriter();
+        $writer->openMemory();
+        $writer->setIndent(true);
+        $writer->setIndentString("\t");
+        $writer->startDocument("1.0", "UTF-8");
+        $writer->startElement($rootobj);
 
-	$xmlconfig .= dump_xml_config_sub($arr, 1);
+        dump_xml_config_sub($writer, $arr);
 
-	$xmlconfig .= "</$rootobj>\n";
-
-	return $xmlconfig;
+        $writer->endElement();
+        $writer->endDocument();
+        $xmlconfig = $writer->outputMemory(true);
+        return $xmlconfig;
 }
 
 ?>

@@ -65,7 +65,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		if(isset($_POST['session_timeout']))
+		if(isset($_POST['session_timeout']) && $_POST['session_timeout'] != "")
 			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
 		else
 			unset($config['system']['webgui']['session_timeout']);

@@ -618,7 +618,7 @@ EOD;
 
 						$localid_type = $ph2ent['localid']['type'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
-						if ($localid_type == "none")
+						if (($localid_type == "none") || ($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))
 							$localid_spec = " ";
 						else if ($localid_type != "address") {
 							$localid_type = "subnet";

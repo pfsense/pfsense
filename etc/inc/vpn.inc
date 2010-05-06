@@ -491,9 +491,13 @@ function vpn_ipsec_configure($ipchg = false)
 
 					$init = "on";
 					$genp = "off";
+					$pcheck = "claim";
+					$passive = ""
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "anonymous";
 						if ($ph1ent['authentication_method'] == "pre_shared_key") {
+							$passive = "passive on;";
+							$pcheck = "obey";
 							$genp = "on";
 						} else {
 							$init = "off";
@@ -585,7 +589,8 @@ remote {$rgip}
 	{$dpdline1}
 	{$dpdline2}
 	support_proxy on;
-	proposal_check claim;
+	proposal_check {$pcheck};
+	{$passive}
 
 	proposal
 	{

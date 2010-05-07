@@ -106,6 +106,7 @@ $firewall_rules_dscp_types = array("af11",
 				"af43", 
 				"EF", 
 				"1-64", 
+				"0x10",
 				"0x04-0xfc");
 
 $auth_server_types = array(

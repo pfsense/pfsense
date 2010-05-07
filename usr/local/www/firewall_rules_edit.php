@@ -1160,19 +1160,6 @@ include("head.inc");
 				</div>
 			</td>
 		</tr>
-		
-<?php
-			/* build a list of gateways */
-			$gateways = array();
-			$gateways[] = "default"; // default to don't use this feature :)
-			if (is_array($config['gateways']['gateway_item'])) {
-				foreach($config['gateways']['gateway_item'] as $gw_item) {
-				if($gw_item['gateway'] <> "")
-					$gateways[] = $gw_item['name'];
-				}
-			}
-			
-?>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Gateway</td>
 			<td width="78%" class="vtable">
@@ -1181,35 +1168,20 @@ include("head.inc");
 				</div>
 				<div id="showgatewayadv" <? if (empty($pconfig['gateway'])) echo "style='display:none'"; ?>>
 					<select name='gateway'>
+					<option value="" >default</option>
 <?php
+					/* build a list of gateways */
+					$gateways = return_gateways_array();
 					// add statically configured gateways to list
-					foreach($gateways as $gw) {
+					foreach($gateways as $gwname => $gw) {
 						if($gw == "") 
 							continue;
-						if($gw == $pconfig['gateway']) {
+						if($gwname == $pconfig['gateway']) {
 							$selected = " SELECTED";
 						} else {
 							$selected = "";
 						}
-						if ($gw == "default") {
-							echo "<option value=\"\" {$selected}>{$gw}</option>\n";
-						} else {
-							$gwip = lookup_gateway_ip_by_name($gw);
-							echo "<option value=\"{$gw}\" {$selected}>{$gw} - {$gwip}</option>\n";
-						}
-					}
-					// add dynamic gateways to list
-					$iflist = get_configured_interface_with_descr();
-					foreach ($iflist as $ifent => $ifdesc) {
-						if (in_array($config['interfaces'][$ifent]['ipaddr'], array("dhcp", "pppoe", "pptp", "ppp"))) {
-							if ($pconfig['gateway'] == $ifent) {
-								$selected = " SELECTED";
-							} else {
-								$selected = "";
-							}
-							if($ifdesc <> "") 
-								echo "<option value=\"{$ifent}\" {$selected}>".strtoupper($ifent)." - {$ifdesc}</option>\n";
-						}
+						echo "<option value=\"{$gwname}\" {$selected}>{$gw['name']} - {$gw['gateway']}</option>\n";
 					}
 					/* add gateway groups to the list */
 					if (is_array($config['gateways']['gateway_group'])) {

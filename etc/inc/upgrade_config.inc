@@ -800,6 +800,32 @@ function upgrade_042_to_043() {
 
 function upgrade_043_to_044() {
 	global $config;
+
+	/* migrate static routes to the new gateways config */
+	$gateways = return_gateways_array(true);
+	if (is_array($config['staticroutes']['route'])) {
+		foreach ($config['staticroutes']['route'] as $idx => $sroute) {
+			$found = false;
+			foreach ($gateways as $gwname => $gw) {
+				if ($gw['gateway'] == $sroute['gateway']) {
+					$config['staticroutes']['route'][$idx]['gateway'] = $gwname;
+					$found = true;
+					break;
+				}
+			}
+			if ($found == false) {
+				$gateway = array();
+				$gateway['name'] = "SROUTE{$sroute['gateway']}";	
+				$gateway['gateway'] = $sroute['gateway'];
+				$gateway['interface'] = $sroute['interface'];
+				$gateway['descr'] = "Upgraded static route for {$sroute['network']}";
+				if (!is_array($config['gateways']['gateway_item']))
+					$config['gateways']['gateway_item'] = array();
+				$config['gateways']['gateway_item'][] = $gateway;
+				$config['staticroutes']['route'][$idx]['gateway'] = $gateway['name'];
+			}
+		}
+	}
 }
 
 

@@ -1991,34 +1991,6 @@ pass out on \$IPsec all keep state label "IPsec internal host to host"
 
 EOD;
 
-	/*  pass traffic between statically routed subnets and the subnet on the
-	 *  interface in question to avoid problems with complicated routing
-	 *  topologies
-	 */
-	if(isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
-		$ipfrules .= "anchor \"staticrouted\" \n";
-		foreach ($config['staticroutes']['route'] as $route) {
-			$realif = guess_interface_from_ip(lookup_gateway_ip_by_name($route['gateway']));
-			$friendly = convert_real_interface_to_friendly_interface_name($realif);
-			if(is_array($FilterIflist[$friendly])) {
-				$oc = $FilterIflist[$friendly];
-				if($oc['ip']) {
-					$sa = $oc['sa'];
-					$sn = $oc['sn'];
-					$if = $oc['if'];
-				}
-				if($sa) {
-				$ipfrules .= <<<EOD
-pass in quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
-pass in quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
-pass out quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
-pass out quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
-
-EOD;
-				}
-			}
-		}
-	}
 	if(!isset($config['system']['webgui']['noantilockout'])) {
 		if(count($config['interfaces']) > 1 && !empty($FilterIflist['lan']['if'])) {
 				/* if antilockout is enabled, LAN exists and has
@@ -2103,6 +2075,35 @@ EOD;
 			if(!$rule['rule'])
 				continue;
 			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
+		}
+	}
+
+	/*  pass traffic between statically routed subnets and the subnet on the
+	 *  interface in question to avoid problems with complicated routing
+	 *  topologies
+	 */
+	if(isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
+		$ipfrules .= "anchor \"staticrouted\" \n";
+		foreach ($config['staticroutes']['route'] as $route) {
+			$realif = guess_interface_from_ip(lookup_gateway_ip_by_name($route['gateway']));
+			$friendly = convert_real_interface_to_friendly_interface_name($realif);
+			if(is_array($FilterIflist[$friendly])) {
+				$oc = $FilterIflist[$friendly];
+				if($oc['ip']) {
+					$sa = $oc['sa'];
+					$sn = $oc['sn'];
+					$if = $oc['if'];
+				}
+				if($sa) {
+				$ipfrules .= <<<EOD
+pass quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to {$route['network']} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
+pass quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass quick on \${$oc['descr']} proto tcp from {$route['network']} to {$sa}/{$sn} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
+pass quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} keep state(sloppy) label "pass traffic between statically routed subnets"
+
+EOD;
+				}
+			}
 		}
 	}
 

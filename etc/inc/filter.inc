@@ -51,6 +51,9 @@ $time_based_rules = false;
 /* Used to hold the interface list that will be used on ruleset creation. */
 $FilterIflist = array();
 
+/* Create a global array to avoid errors on rulesets. */
+$GatewaysList = array();
+
 /* Used for the hostname dns resolver */
 $filterdns = "";
 
@@ -531,7 +534,7 @@ function filter_generate_aliases() {
 }
 
 function filter_generate_gateways() {
-	global $config, $g;
+	global $config, $g, $GatewaysList;
 
 	$rules = "# Gateways\n";
 
@@ -587,6 +590,9 @@ function filter_generate_gateways() {
 			$rules .= "GW{$gateway} = \" {$route} \"\n";
 		}
 	}
+
+	/* Create a global array to avoid errors on rulesets. */
+	$GatewaysList = array_merge($GatewaysList, $GatewayGroupsList);
 
 	$rules .= "\n";
 
@@ -1544,8 +1550,11 @@ function filter_generate_user_rule($rule) {
 	}
 	/* if user has selected a custom gateway, lets work with it */
 	else if($rule['gateway'] <> "") {
-		/* Add the load balanced gateways */
-		$aline['route'] = " \$GW{$rule['gateway']} ";
+		if (isset($GatewaysList[$rule['gateway']]))
+			/* Add the load balanced gateways */
+			$aline['route'] = " \$GW{$rule['gateway']} ";
+		else
+			log_error("The gateway: {$rule['gateway']} is invalid/unkown not using it.");
 	}
 
 	if(isset($rule['protocol'])) {

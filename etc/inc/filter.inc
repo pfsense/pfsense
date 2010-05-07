@@ -1460,7 +1460,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 }
 
 function filter_generate_user_rule($rule) {
-	global $config, $g, $FilterIflist;
+	global $config, $g, $FilterIflist, $GatewaysList;
 	global $layer7_rules_list;
 
 	if(isset($config['system']['developerspew'])) {

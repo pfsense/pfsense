@@ -171,7 +171,12 @@ EOD;
 				$alarmscfg .= "}\n";
 				$alarms .= "\"{$gateway['name']}loss\"";
 				$override = true;
-			}
+			} else {
+                                if ($override == true)
+                                        $alarms .= ",";
+                                $alarms .= "\"loss\"";
+                                $override = true;
+                        }
 			if (!empty($gwref['latencylow'])) {
 				$alarmscfg .= "alarm delay \"{$gateway['name']}delay\" {\n";
 				$alarmscfg .= "\tdelay_low {$gwref['latencylow']}ms\n";
@@ -180,6 +185,11 @@ EOD;
 				if ($override == true)
 					$alarms .= ",";
 				$alarms .= "\"{$gateway['name']}delay\"";
+				$override = true;
+			} else {
+				if ($override == true)
+                                        $alarms .= ",";
+				$alarms .= "\"delay\"";
 				$override = true;
 			}
 			if (!empty($gwref['down'])) {
@@ -190,7 +200,12 @@ EOD;
                                         $alarms .= ",";
 				$alarms .= "\"{$gateway['name']}down\"";
 				$override = true;
-			}
+			} else {
+                                if ($override == true)
+                                        $alarms .= ",";
+                                $alarms .= "\"down\"";
+                                $override = true;
+                        }
 			if ($override == true)
 				$apingercfg .= "\talarms override {$alarms};\n";
 

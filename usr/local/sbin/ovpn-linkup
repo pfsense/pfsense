@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# write nameservers to file needs dns fidnings?!
+
+# let the configuration system know that the ip has changed.
+#/bin/echo $1 > /tmp/rc.newwanip
+/bin/echo $4 > /tmp/$1_router
+/usr/bin/touch /tmp/$1up
+# reload filter 
+/usr/bin/touch /tmp/filter_dirty
+exit 0

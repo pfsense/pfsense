@@ -336,8 +336,8 @@ function openvpn_reconfigure($mode,& $settings) {
 	$conf .= "persist-key\n";
 	$conf .= "proto {$proto}\n";
 	$conf .= "cipher {$cipher}\n";
-	$conf .= "up /etc/rc.filter_configure\n";
-	$conf .= "down /etc/rc.filter_configure\n";
+	$conf .= "up /usr/local/sbin/ovpn-linkup\n";
+	$conf .= "down /usr/local/sbin/ovpn-linkdown\n";
 
 	if (!empty($iface_ip)) {
 		$conf .= "local {$iface_ip}\n";	

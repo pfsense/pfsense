@@ -2782,6 +2782,7 @@ function link_ip_to_carp_interface($ip) {
                                 $carp_sn = $vip['subnet_bits'];
                                 $carp_nw = gen_subnet($carp_ip, $carp_sn);
                                 if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}")) {
+					$carp_int = "vip{$vip['vhid']}";
                                         if (!stristr($carp_ints, $carp_int))
                                                 $carp_ints .= " {$carp_int}";
                                 }

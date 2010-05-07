@@ -42,14 +42,11 @@ function setup_gateways_monitor() {
 
 	$a_gateway_item = &$config['gateways']['gateway_item'];
 
-	if (is_array($config['gateways']['settings'])) {
-		$a_settings = &$config['gateways']['settings'];
-	} else {
-		$a_settings['latencylow'] = "200";
-		$a_settings['latencyhigh'] = "500";
-		$a_settings['losslow'] = "10";
-		$a_settings['losshigh'] = "20";
-	}
+	$a_settings = array();
+	$a_settings['latencylow'] = "200";
+	$a_settings['latencyhigh'] = "500";
+	$a_settings['losslow'] = "10";
+	$a_settings['losshigh'] = "20";
 
 	/* kill apinger process */
 	if(is_process_running("apinger"))
@@ -149,9 +146,10 @@ EOD;
 	if(is_array($gateways_arr)) {
 		$i = 2;
 		foreach($gateways_arr as $name => $gateway) {
+			$gwref = $a_gateway_item[$gateway['attribute']];
 			/* for dynamic gateways without an IP address we subtitute a local one */
-			if((is_numeric($gateway['attribute'])) && is_ipaddr($a_gateway_item[$gateway['attribute']]['monitor'])) {
-				$gateway['monitor'] = $a_gateway_item[$gateway['attribute']]['monitor'];
+			if((is_numeric($gateway['attribute'])) && is_ipaddr($gwref['monitor'])) {
+				$gateway['monitor'] = $gwref['monitor'];
 			} else {
 				if(($gateway['gateway'] == "dynamic") && ($gateway['monitor'])) {
 					$gateway['monitor'] = "127.0.0.{$i}";
@@ -161,11 +159,44 @@ EOD;
 					$gateway['monitor'] = $gateway['gateway'];
 				}
 			}
-			$apingerconfig .= "target \"{$gateway['monitor']}\" {\n";
-			$apingerconfig .= "	description \"{$gateway['name']}\"\n";
-			$apingerconfig .= "	rrd file \"{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd\"\n";
-			$apingerconfig .= "}\n";
-			$apingerconfig .= "\n";
+			
+			$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
+			$apingercfg .= "	description \"{$gateway['name']}\"\n";
+			$alarms = "";
+			$override = false;
+			if (!empty($gwref['lowloss'])) {
+				$alarmscfg .= "alarm loss \"{$gateway['name']}loss\" {\n";
+				$alarmscfg .= "\tpercent_low {$gwref['losslow']}\n";
+        			$alarmscfg .= "\tpercent_high {$gwref['losshigh']}\n";
+				$alarmscfg .= "}\n";
+				$alarms .= "\"{$gateway['name']}loss\"";
+				$override = true;
+			}
+			if (!empty($gwref['latencylow'])) {
+				$alarmscfg .= "alarm delay \"{$gateway['name']}delay\" {\n";
+				$alarmscfg .= "\tdelay_low {$gwref['latencylow']}ms\n";
+				$alarmscfg .= "\tdelay_high {$gwref['latencyhigh']}ms\n";
+				$alarmscfg .= "}\n";
+				if ($override == true)
+					$alarms .= ",";
+				$alarms .= "\"{$gateway['name']}delay\"";
+				$override = true;
+			}
+			if (!empty($gwref['down'])) {
+				$alarmscfg .= "alarm down \"{$gateway['name']}down\" {\n";
+				$alarmscfg .= "\ttime {$gwref['down']}s\n";
+				$alarmscfg .= "}\n";
+				if ($override == true)
+                                        $alarms .= ",";
+				$alarms .= "\"{$gateway['name']}down\"";
+				$override = true;
+			}
+			if ($override == true)
+				$apingercfg .= "\talarms override {$alarms};\n";
+
+			$apingercfg .= "	rrd file \"{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd\"\n";
+			$apingercfg .= "}\n";
+			$apingercfg .= "\n";
 			if($gateway['monitor'] == $gateway['gateway']) {
 				/* if the gateway is the same as the monitor we do not add a
 				 * route as this will break the routing table */
@@ -179,6 +210,8 @@ EOD;
 				}
 			}
 		}
+		$apingerconfig .= $alarmscfg;
+		$apingerconfig .= $apingercfg;
 	}
 	fwrite($fd, $apingerconfig);
 	fclose($fd);

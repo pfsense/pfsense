@@ -139,7 +139,6 @@ include("head.inc");
 			$tab_array[0] = array(gettext("Gateways"), true, "system_gateways.php");
 			$tab_array[1] = array(gettext("Routes"), false, "system_routes.php");
 			$tab_array[2] = array(gettext("Groups"), false, "system_gateway_groups.php");
-			$tab_array[3] = array(gettext("Settings"), false, "system_gateways_settings.php");
 			display_top_tabs($tab_array);
 ?>
 </td></tr>

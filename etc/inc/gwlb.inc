@@ -351,7 +351,7 @@ function return_gateway_groups_array() {
 						} else {
 							$tiers[$tier][] = $gwname;
 						}
-					} elseif (stristr($status['status'], $delay)) {
+					} elseif (stristr($status['status'], "delay")) {
 						if (strstr($group['trigger'] , "latency")) {
 							/* high latency */
 							$msg = "MONITOR: $gwname has high latency, removing from routing group";

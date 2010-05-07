@@ -110,6 +110,9 @@ if ($_POST) {
 			/* we have a priority above 0 (disabled), add item to list */
 			$pconfig['item'][] = "{$gwname}|{$_POST[$gwname]}";
 		}
+		/* check for overlaps */
+		if ($_POST['name'] == $gwname)
+			$input_errors[] = sprintf(gettext('A gateway group cannot have the same name with a gateway "%s" please choose another name.'), $_POST['name']);
 
 	}
 	if(count($pconfig['item']) == 0) {

@@ -716,14 +716,6 @@
 			<description>This is the network that will be accessible from the remote endpoint, expressed as a CIDR range. You may leave this blank if you don't want to add a route to the local network through this tunnel on the remote machine. This is generally set to your LAN network.</description>
 		</field>
 		<field>
-			<displayname>Remote Network</displayname>
-			<name>remotenet</name>
-			<type>input</type>
-			<size>20</size>
-			<bindstofield>ovpnserver->step10->remotenet</bindstofield>
-			<description>This is a network that will be routed through the tunnel, so that a site-to-site VPN can be established without manually changing the routing tables. Expressed as a CIDR range. If this is a site-to-site VPN, enter the remote LAN here. You may leave this blank if you don't want a site-to-site VPN.</description>
-		</field>
-		<field>
 			<displayname>Concurrent Connections</displayname>
 			<name>concurrentcon</name>
 			<description>Specify the maximum number of clients allowed to concurrently connect to this server.</description>

@@ -337,9 +337,6 @@ function step10_submitphpaction() {
 	if ($result = openvpn_validate_cidr($_POST['tunnelnet'], 'Tunnel network'))
 		$input_errors[] = $result;
 
-	if ($result = openvpn_validate_cidr($_POST['remotenet'], 'Remote network'))
-		$input_errors[] = $result;
-
 	if ($result = openvpn_validate_cidr($_POST['localnet'], 'Local network'))
 		$input_errors[] = $result;
 
@@ -530,8 +527,6 @@ function step12_submitphpaction() {
 		$server['gwredir'] = $pconfig['step10']['rdrgw'];
 	if (isset($pconfig['step10']['localnet']))
 		$server['local_network'] = $pconfig['step10']['localnet'];
-	if (isset($pconfig['step10']['remotenet']))
-		$server['remote_network'] = $pconfig['step10']['remotenet'];
 	if (isset($pconfig['step10']['concurrentcon']))
 		$server['maxclients'] = $pconfig['step10']['concurrentcon'];
 	if (isset($pconfig['step10']['compression']))

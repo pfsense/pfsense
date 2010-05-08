@@ -382,10 +382,16 @@ function mode_change() {
 			break;
 	}
 	switch(value) {
-		case "p2p_tls":
 		case "p2p_shared_key":
 			document.getElementById("client_opts").style.display="none";
 			document.getElementById("remote_opts").style.display="";
+			document.getElementById("local_opts").style.display="none";
+			document.getElementById("authmodetr").style.display="none";
+			break;
+		case "p2p_tls":
+			document.getElementById("client_opts").style.display="none";
+			document.getElementById("remote_opts").style.display="";
+			document.getElementById("local_opts").style.display="";
 			document.getElementById("authmodetr").style.display="none";
 			break;
 		case "server_user":
@@ -393,12 +399,14 @@ function mode_change() {
 			document.getElementById("authmodetr").style.display="";
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("local_opts").style.display="";
 			break;
 		case "server_tls":
 			document.getElementById("authmodetr").style.display="none";
 		default:
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("local_opts").style.display="";
 			break;
 	}
 }

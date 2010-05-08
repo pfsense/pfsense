@@ -317,7 +317,7 @@ function update_description(itemnum) {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Reflection Timeout");?></td>
 								<td width="78%" class="vtable">
 									<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" /><br/>
-									<strong><?=gettext("Enter value for Reflection timeout in seconds.");?></strong>
+									<strong><?=gettext("Enter value for Reflection timeout in seconds.  Note: Only applies to Reflection on port forwards.");?></strong>
 								</td>
 							</tr>
 							<tr>

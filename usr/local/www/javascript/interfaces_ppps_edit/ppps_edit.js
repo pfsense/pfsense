@@ -79,6 +79,19 @@ function show_more_settings(checkbox_obj,element_id) {
 		$(element_id).hide();
 }
 
+function show_reset_settings(reset_type) {
+	if (reset_type == 'preset') { 
+		Effect.Appear('pppoepresetwrap', { duration: 0.0 });
+		Effect.Fade('pppoecustomwrap', { duration: 0.0 }); 
+	} 
+	else if (reset_type == 'custom') { 
+		Effect.Appear('pppoecustomwrap', { duration: 0.0 });
+		Effect.Fade('pppoepresetwrap', { duration: 0.0 });
+	} else {
+		Effect.Fade('pppoecustomwrap', { duration: 0.0 });
+		Effect.Fade('pppoepresetwrap', { duration: 0.0 });
+	}
+}
 function prefill_att() {
 	$('initstr').value = "Q0V1E1S0=0&C1&D2+FCLASS=0";
 	$('apn').value = "ISP.CINGULAR";

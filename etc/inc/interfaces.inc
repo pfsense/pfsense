@@ -1078,7 +1078,7 @@ function interface_ppps_configure($interface) {
 		exec("/bin/mkdir -p /var/spool/lock");
 		exec("/bin/chmod a+rw /var/spool/lock/.");
 	}
-	// mpd5 modem chat script expected in the same directory as the mpd_xxx.conf files
+	// mpd5 modem chat script expected in the same directory as the mpd_xxx.conf files	
 	if (!file_exists("{$g['varetc_path']}/mpd.script"))
 		mwexec("/bin/ln -s /usr/local/sbin/mpd.script {$g['varetc_path']}/.");
 		
@@ -3484,14 +3484,24 @@ function is_jumbo_capable($int) {
                 return false;
 }
 
-function setup_pppoe_reset_file($interface, $status) {
-	define("CRON_PPPOE_CMD_FILE", "/conf/pppoe{$interface}restart");
-	define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"config.inc\"); require(\"interfaces.inc\"); interface_reconfigure({$interface}); ?>' | /usr/local/bin/php -q");
+function setup_pppoe_reset_file($ptpid, $status) {
+	define("CRON_PPPOE_CMD_FILE", "{$g['varetc_path']}/ppp_restart_{$ptpid}");
+	
+	if (is_array($config['interfaces']) && count($config['interfaces'])) {
+		foreach ($config['interfaces'] as $interface => $intcfg) {
+			if ($intcfg['ptpid'] == $ptpid)
+				break;
+		}
+	}
+	if ($intcfg['ptpid'] == $ptpid){
+		define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"config.inc\"); require(\"interfaces.inc\"); interface_reconfigure({$interface}); ?>' | /usr/local/bin/php -q");
+	} else
+		define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"config.inc\"); log_error(\"PPPoE Periodic Reset defined for link that is NOT assigned to a WAN/OPTx interface.\"); ?>' | /usr/local/bin/php -q");
+	
 	if ($status == true) {
-		if (!file_exists(CRON_PPPOE_CMD_FILE)) {
 			file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
 			chmod(CRON_PPPOE_CMD_FILE, 0700);
-		}	
+
 	} else
 		unlink_if_exists(CRON_PPPOE_CMD_FILE);
 }

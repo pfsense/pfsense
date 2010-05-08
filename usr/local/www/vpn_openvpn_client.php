@@ -186,12 +186,14 @@ if ($_POST) {
 			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----"))
 			$input_errors[] = "The field 'TLS Authentication Key' does not appear to be valid";
 
-	if (!$tls_mode && !$pconfig['autokey_enable']) {
-		$reqdfields = array('shared_key');
-		$reqdfieldsn = array('Shared key');
-    } else {
+	/* If we are not in shared key mode, then we need the CA/Cert. */
+	if ($pconfig['mode'] != "p2p_shared_key") {
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = explode(",", "Certificate Authority,Certificate");;
+	} elseif (!$pconfig['autokey_enable']) {
+		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
+		$reqdfields = array('shared_key');
+		$reqdfieldsn = array('Shared key');
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);

@@ -133,8 +133,8 @@ $priv_list['page-diagnostics-logs-settings']['match'] = array();
 $priv_list['page-diagnostics-logs-settings']['match'][] = "diag_logs_settings.php*";
 
 $priv_list['page-diagnostics-logs-pptpvpn'] = array();
-$priv_list['page-diagnostics-logs-pptpvpn']['name'] = "WebCfg - Diagnostics: Logs: PPTP VPN page";
-$priv_list['page-diagnostics-logs-pptpvpn']['descr'] = "Allow access to the 'Diagnostics: Logs: PPTP VPN' page.";
+$priv_list['page-diagnostics-logs-pptpvpn']['name'] = "WebCfg - Diagnostics: Logs: VPN page";
+$priv_list['page-diagnostics-logs-pptpvpn']['descr'] = "Allow access to the 'Diagnostics: Logs: VPN' page.";
 $priv_list['page-diagnostics-logs-pptpvpn']['match'] = array();
 $priv_list['page-diagnostics-logs-pptpvpn']['match'][] = "diag_logs_vpn.php*";
 

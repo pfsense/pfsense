@@ -1332,6 +1332,7 @@ EOD;
 	}
 	// Check for PPPoE periodic reset request 
 	if ($type == "pppoe" && isset($ppp['pppoe-reset-type']))
+		log_error ("interface_ppps_configure using ptpid={$ppp['ptpid']} for PPPoE periodic reset");
 		setup_pppoe_reset_file($ppp['ptpid'], $interface);
 	
 	if(file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid") and $g['booting']) {
@@ -1366,7 +1367,7 @@ EOD;
 		}
 		
 		/* fire up mpd */
-		mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/{$ppp['type']}_{$interface}.pid -s {$interface} {$ppp['type']}client");
+		mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/{$ppp['type']}_{$interface}.pid -s ppp {$ppp['type']}client");
 	}
 
 	/* sleep until wan is up - or 30 seconds, whichever comes first */

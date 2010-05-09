@@ -869,6 +869,8 @@ function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_
 		else
 			$rflctintrange = "";
 		$dstaddr = $dstaddr[0];
+		if(empty($dstaddr) || strtolower(trim($dstaddr)) == "port")
+			return "";
 
 		if(isset($rule['destination']['any'])) {
 			if(!$rule['interface'])

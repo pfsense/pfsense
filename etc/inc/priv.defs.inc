@@ -133,8 +133,8 @@ $priv_list['page-diagnostics-logs-settings']['match'] = array();
 $priv_list['page-diagnostics-logs-settings']['match'][] = "diag_logs_settings.php*";
 
 $priv_list['page-diagnostics-logs-pptpvpn'] = array();
-$priv_list['page-diagnostics-logs-pptpvpn']['name'] = "WebCfg - Diagnostics: Logs: VPN page";
-$priv_list['page-diagnostics-logs-pptpvpn']['descr'] = "Allow access to the 'Diagnostics: Logs: VPN' page.";
+$priv_list['page-diagnostics-logs-pptpvpn']['name'] = "WebCfg - Diagnostics: Logs: PPTP VPN page";
+$priv_list['page-diagnostics-logs-pptpvpn']['descr'] = "Allow access to the 'Diagnostics: Logs: PPTP VPN' page.";
 $priv_list['page-diagnostics-logs-pptpvpn']['match'] = array();
 $priv_list['page-diagnostics-logs-pptpvpn']['match'][] = "diag_logs_vpn.php*";
 
@@ -317,6 +317,12 @@ $priv_list['page-getstats']['name'] = "WebCfg - AJAX: Get Stats";
 $priv_list['page-getstats']['descr'] = "Allow access to the 'AJAX: Get Stats' page.";
 $priv_list['page-getstats']['match'] = array();
 $priv_list['page-getstats']['match'][] = "getstats.php*";
+
+$priv_list['page-status-systemlogs-ppp'] = array();
+$priv_list['page-status-systemlogs-ppp']['name'] = "WebCfg - Status: System logs: IPsec VPN page";
+$priv_list['page-status-systemlogs-ppp']['descr'] = "Allow access to the 'Status: System logs: IPsec VPN' page.";
+$priv_list['page-status-systemlogs-ppp']['match'] = array();
+$priv_list['page-status-systemlogs-ppp']['match'][] = "diag_logs_ppp.php*";
 
 $priv_list['page-diagnostics-nanobsd'] = array();
 $priv_list['page-diagnostics-nanobsd']['name'] = "WebCfg - Diagnostics: NanoBSD";

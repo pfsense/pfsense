@@ -1,9 +1,10 @@
 <?php
 /* $Id$ */
 /*
-	diag_logs_auth.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	diag_logs_slbd.php
+	part of pfSense
 
+	Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -29,29 +30,29 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*		
-	pfSense_MODULE:	captiveportal
+/*	
+	pfSense_MODULE:	routing
 */
 
 ##|+PRIV
-##|*IDENT=page-status-systemlogs-portalauth
-##|*NAME=Status: System logs: Portal Auth page
-##|*DESCR=Allow access to the 'Status: System logs: Portal Auth' page.
-##|*MATCH=diag_logs_auth.php*
+##|*IDENT=page-status-systemlogs-loadbalancer
+##|*NAME=Status: System logs: Load Balancer page
+##|*DESCR=Allow access to the 'Status: System logs: Load Balancer' page.
+##|*MATCH=diag_logs_slbd.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 
-$portal_logfile = "{$g['varlog_path']}/portalauth.log";
+$slbd_logfile = "{$g['varlog_path']}/slbd.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) 
-	clear_log_file($portal_logfile);
+	clear_log_file($slbd_logfile);
 
-$pgtitle = array("Status","System logs","Portal Auth");
+$pgtitle = array("Status","System logs","Load Balancer");
 include("head.inc");
 
 ?>
@@ -65,11 +66,11 @@ include("head.inc");
 	$tab_array[] = array("System", false, "diag_logs.php");
 	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
 	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
-	$tab_array[] = array("Portal Auth", true, "diag_logs_auth.php");
+	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
 	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
 	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
 	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
-	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
+	$tab_array[] = array("Load Balancer", true, "diag_logs_slbd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
 	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
 	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
@@ -82,14 +83,14 @@ include("head.inc");
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  Last <?=$nentries;?> Portal Auth log entries</td>
+			  Last <?=$nentries;?> Load Balancer log entries</td>
 		  </tr>
-		  <?php dump_clog($portal_logfile, $nentries, true); ?>
-		<tr><td><br><form action="diag_logs_auth.php" method="post">
+		  <?php dump_clog($slbd_logfile, $nentries); ?>
+		<tr><td><br><form action="diag_logs_slbd.php" method="post">
 			<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
 		</table>
 	</div>
-	</form>
+</form>
 	</td>
   </tr>
 </table>

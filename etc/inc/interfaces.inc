@@ -1054,19 +1054,19 @@ EOD;
 function interface_ppps_configure($interface) {
 	global $config, $g;
 	
-	$wancfg = &$config['interfaces'][$interface];
+	$intcfg = &$config['interfaces'][$interface];
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-			if ($wancfg['ptpid'] == $ppp['ptpid'])
+			if ($intcfg['ptpid'] == $ppp['ptpid'])
 				break;
 		}
 	}
-	if (!$ppp || $wancfg['ptpid'] != $ppp['ptpid']){
+	if (!$ppp || $intcfg['ptpid'] != $ppp['ptpid']){
 		log_error("PPP configuration error in interface_ppps_configure().");
 		return;
 	}
 
-	$pppif = $wancfg['if'];
+	$pppif = $intcfg['if'];
 	if ($ppp['type'] == "ppp")
 		$type = "modem";
 	else
@@ -1156,7 +1156,7 @@ EOD;
 
 	if (isset($ppp['ondemand'])) {
 		$mpdconf .= <<<EOD
-	set iface addrs 10.5.5.1 10.5.0.2
+	set iface addrs 10.10.1.1 10.10.1.2
 
 EOD;
 	}
@@ -1187,7 +1187,7 @@ EOD;
 EOD;
 	}
 /*
-	if (!isset($wancfg['dnsnosec']) && isset($config['system']['dnsallowoverride'])) {
+	if (!isset($intcfg['dnsnosec']) && isset($config['system']['dnsallowoverride'])) {
 			$mpdconf .= <<<EOD
 	set ipcp enable req-sec-dns
 
@@ -1330,6 +1330,10 @@ EOD;
 			conf_mount_ro();
 		}
 	}
+	// Check for PPPoE periodic reset request 
+	if ($type == "pppoe" && isset($ppp['pppoe-reset-type']))
+		setup_pppoe_reset_file($ppp['ptpid'], $interface);
+	
 	if(file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid") and $g['booting']) {
 		/* if we are booting and mpd has already been started then don't start again. */
 	} else {
@@ -2274,7 +2278,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			interface_ppps_configure($interface);
 			break;
 		case 'pptp':
-			interface_pps_configure($interface);
+			interface_ppps_configure($interface);
 			break;
 		case 'ppp':
 			interface_ppps_configure($interface);
@@ -3484,24 +3488,25 @@ function is_jumbo_capable($int) {
                 return false;
 }
 
-function setup_pppoe_reset_file($ptpid, $status) {
+function setup_pppoe_reset_file($ptpid, $interface) {
+	global $g;
 	define("CRON_PPPOE_CMD_FILE", "{$g['varetc_path']}/ppp_restart_{$ptpid}");
-	
-	if (is_array($config['interfaces']) && count($config['interfaces'])) {
-		foreach ($config['interfaces'] as $interface => $intcfg) {
-			if ($intcfg['ptpid'] == $ptpid)
+	$found = false;
+	if(isset($interface) && isset($ptpid)){
+		$iflist = get_configured_interface_list();
+		foreach($iflist as $if) {
+			if($if == $interface){
+				$found = true;
 				break;
+			}
 		}
 	}
-	if ($intcfg['ptpid'] == $ptpid){
-		define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"config.inc\"); require(\"interfaces.inc\"); interface_reconfigure({$interface}); ?>' | /usr/local/bin/php -q");
-	} else
-		define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"config.inc\"); log_error(\"PPPoE Periodic Reset defined for link that is NOT assigned to a WAN/OPTx interface.\"); ?>' | /usr/local/bin/php -q");
 	
-	if ($status == true) {
-			file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
-			chmod(CRON_PPPOE_CMD_FILE, 0700);
-
+	if ($found) {
+		define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"config.inc\"); require(\"interfaces.inc\"); interface_reconfigure({$interface}); log_error(\"PPPoE periodic reset executed on {$interface}\"); ?>' | /usr/local/bin/php -q");
+		file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
+		chmod(CRON_PPPOE_CMD_FILE, 0700);
+		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
 	} else
 		unlink_if_exists(CRON_PPPOE_CMD_FILE);
 }

@@ -373,7 +373,7 @@ if ($_POST) {
 		
         $iflist = get_configured_interface_list();
         foreach ($iflist as $if) {
-        	if ($config['interfaces'][$if]['ptpid'] == $ppp['ptpid']){
+        	if ($config['interfaces'][$if]['ptpid'] == $_POST['ptpid']){
 				$thisif = $if;
 				break;
 			}
@@ -385,7 +385,7 @@ if ($_POST) {
 			
 		write_config();
 		
-		if (!empty($thisif)){
+		if (isset($thisif)){
 			interface_ppps_configure($thisif);
 		}
 		header("Location: interfaces_ppps.php");
@@ -397,7 +397,8 @@ function handle_pppoe_reset() {
 	global $_POST, $config, $g;
 	/* perform a periodic reset? */
 	if(empty($_POST['pppoe-reset-type'])) {
-		setup_pppoe_reset_file($_POST['ptpid'], false);		
+		log_error("Calling setup_pppoe_reset to unlink reset file for {$_POST['ptpid']}.");
+		setup_pppoe_reset_file($_POST['ptpid']);		
 		return;
 	}
 
@@ -465,13 +466,6 @@ function handle_pppoe_reset() {
 		$config['cron']['item'][$itemhash['ID']] = $item;
 	else 
 		$config['cron']['item'][] = $item;
-
-	// finally install the pppoerestart file 
-	if (isset($_POST['pppoe-reset-type'])) {
-		setup_pppoe_reset_file($_POST['ptpid'], true);
-		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
-	} else 
-		setup_pppoe_reset_file($_POST['ptpid'], false);	
 }
 
 $closehead = false;

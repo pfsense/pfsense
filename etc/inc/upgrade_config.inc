@@ -1935,7 +1935,7 @@ function upgrade_061_to_062() {
 	}
 }
 
-function upgrade_061_to_062() {
+function upgrade_062_to_063() {
 	/* Upgrade legacy Themes to the new pfsense_ng */
 	global $config;
 

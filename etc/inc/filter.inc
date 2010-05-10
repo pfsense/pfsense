@@ -485,8 +485,12 @@ function filter_generate_aliases() {
 	if(isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
 			$extraalias = "";
-			$ip = find_interface_ip($aliased['address']);
-			$extraalias = " " . link_ip_to_carp_interface($ip);
+			/* 
+			 * XXX: i am not sure what this does so i am commenting it out for now, because as it is
+			 * its quite dangerous!
+			 * $ip = find_interface_ip($aliased['address']);
+			 * $extraalias = " " . link_ip_to_carp_interface($ip);
+			 */
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
 			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);

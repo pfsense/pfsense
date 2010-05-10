@@ -176,13 +176,13 @@ include("head.inc");
 						</tr>
 						<?php $i = 0; foreach ($config['sysctl']['item'] as $tunable): ?>
 						<tr>
-							<td class="listlr" ondblclick="document.location='system_advanced_sysctl.php?id=<?=$i;?>';">
+							<td class="listlr" ondblclick="document.location='system_advanced_sysctl.php?act=edit&id=<?=$i;?>';">
 								<?php echo $tunable['tunable']; ?>
 							</td>
-							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?id=<?=$i;?>';">
+							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&id=<?=$i;?>';">
 								<?php echo $tunable['desc']; ?>
 							</td>
-							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?id=<?=$i;?>';">
+							<td class="listr" align="left" ondblclick="document.location='system_advanced_sysctl.php?act=edit&id=<?=$i;?>';">
 								<?php echo $tunable['value']; ?>
 								<?php 
 									if($tunable['value'] == "default") 

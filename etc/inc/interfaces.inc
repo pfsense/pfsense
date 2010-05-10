@@ -1331,10 +1331,12 @@ EOD;
 		}
 	}
 	// Check for PPPoE periodic reset request 
-	if ($type == "pppoe" && isset($ppp['pppoe-reset-type']))
-		log_error ("interface_ppps_configure using ptpid={$ppp['ptpid']} for PPPoE periodic reset");
-		setup_pppoe_reset_file($ppp['ptpid'], $interface);
-	
+	if ($type == "pppoe")
+		if (isset($ppp['pppoe-reset-type']))
+			setup_pppoe_reset_file($ppp['ptpid'], $interface);
+		else
+			setup_pppoe_reset_file($ppp['ptpid']);
+
 	if(file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid") and $g['booting']) {
 		/* if we are booting and mpd has already been started then don't start again. */
 	} else {
@@ -3489,27 +3491,17 @@ function is_jumbo_capable($int) {
                 return false;
 }
 
-function setup_pppoe_reset_file($ptpid, $interface) {
+function setup_pppoe_reset_file($ptpid, $iface="") {
 	global $g;
-	define("CRON_PPPOE_CMD_FILE", "{$g['varetc_path']}/ppp_restart_{$ptpid}");
-	$found = false;
-	if(isset($interface) && isset($ptpid)){
-		$iflist = get_configured_interface_list();
-		foreach($iflist as $if) {
-			if($if == $interface){
-				$found = true;
-				break;
-			}
-		}
-	}
-	
-	if ($found) {
-		define("CRON_PPPOE_CMD", "#!/bin/sh\necho '<?php require(\"config.inc\"); require(\"interfaces.inc\"); interface_reconfigure({$interface}); log_error(\"PPPoE periodic reset executed on {$interface}\"); ?>' | /usr/local/bin/php -q");
-		file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
-		chmod(CRON_PPPOE_CMD_FILE, 0700);
+	$cron_file = "{$g['varetc_path']}/pppoe_restart_{$ptpid}";
+
+	if(!empty($iface) && !empty($ptpid)){
+		$cron_cmd = "#!/bin/sh\necho '<?php require(\"config.inc\"); require(\"interfaces.inc\"); interface_reconfigure({$iface}); log_error(\"PPPoE periodic reset executed on {$iface}\"); ?>' | /usr/local/bin/php -q";
+		file_put_contents($cron_file, $cron_cmd);
+		chmod($cron_file, 0700);
 		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
 	} else
-		unlink_if_exists(CRON_PPPOE_CMD_FILE);
+		unlink_if_exists($cron_file);
 }
 
 ?>

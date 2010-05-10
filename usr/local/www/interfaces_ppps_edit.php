@@ -43,7 +43,7 @@
 
 require("guiconfig.inc");
 
-define("CRON_PPPOE_CMD_FILE", "{$g['varetc_path']}/ppp_restart_");
+define("CRON_PPPOE_CMD_FILE", "{$g['varetc_path']}/pppoe_restart_");
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
@@ -334,7 +334,7 @@ if ($_POST) {
 					$ppp['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
 				else
 					unset($ppp['pppoe-reset-type']);
-				handle_pppoe_reset();
+				
 				break;
 			case "pptp":
 				$ppp['localip'] = $_POST['localip'];
@@ -345,31 +345,28 @@ if ($_POST) {
 				break;
 			
 		}
-		/* reset cron items if necessary */
-		if (empty($_POST['pppoe-reset-type'])) {
-			/* test whether a cron item exists and unset() it if necessary */
-			$itemhash = getMPDCRONSettings();
-			$item = $itemhash['ITEM'];
-			if (isset($item))
-				unset($config['cron']['item'][$itemhash['ID']]); 
-		}
+		
 		$ppp['shortseq'] = $_POST['shortseq'] ? true : false;
 		$ppp['acfcomp'] = $_POST['acfcomp'] ? true : false;
 		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
-		if (isset($_POST['bandwidth']))
+		if (isset($_POST['bandwidth']) && count($_POST['bandwidth']))
 			$ppp['bandwidth'] = implode(',', $_POST['bandwidth']);
 		else 
 			unset($ppp['bandwidth']);
-		if (isset($_POST['mtu']))
+		if (isset($_POST['mtu']) && count($_POST['mtu']))
 			$ppp['mtu'] = implode(',', $_POST['mtu']);
 		else 
 			unset($ppp['mtu']);
-		if (isset($_POST['mru']))
+		if (isset($_POST['mru']) && count($_POST['mru']))
 			$ppp['mru'] = implode(',', $_POST['mru']);
 		else 
 			unset($ppp['mru']);
+		/* handle_pppoe_reset is called here because if user changes Link Type from PPPoE to another type we 
+		must be able to clear the config data in the <cron> section of config.xml if it exists
+		*/
+		handle_pppoe_reset();
 		
         $iflist = get_configured_interface_list();
         foreach ($iflist as $if) {
@@ -395,17 +392,20 @@ if ($_POST) {
 
 function handle_pppoe_reset() {
 	global $_POST, $config, $g;
-	/* perform a periodic reset? */
-	if(empty($_POST['pppoe-reset-type'])) {
-		log_error("Calling setup_pppoe_reset to unlink reset file for {$_POST['ptpid']}.");
-		setup_pppoe_reset_file($_POST['ptpid']);		
-		return;
-	}
 
 	if (!is_array($config['cron']['item'])) 
 		$config['cron']['item'] = array(); 
 	$itemhash = getMPDCRONSettings();
 	$item = $itemhash['ITEM'];
+	
+	/* reset cron items if necessary and return*/
+	if (empty($_POST['pppoe-reset-type'])) {
+		if (isset($item))
+			unset($config['cron']['item'][$itemhash['ID']]);
+		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
+		return;
+	}
+
 	if (empty($item)) 
 		$item = array();
 	if (isset($_POST['pppoe-reset-type']) && $_POST['pppoe-reset-type'] == "custom") {

@@ -60,7 +60,7 @@ function return_ext_menu($section) {
 				} else {
 					$myurl = $addresswithport;
 				}
-				$description = str_replace('\$myurl', $myurl, $menuitem['url']);
+				$description = str_replace('$myurl', $myurl, $menuitem['url']);
 			} else {
 				$description = '/pkg.php?xml=' . $menuitem['configfile'];
 			}

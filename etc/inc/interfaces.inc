@@ -2776,6 +2776,7 @@ function link_ip_to_carp_interface($ip) {
 
         $carp_ints = "";
         if (is_array($config['virtualip']['vip'])) {
+		$first = 0;
                 foreach ($config['virtualip']['vip'] as $vip) {
                         if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
                                 $carp_ip = $vip['subnet'];
@@ -2783,8 +2784,12 @@ function link_ip_to_carp_interface($ip) {
                                 $carp_nw = gen_subnet($carp_ip, $carp_sn);
                                 if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}")) {
 					$carp_int = "vip{$vip['vhid']}";
-                                        if (!stristr($carp_ints, $carp_int))
-                                                $carp_ints .= " {$carp_int}";
+                                        if (!stristr($carp_ints, $carp_int)) {
+						if ($first > 0)
+							$carp_ints .= " ";
+                                                $carp_ints .= "{$carp_int}";
+						$first++;
+					}
                                 }
                         }
                 }

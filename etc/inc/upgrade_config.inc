@@ -1935,4 +1935,15 @@ function upgrade_061_to_062() {
 	}
 }
 
+function upgrade_061_to_062() {
+	/* Upgrade legacy Themes to the new pfsense_ng */
+	global $config;
+
+	switch($config['theme']) {
+		"nervecenter":
+			$config['theme'] = "pfsense_ng";
+			break;
+	}
+	
+}
 ?>

@@ -269,19 +269,8 @@ function local_user_set(& $user) {
 		fwrite($fd, $user['password']);
 		pclose($fd);
 		$user_group = "wheel";
-		$user_home = "/root";
 	}
 
-	/* admin user special handling */
-	if ($user_uid == 0) {
-		$cmd = "/usr/sbin/pw usermod -q -n admin -s /bin/sh -H 0";
-		if($debug)
-			log_error("Running: {$cmd}");
-		$fd = popen($cmd, "w");
-		fwrite($fd, $user['password']);
-		pclose($fd);
-		$user_group = "wheel";
-	}
 
 	/* read from pw db */
 	$fd = popen("/usr/sbin/pw usershow {$user_name} 2>&1", "r");
@@ -289,21 +278,35 @@ function local_user_set(& $user) {
 	pclose($fd);
 
 	/* determine add or mod */
-	if (!strncmp($pwread, "pw:", 3))
+	if (!strncmp($pwread, "pw:", 3)) {
 		$user_op = "useradd";
-	else
+	} else {
 		$user_op = "usermod";
+	}
 
 	/* add or mod pw db */
 	$cmd = "/usr/sbin/pw {$user_op} -q -u {$user_uid} -n {$user_name}".
 			" -g {$user_group} -s {$user_shell} -d {$user_home}".
-			" -c ".escapeshellarg($user['fullname'])." -H 0 2>&1";
+			" -c ".escapeshellarg($user['fullname'])." -H 0 -o 2>&1";
 
 	if($debug)
 		log_error("Running: {$cmd}");
 	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
+
+
+	/* admin user special handling */
+	if ($user_uid == 0) {
+		$cmd = "/usr/sbin/pw usermod -q -n {$user_name} -s /bin/sh -H 0";
+		log_error("Running {$cmd}");
+		if($debug)
+			log_error("Running: {$cmd}");
+		$fd = popen($cmd, "w");
+		fwrite($fd, $user['password']);
+		pclose($fd);
+		$user_group = "wheel";
+	}
 
 	/* create user directory if required */
 	if (!is_dir($user_home)) {

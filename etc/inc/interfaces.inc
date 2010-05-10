@@ -692,7 +692,7 @@ function interfaces_configure() {
 	
 	foreach($iflist as $if => $ifname) {
 		$realif = $config['interfaces'][$if]['if'];
-		if(is_array($realif['pppoe']) && isset($realif['pppoe']['pppoe-reset-type']))
+		if(is_array($config['interfaces'][$if]['pppoe']) && isset($config['interfaces'][$if]['pppoe']['pppoe-reset-type']))
 			setup_pppoe_reset_file($if, true);
 		else 
 			setup_pppoe_reset_file($if, false);

@@ -39,12 +39,13 @@
 	$platform = trim(file_get_contents("{$g['etc_path']}/platform"));
 	$hostname = $config['system']['hostname'];
 	$product = $g['product_name'];
+	$machine = trim(`uname -m`);
 	$hideplatform = $g['hideplatform'];
 	
 	if(!$hideplatform) 
 		$platformbanner = "-{$platform}";
 	
-	print "\n*** Welcome to {$product} {$version}{$platformbanner} on {$hostname} ***\n";
+	print "\n*** Welcome to {$product} ({$machine}) {$version}{$platformbanner} on {$hostname} ***\n";
 
 	$iflist = get_configured_interface_with_descr(false, true);
 	foreach($iflist as $ifname => $friendly) {

@@ -220,7 +220,6 @@ value="<?=htmlspecialchars($pconfig['descr']);?>">
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
                     <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="<?=gettext("Cancel"); ?>" class="formbtn"  onclick="history.back()">
-		    <a href="system_gateway_groups.php"><input type="button" value="<?=gettext("Cancel");?>" class="formbtn" ></a>
                     <?php if (isset($id) && $a_gateway_groups[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

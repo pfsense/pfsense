@@ -2606,7 +2606,8 @@ EOD;
 function discover_pkg_rules($ruletype) {
 	global $config, $g;
 
-	if(!is_dir("/usr/local/pkg"))
+	/* Bail if there is no pkg directory, or if the package files might be out of sync. */
+	if(!is_dir("/usr/local/pkg") || file_exists('/conf/needs_package_sync'))
 		return "";
 
 	$rules = "";

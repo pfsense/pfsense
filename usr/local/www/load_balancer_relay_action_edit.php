@@ -525,26 +525,6 @@ document.observe("dom:loaded", function() {
 < XXX TODO -->
 			</td>
 		</tr>
-		<tr align="left" id="ssl_options_row"<?= $pconfig['protocol'] == "http" ? "" : " style=\"display:none;\""?>>
-			<td width="22%" valign="top" class="vncellreq">Options</td>
-			<td width="78%" class="vtable" colspan="2">
-				XXX: TODO
-<!-- XXX TODO >
-				<select id="options" name="options">
-<?
-	foreach ($types as $key => $val) {
-		if(isset($pconfig['protocol']) && $pconfig['protocol'] == $key) {
-			$selected = " selected";
-		} else {
-			$selected = "";
-		}
-		echo "<option value=\"{$key}\" onclick=\"updateType('{$key}');\"{$selected}>{$val}</option>\n";
-	}
-?>
-				</select>
-< XXX TODO -->
-			</td>
-		</tr>
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">

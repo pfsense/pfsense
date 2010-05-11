@@ -1097,17 +1097,19 @@ function upgrade_047_to_048() {
 	if (!empty($config['dyndns'])) {
 		$config['dyndnses'] = array();
 		$config['dyndnses']['dyndns'] = array();
-		$tempdyn = array();
-		$tempdyn['enable'] = isset($config['dyndns'][0]['enable']);
-		$tempdyn['type'] = $config['dyndns'][0]['type'];
-		$tempdyn['wildcard'] = isset($config['dyndns'][0]['wildcard']);
-		$tempdyn['usernamefld'] = $config['dyndns'][0]['username'];
-		$tempdyn['passwordfld'] = $config['dyndns'][0]['password'];
-		$tempdyn['host'] = $config['dyndns'][0]['host'];
-		$tempdyn['mx'] = $config['dyndns'][0]['mx'];		
-		$tempdyn['interface'] = "wan";
-		$tempdyn['descr'] = "Upgraded Dyndns {$tempdyn['type']}";
-		$config['dyndnses']['dyndns'][] = $tempdyn;
+		if(isset($config['dyndns'][0]['enable'])) {
+			$tempdyn = array();
+			$tempdyn['enable'] = isset($config['dyndns'][0]['enable']);
+			$tempdyn['type'] = $config['dyndns'][0]['type'];
+			$tempdyn['wildcard'] = isset($config['dyndns'][0]['wildcard']);
+			$tempdyn['usernamefld'] = $config['dyndns'][0]['username'];
+			$tempdyn['passwordfld'] = $config['dyndns'][0]['password'];
+			$tempdyn['host'] = $config['dyndns'][0]['host'];
+			$tempdyn['mx'] = $config['dyndns'][0]['mx'];		
+			$tempdyn['interface'] = "wan";
+			$tempdyn['descr'] = "Upgraded Dyndns {$tempdyn['type']}";
+			$config['dyndnses']['dyndns'][] = $tempdyn;
+		}
 		unset($config['dyndns']);
 	}		
 	if (!empty($config['dnsupdate'])) {

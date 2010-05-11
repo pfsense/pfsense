@@ -1,19 +1,19 @@
 
 function update_select_list(new_options, select_list){
 	var option_array = new_options.split("|");
-	select_list.options.length = 0;
+	select_list.length = 0;
 	for(var j=0; j < option_array.length-1; j++){
 		var option = option_array[j].split(",");
 		var selected = Boolean(parseInt(option[2]));
-		select_list.options[j] = new Option(option[0], option[1], false, selected);
-		var linklabel = "linklabel" + j.toString();
-		var label_text = $(linklabel).innerHTML;
-		$(linklabel).innerHTML = label_text + " (" + option[1] + ")";
+		select_list[j] = new Option(option[0], option[1], false, selected);
+		var label = "linklabel" + j.toString();
+		//var label_text = $(label).innerHTML;
+		$(label).innerHTML = "Link Parameters (" + option[1] + ")";
 		//for testing and debugging
 		//select_list.options[option_array.length-1+j] = new Option(option[2].toString() +" "+ selected.toString());
 		//select_list.options[option_array.length-1+j] = new Option("Link Label: " + linklabel + " Label Text:" + label_text);
 	}
-	show_hide_linkfields();
+	//show_hide_linkfields(select_list);
 }
 
 function clear_selected(list_name){
@@ -23,27 +23,31 @@ function clear_selected(list_name){
 	}
 }
 
-function show_hide_linkfields(){
-	var select_list = document.iform["interfaces[]"].options;
-		for(var j=0; j < select_list.length; j++){
-			var linklabel = "link" + j.toString();
-			if (select_list[j].selected){
-				$(linklabel).show();
-				continue;
-			}
-			$(linklabel).hide();
+function show_hide_linkfields(options){
+	var select_count = 0;
+	for(var j=0; j < options.length; j++){
+		if (options[j].selected)
+			select_count++;
+	}
+	for(var j=0; j < options.length; j++){
+		var label = "link" + j.toString();
+		if (options[j].selected && select_count > 1){
+			$(label).show();
+			continue;
 		}
+		$(label).hide();
+	}
 }
 
 
 function updateType(t){
 	var serialports = $('serialports').innerHTML;
 	var ports = $('ports').innerHTML;
-	var select_list = document.iform["interfaces[]"];
+	var select_list = document.iform["interfaces[]"].options;
 	switch(t) {
 		case "select": {
 			$('ppp','pppoe','pptp','ipfields','prefil_ppp').invoke('hide');
-			select_list.options.length = 0;
+			select_list.length = 0;
 			select_list.options[0] = new Option("Select Link Type First","");
 			break;
 		}
@@ -66,17 +70,10 @@ function updateType(t){
 			break;
 		}
 		default:
-			select_list.options.length = 0;
+			select_list.length = 0;
 			break;
 	}
 	$(t).show();
-}
-
-function show_more_settings(checkbox_obj,element_id) {
-	if (checkbox_obj.checked)
-		$(element_id).show();
-	else
-		$(element_id).hide();
 }
 
 function show_reset_settings(reset_type) {

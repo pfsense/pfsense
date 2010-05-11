@@ -49,19 +49,12 @@ define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 
-if (!is_array($config['ppps']['ppp']))
-	$config['ppps']['ppp'] = array();
-
-$a_ppps = &$config['ppps']['ppp'];
-
-$portlist = get_interface_list();
-
-function getMPDCRONSettings() {
+function getMPDCRONSettings($ptpid_) {
 	global $config;
 	if (is_array($config['cron']['item'])) {
 		for ($i = 0; $i < count($config['cron']['item']); $i++) {
 			$item = $config['cron']['item'][$i];
-			if (strpos($item['command'], CRON_PPPOE_CMD_FILE.$_POST['ptpid']) !== false) {
+			if (strpos($item['command'], CRON_PPPOE_CMD_FILE.$ptpid_) !== false) {
 				return array("ID" => $i, "ITEM" => $item);
 			}
 		}
@@ -69,15 +62,12 @@ function getMPDCRONSettings() {
 	return NULL;
 }
 
-function getMPDResetTimeFromConfig() {
-	$itemhash = getMPDCRONSettings();
-	$cronitem = $itemhash['ITEM'];
-	if (isset($cronitem)) {
-		return "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
-	} else {
-		return NULL;
-	}
-}
+if (!is_array($config['ppps']['ppp']))
+	$config['ppps']['ppp'] = array();
+
+$a_ppps = &$config['ppps']['ppp'];
+
+$portlist = get_interface_list();
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -134,8 +124,14 @@ if (isset($id) && $a_ppps[$id]) {
 		
 		if (isset($a_ppps[$id]['pppoe-reset-type'])) {
 			$pconfig['pppoe-reset-type'] = $a_ppps[$id]['pppoe-reset-type'];
-
-			$resetTime = getMPDResetTimeFromConfig();  
+			$itemhash = getMPDCRONSettings($a_ppps[$id]['ptpid']);
+			$cronitem = $itemhash['ITEM'];
+			if (isset($cronitem)) {
+				$resetTime = "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
+			} else {
+				$resetTime = NULL;
+			}
+  
 			if ($a_ppps[$id]['pppoe-reset-type'] == "custom") {
 				$resetTime_a = split(" ", $resetTime);
 				$pconfig['pppoe_pr_custom'] = true;
@@ -351,15 +347,36 @@ if ($_POST) {
 		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
-		if (isset($_POST['bandwidth']) && count($_POST['bandwidth']))
+		
+		while(count($_POST['bandwidth'])){
+			if($_POST['bandwidth'][count($_POST['bandwidth'])-1] == "")
+				array_pop(&$_POST['bandwidth']);
+			else
+				break;
+		}
+		if (!empty($_POST['bandwidth']) && count($_POST['bandwidth']))
 			$ppp['bandwidth'] = implode(',', $_POST['bandwidth']);
 		else 
 			unset($ppp['bandwidth']);
-		if (isset($_POST['mtu']) && count($_POST['mtu']))
+		
+		while(count($_POST['mtu'])){
+			if($_POST['mtu'][count($_POST['mtu'])-1] == "")
+				array_pop(&$_POST['mtu']);
+			else
+				break;
+		}
+		if (!empty($_POST['mtu']) && count($_POST['mtu']))
 			$ppp['mtu'] = implode(',', $_POST['mtu']);
 		else 
 			unset($ppp['mtu']);
-		if (isset($_POST['mru']) && count($_POST['mru']))
+		
+		while(count($_POST['mru'])){
+			if($_POST['mru'][count($_POST['mru'])-1] == "")
+				array_pop(&$_POST['mru']);
+			else
+				break;
+		}
+		if (!empty($_POST['mru']) && count($_POST['mru']))
 			$ppp['mru'] = implode(',', $_POST['mru']);
 		else 
 			unset($ppp['mru']);
@@ -395,7 +412,7 @@ function handle_pppoe_reset() {
 
 	if (!is_array($config['cron']['item'])) 
 		$config['cron']['item'] = array(); 
-	$itemhash = getMPDCRONSettings();
+	$itemhash = getMPDCRONSettings($_POST['ptpid']);
 	$item = $itemhash['ITEM'];
 	
 	/* reset cron items if necessary and return*/
@@ -472,7 +489,7 @@ $closehead = false;
 $pgtitle = array("Interfaces","PPPs","Edit");
 include("head.inc");
 
-$types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP",  "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/  ); 
+$types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP"/*,  "l2tp" => "L2TP", "tcp" => "TCP", "udp" => "UDP"*/  ); 
 
 ?>
 	<script type="text/javascript" >
@@ -505,10 +522,10 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr name="interface" id="interface" >
 			<td width="22%" valign="top" class="vncellreq"><?= gettext("Link interface(s)"); ?></td>
 			<td width="78%" class="vtable">
-				<select valign="top" name="interfaces[]" multiple="true" class="formselect" size="4" onChange="show_hide_linkfields();">
+				<select valign="top" name="interfaces[]" multiple="true" class="formselect" size="4" <! onChange="show_hide_linkfields(this.options);" -->>
 					<option></option>
 				</select>
-				<a href='#' onClick='javascript:clear_selected("interfaces[]");'><?= gettext("Click here"); ?></a> <?= gettext("to clear selection(s)."); ?>
+
 				<br/><span class="vexpl"><?= gettext("Interfaces or ports participating in the multilink connection."); ?></span>
 				<span style="display:none" id="prefil_ppp">
 				<p/><?= gettext("Click a link to fill in defaults for these carriers:"); ?>&nbsp;
@@ -548,6 +565,8 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 						echo ",|";
 				}
 				echo $port_count;
+				if($serport_count > $port_count)
+					$port_count=$serport_count;
 			?></td>
 		</tr>
 		<tr>
@@ -681,7 +700,9 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 									<td align="left" valign="top">
 										<p style="margin: 4px; padding: 4px 0 4px 0; width: 94%;">
 										<select valign="top" id="reset_type" name="pppoe-reset-type" class="formselect" onChange="show_reset_settings(this.value);">
-											<option value = ""><?= gettext("Disabled"); ?></option><option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected"; ?>><?= gettext("Custom"); ?></option><option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected"; ?>><?= gettext("Pre-set"); ?></option>
+											<option value = ""><?= gettext("Disabled"); ?></option>
+											<option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected"; ?>><?= gettext("Custom"); ?></option>
+											<option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected"; ?>><?= gettext("Pre-Set"); ?></option>
 										</select> <?= gettext("Select a reset timing type"); ?>
 										</p>
 										<?php if ($pconfig['pppoe_pr_custom']): ?>
@@ -816,7 +837,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 						<td width="22%" valign="top" id="bandwidth<?=$i;?>" class="vncell"> Bandwidth</td>
 						<td width="78%" class="vtable">
 						<br/><input name="bandwidth[]" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['bandwidth'][$i]);?>">
-						<br/> <span class="vexpl">Set Bandwidth for each link ONLY when links have different bandwidths.</span>
+						<br/> <span class="vexpl">Set Bandwidth for each link ONLY for MLPPP connections and ONLY when links have different bandwidths.</span>
 					  </td>
 					</tr>
 					<tr>

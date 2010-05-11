@@ -817,13 +817,10 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	$realif = get_real_interface($interface);
 
 	switch ($ifcfg['ipaddr']) {
+	case "ppp":
 	case "pppoe":
-		killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");
-		sleep(2);
-		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-		break;
 	case "pptp":
-		killbypid("{$g['varrun_path']}/pptp_{$interface}.pid");
+		killbypid("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid");
 		sleep(2);
 		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
 		break;
@@ -843,11 +840,6 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
 			mwexec("/usr/sbin/arp -d -i {$realif} -a");
 		}
-		break;
-	case "ppp":
-		killbypid("{$g['varrun_path']}/ppp_{$interface}.pid");
-		sleep(2);
-		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
 		break;
 	default:
 		if(does_interface_exist("$realif")) {

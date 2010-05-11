@@ -80,7 +80,7 @@ function remove_special_characters($string) {
 function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
         global $config, $g;
 
-        if($g['booting'])
+        if(file_exists("{$g['varrun_path']}/booting"))
                 return;
 
         update_filter_reload_status("Syncing CARP data to {$url}");
@@ -199,7 +199,8 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
         }
 }
 
-if ($g['booting'])
+global $g;
+if (file_exists("{$g['varrun_path']}/booting"))
 	return;
 
 if (is_array($config['installedpackages']['carpsettings']['config'])) {

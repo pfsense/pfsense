@@ -1940,7 +1940,7 @@ function upgrade_062_to_063() {
 	global $config;
 
 	switch($config['theme']) {
-		"nervecenter":
+		case "nervecenter":
 			$config['theme'] = "pfsense_ng";
 			break;
 	}

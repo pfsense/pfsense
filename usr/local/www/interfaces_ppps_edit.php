@@ -176,8 +176,7 @@ if ($_POST) {
 	 * data validation procedure below, may trigger a false error
 	 * message.
 	 */
-	if (empty($_POST['pppoe-reset-type'])) {
-		//unset($_POST['pppoe-reset-type']);                
+	if (empty($_POST['pppoe-reset-type'])) {               
 		unset($_POST['pppoe_resethour']);
 		unset($_POST['pppoe_resetminute']);
 		unset($_POST['pppoe_resetdate']);
@@ -278,6 +277,8 @@ if ($_POST) {
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if (!empty($_POST['idletimeout']))
 			$ppp['idletimeout'] = $_POST['idletimeout'];
+		else
+			unset($ppp['idletimeout']);
 		$ppp['uptime'] = $_POST['uptime'] ? true : false;
 		if (!empty($_POST['descr']))
 			$ppp['descr'] = $_POST['descr'];

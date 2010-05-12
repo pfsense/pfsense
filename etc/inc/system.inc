@@ -291,7 +291,7 @@ function system_routing_configure() {
 		  	 * gateway setup configured.
 		  	 * Force WAN to be default gateway because that is the 1.2 behavior.
 			 */
-			log_error("SYSTEM: We do not have a default gateway in our config. Is this configuration damaged?");
+			log_error("WARNING: There is no default gateway in the configuration.");
 			if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
 				$gatewayip = $config['interfaces']['wan']['gateway'];
 				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
@@ -313,7 +313,7 @@ function system_routing_configure() {
 			} else if (is_ipaddr($rtent['gateway'])) {
 				$gatewayip = $rtent['gateway'];
 			} else {
-				log_error("Static Routes: Gateway ip could not be found for {$rtent['network']}");
+				log_error("Static Routes: Gateway IP could not be found for {$rtent['network']}");
 				continue;
 			}
 

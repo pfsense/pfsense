@@ -242,6 +242,13 @@ if ($_POST) {
 				header("Content-Type: application/octet-stream");
 				header("Content-Disposition: attachment; filename={$name}");
 				header("Content-Length: $size");
+				if (isset($_SERVER['HTTPS'])) {
+					header('Pragma: ');
+					header('Cache-Control: ');
+				} else {
+					header("Pragma: private");
+					header("Cache-Control: private, must-revalidate");
+				}
 				echo $data;
 
 				exit;

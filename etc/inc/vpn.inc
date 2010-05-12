@@ -291,6 +291,13 @@ function vpn_ipsec_configure($ipchg = false)
 			}
 		}
 
+		/* add PSKs for mobile clients */
+		if (is_array($ipseccfg['mobilekey'])) {
+			foreach ($ipseccfg['mobilekey'] as $key) {
+				$pskconf .= "{$key['ident']}	{$key['pre-shared-key']}\n";
+			}
+		}
+
 		fwrite($fd, $pskconf);
 		fclose($fd);
 		chmod("{$g['varetc_path']}/psk.txt", 0600);
@@ -484,10 +491,19 @@ function vpn_ipsec_configure($ipchg = false)
 
 					$init = "on";
 					$genp = "off";
+					$pcheck = "claim";
+					$passive = "";
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "anonymous";
-						$init = "off";
-						$genp = "unique";
+						/* Mimic 1.2.3's behavior for pure-psk mobile tunnels */
+						if ($ph1ent['authentication_method'] == "pre_shared_key") {
+							$passive = "passive on;";
+							$pcheck = "obey";
+							$genp = "on";
+						} else {
+							$init = "off";
+							$genp = "unique";
+						}
 					}
 
 					$dpdline1 = '';
@@ -551,6 +567,11 @@ function vpn_ipsec_configure($ipchg = false)
 					if ($ph1ent['lifetime'])
 						$lifeline = "lifetime time {$ph1ent['lifetime']} secs;";
 
+					/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
+					if (!(($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))) {
+						$peerid_spec = "peers_identifier {$peerid_type} {$peerid_data};";
+					}
+
 					/* add remote section to configuration */
 
 					$racoonconf .=<<<EOD
@@ -560,7 +581,7 @@ remote {$rgip}
 	ph1id {$ikeid};
 	exchange_mode {$ph1ent['mode']};
 	my_identifier {$myid_type} {$myid_data};
-	peers_identifier {$peerid_type} {$peerid_data};
+	{$peerid_spec}
 	ike_frag on;
 	generate_policy = {$genp};
 	initial_contact = {$init};
@@ -569,7 +590,8 @@ remote {$rgip}
 	{$dpdline1}
 	{$dpdline2}
 	support_proxy on;
-	proposal_check claim;
+	proposal_check {$pcheck};
+	{$passive}
 
 	proposal
 	{
@@ -611,7 +633,8 @@ EOD;
 
 						$localid_type = $ph2ent['localid']['type'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
-						if ($localid_type == "none")
+						/* Do not print localid in some cases, such as a pure-psk mobile tunnel */
+						if (($localid_type == "none") || ($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))
 							$localid_spec = " ";
 						else if ($localid_type != "address") {
 							$localid_type = "subnet";

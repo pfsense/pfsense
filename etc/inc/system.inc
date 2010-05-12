@@ -192,11 +192,21 @@ function system_hosts_generate() {
 
 	$hosts .= "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
 
-	$sysiflist = get_configured_interface_list();
-	foreach ($sysiflist as $sysif) {
-		$cfgip = get_interface_ip($sysif);
+	if ($config['interfaces']['lan']) {
+		$cfgip = get_interface_ip("lan");
 		if (is_ipaddr($cfgip))
 			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+	} else {
+		$sysiflist = get_configured_interface_list();
+		foreach ($sysiflist as $sysif) {
+			if (!interface_has_gateway($sysif)) {
+				$cfgip = get_interface_ip($sysif);
+				if (is_ipaddr($cfgip)) {
+					$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+					break;
+				}
+			}
+		}
 	}
 
 	foreach ($hostscfg as $host) {
@@ -281,7 +291,7 @@ function system_routing_configure() {
 		  	 * gateway setup configured.
 		  	 * Force WAN to be default gateway because that is the 1.2 behavior.
 			 */
-			log_error("SYSTEM: We do not have a default gateway in our config. Is this configuration damaged?");
+			log_error("WARNING: There is no default gateway in the configuration.");
 			if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
 				$gatewayip = $config['interfaces']['wan']['gateway'];
 				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
@@ -303,7 +313,7 @@ function system_routing_configure() {
 			} else if (is_ipaddr($rtent['gateway'])) {
 				$gatewayip = $rtent['gateway'];
 			} else {
-				log_error("Static Routes: Gateway ip could not be found for {$rtent['network']}");
+				log_error("Static Routes: Gateway IP could not be found for {$rtent['network']}");
 				continue;
 			}
 

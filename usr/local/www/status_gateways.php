@@ -126,7 +126,7 @@ include("head.inc");
 					array_shift($lastchange);
 					array_shift($lastchange);
 					$lastchange = implode(" ", $lastchange);
-					PRINT "Last success $lastchange";
+					PRINT "Last check $lastchange";
 				} else {
 					print "Gathering data";
 				}

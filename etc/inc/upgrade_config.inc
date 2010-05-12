@@ -800,6 +800,34 @@ function upgrade_042_to_043() {
 
 function upgrade_043_to_044() {
 	global $config;
+
+	/* migrate static routes to the new gateways config */
+	$gateways = return_gateways_array(true);
+	$i = 0;
+	if (is_array($config['staticroutes']['route'])) {
+		foreach ($config['staticroutes']['route'] as $idx => $sroute) {
+			$found = false;
+			foreach ($gateways as $gwname => $gw) {
+				if ($gw['gateway'] == $sroute['gateway']) {
+					$config['staticroutes']['route'][$idx]['gateway'] = $gwname;
+					$found = true;
+					break;
+				}
+			}
+			if ($found == false) {
+				$gateway = array();
+				$gateway['name'] = "SROUTE{$i}";	
+				$gateway['gateway'] = $sroute['gateway'];
+				$gateway['interface'] = $sroute['interface'];
+				$gateway['descr'] = "Upgraded static route for {$sroute['network']}";
+				if (!is_array($config['gateways']['gateway_item']))
+					$config['gateways']['gateway_item'] = array();
+				$config['gateways']['gateway_item'][] = $gateway;
+				$config['staticroutes']['route'][$idx]['gateway'] = $gateway['name'];
+				$i++;
+			}
+		}
+	}
 }
 
 
@@ -1066,34 +1094,40 @@ function upgrade_046_to_047() {
 
 function upgrade_047_to_048() {
 	global $config;
-	$config['dyndnses']['dyndns'] = array();
-	if (isset($config['dyndns']['enable'])) {
-		$tempdyn = array();
-		$tempdyn['enable'] = isset($config['dyndns']['enable']);
-		$tempdyn['type'] = $config['dyndns']['type'];
-		$tempdyn['wildcard'] = isset($config['dyndns']['wildcard']);
-		$tempdyn['usernamefld'] = $config['dyndns']['username'];
-		$tempdyn['passwordfld'] = $config['dyndns']['password'];
-		$tempdyn['host'] = $config['dyndns']['host'];
-		$tempdyn['mx'] = $config['dyndns']['mx'];		
-		$config['dyndnses']['dyndns'][] = $tempdyn;
+	if (!empty($config['dyndns'])) {
+		$config['dyndnses'] = array();
+		$config['dyndnses']['dyndns'] = array();
+		if(isset($config['dyndns'][0]['enable'])) {
+			$tempdyn = array();
+			$tempdyn['enable'] = isset($config['dyndns'][0]['enable']);
+			$tempdyn['type'] = $config['dyndns'][0]['type'];
+			$tempdyn['wildcard'] = isset($config['dyndns'][0]['wildcard']);
+			$tempdyn['usernamefld'] = $config['dyndns'][0]['username'];
+			$tempdyn['passwordfld'] = $config['dyndns'][0]['password'];
+			$tempdyn['host'] = $config['dyndns'][0]['host'];
+			$tempdyn['mx'] = $config['dyndns'][0]['mx'];		
+			$tempdyn['interface'] = "wan";
+			$tempdyn['descr'] = "Upgraded Dyndns {$tempdyn['type']}";
+			$config['dyndnses']['dyndns'][] = $tempdyn;
+		}
 		unset($config['dyndns']);
 	}		
-	$config['dnsupdates']['dnsupdate'] = array();
-	if (isset($config['dnsupdate']['enable'])) {
+	if (!empty($config['dnsupdate'])) {
+		$config['dnsupdates'][0]['dnsupdate'] = array();
 		$pconfig = array();
-		$pconfig['dnsupdate_enable'] = isset($config['dnsupdate']['enable']);
-		$pconfig['dnsupdate_host'] = $config['dnsupdate']['host'];
-		$pconfig['dnsupdate_ttl'] = $config['dnsupdate']['ttl'];
+		$pconfig['dnsupdate_enable'] = isset($config['dnsupdate'][0]['enable']);
+		$pconfig['dnsupdate_host'] = $config['dnsupdate'][0]['host'];
+		$pconfig['dnsupdate_ttl'] = $config['dnsupdate'][0]['ttl'];
 		if (!$pconfig['dnsupdate_ttl'])
 			$pconfig['dnsupdate_ttl'] = 60;
-		$pconfig['dnsupdate_keydata'] = $config['dnsupdate']['keydata'];
-		$pconfig['dnsupdate_keyname'] = $config['dnsupdate']['keyname'];
-		$pconfig['dnsupdate_keytype'] = $config['dnsupdate']['keytype'];
+		$pconfig['dnsupdate_keydata'] = $config['dnsupdate'][0]['keydata'];
+		$pconfig['dnsupdate_keyname'] = $config['dnsupdate'][0]['keyname'];
+		$pconfig['dnsupdate_keytype'] = $config['dnsupdate'][0]['keytype'];
 		if (!$pconfig['dnsupdate_keytype'])
 			$pconfig['dnsupdate_keytype'] = "zone";
-		$pconfig['dnsupdate_server'] = $config['dnsupdate']['server'];
-		$pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate']['usetcp']);
+		$pconfig['dnsupdate_server'] = $config['dnsupdate'][0]['server'];
+		$pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate'][0]['usetcp']);
+		$pconfig['interface'] = "wan";
 		$config['dnsupdates']['dnsupdate'][] = $pconfig;
 		unset($config['dnsupdate']);
 	}
@@ -1598,9 +1632,10 @@ function upgrade_053_to_054() {
 	}
 	// Unset lbpool if we no longer have any server pools
 	if (count($lbpool_srv_arr) == 0) {
-		unset($config['load_balancer']['lbpool']);
-		if(count($config['load_balancer']) == 0) {
+		if(empty($config['load_balancer'])) {
 			unset($config['load_balancer']);
+		} else {
+			unset($config['load_balancer']['lbpool']);
 		}
 	} else {
 		$config['load_balancer']['lbpool'] = $lbpool_srv_arr;
@@ -1887,7 +1922,8 @@ function upgrade_061_to_062() {
 			);
 
 			if (empty($natent['destination']['address'])) {
-				$natent['destination']['address'] = $natent['interface'] . 'ip';
+				unset($natent['destination']['address']);
+				$natent['destination']['network'] = $natent['interface'] . 'ip';
 			} else if ($natent['destination']['address'] == 'any') {
 				unset($natent['destination']['address']);
 				$natent['destination']['any'] = true;
@@ -1902,20 +1938,14 @@ function upgrade_061_to_062() {
 }
 
 function upgrade_062_to_063() {
+	/* Upgrade legacy Themes to the new pfsense_ng */
 	global $config;
-	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-			if (isset($ppp['port'])){
-				$config['ppps']['ppp'][$pppid]['ports'] = $ppp['port'];
-				unset($config['ppps']['ppp'][$pppid]['port']);
-			}
-			if (!isset($ppp['type'])){
-				$config['ppps']['ppp'][$pppid]['type'] = "ppp";
-			}
-			if (!isset($ppp['ptpid'])){
-				$config['ppps']['ppp'][$pppid]['ptpid'] = uniqid('', true);
-			}
-		}
+
+	switch($config['theme']) {
+		case "nervecenter":
+			$config['theme'] = "pfsense_ng";
+			break;
 	}
+	
 }
 ?>

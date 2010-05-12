@@ -41,13 +41,13 @@ require("guiconfig.inc");
 require_once("certs.inc");
 
 $cert_methods = array(
-	"existing" => "Import an existing Certificate",
-	"internal" => "Create an internal Certificate",
-	"external" => "Create a Certificate Signing Request");
+	"existing" => gettext("Import an existing Certificate"),
+	"internal" => gettext("Create an internal Certificate"),
+	"external" => gettext("Create a Certificate Signing Request"));
 
 $cert_keylens = array( "512", "1024", "2048", "4096");
 
-$pgtitle = array("System", "Certificate Manager");
+$pgtitle = array(gettext("System"), gettext("Certificate Manager"));
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -141,7 +141,7 @@ if ($act == "csr") {
 
 if ($_POST) {
 
-	if ($_POST['save'] == "Save") {
+	if ($_POST['save'] == gettext("Save")) {
 
 		unset($input_errors);
 		$pconfig = $_POST;
@@ -150,36 +150,42 @@ if ($_POST) {
 		if ($pconfig['method'] == "existing") {
 			$reqdfields = explode(" ",
 					"name cert key");
-			$reqdfieldsn = explode(",",
-					"Descriptive name,Certificate data,Key data");
+			$reqdfieldsn = array(
+					gettext("Descriptive name"),
+					gettext("Certificate data"),
+					gettext("Key data"));
 		}
 
 		if ($pconfig['method'] == "internal") {
 			$reqdfields = explode(" ",
 					"name caref keylen lifetime dn_country dn_state dn_city ".
 					"dn_organization dn_email dn_commonname");
-			$reqdfieldsn = explode(",",
-					"Descriptive name,Certificate authority,Key length,Lifetime,".
-					"Distinguished name Country Code,".
-					"Distinguished name State or Province,".
-					"Distinguished name City,".
-					"Distinguished name Organization,".
-					"Distinguished name Email Address,".
-					"Distinguished name Common Name");
+			$reqdfieldsn = array(
+					gettext("Descriptive name"),
+					gettext("Certificate authority"),
+					gettext("Key length"),
+					gettext("Lifetime"),
+					gettext("Distinguished name Country Code"),
+					gettext("Distinguished name State or Province"),
+					gettext("Distinguished name City"),
+					gettext("Distinguished name Organization"),
+					gettext("Distinguished name Email Address"),
+					gettext("Distinguished name Common Name"));
 		}
 
 		if ($pconfig['method'] == "external") {
 			$reqdfields = explode(" ",
 					"name csr_keylen csr_dn_country csr_dn_state csr_dn_city ".
 					"csr_dn_organization csr_dn_email csr_dn_commonname");
-			$reqdfieldsn = explode(",",
-					"Descriptive name,Key length,".
-					"Distinguished name Country Code,".
-					"Distinguished name State or Province,".
-					"Distinguished name City,".
-					"Distinguished name Organization,".
-					"Distinguished name Email Address,".
-					"Distinguished name Common Name");
+			$reqdfieldsn = array(
+					gettext("Descriptive name"),
+					gettext("Key length"),
+					gettext("Distinguished name Country Code"),
+					gettext("Distinguished name State or Province"),
+					gettext("Distinguished name City"),
+					gettext("Distinguished name Organization"),
+					gettext("Distinguished name Email Address"),
+					gettext("Distinguished name Common Name"));
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -239,13 +245,15 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['save'] == "Update") {
+	if ($_POST['save'] == gettext("Update")) {
 		unset($input_errors);
 		$pconfig = $_POST;
 
 		/* input validation */
 		$reqdfields = explode(" ", "name cert");
-		$reqdfieldsn = explode(",", "Descriptive name,Final Certificate data");
+		$reqdfieldsn = array(
+			gettext("Descriptive name"),
+			gettext("Final Certificate data"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -254,7 +262,7 @@ if ($_POST) {
 		$subj_cert = cert_get_subject($pconfig['cert'], false);
 
 		if (strcmp($subj_csr,$subj_cert))
-			$input_errors[] = gettext("The certificate subject '{$subj_cert}' does not match the signing request subject.");
+			$input_errors[] = sprintf(gettext("The certificate subject '%s' does not match the signing request subject."),$subj_cert);
 
 		/* if this is an AJAX caller then handle via JSON */
 		if (isAjax() && is_array($input_errors)) {
@@ -368,7 +376,7 @@ function internalca_change() {
 		<td id="mainarea">
 			<div class="tabcont">
 
-				<?php if ($act == "new" || (($_POST['save'] == "Save") && $input_errors)): ?>
+				<?php if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)): ?>
 
 				<form action="system_certmanager.php" method="post" name="iform" id="iform">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -402,23 +410,23 @@ function internalca_change() {
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Existing Certificate</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Existing Certificate");?></td>
 						</tr>
 
 						<tr>
-							<td width="22%" valign="top" class="vncellreq">Certificate data</td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=$pconfig['cert'];?></textarea>
 								<br>
-								Paste a certificate in X.509 PEM format here.</td>
+									<?=gettext("Paste a certificate in X.509 PEM format here.");?></td>
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncellreq">Private key data</td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Private key data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=$pconfig['key'];?></textarea>
 								<br>
-								Paste a private key in X.509 PEM format here.</td>
+								<?=gettext("Paste a private key in X.509 PEM format here.");?></td>
 							</td>
 						</tr>
 					</table>
@@ -428,16 +436,16 @@ function internalca_change() {
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Internal Certificate</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Internal Certificate");?></td>
 						</tr>
 
 						<?php if (!$internal_ca_count): ?>
 
 						<tr>
 							<td colspan="2" align="center" class="vtable">
-								No internal Certificate Authorities have been defined. You must
-								<a href="system_camanager.php?act=new&method=internal">create</a>
-								an internal CA before creating an internal certificate.
+								<?=gettext("No internal Certificate Authorities have been defined. You must");?>
+								<a href="system_camanager.php?act=new&method=internal"><?=gettext("create");?></a>
+								<?=gettext("an internal CA before creating an internal certificate.");?>
 							</td>
 						</tr>
 
@@ -473,14 +481,14 @@ function internalca_change() {
 									<option value="<?=$len;?>"<?=$selected;?>><?=$len;?></option>
 								<?php endforeach; ?>
 								</select>
-								bits
+								<?=gettext("bits");?>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Lifetime");?></td>
 							<td width="78%" class="vtable">
 								<input name="lifetime" type="text" class="formfld unknown" id="lifetime" size="5" value="<?=htmlspecialchars($pconfig['lifetime']);?>"/>
-								days
+								<?=gettext("days");?>
 							</td>
 						</tr>
 						<tr>
@@ -488,47 +496,47 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<table border="0" cellspacing="0" cellpadding="2">
 									<tr>
-										<td align="right">Country Code : &nbsp;</td>
+										<td align="right"><?=gettext("Country Code");?> : &nbsp;</td>
 										<td align="left">
 											<input name="dn_country" type="text" class="formfld unknown" maxlength="2" size="2" value="<?=htmlspecialchars($pconfig['dn_country']);?>" readonly/>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">State or Province : &nbsp;</td>
+										<td align="right"><?=gettext("State or Province");?> : &nbsp;</td>
 										<td align="left">
 											<input name="dn_state" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_state']);?>" readonly/>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">City : &nbsp;</td>
+										<td align="right"><?=gettext("City");?> : &nbsp;</td>
 										<td align="left">
 											<input name="dn_city" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_city']);?>" readonly/>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">Organization : &nbsp;</td>
+										<td align="right"><?=gettext("Organization");?> : &nbsp;</td>
 										<td align="left">
 											<input name="dn_organization" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['dn_organization']);?>" readonly/>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">Email Address : &nbsp;</td>
+										<td align="right"><?=gettext("Email Address");?> : &nbsp;</td>
 										<td align="left">
 											<input name="dn_email" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_email']);?>"/>
 											&nbsp;
 											<em>ex:</em>
 											&nbsp;
-											webadmin@mycompany.com
+											<?=gettext("webadmin@mycompany.com");?>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">Common Name : &nbsp;</td>
+										<td align="right"><?=gettext("Common Name");?> : &nbsp;</td>
 										<td align="left">
 											<input name="dn_commonname" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['dn_commonname']);?>"/>
 											&nbsp;
 											<em>ex:</em>
 											&nbsp;
-											www.example.com
+											<?=gettext("www.example.com");?>
 										</td>
 									</tr>
 								</table>
@@ -544,7 +552,7 @@ function internalca_change() {
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">External Signing Request</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("External Signing Request");?></td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Key length");?></td>
@@ -567,7 +575,7 @@ function internalca_change() {
 							<td width="78%" class="vtable">
 								<table border="0" cellspacing="0" cellpadding="2">
 									<tr>
-										<td align="right">Country Code : &nbsp;</td>
+										<td align="right"><?=gettext("Country Code");?> : &nbsp;</td>
 										<td align="left">
 											<input name="csr_dn_country" type="text" class="formfld unknown" size="2" value="<?=htmlspecialchars($pconfig['csr_dn_country']);?>" />
 											&nbsp;
@@ -575,57 +583,57 @@ function internalca_change() {
 											&nbsp;
 											US
 											&nbsp;
-											<em>( two letters )</em>
+											<em><?=gettext("( two letters )");?></em>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">State or Province : &nbsp;</td>
+										<td align="right"><?=gettext("State or Province");?> : &nbsp;</td>
 										<td align="left">
 											<input name="csr_dn_state" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['csr_dn_state']);?>" />
 											&nbsp;
 											<em>ex:</em>
 											&nbsp;
-											Texas
+											<?=gettext("Texas");?>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">City : &nbsp;</td>
+										<td align="right"><?=gettext("City");?> : &nbsp;</td>
 										<td align="left">
 											<input name="csr_dn_city" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['csr_dn_city']);?>" />
 											&nbsp;
 											<em>ex:</em>
 											&nbsp;
-											Austin
+											<?=gettext("Austin");?>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">Organization : &nbsp;</td>
+										<td align="right"><?=gettext("Organization");?> : &nbsp;</td>
 										<td align="left">
 											<input name="csr_dn_organization" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['csr_dn_organization']);?>" />
 											&nbsp;
 											<em>ex:</em>
 											&nbsp;
-											My Company Inc.
+											<?=gettext("My Company Inc.");?>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">Email Address : &nbsp;</td>
+										<td align="right"><?=gettext("Email Address");?> : &nbsp;</td>
 										<td align="left">
 											<input name="csr_dn_email" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['csr_dn_email']);?>"/>
 											&nbsp;
 											<em>ex:</em>
 											&nbsp;
-											webadmin@mycompany.com
+											<?=gettext("webadmin@mycompany.com");?>
 										</td>
 									</tr>
 									<tr>
-										<td align="right">Common Name : &nbsp;</td>
+										<td align="right"><?=gettext("Common Name");?> : &nbsp;</td>
 										<td align="left">
 											<input name="csr_dn_commonname" type="text" class="formfld unknown" size="25" value="<?=htmlspecialchars($pconfig['csr_dn_commonname']);?>"/>
 											&nbsp;
 											<em>ex:</em>
 											&nbsp;
-											www.example.com
+											<?=gettext("www.example.com");?>
 										</td>
 									</tr>
 								</table>
@@ -637,7 +645,7 @@ function internalca_change() {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
+								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_cert[$id]): ?>
 								<input name="id" type="hidden" value="<?=$id;?>" />
 								<?php endif;?>
@@ -646,7 +654,7 @@ function internalca_change() {
 					</table>
 				</form>
 
-				<?php elseif ($act == "csr" || (($_POST['save'] == "Update") && $input_errors)):?>
+				<?php elseif ($act == "csr" || (($_POST['save'] == gettext("Update")) && $input_errors)):?>
 
 				<form action="system_certmanager.php" method="post" name="iform" id="iform">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -660,29 +668,29 @@ function internalca_change() {
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Complete Signing Request</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Complete Signing Request");?></td>
 						</tr>
 
 						<tr>
-							<td width="22%" valign="top" class="vncellreq">Signing Request data</td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Signing Request data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="csr" id="csr" cols="65" rows="7" class="formfld_cert" readonly><?=$pconfig['csr'];?></textarea>
 								<br>
-								Copy the certificate signing data from here and forward it to your certificate authority for signing.</td>
+								<?=gettext("Copy the certificate signing data from here and forward it to your certificate authority for signing.");?></td>
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncellreq">Final Certificate data</td>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Final Certificate data");?></td>
 							<td width="78%" class="vtable">
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=$pconfig['cert'];?></textarea>
 								<br>
-								Paste the certificate received from your cerificate authority here.</td>
+								<?=gettext("Paste the certificate received from your cerificate authority here.");?></td>
 							</td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<input id="submit" name="save" type="submit" class="formbtn" value="Update" />
+								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Update");?>" />
 								<?php if (isset($id) && $a_cert[$id]): ?>
 								<input name="id" type="hidden" value="<?=$id;?>" />
 								<input name="act" type="hidden" value="csr" />
@@ -696,9 +704,9 @@ function internalca_change() {
 
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="20%" class="listhdrr">Name</td>
-						<td width="20%" class="listhdrr">Issuer</td>
-						<td width="40%" class="listhdrr">Distinguished Name</td>
+						<td width="20%" class="listhdrr"><?=gettext("Name");?></td>
+						<td width="20%" class="listhdrr"><?=gettext("Issuer");?></td>
+						<td width="40%" class="listhdrr"><?=gettext("Distinguished Name");?></td>
 						<td width="10%" class="list"></td>
 					</tr>
 					<?php
@@ -710,15 +718,15 @@ function internalca_change() {
 								$subj = cert_get_subject($cert['crt']);
 								$issuer = cert_get_issuer($cert['crt']);
 								if($subj==$issuer)
-								  $caname = "<em>self-signed</em>";
+								  $caname = "<em>" . gettext("self-signed") . "</em>";
 								else
-							    $caname = "<em>external</em>";
+							    $caname = "<em>" . gettext("external"). "</em>";
 							  $subj = htmlspecialchars($subj);
 							}
 
 							if ($cert['csr']) {
 								$subj = htmlspecialchars(csr_get_subject($cert['csr']));
-								$caname = "<em>external - signature pending</em>";
+								$caname = "<em>" . gettext("external - signature pending") . "</em>";
 							}
 
 							$ca = lookup_ca($cert['caref']);
@@ -747,18 +755,18 @@ function internalca_change() {
 						<td class="listr"><?=$subj;?>&nbsp;</td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_certmanager.php?act=exp&id=<?=$i;?>")">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export cert" alt="export ca" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
 							<a href="system_certmanager.php?act=key&id=<?=$i;?>")">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export key" alt="export ca" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export key");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
 							<a href="system_certmanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate?");?>')">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete cert" alt="delete cert" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete cert");?>" alt="<?=gettext("delete cert");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	if ($cert['csr']): ?>
 							&nbsp;
 								<a href="system_certmanager.php?act=csr&id=<?=$i;?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="update csr" alt="update csr" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("update csr");?>" alt="<?=gettext("update csr");?>" width="17" height="17" border="0" />
 							</a>
 							<?php	endif; ?>
 						</td>
@@ -771,7 +779,7 @@ function internalca_change() {
 						<td class="list" colspan="3"></td>
 						<td class="list">
 							<a href="system_certmanager.php?act=new">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="add or import ca" alt="add ca" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add or import ca");?>" alt="<?=gettext("add ca");?>" width="17" height="17" border="0" />
 							</a>
 						</td>
 					</tr>

@@ -47,7 +47,7 @@ function listtags() {
 		"option ppp package passthrumac phase1 phase2 priv proxyarpnet qinqentry queue ".
 		"pages pipe roll route row rrddatafile rule schedule service servernat servers ".
 		"serversdisabled earlyshellcmd shellcmd staticmap subqueue timerange ".
-		"tunnel user vip virtual_server vlan winsserver wolentry widget  "
+		"tunnel user vip virtual_server vlan winsserver wolentry widget"
 		);
 	return $ret;
 }

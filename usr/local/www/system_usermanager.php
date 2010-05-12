@@ -52,7 +52,7 @@ require("guiconfig.inc");
 if (isAllowedPage("system_usermanager")) {
 
 	// start admin user code
-	$pgtitle = array("System","User Manager");
+	$pgtitle = array(gettext("System"),gettext("User Manager"));
 
 	$id = $_GET['id'];
 	if (isset($_POST['id']))
@@ -180,15 +180,22 @@ if (isAllowedPage("system_usermanager")) {
 		/* input validation */
 		if (isset($id) && ($a_user[$id])) {
 			$reqdfields = explode(" ", "usernamefld");
-			$reqdfieldsn = explode(",", "Username");
+			$reqdfieldsn = array(gettext("Username"));
 		} else {
 			if (empty($_POST['name'])) {
 				$reqdfields = explode(" ", "usernamefld passwordfld1");
-				$reqdfieldsn = explode(",", "Username,Password");
+				$reqdfieldsn = array(
+					gettext("Username"),
+					gettext("Password"));
 			} else {
 				$reqdfields = explode(" ", "usernamefld passwordfld1 name caref keylen lifetime");
-				$reqdfieldsn = explode(",", "Username,Password,Descriptive name,Certificate authority,Key length,Lifetime");
-
+				$reqdfieldsn = array(
+					gettext("Username"),
+					gettext("Password"),
+					gettext("Descriptive name"),
+					gettext("Certificate authority"),
+					gettext("Key length"),
+					gettext("Lifetime"));
 			}
 		}
 
@@ -228,14 +235,14 @@ if (isAllowedPage("system_usermanager")) {
 					$_POST['expires'] = date("m/d/Y",$expdate);
 				}
 			} else {
-				$input_errors[] = "Invalid expiration date format; use MM/DD/YYYY instead.";
+				$input_errors[] = gettext("Invalid expiration date format; use MM/DD/YYYY instead.");
 			}
 		}
 
 		if (!empty($_POST['name'])) {
 			$ca = lookup_ca($_POST['caref']);
         		if (!$ca)
-                		$input_errors[] = "Invalid internal Certificate Authority\n";
+                		$input_errors[] = gettext("Invalid internal Certificate Authority") . "\n";
 		}
 
 		/* if this is an AJAX caller then handle via JSON */
@@ -463,14 +470,14 @@ function sshkeyClicked(obj) {
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">Expiration date</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Expiration date"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="expires" type="text" class="formfld unknown" id="expires" size="10" value="<?=$pconfig['expires'];?>">
 								<a href="javascript:NewCal('expires','mmddyyyy')">
-									<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="Pick a date">
+									<img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="<?=gettext("Pick a date");?>">
 								</a>
 								<br>
-								<span class="vexpl">Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy</span></td>
+								<span class="vexpl"><?=gettext("Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy"); ?></span></td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Group Memberships");?></td>
@@ -478,7 +485,7 @@ function sshkeyClicked(obj) {
 								<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<td align="center" width="50%">
-											<strong>Not Member Of</strong><br/>
+											<strong><?=gettext("Not Member Of"); ?></strong><br/>
 											<br/>
 											<select size="10" style="width: 75%" name="notgroups[]" class="formselect" id="notgroups" onChange="clear_selected('groups')" multiple>
 												<?php
@@ -498,15 +505,15 @@ function sshkeyClicked(obj) {
 										<td>
 											<br/>
 											<a href="javascript:move_selected('notgroups','groups')">
-												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="Add Groups" alt="Add Groups" width="17" height="17" border="0" />
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_right.gif" title="<?=gettext("Add Groups"); ?>" alt="<?=gettext("Add Groups"); ?>" width="17" height="17" border="0" />
 											</a>
 											<br/><br/>
 											<a href="javascript:move_selected('groups','notgroups')">
-												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="Remove Groups" alt="Remove Groups" width="17" height="17" border="0" />
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_left.gif" title="<?=gettext("Remove Groups"); ?>" alt="<?=gettext("Remove Groups"); ?>" width="17" height="17" border="0" />
 											</a>
 										</td>
 										<td align="center" width="50%">
-											<strong>Member Of</strong><br/>
+											<strong><?=gettext("Member Of"); ?></strong><br/>
 											<br/>
 											<select size="10" style="width: 75%" name="groups[]" class="formselect" id="groups" onChange="clear_selected('nogroups')" multiple>
 												<?php
@@ -611,13 +618,13 @@ function sshkeyClicked(obj) {
 										</td>
 										<td valign="middle" nowrap class="list">
 											<a href="system_usermanager.php?act=expckey&id=<?=$id;?>&certid=<?=$i;?>">
-												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export private key" alt="export private key" width="17" height="17" border="0" />
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export private key"); ?>" alt="<?=gettext("export private key"); ?>" width="17" height="17" border="0" />
 											</a>
 											<a href="system_usermanager.php?act=expcert&id=<?=$id;?>&certid=<?=$i;?>">
-												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="export cert" alt="export cert" width="17" height="17" border="0" />
+												<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export cert"); ?>" alt="<?=gettext("export cert"); ?>" width="17" height="17" border="0" />
 											</a>
 											<a href="system_usermanager.php?act=delcert&id=<?=$id?>&certid=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this certificate?");?>')">
-												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="delete cert" />
+												<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="<?=gettext("delete cert");?>" />
 											</a>
 										</td>
 									</tr>
@@ -650,7 +657,7 @@ function sshkeyClicked(obj) {
 						<tr id="usercertchck" name="usercertchck" >
 							<td width="22%" valign="top" class="vncell"><?=gettext("Certificate");?></td>
                                                 	<td width="78%" class="vtable">
-							<input type="checkbox" onClick="javascript:usercertClicked(this)"> Click to create a user certificate.
+							<input type="checkbox" onClick="javascript:usercertClicked(this)"> <?=gettext("Click to create a user certificate."); ?>
 							</td>
 						</tr>
 
@@ -710,7 +717,7 @@ function sshkeyClicked(obj) {
 						<tr id="sshkeychck" name="sshkeychck" >
                                                         <td width="22%" valign="top" class="vncell"><?=gettext("Authorized keys");?></td>
                                                         <td width="78%" class="vtable">
-                                                        <input type="checkbox" onClick="javascript:sshkeyClicked(this)"> Click to paste an authorized key.
+                                                        <input type="checkbox" onClick="javascript:sshkeyClicked(this)"> <?=gettext("Click to paste an authorized key."); ?>
                                                         </td>
                                                 </tr>
 						<tr id="sshkey" name="sshkey" style="display:none">
@@ -724,7 +731,7 @@ function sshkeyClicked(obj) {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
+								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_user[$id]): ?>
 								<input name="id" type="hidden" value="<?=$id;?>" />
 								<?php endif;?>
@@ -737,10 +744,10 @@ function sshkeyClicked(obj) {
 
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="25%" class="listhdrr">Username</td>
-						<td width="25%" class="listhdrr">Full name</td>
-						<td width="5%" class="listhdrr">Disabled</td>
-						<td width="25%" class="listhdrr">Groups</td>
+						<td width="25%" class="listhdrr"><?=gettext("Username"); ?></td>
+						<td width="25%" class="listhdrr"><?=gettext("Full name"); ?></td>
+						<td width="5%" class="listhdrr"><?=gettext("Disabled"); ?></td>
+						<td width="25%" class="listhdrr"><?=gettext("Groups"); ?></td>
 						<td width="10%" class="list"></td>
 					</tr>
 					<?php
@@ -758,7 +765,7 @@ function sshkeyClicked(obj) {
 											else
 												$usrimg = "/themes/{$g['theme']}/images/icons/icon_system-user.png";
 										?>
-										<img src="<?=$usrimg;?>" alt="User" title="User" border="0" height="16" width="16" />
+										<img src="<?=$usrimg;?>" alt="<?=gettext("User"); ?>" title="<?=gettext("User"); ?>" border="0" height="16" width="16" />
 									</td>
 									<td align="left" valign="middle">
 										<?=htmlspecialchars($userent['name']);?>
@@ -774,12 +781,12 @@ function sshkeyClicked(obj) {
 						</td>
 						<td valign="middle" nowrap class="list">
 							<a href="system_usermanager.php?act=edit&id=<?=$i;?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="edit user" alt="edit user" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit user"); ?>" alt="<?=gettext("edit user"); ?>" width="17" height="17" border="0" />
 							</a>
 							<?php if($userent['scope'] != "system"): ?>
 							&nbsp;
 							<a href="system_usermanager.php?act=deluser&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this User?");?>')">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete user" alt="delete user" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete user"); ?>" alt="<?=gettext("delete user"); ?>" width="17" height="17" border="0" />
 							</a>
 							<?php endif; ?>
 						</td>
@@ -792,17 +799,17 @@ function sshkeyClicked(obj) {
 						<td class="list" colspan="4"></td>
 						<td class="list">
 							<a href="system_usermanager.php?act=new">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="add user" alt="add user" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add user"); ?>" alt="<?=gettext("add user"); ?>" width="17" height="17" border="0" />
 							</a>
 						</td>
 					</tr>
 					<tr>
 						<td colspan="4">
 							<p>
-								<?=gettext("Additional webConfigurator users can be added here.");?>
-								<?=gettext("User permissions can be assigned directly or inherited from group memberships.");?>
-								<?=gettext("An icon that appears grey indicates that it is a system defined object.");?>
-								<?=gettext("Some system object properties can be modified but they cannot be deleted.");?>
+								<?=gettext("Additional webConfigurator users can be added here.
+								User permissions can be assigned directly or inherited from group memberships.
+								An icon that appears grey indicates that it is a system defined object. 
+								Some system object properties can be modified but they cannot be deleted."); ?>
 							</p>
 						</td>
 					</tr>
@@ -825,26 +832,26 @@ function sshkeyClicked(obj) {
 
 	// start normal user code
 
-	$pgtitle = array("System","User Password");
+	$pgtitle = array(gettext("System"),gettext("User Password"));
 
 	if (isset($_POST['save'])) {
 		unset($input_errors);
 
 		/* input validation */
 		$reqdfields = explode(" ", "passwordfld1");
-		$reqdfieldsn = explode(",", "Password");
+		$reqdfieldsn = array(gettext("Password"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		if ($_POST['passwordfld1'] != $_POST['passwordfld2'])
-			$input_errors[] = "The passwords do not match.";
+			$input_errors[] = gettext("The passwords do not match.");
 
 		if (!$input_errors) {
 			// all values are okay --> saving changes
 			$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['password'] = crypt(trim($_POST['passwordfld1']));
 
 			write_config();
-			$savemsg = "Password successfully changed<br />";
+			$savemsg = gettext("Password successfully changed") . "<br />";
 		}
 	}
 
@@ -865,7 +872,7 @@ function sshkeyClicked(obj) {
 		print_info_box($savemsg);
 
 	if($islocal == false) {
-		echo "Sorry, you cannot change the password for a LDAP user.";
+		echo gettext("Sorry, you cannot change the password for a LDAP user.");
 		include("fend.inc");
 		exit;
 	}
@@ -875,10 +882,10 @@ function sshkeyClicked(obj) {
 		<form action="system_usermanager.php" method="post" name="iform" id="iform">
 			<table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=$HTTP_SERVER_VARS['AUTH_USER']?>'s Password</td>
+					<td colspan="2" valign="top" class="listtopic"><?=$HTTP_SERVER_VARS['AUTH_USER']?>'s <?=gettext("Password"); ?></td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell" rowspan="2">Password</td>
+					<td width="22%" valign="top" class="vncell" rowspan="2"><?=gettext("Password"); ?></td>
 					<td width="78%" class="vtable">
 						<input name="passwordfld1" type="password" class="formfld pwd" id="passwordfld1" size="20" />
 					</td>

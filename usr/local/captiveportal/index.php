@@ -119,12 +119,6 @@ setTimeout('window.close();',5000) ;
 
 EOD;
 exit;
-/* The $macfilter can be removed safely since we first check if the $clientmac is present, if not we fail */
-} else if ($clientmac && portal_mac_fixed($clientmac)) {
-    /* punch hole in ipfw for pass thru mac addresses */
-    portal_allow($clientip, $clientmac, "unauthenticated");
-    exit;
-
 } else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac,$clientip)) {
     /* radius functions handle everything so we exit here since we're done */
     exit;
@@ -240,201 +234,188 @@ function portal_mac_radius($clientmac,$clientip) {
 
 function portal_allow($clientip,$clientmac,$username,$password = null, $attributes = null, $ruleno = null)  {
 
-    global $redirurl, $g, $config, $url_redirection, $type;
+	global $redirurl, $g, $config, $url_redirection, $type;
 
-    /* See if a ruleno is passed, if not start locking the sessions because this means there isn't one atm */
-    $captiveshouldunlock = false;
-    if ($ruleno == null) {
-        $cplock = lock('captiveportal');
-    	$captiveshouldunlock = true;
-        $ruleno = captiveportal_get_next_ipfw_ruleno();
-    }
+	/* See if a ruleno is passed, if not start locking the sessions because this means there isn't one atm */
+	$captiveshouldunlock = false;
+	if ($ruleno == null) {
+		$cplock = lock('captiveportal');
+		$captiveshouldunlock = true;
+		$ruleno = captiveportal_get_next_ipfw_ruleno();
+	}
 
-    /* if the pool is empty, return appropriate message and exit */
-    if (is_null($ruleno)) {
-        portal_reply_page($redirurl, "error", "System reached maximum login capacity");
-        log_error("WARNING!  Captive portal has reached maximum login capacity");
-    	if ($captiveshouldunlock == true)
-        	unlock($cplock);
-        exit;
-    }
+	/* if the pool is empty, return appropriate message and exit */
+	if (is_null($ruleno)) {
+		portal_reply_page($redirurl, "error", "System reached maximum login capacity");
+		log_error("WARNING!  Captive portal has reached maximum login capacity");
+		if ($captiveshouldunlock == true)
+		unlock($cplock);
+		exit;
+	}
 
-    // Ensure we create an array if we are missing attributes
-    if (!is_array($attributes))
-        $attributes = array();
+	// Ensure we create an array if we are missing attributes
+	if (!is_array($attributes))
+		$attributes = array();
 
-    /* read in client database */
-    $cpdb = captiveportal_read_db();
+	/* read in client database */
+	$cpdb = captiveportal_read_db();
 
-    $radiusservers = captiveportal_get_radius_servers();
+	$radiusservers = captiveportal_get_radius_servers();
 
-    if ($attributes['voucher'])
-        $remaining_time = $attributes['session_timeout'];
+	if ($attributes['voucher'])
+		$remaining_time = $attributes['session_timeout'];
 
-    /* Find an existing session */
-    for ($i = 0; $i < count($cpdb); $i++) {
-        /* on the same ip */
-        if($cpdb[$i][2] == $clientip) {
-            captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - REUSING OLD SESSION");
-            $sessionid = $cpdb[$i][5];
-            break;
-        }
-	elseif (($attributes['voucher']) && ($username != 'unauthenticated') && ($cpdb[$i][4] == $username)) {
-            // user logged in with an active voucher. Check for how long and calculate 
-            // how much time we can give him (voucher credit - used time)
-            $remaining_time = $cpdb[$i][0] + $cpdb[$i][7] - time();
-            if ($remaining_time < 0)    // just in case. 
-                $remaining_time = 0;
+	/* Find an existing session */
+	for ($i = 0; $i < count($cpdb); $i++) {
+		/* on the same ip */
+		if($cpdb[$i][2] == $clientip) {
+			captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - REUSING OLD SESSION");
+			$sessionid = $cpdb[$i][5];
+			break;
+		}
+		elseif (($attributes['voucher']) && ($username != 'unauthenticated') && ($cpdb[$i][4] == $username)) {
+			// user logged in with an active voucher. Check for how long and calculate 
+			// how much time we can give him (voucher credit - used time)
+			$remaining_time = $cpdb[$i][0] + $cpdb[$i][7] - time();
+			if ($remaining_time < 0)    // just in case. 
+				$remaining_time = 0;
 
-            /* This user was already logged in so we disconnect the old one */
-            captiveportal_disconnect($cpdb[$i],$radiusservers,13);
-            captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
-            unset($cpdb[$i]);
-            break;
-        }
-        elseif ((isset($config['captiveportal']['noconcurrentlogins'])) && ($username != 'unauthenticated')) {
-            /* on the same username */
-            if (strcasecmp($cpdb[$i][4], $username) == 0) {
-                /* This user was already logged in so we disconnect the old one */
-                captiveportal_disconnect($cpdb[$i],$radiusservers,13);
-                captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
-                unset($cpdb[$i]);
-                break;
-            }
-        }
-    }
-
-    if ($attributes['voucher'] && $remaining_time <= 0) {
-	unlock($cplock);
-        return 0;       // voucher already used and no time left
-    }
-
-    $writecfg = false;
-    if (!isset($sessionid)) {
-
-        /* generate unique session ID */
-        $tod = gettimeofday();
-        $sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
-
-        /* Add rules for traffic shaping
-         * We don't need to add extra rules since traffic will pass due to the following kernel option
-         * net.inet.ip.fw.one_pass: 1
-         */
-        $peruserbw = isset($config['captiveportal']['peruserbw']);
-	$passthrumacadd = isset($config['captiveportal']['passthrumacadd']);
-	$portalmac = NULL;
-	if (!empty($clientmac)) {
-		$portalmac = portal_mac_fixed($clientmac);
-		if ($portalmac) {
-			$attributes['bw_up'] = $portalmac['bw_up'];
-			$attributes['bw_down'] = $portalmac['bw_down'];
+			/* This user was already logged in so we disconnect the old one */
+			captiveportal_disconnect($cpdb[$i],$radiusservers,13);
+			captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
+			unset($cpdb[$i]);
+			break;
+		}
+		elseif ((isset($config['captiveportal']['noconcurrentlogins'])) && ($username != 'unauthenticated')) {
+			/* on the same username */
+			if (strcasecmp($cpdb[$i][4], $username) == 0) {
+				/* This user was already logged in so we disconnect the old one */
+				captiveportal_disconnect($cpdb[$i],$radiusservers,13);
+				captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - TERMINATING OLD SESSION");
+				unset($cpdb[$i]);
+				break;
+			}
 		}
 	}
 
-       	$bw_up = isset($attributes['bw_up']) ? trim($attributes['bw_up']) : $config['captiveportal']['bwdefaultup'];
-       	$bw_down = isset($attributes['bw_down']) ? trim($attributes['bw_down']) : $config['captiveportal']['bwdefaultdn'];
-
-	if ($passthrumacadd && $portalmac == NULL) {
-		$mac = array();
-		$mac['mac'] = $clientmac;
-		$mac['descr'] =  "Auto added pass-through MAC for user {$username}";
-		if (!empty($bw_up))
-			$mac['bw_up'] = $bw_up;
-		if (!empty($bw_down))
-			$mac['bw_down'] = $bw_down;
-		if (!is_array($config['captiveportal']['passthrumac']))
-			$config['captiveportal']['passthrumac'] = array();
-		$config['captiveportal']['passthrumac'][] = $mac;
-		$writecfg = true;
-	}
-		
-        if ($peruserbw && !empty($bw_up) && is_numeric($bw_up)) {
-            $bw_up_pipeno = $ruleno + 20000;
-	    //$bw_up /= 1000; // Scale to Kbit/s
-            mwexec("/sbin/ipfw pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
-
-	    if (!isset($config['captiveportal']['nomacfilter']) || $passthrumacadd)
-		mwexec("/sbin/ipfw table 1 add {$clientip} mac {$clientmac} {$bw_up_pipeno}");
-	    else
-	    	mwexec("/sbin/ipfw table 1 add {$clientip} {$bw_up_pipeno}");
-        } else {
-	    if (!isset($config['captiveportal']['nomacfilter']) || $passthrumacadd)
-		mwexec("/sbin/ipfw table 1 add {$clientip} mac {$clientmac}");
-	    else
-            	mwexec("/sbin/ipfw table 1 add {$clientip}");
-        }
-        if ($peruserbw && !empty($bw_down) && is_numeric($bw_down)) {
-            $bw_down_pipeno = $ruleno + 20001;
-	    //$bw_down /= 1000; // Scale to Kbit/s
-	    mwexec("/sbin/ipfw pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
-
-	    if (!isset($config['captiveportal']['nomacfilter']) || $passthrumacadd)
-                mwexec("/sbin/ipfw table 2 add {$clientip} mac {$clientmac} {$bw_down_pipeno}");
-            else
-                mwexec("/sbin/ipfw table 2 add {$clientip} {$bw_down_pipeno}");
-        } else {
-            if (!isset($config['captiveportal']['nomacfilter']) || $passthrumacadd)
-                mwexec("/sbin/ipfw table 2 add {$clientip} mac {$clientmac}");
-            else
-                mwexec("/sbin/ipfw table 2 add {$clientip}");
-        }
-
-	if ($attributes['voucher'])
-		$attributes['session_timeout'] = $remaining_time;
-
-        /* encode password in Base64 just in case it contains commas */
-        $bpassword = base64_encode($password);
-        $cpdb[] = array(time(), $ruleno, $clientip, $clientmac, $username, $sessionid, $bpassword,
-                $attributes['session_timeout'],
-                $attributes['idle_timeout'],
-                $attributes['session_terminate_time']);
-
-        if (isset($config['captiveportal']['radacct_enable']) && !empty($radiusservers)) {
-            $acct_val = RADIUS_ACCOUNTING_START($ruleno,
-                                                            $username,
-                                                            $sessionid,
-                                                            $radiusservers,
-                                                            $clientip,
-                                                            $clientmac);
-
-            if ($acct_val == 1)
-                captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
-        }
-
-    	/* rewrite information to database */
-    	captiveportal_write_db($cpdb);
-    }
-
-    if ($captiveshouldunlock == true)
-	unlock($cplock);
-
-    if ($writecfg == true) {
-	write_config();
-	captiveportal_passthrumac_configure(true);
-    }
-
-    /* redirect user to desired destination */
-    if ($url_redirection)
-        $my_redirurl = $url_redirection;
-    else if ($config['captiveportal']['redirurl'])
-        $my_redirurl = $config['captiveportal']['redirurl'];
-    else
-        $my_redirurl = $redirurl;
-
-    if(isset($config['captiveportal']['logoutwin_enable']) && !isset($config['captiveportal']['passthrumacadd'])) {
-
-        if (isset($config['captiveportal']['httpslogin']))
-            $logouturl = "https://{$config['captiveportal']['httpsname']}:8001/";
-        else {
-	    $ifip = portal_ip_from_client_ip($clientip);
-    	    if (!$ifip)
-        	$ourhostname = $config['system']['hostname'] . ":8000";
-            else
-        	$ourhostname = "{$ifip}:8000";
-            $logouturl = "http://{$ourhostname}/";
+	if ($attributes['voucher'] && $remaining_time <= 0) {
+		unlock($cplock);
+		return 0;       // voucher already used and no time left
 	}
 
-        echo <<<EOD
+	$writecfg = false;
+	if (!isset($sessionid)) {
+
+		/* generate unique session ID */
+		$tod = gettimeofday();
+		$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
+
+		/* Add rules for traffic shaping
+		 * We don't need to add extra rules since traffic will pass due to the following kernel option
+		 * net.inet.ip.fw.one_pass: 1
+		 */
+		$peruserbw = isset($config['captiveportal']['peruserbw']);
+
+		$bw_up = isset($attributes['bw_up']) ? trim($attributes['bw_up']) : $config['captiveportal']['bwdefaultup'];
+		$bw_down = isset($attributes['bw_down']) ? trim($attributes['bw_down']) : $config['captiveportal']['bwdefaultdn'];
+
+		if ($passthrumac) {
+			$mac = array();
+			$mac['mac'] = $clientmac;
+			$mac['descr'] =  "Auto added pass-through MAC for user {$username}";
+			if (!empty($bw_up))
+				$mac['bw_up'] = $bw_up;
+			if (!empty($bw_down))
+				$mac['bw_down'] = $bw_down;
+			if (!is_array($config['captiveportal']['passthrumac']))
+				$config['captiveportal']['passthrumac'] = array();
+			$config['captiveportal']['passthrumac'][] = $mac;
+			$macrules = captiveportal_passthrumac_configure_entry($mac);
+			file_put_contents("{$g['tmp_path']}/macentry.rules.tmp", $macrules);
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry.rules.tmp");
+			$writecfg = true;
+		} else {
+
+			if ($peruserbw && !empty($bw_up) && is_numeric($bw_up)) {
+				$bw_up_pipeno = $ruleno + 20000;
+				//$bw_up /= 1000; // Scale to Kbit/s
+				mwexec("/sbin/ipfw pipe {$bw_up_pipeno} config bw {$bw_up}Kbit/s queue 100");
+
+				if (!isset($config['captiveportal']['nomacfilter']))
+					mwexec("/sbin/ipfw table 1 add {$clientip} mac {$clientmac} {$bw_up_pipeno}");
+				else
+					mwexec("/sbin/ipfw table 1 add {$clientip} {$bw_up_pipeno}");
+			} else {
+				if (!isset($config['captiveportal']['nomacfilter']))
+					mwexec("/sbin/ipfw table 1 add {$clientip} mac {$clientmac}");
+				else
+					mwexec("/sbin/ipfw table 1 add {$clientip}");
+			}
+			if ($peruserbw && !empty($bw_down) && is_numeric($bw_down)) {
+				$bw_down_pipeno = $ruleno + 20001;
+				//$bw_down /= 1000; // Scale to Kbit/s
+				mwexec("/sbin/ipfw pipe {$bw_down_pipeno} config bw {$bw_down}Kbit/s queue 100");
+
+				if (!isset($config['captiveportal']['nomacfilter']))
+					mwexec("/sbin/ipfw table 2 add {$clientip} mac {$clientmac} {$bw_down_pipeno}");
+				else
+					mwexec("/sbin/ipfw table 2 add {$clientip} {$bw_down_pipeno}");
+			} else {
+				if (!isset($config['captiveportal']['nomacfilter']))
+					mwexec("/sbin/ipfw table 2 add {$clientip} mac {$clientmac}");
+				else
+					mwexec("/sbin/ipfw table 2 add {$clientip}");
+			}
+
+			if ($attributes['voucher'])
+				$attributes['session_timeout'] = $remaining_time;
+
+			/* encode password in Base64 just in case it contains commas */
+			$bpassword = base64_encode($password);
+			$cpdb[] = array(time(), $ruleno, $clientip, $clientmac, $username, $sessionid, $bpassword,
+				$attributes['session_timeout'], $attributes['idle_timeout'], $attributes['session_terminate_time']);
+
+			if (isset($config['captiveportal']['radacct_enable']) && !empty($radiusservers)) {
+				$acct_val = RADIUS_ACCOUNTING_START($ruleno,
+                                		$username, $sessionid, $radiusservers, $clientip, $clientmac);
+
+				if ($acct_val == 1)
+					captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
+			}
+
+			/* rewrite information to database */
+			captiveportal_write_db($cpdb);
+		}
+	}
+
+	if ($captiveshouldunlock == true)
+		unlock($cplock);
+
+	if ($writecfg == true)
+		write_config();
+
+	/* redirect user to desired destination */
+	if ($url_redirection)
+		$my_redirurl = $url_redirection;
+	else if ($config['captiveportal']['redirurl'])
+		$my_redirurl = $config['captiveportal']['redirurl'];
+	else
+		$my_redirurl = $redirurl;
+
+	if(isset($config['captiveportal']['logoutwin_enable']) && !isset($config['captiveportal']['passthrumacadd'])) {
+
+		if (isset($config['captiveportal']['httpslogin']))
+			$logouturl = "https://{$config['captiveportal']['httpsname']}:8001/";
+		else {
+			$ifip = portal_ip_from_client_ip($clientip);
+			if (!$ifip)
+				$ourhostname = $config['system']['hostname'] . ":8000";
+			else
+				$ourhostname = "{$ifip}:8000";
+			$logouturl = "http://{$ourhostname}/";
+		}
+
+		echo <<<EOD
 <HTML>
 <HEAD><TITLE>Redirecting...</TITLE></HEAD>
 <BODY>
@@ -466,12 +447,11 @@ document.location.href="{$my_redirurl}";
 </HTML>
 
 EOD;
-    } else {
-        header("Location: " . $my_redirurl);
-		return $sessionid;
-    }
+	} else {
+		header("Location: " . $my_redirurl);
+	}
 
-    return $sessionid;
+	return $sessionid;
 }
 
 

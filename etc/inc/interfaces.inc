@@ -692,7 +692,7 @@ function interfaces_configure() {
 	
 	foreach($iflist as $if => $ifname) {
 		$realif = $config['interfaces'][$if]['if'];
-		if(is_array($realif['pppoe']) && isset($realif['pppoe']['pppoe-reset-type']))
+		if(is_array($config['interfaces'][$if]['pppoe']) && isset($config['interfaces'][$if]['pppoe']['pppoe-reset-type']))
 			setup_pppoe_reset_file($if, true);
 		else 
 			setup_pppoe_reset_file($if, false);
@@ -3121,17 +3121,19 @@ function link_ip_to_carp_interface($ip) {
 
         $carp_ints = "";
         if (is_array($config['virtualip']['vip'])) {
+		$first = 0;
+		$carp_int = array();
                 foreach ($config['virtualip']['vip'] as $vip) {
                         if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
                                 $carp_ip = $vip['subnet'];
                                 $carp_sn = $vip['subnet_bits'];
                                 $carp_nw = gen_subnet($carp_ip, $carp_sn);
-                                if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}")) {
-                                        if (!stristr($carp_ints, $carp_int))
-                                                $carp_ints .= " {$carp_int}";
-                                }
+                                if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}"))
+					$carp_int[] = "vip{$vip['vhid']}";
                         }
                 }
+		if (!empty($carp_int))
+			$carp_ints = implode(" ", array_unique($carp_int));
         }
 
         return $carp_ints;

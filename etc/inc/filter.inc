@@ -51,6 +51,9 @@ $time_based_rules = false;
 /* Used to hold the interface list that will be used on ruleset creation. */
 $FilterIflist = array();
 
+/* Create a global array to avoid errors on rulesets. */
+$GatewaysList = array();
+
 /* Used for the hostname dns resolver */
 $filterdns = "";
 
@@ -482,8 +485,12 @@ function filter_generate_aliases() {
 	if(isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
 			$extraalias = "";
-			$ip = find_interface_ip($aliased['address']);
-			$extraalias = " " . link_ip_to_carp_interface($ip);
+			/* 
+			 * XXX: i am not sure what this does so i am commenting it out for now, because as it is
+			 * its quite dangerous!
+			 * $ip = find_interface_ip($aliased['address']);
+			 * $extraalias = " " . link_ip_to_carp_interface($ip);
+			 */
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
 			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
@@ -531,7 +538,7 @@ function filter_generate_aliases() {
 }
 
 function filter_generate_gateways() {
-	global $config, $g;
+	global $config, $g, $GatewaysList;
 
 	$rules = "# Gateways\n";
 
@@ -587,6 +594,9 @@ function filter_generate_gateways() {
 			$rules .= "GW{$gateway} = \" {$route} \"\n";
 		}
 	}
+
+	/* Create a global array to avoid errors on rulesets. */
+	$GatewaysList = array_merge($GatewaysList, $GatewayGroupsList);
 
 	$rules .= "\n";
 
@@ -772,50 +782,136 @@ function filter_flush_state_table() {
 	return mwexec("/sbin/pfctl -F state");
 }
 
-function filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, &$starting_localhost_port, &$reflection_txt) {
+function filter_get_reflection_interfaces($natif = "") {
+	global $FilterIflist;
+
+	$nat_if_list = array();
+
+	foreach ($FilterIflist as $ifent => $ifname) {
+		if($ifname['if'] == $natif)
+			continue;
+
+		/* Do not add reflection redirects for interfaces with gateways */
+		if(interface_has_gateway($ifent))
+			continue;
+
+		$nat_if_list[] = $ifname['if'];
+	}
+
+	return $nat_if_list;
+}
+
+function filter_generate_reflection_nat($rule, $nat_ifs, $protocol, $target, $target_ip, $target_subnet = "") {
+	// Initialize natrules holder string
+	$natrules = "";
+
+	update_filter_reload_status("Creating reflection NAT rule for {$rule['descr']}...");
+
+	/* TODO: Add this option to port forwards page. */
+	if(isset($rule['staticnatport'])) {
+		$static_port = " static-port";
+	} else {
+		$static_port = " port 1024:65535";
+	}
+
+	if(!empty($protocol)) {
+		$protocol_text = " proto {$protocol}";
+	} else {
+		$protocol_text = "";
+	}
+
+	$target_if_list = array();
+	if(empty($target_subnet) || !is_numeric($target_subnet) || $target_subnet == 32) {
+		$target_if_list[] = guess_interface_from_ip($target_ip);
+	} else {
+		$target_if_list[] = guess_interface_from_ip(gen_subnet_max($target_ip, $target_subnet));
+	}
+
+	foreach ($target_if_list as $target_if) {
+		/* Only install additional NAT rules if the
+		 * target is in the list of source networks */
+		if(in_array($target_if, $nat_ifs)) {
+			$target_networks = "{$target_if}:network";
+
+			$natrules .= "no nat on {$target_if}{$protocol_text} from {$target_if} to {$target}\n";
+			$natrules .= "nat on {$target_if}{$protocol_text} from {$target_networks} to {$target} -> {$target_if}{$static_port}\n";
+		}
+	}
+
+	return $natrules;
+}
+
+function filter_generate_reflection($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_port, $dstport, &$starting_localhost_port, &$reflection_txt) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
 	$natrules = "";
 	$reflection_txt = array();
 
-	if(!isset($config['system']['disablenatreflection'])) {
+	if(!empty($rdr_ifs)) {
 		if($config['system']['reflectiontimeout'])
 			$reflectiontimeout = $config['system']['reflectiontimeout'];
 		else
 			$reflectiontimeout = "2000";
 
-		update_filter_reload_status("Setting up NAT Reflection");
+		update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
 
-		$natrules .= "\n# Reflection redirects\n";
-		$rdr_if_list = "";
-		foreach ($FilterIflist as $ifent => $ifname) {
-			/* do not process interfaces with gateways*/
-			if(interface_has_gateway($ifent))
-				continue;
-
-			$rdr_if_list .= " " . $ifname['if'];
-		}
-		if (!empty($rdr_if_list))
+		$rdr_if_list = implode(" ", $rdr_ifs);
+		if(count($rdr_ifs) > 1)
 			$rdr_if_list = "{ {$rdr_if_list} }";
 
-		update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
+		$natrules .= "\n# Reflection redirects\n";
 
 		if($dstport[1])
 			$range_end = ($dstport[1]);
 		else
 			$range_end = ($dstport[0]);
-		$range_end++;
 
-		/* TODO: support multiple ip's in an alias. */
-		if (is_alias($rule['destination']['address']))
-			$dstaddr = filter_expand_alias($rule['destination']['address']);
-		else if(is_ipaddr($rule['destination']['address']))
-			$dstaddr = $rule['destination']['address'];
-		else if (is_ipaddr($FilterIflist[$rule['interface']]['ip']))
-			$dstaddr = $FilterIflist[$rule['interface']]['ip'];
+		$dstaddr = explode(" ", $dstaddr_port);
+		if($dstaddr[2])
+			$rflctintrange = $dstaddr[2];
 		else
-			return "\n";
+			$rflctintrange = "";
+		$dstaddr = $dstaddr[0];
+		if(empty($dstaddr) || strtolower(trim($dstaddr)) == "port")
+			return "";
+
+		if(isset($rule['destination']['any'])) {
+			if(!$rule['interface'])
+				$natif = "wan";
+			else
+				$natif = $rule['interface'];
+
+			if(!isset($FilterIflist[$natif]))
+				return "";
+			if(is_ipaddr($FilterIflist[$natif]['ip']))
+				$dstaddr = $FilterIflist[$natif]['ip'];
+			else
+				return "";
+
+			if(!empty($FilterIflist[$natif]['sn']))
+				$dstaddr = gen_subnet($dstaddr, $FilterIflist[$natif]['sn']) . '/' . $FilterIflist[$natif]['sn'];
+		}
+
+		switch($rule['protocol']) {
+		case "tcp/udp":
+			$protocol = "{ tcp udp }";
+			$reflect_protos = array('tcp', 'udp');
+			break;
+		case "tcp":
+		case "udp":
+			$protocol = $rule['protocol'];
+			$reflect_protos = array($rule['protocol']);
+			break;
+		default:
+			return "";
+			break;
+		}
+
+		if(!empty($nordr)) {
+			$natrules .= "no rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange}\n";
+			return $natrules;
+		}
 
 		if (is_alias($rule['target']))
 			$target = filter_expand_alias($rule['target']);
@@ -824,12 +920,11 @@ function filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, &$startin
 		else if (is_ipaddr($FilterIflist[$rule['target']]['ip']))
 			$target = $FilterIflist[$rule['target']]['ip'];
 		else
-			return "\n";
+			return "";
 
 		if($rule['local-port'])
 			$lrange_start = $rule['local-port'];
-		if($range_end - $dstport[0] > 500) {
-			$range_end = $dstport[0]+1;
+		if(($range_end + 1) - $dstport[0] > 500) {
 			log_error("Not installing nat reflection rules for a port range > 500");
 		/* only install reflection rules for < 19991 items */
 		} else if($starting_localhost_port < 19991) {
@@ -846,55 +941,45 @@ function filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, &$startin
 			}
 
 			$inetdport = $starting_localhost_port;
-			if(($range_end - 1) > $dstport[0]) {
+			if($range_end > $dstport[0]) {
 				$rflctrange = "{$starting_localhost_port}";
-				$delta = $range_end - $dstport[0] - 1;
+				$delta = $range_end - $dstport[0];
 				if(($starting_localhost_port + $delta) > 19990) {
 					log_error("Installing partial nat reflection rules. Maximum 1,000 reached.");
 					$delta = 19990 - $starting_localhost_port;
+					$range_end = $dstport[0] + $delta;
+					$rflctintrange = "";
 				}
 				$starting_localhost_port = $starting_localhost_port + $delta;
 				$rflctrange .= ":{$starting_localhost_port}";
-				$rflctintrange = "{$dstport[0]}:{$range_end}";
+				if(empty($rflctintrange))
+					$rflctintrange = "{$dstport[0]}:{$range_end}";
 				if($rflctnorange)
 					$toadd_array = range($loc_pt, $loc_pt + $delta);
+				$starting_localhost_port++;
 			} else {
 				$rflctrange = $starting_localhost_port;
-				$rflctintrange = $dstport[0];
+				if(empty($rflctintrange))
+					$rflctintrange = $dstport[0];
 				if($rflctnorange)
 					$toadd_array = array($loc_pt);
 				$starting_localhost_port++;
 			}
 
-			switch($rule['protocol']) {
-			case "tcp/udp":
-				$protocol = "{ tcp udp }";
-				foreach($toadd_array as $tda) {
-					$reflection_txt[] = "{$inetdport}\tstream\ttcp\tnowait/0\tnobody\t/usr/bin/nc\tnc -w {$reflectiontimeout} {$target} {$tda}\n";
-					$reflection_txt[] = "{$inetdport}\tdgram\tudp\tnowait/0\tnobody\t/usr/bin/nc\tnc -u -w {$reflectiontimeout} {$target} {$tda}\n";
-						$inetdport++;
+			foreach($toadd_array as $tda){
+				foreach($reflect_protos as $reflect_proto) {
+					if($reflect_proto == "udp") {
+						$socktype = "dgram";
+						$dash_u = "-u ";
+					} else {
+						$socktype = "stream";
+						$dash_u = "";
 					}
-				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT" .
-								($nordr == "" ? " -> 127.0.0.1 port {$rflctrange}" : "") . "\n";
-				break;
-			case "tcp":
-			case "udp":
-				$protocol = $rule['protocol'];
-				if($protocol == "udp") {
-					$socktype = "dgram";
-					$dash_u = "-u ";
-				} else {
-					$socktype = "stream";
-					$dash_u = "";
+					$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
 				}
-				foreach($toadd_array as $tda){
-					$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n";
-					$inetdport++;
-				}
-				$natrules .= "{$nordr}rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT" .
-								($nordr == "" ? " -> 127.0.0.1 port {$rflctrange}" : "") . "\n";
-				break;
+				$inetdport++;
 			}
+			$natrules .= "rdr on {$rdr_if_list} proto {$protocol} from {$srcaddr} to {$dstaddr} port {$rflctintrange} tag PFREFLECT -> 127.0.0.1 port {$rflctrange}\n";
 		}
 		$reflection_txt = array_unique($reflection_txt);
 	}
@@ -983,8 +1068,27 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $natent['interface'];
 			$natif = $FilterIflist[$natif]['if'];
-			if($natif)
-				$natrules .= "binat on $natif from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
+
+			if($natif) {
+				/* If reflection is enabled, turn on extra redirections
+				 * for this rule by adding other interfaces to binat rule. */
+				if(isset($config['system']['enablebinatreflection'])) {
+					$nat_if_list = filter_get_reflection_interfaces($natif);
+				} else {
+					$nat_if_list = array();
+				}
+
+				$nat_if_list = array_merge(array($natif), $nat_if_list);
+				//$binat_if_list = implode(" ", $nat_if_list);
+				//if(count($nat_if_list) > 1)
+				//	$binat_if_list = "{ {$binat_if_list} }";
+
+				/* binat seems to currently only work with the first interface specified on the line */
+				// $natrules .= "binat on {$binat_if_list} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
+				foreach ($nat_if_list as $natifname)
+					$natrules .= "binat on {$natifname} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
+				$natrules .= filter_generate_reflection_nat($rule, $nat_if_list, "", "{$natent['internal']}/{$sn}", $natent['internal'], $sn);
+			}
 		}
 	}
 	$natrules .= "\n# Outbound NAT rules\n";
@@ -1176,17 +1280,6 @@ function filter_nat_rules_generate() {
 			if(isset($rule['disabled']))
 				continue;
 
-			if (strtolower($rule['protocol']) == "tcp/udp")
-				$protocol = "{ tcp udp }";
-			else
-				$protocol = strtolower($rule['protocol']);
-
-			/* if item is an alias, expand */
-			$srcport = "";
-			$srcport[0] = alias_expand($rule['source']['port']);
-			if(!$srcport[0])
-				$srcport = explode("-", $rule['source']['port']);
-
 			/* if item is an alias, expand */
 			$dstport = "";
 			$dstport[0] = alias_expand($rule['destination']['port']);
@@ -1195,8 +1288,10 @@ function filter_nat_rules_generate() {
 
 			/* if item is an alias, expand */
 			$localport = alias_expand($rule['local-port']);
-			if(!$localport || $rule['destination']['port'] == $rule['local-port']) {
+			if(!$localport || $dstport[0] == $localport) {
 				$localport = "";
+			} else if(is_alias($rule['destination']['port']) || is_alias($rule['local-port'])) {
+				$localport = " port {$localport}";
 			} else {
 				if(($dstport[1]) && ($dstport[0] != $dstport[1])) {
 					$localendport = $localport + ($dstport[1] - $dstport[0]);
@@ -1207,8 +1302,22 @@ function filter_nat_rules_generate() {
 				$localport = " port {$localport}";
 			}
 
+			switch(strtolower($rule['protocol'])) {
+			case "tcp/udp":
+				$protocol = "{ tcp udp }";
+				break;
+			case "tcp":
+			case "udp":
+				$protocol = strtolower($rule['protocol']);
+				break;
+			default:
+				$protocol = strtolower($rule['protocol']);
+				$localport = "";
+				break;
+			}
+
 			$target = alias_expand($rule['target']);
-			if(!$target) {
+			if(!$target && !isset($rule['nordr'])) {
 				$natrules .= "# Unresolvable alias {$rule['target']}\n";
 				continue;		/* unresolvable alias */
 			}
@@ -1233,18 +1342,26 @@ function filter_nat_rules_generate() {
 
 			$natif = $FilterIflist[$natif]['if'];
 
-			if (isset($rule['nordr']))
+			if (isset($rule['nordr'])) {
 				$nordr = "no ";
-			else
+				$rdrpass = "";
+			} else
 				$nordr = "";
 
-			if($srcaddr <> "" && $dstaddr <> "") {
-				/* is rule a port range? */
-				if($natif)
-					$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
+			if(!isset($config['system']['disablenatreflection'])) {
+				$nat_if_list = filter_get_reflection_interfaces($natif);
+			} else {
+				$nat_if_list = array();
+			}
+
+			if($srcaddr <> "" && $dstaddr <> "" && $natif) {
+				$srcaddr = trim($srcaddr);
+				$dstaddr = trim($dstaddr);
+
+				$natrules .= "{$nordr}rdr {$rdrpass}on {$natif} proto {$protocol} from {$srcaddr} to {$dstaddr}" . ($nordr == "" ? " -> {$target}{$localport}" : "");
 
 				/* Does this rule redirect back to a internal host? */
-				if($dstaddr == "any" && !interface_has_gateway($rule['interface'])) {
+				if(isset($rule['destination']['any']) && !interface_has_gateway($rule['interface']) && !isset($rule['nordr'])) {
 					$rule_interface_ip = find_interface_ip($natif);
 					$rule_interface_subnet = find_interface_subnet($natif);
 					$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
@@ -1252,7 +1369,7 @@ function filter_nat_rules_generate() {
 					$natrules .= "no nat on {$natif} proto tcp from ({$natif}) to {$rule_subnet}/{$rule_interface_subnet}\n";
 					$natrules .= "nat on {$natif} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$dstport[0]} -> ({$natif})\n";
 				}
-				$natrules .= filter_generate_reflection($rule, $nordr, $srcaddr, $dstport, $starting_localhost_port, $reflection_rules);
+				$natrules .= filter_generate_reflection($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $dstport, $starting_localhost_port, $reflection_rules);
 				$natrules .= "\n";
 
 				foreach ($reflection_rules as $txtline)
@@ -1324,7 +1441,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 		if(strstr($rule[$target]['network'], "opt")) {
 			$optmatch = "";
 			$matches = "";
-			if(preg_match("/opt([0-9]*)/", $rule[$target]['network'], $optmatch)) {
+			if(preg_match("/opt([0-9]*)$/", $rule[$target]['network'], $optmatch)) {
 				$opt_ip = $FilterIflist["opt{$optmatch[1]}"]['ip'];
 				if(!is_ipaddr($opt_ip))
 					return "";
@@ -1408,7 +1525,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 }
 
 function filter_generate_user_rule($rule) {
-	global $config, $g, $FilterIflist;
+	global $config, $g, $FilterIflist, $GatewaysList;
 	global $layer7_rules_list;
 
 	if(isset($config['system']['developerspew'])) {
@@ -1498,8 +1615,11 @@ function filter_generate_user_rule($rule) {
 	}
 	/* if user has selected a custom gateway, lets work with it */
 	else if($rule['gateway'] <> "") {
-		/* Add the load balanced gateways */
-		$aline['route'] = " \$GW{$rule['gateway']} ";
+		if (isset($GatewaysList[$rule['gateway']]))
+			/* Add the load balanced gateways */
+			$aline['route'] = " \$GW{$rule['gateway']} ";
+		else
+			log_error("The gateway: {$rule['gateway']} is invalid/unkown not using it.");
 	}
 
 	if(isset($rule['protocol'])) {
@@ -1553,9 +1673,29 @@ function filter_generate_user_rule($rule) {
 	if($type == "pass") {
 		if(isset($rule['allowopts']))
 			$aline['allowopts'] = " allow-opts ";
-		if( isset($rule['source-track']) or isset($rule['max']) or isset($rule['max-src-nodes']) or isset($rule['max-src-conn']) or isset($rule['max-src-states']) )
-			if($rule['protocol'] == "tcp")
+
+		$aline['flags'] = "";
+		if($rule['protocol'] == "tcp") {
+			if (isset($rule['tcpflags_any']))
+				$aline['flags'] = "flags any ";
+			else if (!empty($rule['tcpflags2'])) {
+				$aline['flags'] = "flags ";
+				if (!empty($rule['tcpflags1'])) {
+					$flags1 = explode(",", $rule['tcpflags1']);
+					foreach ($flags1 as $flag1)
+						$aline['flags'] .= strtoupper($flag1[0]);
+				}
+				$aline['flags'] .= "/";
+				if (!empty($rule['tcpflags2'])) {
+					$flags2 = explode(",", $rule['tcpflags2']);
+					foreach ($flags2 as $flag2)
+						$aline['flags'] .= strtoupper($flag2[0]);
+				}
+				$aline['flags'] .= " ";
+			} else
 				$aline['flags'] = "flags S/SA ";
+		}
+
 		/*
 		 *	# keep state
 		 *		works with TCP, UDP, and ICMP.
@@ -1574,30 +1714,37 @@ function filter_generate_user_rule($rule) {
 			switch($rule['statetype']) {
 				case "none":
 					$noadvoptions = true;
-					$aline['flags'] = " no state ";
+					$aline['flags'] .= " no state ";
 					break;
 				case "modulate state":
 				case "synproxy state":
 					if($rule['protocol'] == "tcp")
-						$aline['flags'] = "{$rule['statetype']} ";
+						$aline['flags'] .= "{$rule['statetype']} ";
+					break;
+				case "sloppy state":
+					$aline['flags'] .= "keep state ";
+					$rule['sloppy'] = true;
 					break;
 				default:
-					$aline['flags'] = "{$rule['statetype']} ";
+					$aline['flags'] .= "{$rule['statetype']} ";
+					break;
 			}
 		} else
-			$aline['flags'] = "keep state ";
+			$aline['flags'] .= "keep state ";
 
 		if($noadvoptions == false || $l7_present)
-			if( isset($rule['source-track']) and $rule['source-track'] <> "" or
-				isset($rule['max']) and $rule['max'] <> "" or
-				isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
-				isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "" or
-				isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or
-				isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or
-				isset($rule['max-src-states']) and $rule['max-src-states'] <> "" or
-				isset($rule['statetimeout']) and $rule['statetimeout'] <> "" or
-				$l7_present) {
+			if( (isset($rule['source-track']) and $rule['source-track'] <> "") or
+			    (isset($rule['max']) and $rule['max'] <> "") or
+			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
+			    (isset($rule['max-src-conn']) and $rule['max-src-conn'] <> "") or
+			    (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
+			    (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "") or
+			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
+			    (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
+			    isset($rule['sloppy']) or $l7_present) {
 					$aline['flags'] .= "( ";
+					if (isset($rule['sloppy']))
+						$aline['flags'] .= "sloppy ";
 					if(isset($rule['source-track']) and $rule['source-track'] <> "")
 						$aline['flags'] .= "source-track rule ";
 					if(isset($rule['max']) and $rule['max'] <> "")
@@ -1918,34 +2065,6 @@ pass out on \$IPsec all keep state label "IPsec internal host to host"
 
 EOD;
 
-	/*  pass traffic between statically routed subnets and the subnet on the
-	 *  interface in question to avoid problems with complicated routing
-	 *  topologies
-	 */
-	if(isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
-		$ipfrules .= "anchor \"staticrouted\" \n";
-		foreach ($config['staticroutes']['route'] as $route) {
-			$realif = guess_interface_from_ip(lookup_gateway_ip_by_name($route['gateway']));
-			$friendly = convert_real_interface_to_friendly_interface_name($realif);
-			if(is_array($FilterIflist[$friendly])) {
-				$oc = $FilterIflist[$friendly];
-				if($oc['ip']) {
-					$sa = $oc['sa'];
-					$sn = $oc['sn'];
-					$if = $oc['if'];
-				}
-				if($sa) {
-				$ipfrules .= <<<EOD
-pass in quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
-pass in quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
-pass out quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} no state label "pass traffic between statically routed subnets"
-pass out quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} no state label "pass traffic between statically routed subnets"
-
-EOD;
-				}
-			}
-		}
-	}
 	if(!isset($config['system']['webgui']['noantilockout'])) {
 		if(count($config['interfaces']) > 1 && !empty($FilterIflist['lan']['if'])) {
 				/* if antilockout is enabled, LAN exists and has
@@ -2030,6 +2149,35 @@ EOD;
 			if(!$rule['rule'])
 				continue;
 			$ipfrules .= "{$rule['rule']} {$rule['descr']}\n";
+		}
+	}
+
+	/*  pass traffic between statically routed subnets and the subnet on the
+	 *  interface in question to avoid problems with complicated routing
+	 *  topologies
+	 */
+	if(isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
+		$ipfrules .= "anchor \"staticrouted\" \n";
+		foreach ($config['staticroutes']['route'] as $route) {
+			$realif = guess_interface_from_ip(lookup_gateway_ip_by_name($route['gateway']));
+			$friendly = convert_real_interface_to_friendly_interface_name($realif);
+			if(is_array($FilterIflist[$friendly])) {
+				$oc = $FilterIflist[$friendly];
+				if($oc['ip']) {
+					$sa = $oc['sa'];
+					$sn = $oc['sn'];
+					$if = $oc['if'];
+				}
+				if($sa) {
+				$ipfrules .= <<<EOD
+pass quick on \${$oc['descr']} proto tcp from {$sa}/{$sn} to {$route['network']} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
+pass quick on \${$oc['descr']} from {$sa}/{$sn} to {$route['network']} keep state(sloppy) label "pass traffic between statically routed subnets"
+pass quick on \${$oc['descr']} proto tcp from {$route['network']} to {$sa}/{$sn} flags any keep state(sloppy) label "pass traffic between statically routed subnets"
+pass quick on \${$oc['descr']} from {$route['network']} to {$sa}/{$sn} keep state(sloppy) label "pass traffic between statically routed subnets"
+
+EOD;
+				}
+			}
 		}
 	}
 
@@ -2457,8 +2605,12 @@ EOD;
 
 function discover_pkg_rules($ruletype) {
 	global $config, $g;
-	if(!is_dir("/usr/local/pkg"))
+
+	/* Bail if there is no pkg directory, or if the package files might be out of sync. */
+	if(!is_dir("/usr/local/pkg") || file_exists('/conf/needs_package_sync'))
 		return "";
+
+	$rules = "";
 	$files = split("\n", trim(`ls /usr/local/pkg/*.inc`));
 	foreach($files as $pkg_inc) {
 		if($pkg_inc == "ls: No match.")
@@ -2469,15 +2621,16 @@ function discover_pkg_rules($ruletype) {
 		$pkg_generate_rules = "{$pkg}_generate_rules";
 		if(function_exists($pkg_generate_rules)) {
 			update_filter_reload_status("Processing early {$ruletype} rules for package {$pkg_inc}");
-			$rules .= $pkg_generate_rules("$ruletype");
-			file_put_contents("{$g['tmp_path']}/rules.packages", $rules);
-			$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.packages");
+			$tmprules = $pkg_generate_rules("$ruletype");
+			file_put_contents("{$g['tmp_path']}/rules.test.packages", $tmprules);
+			$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.test.packages");
 			if ($status <> 0) {
 				$errorrules = "There was an error while parsing the package filter rules for {$pkg_inc}.\n";
 				log_error($errorrules);
 				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg_inc}", "#{$errorrules}\n");
-				return "";
+				continue;
 			}
+			$rules .= $tmprules;
 		}
 	}
 	return $rules;

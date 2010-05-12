@@ -96,7 +96,6 @@ if (led_count() >= 3) {
 /* let the other functions know we're booting */
 $pkg_interface = 'console';
 $g['booting'] = true;
-touch("{$g['varrun_path']}/booting");
 
 /* parse the configuration and include all functions used below */
 require_once("/etc/inc/config.inc");
@@ -367,7 +366,6 @@ upnp_start();
 activate_powerd();
 
 /* done */
-unlink("{$g['varrun_path']}/booting");
 unset($g['booting']);
 
 led_normalize();

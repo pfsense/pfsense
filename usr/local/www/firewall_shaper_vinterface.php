@@ -318,19 +318,6 @@ else
 	$output_form .= "</div>";
 
 $output = "<div id=\"shaperarea\" style=\"position:relative\">";
-if (!$dontshow) {
-if ($queue || $dnpipe || $newqueue) {
-	$output .= "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
-	$output .= "Enable/Disable";
-	$output .= "</td><td class=\"vncellreq\">";
-	$output .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\"";
-	if ($queue)
-		if ($queue->GetEnabled() <> "")
-       			$output .=  " CHECKED";
-	$output .= " ><span class=\"vexpl\"> Enable/Disable queue and its children.</span>";
-	$output .= "</td></tr>";
-}
-}
 $output .= $output_form;
 
 include("head.inc");

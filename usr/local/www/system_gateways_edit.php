@@ -69,6 +69,11 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['friendlyiface'] = $a_gateways[$id]['friendlyiface'];
 	$pconfig['gateway'] = $a_gateways[$id]['gateway'];
 	$pconfig['defaultgw'] = isset($a_gateways[$id]['defaultgw']);
+	$pconfig['latencylow'] = $a_gateway_item[$id]['latencylow'];
+        $pconfig['latencyhigh'] = $a_gateway_item[$id]['latencyhigh'];
+        $pconfig['losslow'] = $a_gateway_item[$id]['losslow'];
+        $pconfig['losshigh'] = $a_gateway_item[$id]['losshigh'];
+        $pconfig['down'] = $a_gateway_item[$id]['down'];
 	if (isset($a_gateways[$id]['dynamic']))
 		$pconfig['dynamic'] = true;
 	if($a_gateways[$id]['monitor'] <> "") {
@@ -91,7 +96,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name");
-	$reqdfieldsn = explode(",", "Name");
+	$reqdfieldsn = array(gettext("Name"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -99,11 +104,11 @@ if ($_POST) {
 		$input_errors[] = "A valid gateway name must be specified.";
 	}
 	if (! is_validaliasname($_POST['name'])) {
-		$input_errors[] = "The gateway name must not contain invalid characters.";
+		$input_errors[] = gettext("The gateway name must not contain invalid characters.");
 	}
 	/* skip system gateways which have been automatically added */
 	if (($_POST['gateway'] && (!is_ipaddr($_POST['gateway'])) && ($_POST['attribute'] != "system")) && ($_POST['gateway'] != "dynamic")) {
-		$input_errors[] = "A valid gateway IP address must be specified.";
+		$input_errors[] = gettext("A valid gateway IP address must be specified.");
 	}
 
 	if ($_POST['gateway'] && (is_ipaddr($_POST['gateway'])) && ($pconfig['attribute'] != "system") && !$_REQUEST['isAjax']) {
@@ -111,12 +116,12 @@ if ($_POST) {
 		if (is_ipaddr($parent_ip)) {
 			$parent_sn = get_interface_subnet($_POST['interface']);
 			if(!ip_in_subnet($_POST['gateway'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
-				$input_errors[] = "The gateway address {$_POST['gateway']} does not lie within the chosen interface's subnet.";
+				$input_errors[] = sprintf(gettext("The gateway address %s does not lie within the chosen interface's subnet."), $_POST['gateway']);
 			}
 		}
 	}
 	if (($_POST['monitor'] <> "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
-		$input_errors[] = "A valid monitor IP address must be specified.";
+		$input_errors[] = gettext("A valid monitor IP address must be specified.");
 	}
 
 	if (isset($_POST['name'])) {
@@ -127,24 +132,64 @@ if ($_POST) {
 			}
 			if($_POST['name'] <> "") {
 				if (($gateway['name'] <> "") && ($_POST['name'] == $gateway['name']) && ($gateway['attribute'] != "system")) {
-					$input_errors[] = "The gateway name \"{$_POST['name']}\" already exists.";
+					$input_errors[] = sprintf(gettext('The gateway name "%s" already exists.'), $_POST['name']);
 					break;
 				}
 			}
 			if(is_ipaddr($_POST['gateway'])) {
 				if (($gateway['gateway'] <> "") && ($_POST['gateway'] == $gateway['gateway']) && ($gateway['attribute'] != "system")) {
-					$input_errors[] = "The gateway IP address \"{$_POST['gateway']}\" already exists.";
+					$input_errors[] = sprintf(gettext('The gateway IP address "%s" already exists.'), $_POST['gateway']);
 					break;
 				}
 			}
 			if(is_ipaddr($_POST['monitor'])) {
 				if (($gateway['monitor'] <> "") && ($_POST['monitor'] == $gateway['monitor']) && ($gateway['attribute'] != "system")) {
-					$input_errors[] = "The monitor IP address \"{$_POST['monitor']}\" is already in use. You must choose a different monitor IP.";
+					$input_errors[] = sprintf(gettext('The monitor IP address "%s" is already in use. You must choose a different monitor IP.'), $_POST['monitor']);
 					break;
 				}
 			}
 		}
 	}
+
+	/* input validation */
+        if($_POST['latencylow']) {
+                if (! is_numeric($_POST['latencylow'])) {
+                        $input_errors[] = gettext("The low latency watermark needs to be a numeric value.");
+                }
+        }
+
+        if($_POST['latencyhigh']) {
+                if (! is_numeric($_POST['latencyhigh'])) {
+                        $input_errors[] = gettext("The high latency watermark needs to be a numeric value.");
+                }
+        }
+        if($_POST['losslow']) {
+                if (! is_numeric($_POST['losslow'])) {
+                        $input_errors[] = gettext("The low loss watermark needs to be a numeric value.");
+                }
+        }
+        if($_POST['losshigh']) {
+                if (! is_numeric($_POST['losshigh'])) {
+                        $input_errors[] = gettext("The high loss watermark needs to be a numeric value.");
+                }
+        }
+
+        if(($_POST['latencylow']) && ($_POST['latencyhigh'])){
+                if(($_POST['latencylow'] > $_POST['latencyhigh'])) {
+                        $input_errors[] = gettext("The High latency watermark needs to be higher then the low latency watermark");
+                }
+        }
+
+        if(($_POST['losslow']) && ($_POST['losshigh'])){
+                if($_POST['losslow'] > $_POST['losshigh']) {
+                        $input_errors[] = gettext("The High packet loss watermark needs to be higher then the low packet loss watermark");
+                }
+        }
+	if($_POST['down']) {
+                if (! is_numeric($_POST['down']) || $_POST['down'] < 1) {
+                        $input_errors[] = gettext("The low latency watermark needs to be a numeric value.");
+                }
+        }
 
 	if (!$input_errors) {
 		$reloadif = false;
@@ -194,6 +239,17 @@ if ($_POST) {
 				unset($gateway['defaultgw']);
 			}
 
+			if ($_POST['latencylow'])
+				$gateway['latencylow'] = $_POST['latencylow'];
+			if ($_POST['latencyhigh'])
+                		$gateway['latencyhigh'] = $_POST['latencyhigh'];
+			if ($_POST['losslow'])
+               			$gateway['losslow'] = $_POST['losslow'];
+			if ($_POST['losshigh'])
+                		$gateway['losshigh'] = $_POST['losshigh'];
+			if ($_POST['down'])
+                		$gateway['down'] = $_POST['down'];
+
 			/* when saving the manual gateway we use the attribute which has the corresponding id */
 			if (isset($id) && $a_gateway_item[$id]) {
 				$a_gateway_item[$id] = $gateway;
@@ -222,7 +278,7 @@ if ($_POST) {
 }
 
 
-$pgtitle = array("System","Gateways","Edit gateway");
+$pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
 include("head.inc");
 
 ?>
@@ -239,6 +295,11 @@ function enable_change(obj) {
 	}	
 	
 }
+function show_advanced_gateway() {
+        document.getElementById("showadvgatewaybox").innerHTML='';
+        aodiv = document.getElementById('showgatewayadv');
+        aodiv.style.display = "block";
+}
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
@@ -252,10 +313,10 @@ function enable_change(obj) {
 	?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Edit gateway</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit gateway"); ?></td>
 				</tr>	
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Interface</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
                   <td width="78%" class="vtable">
 				  <select name="interface" class="formselect" <?php if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") echo "disabled"; ?>>
 		<?php 
@@ -270,34 +331,34 @@ function enable_change(obj) {
 				echo "<option value=\"bgpd\"";
 				if ($pconfig['interface'] == "bgpd") 
 					echo " selected";
-				echo ">Use BGPD</option>";
+				echo ">" . gettext("Use BGPD") . "</option>";
 			}
  		  ?>
                     </select> <br>
-                    <span class="vexpl">Choose which interface this gateway applies to.</span></td>
+                    <span class="vexpl"><?=gettext("Choose which interface this gateway applies to."); ?></span></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Name</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="name" type="text" class="formfld unknown" id="name" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"> 
-                    <br> <span class="vexpl">Gateway name</span></td>
+                    <br> <span class="vexpl"><?=gettext("Gateway name"); ?></span></td>
                 </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncellreq">Gateway</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php echo $pconfig['gateway']; ?>" <?php if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") echo "disabled"; ?>>
-                    <br> <span class="vexpl">Gateway IP address</span></td>
+                    <br> <span class="vexpl"><?=gettext("Gateway IP address"); ?></span></td>
                 </tr>
 		<tr>
-		  <td width="22%" valign="top" class="vncell">Default Gateway</td>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("Default Gateway"); ?></td>
 		  <td width="78%" class="vtable">
 			<input name="defaultgw" type="checkbox" id="defaultgw" value="yes" <?php if ($pconfig['defaultgw'] == true) echo "checked"; ?> onclick="enable_change(this)" />
-			<strong>Default Gateway</strong><br />
-			This will select the above gateway as the default gateway
+			<strong><?=gettext("Default Gateway"); ?></strong><br />
+			<?=gettext("This will select the above gateway as the default gateway"); ?>
 		  </td>
 		</tr>
 		<tr>
-		  <td width="22%" valign="top" class="vncell">Monitor IP</td>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("Monitor IP"); ?></td>
 		  <td width="78%" class="vtable">
 			<?php
 				if(is_numeric($pconfig['attribute']) && ($pconfig['gateway'] == dynamic) && ($pconfig['monitor'] == "")) {
@@ -307,40 +368,83 @@ function enable_change(obj) {
 				}
 			?>
 			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" />
-			<strong>Alternative monitor IP</strong> <br />
-			Enter an alternative address here to be used to monitor the link. This is used for the
-			quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond
-			to ICMP echo requests (pings).</strong>
+			<strong><?=gettext("Alternative monitor IP"); ?></strong> <br />
+			<?gettext("Enter an alternative address here to be used to monitor the link. This is used for the " .
+			"quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond " .
+			"to ICMP echo requests (pings)"); ?>.</strong>
 			<br />
 		  </td>
 		</tr>
 		<tr>
-		  <td width="22%" valign="top" class="vncell">Weight</td>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("Advanced");?></td>
 		  <td width="78%" class="vtable">
-			<select name='weight' class='formfldselect' id='weight'>
-			<?php
-                                for ($i = 1; $i < 6; $i++) {
-                                        $selected = "";
-                                        if ($pconfig['weight'] == $i)
-                                                $selected = "selected";
-                                        echo "<option value='{$i}' {$selected} >{$i}</option>";
-                                }
-			?>
-			</select>
-			<strong>Weight for this gateway when used in a Gateway Group.</strong> <br />
+			<div id="showadvgatewaybox" <? if (!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) || !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || (isset($pconfig['weight']) && $pconfig['weight'] > 1)) echo "style='display:none'"; ?>>
+				<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - Show advanced option</a>
+			</div>
+			<div id="showgatewayadv" <? if (empty($pconfig['latencylow']) && empty($pconfig['latencyhigh']) && empty($pconfig['losslow']) && empty($pconfig['losshigh']) && (empty($pconfig['weight']) || $pconfig['weight'] == 1)) echo "style='display:none'"; ?>>
+                        <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
+			<tr>
+                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Weight");?></td>
+                                <td width="78%" class="vtable">
+					<select name='weight' class='formfldselect' id='weight'>
+				<?php
+					for ($i = 1; $i < 6; $i++) {
+                                        	$selected = "";
+                                        	if ($pconfig['weight'] == $i)
+                                                	$selected = "selected";
+                                        	echo "<option value='{$i}' {$selected} >{$i}</option>";
+                                	}
+				?>
+					</select>
+					<br /><?=gettext("Weight for this gateway when used in a Gateway Group.");?> <br />
+		   		</td>
+			</tr>
+                        <tr>
+                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Latency thresholds");?></td>
+                                <td width="78%" class="vtable">
+                                <?=gettext("From");?>
+                                    <input name="latencylow" type="text" class="formfld unknown" id="latencylow" size="2"
+                                        value="<?=htmlspecialchars($pconfig['latencylow']);?>">
+                                <?=gettext("To");?>
+                                    <input name="latencyhigh" type="text" class="formfld unknown" id="latencyhigh" size="2"
+                                        value="<?=htmlspecialchars($pconfig['latencyhigh']);?>">
+                                    <br> <span class="vexpl"><?=gettext("These define the low and high water marks for latency in milliseconds.");?></span></td>
+                                </td>
+                        </tr>
+                        <tr>
+                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Packet Loss thresholds");?></td>
+                                <td width="78%" class="vtable">
+                                <?=gettext("From");?>
+                                    <input name="losslow" type="text" class="formfld unknown" id="losslow" size="2"
+                                        value="<?=htmlspecialchars($pconfig['losslow']);?>">
+                                <?=gettext("To");?>
+                                    <input name="losshigh" type="text" class="formfld unknown" id="losshigh" size="2"
+                                        value="<?=htmlspecialchars($pconfig['losshigh']);?>">
+                                    <br> <span class="vexpl"><?=gettext("These define the low and high water marks for packet loss in %.");?></span></td>
+                                </td>
+                        </tr>
+			<tr>
+                                <td width="22%" valign="top" class="vncellreq"><?=gettext("Down");?></td>
+                                <td width="78%" class="vtable">
+                                    <input name="down" type="text" class="formfld unknown" id="down" size="2"
+                                        value="<?=htmlspecialchars($pconfig['down']);?>">
+                                    <br> <span class="vexpl"><?=gettext("This defines the down time for the alarm to fire, in seconds.");?></span></td>
+                                </td>
+                        </tr>
+                        </table>
+			</div>
 		   </td>
 		</tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here for your reference (not parsed)"); ?>.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" class="formbtn"  onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="<?=gettext("Cancel");?>" class="formbtn"  onclick="history.back()">
                     <?php if (isset($id) && $a_gateways[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

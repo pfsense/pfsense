@@ -43,6 +43,7 @@ fi
 
 product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
 hideplatform=`cat /etc/inc/globals.inc | grep hideplatform | wc -l`
+varrunpath=`cat /etc/inc/globals.inc | grep varrun_path | cut -d'"' -f4`
 
 if [ "$hideplatform" -gt "0" ]; then
 	platformbanner="" # hide the platform
@@ -324,6 +325,7 @@ cap_mkdb /etc/login.conf
 echo -n "Launching the init system..."
 rm -f /cf/conf/backup/backup.cache
 rm -f /root/lighttpd*
+touch $varrunpath/booting
 /etc/rc.bootup
 
 # If a shell was selected from recovery 
@@ -360,6 +362,7 @@ minicron 86400 /var/run/update_alias_url_data.pid /etc/rc.update_alias_url_data
 /bin/chmod a+rw /tmp/.
 
 echo "Bootup complete"
+rm $varrunpath/booting
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 

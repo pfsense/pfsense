@@ -54,7 +54,7 @@ $sendto = "output";
 
 $todo = array();
 
-$pgtitle = array("System","Package Manager","Install Package");
+$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Install Package"));
 include("head.inc");
 
 ?>
@@ -69,11 +69,11 @@ include("head.inc");
 						<?php
 							$version = file_get_contents("/etc/version");
 							$tab_array = array();
-							$tab_array[] = array("{$version} packages", false, "pkg_mgr.php");
+							$tab_array[] = array("{$version} " . gettext("packages"), false, "pkg_mgr.php");
 //							$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
 //							$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
-							$tab_array[] = array("Installed packages", false, "pkg_mgr_installed.php");
-							$tab_array[] = array("Package Installer", true, "");
+							$tab_array[] = array(gettext("Installed packages"), false, "pkg_mgr_installed.php");
+							$tab_array[] = array(gettext("Package Installer"), true, "");
 							display_top_tabs($tab_array);
 						?>
 					</td>
@@ -98,7 +98,7 @@ include("head.inc");
 							</table>
 							<br>
 							<!-- status box -->
-							<textarea cols="60" rows="1" name="status" id="status" wrap="hard">Beginning package installation.</textarea>
+							<textarea cols="60" rows="1" name="status" id="status" wrap="hard"><?=gettext("Beginning package installation.");?></textarea>
 							<!-- command output box -->
 							<textarea cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
 						</center>
@@ -121,7 +121,7 @@ Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
 ob_flush();
 
 // Write out configuration to creatae a backup prior to pkg install
-write_config("Creating restore point before package installation.");
+write_config(gettext("Creating restore point before package installation."));
 
 /* mount rw fs */
 conf_mount_rw();
@@ -130,8 +130,8 @@ switch($_GET['mode']) {
 	case "delete":
 		$id = get_pkg_id($_GET['pkg']);
 		uninstall_package_from_name($_GET['pkg']);
-		update_status("Package deleted.");
-		$static_output .= "\nPackage deleted.";
+		update_status(gettext("Package deleted."));
+		$static_output .= "\n" . gettext("Package deleted.");
 		update_output_window($static_output);
 		filter_configure();
 		break;
@@ -145,8 +145,8 @@ switch($_GET['mode']) {
 		$id = get_pkg_id(htmlspecialchars($_GET['pkg']));
 		delete_package_xml(htmlspecialchars($_GET['pkg']));
 		install_package(htmlspecialchars($_GET['pkg']));
-		update_status("Package reinstalled.");
-		$static_output .= "\n\nPackage reinstalled.";
+		update_status(gettext("Package reinstalled."));
+		$static_output .= "\n\n" . gettext("Package reinstalled.");
 		start_service(htmlspecialchars($_GET['pkg']));
 		update_output_window($static_output);
 		filter_configure();
@@ -154,7 +154,7 @@ switch($_GET['mode']) {
 	case "reinstallxml":
 		delete_package_xml(htmlspecialchars($_GET['pkg']));
 		install_package(htmlspecialchars($_GET['pkg']));
-		$static_output .= "\n\nPackage reinstalled.";
+		$static_output .= "\n\n" . gettext("Package reinstalled.");
 		start_service(htmlspecialchars($_GET['pkg']));
 		update_output_window($static_output);
 		filter_configure();
@@ -164,10 +164,10 @@ switch($_GET['mode']) {
 		if(file_exists("/tmp/{$_GET['pkg']}.info")) {
 			$filename = escapeshellcmd("/tmp/" . $_GET['pkg']  . ".info");
 			$status = file_get_contents($filename);
-			update_status($_GET['pkg']  . " installation completed.");
+			update_status($_GET['pkg']  . " " . gettext("installation completed."));
 			update_output_window($status);
 		} else {
-			update_output_window("Could not find {$_GET['pkg']}.");
+			update_output_window(gettext("Could not find") . " " . $_GET['pkg'] . ".");
 		}
 		break;
 	case "reinstallall":
@@ -187,8 +187,8 @@ switch($_GET['mode']) {
 				$pkg_id++;
 			}
 		}
-		update_status("All packages reinstalled.");
-		$static_output .= "\n\nAll packages reinstalled.";
+		update_status(gettext("All packages reinstalled."));
+		$static_output .= "\n\n" . gettext("All packages reinstalled.");
 		start_service(htmlspecialchars($_GET['pkg']));
 		update_output_window($static_output);
 		filter_configure();
@@ -196,19 +196,19 @@ switch($_GET['mode']) {
 	default:
 		$status = install_package(htmlspecialchars($_GET['id']));
 		if($status == -1) {
-			update_status("Installation of " . htmlspecialchars($_GET['id']) . " FAILED!");
-			$static_output .= "\n\nInstallation halted.";
+			update_status(gettext("Installation of") . " " . htmlspecialchars($_GET['id']) . " " . gettext("FAILED!"));
+			$static_output .= "\n\n" . gettext("Installation halted.");
 			update_output_window($static_output);
 		} else {
 			$filename = escapeshellcmd("/tmp/" . $_GET['id']  . ".info");
 			$fd = fopen($filename, "w");
-			$status_a = "Installation of " . htmlspecialchars($_GET['id']) . " completed.";
+			$status_a = gettext("Installation of") . " " . htmlspecialchars($_GET['id']) . " " . gettext("completed.");
 			update_status($status_a);
 			$status = get_after_install_info($_GET['id']);
 			if($status) 
-				$static_output .= "\nInstallation completed.\n\n{$_GET['id']} setup instructions:\n\n{$status}";
+				$static_output .= "\n" . gettext("Installation completed.") . "\n\n{$_GET['id']} " . gettext("setup instructions") . ":\n\n{$status}";
 			else
-				$static_output .= "\nInstallation completed.   Please check to make sure that the package is configured from the respective menu then start the package.";
+				$static_output .= "\n" . gettext("Installation completed.   Please check to make sure that the package is configured from the respective menu then start the package.");
 			fwrite($fd, $status_a . "\n\n". $static_output);
 			fclose($fd);
 			echo "<script type='text/javascript'>document.location=\"pkg_mgr_install.php?mode=installedinfo&pkg={$_GET['id']}\";</script>";

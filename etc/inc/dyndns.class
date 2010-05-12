@@ -375,7 +375,7 @@
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "https://updates.opendns.com/nic/update?hostname=";
+					$server = "https://updates.opendns.com/nic/update?hostname=". $this->_dnsHost;
 					$port = "";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;

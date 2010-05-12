@@ -244,12 +244,14 @@ if ($_POST) {
 	if ($pconfig['maxclients'] && !is_numeric($pconfig['maxclients']))
 		$input_errors[] = "The field 'Concurrent connections' must be numeric.";
 
-	if (!$tls_mode && !$pconfig['autokey_enable']) {
-		$reqdfields = array('shared_key');
-		$reqdfieldsn = array('Shared key');
-	} else {
+	/* If we are not in shared key mode, then we need the CA/Cert. */
+	if ($pconfig['mode'] != "p2p_shared_key") {
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = explode(",", "Certificate Authority,Certificate");;
+	} elseif (!$pconfig['autokey_enable']) {
+		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
+		$reqdfields = array('shared_key');
+		$reqdfieldsn = array('Shared key');
 	}
 
 	$reqdfields[] = 'tunnel_network';
@@ -380,10 +382,16 @@ function mode_change() {
 			break;
 	}
 	switch(value) {
-		case "p2p_tls":
 		case "p2p_shared_key":
 			document.getElementById("client_opts").style.display="none";
 			document.getElementById("remote_opts").style.display="";
+			document.getElementById("local_opts").style.display="none";
+			document.getElementById("authmodetr").style.display="none";
+			break;
+		case "p2p_tls":
+			document.getElementById("client_opts").style.display="none";
+			document.getElementById("remote_opts").style.display="";
+			document.getElementById("local_opts").style.display="";
 			document.getElementById("authmodetr").style.display="none";
 			break;
 		case "server_user":
@@ -391,12 +399,14 @@ function mode_change() {
 			document.getElementById("authmodetr").style.display="";
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("local_opts").style.display="";
 			break;
 		case "server_tls":
 			document.getElementById("authmodetr").style.display="none";
 		default:
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("local_opts").style.display="";
 			break;
 	}
 }
@@ -504,6 +514,7 @@ function netbios_change() {
 				$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
 				$tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
 				$tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
+				$tab_array[] = array(gettext("Logs"), false, "diag_logs_openvpn.php");
 				add_package_tabs("OpenVPN", $tab_array);
 				display_top_tabs($tab_array);
 			?>

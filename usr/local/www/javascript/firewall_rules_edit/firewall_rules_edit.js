@@ -3,13 +3,13 @@ var portsenabled = 1;
 var editenabled = 1;
 
 function ext_change() {
-	if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled) {
+	if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled && editenabled) {
 		document.iform.srcbeginport_cust.disabled = 0;
 	} else {
 		document.iform.srcbeginport_cust.value = "";
 		document.iform.srcbeginport_cust.disabled = 1;
 	}
-	if ((document.iform.srcendport.selectedIndex == 0) && portsenabled) {
+	if ((document.iform.srcendport.selectedIndex == 0) && portsenabled && editenabled) {
 		document.iform.srcendport_cust.disabled = 0;
 	} else {
 		document.iform.srcendport_cust.value = "";
@@ -34,9 +34,9 @@ function ext_change() {
 		document.iform.dstbeginport.disabled = 1;
 		document.iform.dstendport.disabled = 1;
 	} else {
-		document.iform.srcbeginport.disabled = 0;
-		document.iform.srcendport.disabled = 0;
 		if( editenabled ) {
+			document.iform.srcbeginport.disabled = 0;
+			document.iform.srcendport.disabled = 0;
 			document.iform.dstbeginport.disabled = 0;
 			document.iform.dstendport.disabled = 0;
 		}
@@ -90,8 +90,10 @@ function typesel_change() {
 function proto_change() {
 	if (document.iform.proto.selectedIndex < 3) {
 		portsenabled = 1;
+		document.getElementById("tcpflags").style.display = '';
 	} else {
 		portsenabled = 0;
+		document.getElementById("tcpflags").style.display = 'none';
 	}
 
 	/* Disable OS knob if the proto is not TCP. */
@@ -180,6 +182,12 @@ function show_advanced_state() {
 	aodiv.style.display = "block";
 }
 
+function show_advanced_tcpflags() {
+        document.getElementById("showtcpflagsbox").innerHTML='';
+        aodiv = document.getElementById('showtcpflagsadv');
+        aodiv.style.display = "block";
+}
+
 function show_advanced_layer7() {
 	document.getElementById("showadvlayer7box").innerHTML='';
 	aodiv = document.getElementById('showlayer7adv');
@@ -194,4 +202,11 @@ function dst_rep_change() {
 	document.iform.dstendport.selectedIndex = document.iform.dstbeginport.selectedIndex;
 }
 
+function tcpflags_anyclick(obj) {
+	if (obj.checked) {
+		document.getElementById('tcpheader').style.display= 'none';
+	} else {
+		document.getElementById('tcpheader').style.display= "";
+	}
+}
 //-->

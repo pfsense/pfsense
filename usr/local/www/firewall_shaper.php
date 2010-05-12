@@ -374,22 +374,6 @@ else
 	$output_form .= "</div>";
 
 $output = "<div id=\"shaperarea\" style=\"position:relative\">";
-if (!$dontshow) {
-if ($queue || $altq || $newqueue) {
-	$output .= "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
-	$output .= "Enable/Disable";
-	$output .= "</td><td class=\"vncellreq\">";
-	$output .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"enabled\"";
-	if ($queue)
-		if ($queue->GetEnabled())
-       			$output .=  " CHECKED";
-	else if ($altq)
-		if ($altq->GetEnabled())
-			$output .= " CHECKED";
-	$output .= " ><span class=\"vexpl\"> Enable/Disable queue and its childs</span>";
-	$output .= "</td></tr>";
-}
-}
 $output .= $output_form;
 
 //$pgtitle = "Firewall: Shaper: By Interface View";

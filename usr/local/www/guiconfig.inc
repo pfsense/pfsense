@@ -93,20 +93,21 @@ if(!$ignorefirmwarelock) {
 }
 
 $firewall_rules_dscp_types = array("af11", 
-								"af12", 
-								"af13", 
-								"af21", 
-								"af22", 
-								"af23", 
-								"af31", 
-								"af32", 
-								"af33", 
-								"af41", 
-								"af42", 
-								"af43", 
-								"EF", 
-								"1-64", 
-								"0x04-0xfc");
+				"af12", 
+				"af13", 
+				"af21", 
+				"af22", 
+				"af23", 
+				"af31", 
+				"af32", 
+				"af33", 
+				"af41", 
+				"af42", 
+				"af43", 
+				"EF", 
+				"1-64", 
+				"0x10",
+				"0x04-0xfc");
 
 $auth_server_types = array(
 	'ldap' => "LDAP",
@@ -201,6 +202,9 @@ $wkports = array(
 	23 => "Telnet",
 	69 => "TFTP",
 	5900 => "VNC");
+
+/* TCP flags */
+$tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg");
 
 $specialnets = array("wanip" => "WAN address", "lanip" => "LAN address", "lan" => "LAN net", "pptp" => "PPTP clients", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
 

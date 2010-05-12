@@ -239,6 +239,8 @@ document.observe("dom:loaded", function() {
 				  <?php endif; ?>
                   </td>
 				</tr>
+				<input type="hidden" name="mode" value="redirect_mode">
+<!--
                 <tr align="left">
 		  			<td width="22%" valign="top" class="vncellreq">Mode</td>
                   <td width="78%" class="vtable" colspan="2">
@@ -248,6 +250,7 @@ document.observe("dom:loaded", function() {
                   <br>
                   </td>
 				</tr>
+-->
                 <tr id="relay" align="left" style="display:none;">
 		  			<td width="22%" valign="top" class="vncellreq">Relay Protocol</td>
                   <td width="78%" class="vtable" colspan="2">

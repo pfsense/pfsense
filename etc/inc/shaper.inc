@@ -513,7 +513,7 @@ class altq_root_queue {
 	 *              this->queues[$qkey]->build_rule();
 	 */
 	function build_rules() {
-		if (count($this->queues) > 0 && $this->GetEnabled()) {
+		if (count($this->queues) > 0 && $this->GetEnabled() == "on") {
 			$rules = " altq on  " . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler())
 				$rules .= " ".strtolower($this->GetScheduler());
@@ -593,7 +593,15 @@ class altq_root_queue {
 	 * to the user like the traffic wizard does.
 	 */
 	function build_form() { 
-		$form = "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
+		$form = "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
+		$form .= "Enable/Disable";
+		$form .= "</td><td class=\"vncellreq\">";
+		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
+                if ($this->GetEnabled() == "on")
+                        $form .=  " CHECKED";
+		$form .= " ><span class=\"vexpl\"> Enable/Disable discipline and its childs</span>";
+		$form .= "</td></tr>";
+		$form .= "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<strong>".$this->GetQname()."</strong>";
 		$form .= "</td></tr>";
@@ -1067,6 +1075,14 @@ class priq_queue {
 	 * need to update it.
 	 */
 	function build_form() {
+		$form = "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
+                $form .= "Enable/Disable";
+                $form .= "</td><td class=\"vncellreq\">";
+                $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
+                if ($this->GetEnabled() == "on")
+                        $form .=  " CHECKED";
+                $form .= " ><span class=\"vexpl\"> Enable/Disable queue and its childs</span>";
+                $form .= "</td></tr>";
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
 		$form .= "Queue Name</td><td width=\"78%\" class=\"vtable\">";
@@ -2907,7 +2923,15 @@ class dnpipe_class extends dummynet_class {
 	}
 
         function build_form() { 
-		$form = "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
+		$form = "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
+                $form .= "Enable/Disable";
+                $form .= "</td><td class=\"vncellreq\">";
+                $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
+                if ($this->GetEnabled() == "on")
+                        $form .=  " CHECKED";
+                $form .= " ><span class=\"vexpl\"> Enable/Disable limiter and its childs</span>";
+                $form .= "</td></tr>";
+		$form .= "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"name\" name=\"name\" value=\"";
 		$form .= $this->GetQname()."\">";
@@ -3142,7 +3166,15 @@ class dnqueue_class extends dummynet_class {
 	}
 
         function build_form() { 
-		$form = "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
+		$form = "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
+                $form .= "Enable/Disable";
+                $form .= "</td><td class=\"vncellreq\">";
+                $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
+                if ($this->GetEnabled() == "on")
+                        $form .=  " CHECKED";
+                $form .= " ><span class=\"vexpl\"> Enable/Disable queue and its childs</span>";
+                $form .= "</td></tr>";
+		$form .= "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"name\" name=\"name\" value=\"";
 		$form .= $this->GetQname()."\">";
@@ -3355,8 +3387,8 @@ class layer7 {
         $form = "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
 	$form .= "Enable/Disable";
 	$form .= "</td><td class=\"vncellreq\">";
-	$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\"";
-	if ($this->GetREnabled()) {
+	$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\" ";
+	if ($this->GetREnabled() == "on") {
        	    $form .=  "checked = \"CHECKED\"";
 	}
 	$form .= " ><span class=\"vexpl\"> Enable/Disable layer7 Container</span>";
@@ -3443,7 +3475,7 @@ class layer7 {
     }
     
     function delete_l7c() {
-	mwexec("/bin/pkill -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'", true);
+	mwexec("/bin/pkill -f 'ipfw-classifyd .* -p ". $this->GetRPort() . "'", true);
 	unset_l7_object_by_reference($this->GetRName());
 	cleanup_l7_from_rules($this->GetRName());
     }

@@ -3,13 +3,13 @@ var portsenabled = 1;
 var editenabled = 1;
 
 function ext_change() {
-	if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled) {
+	if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled && editenabled) {
 		document.iform.srcbeginport_cust.disabled = 0;
 	} else {
 		document.iform.srcbeginport_cust.value = "";
 		document.iform.srcbeginport_cust.disabled = 1;
 	}
-	if ((document.iform.srcendport.selectedIndex == 0) && portsenabled) {
+	if ((document.iform.srcendport.selectedIndex == 0) && portsenabled && editenabled) {
 		document.iform.srcendport_cust.disabled = 0;
 	} else {
 		document.iform.srcendport_cust.value = "";
@@ -34,9 +34,9 @@ function ext_change() {
 		document.iform.dstbeginport.disabled = 1;
 		document.iform.dstendport.disabled = 1;
 	} else {
-		document.iform.srcbeginport.disabled = 0;
-		document.iform.srcendport.disabled = 0;
 		if( editenabled ) {
+			document.iform.srcbeginport.disabled = 0;
+			document.iform.srcendport.disabled = 0;
 			document.iform.dstbeginport.disabled = 0;
 			document.iform.dstendport.disabled = 0;
 		}

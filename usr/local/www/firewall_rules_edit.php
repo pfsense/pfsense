@@ -256,12 +256,16 @@ if ($_POST) {
 	}
 
 	/* input validation */
-	$reqdfields = explode(" ", "type proto src");
-	if ( isset($a_filter[$id]['associated-rule-id'])===false )
+	$reqdfields = explode(" ", "type proto");
+	if ( isset($a_filter[$id]['associated-rule-id'])===false ) {
+		$redqfields[] = "src";
 		$redqfields[] = "dst";
-	$reqdfieldsn = explode(",", "Type,Protocol,Source");
-	if ( isset($a_filter[$id]['associated-rule-id'])===false )
+	}
+	$reqdfieldsn = explode(",", "Type,Protocol");
+	if ( isset($a_filter[$id]['associated-rule-id'])===false ) {
+		$reqdfieldsn[] = "Source";
 		$reqdfieldsn[] = "Destination";
+	}
 
 	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
 		if( $_POST['proto'] != "tcp" )
@@ -270,7 +274,8 @@ if ($_POST) {
 			$input_errors[] = "{$_POST['statetype']} is only valid if the gateway is set to 'default'.";
 	}
         
-	if (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single"))) {
+	if ( isset($a_filter[$id]['associated-rule-id'])===false &&
+	(!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single"))) ) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = "Source bit count";
 	}
@@ -508,8 +513,9 @@ if ($_POST) {
 			$filterent['sched'] = $_POST['sched'];
 		}
 
-		// If we have an associated nat rule, make sure the destination doesn't change
+		// If we have an associated nat rule, make sure the source and destination doesn't change
 		if( isset($a_filter[$id]['associated-rule-id']) ) {
+			$filterent['source'] = $a_filter[$id]['source'];
 			$filterent['destination'] = $a_filter[$id]['destination'];
 			$filterent['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 		}
@@ -721,8 +727,8 @@ include("head.inc");
 						$edit_disabled=true;
 						if (is_array($config['nat']['rule'])) {
 							foreach( $config['nat']['rule'] as $index => $nat_rule ) {
-								if( $nat_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
-									echo "<a href=\"firewall_nat_edit.php?id={$nat_rule[$index]}\">View the NAT rule</a><br>";
+								if( isset($nat_rule['associated-rule-id']) && $nat_rule['associated-rule-id']==$pconfig['associated-rule-id'] ) {
+									echo "<a href=\"firewall_nat_edit.php?id={$index}\">View the NAT rule</a><br>";
 									break;
 								}
 							}

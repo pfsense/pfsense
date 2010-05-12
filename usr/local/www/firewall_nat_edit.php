@@ -581,7 +581,7 @@ include("fbegin.inc"); ?>
 					</tr>
 				</table>
 				<br />
-				<span class="vexpl">Specify the source port or port range for this rule. <b>This is almost never equal to the destination port range (and is usually &quot;any&quot;)</b>. <br /> Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port</span><br/>
+				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule. <b>This is usually <em>random</em> and almost never equal to the destination port range (and should usually be &quot;any&quot;).</b> <br /> Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port.");?></span><br/>
 			</td>
 		</tr>
 		<tr>

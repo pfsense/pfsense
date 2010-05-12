@@ -358,7 +358,7 @@ if ($_POST) {
 		}
 		*/
 			foreach($_POST['bandwidth'] as $bw){
-				if(!empty($bw))
+				if(!empty($bw) && count($bw_array) < count($_POST['interfaces'])+1)
 					$bw_array[] = $bw;
 			}
 		if (count($bw_array)){
@@ -403,6 +403,7 @@ if ($_POST) {
 			$a_ppps[] = $ppp;
 			
 		write_config();
+		configure_cron();
 		
 		if (isset($thisif)){
 			interface_ppps_configure($thisif);

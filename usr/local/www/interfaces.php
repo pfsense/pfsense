@@ -523,11 +523,11 @@ if ($_POST) {
 			}
 		}
 		
-		// Here code assumes only that strings of form "opt#" will be passed.
+		// Here the else condition code assumes only that strings of form "opt#" will be passed.
 		if ($if == "wan")
 			$if_num = "0";
 		else 
-			$if_num = substr($interface, 3);
+			$if_num = substr($if, 3);
 			
 		switch($_POST['type']) {
 			case "static":
@@ -640,6 +640,12 @@ if ($_POST) {
 		if (isset($wancfg['wireless'])) {
 			handle_wireless_post();
 		}
+		
+		if (isset($_POST['pppid']) && $a_ppps[$pppid])
+			$a_ppps[$pppid] = $ppp;
+		else
+			$a_ppps[] = $ppp;
+		
 		write_config();
 		mark_subsystem_dirty('interfaces');
 		/* regenerate cron settings/crontab file */
@@ -649,10 +655,7 @@ if ($_POST) {
 		exit;
 	}
 	
-	if (isset($_POST['pppid']) && $a_ppps[$pppid])
-		$a_ppps[$pppid] = $ppp;
-	else
-		$a_ppps[] = $ppp;
+	
 	
 } // end if($_POST) 
 
@@ -692,7 +695,7 @@ function handle_pppoe_reset() {
 				$item['month'] = "*";
 				$item['wday'] = "*";
 				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE;
+				$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
 				break;
 	        	case "weekly":
 				$item['minute'] = "0";
@@ -701,7 +704,7 @@ function handle_pppoe_reset() {
 				$item['month'] = "*";
 				$item['wday'] = "0";
 				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE;
+				$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
 				break;
 			case "daily":
 				$item['minute'] = "0";
@@ -710,7 +713,7 @@ function handle_pppoe_reset() {
 				$item['month'] = "*";
 				$item['wday'] = "*";
 				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE;
+				$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
 				break;
 			case "hourly":
 				$item['minute'] = "0";
@@ -719,7 +722,7 @@ function handle_pppoe_reset() {
 				$item['month'] = "*";
 				$item['wday'] = "*";
 				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE;
+				$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
 				break;
 		} // end switch
 	} // end if
@@ -728,8 +731,8 @@ function handle_pppoe_reset() {
 	else 
 		$config['cron']['item'][] = $item;
 	/* finally install the pppoerestart file */
-	if (isset($_POST['pppoe-reset-type']) {
-		setup_pppoe_reset_file($_POST['ptpid'], $if);
+	if (isset($_POST['pppoe-reset-type'])) {
+		setup_pppoe_reset_file($_POST['ptpid'], $_POST['if']);
 //		$wancfg['pppoe_reset'] = true;
 //		$wancfg['pppoe_preset'] = true;
 		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");

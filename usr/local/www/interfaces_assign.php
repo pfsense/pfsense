@@ -131,12 +131,13 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		$portname = $ppp['type'].$pppid;
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
+		$ports_base = basename($ppp['ports']);
 		if (isset($ppp['descr']))
-			$portlist[$portname]['descr'] = strtoupper($ppp['type']). "({$ppp['ports']}) - {$ppp['descr']}";
+			$portlist[$portname]['descr'] = strtoupper($ppp['type']). "({$ports_base}) - {$ppp['descr']}";
 		else if (isset($ppp['username']))
-			$portlist[$portname]['descr'] = strtoupper($ppp['type']). "({$ppp['ports']}) - {$ppp['username']}";
+			$portlist[$portname]['descr'] = strtoupper($ppp['type']). "({$ports_base}) - {$ppp['username']}";
 		else
-			$portlist[$portname]['descr'] = strtoupper($ppp['type']). "({$ppp['ports']})";
+			$portlist[$portname]['descr'] = strtoupper($ppp['type']). "({$ports_base})";
 	}
 }
 

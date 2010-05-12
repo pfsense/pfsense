@@ -469,9 +469,9 @@ function write_config($desc="Unknown", $backup = true) {
 
 	/* Log the running script so it's not entirely unlogged what changed */
 	if ($desc == "Unknown")
-		$desc = "{$_SESSION['Username']}: {$_SERVER['SCRIPT_NAME']} made unknown change";
+		$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";
 
-	$config['revision']['description'] = $desc;
+	$config['revision']['description'] = "{$_SESSION['Username']}: " . $desc;
 	$config['revision']['username'] = $_SESSION["Username"];
 
 	$lockkey = lock('config');

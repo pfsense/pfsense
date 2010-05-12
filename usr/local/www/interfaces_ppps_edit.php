@@ -42,6 +42,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require("functions.inc");
 
 define("CRON_PPPOE_CMD_FILE", "{$g['varetc_path']}/pppoe_restart_");
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
@@ -348,37 +349,40 @@ if ($_POST) {
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
 		
-		while(count($_POST['bandwidth'])){
+/*		while(count($_POST['bandwidth'])){
 			if($_POST['bandwidth'][count($_POST['bandwidth'])-1] == "")
 				array_pop(&$_POST['bandwidth']);
 			else
 				break;
 		}
-		if (!empty($_POST['bandwidth']) && count($_POST['bandwidth']))
-			$ppp['bandwidth'] = implode(',', $_POST['bandwidth']);
-		else 
+		*/
+			foreach($_POST['bandwidth'] as $bw){
+				if(!empty($bw))
+					$bw_array[] = $bw;
+			}
+		if (count($bw_array)){
+			
+			$ppp['bandwidth'] = implode(',', $bw_array);
+		} else 
 			unset($ppp['bandwidth']);
 		
-		while(count($_POST['mtu'])){
-			if($_POST['mtu'][count($_POST['mtu'])-1] == "")
-				array_pop(&$_POST['mtu']);
-			else
-				break;
-		}
-		if (!empty($_POST['mtu']) && count($_POST['mtu']))
-			$ppp['mtu'] = implode(',', $_POST['mtu']);
-		else 
+			foreach($_POST['mtu'] as $mtu){
+				if(!empty($mtu))
+					$mtu_array[] = $mtu;
+			}
+		if (count($mtu_array)){
+			
+			$ppp['mtu'] = implode(',', $mtu_array);
+		} else 
 			unset($ppp['mtu']);
-		
-		while(count($_POST['mru'])){
-			if($_POST['mru'][count($_POST['mru'])-1] == "")
-				array_pop(&$_POST['mru']);
-			else
-				break;
-		}
-		if (!empty($_POST['mru']) && count($_POST['mru']))
-			$ppp['mru'] = implode(',', $_POST['mru']);
-		else 
+			foreach($_POST['mru'] as $mru){
+				if(!empty($mru))
+					$mru_array[] = $mru;
+			}
+		if (count($mru_array)){
+			
+			$ppp['mru'] = implode(',', $mru_array);
+		} else 
 			unset($ppp['mru']);
 		/* handle_pppoe_reset is called here because if user changes Link Type from PPPoE to another type we 
 		must be able to clear the config data in the <cron> section of config.xml if it exists
@@ -492,6 +496,10 @@ include("head.inc");
 $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP"/*,  "l2tp" => "L2TP", "tcp" => "TCP", "udp" => "UDP"*/  ); 
 
 ?>
+	<script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
+	<link href="/javascript/numericupdown/css/numericupdown.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="/javascript/datepicker/js/datepicker.js"></script>
+	<link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css"/>
 	<script type="text/javascript" >
 		document.observe("dom:loaded", function() { updateType(<?php echo "'{$pconfig['type']}'";?>); });
 	</script>
@@ -522,7 +530,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr name="interface" id="interface" >
 			<td width="22%" valign="top" class="vncellreq"><?= gettext("Link interface(s)"); ?></td>
 			<td width="78%" class="vtable">
-				<select valign="top" name="interfaces[]" multiple="true" class="formselect" size="4" <! onChange="show_hide_linkfields(this.options);" -->>
+				<select valign="top" name="interfaces[]" multiple="true" class="formselect" size="4" onChange="show_hide_linkfields(this.options);">
 					<option></option>
 				</select>
 
@@ -572,7 +580,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Username"); ?></td>
 			<td width="78%" class="vtable">
-			<input name="username" type="text" class="formfld usr" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+			<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
 			</td>
 		</tr>
 		<tr>
@@ -834,22 +842,22 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			<td class="vtable">
 				<table name="link_parameters" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="22%" valign="top" id="bandwidth<?=$i;?>" class="vncell"> Bandwidth</td>
-						<td width="78%" class="vtable">
+						<td width="22%" valign="top"class="vncell"> Bandwidth</td>
+						<td width="78%" id="bandwidth<?=$i;?>" class="vtable">
 						<br/><input name="bandwidth[]" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['bandwidth'][$i]);?>">
 						<br/> <span class="vexpl">Set Bandwidth for each link ONLY for MLPPP connections and ONLY when links have different bandwidths.</span>
 					  </td>
 					</tr>
 					<tr>
-					  <td width="22%" valign="top" id="mtu<?=$i;?>" class="vncell"> MTU</td>
-					  <td width="78%" class="vtable">
+					  <td width="22%" valign="top" class="vncell"> MTU</td>
+					  <td width="78%" id="mtu<?=$i;?>" class="vtable">
 						<input name="mtu[]" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mtu'][$i]);?>">
 						<br> <span class="vexpl">Set MTU for each link if links have different bandwidths, otherwise, mtu will default to 1492.</span>
 					  </td>
 					</tr>
 					<tr>
-					  <td width="22%" valign="top" id="mru<?=$i;?>" class="vncell"> MRU</td>
-					  <td width="78%" class="vtable">
+					  <td width="22%" valign="top" class="vncell"> MRU</td>
+					  <td width="78%" id="mru<?=$i;?>" class="vtable">
 						<input name="mru[]" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mru'][$i]);?>">
 						<br> <span class="vexpl">Set MRU for each link if links have different bandwidths, otherwise, mru will default to 1492.</span>
 					  </td>
@@ -857,9 +865,6 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				</table
 			</td>
 		</tr><?php endfor; ?>
-		<tr style="display:none">
-			
-		</tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">

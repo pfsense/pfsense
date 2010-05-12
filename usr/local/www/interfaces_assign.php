@@ -133,6 +133,8 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		$portlist[$portname]['isppp'] = true;
 		if (isset($ppp['descr']))
 			$portlist[$portname]['descr'] = strtoupper($ppp['type']) . " - ". $ppp['descr'];
+		else if (isset($ppp['username']))
+			$portlist[$portname]['descr'] = strtoupper($ppp['type']) . " - ". $ppp['username'];
 		else
 			$portlist[$portname]['descr'] = strtoupper($ppp['type']) . " - ". $ppp['ports'];
 	}

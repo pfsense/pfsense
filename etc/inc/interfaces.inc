@@ -1084,6 +1084,7 @@ function interface_ppps_configure($interface) {
 		return 1;
 	}
 	$ports = explode(',',$ppp['ports']);
+	
 	if (is_array($ports) && count($ports) > 1)
 		$multilink = "enable";
 	else
@@ -1116,8 +1117,15 @@ function interface_ppps_configure($interface) {
 		$ppp['password'] = "none";
 	}
 	if (empty($ppp['password']) && $type == "modem")
-		$ppp['password'] = "none";
-
+		$passwd = "none";
+	else
+		$passwd = base64_decode($ppp['password']);
+	if (isset($ppp['bandwidth'])) 
+		$bandwidths = explode(',',$ppp['bandwidth']);
+	if (isset($ppp['mtu'])) 
+		$mtus = explode(',',$ppp['mtu']);
+	if (isset($ppp['mru'])) 
+		$mrus = explode(',',$ppp['mru']);
 	// Construct the mpd.conf file
 	$mpdconf = <<<EOD
 startup:
@@ -1187,62 +1195,66 @@ EOD;
 	}
 */	
 	foreach($ports as $pid => $port){
-	$mpdconf .= <<<EOD
+		$mpdconf .= <<<EOD
 
-	create link static L{$pid}-{$interface} {$type}
+	create link static link{$pid}-{$interface} {$type}
 	set link action bundle {$interface}
 	set link {$multilink} multilink
 	set link keep-alive 10 60
 	set link max-redial 0
 
 EOD;
-	if (isset($ppp['shortseq'])){
-		$mpdconf .= <<<EOD
+		if (isset($ppp['shortseq'])){
+			$mpdconf .= <<<EOD
 	set link no shortseq
 
 EOD;
-	}
-	if (isset($ppp['acfcomp'])){
-		$mpdconf .= <<<EOD
+		}
+		if (isset($ppp['acfcomp'])){
+			$mpdconf .= <<<EOD
 	set link no acfcomp
 
 EOD;
-	}
-	if (isset($ppp['protocomp'])){
-		$mpdconf .= <<<EOD
+		}
+		if (isset($ppp['protocomp'])){
+			$mpdconf .= <<<EOD
 	set link no protocomp
 
 EOD;
-	}
-
-	$mpdconf .= <<<EOD
+		}
+		$mpdconf .= <<<EOD
 	set link disable chap pap
 	set link accept chap pap eap
 	set link disable incoming
 
 EOD;
-/*
-	if (isset($ppp['mtu'])){
-		$mpdconf .= <<<EOD
-	set link mtu {$ppp['mtu']}
+
+
+		if (isset($bandwidths)){
+			$mpdconf .= <<<EOD
+	set link bandwidth {$bandwidths[$pid]}
 
 EOD;
-	}
-	if (isset($ppp['mru'])){
-		$mpdconf .= <<<EOD
-	set link mtu {$ppp['mru']}
+		}
+		if (isset($mtus)){
+			$mpdconf .= <<<EOD
+	set link mtu {$mtus[$pid]}
 
 EOD;
-	}
-*/
-	$passwd = base64_decode($ppp['password']);
-	$mpdconf .= <<<EOD
+		}
+		if (isset($mrus)){
+			$mpdconf .= <<<EOD
+	set link mru {$mrus[$pid]}
+
+EOD;
+		}
+		$mpdconf .= <<<EOD
 	set auth authname "{$ppp['username']}"
 	set auth password {$passwd}
 
 EOD;
-	if ($type == "modem") {
-		$mpdconf .= <<<EOD
+		if ($type == "modem") {
+			$mpdconf .= <<<EOD
 	set modem device {$ppp['ports']}
 	set modem script DialPeer
 	set modem idle-script Ringback
@@ -1251,57 +1263,57 @@ EOD;
 	set modem var \$Telephone "{$ppp['phone']}"
 
 EOD;
-	}
-	if (isset($ppp['connect-timeout']) && $type == "modem") {
-		$mpdconf .= <<<EOD
+		}
+		if (isset($ppp['connect-timeout']) && $type == "modem") {
+			$mpdconf .= <<<EOD
 	set modem var \$ConnectTimeout "{$ppp['connect-timeout']}"
 
 EOD;
-	}
-	if (isset($ppp['initstr']) && $type == "modem") {
-		$initstr = base64_decode($ppp['initstr']);
-		$mpdconf .= <<<EOD
+		}
+		if (isset($ppp['initstr']) && $type == "modem") {
+			$initstr = base64_decode($ppp['initstr']);
+			$mpdconf .= <<<EOD
 	set modem var \$InitString "{$initstr}"
 
 EOD;
-	}
-	if (isset($ppp['simpin']) && $type == "modem") {
-		$mpdconf .= <<<EOD
+		}
+		if (isset($ppp['simpin']) && $type == "modem") {
+			$mpdconf .= <<<EOD
 	set modem var \$SimPin "{$ppp['simpin']}"
 	set modem var \$PinWait "{$ppp['pin-wait']}"
 
 EOD;
-	}
-	if (isset($ppp['apn']) && $type == "modem") {
-		$mpdconf .= <<<EOD
+		}
+		if (isset($ppp['apn']) && $type == "modem") {
+			$mpdconf .= <<<EOD
 	set modem var \$APN "{$ppp['apn']}"
 	set modem var \$APNum "{$ppp['apnum']}"
 
 EOD;
-	}
-
-	if (isset($ppp['provider']) && $type == "pppoe") {
-		$mpdconf .= <<<EOD
+		}
+	
+		if (isset($ppp['provider']) && $type == "pppoe") {
+			$mpdconf .= <<<EOD
 	set pppoe service "{$ppp['provider']}"
 
 EOD;
-	}
-	if ($type == "pppoe") {
-		$mpdconf .= <<<EOD
+		}
+		if ($type == "pppoe") {
+			$mpdconf .= <<<EOD
 	set pppoe iface {$port}
 
 EOD;
-	}
-	if ($type == "pptp") {
-		$mpdconf .= <<<EOD
+		}
+		if ($type == "pptp") {
+			$mpdconf .= <<<EOD
 	set bundle no noretry
 	set pptp self {$ppp['localip']}
 	set pptp peer {$ppp['gateway']}
 	set pptp disable windowing
 
 EOD;
-	}
-	$mpdconf .= "\topen\r\n";
+		}
+		$mpdconf .= "\topen\r\n";
 	} //end foreach($port)
 
 	// Write out configuration for mpd_ppp.conf and mpd.secret

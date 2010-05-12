@@ -1,19 +1,17 @@
 
 function update_select_list(new_options, select_list){
 	var option_array = new_options.split("|");
+	var i = 0;
 	select_list.length = 0;
 	for(var j=0; j < option_array.length-1; j++){
 		var option = option_array[j].split(",");
 		var selected = Boolean(parseInt(option[2]));
 		select_list[j] = new Option(option[0], option[1], false, selected);
-		var label = "linklabel" + j.toString();
-		//var label_text = $(label).innerHTML;
-		$(label).innerHTML = "Link Parameters (" + option[1] + ")";
 		//for testing and debugging
 		//select_list.options[option_array.length-1+j] = new Option(option[2].toString() +" "+ selected.toString());
 		//select_list.options[option_array.length-1+j] = new Option("Link Label: " + linklabel + " Label Text:" + label_text);
 	}
-	//show_hide_linkfields(select_list);
+	show_hide_linkfields(select_list);
 }
 
 function clear_selected(list_name){
@@ -25,14 +23,14 @@ function clear_selected(list_name){
 
 function show_hide_linkfields(options){
 	var select_count = 0;
+	// this for loop is not used currently
 	for(var j=0; j < options.length; j++){
-		if (options[j].selected)
-			select_count++;
-	}
-	for(var j=0; j < options.length; j++){
-		var label = "link" + j.toString();
-		if (options[j].selected && select_count > 1){
+		var label = "link" + select_count.toString();
+		if (options[j].selected){
+			var linklabel = "linklabel" + select_count.toString();
+			$(linklabel).innerHTML = "Link Parameters (" + options[j].value + ")";
 			$(label).show();
+			select_count++;
 			continue;
 		}
 		$(label).hide();

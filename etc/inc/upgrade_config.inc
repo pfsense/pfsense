@@ -793,6 +793,13 @@ function upgrade_042_to_043() {
 			}
 			$j++;
 		}
+
+		/* rename old Quality RRD files in the process */
+		$rrddbpath = "/var/db/rrd";
+		$gwname = "GW_" . strtoupper($ifname);
+		if(is_readable("{$rrddbpath}/{$ifname}-quality.rrd")) {
+			rename("{$rrddbpath}/{$ifname}-quality.rrd", "{$rrddbpath}/{$gwname}-quality.rrd");
+		}
 		$i++;
 	}
 }

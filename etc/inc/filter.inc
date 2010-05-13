@@ -1849,7 +1849,7 @@ function filter_generate_user_rule($rule) {
 }
 
 function filter_rules_generate() {
-	global $config, $g, $FilterIflist, $time_based_rules;
+	global $config, $g, $FilterIflist, $time_based_rules, $GatewaysList;
 
 	update_filter_reload_status("Creating default rules");
 	if(isset($config['system']['developerspew'])) {
@@ -2171,8 +2171,7 @@ EOD;
 	if(isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		$ipfrules .= "anchor \"staticrouted\" \n";
 		foreach ($config['staticroutes']['route'] as $route) {
-			$realif = guess_interface_from_ip(lookup_gateway_ip_by_name($route['gateway']));
-			$friendly = convert_real_interface_to_friendly_interface_name($realif);
+			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if(is_array($FilterIflist[$friendly])) {
 				$oc = $FilterIflist[$friendly];
 				if($oc['ip']) {

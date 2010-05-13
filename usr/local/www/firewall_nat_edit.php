@@ -316,7 +316,7 @@ if ($_POST) {
 			unset($natent['nosync']);
 
 		// If we used to have an associated filter rule, but no-longer should have one
-		if ($a_nat[$id]>0 && ( empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'] ) ) {
+		if (!empty($a_nat[$id]) && ( empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'] ) ) {
 			// Delete the previous rule
 			delete_id($a_nat[$id]['associated-rule-id'], $config['filter']['rule']);
 			mark_subsystem_dirty('filter');

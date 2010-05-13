@@ -119,18 +119,18 @@ function config_unlock() {
 }
 
 /* lock configuration file */
-function lock($lock) {
+function lock($lock, $op = LOCK_SH) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock)
 		die("WARNING: You must give a name as parameter to lock() function.");
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 	$cfglckkeyconsumers++;
-	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w+")) {
-		//if (flock($fp, LOCK_EX))
+	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
+		if (flock($fp, $op))
 			return $fp;
-		//else
-		//	fclose($fp);
+		else
+			fclose($fp);
 	}
 }
 

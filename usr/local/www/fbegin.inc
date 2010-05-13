@@ -74,7 +74,7 @@ function output_menu($arrayitem, $target="") {
 	foreach($arrayitem as $item) {
 		if($target)
 			$targetinfo = "target='{$target}'";
-		echo '<li><a ' . $targetinfo. ' href="' . $item[1] . ' "class="navlnk">' . $item[0] . '</a></li>' . "\n";
+		echo '<li><a ' . $targetinfo. ' href="' . $item[1] . '" class="navlnk">' . $item[0] . '</a></li>' . "\n";
 	}
 }
 

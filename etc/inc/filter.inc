@@ -240,6 +240,11 @@ function filter_configure_sync() {
 		$rules .= "set limit states {$max_states}\n";
 	}
 
+	if($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries'])) {
+		/* User defined maximum table entries in Advanced menu. */
+		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
+	}
+
 	//$rules .= discover_pkg_rules("pfearly");
 
 	// Configure flowtable support if enabled.

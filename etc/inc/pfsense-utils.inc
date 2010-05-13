@@ -1463,6 +1463,11 @@ function pfsense_default_state_size() {
   return $max_states;
 }
 
+function pfsense_default_table_entries_size() {
+	$current = `pfctl -sm | grep table-entries | awk '{print $4};'`;
+	return $current;
+}
+
 /* Compare the current hostname DNS to the DNS cache we made
  * if it has changed we return the old records
  * if no change we return true */

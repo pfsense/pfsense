@@ -613,7 +613,7 @@ class Auth_RADIUS extends PEAR {
             		case 6: /* WISPr-Bandwidth-Min-Down */
             			$this->attributes['bw_down_min'] = radius_cvt_int($datav);
             			break;
-            		case 7: /* WIPSr-Bandwidth-Max-Up */
+            		case 7: /* WISPr-Bandwidth-Max-Up */
             			$this->attributes['bw_up'] = radius_cvt_int($datav);
             			break;
             		case 8: /* WISPr-Bandwidth-Max-Down */

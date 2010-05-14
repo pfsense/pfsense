@@ -283,10 +283,37 @@ function system_routing_configure() {
 			}
 		}
 	}
+	/* Create a array from the existing route table */
+	exec("/usr/bin/netstat -rnf inet", $route_str);
+	array_shift($route_str);
+	array_shift($route_str);
+	array_shift($route_str);
+	array_shift($route_str);
+	$i = 0;
+	$route_arr = array();
+	foreach($route_str as $routeline) {
+		$items = preg_split("/[ ]+/i", $routeline);
+		$route_arr[$i] = array($items[0], $items[1], $items[5]);
+		$i++;
+	}
+
 	if($dont_add_route == false) {
-		if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip)))
-			mwexec("/sbin/route delete default; /sbin/route add default " . escapeshellarg($gatewayip), true);
-		else {
+		if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
+			$route_count = 0;
+			foreach($route_arr as $route_item) {
+				if($route_item[0] == "default") {
+					$route_count = 1;
+					continue;
+				}
+			}
+			if($route_count == 0) {
+				$action = "add";
+			} else {
+				$action = "change";
+			}
+			log_error("$action default route to $gatewayip");
+			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
+		} else {
 			/* Adding gateway for 1.2-style configs without the new
 		  	 * gateway setup configured.
 		  	 * Force WAN to be default gateway because that is the 1.2 behavior.

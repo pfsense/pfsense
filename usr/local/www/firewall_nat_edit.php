@@ -448,7 +448,7 @@ include("fbegin.inc"); ?>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-					<select name="interface" class="formselect" onChange="dst_change(this.value,'<?=$pconfig['interface']?>','<?=$pconfig['dst']?>');typesel_change();">
+					<select name="interface" class="formselect" onChange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
 						<?php
 
 						$iflist = get_configured_interface_with_descr(false, true);
@@ -805,6 +805,7 @@ include("fbegin.inc"); ?>
 <!--
 	ext_change();
 	dst_change(document.iform.interface.value,'<?=$pconfig['interface']?>','<?=$pconfig['dst']?>');
+	var iface_old = document.iform.interface.value;
 	typesel_change();
 	proto_change();
 	<?php if ($pconfig['srcnot'] || $pconfig['src'] != "any" || $pconfig['srcbeginport'] != "any" || $pconfig['srcendport'] != "any"): ?>

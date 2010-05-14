@@ -225,7 +225,7 @@ setup_gateways_monitor();
 echo "done.\n";
 
 echo "Synchronizing user settings...";
-if (!isset($config['system']['webgui']['backend']))
+if (empty($config['system']['webgui']['backend']))
 	local_sync_accounts();
 echo "done.\n";
 

@@ -247,7 +247,8 @@ if ($_POST) {
 	 *  cannot think he is slick and perform a XSS attack on the unwilling 
 	 */
 	foreach ($_POST as $key => $value) {
-		$temp = $value;
+		$temp = str_replace(">", "", $value);
+			
 		if (isset($_POST['floating']) && $key == "interface")
 			continue;
 		$newpost = htmlentities($temp);

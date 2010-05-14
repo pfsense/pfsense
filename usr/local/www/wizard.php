@@ -196,7 +196,7 @@ function enablechange() {
 <?php
         foreach($pkg['step'][$stepid]['fields']['field'] as $field) {
                 if(isset($field['enablefields']) or isset($field['checkenablefields'])) {
-                        print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked == false) {' . "\n";
+                        print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked) {' . "\n";
                         if(isset($field['enablefields'])) {
                                 $enablefields = explode(',', $field['enablefields']);
                                 foreach($enablefields as $enablefield) {

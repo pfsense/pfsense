@@ -295,7 +295,7 @@ function system_routing_configure() {
 		$route_arr[$item[0]] = array($items[0], $items[1], $items[5]);
 	}
 
-	if($dont_add_route == false) {
+	if ($dont_add_route == false) {
 		if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
 			$action = "add";
 			if(isset($route_arr['default'])) {
@@ -303,16 +303,14 @@ function system_routing_configure() {
 			}
 			log_error("ROUTING: $action default route to $gatewayip");
 			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
-		} else {
+		} else if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
 			/* Adding gateway for 1.2-style configs without the new
 		  	 * gateway setup configured.
 		  	 * Force WAN to be default gateway because that is the 1.2 behavior.
 			 */
 			log_error("WARNING: There is no default gateway in the configuration.");
-			if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
-				$gatewayip = $config['interfaces']['wan']['gateway'];
-				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
-			}
+			$gatewayip = $config['interfaces']['wan']['gateway'];
+			mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
 		}
 	}
 

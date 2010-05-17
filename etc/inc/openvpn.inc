@@ -278,30 +278,49 @@ function openvpn_reconfigure($mode,& $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
-	if (isset($settings['dev_mode']))
-		$tunname = "{$settings['dev_mode']}{$vpnid}";
-	else {	/* defaults to tun */
-		$tunname = "tun{$vpnid}";
-		$settings['dev_mode'] = "tun";
+	/* Look for device name to override */
+	$customdev = "";
+	$options = explode(';', $settings['custom_options']);
+	foreach ($options as $opt) {
+		if (substr($opt, 0, 4) == "dev ") {
+			$customdev = substr($opt, 4);
+		}
 	}
 
-	if ($mode == "server")
-		$devname = "ovpns{$vpnid}";
-	else
-		$devname = "ovpnc{$vpnid}";
+	if (empty($customdev)) {
+		if (isset($settings['dev_mode']))
+			$tunname = "{$settings['dev_mode']}{$vpnid}";
+		else {	/* defaults to tun */
+			$tunname = "tun{$vpnid}";
+			$settings['dev_mode'] = "tun";
+		}
 
-	/* is our device already configured */
-	if (mwexec("/sbin/ifconfig {$devname}")) {
+		if ($mode == "server")
+			$devname = "ovpns{$vpnid}";
+		else
+			$devname = "ovpnc{$vpnid}";
 
-		/* create the tap device if required */
-		if (!file_exists("/dev/{$tunname}"))
-			exec("/sbin/ifconfig {$tunname} create");
+		/* is our device already configured */
+		if (mwexec("/sbin/ifconfig {$devname}")) {
 
-		/* rename the device */
-		mwexec("/sbin/ifconfig {$tunname} name {$devname}");
+			/* create the tap device if required */
+			if (!file_exists("/dev/{$tunname}"))
+				exec("/sbin/ifconfig {$tunname} create");
 
-		/* add the device to the openvpn group */
-		mwexec("/sbin/ifconfig {$devname} group openvpn");
+			/* rename the device */
+			mwexec("/sbin/ifconfig {$tunname} name {$devname}");
+
+			/* add the device to the openvpn group */
+			mwexec("/sbin/ifconfig {$devname} group openvpn");
+		}
+		$devtype = $settings['dev_mode'];
+		$conf  = "dev {$devname}\n";
+		$conf .= "dev-type {$devtype}\n";
+		$conf .= "dev-node /dev/{$tunname}\n";
+	} else {
+		$devtype = substr($customdev, 0, 3);
+		$conf = "dev-type {$devtype}\n";
+		$conf .= "dev-node /dev/{$customdev}\n";
 	}
 
 	$pfile = $g['varrun_path'] . "/openvpn_{$mode_id}.pid";
@@ -322,9 +341,6 @@ function openvpn_reconfigure($mode,& $settings) {
 		}
 	}
 
-	$conf  = "dev {$devname}\n";
-	$conf .= "dev-type {$settings['dev_mode']}\n";
-	$conf .= "dev-node /dev/{$tunname}\n";
 	$conf .= "writepid {$pfile}\n";
 	$conf .= "#user nobody\n";
 	$conf .= "#group nobody\n";

@@ -77,7 +77,7 @@ if($_GET['act']=="edit"){
 
 	if (isset($id) && $a_client[$id]) {
 
-		$pconfig['disable'] = $a_client[$id]['disable'];
+		$pconfig['disable'] = isset($a_client[$id]['disable']);
 		$pconfig['mode'] = $a_client[$id]['mode'];
 		$pconfig['protocol'] = $a_client[$id]['protocol'];
 		$pconfig['interface'] = $a_client[$id]['interface'];
@@ -207,7 +207,8 @@ if ($_POST) {
 		else
 			$client['vpnid'] = openvpn_vpnid_next();
 
-		$client['disable'] = $pconfig['disable'];
+		if ($_POST['disable'] == "yes")
+			$server['disable'] = true;
 		$client['protocol'] = $pconfig['protocol'];
 		$client['dev_mode'] = $pconfig['dev_mode'];
 		list($client['interface'], $client['ipaddr']) = explode ("|",$pconfig['interface']);
@@ -808,7 +809,7 @@ function autotls_change() {
 					$i = 0;
 					foreach($a_client as $client):
 						$disabled = "NO";
-						if ($client['disable'])
+						if (isset($client['disable']))
 							$disabled = "YES";
 						$server = "{$client['server_addr']}:{$client['server_port']}";
 				?>

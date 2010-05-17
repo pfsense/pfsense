@@ -208,7 +208,7 @@ if ($_POST) {
 			$client['vpnid'] = openvpn_vpnid_next();
 
 		if ($_POST['disable'] == "yes")
-			$server['disable'] = true;
+			$client['disable'] = true;
 		$client['protocol'] = $pconfig['protocol'];
 		$client['dev_mode'] = $pconfig['dev_mode'];
 		list($client['interface'], $client['ipaddr']) = explode ("|",$pconfig['interface']);

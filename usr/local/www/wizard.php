@@ -365,7 +365,7 @@ function showchange() {
 					$arraynum = "[" . $field['arraynum'] . "]";
 				foreach ($field_split as $f)
 					$field_conv .= "['" . $f . "']";
-				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) \$value = \$config" . $field_conv . $arraynum . ";";
+				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) { \$value = \$config" . $field_conv . $arraynum . "; if (empty(\$value)) \$value = true; }";
 				eval($toeval);
 		    }
 

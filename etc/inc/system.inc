@@ -289,29 +289,19 @@ function system_routing_configure() {
 	array_shift($route_str);
 	array_shift($route_str);
 	array_shift($route_str);
-	$i = 0;
 	$route_arr = array();
 	foreach($route_str as $routeline) {
 		$items = preg_split("/[ ]+/i", $routeline);
-		$route_arr[$i] = array($items[0], $items[1], $items[5]);
-		$i++;
+		$route_arr[$item[0]] = array($items[0], $items[1], $items[5]);
 	}
 
 	if($dont_add_route == false) {
 		if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
-			$route_count = 0;
-			foreach($route_arr as $route_item) {
-				if($route_item[0] == "default") {
-					$route_count = 1;
-					continue;
-				}
-			}
-			if($route_count == 0) {
-				$action = "add";
-			} else {
+			$action = "add";
+			if(isset($route_arr['default'])) {
 				$action = "change";
 			}
-			log_error("$action default route to $gatewayip");
+			log_error("ROUTING: $action default route to $gatewayip");
 			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
 		} else {
 			/* Adding gateway for 1.2-style configs without the new
@@ -327,9 +317,6 @@ function system_routing_configure() {
 	}
 
 	if (is_array($config['staticroutes']['route'])) {
-		$route_str = array();
-		exec("/usr/bin/netstat -rnf inet | /usr/bin/cut -d \" \" -f 1", $route_str);
-		$route_str = array_flip($route_str);
 		$gateways_arr = return_gateways_array();
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
@@ -345,7 +332,7 @@ function system_routing_configure() {
 			}
 
 			$action = "add";
-			if (isset($route_str[$rtent['network']]))
+			if (isset($route_arr[$rtent['network']]))
 				$action = "change";
 
 			if (is_ipaddr($gatewayip)) {

@@ -37,7 +37,7 @@ switch ($command) {
 		die;
 	break;
 	case "1":
-		echo "\nEnter the URL to the .tgz update file:\n> ";
+		echo "\nEnter the URL to the .tgz or .img.gz update file:\n> ";
 		$url = chop(fgets($fp));
 		if(!$url) { 
 			fclose($fp);
@@ -91,23 +91,17 @@ switch ($command) {
 			if(strstr($url,"bdiff")) {
 				echo "Binary DIFF upgrade file detected...\n";
 				$type = "bdiff";
-			}
-			if(strstr($url,"nanobsd")) {
-				echo "NanoBSD upgrade file detected...\n";			
-				$type = "nanobsd";	
-			}			
-			if(file_exists("/root/firmware.tgz")) {
-				$type = "normal";	
-				do_upgrade("/root/firmware.tgz", $type);
-				exit;
+			} elseif(strstr($url,"nanobsd")) {
+				echo "NanoBSD upgrade file detected...\n";
+				$type = "nanobsd";
 			} else {
-				echo "\nCould not download update.\n\n";
-				fclose($fp);
-				die -1;
+				$type = "normal";
 			}
+			do_upgrade("/root/firmware.tgz", $type);
+			exit;
 		}
 	case "2":
-		echo "\nEnter the complete path to the .tgz update file: ";
+		echo "\nEnter the complete path to the .tgz or .img.gz update file: ";
 		$path = chop(fgets($fp));
 		if(!$path) {
 			fclose($fp);
@@ -192,9 +186,9 @@ function do_upgrade($path, $type) {
 	mark_subsystem_dirty('firmwarelock');
 	check_for_kernel_file();
 	echo "\nOne moment please...\nInvoking firmware upgrade...";
-	if($type == "bdiff") 
+	if($type == "bdiff")
 		mwexec_bg("/etc/rc.firmware delta_update $path");
-	elseif($type == "nanobsd") 
+	elseif($type == "nanobsd")
 		mwexec_bg("/etc/rc.firmware pfSenseNanoBSDupgrade $path");
 	else
 		mwexec_bg("/etc/rc.firmware pfSenseupgrade $path");

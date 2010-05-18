@@ -65,11 +65,19 @@ if ($act == "del") {
 		exit;
 	}
 
+	/* Remove server from main list. */
 	$serverdeleted = $a_server[$_GET['id']]['name'];
+	foreach ($config['system']['authserver'] as $k => $as) {
+		if ($config['system']['authserver'][$k]['name'] == $serverdeleted)
+			unset($config['system']['authserver'][$k]);
+	}
+
+	/* Remove server from temp list used later on this page. */
 	unset($a_server[$_GET['id']]);
-	write_config();
+
 	$savemsg = gettext("Authentication Server")." {$serverdeleted} ".
-				gettext("successfully deleted")."<br/>";
+				gettext("deleted")."<br/>";
+	write_config($savemsg);
 }
 
 if ($act == "edit") {

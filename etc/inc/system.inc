@@ -1369,4 +1369,43 @@ EOD;
 	return 0;
 }
 
+/* attempt to identify the specific platform (for embedded systems)
+   Returns an array with two elements:
+	name => platform string (e.g. 'wrap', 'alix' etc.)
+	descr => human-readable description (e.g. "PC Engines WRAP")
+*/
+function system_identify_specific_platform() {
+	global $g;
+	
+	if ($g['platform'] == 'generic-pc')
+		return array('name' => 'generic-pc', 'descr' => "Generic PC");
+	
+	if ($g['platform'] == 'generic-pc-cdrom')
+		return array('name' => 'generic-pc-cdrom', 'descr' => "Generic PC (CD-ROM)");
+	
+	/* the rest of the code only deals with 'embedded' platforms */
+	if ($g['platform'] != 'embedded')
+		return array('name' => $g['platform'], 'descr' => $g['platform']);
+	
+	$dmesg = system_get_dmesg_boot();
+	
+	if (strpos($dmesg, "PC Engines WRAP") !== false)
+		return array('name' => 'wrap', 'descr' => 'PC Engines WRAP');
+	
+	if (strpos($dmesg, "PC Engines ALIX") !== false)
+		return array('name' => 'alix', 'descr' => 'PC Engines ALIX');
+
+	if (preg_match("/Soekris net45../", $dmesg, $matches))
+		return array('name' => 'net45xx', 'descr' => $matches[0]);
+	
+	if (preg_match("/Soekris net48../", $dmesg, $matches))
+		return array('name' => 'net48xx', 'descr' => $matches[0]);
+		
+	if (preg_match("/Soekris net55../", $dmesg, $matches))
+		return array('name' => 'net55xx', 'descr' => $matches[0]);
+	
+	/* unknown embedded platform */
+	return array('name' => 'embedded', 'descr' => 'embedded (unknown)');
+}
+
 ?>

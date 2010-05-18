@@ -432,9 +432,9 @@ function return_gateway_groups_array() {
 			/* sort the tiers array by the tier key */
 			ksort($tiers);
 			/* we do not really foreach the tiers as we stop after the first tier */
-			foreach($tiers as $tiernr => $tier) {
+			foreach($tiers as $tier) {
 				/* process all gateways in this tier */
-				foreach($tier as $tiernr => $member) {
+				foreach($tier as $member) {
 					/* determine interface gateway */
 					if (isset($gateways_arr[$member])) {
 						$gateway = $gateways_arr[$member];
@@ -450,7 +450,7 @@ function return_gateway_groups_array() {
 						$groupmember['int']  = "$int";
 						$groupmember['gwip']  = "$gatewayip";
 						$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
-						$gateway_groups_array[$group['name']][] = $group;
+						$gateway_groups_array[$group['name']][] = $groupmember;
 					}
 				}
 				/* we should have the 1st available tier now, exit stage left */
@@ -458,7 +458,7 @@ function return_gateway_groups_array() {
 			}
 		}
 	}
-	return($gateway_groups_array);
+	return ($gateway_groups_array);
 }
 
 /* Update DHCP WAN Interface ip address in gateway group item */
@@ -479,52 +479,46 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 
 function lookup_gateway_ip_by_name($name) {
         global $config;
-        if(is_array($config['gateways']['gateway_item'])) {
-                foreach($config['gateways']['gateway_item'] as $gateway) {
-                        if($gateway['name'] == $name) {
-                                $gatewayip = $gateway['gateway'];
-                                //$interfacegw = $gateway['interface'];
-                                return($gatewayip);
-                        }
-                }
-        } else {
-                return(false);
-        }
+
+	$gateways_arr = return_gateways_array();
+        if (!empty($gateways_arr[$name])) {
+		$gatewayip = $gateway['gateway'];
+		//$interfacegw = $gateway['interface'];
+		return ($gatewayip);
+        } else
+                return (false);
 }
 
 function lookup_gateway_monitor_ip_by_name($name) {
         global $config;
+
         $gateways_arr = return_gateways_array();
+	if (!empty($gateways_arr[$name])) {
+		$gateway = $gateways_arr[$name];
+		if ($gateway['gateway'] == "dynamic")
+			$gateway['monitor'] = "127.0.0.2";
 
-	$i = 2;
-        foreach($gateways_arr as $gateway) {
-		if($gateway['gateway'] == "dynamic") {
-			$gateway['monitor'] = "127.0.0.{$i}";
-			$i++;
-		}
-                if($gateway['name'] == "$name") {
-                        $monitorip = $gateway['monitor'];
-                        if($monitorip == "")
-                                $monitorip = $gateway['gateway'];
+		$monitorip = $gateway['monitor'];
+		if($monitorip == "")
+			$monitorip = $gateway['gateway'];
 
-                        return($monitorip);
-                }
+		return ($monitorip);
         }
-        return(false);
+
+        return (false);
 }
 
 function lookup_gateway_interface_by_name($name) {
         global $config;
-        $gateways_arr = return_gateways_array();
 
-        foreach($gateways_arr as $gateway) {
-                if($gateway['name'] == "$name") {
-                        $gatewayip = $gateway['gateway'];
-                        $interfacegw = $gateway['interface'];
-                        return($interfacegw);
-                }
+        $gateways_arr = return_gateways_array();
+	if (!empty($gateways_arr[$name])) {
+		//$gatewayip = $gateway['gateway'];
+		$interfacegw = $gateway['interface'];
+		return ($interfacegw);
         }
-        return(false);
+
+        return (false);
 }
 
 function get_interface_gateway($interface, &$dynamic = false) {
@@ -549,7 +543,7 @@ function get_interface_gateway($interface, &$dynamic = false) {
         }
 
         /* return gateway */
-        return $gw;
+        return ($gw);
 }
 
 ?>

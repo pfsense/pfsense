@@ -1414,41 +1414,8 @@ function system_identify_specific_platform() {
 
 function system_get_dmesg_boot() {
 	global $g;
-	
-	if (!file_exists("{$g['varlog_path']}/dmesg.boot"))
-		system_dmesg_save();
-	
+		
 	return file_get_contents("{$g['varlog_path']}/dmesg.boot");
-}
-
-function system_dmesg_save() {
-	global $g;
-	
-	if (file_exists("{$g['varlog_path']}/dmesg.boot"))
-		return 0;	/* nothing to do */
-	
-	exec("/sbin/dmesg", $dmesg);
-	
-	/* find last copyright line (output from previous boots may be present) */
-	$lastcpline = 0;
-	
-	for ($i = 0; $i < count($dmesg); $i++) {
-		if (strstr($dmesg[$i], "Copyright (c) 1992-"))
-			$lastcpline = $i;
-	}
-	
-	$fd = fopen("{$g['varlog_path']}/dmesg.boot", "w");
-	if (!$fd) {
-		printf("Error: cannot open dmesg.boot in system_dmesg_save().\n");
-		return 1;
-	}
-	
-	for ($i = $lastcpline; $i < count($dmesg); $i++)
-		fwrite($fd, $dmesg[$i] . "\n");
-	
-	fclose($fd);
-	
-	return 0;
 }
 
 ?>

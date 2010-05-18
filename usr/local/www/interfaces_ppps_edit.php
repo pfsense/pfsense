@@ -132,7 +132,7 @@ if (isset($id) && $a_ppps[$id]) {
 			} else {
 				$resetTime = NULL;
 			}
-  
+			
 			if ($a_ppps[$id]['pppoe-reset-type'] == "custom") {
 				$resetTime_a = split(" ", $resetTime);
 				$pconfig['pppoe_pr_custom'] = true;

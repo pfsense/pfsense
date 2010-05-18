@@ -100,11 +100,12 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 				break;
 		}
 	}
-if ($wancfg['ptpid'] == $ppp['ptpid']) {
-	$pconfig['interfaces'] = $a_ppps[$pppid]['ports'];
+if ($wancfg['ptpid'] == $a_ppps[$pppid]['ptpid']) {
 	
 	if (isset($a_ppps[$pppid]['defaultgw']))
 		$pconfig['defaultgw'] = true;
+	else
+		$pconfig['defaultgw'] = false;
 
 	if ($a_ppps[$pppid]['type'] == "pppoe"){
 		$pconfig['pppoe_username'] = $a_ppps[$pppid]['username'];
@@ -119,13 +120,14 @@ if ($wancfg['ptpid'] == $ppp['ptpid']) {
 		
 		if (isset($a_ppps[$pppid]['pppoe-reset-type'])) {
 			$pconfig['pppoe-reset-type'] = $a_ppps[$pppid]['pppoe-reset-type'];
-				$itemhash = getMPDCRONSettings($a_ppps[$pppid]['ptpid']);
-				$cronitem = $itemhash['ITEM'];
-				if (isset($cronitem)) {
-					$resetTime = "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
-				} else {
-					$resetTime = NULL;
-				}
+			$itemhash = getMPDCRONSettings($a_ppps[$pppid]['ptpid']);
+			$cronitem = $itemhash['ITEM'];
+			if (isset($cronitem)) {
+				$resetTime = "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
+			} else {
+				$resetTime = NULL;
+			}
+			log_error("ResetTime:".$resetTime);
 			if ($a_ppps[$pppid]['pppoe-reset-type'] == "custom") {
 				$resetTime_a = split(" ", $resetTime);
 				$pconfig['pppoe_pr_custom'] = true;
@@ -339,7 +341,7 @@ if ($_POST) {
 	 * data validation procedure below, may trigger a false error
 	 * message.
 	 */
-	if (empty($_POST['pppoe_preset'])) {
+	if (empty($_POST['pppoe-reset-type'])) {
 		unset($_POST['pppoe_pr_type']);                
 		unset($_POST['pppoe_resethour']);
 		unset($_POST['pppoe_resetminute']);
@@ -581,6 +583,7 @@ if ($_POST) {
 				$wancfg['if'] = $_POST['type'] . $if_num;
 				$wancfg['ptpid'] = $_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
+				$ppp['defaultgw'] = $_POST['defaultgw'];
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -662,13 +665,13 @@ if ($_POST) {
 function handle_pppoe_reset() {
 	global $_POST, $config, $g, $wancfg, $if;
 	/* perform a periodic reset? */
-	if(!isset($_POST['pppoe_preset'])) {
-		setup_pppoe_reset_file($_POST['ptpid'], $_POST['if']);		
+	if(!isset($_POST['pppoe-reset-type'])) {
+		setup_pppoe_reset_file($_POST['ptpid']);		
 		return;
 	}
 	if (!is_array($config['cron']['item'])) 
 		$config['cron']['item'] = array(); 
-	$itemhash = getMPDCRONSettings();
+	$itemhash = getMPDCRONSettings($_POST['ptpid'], $_POST['if']);
 	$item = $itemhash['ITEM'];
 	if (empty($item)) 
 		$item = array();
@@ -686,7 +689,7 @@ function handle_pppoe_reset() {
 		$item['wday'] = "*";
 		$item['who'] = "root";
 		$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
-	} else if (isset($_POST['pppoe-reset-type']) && $_POST['pppoe-reset-type'] = "preset") {
+	} else if (isset($_POST['pppoe-reset-type']) && $_POST['pppoe-reset-type'] == "preset") {
 		switch ($_POST['pppoe_pr_preset_val']) {
 			case "monthly":
 				$item['minute'] = "0";
@@ -697,7 +700,7 @@ function handle_pppoe_reset() {
 				$item['who'] = "root";
 				$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
 				break;
-	        	case "weekly":
+	        case "weekly":
 				$item['minute'] = "0";
 				$item['hour'] = "0";
 				$item['mday'] = "*";
@@ -723,24 +726,14 @@ function handle_pppoe_reset() {
 				$item['wday'] = "*";
 				$item['who'] = "root";
 				$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
-				break;
+			break;
 		} // end switch
 	} // end if
 	if (isset($itemhash['ID'])) 
 		$config['cron']['item'][$itemhash['ID']] = $item;
 	else 
 		$config['cron']['item'][] = $item;
-	/* finally install the pppoerestart file */
-	if (isset($_POST['pppoe-reset-type'])) {
-		setup_pppoe_reset_file($_POST['ptpid'], $_POST['if']);
-//		$wancfg['pppoe_reset'] = true;
-//		$wancfg['pppoe_preset'] = true;
-		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
-	} else {
-//		unset($wancfg['pppoe_reset']);
-//		unset($wancfg['pppoe_preset']);		
-		setup_pppoe_reset_file($_POST['ptpid']);	
-	}
+
 }
 
 function handle_wireless_post() {
@@ -1750,16 +1743,13 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 										<input id="save" name="Submit" type="submit" class="formbtn" value="Save"> 
 										<input id="cancel" type="button" class="formbtn" value="Cancel" onclick="history.back()">
 										<input name="if" type="hidden" id="if" value="<?=$if;?>">
-										<?php
-											if (isset($a_ppps[$pppid]['ptpid']))
-												$ptpid = $a_ppps[$pppid]['ptpid'];
-											else
-												$ptpid = uniqid('', true);
-										?>
-										<input name="ptpid" type="hidden" value="<?=$ptpid;?>">
-										<?php if ($wancfg['ptpid'] == $ppp['ptpid']) : ?>
-											<input name="pppid" type="hidden" value="<?=$pppid;?>">
-											<input name="ppp_port" type="hidden" value="<?=$a_ppps[$pppid]['ports'];?>">
+										<?php if ($wancfg['ptpid'] == $a_ppps[$pppid]['ptpid']) : ?>
+										<input name="pppid" type="hidden" value="<?=$pppid;?>">
+										<input name="ppp_port" type="hidden" value="<?=$a_ppps[$pppid]['ports'];?>">
+										<input name="ptpid" type="hidden" value="<?=$a_ppps[$pppid]['ptpid'];?>">
+										<input name="defaultgw" type="hidden" value="<?=$pconfig['defaultgw'];?>">
+										<?php else: ?>
+										<input name="ptpid" type="hidden" value="<?=uniqid('', true);?>">
 										<?php endif; ?>
 									</td>
 								</tr>

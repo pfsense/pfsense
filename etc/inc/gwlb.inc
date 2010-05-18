@@ -420,12 +420,10 @@ function return_gateway_groups_array() {
 				log_error($msg);
 				notify_via_growl($msg);
 				foreach($group['item'] as $item) {
-					foreach($group['item'] as $item) {
-						$itemsplit = explode("|", $item);
-						$tier = $itemsplit[1];
-						$gwname = $itemsplit[0];
-						$tiers[$tier][] = $gwname;
-					}
+					$itemsplit = explode("|", $item);
+					$tier = $itemsplit[1];
+					$gwname = $itemsplit[0];
+					$tiers[$tier][] = $gwname;
 				}
 			}
 			/* sort the tiers array by the tier key */

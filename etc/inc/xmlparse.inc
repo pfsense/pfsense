@@ -144,10 +144,10 @@ function cData($parser, $data) {
 		}
 
 		if (is_string($ptr)) {
-			$ptr .= $data;
+			$ptr .= html_entity_decode($data);
 		} else {
 			if (trim($data, " ") != "") {
-				$ptr = $data;
+				$ptr = html_entity_decode($data);
 				$havedata++;
 			}
 		}
@@ -256,8 +256,10 @@ function dump_xml_config_sub($arr, $indent) {
 						if($cval === false) continue;
 						if(($cval === true) || ($cval === "")) {
 							$xmlconfig .= "<$ent/>\n";
+						} else if (substr($ent, 0, 5) == "descr") {
+							$xmlconfig .= "<$ent><![CDATA[ " . htmlentities($cval) . " ]]></$ent>\n";
 						} else {
-							$xmlconfig .= "<$ent>" . htmlspecialchars($cval) . "</$ent>\n";
+							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
 					}
 				}
 				}
@@ -279,7 +281,10 @@ function dump_xml_config_sub($arr, $indent) {
 				$xmlconfig .= "<$ent/>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent>" . htmlspecialchars($val) . "</$ent>\n";
+				if (substr($ent, 0, 5) == "descr")
+					$xmlconfig .= "<$ent><![CDATA[ " . htmlentities($val) . " ]]></$ent>\n";
+				else
+					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";
 			}
 		}
 	}

@@ -30,7 +30,7 @@ $intip = explode (".", $intip);
 //use class A subnet to make sure we capture all traffic on specified interface
 $intsubnet = $intip[0] . ".0.0.0/8";
 
-exec("rate -i {$real_interface} -nlq 1 -Aa 10 -c {$intsubnet} | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $5,  $8,  $11 }'", $listedIPs);
+exec("/usr/local/bin/rate -i {$real_interface} -nlq 1 -Aba 20 -c {$intsubnet} | awk '{ printf \"%s:%s:%s:%s:%s\\n\", $1,  $2,  $5,  $8,  $11 }'", $listedIPs);
 
 unset($bandwidthinfo);
 unset($receivebytesarray);

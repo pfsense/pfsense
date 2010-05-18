@@ -283,26 +283,38 @@ function system_routing_configure() {
 			}
 		}
 	}
-	if($dont_add_route == false) {
-		if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip)))
-			mwexec("/sbin/route delete default; /sbin/route add default " . escapeshellarg($gatewayip), true);
-		else {
+	/* Create a array from the existing route table */
+	exec("/usr/bin/netstat -rnf inet", $route_str);
+	array_shift($route_str);
+	array_shift($route_str);
+	array_shift($route_str);
+	array_shift($route_str);
+	$route_arr = array();
+	foreach($route_str as $routeline) {
+		$items = preg_split("/[ ]+/i", $routeline);
+		$route_arr[$item[0]] = array($items[0], $items[1], $items[5]);
+	}
+
+	if ($dont_add_route == false) {
+		if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
+			$action = "add";
+			if(isset($route_arr['default'])) {
+				$action = "change";
+			}
+			log_error("ROUTING: $action default route to $gatewayip");
+			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
+		} else if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
 			/* Adding gateway for 1.2-style configs without the new
 		  	 * gateway setup configured.
 		  	 * Force WAN to be default gateway because that is the 1.2 behavior.
 			 */
 			log_error("WARNING: There is no default gateway in the configuration.");
-			if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
-				$gatewayip = $config['interfaces']['wan']['gateway'];
-				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
-			}
+			$gatewayip = $config['interfaces']['wan']['gateway'];
+			mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
 		}
 	}
 
 	if (is_array($config['staticroutes']['route'])) {
-		$route_str = array();
-		exec("/usr/bin/netstat -rnf inet | /usr/bin/cut -d \" \" -f 1", $route_str);
-		$route_str = array_flip($route_str);
 		$gateways_arr = return_gateways_array();
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
@@ -318,7 +330,7 @@ function system_routing_configure() {
 			}
 
 			$action = "add";
-			if (isset($route_str[$rtent['network']]))
+			if (isset($route_arr[$rtent['network']]))
 				$action = "change";
 
 			if (is_ipaddr($gatewayip)) {

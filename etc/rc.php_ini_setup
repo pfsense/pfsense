@@ -31,9 +31,9 @@ EXTENSIONSDIR="/usr/local/lib/php/20060613/"
 
 # Grab amount of memory that is detected
 if [ -f /var/log/dmesg.boot ]; then
-	AVAILMEM=`/bin/cat /var/log/dmesg.boot |/usr/bin/awk '/avail memory/ { print $5 }'| sed 's/(//g'|tail -1`
+	AVAILMEM=`/bin/cat /var/log/dmesg.boot |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}'`
 else 
-	AVAILMEM=`/sbin/dmesg -a |/usr/bin/awk '/avail memory/ { print $5 }'| sed 's/(//g'|tail -1`
+	AVAILMEM=`/sbin/dmesg -a |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}'`
 fi
 
 # Calculate APC SHM size according 

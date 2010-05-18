@@ -240,6 +240,11 @@ function filter_configure_sync() {
 		$rules .= "set limit states {$max_states}\n";
 	}
 
+	if($config['system']['maximumtableentries'] <> "" && is_numeric($config['system']['maximumtableentries'])) {
+		/* User defined maximum table entries in Advanced menu. */
+		$rules .= "set limit table-entries {$config['system']['maximumtableentries']}\n";
+	}
+
 	//$rules .= discover_pkg_rules("pfearly");
 
 	// Configure flowtable support if enabled.
@@ -1056,6 +1061,8 @@ function filter_nat_rules_generate() {
 	$natrules .= "nat-anchor \"natrules/*\"\n\n";
 	update_filter_reload_status("Creating 1:1 rules...");
 
+	$reflection_txt = "";
+
 	/* any 1:1 mappings? */
 	if(is_array($config['nat']['onetoone'])) {
 		foreach ($config['nat']['onetoone'] as $natent) {
@@ -1078,16 +1085,18 @@ function filter_nat_rules_generate() {
 					$nat_if_list = array();
 				}
 
-				$nat_if_list = array_merge(array($natif), $nat_if_list);
-				//$binat_if_list = implode(" ", $nat_if_list);
-				//if(count($nat_if_list) > 1)
-				//	$binat_if_list = "{ {$binat_if_list} }";
+				$natrules .= "binat on {$natif} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
 
-				/* binat seems to currently only work with the first interface specified on the line */
-				// $natrules .= "binat on {$binat_if_list} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
-				foreach ($nat_if_list as $natifname)
-					$natrules .= "binat on {$natifname} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
-				$natrules .= filter_generate_reflection_nat($rule, $nat_if_list, "", "{$natent['internal']}/{$sn}", $natent['internal'], $sn);
+				if(!empty($nat_if_list)) {
+					$binat_if_list = implode(" ", $nat_if_list);
+					if(count($nat_if_list) > 1)
+						$binat_if_list = "{ {$binat_if_list} }";
+
+					$reflection_txt .= "rdr on {$binat_if_list} from any to {$natent['external']}/{$sn} -> {$natent['internal']}/{$sn} bitmask\n";
+				}
+
+				$nat_if_list = array_merge(array($natif), $nat_if_list);
+				$reflection_txt .= filter_generate_reflection_nat($rule, $nat_if_list, "", "{$natent['internal']}/{$sn}", $natent['internal'], $sn);
 			}
 		}
 	}
@@ -1412,6 +1421,9 @@ EOD;
 	$natrules .= filter_process_carp_nat_rules();
 	$natrules .= "# UPnPd rdr anchor\n";
 	$natrules .= "rdr-anchor \"miniupnpd\"\n";
+
+	if(!empty($reflection_txt))
+		$natrules .= "\n" . $reflection_txt;
 
 	return $natrules;
 }
@@ -1837,7 +1849,7 @@ function filter_generate_user_rule($rule) {
 }
 
 function filter_rules_generate() {
-	global $config, $g, $FilterIflist, $time_based_rules;
+	global $config, $g, $FilterIflist, $time_based_rules, $GatewaysList;
 
 	update_filter_reload_status("Creating default rules");
 	if(isset($config['system']['developerspew'])) {
@@ -2159,8 +2171,7 @@ EOD;
 	if(isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		$ipfrules .= "anchor \"staticrouted\" \n";
 		foreach ($config['staticroutes']['route'] as $route) {
-			$realif = guess_interface_from_ip(lookup_gateway_ip_by_name($route['gateway']));
-			$friendly = convert_real_interface_to_friendly_interface_name($realif);
+			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if(is_array($FilterIflist[$friendly])) {
 				$oc = $FilterIflist[$friendly];
 				if($oc['ip']) {

@@ -114,12 +114,12 @@ function updateBandwidthHosts(data){
                 //update bandwidth inbound to host
                 var hostbandwidthInID = "bandwidthin" + y;
                 var hostbandwidthin = d.getElementById(hostbandwidthInID);
-                hostbandwidthin.innerHTML = hostinfo[1] + " Bytes/sec";
+                hostbandwidthin.innerHTML = hostinfo[1] + " Bits/sec";
 
                 //update bandwidth outbound from host
                 var hostbandwidthOutID = "bandwidthout" + y;
                 var hostbandwidthOut = d.getElementById(hostbandwidthOutID);
-                hostbandwidthOut.innerHTML = hostinfo[2] + " Bytes/sec";
+                hostbandwidthOut.innerHTML = hostinfo[2] + " Bits/sec";
 
                 //make the row appear if hidden
                 var rowid = "host" + y;

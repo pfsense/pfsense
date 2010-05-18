@@ -954,7 +954,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 	<form action="interfaces.php" method="post" name="iform" id="iform">
 		<?php if ($input_errors) print_input_errors($input_errors); ?>
 		<?php if (is_subsystem_dirty('interfaces')): ?><p>
-		<?php print_info_box_np(gettext("The {$wancfg['descr']} configuration has been changed.<p>You must apply the changes in order for them to take effect.<p>Don't forget to adjust the DHCP Server range if needed before applying."));?><br />
+		<?php print_info_box_np(gettext("The {$wancfg['descr']} configuration has been changed.<p>You must apply the changes in order for them to take effect.<p>Don't forget to adjust the DHCP Server range if needed after applying."));?><br />
 		<?php endif; ?>
 		<?php if ($savemsg) print_info_box($savemsg); ?>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">

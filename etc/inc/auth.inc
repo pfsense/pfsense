@@ -298,7 +298,7 @@ function local_user_set(& $user) {
 
 	/* admin user special handling */
 	if ($user_uid == 0) {
-		$cmd = "/usr/sbin/pw usermod -q -n {$user_name} -s /bin/sh -H 0";
+		$cmd = "/usr/sbin/pw usermod -q -n {$user_name} -s /etc/rc.initial -H 0";
 		if($debug)
 			log_error("Running: {$cmd}");
 		$fd = popen($cmd, "w");

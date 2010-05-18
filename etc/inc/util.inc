@@ -119,18 +119,18 @@ function config_unlock() {
 }
 
 /* lock configuration file */
-function lock($lock) {
+function lock($lock, $op = LOCK_SH) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock)
 		die("WARNING: You must give a name as parameter to lock() function.");
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 	$cfglckkeyconsumers++;
-	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w+")) {
-		//if (flock($fp, LOCK_EX))
+	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
+		if (flock($fp, $op))
 			return $fp;
-		//else
-		//	fclose($fp);
+		else
+			fclose($fp);
 	}
 }
 
@@ -858,7 +858,7 @@ function alias_expand_urltable($name) {
 
 	foreach ($config['aliases']['alias'] as $alias) {
 		if (($alias['type'] == 'urltable') && ($alias['name'] == $name)) {
-			if (is_URL($alias["url"]) && file_exists($urltable_filename))
+			if (is_URL($alias["url"]) && file_exists($urltable_filename) && filesize($urltable_filename))
 				return $urltable_filename;
 			else if (process_alias_urltable($name, $alias["url"], 0, true))
 				return $urltable_filename;

@@ -338,8 +338,7 @@ function conf_mount_ro() {
 
 	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
-	mwexec("/bin/sync");
-	mwexec("/bin/sync");
+	mwexec("/bin/sync; /bin/sync");
 	mwexec("/sbin/mount -u -r -f {$g['cf_path']}");
 	mwexec("/sbin/mount -u -r -f /");
 }
@@ -471,14 +470,14 @@ function write_config($desc="Unknown", $backup = true) {
 	if ($desc == "Unknown")
 		$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";
 
-	$config['revision']['description'] = $desc;
+	$config['revision']['description'] = "{$_SESSION['Username']}: " . $desc;
+	$config['revision']['username'] = $_SESSION["Username"];
 
-	$lockkey = lock('config');
+	conf_mount_rw();
+	$lockkey = lock('config', LOCK_EX);
 
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
-
-	conf_mount_rw();
 
 	/* write new configuration */
 	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig, false)) {
@@ -505,13 +504,12 @@ function write_config($desc="Unknown", $backup = true) {
 		fclose($fd);
 	}
 
-	/* tell kernel to sync fs data */
-	if (!$g['booting'])
-		conf_mount_ro();
-
 	unlock($lockkey);
 
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
+
+	/* tell kernel to sync fs data */
+	conf_mount_ro();
 
 	/* sync carp entries to other firewalls */
 	carp_sync_client();
@@ -533,9 +531,9 @@ function write_config($desc="Unknown", $backup = true) {
 function reset_factory_defaults($lock = false) {
 	global $g;
 
-	if (!$lock)
-		$lockkey = lock('config');
 	conf_mount_rw();
+	if (!$lock)
+		$lockkey = lock('config', LOCK_EX);
 
 	/* create conf directory, if necessary */
 	safe_mkdir("{$g['cf_conf_path']}");
@@ -554,9 +552,9 @@ function reset_factory_defaults($lock = false) {
 
 	/* call the wizard */
 	touch("/conf/trigger_initial_wizard");
-	conf_mount_ro();
 	if (!$lock)
 		unlock($lockkey);
+	conf_mount_ro();
 
 	return 0;
 }
@@ -571,7 +569,7 @@ function config_restore($conffile) {
 
 	conf_mount_rw();
 	
-	$lockkey = lock('config');
+	$lockkey = lock('config', LOCK_EX);
 
 	copy($conffile, "{$g['cf_conf_path']}/config.xml");
 	unlink_if_exists("{$g['tmp_path']}/config.cache");
@@ -602,7 +600,7 @@ function config_install($conffile) {
 		log_error("Installing configuration ....");
 
 	conf_mount_rw();
-	$lockkey = lock('config');
+	$lockkey = lock('config', LOCK_EX);
 
 	copy($conffile, "{$g['conf_path']}/config.xml");
 

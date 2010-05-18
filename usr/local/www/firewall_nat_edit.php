@@ -316,7 +316,7 @@ if ($_POST) {
 			unset($natent['nosync']);
 
 		// If we used to have an associated filter rule, but no-longer should have one
-		if ($a_nat[$id]>0 && ( empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'] ) ) {
+		if (!empty($a_nat[$id]) && ( empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'] ) ) {
 			// Delete the previous rule
 			delete_id($a_nat[$id]['associated-rule-id'], $config['filter']['rule']);
 			mark_subsystem_dirty('filter');
@@ -448,7 +448,7 @@ include("fbegin.inc"); ?>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-					<select name="interface" class="formselect" onChange="dst_change(this.value,'<?=$pconfig['interface']?>','<?=$pconfig['dst']?>');typesel_change();">
+					<select name="interface" class="formselect" onChange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
 						<?php
 
 						$iflist = get_configured_interface_with_descr(false, true);
@@ -805,6 +805,7 @@ include("fbegin.inc"); ?>
 <!--
 	ext_change();
 	dst_change(document.iform.interface.value,'<?=$pconfig['interface']?>','<?=$pconfig['dst']?>');
+	var iface_old = document.iform.interface.value;
 	typesel_change();
 	proto_change();
 	<?php if ($pconfig['srcnot'] || $pconfig['src'] != "any" || $pconfig['srcbeginport'] != "any" || $pconfig['srcendport'] != "any"): ?>

@@ -793,6 +793,13 @@ function upgrade_042_to_043() {
 			}
 			$j++;
 		}
+
+		/* rename old Quality RRD files in the process */
+		$rrddbpath = "/var/db/rrd";
+		$gwname = "GW_" . strtoupper($ifname);
+		if(is_readable("{$rrddbpath}/{$ifname}-quality.rrd")) {
+			rename("{$rrddbpath}/{$ifname}-quality.rrd", "{$rrddbpath}/{$gwname}-quality.rrd");
+		}
 		$i++;
 	}
 }
@@ -1405,6 +1412,11 @@ function upgrade_051_to_052() {
 			$server['wins_server1'] = $server['dhcp_wins'];
 			unset($server['dhcp_wins']);
 
+			if (!empty($server['disable']))
+				$server['disable'] = true;
+			else
+				unset($server['disable']);
+
 			/* allocate vpnid */
 			$server['vpnid'] = $vpnid++;
 
@@ -1481,6 +1493,11 @@ function upgrade_051_to_052() {
 
 			/* allocate vpnid */
 			$client['vpnid'] = $vpnid++;
+
+			if (!empty($client['disable']))
+				$client['disable'] = true;
+			else
+				unset($client['disable']);
 
 			$config['openvpn']['openvpn-client'][] = $client;
 		}

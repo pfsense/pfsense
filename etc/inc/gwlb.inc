@@ -151,15 +151,14 @@ EOD;
 			if((is_numeric($gateway['attribute'])) && is_ipaddr($gwref['monitor'])) {
 				$gateway['monitor'] = $gwref['monitor'];
 			} else {
-				if(($gateway['gateway'] == "dynamic") && ($gateway['monitor'])) {
+				if ($gateway['gateway'] == "dynamic") {
 					$gateway['monitor'] = "127.0.0.{$i}";
 					$i++;
 				}
-				if(!is_ipaddr($gateway['monitor'])) {
+				if (!is_ipaddr($gateway['monitor']))
 					$gateway['monitor'] = $gateway['gateway'];
-				}
 			}
-			
+
 			$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
 			$apingercfg .= "	description \"{$gateway['name']}\"\n";
 			$alarms = "";

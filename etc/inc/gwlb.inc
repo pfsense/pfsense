@@ -249,7 +249,7 @@ function return_gateways_status() {
 	$gateways_arr = return_gateways_array();
 
 	$apingerstatus = array();
-	if(is_readable("{$g['tmp_path']}/apinger.status")) {
+	if (file_exists("{$g['tmp_path']}/apinger.status")) {
 		$apingerstatus = file("{$g['tmp_path']}/apinger.status");
 	}
 
@@ -383,7 +383,7 @@ function return_gateway_groups_array() {
 				$gwname = $itemsplit[0];
 				/* check if the gateway is available before adding it to the array */
 				foreach($gateways_status as $status) {
-					if(($status['name'] != $gwname)) {
+					if ($status['name'] != $gwname) {
 						continue;
 					}
 					if (stristr($status['status'], "down")) {
@@ -446,9 +446,11 @@ function return_gateway_groups_array() {
 							$gatewayip = get_interface_gateway($gateway['friendlyiface']);
 					}
 					if (($int <> "") && is_ipaddr($gatewayip)) {
-						$gateway_groups_array[$group['name']][$tiernr]['int']  = "$int";
-						$gateway_groups_array[$group['name']][$tiernr]['gwip']  = "$gatewayip";
-						$gateway_groups_array[$group['name']][$tiernr]['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
+						$groupmember = array();
+						$groupmember['int']  = "$int";
+						$groupmember['gwip']  = "$gatewayip";
+						$groupmember['weight']  = isset($gateway['weight']) ? $gateway['weight'] : 1;
+						$gateway_groups_array[$group['name']][] = $group;
 					}
 				}
 				/* we should have the 1st available tier now, exit stage left */

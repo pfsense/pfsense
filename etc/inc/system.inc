@@ -1339,4 +1339,34 @@ function enable_watchdog() {
 		exec("/usr/sbin/watchdogd");
 	}
 }
+
+function system_check_reset_button() {
+	$specplatform = system_identify_specific_platform();
+
+	if ($specplatform['name'] != "wrap" && $specplatform['name'] != "alix")
+		return 0;
+
+	$retval = mwexec("/usr/local/sbin/" . $specplatform['name'] . "resetbtn");
+
+	if ($retval == 99) {
+		/* user has pressed reset button for 2 seconds - 
+		   reset to factory defaults */
+		echo <<<EOD
+
+***********************************************************************
+* Reset button pressed - resetting configuration to factory defaults. *
+* The system will reboot after this completes.                        *
+***********************************************************************
+
+
+EOD;
+		
+		reset_factory_defaults();
+		system_reboot_sync();
+		exit(0);
+	}
+
+	return 0;
+}
+
 ?>

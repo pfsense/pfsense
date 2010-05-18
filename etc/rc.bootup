@@ -365,6 +365,9 @@ upnp_start();
 /* If powerd is enabled, lets launch it */
 activate_powerd();
 
+/* check whether config reset is desired (via hardware button on WRAP/ALIX) */
+system_check_reset_button();
+
 /* done */
 unset($g['booting']);
 

@@ -191,8 +191,8 @@ function restore_backup($file) {
 
 	if (file_exists($file)) {
 		conf_mount_rw();
-		copy("$file","/cf/conf/config.xml");
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
+		copy("$file","/cf/conf/config.xml");
 		log_error("{$g['product_name']} is restoring the configuration $file");
 		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "pfSenseConfigurator", "");
 		conf_mount_ro();
@@ -496,13 +496,14 @@ function write_config($desc="Unknown", $backup = true) {
 	/* re-read configuration */
 	/* NOTE: We assume that the file can be parsed since we wrote it. */
 	$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
-
-	/* write config cache */
-	$fd = @fopen("{$g['tmp_path']}/config.cache", "wb");
-	if ($fd) {
-		fwrite($fd, serialize($config));
-		fclose($fd);
-	}
+	if ($config == -1) {
+		$last_backup = discover_last_backup();
+		if ($last_backup)
+			restore_backup("/cf/conf/backup/{$last_backup}");
+		else
+			log_error(gettext("Could not restore config.xml."));
+	} else
+		generate_config_cache($config);
 
 	unlock($lockkey);
 
@@ -571,8 +572,8 @@ function config_restore($conffile) {
 	
 	$lockkey = lock('config', LOCK_EX);
 
-	copy($conffile, "{$g['cf_conf_path']}/config.xml");
 	unlink_if_exists("{$g['tmp_path']}/config.cache");
+	copy($conffile, "{$g['cf_conf_path']}/config.xml");
 
 	unlock($lockkey);
 

@@ -205,6 +205,9 @@ interfaces_configure();
 if(!$debugging)
 	unmute_kernel_msgs();
 
+/* re-make hosts file after configuring interfaces */
+system_hosts_generate();
+
 /* generate resolv.conf */
 system_resolvconf_generate();
 

@@ -1388,7 +1388,7 @@ function system_identify_specific_platform() {
 		return array('name' => 'generic-pc-cdrom', 'descr' => "Generic PC (CD-ROM)");
 	
 	/* the rest of the code only deals with 'embedded' platforms */
-	if ($g['platform'] != 'embedded')
+	if ($g['platform'] != 'nanobsd')
 		return array('name' => $g['platform'], 'descr' => $g['platform']);
 	
 	$dmesg = system_get_dmesg_boot();

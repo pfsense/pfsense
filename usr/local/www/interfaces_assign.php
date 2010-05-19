@@ -137,7 +137,7 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 
 if ($_POST['apply']) {
 	if (file_exists("/var/run/interface_mismatch_reboot_needed"))
-		exec("/etc/rc.reboot");
+		system_reboot();
 	else {
 		write_config();
 

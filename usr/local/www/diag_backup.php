@@ -670,6 +670,6 @@ decrypt_change();
 <?php
 
 if (is_subsystem_dirty('restore'))
-	exec("/etc/rc.reboot");
+	system_reboot();
 
 ?>

@@ -234,7 +234,7 @@ function portal_mac_radius($clientmac,$clientip) {
 
 function portal_allow($clientip,$clientmac,$username,$password = null, $attributes = null, $ruleno = null)  {
 
-	global $redirurl, $g, $config, $url_redirection, $type;
+	global $redirurl, $g, $config, $url_redirection, $type, $passthrumac;
 
 	/* See if a ruleno is passed, if not start locking the sessions because this means there isn't one atm */
 	$captiveshouldunlock = false;
@@ -402,7 +402,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	else
 		$my_redirurl = $redirurl;
 
-	if(isset($config['captiveportal']['logoutwin_enable']) && !isset($config['captiveportal']['passthrumacadd'])) {
+	if(isset($config['captiveportal']['logoutwin_enable']) && !$passthrumac) {
 
 		if (isset($config['captiveportal']['httpslogin']))
 			$logouturl = "https://{$config['captiveportal']['httpsname']}:8001/";

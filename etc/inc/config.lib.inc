@@ -1137,63 +1137,69 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 	
 	if (!$lock)
 		$lockkey = lock('config');
-	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
-		conf_mount_rw();
-		$backups = get_backups();
-		$newbaks = array();
-		$bakfiles = glob($g['cf_conf_path'] . "/backup/config-*");
-		$baktimes = $backups['versions'];
-		$tocache = array();
-		unset($backups['versions']);
-   		foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
-   			if(filesize($backup) == 0) {
-   				unlink($backup);
-   				continue;
-   			}
-			$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));
-            if(!in_array($tocheck, $baktimes)) {
-				$i = true;
-				if($g['booting'])
-					echo ".";
-				$newxml = parse_xml_config($backup, $g['xml_rootobj']);
-				if($newxml == "-1") {
-					log_error("The backup cache file $backup is corrupted.  Unlinking.");
-					unlink($backup);
-					log_error("The backup cache file $backup is corrupted.  Unlinking.");
-					continue;
-				}
-				if($newxml['revision']['description'] == "")
-					$newxml['revision']['description'] = "Unknown";
-				$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
-			}
-    	}
-		foreach($backups as $checkbak) {
 
-			if(count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
-				$newbaks[] = $checkbak;
-			} else {
-				$i = true;
-				if($g['booting']) print " " . $tocheck . "r";
-			}
-		}
-		foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);
-		if(is_int($revisions) and (count($tocache) > $revisions)) {
-			$toslice = array_slice(array_keys($tocache), 0, $revisions);
-			foreach($toslice as $sliced)
-				$newcache[$sliced] = $tocache[$sliced];
-			foreach($tocache as $version => $versioninfo) {
-				if(!in_array($version, array_keys($newcache))) {
-					unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
-					if($g['booting']) print " " . $tocheck . "d";
-				}
-			}
-			$tocache = $newcache;
-		}
-		$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-        fwrite($bakout, serialize($tocache));
-		fclose($bakout);
-		conf_mount_ro();
+	conf_mount_rw();
+
+	$backups = get_backups();
+	if ($backups) {
+		$baktimes = $backups['versions'];
+		unset($backups['versions']);
+	} else {
+		$backups = array();
+		$baktimes = array();
 	}
+	$newbaks = array();
+	$bakfiles = glob($g['cf_conf_path'] . "/backup/config-*");
+	$tocache = array();
+
+	foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
+		if(filesize($backup) == 0) {
+			unlink($backup);
+			continue;
+		}
+		$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));
+		if(!in_array($tocheck, $baktimes)) {
+			$i = true;
+			if($g['booting'])
+				echo ".";
+			$newxml = parse_xml_config($backup, $g['xml_rootobj']);
+			if($newxml == "-1") {
+				log_error("The backup cache file $backup is corrupted.  Unlinking.");
+				unlink($backup);
+				log_error("The backup cache file $backup is corrupted.  Unlinking.");
+				continue;
+			}
+			if($newxml['revision']['description'] == "")
+				$newxml['revision']['description'] = "Unknown";
+			$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
+		}
+	}
+	foreach($backups as $checkbak) {
+		if(count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
+			$newbaks[] = $checkbak;
+		} else {
+			$i = true;
+			if($g['booting']) print " " . $tocheck . "r";
+		}
+	}
+	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);
+	if(is_int($revisions) and (count($tocache) > $revisions)) {
+		$toslice = array_slice(array_keys($tocache), 0, $revisions);
+		foreach($toslice as $sliced)
+			$newcache[$sliced] = $tocache[$sliced];
+		foreach($tocache as $version => $versioninfo) {
+			if(!in_array($version, array_keys($newcache))) {
+				unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
+				if($g['booting']) print " " . $tocheck . "d";
+			}
+		}
+		$tocache = $newcache;
+	}
+	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+	fwrite($bakout, serialize($tocache));
+	fclose($bakout);
+	conf_mount_ro();
+
 	if($g['booting'] && $i)
 		print "done.\n";
 	if (!$lock)

@@ -692,7 +692,7 @@ function filter_generate_optcfg_array() {
 		if(!is_ipaddr($oc['ipaddr']) && !empty($oc['ipaddr']))
 			$oic['type'] = $oc['ipaddr'];
 		$oic['sn'] = get_interface_subnet($if);
-		$oic['mtu'] = $oc['mtu'];
+		$oic['mtu'] = empty($oc['mtu']) ? 1500 : $oc['mtu'];
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
 		$oic['nonat'] = $oc['nonat'];

@@ -69,7 +69,8 @@ function flowtable_configure() {
 	// nmbflows cpu count * ($maxstates * 2)
 	$cpus = trim(`/sbin/sysctl kern.smp.cpus | /usr/bin/cut -d' ' -f2`);
 	$nmbflows = ($cpus*($maxstates*2));
-	// Is flowtable enabled?
+	// flowtable is not enabled
+	/*
 	if($config['system']['flowtable'])
 		$flowtable_enable = 1;
 	else
@@ -82,6 +83,7 @@ function flowtable_configure() {
 		}
 		mwexec("/sbin/sysctl net.inet.flowtable.enable={$flowtable_enable}");
 	}
+	*/
 }
 
 function filter_load_ipfw() {

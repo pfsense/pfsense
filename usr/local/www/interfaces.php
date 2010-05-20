@@ -1623,6 +1623,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<td class="vtable">
 												<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <? if ($pconfig['ieee8021x']) echo "checked";?>>
 												<br/>Setting this option will enable 802.1x authentication.
+												<br/><span class="red"><strong>NOTE:</strong</span> this option requires checking the "Enable WPA box".
 											</td>
 										</tr>
 										<tr>

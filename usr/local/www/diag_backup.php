@@ -101,6 +101,7 @@ function spit_out_select_items($area, $showall) {
 		
 	$areas = array("aliases" => "Aliases", 
 				   "captiveportal" => "Captive Portal",
+				   "voucher" => "Captive Portal Vouchers",
 				   "dnsmasq" => "DNS Forwarder",				
 				   "dhcpd" => "DHCP Server",
 				   "filter" => "Firewall Rules",

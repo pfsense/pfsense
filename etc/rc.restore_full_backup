@@ -6,6 +6,7 @@ if [ -f $1 ]; then
 	echo "Restore of $1 complete."
 else 
 	echo "Could not locate $1"
-	ls "Available backups:"
+	echo
+	echo "Available backups:"
 	ls -lah /root | grep Backup
 fi

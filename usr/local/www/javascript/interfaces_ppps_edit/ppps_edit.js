@@ -53,7 +53,6 @@ function updateType(t){
 			update_select_list(serialports, select_list);
 			$('select','pppoe','pptp','subnet').invoke('hide');
 			$('ipfields','prefil_ppp').invoke('show');
-			
 			break;
 		}
 		case "pppoe": {

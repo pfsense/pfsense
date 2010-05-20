@@ -343,8 +343,8 @@ function vpn_ipsec_configure($ipchg = false)
 					$pool_address = $a_client['pool_address'];
 					$pool_netmask = gen_subnet_mask($a_client['pool_netbits']);
 
-					$pool_address = long2ip(ip2long($pool_address)+1);
-					$pool_size = ~ip2long($pool_netmask) - 2;
+					$pool_address = long2ip32(ip2long($pool_address)+1);
+					$pool_size = (~ip2long($pool_netmask) & 0xFFFFFFFF) - 2;
 
 					$racoonconf .= "\tpool_size {$pool_size};\n";
 					$racoonconf .= "\tnetwork4 {$pool_address};\n";
@@ -1012,7 +1012,7 @@ EOD;
 
 			for ($i = 0; $i < $pptpdcfg['n_pptp_units']; $i++) {
 
-				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
+				$clientip = long2ip32(ip2long($pptpdcfg['remoteip']) + $i);
 
 				$mpdconf .= <<<EOD
 
@@ -1219,7 +1219,7 @@ EOD;
 
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 
-				$clientip = long2ip(ip2long($pppoecfg['remoteip']) + $i);
+				$clientip = long2ip32(ip2long($pppoecfg['remoteip']) + $i);
 
 				if (isset ($pppoecfg['radius']['radiusissueips']) && isset ($pppoecfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
@@ -1409,7 +1409,7 @@ EOD;
 
 			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
 
-				$clientip = long2ip(ip2long($l2tpcfg['remoteip']) + $i);
+				$clientip = long2ip32(ip2long($l2tpcfg['remoteip']) + $i);
 
 				if (isset ($l2tpcfg['radius']['radiusissueips']) && isset ($l2tpcfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 0.0.0.0/0";

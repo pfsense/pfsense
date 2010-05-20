@@ -421,14 +421,14 @@ any)</td>
 <?php	if (is_array($config['virtualip']['vip'])):
 		foreach ($config['virtualip']['vip'] as $sn):
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
-				$baseip = ip2long($sn['subnet']) & ip2long(gen_subnet_mask($sn['subnet_bits']));
-				$snip = long2ip($baseip);
+				$baseip = ip2long32($sn['subnet']) & ip2long(gen_subnet_mask($sn['subnet_bits']));
+				$snip = long2ip32($baseip);
 ?>
 				<option value="<?=$snip;?>" <?php if ($snip == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
 <?php
 				for ($i = $sn['subnet_bits']; $i <= 32; $i++):
 					$baseip = $baseip + 1;
-					$snip = long2ip($baseip);
+					$snip = long2ip32($baseip);
 ?>
 				<option value="<?=$snip;?>" <?php if ($snip == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
 				<?php endfor; ?>

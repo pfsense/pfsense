@@ -181,7 +181,7 @@ if(is_array($dhcrelaycfg)) {
 }
 
 function is_inrange($test, $start, $end) {
-	if ( (ip2long($test) < ip2long($end)) && (ip2long($test) > ip2long($start)) )
+	if ( (ip2ulong($test) < ip2ulong($end)) && (ip2ulong($test) > ip2ulong($start)) )
 		return true;
 	else
 		return false;
@@ -242,15 +242,15 @@ if ($_POST) {
 
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
-			$subnet_start = (ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn));
-			$subnet_end = (ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn)));
+			$subnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
+			$subnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
 
-			if ((ip2long($_POST['range_from']) < $subnet_start) || (ip2long($_POST['range_from']) > $subnet_end) ||
-			    (ip2long($_POST['range_to']) < $subnet_start) || (ip2long($_POST['range_to']) > $subnet_end)) {
+			if ((ip2ulong($_POST['range_from']) < $subnet_start) || (ip2ulong($_POST['range_from']) > $subnet_end) ||
+			    (ip2ulong($_POST['range_to']) < $subnet_start) || (ip2ulong($_POST['range_to']) > $subnet_end)) {
 				$input_errors[] = "The specified range lies outside of the current subnet.";
 			}
 
-			if (ip2long($_POST['range_from']) > ip2long($_POST['range_to']))
+			if (ip2ulong($_POST['range_from']) > ip2ulong($_POST['range_to']))
 				$input_errors[] = "The range is invalid (first element higher than second element).";
 
 			/* make sure that the DHCP Relay isn't enabled on this interface */
@@ -534,15 +534,15 @@ include("head.inc");
                         <td width="22%" valign="top" class="vncellreq">Available range</td>
                         <td width="78%" class="vtable">
                           <?php 
-								$range_from = ip2long(long2ip(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn))); 
+								$range_from = ip2long(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn))); 
 								$range_from++;
-								echo long2ip($range_from);
+								echo long2ip32($range_from);
 							?>
                           -
                           <?php
-								$range_to = ip2long(long2ip(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
+								$range_to = ip2long(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
 								$range_to--;
-								echo long2ip($range_to);
+								echo long2ip32($range_to);
 						  ?>
                         </td>
                       </tr>

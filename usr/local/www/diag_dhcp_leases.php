@@ -328,7 +328,7 @@ foreach ($leases as $data) {
 		} else {
 			$fspans = $fspane = "";
 		}
-                $lip = ip2long($data['ip']);
+                $lip = ip2ulong($data['ip']);
 		if ($data['act'] == "static") {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
 				if(is_array($dhcpifconf['staticmap'])) {
@@ -345,7 +345,7 @@ foreach ($leases as $data) {
 			}
 		} else {
                 	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {	
-                        	if (($lip >= ip2long($dhcpifconf['range']['from'])) && ($lip <= ip2long($dhcpifconf['range']['to']))) {
+                        	if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
                                 	$data['if'] = $dhcpif;
                                 	break;
                         	}

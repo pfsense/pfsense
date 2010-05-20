@@ -625,10 +625,10 @@ include("fbegin.inc"); ?>
 <?php							if (is_array($config['virtualip']['vip'])):
 									foreach ($config['virtualip']['vip'] as $sn):
 										if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
-											$baseip = ip2long($sn['subnet']) & ip2long(gen_subnet_mask($sn['subnet_bits']));
+											$baseip = ip2long32($sn['subnet']) & ip2long(gen_subnet_mask($sn['subnet_bits']));
 
 											for ($i = $sn['subnet_bits'] - 1; $i <= 32; $i++):
-												$snip = long2ip($baseip);
+												$snip = long2ip32($baseip);
 ?>
 												<option value="<?=$snip;?>" <?php if ($snip == $pconfig['dst']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
 												<?php $baseip = $baseip + 1; ?>

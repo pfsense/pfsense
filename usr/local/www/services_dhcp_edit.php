@@ -140,12 +140,12 @@ if ($_POST) {
 		
 	/* make sure it's not within the dynamic subnet */
 	if ($_POST['ipaddr']) {
-		$dynsubnet_start = ip2long($config['dhcpd'][$if]['range']['from']);
-		$dynsubnet_end = ip2long($config['dhcpd'][$if]['range']['to']);
-		$lansubnet_start = (ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn));
-		$lansubnet_end = (ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn)));
-		if ((ip2long($_POST['ipaddr']) < $lansubnet_start) ||
-			(ip2long($_POST['ipaddr']) > $lansubnet_end)) {
+		$dynsubnet_start = ip2ulong($config['dhcpd'][$if]['range']['from']);
+		$dynsubnet_end = ip2ulong($config['dhcpd'][$if]['range']['to']);
+		$lansubnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
+		$lansubnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
+		if ((ip2ulong($_POST['ipaddr']) < $lansubnet_start) ||
+			(ip2ulong($_POST['ipaddr']) > $lansubnet_end)) {
 			$input_errors[] = "The IP address must lie in the {$ifcfgdescr} subnet.";
 		}
 	}

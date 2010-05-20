@@ -99,7 +99,7 @@ if(count($states) > 0) {
 }
 
 function sort_by_ip($a, $b) {
-	return sprintf("%u", ip2long($a)) < sprintf("%u", ip2long($b)) ? -1 : 1;
+	return ip2ulong($a) < ip2ulong($b) ? -1 : 1;
 }
 
 function build_port_info($portarr, $proto) {

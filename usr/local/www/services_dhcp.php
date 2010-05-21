@@ -193,6 +193,18 @@ if ($_POST) {
 
 	$pconfig = $_POST;
 
+	$numberoptions = array();
+	for($x=0; $x<99; $x++) {
+		if(isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
+			$numbervalue = array();
+			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
+			$numbervalue['value'] = htmlspecialchars($_POST["value{$x}"]);
+			$numberoptions['item'][] = $numbervalue;
+		}
+	}
+	// Reload the new pconfig variable that the forum uses.
+	$pconfig['numberoptions'] = $numberoptions;
+
 	/* input validation */
 	if ($_POST['enable']) {
 		$reqdfields = explode(" ", "range_from range_to");
@@ -313,17 +325,8 @@ if ($_POST) {
 		// Handle the custom options rowhelper
 		if(isset($config['dhcpd'][$if]['numberoptions']['item']))
 			unset($config['dhcpd'][$if]['numberoptions']['item']);
-		for($x=0; $x<99; $x++) {
-			if(isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
-				$numbervalue = array();
-				$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
-				$numbervalue['value'] = htmlspecialchars($_POST["value{$x}"]);
-				$config['dhcpd'][$if]['numberoptions']['item'][] = $numbervalue;
-			}
-		}
-		
-		// Reload the new pconfig variable that the forum uses.
-		$pconfig['numberoptions'] = $config['dhcpd'][$if]['numberoptions'];
+
+		$config['dhcpd'][$if]['numberoptions'] = $numberoptions;
 
 		write_config();
 

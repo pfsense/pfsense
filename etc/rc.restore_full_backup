@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ -f $1 ]; then
-	echo "One moment please while we restore $1"
+	echo "One moment, restoring ${1}..."
 	tar xzPfU $1 -C /
 	echo "Restore of $1 complete."
 else 

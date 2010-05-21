@@ -148,7 +148,7 @@ EOD;
 		foreach($gateways_arr as $name => $gateway) {
 			$gwref = $a_gateway_item[$gateway['attribute']];
 			/* for dynamic gateways without an IP address we subtitute a local one */
-			if((is_numeric($gateway['attribute'])) && is_ipaddr($gwref['monitor'])) {
+			if(is_ipaddr($gwref['monitor'])) {
 				$gateway['monitor'] = $gwref['monitor'];
 			} else {
 				if ($gateway['gateway'] == "dynamic") {

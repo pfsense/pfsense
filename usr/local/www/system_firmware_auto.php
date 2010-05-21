@@ -43,6 +43,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("pfsense-utils.inc");
 
 $curcfg = $config['system']['firmware'];
 
@@ -130,17 +131,16 @@ if(!$latest_version) {
 	require("fend.inc");
 	exit;
 } else {
-	$current_installed_pfsense_version = str_replace("\n", "", @file_get_contents("/etc/version.buildtime"));
-	$current_installed_pfsense = strtotime($current_installed_pfsense_version);
-	$latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
+	$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
+	$current_installed_version = trim(file_get_contents("/etc/version"));
+	$latest_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
 	$latest_version_pfsense = strtotime($latest_version);
 	if(!$latest_version) {
 		update_output_window(gettext("Unable to check for updates."));
 		require("fend.inc");
 		exit;
 	} else {
-		$needs_system_upgrade = false;
-		if($current_installed_pfsense_version < $latest_version_pfsense) {
+		if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $latest_version) == -1) {
 			update_status(gettext("Downloading updates") . "...");
 			conf_mount_rw();
 			$status = download_file_with_progress_bar("{$updater_url}/latest.tgz", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
@@ -163,8 +163,7 @@ if($g['platform'] == "nanobsd")
 else
 	$external_upgrade_helper_text .= "pfSenseupgrade ";
 
-if($needs_system_upgrade == true)
-	$external_upgrade_helper_text .= "{$g['upload_path']}/latest.tgz";
+$external_upgrade_helper_text .= "{$g['upload_path']}/latest.tgz";
 
 $downloaded_latest_tgz_sha256 = str_replace("\n", "", `/sbin/sha256 -q {$g['upload_path']}/latest.tgz`);
 $upgrade_latest_tgz_sha256 = str_replace("\n", "", `/bin/cat {$g['upload_path']}/latest.tgz.sha256 | awk '{ print $4 }'`);
@@ -221,7 +220,7 @@ if($downloaded_latest_tgz_sha256 <> $upgrade_latest_tgz_sha256) {
 */
 
 function read_body_firmware($ch, $string) {
-	global $fout, $file_size, $downloaded, $counter, $version, $latest_version, $current_installed_pfsense_version;
+	global $fout, $file_size, $downloaded, $counter, $version, $latest_version, $current_installed_version;
 	$length = strlen($string);
 	$downloaded += intval($length);
 	$downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
@@ -231,7 +230,7 @@ function read_body_firmware($ch, $string) {
 	$c = $downloadProgress;
 	$text  = "  " . gettext("Auto Update Download Status") . "\\n";
 	$text .= "----------------------------------------------------\\n";
-	$text .= "  " . gettext("Current Version") . " : {$current_installed_pfsense_version}\\n";
+	$text .= "  " . gettext("Current Version") . " : {$current_installed_version}\\n";
 	$text .= "  " . gettext("Latest Version") . "  : {$latest_version}\\n";
 	$text .= "  " . gettext("File size") . "       : {$a}\\n";
 	$text .= "  " . gettext("Downloaded") . "      : {$b}\\n";

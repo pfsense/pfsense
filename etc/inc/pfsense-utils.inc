@@ -1314,7 +1314,7 @@ function get_interface_info($ifdescr) {
 			}
 		}
 		$dev = $ppp['ports'];
-		if (empty($dev))
+		if ($config['interfaces'][$if]['ptpid'] != $ppp['ptpid'] || empty($dev))
 			break;
 		if (file_exists($dev)) {
 			if (file_exists("{$g['varrun_path']}/ppp_{$if}.pid")) {

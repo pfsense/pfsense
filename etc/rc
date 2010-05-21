@@ -22,52 +22,13 @@ export HOME PATH
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
 
-# Set our current version
-version=`cat /etc/version`
-
-if [ "$PLATFORM" = "cdrom" ]; then
-	/etc/rc.cdrom
-fi
-
-if [ "$PLATFORM" = "embedded" ]; then
-	/etc/rc.embedded
-fi
-
-if [ "$PLATFORM" = "nanobsd" ]; then
-	/etc/rc.embedded
-fi
-
-if [ "$PLATFORM" = "pfSense" ]; then
-	mdmfs -S -M -s 4m md /var/run
-fi
-
-product=`cat /etc/inc/globals.inc | grep product_name | cut -d'"' -f4`
-hideplatform=`cat /etc/inc/globals.inc | grep hideplatform | wc -l`
-varrunpath=`cat /etc/inc/globals.inc | grep varrun_path | cut -d'"' -f4`
-
-if [ "$hideplatform" -gt "0" ]; then
-	platformbanner="" # hide the platform
-else
-	platformbanner=" on the '${PLATFORM}' platform"
-fi
-
-echo
-cat /etc/ascii-art/pfsense-logo-small.txt
-echo
-echo
-echo "Welcome to ${product} ${version} ${platformbanner} ..."
-echo
-
-# Enable console output if its muted.
-/sbin/conscontrol mute off >/dev/null
-
 # Mount memory file system if it exists
 echo -n "Mounting filesystems..."
 /sbin/mount -a
 
 # Mount /. If it fails run a fsck.
 if [ ! "$PLATFORM" = "cdrom" ] ; then
-	/sbin/mount -uw / || (/sbin/fsck -fy; /sbin/mount -uw /)
+	/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
 
 	# If /conf is a directory, convert it to a symlink
 	# to /cf/conf
@@ -87,6 +48,45 @@ if grep -q cf /etc/fstab; then
     /sbin/mount -uw /cf || \
 	(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
 fi
+
+# Set our current version
+version=`cat /etc/version`
+
+if [ "$PLATFORM" = "cdrom" ]; then
+	/etc/rc.cdrom
+fi
+
+if [ "$PLATFORM" = "embedded" ]; then
+	/etc/rc.embedded
+fi
+
+if [ "$PLATFORM" = "nanobsd" ]; then
+	/etc/rc.embedded
+fi
+
+if [ "$PLATFORM" = "pfSense" ]; then
+	mdmfs -S -M -s 4m md /var/run
+fi
+
+product=`grep product_name /etc/inc/globals.inc | cut -d'"' -f4`
+hideplatform=`grep hideplatform /etc/inc/globals.inc | wc -l`
+varrunpath=`grep varrun_path /etc/inc/globals.inc | cut -d'"' -f4`
+
+if [ "$hideplatform" -gt "0" ]; then
+	platformbanner="" # hide the platform
+else
+	platformbanner=" on the '${PLATFORM}' platform"
+fi
+
+echo
+cat /etc/ascii-art/pfsense-logo-small.txt
+echo
+echo
+echo "Welcome to ${product} ${version} ${platformbanner} ..."
+echo
+
+# Enable console output if its muted.
+/sbin/conscontrol mute off >/dev/null
 
 if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform

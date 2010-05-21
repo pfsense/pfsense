@@ -363,9 +363,9 @@ function openvpn_reconfigure($mode,& $settings) {
 		switch($settings['mode']) {
 			case 'p2p_tls':
 			case 'p2p_shared_key':
-				$baselong = ip2long($ip) & ip2long($mask);
-				$ip1 = long2ip($baselong + 1);
-				$ip2 = long2ip($baselong + 2);
+				$baselong = ip2long32($ip) & ip2long($mask);
+				$ip1 = long2ip32($baselong + 1);
+				$ip2 = long2ip32($baselong + 2);
 				$conf .= "ifconfig $ip1 $ip2\n";
 				break;
 			case 'server_tls':
@@ -463,9 +463,9 @@ function openvpn_reconfigure($mode,& $settings) {
 		if (!empty($settings['tunnel_network'])) {
 			list($ip, $mask) = explode('/', $settings['tunnel_network']);
 			$mask = gen_subnet_mask($mask);
-			$baselong = ip2long($ip) & ip2long($mask);
-			$ip1 = long2ip($baselong + 1);
-			$ip2 = long2ip($baselong + 2);
+			$baselong = ip2long32($ip) & ip2long($mask);
+			$ip1 = long2ip32($baselong + 1);
+			$ip2 = long2ip32($baselong + 2);
 			$conf .= "ifconfig $ip2 $ip1\n";
 		}
 
@@ -626,9 +626,9 @@ function openvpn_resync_csc(& $settings) {
 
 	if (!empty($settings['tunnel_network'])) {
 		list($ip, $mask) = explode('/', $settings['tunnel_network']);
-		$baselong = ip2long($ip) & gen_subnet_mask_long($mask);
-		$ip1 = long2ip($baselong + 1);
-		$ip2 = long2ip($baselong + 2);
+		$baselong = ip2long32($ip) & gen_subnet_mask_long($mask);
+		$ip1 = long2ip32($baselong + 1);
+		$ip2 = long2ip32($baselong + 2);
 		$conf .= "ifconfig-push {$ip1} {$ip2}\n";
 	}
 

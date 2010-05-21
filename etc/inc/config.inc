@@ -54,9 +54,9 @@ if($g['booting']) echo ".";
 ini_set("memory_limit","128M");
 
 /* include globals from notices.inc /utility/XML parser files */
-require_once('config.lib.inc');
-if($g['booting']) echo ".";
 require_once("notices.inc");
+if($g['booting']) echo ".";
+require_once('config.lib.inc');
 if($g['booting']) echo ".";
 require_once("util.inc");
 if($g['booting']) echo ".";

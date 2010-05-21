@@ -1339,4 +1339,83 @@ function enable_watchdog() {
 		exec("/usr/sbin/watchdogd");
 	}
 }
+
+function system_check_reset_button() {
+	global $g;
+	if($g['platform'] != "nanobsd")
+		return 0;
+
+	$specplatform = system_identify_specific_platform();
+
+	if ($specplatform['name'] != "wrap" && $specplatform['name'] != "alix")
+		return 0;
+
+	$retval = mwexec("/usr/local/sbin/" . $specplatform['name'] . "resetbtn");
+
+	if ($retval == 99) {
+		/* user has pressed reset button for 2 seconds - 
+		   reset to factory defaults */
+		echo <<<EOD
+
+***********************************************************************
+* Reset button pressed - resetting configuration to factory defaults. *
+* The system will reboot after this completes.                        *
+***********************************************************************
+
+
+EOD;
+		
+		reset_factory_defaults();
+		system_reboot_sync();
+		exit(0);
+	}
+
+	return 0;
+}
+
+/* attempt to identify the specific platform (for embedded systems)
+   Returns an array with two elements:
+	name => platform string (e.g. 'wrap', 'alix' etc.)
+	descr => human-readable description (e.g. "PC Engines WRAP")
+*/
+function system_identify_specific_platform() {
+	global $g;
+	
+	if ($g['platform'] == 'generic-pc')
+		return array('name' => 'generic-pc', 'descr' => "Generic PC");
+	
+	if ($g['platform'] == 'generic-pc-cdrom')
+		return array('name' => 'generic-pc-cdrom', 'descr' => "Generic PC (CD-ROM)");
+	
+	/* the rest of the code only deals with 'embedded' platforms */
+	if ($g['platform'] != 'nanobsd')
+		return array('name' => $g['platform'], 'descr' => $g['platform']);
+	
+	$dmesg = system_get_dmesg_boot();
+	
+	if (strpos($dmesg, "PC Engines WRAP") !== false)
+		return array('name' => 'wrap', 'descr' => 'PC Engines WRAP');
+	
+	if (strpos($dmesg, "PC Engines ALIX") !== false)
+		return array('name' => 'alix', 'descr' => 'PC Engines ALIX');
+
+	if (preg_match("/Soekris net45../", $dmesg, $matches))
+		return array('name' => 'net45xx', 'descr' => $matches[0]);
+	
+	if (preg_match("/Soekris net48../", $dmesg, $matches))
+		return array('name' => 'net48xx', 'descr' => $matches[0]);
+		
+	if (preg_match("/Soekris net55../", $dmesg, $matches))
+		return array('name' => 'net55xx', 'descr' => $matches[0]);
+	
+	/* unknown embedded platform */
+	return array('name' => 'embedded', 'descr' => 'embedded (unknown)');
+}
+
+function system_get_dmesg_boot() {
+	global $g;
+		
+	return file_get_contents("{$g['varlog_path']}/dmesg.boot");
+}
+
 ?>

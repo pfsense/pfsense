@@ -126,6 +126,12 @@ echo " done.\n";
 
 conf_mount_rw();
 
+/* save dmesg output to file */
+system_dmesg_save();
+
+/* check whether config reset is desired (via hardware button on WRAP/ALIX) */
+system_check_reset_button();
+
 /* remove previous firmware upgrade if present */
 if (file_exists("/root/firmware.tgz")) 
 	unlink("/root/firmware.tgz");
@@ -180,9 +186,6 @@ load_glxsb();
 /* run any early shell commands specified in config.xml */
 system_do_shell_commands(1);
 
-/* save dmesg output to file */
-system_dmesg_save();
-
 /* set up our timezone */
 system_timezone_configure();
 
@@ -201,6 +204,9 @@ if(!$debugging)
 interfaces_configure();
 if(!$debugging)
 	unmute_kernel_msgs();
+
+/* re-make hosts file after configuring interfaces */
+system_hosts_generate();
 
 /* generate resolv.conf */
 system_resolvconf_generate();

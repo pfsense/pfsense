@@ -98,11 +98,11 @@ if ($_POST) {
 		
 		if (!$input_errors) {	
 			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pppoe_subnet']);
-			$subnet_start = ip2long($_POST['remoteip']);
-			$subnet_end = ip2long($_POST['remoteip']) + $_POST['pppoe_subnet'] - 1;
+			$subnet_start = ip2ulong($_POST['remoteip']);
+			$subnet_end = ip2ulong($_POST['remoteip']) + $_POST['pppoe_subnet'] - 1;
 						
-			if ((ip2long($_POST['localip']) >= $subnet_start) && 
-			    (ip2long($_POST['localip']) <= $subnet_end)) {
+			if ((ip2ulong($_POST['localip']) >= $subnet_start) && 
+			    (ip2ulong($_POST['localip']) <= $subnet_end)) {
 				$input_errors[] = "The specified server address lies in the remote subnet.";	
 			}
 			if ($_POST['localip'] == get_interface_ip("lan")) {

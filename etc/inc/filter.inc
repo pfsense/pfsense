@@ -69,7 +69,8 @@ function flowtable_configure() {
 	// nmbflows cpu count * ($maxstates * 2)
 	$cpus = trim(`/sbin/sysctl kern.smp.cpus | /usr/bin/cut -d' ' -f2`);
 	$nmbflows = ($cpus*($maxstates*2));
-	// Is flowtable enabled?
+	// flowtable is not enabled
+	/*
 	if($config['system']['flowtable'])
 		$flowtable_enable = 1;
 	else
@@ -82,6 +83,7 @@ function flowtable_configure() {
 		}
 		mwexec("/sbin/sysctl net.inet.flowtable.enable={$flowtable_enable}");
 	}
+	*/
 }
 
 function filter_load_ipfw() {
@@ -690,7 +692,7 @@ function filter_generate_optcfg_array() {
 		if(!is_ipaddr($oc['ipaddr']) && !empty($oc['ipaddr']))
 			$oic['type'] = $oc['ipaddr'];
 		$oic['sn'] = get_interface_subnet($if);
-		$oic['mtu'] = $oc['mtu'];
+		$oic['mtu'] = empty($oc['mtu']) ? 1500 : $oc['mtu'];
 		$oic['descr'] = $ifdetail;
 		$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
 		$oic['nonat'] = $oc['nonat'];
@@ -2498,6 +2500,7 @@ function filter_process_carp_rules() {
 	if(isset($config['installedpackages']['carp']['config']) &&
 			 $config['installedpackages']['carpsettings']['config'] <> "" or
 			 $config['virtualip']['vip'] <> "") {
+		$lines .= "block in log quick proto carp from (self) to any\n";
 		$lines .= "pass quick proto carp\n";
 		$lines .= "pass quick proto pfsync\n";
 	}

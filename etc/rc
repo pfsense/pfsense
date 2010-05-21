@@ -22,39 +22,11 @@ export HOME PATH
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
 
-# Mount memory file system if it exists
-echo -n "Mounting filesystems..."
-/sbin/mount -rw -a
-
-# Mount /. If it fails run a fsck.
-if [ ! "$PLATFORM" = "cdrom" ] ; then
-	if [ "$PLATFORM" = "nanobsd" ]; then
-		/sbin/mount -rw / || (/sbin/fsck -fy; /sbin/mount -rw /)
-		/sbin/mount -rw /cf || (/sbin/fsck -fy; /sbin/mount -rw /cf)
-	else 
-		/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
-	fi
-	# If /conf is a directory, convert it to a symlink
-	# to /cf/conf
-	if [ -d "/conf" ]; then
-		# If item is not a symlink then rm and recreate
-		CONFPOINTSTO=`readlink /conf` 
-		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then 
-			rm -rf /conf
-			ln -s /cf/conf /conf
-		fi
-	fi
-fi
-
-# Check to see if a compact flash mountpoint exists
-# If it fails to mount then run a fsck -fy
-if grep -q cf /etc/fstab; then
-    /sbin/mount -uw /cf || \
-	(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
-fi
-
 # Set our current version
 version=`cat /etc/version`
+
+# Mount memory file system if it exists
+echo -n "Mounting filesystems..."
 
 if [ "$PLATFORM" = "cdrom" ]; then
 	/etc/rc.cdrom
@@ -70,6 +42,31 @@ fi
 
 if [ "$PLATFORM" = "pfSense" ]; then
 	mdmfs -S -M -s 4m md /var/run
+fi
+
+# Mount /. If it fails run a fsck.
+if [ ! "$PLATFORM" = "cdrom" ] ; then
+	if [ "$PLATFORM" = "nanobsd" ]; then
+		/sbin/mount -uw / || (/sbin/fsck -fy; /sbin/mount -uw /)
+	else 
+		/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
+	fi
+	# If /conf is a directory, convert it to a symlink to /cf/conf
+	if [ -d "/conf" ]; then
+		# If item is not a symlink then rm and recreate
+		CONFPOINTSTO=`readlink /conf` 
+		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then 
+			rm -rf /conf
+			ln -s /cf/conf /conf
+		fi
+	fi
+fi
+
+# Check to see if a compact flash mountpoint exists
+# If it fails to mount then run a fsck -fy
+if grep -q cf /etc/fstab; then
+    /sbin/mount -uw /cf || \
+	(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
 fi
 
 product=`grep product_name /etc/inc/globals.inc | cut -d'"' -f4`

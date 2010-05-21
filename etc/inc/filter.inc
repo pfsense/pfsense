@@ -141,9 +141,9 @@ function filter_configure() {
 }
 
 function delete_states_for_down_gateways() {
-	global $config;
-	$a_gateways = return_gateways_array();
-	foreach ($a_gateways as $gateway) {
+	global $config, $gateways_arr;
+	$gateways_arr = return_gateways_array();
+	foreach ($gateways_arr as $gateway) {
 		if($gateway['monitor'] == "down") {
 			$int_ip = get_interface_ip($gateway['interface']);
 			if($int_ip)

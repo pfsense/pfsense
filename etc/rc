@@ -24,12 +24,16 @@ PLATFORM=`cat /etc/platform`
 
 # Mount memory file system if it exists
 echo -n "Mounting filesystems..."
-/sbin/mount -a
+/sbin/mount -rw -a
 
 # Mount /. If it fails run a fsck.
 if [ ! "$PLATFORM" = "cdrom" ] ; then
-	/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
-
+	if [ "$PLATFORM" = "nanobsd" ]; then
+		/sbin/mount -rw / || (/sbin/fsck -fy; /sbin/mount -rw /)
+		/sbin/mount -rw /cf || (/sbin/fsck -fy; /sbin/mount -rw /cf)
+	else 
+		/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
+	fi
 	# If /conf is a directory, convert it to a symlink
 	# to /cf/conf
 	if [ -d "/conf" ]; then

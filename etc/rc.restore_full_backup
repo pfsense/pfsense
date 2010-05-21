@@ -2,11 +2,9 @@
 
 if [ -f $1 ]; then
 	echo "One moment please while we restore $1"
-	tar xzvPfU $1 -C /
+	tar xzPfU $1 -C /
 	echo "Restore of $1 complete."
 else 
-	echo "Could not locate $1"
-	echo
-	echo "Available backups:"
-	ls -lah /root | grep Backup
+	echo "Could not locate ${1}. Available backups:"
+	ls -lah /root | grep backup
 fi

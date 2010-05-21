@@ -248,7 +248,7 @@ function system_hostname_configure() {
 }
 
 function system_routing_configure() {
-	global $config, $g, $gateways_arr;
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_routing_configure() being called $mt\n";

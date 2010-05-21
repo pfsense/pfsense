@@ -34,7 +34,7 @@
  * creates monitoring configuration file
  */
 function setup_gateways_monitor() {
-	global $config, $gateways_arr;
+	global $config;
 	global $g;
 	$gateways_arr = return_gateways_array();
 	if (!is_array($config['gateways']['gateway_item']))
@@ -243,7 +243,7 @@ EOD;
 
 /* return the status of the apinger targets as a array */
 function return_gateways_status() {
-	global $config, $gateways_arr;
+	global $config;
 	global $g;
 	$gateways_arr = return_gateways_array();
 
@@ -282,7 +282,7 @@ function return_gateways_status() {
 
 /* Return all configured gateways on the system */
 function return_gateways_array($disabled = false) {
-	global $config, $gateways_arr;
+	global $config;
 
 	$gateways_arr = array();
 
@@ -365,7 +365,7 @@ function return_gateways_array($disabled = false) {
  * All gateway groups will be processed before returning the array.
 */
 function return_gateway_groups_array() {
-	global $config, $g, $gateways_arr;
+	global $config, $g;
 
 	/* fetch the current gateways status */
 	$gateways_status = return_gateways_status();
@@ -475,7 +475,7 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 }
 
 function lookup_gateway_ip_by_name($name) {
-        global $config, $gateways_arr;
+        global $config;
 
 	$gateways_arr = return_gateways_array();
         if (!empty($gateways_arr[$name])) {
@@ -487,7 +487,7 @@ function lookup_gateway_ip_by_name($name) {
 }
 
 function lookup_gateway_monitor_ip_by_name($name) {
-        global $config, $gateways_arr;
+        global $config;
 
         $gateways_arr = return_gateways_array();
 	if (!empty($gateways_arr[$name])) {
@@ -506,7 +506,7 @@ function lookup_gateway_monitor_ip_by_name($name) {
 }
 
 function lookup_gateway_interface_by_name($name) {
-        global $config, $gateways_arr;
+        global $config;
 
         $gateways_arr = return_gateways_array();
 	if (!empty($gateways_arr[$name])) {

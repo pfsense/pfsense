@@ -195,7 +195,7 @@ include("head.inc");
 							$pkginfolink = $index['pkginfolink'];
 							echo "<a target='_new' href='$pkginfolink'>Package Info</a>";
 						} else {
-							echo gettext("No info, check the") . "<a href='http://forum.pfsense.org/index.php/board,15.0.html'>" . gettext("forum") . "</a>";
+							echo gettext("No info, check the") . " <a href='http://forum.pfsense.org/index.php/board,15.0.html'>" . gettext("forum") . "</a>";
 						}
 						?>
 						</td>

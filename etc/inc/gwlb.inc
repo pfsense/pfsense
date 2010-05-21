@@ -479,7 +479,7 @@ function lookup_gateway_ip_by_name($name) {
 
 	if(is_array($config['gateways']['gateway_item'])) {
 		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if($gateway['name'] == $name) {
+			if($gateway['name'] == $name)
 				return ($gateway['gateway']);
 		}
         } else

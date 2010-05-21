@@ -477,11 +477,11 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 function lookup_gateway_ip_by_name($name) {
         global $config;
 
-	$gateways_arr = return_gateways_array();
-        if (!empty($gateways_arr[$name])) {
-		$gatewayip = $gateway['gateway'];
-		//$interfacegw = $gateway['interface'];
-		return ($gatewayip);
+	if(is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if($gateway['name'] == $name) {
+				return ($gateway['gateway']);
+		}
         } else
                 return (false);
 }

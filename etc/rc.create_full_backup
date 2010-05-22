@@ -14,4 +14,4 @@ tar czPf /root/$FILENAME \
 
 echo ">>> Backup completed.  Note: this backup includes config.xml!"
 echo ">>> To restore this backup run this command:"
-echo "    rc.restore_full_backup /root/$FILENAME"
+echo "    /etc/rc.restore_full_backup /root/$FILENAME"

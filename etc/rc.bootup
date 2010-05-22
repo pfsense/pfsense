@@ -42,7 +42,7 @@ function rescue_detect_keypress() {
 	echo "from a broken hard disk installation, etc.\n\n";
 	echo "(I)nstaller may be invoked now if you do \n";
 	echo "not wish to boot into the liveCD environment at this time.\n";
-	echo "(C) continues the LiveCD bootup without further pause.\n\n"
+	echo "(C) continues the LiveCD bootup without further pause.\n\n";
 	echo "Timeout before auto boot continues (seconds): {$timeout}";
 	$key = null;
 	exec("/bin/stty erase " . chr(8));

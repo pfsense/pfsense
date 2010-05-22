@@ -26,7 +26,7 @@ PLATFORM=`cat /etc/platform`
 version=`cat /etc/version`
 
 # Mount memory file system if it exists
-echo -n "Mounting filesystems..."
+echo "Mounting filesystems..."
 
 if [ "$PLATFORM" = "cdrom" ]; then
 	/etc/rc.cdrom
@@ -65,6 +65,7 @@ fi
 # Check to see if a compact flash mountpoint exists
 # If it fails to mount then run a fsck -fy
 if grep -q cf /etc/fstab; then
+	/sbin/mount -w /cf 2>/dev/null
     /sbin/mount -uw /cf || \
 	(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
 fi

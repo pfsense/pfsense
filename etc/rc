@@ -103,7 +103,6 @@ else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
     /sbin/swapon -a 2>/dev/null >/dev/null
 fi
-echo " done."
 
 if [ "$PLATFORM" = "cdrom" ] ; then
 	mkdir /tmp/unionfs

@@ -126,8 +126,6 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	mount_unionfs /tmp/unionfs/boot /boot/
 	echo -n " conf.default"
 	mount_unionfs /tmp/unionfs/confdefault /conf.default/
-	echo -n " /"
-	mount_unionfs /tmp/unionfs/diskroot /
 	echo "... done."
 fi
 

@@ -608,7 +608,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 		  <br>
 		  <br>
 		<?php endif; ?>
-		  Upload an HTML file for the portal page here (leave blank to keep the current one). Make sure to include a form (POST to &quot;$PORTAL_ACTION$&quot;)
+		  Upload an HTML/PHP file for the portal page here (leave blank to keep the current one). Make sure to include a form (POST to &quot;$PORTAL_ACTION$&quot;)
 with a submit button (name=&quot;accept&quot;) and a hidden field with name=&quot;redirurl&quot; and value=&quot;$PORTAL_REDIRURL$&quot;.
 Include the &quot;auth_user&quot; and &quot;auth_pass&quot; and/or &quot;auth_voucher&quot; input fields if authentication is enabled, otherwise it will always fail.
 Example code for the form:<br>
@@ -632,7 +632,7 @@ Example code for the form:<br>
 		  <br>
 		  <br>
 		<?php endif; ?>
-The contents of the HTML file that you upload here are displayed when an authentication error occurs.
+The contents of the HTML/PHP file that you upload here are displayed when an authentication error occurs.
 You may include &quot;$PORTAL_MESSAGE$&quot;, which will be replaced by the error or reply messages from the RADIUS server, if any.</td>
 	</tr>
 	<tr>

@@ -181,6 +181,14 @@ EOD;
 
 		$fd = @fopen("{$g['varetc_path']}/captiveportal.html", "w");
 		if ($fd) {
+			// Special case handling.  Convert so that we can pass this page
+			// through the PHP interpreter later without clobbering the vars.
+			$htmltext = str_replace("\$PORTAL_REDIRURL\$", "#PORTAL_REDIRURL#", $htmltext);
+			$htmltext = str_replace("\$PORTAL_MESSAGE\$", "#PORTAL_MESSAGE#", $htmltext);
+			$htmltext = str_replace("\$CLIENT_MAC\$", "#CLIENT_MAC#", $htmltext);
+			$htmltext = str_replace("\$CLIENT_IP\$", "#CLIENT_IP#", $htmltext);
+			$htmltext = str_replace("\$ORIGINAL_PORTAL_IP\$", "#ORIGINAL_PORTAL_IP#", $htmltext);
+			$htmltext = str_replace("\$PORTAL_ACTION\$", "#PORTAL_ACTION#", $htmltext);
 			fwrite($fd, $htmltext);
 			fclose($fd);
 		}
@@ -210,6 +218,14 @@ EOD;
 
 		$fd = @fopen("{$g['varetc_path']}/captiveportal-error.html", "w");
 		if ($fd) {
+			// Special case handling.  Convert so that we can pass this page
+			// through the PHP interpreter later without clobbering the vars.
+			$errtext = str_replace("\$PORTAL_REDIRURL\$", "#PORTAL_REDIRURL#", $errtext);
+			$errtext = str_replace("\$PORTAL_MESSAGE\$", "#PORTAL_MESSAGE#", $errtext);
+			$errtext = str_replace("\$CLIENT_MAC\$", "#CLIENT_MAC#", $errtext);
+			$errtext = str_replace("\$CLIENT_IP\$", "#CLIENT_IP#", $errtext);
+			$errtext = str_replace("\$ORIGINAL_PORTAL_IP\$", "#ORIGINAL_PORTAL_IP#", $errtext);
+			$errtext = str_replace("\$PORTAL_ACTION\$", "#PORTAL_ACTION#", $errtext);
 			fwrite($fd, $errtext);
 			fclose($fd);
 		}

@@ -194,20 +194,22 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 
     /* Get captive portal layout */
     if ($type == "login")
-        $htmltext = file_get_contents("{$g['varetc_path']}/captiveportal.html");
+        $htmltext = get_include_contents("{$g['varetc_path']}/captiveportal.html");
     else
-        $htmltext = file_get_contents("{$g['varetc_path']}/captiveportal-error.html");
+        $htmltext = get_include_contents("{$g['varetc_path']}/captiveportal-error.html");
 
     /* substitute other variables */
-    if (isset($config['captiveportal']['httpslogin']))
+    if (isset($config['captiveportal']['httpslogin'])) {
         $htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
-    else {
-	$ifip = portal_ip_from_client_ip($clientip);
+        $htmltext = str_replace("#PORTAL_ACTION#", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
+    } else {
+		$ifip = portal_ip_from_client_ip($clientip);
     	if (!$ifip)
         	$ourhostname = $config['system']['hostname'] . ":8000";
     	else
         	$ourhostname = "{$ifip}:8000";
         $htmltext = str_replace("\$PORTAL_ACTION\$", "http://{$ourhostname}/", $htmltext);
+        $htmltext = str_replace("#PORTAL_ACTION#", "http://{$ourhostname}/", $htmltext);
     }
 
     $htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
@@ -215,9 +217,27 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
     $htmltext = str_replace("\$CLIENT_MAC\$", htmlspecialchars($clientmac), $htmltext);
     $htmltext = str_replace("\$CLIENT_IP\$", htmlspecialchars($clientip), $htmltext);
 
+	// Special handling case for captive portal master page so that it can be ran 
+	// through the PHP interpreter using the include method above.  We convert the
+	// $VARIABLE$ case to #VARIABLE# in /etc/inc/captiveportal.inc before writing out.
+	$htmltext = str_replace("#PORTAL_REDIRURL#", htmlspecialchars($redirurl), $htmltext);
+	$htmltext = str_replace("#PORTAL_MESSAGE#", htmlspecialchars($message), $htmltext);
+	$htmltext = str_replace("#CLIENT_MAC#", htmlspecialchars($clientmac), $htmltext);
+	$htmltext = str_replace("#CLIENT_IP#", htmlspecialchars($clientip), $htmltext);
+
     echo $htmltext;
 }
 
+function get_include_contents($filename) {
+    if (is_file($filename)) {
+        ob_start();
+        include $filename;
+        $contents = ob_get_contents();
+        ob_end_clean();
+        return $contents;
+    }
+    return false;
+}
 function portal_mac_radius($clientmac,$clientip) {
     global $config ;
 
@@ -448,7 +468,12 @@ document.location.href="{$my_redirurl}";
 
 EOD;
 	} else {
-		header("Location: " . $my_redirurl);
+		if($_POST['ORIGINAL_PORTAL_IP']) {
+ 			header ('HTTP/1.1 301 Moved Permanently');
+			header("Location: " . $_POST['ORIGINAL_PORTAL_IP']);
+		} else {
+			header("Location: " . $my_redirurl);
+		}
 	}
 
 	return $sessionid;

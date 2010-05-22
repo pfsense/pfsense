@@ -458,7 +458,7 @@ document.location.href="{$my_redirurl}";
 
 EOD;
 	} else {
-		if($_POST['ORIGINAL_PORTAL_IP']) {
+		if($_POST['ORIGINAL_PORTAL_IP'] && $_SERVER['SERVER_NAME'] != $_POST['ORIGINAL_PORTAL_IP']) {
  			header ('HTTP/1.1 301 Moved Permanently');
 			header("Location: " . $_POST['ORIGINAL_PORTAL_IP']);
 		} else {

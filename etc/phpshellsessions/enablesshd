@@ -1,0 +1,16 @@
+global $config;
+echo "Starting enablesshd...";
+require("config.inc");
+echo ".";
+require("filter.inc");
+echo ".";
+require("shaper.inc");
+echo ".";
+$config = parse_config(true);
+echo ".";
+$config['system']['enablesshd'] = true;
+echo ".";
+write_config("pfSsh.php enabled sshd");
+echo "\nEnabling SSHD, please wait...";
+exec("/etc/sshd");
+echo "\n\n";

@@ -112,6 +112,7 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	mkdir /tmp/unionfs/bin
 	mkdir /tmp/unionfs/boot
 	mkdir /tmp/unionfs/confdefault
+	mkdir /tmp/unionfs/diskroot
 	echo -n "Mounting unionfs directories:"
 	echo -n " usr"
 	mount_unionfs /tmp/unionfs/usr /usr/
@@ -125,6 +126,8 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	mount_unionfs /tmp/unionfs/boot /boot/
 	echo -n " conf.default"
 	mount_unionfs /tmp/unionfs/confdefault /conf.default/
+	echo -n " /"
+	mount_unionfs /tmp/unionfs/diskroot /
 	echo "... done."
 fi
 

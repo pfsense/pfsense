@@ -249,7 +249,8 @@ init_extraction()
       if [ ! -z "${VAL}" ]
       then
         INSFILE="${VAL}" ; export INSFILE
-      for FILE in INSFILE; do
+      for FILE in $INSFILE; do
+        echo_log "pc-sysinstall: Running cpdup -vvv -I -o ${FILE} /mnt/${FILE}"
         cpdup -vvv -I -o ${FILE} /mnt/${FILE} >&1 2>&1
          if [ "$?" != "0" ]
          then

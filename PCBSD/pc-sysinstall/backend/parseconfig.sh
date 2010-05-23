@@ -45,7 +45,7 @@ check_value installMode "fresh upgrade"
 check_value bootManager "bsd none"
 check_value installType "PCBSD FreeBSD"
 check_value installMedium "dvd usb ftp rsync LiveCD"
-check_value packageType "uzip tar rsync split"
+check_value packageType "uzip tar rsync split cpdup"
 check_value partition "all ALL s1 s2 s3 s4 free FREE"
 if_check_value_exists mirrorbal "load prefer round-robin split"
 

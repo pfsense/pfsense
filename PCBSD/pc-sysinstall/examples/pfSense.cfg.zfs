@@ -39,6 +39,6 @@ disk1-part=SWAP 0 none
 commitDiskLabel
 
 # Optional Components
-installComponents=boot,COPYRIGHT,bin,conf,conf.default,dev,etc,home,kernels,libexec,lib,root,sbin,sys,usr,var
+cpdupPaths=boot,COPYRIGHT,bin,conf,conf.default,dev,etc,home,kernels,libexec,lib,root,sbin,sys,usr,var
 
 runCommand=/usr/local/bin/after_installation_routines.sh

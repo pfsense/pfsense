@@ -29,7 +29,7 @@ start_extract_uzip_tar()
 
   case ${PACKAGETYPE} in
    cpdup) 
-         cpdup -vvv -I -o ${INSFILE} ${FSMNT} >&1 2>&1
+         cpdup -vvv -I -o ${INSFILE} ${FSMNT}/${INSFILE} >&1 2>&1
          if [ "$?" != "0" ]
            echo "CPDUP failure occured:" >>${LOGOUT}
            exit_err "ERROR: Error occured during cpdup"

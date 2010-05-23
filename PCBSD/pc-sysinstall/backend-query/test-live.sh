@@ -18,6 +18,7 @@ then
   exit 0
 fi
 
+# The above failed so we are a REAL DISK
 echo "REAL-DISK"
 exit 1
 

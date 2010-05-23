@@ -2,6 +2,7 @@
 installInteractive=no
 installMode=fresh
 installType=FreeBSD
+installMedium=LiveCD
 packageType=cpdup
 
 # Timezone

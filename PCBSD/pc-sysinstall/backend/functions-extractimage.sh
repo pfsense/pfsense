@@ -28,13 +28,6 @@ start_extract_uzip_tar()
   echo_log "pc-sysinstall: Starting Extraction"
 
   case ${PACKAGETYPE} in
-   cpdup) cpdup -vvv -I -o ${INSFILE} ${FSMNT}/${INSFILE} >&1 2>&1
-         if [ "$?" != "0" ]
-         then
-           echo "CPDUP failure occured:" >>${LOGOUT}
-           exit_err "ERROR: Error occurred during cpdup"
-         fi
-         ;;
    uzip) # Start by mounting the uzip image
          MDDEVICE=`mdconfig -a -t vnode -o readonly -f ${INSFILE}`
          mkdir -p ${FSMNT}.uzip
@@ -250,7 +243,21 @@ init_extraction()
     INSFILE="${VAL}" ; export INSFILE
   else
     # If no installFile specified, try our defaults
-    if [ "$INSTALLTYPE" = "FreeBSD" ]
+    if [ "$INSTALLTYPE" = "LiveCD" ]
+	then
+      get_value_from_cfg installComponents
+      if [ ! -z "${VAL}" ]
+      then
+        INSFILE="${VAL}" ; export INSFILE
+      for FILE in INSFILE; do
+        cpdup -vvv -I -o ${FILE} /mnt/${FILE} >&1 2>&1
+         if [ "$?" != "0" ]
+         then
+           echo "CPDUP failure occured:" >>${LOGOUT}
+           exit_err "ERROR: Error occurred during cpdup"
+         fi
+      done
+    else if [ "$INSTALLTYPE" = "FreeBSD" ]
     then
       case $PACKAGETYPE in
          uzip) INSFILE="${FBSD_UZIP_FILE}" ;;

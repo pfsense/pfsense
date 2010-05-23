@@ -32,7 +32,7 @@ start_extract_uzip_tar()
          if [ "$?" != "0" ]
          then
            echo "CPDUP failure occured:" >>${LOGOUT}
-           exit_err "ERROR: Error occured during cpdup"
+           exit_err "ERROR: Error occurred during cpdup"
          fi
          ;;
    uzip) # Start by mounting the uzip image

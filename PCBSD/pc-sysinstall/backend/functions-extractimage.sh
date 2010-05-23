@@ -273,6 +273,8 @@ init_extraction()
 	      then
 	        INSFILE="${VAL}" ; export INSFILE
 	      fi
+		  oIFS=$IFS
+		  IFS=","
 	      for FILE in $INSFILE; do
 	        echo_log "pc-sysinstall: Running cpdup -vvv -I -o /${FILE} /mnt/${FILE}"
 	        /usr/local/bin/cpdup -vvv -I -o /${FILE} /mnt/ >&1 2>&1
@@ -282,6 +284,9 @@ init_extraction()
 	           exit_err "ERROR: Error occurred during cpdup"
 	         fi
 	      done
+  		  oIFS=$IFS
+		  IFS="
+"
 	      return
           ;;
      dvd|usb) # Lets start by mounting the disk 

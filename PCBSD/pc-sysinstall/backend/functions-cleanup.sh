@@ -77,7 +77,7 @@ zfs_cleanup_unmount()
           rc_halt "zfs unmount ${ZPOOLNAME}${ZMNT}"
           sleep 2
         fi
-      done
+      done 
     fi
   done
 

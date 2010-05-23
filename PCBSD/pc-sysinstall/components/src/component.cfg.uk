@@ -1,0 +1,4 @@
+# System Source Component
+name: Source Code
+description: Вихідні коди FreeBSD
+type: component

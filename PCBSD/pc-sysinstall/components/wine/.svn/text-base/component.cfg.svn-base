@@ -1,0 +1,4 @@
+# Warden component file
+name: Wine
+description: Allows running of native applications from other operating systems
+type: PBI

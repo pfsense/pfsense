@@ -1,0 +1,4 @@
+# Pidgin component file
+name: Pidgin
+description: Multi-protocol IM Client
+type: PBI

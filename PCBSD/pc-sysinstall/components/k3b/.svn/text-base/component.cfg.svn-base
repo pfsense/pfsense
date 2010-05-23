@@ -1,0 +1,4 @@
+# K3b component file
+name: K3B
+description: Powerful CD / DVD burning tool
+type: PBI

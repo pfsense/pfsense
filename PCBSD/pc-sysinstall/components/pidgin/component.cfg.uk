@@ -1,0 +1,4 @@
+# Pidgin component file
+name: Pidgin
+description: Багатопротокольна програма для обміну миттєвими повідомленнями
+type: PBI

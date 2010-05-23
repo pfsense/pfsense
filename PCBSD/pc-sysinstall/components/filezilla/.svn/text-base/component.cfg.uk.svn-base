@@ -1,0 +1,4 @@
+# Filezilla component file
+name: FileZilla
+description: FTP, FTPS та SFTP клієнт з багатими можливостями
+type: PBI

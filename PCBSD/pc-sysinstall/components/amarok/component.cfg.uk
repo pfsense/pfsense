@@ -1,0 +1,4 @@
+# Amarok component file
+name: Amarok
+description: Музичний програвач для KDE
+type: PBI

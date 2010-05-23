@@ -1,4 +1,0 @@
-# Warden component file
-name: Wine
-description: Дозволяє запускати "рідні" програми іншої операційної системи
-type: PBI

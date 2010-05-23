@@ -21,7 +21,7 @@ commitDiskPart
 # All sizes are expressed in MB
 # Avail FS Types, UFS, UFS+S, UFS+J, ZFS, SWAP
 # UFS.eli, UFS+S.eli, UFS+J.eli, ZFS.eli, SWAP.eli
-disk0-part=ZFS 0 /,/usr,/var,/data (mirror: da2)
+disk0-part=ZFS 0 / (mirror: da2)
 commitDiskLabel
 
 # Disk Setup for da2

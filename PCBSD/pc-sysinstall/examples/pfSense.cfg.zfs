@@ -1,0 +1,42 @@
+# Auto-Generated pc-sysinstall configuration
+installInteractive=no
+installMode=fresh
+installType=FreeBSD
+packageType=cpdup
+
+# Timezone
+timeZone=Kentucky/Louisville
+
+# Keyboard Layout Options
+localizeKeyModel=pc104
+localizeKeyLayout=us
+ 
+# Disk Setup for ad0
+disk0=da0
+partition=ALL
+bootManager=none
+commitDiskPart
+
+# Partition Setup for ad0(ALL)
+# All sizes are expressed in MB
+# Avail FS Types, UFS, UFS+S, UFS+J, ZFS, SWAP
+# UFS.eli, UFS+S.eli, UFS+J.eli, ZFS.eli, SWAP.eli
+disk0-part=ZFS 0 /,/usr,/var,/data (mirror: da2)
+commitDiskLabel
+
+# Disk Setup for ad3
+disk1=da2
+partition=ALL
+bootManager=none
+commitDiskPart
+
+# Partition Setup for ad3(ALL)
+# All sizes are expressed in MB
+# Avail FS Types, UFS, UFS+S, UFS+J, ZFS, SWAP
+# UFS.eli, UFS+S.eli, UFS+J.eli, ZFS.eli, SWAP.eli
+disk1-part=SWAP 0 none
+commitDiskLabel
+
+# Optional Components
+installComponents=boot,COPYRIGHT,bin,conf,conf.default,dev,etc,home,kernels,libexec,lib,root,sbin,sys,usr,var
+

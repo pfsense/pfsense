@@ -2,8 +2,6 @@ global $config;
 echo "Starting enablesshd...";
 require("config.inc");
 echo ".";
-require("shaper.inc");
-echo ".";
 $config = parse_config(true);
 echo ".";
 $config['system']['enablesshd'] = true;

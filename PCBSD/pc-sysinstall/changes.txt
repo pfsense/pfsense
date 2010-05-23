@@ -1,3 +1,5 @@
 PCBSD -> pfSense changes
 
-# Modified test-live to use mount | grep "/dev/iso9660/pfSense" >/dev/null 2>/dev/null
+1. Modified test-live to use mount | grep "/dev/iso9660/pfSense" >/dev/null 2>/dev/null
+2. Removed desktop specific components directory
+3. 

@@ -28,6 +28,13 @@ start_extract_uzip_tar()
   echo_log "pc-sysinstall: Starting Extraction"
 
   case ${PACKAGETYPE} in
+   cpdup) 
+         cpdup -vvv -I -o ${INSFILE} ${FSMNT} >&1 2>&1
+         if [ "$?" != "0" ]
+           echo "CPDUP failure occured:" >>${LOGOUT}
+           exit_err "ERROR: Error occured during cpdup"
+         fi
+         ;;
    uzip) # Start by mounting the uzip image
          MDDEVICE=`mdconfig -a -t vnode -o readonly -f ${INSFILE}`
          mkdir -p ${FSMNT}.uzip

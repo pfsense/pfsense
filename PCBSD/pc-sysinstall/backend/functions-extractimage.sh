@@ -235,25 +235,6 @@ start_rsync_copy()
 # Entrance function, which starts the installation process
 init_extraction()
 {
-  # Test for LiveCD Type
-  if [ "$INSTALLTYPE" = "LiveCD" ]
-  then
-    get_value_from_cfg cpdupPaths
-    if [ ! -z "${VAL}" ]
-    then
-      INSFILE="${VAL}" ; export INSFILE
-    fi
-    for FILE in $INSFILE; do
-      echo_log "pc-sysinstall: Running cpdup -vvv -I -o /${FILE} /mnt/${FILE}"
-      /usr/local/bin/cpdup -vvv -I -o /${FILE} /mnt/ >&1 2>&1
-       if [ "$?" != "0" ]
-       then
-         echo "CPDUP failure occured:" >>${LOGOUT}
-         exit_err "ERROR: Error occurred during cpdup"
-       fi
-    done
-    return
-  fi
 
   # Figure out what file we are using to install from via the config
   get_value_from_cfg installFile
@@ -287,6 +268,21 @@ init_extraction()
   # Lets start by figuring out what medium we are using
   case ${INSTALLMEDIUM} in
      LiveCD)
+	      get_value_from_cfg cpdupPaths
+	      if [ ! -z "${VAL}" ]
+	      then
+	        INSFILE="${VAL}" ; export INSFILE
+	      fi
+	      for FILE in $INSFILE; do
+	        echo_log "pc-sysinstall: Running cpdup -vvv -I -o /${FILE} /mnt/${FILE}"
+	        /usr/local/bin/cpdup -vvv -I -o /${FILE} /mnt/ >&1 2>&1
+	         if [ "$?" != "0" ]
+	         then
+	           echo "CPDUP failure occured:" >>${LOGOUT}
+	           exit_err "ERROR: Error occurred during cpdup"
+	         fi
+	      done
+	      return
           ;;
      dvd|usb) # Lets start by mounting the disk 
           opt_mount 

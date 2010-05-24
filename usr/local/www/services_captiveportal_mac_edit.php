@@ -112,15 +112,18 @@ if ($_POST) {
 		
 		$mac['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_passthrumacs[$id])
+		if (isset($id) && $a_passthrumacs[$id]) {
+			$oldmac = $a_passthrumacs[$id]['mac'];
 			$a_passthrumacs[$id] = $mac;
-		else
+		} else {
+			$oldmac = $mac['mac'];
 			$a_passthrumacs[] = $mac;
+		}
 		passthrumacs_sort();
 		
 		write_config();
 
-		$ruleno = captiveportal_get_ipfw_passthru_ruleno($mac['mac']);
+		$ruleno = captiveportal_get_ipfw_passthru_ruleno($oldmac);
 		if ($ruleno) {
 			captiveportal_free_ipfw_ruleno($ruleno);
 			$rules = "delete {$ruleno}\n";

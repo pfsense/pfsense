@@ -161,8 +161,8 @@ pfSenseNanoBSDupgrade)
 
 	echo "" >> /conf/upgrade_log.txt
 
-	echo "Installing $IMG." >> /conf/upgrade_log.txt 2>&1
-	echo "Installing $IMG." | wall
+	echo "Installing ${IMG}." >> /conf/upgrade_log.txt 2>&1
+	echo "Installing ${IMG}." | wall
 
 	# resolve glabel label that we booted from
 	BOOT_DEVICE=`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`
@@ -190,11 +190,11 @@ pfSenseNanoBSDupgrade)
 	fi
 
 	# Output specifc information that this script is using
-	echo "SLICE $SLICE" >> /conf/upgrade_log.txt
-	echo "OLDSLICE $OLDSLICE" >> /conf/upgrade_log.txt
-	echo "TOFLASH $TOFLASH" >> /conf/upgrade_log.txt
-	echo "COMPLETE_PATH $COMPLETE_PATH" >> /conf/upgrade_log.txt
-	echo "GLABEL_SLICE $GLABEL_SLICE" >> /conf/upgrade_log.txt
+	echo "SLICE         ${SLICE}" >> /conf/upgrade_log.txt
+	echo "OLDSLICE      ${OLDSLICE}" >> /conf/upgrade_log.txt
+	echo "TOFLASH       ${TOFLASH}" >> /conf/upgrade_log.txt
+	echo "COMPLETE_PATH ${COMPLETE_PATH}" >> /conf/upgrade_log.txt
+	echo "GLABEL_SLICE  ${GLABEL_SLICE}" >> /conf/upgrade_log.txt
 
 	# First ensure the new file can fit inside the 
 	# slice that we are going to be operating on.
@@ -219,14 +219,9 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /conf/fdisk_upgrade_log.txt
 	echo "Before upgrade fdisk/bsdlabel" >> /conf/fdisk_upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs1a >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs2a >> /conf/fdisk_upgrade_log.txt		
-	fdisk $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A ${BOOT_DRIVE}s1 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A ${BOOT_DRIVE}s2 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A ${BOOT_DRIVE}s3 >> /conf/fdisk_upgrade_log.txt
 	echo "---------------------------------------------------------------" >> /conf/fdisk_upgrade_log.txt
 	echo "" >> /conf/fdisk_upgrade_log.txt
 	
@@ -249,21 +244,16 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /conf/fdisk_upgrade_log.txt
 	echo "After upgrade fdisk/bsdlabel" >> /conf/upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs1a >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs2a >> /conf/fdisk_upgrade_log.txt		
-	fdisk $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A ${BOOT_DRIVE}s1 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A ${BOOT_DRIVE}s2 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A ${BOOT_DRIVE}s3 >> /conf/fdisk_upgrade_log.txt
 	echo "---------------------------------------------------------------" >> /conf/fdisk_upgrade_log.txt
 	echo "" >> /conf/fdisk_upgrade_log.txt
 	
 	# Ensure that our new system is sound and bail if it is not and file a notice
 	echo "" >> /conf/upgrade_log.txt
-	echo "/sbin/fsck_ufs -y /dev/$COMPLETE_PATH" >> /conf/upgrade_log.txt
-	/sbin/fsck_ufs -y /dev/$COMPLETE_PATH >> /conf/upgrade_log.txt 2>&1
+	echo "/sbin/fsck_ufs -y /dev/${COMPLETE_PATH}" >> /conf/upgrade_log.txt
+	/sbin/fsck_ufs -y /dev/${COMPLETE_PATH} >> /conf/upgrade_log.txt 2>&1
 	if [ $? != 0 ]; then
 		file_notice "UpgradeFailure" "{\$g['product_name']} upgrade has failed.   Your system has been left in a usable state."
 		rm -f $IMG
@@ -278,8 +268,8 @@ pfSenseNanoBSDupgrade)
 
 	# Add back the corresponding glabel
 	echo "" >> /conf/upgrade_log.txt
-	echo "/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH" >> /conf/upgrade_log.txt
-	/sbin/tunefs -L ${GLABEL_SLICE} /dev/$COMPLETE_PATH >> /conf/upgrade_log.txt 2>&1
+	echo "/sbin/tunefs -L ${GLABEL_SLICE} /dev/${COMPLETE_PATH}" >> /conf/upgrade_log.txt
+	/sbin/tunefs -L ${GLABEL_SLICE} /dev/${COMPLETE_PATH} >> /conf/upgrade_log.txt 2>&1
 
 	# restore config
 	cp -p /tmp/configbak/* /conf 2>/dev/null
@@ -342,14 +332,9 @@ pfSenseNanoBSDupgrade)
 	echo "" >> /conf/fdisk_upgrade_log.txt
 	echo "Final upgrade fdisk/bsdlabel" >> /conf/fdisk_upgrade_log.txt
 	fdisk $BOOT_DRIVE >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs1a >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
-	fdisk $BOOT_DRIVEs2a >> /conf/fdisk_upgrade_log.txt		
-	fdisk $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs1 >> /conf/fdisk_upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs2 >> /conf/fdisk_upgrade_log.txt
-	bsdlabel -A $BOOT_DRIVEs3 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A ${BOOT_DRIVE}s1 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A ${BOOT_DRIVE}s2 >> /conf/fdisk_upgrade_log.txt
+	bsdlabel -A ${BOOT_DRIVE}s3 >> /conf/fdisk_upgrade_log.txt
 	echo "---------------------------------------------------------------" >> /conf/fdisk_upgrade_log.txt
 	echo "" >> /conf/fdisk_upgrade_log.txt
 

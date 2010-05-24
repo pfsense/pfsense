@@ -137,7 +137,9 @@ if ($_POST) {
 		$group['name'] = $_POST['groupname'];
 		$group['description'] = $_POST['description'];
 
-		if ($group['gid'] != 1998) // all group
+		if (empty($_POST['members']))
+			unset($group['member']);
+		else if ($group['gid'] != 1998) // all group
 			$group['member'] = $_POST['members'];
 
 		if (isset($id) && $a_group[$id])

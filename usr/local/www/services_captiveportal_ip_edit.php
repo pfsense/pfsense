@@ -120,10 +120,13 @@ if ($_POST) {
 		write_config();
 
 		if (isset($config['captiveportal']['enable']) && is_module_loaded("ipfw.ko")) {
-			$rules = captiveportal_allowedip_configure_entry($ip);
-			file_put_contents("{$g['tmp_path']}/allowedip_tmp", $rules);
-			mwexec("/sbin/ipfw {$g['tmp_path']}/allowedip_tmp");
-			@unlink("{$g['tmp_path']}/allowedip_tmp");
+			$rules = "";
+			for ($i = 3; $i < 10; $i++)
+				$rules .= "table {$i} delete {$ip['ip']}\n";
+			$rules .= captiveportal_allowedip_configure_entry($ip);
+			file_put_contents("{$g['tmp_path']}/allowedip_tmp{$id}", $rules);
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/allowedip_tmp{$id}");
+			@unlink("{$g['tmp_path']}/allowedip_tmp{$id}");
 		}
 		
 		header("Location: services_captiveportal_ip.php");

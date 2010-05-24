@@ -52,6 +52,7 @@ require_once("shaper.inc");
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
+$pconfig['disablehttpredirect'] = isset($config['system']['disablehttpredirect']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['enableserial'] = $config['system']['enableserial'];
@@ -98,6 +99,14 @@ if ($_POST) {
 			$restart_webgui = true;
 		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certref']))
 			$restart_webgui = true;
+
+		if ($_POST['disablehttpredirect'] == "yes") {
+			$config['system']['disablehttpredirect'] = true;
+			$restart_webgui = true;
+		} else {
+			unset($config['system']['disablehttpredirect']);
+			$restart_webgui = true;
+		}
 
 		if($_POST['disableconsolemenu'] == "yes") {
 			$config['system']['disableconsolemenu'] = true;
@@ -271,6 +280,18 @@ function prot_change() {
 										"above if you want to override the default (80 for HTTP, 443 " .
 										"for HTTPS). Changes will take effect immediately after save."); ?>
 									</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI redirect"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="disablehttpredirect" type="checkbox" id="disablehttpredirect" value="yes" <?php if ($pconfig['disablehttpredirect']) echo "checked"; ?> />
+									<strong><?=gettext("Disable webConfigurator redirect rule"); ?></strong>
+									<br/>
+									<?php gettext("When this is unchecked, access to the webConfigurator " .
+									"is always permitted even on port 80, regardless of the listening port configured." .
+									"Check this box to disable this automatically added redirect rule. ");
+									?>
 								</td>
 							</tr>
 							<tr>

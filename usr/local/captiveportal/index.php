@@ -161,7 +161,10 @@ exit;
         }
         else if ($auth_list['auth_val'] == 3) {
             captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE",$auth_list['reply_message']);
-            portal_reply_page($redirurl, "error", $auth_list['reply_message']);
+	    if (!empty($auth_list['url_redirection']))
+		header("Location: {$auth_list['url_redirection']}");
+	    else
+            	portal_reply_page($redirurl, "error", $auth_list['reply_message']);
         }
     } else {
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"ERROR");
@@ -239,6 +242,9 @@ function portal_mac_radius($clientmac,$clientip) {
     if ($auth_list['auth_val'] == 2) {
         return TRUE;
     }
+    if (!empty($auth_list['url_redirection']))
+	header("Location: {$auth_list['url_redirection']}");
+
     return FALSE;
 }
 

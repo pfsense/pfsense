@@ -51,7 +51,7 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     global $config;
 
     $retvalue = array();
-    $nas_mac = mac_format(get_interface_mac($config['interfaces']['wan']['if']));
+    $nas_mac = mac_format(get_interface_mac(get_real_interface("wan")));
     $clientmac = mac_format($clientmac);
     $nas_port = $ruleno;
     $radiusvendor = $config['captiveportal']['radiusvendor'] ? $config['captiveportal']['radiusvendor'] : null;
@@ -66,7 +66,7 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
         break;
 
         default:
-        $calledstationid = $nas_mac;
+        $calledstationid = get_interface_ip("wan");
         $callingstationid = $clientmac;
     }
 
@@ -74,13 +74,11 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     $rauth = new Auth_RADIUS_PAP($username, $password);
 
     /*
-    Add support for more then one radiusserver. 
-    At most 10 servers may be specified. 
-    When multiple servers are given, they are tried in round-robin fashion until a valid response is received 
-    */
-
+     * Add support for more then one radiusserver. 
+     * At most 10 servers may be specified. 
+     * When multiple servers are given, they are tried in round-robin fashion until a valid response is received 
+     */
     foreach ($radiusservers as $radsrv) {
-
         // Add a new server to our instance
         $rauth->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['key']);
 

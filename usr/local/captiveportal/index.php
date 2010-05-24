@@ -154,17 +154,19 @@ exit;
 
     if ($_POST['auth_user'] && $_POST['auth_pass']) {
         $auth_list = radius($_POST['auth_user'],$_POST['auth_pass'],$clientip,$clientmac,"USER LOGIN");
+	$type = "error";
+	if (!empty($auth_list['url_redirection'])) {
+		$redirurl = $auth_list['url_redirection'];
+		$type = "redir";
+	}
 
         if ($auth_list['auth_val'] == 1) {
             captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"ERROR",$auth_list['error']);
-            portal_reply_page($redirurl, "error", $auth_list['error']);
+ 	    portal_reply_page($redirurl, $type, $auth_list['error']);
         }
         else if ($auth_list['auth_val'] == 3) {
             captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE",$auth_list['reply_message']);
-	    if (!empty($auth_list['url_redirection']))
-		header("Location: {$auth_list['url_redirection']}");
-	    else
-            	portal_reply_page($redirurl, "error", $auth_list['reply_message']);
+            portal_reply_page($redirurl, $type, $auth_list['reply_message']);
         }
     } else {
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"ERROR");
@@ -196,7 +198,10 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
     global $g, $config;
 
     /* Get captive portal layout */
-    if ($type == "login")
+    if ($type = "redir") {
+	header("Location: {$redirurl}");
+	return;
+    } else if ($type == "login")
         $htmltext = get_include_contents("{$g['varetc_path']}/captiveportal.html");
     else
         $htmltext = get_include_contents("{$g['varetc_path']}/captiveportal-error.html");
@@ -239,11 +244,10 @@ function portal_mac_radius($clientmac,$clientip) {
     /* authentication against the radius server */
     $username = mac_format($clientmac);
     $auth_list = radius($username,$radmac_secret,$clientip,$clientmac,"MACHINE LOGIN");
-    if ($auth_list['auth_val'] == 2) {
+    if ($auth_list['auth_val'] == 2)
         return TRUE;
-    }
     if (!empty($auth_list['url_redirection']))
-	header("Location: {$auth_list['url_redirection']}");
+	portal_reply_page($auth_list['url_redirection'], "redir");
 
     return FALSE;
 }

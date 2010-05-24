@@ -340,10 +340,10 @@ function local_user_del($user) {
 
 	if($debug)
 		log_error("Running: {$cmd}");
-	$fd = popen($cmd, "w");
-	fwrite($fd, $user['password']);
-	pclose($fd);
+	mwexec($cmd);
 
+	/* Delete user from groups needs a call to write_config() */
+	local_group_del_user($user);
 }
 
 function local_user_set_password(& $user, $password) {
@@ -421,6 +421,22 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 		local_group_set($group);
 }
 
+function local_group_del_user($user) {
+	global $config;
+
+	if (!is_array($config['system']['group']))
+                return;
+
+        foreach ($config['system']['group'] as $group) {
+		if (is_array($group['member'])) {
+			foreach ($group['member'] as $idx => $uid) {
+				if ($user['uid'] == $uid)
+					unset($config['system']['group']['member'][$idx]);
+			}
+		}
+	}
+}
+
 function local_group_set($group, $reset = false) {
 	global $debug;
 
@@ -446,9 +462,7 @@ function local_group_set($group, $reset = false) {
 
 	if($debug)
 		log_error("Running: {$cmd}");
-	$fd = popen($cmd, "w");
-	fwrite($fd, $user['password']);
-	pclose($fd);
+	mwexec($cmd);
 
 }
 
@@ -460,10 +474,7 @@ function local_group_del($group) {
 
 	if($debug)
 		log_error("Running: {$cmd}");
-	$fd = popen($cmd, "w");
-	fwrite($fd, $user['password']);
-	pclose($fd);
-
+	mwexec($cmd);
 }
 
 function ldap_test_connection($authcfg) {

@@ -1400,6 +1400,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 												<br/><br/>
 												Location<br/>
 												<select name="reglocation" class="formselect" id="reglocation">
+													<option <? if (empty($pconfig['reglocation'])) echo "selected"; ?> value="">Default</option>
 													<option <? if ($pconfig['reglocation'] == 'indoor') echo "selected"; ?> value="indoor">Indoor</option>
 													<option <? if ($pconfig['reglocation'] == 'outdoor') echo "selected"; ?> value="outdoor">Outdoor</option>
 													<option <? if ($pconfig['reglocation'] == 'anywhere') echo "selected"; ?> value="anywhere">Anywhere</option>

@@ -1952,10 +1952,25 @@ function interface_configure($interface = "wan", $reloadall = false) {
 					mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
 						" " . escapeshellarg($wancfg['ipaddr'] . "/" . 
 						$wancfg['subnet']));
+			} else if (substr($realif, 0, 3) == "gre") {
+				if (is_array($config['gres']['gre'])) {
+					foreach ($config['gres']['gre'] as $gre)
+						if ($gre['greif'] == $realif)
+							interface_gre_configure($gre);
+				}
+			} else if (substr($realif, 0, 3) == "gif") {
+				 if (is_array($config['gifs']['gif'])) {
+					foreach ($config['gifs']['gif'] as $gif)
+						if($gif['gifif'] == $interface)
+							interface_gif_configure($gif);
+				}
+			} else if (substr($realif, 0, 4) == "ovpn") {
+				/* XXX: Should be done anything?! */
 			}
 
 			if (is_ipaddr($wancfg['gateway']))
 				file_put_contents("{$g['tmp_path']}/{$realif}_router", $wancfg['gateway']);
+			break;
 	}
 
 	if(does_interface_exist($wancfg['if']))

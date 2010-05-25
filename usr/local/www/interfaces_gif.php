@@ -111,7 +111,7 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_gifs as $gif): ?>
                 <tr  ondblclick="document.location='interfaces_gif_edit.php?id=<?=$i;?>'">
                   <td class="listlr">
-					<?=htmlspecialchars($gif['if']);?>
+					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']));?>
                   </td>
                   <td class="listr">
 					<?=htmlspecialchars($gif['remote-addr']);?>

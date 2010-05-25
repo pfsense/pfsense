@@ -111,7 +111,7 @@ include("head.inc");
 			  <?php $i = 0; foreach ($a_gres as $gre): ?>
                 <tr  ondblclick="document.location='interfaces_vlan_gre.php?id=<?=$i;?>'">
                   <td class="listlr">
-					<?=htmlspecialchars($gre['if']);?>
+					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gre['if']));?>
                   </td>
                   <td class="listr">
 					<?=htmlspecialchars($gre['remote-addr']);?>

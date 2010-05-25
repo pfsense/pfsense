@@ -1185,49 +1185,30 @@ function get_ppp_uptime($port){
 
 //returns interface information
 function get_interface_info($ifdescr) {
-	global $config, $linkinfo, $netstatrninfo, $g;
+	global $config, $g;
 
 	$ifinfo = array();
-	/* if list */
-	$iflist = get_configured_interface_with_descr(false,true);
-
-	$found = false;
-    	foreach ($iflist as $if => $ifname) {
-    		if ($ifdescr == $if || $ifdescr == $ifname) {
-			$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
-			$ifinfo['if'] = get_real_interface($if);
-			$found = true;
-			break;
-		}
-	}
-	if ($found == false)
+	if (empty($config['interfaces'][$ifdescr]))
 		return;
+	$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
+	$ifinfo['if'] = get_real_interface($ifdescr);
 
-	/* run netstat to determine link info */
-
-	unset($linkinfo);
 	$chkif = $ifinfo['if'];
-
-	exec("/usr/bin/netstat -I {$chkif} -nWb -f link", $linkinfo);
-	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-
 	$ifinfotmp = pfSense_get_interface_addresses($chkif);
 	$ifinfo['status'] = $ifinfotmp['status'];
+	if (empty($ifinfo['status']))
+                $ifinfo['status'] = "down";
 	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
 	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
 	$ifinfo['subnet'] = $ifinfotmp['subnet'];
 	if (isset($ifinfotmp['link0']))
 		$link0 = "down";
-
-	
-	if (preg_match("/^enc|^tun|^ppp|^pptp|^ovpn/i", $chkif)) {
-		$ifinfo['inpkts'] = $linkinfo[3];
-		$ifinfo['outpkts'] = $linkinfo[6];
-	} else {
-		$ifinfo['inerrs'] = $linkinfo[5];
-		$ifinfo['outerrs'] = $linkinfo[9];
-		$ifinfo['collisions'] = $linkinfo[11];
-	}
+	$ifinfotmp = pfSense_get_interface_stats($chkif);
+        $ifinfo['inpkts'] = $ifinfotmp['inpkts'];
+        $ifinfo['outpkts'] = $ifinfotmp['outpkts'];
+        $ifinfo['inerrs'] = $ifinfotmp['inerrs'];
+        $ifinfo['outerrs'] = $ifinfotmp['outerrs'];
+        $ifinfo['collisions'] = $ifinfotmp['collisions'];
 
 	/* Use pfctl for non wrapping 64 bit counters */
 	/* Pass */
@@ -1262,10 +1243,6 @@ function get_interface_info($ifdescr) {
 		
 	$ifconfiginfo = "";
 	
-	unset($linkinfo);
-	exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
-	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-	
 	switch ($config['interfaces'][$ifdescr]['ipaddr']) {
 	 /* DHCP? -> see if dhclient is up */
 	case "dhcp":
@@ -1279,35 +1256,27 @@ function get_interface_info($ifdescr) {
 		break;
 	/* PPPoE interface? -> get status from virtual interface */
 	case "pppoe":
-		if ("{$ifinfo['if']}*" == $linkinfo[0])
-			$ifinfo['pppoelink'] = "down";
-		else if ($ifinfo['if'] == $linkinfo[0] && !isset($link0))
-			/* get PPPoE link status for dial on demand */
-			$ifinfo['pppoelink'] = "up";
+		if ($ifinfo['status'] == "up" && !isset($link0))
+                        /* get PPPoE link status for dial on demand */
+                        $ifinfo['pppoelink'] = "up";
 		else
 			$ifinfo['pppoelink'] = "down";
 
 		break;
 	/* PPTP interface? -> get status from virtual interface */
 	case "pptp":
-		if ("{$ifinfo['if']}*" == $linkinfo[0])
-			$ifinfo['pptplink'] = "down";
-		else if ($ifinfo['if'] == $linkinfo[0] && !isset($link0))
-			/* get PPTP link status for dial on demand */
-			$ifinfo['pptplink'] = "up";
+		if ($ifinfo['status'] == "up" && !isset($link0))
+                        /* get PPTP link status for dial on demand */
+                        $ifinfo['pptplink'] = "up";
 		else
 			$ifinfo['pptplink'] = "down";
 		break;
 	/* PPP interface? -> get uptime for this session and cumulative uptime from the persistant log file in conf */
 	case "ppp":
-		if ("{$ifinfo['if']}*" == $linkinfo[0])
-			$ifinfo['ppplink'] = "down";
-		else if ($ifinfo['if'] == $linkinfo[0])
-			$ifinfo['ppplink'] = "up";
+		if ($ifinfo['status'] == "up")
+                        $ifinfo['ppplink'] = "up";
 		else
 			$ifinfo['ppplink'] = "down" ;
-		if (empty($ifinfo['status']))
-			$ifinfo['status'] = "down";
 
 		$dev = $config['interfaces'][$if]['if'];
 		if (empty($dev))

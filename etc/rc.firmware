@@ -157,7 +157,7 @@ pfSenseNanoBSDupgrade)
 
 	# backup config
 	/bin/mkdir -p /tmp/configbak
-	cp -p /conf/* /tmp/configbak 2>/dev/null
+	cp -Rp /conf/* /tmp/configbak 2>/dev/null
 
 	echo "" >> /conf/upgrade_log.txt
 
@@ -272,7 +272,7 @@ pfSenseNanoBSDupgrade)
 	/sbin/tunefs -L ${GLABEL_SLICE} /dev/${COMPLETE_PATH} >> /conf/upgrade_log.txt 2>&1
 
 	# restore config
-	cp -p /tmp/configbak/* /conf 2>/dev/null
+	cp -Rp /tmp/configbak/* /conf 2>/dev/null
 
 	# Remove upgrade file
 	rm -f $IMG
@@ -400,7 +400,7 @@ pfSenseupgrade)
 
 	# backup config
 	/bin/mkdir -p /tmp/configbak
-	cp -p /conf/* /tmp/configbak 2>/dev/null
+	cp -Rp /conf/* /tmp/configbak 2>/dev/null
 
 	# tar explode image onto hd
 	echo "Installing $IMG." >> /conf/upgrade_log.txt 2>&1
@@ -421,7 +421,7 @@ pfSenseupgrade)
     fi
 
 	# restore config
-	cp -p /tmp/configbak/* /conf 2>/dev/null
+	cp -Rp /tmp/configbak/* /conf 2>/dev/null
 
 	# restore /etc symlinks
 	rm /etc/hosts

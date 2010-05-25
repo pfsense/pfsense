@@ -184,7 +184,7 @@ else if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 		/* write out an fstab */
 		$fd = fopen("{$g['etc_path']}/fstab", "w");
 
-		$fstab = "/dev/{$cfgpartition} {$g['cf_path']} {$cfgfstype} ro 1 1\n";
+		$fstab = "/dev/{$cfgpartition} {$g['cf_path']} {$cfgfstype} ro,noatime 1 1\n";
 		$fstab .= "proc /proc procfs rw 0 0\n";
 
 		fwrite($fd, $fstab);

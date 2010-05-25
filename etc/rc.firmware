@@ -159,6 +159,9 @@ pfSenseNanoBSDupgrade)
 	/bin/mkdir -p /tmp/configbak
 	cp -Rp /conf/* /tmp/configbak 2>/dev/null
 
+	# Remove logs from backup dir to avoid clobbering upon restore.
+	rm /tmp/configbak/*_log.txt 2>/dev/null
+
 	echo "" >> /conf/upgrade_log.txt
 
 	echo "Installing ${IMG}." >> /conf/upgrade_log.txt 2>&1
@@ -401,6 +404,9 @@ pfSenseupgrade)
 	# backup config
 	/bin/mkdir -p /tmp/configbak
 	cp -Rp /conf/* /tmp/configbak 2>/dev/null
+
+	# Remove logs from backup dir to avoid clobbering upon restore.
+	rm /tmp/configbak/*_log.txt 2>/dev/null
 
 	# tar explode image onto hd
 	echo "Installing $IMG." >> /conf/upgrade_log.txt 2>&1

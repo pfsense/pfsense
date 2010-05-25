@@ -11,10 +11,10 @@
 
 # Reset file(s)
 echo "" >/conf/upgrade_log.txt
-echo "" >/conf/firmware_update_misc.log
+echo "" >/conf/firmware_update_misc_log.txt
 echo "" >/conf/fdisk_upgrade_log.txt
 
-exec 3>&2 2>>/conf/firmware_update_misc.log
+exec 3>&2 2>>/conf/firmware_update_misc_log.txt
 
 export ACTION=$1
 export IMG=$2

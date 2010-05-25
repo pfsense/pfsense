@@ -1827,7 +1827,7 @@ EOD;
 		/* find which clones are up and bring them down */
 		$clones_up = array();
 		foreach ($clone_list as $clone_if) {
-			$clone_status = pfSense_get_interface_stats($clone_if);
+			$clone_status = pfSense_get_interface_addresses($clone_if);
 			if ($clone_status['status'] == 'up') {
 				$clones_up[] = $clone_if;
 				mwexec("{$ifconfig} " . escapeshellarg($clone_if) . " down");

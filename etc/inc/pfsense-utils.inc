@@ -1965,8 +1965,8 @@ function nanobsd_update_fstab($gslice, $complete_path, $oldufs, $newufs) {
 
 	if (!file_exists($fstabpath)) {
 		$fstab = <<<EOF
-/dev/ufs/{$gslice} / ufs ro 1 1
-/dev/ufs/cf /cf ufs ro 1 1
+/dev/ufs/{$gslice} / ufs ro,noatime 1 1
+/dev/ufs/cf /cf ufs ro,noatime 1 1
 EOF;
 		if (file_put_contents($fstabpath, $fstab))
 			$status = true;

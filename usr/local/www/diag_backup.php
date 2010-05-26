@@ -230,7 +230,7 @@ if ($_POST) {
 							if($rrd_data) {
 								$data .= "\t\t<rrddatafile>\n";
 								$data .= "\t\t\t<filename>{$rrd}</filename>\n";
-								$data .= "\t\t\t<data>" . base64_encode($rrd_data) . "</data>\n";
+								$data .= "\t\t\t<data>" . base64_encode(gzdeflate($rrd_data)) . "</data>\n";
 								$data .= "\t\t</rrddatafile>\n";
 							}
 						}
@@ -318,7 +318,16 @@ if ($_POST) {
 								if($config['rrddata']) {
 									foreach($config['rrddata']['rrddatafile'] as $rrd) {
 										$rrd_fd = fopen("{$g['vardb_path']}/rrd/{$rrd['filename']}", "w");
-										fwrite($rrd_fd, base64_decode($rrd['data']));
+										$data = base64_decode($rrd['data']);
+										/* Try to decompress the data. */
+										$dcomp = @gzinflate($data);
+										if ($dcomp) {
+											/* If the decompression worked, write the decompressed data */
+											fwrite($rrd_fd, $dcomp);
+										} else {
+											/* If the decompression failed, it wasn't compressed, so write raw data */
+											fwrite($rrd_fd, $data);
+										}
 										fclose($rrd_fd);
 									}
 									unset($config['rrddata']);

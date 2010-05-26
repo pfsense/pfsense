@@ -1099,12 +1099,16 @@ function interface_ppps_configure($interface) {
 		if (is_ipaddr($ppp['gateway']))
 			$gateway = $ppp['gateway'];
 		else
-			$gateway = "10.0.0.{$pppid}";
+			$gateway = "10.6.6.{$pppid}";
 		$ranges = "{$localip}/0 {$gateway}/0";
 	}
 	else
 		$ranges = "0.0.0.0/0 0.0.0.0/0";
-		
+	
+	$localips = explode(',',$ppp['localip']);
+	$gateways = explode(',',$ppp['gateway']);
+	$subnets = explode(',',$ppp['subnet']);
+
 	if (isset($ppp['ondemand'])) 
 		$ondemand = "enable";
 	else
@@ -1120,12 +1124,13 @@ function interface_ppps_configure($interface) {
 		$passwd = "none";
 	else
 		$passwd = base64_decode($ppp['password']);
-	if (isset($ppp['bandwidth'])) 
-		$bandwidths = explode(',',$ppp['bandwidth']);
-	if (isset($ppp['mtu'])) 
-		$mtus = explode(',',$ppp['mtu']);
-	if (isset($ppp['mru'])) 
-		$mrus = explode(',',$ppp['mru']);
+
+	$bandwidths = explode(',',$ppp['bandwidth']);
+	$mtus = explode(',',$ppp['mtu']);
+	$mrus = explode(',',$ppp['mru']);
+
+	if (!isset($ppp['idletimeout']))
+		$mrrus = explode(',',$ppp['mrru']);
 	// Construct the mpd.conf file
 	$mpdconf = <<<EOD
 startup:
@@ -1140,13 +1145,31 @@ default:
 	set iface name {$pppif}
 
 EOD;
-
-	if (isset($ppp['defaultgw'])) {
+	$setdefaultgw = false;
+	$founddefaultgw = false;
+	if (is_array($config['gateways']['gateway_item'])) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if($interface == $gateway['interface'] && isset($gateway['defaultgw'])) {
+				$setdefaultgw = true;
+				break;
+			} else if (isset($gateway['defaultgw']) && !empty($gateway['interface'])) {
+				$founddefaultgw = true;
+				break;
+			}
+		}
+	}
+	if (($interface == "wan" && $founddefaultgw == false) || $setdefaultgw == true)
 		$mpdconf .= <<<EOD
 	set iface route default
 
 EOD;
-	}
+/*
+	if (isset($ppp['defaultgw'])) 
+		$mpdconf .= <<<EOD
+	set iface route default
+
+EOD;
+*/
 
 	$mpdconf .= <<<EOD
 	set iface {$ondemand} on-demand
@@ -1154,74 +1177,72 @@ EOD;
 
 EOD;
 
-	if (isset($ppp['ondemand'])) {
+	if (isset($ppp['ondemand']))
 		$mpdconf .= <<<EOD
 	set iface addrs 10.10.1.1 10.10.1.2
 
 EOD;
-	}
-	if (isset($ppp['tcpmssfix'])) {
+	
+	if (isset($ppp['tcpmssfix']))
 		$mpdconf .= <<<EOD
 	set iface enable tcpmssfix
 
 EOD;
-	}
+
 	$mpdconf .= <<<EOD
 	set iface up-script /usr/local/sbin/ppp-linkup
 	set iface down-script /usr/local/sbin/ppp-linkdown
 	set ipcp ranges {$ranges}
 
 EOD;
-	if (isset($ppp['vjcomp'])){
+	if (isset($ppp['vjcomp']))
 		$mpdconf .= <<<EOD
 	set ipcp no vjcomp
 
 EOD;
-	}
 
-	if (isset($config['system']['dnsallowoverride']) && isset($ppp['defaultgw'])) {
+	if (isset($config['system']['dnsallowoverride']) && isset($ppp['defaultgw']))
 		$mpdconf .= <<<EOD
 	set ipcp enable req-pri-dns
 	set ipcp enable req-sec-dns
 
 EOD;
-	}
+
 /*
-	if (!isset($intcfg['dnsnosec']) && isset($config['system']['dnsallowoverride'])) {
+	if (!isset($intcfg['dnsnosec']) && isset($config['system']['dnsallowoverride']))
 			$mpdconf .= <<<EOD
 	set ipcp enable req-sec-dns
 
 EOD;
-	}
 */	
 	foreach($ports as $pid => $port){
 		$mpdconf .= <<<EOD
 
-	create link static link{$pid}-{$interface} {$type}
+	create link static {$interface}_link{$pid} {$type}
 	set link action bundle {$interface}
 	set link {$multilink} multilink
 	set link keep-alive 10 60
 	set link max-redial 0
 
 EOD;
-		if (isset($ppp['shortseq'])){
+		if (isset($ppp['shortseq']))
 			$mpdconf .= <<<EOD
 	set link no shortseq
 
 EOD;
-		}
-		if (isset($ppp['acfcomp'])){
+
+		if (isset($ppp['acfcomp']))
 			$mpdconf .= <<<EOD
 	set link no acfcomp
 
 EOD;
-		}
-		if (isset($ppp['protocomp'])){
+
+		if (isset($ppp['protocomp']))
 			$mpdconf .= <<<EOD
 	set link no protocomp
 
 EOD;
-		}
+
 		$mpdconf .= <<<EOD
 	set link disable chap pap
 	set link accept chap pap eap
@@ -1230,24 +1251,24 @@ EOD;
 EOD;
 
 
-		if (isset($bandwidths)){
+		if (!empty($bandwidths[$pid]))
 			$mpdconf .= <<<EOD
 	set link bandwidth {$bandwidths[$pid]}
 
 EOD;
-		}
-		if (isset($mtus)){
+
+		if (!empty($mtus[$pid]))
 			$mpdconf .= <<<EOD
 	set link mtu {$mtus[$pid]}
 
 EOD;
-		}
-		if (isset($mrus)){
+
+		if (!empty($mrus[$pid]))
 			$mpdconf .= <<<EOD
 	set link mru {$mrus[$pid]}
 
 EOD;
-		}
+
 		$mpdconf .= <<<EOD
 	set auth authname "{$ppp['username']}"
 	set auth password {$passwd}
@@ -1291,24 +1312,23 @@ EOD;
 
 EOD;
 		}
-	
 		if (isset($ppp['provider']) && $type == "pppoe") {
 			$mpdconf .= <<<EOD
 	set pppoe service "{$ppp['provider']}"
 
 EOD;
 		}
-		if ($type == "pppoe") {
+		if ($type == "pppoe")
 			$mpdconf .= <<<EOD
 	set pppoe iface {$port}
 
 EOD;
-		}
+
 		if ($type == "pptp") {
 			$mpdconf .= <<<EOD
 	set bundle no noretry
-	set pptp self {$ppp['localip']}
-	set pptp peer {$ppp['gateway']}
+	set pptp self {$localips[$pid]}
+	set pptp peer {$gateways[$pid]}
 	set pptp disable windowing
 
 EOD;
@@ -1344,22 +1364,22 @@ EOD;
 	if(file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid") and $g['booting']) {
 		/* if we are booting and mpd has already been started then don't start again. */
 	} else {
-		foreach($ports as $port){
+		foreach($ports as $pid => $port){
 			switch ($ppp['type']) {
 				case "pppoe": 
 					/* Bring the parent interface up */
 					if($port)
 						interfaces_bring_up($port);
 					else 
-						log_error("Could not bring up interface {$port} for {$ppp['type']} link on {$interface} in interface_ppps_configure().");
+						log_error("Could not bring up interface {$port} for {$interface} {$ppp['type']} link in interface_ppps_configure().");
 					break;
 				case "pptp": 
 					/* configure interface */
 					if($port)
 						mwexec("/sbin/ifconfig " . escapeshellarg($port) . " " .
-							escapeshellarg($ppp['localip'] . "/" . $ppp['subnet']) . " up");
+							escapeshellarg($localips[$pid] . "/" . $subnets[$pid]) . " up");
 					else 
-						log_error("Could not bring up interface {$port} for {$ppp['type']} link on {$interface} in interface_ppps_configure().");
+						log_error("Could not bring up interface {$port} for {$interface} {$ppp['type']} link in interface_ppps_configure().");
 					break;
 				case "ppp":
 					if (!file_exists("{$port}")) {
@@ -1377,7 +1397,7 @@ EOD;
 	}
 
 	/* sleep until wan is up - or 30 seconds, whichever comes first */
-	for ($count = 0; $count < 30; $count++) {
+	for ($count = 0; $count < 12; $count++) {
 		if(file_exists("{$g['tmp_path']}/{$pppif}up")) {
 			break;
 		}

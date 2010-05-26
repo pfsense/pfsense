@@ -2006,11 +2006,6 @@ function upgrade_063_to_064() {
 				$ppp['username'] = $ifinfo['pptp_username'];
 				$ppp['password'] = base64_encode($ifinfo['pptp_password']);
 			}
-			foreach ($config['gateways']['gateway_item'] as $gateway){
-				if ($gateway['name'] == $ifname && isset($gateway['defaultgw'])){
-					$ppp['defaultgw'] = true;
-				}
-			}
 			
 			if (isset($ifinfo['provider']))
 				$ppp['provider'] = $ifinfo['provider'];

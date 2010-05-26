@@ -103,11 +103,6 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 
 if ($wancfg['ptpid'] == $a_ppps[$pppid]['ptpid']) {
 	$pconfig['pppid'] = $pppid;
-	if (isset($a_ppps[$pppid]['defaultgw']))
-		$pconfig['defaultgw'] = true;
-	else
-		$pconfig['defaultgw'] = false;
-
 	if ($a_ppps[$pppid]['type'] == "pppoe"){
 		$pconfig['pppoe_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pppoe_password'] = base64_decode($a_ppps[$pppid]['password']);
@@ -584,7 +579,6 @@ if ($_POST) {
 				$wancfg['if'] = $_POST['type'] . $if_num;
 				$wancfg['ptpid'] = $_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
-				$ppp['defaultgw'] = $_POST['defaultgw'];
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
@@ -1769,7 +1763,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								<input name="pppid" type="hidden" value="<?=$pppid;?>">
 								<input name="ppp_port" type="hidden" value="<?=$a_ppps[$pppid]['ports'];?>">
 								<input name="ptpid" type="hidden" value="<?=$a_ppps[$pppid]['ptpid'];?>">
-								<input name="defaultgw" type="hidden" value="<?=$pconfig['defaultgw'];?>">
 								<?php else: ?>
 								<input name="ptpid" type="hidden" value="<?=uniqid('', true);?>">
 								<?php endif; ?>

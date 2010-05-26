@@ -23,17 +23,50 @@ function clear_selected(list_name){
 
 function show_hide_linkfields(options){
 	var select_count = 0;
-	// this for loop is not used currently
 	for(var j=0; j < options.length; j++){
-		var label = "link" + select_count.toString();
+		var count = select_count.toString();
+		var type = $('type').value;
+		var label = "link" + count;
+		var bw = "bandwidth" + count;
+		var mtu = "mtu" + count;
+		var mru = "mru" + count;
+		var ipfields = "ipfields" + count;
+		var localip = "localip" + count;
+		var localiplabel = "localiplabel" + count;
+		var subnet = "subnet" + count;
+		var gateway = "gateway" + count;
+		var gatewaylabel = "gatewaylabel" + count;
+		$(ipfields,label,subnet).invoke('hide');
+		//$(label).hide();
+		//$(subnet).hide();
+		$(bw).name = "bandwidth[]";
+		$(mtu).name = "mtu[]";
+		$(mru).name = "mru[]";
+		$(localip).name = "localip[]";
+		$(subnet).name = "subnet[]";
+		$(gateway).name = "gateway[]";
 		if (options[j].selected){
-			var linklabel = "linklabel" + select_count.toString();
-			$(linklabel).innerHTML = "Link Parameters (" + options[j].value + ")";
+			var lnklabel = "linklabel" + count;
+			var bwlabel = "bwlabel" + count;
+			$(lnklabel).innerHTML = "Link Parameters (" + options[j].value + ")";
+			$(bwlabel).innerHTML = "Bandwidth (" + options[j].value + ")";
+			$(bw).name = "bandwidth[" + options[j].value + "]";
+			$(mtu).name = "mtu[" + options[j].value + "]";
+			$(mru).name = "mru[" + options[j].value + "]";
+			if (type == 'pptp' || type == 'ppp'){
+				$(localiplabel).innerHTML = "Local IP (" + options[j].value + ")";
+				$(gatewaylabel).innerHTML = "Gateway (" + options[j].value + ")";
+				$(localip).name = "localip[" + options[j].value + "]";
+				$(subnet).name = "subnet[" + options[j].value + "]";
+				$(gateway).name = "gateway[" + options[j].value + "]";
+				if (type == 'pptp'){
+					$(subnet).show();
+				}
+				$(ipfields).show();
+			}
 			$(label).show();
 			select_count++;
-			continue;
 		}
-		$(label).hide();
 	}
 }
 
@@ -44,26 +77,26 @@ function updateType(t){
 	var select_list = document.iform["interfaces[]"].options;
 	switch(t) {
 		case "select": {
-			$('ppp','pppoe','pptp','ipfields','prefil_ppp').invoke('hide');
+			$('ppp','pppoe','pptp','prefil_ppp').invoke('hide');
 			select_list.length = 0;
-			select_list.options[0] = new Option("Select Link Type First","");
+			select_list[0] = new Option("Select Link Type First","");
 			break;
 		}
 		case "ppp": {
 			update_select_list(serialports, select_list);
-			$('select','pppoe','pptp','subnet').invoke('hide');
-			$('ipfields','prefil_ppp').invoke('show');
+			$('select','pppoe','pptp').invoke('hide');
+			$('prefil_ppp').show();
 			break;
 		}
 		case "pppoe": {
 			update_select_list(ports, select_list);
-			$('select','ppp','pptp','ipfields','prefil_ppp').invoke('hide');
+			$('select','ppp','pptp','prefil_ppp').invoke('hide');
 			break;
 		}
 		case "pptp": {
 			update_select_list(ports, select_list);
 			$('select','ppp','pppoe','prefil_ppp').invoke('hide');
-			$('ipfields','subnet').invoke('show');
+			//$('ipfields','subnet').invoke('show');
 			break;
 		}
 		default:

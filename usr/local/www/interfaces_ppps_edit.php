@@ -109,13 +109,13 @@ if (isset($id) && $a_ppps[$id]) {
 		$pconfig['apnum'] = $a_ppps[$id]['apnum'];
 		$pconfig['phone'] = $a_ppps[$id]['phone'];
 		$pconfig['connect-timeout'] = $a_ppps[$id]['connect-timeout'];
-		$pconfig['localip'] = $a_ppps[$id]['localip'];
-		$pconfig['gateway'] = $a_ppps[$id]['gateway'];
+		$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
+		$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
 	}
 	if ($a_ppps[$id]['type'] == "pptp") {
-		$pconfig['localip'] = $a_ppps[$id]['localip'];
-		$pconfig['subnet'] = $a_ppps[$id]['subnet'];
-		$pconfig['gateway'] = $a_ppps[$id]['gateway'];
+		$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
+		$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
+		$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
 	}
 	if ($a_ppps[$id]['type'] == "pppoe") {
 		$pconfig['provider'] = $a_ppps[$id]['provider'];
@@ -216,8 +216,6 @@ if ($_POST) {
 	}
 	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1)
 		$input_errors[] = "Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.";
-	if ($_POST['type'] == "pptp" && count($_POST['interfaces']) > 1)
-		$input_errors[] = "Multilink connections (MLPPP) using the PPTP link type is not currently supported. Please select only one Link Interface.";
 	if (($_POST['provider'] && !is_domain($_POST['provider']))) 
 		$input_errors[] = "The service name contains invalid characters.";
 	if (($_POST['idletimeout'] != "") && !is_numericint($_POST['idletimeout'])) 
@@ -239,20 +237,22 @@ if ($_POST) {
 		if ($date_nums[2] < date("Y"))
 			$input_errors[] = gettext("A valid PPPoE reset year must be specified. Don't select a year in the past!");
 	}
-	if (($_POST['localip'] && !is_ipaddr($_POST['localip']))) 
-		$input_errors[] = "A valid PPTP local IP address must be specified.";
-	if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) 
-		$input_errors[] = "A valid PPTP subnet bit count must be specified.";
-	if (($_POST['gateway'] && !is_ipaddr($_POST['gateway']))) 
-		$input_errors[] = "A valid PPTP remote IP address must be specified.";
-/*
-	if (($_POST['bandwidth'] != "") && !is_numericint($_POST['bandwidth'])) 
-		$input_errors[] = "The bandwidth value must be an integer.";	
-	if ($_POST['mtu'] && ($_POST['mtu'] < 576)) 
-		$input_errors[] = "The MTU must be greater than 576 bytes.";
-	if ($_POST['mru'] && ($_POST['mru'] < 576)) 
-		$input_errors[] = "The MRU must be greater than 576 bytes.";
+	
+	foreach($_POST['interfaces'] as $iface){
+		if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface]))
+			$input_errors[] = "A valid local IP address must be specified for {$iface}.";
+/*		if (($_POST['subnet'][$iface] && !is_numeric($_POST['subnet'][$iface]))) 
+			$input_errors[] = "A valid PPTP subnet bit count must be specified for {$iface}.";
 */
+		if (($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]))) 
+			$input_errors[] = "A valid gateway (remote IP) address must be specified for {$iface}.";
+		if (($_POST['bandwidth'][$iface] != "") && !is_numericint($_POST['bandwidth'][$iface])) 
+			$input_errors[] = "The bandwidth value for {$iface} must be an integer.";
+		if ($_POST['mtu'][$iface] && ($_POST['mtu'][$iface] < 576)) 
+			$input_errors[] = "The MTU for {$iface} must be greater than 576 bytes.";
+		if ($_POST['mru'][$iface] && ($_POST['mru'][$iface] < 576)) 
+			$input_errors[] = "The MRU for {$iface} must be greater than 576 bytes.";
+	}
 
 /*
 	foreach ($a_ppps as $ppp) {
@@ -310,12 +310,18 @@ if ($_POST) {
 					unset($ppp['apnum']);
 				}
 				$ppp['phone'] = $_POST['phone'];
-				if (!empty($_POST['localip']))
-					$ppp['localip'] = $_POST['localip'];
+				foreach($_POST['interfaces'] as $iface){
+					if (isset($_POST['localip'][$iface]))
+						$localip_array[] = $_POST['localip'][$iface];
+					if (isset($_POST['gateway'][$iface]))
+						$gateway_array[] = $_POST['gateway'][$iface];
+				}
+				if (count($localip_array))
+					$ppp['localip'] = implode(',',$localip_array);
 				else
 					unset($ppp['localip']);
-				if (!empty($_POST['gateway']))
-					$ppp['gateway'] = $_POST['gateway'];
+				if (count($gateway_array))
+					$ppp['gateway'] = implode(',',$gateway_array);
 				else
 					unset($ppp['gateway']);
 				if (!empty($_POST['connect-timeout']))
@@ -335,9 +341,26 @@ if ($_POST) {
 				
 				break;
 			case "pptp":
-				$ppp['localip'] = $_POST['localip'];
-				$ppp['subnet'] = $_POST['subnet'];
-				$ppp['gateway'] = $_POST['gateway'];
+				foreach($_POST['interfaces'] as $iface){
+					if (isset($_POST['localip'][$iface]))
+						$localip_array[] = $_POST['localip'][$iface];
+					if (isset($_POST['gateway'][$iface]))
+						$gateway_array[] = $_POST['gateway'][$iface];
+					if (isset($_POST['subnet'][$iface]))
+						$subnet_array[] = $_POST['subnet'][$iface];
+				}
+				if (count($localip_array))
+					$ppp['localip'] = implode(',',$localip_array);
+				else
+					unset($ppp['localip']);
+				if (count($gateway_array))
+					$ppp['gateway'] = implode(',',$gateway_array);
+				else
+					unset($ppp['gateway']);
+				if (count($subnet_array))
+					$ppp['subnet'] = implode(',',$subnet_array);
+				else
+					unset($ppp['subnet']);
 				break;
 			default:
 				break;
@@ -349,41 +372,35 @@ if ($_POST) {
 		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
-		
-/*		while(count($_POST['bandwidth'])){
-			if($_POST['bandwidth'][count($_POST['bandwidth'])-1] == "")
-				array_pop(&$_POST['bandwidth']);
-			else
-				break;
+/*		
+		$bw_array = array();
+		$mtu_array = array();
+		$mru_array = array();
+		$mrru_array = array();
+*/		
+		foreach($_POST['interfaces'] as $iface){
+			if (isset($_POST['bandwidth'][$iface]))
+				$bw_array[] = $_POST['bandwidth'][$iface];
+			if (isset($_POST['mtu'][$iface]))
+				$mtu_array[] = $_POST['mtu'][$iface];
+			if (isset($_POST['mru'][$iface]))
+				$mru_array[] = $_POST['mru'][$iface];
+			if (isset($_POST['mrru'][$iface]))
+				$mrru_array[] = $_POST['mrru'][$iface];
 		}
-		*/
-			foreach($_POST['bandwidth'] as $bw){
-				if(!empty($bw) && count($bw_array) < count($_POST['interfaces'])+1)
-					$bw_array[] = $bw;
-			}
-		if (count($bw_array)){
-			
+		if (count($bw_array))
 			$ppp['bandwidth'] = implode(',', $bw_array);
-		} else 
+		else 
 			unset($ppp['bandwidth']);
-		
-			foreach($_POST['mtu'] as $mtu){
-				if(!empty($mtu))
-					$mtu_array[] = $mtu;
-			}
-		if (count($mtu_array)){
 			
+		if (count($mtu_array))
 			$ppp['mtu'] = implode(',', $mtu_array);
-		} else 
+		else 
 			unset($ppp['mtu']);
-			foreach($_POST['mru'] as $mru){
-				if(!empty($mru))
-					$mru_array[] = $mru;
-			}
-		if (count($mru_array)){
 			
+		if (count($mru_array))
 			$ppp['mru'] = implode(',', $mru_array);
-		} else 
+		else 
 			unset($ppp['mru']);
 		/* handle_pppoe_reset is called here because if user changes Link Type from PPPoE to another type we 
 		must be able to clear the config data in the <cron> section of config.xml if it exists
@@ -764,31 +781,33 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				</table>
 			</td>
 		</tr>
-		<tr style="display:none" id="ipfields">
+		<?php for($j=0; $j < $port_count; $j++) : ?>
+		<tr style="display:none" id="ipfields<?=$j;?>">
 			<td colspan="2" style="padding:0px;">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?= gettext("Local IP address"); ?></td>
+						<td width="22%" name="<?= gettext("Local IP address"); ?>" id="localiplabel<?=$j;?>" valign="top" class="vncell"></td>
 						<td width="78%" class="vtable"> 
-							<input name="localip" type="text" class="formfld unknown" id="localip" size="20"  value="<?=htmlspecialchars($pconfig['localip']);?>">
+							<input name="localip[]" type="text" class="formfld unknown" id="localip<?=$j;?>" size="20"  value="<?=htmlspecialchars($pconfig['localip'][$j]);?>">
 							/
-							<select style="display:none" name="subnet" class="formselect" id="subnet">
+							<select style="display:none" name="subnet[]" class="formselect" id="subnet<?=$j;?>">
 							<?php for ($i = 31; $i > 0; $i--): ?>
-								<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet']) echo "selected"; ?>><?=$i;?></option>
+								<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo "selected"; ?>><?=$i;?></option>
 							<?php endfor; ?>
 							</select>
 							<br><span class="vexpl"><?= gettext("Note: Local IP/subnet is required for PPTP connections. LocalIP is automatically assigned for PPP links if this field is empty."); ?></span>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?= gettext("Remote IP (Gateway)"); ?></td>
+						<td width="22%" name="<?= gettext("Remote IP (Gateway)"); ?>" id="gatewaylabel<?=$j;?>" valign="top" class="vncell"></td>
 						<td width="78%" class="vtable">
-							<input name="gateway" type="text" class="formfld unknown" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+							<input name="gateway[]" type="text" class="formfld unknown" id="gateway<?=$j;?>" size="20" value="<?=htmlspecialchars($pconfig['gateway'][$j]);?>">
 							<br><span class="vexpl"><?= gettext("Note: This is where the packets will be routed. Remote IP is required for PPTP connections. Remote IP is automatically assigned for PPP links if this field is empty."); ?></span>
 						</td>
 					</tr>
 				</table>
 			</td>
+		</tr><?php endfor; ?>
 		<tr>
 			<td colspan="2" valign="top" height="16"></td>
 		</tr>
@@ -844,23 +863,23 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			<td class="vtable">
 				<table name="link_parameters" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="22%" valign="top"class="vncell"> Bandwidth</td>
-						<td width="78%" id="bandwidth<?=$i;?>" class="vtable">
-						<br/><input name="bandwidth[]" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['bandwidth'][$i]);?>">
+						<td width="22%" id="bwlabel<?=$i;?>" valign="top"class="vncell"> Bandwidth</td>
+						<td width="78%" class="vtable">
+						<br/><input name="bandwidth[]" id="bandwidth<?=$i;?>" type="text" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['bandwidth'][$i]);?>">
 						<br/> <span class="vexpl">Set Bandwidth for each link ONLY for MLPPP connections and ONLY when links have different bandwidths.</span>
 					  </td>
 					</tr>
 					<tr>
-					  <td width="22%" valign="top" class="vncell"> MTU</td>
-					  <td width="78%" id="mtu<?=$i;?>" class="vtable">
-						<input name="mtu[]" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mtu'][$i]);?>">
+					  <td width="22%" id="mtulabel<?=$i;?>" valign="top" class="vncell"> MTU</td>
+					  <td width="78%" class="vtable">
+						<input name="mtu[]" id="mtu<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mtu'][$i]);?>">
 						<br> <span class="vexpl">Set MTU for each link if links have different bandwidths, otherwise, mtu will default to 1492.</span>
 					  </td>
 					</tr>
 					<tr>
-					  <td width="22%" valign="top" class="vncell"> MRU</td>
-					  <td width="78%" id="mru<?=$i;?>" class="vtable">
-						<input name="mru[]" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mru'][$i]);?>">
+					  <td width="22%" id="mrulabel<?=$i;?>" valign="top" class="vncell"> MRU</td>
+					  <td width="78%" class="vtable">
+						<input name="mru[]" id="mru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mru'][$i]);?>">
 						<br> <span class="vexpl">Set MRU for each link if links have different bandwidths, otherwise, mru will default to 1492.</span>
 					  </td>
 					</tr>

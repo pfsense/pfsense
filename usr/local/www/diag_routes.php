@@ -57,15 +57,16 @@ include('head.inc');
 
 <tr>
 <td class="vncellreq" width="22%">Name resolution</td>
-<td class="listr" width="78%">
+<td class="vtable" width="78%">
 <input type="checkbox" class="formfld" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo 'checked'; ?>> Enable</input>
 <br />
 <span class="expl">Enable this to attempt to resolve names when displaying the tables.</span>
+</td>
 </tr>
 
 <tr>
 <td class="vncellreq" width="22%">&nbsp;</td>
-<td class="listr" width="78%">
+<td class="vtable" width="78%">
 <input type="submit" class="formbtn" name="submit" value="Show" />
 <br />
 <br />
@@ -94,13 +95,17 @@ include('head.inc');
 			if ($i == 1)
 				$class = 'listhdrr';
 			else
-				$class = 'listr';
+				$class = 'listlr';
 
 			print("<tr>\n");
 			$j = 0;
 			foreach (explode(' ', $line) as $entry) {
 				if ($entry == '') continue;
+				if ($i == 1 && $j == $elements - 1)
+					$class = 'listhdr';
 				print("<td class=\"$class\">$entry</td>\n");
+				if ($i > 1)
+					$class = 'listr';
 				$j++;
 			}
 			// The 'Expire' field might be blank

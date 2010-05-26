@@ -90,7 +90,12 @@ $curcfg = $config['system']['firmware'];
 		<?php if(!$g['hideplatform']): ?>
 		<tr>
 			<td width="25%" class="vncellt">Platform</td>
-			<td width="75%" class="listr"><?=htmlspecialchars($g['platform']);?></td>
+			<td width="75%" class="listr">
+				<?=htmlspecialchars($g['platform']);?>
+				<?php if (($g['platform'] == "nanobsd") && (file_exists("/etc/nanosize.txt"))) {
+					echo " (" . htmlspecialchars(trim(file_get_contents("/etc/nanosize.txt"))) . ")";
+				} ?>
+			</td>
 		</tr>
 		<?php endif; ?>
 		<?php if ($g['platform'] == "nanobsd"): ?>

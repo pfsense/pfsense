@@ -565,7 +565,7 @@ function backuparea_change(obj) {
 							</tr>
 							<tr>
 								<td>
-									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd">
+									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd" checked>
 								</td>
 								<td>
 									<span class="vexpl">Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)</span>

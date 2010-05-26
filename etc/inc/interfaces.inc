@@ -1158,19 +1158,14 @@ EOD;
 			}
 		}
 	}
-	if (($interface == "wan" && $founddefaultgw == false) || $setdefaultgw == true)
+	
+	if (($interface == "wan" && $founddefaultgw == false) || $setdefaultgw == true){
+		$setdefaultgw = true;
 		$mpdconf .= <<<EOD
 	set iface route default
 
 EOD;
-/*
-	if (isset($ppp['defaultgw'])) 
-		$mpdconf .= <<<EOD
-	set iface route default
-
-EOD;
-*/
-
+	}
 	$mpdconf .= <<<EOD
 	set iface {$ondemand} on-demand
 	set iface idle {$ppp['idletimeout']}
@@ -1201,7 +1196,7 @@ EOD;
 
 EOD;
 
-	if (isset($config['system']['dnsallowoverride']) && isset($ppp['defaultgw']))
+	if (isset($config['system']['dnsallowoverride']) && $setdefaultgw == true)
 		$mpdconf .= <<<EOD
 	set ipcp enable req-pri-dns
 	set ipcp enable req-sec-dns

@@ -80,8 +80,6 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['interfaces'] = $a_ppps[$id]['ports'];
 	$pconfig['username'] = $a_ppps[$id]['username'];
 	$pconfig['password'] = base64_decode($a_ppps[$id]['password']);
-	if (isset($a_ppps[$id]['defaultgw']))
-		$pconfig['defaultgw'] = true;
 	if (isset($a_ppps[$id]['ondemand']))
 		$pconfig['ondemand'] = true;
 	$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
@@ -273,7 +271,6 @@ if ($_POST) {
 		$ppp['ports'] = implode(',',$_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = base64_encode($_POST['password']);
-		$ppp['defaultgw'] = $_POST['defaultgw'] ? true : false;
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if (!empty($_POST['idletimeout']))
 			$ppp['idletimeout'] = $_POST['idletimeout'];
@@ -608,13 +605,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
 			</td>
 		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?= gettext("Gateway"); ?></td>
-			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="defaultgw" name="defaultgw" <?php if (isset($pconfig['defaultgw'])) echo "checked"; ?>><?= gettext("This link will be used as the default gateway."); ?> 
-				<br/><span class="vexpl"><?= gettext("\"Allow DNS Server list to be overridden\" must also be checked in the System -> General Setup menu."); ?>
-			</td>
-		</tr>
+		
 		<tr>
 		<td valign="top" class="vncell"><?= gettext("Dial On Demand"); ?></td>
 			<td class="vtable">

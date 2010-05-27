@@ -158,6 +158,7 @@ if (isAllowedPage("system_usermanager")) {
 			$pconfig['uid'] = $a_user[$id]['uid'];
 			$pconfig['authorizedkeys'] = base64_decode($a_user[$id]['authorizedkeys']);
 			$pconfig['priv'] = $a_user[$id]['priv'];
+			$pconfig['ipsecpsk'] = $a_user[$id]['ipsecpsk'];
 			$pconfig['disabled'] = isset($a_user[$id]['disabled']);
 		}
 	}
@@ -270,6 +271,7 @@ if (isAllowedPage("system_usermanager")) {
 			$userent['fullname'] = $_POST['fullname'];
 			$userent['expires'] = $_POST['expires'];
 			$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
+			$userent['ipsecpsk'] = $_POST['ipsecpsk'];
 			
 			if($_POST['disabled'])
 				$userent['disabled'] = true;
@@ -726,6 +728,12 @@ function sshkeyClicked(obj) {
 								<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert" wrap="off"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
 								<br/>
 								<?=gettext("Paste an authorized keys file here.");?>
+							</td>
+						</tr>
+						<tr id="ipsecpskrow" name="ipsecpskrow">
+							<td width="22%" valign="top" class="vncell"><?=gettext("IPsec Pre-Shared Key");?></td>
+							<td width="78%" class="vtable">
+								<input name="ipsecpsk" type="text" class="formfld unknown" id="ipsecpsk" size="65" value="<?=htmlspecialchars($pconfig['ipsecpsk']);?>">
 							</td>
 						</tr>
 						<tr>

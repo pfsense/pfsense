@@ -170,7 +170,7 @@ exit;
         }
     } else {
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"ERROR");
-        portal_reply_page($redirurl, "error");
+        portal_reply_page($redirurl, "error", "Invalid username/password specified.");
     }
 
 } else if ($_POST['accept'] && $config['captiveportal']['auth_method'] == "local") {

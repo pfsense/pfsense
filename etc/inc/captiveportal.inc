@@ -155,7 +155,7 @@ function captiveportal_configure() {
 <body>
 <center>
 <h2>{$g['product_name']} captive portal</h2>
-Welcome to the {$g['product_name']} Captive Portal!  This is the default page since a custom page has not been defined.
+Welcome to the {$g['product_name']} Captive Portal!
 <p>
 <form method="post" action="\$PORTAL_ACTION\$">
 <input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">

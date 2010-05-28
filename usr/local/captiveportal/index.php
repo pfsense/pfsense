@@ -43,7 +43,7 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 $orig_host = $_ENV['HTTP_HOST'];
-$orig_request = $_GET['redirurl'];
+$orig_request = $_REQUEST['redirurl'];
 $clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {

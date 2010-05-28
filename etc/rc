@@ -202,10 +202,6 @@ if [ ! -d /cf/conf/backup/ ]; then
 	mkdir -p /cf/conf/backup/ 
 fi
 
-if [ ! -f /var/db/ez-ipupdate.cache ]; then
-	touch /var/db/ez-ipupdate.cache
-fi
-
 # OpenVPN storage
 if [ ! -d /var/etc/openvpn ]; then
 	mkdir -p /var/etc/openvpn

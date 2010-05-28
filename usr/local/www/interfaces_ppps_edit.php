@@ -99,66 +99,70 @@ if (isset($id) && $a_ppps[$id]) {
 		$pconfig['vjcomp'] = true;
 	if (isset($a_ppps[$id]['tcpmssfix']))
 		$pconfig['tcpmssfix'] = true;
-	if ($a_ppps[$id]['type'] == "ppp") {
-		$pconfig['initstr'] = base64_decode($a_ppps[$id]['initstr']);
-		$pconfig['simpin'] = $a_ppps[$id]['simpin'];
-		$pconfig['pin-wait'] = $a_ppps[$id]['pin-wait'];
-		$pconfig['apn'] = $a_ppps[$id]['apn'];
-		$pconfig['apnum'] = $a_ppps[$id]['apnum'];
-		$pconfig['phone'] = $a_ppps[$id]['phone'];
-		$pconfig['connect-timeout'] = $a_ppps[$id]['connect-timeout'];
-		$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
-		$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
-	}
-	if ($a_ppps[$id]['type'] == "pptp") {
-		$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
-		$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
-		$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
-	}
-	if ($a_ppps[$id]['type'] == "pppoe") {
-		$pconfig['provider'] = $a_ppps[$id]['provider'];
-		/* ================================================ */
-		/* = force a connection reset at a specific time? = */
-		/* ================================================ */
-		
-		if (isset($a_ppps[$id]['pppoe-reset-type'])) {
-			$pconfig['pppoe-reset-type'] = $a_ppps[$id]['pppoe-reset-type'];
-			$itemhash = getMPDCRONSettings($a_ppps[$id]['ptpid']);
-			$cronitem = $itemhash['ITEM'];
-			if (isset($cronitem)) {
-				$resetTime = "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
-			} else {
-				$resetTime = NULL;
-			}
+	switch($a_ppps[$id]['type']) {
+		case "ppp":
+			$pconfig['initstr'] = base64_decode($a_ppps[$id]['initstr']);
+			$pconfig['simpin'] = $a_ppps[$id]['simpin'];
+			$pconfig['pin-wait'] = $a_ppps[$id]['pin-wait'];
+			$pconfig['apn'] = $a_ppps[$id]['apn'];
+			$pconfig['apnum'] = $a_ppps[$id]['apnum'];
+			$pconfig['phone'] = $a_ppps[$id]['phone'];
+			$pconfig['connect-timeout'] = $a_ppps[$id]['connect-timeout'];
+			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
+			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
+			break;
+		case "pptp":
+			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
+			$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
+			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
+			if (isset($a_ppps[$id]['dhcp']))
+				$pconfig['pptp_dhcp'] = true;
+			break;
+		case "pppoe":
+			$pconfig['provider'] = $a_ppps[$id]['provider'];
+			/* ================================================ */
+			/* = force a connection reset at a specific time? = */
+			/* ================================================ */
 			
-			if ($a_ppps[$id]['pppoe-reset-type'] == "custom") {
-				$resetTime_a = split(" ", $resetTime);
-				$pconfig['pppoe_pr_custom'] = true;
-				$pconfig['pppoe_resetminute'] = $resetTime_a[0];
-				$pconfig['pppoe_resethour'] = $resetTime_a[1];
-				/*  just initialize $pconfig['pppoe_resetdate'] if the
-				 *  coresponding item contains appropriate numeric values.
-				 */
-				if ($resetTime_a[2] <> "*" && $resetTime_a[3] <> "*") 
-					$pconfig['pppoe_resetdate'] = "{$resetTime_a[3]}/{$resetTime_a[2]}/" . date("Y");
-			} else if ($a_ppps[$id]['pppoe-reset-type'] == "preset") {
-				$pconfig['pppoe_pr_preset'] = true;
-				switch ($resetTime) {
-					case CRON_MONTHLY_PATTERN:
-						$pconfig['pppoe_monthly'] = true;
-						break;
-					case CRON_WEEKLY_PATTERN:
-						$pconfig['pppoe_weekly'] = true;
-						break;
-					case CRON_DAILY_PATTERN:
-						$pconfig['pppoe_daily'] = true;
-						break;
-					case CRON_HOURLY_PATTERN:
-						$pconfig['pppoe_hourly'] = true;
-						break;
+			if (isset($a_ppps[$id]['pppoe-reset-type'])) {
+				$pconfig['pppoe-reset-type'] = $a_ppps[$id]['pppoe-reset-type'];
+				$itemhash = getMPDCRONSettings($a_ppps[$id]['ptpid']);
+				$cronitem = $itemhash['ITEM'];
+				if (isset($cronitem)) {
+					$resetTime = "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
+				} else {
+					$resetTime = NULL;
+				}
+				
+				if ($a_ppps[$id]['pppoe-reset-type'] == "custom") {
+					$resetTime_a = split(" ", $resetTime);
+					$pconfig['pppoe_pr_custom'] = true;
+					$pconfig['pppoe_resetminute'] = $resetTime_a[0];
+					$pconfig['pppoe_resethour'] = $resetTime_a[1];
+					/*  just initialize $pconfig['pppoe_resetdate'] if the
+					 *  coresponding item contains appropriate numeric values.
+					 */
+					if ($resetTime_a[2] <> "*" && $resetTime_a[3] <> "*") 
+						$pconfig['pppoe_resetdate'] = "{$resetTime_a[3]}/{$resetTime_a[2]}/" . date("Y");
+				} else if ($a_ppps[$id]['pppoe-reset-type'] == "preset") {
+					$pconfig['pppoe_pr_preset'] = true;
+					switch ($resetTime) {
+						case CRON_MONTHLY_PATTERN:
+							$pconfig['pppoe_monthly'] = true;
+							break;
+						case CRON_WEEKLY_PATTERN:
+							$pconfig['pppoe_weekly'] = true;
+							break;
+						case CRON_DAILY_PATTERN:
+							$pconfig['pppoe_daily'] = true;
+							break;
+						case CRON_HOURLY_PATTERN:
+							$pconfig['pppoe_hourly'] = true;
+							break;
+					}
 				}
 			}
-		}
+			break;
 	}
 	
 }
@@ -239,12 +243,9 @@ if ($_POST) {
 	foreach($_POST['interfaces'] as $iface){
 		if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface]))
 			$input_errors[] = "A valid local IP address must be specified for {$iface}.";
-/*		if (($_POST['subnet'][$iface] && !is_numeric($_POST['subnet'][$iface]))) 
-			$input_errors[] = "A valid PPTP subnet bit count must be specified for {$iface}.";
-*/
-		if (($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]))) 
-			$input_errors[] = "A valid gateway (remote IP) address must be specified for {$iface}.";
-		if (($_POST['bandwidth'][$iface] != "") && !is_numericint($_POST['bandwidth'][$iface])) 
+		if ($_POST['gateway'][$iface] && !is_ipaddr($_POST['gateway'][$iface]) && !is_hostname($_POST['gateway'][$iface])) 
+			$input_errors[] = "A valid gateway IP address OR hostname must be specified for {$iface}.";
+		if ($_POST['bandwidth'][$iface] && !is_numericint($_POST['bandwidth'][$iface])) 
 			$input_errors[] = "The bandwidth value for {$iface} must be an integer.";
 		if ($_POST['mtu'][$iface] && ($_POST['mtu'][$iface] < 576)) 
 			$input_errors[] = "The MTU for {$iface} must be greater than 576 bytes.";
@@ -338,6 +339,7 @@ if ($_POST) {
 				
 				break;
 			case "pptp":
+			case "l2tp":
 				foreach($_POST['interfaces'] as $iface){
 					if (isset($_POST['localip'][$iface]))
 						$localip_array[] = $_POST['localip'][$iface];
@@ -346,6 +348,8 @@ if ($_POST) {
 					if (isset($_POST['subnet'][$iface]))
 						$subnet_array[] = $_POST['subnet'][$iface];
 				}
+
+				$ppp['dhcp'] = $_POST['pptp_dhcp'] ? true : false;
 				if (count($localip_array))
 					$ppp['localip'] = implode(',',$localip_array);
 				else
@@ -369,12 +373,7 @@ if ($_POST) {
 		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
-/*		
-		$bw_array = array();
-		$mtu_array = array();
-		$mru_array = array();
-		$mrru_array = array();
-*/		
+	
 		foreach($_POST['interfaces'] as $iface){
 			if (isset($_POST['bandwidth'][$iface]))
 				$bw_array[] = $_POST['bandwidth'][$iface];
@@ -509,7 +508,7 @@ $closehead = false;
 $pgtitle = array("Interfaces","PPPs","Edit");
 include("head.inc");
 
-$types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP"/*,  "l2tp" => "L2TP", "tcp" => "TCP", "udp" => "UDP"*/  ); 
+$types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP",  "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/  ); 
 
 ?>
 	<script type="text/javascript" src="/javascript/numericupdown/js/numericupdown.js"></script>
@@ -592,6 +591,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				if($serport_count > $port_count)
 					$port_count=$serport_count;
 			?></td>
+			<td style="display:none" name="port_count" id="port_count"><?=htmlspecialchars($port_count);?></td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Username"); ?></td>
@@ -767,7 +767,14 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			<td colspan="2" style="padding:0px;">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?= gettext("PPTP configuration"); ?></td>
+						<td colspan="2" valign="top" class="listtopic"><?= gettext("PPTP/L2TP Configuration"); ?></td>
+					</tr>
+					<tr>
+						<td width="22%" valign="top" class="vncell"><?= gettext("Use DHCP/DNS"); ?></td>
+						<td width="78%" class="vtable"> 
+							<input type="checkbox" value="on" name="pptp_dhcp" id="pptp_dhcp" <?php if (isset($pconfig['pptp_dhcp'])) echo "checked"; ?>> <?= gettext("Configure Local IP and Gateway IP using DHCP/DNS"); ?> 
+							<br/> <span class="vexpl"><?= gettext("Use DHCP to configure the underlying interface IP, and optionally DNS to configure the remote IP for PPtP and L2TP. If a hostname is entered in \"Gateway\" field(s) below, Gateway IP will be set via DNS."); ?></span>
+						</td>
 					</tr>
 				</table>
 			</td>
@@ -777,11 +784,11 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			<td colspan="2" style="padding:0px;">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td width="22%" name="<?= gettext("Local IP address"); ?>" id="localiplabel<?=$j;?>" valign="top" class="vncell"></td>
+						<td width="22%" id="localiplabel<?=$j;?>" valign="top" class="vncell"><?= gettext("Local IP"); ?></td>
 						<td width="78%" class="vtable"> 
 							<input name="localip[]" type="text" class="formfld unknown" id="localip<?=$j;?>" size="20"  value="<?=htmlspecialchars($pconfig['localip'][$j]);?>">
 							/
-							<select style="display:none" name="subnet[]" class="formselect" id="subnet<?=$j;?>">
+							<select name="subnet[]" class="formselect" id="subnet<?=$j;?>" disabled="true">
 							<?php for ($i = 31; $i > 0; $i--): ?>
 								<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo "selected"; ?>><?=$i;?></option>
 							<?php endfor; ?>
@@ -790,10 +797,10 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" name="<?= gettext("Remote IP (Gateway)"); ?>" id="gatewaylabel<?=$j;?>" valign="top" class="vncell"></td>
+						<td width="22%" id="gatewaylabel<?=$j;?>" valign="top" class="vncell"></td>
 						<td width="78%" class="vtable">
-							<input name="gateway[]" type="text" class="formfld unknown" id="gateway<?=$j;?>" size="20" value="<?=htmlspecialchars($pconfig['gateway'][$j]);?>">
-							<br><span class="vexpl"><?= gettext("Note: This is where the packets will be routed. Remote IP is required for PPTP connections. Remote IP is automatically assigned for PPP links if this field is empty."); ?></span>
+							<input name="gateway[]" type="text" class="formfld unknown" id="gateway<?=$j;?>" size="20" value="<?=htmlspecialchars($pconfig['gateway'][$j]);?>"><?= gettext("IP Address OR Hostname"); ?>
+							<br><span class="vexpl"><?= gettext("Note: This is where the packets will be routed. Remote IP OR Hostname is required for PPTP connections. Remote IP is automatically assigned for PPP links if this field is empty."); ?></span>
 						</td>
 					</tr>
 				</table>

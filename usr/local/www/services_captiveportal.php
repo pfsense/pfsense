@@ -57,6 +57,9 @@ if ($_GET['act'] == "viewhtml") {
 } else if ($_GET['act'] == "viewerrhtml") {
 	echo base64_decode($config['captiveportal']['page']['errtext']);
 	exit;
+} else if ($_GET['act'] == "viewlogouthtml") {
+	echo base64_decode($config['captiveportal']['page']['logouttext']);
+	exit;
 }
 
 $pconfig['cinterface'] = $config['captiveportal']['interface'];
@@ -203,6 +206,8 @@ if ($_POST) {
 			$config['captiveportal']['page']['htmltext'] = base64_encode(file_get_contents($_FILES['htmlfile']['tmp_name']));
 		if (is_uploaded_file($_FILES['errfile']['tmp_name']))
 			$config['captiveportal']['page']['errtext'] = base64_encode(file_get_contents($_FILES['errfile']['tmp_name']));
+		if (is_uploaded_file($_FILES['logoutfile']['tmp_name']))
+			$config['captiveportal']['page']['logouttext'] = base64_encode(file_get_contents($_FILES['logoutfile']['tmp_name']));
 
 		write_config();
 
@@ -257,6 +262,7 @@ function enable_change(enable_change) {
 	document.iform.radiussession_timeout.disabled = radius_endis;
 	document.iform.htmlfile.disabled = endis;
 	document.iform.errfile.disabled = endis;
+	document.iform.logoutfile.disabled = endis;
 
 	document.iform.radiusacctport.disabled = (radius_endis || !document.iform.radacct_enable.checked) && !enable_change;
 
@@ -637,6 +643,20 @@ Example code for the form:<br>
 		<input name="errfile" type="file" class="formfld file" id="errfile"><br>
 		<?php if ($config['captiveportal']['page']['errtext']): ?>
 		<a href="?act=viewerrhtml" target="_blank">View current page</a>
+		  <br>
+		  <br>
+		<?php endif; ?>
+The contents of the HTML/PHP file that you upload here are displayed when an authentication error occurs.
+You may include &quot;$PORTAL_MESSAGE$&quot;, which will be replaced by the error or reply messages from the RADIUS server, if any.</td>
+	</tr>
+	<tr>
+	  <td width="22%" valign="top" class="vncell">Logout<br>
+		page<br>
+		contents</td>
+	  <td class="vtable">
+		<input name="logoutfile" type="file" class="formfld file" id="logoutfile"><br>
+		<?php if ($config['captiveportal']['page']['logouttext']): ?>
+		<a href="?act=viewlogouthtml" target="_blank">View current page</a>
 		  <br>
 		  <br>
 		<?php endif; ?>

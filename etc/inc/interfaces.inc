@@ -820,6 +820,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	case "ppp":
 	case "pppoe":
 	case "pptp":
+	case "l2tp":
 		killbypid("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid");
 		sleep(2);
 		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
@@ -1319,7 +1320,7 @@ EOD;
 
 EOD;
 
-		if ($type == "pptp") {
+		if ($type == "pptp" || $type == "l2tp") {
 			$mpdconf .= <<<EOD
 	set bundle no noretry
 	set pptp self {$localips[$pid]}
@@ -1368,7 +1369,8 @@ EOD;
 					else 
 						log_error("Could not bring up interface {$port} for {$interface} {$ppp['type']} link in interface_ppps_configure().");
 					break;
-				case "pptp": 
+				case "pptp":
+				case "l2tp":
 					/* configure interface */
 					if($port)
 						mwexec("/sbin/ifconfig " . escapeshellarg($port) . " " .
@@ -3315,9 +3317,10 @@ function get_interfaces_with_gateway() {
 		switch ($ifname['ipaddr']) {
 			case "dhcp":
 			case "carpdev-dhcp":
+			case "ppp";
 			case "pppoe":
 			case "pptp":
-			case "ppp";
+			case "l2tp";
 				$ints[] = $ifdescr;
 			break;
 			default:

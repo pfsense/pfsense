@@ -202,6 +202,7 @@ if ($_POST) {
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
+		case "l2tp":
 		case "pptp":
 			if ($_POST['ondemand']) {
 				$reqdfields = explode(" ", "interfaces username password localip subnet gateway ondemand idletimeout");

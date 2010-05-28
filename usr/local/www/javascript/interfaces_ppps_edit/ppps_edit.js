@@ -26,6 +26,14 @@ function show_hide_linkfields(options){
 	var port_count = parseInt($('port_count').innerHTML);
 	for(var j=0; j < port_count; j++){
 		var count = j.toString();
+		var link = "link" + count;
+		var ipfields = "ipfields" + count;
+		var subnet = "subnet" + count;
+		$(ipfields,link).invoke('hide');
+		$(subnet).disabled = true;
+	}
+	for(var j=0; j < options.length; j++){
+		var count = select_count.toString();
 		var type = $('type').value;
 		var link = "link" + count;
 		var lnklabel = "linklabel" + count;
@@ -39,7 +47,7 @@ function show_hide_linkfields(options){
 		var subnet = "subnet" + count;
 		var gateway = "gateway" + count;
 		var gatewaylabel = "gatewaylabel" + count;
-		
+		/*
 		$(ipfields,link).invoke('hide');
 		$(bw).name = "bandwidth[]";
 		$(mtu).name = "mtu[]";
@@ -48,7 +56,8 @@ function show_hide_linkfields(options){
 		$(subnet).name = "subnet[]";
 		$(subnet).disabled = true;
 		$(gateway).name = "gateway[]";
-		if (j <  options.length && options[j].selected){
+		*/
+		if (options[j].selected){
 			$(lnklabel).innerHTML = "Link Parameters (" + options[j].value + ")";
 			$(bwlabel).innerHTML = "Bandwidth (" + options[j].value + ")";
 			$(bw).name = "bandwidth[" + options[j].value + "]";

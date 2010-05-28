@@ -111,6 +111,7 @@ if (isset($id) && $a_ppps[$id]) {
 			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
 			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
 			break;
+		case "l2tp":
 		case "pptp":
 			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
 			$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
@@ -385,17 +386,17 @@ if ($_POST) {
 			if (isset($_POST['mrru'][$iface]))
 				$mrru_array[] = $_POST['mrru'][$iface];
 		}
-		if (count($bw_array))
+		if (isset($bw_array))
 			$ppp['bandwidth'] = implode(',', $bw_array);
 		else 
 			unset($ppp['bandwidth']);
 			
-		if (count($mtu_array))
+		if (isset($mtu_array))
 			$ppp['mtu'] = implode(',', $mtu_array);
 		else 
 			unset($ppp['mtu']);
 			
-		if (count($mru_array))
+		if (isset($mru_array))
 			$ppp['mru'] = implode(',', $mru_array);
 		else 
 			unset($ppp['mru']);

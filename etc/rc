@@ -171,6 +171,7 @@ if [ ! -h /tmp/tmp ]; then
 fi
 
 # Make sure our /tmp is 777 + Sticky
+rm -rf /tmp/*
 chmod 1777 /tmp
 
 if [ ! "$PLATFORM" = "cdrom" ] ; then

@@ -99,9 +99,12 @@ function updateType(t){
 		}
 		default:
 			select_list.length = 0;
+			select_list[0] = new Option("Select Link Type First","");
 			break;
 	}
-	$(t).show();
+	if (t != ''){
+		$(t).show();
+	}
 }
 
 function show_reset_settings(reset_type) {

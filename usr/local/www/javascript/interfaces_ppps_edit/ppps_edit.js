@@ -36,9 +36,8 @@ function show_hide_linkfields(options){
 		var subnet = "subnet" + count;
 		var gateway = "gateway" + count;
 		var gatewaylabel = "gatewaylabel" + count;
+		
 		$(ipfields,label,subnet).invoke('hide');
-		//$(label).hide();
-		//$(subnet).hide();
 		$(bw).name = "bandwidth[]";
 		$(mtu).name = "mtu[]";
 		$(mru).name = "mru[]";
@@ -96,7 +95,6 @@ function updateType(t){
 		case "pptp": {
 			update_select_list(ports, select_list);
 			$('select','ppp','pppoe','prefil_ppp').invoke('hide');
-			//$('ipfields','subnet').invoke('show');
 			break;
 		}
 		default:

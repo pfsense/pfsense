@@ -550,7 +550,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					<option></option>
 				</select>
 
-				<br/><span class="vexpl"><?= gettext("Interfaces or ports participating in the multilink connection."); ?></span>
+				<br/><span class="vexpl"><?= gettext("Interface(s) or port(s) participating in the connection."); ?></span>
 				<span style="display:none" id="prefil_ppp">
 				<p/><?= gettext("Click a link to fill in defaults for these carriers:"); ?>&nbsp;
 				<a href='#' onClick='javascript:prefill_att();'>ATT</A>

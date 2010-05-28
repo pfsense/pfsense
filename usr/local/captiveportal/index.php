@@ -198,7 +198,7 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
     global $g, $config;
 
     /* Get captive portal layout */
-    if ($type = "redir") {
+    if ($type == "redir") {
 	header("Location: {$redirurl}");
 	return;
     } else if ($type == "login")

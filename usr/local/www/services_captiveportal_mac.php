@@ -64,8 +64,15 @@ if ($_POST) {
 			clear_subsystem_dirty('passthrumac');
 	}
 
-	if ($_POST['delmac'] && $_POST['postafterlogin']) {
-		if (is_array($a_passthrumacs)) {
+	if ($_POST['postafterlogin']) {
+		if (!is_array($a_passthrumacs))
+			exit;
+		if ($_POST['username']) {
+			$mac = captiveportal_passthrumac_findbyname($_POST['username']);
+			if (!empty($mac))
+				$_POST['delmac'] = $mac['mac'];	
+		}
+		if ($_POST['delmac']) {
 			$found = false;
 			foreach ($a_passthrumacs as $idx => $macent) {
 				if ($macent['mac'] == $_POST['delmac']) {

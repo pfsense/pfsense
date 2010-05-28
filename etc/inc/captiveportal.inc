@@ -785,6 +785,18 @@ function captiveportal_passthrumac_configure($lock = false) {
 	return $rules;
 }
 
+function captiveportal_passthrumac_findbyname($username) {
+	global $config;
+
+	if (is_array($config['captiveportal']['passthrumac'])) {
+		foreach ($config['captiveportal']['passthrumac'] as $macent) {
+			if ($macent['username'] == $username)
+				return $macent;
+		}
+	}
+	return NULL;
+}
+
 /* 
  * table (3=IN)/(4=OUT) hold allowed ip's without bw limits
  * table (5=IN)/(6=OUT) hold allowed ip's with bw limit.

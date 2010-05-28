@@ -194,7 +194,7 @@ exit;
 
 exit;
 
-function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null) {
+function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null, $username = null, $password = null) {
     global $g, $config;
 
     /* Get captive portal layout */
@@ -232,6 +232,8 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	$htmltext = str_replace("#PORTAL_MESSAGE#", htmlspecialchars($message), $htmltext);
 	$htmltext = str_replace("#CLIENT_MAC#", htmlspecialchars($clientmac), $htmltext);
 	$htmltext = str_replace("#CLIENT_IP#", htmlspecialchars($clientip), $htmltext);
+	$htmltext = str_replace("#USERNAME#", htmlspecialchars($username), $htmltext);
+	$htmltext = str_replace("#PASSWORD#", htmlspecialchars($password), $htmltext);
 
     echo $htmltext;
 }
@@ -254,7 +256,7 @@ function portal_mac_radius($clientmac,$clientip) {
 
 function portal_allow($clientip,$clientmac,$username,$password = null, $attributes = null, $ruleno = null)  {
 
-	global $redirurl, $g, $config, $type, $passthrumac;
+	global $redirurl, $g, $config, $type, $passthrumac, $_POST;
 
 	/* See if a ruleno is passed, if not start locking the sessions because this means there isn't one atm */
 	$captiveshouldunlock = false;
@@ -285,13 +287,31 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	if ($attributes['voucher'])
 		$remaining_time = $attributes['session_timeout'];
 
+	$writecfg = false;
 	/* Find an existing session */
 	if ((isset($config['captiveportal']['noconcurrentlogins'])) && $passthrumac) {
 		if (isset($config['captiveportal']['passthrumacadd'])) {
 			$mac = captiveportal_passthrumac_findbyname($username);
 			if (!empty($mac)) {
-				portal_reply_page($redirurl, "error", "Username: {$username} is known with another mac address.");
-				exit;
+				if ($_POST['replacemacpassthru']) {
+					foreach ($a_passthrumacs as $idx => $macent) {
+						if ($macent['mac'] == $mac['mac']) {
+							unset($config['captiveportal']['passthrumac'][$idx]);
+							$mac['mac'] = $clientmac;
+							$config['captiveportal']['passthrumac'][] = $mac;
+							$macrules = captiveportal_passthrumac_configure_entry($mac);
+							file_put_contents("{$g['tmp_path']}/macentry.rules.tmp", $macrules);
+							mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry.rules.tmp");
+							$writecfg = true;
+							$sessionid = true;
+							break;
+						}
+					}
+                                } else {
+					portal_reply_page($redirurl, "error", "Username: {$username} is known with another mac address.",
+						$clientmac, $clientip, $username, $password);
+					exit;
+				}
 			}
 		}
 	}
@@ -334,7 +354,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		return 0;       // voucher already used and no time left
 	}
 
-	$writecfg = false;
 	if (!isset($sessionid)) {
 
 		/* generate unique session ID */

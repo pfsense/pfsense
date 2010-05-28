@@ -286,7 +286,18 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		$remaining_time = $attributes['session_timeout'];
 
 	/* Find an existing session */
-	for ($i = 0; $i < count($cpdb); $i++) {
+	if ((isset($config['captiveportal']['noconcurrentlogins'])) && $passthrumac) {
+		if (isset($config['captiveportal']['passthrumacadd'])) {
+			$mac = captiveportal_passthrumac_findbyname($username);
+			if (!empty($mac)) {
+				portal_reply_page($redirurl, "error", "Username: {$username} is known with another mac address.");
+				exit;
+			}
+		}
+	}
+
+	$nousers = count($cpdb);
+	for ($i = 0; $i < $nousers; $i++) {
 		/* on the same ip */
 		if($cpdb[$i][2] == $clientip) {
 			captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - REUSING OLD SESSION");
@@ -342,6 +353,8 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		if ($passthrumac) {
 			$mac = array();
 			$mac['mac'] = $clientmac;
+			if (isset($config['captiveportal']['passthrumacaddusername']))
+				$mac['username'] = $username;
 			$mac['descr'] =  "Auto added pass-through MAC for user {$username}";
 			if (!empty($bw_up))
 				$mac['bw_up'] = $bw_up;

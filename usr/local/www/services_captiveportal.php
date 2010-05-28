@@ -93,6 +93,7 @@ $pconfig['radiuskey2'] = $config['captiveportal']['radiuskey2'];
 $pconfig['radiusvendor'] = $config['captiveportal']['radiusvendor'];
 $pconfig['radiussession_timeout'] = isset($config['captiveportal']['radiussession_timeout']);
 $pconfig['passthrumacadd'] = isset($config['captiveportal']['passthrumacadd']);
+$pconfig['passthrumacaddusername'] = isset($config['captiveportal']['passthrumacaddusername']);
 $pconfig['radmac_format'] = $config['captiveportal']['radmac_format'];
 
 if ($_POST) {
@@ -194,6 +195,7 @@ if ($_POST) {
 		$config['captiveportal']['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
 		$config['captiveportal']['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
+		$config['captiveportal']['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$config['captiveportal']['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 
 		/* file upload? */
@@ -370,7 +372,13 @@ to access after they've authenticated.</td>
         <strong>Enable Pass-through MAC automatic additions</strong><br>
     If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again. 
     To remove the passthrough MAC entry you either have to log in and remove it manually from the <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> or send a POST from another system to remove it.
-    If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.</td>
+    If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.
+	<br/><br/>
+        <input name="passthrumacaddusername" type="checkbox" class="formfld" id="passthrumacaddusername" value="yes" <?php if ($pconfig['passthrumacaddusername']) echo "checked"; ?>>
+        <strong>Enable Pass-through MAC automatic addition with username</strong><br>
+    If this option is set, with the automatically MAC passthrough entry created the username, used during authentication, will be saved.
+    To remove the passthrough MAC entry you either have to log in and remove it manually from the <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> or send a POST from another system to remove it.
+	</td>
 	</tr>
 	<tr>
       <td valign="top" class="vncell">Per-user bandwidth restriction</td>

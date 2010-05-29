@@ -1123,9 +1123,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 																		</center>
 																	</td>
 																</tr>
-																<tr>
-																	<td>&nbsp;</td>
-																</tr>
+																<tr><td>&nbsp;</td></tr>
 															</table>
 														</td>
 													</tr>

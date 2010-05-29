@@ -22,18 +22,10 @@ function clear_selected(list_name){
 }
 
 function show_hide_linkfields(options){
-	var select_count = 0;
+	var i = 0;
 	var port_count = parseInt($('port_count').innerHTML);
 	for(var j=0; j < port_count; j++){
 		var count = j.toString();
-		var link = "link" + count;
-		var ipfields = "ipfields" + count;
-		var subnet = "subnet" + count;
-		$(ipfields,link).invoke('hide');
-		$(subnet).disabled = true;
-	}
-	for(var j=0; j < options.length; j++){
-		var count = select_count.toString();
 		var type = $('type').value;
 		var link = "link" + count;
 		var lnklabel = "linklabel" + count;
@@ -47,35 +39,40 @@ function show_hide_linkfields(options){
 		var subnet = "subnet" + count;
 		var gateway = "gateway" + count;
 		var gatewaylabel = "gatewaylabel" + count;
-		/*
+		
 		$(ipfields,link).invoke('hide');
+		$(subnet).disabled = true;
+		
 		$(bw).name = "bandwidth[]";
 		$(mtu).name = "mtu[]";
 		$(mru).name = "mru[]";
 		$(localip).name = "localip[]";
 		$(subnet).name = "subnet[]";
-		$(subnet).disabled = true;
 		$(gateway).name = "gateway[]";
-		*/
-		if (options[j].selected){
-			$(lnklabel).innerHTML = "Link Parameters (" + options[j].value + ")";
-			$(bwlabel).innerHTML = "Bandwidth (" + options[j].value + ")";
-			$(bw).name = "bandwidth[" + options[j].value + "]";
-			$(mtu).name = "mtu[" + options[j].value + "]";
-			$(mru).name = "mru[" + options[j].value + "]";
-			$(localiplabel).innerHTML = "Local IP (" + options[j].value + ")";
-			$(gatewaylabel).innerHTML = "Gateway (" + options[j].value + ")";
-			$(localip).name = "localip[" + options[j].value + "]";
-			$(subnet).name = "subnet[" + options[j].value + "]";
-			$(gateway).name = "gateway[" + options[j].value + "]";
-			if (type == 'pptp' || type == 'ppp' || type == 'l2tp'){
-				$(ipfields).show();
-				if (type == 'pptp' || type == 'l2tp'){
-					$(subnet).disabled = false;
+		
+		while(i < options.length){
+			if (options[i].selected ){
+				$(lnklabel).innerHTML = "Link Parameters (" + options[i].value + ")";
+				$(bwlabel).innerHTML = "Bandwidth (" + options[i].value + ")";
+				$(bw).name = "bandwidth[" + options[i].value + "]";
+				$(mtu).name = "mtu[" + options[i].value + "]";
+				$(mru).name = "mru[" + options[i].value + "]";
+				$(localiplabel).innerHTML = "Local IP (" + options[i].value + ")";
+				$(gatewaylabel).innerHTML = "Gateway (" + options[i].value + ")";
+				$(localip).name = "localip[" + options[i].value + "]";
+				$(subnet).name = "subnet[" + options[i].value + "]";
+				$(gateway).name = "gateway[" + options[i].value + "]";
+				if (type == 'pptp' || type == 'ppp' || type == 'l2tp'){
+					$(ipfields).show();
+					if (type == 'pptp' || type == 'l2tp'){
+						$(subnet).disabled = false;
+					}
 				}
+				$(link).show();
+				i++;
+				break;
 			}
-			$(link).show();
-			select_count++;
+			i++;
 		}
 	}
 }

@@ -792,7 +792,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 							/
 							<select name="subnet[]" class="formselect" id="subnet<?=$j;?>" disabled="true">
 							<?php for ($i = 31; $i > 0; $i--): ?>
-								<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo "selected"; ?>><?=$i;?></option>
+								<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo " selected"; ?>><?=$i;?></option>
 							<?php endfor; ?>
 							</select>
 							<br><span class="vexpl"><?= gettext("Note: Local IP/subnet is required for PPTP connections. LocalIP is automatically assigned for PPP links if this field is empty."); ?></span>

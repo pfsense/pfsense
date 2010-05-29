@@ -554,28 +554,28 @@ if ($_POST) {
 				}
 				break;
 			case "pppoe":
-				$ppp['ptpid'] = $_POST['ptpid'];
-				$ppp['type'] = $_POST['type'];
+				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
+				$a_ppps[$pppid]['type'] = $_POST['type'];
 				if (isset($_POST['ppp_port']))
-					$ppp['ports'] = $_POST['ppp_port'];
+					$a_ppps[$pppid]['ports'] = $_POST['ppp_port'];
 				else
-					$ppp['ports'] = $wancfg['if'];
-				$ppp['username'] = $_POST['pppoe_username'];
-				$ppp['password'] = base64_encode($_POST['pppoe_password']);
+					$a_ppps[$pppid]['ports'] = $wancfg['if'];
+				$a_ppps[$pppid]['username'] = $_POST['pppoe_username'];
+				$a_ppps[$pppid]['password'] = base64_encode($_POST['pppoe_password']);
 				if (!empty($_POST['provider']))
-					$ppp['provider'] = $_POST['provider'];
+					$a_ppps[$pppid]['provider'] = $_POST['provider'];
 				else
-					unset($ppp['provider']);
-				$ppp['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
+					unset($a_ppps[$pppid]['provider']);
+				$a_ppps[$pppid]['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 				if (!empty($_POST['idletimeout']))
-					$ppp['idletimeout'] = $_POST['pppoe_idletimeout'];
+					$a_ppps[$pppid]['idletimeout'] = $_POST['pppoe_idletimeout'];
 				else
-					unset($ppp['idletimeout']);
+					unset($a_ppps[$pppid]['idletimeout']);
 
 				if (!empty($_POST['pppoe-reset-type']))
-					$ppp['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
+					$a_ppps[$pppid]['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
 				else
-					unset($ppp['pppoe-reset-type']);
+					unset($a_ppps[$pppid]['pppoe-reset-type']);
 				$wancfg['if'] = $_POST['type'] . $if_num;
 				$wancfg['ptpid'] = $_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
@@ -585,22 +585,22 @@ if ($_POST) {
 				
 				break;
 			case "pptp":
-				$ppp['ptpid'] = $_POST['ptpid'];
-				$ppp['type'] = $_POST['type'];
+				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
+				$a_ppps[$pppid]['type'] = $_POST['type'];
 				if (isset($_POST['ppp_port']))
-					$ppp['ports'] = $_POST['ppp_port'];
+					$a_ppps[$pppid]['ports'] = $_POST['ppp_port'];
 				else
-					$ppp['ports'] = $wancfg['if'];
-				$ppp['username'] = $_POST['pptp_username'];
-				$ppp['password'] = base64_encode($_POST['pptp_password']);
-				$ppp['localip'] = $_POST['pptp_local'];
-				$ppp['subnet'] = $_POST['pptp_subnet'];
-				$ppp['gateway'] = $_POST['pptp_remote'];
-				$ppp['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
+					$a_ppps[$pppid]['ports'] = $wancfg['if'];
+				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
+				$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
+				$a_ppps[$pppid]['localip'] = $_POST['pptp_local'];
+				$a_ppps[$pppid]['subnet'] = $_POST['pptp_subnet'];
+				$a_ppps[$pppid]['gateway'] = $_POST['pptp_remote'];
+				$a_ppps[$pppid]['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
 				if (!empty($_POST['idletimeout']))
-					$ppp['idletimeout'] = $_POST['pptp_idletimeout'];
+					$a_ppps[$pppid]['idletimeout'] = $_POST['pptp_idletimeout'];
 				else
-					unset($ppp['idletimeout']);
+					unset($a_ppps[$pppid]['idletimeout']);
 				
 				$wancfg['if'] = $_POST['type'] . $if_num;
 				$wancfg['ptpid'] = $_POST['ptpid'];
@@ -608,6 +608,8 @@ if ($_POST) {
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
+				break;
+			case "none":
 				break;
 		}
 		handle_pppoe_reset();
@@ -638,11 +640,6 @@ if ($_POST) {
 		if (isset($wancfg['wireless'])) {
 			handle_wireless_post();
 		}
-		
-		if (isset($_POST['pppid']) && $a_ppps[$pppid])
-			$a_ppps[$pppid] = $ppp;
-		else
-			$a_ppps[] = $ppp;
 		
 		write_config();
 		mark_subsystem_dirty('interfaces');
@@ -874,7 +871,7 @@ function check_wireless_mode() {
 $pgtitle = array("Interfaces", $pconfig['descr']);
 $closehead = false;
 include("head.inc");
-$types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe" => "PPPoE", "pptp" => "PPTP" /* , "carpdev-dhcp" => "CarpDev"*/); 
+$types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP" /* , "carpdev-dhcp" => "CarpDev"*/); 
 
 ?>
 
@@ -887,23 +884,27 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 	function updateType(t) {
 		switch(t) {
 			case "none": {
-				$('static','dhcp','pppoe','pptp').invoke('hide');
+				$('static','dhcp','pppoe','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "static": {
-				$('none','dhcp','pppoe','pptp').invoke('hide');
+				$('none','dhcp','pppoe','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "dhcp": {
-				$('none','static','pppoe','pptp').invoke('hide');
+				$('none','static','pppoe','pptp', 'ppp').invoke('hide');
+				break;
+			}
+			case "ppp": {
+				$('none','static','dhcp','pptp', 'pppoe').invoke('hide');
 				break;
 			}
 			case "pppoe": {
-				$('none','static','dhcp','pptp').invoke('hide');
+				$('none','static','dhcp','pptp', 'ppp').invoke('hide');
 				break;
 			}
 			case "pptp": {
-				$('none','static','dhcp','pppoe').invoke('hide');
+				$('none','static','dhcp','pppoe', 'ppp').invoke('hide');
 				break;
 			}
 		}
@@ -1172,6 +1173,29 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								</table>
 							</td>
 						</tr>
+						<tr style="display:none;" name="ppp" id="ppp">
+							<td colspan="2" style="padding: 0px;">
+								<table width="100%" border="0" cellpadding="6" cellspacing="0">
+									<tr>
+										<td colspan="2" valign="top" class="listtopic">PPP configuration</td>
+									</tr>
+									<tr>
+									<td width="22%" valign="top" class="vncell">PPP</td>
+										<?php if (isset($pconfig['pppid'])): ?>
+											<td width="78%" class="vtable">
+											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a>
+											to edit PPP configuration.
+											</td>
+										<? else: ?>
+											<td width="78%" class="vtable">
+											<a href="/interfaces_ppps_edit.php" class="navlnk">Click here</a>
+											to create a PPP configuration.
+											</td>
+										<? endif; ?>	
+									</tr>
+								</table>
+							</td>
+						</tr>
 						<tr style="display:none;" name="pppoe" id="pppoe">
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -1273,7 +1297,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											</td>
 										<? endif; ?>	
 									</tr>
-									
 								</table>
 							</td>
 						</tr>
@@ -1852,6 +1875,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		else
 			echo "show_allcfg(document.iform.enable);";
 		echo "updateType('{$pconfig['type']}');\n";
+		?>
 	</script>
 	<?php include("fend.inc"); ?>
 	</body>

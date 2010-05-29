@@ -985,12 +985,11 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								<select name="type" onChange="updateType(this.value);" class="formselect" id="type">
 								<?php 
 									foreach ($types as $key => $opt) { 
-										//echo "<option onClick=\"updateType('{$key}');\"";
-										echo "<option";
-										$select = "";
+										echo "<option onClick=\"updateType('{$key}');\"";
 										if ($key == $pconfig['type']) 
-											$select = "selected";
-										echo " value=\"{$key}\" {$select}>" . htmlspecialchars($opt) . "</option>";
+											echo " selected";
+										echo " value=\"{$key}\" >" . htmlspecialchars($opt);
+										echo "</option>";
 									} 
 								?>
 								</select>
@@ -1345,16 +1344,16 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 						<tr>
 							<td valign="top" class="vncellreq">Standard</td>
 							<td class="vtable">
-								<select name="standard" class="formselect" id="standard">
-									<?php
-									foreach($wl_modes as $wl_standard => $wl_channels) {
-										echo "<option ";
-										if ($pconfig['standard'] == "$wl_standard")
-											echo "selected ";
-										echo "value=\"$wl_standard\">802.$wl_standard</option>\n";
-									}
-									?>
-								</select>
+							<select name="standard" class="formselect" id="standard">
+								<?php
+								foreach($wl_modes as $wl_standard => $wl_channels) {
+									echo "<option ";
+									if ($pconfig['standard'] == "$wl_standard")
+										echo "selected ";
+									echo "value=\"$wl_standard\">802.$wl_standard</option>\n";
+								}
+								?>
+							</select>
 							</td>
 						</tr>
 						<?php if (isset($wl_modes['11g'])): ?>
@@ -1748,6 +1747,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 						</tr>
 					</table> <!-- End "allcfg" table -->
 					</div> <!-- End "allcfg" div -->
+
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
 							<td width="100" valign="top">
@@ -1852,7 +1852,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		else
 			echo "show_allcfg(document.iform.enable);";
 		echo "updateType('{$pconfig['type']}');\n";
-		?>
 	</script>
 	<?php include("fend.inc"); ?>
 	</body>

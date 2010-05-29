@@ -29,6 +29,11 @@
 
 require("guiconfig.inc");
 
+if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
+	Header("Location: /index.php");
+	exit;
+}
+
 function write_out_pc_sysinstaller_config($disk) {
 	$fd = fopen("/PCBSD/pc-sysinstall/examples/pfSense-install.cfg", "w");
 	if(!$fd) {

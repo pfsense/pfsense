@@ -138,6 +138,7 @@ include("head.inc");
 	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array("File Manager", true, "services_captiveportal_filemanager.php");
 	$tab_array[] = array("Auth Logs", false, "diag_logs_auth.php");
+	$tab_array[] = array("Status", false, "status_captiveportal.php");
 	display_top_tabs($tab_array);
 ?>  </td></tr>
   <tr>

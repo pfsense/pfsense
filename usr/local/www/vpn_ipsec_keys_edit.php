@@ -56,6 +56,10 @@ if (isset($id) && $a_secret[$id]) {
 }
 
 if ($_POST) {
+	$userids = array();
+	foreach ($config['system']['user'] as $id => $user) {
+		$userids[$user['name']] = $id;
+	}
 	
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -68,6 +72,9 @@ if ($_POST) {
 	
 	if (preg_match("/[^a-zA-Z0-9@\.\-]/", $_POST['ident']))
 		$input_errors[] = "The identifier contains invalid characters.";
+
+	if (array_key_exists($_POST['ident'], $userids))
+		$input_errors[] = "A user with this name already exists. Add the key to the user instead.";
 	
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
@@ -117,7 +124,7 @@ include("head.inc");
                 <tr> 
                   <td valign="top" class="vncellreq">Identifier</td>
                   <td class="vtable">
-					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld" id="ident" size="30" value="<?=$pconfig['ident'];?>">
+					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld unknown" id="ident" size="30" value="<?=$pconfig['ident'];?>">
                     <br>
 This can be either an IP address, fully qualified domain name or an e-mail address.       
                   </td>
@@ -125,7 +132,7 @@ This can be either an IP address, fully qualified domain name or an e-mail addre
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Pre-shared key</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="psk" type="text" class="formfld" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>">
+                    <?=$mandfldhtml;?><input name="psk" type="text" class="formfld unknown" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>">
                   </td>
                 </tr>
                 <tr> 

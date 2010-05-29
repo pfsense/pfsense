@@ -112,13 +112,27 @@ if ($_POST) {
 		
 		$mac['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_passthrumacs[$id])
+		if (isset($id) && $a_passthrumacs[$id]) {
+			$oldmac = $a_passthrumacs[$id]['mac'];
 			$a_passthrumacs[$id] = $mac;
-		else
+		} else {
+			$oldmac = $mac['mac'];
 			$a_passthrumacs[] = $mac;
+		}
 		passthrumacs_sort();
 		
 		write_config();
+
+		$ruleno = captiveportal_get_ipfw_passthru_ruleno($oldmac);
+		if ($ruleno) {
+			captiveportal_free_ipfw_ruleno($ruleno);
+			$rules = "delete {$ruleno}\n";
+			$rules .= "delete " . ++$ruleno . "\n";
+			$rules .= captiveportal_passthrumac_configure_entry($mac);
+			file_put_contents("{$g['tmp_path']}/tmpmacedit{$id}", $rules);
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/tmpmacedit{$id}");
+			@unlink("{$g['tmp_path']}/tmpmacedit{$id}");
+		}
 
 		header("Location: services_captiveportal_mac.php");
 		exit;

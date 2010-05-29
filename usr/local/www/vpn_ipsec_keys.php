@@ -46,6 +46,18 @@ if (!is_array($config['ipsec']['mobilekey'])) {
 ipsec_mobilekey_sort();
 $a_secret = &$config['ipsec']['mobilekey'];
 
+$userkeys = array();
+foreach ($config['system']['user'] as $id => $user) {
+	if (isset($user['ipsecpsk'])) {
+		$k = array();
+		$k["ident"] = $user['name'];
+		$k["pre-shared-key"] = $user['ipsecpsk'];
+		$k["id"] = $id;
+		$userkeys[] = $k;
+	}
+}
+
+
 if ($_GET['act'] == "del") {
 	if ($a_secret[$_GET['id']]) {
 		unset($a_secret[$_GET['id']]);
@@ -98,6 +110,19 @@ if (is_subsystem_dirty('ipsec'))
 			</table>
 		  </td>
 		</tr>
+			  <?php $i = 0; foreach ($userkeys as $secretent): ?>
+		<tr>
+		<td class="listlr gray">
+			<?=htmlspecialchars($secretent['ident']);?>
+		</td>
+		<td class="listr gray">
+			<?=htmlspecialchars($secretent['pre-shared-key']);?>
+		</td>
+		<td class="list" nowrap><a href="system_usermanager.php?act=edit&id=<?=$secretent['id'];?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit key" width="17" height="17" border="0"></a>
+		&nbsp;</td>
+				</tr>
+			  <?php $i++; endforeach; ?>
+
 			  <?php $i = 0; foreach ($a_secret as $secretent): ?>
                 <tr> 
                   <td class="listlr">

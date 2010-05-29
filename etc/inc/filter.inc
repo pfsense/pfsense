@@ -142,11 +142,11 @@ function filter_configure() {
 
 function delete_states_for_down_gateways() {
 	global $config;
-	$a_gateways = return_gateways_array();
+	$a_gateways = return_gateways_status();
 	foreach ($a_gateways as $gateway) {
-		if($gateway['monitor'] == "down") {
+		if ($gateway['status'] == "down") {
 			$int_ip = get_interface_ip($gateway['interface']);
-			if($int_ip)
+			if(is_ipaddr($int_ip))
 				mwexec("/sbin/pfctl -b {$int_ip}");
 		}
 	}

@@ -676,7 +676,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'tun',
 				'carp',
 				'lagg',
-				'vip'
+				'vip',
+				'ipfw'
 		);
 	}
 	switch($mode) {

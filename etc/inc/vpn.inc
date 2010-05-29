@@ -291,10 +291,17 @@ function vpn_ipsec_configure($ipchg = false)
 			}
 		}
 
+		/* Add user PSKs */
+		foreach ($config['system']['user'] as $user) {
+			if (!empty($user['ipsecpsk'])) {
+				$pskconf .= "{$user['name']}\t{$user['ipsecpsk']}\n";
+			}
+		}
+
 		/* add PSKs for mobile clients */
 		if (is_array($ipseccfg['mobilekey'])) {
 			foreach ($ipseccfg['mobilekey'] as $key) {
-				$pskconf .= "{$key['ident']}	{$key['pre-shared-key']}\n";
+				$pskconf .= "{$key['ident']}\t{$key['pre-shared-key']}\n";
 			}
 		}
 

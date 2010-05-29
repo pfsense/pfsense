@@ -763,7 +763,7 @@
 					$error = 'phpDynDNS: (ERROR!) No Update URL Provided.';
 					break;
 				case 10:
-					$error = 'phpDynDNS: No Change In My IP Address and/or 25 Days Has Not Past. Not Updating Dynamic DNS Entry.';
+					$error = 'phpDynDNS: No change in my IP address and/or 25 days has not passed. Not updating dynamic DNS entry.';
 					break;
 				default:
 					$error = "phpDynDNS: (ERROR!) Unknown Response.";

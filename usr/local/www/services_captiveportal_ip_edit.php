@@ -111,19 +111,25 @@ if ($_POST) {
                         $ip['bw_up'] = $_POST['bw_up'];
                 if ($_POST['bw_down'])
                         $ip['bw_down'] = $_POST['bw_down'];
-		if (isset($id) && $a_allowedips[$id])
+		if (isset($id) && $a_allowedips[$id]) {
+			$oldip = $a_allowedips[$id]['ip'];
 			$a_allowedips[$id] = $ip;
-		else
+		} else {
+			$oldip = $ip['ip'];
 			$a_allowedips[] = $ip;
+		}
 		allowedips_sort();
 		
 		write_config();
 
 		if (isset($config['captiveportal']['enable']) && is_module_loaded("ipfw.ko")) {
-			$rules = captiveportal_allowedip_configure_entry($ip);
-			file_put_contents("{$g['tmp_path']}/allowedip_tmp", $rules);
-			mwexec("/sbin/ipfw {$g['tmp_path']}/allowedip_tmp");
-			@unlink("{$g['tmp_path']}/allowedip_tmp");
+			$rules = "";
+			for ($i = 3; $i < 10; $i++)
+				$rules .= "table {$i} delete {$oldip}\n";
+			$rules .= captiveportal_allowedip_configure_entry($ip);
+			file_put_contents("{$g['tmp_path']}/allowedip_tmp{$id}", $rules);
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/allowedip_tmp{$id}");
+			@unlink("{$g['tmp_path']}/allowedip_tmp{$id}");
 		}
 		
 		header("Location: services_captiveportal_ip.php");

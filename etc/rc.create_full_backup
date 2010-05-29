@@ -11,6 +11,7 @@ tar czPf /root/$FILENAME \
 	--exclude var/empty/* \
 	--exclude var/empty \
 	/
+
 echo ">>> Backup completed.  Note: this backup includes config.xml!"
 echo ">>> To restore this backup run this command:"
-echo "    tar xzPUf /root/$FILENAME -C /"
+echo "    /etc/rc.restore_full_backup /root/$FILENAME"

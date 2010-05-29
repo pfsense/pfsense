@@ -1,0 +1,11 @@
+#!/bin/sh
+
+echo "Checking..."
+if [ `tar tzPf $1 /etc/rc 2>/dev/null` ]; then
+	echo "One moment, restoring ${1}..."
+	tar xzPfU $1 -C /
+	echo "Restore of $1 complete."
+else
+	echo "Could not locate backup ${1}. Available backups:"
+	ls -lah /root | grep backup | more
+fi

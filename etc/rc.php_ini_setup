@@ -36,6 +36,11 @@ else
 	AVAILMEM=`/sbin/dmesg -a |/usr/bin/awk '/avail memory/ { memory=($4 / 1048576); printf("%0.0f\n", memory); exit}'`
 fi
 
+if [ -z "$AVAILMEM" ]; then
+	MEM=`sysctl hw.physmem | cut -d':' -f2`
+	AVAILMEM=`expr $MEM / 1048576`
+fi
+
 # Calculate APC SHM size according 
 # to detected memory values
 if [ "$AVAILMEM" -lt "128" ]; then

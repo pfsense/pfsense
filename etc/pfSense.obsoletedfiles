@@ -26,8 +26,6 @@
 /usr/local/www/vpn_ipsec_ca_edit.php
 /usr/local/www/vpn_ipsec_ca_edit_create_cert.php
 /usr/local/www/vpn_ipsec_edit.php
-/usr/local/www/vpn_ipsec_keys.php
-/usr/local/www/vpn_ipsec_keys_edit.php
 /usr/local/www/vpn_openvpn.php
 /usr/local/www/vpn_openvpn_ccd.php
 /usr/local/www/vpn_openvpn_ccd_edit.php

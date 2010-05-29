@@ -22,35 +22,11 @@ export HOME PATH
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
 
-# Mount memory file system if it exists
-echo -n "Mounting filesystems..."
-/sbin/mount -a
-
-# Mount /. If it fails run a fsck.
-if [ ! "$PLATFORM" = "cdrom" ] ; then
-	/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
-
-	# If /conf is a directory, convert it to a symlink
-	# to /cf/conf
-	if [ -d "/conf" ]; then
-		# If item is not a symlink then rm and recreate
-		CONFPOINTSTO=`readlink /conf` 
-		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then 
-			rm -rf /conf
-			ln -s /cf/conf /conf
-		fi
-	fi
-fi
-
-# Check to see if a compact flash mountpoint exists
-# If it fails to mount then run a fsck -fy
-if grep -q cf /etc/fstab; then
-    /sbin/mount -uw /cf || \
-	(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
-fi
-
 # Set our current version
 version=`cat /etc/version`
+
+# Mount memory file system if it exists
+echo "Mounting filesystems..."
 
 if [ "$PLATFORM" = "cdrom" ]; then
 	/etc/rc.cdrom
@@ -66,6 +42,32 @@ fi
 
 if [ "$PLATFORM" = "pfSense" ]; then
 	mdmfs -S -M -s 4m md /var/run
+fi
+
+# Mount /. If it fails run a fsck.
+if [ ! "$PLATFORM" = "cdrom" ] ; then
+	if [ "$PLATFORM" = "nanobsd" ]; then
+		/sbin/mount -uw / || (/sbin/fsck -fy; /sbin/mount -uw /)
+	else 
+		/sbin/mount -a || (/sbin/fsck -fy; /sbin/mount -a)
+	fi
+	# If /conf is a directory, convert it to a symlink to /cf/conf
+	if [ -d "/conf" ]; then
+		# If item is not a symlink then rm and recreate
+		CONFPOINTSTO=`readlink /conf` 
+		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then 
+			rm -rf /conf
+			ln -s /cf/conf /conf
+		fi
+	fi
+fi
+
+# Check to see if a compact flash mountpoint exists
+# If it fails to mount then run a fsck -fy
+if grep -q cf /etc/fstab; then
+	/sbin/mount -w /cf 2>/dev/null
+    /sbin/mount -uw /cf || \
+	(/sbin/umount /cf; /sbin/fsck -fy /cf; /sbin/mount -w /cf)
 fi
 
 product=`grep product_name /etc/inc/globals.inc | cut -d'"' -f4`
@@ -101,7 +103,6 @@ else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
     /sbin/swapon -a 2>/dev/null >/dev/null
 fi
-echo " done."
 
 if [ "$PLATFORM" = "cdrom" ] ; then
 	mkdir /tmp/unionfs
@@ -111,6 +112,7 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	mkdir /tmp/unionfs/bin
 	mkdir /tmp/unionfs/boot
 	mkdir /tmp/unionfs/confdefault
+	mkdir /tmp/unionfs/PCBSD
 	echo -n "Mounting unionfs directories:"
 	echo -n " usr"
 	mount_unionfs /tmp/unionfs/usr /usr/
@@ -124,6 +126,8 @@ if [ "$PLATFORM" = "cdrom" ] ; then
 	mount_unionfs /tmp/unionfs/boot /boot/
 	echo -n " conf.default"
 	mount_unionfs /tmp/unionfs/confdefault /conf.default/
+	echo -n " installer"
+	mount_unionfs /tmp/unionfs/PCBSD /PCBSD/
 	echo "... done."
 fi
 
@@ -167,6 +171,7 @@ if [ ! -h /tmp/tmp ]; then
 fi
 
 # Make sure our /tmp is 777 + Sticky
+rm -rf /tmp/*
 chmod 1777 /tmp
 
 if [ ! "$PLATFORM" = "cdrom" ] ; then
@@ -196,10 +201,6 @@ fi
 
 if [ ! -d /cf/conf/backup/ ]; then
 	mkdir -p /cf/conf/backup/ 
-fi
-
-if [ ! -f /var/db/ez-ipupdate.cache ]; then
-	touch /var/db/ez-ipupdate.cache
 fi
 
 # OpenVPN storage

@@ -170,7 +170,7 @@ function body_html() {
 EOF;
 	include("fbegin.inc");
 
-	if($one_two): 
+	if($one_two)
 		echo "<p class=\"pgtitle\">{$pgtitle}</font></p>";
 
 	if ($savemsg) print_info_box($savemsg); 

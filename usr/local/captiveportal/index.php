@@ -43,7 +43,7 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 $orig_host = $_ENV['HTTP_HOST'];
-$orig_request = $_GET['redirurl'];
+$orig_request = $_REQUEST['redirurl'];
 $clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {
@@ -170,7 +170,7 @@ exit;
         }
     } else {
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"ERROR");
-        portal_reply_page($redirurl, "error");
+        portal_reply_page($redirurl, "error", "Invalid username/password specified.");
     }
 
 } else if ($_POST['accept'] && $config['captiveportal']['auth_method'] == "local") {
@@ -194,11 +194,11 @@ exit;
 
 exit;
 
-function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null) {
+function portal_reply_page($redirurl, $type = null, $message = null, $clientmac = null, $clientip = null, $username = null, $password = null) {
     global $g, $config;
 
     /* Get captive portal layout */
-    if ($type = "redir") {
+    if ($type == "redir") {
 	header("Location: {$redirurl}");
 	return;
     } else if ($type == "login")
@@ -232,6 +232,8 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	$htmltext = str_replace("#PORTAL_MESSAGE#", htmlspecialchars($message), $htmltext);
 	$htmltext = str_replace("#CLIENT_MAC#", htmlspecialchars($clientmac), $htmltext);
 	$htmltext = str_replace("#CLIENT_IP#", htmlspecialchars($clientip), $htmltext);
+	$htmltext = str_replace("#USERNAME#", htmlspecialchars($username), $htmltext);
+	$htmltext = str_replace("#PASSWORD#", htmlspecialchars($password), $htmltext);
 
     echo $htmltext;
 }
@@ -254,7 +256,7 @@ function portal_mac_radius($clientmac,$clientip) {
 
 function portal_allow($clientip,$clientmac,$username,$password = null, $attributes = null, $ruleno = null)  {
 
-	global $redirurl, $g, $config, $type, $passthrumac;
+	global $redirurl, $g, $config, $type, $passthrumac, $_POST;
 
 	/* See if a ruleno is passed, if not start locking the sessions because this means there isn't one atm */
 	$captiveshouldunlock = false;
@@ -285,8 +287,37 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 	if ($attributes['voucher'])
 		$remaining_time = $attributes['session_timeout'];
 
+	$writecfg = false;
 	/* Find an existing session */
-	for ($i = 0; $i < count($cpdb); $i++) {
+	if ((isset($config['captiveportal']['noconcurrentlogins'])) && $passthrumac) {
+		if (isset($config['captiveportal']['passthrumacadd'])) {
+			$mac = captiveportal_passthrumac_findbyname($username);
+			if (!empty($mac)) {
+				if ($_POST['replacemacpassthru']) {
+					foreach ($a_passthrumacs as $idx => $macent) {
+						if ($macent['mac'] == $mac['mac']) {
+							unset($config['captiveportal']['passthrumac'][$idx]);
+							$mac['mac'] = $clientmac;
+							$config['captiveportal']['passthrumac'][] = $mac;
+							$macrules = captiveportal_passthrumac_configure_entry($mac);
+							file_put_contents("{$g['tmp_path']}/macentry.rules.tmp", $macrules);
+							mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry.rules.tmp");
+							$writecfg = true;
+							$sessionid = true;
+							break;
+						}
+					}
+                                } else {
+					portal_reply_page($redirurl, "error", "Username: {$username} is known with another mac address.",
+						$clientmac, $clientip, $username, $password);
+					exit;
+				}
+			}
+		}
+	}
+
+	$nousers = count($cpdb);
+	for ($i = 0; $i < $nousers; $i++) {
 		/* on the same ip */
 		if($cpdb[$i][2] == $clientip) {
 			captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"CONCURRENT LOGIN - REUSING OLD SESSION");
@@ -323,7 +354,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		return 0;       // voucher already used and no time left
 	}
 
-	$writecfg = false;
 	if (!isset($sessionid)) {
 
 		/* generate unique session ID */
@@ -342,6 +372,8 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		if ($passthrumac) {
 			$mac = array();
 			$mac['mac'] = $clientmac;
+			if (isset($config['captiveportal']['passthrumacaddusername']))
+				$mac['username'] = $username;
 			$mac['descr'] =  "Auto added pass-through MAC for user {$username}";
 			if (!empty($bw_up))
 				$mac['bw_up'] = $bw_up;
@@ -435,38 +467,8 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$logouturl = "http://{$ourhostname}/";
 		}
 
-		echo <<<EOD
-<HTML>
-<HEAD><TITLE>Redirecting...</TITLE></HEAD>
-<BODY>
-<SPAN STYLE="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<B>Redirecting to <A HREF="{$my_redirurl}">{$my_redirurl}</A>...</B>
-</SPAN>
-<SCRIPT LANGUAGE="JavaScript">
-<!--
-LogoutWin = window.open('', 'Logout', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=256,height=64');
-if (LogoutWin) {
-    LogoutWin.document.write('<HTML>');
-    LogoutWin.document.write('<HEAD><TITLE>Logout</TITLE></HEAD>') ;
-    LogoutWin.document.write('<BODY BGCOLOR="#435370">');
-    LogoutWin.document.write('<DIV ALIGN="center" STYLE="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">') ;
-    LogoutWin.document.write('<B>Click the button below to disconnect</B><P>');
-    LogoutWin.document.write('<FORM METHOD="POST" ACTION="{$logouturl}">');
-    LogoutWin.document.write('<INPUT NAME="logout_id" TYPE="hidden" VALUE="{$sessionid}">');
-    LogoutWin.document.write('<INPUT NAME="logout" TYPE="submit" VALUE="Logout">');
-    LogoutWin.document.write('</FORM>');
-    LogoutWin.document.write('</DIV></BODY>');
-    LogoutWin.document.write('</HTML>');
-    LogoutWin.document.close();
-}
+		include("{$g['varetc_path']}/captiveportal-logout.html");
 
-document.location.href="{$my_redirurl}";
--->
-</SCRIPT>
-</BODY>
-</HTML>
-
-EOD;
 	} else {
 		if($_POST['ORIGINAL_PORTAL_IP'] && $_SERVER['SERVER_NAME'] != $_POST['ORIGINAL_PORTAL_IP']) {
  			header ('HTTP/1.1 301 Moved Permanently');

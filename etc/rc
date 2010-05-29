@@ -171,6 +171,7 @@ if [ ! -h /tmp/tmp ]; then
 fi
 
 # Make sure our /tmp is 777 + Sticky
+rm -rf /tmp/*
 chmod 1777 /tmp
 
 if [ ! "$PLATFORM" = "cdrom" ] ; then
@@ -200,10 +201,6 @@ fi
 
 if [ ! -d /cf/conf/backup/ ]; then
 	mkdir -p /cf/conf/backup/ 
-fi
-
-if [ ! -f /var/db/ez-ipupdate.cache ]; then
-	touch /var/db/ez-ipupdate.cache
 fi
 
 # OpenVPN storage

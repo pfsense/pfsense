@@ -155,7 +155,7 @@ function captiveportal_configure() {
 <body>
 <center>
 <h2>{$g['product_name']} captive portal</h2>
-Welcome to the {$g['product_name']} Captive Portal!  This is the default page since a custom page has not been defined.
+Welcome to the {$g['product_name']} Captive Portal!
 <p>
 <form method="post" action="\$PORTAL_ACTION\$">
 <input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
@@ -230,6 +230,50 @@ EOD;
 			fclose($fd);
 		}
 
+		/* write error page */
+		if ($config['captiveportal']['page']['logouttext'])
+			$logouttext = base64_decode($config['captiveportal']['page']['logouttext']);
+		else {
+			/* example page */
+			$logouttext = <<<EOD
+<HTML>
+<HEAD><TITLE>Redirecting...</TITLE></HEAD>
+<BODY>
+<SPAN STYLE="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
+<B>Redirecting to <A HREF="{$my_redirurl}">{$my_redirurl}</A>...</B>
+</SPAN>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+LogoutWin = window.open('', 'Logout', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=256,height=64');
+if (LogoutWin) {
+    LogoutWin.document.write('<HTML>');
+    LogoutWin.document.write('<HEAD><TITLE>Logout</TITLE></HEAD>') ;
+    LogoutWin.document.write('<BODY BGCOLOR="#435370">');
+    LogoutWin.document.write('<DIV ALIGN="center" STYLE="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">') ;
+    LogoutWin.document.write('<B>Click the button below to disconnect</B><P>');
+    LogoutWin.document.write('<FORM METHOD="POST" ACTION="{$logouturl}">');
+    LogoutWin.document.write('<INPUT NAME="logout_id" TYPE="hidden" VALUE="{$sessionid}">');
+    LogoutWin.document.write('<INPUT NAME="logout" TYPE="submit" VALUE="Logout">');
+    LogoutWin.document.write('</FORM>');
+    LogoutWin.document.write('</DIV></BODY>');
+    LogoutWin.document.write('</HTML>');
+    LogoutWin.document.close();
+}
+
+document.location.href="{$my_redirurl}";
+-->
+</SCRIPT>
+</BODY>
+</HTML>
+
+EOD;
+		}
+
+		$fd = @fopen("{$g['varetc_path']}/captiveportal-logout.html", "w");
+		if ($fd) {
+			fwrite($fd, $logouttext);
+			fclose($fd);
+		}
 		/* write elements */
 		captiveportal_write_elements();
 
@@ -783,6 +827,18 @@ function captiveportal_passthrumac_configure($lock = false) {
 	}
 
 	return $rules;
+}
+
+function captiveportal_passthrumac_findbyname($username) {
+	global $config;
+
+	if (is_array($config['captiveportal']['passthrumac'])) {
+		foreach ($config['captiveportal']['passthrumac'] as $macent) {
+			if ($macent['username'] == $username)
+				return $macent;
+		}
+	}
+	return NULL;
 }
 
 /* 

@@ -57,6 +57,9 @@ if ($_GET['act'] == "viewhtml") {
 } else if ($_GET['act'] == "viewerrhtml") {
 	echo base64_decode($config['captiveportal']['page']['errtext']);
 	exit;
+} else if ($_GET['act'] == "viewlogouthtml") {
+	echo base64_decode($config['captiveportal']['page']['logouttext']);
+	exit;
 }
 
 $pconfig['cinterface'] = $config['captiveportal']['interface'];
@@ -93,6 +96,7 @@ $pconfig['radiuskey2'] = $config['captiveportal']['radiuskey2'];
 $pconfig['radiusvendor'] = $config['captiveportal']['radiusvendor'];
 $pconfig['radiussession_timeout'] = isset($config['captiveportal']['radiussession_timeout']);
 $pconfig['passthrumacadd'] = isset($config['captiveportal']['passthrumacadd']);
+$pconfig['passthrumacaddusername'] = isset($config['captiveportal']['passthrumacaddusername']);
 $pconfig['radmac_format'] = $config['captiveportal']['radmac_format'];
 
 if ($_POST) {
@@ -194,6 +198,7 @@ if ($_POST) {
 		$config['captiveportal']['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
 		$config['captiveportal']['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
+		$config['captiveportal']['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$config['captiveportal']['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 
 		/* file upload? */
@@ -201,6 +206,8 @@ if ($_POST) {
 			$config['captiveportal']['page']['htmltext'] = base64_encode(file_get_contents($_FILES['htmlfile']['tmp_name']));
 		if (is_uploaded_file($_FILES['errfile']['tmp_name']))
 			$config['captiveportal']['page']['errtext'] = base64_encode(file_get_contents($_FILES['errfile']['tmp_name']));
+		if (is_uploaded_file($_FILES['logoutfile']['tmp_name']))
+			$config['captiveportal']['page']['logouttext'] = base64_encode(file_get_contents($_FILES['logoutfile']['tmp_name']));
 
 		write_config();
 
@@ -255,6 +262,7 @@ function enable_change(enable_change) {
 	document.iform.radiussession_timeout.disabled = radius_endis;
 	document.iform.htmlfile.disabled = endis;
 	document.iform.errfile.disabled = endis;
+	document.iform.logoutfile.disabled = endis;
 
 	document.iform.radiusacctport.disabled = (radius_endis || !document.iform.radacct_enable.checked) && !enable_change;
 
@@ -280,6 +288,7 @@ function enable_change(enable_change) {
 	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
 	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
+	$tab_array[] = array("Auth Logs", false, "diag_logs_auth.php");
 	display_top_tabs($tab_array);
 ?>    </td></tr>
   <tr>
@@ -370,7 +379,13 @@ to access after they've authenticated.</td>
         <strong>Enable Pass-through MAC automatic additions</strong><br>
     If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again. 
     To remove the passthrough MAC entry you either have to log in and remove it manually from the <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> or send a POST from another system to remove it.
-    If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.</td>
+    If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.
+	<br/><br/>
+        <input name="passthrumacaddusername" type="checkbox" class="formfld" id="passthrumacaddusername" value="yes" <?php if ($pconfig['passthrumacaddusername']) echo "checked"; ?>>
+        <strong>Enable Pass-through MAC automatic addition with username</strong><br>
+    If this option is set, with the automatically MAC passthrough entry created the username, used during authentication, will be saved.
+    To remove the passthrough MAC entry you either have to log in and remove it manually from the <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> or send a POST from another system to remove it.
+	</td>
 	</tr>
 	<tr>
       <td valign="top" class="vncell">Per-user bandwidth restriction</td>
@@ -629,6 +644,20 @@ Example code for the form:<br>
 		<input name="errfile" type="file" class="formfld file" id="errfile"><br>
 		<?php if ($config['captiveportal']['page']['errtext']): ?>
 		<a href="?act=viewerrhtml" target="_blank">View current page</a>
+		  <br>
+		  <br>
+		<?php endif; ?>
+The contents of the HTML/PHP file that you upload here are displayed when an authentication error occurs.
+You may include &quot;$PORTAL_MESSAGE$&quot;, which will be replaced by the error or reply messages from the RADIUS server, if any.</td>
+	</tr>
+	<tr>
+	  <td width="22%" valign="top" class="vncell">Logout<br>
+		page<br>
+		contents</td>
+	  <td class="vtable">
+		<input name="logoutfile" type="file" class="formfld file" id="logoutfile"><br>
+		<?php if ($config['captiveportal']['page']['logouttext']): ?>
+		<a href="?act=viewlogouthtml" target="_blank">View current page</a>
 		  <br>
 		  <br>
 		<?php endif; ?>

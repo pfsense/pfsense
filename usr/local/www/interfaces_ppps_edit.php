@@ -114,6 +114,10 @@ if (isset($id) && $a_ppps[$id]) {
 		case "l2tp":
 		case "pptp":
 			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
+			foreach ($pconfig['localip'] as $key => $value){
+				if ($value == "dhcp")
+					$pconfig['localip'][$key] = "";	
+			}
 			$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
 			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
 			if (isset($a_ppps[$id]['dhcp']))
@@ -285,6 +289,15 @@ if ($_POST) {
 		else
 			unset($ppp['descr']);
 
+		// Loop through fields associated with a individual link/port and make an array of the data
+		$port_fields = array("localip", "gateway", "subnet", "bandwidth", "mtu", "mru", "mrru");
+		foreach($_POST['interfaces'] as $iface){
+			foreach($port_fields as $field_label){
+				if (isset($_POST[$field_label][$iface]))
+					$port_data[$field_label][] = $_POST[$field_label][$iface];
+			}
+		}		
+				
 		switch($_POST['type']) {
 			case "ppp":
 				if (!empty($_POST['initstr']))
@@ -310,20 +323,8 @@ if ($_POST) {
 					unset($ppp['apnum']);
 				}
 				$ppp['phone'] = $_POST['phone'];
-				foreach($_POST['interfaces'] as $iface){
-					if (isset($_POST['localip'][$iface]))
-						$localip_array[] = $_POST['localip'][$iface];
-					if (isset($_POST['gateway'][$iface]))
-						$gateway_array[] = $_POST['gateway'][$iface];
-				}
-				if (count($localip_array))
-					$ppp['localip'] = implode(',',$localip_array);
-				else
-					unset($ppp['localip']);
-				if (count($gateway_array))
-					$ppp['gateway'] = implode(',',$gateway_array);
-				else
-					unset($ppp['gateway']);
+				$ppp['localip'] = implode(',',$port_data['localip']);
+				$ppp['gateway'] = implode(',',$port_data['gateway']);
 				if (!empty($_POST['connect-timeout']))
 					$ppp['connect-timeout'] = $_POST['connect-timeout'];
 				else
@@ -342,28 +343,16 @@ if ($_POST) {
 				break;
 			case "pptp":
 			case "l2tp":
-				foreach($_POST['interfaces'] as $iface){
-					if (isset($_POST['localip'][$iface]))
-						$localip_array[] = $_POST['localip'][$iface];
-					if (isset($_POST['gateway'][$iface]))
-						$gateway_array[] = $_POST['gateway'][$iface];
-					if (isset($_POST['subnet'][$iface]))
-						$subnet_array[] = $_POST['subnet'][$iface];
-				}
-
 				$ppp['dhcp'] = $_POST['pptp_dhcp'] ? true : false;
-				if (count($localip_array))
-					$ppp['localip'] = implode(',',$localip_array);
-				else
-					unset($ppp['localip']);
-				if (count($gateway_array))
-					$ppp['gateway'] = implode(',',$gateway_array);
-				else
-					unset($ppp['gateway']);
-				if (count($subnet_array))
-					$ppp['subnet'] = implode(',',$subnet_array);
-				else
-					unset($ppp['subnet']);
+				foreach ($port_data['localip'] as $key => $value){
+					if (empty($value)){
+						$port_data['localip'][$key] = "dhcp";
+						$port_data['subnet'][$key] = "";
+					}
+				}
+				$ppp['localip'] = implode(',',$port_data['localip']);
+				$ppp['subnet'] = implode(',',$port_data['subnet']);
+				$ppp['gateway'] = implode(',',$port_data['gateway']);
 				break;
 			default:
 				break;
@@ -375,31 +364,10 @@ if ($_POST) {
 		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
-	
-		foreach($_POST['interfaces'] as $iface){
-			if (isset($_POST['bandwidth'][$iface]))
-				$bw_array[] = $_POST['bandwidth'][$iface];
-			if (isset($_POST['mtu'][$iface]))
-				$mtu_array[] = $_POST['mtu'][$iface];
-			if (isset($_POST['mru'][$iface]))
-				$mru_array[] = $_POST['mru'][$iface];
-			if (isset($_POST['mrru'][$iface]))
-				$mrru_array[] = $_POST['mrru'][$iface];
-		}
-		if (isset($bw_array))
-			$ppp['bandwidth'] = implode(',', $bw_array);
-		else 
-			unset($ppp['bandwidth']);
-			
-		if (isset($mtu_array))
-			$ppp['mtu'] = implode(',', $mtu_array);
-		else 
-			unset($ppp['mtu']);
-			
-		if (isset($mru_array))
-			$ppp['mru'] = implode(',', $mru_array);
-		else 
-			unset($ppp['mru']);
+		$ppp['bandwidth'] = implode(',', $port_data['bandwidth']);
+		$ppp['mtu'] = implode(',', $port_data['mtu']);
+		$ppp['mru'] = implode(',', $port_data['mru']);
+		
 		/* handle_pppoe_reset is called here because if user changes Link Type from PPPoE to another type we 
 		must be able to clear the config data in the <cron> section of config.xml if it exists
 		*/
@@ -769,14 +737,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			<td colspan="2" style="padding:0px;">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?= gettext("PPTP/L2TP Configuration"); ?></td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?= gettext("Use DHCP/DNS"); ?></td>
-						<td width="78%" class="vtable"> 
-							<input type="checkbox" value="on" name="pptp_dhcp" id="pptp_dhcp" <?php if (isset($pconfig['pptp_dhcp'])) echo "checked"; ?>> <?= gettext("Configure Local IP and Gateway IP using DHCP/DNS"); ?> 
-							<br/> <span class="vexpl"><?= gettext("Use DHCP to configure the underlying interface IP, and optionally DNS to configure the remote IP for PPtP and L2TP. If a hostname is entered in \"Gateway\" field(s) below, Gateway IP will be set via DNS."); ?></span>
-						</td>
+						<td colspan="2" valign="top" class="listtopic"><?=strtoupper($pconfig['type']); ?> <?= gettext("Configuration"); ?></td>
 					</tr>
 				</table>
 			</td>
@@ -794,8 +755,8 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 							<?php for ($i = 31; $i > 0; $i--): ?>
 								<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo " selected"; ?>><?=$i;?></option>
 							<?php endfor; ?>
-							</select>
-							<br><span class="vexpl"><?= gettext("Note: Local IP/subnet is required for PPTP connections. LocalIP is automatically assigned for PPP links if this field is empty."); ?></span>
+							</select> Leave blank to use DHCP to configure <?=strtoupper($pconfig['type']); ?> Local IP.
+							<br><span class="vexpl"><?= gettext("Note: Leave blank to retrieve local IP by DHCP for PPtP/L2TP. Local IP is automatically assigned for PPP links if this field is empty."); ?></span>
 						</td>
 					</tr>
 					<tr>

@@ -130,23 +130,22 @@ delete_old_routes() {
 }
 
 add_new_routes() {
-	$LOGGER "Adding new routes"
-	# $ROUTE add $new_ip_address $LOCALHOST >/dev/null 2>&1
+	$LOGGER "Adding new routes to interface: $interface"
 
 	# Only allow the default route to be overridden if it's on our own interface
-	DEFAULTROUTE_IFACE=`/sbin/route get default | grep interface | awk '{print $2};'`
-	if [ -z "${DEFAULTROUTE_IFACE}" -o "{$interface}" = "${DEFAULTROUTE_IFACE}" ]; then
+	if [ -f "/tmp/${interface}_defaultgw" ]; then
+		$ROUTE delete default
 		for router in $new_routers; do
 			if [ "$new_ip_address" = "$router" ]; then
-				$ROUTE add default -iface $router
-				#>/dev/null 2>&1
-				echo $ROUTE add default -iface $router | $LOGGER
-				echo $new_routers > /tmp/${interface}_router
+				$ROUTE add default -iface $interface
+				echo $ROUTE add default -iface $interface | $LOGGER
+				echo $router > /tmp/${interface}_router
+				echo $router > /tmp/${interface}_defaultgw
 			else
 				$ROUTE add default $router
 				echo $ROUTE add default $router | $LOGGER
-				#>/dev/null 2>&1
-                       		echo $new_routers > /tmp/${interface}_router
+                       		echo $router > /tmp/${interface}_router
+				echo $router > /tmp/${interface}_defaultgw
 			fi
 			# 2nd and subsequent default routers error out, so explicitly
 			# stop processing the list after the first one.
@@ -163,13 +162,6 @@ add_new_routes() {
                         echo $new_routers > /tmp/${interface}_router
 		done
 	fi
-
-	# last ditch effort if no route exists.
-	DEFAULTROUTE=`$NETSTAT -rn | $GREP default`
-	if [ -z "${DEFAULTROUTE}" ]; then
-	    $ROUTE add default -iface $interface
-	fi
-
 }
 
 add_new_resolv_conf() {

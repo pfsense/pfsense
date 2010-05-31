@@ -1286,7 +1286,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									</tr>
 									
 									<tr>
-										<td width="22%" valign="top" class="vncell">More</td>
+										<td width="22%" valign="top" class="vncell">Advanced and MLPPP</td>
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a> 
@@ -1295,7 +1295,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 										<? else: ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php" class="navlnk">Click here</a>
-											for advanced PPPoE configuration options or MLPPP configuration.
+											for advanced PPPoE configuration options and MLPPP configuration.
 											</td>
 										<? endif; ?>	
 									</tr>

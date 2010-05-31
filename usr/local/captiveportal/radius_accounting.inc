@@ -47,12 +47,14 @@ RADIUS ACCOUNTING START
 -----------------------
 */
 
+PEAR::loadExtension('bcmath');
+
 function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers, $clientip, $clientmac) {
 
     global $config;
 
     $retvalue = array();
-    $nas_mac = mac_format(get_interface_mac($config['interfaces']['wan']['if']));
+    $nas_mac = mac_format(get_interface_mac("wan"));
     $clientmac = mac_format($clientmac);
     $nas_port = $ruleno;
     $radiusvendor = $config['captiveportal']['radiusvendor'] ? $config['captiveportal']['radiusvendor'] : null;
@@ -65,7 +67,7 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
         break;
 
         default:
-        $calledstationid = $nas_mac;
+        $calledstationid = get_interface_ip("wan");
         $callingstationid = $clientmac;
     }
 
@@ -163,7 +165,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     global $config;
 
     $retvalue = array();
-    $nas_mac = mac_format(get_interface_mac($config['interfaces']['wan']['if']));
+    $nas_mac = mac_format(get_interface_mac("wan"));
     $clientmac = mac_format($clientmac);
     $nas_port = $ruleno;
     $radiusvendor = $config['captiveportal']['radiusvendor'] ? $config['captiveportal']['radiusvendor'] : null;
@@ -183,7 +185,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
         break;
 
         default:
-        $calledstationid = $nas_mac;
+        $calledstationid = get_interface_ip("wan");
         $callingstationid = $clientmac;
     }
 

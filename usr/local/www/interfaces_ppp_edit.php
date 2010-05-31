@@ -147,6 +147,7 @@ if ($_POST) {
 			$a_ppps[$id] = $ppp;
 		else
 			$a_ppps[] = $ppp;
+
 		write_config();
 		
 		if (!empty($thisif))

@@ -169,18 +169,6 @@ if ($_POST) {
 		$ext = gen_subnet($_POST['destination'], $_POST['destination_subnet']) . "/" . $_POST['destination_subnet'];
 	}
 
-	if ($_POST['target']) {
-		/* check for clashes with 1:1 NAT (NAT Addresses is OK) */
-		if (is_array($config['nat']['onetoone'])) {
-			foreach ($config['nat']['onetoone'] as $natent) {
-				if (check_subnets_overlap($_POST['target'], 32, $natent['external'], $natent['subnet'])) {
-					$input_errors[] = "A 1:1 NAT mapping overlaps with the specified target IP address.";
-					break;
-				}
-			}
-		}
-	}
-
 	foreach ($a_out as $natent) {
 		if (isset($id) && ($a_out[$id]) && ($a_out[$id] === $natent)) {
 			continue;
@@ -433,10 +421,12 @@ any)</td>
 <?php	if (is_array($config['virtualip']['vip'])):
 		foreach ($config['virtualip']['vip'] as $sn):
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
-				$baseip = ip2long($sn['subnet']) & ip2long(gen_subnet_mask($sn['subnet_bits']));
-				for ($i = $sn['subnet_bits']; $i <= 32; $i++):
-					$baseip = $baseip + 1;
-					$snip = long2ip($baseip);
+				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+				$len = $end - $start;
+
+				for ($i = 0; $i <= $len; $i++):
+					$snip = long2ip32($start+$i);
 ?>
 				<option value="<?=$snip;?>" <?php if ($snip == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$snip} ({$sn['descr']})");?></option>
 				<?php endfor; ?>

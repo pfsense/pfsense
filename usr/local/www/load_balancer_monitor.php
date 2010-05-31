@@ -39,11 +39,11 @@
 ##|*MATCH=load_balancer_monitor.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
-require("util.inc");
+require_once("util.inc");
 
 if (!is_array($config['load_balancer']['monitor_type'])) {
 	$config['load_balancer']['monitor_type'] = array();
@@ -105,8 +105,6 @@ include("head.inc");
         $tab_array[] = array("Monitors", true, "load_balancer_monitor.php");
         $tab_array[] = array("Pools", false, "load_balancer_pool.php");
         $tab_array[] = array("Virtual Servers", false, "load_balancer_virtual_server.php");
-        $tab_array[] = array("Relay Actions", false, "load_balancer_relay_action.php");
-        $tab_array[] = array("Relay Protocols", false, "load_balancer_relay_protocol.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>

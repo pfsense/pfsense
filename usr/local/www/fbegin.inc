@@ -60,7 +60,7 @@ function return_ext_menu($section) {
 				} else {
 					$myurl = $addresswithport;
 				}
-				$description = str_replace('\$myurl', $myurl, $menuitem['url']);
+				$description = str_replace('$myurl', $myurl, $menuitem['url']);
 			} else {
 				$description = '/pkg.php?xml=' . $menuitem['configfile'];
 			}
@@ -74,7 +74,7 @@ function output_menu($arrayitem, $target="") {
 	foreach($arrayitem as $item) {
 		if($target)
 			$targetinfo = "target='{$target}'";
-		echo '<li><a ' . $targetinfo. ' href="' . $item[1] . ' "class="navlnk">' . $item[0] . '</a></li>' . "\n";
+		echo '<li><a ' . $targetinfo. ' href="' . $item[1] . '" class="navlnk">' . $item[0] . '</a></li>' . "\n";
 	}
 }
 
@@ -105,12 +105,11 @@ $interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfac
 // Firewall
 $firewall_menu = array();
 $firewall_menu[] = array("Aliases", "/firewall_aliases.php");
-if($config['interfaces']['lan']) 
+if(count($config['interfaces']) > 1) 
 	$firewall_menu[] = array("NAT", "/firewall_nat.php");
 $firewall_menu[] = array("Rules", "/firewall_rules.php");
 $firewall_menu[] = array("Schedules", "/firewall_schedule.php");
-if($config['interfaces']['lan']) 
-	$firewall_menu[] = array("Traffic Shaper", "/firewall_shaper.php");
+$firewall_menu[] = array("Traffic Shaper", "/firewall_shaper.php");
 $firewall_menu[] = array("Virtual IPs", "/firewall_virtual_ip.php");
 $firewall_menu = msort(array_merge($firewall_menu, return_ext_menu("Firewall")),0);
 
@@ -128,7 +127,7 @@ $services_menu[] = array("OLSR", "/pkg_edit.php?xml=olsrd.xml&id=0");
 $services_menu[] = array("PPPoE Server", "/vpn_pppoe.php");
 $services_menu[] = array("RIP", "/pkg_edit.php?xml=routed/routed.xml&id=0");
 $services_menu[] = array("SNMP", "/services_snmp.php");
-if($config['interfaces']['lan']) {
+if(count($config['interfaces']) > 1) {
 	/* no use for UPnP in single-interface deployments
 	remove to reduce user confusion
 	*/
@@ -166,7 +165,7 @@ $status_menu[] = array("RRD Graphs", "/status_rrd_graph.php");
 $status_menu[] = array("Services", "/status_services.php");
 $status_menu[] = array("System Logs", "/diag_logs.php");
 $status_menu[] = array("Traffic Graph", "/status_graph.php?if=wan");
-if($config['interfaces']['lan']) 
+if(count($config['interfaces']) > 1) 
 	$status_menu[] = array("UPnP", "/status_upnp.php");
 $ifentries = get_configured_interface_with_descr();
 foreach ($ifentries as $ent => $entdesc) {

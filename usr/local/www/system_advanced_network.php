@@ -63,7 +63,7 @@ if ($_POST) {
     $pconfig = $_POST;
 
 	if ($_POST['ipv6nat_enable'] && !is_ipaddr($_POST['ipv6nat_ipaddr']))
-		$input_errors[] = "You must specify an IP address to NAT IPv6 packets.";
+		$input_errors[] = gettext("You must specify an IP address to NAT IPv6 packets.");
 
     ob_flush();
     flush();
@@ -125,13 +125,13 @@ if ($_POST) {
 
 		$retval = filter_configure();
 		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
+		    $savemsg = get_std_save_message(gettext($retval));
 		else
-		    $savemsg = $retval;
+		    $savemsg = gettext($retval);
 	}
 }
 
-$pgtitle = array("System","Advanced: Networking");
+$pgtitle = array(gettext("System"),gettext("Advanced: Networking"));
 include("head.inc");
 
 ?>
@@ -165,12 +165,12 @@ function enable_change(enable_over) {
 				<td>
 					<?php
 						$tab_array = array();
-						$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
-						$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
-						$tab_array[] = array("Networking", true, "system_advanced_network.php");
-						$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
-						$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
-						$tab_array[] = array("Notifications", false, "system_advanced_notifications.php");						
+						$tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
+						$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
+						$tab_array[] = array(gettext("Networking"), true, "system_advanced_network.php");
+						$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
+						$tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
+						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");						
 						display_top_tabs($tab_array);
 					?>
 				</td>
@@ -180,36 +180,36 @@ function enable_change(enable_over) {
 					<div class="tabcont">
 						<span class="vexpl">
 		    	        	<span class="red">
-								<strong>NOTE:&nbsp</strong>
+								<strong><?=gettext("NOTE"); ?>:&nbsp</strong>
 							</span>
-							The options on this page are intended for use by advanced users only.
+							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
 							<br/>
 						</span>
 						<br/>
 						<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">IPv6 Options</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("IPv6 Options"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Allow IPv6</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Allow IPv6"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="ipv6allow" type="checkbox" id="ipv6allow" value="yes" <?php if ($pconfig['ipv6allow']) echo "checked"; ?> onclick="enable_change(false)" />
-									<strong>Allow IPv6</strong><br/>
-									All IPv6 will be blocked unless this box is checked.<br/>
+									<strong><?=gettext("Allow IPv6"); ?></strong><br/>
+									<?=gettext("All IPv6 will be blocked unless this box is checked."); ?><br/>
 									<br/>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">IPv6 over IPv4 Tunneling</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("IPv6 over IPv4 Tunneling"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="ipv6nat_enable" type="checkbox" id="ipv6nat_enable" value="yes" <?php if ($pconfig['ipv6nat_enable']) echo "checked"; ?> onclick="enable_change(false)" />
-									<strong>Enable IPv4 NAT encapsulation of IPv6 packets</strong><br/>
-									This provides an RFC 2893 compatibility mechanism
-									that can be used to tunneling IPv6 packets over IPv4
-									routing	infrastructures. If enabled, don't forget to
-									add a firewall rule to permit IPv6 packets.<br/>
+									<strong><?=gettext("Enable IPv4 NAT encapsulation of IPv6 packets"); ?></strong><br/>
+									<?=gettext("This provides an RFC 2893 compatibility mechanism ".
+									"that can be used to tunneling IPv6 packets over IPv4 ".
+									"routing infrastructures. If enabled, don't forget to ".
+									"add a firewall rule to permit IPv6 packets."); ?><br/>
 									<br/>
-									IP address :&nbsp;
+									<?=gettext("IP address"); ?>&nbsp;:&nbsp;
 									<input name="ipv6nat_ipaddr" type="text" class="formfld unknown" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
 								</td>
 							</tr>
@@ -217,31 +217,30 @@ function enable_change(enable_over) {
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">Network Interfaces</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Network Interfaces"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Device polling</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Device polling"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="polling_enable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['polling_enable']) echo "checked"; ?>>
-									<strong>Enable device polling</strong><br>
-									Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webConfigurator, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended.
-									Not all NICs support polling; see the <?= $g['product_name'] ?> homepage for a list of supported cards.
+									<strong><?=gettext("Enable device polling"); ?></strong><br>
+									<?php printf(gettext("Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webConfigurator, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended. Not all NICs support polling; see the %s homepage for a list of supported cards."), $g['product_name']); ?>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Hardware Checksum Offloading</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Hardware Checksum Offloading"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked"; ?> />
-									<strong>Disable hardware checksum offload</strong><br>
-									Checking this option will disable hardware checksum offloading. Checksum offloading is broken in some hardware, particularly some Realtek cards. Rarely, drivers may have problems with checksum offloading and some specific NICs.
+									<strong><?=gettext("Disable hardware checksum offload"); ?></strong><br>
+									<?=gettext("Checking this option will disable hardware checksum offloading. Checksum offloading is broken in some hardware, particularly some Realtek cards. Rarely, drivers may have problems with checksum offloading and some specific NICs."); ?>
 								</td>
 							</tr>		
 							<tr>
-								<td width="22%" valign="top" class="vncell">ARP Handling</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("ARP Handling"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="sharednet" type="checkbox" id="sharednet" value="yes" <?php if (isset($pconfig['sharednet'])) echo "checked"; ?> />
-									<strong>Suppress ARP messages</strong><br>
-									This option will suppress ARP log messages when multiple interfaces reside on the same broadcast domain</strong>
+									<strong><?=gettext("Suppress ARP messages"); ?></strong><br>
+									<?=gettext("This option will suppress ARP log messages when multiple interfaces reside on the same broadcast domain"); ?></strong>
 								</td>
 							</tr>
 <?php 
@@ -272,7 +271,7 @@ function enable_change(enable_over) {
 							</tr>							
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
-								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
+								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>
 							</tr>
 						</table>
 					</div>

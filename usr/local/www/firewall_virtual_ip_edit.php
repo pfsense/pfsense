@@ -127,16 +127,6 @@ if ($_POST) {
 		}
 	}
 
-	/* check for overlaps with 1:1 NAT */
-	if (is_array($config['nat']['onetoone'])) {
-		foreach ($config['nat']['onetoone'] as $natent) {
-			if (check_subnets_overlap($_POST['subnet'], 32, $natent['external'], $natent['subnet'])) {
-				$input_errors[] = "A 1:1 NAT mapping overlaps with the specified IP address.";
-				break;
-			}
-		}
-	}
-
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */
@@ -216,8 +206,8 @@ if ($_POST) {
 				interface_vip_bring_down($a_vip[$id]);
 			/* modify all virtual IP rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
-				if ($config['nat']['rule'][$i]['external-address'] == $a_vip[$id]['subnet'])
-					$config['nat']['rule'][$i]['external-address'] = $vipent['subnet'];
+				if ($config['nat']['rule'][$i]['destination']['address'] == $a_vip[$id]['subnet'])
+					$config['nat']['rule'][$i]['destination']['address'] = $vipent['subnet'];
 			}
 			$a_vip[$id] = $vipent;
 		} else
@@ -226,7 +216,7 @@ if ($_POST) {
 		mark_subsystem_dirty('vip');
 		
 		write_config();
-		if (!$id)
+		if (!isset($id))
 			$id = count($a_vip) - 1;
 		header("Location: firewall_virtual_ip.php?changes=mods&id={$id}");
 		exit;

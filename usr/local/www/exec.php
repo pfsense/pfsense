@@ -47,8 +47,13 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 	header("Content-Length: " . filesize($_POST['dlPath']));
 	header("Content-Disposition: attachment; filename=\"" .
 		trim(htmlentities(basename($_POST['dlPath']))) . "\"");
-	header("Pragma: private");
-	header("Cache-Control: private, must-revalidate");
+	if (isset($_SERVER['HTTPS'])) {
+		header('Pragma: ');
+		header('Cache-Control: ');
+	} else {
+		header("Pragma: private");
+		header("Cache-Control: private, must-revalidate");
+	}
 
 	fpassthru($fd);
 	exit;

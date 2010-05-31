@@ -54,10 +54,13 @@ $a_allowedips = &$config['captiveportal']['allowedip'] ;
 if ($_GET['act'] == "del") {
 	if ($a_allowedips[$_GET['id']]) {
 		$ipent = $a_allowedips[$_GET['id']];
-		if ($ipent['dir'] == "from")
-			mwexec("/sbin/ipfw table 1 delete " . $ipent['ip']);
-		else
-			mwexec("/sbin/ipfw table 2 delete " . $ipent['ip']);
+		
+		if (isset($config['captiveportal']['enable'])) {
+			mwexec("/sbin/ipfw table 3 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 4 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 5 delete " . $ipent['ip']);
+			mwexec("/sbin/ipfw table 6 delete " . $ipent['ip']);
+		}
 			
 		unset($a_allowedips[$_GET['id']]);
 		write_config();
@@ -82,6 +85,7 @@ include("head.inc");
 	$tab_array[] = array("Allowed IP addresses", true, "services_captiveportal_ip.php");
 	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
+	$tab_array[] = array("Auth Logs", false, "diag_logs_auth.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -101,14 +105,14 @@ include("head.inc");
 	  </td>
 	</tr>
   <?php $i = 0; foreach ($a_allowedips as $ip): ?>
-	<tr>
+	<tr ondblclick="document.location='services_captiveportal_ip_edit.php?id=<?=$i;?>'">
 	  <td class="listlr">
-		<?php if($ip['dir'] == "to")
-			echo "any <img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\">";
-		?>
+		<?php if($ip['dir'] == "to") 
+			echo "any <img src=\"in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\">";
+		?>	
 		<?=strtolower($ip['ip']);?>
-		<?php if($ip['dir'] == "from")
-			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> any";
+		<?php if($ip['dir'] == "from") 
+			echo "<img src=\"in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> any";
 		?>
 	  </td>
 	  <td class="listbg">

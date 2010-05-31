@@ -63,7 +63,8 @@ function handle_argument_group($iface, $argument2) {
 	}
 }
 
-if ($g['booting'] == true) {
+global $g;
+if (file_exists("{$g['varrun_path']}/booting")) {
 	/* ignore all linkup events */
 } else {
 	foreach($_SERVER['argv'] as $argv) {

@@ -785,10 +785,20 @@ function upgrade_042_to_043() {
 		/* Update all filter rules which might reference this gateway */
 		$j = 0;
 		foreach($config['filter']['rule'] as $rule) {
-			if(is_ipaddr($rule['gateway']) && ($rule['gateway'] == $config['gateways']['gateway_item'][$i]['gateway'])) {
-				$config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+			if(is_ipaddr($rule['gateway'])) {
+				if ($rule['gateway'] == $config['gateways']['gateway_item'][$i]['gateway'])
+					$config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
+				else if ($rule['gateway'] == $ifname)
+					$config['filter']['rule'][$j]['gateway'] = $config['gateways']['gateway_item'][$i]['name'];
 			}
 			$j++;
+		}
+
+		/* rename old Quality RRD files in the process */
+		$rrddbpath = "/var/db/rrd";
+		$gwname = "GW_" . strtoupper($ifname);
+		if(is_readable("{$rrddbpath}/{$ifname}-quality.rrd")) {
+			rename("{$rrddbpath}/{$ifname}-quality.rrd", "{$rrddbpath}/{$gwname}-quality.rrd");
 		}
 		$i++;
 	}
@@ -797,6 +807,34 @@ function upgrade_042_to_043() {
 
 function upgrade_043_to_044() {
 	global $config;
+
+	/* migrate static routes to the new gateways config */
+	$gateways = return_gateways_array(true);
+	$i = 0;
+	if (is_array($config['staticroutes']['route'])) {
+		foreach ($config['staticroutes']['route'] as $idx => $sroute) {
+			$found = false;
+			foreach ($gateways as $gwname => $gw) {
+				if ($gw['gateway'] == $sroute['gateway']) {
+					$config['staticroutes']['route'][$idx]['gateway'] = $gwname;
+					$found = true;
+					break;
+				}
+			}
+			if ($found == false) {
+				$gateway = array();
+				$gateway['name'] = "SROUTE{$i}";	
+				$gateway['gateway'] = $sroute['gateway'];
+				$gateway['interface'] = $sroute['interface'];
+				$gateway['descr'] = "Upgraded static route for {$sroute['network']}";
+				if (!is_array($config['gateways']['gateway_item']))
+					$config['gateways']['gateway_item'] = array();
+				$config['gateways']['gateway_item'][] = $gateway;
+				$config['staticroutes']['route'][$idx]['gateway'] = $gateway['name'];
+				$i++;
+			}
+		}
+	}
 }
 
 
@@ -918,9 +956,9 @@ function upgrade_046_to_047() {
 					$ph1ent['myid_type'] = "fqdn";
 					$ph1ent['myid_data'] = $tunnel['p1']['myident']['fqdn'];
 				}
-				if (isset($tunnel['p1']['myident']['user_fqdn'])) {
+				if (isset($tunnel['p1']['myident']['ufqdn'])) {
 					$ph1ent['myid_type'] = "user_fqdn";
-					$ph1ent['myid_data'] = $tunnel['p1']['myident']['user_fqdn'];
+					$ph1ent['myid_data'] = $tunnel['p1']['myident']['ufqdn'];
 				}
 				if (isset($tunnel['p1']['myident']['asn1dn'])) {
 					$ph1ent['myid_type'] = "asn1dn";
@@ -1063,34 +1101,40 @@ function upgrade_046_to_047() {
 
 function upgrade_047_to_048() {
 	global $config;
-	$config['dyndnses']['dyndns'] = array();
-	if (isset($config['dyndns']['enable'])) {
-		$tempdyn = array();
-		$tempdyn['enable'] = isset($config['dyndns']['enable']);
-		$tempdyn['type'] = $config['dyndns']['type'];
-		$tempdyn['wildcard'] = isset($config['dyndns']['wildcard']);
-		$tempdyn['usernamefld'] = $config['dyndns']['username'];
-		$tempdyn['passwordfld'] = $config['dyndns']['password'];
-		$tempdyn['host'] = $config['dyndns']['host'];
-		$tempdyn['mx'] = $config['dyndns']['mx'];		
-		$config['dyndnses']['dyndns'][] = $tempdyn;
+	if (!empty($config['dyndns'])) {
+		$config['dyndnses'] = array();
+		$config['dyndnses']['dyndns'] = array();
+		if(isset($config['dyndns'][0]['enable'])) {
+			$tempdyn = array();
+			$tempdyn['enable'] = isset($config['dyndns'][0]['enable']);
+			$tempdyn['type'] = $config['dyndns'][0]['type'];
+			$tempdyn['wildcard'] = isset($config['dyndns'][0]['wildcard']);
+			$tempdyn['usernamefld'] = $config['dyndns'][0]['username'];
+			$tempdyn['passwordfld'] = $config['dyndns'][0]['password'];
+			$tempdyn['host'] = $config['dyndns'][0]['host'];
+			$tempdyn['mx'] = $config['dyndns'][0]['mx'];		
+			$tempdyn['interface'] = "wan";
+			$tempdyn['descr'] = "Upgraded Dyndns {$tempdyn['type']}";
+			$config['dyndnses']['dyndns'][] = $tempdyn;
+		}
 		unset($config['dyndns']);
 	}		
-	$config['dnsupdates']['dnsupdate'] = array();
-	if (isset($config['dnsupdate']['enable'])) {
+	if (!empty($config['dnsupdate'])) {
+		$config['dnsupdates'][0]['dnsupdate'] = array();
 		$pconfig = array();
-		$pconfig['dnsupdate_enable'] = isset($config['dnsupdate']['enable']);
-		$pconfig['dnsupdate_host'] = $config['dnsupdate']['host'];
-		$pconfig['dnsupdate_ttl'] = $config['dnsupdate']['ttl'];
+		$pconfig['dnsupdate_enable'] = isset($config['dnsupdate'][0]['enable']);
+		$pconfig['dnsupdate_host'] = $config['dnsupdate'][0]['host'];
+		$pconfig['dnsupdate_ttl'] = $config['dnsupdate'][0]['ttl'];
 		if (!$pconfig['dnsupdate_ttl'])
 			$pconfig['dnsupdate_ttl'] = 60;
-		$pconfig['dnsupdate_keydata'] = $config['dnsupdate']['keydata'];
-		$pconfig['dnsupdate_keyname'] = $config['dnsupdate']['keyname'];
-		$pconfig['dnsupdate_keytype'] = $config['dnsupdate']['keytype'];
+		$pconfig['dnsupdate_keydata'] = $config['dnsupdate'][0]['keydata'];
+		$pconfig['dnsupdate_keyname'] = $config['dnsupdate'][0]['keyname'];
+		$pconfig['dnsupdate_keytype'] = $config['dnsupdate'][0]['keytype'];
 		if (!$pconfig['dnsupdate_keytype'])
 			$pconfig['dnsupdate_keytype'] = "zone";
-		$pconfig['dnsupdate_server'] = $config['dnsupdate']['server'];
-		$pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate']['usetcp']);
+		$pconfig['dnsupdate_server'] = $config['dnsupdate'][0]['server'];
+		$pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate'][0]['usetcp']);
+		$pconfig['interface'] = "wan";
 		$config['dnsupdates']['dnsupdate'][] = $pconfig;
 		unset($config['dnsupdate']);
 	}
@@ -1340,7 +1384,7 @@ function upgrade_051_to_052() {
 			$server['tunnel_network'] = $server['addresspool'];
 			unset($server['addresspool']);
 			if (isset($server['use_lzo'])) {
-				$server['compress'] = true;
+				$server['compression'] = "on";
 				unset($server['use_lzo']);
 			}
 			if ($server['nopool'])
@@ -1367,6 +1411,11 @@ function upgrade_051_to_052() {
 			unset($server['dhcp_nbdd']);
 			$server['wins_server1'] = $server['dhcp_wins'];
 			unset($server['dhcp_wins']);
+
+			if (!empty($server['disable']))
+				$server['disable'] = true;
+			else
+				unset($server['disable']);
 
 			/* allocate vpnid */
 			$server['vpnid'] = $vpnid++;
@@ -1436,7 +1485,7 @@ function upgrade_051_to_052() {
 			$client['proxy_addr'] = $client['poxy_hostname'];
 			unset($client['proxy_addr']);
 			if (isset($client['use_lzo'])) {
-				$client['compress'] = true;
+				$client['compression'] = "on";
 				unset($client['use_lzo']);
 			}
 			$client['resolve_retry'] = $client['infiniteresolvretry'];
@@ -1444,6 +1493,11 @@ function upgrade_051_to_052() {
 
 			/* allocate vpnid */
 			$client['vpnid'] = $vpnid++;
+
+			if (!empty($client['disable']))
+				$client['disable'] = true;
+			else
+				unset($client['disable']);
 
 			$config['openvpn']['openvpn-client'][] = $client;
 		}
@@ -1595,9 +1649,10 @@ function upgrade_053_to_054() {
 	}
 	// Unset lbpool if we no longer have any server pools
 	if (count($lbpool_srv_arr) == 0) {
-		unset($config['load_balancer']['lbpool']);
-		if(count($config['load_balancer']) == 0) {
+		if(empty($config['load_balancer'])) {
 			unset($config['load_balancer']);
+		} else {
+			unset($config['load_balancer']['lbpool']);
 		}
 	} else {
 		$config['load_balancer']['lbpool'] = $lbpool_srv_arr;
@@ -1860,4 +1915,54 @@ function upgrade_060_to_061() {
 		$config['interfaces']['lan']['enable'] = true;
 }
 
+function upgrade_061_to_062() {
+	global $config;
+
+	/* Convert NAT port forwarding rules */
+	if (is_array($config['nat']['rule'])) {
+		$a_nat = &$config['nat']['rule'];
+
+		foreach ($a_nat as &$natent) {
+			$natent['disabled'] = false;
+			$natent['nordr']    = false;
+
+			$natent['source'] = array(
+				"not"     => false,
+				"any"     => true,
+				"port"    => ""
+			);
+
+			$natent['destination'] = array(
+				"not"     => false,
+				"address" => $natent['external-address'],
+				"port"    => $natent['external-port']
+			);
+
+			if (empty($natent['destination']['address'])) {
+				unset($natent['destination']['address']);
+				$natent['destination']['network'] = $natent['interface'] . 'ip';
+			} else if ($natent['destination']['address'] == 'any') {
+				unset($natent['destination']['address']);
+				$natent['destination']['any'] = true;
+			}
+
+			unset($natent['external-address']);
+			unset($natent['external-port']);
+		}
+
+		unset($natent);
+	}
+}
+
+function upgrade_062_to_063() {
+	/* Upgrade legacy Themes to the new pfsense_ng */
+	global $config;
+
+	switch($config['theme']) {
+		case "nervecenter":
+			$config['theme'] = "pfsense_ng";
+			break;
+	}
+	
+}
 ?>

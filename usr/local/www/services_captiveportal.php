@@ -57,6 +57,9 @@ if ($_GET['act'] == "viewhtml") {
 } else if ($_GET['act'] == "viewerrhtml") {
 	echo base64_decode($config['captiveportal']['page']['errtext']);
 	exit;
+} else if ($_GET['act'] == "viewlogouthtml") {
+	echo base64_decode($config['captiveportal']['page']['logouttext']);
+	exit;
 }
 
 $pconfig['cinterface'] = $config['captiveportal']['interface'];
@@ -92,6 +95,8 @@ $pconfig['radiuskey'] = $config['captiveportal']['radiuskey'];
 $pconfig['radiuskey2'] = $config['captiveportal']['radiuskey2'];
 $pconfig['radiusvendor'] = $config['captiveportal']['radiusvendor'];
 $pconfig['radiussession_timeout'] = isset($config['captiveportal']['radiussession_timeout']);
+$pconfig['passthrumacadd'] = isset($config['captiveportal']['passthrumacadd']);
+$pconfig['passthrumacaddusername'] = isset($config['captiveportal']['passthrumacaddusername']);
 $pconfig['radmac_format'] = $config['captiveportal']['radmac_format'];
 
 if ($_POST) {
@@ -192,13 +197,17 @@ if ($_POST) {
 		$config['captiveportal']['radiuskey2'] = $_POST['radiuskey2'];
 		$config['captiveportal']['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
-        $config['captiveportal']['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
+		$config['captiveportal']['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
+		$config['captiveportal']['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
+		$config['captiveportal']['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 
 		/* file upload? */
 		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))
 			$config['captiveportal']['page']['htmltext'] = base64_encode(file_get_contents($_FILES['htmlfile']['tmp_name']));
 		if (is_uploaded_file($_FILES['errfile']['tmp_name']))
 			$config['captiveportal']['page']['errtext'] = base64_encode(file_get_contents($_FILES['errfile']['tmp_name']));
+		if (is_uploaded_file($_FILES['logoutfile']['tmp_name']))
+			$config['captiveportal']['page']['logouttext'] = base64_encode(file_get_contents($_FILES['logoutfile']['tmp_name']));
 
 		write_config();
 
@@ -253,6 +262,7 @@ function enable_change(enable_change) {
 	document.iform.radiussession_timeout.disabled = radius_endis;
 	document.iform.htmlfile.disabled = endis;
 	document.iform.errfile.disabled = endis;
+	document.iform.logoutfile.disabled = endis;
 
 	document.iform.radiusacctport.disabled = (radius_endis || !document.iform.radacct_enable.checked) && !enable_change;
 
@@ -278,6 +288,7 @@ function enable_change(enable_change) {
 	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
 	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
+	$tab_array[] = array("Auth Logs", false, "diag_logs_auth.php");
 	display_top_tabs($tab_array);
 ?>    </td></tr>
   <tr>
@@ -290,7 +301,7 @@ function enable_change(enable_change) {
 		<strong>Enable captive portal </strong></td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncellreq">Interface</td>
+	  <td width="22%" valign="top" class="vncellreq">Interfaces</td>
 	  <td width="78%" class="vtable">
 		<select name="cinterface[]" multiple="true" size="<?php echo count($config['interfaces']); ?>" class="formselect" id="cinterface">
 		  <?php 
@@ -301,7 +312,7 @@ function enable_change(enable_change) {
 		  </option>
 		  <?php endforeach; ?>
 		</select> <br>
-		<span class="vexpl">Choose which interface(s) to run the captive portal on.</span></td>
+		<span class="vexpl">Select the interface(s) to enable for captive portal.</span></td>
 	</tr>
 	<tr>
 	  <td valign="top" class="vncell">Maximum concurrent connections</td>
@@ -360,6 +371,21 @@ to access after they've authenticated.</td>
     If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in.
     This is required when the MAC address of the client cannot be determined (usually because there are routers between <?php echo $g['product_name'] ?> and the clients).
     If this is enabled, RADIUS MAC authentication cannot be used.</td>
+	</tr>
+	<tr>
+      <td valign="top" class="vncell">Pass-through MAC Auto Entry</td>
+      <td class="vtable">
+        <input name="passthrumacadd" type="checkbox" class="formfld" id="passthrumacadd" value="yes" <?php if ($pconfig['passthrumacadd']) echo "checked"; ?>>
+        <strong>Enable Pass-through MAC automatic additions</strong><br>
+    If this option is set, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will never have to authenticate again. 
+    To remove the passthrough MAC entry you either have to log in and remove it manually from the <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> or send a POST from another system to remove it.
+    If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.
+	<br/><br/>
+        <input name="passthrumacaddusername" type="checkbox" class="formfld" id="passthrumacaddusername" value="yes" <?php if ($pconfig['passthrumacaddusername']) echo "checked"; ?>>
+        <strong>Enable Pass-through MAC automatic addition with username</strong><br>
+    If this option is set, with the automatically MAC passthrough entry created the username, used during authentication, will be saved.
+    To remove the passthrough MAC entry you either have to log in and remove it manually from the <a href="services_captiveportal_mac.php">Pass-through MAC tab</a> or send a POST from another system to remove it.
+	</td>
 	</tr>
 	<tr>
       <td valign="top" class="vncell">Per-user bandwidth restriction</td>
@@ -519,7 +545,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 				}
 				?></select><br>
 				If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-Id will be set to the client's IP address and
-				the Called-Station-Id to the client's MAC address. Default behaviour is Calling-Station-Id = client's MAC address and Called-Station-Id = <?=$g['product_name']?>'s WAN IP address.</td>
+				the Called-Station-Id to the client's MAC address. Default behavior is Calling-Station-Id = client's MAC address and Called-Station-Id = <?=$g['product_name']?>'s WAN IP address.</td>
 			</tr>
 		</table>
 	</tr>
@@ -574,7 +600,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
     Paste an RSA private key in PEM format here.</td>
 	  </tr>
         <tr>
-      <td valign="top" class="vncell">HTTPS intermmediate certificate</td>
+      <td valign="top" class="vncell">HTTPS intermediate certificate</td>
       <td class="vtable">
         <textarea name="cacert" cols="65" rows="7" id="cacert" class="formpre"><?=htmlspecialchars($pconfig['cacert']);?></textarea>
         <br>
@@ -597,7 +623,7 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 		  <br>
 		  <br>
 		<?php endif; ?>
-		  Upload an HTML file for the portal page here (leave blank to keep the current one). Make sure to include a form (POST to &quot;$PORTAL_ACTION$&quot;)
+		  Upload an HTML/PHP file for the portal page here (leave blank to keep the current one). Make sure to include a form (POST to &quot;$PORTAL_ACTION$&quot;)
 with a submit button (name=&quot;accept&quot;) and a hidden field with name=&quot;redirurl&quot; and value=&quot;$PORTAL_REDIRURL$&quot;.
 Include the &quot;auth_user&quot; and &quot;auth_pass&quot; and/or &quot;auth_voucher&quot; input fields if authentication is enabled, otherwise it will always fail.
 Example code for the form:<br>
@@ -621,7 +647,21 @@ Example code for the form:<br>
 		  <br>
 		  <br>
 		<?php endif; ?>
-The contents of the HTML file that you upload here are displayed when an authentication error occurs.
+The contents of the HTML/PHP file that you upload here are displayed when an authentication error occurs.
+You may include &quot;$PORTAL_MESSAGE$&quot;, which will be replaced by the error or reply messages from the RADIUS server, if any.</td>
+	</tr>
+	<tr>
+	  <td width="22%" valign="top" class="vncell">Logout<br>
+		page<br>
+		contents</td>
+	  <td class="vtable">
+		<input name="logoutfile" type="file" class="formfld file" id="logoutfile"><br>
+		<?php if ($config['captiveportal']['page']['logouttext']): ?>
+		<a href="?act=viewlogouthtml" target="_blank">View current page</a>
+		  <br>
+		  <br>
+		<?php endif; ?>
+The contents of the HTML/PHP file that you upload here are displayed when an authentication error occurs.
 You may include &quot;$PORTAL_MESSAGE$&quot;, which will be replaced by the error or reply messages from the RADIUS server, if any.</td>
 	</tr>
 	<tr>

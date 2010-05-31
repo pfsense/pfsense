@@ -46,6 +46,17 @@ if($config['notifications']['growl']['password'])
 if($config['notifications']['growl']['ipaddress']) 
 	$pconfig['ipaddress'] = $config['notifications']['growl']['ipaddress'];
 
+if($config['notifications']['growl']['notification_name']) 
+	$pconfig['notification_name'] = $config['notifications']['growl']['notification_name'];
+else
+  $pconfig['notification_name'] = 'pfSense growl alert';
+  
+if($config['notifications']['growl']['name']) 
+	$pconfig['name'] = $config['notifications']['growl']['name'];
+else
+  $pconfig['name'] = 'PHP-Growl';
+
+
 // SMTP
 if($config['notifications']['smtp']['ipaddress']) 
 	$pconfig['smtpipaddress'] = $config['notifications']['smtp']['ipaddress'];
@@ -75,12 +86,14 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 	}
 
-	if ($_POST['Submit'] == "Save") {
+	if ($_POST['Submit'] == gettext("Save")) {
 		$tunableent = array();
 
 		// Growl
 		$config['notifications']['growl']['ipaddress'] = $_POST['ipaddress'];
 		$config['notifications']['growl']['password'] = $_POST['password'];
+		$config['notifications']['growl']['name'] = $_POST['name'];
+		$config['notifications']['growl']['notification_name'] = $_POST['notification_name'];
 
 		// SMTP
 		$config['notifications']['smtp']['ipaddress'] = $_POST['smtpipaddress'];
@@ -95,20 +108,20 @@ if ($_POST) {
 		if($config['notifications']['growl']['ipaddress'] && 
 		   $config['notifications']['growl']['password'] = $_POST['password']) {
 			register_via_growl();
-			notify_via_growl("This is a test message form pfSense.  It is safe to ignore this message.");
+			notify_via_growl(gettext("This is a test message form pfSense.  It is safe to ignore this message."));
 		}
 
 		// Send test message via smtp
 		if(file_exists("/var/db/notices_lastmsg.txt"))
 			unlink("/var/db/notices_lastmsg.txt");
-		$savemsg = notify_via_smtp("This is a test message form pfSense.  It is safe to ignore this message.");
+		$savemsg = notify_via_smtp(gettext("This is a test message form pfSense.  It is safe to ignore this message."));
 
 		pfSenseHeader("system_advanced_notifications.php");
 		exit;
     }
 }
 
-$pgtitle = array("System","Advanced: Notifications");
+$pgtitle = array(gettext("System"),gettext("Advanced: Notifications"));
 include("head.inc");
 
 ?>
@@ -128,12 +141,12 @@ include("head.inc");
 			<td>
 				<?php
 					$tab_array = array();
-					$tab_array[] = array("Admin Access", false, "system_advanced_admin.php");
-					$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
-					$tab_array[] = array("Networking", false, "system_advanced_network.php");
-					$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
-					$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
-					$tab_array[] = array("Notifications", true, "system_advanced_notifications.php");
+					$tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
+					$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
+					$tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
+					$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
+					$tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
+					$tab_array[] = array(gettext("Notifications"), true, "system_advanced_notifications.php");
 					display_top_tabs($tab_array);
 				?>
 			</td>
@@ -145,20 +158,34 @@ include("head.inc");
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<!-- GROWL -->
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Growl</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Growl"); ?></td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">IP Address</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Registration Name"); ?></td>
 							<td width="78%" class="vtable">
-								<input name='ipaddress' value='<?php echo $pconfig['ipaddress']; ?>'><br/>
-								This is the IP address that you would like to send growl notifications to.
+								<input name='name' value='<?php echo $pconfig['name']; ?>'><br/>
+								<?=gettext("Enter the name to register with the Growl server (default: PHP-Growl)."); ?>
+							</td>
+						</tr>
+  					<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Notification Name"); ?></td>
+							<td width="78%" class="vtable">
+								<input name='notification_name' value='<?php echo $pconfig['notification_name']; ?>'><br/>
+								<?=gettext("Enter a name for the Growl notifications (default: pfSense growl alert)."); ?>
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">Password</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("IP Address"); ?></td>
+							<td width="78%" class="vtable">
+								<input name='ipaddress' value='<?php echo $pconfig['ipaddress']; ?>'><br/>
+								<?=gettext("This is the IP address that you would like to send growl notifications to."); ?>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 							<td width="78%" class="vtable">
 								<input name='password' type='password' value='<?php echo $pconfig['password']; ?>'><br/>
-								Enter the password of the remote growl notification device.
+								<?=gettext("Enter the password of the remote growl notification device."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -166,41 +193,41 @@ include("head.inc");
 						</tr>	
 						<!-- SMTP -->
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">SMTP E-Mail</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("SMTP E-Mail"); ?></td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">IP Address of E-Mail server</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("IP Address of E-Mail server"); ?></td>
 							<td width="78%" class="vtable">
 								<input name='smtpipaddress' value='<?php echo $pconfig['smtpipaddress']; ?>'><br/>
-								This is the IP address of the SMTP E-Mail server that will be used to send notifications to.
+								<?=gettext("This is the IP address of the SMTP E-Mail server that will be used to send notifications to."); ?>
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">From e-mail address</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("From e-mail address"); ?></td>
 							<td width="78%" class="vtable">
 								<input name='smtpfromaddress' type='input' value='<?php echo $pconfig['smtpfromaddress']; ?>'><br/>
-								This is the e-mail address that will appear in the from field.
+								<?=gettext("This is the e-mail address that will appear in the from field."); ?>
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">Notification E-Mail address</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Notification E-Mail address"); ?></td>
 							<td width="78%" class="vtable">
 								<input name='smtpnotifyemailaddress' type='input' value='<?php echo $pconfig['smtpnotifyemailaddress']; ?>'><br/>
-								Enter the e-mail address that you would like email notifications sent to.
+								<?=gettext("Enter the e-mail address that you would like email notifications sent to."); ?>
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">Notification E-Mail auth username (optional)</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Notification E-Mail auth username (optional)"); ?></td>
 							<td width="78%" class="vtable">
 								<input name='smtpusername' type='input' value='<?php echo $pconfig['smtpusername']; ?>'><br/>
-								Enter the e-mail address username for SMTP authentication.
+								<?=gettext("Enter the e-mail address username for SMTP authentication."); ?>
 							</td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">Notification E-Mail auth password</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Notification E-Mail auth password"); ?></td>
 							<td width="78%" class="vtable">
 								<input name='smtppassword' type='password' value='<?php echo $pconfig['smtppassword']; ?>'><br/>
-								Enter the e-mail address password for SMTP authentication.
+								<?=gettext("Enter the e-mail address password for SMTP authentication."); ?>
 							</td>
 						</tr>
 						<tr>
@@ -209,7 +236,7 @@ include("head.inc");
 							</td>
 							<td>
 								<br/>
-								<input type='submit' id='Submit' name='Submit' value='Save'></form>
+								<input type='submit' id='Submit' name='Submit' value='<?=gettext("Save"); ?>'></form>
 							</td>
 						</tr>
 					</table>

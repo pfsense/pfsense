@@ -52,6 +52,7 @@ require_once("shaper.inc");
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
+$pconfig['disablehttpredirect'] = isset($config['system']['disablehttpredirect']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['enableserial'] = $config['system']['enableserial'];
@@ -76,11 +77,11 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['webguiport'])
 		if(!is_port($_POST['webguiport']))
-			$input_errors[] = "You must specify a valid webConfigurator port number";
+			$input_errors[] = gettext("You must specify a valid webConfigurator port number");
 
 	if ($_POST['sshport'])
 		if(!is_port($_POST['sshport']))
-			$input_errors[] = "You must specify a valid port number";
+			$input_errors[] = gettext("You must specify a valid port number");
 
 	if($_POST['sshdkeyonly'] == "yes")
 		$config['system']['ssh']['sshdkeyonly'] = "enabled";
@@ -98,6 +99,14 @@ if ($_POST) {
 			$restart_webgui = true;
 		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certref']))
 			$restart_webgui = true;
+
+		if ($_POST['disablehttpredirect'] == "yes") {
+			$config['system']['disablehttpredirect'] = true;
+			$restart_webgui = true;
+		} else {
+			unset($config['system']['disablehttpredirect']);
+			$restart_webgui = true;
+		}
 
 		if($_POST['disableconsolemenu'] == "yes") {
 			$config['system']['disableconsolemenu'] = true;
@@ -157,7 +166,7 @@ if ($_POST) {
 	    $savemsg = get_std_save_message($retval);
 
 		if ($restart_webgui)
-			$savemsg .= "<br />One moment...redirecting to {$url} in 20 seconds.";
+			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."),$url);
 
 		conf_mount_rw();
 		setup_serial_port();
@@ -165,7 +174,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("System","Advanced: Admin Access");
+$pgtitle = array(gettext("System"),gettext("Advanced: Admin Access"));
 include("head.inc");
 
 ?>
@@ -197,12 +206,12 @@ function prot_change() {
 				<td>
 					<?php
 						$tab_array = array();
-						$tab_array[] = array("Admin Access", true, "system_advanced_admin.php");
-						$tab_array[] = array("Firewall / NAT", false, "system_advanced_firewall.php");
-						$tab_array[] = array("Networking", false, "system_advanced_network.php");
-						$tab_array[] = array("Miscellaneous", false, "system_advanced_misc.php");
-						$tab_array[] = array("System Tunables", false, "system_advanced_sysctl.php");
-						$tab_array[] = array("Notifications", false, "system_advanced_notifications.php");
+						$tab_array[] = array(gettext("Admin Access"), true, "system_advanced_admin.php");
+						$tab_array[] = array(gettext("Firewall / NAT"), false, "system_advanced_firewall.php");
+						$tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
+						$tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
+						$tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
+						$tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 						display_top_tabs($tab_array);
 					?>
 				</td>
@@ -212,18 +221,18 @@ function prot_change() {
 					<div class="tabcont">
 						<span class="vexpl">
 							<span class="red">
-								<strong>NOTE:&nbsp</strong>
+								<strong><?=gettext("NOTE"); ?>:&nbsp</strong>
 							</span>
-							The options on this page are intended for use by advanced users only.
+							<?=gettext("The options on this page are intended for use by advanced users only."); ?>
 							<br/>
 						</span>
 						<br/>
 						<table width="100%" border="0" cellpadding="6" cellspacing="0">
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">webConfigurator</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("webConfigurator"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Protocol</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Protocol"); ?></td>
 								<td width="78%" class="vtable">
 									<?php
 										if ($pconfig['webguiproto'] == "http")
@@ -240,14 +249,14 @@ function prot_change() {
 									HTTPS
 									<?php if (!$certs_available): ?>
 									<br/>
-									No Certificates have been defined. You must
-									<a href="system_certmanager.php">Create or Import</a>
-									a Certificate before SSL can be enabled.
+									<?=gettext("No Certificates have been defined. You must"); ?>
+									<a href="system_certmanager.php"><?=gettext("Create or Import"); ?></a>
+									<?=gettext("a Certificate before SSL can be enabled."); ?>
 									<?php endif; ?>
 								</td>
 							</tr>
 							<tr id="ssl_opts">
-								<td width="22%" valign="top" class="vncell">SSL Certificate</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("SSL Certificate"); ?></td>
 								<td width="78%" class="vtable">
 									<select name="ssl-certref" id="ssl-certref" class="formselect">
 										<?php
@@ -262,19 +271,31 @@ function prot_change() {
 								</td>
 							</tr>
 							<tr>
-								<td valign="top" class="vncell">TCP port</td>
+								<td valign="top" class="vncell"><?=gettext("TCP port"); ?></td>
 								<td class="vtable">
 									<input name="webguiport" type="text" class="formfld unknown" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
 									<br>
 									<span class="vexpl">
-										Enter a custom port number for the webConfigurator
-										above if you want to override the default (80 for HTTP, 443
-										for HTTPS). Changes will take effect immediately after save.
+										<?=gettext("Enter a custom port number for the webConfigurator " .
+										"above if you want to override the default (80 for HTTP, 443 " .
+										"for HTTPS). Changes will take effect immediately after save."); ?>
 									</span>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Anti-lockout</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("WebGUI redirect"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="disablehttpredirect" type="checkbox" id="disablehttpredirect" value="yes" <?php if ($pconfig['disablehttpredirect']) echo "checked"; ?> />
+									<strong><?=gettext("Disable webConfigurator redirect rule"); ?></strong>
+									<br/>
+									<?php gettext("When this is unchecked, access to the webConfigurator " .
+									"is always permitted even on port 80, regardless of the listening port configured." .
+									"Check this box to disable this automatically added redirect rule. ");
+									?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Anti-lockout"); ?></td>
 								<td width="78%" class="vtable">
 									<?php
 										if($config['interfaces']['lan']) 
@@ -283,47 +304,47 @@ function prot_change() {
 											$lockout_interface = "WAN";
 									?>
 									<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
-									<strong>Disable webConfigurator anti-lockout rule</strong>
+									<strong><?=gettext("Disable webConfigurator anti-lockout rule"); ?></strong>
 									<br/>
-									When this is unchecked, access to the webConfigurator on the <?=$lockout_interface;?>
-									interface is always permitted, regardless of the user-defined firewall
-									rule set. Check this box to disable this automatically added rule, so access
-									to the webConfigurator is controlled by the user-defined firewall rules 
-									(ensure you have a firewall rule in place that allows you in, or you will
-									lock yourself out!). <em> Hint: the &quot;Set interface(s) IP address&quot;
-									option in the console menu resets this setting as well. </em>
+									<?php sprintf(gettext("When this is unchecked, access to the webConfigurator " .
+									"on the %s interface is always permitted, regardless of the user-defined firewall " .
+									"rule set. Check this box to disable this automatically added rule, so access " .
+									"to the webConfigurator is controlled by the user-defined firewall rules " .
+									"(ensure you have a firewall rule in place that allows you in, or you will " .
+									"lock yourself out!)"), $lockout_interface); ?>
+									<em> <?=gettext("Hint: the &quot;Set interface(s) IP address&quot; option in the console menu resets this setting as well."); ?> </em>
 								</td>
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
 							</tr>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">Secure Shell</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Secure Shell"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Secure Shell Server</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Secure Shell Server"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="enablesshd" type="checkbox" id="enablesshd" value="yes" <?php if (isset($pconfig['enablesshd'])) echo "checked"; ?> />
-									<strong>Enable Secure Shell</strong>
+									<strong><?=gettext("Enable Secure Shell"); ?></strong>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Authentication Method</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Authentication Method"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if ($pconfig['sshdkeyonly']) echo "checked"; ?> />
-									<strong>Disable Password login for Secure Shell (rsa key only)</strong>
+									<strong><?=gettext("Disable Password login for Secure Shell (rsa key only)"); ?></strong>
 									<br/>
-									When enabled, authorized keys need to be configured for each
-									<a href="system_usermanager.php">user</a>
-									that has been granted secure shell access.
+									<?=gettext("When enabled, authorized keys need to be configured for each"); ?>
+									<a href="system_usermanager.php"><?=gettext("user"); ?></a>
+									<?=gettext("that has been granted secure shell access."); ?>
 								</td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">SSH port</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("SSH port"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="sshport" type="text" id="sshport" value="<?php echo $pconfig['sshport']; ?>" />
 									<br/>
-									<span class="vexpl">Note:  Leave this blank for the default of 22</span>
+									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default of 22"); ?></span>
 								</td>
 							</tr>
 							<tr>
@@ -331,15 +352,15 @@ function prot_change() {
 							</tr>
 							<?php if($g['platform'] == "pfSense" || $g['platform'] == "cdrom"): ?>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">Serial Communcations</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Serial Communcations"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Serial Terminal</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Serial Terminal"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked"; ?> />
-									<strong>This will enable the first serial port with 9600/8/N/1</strong>
+									<strong><?=gettext("This will enable the first serial port with 9600/8/N/1"); ?></strong>
 									<br>
-									<span class="vexpl">Note:  This will disable the internal video card/keyboard</span>
+									<span class="vexpl"><?=gettext("Note:  This will disable the internal video card/keyboard"); ?></span>
 								</td>
 							</tr>
 							<tr>
@@ -347,15 +368,15 @@ function prot_change() {
 							</tr>
 							<?php endif; ?>
 							<tr>
-								<td colspan="2" valign="top" class="listtopic">Console Options</td>
+								<td colspan="2" valign="top" class="listtopic"><?=gettext("Console Options"); ?></td>
 							</tr>
 							<tr>
-								<td width="22%" valign="top" class="vncell">Console menu</td>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Console menu"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked"; ?>  />
-									<strong>Password protect the console menu</strong>
+									<strong><?=gettext("Password protect the console menu"); ?></strong>
 									<br/>
-									<span class="vexpl">Changes to this option will take effect after a reboot.</span>
+									<span class="vexpl"><?=gettext("Changes to this option will take effect after a reboot."); ?></span>
 								</td>
 							</tr>
 							<tr>
@@ -363,7 +384,7 @@ function prot_change() {
 							</tr>							
 							<tr>
 								<td width="22%" valign="top">&nbsp;</td>
-								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" /></td>
+								<td width="78%"><input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" /></td>
 							</tr>
 							<tr>
 								<td colspan="2" class="list" height="12">&nbsp;</td>
@@ -392,17 +413,17 @@ function prot_change() {
 if ($restart_sshd) {
 
 	mwexec("/usr/bin/killall sshd");
-	log_error("secure shell configuration has changed. Stopping sshd.");
+	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
 
 	if ($config['system']['enablesshd']) {
-		log_error("secure shell configuration has changed. Restarting sshd.");
+		log_error(gettext("secure shell configuration has changed. Restarting sshd."));
 		touch("{$g['tmp_path']}/start_sshd");
 	}
 }
 if ($restart_webgui) {
 	ob_flush();
 	flush();
-	log_error("webConfigurator configuration has changed. Restarting webConfigurator.");
+	log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
 	touch("{$g['tmp_path']}/restart_webgui");
 }
 

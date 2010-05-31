@@ -119,18 +119,18 @@ function config_unlock() {
 }
 
 /* lock configuration file */
-function lock($lock) {
+function lock($lock, $op = LOCK_SH) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock)
 		die("WARNING: You must give a name as parameter to lock() function.");
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock"))
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 	$cfglckkeyconsumers++;
-	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w+")) {
-		//if (flock($fp, LOCK_EX))
+	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
+		if (flock($fp, $op))
 			return $fp;
-		//else
-		//	fclose($fp);
+		else
+			fclose($fp);
 	}
 }
 
@@ -198,7 +198,7 @@ function gen_subnet_max($ipaddr, $bits) {
 	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
 		return "";
 
-	return long2ip(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
+	return long2ip32(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
 }
 
 /* returns a subnet mask (long given a bit count) */
@@ -216,9 +216,19 @@ function gen_subnet_mask($bits) {
 	return long2ip(gen_subnet_mask_long($bits));
 }
 
+/* Convert long int to IP address, truncating to 32-bits. */
+function long2ip32($ip) {
+	return long2ip($ip & 0xFFFFFFFF);
+}
+
+/* Convert IP address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms. */
+function ip2long32($ip) {
+	return ( ip2long($ip) & 0xFFFFFFFF );
+}
+
 /* Convert IP address to unsigned long int. */
 function ip2ulong($ip) {
-	return sprintf("%u", ip2long($ip));
+	return sprintf("%u", ip2long32($ip));
 }
 
 /* Find out how many IPs are contained within a given IP range
@@ -246,12 +256,12 @@ function find_smallest_cidr($number) {
 
 /* Return the previous IP address before the given address */
 function ip_before($ip) {
-	return long2ip(ip2long($ip)-1);
+	return long2ip32(ip2long($ip)-1);
 }
 
 /* Return the next IP address after the given address */
 function ip_after($ip) {
-	return long2ip(ip2long($ip)+1);
+	return long2ip32(ip2long($ip)+1);
 }
 
 /* Return true if the first IP is 'before' the second */
@@ -347,7 +357,7 @@ function is_ipaddr($ipaddr) {
 		return false;
 
 	$ip_long = ip2long($ipaddr);
-	$ip_reverse = long2ip($ip_long);
+	$ip_reverse = long2ip32($ip_long);
 
 	if ($ipaddr == $ip_reverse)
 		return true;
@@ -666,7 +676,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'tun',
 				'carp',
 				'lagg',
-				'vip'
+				'vip',
+				'ipfw'
 		);
 	}
 	switch($mode) {
@@ -851,6 +862,22 @@ function alias_expand($name) {
 		return null;
 }
 
+function alias_expand_urltable($name) {
+	global $config;
+	$urltable_prefix = "/var/db/aliastables/";
+	$urltable_filename = $urltable_prefix . $name . ".txt";
+
+	foreach ($config['aliases']['alias'] as $alias) {
+		if (($alias['type'] == 'urltable') && ($alias['name'] == $name)) {
+			if (is_URL($alias["url"]) && file_exists($urltable_filename) && filesize($urltable_filename))
+				return $urltable_filename;
+			else if (process_alias_urltable($name, $alias["url"], 0, true))
+				return $urltable_filename;
+		}
+	}
+	return null;
+}
+
 /* find out whether two subnets overlap */
 function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
 
@@ -875,9 +902,9 @@ function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
 
 /* compare two IP addresses */
 function ipcmp($a, $b) {
-	if (ip2long($a) < ip2long($b))
+	if (ip_less_than($a, $b))
 		return -1;
-	else if (ip2long($a) > ip2long($b))
+	else if (ip_greater_than($a, $b))
 		return 1;
 	else
 		return 0;
@@ -886,7 +913,7 @@ function ipcmp($a, $b) {
 /* return true if $addr is in $subnet, false if not */
 function ip_in_subnet($addr,$subnet) {
 	list($ip, $mask) = explode('/', $subnet);
-	$mask = 0xffffffff << (32 - $mask);
+	$mask = (0xffffffff << (32 - $mask)) & 0xffffffff;
 	return ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
 }
 

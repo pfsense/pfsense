@@ -192,11 +192,21 @@ function system_hosts_generate() {
 
 	$hosts .= "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
 
-	$sysiflist = get_configured_interface_list();
-	foreach ($sysiflist as $sysif) {
-		$cfgip = get_interface_ip($sysif);
+	if ($config['interfaces']['lan']) {
+		$cfgip = get_interface_ip("lan");
 		if (is_ipaddr($cfgip))
 			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+	} else {
+		$sysiflist = get_configured_interface_list();
+		foreach ($sysiflist as $sysif) {
+			if (!interface_has_gateway($sysif)) {
+				$cfgip = get_interface_ip($sysif);
+				if (is_ipaddr($cfgip)) {
+					$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+					break;
+				}
+			}
+		}
 	}
 
 	foreach ($hostscfg as $host) {
@@ -245,51 +255,24 @@ function system_routing_configure() {
 	}
 
 	/* Enable fast routing, if enabled */
+	/* XXX: More checks need to be done for subsystems that are not compatibel with fast routing. */
 	if(isset($config['staticroutes']['enablefastrouting']) && !isset($config['ipsec']['enable']))
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
 
-	$route_str = exec_command("/usr/bin/netstat -rnf inet");
-
-	/* clear out old routes, if necessary */
-	if (file_exists("{$g['vardb_path']}/routes.db")) {
-		$fd = fopen("{$g['vardb_path']}/routes.db", "r");
-		if (!$fd) {
-			printf("Error: cannot open routes DB file in system_routing_configure().\n");
-			return 1;
-		}
-		while (!feof($fd)) {
-			$oldrt = trim(fgets($fd));
-			if (($oldrt) && (stristr($route_str, $oldrt)))
-				mwexec("/sbin/route delete " . escapeshellarg($oldrt));
-		}
-		fclose($fd);
-		unlink("{$g['vardb_path']}/routes.db");
-	}
-
-	if (false) {
-	/* if list */
-	$iflist = get_configured_interface_list();
-
-	$dont_remove_route = false;
-	foreach ($iflist as $ifent => $ifname) {
-		/* 
-		 * XXX: The value of this is really when this function can take
-		 * 	an interface as parameter.
-		 */
-		/* do not process interfaces that will end up with gateways */
-		if (interface_has_gateway($ifent) || 
-			$config['interfaces'][$ifent]['ipaddr'] == "carpdev-dhcp") {
-			$dont_remove_route = true;
-			break;
+	$gatewayip = "";
+	$interfacegw = "";
+	/* tack on all the hard defined gateways as well */
+	if (is_array($config['gateways']['gateway_item'])) {
+		foreach	($config['gateways']['gateway_item'] as $gateway) {
+			if (isset($gateway['defaultgw'])) {
+				if ($gateway['gateway'] == "dynamic")
+					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
+				$gatewayip = $gateway['gateway'];
+				$interfacegw = $gateway['interface'];
+				break;
+			}
 		}
 	}
-
-	if ($dont_remove_route == false) {
-		/* remove default route */
-		mwexec("/sbin/route delete default", true);
-	}
-	}
-
 	$dont_add_route = false;
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
 	if($config['installedpackages']['olsrd']) {
@@ -300,83 +283,68 @@ function system_routing_configure() {
 			}
 		}
 	}
+	/* Create a array from the existing route table */
+	exec("/usr/bin/netstat -rnf inet", $route_str);
+	array_shift($route_str);
+	array_shift($route_str);
+	array_shift($route_str);
+	array_shift($route_str);
+	$route_arr = array();
+	foreach($route_str as $routeline) {
+		$items = preg_split("/[ ]+/i", $routeline);
+		$route_arr[$item[0]] = array($items[0], $items[1], $items[5]);
+	}
 
-	if($dont_add_route == false) {
-		if(is_array($config['gateways']['gateway_item'])) {
-			foreach($config['gateways']['gateway_item'] as $gateway) {
-		        	if(isset($gateway['defaultgw'])) {
-					$gatewayip = $gateway['gateway'];
-					$interfacegw = $gateway['interface'];
-					/* This handles the case where a dynamic gateway is choosen as default. */
-					if (!is_ipaddr($gatewayip))
-						$gatewayip = get_interface_gateway($interfacegw);
-					break;
-				}
+	if ($dont_add_route == false) {
+		if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
+			$action = "add";
+			if(isset($route_arr['default'])) {
+				$action = "change";
 			}
-			if(($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
-				preg_match("/default[ ]+([0-9].*?)[ ]+/i", $route_str, $elements);
-				if(trim($elements[1]) != "$gatewayip") {
-					mwexec("/sbin/route delete default " . escapeshellarg($gatewayip), true);
-				}
-				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
-			}
-		} else {
-			log_error("SYSTEM: We do not have a gateways array in our XML. Is this configuration damaged?");
-			/* adding gateway for 1.2-style configs without the new
-			  gateway setup configured.
-			  Force WAN to be default gateway because that is the
-			  1.2 behavior.
-			*/
-			if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
-				$gatewayip = $config['interfaces']['wan']['gateway'];
-				mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
-			}
+			log_error("ROUTING: $action default route to $gatewayip");
+			mwexec("/sbin/route {$action} default " . escapeshellarg($gatewayip));
+		} else if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
+			/* Adding gateway for 1.2-style configs without the new
+		  	 * gateway setup configured.
+		  	 * Force WAN to be default gateway because that is the 1.2 behavior.
+			 */
+			log_error("WARNING: There is no default gateway in the configuration.");
+			$gatewayip = $config['interfaces']['wan']['gateway'];
+			mwexec("/sbin/route add default " . escapeshellarg($gatewayip), true);
 		}
 	}
 
 	if (is_array($config['staticroutes']['route'])) {
-
-		$fd = fopen("{$g['vardb_path']}/routes.db", "w");
-		if (!$fd) {
-			printf("Error: cannot open routes DB file in system_routing_configure().\n");
-			return 1;
-		}
+		$gateways_arr = return_gateways_array();
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
-			unset($gatewayip);
-			unset($interfacegw);
-			if(is_array($config['gateways']['gateway_item'])) {
-				foreach($config['gateways']['gateway_item'] as $gateway) {
-					if($rtent['gateway'] == $gateway['name']) {
-						$gatewayip = $gateway['gateway'];
-						$interfacegw = $gateway['interface'];
-						/* This handles the case where a dynamic gateway is choosen. */
-                                        	if (!is_ipaddr($gatewayip))
-                                                	$gatewayip = get_interface_gateway($interfacegw);
-						break;
-					}
-				}
-			}
-			if((is_ipaddr($rtent['gateway'])) && empty($gatewayip))  {
+			$gatewayip = "";
+			if (isset($gateways_arr[$rtent['gateway']])) {
+				$gatewayip = $gateways_arr[$rtent['gateway']]['gateway'];
+				$interfacegw = get_real_interface($rtent['interface']);
+			} else if (is_ipaddr($rtent['gateway'])) {
 				$gatewayip = $rtent['gateway'];
-				$interfacegw = $rtent['interface'];
-			}
-			if((isset($rtent['interfacegateway'])) && (! is_ipaddr($gatewayip))) {
-				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));
 			} else {
-				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-					" " . escapeshellarg($gatewayip));
+				log_error("Static Routes: Gateway IP could not be found for {$rtent['network']}");
+				continue;
 			}
-			/* record route so it can be easily removed later (if necessary) */
-			fwrite($fd, $rtent['network'] . "\n");
+
+			$action = "add";
+			if (isset($route_arr[$rtent['network']]))
+				$action = "change";
+
+			if (is_ipaddr($gatewayip)) {
+				mwexec("/sbin/route {$action} " . escapeshellarg($rtent['network']) .
+					" " . escapeshellarg($gatewayip));
+			} else if (!empty($interfacegw)) {
+				mwexec("/sbin/route {$action} " . escapeshellarg($rtent['network']) .
+					" -iface " . escapeshellarg($interfacegw));
+			}
 		}
-		fclose($fd);
 	}
 
 	return 0;
 }
-
 
 function system_routing_enable() {
 	global $config, $g;
@@ -1371,4 +1339,83 @@ function enable_watchdog() {
 		exec("/usr/sbin/watchdogd");
 	}
 }
+
+function system_check_reset_button() {
+	global $g;
+	if($g['platform'] != "nanobsd")
+		return 0;
+
+	$specplatform = system_identify_specific_platform();
+
+	if ($specplatform['name'] != "wrap" && $specplatform['name'] != "alix")
+		return 0;
+
+	$retval = mwexec("/usr/local/sbin/" . $specplatform['name'] . "resetbtn");
+
+	if ($retval == 99) {
+		/* user has pressed reset button for 2 seconds - 
+		   reset to factory defaults */
+		echo <<<EOD
+
+***********************************************************************
+* Reset button pressed - resetting configuration to factory defaults. *
+* The system will reboot after this completes.                        *
+***********************************************************************
+
+
+EOD;
+		
+		reset_factory_defaults();
+		system_reboot_sync();
+		exit(0);
+	}
+
+	return 0;
+}
+
+/* attempt to identify the specific platform (for embedded systems)
+   Returns an array with two elements:
+	name => platform string (e.g. 'wrap', 'alix' etc.)
+	descr => human-readable description (e.g. "PC Engines WRAP")
+*/
+function system_identify_specific_platform() {
+	global $g;
+	
+	if ($g['platform'] == 'generic-pc')
+		return array('name' => 'generic-pc', 'descr' => "Generic PC");
+	
+	if ($g['platform'] == 'generic-pc-cdrom')
+		return array('name' => 'generic-pc-cdrom', 'descr' => "Generic PC (CD-ROM)");
+	
+	/* the rest of the code only deals with 'embedded' platforms */
+	if ($g['platform'] != 'nanobsd')
+		return array('name' => $g['platform'], 'descr' => $g['platform']);
+	
+	$dmesg = system_get_dmesg_boot();
+	
+	if (strpos($dmesg, "PC Engines WRAP") !== false)
+		return array('name' => 'wrap', 'descr' => 'PC Engines WRAP');
+	
+	if (strpos($dmesg, "PC Engines ALIX") !== false)
+		return array('name' => 'alix', 'descr' => 'PC Engines ALIX');
+
+	if (preg_match("/Soekris net45../", $dmesg, $matches))
+		return array('name' => 'net45xx', 'descr' => $matches[0]);
+	
+	if (preg_match("/Soekris net48../", $dmesg, $matches))
+		return array('name' => 'net48xx', 'descr' => $matches[0]);
+		
+	if (preg_match("/Soekris net55../", $dmesg, $matches))
+		return array('name' => 'net55xx', 'descr' => $matches[0]);
+	
+	/* unknown embedded platform */
+	return array('name' => 'embedded', 'descr' => 'embedded (unknown)');
+}
+
+function system_get_dmesg_boot() {
+	global $g;
+		
+	return file_get_contents("{$g['varlog_path']}/dmesg.boot");
+}
+
 ?>

@@ -196,7 +196,7 @@ function enablechange() {
 <?php
         foreach($pkg['step'][$stepid]['fields']['field'] as $field) {
                 if(isset($field['enablefields']) or isset($field['checkenablefields'])) {
-                        print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked == false) {' . "\n";
+                        print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked) {' . "\n";
                         if(isset($field['enablefields'])) {
                                 $enablefields = explode(',', $field['enablefields']);
                                 foreach($enablefields as $enablefield) {
@@ -365,7 +365,7 @@ function showchange() {
 					$arraynum = "[" . $field['arraynum'] . "]";
 				foreach ($field_split as $f)
 					$field_conv .= "['" . $f . "']";
-				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) \$value = \$config" . $field_conv . $arraynum . ";";
+				$toeval = "if (isset(\$config" . $field_conv . $arraynum . ")) { \$value = \$config" . $field_conv . $arraynum . "; if (empty(\$value)) \$value = true; }";
 				eval($toeval);
 		    }
 
@@ -471,14 +471,18 @@ function showchange() {
 
 			break;
 		    case "password":
-			if(!$field['dontdisplayname']) {
+			if ($field['displayname']) {
+				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+				echo $field['displayname'];
+				echo ":</td>\n";
+			} else if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);
 				echo ":</td>\n";
 			}
 			if(!$field['dontcombinecells'])
 				echo "<td class=\"vtable\">";
-			echo "<input class='formfld password' id='" . $name . "' name='" . $name . "' value='" . $value . "' type='password' ";
+			echo "<input class='formfld pwd' id='" . $name . "' name='" . $name . "' value='" . $value . "' type='password' ";
 			if($field['size'])
 				echo " size='" . $field['size'] . "' ";
 			echo ">\n";

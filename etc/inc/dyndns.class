@@ -171,12 +171,15 @@
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 				curl_setopt($ch, CURLOPT_INTERFACE, $this->_ifIP);
+				curl_setopt($ch, CURLOPT_TIMEOUT, 30); // Completely empirical
 			}
 
 			switch ($this->_dnsService) {
 				case 'dyndns':
+				case 'dyndns-static':
+				case 'dyndns-custom':
 					$needsIP = FALSE;
-					log_error("DynDns: DynDns _update() starting. Dynamic");
+					//log_error("DynDns: DynDns _update() starting. Dynamic");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
@@ -189,40 +192,6 @@
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					$data = curl_exec($ch);
 					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
-					break;
-				case 'dyndns-static':
-					$needsIP = FALSE;
-					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "https://members.dyndns.org/nic/update";
-					$port = "";
-					if($this->_dnsServer)
-						$server = $this->_dnsServer;
-					if($this->_dnsPort)
-						$port = ":" . $this->_dnsPort;
-					curl_setopt($ch, CURLOPT_URL, $server.$port.'?system=statdns&hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl error occurred: " . curl_error($ch));
-					curl_close($ch);
-					$this->_checkStatus($data);
-					break;
-				case 'dyndns-custom':
-					$needsIP = FALSE;
-					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
-					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "https://members.dyndns.org/nic/update";
-					$port = "";
-					if($this->_dnsServer)
-						$server = $this->_dnsServer;
-					if($this->_dnsPort)
-						$port = ":" . $this->_dnsPort;					
-					curl_setopt($ch, CURLOPT_URL, $server.$port.'?system=custom&hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
-					$data = curl_exec($ch);
-					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
@@ -403,11 +372,10 @@
 					break;
 				case 'opendns':
 					$needsIP = FALSE;
-					log_error("DynDns: DynDns _update() starting. Dynamic");
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$server = "https://updates.opendns.com/nic/update?hostname=";
+					$server = "https://updates.opendns.com/nic/update?hostname=". $this->_dnsHost;
 					$port = "";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;
@@ -795,7 +763,7 @@
 					$error = 'phpDynDNS: (ERROR!) No Update URL Provided.';
 					break;
 				case 10:
-					$error = 'phpDynDNS: No Change In My IP Address and/or 25 Days Has Not Past. Not Updating Dynamic DNS Entry.';
+					$error = 'phpDynDNS: No change in my IP address and/or 25 days has not passed. Not updating dynamic DNS entry.';
 					break;
 				default:
 					$error = "phpDynDNS: (ERROR!) Unknown Response.";
@@ -857,7 +825,7 @@
 				$update_reason .= "Cached IP: {$cacheIP} WAN IP: {$wan_ip} ";
 			}
 			if (($currentTime - $cacheTime) > $time ) {
-				$needs_updating = TRUE;
+				$needs_updating = true;
 				$update_reason = "DynDns: More than 25 days.  Updating. ";
 				$update_reason .= "{$currentTime} - {$cacheTime} > {$time} ";
 			}
@@ -884,7 +852,7 @@
 		 *   - status is returned from a DynDNS service provider.
 		 */
 		function _debug ($data) {
-			$string = date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data.'\n';
+			$string = '\n'.date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data.'\n';
 			conf_mount_rw();
 			$file = fopen($this->_debugFile, 'a');
 			fwrite($file, $string);
@@ -896,6 +864,7 @@
 			log_error("DynDns: _checkIP() starting.");
 
 			$ip_address = find_interface_ip($this->_if);
+			$this->_ifIP = $ip_address;
 			if (is_private_ip($ip_address)) {
 				$hosttocheck = "checkip.dyndns.org";
 				$checkip = gethostbyname($hosttocheck);
@@ -906,7 +875,7 @@
 				$ip_result_page = curl_exec($ip_ch);
 				curl_close($ip_ch);
 				$ip_result_decoded = urldecode($ip_result_page);
-				preg_match('=Current IP Address: (.*)</body>=siU', $ip_result_decoded, $matches);
+				preg_match('/Current IP Address: (.*)<\/body>/', $ip_result_decoded, $matches);
 				$ip_address = trim($matches[1]);
 				log_error("DynDns debug information: {$ip_address} extracted from {$hosttocheck}");
 			} else

@@ -1,28 +1,65 @@
 <!--
+var portsenabled = 1;
+var dstenabled = 1;
+var showsource = 0;
+
 function ext_change() {
-	if (document.iform.beginport.selectedIndex == 0) {
-		document.iform.beginport_cust.disabled = 0;
+	if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled) {
+		document.iform.srcbeginport_cust.disabled = 0;
 	} else {
-		document.iform.beginport_cust.value = "";
-		document.iform.beginport_cust.disabled = 1;
+		document.iform.srcbeginport_cust.value = "";
+		document.iform.srcbeginport_cust.disabled = 1;
 	}
-	if (document.iform.endport.selectedIndex == 0) {
-		document.iform.endport_cust.disabled = 0;
+	if ((document.iform.srcendport.selectedIndex == 0) && portsenabled) {
+		document.iform.srcendport_cust.disabled = 0;
 	} else {
-		document.iform.endport_cust.value = "";
-		document.iform.endport_cust.disabled = 1;
+		document.iform.srcendport_cust.value = "";
+		document.iform.srcendport_cust.disabled = 1;
 	}
-	if (document.iform.localbeginport.selectedIndex == 0) {
+	if ((document.iform.dstbeginport.selectedIndex == 0) && portsenabled && dstenabled) {
+		document.iform.dstbeginport_cust.disabled = 0;
+	} else {
+		document.iform.dstbeginport_cust.value = "";
+		document.iform.dstbeginport_cust.disabled = 1;
+	}
+	if ((document.iform.dstendport.selectedIndex == 0) && portsenabled && dstenabled) {
+		document.iform.dstendport_cust.disabled = 0;
+	} else {
+		document.iform.dstendport_cust.value = "";
+		document.iform.dstendport_cust.disabled = 1;
+	}
+
+	if ((document.iform.localbeginport.selectedIndex == 0) && portsenabled) {
 		document.iform.localbeginport_cust.disabled = 0;
 	} else {
 		document.iform.localbeginport_cust.value = "";
 		document.iform.localbeginport_cust.disabled = 1;
 	}
+
+	if (!portsenabled) {
+		document.iform.srcbeginport.disabled = 1;
+		document.iform.srcendport.disabled = 1;
+		document.iform.dstbeginport.disabled = 1;
+		document.iform.dstendport.disabled = 1;
+		document.iform.localbeginport_cust.disabled = 1;
+	} else {
+		document.iform.srcbeginport.disabled = 0;
+		document.iform.srcendport.disabled = 0;
+		document.iform.localbeginport_cust.disabled = 0;
+		if( dstenabled ) {
+			document.iform.dstbeginport.disabled = 0;
+			document.iform.dstendport.disabled = 0;
+		}
+	}
 }
 
-function ext_rep_change() {
-	document.iform.endport.selectedIndex = document.iform.beginport.selectedIndex;
-	document.iform.localbeginport.selectedIndex = document.iform.beginport.selectedIndex;
+function show_source() {
+	if(portsenabled)
+		document.getElementById("sprtable").style.display = '';
+
+	document.getElementById("srctable").style.display = '';
+	document.getElementById("showadvancedboxsrc").style.display = 'none';
+	showsource = 1;
 }
 
 function check_for_aliases() {
@@ -30,64 +67,119 @@ function check_for_aliases() {
 	 *  entry of Local port
 	 */
 	for(i=0; i<customarray.length; i++) {
-		if(document.iform.beginport_cust.value == customarray[i]) {
-			document.iform.endport_cust.value = customarray[i];
+		if(document.iform.dstbeginport_cust.value == customarray[i]) {
+			document.iform.dstendport_cust.value = customarray[i];
 			document.iform.localbeginport_cust.value = customarray[i];
-			document.iform.endport_cust.disabled = 1;
+			document.iform.dstendport_cust.disabled = 1;
 			document.iform.localbeginport.disabled = 1;
 			document.iform.localbeginport_cust.disabled = 1;
-			document.iform.endport_cust.disabled = 0;
+			document.iform.dstendport_cust.disabled = 0;
 			document.iform.localbeginport.disabled = 0;
 			document.iform.localbeginport_cust.disabled = 0;
 		}
-		if(document.iform.beginport.value == customarray[i]) {
-			document.iform.endport_cust.value = customarray[i];
+		if(document.iform.dstbeginport.value == customarray[i]) {
+			document.iform.dstendport_cust.value = customarray[i];
 			document.iform.localbeginport_cust.value = customarray[i];
-			document.iform.endport_cust.disabled = 1;
+			document.iform.dstendport_cust.disabled = 1;
 			document.iform.localbeginport.disabled = 1;
 			document.iform.localbeginport_cust.disabled = 1;
-			document.iform.endport_cust.disabled = 0;
+			document.iform.dstendport_cust.disabled = 0;
 			document.iform.localbeginport.disabled = 0;
 			document.iform.localbeginport_cust.disabled = 0;
 		}
-		if(document.iform.endport_cust.value == customarray[i]) {
-			document.iform.endport_cust.value = customarray[i];
+		if(document.iform.dstendport_cust.value == customarray[i]) {
+			document.iform.dstendport_cust.value = customarray[i];
 			document.iform.localbeginport_cust.value = customarray[i];
-			document.iform.endport_cust.disabled = 1;
+			document.iform.dstendport_cust.disabled = 1;
 			document.iform.localbeginport.disabled = 1;
 			document.iform.localbeginport_cust.disabled = 1;
-			document.iform.endport_cust.disabled = 0;
+			document.iform.dstendport_cust.disabled = 0;
 			document.iform.localbeginport.disabled = 0;
 			document.iform.localbeginport_cust.disabled = 0;
 		}
-		if(document.iform.endport.value == customarray[i]) {
-			document.iform.endport_cust.value = customarray[i];
+		if(document.iform.dstendport.value == customarray[i]) {
+			document.iform.dstendport_cust.value = customarray[i];
 			document.iform.localbeginport_cust.value = customarray[i];
-			document.iform.endport_cust.disabled = 1;
+			document.iform.dstendport_cust.disabled = 1;
 			document.iform.localbeginport.disabled = 1;
 			document.iform.localbeginport_cust.disabled = 1;
-			document.iform.endport_cust.disabled = 0;
+			document.iform.dstendport_cust.disabled = 0;
 			document.iform.localbeginport.disabled = 0;
 			document.iform.localbeginport_cust.disabled = 0;
 		}
+
 	}
 }
 
 function proto_change() {
-	if(document.iform.proto.selectedIndex > 2) {
-		document.iform.beginport_cust.disabled = 1;
-		document.iform.endport_cust.disabled = 1;
-		document.iform.beginport.disabled = 1;
-		document.iform.endport.disabled = 1;
-		document.iform.localbeginport_cust.disabled = 1;
-		document.iform.localbeginport.disabled = 1;
+	if (document.iform.proto.selectedIndex < 3) {
+		portsenabled = 1;
 	} else {
-		document.iform.beginport_cust.disabled = 0;
-		document.iform.endport_cust.disabled = 0;
-		document.iform.beginport.disabled = 0;
-		document.iform.endport.disabled = 0;
-		document.iform.localbeginport_cust.disabled = 0;
-		document.iform.localbeginport.disabled = 0;
+		portsenabled = 0;
+	}
+
+	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 2) {
+		document.getElementById("sprtable").style.display = showsource == 1 ? '':'none';
+		document.getElementById("dprtr").style.display = '';
+		document.getElementById("lprtr").style.display = '';
+	} else {
+		document.getElementById("sprtable").style.display = 'none';
+		document.getElementById("dprtr").style.display = 'none';
+		document.getElementById("lprtr").style.display = 'none';
+	}
+}
+
+function typesel_change() {
+	switch (document.iform.srctype.selectedIndex) {
+		case 1:	/* single */
+			document.iform.src.disabled = 0;
+			document.iform.srcmask.value = "";
+			document.iform.srcmask.disabled = 1;
+			break;
+		case 2:	/* network */
+			document.iform.src.disabled = 0;
+			document.iform.srcmask.disabled = 0;
+			break;
+		default:
+			document.iform.src.value = "";
+			document.iform.src.disabled = 1;
+			document.iform.srcmask.value = "";
+			document.iform.srcmask.disabled = 1;
+			break;
+	}
+	if( dstenabled )
+	{
+		switch (document.iform.dsttype.selectedIndex) {
+			case 1:	/* single */
+				document.iform.dst.disabled = 0;
+				document.iform.dstmask.value = "";
+				document.iform.dstmask.disabled = 1;
+				break;
+			case 2:	/* network */
+				document.iform.dst.disabled = 0;
+				document.iform.dstmask.disabled = 0;
+				break;
+			default:
+				document.iform.dst.value = "";
+				document.iform.dst.disabled = 1;
+				document.iform.dstmask.value = "";
+				document.iform.dstmask.disabled = 1;
+				break;
+		}
+	}
+}
+
+function src_rep_change() {
+	document.iform.srcendport.selectedIndex = document.iform.srcbeginport.selectedIndex;
+}
+
+function dst_rep_change() {
+	document.iform.dstendport.selectedIndex = document.iform.dstbeginport.selectedIndex;
+}
+
+function dst_change( iface, old_iface, old_dst ) {
+	if ( ( old_dst == "" ) || ( old_iface.concat("ip") == old_dst ) ) {
+		document.iform.dsttype.value = iface.concat("ip");
 	}
 }
 //-->

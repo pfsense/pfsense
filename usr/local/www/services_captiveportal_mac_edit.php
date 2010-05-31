@@ -66,6 +66,8 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_passthrumacs[$id]) {
 	$pconfig['mac'] = $a_passthrumacs[$id]['mac'];
+	$pconfig['bw_up'] = $a_passthrumacs[$id]['bw_up'];
+	$pconfig['bw_down'] = $a_passthrumacs[$id]['bw_down'];
 	$pconfig['descr'] = $a_passthrumacs[$id]['descr'];
 }
 
@@ -85,6 +87,10 @@ if ($_POST) {
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
 		$input_errors[] = "A valid MAC address must be specified. [".$_POST['mac']."]";
 	}
+	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
+		$input_errors[] = "Upload speed needs to be an integer";
+	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))
+		$input_errors[] = "Download speed needs to be an integer";
 
 	foreach ($a_passthrumacs as $macent) {
 		if (isset($id) && ($a_passthrumacs[$id]) && ($a_passthrumacs[$id] === $macent))
@@ -99,18 +105,35 @@ if ($_POST) {
 	if (!$input_errors) {
 		$mac = array();
 		$mac['mac'] = $_POST['mac'];
+		if ($_POST['bw_up'])
+			$mac['bw_up'] = $_POST['bw_up'];
+		if ($_POST['bw_down'])
+			$mac['bw_down'] = $_POST['bw_down'];
+		
 		$mac['descr'] = $_POST['descr'];
 
-		if (isset($id) && $a_passthrumacs[$id])
+		if (isset($id) && $a_passthrumacs[$id]) {
+			$oldmac = $a_passthrumacs[$id]['mac'];
 			$a_passthrumacs[$id] = $mac;
-		else
+		} else {
+			$oldmac = $mac['mac'];
 			$a_passthrumacs[] = $mac;
+		}
 		passthrumacs_sort();
 		
 		write_config();
 
-		mark_subsystem_dirty('passthrumac');
-		
+		$ruleno = captiveportal_get_ipfw_passthru_ruleno($oldmac);
+		if ($ruleno) {
+			captiveportal_free_ipfw_ruleno($ruleno);
+			$rules = "delete {$ruleno}\n";
+			$rules .= "delete " . ++$ruleno . "\n";
+			$rules .= captiveportal_passthrumac_configure_entry($mac);
+			file_put_contents("{$g['tmp_path']}/tmpmacedit{$id}", $rules);
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/tmpmacedit{$id}");
+			@unlink("{$g['tmp_path']}/tmpmacedit{$id}");
+		}
+
 		header("Location: services_captiveportal_mac.php");
 		exit;
 	}
@@ -129,12 +152,24 @@ include("head.inc");
                     <br> 
                     <span class="vexpl">MAC address (6 hex octets separated by colons)</span></td>
                 </tr>
-				<tr>
+		<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
+                </tr>
+		<tr>
+                  <td width="22%" valign="top" class="vncell">Bandwidth up</td>
+                  <td width="78%" class="vtable"> 
+                    <input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>">
+                    <br> <span class="vexpl">Enter a upload limit to be enforced on this MAC address in Kbit/s</span></td>
+                </tr>
+		<tr>
+                  <td width="22%" valign="top" class="vncell">Bandwidth down</td>
+                  <td width="78%" class="vtable"> 
+                    <input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>">
+                    <br> <span class="vexpl">Enter a download limit to be enforced on this MAC address in Kbit/s</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

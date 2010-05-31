@@ -41,7 +41,7 @@
 require("guiconfig.inc");
 require_once("auth.inc");
 
-$pgtitle = array("System", "Authentication Servers");
+$pgtitle = array(gettext("System"), gettext("Authentication Servers"));
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -65,11 +65,19 @@ if ($act == "del") {
 		exit;
 	}
 
+	/* Remove server from main list. */
 	$serverdeleted = $a_server[$_GET['id']]['name'];
+	foreach ($config['system']['authserver'] as $k => $as) {
+		if ($config['system']['authserver'][$k]['name'] == $serverdeleted)
+			unset($config['system']['authserver'][$k]);
+	}
+
+	/* Remove server from temp list used later on this page. */
 	unset($a_server[$_GET['id']]);
-	write_config();
+
 	$savemsg = gettext("Authentication Server")." {$serverdeleted} ".
-				gettext("successfully deleted")."<br/>";
+				gettext("deleted")."<br/>";
+	write_config($savemsg);
 }
 
 if ($act == "edit") {
@@ -141,40 +149,52 @@ if ($_POST) {
 		$reqdfields = explode(" ", "name type ldap_host ldap_port ".
 						"ldap_urltype ldap_protver ldap_scope ldap_basedn ".
 						"ldap_attr_user ldap_attr_group ldap_attr_member ldapauthcontainers");
-		$reqdfieldsn = explode(",", "Descriptive name,Type,Hostname or IP,".
-						"Port value,Transport,Protocol version,Search level,".
-						"Search Base DN,User naming Attribute,".
-						"Group naming Attribute,Group member attribute,Authentication container");
+		$reqdfieldsn = array(
+			gettext("Descriptive name"),
+			gettext("Type"),
+			gettext("Hostname or IP"),
+			gettext("Port value"),
+			gettext("Transport"),
+			gettext("Protocol version"),
+			gettext("Search level"),
+			gettext("Search Base DN"),
+			gettext("User naming Attribute"),
+			gettext("Group naming Attribute"),
+			gettext("Group member attribute"),
+			gettext("Authentication container"));
 
 		if (!$pconfig['ldap_anon']) {
 			$reqdfields[] = "ldap_binddn";
 			$reqdfields[] = "ldap_bindpw";
-			$reqdfieldsn[] = "Bind user DN";
-			$reqdfieldsn[] = "Bind Password";
+			$reqdfieldsn[] = gettext("Bind user DN");
+			$reqdfieldsn[] = gettext("Bind Password");
 		}
 
 	}
 
 	if ($pconfig['type'] == "radius") {
 		$reqdfields = explode(" ", "name type radius_host radius_srvcs");
-		$reqdfieldsn = explode(",", "Descriptive name,Type,Hostname or IP,".
-						"Services");
+		$reqdfieldsn = array(
+			gettext("Descriptive name"),
+			gettext("Type"),
+			gettext("Hostname or IP"),
+			gettext("Services"));
 
 		if ($pconfig['radisu_srvcs'] == "both" ||
 			$pconfig['radisu_srvcs'] == "auth") {
 			$reqdfields[] = "radius_auth_port";
-			$reqdfieldsn[] = "Authentication port value";
+			$reqdfieldsn[] = gettext("Authentication port value");
 		}
 
 		if ($pconfig['radisu_srvcs'] == "both" ||
 			$pconfig['radisu_srvcs'] == "acct") {
 			$reqdfields[] = "radius_acct_port";
-			$reqdfieldsn[] = "Accounting port value";
+			$reqdfieldsn[] = gettext("Accounting port value");
 		}
 
 		if (!isset($id)) {
 			$reqdfields[] = "radius_secret";
-			$reqdfieldsn[] = "Shared Secret";
+			$reqdfieldsn[] = gettext("Shared Secret");
 		}
 	}
 
@@ -184,7 +204,7 @@ if ($_POST) {
 		$input_errors[] = gettext("The host name contains invalid characters.");
 
 	if (auth_get_authserver($pconfig['name']) && !isset($id))
-		$input_errors[] = "A authentication server with the same name already exists.";
+		$input_errors[] = gettext("An authentication server with the same name already exists.");
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -345,6 +365,21 @@ function radius_srvcschange(){
 }
 
 function select_clicked() {
+	if (document.getElementById("ldap_port").value == '' ||
+	    document.getElementById("ldap_host").value == '' ||
+	    document.getElementById("ldap_scope").value == '' ||
+	    document.getElementById("ldap_basedn").value == '' ||
+	    document.getElementById("ldapauthcontainers").value == '') {
+		alert("<?=gettext("Please fill the required values.");?>");
+		return;
+	}
+	if (!document.getElementById("ldap_anon").checked) {
+		if (document.getElementById("ldap_binddn").value == '' ||
+		    document.getElementById("ldap_bindpw").value == '') {
+				alert("<?=gettext("Please fill the bind username/password.");?>");
+			return;
+		}
+	}
         var url = 'system_usermanager_settings_ldapacpicker.php?';
         url += 'port=' + document.getElementById("ldap_port").value;
         url += '&host=' + document.getElementById("ldap_host").value;
@@ -358,7 +393,7 @@ function select_clicked() {
 
         var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
         if (oWin==null || typeof(oWin)=="undefined")
-                alert('Popup blocker detected.  Action aborted.');
+			alert("<?=gettext('Popup blocker detected.  Action aborted.');?>");
 }
 //-->
 </script>
@@ -427,7 +462,7 @@ function select_clicked() {
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">LDAP Server Settings</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("LDAP Server Settings");?></td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname or IP address");?></td>
@@ -476,7 +511,7 @@ function select_clicked() {
 							<td width="78%" class="vtable">
 								<table border="0" cellspacing="0" cellpadding="2">
 									<tr>
-										<td>Level: &nbsp;</td>
+										<td><?=gettext("Level");?>: &nbsp;</td>
 										<td>
 											<select name='ldap_scope' id='ldap_scope' class="formselect">
 											<?php
@@ -491,7 +526,7 @@ function select_clicked() {
 										</td>
 									</tr>
 									<tr>
-										<td>Base DN: &nbsp;</td>
+										<td><?=gettext("Base DN");?>: &nbsp;</td>
 										<td>
 											<input name="ldap_basedn" type="text" class="formfld unknown" id="ldap_basedn" size="40" value="<?=htmlspecialchars($pconfig['ldap_basedn']);?>"/>
 										</td>
@@ -501,23 +536,22 @@ function select_clicked() {
 							</td>
 						</tr>
 						<tr>
-                                                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication containers");?></td>
-                                                        <td width="78%" class="vtable">
-                                                                <table border="0" cellspacing="0" cellpadding="2">
-                                                                        <tr>
-                                                                                <td>Containers: &nbsp;</td>
-                                                                                <td>
-                                                                                        <input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
-											<input type="button" onClick="select_clicked();" value="Select">
-											<br />NOTE: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.
-											<br />EXAMPLE: CN=Users;DC=example
-											<br />EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com 
-                                                                                </td>
-                                                                        </tr>
-                                                                </table>
-
-                                                        </td>
-                                                </tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Authentication containers");?></td>
+							<td width="78%" class="vtable">
+								<table border="0" cellspacing="0" cellpadding="2">
+									<tr>
+										<td><?=gettext("Containers");?>: &nbsp;</td>
+										<td>
+											<input name="ldapauthcontainers" type="text" class="formfld unknown" id="ldapauthcontainers" size="40" value="<?=htmlspecialchars($pconfig['ldap_authcn']);?>"/>
+											<input type="button" onClick="select_clicked();" value="<?=gettext("Select");?>">
+											<br /><?=gettext("NOTE: Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.");?>
+											<br /><?=gettext("EXAMPLE: CN=Users;DC=example");?>
+											<br /><?=gettext("EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com ");?>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncell"><?=gettext("Bind credentials");?></td>
 							<td width="78%" class="vtable">
@@ -527,7 +561,7 @@ function select_clicked() {
 											<input name="ldap_anon" type="checkbox" id="ldap_anon" value="yes" <?php if ($pconfig['ldap_anon']) echo "checked"; ?> onClick="ldap_bindchange()">
 										</td>
 										<td>
-											Use anonymous binds to resolve distinguished names
+											<?=gettext("Use anonymous binds to resolve distinguished names");?>
 										</td>
 									</tr>
 								</table>
@@ -536,13 +570,13 @@ function select_clicked() {
 										<td colspan="2"></td>
 									</tr>
 									<tr>
-										<td>User DN: &nbsp;</td>
+										<td><?=gettext("User DN");?>: &nbsp;</td>
 										<td>
 											<input name="ldap_binddn" type="text" class="formfld unknown" id="ldap_binddn" size="40" value="<?=htmlspecialchars($pconfig['ldap_binddn']);?>"/><br/>
 										</td>
 									</tr>
 									<tr>
-										<td>Password: &nbsp;</td>
+										<td><?=gettext("Password");?>: &nbsp;</td>
 										<td>
 											<input name="ldap_bindpw" type="password" class="formfld pwd" id="ldap_bindpw" size="20" value="<?=htmlspecialchars($pconfig['ldap_bindpw']);?>"/><br/>
 										</td>
@@ -592,7 +626,7 @@ function select_clicked() {
 							<td colspan="2" class="list" height="12"></td>
 						</tr>
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Radius Server Settings</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Radius Server Settings");?></td>
 						</tr>
 						<tr>
 							<td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname or IP address");?></td>
@@ -639,7 +673,7 @@ function select_clicked() {
 						<tr>
 							<td width="22%" valign="top">&nbsp;</td>
 							<td width="78%">
-								<input id="submit" name="save" type="submit" class="formbtn" value="Save" />
+								<input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 								<?php if (isset($id) && $a_server[$id]): ?>
 								<input name="id" type="hidden" value="<?=$id;?>" />
 								<?php endif;?>
@@ -652,9 +686,9 @@ function select_clicked() {
 
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="25%" class="listhdrr">Server Name</td>
-						<td width="25%" class="listhdrr">Type</td>
-						<td width="35%" class="listhdrr">Host Name</td>
+						<td width="25%" class="listhdrr"><?=gettext("Server Name");?></td>
+						<td width="25%" class="listhdrr"><?=gettext("Type");?></td>
+						<td width="35%" class="listhdrr"><?=gettext("Host Name");?></td>
 						<td width="10%" class="list"></td>
 					</tr>
 					<?php
@@ -671,11 +705,11 @@ function select_clicked() {
 						<td valign="middle" nowrap class="list">
 						<?php if ($i < (count($a_server) - 1)): ?>
 							<a href="system_authservers.php?act=edit&id=<?=$i;?>">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="edit server" alt="edit server" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit server");?>" alt="<?=gettext("edit server");?>" width="17" height="17" border="0" />
 							</a>
 							&nbsp;
 							<a href="system_authservers.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Server?");?>')">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="delete server" alt="delete server" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete server");?>" alt="<?=gettext("delete server");?>" width="17" height="17" border="0" />
 							</a>
 						<?php endif; ?>
 						</td>
@@ -687,7 +721,7 @@ function select_clicked() {
 						<td class="list" colspan="3"></td>
 						<td class="list">
 							<a href="system_authservers.php?act=new">
-								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="add server" alt="add server" width="17" height="17" border="0" />
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add server");?>" alt="<?=gettext("add server");?>" width="17" height="17" border="0" />
 							</a>
 						</td>
 					</tr>

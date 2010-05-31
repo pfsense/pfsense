@@ -144,7 +144,8 @@ include("head.inc");
 				$tab_array = array();
 				$tab_array[0] = array("Tunnels", true, "vpn_ipsec.php");
 				$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
-				$tab_array[2] = array("Logs", false, "diag_logs_ipsec.php");
+				$tab_array[2] = array("Pre-shared keys", false, "vpn_ipsec_keys.php");
+				$tab_array[3] = array("Logs", false, "diag_logs_ipsec.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>
@@ -317,6 +318,11 @@ include("head.inc");
 											<?=$ph2ent['mode'];?>
 										<?=$spane;?>
 									</td>
+									<?php 
+										if($ph2ent['mode'] <> "tunnel") {
+											echo "<td nowrap class=\"listr\">&nbsp;</td><td nowrap class=\"listr\">&nbsp;</td>";
+										} 
+									?>
 									<?php if($ph2ent['mode'] == "tunnel"): ?>
 									<td nowrap class="listr">
 										<?=$spans;?>

@@ -289,9 +289,11 @@ function is_alias_inuse($alias) {
 	/* loop through nat rules looking for alias in use */
 	if(is_array($config['nat']['rule']))
 		foreach($config['nat']['rule'] as $rule) {
-			if($rule['target'] == $alias)
+			if($rule['target'] && $rule['target'] == $alias)
 				return true;
-			if($rule['external-address'] == $alias)
+			if($rule['source']['address'] && $rule['source']['address'] == $alias)
+				return true;
+			if($rule['destination']['address'] && $rule['destination']['address'] == $alias)
 				return true;
 		}
 	return false;
@@ -640,6 +642,8 @@ function restore_config_section($section, $new_contents) {
 	if ($section_xml != -1)
 		$config[$section] = &$section_xml;
 	@unlink($g['tmp_path'] . "/tmpxml");
+	if(file_exists("{$g['tmp_path']}/config.cache"))
+		unlink("{$g['tmp_path']}/config.cache");
 	write_config("Restored {$section} of config file (maybe from CARP partner)");
 	conf_mount_ro();
 	return;
@@ -1094,9 +1098,9 @@ function setup_serial_port() {
 	foreach($ttys_split as $tty) {
 		if(stristr($tty, "ttyd0") or stristr($tty, "ttyu0")) {
 			if(isset($config['system']['enableserial'])) {
-				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	dialup	on	secure\n");
+				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	on	secure\n");
 			} else {
-				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	dialup	off	secure\n");
+				fwrite($fd, "ttyu0	\"/usr/libexec/getty bootupcli\"	cons25	off	secure\n");
 			}
 		} else {
 			fwrite($fd, $tty . "\n");
@@ -1141,43 +1145,8 @@ function is_dhcp_server_enabled()
 	return $dhcpdenable;
 }
 
-/* Compute the total uptime from the ppp uptime log file in the conf directory */
-/* Written by: gnoahb@gmail.com */
-
-function get_ppp_uptime($serialport){
-	if (file_exists("/conf/ppp-up.".$serialport . ".log")){
-        	$saved_time = file_get_contents("/conf/ppp-up." . $serialport . ".log");
-        	$uptime_data = explode("\n",$saved_time);
-    		$sec=0;
-		$min=0;
-		$hrs=0;
-		foreach($uptime_data as $upt) {
-        	        $time = substr($upt, 1 + strpos($upt, " "));
-        	        if ($time != "00:00:00"){
-        	                $hms = explode(":",$time);
-        	                $hrs += $hms[0];
-        	                $min += $hms[1];
-        	                $sec += $hms[2];
-               		 }
- 		}
-        	if ($sec != 0){
-                	$min += floor($sec/60);
-                	$sec %= 60;
-        	}
-        	if($min !=0){
-                	$hrs += floor($min/60);
-                	$min %= 60;
-        	}
-		$total_time = $hrs.":".$min.":".$sec;
-		return $total_time;
-
-	} else {
-		$total_time = "No session history data found!";
-		return $total_time;
-	}
-}
-
 function convert_seconds_to_hms($sec){
+	$min=$hrs=0;
 	if ($sec != 0){
 		$min = floor($sec/60);
 		$sec %= 60;
@@ -1196,52 +1165,50 @@ function convert_seconds_to_hms($sec){
 	return $result;
 }
 
+/* Compute the total uptime from the ppp uptime log file in the conf directory */
+/* Written by: gnoahb@gmail.com */
+
+function get_ppp_uptime($port){
+	if (file_exists("/conf/{$port}.log")){
+    	$saved_time = file_get_contents("/conf/{$port}.log");
+    	$uptime_data = explode("\n",$saved_time);
+		$sec=0;
+		foreach($uptime_data as $upt) {
+			$sec += substr($upt, 1 + strpos($upt, " "));
+ 		}
+		return convert_seconds_to_hms($sec);
+	} else {
+		$total_time = "No session history data found!";
+		return $total_time;
+	}
+}
 
 //returns interface information
 function get_interface_info($ifdescr) {
-	global $config, $linkinfo, $netstatrninfo, $g;
+	global $config, $g;
 
 	$ifinfo = array();
-	/* if list */
-	$iflist = get_configured_interface_with_descr(false,true);
-
-	$found = false;
-    	foreach ($iflist as $if => $ifname) {
-    		if ($ifdescr == $if || $ifdescr == $ifname) {
-			$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
-			$ifinfo['if'] = get_real_interface($if);
-			$found = true;
-			break;
-		}
-	}
-	if ($found == false)
+	if (empty($config['interfaces'][$ifdescr]))
 		return;
+	$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
+	$ifinfo['if'] = get_real_interface($ifdescr);
 
-	/* run netstat to determine link info */
-
-	unset($linkinfo);
 	$chkif = $ifinfo['if'];
-
-	exec("/usr/bin/netstat -I {$chkif} -nWb -f link", $linkinfo);
-	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-
 	$ifinfotmp = pfSense_get_interface_addresses($chkif);
 	$ifinfo['status'] = $ifinfotmp['status'];
+	if (empty($ifinfo['status']))
+                $ifinfo['status'] = "down";
 	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
 	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
 	$ifinfo['subnet'] = $ifinfotmp['subnet'];
 	if (isset($ifinfotmp['link0']))
 		$link0 = "down";
-
-	
-	if (preg_match("/^enc|^tun|^ppp|^pptp|^ovpn/i", $chkif)) {
-		$ifinfo['inpkts'] = $linkinfo[3];
-		$ifinfo['outpkts'] = $linkinfo[6];
-	} else {
-		$ifinfo['inerrs'] = $linkinfo[5];
-		$ifinfo['outerrs'] = $linkinfo[9];
-		$ifinfo['collisions'] = $linkinfo[11];
-	}
+	$ifinfotmp = pfSense_get_interface_stats($chkif);
+        $ifinfo['inpkts'] = $ifinfotmp['inpkts'];
+        $ifinfo['outpkts'] = $ifinfotmp['outpkts'];
+        $ifinfo['inerrs'] = $ifinfotmp['inerrs'];
+        $ifinfo['outerrs'] = $ifinfotmp['outerrs'];
+        $ifinfo['collisions'] = $ifinfotmp['collisions'];
 
 	/* Use pfctl for non wrapping 64 bit counters */
 	/* Pass */
@@ -1276,10 +1243,6 @@ function get_interface_info($ifdescr) {
 		
 	$ifconfiginfo = "";
 	
-	unset($linkinfo);
-	exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
-	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
-	
 	switch ($config['interfaces'][$ifdescr]['ipaddr']) {
 	 /* DHCP? -> see if dhclient is up */
 	case "dhcp":
@@ -1293,44 +1256,35 @@ function get_interface_info($ifdescr) {
 		break;
 	/* PPPoE interface? -> get status from virtual interface */
 	case "pppoe":
-		if ("{$ifinfo['if']}*" == $linkinfo[0])
-			$ifinfo['pppoelink'] = "down";
-		else if ($ifinfo['if'] == $linkinfo[0] && !isset($link0))
-			/* get PPPoE link status for dial on demand */
-			$ifinfo['pppoelink'] = "up";
+		if ($ifinfo['status'] == "up" && !isset($link0))
+                        /* get PPPoE link status for dial on demand */
+                        $ifinfo['pppoelink'] = "up";
 		else
 			$ifinfo['pppoelink'] = "down";
 
 		break;
 	/* PPTP interface? -> get status from virtual interface */
 	case "pptp":
-		if ("{$ifinfo['if']}*" == $linkinfo[0])
-			$ifinfo['pptplink'] = "down";
-		else if ($ifinfo['if'] == $linkinfo[0] && !isset($link0))
-			/* get PPTP link status for dial on demand */
-			$ifinfo['pptplink'] = "up";
+		if ($ifinfo['status'] == "up" && !isset($link0))
+                        /* get PPTP link status for dial on demand */
+                        $ifinfo['pptplink'] = "up";
 		else
 			$ifinfo['pptplink'] = "down";
 		break;
 	/* PPP interface? -> get uptime for this session and cumulative uptime from the persistant log file in conf */
 	case "ppp":
-		if ("{$ifinfo['if']}*" == $linkinfo[0])
-			$ifinfo['ppplink'] = "down";
-		else if ($ifinfo['if'] == $linkinfo[0])
-			$ifinfo['ppplink'] = "up";
+		if ($ifinfo['status'] == "up")
+                        $ifinfo['ppplink'] = "up";
 		else
 			$ifinfo['ppplink'] = "down" ;
-		if (empty($ifinfo['status']))
-			$ifinfo['status'] = "down";
 
 		$dev = $config['interfaces'][$if]['if'];
 		if (empty($dev))
 			break;
 		if (file_exists("/dev/{$dev}")) {
-			if (file_exists("{$g['varrun_path']}/ppp_{$if}.pid") && file_exists("{$g['varetc_path']}/mpd_{$if}.query")) {
+			if (file_exists("{$g['varrun_path']}/ppp_{$if}.pid")) {
 				$ifinfo['pppinfo'] = "{$ifinfo['if']}";
-				$pppid = substr($ifinfo['if'], 3);
-				$sec = trim(`/usr/bin/nc 127.0.0.1 500{$pppid} < {$g['varetc_path']}/mpd_{$if}.query | grep 'Session time' | cut -f7 -d ' '`);
+				$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
         		$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
 			}
 		} else {
@@ -1338,7 +1292,7 @@ function get_interface_info($ifdescr) {
 			$ifinfo['pppinfo'] = $dev . " device not present! Is the modem attached to the system?";	
 		}
 		// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
-		$ifinfo['ppp_uptime_accumulated'] = get_ppp_uptime($dev);
+		$ifinfo['ppp_uptime_accumulated'] = get_ppp_uptime($ifinfo['if']);
 
 		break;
 	default:
@@ -1425,25 +1379,6 @@ function get_cpu_speed() {
 	 return exec("sysctl hw.clockrate | awk '{ print $2 }'");
 }
 
-/* check if the wan interface is up
- * Wait for a maximum of 10 seconds
- * If the interface is up before then continue
- */
-function is_wan_interface_up($interface) {
-	global $g;
-	global $config;
-	$i = 0;
-	while($i < 10) {
-		if(get_interface_gateway($interface)) {
-			return true;
-		} else {
-			sleep(1);
-		}
-		$i++;
-	}
-	return false;
-}
-
 function add_hostname_to_watch($hostname) {
 	if(!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");
@@ -1497,6 +1432,11 @@ function pfsense_default_state_size() {
   /* Be cautious and only allocate 10% of system memory to the state table */
   $max_states = (int) ($avail/10)*1000;
   return $max_states;
+}
+
+function pfsense_default_table_entries_size() {
+	$current = `pfctl -sm | grep table-entries | awk '{print $4};'`;
+	return $current;
 }
 
 /* Compare the current hostname DNS to the DNS cache we made
@@ -1810,6 +1750,276 @@ function process_alias_tgz($temp_filename) {
 		unlink($f2p);
 	}
 	fclose($fd);
+}
+
+function version_compare_dates($a, $b) {
+	$a_time = strtotime($a);
+	$b_time = strtotime($b);
+
+	if ((!$a_time) || (!$b_time)) {
+		return FALSE;
+	} else {
+		if ($a < $b)
+			return -1;
+		elseif ($a == $b)
+			return 0;
+		else
+			return 1;
+	}
+}
+function version_get_string_value($a) {
+	$strs = array(
+		0 => "ALPHA-ALPHA",
+		2 => "ALPHA",
+		3 => "BETA",
+		4 => "B",
+		5 => "RC",
+		6 => "RELEASE"
+	);
+	$major = 0;
+	$minor = 0;
+	foreach ($strs as $num => $str) {
+		if (substr($a, 0, strlen($str)) == $str) {
+			$major = $num;
+			$n = substr($a, strlen($str));
+			if (is_numeric($n))
+				$minor = $n;
+			break;
+		}
+	}
+	return "{$major}.{$minor}";
+}
+function version_compare_string($a, $b) {
+	return version_compare_numeric(version_get_string_value($a), version_get_string_value($b));
+}
+function version_compare_numeric($a, $b) {
+	$a_arr = explode('.', rtrim($a, '.0'));
+	$b_arr = explode('.', rtrim($b, '.0'));
+
+	foreach ($a_arr as $n => $val) {
+		if (array_key_exists($n, $b_arr)) {
+			// So far so good, both have values at this minor version level. Compare.
+			if ($val > $b_arr[$n])
+				return 1;
+			elseif ($val < $b_arr[$n])
+				return -1;
+		} else {
+			// a is greater, since b doesn't have any minor version here.
+			return 1;
+		}
+	}
+	if (count($b_arr) > count($a_arr)) {
+		// b is longer than a, so it must be greater.
+		return -1;
+	} else {
+		// Both a and b are of equal length and value.
+		return 0;
+	}
+}
+function pfs_version_compare($cur_time, $cur_text, $remote) {
+	// First try date compare
+	$v = version_compare_dates($cur_time, $b);
+	if ($v === FALSE) {
+		// If that fails, try to compare by string
+		// Before anything else, simply test if the strings are equal
+		if ($cur_text == $remote)
+			return 0;
+		list($cur_num, $cur_str) = explode('-', $cur_text);
+		list($rem_num, $rem_str) = explode('-', $remote);
+
+		// First try to compare the numeric parts of the version string.
+		$v = version_compare_numeric($cur_num, $rem_num);
+
+		// If the numeric parts are the same, compare the string parts.
+		if ($v == 0)
+			return version_compare_string($cur_str, $rem_str);
+	}
+	return $v;
+}
+function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
+	$urltable_prefix = "/var/db/aliastables/";
+	$urltable_filename = $urltable_prefix . $name . ".txt";
+
+	// Make the aliases directory if it doesn't exist
+	if (!file_exists($urltable_prefix)) {
+		mkdir($urltable_prefix);
+	} elseif (!is_dir($urltable_prefix)) {
+		unlink($urltable_prefix);
+		mkdir($urltable_prefix);
+	}
+
+	// If the file doesn't exist or is older than update_freq days, fetch a new copy.
+	if (!file_exists($urltable_filename)
+		|| ((time() - filemtime($urltable_filename)) > ($freq * 86400))
+		|| $forceupdate) {
+
+		// Try to fetch the URL supplied
+		conf_mount_rw();
+		unlink_if_exists($urltable_filename . ".tmp");
+		// Use fetch to grab data since these may be large files, we don't want to process them through PHP if we can help it.
+		mwexec("/usr/bin/fetch -q -o " . escapeshellarg($urltable_filename . ".tmp") . " " . escapeshellarg($url));
+		// Remove comments. Might need some grep-fu to only allow lines that look like IPs/subnets
+		mwexec("/usr/bin/grep -v '^#' " . escapeshellarg($urltable_filename . ".tmp") . " > " . escapeshellarg($urltable_filename));
+		unlink_if_exists($urltable_filename . ".tmp");
+		conf_mount_ro();
+		if (filesize($urltable_filename)) {
+			return true;
+		} else {
+			// If it's unfetchable or an empty file, bail
+			return false;
+		}
+	} else {
+		// File exists, and it doesn't need updated.
+		return -1;
+	}
+}
+function get_real_slice_from_glabel($label) {
+	$label = escapeshellarg($label);
+	return trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$label} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);
+}
+function nanobsd_get_boot_slice() {
+	return trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`);
+}
+function nanobsd_get_boot_drive() {
+	return trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`);
+}
+function nanobsd_get_active_slice() {
+	$boot_drive = nanobsd_get_boot_drive();
+	$active = trim(`gpart show $boot_drive | grep '\[active\]' | awk '{print $3;}'`);
+
+	return "{$boot_drive}s{$active}";
+}
+function nanobsd_get_size() {
+	return strtoupper(file_get_contents("/etc/nanosize.txt"));
+}
+function nanobsd_switch_boot_slice() {
+	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+	nanobsd_detect_slice_info();
+
+	if ($BOOTFLASH == $ACTIVE_SLICE) {
+		$slice = $TOFLASH;
+	} else {
+		$slice = $BOOTFLASH;
+	}
+
+	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
+	ob_implicit_flush(1);
+	if(strstr($slice, "s2")) {
+		$ASLICE="2";
+		$AOLDSLICE="1";
+		$AGLABEL_SLICE="pfsense1";
+		$AUFS_ID="1";
+		$AOLD_UFS_ID="0";
+	} else {
+		$ASLICE="1";
+		$AOLDSLICE="2";
+		$AGLABEL_SLICE="pfsense0";
+		$AUFS_ID="0";
+		$AOLD_UFS_ID="1";
+	}
+	$ATOFLASH="{$BOOT_DRIVE}s{$ASLICE}";
+	$ACOMPLETE_PATH="{$BOOT_DRIVE}s{$ASLICE}a";
+	$ABOOTFLASH="{$BOOT_DRIVE}s{$AOLDSLICE}";
+	conf_mount_rw();
+	exec("sysctl kern.geom.debugflags=16");
+	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
+	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
+	// We can't update these if they are mounted now.
+	if ($BOOTFLASH != $slice) {
+		exec("/sbin/tunefs -L ${AGLABEL_SLICE} /dev/$ACOMPLETE_PATH");
+		nanobsd_update_fstab($AGLABEL_SLICE, $ACOMPLETE_PATH, $AOLD_UFS_ID, $AUFS_ID);
+	}
+	exec("/sbin/sysctl kern.geom.debugflags=0");
+	conf_mount_ro();
+}
+function nanobsd_clone_slice() {
+	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+	nanobsd_detect_slice_info();
+
+	for ($i = 0; $i < ob_get_level(); $i++) { ob_end_flush(); }
+	ob_implicit_flush(1);
+	exec("/sbin/sysctl kern.geom.debugflags=16");
+	exec("/bin/dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
+	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
+	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
+	$status = nanobsd_update_fstab($GLABEL_SLICE, $COMPLETE_PATH, $OLD_UFS_ID, $UFS_ID);
+	exec("/sbin/sysctl kern.geom.debugflags=0");
+	if($status) {
+		return false;
+	} else {
+		return true;
+	}
+}
+function nanobsd_update_fstab($gslice, $complete_path, $oldufs, $newufs) {
+	$tmppath = "/tmp/{$gslice}";
+	$fstabpath = "/tmp/{$gslice}/etc/fstab";
+
+	exec("/bin/mkdir {$tmppath}");
+	exec("/sbin/fsck_ufs -y /dev/{$complete_path}");
+	exec("/sbin/mount /dev/ufs/{$gslice} {$tmppath}");
+	exec("/bin/cp /etc/fstab {$fstabpath}");
+
+	if (!file_exists($fstabpath)) {
+		$fstab = <<<EOF
+/dev/ufs/{$gslice} / ufs ro,noatime 1 1
+/dev/ufs/cf /cf ufs ro,noatime 1 1
+EOF;
+		if (file_put_contents($fstabpath, $fstab))
+			$status = true;
+		else
+			$status = false;
+	} else {
+		$status = exec("sed -i \"\" \"s/pfsense{$oldufs}/pfsense{$newufs}/g\" {$fstabpath}");
+	}
+	exec("/sbin/umount {$tmppath}");
+	exec("/bin/rmdir {$tmppath}");
+
+	return $status;
+}
+function nanobsd_detect_slice_info() {
+	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+
+	$BOOT_DEVICE=nanobsd_get_boot_slice();
+	$REAL_BOOT_DEVICE=get_real_slice_from_glabel($BOOT_DEVICE);
+	$BOOT_DRIVE=nanobsd_get_boot_drive();
+	$ACTIVE_SLICE=nanobsd_get_active_slice();
+
+	// Detect which slice is active and set information.
+	if(strstr($REAL_BOOT_DEVICE, "s1")) {
+		$SLICE="2";
+		$OLDSLICE="1";
+		$GLABEL_SLICE="pfsense1";
+		$UFS_ID="1";
+		$OLD_UFS_ID="0";
+
+	} else {
+		$SLICE="1";
+		$OLDSLICE="2";
+		$GLABEL_SLICE="pfsense0";
+		$UFS_ID="0";
+		$OLD_UFS_ID="1";
+	}
+	$TOFLASH="{$BOOT_DRIVE}s{$SLICE}";
+	$COMPLETE_PATH="{$BOOT_DRIVE}s{$SLICE}a";
+	$COMPLETE_BOOT_PATH="{$BOOT_DRIVE}s{$OLDSLICE}";
+	$BOOTFLASH="{$BOOT_DRIVE}s{$OLDSLICE}";
+}
+
+function get_include_contents($filename) {
+    if (is_file($filename)) {
+        ob_start();
+        include $filename;
+        $contents = ob_get_contents();
+        ob_end_clean();
+        return $contents;
+    }
+    return false;
 }
 
 ?>

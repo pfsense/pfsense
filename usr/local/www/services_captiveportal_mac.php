@@ -50,6 +50,7 @@ if (!is_array($config['captiveportal']['passthrumac']))
 
 $a_passthrumacs = &$config['captiveportal']['passthrumac'] ;
 
+
 if ($_POST) {
 
 	$pconfig = $_POST;
@@ -57,19 +58,49 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = 0;
 
-		$retval = captiveportal_passthrumac_configure();
-
+		$rules = captiveportal_passthrumac_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0)
 			clear_subsystem_dirty('passthrumac');
+	}
+
+	if ($_POST['postafterlogin']) {
+		if (!is_array($a_passthrumacs))
+			exit;
+		if ($_POST['username']) {
+			$mac = captiveportal_passthrumac_findbyname($_POST['username']);
+			if (!empty($mac))
+				$_POST['delmac'] = $mac['mac'];	
+		}
+		if ($_POST['delmac']) {
+			$found = false;
+			foreach ($a_passthrumacs as $idx => $macent) {
+				if ($macent['mac'] == $_POST['delmac']) {
+					$found = true;
+					break;
+				}
+			}
+			if ($found == true) {
+				$ruleno = captiveportal_get_ipfw_passthru_ruleno($_POST['delmac']);
+				if ($ruleno) {
+					mwexec("/sbin/ipfw delete {$ruleno}; /sbin/ipfw delete " . ++$ruleno);
+				}
+				unset($a_passthrumacs[$idx]);
+				write_config();
+			}
+		}
+		exit;
 	}
 }
 
 if ($_GET['act'] == "del") {
 	if ($a_passthrumacs[$_GET['id']]) {
+		$ruleno = captiveportal_get_ipfw_passthru_ruleno($a_passthrumacs[$_GET['id']]['mac']);
+		if ($ruleno) {
+			mwexec("/sbin/ipfw delete {$ruleno}; /sbin/ipfw delete " . ++$ruleno);
+		}
 		unset($a_passthrumacs[$_GET['id']]);
 		write_config();
-		mark_subsystem_dirty('passthrumac');
 		header("Location: services_captiveportal_mac.php");
 		exit;
 	}
@@ -94,6 +125,7 @@ include("head.inc");
 	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
 	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
+	$tab_array[] = array("Auth Logs", false, "diag_logs_auth.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -106,7 +138,7 @@ include("head.inc");
 	  <td width="10%" class="list"></td>
 	</tr>
   <?php $i = 0; foreach ($a_passthrumacs as $mac): ?>
-	<tr>
+	<tr ondblclick="document.location='services_captiveportal_mac_edit.php?id=<?=$i;?>'">
 	  <td class="listlr">
 		<?=strtolower($mac['mac']);?>
 	  </td>
@@ -125,7 +157,7 @@ include("head.inc");
 	<td colspan="2" class="list"><span class="vexpl"><span class="red"><strong>
 	Note:<br>
 	</strong></span>
-	Adding MAC addresses as pass-through MACs  allows them access through the captive portal automatically without being taken to the portal page. The pass-through MACs can change their IP addresses on the fly and upon the next access, the pass-through tables are changed accordingly. Pass-through MACs will however still be disconnected after the captive portal timeout period.</span></td>
+	Adding MAC addresses as pass-through MACs allows them access through the captive portal automatically without being taken to the portal page. The pass-through MACs can change their IP addresses on the fly and upon the next access, the pass-through tables are changed accordingly. Pass-through MACs will however still be disconnected after the captive portal timeout period.</span></td>
 	<td class="list">&nbsp;</td>
 	</tr>
   </table>

@@ -1,0 +1,7 @@
+#!/bin/sh
+/sbin/pfctl -b $3
+# delete the node just in case mpd cannot do that
+/bin/rm -f /var/etc/nameserver_$1
+/bin/rm -f /tmp/$1_router
+/bin/rm -f /tmp/$1up
+/usr/bin/touch /tmp/filter_dirty

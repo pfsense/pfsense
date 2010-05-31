@@ -99,10 +99,17 @@ Refresh Interval:
 				$interfacevalue = "hide";
 			}
 		} else {
+			if(!$firstgraphshown) {
 				$mingraphbutton = "inline";
 				$showgraphbutton = "none";
 				$graphdisplay = "inline";
 				$interfacevalue = "show";
+			} else {
+				$mingraphbutton = "none";
+				$showgraphbutton = "inline";
+				$graphdisplay = "none";
+				$interfacevalue = "hide";
+			}
 		}
 		
 		
@@ -115,10 +122,8 @@ Refresh Interval:
 				<span onClick="location.href='/status_graph.php?if=<?=$ifdescr;?>'" style="cursor:pointer">Current <?=$ifname;?> Traffic</span>
 			</div>
 			<div align="right" style="float:right;width:49%">
-<!--
 				<div id="<?=$ifname;?>graphdiv-min" onclick='return  trafficminimizeDiv("<?php echo $ifname;?>",true)' style="display:<?php echo $mingraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="Minimize <?=$ifname;?> traffic graph" /></div>								
 				<div id="<?=$ifname;?>graphdiv-open" onclick='return trafficshowDiv("<?php echo $ifname;?>",true)' style="display:<?php echo $showgraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" alt="Show <?=$ifname;?> traffic graph" /></div>												
--->
 			</div>
 			<div style="clear:both;"></div>
 		</div>						

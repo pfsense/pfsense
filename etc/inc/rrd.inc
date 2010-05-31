@@ -37,7 +37,7 @@
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	if(file_exists($xmldumpfile))
-		exec("rm {$xmldumpfile}");
+		mwexec("rm {$xmldumpfile}");
 
 	exec("$rrdtool dump {$rrddatabase} {$xmldumpfile} 2>&1", $dumpout, $dumpret);
 	if ($dumpret <> 0) {
@@ -275,7 +275,7 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				exec("$rrdtool update $rrddbpath$ifname$traffic N:U:U:U:U");
+				mwexec("$rrdtool update $rrddbpath$ifname$traffic N:U:U:U:U");
 			}
 
 			$rrdupdatesh .= "\n";
@@ -301,7 +301,7 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				exec("$rrdtool update $rrddbpath$ifname$packets N:U:U:U:U");
+				mwexec("$rrdtool update $rrddbpath$ifname$packets N:U:U:U:U");
 			}
 
 			$rrdupdatesh .= "\n";
@@ -327,7 +327,7 @@ function enable_rrd_graphing() {
 
 				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 				if($g['booting']) {
-					exec("$rrdtool update $rrddbpath$ifname$wireless N:U:U:U");
+					mwexec("$rrdtool update $rrddbpath$ifname$wireless N:U:U:U");
 				}
 
 				$rrdupdatesh .= "\n";
@@ -466,7 +466,7 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				exec("$rrdtool update $rrddbpath$ifname$states N:U:U:U:U:U");
+				mwexec("$rrdtool update $rrddbpath$ifname$states N:U:U:U:U:U");
 			}
 
  			/* the pf states gathering function. */
@@ -500,7 +500,7 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				exec("$rrdtool update $rrddbpath$ifname$proc N:U:U:U:U:U");
+				mwexec("$rrdtool update $rrddbpath$ifname$proc N:U:U:U:U:U");
 			}
 
  			/* the CPU stats gathering function. */
@@ -538,7 +538,7 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				exec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U");
+				mwexec("$rrdtool update $rrddbpath$ifname$mem N:U:U:U:U:U");
 			}
 
  			/* the Memory stats gathering function. */
@@ -597,7 +597,7 @@ function enable_rrd_graphing() {
 
 			/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 			if($g['booting']) {
-				exec("$rrdtool update $rrddbpath$ifname$cellular N:U:U");
+				mwexec("$rrdtool update $rrddbpath$ifname$cellular N:U:U");
 			}
 
 			$rrdupdatesh .= "\n";

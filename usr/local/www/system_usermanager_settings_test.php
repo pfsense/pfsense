@@ -73,50 +73,50 @@ $authcfg = auth_get_authserver($authserver);
 <?php
 
 if (!$authcfg) {
-	echo "Could not find settings for {$authserver}<p/>";
+	printf(gettext("Could not find settings for %s%s"), $authserver, "<p/>");
 } else {
-	echo "Testing pfSense LDAP settings... One moment please...<p/>";
+	echo gettext("Testing pfSense LDAP settings... One moment please...") . "<p/>";
 
 	echo "<table width='100%'>";
 
-	echo "<tr><td>Attempting connection to {$ldapserver}</td><td>";
+	echo "<tr><td>" . gettext("Attempting connection to") . " " . $ldapserver . "</td><td>";
 	if(ldap_test_connection($authcfg)) {
 		echo "<td><font color=green>OK</td></tr>";
 
-		echo "<tr><td>Attempting bind to {$ldapserver}</td><td>";
+		echo "<tr><td>" . gettext("Attempting bind to") . " " .  $ldapserver . "</td><td>";
 		if(ldap_test_bind($authcfg)) {
 			echo "<td><font color=green>OK</td></tr>";
 
-			echo "<tr><td>Attempting to fetch Organizational Units from {$ldapserver}</td><td>";
+			echo "<tr><td>" . gettext("Attempting to fetch Organizational Units from") . " " . $ldapserver . "</td><td>";
 			$ous = ldap_get_user_ous(true, $authcfg);
 			if(count($ous)>1) {
 				echo "<td><font color=green>OK</td></tr>";
 				echo "</table>";
 				if(is_array($ous)) {
-					echo "Organization units found:<p/>";
+					echo gettext("Organization units found") . ":<p/>";
 					echo "<table width='100%'>";
 					foreach($ous as $ou) {
 						echo "<tr><td>" . $ou . "</td></tr>";
 					}
 				}
 			} else
-				echo "<td><font color=red>failed</td></tr>";
+				echo "<td><font color=red>" . gettext("failed") . "</td></tr>";
 
 			echo "</table><p/>";
 
 		} else {
-			echo "<td><font color=red>failed</td></tr>";
+			echo "<td><font color=red>" . gettext("failed") . "</td></tr>";
 			echo "</table><p/>";
 		}
 	} else {
-		echo "<td><font color=red>failed</td></tr>";
+		echo "<td><font color=red>" . gettext("failed") . "</td></tr>";
 		echo "</table><p/>";
 	}
 }
 
 ?>
 	<p/>
-	<input type="Button" value="Close" onClick='Javascript:window.close();'>
+	<input type="Button" value="<?=gettext("Close"); ?>" onClick='Javascript:window.close();'>
 
 	</form>
 </body>

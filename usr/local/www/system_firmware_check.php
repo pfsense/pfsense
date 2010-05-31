@@ -4,7 +4,7 @@
 	system_firmware.php
 	Copyright (C) 2008 Scott Ullrich <sullrich@gmail.com>
 	All rights reserved.
-	
+
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
@@ -46,7 +46,7 @@ require("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
 $curcfg = $config['system']['firmware'];
-$pgtitle=array("System", "Firmware", "Auto Update");
+$pgtitle=array(gettext("System"), gettext("Firmware"), gettext("Auto Update"));
 include("head.inc");
 
 ?>
@@ -65,9 +65,9 @@ include("head.inc");
 		<td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Manual Update", false, "system_firmware.php");
-	$tab_array[1] = array("Auto Update", true, "system_firmware_check.php");
-	$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
+	$tab_array[0] = array(gettext("Manual Update"), false, "system_firmware.php");
+	$tab_array[1] = array(gettext("Auto Update"), true, "system_firmware_check.php");
+	$tab_array[2] = array(gettext("Updater Settings"), false, "system_firmware_settings.php");
 	display_top_tabs($tab_array);
 ?>
 		</td>
@@ -95,13 +95,13 @@ include("head.inc");
 							</td>
 						</tr>
 					</table>
-		      <br>                      
+		      <br>
 		      <!-- command output box -->
 		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='90' rows='9' name='output' id='output' wrap='hard'>
-		      </textarea>                      
+		      </textarea>
 		      </center>
  			<p>
-			<center><input id='invokeupgrade' style='visibility:hidden' type="submit" value="Invoke Auto Upgrade">
+			<center><input id='invokeupgrade' style='visibility:hidden' type="submit" value="<?=gettext("Invoke Auto Upgrade"); ?>">
 		  </td>
 		</tr>
 	      </table>
@@ -116,36 +116,36 @@ include("head.inc");
 /* Define necessary variables. */
 if(isset($curcfg['alturl']['enable']))
 	$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-else 
+else
 	$updater_url = $g['update_url'];
 $needs_system_upgrade = false;
+$static_text .= gettext("Downloading new version information...");
 download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
-$latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
-$static_text .= "done.\n";
-if(!$latest_version)
-	$static_text .= "Unable to check for updates.\n";
-else {
-	$static_text .= "Downloading current version information...";
+$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
+$static_text .= gettext("done") . "\\n";
+if (!$remote_version) {
+	$static_text .= gettext("Unable to check for updates.") . "\\n";
+	if(isset($curcfg['alturl']['enable']))
+		$static_text .= gettext("Could not contact custom update server.") . "\\n";
+	else
+		$static_text .= sprintf(gettext("Could not contact %s update server %s%s"), $g['product_name'], $updater_url, "\\n");
+} else {
+	$static_text .= gettext("Obtaining current version information...");
 	update_output_window($static_text);
-        $current_installed_pfsense_version = str_replace("\n", "", file_get_contents("/etc/version.buildtime"));
-        $current_installed_pfsense = strtotime($current_installed_pfsense_version);
-        $latest_build_version = strtotime($latest_version);
-	$static_text .= "done\n";
+
+	$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
+	$current_installed_version = trim(file_get_contents("/etc/version"));
+
+	$static_text .= "done\\n";
 	update_output_window($static_text);
-        if(!$latest_build_version) {
-                $static_text .= "Unable to check for updates.\n";
-		if(isset($curcfg['alturl']['enable']))
-			$static_text .= "Could not contact custom update server.\n";
-		else 
-			$static_text .= "Could not contact {$g['product_name']} update server {$updater_url}.\n";
-        } else {
-                if($current_installed_pfsense < $latest_build_version) {
-                	$needs_system_upgrade = true;
-                } else {
-			$static_text .= "You are on the latest version.\n";
-                }
-        }
+
+	if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
+		$needs_system_upgrade = true;
+	} else {
+		$static_text .= "\\n" . gettext("You are on the latest version.") . "\\n";
+	}
 }
+
 update_output_window($static_text);
 if ($needs_system_upgrade == false) {
 	require("fend.inc");
@@ -153,10 +153,11 @@ if ($needs_system_upgrade == false) {
 }
 
 echo "\n<script>$('invokeupgrade').style.visibility = 'visible';</script>";
-$txt  = "A new version is now available \\n\\n";
-$txt .= "Current version: {$current_installed_pfsense_version}\\n";
-$txt .= "New version:     {$latest_version}\\n\\n";
-$txt .= "Update source:   {$updater_url}\\n";
+$txt  = gettext("A new version is now available") . "\\n\\n";
+$txt .= gettext("Current version") .": ". $current_installed_version . "\\n";
+$txt .= "       " . gettext("Built On") .": ".  $current_installed_buildtime . "\\n";
+$txt .= "    " . gettext("New version") .": ".  $remote_version . "\\n\\n";
+$txt .= "  " . gettext("Update source") .": ".  $updater_url . "\\n";
 update_output_window($txt);
 ?>
 </form>

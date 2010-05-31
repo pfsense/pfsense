@@ -77,6 +77,14 @@ if ($_POST) {
 
     do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
+	// Look for duplicate roll #
+	foreach($a_roll as $re) {
+		if($re['number'] == $_POST['number']) {
+			$input_errors[] = "Roll number {$_POST['number']} already exists.";
+			break;
+		}
+	}
+	
     if (!is_numeric($_POST['number']) || $_POST['number'] >= $maxnumber) 
         $input_errors[] = "Roll number must be numeric and less than $maxnumber";
 

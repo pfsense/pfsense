@@ -269,19 +269,8 @@ function local_user_set(& $user) {
 		fwrite($fd, $user['password']);
 		pclose($fd);
 		$user_group = "wheel";
-		$user_home = "/root";
 	}
 
-	/* admin user special handling */
-	if ($user_uid == 0) {
-		$cmd = "/usr/sbin/pw usermod -q -n admin -s /bin/sh -H 0";
-		if($debug)
-			log_error("Running: {$cmd}");
-		$fd = popen($cmd, "w");
-		fwrite($fd, $user['password']);
-		pclose($fd);
-		$user_group = "wheel";
-	}
 
 	/* read from pw db */
 	$fd = popen("/usr/sbin/pw usershow {$user_name} 2>&1", "r");
@@ -289,10 +278,11 @@ function local_user_set(& $user) {
 	pclose($fd);
 
 	/* determine add or mod */
-	if (!strncmp($pwread, "pw:", 3))
-		$user_op = "useradd";
-	else
+	if (!strncmp($pwread, "pw:", 3)) {
+		$user_op = "useradd -o";
+	} else {
 		$user_op = "usermod";
+	}
 
 	/* add or mod pw db */
 	$cmd = "/usr/sbin/pw {$user_op} -q -u {$user_uid} -n {$user_name}".
@@ -304,6 +294,18 @@ function local_user_set(& $user) {
 	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
+
+
+	/* admin user special handling */
+	if ($user_uid == 0) {
+		$cmd = "/usr/sbin/pw usermod -q -n {$user_name} -s /etc/rc.initial -H 0";
+		if($debug)
+			log_error("Running: {$cmd}");
+		$fd = popen($cmd, "w");
+		fwrite($fd, $user['password']);
+		pclose($fd);
+		$user_group = "wheel";
+	}
 
 	/* create user directory if required */
 	if (!is_dir($user_home)) {
@@ -338,10 +340,10 @@ function local_user_del($user) {
 
 	if($debug)
 		log_error("Running: {$cmd}");
-	$fd = popen($cmd, "w");
-	fwrite($fd, $user['password']);
-	pclose($fd);
+	mwexec($cmd);
 
+	/* Delete user from groups needs a call to write_config() */
+	local_group_del_user($user);
 }
 
 function local_user_set_password(& $user, $password) {
@@ -419,6 +421,22 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 		local_group_set($group);
 }
 
+function local_group_del_user($user) {
+	global $config;
+
+	if (!is_array($config['system']['group']))
+                return;
+
+        foreach ($config['system']['group'] as $group) {
+		if (is_array($group['member'])) {
+			foreach ($group['member'] as $idx => $uid) {
+				if ($user['uid'] == $uid)
+					unset($config['system']['group']['member'][$idx]);
+			}
+		}
+	}
+}
+
 function local_group_set($group, $reset = false) {
 	global $debug;
 
@@ -444,9 +462,7 @@ function local_group_set($group, $reset = false) {
 
 	if($debug)
 		log_error("Running: {$cmd}");
-	$fd = popen($cmd, "w");
-	fwrite($fd, $user['password']);
-	pclose($fd);
+	mwexec($cmd);
 
 }
 
@@ -458,10 +474,7 @@ function local_group_del($group) {
 
 	if($debug)
 		log_error("Running: {$cmd}");
-	$fd = popen($cmd, "w");
-	fwrite($fd, $user['password']);
-	pclose($fd);
-
+	mwexec($cmd);
 }
 
 function ldap_test_connection($authcfg) {
@@ -564,6 +577,8 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	if(!function_exists("ldap_connect"))
 		return;
 
+	$ous = array();
+
 	if ($authcfg) {
                 if (strstr($authcfg['ldap_urltype'], "Standard"))
                         $ldapproto = "ldap";
@@ -584,8 +599,6 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 		$ldapscope          = $authcfg['ldap_scope'];
         } else
 		return false;
-
-	$ous = array();
 
         /* first check if there is even an LDAP server populated */
         if(!$ldapserver) {
@@ -629,8 +642,8 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	else
 		$ldapfunc = "ldap_search";
 
-	$search = $ldapfunc($ldap, $ldapbasedn, $ldapfilter);
-	$info = ldap_get_entries($ldap, $search);
+	$search = @$ldapfunc($ldap, $ldapbasedn, $ldapfilter);
+	$info = @ldap_get_entries($ldap, $search);
 
 	if (is_array($info)) {
 		foreach ($info as $inf) {
@@ -743,8 +756,8 @@ function ldap_get_groups($username, $authcfg) {
         else
                 $ldapfunc = "ldap_search";
 
-	$search    = $ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
-	$info      = ldap_get_entries($ldap, $search);
+	$search    = @$ldapfunc($ldap, $ldapdn, $ldapfilter, array($ldapgroupattribute));
+	$info      = @ldap_get_entries($ldap, $search);
 
 	$countem = $info["count"];	
 	
@@ -876,9 +889,9 @@ function ldap_backed($username, $passwd, $authcfg) {
 			$ldapfunc = "ldap_search";
 		/* Support legacy auth container specification. */
 		if (stristr($ldac_split, "DC="))
-			$search	 = $ldapfunc($ldap,$ldac_split,$ldapfilter);
+			$search	 = @$ldapfunc($ldap,$ldac_split,$ldapfilter);
 		else
-			$search  = $ldapfunc($ldap,"{$ldac_split},{$ldapbasedn}",$ldapfilter);
+			$search  = @$ldapfunc($ldap,"{$ldac_split},{$ldapbasedn}",$ldapfilter);
 		if (!$search) {
 			log_error("Search resulted in error: " . ldap_error($ldap));
 			continue;
@@ -1086,7 +1099,10 @@ function session_auth() {
 			$_SESSION['last_access'] = time();
 			log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
 			require_once("functions.inc");
-			pfSenseHeader("/{$page}");
+			if (isset($_POST['postafterlogin']))
+				return true;
+			else
+				pfSenseHeader("/{$page}");
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = "Username or Password incorrect";
@@ -1103,13 +1119,17 @@ function session_auth() {
 		return false;
 
 	/* If session timeout isn't set, we don't mark sessions stale */
-	if (empty($config['system']['webgui']['session_timeout'])) {
+	if (!isset($config['system']['webgui']['session_timeout'])) {
 		/* Default to 4 hour timeout if one is not set */
 		if ($_SESSION['last_access'] < (time() - 14400)) {
 			$_GET['logout'] = true;
 			$_SESSION['Logout'] = true;
 		} else
 			$_SESSION['last_access'] = time();	
+	} else if (intval($config['system']['webgui']['session_timeout']) == 0) {
+		/* only update if it wasn't ajax */
+		if (!isAjax())
+			$_SESSION['last_access'] = time();
 	} else {
 		/* Check for stale session */
 		if ($_SESSION['last_access'] < (time() - ($config['system']['webgui']['session_timeout'] * 60))) {

@@ -47,7 +47,7 @@ function listtags() {
 		"option ppp package passthrumac phase1 phase2 priv proxyarpnet qinqentry queue ".
 		"pages pipe roll route row rrddatafile rule schedule service servernat servers ".
 		"serversdisabled earlyshellcmd shellcmd staticmap subqueue timerange ".
-		"tunnel user vip virtual_server vlan winsserver wolentry widget  "
+		"tunnel user vip virtual_server vlan winsserver wolentry widget"
 		);
 	return $ret;
 }
@@ -144,10 +144,10 @@ function cData($parser, $data) {
 		}
 
 		if (is_string($ptr)) {
-			$ptr .= $data;
+			$ptr .= html_entity_decode($data);
 		} else {
 			if (trim($data, " ") != "") {
-				$ptr = $data;
+				$ptr = html_entity_decode($data);
 				$havedata++;
 			}
 		}
@@ -246,25 +246,31 @@ function dump_xml_config_sub($arr, $indent) {
 			if (in_array(strtolower($ent), $listtags)) {
 				foreach ($val as $cval) {
 					if (is_array($cval)) {
-						$xmlconfig .= str_repeat("\t", $indent);
-						$xmlconfig .= "<$ent>\n";
-						$xmlconfig .= dump_xml_config_sub($cval, $indent + 1);
-						$xmlconfig .= str_repeat("\t", $indent);
-						$xmlconfig .= "</$ent>\n";
-					} else {
-						$xmlconfig .= str_repeat("\t", $indent);
-						if($cval === false) continue;
-						if(($cval === true) || ($cval === "")) {
+						if (empty($cval)) {
+							$xmlconfig .= str_repeat("\t", $indent);
 							$xmlconfig .= "<$ent/>\n";
 						} else {
-							$xmlconfig .= "<$ent>" . htmlspecialchars($cval) . "</$ent>\n";
+							$xmlconfig .= str_repeat("\t", $indent);
+							$xmlconfig .= "<$ent>\n";
+							$xmlconfig .= dump_xml_config_sub($cval, $indent + 1);
+							$xmlconfig .= str_repeat("\t", $indent);
+							$xmlconfig .= "</$ent>\n";
+						}
+					} else {
+						if($cval === false) continue;
+						$xmlconfig .= str_repeat("\t", $indent);
+						if((is_bool($cval) && $cval == true) || ($cval === "")) {
+							$xmlconfig .= "<$ent/>\n";
+						} else if (substr($ent, 0, 5) == "descr") {
+							$xmlconfig .= "<$ent><![CDATA[" . htmlentities($cval) . "]]></$ent>\n";
+						} else {
+							$xmlconfig .= "<$ent>" . htmlentities($cval) . "</$ent>\n";
+						}
 					}
-				}
 				}
 			} else if (empty($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
 				$xmlconfig .= "<$ent/>\n";
-				$xmlconfig .= str_repeat("\t", $indent);
 			} else {
 				/* it's an array */
 				$xmlconfig .= str_repeat("\t", $indent);
@@ -279,7 +285,10 @@ function dump_xml_config_sub($arr, $indent) {
 				$xmlconfig .= "<$ent/>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent>" . htmlspecialchars($val) . "</$ent>\n";
+				if (substr($ent, 0, 5) == "descr")
+					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
+				else
+					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";
 			}
 		}
 	}

@@ -453,4 +453,14 @@ function ipsec_dump_sad()
 	return $sad;
 }
 
+function ipsec_mobilekey_sort() {
+	global $config;
+
+	function mobilekeycmp($a, $b) {
+		return strcmp($a['ident'][0], $b['ident'][0]);
+	}
+
+	usort($config['ipsec']['mobilekey'], "mobilekeycmp");
+}
+
 ?>

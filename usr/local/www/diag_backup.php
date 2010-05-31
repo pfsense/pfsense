@@ -101,6 +101,7 @@ function spit_out_select_items($area, $showall) {
 		
 	$areas = array("aliases" => "Aliases", 
 				   "captiveportal" => "Captive Portal",
+				   "voucher" => "Captive Portal Vouchers",
 				   "dnsmasq" => "DNS Forwarder",				
 				   "dhcpd" => "DHCP Server",
 				   "filter" => "Firewall Rules",
@@ -229,7 +230,7 @@ if ($_POST) {
 							if($rrd_data) {
 								$data .= "\t\t<rrddatafile>\n";
 								$data .= "\t\t\t<filename>{$rrd}</filename>\n";
-								$data .= "\t\t\t<data>" . base64_encode($rrd_data) . "</data>\n";
+								$data .= "\t\t\t<data>" . base64_encode(gzdeflate($rrd_data)) . "</data>\n";
 								$data .= "\t\t</rrddatafile>\n";
 							}
 						}
@@ -242,6 +243,13 @@ if ($_POST) {
 				header("Content-Type: application/octet-stream");
 				header("Content-Disposition: attachment; filename={$name}");
 				header("Content-Length: $size");
+				if (isset($_SERVER['HTTPS'])) {
+					header('Pragma: ');
+					header('Cache-Control: ');
+				} else {
+					header("Pragma: private");
+					header("Cache-Control: private, must-revalidate");
+				}
 				echo $data;
 
 				exit;
@@ -310,7 +318,16 @@ if ($_POST) {
 								if($config['rrddata']) {
 									foreach($config['rrddata']['rrddatafile'] as $rrd) {
 										$rrd_fd = fopen("{$g['vardb_path']}/rrd/{$rrd['filename']}", "w");
-										fwrite($rrd_fd, base64_decode($rrd['data']));
+										$data = base64_decode($rrd['data']);
+										/* Try to decompress the data. */
+										$dcomp = @gzinflate($data);
+										if ($dcomp) {
+											/* If the decompression worked, write the decompressed data */
+											fwrite($rrd_fd, $dcomp);
+										} else {
+											/* If the decompression failed, it wasn't compressed, so write raw data */
+											fwrite($rrd_fd, $data);
+										}
 										fclose($rrd_fd);
 									}
 									unset($config['rrddata']);
@@ -340,8 +357,11 @@ if ($_POST) {
 												update_alias_names_upon_change('filter', 'rule', 'source', 'address', $newname, $origname);
 												update_alias_names_upon_change('filter', 'rule', 'destination', 'address', $newname, $origname);
 												// NAT Rules
+												update_alias_names_upon_change('nat', 'rule', 'source', 'address', $newname, $origname);
+												update_alias_names_upon_change('nat', 'rule', 'source', 'port', $newname, $origname);
+												update_alias_names_upon_change('nat', 'rule', 'destination', 'address', $newname, $origname);
+												update_alias_names_upon_change('nat', 'rule', 'destination', 'port', $newname, $origname);
 												update_alias_names_upon_change('nat', 'rule', 'target', '', $newname, $origname);
-												update_alias_names_upon_change('nat', 'rule', 'external-port', '', $newname, $origname);
 												update_alias_names_upon_change('nat', 'rule', 'local-port', '', $newname, $origname);
 												// Alias in an alias
 												update_alias_names_upon_change('aliases', 'alias', 'address', '', $newname, $origname);
@@ -554,7 +574,7 @@ function backuparea_change(obj) {
 							</tr>
 							<tr>
 								<td>
-									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd">
+									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd" checked>
 								</td>
 								<td>
 									<span class="vexpl">Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)</span>
@@ -660,6 +680,6 @@ decrypt_change();
 <?php
 
 if (is_subsystem_dirty('restore'))
-	exec("/etc/rc.reboot");
+	system_reboot();
 
 ?>

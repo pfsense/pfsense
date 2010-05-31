@@ -35,31 +35,32 @@ require_once("functions.inc");
 require_once("guiconfig.inc");
 require_once('notices.inc');
 
+
 if($_REQUEST['getupdatestatus']) {
 	if(isset($curcfg['alturl']['enable']))
 		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
 	else 
 		$updater_url = $g['update_url'];
 	download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
-	$latest_version = file_get_contents("/tmp/{$g['product_name']}_version");
-	if(empty($latest_version))
+	$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
+	if(empty($remote_version))
 		echo "<br /><br />Unable to check for updates.";
 	else {
-		$current_installed_pfsense_version = strtotime(str_replace("\n", "", file_get_contents("/etc/version.buildtime")));
+		$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
+		$current_installed_version = trim(file_get_contents("/etc/version"));
 
-		$latest_version = strtotime(str_replace("\n", "", file_get_contents("/tmp/{$g['product_name']}_version")));
-		if(!$latest_version) {
-			echo "<br /><br />Unable to check for updates.";							
+		if(!$remote_version) {
+			echo "<br /><br />Unable to check for updates.";
 		}
 		else {
 			$needs_system_upgrade = false;
-			if($current_installed_pfsense_version < $latest_version) {
+			if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $remote_version) == -1) {
 				echo "<br/><span class=\"red\" id=\"updatealert\"><b>Update available. </b></span><a href=\"/system_firmware_check.php\">Click Here</a> to view update.";
 				echo "<script type=\"text/javascript\">";
 				echo "Effect.Pulsate('updatealert', { pulses: 30, duration: 10});";
 				echo "</script>";
 			} else
-				echo "<br /><br />You are on the latest version.";
+				echo "<br />You are on the latest version.";
 		}
 	}
 	exit;
@@ -89,17 +90,30 @@ $curcfg = $config['system']['firmware'];
 		<?php if(!$g['hideplatform']): ?>
 		<tr>
 			<td width="25%" class="vncellt">Platform</td>
-			<td width="75%" class="listr"><?=htmlspecialchars($g['platform']);?></td>
+			<td width="75%" class="listr">
+				<?=htmlspecialchars($g['platform']);?>
+				<?php if (($g['platform'] == "nanobsd") && (file_exists("/etc/nanosize.txt"))) {
+					echo " (" . htmlspecialchars(trim(file_get_contents("/etc/nanosize.txt"))) . ")";
+				} ?>
+			</td>
 		</tr>
 		<?php endif; ?>
 		<?php if ($g['platform'] == "nanobsd"): ?>
 			<?
-			$BOOT_DEVICE=trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`);
-			$REAL_BOOT_DEVICE=trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$BOOT_DEVICE} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);
+			global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
+			global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
+			global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
+			nanobsd_detect_slice_info();
 			?>
 		<tr>
 			<td width="25%" class="vncellt">NanoBSD Boot Slice</td>
-			<td width="75%" class="listr"><?=htmlspecialchars($BOOT_DEVICE);?> / <?=htmlspecialchars($REAL_BOOT_DEVICE);?></td>
+			<td width="75%" class="listr">
+				<?=htmlspecialchars($BOOT_DEVICE);?> / <?=htmlspecialchars($BOOTFLASH);?>
+				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
+				<br/><br/>Next Boot:<br/>
+				<?=htmlspecialchars($GLABEL_SLICE);?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
+				<?php endif; ?>
+			</td>
 		</tr>
 		<?php endif; ?>
 		<tr>

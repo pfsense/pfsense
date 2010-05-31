@@ -47,12 +47,9 @@ require_once("shaper.inc");
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();
 
-if (!is_array($config['gateways']['gateway_item']))
-	$config['gateways']['gateway_item'] = array();
-
 $a_routes = &$config['staticroutes']['route'];
-$a_gateways = &$config['gateways']['gateway_item'];
-$changedesc = "Static Routes: ";
+$a_gateways = return_gateways_array(true);
+$changedesc = gettext("Static Routes") . ": ";
 
 if ($_POST) {
 
@@ -74,14 +71,14 @@ if ($_POST) {
 		if ($_POST['enablefastrouting'] == "") {
 			/* Only update config if something changed */
 			if (isset($config['staticroutes']['enablefastrouting'])) {
-				$changedesc .= " disable fast routing";
+				$changedesc .= " " . gettext("disable fast routing");
 				unset($config['staticroutes']['enablefastrouting']);
 				write_config($changedesc);
 			}
 		} else {
 			/* Only update config if something changed */
 			if (!isset($config['staticroutes']['enablefastrouting'])) {
-				$changedesc .= " enable fast routing";
+				$changedesc .= " " . gettext("enable fast routing");
 				$config['staticroutes']['enablefastrouting'] = "enabled";
 				write_config($changedesc);
 			}
@@ -91,7 +88,8 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_routes[$_GET['id']]) {
-		$changedesc .= "removed route to " . $a_routes[$_GET['id']['route']];
+		$changedesc .= gettext("removed route to") . " " . $a_routes[$_GET['id']['route']];
+		mwexec("/sbin/route delete " . escapeshellarg($a_routes[$_GET['id']]['network']));
 		unset($a_routes[$_GET['id']]);
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
@@ -100,7 +98,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("System","Static Routes");
+$pgtitle = array(gettext("System"),gettext("Static Routes"));
 include("head.inc");
 
 ?>
@@ -111,15 +109,15 @@ include("head.inc");
 <input type="hidden" name="y1" value="1">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np("The static route configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(sprintf(gettext("The static route configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br>"));?><br>
 <?php endif; ?>
 
 	     <?php if($config['system']['disablefilter'] <> "") :?>
 	       <table width="100%" border="0" cellpadding="0" cellspacing="0">
 
-		<tr><td width="2%"><input type="checkbox" name="enablefastrouting" id="enablefastrouting" <?php if($config['staticroutes']['enablefastrouting'] == "enabled") echo " checked"; ?>></td><td><b>Enable fast routing</td></tr>
+		<tr><td width="2%"><input type="checkbox" name="enablefastrouting" id="enablefastrouting" <?php if($config['staticroutes']['enablefastrouting'] == "enabled") echo " checked"; ?>></td><td><b><?=gettext("Enable fast routing");?></td></tr>
 
-		<tr><td colspan=2><hr><input type="submit" value="Save"></td></tr>
+		<tr><td colspan=2><hr><input type="submit" value="<?=gettext("Save"); ?>"></td></tr>
 	       </table><br>
 	     <?php endif; ?>
 
@@ -128,10 +126,9 @@ include("head.inc");
 		  <td>
 <?php
 		$tab_array = array();
-		$tab_array[0] = array("Gateways", false, "system_gateways.php");
-		$tab_array[1] = array("Routes", true, "system_routes.php");
-		$tab_array[2] = array("Groups", false, "system_gateway_groups.php");
-		$tab_array[3] = array("Settings", false, "system_gateways_settings.php");
+		$tab_array[0] = array(gettext("Gateways"), false, "system_gateways.php");
+		$tab_array[1] = array(gettext("Routes"), true, "system_routes.php");
+		$tab_array[2] = array(gettext("Groups"), false, "system_gateway_groups.php");
 		display_top_tabs($tab_array);
 ?>
 </td></tr>
@@ -140,10 +137,10 @@ include("head.inc");
 	<div id="mainarea">
              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="25%" class="listhdrr">Network</td>
-                  <td width="20%" class="listhdrr">Gateway</td>
-                  <td width="15%" class="listhdrr">Interface</td>
-                  <td width="30%" class="listhdr">Description</td>
+                  <td width="25%" class="listhdrr"><?=gettext("Network");?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Gateway");?></td>
+                  <td width="15%" class="listhdrr"><?=gettext("Interface");?></td>
+                  <td width="30%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			   <tr>
@@ -160,17 +157,12 @@ include("head.inc");
                   </td>
                   <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
 			<?php
-				echo $route['gateway'] . " ";
+				echo htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway']);
 			?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
 			<?php
-				foreach($a_gateways as $gateway) {
-					if($gateway['name'] == $route['gateway']) {
-						echo strtoupper($gateway['interface']) . " ";
-					}
-				}
-
+				echo convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface']) . " ";
 			?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
@@ -180,7 +172,7 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1">
 			   <tr>
 				<td><a href="system_routes_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-				<td><a href="system_routes.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this route?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+				<td><a href="system_routes.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this route?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 			   </tr>
 			   <tr>
 				<td width="17"></td>
@@ -207,7 +199,7 @@ include("head.inc");
 		  </tr>
 		</table>
             </form>
-			<p><b>Note:</b>  Do not enter static routes for networks assigned on any interface of this firewall.  Static routes are only used for networks reachable via a different router, and not reachable via your default gateway.</p>
+			<p><b><?=gettext("Note");?>:</b>  <?=gettext("Do not enter static routes for networks assigned on any interface of this firewall.  Static routes are only used for networks reachable via a different router, and not reachable via your default gateway.");?></p>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -94,8 +94,8 @@ if ($_GET['act'] == "del") {
 		/* make sure no inbound NAT mappings reference this entry */
 		if (is_array($config['nat']['rule'])) {
 			foreach ($config['nat']['rule'] as $rule) {
-				if($rule['external-address'] <> "") {
-					if ($rule['external-address'] == $a_vip[$_GET['id']]['ipaddr']) {
+				if($rule['destination']['address'] <> "") {
+					if ($rule['destination']['address'] == $a_vip[$_GET['id']]['subnet']) {
 						$input_errors[] = "This entry cannot be deleted because it is still referenced by at least one NAT mapping.";
 						break;
 					}

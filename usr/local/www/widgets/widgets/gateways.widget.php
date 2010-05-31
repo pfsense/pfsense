@@ -74,9 +74,9 @@ $counter = 1;
                         <table border="0" cellpadding="0" cellspacing="2">
                         <?php
                                 $monitor = $gateway['monitor'];
-								if(empty($monitor)) {
-									$monitor = $gateway['gateway'];
-								}
+				if(empty($monitor)) {
+					$monitor = $gateway['gateway'];
+				}
                                 switch($gateways_status[$monitor]['status']) {
                                         case "None":
                                                 $online = "Online";
@@ -94,11 +94,11 @@ $counter = 1;
                                                $online = "Warning, Packetloss";
                                                 $bgcolor = "khaki";
                                                 break;
-										default:
-											$online = "Gathering data";
-								}
-								echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
-								$counter++;
+					default:
+						$online = "Gathering data";
+				}
+				echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
+				$counter++;
                         ?>
                         </table>
                   </td>

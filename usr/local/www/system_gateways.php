@@ -46,9 +46,8 @@ require_once("shaper.inc");
 
 $a_gateways = return_gateways_array(true);
 $a_gateways_arr = array();
-foreach($a_gateways as $gw) {
+foreach ($a_gateways as $gw)
 	$a_gateways_arr[] = $gw;
-}
 $a_gateways = $a_gateways_arr;
 
 if (!is_array($config['gateways']['gateway_item']))
@@ -81,42 +80,65 @@ if ($_GET['act'] == "del") {
 	if ($a_gateways[$_GET['id']]) {
 		/* remove the real entry */
 		$realid = $a_gateways[$_GET['id']]['attribute'];
-
-		if ($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway'] == $a_gateways[$_GET['id']]['name'])
-			unset($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway']);
-		$changedesc .= "removed gateway {$realid}";
-		unset($a_gateway_item[$realid]);
-		write_config($changedesc);
-		mark_subsystem_dirty('staticroutes');
-		header("Location: system_gateways.php");
-		exit;
+		$remove = true;
+		if (is_array($config['gateways']['gateway_group'])) {
+			foreach ($config['gateways']['gateway_group'] as $group) {
+				foreach ($group['item'] as $item) {
+					$items = explode("|", $item);
+					if ($items[0] == $a_gateways[$_GET['id']]['name']) {
+						$input_errors[] = "Gateway cannot be deleted because it is in use on Gateway Group '{$group['name']}'";
+						$remove = false;
+						break;
+					}
+						
+				}
+			}
+		}
+		if (is_array($config['staticroutes']['route'])) {
+			foreach ($config['staticroutes']['route'] as $route) {
+				if ($route['gateway'] == $a_gateways[$_GET['id']]['name']) {
+					$input_errors[] = "Gateway cannot be deleted because it is in use on Static Routes '{$route['network']}'";
+						$remove = false;
+					break;
+				}
+			}
+		}
+		if ($remove == true) {
+			if ($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway'] == $a_gateways[$_GET['id']]['name'])
+				unset($config['interfaces'][$a_gateways[$_GET['id']]['friendlyiface']]['gateway']);
+			$changedesc .= "removed gateway {$realid}";
+			unset($a_gateway_item[$realid]);
+			write_config($changedesc);
+			mark_subsystem_dirty('staticroutes');
+			header("Location: system_gateways.php");
+			exit;
+		}
 	}
 }
 
 
-$pgtitle = array("System","Gateways");
+$pgtitle = array(gettext("System"),gettext("Gateways"));
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="system_gateways.php" method="post">
 <input type="hidden" name="y1" value="1">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('staticroutes')): ?><p>
-<?php print_info_box_np("The gateway configuration has been changed.<br>You must apply the changes in order for them to take 
-effect.");?><br>
+<?php print_info_box_np(gettext("The gateway configuration has been changed.") . "<br>" . gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 		  <td>
 <?php
 			$tab_array = array();
-			$tab_array[0] = array("Gateways", true, "system_gateways.php");
-			$tab_array[1] = array("Routes", false, "system_routes.php");
-			$tab_array[2] = array("Groups", false, "system_gateway_groups.php");
-			$tab_array[3] = array("Settings", false, "system_gateways_settings.php");
+			$tab_array[0] = array(gettext("Gateways"), true, "system_gateways.php");
+			$tab_array[1] = array(gettext("Routes"), false, "system_routes.php");
+			$tab_array[2] = array(gettext("Groups"), false, "system_gateway_groups.php");
 			display_top_tabs($tab_array);
 ?>
 </td></tr>
@@ -125,11 +147,11 @@ effect.");?><br>
 	<div id="mainarea">
              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="15%" class="listhdrr">Name</td>
-                  <td width="15%" class="listhdrr">Interface</td>
-                  <td width="20%" class="listhdrr">Gateway</td>
-                  <td width="20%" class="listhdrr">Monitor IP</td>
-                  <td width="30%" class="listhdr">Description</td>
+                  <td width="15%" class="listhdrr"><?=gettext("Name"); ?></td>
+                  <td width="15%" class="listhdrr"><?=gettext("Interface"); ?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Gateway"); ?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Monitor IP"); ?></td>
+                  <td width="30%" class="listhdr"><?=gettext("Description"); ?></td>
                   <td width="10%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			   <tr>
@@ -191,8 +213,11 @@ effect.");?><br>
 				<td><a href="system_gateways_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
 				<?php
 				if ($gateway['attribute'] != "system") : ?>
-					<td><a href="system_gateways.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this 
-gateway?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+					<td>
+						<a href="system_gateways.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this gateway?"); ?>')">
+							<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0">
+						</a>
+					</td>
 				<?php else : ?>
 					<td width='17'></td>
 				<?php endif; ?>

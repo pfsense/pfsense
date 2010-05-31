@@ -191,8 +191,8 @@ function restore_backup($file) {
 
 	if (file_exists($file)) {
 		conf_mount_rw();
-		copy("$file","/cf/conf/config.xml");
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
+		copy("$file","/cf/conf/config.xml");
 		log_error("{$g['product_name']} is restoring the configuration $file");
 		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "pfSenseConfigurator", "");
 		conf_mount_ro();
@@ -338,8 +338,7 @@ function conf_mount_ro() {
 
 	clear_subsystem_dirty('mount');
 	/* sync data, then force a remount of /cf */
-	mwexec("/bin/sync");
-	mwexec("/bin/sync");
+	mwexec("/bin/sync; /bin/sync");
 	mwexec("/sbin/mount -u -r -f {$g['cf_path']}");
 	mwexec("/sbin/mount -u -r -f /");
 }
@@ -471,20 +470,20 @@ function write_config($desc="Unknown", $backup = true) {
 	if ($desc == "Unknown")
 		$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";
 
-	$config['revision']['description'] = $desc;
+	$config['revision']['description'] = "{$_SESSION['Username']}: " . $desc;
+	$config['revision']['username'] = $_SESSION["Username"];
 
-	$lockkey = lock('config');
+	conf_mount_rw();
+	$lockkey = lock('config', LOCK_EX);
 
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
-
-	conf_mount_rw();
 
 	/* write new configuration */
 	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig, false)) {
 		log_error("WARNING: Config contents could not be save. Could not open file!");
 		unlock($lockkey);
-		file_notice("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
+		file_notice("config.xml", "Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
 		return -1;
 	}
 	
@@ -497,21 +496,21 @@ function write_config($desc="Unknown", $backup = true) {
 	/* re-read configuration */
 	/* NOTE: We assume that the file can be parsed since we wrote it. */
 	$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
-
-	/* write config cache */
-	$fd = @fopen("{$g['tmp_path']}/config.cache", "wb");
-	if ($fd) {
-		fwrite($fd, serialize($config));
-		fclose($fd);
-	}
-
-	/* tell kernel to sync fs data */
-	if (!$g['booting'])
-		conf_mount_ro();
+	if ($config == -1) {
+		$last_backup = discover_last_backup();
+		if ($last_backup)
+			restore_backup("/cf/conf/backup/{$last_backup}");
+		else
+			log_error(gettext("Could not restore config.xml."));
+	} else
+		generate_config_cache($config);
 
 	unlock($lockkey);
 
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
+
+	/* tell kernel to sync fs data */
+	conf_mount_ro();
 
 	/* sync carp entries to other firewalls */
 	carp_sync_client();
@@ -533,9 +532,9 @@ function write_config($desc="Unknown", $backup = true) {
 function reset_factory_defaults($lock = false) {
 	global $g;
 
-	if (!$lock)
-		$lockkey = lock('config');
 	conf_mount_rw();
+	if (!$lock)
+		$lockkey = lock('config', LOCK_EX);
 
 	/* create conf directory, if necessary */
 	safe_mkdir("{$g['cf_conf_path']}");
@@ -554,9 +553,9 @@ function reset_factory_defaults($lock = false) {
 
 	/* call the wizard */
 	touch("/conf/trigger_initial_wizard");
-	conf_mount_ro();
 	if (!$lock)
 		unlock($lockkey);
+	conf_mount_ro();
 
 	return 0;
 }
@@ -571,10 +570,10 @@ function config_restore($conffile) {
 
 	conf_mount_rw();
 	
-	$lockkey = lock('config');
+	$lockkey = lock('config', LOCK_EX);
 
-	copy($conffile, "{$g['cf_conf_path']}/config.xml");
 	unlink_if_exists("{$g['tmp_path']}/config.cache");
+	copy($conffile, "{$g['cf_conf_path']}/config.xml");
 
 	unlock($lockkey);
 
@@ -602,7 +601,7 @@ function config_install($conffile) {
 		log_error("Installing configuration ....");
 
 	conf_mount_rw();
-	$lockkey = lock('config');
+	$lockkey = lock('config', LOCK_EX);
 
 	copy($conffile, "{$g['conf_path']}/config.xml");
 
@@ -1138,63 +1137,69 @@ function cleanup_backupcache($revisions = 30, $lock = false) {
 	
 	if (!$lock)
 		$lockkey = lock('config');
-	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
-		conf_mount_rw();
-		$backups = get_backups();
-		$newbaks = array();
-		$bakfiles = glob($g['cf_conf_path'] . "/backup/config-*");
-		$baktimes = $backups['versions'];
-		$tocache = array();
-		unset($backups['versions']);
-   		foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
-   			if(filesize($backup) == 0) {
-   				unlink($backup);
-   				continue;
-   			}
-			$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));
-            if(!in_array($tocheck, $baktimes)) {
-				$i = true;
-				if($g['booting'])
-					echo ".";
-				$newxml = parse_xml_config($backup, $g['xml_rootobj']);
-				if($newxml == "-1") {
-					log_error("The backup cache file $backup is corrupted.  Unlinking.");
-					unlink($backup);
-					log_error("The backup cache file $backup is corrupted.  Unlinking.");
-					continue;
-				}
-				if($newxml['revision']['description'] == "")
-					$newxml['revision']['description'] = "Unknown";
-				$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
-			}
-    	}
-		foreach($backups as $checkbak) {
 
-			if(count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
-				$newbaks[] = $checkbak;
-			} else {
-				$i = true;
-				if($g['booting']) print " " . $tocheck . "r";
-			}
-		}
-		foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);
-		if(is_int($revisions) and (count($tocache) > $revisions)) {
-			$toslice = array_slice(array_keys($tocache), 0, $revisions);
-			foreach($toslice as $sliced)
-				$newcache[$sliced] = $tocache[$sliced];
-			foreach($tocache as $version => $versioninfo) {
-				if(!in_array($version, array_keys($newcache))) {
-					unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
-					if($g['booting']) print " " . $tocheck . "d";
-				}
-			}
-			$tocache = $newcache;
-		}
-		$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-        fwrite($bakout, serialize($tocache));
-		fclose($bakout);
-		conf_mount_ro();
+	conf_mount_rw();
+
+	$backups = get_backups();
+	if ($backups) {
+		$baktimes = $backups['versions'];
+		unset($backups['versions']);
+	} else {
+		$backups = array();
+		$baktimes = array();
 	}
+	$newbaks = array();
+	$bakfiles = glob($g['cf_conf_path'] . "/backup/config-*");
+	$tocache = array();
+
+	foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
+		if(filesize($backup) == 0) {
+			unlink($backup);
+			continue;
+		}
+		$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));
+		if(!in_array($tocheck, $baktimes)) {
+			$i = true;
+			if($g['booting'])
+				echo ".";
+			$newxml = parse_xml_config($backup, $g['xml_rootobj']);
+			if($newxml == "-1") {
+				log_error("The backup cache file $backup is corrupted.  Unlinking.");
+				unlink($backup);
+				log_error("The backup cache file $backup is corrupted.  Unlinking.");
+				continue;
+			}
+			if($newxml['revision']['description'] == "")
+				$newxml['revision']['description'] = "Unknown";
+			$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
+		}
+	}
+	foreach($backups as $checkbak) {
+		if(count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
+			$newbaks[] = $checkbak;
+		} else {
+			$i = true;
+			if($g['booting']) print " " . $tocheck . "r";
+		}
+	}
+	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);
+	if(is_int($revisions) and (count($tocache) > $revisions)) {
+		$toslice = array_slice(array_keys($tocache), 0, $revisions);
+		foreach($toslice as $sliced)
+			$newcache[$sliced] = $tocache[$sliced];
+		foreach($tocache as $version => $versioninfo) {
+			if(!in_array($version, array_keys($newcache))) {
+				unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
+				if($g['booting']) print " " . $tocheck . "d";
+			}
+		}
+		$tocache = $newcache;
+	}
+	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+	fwrite($bakout, serialize($tocache));
+	fclose($bakout);
+	conf_mount_ro();
+
 	if($g['booting'] && $i)
 		print "done.\n";
 	if (!$lock)

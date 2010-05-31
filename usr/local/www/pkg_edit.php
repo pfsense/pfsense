@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     pkg_edit.php
-    Copyright (C) 2004 Scott Ullrich
+    Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -245,7 +245,7 @@ if ($_POST) {
 }
 
 if($pkg['title'] <> "") {
-	$edit = ($only_edit ? '' : ': Edit');
+	$edit = ($only_edit ? '' : ": " .  gettext("Edit"));
 	$title = $pkg['title'] . $edit;
 }
 else
@@ -440,6 +440,40 @@ if ($pkg['tabs'] <> "") {
                   }
 
                   print("</select>\n<br />\n" . fixup_string($pkga['description']) . "\n");
+		  } else if($pkga['type'] == "select_source") {
+                  $fieldname = $pkga['fieldname'];
+                  if (isset($pkga['multiple'])) {
+                    $multiple = 'multiple="multiple"';
+                    $items = explode(',', $value);
+                    $fieldname .= "[]";
+                  }
+                  else {
+                    $multiple = '';
+                    $items = array($value);
+                  }
+                  $size = (isset($pkga['size']) ? "size=\"{$pkga['size']}\"" : '');
+                  $onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
+
+                  print("<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n");
+				  $source_url = $pkga['source'];
+				  eval("\$pkg_source_txt = &$source_url;");
+                  foreach ($pkg_source_txt as $opt) {
+                      $selected = '';
+					  if($pkga['source_name']) {
+						$source_name = $opt[$pkga['source_name']];
+					  } else {
+						$source_name = $opt[$pkga['name']];
+					  }
+					  if($pkga['source_value']) {
+						$source_value = $opt[$pkga['source_value']];
+					  } else {
+						$source_value = $opt[$pkga['value']];
+					  }
+                      if (in_array($opt['value'], $items)) $selected = 'selected="selected"';
+                      	print("\t<option name=\"{$source_name}\" value=\"{$source_value}\" $selected>{$source_name}</option>\n");
+                  }
+
+                  print("</select>\n<br />\n" . fixup_string($pkga['description']) . "\n");		
 	      } else if($pkga['type'] == "vpn_selection") {
 		    echo "<select id='" . $pkga['fieldname'] . "' name='" . $vpn['name'] . "'>\n";
 		    foreach ($config['ipsec']['phase1'] as $vpn) {
@@ -656,7 +690,7 @@ if($pkg['note'] != "")
  * ROW Helpers function
  */
 function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
-	global $text;
+	global $text, $config;
 	echo "<td>\n";
 	if($type == "input") {
 		echo "<input size='" . $size . "' name='" . $fieldname . $trc . "' id='" . $fieldname . $trc . "' value='" . $value . "'>\n";
@@ -678,6 +712,28 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 			echo "<option value='" . $rowopt['value'] . "'" . $selected . ">" . $rowopt['name'] . "</option>\n";
 		}
 		echo "</select>\n";
+	} else if($type == "select_source") {
+		echo "<select id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "'>\n";
+	    $source_url = $rowhelper['source'];
+	    eval("\$pkg_source_txt = &$source_url;");
+		foreach($pkg_source_txt as $opt) {
+			$selected = "";
+		    if($rowhelper['source_name']) {
+				$source_name = $opt[$rowhelper['source_name']];
+		    } else {
+				$source_name = $opt[$rowhelper['name']];
+		    }
+		  	if($rowhelper['source_value']) {
+				$source_value = $opt[$rowhelper['source_value']];
+		  	} else {
+				$source_value = $opt[$rowhelper['value']];
+		  	}
+			if($source_value == $value) 
+				$selected = " SELECTED";
+			$text .= "<option value='" . $source_value . "'" . $selected . ">" . $source_name . "</option>";
+			echo "<option value='" . $source_value . "'" . $selected . ">" . $source_name . "</option>\n";
+		}
+		echo "</select>\n";		
 	}
 }
 

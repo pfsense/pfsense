@@ -67,8 +67,10 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_allowedips[$id]) {
 	$pconfig['ip'] = $a_allowedips[$id]['ip'];
-	$pconfig['descr'] = $a_allowedips[$id]['descr'];
 	$pconfig['dir'] = $a_allowedips[$id]['dir'];
+	$pconfig['bw_up'] = $a_allowedips[$id]['bw_up'];
+	$pconfig['bw_down'] = $a_allowedips[$id]['bw_down'];
+	$pconfig['descr'] = $a_allowedips[$id]['descr'];
 }
 
 if ($_POST) {
@@ -77,20 +79,24 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "ip dir");
-	$reqdfieldsn = explode(",", "Allowed IP address,Direction");
+	$reqdfields = explode(" ", "ip");
+	$reqdfieldsn = explode(",", "Allowed IP address");
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
 	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
 		$input_errors[] = "A valid IP address must be specified. [".$_POST['ip']."]";
 	}
+	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
+                $input_errors[] = "Upload speed needs to be an integer";
+        if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))
+                $input_errors[] = "Download speed needs to be an integer";
 
 	foreach ($a_allowedips as $ipent) {
 		if (isset($id) && ($a_allowedips[$id]) && ($a_allowedips[$id] === $ipent))
 			continue;
 		
-		if (($ipent['dir'] == $_POST['dir']) && ($ipent['ip'] == $_POST['ip'])){
+		if ($ipent['ip'] == $_POST['ip']){
 			$input_errors[] = "[" . $_POST['ip'] . "] already allowed." ;
 			break ;
 		}	
@@ -99,22 +105,31 @@ if ($_POST) {
 	if (!$input_errors) {
 		$ip = array();
 		$ip['ip'] = $_POST['ip'];
-		$ip['descr'] = $_POST['descr'];
 		$ip['dir'] = $_POST['dir'];
-
-		if (isset($id) && $a_allowedips[$id])
+		$ip['descr'] = $_POST['descr'];
+		if ($_POST['bw_up'])
+                        $ip['bw_up'] = $_POST['bw_up'];
+                if ($_POST['bw_down'])
+                        $ip['bw_down'] = $_POST['bw_down'];
+		if (isset($id) && $a_allowedips[$id]) {
+			$oldip = $a_allowedips[$id]['ip'];
 			$a_allowedips[$id] = $ip;
-		else
+		} else {
+			$oldip = $ip['ip'];
 			$a_allowedips[] = $ip;
+		}
 		allowedips_sort();
 		
 		write_config();
 
-		if (isset($config['captiveportal']['enable'])) {
-			if ($ip['dir'] == "from")
-				mwexec("/sbin/ipfw table 1 add " . $ip['ip']);
-			else
-				mwexec("/sbin/ipfw table 2 add " . $ip['ip']);	
+		if (isset($config['captiveportal']['enable']) && is_module_loaded("ipfw.ko")) {
+			$rules = "";
+			for ($i = 3; $i < 10; $i++)
+				$rules .= "table {$i} delete {$oldip}\n";
+			$rules .= captiveportal_allowedip_configure_entry($ip);
+			file_put_contents("{$g['tmp_path']}/allowedip_tmp{$id}", $rules);
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/allowedip_tmp{$id}");
+			@unlink("{$g['tmp_path']}/allowedip_tmp{$id}");
 		}
 		
 		header("Location: services_captiveportal_ip.php");
@@ -130,35 +145,47 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_captiveportal_ip_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-				<tr>
+		<tr>
                   <td width="22%" valign="top" class="vncellreq">Direction</td>
                   <td width="78%" class="vtable"> 
-					<select name="dir" class="formselect">
-					<?php 
-					$dirs = explode(" ", "From To") ;
-					foreach ($dirs as $dir): ?>
-					<option value="<?=strtolower($dir);?>" <?php if (strtolower($dir) == strtolower($pconfig['dir'])) echo "selected";?> >
-					<?=htmlspecialchars($dir);?>
-					</option>
-					<?php endforeach; ?>
-					</select>
+			<select name="dir" class="formfld">
+		<?php 
+			$dirs = explode(" ", "Both From To") ;
+			foreach ($dirs as $dir): ?>
+				<option value="<?=strtolower($dir);?>" <?php if (strtolower($dir) == strtolower($pconfig['dir'])) echo "selected";?> >
+				<?=htmlspecialchars($dir);?>
+				</option>
+		<?php endforeach; ?>
+			</select>
                     <br> 
                     <span class="vexpl">Use <em>From</em> to always allow an IP address through the captive portal (without authentication). 
                     Use <em>To</em> to allow access from all clients (even non-authenticated ones) behind the portal to this IP address.</span></td>
                 </tr>
-				<tr>
+		<tr>
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>">
                     <br> 
                     <span class="vexpl">IP address</span></td>
                 </tr>
-				<tr>
+		<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
+                </tr>
+		<tr>
+                  <td width="22%" valign="top" class="vncell">Bandwidth up</td>
+                  <td width="78%" class="vtable">
+                    <input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>">
+                    <br> <span class="vexpl">Enter a upload limit to be enforced on this IP address in Kbit/s</span></td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">Bandwidth down</td>
+                  <td width="78%" class="vtable">
+                    <input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>">
+                    <br> <span class="vexpl">Enter a download limit to be enforced on this IP address in Kbit/s</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

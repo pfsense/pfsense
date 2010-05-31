@@ -77,7 +77,7 @@ if($_GET['act']=="edit"){
 
 	if (isset($id) && $a_client[$id]) {
 
-		$pconfig['disable'] = $a_client[$id]['disable'];
+		$pconfig['disable'] = isset($a_client[$id]['disable']);
 		$pconfig['mode'] = $a_client[$id]['mode'];
 		$pconfig['protocol'] = $a_client[$id]['protocol'];
 		$pconfig['interface'] = $a_client[$id]['interface'];
@@ -186,12 +186,14 @@ if ($_POST) {
 			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----"))
 			$input_errors[] = "The field 'TLS Authentication Key' does not appear to be valid";
 
-	if (!$tls_mode && !$pconfig['autokey_enable']) {
-		$reqdfields = array('shared_key');
-		$reqdfieldsn = array('Shared key');
-    } else {
+	/* If we are not in shared key mode, then we need the CA/Cert. */
+	if ($pconfig['mode'] != "p2p_shared_key") {
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = explode(",", "Certificate Authority,Certificate");;
+	} elseif (!$pconfig['autokey_enable']) {
+		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
+		$reqdfields = array('shared_key');
+		$reqdfieldsn = array('Shared key');
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -205,7 +207,8 @@ if ($_POST) {
 		else
 			$client['vpnid'] = openvpn_vpnid_next();
 
-		$client['disable'] = $pconfig['disable'];
+		if ($_POST['disable'] == "yes")
+			$client['disable'] = true;
 		$client['protocol'] = $pconfig['protocol'];
 		$client['dev_mode'] = $pconfig['dev_mode'];
 		list($client['interface'], $client['ipaddr']) = explode ("|",$pconfig['interface']);
@@ -341,6 +344,7 @@ function autotls_change() {
 				$tab_array[] = array(gettext("Client"), true, "vpn_openvpn_client.php");
 				$tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
 				$tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
+				$tab_array[] = array(gettext("Logs"), false, "diag_logs_openvpn.php");
 				add_package_tabs("OpenVPN", $tab_array);
 				display_top_tabs($tab_array);
 			?>
@@ -805,7 +809,7 @@ function autotls_change() {
 					$i = 0;
 					foreach($a_client as $client):
 						$disabled = "NO";
-						if ($client['disable'])
+						if (isset($client['disable']))
 							$disabled = "YES";
 						$server = "{$client['server_addr']}:{$client['server_port']}";
 				?>

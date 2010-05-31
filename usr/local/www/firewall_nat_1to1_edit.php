@@ -100,12 +100,6 @@ if ($_POST) {
 		$input_errors[] = "A valid internal subnet must be specified.";
 	}
 
-	if (is_ipaddr($config['interfaces']['wan']['ipaddr'])) {
-		if (check_subnets_overlap($_POST['external'], $_POST['subnet'], 
-				get_interface_ip("wan"), 32))
-			$input_errors[] = "The WAN IP address may not be used in a 1:1 rule.";
-	}
-
 	/* check for overlaps with other 1:1 */
 	foreach ($a_1to1 as $natent) {
 		if (isset($id) && ($a_1to1[$id]) && ($a_1to1[$id] === $natent))
@@ -117,17 +111,6 @@ if ($_POST) {
 		} else if (check_subnets_overlap($_POST['internal'], $_POST['subnet'], $natent['internal'], $natent['subnet'])) {
 			//$input_errors[] = "Another 1:1 rule overlaps with the specified internal subnet.";
 			//break;
-		}
-	}
-
-	/* check for overlaps with advanced outbound NAT */
-	if (is_array($config['nat']['advancedoutbound']['rule'])) {
-		foreach ($config['nat']['advancedoutbound']['rule'] as $natent) {
-			if ($natent['target'] && 
-				check_subnets_overlap($_POST['external'], $_POST['subnet'], $natent['target'], 32)) {
-				$input_errors[] = "An advanced outbound NAT entry overlaps with the specified external subnet.";
-				break;
-			}
 		}
 	}
 

@@ -112,6 +112,7 @@ if($_GET['act']=="edit"){
 		$pconfig['passtos'] = $a_server[$id]['passtos'];
 		$pconfig['client2client'] = $a_server[$id]['client2client'];
 
+		$pconfig['dynamic_ip'] = $a_server[$id]['dynamic_ip'];
 		$pconfig['pool_enable'] = $a_server[$id]['pool_enable'];
 
 		$pconfig['dns_domain'] = $a_server[$id]['dns_domain'];
@@ -243,12 +244,14 @@ if ($_POST) {
 	if ($pconfig['maxclients'] && !is_numeric($pconfig['maxclients']))
 		$input_errors[] = "The field 'Concurrent connections' must be numeric.";
 
-	if (!$tls_mode && !$pconfig['autokey_enable']) {
-		$reqdfields = array('shared_key');
-		$reqdfieldsn = array('Shared key');
-	} else {
+	/* If we are not in shared key mode, then we need the CA/Cert. */
+	if ($pconfig['mode'] != "p2p_shared_key") {
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = explode(",", "Certificate Authority,Certificate");;
+	} elseif (!$pconfig['autokey_enable']) {
+		/* We only need the shared key filled in if we are in shared key mode and autokey is not selected. */
+		$reqdfields = array('shared_key');
+		$reqdfieldsn = array('Shared key');
 	}
 
 	$reqdfields[] = 'tunnel_network';
@@ -299,6 +302,7 @@ if ($_POST) {
 		$server['passtos'] = $pconfig['passtos'];
 		$server['client2client'] = $pconfig['client2client'];
 
+		$server['dynamic_ip'] = $pconfig['dynamic_ip'];
 		$server['pool_enable'] = $pconfig['pool_enable'];
 
 		if ($pconfig['dns_domain_enable'])
@@ -378,10 +382,16 @@ function mode_change() {
 			break;
 	}
 	switch(value) {
-		case "p2p_tls":
 		case "p2p_shared_key":
 			document.getElementById("client_opts").style.display="none";
 			document.getElementById("remote_opts").style.display="";
+			document.getElementById("local_opts").style.display="none";
+			document.getElementById("authmodetr").style.display="none";
+			break;
+		case "p2p_tls":
+			document.getElementById("client_opts").style.display="none";
+			document.getElementById("remote_opts").style.display="";
+			document.getElementById("local_opts").style.display="";
 			document.getElementById("authmodetr").style.display="none";
 			break;
 		case "server_user":
@@ -389,12 +399,14 @@ function mode_change() {
 			document.getElementById("authmodetr").style.display="";
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("local_opts").style.display="";
 			break;
 		case "server_tls":
 			document.getElementById("authmodetr").style.display="none";
 		default:
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
+			document.getElementById("local_opts").style.display="";
 			break;
 	}
 }
@@ -502,6 +514,7 @@ function netbios_change() {
 				$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
 				$tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
 				$tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
+				$tab_array[] = array(gettext("Logs"), false, "diag_logs_openvpn.php");
 				add_package_tabs("OpenVPN", $tab_array);
 				display_top_tabs($tab_array);
 			?>
@@ -906,6 +919,24 @@ function netbios_change() {
 						<td colspan="2" valign="top" class="listtopic">Client Settings</td>
 					</tr>
 					<tr>
+						<td width="22%" valign="top" class="vncell">Dynamic IP</td>
+						<td width="78%" class="vtable">
+							<table border="0" cellpadding="2" cellspacing="0">
+								<tr>
+									<td>
+										<?php set_checked($pconfig['dynamic_ip'],$chk); ?>
+										<input name="dynamic_ip" type="checkbox" id="dynamic_ip" value="yes" <?=$chk;?>">
+									</td>
+									<td>
+										<span class="vexpl">
+											Allow connected clients to retain their connections if their IP address changes.<br>
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
 						<td width="22%" valign="top" class="vncell">Address Pool</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">
@@ -1178,7 +1209,7 @@ function netbios_change() {
 			<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td width="10%" class="listhdrr">Disabled</td>
-					<td width="10%" class="listhdrr">Protocol</td>
+					<td width="10%" class="listhdrr">Protocol / Port</td>
 					<td width="30%" class="listhdrr">Tunnel Network</td>
 					<td width="40%" class="listhdrr">Description</td>
 					<td width="10%" class="list"></td>
@@ -1195,7 +1226,7 @@ function netbios_change() {
 						<?=$disabled;?>
 					</td>
 					<td class="listr" ondblclick="document.location='vpn_openvpn_server.php?act=edit&id=<?=$i;?>'">
-						<?=htmlspecialchars($server['protocol']);?>
+						<?=htmlspecialchars($server['protocol']);?> / <?=htmlspecialchars($server['local_port']);?>
 					</td>
 					<td class="listr" ondblclick="document.location='vpn_openvpn_server.php?act=edit&id=<?=$i;?>'">
 						<?=htmlspecialchars($server['tunnel_network']);?>

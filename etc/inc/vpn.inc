@@ -291,6 +291,20 @@ function vpn_ipsec_configure($ipchg = false)
 			}
 		}
 
+		/* Add user PSKs */
+		foreach ($config['system']['user'] as $user) {
+			if (!empty($user['ipsecpsk'])) {
+				$pskconf .= "{$user['name']}\t{$user['ipsecpsk']}\n";
+			}
+		}
+
+		/* add PSKs for mobile clients */
+		if (is_array($ipseccfg['mobilekey'])) {
+			foreach ($ipseccfg['mobilekey'] as $key) {
+				$pskconf .= "{$key['ident']}\t{$key['pre-shared-key']}\n";
+			}
+		}
+
 		fwrite($fd, $pskconf);
 		fclose($fd);
 		chmod("{$g['varetc_path']}/psk.txt", 0600);
@@ -336,8 +350,8 @@ function vpn_ipsec_configure($ipchg = false)
 					$pool_address = $a_client['pool_address'];
 					$pool_netmask = gen_subnet_mask($a_client['pool_netbits']);
 
-					$pool_address = long2ip(ip2long($pool_address)+1);
-					$pool_size = ~ip2long($pool_netmask) - 2;
+					$pool_address = long2ip32(ip2long($pool_address)+1);
+					$pool_size = (~ip2long($pool_netmask) & 0xFFFFFFFF) - 2;
 
 					$racoonconf .= "\tpool_size {$pool_size};\n";
 					$racoonconf .= "\tnetwork4 {$pool_address};\n";
@@ -484,10 +498,19 @@ function vpn_ipsec_configure($ipchg = false)
 
 					$init = "on";
 					$genp = "off";
+					$pcheck = "claim";
+					$passive = "";
 					if (isset($ph1ent['mobile'])) {
 						$rgip = "anonymous";
-						$init = "off";
-						$genp = "unique";
+						/* Mimic 1.2.3's behavior for pure-psk mobile tunnels */
+						if ($ph1ent['authentication_method'] == "pre_shared_key") {
+							$passive = "passive on;";
+							$pcheck = "obey";
+							$genp = "on";
+						} else {
+							$init = "off";
+							$genp = "unique";
+						}
 					}
 
 					$dpdline1 = '';
@@ -551,6 +574,11 @@ function vpn_ipsec_configure($ipchg = false)
 					if ($ph1ent['lifetime'])
 						$lifeline = "lifetime time {$ph1ent['lifetime']} secs;";
 
+					/* Only specify peer ID if we are not dealing with a mobile PSK-only tunnel */
+					if (!(($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))) {
+						$peerid_spec = "peers_identifier {$peerid_type} {$peerid_data};";
+					}
+
 					/* add remote section to configuration */
 
 					$racoonconf .=<<<EOD
@@ -560,7 +588,7 @@ remote {$rgip}
 	ph1id {$ikeid};
 	exchange_mode {$ph1ent['mode']};
 	my_identifier {$myid_type} {$myid_data};
-	peers_identifier {$peerid_type} {$peerid_data};
+	{$peerid_spec}
 	ike_frag on;
 	generate_policy = {$genp};
 	initial_contact = {$init};
@@ -569,7 +597,8 @@ remote {$rgip}
 	{$dpdline1}
 	{$dpdline2}
 	support_proxy on;
-	proposal_check claim;
+	proposal_check {$pcheck};
+	{$passive}
 
 	proposal
 	{
@@ -611,7 +640,8 @@ EOD;
 
 						$localid_type = $ph2ent['localid']['type'];
 						$localid_data = ipsec_idinfo_to_cidr($ph2ent['localid']);
-						if ($localid_type == "none")
+						/* Do not print localid in some cases, such as a pure-psk mobile tunnel */
+						if (($localid_type == "none") || ($ph1ent['authentication_method'] == "pre_shared_key") && isset($ph1ent['mobile']))
 							$localid_spec = " ";
 						else if ($localid_type != "address") {
 							$localid_type = "subnet";
@@ -989,7 +1019,7 @@ EOD;
 
 			for ($i = 0; $i < $pptpdcfg['n_pptp_units']; $i++) {
 
-				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
+				$clientip = long2ip32(ip2long($pptpdcfg['remoteip']) + $i);
 
 				$mpdconf .= <<<EOD
 
@@ -1196,7 +1226,7 @@ EOD;
 
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 
-				$clientip = long2ip(ip2long($pppoecfg['remoteip']) + $i);
+				$clientip = long2ip32(ip2long($pppoecfg['remoteip']) + $i);
 
 				if (isset ($pppoecfg['radius']['radiusissueips']) && isset ($pppoecfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
@@ -1386,7 +1416,7 @@ EOD;
 
 			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
 
-				$clientip = long2ip(ip2long($l2tpcfg['remoteip']) + $i);
+				$clientip = long2ip32(ip2long($l2tpcfg['remoteip']) + $i);
 
 				if (isset ($l2tpcfg['radius']['radiusissueips']) && isset ($l2tpcfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 0.0.0.0/0";

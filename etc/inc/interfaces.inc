@@ -692,7 +692,7 @@ function interfaces_configure() {
 	
 	foreach($iflist as $if => $ifname) {
 		$realif = $config['interfaces'][$if]['if'];
-		if(is_array($realif['pppoe']) && isset($realif['pppoe']['pppoe-reset-type']))
+		if(is_array($config['interfaces'][$if]['pppoe']) && isset($config['interfaces'][$if]['pppoe']['pppoe-reset-type']))
 			setup_pppoe_reset_file($if, true);
 		else 
 			setup_pppoe_reset_file($if, false);
@@ -816,24 +816,16 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 
 	$realif = get_real_interface($interface);
 
-
-	/* remove interface up file if it exists */
-	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
-	unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
-	unlink_if_exists("{$g['tmp_path']}/{$realif}_router");
-
 	switch ($ifcfg['ipaddr']) {
 	case "pppoe":
 		killbypid("{$g['varrun_path']}/pppoe_{$interface}.pid");
 		sleep(2);
 		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
 		break;
 	case "pptp":
 		killbypid("{$g['varrun_path']}/pptp_{$interface}.pid");
 		sleep(2);
 		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
-		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.links");
 		break;
 	case "carpdev-dhcp":
 		/* 
@@ -854,6 +846,8 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		break;
 	case "ppp":
 		killbypid("{$g['varrun_path']}/ppp_{$interface}.pid");
+		sleep(2);
+		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
 		break;
 	default:
 		if(does_interface_exist("$realif")) {
@@ -864,6 +858,11 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		break;
 	}
 
+	/* remove interface up file if it exists */
+	unlink_if_exists("{$g['tmp_path']}/{$realif}up");
+	unlink_if_exists("{$g['vardb_path']}/{$interface}ip");
+	unlink_if_exists("{$g['tmp_path']}/{$realif}_router");
+	
 	/* hostapd and wpa_supplicant do not need to be running when the interface is down.
 	 * They will also use 100% CPU if running after the wireless clone gets deleted. */
 	if (is_array($ifcfg['wireless'])) {
@@ -970,6 +969,8 @@ EOD;
 
 	$mpdconf .= <<<EOD
 	create link static lnk{$interface} modem
+	set link keep-alive 10 60
+	set link max-redial 0
 	set link disable chap pap
 	set link accept chap pap eap
 	set link enable no-orig-auth
@@ -1033,25 +1034,6 @@ EOD;
 	// Write out configuration for mpd_ppp.conf and mpd.secret
 	fwrite($fd, $mpdconf);
 	fclose($fd);
-
-	$fdlnkq = fopen("{$g['varetc_path']}/mpd_{$interface}.query", "w");
-	if (!$fdlnkq) {
-		/* NOTE: It is not fatal if we cannot write the query.") */
-		log_error("Error: cannot open mpd_{$interface}.query in interface_ppp_configure().\n");
-	} else {
-	$linkquery = <<<EOD
-admin
-pfsense
-link lnk{$interface}
-show iface
-exit
-
-EOD;
-
-		// Write out linkquery file for each configured PPP interface.
-		fwrite($fdlnkq, $linkquery);
-		fclose($fdlnkq);
-	}
 
 	// Launch specified ppp instance
 	if (file_exists("{$ppp['port']}")) {
@@ -1845,7 +1827,7 @@ EOD;
 		/* find which clones are up and bring them down */
 		$clones_up = array();
 		foreach ($clone_list as $clone_if) {
-			$clone_status = pfSense_get_interface_stats($clone_if);
+			$clone_status = pfSense_get_interface_addresses($clone_if);
 			if ($clone_status['status'] == 'up') {
 				$clones_up[] = $clone_if;
 				mwexec("{$ifconfig} " . escapeshellarg($clone_if) . " down");
@@ -1970,10 +1952,25 @@ function interface_configure($interface = "wan", $reloadall = false) {
 					mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
 						" " . escapeshellarg($wancfg['ipaddr'] . "/" . 
 						$wancfg['subnet']));
+			} else if (substr($realif, 0, 3) == "gre") {
+				if (is_array($config['gres']['gre'])) {
+					foreach ($config['gres']['gre'] as $gre)
+						if ($gre['greif'] == $realif)
+							interface_gre_configure($gre);
+				}
+			} else if (substr($realif, 0, 3) == "gif") {
+				 if (is_array($config['gifs']['gif'])) {
+					foreach ($config['gifs']['gif'] as $gif)
+						if($gif['gifif'] == $interface)
+							interface_gif_configure($gif);
+				}
+			} else if (substr($realif, 0, 4) == "ovpn") {
+				/* XXX: Should be done anything?! */
 			}
 
 			if (is_ipaddr($wancfg['gateway']))
 				file_put_contents("{$g['tmp_path']}/{$realif}_router", $wancfg['gateway']);
+			break;
 	}
 
 	if(does_interface_exist($wancfg['if']))
@@ -2214,7 +2211,7 @@ EOD;
 	}
 	
 	$mpdconf .= <<<EOD
-	set ipcp yes vjcomp
+	set ipcp no vjcomp
 	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
 	create link static {$interface}L1 pppoe
 	set link disable incoming
@@ -2794,17 +2791,19 @@ function link_ip_to_carp_interface($ip) {
 
         $carp_ints = "";
         if (is_array($config['virtualip']['vip'])) {
+		$first = 0;
+		$carp_int = array();
                 foreach ($config['virtualip']['vip'] as $vip) {
                         if ($vip['mode'] == "carp" || $vip['mode'] == "carpdev") {
                                 $carp_ip = $vip['subnet'];
                                 $carp_sn = $vip['subnet_bits'];
                                 $carp_nw = gen_subnet($carp_ip, $carp_sn);
-                                if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}")) {
-                                        if (!stristr($carp_ints, $carp_int))
-                                                $carp_ints .= " {$carp_int}";
-                                }
+                                if (ip_in_subnet($ip, "{$carp_nw}/{$carp_sn}"))
+					$carp_int[] = "vip{$vip['vhid']}";
                         }
                 }
+		if (!empty($carp_int))
+			$carp_ints = implode(" ", array_unique($carp_int));
         }
 
         return $carp_ints;
@@ -2816,16 +2815,11 @@ function link_interface_to_vlans($int, $action = "") {
 	if (empty($int))
 		return;
 
-	$real_if = get_real_interface($int);
 	if (is_array($config['vlans']['vlan'])) {
                 foreach ($config['vlans']['vlan'] as $vlan) {
-			if ($real_if == $vlan['if']) {
+			if ($int == $vlan['if']) {
 				if ($action == "update") {
-					foreach ($config['interfaces'] as $ifname => $ifcfg) {
-						if ($ifcfg['if'] == $vlan['vlanif'])
-							interface_vlan_configure($vlan);
-							interface_configure($ifname);
-					}
+					interfaces_bring_up($int);
 				} else if ($action == "")
 					return $vlan;
 			}
@@ -3060,7 +3054,6 @@ function get_wireless_modes($interface) {
 
 	if(is_interface_wireless($wlif)) {
 		$cloned_interface = get_real_interface($interface);
-		$wi = 1;
 		$chan_list = "/sbin/ifconfig {$cloned_interface} list chan";
 		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
 		$format_list = "/usr/bin/awk '{print \$5 \" \" \$6 \",\" \$1}'";
@@ -3097,6 +3090,30 @@ function get_wireless_modes($interface) {
 		}
 	}
 	return($wireless_modes);
+}
+
+/* return channel numbers, frequency, max txpower, and max regulation txpower */
+function get_wireless_channel_info($interface) {
+	$wireless_channels = array();
+
+	$wlif = interface_translate_type_to_real($interface);
+
+	if(is_interface_wireless($wlif)) {
+		$cloned_interface = get_real_interface($interface);
+		$chan_list = "/sbin/ifconfig {$cloned_interface} list txpower";
+		$stack_list = "/usr/bin/awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
+		$format_list = "/usr/bin/awk '{print \$1 \",\" \$3 \" \" \$4 \",\" \$5 \",\" \$7}'";
+
+		$interface_channels = "";
+		exec("$chan_list | $stack_list | sort -u | $format_list 2>&1", $interface_channels);
+
+		foreach ($interface_channels as $channel_line) {
+			$channel_line = explode(",", $channel_line);
+			if(!isset($wireless_channels[$channel_line[0]]))
+				$wireless_channels[$channel_line[0]] = $channel_line;
+		}
+	}
+	return($wireless_channels);
 }
 
 /****f* interfaces/get_interface_mtu

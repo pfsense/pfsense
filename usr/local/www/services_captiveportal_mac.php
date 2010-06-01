@@ -83,6 +83,7 @@ if ($_POST) {
 			if ($found == true) {
 				$ruleno = captiveportal_get_ipfw_passthru_ruleno($_POST['delmac']);
 				if ($ruleno) {
+					captiveportal_free_ipfw_ruleno($ruleno, true);
 					mwexec("/sbin/ipfw delete {$ruleno}; /sbin/ipfw delete " . ++$ruleno);
 				}
 				unset($a_passthrumacs[$idx]);

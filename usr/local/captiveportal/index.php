@@ -296,6 +296,14 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 				if ($_POST['replacemacpassthru']) {
 					foreach ($config['captiveportal']['passthrumac'] as $idx => $macent) {
 						if ($macent['mac'] == $mac['mac']) {
+							$macrules = "";
+							$ruleno = captiveportal_get_ipfw_passthru_ruleno($mac['mac']);
+                                			if ($ruleno) {
+								captiveportal_free_ipfw_ruleno($ruleno, true);
+                                        			$macrules .= "delete {$ruleno}";
+								++$ruleno;
+                                        			$macrules .= "delete {$ruleno}";
+                                			}
 							unset($config['captiveportal']['passthrumac'][$idx]);
 							$mac['mac'] = $clientmac;
 							$config['captiveportal']['passthrumac'][] = $mac;

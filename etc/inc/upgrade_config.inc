@@ -1669,7 +1669,7 @@ function upgrade_054_to_055() {
 	global $g;
 
 	/* RRD files changed for quality, traffic and packets graphs */
-	ini_set("max_execution_time", "1800");
+	//ini_set("max_execution_time", "1800");
 	/* convert traffic RRD file */
 	global $parsedcfg, $listtags;
 	$listtags = array("ds", "v", "rra", "row");

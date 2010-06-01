@@ -359,7 +359,7 @@ function convert_config() {
 	global $config, $g;
 	$now = date("H:i:s");
 	log_error("Start Configuration upgrade at $now, set execution timeout to 15 minutes");
-	ini_set("max_execution_time", "900");
+	//ini_set("max_execution_time", "900");
 
 	/* special case upgrades */
 	/* fix every minute crontab bogons entry */

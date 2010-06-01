@@ -211,6 +211,9 @@ if ($_POST['submit']) {
 }
 
 $pgtitle = array("VPN","IPsec","Mobile");
+$statusurl = "diag_ipsec.php";
+$logurl = "diag_logs_ipsec.php";
+
 include("head.inc");
 ?>
 

@@ -333,6 +333,9 @@ if ($pconfig['mobile'])
 	$pgtitle = array("VPN","IPsec","Edit Phase 1", "Mobile Client");
 else
 	$pgtitle = array("VPN","IPsec","Edit Phase 1");
+$statusurl = "diag_ipsec.php";
+$logurl = "diag_logs_ipsec.php";
+
 
 include("head.inc");
 

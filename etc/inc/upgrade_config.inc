@@ -1539,6 +1539,11 @@ function upgrade_051_to_052() {
 			$csc['wins_server1'] = $csc['dhcp_wins'];
 			unset($csc['dhcp_wins']);
 
+			if (!empty($csc['disable']))
+				$csc['disable'] = true;
+			else
+				unset($csc['disable']);
+
 			$config['openvpn']['openvpn-csc'][] = $csc;
 		}
 

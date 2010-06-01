@@ -9,5 +9,7 @@ fi
 
 sleep 1
 
+killall -TERM sshd 2>&1 /dev/null
+
 /sbin/shutdown -p now
 

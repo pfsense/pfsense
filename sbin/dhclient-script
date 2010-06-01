@@ -211,9 +211,8 @@ if [ -f /etc/dhclient-enter-hooks ]; then
 	fi
 fi
 
-if [ -x $NETSTAT ]; then
-	$LOGGER "netstat"
-	if_defaultroute=`$NETSTAT -rn | $GREP "^default" | $AWK '{print $6}'`
+if [ -x $ROUTE ]; then
+	if_defaultroute=`$ROUTE get default | $GREP interface | $AWK '{print $2}'`
 else
 	$LOGGER "if_defaultroute"
 	if_defaultroute="x"

@@ -38,6 +38,8 @@ require("guiconfig.inc");
 require_once("openvpn.inc");
 
 $pgtitle = array("OpenVPN", "Client Specific Override");
+$statusurl = "status_openvpn.php";
+$logurl = "diag_logs_openvpn.php";
 
 if (!is_array($config['openvpn']['openvpn-csc']))
 	$config['openvpn']['openvpn-csc'] = array();

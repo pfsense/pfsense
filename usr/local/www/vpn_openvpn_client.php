@@ -346,7 +346,6 @@ function autotls_change() {
 				$tab_array[] = array(gettext("Client"), true, "vpn_openvpn_client.php");
 				$tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
 				$tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
-				$tab_array[] = array(gettext("Logs"), false, "diag_logs_openvpn.php");
 				add_package_tabs("OpenVPN", $tab_array);
 				display_top_tabs($tab_array);
 			?>

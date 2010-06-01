@@ -294,7 +294,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 			$mac = captiveportal_passthrumac_findbyname($username);
 			if (!empty($mac)) {
 				if ($_POST['replacemacpassthru']) {
-					foreach ($a_passthrumacs as $idx => $macent) {
+					foreach ($config['captiveportal']['passthrumac'] as $idx => $macent) {
 						if ($macent['mac'] == $mac['mac']) {
 							unset($config['captiveportal']['passthrumac'][$idx]);
 							$mac['mac'] = $clientmac;

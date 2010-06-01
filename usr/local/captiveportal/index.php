@@ -307,7 +307,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 							unset($config['captiveportal']['passthrumac'][$idx]);
 							$mac['mac'] = $clientmac;
 							$config['captiveportal']['passthrumac'][] = $mac;
-							$macrules = captiveportal_passthrumac_configure_entry($mac);
+							$macrules .= captiveportal_passthrumac_configure_entry($mac);
 							file_put_contents("{$g['tmp_path']}/macentry.rules.tmp", $macrules);
 							mwexec("/sbin/ipfw -q {$g['tmp_path']}/macentry.rules.tmp");
 							$writecfg = true;

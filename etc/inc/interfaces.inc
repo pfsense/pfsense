@@ -151,16 +151,6 @@ function interface_vlan_configure(&$vlan) {
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
-	/*   all vlans need to spoof their parent mac address, too.  see
-	 *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
-	 */
-	foreach($config['interfaces'] as $interfaces) {
-		if($interfaces['if'] == $if && $interfaces['spoofmac']) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($vlanif) .
-				" link " . escapeshellarg($interfaces['spoofmac']));
-		}
-	}
-
 	/* XXX: ermal -- for now leave it here at the moment it does not hurt. */
 	interfaces_bring_up($if);
 
@@ -1896,6 +1886,18 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	if ($wancfg['spoofmac']) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
+
+		/* 
+		 * All vlans need to spoof their parent mac address, too.  see
+		 * ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
+		 */
+		if (is_array($config['vlans']['vlan'])) {
+			foreach ($config['vlans']['vlan'] as $vlan) {
+				if ($vlan['if'] == $realif)
+					mwexec("/sbin/ifconfig " . escapeshellarg($vlan['vlanif']) .
+						" link " . escapeshellarg($wancfg['spoofmac']));
+			}
+		}
 	}  else {
 		$mac = get_interface_mac(get_real_interface($wancfg['if']));
 		if($mac == "ff:ff:ff:ff:ff:ff") {

@@ -300,9 +300,9 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 							$ruleno = captiveportal_get_ipfw_passthru_ruleno($mac['mac']);
                                 			if ($ruleno) {
 								captiveportal_free_ipfw_ruleno($ruleno, true);
-                                        			$macrules .= "delete {$ruleno}";
+                                        			$macrules .= "delete {$ruleno}\n";
 								++$ruleno;
-                                        			$macrules .= "delete {$ruleno}";
+                                        			$macrules .= "delete {$ruleno}\n";
                                 			}
 							unset($config['captiveportal']['passthrumac'][$idx]);
 							$mac['mac'] = $clientmac;

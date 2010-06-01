@@ -37,6 +37,8 @@ require_once("auth.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
 
+$errormsg = "Invalid credentials specified.";
+
 header("Expires: 0");
 header("Cache-Control: no-store, no-cache, must-revalidate");
 header("Cache-Control: post-check=0, pre-check=0", false);
@@ -140,14 +142,14 @@ exit;
             // YES: user is good for $timecredit minutes.
             captiveportal_logportalauth($voucher,$clientmac,$clientip,"Voucher login good for $timecredit min.");
         } else {
-            portal_reply_page($redirurl, "error", $config['voucher']['msgexpired']);
+            portal_reply_page($redirurl, "error", $config['voucher']['msgexpired'] ? $config['voucher']['msgexpired']: $errormsg);
         }
     } else if (-1 == $timecredit) {  // valid but expired
         captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE","voucher expired");
-        portal_reply_page($redirurl, "error", $config['voucher']['msgexpired']);
+        portal_reply_page($redirurl, "error", $config['voucher']['msgexpired'] ? $config['voucher']['msgexpired']: $errormsg);
     } else {
         captiveportal_logportalauth($voucher,$clientmac,$clientip,"FAILURE");
-        portal_reply_page($redirurl, "error", $config['voucher']['msgnoaccess']);
+        portal_reply_page($redirurl, "error", $config['voucher']['msgnoaccess'] ? $config['voucher']['msgnoaccess'] : $errormsg);
     }
 
 } else if ($_POST['accept'] && $radius_enable) {
@@ -162,15 +164,15 @@ exit;
 
         if ($auth_list['auth_val'] == 1) {
             captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"ERROR",$auth_list['error']);
- 	    portal_reply_page($redirurl, $type, $auth_list['error']);
+ 	    portal_reply_page($redirurl, $type, $auth_list['error'] ? $auth_list['error'] : $errormsg);
         }
         else if ($auth_list['auth_val'] == 3) {
             captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE",$auth_list['reply_message']);
-            portal_reply_page($redirurl, $type, $auth_list['reply_message']);
+            portal_reply_page($redirurl, $type, $auth_list['reply_message'] ? $auth_list['reply_message'] : $errormsg);
         }
     } else {
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"ERROR");
-        portal_reply_page($redirurl, "error", "Invalid username/password specified.");
+        portal_reply_page($redirurl, "error", $errormsg);
     }
 
 } else if ($_POST['accept'] && $config['captiveportal']['auth_method'] == "local") {
@@ -182,7 +184,7 @@ exit;
         portal_allow($clientip, $clientmac,$_POST['auth_user']);
     } else {
         captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE");
-        portal_reply_page($redirurl, "error");
+        portal_reply_page($redirurl, "error", $errormsg);
     }
 } else if ($_POST['accept'] && $clientip) {
     captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");

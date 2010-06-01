@@ -155,7 +155,7 @@ case ${opmode} in
     	fi
     	;;
 "")
-		killall login ; exit
+		kill $PPID ; exit
 		;;
 esac
 

@@ -138,6 +138,10 @@ if ($_POST) {
 }
 
 $pgtitle = array("Services", "Load Balancer","Pool","Edit");
+#$statusurl = "status_slbd_vs.php";
+$statusurl = "status_slbd_pool.php";
+$logurl = "diag_logs_relayd.php";
+
 include("head.inc");
 
 ?>

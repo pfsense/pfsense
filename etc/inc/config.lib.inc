@@ -932,7 +932,7 @@ EODD;
 
 				if (strcasecmp(chop(fgets($fp)), "y") == 0) {
 					if($config['interfaces']['lan']['if'])
-						mwexec("/sbin/ifconfig delete " . $config['interfaces']['lan']['if']);
+						mwexec("/sbin/ifconfig " . $config['interfaces']['lan']['if'] . " delete");
 				}
 				if(isset($config['interfaces']['lan']))
 					unset($config['interfaces']['lan']);
@@ -950,7 +950,7 @@ EODD;
 					unset($config['nat']);				
 		} else {
 			if(isset($config['interfaces']['lan']['if']))
-				mwexec("/sbin/ifconfig delete " . $config['interfaces']['lan']['if']);
+				mwexec("/sbin/ifconfig " . $config['interfaces']['lan']['if'] . " delete");
 			if(isset($config['interfaces']['lan']))
 				unset($config['interfaces']['lan']);
 			if(isset($config['dhcpd']['lan']))

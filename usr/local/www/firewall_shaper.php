@@ -52,6 +52,7 @@ if($_GET['reset'] <> "") {
 }
 
 $pgtitle = array("Firewall","Traffic Shaper");
+$statusurl = "status_queues.php";
 
 $shaperIFlist = get_configured_interface_with_descr();
 read_altq_config();

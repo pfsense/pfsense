@@ -86,6 +86,10 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array("Services", "Load Balancer","Monitor");
+#$statusurl = "status_slbd_vs.php";
+$statusurl = "status_slbd_pool.php";
+$logurl = "diag_logs_relayd.php";
+
 include("head.inc");
 
 ?>

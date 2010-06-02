@@ -359,7 +359,7 @@ function convert_config() {
 	global $config, $g;
 	$now = date("H:i:s");
 	log_error("Start Configuration upgrade at $now, set execution timeout to 15 minutes");
-	ini_set("max_execution_time", "900");
+	//ini_set("max_execution_time", "900");
 
 	/* special case upgrades */
 	/* fix every minute crontab bogons entry */
@@ -932,7 +932,7 @@ EODD;
 
 				if (strcasecmp(chop(fgets($fp)), "y") == 0) {
 					if($config['interfaces']['lan']['if'])
-						mwexec("/sbin/ifconfig delete " . $config['interfaces']['lan']['if']);
+						mwexec("/sbin/ifconfig " . $config['interfaces']['lan']['if'] . " delete");
 				}
 				if(isset($config['interfaces']['lan']))
 					unset($config['interfaces']['lan']);
@@ -950,7 +950,7 @@ EODD;
 					unset($config['nat']);				
 		} else {
 			if(isset($config['interfaces']['lan']['if']))
-				mwexec("/sbin/ifconfig delete " . $config['interfaces']['lan']['if']);
+				mwexec("/sbin/ifconfig " . $config['interfaces']['lan']['if'] . " delete");
 			if(isset($config['interfaces']['lan']))
 				unset($config['interfaces']['lan']);
 			if(isset($config['dhcpd']['lan']))

@@ -112,6 +112,9 @@ if ($_POST) {
 }
 
 $pgtitle = "VPN: IPsec: Edit pre-shared key";
+$statusurl = "diag_ipsec.php";
+$logurl = "diag_logs_ipsec.php";
+
 include("head.inc");
 
 ?>

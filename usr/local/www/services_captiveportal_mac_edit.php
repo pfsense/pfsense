@@ -49,6 +49,9 @@ function passthrumacs_sort() {
 }
 
 $pgtitle = array("Services","Captive portal","Edit pass-through MAC address");
+$statusurl = "status_captiveportal.php";
+$logurl = "diag_logs_auth.php";
+
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");

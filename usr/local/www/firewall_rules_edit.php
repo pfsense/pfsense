@@ -549,6 +549,9 @@ read_layer7_config();
 $l7clist =& get_l7_unique_list();
 
 $pgtitle = array("Firewall","Rules","Edit");
+$statusurl = "status_filter_reload.php";
+$logurl = "diag_logs_filter.php";
+
 $closehead = false;
 
 $page_filename = "firewall_rules_edit.php";

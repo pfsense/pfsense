@@ -38,6 +38,8 @@ require("guiconfig.inc");
 require_once("openvpn.inc");
 
 $pgtitle = array("OpenVPN", "Server");
+$statusurl = "status_openvpn.php";
+$logurl = "diag_logs_openvpn.php";
 
 if (!is_array($config['openvpn']['openvpn-server']))
 	$config['openvpn']['openvpn-server'] = array();
@@ -514,7 +516,6 @@ function netbios_change() {
 				$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
 				$tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
 				$tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
-				$tab_array[] = array(gettext("Logs"), false, "diag_logs_openvpn.php");
 				add_package_tabs("OpenVPN", $tab_array);
 				display_top_tabs($tab_array);
 			?>

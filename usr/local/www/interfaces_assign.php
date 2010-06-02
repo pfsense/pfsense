@@ -41,6 +41,8 @@
 ##|-PRIV
 
 $pgtitle = array("Interfaces", "Assign network ports");
+$statusurl = "status_interfaces.php";
+
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");

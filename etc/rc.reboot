@@ -23,11 +23,4 @@ fi
 
 sleep 1
 
-echo -n "Downing interfaces: "
-for INTERFACE in `/sbin/ifconfig -l`; do
-	echo -n "$INTERFACE "
-	/sbin/ifconfig $INTERFACE down
-done
-
 /sbin/shutdown -r now
-

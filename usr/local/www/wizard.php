@@ -201,7 +201,7 @@ function enablechange() {
                                 $enablefields = explode(',', $field['enablefields']);
                                 foreach($enablefields as $enablefield) {
                                         $enablefield = strtolower($enablefield);
-                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 1;' . "\n";
+                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 0;' . "\n";
                                 }
                         }
                         if(isset($field['checkenablefields'])) {
@@ -216,7 +216,7 @@ function enablechange() {
                                 $enablefields = explode(',', $field['enablefields']);
                                 foreach($enablefields as $enablefield) {
                                         $enablefield = strtolower($enablefield);
-                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 0;' . "\n";
+                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 1;' . "\n";
                                 }
                         }
                         if(isset($field['checkenablefields'])) {
@@ -248,7 +248,7 @@ function disablechange() {
                                 $checkenablefields = explode(',', $field['checkdisablefields']);
                                 foreach($checkenablefields as $checkenablefield) {
                                         $checkenablefield = strtolower($checkenablefield);
-                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 0;' . "\n";
+                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 1;' . "\n";
                                 }
                         }
                         print "\t" . '} else {' . "\n";
@@ -263,7 +263,7 @@ function disablechange() {
                                 $checkenablefields = explode(',', $field['checkdisablefields']);
                                 foreach($checkenablefields as $checkenablefield) {
                                         $checkenablefield = strtolower($checkenablefield);
-                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 1;' . "\n";
+                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 0;' . "\n";
                                 }
                         }
                         print "\t" . '}' . "\n";

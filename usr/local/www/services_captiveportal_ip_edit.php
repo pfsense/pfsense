@@ -50,6 +50,9 @@ function allowedips_sort() {
 }
 
 $pgtitle = array("Services","Captive portal","Edit allowed IP address");
+$statusurl = "status_captiveportal.php";
+$logurl = "diag_logs_auth.php";
+
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");

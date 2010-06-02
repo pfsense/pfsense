@@ -176,6 +176,10 @@ if ($_POST) {
 }
 
 $pgtitle = array("Services", "Load Balancer","Relay Action","Edit");
+#$statusurl = "status_slbd_vs.php";
+$statusurl = "status_slbd_pool.php";
+$logurl = "diag_logs_relayd.php";
+
 include("head.inc");
 	$types = array("http" => "HTTP", "tcp" => "TCP", "dns" => "DNS");
 ?>

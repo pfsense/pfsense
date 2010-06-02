@@ -51,7 +51,7 @@ function interfaces_bring_up($interface) {
 		log_error( "Backtrace: " . debug_backtrace() );
 		return;
 	}
-	mwexec("/sbin/ifconfig " . escapeshellarg($interface) . " up");
+	pfSense_interface_flags($interface, IFF_UP);
 }
 
 /*
@@ -87,7 +87,7 @@ function does_interface_exist($interface) {
 function interfaces_loopback_configure() {
 	if($g['booting'])
 		echo "Configuring loopback interface...";
-	mwexec("/sbin/ifconfig lo0 127.0.0.1");
+	pfSense_interface_setaddress("lo0", "127.0.0.1");
 	interfaces_bring_up("lo0");
 	exec("/sbin/route add 127.0.0.2 127.0.0.1");
 	if($g['booting'])
@@ -122,7 +122,7 @@ function interface_vlan_configure(&$vlan) {
 	$vlanif  = empty($vlan['vlanif']) ? "{$if}_vlan{$vlan['tag']}" : $vlan['vlanif'];
 	$tag = $vlan['tag'];
 
-	if(empty($if)) {
+	if (empty($if)) {
 		log_error("interface_vlan_confgure called with if undefined.");
 		return;
 	}
@@ -130,21 +130,17 @@ function interface_vlan_configure(&$vlan) {
 	/* make sure the parent interface is up */
 	interfaces_bring_up($if);
 	/* Since we are going to add vlan(4) try to enable all that hardware supports. */
-	mwexec("/sbin/ifconfig {$if} vlanhwtag");
-	mwexec("/sbin/ifconfig {$if} vlanmtu");
-	mwexec("/sbin/ifconfig {$if} vlanhwfilter");
+	pfSense_interface_capabilities($if, IFCAP_VLAN_HWTAGGING|IFCAP_VLAN_MTU|IFCAP_VLAN_HWFILTER);
 
 	if (!empty($vlanif) && does_interface_exist($vlanif)) {
 		interface_bring_down($vlanif);
 	} else {
-		$tmpvlanif = exec("/sbin/ifconfig vlan create");
-		mwexec("/sbin/ifconfig {$tmpvlanif} name {$vlanif}");
-		mwexec("/usr/sbin/ngctl name {$tmpvlanif}: {$vlanif}");
+		$tmpvlanif = pfSense_interface_create("vlan");
+		pfSense_interface_rename($tmpvlanif, $vlanif);
+		pfSense_ngctl_name("{$tmpvlanif}:", $vlanif);
 	}
-	
-	mwexec("/sbin/ifconfig {$vlanif} vlan " .
-		escapeshellarg($tag) . " vlandev " .
-		escapeshellarg($if));
+
+	pfSense_vlan_create($vlanif, $if, $tag);
 
 	interfaces_bring_up($vlanif);
 
@@ -323,12 +319,11 @@ function interface_bridge_configure(&$bridge) {
 	$checklist = get_configured_interface_list();
 
 	if ($g['booting'] || !empty($bridge['bridgeif'])) {
-		mwexec("/sbin/ifconfig {$bridge['bridgeif']} destroy");
-		mwexec("/sbin/ifconfig {$bridge['bridgeif']} create");
+		pfSense_interface_destroy($bridge['bridgeif']);
+		pfSense_interface_create($bridge['bridgeif']);
 		$bridgeif = $bridge['bridgeif'];
-	} else {
-		$bridgeif = exec("/sbin/ifconfig bridge create");
-	}
+	} else
+		$bridgeif = pfSense_interface_create("bridge");
 
 	/* Calculate smaller mtu and enforce it */
 	$smallermtu = 0;
@@ -352,7 +347,7 @@ function interface_bridge_configure(&$bridge) {
 		$realif1 = get_real_interface($member);
 		$realif =  escapeshellarg($realif1);
 		/* make sure the parent interface is up */
-		mwexec("/sbin/ifconfig {$realif} mtu {$smallermtu}");
+		pfSense_interface_mtu($realif, $smallermtu);
 		if(!$realif) 
 			log_error("realif not defined in interfaces bridge - up");
 		interfaces_bring_up($realif1);
@@ -476,7 +471,7 @@ function interface_bridge_add_member($bridgeif, $interface) {
 	$mtum = get_interface_mtu($interface);
 	
 	if ($mtu != $mtum)
-		mwexec("/sbin/ifconfig {$interface} mtu {$mtu}");
+		pfSense_interface_mtu($interface, $mtu);
 
 	interfaces_bring_up($interface);
 	mwexec("/sbin/ifconfig {$bridgeif} addm {$interface}");
@@ -514,11 +509,11 @@ function interface_lagg_configure(&$lagg) {
 	$checklist = get_interface_list();
 
 	if ($g['booting'] || !(empty($lagg['laggif']))) {
-                mwexec("/sbin/ifconfig {$lagg['laggif']} destroy");
-                mwexec("/sbin/ifconfig {$lagg['laggif']} create");
+		pfSense_interface_destroy($lagg['laggif']);
+		pfSense_interface_create($lagg['laggif']);
                 $laggif = $lagg['laggif'];
         } else
-                $laggif = exec("/sbin/ifconfig lagg create");
+		$laggif = pfSense_interface_create("lagg");
 
 	/* Calculate smaller mtu and enforce it */
         $smallermtu = 0;
@@ -538,7 +533,7 @@ function interface_lagg_configure(&$lagg) {
 		if (!array_key_exists($member, $checklist))
 			continue;
 		/* make sure the parent interface is up */
-		mwexec("/sbin/ifconfig {$member} mtu {$smallermtu}");
+		pfSense_interface_mtu($member, $smallermtu);
 		interfaces_bring_up($member);
 		mwexec("/sbin/ifconfig {$laggif} laggport {$member}");
 	}
@@ -578,22 +573,21 @@ function interface_gre_configure(&$gre) {
 	interfaces_bring_up($realif);
 
 	if ($g['booting'] || !(empty($gre['greif']))) {
-		mwexec("/sbin/ifconfig {$gre['greif']} destroy");
-		mwexec("/sbin/ifconfig {$gre['greif']} create");
+		pfSense_interface_destroy($gre['greif']);
+		pfSense_interface_create($gre['greif']);
 		$greif = $gre['greif'];
-	} else {
-		$greif = exec("/sbin/ifconfig gre create");
-	}
+	} else
+		$greif = pfSense_interface_create("gre");
 
 	/* Do not change the order here for more see gre(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$greif} tunnel {$realifip} {$gre['remote-addr']}");
 	mwexec("/sbin/ifconfig {$greif} {$gre['tunnel-local-addr']} {$gre['tunnel-remote-addr']} netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
 	if (isset($gre['link0']) && $gre['link0'])
-		mwexec("/sbin/ifconfig {$greif} link0");
+		pfSense_interface_flags($greif, IFF_LINK0);
 	if (isset($gre['link1']) && $gre['link1'])
-		mwexec("/sbin/ifconfig {$greif} link1");
+		pfSense_interface_flags($greif, IFF_LINK1);
 	if (isset($gre['link2']) && $gre['link2'])
-		mwexec("/sbin/ifconfig {$greif} link2");
+		pfSense_interface_flags($greif, IFF_LINK2);
 
 	if($greif)
 		interfaces_bring_up($greif);
@@ -637,19 +631,19 @@ function interface_gif_configure(&$gif) {
 		log_error("could not bring realif up -- variable not defined -- interface_gif_configure()");
 
 	if ($g['booting'] || !(empty($gif['gifif']))) {
-		mwexec("/sbin/ifconfig {$gif['gifif']} destroy");
-		mwexec("/sbin/ifconfig {$gif['gifif']} create");
+		pfSense_interface_destroy($gif['gifif']);
+		pfSense_interface_create($gif['gifif']);
 		$gifif = $gif['gifif'];
 	} else
-		$gifif = exec("/sbin/ifconfig gif create");
+		$gifif = pfSense_interface_create("gif");
 
 	/* Do not change the order here for more see gif(4) NOTES section. */
 	mwexec("/sbin/ifconfig {$gifif} tunnel {$realifip} {$gif['remote-addr']}");
 	mwexec("/sbin/ifconfig {$gifif} {$gif['tunnel-local-addr']} {$gif['tunnel-remote-addr']} netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
 	if (isset($gif['link0']) && $gif['link0'])
-		mwexec("/sbin/ifconfig {$gifif} link0");
+		pfSense_interface_flags($gifif, IFF_LINK0);
 	if (isset($gif['link1']) && $gif['link1'])
-		mwexec("/sbin/ifconfig {$gifif} link1");
+		pfSense_interface_flags($gifif, IFF_LINK1);
 	if($gifif)
 		interfaces_bring_up($gifif);
 	else
@@ -680,6 +674,11 @@ function interfaces_configure() {
 	$delayed_list = array();
 	$bridge_list = array();
 	
+	/* This is needed to speedup interfaces on bootup. */
+	$reload = false;
+	if ($g['booting'])
+		$reload = true;
+
 	foreach($iflist as $if => $ifname) {
 		$realif = $config['interfaces'][$if]['if'];
 		if(is_array($config['interfaces'][$if]['pppoe']) && isset($config['interfaces'][$if]['pppoe']['pppoe-reset-type']))
@@ -697,7 +696,7 @@ function interfaces_configure() {
 				echo "Configuring {$ifname} interface...";
 			if($g['debug'])
 				log_error("Configuring {$ifname}");
-			interface_configure($if, true);
+			interface_configure($if, $reload);
 			if ($g['booting']) 
 				echo "done.\n";
 		}
@@ -718,7 +717,7 @@ function interfaces_configure() {
         	if ($g['debug'])
         		log_error("Configuring {$ifname}");
 
-		interface_configure($if, true);
+		interface_configure($if, $reload);
 
 		if ($g['booting'])
 			echo "done.\n";
@@ -733,7 +732,7 @@ function interfaces_configure() {
 		if($g['debug'])
 			log_error("Configuring {$ifname}");
 
-		interface_configure($if, true);
+		interface_configure($if, $reload);
 
 		if ($g['booting'])
 			echo "done.\n";
@@ -770,7 +769,7 @@ function interfaces_configure() {
 
 function interface_reconfigure($interface = "wan") {
 	interface_bring_down($interface);
-	interface_configure($interface);
+	interface_configure($interface, true);
 }
 
 function interface_vip_bring_down(&$vip) {
@@ -781,17 +780,17 @@ function interface_vip_bring_down(&$vip) {
 	case "ipalias":
 		$vipif = get_real_interface($vip['interface']);
 		if(does_interface_exist($vipif))
-			mwexec("/sbin/ifconfig {$vipif} delete {$vip['subnet']}");
+			pfSense_interface_deladdress($vipif, $vip['subnet']);
 		break;
 	case "carp":
 		$vipif = "vip" . $vip['vhid'];
 		if(does_interface_exist($vipif)) 
-			mwexec("/sbin/ifconfig {$vipif} destroy");
+			pfSense_interface_destroy($vipif);
 		break;
 	case "carpdev-dhcp":
 		$vipif = "vip" . $vip['vhid'];
 		if(does_interface_exist($vipif)) 
-			mwexec("/sbin/ifconfig {$vipif} destroy");
+			pfSense_interface_destroy($vipif);
 		break;
 	}
 }
@@ -830,7 +829,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 		unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
-			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
+			pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i {$realif} -a");
 		}
 		break;
@@ -842,7 +841,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	default:
 		if(does_interface_exist("$realif")) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
-			mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " down");
+			pfSense_interface_flags($realif, -IFF_UP);
 			mwexec("/usr/sbin/arp -d -i {$realif} -a");
 		}
 		break;
@@ -862,7 +861,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 
 	if ($destroy == true) {
 		if (preg_match("/^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $realif))
-			mwexec("/sbin/ifconfig {$realif} destroy");
+			pfSense_interface_destroy($realif);
 	}	
 
 	return;
@@ -1301,11 +1300,11 @@ function interface_carp_configure(&$vip) {
 
 	/* create the carp interface and setup */
 	if (does_interface_exist($vipif)) {
-		interface_bring_down($vipif);
+		pfSense_interface_flags($vipif, -IFF_UP);
 	} else {
-		$carpif = exec("/sbin/ifconfig carp create");
-		mwexec("/sbin/ifconfig {$carpif} name {$vipif}");
-		mwexec("/usr/sbin/ngctl name {$carpif}: {$vipif}");
+		$carpif = pfSense_interface_create("carp");
+		pfSense_interface_rename($carpif, $vipif);
+		pfSense_ngctl_name("{$carpif}:", $vipif);
 	}
 
 	/* invalidate interface cache */
@@ -1351,7 +1350,7 @@ function interface_carpdev_configure(&$vip) {
 	} else {
 		$carpdevif = exec("/sbin/ifconfig carp create");
 		mwexec("/sbin/ifconfig {$carpdevif} name {$vipif}");
-		mwexec("/usr/sbin/ngctl name {$carpdevif}: {$vipif}");
+		pfSense_ngctl_name("{$carpdevif}:", $vipif);
 	}
 
 	mwexec("/sbin/ifconfig {$vipif} carpdev {$realif} vhid {$vip['vhid']} advskew {$vip['advskew']} {$password}");
@@ -1439,7 +1438,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 	if($needs_clone == true) {
 		/* remove previous instance if it exists */
 		if(does_interface_exist($realif))
-			mwexec("/sbin/ifconfig {$realif} destroy");			
+			pfSense_interface_destroy($realif);
 
 		log_error("Cloning new wireless interface {$realif}");
 		// Create the new wlan interface. FreeBSD returns the new interface name.
@@ -1451,7 +1450,7 @@ function interface_wireless_clone($realif, $wlcfg) {
 		}
 		$newif = trim($out[0]);
 		// Rename the interface to {$parentnic}_wlan{$number}#: EX: ath0_wlan0
-		mwexec("/sbin/ifconfig {$newif} name {$realif} 2>&1", false);
+		pfSense_interface_rename($newif, $realif);
 		// FIXME: not sure what ngctl is for. Doesn't work.
 		// mwexec("/usr/sbin/ngctl name {$newif}: {$realif}", false);
 	}
@@ -1887,17 +1886,17 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
 
-		/* 
-		 * All vlans need to spoof their parent mac address, too.  see
-		 * ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
-		 */
-		if (is_array($config['vlans']['vlan'])) {
-			foreach ($config['vlans']['vlan'] as $vlan) {
-				if ($vlan['if'] == $realif)
-					mwexec("/sbin/ifconfig " . escapeshellarg($vlan['vlanif']) .
-						" link " . escapeshellarg($wancfg['spoofmac']));
-			}
-		}
+                /*
+                 * All vlans need to spoof their parent mac address, too.  see
+                 * ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33
+                 */
+                if (is_array($config['vlans']['vlan'])) {
+                        foreach ($config['vlans']['vlan'] as $vlan) {
+                                if ($vlan['if'] == $realif)
+                                        mwexec("/sbin/ifconfig " . escapeshellarg($vlan['vlanif']) .
+                                                " link " . escapeshellarg($wancfg['spoofmac']));
+                        }
+                }
 	}  else {
 		$mac = get_interface_mac(get_real_interface($wancfg['if']));
 		if($mac == "ff:ff:ff:ff:ff:ff") {
@@ -1924,7 +1923,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		mwexec($cmd);
 	}
 	if (!empty($wancfg['mtu']))
-		mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " mtu {$wancfg['mtu']}");
+		pfSense_interface_mtu($realif, $wancfg['mtu']);
 
 	/* invalidate interface/ip/sn cache */
 	get_interface_arr(true);
@@ -1950,10 +1949,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			break;
 		default:
 			if ($wancfg['ipaddr'] <> "" && $wancfg['subnet'] <> "") {
-				if($wancfg['ipaddr'] && $wancfg['subnet'])
-					mwexec("/sbin/ifconfig " . escapeshellarg($realif) .
-						" " . escapeshellarg($wancfg['ipaddr'] . "/" . 
-						$wancfg['subnet']));
+				pfSense_interface_setaddress($realif, "{$wancfg['ipaddr']}/{$wancfg['subnet']}");
 			} else if (substr($realif, 0, 3) == "gre") {
 				if (is_array($config['gres']['gre'])) {
 					foreach ($config['gres']['gre'] as $gre)
@@ -2028,8 +2024,6 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			filter_configure();
 		}
 	}
-
-	unmute_kernel_msgs();
 
 	return 0;
 }

@@ -1,0 +1,6742 @@
+<?xml version="1.0"?>
+<!-- -*- Mode: XML; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*- -->
+<!DOCTYPE serviceproviders SYSTEM "serviceproviders.2.dtd">
+
+<!-- Authors:
+     2008 Antti Kaijanmäki <antti@kaijanmaki.net>
+     2009 Dan Williams <dcbw@redhat.com>
+-->
+
+<!-- THIS WORK IS IN PUBLIC DOMAIN:
+The person or persons who have associated work with this document
+(the "Dedicator" or "Certifier") hereby either (a) certifies that, to the best
+of his knowledge, the work of authorship identified is in the public domain of
+the country from which the work is published, or (b) hereby dedicates whatever
+copyright the dedicators holds in the work of authorship identified below
+(the "Work") to the public domain. A certifier, moreover, dedicates any
+copyright interest he may have in the associated work, and for these purposes,
+is described as a "dedicator" below.
+
+A certifier has taken reasonable steps to verify the copyright status of this
+work. Certifier recognizes that his good faith efforts may not shield him from
+liability if in fact the work certified is not in the public domain.
+
+Dedicator makes this dedication for the benefit of the public at large and to
+the detriment of the Dedicator's heirs and successors. Dedicator intends this
+dedication to be an overt act of relinquishment in perpetuity of all present
+and future rights under copyright law, whether vested or contingent, in the
+Work. Dedicator understands that such relinquishment of all rights includes the
+relinquishment of all rights to enforce (by lawsuit or otherwise) those
+copyrights in the Work.
+
+Dedicator recognizes that, once placed in the public domain, the Work may be
+freely reproduced, distributed, transmitted, used, modified, built upon, or
+otherwise exploited by anyone for any purpose, commercial or non-commercial,
+and in any way, including by methods that have not yet been invented or
+conceived.
+-->
+
+<serviceproviders format="2.0">
+
+<!-- United Arab Emirates -->
+<country code="ae">
+	<provider>
+		<name>Etisalat</name>
+		<gsm>
+			<network-id mcc="424" mnc="02"/>
+			<apn value="mnet">
+				<name>Etisalat</name>
+				<username>mnet</username>
+				<password>mnet</password>
+				<dns>194.170.1.6</dns>
+				<dns>194.170.1.7</dns>
+			</apn>
+			<apn value="etisalat.ae">
+				<name>Etisalat 3G</name>
+				<username>etisalat.ae</username>
+				<password>etisalat.ae</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Albania -->
+<country code="al">
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="276" mnc="02"/>
+			<apn value="Twa" />
+		</gsm>
+	</provider>
+</country>
+
+<!-- Armenia -->
+<country code="am">
+	<provider>
+		<name>Beeline</name>
+		<gsm>
+			<network-id mcc="283" mnc="01"/>
+			<apn value="internet.beeline.am">
+				<username>internet</username>
+				<password>internet</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="283" mnc="10"/>
+			<apn value="internet.orange">
+				<name>Internet Hima (USB)</name>
+			</apn>
+			<apn value="internet">
+				<name>Mobile Broadband</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>VivaCell/MTS</name>
+		<gsm>
+			<network-id mcc="283" mnc="05"/>
+			<apn value="connect.vivacell.am">
+				<name>MTS connect</name>
+			</apn>
+			<apn value="inet.vivacell.am">
+				<name>Mobile Broadband</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+
+<!-- Angola -->
+<country code="ao">
+	<provider>
+		<name>Movinet</name>
+		<cdma>
+			<username>uname</username>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Unitel</name>
+		<gsm>
+			<network-id mcc="631" mnc="02"/>
+			<apn value="internet.unitel.co.ao" />
+		</gsm>
+	</provider>
+</country>
+
+<!-- Argentina -->
+<country code="ar">
+	<provider>
+		<name>Personal</name>
+		<gsm>
+			<network-id mcc="722" mnc="340"/>
+			<apn value="gprs.personal.com">
+				<username>gprs</username>
+				<password>adgj</password>
+				<dns>172.25.7.6</dns>
+				<dns>172.25.7.7</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Claro</name>
+		<gsm>
+			<network-id mcc="722" mnc="310"/>
+			<network-id mcc="722" mnc="320"/>
+			<network-id mcc="722" mnc="330"/>
+			<apn value="igprs.claro.com.ar">
+				<username>clarogprs</username>
+				<password>clarogprs999</password>
+				<dns>170.51.255.100</dns>
+				<dns>170.51.242.18</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Movistar</name>
+		<gsm>
+			<network-id mcc="722" mnc="010"/>
+			<network-id mcc="722" mnc="070"/>
+			<apn value="internet.gprs.unifon.com.ar">
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Austria -->
+<country code="at">
+	<provider>
+		<name>A1/Telekom Austria</name>
+		<gsm>
+			<network-id mcc="232" mnc="01"/>
+			<apn value="a1.net">
+				<name>A1 Breitband</name>
+				<username>ppp@a1plus.at</username>
+				<password>ppp</password>
+				<dns>194.48.139.254</dns>
+				<dns>194.48.124.202</dns>
+			</apn>
+			<apn value="aon.data">
+				<name>aon (Flex, Breitband-Duo, BusinessFlex)</name>
+				<username></username>
+				<password>ppp</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Bob</name>
+		<gsm>
+			<network-id mcc="232" mnc="11"/>
+			<apn value="bob.at">
+				<username>data@bob.at</username>
+				<password>ppp</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>T-Mobile</name>
+		<gsm>
+			<network-id mcc="232" mnc="03"/>
+			<apn value="gprswap">
+				<name>WAP</name>
+				<username>t-mobile</username>
+				<password>tm</password>
+			</apn>
+			<apn value="gprsinternet">
+				<name>Internet</name>
+				<username>t-mobile</username>
+				<password>tm</password>
+			</apn>
+			<apn value="business.gprsinternet">
+				<name>Business Internet</name>
+				<username>t-mobile</username>
+				<password>tm</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>tele.ring</name>
+		<gsm>
+			<network-id mcc="232" mnc="07"/>
+			<apn value="web">
+				<username>web@telering.at</username>
+				<password>web</password>
+				<dns>212.95.31.11</dns>
+				<dns>212.95.31.35</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="232" mnc="05"/>
+			<apn value="web.one.at">
+				<name>Web</name>
+				<username>web</username>
+				<password>web</password>
+				<dns>194.24.128.100</dns>
+				<dns>194.24.128.102</dns>
+			</apn>
+			<apn value="fullspeed">
+				<name>Web (no filtering)</name>
+				<username>web</username>
+				<password>web</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Three</name>
+		<name xml:lang="de">Drei</name>
+		<gsm>
+			<network-id mcc="232" mnc="10"/>
+			<apn value="drei.at"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Yesss</name>
+		<gsm>
+			<apn value="web.yesss.at"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Australia -->
+<country code="au">
+	<provider>
+		<name>Exetel</name>
+		<gsm>
+			<apn value="exetel1"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Optus</name>
+		<gsm>
+			<network-id mcc="505" mnc="02"/>
+			<apn value="internet">
+				<name>Mobile Internet (handsets)</name>
+				<dns>211.29.132.12</dns>
+				<dns>198.142.0.51</dns>
+			</apn>
+			<apn value="connect">
+				<name>Wireless Broadband</name>
+				<dns>211.29.132.12</dns>
+				<dns>198.142.0.51</dns>
+			</apn>
+			<apn value="preconnect">
+				<name>Pre-Paid Mobile Broadband</name>
+				<dns>211.29.132.12</dns>
+				<dns>198.142.0.51</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telstra</name>
+		<gsm>
+			<network-id mcc="505" mnc="01"/>
+			<apn value="telstra.wap">
+				<dns>139.130.4.4</dns>
+				<dns>203.50.2.71</dns>
+			</apn>
+			<apn value="telstra.datapack">
+				<name>Telstra (3G data pack)</name>
+				<password>Telstra</password>
+				<dns>139.130.4.4</dns>
+				<dns>203.50.2.71</dns>
+			</apn>
+			<apn value="telstra.internet">
+				<name>Telstra (Next G)</name>
+				<dns>139.130.4.4</dns>
+				<dns>203.50.2.71</dns>
+			</apn>
+			<apn value="telstra.pcpack">
+				<name>Telstra (3G PC pack - pay by time)</name>
+				<password>Telstra</password>
+				<dns>139.130.4.4</dns>
+				<dns>203.50.2.71</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Three</name>
+		<gsm>
+			<network-id mcc="505" mnc="06"/>
+			<apn value="3netaccess">
+				<username>a</username>
+				<password>a</password>
+				<dns>202.124.68.130</dns>
+				<dns>202.124.76.66</dns>
+			</apn>
+			<apn value="3services">
+				<name>Three Prepaid</name>
+				<username>a</username>
+				<password>a</password>
+				<dns>202.124.68.130</dns>
+				<dns>202.124.76.66</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Virgin Mobile</name>
+		<gsm>
+			<network-id mcc="505" mnc="02"/>
+			<apn value="VirginInternet">
+				<name>Mobile Internet</name>
+				<username>guest</username>
+				<password>guest</password>
+				<dns>61.88.88.88</dns>
+			</apn>
+			<apn value="VirginBroadband">
+				<name>Mobile Broadband</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="505" mnc="03"/>
+			<apn value="vfinternet.au">
+				<name>Postpaid</name>
+				<dns>192.189.54.33</dns>
+				<dns>210.80.58.3</dns>
+			</apn>
+			<apn value="vfprepaymbb">
+				<name>Prepaid</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Azerbaijan -->
+<country code="az">
+	<provider>
+		<name>Azercell</name>
+		<gsm>
+			<network-id mcc="400" mnc="01"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Bakcell</name>
+		<gsm>
+			<network-id mcc="400" mnc="02"/>
+			<apn value="mms"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Bosnia & Herzegovina -->
+<country code="ba">
+	<provider>
+		<name>BH GSM</name>
+		<gsm>
+			<network-id mcc="218" mnc="90"/>
+			<apn value="mms.bhmobile.ba"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Barbados -->
+<country code="bb">
+	<provider>
+		<name>Digicel</name>
+		<gsm>
+			<network-id mcc="342" mnc="750"/>
+			<apn value="isp.digicelbarbados.com"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Bangladesh -->
+<country code="bd">
+	<provider>
+		<name>Robi (AKTel)</name>
+		<gsm>
+			<network-id mcc="470" mnc="02"/>
+			<apn value="internet">
+				<name>Internet</name>
+				<dns>192.168.23.7</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Banglalink</name>
+		<gsm>
+			<network-id mcc="470" mnc="03"/>
+			<apn value="blweb">
+				<name>Web</name>
+				<dns>10.10.55.34</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>GrameenPhone</name>
+		<gsm>
+			<network-id mcc="470" mnc="01"/>
+			<apn value="gpinternet">
+				<dns>202.56.4.120</dns>
+				<dns>202.56.4.121</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Warid</name>
+		<gsm>
+			<network-id mcc="470" mnc="07"/>
+			<apn value="internet">
+				<name>Internet</name>
+				<dns>10.6.0.2</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Citycell</name>
+		<cdma>
+			<username>waps</username>
+			<password>waps</password>
+			<dns>117.18.224.146</dns>
+			<dns>117.18.224.147</dns>
+			<sid value="13480"/>
+		</cdma>
+	</provider>
+</country>
+
+<!-- Belgium -->
+<country code="be">
+	<provider>
+		<name>Mobistar</name>
+		<gsm>
+			<network-id mcc="206" mnc="10"/>
+			<apn value="web.pro.be">
+				<name>Business</name>
+				<username>mobistar</username>
+				<password>mobistar</password>
+				<dns>212.65.63.10</dns>
+				<dns>212.65.63.145</dns>
+			</apn>
+			<apn value="internet.be">
+				<name>Personal</name>
+				<username>mobistar</username>
+				<password>mobistar</password>
+				<dns>212.65.63.10</dns>
+				<dns>212.65.63.145</dns>
+			</apn>
+			<apn value="iew.be">
+				<name>Internet Everywhere</name>
+				<username>mobistar</username>
+				<password>mobistar</password>
+				<dns>212.65.63.10</dns>
+				<dns>212.65.63.145</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telenet Mobile</name>
+		<gsm>
+			<network-id mcc="206" mnc="10"/>
+			<apn value="telenetwap.be">
+				<name>Walk &amp; Talk</name>
+			</apn>
+			<apn value="telenetwap.be">
+				<name>Walk &amp; Surf</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<apn value="orangeinternet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Proximus</name>
+		<gsm>
+			<network-id mcc="206" mnc="01"/>
+			<apn value="internet.proximus.be">
+				<name>Inter</name>
+				<dns>195.238.2.21</dns>
+				<dns>195.238.2.22</dns>
+			</apn>
+			<apn value="intraprox.be">
+				<name>Intra</name>
+				<dns>195.238.2.21</dns>
+				<dns>195.238.2.22</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Base</name>
+		<gsm>
+			<network-id mcc="206" mnc="20"/>
+			<apn value="gprs.base.be">
+				<username>base</username>
+				<password>base</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Bulgaria -->
+<country code="bg">
+	<provider>
+		<name>GloBul</name>
+		<gsm>
+			<network-id mcc="284" mnc="05"/>
+			<apn value="internet.globul.bg">
+				<username>globul</username>
+				<dns>192.168.88.11</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>M-Tel</name>
+		<gsm>
+			<network-id mcc="284" mnc="01"/>
+			<apn value="inet-gprs.mtel.bg">
+				<username>mtel</username>
+				<password>mtel</password>
+				<dns>213.226.7.34</dns>
+				<dns>213.226.7.35</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vivacom</name>
+		<gsm>
+			<network-id mcc="284" mnc="03"/>
+			<apn value="internet.vivacom.bg">
+				<!-- http://www.vivacom.bg/en/residential/help_and_advice/common_questions/mobile_postpaid/8/ -->
+				<name>Vivacom Internet (Postpaid)</name>
+				<username>vivacom</username>
+				<password>vivacom</password>
+			</apn>
+			<apn value="internet.vivatel.bg">
+				<name>Vivatel (old)</name>
+				<username>vivatel</username>
+				<password>vivatel</password>
+				<dns>192.168.123.123</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Bahrain -->
+<country code="bh">
+	<provider>
+		<name>Batelco</name>
+		<gsm>
+			<network-id mcc="426" mnc="01"/>
+			<apn value="internet.batelco.com">
+				<name>oNet</name>
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Zain BH</name>
+		<gsm>
+			<network-id mcc="426" mnc="02"/>
+			<apn value="hsdpa">
+				<name>eGO</name>
+				<username>hsdpa</username>
+				<password>hsdpa</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>STC</name>
+		<gsm>
+			<network-id mcc="426" mnc="04"/>
+			<apn value="viva.bh">
+				<name>Viva</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Brazil -->
+<country code="br">
+	<provider>
+		<!-- Brasil Telecom was bought by Oi on 2009-01-09 and will be phased
+		     out and transitioned to Oi.
+		  -->
+		<name>Brasil Telecom</name>
+		<gsm>
+			<apn value="brt.br">
+				<username>BrT</username>
+				<password>BrT</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Claro</name>
+		<gsm>
+			<network-id mcc="724" mnc="05"/>
+			<apn value="claro.com.br">
+				<username>claro</username>
+				<password>claro</password>
+			</apn>
+			<apn value="bandalarga.claro.com.br">
+				<name>3G</name>
+				<username>claro</username>
+				<password>claro</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>CTBC</name>
+		<gsm>
+			<network-id mcc="724" mnc="07"/>
+			<network-id mcc="724" mnc="32"/>
+			<network-id mcc="724" mnc="33"/>
+			<network-id mcc="724" mnc="34"/>
+			<apn value="ctbc.br">
+				<username>ctbc</username>
+				<password>1212</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Oi</name>
+		<gsm>
+			<network-id mcc="724" mnc="16"/>
+			<network-id mcc="724" mnc="31"/>
+			<network-id mcc="724" mnc="24"/>
+
+			<apn value="gprs.oi.com.br">
+				<password>oioioi</password>
+			</apn>
+			<apn value="wapgprs.oi.com.br">
+				<name>WAP</name>
+				<username>oiwap</username>
+				<password>oioioi</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TIM</name>
+		<gsm>
+			<network-id mcc="724" mnc="02"/>
+			<network-id mcc="724" mnc="03"/>
+			<network-id mcc="724" mnc="04"/>
+			<network-id mcc="724" mnc="08"/>
+
+			<apn value="tim.br">
+				<username>tim</username>
+				<password>tim</password>
+				<dns>10.223.246.102</dns>
+				<dns>10.223.246.103</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Velox</name>
+		<gsm>
+			<apn value="wap.telcel.com">
+				<username>iesgprs</username>
+				<password>iesgprs2002</password>
+				<dns>66.36.250.14</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vivo</name>
+		<gsm>
+			<network-id mcc="724" mnc="06"/>
+			<network-id mcc="724" mnc="10"/>
+			<network-id mcc="724" mnc="11"/>
+			<network-id mcc="724" mnc="23"/>
+
+			<apn value="zap.vivo.com.br">
+				<username>vivo</username>
+				<password>vivo</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Bahamas -->
+<country code="bs">
+	<provider>
+		<name>Batelco</name>
+		<gsm>
+			<network-id mcc="364" mnc="390"/>
+			<apn value="internet.btcbahamas.com"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Brunei -->
+<country code="bn">
+	<provider>
+		<name>B-Mobile</name>
+		<gsm>
+			<network-id mcc="528" mnc="02"/>
+			<apn value="bmobilewap"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>DSTCOM</name>
+		<gsm>
+			<network-id mcc="528" mnc="11"/>
+			<apn value="dst.wap">
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Belarus -->
+<country code="by">
+	<provider>
+		<!-- http://www.velcom.by/ru/services/gprs/settings/ -->
+		<name>velcom</name>
+		<gsm>
+			<network-id mcc="257" mnc="01"/>
+			<apn value="wap.velcom.by">
+				<name>GPRS WAP</name>
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+			<apn value="web.velcom.by">
+				<name>GPRS WEB</name>
+				<username>web</username>
+				<password>web</password>
+			</apn>
+			<apn value="plus.velcom.by">
+				<name>GPRS WEB PLUS</name>
+				<username>plus</username>
+				<password>plus</password>
+			</apn>
+			<apn value="privet.velcom.by">
+				<name>GPRS PRIVET</name>
+				<username>privet</username>
+				<password>privet</password>
+			</apn>
+			<apn value="web1.velcom.by">
+				<name>WEB BASIC</name>
+				<username>web1</username>
+				<password>web1</password>
+			</apn>
+			<apn value="web2.velcom.by">
+				<name>WEB 25</name>
+				<username>web2</username>
+				<password>web2</password>
+			</apn>
+			<apn value="web3.velcom.by">
+				<name>WEB 150</name>
+				<username>web3</username>
+				<password>web3</password>
+			</apn>
+			<apn value="vmi.velcom.by">
+				<name>WEB 500</name>
+				<username>vmi</username>
+				<password>vmi</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>MTS</name>
+		<gsm>
+			<network-id mcc="257" mnc="02"/>
+			<apn value="internet.mts.by">
+				<username>mts</username>
+				<password>mts</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<!-- http://life.com.by/en/services/internet-105.html -->
+		<name>life:)</name>
+		<gsm>
+			<network-id mcc="257" mnc="03"/>
+			<apn value="internet.life.com.by"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Botswana -->
+<country code="bw">
+	<provider>
+		<name>Mascom Wireless</name>
+		<gsm>
+			<network-id mcc="652" mnc="01"/>
+			<apn value="internet.mascom"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Canada -->
+<country code="ca">
+	<provider>
+		<name>Fido</name>
+		<gsm>
+			<network-id mcc="302" mnc="370"/>
+			<apn value="internet.fido.ca">
+				<username>fido</username>
+				<password>fido</password>
+				<dns>204.92.15.211</dns>
+				<dns>207.181.101.4</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Rogers</name>
+		<gsm>
+			<network-id mcc="302" mnc="720"/>
+			<apn value="internet.com">
+				<username>wapuser1</username>
+				<password>wap</password>
+				<dns>207.181.101.4</dns>
+				<dns>207.181.101.5</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Bell Mobility</name>
+		<gsm>
+			<network-id mcc="302" mnc="610"/>
+			<network-id mcc="302" mnc="640"/>
+			<network-id mcc="302" mnc="651"/>
+			<network-id mcc="302" mnc="880"/>
+			<apn value="inet.bell.ca">
+				<name>Internet</name>
+			</apn>
+			<apn value="pda.bell.ca">
+				<name>Mobile Web</name>
+			</apn>
+		</gsm>
+		<cdma>
+			<sid value="16420"/>
+			<sid value="16440"/>
+			<sid value="16456"/>
+			<sid value="16410"/>
+			<sid value="16444"/>
+			<sid value="16390"/>
+			<sid value="16394"/>
+			<sid value="16402"/>
+			<sid value="16414"/>
+			<sid value="16416"/>
+			<sid value="16418"/>
+			<sid value="16462"/>
+			<sid value="16472"/>
+			<sid value="16408"/>
+			<sid value="16404"/>
+			<sid value="16430"/>
+			<sid value="16396"/>
+			<sid value="16426"/>
+			<sid value="16388"/>
+			<sid value="16390"/>
+			<sid value="16408"/>
+			<sid value="16414"/>
+			<sid value="16430"/>
+			<sid value="16460"/>
+			<sid value="16468"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Telus Mobility</name>
+		<gsm>
+			<network-id mcc="302" mnc="220"/>
+			<network-id mcc="302" mnc="860"/>
+			<network-id mcc="302" mnc="880"/>
+			<apn value="isp.telus.com">
+				<name>Internet</name>
+			</apn>
+			<apn value="vpn.telus.com">
+				<name>Internet (with VPN)</name>
+			</apn>
+			<apn value="bb.telus.com">
+				<name>Blackberry</name>
+			</apn>
+			<apn value="sp.telus.com">
+				<name>Mobile Web/Smartphone</name>
+			</apn>
+		</gsm>
+		<cdma>
+			<sid value="16422"/>
+			<sid value="17500"/>
+			<sid value="16438"/>
+			<sid value="16458"/>
+			<sid value="16436"/>
+			<sid value="16434"/>
+			<sid value="16384"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Virgin Mobile</name>
+		<cdma/>
+	</provider>
+	<provider>
+		<name>SaskTel</name>
+		<cdma>
+			<sid value="16410"/>
+			<sid value="16412"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Vidéotron</name>
+		<gsm>
+			<network-id mcc="302" mnc="500"/>
+			<network-id mcc="302" mnc="510"/>
+			<apn value="ihvm.videotron">
+				<name>IHVM</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>WIND Mobile</name>
+		<gsm>
+			<network-id mcc="302" mnc="490"/>
+			<apn value="internet.windmobile.ca"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Congo (Dem. Rep.) -->
+<country code="cd">
+	<provider>
+		<name>Vodacom</name>
+		<gsm>
+			<network-id mcc="630" mnc="01"/>
+			<apn value="vodanet">
+				<username>vodalive</username>
+				<dns>172.24.97.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Congo (Rep.) -->
+<country code="cg">
+</country>
+
+<!-- Switzerland -->
+<country code="ch">
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="228" mnc="03"/>
+			<apn value="mobileoffice3g">
+				<name>Business Everywhere</name>
+				<dns>213.55.128.1</dns>
+				<dns>213.55.128.2</dns>
+			</apn>
+			<apn value="click">
+				<name>Prima Surf</name>
+			</apn>
+			<apn value="internet">
+				<name>Internet Everywhere</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Sunrise</name>
+		<gsm>
+			<network-id mcc="228" mnc="02"/>
+			<apn value="internet">
+				<username>internet</username>
+				<password>internet</password>
+				<dns>212.35.35.35</dns>
+				<dns>212.35.35.5</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Swisscom</name>
+		<gsm>
+			<network-id mcc="228" mnc="01"/>
+			<apn value="gprs.swisscom.ch">
+				<username>gprs</username>
+				<password>gprs</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Cote d'Ivoire -->
+<country code="ci">
+	<provider>
+		<name>MTN</name>
+		<gsm>
+			<network-id mcc="612" mnc="05"/>
+			<apn value="internet">
+				<dns>172.16.100.5</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Chile -->
+<country code="cl">
+	<provider>
+		<name>Claro Chile</name>
+		<gsm>
+			<network-id mcc="730" mnc="03"/>
+			<apn value="bam.clarochile.cl">
+				<username>clarochile</username>
+				<password>clarochile</password>
+			</apn>
+			<apn value="bap.clarochile.cl">
+				<name>Prepago</name>
+				<username>clarochile</username>
+				<password>clarochile</password>
+			</apn>
+			<apn value="wap.clarochile.cl">
+				<name>WAP</name>
+				<username>clarochile</username>
+				<password>clarochile</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Entel PCS</name>
+		<gsm>
+			<network-id mcc="730" mnc="01"/>
+			<apn value="imovil.entelpcs.cl">
+				<username>entelpcs</username>
+				<password>entelpcs</password>
+			</apn>
+			<apn value="bam.entelpcs.cl">
+				<name>WAP</name>
+				<username>entelpcs</username>
+				<password>entelpcs</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Movistar</name>
+		<gsm>
+			<network-id mcc="730" mnc="10"/>
+			<apn value="web.tmovil.cl">
+				<name>Web</name>
+				<username>web</username>
+				<password>web</password>
+			</apn>
+			<apn value="wap.tmovil.cl">
+				<name>WAP</name>
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Cameroon -->
+<country code="cm">
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="624" mnc="02"/>
+			<apn value="orangecmgprs">
+				<username>orange</username>
+				<password>orange</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>MTN</name>
+		<gsm>
+			<network-id mcc="624" mnc="01"/>
+			<apn value="INTERNET">
+				<username>guest</username>
+				<password>guest</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- China -->
+<country code="cn">
+	<provider>
+		<name>China Mobile</name>
+		<gsm>
+			<network-id mcc="460" mnc="00"/>
+			<network-id mcc="460" mnc="02"/>
+			<apn value="cmwap">
+				<name>WAP</name>
+				<username>guest</username>
+				<password>guest</password>
+			</apn>
+			<apn value="cmnet">
+				<name>Internet</name>
+				<username>guest</username>
+				<password>guest</password>
+				<dns>211.136.20.203</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>China Unicom</name>
+		<gsm>
+			<network-id mcc="460" mnc="01"/>
+			<apn value="uninet">
+				<username>uninet</username>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>China Telecom</name>
+		<cdma>
+			<username>ctnet@mycdma.cn</username>
+			<password>vnet.mobi</password>
+			<sid value="11296"/>
+			<sid value="11298"/>
+		</cdma>
+	</provider>
+</country>
+
+<!-- Costa Rica -->
+<country code="cr">
+	<provider>
+		<name>IceCelular</name>
+		<gsm>
+			<network-id mcc="712" mnc="01"/>
+			<network-id mcc="712" mnc="02"/>
+			<apn value="icecelular">
+				<username>guest</username>
+				<password>guest</password>
+				<dns>208.133.206.44</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Colombia -->
+<country code="co">
+	<provider>
+		<name>Comcel</name>
+		<gsm>
+			<network-id mcc="732" mnc="101"/>
+			<apn value="internet.comcel.com.co">
+				<username>COMCELWEB</username>
+				<password>COMCELWEB</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tigo</name>
+		<gsm>
+			<network-id mcc="732" mnc="103"/>
+			<network-id mcc="732" mnc="111"/>
+			<apn value="web.colombiamovil.com.co"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Movistar</name>
+		<gsm>
+			<network-id mcc="732" mnc="102"/>
+			<network-id mcc="732" mnc="123"/>
+			<apn value="internet.movistar.com.co">
+				<username>movistar</username>
+				<password>movistar</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Cyprus -->
+<country code="cy">
+	<provider>
+		<name>Cytamobile-Vodafone</name>
+		<gsm>
+			<network-id mcc="280" mnc="01"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>MTN</name>
+		<gsm>
+			<network-id mcc="280" mnc="10"/>
+			<apn value="internet">
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Czech Republic -->
+<country code="cz">
+	<provider>
+		<name>Cesky Mobil</name>
+		<gsm>
+			<network-id mcc="230" mnc="98"/>
+			<apn value="internet">
+				<name>Postpaid</name>
+				<dns>212.67.64.2</dns>
+				<dns>217.77.161.131</dns>
+			</apn>
+			<apn value="Cinternet">
+				<name>Prepaid</name>
+				<dns>212.67.64.2</dns>
+				<dns>217.77.161.131</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>EuroTel / Telefónica</name>
+		<gsm>
+			<network-id mcc="230" mnc="02"/>
+			<apn value="gointernet">
+				<name>Go</name>
+				<dns>160.218.10.200</dns>
+				<dns>160.218.43.200</dns>
+			</apn>
+			<apn value="internet">
+				<name>Contract</name>
+				<dns>160.218.10.200</dns>
+				<dns>160.218.43.200</dns>
+			</apn>
+			<apn value="internet.open">
+				<name>Contract (Open)</name>
+				<dns>160.218.10.200</dns>
+				<dns>160.218.43.200</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Oscar</name>
+		<gsm>
+			<network-id mcc="230" mnc="03"/>
+			<apn value="internet">
+				<name>Postpaid</name>
+				<username>wap</username>
+				<password>wap</password>
+				<dns>217.77.161.130</dns>
+				<dns>217.77.161.131</dns>
+			</apn>
+			<apn value="ointernet">
+				<name>Prepaid</name>
+				<dns>217.77.161.130</dns>
+				<dns>217.77.161.131</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Paegas Internet</name>
+		<gsm>
+			<apn value="internet.click.cz">
+				<name>Internet</name>
+				<dns>62.141.0.1</dns>
+				<dns>62.141.0.2</dns>
+			</apn>
+			<apn value="profil.click.cz">
+				<name>Profil</name>
+				<dns>62.141.0.1</dns>
+				<dns>62.141.0.2</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Radiomibil</name>
+		<gsm>
+			<apn value="internet.click.cz"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>T-Mobil</name>
+		<gsm>
+			<network-id mcc="230" mnc="01"/>
+			<apn value="internet.t-mobile.cz">
+				<dns>62.141.0.1</dns>
+				<dns>213.162.65.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Germany -->
+<country code="de">
+	<provider>
+		<name>AldiTalk/MedionMobile</name>
+		<gsm>
+			<network-id mcc="262" mnc="03"/>
+			<network-id mcc="262" mnc="05"/>
+			<network-id mcc="262" mnc="77"/>
+			<apn value="internet.eplus.de">
+				<name>Volume rate/30 Day Flatrate</name>
+				<username>eplus</username>
+				<password>gprs</password>
+				<dns>212.23.97.2</dns>
+				<dns>212.23.97.3</dns>
+			</apn>
+			<apn value="tagesflat.eplus.de">
+				<name>24 Hour Flatrate</name>
+				<name xml:lang="de">Tages-Flatrate</name>
+				<username>eplus</username>
+				<password>gprs</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>blau.de</name>
+		<gsm>
+			<network-id mcc="262" mnc="03"/>
+			<network-id mcc="262" mnc="05"/>
+			<network-id mcc="262" mnc="77"/>
+			<apn value="internet.eplus.de">
+				<username>blau</username>
+				<password>blau</password>
+			</apn>
+			<apn value="tagesflat.eplus.de">
+				<name>24 Hour Flatrate</name>
+				<name xml:lang="de">Tages-Flatrate</name>
+				<username>blau</username>
+				<password>blau</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>E-Plus</name>
+		<gsm>
+			<network-id mcc="262" mnc="03"/>
+			<network-id mcc="262" mnc="05"/>
+			<network-id mcc="262" mnc="77"/>
+
+			<apn value="internet.eplus.de">
+				<username>eplus</username>
+				<password>gprs</password>
+				<dns>212.23.97.2</dns>
+				<dns>212.23.97.3</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>O2</name>
+		<gsm>
+			<network-id mcc="262" mnc="07"/>
+			<network-id mcc="262" mnc="08"/>
+			<network-id mcc="262" mnc="11"/>
+
+			<apn value="internet">
+				<name>Pay-by-MB</name>
+				<dns>195.182.110.132</dns>
+				<dns>62.134.11.4</dns>
+			</apn>
+			<apn value="surfo2">
+				<name>Pay-by-time</name>
+				<dns>195.182.110.132</dns>
+				<dns>62.134.11.4</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>T-mobile (D1)</name>
+		<gsm>
+			<network-id mcc="262" mnc="01"/>
+			<network-id mcc="262" mnc="06"/>
+
+			<apn value="internet.t-d1.de">
+				<password>t-d1</password>
+				<dns>193.254.160.1</dns>
+				<dns>193.254.160.130</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone (D2)</name>
+		<gsm>
+			<network-id mcc="262" mnc="02"/>
+			<network-id mcc="262" mnc="04"/>
+			<network-id mcc="262" mnc="09"/>
+
+			<apn value="web.vodafone.de">
+				<username>vodafone</username>
+				<password>vodafone</password>
+				<dns>139.7.30.125</dns>
+				<dns>139.7.30.126</dns>
+			</apn>
+			<apn value="event.vodafone.de">
+				<name>WebSessions</name>
+				<username>vodafone</username>
+				<password>vodafone</password>
+				<dns>139.7.30.125</dns>
+				<dns>139.7.30.126</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>FONIC</name>
+		<gsm>
+			<network-id mcc="262" mnc="07"/>
+			<network-id mcc="262" mnc="08"/>
+			<network-id mcc="262" mnc="11"/>
+			<apn value="pinternet.interkom.de"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>simyo Internet</name>
+		<gsm>
+			<network-id mcc="262" mnc="03"/>
+			<network-id mcc="262" mnc="05"/>
+			<network-id mcc="262" mnc="77"/>
+			<apn value="internet.eplus.de">
+				<username>simyo</username>
+				<password>simyo</password>
+				<dns>212.23.97.2</dns>
+				<dns>212.23.97.3</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<!-- This configuration is valid for all vistream retailers like
+		     solomo, igge & ko, sdt.net, Südkurier-Tel etc.-->
+		<name>vistream</name>
+		<gsm>
+			<apn value="internet.vistream.net">
+				<username>web</username>
+				<password>vistream</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>solomo</name>
+		<gsm>
+			<apn value="internet.vistream.net">
+				<username>web</username>
+				<password>vistream</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Materna BR</name>
+		<gsm>
+			<apn value="internet.vistream.net">
+				<username>web</username>
+				<password>vistream</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>sdt.net</name>
+		<gsm>
+			<apn value="internet.vistream.net">
+				<username>web</username>
+				<password>vistream</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>igge &amp; ko</name>
+		<gsm>
+			<apn value="internet.vistream.net">
+				<username>web</username>
+				<password>vistream</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>PTT mobile</name>
+		<gsm>
+			<apn value="internet.vistream.net">
+				<username>web</username>
+				<password>vistream</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TouristMobile</name>
+		<gsm>
+			<apn value="internet.vistream.net">
+				<username>web</username>
+				<password>vistream</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>SunSIM</name>
+		<gsm>
+			<apn value="internet.vistream.net">
+				<username>web</username>
+				<password>vistream</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>SüdkurierTel</name>
+		<gsm>
+			<apn value="internet.vistream.net">
+				<username>web</username>
+				<password>vistream</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>NetCologne</name>
+		<gsm>
+			<apn value="internet.netcologne.de">
+				<username>web</username>
+				<password>password</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Denmark -->
+<country code="dk">
+	<provider>
+		<name>3</name>
+		<gsm>
+			<network-id mcc="238" mnc="06"/>
+			<apn value="bredband.tre.dk">
+				<name>Bredbånd</name>
+ 			</apn>
+			<apn value="net.tre.dk">
+				<name>Bredbånd Premium Kontant</name>
+			</apn>
+			<apn value="data.tre.dk">
+				<name>3 (Mobil Abonnement)</name>
+			</apn>
+		</gsm>
+	</provider>
+	<!-- http://oister.dk - Same network as 3.dk -->
+	<provider>
+		<name>OiSTER</name>
+		<gsm>
+			<network-id mcc="238" mnc="06"/>
+			<apn value="bredband.oister.dk"/>
+		</gsm>
+	</provider>
+
+	<!-- http://www.ice-net.dk/mobiltbredbaand.php -->
+	<provider>
+		<name>ice.net (Nordisk Mobiltelefon)</name>
+		<cdma>
+			<username>cdma</username>
+			<password>cdma</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Telenor</name>
+		<gsm>
+			<network-id mcc="238" mnc="02"/>
+			<network-id mcc="238" mnc="77"/>
+			<apn value="internet">
+				<dns>212.88.64.199</dns>
+				<dns>212.88.64.14</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TDC</name>
+		<gsm>
+			<network-id mcc="238" mnc="01"/>
+			<apn value="internet">
+				<dns>194.239.134.83</dns>
+				<dns>193.162.153.164</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Fullrate</name>
+		<gsm>
+			<apn value="internet">
+				<username>Fullrate</username>
+				<password>Fullrate</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telia</name>
+		<gsm>
+			<network-id mcc="238" mnc="30"/>
+			<apn value="www.internet.mtelia.dk"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>BiBoB</name>
+		<gsm>
+			<apn value="internet.bibob.dk"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Dominican Republic -->
+<country code="do">
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="370" mnc="01"/>
+			<apn value="orangenet.com.do"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Algeria -->
+<country code="dz">
+	<provider>
+		<name>Djezzy</name>
+		<gsm>
+			<network-id mcc="603" mnc="02"/>
+			<apn value="djezzy.internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Mobilis</name>
+		<gsm>
+			<network-id mcc="603" mnc="01"/>
+			<apn value="internet">
+				<username>internet</username>
+				<password>internet</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Nedjma</name>
+		<gsm>
+			<network-id mcc="603" mnc="03"/>
+			<apn value="internet">
+				<name>WEB</name>
+				<username>nedjma</username>
+				<password>nedjma</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Ecuador -->
+<country code="ec">
+	<provider>
+		<name>Porta 3G</name>
+		<gsm>
+			<network-id mcc="740" mnc="01"/>
+			<apn value="internet.porta.com.ec"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Estonia -->
+<country code="ee">
+	<provider>
+		<name>EMT</name>
+		<gsm>
+			<network-id mcc="248" mnc="01"/>
+			<apn value="internet.emt.ee">
+				<dns>217.71.32.116</dns>
+				<dns>217.71.32.115</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Nordea</name>
+		<gsm>
+			<network-id mcc="248" mnc="01"/>
+			<apn value="internet.emt.ee"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Elisa</name>
+		<gsm>
+			<apn value="internet">
+				<dns>194.204.0.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tele2</name>
+		<gsm>
+			<network-id mcc="248" mnc="03"/>
+			<apn value="internet.tele2.ee">
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Egypt -->
+<country code="eg">
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="602" mnc="02"/>
+			<apn value="internet.vodafone.net">
+				<username>internet</username>
+				<password>internet</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Etisalat</name>
+		<gsm>
+			<network-id mcc="602" mnc="03"/>
+			<apn value="etisalat"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>MobiNil</name>
+		<gsm>
+			<network-id mcc="602" mnc="01"/>
+			<apn value="mobinilweb">
+				<dns>80.75.166.250</dns>
+				<dns>163.121.163.201</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Spain -->
+<country code="es">
+	<provider>
+		<name>Euskaltel</name>
+		<gsm>
+			<network-id mcc="214" mnc="08"/>
+			<apn value="internet.euskaltel.mobi">
+				<username>CLIENTE</username>
+				<password>EUSKALTEL</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Másmovil</name>
+		<gsm>
+			<apn value="internetmas" />
+		</gsm>
+	</provider>
+	<provider>
+		<name>móbil R (Mundo-R)</name>
+		<gsm>
+			<network-id mcc="214" mnc="17"/>
+			<apn value="internet.mundo-r.com" />
+		</gsm>
+	</provider>
+	<provider>
+		<name>Ono</name>
+		<gsm>
+			<network-id mcc="214" mnc="18"/>
+			<apn value="internet.ono.com">
+				<dns>62.42.230.24</dns>
+				<dns>62.42.63.52</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Pepephone</name>
+		<gsm>
+			<apn value="gprs.pepephone.com" />
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange (Amena)</name>
+		<gsm>
+			<network-id mcc="214" mnc="03"/>
+			<network-id mcc="214" mnc="09"/>
+			<apn value="internet">
+				<username>CLIENTE</username>
+				<password>AMENA</password>
+				<dns>213.143.32.20</dns>
+				<dns>213.143.33.8</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Simyo</name>
+		<gsm>
+			<network-id mcc="214" mnc="19"/>
+			<apn value="gprs-service.com"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telecable</name>
+		<gsm>
+			<network-id mcc="214" mnc="16"/>
+			<apn value="internet.telecable.es">
+				<username>telecable</username>
+				<password>telecable</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>movistar (Telefonica)</name>
+		<gsm>
+			<network-id mcc="214" mnc="07"/>
+			<apn value="movistar.es">
+				<username>movistar</username>
+				<password>movistar</password>
+				<dns>194.179.1.100</dns>
+				<dns>194.179.1.101</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone (Airtel)</name>
+		<gsm>
+			<network-id mcc="214" mnc="01"/>
+			<network-id mcc="214" mnc="06"/>
+			<apn value="airtelnet.es">
+				<username>vodafone</username>
+				<password>vodafone</password>
+				<dns>212.73.32.3</dns>
+				<dns>212.73.32.67</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Yoigo</name>
+		<gsm>
+			<network-id mcc="214" mnc="04"/>
+			<apn value="Internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Jazztel</name>
+		<gsm>
+			<apn value="jazzinternet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Finland -->
+<country code="fi">
+	<provider>
+		<name>Dna</name>
+		<gsm>
+			<network-id mcc="244" mnc="03"/>
+			<apn value="internet">
+				<dns>217.78.192.22</dns>
+				<dns>217.78.192.78</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Elisa</name>
+		<gsm>
+			<network-id mcc="244" mnc="05"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Saunalahti</name>
+		<gsm>
+			<network-id mcc="244" mnc="21"/>
+			<apn value="internet.saunalahti">
+				<name>Postpaid (contract)</name>
+				<dns>192.89.123.230</dns>
+				<dns>192.89.123.231</dns>
+			</apn>
+			<apn value="internet">
+				<name>Prepaid (no contract)</name>
+				<dns>192.89.123.230</dns>
+				<dns>192.89.123.231</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Sonera</name>
+		<gsm>
+			<network-id mcc="244" mnc="91"/>
+			<apn value="internet">
+				<dns>192.89.123.230</dns>
+				<dns>192.89.123.231</dns>
+			</apn>
+			<apn value="prointernet">
+				<name>Prointernet (public IP)</name>
+				<dns>192.89.123.230</dns>
+				<dns>192.89.123.231</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Welho</name>
+		<gsm>
+			<apn value="internet.welho.fi">
+				<name>Wekkula</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Fiji -->
+<country code="fj">
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="542" mnc="01"/>
+			<apn value="vfinternet.fj"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- France -->
+<country code="fr">
+	<provider>
+		<name>A Mobile (Auchan Telecom)</name>
+		<gsm>
+			<apn value="wap65"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Bouygues Telecom</name>
+		<gsm>
+			<network-id mcc="208" mnc="20"/>
+			<network-id mcc="208" mnc="21"/>
+			<apn value="b2bouygtel.com">
+				<name>B2Bouygtel</name>
+				<dns>62.201.129.99</dns>
+			</apn>
+			<apn value="ebouygtel.com">
+				<dns>62.201.129.99</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>France Telecom</name>
+		<gsm>
+			<network-id mcc="208" mnc="01"/>
+			<network-id mcc="208" mnc="00"/>
+			<apn value="orange.fr.mnc001.mcc208.gprs">
+				<username>gprs</username>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="208" mnc="01"/>
+			<network-id mcc="208" mnc="00"/>
+			<apn value="orange.fr">
+				<name>Contract</name>
+				<username>orange</username>
+				<password>orange</password>
+				<dns>194.51.3.56</dns>
+				<dns>194.51.3.76</dns>
+			</apn>
+			<apn value="internet-entreprise">
+				<name>Business Contract</name>
+				<username>orange</username>
+				<password>orange</password>
+				<dns>194.51.3.56</dns>
+				<dns>194.51.3.76</dns>
+			</apn>
+			<apn value="orange">
+				<name>No Contract / Mobicarte</name>
+				<username>orange</username>
+				<password>orange</password>
+				<dns>194.51.3.56</dns>
+				<dns>194.51.3.76</dns>
+			</apn>
+			<apn value="orange-mib">
+				<name>Orange MIB</name>
+				<username>mportail</username>
+				<password>mib</password>
+				<dns>172.17.0.2</dns>
+				<dns>172.17.0.4</dns>
+			</apn>
+			<apn value="orange.ie">
+				<name>Internet Everywhere 3G</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>SFR</name>
+		<gsm>
+			<!-- http://assistance.sfr.fr/internet-partout/Mobile/difference-wap-web/fc-2302-62196 -->
+			<network-id mcc="208" mnc="10"/>
+			<network-id mcc="208" mnc="11"/>
+			<apn value="websfr">
+				<name>Web</name>
+				<dns>172.20.2.10</dns>
+				<dns>172.20.2.39</dns>
+			</apn>
+			<apn value="wapsfr">
+				<name>WAP</name>
+			</apn>
+			<apn value="slsfr">
+				<name>Mobile Broadband</name>
+				<username>slsfr</username>
+				<password>slsfr</password>
+				<dns>172.20.2.10</dns>
+				<dns>172.20.2.39</dns>
+			</apn>
+			<apn value="sl2sfr">
+				<name>Full Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Transatel Telecom</name>
+		<gsm>
+			<apn value="netgprs.com"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TEN</name>
+		<gsm>
+			<apn value="ao.fr">
+				<username>orange</username>
+				<password>orange</password>
+			</apn>
+			<apn value="ofnew.fr">
+				<name>Pay-by-MB</name>
+				<username>orange</username>
+				<password>orange</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Britain -->
+<country code="gb">
+	<provider>
+		<name>airtel vodaphone</name>
+		<gsm>
+			<apn value="airtel-ci-gprs.com"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>BT Mobile</name>
+		<gsm>
+			<network-id mcc="234" mnc="00"/>
+			<apn value="btmobile.bt.com">
+				<username>bt</username>
+				<password>bt</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>O2</name>
+		<gsm>
+			<network-id mcc="234" mnc="02"/>
+			<network-id mcc="234" mnc="10"/>
+			<network-id mcc="234" mnc="11"/>
+
+			<apn value="mobile.o2.co.uk">
+				<name>Contract</name>
+				<username>o2web</username>
+				<password>password</password>
+				<dns>193.113.200.200</dns>
+				<dns>193.113.200.201</dns>
+			</apn>
+			<apn value="mobile.o2.co.uk">
+				<name>Contract (faster)</name>
+				<username>faster</username>
+				<password>password</password>
+				<dns>193.113.200.200</dns>
+				<dns>193.113.200.201</dns>
+			</apn>
+			<apn value="payandgo.o2.co.uk">
+				<name>Pay and Go (Prepaid)</name>
+				<username>payandgo</username>
+				<password>payandgo</password>
+			</apn>
+			<apn value="idata.o2.co.uk">
+				<name>iPhone (Contract)</name>
+				<username>vertigo</username>
+				<password>password</password>
+			</apn>
+			<apn value="m-bb.o2.co.uk">
+				<name>Mobile Broadband</name>
+				<username>o2bb</username>
+				<password>password</password>
+			</apn>
+			<apn value="wap.o2.co.uk">
+				<name>WAP</name>
+				<username>o2wap</username>
+				<password>password</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>T-Mobile</name>
+		<gsm>
+			<network-id mcc="234" mnc="30"/>
+			<apn value="general.t-mobile.uk">
+				<username>User</username>
+				<password>mms</password>
+				<dns>149.254.201.126</dns>
+				<dns>149.254.192.126</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Virgin Mobile</name>
+		<gsm>
+			<network-id mcc="234" mnc="31"/>
+			<network-id mcc="234" mnc="32"/>
+			<apn value="vdata">
+				<dns>196.7.0.138</dns>
+				<dns>196.7.142.132</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="234" mnc="15"/>
+			<apn value="internet">
+				<name>Contract</name>
+				<username>web</username>
+				<password>web</password>
+				<dns>10.206.65.68</dns>
+				<dns>10.203.65.68</dns>
+			</apn>
+			<apn value="pp.vodafone.co.uk">
+				<name>Prepaid</name>
+				<username>wap</username>
+				<password>wap</password>
+				<dns>172.29.1.11</dns>
+				<dns>172.29.1.11</dns>
+			</apn>
+			<apn value="pp.internet">
+				<name>TopUp and Go</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>3</name>
+		<gsm>
+			<network-id mcc="234" mnc="20"/>
+			<apn value="3internet">
+				<name>Internet</name>
+			</apn>
+			<apn value="three.co.uk">
+				<name>Handsets</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="234" mnc="33"/>
+			<network-id mcc="234" mnc="34"/>
+
+			<apn value="orangeinternet">
+				<name>Contract</name>
+				<username>orange</username>
+				<password>orange</password>
+				<dns>193.35.133.10</dns>
+				<dns>193.35.134.10</dns>
+			</apn>
+			<apn value="internetvpn">
+				<name>Contract (with VPN)</name>
+				<username>orange</username>
+				<password>orange</password>
+				<dns>193.35.133.10</dns>
+				<dns>193.35.134.10</dns>
+			</apn>
+			<apn value="orangewap">
+				<name>Orange WAP</name>
+				<username>orange</username>
+				<password>multimedia</password>
+				<dns>158.43.192.1</dns>
+				<dns>158.43.128.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Georgia -->
+<country code="ge">
+	<provider>
+		<name>Geocell</name>
+		<gsm>
+			<network-id mcc="282" mnc="01"/>
+			<apn value="Internet">
+				<dns>212.72.130.20</dns>
+				<dns>212.72.152.001</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Guernsey -->
+<country code="gg">
+	<provider>
+		<name>Sure (Cable &amp; Wireless)</name>
+		<gsm>
+			<network-id mcc="234" mnc="55"/>
+			<apn value="wap">
+				<name>WAP</name>
+			</apn>
+			<apn value="internet">
+				<name>Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Ghana -->
+<country code="gh">
+	<provider>
+		<name>MTN</name>
+		<gsm>
+			<network-id mcc="620" mnc="01"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone (ONEtouch)</name>
+		<gsm>
+			<network-id mcc="620" mnc="02"/>
+			<apn value="browse"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tigo</name>
+		<gsm>
+			<network-id mcc="620" mnc="03"/>
+			<apn value="web.tigo.com.gh">
+				<username>web</username>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Zain</name>
+		<gsm>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Kasapa</name>
+		<cdma/>
+	</provider>
+</country>
+
+<!-- Greece -->
+<country code="gr">
+	<provider>
+		<name>Cosmote</name>
+		<gsm>
+			<network-id mcc="202" mnc="01"/>
+			<apn value="3g-internet">
+				<dns>195.167.65.194</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="202" mnc="05"/>
+			<apn value="internet">
+				<name>Contract</name>
+			</apn>
+			<apn value="web.session">
+				<name>Mobile Broadband On Demand</name>
+				<dns>213.249.17.10</dns>
+				<dns>213.249.17.11</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Wind</name>
+		<gsm>
+			<network-id mcc="202" mnc="09"/>
+			<network-id mcc="202" mnc="10"/>
+			<apn value="gint.b-online.gr">
+				<username>web</username>
+				<password>web</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Guatemala -->
+<country code="gt">
+	<provider>
+		<name>Claro</name>
+		<gsm>
+			<network-id mcc="704" mnc="01"/>
+			<apn value="internet.ideasclaro"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Comcel / Tigo</name>
+		<gsm>
+			<network-id mcc="704" mnc="02"/>
+			<apn value="Wap.tigo.gt">
+				<username>Wap</username>
+				<password>Wap</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Guyana -->
+<country code="gy">
+	<provider>
+		<name>GT&amp;T Cellink Plus</name>
+		<gsm>
+			<apn value="wap.cellinkgy.com">
+				<username>test</username>
+				<password>test</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>DigiCel</name>
+		<gsm>
+			<network-id mcc="738" mnc="01"/>
+			<apn value="internet">
+				<username>web</username>
+				<password>web</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Hong Kong -->
+<country code="hk">
+	<provider>
+		<name>CSL</name>
+		<gsm>
+			<network-id mcc="454" mnc="00"/>
+			<network-id mcc="454" mnc="02"/>
+			<apn value="internet">
+				<dns>202.84.255.1</dns>
+				<dns>203.116.254.150</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>New World</name>
+		<gsm>
+			<network-id mcc="454" mnc="10"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>People</name>
+		<gsm>
+			<network-id mcc="454" mnc="12"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>SmarTone</name>
+		<gsm>
+			<network-id mcc="454" mnc="06"/>
+			<apn value="internet">
+				<dns>202.140.96.51</dns>
+				<dns>202.140.96.52</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Sunday</name>
+		<gsm>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<apn value="web.orangehk.com"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Three</name>
+		<gsm>
+			<network-id mcc="454" mnc="03"/>
+			<network-id mcc="454" mnc="04"/>
+			<apn value="mobile.three.com.hk"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Honduras -->
+<country code="hn">
+	<provider>
+		<name>Tigo</name>
+		<gsm>
+			<network-id mcc="708" mnc="02"/>
+			<apn value="internet.tigo.hn"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Croatia -->
+<country code="hr">
+	<provider>
+		<name>T-Mobile</name>
+		<gsm>
+			<network-id mcc="219" mnc="01"/>
+			<apn value="web.htgpr">
+				<dns>10.12.0.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>VIPNET</name>
+		<gsm>
+			<network-id mcc="219" mnc="10"/>
+			<apn value="gprs5.vipnet.hr">
+				<name>GPRS 5</name>
+				<username>38591</username>
+				<password>38591</password>
+				<dns>195.29.159.15</dns>
+			</apn>
+			<apn value="gprs0.vipnet.hr">
+				<name>GPRS 0</name>
+				<username>38591</username>
+				<password>38591</password>
+				<dns>195.29.159.15</dns>
+			</apn>
+			<apn value="3g.vipnet.hr">
+				<name>3G</name>
+				<username>38591</username>
+				<password>38591</password>
+				<dns>212.91.97.3</dns>
+				<dns>212.91.97.4</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Hungary -->
+<country code="hu">
+	<provider>
+		<name>Pannon</name>
+		<gsm>
+			<network-id mcc="216" mnc="01"/>
+			<apn value="netx">
+				<name>átalánydíjas</name>
+				<dns>193.225.155.254</dns>
+				<dns>194.149.0.157</dns>
+			</apn>
+			<apn value="net">
+				<name>Normál</name>
+				<dns>193.225.153.17</dns>
+				<dns>195.56.172.113</dns>
+			</apn>
+			<apn value="snet">
+				<name>Tömörített</name>
+				<dns>193.225.153.17</dns>
+				<dns>194.149.0.157</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>T-Mobile</name>
+		<gsm>
+			<network-id mcc="216" mnc="30"/>
+			<apn value="internet">
+				<dns>212.51.115.1</dns>
+				<dns>194.176.224.6</dns>
+			</apn>
+			<apn value="mms-westel">
+				<name>MMS</name>
+				<username>mms</username>
+				<dns>212.51.115.1</dns>
+				<dns>194.176.224.3</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="216" mnc="70"/>
+			<apn value="standardnet.vodafone.net">
+				<name>Előf. Normál</name>
+				<username>vodawap</username>
+				<password>vodawap</password>
+				<dns>80.244.97.30</dns>
+				<dns>80.244.96.1</dns>
+			</apn>
+			<apn value="internet.vodafone.net">
+				<name>Előf. töm.</name>
+				<username>vodawap</username>
+				<password>vodawap</password>
+				<dns>80.244.97.30</dns>
+				<dns>80.244.96.1</dns>
+			</apn>
+			<apn value="vitamax.snet.vodafone.net">
+				<name>Felt. norm.</name>
+				<dns>80.244.97.30</dns>
+				<dns>80.244.96.1</dns>
+			</apn>
+			<apn value="vitamax.internet.vodafone.net">
+				<name>Vodafone (felt. töm.)</name>
+				<dns>80.244.97.30</dns>
+				<dns>80.244.96.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Indonesia -->
+<country code="id">
+	<provider>
+		<name>AXIS</name>
+		<gsm>
+			<network-id mcc="510" mnc="08"/>
+			<apn value="AXIS">
+				<username>axis</username>
+				<password>123456</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>IM3</name>
+		<gsm>
+			<network-id mcc="510" mnc="21"/>
+			<apn value="www.imdosat-m3.net">
+				<username>gprs</username>
+				<password>im3</password>
+				<dns>202.155.46.66</dns>
+				<dns>202.155.46.77</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Indosat</name>
+		<gsm>
+			<network-id mcc="510" mnc="01"/>
+			<apn value="satelindogprs.com">
+				<dns>202.152.162.250</dns>
+			</apn>
+			<apn value="indosatgprs">
+				<name>Matrix 3G</name>
+				<username>indosat</username>
+				<password>indosat</password>
+				<dns>202.155.46.66</dns>
+				<dns>202.155.46.77</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telkomsel</name>
+		<gsm>
+			<network-id mcc="510" mnc="10"/>
+			<network-id mcc="510" mnc="20"/>
+			<apn value="internet">
+				<username>wap</username>
+				<password>wap123</password>
+				<dns>202.152.0.2</dns>
+				<dns>202.155.14.251</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Excelcomindo (XL)</name>
+		<gsm>
+			<network-id mcc="510" mnc="11"/>
+			<apn value="www.xlgprs.net">
+				<username>xlgprs</username>
+				<password>proxl</password>
+				<dns>202.152.254.245</dns>
+				<dns>202.152.254.246</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Ireland -->
+<country code="ie">
+	<provider>
+		<name>O2</name>
+		<gsm>
+			<network-id mcc="272" mnc="02"/>
+			<apn value="open.internet">
+				<name>Contract</name>
+				<username>gprs</username>
+				<password>gprs</password>
+				<dns>62.40.32.33</dns>
+				<dns>62.40.32.34</dns>
+			</apn>
+			<apn value="pp.internet">
+				<name>Prepaid</name>
+				<username>faster</username>
+				<password>web</password>
+				<dns>62.40.32.33</dns>
+				<dns>62.40.32.34</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="272" mnc="01"/>
+			<apn value="hs.vodafone.ie">
+				<username>vodafone</username>
+				<password>vodafone</password>
+			</apn>
+			<apn value="isp.vodafone.ie">
+				<name>Old</name>
+				<username>vodafone</username>
+				<password>vodafone</password>
+			</apn>
+			<apn value="live.vodafone.com">
+				<name>Prepaid</name>
+				<username>vodafone</username>
+				<password>vodafone</password>
+				<dns>10.24.59.100</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Meteor</name>
+		<gsm>
+			<network-id mcc="272" mnc="03"/>
+			<apn value="data.mymeteor.ie">
+				<name>Meteor Data</name>
+				<username>my</username>
+				<password>meteor</password>
+			</apn>
+			<apn value="broadband.mymeteor.ie">
+				<name>Broadband To Go</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Three Ireland</name>
+		<gsm>
+			<network-id mcc="272" mnc="05"/>
+			<apn value="3ireland.ie">
+				<dns>172.31.140.69</dns>
+				<dns>172.30.140.69</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Israel -->
+<country code="il">
+	<provider>
+		<name>CellCom</name>
+		<gsm>
+			<network-id mcc="425" mnc="02"/>
+			<apn value="internetg"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="425" mnc="01"/>
+			<apn value="orangeinternet">
+				<dns>158.43.192.1</dns>
+				<dns>158.43.128.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Pelephone</name>
+		<gsm>
+			<network-id mcc="425" mnc="03"/>
+			<apn value="internet.pelephone.net.il ">
+				<name>3G</name>
+				<username>pcl@3g</username>
+				<password>pcl</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Isle of Man -->
+<country code="im">
+	<provider>
+		<name>Sure (Cable &amp; Wireless)</name>
+		<gsm>
+			<network-id mcc="234" mnc="55"/>
+			<apn value="wap">
+				<name>WAP</name>
+			</apn>
+			<apn value="internet">
+				<name>Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- India -->
+<country code="in">
+	<provider>
+		<name>AIRCEL</name>
+		<gsm>
+			<network-id mcc="404" mnc="17"/>
+			<network-id mcc="404" mnc="28"/>
+			<network-id mcc="404" mnc="29"/>
+			<network-id mcc="404" mnc="37"/>
+			<network-id mcc="404" mnc="41"/>
+			<network-id mcc="404" mnc="42"/>
+			<network-id mcc="404" mnc="91"/>
+			<network-id mcc="405" mnc="800"/>
+			<network-id mcc="405" mnc="801"/>
+			<network-id mcc="405" mnc="802"/>
+			<network-id mcc="405" mnc="803"/>
+			<network-id mcc="405" mnc="804"/>
+			<network-id mcc="405" mnc="805"/>
+			<network-id mcc="405" mnc="806"/>
+			<network-id mcc="405" mnc="807"/>
+			<network-id mcc="405" mnc="808"/>
+			<network-id mcc="405" mnc="809"/>
+			<network-id mcc="405" mnc="810"/>
+			<network-id mcc="405" mnc="811"/>
+			<network-id mcc="405" mnc="812"/>
+
+			<apn value="aircelweb">
+				<name>Web</name>
+			</apn>
+			<apn value="aircelgprs.po">
+				<name>GPRS (Postpaid)</name>
+			</apn>
+			<apn value="aircelgprs.pr">
+				<name>GPRS (Prepaid)</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Airtel</name>
+		<gsm>
+			<network-id mcc="404" mnc="02"/>
+			<network-id mcc="404" mnc="03"/>
+			<network-id mcc="404" mnc="06"/>
+			<network-id mcc="404" mnc="10"/>
+			<network-id mcc="404" mnc="28"/>
+			<network-id mcc="404" mnc="31"/>
+			<network-id mcc="404" mnc="37"/>
+			<network-id mcc="404" mnc="40"/>
+			<network-id mcc="404" mnc="41"/>
+			<network-id mcc="404" mnc="42"/>
+			<network-id mcc="404" mnc="45"/>
+			<network-id mcc="404" mnc="49"/>
+			<network-id mcc="404" mnc="70"/>
+			<network-id mcc="404" mnc="90"/>
+			<network-id mcc="404" mnc="92"/>
+			<network-id mcc="404" mnc="93"/>
+			<network-id mcc="404" mnc="96"/>
+			<network-id mcc="404" mnc="97"/>
+			<network-id mcc="404" mnc="98"/>
+			<network-id mcc="405" mnc="51"/>
+			<network-id mcc="405" mnc="52"/>
+			<network-id mcc="405" mnc="54"/>
+			<network-id mcc="405" mnc="56"/>
+
+			<apn value="airtelgprs.com">
+				<dns>202.56.230.5</dns>
+				<dns>202.56.240.5</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="404" mnc="01"/>
+			<network-id mcc="404" mnc="05"/>
+			<network-id mcc="404" mnc="11"/>
+			<network-id mcc="404" mnc="13"/>
+			<network-id mcc="404" mnc="15"/>
+			<network-id mcc="404" mnc="20"/>
+			<network-id mcc="404" mnc="27"/>
+			<network-id mcc="404" mnc="30"/>
+			<network-id mcc="404" mnc="46"/>
+			<network-id mcc="404" mnc="60"/>
+			<network-id mcc="404" mnc="67"/>
+			<network-id mcc="404" mnc="84"/>
+			<network-id mcc="404" mnc="86"/>
+			<network-id mcc="405" mnc="66"/>
+			<network-id mcc="405" mnc="750"/>
+			<network-id mcc="405" mnc="751"/>
+			<network-id mcc="405" mnc="752"/>
+			<network-id mcc="405" mnc="753"/>
+			<network-id mcc="405" mnc="754"/>
+			<network-id mcc="405" mnc="755"/>
+			<network-id mcc="405" mnc="756"/>
+			<apn value="www">
+				<name>Vodafone Connect</name>
+			</apn>
+			<apn value="portalnmms">
+				<name>Vodafone Live</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>BSNL/CellOne</name>
+		<gsm>
+			<network-id mcc="404" mnc="34"/>
+			<network-id mcc="404" mnc="38"/>
+			<network-id mcc="404" mnc="51"/>
+			<network-id mcc="404" mnc="53"/>
+			<network-id mcc="404" mnc="54"/>
+			<network-id mcc="404" mnc="55"/>
+			<network-id mcc="404" mnc="57"/>
+			<network-id mcc="404" mnc="58"/>
+			<network-id mcc="404" mnc="59"/>
+			<network-id mcc="404" mnc="62"/>
+			<network-id mcc="404" mnc="64"/>
+			<network-id mcc="404" mnc="66"/>
+			<network-id mcc="404" mnc="71"/>
+			<network-id mcc="404" mnc="72"/>
+			<network-id mcc="404" mnc="73"/>
+			<network-id mcc="404" mnc="74"/>
+			<network-id mcc="404" mnc="75"/>
+			<network-id mcc="404" mnc="76"/>
+			<network-id mcc="404" mnc="77"/>
+			<network-id mcc="404" mnc="80"/>
+			<network-id mcc="404" mnc="81"/>
+
+			<apn value="bsnlsouth">
+				<name>South Zone A (Karnatka, Andhra Pradesh, Chennai, Tamil Nadu, Kerala)</name>
+			</apn>
+			<apn value="gprssouth.cellone.in">
+				<name>South Zone B (Karnatka, Andhra Pradesh, Chennai, Tamil Nadu, Kerala)</name>
+			</apn>
+			<apn value="gprsnorth.cellone.in">
+				<name>North Zone (Haryana, Punjab, UP(East), UP(West), Himachal Pradesh, Rajasthan, Jammu &amp; Kashmir)</name>
+			</apn>
+			<apn value="gprswest.cellone.in">
+				<name>West Zone (Maharashtra, Gujrat, Madhya Pradesh, Chattishgarh)</name>
+			</apn>
+			<apn value="www.e.pr">
+				<name>East Zone Prepaid (Jharkhand, Bihar, Kolkata, West Bengal, Orissa, Assam, North East, Adman Nicobar)</name>
+				<dns>218.248.240.208</dns>
+				<dns>218.248.240.135</dns>
+			</apn>
+			<apn value="www.e.po">
+				<name>East Zone Postpaid (Jharkhand, Bihar, Kolkata, West Bengal, Orissa, Assam, North East, Adman Nicobar)</name>
+				<dns>218.248.240.208</dns>
+				<dns>218.248.240.135</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Idea Cellular</name>
+		<gsm>
+			<network-id mcc="404" mnc="04"/>
+			<network-id mcc="404" mnc="07"/>
+			<network-id mcc="404" mnc="12"/>
+			<network-id mcc="404" mnc="14"/>
+			<network-id mcc="404" mnc="19"/>
+			<network-id mcc="404" mnc="22"/>
+			<network-id mcc="404" mnc="24"/>
+			<network-id mcc="404" mnc="44"/>
+			<network-id mcc="404" mnc="56"/>
+			<network-id mcc="404" mnc="82"/>
+			<network-id mcc="405" mnc="70"/>
+			<network-id mcc="405" mnc="799"/>
+			<network-id mcc="405" mnc="845"/>
+			<network-id mcc="405" mnc="848"/>
+			<network-id mcc="405" mnc="850"/>
+			<apn value="internet">
+				<dns>10.4.42.15</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>MTNL</name>
+		<gsm>
+			<network-id mcc="404" mnc="68"/>
+			<network-id mcc="404" mnc="69"/>
+			<apn value="gprsmtnldel">
+				<name>Delhi</name>
+				<username>mtnl</username>
+				<password>mtnl123</password>
+			</apn>
+			<apn value="gprsppsmum">
+				<name>Mumbai (Prepaid)</name>
+				<username>mtnl</username>
+				<password>mtnl123</password>
+			</apn>
+			<apn value="gprsmtnlmum">
+				<name>Mumbai (Postpaid / Plan 2)</name>
+				<username>mtnl</username>
+				<password>mtnl123</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Reliance</name>
+		<gsm>
+			<network-id mcc="404" mnc="09"/>
+			<network-id mcc="404" mnc="36"/>
+			<network-id mcc="404" mnc="52"/>
+			<network-id mcc="404" mnc="83"/>
+			<network-id mcc="404" mnc="85"/>
+			<network-id mcc="405" mnc="05"/>
+			<network-id mcc="405" mnc="10"/>
+			<network-id mcc="405" mnc="13"/>
+			<apn value="smartnet">
+				<name>Smart Net</name>
+			</apn>
+			<apn value="smartwap">
+				<name>Smart WAP</name>
+			</apn>
+		</gsm>
+		<cdma>
+			<name>Reliance Netconnect</name>
+			<sid value="14655"/>
+			<sid value="14656"/>
+			<sid value="14657"/>
+			<sid value="14658"/>
+			<sid value="14659"/>
+			<sid value="14660"/>
+			<sid value="14661"/>
+			<sid value="14662"/>
+			<sid value="14663"/>
+			<sid value="14664"/>
+			<sid value="14665"/>
+			<sid value="14666"/>
+			<sid value="14667"/>
+			<sid value="14668"/>
+			<sid value="14669"/>
+			<sid value="14670"/>
+			<sid value="14671"/>
+			<sid value="14672"/>
+			<sid value="14673"/>
+			<sid value="14674"/>
+			<sid value="14675"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Spice telecom</name>
+		<gsm>
+			<network-id mcc="404" mnc="14"/>
+			<network-id mcc="404" mnc="44"/>
+
+			<apn value="Simplyenjoy">
+				<username>spice</username>
+				<password>spice</password>
+			</apn>
+			<apn value="simplydownload">
+				<name>kar</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tata Docomo</name>
+		<gsm>
+			<network-id mcc="405" mnc="025"/>
+			<network-id mcc="405" mnc="026"/>
+			<network-id mcc="405" mnc="027"/>
+			<network-id mcc="405" mnc="029"/>
+			<network-id mcc="405" mnc="030"/>
+			<network-id mcc="405" mnc="031"/>
+			<network-id mcc="405" mnc="032"/>
+			<network-id mcc="405" mnc="034"/>
+			<network-id mcc="405" mnc="035"/>
+			<network-id mcc="405" mnc="036"/>
+			<network-id mcc="405" mnc="037"/>
+			<network-id mcc="405" mnc="038"/>
+			<network-id mcc="405" mnc="039"/>
+			<network-id mcc="405" mnc="041"/>
+			<network-id mcc="405" mnc="042"/>
+			<network-id mcc="405" mnc="043"/>
+			<network-id mcc="405" mnc="044"/>
+			<network-id mcc="405" mnc="045"/>
+			<network-id mcc="405" mnc="046"/>
+			<network-id mcc="405" mnc="047"/>
+
+			<apn value="TATA.DOCOMO.INTERNET">
+				<name>Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tata Indicom (Plug2Surf)</name>
+		<cdma>
+			<username>internet</username>
+			<password>internet</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Tata Indicom (Photon+)</name>
+		<cdma>
+			<username>internet</username>
+			<password>internet</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>MTS MBlaze</name>
+		<cdma>
+			<username>internet@internet.mtsindia.in</username>
+			<password>mts</password>
+			<sid value="14554"/>
+		</cdma>
+	</provider>
+</country>
+
+<!-- Iraq -->
+<country code="iq">
+	<provider>
+		<name>Itisaluna</name>
+		<cdma>
+			<username>itisaluna</username>
+			<password>itisaluna</password>
+			<sid value="15456"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Omnea Telecom</name>
+		<cdma>
+			<username>omnea</username>
+			<password>omnea</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Kalimat Telecom</name>
+		<cdma>
+			<sid value="15470"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Korek</name>
+		<gsm>
+			<network-id mcc="418" mnc="40"/>
+			<apn value="net.korek.com">
+				<username>korek</username>
+				<password>korek</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Asia Cell</name>
+		<gsm>
+			<network-id mcc="418" mnc="50"/>
+			<apn value="net.asiacell.com">
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Iceland -->
+<country code="is">
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="274" mnc="02"/>
+			<network-id mcc="274" mnc="03"/>
+			<apn value="vmc.gprs.is">
+				<dns>213.176.128.51</dns>
+				<dns>213.176.128.50</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Nova</name>
+		<gsm>
+			<network-id mcc="274" mnc="11"/>
+			<apn value="internet.nova.is">
+				<dns>192.168.190.54</dns>
+				<dns>192.168.190.55</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Síminn</name>
+		<gsm>
+			<network-id mcc="274" mnc="01"/>
+			<apn value="wap.simi.is">
+				<dns>194.105.224.1</dns>
+				<dns>212.30.200.200</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Italy -->
+<country code="it">
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="222" mnc="10"/>
+			<apn value="mobile.vodafone.it">
+				<name>Mobile Internet</name>
+			</apn>
+			<apn value="web.omnitel.it">
+				<name>Internet Facile (old)</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TIM</name>
+		<gsm>
+			<network-id mcc="222" mnc="01"/>
+			<apn value="ibox.tim.it">
+				<name>Maxxi Alice/Internet</name>
+			</apn>
+			<apn value="wap.tim.it">
+				<name>WAP</name>
+				<username>WAPTIM</username>
+				<dns>213.230.155.94</dns>
+				<dns>213.230.130.222</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Wind</name>
+		<gsm>
+			<network-id mcc="222" mnc="88"/>
+			<apn value="internet.wind">
+				<name>Non-business</name>
+				<username>Wind</username>
+				<password>Wind</password>
+				<dns>193.70.152.25</dns>
+				<dns>193.70.192.25</dns>
+			</apn>
+			<apn value="internet.wind.biz">
+				<name>Business</name>
+				<username>Wind</username>
+				<password>Wind</password>
+				<dns>193.70.152.25</dns>
+				<dns>193.70.192.25</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>3</name>
+		<gsm>
+			<network-id mcc="222" mnc="99"/>
+			<apn value="tre.it">
+				<name>Standard</name>
+			</apn>
+			<apn value="datacard.tre.it">
+				<name>Tre.Dati</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Fastweb</name>
+		<gsm>
+			<apn value="apn.fastweb.it">
+				<name>Voce/dati</name>
+			</apn>
+			<apn value="datacard.fastweb.it">
+				<name>Solo dati</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>PosteMobile</name>
+		<gsm>
+			<network-id mcc="222" mnc="10"/>
+			<apn value="internet.postemobile.it"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Jersey -->
+<country code="je">
+	<provider>
+		<name>Sure (Cable &amp; Wireless)</name>
+		<gsm>
+			<network-id mcc="234" mnc="55"/>
+			<apn value="wap">
+				<name>WAP</name>
+			</apn>
+			<apn value="internet">
+				<name>Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Jersey Telecom</name>
+		<gsm>
+			<network-id mcc="234" mnc="50"/>
+			<apn value="pepper">
+				<username>abc</username>
+				<password>abc</password>
+				<dns>212.9.0.135</dns>
+				<dns>212.9.0.136</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Jamaica -->
+<country code="jm">
+	<provider>
+		<name>Cable &amp; Wireless</name>
+		<gsm>
+			<network-id mcc="338" mnc="020"/>
+			<apn value="wap"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Digicel</name>
+		<gsm>
+			<network-id mcc="338" mnc="050"/>
+			<apn value="web.digiceljamaica.com">
+				<username>wapuser</username>
+				<password>wap03jam</password>
+				<dns>208.131.176.126</dns>
+				<dns>200.10.152.232</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Japan -->
+<country code="jp">
+	<provider>
+		<name>Softbank Mobile</name>
+		<gsm>
+			<network-id mcc="440" mnc="04"/>
+			<network-id mcc="440" mnc="06"/>
+			<network-id mcc="440" mnc="20"/>
+			<network-id mcc="440" mnc="40"/>
+			<network-id mcc="440" mnc="41"/>
+			<network-id mcc="440" mnc="42"/>
+			<network-id mcc="440" mnc="43"/>
+			<network-id mcc="440" mnc="44"/>
+			<network-id mcc="440" mnc="45"/>
+			<network-id mcc="440" mnc="46"/>
+			<network-id mcc="440" mnc="47"/>
+			<network-id mcc="440" mnc="48"/>
+			<network-id mcc="440" mnc="90"/>
+			<network-id mcc="440" mnc="92"/>
+			<network-id mcc="440" mnc="93"/>
+			<network-id mcc="440" mnc="94"/>
+			<network-id mcc="440" mnc="95"/>
+			<network-id mcc="440" mnc="96"/>
+			<network-id mcc="440" mnc="97"/>
+			<network-id mcc="440" mnc="98"/>
+			<apn value="softbank">
+				<username>ai@softbank</username>
+				<password>softbank</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>e-mobile</name>
+		<gsm>
+			<network-id mcc="440" mnc="00"/>
+			<apn value="emb.ne.jp">
+				<username>em</username>
+				<password>em</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>NTTdocomo</name>
+		<gsm>
+			<network-id mcc="440" mnc="01"/>
+			<network-id mcc="440" mnc="02"/>
+			<network-id mcc="440" mnc="03"/>
+			<network-id mcc="440" mnc="09"/>
+			<network-id mcc="440" mnc="10"/>
+			<network-id mcc="440" mnc="11"/>
+			<network-id mcc="440" mnc="12"/>
+			<network-id mcc="440" mnc="13"/>
+			<network-id mcc="440" mnc="14"/>
+			<network-id mcc="440" mnc="15"/>
+			<network-id mcc="440" mnc="16"/>
+			<network-id mcc="440" mnc="17"/>
+			<network-id mcc="440" mnc="18"/>
+			<network-id mcc="440" mnc="19"/>
+			<network-id mcc="440" mnc="21"/>
+			<network-id mcc="440" mnc="22"/>
+			<network-id mcc="440" mnc="23"/>
+			<network-id mcc="440" mnc="24"/>
+			<network-id mcc="440" mnc="25"/>
+			<network-id mcc="440" mnc="26"/>
+			<network-id mcc="440" mnc="27"/>
+			<network-id mcc="440" mnc="28"/>
+			<network-id mcc="440" mnc="29"/>
+			<network-id mcc="440" mnc="30"/>
+			<network-id mcc="440" mnc="31"/>
+			<network-id mcc="440" mnc="32"/>
+			<network-id mcc="440" mnc="33"/>
+			<network-id mcc="440" mnc="34"/>
+			<network-id mcc="440" mnc="35"/>
+			<network-id mcc="440" mnc="36"/>
+			<network-id mcc="440" mnc="37"/>
+			<network-id mcc="440" mnc="38"/>
+			<network-id mcc="440" mnc="39"/>
+			<network-id mcc="440" mnc="49"/>
+			<network-id mcc="440" mnc="58"/>
+			<network-id mcc="440" mnc="60"/>
+			<network-id mcc="440" mnc="61"/>
+			<network-id mcc="440" mnc="62"/>
+			<network-id mcc="440" mnc="63"/>
+			<network-id mcc="440" mnc="64"/>
+			<network-id mcc="440" mnc="65"/>
+			<network-id mcc="440" mnc="66"/>
+			<network-id mcc="440" mnc="67"/>
+			<network-id mcc="440" mnc="68"/>
+			<network-id mcc="440" mnc="69"/>
+			<network-id mcc="440" mnc="87"/>
+			<network-id mcc="440" mnc="99"/>
+
+			<apn value="mopera.ne.jp">
+				<name>mopera</name>
+			</apn>
+			<apn value="mopera.net">
+				<name>mopera U</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>au(KDDI)</name>
+		<cdma>
+			<username>au@au-win.ne.jp</username>
+			<password>au</password>
+			<dns>210.196.3.183</dns>
+			<dns>210.141.112.163</dns>
+		</cdma>
+	</provider>
+</country>
+
+<!-- Kenya -->
+<country code="ke">
+	<provider>
+		<name>Zain / Celtel</name>
+		<gsm>
+			<network-id mcc="639" mnc="03"/>
+			<apn value="ke.celtel.com"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Safaricom</name>
+		<gsm>
+			<network-id mcc="639" mnc="02"/>
+			<apn value="web.safaricom.com">
+				<username>web</username>
+				<password>web</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Econet</name>
+		<gsm>
+			<apn value="internet.econet.co.ke"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Cambodia -->
+<country code="kh">
+	<provider>
+		<name>hello</name>
+		<gsm>
+			<network-id mcc="456" mnc="02"/>
+			<apn value="hellowww"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Mobitel</name>
+		<gsm>
+			<network-id mcc="456" mnc="01"/>
+			<apn value="3g">
+				<name>CellCard Corporate</name>
+				<username>mobitel</username>
+				<password>mobitel</password>
+			</apn>
+			<apn value="3gtv">
+				<name>CellCard Unlimited</name>
+				<username>mobitel</username>
+				<password>mobitel</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>qb</name>
+		<gsm>
+			<network-id mcc="456" mnc="04"/>
+			<apn value="WAP">
+				<name>QBmore</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Star-Cell</name>
+		<gsm>
+			<network-id mcc="456" mnc="05"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Excell</name>
+		<cdma/>
+	</provider>
+</country>
+
+<!-- Korea, Republic of -->
+<country code="kr">
+	<provider>
+		<name>KTF</name>
+		<cdma>
+			<!-- cid: "016" -->
+			<username>ktf</username>
+			<password>ktf</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>LGTelecom</name>
+		<cdma>
+			<!-- cid: "109" -->
+			<!--
+			username must be xxxx(yournumber)@lgt.co.kr and
+			password must be your last 4 number
+			<username>number@lgt.co.kr</username>
+			<password></password>
+			-->
+		</cdma>
+	</provider>
+	<provider>
+		<name>SKTelecom</name>
+		<cdma>
+			<!-- cid: 1501 -->
+			<username>sktelecom</username>
+		</cdma>
+	</provider>
+</country>
+
+<!-- Kuwait -->
+<country code="kw">
+	<provider>
+		<name>Zain</name>
+		<gsm>
+			<network-id mcc="419" mnc="02"/>
+			<apn value="pps">
+				<name>Personal</name>
+				<username>pps</username>
+				<password>pps</password>
+			</apn>
+			<apn value="apn01">
+				<name>Corporate</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Wataniya</name>
+		<gsm>
+			<network-id mcc="419" mnc="03"/>
+			<apn value="action.wataniya.com"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Viva</name>
+		<gsm>
+			<network-id mcc="419" mnc="04"/>
+			<apn value="viva"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Kazakhstan -->
+<country code="kz">
+	<provider>
+		<name>Beeline</name>
+		<gsm>
+			<network-id mcc="401" mnc="01"/>
+			<apn value="internet.beeline.kz">
+				<username>@internet.beeline</username>
+				<dns>212.19.149.53</dns>
+				<dns>194.226.128.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>K'CELL</name>
+		<gsm>
+			<network-id mcc="401" mnc="02"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<!-- Owned by K'CELL -->
+		<name>Activ</name>
+		<gsm>
+			<network-id mcc="401" mnc="02"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Neo</name>
+		<gsm>
+			<network-id mcc="401" mnc="77"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Pathword</name>
+		<cdma>
+			<username>Pathword</username>
+			<password>Pathword</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Dalacom</name>
+		<cdma>
+			<username>Dalacom</username>
+			<password>Dalacom</password>
+		</cdma>
+	</provider>
+</country>
+
+<!-- Laos -->
+<country code="la">
+	<provider>
+		<name>ETL</name>
+		<gsm>
+			<network-id mcc="457" mnc="02"/>
+			<apn value="etlnet">
+				<dns>192.168.4.130</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Lebanon -->
+<country code="lb">
+	<provider>
+		<name>MTC Touch</name>
+		<gsm>
+			<network-id mcc="415" mnc="03"/>
+			<apn value="gprs.mtctouch.com.lb"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- St Lucia -->
+<country code="lc">
+	<provider>
+		<name>Cable &amp; Wireless</name>
+		<gsm>
+			<network-id mcc="358" mnc="110"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Sri Lanka -->
+<country code="lk">
+	<provider>
+		<name>Airtel</name>
+		<gsm>
+			<network-id mcc="413" mnc="05"/>
+			<apn value="www.wap.airtel.lk"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Dialog GSM</name>
+		<gsm>
+			<network-id mcc="413" mnc="02"/>
+			<apn value="www.dialogsl.com">
+				<name>Postpaid</name>
+			</apn>
+			<apn value="ppinternet">
+				<name>Prepaid</name>
+			</apn>
+			<apn value="dialogbb">
+				<name>Unlimited Broadband</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Hutch</name>
+		<gsm>
+			<network-id mcc="413" mnc="08"/>
+			<apn value="htwap"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Mobitel</name>
+		<gsm>
+			<network-id mcc="413" mnc="01"/>
+			<apn value="isp"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tigo</name>
+		<gsm>
+			<network-id mcc="413" mnc="03"/>
+			<apn value="wap"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Lithuania -->
+<country code="lt">
+	<provider>
+		<name>Bite</name>
+		<gsm>
+			<network-id mcc="246" mnc="02"/>
+			<apn value="banga">
+				<username>bite</username>
+				<dns>213.226.131.131</dns>
+				<dns>193.219.88.36</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TELE2 GPRS</name>
+		<gsm>
+			<network-id mcc="246" mnc="03"/>
+			<apn value="internet.tele2.lt"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Omnitel (contract)</name>
+		<gsm>
+			<network-id mcc="246" mnc="01"/>
+			<apn value="gprs.omnitel.net">
+				<name>Contract</name>
+				<dns>194.176.32.129</dns>
+				<dns>195.22.175.1</dns>
+			</apn>
+			<apn value="gprs.startas.lt">
+				<name>No contract</name>
+				<username>omni</username>
+				<password>omni</password>
+				<dns>194.176.32.129</dns>
+				<dns>195.22.175.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Luxembourg -->
+<country code="lu">
+	<provider>
+		<name>LUXGSM</name>
+		<gsm>
+			<network-id mcc="270" mnc="01"/>
+			<apn value="web.pt.lu">
+				<dns>194.154.192.101</dns>
+				<dns>194.154.192.102</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tango</name>
+		<gsm>
+			<network-id mcc="270" mnc="77"/>
+			<apn value="internet">
+				<username>tango</username>
+				<password>tango</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>VOXmobile</name>
+		<gsm>
+			<network-id mcc="270" mnc="99"/>
+			<apn value="vox.lu"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Latvia -->
+<country code="lv">
+	<provider>
+		<name>LMT</name>
+		<gsm>
+			<network-id mcc="247" mnc="01"/>
+			<apn value="internet.lmt.lv">
+				<dns>212.93.96.2</dns>
+				<dns>212.93.96.4</dns>
+			</apn>
+			<apn value="open.lmt.lv">
+				<name>O!Karte internet</name>
+			</apn>
+			<apn value="okarte.lmt.lv">
+				<name>O!Karte</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tele2</name>
+		<gsm>
+			<network-id mcc="247" mnc="02"/>
+			<apn value="internet.tele2.lv">
+				<name>Regular</name>
+				<username>gprs</username>
+				<password>internet</password>
+			</apn>
+			<apn value="mobileinternet.tele2.lv">
+				<name>Mobile Internet</name>
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+			<apn value="data.tele2.lv">
+				<name>Zelta Zivtina</name>
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Bite</name>
+		<gsm>
+			<network-id mcc="247" mnc="05"/>
+			<apn value="wap">
+				<name>Bite plus</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Morocco -->
+<country code="ma">
+	<provider>
+		<name>Ittissalat Al Maghrib</name>
+		<gsm>
+			<network-id mcc="604" mnc="01"/>
+			<apn value="iam">
+				<username>wac</username>
+				<password>1987</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Medi Telecom</name>
+		<gsm>
+			<network-id mcc="604" mnc="00"/>
+			<apn value="wap.meditel.ma">
+				<username>MEDIWAP</username>
+				<password>MEDIWAP</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Moldova -->
+<country code="md">
+	<provider>
+		<name>Moldcell</name>
+		<gsm>
+			<network-id mcc="259" mnc="02"/>
+			<apn value="internet">
+				<name>Internet</name>
+				<username>gprs</username>
+				<password>gprs</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Eventis</name>
+		<gsm>
+			<network-id mcc="259" mnc="04"/>
+			<apn value="internet.md">
+				<name>Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="259" mnc="01"/>
+			<apn value="internet">
+				<name>Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Montenegro -->
+<country code="me">
+	<provider>
+		<name>ProMonte GSM</name>
+		<gsm>
+			<network-id mcc="297" mnc="01"/>
+			<apn value="gprs.promonte.com"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>T-Mobile</name>
+		<gsm>
+			<network-id mcc="297" mnc="02"/>
+			<apn value="internet-postpaid"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>m:tel</name>
+		<gsm>
+			<network-id mcc="297" mnc="03"/>
+			<apn value="gprsinternet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Mali -->
+<country code="ml">
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="610" mnc="02"/>
+			<apn value="iew">
+				<username>iew</username>
+				<password>iew</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Mongolia -->
+<country code="mn">
+	<provider>
+		<name>MobiCom</name>
+		<gsm>
+			<network-id mcc="428" mnc="99"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Macau -->
+<country code="mo">
+	<provider>
+		<name>3 / Hutchison</name>
+		<gsm>
+			<network-id mcc="455" mnc="03"/>
+			<network-id mcc="455" mnc="05"/>
+			<apn value="web.hutchisonmacau.com">
+				<username>hutchison</username>
+				<password>1234</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>CTM</name>
+		<gsm>
+			<network-id mcc="455" mnc="01"/>
+			<network-id mcc="455" mnc="04"/>
+			<apn value="ctm-mobile"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>China Telecom</name>
+		<cdma/>
+	</provider>
+</country>
+
+<!-- Malta -->
+<country code="mt">
+	<provider>
+		<name>GO Mobile</name>
+		<gsm>
+			<network-id mcc="278" mnc="21"/>
+			<apn value="gosurfing">
+				<name>Postpaid</name>
+			</apn>
+			<apn value="rtgsurfing">
+				<name>Prepaid</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="278" mnc="01"/>
+			<apn value="Internet">
+				<username>Internet</username>
+				<password>Internet</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Mauritius -->
+<country code="mu">
+	<provider>
+		<name>Emtel</name>
+		<gsm>
+			<network-id mcc="617" mnc="10"/>
+			<apn value="WEB"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Maldives -->
+<country code="mv">
+	<provider>
+		<name>Dhiraagu</name>
+		<gsm>
+			<network-id mcc="472" mnc="01"/>
+			<apn value="internet.dhimobile"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Wataniya</name>
+		<gsm>
+			<network-id mcc="472" mnc="02"/>
+			<apn value="WataniyaNet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Mexico -->
+<country code="mx">
+	<provider>
+		<name>Telcel</name>
+		<gsm>
+			<network-id mcc="334" mnc="02"/>
+			<apn value="internet.itelcel.com">
+				<username>webgprs</username>
+				<password>webgprs2002</password>
+				<dns>148.233.151.245</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Movistar</name>
+		<gsm>
+			<network-id mcc="334" mnc="03"/>
+			<apn value="internet.movistar.mx">
+				<username>movistar</username>
+				<password>movistar</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Iusacell</name>
+		<cdma/>
+	</provider>
+</country>
+
+<!-- Malaysia -->
+<country code="my">
+	<provider>
+		<name>DiGi</name>
+		<gsm>
+			<network-id mcc="502" mnc="16"/>
+			<apn value="diginet">
+				<name>Mobile Internet</name>
+				<dns>203.92.128.131</dns>
+				<dns>203.92.128.132</dns>
+			</apn>
+			<apn value="3gdgnet">
+				<name>Broadband</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Maxis</name>
+		<gsm>
+			<network-id mcc="502" mnc="12"/>
+			<network-id mcc="502" mnc="17"/>
+			<apn value="maxisbb">
+				<name>Broadband</name>
+				<username>maxis</username>
+				<password>wap</password>
+			</apn>
+			<apn value="net">
+				<name>GPRS</name>
+				<username>maxis</username>
+				<password>net</password>
+			</apn>
+			<apn value="unet">
+				<name>3G (handsets)</name>
+				<username>maxis</username>
+				<password>wap</password>
+				<dns>10.213.17.1</dns>
+				<dns>10.213.17.2</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Celcom</name>
+		<gsm>
+			<network-id mcc="502" mnc="13"/>
+			<network-id mcc="502" mnc="19"/>
+			<apn value="celcom.net.my"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Mozambique -->
+<country code="mz">
+	<provider>
+		<name>MCel</name>
+		<gsm>
+			<network-id mcc="643" mnc="01"/>
+			<apn value="isp.mcel.mz">
+				<username>guest</username>
+				<password>guest</password>
+				<dns>212.96.24.2</dns>
+				<dns>212.96.24.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodacom</name>
+		<gsm>
+			<network-id mcc="643" mnc="04"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Nigeria -->
+<country code="ng">
+	<provider>
+		<name>Zain</name>
+		<gsm>
+			<network-id mcc="621" mnc="20"/>
+			<network-id mcc="621" mnc="80"/>
+			<apn value="wap">
+				<username>web</username>
+				<password>web</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>MTN</name>
+		<gsm>
+			<network-id mcc="621" mnc="30"/>
+			<network-id mcc="621" mnc="60"/>
+			<apn value="web.gprs.mtnnigeria.net">
+				<username>web</username>
+				<password>web</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Glo Mobile</name>
+		<gsm>
+			<network-id mcc="621" mnc="50"/>
+			<network-id mcc="621" mnc="70"/>
+			<apn value="glosecure">
+				<name>Pay as You Go</name>
+				<username>gprs</username>
+				<password>gprs</password>
+			</apn>
+			<apn value="gloflat">
+				<name>Glo 3G Packs</name>
+				<username>flat</username>
+				<password>flat</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Etisalat</name>
+		<gsm>
+			<network-id mcc="621" mnc="90"/>
+			<apn value="etisalat">
+				<name>Etisalat Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Nicaragua -->
+<country code="ni">
+	<provider>
+		<name>Claro</name>
+		<gsm>
+			<network-id mcc="710" mnc="21"/>
+			<network-id mcc="710" mnc="73"/>
+			<apn value="wap.emovil">
+				<name>WAP</name>
+				<username>wapemovil</username>
+				<password>wapemovil</password>
+			</apn>
+			<apn value="web.emovil">
+				<name>Web</name>
+				<username>webemovil</username>
+				<password>webemovil</password>
+			</apn>
+			<apn value="internet.ideasalo.ni">
+				<name>Web (Alo pcs)</name>
+				<username>internet</username>
+				<password>internet</password>
+			</apn>
+			<apn value="wap.ideasalo.ni">
+				<name>WAP (Alo pcs)</name>
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Movistar</name>
+		<gsm>
+			<network-id mcc="710" mnc="30"/>
+			<apn value="internet.movistar.ni">
+				<username>internet</username>
+				<password>internet</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Netherlands -->
+<country code="nl">
+	<provider>
+		<name>Hi</name>
+		<gsm>
+			<apn value="portalmmm.nl"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>KPN Mobile</name>
+		<gsm>
+			<network-id mcc="204" mnc="08"/>
+			<apn value="internet">
+				<username>KPN</username>
+				<password>gprs</password>
+				<dns>62.133.126.28</dns>
+				<dns>62.133.126.29</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telfort</name>
+		<gsm>
+			<network-id mcc="204" mnc="12"/>
+			<apn value="internet">
+				<username>telfortnl</username>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>T-Mobile</name>
+		<gsm>
+			<network-id mcc="204" mnc="16"/>
+			<apn value="internet">
+				<dns>193.78.240.12</dns>
+				<dns>193.79.242.39</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Ben</name>
+		<gsm>
+			<network-id mcc="204" mnc="16"/>
+			<apn value="internet.ben">
+				<dns>193.78.240.12</dns>
+				<dns>193.79.242.39</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="204" mnc="20"/>
+			<apn value="internet">
+				<username>orange</username>
+				<password>orange</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>XS4ALL Mobiel Internet</name>
+		<gsm>
+			<apn value="umts.xs4all.nl"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="204" mnc="04"/>
+			<apn value="live.vodafone.com">
+				<name>Non-business</name>
+				<username>vodafone</username>
+				<password>vodafone</password>
+			</apn>
+			<apn value="office.vodafone.nl">
+				<name>Business</name>
+				<username>vodafone</username>
+				<password>vodafone</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Norway -->
+<country code="no">
+	<provider>
+		<name>Netcom</name>
+		<gsm>
+			<network-id mcc="242" mnc="02"/>
+			<apn value="internet.netcom.no">
+				<username>netcom</username>
+				<password>netcom</password>
+				<dns>212.169.123.67</dns>
+				<dns>212.45.188.254</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<!-- http://www.ice.no/Mobilt-bredb%C3%A5nd-1046.aspx -->
+	<provider>
+		<name>ice.net (Nordisk Mobiltelefon)</name>
+		<cdma>
+			<username>cdma</username>
+			<password>cdma</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Telenor</name>
+		<gsm>
+			<network-id mcc="242" mnc="01"/>
+			<apn value="telenor">
+				<dns>212.17.131.3</dns>
+				<dns>148.122.161.2</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TDC</name>
+		<gsm>
+			<network-id mcc="242" mnc="08"/>
+			<apn value="internet.no">
+				<dns>80.232.41.10</dns>
+				<dns>80.232.41.20</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>NetworkNorway</name>
+		<gsm>
+			<network-id mcc="242" mnc="05"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>OneCall</name>
+		<gsm>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Lebara</name>
+		<gsm>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Altibox</name>
+		<gsm>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>SheTalks</name>
+		<gsm>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telipol</name>
+		<gsm>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Ventelo</name>
+		<gsm>
+			<network-id mcc="242" mnc="07"/>
+			<apn value="internet.ventelo.no"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Ludo Mobil</name>
+		<gsm>
+			<network-id mcc="242" mnc="07"/>
+			<apn value="internet.ventelo.no"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Nepal -->
+<country code="np">
+	<provider>
+		<name>Nepal Telecom</name>
+		<gsm>
+			<network-id mcc="429" mnc="01"/>
+			<apn value="ntnet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Mero Mobile</name>
+		<gsm>
+			<network-id mcc="429" mnc="02"/>
+			<apn value="mero"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- New Zealand -->
+<country code="nz">
+	<provider>
+		<name>Telecom New Zealand</name>
+		<gsm>
+			<network-id mcc="530" mnc="00"/>
+			<network-id mcc="530" mnc="05"/>
+			<apn value="wap.telecom.co.nz">
+				<name>XT mobile (WAP)</name>
+			</apn>
+			<apn value="internet.telecom.co.nz">
+				<name>XT mobile (Internet with Firewall)</name>
+			</apn>
+			<apn value="direct.telecom.co.nz">
+				<name>XT mobile (Direct Internet)</name>
+			</apn>
+			<apn value="oa.telecom.co.nz">
+				<name>XT mobile (One Office/Remote Office)</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="530" mnc="01"/>
+			<apn value="live.vodafone.com">
+				<name>WAP</name>
+				<dns>202.73.206.16</dns>
+				<dns>202.73.198.16</dns>
+			</apn>
+			<apn value="www.vodafone.net.nz">
+				<name>Restricted</name>
+				<dns>202.73.206.16</dns>
+				<dns>202.73.198.16</dns>
+			</apn>
+			<apn value="internet">
+				<name>Unrestricted (public)</name>
+				<dns>202.73.206.16</dns>
+				<dns>202.73.198.16</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Oman -->
+<country code="om">
+	<provider>
+		<name>Oman Mobile</name>
+		<gsm>
+			<network-id mcc="422" mnc="02"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Nawras</name>
+		<gsm>
+			<network-id mcc="422" mnc="03"/>
+			<apn value="isp.nawras.com.om"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Panama -->
+<country code="pa">
+	<provider>
+		<name>Cable and Wireless</name>
+		<gsm>
+			<network-id mcc="714" mnc="01"/>
+			<apn value="apn01.cwpanama.com.pa">
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Movistar</name>
+		<gsm>
+			<network-id mcc="714" mnc="02"/>
+			<apn value="internet.movistar.pa">
+				<username>movistarpa</username>
+				<password>movistarpa</password>
+				<dns>200.39.10.1</dns>
+				<dns>200.36.160.237</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Peru -->
+<country code="pe">
+	<provider>
+		<name>Claro</name>
+		<gsm>
+			<network-id mcc="716" mnc="10"/>
+			<apn value="tim.pe">
+				<username>tim</username>
+				<password>tulibertad</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Movistar</name>
+		<gsm>
+			<network-id mcc="716" mnc="06"/>
+			<apn value="movistar.pe">
+				<username>movistar@datos</username>
+				<password>movistar</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Philippines -->
+<country code="ph">
+	<provider>
+		<name>Globe Telecom</name>
+		<gsm>
+			<network-id mcc="515" mnc="02"/>
+			<apn value="internet.globe.com.ph">
+				<name>Internet</name>
+				<username>globe</username>
+				<password>globe</password>
+				<dns>203.127.225.10</dns>
+				<dns>203.127.225.11</dns>
+			</apn>
+			<apn value="www.globe.com.ph">
+				<name>WAP</name>
+				<username>globe</username>
+				<password>globe</password>
+				<dns>203.127.225.10</dns>
+				<dns>203.127.225.11</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Smart</name>
+		<gsm>
+			<network-id mcc="515" mnc="03"/>
+			<apn value="internet">
+				<username>witsductoor</username>
+				<password>banonoy</password>
+				<dns>202.57.96.3</dns>
+				<dns>202.57.96.4</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Digitel (Sun Cellular)</name>
+		<gsm>
+			<network-id mcc="515" mnc="05"/>
+			<apn value="minternet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Pakistan -->
+<country code="pk">
+	<provider>
+		<name>Djuice</name>
+		<gsm>
+			<network-id mcc="515" mnc="06"/>
+			<apn value="internet">
+				<username>telenor</username>
+				<password>telenor</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Mobilink</name>
+		<gsm>
+			<network-id mcc="515" mnc="01"/>
+			<apn value="connect.mobilinkworld.com">
+				<name>Internet</name>
+			</apn>
+			<apn value="jazzconnect.mobilinkworld.com">
+				<name>Jazz</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telenor</name>
+		<gsm>
+			<network-id mcc="515" mnc="06"/>
+			<apn value="internet">
+				<username>telenor</username>
+				<password>telenor</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Ufone</name>
+		<gsm>
+			<network-id mcc="410" mnc="03"/>
+			<apn value="ufone.internet">
+				<username>ufone</username>
+				<password>ufone</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Warid</name>
+		<gsm>
+			<network-id mcc="515" mnc="07"/>
+			<apn value="warid"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>ZONG</name>
+		<gsm>
+			<network-id mcc="515" mnc="04"/>
+			<apn value="zonginternet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Poland -->
+<country code="pl">
+	<provider>
+		<name>ERA</name>
+		<gsm>
+			<network-id mcc="260" mnc="02"/>
+			<apn value="erainternet">
+				<username>erainternet</username>
+				<password>erainternet</password>
+				<dns>213.158.194.1</dns>
+				<dns>213.158.193.38</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Play Online</name>
+		<gsm>
+			<network-id mcc="260" mnc="06"/>
+			<apn value="Internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Heyah</name>
+		<gsm>
+			<apn value="heyah.pl">
+				<username>heyah</username>
+				<password>heyah</password>
+				<dns>213.158.194.1</dns>
+				<dns>213.158.193.38</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="260" mnc="03"/>
+			<apn value="internet">
+				<username>internet</username>
+				<password>internet</password>
+				<dns>194.9.223.79</dns>
+				<dns>194.204.159.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>iPlus</name>
+		<gsm>
+			<network-id mcc="260" mnc="01"/>
+			<apn value="www.plusgsm.pl">
+				<dns>212.2.96.51</dns>
+				<dns>212.2.96.52</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>GaduAIR</name>
+		<gsm>
+			<apn value="internet.gadu-gadu.pl"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Portugal -->
+<country code="pt">
+	<provider>
+		<name>Kanguru</name>
+		<gsm>
+			<network-id mcc="286" mnc="03"/>
+			<apn value="myconnection">
+				<dns>62.169.67.172</dns>
+				<dns>62.169.67.171</dns>
+			</apn>
+			<apn value="kangurufixo">
+				<name>Fixo</name>
+				<dns>62.169.67.172</dns>
+				<dns>62.169.67.171</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Optimus</name>
+		<gsm>
+			<network-id mcc="286" mnc="03"/>
+			<apn value="internet">
+				<dns>194.79.69.129</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TMN</name>
+		<gsm>
+			<network-id mcc="286" mnc="06"/>
+			<apn value="internet">
+				<dns>194.65.3.20</dns>
+				<dns>194.65.3.21</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="286" mnc="01"/>
+			<apn value="internet.vodafone.pt">
+				<dns>212.18.160.133</dns>
+				<dns>212.18.160.134</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Paraguay -->
+<country code="py">
+	<provider>
+		<name>VOX</name>
+		<gsm>
+			<network-id mcc="744" mnc="01"/>
+			<apn value="vox.wap"></apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Personal</name>
+		<gsm>
+			<network-id mcc="744" mnc="05"/>
+			<apn value="internet"></apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tigo</name>
+		<gsm>
+			<network-id mcc="744" mnc="04"/>
+			<apn value="internet.tigo.py">
+				<name>Internet</name>
+			</apn>
+			<apn value="broadband.tigo.py">
+				<name>Broadband</name>
+				<name xml:lang="es">Banda Ancha Móvil</name>
+				<username>tigo</username>
+				<password>tigo</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Qatar -->
+<country code="qa">
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="427" mnc="02"/>
+			<apn value="vodafone.com.qa"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Q-Tel</name>
+		<gsm>
+			<network-id mcc="427" mnc="01"/>
+			<apn value="gprs.qtel">
+				<name>Qatarnet</name>
+				<username>gprs</username>
+				<password>gprs</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Romania -->
+<country code="ro">
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="226" mnc="10"/>
+			<apn value="internet">
+				<dns>172.22.7.21</dns>
+				<dns>172.22.7.20</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="226" mnc="01"/>
+			<apn value="internet.vodafone.ro">
+				<name>Mobile Internet (Postpaid)</name>
+				<username>internet.vodafone.ro</username>
+				<password>vodafone</password>
+			</apn>
+			<apn value="internet.pre.vodafone.ro">
+				<name>Mobile Internet (Prepaid)</name>
+				<username>internet.pre.vodafone.ro</username>
+				<password>vodafone</password>
+			</apn>
+			<apn value="live.vodafone.com">
+				<name>Live! (Postpaid)</name>
+				<username>live</username>
+				<password>vodafone</password>
+			</apn>
+			<apn value="live.pre.vodafone.ro">
+				<name>Live! (Prepaid)</name>
+				<username>live.pre.vodafone.com</username>
+				<password>vodafone</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Zapp</name>
+		<cdma>
+			<username>zapp</username>
+			<password>zapp</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Digi.Net Mobil</name>
+		<gsm>
+			<network-id mcc="226" mnc="05"/>
+			<apn value="internet">
+				<name>Home</name>
+			</apn>
+			<apn value="static">
+				<name>Business (static)</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Serbia -->
+<country code="rs">
+	<provider>
+		<name>Telenor</name>
+		<gsm>
+			<network-id mcc="220" mnc="01"/>
+			<apn value="internet">
+				<username>telenor</username>
+				<password>gprs</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telekom Srbija</name>
+		<gsm>
+			<network-id mcc="220" mnc="03"/>
+			<apn value="gprsinternet">
+				<username>mts</username>
+				<password>064</password>
+				<dns>195.178.38.3</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>VIP Mobile</name>
+		<gsm>
+			<network-id mcc="220" mnc="05"/>
+			<apn value="vipmobile">
+				<username>vipmobile</username>
+				<password>vipmobile</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Russia -->
+<country code="ru">
+	<provider>
+		<name>BaikalWestCom</name>
+		<name xml:lang="ru">БайкалВестКом</name>
+		<gsm>
+			<network-id mcc="250" mnc="12"/>
+			<apn value="inet.bwc.ru">
+				<username>bwc</username>
+				<password>bwc</password>
+				<dns>81.18.113.2</dns>
+				<dns>81.18.112.50</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Beeline</name>
+		<name xml:lang="ru">Билайн</name>
+		<gsm>
+			<network-id mcc="250" mnc="28"/>
+			<network-id mcc="250" mnc="99"/>
+			<apn value="internet.beeline.ru">
+				<username>beeline</username>
+				<password>beeline</password>
+				<dns>217.118.66.243</dns>
+				<dns>217.118.66.244</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>ETK</name>
+		<gsm>
+			<network-id mcc="250" mnc="05"/>
+			<apn value="wap.etk.ru"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>MTS</name>
+		<gsm>
+			<network-id mcc="250" mnc="01"/>
+			<apn value="internet.mts.ru">
+				<username>mts</username>
+				<password>mts</password>
+				<dns>213.87.0.1</dns>
+				<dns>213.87.1.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Megafon</name>
+		<name xml:lang="ru">Мегафон</name>
+
+		<gsm>
+			<network-id mcc="250" mnc="02"/>
+
+			<apn value="internet.nw">
+				<name>NW</name>
+				<name xml:lang="ru">Северо-Запад</name>
+				<dns>10.140.142.42</dns>
+				<dns>10.140.142.45</dns>
+			</apn>
+			<apn value="internet.ugsm">
+				<name>UGSM</name>
+				<name xml:lang="ru">Урал</name>
+				<dns>83.149.32.2</dns>
+				<dns>83.149.33.2</dns>
+			</apn>
+			<apn value="internet.usi.ru">
+				<name>usi</name>
+				<dns>212.120.160.130</dns>
+				<dns>212.120.160.130</dns>
+			</apn>
+			<apn value="internet.dv">
+				<name>DV</name>
+				<name xml:lang="ru">Дальний Восток</name>
+				<dns>83.149.52.77</dns>
+				<dns>194.186.112.18</dns>
+			</apn>
+			<apn value="internet.kvk">
+				<name>kvk</name>
+				<name xml:lang="ru">Кавказ</name>
+				<dns>83.149.24.244</dns>
+				<dns>62.183.50.230</dns>
+			</apn>
+			<apn value="internet.ltmsk">
+				<name>ltmsk</name>
+				<dns>10.22.10.20</dns>
+				<dns>10.22.10.21</dns>
+			</apn>
+			<apn value="internet.sib">
+				<name>sib</name>
+				<name xml:lang="ru">Сибирь</name>
+				<dns>83.149.51.65</dns>
+				<dns>83.149.50.65</dns>
+			</apn>
+			<apn value="internet.volga">
+				<name>volga</name>
+				<name xml:lang="ru">Поволжье</name>
+				<dns>83.149.16.7</dns>
+				<dns>195.128.128.1</dns>
+			</apn>
+			<apn value="internet.mc">
+				<name>mc</name>
+				<name xml:lang="ru">Центр</name>
+				<dns>81.18.129.252</dns>
+				<dns>217.150.34.1</dns>
+			</apn>
+			<apn value="internet">
+				<name>Moscow</name>
+				<name xml:lang="ru">Москва</name>
+				<username>gdata</username>
+				<password>gdata</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>NCC</name>
+		<gsm>
+			<network-id mcc="250" mnc="03"/>
+			<apn value="internet">
+				<username>ncc</username>
+				<dns>10.0.3.5</dns>
+				<dns>10.0.3.2</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>NTC</name>
+		<gsm>
+			<network-id mcc="250" mnc="16"/>
+			<apn value="internet.ntc">
+				<dns>80.243.64.67</dns>
+				<dns>80.243.68.34</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Enisey TeleCom</name>
+		<name xml:lang="ru">Енисей Телеком</name>
+		<gsm>
+			<network-id mcc="250" mnc="05"/>
+			<apn value="internet.etk.ru">
+				<username>etk</username>
+				<dns>10.10.30.3</dns>
+				<dns>10.10.30.4</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Motiv</name>
+		<name xml:lang="ru">Мотив</name>
+		<gsm>
+			<network-id mcc="250" mnc="35"/>
+			<apn value="inet.ycc.ru">
+				<username>motiv</username>
+				<dns>217.148.52.34</dns>
+				<dns>217.148.52.3</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tatincom</name>
+		<name xml:lang="ru">Татинком</name>
+		<gsm>
+			<apn value="internet.tatincom.ru">
+				<username>tatincom</username>
+				<password>tatincom</password>
+				<dns>89.207.96.2</dns>
+				<dns>89.207.97.18</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tele2</name>
+		<name xml:lang="ru">Теле2</name>
+		<gsm>
+			<network-id mcc="250" mnc="20"/>
+			<apn value="wap.tele2.ru">
+				<username>gprs</username>
+				<dns>130.244.127.161</dns>
+				<dns>130.244.127.169</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Skylink</name>
+		<name xml:lang="ru">Скайлинк</name>
+		<cdma>
+			<username>mobile</username>
+			<password>internet</password>
+
+			<!-- Assignments taken from IFAST: http://www.ifast.org/files/NationalSID.htm -->
+			<sid value="11396"/>  <!-- Khabarovsk area -->
+			<sid value="11398"/>  <!-- Adygeya -->
+			<sid value="11400"/>  <!-- Altay republic -->
+			<sid value="11418"/>  <!-- Bashkostostan -->
+			<sid value="11424"/>  <!-- Buryatiya -->
+			<sid value="11432"/>  <!-- Dagestan -->
+			<sid value="11434"/>  <!-- Ingushetia -->
+			<sid value="11438"/>  <!-- Kabardino-Balkariya -->
+			<sid value="11440"/>  <!-- Kalmykia -->
+			<sid value="11442"/>  <!-- Karachayevo-Cherkessiya -->
+			<sid value="11446"/>  <!-- Karelia -->
+			<sid value="11452"/>  <!-- Komi -->
+			<sid value="11456"/>  <!-- Mordovia -->
+			<sid value="11462"/>  <!-- Yakutiya -->
+			<sid value="11465"/>  <!-- North Osetia -->
+			<sid value="11482"/>  <!-- Tatarstan -->
+			<sid value="11484"/>  <!-- Tuva -->
+			<sid value="11492"/>  <!-- Udmurtiya -->
+			<sid value="11494"/>  <!-- Khakasia -->
+			<sid value="11498"/>  <!-- Chechnya -->
+			<sid value="11510"/>  <!-- Altay area -->
+			<sid value="11532"/>  <!-- Krasnodar -->
+			<sid value="11546"/>  <!-- Krasnoyarsk -->
+			<sid value="11556"/>  <!-- Primorsky area -->
+			<sid value="11568"/>  <!-- Stavropol -->
+			<sid value="11572"/>  <!-- Amur area -->
+			<sid value="11578"/>  <!-- Arkhangelsk -->
+			<sid value="11582"/>  <!-- Astrakhan -->
+			<sid value="11590"/>  <!-- Belgorod -->
+			<sid value="11596"/>  <!-- Bryansk -->
+			<sid value="11604"/>  <!-- Vladimir -->
+			<sid value="11616"/>  <!-- Volgograd -->
+			<sid value="11622"/>  <!-- Vologda -->
+			<sid value="11630"/>  <!-- Ivanovo -->
+			<sid value="11642"/>  <!-- Irkutsk -->
+			<sid value="11646"/>  <!-- Kaliningrad -->
+			<sid value="11650"/>  <!-- Kaluga -->
+			<sid value="11668"/>  <!-- Kemerovo -->
+			<sid value="11672"/>  <!-- Kostroma -->
+			<sid value="11676"/>  <!-- Kurgan -->
+			<sid value="11684"/>  <!-- Kursk -->
+			<sid value="11692"/>  <!-- Leningrad area -->
+			<sid value="11698"/>  <!-- Lipetsk -->
+			<sid value="11700"/>  <!-- Magadan -->
+			<sid value="11732"/>  <!-- Moscow area -->
+			<sid value="11736"/>  <!-- Murmansk -->
+			<sid value="11754"/>  <!-- Nizhniy Novgorod -->
+			<sid value="11758"/>  <!-- V. Novgorog -->
+			<sid value="11772"/>  <!-- Novosibirsk -->
+			<sid value="11780"/>  <!-- Kirov -->
+			<sid value="11784"/>  <!-- Chuvashia -->
+			<sid value="11788"/>  <!-- Evreysky district -->
+			<sid value="11790"/>  <!-- Aginsky-Buryatsky district -->
+			<sid value="11794"/>  <!-- Penza -->
+			<sid value="11802"/>  <!-- Mariy El -->
+			<sid value="11806"/>  <!-- Koryak district -->
+			<sid value="11816"/>  <!-- Omsk -->
+			<sid value="11826"/>  <!-- Orenburg -->
+			<sid value="11830"/>  <!-- Orel -->
+			<sid value="11844"/>  <!-- Perm -->
+			<sid value="11848"/>  <!-- Pskov -->
+			<sid value="11868"/>  <!-- Rostov -->
+			<sid value="11874"/>  <!-- Tomsk -->
+			<sid value="11884"/>  <!-- Voronezh -->
+			<sid value="11892"/>  <!-- Ryazan -->
+			<sid value="11908"/>  <!-- Samara -->
+			<sid value="11922"/>  <!-- Saratov -->
+			<sid value="11924"/>  <!-- Sakhalin -->
+			<sid value="11948"/>  <!-- Sverdlovsk -->
+			<sid value="11960"/>  <!-- Tambov -->
+			<sid value="11964"/>  <!-- Smolensk -->
+			<sid value="11968"/>  <!-- Tver -->
+			<sid value="11978"/>  <!-- Tula -->
+			<sid value="11984"/>  <!-- Tyumen -->
+			<sid value="11990"/>  <!-- Ul yanovsk -->
+			<sid value="12006"/>  <!-- Chelyabinsk -->
+			<sid value="12012"/>  <!-- Chita -->
+			<sid value="12020"/>  <!-- Yaroslavl -->
+			<sid value="12060"/>  <!-- Moscow -->
+			<sid value="12061"/>  <!-- Moscow -->
+			<sid value="12063"/>  <!-- St. Petersburg -->
+			<sid value="12064"/>  <!-- St. Petersburg -->
+			<sid value="12065"/>  <!-- Kemerovo -->
+			<sid value="12066"/>  <!-- Kemerovo -->
+			<sid value="12067"/>  <!-- Sverdlovsk -->
+			<sid value="12085"/>  <!-- Nenetskiy district -->
+			<sid value="12087"/>  <!-- Ust-Ordynsky district -->
+			<sid value="12090"/>  <!-- Khanty-Mansi district -->
+			<sid value="12092"/>  <!-- Chukotsky district -->
+			<sid value="12094"/>  <!-- Yamal-Nenets district -->
+			<sid value="12095"/>  <!-- Kamchatka -->
+		</cdma>
+	</provider>
+	<provider>
+		<name>U-tel</name>
+		<gsm>
+			<network-id mcc="250" mnc="39"/>
+			<apn value="internet.usi.ru"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Saudi Arabia -->
+<country code="sa">
+	<provider>
+		<name>Mobily</name>
+		<gsm>
+			<network-id mcc="420" mnc="03"/>
+			<apn value="web1">
+				<name>Postpaid</name>
+			</apn>
+			<apn value="web2">
+				<name>Prepaid</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>STC</name>
+		<gsm>
+			<network-id mcc="420" mnc="01"/>
+			<apn value="jawalnet.com.sa">
+				<dns>212.118.133.101</dns>
+				<dns>212.118.133.102</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Zain</name>
+		<gsm>
+			<network-id mcc="420" mnc="04"/>
+			<apn value="zain"/>
+		</gsm>
+	</provider>
+</country>
+
+
+<!-- Sweden -->
+<country code="se">
+	<provider>
+		<name>3</name>
+		<gsm>
+			<network-id mcc="240" mnc="02"/>
+			<network-id mcc="240" mnc="04"/>
+			<!-- http://www.tre.se/templates/Sporg3_02.aspx?id=4231 -->
+			<apn value="data.tre.se">
+				<name>Mobiltelefon</name>
+			</apn>
+			<!-- http://www.tre.se/templates/Sporg3_02.aspx?id=4231 -->
+			<apn value="bredband.tre.se">
+				<name>Bredband</name>
+			</apn>
+			<apn value="net.tre.se">
+				<name>Bredband Kontantkort</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Glocalnet</name>
+		<gsm>
+			<!-- http://glocalnet.se/mobiltbredband -->
+			<apn value="bredband.glocalnet.se">
+				<name>Mobilt Bredband</name>
+			</apn>
+			<!-- http://kundservice.glocalnet.se/Kundservice/Mobiltelefoni/Installningar/ -->
+			<apn value="internet.glocalnet.se">
+				<name>Glocalnet Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Halebop</name>
+		<gsm>
+			<network-id mcc="240" mnc="01"/>
+
+			<!-- http://www.halebop.se/halebop_kundtjanst/vanliga_fragor_kontantkort/ -->
+			<apn value="halebop.telia.se"/>
+		</gsm>
+	</provider>
+	<provider>
+		<!-- http://www.ice.net/Mobilt-bredband-1373.aspx -->
+		<name>ice.net (Nordisk Mobiltelefon)</name>
+		<cdma>
+			<username>cdma</username>
+			<password>cdma</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Tele2</name>
+		<gsm>
+			<network-id mcc="240" mnc="07"/>
+			<network-id mcc="240" mnc="05"/>
+			<!-- http://www.tele2.se/internet-via-gprs.html -->
+			<apn value="internet.tele2.se">
+				<name>Mobilt Internet</name>
+			</apn>
+			<!-- http://www.tele2.se/alien-modem.html -->
+			<apn value="mobileinternet.tele2.se">
+				<name>Mobilt Bredband</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Comviq</name>
+		<gsm>
+			<network-id mcc="240" mnc="07"/>
+			<network-id mcc="240" mnc="05"/>
+			<apn value="data.comviq.se">
+				<name>Surf</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Multicom Security</name>
+		<gsm>
+			<network-id mcc="240" mnc="01"/>
+			<network-id mcc="240" mnc="05"/>
+			
+			<!-- http://multicomsecurity.se/produkter-tjanster/mobil-datakommunikation/mobiflex/ -->
+			<apn value="mobiflex.telia.se">
+				<name>Mobiflex</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telenor</name>
+		<gsm>
+			<network-id mcc="240" mnc="04"/>
+			<network-id mcc="240" mnc="06"/>
+			<network-id mcc="240" mnc="08"/>
+
+			<!-- http://www.telenor.se/privat/mobiltelefoni/alla-mobiltjanster/alla-mobiltjanster.html#C45-2100 -->
+			<apn value="internet.telenor.se">
+				<name>Mobilt Internet</name>
+			</apn>
+			<apn value="services.telenor.se">
+				<name>Mobilsurf med maxtaxa</name>
+			</apn>
+			<apn value="bredband.telenor.se">
+				<name>Mobilt Bredband</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Telia</name>
+		<gsm>
+			<network-id mcc="240" mnc="01"/>
+			<network-id mcc="240" mnc="05"/>
+
+			<!-- http://www3.telia.se/foretag/mobilguiden/ -->
+			<apn value="online.telia.se"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TDC</name>
+		<gsm>
+			<network-id mcc="240" mnc="14"/>
+			<apn value="internet.se"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>djuice</name>
+		<gsm>
+			<network-id mcc="240" mnc="09"/>
+			<apn value="internet.djuice.se"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Com Hem</name>
+		<gsm>
+			<network-id mcc="240" mnc="02"/>
+			<network-id mcc="240" mnc="04"/>
+			<!-- MVNO operating on 3's network -->
+			<apn value="bredband.comhem.se"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Parlino</name>
+		<gsm>
+			<apn value="internet.parlino.se"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Universal Telecom</name>
+		<gsm>
+			<!-- http://www.uvtc.com/SWEDEN/internet/mobiltbredband/Default.aspx -->
+			<apn value="sp-internet">
+				<name>Mobilt Bredband</name>
+			</apn>
+			<!-- http://www.uvtc.com/sweden/Mobil/Faq/default.aspx -->
+			<apn value="internet.uvtc.com">
+				<name>Mobilt Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Singapore -->
+<country code="sg">
+	<provider>
+		<name>M1</name>
+		<gsm>
+			<!-- http://m1.com.sg/filedownloads/popup/Miworld/popup_se2.5.html -->
+			<network-id mcc="525" mnc="03"/>
+			<apn value="sunsurf">
+				<name>SunSurf/Mobile Broadband (postpaid)</name>
+				<username>65</username>
+				<password>user123</password>
+				<dns>202.79.64.21</dns>
+				<dns>202.79.64.26</dns>
+			</apn>
+			<apn value="miworld">
+				<name>MiWorld Mobile (postpaid)</name>
+				<password>user123</password>
+			</apn>
+			<apn value="miworldcard">
+				<name>MiWorld Mobile (prepaid)</name>
+				<password>user123</password>
+			</apn>
+			<apn value="prepaidbb">
+				<name>Mobile Broadband (prepaid)</name>
+			</apn>
+			<apn value="sunsurfmcard">
+				<name>M Card (prepaid)</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>SingTel</name>
+		<gsm>
+			<network-id mcc="525" mnc="01"/>
+			<network-id mcc="525" mnc="02"/>
+			<apn value="internet">
+				<dns>165.21.100.88</dns>
+				<dns>165.21.83.88</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Starhub</name>
+		<gsm>
+			<network-id mcc="525" mnc="05"/>
+			<apn value="shwap">
+				<name>WAP</name>
+				<username>star</username>
+				<password>hub</password>
+				<dns>203.116.1.78</dns>
+			</apn>
+			<apn value="shppd">
+				<name>MaxMobile Broadband (prepaid)</name>
+			</apn>
+			<apn value="shinternet">
+				<name>MaxMobile Broadband (postpaid)</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Slovenia -->
+<country code="si">
+	<provider>
+		<name>Mobitel</name>
+		<gsm>
+			<network-id mcc="293" mnc="41"/>
+
+			<apn value="internet">
+				<name>Postpaid</name>
+				<username>mobitel</username>
+				<password>internet</password>
+				<dns>213.229.248.161</dns>
+				<dns>193.189.160.11</dns>
+			</apn>
+			<apn value="internetpro">
+				<username>mobitel</username>
+				<password>internet</password>
+				<dns>213.229.248.161</dns>
+				<dns>193.189.160.11</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone / Simobil</name>
+		<gsm>
+			<network-id mcc="293" mnc="40"/>
+			<apn value="internet.simobil.si">
+				<username>simobil</username>
+				<password>internet</password>
+				<dns>121.30.86.130</dns>
+				<dns>193.189.160.11</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>T-2</name>
+		<gsm>
+			<network-id mcc="293" mnc="64"/>
+			<apn value="internet.t-2.net"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Slovakia -->
+<country code="sk">
+	<provider>
+		<name>T-Mobile (EuroTel)</name>
+		<gsm>
+			<network-id mcc="231" mnc="02"/>
+			<network-id mcc="231" mnc="04"/>
+			<apn value="internet">
+				<dns>194.154.230.66</dns>
+				<dns>194.154.230.74</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="231" mnc="01"/>
+			<apn value="internet">
+				<dns>213.151.200.30</dns>
+				<dns>213.151.208.161</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>O2</name>
+		<gsm>
+			<network-id mcc="231" mnc="06"/>
+			<apn value="o2internet">
+				<name>Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Senegal -->
+<country code="sn">
+	<provider>
+		<name>Tigo</name>
+		<gsm>
+			<network-id mcc="608" mnc="02"/>
+			<apn value="wap.sentelgsm.com">
+				<dns>200.85.0.104</dns>
+				<dns>200.85.0.107</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- El Salvador -->
+<country code="sv">
+	<provider>
+		<name>movistar</name>
+		<gsm>
+			<network-id mcc="706" mnc="04"/>
+			<apn value="movistar.sv">
+				<username>movistarsv</username>
+				<password>movistarsv</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>digicel</name>
+		<gsm>
+			<network-id mcc="706" mnc="02"/>
+			<apn value="wap.digicelsv.com"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Tigo</name>
+		<gsm>
+			<network-id mcc="706" mnc="03"/>
+			<apn value="internet.tigo.sv"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Claro</name>
+		<gsm>
+			<network-id mcc="706" mnc="10"/>
+			<apn value="internet.ideasclaro">
+				<name>Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Sudan -->
+<country code="sd">
+	<provider>
+		<name>Zain</name>
+		<gsm>
+			<network-id mcc="634" mnc="01"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Thailand -->
+<country code="th">
+	<provider>
+		<name>AIS</name>
+		<gsm>
+			<network-id mcc="520" mnc="01"/>
+			<apn value="internet">
+				<dns>202.183.255.20</dns>
+				<dns>202.183.255.21</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>DTAC</name>
+		<gsm>
+			<network-id mcc="520" mnc="18"/>
+			<apn value="www.dtac.co.th">
+				<dns>202.44.202.2</dns>
+				<dns>203.44.144.33</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>True Move</name>
+		<gsm>
+			<network-id mcc="520" mnc="99"/>
+			<apn value="internet">
+				<username>true</username>
+				<password>true</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Turkey -->
+<country code="tr">
+	<provider>
+		<name>Avea</name>
+		<gsm>
+			<network-id mcc="286" mnc="03"/>
+			<network-id mcc="286" mnc="04"/>
+			<apn value="internet">
+				<dns>212.156.4.4</dns>
+				<dns>212.156.4.20</dns>
+			</apn>
+
+			<apn value="aycell">
+				<name>(former Aycell)</name>
+				<dns>212.156.4.1</dns>
+				<dns>212.156.4.4</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Turkcell</name>
+		<gsm>
+			<network-id mcc="286" mnc="01"/>
+			<apn value="internet">
+				<username>gprs</username>
+				<password>gprs</password>
+				<dns>86.108.136.27</dns>
+				<dns>86.108.136.26</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodafone</name>
+		<gsm>
+			<network-id mcc="286" mnc="02"/>
+			<apn value="telsim">
+				<name>Postpaid</name>
+				<username>telsim</username>
+				<password>telsim</password>
+				<dns>212.65.128.20</dns>
+				<dns>212.156.4.7</dns>
+			</apn>
+			<apn value="prepaidgprs">
+				<name>Prepaid</name>
+				<dns>212.65.128.20</dns>
+				<dns>212.156.4.7</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Trinidad & Tobago -->
+<country code="tt">
+	<provider>
+		<name>Digicel</name>
+		<gsm>
+			<network-id mcc="374" mnc="13"/>
+			<apn value="wap.digiceltt.com">
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>bmobile / TSTT</name>
+		<gsm>
+			<network-id mcc="374" mnc="12"/>
+			<apn value="internet">
+				<username>wap</username>
+				<password>wap</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Taiwan -->
+<country code="tw">
+	<provider>
+		<name>Chunghwa Telecom (emome)</name>
+		<name xml:lang="zh">中華電信 (emome)</name>
+		<gsm>
+			<network-id mcc="466" mnc="92"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Far EasTone / KGT</name>
+		<name xml:lang="zh">遠傳電信 / 和信電訊</name>
+		<gsm>
+			<network-id mcc="466" mnc="01"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TW Mobile</name>
+		<name xml:lang="zh">台湾大哥大</name>
+		<gsm>
+			<network-id mcc="466" mnc="99"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>TransAsia</name>
+		<name xml:lang="zh">泛亞電信</name>
+		<gsm>
+			<network-id mcc="466" mnc="97"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vibo Telecom / Aurora</name>
+		<name xml:lang="zh">威寶電信 (Vibo) / 震旦電信 (Aurora)</name>
+		<gsm>
+			<network-id mcc="466" mnc="89"/>
+			<apn value="vibo"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Asia Pacific Telecom (APBW)</name>
+		<name xml:lang="zh">亞太電信 (亞太行動寬頻電信)</name>
+		<cdma/>
+	</provider>
+</country>
+
+<!-- Tanzania, United Republic of -->
+<country code="tz">
+	<provider>
+		<name>Zain</name>
+		<gsm>
+			<network-id mcc="640" mnc="05"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodacom</name>
+		<gsm>
+			<network-id mcc="640" mnc="04"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Zantel</name>
+		<gsm>
+			<network-id mcc="640" mnc="03"/>
+			<apn value="znet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Ukraine -->
+<country code="ua">
+	<provider>
+		<name>kyivstar</name>
+		<gsm>
+			<network-id mcc="255" mnc="03"/>
+
+			<apn value="www.ab.kyivstar.net">
+				<name>Ace&amp;Base</name>
+				<username>igprs</username>
+				<password>internet</password>
+			</apn>
+			<apn value="www.kyivstar.net">
+				<name>Contract GPRS</name>
+			</apn>
+			<apn value="3g.kyivstar.net">
+				<name>Internet 3G</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Djuice</name>
+		<gsm>
+			<network-id mcc="255" mnc="03"/>
+
+			<apn value="www.djuice.com.ua">
+				<name>Internet GPRS</name>
+			</apn>
+			<apn value="xl.kyivstar.net">
+				<name>Internet XL</name>
+			</apn>
+			<apn value="3g.kyivstar.net">
+				<name>Internet 3G</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Life</name>
+		<gsm>
+			<network-id mcc="255" mnc="06"/>
+
+			<apn value="internet">
+				<name>Standard</name>
+				<dns>212.58.160.33</dns>
+				<dns>212.58.160.34</dns>
+			</apn>
+			<apn value="speed">
+				<name>Faster</name>
+				<dns>212.58.160.33</dns>
+				<dns>212.58.160.34</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Beeline</name>
+		<gsm>
+			<network-id mcc="255" mnc="02"/>
+			<apn value="internet.beeline.ua"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Jeans</name>
+		<gsm>
+			<apn value="www.jeans.ua">
+				<dns>80.255.64.23</dns>
+				<dns>80.255.64.24</dns>
+			</apn>
+			<apn value="hyper.net">
+				<name>Hyper.NET</name>
+				<dns>212.58.160.33</dns>
+				<dns>212.58.160.34</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>MTS</name>
+		<gsm>
+			<network-id mcc="255" mnc="01"/>
+
+			<apn value="internet">
+				<name>GPRS Internet</name>
+				<username>internet</username>
+				<dns>212.58.160.33</dns>
+				<dns>212.58.160.34</dns>
+			</apn>
+			<apn value="hyper.net">
+				<name>Hyper.NET</name>
+			</apn>
+			<apn value="active">
+				<name>HyperActive</name>
+			</apn>
+			<apn value="www.umc.ua">
+				<name>umc.ua</name>
+				<dns>80.255.64.23</dns>
+				<dns>80.255.64.24</dns>
+			</apn>
+		</gsm>
+		<cdma>
+			<name>MTS Connect 3G</name>
+			<username>mobile</username>
+			<password>internet</password>
+			<sid value="15907"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Utel</name>
+		<gsm>
+			<network-id mcc="255" mnc="07"/>
+			<apn value="3g.utel.ua"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>CDMA Ukraine</name>
+		<cdma>
+			<username>cdma</username>
+			<password>cdma</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>InterTelecom</name>
+		<cdma>
+			<username>IT@IT</username>
+			<password>IT</password>
+			<sid value="15906"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>PEOPLEnet</name>
+		<cdma/>
+	</provider>
+</country>
+
+<!-- Uganda -->
+<country code="ug">
+	<provider>
+		<name>MTN</name>
+		<gsm>
+			<network-id mcc="641" mnc="10"/>
+			<apn value="yellopix.mtn.co.ug">
+				<dns>193.108.252.50</dns>
+				<dns>193.108.252.51</dns>
+			</apn>
+		</gsm>
+	</provider>
+    <provider>
+		<name>Orange</name>
+		<gsm>
+			<network-id mcc="641" mnc="14"/>
+			<apn value="orange.ug"/>
+		</gsm>
+	</provider>
+    <provider>
+		<name>UTL</name>
+		<gsm>
+			<network-id mcc="641" mnc="11"/>
+			<apn value="utbroadband">
+				<name>Mobile Broadband</name>
+			</apn>
+			<apn value="utweb">
+				<name>Mobile Internet</name>
+			</apn>
+		</gsm>
+	</provider>
+    <provider>
+		<name>Warid</name>
+		<gsm>
+			<network-id mcc="641" mnc="22"/>
+			<!-- http://www.waridtel.co.ug/gprs.php -->
+			<apn value="web.waridtel.co.ug"/>
+		</gsm>
+	</provider>
+    <provider>
+		<name>Zain</name>
+		<gsm>
+			<network-id mcc="641" mnc="01"/>
+			<apn value="web.ug.zain.com"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- United States -->
+<country code="us">
+	<provider>
+		<name>AT&amp;T</name>
+		<gsm>
+			<network-id mcc="310" mnc="038"/>
+			<network-id mcc="310" mnc="090"/>
+			<network-id mcc="310" mnc="150"/>
+			<network-id mcc="310" mnc="410"/>
+			<network-id mcc="310" mnc="560"/>
+			<network-id mcc="310" mnc="680"/>
+			<apn value="WAP.CINGULAR">
+				<name>MEdia Net</name>
+				<username>WAP@CINGULARGPRS.COM</username>
+				<password>CINGULAR1</password>
+			</apn>
+			<apn value="ISP.CINGULAR">
+				<name>Data Connect</name>
+				<username>ISP@CINGULARGPRS.COM</username>
+				<password>CINGULAR1</password>
+			</apn>
+			<apn value="ISP.CINGULAR">
+				<name>Data Connect (Accelerated)</name>
+				<username>ISPDA@CINGULARGPRS.COM</username>
+				<password>CINGULAR1</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>T-Mobile</name>
+		<gsm>
+			<network-id mcc="310" mnc="160"/>
+			<network-id mcc="310" mnc="200"/>
+			<network-id mcc="310" mnc="210"/>
+			<network-id mcc="310" mnc="220"/>
+			<network-id mcc="310" mnc="230"/>
+			<network-id mcc="310" mnc="240"/>
+			<network-id mcc="310" mnc="250"/>
+			<network-id mcc="310" mnc="260"/>
+			<network-id mcc="310" mnc="270"/>
+			<network-id mcc="310" mnc="310"/>
+			<network-id mcc="310" mnc="490"/>
+			<network-id mcc="310" mnc="580"/>
+			<network-id mcc="310" mnc="660"/>
+			<network-id mcc="310" mnc="800"/>
+
+			<apn value="wap.voicestream.com">
+				<name>Web2Go/t-zones</name>
+			</apn>
+			<apn value="internet2.voicestream.com">
+				<name>Internet</name>
+			</apn>
+			<apn value="internet3.voicestream.com">
+				<name>Internet with VPN</name>
+			</apn>
+			<apn value="epc.tmobile.com">
+				<name>T-Mobile G1</name>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Cincinnati Bell Wireless</name>
+		<gsm>
+			<network-id mcc="310" mnc="420"/>
+			<apn value="wap.gocbw.com">
+				<username>cbw</username>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Sprint</name>
+		<cdma>
+			<!-- Assignments taken from IFAST: http://www.ifast.org/files/NationalSID.htm -->
+			<sid value="4103"/>
+			<sid value="4106"/>
+			<sid value="4107"/>
+			<sid value="4120"/>
+			<sid value="4121"/>
+			<sid value="4124"/>
+			<sid value="4126"/>
+			<sid value="4132"/>
+			<sid value="4135"/>
+			<sid value="4139"/>
+			<sid value="4144"/>
+			<sid value="4145"/>
+			<sid value="4148"/>
+			<sid value="4151"/>
+			<sid value="4153"/>
+			<sid value="4155"/>
+			<sid value="4157"/>
+			<sid value="4159"/>
+			<sid value="4162"/>
+			<sid value="4164"/>
+			<sid value="4166"/>
+			<sid value="4168"/>
+			<sid value="4170"/>
+			<sid value="4171"/>
+			<sid value="4174"/>
+			<sid value="4180"/>
+			<sid value="4181"/>
+			<sid value="4183"/>
+			<sid value="4184"/>
+			<sid value="4186"/>
+			<sid value="4188"/>
+			<sid value="4190"/>
+			<sid value="4194"/>
+			<sid value="4195"/>
+			<sid value="4198"/>
+			<sid value="4274"/>
+			<sid value="4376"/>
+			<sid value="4379"/>
+			<sid value="4384"/>
+			<sid value="4390"/>
+			<sid value="4396"/>
+			<sid value="4418"/>
+			<sid value="4622"/>
+			<sid value="4654"/>
+			<sid value="4694"/>
+			<sid value="4812"/>
+			<sid value="4982"/>
+			<sid value="5116"/>
+			<sid value="5142"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Boost Mobile (Prepaid)</name>
+		<cdma />
+	</provider>
+	<provider>
+		<name>Verizon</name>
+		<cdma>
+			<!-- Assignments taken from IFAST: http://www.ifast.org/files/NationalSID.htm -->
+			<sid value="2"/>
+			<sid value="4"/>
+			<sid value="5"/>
+			<sid value="6"/>
+			<sid value="8"/>
+			<sid value="12"/>
+			<sid value="15"/>
+			<sid value="17"/>
+			<sid value="18"/>
+			<sid value="20"/>
+			<sid value="21"/>
+			<sid value="22"/>
+			<sid value="26"/>
+			<sid value="28"/>
+			<sid value="30"/>
+			<sid value="32"/>
+			<sid value="33"/>
+			<sid value="37"/>
+			<sid value="40"/>
+			<sid value="41"/>
+			<sid value="48"/>
+			<sid value="51"/>
+			<sid value="54"/>
+			<sid value="56"/>
+			<sid value="58"/>
+			<sid value="59"/>
+			<sid value="60"/>
+			<sid value="64"/>
+			<sid value="65"/>
+			<sid value="69"/>
+			<sid value="73"/>
+			<sid value="75"/>
+			<sid value="78"/>
+			<sid value="80"/>
+			<sid value="86"/>
+			<sid value="92"/>
+			<sid value="93"/>
+			<sid value="94"/>
+			<sid value="95"/>
+			<sid value="96"/>
+			<sid value="104"/>
+			<sid value="107"/>
+			<sid value="110"/>
+			<sid value="112"/>
+			<sid value="113"/>
+			<sid value="119"/>
+			<sid value="126"/>
+			<sid value="127"/>
+			<sid value="133"/>
+			<sid value="137"/>
+			<sid value="139"/>
+			<sid value="143"/>
+			<sid value="150"/>
+			<sid value="154"/>
+			<sid value="162"/>
+			<sid value="163"/>
+			<sid value="165"/>
+			<sid value="170"/>
+			<sid value="172"/>
+			<sid value="179"/>
+			<sid value="180"/>
+			<sid value="181"/>
+			<sid value="186"/>
+			<sid value="189"/>
+			<sid value="190"/>
+			<sid value="203"/>
+			<sid value="213"/>
+			<sid value="214"/>
+			<sid value="222"/>
+			<sid value="224"/>
+			<sid value="226"/>
+			<sid value="228"/>
+			<sid value="241"/>
+			<sid value="250"/>
+			<sid value="258"/>
+			<sid value="262"/>
+			<sid value="263"/>
+			<sid value="266"/>
+			<sid value="272"/>
+			<sid value="276"/>
+			<sid value="284"/>
+			<sid value="286"/>
+			<sid value="294"/>
+			<sid value="298"/>
+			<sid value="299"/>
+			<sid value="300"/>
+			<sid value="314"/>
+			<sid value="316"/>
+			<sid value="319"/>
+			<sid value="323"/>
+			<sid value="328"/>
+			<sid value="329"/>
+			<sid value="330"/>
+			<sid value="349"/>
+			<sid value="356"/>
+			<sid value="377"/>
+			<sid value="385"/>
+			<sid value="404"/>
+			<sid value="428"/>
+			<sid value="443"/>
+			<sid value="456"/>
+			<sid value="465"/>
+			<sid value="482"/>
+			<sid value="483"/>
+			<sid value="486"/>
+			<sid value="490"/>
+			<sid value="498"/>
+			<sid value="502"/>
+			<sid value="506"/>
+			<sid value="528"/>
+			<sid value="530"/>
+			<sid value="532"/>
+			<sid value="539"/>
+			<sid value="1015"/>
+			<sid value="1026"/>
+			<sid value="1032"/>
+			<sid value="1034"/>
+			<sid value="1062"/>
+			<sid value="1072"/>
+			<sid value="1074"/>
+			<sid value="1076"/>
+			<sid value="1083"/>
+			<sid value="1086"/>
+			<sid value="1088"/>
+			<sid value="1094"/>
+			<sid value="1103"/>
+			<sid value="1129"/>
+			<sid value="1131"/>
+			<sid value="1137"/>
+			<sid value="1139"/>
+			<sid value="1145"/>
+			<sid value="1151"/>
+			<sid value="1153"/>
+			<sid value="1164"/>
+			<sid value="1166"/>
+			<sid value="1174"/>
+			<sid value="1180"/>
+			<sid value="1189"/>
+			<sid value="1193"/>
+			<sid value="1196"/>
+			<sid value="1220"/>
+			<sid value="1224"/>
+			<sid value="1227"/>
+			<sid value="1230"/>
+			<sid value="1285"/>
+			<sid value="1330"/>
+			<sid value="1358"/>
+			<sid value="1417"/>
+			<sid value="1429"/>
+			<sid value="1476"/>
+			<sid value="1488"/>
+			<sid value="1492"/>
+			<sid value="1494"/>
+			<sid value="1506"/>
+			<sid value="1510"/>
+			<sid value="1514"/>
+			<sid value="1516"/>
+			<sid value="1517"/>
+			<sid value="1519"/>
+			<sid value="1523"/>
+			<sid value="1548"/>
+			<sid value="1552"/>
+			<sid value="1563"/>
+			<sid value="1567"/>
+			<sid value="1614"/>
+			<sid value="1626"/>
+			<sid value="1630"/>
+			<sid value="1632"/>
+			<sid value="1637"/>
+			<sid value="1639"/>
+			<sid value="1641"/>
+			<sid value="1653"/>
+			<sid value="1679"/>
+			<sid value="1736"/>
+			<sid value="1740"/>
+			<sid value="1749"/>
+			<sid value="1760"/>
+			<sid value="1776"/>
+			<sid value="1780"/>
+			<sid value="1790"/>
+			<sid value="1792"/>
+			<sid value="1824"/>
+			<sid value="1826"/>
+			<sid value="1827"/>
+			<sid value="1830"/>
+			<sid value="1832"/>
+			<sid value="1857"/>
+			<sid value="1910"/>
+			<sid value="1912"/>
+			<sid value="1940"/>
+			<sid value="1969"/>
+			<sid value="2004"/>
+			<sid value="2054"/>
+			<sid value="2058"/>
+			<sid value="2060"/>
+			<sid value="2076"/>
+			<sid value="2115"/>
+			<sid value="2119"/>
+			<sid value="2125"/>
+			<sid value="2127"/>
+			<sid value="2149"/>
+			<sid value="3004"/>
+			<sid value="3008"/>
+			<sid value="3046"/>
+			<sid value="3066"/>
+			<sid value="3216"/>
+			<sid value="3218"/>
+			<sid value="3228"/>
+			<sid value="6709"/>
+			<sid value="6711"/>
+			<sid value="7532"/>
+			<sid value="7536"/>
+			<sid value="9640"/>
+			<sid value="9642"/>
+			<sid value="9644"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>US Cellular</name>
+		<cdma>
+			<!-- Assignments taken from IFAST: http://www.ifast.org/files/NationalSID.htm
+			     NOTE: SIDs listed as "HOLLAND & KNIGHT LLP" are counted for US Cellular
+			           because HOLLAND & KNIGHT LLP/Peter M. Connolly appears to be the
+			           license administrator for US Cellular in those license areas listed
+			           in the IFAST SID database as assigned to HOLLAND & KNIGHT LLP.
+			           When a search of the FCC's ULS for the CMA noted for a SID by
+			           IFAST does not return an active license held by
+			           US Cellular/HOLLAND & KNIGHT LLP, that SID is not counted
+			           for US Cellular (ex SID 1925, 1935, 5289, 5291, 5293, etc).
+			-->
+			<sid value="5"/>
+			<sid value="104"/>
+			<sid value="166"/>
+			<sid value="191"/>
+			<sid value="193"/>
+			<sid value="195"/>
+			<sid value="217"/>
+			<sid value="221"/>
+			<sid value="246"/>
+			<sid value="298"/>
+			<sid value="303"/>
+			<sid value="309"/>
+			<sid value="331"/>
+			<sid value="333"/>
+			<sid value="340"/>
+			<sid value="364"/>
+			<sid value="384"/>
+			<sid value="389"/>
+			<sid value="393"/>
+			<sid value="413"/>
+			<sid value="445"/>
+			<sid value="580"/>
+			<sid value="599"/>
+			<sid value="1059"/>
+			<sid value="1061"/>
+			<sid value="1075"/>
+			<sid value="1173"/>
+			<sid value="1175"/>
+			<sid value="1200"/>
+			<sid value="1211"/>
+			<sid value="1213"/>
+			<sid value="1219"/>
+			<sid value="1223"/>
+			<sid value="1228"/>
+			<sid value="1229"/>
+			<sid value="1237"/>
+			<sid value="1272"/>
+			<sid value="1317"/>
+			<sid value="1320"/>
+			<sid value="1399"/>
+			<sid value="1403"/>
+			<sid value="1406"/>
+			<sid value="1419"/>
+			<sid value="1425"/>
+			<sid value="1427"/>
+			<sid value="1484"/>
+			<sid value="1521"/>
+			<sid value="1541"/>
+			<sid value="1543"/>
+			<sid value="1574"/>
+			<sid value="1595"/>
+			<sid value="1607"/>
+			<sid value="1610"/>
+			<sid value="1643"/>
+			<sid value="1753"/>
+			<sid value="1779"/>
+			<sid value="1783"/>
+			<sid value="1794"/>
+			<sid value="1802"/>
+			<sid value="1819"/>
+			<sid value="1821"/>
+			<sid value="1881"/>
+			<sid value="1914"/>
+			<sid value="1983"/>
+			<sid value="2066"/>
+			<sid value="2141"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Alltel</name>
+		<cdma>
+			<!-- Assignments taken from IFAST: http://www.ifast.org/files/NationalSID.htm -->
+			<sid value="32"/>
+			<sid value="42"/>
+			<sid value="52"/>
+			<sid value="53"/>
+			<sid value="54"/>
+			<sid value="57"/>
+			<sid value="71"/>
+			<sid value="74"/>
+			<sid value="79"/>
+			<sid value="83"/>
+			<sid value="84"/>
+			<sid value="85"/>
+			<sid value="97"/>
+			<sid value="100"/>
+			<sid value="114"/>
+			<sid value="116"/>
+			<sid value="120"/>
+			<sid value="126"/>
+			<sid value="130"/>
+			<sid value="142"/>
+			<sid value="144"/>
+			<sid value="152"/>
+			<sid value="156"/>
+			<sid value="182"/>
+			<sid value="186"/>
+			<sid value="188"/>
+			<sid value="202"/>
+			<sid value="204"/>
+			<sid value="205"/>
+			<sid value="208"/>
+			<sid value="212"/>
+			<sid value="216"/>
+			<sid value="220"/>
+			<sid value="240"/>
+			<sid value="244"/>
+			<sid value="256"/>
+			<sid value="260"/>
+			<sid value="272"/>
+			<sid value="281"/>
+			<sid value="282"/>
+			<sid value="292"/>
+			<sid value="304"/>
+			<sid value="306"/>
+			<sid value="312"/>
+			<sid value="318"/>
+			<sid value="338"/>
+			<sid value="342"/>
+			<sid value="344"/>
+			<sid value="348"/>
+			<sid value="350"/>
+			<sid value="368"/>
+			<sid value="374"/>
+			<sid value="376"/>
+			<sid value="386"/>
+			<sid value="387"/>
+			<sid value="392"/>
+			<sid value="396"/>
+			<sid value="416"/>
+			<sid value="418"/>
+			<sid value="424"/>
+			<sid value="430"/>
+			<sid value="440"/>
+			<sid value="444"/>
+			<sid value="448"/>
+			<sid value="462"/>
+			<sid value="478"/>
+			<sid value="487"/>
+			<sid value="491"/>
+			<sid value="518"/>
+			<sid value="520"/>
+			<sid value="544"/>
+			<sid value="546"/>
+			<sid value="547"/>
+			<sid value="550"/>
+			<sid value="558"/>
+			<sid value="570"/>
+			<sid value="578"/>
+			<sid value="1008"/>
+			<sid value="1012"/>
+			<sid value="1014"/>
+			<sid value="1016"/>
+			<sid value="1025"/>
+			<sid value="1031"/>
+			<sid value="1033"/>
+			<sid value="1038"/>
+			<sid value="1040"/>
+			<sid value="1042"/>
+			<sid value="1044"/>
+			<sid value="1046"/>
+			<sid value="1048"/>
+			<sid value="1052"/>
+			<sid value="1054"/>
+			<sid value="1056"/>
+			<sid value="1058"/>
+			<sid value="1093"/>
+			<sid value="1118"/>
+			<sid value="1120"/>
+			<sid value="1124"/>
+			<sid value="1126"/>
+			<sid value="1148"/>
+			<sid value="1154"/>
+			<sid value="1156"/>
+			<sid value="1244"/>
+			<sid value="1246"/>
+			<sid value="1248"/>
+			<sid value="1250"/>
+			<sid value="1252"/>
+			<sid value="1254"/>
+			<sid value="1256"/>
+			<sid value="1258"/>
+			<sid value="1260"/>
+			<sid value="1262"/>
+			<sid value="1264"/>
+			<sid value="1266"/>
+			<sid value="1268"/>
+			<sid value="1270"/>
+			<sid value="1271"/>
+			<sid value="1296"/>
+			<sid value="1298"/>
+			<sid value="1302"/>
+			<sid value="1311"/>
+			<sid value="1332"/>
+			<sid value="1334"/>
+			<sid value="1336"/>
+			<sid value="1338"/>
+			<sid value="1340"/>
+			<sid value="1342"/>
+			<sid value="1344"/>
+			<sid value="1346"/>
+			<sid value="1348"/>
+			<sid value="1375"/>
+			<sid value="1383"/>
+			<sid value="1385"/>
+			<sid value="1393"/>
+			<sid value="1400"/>
+			<sid value="1414"/>
+			<sid value="1422"/>
+			<sid value="1424"/>
+			<sid value="1426"/>
+			<sid value="1466"/>
+			<sid value="1493"/>
+			<sid value="1495"/>
+			<sid value="1499"/>
+			<sid value="1501"/>
+			<sid value="1526"/>
+			<sid value="1528"/>
+			<sid value="1530"/>
+			<sid value="1532"/>
+			<sid value="1534"/>
+			<sid value="1536"/>
+			<sid value="1538"/>
+			<sid value="1540"/>
+			<sid value="1542"/>
+			<sid value="1544"/>
+			<sid value="1546"/>
+			<sid value="1558"/>
+			<sid value="1560"/>
+			<sid value="1566"/>
+			<sid value="1568"/>
+			<sid value="1638"/>
+			<sid value="1640"/>
+			<sid value="1642"/>
+			<sid value="1650"/>
+			<sid value="1652"/>
+			<sid value="1654"/>
+			<sid value="1688"/>
+			<sid value="1712"/>
+			<sid value="1720"/>
+			<sid value="1763"/>
+			<sid value="1765"/>
+			<sid value="1800"/>
+			<sid value="1816"/>
+			<sid value="1818"/>
+			<sid value="1866"/>
+			<sid value="1874"/>
+			<sid value="1900"/>
+			<sid value="1913"/>
+			<sid value="1916"/>
+			<sid value="1928"/>
+			<sid value="1930"/>
+			<sid value="1934"/>
+			<sid value="1938"/>
+			<sid value="1972"/>
+			<sid value="1982"/>
+			<sid value="1984"/>
+			<sid value="1986"/>
+			<sid value="1989"/>
+			<sid value="1992"/>
+			<sid value="2010"/>
+			<sid value="2012"/>
+			<sid value="2014"/>
+			<sid value="2018"/>
+			<sid value="2022"/>
+			<sid value="2026"/>
+			<sid value="2040"/>
+			<sid value="2044"/>
+			<sid value="2046"/>
+			<sid value="2064"/>
+			<sid value="2133"/>
+			<sid value="3020"/>
+			<sid value="3226"/>
+			<sid value="3244"/>
+			<sid value="30524"/>
+			<sid value="30635"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Leap Wireless</name>
+		<cdma />
+	</provider>
+	<provider>
+		<name>Cricket Communications</name>
+		<cdma />
+	</provider>
+	<provider>
+		<name>Jump Mobile (Prepaid)</name>
+		<cdma />
+	</provider>
+	<provider>
+		<name>MetroPCS</name>
+		<cdma>
+			<!-- Assignments taken from IFAST: http://www.ifast.org/files/NationalSID.htm -->
+			<sid value="4269"/>
+			<sid value="4273"/>
+			<sid value="4387"/>
+			<sid value="4531"/>
+			<sid value="4533"/>
+			<sid value="4547"/>
+			<sid value="4815"/>
+			<sid value="4855"/>
+			<sid value="5007"/>
+			<sid value="5023"/>
+			<sid value="5037"/>
+			<sid value="5097"/>
+			<sid value="5167"/>
+			<sid value="5199"/>
+			<sid value="21580"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Virgin Mobile / Helio</name>
+		<cdma />
+	</provider>
+	<provider>
+		<name>Cellular South</name>
+		<cdma>
+			<!-- Assignments taken from IFAST: http://www.ifast.org/files/NationalSID.htm
+			     NOTE: Cellular South appears to use "Lukas, Nace, Gutierrez & Sachs, Chartered"
+			     as their license administrator, but that firm also administers Rural Cellular
+			     Corporation (recently bought by Verizon) as well, so SIDs counted for
+			     Cellular South were found by searching the FCC database for "Cellular South",
+			     looking up the returned Cellular Market Areas in the IFAST database, and from
+			     the IFAST database results using SIDs attributed to "Lukas, Nace, ..."
+			-->
+			<sid value="160"/>
+			<sid value="264"/>
+			<sid value="1382"/>
+			<sid value="1394"/>
+			<sid value="1996"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>BendBroadband</name>
+		<gsm>
+			<network-id mcc="311" mnc="570"/>
+			<apn value="ISP"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Uruguay -->
+<country code="uy">
+	<provider>
+		<name>Ancel</name>
+		<gsm>
+			<network-id mcc="748" mnc="00"/>
+			<network-id mcc="748" mnc="01"/>
+			<apn value="adslmovil">
+				<name>ADSL Móvil</name>
+				<dns>200.40.30.245</dns>
+				<dns>200.40.220.245</dns>
+			</apn>
+			<apn value="gprs.ancel">
+				<name>GPRS</name>
+				<dns>200.40.30.245</dns>
+				<dns>200.40.220.245</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Claro</name>
+		<gsm>
+			<network-id mcc="748" mnc="10"/>
+			<apn value="gprs.claro.com.uy">
+				<name>3G Internet</name>
+				<username>ctigprs</username>
+				<password>ctigprs999</password>
+			</apn>
+			<apn value="internet.ctimovil.com.uy">
+				<name>2G Internet</name>
+				<username>ctiweb</username>
+				<password>ctiweb999</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Movistar</name>
+		<gsm>
+			<network-id mcc="748" mnc="07"/>
+			<apn value="apnumt.movistar.com.uy">
+				<name>3G Internet</name>
+				<username>movistar</username>
+				<password>movistar</password>
+			</apn>
+			<apn value="webapn.movistar.com.uy">
+				<name>2G Internet</name>
+				<username>movistar</username>
+				<password>movistar</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Uzbekistan -->
+<country code="uz">
+	<provider>
+		<name>Uzdunrobita / MTS</name>
+		<gsm>
+			<network-id mcc="434" mnc="07"/>
+			<apn value="net.urd.uz">
+				<username>user</username>
+				<password>pass</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- St Vincent -->
+<country code="vc">
+	<provider>
+		<name>Digicel</name>
+		<gsm>
+			<network-id mcc="360" mnc="070"/>
+			<apn value="wap.digiceloecs.com">
+				<username>wapoecs</username>
+				<password>wap03oecs</password>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Venezuela -->
+<country code="ve">
+	<provider>
+		<name>Digitel TIM</name>
+		<gsm>
+			<network-id mcc="734" mnc="01"/>
+			<network-id mcc="734" mnc="02"/>
+			<network-id mcc="734" mnc="03"/>
+			<apn value="gprsweb.digitel.ve">
+				<dns>57.67.127.195</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+<!-- Viet Nam -->
+<country code="vn">
+	<provider>
+		<name>MobiFone</name>
+		<gsm>
+			<network-id mcc="452" mnc="01"/>
+			<apn value="v-wap">
+				<username>mms</username>
+				<password>mms</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vinaphone</name>
+		<gsm>
+			<network-id mcc="452" mnc="02"/>
+			<apn value="m3-world">
+				<username>mms</username>
+				<password>mms</password>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>S-Fone</name>
+		<cdma>
+			<!-- phone number dialed appears to be 1501 not 777 (???
+			     http://www.sfone.com.vn/webportal/guideMobile02_vi.html?pageNum=3&subNum=9&idxNum=091
+			  -->
+			<username>S-Fone</username>
+			<!-- Assignments taken from IFAST: http://www.ifast.org/files/NationalSID.htm -->
+			<sid value="13331"/>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Viettel Mobile</name>
+		<gsm>
+			<network-id mcc="452" mnc="04"/>
+			<apn value="v-internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vietnamobile</name>
+		<gsm>
+			<network-id mcc="452" mnc="05"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+	<provider>
+		<name>E-Mobile</name>
+		<cdma>
+			<username>evntelecom</username>
+			<password>evntelecom</password>
+		</cdma>
+	</provider>
+	<provider>
+		<name>Beeline VN</name>
+		<gsm>
+			<network-id mcc="452" mnc="07"/>
+			<apn value="internet"/>
+		</gsm>
+	</provider>
+</country>
+
+<!-- South Africa -->
+<country code="za">
+	<provider>
+		<name>Cell-c</name>
+		<gsm>
+			<network-id mcc="655" mnc="07"/>
+			<apn value="internet">
+				<username>Cellcis</username>
+				<dns>196.7.0.138</dns>
+				<dns>196.7.142.132</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>MTN</name>
+		<gsm>
+			<network-id mcc="655" mnc="10"/>
+			<apn value="internet">
+				<dns>196.11.240.241</dns>
+				<dns>209.212.97.1</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Vodacom</name>
+		<gsm>
+			<network-id mcc="655" mnc="01"/>
+			<apn value="internet">
+				<dns>196.207.40.165</dns>
+				<dns>196.43.46.190</dns>
+			</apn>
+			<apn value="unrestricted">
+				<name>Unrestricted</name>
+				<dns>196.207.32.69</dns>
+				<dns>196.43.45.190</dns>
+			</apn>
+		</gsm>
+	</provider>
+	<provider>
+		<name>Virgin Mobile</name>
+		<gsm>
+			<apn value="vdata">
+				<dns>196.7.0.138</dns>
+				<dns>196.7.142.132</dns>
+			</apn>
+		</gsm>
+	</provider>
+</country>
+
+</serviceproviders>
+

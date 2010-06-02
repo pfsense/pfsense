@@ -108,7 +108,7 @@ function captiveportal_configure() {
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_mac.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_ip.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius.db");
-		mwexec("/sbin/ipfw -q table all flush");
+		mwexec("/sbin/ipfw -q table all flush", true);
 
 		/* setup new database in case someone tries to access the status -> captive portal page */
 		touch("{$g['vardb_path']}/captiveportal.db");

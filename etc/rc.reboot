@@ -21,15 +21,6 @@ else
 	/etc/rc.conf_mount_ro
 fi
 
-killall -TERM sshd 2>&1 /dev/null
-
 sleep 1
 
-echo -n "Downing interfaces: "
-for INTERFACE in `/sbin/ifconfig -l`; do
-	echo -n "$INTERFACE "
-	/sbin/ifconfig $INTERFACE down
-done
-
 /sbin/shutdown -r now
-

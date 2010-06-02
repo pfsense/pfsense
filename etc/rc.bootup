@@ -198,6 +198,10 @@ system_hosts_generate();
 /* configure loopback interface */
 interfaces_loopback_configure();
 
+echo "Starting Secure Shell Services...";
+mwexec_bg("/etc/sshd");
+echo "done.\n";
+
 /* set up interfaces */
 if(!$debugging)
 	mute_kernel_msgs();
@@ -259,10 +263,6 @@ system_routing_configure();
 
 /* enable routing */
 system_routing_enable();
-
-echo "Starting Secure Shell Services...";
-mwexec_bg("/etc/sshd");
-echo "done.\n";
 
 /* configure console menu */
 system_console_configure();

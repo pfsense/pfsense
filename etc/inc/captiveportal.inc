@@ -34,7 +34,7 @@
 	added rules which may have been created by other per-user code (index.php, etc).
 	These changes are (c) 2004 Keycom PLC.
 	
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/ipfw	/sbin/sysctl	/sbin/kldunload
+	pfSense_BUILDER_BINARIES:	/sbin/ipfw	/sbin/sysctl	/sbin/kldunload
 	pfSense_BUILDER_BINARIES:	/usr/local/sbin/lighttpd	/usr/local/bin/minicron	/sbin/pfctl
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/cp	
 	pfSense_MODULE:	captiveportal
@@ -58,7 +58,7 @@ function captiveportal_configure() {
 		$ifaces = get_configured_interface_list();
 		foreach ($ifaces as $kiface => $kiface2) {
 			$tmpif = get_real_interface($kiface);
-			mwexec("/sbin/ifconfig {$tmpif} -ipfwfilter");
+			pfSense_interface_flags($tmpif, -IFF_IPFW_FILTER);
 		}
 		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
 		$firsttime = 0;
@@ -77,14 +77,14 @@ function captiveportal_configure() {
 					if (!empty($carpif)) {
 						$carpsif = explode(" ", $carpif);
 						foreach ($carpsif as $cpcarp) {
-							mwexec("/sbin/ifconfig {$cpcarp} ipfwfilter");
+							pfSense_interface_flags($cpcarp, IFF_IPFW_FILTER);
 							$carpip = find_interface_ip($cpcarp);
 							if (is_ipaddr($carpip))
 								$cpips[] = $carpip;
 						}
 					}
 					$cpips[] = $cpipm;
-					mwexec("/sbin/ifconfig {$tmpif} ipfwfilter");
+					pfSense_interface_flags($tmpif, IFF_IPFW_FILTER);
 				}
 			}
 		}
@@ -391,12 +391,12 @@ EOD;
 		foreach ($listifs as $listrealif => $listif) {
 			if (!empty($listrealif)) {
 				if (does_interface_exist($listrealif)) {
-					mwexec("/sbin/ifconfig {$listrealif} -ipfwfilter");
+					pfSense_interface_flags($listrealif, -IFF_IPFW_FILTER);
 					$carpif = link_ip_to_carp_interface(find_interface_ip($listrealif));
                         		if (!empty($carpif)) {
 						$carpsif = explode(" ", $carpif);
 						foreach ($carpsif as $cpcarp)
-							mwexec("/sbin/ifconfig {$cpcarp} -ipfwfilter");
+							pfSense_interface_flags($cpcarp, -IFF_IPFW_FILTER);
 					}
 				}
 			}

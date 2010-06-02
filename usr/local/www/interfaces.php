@@ -828,6 +828,8 @@ function check_wireless_mode() {
 }
 
 $pgtitle = array("Interfaces", $pconfig['descr']);
+$statusurl = "status_interfaces.php";
+
 $closehead = false;
 include("head.inc");
 $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe" => "PPPoE", "pptp" => "PPTP" /* , "carpdev-dhcp" => "CarpDev"*/); 

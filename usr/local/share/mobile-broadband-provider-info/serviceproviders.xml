@@ -414,7 +414,7 @@ conceived.
 <!-- Bangladesh -->
 <country code="bd">
 	<provider>
-		<name>AKTel</name>
+		<name>Robi (AKTel)</name>
 		<gsm>
 			<network-id mcc="470" mnc="02"/>
 			<apn value="internet">
@@ -452,6 +452,16 @@ conceived.
 				<dns>10.6.0.2</dns>
 			</apn>
 		</gsm>
+	</provider>
+	<provider>
+		<name>Citycell</name>
+		<cdma>
+			<username>waps</username>
+			<password>waps</password>
+			<dns>117.18.224.146</dns>
+			<dns>117.18.224.147</dns>
+			<sid value="13480"/>
+		</cdma>
 	</provider>
 </country>
 
@@ -1997,6 +2007,13 @@ conceived.
 			</apn>
 			<apn value="wapsfr">
 				<name>WAP</name>
+			</apn>
+			<apn value="slsfr">
+				<name>Mobile Broadband</name>
+				<username>slsfr</username>
+				<password>slsfr</password>
+				<dns>172.20.2.10</dns>
+				<dns>172.20.2.39</dns>
 			</apn>
 			<apn value="sl2sfr">
 				<name>Full Internet</name>

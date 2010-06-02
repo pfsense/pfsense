@@ -76,7 +76,7 @@ if (isset($id) && $a_gateways[$id]) {
         $pconfig['down'] = $a_gateway_item[$id]['down'];
 	if (isset($a_gateways[$id]['dynamic']))
 		$pconfig['dynamic'] = true;
-	if($a_gateways[$id]['monitor'] <> "") {
+	if(($a_gateways[$id]['monitor'] <> "") && ($a_gateways[$id]['attribute'] != "system") && ($a_gateways[$id]['gateway'] != "dynamic")) {
 		$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	} else {
 		$pconfig['monitor'] == "";
@@ -363,7 +363,7 @@ function show_advanced_gateway() {
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Monitor IP"); ?></td>
 		  <td width="78%" class="vtable">
 			<?php
-				if(is_numeric($pconfig['attribute']) && ($pconfig['gateway'] == dynamic) && ($pconfig['monitor'] == "")) {
+				if(($pconfig['attribute'] == "system") && ($pconfig['gateway'] == "dynamic") && ($pconfig['monitor'] == "")) {
 					$monitor = "";
 				} else {
 					$monitor = htmlspecialchars($pconfig['monitor']);

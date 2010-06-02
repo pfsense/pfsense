@@ -520,12 +520,37 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				</select>
 
 				<br/><span class="vexpl"><?= gettext("Interface(s) or port(s) participating in the connection."); ?></span>
-				<span style="display:none" id="prefil_ppp">
-				<p/><?= gettext("Click a link to fill in defaults for these carriers:"); ?>&nbsp;
-				<a href='#' onClick='javascript:prefill_att();'>ATT</A>
-				<a href='#' onClick='javascript:prefill_sprint();'>Sprint</A>
-				<a href='#' onClick='javascript:prefill_vzw();'>Verizon</A>
-				</span>
+			</td>
+		</tr>
+		<tr name="prefil_ppp" id="prefil_ppp" style="display:none">
+			<td width="22%" valign="top" class="vncell"><?= gettext("Service Provider"); ?></td>
+			<td width="78%" class="vtable">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tr id="trcountry" style="display:none">
+						<td><?= gettext("Country"); ?> :&nbsp;&nbsp;</td>
+						<td>
+							<select class="formselect" name="country" id="country" onChange="providers_list()">
+								<option></option>
+							</select>
+						</td>
+					</tr>
+					<tr id="trprovider" style="display:none">
+						<td><?= gettext("Provider"); ?> :&nbsp;&nbsp;</td>
+						<td>
+							<select class="formselect" name="provider" id="provider" onChange="providerplan_list()">
+								<option></option>
+							</select>
+						</td>
+					</tr>
+					<tr id="trproviderplan" style="display:none">
+						<td><?= gettext("Plan"); ?> :&nbsp;&nbsp;</td>
+						<td>
+							<select class="formselect" name="providerplan" id="providerplan" onChange="prefill_provider()">
+								<option></option>
+							</select>
+						</td>
+					</tr>
+				</table>
 			</td>
 		</tr>
 		<tr style="display:none" name="portlists" id="portlists">

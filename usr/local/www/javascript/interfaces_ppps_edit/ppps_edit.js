@@ -93,6 +93,7 @@ function updateType(t){
 			update_select_list(serialports, select_list);
 			$('select','pppoe','pptp').invoke('hide');
 			$('prefil_ppp').show();
+			country_list();
 			break;
 		}
 		case "pppoe": {
@@ -131,27 +132,87 @@ function show_reset_settings(reset_type) {
 		Effect.Fade('pppoepresetwrap', { duration: 0.0 });
 	}
 }
-function prefill_att() {
-	$('initstr').value = "Q0V1E1S0=0&C1&D2+FCLASS=0";
-	$('apn').value = "ISP.CINGULAR";
-	$('apnum').value = "1";
-	$('phone').value = "*99#";
-	$('username').value = "att";
-	$('password').value = "att";
+
+function country_list() {
+	$('country').childElements().each(function(node) { node.remove(); });
+	$('provider').childElements().each(function(node) { node.remove(); });
+	$('providerplan').childElements().each(function(node) { node.remove(); });
+	new Ajax.Request("getserviceproviders.php",{
+		onSuccess: function(response) {
+			var responseTextArr = response.responseText.split("\n");
+			responseTextArr.sort();
+			responseTextArr.each( function(value) {
+				var option = new Element('option');
+				country = value.split(":");
+				option.text = country[0];
+				option.value = country[1];
+				$('country').insert({ bottom : option });
+			});
+		}
+	});
+	$('trcountry').setStyle({display : "table-row"});
 }
-function prefill_sprint() {
-	$('initstr').value = "E1Q0";
-	$('apn').value = "";
-	$('apnum').value = "";
-	$('phone').value = "#777";
-	$('username').value = "sprint";
-	$('password').value = "sprint";
+
+function providers_list() {
+	$('provider').childElements().each(function(node) { node.remove(); });
+	$('providerplan').childElements().each(function(node) { node.remove(); });
+	new Ajax.Request("getserviceproviders.php",{
+		parameters: {country : $F('country')},
+		onSuccess: function(response) {
+			var responseTextArr = response.responseText.split("\n");
+			responseTextArr.sort();
+			responseTextArr.each( function(value) {
+				var option = new Element('option');
+				option.text = value;
+				option.value = value;
+				$('provider').insert({ bottom : option });
+			});
+		}
+	});
+	$('trprovider').setStyle({display : "table-row"});
+	$('trproviderplan').setStyle({display : "none"});
 }
-function prefill_vzw() {
-	$('initstr').value = "E1Q0s7=60";
-	$('apn').value = "";
-	$('apnum').value = "";
-	$('phone').value = "#777";
-	$('username').value = "123@vzw3g.com";
-	$('password').value = "vzw";
+
+function providerplan_list() {
+	$('providerplan').childElements().each(function(node) { node.remove(); });
+	$('providerplan').insert( new Element('option') );
+	new Ajax.Request("getserviceproviders.php",{
+		parameters: {country : $F('country'), provider : $F('provider')},
+		onSuccess: function(response) {
+			var responseTextArr = response.responseText.split("\n");
+			responseTextArr.sort();
+			responseTextArr.each( function(value) {
+				if(value != "") {
+					providerplan = value.split(":");
+
+					var option = new Element('option');
+					option.text = providerplan[0] + " - " + providerplan[1];
+					option.value = providerplan[1];
+					$('providerplan').insert({ bottom : option });
+				}
+			});
+		}
+	});
+	$('trproviderplan').setStyle({display : "table-row"});
+}
+
+function prefill_provider() {
+	new Ajax.Request("getserviceproviders.php",{
+		parameters: {country : $F('country'), provider : $F('provider'), plan : $F('providerplan')},
+		onSuccess: function(response) {
+			var xmldoc = response.responseXML;
+			var provider = xmldoc.getElementsByTagName('connection')[0];
+			$('username').setValue('');
+			$('password').setValue('');
+			if(provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
+				$('phone').setValue('*777');
+				$('apn').setValue('');
+			} else {
+				$('phone').setValue('*99#');
+				$('apn').setValue(provider.getElementsByTagName('apn')[0].firstChild.data);
+			}
+			$('username').setValue(provider.getElementsByTagName('username')[0].firstChild.data);
+			$('password').setValue(provider.getElementsByTagName('password')[0].firstChild.data);
+		}
+	});
 }

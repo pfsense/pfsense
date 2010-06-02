@@ -188,13 +188,15 @@ function enable_hardware_offloading($interface) {
 	if($int <> "") 
 		$interface = $int;
 	$int_family = preg_split("/[0-9]+/", $interface);
-	$options = strtolower(`/sbin/ifconfig -m {$interface} | grep capabilities`);
+	$options = pfSense_get_interface_addresses($interface);
+	if (!is_array($options))
+		return;
 	$supported_ints = array('fxp');
 	if (in_array($int_family, $supported_ints)) {
 		if(isset($config['system']['do_not_use_nic_microcode']))
 			continue;
 		if(does_interface_exist($interface)) 
-			mwexec("/sbin/ifconfig {$interface} link0");
+			pfSense_interface_flags($interface, IFF_LINK0);
 	}
 
 	/* skip vlans for checksumming and polling */
@@ -202,26 +204,24 @@ function enable_hardware_offloading($interface) {
 		return;
 
 	if($config['system']['disablechecksumoffloading']) {
-		if(stristr($options, "txcsum") == true)
-			mwexec("/sbin/ifconfig {$interface} -txcsum 2>/dev/null");
-		if(stristr($options, "rxcsum") == true)
-			mwexec("/sbin/ifconfig {$interface} -rxcsum 2>/dev/null");
+		if (isset($options['encaps']['txcsum']))
+			pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
+		if (isset($options['encaps']['rxcsum']))
+			pfSense_interface_capabilities($interface, -IFCAP_RXCSUM);
 	} else {
-		if(stristr($options, "txcsum") == true)
-			mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
-		if(stristr($options, "rxcsum") == true)
-			mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");
+		if (isset($options['caps']['txcsum']))
+			pfSense_interface_capabilities($interface, IFCAP_TXCSUM);
+		if (isset($options['caps']['rxcsum']))
+			pfSense_interface_capabilities($interface, IFCAP_RXCSUM);
 	}
 
 	/* if the NIC supports polling *AND* it is enabled in the GUI */
-	if(interface_supports_polling($interface)) {
-		$polling = isset($config['system']['polling']);	
-		if($polling) {
-			mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
-		} else {
-			mwexec("/sbin/ifconfig {$interface} -polling 2>/dev/null");
-		}
-	}
+	$polling = isset($config['system']['polling']);	
+	if($polling && isset($options['caps']['polling']))
+		pfSense_interface_capabilities($interface, IFCAP_POLLING);
+	else
+		pfSense_interface_capabilities($interface, -IFCAP_POLLING);
+
 	return;
 }
 
@@ -236,29 +236,10 @@ function enable_hardware_offloading($interface) {
  *
  ******/
 function interface_supports_polling($iface) {
-	$pattern = '/([a-z].*)[0-9]/';
-	preg_match($pattern, $iface, $iface2);
-	$interface=$iface2[1];
-	$supported_ints = array("bge",
-		"dc",
-		"em",
-		"fwe",
-		"fwip",
-		"fxp",
-		"ixgb",
-		"nfe",
-		"vge",
-		"re",
-		"rl",
-		"sf",
-		"sis",
-		"ste",
-		"stge",    
-		"vge",
-		"vr",
-		"xl");
-	if(in_array($interface, $supported_ints))
+	$opts = pfSense_get_interface_addresses($iface);
+	if (is_array($opts) && isset($opts['caps']['polling']))
 		return true;
+
 	return false;
 }
 

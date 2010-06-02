@@ -50,6 +50,9 @@ function cpelements_sort() {
 }
 
 $pgtitle = array("Services","Captive portal");
+$statusurl = "status_captiveportal.php";
+$logurl = "diag_logs_auth.php";
+
 
 require("guiconfig.inc");
 require("functions.inc");

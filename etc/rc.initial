@@ -62,7 +62,7 @@ echo "10)  Filter Logs"
 echo "11)  Restart webConfigurator"
 echo "12)  ${product} Developer Shell"
 echo "13)  Upgrade from console"
-SSHD=`netstat -an | grep "*.22" | wc -l`
+SSHD=`/usr/bin/sockstat -4l | grep "*.22" | wc -l`
 if [ "$SSHD" -gt 0 ]; then
 	echo "14)  Disable Secure Shell (sshd)";
 else
@@ -155,7 +155,7 @@ case ${opmode} in
     	fi
     	;;
 "")
-		killall login ; exit
+		kill $PPID ; exit
 		;;
 esac
 

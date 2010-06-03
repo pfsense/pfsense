@@ -39,6 +39,9 @@
 ##|-PRIV
 
 $pgtitle = array("Services","Captive portal");
+$statusurl = "status_captiveportal.php";
+$logurl = "diag_logs_auth.php";
+
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");
@@ -83,6 +86,7 @@ if ($_POST) {
 			if ($found == true) {
 				$ruleno = captiveportal_get_ipfw_passthru_ruleno($_POST['delmac']);
 				if ($ruleno) {
+					captiveportal_free_ipfw_ruleno($ruleno, true);
 					mwexec("/sbin/ipfw delete {$ruleno}; /sbin/ipfw delete " . ++$ruleno);
 				}
 				unset($a_passthrumacs[$idx]);
@@ -125,7 +129,6 @@ include("head.inc");
 	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
 	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
-	$tab_array[] = array("Auth Logs", false, "diag_logs_auth.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

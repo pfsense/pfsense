@@ -163,7 +163,6 @@ $wan_if = get_real_interface();
  *  and ask the user to reassign interfaces.  This will
  *  avoid a reboot and thats a good thing.
  */
-unmute_kernel_msgs();
 while(is_interface_mismatch() == true) {
 	echo "\nNetwork interface mismatch -- Running interface assignment option.\n";
 	set_networking_interfaces_ports();
@@ -200,6 +199,10 @@ system_hosts_generate();
 
 /* configure loopback interface */
 interfaces_loopback_configure();
+
+echo "Starting Secure Shell Services...";
+mwexec_bg("/etc/sshd");
+echo "done.\n";
 
 /* set up interfaces */
 if(!$debugging)
@@ -262,10 +265,6 @@ system_routing_configure();
 
 /* enable routing */
 system_routing_enable();
-
-echo "Starting Secure Shell Services...";
-mwexec_bg("/etc/sshd");
-echo "done.\n";
 
 /* configure console menu */
 system_console_configure();

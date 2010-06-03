@@ -141,6 +141,8 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
+$statusurl = "status_gateway_groups.php";
+
 include("head.inc");
 
 ?>

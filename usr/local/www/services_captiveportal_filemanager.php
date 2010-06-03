@@ -50,6 +50,9 @@ function cpelements_sort() {
 }
 
 $pgtitle = array("Services","Captive portal");
+$statusurl = "status_captiveportal.php";
+$logurl = "diag_logs_auth.php";
+
 
 require("guiconfig.inc");
 require("functions.inc");
@@ -137,7 +140,6 @@ include("head.inc");
 	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
 	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
 	$tab_array[] = array("File Manager", true, "services_captiveportal_filemanager.php");
-	$tab_array[] = array("Auth Logs", false, "diag_logs_auth.php");
 	display_top_tabs($tab_array);
 ?>  </td></tr>
   <tr>

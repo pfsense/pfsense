@@ -37,6 +37,9 @@
 ##|-PRIV
 
 $pgtitle = array("Services", "Captive portal", "Vouchers");
+$statusurl = "status_captiveportal_vouchers.php";
+$logurl = "diag_logs_auth.php";
+
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");
@@ -244,7 +247,6 @@ function enable_change(enable_change) {
         $tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
         $tab_array[] = array("Vouchers", true, "services_captiveportal_vouchers.php");
         $tab_array[] = array("File Manager", false, "services_captiveportal_filemanager.php");
-	$tab_array[] = array("Auth Logs", false, "diag_logs_auth.php");
         display_top_tabs($tab_array);
 ?> 
   </ul>

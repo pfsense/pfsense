@@ -42,6 +42,9 @@
 ##|-PRIV
 
 $pgtitle = array("Firewall", "Rules");
+$statusurl = "status_filter_reload.php";
+$logurl = "diag_logs_filter.php";
+
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");

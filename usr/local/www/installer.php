@@ -29,6 +29,25 @@
 
 require("guiconfig.inc");
 
+if($g['platform'] == "pfSense" or $g['platform'] == "nanobsd") {
+	Header("Location: /index.php");
+	exit;
+}
+
+// Main switch dispatcher
+switch ($_REQUEST['state']) {
+	case "quickeasyinstall":
+		quickeasyinstall_gui();
+		break;
+	case "update_installer_status":
+		update_installer_status();
+		exit;
+	case "quickeasyinstall":
+		begin_quick_easy_install();
+	default:
+		installer_main();	
+}
+
 function write_out_pc_sysinstaller_config($disk) {
 	$fd = fopen("/PCBSD/pc-sysinstall/examples/pfSense-install.cfg", "w");
 	if(!$fd) {
@@ -73,6 +92,10 @@ EOF;
 
 function start_installation() {
 	$fd = fopen("/tmp/installer.sh", "w");
+	if(!$fd) {
+		die("Could not open /tmp/installer.sh for writing");
+		exit;
+	}	
 	fwrite($fd, "/PCBSD/pc-sysinstall/pc-sysinstall -c /PCBSD/pc-sysinstall/examples/pfSense-install.cfg && touch /tmp/install_complete");
 	fclose($fd);
 	exec("chmod a+rx /tmp/installer.sh");
@@ -115,166 +138,139 @@ function begin_quick_easy_install() {
 	start_installation();
 }
 
-if($_REQUEST['state'] == "update_installer_status") {
-	update_installer_status();
-	exit;
+function body_html() {
+	$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
+	if(strstr($pfSversion, "1.2"))
+		$one_two = true;
+	$pgtitle = "pfSense: Installer";
+	include("head.inc");
+	echo <<<EOF
+	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+	<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			function getinstallerprogress() {
+				url = 'installer.php';
+				pars = 'state=update_installer_status';
+				callajax(url, pars, installcallback);
+			}
+			function callajax(url, pars, activitycallback) {
+				var myAjax = new Ajax.Request(
+					url,
+					{
+						method: 'post',
+						parameters: pars,
+						onComplete: activitycallback
+					});
+			}
+			function installcallback(transport) {
+				this.document.forms[0].installeroutput.value=transport.responseText;
+				setTimeout('getinstallerprogress()', 1000);		
+			}
+	</script>
+EOF;
+	include("fbegin.inc");
+
+	if($one_two)
+		echo "<p class=\"pgtitle\">{$pgtitle}</font></p>";
+
+	if ($savemsg) print_info_box($savemsg); 
 }
 
-if($_REQUEST['step1_post']) {
-	
-}
-
-if($_REQUEST['step2_post']) {
-	
-}
-
-if($_REQUEST['step3_post']) {
-	
-}
-
-if($_REQUEST['step4_post']) {
-	
-}
-
-$pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
-if(strstr($pfSversion, "1.2"))
-	$one_two = true;
-
-$pgtitle = "pfSense: Installer";
-include("head.inc");
-
-?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-	<script type="text/javascript">
-		function getinstallerprogress() {
-			url = 'installer.php';
-			pars = 'state=update_installer_status';
-			callajax(url, pars, installcallback);
-		}
-		function callajax(url, pars, activitycallback) {
-			var myAjax = new Ajax.Request(
-				url,
-				{
-					method: 'post',
-					parameters: pars,
-					onComplete: activitycallback
-				});
-		}
-		function installcallback(transport) {
-			this.document.forms[0].installeroutput.value=transport.responseText;
-			setTimeout('getinstallerprogress()', 1000);		
-		}
-</script>
-<?php include("fbegin.inc"); ?>
-
-<?php if($one_two): ?>
-<p class="pgtitle"><?=$pgtitle?></font></p>
-<?php endif; ?>
-
-<?php if ($savemsg) print_info_box($savemsg); ?>
-
-<?php
-if($_REQUEST['state'] == "quickeasyinstall") {
-	quickeasyinstall_gui();
-} else {
-	installer_main();
+function end_html() {
+	echo "</form>";
+	include("fend.inc");
+	echo "</body>";
+	echo "</html>";
 }
 
 function template() {
-echo <<<EOF
-<div id="mainlevel">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
- 		<tr>
-    		<td>
-				<div id="mainarea">
-					<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-						<tr>
-     						<td class="tabcont" >
-      							<form action="installer.php" method="post">
-								<div id="pfsensetemplate">
+	body_html();
+	echo <<<EOF
+	<div id="mainlevel">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	 		<tr>
+	    		<td>
+					<div id="mainarea">
+						<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+	     						<td class="tabcont" >
+	      							<form action="installer.php" method="post">
+									<div id="pfsensetemplate">
 
 
-								</div>
-     						</td>
-						</tr>
-					</table>
-				</div>
-			</td>
-		</tr>
-	</table>
-</div>
+									</div>
+	     						</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
 EOF;
-
+	end_html();
 }
 
 function quickeasyinstall_gui() {
+	body_html();
 	echo <<<EOF
-<div id="mainlevel">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
- 		<tr>
-    		<td>
-				<div id="mainarea">
-					<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-						<tr>
-     						<td class="tabcont" >
-      							<form action="installer.php" method="post" state="step1_post">
-								<div id="pfsenseinstaller">
-									Starting Installer...  Please wait...<p/>
-									{{ Insert progressbar here }}<p/>
-									<textarea name='installeroutput' id='installeroutput' rows="20" cols="80">
-									</textarea>
-								</div>
-     						</td>
-						</tr>
-					</table>
-				</div>
-			</td>
-		</tr>
-	</table>
-</div>
-<script type="text/javascript">setTimeout('getinstallerprogress()', 250);</script>
+	<div id="mainlevel">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	 		<tr>
+	    		<td>
+					<div id="mainarea">
+						<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+	     						<td class="tabcont" >
+	      							<form action="installer.php" method="post" state="step1_post">
+									<div id="pfsenseinstaller">
+										Starting Installer...  Please wait...<p/>
+										{{ Insert progressbar here }}<p/>
+										<textarea name='installeroutput' id='installeroutput' rows="20" cols="80">
+										</textarea>
+									</div>
+	     						</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<script type="text/javascript">setTimeout('getinstallerprogress()', 250);</script>
 EOF;
-
+	end_html();
 }
-
 
 function installer_main() {
-echo <<<EOF
-<div id="mainlevel">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
- 		<tr>
-    		<td>
-				<div id="mainarea">
-					<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-						<tr>
-     						<td class="tabcont" >
-      							<form action="installer.php" method="post" state="step1_post">
-								<div id="pfsenseinstaller">
-									<a href='installer.php?state=quickeasyinstall'>Quick/Easy installation</a> 
-									</p>
-								</div>
-     						</td>
-						</tr>
-					</table>
-				</div>
-			</td>
-		</tr>
-	</table>
-</div>
+	body_html();
+	$disk = installer_find_first_disk();
+	if(!$disk) 
+		echo "WARNING: Could not find any suitable disks for installation.";
+	echo <<<EOF
+	<div id="mainlevel">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	 		<tr>
+	    		<td>
+					<div id="mainarea">
+						<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+	     						<td class="tabcont" >
+	      							<form action="installer.php" method="post" state="step1_post">
+									<div id="pfsenseinstaller">
+										<a onclick="return confirm('Are you sure you want to install pfSense to $disk?')"> href='installer.php?state=quickeasyinstall'>Quick/Easy installation</a> 
+										</p>
+									</div>
+	     						</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
 EOF;
-
+	end_html();
 }
 
-?>
-
-</form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
-
-<?php
-	if($_REQUEST['state'] == "quickeasyinstall") {
-		begin_quick_easy_install();
-	}
 ?>

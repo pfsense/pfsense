@@ -76,7 +76,7 @@ if (isset($id) && $a_gateways[$id]) {
         $pconfig['down'] = $a_gateway_item[$id]['down'];
 	if (isset($a_gateways[$id]['dynamic']))
 		$pconfig['dynamic'] = true;
-	if($a_gateways[$id]['monitor'] <> "") {
+	if(($a_gateways[$id]['monitor'] <> "") && ($a_gateways[$id]['attribute'] != "system") && ($a_gateways[$id]['gateway'] != "dynamic")) {
 		$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	} else {
 		$pconfig['monitor'] == "";
@@ -279,6 +279,8 @@ if ($_POST) {
 
 
 $pgtitle = array(gettext("System"),gettext("Gateways"),gettext("Edit gateway"));
+$statusurl = "status_gateways.php";
+
 include("head.inc");
 
 ?>
@@ -346,7 +348,7 @@ function show_advanced_gateway() {
 		<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
                   <td width="78%" class="vtable"> 
-                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php echo $pconfig['gateway']; ?>" <?php if ($pconfig['dynamic'] == true && $pconfig['attribute'] == "system") echo "disabled"; ?>>
+                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?php if ($pconfig['dynamic']) echo "dynamic"; else echo $pconfig['gateway']; ?>" <?php if ($pconfig['dynamic'] && $pconfig['attribute'] == "system") echo "disabled"; ?>>
                     <br> <span class="vexpl"><?=gettext("Gateway IP address"); ?></span></td>
                 </tr>
 		<tr>
@@ -361,7 +363,7 @@ function show_advanced_gateway() {
 		  <td width="22%" valign="top" class="vncell"><?=gettext("Monitor IP"); ?></td>
 		  <td width="78%" class="vtable">
 			<?php
-				if(is_numeric($pconfig['attribute']) && ($pconfig['gateway'] == dynamic) && ($pconfig['monitor'] == "")) {
+				if(($pconfig['attribute'] == "system") && ($pconfig['gateway'] == "dynamic") && ($pconfig['monitor'] == "")) {
 					$monitor = "";
 				} else {
 					$monitor = htmlspecialchars($pconfig['monitor']);

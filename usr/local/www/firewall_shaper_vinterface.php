@@ -52,6 +52,7 @@ if($_GET['reset'] <> "") {
 }
 
 $pgtitle = array("Firewall","Traffic Shaper", "Limiter");
+$statusurl = "status_queues.php";
 
 read_dummynet_config();
 /* 

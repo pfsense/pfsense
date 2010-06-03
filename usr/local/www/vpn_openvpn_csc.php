@@ -38,6 +38,8 @@ require("guiconfig.inc");
 require_once("openvpn.inc");
 
 $pgtitle = array("OpenVPN", "Client Specific Override");
+$statusurl = "status_openvpn.php";
+$logurl = "diag_logs_openvpn.php";
 
 if (!is_array($config['openvpn']['openvpn-csc']))
 	$config['openvpn']['openvpn-csc'] = array();
@@ -69,7 +71,7 @@ if($_GET['act']=="edit"){
 
 	if (isset($id) && $a_csc[$id]) {
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
-		$pconfig['disable'] = $a_csc[$id]['disable'];
+		$pconfig['disable'] = isset($a_csc[$id]['disable']);
 		$pconfig['common_name'] = $a_csc[$id]['common_name'];
 		$pconfig['block'] = $a_csc[$id]['block'];
 		$pconfig['description'] = $a_csc[$id]['description'];
@@ -168,7 +170,8 @@ if ($_POST) {
 		$csc = array();
 
 		$csc['custom_options'] = $pconfig['custom_options'];
-		$csc['disable'] = $pconfig['disable'];
+		if ($_POST['disable'] == "yes")
+			$csc['disable'] = true;
 		$csc['common_name'] = $pconfig['common_name'];
 		$csc['block'] = $pconfig['block'];
 		$csc['description'] = $pconfig['description'];
@@ -291,7 +294,6 @@ function netbios_change() {
 				$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
 				$tab_array[] = array(gettext("Client Specific Overrides"), true, "vpn_openvpn_csc.php");
 				$tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
-				$tab_array[] = array(gettext("Logs"), false, "diag_logs_openvpn.php");
 				add_package_tabs("OpenVPN", $tab_array);
 				display_top_tabs($tab_array);
 			?>
@@ -314,7 +316,7 @@ function netbios_change() {
 							<table border="0" cellpadding="0" cellspacing="0">
 								<tr>
 									<td>
-										<?php set_checked($pconfig['disable'],$chk); ?>
+										<?php set_checked(isset($pconfig['disable']),$chk); ?>
 										<input name="disable" type="checkbox" value="yes" <?=$chk;?>/>
 									</td>
 									<td>
@@ -676,7 +678,7 @@ function netbios_change() {
 					$i = 0;
 					foreach($a_csc as $csc):
 						$disabled = "NO";
-						if ($csc['disable'])
+						if (isset($csc['disable']))
 							$disabled = "YES";
 				?>
 				<tr>

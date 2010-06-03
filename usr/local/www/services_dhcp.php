@@ -373,6 +373,9 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array("Services","DHCP server");
+$statusurl = "diag_dhcp_leases.php";
+$logurl = "diag_logs_dhcp.php";
+
 include("head.inc");
 
 ?>

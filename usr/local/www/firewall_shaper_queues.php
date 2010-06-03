@@ -170,6 +170,7 @@ if ($_POST['apply']) {
 }
 
 $pgtitle = "Firewall: Shaper: By Queues View";
+$statusurl = "status_queues.php";
 
 include("head.inc");
 ?>

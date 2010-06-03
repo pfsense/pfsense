@@ -1000,8 +1000,11 @@ EOD;
 EOD;
 	
 	if (isset($ppp['tcpmssfix']))
+		$tcpmss = "disable";
+	else
+		$tcpmss = "enable";
 		$mpdconf .= <<<EOD
-	set iface enable tcpmssfix
+	set iface {$tcpmss} tcpmssfix
 
 EOD;
 
@@ -1073,7 +1076,8 @@ EOD;
 
 EOD;
 
-		if (!empty($mtus[$pid]))
+		if (empty($mtus[$pid]))
+			$mtus[$pid] = "1492";
 			$mpdconf .= <<<EOD
 	set link mtu {$mtus[$pid]}
 

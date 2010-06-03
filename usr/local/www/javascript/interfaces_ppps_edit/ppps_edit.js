@@ -14,16 +14,34 @@ function update_select_list(new_options, select_list){
 	show_hide_linkfields(select_list);
 }
 
-function clear_selected(list_name){
-	var select_list = document.iform[list_name];
-	for(var j=0; j < select_list.options.length; j++){
-		select_list.options[j].selected = 0;
+function show_advanced(hide){
+	var select_list = document.iform["interfaces[]"].options;
+	var adv_rows = parseInt($('adv_rows').innerHTML);
+	var adv_show = Boolean(parseInt($('adv_show').innerHTML));
+	var status = Boolean(parseInt(hide));
+	if (status){
+		$('advanced_').hide();
+		for(var j=0; j < adv_rows; j++){
+			var advanced = "advanced_" + j.toString();
+			$(advanced).show();
+		}
+		$('adv_show').innerHTML = "1";
+		show_hide_linkfields(select_list);
+	} else {
+		$('advanced_').show();
+		for(var j=0; j < adv_rows; j++){
+			var advanced = "advanced_" + j.toString();
+			$(advanced).hide();
+		}
+		$('adv_show').innerHTML = "0";
+		show_hide_linkfields(select_list);
 	}
 }
 
 function show_hide_linkfields(options){
 	var i = 0;
 	var port_count = parseInt($('port_count').innerHTML);
+	var adv_show = Boolean(parseInt($('adv_show').innerHTML));
 	for(var j=0; j < port_count; j++){
 		var count = j.toString();
 		var type = $('type').value;
@@ -62,13 +80,17 @@ function show_hide_linkfields(options){
 				$(localip).name = "localip[" + options[i].value + "]";
 				$(subnet).name = "subnet[" + options[i].value + "]";
 				$(gateway).name = "gateway[" + options[i].value + "]";
-				if (type == 'pptp' || type == 'ppp' || type == 'l2tp'){
+				if (type == 'ppp' && adv_show){
 					$(ipfields).show();
-					if (type == 'pptp' || type == 'l2tp'){
-						$(subnet).disabled = false;
-					}
 				}
-				$(link).show();
+				if (type == 'pptp' || type == 'l2tp'){
+					$(subnet).disabled = false;
+					$(ipfields).show();
+						$('pptp').show();
+				}
+				if (adv_show){
+					$(link).show();
+				}
 				i++;
 				break;
 			}
@@ -82,9 +104,11 @@ function updateType(t){
 	var serialports = $('serialports').innerHTML;
 	var ports = $('ports').innerHTML;
 	var select_list = document.iform["interfaces[]"].options;
+	$('adv_show').innerHTML = "0";
+	show_advanced('0');
 	switch(t) {
 		case "select": {
-			$('ppp','pppoe','pptp','prefil_ppp').invoke('hide');
+			$('ppp','pppoe','pptp').invoke('hide');
 			select_list.length = 0;
 			select_list[0] = new Option("Select Link Type First","");
 			break;
@@ -92,21 +116,24 @@ function updateType(t){
 		case "ppp": {
 			update_select_list(serialports, select_list);
 			$('select','pppoe','pptp').invoke('hide');
-			$('prefil_ppp').show();
 			country_list();
 			break;
 		}
 		case "pppoe": {
 			update_select_list(ports, select_list);
-			$('select','ppp','pptp','prefil_ppp').invoke('hide');
+			$('select','ppp','pptp').invoke('hide');
 			break;
 		}
 		case "l2tp": {
-			t = "pptp";
+			$('pptp_label').innerHTML = "L2TP Configuration";
+			update_select_list(ports, select_list);
+			$('select','ppp','pppoe').invoke('hide');
+			break;
 		}
 		case "pptp": {
 			update_select_list(ports, select_list);
-			$('select','ppp','pppoe','prefil_ppp').invoke('hide');
+			$('select','ppp','pppoe').invoke('hide');
+			$('pptp_label').innerHTML = "PPTP Configuration";
 			break;
 		}
 		default:

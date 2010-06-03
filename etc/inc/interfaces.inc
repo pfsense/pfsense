@@ -62,7 +62,7 @@ function get_interface_arr($flush = false) {
 
         /* If the cache doesn't exist, build it */
         if (!isset($interface_arr_cache) or $flush)
-                $interface_arr_cache = `/sbin/ifconfig -l`;
+                $interface_arr_cache = explode(" ", `/sbin/ifconfig -l`);
 
         return $interface_arr_cache;
 }
@@ -78,7 +78,7 @@ function does_interface_exist($interface) {
                 return false;
 
         $ints = get_interface_arr();
-        if(stristr($ints, $interface) !== false)
+	if (in_array($interface, $ints))
                 return true;
         else
                 return false;
@@ -869,7 +869,10 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 
 function interface_ppp_configure($interface) {
 	global $config, $g;
-	
+
+	if (!is_array($config['interfaces'][$interface]))
+		return;
+
 	$wancfg =& $config['interfaces'][$interface];
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		foreach ($config['ppps']['ppp'] as $ppp) {
@@ -882,8 +885,9 @@ function interface_ppp_configure($interface) {
 
 	if ($interface == "wan")
 		$pppid = "0";
-	else
+	else {
 		$pppid = substr($interface, 3);
+	}
 
 	$pppif = "ppp{$pppid}";
 
@@ -2108,7 +2112,10 @@ EOD;
 function interface_pppoe_configure($interface = "wan") {
 	global $config, $g;
 
-	$wancfg = $config['interfaces'][$interface];
+	if (!is_array($config['interfaces'][$interface]))
+                return;
+
+	$wancfg =& $config['interfaces'][$interface];
 
 	/* generate mpd.conf */
 	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.conf", "w");
@@ -2142,7 +2149,8 @@ EOD;
 		$realif = "pppoe0";
 	else {
 		// Here code assumes only that strings of form "opt#" will be passed.
-		$realif = "pppoe" . substr($interface, 3); 
+		$pppoeidx = substr($interface, 3);
+		$realif = "pppoe{$pppoeidx}";
 	}
 	
 	$mpdconf .= <<<EOD
@@ -2266,7 +2274,10 @@ EOD;
 function interface_pptp_configure($interface) {
 	global $config, $g;
 
-	$wancfg = $config['interfaces'][$interface];
+	if (!is_array($config['interfaces'][$interface]))
+                return;
+
+	$wancfg =& $config['interfaces'][$interface];
 
 	/* generate mpd.conf */
 	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.conf", "w");
@@ -2300,8 +2311,9 @@ EOD;
                 $realif = "pptp0";
         else {
                 // Here code assumes only that strings of form "opt#" will be passed.
-                $realif = "pptp" . substr($interface, 3);
-	}
+                $pptpidx = substr($interface, 3);
+                $realif = "pptp{$pptpidx}";
+        }
 
         $mpdconf .= <<<EOD
 	create bundle static {$interface}
@@ -2440,52 +2452,66 @@ function convert_real_interface_to_friendly_interface_name($interface = "wan") {
         global $config;
 
         if (stristr($interface, "pppoe")) {
-                $index = substr($interface, 5);
-                if (intval($index) > 0)
+                $index = intval(substr($interface, 5));
+		if ($interface == "pppoe")
+			return "lan";
+                if ($index > 0)
                         return "opt{$index}";
                 else
                         return "wan";
         } else if (stristr($interface, "pptp")) {
-                $index = substr($interface, 4);
-                if (intval($index) > 0)
+                $index = intval(substr($interface, 4));
+		if ($interface == "pptp")
+			return "lan";
+                if ($index > 0)
+                        return "opt{$index}";
+                else
+                        return "wan";
+        } else if (stristr($interface, "ppp")) {
+                $index = intval(substr($interface, 3));
+		if ($interface == "ppp")
+			return "lan";
+                if ($index > 0)
+                        return "opt{$index}";
+                else
+                        return "wan";
+        } else if (stristr($interface, "l2tp")) {
+                $index = intval(substr($interface, 4));
+		if ($interface == "l2tp")
+			return "lan";
+                if ($index > 0)
                         return "opt{$index}";
                 else
                         return "wan";
 	} else if (stristr($interface, "vip")) {
-                $index = substr($interface, 3);
-                $counter = 0;
-                foreach ($config['virtualip']['vip'] as $vip) {
+                $index = intval(substr($interface, 3));
+                foreach ($config['virtualip']['vip'] as $counter => $vip) {
                         if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
-                                if (intval($index) == $counter)
+                                if ($index == $counter)
                                         return $vip['interface'];
-                                $counter++;
                         }
                 }
         } else if (stristr($interface, "carp")) {
-                $index = substr($interface, 4);
-                $counter = 0;
-                foreach ($config['virtualip']['vip'] as $vip) {
+                $index = intval(substr($interface, 4));
+                foreach ($config['virtualip']['vip'] as $counter => $vip) {
                         if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {
-                                if (intval($index) == $counter)
+                                if ($index == $counter)
                                         return $vip['interface'];
-                                $counter++;
                         }
                 }
         }
 
-        /* if list */
-        $ifdescrs = get_configured_interface_list(false, true);
+        /* XXX: For speed reasons reference directly the interface array */
+	$ifdescrs = $config['interfaces'];
+        //$ifdescrs = get_configured_interface_list(false, true);
 
         foreach ($ifdescrs as $if => $ifname) {
-                if($config['interfaces'][$if]['if'] == $interface)
-                        return $ifname;
+                if ($config['interfaces'][$if]['if'] == $interface)
+                        return $if;
 
                 /* XXX: ermal - The 3 lines below are totally bogus code. */
                 $int = interface_translate_type_to_real($if);
-                if($ifname == $interface)
-                        return $ifname;
-
-                if($int == $interface)
+                if ($int == $interface)
                         return $ifname;
         }
         return NULL;
@@ -2576,7 +2602,7 @@ function interface_get_wireless_clone($wlif) {
 }
 
 function get_real_interface($interface = "wan") {
-    global $config;
+	global $config;
 
 	$wanif = NULL;
 
@@ -2601,78 +2627,60 @@ function get_real_interface($interface = "wan") {
 		$wanif = "ppp";
 		break;
 	default:
-		$iflist = get_configured_interface_with_descr(false, true);
+		// If a real interface was alread passed simply
+		// pass the real interface back.  This encourages
+		// the usage of this function in more cases so that
+		// we can combine logic for more flexibility.
+		if(does_interface_exist($interface)) {
+			$wanif = $interface;
+			break;
+		}
+		if (empty($config['interfaces'][$interface]))
+			break;
 
-		foreach ($iflist as $if => $ifdesc) {
-			// If a real interface was alread passed simply
-			// pass the real interface back.  This encourages
-			// the usage of this function in more cases so that
-			// we can combine logic for more flexibility.
-			if($config['interfaces'][$if]['if'] == $interface) {
-				if(does_interface_exist($interface)) {
-					$wanif = $interface;
-					break;
+		$cfg =& $config['interfaces'][$interface];
+
+		// Wireless cloned NIC support (FreeBSD 8+)
+		// interface name format: $parentnic_wlanparentnic#
+		// example: ath0_wlan0
+		if (is_interface_wireless($cfg['if'])) {
+			$wanif = interface_get_wireless_clone($cfg['if']);
+			break;
+		}
+		/*
+		if (empty($cfg['if'])) {
+			$wancfg = $cfg['if'];
+			break;
+		}
+		*/
+
+		switch ($cfg['ipaddr']) {
+			case "carpdev-dhcp":
+				$viparr = &$config['virtualip']['vip'];
+				if(is_array($viparr))
+				foreach ($viparr as $counter => $vip) {
+					if ($vip['mode'] == "carpdev-dhcp") {
+						if($vip['interface'] == $interface) {
+							$wanif = "carp{$counter}";
+							break;
+						}
+					}
 				}
-			}
-
-			if ($interface == $if || $interface == $ifdesc) {
-
-			$cfg = $config['interfaces'][$if];
-
-			// Wireless cloned NIC support (FreeBSD 8+)
-			// interface name format: $parentnic_wlanparentnic#
-			// example: ath0_wlan0
-			if(is_interface_wireless($cfg['if'])) {
-				$wanif = interface_get_wireless_clone($cfg['if']);
 				break;
-			}
-
-			if (empty($cfg['ipaddr'])) {
+			case "pppoe": 
+			case "pptp": 
+			case "l2tp": 
+			case "ppp":
+				if ($interface == "wan")
+					$wanif = "{$cfg['ipaddr']}0";
+				else {
+					$idx = substr($interface, 3);
+					$wanif = "{$cfg['ipaddr']}{$idx}";
+				}
+				break;
+			default:
 				$wanif = $cfg['if'];
 				break;
-			}
-
-			switch ($cfg['ipaddr']) {
-				case "carpdev-dhcp":
-					$viparr = &$config['virtualip']['vip'];
-					$counter = 0;
-					if(is_array($viparr))
-					foreach ($viparr as $vip) {
-						if ($vip['mode'] == "carpdev-dhcp") {
-							if($vip['interface'] == $if) {
-								$wanif =  "carp{$counter}";
-								break;
-							}
-							$counter++;
-						} else if ($vip['mode'] = "carp") 
-							$counter++;
-					}
-					break;
-				case "pppoe": 
-					if ($if == "wan")
-						$wanif = "pppoe0";
-					else
-						$wanif = "pppoe" . substr($if,3);
-					break;
-				case "pptp": 
-					if ($if == "wan")
-						$wanif = "pptp0";
-					else
-						$wanif = "pptp" . substr($if, 3);
-					break;
-				case "ppp":
-					if ($if == "wan")
-						$wanif = "ppp0";
-					else
-						$wanif = "ppp" . substr($if, 3);
-					break;
-				default:
-					$wanif = $cfg['if'];
-					break;
-				}
-			
-				break;
-			}
 		}
 		break;
 	}
@@ -2920,10 +2928,6 @@ function get_interface_ip($interface = "wan")
 			return null;
 	}
 
-	/* Do we really come here for these interfaces ?! */
-	if (in_array($realif, array("pptp", "pppoe", "l2tp", "openvpn", "enc0" /* , "ppp" */)))
-			return "";
-
 	$curip = find_interface_ip($realif);
 	if ($curip && is_ipaddr($curip) && ($curip != "0.0.0.0"))
 		return $curip;
@@ -2942,10 +2946,6 @@ function get_interface_subnet($interface = "wan")
                 else
                         return null;
         }
-
-	/* Do we really come here for these interfaces ?! */
-	if (in_array($realif, array("pptp", "pppoe", "l2tp", "openvpn", "enc0" /* , "ppp" */)))
-		return "";
 
 	$cursn = find_interface_subnet($realif);
 	if (!empty($cursn))
@@ -2968,12 +2968,13 @@ function get_interfaces_with_gateway() {
 			case "carpdev-dhcp":
 			case "pppoe":
 			case "pptp":
+			case "l2tp":
 			case "ppp";
-				$ints[] = $ifdescr;
+				$ints[$ifdescr] = $ifdescr;
 			break;
 			default:
 				if (!empty($ifname['gateway']))
-					$ints[] = $ifdescr;
+					$ints[$ifdescr] = $ifdescr;
 			break;
 		}
 	}
@@ -2982,10 +2983,25 @@ function get_interfaces_with_gateway() {
 
 /* return true if interface has a gateway */
 function interface_has_gateway($friendly) {
+	global $config;
 
-        $friendly = strtolower($friendly);
-        if (in_array($friendly, get_interfaces_with_gateway()))
-                return true;
+	if (!empty($config['interfaces'][$friendly])) {
+		$ifname =& $config['interfaces'][$friendly];
+		switch ($ifname['ipaddr']) {
+			case "dhcp":
+			case "carpdev-dhcp":
+			case "pppoe":
+			case "pptp":
+			case "l2tp":
+			case "ppp";
+				return true;
+			break;
+			default:
+				if (!empty($ifname['gateway']))
+					return true;
+			break;
+		}
+	}
 
 	return false;
 }

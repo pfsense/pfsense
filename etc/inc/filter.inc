@@ -2085,7 +2085,7 @@ EOD;
 				/* if antilockout is enabled, LAN exists and has
 				 * an IP and subnet mask assigned
 				 */
-				$lanif = $FilterIflist["lan"]['if'];
+				$lanif = $FilterIflist['lan']['if'];
 				$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"

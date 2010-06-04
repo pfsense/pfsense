@@ -155,7 +155,7 @@ if ($_POST) {
 
 	if (isset($id) && ($a_vip[$id])) {
 		if ($a_vip[$id]['mode'] != $_POST['mode'])
-			interface_bring_down($a_vip[$id]);
+			interface_bring_down($a_vip[$id]['interface']);
 	}
 
 	if (!$input_errors) {

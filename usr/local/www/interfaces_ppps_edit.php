@@ -558,6 +558,49 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			<td style="display:none" name="port_count" id="port_count"><?=htmlspecialchars($port_count);?></td>
 		</tr>
 		<tr>
+			<td width="22%" valign="top" class="vncell"><?= gettext("Description"); ?></td>
+			<td width="78%" class="vtable">
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+				<br/> <span class="vexpl"><?= gettext("You may enter a description here for your reference. Description will appear in the \"Interfaces Assign\" select lists."); ?></span>
+			</td>
+		</tr>	
+		<tr style="display:none" name="select" id="select"></tr>
+		
+		<?php $k=0; ?>
+		
+		<tr style="display:none" name="ppp_provider" id="ppp_provider">
+			<td width="22%" valign="top" class="vncell"><?= gettext("Service Provider"); ?></td>
+			<td width="78%" class="vtable">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tr id="trcountry" style="display:none">
+						<td><?= gettext("Country"); ?> :&nbsp;&nbsp;</td>
+						<td>
+							<select class="formselect" name="country" id="country" onChange="providers_list()">
+								<option></option>
+							</select>
+						</td>
+					</tr>
+					<tr id="trprovider" style="display:none">
+						<td><?= gettext("Provider"); ?> :&nbsp;&nbsp;</td>
+						<td>
+							<select class="formselect" name="provider" id="provider" onChange="providerplan_list()">
+								<option></option>
+							</select>
+						</td>
+					</tr>
+					<tr id="trproviderplan" style="display:none">
+						<td><?= gettext("Plan"); ?> :&nbsp;&nbsp;</td>
+						<td>
+							<select class="formselect" name="providerplan" id="providerplan" onChange="prefill_provider()">
+								<option></option>
+							</select>
+						</td>
+					</tr>
+				</table>
+				<br/><span class="vexpl"><?= gettext("Select to fill in data for your service provider."); ?></span>
+			</td>
+		</tr>
+		<tr>
 			<td width="22%" valign="top" class="vncell"><?= gettext("Username"); ?></td>
 			<td width="78%" class="vtable">
 			<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
@@ -569,86 +612,39 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
 			</td>
 		</tr>
-		
-		<tr>
-			<td width="22%" valign="top" class="vncell"><?= gettext("Description"); ?></td>
+
+		<tr style="display:none" name="phone_num" id="phone_num">
+			<td width="22%" valign="top" class="vncell"><?= gettext("Phone Number"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-				<br/> <span class="vexpl"><?= gettext("You may enter a description here for your reference. Description will appear in the \"Interfaces Assign\" select lists."); ?></span>
+				<input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>">
+				<br/><span class="vexpl"><?= gettext("Note: Typically (*99# or *99***# or *99***1#) for GSM networks and *777 for CDMA networks"); ?></span>
 			</td>
 		</tr>
-		<tr>
-			<td colspan="2" valign="top" height="16"></td>
+		<tr style="display:none" name="apn" id="apn">
+			<td width="22%" valign="top" class="vncell"><?= gettext("Access Point Name (APN)"); ?></td>
+			<td width="78%" class="vtable">
+				<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>">
+			</td>
 		</tr>
-		<tr style="display:none" name="select" id="select">
-		</tr>
-		<?php $k=0; ?>
 		
 		<tr style="display:none" name="ppp" id="ppp">
 			<td colspan="2" style="padding:0px;">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
-					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?= gettext("PPP configuration"); ?></td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?= gettext("Service Provider"); ?></td>
-						<td width="78%" class="vtable">
-							<table border="0" cellpadding="0" cellspacing="0">
-								<tr id="trcountry" style="display:none">
-									<td><?= gettext("Country"); ?> :&nbsp;&nbsp;</td>
-									<td>
-										<select class="formselect" name="country" id="country" onChange="providers_list()">
-											<option></option>
-										</select>
-									</td>
-								</tr>
-								<tr id="trprovider" style="display:none">
-									<td><?= gettext("Provider"); ?> :&nbsp;&nbsp;</td>
-									<td>
-										<select class="formselect" name="provider" id="provider" onChange="providerplan_list()">
-											<option></option>
-										</select>
-									</td>
-								</tr>
-								<tr id="trproviderplan" style="display:none">
-									<td><?= gettext("Plan"); ?> :&nbsp;&nbsp;</td>
-									<td>
-										<select class="formselect" name="providerplan" id="providerplan" onChange="prefill_provider()">
-											<option></option>
-										</select>
-									</td>
-								</tr>
-							</table>
-							<br/><span class="vexpl"><?= gettext("Select to fill in data for your service provider."); ?></span>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?= gettext("Access Point Name (APN)"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>">
-						</td>
-					</tr>
-					<tr <tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+				<table width="100%" border="0" cellpadding="6" cellspacing="0">		
+					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?= gettext("APN number (optional)"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="apnum" type="text" class="formfld unknown" id="apnum" size="2" value="<?=htmlspecialchars($pconfig['apnum']);?>">
 							<br/><span class="vexpl"><?= gettext("Note: Defaults to 1 if you set APN above. Ignored if you set no APN above."); ?></span>
 						</td>
 					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?= gettext("Phone Number"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>">
-							<br/><span class="vexpl"><?= gettext("Note: Typically (*99# or *99***# or *99***1#) for GSM networks and *777 for CDMA networks"); ?></span>
-					  	</td>
-					</tr>
-					<tr <tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?= gettext("Sim PIN"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="simpin" type="text" class="formfld unknown" id="simpin" size="12" value="<?=htmlspecialchars($pconfig['simpin']);?>">
 						</td>
 					</tr>
-					<tr <tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
+			
+					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?= gettext("Sim PIN wait"); ?></td>
 						<td width="78%" class="vtable">
 							<input name="pin-wait" type="text" class="formfld unknown" id="pin-wait" size="2" value="<?=htmlspecialchars($pconfig['pin-wait']);?>">
@@ -683,9 +679,6 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr style="display:none" name="pppoe" id="pppoe">
 			<td colspan="2" style="padding:0px;">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
-					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?= gettext("PPPoE configuration"); ?></td>
-					</tr>
 					<tr>
 						<td width="22%" valign="top" class="vncell"><?= gettext("Service name"); ?></td>
 						<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
@@ -745,40 +738,27 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				</table>
 			</td>
 		</tr>
-		<tr style="display:none" name="pptp" id="pptp">
-			<td colspan="2" style="padding:0px;">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
-					<tr>
-						<td colspan="2" valign="top" class="listtopic" name="pptp_label" id="pptp_label"></td>
-					</tr>
-				</table>
+
+		<?php for($j=0; $j < $port_count; $j++) : ?>
+		
+		<tr style="display:none" id="gw_fields<?=$j;?>">
+			<td width="22%" id="localiplabel<?=$j;?>" valign="top" class="vncell"><?= gettext("Local IP"); ?></td>
+			<td width="78%" class="vtable"> 
+				<input name="localip[]" type="text" class="formfld unknown" id="localip<?=$j;?>" size="20"  value="<?=htmlspecialchars($pconfig['localip'][$j]);?>">
+				/
+				<select name="subnet[]" class="formselect" id="subnet<?=$j;?>" disabled="true">
+				<?php for ($i = 31; $i > 0; $i--): ?>
+					<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo " selected"; ?>><?=$i;?></option>
+				<?php endfor; ?>
+				</select> Leave blank to use DHCP to configure <?=strtoupper($pconfig['type']); ?> Local IP.
+				<br><span class="vexpl"><?= gettext("Note: Leave blank to retrieve local IP by DHCP for PPtP/L2TP. Local IP is automatically assigned for PPP links if this field is empty."); ?></span>
 			</td>
 		</tr>
-		<?php for($j=0; $j < $port_count; $j++) : ?>
-		<tr style="display:none" id="ipfields<?=$j;?>">
-			<td colspan="2" style="padding:0px;">
-				<table width="100%" border="0" cellpadding="6" cellspacing="0">
-					<tr>
-						<td width="22%" id="localiplabel<?=$j;?>" valign="top" class="vncell"><?= gettext("Local IP"); ?></td>
-						<td width="78%" class="vtable"> 
-							<input name="localip[]" type="text" class="formfld unknown" id="localip<?=$j;?>" size="20"  value="<?=htmlspecialchars($pconfig['localip'][$j]);?>">
-							/
-							<select name="subnet[]" class="formselect" id="subnet<?=$j;?>" disabled="true">
-							<?php for ($i = 31; $i > 0; $i--): ?>
-								<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo " selected"; ?>><?=$i;?></option>
-							<?php endfor; ?>
-							</select> Leave blank to use DHCP to configure <?=strtoupper($pconfig['type']); ?> Local IP.
-							<br><span class="vexpl"><?= gettext("Note: Leave blank to retrieve local IP by DHCP for PPtP/L2TP. Local IP is automatically assigned for PPP links if this field is empty."); ?></span>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" id="gatewaylabel<?=$j;?>" valign="top" class="vncell"></td>
-						<td width="78%" class="vtable">
-							<input name="gateway[]" type="text" class="formfld unknown" id="gateway<?=$j;?>" size="20" value="<?=htmlspecialchars($pconfig['gateway'][$j]);?>"><?= gettext("IP Address OR Hostname"); ?>
-							<br><span class="vexpl"><?= gettext("Note: This is where the packets will be routed. Remote IP OR Hostname is required for PPTP connections. Remote IP is automatically assigned for PPP links if this field is empty."); ?></span>
-						</td>
-					</tr>
-				</table>
+		<tr style="display:none" id="ip_fields<?=$j;?>">
+			<td width="22%" id="gatewaylabel<?=$j;?>" valign="top" class="vncell"></td>
+			<td width="78%" class="vtable">
+				<input name="gateway[]" type="text" class="formfld unknown" id="gateway<?=$j;?>" size="20" value="<?=htmlspecialchars($pconfig['gateway'][$j]);?>"><?= gettext("IP Address OR Hostname"); ?>
+				<br><span class="vexpl"><?= gettext("Note: This is where the packets will be routed. Remote IP OR Hostname is required for PPTP connections. Remote IP is automatically assigned for PPP links if this field is empty."); ?></span>
 			</td>
 		</tr><?php endfor; ?>
 

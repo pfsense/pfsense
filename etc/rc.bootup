@@ -329,9 +329,6 @@ enable_rrd_graphing();
 /* start DHCP service */
 services_dhcpd_configure();
 
-/* start DHCP logging service which populates /etc/hosts */
-services_parse_dhcpd_hostnames();
-
 /* startup OLSR if needed */
 setup_wireless_olsr();
 

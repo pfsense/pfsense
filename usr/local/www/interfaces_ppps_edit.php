@@ -617,10 +617,10 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			<td width="22%" valign="top" class="vncell"><?= gettext("Phone Number"); ?></td>
 			<td width="78%" class="vtable">
 				<input name="phone" type="text" class="formfld unknown" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>">
-				<br/><span class="vexpl"><?= gettext("Note: Typically (*99# or *99***# or *99***1#) for GSM networks and *777 for CDMA networks"); ?></span>
+				<br/><span class="vexpl"><?= gettext("Note: Typically (*99# for GSM networks and *777 for CDMA networks"); ?></span>
 			</td>
 		</tr>
-		<tr style="display:none" name="apn" id="apn">
+		<tr style="display:none" name="apn_" id="apn_">
 			<td width="22%" valign="top" class="vncell"><?= gettext("Access Point Name (APN)"); ?></td>
 			<td width="78%" class="vtable">
 				<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>">
@@ -750,15 +750,14 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				<?php for ($i = 31; $i > 0; $i--): ?>
 					<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo " selected"; ?>><?=$i;?></option>
 				<?php endfor; ?>
-				</select> Leave blank to use DHCP to configure <?=strtoupper($pconfig['type']); ?> Local IP.
-				<br><span class="vexpl"><?= gettext("Note: Leave blank to retrieve local IP by DHCP for PPtP/L2TP. Local IP is automatically assigned for PPP links if this field is empty."); ?></span>
+				</select> <?= gettext("IP Address (Leave empty to enable DHCP)"); ?>
+				
 			</td>
 		</tr>
 		<tr style="display:none" id="ip_fields<?=$j;?>">
 			<td width="22%" id="gatewaylabel<?=$j;?>" valign="top" class="vncell"></td>
 			<td width="78%" class="vtable">
 				<input name="gateway[]" type="text" class="formfld unknown" id="gateway<?=$j;?>" size="20" value="<?=htmlspecialchars($pconfig['gateway'][$j]);?>"><?= gettext("IP Address OR Hostname"); ?>
-				<br><span class="vexpl"><?= gettext("Note: This is where the packets will be routed. Remote IP OR Hostname is required for PPTP connections. Remote IP is automatically assigned for PPP links if this field is empty."); ?></span>
 			</td>
 		</tr><?php endfor; ?>
 

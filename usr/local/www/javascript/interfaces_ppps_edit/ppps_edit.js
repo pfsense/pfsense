@@ -108,7 +108,7 @@ function updateType(t){
 	show_advanced('0');
 	switch(t) {
 		case "select": {
-			$('ppp','pppoe','ppp_provider','phone_num','apn').invoke('hide');
+			$('ppp','pppoe','ppp_provider','phone_num','apn_').invoke('hide');
 			select_list.length = 0;
 			select_list[0] = new Option("Select Link Type First","");
 			break;
@@ -116,19 +116,19 @@ function updateType(t){
 		case "ppp": {
 			update_select_list(serialports, select_list);
 			$('select','pppoe').invoke('hide');
-			$('ppp_provider','phone_num','apn').invoke('show');
+			$('ppp_provider','phone_num','apn_').invoke('show');
 			country_list();
 			break;
 		}
 		case "pppoe": {
 			update_select_list(ports, select_list);
-			$('select','ppp','ppp_provider','phone_num','apn').invoke('hide');
+			$('select','ppp','ppp_provider','phone_num','apn_').invoke('hide');
 			break;
 		}
 		case "l2tp":
 		case "pptp": {
 			update_select_list(ports, select_list);
-			$('select','ppp','pppoe','ppp_provider','phone_num','apn').invoke('hide');
+			$('select','ppp','pppoe','ppp_provider','phone_num','apn_').invoke('hide');
 			break;
 		}
 		default:

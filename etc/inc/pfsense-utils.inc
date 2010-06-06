@@ -1171,7 +1171,7 @@ function get_interface_info($ifdescr) {
 	$ifinfo = array();
 	if (empty($config['interfaces'][$ifdescr]))
 		return;
-	$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
+	$ifinfo['hwif'] = $config['interfaces'][$ifdescr]['if'];
 	$ifinfo['if'] = get_real_interface($ifdescr);
 
 	$chkif = $ifinfo['if'];
@@ -1264,16 +1264,16 @@ function get_interface_info($ifdescr) {
 			
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-				if ($config['interfaces'][$if]['ptpid'] == $ppp['ptpid'])
+				if ($config['interfaces'][$ifdescr]['ptpid'] == $ppp['ptpid'])
 					break;
 			}
 		}
 		$dev = $ppp['ports'];
-		if ($config['interfaces'][$if]['ptpid'] != $ppp['ptpid'] || empty($dev))
+		if ($config['interfaces'][$ifdescr]['ptpid'] != $ppp['ptpid'] || empty($dev))
 			break;
 		if (file_exists($dev)) {
-			if (file_exists("{$g['varrun_path']}/ppp_{$if}.pid")) {
-				$ifinfo['pppinfo'] = "{$ifinfo['if']}";
+			if (file_exists("{$g['varrun_path']}/ppp_{$ifdescr}.pid")) {
+				$ifinfo['pppinfo'] = $ifinfo['if'];
 				$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
         		$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
 			}
@@ -1341,8 +1341,8 @@ function get_interface_info($ifdescr) {
 
 		}
 		/* lookup the gateway */
-		if (interface_has_gateway($if)) 
-			$ifinfo['gateway'] = get_interface_gateway($if);
+		if (interface_has_gateway($ifdescr)) 
+			$ifinfo['gateway'] = get_interface_gateway($ifdescr);
 	}
 
 	$bridge = "";

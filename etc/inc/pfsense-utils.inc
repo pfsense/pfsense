@@ -1190,7 +1190,7 @@ function get_interface_info($ifdescr) {
 	$ifinfo = array();
 	if (empty($config['interfaces'][$ifdescr]))
 		return;
-	$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
+	$ifinfo['hwif'] = $config['interfaces'][$ifdescr]['if'];
 	$ifinfo['if'] = get_real_interface($ifdescr);
 
 	$chkif = $ifinfo['if'];
@@ -1278,7 +1278,7 @@ function get_interface_info($ifdescr) {
 		else
 			$ifinfo['ppplink'] = "down" ;
 
-		$dev = $config['interfaces'][$if]['if'];
+		$dev = $config['interfaces'][$ifdescr]['if'];
 		if (empty($dev))
 			break;
 		if (file_exists("/dev/{$dev}")) {
@@ -1351,8 +1351,8 @@ function get_interface_info($ifdescr) {
 
 		}
 		/* lookup the gateway */
-		if (interface_has_gateway($if)) 
-			$ifinfo['gateway'] = get_interface_gateway($if);
+		if (interface_has_gateway($ifdescr)) 
+			$ifinfo['gateway'] = get_interface_gateway($ifdescr);
 	}
 
 	$bridge = "";

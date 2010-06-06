@@ -225,6 +225,19 @@ function system_hosts_generate() {
 	fwrite($fd, $hosts);
 	fclose($fd);
 
+	/* Start the monitoring process for dynamic dhcpclients. */
+	if (isset($config['dnsmasq']['regdhcp'])) {
+		/* Make sure we do not error out */
+		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
+                if (file_exists("{$g['varrun_path']}/dhcpleases.pid"))
+                        sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
+                else
+                        mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$syscfg['domain']} -p {$g['varrun_path']}/dnsmasq.pid -h {$g['varetc_path']}/hosts");
+        } else {
+                sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
+                @unlink("{$g['varrun_path']}/dhcpleases.pid");
+        }
+
 	return 0;
 }
 
@@ -263,15 +276,29 @@ function system_routing_configure() {
 	$interfacegw = "";
 	/* tack on all the hard defined gateways as well */
 	if (is_array($config['gateways']['gateway_item'])) {
+		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw");
+		$foundgw = false;
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
 			if (isset($gateway['defaultgw'])) {
 				if ($gateway['gateway'] == "dynamic")
 					$gateway['gateway'] = get_interface_gateway($gateway['interface']);
 				$gatewayip = $gateway['gateway'];
 				$interfacegw = $gateway['interface'];
+				if (!empty($interfacegw)) {
+					$defaultif = get_real_interface($gateway['interface']);
+					if ($defaultif)
+						@file_put_contents("{$g['tmp_path']}/{$defaultif}_defaultgw", $gatewayip);
+				}
+				$foundgw = true;
 				break;
 			}
 		}
+		if ($foundgw == false) {
+			$defaultif = get_real_interface("wan");
+			$interfacegw = "wan";
+			$gatewayip = get_interface_gateway("wan");
+			@touch("{$g['tmp_path']}/{$defaultif}_defaultgw");
+		}	
 	}
 	$dont_add_route = false;
 	/* if OLSRD is enabled, allow WAN to house DHCP. */

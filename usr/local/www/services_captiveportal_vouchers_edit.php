@@ -36,6 +36,9 @@
 ##|-PRIV
 
 $pgtitle = array("Services", "Captive portal", "Edit Voucher Rolls");
+$statusurl = "status_captiveportal_vouchers.php";
+$logurl = "diag_logs_auth.php";
+
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");

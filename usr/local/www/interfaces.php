@@ -44,14 +44,14 @@
 ##|*MATCH=interfaces.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("ipsec.inc");
-require("functions.inc");
-require("captiveportal.inc");
-require("filter.inc");
-require("shaper.inc");
-require("rrd.inc");
-require("vpn.inc");
+require_once("guiconfig.inc");
+require_once("ipsec.inc");
+require_once("functions.inc");
+require_once("captiveportal.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
+require_once("rrd.inc");
+require_once("vpn.inc");
 
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
@@ -828,6 +828,8 @@ function check_wireless_mode() {
 }
 
 $pgtitle = array("Interfaces", $pconfig['descr']);
+$statusurl = "status_interfaces.php";
+
 $closehead = false;
 include("head.inc");
 $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe" => "PPPoE", "pptp" => "PPTP" /* , "carpdev-dhcp" => "CarpDev"*/); 

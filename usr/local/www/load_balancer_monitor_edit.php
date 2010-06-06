@@ -188,6 +188,10 @@ if ($_POST) {
 }
 
 $pgtitle = array("Services", "Load Balancer","Monitor","Edit");
+#$statusurl = "status_slbd_vs.php";
+$statusurl = "status_slbd_pool.php";
+$logurl = "diag_logs_relayd.php";
+
 include("head.inc");
 $types = array("icmp" => "ICMP", "tcp" => "TCP", "http" => "HTTP", "https" => "HTTPS", "send" => "Send/Expect");
 

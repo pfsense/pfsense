@@ -30,7 +30,6 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
-$a_gateways = return_gateways_array();
 $gateways_status = array();
 $gateways_status = return_gateways_status();
 
@@ -58,7 +57,7 @@ $counter = 1;
 								<?php $counter++; ?>
                   </td>
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">
-                                <?=$a_gateways[$gateway['name']]['gateway'];?>
+                                <?php echo lookup_gateway_ip_by_name($gateway['name']);?>
 								<?php $counter++; ?>
                   </td>
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">

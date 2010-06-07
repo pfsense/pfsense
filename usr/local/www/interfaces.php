@@ -103,6 +103,15 @@ if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 
 if ($wancfg['ptpid'] == $a_ppps[$pppid]['ptpid']) {
 	$pconfig['pppid'] = $pppid;
+	
+	if ($a_ppps[$pppid]['type'] == "ppp"){
+		$pconfig['username'] = $a_ppps[$pppid]['username'];
+		$pconfig['password'] = base64_decode($a_ppps[$pppid]['password']);
+		$pconfig['port'] = $a_ppps[$pppid]['ports'];
+		$pconfig['phone'] = $a_ppps[$pppid]['phone'];
+		$pconfig['apn'] = $a_ppps[$pppid]['apn'];
+	}
+	
 	if ($a_ppps[$pppid]['type'] == "pppoe"){
 		$pconfig['pppoe_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pppoe_password'] = base64_decode($a_ppps[$pppid]['password']);
@@ -553,6 +562,15 @@ if ($_POST) {
 					$a_gateways[] = $gateway_item;
 				}
 				break;
+			case "ppp":
+				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
+				$a_ppps[$pppid]['type'] = $_POST['type'];
+				$a_ppps[$pppid]['ports'] = $_POST['port'];
+				$a_ppps[$pppid]['username'] = $_POST['username'];
+				$a_ppps[$pppid]['password'] = base64_encode($_POST['password']);
+				$a_ppps[$pppid]['apn'] = $_POST['apn'];
+				break;
+
 			case "pppoe":
 				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
 				$a_ppps[$pppid]['type'] = $_POST['type'];
@@ -899,6 +917,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 			}
 			case "ppp": {
 				$('none','static','dhcp','pptp', 'pppoe').invoke('hide');
+				country_list();
 				break;
 			}
 			case "pppoe": {
@@ -946,6 +965,90 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 		else 
 			return true;
 	}
+	function country_list() {
+		$('country').childElements().each(function(node) { node.remove(); });
+		$('provider').childElements().each(function(node) { node.remove(); });
+		$('providerplan').childElements().each(function(node) { node.remove(); });
+		new Ajax.Request("getserviceproviders.php",{
+			onSuccess: function(response) {
+				var responseTextArr = response.responseText.split("\n");
+				responseTextArr.sort();
+				responseTextArr.each( function(value) {
+					var option = new Element('option');
+					country = value.split(":");
+					option.text = country[0];
+					option.value = country[1];
+					$('country').insert({ bottom : option });
+				});
+			}
+		});
+		$('trcountry').setStyle({display : "table-row"});
+	}
+	
+	function providers_list() {
+		$('provider').childElements().each(function(node) { node.remove(); });
+		$('providerplan').childElements().each(function(node) { node.remove(); });
+		new Ajax.Request("getserviceproviders.php",{
+			parameters: {country : $F('country')},
+			onSuccess: function(response) {
+				var responseTextArr = response.responseText.split("\n");
+				responseTextArr.sort();
+				responseTextArr.each( function(value) {
+					var option = new Element('option');
+					option.text = value;
+					option.value = value;
+					$('provider').insert({ bottom : option });
+				});
+			}
+		});
+		$('trprovider').setStyle({display : "table-row"});
+		$('trproviderplan').setStyle({display : "none"});
+	}
+	
+	function providerplan_list() {
+		$('providerplan').childElements().each(function(node) { node.remove(); });
+		$('providerplan').insert( new Element('option') );
+		new Ajax.Request("getserviceproviders.php",{
+			parameters: {country : $F('country'), provider : $F('provider')},
+			onSuccess: function(response) {
+				var responseTextArr = response.responseText.split("\n");
+				responseTextArr.sort();
+				responseTextArr.each( function(value) {
+					if(value != "") {
+						providerplan = value.split(":");
+	
+						var option = new Element('option');
+						option.text = providerplan[0] + " - " + providerplan[1];
+						option.value = providerplan[1];
+						$('providerplan').insert({ bottom : option });
+					}
+				});
+			}
+		});
+		$('trproviderplan').setStyle({display : "table-row"});
+	}
+	
+	function prefill_provider() {
+		new Ajax.Request("getserviceproviders.php",{
+			parameters: {country : $F('country'), provider : $F('provider'), plan : $F('providerplan')},
+			onSuccess: function(response) {
+				var xmldoc = response.responseXML;
+				var provider = xmldoc.getElementsByTagName('connection')[0];
+				$('username').setValue('');
+				$('password').setValue('');
+				if(provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
+					$('phone').setValue('*777');
+					$('apn').setValue('');
+				} else {
+					$('phone').setValue('*99#');
+					$('apn').setValue(provider.getElementsByTagName('apn')[0].firstChild.data);
+				}
+				$('username').setValue(provider.getElementsByTagName('username')[0].firstChild.data);
+				$('password').setValue(provider.getElementsByTagName('password')[0].firstChild.data);
+			}
+		});
+	}
+
 </script>
 </head>
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -1181,8 +1284,82 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									<tr>
 										<td colspan="2" valign="top" class="listtopic">PPP configuration</td>
 									</tr>
+									<tr name="ppp_provider" id="ppp_provider">
+										<td width="22%" valign="top" class="vncell"><?= gettext("Service Provider"); ?></td>
+										<td width="78%" class="vtable">
+											<table border="0" cellpadding="0" cellspacing="0">
+												<tr id="trcountry">
+													<td><?= gettext("Country"); ?> :&nbsp;&nbsp;</td>
+													<td>
+														<select class="formselect" name="country" id="country" onChange="providers_list()">
+															<option></option>
+														</select>
+													</td>
+												</tr>
+												<tr id="trprovider" style="display:none">
+													<td><?= gettext("Provider"); ?> :&nbsp;&nbsp;</td>
+													<td>
+														<select class="formselect" name="provider" id="provider" onChange="providerplan_list()">
+															<option></option>
+														</select>
+													</td>
+												</tr>
+												<tr id="trproviderplan" style="display:none">
+													<td><?= gettext("Plan"); ?> :&nbsp;&nbsp;</td>
+													<td>
+														<select class="formselect" name="providerplan" id="providerplan" onChange="prefill_provider()">
+															<option></option>
+														</select>
+													</td>
+												</tr>
+											</table>
+											<br/><span class="vexpl"><?= gettext("Select to fill in data for your service provider."); ?></span>
+										</td>
+									</tr>
 									<tr>
-									<td width="22%" valign="top" class="vncell">PPP</td>
+										<td width="22%" valign="top" class="vncell"><?= gettext("Username"); ?></td>
+										<td width="78%" class="vtable">
+										<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?= gettext("Password"); ?></td>
+										<td width="78%" class="vtable">
+										<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+										</td>
+									</tr>
+									<tr name="phone_num" id="phone_num">
+										<td width="22%" valign="top" class="vncellreq"><?= gettext("Phone Number"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="phone" type="text" class="formfld unknown" id="phone" size="12" value="<?=htmlspecialchars($pconfig['phone']);?>">
+										</td>
+									</tr>
+									<tr name="apn_" id="apn_">
+										<td width="22%" valign="top" class="vncell"><?= gettext("Access Point Name (APN)"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>">
+										</td>
+									</tr>
+									<tr name="interface" id="interface" >
+										<td width="22%" valign="top" class="vncellreq"><?= gettext("Modem Port"); ?></td>
+										<td width="78%" class="vtable">
+											<select name="port" id="port" class="formselect">
+											<?php
+												$portlist = glob("/dev/cua*");
+												$modems = glob("/dev/modem*");
+												$portlist = array_merge($portlist, $modems);
+												foreach ($portlist as $port) {
+													if(preg_match("/\.(lock|init)$/", $port))
+														continue;
+													echo "<option value=\"".trim($port)."\"";
+													if ($pconfig['port'] == $port)
+														echo "selected";
+													echo ">{$port}</option>";
+												}?>
+											</select>
+										</td>
+									</tr>
+									<td width="22%" valign="top" class="vncell"><?= gettext("Advanced PPP"); ?></td>
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
 											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a>

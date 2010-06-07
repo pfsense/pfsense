@@ -314,10 +314,7 @@ if ($_POST) {
 				
 				if (!empty($_POST['apn'])){
 					$ppp['apn'] = $_POST['apn'];
-					if (!empty($_POST['apnum']))
-						$ppp['apnum'] = $_POST['apnum'];
-					else
-						$ppp['apnum'] = "1";
+					$ppp['apnum'] = $_POST['apnum'];
 				} else {
 					unset($ppp['apn']);
 					unset($ppp['apnum']);
@@ -509,7 +506,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 						echo " value=\"{$key}\" >" . htmlspecialchars($opt) . "</option>";
 					} 
 				?>
-				</select>
+				</select> 
 			</td>
 		</tr>
 		<tr name="interface" id="interface" >
@@ -685,7 +682,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 							<br/> <span class="vexpl"><?= gettext("Hint: this field can usually be left empty"); ?></span>
 						</td>
 					</tr>
-					<tr>
+					<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 						<td width="22%" valign="top" class="vncell"><?=gettext("Periodic reset");?></td>
 						<td width="78%" class="vtable">
 							<table id="presetwrap" cellspacing="0" cellpadding="0" width="100%">
@@ -850,14 +847,14 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 					  <td width="22%" id="mtulabel<?=$i;?>" valign="top" class="vncell"> MTU</td>
 					  <td width="78%" class="vtable">
 						<input name="mtu[]" id="mtu<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mtu'][$i]);?>">
-						<br> <span class="vexpl">Set MTU for each link if links have different bandwidths, otherwise, mtu will default to 1492.</span>
+						<br> <span class="vexpl">MTU will default to 1492.</span>
 					  </td>
 					</tr>
 					<tr>
 					  <td width="22%" id="mrulabel<?=$i;?>" valign="top" class="vncell"> MRU</td>
 					  <td width="78%" class="vtable">
 						<input name="mru[]" id="mru<?=$i;?>" type="text" class="formfld unknown" size="6" value="<?=htmlspecialchars($pconfig['mru'][$i]);?>">
-						<br> <span class="vexpl">Set MRU for each link if links have different bandwidths, otherwise, mru will default to 1492.</span>
+						<br> <span class="vexpl">MRU will default to 1492.</span>
 					  </td>
 					</tr>
 				</table

@@ -243,9 +243,7 @@ EOD;
 
 /* return the status of the apinger targets as a array */
 function return_gateways_status() {
-	global $config;
-	global $g;
-	$gateways_arr = return_gateways_array();
+	global $config, $g;
 
 	$apingerstatus = array();
 	if (file_exists("{$g['tmp_path']}/apinger.status")) {
@@ -253,21 +251,6 @@ function return_gateways_status() {
 	}
 
 	$status = array();
-	$i = 2;
-	/* assign a dummy IP address for dynamic interfaces in case we need it */
-	$monitor = array();
-	foreach($gateways_arr as $name => $gateway) {
-		if($gateway['monitor'] == "dynamic") {
-			$gateway['monitor'] = "127.0.0.{$i}";
-			$i++;
-		}
-		$status[$gateway['monitor']]['monitor'] = $gateway['monitor'];
-		$status[$gateway['monitor']]['interface'] = $gateway['interface'];
-		$status[$gateway['monitor']]['gateway'] = $gateway['gateway'];
-		$status[$gateway['monitor']]['name'] = $gateway['name'];
-		$status[$gateway['monitor']]['status'] = "down";
-
-	}
 	foreach($apingerstatus as $line) {
 		$info = explode("|", $line);
 		$target = $info[0];

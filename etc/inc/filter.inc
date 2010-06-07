@@ -140,8 +140,9 @@ function filter_configure() {
 	touch($g['tmp_path'] . "/filter_dirty");
 }
 
-function delete_states_for_down_gateways() {
+function filter_delete_states_for_down_gateways() {
 	global $config;
+
 	$a_gateways = return_gateways_status();
 	foreach ($a_gateways as $gateway) {
 		if ($gateway['status'] == "down") {
@@ -369,7 +370,7 @@ function filter_configure_sync() {
 		echo ".";
 
 	update_filter_reload_status("Processing down interface states");
-	delete_states_for_down_gateways();
+	filter_delete_states_for_down_gateways();
 
 	update_filter_reload_status("Running plugins");
 
@@ -2084,7 +2085,7 @@ EOD;
 				/* if antilockout is enabled, LAN exists and has
 				 * an IP and subnet mask assigned
 				 */
-				$lanif = $FilterIflist["lan"]['if'];
+				$lanif = $FilterIflist['lan']['if'];
 				$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"

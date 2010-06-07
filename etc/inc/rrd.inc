@@ -634,7 +634,7 @@ function enable_rrd_graphing() {
 }
 
 function kill_traffic_collector() {
-	mwexec("/bin/pkill -f updaterrd.sh");
+	mwexec("/bin/pkill -f updaterrd.sh", true);
 }
 
 ?>

@@ -1273,7 +1273,7 @@ function get_interface_info($ifdescr) {
 			break;
 		if (file_exists($dev)) {
 			if (file_exists("{$g['varrun_path']}/ppp_{$ifdescr}.pid")) {
-				$ifinfo['pppinfo'] = $ifinfo['if'];
+				$ifinfo['pppinfo'] = $ifinfo['ifdescr'];
 				$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
         		$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
 			}

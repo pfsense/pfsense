@@ -256,8 +256,8 @@ function return_gateways_status() {
 		$target = $info[0];
 		$status[$target]['name'] = $info[1];
 		$status[$target]['lastcheck'] = $info[4] ? date('r', $info[4]) : date('r');
-		$status[$target]['delay'] = $info[5];
-		$status[$target]['loss'] = $info[6];
+		$status[$target]['delay'] = empty(trim($info[5])) ? 0 : $info[5];
+		$status[$target]['loss'] = empty(trim($info[6])) ? 0.0 : $info[6];
 		$status[$target]['status'] = trim($info[7]);
 	}
 	return($status);

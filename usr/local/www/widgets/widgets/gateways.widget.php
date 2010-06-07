@@ -30,8 +30,6 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
-$a_gateways = return_gateways_array();
-
 $gateways_status = array();
 $gateways_status = return_gateways_status();
 
@@ -46,13 +44,13 @@ $counter = 1;
                   <td width="10%" class="listhdrr">Loss</td>
                   <td width="30%" class="listhdrr">Status</td>
                                 </tr>
-         <?php foreach ($a_gateways as $gateway) { ?>
+         <?php foreach ($gateways_status as $gateway) { ?>
              <?php
                      $monitor = $gateway['monitor'];
-						if(empty($monitor)) {
-							$monitor = $gateway['gateway'];
-						}
-			 ?>
+			if(empty($monitor)) {
+				$monitor = $gateway['gateway'];
+			}
+	 ?>
                 <tr>
                   <td class="listlr" id="gateway<?= $counter; ?>">
                                 <?=$gateway['name'];?>
@@ -73,30 +71,20 @@ $counter = 1;
                   <td class="listr" id=\"gateway<?=$counter?>\" >
                         <table border="0" cellpadding="0" cellspacing="2">
                         <?php
-                                $monitor = $gateway['monitor'];
-				if(empty($monitor)) {
-					$monitor = $gateway['gateway'];
-				}
-                                switch($gateways_status[$monitor]['status']) {
-                                        case "None":
-                                                $online = "Online";
-                                                $bgcolor = "lightgreen";
-                                                break;
-                                        case "\"down\"":
-                                                $online = "Offline";
-                                                $bgcolor = "lightcoral";
-                                                break;
-                                        case "\"delay\"":
-                                                $online = "Warning, Latency";
-                                                $bgcolor = "khaki";
-                                                break;
-                                        case "\"loss\"":
-                                               $online = "Warning, Packetloss";
-                                                $bgcolor = "khaki";
-                                                break;
-					default:
-						$online = "Gathering data";
-				}
+				if (stristr($gateway['status'], "down")) {
+                                        $online = "Offline";
+                                        $bgcolor = "lightcoral";
+                                } elseif (stristr($gateway['status'], "loss")) {
+                                        $online = "Warning, Packetloss";
+                                        $bgcolor = "khaki";
+                                } elseif (stristr($gateway['status'], "delay")) {
+                                        $online = "Warning, Latency";
+                                        $bgcolor = "khaki";
+                                } elseif (stristr($gateway['status'], "none")) {
+                                        $online = "Online";
+                                        $bgcolor = "lightgreen";
+                                } else
+					$online = "Gathering data";
 				echo "<tr><td bgcolor=\"$bgcolor\" > $online </td>";
 				$counter++;
                         ?>
@@ -104,7 +92,6 @@ $counter = 1;
                   </td>
                 </tr>
         <?php
-        	$i++;
        		}
         ?>
           </table>

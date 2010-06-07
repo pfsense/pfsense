@@ -42,7 +42,6 @@
 require("guiconfig.inc");
 
 $a_gateways = return_gateways_array();
-
 $gateways_status = array();
 $gateways_status = return_gateways_status();
 
@@ -76,8 +75,7 @@ include("head.inc");
                   <td width="30%" class="listhdrr">Status</td>
                   <td width="30%" class="listhdr">Description</td>
 				</tr>
-			  <?php foreach ($a_gateways as $gateway) {
-				$i = 2;
+			  <?php foreach ($gateways_status as $gateway) {
 			?>
                 <tr>
                   <td class="listlr">
@@ -92,35 +90,21 @@ include("head.inc");
                   <td class="listr" >
 			<table border="0" cellpadding="0" cellspacing="2">
                         <?php
-				if($gateway['gateway'] == "dynamic") {
-					$gateway['monitor'] = "127.0.0.{$i}";
-					$i++;
+				if (stristr($gateway['status'], "down")) {
+					$online = "Offline";
+					$bgcolor = "lightcoral";
+				} elseif (stristr($gateway['status'], "loss")) {
+					$online = "Warning, Packetloss";
+					$bgcolor = "khaki";
+				} elseif (stristr($gateway['status'], "delay")) {
+					$online = "Warning, Latency";
+					$bgcolor = "khaki";
+				} elseif (stristr($gateway['status'], "none")) {
+					$online = "Online";
+					$bgcolor = "lightgreen";
 				}
-				$monitor = $gateway['monitor'];
-				if(empty($monitor)) {
-					$monitor = $gateway['gateway'];
-				}
-				switch($gateways_status[$monitor]['status']) {
-					case "None":
-						$online = "Online";
-						$bgcolor = "lightgreen";
-						break;
-					case "\"down\"":
-						$online = "Offline";
-						$bgcolor = "lightcoral";
-						break;
-					case "\"delay\"":
-						$online = "Warning, Latency";
-						$bgcolor = "khaki";
-						break;
-					case "\"loss\"":
-						$online = "Warning, Packetloss";
-						$bgcolor = "khaki";
-						break;
-				}
-
-				PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
-				$lastchange = $gateways_status[$monitor]['lastcheck'];
+				echo "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
+				$lastchange = $gateway['lastcheck'];
 				if(!empty($lastchange)) {
 					$lastchange = explode(" ", $lastchange);
 					array_shift($lastchange);
@@ -130,13 +114,11 @@ include("head.inc");
 				} else {
 					print "Gathering data";
 				}
-				PRINT "</td></tr>";
+				echo "</td></tr>";
                         ?>
 			</table>
                   </td>
-                  <td class="listbg" >
-						<?=$gateway['descr'];?></font>
-                  </td>
+		  <td class="listbg"> <?=$a_gateway[$gateway['name']]['descr']; ?></td>
                 </tr>
 		<?php } ?>
               </table>

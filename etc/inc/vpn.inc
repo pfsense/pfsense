@@ -1065,18 +1065,20 @@ EOD;
 
 			if  (isset($pptpdcfg["wins"]) && $pptpdcfg['wins'] != "")
 				$mpdconf  .=  "	set ipcp nbns {$pptpdcfg['wins']}\n";
-			if (is_array($pptpdcfg['dnsserver']) && ($pptpdcfg['dnsserver'][0])) {
-				$mpdconf .= "	set ipcp dns " . join(" ", $pptpdcfg['dnsserver']) . "\n";
-			} else
-				if (isset ($config['dnsmasq']['enable'])) {
-					$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-					if ($syscfg['dnsserver'][0])
-						$mpdconf .= " " . $syscfg['dnsserver'][0];
-					$mpdconf .= "\n";
-				} else
-					if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-						$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
-					}
+
+			if (!empty($pptpdcfg['dns1'])) {
+				$mpdconf .= "	set ipcp dns " . $pptpdcfg['dns1'];
+				if (!empty($pptpdcfg['dns2']))
+					$mpdconf .= " " . $pptpdcfg['dns2'];
+				$mpdconf .= "\n";
+			} elseif (isset ($config['dnsmasq']['enable'])) {
+				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
+				if ($syscfg['dnsserver'][0])
+					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				$mpdconf .= "\n";
+			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
+					$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
+			}
 
 			if (isset ($pptpdcfg['radius']['server']['enable'])) {
 				$authport = (isset($pptpdcfg['radius']['server']['port']) && strlen($pptpdcfg['radius']['server']['port']) > 1) ? $pptpdcfg['radius']['server']['port'] : 1812;
@@ -1274,15 +1276,19 @@ pppoe_standart:
 
 EOD;
 
-			if (isset ($config['dnsmasq']['enable'])) {
+			if (!empty($pppoecfg['dns1'])) {
+				$mpdconf .= "	set ipcp dns " . $pppoecfg['dns1'];
+				if (!empty($pppoecfg['dns2']))
+					$mpdconf .= " " . $pppoecfg['dns2'];
+				$mpdconf .= "\n";
+			} elseif (isset ($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
 				$mpdconf .= "\n";
-			} else
-				if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
+			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 					$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
-				}
+			}
 
 			if (isset ($pppoecfg['radius']['enable'])) {
 				$mpdconf .=<<<EOD
@@ -1454,15 +1460,19 @@ l2tp_standard:
 
 EOD;
 
-			if (isset ($config['dnsmasq']['enable'])) {
+			if (!empty($l2tpcfg['dns1'])) {
+				$mpdconf .= "	set ipcp dns " . $l2tpcfg['dns1'];
+				if (!empty($l2tpcfg['dns2']))
+					$mpdconf .= " " . $l2tpcfg['dns2'];
+				$mpdconf .= "\n";
+			} elseif (isset ($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
 				$mpdconf .= "\n";
-			} else
-				if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
+			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 					$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
-				}
+			}
 
 			if (isset ($l2tpcfg['radius']['enable'])) {
 				$mpdconf .=<<<EOD

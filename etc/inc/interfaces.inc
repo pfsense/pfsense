@@ -1005,8 +1005,9 @@ function interface_ppps_configure($interface) {
 	$mtus = explode(',',$ppp['mtu']);
 	$mrus = explode(',',$ppp['mru']);
 
-	if (isset($ppp['idletimeout']))
+	if (isset($ppp['mrru']))
 		$mrrus = explode(',',$ppp['mrru']);
+
 	// Construct the mpd.conf file
 	$mpdconf = <<<EOD
 startup:
@@ -1211,7 +1212,7 @@ EOD;
 		$mpdconf .= "\topen\r\n";
 	} //end foreach($port)
 
-	// Write out configuration for mpd_ppp.conf and mpd.secret
+	// Write out mpd_ppp.conf
 	fwrite($fd, $mpdconf);
 	fclose($fd);
 
@@ -2285,7 +2286,7 @@ function interface_dhcp_configure($interface = "wan") {
 		$wanif = get_real_interface($interface, true);
 	if (stristr($wanif,',')) {
 		log_error("Invalid interface \"{$wanif}\" in interface_dhcp_configure()");
-		return 1;
+		return 0;
 	}
  	$dhclientconf = "";
 	

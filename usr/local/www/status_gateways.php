@@ -75,17 +75,17 @@ include("head.inc");
                   <td width="30%" class="listhdrr">Status</td>
                   <td width="30%" class="listhdr">Description</td>
 				</tr>
-			  <?php foreach ($gateways_status as $gateway) {
+			  <?php foreach ($gateways_status as $target => $gateway) {
 			?>
                 <tr>
                   <td class="listlr">
 				<?=strtoupper($gateway['name']);?>
                   </td>
                   <td class="listr" align="center" >
-                                <?=$gateway['gateway'];?>
+                                <?=$a_gateways[$gateway['name']['gateway'];?>
                   </td>
                   <td class="listr" align="center" >
-                                <?=$gateway['monitor'];?>
+                                <?=$target;?>
                   </td>
                   <td class="listr" >
 			<table border="0" cellpadding="0" cellspacing="2">

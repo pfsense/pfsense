@@ -30,6 +30,7 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
+$a_gateways = return_gateways_array();
 $gateways_status = array();
 $gateways_status = return_gateways_status();
 
@@ -44,9 +45,9 @@ $counter = 1;
                   <td width="10%" class="listhdrr">Loss</td>
                   <td width="30%" class="listhdrr">Status</td>
                                 </tr>
-         <?php foreach ($gateways_status as $gateway) { ?>
+         <?php foreach ($gateways_status as $target => $gateway) { ?>
              <?php
-                     $monitor = $gateway['monitor'];
+                     $monitor = $target;
 			if(empty($monitor)) {
 				$monitor = $gateway['gateway'];
 			}
@@ -57,15 +58,15 @@ $counter = 1;
 								<?php $counter++; ?>
                   </td>
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">
-                                <?=$gateway['gateway'];?>
+                                <?=$a_gateways[$gateway['name']]['gateway'];?>
 								<?php $counter++; ?>
                   </td>
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">
-								<?=$gateways_status[$monitor]['delay'];?>
+								<?=$gateway['delay'];?>
 								<?php $counter++; ?>
 				  </td>
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">
-								<?=$gateways_status[$monitor]['loss'];?>
+								<?=$gateway['loss'];?>
 								<?php $counter++; ?>
 				  </td>
                   <td class="listr" id=\"gateway<?=$counter?>\" >

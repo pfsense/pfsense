@@ -1147,7 +1147,6 @@ function convert_seconds_to_hms($sec){
 }
 
 /* Compute the total uptime from the ppp uptime log file in the conf directory */
-/* Written by: gnoahb@gmail.com */
 
 function get_ppp_uptime($port){
 	if (file_exists("/conf/{$port}.log")){

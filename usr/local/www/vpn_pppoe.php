@@ -214,7 +214,7 @@ function enable_change(enable_over) {
 			document.iform.radius_nasip.disabled = 0;
 			document.iform.radiusissueips.disabled = 0;
 			document.iform.radius_nasip.disabled = 0;
-			document.iform.radius_acct_update = 0;
+			document.iform.radius_acct_update.disabled = 0;
 			document.iform.radiussecenable.disabled = 0;
 			if (document.iform.radiussecenable.checked || enable_over) {
 				document.iform.radiusserver2.disabled = 0;
@@ -236,7 +236,7 @@ function enable_change(enable_over) {
 			document.iform.radiusserveracctport.disabled = 1;
 			document.iform.radiusissueips.disabled = 1;
 			document.iform.radius_nasip.disabled = 1;
-			document.iform.radius_acct_update = 1;
+			document.iform.radius_acct_update.disabled = 1;
 			document.iform.radiussecenable.disabled = 1;
 		}
 	} else {
@@ -260,7 +260,7 @@ function enable_change(enable_over) {
 		document.iform.radiusserver2acctport.disabled = 1;
 		document.iform.radiusissueips.disabled = 1;
 		document.iform.radius_nasip.disabled = 1;
-		document.iform.radius_acct_update = 1;
+		document.iform.radius_acct_update.disabled = 1;
 	}
 }
 //-->
@@ -366,7 +366,7 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">DNS servers</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="pppoe_dns1" type="text" class="formfld unkown" id="pppoe_dns1" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns1']);?>">
+                    <?=$mandfldhtml;?><input name="pppoe_dns1" type="text" class="formfld unknown" id="pppoe_dns1" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns1']);?>">
                     <br>
 			<input name="pppoe_dns2" type="text" class="formfld unknown" id="pppoe_dns2" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns2']);?>">
                     <br>

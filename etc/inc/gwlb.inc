@@ -256,8 +256,8 @@ function return_gateways_status() {
 		$target = $info[0];
 		$status[$target]['name'] = $info[1];
 		$status[$target]['lastcheck'] = $info[4] ? date('r', $info[4]) : date('r');
-		$status[$target]['delay'] = $info[5];
-		$status[$target]['loss'] = $info[6];
+		$status[$target]['delay'] = empty($info[5]) ? 0 : $info[5];
+		$status[$target]['loss'] = empty($info[6]) ? "0.0%" : $info[6] . "%";
 		$status[$target]['status'] = trim($info[7]);
 	}
 	return($status);
@@ -458,19 +458,15 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 }
 
 function lookup_gateway_ip_by_name($name) {
-        global $config;
 
-	if(is_array($config['gateways']['gateway_item'])) {
-		foreach($config['gateways']['gateway_item'] as $gateway) {
-			if($gateway['name'] == $name)
-				return ($gateway['gateway']);
-		}
-        } else
-                return (false);
+	$gateways_arr = return_gateways_array();
+	if (!empty($gateways_arr[$name]))
+		return $gateways_arr[$name]['gateway'];
+
+	return false;
 }
 
 function lookup_gateway_monitor_ip_by_name($name) {
-        global $config;
 
         $gateways_arr = return_gateways_array();
 	if (!empty($gateways_arr[$name])) {
@@ -489,7 +485,6 @@ function lookup_gateway_monitor_ip_by_name($name) {
 }
 
 function lookup_gateway_interface_by_name($name) {
-        global $config;
 
         $gateways_arr = return_gateways_array();
 	if (!empty($gateways_arr[$name])) {
@@ -509,8 +504,14 @@ function get_interface_gateway($interface, &$dynamic = false) {
         $gwcfg = $config['interfaces'][$interface];
         if (is_ipaddr($gwcfg['gateway']))
                 $gw = $gwcfg['gateway'];
-        else if (!empty($gwcfg['gateway']))
-                $gw = lookup_gateway_ip_by_name($gwcfg['gateway']);
+        else if (!empty($gwcfg['gateway']) && is_array($config['gateways']['gateway_item'])) {
+               	foreach($config['gateways']['gateway_item'] as $gateway) {
+                        if ($gateway['name'] == $gwcfg['gateway']) {
+                                $gw = $gateway['gateway'];
+				break;
+			}
+                }
+	}
 
         // for dynamic interfaces we handle them through the $interface_router file.
         if (!is_ipaddr($gw) && !is_ipaddr($gwcfg['ipaddr'])) {

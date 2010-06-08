@@ -923,9 +923,9 @@ function interface_ppps_configure($interface) {
 					// configure DHCP on the $port interface
 					interface_dhcp_configure($port);
 					// Wait for the IP address before proceeding.
-					for ($count = 0; $count < 15; $count++) {
+					for ($count = 0; $count < 30; $count++) {
 						$localips[$pid] = find_interface_ip($port);
-						if(!empty($localips[$pid]))						
+						if(is_ipaddr($localips[$pid]))						
 							break;
 						sleep(1);
 					}
@@ -937,9 +937,16 @@ function interface_ppps_configure($interface) {
 						escapeshellarg($localips[$pid] . "/" . $subnets[$pid]) . " up");
 				}
 				/* configure the gateway (remote IP ) */
-				if (!empty($gateways[$pid]) && is_hostname($gateways[$pid]) && !is_ipaddr($gateways[$pid])) {
+				if (!is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
 					// do a DNS lookup for the gateway IP and store it in $gateways[$pid]
-					$gateways[$pid] = gethostbyname($gateways[$pid]);
+					for ($count = 0; $count < 30; $count++) {
+						$gateways[$pid] = gethostbyname($gateways[$pid]);
+						if(is_ipaddr($gateways[$pid]))						
+							break;
+						sleep(1);
+					}
+					log_error("Could not get a PPtP/L2tP Remote IP address for {$port} using DNS in interfaces_ppps_configure");
+					return 0;
 				}
 				if (0) // Logic for this? 
 					log_error("Could not bring up interface {$port} for {$interface} {$ppp['type']} link in interface_ppps_configure().");

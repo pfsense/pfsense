@@ -94,14 +94,12 @@ $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
 
-if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
-	foreach ($a_ppps as $pppid => $ppp) {
-		if ($wancfg['ptpid'] == $ppp['ptpid'])
-			break;
-	}
+foreach ($a_ppps as $pppid => $ppp) {
+	if ($wancfg['ptpid'] == $ppp['ptpid'])
+		break;
 }
 
-if ($wancfg['ptpid'] == $a_ppps[$pppid]['ptpid']) {
+if (isset($wancfg['ptpid']) && $wancfg['ptpid'] == $a_ppps[$pppid]['ptpid']) {
 	$pconfig['pppid'] = $pppid;
 	
 	if ($a_ppps[$pppid]['type'] == "ppp"){
@@ -171,6 +169,9 @@ if ($wancfg['ptpid'] == $a_ppps[$pppid]['ptpid']) {
 		$pconfig['pptp_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
 		$pconfig['pptp_idletimeout'] = $a_ppps[$pppid]['timeout'];
 	}
+} else {
+	$new_ptpid=uniqid('', true);
+	$pppid = count($a_ppps);
 }
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
@@ -499,12 +500,17 @@ if ($_POST) {
 		unset($wancfg['provider']);
 		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
-		if ($wancfg['pppoe']['pppoe-reset-type'])
-			unset($wancfg['pppoe']['pppoe-reset-type']);
+		unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
 		unset($wancfg['subnet']);
 		unset($wancfg['remote']);
-
+		unset($a_ppps[$pppid]['apn']);
+		unset($a_ppps[$pppid]['phone']);
+		unset($a_ppps[$pppid]['localip']);
+		unset($a_ppps[$pppid]['subnet']);
+		unset($a_ppps[$pppid]['gateway']);
+		unset($a_ppps[$pppid]['pppoe-reset-type']);
+		
 		$wancfg['descr'] = remove_bad_chars($_POST['descr']);
 		$wancfg['enable'] =  $_POST['enable']  == "yes" ? true : false;
 
@@ -568,7 +574,13 @@ if ($_POST) {
 				$a_ppps[$pppid]['ports'] = $_POST['port'];
 				$a_ppps[$pppid]['username'] = $_POST['username'];
 				$a_ppps[$pppid]['password'] = base64_encode($_POST['password']);
+				$a_ppps[$pppid]['phone'] = $_POST['phone'];
 				$a_ppps[$pppid]['apn'] = $_POST['apn'];
+				$wancfg['if'] = $_POST['type'] . $if_num;
+				$wancfg['ptpid'] = $_POST['ptpid'];
+				$wancfg['ipaddr'] = $_POST['type'];
+				unset($a_ppps[$pppid]['ondemand']);
+				unset($a_ppps[$pppid]['idletimeout']);
 				break;
 
 			case "pppoe":
@@ -1962,12 +1974,11 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 								<input id="save" name="Submit" type="submit" class="formbtn" value="Save"> 
 								<input id="cancel" type="button" class="formbtn" value="Cancel" onclick="history.back()">
 								<input name="if" type="hidden" id="if" value="<?=$if;?>">
-								<?php if ($wancfg['ptpid'] == $a_ppps[$pppid]['ptpid']) : ?>
-								<input name="pppid" type="hidden" value="<?=$pppid;?>">
+								<?php if (isset ($wancfg['ptpid']) && $wancfg['ptpid'] == $a_ppps[$pppid]['ptpid']) : ?>
 								<input name="ppp_port" type="hidden" value="<?=$a_ppps[$pppid]['ports'];?>">
 								<input name="ptpid" type="hidden" value="<?=$a_ppps[$pppid]['ptpid'];?>">
 								<?php else: ?>
-								<input name="ptpid" type="hidden" value="<?=uniqid('', true);?>">
+								<input name="ptpid" type="hidden" value="<?=$new_ptpid;?>">
 								<?php endif; ?>
 							</td>
 						</tr>

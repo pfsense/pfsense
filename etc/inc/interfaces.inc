@@ -62,7 +62,7 @@ function get_interface_arr($flush = false) {
 
         /* If the cache doesn't exist, build it */
         if (!isset($interface_arr_cache) or $flush)
-                $interface_arr_cache = explode(" ", `/sbin/ifconfig -l`);
+                $interface_arr_cache = explode(" ", trim(`/sbin/ifconfig -l`));
 
         return $interface_arr_cache;
 }
@@ -72,16 +72,16 @@ function get_interface_arr($flush = false) {
  * detected.
  */
 function does_interface_exist($interface) {
-        global $config;
+	global $config;
+	
+	if(!$interface)
+			return false;
 
-        if(!$interface)
-                return false;
-
-        $ints = get_interface_arr();
+	$ints = get_interface_arr();
 	if (in_array($interface, $ints))
-                return true;
-        else
-                return false;
+		return true;
+	else
+		return false;
 }
 
 function interfaces_loopback_configure() {
@@ -861,7 +861,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 }
 
 /*	This function can configure PPPoE, MLPPP (PPPoE), PPtP.
-*	It writes the mpd config file to /var/etc every time the interfaces is brought up.
+*	It writes the mpd config file to /var/etc every time the link is opened.
 */
 
 function interface_ppps_configure($interface) {
@@ -887,7 +887,10 @@ function interface_ppps_configure($interface) {
 		log_error("Can't find PPP config with ptpid {$ifcfg['ptpid']} in interface_ppps_configure().");
 		return 0;
 	}
-
+	if (!isset($ifcfg['enable'])) {
+		log_error("{$interface} is not enabled.");
+		return 0;
+	}
 	$pppif = $ifcfg['if'];
 	if ($ppp['type'] == "ppp")
 		$type = "modem";
@@ -3114,7 +3117,7 @@ function find_interface_ip($interface, $flush = false)
 
 	$interface = str_replace("\n", "", $interface);
 	
-	if (does_interface_exist($interface) == false)
+	if (!does_interface_exist($interface))
 		return;
 
 	/* Setup IP cache */
@@ -3157,8 +3160,8 @@ function get_interface_ip($interface = "wan")
 	$curip = find_interface_ip($realif);
 	if ($curip && is_ipaddr($curip) && ($curip != "0.0.0.0"))
 		return $curip;
-
-	return null;
+	else
+		return null;
 }
 
 function get_interface_subnet($interface = "wan")

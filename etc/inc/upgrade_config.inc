@@ -1985,7 +1985,7 @@ function upgrade_063_to_064() {
 			if (!isset($ppp['ptpid'])){
 				$config['ppps']['ppp'][$pppid]['ptpid'] = uniqid('', true);
 			}
-			if (isset($ppp['defaultgw'])){
+			if (isset($ppp['defaultgw']))
 				unset($config['ppps']['ppp'][$pppid]['defaultgw']);
 		}
 	}

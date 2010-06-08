@@ -62,7 +62,7 @@ function get_interface_arr($flush = false) {
 
         /* If the cache doesn't exist, build it */
         if (!isset($interface_arr_cache) or $flush)
-                $interface_arr_cache = explode(" ", `/sbin/ifconfig -l`);
+                $interface_arr_cache = explode(" ", trim(`/sbin/ifconfig -l`));
 
         return $interface_arr_cache;
 }

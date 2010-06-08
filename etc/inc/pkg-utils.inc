@@ -882,24 +882,6 @@ function delete_package_xml($pkg) {
 			eval_once($pkg_config['custom_php_global_functions']);
 		if($pkg_config['custom_php_pre_deinstall_command'] <> "")
 			eval_once($pkg_config['custom_php_pre_deinstall_command']);
-		/* remove all additional files */
-		if(is_array($pkg_config['additional_files_needed'])) {
-			$static_output .= "\tAuxiliary files... ";
-			update_output_window($static_output);
-			foreach($pkg_config['additional_files_needed'] as $afn) {
-				$filename = get_filename_from_url($afn['item'][0]);
-				if($afn['prefix'] <> "") {
-					$prefix = $afn['prefix'];
-				} else {
-					$prefix = "/usr/local/pkg/";
-				}
-				unlink_if_exists($prefix . $filename);
-				if(file_exists($prefix . $filename))
-				    mwexec("rm -rf {$prefix}{$filename}");
-			}
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
 		/* system files */
 		if(is_array($pkg_config['modify_system']['item'])) {
 			$static_output .= "\tSystem files... ";
@@ -935,6 +917,24 @@ function delete_package_xml($pkg) {
                         update_output_window($static_output);
 			
                 }
+		/* remove all additional files */
+		if(is_array($pkg_config['additional_files_needed'])) {
+			$static_output .= "\tAuxiliary files... ";
+			update_output_window($static_output);
+			foreach($pkg_config['additional_files_needed'] as $afn) {
+				$filename = get_filename_from_url($afn['item'][0]);
+				if($afn['prefix'] <> "") {
+					$prefix = $afn['prefix'];
+				} else {
+					$prefix = "/usr/local/pkg/";
+				}
+				unlink_if_exists($prefix . $filename);
+				if(file_exists($prefix . $filename))
+				    mwexec("rm -rf {$prefix}{$filename}");
+			}
+			$static_output .= "done.\n";
+			update_output_window($static_output);
+		}
 		/* package XML file */
 		$static_output .= "\tPackage XML... ";
 		update_output_window($static_output);

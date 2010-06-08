@@ -371,6 +371,11 @@ if ($_POST) {
 			$reqdfieldsn = explode(",", "IP address,Subnet bit count,Gateway");
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
+		case "ppp":
+			$reqdfields = explode(" ", "port phone");
+			$reqdfieldsn = explode(",", "Modem Port,Phone Number");
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			break;
 		case "PPPoE":
 			if ($_POST['pppoe_dialondemand']) {
 				$reqdfields = explode(" ", "pppoe_username pppoe_password pppoe_dialondemand pppoe_idletimeout");
@@ -1096,7 +1101,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 								<br><span class="vexpl">Enter a description (name) for the interface here.</span>
 							</td>
 						</tr>
-						<? if(!$wancfg['serialport']): ?>
 						<tr>
 							<td valign="middle" class="vncell"><strong>Type</strong></td>
 							<td class="vtable"> 
@@ -1113,7 +1117,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 								</select>
 							</td>
 						</tr>
-						<?php endif; ?>
 						<tr>
 							<td valign="top" class="vncell">MAC address</td>
 							<td class="vtable">

@@ -1973,7 +1973,8 @@ function upgrade_062_to_063() {
 
 function upgrade_063_to_064() {
 	global $config;
-	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+	$i=0;
+	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {	
 		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 			if (isset($ppp['port'])){
 				$config['ppps']['ppp'][$pppid]['ports'] = $ppp['port'];
@@ -1983,7 +1984,8 @@ function upgrade_063_to_064() {
 				$config['ppps']['ppp'][$pppid]['type'] = "ppp";
 			}
 			if (!isset($ppp['ptpid'])){
-				$config['ppps']['ppp'][$pppid]['ptpid'] = uniqid('', true);
+				$config['ppps']['ppp'][$pppid]['ptpid'] = $i;
+				$i++;
 			}
 			if (isset($ppp['defaultgw']))
 				unset($config['ppps']['ppp'][$pppid]['defaultgw']);
@@ -2002,8 +2004,9 @@ function upgrade_063_to_064() {
 		if ($ifinfo['ipaddr'] == "pppoe" || $ifinfo['ipaddr'] == "pptp"){
 			if (isset($ifinfo['ptpid']))
 				continue;
-			$ppp['ptpid'] =  uniqid('', true);
+			$ppp['ptpid'] =  $i;
 			$ppp['type'] = $ifinfo['ipaddr'];
+			$ppp['if'] = $ifinfo['ipaddr'].$i;
 			$ppp['ports'] = $ifinfo['if'];
 			if ($ifinfo['ipaddr'] == "pppoe"){
 				$ppp['username'] = $ifinfo['pppoe_username'];
@@ -2026,7 +2029,7 @@ function upgrade_063_to_064() {
 					for ($i = 0; $i < count($config['cron']['item']); $i++) {
 						$item = $config['cron']['item'][$i];
 						if (strpos($item['command'], "/conf/pppoe{$ifname}restart") !== false)
-							$config['cron']['item'][$i]['command'] = "/var/etc/pppoe_restart_" . $ppp['ptpid'];
+							$config['cron']['item'][$i]['command'] = "/var/etc/pppoe_restart_" . $ppp['if'];
 					}
 				}
 			}
@@ -2036,12 +2039,10 @@ function upgrade_063_to_064() {
 				$ppp['subnet'] = $ifinfo['subnet'];
 			if (isset($ifinfo['remote']))
 				$ppp['gateway'] = $ifinfo['remote'];
-				
-			$ifcfg[$ifname]['ptpid'] = $ppp['ptpid'];
-			if ($ifname == "wan")
-				$ifcfg[$ifname]['if'] = $ifinfo['ipaddr'] ."0";
-			else
-				$ifcfg[$ifname]['if'] = $ifinfo['ipaddr'] . substr($ifname,3);
+
+			$ifcfg[$ifname]['if'] = $ifinfo['ipaddr'].$i;
+			$i++;
+			
 			unset($ifcfg[$ifname]['pppoe_username']);
 			unset($ifcfg[$ifname]['pppoe_password']);
 			unset($ifcfg[$ifname]['provider']);

@@ -999,12 +999,12 @@ function interface_ppps_configure($interface) {
 	$ifcfg = &$config['interfaces'][$interface];
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-			if ($ifcfg['ptpid'] == $ppp['ptpid'])
+			if ($ifcfg['if'] == $ppp['if'])
 				break;
 		}
 	}
-	if (!$ppp || $ifcfg['ptpid'] != $ppp['ptpid']){
-		log_error("Can't find PPP config with ptpid {$ifcfg['ptpid']} in interface_ppps_configure().");
+	if (!$ppp || $ifcfg['if'] != $ppp['if']){
+		log_error("Can't find PPP config for {$ifcfg['if']} in interface_ppps_configure().");
 		return 0;
 	}
 	if (!isset($ifcfg['enable'])) {
@@ -2412,7 +2412,7 @@ function interface_dhcp_configure($interface = "wan") {
 	}
 
 	$wanif = get_real_interface($interface);
-	if (isset($wancfg['ptpid']))
+	if ($wancfg['ipaddr'] == "pppoe" || $wancfg['ipaddr'] == "pptp" $wancfg['ipaddr'] == "l2tp")
 		$wanif = get_real_interface($interface, true);
 	if (stristr($wanif,',')) {
 		log_error("Invalid interface \"{$wanif}\" in interface_dhcp_configure()");
@@ -3021,9 +3021,9 @@ function get_real_interface($interface = "wan", $get_parent = false) {
 			case "l2tp": 
 			case "ppp":
 				$wanif = $cfg['if'];
-				if ($get_parent && isset($cfg['ptpid']))
+				if ($get_parent)
 					foreach ($config['ppps']['ppp'] as $ppp) {
-						if ($ppp['ptpid'] == $cfg['ptpid'])
+						if ($ppp['if'] == $cfg['if'])
 							$wanif = $ppp['ports'];
 					}
 				break;

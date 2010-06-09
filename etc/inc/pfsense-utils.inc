@@ -1263,12 +1263,12 @@ function get_interface_info($ifdescr) {
 			
 		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-				if ($config['interfaces'][$ifdescr]['ptpid'] == $ppp['ptpid'])
+				if ($config['interfaces'][$ifdescr]['if'] == $ppp['if'])
 					break;
 			}
 		}
 		$dev = $ppp['ports'];
-		if ($config['interfaces'][$ifdescr]['ptpid'] != $ppp['ptpid'] || empty($dev))
+		if ($config['interfaces'][$ifdescr]['if'] != $ppp['if'] || empty($dev))
 			break;
 		if (file_exists($dev)) {
 			if (file_exists("{$g['varrun_path']}/ppp_{$ifdescr}.pid")) {

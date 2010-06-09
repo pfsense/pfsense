@@ -1973,9 +1973,14 @@ function upgrade_062_to_063() {
 
 function upgrade_063_to_064() {
 	global $config;
-	$i=0;
+	$j=0;
+	$ifcfg = &$config['interfaces'];
+	
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {	
 		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+			$config['ppps']['ppp'][$pppid]['if'] = "ppp".$j;
+			$config['ppps']['ppp'][$pppid]['ptpid'] = $j;
+			$j++;
 			if (isset($ppp['port'])){
 				$config['ppps']['ppp'][$pppid]['ports'] = $ppp['port'];
 				unset($config['ppps']['ppp'][$pppid]['port']);
@@ -1983,16 +1988,10 @@ function upgrade_063_to_064() {
 			if (!isset($ppp['type'])){
 				$config['ppps']['ppp'][$pppid]['type'] = "ppp";
 			}
-			if (!isset($ppp['ptpid'])){
-				$config['ppps']['ppp'][$pppid]['ptpid'] = $i;
-				$i++;
-			}
 			if (isset($ppp['defaultgw']))
 				unset($config['ppps']['ppp'][$pppid]['defaultgw']);
 		}
 	}
-	
-	$ifcfg = &$config['interfaces'];
 	
 	if (!is_array($config['ppps']['ppp']))
 		$config['ppps']['ppp'] = array();
@@ -2004,9 +2003,9 @@ function upgrade_063_to_064() {
 		if ($ifinfo['ipaddr'] == "pppoe" || $ifinfo['ipaddr'] == "pptp"){
 			if (isset($ifinfo['ptpid']))
 				continue;
-			$ppp['ptpid'] =  $i;
+			$ppp['ptpid'] =  $j;
 			$ppp['type'] = $ifinfo['ipaddr'];
-			$ppp['if'] = $ifinfo['ipaddr'].$i;
+			$ppp['if'] = $ifinfo['ipaddr'].$j;
 			$ppp['ports'] = $ifinfo['if'];
 			if ($ifinfo['ipaddr'] == "pppoe"){
 				$ppp['username'] = $ifinfo['pppoe_username'];
@@ -2040,8 +2039,8 @@ function upgrade_063_to_064() {
 			if (isset($ifinfo['remote']))
 				$ppp['gateway'] = $ifinfo['remote'];
 
-			$ifcfg[$ifname]['if'] = $ifinfo['ipaddr'].$i;
-			$i++;
+			$ifcfg[$ifname]['if'] = $ifinfo['ipaddr'].$j;
+			$j++;
 			
 			unset($ifcfg[$ifname]['pppoe_username']);
 			unset($ifcfg[$ifname]['pppoe_password']);

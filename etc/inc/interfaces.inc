@@ -1053,8 +1053,6 @@ function interface_ppps_configure($interface) {
 							break;
 						sleep(1);
 					}
-					log_error("Could not get PPtP/L2tP Local IP address for {$port} using DHCP in interfaces_ppps_configure");
-					return 0;
 				} else {
 					// Manually configure interface IP/subnet
 					mwexec("/sbin/ifconfig " . escapeshellarg($port) . " " .
@@ -1062,15 +1060,15 @@ function interface_ppps_configure($interface) {
 				}
 				/* configure the gateway (remote IP ) */
 				if (!is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
-					// do a DNS lookup for the gateway IP and store it in $gateways[$pid]
+					/* do a DNS lookup for the gateway IP and store it in $gateways[$pid]
+					If this pptp interface is not the default gateway, the default must be up and nameservers must resolve
+					whatever the user enters as the hostname */
 					for ($count = 0; $count < 30; $count++) {
 						$gateways[$pid] = gethostbyname($gateways[$pid]);
 						if(is_ipaddr($gateways[$pid]))						
 							break;
 						sleep(1);
 					}
-					log_error("Could not get a PPtP/L2tP Remote IP address for {$port} using DNS in interfaces_ppps_configure");
-					return 0;
 				}
 				if (0) // Logic for this? 
 					log_error("Could not bring up interface {$port} for {$interface} {$ppp['type']} link in interface_ppps_configure().");

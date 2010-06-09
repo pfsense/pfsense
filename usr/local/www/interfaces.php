@@ -150,9 +150,13 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	if ($a_ppps[$pppid]['type'] == "pptp"){
 		$pconfig['pptp_username'] = $a_ppps[$pppid]['username'];
 		$pconfig['pptp_password'] = base64_decode($a_ppps[$pppid]['password']);
-		$pconfig['pptp_local'] = $a_ppps[$pppid]['localip'];
-		$pconfig['pptp_subnet'] = $a_ppps[$pppid]['subnet'];
-		$pconfig['pptp_remote'] = $a_ppps[$pppid]['gateway'];
+		$pconfig['pptp_local'] = explode(",",$a_ppps[$pppid]['localip']);
+		foreach ($pconfig['pptp_local'] as $key => $value){
+			if ($value == "dhcp")
+				$pconfig['localip'][$key] = "";	
+		}
+		$pconfig['pptp_subnet'] = explode(",",$a_ppps[$pppid]['subnet']);
+		$pconfig['pptp_remote'] = explode(",",$a_ppps[$pppid]['gateway']);
 		$pconfig['pptp_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
 		$pconfig['pptp_idletimeout'] = $a_ppps[$pppid]['timeout'];
 	}
@@ -1412,17 +1416,17 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									<tr>
 										<td width="22%" valign="top" class="vncellreq">Password</td>
 										<td width="78%" class="vtable">
-											<input name="pptp_password" type="text" class="formfld pwd" id="pptp_password" size="20" value="<?=htmlspecialchars($pconfig['pptp_password']);?>">
+											<input name="pptp_password" type="password" class="formfld pwd" id="pptp_password" size="20" value="<?=htmlspecialchars($pconfig['pptp_password']);?>">
 										</td>
 									</tr>
 									<tr>
 										<td width="22%" width="100" valign="top" class="vncellreq">Local IP address</td>
 										<td width="78%" class="vtable"> 
-											<input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20"  value="<?=htmlspecialchars($pconfig['pptp_local']);?>">
+											<input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20"  value="<?=htmlspecialchars($pconfig['pptp_local'][0]);?>">
 											/
 											<select name="pptp_subnet" class="formselect" id="pptp_subnet">
 												<?php for ($i = 31; $i > 0; $i--): ?>
-													<option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet']) echo "selected"; ?>>
+													<option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet'][0]) echo "selected"; ?>>
 														<?=$i;?></option>
 												<?php endfor; ?>
 											</select>
@@ -1431,7 +1435,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									<tr>
 										<td width="22%" width="100" valign="top" class="vncellreq">Remote IP address</td>
 										<td width="78%" class="vtable">
-											<input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote']);?>">
+											<input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote'][0]);?>">
 										</td>
 									</tr>
 									<tr>
@@ -1447,6 +1451,20 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 										<td width="78%" class="vtable">
 											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.
 										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell">Advanced</td>
+										<?php if (isset($pconfig['pppid'])): ?>
+											<td width="78%" class="vtable">
+											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a> 
+											for additional PPtP and L2tP configuration options. Save first if you made changes.
+											</td>
+										<? else: ?>
+											<td width="78%" class="vtable">
+											<a href="/interfaces_ppps_edit.php" class="navlnk">Click here</a>
+											for advanced PPtP and L2tP configuration options.
+											</td>
+										<? endif; ?>	
 									</tr>
 								</table>
 							</td>

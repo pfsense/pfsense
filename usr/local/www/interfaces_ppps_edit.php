@@ -107,9 +107,6 @@ if (isset($id) && $a_ppps[$id]) {
 			}
 			$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
 			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
-			if (isset($a_ppps[$id]['dhcp']))
-				$pconfig['pptp_dhcp'] = true;
-			break;
 		case "pppoe":
 			$pconfig['provider'] = $a_ppps[$id]['provider'];
 			/* ================================================ */
@@ -694,7 +691,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell"><?= gettext("Compression"); ?></td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable vjcomp(compression) (enabled by default)."); ?>
+				<input type="checkbox" value="on" id="vjcomp" name="vjcomp" <?php if (isset($pconfig['vjcomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable vjcomp(compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl">This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet. 
 				You almost always want this option. This compression ineffective for TCP connections with enabled modern extensions like time 
 				stamping or SACK, which modify TCP options between sequential packets.</span>
@@ -714,7 +711,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell">ShortSeq</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="shortseq" name="shortseq" <?php if (isset($pconfig['shortseq'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable shortseq (enabled by default)."); ?>
+				<input type="checkbox" value="on" id="shortseq" name="shortseq" <?php if (isset($pconfig['shortseq'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable shortseq (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?= gettext("This option is only meaningful if multi-link PPP is negotiated. It proscribes shorter multi-link fragment headers, saving two bytes on every frame. 
 				It is not necessary to disable this for connections that are not multi-link."); ?></span>
 			</td>
@@ -722,14 +719,14 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell">ACFComp</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="acfcomp" name="acfcomp" <?php if (isset($pconfig['acfcomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable acfcomp(compression) (enabled by default)."); ?>
+				<input type="checkbox" value="on" id="acfcomp" name="acfcomp" <?php if (isset($pconfig['acfcomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable acfcomp(compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?= gettext("Address and control field compression. This option only applies to asynchronous link types. It saves two bytes per frame."); ?></span>
 			</td>
 		</tr>
 		<tr style="display:none" id="advanced_<?=$k;?>" name="advanced_<?=$k;$k++;?>">
 			<td width="22%" valign="top" class="vncell">ProtoComp</td>
 			<td width="78%" class="vtable">
-				<input type="checkbox" value="on" id="protocomp" name="protocomp" <?php if (isset($pconfig['protocomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable protocomp(compression) (enabled by default)."); ?>
+				<input type="checkbox" value="on" id="protocomp" name="protocomp" <?php if (isset($pconfig['protocomp'])) echo "checked"; ?>>&nbsp;<?= gettext("Disable protocomp(compression) (auto-negotiated by default)."); ?>
 				<br/> <span class="vexpl"><?= gettext("Protocol field compression. This option saves one byte per frame for most frames."); ?></span>
 			</td>
 		</tr>

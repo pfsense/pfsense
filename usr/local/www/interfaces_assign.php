@@ -130,16 +130,16 @@ if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry
 /* add PPP interfaces */
 if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 	foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-		$portname = $ppp['type'].$pppid;
+		$portname = $ppp['if'];
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
 		$ports_base = basename($ppp['ports']);
 		if (isset($ppp['descr']))
-			$portlist[$portname]['descr'] = strtoupper($ppp['type']). "({$ports_base}) - {$ppp['descr']}";
+			$portlist[$portname]['descr'] = strtoupper($ppp['if']). "({$ports_base}) - {$ppp['descr']}";
 		else if (isset($ppp['username']))
-			$portlist[$portname]['descr'] = strtoupper($ppp['type']). "({$ports_base}) - {$ppp['username']}";
+			$portlist[$portname]['descr'] = strtoupper($ppp['if']). "({$ports_base}) - {$ppp['username']}";
 		else
-			$portlist[$portname]['descr'] = strtoupper($ppp['type']). "({$ports_base})";
+			$portlist[$portname]['descr'] = strtoupper($ppp['if']). "({$ports_base})";
 	}
 }
 
@@ -209,19 +209,8 @@ if ($_POST['apply']) {
 						$reloadif = true;
 					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
-					
-					/*For PPP interfaces, write link type to IP address field to signal that IP 
-					addr is dynamic and comes from PPP, PPPoE, or PPTP */
-					if (isset($portlist[$ifport]['isppp'])){
-						if ($ifname == "wan")
-							$config['interfaces'][$ifname]['if'] = $portlist[$ifport]['type'] ."0";
-						else
-							$config['interfaces'][$ifname]['if'] = $portlist[$ifport]['type'] . substr($ifname,3);
-
+					if (isset($portlist[$ifport]['isppp']))
 						$config['interfaces'][$ifname]['ipaddr'] = $portlist[$ifport]['type'];
-						$config['interfaces'][$ifname]['ptpid'] = $portlist[$ifport]['ptpid'];
-					} else
-						unset($config['interfaces'][$ifname]['ptpid']);
 					
 					/* check for wireless interfaces, set or clear ['wireless'] */
 					if (preg_match($g['wireless_regex'], $ifport)) {
@@ -438,14 +427,8 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	  <td valign="middle" class="listr">
 		<select name="<?=$ifname;?>" id="<?=$ifname;?>">
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
-			<option value="<?=$portname;?>" <?php 
-				if (isset($portinfo['isppp'])){
-					if ($portinfo['ptpid'] == $iface['ptpid']) echo "selected";
-				}
-				else
-					if ($portname == $iface['if']) echo "selected";
-				?>><?php 
-				if ($portinfo['isvlan']) {
+			<option value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected";?>>
+				<?php if ($portinfo['isvlan']) {
 					$descr = "VLAN {$portinfo['tag']} on {$portinfo['if']}";
 				if ($portinfo['descr'])
 					$descr .= " (" . $portinfo['descr'] . ")";

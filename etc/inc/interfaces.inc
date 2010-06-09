@@ -885,7 +885,7 @@ function getMPDCRONSettings($pppif_) {
 	if (is_array($config['cron']['item'])) {
 		for ($i = 0; $i < count($config['cron']['item']); $i++) {
 			$item = $config['cron']['item'][$i];
-			if (strpos($item['command'], CRON_PPPOE_CMD_FILE.$pppif_) !== false) {
+			if (strpos($item['command'], $pppif_) !== false) {
 				return array("ID" => $i, "ITEM" => $item);
 			}
 		}
@@ -896,10 +896,12 @@ function getMPDCRONSettings($pppif_) {
 function handle_pppoe_reset($post_array) {
 	global $config, $g;
 
+	$cron_cmd_file = "{$g['varetc_path']}/pppoe_restart_";
+
 	$pppif = $post_array['type'].$post_array['ptpid'];
 	if (!is_array($config['cron']['item'])) 
 		$config['cron']['item'] = array(); 
-	$itemhash = getMPDCRONSettings($pppif);
+	$itemhash = getMPDCRONSettings($cron_cmd_file.$pppif);
 	$item = $itemhash['ITEM'];
 	
 	// reset cron items if necessary and return
@@ -925,7 +927,7 @@ function handle_pppoe_reset($post_array) {
 		}
 		$item['wday'] = "*";
 		$item['who'] = "root";
-		$item['command'] = CRON_PPPOE_CMD_FILE.$pppif;
+		$item['command'] = $cron_cmd_file.$pppif;
 	} else if (isset($post_array['pppoe-reset-type']) && $post_array['pppoe-reset-type'] == "preset") {
 		switch ($post_array['pppoe_pr_preset_val']) {
 			case "monthly":
@@ -935,7 +937,7 @@ function handle_pppoe_reset($post_array) {
 				$item['month'] = "*";
 				$item['wday'] = "*";
 				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE.$pppif;
+				$item['command'] = $cron_cmd_file.$pppif;
 				break;
 	        case "weekly":
 				$item['minute'] = "0";
@@ -944,7 +946,7 @@ function handle_pppoe_reset($post_array) {
 				$item['month'] = "*";
 				$item['wday'] = "0";
 				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE.$pppif;
+				$item['command'] = $cron_cmd_file.$pppif;
 				break;
 			case "daily":
 				$item['minute'] = "0";
@@ -953,7 +955,7 @@ function handle_pppoe_reset($post_array) {
 				$item['month'] = "*";
 				$item['wday'] = "*";
 				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE.$pppif;
+				$item['command'] = $cron_cmd_file.$pppif;
 				break;
 			case "hourly":
 				$item['minute'] = "0";
@@ -962,9 +964,15 @@ function handle_pppoe_reset($post_array) {
 				$item['month'] = "*";
 				$item['wday'] = "*";
 				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE.$pppif;
+				$item['command'] = $cron_cmd_file.$pppif;
 				break;
 		} // end switch
+	} else {
+		/* test whether a cron item exists and unset() it if necessary */
+		$itemhash = getMPDCRONSettings($cron_cmd_file.$pppif);
+		$item = $itemhash['ITEM'];
+		if (isset($item))
+			unset($config['cron']['item'][$itemhash['ID']]); 
 	}// end if
 	if (isset($itemhash['ID'])) 
 		$config['cron']['item'][$itemhash['ID']] = $item;
@@ -1359,9 +1367,9 @@ EOD;
 	// Check for PPPoE periodic reset request 
 	if ($type == "pppoe")
 		if (isset($ppp['pppoe-reset-type']))
-			setup_pppoe_reset_file($ppp['ptpid'], $interface);
+			setup_pppoe_reset_file($ppp['if'], $interface);
 		else
-			setup_pppoe_reset_file($ppp['ptpid']);
+			setup_pppoe_reset_file($ppp['if']);
 
 	/* sleep until wan is up - or 30 seconds, whichever comes first */
 	for ($count = 0; $count < 12; $count++) {
@@ -3521,11 +3529,11 @@ function is_jumbo_capable($int) {
                 return false;
 }
 
-function setup_pppoe_reset_file($ptpid, $iface="") {
+function setup_pppoe_reset_file($pppif, $iface="") {
 	global $g;
-	$cron_file = "{$g['varetc_path']}/pppoe_restart_{$ptpid}";
+	$cron_file = "{$g['varetc_path']}/pppoe_restart_{$pppif}";
 
-	if(!empty($iface) && !empty($ptpid)){
+	if(!empty($iface) && !empty($pppif)){
 		$cron_cmd = "#!/bin/sh\necho '<?php require(\"config.inc\"); require(\"interfaces.inc\"); interface_reconfigure({$iface}); log_error(\"PPPoE periodic reset executed on {$iface}\"); ?>' | /usr/local/bin/php -q";
 		file_put_contents($cron_file, $cron_cmd);
 		chmod($cron_file, 0700);

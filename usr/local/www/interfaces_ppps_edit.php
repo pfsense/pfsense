@@ -44,7 +44,6 @@
 require("guiconfig.inc");
 require("functions.inc");
 
-define("CRON_PPPOE_CMD_FILE", "{$g['varetc_path']}/pppoe_restart_");
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");

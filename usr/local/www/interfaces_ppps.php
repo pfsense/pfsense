@@ -62,6 +62,8 @@ if ($_GET['act'] == "del") {
 	if (ppp_inuse($_GET['id'])) {
 		$input_errors[] = "This point-to-point link cannot be deleted because it is still being used as an interface.";
 	} else {
+		unset($a_ppps[$_GET['id']]['pppoe-reset-type']);
+		handle_pppoe_reset($a_ppps[$_GET['id']]);
 		unset($a_ppps[$_GET['id']]);
 		write_config();
 		header("Location: interfaces_ppps.php");

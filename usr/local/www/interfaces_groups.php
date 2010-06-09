@@ -70,18 +70,18 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
-        $tab_array = array();
-        $tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
+	$tab_array = array();
+	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
 	$tab_array[1] = array("Interface Groups", true, "interfaces_groups.php");
 	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
-        $tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
-        $tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
-        $tab_array[5] = array("PPP", false, "interfaces_ppp.php");
-        $tab_array[6] = array("GRE", false, "interfaces_gre.php");
-        $tab_array[7] = array("GIF", false, "interfaces_gif.php");
-        $tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
-        $tab_array[9] = array("LAGG", false, "interfaces_lagg.php");
-        display_top_tabs($tab_array);
+	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
+	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
+	$tab_array[5] = array("PPPs", false, "interfaces_ppps.php");
+	$tab_array[6] = array("GRE", false, "interfaces_gre.php");
+	$tab_array[7] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
+	$tab_array[9] = array("LAGG", false, "interfaces_lagg.php");
+	display_top_tabs($tab_array);
 ?>
   </td></tr>
 <tr>

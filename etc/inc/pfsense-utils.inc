@@ -1147,7 +1147,6 @@ function convert_seconds_to_hms($sec){
 }
 
 /* Compute the total uptime from the ppp uptime log file in the conf directory */
-/* Written by: gnoahb@gmail.com */
 
 function get_ppp_uptime($port){
 	if (file_exists("/conf/{$port}.log")){
@@ -1171,7 +1170,7 @@ function get_interface_info($ifdescr) {
 	$ifinfo = array();
 	if (empty($config['interfaces'][$ifdescr]))
 		return;
-	$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
+	$ifinfo['hwif'] = $config['interfaces'][$ifdescr]['if'];
 	$ifinfo['if'] = get_real_interface($ifdescr);
 
 	$chkif = $ifinfo['if'];
@@ -1255,16 +1254,25 @@ function get_interface_info($ifdescr) {
 	/* PPP interface? -> get uptime for this session and cumulative uptime from the persistant log file in conf */
 	case "ppp":
 		if ($ifinfo['status'] == "up")
-                        $ifinfo['ppplink'] = "up";
+			$ifinfo['ppplink'] = "up";
 		else
 			$ifinfo['ppplink'] = "down" ;
 
-		$dev = $config['interfaces'][$if]['if'];
-		if (empty($dev))
+		if (empty($ifinfo['status']))
+			$ifinfo['status'] = "down";
+			
+		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+				if ($config['interfaces'][$ifdescr]['if'] == $ppp['if'])
+					break;
+			}
+		}
+		$dev = $ppp['ports'];
+		if ($config['interfaces'][$ifdescr]['if'] != $ppp['if'] || empty($dev))
 			break;
-		if (file_exists("/dev/{$dev}")) {
-			if (file_exists("{$g['varrun_path']}/ppp_{$if}.pid")) {
-				$ifinfo['pppinfo'] = "{$ifinfo['if']}";
+		if (file_exists($dev)) {
+			if (file_exists("{$g['varrun_path']}/ppp_{$ifdescr}.pid")) {
+				$ifinfo['pppinfo'] = $ifinfo['ifdescr'];
 				$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
         		$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
 			}
@@ -1332,8 +1340,8 @@ function get_interface_info($ifdescr) {
 
 		}
 		/* lookup the gateway */
-		if (interface_has_gateway($if)) 
-			$ifinfo['gateway'] = get_interface_gateway($if);
+		if (interface_has_gateway($ifdescr)) 
+			$ifinfo['gateway'] = get_interface_gateway($ifdescr);
 	}
 
 	$bridge = "";
@@ -2001,6 +2009,166 @@ function get_include_contents($filename) {
         return $contents;
     }
     return false;
+}
+
+/* This xml 2 array function is courtesy of the php.net comment section on xml_parse.
+ * it is roughly 4 times faster then our existing pfSense parser but due to the large
+ * size of the RRD xml dumps this is required.
+ * The reason we do not use it for pfSense is that it does not know about array fields
+ * which causes it to fail on array fields with single items. Possible Todo?
+ */
+function xml2array($contents, $get_attributes = 1, $priority = 'tag')
+{
+    if (!function_exists('xml_parser_create'))
+    {
+        return array ();
+    }
+    $parser = xml_parser_create('');
+    xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, "UTF-8");
+    xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
+    xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
+    xml_parse_into_struct($parser, trim($contents), $xml_values);
+    xml_parser_free($parser);
+    if (!$xml_values)
+        return; //Hmm...
+    $xml_array = array ();
+    $parents = array ();
+    $opened_tags = array ();
+    $arr = array ();
+    $current = & $xml_array;
+    $repeated_tag_index = array ();
+    foreach ($xml_values as $data)
+    {
+        unset ($attributes, $value);
+        extract($data);
+        $result = array ();
+        $attributes_data = array ();
+        if (isset ($value))
+        {
+            if ($priority == 'tag')
+                $result = $value;
+            else
+                $result['value'] = $value;
+        }
+        if (isset ($attributes) and $get_attributes)
+        {
+            foreach ($attributes as $attr => $val)
+            {
+                if ($priority == 'tag')
+                    $attributes_data[$attr] = $val;
+                else
+                    $result['attr'][$attr] = $val; //Set all the attributes in a array called 'attr'
+            }
+        }
+        if ($type == "open")
+        {
+            $parent[$level -1] = & $current;
+            if (!is_array($current) or (!in_array($tag, array_keys($current))))
+            {
+                $current[$tag] = $result;
+                if ($attributes_data)
+                    $current[$tag . '_attr'] = $attributes_data;
+                $repeated_tag_index[$tag . '_' . $level] = 1;
+                $current = & $current[$tag];
+            }
+            else
+            {
+                if (isset ($current[$tag][0]))
+                {
+                    $current[$tag][$repeated_tag_index[$tag . '_' . $level]] = $result;
+                    $repeated_tag_index[$tag . '_' . $level]++;
+                }
+                else
+                {
+                    $current[$tag] = array (
+                        $current[$tag],
+                        $result
+                    );
+                    $repeated_tag_index[$tag . '_' . $level] = 2;
+                    if (isset ($current[$tag . '_attr']))
+                    {
+                        $current[$tag]['0_attr'] = $current[$tag . '_attr'];
+                        unset ($current[$tag . '_attr']);
+                    }
+                }
+                $last_item_index = $repeated_tag_index[$tag . '_' . $level] - 1;
+                $current = & $current[$tag][$last_item_index];
+            }
+        }
+        elseif ($type == "complete")
+        {
+            if (!isset ($current[$tag]))
+            {
+                $current[$tag] = $result;
+                $repeated_tag_index[$tag . '_' . $level] = 1;
+                if ($priority == 'tag' and $attributes_data)
+                    $current[$tag . '_attr'] = $attributes_data;
+            }
+            else
+            {
+                if (isset ($current[$tag][0]) and is_array($current[$tag]))
+                {
+                    $current[$tag][$repeated_tag_index[$tag . '_' . $level]] = $result;
+                    if ($priority == 'tag' and $get_attributes and $attributes_data)
+                    {
+                        $current[$tag][$repeated_tag_index[$tag . '_' . $level] . '_attr'] = $attributes_data;
+                    }
+                    $repeated_tag_index[$tag . '_' . $level]++;
+                }
+                else
+                {
+                    $current[$tag] = array (
+                        $current[$tag],
+                        $result
+                    );
+                    $repeated_tag_index[$tag . '_' . $level] = 1;
+                    if ($priority == 'tag' and $get_attributes)
+                    {
+                        if (isset ($current[$tag . '_attr']))
+                        {
+                            $current[$tag]['0_attr'] = $current[$tag . '_attr'];
+                            unset ($current[$tag . '_attr']);
+                        }
+                        if ($attributes_data)
+                        {
+                            $current[$tag][$repeated_tag_index[$tag . '_' . $level] . '_attr'] = $attributes_data;
+                        }
+                    }
+                    $repeated_tag_index[$tag . '_' . $level]++; //0 and 1 index is already taken
+                }
+            }
+        }
+        elseif ($type == 'close')
+        {
+            $current = & $parent[$level -1];
+        }
+    }
+    return ($xml_array);
+}
+
+function get_country_name($country_code) {
+	if ($country_code != "ALL" && strlen($country_code) != 2)
+		return "";
+
+	$country_names_xml = "/usr/local/share/mobile-broadband-provider-info/iso_3166-1_list_en.xml";
+	$country_names_contents = file_get_contents($country_names_xml);
+	$country_names = xml2array($country_names_contents);
+
+	if($country_code == "ALL") {
+		$country_list = array();
+		foreach($country_names['ISO_3166-1_List_en']['ISO_3166-1_Entry'] as $country) {
+			$country_list[] = array( "code" => $country['ISO_3166-1_Alpha-2_Code_element'],
+						 "name" => ucwords(strtolower($country['ISO_3166-1_Country_name'])) );
+		}
+		return $country_list;
+	}
+
+	foreach ($country_names['ISO_3166-1_List_en']['ISO_3166-1_Entry'] as $country) {
+		if ($country['ISO_3166-1_Alpha-2_Code_element'] == strtoupper($country_code)) {
+			return ucwords(strtolower($country['ISO_3166-1_Country_name']));
+		}
+	}
+	return "";
 }
 
 ?>

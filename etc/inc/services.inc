@@ -38,26 +38,6 @@
 	pfSense_MODULE:	utils
 */
 
-function services_parse_dhcpd_hostnames() {
-	global $g, $config;
-
-	// Launch if option enabled
-	if (isset($config['dnsmasq']['regdhcp'])) {
-		/* Make sure we do not error out */
-		@touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
-		if (!file_exists("{$g['varetc_path']}/hosts"))
-			system_hosts_generate();
-		if (file_exists("{$g['varrun_path']}/dhcpleases.pid"))
-			sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "HUP");
-		else
-			mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/dnsmasq.pid -h {$g['varetc_path']}/hosts");
-	} else {
-		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
-		@unlink("{$g['varrun_path']}/dhcpleases.pid");
-	}
-		
-}
-
 function services_dhcpd_configure() {
 	global $config, $g;
 	
@@ -647,9 +627,6 @@ function services_dnsmasq_configure() {
 		if(services_dhcpd_configure()!=0)
 			$return = 1;
 	}
-
-	// restart isc-dhcpd parser
-	services_parse_dhcpd_hostnames();
 
 	return $return;
 }

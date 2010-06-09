@@ -130,10 +130,16 @@ if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry
 /* add PPP interfaces */
 if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 	foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
-		$portname = basename($ppp['port']);
+		$portname = $ppp['if'];
 		$portlist[$portname] = $ppp;
 		$portlist[$portname]['isppp'] = true;
-		$portlist[$portname]['descr'] = "PPP " . basename($ppp['port']);
+		$ports_base = basename($ppp['ports']);
+		if (isset($ppp['descr']))
+			$portlist[$portname]['descr'] = strtoupper($ppp['if']). "({$ports_base}) - {$ppp['descr']}";
+		else if (isset($ppp['username']))
+			$portlist[$portname]['descr'] = strtoupper($ppp['if']). "({$ports_base}) - {$ppp['username']}";
+		else
+			$portlist[$portname]['descr'] = strtoupper($ppp['if']). "({$ports_base})";
 	}
 }
 
@@ -203,11 +209,9 @@ if ($_POST['apply']) {
 						$reloadif = true;
 					}
 					$config['interfaces'][$ifname]['if'] = $ifport;
-					if (file_exists("/dev/{$ifport}")) {
-						$config['interfaces'][$ifname]['if'] =  basename($portlist[$ifport]['port']);
-						$config['interfaces'][$ifname]['ipaddr'] = "ppp";
-					}
-
+					if (isset($portlist[$ifport]['isppp']))
+						$config['interfaces'][$ifname]['ipaddr'] = $portlist[$ifport]['type'];
+					
 					/* check for wireless interfaces, set or clear ['wireless'] */
 					if (preg_match($g['wireless_regex'], $ifport)) {
 						if (!is_array($config['interfaces'][$ifname]['wireless']))
@@ -219,6 +223,7 @@ if ($_POST['apply']) {
 					/* make sure there is a descr for all interfaces */
 					if (!isset($config['interfaces'][$ifname]['descr']))
 						$config['interfaces'][$ifname]['descr'] = strtoupper($ifname);
+						
 					if ($reloadif == true) {
 						if (preg_match($g['wireless_regex'], $ifport))
 							interface_sync_wireless_clones($config['interfaces'][$ifname], false);
@@ -265,23 +270,23 @@ if ($_GET['act'] == "del") {
 		}
 
 		if (count($config['filter']['rule']) > 0) {
-       	 		foreach ($config['filter']['rule'] as $x => $rule) {
-                	        if($rule['interface'] == $id)
-               		                 unset($config['filter']['rule'][$x]);
+			foreach ($config['filter']['rule'] as $x => $rule) {
+				if($rule['interface'] == $id)
+					unset($config['filter']['rule'][$x]);
 			}
         	}
 		if (is_array($config['nat']['advancedoutbound']) && count($config['nat']['advancedoutbound']['rule']) > 0) {
-        		foreach ($config['nat']['advancedoutbound']['rule'] as $x => $rule) {
-                	        if($rule['interface'] == $id)
-           	    	                 unset($config['nat']['advancedoutbound']['rule'][$x]['interface']);
+        	foreach ($config['nat']['advancedoutbound']['rule'] as $x => $rule) {
+				if($rule['interface'] == $id)
+					unset($config['nat']['advancedoutbound']['rule'][$x]['interface']);
         		}
 		}
-        	if (is_array($config['nat']['rule']) && count($config['nat']['rule']) > 0) {
-        		foreach ($config['nat']['rule'] as $x => $rule) {
-                        	if($rule['interface'] == $id)
-                	                unset($config['nat']['rule'][$x]['interface']);
+		if (is_array($config['nat']['rule']) && count($config['nat']['rule']) > 0) {
+			foreach ($config['nat']['rule'] as $x => $rule) {
+				if($rule['interface'] == $id)
+					unset($config['nat']['rule'][$x]['interface']);
 			}
-        	}
+        }
 
 		write_config();
 	
@@ -394,11 +399,11 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
 	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
-	$tab_array[5] = array("PPP", false, "interfaces_ppp.php");
-        $tab_array[6] = array("GRE", false, "interfaces_gre.php");
-        $tab_array[7] = array("GIF", false, "interfaces_gif.php");
-	$tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
-	$tab_array[9] = array("LAGG", false, "interfaces_lagg.php");
+	$tab_array[5] = array("PPPs", false, "interfaces_ppps.php");
+	$tab_array[7] = array("GRE", false, "interfaces_gre.php");
+	$tab_array[8] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[9] = array("Bridges", false, "interfaces_bridge.php");
+	$tab_array[10] = array("LAGG", false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>  
   </td></tr>
@@ -422,45 +427,44 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	  <td valign="middle" class="listr">
 		<select name="<?=$ifname;?>" id="<?=$ifname;?>">
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
-		  <option value="<?=$portname;?>" <?php if ($portname == $iface['if']) echo "selected";?>> 
-		  <?php if ($portinfo['isvlan']) {
-			$descr = "VLAN {$portinfo['tag']} on {$portinfo['if']}";
-		if ($portinfo['descr'])
-			$descr .= " (" . $portinfo['descr'] . ")";
-			echo htmlspecialchars($descr);
-                } elseif ($portinfo['iswlclone']) {
-                        $descr = $portinfo['cloneif'];
-                        if ($portinfo['descr'])
-				$descr .= " (" . $portinfo['descr'] . ")";
-                        echo htmlspecialchars($descr);
-		} elseif ($portinfo['isppp']) {
-			echo htmlspecialchars($portinfo['descr']);
-                } elseif ($portinfo['isbridge']) {
-                        $descr = strtoupper($portinfo['bridgeif']);
-                        if ($portinfo['descr'])
-				$descr .= " (" . $portinfo['descr'] . ")";
-                        echo htmlspecialchars($descr);
-                } elseif ($portinfo['isgre']) {
-                        $descr = "GRE {$portinfo['remote-addr']}";
-                        if ($portinfo['descr'])
-				$descr .= " (" . $portinfo['descr'] . ")";
-                        echo htmlspecialchars($descr);
-                } elseif ($portinfo['isgif']) {
-                        $descr = "GRE {$portinfo['remote-addr']}";
-                        if ($portinfo['descr'])
-				$descr .= " (" . $portinfo['descr'] . ")";
-                        echo htmlspecialchars($descr);
-                } elseif ($portinfo['islagg']) {
-                        $descr = strtoupper($portinfo['laggif']);
-                        if ($portinfo['descr'])
-				$descr .= " (" . $portinfo['descr'] . ")";
-                        echo htmlspecialchars($descr);
-		} elseif ($portinfo['isqinq']) {
-			echo htmlspecialchars($portinfo['descr']);
-		} else
-			echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
-		?>
-		</option>
+			<option value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected";?>>
+				<?php if ($portinfo['isvlan']) {
+					$descr = "VLAN {$portinfo['tag']} on {$portinfo['if']}";
+				if ($portinfo['descr'])
+					$descr .= " (" . $portinfo['descr'] . ")";
+					echo htmlspecialchars($descr);
+				} elseif ($portinfo['iswlclone']) {
+					$descr = $portinfo['cloneif'];
+					if ($portinfo['descr'])
+						$descr .= " (" . $portinfo['descr'] . ")";
+					echo htmlspecialchars($descr);
+				} elseif ($portinfo['isppp']) {
+					echo htmlspecialchars($portinfo['descr']);
+				} elseif ($portinfo['isbridge']) {
+					$descr = strtoupper($portinfo['bridgeif']);
+					if ($portinfo['descr'])
+						$descr .= " (" . $portinfo['descr'] . ")";
+					echo htmlspecialchars($descr);
+				} elseif ($portinfo['isgre']) {
+					$descr = "GRE {$portinfo['remote-addr']}";
+					if ($portinfo['descr'])
+						$descr .= " (" . $portinfo['descr'] . ")";
+					echo htmlspecialchars($descr);
+				} elseif ($portinfo['isgif']) {
+					$descr = "GRE {$portinfo['remote-addr']}";
+					if ($portinfo['descr'])
+						$descr .= " (" . $portinfo['descr'] . ")";
+					echo htmlspecialchars($descr);
+				} elseif ($portinfo['islagg']) {
+					$descr = strtoupper($portinfo['laggif']);
+					if ($portinfo['descr'])
+						$descr .= " (" . $portinfo['descr'] . ")";
+					echo htmlspecialchars($descr);
+				} elseif ($portinfo['isqinq']) {
+					echo htmlspecialchars($portinfo['descr']);
+				} else
+					echo htmlspecialchars($portname . " (" . $portinfo['mac'] . ")");
+			?></option>
 		<?php endforeach; ?>
 	</select>
 	</td>

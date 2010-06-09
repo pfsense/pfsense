@@ -44,14 +44,14 @@
 ##|*MATCH=interfaces.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("ipsec.inc");
-require("functions.inc");
-require("captiveportal.inc");
-require("filter.inc");
-require("shaper.inc");
-require("rrd.inc");
-require("vpn.inc");
+require_once("guiconfig.inc");
+require_once("ipsec.inc");
+require_once("functions.inc");
+require_once("captiveportal.inc");
+require_once("filter.inc");
+require_once("shaper.inc");
+require_once("rrd.inc");
+require_once("vpn.inc");
 
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];
@@ -59,34 +59,15 @@ if ($_REQUEST['if']) {
 	$if = "wan";
 }
 
-define("CRON_PPPOE_CMD_FILE", "/conf/pppoe{$if}restart");
 define("CRON_MONTHLY_PATTERN", "0 0 1 * *");
 define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 
-function getMPDCRONSettings() {
-	global $config;
-	if (is_array($config['cron']['item'])) {
-		for ($i = 0; $i < count($config['cron']['item']); $i++) {
-			$item = $config['cron']['item'][$i];
-			if (strpos($item['command'], CRON_PPPOE_CMD_FILE) !== false) {
-				return array("ID" => $i, "ITEM" => $item);
-			}
-		}
-	}
-	return NULL;
-}
+if (!is_array($config['ppps']['ppp']))
+	$config['ppps']['ppp'] = array();
 
-function getMPDResetTimeFromConfig() {
-	$itemhash = getMPDCRONSettings();
-	$cronitem = $itemhash['ITEM'];
-	if (isset($cronitem)) {
-		return "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
-	} else {
-		return NULL;
-	}
-}
+$a_ppps = &$config['ppps']['ppp'];
 
 function remove_bad_chars($string) {
 	return preg_replace('/[^a-z|_|0-9]/i','',$string);
@@ -99,56 +80,86 @@ $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
 
-$pconfig['pppoe_username'] = $wancfg['pppoe_username'];
-$pconfig['pppoe_password'] = $wancfg['pppoe_password'];
-$pconfig['provider'] = $wancfg['provider'];
-$pconfig['pppoe_dialondemand'] = isset($wancfg['ondemand']);
-$pconfig['pppoe_idletimeout'] = $wancfg['timeout'];
-
-/* ================================================ */
-/* = force a connection reset at a specific time? = */
-/* ================================================ */
-
-if (isset($wancfg['pppoe']['pppoe-reset-type'])) {
-	$resetTime = getMPDResetTimeFromConfig();  
-	$pconfig['pppoe_preset'] = true;
-	if ($wancfg['pppoe']['pppoe-reset-type'] == "custom") {
-		$resetTime_a = split(" ", $resetTime);
-		$pconfig['pppoe_pr_custom'] = true;
-		$pconfig['pppoe_resetminute'] = $resetTime_a[0];
-		$pconfig['pppoe_resethour'] = $resetTime_a[1];
-		/*  just initialize $pconfig['pppoe_resetdate'] if the
-		 *  coresponding item contains appropriate numeric values.
-		 */
-		if ($resetTime_a[2] <> "*" && $resetTime_a[3] <> "*") 
-			$pconfig['pppoe_resetdate'] = "{$resetTime_a[3]}/{$resetTime_a[2]}/" . date("Y");
-	} else if ($wancfg['pppoe']['pppoe-reset-type'] == "preset") {
-		$pconfig['pppoe_pr_preset'] = true;
-		switch ($resetTime) {
-			case CRON_MONTHLY_PATTERN:
-				$pconfig['pppoe_monthly'] = true;
-				break;
-			case CRON_WEEKLY_PATTERN:
-				$pconfig['pppoe_weekly'] = true;
-				break;
-			case CRON_DAILY_PATTERN:
-				$pconfig['pppoe_daily'] = true;
-				break;
-			case CRON_HOURLY_PATTERN:
-				$pconfig['pppoe_hourly'] = true;
-				break;
-		}
-	}
+foreach ($a_ppps as $pppid => $ppp) {
+	if ($wancfg['if'] == $ppp['if'])
+		break;
 }
 
-$pconfig['pptp_username'] = $wancfg['pptp_username'];
-$pconfig['pptp_password'] = $wancfg['pptp_password'];
-$pconfig['pptp_local'] = $wancfg['local'];
-$pconfig['pptp_subnet'] = $wancfg['subnet'];
-$pconfig['pptp_remote'] = $wancfg['remote'];
-$pconfig['pptp_dialondemand'] = isset($wancfg['ondemand']);
-$pconfig['pptp_idletimeout'] = $wancfg['timeout'];
+if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
+	$pconfig['pppid'] = $pppid;
+	$pconfig['ptpid'] = $a_ppps[$pppid]['ptpid'];
+	$pconfig['port'] = $a_ppps[$pppid]['ports'];
+	if ($a_ppps[$pppid]['type'] == "ppp"){
+		$pconfig['username'] = $a_ppps[$pppid]['username'];
+		$pconfig['password'] = base64_decode($a_ppps[$pppid]['password']);
+		
+		$pconfig['phone'] = $a_ppps[$pppid]['phone'];
+		$pconfig['apn'] = $a_ppps[$pppid]['apn'];
+	}
+	
+	if ($a_ppps[$pppid]['type'] == "pppoe"){
+		$pconfig['pppoe_username'] = $a_ppps[$pppid]['username'];
+		$pconfig['pppoe_password'] = base64_decode($a_ppps[$pppid]['password']);
+		$pconfig['provider'] = $a_ppps[$pppid]['provider'];
+		$pconfig['pppoe_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
+		$pconfig['pppoe_idletimeout'] = $a_ppps[$pppid]['idletimeout'];
 
+		/* ================================================ */
+		/* = force a connection reset at a specific time? = */
+		/* ================================================ */
+		
+		if (isset($a_ppps[$pppid]['pppoe-reset-type'])) {
+			$pconfig['pppoe-reset-type'] = $a_ppps[$pppid]['pppoe-reset-type'];
+			$itemhash = getMPDCRONSettings($a_ppps[$pppid]['if']);
+			$cronitem = $itemhash['ITEM'];
+			if (isset($cronitem)) {
+				$resetTime = "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
+			} else {
+				$resetTime = NULL;
+			}
+			log_error("ResetTime:".$resetTime);
+			if ($a_ppps[$pppid]['pppoe-reset-type'] == "custom") {
+				$resetTime_a = split(" ", $resetTime);
+				$pconfig['pppoe_pr_custom'] = true;
+				$pconfig['pppoe_resetminute'] = $resetTime_a[0];
+				$pconfig['pppoe_resethour'] = $resetTime_a[1];
+				/*  just initialize $pconfig['pppoe_resetdate'] if the
+				 *  coresponding item contains appropriate numeric values.
+				 */
+				if ($resetTime_a[2] <> "*" && $resetTime_a[3] <> "*") 
+					$pconfig['pppoe_resetdate'] = "{$resetTime_a[3]}/{$resetTime_a[2]}/" . date("Y");
+			} else if ($a_ppps[$pppid]['pppoe-reset-type'] == "preset") {
+				$pconfig['pppoe_pr_preset'] = true;
+				switch ($resetTime) {
+					case CRON_MONTHLY_PATTERN:
+						$pconfig['pppoe_monthly'] = true;
+						break;
+					case CRON_WEEKLY_PATTERN:
+						$pconfig['pppoe_weekly'] = true;
+						break;
+					case CRON_DAILY_PATTERN:
+						$pconfig['pppoe_daily'] = true;
+						break;
+					case CRON_HOURLY_PATTERN:
+						$pconfig['pppoe_hourly'] = true;
+						break;
+				}
+			}
+		}// End force pppoe reset at specific time
+	}// End if type == pppoe		
+	if ($a_ppps[$pppid]['type'] == "pptp"){
+		$pconfig['pptp_username'] = $a_ppps[$pppid]['username'];
+		$pconfig['pptp_password'] = base64_decode($a_ppps[$pppid]['password']);
+		$pconfig['pptp_local'] = $a_ppps[$pppid]['localip'];
+		$pconfig['pptp_subnet'] = $a_ppps[$pppid]['subnet'];
+		$pconfig['pptp_remote'] = $a_ppps[$pppid]['gateway'];
+		$pconfig['pptp_dialondemand'] = isset($a_ppps[$pppid]['ondemand']);
+		$pconfig['pptp_idletimeout'] = $a_ppps[$pppid]['timeout'];
+	}
+} else {
+	$pconfig['ptpid'] = interfaces_ptpid_next();
+	$pppid = count($a_ppps);
+}
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
@@ -180,13 +191,9 @@ switch($wancfg['ipaddr']) {
 		$pconfig['ipaddr'] = "";
 		break;
 	case "pppoe":
-		$pconfig['type'] = "pppoe";
-		break;
 	case "pptp":
-		$pconfig['type'] = "pptp";
-		break;
 	case "ppp":
-		$pconfig['type'] = "ppp";
+		$pconfig['type'] = $wancfg['ipaddr'];
 		break;
 	default:
 		if(is_ipaddr($wancfg['ipaddr'])) {
@@ -327,7 +334,7 @@ if ($_POST) {
 	 * data validation procedure below, may trigger a false error
 	 * message.
 	 */
-	if (empty($_POST['pppoe_preset'])) {
+	if (empty($_POST['pppoe-reset-type'])) {
 		unset($_POST['pppoe_pr_type']);                
 		unset($_POST['pppoe_resethour']);
 		unset($_POST['pppoe_resetminute']);
@@ -349,6 +356,11 @@ if ($_POST) {
 		case "static":
 			$reqdfields = explode(" ", "ipaddr subnet gateway");
 			$reqdfieldsn = explode(",", "IP address,Subnet bit count,Gateway");
+			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+			break;
+		case "ppp":
+			$reqdfields = explode(" ", "port phone");
+			$reqdfieldsn = explode(",", "Modem Port,Phone Number");
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 		case "PPPoE":
@@ -467,6 +479,7 @@ if ($_POST) {
 		}
 	}
 	if (!$input_errors) {
+		$ppp = array();
 		if ($wancfg['ipaddr'] != "ppp")
 			unset($wancfg['ipaddr']);
 		unset($wancfg['subnet']);
@@ -479,12 +492,18 @@ if ($_POST) {
 		unset($wancfg['provider']);
 		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
-		if ($wancfg['pppoe']['pppoe-reset-type'])
-			unset($wancfg['pppoe']['pppoe-reset-type']);
+		unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
 		unset($wancfg['subnet']);
 		unset($wancfg['remote']);
-
+		unset($a_ppps[$pppid]['apn']);
+		unset($a_ppps[$pppid]['phone']);
+		unset($a_ppps[$pppid]['localip']);
+		unset($a_ppps[$pppid]['subnet']);
+		unset($a_ppps[$pppid]['gateway']);
+		unset($a_ppps[$pppid]['pppoe-reset-type']);
+		unset($a_ppps[$pppid]['provider']);
+		
 		$wancfg['descr'] = remove_bad_chars($_POST['descr']);
 		$wancfg['enable'] =  $_POST['enable']  == "yes" ? true : false;
 
@@ -509,7 +528,7 @@ if ($_POST) {
 				unset($gateway_item);
 			}
 		}
-
+			
 		switch($_POST['type']) {
 			case "static":
 				$wancfg['ipaddr'] = $_POST['ipaddr'];
@@ -536,40 +555,82 @@ if ($_POST) {
 					$a_gateways[] = $gateway_item;
 				}
 				break;
+			case "ppp":
+				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
+				$a_ppps[$pppid]['type'] = $_POST['type'];
+				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
+				$a_ppps[$pppid]['ports'] = $_POST['port'];
+				$a_ppps[$pppid]['username'] = $_POST['username'];
+				$a_ppps[$pppid]['password'] = base64_encode($_POST['password']);
+				$a_ppps[$pppid]['phone'] = $_POST['phone'];
+				$a_ppps[$pppid]['apn'] = $_POST['apn'];
+				$wancfg['if'] = $_POST['type'] . $_POST['ptpid'];
+				$wancfg['ipaddr'] = $_POST['type'];
+				unset($a_ppps[$pppid]['ondemand']);
+				unset($a_ppps[$pppid]['idletimeout']);
+				break;
+
 			case "pppoe":
-				$wancfg['ipaddr'] = "pppoe";
-				$wancfg['pppoe_username'] = $_POST['pppoe_username'];
-				$wancfg['pppoe_password'] = $_POST['pppoe_password'];
-				$wancfg['provider'] = $_POST['provider'];
-				$wancfg['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
-				$wancfg['timeout'] = $_POST['pppoe_idletimeout'];
+				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
+				$a_ppps[$pppid]['type'] = $_POST['type'];
+				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
+				if (isset($_POST['ppp_port']))
+					$a_ppps[$pppid]['ports'] = $_POST['ppp_port'];
+				else
+					$a_ppps[$pppid]['ports'] = $wancfg['if'];
+				$a_ppps[$pppid]['username'] = $_POST['pppoe_username'];
+				$a_ppps[$pppid]['password'] = base64_encode($_POST['pppoe_password']);
+				if (!empty($_POST['provider']))
+					$a_ppps[$pppid]['provider'] = $_POST['provider'];
+				else
+					unset($a_ppps[$pppid]['provider']);
+				$a_ppps[$pppid]['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
+				if (!empty($_POST['idletimeout']))
+					$a_ppps[$pppid]['idletimeout'] = $_POST['pppoe_idletimeout'];
+				else
+					unset($a_ppps[$pppid]['idletimeout']);
+
+				if (!empty($_POST['pppoe-reset-type']))
+					$a_ppps[$pppid]['pppoe-reset-type'] = $_POST['pppoe-reset-type'];
+				else
+					unset($a_ppps[$pppid]['pppoe-reset-type']);
+				$wancfg['if'] = $_POST['type'].$_POST['ptpid'];
+				$wancfg['ipaddr'] = $_POST['type'];
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
+				
 				break;
 			case "pptp":
-				$wancfg['ipaddr'] = "pptp";
-				$wancfg['pptp_username'] = $_POST['pptp_username'];
-				$wancfg['pptp_password'] = $_POST['pptp_password'];
-				$wancfg['local'] = $_POST['pptp_local'];
-				$wancfg['subnet'] = $_POST['pptp_subnet'];
-				$wancfg['remote'] = $_POST['pptp_remote'];
-				$wancfg['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
-				$wancfg['timeout'] = $_POST['pptp_idletimeout'];
+				$a_ppps[$pppid]['ptpid'] = $_POST['ptpid'];
+				$a_ppps[$pppid]['type'] = $_POST['type'];
+				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
+				if (isset($_POST['ppp_port']))
+					$a_ppps[$pppid]['ports'] = $_POST['ppp_port'];
+				else
+					$a_ppps[$pppid]['ports'] = $wancfg['if'];
+				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
+				$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
+				$a_ppps[$pppid]['localip'] = $_POST['pptp_local'];
+				$a_ppps[$pppid]['subnet'] = $_POST['pptp_subnet'];
+				$a_ppps[$pppid]['gateway'] = $_POST['pptp_remote'];
+				$a_ppps[$pppid]['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
+				if (!empty($_POST['idletimeout']))
+					$a_ppps[$pppid]['idletimeout'] = $_POST['pptp_idletimeout'];
+				else
+					unset($a_ppps[$pppid]['idletimeout']);
+				
+				$wancfg['if'] = $_POST['type'].$_POST['ptpid'];
+				$wancfg['ipaddr'] = $_POST['type'];
 				if($gateway_item) {
 					$a_gateways[] = $gateway_item;
 				}
 				break;
+			case "none":
+				break;
 		}
-		handle_pppoe_reset();
-		/* reset cron items if necessary */
-		if (empty($_POST['pppoe_preset'])) {
-			/* test whether a cron item exists and unset() it if necessary */
-			$itemhash = getMPDCRONSettings();
-			$item = $itemhash['ITEM'];
-			if (isset($item))
-				unset($config['cron']['item'][$itemhash['ID']]); 
-		}
+		handle_pppoe_reset($_POST);
+		
 		if($_POST['blockpriv'] == "yes") {
 			$wancfg['blockpriv'] = true;
 		} else {
@@ -589,6 +650,7 @@ if ($_POST) {
 		if (isset($wancfg['wireless'])) {
 			handle_wireless_post();
 		}
+		
 		write_config();
 		mark_subsystem_dirty('interfaces');
 		/* regenerate cron settings/crontab file */
@@ -597,95 +659,10 @@ if ($_POST) {
 		header("Location: interfaces.php?if={$if}");
 		exit;
 	}
+	
+	
+	
 } // end if($_POST) 
-
-function handle_pppoe_reset() {
-	global $_POST, $config, $g, $wancfg, $if;
-	/* perform a periodic reset? */
-	if(!isset($_POST['pppoe_preset'])) {
-		setup_pppoe_reset_file($if, false);		
-		return;
-	}
-	if (!is_array($config['cron']['item'])) 
-		$config['cron']['item'] = array(); 
-	$itemhash = getMPDCRONSettings();
-	$item = $itemhash['ITEM'];
-	if (empty($item)) 
-		$item = array();
-	if (isset($_POST['pppoe_pr_type']) && $_POST['pppoe_pr_type'] == "custom") {
-		$wancfg['pppoe']['pppoe-reset-type'] = "custom";
-		$pconfig['pppoe_pr_custom'] = true;
-		$item['minute'] = $_POST['pppoe_resetminute'];
-		$item['hour'] = $_POST['pppoe_resethour'];
-		if (isset($_POST['pppoe_resetdate']) && $_POST['pppoe_resetdate'] <> "" && strlen($_POST['pppoe_resetdate']) == 10) {
-			$date = explode("/", $_POST['pppoe_resetdate']);
-			$item['mday'] = $date[1];
-			$item['month'] = $date[0];
-		} else {
-			$item['mday'] = "*";
-			$item['month'] = "*";
-		}
-		$item['wday'] = "*";
-		$item['who'] = "root";
-		$item['command'] = CRON_PPPOE_CMD_FILE;
-	} else if (isset($_POST['pppoe_pr_type']) && $_POST['pppoe_pr_type'] = "preset") {
-		$wancfg['pppoe']['pppoe-reset-type'] = "preset";
-		$pconfig['pppoe_pr_preset'] = true;
-		switch ($_POST['pppoe_pr_preset_val']) {
-			case "monthly":
-				$item['minute'] = "0";
-				$item['hour'] = "0";
-				$item['mday'] = "1";
-				$item['month'] = "*";
-				$item['wday'] = "*";
-				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE;
-				break;
-	        	case "weekly":
-				$item['minute'] = "0";
-				$item['hour'] = "0";
-				$item['mday'] = "*";
-				$item['month'] = "*";
-				$item['wday'] = "0";
-				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE;
-				break;
-			case "daily":
-				$item['minute'] = "0";
-				$item['hour'] = "0";
-				$item['mday'] = "*";
-				$item['month'] = "*";
-				$item['wday'] = "*";
-				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE;
-				break;
-			case "hourly":
-				$item['minute'] = "0";
-				$item['hour'] = "*";
-				$item['mday'] = "*";
-				$item['month'] = "*";
-				$item['wday'] = "*";
-				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE;
-				break;
-		} // end switch
-	} // end if
-	if (isset($itemhash['ID'])) 
-		$config['cron']['item'][$itemhash['ID']] = $item;
-	else 
-		$config['cron']['item'][] = $item;
-	/* finally install the pppoerestart file */
-	if (isset($_POST['pppoe_preset'])) {
-		setup_pppoe_reset_file($if, true);
-		$wancfg['pppoe_reset'] = true;
-		$wancfg['pppoe_preset'] = true;
-		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
-	} else {
-		unset($wancfg['pppoe_reset']);
-		unset($wancfg['pppoe_preset']);		
-		setup_pppoe_reset_file($if, false);	
-	}
-}
 
 function handle_wireless_post() {
 	global $_POST, $config, $g, $wancfg, $if, $wl_countries_attr;
@@ -832,7 +809,7 @@ $statusurl = "status_interfaces.php";
 
 $closehead = false;
 include("head.inc");
-$types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe" => "PPPoE", "pptp" => "PPTP" /* , "carpdev-dhcp" => "CarpDev"*/); 
+$types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP" /* , "carpdev-dhcp" => "CarpDev"*/); 
 
 ?>
 
@@ -842,21 +819,33 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 <link href="/javascript/datepicker/css/datepicker.css" rel="stylesheet" type="text/css"/>
 
 <script type="text/javascript">
-	function updateType(t){
+	function updateType(t) {
 		switch(t) {
-	<?php
-		/* OK, so this is sick using php to generate javascript, but it needed to be done */
-		foreach ($types as $key => $val) {
-			echo "case \"{$key}\": {\n";
-			$t = $types;
-			foreach ($t as $k => $v) {
-				if ($k != $key) {
-					echo "$('{$k}').hide();\n";
-				}
+			case "none": {
+				$('static','dhcp','pppoe','pptp', 'ppp').invoke('hide');
+				break;
 			}
-			echo "}\n";
-		}
-	?>
+			case "static": {
+				$('none','dhcp','pppoe','pptp', 'ppp').invoke('hide');
+				break;
+			}
+			case "dhcp": {
+				$('none','static','pppoe','pptp', 'ppp').invoke('hide');
+				break;
+			}
+			case "ppp": {
+				$('none','static','dhcp','pptp', 'pppoe').invoke('hide');
+				country_list();
+				break;
+			}
+			case "pppoe": {
+				$('none','static','dhcp','pptp', 'ppp').invoke('hide');
+				break;
+			}
+			case "pptp": {
+				$('none','static','dhcp','pppoe', 'ppp').invoke('hide');
+				break;
+			}
 		}
 		$(t).show();
 	}
@@ -867,14 +856,20 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		else
 			$('allcfg').hide();
 	}
-	
-	function show_periodic_reset(obj) {
-		if (obj.checked)
-			$('presetwrap').show();
-		else
-			$('presetwrap').hide();
-	}
 
+	function show_reset_settings(reset_type) {
+		if (reset_type == 'preset') { 
+			Effect.Appear('pppoepresetwrap', { duration: 0.0 });
+			Effect.Fade('pppoecustomwrap', { duration: 0.0 }); 
+		} 
+		else if (reset_type == 'custom') { 
+			Effect.Appear('pppoecustomwrap', { duration: 0.0 });
+			Effect.Fade('pppoepresetwrap', { duration: 0.0 });
+		} else {
+			Effect.Fade('pppoecustomwrap', { duration: 0.0 });
+			Effect.Fade('pppoepresetwrap', { duration: 0.0 });
+		}
+	}
 	function show_mon_config() {
 		document.getElementById("showmonbox").innerHTML='';
 		aodiv = document.getElementById('showmon');
@@ -888,6 +883,90 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		else 
 			return true;
 	}
+	function country_list() {
+		$('country').childElements().each(function(node) { node.remove(); });
+		$('provider').childElements().each(function(node) { node.remove(); });
+		$('providerplan').childElements().each(function(node) { node.remove(); });
+		new Ajax.Request("getserviceproviders.php",{
+			onSuccess: function(response) {
+				var responseTextArr = response.responseText.split("\n");
+				responseTextArr.sort();
+				responseTextArr.each( function(value) {
+					var option = new Element('option');
+					country = value.split(":");
+					option.text = country[0];
+					option.value = country[1];
+					$('country').insert({ bottom : option });
+				});
+			}
+		});
+		$('trcountry').setStyle({display : "table-row"});
+	}
+	
+	function providers_list() {
+		$('provider').childElements().each(function(node) { node.remove(); });
+		$('providerplan').childElements().each(function(node) { node.remove(); });
+		new Ajax.Request("getserviceproviders.php",{
+			parameters: {country : $F('country')},
+			onSuccess: function(response) {
+				var responseTextArr = response.responseText.split("\n");
+				responseTextArr.sort();
+				responseTextArr.each( function(value) {
+					var option = new Element('option');
+					option.text = value;
+					option.value = value;
+					$('provider').insert({ bottom : option });
+				});
+			}
+		});
+		$('trprovider').setStyle({display : "table-row"});
+		$('trproviderplan').setStyle({display : "none"});
+	}
+	
+	function providerplan_list() {
+		$('providerplan').childElements().each(function(node) { node.remove(); });
+		$('providerplan').insert( new Element('option') );
+		new Ajax.Request("getserviceproviders.php",{
+			parameters: {country : $F('country'), provider : $F('provider')},
+			onSuccess: function(response) {
+				var responseTextArr = response.responseText.split("\n");
+				responseTextArr.sort();
+				responseTextArr.each( function(value) {
+					if(value != "") {
+						providerplan = value.split(":");
+	
+						var option = new Element('option');
+						option.text = providerplan[0] + " - " + providerplan[1];
+						option.value = providerplan[1];
+						$('providerplan').insert({ bottom : option });
+					}
+				});
+			}
+		});
+		$('trproviderplan').setStyle({display : "table-row"});
+	}
+	
+	function prefill_provider() {
+		new Ajax.Request("getserviceproviders.php",{
+			parameters: {country : $F('country'), provider : $F('provider'), plan : $F('providerplan')},
+			onSuccess: function(response) {
+				var xmldoc = response.responseXML;
+				var provider = xmldoc.getElementsByTagName('connection')[0];
+				$('username').setValue('');
+				$('password').setValue('');
+				if(provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
+					$('phone').setValue('*777');
+					$('apn').setValue('');
+				} else {
+					$('phone').setValue('*99#');
+					$('apn').setValue(provider.getElementsByTagName('apn')[0].firstChild.data);
+				}
+				$('username').setValue(provider.getElementsByTagName('username')[0].firstChild.data);
+				$('password').setValue(provider.getElementsByTagName('password')[0].firstChild.data);
+			}
+		});
+	}
+
 </script>
 </head>
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -923,7 +1002,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								<br><span class="vexpl">Enter a description (name) for the interface here.</span>
 							</td>
 						</tr>
-						<? if(!$wancfg['serialport']): ?>
 						<tr>
 							<td valign="middle" class="vncell"><strong>Type</strong></td>
 							<td class="vtable"> 
@@ -940,7 +1018,6 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								</select>
 							</td>
 						</tr>
-						<?php endif; ?>
 						<tr>
 							<td valign="top" class="vncell">MAC address</td>
 							<td class="vtable">
@@ -1117,6 +1194,103 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								</table>
 							</td>
 						</tr>
+						<tr style="display:none;" name="ppp" id="ppp">
+							<td colspan="2" style="padding: 0px;">
+								<table width="100%" border="0" cellpadding="6" cellspacing="0">
+									<tr>
+										<td colspan="2" valign="top" class="listtopic">PPP configuration</td>
+									</tr>
+									<tr name="ppp_provider" id="ppp_provider">
+										<td width="22%" valign="top" class="vncell"><?= gettext("Service Provider"); ?></td>
+										<td width="78%" class="vtable">
+											<table border="0" cellpadding="0" cellspacing="0">
+												<tr id="trcountry">
+													<td><?= gettext("Country"); ?> :&nbsp;&nbsp;</td>
+													<td>
+														<select class="formselect" name="country" id="country" onChange="providers_list()">
+															<option></option>
+														</select>
+													</td>
+												</tr>
+												<tr id="trprovider" style="display:none">
+													<td><?= gettext("Provider"); ?> :&nbsp;&nbsp;</td>
+													<td>
+														<select class="formselect" name="provider" id="provider" onChange="providerplan_list()">
+															<option></option>
+														</select>
+													</td>
+												</tr>
+												<tr id="trproviderplan" style="display:none">
+													<td><?= gettext("Plan"); ?> :&nbsp;&nbsp;</td>
+													<td>
+														<select class="formselect" name="providerplan" id="providerplan" onChange="prefill_provider()">
+															<option></option>
+														</select>
+													</td>
+												</tr>
+											</table>
+											<br/><span class="vexpl"><?= gettext("Select to fill in data for your service provider."); ?></span>
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?= gettext("Username"); ?></td>
+										<td width="78%" class="vtable">
+										<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+										</td>
+									</tr>
+									<tr>
+										<td width="22%" valign="top" class="vncell"><?= gettext("Password"); ?></td>
+										<td width="78%" class="vtable">
+										<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+										</td>
+									</tr>
+									<tr name="phone_num" id="phone_num">
+										<td width="22%" valign="top" class="vncellreq"><?= gettext("Phone Number"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="phone" type="text" class="formfld unknown" id="phone" size="12" value="<?=htmlspecialchars($pconfig['phone']);?>">
+										</td>
+									</tr>
+									<tr name="apn_" id="apn_">
+										<td width="22%" valign="top" class="vncell"><?= gettext("Access Point Name (APN)"); ?></td>
+										<td width="78%" class="vtable">
+											<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>">
+										</td>
+									</tr>
+									<tr name="interface" id="interface" >
+										<td width="22%" valign="top" class="vncellreq"><?= gettext("Modem Port"); ?></td>
+										<td width="78%" class="vtable">
+											<select name="port" id="port" class="formselect">
+											<?php
+												$portlist = glob("/dev/cua*");
+												$modems = glob("/dev/modem*");
+												$portlist = array_merge($portlist, $modems);
+												foreach ($portlist as $port) {
+													if(preg_match("/\.(lock|init)$/", $port))
+														continue;
+													echo "<option value=\"".trim($port)."\"";
+													if ($pconfig['port'] == $port)
+														echo "selected";
+													echo ">{$port}</option>";
+												}?>
+											</select>
+										</td>
+									</tr>
+									<td width="22%" valign="top" class="vncell"><?= gettext("Advanced PPP"); ?></td>
+										<?php if (isset($pconfig['pppid'])): ?>
+											<td width="78%" class="vtable">
+											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a>
+											to edit PPP configuration.
+											</td>
+										<? else: ?>
+											<td width="78%" class="vtable">
+											<a href="/interfaces_ppps_edit.php" class="navlnk">Click here</a>
+											to create a PPP configuration.
+											</td>
+										<? endif; ?>	
+									</tr>
+								</table>
+							</td>
+						</tr>
 						<tr style="display:none;" name="pppoe" id="pppoe">
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -1158,63 +1332,71 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 									<tr>
 										<td width="22%" valign="top" class="vncell"><?=gettext("Periodic reset");?></td>
 										<td width="78%" class="vtable">
-											<input name="pppoe_preset" type="checkbox" id="pppoe_preset" value="yes" <?php if ($pconfig['pppoe_preset']) echo "checked=\"checked\""; ?> onclick="show_periodic_reset(this);" />
-												<?= gettext("enable periodic PPPoE resets"); ?>
-												<br />
-												<?php if ($pconfig['pppoe_preset']): ?>
-													<table id="presetwrap" cellspacing="0" cellpadding="0" width="100%">
-													<?php else: ?>
-														<table id="presetwrap" cellspacing="0" cellpadding="0" width="100%" style="display: none;">
+											<table id="presetwrap" cellspacing="0" cellpadding="0" width="100%">
+												<tr>
+													<td align="left" valign="top">
+														<p style="margin: 4px; padding: 4px 0 4px 0; width: 94%;">
+														<select valign="top" id="reset_type" name="pppoe-reset-type" class="formselect" onChange="show_reset_settings(this.value);">
+															<option value = ""><?= gettext("Disabled"); ?></option>
+															<option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected"; ?>><?= gettext("Custom"); ?></option>
+															<option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected"; ?>><?= gettext("Pre-Set"); ?></option>
+														</select> <?= gettext("Select a reset timing type"); ?>
+														</p>
+														<?php if ($pconfig['pppoe_pr_custom']): ?>
+															<p style="margin: 2px; padding: 4px; width: 94%;" id="pppoecustomwrap">
+														<?php else: ?>
+															<p style="margin: 2px; padding: 4px; width: 94%; display: none;" id="pppoecustomwrap">
 														<?php endif; ?>
-														<tr>
-															<td align="left" valign="top">
-																<p style="margin: 4px; padding: 4px 0 4px 0; width: 94%;">
-																	<input name="pppoe_pr_type" type="radio" id="pppoe_pr_custom" value="custom" <?php if ($pconfig['pppoe_pr_custom']) echo "checked=\"checked\""; ?> onclick="if (this.checked) { Effect.Appear('pppoecustomwrap', { duration: 0.0 }); Effect.Fade('pppoepresetwrap', { duration: 0.0 }); }" /> 
-																		<?= gettext("provide a custom reset time"); ?>
-																		<br />
-																		<input name="pppoe_pr_type" type="radio" id="pppoe_pr_preset" value="preset" <?php if ($pconfig['pppoe_pr_preset']) echo "checked=\"checked\""; ?> onclick="if (this.checked) { Effect.Appear('pppoepresetwrap', { duration: 0.0 }); Effect.Fade('pppoecustomwrap', { duration: 0.0 }); }" /> 
-																			<?= gettext("select reset time from a preset"); ?>
-																		</p>
-																		<?php if ($pconfig['pppoe_pr_custom']): ?>
-																			<p style="margin: 2px; padding: 4px; width: 94%;" id="pppoecustomwrap">
-																			<?php else: ?>
-																				<p style="margin: 2px; padding: 4px; width: 94%; display: none;" id="pppoecustomwrap">
-																				<?php endif; ?>
-																				<input type="text" name="pppoe_resethour" class="fd_incremental_inp_range_0_23 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resethour" value="<?= $pconfig['pppoe_resethour']; ?>" size="3" /> 
-																				<?= gettext("hour (0-23)"); ?><br />
-																				<input type="text" name="pppoe_resetminute" class="fd_incremental_inp_range_0_59 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resetminute" value="<?= $pconfig['pppoe_resetminute']; ?>" size="3" /> 
-																				<?= gettext("minute (0-59)"); ?><br />
-																				<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" /> 
-																				<?= gettext("reset at a specific date (mm/dd/yyyy)"); ?>
-																				<br />&nbsp;<br />
-																				<span class="red"><strong>Note: </strong></span>
-																				If you leave the date field empty, the reset will be executed each day at the time you did specify using the minutes and hour field.
-																			</p>
-																			<?php if ($pconfig['pppoe_pr_preset']): ?>
-																				<p style="margin: 2px; padding: 4px; width: 94%;" id="pppoepresetwrap">
-																				<?php else: ?>
-																					<p style="margin: 2px; padding: 4px; width: 94%; display: none;" id="pppoepresetwrap">
-																					<?php endif; ?>
-																					<input name="pppoe_pr_preset_val" type="radio" id="pppoe_monthly" value="monthly" <?php if ($pconfig['pppoe_monthly']) echo "checked=\"checked\""; ?> /> 
-																					<?= gettext("reset at each month ('0 0 1 * *')"); ?>
-																					<br />
-																					<input name="pppoe_pr_preset_val" type="radio" id="pppoe_weekly" value="weekly" <?php if ($pconfig['pppoe_weekly']) echo "checked=\"checked\""; ?> /> 
-																					<?= gettext("reset at each week ('0 0 * * 0')"); ?>
-																					<br />
-																					<input name="pppoe_pr_preset_val" type="radio" id="pppoe_daily" value="daily" <?php if ($pconfig['pppoe_daily']) echo "checked=\"checked\""; ?> /> 
-																					<?= gettext("reset at each day ('0 0 * * *')"); ?>
-																					<br />
-																					<input name="pppoe_pr_preset_val" type="radio" id="pppoe_hourly" value="hourly" <?php if ($pconfig['pppoe_hourly']) echo "checked=\"checked\""; ?> /> 
-																					<?= gettext("reset at each hour ('0 * * * *')"); ?>
-																				</p>
-																			</td>
-																		</tr>
-																	</table>
-																</td>
-															</tr>
-														</table>
+														<input type="text" name="pppoe_resethour" class="fd_incremental_inp_range_0_23 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resethour" value="<?= $pconfig['pppoe_resethour']; ?>" size="3" /> 
+														<?= gettext("hour (0-23)"); ?><br />
+														<input type="text" name="pppoe_resetminute" class="fd_incremental_inp_range_0_59 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resetminute" value="<?= $pconfig['pppoe_resetminute']; ?>" size="3" /> 
+														<?= gettext("minute (0-59)"); ?><br />
+														<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" /> 
+														<?= gettext("reset at a specific date (mm/dd/yyyy)"); ?>
+														<br />&nbsp;<br />
+														<span class="red"><strong>Note: </strong></span>
+														<?= gettext("If you leave the date field empty, the reset will be executed each day at the time you did specify using the minutes and hour field."); ?>
+														</p>
+														<?php if ($pconfig['pppoe_pr_preset']): ?>
+															<p style="margin: 2px; padding: 4px; width: 94%;" id="pppoepresetwrap">
+														<?php else: ?>
+															<p style="margin: 2px; padding: 4px; width: 94%; display: none;" id="pppoepresetwrap">
+														<?php endif; ?>
+														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_monthly" value="monthly" <?php if ($pconfig['pppoe_monthly']) echo "checked=\"checked\""; ?> /> 
+														<?= gettext("reset at each month ('0 0 1 * *')"); ?>
+														<br />
+														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_weekly" value="weekly" <?php if ($pconfig['pppoe_weekly']) echo "checked=\"checked\""; ?> /> 
+														<?= gettext("reset at each week ('0 0 * * 0')"); ?>
+														<br />
+														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_daily" value="daily" <?php if ($pconfig['pppoe_daily']) echo "checked=\"checked\""; ?> /> 
+														<?= gettext("reset at each day ('0 0 * * *')"); ?>
+														<br />
+														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_hourly" value="hourly" <?php if ($pconfig['pppoe_hourly']) echo "checked=\"checked\""; ?> /> 
+														<?= gettext("reset at each hour ('0 * * * *')"); ?>
+														</p>
 													</td>
 												</tr>
+											</table>
+										</td>
+									</tr>
+									
+									<tr>
+										<td width="22%" valign="top" class="vncell">Advanced and MLPPP</td>
+										<?php if (isset($pconfig['pppid'])): ?>
+											<td width="78%" class="vtable">
+											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a> 
+											for additional PPPoE configuration options. Save first if you made changes.
+											</td>
+										<? else: ?>
+											<td width="78%" class="vtable">
+											<a href="/interfaces_ppps_edit.php" class="navlnk">Click here</a>
+											for advanced PPPoE configuration options and MLPPP configuration.
+											</td>
+										<? endif; ?>	
+									</tr>
+								</table>
+							</td>
+						</tr>
 						<tr style="display:none;" name="pptp" id="pptp">
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -1241,8 +1423,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 											<select name="pptp_subnet" class="formselect" id="pptp_subnet">
 												<?php for ($i = 31; $i > 0; $i--): ?>
 													<option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet']) echo "selected"; ?>>
-														<?=$i;?>
-													</option>
+														<?=$i;?></option>
 												<?php endfor; ?>
 											</select>
 										</td>
@@ -1684,9 +1865,9 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								and obviously should not appear as the source address in any packets you receive.
 							</td>
 						</tr>
-					</tr>
-					</table>
-					</div>
+					</table> <!-- End "allcfg" table -->
+					</div> <!-- End "allcfg" div -->
+
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
 							<td width="100" valign="top">
@@ -1697,14 +1878,21 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 								<input id="save" name="Submit" type="submit" class="formbtn" value="Save"> 
 								<input id="cancel" type="button" class="formbtn" value="Cancel" onclick="history.back()">
 								<input name="if" type="hidden" id="if" value="<?=$if;?>">
+								<?php if ($wancfg['if'] == $a_ppps[$pppid]['if']) : ?>
+								<input name="ppp_port" type="hidden" value="<?=$pconfig['port'];?>">
+								<?php endif; ?>
+								<input name="ptpid" type="hidden" value="<?=$pconfig['ptpid'];?>">
 							</td>
 						</tr>
 					</table>
 				</td>
-			</table>
+			</tr>
+		</table>
+		<!--
 		</div>
 		</td></tr>
 		</table>
+		-->
 	</form>
 	<script type="text/javascript">
 		var gatewayip;
@@ -1777,10 +1965,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "pppoe"
 		}
 		<?php
 		if ($if == "wan" || $if == "lan")
-			echo "\$('allcfg').show();";
+			echo "\$('allcfg').show();\n";
 		else
 			echo "show_allcfg(document.iform.enable);";
-		echo "updateType('{$pconfig['type']}')";
+		echo "updateType('{$pconfig['type']}');\n";
 		?>
 	</script>
 	<?php include("fend.inc"); ?>

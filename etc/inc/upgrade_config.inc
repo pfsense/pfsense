@@ -1970,4 +1970,96 @@ function upgrade_062_to_063() {
 	}
 	
 }
+
+function upgrade_063_to_064() {
+	global $config;
+	$j=0;
+	$ifcfg = &$config['interfaces'];
+	
+	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {	
+		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+			$config['ppps']['ppp'][$pppid]['if'] = "ppp".$j;
+			$config['ppps']['ppp'][$pppid]['ptpid'] = $j;
+			$j++;
+			if (isset($ppp['port'])){
+				$config['ppps']['ppp'][$pppid]['ports'] = $ppp['port'];
+				unset($config['ppps']['ppp'][$pppid]['port']);
+			}
+			if (!isset($ppp['type'])){
+				$config['ppps']['ppp'][$pppid]['type'] = "ppp";
+			}
+			if (isset($ppp['defaultgw']))
+				unset($config['ppps']['ppp'][$pppid]['defaultgw']);
+		}
+	}
+	
+	if (!is_array($config['ppps']['ppp']))
+		$config['ppps']['ppp'] = array();
+	$a_ppps = &$config['ppps']['ppp'];
+
+	foreach ($ifcfg as $ifname => $ifinfo) {
+		$ppp = array();
+		// For pppoe conversion
+		if ($ifinfo['ipaddr'] == "pppoe" || $ifinfo['ipaddr'] == "pptp"){
+			if (isset($ifinfo['ptpid']))
+				continue;
+			$ppp['ptpid'] =  $j;
+			$ppp['type'] = $ifinfo['ipaddr'];
+			$ppp['if'] = $ifinfo['ipaddr'].$j;
+			$ppp['ports'] = $ifinfo['if'];
+			if ($ifinfo['ipaddr'] == "pppoe"){
+				$ppp['username'] = $ifinfo['pppoe_username'];
+				$ppp['password'] = base64_encode($ifinfo['pppoe_password']);
+			}
+			if ($ifinfo['ipaddr'] == "pptp"){
+				$ppp['username'] = $ifinfo['pptp_username'];
+				$ppp['password'] = base64_encode($ifinfo['pptp_password']);
+			}
+			
+			if (isset($ifinfo['provider']))
+				$ppp['provider'] = $ifinfo['provider'];
+			if (isset($ifinfo['ondemand']))
+				$ppp['ondemand'] = true;
+			if (isset($ifinfo['timeout']))
+				$ppp['idletimeout'] = $ifinfo['timeout'];
+			if (isset($ifinfo['pppoe']['pppoe-reset-type'])){
+				$ppp['pppoe-reset-type'] = $ifinfo['pppoe']['pppoe-reset-type'];
+				if (is_array($config['cron']['item'])) {
+					for ($i = 0; $i < count($config['cron']['item']); $i++) {
+						$item = $config['cron']['item'][$i];
+						if (strpos($item['command'], "/conf/pppoe{$ifname}restart") !== false)
+							$config['cron']['item'][$i]['command'] = "/var/etc/pppoe_restart_" . $ppp['if'];
+					}
+				}
+			}
+			if (isset($ifinfo['local']))
+				$ppp['localip'] = $ifinfo['local'];
+			if (isset($ifinfo['subnet']))
+				$ppp['subnet'] = $ifinfo['subnet'];
+			if (isset($ifinfo['remote']))
+				$ppp['gateway'] = $ifinfo['remote'];
+
+			$ifcfg[$ifname]['if'] = $ifinfo['ipaddr'].$j;
+			$j++;
+			
+			unset($ifcfg[$ifname]['pppoe_username']);
+			unset($ifcfg[$ifname]['pppoe_password']);
+			unset($ifcfg[$ifname]['provider']);
+			unset($ifcfg[$ifname]['ondemand']);
+			unset($ifcfg[$ifname]['timeout']);
+			unset($ifcfg[$ifname]['pppoe_reset']);
+			unset($ifcfg[$ifname]['pppoe_preset']);
+			unset($ifcfg[$ifname]['pppoe']);
+			unset($ifcfg[$ifname]['pptp_username']);
+			unset($ifcfg[$ifname]['pptp_password']);
+			unset($ifcfg[$ifname]['local']);
+			unset($ifcfg[$ifname]['subnet']);
+			unset($ifcfg[$ifname]['remote']);
+			
+			$a_ppps[] = $ppp;
+			
+		}
+	}
+}
+
 ?>

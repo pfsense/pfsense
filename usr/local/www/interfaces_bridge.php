@@ -91,7 +91,7 @@ include("head.inc");
 	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
 	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
-	$tab_array[5] = array("PPP", false, "interfaces_ppp.php");
+	$tab_array[5] = array("PPPs", false, "interfaces_ppps.php");
 	$tab_array[6] = array("GRE", false, "interfaces_gre.php");
 	$tab_array[7] = array("GIF", false, "interfaces_gif.php");
 	$tab_array[8] = array("Bridges", true, "interfaces_bridge.php");

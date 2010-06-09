@@ -116,29 +116,24 @@ include("head.inc");
 					echo "<tr>";
 					$c = 1;
 					while($c <= $priority_count) {
+						$monitor = lookup_gateway_monitor_ip_by_name($member);
 						if($p == $c) {
-							$monitor = lookup_gateway_monitor_ip_by_name($member);
-							switch($gateways_status[$monitor]['status']) {
-							        case "None":
-							                $online = "Online";
-							                $bgcolor = "lightgreen";
-							                break;
-							        case "\"down\"":
-							                $online = "Offline";
-							                $bgcolor = "lightcoral";
-							                break;
-							        case "\"delay\"":
-							                $online = "Latency";
-							                $bgcolor = "khaki";
-							                break;
-							        case "\"loss\"":
-							                $online = "Packetloss";
-							                $bgcolor = "khaki";
-							                break;
-								default:
-							                $online = "Unknown";
-							                $bgcolor = "lightblue";
-							                break;
+							$status = $gateways_status[$monitor]['status'];
+							if (stristr($status, "down")) {
+                                        			$online = "Offline";
+                                        			$bgcolor = "lightcoral";
+                                			} elseif (stristr($status, "loss")) {
+                                        			$online = "Warning, Packetloss";
+                                        			$bgcolor = "khaki";
+                                			} elseif (stristr($status, "delay")) {
+                                        			$online = "Warning, Latency";
+                                        			$bgcolor = "khaki";
+                                			} elseif (stristr($status, "none")) {
+                                        			$online = "Online";
+                                        			$bgcolor = "lightgreen";
+                                			} else {
+								$online = "Unknown";
+								$bgcolor = "lightblue";
 							}
 							echo "<td bgcolor='$bgcolor'>". htmlspecialchars($member) .", $online</td>";
 						} else {

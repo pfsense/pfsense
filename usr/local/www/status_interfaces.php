@@ -76,9 +76,7 @@ include("head.inc");
 <?php endif; ?>
 	<tr>
 		<td colspan="2" class="listtopic">
-			<?=htmlspecialchars($ifname);?>
-			interface
-			(<?=($ifinfo['hwif']);?>)
+			<?=htmlspecialchars($ifname);?> interface (<?=htmlspecialchars($ifinfo['hwif']);?>)
 		</td>
 	</tr>
 	<tr>

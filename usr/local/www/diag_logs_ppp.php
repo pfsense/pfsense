@@ -33,47 +33,30 @@
 
 /*	
 	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/bin/awk	
-	pfSense_MODULE:	ipsec
+	pfSense_MODULE:
 */
 
 ##|+PRIV
-##|*IDENT=page-status-systemlogs-ipsecvpn
+##|*IDENT=page-status-systemlogs-ppp
 ##|*NAME=Status: System logs: IPsec VPN page
 ##|*DESCR=Allow access to the 'Status: System logs: IPsec VPN' page.
-##|*MATCH=diag_logs_ipsec.php*
+##|*MATCH=diag_logs_ppp.php*
 ##|-PRIV
 
 require("guiconfig.inc");
-require("ipsec.inc");
 
-$ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
-
-/* Create array with all IPsec tunnel descriptions */
-$search = array();
-$replace = array();
-if(is_array($config['ipsec']['phase1']))
-	foreach($config['ipsec']['phase1'] as $ph1ent) {
-		$gateway = ipsec_get_phase1_dst($ph1ent);
-		$search[] = "/(racoon: )([A-Z:].*?)({$gateway}\[[0-9].+\]|{$gateway})(.*)/i";
-		$replace[] = "$1<strong>[{$ph1ent['descr']}]</strong>: $2$3$4";
-	}
-/* collect all our own ip addresses */
-exec("/sbin/ifconfig | /usr/bin/awk '/inet / {print $2}'", $ip_address_list);
-foreach($ip_address_list as $address) {
-	$search[] = "/(racoon: )([A-Z:].*?)({$address}\[[0-9].+\])(.*isakmp.*)/i";
-	$replace[] = "$1<strong>[Self]</strong>: $2$3$4";
-}
+$ppp_logfile = "{$g['varlog_path']}/ppp.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) 
-	clear_log_file($ipsec_logfile);
+	clear_log_file($ppp_logfile);
 
-$ipsec_logarr = return_clog($ipsec_logfile, $nentries);
+$ppp_logarr = return_clog($ppp_logfile, $nentries);
 
-$pgtitle = array("Status","System logs","IPsec VPN");
+$pgtitle = array("Status","System logs","PPP");
 include("head.inc");
 
 ?>
@@ -88,8 +71,8 @@ include("head.inc");
 	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
 	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
 	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
-	$tab_array[] = array("IPsec", true, "diag_logs_ipsec.php");
-	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
+	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
+	$tab_array[] = array("PPP", true, "diag_logs_ppp.php");
 	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
 	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
@@ -104,14 +87,10 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  		<tr>
-					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPsec log entries</td>
+					<td colspan="2" class="listtopic">Last <?=$nentries;?> PPP log entries</td>
 		  		</tr>
 				<?php
-				foreach($ipsec_logarr as $logent){
-					foreach($search as $string) {
-						if(preg_match($string, $logent))
-							$match = true;
-					}
+				foreach($ppp_logarr as $logent){
 					if(isset($match)) {
 						$logent = preg_replace($search, $replace, $logent);
 					} else {
@@ -130,7 +109,7 @@ include("head.inc");
 				<tr>
 					<td>
 						<br>
-						<form action="diag_logs_ipsec.php" method="post">
+						<form action="diag_logs_ppp.php" method="post">
 						<input name="clear" type="submit" class="formbtn" value="Clear log">
 						</form>
 					</td>

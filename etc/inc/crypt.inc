@@ -32,26 +32,17 @@
     DISABLE_PHP_LINT_CHECKING
 */
 
-	function crypt_data(& $data, $pass, $opt) {
-
-		$pspec = "/usr/bin/openssl enc {$opt} -aes-256-cbc -k {$pass}";
-		$dspec = array( 0 => array("pipe", "r"),
-				1 => array("pipe", "w"),
-				2 => array("pipe", "e"));
-
-		$fp = proc_open($pspec, $dspec, $pipes);
-		if (!$fp)
-			return false;
-
-		fwrite($pipes[0], $data);
-		fclose($pipes[0]);
-
-		$rslt = stream_get_contents($pipes[1]);
-		fclose($pipes[1]);
-
-		proc_close($fp);
-
-		return $rslt;
+	function crypt_data($val, $pass, $opt) {
+		$file = tempnam("/tmp", "php-encrypt");
+		$fd = fopen("$file.dec", "w");
+		fwrite($fd, $val);
+		fclose($fd);
+		exec("/usr/bin/openssl enc {$opt} -aes-256-cbc -in $file.dec -out $file.enc -k {$pass}");
+		$result = file_get_contents("$file.enc");
+		exec("rm $file");
+		exec("rm $file.dec");
+		exec("rm $file.enc");
+		return $result;
 	}
 
 	function encrypt_data(& $data, $pass) {

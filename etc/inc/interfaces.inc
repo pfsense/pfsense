@@ -860,6 +860,118 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	return;
 }
 
+function interfaces_ptpid_used($ptpid) {
+	global $config;
+
+	if (is_array($config['ppps']['ppp']))
+		foreach ($config['ppps']['ppp'] as & $settings)
+			if ($ptpid == $settings['ptpid'])
+				return true;
+
+	return false;
+}
+
+function interfaces_ptpid_next() {
+
+	$ptpid = 0;
+	while(interfaces_ptpid_used($ptpid))
+		$ptpid++;
+
+	return $ptpid;
+}
+
+function getMPDCRONSettings($pppif_) {
+	global $config;
+	if (is_array($config['cron']['item'])) {
+		for ($i = 0; $i < count($config['cron']['item']); $i++) {
+			$item = $config['cron']['item'][$i];
+			if (strpos($item['command'], CRON_PPPOE_CMD_FILE.$pppif_) !== false) {
+				return array("ID" => $i, "ITEM" => $item);
+			}
+		}
+	}
+	return NULL;
+}
+
+function handle_pppoe_reset($post_array) {
+	global $config, $g;
+
+	$pppif = $post_array['type'].$post_array['ptpid'];
+	if (!is_array($config['cron']['item'])) 
+		$config['cron']['item'] = array(); 
+	$itemhash = getMPDCRONSettings($pppif);
+	$item = $itemhash['ITEM'];
+	
+	// reset cron items if necessary and return
+	if (empty($post_array['pppoe-reset-type'])) {
+		if (isset($item))
+			unset($config['cron']['item'][$itemhash['ID']]);
+		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
+		return;
+	}
+
+	if (empty($item)) 
+		$item = array();
+	if (isset($post_array['pppoe-reset-type']) && $post_array['pppoe-reset-type'] == "custom") {
+		$item['minute'] = $post_array['pppoe_resetminute'];
+		$item['hour'] = $post_array['pppoe_resethour'];
+		if (isset($post_array['pppoe_resetdate']) && $post_array['pppoe_resetdate'] <> "") {
+			$date = explode("/", $post_array['pppoe_resetdate']);
+			$item['mday'] = $date[1];
+			$item['month'] = $date[0];
+		} else {
+			$item['mday'] = "*";
+			$item['month'] = "*";
+		}
+		$item['wday'] = "*";
+		$item['who'] = "root";
+		$item['command'] = CRON_PPPOE_CMD_FILE.$pppif;
+	} else if (isset($post_array['pppoe-reset-type']) && $post_array['pppoe-reset-type'] == "preset") {
+		switch ($post_array['pppoe_pr_preset_val']) {
+			case "monthly":
+				$item['minute'] = "0";
+				$item['hour'] = "0";
+				$item['mday'] = "1";
+				$item['month'] = "*";
+				$item['wday'] = "*";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE.$pppif;
+				break;
+	        case "weekly":
+				$item['minute'] = "0";
+				$item['hour'] = "0";
+				$item['mday'] = "*";
+				$item['month'] = "*";
+				$item['wday'] = "0";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE.$pppif;
+				break;
+			case "daily":
+				$item['minute'] = "0";
+				$item['hour'] = "0";
+				$item['mday'] = "*";
+				$item['month'] = "*";
+				$item['wday'] = "*";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE.$pppif;
+				break;
+			case "hourly":
+				$item['minute'] = "0";
+				$item['hour'] = "*";
+				$item['mday'] = "*";
+				$item['month'] = "*";
+				$item['wday'] = "*";
+				$item['who'] = "root";
+				$item['command'] = CRON_PPPOE_CMD_FILE.$pppif;
+				break;
+		} // end switch
+	}// end if
+	if (isset($itemhash['ID'])) 
+		$config['cron']['item'][$itemhash['ID']] = $item;
+	else 
+		$config['cron']['item'][] = $item;
+}
+
 /*	This function can configure PPPoE, MLPPP (PPPoE), PPtP.
 *	It writes the mpd config file to /var/etc every time the link is opened.
 */

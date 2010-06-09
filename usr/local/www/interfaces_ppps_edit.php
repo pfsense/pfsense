@@ -50,19 +50,6 @@ define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 
-function getMPDCRONSettings($ptpid_) {
-	global $config;
-	if (is_array($config['cron']['item'])) {
-		for ($i = 0; $i < count($config['cron']['item']); $i++) {
-			$item = $config['cron']['item'][$i];
-			if (strpos($item['command'], CRON_PPPOE_CMD_FILE.$ptpid_) !== false) {
-				return array("ID" => $i, "ITEM" => $item);
-			}
-		}
-	}
-	return NULL;
-}
-
 if (!is_array($config['ppps']['ppp']))
 	$config['ppps']['ppp'] = array();
 
@@ -73,10 +60,11 @@ $portlist = get_interface_list();
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
-
-
+	
 if (isset($id) && $a_ppps[$id]) {
+	$pconfig['ptpid'] = $a_ppps[$id]['ptpid'];
 	$pconfig['type'] = $a_ppps[$id]['type'];
+	//$pconfig['if'] = $a_ppps[$id]['if'];
 	$pconfig['interfaces'] = $a_ppps[$id]['ports'];
 	$pconfig['username'] = $a_ppps[$id]['username'];
 	$pconfig['password'] = base64_decode($a_ppps[$id]['password']);
@@ -131,7 +119,7 @@ if (isset($id) && $a_ppps[$id]) {
 			
 			if (isset($a_ppps[$id]['pppoe-reset-type'])) {
 				$pconfig['pppoe-reset-type'] = $a_ppps[$id]['pppoe-reset-type'];
-				$itemhash = getMPDCRONSettings($a_ppps[$id]['ptpid']);
+				$itemhash = getMPDCRONSettings($a_ppps[$id]['if']);
 				$cronitem = $itemhash['ITEM'];
 				if (isset($cronitem)) {
 					$resetTime = "{$cronitem['minute']} {$cronitem['hour']} {$cronitem['mday']} {$cronitem['month']} {$cronitem['wday']}";
@@ -170,7 +158,8 @@ if (isset($id) && $a_ppps[$id]) {
 			break;
 	}
 	
-}
+} else
+	$pconfig['ptpid'] = interfaces_ptpid_next();
 
 if ($_POST) {
 
@@ -275,6 +264,7 @@ if ($_POST) {
 		$ppp = array();
 		$ppp['ptpid'] = $_POST['ptpid'];
 		$ppp['type'] = $_POST['type'];
+		$ppp['if'] = $ppp['type'].$ppp['ptpid'];
 		$ppp['ports'] = implode(',',$_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
 		$ppp['password'] = base64_encode($_POST['password']);
@@ -368,11 +358,11 @@ if ($_POST) {
 		/* handle_pppoe_reset is called here because if user changes Link Type from PPPoE to another type we 
 		must be able to clear the config data in the <cron> section of config.xml if it exists
 		*/
-		handle_pppoe_reset();
+		handle_pppoe_reset($_POST);
 		
         $iflist = get_configured_interface_list();
         foreach ($iflist as $if) {
-        	if ($config['interfaces'][$if]['ptpid'] == $_POST['ptpid']){
+        	if ($config['interfaces'][$if]['if'] == $ppp['if']){
 				$thisif = $if;
 				break;
 			}
@@ -392,84 +382,6 @@ if ($_POST) {
 		exit;
 	}
 } // end if($_POST)
-
-function handle_pppoe_reset() {
-	global $_POST, $config, $g;
-
-	if (!is_array($config['cron']['item'])) 
-		$config['cron']['item'] = array(); 
-	$itemhash = getMPDCRONSettings($_POST['ptpid']);
-	$item = $itemhash['ITEM'];
-	
-	/* reset cron items if necessary and return*/
-	if (empty($_POST['pppoe-reset-type'])) {
-		if (isset($item))
-			unset($config['cron']['item'][$itemhash['ID']]);
-		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
-		return;
-	}
-
-	if (empty($item)) 
-		$item = array();
-	if (isset($_POST['pppoe-reset-type']) && $_POST['pppoe-reset-type'] == "custom") {
-		$item['minute'] = $_POST['pppoe_resetminute'];
-		$item['hour'] = $_POST['pppoe_resethour'];
-		if (isset($_POST['pppoe_resetdate']) && $_POST['pppoe_resetdate'] <> "") {
-			$date = explode("/", $_POST['pppoe_resetdate']);
-			$item['mday'] = $date[1];
-			$item['month'] = $date[0];
-		} else {
-			$item['mday'] = "*";
-			$item['month'] = "*";
-		}
-		$item['wday'] = "*";
-		$item['who'] = "root";
-		$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
-	} else if (isset($_POST['pppoe-reset-type']) && $_POST['pppoe-reset-type'] == "preset") {
-		switch ($_POST['pppoe_pr_preset_val']) {
-			case "monthly":
-				$item['minute'] = "0";
-				$item['hour'] = "0";
-				$item['mday'] = "1";
-				$item['month'] = "*";
-				$item['wday'] = "*";
-				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
-				break;
-	        case "weekly":
-				$item['minute'] = "0";
-				$item['hour'] = "0";
-				$item['mday'] = "*";
-				$item['month'] = "*";
-				$item['wday'] = "0";
-				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
-				break;
-			case "daily":
-				$item['minute'] = "0";
-				$item['hour'] = "0";
-				$item['mday'] = "*";
-				$item['month'] = "*";
-				$item['wday'] = "*";
-				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
-				break;
-			case "hourly":
-				$item['minute'] = "0";
-				$item['hour'] = "*";
-				$item['mday'] = "*";
-				$item['month'] = "*";
-				$item['wday'] = "*";
-				$item['who'] = "root";
-				$item['command'] = CRON_PPPOE_CMD_FILE.$_POST['ptpid'];
-				break;
-		} // end switch
-	}// end if
-	if (isset($itemhash['ID'])) 
-		$config['cron']['item'][$itemhash['ID']] = $item;
-	else 
-		$config['cron']['item'][] = $item;
-}
 
 $closehead = false;
 $pgtitle = array("Interfaces","PPPs","Edit");
@@ -865,13 +777,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="Save">
 				<input type="button" value="Cancel" onclick="history.back()">
-				<?php
-					if (isset($a_ppps[$id]['ptpid']))
-						$ptpid = $a_ppps[$id]['ptpid'];
-					else
-						$ptpid = uniqid('', true);
-				?>
-				<input name="ptpid" type="hidden" value="<?=$ptpid;?>">
+				<input name="ptpid" type="hidden" value="<?=htmlspecialchars($pconfig['ptpid']);?>">
 				<?php if (isset($id) && $a_ppps[$id]): ?>
 					<input name="id" type="hidden" value="<?=$id;?>">
 				<?php endif; ?>

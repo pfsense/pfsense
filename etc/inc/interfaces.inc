@@ -2412,7 +2412,7 @@ function interface_dhcp_configure($interface = "wan") {
 	}
 
 	$wanif = get_real_interface($interface);
-	if ($wancfg['ipaddr'] == "pppoe" || $wancfg['ipaddr'] == "pptp" $wancfg['ipaddr'] == "l2tp")
+	if ($wancfg['ipaddr'] == "pppoe" || $wancfg['ipaddr'] == "pptp" || $wancfg['ipaddr'] == "l2tp")
 		$wanif = get_real_interface($interface, true);
 	if (stristr($wanif,',')) {
 		log_error("Invalid interface \"{$wanif}\" in interface_dhcp_configure()");

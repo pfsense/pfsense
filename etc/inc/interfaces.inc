@@ -882,10 +882,11 @@ function interfaces_ptpid_next() {
 
 function getMPDCRONSettings($pppif_) {
 	global $config;
+	$cron_cmd_file = "{$g['varetc_path']}/pppoe_restart_";
 	if (is_array($config['cron']['item'])) {
 		for ($i = 0; $i < count($config['cron']['item']); $i++) {
 			$item = $config['cron']['item'][$i];
-			if (strpos($item['command'], $pppif_) !== false) {
+			if (strpos($item['command'], $cron_cmd_file.$pppif_) !== false) {
 				return array("ID" => $i, "ITEM" => $item);
 			}
 		}
@@ -901,7 +902,7 @@ function handle_pppoe_reset($post_array) {
 	$pppif = $post_array['type'].$post_array['ptpid'];
 	if (!is_array($config['cron']['item'])) 
 		$config['cron']['item'] = array(); 
-	$itemhash = getMPDCRONSettings($cron_cmd_file.$pppif);
+	$itemhash = getMPDCRONSettings($pppif);
 	$item = $itemhash['ITEM'];
 	
 	// reset cron items if necessary and return
@@ -969,7 +970,7 @@ function handle_pppoe_reset($post_array) {
 		} // end switch
 	} else {
 		/* test whether a cron item exists and unset() it if necessary */
-		$itemhash = getMPDCRONSettings($cron_cmd_file.$pppif);
+		$itemhash = getMPDCRONSettings($pppif);
 		$item = $itemhash['ITEM'];
 		if (isset($item))
 			unset($config['cron']['item'][$itemhash['ID']]); 

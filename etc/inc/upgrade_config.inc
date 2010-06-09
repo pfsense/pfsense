@@ -34,11 +34,13 @@ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 	pfSense_MODULE:	config
 */
 
+if(!function_exists("dump_rrd_to_xml")) 
+	require("rrd.inc");
+
 /* Upgrade functions must be named:
 *    upgrade_XXX_to_YYY
 	* where XXX == previous version, zero padded, and YYY == next version, zero padded
 	*/
-
 function upgrade_010_to_011() {
 	global $config;
 	$opti = 1;

@@ -1018,13 +1018,18 @@ function interface_ppps_configure($interface) {
 	$upper_type = strtoupper($ppp['type']);	
 	
 	if($g['booting']) {
-		echo " configuring {$upper_type} on {$pppif} interface...\n";
+		$descr = isset($ifcfg['descr']) ? $ifcfg['descr'] : strtoupper($interface);
+		echo " configuring {$upper_type} on {$descr} interface...\n";
 		// Do not re-configure the interface if we are booting and it's already been started
 		if(file_exists("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid"))
 			return 0;
 	}
 	
 	$ports = explode(',',$ppp['ports']);
+	if ($type != "modem") {
+		foreach ($ports as $pid => $port)
+			$ports[$pid] = get_real_interface($port);
+	}
 	$localips = explode(',',$ppp['localip']);
 	$gateways = explode(',',$ppp['gateway']);
 	$subnets = explode(',',$ppp['subnet']);
@@ -1033,7 +1038,7 @@ function interface_ppps_configure($interface) {
 	to obtain an address first so we can write it in the mpd .conf file for PPtP and L2tP configs
 	*/
 	foreach($ports as $pid => $port){
-		switch ($ppp['type']) {
+		switch ($type) {
 			case "pppoe": 
 				/* Bring the parent interface up */
 				interfaces_bring_up($port);
@@ -1043,7 +1048,7 @@ function interface_ppps_configure($interface) {
 				/* configure interface */
 				if ($localips[$pid] == "dhcp") {
 					// configure DHCP on the $port interface
-					interface_dhcp_configure($port);
+					interface_dhcp_configure(convert_real_interface_to_friendly_interface($port));
 					// Wait for the IP address before proceeding.
 					for ($count = 0; $count < 30; $count++) {
 						$localips[$pid] = find_interface_ip($port);
@@ -1053,11 +1058,11 @@ function interface_ppps_configure($interface) {
 					}
 				} else {
 					// Manually configure interface IP/subnet
-					mwexec("/sbin/ifconfig " . escapeshellarg($port) . " " .
-						escapeshellarg($localips[$pid] . "/" . $subnets[$pid]) . " up");
+					pfSense_interface_setaddress($port, "{$localips[$pid]}/{$subnets[$pid]}");
+					interfaces_bring_up($port);
 				}
-				/* configure the gateway (remote IP ) */
-				if (!is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
+				/* XXX: This needs to go away soon! Configure the gateway (remote IP ) */
+				if (!$g['booting'] && !is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
 					/* do a DNS lookup for the gateway IP and store it in $gateways[$pid]
 					If this pptp interface is not the default gateway, the default must be up and nameservers must resolve
 					whatever the user enters as the hostname */
@@ -1068,8 +1073,6 @@ function interface_ppps_configure($interface) {
 						sleep(1);
 					}
 				}
-				if (0) // Logic for this? 
-					log_error("Could not bring up interface {$port} for {$interface} {$ppp['type']} link in interface_ppps_configure().");
 				break;
 			case "ppp":
 				if (!file_exists("{$port}")) {
@@ -1078,6 +1081,7 @@ function interface_ppps_configure($interface) {
 				}
 				break;
 			default:
+				log_error("Unkown {$type} configured as ppp interface.");
 				break;
 		}
 	}
@@ -1203,21 +1207,15 @@ EOD;
 
 EOD;
 
-	if (isset($config['system']['dnsallowoverride']) && $setdefaultgw == true)
+	if (isset($config['system']['dnsallowoverride']))
 		$mpdconf .= <<<EOD
 	set ipcp enable req-pri-dns
 	set ipcp enable req-sec-dns
 
 EOD;
 
-/*
-	if (!isset($ifcfg['dnsnosec']) && isset($config['system']['dnsallowoverride']))
-			$mpdconf .= <<<EOD
-	set ipcp enable req-sec-dns
-
-EOD;
-*/	
 	foreach($ports as $pid => $port){
+		$port = get_real_interface($port);
 		$mpdconf .= <<<EOD
 
 	create link static {$interface}_link{$pid} {$type}
@@ -1362,18 +1360,11 @@ EOD;
 	mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/{$ppp['type']}_{$interface}.pid -s ppp {$ppp['type']}client");
 
 	// Check for PPPoE periodic reset request 
-	if ($type == "pppoe")
+	if ($type == "pppoe") {
 		if (isset($ppp['pppoe-reset-type']))
 			setup_pppoe_reset_file($ppp['if'], $interface);
 		else
 			setup_pppoe_reset_file($ppp['if']);
-
-	/* sleep until wan is up - or 30 seconds, whichever comes first */
-	for ($count = 0; $count < 12; $count++) {
-		if(file_exists("{$g['tmp_path']}/{$pppif}up")) {
-			break;
-		}
-		sleep(1);
 	}
 
 	return 0;
@@ -2797,39 +2788,7 @@ function get_current_wan_address($interface = "wan") {
 function convert_real_interface_to_friendly_interface_name($interface = "wan") {
         global $config;
 
-        if (stristr($interface, "pppoe")) {
-                $index = intval(substr($interface, 5));
-		if ($interface == "pppoe")
-			return "lan";
-                if ($index > 0)
-                        return "opt{$index}";
-                else
-                        return "wan";
-        } else if (stristr($interface, "pptp")) {
-                $index = intval(substr($interface, 4));
-		if ($interface == "pptp")
-			return "lan";
-                if ($index > 0)
-                        return "opt{$index}";
-                else
-                        return "wan";
-        } else if (stristr($interface, "ppp")) {
-                $index = intval(substr($interface, 3));
-		if ($interface == "ppp")
-			return "lan";
-                if ($index > 0)
-                        return "opt{$index}";
-                else
-                        return "wan";
-        } else if (stristr($interface, "l2tp")) {
-                $index = intval(substr($interface, 4));
-		if ($interface == "l2tp")
-			return "lan";
-                if ($index > 0)
-                        return "opt{$index}";
-                else
-                        return "wan";
-		} else if (stristr($interface, "vip")) {
+	if (stristr($interface, "vip")) {
                 $index = intval(substr($interface, 3));
                 foreach ($config['virtualip']['vip'] as $counter => $vip) {
                         if ($vip['mode'] == "carpdev-dhcp" || $vip['mode'] == "carp")  {

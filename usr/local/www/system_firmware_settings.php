@@ -131,7 +131,7 @@ function enable_altfirmwareurl(enable_over) {
 	<tr>
 		<td valign="top" class="vncell"><?=gettext("Firmware Auto Update URL"); ?></td>
 		<td class="vtable">
-			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onClick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked"; ?>> <?=gettext("Use a different URL server for firmware upgrades other than") . $g['product_website']; ?><br>
+			<input name="alturlenable" type="checkbox" id="alturlenable" value="yes" onClick="enable_altfirmwareurl()" <?php if(isset($curcfg['alturl']['enable'])) echo "checked"; ?>> <?=gettext("Use a different URL server for firmware upgrades other than") . " " . $g['product_website']; ?><br>
 			<table>
 			<tr><td><?=gettext("Base URL"); ?>:</td><td><input name="firmwareurl" type="input" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['']; ?>"></td></tr>
 			</table>

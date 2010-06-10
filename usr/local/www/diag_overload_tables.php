@@ -35,9 +35,9 @@
 */
 
 ##|+PRIV
-##|*IDENT=page-diagnostics-tables
-##|*NAME=Diagnostics: States Summary page
-##|*DESCR=Allow access to the 'Diagnostics: States Summary' page.
+##|*IDENT=page-diagnostics-overload-tables
+##|*NAME=Diagnostics: PF Overload table IP addresses
+##|*DESCR=Allow access to the 'Diagnostics: Overload tables' page.
 ##|*MATCH=diag_overload_tables.php*
 ##|-PRIV
 

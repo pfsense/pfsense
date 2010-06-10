@@ -55,6 +55,7 @@ if (!is_array($config['ppps']['ppp']))
 $a_ppps = &$config['ppps']['ppp'];
 
 $portlist = get_interface_list();
+$portlist = array_merge($portlist, get_configured_interface_with_descr());
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -450,7 +451,15 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				$port_count = 0;
 				foreach ($portlist as $ifn => $ifinfo){
 				$port_count++;
-					echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")") . ",{$ifn}";
+					$string = "";
+					if (is_array($ifinfo)) {
+						$string .= $ifn;
+						if ($ifinfo['mac'])
+						$string .= " ({$ifinfo['mac']})";	
+					} else
+						$string .= $ifinfo;
+					$string .= ",{$ifn}";
+					echo htmlspecialchars($string);
 					if (in_array($ifn,$selected_ports))
 						echo ",1|";
 					else

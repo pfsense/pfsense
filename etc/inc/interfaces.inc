@@ -1155,7 +1155,6 @@ startup:
 default:
 {$ppp['type']}client:
 	create bundle static {$interface}
-	set bundle no noretry
 	set iface name {$pppif}
 
 EOD;

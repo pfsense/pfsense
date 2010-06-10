@@ -122,7 +122,6 @@ include("head.inc");
 				}
 
 				if(is_array($config['virtualip']['vip'])) {
-					$carpint=0;
 					foreach($config['virtualip']['vip'] as $carp) {
 						if ($carp['mode'] != "carp") continue;
 						$ipaddress = $carp['subnet'];
@@ -137,7 +136,6 @@ include("head.inc");
 						if($carp_enabled == false) {
 							$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_block.gif'>";
 							$status = "DISABLED";
-							$carp_int = "carp" . $carpint;
 						} else {
 							if($status == "MASTER") {
 								$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_pass.gif'>";
@@ -151,7 +149,6 @@ include("head.inc");
 						echo "<td class=\"listlr\"><center>" . $ipaddress . "&nbsp;</td>";
 						echo "<td class=\"listlr\"><center>{$icon}&nbsp;&nbsp;" . $status . "&nbsp;</td>";
 						echo "</tr>";
-						$carpint++;
 					}
 				}
 ?>

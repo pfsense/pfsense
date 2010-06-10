@@ -143,6 +143,9 @@ EOD;
 			$dhcpdconf .= "authoritative;\n";
 
 		if($dhcpifconf['failover_peerip'] <> "") {
+			$int = guess_interface_from_ip($dhcpifconf['failover_peerip']);
+			$intip = find_interface_ip($int);
+			$real_dhcpif = convert_friendly_interface_to_real_interface_name($dhcpif);
 			/*
 			 *    yep, failover peer is defined.
 			 *    does it match up to a defined vip?
@@ -151,9 +154,6 @@ EOD;
 			$a_vip = &$config['virtualip']['vip'];
 			if(is_array($a_vip)) {
 				foreach ($a_vip as $vipent) {
-					$int = guess_interface_from_ip($dhcpifconf['failover_peerip']);
-					$intip = find_interface_ip($int);
-					$real_dhcpif = convert_friendly_interface_to_real_interface_name($dhcpif);
 					if($int == $real_dhcpif) {
 						/* this is the interface! */
 						if($vipent['advskew'] < "20")

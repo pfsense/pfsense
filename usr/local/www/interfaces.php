@@ -153,7 +153,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 		$pconfig['pptp_local'] = explode(",",$a_ppps[$pppid]['localip']);
 		foreach ($pconfig['pptp_local'] as $key => $value){
 			if ($value == "dhcp")
-				$pconfig['localip'][$key] = "";	
+				$pconfig['pptp_local'][$key] = "";	
 		}
 		$pconfig['pptp_subnet'] = explode(",",$a_ppps[$pppid]['subnet']);
 		$pconfig['pptp_remote'] = explode(",",$a_ppps[$pppid]['gateway']);
@@ -615,7 +615,10 @@ if ($_POST) {
 					$a_ppps[$pppid]['ports'] = $wancfg['if'];
 				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
 				$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
-				$a_ppps[$pppid]['localip'] = $_POST['pptp_local'];
+				if($_POST['pptp_local'] == "")
+					$a_ppps[$pppid]['localip'] = "dhcp";
+				else
+					$a_ppps[$pppid]['localip'] = $_POST['pptp_local'];
 				$a_ppps[$pppid]['subnet'] = $_POST['pptp_subnet'];
 				$a_ppps[$pppid]['gateway'] = $_POST['pptp_remote'];
 				$a_ppps[$pppid]['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
@@ -623,7 +626,6 @@ if ($_POST) {
 					$a_ppps[$pppid]['idletimeout'] = $_POST['pptp_idletimeout'];
 				else
 					unset($a_ppps[$pppid]['idletimeout']);
-				
 				$wancfg['if'] = $_POST['type'].$_POST['ptpid'];
 				$wancfg['ipaddr'] = $_POST['type'];
 				if($gateway_item) {

@@ -1038,7 +1038,7 @@ function interface_ppps_configure($interface) {
 	to obtain an address first so we can write it in the mpd .conf file for PPtP and L2tP configs
 	*/
 	foreach($ports as $pid => $port){
-		switch ($type) {
+		switch ($ppp['type']) {
 			case "pppoe": 
 				/* Bring the parent interface up */
 				interfaces_bring_up($port);
@@ -1048,13 +1048,17 @@ function interface_ppps_configure($interface) {
 				/* configure interface */
 				if ($localips[$pid] == "dhcp") {
 					// configure DHCP on the $port interface
-					interface_dhcp_configure(convert_real_interface_to_friendly_interface($port));
+					interface_dhcp_configure($port);
 					// Wait for the IP address before proceeding.
 					for ($count = 0; $count < 30; $count++) {
 						$localips[$pid] = find_interface_ip($port);
 						if(is_ipaddr($localips[$pid]))						
 							break;
 						sleep(1);
+					}
+					if(!is_ipaddr($localips[$pid])){
+						log_error("Could not get PPtP/L2tP Local IP address for {$port} using DHCP in interfaces_ppps_configure.");
+						return 0;
 					}
 				} else {
 					// Manually configure interface IP/subnet
@@ -1063,21 +1067,23 @@ function interface_ppps_configure($interface) {
 				}
 				/* XXX: This needs to go away soon! Configure the gateway (remote IP ) */
 				if (!$g['booting'] && !is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
-					/* do a DNS lookup for the gateway IP and store it in $gateways[$pid]
-					If this pptp interface is not the default gateway, the default must be up and nameservers must resolve
-					whatever the user enters as the hostname */
-					for ($count = 0; $count < 30; $count++) {
-						$gateways[$pid] = gethostbyname($gateways[$pid]);
-						if(is_ipaddr($gateways[$pid]))						
-							break;
-						sleep(1);
+					/* dig for the gateway IP and store it in $gateways[$pid]
+						Direct dig to use query the router ip we just got via DHCP
+					*/
+					/* XXX: Fix later
+					$dhcp_gateway = get_interface_gateway('only written to accept WAN,OPTx etc');
+					$gateways[$pid] = trim(mwexec("dig @{$dhcp_gateway} +short -q {$gateways[$pid]}"));
+					*/
+					if(!is_ipaddr($gateways[$pid])){
+						log_error("[Feature incomplete] Could not get a PPtP/L2tP Remote IP address for {$port} using DNS in interfaces_ppps_configure.");
+						return 0;
 					}
 				}
 				break;
 			case "ppp":
 				if (!file_exists("{$port}")) {
 					log_error("Device {$port} does not exist. PPP link cannot start without the modem device.");
-					return 1;
+					return 0;
 				}
 				break;
 			default:
@@ -1090,7 +1096,7 @@ function interface_ppps_configure($interface) {
 	$fd = fopen("{$g['varetc_path']}/mpd_{$interface}.conf", "w");
 	if (!$fd) {
 		log_error("Error: cannot open mpd_{$interface}.conf in interface_ppps_configure().\n");
-		return 1;
+		return 0;
 	}
 	
 	if (is_array($ports) && count($ports) > 1)
@@ -1107,13 +1113,12 @@ function interface_ppps_configure($interface) {
 		if (is_ipaddr($ppp['gateway']))
 			$gateway = $ppp['gateway'];
 		else
-			$gateway = "10.6.6.{$pppid}";
+			$gateway = "10.64.64.{$pppid}";
 		$ranges = "{$localip}/0 {$gateway}/0";
 		
 		if (empty($ppp['apnum']))	
 			$ppp['apnum'] = 1;
-	}
-	else
+	} else
 		$ranges = "0.0.0.0/0 0.0.0.0/0";
 
 	if (isset($ppp['ondemand'])) 
@@ -1213,7 +1218,11 @@ EOD;
 	set ipcp enable req-sec-dns
 
 EOD;
+	if (!isset($ppp['verbose_log']))
+		$mpdconf .= <<<EOD
+	log -bund* -ccp* -chat* -iface* -ipcp* -lcp* -link*
 
+EOD;
 	foreach($ports as $pid => $port){
 		$port = get_real_interface($port);
 		$mpdconf .= <<<EOD
@@ -1327,13 +1336,14 @@ EOD;
 
 		if ($type == "pptp" || $type == "l2tp") {
 			$mpdconf .= <<<EOD
-	set bundle no noretry
+	# set bundle no noretry
 	set pptp self {$localips[$pid]}
 	set pptp peer {$gateways[$pid]}
 	set pptp disable windowing
 
 EOD;
 		}
+		
 		$mpdconf .= "\topen\r\n";
 	} //end foreach($port)
 
@@ -1367,7 +1377,7 @@ EOD;
 			setup_pppoe_reset_file($ppp['if']);
 	}
 
-	return 0;
+	return 1;
 }
 
 function interfaces_carp_setup() {

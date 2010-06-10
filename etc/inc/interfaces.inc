@@ -998,6 +998,8 @@ function interface_ppps_configure($interface) {
 		mwexec("/bin/ln -s /usr/local/sbin/mpd.script {$g['varetc_path']}/.");
 		
 	$ifcfg = &$config['interfaces'][$interface];
+	if (!isset($ifcfg['enable']))
+		return 0;
 	if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
 		foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
 			if ($ifcfg['if'] == $ppp['if'])
@@ -1006,10 +1008,6 @@ function interface_ppps_configure($interface) {
 	}
 	if (!$ppp || $ifcfg['if'] != $ppp['if']){
 		log_error("Can't find PPP config for {$ifcfg['if']} in interface_ppps_configure().");
-		return 0;
-	}
-	if (!isset($ifcfg['enable'])) {
-		log_error("{$interface} is not enabled.");
 		return 0;
 	}
 	$pppif = $ifcfg['if'];

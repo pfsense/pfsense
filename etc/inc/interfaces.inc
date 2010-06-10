@@ -1048,7 +1048,7 @@ function interface_ppps_configure($interface) {
 				/* configure interface */
 				if ($localips[$pid] == "dhcp") {
 					// configure DHCP on the $port interface
-					interface_dhcp_configure($port);
+					interface_dhcp_configure(convert_real_interface_to_friendly_interface($port));
 					// Wait for the IP address before proceeding.
 					for ($count = 0; $count < 30; $count++) {
 						$localips[$pid] = find_interface_ip($port);
@@ -1061,6 +1061,10 @@ function interface_ppps_configure($interface) {
 						return 0;
 					}
 				} else {
+					if(!is_ipaddr($localips[$pid])){
+						log_error("Could not get PPtP/L2tP Local IP address for {$port} using DHCP in interfaces_ppps_configure.");
+						return 0;
+					}
 					// Manually configure interface IP/subnet
 					pfSense_interface_setaddress($port, "{$localips[$pid]}/{$subnets[$pid]}");
 					interfaces_bring_up($port);

@@ -102,10 +102,6 @@ if (isset($id) && $a_ppps[$id]) {
 		case "l2tp":
 		case "pptp":
 			$pconfig['localip'] = explode(",",$a_ppps[$id]['localip']);
-			foreach ($pconfig['localip'] as $key => $value){
-				if ($value == "dhcp")
-					$pconfig['localip'][$key] = "";	
-			}
 			$pconfig['subnet'] = explode(",",$a_ppps[$id]['subnet']);
 			$pconfig['gateway'] = explode(",",$a_ppps[$id]['gateway']);
 		case "pppoe":
@@ -327,13 +323,6 @@ if ($_POST) {
 				break;
 			case "pptp":
 			case "l2tp":
-				$ppp['dhcp'] = $_POST['pptp_dhcp'] ? true : false;
-				foreach ($port_data['localip'] as $key => $value){
-					if (empty($value)){
-						$port_data['localip'][$key] = "dhcp";
-						$port_data['subnet'][$key] = "";
-					}
-				}
 				$ppp['localip'] = implode(',',$port_data['localip']);
 				$ppp['subnet'] = implode(',',$port_data['subnet']);
 				$ppp['gateway'] = implode(',',$port_data['gateway']);
@@ -664,7 +653,7 @@ $types = array("select" => "Select", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" 
 				<?php for ($i = 31; $i > 0; $i--): ?>
 					<option value="<?=$i;?>"<?php if ($i == $pconfig['subnet'][$j]) echo " selected"; ?>><?=$i;?></option>
 				<?php endfor; ?>
-				</select> <?= gettext("IP Address (Leave empty to enable DHCP)"); ?>
+				</select> <?= gettext("IP Address"); ?>
 				
 			</td>
 		</tr>

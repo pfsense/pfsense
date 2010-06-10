@@ -37,6 +37,7 @@ function setup_gateways_monitor() {
 	global $config;
 	global $g;
 	$gateways_arr = return_gateways_array();
+	$gateways_status = return_gateways_status();
 	if (!is_array($config['gateways']['gateway_item']))
 		$config['gateways']['gateway_item'] = array();
 
@@ -216,7 +217,9 @@ EOD;
 				 * route as this will break the routing table */
 				continue;
 			} else {
-				if(($gateway['gateway'] != "dynamic") && (is_ipaddr($gateway['gateway']))) {
+				if (!empty($gateway_status[$gateway['monitor']]) && $gateway_status[$gateway['monitor']]['status'] == "down")
+					; /* This check makes sure that we do not delete previous routes. */
+				else if ($gateway['gateway'] != "dynamic" && is_ipaddr($gateway['gateway'])) {
 					mwexec("/sbin/route delete -host " . escapeshellarg($gateway['monitor']));
 					mwexec("/sbin/route add -host " . escapeshellarg($gateway['monitor']) .
 						" " . escapeshellarg($gateway['gateway']));

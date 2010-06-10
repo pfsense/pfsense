@@ -2394,6 +2394,8 @@ function interface_dhcp_configure($interface = "wan") {
 	global $config, $g;
 
 	$wancfg = $config['interfaces'][$interface];
+	if (empty($wancfg))
+		$wancfg = array();
 
 	/* generate dhclient_wan.conf */
 	$fd = fopen("{$g['varetc_path']}/dhclient_{$interface}.conf", "w");
@@ -2410,10 +2412,8 @@ function interface_dhcp_configure($interface = "wan") {
 	}
 
 	$wanif = get_real_interface($interface);
-	if ($wancfg['ipaddr'] == "pppoe" || $wancfg['ipaddr'] == "pptp" || $wancfg['ipaddr'] == "l2tp")
-		$wanif = get_real_interface($interface, true);
-	if (stristr($wanif,',')) {
-		log_error("Invalid interface \"{$wanif}\" in interface_dhcp_configure()");
+	if (empty($wanif)) {
+		log_error("Invalid interface \"{$interface}\" in interface_dhcp_configure()");
 		return 0;
 	}
  	$dhclientconf = "";
@@ -2622,7 +2622,7 @@ function interface_get_wireless_clone($wlif) {
 	}
 }
 
-function get_real_interface($interface = "wan", $get_parent = false) {
+function get_real_interface($interface = "wan") {
     global $config;
 
 	$wanif = NULL;
@@ -2693,11 +2693,6 @@ function get_real_interface($interface = "wan", $get_parent = false) {
 			case "l2tp": 
 			case "ppp":
 				$wanif = $cfg['if'];
-				if ($get_parent)
-					foreach ($config['ppps']['ppp'] as $ppp) {
-						if ($ppp['if'] == $cfg['if'])
-							$wanif = $ppp['ports'];
-					}
 				break;
 			default:
 				$wanif = $cfg['if'];

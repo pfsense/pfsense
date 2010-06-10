@@ -1155,6 +1155,7 @@ startup:
 default:
 {$ppp['type']}client:
 	create bundle static {$interface}
+	set bundle no noretry
 	set iface name {$pppif}
 
 EOD;
@@ -1336,7 +1337,6 @@ EOD;
 
 		if ($type == "pptp" || $type == "l2tp") {
 			$mpdconf .= <<<EOD
-	# set bundle no noretry
 	set pptp self {$localips[$pid]}
 	set pptp peer {$gateways[$pid]}
 	set pptp disable windowing

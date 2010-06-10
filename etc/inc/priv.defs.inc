@@ -420,17 +420,17 @@ $priv_list['page-interfacess-lagg']['descr'] = "Edit Interface LAGG";
 $priv_list['page-interfacess-lagg']['match'] = array();
 $priv_list['page-interfacess-lagg']['match'][] = "interfaces_lagg.php*";
 
-$priv_list['page-interfaces-ppp-edit'] = array();
-$priv_list['page-interfaces-ppp-edit']['name'] = "WebCfg - Interfaces: PPP: Edit page";
-$priv_list['page-interfaces-ppp-edit']['descr'] = "Allow access to the 'Interfaces: PPP: Edit' page.";
-$priv_list['page-interfaces-ppp-edit']['match'] = array();
-$priv_list['page-interfaces-ppp-edit']['match'][] = "interfaces_ppp_edit.php*";
+$priv_list['page-interfaces-ppps-edit'] = array();
+$priv_list['page-interfaces-ppps-edit']['name'] = "WebCfg - Interfaces: PPP: Edit page";
+$priv_list['page-interfaces-ppps-edit']['descr'] = "Allow access to the 'Interfaces: PPP: Edit' page.";
+$priv_list['page-interfaces-ppps-edit']['match'] = array();
+$priv_list['page-interfaces-ppps-edit']['match'][] = "interfaces_ppps_edit.php*";
 
-$priv_list['page-interfaces-ppp'] = array();
-$priv_list['page-interfaces-ppp']['name'] = "WebCfg - Interfaces: PPP page";
-$priv_list['page-interfaces-ppp']['descr'] = "Allow access to the 'Interfaces: PPP' page.";
-$priv_list['page-interfaces-ppp']['match'] = array();
-$priv_list['page-interfaces-ppp']['match'][] = "interfaces_ppp.php*";
+$priv_list['page-interfaces-ppps'] = array();
+$priv_list['page-interfaces-ppps']['name'] = "WebCfg - Interfaces: PPP page";
+$priv_list['page-interfaces-ppps']['descr'] = "Allow access to the 'Interfaces: PPP' page.";
+$priv_list['page-interfaces-ppps']['match'] = array();
+$priv_list['page-interfaces-ppps']['match'][] = "interfaces_ppps.php*";
 
 $priv_list['page-interfaces-groups'] = array();
 $priv_list['page-interfaces-groups']['name'] = "WebCfg - Interfaces: Groups page";

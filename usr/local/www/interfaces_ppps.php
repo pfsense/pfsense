@@ -112,7 +112,14 @@ include("head.inc");
 					<?=htmlspecialchars($ppp['if']);?>
                   </td>
                   <td class="listr">
-					<?=htmlspecialchars($ppp['ports']);?>
+					<?php
+						$portlist = explode(",", $ppp['ports']);
+						foreach ($portlist as $portid => $port) {
+							if ($port != get_real_interface($port))
+								$portlist[$portid] = convert_friendly_interface_to_friendly_descr($port);
+						}
+						echo htmlspecialchars(implode(",", $portlist));
+					?>
                   </td>
                   <td class="listbg">
                     <?=htmlspecialchars($ppp['descr']);?>&nbsp;

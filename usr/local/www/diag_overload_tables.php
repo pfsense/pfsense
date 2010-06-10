@@ -131,7 +131,7 @@ Table:
 
 <?php
 	if($count > 0)
-		echo "<p/>Delete <a href='diag_overload_tables.php?deleteall=true&type={$tablename}'>all</a> entries in this table;"
+		echo "<p/>Delete <a href='diag_overload_tables.php?deleteall=true&type={$tablename}'>all</a> entries in this table."
 
 ?>
 

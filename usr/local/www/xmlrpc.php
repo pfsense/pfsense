@@ -231,6 +231,25 @@ function filter_configure_xmlrpc($raw_params) {
 
 /*****************************/
 
+$carp_configure_doc = 'Basic XMLRPC wrapper for filter_configure. This method must be called with one paramater: a string containing the local system\'s password. This function returns true upon completion.';
+$carp_configure_sig = array(
+							array(
+								$XML_RPC_Boolean,
+								$XML_RPC_String
+							)
+						);
+
+function interfaces_carp_configure_xmlrpc($raw_params) {
+	global $xmlrpc_g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	interfaces_carp_setup();
+	interfaces_vips_configure();
+	return $xmlrpc_g['return']['true'];
+}
+
+/*****************************/
+
 $check_firmware_version_doc = 'Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon completion.';
 $check_firmware_version_sig = array(
 								array(
@@ -287,29 +306,18 @@ function get_notices_xmlrpc($raw_params) {
 
 /*****************************/
 
-$carp_configure_doc = 'Basic XMLRPC wrapper for configuring CARP interfaces.';
-$carp_configure_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
-
-function interfaces_carp_configure_xmlrpc($raw_params) {
-	global $xmlrpc_g;
-	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
-	interfaces_carp_setup();
-	return $xmlrpc_g['return']['true'];
-}
-
-/*****************************/
-
 $server = new XML_RPC_Server(
         array(
             'pfsense.exec_shell' 		=> array('function' => 'exec_shell_xmlrpc',
 							'signature' => $exec_shell_sig,
 							'docstring' => $exec_shell_doc),
-            'pfsense.exec_php'	 		=> array('function' => 'exec_php_xmlrpc',
+            		 'pfsense.exec_php'	=> array('function' => 'exec_php_xmlrpc',
 							'signature' => $exec_php_sig,
 							'docstring' => $exec_php_doc),	
+			 'pfsense.filter_configure' => 	array('function' => 'filter_configure_xmlrpc',
+							'signature' => $filter_configure_sig,
+							'docstring' => $filter_configure_doc),
             'pfsense.interfaces_carp_configure' => array('function' => 'interfaces_carp_configure_xmlrpc',
-							'signature' => $carp_configure_doc,
 							'docstring' => $carp_configure_sig),
             'pfsense.backup_config_section' => 	array('function' => 'backup_config_section_xmlrpc',
 							'signature' => $backup_config_section_sig,
@@ -323,9 +331,6 @@ $server = new XML_RPC_Server(
 			'pfsense.merge_installedpackages_section_xmlrpc' => array('function' => 'merge_installedpackages_section_xmlrpc',
 							'signature' => $merge_config_section_sig,
 							'docstring' => $merge_config_section_doc),							
-			'pfsense.filter_configure' => 	array('function' => 'filter_configure_xmlrpc',
-							'signature' => $filter_configure_sig,
-							'docstring' => $filter_configure_doc),
 			'pfsense.check_firmware_version' =>	array('function' => 'check_firmware_version_xmlrpc',
 							'signature' => $check_firmware_version_sig,
 							'docstring' => $check_firmware_version_doc),

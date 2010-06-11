@@ -129,11 +129,13 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		$field_conv .= "['" . $f . "']";
 	if($field_conv == "")
 		return;
+	if ($arraynum <> "")
+		$field_conf .= "[" . $arraynum . "]";
 	if(($field_type == "checkbox" and $updatetext <> "on") || $updatetext == "") {
 		/*
-		    item is a checkbox, it should have the value "on"
-		    if it was checked
-                */
+		 * item is a checkbox, it should have the value "on"
+		 * if it was checked
+                 */
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
 		return;
@@ -150,16 +152,9 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	if($unset <> "") {
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
-		$text = "\$config" . $field_conv . "[" . $arraynum . "] = \"" . $updatetext . "\";";
-		eval($text);
-	} else {
-		if($arraynum <> "") {
-			$text = "\$config" . $field_conv . "[" . $arraynum . "] = \"" . $updatetext . "\";";
-		} else {
-			$text = "\$config" . $field_conv . " = \"" . $updatetext . "\";";
-		}
-		eval($text);
 	}
+	$text = "\$config" . $field_conv . " = \"" . $updatetext . "\";";
+	eval($text);
 }
 
 // handle before form display event.

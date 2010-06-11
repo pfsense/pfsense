@@ -130,7 +130,7 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	if($field_conv == "")
 		return;
 	if ($arraynum <> "")
-		$field_conf .= "[" . $arraynum . "]";
+		$field_conv .= "[" . $arraynum . "]";
 	if(($field_type == "checkbox" and $updatetext <> "on") || $updatetext == "") {
 		/*
 		 * item is a checkbox, it should have the value "on"
@@ -149,7 +149,7 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		return;
 	}
 
-	if($unset <> "") {
+	if($unset == "yes") {
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
 	}

@@ -194,7 +194,7 @@ if ($_POST && !is_subsystem_dirty('firmwarelock')) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Firmware"));
+$pgtitle = array(gettext("System"),gettext("Firmware"));
 include("head.inc");
 
 ?>

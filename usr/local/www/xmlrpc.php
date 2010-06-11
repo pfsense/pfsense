@@ -231,7 +231,7 @@ function filter_configure_xmlrpc($raw_params) {
 
 /*****************************/
 
-$carp_configure_doc = 'Basic XMLRPC wrapper for filter_configure. This method must be called with one paramater: a string containing the local system\'s password. This function returns true upon completion.';
+$carp_configure_doc = 'Basic XMLRPC wrapper for configuring CARP interfaces.';
 $carp_configure_sig = array(
 							array(
 								$XML_RPC_Boolean,

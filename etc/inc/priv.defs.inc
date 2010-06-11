@@ -805,8 +805,8 @@ $priv_list['page-status-upnpstatus']['match'] = array();
 $priv_list['page-status-upnpstatus']['match'][] = "status_upnp.php*";
 
 $priv_list['page-diagnostics-wirelessstatus'] = array();
-$priv_list['page-diagnostics-wirelessstatus']['name'] = "WebCfg - Diagnostics: Wireless Status page";
-$priv_list['page-diagnostics-wirelessstatus']['descr'] = "Allow access to the 'Diagnostics: Wireless Status' page.";
+$priv_list['page-diagnostics-wirelessstatus']['name'] = "WebCfg - Status: Wireless page";
+$priv_list['page-diagnostics-wirelessstatus']['descr'] = "Allow access to the 'Status: Wireless' page.";
 $priv_list['page-diagnostics-wirelessstatus']['match'] = array();
 $priv_list['page-diagnostics-wirelessstatus']['match'][] = "status_wireless.php*";
 

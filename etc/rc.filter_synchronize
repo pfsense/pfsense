@@ -267,15 +267,45 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
                                 update_filter_reload_status("Signaling CARP reload signal...");
                                 carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);
                                 $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
-                                $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
+				$params = array(
+					XML_RPC_encode($carp['password'])
+				);
+
+                                $msg = new XML_RPC_Message('pfsense.filter_configure', $params);
                                 $username = $config['system']['user'][0]['name'];
                                 $cli->setCredentials($username, $carp['password']);
-                                $cli->send($msg, "900");
+                                $resp = $cli->send($msg, "900");
+
+				if(!$resp) {
+					$error = "A communications error occured while attempting Filter sync with username {$username} {$synchronizetoip}:{$port}.";
+					log_error($error);
+					file_notice("sync_settings", $error, "Settings Sync", "");
+				} elseif($resp->faultCode()) {
+					$error = "An error code was received while attempting Filter sync with username {$username} {$synchronizetoip}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+					log_error($error);
+					file_notice("sync_settings", $error, "Settings Sync", "");
+				} else {
+					log_error("Filter sync successfully completed with {$synchronizetoip}:{$port}.");
+					$numberofruns = 3;
+				}
+
                                 /* signal a carp reload */
                                 $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
-                                $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure', array(new XML_RPC_Value($carp['password'], 'string')));
-                                $cli->setCredentials($username, $carp['password']);
-                                $cli->send($msg, "900");
+                                $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure', $params);
+                                $resp = $cli->send($msg, "900");
+
+				if(!$resp) {
+					$error = "A communications error occured while attempting CARP sync with username {$username} {$synchronizetoip}:{$port}.";
+					log_error($error);
+					file_notice("sync_settings", $error, "Settings Sync", "");
+				} elseif($resp->faultCode()) {
+					$error = "An error code was received while attempting CARP sync with username {$username} {$synchronizetoip}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+					log_error($error);
+					file_notice("sync_settings", $error, "Settings Sync", "");
+				} else {
+					log_error("CARP sync successfully completed with {$synchronizetoip}:{$port}.");
+					$numberofruns = 3;
+				}
                          }
 						 break;
                 }

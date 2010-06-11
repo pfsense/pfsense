@@ -247,8 +247,10 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
                                 $sections[] = 'wol';
                          if ($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper']))
                                 $sections[] = 'shaper';
-                         if ($carp['synchronizestaticroutes'] != "" and is_array($config['staticroutes']))
+                         if ($carp['synchronizestaticroutes'] != "" and is_array($config['staticroutes'])) {
                                 $sections[] = 'staticroutes';
+                                $sections[] = 'gateways';
+                         }
                          if ($carp['synchronizevirtualip'] != "" and is_array($config['virtualip']))
                                 $sections[] = 'virtualip';
                          if ($carp['synchronizelb'] != "" and is_array($config['load_balancer']))

@@ -106,14 +106,18 @@
 			<description>When this option is enabled, this system will automatically sync the IPsec configuration to the other CARP host when changes are made.</description>
 			<type>checkbox</type>
 		</field>
-		<!--
+		<field>
+			<fielddescr>Synchronize OpenVPN</fielddescr>
+			<fieldname>synchronizeopenvpn</fieldname>
+			<description>When this option is enabled, this system will automatically sync the OpenVPN configuration to the other CARP host when changes are made.</description>
+			<type>checkbox</type>
+		</field>
 		<field>
 			<fielddescr>Synchronize DHCPD</fielddescr>
 			<fieldname>synchronizedhcpd</fieldname>
 			<description>When this option is enabled, this system will automatically sync the DHCP Server settings over to the other carp host when changes are made.</description>
 			<type>checkbox</type>
 		</field>
-		-->
 		<field>
 			<fielddescr>Synchronize Wake on LAN</fielddescr>
 			<fieldname>synchronizewol</fieldname>

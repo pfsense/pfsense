@@ -272,6 +272,7 @@ if (is_array($config['installedpackages']['carpsettings']['config'])) {
                                 $cli->setCredentials($username, $carp['password']);
                                 $cli->send($msg, "900");
                                 /* signal a carp reload */
+                                $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
                                 $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure');
                                 $cli->send($msg, "900");
                          }

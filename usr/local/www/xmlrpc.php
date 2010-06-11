@@ -226,6 +226,9 @@ function filter_configure_xmlrpc($raw_params) {
 	system_routing_configure();
 	setup_gateways_monitor();
 	relayd_configure();
+	require_once("openvpn.inc");
+	openvpn_resync_all();
+	services_dhcpd_configure();
 	return $xmlrpc_g['return']['true'];
 }
 

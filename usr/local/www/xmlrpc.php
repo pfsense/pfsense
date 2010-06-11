@@ -222,7 +222,6 @@ function filter_configure_xmlrpc($raw_params) {
 	global $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
-	require("vslb.inc");
 	filter_configure();
 	system_routing_configure();
 	setup_gateways_monitor();

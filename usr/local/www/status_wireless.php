@@ -31,14 +31,14 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-wirelessstatus
-##|*NAME=Diagnostics: Wireless Status page
-##|*DESCR=Allow access to the 'Diagnostics: Wireless Status' page.
+##|*NAME=Status: Wireless page
+##|*DESCR=Allow access to the 'Status: Wireless' page.
 ##|*MATCH=status_wireless.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
 
-$pgtitle = array("Diagnostics","Wireless Status");
+$pgtitle = array("Status","Wireless");
 include("head.inc");
 
 $if = $_POST['if'];

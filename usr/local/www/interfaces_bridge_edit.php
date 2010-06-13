@@ -109,27 +109,27 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if ($_POST['maxage'] && !is_numeric($_POST['maxage']))
-		$input_errors[] = "Maxage needs to be an interger between 6 and 40.";
+		$input_errors[] = "Maxage needs to be an integer between 6 and 40.";
 	if ($_POST['maxaddr'] && !is_numeric($_POST['maxaddr']))
-		$input_errors[] = "Maxaddr needs to be an interger.";
+		$input_errors[] = "Maxaddr needs to be an integer.";
 	if ($_POST['timeout'] && !is_numeric($_POST['timeout']))
-		$input_errors[] = "Timeout needs to be an interger.";
+		$input_errors[] = "Timeout needs to be an integer.";
 	if ($_POST['fwdelay'] && !is_numeric($_POST['fwdelay']))
-		$input_errors[] = "Forward Delay needs to be an interger between 4 and 30.";
+		$input_errors[] = "Forward Delay needs to be an integer between 4 and 30.";
 	if ($_POST['hellotime'] && !is_numeric($_POST['hellotime']))
-		$input_errors[] = "Hello time for STP needs to be an interger between 1 and 2.";
+		$input_errors[] = "Hello time for STP needs to be an integer between 1 and 2.";
 	if ($_POST['priority'] && !is_numeric($_POST['priority']))
-		$input_errors[] = "Priority for STP needs to be an interger between 0 and 61440.";
+		$input_errors[] = "Priority for STP needs to be an integer between 0 and 61440.";
 	if ($_POST['holdcnt'] && !is_numeric($_POST['holdcnt']))
-		$input_errors[] = "Transmit Hold Count for STP needs to be an interger between 1 and 10.";
+		$input_errors[] = "Transmit Hold Count for STP needs to be an integer between 1 and 10.";
 	foreach ($ifacelist as $ifn => $ifdescr) {
 		if ($_POST[$ifn] <> "" && !is_numeric($_POST[$ifn]))
-			$input_errors[] = "{$ifdescr} interface priority for STP needs to be an interger between 0 and 240.";
+			$input_errors[] = "{$ifdescr} interface priority for STP needs to be an integer between 0 and 240.";
 	}
 	$i = 0;
 	foreach ($ifacelist as $ifn => $ifdescr) {
 		if ($_POST["{$ifn}{$i}"] <> "" && !is_numeric($_POST["{$ifn}{$i}"]))
-			$input_errors[] = "{$ifdescr} interface path cost for STP needs to be an interger between 1 and 200000000.";
+			$input_errors[] = "{$ifdescr} interface path cost for STP needs to be an integer between 1 and 200000000.";
 		$i++;
 	}
 
@@ -461,7 +461,7 @@ Set the size of the bridge address cache to size.	The default is
                     <br>
                     <span class="vexpl">
 	     Set interface as an edge port.  An edge port connects directly to
-	     end stations cannot create bridging loops in the network, this
+	     end stations and cannot create bridging loops in the network; this
 	     allows it to transition straight to forwarding.			
 					</span></td>
 			    </tr>
@@ -503,9 +503,9 @@ Set the size of the bridge address cache to size.	The default is
 					</select>
                     <br>
                     <span class="vexpl">
-	     Set the interface as a point to point link.  This is required for
+	     Set the interface as a point-to-point link.  This is required for
 	     straight transitions to forwarding and should be enabled on a
-	     direct link to another RSTP capable switch.		
+	     direct link to another RSTP-capable switch.
 					</span></td>
 			    </tr>
                 <tr style="display:none" id="sprtable8" name="sprtable8">
@@ -523,7 +523,7 @@ Set the size of the bridge address cache to size.	The default is
 					</select>
                     <br>
                     <span class="vexpl">
-	     Automatically detect the point to point status on interface by
+	     Automatically detect the point-to-point status on interface by
 	     checking the full duplex link status.  This is the default for
 	     interfaces added to the bridge.
 		 		 <p class="vexpl"><span class="red"><strong>
@@ -548,7 +548,7 @@ Set the size of the bridge address cache to size.	The default is
                     <br>
                     <span class="vexpl">
 	     Mark an interface as a "sticky" interface.  Dynamically learned
-	     address entries are treated at static once entered into the
+	     address entries are treated as static once entered into the
 	     cache.  Sticky entries are never aged out of the cache or
 	     replaced, even if the address is seen on a different interface.		
 					</span></td>

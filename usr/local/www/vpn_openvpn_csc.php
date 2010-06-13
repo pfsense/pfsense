@@ -327,7 +327,7 @@ function netbios_change() {
 									</td>
 								</tr>
 							</table>
-							Set this option to disable this client specific override without removing it from the list.
+							Set this option to disable this client-specific override without removing it from the list.
 						</td>
 					</tr>
 					<tr> 
@@ -362,7 +362,7 @@ function netbios_change() {
 									</td>
 								</tr>
 							</table>
-							Don't use this option to permenently disable a
+							Don't use this option to permanently disable a
 							client due to a compromised key or password.
 							Use a CRL (certificate revocation list) instead.
 						</td>
@@ -422,7 +422,7 @@ function netbios_change() {
 									</td>
 									<td>
 										<span class="vexpl">
-											Prevent this client from receiving any server defined client settings.
+											Prevent this client from receiving any server-defined client settings.
 										</span>
 									</td>
 								</tr>
@@ -558,7 +558,7 @@ function netbios_change() {
 									</td>
 								</tr>
 							</table>
-							If this option is not set, all Netbios-over-TCP/IP options (includeing WINS) will be disabled.
+							If this option is not set, all NetBIOS-over-TCP/IP options (includeing WINS) will be disabled.
 							<br/>
 							<table border="0" cellpadding="2" cellspacing="0" id="netbios_data">
 								<tr>

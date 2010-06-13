@@ -67,7 +67,7 @@ function lagg_inuse($num) {
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (lagg_inuse($_GET['id'])) {
-		$input_errors[] = "This lagg interface cannot be deleted because it is still being used.";
+		$input_errors[] = "This LAGG interface cannot be deleted because it is still being used.";
 	} else {
 		mwexec_bg("/sbin/ifconfig " . $a_laggs[$_GET['id']]['laggif'] . " destroy");
 		unset($a_laggs[$_GET['id']]);
@@ -126,7 +126,7 @@ include("head.inc");
                     <?=htmlspecialchars($lagg['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="interfaces_lagg_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_lagg.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this lagg interface?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="interfaces_lagg.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this LAGG interface?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
@@ -137,7 +137,7 @@ include("head.inc");
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
 				  Note:<br>
 				  </strong></span>
-				  Lagg allows for link aggregation, for bonding and fault tolerance. Only un-assigned interfaces can be added to lagg.
+				  LAGG allows for link aggregation, bonding and fault tolerance. Only unassigned interfaces can be added to LAGG.
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

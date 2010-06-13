@@ -101,7 +101,7 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                	<td width="20%" class="listhdrr">Type</td>
+                	<td width="20%" class="listhdrr">Interface</td>
                   <td width="20%" class="listhdrr">Interface(s)/Port(s)</td>
                   <td width="40%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
@@ -115,7 +115,7 @@ include("head.inc");
 					<?php
 						$portlist = explode(",", $ppp['ports']);
 						foreach ($portlist as $portid => $port) {
-							if ($port != get_real_interface($port))
+							if ($port != get_real_interface($port) && $ppp['type'] != "ppp")
 								$portlist[$portid] = convert_friendly_interface_to_friendly_descr($port);
 						}
 						echo htmlspecialchars(implode(",", $portlist));

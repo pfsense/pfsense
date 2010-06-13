@@ -1046,42 +1046,33 @@ function interface_ppps_configure($interface) {
 			case "pptp":
 			case "l2tp":
 				/* configure interface */
-				if ($localips[$pid] == "dhcp") {
-					// configure DHCP on the $port interface
-					interface_dhcp_configure(convert_real_interface_to_friendly_interface($port));
-					// Wait for the IP address before proceeding.
-					for ($count = 0; $count < 30; $count++) {
-						$localips[$pid] = find_interface_ip($port);
-						if(is_ipaddr($localips[$pid]))						
-							break;
-						sleep(1);
-					}
-					if(!is_ipaddr($localips[$pid])){
-						log_error("Could not get PPtP/L2tP Local IP address for {$port} using DHCP in interfaces_ppps_configure.");
-						return 0;
-					}
-				} else {
-					if(!is_ipaddr($localips[$pid])){
-						log_error("Could not get PPtP/L2tP Local IP address for {$port} using DHCP in interfaces_ppps_configure.");
-						return 0;
-					}
+				if(is_ipaddr($localips[$pid])){
 					// Manually configure interface IP/subnet
 					pfSense_interface_setaddress($port, "{$localips[$pid]}/{$subnets[$pid]}");
 					interfaces_bring_up($port);
+				} else if (empty($localips[$pid]))
+					$localips[$pid] = get_interface_ip($port); // try to get the interface IP from the port
+				
+				if(!is_ipaddr($localips[$pid])){
+					log_error("Could not get a Local IP address for PPtP/L2tP link on {$port} in interfaces_ppps_configure.");
+					return 0;
 				}
-				/* XXX: This needs to go away soon! Configure the gateway (remote IP ) */
+				/* XXX: This needs to go away soon! [It's commented out!] */
+				/* Configure the gateway (remote IP ) */
 				if (!$g['booting'] && !is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
-					/* dig for the gateway IP and store it in $gateways[$pid]
-						Direct dig to use query the router ip we just got via DHCP
-					*/
-					/* XXX: Fix later
-					$dhcp_gateway = get_interface_gateway('only written to accept WAN,OPTx etc');
-					$gateways[$pid] = trim(mwexec("dig @{$dhcp_gateway} +short -q {$gateways[$pid]}"));
-					*/
-					if(!is_ipaddr($gateways[$pid])){
-						log_error("[Feature incomplete] Could not get a PPtP/L2tP Remote IP address for {$port} using DNS in interfaces_ppps_configure.");
+					/* XXX: Fix later 
+					$gway = $gateways[$pid];
+					$dhcp_gateway = get_interface_gateway(convert_real_interface_to_friendly_interface_name($port));
+					if(!is_ipaddr($dhcp_gateway)) {
+						log_error("Could not get a valid Gateway IP from {$port} in interfaces_ppps_configure.");
 						return 0;
 					}
+					$gateways[$pid] = trim(`dig @{$dhcp_gateway} +short -q {$gateways[$pid]}`);
+					*/
+				}
+				if(!is_ipaddr($gateways[$pid])){
+					log_error("Could not get a PPtP/L2tP Remote IP address from {$dhcp_gateway} for {$gway} in interfaces_ppps_configure.");
+					return 0;
 				}
 				break;
 			case "ppp":

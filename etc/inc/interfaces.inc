@@ -681,10 +681,6 @@ function interfaces_configure() {
 
 	foreach($iflist as $if => $ifname) {
 		$realif = $config['interfaces'][$if]['if'];
-		if(is_array($config['interfaces'][$if]['pppoe']) && isset($config['interfaces'][$if]['pppoe']['pppoe-reset-type']))
-			setup_pppoe_reset_file($if, true);
-		else 
-			setup_pppoe_reset_file($if, false);
 		if (strstr($realif, "bridge")) 
 			$bridge_list[$if] = $ifname;
 		else if (strstr($realif, "gre"))
@@ -2281,11 +2277,8 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			interface_dhcp_configure($interface);
 			break;
 		case 'pppoe':
-			interface_ppps_configure($interface);
-			break;
+		case 'l2tp':
 		case 'pptp':
-			interface_ppps_configure($interface);
-			break;
 		case 'ppp':
 			interface_ppps_configure($interface);
 			break;

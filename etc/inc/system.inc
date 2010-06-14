@@ -319,7 +319,7 @@ function system_routing_configure() {
 	$route_arr = array();
 	foreach($route_str as $routeline) {
 		$items = preg_split("/[ ]+/i", $routeline);
-		$route_arr[$item[0]] = array($items[0], $items[1], $items[5]);
+		$route_arr[$items[0]] = array($items[0], $items[1], $items[5]);
 	}
 
 	if ($dont_add_route == false) {

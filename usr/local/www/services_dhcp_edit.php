@@ -177,7 +177,7 @@ if ($_POST) {
 }
 
 $pgtitle = array("Services","DHCP","Edit static mapping");
-$statusurl = "diag_dhcp_leases.php";
+$statusurl = "status_dhcp_leases.php";
 $logurl = "diag_logs_dhcp.php";
 
 include("head.inc");

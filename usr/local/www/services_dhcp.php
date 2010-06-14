@@ -373,7 +373,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array("Services","DHCP server");
-$statusurl = "diag_dhcp_leases.php";
+$statusurl = "status_dhcp_leases.php";
 $logurl = "diag_logs_dhcp.php";
 
 include("head.inc");
@@ -807,7 +807,7 @@ include("head.inc");
 				forwarder</a>, if enabled) </span><span class="vexpl">will
 				be assigned to clients by the DHCP server.<br>
 				<br>
-				The DHCP lease table can be viewed on the <a href="diag_dhcp_leases.php">Status:
+				The DHCP lease table can be viewed on the <a href="status_dhcp_leases.php">Status:
 				DHCP leases</a> page.<br>
 				</span></p>
 			</td>

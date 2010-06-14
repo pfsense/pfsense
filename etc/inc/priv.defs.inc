@@ -40,7 +40,7 @@ $priv_list['page-status-dhcpleases'] = array();
 $priv_list['page-status-dhcpleases']['name'] = "WebCfg - Status: DHCP leases page";
 $priv_list['page-status-dhcpleases']['descr'] = "Allow access to the 'Status: DHCP leases' page.";
 $priv_list['page-status-dhcpleases']['match'] = array();
-$priv_list['page-status-dhcpleases']['match'][] = "diag_dhcp_leases.php*";
+$priv_list['page-status-dhcpleases']['match'][] = "status_dhcp_leases.php*";
 
 $priv_list['page-diagnostics-factorydefaults'] = array();
 $priv_list['page-diagnostics-factorydefaults']['name'] = "WebCfg - Diagnostics: Factory defaults page";

@@ -315,7 +315,7 @@ function interface_bridge_configure(&$bridge) {
 	$members = explode(',', $bridge['members']);
 	if (!count($members))
 		return -1;
-	
+
 	$checklist = get_configured_interface_list();
 
 	if ($g['booting'] || !empty($bridge['bridgeif'])) {
@@ -472,6 +472,12 @@ function interface_bridge_add_member($bridgeif, $interface) {
 	
 	if ($mtu != $mtum)
 		pfSense_interface_mtu($interface, $mtu);
+
+	pfSense_get_interface_addresses($bridgeif);
+	if (isset($options['encaps']['txcsum']))
+		pfSense_interface_capabilities($interface, -IFCAP_TXCSUM);
+	else
+		pfSense_interface_capabilities($interface, IFCAP_TXCSUM);
 
 	interfaces_bring_up($interface);
 	mwexec("/sbin/ifconfig {$bridgeif} addm {$interface}");
@@ -2257,7 +2263,6 @@ function interface_configure($interface = "wan", $reloadall = false) {
 	unset($interface_sn_arr_cache[$realif]);
 
 	switch ($wancfg['ipaddr']) {
-
 		case 'carpdev-dhcp':
 			interface_carpdev_dhcp_configure($interface);
 			break;

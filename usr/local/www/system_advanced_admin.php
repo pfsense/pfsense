@@ -332,7 +332,7 @@ function prot_change() {
 								<td width="22%" valign="top" class="vncell"><?=gettext("Authentication Method"); ?></td>
 								<td width="78%" class="vtable">
 									<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if ($pconfig['sshdkeyonly']) echo "checked"; ?> />
-									<strong><?=gettext("Disable Password login for Secure Shell (rsa key only)"); ?></strong>
+									<strong><?=gettext("Disable password login for Secure Shell (RSA key only)"); ?></strong>
 									<br/>
 									<?=gettext("When enabled, authorized keys need to be configured for each"); ?>
 									<a href="system_usermanager.php"><?=gettext("user"); ?></a>
@@ -344,7 +344,7 @@ function prot_change() {
 								<td width="78%" class="vtable">
 									<input name="sshport" type="text" id="sshport" value="<?php echo $pconfig['sshport']; ?>" />
 									<br/>
-									<span class="vexpl"><?=gettext("Note:  Leave this blank for the default of 22"); ?></span>
+									<span class="vexpl"><?=gettext("Note: Leave this blank for the default of 22."); ?></span>
 								</td>
 							</tr>
 							<tr>

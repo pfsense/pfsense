@@ -41,7 +41,7 @@ include("guiconfig.inc");
 // sanitize the ID value
 $id = $_SESSION['uploadid'];
 if (!$id) {
-	echo "Sorry, we could not find a uploadid code.";
+	echo "Sorry, we could not find an uploadid code.";
 	exit;
 }
 

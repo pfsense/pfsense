@@ -52,7 +52,7 @@
 <step>
 	<id>2</id>
 	<title>General Information</title>
-	<description>On this screen you will set the General pfSense parameters.</description>
+	<description>On this screen you will set the general pfSense parameters.</description>
 	<fields>
 		<field>
 			<name>Hostname</name>
@@ -179,7 +179,7 @@
 			<name>MAC Address</name>
 			<bindstofield>interfaces->wan->spoofmac</bindstofield>
 			<type>input</type>
-			<description> This field can be used to modify ("spoof") the MAC address of the WAN interface (may be required with some cable connections) Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank</description>
+			<description> This field can be used to modify ("spoof") the MAC address of the WAN interface (may be required with some cable connections). Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank.</description>
 		</field>
 		<field>
 			<donotdisable>true</donotdisable>
@@ -318,7 +318,7 @@
 		<field>
 			<donotdisable>true</donotdisable>
 			<name>Block bogon networks</name>
-			<description>Block bogon networks when set, this option blocks traffic from IP addresses that are reserved (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.</description>
+			<description>When set, this option blocks traffic from IP addresses that are reserved (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.</description>
 			<type>checkbox</type>
 			<bindstofield>interfaces->wan->blockbogons</bindstofield>
 			<typehint>Block non-Internet routed networks from entering via WAN</typehint>
@@ -376,7 +376,7 @@
 <step>
 	<id>6</id>
 	<title>Set Admin WebGUI Password</title>
-	<description>On this screen we will set the Admin password which is used to access the WebGUI and also SSH services if you wish to enable.</description>
+	<description>On this screen we will set the admin password, which is used to access the WebGUI and also SSH services if you wish to enable them.</description>
 	<fields>
 		<field>
 			<name>Admin Password</name>

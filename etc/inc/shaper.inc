@@ -599,7 +599,7 @@ class altq_root_queue {
 		$form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
                         $form .=  " CHECKED";
-		$form .= " ><span class=\"vexpl\"> Enable/Disable discipline and its childs</span>";
+		$form .= " ><span class=\"vexpl\"> Enable/disable discipline and its children</span>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -627,7 +627,7 @@ class altq_root_queue {
 		$form .= ">PRIQ</option>";
 		$form .= "</select>";
 		$form .= "<br> <span class=\"vexpl\">";
-		$form .= "NOTE: changing this changes all child queues!";
+		$form .= "NOTE: Changing this changes all child queues!";
 		$form .= " Beware you can lose information.";
 		$form .= "</span>";
 		$form .= "</td></tr>";
@@ -660,13 +660,13 @@ class altq_root_queue {
 		$form .= $this->GetQlimit();
 		$form .= "\">";
 		$form .= "</td></tr>";
-		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Tbr Size</td>";
+		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">TBR Size</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"tbrconfig\" name=\"tbrconfig\" value=\"";
 		$form .= $this->GetTbrConfig();
 		$form .= "\">";
 		$form .= "<br> <span class=\"vexpl\">";
-		$form .= "Adjusts the size, in bytes, of the token bucket regulator.";
+		$form .= "Adjusts the size, in bytes, of the token bucket regulator. ";
 		$form .= "If not specified, heuristics based on the interface ";
 		$form .= "bandwidth are used to determine the size.";
 		$form .= "</span></td></tr>";

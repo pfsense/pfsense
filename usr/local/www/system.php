@@ -251,7 +251,7 @@ include("head.inc");
 				<td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>">
 					<br/>
 					<span class="vexpl">
-						<?=gettext("name of the firewall host, without domain part"); ?>
+						<?=gettext("Name of the firewall host, without domain part"); ?>
 						<br/>
 						<?=gettext("e.g."); ?> <em>firewall</em>
 					</span>

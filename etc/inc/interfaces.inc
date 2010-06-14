@@ -849,7 +849,7 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	}
 
 	if ($destroy == true) {
-		if (preg_match("/^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $realif))
+		if (preg_match("/^vip/^tun|^ovpn|^gif|^gre|^lagg|^bridge|vlan/i", $realif))
 			pfSense_interface_destroy($realif);
 	}	
 

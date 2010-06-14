@@ -1616,25 +1616,13 @@ function interface_carp_configure(&$vip) {
 		return;
 	}
 
-	/* ensure CARP IP really exists prior to loading up */
-	/* XXX: this can be bound to only the interface choosen in the carp creation. Not yet since upgrade is needed! */
-	$found = false;
-	$iflist = get_configured_interface_list();
-	foreach($iflist as $if) {
-		$ww_subnet_ip = get_interface_ip($if);
-		$ww_subnet_bits = get_interface_subnet($if);
-		if (ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits)) {
-			$found = true;
-			break;
-		}
-	}
-	if($found == false) {
+	/* Ensure CARP IP really exists prior to loading up. */
+	$ww_subnet_ip = find_interface_ip($realif);
+	$ww_subnet_bits = find_interface_subnet($realif);
+	if (!ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits)) {
 		file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
 		return;
 	}
-
-	/* invalidate interface cache */
-	get_interface_arr(true);
 
 	/* create the carp interface and setup */
 	if (does_interface_exist($vipif)) {

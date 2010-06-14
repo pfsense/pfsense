@@ -218,7 +218,13 @@ if ($_POST) {
 		write_config();
 		if (!isset($id))
 			$id = count($a_vip) - 1;
-		header("Location: firewall_virtual_ip.php?changes=mods&id={$id}");
+		if (file_exists("{$g['tmp_path']}/firewall_virtual_ip.apply"))
+			$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/firewall_virtual_ip.apply"));
+		else
+			$toapplylist = array();
+		$toapplylist[] = $id;
+		file_put_contents("{$g['tmp_path']}/firewall_virtual_ip.apply", serialize($toapplylist));
+		header("Location: firewall_virtual_ip.php");
 		exit;
 	}
 }

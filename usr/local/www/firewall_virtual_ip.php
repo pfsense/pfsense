@@ -62,24 +62,28 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
-		
-		if ($a_vip[$_POST['id']]) {
-                switch ($a_vip[$_POST['id']]['mode']) {
-                case "ipalias":
-                        interface_ipalias_configure($a_vip[$_POST['id']]);
-                        break;
-                case "proxyarp":
-                        interface_proxyarp_configure();
-                        break;
-                case "carp":
-                        interface_carp_configure($a_vip[$_POST['id']]);
-			break;
-                case "carpdev-dhcp":
-                        interface_carpdev_configure($a_vip[$_POST['id']]);
-                        break;
-                default:
-                        break;
-                }
+		$toapplylist = array();
+		if (file_exists("{$g['tmp_path']}/firewall_virtual_ip.apply"))
+                        $toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/firewall_virtual_ip.apply"));
+		foreach ($toapplylist as $vid) {
+			if ($a_vip[$vid]) {
+                		switch ($a_vip[$vid]['mode']) {
+                		case "ipalias":
+                        		interface_ipalias_configure($a_vip[$vid]);
+                        		break;
+                		case "proxyarp":
+                        		interface_proxyarp_configure();
+                        		break;
+                		case "carp":
+                        		interface_carp_configure($a_vip[$vid]);
+					break;
+                		case "carpdev-dhcp":
+                        		interface_carpdev_configure($a_vip[$vid]);
+                        		break;
+                		default:
+                        		break;
+				}
+                	}
         	}
 		$retval = 0;
 		$retval |= filter_configure();

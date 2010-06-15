@@ -111,7 +111,6 @@ display_top_tabs($tab_array);
 		$bssid = $bssid[0];
 		/* Split the rest by using spaces for this line using the 2nd part */
 		$split = preg_split("/[ ]+/i", $split[1]);
-		$bssid = $split[0];
 		$channel = $split[1];
 		$rate = $split[2];
 		$rssi = $split[3];

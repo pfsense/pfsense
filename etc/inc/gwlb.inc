@@ -395,7 +395,7 @@ function return_gateway_groups_array() {
 						} else {
 							$tiers[$tier][] = $gwname;
 						}
-					} elseif ($status['status'] == "none")) {
+					} elseif ($status['status'] == "none") {
 						/* Online add member */
 						$tiers[$tier][] = $gwname;
 					}

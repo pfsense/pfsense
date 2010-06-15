@@ -1063,13 +1063,11 @@ function interface_ppps_configure($interface) {
 				/* Configure the gateway (remote IP ) */
 				if (!$g['booting'] && !is_ipaddr($gateways[$pid]) && is_hostname($gateways[$pid])) {
 					/* XXX: Fix later 
-					$gway = $gateways[$pid];
-					$dhcp_gateway = get_interface_gateway(convert_real_interface_to_friendly_interface_name($port));
-					if(!is_ipaddr($dhcp_gateway)) {
-						log_error("Could not get a valid Gateway IP from {$port} in interfaces_ppps_configure.");
+					$gateways[$pid] = gethostbyname($gateways[$pid]);
+					if(!is_ipaddr($gateways[$pid])) {
+						log_error("Could not get a valid Gateway IP from {$port} via DNS in interfaces_ppps_configure.");
 						return 0;
 					}
-					$gateways[$pid] = trim(`dig @{$dhcp_gateway} +short -q {$gateways[$pid]}`);
 					*/
 				}
 				if(!is_ipaddr($gateways[$pid])){

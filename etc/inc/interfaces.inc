@@ -1217,7 +1217,7 @@ EOD;
 EOD;
 	if (!isset($ppp['verbose_log']))
 		$mpdconf .= <<<EOD
-	log -bund -ccp -chat -iface -ipcp -lcp -link
+	#log -bund -ccp -chat -iface -ipcp -lcp -link
 
 EOD;
 	foreach($ports as $pid => $port){

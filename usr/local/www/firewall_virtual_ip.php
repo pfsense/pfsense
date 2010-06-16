@@ -72,7 +72,7 @@ if ($_POST) {
                         		interface_ipalias_configure($a_vip[$vid]);
                         		break;
                 		case "proxyarp":
-                        		interface_proxyarp_configure();
+                        		interface_proxyarp_configure($a_vip[$vid]['interface']);
                         		break;
                 		case "carp":
                         		interface_carp_configure($a_vip[$vid]);
@@ -85,6 +85,7 @@ if ($_POST) {
 				}
                 	}
         	}
+		@unlink("{$g['tmp_path']}/firewall_virtual_ip.apply");
 		$retval = 0;
 		$retval |= filter_configure();
 		$savemsg = get_std_save_message($retval);

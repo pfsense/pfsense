@@ -194,7 +194,7 @@ function enable_change(whichone) {
 	    document.iform.syscontact.disabled = false;
 	    document.iform.rocommunity.disabled = false;
 	    document.iform.trapenable.disabled = false;
-	    document.iform.bindlan.disabled = false;
+	    //document.iform.bindlan.disabled = false;
 	    /* disabled until some docs show up on what this does.
 	    document.iform.rwenable.disabled = false;
 	    if( document.iform.rwenable.checked == true )
@@ -222,7 +222,7 @@ function enable_change(whichone) {
 	    document.iform.netgraph.disabled = false;
 	    document.iform.pf.disabled = false;
 	    document.iform.hostres.disabled = false;
-	    document.iform.bridge.disabled = false;
+	    //document.iform.bridge.disabled = false;
 	}
 	else
 	{
@@ -243,9 +243,8 @@ function enable_change(whichone) {
             document.iform.netgraph.disabled = true;
             document.iform.pf.disabled = true;
             document.iform.hostres.disabled = true;
-            document.iform.bridge.disabled = true;
-	    
-	    document.iform.bindlan.disabled = true;
+            //document.iform.bridge.disabled = true;
+	    //document.iform.bindlan.disabled = true;
 	}
 }
 //-->
@@ -261,7 +260,7 @@ function enable_change(whichone) {
   		  <td colspan="2" valign="top" class="optsect_t">
   			<table border="0" cellspacing="0" cellpadding="0" width="100%">
   			<tr><td class="optsect_s"><strong>SNMP Daemon</strong></td>
-			<td align="right" class="optsect_s"><input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(this)"> <strong>Enable</strong></td></tr>
+			<td align="right" class="optsect_s"><input name="enable" id="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(this)"> <strong>Enable</strong></td></tr>
   			</table></td>
                 </tr>
 
@@ -300,7 +299,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
-	 	   <input name="rwenable" type="checkbox" value="yes" <?php if ($pconfig['rwenable']) echo "checked"; ?> onClick="enable_change(this)">
+	 	   <input name="rwenable" id="rwenable" type="checkbox" value="yes" <?php if ($pconfig['rwenable']) echo "checked"; ?> onClick="enable_change(this)">
                     <strong>Enable Write Community String</strong>
 		  </td>
                 </tr>
@@ -321,7 +320,7 @@ function enable_change(whichone) {
   		  <td colspan="2" valign="top" class="optsect_t">
   			<table border="0" cellspacing="0" cellpadding="0" width="100%">
   			<tr><td class="optsect_s"><strong>SNMP Traps</strong></td>
-			<td align="right" class="optsect_s"><input name="trapenable" type="checkbox" value="yes" <?php if ($pconfig['trapenable']) echo "checked"; ?> onClick="enable_change(this)"> <strong>Enable</strong></td></tr>
+			<td align="right" class="optsect_s"><input name="trapenable" id="trapenable" type="checkbox" value="yes" <?php if ($pconfig['trapenable']) echo "checked"; ?> onClick="enable_change(this)"> <strong>Enable</strong></td></tr>
   			</table></td>
                 </tr>
 

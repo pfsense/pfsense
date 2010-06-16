@@ -78,28 +78,9 @@ function vpn_ipsec_failover_configure() {
 	}
 }
 
-function find_last_gif_device() {
-	$last_gif_found = -1;
-	$regs = "";
-	if (!($fp = popen("/sbin/ifconfig -l", "r")))
-		return -1;
-	$ifconfig_data = fread($fp, 4096);
-	pclose($fp);
-	$ifconfig_array = split(" ", $ifconfig_data);
-	foreach ($ifconfig_array as $ifconfig) {
-		ereg("gif(.)", $ifconfig, $regs);
-		if ($regs[0] && $regs[0] > $last_gif_found) {
-			$last_gif_found = $regs[1];
-		}
-	}
-	return $last_gif_found;
-}
-
 function vpn_ipsec_configure($ipchg = false)
 {
 	global $config, $g, $sa, $sn, $p1_ealgos, $p2_ealgos;
-
-	mwexec("/sbin/ifconfig enc0 up");
 
 	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
@@ -109,10 +90,6 @@ function vpn_ipsec_configure($ipchg = false)
 		mwexec("/sbin/sysctl -w net.key.preferred_oldsa=-30");
 	else
 		mwexec("/sbin/sysctl net.key.preferred_oldsa=0");
-
-	$number_of_gifs = find_last_gif_device();
-	for ($x = 0; $x < $number_of_gifs; $x++)
-		mwexec("/sbin/ifconfig gif" . $x . " delete");
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
@@ -146,6 +123,8 @@ function vpn_ipsec_configure($ipchg = false)
 
 		return true;
 	} else {
+		mwexec("/sbin/ifconfig enc0 up");
+
 		if ($g['booting'])
 			echo "Configuring IPsec VPN... ";
 
@@ -802,21 +781,6 @@ EOD;
 
 				$localid = ipsec_idinfo_to_cidr($ph2ent['localid'],true);
 				$remoteid = ipsec_idinfo_to_cidr($ph2ent['remoteid'],true);
-
-				if (isset ($ph2ent['creategif'])) {
-					$number_of_gifs = find_last_gif_device();
-					$number_of_gifs++;
-					$curwanip = get_interface_ip();
-					if ($config['installedpackages']['sasyncd']['config'] <> "") {
-						foreach ($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
-							if ($sasyncd['ip'] <> "")
-								$curwanip = $sasyncd['ip'];
-						}
-					}
-					mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $rgip);
-					if ($config['interfaces']['lan'])
-						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
-				}
 
 				if($ph2ent['mode'] == "tunnel") {
 

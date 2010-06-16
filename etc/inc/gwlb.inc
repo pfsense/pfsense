@@ -395,7 +395,7 @@ function return_gateway_groups_array() {
 						} else {
 							$tiers[$tier][] = $gwname;
 						}
-					} elseif ($status['status'] == "none")) {
+					} elseif ($status['status'] == "none") {
 						/* Online add member */
 						$tiers[$tier][] = $gwname;
 					}
@@ -480,7 +480,7 @@ function lookup_gateway_monitor_ip_by_name($name) {
 			$gateway['monitor'] = "127.0.0.2";
 
 		$monitorip = $gateway['monitor'];
-		if($monitorip == "")
+		if(!is_ipaddr($monitorip))
 			$monitorip = $gateway['gateway'];
 
 		return ($monitorip);

@@ -2622,7 +2622,7 @@ class fairq_queue extends priq_queue {
 
 
 /*
- * XXX: TODO Link dummynet(4) in the system. 
+ * dummynet(4) wrappers.
  */
 
 

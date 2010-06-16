@@ -128,7 +128,7 @@ include("head.inc");
                                 			} elseif (stristr($status, "delay")) {
                                         			$online = "Warning, Latency";
                                         			$bgcolor = "khaki";
-                                			} elseif (stristr($status, "none")) {
+                                			} elseif ($status == "none") {
                                         			$online = "Online";
                                         			$bgcolor = "lightgreen";
                                 			} else {

@@ -74,13 +74,7 @@ if ($_POST) {
 
 		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
 
-		if(!$config['ipsec']['enable']) {
-			if(is_process_running("racoon")) 
-				mwexec("killall racoon");
-		} else {
-			$retval = vpn_ipsec_configure();
-		}
-
+		$retval = vpn_ipsec_configure();
 		write_config();
 	}
 }

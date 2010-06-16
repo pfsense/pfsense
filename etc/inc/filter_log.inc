@@ -150,6 +150,8 @@ function parse_filter_line($line) {
 	if ($flent['proto'] == "TCP") {
 		$flags = split('[\, ]', $leftovers);
 		$flent['tcpflags'] = str_replace(".", "A", substr($flags[1], 1, -1));
+	} elseif ($flent['proto'] == "Options") {
+		$flent['proto'] = "none";
 	}
 
 	/* If there is a src, a dst, and a time, then the line should be usable/good */

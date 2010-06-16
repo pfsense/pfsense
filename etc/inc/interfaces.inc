@@ -812,9 +812,18 @@ function interface_bring_down($interface = "wan", $destroy = false) {
 	case "pppoe":
 	case "pptp":
 	case "l2tp":
-		killbypid("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid");
-		sleep(2);
-		unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
+		if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+			foreach ($config['ppps']['ppp'] as $pppid => $ppp) {
+				if ($realif == $ppp['if']) {
+					if (!isset($ppp['ondemand'])) {
+						killbypid("{$g['varrun_path']}/{$ifcfg['ipaddr']}_{$interface}.pid");
+						sleep(2);
+						unlink_if_exists("{$g['varetc_path']}/mpd_{$interface}.conf");
+					}
+					break;
+				}
+			}
+		}
 		break;
 	case "carpdev-dhcp":
 		/* 

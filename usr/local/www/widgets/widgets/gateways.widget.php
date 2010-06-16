@@ -54,11 +54,11 @@ $counter = 1;
                 <tr>
                   <td class="listlr" id="gateway<?= $counter; ?>">
                                 <?=$gateway['name'];?>
-								<?php $counter++; ?>
+				<?php $counter++; ?>
                   </td>
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">
-                                <?php echo lookup_gateway_ip_by_name($gateway['name']);?>
-								<?php $counter++; ?>
+                              <?php echo lookup_gateway_ip_by_name($gateway['name']);?>
+				<?php $counter++; ?>
                   </td>
                   <td class="listr" align="center" id="gateway<?= $counter; ?>">
 								<?=$gateway['delay'];?>
@@ -80,7 +80,7 @@ $counter = 1;
                                 } elseif (stristr($gateway['status'], "delay")) {
                                         $online = "Warning, Latency";
                                         $bgcolor = "khaki";
-                                } elseif (stristr($gateway['status'], "none")) {
+                                } elseif ($gateway['status'] == "none") {
                                         $online = "Online";
                                         $bgcolor = "lightgreen";
                                 } else

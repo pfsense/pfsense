@@ -99,7 +99,7 @@ include("head.inc");
 				} elseif (stristr($gateway['status'], "delay")) {
 					$online = "Warning, Latency";
 					$bgcolor = "khaki";
-				} elseif (stristr($gateway['status'], "none")) {
+				} elseif ($gateway['status'] == "none") {
 					$online = "Online";
 					$bgcolor = "lightgreen";
 				}
@@ -110,9 +110,9 @@ include("head.inc");
 					array_shift($lastchange);
 					array_shift($lastchange);
 					$lastchange = implode(" ", $lastchange);
-					PRINT "Last check $lastchange";
+					echo "Last check $lastchange";
 				} else {
-					print "Gathering data";
+					echo "Gathering data";
 				}
 				echo "</td></tr>";
                         ?>

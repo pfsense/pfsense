@@ -775,9 +775,13 @@ function interface_reconfigure($interface = "wan") {
 }
 
 function interface_vip_bring_down(&$vip) {
+	global $g;
+
 	switch ($vip['mode']) {
 	case "proxyarp":
-		interface_proxyarp_configure();
+		$vipif = get_real_interface($vip['interface']);
+		if (file_exists("{$g['varrun_path']}/{$vipif}.pid"))
+			killbypid("{$g['varrun_path']}/{$vipif}.pid");
 		break;
 	case "ipalias":
 		$vipif = get_real_interface($vip['interface']);
@@ -1470,7 +1474,7 @@ function interfaces_carp_setup() {
 	}
 }
 
-function interface_proxyarp_configure() {
+function interface_proxyarp_configure($interface = "") {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -1478,7 +1482,8 @@ function interface_proxyarp_configure() {
 	}
 
 	/* kill any running choparp */
-	killbyname("choparp");
+	if (empty($interface))
+		killbyname("choparp");
 
 	if (isset($config['virtualip']) && is_array($config['virtualip']['vip'])) {
 		$paa = array();
@@ -1496,26 +1501,38 @@ function interface_proxyarp_configure() {
 
 				$paa[$proxyif][] = $vipent;
 			}
+		}
 	}
 
-	if (count($paa))
+	if (!empty($interface)) {
+		if (is_array($paa[$interface])) {
+			$paaifip = get_interface_ip($interface);
+                        if (!is_ipaddr($paaifip))
+                                return;
+                        $args = get_real_interface($interface) . " auto";
+                        foreach ($paa[$interface] as $paent) {
+                                if (isset($paent['subnet']))
+                                        $args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");
+                                else if (isset($paent['range']))
+                                        $args .= " " . escapeshellarg($paent['range']['from'] . "-" . $paent['range']['to']);
+                        }
+                        mwexec_bg("/usr/local/sbin/choparp " . $args);	
+		}
+	} else if (count($paa)) {
 		foreach ($paa as $paif => $paents) {
 			$paaifip = get_interface_ip($paif);
 			if (!(is_ipaddr($paaifip)))
 				continue;
 			$args = get_real_interface($paif) . " auto";
 			foreach ($paents as $paent) {
-
 				if (isset($paent['subnet']))
 					$args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");
 				else if (isset($paent['range']))
-					$args .= " " . escapeshellarg($paent['range']['from'] . "-" .
-					$paent['range']['to']);
+					$args .= " " . escapeshellarg($paent['range']['from'] . "-" . $paent['range']['to']);
 			}
 			mwexec_bg("/usr/local/sbin/choparp " . $args);
 		}
 	}
-
 }
 
 function interfaces_vips_configure($interface = "") {

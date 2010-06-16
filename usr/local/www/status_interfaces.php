@@ -151,7 +151,7 @@ include("head.inc");
 	</tr>
 	<?php  endif; if ($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated']): ?>
 	<tr>
-		<td width="22%" class="vncellt">Uptime <?php if ($ifinfo['ppp_uptime_accumulated']) echo "(historical)" ?></td>
+		<td width="22%" class="vncellt">Uptime <?php if ($ifinfo['ppp_uptime_accumulated']) echo "(historical)"; ?></td>
 		<td width="78%" class="listr">
 			<?=htmlspecialchars($ifinfo['ppp_uptime']);?> <?=htmlspecialchars($ifinfo['ppp_uptime_accumulated']);?>
 		</td>

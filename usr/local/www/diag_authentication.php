@@ -49,24 +49,24 @@ if ($_POST) {
 
 	$authcfg = auth_get_authserver($_POST['authmode']);
 	if (!$authcfg)
-		$input_errors[] = "{$_POST['authmode']} is not a valid authentication server ";
+		$input_errors[] = "{$_POST['authmode']}" + gettext("is not a valid authentication server ");
 
 	if (empty($_POST['username']) || empty($_POST['password']))
-		$input_errors[] = "A username and password must be specified.";
+		$input_errors[] = gettext("A username and password must be specified.");
 
 	if (!$input_errors) {
 		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg)) {
-			$savemsg = "User: {$_POST['username']} authenticated sucessfully.";
+			$savemsg = gettext("User: ") + {$_POST['username']} + gettext(" authenticated sucessfully.");
 			$groups = getUserGroups($_POST['username'], $authcfg);
-			$savemsg .= "<br />This user is member of this groups: <br />";
+			$savemsg .= "<br />" + gettext("This user is member of this groups:") + " <br />";
 			foreach ($groups as $group)
 				$savemsg .= "{$group} ";
 		} else {
-			$input_errors[] = "Authentication failed.";
+			$input_errors[] = gettext("Authentication failed.");
 		}
 	}
 }
-$pgtitle = array("Diagnostics","Authentication");
+$pgtitle = array(gettext("Diagnostics"),gettext("Authentication"));
 include("head.inc");
 
 ?>
@@ -87,7 +87,7 @@ include("head.inc");
 	<form id="iform" name="iform" action="diag_authentication.php" method="post">
 	<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 	<tr>
-		<td width="22%" valign="top" class="vncell">Authentication Server</td>
+		<td width="22%" valign="top" class="vncell"><?php gettext("Authentication Server"); ?></td>
 		<td width="78%" class="vtable">
 			<select name='authmode' id='authmode' class="formselect" >
 			<?php
@@ -103,13 +103,13 @@ include("head.inc");
 		</td>
 	</tr>
 	<tr>
-		<td width="22%" valign="top" class="vncell">Username</td>
+		<td width="22%" valign="top" class="vncell"><?php gettext("Username"); ?></td>
 		<td width="78%" class="vtable">
 			<input class="formfld unknown" size='20' id='username' name='username' value='<?=$pconfig['username'];?>' />
 		</td>
 	</tr>
 	<tr>
-		<td width="22%" valign="top" class="vncell">Password</td>
+		<td width="22%" valign="top" class="vncell"><?php gettext("Password"); ?></td>
 		<td width="78%" class="vtable">
 			<input class="formfld pwd" type='password' size='20' id='password' name='password' value='<?=$pconfig['password'];?>' />
 		</td>

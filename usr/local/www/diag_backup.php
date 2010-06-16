@@ -99,27 +99,27 @@ function check_and_returnif_section_exists($section) {
 function spit_out_select_items($area, $showall) {
 	global $config;
 		
-	$areas = array("aliases" => "Aliases", 
-				   "captiveportal" => "Captive Portal",
-				   "voucher" => "Captive Portal Vouchers",
-				   "dnsmasq" => "DNS Forwarder",				
-				   "dhcpd" => "DHCP Server",
-				   "filter" => "Firewall Rules",
-				   "interfaces" => "Interfaces",
-				   "ipsec" => "IPSEC",
-				   "nat" => "NAT",
-				   "ovpn" => "OpenVPN",
-				   "installedpackages" => "Package Manager",
-				   "pptpd" => "PPTP Server",
-				   "cron" => "Scheduled Tasks",				
-				   "syslog" => "Syslog",
-				   "system" => "System",
-				   "staticroutes" => "Static routes",
-				   "sysctl" => "System tunables",
-				   "snmpd" => "SNMP Server",
-				   "shaper" => "Traffic Shaper",
-				   "vlans" => "VLANS",
-				   "wol" => "Wake on LAN"
+	$areas = array("aliases" => gettext("Aliases"), 
+				   "captiveportal" => gettext("Captive Portal"),
+				   "voucher" => gettext("Captive Portal Vouchers"),
+				   "dnsmasq" => gettext("DNS Forwarder"),				
+				   "dhcpd" => gettext("DHCP Server"),
+				   "filter" => gettext("Firewall Rules"),
+				   "interfaces" => gettext("Interfaces"),
+				   "ipsec" => gettext("IPSEC"),
+				   "nat" => gettext("NAT"),
+				   "ovpn" => gettext("OpenVPN"),
+				   "installedpackages" => gettext("Package Manager"),
+				   "pptpd" => gettext("PPTP Server"),
+				   "cron" => gettext("Scheduled Tasks"),				
+				   "syslog" => gettext("Syslog"),
+				   "system" => gettext("System"),
+				   "staticroutes" => gettext("Static routes"),
+				   "sysctl" => gettext("System tunables"),
+				   "snmpd" => gettext("SNMP Server"),
+				   "shaper" => gettext("Traffic Shaper"),
+				   "vlans" => gettext("VLANS"),
+				   "wol" => gettext("Wake on LAN")
 	);
 
 	$select  = "<select name=\"{$area}\" id=\"{$aread}\" ";
@@ -174,9 +174,9 @@ if ($_POST) {
 
 			if ($_POST['encrypt']) {
 				if(!$_POST['encrypt_password'] || !$_POST['encrypt_passconf'])
-					$input_errors[] = "You must supply and confirm the password for encryption.";
+					$input_errors[] = gettext("You must supply and confirm the password for encryption.");
 				if($_POST['encrypt_password'] != $_POST['encrypt_passconf'])
-					$input_errors[] = "The supplied 'Password' and 'Confirm' field values must match.";
+					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 			}
 
 			if (!$input_errors) {
@@ -260,9 +260,9 @@ if ($_POST) {
 
 			if ($_POST['decrypt']) {
 				if(!$_POST['decrypt_password'] || !$_POST['decrypt_passconf'])
-					$input_errors[] = "You must supply and confirm the password for decryption.";
+					$input_errors[] = gettext("You must supply and confirm the password for decryption.");
 				if($_POST['decrypt_password'] != $_POST['decrypt_passconf'])
-					$input_errors[] = "The supplied 'Password' and 'Confirm' field values must match.";
+					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 			}
 
 			if (!$input_errors) {
@@ -272,20 +272,20 @@ if ($_POST) {
 					/* read the file contents */
 					$data = file_get_contents($_FILES['conffile']['tmp_name']);
 					if(!$data) {
-						log_error("Warning, could not read file " . $_FILES['conffile']['tmp_name']);
+						log_error(gettext("Warning, could not read file ") . $_FILES['conffile']['tmp_name']);
 						return 1;
 					}
 
 					if ($_POST['decrypt']) {
 						if (!tagfile_deformat($data, $data, "config.xml")) {
-							$input_errors[] = "The uploaded file does not appear to contain an encrypted pfsense configuration.";
+							$input_errors[] = gettext("The uploaded file does not appear to contain an encrypted pfsense configuration.");
 							return 1;
 						}
 						$data = decrypt_data($data, $_POST['decrypt_password']);
 					}
 
 					if(stristr($data, "<m0n0wall>")) {
-						log_error("Upgrading m0n0wall configuration to pfsense.");
+						log_error(gettext("Upgrading m0n0wall configuration to pfsense."));
 						/* m0n0wall was found in config.  convert it. */
 						$data = str_replace("m0n0wall", "pfsense", $data);
 						$m0n0wall_upgrade = true;
@@ -293,15 +293,15 @@ if ($_POST) {
 					if($_POST['restorearea']) {
 						/* restore a specific area of the configuration */
 						if(!stristr($data, $_POST['restorearea'])) {
-							$input_errors[] = "You have selected to restore an area but we could not locate the correct xml tag.";
+							$input_errors[] = gettext("You have selected to restore an area but we could not locate the correct xml tag.");
 						} else {
 							restore_config_section($_POST['restorearea'], $data);
 							filter_configure();
-							$savemsg = "The configuration area has been restored.  You may need to reboot the firewall.";
+							$savemsg = gettext("The configuration area has been restored.  You may need to reboot the firewall.");
 						}
 					} else {
 						if(!stristr($data, "<" . $g['xml_rootobj'] . ">")) {
-							$input_errors[] = "You have selected to restore the full configuration but we could not locate a " . $g['xml_rootobj'] . " tag.";
+							$input_errors[] = gettext("You have selected to restore the full configuration but we could not locate a ") . $g['xml_rootobj'] . gettext(" tag.");
 						} else {
 							/* restore the entire configuration */
 							file_put_contents($_FILES['conffile']['tmp_name'], $data);
@@ -435,7 +435,7 @@ if ($_POST) {
 									add_base_packages_menu_items();									
 									convert_config();
 									conf_mount_ro();
-									$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense.";
+									$savemsg = gettext("The m0n0wall configuration has been restored and upgraded to pfSense.");
 									mark_subsystem_dirty("restore");
 								}
 								if(isset($config['captiveportal']['enable'])) {
@@ -451,12 +451,12 @@ if ($_POST) {
 									exit;
 								}
 							} else {
-								$input_errors[] = "The configuration could not be restored.";
+								$input_errors[] = gettext("The configuration could not be restored.");
 							}
 						}
 					}
 				} else {
-					$input_errors[] = "The configuration could not be restored (file upload error).";
+					$input_errors[] = gettext("The configuration could not be restored (file upload error).");
 				}
 			}
 		}
@@ -466,16 +466,16 @@ if ($_POST) {
 			header("Location: pkg_mgr_install.php?mode=reinstallall");
 			exit;
                 } else if ($mode == "restore_ver") {
-			$input_errors[] = "XXX - this feature may hose your config (do NOT backrev configs!) - billm";
+			$input_errors[] = gettext("XXX - this feature may hose your config (do NOT backrev configs!) - billm");
 			if ($ver2restore <> "") {
 				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
 				if (config_install($conf_file) == 0) {
 						mark_subsystem_dirty("restore");
                         } else {
-                        	$input_errors[] = "The configuration could not be restored.";
+                        	$input_errors[] = gettext("The configuration could not be restored.");
                         }
                 } else {
-                        $input_errors[] = "No version selected.";
+                        $input_errors[] = gettext("No version selected.");
                 }
 		}
 	}
@@ -486,7 +486,7 @@ $id = rand() . '.' . time();
 $mth = ini_get('upload_progress_meter.store_method');
 $dir = ini_get('upload_progress_meter.file.filename_template');
 
-$pgtitle = array("Diagnostics","Backup/restore");
+$pgtitle = array(gettext("Diagnostics"),gettext("Backup/restore"));
 include("head.inc");
 
 ?>
@@ -527,7 +527,7 @@ function backuparea_change(obj) {
 <?php if (is_subsystem_dirty('restore')): ?><p>
 <form action="reboot.php" method="post">
 <input name="Submit" type="hidden" value=" Yes ">
-<?php print_info_box("The firewall configuration has been changed.<br/>The firewall is now rebooting.");?><br>
+<?php print_info_box(gettext("The firewall configuration has been changed.<br/>The firewall is now rebooting."));?><br>
 </form>
 <?php endif; ?>
 <form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">
@@ -536,8 +536,8 @@ function backuparea_change(obj) {
 		<td>
 <?php
 		$tab_array = array();
-		$tab_array[0] = array("Config History", false, "diag_confbak.php");
-		$tab_array[1] = array("Backup/Restore", true, "diag_backup.php");
+		$tab_array[0] = array(gettext("Config History"), false, "diag_confbak.php");
+		$tab_array[1] = array(gettext("Backup/Restore"), true, "diag_backup.php");
 		display_top_tabs($tab_array);
 ?>
 		</td>
@@ -547,19 +547,19 @@ function backuparea_change(obj) {
 			<div id="mainarea">
 			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" class="listtopic">Backup configuration</td>
+					<td colspan="2" class="listtopic"><?php gettext("Backup configuration"); ?></td>
 				</tr>
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						<p>Click this button to download the system configuration in XML format.<br /><br /> Backup area: <?php spit_out_select_items("backuparea", false); ?></p>
+						<p><?php gettext("Click this button to download the system configuration in XML format."); ?><br /><br /> <?php gettext("Backup area:"); ?> <?php spit_out_select_items("backuparea", false); ?></p>
 						<table>
 							<tr>
 								<td>
 									<input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">
 								</td>
 								<td>
-									<span class="vexpl">Do not backup package information.</span>
+									<span class="vexpl"><?php gettext("Do not backup package information."); ?></span>
 								</td>
 							</tr>
 						</table>
@@ -569,7 +569,7 @@ function backuparea_change(obj) {
 									<input name="encrypt" type="checkbox" class="formcheckbox" id="nopackages" onClick="encrypt_change()">
 								</td>
 								<td>
-									<span class="vexpl">Encrypt this configuration file.</span>
+									<span class="vexpl"><?php gettext("Encrypt this configuration file."); ?></span>
 								</td>
 							</tr>
 							<tr>
@@ -577,14 +577,14 @@ function backuparea_change(obj) {
 									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd" checked>
 								</td>
 								<td>
-									<span class="vexpl">Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)</span>
+									<span class="vexpl"><?php gettext("Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)"); ?></span>
 								</td>
 							</tr>
 						</table>
 						<table id="encrypt_opts">
 							<tr>
 								<td>
-									<span class="vexpl">Password :</span>
+									<span class="vexpl"><?php gettext("Password"); ?> :</span>
 								</td>
 								<td>
 									<input name="encrypt_password" type="password" class="formfld pwd" size="20" value="" />
@@ -592,7 +592,7 @@ function backuparea_change(obj) {
 							</tr>
 							<tr>
 								<td>
-									<span class="vexpl">confirm :</span>
+									<span class="vexpl"><?php gettext("confirm"); ?> :</span>
 								</td>
 								<td>
 									<input name="encrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
@@ -606,12 +606,12 @@ function backuparea_change(obj) {
 					<td colspan="2" class="list" height="12">&nbsp;</td>
                 </tr>
                 <tr>
-					<td colspan="2" class="listtopic">Restore configuration</td>
+					<td colspan="2" class="listtopic"><?php gettext("Restore configuration"); ?></td>
 				</tr>
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						Open a <?=$g['[product_name']?> configuration XML file and click the button below to restore the configuration. <br /><br /> Restore area: <?php spit_out_select_items("restorearea", true); ?>
+						<?php gettext("Open a"); ?> <?=$g['[product_name']?> <?php gettext("configuration XML file and click the button below to restore the configuration."); ?> <br /><br /> <?php gettext("Restore area:"); ?> <?php spit_out_select_items("restorearea", true); ?>
 						<p><input name="conffile" type="file" class="formfld unknown" id="conffile" size="40"></p>
 						<table>
 							<tr>
@@ -619,14 +619,14 @@ function backuparea_change(obj) {
 									<input name="decrypt" type="checkbox" class="formcheckbox" id="nopackages" onClick="decrypt_change()">
 								</td>
 								<td>
-									<span class="vexpl">Configuration file is encrypted.</span>
+									<span class="vexpl"><?php gettext("Configuration file is encrypted."); ?></span>
 								</td>
 							</tr>
 						</table>
 						<table id="decrypt_opts">
 							<tr>
 								<td>
-									<span class="vexpl">Password :</span>
+									<span class="vexpl"><?php gettext("Password :"); ?></span>
 								</td>
 								<td>
 									<input name="decrypt_password" type="password" class="formfld pwd" size="20" value="" />
@@ -634,7 +634,7 @@ function backuparea_change(obj) {
 							</tr>
 							<tr>
 								<td>
-									<span class="vexpl">confirm :</span>
+									<span class="vexpl"><?php gettext("confirm :"); ?></span>
 								</td>
 								<td>
 									<input name="decrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
@@ -642,7 +642,7 @@ function backuparea_change(obj) {
 							</tr>
 						</table>
 						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration"></p>
-                      	<p><strong><span class="red">Note:</span></strong><br />The firewall will reboot after restoring the configuration.<br /></p>
+                      	<p><strong><span class="red">Note:</span></strong><br /><?php gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
 					</td>
 				</tr>
 				<?php if($config['installedpackages']['package'] != "") { ?>
@@ -650,12 +650,12 @@ function backuparea_change(obj) {
 					<td colspan="2" class="list" height="12">&nbsp;</td>
 				</tr>
 				<tr>
-					<td colspan="2" class="listtopic">Reinstall packages</td>
+					<td colspan="2" class="listtopic"><?php gettext("Reinstall packages"); ?></td>
 				</tr>
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						<p>Click this button to reinstall all system packages.  This may take a while. <br /><br />
+						<p><?php gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
 		  				<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="Reinstall packages">
 					</td>
 				</tr>

@@ -780,8 +780,8 @@ function interface_vip_bring_down(&$vip) {
 	switch ($vip['mode']) {
 	case "proxyarp":
 		$vipif = get_real_interface($vip['interface']);
-		if (file_exists("{$g['varrun_path']}/{$vipif}.pid"))
-			killbypid("{$g['varrun_path']}/{$vipif}.pid");
+		if (file_exists("{$g['varrun_path']}/choparp_{$vipif}.pid"))
+			killbypid("{$g['varrun_path']}/choparp_{$vipif}.pid");
 		break;
 	case "ipalias":
 		$vipif = get_real_interface($vip['interface']);

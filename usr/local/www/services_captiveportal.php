@@ -544,6 +544,21 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 							echo "<option value='{$ifdesc}' {$selected}>{$ifdescr} - {$ipaddr}</option>\n";
 						}
 					}
+					if (is_array($config['virtualip']['vip'])) {
+                				foreach ($config['virtualip']['vip'] as $sn) {
+                        				if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+                                				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+                                				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+                                				$len = $end - $start;
+
+                                				for ($i = 0; $i <= $len; $i++) {
+                                        				$snip = long2ip32($start+$i);
+                                					echo "<option value='{$snip}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$snip}") . "></option>\n";
+								}
+							} else
+                                				echo "<option value='{$sn['subnet']}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$sn['subnet']}") . "></option>\n";
+						}
+					}
 				?>
 				</select><br/>
 				Choose the ip to use for calling station attribute.

@@ -66,7 +66,7 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
         break;
 
         default:
-        $calledstationid = get_interface_ip("wan");
+        $calledstationid = get_interface_ip($config['captiveportal']['radiussrcip_attribute']);
         $callingstationid = $clientmac;
     }
 

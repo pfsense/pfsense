@@ -50,7 +50,7 @@ if(empty($if)) {
 	/* Find the first interface
 	   that is wireless */
 	foreach($ciflist as $interface => $ifdescr) {
-		if(is_interface_wireless($interface))
+		if(is_interface_wireless(get_real_interface($interface)))
 			$if = $interface;
 	}
 }
@@ -68,7 +68,7 @@ include("fbegin.inc");
 <?php
 $tab_array = array();
 foreach($ciflist as $interface => $ifdescr) {
-	if (is_interface_wireless($interface)) {
+	if (is_interface_wireless(get_real_interface($interface))) {
 		$enabled = false;
 		if($if == $interface)
 			$enabled = true;

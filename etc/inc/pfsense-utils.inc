@@ -1158,7 +1158,7 @@ function get_ppp_uptime($port){
  		}
 		return convert_seconds_to_hms($sec);
 	} else {
-		$total_time = "No session history data found!";
+		$total_time = "No history data found!";
 		return $total_time;
 	}
 }
@@ -1222,8 +1222,8 @@ function get_interface_info($ifdescr) {
 	$ifinfo['outpkts'] = $in4_pass_packets + $out4_block_packets;
 		
 	$ifconfiginfo = "";
-	
-	switch ($config['interfaces'][$ifdescr]['ipaddr']) {
+	$link_type = $config['interfaces'][$ifdescr]['ipaddr'];
+	switch ($link_type) {
 	 /* DHCP? -> see if dhclient is up */
 	case "dhcp":
 	case "carpdev-dhcp":
@@ -1237,8 +1237,8 @@ function get_interface_info($ifdescr) {
 	/* PPPoE interface? -> get status from virtual interface */
 	case "pppoe":
 		if ($ifinfo['status'] == "up" && !isset($link0))
-                        /* get PPPoE link status for dial on demand */
-                        $ifinfo['pppoelink'] = "up";
+			/* get PPPoE link status for dial on demand */
+			$ifinfo['pppoelink'] = "up";
 		else
 			$ifinfo['pppoelink'] = "down";
 
@@ -1246,8 +1246,8 @@ function get_interface_info($ifdescr) {
 	/* PPTP interface? -> get status from virtual interface */
 	case "pptp":
 		if ($ifinfo['status'] == "up" && !isset($link0))
-                        /* get PPTP link status for dial on demand */
-                        $ifinfo['pptplink'] = "up";
+			/* get PPTP link status for dial on demand */
+			$ifinfo['pptplink'] = "up";
 		else
 			$ifinfo['pptplink'] = "down";
 		break;
@@ -1270,24 +1270,23 @@ function get_interface_info($ifdescr) {
 		$dev = $ppp['ports'];
 		if ($config['interfaces'][$ifdescr]['if'] != $ppp['if'] || empty($dev))
 			break;
-		if (file_exists($dev)) {
-			if (file_exists("{$g['varrun_path']}/ppp_{$ifdescr}.pid")) {
-				$ifinfo['pppinfo'] = $ifinfo['ifdescr'];
-				$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
-        		$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
-			}
-		} else {
+		if (!file_exists($dev)) {
 			$ifinfo['nodevice'] = 1;
 			$ifinfo['pppinfo'] = $dev . " device not present! Is the modem attached to the system?";	
 		}
 		// Calculate cumulative uptime for PPP link. Useful for connections that have per minute/hour contracts so you don't go over!
-		$ifinfo['ppp_uptime_accumulated'] = get_ppp_uptime($ifinfo['if']);
-
+		if (isset($ppp['uptime']))
+			$ifinfo['ppp_uptime_accumulated'] = "(".get_ppp_uptime($ifinfo['if']).")";
 		break;
 	default:
 		break;
 	}
-
+	
+	if (file_exists("{$g['varrun_path']}/{$link_type}_{$ifdescr}.pid")) {
+		$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
+		$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
+	}
+	
 	if ($ifinfo['status'] == "up") {
 		/* try to determine media with ifconfig */
 		unset($ifconfiginfo);

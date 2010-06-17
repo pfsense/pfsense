@@ -1057,7 +1057,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 }
 
 function filter_nat_rules_generate() {
-	global $config, $g, $after_filter_configure_run, $FilterIflist;
+	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList;
 
 	$natrules = "nat-anchor \"natearly/*\"\n";
 
@@ -1145,16 +1145,13 @@ function filter_nat_rules_generate() {
 		if(is_array($config['staticroutes']['route'])) {
 			foreach ($config['staticroutes']['route'] as $route) {
 				$netip = explode("/", $route['network']);
-				if(is_array($config['gateways']['gateway_item'])) {
-					foreach($config['gateways']['gateway_item'] as $gateway) {
-						if($route['gateway'] == $gateway['name']) {
-							$gatewayip = $gateway['gateway'];
-							$interfacegw = $gateway['interface'];
-							if((! interface_has_gateway($gateway['interface'])) && (is_private_ip($netip[0]))) {
-								$numberofnathosts++;
-								$tonathosts .= "{$route['network']} ";
-							}
-						}
+				if (isset($GatewaysList[$route['gateway']])) {
+					$gateway =& $GatewaysList[$route['gateway']];
+					$gatewayip = $gateway['gateway'];
+					$interfacegw = $gateway['interface'];
+					if(!interface_has_gateway($gateway['interface']) && is_private_ip($netip[0])) {
+						$numberofnathosts++;
+						$tonathosts .= "{$route['network']} ";
 					}
 				}
 			}

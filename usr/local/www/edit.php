@@ -56,6 +56,7 @@ if($_REQUEST['action']) {
 				echo "|No file name specified.|";
 			} else {
 				conf_mount_rw();
+				$_REQUEST['data'] = str_replace("\r", "", $_REQUEST['data']);
 				$ret = file_put_contents($_REQUEST['file'], $_REQUEST['data']);
 				conf_mount_ro();
 				if($_REQUEST['file'] == "config.xml")

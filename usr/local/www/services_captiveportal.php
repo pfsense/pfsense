@@ -201,7 +201,7 @@ if ($_POST) {
 		$config['captiveportal']['radiuskey2'] = $_POST['radiuskey2'];
 		$config['captiveportal']['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
-		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussrcip_attribute'];
+		$config['captiveportal']['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
 		$config['captiveportal']['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
 		$config['captiveportal']['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$config['captiveportal']['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;

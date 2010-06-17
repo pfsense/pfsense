@@ -1251,7 +1251,10 @@ function getNasIP()
 	global $config;
 
 	if (!empty($config['captiveportal']['radiussrcip_attribute']))
-    		$nasIp = get_interface_ip($config['captiveportal']['radiussrcip_attribute']);
+		if (is_ipaddr($config['captiveportal']['radiussrcip_attribute']))
+                        $nasIp = $config['captiveportal']['radiussrcip_attribute'];
+                else
+                        $nasIp = get_interface_ip($config['captiveportal']['radiussrcip_attribute']);
 	else
     		$nasIp = get_interface_ip();
 		

@@ -136,14 +136,15 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		 * item is a checkbox, it should have the value "on"
 		 * if it was checked
                  */
-		$text = "unset(\$config" . $field_conv . ");";
+		$var = "\$config{$field_conv}";
+		$text = "if (isset({$var})) unset({$var});";
 		eval($text);
 		return;
 	}
 
 	if($field_type == "interfaces_selection") {
-		$text = "unset(\$config" . $field_conv . ");";
-		eval($text);
+		$var = "\$config{$field_conv}";
+		$text = "if (isset({$var})) unset({$var});";
 		$text = "\$config" . $field_conv . " = \"" . $updatetext . "\";";
 		eval($text);
 		return;

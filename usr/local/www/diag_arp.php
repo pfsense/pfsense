@@ -259,7 +259,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 
 <div id="loading">
-	<img src="/themes/{$g['theme']}/images/misc/loader.gif"><?php gettext("Loading, please wait..."); ?>
+	<img src="/themes/{$g['theme']}/images/misc/loader.gif"><?= gettext("Loading, please wait..."); ?>
 	<p/>&nbsp;
 </div>
 
@@ -289,10 +289,10 @@ $data = msort($data, "dnsresolve");
 		<td>
 			<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<td class="listhdrr"><?php gettext("IP address"); ?></td>
-					<td class="listhdrr"><?php gettext("MAC address"); ?></td>
-					<td class="listhdrr"><?php gettext("Hostname"); ?></td>
-					<td class="listhdr"><?php gettext("Interface"); ?></td>
+					<td class="listhdrr"><?= gettext("IP address"); ?></td>
+					<td class="listhdrr"><?= gettext("MAC address"); ?></td>
+					<td class="listhdrr"><?= gettext("Hostname"); ?></td>
+					<td class="listhdr"><?= gettext("Interface"); ?></td>
 					<td class="list"></td>
 				</tr>
 				<?php foreach ($data as $entry): ?>

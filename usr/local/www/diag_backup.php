@@ -547,19 +547,19 @@ function backuparea_change(obj) {
 			<div id="mainarea">
 			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" class="listtopic"><?php gettext("Backup configuration"); ?></td>
+					<td colspan="2" class="listtopic"><?=gettext("Backup configuration"); ?></td>
 				</tr>
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						<p><?php gettext("Click this button to download the system configuration in XML format."); ?><br /><br /> <?php gettext("Backup area:"); ?> <?php spit_out_select_items("backuparea", false); ?></p>
+						<p><?=gettext("Click this button to download the system configuration in XML format."); ?><br /><br /> <?=gettext("Backup area:"); ?> <?php spit_out_select_items("backuparea", false); ?></p>
 						<table>
 							<tr>
 								<td>
 									<input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">
 								</td>
 								<td>
-									<span class="vexpl"><?php gettext("Do not backup package information."); ?></span>
+									<span class="vexpl"><?=gettext("Do not backup package information."); ?></span>
 								</td>
 							</tr>
 						</table>
@@ -569,7 +569,7 @@ function backuparea_change(obj) {
 									<input name="encrypt" type="checkbox" class="formcheckbox" id="nopackages" onClick="encrypt_change()">
 								</td>
 								<td>
-									<span class="vexpl"><?php gettext("Encrypt this configuration file."); ?></span>
+									<span class="vexpl"><?=gettext("Encrypt this configuration file."); ?></span>
 								</td>
 							</tr>
 							<tr>
@@ -577,14 +577,14 @@ function backuparea_change(obj) {
 									<input name="donotbackuprrd" type="checkbox" class="formcheckbox" id="dotnotbackuprrd" checked>
 								</td>
 								<td>
-									<span class="vexpl"><?php gettext("Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)"); ?></span>
+									<span class="vexpl"><?=gettext("Do not backup RRD data (NOTE: RRD Data can consume 4+ megabytes of config.xml space!)"); ?></span>
 								</td>
 							</tr>
 						</table>
 						<table id="encrypt_opts">
 							<tr>
 								<td>
-									<span class="vexpl"><?php gettext("Password"); ?> :</span>
+									<span class="vexpl"><?=gettext("Password"); ?> :</span>
 								</td>
 								<td>
 									<input name="encrypt_password" type="password" class="formfld pwd" size="20" value="" />
@@ -592,7 +592,7 @@ function backuparea_change(obj) {
 							</tr>
 							<tr>
 								<td>
-									<span class="vexpl"><?php gettext("confirm"); ?> :</span>
+									<span class="vexpl"><?=gettext("confirm"); ?> :</span>
 								</td>
 								<td>
 									<input name="encrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
@@ -606,12 +606,12 @@ function backuparea_change(obj) {
 					<td colspan="2" class="list" height="12">&nbsp;</td>
                 </tr>
                 <tr>
-					<td colspan="2" class="listtopic"><?php gettext("Restore configuration"); ?></td>
+					<td colspan="2" class="listtopic"><?=gettext("Restore configuration"); ?></td>
 				</tr>
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						<?php gettext("Open a"); ?> <?=$g['[product_name']?> <?php gettext("configuration XML file and click the button below to restore the configuration."); ?> <br /><br /> <?php gettext("Restore area:"); ?> <?php spit_out_select_items("restorearea", true); ?>
+						<?=gettext("Open a"); ?> <?=$g['[product_name']?> <?=gettext("configuration XML file and click the button below to restore the configuration."); ?> <br /><br /> <?=gettext("Restore area:"); ?> <?php spit_out_select_items("restorearea", true); ?>
 						<p><input name="conffile" type="file" class="formfld unknown" id="conffile" size="40"></p>
 						<table>
 							<tr>
@@ -619,14 +619,14 @@ function backuparea_change(obj) {
 									<input name="decrypt" type="checkbox" class="formcheckbox" id="nopackages" onClick="decrypt_change()">
 								</td>
 								<td>
-									<span class="vexpl"><?php gettext("Configuration file is encrypted."); ?></span>
+									<span class="vexpl"><?=gettext("Configuration file is encrypted."); ?></span>
 								</td>
 							</tr>
 						</table>
 						<table id="decrypt_opts">
 							<tr>
 								<td>
-									<span class="vexpl"><?php gettext("Password :"); ?></span>
+									<span class="vexpl"><?=gettext("Password :"); ?></span>
 								</td>
 								<td>
 									<input name="decrypt_password" type="password" class="formfld pwd" size="20" value="" />
@@ -634,7 +634,7 @@ function backuparea_change(obj) {
 							</tr>
 							<tr>
 								<td>
-									<span class="vexpl"><?php gettext("confirm :"); ?></span>
+									<span class="vexpl"><?=gettext("confirm :"); ?></span>
 								</td>
 								<td>
 									<input name="decrypt_passconf" type="password" class="formfld pwd" size="20" value="" />
@@ -642,7 +642,7 @@ function backuparea_change(obj) {
 							</tr>
 						</table>
 						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration"></p>
-                      	<p><strong><span class="red">Note:</span></strong><br /><?php gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
+                      	<p><strong><span class="red">Note:</span></strong><br /><?=gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
 					</td>
 				</tr>
 				<?php if($config['installedpackages']['package'] != "") { ?>
@@ -650,12 +650,12 @@ function backuparea_change(obj) {
 					<td colspan="2" class="list" height="12">&nbsp;</td>
 				</tr>
 				<tr>
-					<td colspan="2" class="listtopic"><?php gettext("Reinstall packages"); ?></td>
+					<td colspan="2" class="listtopic"><?=gettext("Reinstall packages"); ?></td>
 				</tr>
 				<tr>
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
-						<p><?php gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
+						<p><?=gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
 		  				<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="Reinstall packages">
 					</td>
 				</tr>

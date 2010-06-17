@@ -87,7 +87,7 @@ include("head.inc");
 	<form id="iform" name="iform" action="diag_authentication.php" method="post">
 	<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 	<tr>
-		<td width="22%" valign="top" class="vncell"><?php gettext("Authentication Server"); ?></td>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Authentication Server"); ?></td>
 		<td width="78%" class="vtable">
 			<select name='authmode' id='authmode' class="formselect" >
 			<?php
@@ -103,13 +103,13 @@ include("head.inc");
 		</td>
 	</tr>
 	<tr>
-		<td width="22%" valign="top" class="vncell"><?php gettext("Username"); ?></td>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Username"); ?></td>
 		<td width="78%" class="vtable">
 			<input class="formfld unknown" size='20' id='username' name='username' value='<?=$pconfig['username'];?>' />
 		</td>
 	</tr>
 	<tr>
-		<td width="22%" valign="top" class="vncell"><?php gettext("Password"); ?></td>
+		<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 		<td width="78%" class="vtable">
 			<input class="formfld pwd" type='password' size='20' id='password' name='password' value='<?=$pconfig['password'];?>' />
 		</td>

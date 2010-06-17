@@ -805,9 +805,9 @@ function captiveportal_passthrumac_configure_entry($macent) {
 		$rules .= "pipe {$bw_down} config bw {$macent['bw_down']}Kbit/s queue 100\n";
 		$actiondown = "pipe {$bw_down}";
         }
-	$rules .= "add {$ruleno} {$actionup} ip from any to any MAC {$macent['mac']} any\n";
+	$rules .= "add {$ruleno} {$actiondown} ip from any to any MAC {$macent['mac']} any\n";
 	$ruleno++;
-	$rules .= "add {$ruleno} {$actiondown} ip from any to any MAC any {$macent['mac']}\n";
+	$rules .= "add {$ruleno} {$actionup} ip from any to any MAC any {$macent['mac']}\n";
 
 	return $rules;
 }

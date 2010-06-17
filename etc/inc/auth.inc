@@ -1098,12 +1098,14 @@ function session_auth() {
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
 			log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
-			require_once("functions.inc");
 			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
 				return true;
-			else
-				pfSenseHeader("/{$page}");
+			else {
+				if (empty($page))
+					$page = "/";
+				header("Location: {$page}");
+			}
 			exit;
 		} else {
 			/* give the user an error message */

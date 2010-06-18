@@ -82,7 +82,7 @@ include("head.inc");
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  <?=printf(gettext("Last %s OpenNTPD log entries"), $nentries);?></td>
+			  <?php printf(gettext("Last %s OpenNTPD log entries"), $nentries);?></td>
 		  </tr>
 		  <?php dump_clog($ntpd_logfile, $nentries); ?>
 		<tr><td><br>

@@ -465,8 +465,10 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 function lookup_gateway_ip_by_name($name) {
 
 	$gateways_arr = return_gateways_array();
-	if (!empty($gateways_arr[$name]))
-		return $gateways_arr[$name]['gateway'];
+        foreach ($gateways_arr as $gw) {
+                if ($gw['name'] == $name)
+                        return $gw['gateway'];
+        }
 
 	return false;
 }

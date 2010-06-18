@@ -45,9 +45,10 @@ if($_GET['newver'] != "") {
 	conf_mount_rw();
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 	if(config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0)
-		$savemsg = "Successfully reverted to timestamp " . date("n/j/y H:i:s", $_GET['newver']) . " with description \"" . $confvers[$_GET['newver']]['description'] . "\".";
+
+	$savemsg = sprintf("Successfully reverted to timestamp %s with description \"%s\".", date(gettext("n/j/y H:i:s"), $_GET['newver']), $confvers[$_GET['newver']]['description']);
 	else
-		$savemsg = "Unable to revert to the selected configuration.";
+		$savemsg = gettext("Unable to revert to the selected configuration.");
 	conf_mount_ro();
 }
 
@@ -55,7 +56,7 @@ if($_GET['rmver'] != "") {
 	conf_mount_rw();
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 	unlink_if_exists($g['conf_path'] . '/backup/config-' . $_GET['rmver'] . '.xml');
-	$savemsg = "Deleted backup with timestamp " . date("n/j/y H:i:s", $_GET['rmver']) . " and description \"" . $confvers[$_GET['rmver']]['description'] . "\".";
+	$savemsg = sprintf("Deleted backup with timestamp  %s  and description \"%s\".",date(gettext("n/j/y H:i:s"), $_GET['rmver']),$confvers[$_GET['rmver']]['description']);
 	conf_mount_ro();
 }
 
@@ -94,7 +95,7 @@ cleanup_backupcache();
 $confvers = get_backups();
 unset($confvers['versions']);
 
-$pgtitle = array("Diagnostics","Configuration History");
+$pgtitle = array(gettext("Diagnostics"),gettext("Configuration History"));
 include("head.inc");
 
 ?>
@@ -107,7 +108,7 @@ include("head.inc");
 	?>
 	<? if ($diff) { ?>
 	<table align="center" valign="middle" width="100%" border="0" cellspacing="0" style="padding-top: 4px; padding-bottom: 4px;">
-		<tr><td>Configuration diff from <?php echo date("n/j/y H:i:s", $oldtime); ?> to <?php echo date("n/j/y H:i:s", $newtime); ?></td></tr>
+		<tr><td><?=gettext("Configuration diff from");?> <?php echo date(gettext("n/j/y H:i:s"), $oldtime); ?> <?=gettext("to");?> <?php echo date(gettext("n/j/y H:i:s"), $newtime); ?></td></tr>
 		<?php foreach ($diff as $line) {
 			switch (substr($line, 0, 1)) {
 				case "+":
@@ -135,8 +136,8 @@ include("head.inc");
 			<td>
 			<?php
 				$tab_array = array();
-				$tab_array[0] = array("Config History", true, "diag_confbak.php");
-				$tab_array[1] = array("Backup/Restore", false, "diag_backup.php");
+				$tab_array[0] = array(gettext("Config History"), true, "diag_confbak.php");
+				$tab_array[1] = array(gettext("Backup/Restore"), false, "diag_backup.php");
 				display_top_tabs($tab_array);
 			?>			
 			</td>
@@ -149,25 +150,25 @@ include("head.inc");
 						<?php if (is_array($confvers)): ?>
 						<tr>
 							<td colspan="2" valign="middle" align="center" class="list" nowrap><input type="submit" name="diff" value="Diff"></td>
-							<td width="30%" class="listhdrr">Date</td>
-							<td width="70%" class="listhdrr">Configuration Change</td>
+							<td width="30%" class="listhdrr"><?=gettext("Date");?></td>
+							<td width="70%" class="listhdrr"><?=gettext("Configuration Change");?></td>
 						</tr>
 						<tr valign="top">
 							<td valign="middle" class="list" nowrap></td>
 							<td class="list">
 								<input type="radio" name="newtime" value="current">
 							</td>
-							<td class="listlr"> <?= date("n/j/y H:i:s", $config['revision']['time']) ?></td>
+							<td class="listlr"> <?= date(gettext("n/j/y H:i:s"), $config['revision']['time']) ?></td>
 							<td class="listr"> <?= $config['revision']['description'] ?></td>
-							<td colspan="3" valign="middle" class="list" nowrap><b>Current</b></td>
+							<td colspan="3" valign="middle" class="list" nowrap><b><?=gettext("Current");?></b></td>
 						</tr>
 						<?php
 							$c = 0;
 							foreach($confvers as $version):
 								if($version['time'] != 0)
-									$date = date("n/j/y H:i:s", $version['time']);
+									$date = date(gettext("n/j/y H:i:s"), $version['time']);
 								else
-									$date = "Unknown";
+									$date = gettext("Unknown");
 								$desc = $version['description'];
 						?>
 						<tr valign="top">
@@ -185,18 +186,18 @@ include("head.inc");
 							<td class="listlr"> <?= $date ?></td>
 							<td class="listr"> <?= $desc ?></td>
 							<td valign="middle" class="list" nowrap>
-								<a href="diag_confbak.php?newver=<?=$version['time'];?>" onclick="return confirm('Revert to this configuration?')">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="Revert to this configuration" title="Revert to this configuration">
+							<a href="diag_confbak.php?newver=<?=$version['time'];?>" onclick="return confirm('<?=gettext("Revert to this configuration?");?>'")>
+							<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" alt="<?=gettext("Revert to this configuration");?>" title="<?=gettext("Revert to this configuration");?>">
 								</a>
 							</td>
 							<td valign="middle" class="list" nowrap>
-								<a href="diag_confbak.php?rmver=<?=$version['time'];?>" onclick="return confirm('Delete this configuration backup?')">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="Remove this backup" title="Remove this backup">
+							<a href="diag_confbak.php?rmver=<?=$version['time'];?>" onclick="return confirm('<?=gettext("Delete this configuration backup?");?>')">
+							<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="Remove this backup" title="<?=gettext("Remove this backup");?>">
 								</a>
 							</td>
 							<td valign="middle" class="list" nowrap>
 								<a href="diag_confbak.php?getcfg=<?=$version['time'];?>">
-									<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_down.gif" width="17" height="17" border="0" alt="Download this backup" title="Download this backup">
+								<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_down.gif" width="17" height="17" border="0" alt="Download this backup" title="<?=gettext("Download this backup");?>">
 								</a>
 							</td>
 						</tr>
@@ -208,7 +209,7 @@ include("head.inc");
 						<?php else: ?>
 						<tr>
 							<td>
-								<?php print_info_box("No backups found."); ?>
+								<?php print_info_box(gettext("No backups found.")); ?>
 							</td>
 						</tr>
 						<?php endif; ?>

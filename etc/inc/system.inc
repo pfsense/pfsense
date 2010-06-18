@@ -276,7 +276,7 @@ function system_routing_configure() {
 	$interfacegw = "";
 	/* tack on all the hard defined gateways as well */
 	if (is_array($config['gateways']['gateway_item'])) {
-		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw");
+		mwexec("/bin/rm {$g['tmp_path']}/*_defaultgw", true);
 		$foundgw = false;
 		foreach	($config['gateways']['gateway_item'] as $gateway) {
 			if (isset($gateway['defaultgw'])) {

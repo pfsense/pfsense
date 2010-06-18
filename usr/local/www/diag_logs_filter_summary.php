@@ -31,7 +31,7 @@
 	pfSense_MODULE:	filter
 */
 
-$pgtitle = "Diagnostics: System logs: Firewall Log Summary";
+$pgtitle = gettext("Diagnostics").": ".gettext("System logs").": ".gettext("Firewall Log Summary");
 require_once("guiconfig.inc");
 include_once("filter_log.inc");
 
@@ -42,13 +42,13 @@ $entriesperblock = 5;
 $filterlog = conv_log_filter($filter_logfile, $lines, $lines);
 $gotlines = count($filterlog);
 $fields = array(
-	'act'       => "Actions",
-	'interface' => "Interfaces",
-	'proto'     => "Protocols",
-	'srcip'     => "Source IPs",
-	'dstip'     => "Destination IPs",
-	'srcport'   => "Source Ports",
-	'dstport'   => "Destination Ports");
+	'act'       => gettext("Actions"),
+	'interface' => gettext("Interfaces"),
+	'proto'     => gettext("Protocols"),
+	'srcip'     => gettext("Source IPs"),
+	'dstip'     => gettext("Destination IPs"),
+	'srcport'   => gettext("Source Ports"),
+	'dstport'   => gettext("Destination Ports"));
 
 $summary = array();
 foreach (array_keys($fields) as $f) {
@@ -68,7 +68,7 @@ function stat_block($summary, $stat, $num) {
 	global $gotlines, $fields;
 	uasort($summary[$stat] , 'cmp');
 	print '<table width="200px" cellpadding="3" cellspacing="0" border="1">';
-	print "<tr><th colspan='2'>{$fields[$stat]} data</th></tr>";
+	print "<tr><th colspan='2'>{$fields[$stat]} ".gettext("data")."</th></tr>";
 	$k = array_keys($summary[$stat]);
 	$total = 0;
 	$numentries = 0;
@@ -78,7 +78,7 @@ function stat_block($summary, $stat, $num) {
 			$numentries++;
 			$outstr = $k[$i];
 			if (is_ipaddr($outstr)) {
-				$outstr = "<a href=\"diag_dns.php?host={$outstr}\" title=\"Reverse Resolve with DNS\"><img border=\"0\" src=\"/themes/nervecenter/images/icons/icon_log.gif\"></a> {$outstr}";
+				$outstr = "<a href=\"diag_dns.php?host={$outstr}\" title=\"".gettext("Reverse Resolve with DNS")."\"><img border=\"0\" src=\"/themes/nervecenter/images/icons/icon_log.gif\"></a> {$outstr}";
 			} elseif (substr_count($outstr, '/') == 1) {
 				list($proto, $port) = explode('/', $outstr);
 				$service = getservbyport($port, strtolower($proto));
@@ -121,7 +121,7 @@ function pie_block($summary, $stat, $num) {
 	print "			[\n";
 	for ($i=0; $i < $num; $i++) {
 		if ($k[$i]) {
-			print "			{ data: d{$stat}{$i}, label: \"{$k[$i]}\"}";
+			print "			{ ".gettext("data").": d{$stat}{$i}, ".gettext("label").": \"{$k[$i]}\"}";
 			if (!(($i == ($numentries - 1)) && ($leftover <= 0)))
 				print ",\n";
 			else
@@ -129,11 +129,11 @@ function pie_block($summary, $stat, $num) {
 		}
 	}
 	if ($leftover > 0)
-		print "			{ data: d{$stat}{$i}, label: \"Other\"}\n";
+		print "			{ ".gettext("data").": d{$stat}{$i}, ".gettext("label").": \"Other\"}\n";
 	print "			],\n";
 	print "			{\n";
-	print "				pies: {show: true, autoScale: true},\n";
-	print "				legend: {show: true, labelFormatter: lblfmt}\n";
+	print "				".gettext("pies").": {show: true, autoScale: true},\n";
+	print "				".gettext("legend").": {show: true, labelFormatter: lblfmt}\n";
 	print "			});\n";
 	print "});\n";
 
@@ -181,17 +181,17 @@ include("head.inc"); ?>
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array("System", false, "diag_logs.php");
-	$tab_array[] = array("Firewall", true, "diag_logs_filter.php");
-	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
-	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
-	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
-	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
-	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
-	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
-	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
-	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
-	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
+	$tab_array[] = array(gettext("System"), false, gettext("diag_logs.php"));
+	$tab_array[] = array(gettext("Firewall"), true, gettext("diag_logs_filter.php"));
+	$tab_array[] = array(gettext("DHCP"), false, gettext("diag_logs_dhcp.php"));
+	$tab_array[] = array(gettext("Portal Auth"), false, gettext("diag_logs_auth.php"));
+	$tab_array[] = array(gettext("IPsec"), false, gettext("diag_logs_ipsec.php"));
+	$tab_array[] = array(gettext("PPP"), false, gettext("diag_logs_ppp.php"));
+	$tab_array[] = array(gettext("VPN"), false, gettext("diag_logs_vpn.php"));
+	$tab_array[] = array(gettext("Load Balancer"), false, gettext("diag_logs_relayd.php"));
+	$tab_array[] = array(gettext("OpenVPN"), false, gettext("diag_logs_openvpn.php"));
+	$tab_array[] = array(gettext("OpenNTPD"), false, gettext("diag_logs_ntpd.php"));
+	$tab_array[] = array(gettext("Settings"), false, gettext("diag_logs_settings.php"));
 	display_top_tabs($tab_array);
 ?>
  </td></tr>
@@ -200,12 +200,12 @@ include("head.inc"); ?>
 	<div id="mainarea">
 		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
 		<tr><td colspan="6" align="left">
-			<a href="diag_logs_filter.php">Normal View</a> | <a href="diag_logs_filter_dynamic.php">Dynamic View</a> | Summary View<br/><br/>
+			<a href="diag_logs_filter.php"><?=gettext("Normal View");?></a> | <a href="diag_logs_filter_dynamic.php"><?=gettext("Dynamic View");?></a> | <?=gettext("Summary View");?><br/><br/>
 		</td></tr>
 		<tr><td align="center">
 
-This is a firewall log summary, of the last <?php echo $gotlines; ?> lines of the firewall log (Max <?php echo $lines; ?>).<br />
-NOTE: IE8 users must enable compatibility view.
+<?php printf (gettext("This is a firewall log summary, of the last %s lines of the firewall log (Max %s)."), $gotlines, $lines)?><br />
+<?=gettext("NOTE: IE8 users must enable compatibility view.")?>
 
 <?php
 foreach(array_keys($fields) as $field) {

@@ -52,49 +52,7 @@ function captiveportal_configure() {
 
 	$captiveportallck = lock('captiveportal');
 	
-	$cpactive = false;
 	if (isset($config['captiveportal']['enable'])) {
-		$cpips = array();
-		$ifaces = get_configured_interface_list();
-		foreach ($ifaces as $kiface => $kiface2) {
-			$tmpif = get_real_interface($kiface);
-			pfSense_interface_flags($tmpif, -IFF_IPFW_FILTER);
-		}
-		$cpinterfaces = explode(",", $config['captiveportal']['interface']);
-		$firsttime = 0;
-		foreach ($cpinterfaces as $cpifgrp) {
-			if (!isset($ifaces[$cpifgrp]))
-				continue;
-			$tmpif = get_real_interface($cpifgrp);
-			if (!empty($tmpif)) {
-				if ($firsttime > 0)
-					$cpinterface .= " or ";
-				$cpinterface .= "via {$tmpif}"; 
-				$firsttime = 1;
-				$cpipm = get_interface_ip($cpifgrp);
-				if (is_ipaddr($cpipm)) {
-					$carpif = link_ip_to_carp_interface($cpipm);
-					if (!empty($carpif)) {
-						$carpsif = explode(" ", $carpif);
-						foreach ($carpsif as $cpcarp) {
-							pfSense_interface_flags($cpcarp, IFF_IPFW_FILTER);
-							$carpip = find_interface_ip($cpcarp);
-							if (is_ipaddr($carpip))
-								$cpips[] = $carpip;
-						}
-					}
-					$cpips[] = $cpipm;
-					pfSense_interface_flags($tmpif, IFF_IPFW_FILTER);
-				}
-			}
-		}
-		if (count($cpips) > 0) {
-			$cpactive = true;
-			$cpinterface = "{ {$cpinterface} } ";
-		}
-	}
-
-	if ($cpactive == true) {
 
 		if ($g['booting'])
 			echo "Starting captive portal... ";
@@ -108,7 +66,6 @@ function captiveportal_configure() {
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_mac.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_ip.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius.db");
-		mwexec("/sbin/ipfw -q table all flush", true);
 
 		/* setup new database in case someone tries to access the status -> captive portal page */
 		touch("{$g['vardb_path']}/captiveportal.db");
@@ -116,22 +73,11 @@ function captiveportal_configure() {
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/minicron.pid");
 
-		/* make sure ipfw is loaded */
-		if (!is_module_loaded("ipfw.ko"))
-			filter_load_ipfw();
-		/* Always load dummynet now that even allowed ip and mac passthrough use it. */
-		if (!is_module_loaded("dummynet.ko"))
-                        mwexec("/sbin/kldload dummynet");
-
-		/* generate ipfw rules */
+		/* init dummynet/ipfw rules number database */
 		captiveportal_init_ipfw_ruleno();
-		$cprules = captiveportal_rules_generate($cpinterface, $cpips);
-		$cprules .= "\n";
-		/* generate passthru mac database */
-		$cprules .= captiveportal_passthrumac_configure(true);
-		$cprules .= "\n";
-		/* allowed ipfw rules to make allowed ip work */
-		$cprules .= captiveportal_allowedip_configure();
+
+		/* init ipfw rules */
+		captiveportal_init_rules();
 
 		/* stop accounting on all clients */
 		captiveportal_radius_stop_all(true);
@@ -277,60 +223,8 @@ EOD;
 		/* write elements */
 		captiveportal_write_elements();
 
-		/* load rules */
-		mwexec("/sbin/ipfw -q flush");
-
-		/* ipfw cannot accept rules directly on stdin,
-		   so we have to write them to a temporary file first */
-		$fd = @fopen("{$g['tmp_path']}/ipfw.cp.rules", "w");
-		if (!$fd) {
-			printf("Cannot open ipfw.cp.rules in captiveportal_configure()\n");
-			return 1;
-		}
-
-		fwrite($fd, $cprules);
-		fclose($fd);
-
-		mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw.cp.rules");
-
-		@unlink("{$g['tmp_path']}/ipfw.cp.rules");
-
-		/* filter on layer2 as well so we can check MAC addresses */
-		mwexec("/sbin/sysctl net.link.ether.ipfw=1");
-
-		chdir($g['captiveportal_path']);
-
-		if ($config['captiveportal']['maxproc'])
-			$maxproc = $config['captiveportal']['maxproc'];
-		else
-			$maxproc = 16;
-
-		$use_fastcgi = true;
-
-		if(isset($config['captiveportal']['httpslogin'])) {
-			$cert = base64_decode($config['captiveportal']['certificate']);
-			if (isset($config['captiveportal']['cacertificate']))
-				$cacert = base64_decode($config['captiveportal']['cacertificate']);
-			else
-				$cacert = "";
-			$key = base64_decode($config['captiveportal']['private-key']);
-			/* generate lighttpd configuration */
-			system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal-SSL.conf",
-				$cert, $key, $cacert, "lighty-CaptivePortal-ssl.pid", "8001", "/usr/local/captiveportal/",
-					"cert-portal.pem", "ca-portal.pem", "1", $maxproc, $use_fastcgi, true);
-		}
-
-		/* generate lighttpd configuration */
-		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
-			"", "", "", "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
-				"cert-portal.pem", "ca-portal.pem", "1", $maxproc, $use_fastcgi, true);
-
-		/* attempt to start lighttpd */
-		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");
-
-		/* fire up https instance */
-		if(isset($config['captiveportal']['httpslogin']))
-			$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal-SSL.conf");
+		/* start up the webserving daemon */
+		captiveportal_init_webgui();
 
 		/* start pruning process (interval defaults to 60 seconds) */
 		mwexec("/usr/local/bin/minicron $croninterval {$g['varrun_path']}/minicron.pid " .
@@ -408,8 +302,97 @@ EOD;
 	return 0;
 }
 
-function captiveportal_rules_generate($cpif, &$cpiparray) {
+function captiveportal_init_webgui() {
+	global $g, $config;
+
+	 if (!isset($config['captiveportal']['enable']))
+                return;
+
+	if ($config['captiveportal']['maxproc'])
+		$maxproc = $config['captiveportal']['maxproc'];
+	else
+		$maxproc = 16;
+
+	$use_fastcgi = true;
+
+	if (isset($config['captiveportal']['httpslogin'])) {
+		$cert = base64_decode($config['captiveportal']['certificate']);
+		if (isset($config['captiveportal']['cacertificate']))
+			$cacert = base64_decode($config['captiveportal']['cacertificate']);
+		else
+			$cacert = "";
+		$key = base64_decode($config['captiveportal']['private-key']);
+		/* generate lighttpd configuration */
+		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal-SSL.conf",
+			$cert, $key, $cacert, "lighty-CaptivePortal-ssl.pid", "8001", "/usr/local/captiveportal/",
+			"cert-portal.pem", "ca-portal.pem", "1", $maxproc, $use_fastcgi, true);
+	}
+
+	/* generate lighttpd configuration */
+	system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
+		"", "", "", "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
+		"cert-portal.pem", "ca-portal.pem", "1", $maxproc, $use_fastcgi, true);
+
+	/* attempt to start lighttpd */
+	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");
+
+	/* fire up https instance */
+	if (isset($config['captiveportal']['httpslogin']))
+		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal-SSL.conf");
+}
+
+function captiveportal_init_rules() {
 	global $config, $g;
+
+	if (!isset($config['captiveportal']['enable']))
+		return;
+
+	$cpips = array();
+	$ifaces = get_configured_interface_list();
+	foreach ($ifaces as $kiface => $kiface2) {
+		$tmpif = get_real_interface($kiface);
+		pfSense_interface_flags($tmpif, -IFF_IPFW_FILTER);
+	}
+	$cpinterfaces = explode(",", $config['captiveportal']['interface']);
+	$firsttime = 0;
+	foreach ($cpinterfaces as $cpifgrp) {
+		if (!isset($ifaces[$cpifgrp]))
+			continue;
+		$tmpif = get_real_interface($cpifgrp);
+		if (!empty($tmpif)) {
+			if ($firsttime > 0)
+				$cpinterface .= " or ";
+			$cpinterface .= "via {$tmpif}";
+			$firsttime = 1;
+			$cpipm = get_interface_ip($cpifgrp);
+			if (is_ipaddr($cpipm)) {
+				$carpif = link_ip_to_carp_interface($cpipm);
+				if (!empty($carpif)) {
+					$carpsif = explode(" ", $carpif);
+					foreach ($carpsif as $cpcarp) {
+						pfSense_interface_flags($cpcarp, IFF_IPFW_FILTER);
+						$carpip = find_interface_ip($cpcarp);
+						if (is_ipaddr($carpip))
+							$cpips[] = $carpip;
+					}
+				}
+				$cpips[] = $cpipm;
+				pfSense_interface_flags($tmpif, IFF_IPFW_FILTER);
+			}
+		}
+	}
+	if (count($cpips) > 0) {
+		$cpactive = true;
+		$cpinterface = "{ {$cpinterface} } ";
+        } else
+		return false;
+
+	/* make sure ipfw is loaded */
+	if (!is_module_loaded("ipfw.ko"))
+		filter_load_ipfw();
+	/* Always load dummynet now that even allowed ip and mac passthrough use it. */
+	if (!is_module_loaded("dummynet.ko"))
+		mwexec("/sbin/kldload dummynet");
 
 	$cprules =  "add 65291 set 1 allow pfsync from any to any\n";
 	$cprules .= "add 65292 set 1 allow carp from any to any\n";
@@ -436,7 +419,7 @@ EOD;
 
 	$rulenum = 65310;
 	$ips = "255.255.255.255 ";
-	foreach ($cpiparray as $cpip)
+	foreach ($cpips as $cpip)
 		$ips .= "or {$cpip} ";
 	$ips = "{ {$ips} }";
 	//# allow access to our DHCP server (which needs to be able to ping clients as well)
@@ -522,7 +505,23 @@ add 65534 set 1 pass all from any to any layer2
 
 EOD;
 
-    return $cprules;
+	/* generate passthru mac database */
+	$cprules .= captiveportal_passthrumac_configure(true);
+	$cprules .= "\n";
+	/* allowed ipfw rules to make allowed ip work */
+	$cprules .= captiveportal_allowedip_configure();
+
+	/* load rules */
+	$cprules = "table all flush\nflush\n{$cprules}";
+	if (file_put_contents("{$g['tmp_path']}/ipfw.cp.rules", $cprules)) {
+		mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw.cp.rules", true);
+		//@unlink("{$g['tmp_path']}/ipfw.cp.rules");
+	}
+
+	/* filter on layer2 as well so we can check MAC addresses */
+	mwexec("/sbin/sysctl net.link.ether.ipfw=1");
+
+	return $cprules;
 }
 
 /* remove clients that have been around for longer than the specified amount of time */
@@ -1071,20 +1070,19 @@ function captiveportal_write_db($cpdb) {
 }
 
 function captiveportal_write_elements() {
-    global $g, $config;
+	global $g, $config;
     
-    /* delete any existing elements */
-    if (is_dir($g['captiveportal_element_path'])) {
-        $dh = opendir($g['captiveportal_element_path']);
-        while (($file = readdir($dh)) !== false) {
-            if ($file != "." && $file != "..")
-                unlink($g['captiveportal_element_path'] . "/" . $file);
-        }
-        closedir($dh);
-    } else {
-        @mkdir($g['captiveportal_element_path']);
-    }
-    
+	/* delete any existing elements */
+	if (is_dir($g['captiveportal_element_path'])) {
+		$dh = opendir($g['captiveportal_element_path']);
+		while (($file = readdir($dh)) !== false) {
+			if ($file != "." && $file != "..")
+				unlink($g['captiveportal_element_path'] . "/" . $file);
+		}
+		closedir($dh);
+	} else
+		@mkdir($g['captiveportal_element_path']);
+
 	if (is_array($config['captiveportal']['element'])) {
 		conf_mount_rw();
 		foreach ($config['captiveportal']['element'] as $data) {
@@ -1103,7 +1101,7 @@ function captiveportal_write_elements() {
 		conf_mount_ro();
 	}
     
-    return 0;
+	return 0;
 }
 
 function captiveportal_init_ipfw_ruleno($rulenos_start = 2000, $rulenos_range_max = 49899) {

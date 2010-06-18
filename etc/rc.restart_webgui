@@ -14,7 +14,7 @@ echo "Restarting webConfigurator...";
 
 system_webgui_start();
 
-captiveportal_configure();
+captiveportal_init_webgui();
 
 enable_rrd_graphing();
 

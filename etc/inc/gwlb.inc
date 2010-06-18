@@ -160,6 +160,9 @@ EOD;
 					$gateway['monitor'] = $gateway['gateway'];
 			}
 
+			if (!is_ipaddr($gateway['monitor']))
+				continue;
+
 			$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
 			$apingercfg .= "	description \"{$gateway['name']}\"\n";
 			$gwifip = find_interface_ip($gateway['interface']);

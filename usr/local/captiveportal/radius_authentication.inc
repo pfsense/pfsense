@@ -61,13 +61,16 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     switch($radiusvendor) {
 
         case 'cisco':
-        $calledstationid = $clientmac;
-        $callingstationid = $clientip;
-        break;
-
+        	$calledstationid = $clientmac;
+        	$callingstationid = $clientip;
+        	break;
         default:
-        $calledstationid = get_interface_ip("wan");
-        $callingstationid = $clientmac;
+		if (is_ipaddr($config['captiveportal']['radiussrcip_attribute']))
+			$calledstationid = $config['captiveportal']['radiussrcip_attribute'];
+		else
+        		$calledstationid = get_interface_ip($config['captiveportal']['radiussrcip_attribute']);
+        	$callingstationid = $clientmac;
+		break;
     }
 
     // Create our instance

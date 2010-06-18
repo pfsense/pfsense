@@ -98,6 +98,7 @@ $pconfig['radiuskey'] = $config['captiveportal']['radiuskey'];
 $pconfig['radiuskey2'] = $config['captiveportal']['radiuskey2'];
 $pconfig['radiusvendor'] = $config['captiveportal']['radiusvendor'];
 $pconfig['radiussession_timeout'] = isset($config['captiveportal']['radiussession_timeout']);
+$pconfig['radiussrcip_attribute'] = $config['captiveportal']['radiussrcip_attribute'];
 $pconfig['passthrumacadd'] = isset($config['captiveportal']['passthrumacadd']);
 $pconfig['passthrumacaddusername'] = isset($config['captiveportal']['passthrumacaddusername']);
 $pconfig['radmac_format'] = $config['captiveportal']['radmac_format'];
@@ -200,6 +201,7 @@ if ($_POST) {
 		$config['captiveportal']['radiuskey2'] = $_POST['radiuskey2'];
 		$config['captiveportal']['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
+		$config['captiveportal']['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
 		$config['captiveportal']['passthrumacadd'] = $_POST['passthrumacadd'] ? true : false;
 		$config['captiveportal']['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$config['captiveportal']['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
@@ -263,6 +265,7 @@ function enable_change(enable_change) {
 	document.iform.noconcurrentlogins.disabled = endis;
 	document.iform.radiusvendor.disabled = radius_endis;
 	document.iform.radiussession_timeout.disabled = radius_endis;
+	document.iform.radiussrcip_attribute.disabled = radius_endis;
 	document.iform.htmlfile.disabled = endis;
 	document.iform.errfile.disabled = endis;
 	document.iform.logoutfile.disabled = endis;
@@ -525,6 +528,41 @@ value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 			</tr>
 			<tr>
 				<td colspan="2" valign="top" class="optsect_t2">RADIUS options</td>
+			</tr>
+
+			<tr>
+				<td class="vncell" valign="top">Radius ip attribute</td>
+				<td>
+				<select name="radiussrcip_attribute" id="radiussrcip_attribute">
+				<?php $iflist = get_configured_interface_with_descr();
+					foreach ($iflist as $ifdesc => $ifdescr) {
+						$ipaddr = get_interface_ip($ifdesc);
+						if (is_ipaddr($ipaddr)) {
+							$selected = "";
+							if ($ipaddr == $pconfig['radiussrcip_attribute'])
+								$ifdesc = "selected";
+							echo "<option value='{$ifdesc}' {$selected}>{$ifdescr} - {$ipaddr}</option>\n";
+						}
+					}
+					if (is_array($config['virtualip']['vip'])) {
+                				foreach ($config['virtualip']['vip'] as $sn) {
+                        				if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+                                				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
+                                				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
+                                				$len = $end - $start;
+
+                                				for ($i = 0; $i <= $len; $i++) {
+                                        				$snip = long2ip32($start+$i);
+                                					echo "<option value='{$snip}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$snip}") . "></option>\n";
+								}
+							} else
+                                				echo "<option value='{$sn['subnet']}' {$selected}>" . htmlspecialchars("{$sn['descr']} - {$sn['subnet']}") . "></option>\n";
+						}
+					}
+				?>
+				</select><br/>
+				Choose the ip to use for calling station attribute.
+				</td>
 			</tr>
 
 			<tr>

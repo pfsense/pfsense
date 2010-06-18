@@ -1098,11 +1098,15 @@ function session_auth() {
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['last_access'] = time();
 			log_error("Successful login for user '{$_POST['usernamefld']}' from: {$_SERVER['REMOTE_ADDR']}");
-			require_once("functions.inc");
+			$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 			if (isset($_POST['postafterlogin']))
 				return true;
-			else
-				pfSenseHeader("/{$page}");
+			else {
+				if (empty($page))
+					$page = "/";
+				header("Location: {$page}");
+			}
+			exit;
 		} else {
 			/* give the user an error message */
 			$_SESSION['Login_Error'] = "Username or Password incorrect";
@@ -1177,20 +1181,14 @@ function session_auth() {
 	 * to submit a HTML form. It basically diables the observation
 	 * of the submit event and hence does not trigger Ajax.
 	 */
-	if ($_GET['disable_ajax']) {
+	if ($_GET['disable_ajax'])
 		$_SESSION['NO_AJAX'] = "True";
-		$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
-		return true;
-	}
 
 	/*
 	 * Same to re-enable Ajax.
 	 */
-	if ($_GET['enable_ajax']) {
+	if ($_GET['enable_ajax'])
 		unset($_SESSION['NO_AJAX']);
-		$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
-		return true;
-	}
 
 	$HTTP_SERVER_VARS['AUTH_USER'] = $_SESSION['Username'];
 	return true;

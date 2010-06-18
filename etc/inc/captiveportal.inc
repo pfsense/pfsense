@@ -1248,10 +1248,21 @@ function getNasID()
 
 function getNasIP()
 {
-    $nasIp = get_interface_ip();
-    if(!$nasIp)
-        $nasIp = "0.0.0.0";
-    return $nasIp;
+	global $config;
+
+	if (empty($config['captiveportal']['radiussrcip_attribute']))
+    		$nasIp = get_interface_ip();
+	else {
+		if (is_ipaddr($config['captiveportal']['radiussrcip_attribute']))
+                        $nasIp = $config['captiveportal']['radiussrcip_attribute'];
+                else
+                        $nasIp = get_interface_ip($config['captiveportal']['radiussrcip_attribute']);
+	}
+		
+    	if(!is_ipaddr($nasIp))
+        	$nasIp = "0.0.0.0";
+
+	return $nasIp;
 }
 
 function portal_ip_from_client_ip($cliip) {

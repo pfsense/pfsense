@@ -67,7 +67,11 @@ function RADIUS_ACCOUNTING_START($ruleno, $username, $sessionid, $radiusservers,
         break;
 
         default:
-        $calledstationid = get_interface_ip("wan");
+	if (is_ipaddr($config['captiveportal']['radiussrcip_attribute']))
+            $calledstationid = $config['captiveportal']['radiussrcip_attribute'];
+        else
+                $calledstationid = get_interface_ip($config['captiveportal']['radiussrcip_attribute']);
+            $callingstationid = $clientmac;
         $callingstationid = $clientmac;
     }
 

@@ -1081,7 +1081,7 @@ class priq_queue {
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
                         $form .=  " CHECKED";
-                $form .= " ><span class=\"vexpl\"> Enable/Disable queue and its childs</span>";
+                $form .= " ><span class=\"vexpl\"> Enable/Disable queue and its children</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
@@ -2929,7 +2929,7 @@ class dnpipe_class extends dummynet_class {
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
                         $form .=  " CHECKED";
-                $form .= " ><span class=\"vexpl\"> Enable/Disable limiter and its childs</span>";
+                $form .= " ><span class=\"vexpl\"> Enable/Disable limiter and its children</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -3172,7 +3172,7 @@ class dnqueue_class extends dummynet_class {
                 $form .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\" value=\"on\"";
                 if ($this->GetEnabled() == "on")
                         $form .=  " CHECKED";
-                $form .= " ><span class=\"vexpl\"> Enable/Disable queue and its childs</span>";
+                $form .= " ><span class=\"vexpl\"> Enable/Disable queue and its children</span>";
                 $form .= "</td></tr>";
 		$form .= "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";

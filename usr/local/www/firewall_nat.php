@@ -82,6 +82,19 @@ if ($_POST) {
 	}
 }
 
+if ($_GET['act'] == "del") {
+	if ($a_nat[$_GET['id']]) {
+		if (isset($a_nat[$_GET['id']]['associated-rule-id'])) {
+			delete_id($a_nat[$_GET['id']]['associated-rule-id'], $config['filter']['rule']);
+		}
+		unset($a_nat[$_GET['id']]);
+		write_config();
+		mark_subsystem_dirty('nat');
+		header("Location: firewall_nat.php");
+		exit;
+	}
+}
+
 if (isset($_POST['del_x'])) {
     /* delete selected rules */
     if (is_array($_POST['rule']) && count($_POST['rule'])) {
@@ -195,7 +208,13 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td width="5%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-			<td width="17"></td>
+			<td width="17">
+			<?php if (count($a_nat) == 0): ?>
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0">
+			<?php else: ?>
+				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected rules" onclick="return confirm('Do you really want to delete the selected rules?')">
+			<?php endif; ?>
+			</td>
                         <td><a href="firewall_nat_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
@@ -293,10 +312,11 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td valign="middle" class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
+                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="move selected rules before this rule" height="17" type="image" width="17" border="0"></td>
                         <td><a href="firewall_nat_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="edit rule"></a></td>
                       </tr>
                       <tr>
-                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="move selected rules before this rule" height="17" type="image" width="17" border="0"></td>
+					    <td align="center" valign="middle"><a href="firewall_nat.php?act=del&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="delete rule" onclick="return confirm('Do you really want to delete this rule?')"></a></td>
                         <td><a href="firewall_nat_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add a new nat based on this one" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
@@ -310,11 +330,17 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="list" valign="middle" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected mappings to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected mappings to end" border="0"><?php endif; ?></td>
-                        <td><a href="firewall_nat_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected rules to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected rules to end" border="0"><?php endif; ?></td>
                       </tr>
                       <tr>
-                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?><input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')"><?php endif; ?></td>
+			<td width="17">
+			<?php if (count($a_nat) == 0): ?>
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0">
+			<?php else: ?>
+				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected rules" onclick="return confirm('Do you really want to delete the selected rules?')">
+			<?php endif; ?>
+			</td>
+                        <td><a href="firewall_nat_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
 		  </td>

@@ -116,7 +116,7 @@ include("head.inc");
 						$logent = preg_replace($search, $replace, $logent);
 					} else {
 						$searchs = "/(racoon: )([A-Z:].*?)([0-9].+\.[0-9].+.[0-9].+.[0-9].+\[[0-9].+\])(.*)/i";
-						$replaces = "$1<strong><font color=red>[".gettext("Unknown Gateway/Dynamic"."]</font></strong>: $2$3$4";
+						$replaces = "$1<strong><font color=red>[".gettext("Unknown Gateway/Dynamic")."]</font></strong>: $2$3$4";
 						$logent = preg_replace($searchs, $replaces, $logent);
 					}
 					$logent = preg_split("/\s+/", $logent, 6);

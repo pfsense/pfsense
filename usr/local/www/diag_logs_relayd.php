@@ -52,7 +52,7 @@ if (!$nentries)
 if ($_POST['clear']) 
 	clear_log_file($relayd_logfile);
 
-$pgtitle = array("Status","System logs","Load Balancer");
+$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("Load Balancer"));
 include("head.inc");
 
 ?>
@@ -63,17 +63,17 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array("System", false, "diag_logs.php");
-	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
-	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
-	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
-	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
-	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
-	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
-	$tab_array[] = array("Load Balancer", true, "diag_logs_relayd.php");
-	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
-	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
-	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
+	$tab_array[] = array(gettext("System"), false, gettext("diag_logs.php"));
+	$tab_array[] = array(gettext("Firewall"), false, gettext("diag_logs_filter.php"));
+	$tab_array[] = array(gettext("DHCP"), false, gettext("diag_logs_dhcp.php"));
+	$tab_array[] = array(gettext("Portal Auth"), false, gettext("diag_logs_auth.php"));
+	$tab_array[] = array(gettext("PPP"), false, gettext("diag_logs_ppp.php"));
+	$tab_array[] = array(gettext("IPsec"), false, gettext("diag_logs_ipsec.php"));
+	$tab_array[] = array(gettext("VPN"), false, gettext("diag_logs_vpn.php"));
+	$tab_array[] = array(gettext("Load Balancer"), true, gettext("diag_logs_relayd.php"));
+	$tab_array[] = array(gettext("OpenVPN"), false, gettext("diag_logs_openvpn.php"));
+	$tab_array[] = array(gettext("OpenNTPD"), false, gettext("diag_logs_ntpd.php"));
+	$tab_array[] = array(gettext("Settings"), false, gettext("diag_logs_settings.php"));
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -83,7 +83,7 @@ include("head.inc");
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  Last <?=$nentries;?> Load Balancer log entries</td>
+			  <?php printf(gettext("Last %s Load Balancer log entries"),$nentries);?></td>
 		  </tr>
 		  <?php dump_clog($relayd_logfile, $nentries); ?>
 		<tr><td><br><form action="diag_logs_relayd.php" method="post">

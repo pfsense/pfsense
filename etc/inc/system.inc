@@ -260,7 +260,7 @@ function system_hostname_configure() {
 	return $status;
 }
 
-function system_routing_configure() {
+function system_routing_configure($interface = "") {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -322,8 +322,10 @@ function system_routing_configure() {
 		$route_arr[$items[0]] = array($items[0], $items[1], $items[5]);
 	}
 
-	if ($dont_add_route == false) {
-		if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
+	if ($dont_add_route == false ) {
+		if (!empty($interface) && $inteface != $interafegw)
+			;
+		else if (($interfacegw <> "bgpd") && (is_ipaddr($gatewayip))) {
 			$action = "add";
 			if(isset($route_arr['default'])) {
 				$action = "change";
@@ -345,6 +347,8 @@ function system_routing_configure() {
 		$gateways_arr = return_gateways_array();
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
+			if (!empty($interface) && $interface != $rtent['interface'])
+				continue;
 			$gatewayip = "";
 			if (isset($gateways_arr[$rtent['gateway']])) {
 				$gatewayip = $gateways_arr[$rtent['gateway']]['gateway'];

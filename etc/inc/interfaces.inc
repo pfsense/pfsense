@@ -2355,7 +2355,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		if ($reloadall == true) {
 
 			/* reconfigure static routes (kernel may have deleted them) */
-			system_routing_configure();
+			system_routing_configure($interface);
 
 			/* reload ipsec tunnels */
 			vpn_ipsec_configure();

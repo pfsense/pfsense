@@ -62,7 +62,7 @@ if ($_POST['filtertext'])
 if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";
 
-$pgtitle = array("Status","System logs","System");
+$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("System"));
 include("head.inc");
 
 ?>
@@ -74,17 +74,17 @@ include("head.inc");
 		<td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array("System", true, "diag_logs.php");
-	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
-	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
-	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
-	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
-	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
-	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
-	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
-	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
-	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
-	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
+	$tab_array[] = array(gettext("System"), true, "diag_logs.php");
+	$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
+	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
+	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
+	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
+	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
+	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
+	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
+	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
+	$tab_array[] = array(gettext("OpenNTPD"), false, "diag_logs_ntpd.php");
+	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
 		</td>
@@ -94,7 +94,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td colspan="2" class="listtopic">Last <?=$nentries;?> system log entries</td>
+					<td colspan="2" class="listtopic"><? printf(gettext("Last %s system log entries"),$nentries); ?></td>
 				</tr>
 				<?php
 					if($filtertext)
@@ -110,7 +110,7 @@ include("head.inc");
 					</td>
 					<td align="right" valign="top" >
 						<form id="clearform" name="clearform" action="diag_logs.php" method="post" style="margin-top: 14px;">
-              				<input id="filtertext" name="filtertext" value="<?=gettext($filtertext);?>" />
+              				<input id="filtertext" name="filtertext" value="<?=$filtertext;?>" />
               				<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
 						</form>
 					</td>

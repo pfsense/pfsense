@@ -73,11 +73,8 @@ function captiveportal_configure() {
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/minicron.pid");
 
-		/* init dummynet/ipfw rules number database */
-		captiveportal_init_ipfw_ruleno();
-
 		/* init ipfw rules */
-		captiveportal_init_rules();
+		captiveportal_init_rules(true);
 
 		/* stop accounting on all clients */
 		captiveportal_radius_stop_all(true);
@@ -341,7 +338,7 @@ function captiveportal_init_webgui() {
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal-SSL.conf");
 }
 
-function captiveportal_init_rules() {
+function captiveportal_init_rules($reinit = false) {
 	global $config, $g;
 
 	if (!isset($config['captiveportal']['enable']))
@@ -386,6 +383,9 @@ function captiveportal_init_rules() {
 		$cpinterface = "{ {$cpinterface} } ";
         } else
 		return false;
+
+	/* init dummynet/ipfw rules number database */
+	captiveportal_init_ipfw_ruleno();
 
 	/* make sure ipfw is loaded */
 	if (!is_module_loaded("ipfw.ko"))
@@ -512,7 +512,20 @@ EOD;
 	$cprules .= captiveportal_allowedip_configure();
 
 	/* load rules */
-	$cprules = "table all flush\nflush\n{$cprules}";
+	if ($reinit == true)
+		$cprules = "table all flush\nflush\n{$cprules}";
+	else {
+		$tmprules = "table 3 flush\n";
+		$tmprules .= "table 4 flush\n";
+		$tmprules .= "table 5 flush\n";
+		$tmprules .= "table 6 flush\n";
+		$tmprules .= "table 7 flush\n";
+		$tmprules .= "table 8 flush\n";
+		$tmprules .= "table 9 flush\n";
+		$tmprules .= "table 10 flush\n";
+		$tmprules .= "flush\n";
+		$cprules = "{$tmprules}\n{$cprules}";
+	}
 	if (file_put_contents("{$g['tmp_path']}/ipfw.cp.rules", $cprules)) {
 		mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw.cp.rules", true);
 		//@unlink("{$g['tmp_path']}/ipfw.cp.rules");

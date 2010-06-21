@@ -160,6 +160,9 @@ EOD;
 					$gateway['monitor'] = $gateway['gateway'];
 			}
 
+			if (!is_ipaddr($gateway['monitor']))
+				continue;
+
 			$apingercfg .= "target \"{$gateway['monitor']}\" {\n";
 			$apingercfg .= "	description \"{$gateway['name']}\"\n";
 			$gwifip = find_interface_ip($gateway['interface']);
@@ -465,8 +468,10 @@ function dhclient_update_gateway_groups_defaultroute($interface = "wan") {
 function lookup_gateway_ip_by_name($name) {
 
 	$gateways_arr = return_gateways_array();
-	if (!empty($gateways_arr[$name]))
-		return $gateways_arr[$name]['gateway'];
+        foreach ($gateways_arr as $gw) {
+                if ($gw['name'] == $name)
+                        return $gw['gateway'];
+        }
 
 	return false;
 }

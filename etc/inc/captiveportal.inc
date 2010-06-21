@@ -384,6 +384,9 @@ function captiveportal_init_rules($reinit = false) {
         } else
 		return false;
 
+	if ($reinit == false)
+		$captiveportallck = lock('captiveportal');
+
 	/* init dummynet/ipfw rules number database */
 	captiveportal_init_ipfw_ruleno();
 
@@ -526,10 +529,14 @@ EOD;
 		$tmprules .= "flush\n";
 		$cprules = "{$tmprules}\n{$cprules}";
 	}
-	if (file_put_contents("{$g['tmp_path']}/ipfw.cp.rules", $cprules)) {
-		mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw.cp.rules", true);
-		//@unlink("{$g['tmp_path']}/ipfw.cp.rules");
-	}
+
+	file_put_contents("{$g['tmp_path']}/ipfw.cp.rules", $cprules);
+	mwexec("/sbin/ipfw -q {$g['tmp_path']}/ipfw.cp.rules", true);
+	@unlink("{$g['tmp_path']}/ipfw.cp.rules");
+
+	if ($reinit == false)
+		unlock($captiveportallck);
+
 
 	/* filter on layer2 as well so we can check MAC addresses */
 	mwexec("/sbin/sysctl net.link.ether.ipfw=1");

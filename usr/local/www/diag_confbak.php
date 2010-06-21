@@ -28,7 +28,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*	
+/*
 	pfSense_MODULE:	config
 */
 
@@ -46,7 +46,7 @@ if($_GET['newver'] != "") {
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 	if(config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0)
 
-	$savemsg = sprintf("Successfully reverted to timestamp %s with description \"%s\".", date(gettext("n/j/y H:i:s"), $_GET['newver']), $confvers[$_GET['newver']]['description']);
+	$savemsg = sprintf(gettext("Successfully reverted to timestamp %s with description \"%s\"."), date(gettext("n/j/y H:i:s"), $_GET['newver']), $confvers[$_GET['newver']]['description']);
 	else
 		$savemsg = gettext("Unable to revert to the selected configuration.");
 	conf_mount_ro();
@@ -56,7 +56,7 @@ if($_GET['rmver'] != "") {
 	conf_mount_rw();
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 	unlink_if_exists($g['conf_path'] . '/backup/config-' . $_GET['rmver'] . '.xml');
-	$savemsg = sprintf("Deleted backup with timestamp  %s  and description \"%s\".",date(gettext("n/j/y H:i:s"), $_GET['rmver']),$confvers[$_GET['rmver']]['description']);
+	$savemsg = sprintf(gettext("Deleted backup with timestamp %s and description \"%s\"."), date(gettext("n/j/y H:i:s"), $_GET['rmver']),$confvers[$_GET['rmver']]['description']);
 	conf_mount_ro();
 }
 
@@ -139,7 +139,7 @@ include("head.inc");
 				$tab_array[0] = array(gettext("Config History"), true, "diag_confbak.php");
 				$tab_array[1] = array(gettext("Backup/Restore"), false, "diag_backup.php");
 				display_top_tabs($tab_array);
-			?>			
+			?>
 			</td>
 		</tr>
 		<tr>
@@ -180,7 +180,7 @@ include("head.inc");
 								<input type="radio" name="newtime" value="<?php echo $version['time'];?>">
 								<? } else { ?>
 								&nbsp;
-								<? } 
+								<? }
 								$c++; ?>
 							</td>
 							<td class="listlr"> <?= $date ?></td>
@@ -192,12 +192,12 @@ include("head.inc");
 							</td>
 							<td valign="middle" class="list" nowrap>
 							<a href="diag_confbak.php?rmver=<?=$version['time'];?>" onclick="return confirm('<?=gettext("Delete this configuration backup?");?>')">
-							<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="Remove this backup" title="<?=gettext("Remove this backup");?>">
+							<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="<?=gettext("Remove this backup");?>" title="<?=gettext("Remove this backup");?>">
 								</a>
 							</td>
 							<td valign="middle" class="list" nowrap>
 								<a href="diag_confbak.php?getcfg=<?=$version['time'];?>">
-								<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_down.gif" width="17" height="17" border="0" alt="Download this backup" title="<?=gettext("Download this backup");?>">
+								<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_down.gif" width="17" height="17" border="0" alt="<?=gettext("Download this backup");?>" title="<?=gettext("Download this backup");?>">
 								</a>
 							</td>
 						</tr>

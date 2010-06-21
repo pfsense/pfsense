@@ -49,16 +49,16 @@ if ($_POST) {
 
 	$authcfg = auth_get_authserver($_POST['authmode']);
 	if (!$authcfg)
-		$input_errors[] = "{$_POST['authmode']}" + gettext("is not a valid authentication server ");
+		$input_errors[] = $_POST['authmode'] . " " . gettext("is not a valid authentication server");
 
 	if (empty($_POST['username']) || empty($_POST['password']))
 		$input_errors[] = gettext("A username and password must be specified.");
 
 	if (!$input_errors) {
 		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg)) {
-			$savemsg = gettext("User: ") + {$_POST['username']} + gettext(" authenticated sucessfully.");
+			$savemsg = gettext("User") . ": " . $_POST['username'] . " " . gettext("authenticated sucessfully.");
 			$groups = getUserGroups($_POST['username'], $authcfg);
-			$savemsg .= "<br />" + gettext("This user is member of this groups:") + " <br />";
+			$savemsg .= "<br />" + gettext("This user is member of this groups") + ": <br />";
 			foreach ($groups as $group)
 				$savemsg .= "{$group} ";
 		} else {

@@ -148,9 +148,13 @@ if(!$latest_version) {
 		if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $latest_version) == -1) {
 			update_status(gettext("Downloading updates") . "...");
 			conf_mount_rw();
-
-			$status = download_file_with_progress_bar("{$updater_url}/latest{$nanosize}.tgz", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
-			$status = download_file_with_progress_bar("{$updater_url}/latest{$nanosize}.tgz.sha256", "{$g['upload_path']}/latest.tgz.sha256");
+			if ($g['platform'] == "nanobsd") {
+				$update_filename = "latest{$nanosize}.img.gz";
+			} else {
+				$update_filename = "latest.tgz";
+			}
+			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
+			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}.sha256", "{$g['upload_path']}/latest.tgz.sha256");
 			conf_mount_ro();
 			update_output_window("{$g['product_name']} " . gettext("download complete."));
 		} else {

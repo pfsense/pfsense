@@ -64,13 +64,13 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
 <form action="diag_defaults.php" method="post">
-              <p><strong> <?=gettext("If you click &quot;Yes&quot;, the firewall will")?>: 
+              <p><strong> <?=gettext("If you click") . " &quot;" . gettext("Yes") . "&quot;, " . gettext("the firewall will")?>: 
 	      
 		<ul>
-		  <li><?=gettext("Reset to factory defaults");</li>
-		  <li><?=gettext("LAN IP address will be reset to 192.168.1.1");></li>
+		  <li><?=gettext("Reset to factory defaults");?></li>
+		  <li><?=gettext("LAN IP address will be reset to 192.168.1.1");?></li>
 		  <li><?=gettext("System will be configured as a DHCP server on the default LAN interface");?></li>
-		  <li><?=gettext("Reboot after changes are installed");?> </li>
+		  <li><?=gettext("Reboot after changes are installed");?></li>
 		  <li><?=gettext("WAN interface will be set to obtain an address automatically from a DHCP server");?></li>
 		  <li><?=gettext("webConfigurator admin username will be reset to 'admin'");?></li>
 		  <li><?=gettext("webConfigurator admin password will be reset to");?> '<?=$g['product_name']?>'</li>
@@ -78,8 +78,8 @@ include("head.inc");
 		</ul>
                 <?=gettext("Are you sure you want to proceed?");?></strong></p>
         <p>
-          <input name="Submit" type="submit" class="formbtn" value="<?=gettext(" Yes ");?>">
-          <input name="Submit" type="submit" class="formbtn" value="<?=gettext(" No ");?>">
+          <input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes");?> ">
+          <input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No");?> ">
         </p>
       </form>
 <?php endif; ?>

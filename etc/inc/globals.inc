@@ -124,7 +124,7 @@ if(file_exists("/etc/platform")) {
 	$arch = trim(`uname -m`);
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if($g['platform'] == "nanobsd") {
-		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_0/{$arch}/pfSense_HEAD/.updaters/";
+		$g['update_url']="http://snapshots.pfsense.org/FreeBSD_RELENG_8_1/{$arch}/pfSense_HEAD/.updaters/";
 		$g['update_manifest']="http://updates.pfSense.com/nanobsd/manifest";
 		$g['firmware_update_text']="pfSense-*.img.gz";
 

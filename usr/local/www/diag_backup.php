@@ -60,7 +60,7 @@ function add_base_packages_menu_items() {
 	$modified_config = false;
 	foreach($base_packages as $bp) {
 		$basepkg_path = "/usr/local/pkg/{$bp}";
-		$tmpinfo = pathinfo($basepkg_path, PATHINFO_EXTENSION); 
+		$tmpinfo = pathinfo($basepkg_path, PATHINFO_EXTENSION);
 		if($tmpinfo['extension'] == "xml" && file_exists($basepkg_path)) {
 			$pkg_config = parse_xml_config_pkg($basepkg_path, "packagegui");
 			if($pkg_config['menu'] != "") {
@@ -98,11 +98,11 @@ function check_and_returnif_section_exists($section) {
 
 function spit_out_select_items($area, $showall) {
 	global $config;
-		
-	$areas = array("aliases" => gettext("Aliases"), 
+
+	$areas = array("aliases" => gettext("Aliases"),
 				   "captiveportal" => gettext("Captive Portal"),
 				   "voucher" => gettext("Captive Portal Vouchers"),
-				   "dnsmasq" => gettext("DNS Forwarder"),				
+				   "dnsmasq" => gettext("DNS Forwarder"),
 				   "dhcpd" => gettext("DHCP Server"),
 				   "filter" => gettext("Firewall Rules"),
 				   "interfaces" => gettext("Interfaces"),
@@ -111,7 +111,7 @@ function spit_out_select_items($area, $showall) {
 				   "ovpn" => gettext("OpenVPN"),
 				   "installedpackages" => gettext("Package Manager"),
 				   "pptpd" => gettext("PPTP Server"),
-				   "cron" => gettext("Scheduled Tasks"),				
+				   "cron" => gettext("Scheduled Tasks"),
 				   "syslog" => gettext("Syslog"),
 				   "system" => gettext("System"),
 				   "staticroutes" => gettext("Static routes"),
@@ -128,16 +128,16 @@ function spit_out_select_items($area, $showall) {
 	$select .= " >\n";
 	$select .= "<option VALUE=\"\">ALL</option>";
 
-	if($showall == true) 
+	if($showall == true)
 		foreach($areas as $area => $areaname)
 			$select .= "<option value='{$area}'>{$areaname}</option>\n";
-	else 
+	else
 		foreach($areas as $area => $areaname)
 			if(check_and_returnif_section_exists($area) == true)
 				$select .= "<option value='{$area}'>{$areaname}</option>\n";
 
 	$select .= "</select>\n";
-		
+
 	echo $select;
 
 }
@@ -199,7 +199,7 @@ if ($_POST) {
 					$sfn = "{$g['tmp_path']}/config.xml.nopkg";
 					file_put_contents($sfn, $data);
 					exec("sed '/<installedpackages>/,/<\/installedpackages>/d' {$sfn} > {$sfn}-new");
-					$data = file_get_contents($sfn . "-new");					
+					$data = file_get_contents($sfn . "-new");
 				} else {
 					if(!$_POST['backuparea']) {
 						/* backup entire configuration */
@@ -218,7 +218,7 @@ if ($_POST) {
 					tagfile_reformat($data, $data, "config.xml");
 				}
 
-				/* 
+				/*
 				 *  Backup RRD Data
 				 */
 				if(!$_POST['donotbackuprrd']) {
@@ -238,7 +238,7 @@ if ($_POST) {
 					$data .= "\t</rrddata>\n";
 					$data .= "</pfsense>\n";
 				}
-				
+
 				$size = strlen($data);
 				header("Content-Type: application/octet-stream");
 				header("Content-Disposition: attachment; filename={$name}");
@@ -370,7 +370,7 @@ if ($_POST) {
 									}
 									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									// Reset configuration version to something low
-									// in order to force the config upgrade code to 
+									// in order to force the config upgrade code to
 									// run through with all steps that are required.
 									$config['system']['version'] = "1.0";
 									// Deal with descriptions longer than 63 characters
@@ -432,7 +432,7 @@ if ($_POST) {
 									}
 									$config['diag']['ipv6nat'] = true;
 									write_config();
-									add_base_packages_menu_items();									
+									add_base_packages_menu_items();
 									convert_config();
 									conf_mount_ro();
 									$savemsg = gettext("The m0n0wall configuration has been restored and upgraded to pfSense.");

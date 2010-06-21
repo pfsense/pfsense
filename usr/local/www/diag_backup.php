@@ -80,7 +80,7 @@ function add_base_packages_menu_items() {
 		}
 	}
 	if($modified_config) {
-		write_confg("Restored base_package menus after configuration restore.");
+		write_confg(gettext("Restored base_package menus after configuration restore."));
 		$config = parse_config(true);
 	}
 }
@@ -153,13 +153,13 @@ if ($_POST['apply']) {
 
 if ($_POST) {
 	unset($input_errors);
-	if (stristr($_POST['Submit'], "Restore configuration"))
+	if (stristr($_POST['Submit'], gettext("Restore configuration")))
 		$mode = "restore";
-	else if (stristr($_POST['Submit'], "Reinstall"))
+	else if (stristr($_POST['Submit'], gettext("Reinstall")))
 		$mode = "reinstallpackages";
-	else if (stristr($_POST['Submit'], "Download"))
+	else if (stristr($_POST['Submit'], gettext("Download")))
 		$mode = "download";
-	else if (stristr($_POST['Submit'], "Restore version"))
+	else if (stristr($_POST['Submit'], gettext("Restore version")))
 		$mode = "restore_ver";
 
 	if ($_POST["nopackages"] <> "")
@@ -272,7 +272,7 @@ if ($_POST) {
 					/* read the file contents */
 					$data = file_get_contents($_FILES['conffile']['tmp_name']);
 					if(!$data) {
-						log_error(gettext("Warning, could not read file ") . $_FILES['conffile']['tmp_name']);
+						log_error(gettext("Warning, could not read file") . " " . $_FILES['conffile']['tmp_name']);
 						return 1;
 					}
 
@@ -301,7 +301,7 @@ if ($_POST) {
 						}
 					} else {
 						if(!stristr($data, "<" . $g['xml_rootobj'] . ">")) {
-							$input_errors[] = gettext("You have selected to restore the full configuration but we could not locate a ") . $g['xml_rootobj'] . gettext(" tag.");
+							$input_errors[] = gettext("You have selected to restore the full configuration but we could not locate a") . " " . $g['xml_rootobj'] . " " . gettext("tag.");
 						} else {
 							/* restore the entire configuration */
 							file_put_contents($_FILES['conffile']['tmp_name'], $data);
@@ -527,7 +527,7 @@ function backuparea_change(obj) {
 <?php if (is_subsystem_dirty('restore')): ?><p>
 <form action="reboot.php" method="post">
 <input name="Submit" type="hidden" value=" Yes ">
-<?php print_info_box(gettext("The firewall configuration has been changed.<br/>The firewall is now rebooting."));?><br>
+<?php print_info_box(gettext("The firewall configuration has been changed.") . "<br/>" . gettext("The firewall is now rebooting."));?><br>
 </form>
 <?php endif; ?>
 <form action="diag_backup.php" method="post" name="iform" enctype="multipart/form-data">

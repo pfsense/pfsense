@@ -49,9 +49,6 @@ function setup_gateways_monitor() {
 	$a_settings['losslow'] = "10";
 	$a_settings['losshigh'] = "20";
 
-	/* kill apinger process */
-	if(is_process_running("apinger"))
-		mwexec("/usr/bin/killall apinger", true);
 	$fd = fopen("{$g['varetc_path']}/apinger.conf", "w");
 	$apingerconfig = <<<EOD
 

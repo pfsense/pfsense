@@ -136,9 +136,10 @@
 	}
 	
 	// Check for all needed key files. If any are missing, the keys need to be regenerated.
+	$files_to_check = array('ssh_host_dsa_key','ssh_host_dsa_key.pub','ssh_host_key','ssh_host_key.pub','ssh_host_rsa_key','ssh_host_rsa_key.pub');
 	$generate_keys = false;
 	foreach ($files_to_check as $f2c) {
-		if (!file_exists($f2c)) {
+		if (!file_exists("/etc/ssh/{$f2c}")) {
 			$generate_keys = true;
 		}
 	}

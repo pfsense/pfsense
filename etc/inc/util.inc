@@ -50,9 +50,9 @@ function isvalidpid($pid) {
 }
 
 function is_process_running($process) {
-        $running = (shell_exec("/bin/pgrep -x {$process}") != '');
+	$running = shell_exec("/bin/pgrep -x {$process}");
 
-        return $running;
+        return !empty($running);
 }
 
 function isvalidproc($proc) {

@@ -49,9 +49,6 @@ function setup_gateways_monitor() {
 	$a_settings['losslow'] = "10";
 	$a_settings['losshigh'] = "20";
 
-	/* kill apinger process */
-	if(is_process_running("apinger"))
-		mwexec("/usr/bin/killall apinger", true);
 	$fd = fopen("{$g['varetc_path']}/apinger.conf", "w");
 	$apingerconfig = <<<EOD
 
@@ -238,7 +235,9 @@ EOD;
 	fwrite($fd, $apingerconfig);
 	fclose($fd);
 
-	if(!is_process_running("apinger")) {
+	if (is_process_running("apinger")) {
+		sigkillbypid("{$g['varrun_path']}/apinger.pid", "HUP");
+	} else {
 		if (is_dir("{$g['tmp_path']}"))
 			chmod("{$g['tmp_path']}", 01777);
 		if (is_dir("{$g['vardb_path']}/rrd"))
@@ -246,6 +245,7 @@ EOD;
 		/* start a new apinger process */
 		mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
 	}
+
 	return 0;
 }
 

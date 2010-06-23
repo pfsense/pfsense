@@ -174,7 +174,6 @@ if (isAllowedPage("system_usermanager")) {
 	}
 
 	if ($_POST) {
-		conf_mount_rw();
 		unset($input_errors);
 		$pconfig = $_POST;
 
@@ -253,6 +252,7 @@ if (isAllowedPage("system_usermanager")) {
 		}
 
 		if (!$input_errors) {
+			conf_mount_rw();
 			$userent = array();
 			if (isset($id) && $a_user[$id])
 				$userent = $a_user[$id];
@@ -303,6 +303,16 @@ if (isAllowedPage("system_usermanager")) {
 					$userent['cert'][] = $cert;
 				}
 				$userent['uid'] = $config['system']['nextuid']++;
+				/* Add the user to All Users group. */
+				if (!is_array($config['system']['group']['member']))
+					$config['system']['group']['member'] = array();
+				foreach ($config['system']['group'] as $gidx => $group) {
+					if ($group['name'] == "all") {
+						$config['system']['group'][$gidx]['member'][] = $userent['uid'];
+						break;
+					}
+				}
+
 				$a_user[] = $userent;
 			}
 

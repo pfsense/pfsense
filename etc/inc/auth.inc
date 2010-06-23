@@ -409,7 +409,7 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 	/* determine which memberships to remove */
 	foreach ($cur_groups as $groupname) {
 		if (in_array($groupname,$new_groups))
-		continue;
+			continue;
 		$group = & $config['system']['group'][$groupindex[$groupname]];
 		$index = array_search($user['uid'], $group['member']);
 		array_splice($group['member'], $index, 1);

@@ -124,7 +124,12 @@ include("head.inc");
 <?php
 
 update_status(gettext("Downloading current version information") . "...");
-download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
+$nanosize = "";
+if ($g['platform'] == "nanobsd") {
+	$nanosize = "-nanobsd-" . strtolower(trim(file_get_contents("/etc/nanosize.txt")));
+}
+
+download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version");
 $latest_version = str_replace("\n", "", @file_get_contents("/tmp/{$g['product_name']}_version"));
 if(!$latest_version) {
 	update_output_window(gettext("Unable to check for updates."));
@@ -143,8 +148,13 @@ if(!$latest_version) {
 		if (pfs_version_compare($current_installed_buildtime, $current_installed_version, $latest_version) == -1) {
 			update_status(gettext("Downloading updates") . "...");
 			conf_mount_rw();
-			$status = download_file_with_progress_bar("{$updater_url}/latest.tgz", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
-			$status = download_file_with_progress_bar("{$updater_url}/latest.tgz.sha256", "{$g['upload_path']}/latest.tgz.sha256");
+			if ($g['platform'] == "nanobsd") {
+				$update_filename = "latest{$nanosize}.img.gz";
+			} else {
+				$update_filename = "latest.tgz";
+			}
+			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}", "{$g['upload_path']}/latest.tgz", "read_body_firmware");	
+			$status = download_file_with_progress_bar("{$updater_url}/{$update_filename}.sha256", "{$g['upload_path']}/latest.tgz.sha256");
 			conf_mount_ro();
 			update_output_window("{$g['product_name']} " . gettext("download complete."));
 		} else {

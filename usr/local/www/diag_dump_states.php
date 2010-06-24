@@ -50,7 +50,7 @@ if($_GET['action']) {
 			$retval = mwexec("/sbin/pfctl -k '{$srcip}' -k '{$dstip}'");
 			echo htmlentities("|{$srcip}|{$dstip}|{$retval}|");
 		} else {
-			echo "invalid input";
+			echo gettext("invalid input");
 		}
 		exit;
 	}
@@ -132,7 +132,7 @@ include("head.inc");
 			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td>Current state count: <?=$current_statecount?></td>
+					<td><?=gettext("Current state count");?>: <?=$current_statecount?></td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
 						<input type="text" name="filter" class="formfld search" value="<?=$_GET['filter'];?>" size="30" />
@@ -172,26 +172,26 @@ if(count($states) > 0) {
 		$parts = split(":", $ends[count($ends) - 1]);
 		$dstip = trim($parts[0]);
 
-		echo "<tr valign='top' name='r:{$srcip}:{$dstip}'>
+		echo "<tr valign='top' name='r:{$srcip}:{$dstip}'>"
 				<td class='listlr'>{$proto}</td>
 				<td class='listr'>{$info}</td>
 				<td class='listr'>{$state}</td>
 				<td class='list'>
 				  <img src='/themes/{$g['theme']}/images/icons/icon_x.gif' height='17' width='17' border='0'
-				  	   onclick=\"removeState('{$srcip}', '{$dstip}');\" style='cursor:pointer;'
+				  	   onclick="removeState('{$srcip}', '{$dstip}');" style='cursor:pointer;'
 				       name='i:{$srcip}:{$dstip}'
 				       title='" . gettext("Remove all state entries from") . " {$srcip} " . gettext("to") . " {$dstip}' alt='' />
 				</td>
-			  </tr>";
+			  </tr>;
 		$row++;
 	}
 }
 else {
-	echo "<tr>
+	echo "<tr>"
 			<td class='list' colspan='4' align='center' valign='top'>
 			  " . gettext("No states were found.") . "
 			</td>
-		  </tr>";
+		  </tr>;
 }
 ?>
 			</table>

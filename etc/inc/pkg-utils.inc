@@ -172,8 +172,10 @@ function resync_all_package_configs($show_message = false) {
 	global $config, $restart_sync, $pkg_interface;
 	$i = 0;
 	log_error("Resyncing configuration for all packages.");
-	if(!$config['installedpackages']['package']) return;
-	if($show_message == true) print "Syncing packages:";
+	if(!$config['installedpackages']['package'])
+		return;
+	if($show_message == true)
+		echo "Syncing packages:";
 	foreach($config['installedpackages']['package'] as $package) {
 		if (empty($package['name']))
 			continue;
@@ -189,6 +191,7 @@ function resync_all_package_configs($show_message = false) {
 		$i++;
 	}
 	if($show_message == true) print ".\n";
+	@unlink("/conf/needs_package_sync");
 }
 
 /*

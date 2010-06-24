@@ -49,7 +49,7 @@ if ($_POST) {
 	$host_esc = escapeshellarg(trim($_POST['host']));
 	
 	if (!is_hostname($host) && !is_ipaddr($host)) 
-		$input_errors[] = "Host must be a valid hostname or IP address.";
+		$input_errors[] = gettext("Host must be a valid hostname or IP address.");
 
 	// Test resolution speed of each DNS server.
 	if ((is_hostname($host) || is_ipaddr($host))) {
@@ -59,7 +59,7 @@ if ($_POST) {
 			$dns_server = $pconfig['dns' . $dnscounter];
 			$query_time = `dig {$host_esc} @{$dns_server} | grep Query | cut -d':' -f2`;
 			if($query_time == "")
-				$query_time = "No response";
+				$query_time = gettext("No response");
 			$new_qt = array();
 			$new_qt['dns_server'] = $dns_server;
 			$new_qt['query_time'] = $query_time;			
@@ -68,7 +68,7 @@ if ($_POST) {
 		}
 	}
 
-	$type = "unknown";
+	$type = gettext("unknown");
 	$resolved = "";
 	$ipaddr = "";
 	$hostname = "";
@@ -88,7 +88,7 @@ if ($_POST) {
 		}
 
 		if ($host == $resolved) {
-			$resolved = "No record found";
+			$resolved = gettext("No record found");
 		}
 	}
 }
@@ -103,10 +103,10 @@ include("head.inc"); ?>
 	<form action="diag_dns.php" method="post" name="iform" id="iform">
 	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">Resolve DNS hostname or IP</td>
+			<td colspan="2" valign="top" class="listtopic"> <?=gettext("Resolve DNS hostname or IP");?></td>
 		</tr>
         <tr>
-		  <td width="22%" valign="top" class="vncellreq">Hostname or IP</td>
+		  <td width="22%" valign="top" class="vncellreq">gettext("Hostname or IP");?></td>
 		  <td width="78%" class="vtable">
             <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
 			<? if ($resolved && $type) { ?>
@@ -116,15 +116,15 @@ include("head.inc"); ?>
 		</tr>
 <?php		if($_POST): ?>
 		<tr>
-		  <td width="22%" valign="top" class="vncell">Resolution time per server</td>
+		  <td width="22%" valign="top" class="vncell"><?=gettext("Resolution time per server");?></td>
 		  <td width="78%" class="vtable">
 				<table width="170" border="1" cellpadding="2" style="border-width: 1px 1px 1px 1px; border-collapse: collapse;">
 					<tr>
 						<td>
-							<b>Server</b>
+							<b><?=gettext("Server");?></b>
 						</td>
 						<td>
-							<b>Query time</b>
+							<b><?=gettext("Query time");></b>
 						</td>
 					</tr>
 <?php
@@ -148,14 +148,14 @@ include("head.inc"); ?>
 		<?php endif; ?>
 		<?php if (!$input_errors && $ipaddr) { ?>
 		<tr>
-			<td width="22%" valign="top"  class="vncell">More Information:</td>
+			<td width="22%" valign="top"  class="vncell"><?=gettext("More Information:");?></td>
 			<td width="78%" class="vtable">
-				<a target="_new" href ="/diag_ping.php?host=<?=$host?>&interface=wan&count=3">Ping</a> <br/>
-				<a target="_new" href ="/diag_traceroute.php?host=<?=$host?>&ttl=18">Traceroute</a>
+				<a target="_new" href ="/diag_ping.php?host=<?=$host?>&interface=wan&count=3"><?=gettext("Ping");?></a> <br/>
+				<a target="_new" href ="/diag_traceroute.php?host=<?=$host?>&ttl=18"><?=gettext("Traceroute");?></a>
 				<p/>
-				NOTE: The following links are to external services, so their reliability cannot be guaranteed.<br/><br/>
-				<a target="_new" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>">IP WHOIS @ DNS Stuff</a><br />
-				<a target="_new" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>">IP Info @ DNS Stuff</a>
+				<?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?><br/><br/>
+				<a target="_new" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a><br />
+				<a target="_new" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP Info @ DNS Stuff");?></a>
 			</td>
 		</tr>
 		<?php } ?>
@@ -163,7 +163,7 @@ include("head.inc"); ?>
 		  <td width="22%" valign="top">&nbsp;</td>
 		  <td width="78%">
 			<br/>&nbsp;
-            <input name="Submit" type="submit" class="formbtn" value="DNS Lookup">
+            <input name="Submit" type="submit" class="formbtn" value="<?=gettext("DNS Lookup");?>">
 		</td>
 		</tr>
 	</table>

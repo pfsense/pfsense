@@ -79,7 +79,7 @@ include("head.inc");
 			?>
                 <tr>
                   <td class="listlr">
-				<?=strtoupper($gateway['name']);?>
+				<?=$gateway['name'];?>
                   </td>
                   <td class="listr" align="center" >
                                 <?php echo lookup_gateway_ip_by_name($gateway['name']);?>

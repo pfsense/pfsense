@@ -205,15 +205,15 @@ if(count($pools) > 0) {
 // Put this in an easy to use form
 $dhcpmac = array();
 $dhcpip = array();
-	
+
 foreach ($leases as $value) {
-	$dhcpmac[$value['mac']] = $value['hostname'];	
-	$dhcpip[$value['ip']] = $value['hostname'];	
+	$dhcpmac[$value['mac']] = $value['hostname'];
+	$dhcpip[$value['ip']] = $value['hostname'];
 }
 
 exec("/usr/sbin/arp -an",$rawdata);
 
-$i = 0; 
+$i = 0;
 
 /* if list */
 $ifdescrs = get_configured_interface_with_descr();
@@ -225,7 +225,7 @@ foreach ($ifdescrs as $key =>$interface) {
 $data = array();
 foreach ($rawdata as $line) {
 	$elements = explode(' ',$line);
-	
+
 	if ($elements[3] != "(incomplete)") {
 		$arpent = array();
 		$arpent['ip'] = trim(str_replace(array('(',')'),'',$elements[1]));
@@ -238,15 +238,15 @@ foreach ($rawdata as $line) {
 function getHostName($mac,$ip)
 {
 	global $dhcpmac, $dhcpip;
-	
+
 	if ($dhcpmac[$mac])
 		return $dhcpmac[$mac];
 	else if ($dhcpip[$ip])
 		return $dhcpip[$ip];
 	else if(gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip)
 		return gethostbyaddr($ip);
-	else 
-		return "";	
+	else
+		return "";
 }
 
 $pgtitle = array(gettext("Diagnostics"),gettext("ARP Table"));
@@ -255,7 +255,7 @@ include("head.inc");
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000">
-	
+
 <?php include("fbegin.inc"); ?>
 
 <div id="loading">
@@ -276,7 +276,7 @@ foreach ($data as &$entry) {
 	$dns = trim(getHostName($entry['mac'], $entry['ip']));
 	if(trim($dns))
 		$entry['dnsresolve'] = "$dns";
-	else 
+	else
 		$entry['dnsresolve'] = "Z_ ";
 }
 

@@ -120,7 +120,13 @@ else
 	$updater_url = $g['update_url'];
 $needs_system_upgrade = false;
 $static_text .= gettext("Downloading new version information...");
-download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
+
+$nanosize = "";
+if ($g['platform'] == "nanobsd") {
+	$nanosize = "-nanobsd-" . strtolower(trim(file_get_contents("/etc/nanosize.txt")));
+}
+
+download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version");
 $remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
 $static_text .= gettext("done") . "\\n";
 if (!$remote_version) {
@@ -155,6 +161,9 @@ if ($needs_system_upgrade == false) {
 echo "\n<script>$('invokeupgrade').style.visibility = 'visible';</script>";
 $txt  = gettext("A new version is now available") . "\\n\\n";
 $txt .= gettext("Current version") .": ". $current_installed_version . "\\n";
+if ($g['platform'] == "nanobsd") {
+	$txt .= "  " . gettext("NanoBSD Size") . " : " . trim(file_get_contents("/etc/nanosize.txt")) . "\\n";
+}
 $txt .= "       " . gettext("Built On") .": ".  $current_installed_buildtime . "\\n";
 $txt .= "    " . gettext("New version") .": ".  $remote_version . "\\n\\n";
 $txt .= "  " . gettext("Update source") .": ".  $updater_url . "\\n";

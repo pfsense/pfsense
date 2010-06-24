@@ -147,7 +147,7 @@ if ($_GET['act'] == "del") {
 			}
 		}
 		if($is_alias_referenced == true) {
-			$savemsg = "Cannot delete rule.  Currently in use by {$referenced_by}";
+			$savemsg = gettext("Cannot delete rule.  Currently in use by {$referenced_by}");
 		} else {
 			unset($a_aliases[$_GET['id']]);
 			write_config();
@@ -169,7 +169,7 @@ include("head.inc");
 <form action="firewall_aliases.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('aliases')): ?><p>
-<?php print_info_box_np("The alias list has been changed.<br>You must apply the changes in order for them to take effect.");?>
+<?php print_info_box_np gettext("The alias list has been changed.<br>You must apply the changes in order for them to take effect.");?>
 <?php endif; ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -230,7 +230,7 @@ include("head.inc");
           <a href="firewall_aliases_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new alias"></a></td>
         </td>
 	      <td valign="middle">
-           <a href="firewall_aliases_import.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_import_alias.gif" width="17" height="17" border="0" title="<?=gettext("Bulk import aliases from list");?>" alt="" /></a>
+           <a href="firewall_aliases_import.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_import_alias.gif" width="17" height="17" border="0" title="<?=gettext("Bulk import aliases from list");"?>" alt="" /></a>
         </td>
       </tr>
     </table>
@@ -238,7 +238,7 @@ include("head.inc");
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number of changes that have to be made if a host, network or port changes. You can enter the name of an alias instead of the host, network or port in all fields that have a red background. The alias will be resolved according to the list above. If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.</span></p>
+   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>gettext("Aliases act as placeholders for real hosts, networks or ports.") gettext("They can be used to minimize the number of changes that have to be made if a host, network or port changes.") gettext("You can enter the name of an alias instead of the host, network or port in all fields that have a red background.") gettext("The alias will be resolved according to the list above.") gettext("If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.")</span></p>
   </td>
 </tr>
 </table>

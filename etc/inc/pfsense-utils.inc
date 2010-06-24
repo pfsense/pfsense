@@ -1810,7 +1810,7 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	if ($v === FALSE) {
 		// If that fails, try to compare by string
 		// Before anything else, simply test if the strings are equal
-		if ($cur_text == $remote)
+		if (($cur_text == $remote) || ($cur_time == $remote))
 			return 0;
 		list($cur_num, $cur_str) = explode('-', $cur_text);
 		list($rem_num, $rem_str) = explode('-', $remote);

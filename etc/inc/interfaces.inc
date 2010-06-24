@@ -760,7 +760,7 @@ function interfaces_configure() {
 		services_dnsmasq_configure();
 
 		/* reload captive portal */
-		captiveportal_configure();
+		captiveportal_init_rules();
 
 		/* set the reload filter dity flag */
 		filter_configure();
@@ -2355,7 +2355,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 		if ($reloadall == true) {
 
 			/* reconfigure static routes (kernel may have deleted them) */
-			system_routing_configure();
+			system_routing_configure($interface);
 
 			/* reload ipsec tunnels */
 			vpn_ipsec_configure();
@@ -2370,7 +2370,7 @@ function interface_configure($interface = "wan", $reloadall = false) {
 			services_dnsmasq_configure();
 
 			/* reload captive portal */
-			captiveportal_configure();
+			captiveportal_init_rules();
 
 			/* set the reload filter dity flag */
 			filter_configure();

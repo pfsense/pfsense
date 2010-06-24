@@ -37,7 +37,7 @@
 ##|*MATCH=firewall_aliases_import.php*
 ##|-PRIV
 
-$pgtitle = array("Firewall","Aliases","Bulk import");
+$pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Bulk import"));
 
 $reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp");
 
@@ -55,27 +55,27 @@ $a_aliases = &$config['aliases']['alias'];
 
 if($_POST['aliasimport'] <> "") {
 	$reqdfields = explode(" ", "name aliasimport");
-	$reqdfieldsn = explode(",", "Name,Aliases");
+	$reqdfieldsn = array(",", gettext("Name,Aliases"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		
 	if (is_validaliasname($_POST['name']) == false)
-		$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9, _.";
+		$input_errors[] = gettext("The alias name may only consist of the characters a-z, A-Z, 0-9, _.");
 
 	/* check for name duplicates */
 	if (is_alias($_POST['name']))
-		$input_errors[] = "An alias with this name already exists.";
+		$input_errors[] = gettext("An alias with this name already exists.");
 
 
 	/* Check for reserved keyword names */
         foreach($reserved_keywords as $rk)
                 if ($rk == $_POST['name'])
-                        $input_errors[] = "Cannot use a reserved keyword as alias name $rk";
+                        $input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
 
         /* check for name interface description conflicts */
         foreach($config['interfaces'] as $interface) {
                 if($interface['descr'] == $_POST['name']) {
-                        $input_errors[] = "An interface description with this name already exists.";
+                        $input_errors[] = gettext("An interface description with this name already exists.");
                         break;
                 }
         }
@@ -90,7 +90,7 @@ if($_POST['aliasimport'] <> "") {
 				$rangesubnets = ip_range_to_subnet_array($startip, $endip);
 				$address .= implode(" ", $rangesubnets);
 			} else if (!is_ipaddr($impip) && !is_subnet($impip) && !empty($impip)) {
-				$input_errors[] = "$impip is not an IP address. Please correct the error to continue";
+				$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
 			} elseif (!empty($impip)) {
 				$imported[] = $impip;
 			}
@@ -127,31 +127,31 @@ include("head.inc");
 <div id="inputerrors"></div>
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
-	  <td colspan="2" valign="top" class="listtopic">Alias Import</td>
+	  <td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Import"); ?></td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncellreq">Alias Name</td>
+	  <td valign="top" class="vncellreq"><?=gettext("Alias Name"); ?></td>
 	  <td class="vtable"> <input name="name" type="text" class="formfld unknown" id="name" size="40" value="<?=htmlspecialchars($_POST['name']);?>" />
 	    <br /> <span class="vexpl">
-	    The name of the alias may only consist of the characters a-z, A-Z and 0-9.</span></td>
+	    <?=gettext("The name of the alias may only consist of the characters a-z, A-Z and 0-9."); ?></span></td>
 	</tr>
 	<tr>
-	  <td width="22%" valign="top" class="vncell">Description</td>
+	  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 	  <td width="78%" class="vtable"> <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($_POST['descr']);?>" />
-	    <br /> <span class="vexpl">You may enter a description here
-	    for your reference (not parsed).</span></td>
+	    <br /> <span class="vexpl"><?=gettext("You may enter a description here " .
+	    "for your reference (not parsed)"); ?>.</span></td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncellreq">Aliases to import</td>
+	  <td valign="top" class="vncellreq"><?=gettext("Aliases to import"); ?></td>
 	  <td class="vtable"><textarea name="aliasimport" ROWS="15" COLS="40"><?php echo $_POST['aliasimport']; ?></textarea>
-	    <br /> <span class="vexpl">Paste in the aliases to import separated by a carriage return.  Common examples are lists of IPs, networks, blacklists, etc. 
-	    <br /> The list may contain only IP addresses. </span></td>
+	    <br /> <span class="vexpl"><?=gettext("Paste in the aliases to import separated by a carriage return.  Common examples are lists of IPs, networks, blacklists, etc."); ?> 
+	    <br /> <?=gettext("The list may contain only IP addresses."); ?> </span></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%">
-      <input id="submit" name="Submit" type="submit" class="formbtn" value="Save" />
-      <input class="formbtn" type="button" value="Cancel" onclick="history.back()" />
+      <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
+      <input class="formbtn" type="button" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 	</tr>
 </table>
 

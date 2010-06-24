@@ -172,26 +172,26 @@ if(count($states) > 0) {
 		$parts = split(":", $ends[count($ends) - 1]);
 		$dstip = trim($parts[0]);
 
-		echo "<tr valign='top' name='r:{$srcip}:{$dstip}'>
+		echo "<tr valign='top' name='r:{$srcip}:{$dstip}'>"
 				<td class='listlr'>{$proto}</td>
 				<td class='listr'>{$info}</td>
 				<td class='listr'>{$state}</td>
 				<td class='list'>
 				  <img src='/themes/{$g['theme']}/images/icons/icon_x.gif' height='17' width='17' border='0'
-				  	   onclick=\"removeState('{$srcip}', '{$dstip}');\" style='cursor:pointer;'
+				  	   onclick="removeState('{$srcip}', '{$dstip}');" style='cursor:pointer;'
 				       name='i:{$srcip}:{$dstip}'
 				       title='" . gettext("Remove all state entries from") . " {$srcip} " . gettext("to") . " {$dstip}' alt='' />
 				</td>
-			  </tr>";
+			  </tr>;
 		$row++;
 	}
 }
 else {
-	echo "<tr>
+	echo "<tr>"
 			<td class='list' colspan='4' align='center' valign='top'>
 			  " . gettext("No states were found.") . "
 			</td>
-		  </tr>";
+		  </tr>;
 }
 ?>
 			</table>

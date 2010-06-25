@@ -215,6 +215,14 @@ if (isAllowedPage("system_usermanager")) {
 					break;
 				}
 			}
+			$system_users = explode("\n", file_get_contents("/etc/passwd"));
+			foreach ($system_users as $s_user) {
+				$ent = explode(":", $s_user);
+				if ($ent[0] ==  $_POST['usernamefld']) {
+					$input_errors[] = gettext("That username already exists or is reserved by the system.");
+					break;
+				}
+			}
 		}
 
 		/*

@@ -130,6 +130,8 @@
 			<description>Enter the hostname (FQDN) of the time server.</description>
 			<type>input</type>
 			<bindstofield>system->timeservers</bindstofield>
+			<validate>^[a-z0-9.|-]+$</validate>
+			<message>Invalid Time Server Field</message>
 		</field>
 		<field>
 			<name>Timezone</name>
@@ -141,6 +143,14 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitphpaction>
+		<![CDATA[
+		if(!empty($_POST['timeserverhostname']) && !(is_hostname($_POST['timeserverhostname']) || is_ipaddr($_POST['timeserverhostname']))) {
+			print_info_box_np("Invalid Time Server. Please press back in your browser window and correct.");
+			die;
+		}
+		]]>
+	</stepsubmitphpaction>
 </step>
 <step>
 	<id>4</id>

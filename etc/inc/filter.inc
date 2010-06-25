@@ -1426,7 +1426,7 @@ EOD;
 	$natrules .= "rdr-anchor \"miniupnpd\"\n";
 
 	if(!empty($reflection_txt))
-		$natrules .= "\n" . $reflection_txt;
+		$natrules .= "\n# Reflection redirects and NAT for 1:1 mappings\n" . $reflection_txt;
 
 	return $natrules;
 }

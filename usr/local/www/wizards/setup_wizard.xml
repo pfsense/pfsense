@@ -328,6 +328,16 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitphpaction>
+		<![CDATA[
+		if(!empty($_POST['mtu'])) {
+			if($_POST['mtu'] < 576) {
+				print_info_box_np("MTU Must be at least 576 (Per RFC 791). Please press back in your browser window and correct.");
+				die;
+			}
+		}
+		]]>
+	</stepsubmitphpaction>
 	<stepsubmitbeforesave>
 		<![CDATA[
 			if($_POST['selectedtype'] == "Static") { 
@@ -428,3 +438,4 @@
 	</stepafterformdisplay>
 </step>
 </pfsensewizard>
+ 

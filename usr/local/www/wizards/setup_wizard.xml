@@ -59,6 +59,8 @@
 			<type>input</type>
 			<bindstofield>system->hostname</bindstofield>
 			<description>EXAMPLE: myserver</description>
+			<validate>^[a-z0-9.|-]+$</validate>
+			<message>Invalid Hostname</message>
 		</field>
 		<field>
 			<name>Domain</name>
@@ -75,12 +77,16 @@
 			<!-- we must unset the fields because this is an array. -->
 			<unsetfield>yes</unsetfield>
 			<arraynum>0</arraynum>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>Primary DNS Server field is invalid</message>
 		</field>
 		<field>
 			<name>Secondary DNS Server</name>
 			<type>input</type>
 			<bindstofield>system->dnsserver</bindstofield>
 			<arraynum>1</arraynum>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>Secondary DNS Server field is invalid</message>
 		</field>
 		<field>
 			<name>Override DNS</name>
@@ -93,6 +99,26 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitphpaction>
+		<![CDATA[
+		if(empty($_POST['hostname']) || !is_hostname($_POST['hostname'])) {
+			print_info_box_np("Hostname is invalid. Please press back in your browser window and correct.");
+			die;
+		}
+		if(empty($_POST['domain']) || !is_domain($_POST['domain'])) {
+			print_info_box_np("Domain is invalid. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['primarydnsserver']) && !is_ipaddr($_POST['primarydnsserver'])) {
+			print_info_box_np("Primary DNS server is invalid. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['secondarydnsserver']) && !is_ipaddr($_POST['secondarydnsserver'])) {
+			print_info_box_np("Second DNS server is invalid. Please press back in your browser window and correct.");
+			die;
+		}
+		]]>
+	</stepsubmitphpaction>
 </step>
 <step>
 	<id>3</id>

@@ -412,7 +412,7 @@ function prot_change() {
 <?php
 if ($restart_sshd) {
 
-	killbyname(sshd);
+	killbyname("sshd");
 	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
 
 	if ($config['system']['enablesshd']) {

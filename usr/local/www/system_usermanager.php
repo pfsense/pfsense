@@ -207,19 +207,26 @@ if (isAllowedPage("system_usermanager")) {
 		if (($_POST['passwordfld1']) && ($_POST['passwordfld1'] != $_POST['passwordfld2']))
 			$input_errors[] = gettext("The passwords do not match.");
 
+		if (isset($id) && $a_user[$id])
+			$oldusername = $a_user[$id]['name'];
+		else
+			$oldusername = "";
 		/* make sure this user name is unique */
-		if (!$input_errors && !(isset($id) && $a_user[$id])) {
+		if (!$input_errors) {
 			foreach ($a_user as $userent) {
-				if ($userent['name'] == $_POST['usernamefld']) {
+				if ($userent['name'] == $_POST['usernamefld'] && $oldusername != $_POST['usernamefld']) {
 					$input_errors[] = gettext("Another entry with the same username already exists.");
 					break;
 				}
 			}
+		}
+		/* also make sure it is not reserved */
+		if (!$input_errors) {
 			$system_users = explode("\n", file_get_contents("/etc/passwd"));
 			foreach ($system_users as $s_user) {
 				$ent = explode(":", $s_user);
-				if ($ent[0] ==  $_POST['usernamefld']) {
-					$input_errors[] = gettext("That username already exists or is reserved by the system.");
+				if ($ent[0] == $_POST['usernamefld'] && $oldusername != $_POST['usernamefld']) {
+					$input_errors[] = gettext("That username is reserved by the system.");
 					break;
 				}
 			}

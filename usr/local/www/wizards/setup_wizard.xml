@@ -206,6 +206,8 @@
 			<bindstofield>interfaces->wan->spoofmac</bindstofield>
 			<type>input</type>
 			<description> This field can be used to modify ("spoof") the MAC address of the WAN interface (may be required with some cable connections). Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank.</description>
+			<validate>^([0-9a-f]{2}([:-]||$)){6}$</validate>
+			<message>MAC Address field is invalid</message>
 		</field>
 		<field>
 			<donotdisable>true</donotdisable>
@@ -224,6 +226,8 @@
 			<type>input</type>
 			<typehint> / </typehint>
 			<combinefieldsbegin>true</combinefieldsbegin>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>IP Address field is invalid</message>
 		</field>
 		<field>
 			<combinefieldsend>true</combinefieldsend>
@@ -237,6 +241,8 @@
 			<name>Gateway</name>
 			<bindstofield>interfaces->wan->gateway</bindstofield>
 			<type>input</type>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>Gateway IP Address field is invalid</message>
 		</field>
 		<field>
 			<name>DHCP client configuration</name>
@@ -298,6 +304,8 @@
 			<type>input</type>
 			<typehint> / </typehint>
 			<bindstofield>pptp->local</bindstofield>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>PPTP Local IP Address field is invalid</message>
 		</field>
 		<field>
 			<combinefieldsend>true</combinefieldsend>
@@ -311,6 +319,8 @@
 			<name>PPTP Remote IP Address</name>
 			<bindstofield>pptp->remote</bindstofield>
 			<type>input</type>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>PPTP Remote IP Address field is invalid</message>
 		</field>
 		<field>
 			<name>PPTP Dial on demand</name>
@@ -356,11 +366,29 @@
 	</fields>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if(!empty($_POST['mtu'])) {
-			if($_POST['mtu'] < 576) {
-				print_info_box_np("MTU Must be at least 576 (Per RFC 791). Please press back in your browser window and correct.");
-				die;
-			}
+		if(!empty($_POST['mtu']) && ($_POST['mtu'] < 576)) {
+			print_info_box_np("MTU Must be at least 576 (Per RFC 791). Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['macaddress']) && !is_macaddr($_POST['macaddress'])) {
+			print_info_box_np("Invalid MAC Address. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static") && (!is_ipaddr($_POST['ipaddress']))) {
+			print_info_box_np("Invalid WAN IP Address. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['dhcphostname']) && !is_hostname($_POST['dhcphostname'])) {
+			print_info_box_np("Invalid DHCP Hostname. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['pptplocalipaddress']) && !is_ipaddr($_POST['pptplocalipaddress'])) {
+			print_info_box_np("Invalid PPTP Local IP Address. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
+			print_info_box_np("Invalid PPTP Remopte IP Address. Please press back in your browser window and correct.");
+			die;
 		}
 		]]>
 	</stepsubmitphpaction>
@@ -388,6 +416,8 @@
 			<type>input</type>
 			<bindstofield>interfaces->lan->ipaddr</bindstofield>
 			<description>Type dhcp if this interface uses DHCP to obtain its IP address.</description>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>LAN IP Address field is invalid</message>
 		</field>
 				<field>
 			<name>Subnet Mask</name>
@@ -400,6 +430,11 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
+		<![CDATA[
+		if(empty($_POST['lanipaddress']) || !is_ipaddr($_POST['lanipaddress'])) {
+			print_info_box_np("Invalid LAN IP Address. Please press back in your browser window and correct.");
+			die;
+		}
 		$ft = split("\.", $_POST['lanipaddress']);
 		$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
 		$config['dhcpd']['lan']['range']['from'] = $ft_ip . "10";
@@ -407,6 +442,7 @@
 		$hi = split("\.", $highestip);
 		$highestip = $hi[3]-10;
 		$config['dhcpd']['lan']['range']['to'] = $ft_ip . $highestip;
+		]]>
 	</stepsubmitphpaction>
 </step>
 <step>
@@ -464,4 +500,3 @@
 	</stepafterformdisplay>
 </step>
 </pfsensewizard>
- 

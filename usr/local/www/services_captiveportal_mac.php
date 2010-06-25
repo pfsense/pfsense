@@ -68,12 +68,16 @@ if ($_POST) {
 	}
 
 	if ($_POST['postafterlogin']) {
-		if (!is_array($a_passthrumacs))
+		if (!is_array($a_passthrumacs)) {
+			echo "No entry exists yet!\n";
 			exit;
+		}
 		if ($_POST['username']) {
 			$mac = captiveportal_passthrumac_findbyname($_POST['username']);
 			if (!empty($mac))
 				$_POST['delmac'] = $mac['mac'];	
+			else
+				echo "No entry exists for this username: {$_POST['username']}\n";
 		}
 		if ($_POST['delmac']) {
 			$found = false;
@@ -91,7 +95,9 @@ if ($_POST) {
 				}
 				unset($a_passthrumacs[$idx]);
 				write_config();
-			}
+				echo "The entry was sucessfully deleted\n";
+			} else
+				echo "No entry exists for this mac address: {$_POST['delmac']}\n";
 		}
 		exit;
 	}

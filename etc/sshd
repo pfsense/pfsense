@@ -94,7 +94,7 @@
 	$sshconf .= "ClientAliveInterval 30\n";
 	$sshconf .= "UseDNS no\n";
 	$sshconf .= "X11Forwarding no\n";
-	if($config['system']['ssh']['sshdkeyonly'] <> "") {
+	if(isset($config['system']['ssh']['sshdkeyonly'])) {
 		$sshconf .= "# Login via Key only\n";
 		$sshconf .= "PasswordAuthentication no\n";
 		$sshconf .= "ChallengeResponseAuthentication no\n";

@@ -41,7 +41,14 @@ if($_REQUEST['getupdatestatus']) {
 		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
 	else 
 		$updater_url = $g['update_url'];
-	download_file_with_progress_bar("{$updater_url}/version", "/tmp/{$g['product_name']}_version");
+
+	$nanosize = "";
+	if ($g['platform'] == "nanobsd") {
+		$nanosize = "-nanobsd-" . strtolower(trim(file_get_contents("/etc/nanosize.txt")));
+	}
+
+	download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version");
+
 	$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
 	if(empty($remote_version))
 		echo "<br /><br />Unable to check for updates.";

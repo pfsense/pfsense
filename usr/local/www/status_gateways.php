@@ -118,7 +118,7 @@ include("head.inc");
                         ?>
 			</table>
                   </td>
-		  <td class="listbg"> <?=$a_gateway[$gateway['name']]['descr']; ?></td>
+		  <td class="listbg"> <?=$a_gateways[$gateway['name']]['descr']; ?></td>
                 </tr>
 		<?php } ?>
               </table>

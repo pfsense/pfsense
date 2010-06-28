@@ -1011,9 +1011,12 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 			$tgt = "($if)";
 	}
 	/* Add the protocol, if defined */
-	if (!empty($proto) && $proto != "any")
-		$protocol = " proto {$proto}";
-	else
+	if (!empty($proto) && $proto != "any") {
+		if ($proto == "tcp/udp")
+			$protocol = " proto { tcp udp }";
+		else
+			$protocol = " proto {$proto}";
+	} else
 		$protocol = "";
 	/* Add the hard set source port (useful for ISAKMP) */
 	if($natport != "")
@@ -1423,7 +1426,7 @@ EOD;
 	$natrules .= "rdr-anchor \"miniupnpd\"\n";
 
 	if(!empty($reflection_txt))
-		$natrules .= "\n" . $reflection_txt;
+		$natrules .= "\n# Reflection redirects and NAT for 1:1 mappings\n" . $reflection_txt;
 
 	return $natrules;
 }

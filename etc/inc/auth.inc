@@ -269,8 +269,8 @@ function local_user_set(& $user) {
 		fwrite($fd, $user['password']);
 		pclose($fd);
 		$user_group = "wheel";
+		$user_home = "/root";
 	}
-
 
 	/* read from pw db */
 	$fd = popen("/usr/sbin/pw usershow {$user_name} 2>&1", "r");
@@ -294,18 +294,6 @@ function local_user_set(& $user) {
 	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
-
-
-	/* admin user special handling */
-	if ($user_uid == 0) {
-		$cmd = "/usr/sbin/pw usermod -q -n {$user_name} -s /etc/rc.initial -H 0";
-		if($debug)
-			log_error("Running: {$cmd}");
-		$fd = popen($cmd, "w");
-		fwrite($fd, $user['password']);
-		pclose($fd);
-		$user_group = "wheel";
-	}
 
 	/* create user directory if required */
 	if (!is_dir($user_home)) {

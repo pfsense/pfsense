@@ -59,7 +59,7 @@ if($_POST['Download']) {
 }
 
 $bogons = file_get_contents(trim("/etc/bogons"));
-$pgtitle = array(gettext("Diagnostics:")gettext("Show Bogons"));
+$pgtitle = array(gettext("Diagnostics:"),gettext("Show Bogons"));
 
 include("head.inc");
 ?>

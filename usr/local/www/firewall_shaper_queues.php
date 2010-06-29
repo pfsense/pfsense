@@ -169,7 +169,7 @@ if ($_POST['apply']) {
 		clear_subsystem_dirty('shaper');
 }
 
-$pgtitle = "Firewall: Shaper: By Queues View";
+$pgtitle = gettext("Firewall: Shaper: By Queues View");
 $statusurl = "status_queues.php";
 
 include("head.inc");
@@ -184,17 +184,17 @@ include("head.inc");
 <form action="firewall_shaper_queues.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("By Interface", false, "firewall_shaper.php");
-	$tab_array[1] = array("By Queue", true, "firewall_shaper_queues.php");
-	$tab_array[2] = array("Limiter", false, "firewall_shaper_vinterface.php");
-	$tab_array[3] = array("Layer7", false, "firewall_shaper_layer7.php");
-	$tab_array[4] = array("Wizards", false, "firewall_shaper_wizards.php");
+	$tab_array[0] = array(gettext("By Interface"), false, "firewall_shaper.php");
+	$tab_array[1] = array(gettext("By Queue"), true, "firewall_shaper_queues.php");
+	$tab_array[2] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
+	$tab_array[3] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
+	$tab_array[4] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

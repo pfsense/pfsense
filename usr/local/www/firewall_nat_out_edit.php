@@ -108,51 +108,51 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "interface protocol source source_subnet destination destination_subnet");
-	$reqdfieldsn = explode(",", "Interface,Protocol,Source,Source bit count,Destination,Destination bit count");
+	$reqdfields = explode(" ", gettext("interface protocol source source_subnet destination destination_subnet"));
+	$reqdfieldsn = explode(",", gettext("Interface,Protocol,Source,Source bit count,Destination,Destination bit count"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if($_POST['sourceport'] <> "" && !is_port($_POST['sourceport']))
-		$input_errors[] = "You must supply either a valid port for the source port entry.";
+		$input_errors[] = gettext("You must supply either a valid port for the source port entry.");
 
 	if($_POST['dstport'] <> "" and !is_port($_POST['dstport']))
-		$input_errors[] = "You must supply either a valid port for the destination port entry.";
+		$input_errors[] = gettext("You must supply either a valid port for the destination port entry.");
 
 	if($_POST['natport'] <> "" and !is_port($_POST['natport']))
-		$input_errors[] = "You must supply either a valid port for the nat port entry.";
+		$input_errors[] = gettext("You must supply either a valid port for the nat port entry.");
 
 	if ($_POST['source_type'] != "any") {
 		if ($_POST['source'] && !is_ipaddr($_POST['source']) && $_POST['source'] <> "any") {
-			$input_errors[] = "A valid source must be specified.";
+			$input_errors[] = gettext("A valid source must be specified.");
 		}
 	}
 	if ($_POST['source_subnet'] && !is_numericint($_POST['source_subnet'])) {
-		$input_errors[] = "A valid source bit count must be specified.";
+		$input_errors[] = gettext("A valid source bit count must be specified.");
 	}
 	if ($_POST['sourceport'] && !is_numericint($_POST['sourceport'])) {
-		$input_errors[] = "A valid source port must be specified.";
+		$input_errors[] = gettext("A valid source port must be specified.");
 	}
 	if ($_POST['destination_type'] != "any") {
         	if ($_POST['destination'] && !is_ipaddr($_POST['destination'])) {
-			$input_errors[] = "A valid destination must be specified.";
+			$input_errors[] = gettext("A valid destination must be specified.");
 		}
 	}
         if ($_POST['destination_subnet'] && !is_numericint($_POST['destination_subnet'])) {
-            $input_errors[] = "A valid destination bit count must be specified.";
+            $input_errors[] = gettext("A valid destination bit count must be specified.");
         }
 	if ($_POST['destination_type'] == "any") {
 		if ($_POST['destination_not']) {
-			$input_errors[] = "Negating destination address of \"any\" is invalid.";
+			$input_errors[] = gettext("Negating destination address of \"any\" is invalid.");
 		}
 	}
 
 	if ($_POST['nonat'] && $_POST['staticnatport']) {
-		$input_errors[] = "Static port cannot be used with No NAT.";
+		$input_errors[] = gettext("Static port cannot be used with No NAT.");
 	}
 
 	if ($_POST['target'] && !is_ipaddr($_POST['target'])) {
-		$input_errors[] = "A valid target IP address must be specified.";
+		$input_errors[] = gettext("A valid target IP address must be specified.");
 	}
 
 	/* if user has selected any as source, set it here */
@@ -249,7 +249,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Firewall","NAT","Outbound","Edit");
+$pgtitle = array(gettext("Firewall","NAT","Outbound","Edit"));
 $closehead = false;
 include("head.inc");
 
@@ -304,14 +304,14 @@ function sourcesel_change() {
             <form action="firewall_nat_out_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="1">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Edit Advanced Outbound NAT entry</td>
+					<td colspan="2" valign="top" class="listtopic">gettext("Edit Advanced Outbound NAT entry")</td>
 				</tr>
 	        <tr>
                   <td width="22%" valign="top" class="vncell">Do not NAT</td>
                   <td width="78%" class="vtable">
 			<input type="checkbox" name="nonat"<?php if(isset($pconfig['nonat'])) echo " CHECKED"; ?>>
-                     <span class="vexpl">Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules.
-		     <br>Hint: in most cases, you won't use this option.</span></td>
+                     <span class="vexpl">gettext("Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules.")
+		     <br>gettext("Hint: in most cases, you won't use this option.")</span></td>
                 </tr>
 	        <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
@@ -325,8 +325,8 @@ function sourcesel_change() {
 				</option>
 				<?php endforeach; ?>
 			</select><br>
-                     <span class="vexpl">Choose which interface this rule applies to.<br>
-                     Hint: in most cases, you'll want to use WAN here.</span></td>
+                     <span class="vexpl">gettext("Choose which interface this rule applies to.")<br>
+                     gettext("Hint: in most cases, you'll want to use WAN here.")</span></td>
                 </tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Protocol</td>
@@ -336,8 +336,8 @@ function sourcesel_change() {
                                 foreach ($protocols as $proto): ?>
                                         <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['protocol']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
 				<?php endforeach; ?>
-				 </select> <br> <span class="vexpl">Choose which protocol this rule should match.<br />
-				 Hint: in most cases, you should specify <em>any</em> &nbsp;here.</span>
+				 </select> <br> <span class="vexpl">gettext("Choose which protocol this rule should match.")<br />
+				 gettext("Hint: in most cases, you should specify <em>any</em> &nbsp;here.")</span>
 			</td>
 		</tr>
                 <tr>
@@ -355,13 +355,13 @@ function sourcesel_change() {
                         <td>Address:&nbsp;&nbsp;</td>
                         <td><input name="source" type="text" class="formfld unknown" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
-                          <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo " selected"; ?>><?=$i;?></option>
+                          <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo "selected"; ?>><?=$i;?></option>
 <?php endfor; ?>
                           </select></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
-                        <td><span class="vexpl">Enter the source network for the outbound NAT mapping.</span></td>
+                        <td><span class="vexpl">gettext("Enter the source network for the outbound NAT mapping.")</span></td>
                       </tr>
                       <tr>
                         <td>Source port:&nbsp;&nbsp;</td>
@@ -371,11 +371,11 @@ blank for any)</td>
                     </table></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Destination</td>
+                  <td width="22%" valign="top" class="vncellreq">gettext("Destination")</td>
                   <td width="78%" class="vtable">
 <input name="destination_not" type="checkbox" id="destination_not" value="yes" <?php if ($pconfig['destination_not']) echo "checked"; ?>>
                     <strong>not</strong><br>
-                    Use this option to invert the sense of the match.<br>
+                    gettext("Use this option to invert the sense of the match.")<br>
                     <br>
                     <table border="0" cellspacing="1" cellpadding="1">
                       <tr>
@@ -399,8 +399,8 @@ blank for any)</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
-                        <td><span class="vexpl">Enter the destination network for
-                          the outbound NAT mapping.</span></td>
+                        <td><span class="vexpl">gettext("Enter the destination network for
+                          the outbound NAT mapping.")</span></td>
                       </tr>
                       <tr>
                         <td>Destination port:&nbsp;&nbsp;</td>
@@ -411,13 +411,13 @@ any)</td>
 		  </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">Translation</td>
+                  <td width="22%" valign="top" class="vncell">gettext("Translation")</td>
                   <td width="78%" class="vtable">
 			<table border="0" cellspacing="1" cellpadding="1">
 			<tr>
 			  <td>Address:&nbsp;&nbsp;</td>
 			  <td><select name="target" class="formselect">
-				<option value=""<?php if (!$pconfig['target']) echo " selected"; ?>>Interface address</option>
+				<option value=""<?php if (!$pconfig['target']) echo " selected"; ?>>gettext("Interface address")</option>
 <?php	if (is_array($config['virtualip']['vip'])):
 		foreach ($config['virtualip']['vip'] as $sn):
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network"):
@@ -440,10 +440,10 @@ any)</td>
 			  </td>
 			</tr>
 			<tr><td>&nbsp;</td><td>
-                     <span class="vexpl">Packets matching this rule will be mapped to the IP address given here.<br>
-			If you want this rule to apply to another IP address than the IP address of the interface chosen above,
-			select it here (you need to define <a href="firewall_virtual_ip.php">Virtual IP</a> addresses on the first).
-			 Also note that if you are trying to redirect connections on the LAN select the "any" option.
+                     <span class="vexpl">gettext("Packets matching this rule will be mapped to the IP address given here.")<br>
+			gettext("If you want this rule to apply to another IP address than the IP address of the interface chosen above,
+			select it here (you need to define <a href="firewall_virtual_ip.php">Virtual IP</a> addresses on the first)").
+			 gettext("Also note that if you are trying to redirect connections on the LAN select the "any" option.")
 			</span>
 			</td></tr>
 			<tr>
@@ -451,7 +451,7 @@ any)</td>
                           <td><input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"></td>
 			</tr>
 			<tr><td>&nbsp;</td><td>
-                        <span class="vexpl">Enter the source port for the outbound NAT mapping.</span>
+                        <span class="vexpl">gettext("Enter the source port for the outbound NAT mapping.")</span>
 			</td></tr>
                         <tr>
                           <td>Static-port:&nbsp;&nbsp;</td>
@@ -461,18 +461,18 @@ any)</td>
 		  </td>
                 </tr>
 				<tr>
-				  <td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
+				  <td width="22%" valign="top" class="vncell">gettext("No XMLRPC Sync")</td>
 				  <td width="78%" class="vtable">
 					<input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-				   			 HINT: This prevents the rule from automatically syncing to other CARP members.
+				   			 gettext("HINT: This prevents the rule from automatically syncing to other CARP members.")
 				  </td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell">gettext("Description")</td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl">gettext("You may enter a description here
+                    for your reference (not parsed).")</span></td>
           </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

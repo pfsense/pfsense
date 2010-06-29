@@ -108,7 +108,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$natent = array();
 					$natent['source']['network'] = "{$osn}/{$ossubnet}";
 					$natent['dstport'] = "500";
-					$natent['descr'] = "Auto created rule for ISAKMP - {$ifdesc} to {$ifdesc2}";
+					$natent['descr'] = gettext("Auto created rule for ISAKMP - {$ifdesc} to {$ifdesc2}");
 					$natent['target'] = "";
 					$natent['interface'] = $if2;
 					$natent['destination']['any'] = true;
@@ -118,7 +118,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$natent = array();
 					$natent['source']['network'] = "{$osn}/{$ossubnet}";
                                         $natent['dstport'] = "5060";
-                                        $natent['descr'] = "Auto created rule for SIP - {$ifdesc} to {$ifdesc2}";
+                                        $natent['descr'] = gettext("Auto created rule for SIP - {$ifdesc} to {$ifdesc2}");
                                         $natent['target'] = "";
                                         $natent['interface'] = $if2;
                                         $natent['destination']['any'] = true;
@@ -128,7 +128,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 					$natent = array();
                                         $natent['source']['network'] = "{$osn}/{$ossubnet}";
                                         $natent['sourceport'] = "";
-                                        $natent['descr'] = "Auto created rule for {$ifdesc} to {$ifdesc2}";
+                                        $natent['descr'] = gettext("Auto created rule for {$ifdesc} to {$ifdesc2}");
                                         $natent['target'] = "";
                                         $natent['interface'] = $if2;
                                         $natent['destination']['any'] = true;
@@ -146,7 +146,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 							$natent = array();
 							$natent['source']['network'] = "{$osn}/{$ossubnet}";
 							$natent['sourceport'] = "";
-							$natent['descr'] = "Auto created rule for PPTP server";
+							$natent['descr'] = gettext("Auto created rule for PPTP server");
 							$natent['target'] = "";
 							$natent['interface'] = $if2;
 							$natent['destination']['any'] = true;
@@ -165,7 +165,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 							$natent = array();
 							$natent['source']['network'] = "{$osn}/{$ossubnet}";
 							$natent['sourceport'] = "";
-							$natent['descr'] = "Auto created rule for PPPoE server";
+							$natent['descr'] = gettext("Auto created rule for PPPoE server");
 							$natent['target'] = "";
 							$natent['interface'] = $if2;
 							$natent['destination']['any'] = true;
@@ -184,7 +184,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 							$natent = array();
 							$natent['source']['network'] = "{$osn}/{$ossubnet}";
 							$natent['sourceport'] = "";
-							$natent['descr'] = "Auto created rule for L2TP server";
+							$natent['descr'] = gettext("Auto created rule for L2TP server");
 							$natent['target'] = "";
 							$natent['interface'] = $if2;
 							$natent['destination']['any'] = true;
@@ -198,7 +198,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 							$natent = array();
 							$natent['source']['network'] = $ovpnsrv['tunnel_network'];
 							$natent['sourceport'] = "";
-							$natent['descr'] = "Auto created rule for OpenVPN server";
+							$natent['descr'] = gettext("Auto created rule for OpenVPN server");
 							$natent['target'] = "";
 							$natent['interface'] = $if2;
 							$natent['destination']['any'] = true;
@@ -209,7 +209,7 @@ if (isset($_POST['save']) && $_POST['save'] == "Save") {
 				}	
 			}
 
-			$savemsg = "Default rules for each interface have been created.";
+			$savemsg = gettext("Default rules for each interface have been created.");
 		}
 		break;
 	}
@@ -291,14 +291,14 @@ include("head.inc");
 </script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?><p>
-<?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np gettext(("The NAT configuration has been changed.")<br>gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array("Port Forward", false, "firewall_nat.php");
+	$tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");
 	$tab_array[] = array("1:1", false, "firewall_nat_1to1.php");
-	$tab_array[] = array("Outbound", true, "firewall_nat_out.php");
+	$tab_array[] = array(gettext("Outbound"), true, "firewall_nat_out.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -323,15 +323,15 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td colspan="2"><p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>If advanced outbound NAT is enabled, no outbound NAT
-                      rules will be automatically generated any longer. Instead, only the mappings
-                      you specify below will be used. With advanced outbound NAT disabled,
+                      </strong></span>gettext("If advanced outbound NAT is enabled, no outbound NAT
+                      rules will be automatically generated any longer.") gettext("Instead, only the mappings
+                      you specify below will be used.") gettext("With advanced outbound NAT disabled,
                       a mapping is automatically created for each interface's subnet
-                      (except WAN).  If you use target addresses other than the WAN interface's
+                      (except WAN).") gettext("If you use target addresses other than the WAN interface's
 		      IP address, then depending on the way your WAN connection is setup, you
-	              may also need a <a href="firewall_virtual_ip.php">Virtual IP</a>.</span><br>
+	              may also need a") <a href="firewall_virtual_ip.php">gettext("Virtual IP")</a>.</span><br>
                       <br>
-                      You may enter your own mappings below.</p>
+                      gettext("You may enter your own mappings below.")</p>
                     </td>
                 </tr>
               </table>
@@ -339,20 +339,20 @@ include("head.inc");
                 <tr id="frheader">
                   <td width="3%" class="list">&nbsp;</td>
                   <td width="3%" class="list">&nbsp;</td>
-                  <td width="10%" class="listhdrr">Interface</td>
-                  <td width="15%" class="listhdrr">Source</td>
-                  <td width="10%" class="listhdrr">Source Port</td>
-                  <td width="15%" class="listhdrr">Destination</td>
-                  <td width="10%" class="listhdrr">Destination Port</td>
-                  <td width="15%" class="listhdrr">NAT Address</td>
-                  <td width="10%" class="listhdrr">NAT Port</td>
-		  <td width="10%" class="listhdrr">Static Port</td>
-                  <td width="25%" class="listhdr">Description</td>
+                  <td width="10%" class="listhdrr">gettext("Interface")</td>
+                  <td width="15%" class="listhdrr">gettext("Source")</td>
+                  <td width="10%" class="listhdrr">gettext("Source Port")</td>
+                  <td width="15%" class="listhdrr">gettext("Destination")</td>
+                  <td width="10%" class="listhdrr">gettext("Destination Port")</td>
+                  <td width="15%" class="listhdrr">gettext("NAT Address")</td>
+                  <td width="10%" class="listhdrr">gettext("NAT Port")</td>
+		  <td width="10%" class="listhdrr">gettext("Static Port")</td>
+                  <td width="25%" class="listhdr">gettext("Description")</td>
                   <td width="5%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
 			<td width="17"></td>
-                        <td><a href="firewall_nat_out_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add new mapping"></a></td>
+                        <td><a href="firewall_nat_out_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title=gettext("add new mapping")></a></td>
                       </tr>
                     </table>
 		  </td>
@@ -437,7 +437,7 @@ include("head.inc");
                         <td><a href="firewall_nat_out_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="edit mapping"></a></td>
                       </tr>
                       <tr>
-                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="move selected rules before this rule" height="17" type="image" width="17" border="0"></td>
+                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title=gettext("move selected rules before this rule") height="17" type="image" width="17" border="0"></td>
                         <td><a href="firewall_nat_out_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add a new nat based on this one" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
@@ -447,11 +447,11 @@ include("head.inc");
                   <td class="list" valign="middle" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected mappings to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected mappings to end" border="0"><?php endif; ?></td>
+                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title=gettext("move selected mappings to end") border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title=gettext("move selected mappings to end") border="0"><?php endif; ?></td>
                         <td><a href="firewall_nat_out_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add new mapping"></a></td>
                       </tr>
                       <tr>
-                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?><input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')"><?php endif; ?></td>
+                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?><input name="del" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title=gettext("delete selected mappings") onclick="return confirm(gettext('Do you really want to delete the selected mappings?'))"><?php endif; ?></td>
                       </tr>
                     </table></td>
                 </tr>

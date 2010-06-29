@@ -224,7 +224,7 @@ if ($_POST) {
 			$toapplylist = array();
 		$toapplylist[] = $id;
 		file_put_contents("{$g['tmp_path']}/firewall_virtual_ip.apply", serialize($toapplylist));
-		header(gettext("Location: firewall_virtual_ip.php"));
+		header("Location: firewall_virtual_ip.php");
 		exit;
 	}
 }

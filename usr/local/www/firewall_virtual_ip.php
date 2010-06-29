@@ -121,7 +121,7 @@ if ($_GET['act'] == "del") {
 				unset($config['virtualip']['vip']);
 			write_config();
 			mark_subsystem_dirty('vip');
-			header(gettext("Location: firewall_virtual_ip.php"));
+			header("Location: firewall_virtual_ip.php");
 			exit;
 		}
 	}

@@ -56,14 +56,14 @@ $avail_behaviours_limiter = get_dummynet_name_list();
 $show_proto_form = false;
 
 //More variables
-$pgtitle = array("Firewall","Traffic Shaper", "Layer7");
+$pgtitle = array("Firewall",gettext("Traffic Shaper"), "Layer7");
 $statusurl = "status_queues.php";
 
 $output_form = "";
 
 $default_layer7shaper_msg = "<tr><td colspan=\"4\">";
 $default_layer7shaper_msg .= "<p><span class=\"vexpl\"><span class=\"red\"><strong>Note:<br>";
-$default_layer7shaper_msg .= "</strong></span>You can add new layer7 protocol patterns by simply uploading the file <a href=\"diag_patterns.php\">here.</a><br>";
+$default_layer7shaper_msg .= "</strong></span>" . gettext("You can add new layer7 protocol patterns by simply uploading the file") . " <a href=\"diag_patterns.php\">" . gettext("here") . ".</a><br>";
 $default_layer7shaper_msg .= "</td></tr>";
 
 
@@ -109,7 +109,7 @@ if ($_GET) {
 			}
 			else {
 				$show_proto_form = false;
-				$input_errors[] = "Layer7 Rules Container not found!";
+				$input_errors[] = gettext("Layer7 Rules Container not found!");
 			}
 			break;
 		default:
@@ -159,7 +159,7 @@ else if ($_POST) {
 		}
 		else {
 			if(sizeof($dupes) > 0) {
-				$dupe_error = "Found the following repeated protocol definitions: ";
+				$dupe_error = gettext("Found the following repeated protocol definitions: ");
 				foreach($dupes as $dupe)
 					$dupe_error .= "$dupe ";
 				$input_errors[] .= $dupe_error;
@@ -399,17 +399,17 @@ include("fbegin.inc");
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("By Interface", false, "firewall_shaper.php");
-	$tab_array[1] = array("By Queue", false, "firewall_shaper_queues.php");
-	$tab_array[2] = array("Limiter", false, "firewall_shaper_vinterface.php");
-	$tab_array[3] = array("Layer7", true, "firewall_shaper_layer7.php");
-	$tab_array[4] = array("Wizards", false, "firewall_shaper_wizards.php");
+	$tab_array[0] = array(gettext("By Interface"), false, "firewall_shaper.php");
+	$tab_array[1] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
+	$tab_array[2] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
+	$tab_array[3] = array(gettext("Layer7"), true, "firewall_shaper_layer7.php");
+	$tab_array[4] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -430,7 +430,7 @@ include("fbegin.inc");
 			?>
 			<br/><br/>
 			<a href="firewall_shaper_layer7.php?action=add">
-			<img src="./themes/<?=$g['theme']; ?>/images/icons/icon_plus.gif" title="Create new l7 rules group" width="17" height="17" border="0">  Create new l7 rules group
+			<img src="./themes/<?=$g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("Create new l7 rules group"); ?>" width="17" height="17" border="0">  <?=gettext("Create new l7 rules group"); ?>
 			</a><br/>
 			</td>
 			<td width="75%" valign="top" align="center">
@@ -443,7 +443,7 @@ include("fbegin.inc");
 			<?php if($show_proto_form): ?>
 			<td width = "22%" valign = "top" class = "vncellreq">
                                 <div id = "addressnetworkport">
-                                        Rule(s)
+                                        <?=gettext("Rule(s)"); ?>
                                 </div>
                         </td>
 
@@ -455,7 +455,7 @@ include("fbegin.inc");
                                                         <td colspan = "4">
                                                             <div style = "font-size: 8pt; padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066;"
                                                                 id = "itemhelp">
-                                                                Add one or more rules
+                                                                <?=gettext("Add one or more rules"); ?>
                                                             </div>
                                                         </td>
                                                 </tr>
@@ -464,21 +464,21 @@ include("fbegin.inc");
                                                         <td>
                                                             <div style = "font-size: 8pt; padding:5px;"
                                                                 id = "onecolumn">
-                                                                Protocol
+                                                                <?=gettext("Protocol"); ?>
                                                             </div>
                                                         </td>
 
                                                         <td>
                                                             <div style = "font-size: 8pt; padding:5px;"
                                                                 id = "twocolumn">
-                                                                Structure
+                                                                <?=gettext("Structure"); ?>
                                                             </div>
                                                         </td>
 
                                                         <td>
                                                             <div style = "font-size: 8pt; padding:5px;"
                                                                 id = "threecolumn">
-                                                                Behaviour
+                                                                <?=gettext("Behaviour"); ?>
                                                             </div>
                                                         </td>
                                                 </tr>                                                                                                        
@@ -556,7 +556,7 @@ include("fbegin.inc");
 
                                         <a onclick = "javascript:addRow('maintable'); return false;" href="#"> <img border = "0"
                                                 src = "/themes/<?=$g['theme']; ?>/images/icons/icon_plus.gif"
-                                                alt = "" title = "add another entry" /> </a>
+                                                alt = "" title = "<?=gettext("add another entry"); ?>" /> </a>
                         </td>
 			</tr>
 
@@ -567,14 +567,14 @@ include("fbegin.inc");
 
                         <td width = "78%">
                                 <input id = "submit"
-                                name = "submit" type = "submit" class = "formbtn" value = "Save" />
+                                name = "submit" type = "submit" class = "formbtn" value = "<?=gettext("Save"); ?>" />
 
 				<a href= "firewall_shaper_layer7.php">
                                 <input id = "cancelbutton"
-                                name = "cancelbutton" type = "button" class = "formbtn" value = "Cancel" /></a>
+                                name = "cancelbutton" type = "button" class = "formbtn" value = "<?=gettext("Cancel"); ?>" /></a>
 				
 				<?php if($container): ?>
-						<input id = "delete" type="submit" class="formbtn" name="delete" value="Delete"></a>
+						<input id = "delete" type="submit" class="formbtn" name="delete" value="<?=gettext("Delete"); ?>"></a>
 				<? endif ?>
                         </td>
                         </tr>

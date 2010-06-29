@@ -248,10 +248,6 @@ function local_user_set(& $user) {
 	if (!is_dir($home_base)) 
 		mkdir($home_base, 0755);
 
-	// Ensure $user_home exists and is writable
-	if(!is_dir($user_home)) 
-		mkdir($user_home, 0755);
-
 	/* configure shell type */
 	if (!(userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all"))) {
 		if (!userHasPrivilege($user, "user-copy-files"))
@@ -279,7 +275,7 @@ function local_user_set(& $user) {
 
 	/* determine add or mod */
 	if (!strncmp($pwread, "pw:", 3)) {
-		$user_op = "useradd -o";
+		$user_op = "useradd -m -o";
 	} else {
 		$user_op = "usermod";
 	}

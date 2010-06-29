@@ -323,13 +323,9 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td colspan="2"><p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>gettext("If advanced outbound NAT is enabled, no outbound NAT
-                      rules will be automatically generated any longer.") gettext("Instead, only the mappings
-                      you specify below will be used.") gettext("With advanced outbound NAT disabled,
-                      a mapping is automatically created for each interface's subnet
-                      (except WAN).") gettext("If you use target addresses other than the WAN interface's
-		      IP address, then depending on the way your WAN connection is setup, you
-	              may also need a") <a href="firewall_virtual_ip.php">gettext("Virtual IP")</a>.</span><br>
+                      </strong></span>gettext("If advanced outbound NAT is enabled, no outbound NAT rules will be automatically generated any longer.") 		gettext("Instead, only the mappings you specify below will be used.") 
+		gettext("With advanced outbound NAT disabled, a mapping is automatically created for each interface's subnet (except WAN).") 
+		gettext("If you use target addresses other than the WAN interface's IP address, then depending on the way your WAN connection is setup, you may also need a <a href="firewall_virtual_ip.php">Virtual IP")</a>.</span><br>
                       <br>
                       gettext("You may enter your own mappings below.")</p>
                     </td>

@@ -400,7 +400,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 							$textss = $textse = "";
 						}
 				  ?>
-				  <a href="?if=<?=$if;?>&act=toggle&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>></a>
+				  <a href="<?if=<?=$if;?>&act=toggle&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="<?=gettext("click to toggle enabled/disabled status");?>"</a>
 				  <?php if (isset($filterent['log'])):
 							$iconfnlog = "log_s";
 						if (isset($filterent['disabled']))
@@ -656,7 +656,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					  <td>
 					  <?php if ($nrules == 0): ?>
 					  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0"><?php else: ?>
-					  <input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title=<?=gettext("delete selected rules");?>" onclick="return confirm(<?=gettext('Do you really want to delete the selected rules?');?>)"><?php endif; ?>
+					  <input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" onclick="return confirm(<?=gettext("'Do you really want to delete the selected rules?'");?>)"><?php endif; ?>
 					  </td>
 			                  <td><a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0"></a></td>
 					</tr>

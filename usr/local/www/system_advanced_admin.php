@@ -157,7 +157,7 @@ if ($_POST) {
 			if ($port)
 				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";
 			else
-				$url = "{$prot}://{$host}/system.php";
+				$url = "{$prot}://{$host}/system_advanced_admin.php";
 		}
 
 		write_config();

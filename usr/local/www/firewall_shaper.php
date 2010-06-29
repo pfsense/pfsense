@@ -156,7 +156,7 @@ if ($_GET) {
 		} else if ($addnewaltq) {
 			$q = new altq_root_queue();
 		} else 
-			$input_errors[] = "Could not create new queue/discipline!";
+			$input_errors[] = gettext("Could not create new queue/discipline!");
 
 			if ($q) {
 				$q->SetInterface($interface);
@@ -172,7 +172,7 @@ if ($_GET) {
 			if ($queue)  
                         $output_form .= $queue->build_form();
 			else
-					$input_errors[] = "Queue not found!";
+					$input_errors[] = gettext("Queue not found!");
 		break;
 		case "enable":
 			if ($queue) {
@@ -181,7 +181,7 @@ if ($_GET) {
 					write_config();
 					mark_subsystem_dirty('shaper');
 			} else
-					$input_errors[] = "Queue not found!";
+					$input_errors[] = gettext("Queue not found!");
 		break;
 		case "disable":
 			if ($queue) {
@@ -190,7 +190,7 @@ if ($_GET) {
 					write_config();
 					mark_subsystem_dirty('shaper');
 			} else
-					$input_errors[] = "Queue not found!";
+					$input_errors[] = gettext("Queue not found!");
 		break;
 		default:
 			$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
@@ -363,9 +363,9 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "&action=delete\">";
 	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
 	if ($queue)
-		$output_form .= " value=\"Delete this queue\">";
+		$output_form .= " value=\gettext("Delete this queue\")>";
 	else
-		$output_form .= " value=\"Disable shaper on interface\">";
+		$output_form .= " value=\gettext("Disable shaper on interface\")>";
 	$output_form .= "</a>";  
 }
 $output_form .= "</td></tr>";
@@ -402,17 +402,17 @@ include("fbegin.inc");
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("By Interface", true, "firewall_shaper.php");
-	$tab_array[1] = array("By Queue", false, "firewall_shaper_queues.php");
-	$tab_array[2] = array("Limiter", false, "firewall_shaper_vinterface.php");
-	$tab_array[3] = array("Layer7", false, "firewall_shaper_layer7.php");
-	$tab_array[4] = array("Wizards", false, "firewall_shaper_wizards.php");
+	$tab_array[0] = array(gettext("By Interface"), true, "firewall_shaper.php");
+	$tab_array[1] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
+	$tab_array[2] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
+	$tab_array[3] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
+	$tab_array[4] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -423,7 +423,7 @@ include("fbegin.inc");
 <?php if (count($altq_list_queues) > 0): ?>
                         <tr class="tabcont"><td width="25%" align="left">
                                 <a href="firewall_shaper.php?action=resetall" >
-                                        <input type="button" value="Remove Shaper" class="formbtn">
+                                        <input type="button" value=gettext("Remove Shaper") class="formbtn">
                                 </a>
                         </td><td width="75%"> </td></tr>
 <? endif; ?>

@@ -68,7 +68,7 @@ if ($_POST) {
 		}
 	}
 
-	$type = gettext("unknown");
+	$type = "unknown";
 	$resolved = "";
 	$ipaddr = "";
 	$hostname = "";
@@ -106,7 +106,7 @@ include("head.inc"); ?>
 			<td colspan="2" valign="top" class="listtopic"> <?=gettext("Resolve DNS hostname or IP");?></td>
 		</tr>
         <tr>
-		  <td width="22%" valign="top" class="vncellreq">gettext("Hostname or IP");?></td>
+		  <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname or IP");?></td>
 		  <td width="78%" class="vtable">
             <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
 			<? if ($resolved && $type) { ?>
@@ -124,7 +124,7 @@ include("head.inc"); ?>
 							<b><?=gettext("Server");?></b>
 						</td>
 						<td>
-							<b><?=gettext("Query time");></b>
+							<b><?=gettext("Query time");?></b>
 						</td>
 					</tr>
 <?php

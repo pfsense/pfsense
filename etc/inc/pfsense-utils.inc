@@ -393,9 +393,9 @@ function setup_polling() {
 function setup_microcode() {
 
 	/* if list */
-        $ifdescrs = get_configured_interface_list();
+	$ifs = get_interface_arr();
 
-	foreach($ifdescrs as $if)
+	foreach($ifs as $if)
 		enable_hardware_offloading($if);
 }
 

@@ -253,7 +253,7 @@ function local_user_set(& $user) {
 		mkdir($user_home, 0755);
 
 	/* configure shell type */
-	if (!userHasPrivilege($user, "user-shell-access")) {
+	if (!(userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all"))) {
 		if (!userHasPrivilege($user, "user-copy-files"))
 			$user_shell = "/sbin/nologin";
 		else

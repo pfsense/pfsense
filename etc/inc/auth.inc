@@ -254,6 +254,8 @@ function local_user_set(& $user) {
 			$user_shell = "/sbin/nologin";
 		else
 			$user_shell = "/usr/local/bin/scponly";
+	} else {
+		$user_shell = "/bin/tcsh";
 	}
 
 	/* root user special handling */
@@ -266,6 +268,7 @@ function local_user_set(& $user) {
 		pclose($fd);
 		$user_group = "wheel";
 		$user_home = "/root";
+		$user_shell = "/etc/rc.initial";
 	}
 
 	/* read from pw db */

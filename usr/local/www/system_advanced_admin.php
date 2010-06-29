@@ -132,7 +132,7 @@ if ($_POST) {
 		else
 			unset($config['system']['enablesshd']);
 
-		$sshd_keyonly = $config['system']['sshdkeyonly'];
+		$sshd_keyonly = isset($config['system']['sshdkeyonly']);
 		if ($_POST['sshdkeyonly'])
 			$config['system']['sshdkeyonly'] = true;
 		else

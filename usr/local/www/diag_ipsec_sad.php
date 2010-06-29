@@ -130,7 +130,7 @@ if ($_GET['act'] == "del") {
 
 <span class="vexpl">
 <span class="red"><strong><?=gettext("Note");?>:<br></strong></span>
-<?=gettext("You can configure your IPsec");?> <a href="vpn_ipsec.php">here</a>.
+<?=gettext("You can configure your IPsec");?> <a href="vpn_ipsec.php"><?=gettext("here");?></a>.
 </span>
 
 <?php include("fend.inc"); ?>

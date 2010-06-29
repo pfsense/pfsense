@@ -131,7 +131,7 @@ include("head.inc");
 		  </td></tr>
 		  <tr>
 		  <td colspan="4" class="listtopic">
-				<?=gettext("Last");?> <?=$nentries;?> <?=$vpns[$vpntype];?> <?=gettext("VPN log entries");?></td>
+				<?php printf(gettext("Last %s %s VPN log entries"),$nentries,$vpns[$vpntype]);?></td>
 			</tr>
 			<tr>
 			  <td class="listhdrr"><?=gettext("Time");?></td>

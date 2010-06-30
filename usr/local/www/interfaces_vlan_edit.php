@@ -71,8 +71,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", gettext("if tag"));
-	$reqdfieldsn = explode(",", gettext("Parent interface,VLAN tag"));
+	$reqdfields = explode(" ", "if tag");
+	$reqdfieldsn = array(gettext("Parent interface"),gettext("VLAN tag"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -173,7 +173,7 @@ include("head.inc");
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
 		    <input type="hidden" name="vlanif" value="<?=$pconfig['vlanif']; ?>">
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
                     <?php if (isset($id) && $a_vlans[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

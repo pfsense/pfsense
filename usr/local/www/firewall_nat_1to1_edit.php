@@ -89,7 +89,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "interface external internal");
-	$reqdfieldsn = array(",", gettext("Interface,External subnet,Internal subnet"));
+	$reqdfieldsn = array(gettext("Interface"),gettext("External subnet"),gettext("Internal subnet"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -138,7 +138,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Firewall","NAT","1:1",gettext("Edit"));
+$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("1:1"),gettext("Edit"));
 include("head.inc");
 
 ?>

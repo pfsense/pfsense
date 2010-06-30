@@ -178,10 +178,10 @@ if ($_POST) {
 	/* input validation */
 	if(strtoupper($_POST['proto']) == "TCP" or strtoupper($_POST['proto']) == "UDP" or strtoupper($_POST['proto']) == "TCP/UDP") {
 		$reqdfields = explode(" ", "interface proto dstbeginport dstendport localip");
-		$reqdfieldsn = array(",", gettext("Interface,Protocol,Destination port from,Destination port to,NAT IP"));
+		$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"),gettext("Destination port from"),gettext("Destination port to"),gettext("NAT IP"));
 	} else {
 		$reqdfields = explode(" ", "interface proto localip");
-		$reqdfieldsn = array(",", gettext("Interface,Protocol,NAT IP"));
+		$reqdfieldsn = array(gettext("Interface"),gettext("Protocol"),gettext("NAT IP"));
 	}
 
 	if ($_POST['srctype'] == "single" || $_POST['srctype'] == "network") {
@@ -415,7 +415,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Firewall","NAT",gettext("Port Forward: Edit"));
+$pgtitle = array(gettext("Firewall"),gettext("NAT"),gettext("Port Forward"),gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -498,7 +498,7 @@ include("fbegin.inc"); ?>
 		<tr style="display: none;" id="srctable" name="srctable">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Source"); ?></td>
 			<td width="78%" class="vtable">
-				<input name="srcnot" type="checkbox" id="srcnot" value="<?=gettext("yes"); ?>" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
+				<input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
 				<strong><?=gettext("not"); ?></strong>
 				<br />
 				<?=gettext("Use this option to invert the sense of the match"); ?>.
@@ -515,20 +515,20 @@ include("fbegin.inc"); ?>
 								<option value="single"  <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>><?=gettext("Single host or alias"); ?></option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>><?=gettext("Network"); ?></option>
 								<?php if(have_ruleint_access("pptp")): ?>
-								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo gettext("selected"); } ?>>PPTP <?=gettext("clients"); ?></option>
+								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>><?=gettext("PPTP clients"); ?></option>
 								<?php endif; ?>
 								<?php if(have_ruleint_access("pppoe")): ?>
-								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo gettext("selected"); } ?>>PPPoE <?=gettext("clients"); ?></option>
+								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>><?=gettext("PPPoE clients"); ?></option>
 								<?php endif; ?>
 								 <?php if(have_ruleint_access("l2tp")): ?>
-                                                                <option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo gettext("selected"); } ?>>L2TP <?=gettext("clients"); ?></option>
+                                                                <option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected"; } ?>><?=gettext("L2TP clients"); ?></option>
                                                                 <?php endif; ?>
 <?php
 								foreach ($ifdisp as $ifent => $ifdesc): ?>
 								<?php if(have_ruleint_access($ifent)): ?>
 									<option value="<?=$ifent;?>" <?php if ($pconfig['src'] == $ifent) { echo "selected"; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("subnet"); ?></option>
 									<option value="<?=$ifent;?>ip"<?php if ($pconfig['src'] ==  $ifent . "ip") { echo "selected"; } ?>>
-										<?=$ifdesc?> address
+										<?=$ifdesc?> <?=gettext("address");?>
 									</option>
 								<?php endif; ?>
 <?php 							endforeach; ?>
@@ -604,20 +604,20 @@ include("fbegin.inc"); ?>
 								<option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>><?=gettext("Single host or alias"); ?></option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>><?=gettext("Network"); ?></option>
 								<?php if(have_ruleint_access("pptp")): ?>
-								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>>PPTP <?=gettext("clients"); ?></option>
+								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>><?=gettext("PPTP clients"); ?></option>
 								<?php endif; ?>
 								<?php if(have_ruleint_access("pppoe")): ?>
-								<option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected"; } ?>>PPPoE <?=gettext("clients"); ?></option>
+								<option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected"; } ?>><?=gettext("PPPoE clients"); ?></option>
 								<?php endif; ?>
 								<?php if(have_ruleint_access("l2tp")): ?>
-                                                                <option value="l2tp" <?php if ($pconfig['dst'] == "l2tp") { echo "selected"; } ?>>L2TP <?=gettext("clients"); ?></option>
+                                                                <option value="l2tp" <?php if ($pconfig['dst'] == "l2tp") { echo "selected"; } ?>><?=gettext("L2TP clients"); ?></option>
                                                                 <?php endif; ?>
 
 <?php 							foreach ($ifdisp as $if => $ifdesc): ?>
 								<?php if(have_ruleint_access($if)): ?>
 									<option value="<?=$if;?>" <?php if ($pconfig['dst'] == $if) { echo "selected"; } ?>><?=htmlspecialchars($ifdesc);?> <?=gettext("subnet"); ?></option>
 									<option value="<?=$if;?>ip"<?php if ($pconfig['dst'] == $if . "ip") { echo "selected"; } ?>>
-										<?=$ifdesc;?> address
+										<?=$ifdesc;?> <?=gettext("address");?>
 									</option>
 								<?php endif; ?>
 <?php 							endforeach; ?>
@@ -737,7 +737,7 @@ include("fbegin.inc"); ?>
 				<tr>
 					<td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync"); ?></td>
 					<td width="78%" class="vtable">
-						<input type="checkbox" value="<?=gettext("yes"); ?>" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
+						<input type="checkbox" value="yes" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
 						<?=gettext("HINT: This prevents the rule from automatically syncing to other CARP members"); ?>.
 					</td>
 				</tr>

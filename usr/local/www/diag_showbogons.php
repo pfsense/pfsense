@@ -55,11 +55,11 @@ if($_POST['Download']) {
 		sleep(1);
 	}
 	if($maxtimetowait < 90)
-		$savemsg = "The bogons database has been updated.";
+		$savemsg = gettext("The bogons database has been updated.");
 }
 
 $bogons = file_get_contents(trim("/etc/bogons"));
-$pgtitle = array(gettext("Diagnostics:"),gettext("Show Bogons"));
+$pgtitle = array(gettext("Diagnostics"),gettext("Show Bogons"));
 
 include("head.inc");
 ?>
@@ -87,7 +87,7 @@ pre { font-size: 1.15em; }
 					<tr>
 						<td>
 							<font size="+1">
-								<b><?=gettext("Currently loaded bogons table:");?></b><p/>
+								<b><?=gettext("Currently loaded bogons table");?>:</b><p/>
 								<pre>
 <?php echo $bogons; ?>
 								</pre>

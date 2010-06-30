@@ -248,16 +248,14 @@ function local_user_set(& $user) {
 	if (!is_dir($home_base)) 
 		mkdir($home_base, 0755);
 
-	// Ensure $user_home exists and is writable
-	if(!is_dir($user_home)) 
-		mkdir($user_home, 0755);
-
 	/* configure shell type */
-	if (!userHasPrivilege($user, "user-shell-access")) {
+	if (!(userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all"))) {
 		if (!userHasPrivilege($user, "user-copy-files"))
 			$user_shell = "/sbin/nologin";
 		else
 			$user_shell = "/usr/local/bin/scponly";
+	} else {
+		$user_shell = "/bin/tcsh";
 	}
 
 	/* root user special handling */
@@ -269,8 +267,9 @@ function local_user_set(& $user) {
 		fwrite($fd, $user['password']);
 		pclose($fd);
 		$user_group = "wheel";
+		$user_home = "/root";
+		$user_shell = "/etc/rc.initial";
 	}
-
 
 	/* read from pw db */
 	$fd = popen("/usr/sbin/pw usershow {$user_name} 2>&1", "r");
@@ -279,7 +278,7 @@ function local_user_set(& $user) {
 
 	/* determine add or mod */
 	if (!strncmp($pwread, "pw:", 3)) {
-		$user_op = "useradd -o";
+		$user_op = "useradd -m -k /usr/share/skel -o";
 	} else {
 		$user_op = "usermod";
 	}
@@ -294,18 +293,6 @@ function local_user_set(& $user) {
 	$fd = popen($cmd, "w");
 	fwrite($fd, $user['password']);
 	pclose($fd);
-
-
-	/* admin user special handling */
-	if ($user_uid == 0) {
-		$cmd = "/usr/sbin/pw usermod -q -n {$user_name} -s /etc/rc.initial -H 0";
-		if($debug)
-			log_error("Running: {$cmd}");
-		$fd = popen($cmd, "w");
-		fwrite($fd, $user['password']);
-		pclose($fd);
-		$user_group = "wheel";
-	}
 
 	/* create user directory if required */
 	if (!is_dir($user_home)) {

@@ -59,6 +59,8 @@
 			<type>input</type>
 			<bindstofield>system->hostname</bindstofield>
 			<description>EXAMPLE: myserver</description>
+			<validate>^[a-z0-9.|-]+$</validate>
+			<message>Invalid Hostname</message>
 		</field>
 		<field>
 			<name>Domain</name>
@@ -75,12 +77,16 @@
 			<!-- we must unset the fields because this is an array. -->
 			<unsetfield>yes</unsetfield>
 			<arraynum>0</arraynum>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>Primary DNS Server field is invalid</message>
 		</field>
 		<field>
 			<name>Secondary DNS Server</name>
 			<type>input</type>
 			<bindstofield>system->dnsserver</bindstofield>
 			<arraynum>1</arraynum>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>Secondary DNS Server field is invalid</message>
 		</field>
 		<field>
 			<name>Override DNS</name>
@@ -93,6 +99,26 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitphpaction>
+		<![CDATA[
+		if(empty($_POST['hostname']) || !is_hostname($_POST['hostname'])) {
+			print_info_box_np("Hostname is invalid. Please press back in your browser window and correct.");
+			die;
+		}
+		if(empty($_POST['domain']) || !is_domain($_POST['domain'])) {
+			print_info_box_np("Domain is invalid. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['primarydnsserver']) && !is_ipaddr($_POST['primarydnsserver'])) {
+			print_info_box_np("Primary DNS server is invalid. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['secondarydnsserver']) && !is_ipaddr($_POST['secondarydnsserver'])) {
+			print_info_box_np("Second DNS server is invalid. Please press back in your browser window and correct.");
+			die;
+		}
+		]]>
+	</stepsubmitphpaction>
 </step>
 <step>
 	<id>3</id>
@@ -104,6 +130,8 @@
 			<description>Enter the hostname (FQDN) of the time server.</description>
 			<type>input</type>
 			<bindstofield>system->timeservers</bindstofield>
+			<validate>^[a-z0-9.|-]+$</validate>
+			<message>Invalid Time Server Field</message>
 		</field>
 		<field>
 			<name>Timezone</name>
@@ -115,6 +143,14 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitphpaction>
+		<![CDATA[
+		if(!empty($_POST['timeserverhostname']) && !(is_hostname($_POST['timeserverhostname']) || is_ipaddr($_POST['timeserverhostname']))) {
+			print_info_box_np("Invalid Time Server. Please press back in your browser window and correct.");
+			die;
+		}
+		]]>
+	</stepsubmitphpaction>
 </step>
 <step>
 	<id>4</id>
@@ -180,6 +216,8 @@
 			<bindstofield>interfaces->wan->spoofmac</bindstofield>
 			<type>input</type>
 			<description> This field can be used to modify ("spoof") the MAC address of the WAN interface (may be required with some cable connections). Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank.</description>
+			<validate>^([0-9a-f]{2}([:-]||$)){6}$</validate>
+			<message>MAC Address field is invalid</message>
 		</field>
 		<field>
 			<donotdisable>true</donotdisable>
@@ -198,6 +236,8 @@
 			<type>input</type>
 			<typehint> / </typehint>
 			<combinefieldsbegin>true</combinefieldsbegin>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>IP Address field is invalid</message>
 		</field>
 		<field>
 			<combinefieldsend>true</combinefieldsend>
@@ -211,6 +251,8 @@
 			<name>Gateway</name>
 			<bindstofield>interfaces->wan->gateway</bindstofield>
 			<type>input</type>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>Gateway IP Address field is invalid</message>
 		</field>
 		<field>
 			<name>DHCP client configuration</name>
@@ -272,6 +314,8 @@
 			<type>input</type>
 			<typehint> / </typehint>
 			<bindstofield>pptp->local</bindstofield>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>PPTP Local IP Address field is invalid</message>
 		</field>
 		<field>
 			<combinefieldsend>true</combinefieldsend>
@@ -285,6 +329,8 @@
 			<name>PPTP Remote IP Address</name>
 			<bindstofield>pptp->remote</bindstofield>
 			<type>input</type>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>PPTP Remote IP Address field is invalid</message>
 		</field>
 		<field>
 			<name>PPTP Dial on demand</name>
@@ -328,6 +374,34 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitphpaction>
+		<![CDATA[
+		if(!empty($_POST['mtu']) && ($_POST['mtu'] < 576)) {
+			print_info_box_np("MTU Must be at least 576 (Per RFC 791). Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['macaddress']) && !is_macaddr($_POST['macaddress'])) {
+			print_info_box_np("Invalid MAC Address. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static") && (!is_ipaddr($_POST['ipaddress']))) {
+			print_info_box_np("Invalid WAN IP Address. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['dhcphostname']) && !is_hostname($_POST['dhcphostname'])) {
+			print_info_box_np("Invalid DHCP Hostname. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['pptplocalipaddress']) && !is_ipaddr($_POST['pptplocalipaddress'])) {
+			print_info_box_np("Invalid PPTP Local IP Address. Please press back in your browser window and correct.");
+			die;
+		}
+		if(!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
+			print_info_box_np("Invalid PPTP Remopte IP Address. Please press back in your browser window and correct.");
+			die;
+		}
+		]]>
+	</stepsubmitphpaction>
 	<stepsubmitbeforesave>
 		<![CDATA[
 			if($_POST['selectedtype'] == "Static") { 
@@ -352,6 +426,8 @@
 			<type>input</type>
 			<bindstofield>interfaces->lan->ipaddr</bindstofield>
 			<description>Type dhcp if this interface uses DHCP to obtain its IP address.</description>
+			<validate>^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$</validate>
+			<message>LAN IP Address field is invalid</message>
 		</field>
 				<field>
 			<name>Subnet Mask</name>
@@ -364,6 +440,11 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
+		<![CDATA[
+		if(empty($_POST['lanipaddress']) || !is_ipaddr($_POST['lanipaddress'])) {
+			print_info_box_np("Invalid LAN IP Address. Please press back in your browser window and correct.");
+			die;
+		}
 		$ft = split("\.", $_POST['lanipaddress']);
 		$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
 		$config['dhcpd']['lan']['range']['from'] = $ft_ip . "10";
@@ -371,6 +452,7 @@
 		$hi = split("\.", $highestip);
 		$highestip = $hi[3]-10;
 		$config['dhcpd']['lan']['range']['to'] = $ft_ip . $highestip;
+		]]>
 	</stepsubmitphpaction>
 </step>
 <step>

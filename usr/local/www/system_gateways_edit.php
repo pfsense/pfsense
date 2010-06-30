@@ -375,7 +375,7 @@ function show_advanced_gateway() {
 			?>
 			<input name="monitor" type="text" id="monitor" value="<?php echo $monitor; ?>" />
 			<strong><?=gettext("Alternative monitor IP"); ?></strong> <br />
-			<?gettext("Enter an alternative address here to be used to monitor the link. This is used for the " .
+			<?=gettext("Enter an alternative address here to be used to monitor the link. This is used for the " .
 			"quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond " .
 			"to ICMP echo requests (pings)"); ?>.</strong>
 			<br />

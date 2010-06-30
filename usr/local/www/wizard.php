@@ -697,6 +697,8 @@ function showchange() {
 				echo "<td class=\"vtable\">";
 			echo "<select class='formselect' name='{$name}'>\n";
 			foreach ($timezonelist as $tz) {
+				if(strstr($tz, "GMT"))
+					continue;
 				$SELECTED = "";
 				if ($value == $tz) $SELECTED = " SELECTED";
 				echo "<option value='" . htmlspecialchars($tz) . "' {$SELECTED}>";

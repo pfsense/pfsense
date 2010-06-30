@@ -34,13 +34,15 @@
 	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/bin/netstat	/usr/sbin/syslogd	
 	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
 	pfSense_BUILDER_BINARIES:	/usr/bin/tar	/bin/sync	/usr/local/sbin/ntpd	/usr/sbin/ntpdate
-	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit
+	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
 	pfSense_MODULE:	utils
 */
 
 function activate_powerd() {
 	global $config, $g;
 	if(isset($config['system']['powerd_enable'])) {
+		if ($g["platform"] == "nanobsd")
+			exec("/sbin/kldload cpufreq");
 		exec("/usr/sbin/powerd -b adp -a adp");
 	} else {
 		if(is_process_running("powerd"))

@@ -53,7 +53,7 @@ function schedule_sort(){
         usort($config['schedules']['schedule'], "schedulecmp");
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Schedules"),gettext("Edit"));
+$pgtitle = array("Firewall","Schedules","Edit");
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -65,8 +65,8 @@ $starttimemin = 00;
 $stoptimehr = 23;
 $stoptimemin = 59;
 
-$dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
-$monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
+$dayArray = array ('Mon','Tues','Wed','Thur','Fri','Sat','Sun');
+$monthArray = array ('January','February','March','April','May','June','July','August','September','October','November','December');
 
 if (!is_array($config['schedules']['schedule']))
 	$config['schedules']['schedule'] = array();
@@ -89,18 +89,18 @@ if (isset($id) && $a_schedules[$id]) {
 if ($_POST) {
 	
 	if(strtolower($_POST['name']) == "lan")
-		$input_errors[] = gettext("Schedule may not be named LAN.");
+		$input_errors[] = "Schedule may not be named LAN.";
 	if(strtolower($_POST['name']) == "wan")
-		$input_errors[] = gettext("Schedule may not be named WAN.");
+		$input_errors[] = "Schedule may not be named WAN.";
 	if(strtolower($_POST['name']) == "")
-		$input_errors[] = gettext("Schedule name cannot be blank.");
+		$input_errors[] = "Schedule name cannot be blank.";
 
 	$x = is_validaliasname($_POST['name']);
 	if (!isset($x)) {
-		$input_errors[] = gettext("Reserved word used for schedule name.");
+		$input_errors[] = "Reserved word used for schedule name.";
 	} else {
 		if (is_validaliasname($_POST['name']) == false)
-			$input_errors[] = gettext("The schedule name may only consist of the characters a-z, A-Z, 0-9");
+			$input_errors[] = "The schedule name may only consist of the characters a-z, A-Z, 0-9";
 	}
 	
 	/* check for name conflicts */
@@ -109,7 +109,7 @@ if ($_POST) {
 			continue;
 
 		if ($schedule['name'] == $_POST['name']) {
-			$input_errors[] = gettext("A Schedule with this name already exists.");
+			$input_errors[] = "A Schedule with this name already exists.";
 			break;
 		}
 	}
@@ -166,7 +166,7 @@ if ($_POST) {
 	}
 	
 	if (!$timerangeFound)
-		$input_errors[] = gettext("The schedule must have at least one time range configured.");
+		$input_errors[] = "The schedule must have at least one time range configured.";
 		
 	if (!$input_errors) {		
 		
@@ -186,7 +186,7 @@ if ($_POST) {
 		
 		filter_configure();
 			
-		header(gettext("Location: firewall_schedule.php"));
+		header("Location: firewall_schedule.php");
 		exit;
 		
 	}
@@ -766,33 +766,33 @@ EOD;
 <form action="firewall_schedule_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-			<td colspan="2" valign="top" class="listtopic"><?=gettext("Schedule information");?></td>
+			<td colspan="2" valign="top" class="listtopic">Schedule information</td>
 		</tr>	
         <tr>
           <td>
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
                	<tr>
-				  <td width="15%" valign="top" class="vncellreq"><?=gettext("Schedule Name");?></td>
+				  <td width="15%" valign="top" class="vncellreq">Schedule Name</td>
 				  <td width="85%" class="vtable">
 				  <?php if(is_schedule_inuse($pconfig['name']) == true): ?>
 				  			<input name="name" type="hidden" id="name" size="40"  value="<?=htmlspecialchars($pconfig['name']);?>" />
 						  <?php echo $pconfig['name']; ?>
 						      <p>
-						        <span class="vexpl"><?=gettext("NOTE: This schedule is in use so the name may not be modified!");?></span>
+						        <span class="vexpl">NOTE: This schedule is in use so the name may not be modified!</span>
 						      </p>
 				<?php else: ?>
 				  <input name="name" type="text" id="name" size="40" maxlength="40" class="formfld unknown" value="<?=htmlspecialchars($pconfig['name']);?>"><br>
 				      	<span class="vexpl">
-     					   <?=gettext("The name of the alias may only consist of the characters a-z, A-Z and 0-9");?>
+     					   The name of the alias may only consist of the characters a-z, A-Z and 0-9
       					</span>
       			<?php endif; ?>   					
 				  </td>
 				</tr>
 				<tr>
-					<td width="15%" valign="top" class="vncell"><?=gettext("Description");?></td>
+					<td width="15%" valign="top" class="vncell">Description</td>
 					<td width="85%" class="vtable"><input name="descr" type="text" id="descr" size="40" maxlength="40" class="formfld unknown" value="<?=htmlspecialchars($pconfig['descr']);?>"><br>
  						<span class="vexpl">
-				        	<?=gettext("You may enter a description here for your reference (not parsed).");?>
+				        	You may enter a description here for your reference (not parsed).
 				      	</span>
 				  
 					</td>
@@ -800,7 +800,7 @@ EOD;
 				<tr>
 				</tr>
 			    <tr>
-				  <td width="15%" valign="top" class="vncellreq"><?=gettext("Month");?></td>
+				  <td width="15%" valign="top" class="vncellreq">Month</td>
 				  <td width="85%" class="vtable">
                     <select name="monthsel" class="formselect" id="monthsel" onchange="update_month();">
                     	<?php 
@@ -842,13 +842,13 @@ EOD;
 								<TR><TD COLSPAN="7" ALIGN=center class="listbg"><B><?php echo date("F Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?></B></TD>
 								</TR>							
 								<TR>																
-									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p1');"><u><b><?=gettext("Mon");?></b></u></TD>
-									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p2');"><u><b><?=gettext("Tue");?></b></u></TD>
-									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p3');"><u><b><?=gettext("Wed");?></b></u></TD>
-									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p4');"><u><b><?=gettext("Thu");?></b></u></TD>
-									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p5');"><u><b><?=gettext("Fri");?></b></u></TD>
-									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p6');"><u><b><?=gettext("Sat");?></b></u></TD>
-									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p7');"><u><b><?=gettext("Sun");?></b></u></TD>
+									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p1');"><u><b>Mon</b></u></TD>
+									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p2');"><u><b>Tue</b></u></TD>
+									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p3');"><u><b>Wed</b></u></TD>
+									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p4');"><u><b>Thu</b></u></TD>
+									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p5');"><u><b>Fri</b></u></TD>
+									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p6');"><u><b>Sat</b></u></TD>
+									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p7');"><u><b>Sun</b></u></TD>
 								</TR>
 								<?php			
 								$firstmonth = FALSE;				
@@ -902,15 +902,15 @@ EOD;
 					} //end for loop
 					?>
 							<br/>
-					<?=gettext)"Click individual date to select that date only. Click the appropriate weekday Header to select all occurences of that weekday.");?>
+					Click individual date to select that date only. Click the appropriate weekday Header to select all occurences of that weekday.
 	                 </td>
 				</tr>
 				<tr>
-				  <td width="15%" valign="top" class="vncellreq"><?=gettext("Time");?></td>
+				  <td width="15%" valign="top" class="vncellreq">Time</td>
 				  <td width="85%" class="vtable">
 				  	<table cellspacing=2 class="tabcont">
 				  		<tr>
-				  			<td class="listhdrr" align="center"><?=gettext("Start Time");?></td><td></td><td class="listhdrr" align="center"><?=gettext("Stop Time");?></td>
+				  			<td class="listhdrr" align="center">Start Time</td><td></td><td class="listhdrr" align="center">Stop Time</td>
 				  		</tr>
 				  		<tr>
 				  			<td>
@@ -959,14 +959,14 @@ EOD;
 				  			</td>
 				  		</tr>
 				  	</table><br>
-                   <?=gettext("Select the time range for the day(s) selected on the Month(s) above. A full day is 0:00-23:59.")?>
+                    Select the time range for the day(s) selected on the Month(s) above. A full day is 0:00-23:59.
 					</td>
 				</tr>
 				<tr>
-					<td width="15%" valign="top" class="vncell"><?=gettext("Time Range Description")?></td>
+					<td width="15%" valign="top" class="vncell">Time Range Description</td>
 					<td width="85%" class="vtable"><input name="timerangedescr" type="text" class="formfld unknown" id="timerangedescr" size="40" maxlength="40"><br>
  						<span class="vexpl">
-				        	<?=gettext("You may enter a description here for your reference (not parsed).")?>
+				        	You may enter a description here for your reference (not parsed).
 				      	</span>     
 				      </td>					
 				</tr>
@@ -983,18 +983,18 @@ EOD;
                     </td>
 				</tr>
 				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Schedule repeat");?></td>
+					<td colspan="2" valign="top" class="listtopic">Schedule repeat</td>
 				</tr>	
 				<tr>
-					<td width="15%" valign="top" class="vncellreq"><?=gettext("Configured Ranges");?></td>
+					<td width="15%" valign="top" class="vncellreq">Configured Ranges</td>
 					<td width="85%">
 						<table id="scheduletable">
 							<tbody>
 								<tr>
-									<TD ALIGN="center" class="listbg" width="35%"><?=gettext("Day(s)");?></td>
-									<TD ALIGN="center" class="listbg" width="12%"><?=gettext("Start Time");?></td>
-									<TD ALIGN="center" class="listbg" width="11%"><?=gettext("Stop Time");?></td>
-									<TD ALIGN="center" class="listbg" width="42%"><?=gettext("Description");?></td>
+									<TD ALIGN="center" class="listbg" width="35%">Day(s)</td>
+									<TD ALIGN="center" class="listbg" width="12%">Start Time</td>
+									<TD ALIGN="center" class="listbg" width="11%">Stop Time</td>
+									<TD ALIGN="center" class="listbg" width="42%">Description</td>
 								</tr>
 								<?php
 								if ($getSchedule){

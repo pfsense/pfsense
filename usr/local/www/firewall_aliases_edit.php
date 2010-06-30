@@ -44,7 +44,7 @@
 ##|*MATCH=firewall_aliases_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
+$pgtitle = array("Firewall","Aliases","Edit");
 
 // Keywords not allowed in names
 $reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp", "pppoe", "l2tp", "openvpn");
@@ -101,7 +101,7 @@ if (isset($id) && $a_aliases[$id]) {
 	$iflist = get_configured_interface_with_descr(true, true);
 	foreach ($iflist as $if => $ifdesc)
 		if($ifdesc == $pconfig['descr']) 
-			$input_errors[] = sprintf(gettext("Sorry, an interface is already named %s."), $pconfig['descr']);
+			$input_errors[] = "Sorry, an interface is already named {$pconfig['descr']}.";
 
 	if($a_aliases[$id]['type'] == "urltable") {
 		$pconfig['address'] = $a_aliases[$id]['url'];
@@ -130,24 +130,24 @@ if ($_POST) {
 	/* input validation */
 
 	$reqdfields = explode(" ", "name");
-	$reqdfieldsn = array(",", gettext("Name"));
+	$reqdfieldsn = explode(",", "Name");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	$x = is_validaliasname($_POST['name']);
 	if (!isset($x)) {
-		$input_errors[] = gettext("Reserved word used for alias name.");
+		$input_errors[] = "Reserved word used for alias name.";
 	} else if ($_POST['type'] == "port" && (getservbyname($_POST['name'], "tcp") || getservbyname($_POST['name'], "udp"))) {
-		$input_errors[] = gettext("Reserved word used for alias name.)";
+		$input_errors[] = "Reserved word used for alias name.";
 	} else {
 		if (is_validaliasname($_POST['name']) == false)
-			$input_errors[] = gettext("The alias name may only consist of the characters a-z, A-Z, 0-9, _.");
+			$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9, _.";
 	}
 	/* check for name conflicts */
 	if (empty($a_aliases[$id])) {
 		foreach ($a_aliases as $alias) {
 			if ($alias['name'] == $_POST['name']) {
-				$input_errors[] = gettext("An alias with this name already exists.");
+				$input_errors[] = "An alias with this name already exists.";
 				break;
 			}
 		}
@@ -156,12 +156,12 @@ if ($_POST) {
 	/* Check for reserved keyword names */
 	foreach($reserved_keywords as $rk) 
 		if($rk == $_POST['name'])
-			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
+			$input_errors[] = "Cannot use a reserved keyword as alias name $rk";
 
 	/* check for name interface description conflicts */
 	foreach($config['interfaces'] as $interface) {
 		if($interface['descr'] == $_POST['name']) {
-			$input_errors[] = gettext("An interface description with this name already exists.");
+			$input_errors[] = "An interface description with this name already exists.";
 			break;
 		}
 	}
@@ -183,10 +183,10 @@ if ($_POST) {
 			$alias['url'] = $_POST['address0'];
 			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
-				$input_errors[] = gettext("You must provide a valid URL.");
+				$input_errors[] = "You must provide a valid URL.";
 				$dont_update = true;
 			} elseif (! process_alias_urltable($alias['name'], $alias['url'], 0, true)) {
-				$input_errors[] = gettext("Unable to fetch usable data.");
+				$input_errors[] = "Unable to fetch usable data.";
 				$dont_update = true;
 			}
 		}
@@ -231,14 +231,14 @@ if ($_POST) {
 					}
 					if($isfirst == 0) {
 						/* nothing was found */
-						$input_errors[] = gettext("You must provide a valid URL. Could not fetch usable data.");
+						$input_errors[] = "You must provide a valid URL. Could not fetch usable data.";
 						$dont_update = true;
 						break;
 					}
 					$alias['aliasurl'][] = $_POST['address' . $x];
 					mwexec("/bin/rm -rf {$temp_filename}");
 				} else {
-					$input_errors[] = gettext("You must provide a valid URL.");
+					$input_errors[] = "You must provide a valid URL.";
 					$dont_update = true;
 					break;
 				}
@@ -254,12 +254,12 @@ if ($_POST) {
 						$wrongaliases .= " " . $_POST["address{$x}"];
 				} else if ($_POST['type'] == "port") {
 					if (!is_port($_POST["address{$x}"]))
-						$input_errors[] = $_POST["address{$x}"] . " " . gettext("is not a valid port or alias.");
+						$input_errors[] = $_POST["address{$x}"] . " is not a valid port or alias.";
 				} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
 					if (!is_ipaddr($_POST["address{$x}"])
 					 && !is_hostname($_POST["address{$x}"])
 					 && !is_iprange($_POST["address{$x}"]))
-						$input_errors[] = sprintf(gettext("%s is not a valid %s alias."), $_POST["address{$x}"], $_POST['type'];
+						$input_errors[] = $_POST["address{$x}"] . " is not a valid {$_POST['type']} alias.";
 				}
 				if (is_iprange($_POST["address{$x}"])) {
 					list($startip, $endip) = explode('-', $_POST["address{$x}"]);
@@ -274,11 +274,11 @@ if ($_POST) {
 				if ($_POST["detail{$x}"] <> "")
 					$final_address_details[] = $_POST["detail{$x}"];
 				else
-					$final_address_details[] = sprintf(gettext("Entry added %s"), date('r'));
+					$final_address_details[] = "Entry added " . date('r');
 			}
 		}
 		if ($wrongaliases <> "")
-			$input_errors[] = sprintf(gettext("The alias(es): %s \ncannot be nested cause they are not of the same type."), $wrongaliases);
+			$input_errors[] = "The alias(es): {$wrongaliases} \ncannot be nested cause they are not of the same type.";
 	}
 
 	if (!$input_errors) {
@@ -444,8 +444,8 @@ $update_freq_str = gettext("Update Freq.");
 $networks_help = gettext("Networks are specified in CIDR format.  Select the CIDR mask that pertains to each entry. /32 specifies a single host, /24 specifies 255.255.255.0, etc. Hostnames (FQDNs) may also be specified, using a /32 mask. You may also enter an IP range such as 192.168.1.1-192.168.1.254 and a list of CIDR networks will be derived to fill the range.");
 $hosts_help = gettext("Enter as many hosts as you would like.  Hosts must be specified by their IP address.");
 $ports_help = gettext("Enter as many ports as you wish.  Port ranges can be expressed by seperating with a colon.");
-$url_help = sprintf(gettext("Enter as many URLs as you wish. After saving %s will download the URL and import the items into the alias. Use only with small sets of IP addresses (less than 3000)."), $g['product_name']);
-$urltable_help = sprintf(gettext("Enter a single URL containing a large number of IPs and/or Subnets. After saving %s will download the URL and create a table file containing these addresses. This will work with large numbers of addresses (30,000+) or small numbers."), $g['product_name']);
+$url_help = gettext("Enter as many URLs as you wish. After saving {$g['product_name']} will download the URL and import the items into the alias. Use only with small sets of IP addresses (less than 3000).");
+$urltable_help = gettext("Enter a single URL containing a large number of IPs and/or Subnets. After saving {$g['product_name']} will download the URL and create a table file containing these addresses. This will work with large numbers of addresses (30,000+) or small numbers.");
 
 $openvpn_str = gettext("Username");
 $openvpn_user_str = gettext("OpenVPN Users");
@@ -549,10 +549,10 @@ EOD;
 <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
   <tr>
-	<td colspan="2" valign="top" class="listtopic"><?=gettext("Alias Edit"); ?></td>
+	<td colspan="2" valign="top" class="listtopic">Alias Edit</td>
   </tr>
   <tr>
-    <td valign="top" class="vncellreq"><?=gettext("Name"); ?></td>
+    <td valign="top" class="vncellreq">Name</td>
     <td class="vtable">
       <input name="origname" type="hidden" id="origname" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
       <input name="name" type="text" id="name" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
@@ -561,30 +561,30 @@ EOD;
       <?php endif; ?>
       <br />
       <span class="vexpl">
-        <?=gettext("The name of the alias may only consist of the characters a-z, A-Z and 0-9."); ?>
+        The name of the alias may only consist of the characters a-z, A-Z and 0-9.
       </span>
     </td>
   </tr>
   <tr>
-    <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
+    <td width="22%" valign="top" class="vncell">Description</td>
     <td width="78%" class="vtable">
       <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=$pconfig['descr'];?>" />
       <br />
       <span class="vexpl">
-        <?=gettext("You may enter a description here for your reference (not parsed)."); ?>
+        You may enter a description here for your reference (not parsed).
       </span>
     </td>
   </tr>
   <tr>
-    <td valign="top" class="vncellreq"><?=gettext("Type"); ?></td>
+    <td valign="top" class="vncellreq">Type</td>
     <td class="vtable">
       <select name="type" class="formselect" id="type" onchange="update_box_type(); typesel_change();">
         <option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>>Host(s)</option>
-        <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>><?=gettext("Network(s)"); ?></option>
-        <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>><?=gettext("Port(s)"); ?></option>
-        <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>><?=gettext("OpenVPN Users"); ?></option>
+        <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>>Network(s)</option>
+        <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>>Port(s)</option>
+        <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>>OpenVPN Users</option>
         <option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>>URL</option>
-        <option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected"; ?>><?=gettext("URL Table"); ?></option>
+        <option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected"; ?>>URL Table</option>
       </select>
     </td>
   </tr>
@@ -595,13 +595,13 @@ EOD;
         <tbody>
           <tr>
             <td colspan="4">
-      		    <div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp"><?=gettext("Item information"); ?></div>
+      		    <div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp">Item information</div>
             </td>
           </tr>
           <tr>
-            <td><div id="onecolumn"><?=gettext("Network"); ?></div></td>
+            <td><div id="onecolumn">Network</div></td>
             <td><div id="twocolumn">CIDR</div></td>
-           <td><div id="threecolumn"><?=gettext("Description"); ?></div></td>
+           <td><div id="threecolumn">Description</div></td>
           </tr>
 
 	<?php
@@ -640,7 +640,7 @@ EOD;
               <input name="detail<?php echo $tracker; ?>" type="text" class="formfld unknown" id="detail<?php echo $tracker; ?>" size="50" value="<?=$item4;?>" />
             </td>
             <td>
-    		<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete"); ?>" />
+    		<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="Delete" />
 	      </td>
           </tr>
 <?php
@@ -662,8 +662,8 @@ EOD;
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-      <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>" />
-      <a href="firewall_aliases.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" /></a>
+      <input id="submit" name="submit" type="submit" class="formbtn" value="Save" />
+      <a href="firewall_aliases.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" /></a>
     </td>
   </tr>
 </table>

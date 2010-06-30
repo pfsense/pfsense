@@ -39,10 +39,10 @@
 ##|*MATCH=firewall_schedule.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Firewall"),gettext("Schedules"));
+$pgtitle = array("Firewall","Schedules");
 
-$dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
-$monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
+$dayArray = array ('Mon','Tues','Wed','Thur','Fri','Sat','Sun');
+$monthArray = array ('January','February','March','April','May','June','July','August','September','October','November','December');
 
 require("guiconfig.inc");
 require("filter.inc");
@@ -73,7 +73,7 @@ if ($_GET['act'] == "del") {
 		}
 
 		if($is_schedule_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete Schedule.  Currently in use by %s"),$referenced_by);
+			$savemsg = "Cannot delete Schedule.  Currently in use by {$referenced_by}";
 		} else {
 			unset($a_schedules[$_GET['id']]);
 			write_config();
@@ -110,7 +110,7 @@ include("head.inc");
 			<?=htmlspecialchars($schedule['name']); 
 					$schedstatus = filter_get_time_based_rule_status($schedule);
 					 if ($schedstatus) { ?>
-					 	&nbsp;<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_frmfld_time.png" title="<?=gettext("Schedule is currently active");?>" width="17" height="17" border="0">
+					 	&nbsp;<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_frmfld_time.png" title="Schedule is currently active" width="17" height="17" border="0">
 					 <?php } ?>
     
   		</td>
@@ -215,8 +215,8 @@ include("head.inc");
   		  <td valign="middle" nowrap class="list">
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
-        <td valign="middle"><a href="firewall_schedule_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit alias");?>"></a></td>
-        <td><a href="firewall_schedule.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext('Do you really want to delete this schedule?');?>)"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete alias");?>"></a></td>
+        <td valign="middle"><a href="firewall_schedule_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="edit alias"></a></td>
+        <td><a href="firewall_schedule.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this schedule?')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="delete alias"></a></td>
       </tr>
     </table>
   </td>
@@ -235,7 +235,7 @@ include("head.inc");
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Schedules act as placeholders for time ranges to be used in Firewall Rules.");?></span></p>
+   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Schedules act as placeholders for time ranges to be used in Firewall Rules.</span></p>
   </td>
 </tr>
 </table>

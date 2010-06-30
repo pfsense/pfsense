@@ -89,15 +89,15 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "interface external internal");
-	$reqdfieldsn = array(",", gettext("Interface,External subnet,Internal subnet"));
+	$reqdfieldsn = explode(",", "Interface,External subnet,Internal subnet");
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (($_POST['external'] && !is_ipaddr($_POST['external']))) {
-		$input_errors[] = gettext("A valid external subnet must be specified.");
+		$input_errors[] = "A valid external subnet must be specified.";
 	}
 	if (($_POST['internal'] && !is_ipaddr($_POST['internal']))) {
-		$input_errors[] = gettext("A valid internal subnet must be specified.");
+		$input_errors[] = "A valid internal subnet must be specified.";
 	}
 
 	/* check for overlaps with other 1:1 */
@@ -138,7 +138,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Firewall","NAT","1:1",gettext("Edit"));
+$pgtitle = array("Firewall","NAT","1:1","Edit");
 include("head.inc");
 
 ?>
@@ -149,7 +149,7 @@ include("head.inc");
             <form action="firewall_nat_1to1_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit NAT 1:1 entry"); ?></td>
+					<td colspan="2" valign="top" class="listtopic">Edit NAT 1:1 entry</td>
 				</tr>	
 				<tr>
 				  <td width="22%" valign="top" class="vncellreq">Interface</td>
@@ -164,11 +164,11 @@ include("head.inc");
 						</option>
 						<?php endforeach; ?>
 					</select><br>
-				  <span class="vexpl"><?=gettext("Choose which interface this rule applies to"); ?>.<br>
-				  <?=gettext("Hint: in most cases, you'll want to use WAN here"); ?>.</span></td>
+				  <span class="vexpl">Choose which interface this rule applies to.<br>
+				  Hint: in most cases, you'll want to use WAN here.</span></td>
 				</tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("External subnet"); ?></td>
+                  <td width="22%" valign="top" class="vncellreq">External subnet</td>
                   <td width="78%" class="vtable"> 
                     <input name="external" type="text" class="formfld unknown" id="external" size="20" value="<?=htmlspecialchars($pconfig['external']);?>">
                     <select name="subnet" class="formselect" id="subnet" >
@@ -179,26 +179,26 @@ include("head.inc");
                       <?php endfor; ?>
                     </select>
                     <br>
-                    <span class="vexpl"><?=gettext("Enter the external (WAN) subnet for the 1:1 mapping. You may map single IP addresses by specifying a /32 subnet."); ?></span></td>
+                    <span class="vexpl">Enter the external (WAN) subnet for the 1:1 mapping. You may map single IP addresses by specifying a /32 subnet.</span></td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Internal subnet"); ?></td>
+                  <td width="22%" valign="top" class="vncellreq">Internal subnet</td>
                   <td width="78%" class="vtable"> 
                     <input name="internal" type="text" class="formfld unknown" id="internal" size="20" value="<?=htmlspecialchars($pconfig['internal']);?>"> 
                     <br>
-                     <span class="vexpl"><?=gettext("Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the external subnet also applies to the internal subnet (they  have to be the same)."); ?></span></td>
+                     <span class="vexpl">Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the external subnet also applies to the internal subnet (they  have to be the same).</span></td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
+                  <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here " .
-                    "for your reference (not parsed)."); ?></span></td>
+                    <br> <span class="vexpl">You may enter a description here 
+                    for your reference (not parsed).</span></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
                     <?php if (isset($id) && $a_1to1[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>"> 
                     <?php endif; ?>

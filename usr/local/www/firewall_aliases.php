@@ -147,7 +147,7 @@ if ($_GET['act'] == "del") {
 			}
 		}
 		if($is_alias_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete rule.  Currently in use by %s"), $referenced_by);
+			$savemsg = "Cannot delete rule.  Currently in use by {$referenced_by}";
 		} else {
 			unset($a_aliases[$_GET['id']]);
 			write_config();
@@ -169,19 +169,19 @@ include("head.inc");
 <form action="firewall_aliases.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('aliases')): ?><p>
-<?php print_info_box_np gettext("The alias list has been changed.<br>You must apply the changes in order for them to take effect.");?>
+<?php print_info_box_np("The alias list has been changed.<br>You must apply the changes in order for them to take effect.");?>
 <?php endif; ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr>
-  <td width="25%" class="listhdrr"><?=gettext("Name"); ?></td>
-  <td width="25%" class="listhdrr"><?=gettext("Values"); ?></td>
-  <td width="25%" class="listhdr"><?=gettext("Description"); ?></td>
+  <td width="25%" class="listhdrr">Name</td>
+  <td width="25%" class="listhdrr">Values</td>
+  <td width="25%" class="listhdr">Description</td>
   <td width="10%" class="list">
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
 	<td valign="middle" width="17">&nbsp;</td>
-        <td valign="middle"><a href="firewall_aliases_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new alias"); ?>"></a></td>
+        <td valign="middle"><a href="firewall_aliases_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new alias"></a></td>
       </tr>
     </table>
   </td>
@@ -213,8 +213,8 @@ include("head.inc");
   <td valign="middle" nowrap class="list">
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
-        <td valign="middle"><a href="firewall_aliases_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit alias"); ?>"></a></td>
-        <td><a href="firewall_aliases.php?act=del&id=<?=$i;?>" onclick="return confirm(gettext('Do you really want to delete this alias? All elements that still use it will become invalid (e.g. filter rules)!'))"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete alias"); ?>"></a></td>
+        <td valign="middle"><a href="firewall_aliases_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="edit alias"></a></td>
+        <td><a href="firewall_aliases.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this alias? All elements that still use it will become invalid (e.g. filter rules)!')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="delete alias"></a></td>
       </tr>
     </table>
   </td>
@@ -227,10 +227,10 @@ include("head.inc");
       <tr>
 	<td valign="middle" width="17">&nbsp;</td>
         <td valign="middle">
-          <a href="firewall_aliases_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new alias"); ?>"></a></td>
+          <a href="firewall_aliases_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new alias"></a></td>
         </td>
 	      <td valign="middle">
-           <a href="firewall_aliases_import.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_import_alias.gif" width="17" height="17" border="0" title="<?=gettext("Bulk import aliases from list"); ?>" alt="" /></a>
+           <a href="firewall_aliases_import.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_import_alias.gif" width="17" height="17" border="0" title="<?=gettext("Bulk import aliases from list");?>" alt="" /></a>
         </td>
       </tr>
     </table>
@@ -238,7 +238,7 @@ include("head.inc");
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note"); ?>:<br></strong></span><?=gettext("Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number of changes that have to be made if a host, network or port changes. You can enter the name of an alias instead of the host, network or port in all fields that have a red background. The alias will be resolved according to the list above. If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped."); ?></span></p>
+   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number of changes that have to be made if a host, network or port changes. You can enter the name of an alias instead of the host, network or port in all fields that have a red background. The alias will be resolved according to the list above. If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.</span></p>
   </td>
 </tr>
 </table>

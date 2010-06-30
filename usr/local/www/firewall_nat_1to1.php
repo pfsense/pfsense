@@ -84,14 +84,14 @@ include("head.inc");
 <form action="firewall_nat_1to1.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?><p>
-<?php print_info_box_np(gettext("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");
+	$tab_array[] = array("Port Forward", false, "firewall_nat.php");
 	$tab_array[] = array("1:1", true, "firewall_nat_1to1.php");
-	$tab_array[] = array(gettext("Outbound"), false, "firewall_nat_out.php");
+	$tab_array[] = array("Outbound", false, "firewall_nat_out.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -101,14 +101,14 @@ include("head.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
 		  <td width="10%" class="listhdrr">Interface</td>
-                  <td width="20%" class="listhdrr"><?=gettext("External IP"); ?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("Internal IP"); ?></td>
-                  <td width="40%" class="listhdr"><?=gettext("Description"); ?></td>
+                  <td width="20%" class="listhdrr">External IP</td>
+                  <td width="20%" class="listhdrr">Internal IP</td>
+                  <td width="40%" class="listhdr">Description</td>
                   <td width="10%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
 			<td width="17"></td>
-                        <td valign="middle"><a href="firewall_nat_1to1_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add rule"); ?>"></a></td>
+                        <td valign="middle"><a href="firewall_nat_1to1_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add rule"></a></td>
                       </tr>
                     </table>
 		  </td>
@@ -137,8 +137,8 @@ include("head.inc");
                   <td class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td valign="middle"><a href="firewall_nat_1to1_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit rule"); ?>"></a></td>
-                        <td valign="middle"><a href="firewall_nat_1to1.php?act=del&id=<?=$i;?>" onclick="return confirm(gettext('Do you really want to delete this mapping?'))"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule"); ?>"></a></td>
+                        <td valign="middle"><a href="firewall_nat_1to1_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="edit rule"></a></td>
+                        <td valign="middle"><a href="firewall_nat_1to1.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this mapping?')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="delete rule"></a></td>
                       </tr>
                     </table>
                   </td>
@@ -150,17 +150,17 @@ include("head.inc");
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
 			<td width="17"></td>
-                        <td valign="middle"><a href="firewall_nat_1to1_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add rule"); ?>"></a></td>
+                        <td valign="middle"><a href="firewall_nat_1to1_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add rule"></a></td>
                       </tr>
                     </table>
                   </td>
                 </tr>
 		<tr>
 		  <td colspan="4">
-		        <p><span class="vexpl"><span class="red"><strong><?=gettext("Note"); ?>:<br>
-                      </strong></span><?=gettext("Depending on the way your WAN connection is setup, you may also need a"); ?> <a href="firewall_virtual_ip.php"><?=gettext("Virtual IP"); ?></a>.<br/>
-			<?=gettext("If you add a 1:1 NAT entry for any of the interface IPs on this system, it will make this system inaccessible on that IP address. i.e. if " .
-			"you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) using the WAN IP address will no longer function."); ?></span></p>
+		        <p><span class="vexpl"><span class="red"><strong>Note:<br>
+                      </strong></span>Depending on the way your WAN connection is setup, you may also need a <a href="firewall_virtual_ip.php">Virtual IP</a>.<br/>
+			If you add a 1:1 NAT entry for any of the interface IPs on this system, it will make this system inaccessible on that IP address. i.e. if
+			you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) using the WAN IP address will no longer function.</span></p>
 		  </td>
 		<tr>
               </table>

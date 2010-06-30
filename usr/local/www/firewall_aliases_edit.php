@@ -130,7 +130,7 @@ if ($_POST) {
 	/* input validation */
 
 	$reqdfields = explode(" ", "name");
-	$reqdfieldsn = array(",", gettext("Name"));
+	$reqdfieldsn = array(gettext("Name"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -138,10 +138,10 @@ if ($_POST) {
 	if (!isset($x)) {
 		$input_errors[] = gettext("Reserved word used for alias name.");
 	} else if ($_POST['type'] == "port" && (getservbyname($_POST['name'], "tcp") || getservbyname($_POST['name'], "udp"))) {
-		$input_errors[] = gettext("Reserved word used for alias name.)";
+		$input_errors[] = gettext("Reserved word used for alias name.");
 	} else {
 		if (is_validaliasname($_POST['name']) == false)
-			$input_errors[] = gettext("The alias name may only consist of the characters a-z, A-Z, 0-9, _.");
+			$input_errors[] = gettext("The alias name may only consist of the characters") . " a-z, A-Z, 0-9, _.";
 	}
 	/* check for name conflicts */
 	if (empty($a_aliases[$id])) {
@@ -450,7 +450,7 @@ $urltable_help = sprintf(gettext("Enter a single URL containing a large number o
 $openvpn_str = gettext("Username");
 $openvpn_user_str = gettext("OpenVPN Users");
 $openvpn_help = gettext("Enter as many usernames as you wish.");
-$openvpn_freq = gettext("");
+$openvpn_freq = "";
 
 $jscriptstr .= <<<EOD
 
@@ -561,7 +561,7 @@ EOD;
       <?php endif; ?>
       <br />
       <span class="vexpl">
-        <?=gettext("The name of the alias may only consist of the characters a-z, A-Z and 0-9."); ?>
+        <?=gettext("The name of the alias may only consist of the characters") . " a-z, A-Z and 0-9."; ?>
       </span>
     </td>
   </tr>
@@ -583,7 +583,7 @@ EOD;
         <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>><?=gettext("Network(s)"); ?></option>
         <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>><?=gettext("Port(s)"); ?></option>
         <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>><?=gettext("OpenVPN Users"); ?></option>
-        <option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>>URL</option>
+	<option value="url" <?php if ($pconfig['type'] == "url") echo "selected"; ?>><?=gettext("URL");?></option>
         <option value="urltable" <?php if ($pconfig['type'] == "urltable") echo "selected"; ?>><?=gettext("URL Table"); ?></option>
       </select>
     </td>

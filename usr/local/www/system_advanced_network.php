@@ -54,6 +54,8 @@ $pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
+$pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
+$pconfig['disablelargereceiveoffloading'] = isset($config['system']['disablelargereceiveoffloading']);
 $pconfig['flowtable'] = false;
 $pconfig['flowtable'] = isset($config['system']['flowtable']);
 
@@ -111,11 +113,23 @@ if ($_POST) {
 
 		if($_POST['disablechecksumoffloading'] == "yes") {
 			$config['system']['disablechecksumoffloading'] = $_POST['disablechecksumoffloading'];
-                        setup_microcode();
 		} else {
 			unset($config['system']['disablechecksumoffloading']);
-                        setup_microcode();
 		}
+
+		if($_POST['disablesegmentationoffloading'] == "yes") {
+			$config['system']['disablesegmentationoffloading'] = $_POST['disablesegmentationoffloading'];
+		} else {
+			unset($config['system']['disablesegmentationoffloading']);
+		}
+
+		if($_POST['disablelargereceiveoffloading'] == "yes") {
+			$config['system']['disablelargereceiveoffloading'] = $_POST['disablelargereceiveoffloading'];
+		} else {
+			unset($config['system']['disablelargereceiveoffloading']);
+		}
+
+		setup_microcode();
 
 		// Write out configuration (config.xml)
 		write_config();
@@ -234,7 +248,23 @@ function enable_change(enable_over) {
 									<strong><?=gettext("Disable hardware checksum offload"); ?></strong><br>
 									<?=gettext("Checking this option will disable hardware checksum offloading. Checksum offloading is broken in some hardware, particularly some Realtek cards. Rarely, drivers may have problems with checksum offloading and some specific NICs."); ?>
 								</td>
-							</tr>		
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Hardware TCP Segmentation Offloading"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="disablesegmentationoffloading" type="checkbox" id="disablesegmentationoffloading" value="yes" <?php if (isset($config['system']['disablesegmentationoffloading'])) echo "checked"; ?> />
+									<strong><?=gettext("Disable hardware TCP segmentation offload"); ?></strong><br>
+									<?=gettext("Checking this option will disable hardware TCP segmentation offloading (TSO, TSO4, TSO6). This offloading is broken in some hardware drivers, and may impact performance with some specific NICs."); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Hardware Large Receive Offloading"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="disablelargereceiveoffloading" type="checkbox" id="disablelargereceiveoffloading" value="yes" <?php if (isset($config['system']['disablelargereceiveoffloading'])) echo "checked"; ?> />
+									<strong><?=gettext("Disable hardware large receive offload"); ?></strong><br>
+									<?=gettext("Checking this option will disable hardware large receive offloading (LRO). This offloading is broken in some hardware drivers, and may impact performance with some specific NICs.."); ?>
+								</td>
+							</tr>
 							<tr>
 								<td width="22%" valign="top" class="vncell"><?=gettext("ARP Handling"); ?></td>
 								<td width="78%" class="vtable">

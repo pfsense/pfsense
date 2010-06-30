@@ -248,16 +248,14 @@ function local_user_set(& $user) {
 	if (!is_dir($home_base)) 
 		mkdir($home_base, 0755);
 
-	// Ensure $user_home exists and is writable
-	if(!is_dir($user_home)) 
-		mkdir($user_home, 0755);
-
 	/* configure shell type */
-	if (!userHasPrivilege($user, "user-shell-access")) {
+	if (!(userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all"))) {
 		if (!userHasPrivilege($user, "user-copy-files"))
 			$user_shell = "/sbin/nologin";
 		else
 			$user_shell = "/usr/local/bin/scponly";
+	} else {
+		$user_shell = "/bin/tcsh";
 	}
 
 	/* root user special handling */
@@ -270,6 +268,7 @@ function local_user_set(& $user) {
 		pclose($fd);
 		$user_group = "wheel";
 		$user_home = "/root";
+		$user_shell = "/etc/rc.initial";
 	}
 
 	/* read from pw db */
@@ -279,7 +278,7 @@ function local_user_set(& $user) {
 
 	/* determine add or mod */
 	if (!strncmp($pwread, "pw:", 3)) {
-		$user_op = "useradd -o";
+		$user_op = "useradd -m -k /usr/share/skel -o";
 	} else {
 		$user_op = "usermod";
 	}

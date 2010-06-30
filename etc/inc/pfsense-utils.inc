@@ -215,6 +215,27 @@ function enable_hardware_offloading($interface) {
 			pfSense_interface_capabilities($interface, IFCAP_RXCSUM);
 	}
 
+	if($config['system']['disablesegmentationoffloading']) {
+		if (isset($options['encaps']['tso4']))
+			pfSense_interface_capabilities($interface, -IFCAP_TSO);
+		if (isset($options['encaps']['tso6']))
+			pfSense_interface_capabilities($interface, -IFCAP_TSO);
+	} else {
+		if (isset($options['caps']['tso4']))
+			pfSense_interface_capabilities($interface, IFCAP_TSO);
+		if (isset($options['caps']['tso6']))
+			pfSense_interface_capabilities($interface, IFCAP_TSO);
+	}
+
+	if($config['system']['disablelargereceiveoffloading']) {
+		if (isset($options['encaps']['lro']))
+			pfSense_interface_capabilities($interface, -IFCAP_LRO);
+	} else {
+		if (isset($options['caps']['lro']))
+			pfSense_interface_capabilities($interface, IFCAP_LRO);
+	}
+
+
 	/* if the NIC supports polling *AND* it is enabled in the GUI */
 	$polling = isset($config['system']['polling']);	
 	if($polling && isset($options['caps']['polling']))
@@ -372,9 +393,9 @@ function setup_polling() {
 function setup_microcode() {
 
 	/* if list */
-        $ifdescrs = get_configured_interface_list();
+	$ifs = get_interface_arr();
 
-	foreach($ifdescrs as $if)
+	foreach($ifs as $if)
 		enable_hardware_offloading($if);
 }
 

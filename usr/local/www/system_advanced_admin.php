@@ -132,7 +132,7 @@ if ($_POST) {
 		else
 			unset($config['system']['enablesshd']);
 
-		$sshd_keyonly = $config['system']['sshdkeyonly'];
+		$sshd_keyonly = isset($config['system']['sshdkeyonly']);
 		if ($_POST['sshdkeyonly'])
 			$config['system']['sshdkeyonly'] = true;
 		else
@@ -157,7 +157,7 @@ if ($_POST) {
 			if ($port)
 				$url = "{$prot}://{$host}:{$port}/system_advanced_admin.php";
 			else
-				$url = "{$prot}://{$host}/system.php";
+				$url = "{$prot}://{$host}/system_advanced_admin.php";
 		}
 
 		write_config();

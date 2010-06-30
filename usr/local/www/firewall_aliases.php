@@ -147,7 +147,7 @@ if ($_GET['act'] == "del") {
 			}
 		}
 		if($is_alias_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete rule.  Currently in use by %s"), $referenced_by);
+			$savemsg = sprintf(gettext("Cannot delete rule. Currently in use by %s"), $referenced_by);
 		} else {
 			unset($a_aliases[$_GET['id']]);
 			write_config();
@@ -169,7 +169,7 @@ include("head.inc");
 <form action="firewall_aliases.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('aliases')): ?><p>
-<?php print_info_box_np gettext("The alias list has been changed.<br>You must apply the changes in order for them to take effect.");?>
+<?php print_info_box_np(gettext("The alias list has been changed.") . "<br>" . gettext("You must apply the changes in order for them to take effect."));?>
 <?php endif; ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -214,7 +214,7 @@ include("head.inc");
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
         <td valign="middle"><a href="firewall_aliases_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit alias"); ?>"></a></td>
-        <td><a href="firewall_aliases.php?act=del&id=<?=$i;?>" onclick="return confirm(gettext('Do you really want to delete this alias? All elements that still use it will become invalid (e.g. filter rules)!'))"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete alias"); ?>"></a></td>
+	<td><a href="firewall_aliases.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext('Do you really want to delete this alias? All elements that still use it will become invalid (e.g. filter rules)!');?>)"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete alias"); ?>"></a></td>
       </tr>
     </table>
   </td>

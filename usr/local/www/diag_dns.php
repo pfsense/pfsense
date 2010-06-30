@@ -124,7 +124,7 @@ include("head.inc"); ?>
 							<b><?=gettext("Server");?></b>
 						</td>
 						<td>
-							<b><?=gettext("Query time");?></b>
+							<b><?=gettext("Query time");></b>
 						</td>
 					</tr>
 <?php

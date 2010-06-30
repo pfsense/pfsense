@@ -70,14 +70,14 @@ if ($_POST['apply']) {
 		clear_subsystem_dirty('shaper');
 }
 
-$pgtitle = array("Firewall", "Traffic Shaper", "Wizards");
+$pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"),gettext("Wizards"));
 $statusurl = "status_queues.php";
 
-$wizards = array("Single Lan multi Wan" => "traffic_shaper_wizard.xml",
-									"Single Wan multi Lan" => "traffic_shaper_wizard_multi_lan.xml",
-									"Multiple Lan/Wan" => "traffic_shaper_wizard_multi_all.xml",
-									"Dedicated Links" => "traffic_shaper_wizard_dedicated.xml",
-								);
+$wizards = array(gettext("Single Lan multi Wan")) => "traffic_shaper_wizard.xml",
+                gettext("Single Wan multi Lan") => "traffic_shaper_wizard_multi_lan.xml",
+				gettext("Multiple Lan/Wan") => "traffic_shaper_wizard_multi_all.xml",
+				gettext("Dedicated Links") => "traffic_shaper_wizard_dedicated.xml",
+				;
 
 include("head.inc");
 ?>
@@ -93,17 +93,17 @@ include("fbegin.inc");
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")<br>gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("By Interface", false, "firewall_shaper.php");
-	$tab_array[1] = array("By Queue", false, "firewall_shaper_queues.php");
-	$tab_array[2] = array("Limiter", false, "firewall_shaper_vinterface.php");
-	$tab_array[3] = array("Layer7", false, "firewall_shaper_layer7.php");
-	$tab_array[4] = array("Wizards", true, "firewall_shaper_wizards.php");
+	$tab_array[0] = array(gettext("By Interface")), false, "firewall_shaper.php");
+	$tab_array[1] = array(gettext("By Queue")), false, "firewall_shaper_queues.php");
+	$tab_array[2] = array(gettext("Limiter")), false, "firewall_shaper_vinterface.php");
+	$tab_array[3] = array(gettext("Layer7")), false, "firewall_shaper_layer7.php");
+	$tab_array[4] = array(gettext("Wizards")), true, "firewall_shaper_wizards.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

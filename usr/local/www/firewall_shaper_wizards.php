@@ -73,7 +73,7 @@ if ($_POST['apply']) {
 $pgtitle = array("Firewall", "Traffic Shaper", "Wizards");
 $statusurl = "status_queues.php";
 
-$wizards = array("Single Lan multi Wan" => "traffic_shaper_wizard.xml",
+$wizards = array(gettext("Single Lan multi Wan") => "traffic_shaper_wizard.xml",
 									"Single Wan multi Lan" => "traffic_shaper_wizard_multi_lan.xml",
 									"Multiple Lan/Wan" => "traffic_shaper_wizard_multi_all.xml",
 									"Dedicated Links" => "traffic_shaper_wizard_dedicated.xml",

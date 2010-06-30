@@ -112,7 +112,7 @@ include("head.inc");
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  <?= gettext("Last") $nentries $curtab gettext("log entries") ?></td>
+			  <?php printf(gettext("Last %s %s log entries"),$nentries,$curtab); ?></td>
 		  </tr>
 		  <?php
 			$package =& $config['installedpackages']['package'][$apkgid];

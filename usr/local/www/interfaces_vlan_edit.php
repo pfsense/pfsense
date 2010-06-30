@@ -71,13 +71,13 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "if tag");
-	$reqdfieldsn = explode(",", "Parent interface,VLAN tag");
+	$reqdfields = explode(" ", gettext("if tag"));
+	$reqdfieldsn = explode(",", gettext("Parent interface,VLAN tag"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if ($_POST['tag'] && (!is_numericint($_POST['tag']) || ($_POST['tag'] < '1') || ($_POST['tag'] > '4094'))) {
-		$input_errors[] = "The VLAN tag must be an integer between 1 and 4094.";
+		$input_errors[] = gettext("The VLAN tag must be an integer between 1 and 4094.");
 	}
 
 	foreach ($a_vlans as $vlan) {
@@ -85,14 +85,14 @@ if ($_POST) {
 			continue;
 
 		if (($vlan['if'] == $_POST['if']) && ($vlan['tag'] == $_POST['tag'])) {
-			$input_errors[] = "A VLAN with the tag {$vlan['tag']} is already defined on this interface.";
+			$input_errors[] = sprintf(gettext("A VLAN with the tag %s is already defined on this interface."),$vlan['tag']);
 			break;
 		}
 	}
 	if (is_array($config['qinqs']['qinqentry'])) {
 		foreach ($config['qinqs']['qinqentry'] as $qinq)
 			if ($qinq['tag'] == $_POST['tag'] && $qinq['if'] == $_POST['if'])
-				$input_errors[] = "A QinQ VLAN exists with this tag please remove it to use this tag with.";
+				$input_errors[] = gettext("A QinQ VLAN exists with this tag please remove it to use this tag with.");
 	}
 
 	if (!$input_errors) {
@@ -104,7 +104,7 @@ if ($_POST) {
 
 		$vlan['vlanif'] = interface_vlan_configure($vlan);
                 if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan"))
-                        $input_errors[] = "Error occured creating interface, please retry.";
+                        $input_errors[] = gettext("Error occured creating interface, please retry.");
                 else {
                         if (isset($id) && $a_vlans[$id])
                                 $a_vlans[$id] = $vlan;
@@ -123,7 +123,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Firewall","VLAN","Edit");
+$pgtitle = array(gettext("Firewall"),gettext("VLAN"),gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -134,10 +134,10 @@ include("head.inc");
             <form action="interfaces_vlan_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">VLAN configuration</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("VLAN configuration");?></td>
 				</tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncellreq">Parent interface</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface");?></td>
                   <td width="78%" class="vtable">
                     <select name="if" class="formselect">
                       <?php
@@ -153,27 +153,27 @@ include("head.inc");
 		      ?>
                     </select>
 			<br/>
-			<span class="vexpl">Only VLAN capable interfaces will be shown.</span></td>
+			<span class="vexpl"><?=gettext("Only VLAN capable interfaces will be shown.");?></span></td>
                 </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">VLAN tag </td>
+                  <td valign="top" class="vncellreq"><?=gettext("VLAN tag ");?></td>
                   <td class="vtable">
                     <input name="tag" type="text" class="formfld unknown" id="tag" size="6" value="<?=htmlspecialchars($pconfig['tag']);?>">
                     <br>
-                    <span class="vexpl">802.1Q VLAN tag (between 1 and 4094) </span></td>
+                    <span class="vexpl"><?=gettext("802.1Q VLAN tag (between 1 and 4094) ");?></span></td>
 			    </tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here").
+                    ("for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
 		    <input type="hidden" name="vlanif" value="<?=$pconfig['vlanif']; ?>">
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="Cancel" onclick="history.back()">
                     <?php if (isset($id) && $a_vlans[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

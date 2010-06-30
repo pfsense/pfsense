@@ -42,7 +42,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Traceroute"));
+$pgtitle = array("Diagnostics","Traceroute");
 include("head.inc");
 
 ?>
@@ -59,11 +59,11 @@ if ($_POST || $_REQUEST['host']) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "host ttl");
-	$reqdfieldsn = array(gettext("Host"),gettext("ttl"));
+	$reqdfieldsn = explode(",", "Host,ttl");
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (($_REQUEST['ttl'] < 1) || ($_REQUEST['ttl'] > MAX_TTL)) {
-		$input_errors[] = sprintf(gettext("Maximum number of hops must be between 1 and '%s'", MAX_TLL);
+		$input_errors[] = "Maximum number of hops must be between 1 and {MAX_TTL}";
 	}
 
 	if (!$input_errors) {
@@ -83,15 +83,15 @@ if (!isset($do_traceroute)) {
 			<form action="diag_traceroute.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Traceroute");?></td>
+					<td colspan="2" valign="top" class="listtopic">Traceroute</td>
 				</tr>	
                 <tr>
-				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Host");?></td>
+				  <td width="22%" valign="top" class="vncellreq">Host</td>
 				  <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
 				</tr>
 				<tr>
-				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Maximum number of hops");?></td>
+				  <td width="22%" valign="top" class="vncellreq">Maximum number of hops</td>
 				  <td width="78%" class="vtable">
 					<select name="ttl" class="formfld" id="ttl">
 					<?php for ($i = 1; $i <= MAX_TTL; $i++): ?>
@@ -101,7 +101,7 @@ if (!isset($do_traceroute)) {
 				</tr>
 
 				<tr>
-				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Use ICMP");?></td>
+				  <td width="22%" valign="top" class="vncellreq">Use ICMP</td>
 				  <td width="78%" class="vtable">
 					<input name="useicmp" type="checkbox"<?php if($_REQUEST['useicmp']) echo " CHECKED"; ?>>
 					</td>
@@ -109,12 +109,12 @@ if (!isset($do_traceroute)) {
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Traceroute");?>">
+                    <input name="Submit" type="submit" class="formbtn" value="Traceroute">
 				</td>
 				</tr>
 				<tr>
 				<td valign="top" colspan="2">
-				<p><span class="vexpl"><span class="red"><b><?=gettext("Note");?>:</b></span><?=gettext("Traceroute may take a while to complete.".      "You may hit the Stop button on your browser at any time to see the progress of failed traceroutes.");?><p>
+				<p><span class="vexpl"><span class="red"><strong>Note: </strong></span> Traceroute may take a while to complete.  You may hit the Stop button on your browser at any time to see the progress of failed traceroutes.<p>
 				<? if ($do_traceroute) {
 					echo "<font face='terminal' size='2'>";
 					echo("<br><strong>Traceroute output:</strong><br>");
@@ -133,7 +133,7 @@ if (!isset($do_traceroute)) {
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%"> 
-					<span class="vexpl"><b><?=gettext("Note");?>:</b></span><?=gettext("Multi-wan is not supported from this utility currently.");?> 
+					<span class="vexpl"><strong>Note: </strong></span> Multi-wan is not supported from this utility currently. 
 				 </td>
 				</tr>					
 			</table>

@@ -59,7 +59,7 @@ if($_POST['Download']) {
 }
 
 $bogons = file_get_contents(trim("/etc/bogons"));
-$pgtitle = array(gettext("Diagnostics:")gettext("Show Bogons"));
+$pgtitle = "Diagnostics: Show Bogons";
 
 include("head.inc");
 ?>
@@ -87,7 +87,7 @@ pre { font-size: 1.15em; }
 					<tr>
 						<td>
 							<font size="+1">
-								<b><?=gettext("Currently loaded bogons table:");?></b><p/>
+								<b>Currently loaded bogons table:</b><p/>
 								<pre>
 <?php echo $bogons; ?>
 								</pre>
@@ -103,7 +103,7 @@ pre { font-size: 1.15em; }
   </tr>
 </table>
 <p/>
-<input type="submit" name="Download" value="<?=gettext("Download");?>"><?=gettext("latest bogon data.");?>
+<input type="submit" name="Download" value="Download"> latest bogon data.
 </form>
 <?php include("fend.inc"); ?>
 </body>

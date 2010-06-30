@@ -46,7 +46,7 @@
 require("guiconfig.inc");
 require("ipsec.inc");
 
-$pgtitle = array(gettext("Status"),gettext("IPsec"),gettext("SAD"));
+$pgtitle = array("Status","IPsec","SAD");
 include("head.inc");
 
 $sad = ipsec_dump_sad();
@@ -70,10 +70,10 @@ if ($_GET['act'] == "del") {
 			<td>
 				<?php
 					$tab_array = array();
-					$tab_array[0] = array(gettext("Overview"), false, "diag_ipsec.php");
-					$tab_array[1] = array(gettext("SAD"), true, "diag_ipsec_sad.php");
-					$tab_array[2] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
-					$tab_array[3] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
+					$tab_array[0] = array("Overview", false, "diag_ipsec.php");
+					$tab_array[1] = array("SAD", true, "diag_ipsec_sad.php");
+					$tab_array[2] = array("SPD", false, "diag_ipsec_spd.php");
+					$tab_array[3] = array("Logs", false, "diag_logs_ipsec.php");
 					display_top_tabs($tab_array);
 				?>
 			</td>
@@ -84,12 +84,12 @@ if ($_GET['act'] == "del") {
 					<table class="tabcont sortable" width="100%" border="0" cellpadding="6" cellspacing="0">
 						<?php if (count($sad)): ?>
 						<tr>
-							<td nowrap class="listhdrr"><?=gettext("Source");?></td>
-							<td nowrap class="listhdrr"><?=gettext("Destination");?></a></td>
-							<td nowrap class="listhdrr"><?=gettext("Protocol");?></td>
-							<td nowrap class="listhdrr"><?=gettext("SPI");?></td>
-							<td nowrap class="listhdrr"><?=gettext("Enc. alg.");?></td>
-							<td nowrap class="listhdr"><?=gettext("Auth. alg.");?></td>
+							<td nowrap class="listhdrr">Source</td>
+							<td nowrap class="listhdrr">Destination</a></td>
+							<td nowrap class="listhdrr">Protocol</td>
+							<td nowrap class="listhdrr">SPI</td>
+							<td nowrap class="listhdrr">Enc. alg.</td>
+							<td nowrap class="listhdr">Auth. alg.</td>
 							<td nowrap class="list"></td>
 						</tr>
 						<?php foreach ($sad as $sa): ?>
@@ -116,7 +116,7 @@ if ($_GET['act'] == "del") {
 						<?php else: ?>
 						<tr>
 							<td>
-								<p><strong><?=gettext("No IPsec security associations.");?></strong></p>
+								<p><strong>No IPsec security associations.</strong></p>
 							</td>
 						</tr>
 						<?php endif; ?>
@@ -129,8 +129,8 @@ if ($_GET['act'] == "del") {
 <p/>
 
 <span class="vexpl">
-<span class="red"><strong><?=gettext("Note");?>:<br></strong></span>
-<?=gettext("You can configure your IPsec");?> <a href="vpn_ipsec.php">here</a>.
+<span class="red"><strong>Note:<br></strong></span>
+You can configure your IPsec <a href="vpn_ipsec.php">here</a>.
 </span>
 
 <?php include("fend.inc"); ?>

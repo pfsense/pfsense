@@ -43,7 +43,7 @@ require("guiconfig.inc");
 
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 
-$pgtitle = gettext("Diagnostics: System Activity");
+$pgtitle = "Diagnostics: System Activity";
 
 if($_REQUEST['getactivity']) {
 	$text = `/usr/bin/top -HS`;
@@ -98,7 +98,7 @@ include("head.inc");
 				<table>
 					<tr><td>
 						<div name='cpuactivitydiv' id='cpuactivitydiv'>
-							<b><?=gettext("Gathering CPU activity, please wait...");?>
+							<b>Gathering CPU activity, please wait...
 						</div>
 					</td></tr>
 				</table>

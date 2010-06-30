@@ -73,20 +73,20 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable'] && !is_ipaddr($_POST['remoteserver'])) {
-		$input_errors[] = gettext("A valid IP address must be specified for remote syslog server #1.");
+		$input_errors[] = "A valid IP address must be specified for remote syslog server #1.";
 	}
 	if ($_POST['enable'] && $_POST['remoteserver2'] && !is_ipaddr($_POST['remoteserver2'])) {
-		$input_errors[] = gettext("A valid IP address must be specified for remote syslog server #2.");
+		$input_errors[] = "A valid IP address must be specified for remote syslog server #2.";
 	}
 	if ($_POST['enable'] && $_POST['remoteserver3'] && !is_ipaddr($_POST['remoteserver3'])) {
-		$input_errors[] = gettext("A valid IP address must be specified for remote syslog server #3.");
+		$input_errors[] = "A valid IP address must be specified for remote syslog server #3.";
 	}
 	if ($_POST['enable'] && !is_ipaddr($_POST['remoteserver'])) {
-		$input_errors[] = gettext("A valid IP address must be specified.");
+		$input_errors[] = "A valid IP address must be specified.";
 	}
 
 	if (($_POST['nentries'] < 5) || ($_POST['nentries'] > 2000)) {
-		$input_errors[] = gettext("Number of log entries to show must be between 5 and 2000.");
+		$input_errors[] = "Number of log entries to show must be between 5 and 2000.";
 	}
 
 	if (!$input_errors) {
@@ -123,7 +123,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Settings"));
+$pgtitle = array("Status","System logs","Settings");
 include("head.inc");
 
 ?>
@@ -166,17 +166,17 @@ function enable_change(enable_over) {
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-	$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
-	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
-	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
-	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
-	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
-	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-	$tab_array[] = array(gettext("OpenNTPD"), false, "diag_logs_ntpd.php");
-	$tab_array[] = array(gettext("Settings"), true, "diag_logs_settings.php");
+	$tab_array[] = array("System", false, "diag_logs.php");
+	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
+	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
+	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
+	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
+	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
+	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
+	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
+	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
+	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
+	$tab_array[] = array("Settings", true, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -187,44 +187,46 @@ function enable_change(enable_over) {
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable"> <input name="reverse" type="checkbox" id="reverse" value="yes" <?php if ($pconfig['reverse']) echo "checked"; ?>>
-			<strong><?=gettext("Show log entries in reverse order (newest entries on top)");?></strong></td>
+                          <strong>Show log entries in reverse order (newest entries
+                          on top)</strong></td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
-			<td width="78%" class="vtable"><?=gettext("Number of log entries to show") . ":"?>
+                        <td width="78%" class="vtable">Number of log entries to
+                          show:
                           <input name="nentries" id="nentries" type="text" class="formfld unknown" size="4" value="<?=htmlspecialchars($pconfig['nentries']);?>"></td>
                       </tr>
                       <tr>
                         <td valign="top" class="vtable">&nbsp;</td>
                         <td class="vtable"> <input name="logdefaultblock" type="checkbox" id="logdefaultblock" value="yes" <?php if ($pconfig['logdefaultblock']) echo "checked"; ?>>
-			<strong><?=gettext("Log packets blocked by the default rule");?></strong><br>
-			  <?=gettext("Hint: packets that are blocked by the " .
-                          "implicit default block rule will not be logged anymore " .
-			  "if you uncheck this option. Per-rule logging options are not affected.");?></td>
+                          <strong>Log packets blocked by the default rule</strong><br>
+                          Hint: packets that are blocked by the
+                          implicit default block rule will not be logged anymore
+                          if you uncheck this option. Per-rule logging options are not affected.</td>
                       </tr>
                       <tr>
                         <td valign="top" class="vtable">&nbsp;</td>
                         <td class="vtable"> <input name="rawfilter" type="checkbox" id="rawfilter" value="yes" <?php if ($pconfig['rawfilter']) echo "checked"; ?>>
-			<strong><?=gettext("Show raw filter logs");?></strong><br>
-			  <?=gettext("Hint: If this is checked, filter logs are shown as generated by the packet filter, without any formatting. This will reveal more detailed information.");?></td>
+                          <strong>Show raw filter logs</strong><br>
+                          Hint: If this is checked, filter logs are shown as generated by the packet filter, without any formatting. This will reveal more detailed information. </td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable"> <input name="disablelocallogging" type="checkbox" id="disablelocallogging" value="yes" <?php if ($pconfig['disablelocallogging']) echo "checked"; ?> onClick="enable_change(false)">
-			  <strong><?=gettext("Disable writing log files to the local RAM disk");?></strong></td>
+                          <strong>Disable writing log files to the local RAM disk</strong></td>
                        </tr>
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable"> <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
-			  <strong><?=gettext("Enable syslog'ing to remote syslog server");?></strong></td>
+                          <strong>Enable syslog'ing to remote syslog server</strong></td>
                       </tr>
                       <tr>
-			<td width="22%" valign="top" class="vncell"><?=gettext("Remote syslog servers");?></td>
+                        <td width="22%" valign="top" class="vncell">Remote syslog servers</td>
                         <td width="78%" class="vtable"> 
 							<table>
 								<tr>
 									<td>
-										<?=gettext("Server") . " 1";?>
+										Server 1
 									</td>
 									<td>
 										<input name="remoteserver" id="remoteserver" type="text" class="formfld host" size="20" value="<?=htmlspecialchars($pconfig['remoteserver']);?>">
@@ -232,7 +234,7 @@ function enable_change(enable_over) {
 								</tr>
 								<tr>
 									<td>
-										<?=gettext("Server") . " 2";?>
+										Server 2
 									</td>
 									<td>
 										<input name="remoteserver2" id="remoteserver2" type="text" class="formfld host" size="20" value="<?=htmlspecialchars($pconfig['remoteserver2']);?>">
@@ -240,7 +242,7 @@ function enable_change(enable_over) {
 								</tr>
 								<tr>
 									<td>
-										<?=gettext("Server") . " 3";?>
+										Server 3
 									</td>
 									<td>
 										<input name="remoteserver3" id="remoteserver3" type="text" class="formfld host" size="20" value="<?=htmlspecialchars($pconfig['remoteserver3']);?>">
@@ -251,17 +253,17 @@ function enable_change(enable_over) {
 										&nbsp;
 									</td>
 									<td>
-										<?=gettext("IP addresses of remote syslog servers");?>
+										IP addresses of remote syslog servers
 									</td>
 							</table>
 					 	  <input name="system" id="system" type="checkbox" value="yes" onclick="enable_change(false)" <?php if ($pconfig['system']) echo "checked"; ?>>
-						  <?=gettext("system events");?><br> <input name="filter" id="filter" type="checkbox" value="yes" <?php if ($pconfig['filter']) echo "checked"; ?>>
-						  <?=gettext("firewall events");?><br> <input name="dhcp" id="dhcp" type="checkbox" value="yes" <?php if ($pconfig['dhcp']) echo "checked"; ?>>
-						  <?=gettext("DHCP service events");?><br> <input name="portalauth" id="portalauth" type="checkbox" value="yes" <?php if ($pconfig['portalauth']) echo "checked"; ?>>
-						  <?=gettext("Portal Auth");?><br> <input name="vpn" id="vpn" type="checkbox" value="yes" <?php if ($pconfig['vpn']) echo "checked"; ?>>
-						  <?=gettext("PPTP VPN events");?>
+                          system events <br> <input name="filter" id="filter" type="checkbox" value="yes" <?php if ($pconfig['filter']) echo "checked"; ?>>
+                          firewall events<br> <input name="dhcp" id="dhcp" type="checkbox" value="yes" <?php if ($pconfig['dhcp']) echo "checked"; ?>>
+                          DHCP service events<br> <input name="portalauth" id="portalauth" type="checkbox" value="yes" <?php if ($pconfig['portalauth']) echo "checked"; ?>>
+                          Portal Auth<br> <input name="vpn" id="vpn" type="checkbox" value="yes" <?php if ($pconfig['vpn']) echo "checked"; ?>>
+                          PPTP VPN events
                           <br> <input name="logall" id="logall" type="checkbox" value="yes" <?php if ($pconfig['logall']) echo "checked"; ?>>
-						  <?=gettext("Everything");?>
+                          Everything
                         </td>
                       </tr>
                       <tr>
@@ -271,10 +273,10 @@ function enable_change(enable_over) {
                       </tr>
                       <tr>
                         <td width="22%" height="53" valign="top">&nbsp;</td>
-						<td width="78%"><strong><span class="red"><?=gettext("Note") . ":"?></span></strong><br>
-                          <?=gettext("syslog sends UDP datagrams to port 514 on the specified " .
-                          "remote syslog server. Be sure to set syslogd on the " .
-						  "remote server to accept syslog messages from");?> <?=$g['product_name']?>.
+                        <td width="78%"><strong><span class="red">Note:</span></strong><br>
+                          syslog sends UDP datagrams to port 514 on the specified
+                          remote syslog server. Be sure to set syslogd on the
+                          remote server to accept syslog messages from <?=$g['product_name']?>.
                         </td>
                       </tr>
                     </table>

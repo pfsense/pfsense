@@ -45,7 +45,7 @@
 
 global $g;
 
-$pgtitle = array(gettext("Status"),gettext("IPsec"));
+$pgtitle = array("Status","IPsec");
 
 require("guiconfig.inc");
 include("head.inc");
@@ -69,10 +69,10 @@ $sad = ipsec_dump_sad();
 		<td>
 			<?php
 				$tab_array = array();
-				$tab_array[0] = array(gettext("Overview"), true, "diag_ipsec.php");
-				$tab_array[1] = array(gettext("SAD"), false, "diag_ipsec_sad.php");
-				$tab_array[2] = array(gettext("SPD"), false, "diag_ipsec_spd.php");
-				$tab_array[3] = array(gettext("Logs"), false, "diag_logs_ipsec.php");
+				$tab_array[0] = array("Overview", true, "diag_ipsec.php");
+				$tab_array[1] = array("SAD", false, "diag_ipsec_sad.php");
+				$tab_array[2] = array("SPD", false, "diag_ipsec_spd.php");
+				$tab_array[3] = array("Logs", false, "diag_logs_ipsec.php");
 				display_top_tabs($tab_array);
 			?>
 		</td>
@@ -82,12 +82,12 @@ $sad = ipsec_dump_sad();
 			<div id="mainarea">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0" class="tabcont sortable">
 					<tr>
-						<td nowrap class="listhdrr"><?=gettext("Local IP");?></td>
-						<td nowrap class="listhdrr"><?=gettext("Remote IP");?></a></td>
-						<td nowrap class="listhdrr"><?=gettext("Local Network");?></td>
-						<td nowrap class="listhdrr"><?=gettext("Remote Network");?></a></td>
-						<td nowrap class="listhdrr"><?=gettext("Description");?></a></td>
-						<td nowrap class="listhdrr"><?=gettext("Status");?></td>
+						<td nowrap class="listhdrr">Local IP</td>
+						<td nowrap class="listhdrr">Remote IP</a></td>
+						<td nowrap class="listhdrr">Local Network</td>
+						<td nowrap class="listhdrr">Remote Network</a></td>
+						<td nowrap class="listhdrr">Description</a></td>
+						<td nowrap class="listhdrr">Status</td>
 					</tr>
 					<?php
 						foreach ($a_phase2 as $ph2ent) {
@@ -132,9 +132,9 @@ $sad = ipsec_dump_sad();
 
 <span class="vexpl">
 	<span class="red">
-		<strong><?=gettext("Note");?>:<br /></strong>
+		<strong>Note:<br /></strong>
 	</span>
-	<?=gettext("You can configure your IPsec");?> 
+	You can configure your IPsec 
 	<a href="vpn_ipsec.php">here</a>.
 </span>
 

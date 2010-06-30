@@ -40,7 +40,7 @@
 ##|*MATCH=diag_ping.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Diagnostics"), "Ping");
+$pgtitle = array("Diagnostics", "Ping");
 require("guiconfig.inc");
 
 define('MAX_COUNT', 10);
@@ -52,11 +52,11 @@ if ($_POST || $_REQUEST['host']) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "host count");
-	$reqdfieldsn = array(",", gettext("Host"),gettext("Count"));
+	$reqdfieldsn = explode(",", "Host,Count");
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
-		$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_COUNT);
+		$input_errors[] = "Count must be between 1 and {MAX_COUNT}";
 	}
 
 	if (!$input_errors) {
@@ -103,7 +103,7 @@ include("head.inc"); ?>
 				  </td>
 				</tr>
 				<tr>
-				  <td width="22%" valign="top" class="vncellreq"><?= gettext("Count"); ?></td>
+				  <td width="22%" valign="top" class="vncellreq">Count</td>
 				  <td width="78%" class="vtable">
 					<select name="count" class="formfld" id="count">
 					<?php for ($i = 1; $i <= MAX_COUNT; $i++): ?>
@@ -121,7 +121,7 @@ include("head.inc"); ?>
 				<td valign="top" colspan="2">
 				<? if ($do_ping) {
 					echo "<font face='terminal' size='2'>";
-					echo "<strong>" . gettext("Ping output") . ":</strong><br>");
+					echo("<strong>Ping output:</strong><br>");
 					echo('<pre>');
 					$ifaddr = get_interface_ip($interface);
 					if ($ifaddr)

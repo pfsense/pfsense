@@ -33,6 +33,7 @@
 	pfSense_BUILDER_BINARIES:	/usr/bin/netstat	
 	pfSense_MODULE:	routing
 */
+
 ##|+PRIV
 ##|*IDENT=page-diagnostics-routingtables
 ##|*NAME=Diagnostics: Routing tables page
@@ -42,7 +43,7 @@
 
 include('guiconfig.inc');
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Routing tables"));
+$pgtitle = array("Diagnostics","Routing tables");
 
 include('head.inc');
 
@@ -55,11 +56,11 @@ include('head.inc');
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 
 <tr>
-<td class="vncellreq" width="22%"><?=gettext("Name resolution");?></td>
+<td class="vncellreq" width="22%">Name resolution</td>
 <td class="vtable" width="78%">
-<input type="checkbox" class="formfld" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo 'checked'; ?>><?=gettext("Enable");?></input>
+<input type="checkbox" class="formfld" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo 'checked'; ?>> Enable</input>
 <br />
-<span class="expl"><?=gettext("Enable this to attempt to resolve names when displaying the tables.");?></span>
+<span class="expl">Enable this to attempt to resolve names when displaying the tables.</span>
 </td>
 </tr>
 
@@ -69,7 +70,7 @@ include('head.inc');
 <input type="submit" class="formbtn" name="submit" value="Show" />
 <br />
 <br />
-<span class="vexpl"><span class="red"><strong><?=gettext("Note")?>:</strong></span><?=gettext("By enabling name resolution, the query should take a bit longer. You can stop it at"."any time by clicking the Stop button in your browser");?>.</span>
+<span class="vexpl"><span class="red"><strong>Note:</strong></span> By enabling name resolution, the query should take a bit longer. You can stop it at any time by clicking the Stop button in your browser.</span>
 </td>
 </tr>
 

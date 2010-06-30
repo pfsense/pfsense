@@ -46,7 +46,7 @@ ini_set('max_input_time', '9999');
 require_once("guiconfig.inc");
 require_once("config.inc");
 
-$pgtitle = array(gettext("Diagnostics"), gettext("NanoBSD"));
+$pgtitle = array("Diagnostics","NanoBSD");
 include("head.inc");
 
 // Survey slice info
@@ -70,12 +70,12 @@ if($_POST['bootslice']) {
 	echo <<<EOF
 	 	<div id="loading">
 			<img src="/themes/metallic/images/misc/loader.gif"> 
-			gettext("Setting slice information, please wait...")
+			Setting slice information, please wait...
 			<p/>&nbsp;
 		</div>
 EOF;
 	nanobsd_switch_boot_slice();
-	$savemsg = gettext("The boot slice has been set to") . " " . nanobsd_get_active_slice();
+	$savemsg = "The boot slice has been set to " . nanobsd_get_active_slice();
 	// Survey slice info
 	nanobsd_detect_slice_info();
 
@@ -85,14 +85,14 @@ if($_POST['destslice']) {
 echo <<<EOF
  	<div id="loading">
 		<img src="/themes/metallic/images/misc/loader.gif">
-		gettext("Duplicating slice.  Please wait, this will take a moment...")
+		Duplicating slice.  Please wait, this will take a moment...
 		<p/>&nbsp;
 	</div>
 EOF;
 	if(nanobsd_clone_slice($_POST['destslice'])) {
-		$savemsg = gettext("The slice has been duplicated.") . "<p/>" . gettext("If you would like to boot from this newly duplicated slice please set it using the bootup information area.");
+		$savemsg = "The slice has been duplicated.<p/>If you would like to boot from this newly duplicated slice please set it using the bootup information area.";
 	} else {
-		$savemsg = gettext("There was an error while duplicating the slice.  Operation aborted.");
+		$savemsg = "There was an error while duplicating the slice.  Operation aborted.";
 	}
 	// Re-Survey slice info
 	nanobsd_detect_slice_info();
@@ -113,28 +113,28 @@ if ($savemsg)
 			<div class="tabcont">
 				<span class="vexpl">
 					<span class="red">
-						<strong><?=gettext("NOTE") . ":"?>&nbsp;</strong>
+						<strong>NOTE:&nbsp</strong>
 					</span>
-					<?=gettext("The options on this page are intended for use by advanced users only.")?>
+					The options on this page are intended for use by advanced users only.
 					<br/>&nbsp;
 				</span>
 				<p/>
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?=gettext("Bootup information");?></td>
+						<td colspan="2" valign="top" class="listtopic">Bootup information</td>
 					</tr>
 					<tr>						
-						<td width="22%" valign="top" class="vncell"><?=gettext("NanoBSD Image size");?></td>
+						<td width="22%" valign="top" class="vncell">NanoBSD Image size</td>
 						<td width="78%" class="vtable">
 							<?php echo $NANOBSD_SIZE; ?>
 						</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Bootup");?></td>
+						<td width="22%" valign="top" class="vncell">Bootup</td>
 						<td width="78%" class="vtable">
 							<form action="diag_nanobsd.php" method="post" name="iform">
-								<?=gettext("Bootup slice is currently");?>: <?php echo $ACTIVE_SLICE; ?>
-								<br/><br/><?=gettext("This will switch the bootup slice to the alternate slice.");?>
+								Bootup slice is currently: <?php echo $ACTIVE_SLICE; ?>
+								<br/><br/>This will switch the bootup slice to the alternate slice.
 								<br/>
 								<input type='hidden' name='bootslice' value='switch'>
 								<input type='submit' value='Switch Slice'></form>
@@ -144,20 +144,20 @@ if ($savemsg)
 						<td colspan="2" valign="top" class="">&nbsp;</td>
 					</tr>					
 					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?=gettext("Duplicate bootup slice to alternate");?></td>
+						<td colspan="2" valign="top" class="listtopic">Duplicate bootup slice to alternate</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Duplicate bootup slice");?></td>
+						<td width="22%" valign="top" class="vncell">Duplicate bootup slice</td>
 						<td width="78%" class="vtable">
 							<form action="diag_nanobsd.php" method="post" name="iform">						
-								<?=gettext("Destination slice");?>:							
+								Destination slice:							
 								<select name='destslice'>
 									<option value='<?php echo $COMPLETE_PATH; ?>'>
 										<?php echo "{$COMPLETE_BOOT_PATH} -> {$TOFLASH}"; ?>
 									</option>
 								</select>
 								<br/>
-								<?=gettext("This will duplicate the bootup slice to the alternate slice.  Use this if you would like to duplicate the known good working boot partition to the alternate.");?>
+								This will duplicate the bootup slice to the alternate slice.  Use this if you would like to duplicate the known good working boot partition to the alternate.
 						</td>
 					</tr>
 					<tr>
@@ -168,10 +168,10 @@ if ($savemsg)
 						<td colspan="2" valign="top" class="">&nbsp;</td>
 					</tr>					
 					<tr>
-						<td colspan="2" valign="top" class="listtopic"><?=gettext("View upgrade log");?></td>
+						<td colspan="2" valign="top" class="listtopic">View upgrade log</td>
 					</tr>
 					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("View previous upgrade log");?></td>
+						<td width="22%" valign="top" class="vncell">View previous upgrade log</td>
 						<td width="78%" class="vtable">
 						<?php
 							if($_POST['viewupgradelog']) {

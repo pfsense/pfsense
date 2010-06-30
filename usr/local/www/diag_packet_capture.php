@@ -35,7 +35,7 @@
 ##|*MATCH=diag_packet_capture.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Packet Capture"));
+$pgtitle = array("Diagnostics", "Packet Capture");
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
@@ -64,14 +64,14 @@ if ($_POST) {
 	}
 
 	if ($_POST['startbtn'] != "" ) {
-		$action = gettext("Start");
+		$action = "Start";
 		
 	 	//delete previous packet capture if it exists
 	 	if (file_exists($fp.$fn))
 	 		unlink ($fp.$fn);
 
 	} elseif ($_POST['stopbtn']!= "") {
-		$action = gettext("Stop");
+		$action = "Stop";
 		$processes_running = trim(shell_exec('/bin/ps axw -O pid= | /usr/bin/grep tcpdump | /usr/bin/grep $fn | /usr/bin/grep -v pflog'));
 
 		//explode processes into an array, (delimiter is new line)
@@ -95,6 +95,7 @@ if ($_POST) {
 } else {
 	$do_tcpdump = false;
 }
+$pgtitle = "Diagnostics: Packet Capture";
 include("head.inc"); ?>
 
 <body link="#000000" vlink="#0000CC" alink="#0000CC">
@@ -109,10 +110,10 @@ include("fbegin.inc");
 			<form action="diag_packet_capture.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic"><?=gettext("Packet capture");?></td>
+					<td colspan="2" valign="top" class="listtopic">Packet capture</td>
 				</tr>	
                	<tr>
-				  <td width="17%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
+				  <td width="17%" valign="top" class="vncellreq">Interface</td>
 				  <td width="83%" class="vtable">
 				<select name="interface">
 <?php 
@@ -124,58 +125,56 @@ include("fbegin.inc");
                       </option>
                       <?php endforeach;?>
                     </select>
-					<br/><?=gettext("Select the interface the traffic will be passing through. Typically this will be the WAN interface.");?>
+                    <br/>Select the interface the traffic will be passing through. Typically this will be the WAN interface.
 				  </td>
 				</tr>
 			    <tr>
-				  <td width="17%" valign="top" class="vncellreq"><?=gettext("Host Address");?></td>
+				  <td width="17%" valign="top" class="vncellreq">Host Address</td>
 				  <td width="83%" class="vtable">
                     <input name="host" type="text" class="formfld host" id="host" size="20" value="<?=htmlspecialchars($host);?>">
-					<br/><?=gettext("This value is either the Source or Destination IP address. The packet capture will look for this address in either field.");?>
-					<br/><?=gettext("This value can be a domain name or IP address.");?>
-					<br/><?=gettext("If you leave this field blank, all packets on the specified interface will be captured. ");?>
+					<br/>This value is either the Source or Destination IP address. The packet capture will look for this address in either field.
+					<br/>This value can be a domain name or IP address.
+					<br/>If you leave this field blank, all packets on the specified interface will be captured. 
 					</td>
 				</tr>
 				<tr>
-				  <td width="17%" valign="top" class="vncellreq"><?=gettext("Port");?></td>
+				  <td width="17%" valign="top" class="vncellreq">Port</td>
 				  <td width="83%" class="vtable">
                     <input name="port" type="text" class="formfld unknown" id="port" size="5" value="<?=$port;?>">
-					<br/><?=gettext("The port can be either the source or destination port. The packet capture will look for this port in either field.");?>
-					<br/><?=gettext("Leave blank if you do not want to filter by port.");?>
+					<br/>The port can be either the source or destination port. The packet capture will look for this port in either field.
+					<br/>Leave blank if you do not want to filter by port.
 					</td>
 				</tr>
 				<tr>
-				  <td width="17%" valign="top" class="vncellreq"><?=gettext("Packet Length");?></td>
+				  <td width="17%" valign="top" class="vncellreq">Packet Length</td>
 				  <td width="83%" class="vtable">
                     <input name="snaplen" type="text" class="formfld unknown" id="snaplen" size="5" value="<?=$snaplen;?>">
-					<br/><?=gettext("The Packet length is the number of bytes the packet will capture for each payload. Default value is 1500.");?>
+					<br/>The Packet length is the number of bytes the packet will capture for each payload. Default value is 1500.
 					</td>
 				</tr>
 				<tr>
-				  <td width="17%" valign="top" class="vncellreq"><?=gettext("Count");?></td>
+				  <td width="17%" valign="top" class="vncellreq">Count</td>
 				  <td width="83%" class="vtable">
                     <input name="count" type="text" class="formfld unknown" id="count" size="5" value="<?=$count;?>">
-					<br/><?=gettext("This is the number of packets the packet capture will grab. Default value is 100.") . "<br/>" . gettext("Enter 0 (zero) for no count limit.");?>
+					<br/>This is the number of packets the packet capture will grab. Default value is 100. <br/>Enter 0 (zero) for no count limit.
 				</tr>
 				<tr>
-				  <td width="17%" valign="top" class="vncellreq"><?=gettext("Level of Detail");?></td>
+				  <td width="17%" valign="top" class="vncellreq">Level of Detail</td>
 				  <td width="83%" class="vtable">
                     <select name="detail" type="text" class="formselect" id="detail" size="1">
-						<option value="-q" <?php if ($detail == "-q") echo "selected"; ?>><?=gettext("Normal");?></option>
-						<option value="-v" <?php if ($detail == "-v") echo "selected"; ?>><?=gettext("Medium");?></option>
-						<option value="-vv" <?php if ($detail == "-vv") echo "selected"; ?>><?=gettext("High");?></option>
-						<option value="-vv -e" <?php if ($detail == "-vv -e") echo "selected"; ?>><?=gettext("Full");?></option>
+						<option value="-q" <?php if ($detail == "-q") echo "selected"; ?>>Normal</option>
+						<option value="-v" <?php if ($detail == "-v") echo "selected"; ?>>Medium</option>
+						<option value="-vv" <?php if ($detail == "-vv") echo "selected"; ?>>High</option>
+						<option value="-vv -e" <?php if ($detail == "-vv -e") echo "selected"; ?>>Full</option>
 					</select>
-					<br/><?=gettext("This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured.") .  "<br/><b>" .
-							gettext("Note") . ":</b> " .
-							gettext("This option does not affect the level of detail when downloading the packet capture.");?>
+					<br/>This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured. <br/><b>Note:</b> This option does not affect the level of detail when downloading the packet capture.
 				</tr>
 				<tr>
-				  <td width="17%" valign="top" class="vncellreq"><?=gettext("Reverse DNS Lookup");?></td>
+				  <td width="17%" valign="top" class="vncellreq">Reverse DNS Lookup</td>
 				  <td width="83%" class="vtable">
 					<input name="dnsquery" type="checkbox"<?php if($_POST['dnsquery']) echo " CHECKED"; ?>>
-					<br/><?=gettext("This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.");?>
-					<br/><b><?=gettext("Note");?>: </b><?=gettext("This option can cause delays for large packet captures.");?>
+					<br/>This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.
+					<br/><b>Note: </b>This option can cause delays for large packet captures.
 					</td>
 				</tr>
 				<tr>
@@ -191,14 +190,14 @@ include("fbegin.inc");
 					if ($processcheck != false)
 						$processisrunning = true;
 						
-					if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
-						echo "<input type=\"submit\" name=\"startbtn\" value=\"" . gettext("Start") . "\">&nbsp;";
+					if (($action == "Stop" or $action == "") and $processisrunning != true)
+						echo "<input type=\"submit\" name=\"startbtn\" value=\"Start\">&nbsp;";
 				  	else {
-					  	echo "<input type=\"submit\" name=\"stopbtn\" value=\"" . gettext("Stop") . "\">&nbsp;";
+					  	echo "<input type=\"submit\" name=\"stopbtn\" value=\"Stop\">&nbsp;";
 				  	}
 					if (file_exists($fp.$fn) and $processisrunning != true) {
-						echo "<input type=\"submit\" name=\"downloadbtn\" value=\"" . gettext("Download Capture") . "\">";
-						echo "&nbsp;&nbsp;(" . gettext("The packet capture file was last updated") . ": " . date("F jS, Y g:i:s a.", filemtime($fp.$fn)) . ")";
+						echo "<input type=\"submit\" name=\"downloadbtn\" value=\"Download Capture\">";
+						echo "&nbsp;&nbsp;(The packet capture file was last updated: " . date("F jS, Y g:i:s a.", filemtime($fp.$fn)) . ")";
 					}
 ?>
 				  </td>
@@ -208,7 +207,7 @@ include("fbegin.inc");
 <?php
 				echo "<font face='terminal' size='2'>";
 				if ($processisrunning == true)
-						echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br/>");
+						echo("<strong>Packet Capture is running.</strong><br/>");
 						
 				if ($do_tcpdump) {					
 
@@ -235,12 +234,12 @@ include("fbegin.inc");
 
 					$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
 	
-					if ($action == gettext("Start")) {
-						echo("<strong>" . gettext("Packet Capture is running.") . "</strong><br/>");
+					if ($action == "Start") {
+						echo("<strong>Packet Capture is running.</strong><br/>");
 					 	mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fp$fn $searchhost $searchport");
 					} else  {
 						//action = stop
-						echo("<strong>" . gettext("Packet Capture stopped.") . "<br/><br/>" . gettext("Packets Captured") . ":</strong><br/>");
+						echo("<strong>Packet Capture stopped. <br/><br/>Packets Captured:</strong><br/>");
 ?>
 						<textarea style="width:98%" name="code" rows="15" cols="66" wrap="off" readonly="readonly">
 <?php

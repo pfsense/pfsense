@@ -73,7 +73,7 @@ if ($_POST['clear'])
 
 $ipsec_logarr = return_clog($ipsec_logfile, $nentries);
 
-$pgtitle = array(gettext("Status"),gettext("System logs"),gettext("IPsec VPN"));
+$pgtitle = array("Status","System logs","IPsec VPN");
 include("head.inc");
 
 ?>
@@ -84,17 +84,17 @@ include("head.inc");
 		<td>
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-	$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
-	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
-	$tab_array[] = array(gettext("IPsec"), true, "diag_logs_ipsec.php");
-	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
-	$tab_array[] = array(gettext("VPN"), false, "diag_logs_vpn.php");
-	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
-	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-	$tab_array[] = array(gettext("OpenNTPD"), false, "diag_logs_ntpd.php");
-	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
+	$tab_array[] = array("System", false, "diag_logs.php");
+	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
+	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
+	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
+	$tab_array[] = array("IPsec", true, "diag_logs_ipsec.php");
+	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
+	$tab_array[] = array("VPN", false, "diag_logs_vpn.php");
+	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
+	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
+	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
+	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
   		</td>
@@ -104,7 +104,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  		<tr>
-					<td colspan="2" class="listtopic"><?php printf(gettext("Last %s  IPsec log entries"),$nentries);?></td>
+					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPsec log entries</td>
 		  		</tr>
 				<?php
 				foreach($ipsec_logarr as $logent){
@@ -116,7 +116,7 @@ include("head.inc");
 						$logent = preg_replace($search, $replace, $logent);
 					} else {
 						$searchs = "/(racoon: )([A-Z:].*?)([0-9].+\.[0-9].+.[0-9].+.[0-9].+\[[0-9].+\])(.*)/i";
-						$replaces = "$1<strong><font color=red>[".gettext("Unknown Gateway/Dynamic")."]</font></strong>: $2$3$4";
+						$replaces = "$1<strong><font color=red>[Unknown Gateway/Dynamic]</font></strong>: $2$3$4";
 						$logent = preg_replace($searchs, $replaces, $logent);
 					}
 					$logent = preg_split("/\s+/", $logent, 6);

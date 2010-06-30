@@ -41,7 +41,7 @@
 ##|*MATCH=diag_logs_vpn.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("VPN"));
+$pgtitle = array("Status","System logs","VPN");
 require("guiconfig.inc");
 require_once("vpn.inc");
 
@@ -98,17 +98,17 @@ include("head.inc");
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("System"), false, "diag_logs.php");
-	$tab_array[] = array(gettext("Firewall"), false, "diag_logs_filter.php");
-	$tab_array[] = array(gettext("DHCP"), false, "diag_logs_dhcp.php");
-	$tab_array[] = array(gettext("Portal Auth"), false, "diag_logs_auth.php");
-	$tab_array[] = array(gettext("IPsec"), false, "diag_logs_ipsec.php");
-	$tab_array[] = array(gettext("PPP"), false, "diag_logs_ppp.php");
-	$tab_array[] = array(gettext("VPN"), true, "diag_logs_vpn.php");
-	$tab_array[] = array(gettext("Load Balancer"), false, "diag_logs_relayd.php");
-	$tab_array[] = array(gettext("OpenVPN"), false, "diag_logs_openvpn.php");
-	$tab_array[] = array(gettext("OpenNTPD"), false, "diag_logs_ntpd.php");
-	$tab_array[] = array(gettext("Settings"), false, "diag_logs_settings.php");
+	$tab_array[] = array("System", false, "diag_logs.php");
+	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
+	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
+	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
+	$tab_array[] = array("IPsec", false, "diag_logs_ipsec.php");
+	$tab_array[] = array("PPP", false, "diag_logs_ppp.php");
+	$tab_array[] = array("VPN", true, "diag_logs_vpn.php");
+	$tab_array[] = array("Load Balancer", false, "diag_logs_relayd.php");
+	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
+	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
+	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -117,7 +117,7 @@ include("head.inc");
 <form action="diag_logs_vpn.php" method="post">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
 		  <td colspan="4" class="listtopic">
-			<?=gettext("Choose which type of VPN you want to view.");?>
+			Choose which type of VPN you want to view.
 		  </td></tr><tr>
 		  <td colspan="4">
 			<?php $vpns = array("pptp" => "PPTP", "pppoe" => "PPPoE", "l2tp" => "L2TP");
@@ -131,13 +131,13 @@ include("head.inc");
 		  </td></tr>
 		  <tr>
 		  <td colspan="4" class="listtopic">
-				<?=gettext("Last");?> <?=$nentries;?> <?=$vpns[$vpntype];?> <?=gettext("VPN log entries");?></td>
+			    Last <?=$nentries;?> <?=$vpns[$vpntype];?> VPN log entries</td>
 			</tr>
 			<tr>
-			  <td class="listhdrr"><?=gettext("Time");?></td>
-			  <td class="listhdrr"><?=gettext("Action");?></td>
-			  <td class="listhdrr"><?=gettext("User");?></td>
-			  <td class="listhdrr"><?=gettext("IP address");?></td>
+			  <td class="listhdrr">Time</td>
+			  <td class="listhdrr">Action</td>
+			  <td class="listhdrr">User</td>
+			  <td class="listhdrr">IP address</td>
 			</tr>
 			<?php dump_clog_vpn("/var/log/{$vpntype}.log", $nentries); ?>
           </table>

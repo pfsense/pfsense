@@ -48,14 +48,14 @@ if ($_POST) {
 	if ($_POST['Submit'] != " No ") {
 		reset_factory_defaults();
 		system_reboot();
-		$rebootmsg = gettext("The system has been reset to factory defaults and is now rebooting. This may take one minute.");
+		$rebootmsg = "The system has been reset to factory defaults and is now rebooting. This may take one minute.";
 	} else {
 		header("Location: index.php");
 		exit;
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Factory defaults"));
+$pgtitle = array("Diagnostics","Factory defaults");
 include("head.inc");
 
 ?>
@@ -64,22 +64,21 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
 <form action="diag_defaults.php" method="post">
-              <p><strong> <?=gettext("If you click") . " &quot;" . gettext("Yes") . "&quot;, " . gettext("the firewall will")?>:
-
+              <p><strong>If you click &quot;Yes&quot;, the firewall will: 
+	      
 		<ul>
-		  <li><?=gettext("Reset to factory defaults");?></li>
-		  <li><?=gettext("LAN IP address will be reset to 192.168.1.1");?></li>
-		  <li><?=gettext("System will be configured as a DHCP server on the default LAN interface");?></li>
-		  <li><?=gettext("Reboot after changes are installed");?></li>
-		  <li><?=gettext("WAN interface will be set to obtain an address automatically from a DHCP server");?></li>
-		  <li><?=gettext("webConfigurator admin username will be reset to 'admin'");?></li>
-		  <li><?=gettext("webConfigurator admin password will be reset to");?> '<?=$g['product_name']?>'</li>
-
+		  <li>Reset to factory defaults</li>
+		  <li>LAN IP address will be reset to 192.168.1.1</li>
+		  <li>System will be configured as a DHCP server on the default LAN interface</li>
+		  <li>Reboot after changes are installed</li>
+		  <li>WAN interface will be set to obtain an address automatically from a DHCP server</li>
+		  <li>webConfigurator admin username will be reset to 'admin'</li>
+		  <li>webConfigurator admin password will be reset to '<?=$g['product_name']?>'</li>
 		</ul>
-                <?=gettext("Are you sure you want to proceed?");?></strong></p>
+                Are you sure you want to proceed?</strong></p>
         <p>
-          <input name="Submit" type="submit" class="formbtn" value=" <?=gettext("Yes");?> ">
-          <input name="Submit" type="submit" class="formbtn" value=" <?=gettext("No");?> ">
+          <input name="Submit" type="submit" class="formbtn" value=" Yes ">
+          <input name="Submit" type="submit" class="formbtn" value=" No ">
         </p>
       </form>
 <?php endif; ?>

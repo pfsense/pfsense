@@ -42,7 +42,7 @@ require("guiconfig.inc");
 
 $pfSversion = str_replace("\n", "", file_get_contents("/etc/version"));
 
-$pgtitle = gettext("Diagnostics: PFTop");
+$pgtitle = "Diagnostics: PFTop";
 
 if($_REQUEST['getactivity']) {
 	if($_REQUEST['sorttype'])
@@ -99,18 +99,18 @@ else
 	Sort type: 
 	<select name='sorttype' id='sorttype' onChange='this.form.submit();'>
 		<option value='<?=$sorttype?>'><?=$sorttype?></option>
-		<option value='age'><?=gettext("age");?></option>
-		<option value='bytes'><?=gettext("bytes");?></option>
-		<option value='dest'><?=gettext("dest");?></option>
-		<option value='dport'><?=gettext("dport");?></option>
-		<option value='exp'><?=gettext("exp");?></option>
-		<option value='none'><?=gettext("none");?></option>
-		<option value='peak'><?=gettext("peak");?></option>
-		<option value='pkt'><?=gettext("pkt");?></option>
-		<option value='rate'><?=gettext("rate");?></option>
-		<option value='size'><?=gettext("size");?></option>
-		<option value='sport'><?=gettext("sport");?></option>
-		<option value='src'><?=gettext("src");?></option>														
+		<option value='age'>age</option>
+		<option value='bytes'>bytes</option>
+		<option value='dest'>dest</option>
+		<option value='dport'>dport</option>
+		<option value='exp'>exp</option>
+		<option value='none'>none</option>
+		<option value='peak'>peak</option>
+		<option value='pkt'>pkt</option>
+		<option value='rate'>rate</option>
+		<option value='size'>size</option>
+		<option value='sport'>sport</option>
+		<option value='src'>src</option>														
 	</select>
 	<p/>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  
@@ -123,7 +123,7 @@ else
 				<table>
 					<tr><td>
 						<div name='cpuactivitydiv' id='cpuactivitydiv'>
-							<b><?=gettext("Gathering pfTOP activity, please wait...");?>
+							<b>Gathering pfTOP activity, please wait...
 						</div>
 					</td></tr>
 				</table>

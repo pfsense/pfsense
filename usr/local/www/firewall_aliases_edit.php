@@ -259,7 +259,7 @@ if ($_POST) {
 					if (!is_ipaddr($_POST["address{$x}"])
 					 && !is_hostname($_POST["address{$x}"])
 					 && !is_iprange($_POST["address{$x}"]))
-						$input_errors[] = sprintf(gettext("%s is not a valid %s alias."), $_POST["address{$x}"], $_POST['type'];
+						$input_errors[] = sprintf(gettext("%s is not a valid %s alias."), $_POST["address{$x}"], $_POST['type']);
 				}
 				if (is_iprange($_POST["address{$x}"])) {
 					list($startip, $endip) = explode('-', $_POST["address{$x}"]);

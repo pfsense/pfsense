@@ -137,12 +137,15 @@ if ($_POST) {
 	$x = is_validaliasname($_POST['name']);
 	if (!isset($x)) {
 		$input_errors[] = gettext("Reserved word used for alias name.");
-	} else if ($_POST['type'] == "port" && (getservbyname($_POST['name'], "tcp") || getservbyname($_POST['name'], "udp"))) {
-		$input_errors[] = gettext("Reserved word used for alias name.)";
-	} else {
-		if (is_validaliasname($_POST['name']) == false)
+	} 
+		else if ($_POST['type'] == "port" && (getservbyname($_POST['name'], "tcp") || getservbyname($_POST['name'], "udp"))) 
+		{
+		$input_errors[] = gettext("Reserved word used for alias name.");
+		} 
+		else {
+			if (is_validaliasname($_POST['name']) == false)
 			$input_errors[] = gettext("The alias name may only consist of the characters a-z, A-Z, 0-9, _.");
-	}
+		}
 	/* check for name conflicts */
 	if (empty($a_aliases[$id])) {
 		foreach ($a_aliases as $alias) {
@@ -259,7 +262,7 @@ if ($_POST) {
 					if (!is_ipaddr($_POST["address{$x}"])
 					 && !is_hostname($_POST["address{$x}"])
 					 && !is_iprange($_POST["address{$x}"]))
-						$input_errors[] = sprintf(gettext("%s is not a valid %s alias."), $_POST["address{$x}"], $_POST['type'];
+						$input_errors[] = sprintf(gettext("%s is not a valid %s alias."), $_POST["address{$x}"], $_POST['type']);
 				}
 				if (is_iprange($_POST["address{$x}"])) {
 					list($startip, $endip) = explode('-', $_POST["address{$x}"]);

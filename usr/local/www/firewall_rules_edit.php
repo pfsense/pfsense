@@ -45,7 +45,7 @@ require("guiconfig.inc");
 require("filter.inc");
 require("shaper.inc");
 
-$specialsrcdst = explode(" ", gettext("any pptp pppoe l2tp openvpn"););
+$specialsrcdst = explode(" ", gettext("any pptp pppoe l2tp openvpn"));
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
@@ -901,7 +901,7 @@ include("head.inc");
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected"; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
-<?php 							endforeach; ?>
+<?php 							endforeach ;?>
 							</select>
 							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>">
 						</td>
@@ -910,7 +910,7 @@ include("head.inc");
 						<td><?=gettext("to:");?></td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstendport" class="formselect" onchange="ext_change()">
-								<option value=""><?=gettext("(other)"?></option>
+								<option value=""><?=gettext("(other)")?></option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected"; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
@@ -934,7 +934,7 @@ include("head.inc");
 				<input name="log" type="checkbox" id="log" value="yes" <?php if ($pconfig['log']) echo "checked"; ?>>
 				<strong><?=gettext("Log packets that are handled by this rule");?></strong>
 				<br />
-				<span class="vexpl"><?=gettext("Hint: the firewall has limited local log space. Don't turn on logging for everything. If you want to do a lot of logging, consider using a remote syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: Settings</a> page).");?></span>
+				<span class="vexpl"><?=gettext("Hint: the firewall has limited local log space.") gettext("Don't turn on logging for everything.") gettext("If you want to do a lot of logging, consider using a remote syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: Settings</a> page).");?></span>
 			</td>
 		</tr>
 		<tr>

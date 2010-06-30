@@ -169,7 +169,7 @@ include("head.inc");
 <form action="firewall_aliases.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('aliases')): ?><p>
-<?php print_info_box_np gettext("The alias list has been changed.<br>You must apply the changes in order for them to take effect.");?>
+<?php print_info_box_np (gettext("The alias list has been changed.") <br> gettext("You must apply the changes in order for them to take effect.")); ?>
 <?php endif; ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

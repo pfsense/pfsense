@@ -174,7 +174,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <?php if (is_subsystem_dirty('natconf')): ?><p>
 <?php
 	if($savemsg)
-		print_info_box_np("{$savemsg}<br>gettext("The NAT configuration has been changed.")<br>gettext("You must apply the changes in order for them to take effect.")");
+		print_info_box_np("{$savemsg} <br> gettext("The NAT configuration has been changed.") <br> gettext("You must apply the changes in order for them to take effect.")");
 	else
 		print_info_box_np(gettext("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect."));
 ?>

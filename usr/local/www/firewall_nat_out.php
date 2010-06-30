@@ -291,7 +291,7 @@ include("head.inc");
 </script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('natconf')): ?><p>
-<?php print_info_box_np gettext(("The NAT configuration has been changed.")<br>gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np gettext(("The NAT configuration has been changed.") <br> gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php

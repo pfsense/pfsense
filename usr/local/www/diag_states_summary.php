@@ -122,9 +122,9 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td class="listhdrr"><?=gettext("IP");?></td>
-		<td class="listhdrr"><?=gettext("# States");?></td>
+		<td class="listhdrr"># <?=gettext("States");?></td>
 		<td class="listhdrr"><?=gettext("Proto");?></td>
-		<td class="listhdrr"><?=gettext"(# States");?></td>
+		<td class="listhdrr"># <?=gettext("States");?></td>
 		<td class="listhdrr"><?=gettext("Src Ports");?></td>
 		<td class="listhdrr"><?=gettext("Dst Ports");?></td>
 	</tr>

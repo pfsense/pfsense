@@ -73,11 +73,11 @@ if ($_POST['apply']) {
 $pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"),gettext("Wizards"));
 $statusurl = "status_queues.php";
 
-$wizards = array(gettext("Single Lan multi Wan") => "traffic_shaper_wizard.xml",
+$wizards = array(gettext("Single Lan multi Wan")) => "traffic_shaper_wizard.xml",
                 gettext("Single Wan multi Lan") => "traffic_shaper_wizard_multi_lan.xml",
 				gettext("Multiple Lan/Wan") => "traffic_shaper_wizard_multi_all.xml",
 				gettext("Dedicated Links") => "traffic_shaper_wizard_dedicated.xml",
-				);
+				;
 
 include("head.inc");
 ?>
@@ -93,7 +93,7 @@ include("fbegin.inc");
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('shaper')): ?><p>
-<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.").<br>.gettext("You must apply the changes in order for them to take effect."));?><br>
+<?php print_info_box_np(gettext("The traffic shaper configuration has been changed.")<br>gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>

@@ -40,7 +40,7 @@
 ##|*MATCH=interfaces_assign.php*
 ##|-PRIV
 
-$pgtitle = array("Interfaces", "Assign network ports");
+$pgtitle = array(gettext("Interfaces"),gettext("Assign network ports"));
 $statusurl = "status_interfaces.php";
 
 require("guiconfig.inc");
@@ -182,9 +182,9 @@ if ($_POST['apply']) {
 	/* Deliver error message for any port with more than one assignment */
 	foreach ($portifmap as $portname => $ifnames) {
 		if (count($ifnames) > 1) {
-			$errstr = "Port " . $portname .
-				" was assigned to " . count($ifnames) .
-				" interfaces:";
+			$errstr = sprintf(gettext("Port '%s' ".
+				" was assigned to '%s'" .
+				" interfaces:"), $portname, count($ifnames));
 				
 			foreach ($portifmap[$portname] as $ifn)
 				$errstr .= " " . $ifn;
@@ -246,11 +246,11 @@ if ($_GET['act'] == "del") {
 	$id = $_GET['id'];
 
 	if (link_interface_to_bridge($id))
-		$input_errors[] = "The interface is part of a bridge. Please remove it from the bridge to continue";
+		$input_errors[] = gettext("The interface is part of a bridge. Please remove it from the bridge to continue");
 	else if (link_interface_to_gre($id))
-		$input_errors[] = "The interface is part of a gre tunnel. Please delete the tunnel to continue";
+		$input_errors[] = gettext("The interface is part of a gre tunnel. Please delete the tunnel to continue");
 	else if (link_interface_to_gif($id))
-		$input_errors[] = "The interface is part of a gif tunnel. Please delete the tunnel to continue";
+		$input_errors[] = gettext("The interface is part of a gif tunnel. Please delete the tunnel to continue");
 	else {
 		unset($config['interfaces'][$id]['enable']);
 		$realid = get_real_interface($id);
@@ -300,15 +300,15 @@ if ($_GET['act'] == "del") {
 
 		link_interface_to_vlans($realid, "update");
 	
-		$savemsg = "Interface has been deleted.";
+		$savemsg = gettext("Interface has been deleted.");
 	}
 }
 
 if ($_GET['act'] == "add") {
 	/* find next free optional interface number */
 	if(!$config['interfaces']['lan']) {
-		$newifname = "lan";
-		$descr = "LAN";
+		$newifname = gettext("lan");
+		$descr = gettext("LAN");
 		$config['interfaces'][$newifname] = array();
 		$config['interfaces'][$newifname]['descr'] = $descr;
 	} else {
@@ -317,7 +317,7 @@ if ($_GET['act'] == "add") {
 				break;
 		}
 		$newifname = 'opt' . $i;
-		$descr = "OPT{$i}";
+		$descr = sprintf(gettext("OPT '%s'"),$i);
 		$config['interfaces'][$newifname] = array();
 		$config['interfaces'][$newifname]['descr'] = $descr;
 	}
@@ -348,7 +348,7 @@ if ($_GET['act'] == "add") {
 
 	write_config();
 
-	$savemsg = "Interface has been added.";
+	$savemsg = gettext("Interface has been added.");
 
 }
 
@@ -371,9 +371,9 @@ include("head.inc");
 
 if(file_exists("/var/run/interface_mismatch_reboot_needed")) 
 	if ($_POST)
-		$savemsg = "Reboot is needed. Please apply the settings in order to reboot.";
+		$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
 	else
-		$savemsg = "Interface mismatch detected.  Please resolve the mismatch and click Save.  The firewall will reboot afterwards.";
+		$savemsg = gettext("Interface mismatch detected.  Please resolve the mismatch and click Save.  The firewall will reboot afterwards.");
 
 ?>
 
@@ -429,7 +429,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
 			<option value="<?=$portname;?>"  <?php if ($portname == $iface['if']) echo " selected";?>>
 				<?php if ($portinfo['isvlan']) {
-					$descr = "VLAN {$portinfo['tag']} on {$portinfo['if']}";
+					$descr = sprintf(gettext("VLAN '%s' on '%s'"),$portinfo['tag'],$portinfo['if']);
 				if ($portinfo['descr'])
 					$descr .= " (" . $portinfo['descr'] . ")";
 					echo htmlspecialchars($descr);
@@ -470,7 +470,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	</td>
 	<td valign="middle" class="list">
 		  <?php if ($ifname != 'wan'): ?>
-		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete interface" width="17" height="17" border="0"></a> 
+		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title=<?=gettext("delete interface"); ?> width="17" height="17" border="0"></a> 
 		  <?php endif; ?>
 		</td>
   </tr>
@@ -479,7 +479,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <tr>
 	<td class="list" colspan="2"></td>
 	<td class="list" nowrap>
-	<a href="interfaces_assign.php?act=add"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add interface" width="17" height="17" border="0"></a>
+	<a href="interfaces_assign.php?act=add"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title=<?=gettext("add interface"); ?> width="17" height="17" border="0"></a>
 	</td>
   </tr>
   <?php else: ?>
@@ -490,14 +490,14 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 </table>
 </div>
 <br/>
-<input name="Submit" type="submit" class="formbtn" value="Save"><br><br>
+<input name="Submit" type="submit" class="formbtn" value=<?=gettext("Save"); ?>><br><br>
 <p>
 </p>
 <ul>
-  <li><span class="vexpl">change the IP address of your computer</span></li>
-  <li><span class="vexpl">renew its DHCP lease</span></li>
-  <li><span class="vexpl">access the webConfigurator with the new IP address</span></li>
-  <li><span class="vexpl">interfaces that are configured as members of a lagg(4) interface will not be shown.</span></li>
+  <li><span class="vexpl"><?=gettext("change the IP address of your computer"); ?></span></li>
+  <li><span class="vexpl"><?=gettext("renew its DHCP lease"); ?></span></li>
+  <li><span class="vexpl"><?=gettext("access the webConfigurator with the new IP address"); ?></span></li>
+  <li><span class="vexpl"><?=gettext("interfaces that are configured as members of a lagg(4) interface will not be shown."); ?></span></li>
 </ul></td>
 	</tr>
 </table>

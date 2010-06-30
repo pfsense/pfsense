@@ -159,7 +159,7 @@ EOF;
 	}
 
 
-/*	## Find out whether there's hardware encryption or not */
+	## Find out whether there's hardware encryption or not
 	unset($hwcrypto);
 	$fd = @fopen("{$g['varlog_path']}/dmesg.boot", "r");
 	if ($fd) {

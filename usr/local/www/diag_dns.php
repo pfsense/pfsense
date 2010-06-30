@@ -124,7 +124,7 @@ include("head.inc"); ?>
 							<b><?=gettext("Server");?></b>
 						</td>
 						<td>
-							<b><?=gettext("Query time");></b>
+							<b><?=gettext("Query time);></b>
 						</td>
 					</tr>
 <?php
@@ -155,7 +155,7 @@ include("head.inc"); ?>
 				<p/>
 				<?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?><br/><br/>
 				<a target="_new" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a><br />
-				<a target="_new" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP Info @ DNS Stuff");?></a>
+				<a target="_new" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP Info @ DNS Stuff);?></a>
 			</td>
 		</tr>
 		<?php } ?>

@@ -399,11 +399,13 @@ blank for any)</td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
-                        <td><span class="vexpl">gettext("Enter the destination network for the outbound NAT mapping.")</span></td>
+                        <td><span class="vexpl">gettext("Enter the destination network for
+                          the outbound NAT mapping.")</span></td>
                       </tr>
                       <tr>
-                        <td>gettext("Destination port:")&nbsp;&nbsp;</td>
-                        <td><input name="dstport" type="text" class="formfld unknown" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> (leave blank for any)</td>
+                        <td>Destination port:&nbsp;&nbsp;</td>
+                        <td><input name="dstport" type="text" class="formfld unknown" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> (leave blank for 
+any)</td>
                       </tr>
                     </table>
 		  </td>
@@ -439,7 +441,8 @@ blank for any)</td>
 			</tr>
 			<tr><td>&nbsp;</td><td>
                      <span class="vexpl">gettext("Packets matching this rule will be mapped to the IP address given here.")<br>
-			gettext("If you want this rule to apply to another IP address than the IP address of the interface chosen above, 			select it here") gettext("(you need to define <a href="firewall_virtual_ip.php">Virtual IP</a> addresses on the first)").
+			gettext("If you want this rule to apply to another IP address than the IP address of the interface chosen above,
+			select it here (you need to define <a href="firewall_virtual_ip.php">Virtual IP</a> addresses on the first)").
 			 gettext("Also note that if you are trying to redirect connections on the LAN select the "any" option.")
 			</span>
 			</td></tr>
@@ -468,7 +471,8 @@ blank for any)</td>
                   <td width="22%" valign="top" class="vncell">gettext("Description")</td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">gettext("You may enter a description here for your reference (not parsed).")</span></td>
+                    <br> <span class="vexpl">gettext("You may enter a description here
+                    for your reference (not parsed).")</span></td>
           </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

@@ -313,10 +313,10 @@ function show_source_port_range() {
 					</select>
 					<br/>
 					<span class="vexpl" >
-	     <?=gettext("Enable Spanning Tree Protocol on interface.  The if_bridge(4)
-	     driver has support for the IEEE 802.1D Spanning Tree Protocol
-	     (STP).  STP is used to detect and remove loops in a
-	     network topology."); ?>
+	     <?=gettext("Enable Spanning Tree Protocol on interface.  The if_bridge(4)" .
+	     "driver has support for the IEEE 802.1D Spanning Tree Protocol" .
+	     "(STP).  STP is used to detect and remove loops in a" .
+	     "network topology."); ?>
 					</span>
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Valid time"); ?></td>
@@ -324,9 +324,9 @@ function show_source_port_range() {
 					<input name="maxage" type="text" class="formfld unkown" id="maxage" size="8" value="<?=$pconfig['maxage'];?>"> <?=gettext("seconds"); ?>
 					<br/>
 					<span class="vexpl">
-	     <?=gettext("Set the time that a Spanning Tree Protocol configuration is
-	     valid.  The default is 20 seconds.  The minimum is 6 seconds and
-	     the maximum is 40 seconds."); ?>
+	     <?=gettext("Set the time that a Spanning Tree Protocol configuration is" .
+	     "valid.  The default is 20 seconds.  The minimum is 6 seconds and" .
+	     "the maximum is 40 seconds."); ?>
 					</span>
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Forward time"); ?> </td>
@@ -334,8 +334,8 @@ function show_source_port_range() {
 					<input name="fwdelay" type="text" class="formfld unkown" id="fwdelay" size="8" value="<?=$pconfig['fwdelay'];?>"> <?=gettext("seconds"); ?>
 					<br/>
 					<span class="vexpl">
-	     <?=gettext("Set the time that must pass before an interface begins forwarding
-	     packets when Spanning Tree is enabled.  The default is 15 seconds.  The minimum is 4 seconds and the maximum is 30 seconds."); ?>		
+	     <?=gettext("Set the time that must pass before an interface begins forwarding" .
+	     "packets when Spanning Tree is enabled.  The default is 15 seconds.  The minimum is 4 seconds and the maximum is 30 seconds."); ?>		
 					</span>
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Hello time"); ?></td>
@@ -343,8 +343,8 @@ function show_source_port_range() {
 					<input name="hellotime" type="text" class="formfld unkown" size="8" id="hellotime" value="<?=$pconfig['hellotime'];?>"> <?=gettext("seconds"); ?>
 					<br/>
 					<span class="vexpl">
-	     <?=gettext("Set the time between broadcasting of Spanning Tree Protocol configuration messages.  The hello time may only be changed when
-	     operating in legacy STP mode.  The default is 2 seconds.  The minimum is 1 second and the maximum is 2 seconds."); ?>		
+	     <?=gettext("Set the time between broadcasting of Spanning Tree Protocol configuration messages.  The hello time may only be changed when" .
+	     "operating in legacy STP mode.  The default is 2 seconds.  The minimum is 1 second and the maximum is 2 seconds."); ?>		
 					</span>
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Priority"); ?></td>
@@ -352,8 +352,8 @@ function show_source_port_range() {
 					<input name="priority" type="text" class="formfld unkown" id="priority" value="<?=$pconfig['priority'];?>">
 					<br/>
 					<span class="vexpl">
-	     <?=gettext("Set the bridge priority for Spanning Tree.  The default is 32768.
-	     The minimum is 0 and the maximum is 61440."); ?>		
+	     <?=gettext("Set the bridge priority for Spanning Tree.  The default is 32768." .
+	     "The minimum is 0 and the maximum is 61440."); ?>		
 					</span>
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Hold count"); ?></td>
@@ -361,9 +361,9 @@ function show_source_port_range() {
 					<input name="holdcnt" type="text" class="formfld unkown" id="holdcnt" value="<?=$pconfig['holdcnt'];?>">
 					<br/>
 					<span class="vexpl">
-	     <?=gettext("Set the transmit hold count for Spanning Tree.  This is the num-
-	     ber of packets transmitted before being rate limited.  The
-	     default is 6.  The minimum is 1 and the maximum is 10."); ?>		
+	     <?=gettext("Set the transmit hold count for Spanning Tree.  This is the num-" .
+	     "ber of packets transmitted before being rate limited.  The" .
+	     "default is 6.  The minimum is 1 and the maximum is 10."); ?>		
 					</span>
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Priority"); ?></td>
@@ -375,8 +375,8 @@ function show_source_port_range() {
 					</table>
 					<br/>
 					<span class="vexpl" > 
-	     <?=gettext("Set the Spanning Tree priority of interface to value.  The
-	     default is 128.  The minimum is 0 and the maximum is 240."); ?>		
+	     <?=gettext("Set the Spanning Tree priority of interface to value.  The" .
+	     "default is 128.  The minimum is 0 and the maximum is 240."); ?>		
 					</span>
 					</td></tr>
 					<tr><td valign="top" class="vncell" width="20%"><?=gettext("Path cost"); ?></td>
@@ -388,8 +388,8 @@ function show_source_port_range() {
 					</table>
 					<br/>
 					<span class="vexpl" > 
-	     <?=gettext("Set the Spanning Tree path cost of interface to value.  The
-	     default is calculated from the link speed.  To change a previously selected path cost back to automatic, set the cost to 0.
+	     <?=gettext("Set the Spanning Tree path cost of interface to value.  The" .
+	     "default is calculated from the link speed.  To change a previously selected path cost back to automatic, set the cost to 0.
 	     The minimum is 1 and the maximum is 200000000."); ?>		
 					</span>
 					</td></tr>
@@ -401,8 +401,8 @@ function show_source_port_range() {
 					<td class="vtable">
 						<input name="maxaddr" size="10" type="text" class="formfld unkown" id="maxaddr" value="<?=$pconfig['maxaddr'];?>"> entries
 					<br/><span class="vexpl">		
-<?=gettext("Set the size of the bridge address cache to size.	The default is
-	     100 entries."); ?>
+<?=gettext("Set the size of the bridge address cache to size.	The default is" .
+	     ".100 entries."); ?>
 					</span>					
 					</td>
 				</tr>
@@ -411,9 +411,9 @@ function show_source_port_range() {
 				  <td>
 					<input name="timeout" type="text" class="formfld unkown" id="timeout" size="10" value="<?=$pconfig['timeout'];?>"> seconds
 					<br/><span class="vexpl">		
-	     <?=gettext("Set the timeout of address cache entries to this number of seconds.  If
-	     seconds is zero, then address cache entries will not be expired.
-	     The default is 240 seconds."); ?>
+	     <?=gettext("Set the timeout of address cache entries to this number of seconds.  If" .
+	     "seconds is zero, then address cache entries will not be expired." .
+	     "The default is 240 seconds."); ?>
 					</span>					
 					</td>
 				</tr>
@@ -432,11 +432,11 @@ function show_source_port_range() {
 						?>
 					</select>
 					<br/><span class="vexpl">		
-	     <?=gettext("Add the interface named by interface as a span port on the
-	     bridge.  Span ports transmit a copy of every frame received by
-	     the bridge.  This is most useful for snooping a bridged network
-	     passively on another host connected to one of the span ports of
-	     the bridge."); ?>		
+	     <?=gettext("Add the interface named by interface as a span port on the" .
+	     "bridge.  Span ports transmit a copy of every frame received by" .
+	     "the bridge.  This is most useful for snooping a bridged network" .
+	     "passively on another host connected to one of the span ports of" .
+	     "the bridge."); ?>		
 					</span>
 		<p class="vexpl"><span class="red"><strong>
 					 <?=gettext("Note:"); ?><br>
@@ -460,9 +460,9 @@ function show_source_port_range() {
 					</select>
                     <br>
                     <span class="vexpl">
-	     <?=gettext("Set interface as an edge port.  An edge port connects directly to
-	     end stations and cannot create bridging loops in the network; this
-	     allows it to transition straight to forwarding."); ?>			
+	     <?=gettext("Set interface as an edge port.  An edge port connects directly to" .
+	     "end stations and cannot create bridging loops in the network; this" .
+	     "allows it to transition straight to forwarding."); ?>			
 					</span></td>
 			    </tr>
                 <tr style="display:none" id="sprtable6" name="sprtable6">
@@ -480,8 +480,8 @@ function show_source_port_range() {
 					</select>
                     <br>
                     <span class="vexpl">
-	     <?=gettext("Allow interface to automatically detect edge status.  This is the
-	     default for all interfaces added to a bridge."); ?>
+	     <?=gettext("Allow interface to automatically detect edge status.  This is the" .
+	     "default for all interfaces added to a bridge."); ?>
 		 <p class="vexpl"><span class="red"><strong>
 				  <?=gettext("Note:"); ?><br>
 				  </strong></span>
@@ -503,9 +503,9 @@ function show_source_port_range() {
 					</select>
                     <br>
                     <span class="vexpl">
-	     <?=gettext("Set the interface as a point-to-point link.  This is required for
-	     straight transitions to forwarding and should be enabled on a
-	     direct link to another RSTP-capable switch."); ?>
+	     <?=gettext("Set the interface as a point-to-point link.  This is required for" .
+	     "straight transitions to forwarding and should be enabled on a" .
+	     "direct link to another RSTP-capable switch."); ?>
 					</span></td>
 			    </tr>
                 <tr style="display:none" id="sprtable8" name="sprtable8">
@@ -523,9 +523,9 @@ function show_source_port_range() {
 					</select>
                     <br>
                     <span class="vexpl">
-	     <?=gettext("Automatically detect the point-to-point status on interface by
-	     checking the full duplex link status.  This is the default for
-	     interfaces added to the bridge."); ?>
+	     <?=gettext("Automatically detect the point-to-point status on interface by" .
+	     "checking the full duplex link status.  This is the default for" .
+	     "interfaces added to the bridge."); ?>
 		 		 <p class="vexpl"><span class="red"><strong>
 				  <?=gettext("Note:"); ?><br>
 				  </strong></span>
@@ -547,10 +547,10 @@ function show_source_port_range() {
 					</select>
                     <br>
                     <span class="vexpl">
-	     <?=gettext("Mark an interface as a \"sticky\" interface.  Dynamically learned
-	     address entries are treated as static once entered into the
-	     cache.  Sticky entries are never aged out of the cache or
-	     replaced, even if the address is seen on a different interface."); ?>		
+	     <?=gettext("Mark an interface as a \"sticky\" interface.  Dynamically learned" .
+	     "address entries are treated as static once entered into the" .
+	     "cache.  Sticky entries are never aged out of the cache or" .
+	     "replaced, even if the address is seen on a different interface."); ?>		
 					</span></td>
 			    </tr>
                 <tr style="display:none" id="sprtable10" name="sprtable10">
@@ -568,8 +568,8 @@ function show_source_port_range() {
 					</select>
                     <br>
                     <span class="vexpl">
-	     <?=gettext("Mark an interface as a \"private\" interface.  A private interface does not forward any traffic to any other port that is also
-	     a private interface."); ?>
+	     <?=gettext("Mark an interface as a \"private\" interface.  A private interface does not forward any traffic to any other port that is also" .
+	     "a private interface."); ?>
 					</span></td>
 			    </tr>
                 <tr>

@@ -49,7 +49,7 @@
 
 require_once("config.gui.inc");
 
-/* DNS Binding attack prevention.  http://redmine.pfsense.org/issues/708 */
+/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
 if ($_SERVER['HTTP_HOST'] != $config['system']['hostname'] . "." . $config['system']['domain'] and
 	$_SERVER['HTTP_HOST'] != $_SERVER['SERVER_ADDR'] and 
 	$_SERVER['HTTP_HOST'] != $config['system']['hostname']) {

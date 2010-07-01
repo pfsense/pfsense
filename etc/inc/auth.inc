@@ -37,7 +37,7 @@ $auth_method="htpasswd_backed_basic_auth";
 if ($_SERVER['HTTP_HOST'] != $config['system']['hostname'] . "." . $config['system']['domain'] and
 	$_SERVER['HTTP_HOST'] != $_SERVER['SERVER_ADDR'] and 
 	$_SERVER['HTTP_HOST'] != $config['system']['hostname']) {
-    echo "DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding";
+    echo "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding";
     exit;
 }
 

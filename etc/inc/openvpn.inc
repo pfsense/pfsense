@@ -416,17 +416,16 @@ function openvpn_reconfigure($mode,& $settings) {
 			$conf .= "push \"route $ip $mask\"\n";
 		}
 
-		// Configure client dhcp options
 		switch($settings['mode']) {
 			case 'server_tls':
 			case 'server_user':
 			case 'server_tls_user':
+				// Configure client dhcp options
 				openvpn_add_dhcpopts($settings, $conf);
+				if ($settings['client2client'])
+					$conf .= "client-to-client\n";
 				break;
 		}
-
-		if ($settings['client2client'])
-			$conf .= "client-to-client\n";
 	}
 
 	// client specific settings

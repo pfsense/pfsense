@@ -389,12 +389,14 @@ function mode_change() {
 			document.getElementById("remote_opts").style.display="";
 			document.getElementById("local_opts").style.display="none";
 			document.getElementById("authmodetr").style.display="none";
+			document.getElementById("inter_client_communication").style.display="none";
 			break;
 		case "p2p_tls":
 			document.getElementById("client_opts").style.display="none";
 			document.getElementById("remote_opts").style.display="";
 			document.getElementById("local_opts").style.display="";
 			document.getElementById("authmodetr").style.display="none";
+			document.getElementById("inter_client_communication").style.display="none";
 			break;
 		case "server_user":
                 case "server_tls_user":
@@ -402,6 +404,7 @@ function mode_change() {
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
 			document.getElementById("local_opts").style.display="";
+			document.getElementById("inter_client_communication").style.display="";
 			break;
 		case "server_tls":
 			document.getElementById("authmodetr").style.display="none";
@@ -409,6 +412,7 @@ function mode_change() {
 			document.getElementById("client_opts").style.display="";
 			document.getElementById("remote_opts").style.display="none";
 			document.getElementById("local_opts").style.display="";
+			document.getElementById("inter_client_communication").style.display="";
 			break;
 	}
 }
@@ -892,7 +896,7 @@ function netbios_change() {
 							</table>
 						</td>
 					</tr>
-					<tr>
+					<tr id="inter_client_communication">
 						<td width="22%" valign="top" class="vncell">Inter-client communication</td>
 						<td width="78%" class="vtable">
 							<table border="0" cellpadding="2" cellspacing="0">

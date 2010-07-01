@@ -177,8 +177,8 @@ if ($_POST) {
 					}
 				} else {
 					$rules = file_get_contents($_FILES['conffile']['tmp_name']);
-					if(stristr($rules, "pfsense") == false) {
-						$input_errors[] = "You have selected to restore the full configuration but we could not locate a pfsense tag.";
+					if(!stristr($rules, "<" . $g['xml_rootobj'] . ">")) {
+						$input_errors[] = "You have selected to restore the full configuration but we could not locate a " . $g['xml_rootobj'] . " tag.";
 					} else {
 						/* restore the entire configuration */
 						if (config_install($_FILES['conffile']['tmp_name']) == 0) {

@@ -43,6 +43,7 @@ $g = array(
 	"product_website_footer" => "http://www.pfsense.org/?gui12",
 	"product_email" => "coreteam@pfsense.org",
 	"hideplatform" => false,
+	"disablethemeselection" => false,
 	"upload_path" => "/root",
 	"dhcpd_chroot_path" => "/var/dhcpd",
 	"varrun_path" => "/var/run",

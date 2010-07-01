@@ -49,6 +49,13 @@
 
 require_once("config.gui.inc");
 
+if ($_SERVER['HTTP_HOST'] != $config['system']['hostname'] . "." . $config['system']['domain'] and
+	$_SERVER['HTTP_HOST'] != $_SERVER['SERVER_ADDR'] and 
+	$_SERVER['HTTP_HOST'] != $config['system']['hostname']) {
+    display_error_form("501", "DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding");
+    exit;
+}
+
 $groupindex = index_groups();
 $userindex = index_users();
 

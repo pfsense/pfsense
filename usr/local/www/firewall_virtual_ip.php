@@ -200,7 +200,7 @@ include("head.inc");
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
                         <td valign="middle"><a href="firewall_virtual_ip_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-                        <td valign="middle"><a href="firewall_virtual_ip.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext("Do you really want to delete this entry?");?>)"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="firewall_virtual_ip.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext('Do you really want to delete this entry?');?>)"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
                   </td>
@@ -220,9 +220,9 @@ include("head.inc");
                 </tr>
 		<tr>
 		  <td colspan="4">
-		      <p><span class="vexpl"><span class="red"><b><?=gettext("Note:");?><br>
-                      </b></span><?=gettext("The virtual IP addresses defined on this page may be used in ");?><a href="firewall_nat.php">NAT</a><?=gettext ("mappings.");?><br>
-                      <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php"><?=gettext("here");?></a>.</span></p>
+		      <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+                      </strong></span><?=gettext("The virtual IP addresses defined on this page may be used in ");?><a href="firewall_nat.php">NAT</a><?=gettext(" mappings.");?><br>
+                      <?=gettext("You can check the status of your CARP Virtual IPs and interfaces ");?><a href="carp_status.php">here</a>.</span></p>
 		  </td>
 		</tr>
               </table>

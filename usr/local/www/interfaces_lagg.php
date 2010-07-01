@@ -67,7 +67,7 @@ function lagg_inuse($num) {
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (lagg_inuse($_GET['id'])) {
-		$input_errors[] = "This LAGG interface cannot be deleted because it is still being used.";
+		$input_errors[] = gettext("This LAGG interface cannot be deleted because it is still being used.");
 	} else {
 		mwexec_bg("/sbin/ifconfig " . $a_laggs[$_GET['id']]['laggif'] . " destroy");
 		unset($a_laggs[$_GET['id']]);
@@ -79,7 +79,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("Interfaces","LAGG");
+$pgtitle = array(gettext("Interfaces"),gettext("LAGG"));
 include("head.inc");
 
 ?>
@@ -91,15 +91,15 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
-	$tab_array[1] = array("Interface Groups", false, "interfaces_groups.php");
-	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
+	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+	$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
 	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
 	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
 	$tab_array[5] = array("PPPs", false, "interfaces_ppps.php");
 	$tab_array[6] = array("GRE", false, "interfaces_gre.php");
 	$tab_array[7] = array("GIF", false, "interfaces_gif.php");
-	$tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
+	$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 	$tab_array[9] = array("LAGG", true, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
@@ -109,9 +109,9 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="20%" class="listhdrr">Interface</td>
-                  <td width="20%" class="listhdrr">Members</td>
-                  <td width="50%" class="listhdr">Description</td>
+                  <td width="20%" class="listhdrr"><?=gettext("Interface"); ?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Members"); ?></td>
+                  <td width="50%" class="listhdr"><?=gettext("Description"); ?></td>
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_laggs as $lagg): ?>
@@ -135,9 +135,9 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  Note:<br>
+				  <?=gettext("Note"); ?>:<br>
 				  </strong></span>
-				  LAGG allows for link aggregation, bonding and fault tolerance. Only unassigned interfaces can be added to LAGG.
+				  <?=gettext("LAGG allows for link aggregation, bonding and fault tolerance. Only unassigned interfaces can be added to LAGG"); ?>.
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

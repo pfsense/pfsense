@@ -100,8 +100,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", gettext("mode"));
-	$reqdfieldsn = explode(",", gettext("Type"));
+	$reqdfields = explode(" ", "mode");
+	$reqdfieldsn = array(gettext("Type"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -145,7 +145,7 @@ if ($_POST) {
 		$parent_sn = get_interface_subnet($_POST['interface']);
 		if (!ip_in_subnet($_POST['subnet'], gen_subnet($parent_ip, $parent_sn) . "/" . $parent_sn)) {
 			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
-			$input_errors[] = gettext("Sorry, we could not locate an interface with a matching subnet for {$cannot_find}.  Please add an IP alias in this subnet on this interface.");
+			$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
 		} else if ($parent_sn != $_POST['subnet_bits'])
 			$input_errors[] = gettext("Subnet bits needs to be the same as the parent interface.");
 
@@ -229,7 +229,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Virtual IP Address","Edit"));
+$pgtitle = array(gettext("Firewall"),gettext("Virtual IP Address"),gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -248,9 +248,9 @@ function get_radio_value(obj)
 }
 function enable_change(enable_over) {
 		var note = document.getElementById("typenote");
-		var carpnote = document.createTextNode(<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>);
-		var proxyarpnote = document.createTextNode(<?=gettext("This is a CIDR block of proxy ARP addresses.");?>);
-		var ipaliasnote = document.createTextNode(<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>);
+		var carpnote = document.createTextNode('<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>');
+		var proxyarpnote = document.createTextNode('<?=gettext("This is a CIDR block of proxy ARP addresses.");?>');
+		var ipaliasnote = document.createTextNode('<?=gettext("This must be the network's subnet mask. It does not specify a CIDR range.");?>');
         if ((get_radio_value(document.iform.mode) == "carp") || enable_over) {
                 document.iform.vhid.disabled = 0;
                 document.iform.password.disabled = 0;
@@ -379,7 +379,7 @@ function typesel_change() {
                   <td class="vtable">
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
-                        <td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
+                        <td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
                         <td><select name="type" class="formselect" onChange="typesel_change()">
                             <option value="single" <?php if ((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) echo "selected"; ?>>
                             <?=gettext("Single address");?></option>
@@ -390,7 +390,7 @@ function typesel_change() {
                           </select></td>
                       </tr>
                       <tr>
-                        <td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
+                        <td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
                         <td><input name="subnet" type="text" class="formfld unknown" id="subnet" size="20" value="<?=htmlspecialchars($pconfig['subnet']);?>">
                           /<select name="subnet_bits" class="formselect" id="select">
                             <?php for ($i = 32; $i >= 1; $i--): ?>
@@ -465,7 +465,7 @@ function typesel_change() {
 				      <p>
 				      	<span class="vexpl">
 				      		<span class="red">
-				      			<b><?=gettext("Note:");?><br></b>
+				      			<b><?=gettext("Note");?>:<br></b>
 				      		</span>&nbsp;&nbsp;
 				      		<?=gettext("ProxyARP type IP addresses *DO NOT* work with add on packages such as Squid.  Use a CARP or IP Alias type address for these cases.");?>
 				      		<p>&nbsp;&nbsp;&nbsp;<?=gettext("For more information on CARP and the above values, visit the OpenBSD ");?><a href='http://www.openbsd.org/faq/pf/carp.html'>CARP FAQ</A>.

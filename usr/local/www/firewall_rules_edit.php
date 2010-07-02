@@ -830,7 +830,7 @@ include("head.inc");
 					</tr>
 				</table>
 				<br />
-				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule. <b>This is usually <em>random</em> and almost never equal to the destination port range (and should usually be &quot;any&quot;).</b> <br /> Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port.");?></span><br/>
+				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule. <b>This is usually <em>random</em> and almost never equal to the destination port range (and should usually be &quot;any&quot;).</b>")."<br />".gettext("Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port.");?></span><br/>
 			</td>
 		</tr>
 		<tr>
@@ -1256,7 +1256,7 @@ include("head.inc");
 ?>
 				</select>
 				<br />
-				<span class="vexpl"><?=gettext("Choose the Out queue/Virtual interface only if you have selected In too. <br/> The Out selection is applied to traffic going out the interface the rule is created, In is the incoming one. <br/> If you are creating a rule on the Floating tab if the direction is In then the same rules apply, if the direction is out the selections are reverted Out is for incoming and In is for outgoing and if you do not select any direction use only the In since the Out selection does not make sense in there to prevent oddities.");?></span>
+				<span class="vexpl"><?=gettext("Choose the Out queue/Virtual interface only if you have selected In too.")."<br/>".gettext("The Out selection is applied to traffic going out the interface the rule is created, In is the incoming one.")."<br/>".gettext("If you are creating a rule on the Floating tab if the direction is In then the same rules apply, if the direction is out the selections are reverted Out is for incoming and In is for outgoing and if you do not select any direction use only the In since the Out selection does not make sense in there to prevent oddities.");?></span>
 				</div>
 			</td>
 		</tr>

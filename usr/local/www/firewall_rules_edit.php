@@ -45,7 +45,7 @@ require("guiconfig.inc");
 require("filter.inc");
 require("shaper.inc");
 
-$specialsrcdst = explode(" ", gettext("any pptp pppoe l2tp openvpn"););
+$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
 foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}";
@@ -174,9 +174,9 @@ if (isset($id) && $a_filter[$id]) {
 	/* defaults */
 	if ($_GET['if'])
 		$pconfig['interface'] = $_GET['if'];
-	$pconfig['type'] = gettext("pass");
-	$pconfig['src'] = gettext("any");
-	$pconfig['dst'] = gettext("any");
+	$pconfig['type'] = "pass";
+	$pconfig['src'] = "any";
+	$pconfig['dst'] = "any";
 }
 /* Allow the FlotingRules to work */
 $if = $pconfig['interface'];
@@ -576,7 +576,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Action");?></td>
 			<td width="78%" class="vtable">
 				<select name="type" class="formselect">
-					<?php $types = explode(" ", gettext("Pass Block Reject")); foreach ($types as $type): ?>
+					<?php $types = explode(" ", "Pass Block Reject"); foreach ($types as $type): ?>
 					<option value="<?=strtolower($type);?>" <?php if (strtolower($type) == strtolower($pconfig['type'])) echo "selected"; ?>>
 					<?=htmlspecialchars($type);?>
 					</option>
@@ -645,7 +645,7 @@ include("head.inc");
 					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
        					$interfaces["openvpn"] = "OpenVPN";
 					foreach ($interfaces as $iface => $ifacename): ?>
-						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && (strcasecmp($pconfig['interface'], $iface) == 0)) echo "selected"; ?>><?=gettext($ifacename);?></option>
+						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && (strcasecmp($pconfig['interface'], $iface) == 0)) echo "selected"; ?>><?=$ifacename?></option>
 <?php 				endforeach; ?>
 				</select>
 				<br />
@@ -659,7 +659,7 @@ include("head.inc");
 			</td>
 			<td width="78%" class="vtable">
 				<select name="direction" class="formselect">
-					<?php      $directions = array(gettext('any'),gettext('in'),gettext('out'));
+					<?php      $directions = array('any','in','out');
 				foreach ($directions as $direction): ?>
 				<option value="<?=$direction;?>"
 					<?php if ($direction == $pconfig['direction']): ?>
@@ -677,7 +677,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<select name="proto" class="formselect" onchange="proto_change()">
 <?php
-				$protocols = explode(" ", gettext("TCP UDP TCP/UDP ICMP ESP AH GRE IGMP any carp pfsync"));
+				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IGMP any carp pfsync");
 				foreach ($protocols as $proto): ?>
 					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
 <?php 			endforeach; ?>
@@ -751,7 +751,7 @@ include("head.inc");
 				<br />
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
+						<td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srctype" class="formselect" onChange="typesel_change()">
 <?php
@@ -781,7 +781,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
+						<td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
 						<td>
 							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcmask" class="formselect" id="srcmask">
@@ -794,7 +794,7 @@ include("head.inc");
 				</table>
 				<div id="showadvancedboxspr">
 					<p>
-					<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> type="button" onClick="show_source_port_range()" value="Advanced"></input><?=gettext(" - Show source port range");?></a>
+					<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> type="button" onClick="show_source_port_range()" value="Advanced"></input> - <?=gettext("Show source port range");?></a>
 				</div>
 			</td>
 		</tr>
@@ -803,7 +803,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("from:");?>&nbsp;&nbsp;</td>
+						<td><?=gettext("from");?>:&nbsp;&nbsp;</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
 								<option value=""><?=gettext("(other)");?></option>
@@ -816,7 +816,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("to:");?></td>
+						<td><?=gettext("to");?>:</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcendport" class="formselect" onchange="ext_change()">
 								<option value=""><?=gettext("(other)");?></option>
@@ -844,7 +844,7 @@ include("head.inc");
 					<br />
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("Type:");?>&nbsp;&nbsp;</td>
+						<td><?=gettext("Type");?>:&nbsp;&nbsp;</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dsttype" class="formselect" onChange="typesel_change()">
 <?php
@@ -874,7 +874,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("Address:");?>&nbsp;&nbsp;</td>
+						<td><?=gettext("Address");?>:&nbsp;&nbsp;</td>
 						<td>
 							<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
@@ -894,7 +894,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><?=gettext("from:");?>&nbsp;&nbsp;</td>
+						<td><?=gettext("from");?>:&nbsp;&nbsp;</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
 								<option value=""><?=gettext("(other)");?></option>
@@ -907,7 +907,7 @@ include("head.inc");
 						</td>
 					</tr>
 					<tr>
-						<td><?=gettext("to:");?></td>
+						<td><?=gettext("to");?>:</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstendport" class="formselect" onchange="ext_change()">
 								<option value=""><?=gettext("(other)"?></option>
@@ -966,10 +966,10 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Source OS");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvsourceosbox" <? if ($pconfig['os']) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_sourceos()" value="Advanced"></input><?=gettext(" - Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_sourceos()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showsourceosadv" <? if (empty($pconfig['os'])) echo "style='display:none'"; ?>>
-					<?=gettext("OS Type:");?>&nbsp;
+					<?=gettext("OS Type");?>:&nbsp;
 					<select name="os" id="os" class="formselect">
 <?php
 						$ostypes = array(
@@ -1000,7 +1000,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Diffserv Code Point");?></td>
 			<td width="78%" class="vtable">
 				<div id="dsadv" name="dsadv" <? if ($pconfig['dscp']) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_dsdiv();" value="Advanced"><?=gettext(" - Show advanced option");?>
+					<input type="button" onClick="show_dsdiv();" value="Advanced"> - <?=gettext("Show advanced option");?>
 				</div>
 				<div id="dsdivmain" name="dsdivmain" <? if (empty($pconfig['dscp'])) echo "style='display:none'"; ?>>
 					<select name="dscp" id="dscp">
@@ -1016,7 +1016,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Advanced Options");?></td>
 			<td width="78%" class="vtable">
 			<div id="aoadv" name="aoadv">
-				<input type="button" onClick="show_aodiv();" value="Advanced"><?=gettext(" - Show advanced option");?>
+				<input type="button" onClick="show_aodiv();" value="Advanced"> - <?=gettext("Show advanced option");?>
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
 				<input type="checkbox" id="allowopts" value="yes" name="allowopts"<?php if($pconfig['allowopts'] == true) echo " checked"; ?>>
@@ -1058,7 +1058,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("TCP flags");?></td>
 			<td width="78%" class="vtable">
 			<div id="showtcpflagsbox" <? if ($pconfig['tcpflags_any'] || $pconfig['tcpflags1'] || $pconfig['tcpflags2']) echo "style='display:none'"; ?>>
-                        	<input type="button" onClick="show_advanced_tcpflags()" value="Advanced"></input><?=gettext(" - Show advanced option");?></a>
+                        	<input type="button" onClick="show_advanced_tcpflags()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
                         </div>
                         <div id="showtcpflagsadv" <? if (empty($pconfig['tcpflags_any']) && empty($pconfig['tcpflags1']) && empty($pconfig['tcpflags2'])) echo "style='display:none'"; ?>>
 			<div id="tcpheader" name="tcpheader">
@@ -1100,7 +1100,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("State Type");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvstatebox" <? if (!empty($pconfig['statetype']) && $pconfig['statetype'] != "keep state") echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_state()" value="Advanced"></input><?=gettext(" - Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_state()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showstateadv" <? if (empty($pconfig['statetype']) || $pconfig['statetype'] == "keep state") echo "style='display:none'"; ?>>
 					<select name="statetype">
@@ -1124,7 +1124,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvnoxmlrpcsyncbox" <? if ($pconfig['nosync']) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_noxmlrpc()" value="Advanced"></input><?=gettext(" - Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_noxmlrpc()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="shownoxmlrpcadv" <? if (empty($pconfig['nosync'])) echo "style='display:none'"; ?>>
 					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
@@ -1147,7 +1147,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Schedule");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvschedulebox" <? if (!empty($pconfig['sched'])) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_schedule()" value="Advanced"></input><?=gettext(" - Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_schedule()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showscheduleadv" <? if (empty($pconfig['sched'])) echo "style='display:none'"; ?>>
 					<select name='sched'>
@@ -1174,7 +1174,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvgatewaybox" <? if (!empty($pconfig['gateway'])) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input><?=gettext(" - Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showgatewayadv" <? if (empty($pconfig['gateway'])) echo "style='display:none'"; ?>>
 					<select name='gateway'>
@@ -1215,7 +1215,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("In/Out");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvinoutbox" <? if (!empty($pconfig['dnpipe'])) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_inout()" value="Advanced"></input><?=gettext(" - Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_inout()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showinoutadv" <? if (empty($pconfig['dnpipe'])) echo "style='display:none'"; ?>>
 					<select name="dnpipe">
@@ -1265,7 +1265,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Ackqueue/Queue");?></td>
 			<td width="78%" class="vtable">
 			<div id="showadvackqueuebox" <? if (!empty($pconfig['defaultqueue'])) echo "style='display:none'"; ?>>
-				<input type="button" onClick="show_advanced_ackqueue()" value="Advanced"></input><?=gettext(" - Show advanced option");?></a>
+				<input type="button" onClick="show_advanced_ackqueue()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
 			</div>
 			<div id="showackqueueadv" <? if (empty($pconfig['defaultqueue'])) echo "style='display:none'"; ?>>
 				<select name="ackqueue">
@@ -1313,7 +1313,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncell"><?=gettext("Layer7");?></td>
 				<td width="78%" class="vtable">
 					<div id="showadvlayer7box" <? if (!empty($pconfig['l7container'])) echo "style='display:none'"; ?>>
-						<input type="button" onClick="show_advanced_layer7()" value="Advanced"></input><?=gettext(" - Show advanced option");?></a>
+						<input type="button" onClick="show_advanced_layer7()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
 					</div>
 					<div id="showlayer7adv" <? if (empty($pconfig['l7container'])) echo "style='display:none'"; ?>>
 				<select name="l7container">

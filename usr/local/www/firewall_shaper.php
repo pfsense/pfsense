@@ -363,9 +363,9 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "&action=delete\">";
 	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
 	if ($queue)
-		$output_form .= " value=\gettext("Delete this queue\")>";
+		$output_form .= " value=\"" . gettext("Delete this queue") . "\">";
 	else
-		$output_form .= " value=\gettext("Disable shaper on interface\")>";
+		$output_form .= " value=\"" . gettext("Disable shaper on interface") . "\">";
 	$output_form .= "</a>";  
 }
 $output_form .= "</td></tr>";
@@ -423,7 +423,7 @@ include("fbegin.inc");
 <?php if (count($altq_list_queues) > 0): ?>
                         <tr class="tabcont"><td width="25%" align="left">
                                 <a href="firewall_shaper.php?action=resetall" >
-                                        <input type="button" value=gettext("Remove Shaper") class="formbtn">
+                                        <input type="button" value="<?=gettext("Remove Shaper")?>" class="formbtn">
                                 </a>
                         </td><td width="75%"> </td></tr>
 <? endif; ?>

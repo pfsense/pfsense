@@ -56,7 +56,7 @@ $avail_behaviours_limiter = get_dummynet_name_list();
 $show_proto_form = false;
 
 //More variables
-$pgtitle = array("Firewall",gettext("Traffic Shaper"), "Layer7");
+$pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"), gettext("Layer7"));
 $statusurl = "status_queues.php";
 
 $output_form = "";
@@ -159,7 +159,7 @@ else if ($_POST) {
 		}
 		else {
 			if(sizeof($dupes) > 0) {
-				$dupe_error = gettext("Found the following repeated protocol definitions: ");
+				$dupe_error = gettext("Found the following repeated protocol definitions") . ": ";
 				foreach($dupes as $dupe)
 					$dupe_error .= "$dupe ";
 				$input_errors[] .= $dupe_error;

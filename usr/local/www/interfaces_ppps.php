@@ -60,7 +60,7 @@ function ppp_inuse($num) {
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (ppp_inuse($_GET['id'])) {
-		$input_errors[] = "This point-to-point link cannot be deleted because it is still being used as an interface.";
+		$input_errors[] = gettext("This point-to-point link cannot be deleted because it is still being used as an interface.");
 	} else {
 		unset($a_ppps[$_GET['id']]['pppoe-reset-type']);
 		handle_pppoe_reset($a_ppps[$_GET['id']]);
@@ -71,7 +71,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = "Interfaces: PPPs";
+$pgtitle = gettext("Interfaces: PPPs");
 include("head.inc");
 
 ?>
@@ -83,16 +83,16 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
-	$tab_array[1] = array("Interface Groups", false, "interfaces_groups.php");
-	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
-	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
-	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
-	$tab_array[5] = array("PPPs", true, "interfaces_ppps.php");
-	$tab_array[6] = array("GRE", false, "interfaces_gre.php");
-	$tab_array[7] = array("GIF", false, "interfaces_gif.php");
-	$tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
-	$tab_array[9] = array("LAGG", false, "interfaces_lagg.php");
+	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+	$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+	$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+	$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+	$tab_array[5] = array(gettext("PPPs"), true, "interfaces_ppps.php");
+	$tab_array[6] = array(gettext("GRE"), false, "interfaces_gre.php");
+	$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
+	$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+	$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -101,9 +101,9 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                	<td width="20%" class="listhdrr">Interface</td>
-                  <td width="20%" class="listhdrr">Interface(s)/Port(s)</td>
-                  <td width="40%" class="listhdr">Description</td>
+                	<td width="20%" class="listhdrr"><?=gettext("Interface");?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Interface(s)/Port(s)");?></td>
+                  <td width="40%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
@@ -125,7 +125,7 @@ include("head.inc");
                     <?=htmlspecialchars($ppp['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="interfaces_ppps_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_ppps.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this PPP interface?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="interfaces_ppps.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext("Do you really want to delete this PPP interface?");?>)"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>

@@ -515,6 +515,7 @@ include("fbegin.inc"); ?>
 								<option value="single"  <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>><?=gettext("Single host or alias"); ?></option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>><?=gettext("Network"); ?></option>
 								<?php if(have_ruleint_access("pptp")): ?>
+<<<<<<< HEAD
 								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>><?=gettext("PPTP clients"); ?></option>
 								<?php endif; ?>
 								<?php if(have_ruleint_access("pppoe")): ?>
@@ -522,6 +523,15 @@ include("fbegin.inc"); ?>
 								<?php endif; ?>
 								 <?php if(have_ruleint_access("l2tp")): ?>
                                                                 <option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected"; } ?>><?=gettext("L2TP clients"); ?></option>
+=======
+								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>>PPTP <?=gettext("clients"); ?></option>
+								<?php endif; ?>
+								<?php if(have_ruleint_access("pppoe")): ?>
+								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>PPPoE <?=gettext("clients"); ?></option>
+								<?php endif; ?>
+								 <?php if(have_ruleint_access("l2tp")): ?>
+                                                                <option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected"; } ?>>L2TP <?=gettext("clients"); ?></option>
+>>>>>>> parent of 1baff2e... Implemment gettext()
                                                                 <?php endif; ?>
 <?php
 								foreach ($ifdisp as $ifent => $ifdesc): ?>

@@ -143,7 +143,7 @@ include("head.inc");
 		print_info_box($savemsg); 
 	else
 	if (is_subsystem_dirty('vip'))
-		print_info_box_np(gettext("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect."));
+		print_info_box_np(gettext("The VIP configuration has been changed.")."<br>".gettext("You must apply the changes in order for them to take effect."));
 ?>
 <br>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

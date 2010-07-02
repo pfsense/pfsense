@@ -186,7 +186,7 @@ if ($_POST) {
 		
 		filter_configure();
 			
-		header(gettext("Location: firewall_schedule.php"));
+		header("Location: firewall_schedule.php");
 		exit;
 		
 	}
@@ -902,7 +902,7 @@ EOD;
 					} //end for loop
 					?>
 							<br/>
-					<?=gettext)"Click individual date to select that date only. Click the appropriate weekday Header to select all occurences of that weekday.");?>
+					<?=gettext("Click individual date to select that date only. Click the appropriate weekday Header to select all occurences of that weekday.");?>
 	                 </td>
 				</tr>
 				<tr>
@@ -948,14 +948,14 @@ EOD;
 				  							echo "</option>";
 				  						}
 				  					?>
-				  				</select>&nbsp;Hr&nbsp;&nbsp;
+				  				</select>&nbsp;<?=gettext("Hr");?>&nbsp;&nbsp;
 				  				<select name="stoptimemin" class="formselect" id="stoptimemin">
 				  					<option value="00">00</option>
 				  					<option value="15">15</option>
 				  					<option value="30">30</option>
 				  					<option value="45">45</option>
 				  					<option value="59" SELECTED>59</option>
-				  				</select>&nbsp;Min
+				  				</select>&nbsp;<?=gettext("Min");?>
 				  			</td>
 				  		</tr>
 				  	</table><br>
@@ -973,8 +973,8 @@ EOD;
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%">
-				  	<input type="button" value="Add Time"  class="formbtn"  onclick="javascript:processEntries();">&nbsp;&nbsp;&nbsp;
-				  	<input type="button" value="Clear Selection" class="formbtn" onclick="javascript:clearCalendar(); clearTime(); clearDescr();">
+				  	<input type="button" value="<?=gettext("Add Time");?>"  class="formbtn"  onclick="javascript:processEntries();">&nbsp;&nbsp;&nbsp;
+				  	<input type="button" value="<?=gettext("Clear Selection");?>" class="formbtn" onclick="javascript:clearCalendar(); clearTime(); clearDescr();">
                     </td>
 				</tr>
 				<tr>

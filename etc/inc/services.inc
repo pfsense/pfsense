@@ -636,7 +636,8 @@ function services_dnsmasq_configure() {
 		//}
 
 		/* run dnsmasq */
-		mwexec("/usr/local/sbin/dnsmasq --rebind-localhost-ok --stop-dns-rebind --all-servers {$args}");
+		// --rebind-localhost-ok
+		mwexec("/usr/local/sbin/dnsmasq --stop-dns-rebind --all-servers {$args}");
 
 		if ($g['booting'])
 			echo "done.\n";

@@ -92,9 +92,9 @@ include("head.inc");
 <form action="firewall_schedule.php" method="post">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
-	  <td width="25%" class="listhdrr">Name</td>
-	  <td width="35%" class="listhdrr">Time Range(s)</td>
-	  <td width="35%" class="listhdr">Description</td>
+	  <td width="25%" class="listhdrr"><?=gettext("Name");?></td>
+	  <td width="35%" class="listhdrr"><?=gettext("Time Range(s)");?></td>
+	  <td width="35%" class="listhdr"><?=gettext("Description");?></td>
 	  <td width="5%" class="list sort_ignore">
 	    <table border="0" cellspacing="0" cellpadding="1">
 	      <tr>
@@ -216,7 +216,7 @@ include("head.inc");
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
         <td valign="middle"><a href="firewall_schedule_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit alias");?>"></a></td>
-        <td><a href="firewall_schedule.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext('Do you really want to delete this schedule?');?>)"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete alias");?>"></a></td>
+        <td><a href="firewall_schedule.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext('Do you really want to delete this schedule?');?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete alias");?>"></a></td>
       </tr>
     </table>
   </td>
@@ -235,7 +235,7 @@ include("head.inc");
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Schedules act as placeholders for time ranges to be used in Firewall Rules.");?></span></p>
+   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br></strong></span><?=gettext("Schedules act as placeholders for time ranges to be used in Firewall Rules.");?></span></p>
   </td>
 </tr>
 </table>

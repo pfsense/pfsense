@@ -146,7 +146,7 @@ if ($_POST) {
 
 		clear_subsystem_dirty('filter');
 
-		$savemsg = gettext("The settings have been applied").". ".gettext("The firewall rules are now reloading in the background").". ".gettext("You can also ")."<a href='status_filter_reload.php'>".gettext("monitor")."</a>".gettext("the reload progress").".";
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background. You can also %s monitor %s the reload progress"),"<a href='status_filter_reload.php'>","</a>");
 	}
 }
 
@@ -249,7 +249,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 </script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('filter')): ?><p>
-<?php print_info_box_np(gettext("The firewall rule configuration has been changed").".<br>".gettext("You must apply the changes in order for them to take effect").".");?><br>
+<?php print_info_box_np(gettext("The firewall rule configuration has been changed.")."<br>".gettext("You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
@@ -305,7 +305,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				<td>
 				<?php if ($nrules == 0): ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?>
-				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" onclick="return confirm(<?=gettext('Do you really want to delete the selected rules?');?>)"><?php endif; ?>
+				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')"><?php endif; ?>
 				</td>
 				<td align="center" valign="middle"><a href="firewall_rules_edit.php?if=<?=$if;?>&after=-1"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0"></a></td>
 			   </tr>
@@ -317,13 +317,13 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
                   <td class="listlr" style="background-color: #e0e0e0"></td>
-                  <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0"><?=gettext("RFC 1918 networks");?></td>
-                  <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
-                  <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
-                  <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
-                  <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
-		<td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+		<td class="listr" style="background-color: #e0e0e0">*</td>
 	 		 <td class="listr" style="background-color: #e0e0e0"></td>
                   <td class="listbg"><?=gettext("Block private networks");?></td>
                   <td valign="middle" nowrap class="list">
@@ -345,13 +345,13 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
                   <td class="listlr" style="background-color: #e0e0e0"></td>
-                  <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0"><?=gettext("Reserved/not assigned by IANA");?></td>
-                  <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
-                  <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
-                  <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
-				  <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
-				   <td class="listr" style="background-color: #e0e0e0"><?=gettext("*");?></td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+				  <td class="listr" style="background-color: #e0e0e0">*</td>
+				   <td class="listr" style="background-color: #e0e0e0">*</td>
 		  <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listbg"><?=gettext("Block bogon networks");?></td>
                   <td valign="middle" nowrap class="list">
@@ -627,8 +627,8 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 			  <td class="listt"></td>
 			  <td class="listlr" colspan="10" align="center" valign="middle">
 			  <span class="gray">
-			  <?=gettext("No rules are currently defined for this interface"."<br>".
-			  "All incoming connections on this interface will be blocked until you add pass rules.<br><br>");?>
+			  <?=gettext("No rules are currently defined for this interface")."<br>".
+			  gettext("All incoming connections on this interface will be blocked until you add pass rules.")."<br><br>";?>
 			  Click the <a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="absmiddle"></a><?=gettext(" button to add a new rule.");?></span>
 			  </td>
 			  <?php endif; ?>
@@ -656,7 +656,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					  <td>
 					  <?php if ($nrules == 0): ?>
 					  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0"><?php else: ?>
-					  <input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title=<?=gettext("delete selected rules");?>" onclick="return confirm(<?=gettext('Do you really want to delete the selected rules?');?>)"><?php endif; ?>
+					  <input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" onclick="return confirm('<?=gettext('Do you really want to delete the selected rules?');?>')"><?php endif; ?>
 					  </td>
 			                  <td><a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" width="17" height="17" border="0"></a></td>
 					</tr>
@@ -694,7 +694,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 		<tr>
 		  <td colspan="10">
   <p>
-  <strong><span class="red"><?=gettext("Hint:");?><br>
+  <strong><span class="red"><?=gettext("Hint").":";?><br>
   </span></strong><?=gettext("Rules are evaluated on a first-match basis (i.e.".
   "the action of the first rule to match a packet will be executed).".
   "This means that if you use block rules, you'll have to pay attention".

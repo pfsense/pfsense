@@ -49,6 +49,14 @@
 
 require_once("config.gui.inc");
 
+/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
+if ($_SERVER['HTTP_HOST'] != $config['system']['hostname'] . "." . $config['system']['domain'] and
+	$_SERVER['HTTP_HOST'] != $_SERVER['SERVER_ADDR'] and 
+	$_SERVER['HTTP_HOST'] != $config['system']['hostname']) {
+    display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding");
+    exit;
+}
+
 $groupindex = index_groups();
 $userindex = index_users();
 

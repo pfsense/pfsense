@@ -49,18 +49,22 @@
 
 require_once("config.gui.inc");
 
-/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
-$found_host = false;
-if($config['dyndnses']['dyndns'])
-	foreach($config['dyndnses']['dyndns'] as $dyndns)
-		if($dyndns['host'] == $_SERVER['HTTP_HOST'] or $dyndns['host'] == $_SERVER['SERVER_ADDR'])
-			$found_host = true;
-if($found_host == false) {
-	if ($_SERVER['HTTP_HOST'] != $config['system']['hostname'] . "." . $config['system']['domain'] and
-		$_SERVER['HTTP_HOST'] != $_SERVER['SERVER_ADDR'] and 
-		$_SERVER['HTTP_HOST'] != $config['system']['hostname']) {
-		display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding");
-		exit;
+/* If this function doesn't exist, we're being called from Captive Portal or 
+   another internal subsystem which does not include authgui.inc */
+if (function_exists("display_error_form")) {
+	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
+	$found_host = false;
+	if($config['dyndnses']['dyndns'])
+		foreach($config['dyndnses']['dyndns'] as $dyndns)
+			if($dyndns['host'] == $_SERVER['HTTP_HOST'] or $dyndns['host'] == $_SERVER['SERVER_ADDR'])
+				$found_host = true;
+	if($found_host == false) {
+		if ($_SERVER['HTTP_HOST'] != $config['system']['hostname'] . "." . $config['system']['domain'] and
+			$_SERVER['HTTP_HOST'] != $_SERVER['SERVER_ADDR'] and 
+			$_SERVER['HTTP_HOST'] != $config['system']['hostname']) {
+			display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding");
+			exit;
+		}
 	}
 }
 

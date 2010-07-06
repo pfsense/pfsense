@@ -54,6 +54,8 @@ require_once("config.gui.inc");
 if (function_exists("display_error_form")) {
 	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
 	$found_host = false;
+	if($dyndns['host'] == "localhost")
+		$found_host = true;
 	if($config['dyndnses']['dyndns'])
 		foreach($config['dyndnses']['dyndns'] as $dyndns)
 			if($dyndns['host'] == $_SERVER['HTTP_HOST'] or $dyndns['host'] == $_SERVER['SERVER_ADDR'])

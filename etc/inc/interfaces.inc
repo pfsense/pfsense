@@ -2136,7 +2136,7 @@ EOD;
 		$reg_changing = true;
 	else if ($wlcfg['reglocation'] == 'anywhere' && preg_match("/\s(indoor|outdoor)\s/si", $ifconfig_str))
 		$reg_changing = true;
-	} else if ($wlcfg['reglocation'] && $wlcfg['reglocation'] != 'anywhere' && !preg_match("/\s{$wlcfg['reglocation']}\s/si", $ifconfig_str))
+	else if ($wlcfg['reglocation'] && $wlcfg['reglocation'] != 'anywhere' && !preg_match("/\s{$wlcfg['reglocation']}\s/si", $ifconfig_str))
 		$reg_changing = true;
 
 	if ($reg_changing) {

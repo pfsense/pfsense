@@ -70,7 +70,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "if tunnel-remote-addr tunnel-remote-net tunnel-local-addr");
-	$reqdfieldsn = explode(",", "Parent interface,Local address, Remote tunnel address, Remote tunnel network, Local tunnel address");
+	$reqdfieldsn = array(gettext("Parent interface"),gettext("Local address"),gettext("Remote tunnel address"),gettext("Remote tunnel network"), gettext("Local tunnel address"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -84,7 +84,7 @@ if ($_POST) {
 			continue;
 
 		if (($gre['if'] == $_POST['if']) && ($gre['tunnel-remote-net'] == $_POST['tunnel-remote-net'])) {
-			$input_errors[] = "A gre with the network {$gre['remote-network']} is already defined.";
+			$input_errors[] = sprintf(gettext("A gre with the network %s is already defined."),$gre['remote-network']);
 			break;
 		}
 	}
@@ -104,7 +104,7 @@ if ($_POST) {
 
                 $gre['greif'] = interface_gre_configure($gre);
                 if ($gre['greif'] == "" || !stristr($gre['greif'], "gre"))
-                        $input_errors[] = "Error occured creating interface, please retry.";
+                        $input_errors[] = gettext("Error occured creating interface, please retry.");
                 else {
                         if (isset($id) && $a_gres[$id])
                                 $a_gres[$id] = $gre;
@@ -119,7 +119,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Firewall","GRE","Edit");
+$pgtitle = array(gettext("Firewall"),gettext("GRE"),gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -130,10 +130,10 @@ include("head.inc");
             <form action="interfaces_gre_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">GRE configuration</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("GRE configuration");?></td>
 				</tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncellreq">Parent interface</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface");?></td>
                   <td width="78%" class="vtable">
                     <select name="if" class="formselect">
                       <?php
@@ -147,24 +147,24 @@ include("head.inc");
 		      		?>
                     </select>
 			<br/>
-			<span class="vexpl">The interface here serves as the local address to be used for the GRE tunnel.</span></td>
+			<span class="vexpl"><?=gettext("The interface here serves as the local address to be used for the GRE tunnel.");?></span></td>
                 </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">GRE remote address</td>
+                  <td valign="top" class="vncellreq"><?=gettext("GRE remote address");?></td>
                   <td class="vtable">
                     <input name="remote-addr" type="text" class="formfld unknown" id="remote-addr" size="16" value="<?=$pconfig['remote-addr'];?>">
                     <br>
-                    <span class="vexpl">Peer address where encapsulated GRE packets will be sent </span></td>
+                    <span class="vexpl"><?=gettext("Peer address where encapsulated GRE packets will be sent ");?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">GRE tunnel local address </td>
+                  <td valign="top" class="vncellreq"><?=gettext("GRE tunnel local address ");?></td>
                   <td class="vtable">
                     <input name="tunnel-local-addr" type="text" class="formfld unknown" id="tunnel-local-addr" size="16" value="<?=$pconfig['tunnel-local-addr'];?>">
                     <br>
-                    <span class="vexpl">Local GRE tunnel endpoint</span></td>
+                    <span class="vexpl"><?=gettext("Local GRE tunnel endpoint");?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncellreq">GRE tunnel remote address </td>
+                  <td valign="top" class="vncellreq"><?=gettext("GRE tunnel remote address ");?></td>
                   <td class="vtable">
                     <input name="tunnel-remote-addr" type="text" class="formfld unknown" id="tunnel-remote-addr" size="16" value="<?=$pconfig['tunnel-remote-addr'];?>">
                     <select name="tunnel-remote-net" class="formselect" id="tunnel-remote-net">
@@ -179,46 +179,46 @@ include("head.inc");
                                         ?>
                     </select>					
                     <br/>
-                    <span class="vexpl">Remote GRE address endpoint. The subnet part is used for the determining the network that is tunneled.</span></td>
+                    <span class="vexpl"><?=gettext("Remote GRE address endpoint. The subnet part is used for the determining the network that is tunneled.");?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncell">Mobile tunnel</td>
+                  <td valign="top" class="vncell"><?=gettext("Mobile tunnel");?></td>
                   <td class="vtable">
                     <input name="link0" type="checkbox" id="link0" <?if ($pconfig['link0']) echo "checked";?>>
                     <br>
-                    <span class="vexpl">Specify which encapsulation method the tunnel should use. </span></td>
+                    <span class="vexpl"><?=gettext("Specify which encapsulation method the tunnel should use. ");?></span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncell">Route search type</td>
+                  <td valign="top" class="vncell"><?=gettext("Route search type");?></td>
                   <td class="vtable">
                     <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked";?>>
                     <br>
                     <span class="vexpl">
-     For correct operation, the GRE device needs a route to the destination
-     that is less specific than the one over the tunnel.  (Basically, there
-     needs to be a route to the decapsulating host that does not run over the
-     tunnel, as this would be a loop.)
+     <?=gettext("For correct operation, the GRE device needs a route to the destination".
+    " that is less specific than the one over the tunnel.  (Basically, there".
+    " needs to be a route to the decapsulating host that does not run over the".
+    " tunnel, as this would be a loop.");?>
 					 </span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncell">WCCP version</td>
+                  <td valign="top" class="vncell"><?=gettext("WCCP version");?></td>
                   <td class="vtable">
                     <input name="link2" type="checkbox" id="link2" <?if ($pconfig['link2']) echo "checked";?>>
                     <br>
-                    <span class="vexpl">Specify which WCCP encapsulation(version 1 or 2) method the tunnel should use</span></td>
+                    <span class="vexpl"><?=gettext("Specify which WCCP encapsulation(version 1 or 2) method the tunnel should use");?></span></td>
 			    </tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here".
+                    " for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
 		    <input type="hidden" name="greif" value="<?=$pconfig['greif']; ?>">
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
                     <?php if (isset($id) && $a_gres[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

@@ -56,7 +56,7 @@ if (function_exists("display_error_form")) {
 	$found_host = false;
 	if($_SERVER['HTTP_HOST'] == "localhost" or $_SERVER['HTTP_HOST'] == "localhost")
 		$found_host = true;
-	if($_SERVER['HTTP_HOST'] == "127.0.0.1" or $_SERVER['HTTP_HOST'] == "127.0.0.1")
+	if($_SERVER['HTTP_HOST'] == "127.0.0.1" or $_SERVER['SERVER_ADDR'] == "127.0.0.1")
 		$found_host = true;
 	if($config['dyndnses']['dyndns'])
 		foreach($config['dyndnses']['dyndns'] as $dyndns)

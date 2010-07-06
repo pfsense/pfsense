@@ -293,7 +293,7 @@ function local_user_set(& $user) {
 
 	/* determine add or mod */
 	if (!strncmp($pwread, "pw:", 3)) {
-		$user_op = "useradd -m -k /usr/share/skel -o";
+		$user_op = "useradd -m -k /etc/skel -o";
 	} else {
 		$user_op = "usermod";
 	}

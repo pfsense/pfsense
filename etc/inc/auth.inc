@@ -68,6 +68,13 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 			if($dyndns['host'] == $http_host or $dyndns['host'] == $_SERVER['SERVER_ADDR'])
 				$found_host = true;
 
+	if(!empty($config['system']['webgui']['althostnames'])) {
+		$althosts = explode(" ", $config['system']['webgui']['althostnames']);
+		foreach ($althosts as $ah)
+			if($ah == $http_host or $ah == $_SERVER['SERVER_ADDR'])
+				$found_host = true;
+	}
+
 	if($http_host == $config['system']['hostname'] . "." . $config['system']['domain'] or
 			$http_host == $_SERVER['SERVER_ADDR'] or
 			$http_host == $config['system']['hostname'])

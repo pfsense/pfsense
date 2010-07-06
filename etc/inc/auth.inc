@@ -33,14 +33,6 @@ require_once("globals.inc");
 /* We only support file backed HTTP Basic auth right now */
 $auth_method="htpasswd_backed_basic_auth";
 
-/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
-if ($_SERVER['HTTP_HOST'] != $config['system']['hostname'] . "." . $config['system']['domain'] and
-	$_SERVER['HTTP_HOST'] != $_SERVER['SERVER_ADDR'] and 
-	$_SERVER['HTTP_HOST'] != $config['system']['hostname']) {
-    echo "DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding";
-    exit;
-}
-
 /* Authenticate user - exit if failed (we should have a callback for this maybe) */
 if (!$auth_method())
 	exit;

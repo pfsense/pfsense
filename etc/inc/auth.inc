@@ -54,7 +54,7 @@ require_once("config.gui.inc");
 if (function_exists("display_error_form")) {
 	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
 	$found_host = false;
-	if($_SERVER['HTTP_HOST'] == "localhost" or $_SERVER['HTTP_HOST'] == "localhost")
+	if($_SERVER['HTTP_HOST'] == "localhost" or $_SERVER['SERVER_ADDR'] == "localhost")
 		$found_host = true;
 	if($_SERVER['HTTP_HOST'] == "127.0.0.1" or $_SERVER['SERVER_ADDR'] == "127.0.0.1")
 		$found_host = true;

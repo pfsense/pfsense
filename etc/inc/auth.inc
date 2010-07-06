@@ -54,21 +54,28 @@ require_once("config.gui.inc");
 if (function_exists("display_error_form")) {
 	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
 	$found_host = false;
-	if($_SERVER['HTTP_HOST'] == "localhost" or $_SERVER['SERVER_ADDR'] == "localhost")
-		$found_host = true;
-	if($_SERVER['HTTP_HOST'] == "127.0.0.1" or $_SERVER['SERVER_ADDR'] == "127.0.0.1")
+	if(strstr($_SERVER['HTTP_HOST'], ":")) {
+		$http_host_port = explode(":", $_SERVER['HTTP_HOST']);
+		$http_host = $http_host_port[0];
+	} else {
+		$http_host = $_SERVER['HTTP_HOST'];
+	}
+	if(($http_host == "localhost" or $_SERVER['SERVER_ADDR'] == "localhost") or
+	   ($http_host == "127.0.0.1" or $_SERVER['SERVER_ADDR'] == "127.0.0.1"))
 		$found_host = true;
 	if($config['dyndnses']['dyndns'])
 		foreach($config['dyndnses']['dyndns'] as $dyndns)
-			if($dyndns['host'] == $_SERVER['HTTP_HOST'] or $dyndns['host'] == $_SERVER['SERVER_ADDR'])
+			if($dyndns['host'] == $http_host or $dyndns['host'] == $_SERVER['SERVER_ADDR'])
 				$found_host = true;
+
+	if($http_host == $config['system']['hostname'] . "." . $config['system']['domain'] or
+			$http_host == $_SERVER['SERVER_ADDR'] or
+			$http_host == $config['system']['hostname'])
+		$found_host = true;
+
 	if($found_host == false) {
-		if ($_SERVER['HTTP_HOST'] != $config['system']['hostname'] . "." . $config['system']['domain'] and
-			$_SERVER['HTTP_HOST'] != $_SERVER['SERVER_ADDR'] and 
-			$_SERVER['HTTP_HOST'] != $config['system']['hostname']) {
-			display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding");
-			exit;
-		}
+		display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding");
+		exit;
 	}
 }
 

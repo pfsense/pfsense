@@ -77,6 +77,7 @@ if (isset($id) && $a_1to1[$id]) {
 	else
 		$pconfig['subnet'] = $a_1to1[$id]['subnet'];
 	$pconfig['descr'] = $a_1to1[$id]['descr'];
+	$pconfig['natreflection'] = $a_1to1[$id]['natreflection'];
 } else {
     $pconfig['subnet'] = 32;
 	$pconfig['interface'] = "wan";
@@ -122,6 +123,11 @@ if ($_POST) {
 		$natent['subnet'] = $_POST['subnet'];
 		$natent['descr'] = $_POST['descr'];
 		$natent['interface'] = $_POST['interface'];
+
+		if ($_POST['natreflection'] == "enable" || $_POST['natreflection'] == "disable")
+			$natent['natreflection'] = $_POST['natreflection'];
+		else
+			unset($natent['natreflection']);
 
 		if (isset($id) && $a_1to1[$id])
 			$a_1to1[$id] = $natent;
@@ -220,6 +226,16 @@ include("head.inc");
                     <br> <span class="vexpl">You may enter a description here 
                     for your reference (not parsed).</span></td>
                 </tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">NAT reflection</td>
+					<td width="78%" class="vtable">
+						<select name="natreflection" class="formselect">
+						<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo "selected"; ?>>use system default</option>
+						<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected"; ?>>enable</option>
+						<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected"; ?>>disable</option>
+						</select>
+					</td>
+				</tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 

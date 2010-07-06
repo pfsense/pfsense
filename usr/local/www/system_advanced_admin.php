@@ -55,6 +55,8 @@ $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
 $pconfig['disablehttpredirect'] = isset($config['system']['disablehttpredirect']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
+$pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
+$pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
@@ -125,6 +127,11 @@ if ($_POST) {
 			$config['system']['enableserial'] = true;
 		else
 			unset($config['system']['enableserial']);
+
+		if ($_POST['nodnsrebindcheck'] == "yes")
+			$config['system']['webgui']['nodnsrebindcheck'] = true;
+		else
+			unset($config['system']['webgui']['nodnsrebindcheck']);
 
 		$sshd_enabled = $config['system']['enablesshd'];
 		if($_POST['enablesshd'])
@@ -313,6 +320,18 @@ function prot_change() {
 									"(ensure you have a firewall rule in place that allows you in, or you will " .
 									"lock yourself out!)"), $lockout_interface); ?>
 									<em> <?=gettext("Hint: the &quot;Set interface(s) IP address&quot; option in the console menu resets this setting as well."); ?> </em>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("DNS Rebind Check"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="nodnsrebindcheck" type="checkbox" id="nodnsrebindcheck" value="yes" <?php if ($pconfig['nodnsrebindcheck']) echo "checked"; ?> />
+									<strong><?=gettext("Disable webConfigurator DNS Rebinding Checks"); ?></strong>
+									<br/>
+									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
+									"is protected against <a href=\"http://en.wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>. " .
+									"Check this box to disable this protection if you find that it interferes with " .
+									"webConfigurator access in certain corner cases. "); ?>
 								</td>
 							</tr>
 							<tr>

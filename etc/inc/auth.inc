@@ -51,7 +51,7 @@ require_once("config.gui.inc");
 
 /* If this function doesn't exist, we're being called from Captive Portal or 
    another internal subsystem which does not include authgui.inc */
-if (function_exists("display_error_form")) {
+if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
 	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
 	$found_host = false;
 	if(strstr($_SERVER['HTTP_HOST'], ":")) {

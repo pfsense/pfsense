@@ -101,10 +101,12 @@ function ca_chain(& $cert) {
 	return "";
 }
 
-function ca_import(& $ca, $str) {
+function ca_import(& $ca, $str, $key="") {
 	global $config;
 
 	$ca['crt'] = base64_encode($str);
+	if (!empty($key))
+		$ca['prv'] = base64_encode($key);
 
 	$subject = cert_get_subject($str, false);
 	$issuer = cert_get_issuer($str, false);

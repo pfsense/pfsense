@@ -51,7 +51,7 @@ require_once("config.gui.inc");
 
 /* If this function doesn't exist, we're being called from Captive Portal or 
    another internal subsystem which does not include authgui.inc */
-if (function_exists("display_error_form")) {
+if (function_exists("display_error_form") && !isset($config['system']['webgui']['nodnsrebindcheck'])) {
 	/* DNS ReBinding attack prevention.  http://redmine.pfsense.org/issues/708 */
 	$found_host = false;
 	if(strstr($_SERVER['HTTP_HOST'], ":")) {
@@ -68,10 +68,31 @@ if (function_exists("display_error_form")) {
 			if($dyndns['host'] == $http_host or $dyndns['host'] == $_SERVER['SERVER_ADDR'])
 				$found_host = true;
 
+	if(!empty($config['system']['webgui']['althostnames'])) {
+		$althosts = explode(" ", $config['system']['webgui']['althostnames']);
+		foreach ($althosts as $ah)
+			if($ah == $http_host or $ah == $_SERVER['SERVER_ADDR'])
+				$found_host = true;
+	}
+
 	if($http_host == $config['system']['hostname'] . "." . $config['system']['domain'] or
 			$http_host == $_SERVER['SERVER_ADDR'] or
 			$http_host == $config['system']['hostname'])
 		$found_host = true;
+
+	/* Check against locally configured IP addresses, which will catch when someone 
+	   port forwards WebGUI access from WAN to an internal IP on the router. */
+	if ($found_host == false) {
+		global $FilterIflist;
+		if (empty($FilterIflist)) {
+			require_once('filter.inc');
+			require_once('shaper.inc');
+			filter_generate_optcfg_array();
+		}
+		foreach ($FilterIflist as $iflist)
+			if($iflist['ip'] == $http_host)
+				$found_host = true;
+	}
 
 	if($found_host == false) {
 		display_error_form("501", "Potential DNS Rebind attack detected, see http://en.wikipedia.org/wiki/DNS_rebinding");

@@ -55,6 +55,8 @@ $pconfig['ssl-certref'] = $config['system']['webgui']['ssl-certref'];
 $pconfig['disablehttpredirect'] = isset($config['system']['disablehttpredirect']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
+$pconfig['nodnsrebindcheck'] = isset($config['system']['webgui']['nodnsrebindcheck']);
+$pconfig['althostnames'] = $config['system']['webgui']['althostnames'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
@@ -78,6 +80,13 @@ if ($_POST) {
 	if ($_POST['webguiport'])
 		if(!is_port($_POST['webguiport']))
 			$input_errors[] = gettext("You must specify a valid webConfigurator port number");
+
+	if ($_POST['althostnames']) {
+		$althosts = explode(" ", $_POST['althostnames']);
+		foreach ($althosts as $ah)
+			if (!is_hostname($ah))
+				$input_errors[] = gettext("Alternate hostname " . htmlspecialchars($ah) . " is not a valid hostname.");
+	}
 
 	if ($_POST['sshport'])
 		if(!is_port($_POST['sshport']))
@@ -125,6 +134,16 @@ if ($_POST) {
 			$config['system']['enableserial'] = true;
 		else
 			unset($config['system']['enableserial']);
+
+		if ($_POST['nodnsrebindcheck'] == "yes")
+			$config['system']['webgui']['nodnsrebindcheck'] = true;
+		else
+			unset($config['system']['webgui']['nodnsrebindcheck']);
+
+		if ($_POST['althostnames'])
+			$config['system']['webgui']['althostnames'] = $_POST['althostnames'];
+		else
+			unset($config['system']['webgui']['althostnames']);
 
 		$sshd_enabled = $config['system']['enablesshd'];
 		if($_POST['enablesshd'])
@@ -313,6 +332,29 @@ function prot_change() {
 									"(ensure you have a firewall rule in place that allows you in, or you will " .
 									"lock yourself out!)"), $lockout_interface); ?>
 									<em> <?=gettext("Hint: the &quot;Set interface(s) IP address&quot; option in the console menu resets this setting as well."); ?> </em>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("DNS Rebind Check"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="nodnsrebindcheck" type="checkbox" id="nodnsrebindcheck" value="yes" <?php if ($pconfig['nodnsrebindcheck']) echo "checked"; ?> />
+									<strong><?=gettext("Disable webConfigurator DNS Rebinding Checks"); ?></strong>
+									<br/>
+									<?php echo gettext("When this is unchecked, access to the webConfigurator " .
+									"is protected against <a href=\"http://en.wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>. " .
+									"Check this box to disable this protection if you find that it interferes with " .
+									"webConfigurator access in certain corner cases. "); ?>
+								</td>
+							</tr>
+							<tr>
+								<td width="22%" valign="top" class="vncell"><?=gettext("Alternate Hostnames"); ?></td>
+								<td width="78%" class="vtable">
+									<input name="althostnames" type="text" class="formfld unknown" id="althostnames" size="75" value="<?=htmlspecialchars($pconfig['althostnames']);?>"/>
+									<br/>
+									<strong><?=gettext("Alternate Hostnames for DNS Rebinding Checks"); ?></strong>
+									<br/>
+									<?php echo gettext("Here you can specify alternate hostnames by which the router may be queried, to " . 
+									"bypass the DNS Rebinding Attack checks. Separate hostnames with spaces."); ?>
 								</td>
 							</tr>
 							<tr>

@@ -335,4 +335,30 @@ function cert_get_issuer($str_crt, $decode = true) {
 	return $issuer;
 }
 
+function get_all_user_certs($certsonly=false) {
+	global $config;
+	$usercerts = array();
+	if (!is_array($config['system']['user']))
+		return;
+	foreach ($config['system']['user'] as $user) {
+		if (!is_array($user['cert']))
+			continue;
+		foreach ($user['cert'] as $cert) {
+			$usercerts[] = $certsonly ? $cert['crt'] : $cert;
+		}
+	}
+	return $usercerts;
+}
+
+function get_all_certs_tree() {
+	global $config;
+	$cert_tree = array();
+	foreach ($config['system']['ca'] as $ca)
+		$cert_tree[$ca['refid']] = $ca;
+	$usercerts = get_all_user_certs();
+	foreach ($usercerts as $cert)
+		$cert_tree[$cert['caref']]['certs'][] = $cert;
+	return $cert_tree;
+}
+
 ?>

@@ -84,6 +84,7 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['interface'] = $a_nat[$id]['interface'];
 	$pconfig['associated-rule-id'] = $a_nat[$id]['associated-rule-id'];
 	$pconfig['nosync'] = isset($a_nat[$id]['nosync']);
+	$pconfig['natreflection'] = $a_nat[$id]['natreflection'];
 
 	if (!$pconfig['interface'])
 		$pconfig['interface'] = "wan";
@@ -315,6 +316,11 @@ if ($_POST) {
 		else
 			unset($natent['nosync']);
 
+		if ($_POST['natreflection'] == "enable" || $_POST['natreflection'] == "disable")
+			$natent['natreflection'] = $_POST['natreflection'];
+		else
+			unset($natent['natreflection']);
+
 		// If we used to have an associated filter rule, but no-longer should have one
 		if (!empty($a_nat[$id]) && ( empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'] ) ) {
 			// Delete the previous rule
@@ -456,6 +462,10 @@ include("fbegin.inc"); ?>
 							if(have_ruleint_access($if))
 								$interfaces[$if] = $ifdesc;
 
+						if ($config['l2tp']['mode'] == "server")
+							if(have_ruleint_access("l2tp"))
+								$interfaces['l2tp'] = "L2TP VPN";
+
 						if ($config['pptpd']['mode'] == "server")
 							if(have_ruleint_access("pptp"))
 								$interfaces['pptp'] = "PPTP VPN";
@@ -468,6 +478,10 @@ include("fbegin.inc"); ?>
 						if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
 							if(have_ruleint_access("enc0"))
 								$interfaces["enc0"] = "IPsec";
+
+						/* add openvpn/tun interfaces */
+						if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+							$interfaces["openvpn"] = "OpenVPN";
 
 						foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
@@ -749,6 +763,16 @@ include("fbegin.inc"); ?>
 					<td width="78%" class="vtable">
 						<input type="checkbox" value="yes" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
 						<?=gettext("HINT: This prevents the rule from automatically syncing to other CARP members"); ?>.
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">NAT reflection</td>
+					<td width="78%" class="vtable">
+						<select name="natreflection" class="formselect">
+						<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo "selected"; ?>>use system default</option>
+						<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected"; ?>>enable</option>
+						<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected"; ?>>disable</option>
+						</select>
 					</td>
 				</tr>
 				<?php if (isset($id) && $a_nat[$id] && !isset($_GET['dup'])): ?>

@@ -77,6 +77,7 @@ if (isset($id) && $a_1to1[$id]) {
 	else
 		$pconfig['subnet'] = $a_1to1[$id]['subnet'];
 	$pconfig['descr'] = $a_1to1[$id]['descr'];
+	$pconfig['natreflection'] = $a_1to1[$id]['natreflection'];
 } else {
     $pconfig['subnet'] = 32;
 	$pconfig['interface'] = "wan";
@@ -123,6 +124,11 @@ if ($_POST) {
 		$natent['descr'] = $_POST['descr'];
 		$natent['interface'] = $_POST['interface'];
 
+		if ($_POST['natreflection'] == "enable" || $_POST['natreflection'] == "disable")
+			$natent['natreflection'] = $_POST['natreflection'];
+		else
+			unset($natent['natreflection']);
+
 		if (isset($id) && $a_1to1[$id])
 			$a_1to1[$id] = $natent;
 		else
@@ -156,7 +162,32 @@ include("head.inc");
 				  <td width="78%" class="vtable">
 					<select name="interface" class="formselect">
 						<?php
-						$interfaces = get_configured_interface_with_descr();
+						$iflist = get_configured_interface_with_descr();
+						foreach ($iflist as $if => $ifdesc)
+							if(have_ruleint_access($if))
+								$interfaces[$if] = $ifdesc;
+
+						if ($config['l2tp']['mode'] == "server")
+							if(have_ruleint_access("l2tp"))
+								$interfaces['l2tp'] = "L2TP VPN";
+
+						if ($config['pptpd']['mode'] == "server")
+							if(have_ruleint_access("pptp"))
+								$interfaces['pptp'] = "PPTP VPN";
+
+						if ($config['pppoe']['mode'] == "server")
+							if(have_ruleint_access("pppoe"))
+								$interfaces['pppoe'] = "PPPoE VPN";
+
+						/* add ipsec interfaces */
+						if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
+							if(have_ruleint_access("enc0"))
+								$interfaces["enc0"] = "IPsec";
+
+						/* add openvpn/tun interfaces */
+						if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+							$interfaces["openvpn"] = "OpenVPN";
+
 						foreach ($interfaces as $iface => $ifacename): 
 						?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
@@ -195,6 +226,16 @@ include("head.inc");
                     <br> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed)."); ?></span></td>
                 </tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">NAT reflection</td>
+					<td width="78%" class="vtable">
+						<select name="natreflection" class="formselect">
+						<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo "selected"; ?>>use system default</option>
+						<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected"; ?>>enable</option>
+						<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected"; ?>>disable</option>
+						</select>
+					</td>
+				</tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 

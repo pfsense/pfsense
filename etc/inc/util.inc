@@ -1104,7 +1104,8 @@ function get_memory() {
 		if(!$real && !$avail) {
 			$real = trim(`sysctl hw.physmem | cut -d' ' -f2`);
 			$avail = trim(`sysctl hw.realmem | cut -d' ' -f2`);
-			return array(($real/1024),($avail/1024));
+			/* convert from bytes to megabytes */
+			return array(($real/1048576),($avail/1048576));
 		}
 }
 

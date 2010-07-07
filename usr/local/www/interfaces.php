@@ -492,7 +492,8 @@ if ($_POST) {
 		unset($wancfg['provider']);
 		unset($wancfg['ondemand']);
 		unset($wancfg['timeout']);
-		unset($wancfg['pppoe']['pppoe-reset-type']);
+		if (isset($wancfg['pppoe']['pppoe-reset-type']))
+			unset($wancfg['pppoe']['pppoe-reset-type']);
 		unset($wancfg['local']);
 		unset($wancfg['subnet']);
 		unset($wancfg['remote']);

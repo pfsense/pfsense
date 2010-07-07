@@ -267,7 +267,7 @@ if ($_POST) {
 					$address = array_merge($address, $rangesubnets);
 				} else {
 					$tmpaddress = $_POST["address{$x}"];
-					if(($_POST['type'] == "network" || is_ipaddr($_POST["address{$x}"])) && $_POST["address_subnet{$x}"] <> "")
+					if(is_ipaddr($_POST["address{$x}"]) && $_POST["address_subnet{$x}"] <> "")
 						$tmpaddress .= "/" . $_POST["address_subnet{$x}"];
 					$address[] = $tmpaddress;
 				}

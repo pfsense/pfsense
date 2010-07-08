@@ -344,9 +344,9 @@ function typesel_change() {
 		  		  <td width="22%" valign="top" class="vncellreq"><?=gettext("Type");?></td>
                   <td width="78%" class="vtable">
                     <input name="mode" type="radio" onclick="enable_change(false)" value="proxyarp"
-					<?php if ($pconfig['mode'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> Proxy ARP
+					<?php if ($pconfig['mode'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> <?=gettext("Proxy ARP"); ?>
 					<input name="mode" type="radio" onclick="enable_change(false)" value="carp"
-					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> CARP
+					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> <?=gettext("CARP"); ?>
 					<input name="mode" type="radio" onclick="enable_change(false)" value="other"
 					<?php if ($pconfig['mode'] == "other") echo "checked";?>> <?=gettext("Other");?>
 					<input name="mode" type="radio" onclick="enable_change(false)" value="ipalias"
@@ -454,7 +454,7 @@ function typesel_change() {
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
                     <?php if (isset($id) && $a_vip[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>
@@ -468,7 +468,7 @@ function typesel_change() {
 				      			<b><?=gettext("Note");?>:<br></b>
 				      		</span>&nbsp;&nbsp;
 				      		<?=gettext("ProxyARP type IP addresses *DO NOT* work with add on packages such as Squid.  Use a CARP or IP Alias type address for these cases.");?>
-				      		<p>&nbsp;&nbsp;&nbsp;<?=gettext("For more information on CARP and the above values, visit the OpenBSD ");?><a href='http://www.openbsd.org/faq/pf/carp.html'>CARP FAQ</A>.
+				      		<p>&nbsp;&nbsp;&nbsp;<?=gettext("For more information on CARP and the above values, visit the OpenBSD ");?><a href='http://www.openbsd.org/faq/pf/carp.html'> CARP FAQ</A>.
 						</span>
 					  </p>
 				  </td>

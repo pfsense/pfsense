@@ -212,7 +212,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 			<?php if (count($a_nat) == 0): ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0">
 			<?php else: ?>
-				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected rules" onclick="return confirm('Do you really want to delete the selected rules?')">
+				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules"); ?>" onclick="return confirm('Do you really want to delete the selected rules?')">
 			<?php endif; ?>
 			</td>
                         <td><a href="firewall_nat_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
@@ -253,9 +253,9 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                   <td class="listt" align="center">
 					<?php if($natent['associated-rule-id'] == "pass"): ?>
-					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" title="All traffic matching this NAT entry is passed" border="0">
+					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" title="<?=gettext("All traffic matching this NAT entry is passed"); ?>" border="0">
 					<?php elseif (!empty($natent['associated-rule-id'])): ?>
-					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="Firewall rule ID <?=htmlspecialchars($nnatid); ?> is managed with this rule" border="0">
+					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="17" height="17" title="<?=gettext("Firewall rule ID"); ?> <?=htmlspecialchars($nnatid); ?> <?=gettext("is managed with this rule"); ?>" border="0">
 					<?php endif; ?>
 				  </td>
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
@@ -313,7 +313,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
 			<td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="<?=gettext("move selected rules before this rule");?>" height="17" type="image" width="17" border="0"></td>
-                        <td><a href="firewall_nat_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="edit rule"></a></td>
+                        <td><a href="firewall_nat_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit rule"); ?>"></a></td>
                       </tr>
                       <tr>
 					    <td align="center" valign="middle"><a href="firewall_nat.php?act=del&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete rule");?> onclick="return confirm(<?=gettext('Do you really want to delete this rule?');?>)"></a></td>
@@ -330,14 +330,14 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="list" valign="middle" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-			<td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected rules to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="<?=gettext("move selected rules to end");?>" border="0"><?php endif; ?></td>
+			<td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected rules to end"); ?>" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="<?=gettext("move selected rules to end");?>" border="0"><?php endif; ?></td>
                       </tr>
                       <tr>
 			<td width="17">
 			<?php if (count($a_nat) == 0): ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected rules");?>" border="0">
 			<?php else: ?>
-				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected rules" onclick="return confirm(<?=gettext('Do you really want to delete the selected rules?');?>)">
+				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="<?=gettext("delete selected rules"); ?>" onclick="return confirm(<?=gettext('Do you really want to delete the selected rules?');?>)">
 			<?php endif; ?>
 			</td>
                         <td><a href="firewall_nat_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
@@ -348,7 +348,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 		<tr><td>&nbsp;</td></tr>
           <tr>
             <td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11"></td>
-            <td colspan="3">pass</td>
+            <td colspan="3"><?=gettext("pass"); ?></td>
 			</tr>
 		   <tr>
             <td width="14"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_chain.png" width="11" height="11"></td>

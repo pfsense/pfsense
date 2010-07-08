@@ -561,7 +561,7 @@ EOD;
       <?php endif; ?>
       <br />
       <span class="vexpl">
-        <?=gettext("The name of the alias may only consist of the characters") . " a-z, A-Z and 0-9."; ?>
+        <?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z and 0-9\"."); ?>
       </span>
     </td>
   </tr>
@@ -579,7 +579,7 @@ EOD;
     <td valign="top" class="vncellreq"><?=gettext("Type"); ?></td>
     <td class="vtable">
       <select name="type" class="formselect" id="type" onchange="update_box_type(); typesel_change();">
-        <option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>>Host(s)</option>
+        <option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>><?=gettext("Host(s)"); ?></option>
         <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>><?=gettext("Network(s)"); ?></option>
         <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>><?=gettext("Port(s)"); ?></option>
         <option value="openvpn" <?php if ($pconfig['type'] == "openvpn") echo "selected"; ?>><?=gettext("OpenVPN Users"); ?></option>
@@ -589,7 +589,7 @@ EOD;
     </td>
   </tr>
   <tr>
-    <td width="22%" valign="top" class="vncellreq"><div id="addressnetworkport">Host(s)</div></td>
+    <td width="22%" valign="top" class="vncellreq"><div id="addressnetworkport"><?=gettext("Host(s)"); ?></div></td>
     <td width="78%" class="vtable">
       <table id="maintable">
         <tbody>

@@ -168,7 +168,8 @@ if (isset($id) && $a_filter[$id]) {
 
 	//schedule support
 	$pconfig['sched'] = $a_filter[$id]['sched'];
-	$pconfig['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
+	if (!isset($_GET['dup']))
+		$pconfig['associated-rule-id'] = $a_filter[$id]['associated-rule-id'];
 
 } else {
 	/* defaults */

@@ -641,7 +641,7 @@ function backuparea_change(obj) {
 								</td>
 							</tr>
 						</table>
-						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration"></p>
+						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="<?=gettext("Restore configuration"); ?>"></p>
                       	<p><strong><span class="red">Note:</span></strong><br /><?=gettext("The firewall will reboot after restoring the configuration."); ?><br /></p>
 					</td>
 				</tr>

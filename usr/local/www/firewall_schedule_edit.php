@@ -923,14 +923,14 @@ EOD;
 				  							echo "</option>";
 				  						}
 				  					?>
-				  				</select>&nbsp;Hr&nbsp;&nbsp;
+				  				</select>&nbsp;<?=gettext("Hr"); ?>&nbsp;&nbsp;
 				  				<select name="starttimemin" class="formselect" id="starttimemin">
 				  					<option value="00">00</option>
 				  					<option value="15">15</option>
 				  					<option value="30">30</option>
 				  					<option value="45">45</option>
 				  					<option value="59">59</option>
-				  				</select>&nbsp;Min
+				  				</select>&nbsp;<?=gettext("Min"); ?>
 				  			</td>
 				  			<td></td>
 				  			<td>
@@ -1152,8 +1152,8 @@ EOD;
 			 	<tr>
 				    <td width="15%" valign="top">&nbsp;</td>
 				    <td width="85%">
-				      <input id="submit" name="submit" type="submit" onclick="return checkForRanges();" class="formbtn" value="Save" />
-				      <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" onclick="history.back()" />
+				      <input id="submit" name="submit" type="submit" onclick="return checkForRanges();" class="formbtn" value="<?=gettext("Save"); ?>" />
+				      <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()" />
 				      <?php if (isset($id) && $a_schedules[$id]): ?>
 				      <input name="id" type="hidden" value="<?=$id;?>" />
 				      <?php endif; ?>

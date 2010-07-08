@@ -85,12 +85,12 @@ include("head.inc"); ?>
 					<td colspan="2" valign="top" class="listtopic">Ping</td>
 				</tr>
                 <tr>
-				  <td width="22%" valign="top" class="vncellreq">Host</td>
+				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ></td>
 				  <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
 				</tr>
 				<tr>
-				  <td width="22%" valign="top" class="vncellreq">Interface</td>
+				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 				  <td width="78%" class="vtable">
 				  <select name="interface" class="formfld">
                       <?php $interfaces = get_configured_interface_with_descr();
@@ -114,7 +114,7 @@ include("head.inc"); ?>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Ping">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Ping"); ?>">
 				</td>
 				</tr>
 				<tr>

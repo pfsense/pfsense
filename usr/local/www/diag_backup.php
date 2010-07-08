@@ -126,7 +126,7 @@ function spit_out_select_items($area, $showall) {
 	if ($area == "backuparea")
 		$select .= " onChange=backuparea_change(this)";
 	$select .= " >\n";
-	$select .= "<option VALUE=\"\">ALL</option>";
+	$select .= "<option VALUE=\"\">" . gettext("ALL") . "</option>";
 
 	if($showall == true)
 		foreach($areas as $area => $areaname)
@@ -656,7 +656,7 @@ function backuparea_change(obj) {
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
 						<p><?=gettext("Click this button to reinstall all system packages.  This may take a while."); ?> <br /><br />
-		  				<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="Reinstall packages">
+		  				<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="<?=gettext("Reinstall packages"); ?>">
 					</td>
 				</tr>
 				<?php } ?>

@@ -110,6 +110,24 @@ if ($act == "exp") {
 	exit;
 }
 
+if ($act == "expkey") {
+
+	if (!$a_ca[$id]) {
+		pfSenseHeader("system_camanager.php");
+		exit;
+	}
+
+	$exp_name = urlencode("{$a_ca[$id]['name']}.key");
+	$exp_data = base64_decode($a_ca[$id]['prv']);
+	$exp_size = strlen($exp_data);
+
+	header("Content-Type: application/octet-stream");
+	header("Content-Disposition: attachment; filename={$exp_name}");
+	header("Content-Length: $exp_size");
+	echo $exp_data;
+	exit;
+}
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -157,7 +175,7 @@ if ($_POST) {
 	    $ca['name'] = $pconfig['name'];
 
 		if ($pconfig['method'] == "existing")
-			ca_import($ca, $pconfig['cert']);
+			ca_import($ca, $pconfig['cert'], $pconfig['key']);
 
 		if ($pconfig['method'] == "internal")
 		{
@@ -273,6 +291,14 @@ function method_change() {
 								<textarea name="cert" id="cert" cols="65" rows="7" class="formfld_cert"><?=$pconfig['cert'];?></textarea>
 								<br>
 								<?=gettext("Paste a certificate in X.509 PEM format here.");?></td>
+							</td>
+						</tr>
+						<tr>
+							<td width="22%" valign="top" class="vncellreq"><?=gettext("Certificate Private Key");?><br/><?=gettext("(optional)");?></td>
+							<td width="78%" class="vtable">
+								<textarea name="key" id="key" cols="65" rows="7" class="formfld_cert"><?=$pconfig['key'];?></textarea>
+								<br>
+								<?=gettext("Paste the private key for the above certificate here. This is optional in most cases, but required if you need to generate a Certificate Revocation List (CRL).");?></td>
 							</td>
 						</tr>
 					</table>
@@ -457,6 +483,11 @@ function method_change() {
 							<a href="system_camanager.php?act=exp&id=<?=$i;?>")">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export ca");?>" alt="<?=gettext("export ca");?>" width="17" height="17" border="0" />
 							</a>
+							<?php if ($ca['prv']): ?>
+							<a href="system_camanager.php?act=expkey&id=<?=$i;?>")">
+								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_down.gif" title="<?=gettext("export ca private key");?>" alt="<?=gettext("export ca private key");?>" width="17" height="17" border="0" />
+							</a>
+							<?php endif; ?>
 							<a href="system_camanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate Authority and all associated certificates?");?>')">
 								<img src="/themes/<?= $g['theme'];?>/images/icons/icon_x.gif" title="<?=gettext("delete ca");?>" alt="<?=gettext("delete ca"); ?>" width="17" height="17" border="0" />
 							</a>

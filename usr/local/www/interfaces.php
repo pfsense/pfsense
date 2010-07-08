@@ -177,7 +177,7 @@ $pconfig['enable'] = isset($wancfg['enable']);
 if (is_array($config['aliases']['alias'])) {
 	foreach($config['aliases']['alias'] as $alias) {
 		if($alias['name'] == $wancfg['descr']) {
-			$input_errors[] = sprintf(gettext("Sorry, an alias with the name '%s' already exists."),$wancfg['descr']);
+			$input_errors[] = gettext("Sorry, an alias with the name {$wancfg['descr']} already exists.");
 		}
 	}
 }
@@ -355,31 +355,31 @@ if ($_POST) {
 	switch($_POST['type']) {
 		case "static":
 			$reqdfields = explode(" ", "ipaddr subnet gateway");
-			$reqdfieldsn = array(gettext("IP address"),gettext("Subnet bit count"),gettext("Gateway"));
+			$reqdfieldsn = explode(",", "IP address,Subnet bit count,Gateway");
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 		case "ppp":
 			$reqdfields = explode(" ", "port phone");
-			$reqdfieldsn = array(gettext("Modem Port"),gettext("Phone Number"));
+			$reqdfieldsn = explode(",", "Modem Port,Phone Number");
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 		case "PPPoE":
 			if ($_POST['pppoe_dialondemand']) {
 				$reqdfields = explode(" ", "pppoe_username pppoe_password pppoe_dialondemand pppoe_idletimeout");
-				$reqdfieldsn = array(gettext("PPPoE username"),gettext("PPPoE password"),gettext("Dial on demand"),gettext("Idle timeout value"));
+				$reqdfieldsn = explode(",", "PPPoE username,PPPoE password,Dial on demand,Idle timeout value");
 			} else {
 				$reqdfields = explode(" ", "pppoe_username pppoe_password");
-				$reqdfieldsn = array(gettext("PPPoE username"),gettext("PPPoE password"));
+				$reqdfieldsn = explode(",", "PPPoE username,PPPoE password");
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
 		case "PPTP":
 			if ($_POST['pptp_dialondemand']) {
 				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote pptp_dialondemand pptp_idletimeout");
-				$reqdfieldsn = array(gettext("PPTP username"),gettext("PPTP password"),gettext("PPTP local IP address"),gettext("PPTP subnet"),gettext("PPTP remote IP address"),gettext("Dial on demand"),gettext("Idle timeout value"));
+				$reqdfieldsn = explode(",", "PPTP username,PPTP password,PPTP local IP address,PPTP subnet,PPTP remote IP address,Dial on demand,Idle timeout value");
 			} else {
 				$reqdfields = explode(" ", "pptp_username pptp_password pptp_local pptp_subnet pptp_remote");
-				$reqdfieldsn = array(gettext("PPTP username"),gettext("PPTP password"),gettext("PPTP local IP address"),gettext("PPTP subnet"),gettext("PPTP remote IP address"));
+				$reqdfieldsn = explode(",", "PPTP username,PPTP password,PPTP local IP address,PPTP subnet,PPTP remote IP address");
 			}
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 			break;
@@ -433,7 +433,7 @@ if ($_POST) {
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
 		$reqdfields = explode(" ", "mode ssid");
-		$reqdfieldsn = array(gettext("Mode"),gettext("SSID"));
+		$reqdfieldsn = explode(",", "Mode,SSID");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		check_wireless_mode();
 		/* loop through keys and enforce size */
@@ -804,7 +804,7 @@ function check_wireless_mode() {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),sprintf(gettext("'%s'"),$pconfig['descr']));
+$pgtitle = array("Interfaces", $pconfig['descr']);
 $statusurl = "status_interfaces.php";
 
 $closehead = false;
@@ -974,7 +974,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 	<form action="interfaces.php" method="post" name="iform" id="iform">
 		<?php if ($input_errors) print_input_errors($input_errors); ?>
 		<?php if (is_subsystem_dirty('interfaces')): ?><p>
-		<?php print_info_box_np(printf(gettext("The '%s' configuration has been changed."),$wancfg['descr'])."<p>".gettext("You must apply the changes in order for them to take effect.")."<p>".gettext("Don't forget to adjust the DHCP Server range if needed after applying."));?><br />
+		<?php print_info_box_np(gettext("The {$wancfg['descr']} configuration has been changed.<p>You must apply the changes in order for them to take effect.<p>Don't forget to adjust the DHCP Server range if needed after applying."));?><br />
 		<?php endif; ?>
 		<?php if ($savemsg) print_info_box($savemsg); ?>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -999,7 +999,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td width="22%" valign="top" class="vncell">Description</td>
 							<td width="78%" class="vtable">
 								<input name="descr" type="text" class="formfld unknown" id="descr" size="30" value="<?=htmlspecialchars($pconfig['descr']);?>">
-								<br><span class="vexpl"><?= gettext("Enter a description (name) for the interface here."); ?></span>
+								<br><span class="vexpl">Enter a description (name) for the interface here.</span>
 							</td>
 						</tr>
 						<tr>
@@ -1312,7 +1312,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									<tr>
 										<td width="22%" valign="top" class="vncell">Service name</td>
 										<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
-											<br> <span class="vexpl"><?= gettext("Hint: this field can usually be left empty"); ?></span>
+											<br> <span class="vexpl">Hint: this field can usually be left empty</span>
 										</td>
 									</tr>
 									<tr>
@@ -1354,7 +1354,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 														<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" /> 
 														<?= gettext("reset at a specific date (mm/dd/yyyy)"); ?>
 														<br />&nbsp;<br />
-														<span class="red"><strong><?= gettext("Note"); ?>: </strong></span>
+														<span class="red"><strong>Note: </strong></span>
 														<?= gettext("If you leave the date field empty, the reset will be executed each day at the time you did specify using the minutes and hour field."); ?>
 														</p>
 														<?php if ($pconfig['pppoe_pr_preset']): ?>
@@ -1824,7 +1824,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td class="vtable">
 								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <? if ($pconfig['ieee8021x']) echo "checked";?>>
 								<br/>Setting this option will enable 802.1x authentication.
-								<br/><span class="red"><strong><?= gettext("NOTE"); ?>:</strong</span> this option requires checking the "Enable WPA box".
+								<br/><span class="red"><strong>NOTE:</strong</span> this option requires checking the "Enable WPA box".
 							</td>
 						</tr>
 						<tr>
@@ -1889,7 +1889,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							</td>
 							<td>
 								<br/>
-								<input id="save" name="Submit" type="submit" class="formbtn" value="<?= gettext("Save"); ?>"> 
+								<input id="save" name="Submit" type="submit" class="formbtn" value="Save"> 
 								<input id="cancel" type="button" class="formbtn" value="Cancel" onclick="history.back()">
 								<input name="if" type="hidden" id="if" value="<?=$if;?>">
 								<?php if ($wancfg['if'] == $a_ppps[$pppid]['if']) : ?>

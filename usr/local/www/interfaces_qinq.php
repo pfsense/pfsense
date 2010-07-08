@@ -60,7 +60,7 @@ function qinq_inuse($num) {
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (qinq_inuse($_GET['id'])) {
-		$input_errors[] = gettext("This QinQ cannot be deleted because it is still being used as an interface.");
+		$input_errors[] = "This QinQ cannot be deleted because it is still being used as an interface.";
 	} else {
 		$id = $_GET['id'];
 		$qinq =& $a_qinqs[$id];
@@ -81,7 +81,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("QinQ"));
+$pgtitle = array("Interfaces","QinQ");
 include("head.inc");
 
 ?>
@@ -93,16 +93,16 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
-	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-	$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-	$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
-	$tab_array[4] = array(gettext("QinQs"), true, "interfaces_qinq.php");
-	$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-	$tab_array[6] = array(gettext("GRE"), false, "interfaces_gre.php");
-	$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
-	$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-	$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
+	$tab_array[1] = array("Interface Groups", false, "interfaces_groups.php");
+	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
+	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
+	$tab_array[4] = array("QinQs", true, "interfaces_qinq.php");
+	$tab_array[5] = array("PPPs", false, "interfaces_ppps.php");
+	$tab_array[6] = array("GRE", false, "interfaces_gre.php");
+	$tab_array[7] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
+	$tab_array[9] = array("LAGG", false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -111,10 +111,10 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="15%" class="listhdrr"><?=gettext("Interface");?></td>
-                  <td width="10%" class="listhdrr"><?=gettext("Tag");?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("QinQ members");?></td>
-                  <td width="45%" class="listhdr"><?=gettext("Description");?></td>
+                  <td width="15%" class="listhdrr">Interface</td>
+                  <td width="10%" class="listhdrr">Tag</td>
+                  <td width="20%" class="listhdrr">QinQ members</td>
+                  <td width="45%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_qinqs as $qinq): ?>
@@ -137,7 +137,7 @@ include("head.inc");
                     <?=htmlspecialchars($qinq['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="interfaces_qinq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_qinq.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext("Do you really want to delete this QinQ?");?>)"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="interfaces_qinq.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this QinQ?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
@@ -146,9 +146,9 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:");?><br>
+				  Note:<br>
 				  </strong></span>
-				  <?php sprintf(gettext("Not all drivers/NICs support 802.1Q QinQ tagging properly. On cards that do not explicitly support it, QinQ tagging will still work, but the reduced MTU may cause problems. See the %s handbook for information on supported cards."), $g['product_name']);?></p>
+				  Not all drivers/NICs support 802.1Q QinQ tagging properly. On cards that do not explicitly support it, QinQ tagging will still work, but the reduced MTU may cause problems. See the <?=$g['product_name']?> handbook for information on supported cards. </p>
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

@@ -61,7 +61,7 @@ function gre_inuse($num) {
 if ($_GET['act'] == "del") {
 	/* check if still in use */
 	if (gre_inuse($_GET['id'])) {
-		$input_errors[] = gettext("This GRE tunnel cannot be deleted because it is still being used as an interface.");
+		$input_errors[] = "This GRE tunnel cannot be deleted because it is still being used as an interface.";
 	} else {
 		mwexec("/sbin/ifconfig " . $a_gres[$_GET['id']]['greif'] . " destroy");
 		unset($a_gres[$_GET['id']]);
@@ -73,7 +73,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GRE"));
+$pgtitle = array("Interfaces","GRE");
 include("head.inc");
 
 ?>
@@ -85,16 +85,16 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
-	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-	$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-	$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
-	$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
-	$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-	$tab_array[6] = array(gettext("GRE"), true, "interfaces_gre.php");
-	$tab_array[7] = array(gettext("GIF"), false, "interfaces_gif.php");
-	$tab_array[8] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-	$tab_array[9] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
+	$tab_array[1] = array("Interface Groups", false, "interfaces_groups.php");
+	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
+	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
+	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
+	$tab_array[5] = array("PPPs", false, "interfaces_ppps.php");
+	$tab_array[6] = array("GRE", true, "interfaces_gre.php");
+	$tab_array[7] = array("GIF", false, "interfaces_gif.php");
+	$tab_array[8] = array("Bridges", false, "interfaces_bridge.php");
+	$tab_array[9] = array("LAGG", false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -103,9 +103,9 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="20%" class="listhdrr"><?=gettext("Interface");?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("Tunnel to...");?></td>
-                  <td width="50%" class="listhdr"><?=gettext("Description");?></td>
+                  <td width="20%" class="listhdrr">Interface</td>
+                  <td width="20%" class="listhdrr">Tunnel to...</td>
+                  <td width="50%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_gres as $gre): ?>
@@ -120,7 +120,7 @@ include("head.inc");
                     <?=htmlspecialchars($gre['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="interfaces_gre_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_gre.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext("Do you really want to delete this GRE tunnel?");?>)"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="interfaces_gre.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this GRE tunnel?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
@@ -129,7 +129,7 @@ include("head.inc");
 				</tr>
         <tr>
                 <td class="tabcont" colspan="3">
-                    <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.");?></span></p>
+                    <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.</span></p>
                     </td>
                 </tr>
               </table>

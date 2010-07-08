@@ -36,7 +36,7 @@
 ##|*MATCH=interfaces_qinq_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Interfaces"),gettext("QinQ"), gettext("Edit"));
+$pgtitle = array("Interfaces","QinQ", "Edit");
 
 require("guiconfig.inc");
 
@@ -81,19 +81,19 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if (empty($_POST['tag']))
-		$input_errors[] = gettext("First level tag cannot be empty.");
+		$input_errors[] = "First level tag cannot be empty.";
 	if (isset($id) && $a_qinqs[$id]['tag'] != $_POST['tag'])
-		$input_errors[] = gettext("You are editing an existing entry and modifying the first level tag is not allowed.");
+		$input_errors[] = "You are editing an existing entry and modifying the first level tag is not allowed.";
 	if (isset($id) && $a_qinqs[$id]['if'] != $_POST['if'])
-		$input_errors[] = gettext("You are editing an existing entry and modifying the interface is not allowed.");
+		$input_errors[] = "You are editing an existing entry and modifying the interface is not allowed.";
 	if (!isset($id)) {
 		foreach ($a_qinqs as $qinqentry)
 			if ($qinqentry['tag'] == $_POST['tag'] && $qinqentry['if'] == $_POST['if'])
-				$input_errors[] = gettext("QinQ level already exists for this interface, edit it!");
+				$input_errors[] = "QinQ level already exists for this interface, edit it!";
 		if (is_array($config['vlans']['vlan'])) {
 			foreach ($config['vlans']['vlan'] as $vlan)
 				if ($vlan['tag'] == $_POST['tag'] && $vlan['if'] == $_POST['if'])
-					$input_errors[] = gettext("A normal VLAN exists with this tag please remove it to use this tag for QinQ first level.");
+					$input_errors[] = "A normal VLAN exists with this tag please remove it to use this tag for QinQ first level.";
 		}
 	}
 
@@ -120,7 +120,7 @@ if ($_POST) {
 			if (count($member) > 1) {
 				if (preg_match("/([^0-9])+/", $member[0], $match)  ||
 					preg_match("/([^0-9])+/", $member[1], $match))
-					$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
+					$input_errors[] = "Tags can contain only numbers or a range in format #-#.";
 
 				for ($i = $member[0]; $i <= $member[1]; $i++) {
 					if ($isfirst > 0)
@@ -130,7 +130,7 @@ if ($_POST) {
 				}
 			} else {
 				if (preg_match("/([^0-9])+/", $_POST["members{$x}"], $match))
-					$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
+					$input_errors[] = "Tags can contain only numbers or a range in format #-#.";
 
 				if ($isfirst > 0)
 					$members .= " ";
@@ -190,7 +190,7 @@ if ($_POST) {
 				$gentry = array();
 				$gentry['ifname'] = "QinQ";
 				$gentry['members'] = "{$additions}";
-				$gentry['descr'] = gettext("QinQ VLANs group");
+				$gentry['descr'] = "QinQ VLANs group";
 				$config['ifgroups']['ifgroupentry'][] = $gentry;
 			}
 		}
@@ -266,11 +266,11 @@ function removeRow(el) {
     }
 }
 
-	rowname[0] = <?=gettext("members");?>;
+	rowname[0] = "members";
 	rowtype[0] = "textbox";
 	rowsize[0] = "30";
 
-	rowname[2] = <?=gettext("detail");?>;
+	rowname[2] = "detail";
 	rowtype[2] = "textbox";
 	rowsize[2] = "50";
 </script>
@@ -282,10 +282,10 @@ function removeRow(el) {
 <form action="interfaces_qinq_edit.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
   <tr>
-	<td colspan="2" valign="top" class="listtopic"><?=gettext("Interface QinQ Edit");?></td>
+	<td colspan="2" valign="top" class="listtopic">Interface QinQ Edit</td>
   </tr>
   <tr>
-    <td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface");?></td>
+    <td width="22%" valign="top" class="vncellreq">Parent interface</td>
     <td width="78%" class="vtable">
     <select name="if" id="if" class="formselect">
     <?php
@@ -302,20 +302,20 @@ function removeRow(el) {
     ?>
     </select>
     <br/>
-    <span class="vexpl"><?=gettext("Only QinQ capable interfaces will be shown.");?></span></td>
+    <span class="vexpl">Only QinQ capable interfaces will be shown.</span></td>
   </tr>
   <tr>
-    <td width="22%" valign="top" class="vncellreq"><?=gettext("First level tag");?></td>
+    <td width="22%" valign="top" class="vncellreq">First level tag</td>
     <td width="78%" class="vtable">
       <input name="tag" type="text" class="formfld unknown" id="tag" size="10" value="<?=$pconfig['tag'];?>" />
       <br />
       <span class="vexpl">
-	<?=gettext("This is the first level VLAN tag. On top of this are stacked the member VLANs defined below.");?>
+	This is the first level VLAN tag. On top of this are stacked the member VLANs defined below.
       </span>
     </td>
   </tr>
   <tr>
-	<td width="22%" valign="top" class="vncell"><?=gettext("Options");?></td>
+	<td width="22%" valign="top" class="vncell">Options</td>
 	<td width="78%" class="vtable">
 <?php /* ?>
 		<br/>
@@ -330,30 +330,30 @@ function removeRow(el) {
 <?php */ ?>
 		<br/>
 		<input name="autogroup" type="checkbox" value="yes" id="autogroup" <? if ($pconfig['autogroup']) echo "checked";?>>
-		<span class="vexpl"><?=gettext("Adds interface to QinQ interface groups so you can write filter rules easily.");?></span>
+		<span class="vexpl"> Adds interface to QinQ interface groups so you can write filter rules easily.</span>
 	</td>
   </tr>
   <tr>
-    <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
+    <td width="22%" valign="top" class="vncell">Description</td>
     <td width="78%" class="vtable">
       <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=$pconfig['descr'];?>" />
       <br />
       <span class="vexpl">
-        <?=gettext("You may enter a description here for your reference (not parsed).");?>
+        You may enter a description here for your reference (not parsed).
       </span>
     </td>
   </tr>
   <tr>
-    <td width="22%" valign="top" class="vncellreq"><div id="membersnetworkport"><?=gettext("Member (s)");?></div></td>
+    <td width="22%" valign="top" class="vncellreq"><div id="membersnetworkport">Member (s)</div></td>
     <td width="78%" class="vtable">
 	<span vlass="vexpl">
-		<?=gettext("You can specify ranges in the input below. The format is pretty simple i.e 9-100 or 10.20...");?>
+		You can specify ranges in the input below. The format is pretty simple i.e 9-100 or 10.20...
 	</span>
 	<br/>
       <table id="maintable">
         <tbody>
           <tr>
-            <td><div id="onecolumn"><?=gettext("Tag");?></div></td>
+            <td><div id="onecolumn">Tag</div></td>
           </tr>
 
 	<?php
@@ -370,7 +370,7 @@ function removeRow(el) {
 	        <input name="members<?php echo $tracker; ?>" class="formselect" id="members<?php echo $tracker; ?>" value="<? echo $members;?>">
 	</td>
         <td>
-	<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete");?>" />
+	<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="Delete" />
 	      </td>
           </tr>
 <?php
@@ -385,15 +385,15 @@ function removeRow(el) {
         </tfoot>
 		  </table>
 			<a onclick="javascript:addRowTo('maintable'); return false;" href="#">
-        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
+        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="add another entry" />
       </a>
 		</td>
   </tr>
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-      <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-      <a href="interfaces_qinq.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
+      <input id="submit" name="submit" type="submit" class="formbtn" value="Save" />
+      <a href="interfaces_qinq.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" /></a>
       <?php if (isset($id) && $a_qinqs[$id]): ?>
       <input name="id" type="hidden" value="<?=$id;?>" />
       <?php endif; ?>

@@ -133,7 +133,7 @@ include("head.inc");
 	  <td valign="top" class="vncellreq"><?=gettext("Alias Name"); ?></td>
 	  <td class="vtable"> <input name="name" type="text" class="formfld unknown" id="name" size="40" value="<?=htmlspecialchars($_POST['name']);?>" />
 	    <br /> <span class="vexpl">
-	    <?=gettext("The name of the alias may only consist of the characters") . " a-z, A-Z and 0-9."; ?></span></td>
+	    <?=gettext("The name of the alias may only consist of the characters \"a-z, A-Z and 0-9\"."); ?></span></td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>

@@ -51,7 +51,7 @@ if($_GET['reset'] <> "") {
 	exit;
 }
 
-$pgtitle = array("Firewall","Traffic Shaper");
+$pgtitle = array(gettext("Firewall"),gettext("Traffic Shaper"));
 $statusurl = "status_queues.php";
 
 $shaperIFlist = get_configured_interface_with_descr();

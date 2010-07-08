@@ -692,23 +692,23 @@ include("head.inc");
 				<select name="icmptype" class="formselect">
 <?php
 				$icmptypes = array(
-				"" => "any",
-				"echorep" => "Echo reply",
-				"unreach" => "Destination unreachable",
-				"squench" => "Source quench",
-				"redir" => "Redirect",
-				"althost" => "Alternate Host",
-				"echoreq" => "Echo",
-				"routeradv" => "Router advertisement",
-				"routersol" => "Router solicitation",
-				"timex" => "Time exceeded",
-				"paramprob" => "Invalid IP header",
-				"timereq" => "Timestamp",
-				"timerep" => "Timestamp reply",
-				"inforeq" => "Information request",
-				"inforep" => "Information reply",
-				"maskreq" => "Address mask request",
-				"maskrep" => "Address mask reply"
+				"" => gettext("any"),
+				"echorep" => gettext("Echo reply"),
+				"unreach" => gettext("Destination unreachable"),
+				"squench" => gettext("Source quench"),
+				"redir" => gettext("Redirect"),
+				"althost" => gettext("Alternate Host"),
+				"echoreq" => gettext("Echo"),
+				"routeradv" => gettext("Router advertisement"),
+				"routersol" => gettext("Router solicitation"),
+				"timex" => gettext("Time exceeded"),
+				"paramprob" => gettext("Invalid IP header"),
+				"timereq" => gettext("Timestamp"),
+				"timerep" => gettext("Timestamp reply"),
+				"inforeq" => gettext("Information request"),
+				"inforep" => gettext("Information reply"),
+				"maskreq" => gettext("Address mask request"),
+				"maskrep" => gettext("Address mask reply")
 				);
 
 				foreach ($icmptypes as $icmptype => $descr): ?>
@@ -806,7 +806,7 @@ include("head.inc");
 						<td><?=gettext("from");?>:&nbsp;&nbsp;</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
-								<option value=""><?=gettext("(other)");?></option>
+								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
@@ -819,7 +819,7 @@ include("head.inc");
 						<td><?=gettext("to");?>:</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="srcendport" class="formselect" onchange="ext_change()">
-								<option value=""><?=gettext("(other)");?></option>
+								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected"; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
@@ -897,7 +897,7 @@ include("head.inc");
 						<td><?=gettext("from");?>:&nbsp;&nbsp;</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
-								<option value=""><?=gettext("(other)");?></option>
+								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected"; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
@@ -910,7 +910,7 @@ include("head.inc");
 						<td><?=gettext("to");?>:</td>
 						<td>
 							<select<?php echo ($edit_disabled===true?' DISABLED':''); ?> name="dstendport" class="formselect" onchange="ext_change()">
-								<option value=""><?=gettext("(other)"?></option>
+								<option value="">(<?=gettext("other"); ?>)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected"; $bfound = 1; } ?>><?=gettext("any");?></option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
@@ -973,7 +973,7 @@ include("head.inc");
 					<select name="os" id="os" class="formselect">
 <?php
 						$ostypes = array(
-							 "" => "any",
+							 "" => gettext("any"),
 							"AIX" => "AIX",
 							"Linux" => "Linux",
 							"FreeBSD" => "FreeBSD",

@@ -452,7 +452,7 @@ include("fbegin.inc"); ?>
                   </td>
                 </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncellreq">Interface</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
                   <td width="78%" class="vtable">
 					<select name="interface" class="formselect" onChange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
 						<?php
@@ -506,7 +506,7 @@ include("fbegin.inc"); ?>
 		<tr id="showadvancedboxsrc" name="showadvancedboxsrc">
 			<td width="22%" valign="top" class="vncellreq"><?=gettext("Source"); ?></td>
 			<td width="78%" class="vtable">
-				<input type="button" onClick="show_source()" value="Advanced"></input> - <?=gettext("Show source address and port range"); ?></a>
+				<input type="button" onClick="show_source()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show source address and port range"); ?></a>
 			</td>
 		</tr>
 		<tr style="display: none;" id="srctable" name="srctable">
@@ -529,7 +529,6 @@ include("fbegin.inc"); ?>
 								<option value="single"  <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>><?=gettext("Single host or alias"); ?></option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>><?=gettext("Network"); ?></option>
 								<?php if(have_ruleint_access("pptp")): ?>
-<<<<<<< HEAD
 								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>><?=gettext("PPTP clients"); ?></option>
 								<?php endif; ?>
 								<?php if(have_ruleint_access("pppoe")): ?>
@@ -537,16 +536,7 @@ include("fbegin.inc"); ?>
 								<?php endif; ?>
 								 <?php if(have_ruleint_access("l2tp")): ?>
                                                                 <option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected"; } ?>><?=gettext("L2TP clients"); ?></option>
-=======
-								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>>PPTP <?=gettext("clients"); ?></option>
-								<?php endif; ?>
-								<?php if(have_ruleint_access("pppoe")): ?>
-								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>PPPoE <?=gettext("clients"); ?></option>
-								<?php endif; ?>
-								 <?php if(have_ruleint_access("l2tp")): ?>
-                                                                <option value="l2tp"   <?php if ($pconfig['src'] == "l2tp") { echo "selected"; } ?>>L2TP <?=gettext("clients"); ?></option>
->>>>>>> parent of 1baff2e... Implemment gettext()
-                                                                <?php endif; ?>
+                                 <?php endif; ?>
 <?php
 								foreach ($ifdisp as $ifent => $ifdesc): ?>
 								<?php if(have_ruleint_access($ifent)): ?>
@@ -766,12 +756,12 @@ include("fbegin.inc"); ?>
 					</td>
 				</tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">NAT reflection</td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("NAT reflection"); ?></td>
 					<td width="78%" class="vtable">
 						<select name="natreflection" class="formselect">
-						<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo "selected"; ?>>use system default</option>
-						<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected"; ?>>enable</option>
-						<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected"; ?>>disable</option>
+						<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo "selected"; ?>><?=gettext("use system default"); ?></option>
+						<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected"; ?>><?=gettext("enable"); ?></option>
+						<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected"; ?>><?=gettext("disable"); ?></option>
 						</select>
 					</td>
 				</tr>
@@ -816,7 +806,7 @@ include("fbegin.inc"); ?>
 						<option value=""><?=gettext("None"); ?></option>
 						<option value="add-associated" selected="selected"><?=gettext("Add associated filter rule"); ?></option>
 						<option value="add-unassociated"><?=gettext("Add unassociated filter rule"); ?></option>
-						<option value="pass">Pass</option>
+						<option value="pass"><?=gettext("Pass"); ?></option>
 					</select>
 				  </td>
                 </tr><?php endif; ?>

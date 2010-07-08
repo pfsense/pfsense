@@ -159,7 +159,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("Firewall","Aliases");
+$pgtitle = array(gettext("Firewall"),gettext("Aliases"));
 include("head.inc");
 
 ?>

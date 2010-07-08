@@ -599,7 +599,7 @@ function backuparea_change(obj) {
 								</td>
 							</tr>
 						</table>
-						<p><input name="Submit" type="submit" class="formbtn" id="download" value="Download configuration"></p>
+						<p><input name="Submit" type="submit" class="formbtn" id="download" value="<?=gettext("Download configuration"); ?>"></p>
 					</td>
 				</tr>
 				<tr>

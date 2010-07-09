@@ -644,9 +644,10 @@ include("head.inc");
 							$interfaces["enc0"] = "IPsec";
 					/* add openvpn/tun interfaces */
 					if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
-       					$interfaces["openvpn"] = "OpenVPN";
+						$interfaces["openvpn"] = "OpenVPN";
+					$selected_interfaces = explode(",", $pconfig['interface']);
 					foreach ($interfaces as $iface => $ifacename): ?>
-						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && (strcasecmp($pconfig['interface'], $iface) == 0)) echo "selected"; ?>><?=gettext($ifacename);?></option>
+						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && ( strcasecmp($pconfig['interface'], $iface) == 0 || in_array($iface, $selected_interfaces) )) echo "selected"; ?>><?=gettext($ifacename);?></option>
 <?php 				endforeach; ?>
 				</select>
 				<br />

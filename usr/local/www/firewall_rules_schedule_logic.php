@@ -1,5 +1,8 @@
+<?php
+include 'globals.inc';
+?>
 <pre>
-When working with pfSense based schedules, the logic is a bit different from the normal pfSense rules.
+When working with <?= $g['product_name'] ?> based schedules, the logic is a bit different from the normal <?= $g['product_name'] ?> rules.
 
 For example, the rules are evaluated from top to bottom.   
 

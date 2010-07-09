@@ -383,7 +383,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 
 <?php if (file_exists("/tmp/reload_interfaces")): ?><p>
-	<?php print_info_box_np("The interface configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+	<?php print_info_box_np(gettext("The interface configuration has been changed.<br>You must apply the changes in order for them to take effect)."));?><br>
 <?php elseif($savemsg): ?>
 	<?php print_info_box($savemsg); ?>
 <?php endif; ?>
@@ -394,16 +394,16 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Interface assignments", true, "interfaces_assign.php");
-	$tab_array[1] = array("Interface Groups", false, "interfaces_groups.php");
-	$tab_array[2] = array("Wireless", false, "interfaces_wireless.php");
-	$tab_array[3] = array("VLANs", false, "interfaces_vlan.php");
-	$tab_array[4] = array("QinQs", false, "interfaces_qinq.php");
-	$tab_array[5] = array("PPPs", false, "interfaces_ppps.php");
-	$tab_array[7] = array("GRE", false, "interfaces_gre.php");
-	$tab_array[8] = array("GIF", false, "interfaces_gif.php");
-	$tab_array[9] = array("Bridges", false, "interfaces_bridge.php");
-	$tab_array[10] = array("LAGG", false, "interfaces_lagg.php");
+	$tab_array[0] = array(gettext("Interface assignments"), true, "interfaces_assign.php");
+	$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+	$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+	$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+	$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+	$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+	$tab_array[7] = array(gettext("GRE"), false, "interfaces_gre.php");
+	$tab_array[8] = array(gettext("GIF"), false, "interfaces_gif.php");
+	$tab_array[9] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+	$tab_array[10] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 	display_top_tabs($tab_array);
 ?>  
   </td></tr>
@@ -412,8 +412,8 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	<div id="mainarea">
         <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
        <tr> 
-	<td class="listhdrr">Interface</td>
-	<td class="listhdr">Network port</td>
+	<td class="listhdrr"><?=gettext("Interface"); ?></td>
+	<td class="listhdr"><?=gettext("Network port"); ?></td>
 	<td class="list">&nbsp;</td>
   </tr>
   <?php foreach ($config['interfaces'] as $ifname => $iface):
@@ -490,7 +490,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 </table>
 </div>
 <br/>
-<input name="Submit" type="submit" class="formbtn" value=<?=gettext("Save"); ?>><br><br>
+<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"><br><br>
 <p>
 </p>
 <ul>

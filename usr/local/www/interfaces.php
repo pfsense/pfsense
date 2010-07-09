@@ -284,7 +284,7 @@ if (isset($wancfg['wireless'])) {
 if ($_POST['apply']) {
 	unset($input_errors);
 	if (!is_subsystem_dirty('interfaces'))
-		$intput_errors[] = "You have already applied your settings!";
+		$intput_errors[] = gettext("You have already applied your settings!");
 	else {	
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
@@ -296,7 +296,7 @@ if ($_POST['apply']) {
 		/* restart snmp so that it binds to correct address */		
 		services_snmpd_configure();		
 		if ($if == "lan") 		
-			$savemsg = "The changes have been applied.  You may need to correct your web browser's IP address.";
+			$savemsg = gettext("The changes have been applied.  You may need to correct your web browser's IP address.");
 
 		/* sync filter configuration */
 		setup_gateways_monitor();
@@ -346,11 +346,11 @@ if ($_POST) {
 	/* description unique? */
 	foreach ($iflist as $ifent => $ifdescr) {
 		if ($if != $ifent && $ifdescr == $_POST['descr'])
-			$input_errors[] = "An interface with the specified description already exists.";
+			$input_errors[] = gettext("An interface with the specified description already exists.");
 	}
 	/* input validation */
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && $_POST['type'] != "static")
-		$input_errors[] = "The DHCP Server is active on this interface and it can be used only with a static IP configuration. Please disable the DHCP Server service on this interface first, then change the interface configuration.";
+		$input_errors[] = gettext("The DHCP Server is active on this interface and it can be used only with a static IP configuration. Please disable the DHCP Server service on this interface first, then change the interface configuration.");
 
 	switch($_POST['type']) {
 		case "static":
@@ -388,13 +388,13 @@ if ($_POST) {
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) 
-		$input_errors[] = "A valid IP address must be specified.";
+		$input_errors[] = gettext("A valid IP address must be specified.");
 	if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) 
-		$input_errors[] = "A valid subnet bit count must be specified.";
+		$input_errors[] = gettext("A valid subnet bit count must be specified.");
 	if (($_POST['alias-address'] && !is_ipaddr($_POST['alias-address']))) 
-		$input_errors[] = "A valid alias IP address must be specified.";
+		$input_errors[] = gettext("A valid alias IP address must be specified.");
 	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet']))) 
-		$input_errors[] = "A valid alias subnet bit count must be specified.";
+		$input_errors[] = gettext("A valid alias subnet bit count must be specified.");
 	if ($_POST['gateway'] != "none") {
 		$match = false;
 		foreach($a_gateways as $gateway) {
@@ -403,13 +403,13 @@ if ($_POST) {
 			}
 		}
 		if(!$match) {
-			$input_errors[] = "A valid gateway must be specified.";
+			$input_errors[] = gettext("A valid gateway must be specified.");
 		}
 	}
 	if (($_POST['provider'] && !is_domain($_POST['provider']))) 
-		$input_errors[] = "The service name contains invalid characters.";
+		$input_errors[] = gettext("The service name contains invalid characters.");
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) 
-		$input_errors[] = "The idle timeout value must be an integer.";
+		$input_errors[] = gettext("The idle timeout value must be an integer.");
 	if ($_POST['pppoe_resethour'] <> "" && !is_numericint($_POST['pppoe_resethour']) && 
 		$_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23) 
 			$input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
@@ -419,17 +419,17 @@ if ($_POST) {
 	if ($_POST['pppoe_resetdate'] <> "" && !is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) 
 		$input_errors[] = gettext("A valid PPPoE reset date must be specified (mm/dd/yyyy).");
 	if (($_POST['pptp_local'] && !is_ipaddr($_POST['pptp_local']))) 
-		$input_errors[] = "A valid PPTP local IP address must be specified.";
+		$input_errors[] = gettext("A valid PPTP local IP address must be specified.");
 	if (($_POST['pptp_subnet'] && !is_numeric($_POST['pptp_subnet']))) 
-		$input_errors[] = "A valid PPTP subnet bit count must be specified.";
+		$input_errors[] = gettext("A valid PPTP subnet bit count must be specified.");
 	if (($_POST['pptp_remote'] && !is_ipaddr($_POST['pptp_remote']))) 
-		$input_errors[] = "A valid PPTP remote IP address must be specified.";
+		$input_errors[] = gettext("A valid PPTP remote IP address must be specified.");
 	if (($_POST['pptp_idletimeout'] != "") && !is_numericint($_POST['pptp_idletimeout'])) 
-		$input_errors[] = "The idle timeout value must be an integer.";
+		$input_errors[] = gettext("The idle timeout value must be an integer.");
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac']))) 
-		$input_errors[] = "A valid MAC address must be specified.";
+		$input_errors[] = gettext("A valid MAC address must be specified.");
 	if ($_POST['mtu'] && ($_POST['mtu'] < 576)) 
-		$input_errors[] = "The MTU must be greater than 576 bytes.";
+		$input_errors[] = gettext("The MTU must be greater than 576 bytes.");
 	/* Wireless interface? */
 	if (isset($wancfg['wireless'])) {
 		$reqdfields = explode(" ", "mode ssid");
@@ -467,7 +467,7 @@ if ($_POST) {
 				}
 				if(strlen($_POST['key' . $i]) == 28)
 					continue;
-				$input_errors[] =  "Invalid WEP key size.   Sizes should be 40 (64) bit keys or 104 (128) bit.";
+				$input_errors[] =  gettext("Invalid WEP key size.   Sizes should be 40 (64) bit keys or 104 (128) bit.");
 				break;
 			}
 		}
@@ -475,7 +475,7 @@ if ($_POST) {
 		if ($_POST['passphrase']) {
                 	$passlen = strlen($_POST['passphrase']);
                 	if ($passlen < 8 || $passlen > 64)
-                        	$input_errors[] = "The length of the passphrase should be between 8 and 63 characters.";
+                        	$input_errors[] = gettext("The length of the passphrase should be between 8 and 63 characters.");
 		}
 	}
 	if (!$input_errors) {
@@ -521,8 +521,8 @@ if ($_POST) {
 				}
 			}
 			if($skip == false) {
-				$gateway_item['gateway'] = "dynamic";
-				$gateway_item['descr'] = "Interface {$if} dynamic gateway";
+				$gateway_item['gateway'] = gettext("dynamic");
+				$gateway_item['descr'] = gettext("Interface") . $if . gettext("dynamic gateway");
 				$gateway_item['name'] = "GW_" . strtoupper($if);
 				$gateway_item['interface'] = "{$if}";
 			} else {
@@ -796,7 +796,7 @@ function check_wireless_mode() {
 		$old_wireless_mode = $wancfg['wireless']['mode'];
 		$wancfg['wireless']['mode'] = $_POST['mode'];
 		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
-			$input_errors[] = "Unable to change mode to {$wlan_modes[$wancfg['wireless']['mode']]}.  You may already have the maximum number of wireless clones supported in this mode.";
+			$input_errors[] = sprintf(gettext("Unable to change mode to %s .  You may already have the maximum number of wireless clones supported in this mode."), $wlan_modes[$wancfg['wireless']['mode']]);
 		} else {
 			mwexec("/sbin/ifconfig {$wlanif}_ destroy");
 		}
@@ -809,7 +809,7 @@ $statusurl = "status_interfaces.php";
 
 $closehead = false;
 include("head.inc");
-$types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP" /* , "carpdev-dhcp" => "CarpDev"*/); 
+$types = array("none" => gettext("None"), "static" => gettext("Static"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP") /* , "carpdev-dhcp" => "CarpDev"*/); 
 
 ?>
 
@@ -983,27 +983,27 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 					<div class="tabcont">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">General configuration</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("General configuration"); ?></td>
 						</tr>
 						<tr>
-							<td width="22%" valign="top" class="vncell">Enable</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Enable"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable'] == true) echo "checked"; ?> onClick="show_allcfg(this);">
-							<strong>Enable Interface</strong>
+							<strong><?=gettext("Enable Interface"); ?></strong>
 							</td>
 						</tr>
 					</table>
 					<div style="display:none;" name="allcfg" id="allcfg">
 					<table width="100%" border="0" cellpadding="6" cellspacing="0">
 						<tr>
-							<td width="22%" valign="top" class="vncell">Description</td>
+							<td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
 							<td width="78%" class="vtable">
 								<input name="descr" type="text" class="formfld unknown" id="descr" size="30" value="<?=htmlspecialchars($pconfig['descr']);?>">
 								<br><span class="vexpl"><?= gettext("Enter a description (name) for the interface here."); ?></span>
 							</td>
 						</tr>
 						<tr>
-							<td valign="middle" class="vncell"><strong>Type</strong></td>
+							<td valign="middle" class="vncell"><strong><?=gettext("Type"); ?></strong></td>
 							<td class="vtable"> 
 								<select name="type" onChange="updateType(this.value);" class="formselect" id="type">
 								<?php 
@@ -1019,7 +1019,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">MAC address</td>
+							<td valign="top" class="vncell"><?=gettext("MAC address"); ?></td>
 							<td class="vtable">
 								<input name="spoofmac" type="text" class="formfld unknown" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>">
 								<?php
@@ -1028,25 +1028,25 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									$mac = str_replace("\n","",$mac);
 									if($mac):
 								?>
-									<a OnClick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#">Insert my local MAC address</a>
+									<a OnClick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#"><?=gettext("Insert my local MAC address"); ?></a>
 								<?php endif; ?>
 								<br>
-								This field can be used to modify (&quot;spoof&quot;) the MAC
-								address of the WAN interface<br>
-								(may be required with some cable connections)<br>
-								Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx
-								or leave blank
+								<?=gettext("This field can be used to modify (\"spoof\") the MAC " .
+								"address of the WAN interface"); ?><br>
+								<?=gettext("(may be required with some cable connections)"); ?><br>
+								<?=gettext("Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx " .
+								"or leave blank"); ?>
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">MTU</td>
+							<td valign="top" class="vncell"><?=gettext("MTU"); ?></td>
 							<td class="vtable"> 
 								<input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
 								<br>
-								If you enter a value in this field, then MSS clamping for
-								TCP connections to the value entered above minus 40 (TCP/IP
-								header size) will be in effect. If you leave this field blank,
-								an MTU of 1500 bytes will be assumed.
+								<?=gettext("If you enter a value in this field, then MSS clamping for " .
+								"TCP connections to the value entered above minus 40 (TCP/IP " . 
+								"header size) will be in effect. If you leave this field blank, " .
+								"an MTU of 1500 bytes will be assumed"); ?>.
 							</td>
 						</tr>
 						<tr>
@@ -1058,10 +1058,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic">Static IP configuration</td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("Static IP configuration"); ?></td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncellreq">IP address</td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("IP address"); ?></td>
 										<td width="78%" class="vtable"> 
 											<input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
 											/
@@ -1079,10 +1079,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncellreq">Gateway</td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Gateway"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="gateway" class="formselect" id="gateway">
-												<option value="none" selected>None</option>
+												<option value="none" selected><?=gettext("None"); ?></option>
 													<?php
 													if(count($a_gateways) > 0) {
 														foreach ($a_gateways as $gateway) {
@@ -1099,7 +1099,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 											</select>
 											<br/>
 											<div id='addgwbox'>
-												If this interface is an Internet connection, select an existing Gateway from the list or <a OnClick="show_add_gateway();" href="#">add a new one</a>.
+												<?=gettext("If this interface is an Internet connection, select an existing Gateway from the list or"); ?> <a OnClick="show_add_gateway();" href="#"><?=gettext("add a new one"); ?></a>.
 											</div>
 											<div id='notebox'>
 											</div>
@@ -1113,7 +1113,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 															<table bgcolor="#990000" cellpadding="1" cellspacing="1">
 																<tr><td>&nbsp;</td>
 																<tr>
-																	<td colspan="2"><center><b><font color="white">Add new gateway:</font></b></center></td>
+																	<td colspan="2"><center><b><font color="white"><?=gettext("Add new gateway"); ?>:</font></b></center></td>
 																</tr>
 																<tr><td>&nbsp;</td>
 																<?php
@@ -1121,16 +1121,16 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 																	$checked = " CHECKED";
 																?>
 																<tr>
-																	<td width="45%" align="right"><font color="white">Default  gateway:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
+																	<td width="45%" align="right"><font color="white"><?=gettext("Default  gateway"); ?>:</td><td><input type="checkbox" id="defaultgw" name="defaultgw"<?=$checked?>></td>
 																</tr>												
 																<tr>
-																	<td align="right"><font color="white">Gateway Name:</td><td><input id="name" name="name" value="<?=$wancfg['descr'] . "GW"?>"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway Name"); ?>:</td><td><input id="name" name="name" value="<?=$wancfg['descr'] . "GW"?>"></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white">Gateway IP:</td><td><input id="gatewayip" name="gatewayip"></td>
+																	<td align="right"><font color="white"><?=gettext("Gateway IP"); ?>:</td><td><input id="gatewayip" name="gatewayip"></td>
 																</tr>
 																<tr>
-																	<td align="right"><font color="white">Description:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
+																	<td align="right"><font color="white"><?=gettext("Description"); ?>:</td><td><input id="gatewaydescr" name="gatewaydescr"></td>
 																</tr>
 																<tr><td>&nbsp;</td>
 																<tr>
@@ -1138,8 +1138,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 																		<center>
 																			<div id='savebuttondiv'>
 																				<input type="hidden" name="addrtype" id="addrtype" value="IPv4" />
-																				<input id="gwsave" type="Button" value="Save Gateway" onClick='hide_add_gatewaysave();'> 
-																				<input id="gwcancel" type="Button" value="Cancel" onClick='hide_add_gateway();'>
+																				<input id="gwsave" type="Button" value="<?=gettext("Save Gateway"); ?>" onClick='hide_add_gatewaysave();'> 
+																				<input id="gwcancel" type="Button" value="<?=gettext("Cancel"); ?>" onClick='hide_add_gateway();'>
 																			</div>
 																		</center>
 																	</td>
@@ -1160,20 +1160,20 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic">DHCP client configuration</td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("DHCP client configuration"); ?></td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell">Hostname</td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Hostname"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
 											<br>
-											The value in this field is sent as the DHCP client identifier
-											and hostname when requesting a DHCP lease. Some ISPs may require
-											this (for client identification).
+											<?=gettext("The value in this field is sent as the DHCP client identifier " .
+											"and hostname when requesting a DHCP lease. Some ISPs may require " .
+											"this (for client identification)"); ?>.
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell">Alias IP address</td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Alias IP address"); ?></td>
 										<td width="78%" class="vtable"> 
 											<input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
 											<select name="alias-subnet" class="formselect" id="alias-subnet">
@@ -1187,8 +1187,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 												}
 												?>
 											</select>
-											The value in this field is used as a fixed alias IP address by the
-											DHCP client.
+											<?=gettext("The value in this field is used as a fixed alias IP address by the " .
+											"DHCP client"); ?>.
 										</td>
 									</tr>
 								</table>
@@ -1198,14 +1198,14 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td colspan="2" style="padding: 0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic">PPP configuration</td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("PPP configuration"); ?></td>
 									</tr>
 									<tr name="ppp_provider" id="ppp_provider">
-										<td width="22%" valign="top" class="vncell"><?= gettext("Service Provider"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Service Provider"); ?></td>
 										<td width="78%" class="vtable">
 											<table border="0" cellpadding="0" cellspacing="0">
 												<tr id="trcountry">
-													<td><?= gettext("Country"); ?> :&nbsp;&nbsp;</td>
+													<td><?=gettext("Country"); ?> :&nbsp;&nbsp;</td>
 													<td>
 														<select class="formselect" name="country" id="country" onChange="providers_list()">
 															<option></option>
@@ -1213,7 +1213,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 													</td>
 												</tr>
 												<tr id="trprovider" style="display:none">
-													<td><?= gettext("Provider"); ?> :&nbsp;&nbsp;</td>
+													<td><?=gettext("Provider"); ?> :&nbsp;&nbsp;</td>
 													<td>
 														<select class="formselect" name="provider" id="provider" onChange="providerplan_list()">
 															<option></option>
@@ -1221,7 +1221,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 													</td>
 												</tr>
 												<tr id="trproviderplan" style="display:none">
-													<td><?= gettext("Plan"); ?> :&nbsp;&nbsp;</td>
+													<td><?=gettext("Plan"); ?> :&nbsp;&nbsp;</td>
 													<td>
 														<select class="formselect" name="providerplan" id="providerplan" onChange="prefill_provider()">
 															<option></option>
@@ -1229,35 +1229,35 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 													</td>
 												</tr>
 											</table>
-											<br/><span class="vexpl"><?= gettext("Select to fill in data for your service provider."); ?></span>
+											<br/><span class="vexpl"><?=gettext("Select to fill in data for your service provider."); ?></span>
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell"><?= gettext("Username"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Username"); ?></td>
 										<td width="78%" class="vtable">
 										<input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell"><?= gettext("Password"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Password"); ?></td>
 										<td width="78%" class="vtable">
 										<input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
 										</td>
 									</tr>
 									<tr name="phone_num" id="phone_num">
-										<td width="22%" valign="top" class="vncellreq"><?= gettext("Phone Number"); ?></td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Phone Number"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="phone" type="text" class="formfld unknown" id="phone" size="12" value="<?=htmlspecialchars($pconfig['phone']);?>">
 										</td>
 									</tr>
 									<tr name="apn_" id="apn_">
-										<td width="22%" valign="top" class="vncell"><?= gettext("Access Point Name (APN)"); ?></td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Access Point Name (APN)"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="apn" type="text" class="formfld unknown" id="apn" size="40" value="<?=htmlspecialchars($pconfig['apn']);?>">
 										</td>
 									</tr>
 									<tr name="interface" id="interface" >
-										<td width="22%" valign="top" class="vncellreq"><?= gettext("Modem Port"); ?></td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Modem Port"); ?></td>
 										<td width="78%" class="vtable">
 											<select name="port" id="port" class="formselect">
 											<?php
@@ -1275,16 +1275,16 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 											</select>
 										</td>
 									</tr>
-									<td width="22%" valign="top" class="vncell"><?= gettext("Advanced PPP"); ?></td>
+									<td width="22%" valign="top" class="vncell"><?=gettext("Advanced PPP"); ?></td>
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
-											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a>
-											to edit PPP configuration.
+											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here "); ?></a>
+											<?=gettext("to edit PPP configuration"); ?>.
 											</td>
 										<? else: ?>
 											<td width="78%" class="vtable">
-											<a href="/interfaces_ppps_edit.php" class="navlnk">Click here</a>
-											to create a PPP configuration.
+											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here"); ?></a>
+											<?=gettext("to create a PPP configuration"); ?>.
 											</td>
 										<? endif; ?>	
 									</tr>
@@ -1295,38 +1295,38 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic">PPPoE configuration</td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("PPPoE configuration"); ?></td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncellreq">Username</td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Username"); ?></td>
 										<td width="78%" class="vtable">
 												<input name="pppoe_username" type="text" class="formfld user" id="pppoe_username" size="20" value="<?=htmlspecialchars($pconfig['pppoe_username']);?>">
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncellreq">Password</td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Password"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="pppoe_password" type="password" class="formfld pwd" id="pppoe_password" size="20" value="<?=htmlspecialchars($pconfig['pppoe_password']);?>">
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell">Service name</td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Service name"); ?></td>
 										<td width="78%" class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
-											<br> <span class="vexpl"><?= gettext("Hint: this field can usually be left empty"); ?></span>
+											<br> <span class="vexpl"><?=gettext("Hint: this field can usually be left empty"); ?></span>
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell">Dial on demand</td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?>>
-											<strong>Enable Dial-On-Demand mode</strong><br>
-											This option causes the interface to operate in dial-on-demand mode, allowing you to have a <i>virtual full time</i> connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.
+											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br>
+											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a "); ?><i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected"); ?>.
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell">Idle timeout</td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.
+											<input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> <?=gettext("seconds"); ?><br><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature"); ?>.
 										</td>
 									</tr>
 									<tr>
@@ -1337,10 +1337,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 													<td align="left" valign="top">
 														<p style="margin: 4px; padding: 4px 0 4px 0; width: 94%;">
 														<select valign="top" id="reset_type" name="pppoe-reset-type" class="formselect" onChange="show_reset_settings(this.value);">
-															<option value = ""><?= gettext("Disabled"); ?></option>
-															<option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected"; ?>><?= gettext("Custom"); ?></option>
-															<option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected"; ?>><?= gettext("Pre-Set"); ?></option>
-														</select> <?= gettext("Select a reset timing type"); ?>
+															<option value = ""><?=gettext("Disabled"); ?></option>
+															<option value="custom" <?php if ($pconfig['pppoe-reset-type'] == "custom") echo "selected"; ?>><?=gettext("Custom"); ?></option>
+															<option value="preset" <?php if ($pconfig['pppoe-reset-type'] == "preset") echo "selected"; ?>><?=gettext("Pre-Set"); ?></option>
+														</select> <?=gettext("Select a reset timing type"); ?>
 														</p>
 														<?php if ($pconfig['pppoe_pr_custom']): ?>
 															<p style="margin: 2px; padding: 4px; width: 94%;" id="pppoecustomwrap">
@@ -1348,14 +1348,14 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 															<p style="margin: 2px; padding: 4px; width: 94%; display: none;" id="pppoecustomwrap">
 														<?php endif; ?>
 														<input type="text" name="pppoe_resethour" class="fd_incremental_inp_range_0_23 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resethour" value="<?= $pconfig['pppoe_resethour']; ?>" size="3" /> 
-														<?= gettext("hour (0-23)"); ?><br />
+														<?=gettext("hour (0-23)"); ?><br />
 														<input type="text" name="pppoe_resetminute" class="fd_incremental_inp_range_0_59 fd_increment_1 fd_classname_dec_buttonDec fd_classname_inc_buttonInc" maxlength="2" id="pppoe_resetminute" value="<?= $pconfig['pppoe_resetminute']; ?>" size="3" /> 
-														<?= gettext("minute (0-59)"); ?><br />
+														<?=gettext("minute (0-59)"); ?><br />
 														<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" /> 
-														<?= gettext("reset at a specific date (mm/dd/yyyy)"); ?>
+														<?=gettext("reset at a specific date (mm/dd/yyyy)"); ?>
 														<br />&nbsp;<br />
-														<span class="red"><strong><?= gettext("Note"); ?>: </strong></span>
-														<?= gettext("If you leave the date field empty, the reset will be executed each day at the time you did specify using the minutes and hour field."); ?>
+														<span class="red"><strong><?=gettext("Note"); ?>: </strong></span>
+														<?=gettext("If you leave the date field empty, the reset will be executed each day at the time you did specify using the minutes and hour field."); ?>
 														</p>
 														<?php if ($pconfig['pppoe_pr_preset']): ?>
 															<p style="margin: 2px; padding: 4px; width: 94%;" id="pppoepresetwrap">
@@ -1363,16 +1363,16 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 															<p style="margin: 2px; padding: 4px; width: 94%; display: none;" id="pppoepresetwrap">
 														<?php endif; ?>
 														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_monthly" value="monthly" <?php if ($pconfig['pppoe_monthly']) echo "checked=\"checked\""; ?> /> 
-														<?= gettext("reset at each month ('0 0 1 * *')"); ?>
+														<?=gettext("reset at each month ('0 0 1 * *')"); ?>
 														<br />
 														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_weekly" value="weekly" <?php if ($pconfig['pppoe_weekly']) echo "checked=\"checked\""; ?> /> 
-														<?= gettext("reset at each week ('0 0 * * 0')"); ?>
+														<?=gettext("reset at each week ('0 0 * * 0')"); ?>
 														<br />
 														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_daily" value="daily" <?php if ($pconfig['pppoe_daily']) echo "checked=\"checked\""; ?> /> 
-														<?= gettext("reset at each day ('0 0 * * *')"); ?>
+														<?=gettext("reset at each day ('0 0 * * *')"); ?>
 														<br />
 														<input name="pppoe_pr_preset_val" type="radio" id="pppoe_hourly" value="hourly" <?php if ($pconfig['pppoe_hourly']) echo "checked=\"checked\""; ?> /> 
-														<?= gettext("reset at each hour ('0 * * * *')"); ?>
+														<?=gettext("reset at each hour ('0 * * * *')"); ?>
 														</p>
 													</td>
 												</tr>
@@ -1381,16 +1381,16 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									</tr>
 									
 									<tr>
-										<td width="22%" valign="top" class="vncell">Advanced and MLPPP</td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Advanced and MLPPP"); ?></td>
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
-											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a> 
-											for additional PPPoE configuration options. Save first if you made changes.
+											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here"); ?> </a> 
+											<?=gettext("for additional PPPoE configuration options. Save first if you made changes"); ?>.
 											</td>
 										<? else: ?>
 											<td width="78%" class="vtable">
-											<a href="/interfaces_ppps_edit.php" class="navlnk">Click here</a>
-											for advanced PPPoE configuration options and MLPPP configuration.
+											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here"); ?> </a>
+											<?=gettext("for advanced PPPoE configuration options and MLPPP configuration"); ?>.
 											</td>
 										<? endif; ?>	
 									</tr>
@@ -1401,22 +1401,22 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td colspan="2" style="padding:0px;">
 								<table width="100%" border="0" cellpadding="6" cellspacing="0">
 									<tr>
-										<td colspan="2" valign="top" class="listtopic">PPTP configuration</td>
+										<td colspan="2" valign="top" class="listtopic"><?=gettext("PPTP configuration"); ?></td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncellreq">Username</td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Username"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="pptp_username" type="text" class="formfld user" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>">
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncellreq">Password</td>
+										<td width="22%" valign="top" class="vncellreq"><?=gettext("Password"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="pptp_password" type="password" class="formfld pwd" id="pptp_password" size="20" value="<?=htmlspecialchars($pconfig['pptp_password']);?>">
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" width="100" valign="top" class="vncellreq">Local IP address</td>
+										<td width="22%" width="100" valign="top" class="vncellreq"><?=gettext("Local IP address"); ?></td>
 										<td width="78%" class="vtable"> 
 											<input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20"  value="<?=htmlspecialchars($pconfig['pptp_local'][0]);?>">
 											/
@@ -1429,36 +1429,36 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" width="100" valign="top" class="vncellreq">Remote IP address</td>
+										<td width="22%" width="100" valign="top" class="vncellreq"><?=gettext("Remote IP address"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote'][0]);?>">
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell">Dial on demand</td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Dial on demand"); ?></td>
 										<td width="78%" class="vtable">
 											<input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?>>
-											<strong>Enable Dial-On-Demand mode</strong><br>
-											This option causes the interface to operate in dial-on-demand mode, allowing you to have a <i>virtual full time</i> connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.
+											<strong><?=gettext("Enable Dial-On-Demand mode"); ?></strong><br>
+											<?=gettext("This option causes the interface to operate in dial-on-demand mode, allowing you to have a"); ?> <i><?=gettext("virtual full time"); ?></i> <?=gettext("connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected"); ?>.
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell">Idle timeout</td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Idle timeout"); ?></td>
 										<td width="78%" class="vtable">
-											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.
+											<input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> <?=gettext("seconds"); ?><br><?=gettext("If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature"); ?>.
 										</td>
 									</tr>
 									<tr>
-										<td width="22%" valign="top" class="vncell">Advanced</td>
+										<td width="22%" valign="top" class="vncell"><?=gettext("Advanced"); ?></td>
 										<?php if (isset($pconfig['pppid'])): ?>
 											<td width="78%" class="vtable">
-											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk">Click here</a> 
-											for additional PPtP and L2tP configuration options. Save first if you made changes.
+											<a href="/interfaces_ppps_edit.php?id=<?=htmlspecialchars($pconfig['pppid']);?>" class="navlnk"><?=gettext("Click here"); ?> </a> 
+											<?=gettext("for additional PPtP and L2tP configuration options. Save first if you made changes"); ?>.
 											</td>
 										<? else: ?>
 											<td width="78%" class="vtable">
-											<a href="/interfaces_ppps_edit.php" class="navlnk">Click here</a>
-											for advanced PPtP and L2tP configuration options.
+											<a href="/interfaces_ppps_edit.php" class="navlnk"><?=gettext("Click here"); ?> </a>
+											<?=gettext("for advanced PPtP and L2tP configuration options"); ?>.
 											</td>
 										<? endif; ?>	
 									</tr>
@@ -1473,10 +1473,10 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td colspan="2" valign="top" height="16"></td>
 						</tr>										
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Common wireless configuration - Settings apply to all wireless networks on <?=$wlanbaseif;?>.</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Common wireless configuration - Settings apply to all wireless networks on"); ?> <?=$wlanbaseif;?>.</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncellreq">Standard</td>
+							<td valign="top" class="vncellreq"><?=gettext("Standard"); ?></td>
 							<td class="vtable">
 							<select name="standard" class="formselect" id="standard">
 								<?php
@@ -1492,15 +1492,15 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 						</tr>
 						<?php if (isset($wl_modes['11g'])): ?>
 						<tr>
-							<td valign="top" class="vncellreq">802.11g OFDM Protection Mode</td>
+							<td valign="top" class="vncellreq">802.11g OFDM <?=gettext("Protection Mode"); ?></td>
 							<td class="vtable">
 								<select name="protmode" class="formselect" id="protmode">
-									<option <? if ($pconfig['protmode'] == 'off') echo "selected";?> value="off">Protection mode off</option>
-									<option <? if ($pconfig['protmode'] == 'cts') echo "selected";?> value="cts">Protection mode CTS to self</option>
-									<option <? if ($pconfig['protmode'] == 'rtscts') echo "selected";?> value="rtscts">Protection mode RTS and CTS</option>
+									<option <? if ($pconfig['protmode'] == 'off') echo "selected";?> value="off"><?=gettext("Protection mode off"); ?></option>
+									<option <? if ($pconfig['protmode'] == 'cts') echo "selected";?> value="cts"><?=gettext("Protection mode CTS to self"); ?></option>
+									<option <? if ($pconfig['protmode'] == 'rtscts') echo "selected";?> value="rtscts"><?=gettext("Protection mode RTS and CTS"); ?></option>
 								</select>
 								<br/>
-								For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network.
+								<?=gettext("For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network"); ?>.
 								<br/>
 							</td>
 						</tr>
@@ -1508,7 +1508,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 						<input name="protmode" type="hidden" id="protmode" value="off">
 						<?php endif; ?>
 						<tr>
-							<td valign="top" class="vncellreq">Transmit power</td>
+							<td valign="top" class="vncellreq"><?=gettext("Transmit power"); ?></td>
 							<td class="vtable">
 								<select name="txpower" class="formselect" id="txpower">
 									<?
@@ -1521,14 +1521,14 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									}
 									?>
 								</select><br/>
-								Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adaptors support changing the transmit power setting.
+								<?=gettext("Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adaptors support changing the transmit power setting"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncellreq">Channel</td>
+							<td valign="top" class="vncellreq"><?=gettext("Channel"); ?></td>
 							<td class="vtable">
 								<select name="channel" class="formselect" id="channel">
-									<option <? if ($pconfig['channel'] == 0) echo "selected"; ?> value="0">Auto</option>
+									<option <? if ($pconfig['channel'] == 0) echo "selected"; ?> value="0"><?=gettext("Auto"); ?></option>
 									<?php
 									foreach($wl_modes as $wl_standard => $wl_channels) {
 										if($wl_standard == "11g") { $wl_standard = "11b/g"; }
@@ -1548,26 +1548,26 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									?>
 								</select>
 								<br/>
-								Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)
+								<?=gettext("Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)"); ?>
 								<br/>
-								Note: Not all channels may be supported by your card.  Auto may override the wireless standard selected above.
+								<?=gettext("Note: Not all channels may be supported by your card.  Auto may override the wireless standard selected above"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">Distance setting</td>
+							<td valign="top" class="vncell"><?=gettext("Distance setting"); ?></td>
 							<td class="vtable">
 								<input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">
 								<br/>
-								Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client<br/>
-								(measured in Meters and works only for Atheros based cards !)
+								<?=gettext("Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client"); ?><br/>
+								<?=gettext("(measured in Meters and works only for Atheros based cards !)"); ?>
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">Regulatory settings</td>
+							<td valign="top" class="vncell"><?=gettext("Regulatory settings"); ?></td>
 							<td class="vtable">
-								Regulatory domain<br/>
+								<?=gettext("Regulatory domain"); ?><br/>
 								<select name="regdomain" class="formselect" id="regdomain">
-									<option <? if (empty($pconfig['regdomain'])) echo "selected"; ?> value="">Default</option>
+									<option <? if (empty($pconfig['regdomain'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
 									<?php
 									foreach($wl_regdomains as $wl_regdomain_key => $wl_regdomain) {
 										echo "<option ";
@@ -1579,11 +1579,11 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									?>
 								</select>
 								<br/>
-								Note: Some cards have a default that is not recognized and require changing the regulatory domain to one in this list for the changes to other regulatory settings to work.
+								<?=gettext("Note: Some cards have a default that is not recognized and require changing the regulatory domain to one in this list for the changes to other regulatory settings to work"); ?>.
 								<br/><br/>
-								Country (listed with country code and regulatory domain)<br/>
+								<?=gettext("Country (listed with country code and regulatory domain)"); ?><br/>
 								<select name="regcountry" class="formselect" id="regcountry">
-									<option <? if (empty($pconfig['regcountry'])) echo "selected"; ?> value="">Default</option>
+									<option <? if (empty($pconfig['regcountry'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
 									<?php
 									foreach($wl_countries as $wl_country_key => $wl_country) {
 										echo "<option ";
@@ -1595,107 +1595,107 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									?>
 								</select>
 								<br/>
-								Note: Any country setting other than "Default" will override the regulatory domain setting.
+								<?=gettext("Note: Any country setting other than \"Default\" will override the regulatory domain setting"); ?>.
 								<br/><br/>
-								Location<br/>
+								<?=gettext("Location"); ?><br/>
 								<select name="reglocation" class="formselect" id="reglocation">
-									<option <? if (empty($pconfig['reglocation'])) echo "selected"; ?> value="">Default</option>
-									<option <? if ($pconfig['reglocation'] == 'indoor') echo "selected"; ?> value="indoor">Indoor</option>
-									<option <? if ($pconfig['reglocation'] == 'outdoor') echo "selected"; ?> value="outdoor">Outdoor</option>
-									<option <? if ($pconfig['reglocation'] == 'anywhere') echo "selected"; ?> value="anywhere">Anywhere</option>
+									<option <? if (empty($pconfig['reglocation'])) echo "selected"; ?> value=""><?=gettext("Default"); ?></option>
+									<option <? if ($pconfig['reglocation'] == 'indoor') echo "selected"; ?> value="indoor"><?=gettext("Indoor"); ?></option>
+									<option <? if ($pconfig['reglocation'] == 'outdoor') echo "selected"; ?> value="outdoor"><?=gettext("Outdoor"); ?></option>
+									<option <? if ($pconfig['reglocation'] == 'anywhere') echo "selected"; ?> value="anywhere"><?=gettext("Anywhere"); ?></option>
 								</select>
 								<br/><br/>
-								These settings may affect which channels are available and the maximum transmit power allowed on those channels.  Using the correct settings to comply with local regulatory requirements is recommended.
+								<?=gettext("These settings may affect which channels are available and the maximum transmit power allowed on those channels.  Using the correct settings to comply with local regulatory requirements is recommended"); ?>.
 								<br/>
-								Note: All wireless networks on this interface will be temporarily brought down when changing regulatory settings.  Some of the regulatory domains or country codes may not be allowed by some cards.  These settings may not be able to add additional channels that are not already supported.
+								<?=gettext("Note: All wireless networks on this interface will be temporarily brought down when changing regulatory settings.  Some of the regulatory domains or country codes may not be allowed by some cards.  These settings may not be able to add additional channels that are not already supported"); ?>.
 							</td>
 						</tr>
 						<tr>
 							<td colspan="2" valign="top" height="16"></td>
 						</tr>										
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Wireless configuration</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Wireless configuration"); ?></td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncellreq">Mode</td>
+							<td valign="top" class="vncellreq"><?=gettext("Mode"); ?></td>
 							<td class="vtable">
 								<select name="mode" class="formselect" id="mode">
-									<option <? if ($pconfig['mode'] == 'bss') echo "selected";?> value="bss">Infrastructure (BSS)</option>
-									<option <? if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc">Ad-hoc (IBSS)</option>
-									<option <? if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap">Access Point</option>
+									<option <? if ($pconfig['mode'] == 'bss') echo "selected";?> value="bss"><?=gettext("Infrastructure (BSS)"); ?></option>
+									<option <? if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc"><?=gettext("Ad-hoc (IBSS)"); ?></option>
+									<option <? if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap"><?=gettext("Access Point"); ?></option>
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncellreq">SSID</td>
+							<td valign="top" class="vncellreq"><?=gettext("SSID"); ?></td>
 							<td class="vtable">
 								<input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']); ?>">
 							</td>
 						</tr>
 						<?php if (isset($wl_modes['11ng']) || isset($wl_modes['11na'])): ?>
 						<tr>
-							<td valign="top" class="vncell">Minimum wireless standard</td>
+							<td valign="top" class="vncell"><?=gettext("Minimum wireless standard"); ?></td>
 							<td class="vtable">
 								<select name="puremode" class="formselect" id="puremode">
-									<option <? if ($pconfig['puremode'] == 'any') echo "selected";?> value="any">Any</option>
+									<option <? if ($pconfig['puremode'] == 'any') echo "selected";?> value="any"><?=gettext("Any"); ?></option>
 									<?php if (isset($wl_modes['11g'])): ?>
 									<option <? if ($pconfig['puremode'] == '11g') echo "selected";?> value="11g">802.11g</option>
 									<?php endif; ?>
 									<option <? if ($pconfig['puremode'] == '11n') echo "selected";?> value="11n">802.11n</option>
 								</select>
 								<br/>
-								When operating as an access point, allow only stations capable of the selected wireless standard to associate (stations not capable are not permitted to associate).
+								<?=gettext("When operating as an access point, allow only stations capable of the selected wireless standard to associate (stations not capable are not permitted to associate)"); ?>.
 							</td>
 						</tr>
 						<?php elseif (isset($wl_modes['11g'])): ?>
 						<tr>
-							<td valign="top" class="vncell">802.11g only</td>
+							<td valign="top" class="vncell">802.11g <?=gettext("only"); ?></td>
 							<td class="vtable">
 								<input name="puremode" type="checkbox" value="11g"  class="formfld" id="puremode" <? if ($pconfig['puremode'] == '11g') echo "checked";?>>
-								<br/>When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate).
+								<br/><?=gettext("When operating as an access point in 802.11g mode, allow only 11g-capable stations to associate (11b-only stations are not permitted to associate)"); ?>.
 							</td>
 						</tr>
 						<?php endif; ?>
 						<tr>
-							<td valign="top" class="vncell">Allow intra-BSS communication</td>
+							<td valign="top" class="vncell"><?=gettext("Allow intra-BSS communication"); ?></td>
 							<td class="vtable">
 								<input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <? if ($pconfig['apbridge_enable']) echo "checked";?>>
 								<br/>
-								When operating as an access point, enable this if you want to pass packets between wireless clients directly.
+								<?=gettext("When operating as an access point, enable this if you want to pass packets between wireless clients directly"); ?>.
 								<br/>
-								Disabling the internal bridging is useful when traffic is to be processed with packet filtering.
+								<?=gettext("Disabling the internal bridging is useful when traffic is to be processed with packet filtering"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">Enable WME</td>
+							<td valign="top" class="vncell"><?=gettext("Enable WME"); ?></td>
 							<td class="vtable">
 								<input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <? if ($pconfig['wme_enable']) echo "checked";?>>
-								<br/>Setting this option will force the card to use WME (wireless QoS).
+								<br/><?=gettext("Setting this option will force the card to use WME (wireless QoS)"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">Enable Hide SSID</td>
+							<td valign="top" class="vncell"><?=gettext("Enable Hide SSID"); ?></td>
 							<td class="vtable">
 								<input name="hidessid_enable" type="checkbox" class="formfld" id="hidessid_enable" value="yes" <? if ($pconfig['hidessid_enable']) echo "checked";?>>
 								<br/>
-								Setting this option will force the card to NOT broadcast its SSID
+								<?=gettext("Setting this option will force the card to NOT broadcast its SSID"); ?>
 								<br/>
-								(this might create problems for some clients).
+								<?=gettext("(this might create problems for some clients)"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">WEP</td>
+							<td valign="top" class="vncell"><?=gettext("WEP"); ?></td>
 							<td class="vtable"> 
 								<input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <? if ($pconfig['wep_enable']) echo "checked"; ?>>
-								<strong>Enable WEP</strong>
+								<strong><?=gettext("Enable WEP"); ?></strong>
 								<table border="0" cellspacing="0" cellpadding="0">
 									<tr>
 										<td>&nbsp;</td>
 										<td>&nbsp;</td>
-										<td>&nbsp;TX key&nbsp;</td>
+										<td>&nbsp;<?=gettext("TX key"); ?>&nbsp;</td>
 									</tr>
 									<tr>
-										<td>Key 1:&nbsp;&nbsp;</td>
+										<td><?=gettext("Key"); ?> 1:&nbsp;&nbsp;</td>
 										<td>
 											<input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>">
 										</td>
@@ -1704,7 +1704,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 										</td>
 									</tr>
 									<tr>
-										<td>Key 2:&nbsp;&nbsp;</td>
+										<td><?=gettext("Key"); ?> 2:&nbsp;&nbsp;</td>
 										<td>
 											<input name="key2" type="text" class="formfld unknown" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>">
 										</td>
@@ -1713,7 +1713,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 										</td>
 									</tr>
 									<tr>
-										<td>Key 3:&nbsp;&nbsp;</td>
+										<td><?=gettext("Key"); ?> 3:&nbsp;&nbsp;</td>
 										<td>
 											<input name="key3" type="text" class="formfld unknown" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>">
 										</td>
@@ -1722,7 +1722,7 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 										</td>
 									</tr>
 									<tr>
-										<td>Key 4:&nbsp;&nbsp;</td>
+										<td><?=gettext("Key"); ?> 4:&nbsp;&nbsp;</td>
 										<td>
 											<input name="key4" type="text" class="formfld unknown" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>">
 										</td>
@@ -1732,117 +1732,117 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 									</tr>
 								</table>
 								<br/>
-								40 (64) bit keys may be entered as 5 ASCII characters or 10 hex digits preceded by '0x'.<br/>
-								104 (128) bit keys may be entered as 13 ASCII characters or 26 hex digits preceded by '0x'.
+								<?=gettext("40 (64) bit keys may be entered as 5 ASCII characters or 10 hex digits preceded by '0x'"); ?>.<br/>
+								<?=gettext("104 (128) bit keys may be entered as 13 ASCII characters or 26 hex digits preceded by '0x'"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">WPA</td>
+							<td valign="top" class="vncell"><?=gettext("WPA"); ?></td>
 							<td class="vtable">
 								<input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <? if ($pconfig['wpa_enable']) echo "checked"; ?>>
-								<strong>Enable WPA</strong>
+								<strong><?=gettext("Enable WPA"); ?></strong>
 								<br/><br/>
 								<table border="0" cellspacing="0" cellpadding="0">
 									<tr>
 										<td>&nbsp;</td>
-										<td>&nbsp;WPA Pre Shared Key&nbsp;</td>
+										<td>&nbsp;<?=gettext("WPA Pre Shared Key"); ?>&nbsp;</td>
 									</tr>
 									<tr>
-										<td>PSK:&nbsp;&nbsp;</td>
+										<td><?=gettext("PSK"); ?>:&nbsp;&nbsp;</td>
 										<td>
 											<input name="passphrase" type="text" class="formfld unknown" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase']);?>">
 										</td>
 									</tr>
 								</table>
-								<br/>Passphrase must be from 8 to 63 characters.
+								<br/><?=gettext("Passphrase must be from 8 to 63 characters"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">WPA Mode</td>
+							<td valign="top" class="vncell"><?=gettext("WPA Mode"); ?></td>
 							<td class="vtable">
 								<select name="wpa_mode" class="formselect" id="wpa_mode">
-									<option <? if ($pconfig['wpa_mode'] == '1') echo "selected";?> value="1">WPA</option>
-									<option <? if ($pconfig['wpa_mode'] == '2') echo "selected";?> value="2">WPA2</option>
-									<option <? if ($pconfig['wpa_mode'] == '3') echo "selected";?> value="3">Both</option>
+									<option <? if ($pconfig['wpa_mode'] == '1') echo "selected";?> value="1"><?=gettext("WPA"); ?></option>
+									<option <? if ($pconfig['wpa_mode'] == '2') echo "selected";?> value="2"><?=gettext("WPA2"); ?></option>
+									<option <? if ($pconfig['wpa_mode'] == '3') echo "selected";?> value="3"><?=gettext("Both"); ?></option>
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">WPA Key Management Mode</td>
+							<td valign="top" class="vncell"><?=gettext("WPA Key Management Mode"); ?></td>
 							<td class="vtable"> 
 								<select name="wpa_key_mgmt" class="formselect" id="wpa_key_mgmt">
-									<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK') echo "selected";?> value="WPA-PSK">Pre Shared Key</option>
-									<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-EAP') echo "selected";?> value="WPA-EAP">Extensible Authentication Protocol</option>
-									<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK WPA-EAP') echo "selected";?> value="WPA-PSK WPA-EAP">Both</option>
+									<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK') echo "selected";?> value="WPA-PSK"><?=gettext("Pre Shared Key"); ?></option>
+									<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-EAP') echo "selected";?> value="WPA-EAP"><?=gettext("Extensible Authentication Protocol"); ?></option>
+									<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK WPA-EAP') echo "selected";?> value="WPA-PSK WPA-EAP"><?=gettext("Both"); ?></option>
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">Authentication</td>
+							<td valign="top" class="vncell"><?=gettext("Authentication"); ?></td>
 							<td class="vtable">
 								<select name="auth_algs" class="formselect" id="auth_algs">
-									<option <? if ($pconfig['auth_algs'] == '1') echo "selected";?> value="1">Open System Authentication</option>
-									<option <? if ($pconfig['auth_algs'] == '2') echo "selected";?> value="2">Shared Key Authentication</option>
+									<option <? if ($pconfig['auth_algs'] == '1') echo "selected";?> value="1"><?=gettext("Open System Authentication"); ?></option>
+									<option <? if ($pconfig['auth_algs'] == '2') echo "selected";?> value="2"><?=gettext("Shared Key Authentication"); ?></option>
 									<option <? if ($pconfig['auth_algs'] == '3') echo "selected";?> value="3">Both</option>
 								</select>
-								<br/>Note: Shared Key Authentication requires WEP.</br>
+								<br/><?=gettext("Note: Shared Key Authentication requires WEP"); ?>.</br>
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">WPA Pairwise</td>
+							<td valign="top" class="vncell"><?=gettext("WPA Pairwise"); ?></td>
 							<td class="vtable">
 								<select name="wpa_pairwise" class="formselect" id="wpa_pairwise">
-									<option <? if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected";?> value="CCMP TKIP">Both</option>
-									<option <? if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected";?> value="CCMP">AES (recommended)</option>
-									<option <? if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected";?> value="TKIP">TKIP</option>
+									<option <? if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected";?> value="CCMP TKIP"><?=gettext("Both"); ?></option>
+									<option <? if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected";?> value="CCMP"><?=gettext("AES (recommended)"); ?></option>
+									<option <? if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected";?> value="TKIP"><?=gettext("TKIP"); ?></option>
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">Key Rotation</td>
+							<td valign="top" class="vncell"><?=gettext("Key Rotation"); ?></td>
 							<td class="vtable">
 								<input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<? echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>">
-								<br/>Allowed values are 1-9999 but should not be longer than Master Key Regeneration time.
+								<br/><?=gettext("Allowed values are 1-9999 but should not be longer than Master Key Regeneration time"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">Master Key Regeneration</td>
+							<td valign="top" class="vncell"><?=gettext("Master Key Regeneration"); ?></td>
 							<td class="vtable">
 								<input name="wpa_gmk_rekey" type="text" class="formfld" id="wpa_gmk_rekey" size="30" value="<? echo $pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600";?>">
-								<br/>Allowed values are 1-9999 but should not be shorter than Key Rotation time.
+								<br/><?=gettext("Allowed values are 1-9999 but should not be shorter than Key Rotation time"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">Strict Key Regeneration</td>
+							<td valign="top" class="vncell"><?=gettext("Strict Key Regeneration"); ?></td>
 							<td class="vtable">
 								<input name="wpa_strict_rekey" type="checkbox" value="yes"  class="formfld" id="wpa_strict_rekey" <? if ($pconfig['wpa_strict_rekey']) echo "checked"; ?>>
-								<br/>Setting this option will force the AP to rekey whenever a client disassociates.
+								<br/><?=gettext("Setting this option will force the AP to rekey whenever a client disassociates"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">Enable IEEE802.1X Authentication</td>
+							<td valign="top" class="vncell"><?=gettext("Enable IEEE802.1X Authentication"); ?></td>
 							<td class="vtable">
 								<input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <? if ($pconfig['ieee8021x']) echo "checked";?>>
-								<br/>Setting this option will enable 802.1x authentication.
-								<br/><span class="red"><strong><?= gettext("NOTE"); ?>:</strong</span> this option requires checking the "Enable WPA box".
+								<br/><?=gettext("Setting this option will enable 802.1x authentication"); ?>.
+								<br/><span class="red"><strong><?=gettext("NOTE"); ?>:</strong</span> <?=gettext("this option requires checking the \"Enable WPA box\""); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">802.1X Authentication Server IP Address</td>
+							<td valign="top" class="vncell"><?=gettext("802.1X Authentication Server IP Address"); ?></td>
 							<td class="vtable">
 								<input name="auth_server_addr" id="auth_server_addr" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_addr']);?>">
-								<br/>Enter the IP address of the 802.1X Authentication Server.  This is commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)
+								<br/><?=gettext("Enter the IP address of the 802.1X Authentication Server.  This is commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)"); ?>
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">802.1X Authentication Server Port</td>
+							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Server Port"); ?></td>
 							<td class="vtable">
 								<input name="auth_server_port" id="auth_server_port" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_port']);?>">
-								<br/>Leave blank for the default 1812 port.
+								<br/><?=gettext("Leave blank for the default 1812 port"); ?>.
 							</td>
 						</tr>
 						<tr>
-							<td valign="top" class="vncell">802.1X Authentication Server Shared Secret</td>
+							<td valign="top" class="vncell">802.1X <?=gettext("Authentication Server Shared Secret"); ?></td>
 							<td class="vtable">
 								<input name="auth_server_shared_secret" id="auth_server_shared_secret" type="text" class="formfld unknown" size="66" value="<?=htmlspecialchars($pconfig['auth_server_shared_secret']);?>">
 								<br/>
@@ -1853,30 +1853,30 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							<td colspan="2" valign="top" height="16"></td>
 						</tr>
 						<tr>
-							<td colspan="2" valign="top" class="listtopic">Private networks</td>
+							<td colspan="2" valign="top" class="listtopic"><?=gettext("Private networks"); ?></td>
 						</tr>
 						<tr>
 							<td valign="middle" class="vncell">&nbsp;</td>
 							<td class="vtable">
 								<a name="rfc1918"></a> 
 								<input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?>>
-								<strong>Block private networks</strong><br>
-								When set, this option blocks traffic from IP addresses that are reserved 
-								for private  networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as 
-								well as loopback addresses (127/8).&nbsp;&nbsp; You should generally
-								leave this option turned on, unless your WAN network lies in such 
-								a private address space, too. 
+								<strong><?=gettext("Block private networks"); ?></strong><br>
+								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
+								"for private  networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as"); ?>
+								<?=gettext("well as loopback addresses (127/8)"); ?>.&nbsp;&nbsp; <?=gettext("You should generally " .
+								"leave this option turned on, unless your WAN network lies in such " .
+								"a private address space, too"); ?>. 
 							</td>
 						</tr>
 						<tr>
 							<td valign="middle" class="vncell">&nbsp;</td>
 							<td class="vtable"> 
 								<input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?>>
-								<strong>Block bogon networks</strong><br>
-								When set, this option blocks traffic from IP addresses that are reserved 
-								(but not RFC 1918) or not yet assigned by IANA.&nbsp;&nbsp;
-								Bogons are prefixes that should never appear in the Internet routing table, 
-								and obviously should not appear as the source address in any packets you receive.
+								<strong><?=gettext("Block bogon networks"); ?></strong><br>
+								<?=gettext("When set, this option blocks traffic from IP addresses that are reserved " .
+								"(but not RFC 1918) or not yet assigned by IANA"); ?>.&nbsp;&nbsp;
+								<?=gettext("Bogons are prefixes that should never appear in the Internet routing table, " .
+								"and obviously should not appear as the source address in any packets you receive"); ?>.
 							</td>
 						</tr>
 					</table> <!-- End "allcfg" table -->
@@ -1889,8 +1889,8 @@ $types = array("none" => "None", "static" => "Static", "dhcp" => "DHCP", "ppp" =
 							</td>
 							<td>
 								<br/>
-								<input id="save" name="Submit" type="submit" class="formbtn" value="<?= gettext("Save"); ?>"> 
-								<input id="cancel" type="button" class="formbtn" value="Cancel" onclick="history.back()">
+								<input id="save" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> 
+								<input id="cancel" type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 								<input name="if" type="hidden" id="if" value="<?=$if;?>">
 								<?php if ($wancfg['if'] == $a_ppps[$pppid]['if']) : ?>
 								<input name="ppp_port" type="hidden" value="<?=$pconfig['port'];?>">

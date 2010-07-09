@@ -69,7 +69,7 @@ if ($_GET['act'] == "del") {
 		if (is_array($config['load_balancer']['lbpool'])) {
 			foreach ($config['load_balancer']['pool'] as $pool) {
 				if ($pool['monitor'] == $a_monitor[$_GET['id']]['name']) {
-					$input_errors[] = "This entry cannot be deleted because it is still referenced by at least one pool.";
+					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by at least one pool.");
 					break;
 				}
 			}
@@ -85,7 +85,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("Services", "Load Balancer","Monitor");
+$pgtitle = array(gettext("Services", "Load Balancer","Monitor"));
 #$statusurl = "status_slbd_vs.php";
 $statusurl = "status_slbd_pool.php";
 $logurl = "diag_logs_relayd.php";
@@ -99,7 +99,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('loadbalancer')): ?><p>
-<?php print_info_box_np("The load balancer configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(gettext("The load balancer configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">

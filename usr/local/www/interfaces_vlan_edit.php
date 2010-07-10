@@ -166,8 +166,8 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here").
-                    ("for your reference (not parsed).");?></span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here ".
+                    "for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

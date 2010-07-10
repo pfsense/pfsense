@@ -124,7 +124,7 @@ include("head.inc");
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
         <td valign="middle"><a href="interfaces_groups_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="<?=gettext("edit group");?>"></a></td>
-        <td><a href="interfaces_groups.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext("Do you really want to delete this group? All elements that still use it will become invalid (e.g. filter rules)!");?>)"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete ifgroupentry");?>"></a></td>
+        <td><a href="interfaces_groups.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this group? All elements that still use it will become invalid (e.g. filter rules)!");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete ifgroupentry");?>"></a></td>
       </tr>
     </table>
   </td>
@@ -144,7 +144,7 @@ include("head.inc");
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-	<p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.");?></span></p>
+	<p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br></strong></span><?=gettext("Interface Groups allow you to create rules that apply to multiple interfaces without duplicating the rules. If you remove members from an interface group, the group rules no longer apply to that interface.");?></span></p>
 	</td>
 </tr>
 	</table>

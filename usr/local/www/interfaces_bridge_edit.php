@@ -274,7 +274,7 @@ function show_source_port_range() {
             <tr id="sprtable" name="sprtable">
                 <td></td>
                 <td>
-                <p><input type="button" onClick="show_source_port_range()" value="Show advanced options"></p>
+                <p><input type="button" onClick="show_source_port_range()" value="<?=gettext("Show advanced options"); ?>"></p>
                 </td>
 			</tr>
                 <tr style="display:none" id="sprtable1" name="sprtable1">
@@ -399,7 +399,7 @@ function show_source_port_range() {
                 <tr style="display:none" id="sprtable2" name="sprtable2">
                   <td valign="top" class="vncell"><?=gettext("Cache size"); ?></td>
 					<td class="vtable">
-						<input name="maxaddr" size="10" type="text" class="formfld unkown" id="maxaddr" value="<?=$pconfig['maxaddr'];?>"> entries
+						<input name="maxaddr" size="10" type="text" class="formfld unkown" id="maxaddr" value="<?=$pconfig['maxaddr'];?>"> <?=gettext("entries"); ?>
 					<br/><span class="vexpl">		
 <?=gettext("Set the size of the bridge address cache to size.	The default is " .
 	     ".100 entries."); ?>
@@ -409,7 +409,7 @@ function show_source_port_range() {
                 <tr style="display:none" id="sprtable3" name="sprtable3">
                   <td valign="top" class="vncell"><?=gettext("Cache entry expire time"); ?></td>
 				  <td>
-					<input name="timeout" type="text" class="formfld unkown" id="timeout" size="10" value="<?=$pconfig['timeout'];?>"> seconds
+					<input name="timeout" type="text" class="formfld unkown" id="timeout" size="10" value="<?=$pconfig['timeout'];?>"> <?=gettext("seconds"); ?>
 					<br/><span class="vexpl">		
 	     <?=gettext("Set the timeout of address cache entries to this number of seconds.  If " .
 	     "seconds is zero, then address cache entries will not be expired. " .
@@ -439,7 +439,7 @@ function show_source_port_range() {
 	     "the bridge."); ?>		
 					</span>
 		<p class="vexpl"><span class="red"><strong>
-					 <?=gettext("Note:"); ?><br>
+					 <?=gettext("Note"); ?>:<br>
                                   </strong></span>
                  <?=gettext("The span interface cannot be part of the bridge member interfaces."); ?>
                                         </span>
@@ -483,7 +483,7 @@ function show_source_port_range() {
 	     <?=gettext("Allow interface to automatically detect edge status.  This is the " .
 	     "default for all interfaces added to a bridge."); ?>
 		 <p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:"); ?><br>
+				  <?=gettext("Note"); ?>:<br>
 				  </strong></span>
 		 <?=gettext("This will disable the autoedge status of interfaces."); ?>
 					</span></td>
@@ -527,7 +527,7 @@ function show_source_port_range() {
 	     "checking the full duplex link status.  This is the default for " .
 	     "interfaces added to the bridge."); ?>
 		 		 <p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:"); ?><br>
+				  <?=gettext("Note"); ?>:<br>
 				  </strong></span>
 		 <?=gettext("The interfaces selected here will be removed from default autoedge status."); ?>
 					</span></td>

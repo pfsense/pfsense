@@ -119,7 +119,7 @@ include("head.inc");
             <form action="interfaces_lagg_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">LAGG <?=gettext("configuration"); ?></td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("LAGG configuration"); ?></td>
 				</tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq"><?=gettext("Parent interface"); ?></td>

@@ -613,7 +613,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 										<input name="pppoe_resetdate" type="text" class="w8em format-m-d-y highlight-days-67" id="pppoe_resetdate" maxlength="10" size="10" value="<?=htmlspecialchars($pconfig['pppoe_resetdate']);?>" /> 
 										<?= gettext("reset at a specific date (mm/dd/yyyy)"); ?>
 										<br />&nbsp;<br />
-										<span class="red"><strong><?=gettext("Note: ");?></strong></span>
+										<span class="red"><strong><?=gettext("Note ");?>:</strong></span>
 										<?= gettext("If you leave the date field empty, the reset will be executed each day at the time you did specify using the minutes and hour field."); ?>
 										</p>
 										<?php if ($pconfig['pppoe_pr_preset']): ?>

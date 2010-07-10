@@ -146,9 +146,9 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:");?><br>
+				  <?=gettext("Note");?>:<br>
 				  </strong></span>
-				  <?php sprintf(gettext("Not all drivers/NICs support 802.1Q QinQ tagging properly. On cards that do not explicitly support it, QinQ tagging will still work, but the reduced MTU may cause problems. See the %s handbook for information on supported cards."), $g['product_name']);?></p>
+				  <?php printf(gettext("Not all drivers/NICs support 802.1Q QinQ tagging properly. On cards that do not explicitly support it, QinQ tagging will still work, but the reduced MTU may cause problems. See the %s handbook for information on supported cards."), $g['product_name']);?></p>
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

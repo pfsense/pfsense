@@ -120,7 +120,7 @@ include("head.inc");
                     <?=htmlspecialchars($gre['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="interfaces_gre_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_gre.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext("Do you really want to delete this GRE tunnel?");?>)"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="interfaces_gre.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this GRE tunnel?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
@@ -129,7 +129,7 @@ include("head.inc");
 				</tr>
         <tr>
                 <td class="tabcont" colspan="3">
-                    <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.");?></span></p>
+                    <p><span class="vexpl"><span class="red"><strong><?=gettext("Note");?>:<br></strong></span><?=gettext("Here you can configure Generic Routing Encapsulation (GRE - RFC 2784) tunnels.");?></span></p>
                     </td>
                 </tr>
               </table>

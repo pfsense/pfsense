@@ -122,7 +122,7 @@ include("head.inc");
                     <?=htmlspecialchars($vlan['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="interfaces_vlan_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_vlan.php?act=del&id=<?=$i;?>" onclick="return confirm(<?=gettext("Do you really want to delete this VLAN?");?>)"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="interfaces_vlan.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this VLAN?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
@@ -131,9 +131,9 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  <?=gettext("Note:");?><br>
+				  <?=gettext("Note");?>:<br>
 				  </strong></span>
-				  <?=gettext("Not all drivers/NICs support 802.1Q VLAN tagging properly. On cards that do not explicitly support it, VLAN tagging will still work, but the reduced MTU may cause problems. See the ");?><?=$g['product_name']?><?=gettext(" handbook for information on supported cards.");?> </p>
+				  <?php printf(gettext("Not all drivers/NICs support 802.1Q VLAN tagging properly. On cards that do not explicitly support it, VLAN tagging will still work, but the reduced MTU may cause problems. See the %s handbook for information on supported cards."),$g['product_name']);?> </p>
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

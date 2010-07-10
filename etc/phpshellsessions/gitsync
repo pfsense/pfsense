@@ -147,25 +147,27 @@ if($nobackup == false) {
 echo "===> Checking out $branch\n";
 exec("mkdir -p /root/pfsense/$branch");
 
+// Git commands for resetting to the specified branch
+if($branch == "build_commit") {
+	$git_cmd = array(
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch $branch 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f $branch 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard `cat /etc/version.lastcommit`"
+	);
+} else {
+	$git_cmd = array(
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch $branch origin/$branch 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f $branch 2>/dev/null",
+		"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard origin/$branch"
+	);
+}
+
 // Git 'er done!
 if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 	echo "===> Fetching updates...\n";
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url $GIT_REPO");
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git fetch");
 	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git clean -f -f -x -d");
-	if($branch == "build_commit") {
-		$git_cmd = array(
-			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch $branch 2>/dev/null",
-			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f $branch 2>/dev/null",
-			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard `cat /etc/version.lastcommit`"
-		);
-	} else {
-		$git_cmd = array(
-			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git branch $branch origin/$branch 2>/dev/null",
-			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -f $branch 2>/dev/null",
-			"cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git reset --hard origin/$branch"
-		);
-	}
 	run_cmds($git_cmd);
 } else {
     exec("mkdir -p $CODIR/pfSenseGITREPO");
@@ -175,13 +177,7 @@ if(is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO")) {
 		exec("mv $CODIR/pfSenseGITREPO/pfSense $CODIR/pfSenseGITREPO/pfSenseGITREPO");
 	if(is_dir("$CODIR/pfSenseGITREPO/mainline")) 
 		exec("mv $CODIR/pfSenseGITREPO/mainline $CODIR/pfSenseGITREPO/pfSenseGITREPO");
-	if($branch == "master") {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout master");
-	} else if($branch == "build_commit") {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b build_commit `cat /etc/version.lastcommit`");
-	} else {
-		exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && git checkout -b $branch origin/$branch");
-	}
+	run_cmds($git_cmd);
 }
 
 foreach($merge_repos as $merge_repo) {

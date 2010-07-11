@@ -129,8 +129,8 @@ if ($_POST) {
 }
 
 $pgtitle = array("Services", "Load Balancer","Virtual Server","Edit");
-$statusurl = "status_slbd_vs.php";
-#$statusurl = "status_slbd_pool.php";
+$statusurl = "status_lb_vs.php";
+#$statusurl = "status_lb_pool.php";
 $logurl = "diag_logs_relayd.php";
 
 include("head.inc");

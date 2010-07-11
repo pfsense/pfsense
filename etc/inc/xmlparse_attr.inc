@@ -127,10 +127,43 @@ function cData_attr($parser, $data) {
 	}
 }
 
-function parse_xml_regdomain(&$rdattributes, $rdfile = '/etc/regdomain.xml', $rootobj = 'regulatory-data') {
-	global $listtags;
+function parse_xml_regdomain(&$rdattributes, $rdfile = '', $rootobj = 'regulatory-data') {
+	global $g, $listtags;
+
+	if (empty($rdfile))
+		$rdfile = $g['etc_path'] . '/regdomain.xml';
 	$listtags = listtags_rd();
-	return parse_xml_config_raw_attr($rdfile, $rootobj, $rdattributes);
+	$parsed_xml = array();
+
+	if (file_exists($g['tmp_path'] . '/regdomain.cache')) {
+		$parsed_xml = unserialize(file_get_contents($g['tmp_path'] . '/regdomain.cache'));
+		if (!empty($parsed_xml)) {
+			$rdmain = $parsed_xml['main'];
+			$rdattributes = $parsed_xml['attributes'];
+		}
+	}
+	if (empty($parsed_xml) && file_exists($g['etc_path'] . '/regdomain.xml')) {
+		$rdmain = parse_xml_config_raw_attr($rdfile, $rootobj, $rdattributes);
+
+		// unset parts that aren't used before making cache
+		foreach ($rdmain['regulatory-domains']['rd'] as $rdkey => $rdentry) {
+			if (isset($rdmain['regulatory-domains']['rd'][$rdkey]['netband']))
+				unset($rdmain['regulatory-domains']['rd'][$rdkey]['netband']);
+			if (isset($rdattributes['regulatory-domains']['rd'][$rdkey]['netband']))
+				unset($rdattributes['regulatory-domains']['rd'][$rdkey]['netband']);
+		}
+		if (isset($rdmain['shared-frequency-bands']))
+			unset($rdmain['shared-frequency-bands']);
+		if (isset($rdattributes['shared-frequency-bands']))
+			unset($rdattributes['shared-frequency-bands']);
+
+		$parsed_xml = array('main' => $rdmain, 'attributes' => $rdattributes);
+		$rdcache = fopen($g['tmp_path'] . '/regdomain.cache', "w");
+		fwrite($rdcache, serialize($parsed_xml));
+		fclose($rdcache);
+	}
+
+	return $rdmain;
 }
 
 function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes, $isstring = "false") {

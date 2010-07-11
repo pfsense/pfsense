@@ -230,7 +230,7 @@ function relayd_configure() {
   if(is_array($vs_a)) {
     for ($i = 0; isset($vs_a[$i]); $i++) {
       switch($vs_a[$i]['mode']) {
-        case 'redirect': {
+        case 'redirect_mode': {
           $conf .= "redirect \"{$vs_a[$i]['name']}\" {\n";
           $conf .= "  listen on {$vs_a[$i]['ipaddr']} port {$vs_a[$i]['port']}\n";
           $conf .= "  forward to <{$vs_a[$i]['pool']}> port {$pools[$vs_a[$i]['pool']]['port']} {$check_a[$pools[$vs_a[$i]['pool']]['monitor']]} timeout 1000\n";
@@ -259,7 +259,7 @@ function relayd_configure() {
   fwrite($fd, $conf);
   fclose($fd);
 
-  if (is_process_running('relayd: parent')) {
+  if (is_process_running('relayd')) {
     /*
      * XXX: Something breaks our control connection with relayd and makes relayctl stop working
      * rule reloads are the current suspect

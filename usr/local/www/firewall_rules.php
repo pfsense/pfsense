@@ -98,6 +98,42 @@ if ($_POST['if'])
 
 $ifdescs = get_configured_interface_with_descr();
 
+// Drag and drop reordering
+if($_REQUEST['dragdroporder']) {
+	// First create a new ruleset array and tmp arrays
+	$a_filter_unorder = array();
+	$a_filter_order = array();
+	$a_filter_order_tmp = array();
+	// Pointer to id of item being reordered
+	$found = 0;
+	$drag_order = $_REQUEST['dragtable'];
+	// Next traverse through rules building a new order for interface
+	for ($i = 0; isset($a_filter[$i]); $i++) {
+		if($a_filter[$i]['interface'] <> $_REQUEST['if']) 
+			$a_filter_unorder[] = $a_filter[$i];
+		else 
+			$a_filter_order_tmp[] = $a_filter[$i];
+	}
+	// Reorder rules with the posted order
+	for ($i = 0; $i<count($drag_order); $i++) 
+		$a_filter_order[] = $a_filter_order_tmp[$drag_order[$i]];
+	unset($config['filter']['rule']);
+	// Overwrite filter rules with newly created items
+	$config['filter']['rule'] = $a_filter_order;
+	foreach($a_filter_unorder as $aa) 
+		$config['filter']['rule'][] = $aa;
+	// Identifty what changed
+	for ($i = 0; $i<count($drag_order); $i++) {
+		if(array_diff($a_filter_order[$i], $a_filter_order_tmp[$i])) 
+			$changed_item[] = $i;
+	}
+	// Write configuration
+	$config = write_config("Drag and drop firewall rules ordering update.");
+	// Redirect back to page
+	Header("Location: firewall_rules.php?if=" . $_REQUEST['if'] . "&savemsg=" . urlencode("The filter rules order has been updated."));
+	exit;
+}
+
 /* add group interfaces */
 if (is_array($config['ifgroups']['ifgroupentry']))
 	foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
@@ -162,6 +198,10 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
+
+// Handle save msg if defined
+if($_REQUEST['savemsg']) 
+	$savemsg = htmlentities($_REQUEST['savemsg']);
 
 if (isset($_POST['del_x'])) {
 	/* delete selected rules */
@@ -368,6 +408,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				  </td>
 				</tr>
 <?php endif; ?>
+				<tbody id="dragtable" width="100%">
 				<?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++):
 					$filterent = $a_filter[$i];
 					if ($filterent['interface'] != $if && !isset($filterent['floating']))
@@ -589,7 +630,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else  echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
                   </td>
-<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><?=$textss;?>
+				  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><?=$textss;?>
                           <?php
 							if (isset($filterent['ackqueue']) && isset($filterent['defaultqueue'])) {
 								$desc = $filterent['ackqueue'] ;
@@ -622,6 +663,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				  </td>
 				</tr>
 			  <?php $nrules++; endfor; ?>
+			  </tbody>
 			  <?php if ($nrules == 0): ?>
               <td class="listt"></td>
 			  <td class="listt"></td>
@@ -649,7 +691,8 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				    <table border="0" cellspacing="0" cellpadding="1">
 					<tr>
 				      <td>
-					  <?php if ($nrules == 0): ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected rules to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected rules to end" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"><?php endif; ?></td>
+					  <?php if ($nrules == 0): ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected rules to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected rules to end" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="
+						(<?=$nrules;?>, false)"><?php endif; ?></td>
 					  <td></td>
 				    </tr>
 					<tr>
@@ -708,6 +751,27 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
   </tr>
 </table>
   <input type="hidden" name="if" value="<?=$if;?>">
+  <script type="text/javascript">
+<?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++): ?>
+	Sortable.create("dragtable", { 
+		tag:"tr", 
+		format:"fr([0-9999999])",
+		containment:["dragtable"], 
+		onChange: function() {
+			document.body.style.cursor = 'pointer';
+		},
+		onUpdate:function() { 
+			document.body.style.cursor = 'pointer';
+			updateOrder(Sortable.serialize('dragtable', 'tr'));
+		} 
+	});
+<?php endfor; ?>
+	function updateOrder(order) {
+		document.body.style.cursor = 'wait';
+		document.location = 'firewall_rules.php?if=<?=$if?>&dragdroporder=true&' + Sortable.serialize('dragtable', 'tr');
+		return;
+	}
+  </script>
 </form>
 <?php include("fend.inc"); ?>
 </body>

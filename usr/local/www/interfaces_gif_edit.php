@@ -83,7 +83,7 @@ if ($_POST) {
 			continue;
 
 		if (($gif['if'] == $_POST['if']) && ($gif['tunnel-remote-net'] == $_POST['tunnel-remote-net'])) {
-			$input_errors[] = gettext("A gif with the network {$gif['remote-network']} is already defined.");
+			$input_errors[] = sprintf(gettext("A gif with the network %s is already defined."), $gif['remote-network']);
 			break;
 		}
 	}
@@ -192,7 +192,7 @@ include("head.inc");
                     <input name="link1" type="checkbox" id="link1" <?if ($pconfig['link1']) echo "checked";?>>
                     <br>
                     <span class="vexpl">
-     <?=gettext("Note that the ECN friendly behavior violates RFC2893.  This should be" .
+     <?=gettext("Note that the ECN friendly behavior violates RFC2893.  This should be " .
      "used in mutual agreement with the peer."); ?>					
 					 </span></td>
 			    </tr>
@@ -200,7 +200,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here" .
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here " .
                     "for your reference (not parsed)."); ?></span></td>
                 </tr>
                 <tr>

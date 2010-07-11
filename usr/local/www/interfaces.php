@@ -52,6 +52,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
 require_once("vpn.inc");
+require_once("xmlparse_attr.inc");
 
 if ($_REQUEST['if']) {
 	$if = $_REQUEST['if'];

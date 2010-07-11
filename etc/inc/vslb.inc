@@ -201,6 +201,7 @@ function relayd_configure() {
 
   /* reindex pools by name as we loop through the pools array */
   $pools = array();
+  $conf .= "log updates \n";
   /* Virtual server pools */
   if(is_array($pool_a)) {
     for ($i = 0; isset($pool_a[$i]); $i++) {

@@ -46,7 +46,7 @@ if (!is_array($config['load_balancer']['lbpool'])) {
 }
 $a_pool = &$config['load_balancer']['lbpool'];
 
-$slbd_logfile = "{$g['varlog_path']}/slbd.log";
+$lb_logfile = "{$g['varlog_path']}/relayd.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
@@ -117,7 +117,7 @@ include("head.inc");
 						$lastchange = "";
                                                 $svr = split("\|", $server);
 						$monitorip = $svr[1];
-						$logstates = return_clog($slbd_logfile, $nentries, true, array("$monitorip", "marking"), "", true);
+						$logstates = return_clog($lb_logfile, $nentries, true, array("$monitorip", "marking"), "", true);
 
 						$logstates = $logstates[0];
 

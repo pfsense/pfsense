@@ -125,7 +125,8 @@ if($_REQUEST['dragdroporder']) {
 	// Write configuration
 	$config = write_config("Drag and drop firewall rules ordering update.");
 	// Redirect back to page
-	Header("Location: firewall_rules.php?if=" . $_REQUEST['if'] . "&savemsg=" . urlencode("The filter rules order has been updated."));
+	mark_subsystem_dirty('filter');
+	Header("Location: firewall_rules.php?if=" . $_REQUEST['if']);
 	exit;
 }
 

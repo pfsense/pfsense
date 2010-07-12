@@ -156,7 +156,7 @@ $status_menu[] = array("DHCP Leases", "/status_dhcp_leases.php");
 $status_menu[] = array("Filter Reload", "/status_filter_reload.php");
 $status_menu[] = array("Interfaces", "/status_interfaces.php");
 $status_menu[] = array("IPsec", "/diag_ipsec.php");
-$status_menu[] = array("Load Balancer", "/status_slbd_pool.php");
+$status_menu[] = array("Load Balancer", "/status_lb_pool.php");
 $status_menu[] = array("OpenVPN", "/status_openvpn.php");
 if ($g['platform'] == "pfSense")
 	$status_menu[] = array("Package Logs", "/diag_pkglogs.php");

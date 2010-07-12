@@ -483,6 +483,8 @@ function system_syslogd_start() {
 			if($syslogcfg['remoteserver3'])
 				$syslogconf .= "*.*					 @{$syslogcfg['remoteserver3']}\n";
 		}
+		$syslogconf .= "!relayd\n";
+		$syslogconf .= "*.* 						{$log_directive}{$g['varlog_path']}/relayd.log\n";
 		$syslogconf .= "!-{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) 
 			$syslogconf .= <<<EOD
@@ -495,7 +497,6 @@ news.err;local0.none;local3.none;local4.none; 	 {$log_directive}{$g['varlog_path
 local7.none										 {$log_directive}{$g['varlog_path']}/system.log
 security.*										 {$log_directive}{$g['varlog_path']}/system.log
 auth.info;authpriv.info;daemon.info				 {$log_directive}{$g['varlog_path']}/system.log
-local1.*										 {$log_directive}{$g['varlog_path']}/relayd.log
 auth.info;authpriv.info 						 |exec /usr/local/sbin/sshlockout_pf
 *.emerg											 *
 

@@ -302,6 +302,10 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 		eval($toeval);
 	}	
 		
+	if(!$savebutton) {
+		$savebutton = '<td class="infoboxsave"><input value="Close" type="button" onClick="$(\'redboxtable\').hide();"></td>';
+	}
+
 	echo <<<EOFnp
 	<table class='infobox' id='redboxtable'>
 		<tr>
@@ -319,6 +323,9 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 						</tr>
 					</table>
 				</div>
+				<div>
+					<p/>
+				</div>
 			</td>
 		</tr>
 	</table>
@@ -327,15 +334,12 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
 		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
 	</script>
-	<br/>
 EOFnp;
 
 }
 
 function print_info_box($msg) {
-	echo "<p>";
 	print_info_box_np($msg);
-	echo "</p>";
 }
 
 function get_std_save_message($ok) {

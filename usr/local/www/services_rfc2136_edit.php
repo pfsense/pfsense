@@ -68,16 +68,16 @@ if ($_POST) {
 	$reqdfields = array();
 	$reqdfieldsn = array();
 	$reqdfields = array_merge($reqdfields, explode(" ", "host ttl keyname keydata"));
-	$reqdfieldsn = array_merge($reqdfieldsn, explode(",", "Hostname,TTL,Key name,Key"));
+	$reqdfieldsn = array_merge($reqdfieldsn, array(gettext("Hostname"), gettext("TTL"), gettext("Key name"), gettext("Key"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (($_POST['host'] && !is_domain($_POST['host'])))  
-		$input_errors[] = "The DNS update host name contains invalid characters.";
+		$input_errors[] = gettext("The DNS update host name contains invalid characters.");
 	if (($_POST['ttl'] && !is_numericint($_POST['ttl']))) 
-		$input_errors[] = "The DNS update TTL must be an integer.";
+		$input_errors[] = gettext("The DNS update TTL must be an integer.");
 	if (($_POST['keyname'] && !is_domain($_POST['keyname'])))
-		$input_errors[] = "The DNS update key name contains invalid characters.";
+		$input_errors[] = gettext("The DNS update key name contains invalid characters.");
 
 	if (!$input_errors) {
 		$rfc2136 = array();
@@ -97,7 +97,7 @@ if ($_POST) {
 		else
 			$a_rfc2136[] = $rfc2136;
 
-		write_config("New/Edited RFC2136 dnsupdate entry was posted.");
+		write_config(gettext("New/Edited RFC2136 dnsupdate entry was posted."));
 
                 $retval = services_dnsupdate_process();
 
@@ -106,7 +106,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services","RFC 2136 client", "Edit");
+$pgtitle = array(gettext("Services"),gettext("RFC 2136 client"), gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -120,18 +120,18 @@ include("head.inc");
 			  	<tr>
                   <td colspan="2" valign="top" class="optsect_t">
 				  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-				  	<tr><td class="optsect_s"><strong>RFC 2136 client</strong></td></tr>
+				  	<tr><td class="optsect_s"><strong><?=gettext("RFC 2136 client");?></strong></td></tr>
 				  </table>
 				  </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Enable</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Enable");?></td>
 				  <td width="78%" class="vtable">
 				    <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
 				  </td>
                 </tr>
 				<tr>
-				   <td width="22%" valign="top" class="vncellreq">Interface to monitor</td>  
+				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to monitor");?></td>  
 				   <td width="78%" class="vtable">
 				   <select name="interface" class="formselect" id="interface">
 				   <?php $iflist = get_configured_interface_with_descr();
@@ -143,7 +143,7 @@ include("head.inc");
 					</td>
 				</tr>	
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Hostname</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable">
                     <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
                   </td>
@@ -152,43 +152,43 @@ include("head.inc");
                   <td valign="top" class="vncellreq">TTL</td>
                   <td class="vtable">
                     <input name="ttl" type="text" class="formfld unknown" id="ttl" size="6" value="<?=htmlspecialchars($pconfig['ttl']);?>">
-                  seconds</td>
+                  <?=gettext("seconds");?></td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncellreq">Key name</td>
+                  <td valign="top" class="vncellreq"><?=gettext("Key name");?></td>
                   <td class="vtable">
                     <input name="keyname" type="text" class="formfld unknown" id="keyname" size="30" value="<?=htmlspecialchars($pconfig['keyname']);?>">
                     <br>
-                    This must match the setting on the DNS server.</td>
+                    <?=gettext("This must match the setting on the DNS server.");?></td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncellreq">Key type </td>
+                  <td valign="top" class="vncellreq"><?=gettext("Key type ");?></td>
                   <td class="vtable">
-				  <input name="keytype" type="radio" value="zone" <?php if ($pconfig['keytype'] == "zone") echo "checked"; ?>> Zone &nbsp;
+				  <input name="keytype" type="radio" value="<?=gettext("zone");?>" <?php if ($pconfig['keytype'] == "zone") echo "checked"; ?>> <?=gettext("Zone");?> &nbsp;
                   <input name="keytype" type="radio" value="host" <?php if ($pconfig['keytype'] == "host") echo "checked"; ?>> Host &nbsp;
-                  <input name="keytype" type="radio" value="user" <?php if ($pconfig['keytype'] == "user") echo "checked"; ?>> User
+                  <input name="keytype" type="radio" value="<?=gettext("user");?>" <?php if ($pconfig['keytype'] == "user") echo "checked"; ?>><?=gettext(" User");?>
 				</tr>
                 <tr>
-                  <td valign="top" class="vncellreq">Key</td>
+                  <td valign="top" class="vncellreq"><?=gettext("Key");?></td>
                   <td class="vtable">
                     <input name="keydata" type="text" class="formfld unknown" id="keydata" size="70" value="<?=htmlspecialchars($pconfig['keydata']);?>">
                     <br>
-                    Paste an HMAC-MD5 key here.</td>
+                    <?=gettext("Paste an HMAC-MD5 key here.");?></td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Server</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Server");?></td>
                   <td width="78%" class="vtable">
                     <input name="server" type="text" class+"formfld" id="server" size="30" value="<?=htmlspecialchars($pconfig['server'])?>">
                   </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Protocol</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Protocol");?></td>
                   <td width="78%" class="vtable">
-                    <input name="usetcp" type="checkbox" id="usetcp" value="yes" <?php if ($pconfig['usetcp']) echo "checked"; ?>>
-                    <strong>Use TCP instead of UDP</strong></td>
+                    <input name="usetcp" type="checkbox" id="usetcp" value="<?=gettext("yes");?>" <?php if ($pconfig['usetcp']) echo "checked"; ?>>
+                    <strong><?=gettext("Use TCP instead of UDP");?></strong></td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Description</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>">
                   </td>
@@ -196,8 +196,8 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)">
-					<a href="services_rfc2136.php"><input name="Cancel" type="button" class="formbtn" value="Cancel"></a>
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onClick="enable_change(true)">
+					<a href="services_rfc2136.php"><input name="Cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>"></a>
 					<?php if (isset($id) && $a_rfc2136[$id]): ?>
 						<input name="id" type="hidden" value="<?=$id;?>">
 					<?php endif; ?>
@@ -205,10 +205,10 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
-                    </strong></span>You must configure a DNS server in <a href="system.php">System:
-                    General setup</a> or allow the DNS server list to be overridden
-                    by DHCP/PPP on WAN for dynamic DNS updates to work.</span></td>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+                    </strong></span><?php printf(gettext("You must configure a DNS server in %sSystem:
+                    General setup %sor allow the DNS server list to be overridden
+                    by DHCP/PPP on WAN for dynamic DNS updates to work."),'<a href="system.php">', '</a>');?></span></td>
                 </tr>
               </table>
 </form>

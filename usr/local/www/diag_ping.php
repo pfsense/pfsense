@@ -85,7 +85,7 @@ include("head.inc"); ?>
 					<td colspan="2" valign="top" class="listtopic">Ping</td>
 				</tr>
                 <tr>
-				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ></td>
+				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?>></td>
 				  <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
 				</tr>

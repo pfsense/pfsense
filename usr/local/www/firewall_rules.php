@@ -768,8 +768,8 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 	});
 <?php endfor; ?>
 	function updateOrder(order) {
-		if(document.getElementById("infoboxnp"))
-			$('infoboxnp').hide();
+		if(document.getElementById("redboxtable"))
+			$('redboxtable').hide();
 		$('loading').show();
 		document.body.style.cursor = 'wait';
 		document.location = 'firewall_rules.php?if=<?=$if?>&dragdroporder=true&' + Sortable.serialize('dragtable', 'tr');

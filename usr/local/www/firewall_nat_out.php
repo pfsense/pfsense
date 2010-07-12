@@ -305,25 +305,31 @@ include("head.inc");
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="4" cellspacing="0">
-				<tr><td colspan="2"><b>Mode:</b></td></tr>
-              <tr>
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr><td align="right"><b>Mode:</b></td>
                   <td>
                       &nbsp;&nbsp;<input name="advancedoripsec" type="radio" id="ipsecpassthru" value="ipsecpassthru" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked";?>>
-                      <strong><?=gettext("Automatic outbound NAT rule generation (IPsec passthrough)");?></strong>
+                      <strong><?=gettext("Automatic outbound NAT rule generation<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(IPsec passthrough included)");?></strong>
                   </td>
-                </tr>
-                <tr>
+
                   <td>
                       &nbsp;&nbsp;<input name="advancedoripsec" type="radio" id="advancedoutbound" value="advancedoutboundnat" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked";?>>
-                      <strong><?=gettext("Manual Outbound NAT rule generation (Advanced Outbound NAT (AON))");?></strong></td>
-                </tr>
-                <tr>
-                  <td class="vtable" >
+                      <strong><?=gettext("Manual Outbound NAT rule generation<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(AON - Advanced Outbound NAT)");?></strong></td>
+                  <td align="left">
 					<input name="save" type="submit" class="formbtn" value="Save">
 					&nbsp;<br/>&nbsp;
                   </td>
                 </tr>
+				<tr>
+					<td colspan="5">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td  class="vtable" colspan="5">
+						&nbsp;
+					</td>
+				</tr>
               </table>
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr><td colspan="5"><b>&nbsp;Mappings:</b></td></tr>

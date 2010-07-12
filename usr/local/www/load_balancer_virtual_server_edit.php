@@ -193,7 +193,6 @@ document.observe("dom:loaded", function() {
                   <td width="78%" class="vtable" colspan="2">
                     <input name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"{$pconfig['ipaddr']}\"";?> size="16" maxlength="16">
 		    		<br>This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP and port will be forwarded to the pool cluster.
-		    		<br><b>NOTE:</b> DO NOT USE RELAY MODE WITH PROXY ARP - IT WILL NOT WORK - TODO for 2.0 to fix.
                   </td>
 			</tr>
                 <tr align="left">

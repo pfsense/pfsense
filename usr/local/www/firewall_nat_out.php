@@ -306,7 +306,7 @@ include("head.inc");
     <td>
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tr><td align="right"><b>Mode:</b></td>
+				<tr><td align="right"><b><?=gettext("Mode"); ?>:</b></td>
                   <td>
                       &nbsp;&nbsp;<input name="advancedoripsec" type="radio" id="ipsecpassthru" value="ipsecpassthru" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked";?>>
                       <strong><?=gettext("Automatic outbound NAT rule generation<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(IPsec passthrough included)");?></strong>
@@ -332,7 +332,7 @@ include("head.inc");
 				</tr>
               </table>
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tr><td colspan="5"><b>&nbsp;Mappings:</b></td></tr>
+				<tr><td colspan="5"><b>&nbsp;<?=gettext("Mappings"); ?>:</b></td></tr>
 				<tr><td>&nbsp;</td></tr>
                 <tr id="frheader">
                   <td width="3%" class="list">&nbsp;</td>
@@ -455,14 +455,14 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td colspan="12">
-					<p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>If advanced outbound NAT is enabled, no outbound NAT
-                      rules will be automatically generated any longer. Instead, only the mappings
-                      you specify below will be used. With advanced outbound NAT disabled,
-                      a mapping is automatically created for each interface's subnet
-                      (except WAN).  If you use target addresses other than the WAN interface's
-		      IP address, then depending on the way your WAN connection is setup, you
-	              may also need a <a href="firewall_virtual_ip.php">Virtual IP</a>.</span><br>
+					<p><span class="vexpl"><span class="red"><strong><?=gettext("Note"); ?>:<br>
+                      </strong></span><?=gettext("If advanced outbound NAT is enabled, no outbound NAT " .
+                      "rules will be automatically generated any longer. Instead, only the mappings " .
+                      "you specify below will be used. With advanced outbound NAT disabled, " .
+                      "a mapping is automatically created for each interface's subnet " .
+                      "(except WAN).  If you use target addresses other than the WAN interface's " .
+		      "IP address, then depending on the way your WAN connection is setup, you " .
+	              "may also need a"); ?> <a href="firewall_virtual_ip.php"><?=gettext("Virtual IP"); ?></a>.</span><br>
                     </td>
                 </tr>
 

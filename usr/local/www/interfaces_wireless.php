@@ -73,7 +73,7 @@ if ($_GET['act'] == "del") {
 }
 
 
-$pgtitle = array(gettext("Interfaces"),("Wireless"));
+$pgtitle = array(gettext("Interfaces"),gettext("Wireless"));
 include("head.inc");
 
 ?>

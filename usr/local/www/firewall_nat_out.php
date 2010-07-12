@@ -315,7 +315,7 @@ include("head.inc");
                   <td>
                       &nbsp;&nbsp;<input name="advancedoripsec" type="radio" id="advancedoutbound" value="advancedoutboundnat" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked";?>>
                       <strong><?=gettext("Manual Outbound NAT rule generation<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(AON - Advanced Outbound NAT)");?></strong></td>
-                  <td align="left">
+                  <td valign="middle" align="left">
 					<input name="save" type="submit" class="formbtn" value="Save">
 					&nbsp;<br/>&nbsp;
                   </td>

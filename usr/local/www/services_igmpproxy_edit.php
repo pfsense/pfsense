@@ -43,7 +43,7 @@
 ##|*MATCH=services_igmpproxy_edit.php*
 ##|-PRIV
 
-$pgtitle = array("Firewall","IGMP Proxy", "Edit");
+$pgtitle = array(gettext("Firewall"),gettext("IGMP Proxy"), gettext("Edit"));
 
 require("guiconfig.inc");
 
@@ -76,7 +76,7 @@ if ($_POST) {
 			if (isset($id) && $id == $pid)
 				continue;
 			if ($proxyentry['type'] == "upstream" && $proxyentry['ifname'] != $_POST['interface'])
-				$input_errors[] = "Only one 'upstream' interface can be configured.";
+				$input_errors[] = gettext("Only one 'upstream' interface can be configured.");
 		}
 	}
 	$igmpentry = array();
@@ -131,8 +131,8 @@ include("head.inc");
 <script type="text/javascript" src="/javascript/row_helper.js">
 </script>
 
-<input type='hidden' name='address_type' value='textbox' class="formfld unknown" />
-<input type='hidden' name='address_subnet_type' value='select' />
+<input type='hidden' name='address_type' value='<?=gettext("textbox");?>' class="formfld unknown" />
+<input type='hidden' name='address_subnet_type' value='<?=gettext("select");?>' />
 
 <script type="text/javascript">
 	rowname[0] = "address";
@@ -154,10 +154,10 @@ include("head.inc");
 <form action="services_igmpproxy_edit.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
   <tr>
-	<td colspan="2" valign="top" class="listtopic">IGMP Proxy Edit</td>
+	<td colspan="2" valign="top" class="listtopic"><?=gettext("IGMP Proxy Edit");?></td>
   </tr>
   <tr>
-    <td valign="top" class="vncellreq">Interface</td>
+    <td valign="top" class="vncellreq"><?=gettext("Interface");?></td>
     <td class="vtable"> <select name="ifname" id="ifname" >
 		<?php $iflist = get_configured_interface_with_descr();
 			foreach ($iflist as $ifnam => $ifdescr) {
@@ -171,56 +171,56 @@ include("head.inc");
     </td>
   </tr>
   <tr>
-    <td width="22%" valign="top" class="vncell">Description</td>
+    <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
     <td width="78%" class="vtable">
       <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=$pconfig['descr'];?>" />
       <br />
       <span class="vexpl">
-        You may enter a description here for your reference (not parsed).
+        <?=gettext("You may enter a description here for your reference (not parsed).");?>
       </span>
     </td>
   </tr>
   <tr>
-    <td valign="top" class="vncellreq">Type</td>
+    <td valign="top" class="vncellreq"><?=gettext("Type");?></td>
     <td class="vtable">
       <select name="type" class="formselect" id="type" >
-        <option value="upstream" <?php if ($pconfig['type'] == "upstream") echo "selected"; ?>>Upstream Interface</option>
-        <option value="downstream" <?php if ($pconfig['type'] == "downstream") echo "selected"; ?>>Downstream Interface</option>
+        <option value="upstream" <?php if ($pconfig['type'] == "upstream") echo "selected"; ?>><?=gettext("Upstream Interface");?></option>
+        <option value="downstream" <?php if ($pconfig['type'] == "downstream") echo "selected"; ?>><?=gettext("Downstream Interface");?></option>
       </select>
       <br />
       <span class="vexpl">
-        The <b>upstream</b> network interface is the outgoing interface which is
-       responsible for communicating to available multicast data sources.
-       There can only be one upstream interface.
+        <?=gettext("The <b>upstream</b> network interface is the outgoing interface which is".
+      " responsible for communicating to available multicast data sources.".
+      " There can only be one upstream interface.");?>
 	</span>
 	<br />
 	<span class="vexpl">
-       <b>Downstream</b> network interfaces are the distribution  interfaces  to  the
-       destination  networks,  where  multicast  clients  can  join groups and
-       receive multicast data. One or more downstream interfaces must be configured.
+       <?=gettext("<b>Downstream</b> network interfaces are the distribution  interfaces  to  the".
+      " destination  networks,  where  multicast  clients  can  join groups and".
+      " receive multicast data. One or more downstream interfaces must be configured.");?>
       </span>
     </td>
   </tr>
   <tr>
-    <td valign="top" class="vncell">Threshold</td>
+    <td valign="top" class="vncell"><?=gettext("Threshold");?></td>
     <td class="vtable">
       <input name="threshold" class="formfld unknown" id="threshold" value="<?php echo $pconfig['threshold'];?>">
       <br />
       <span class="vexpl">
-	      Defines the TTL threshold for  the  network  interface.  Packets
-              with  a lower TTL than the threshols value will be ignored. This
-              setting is optional, and by default the threshold is 1.
+	      <?=gettext("Defines the TTL threshold for  the  network  interface.  Packets".
+             " with  a lower TTL than the threshols value will be ignored. This".
+             " setting is optional, and by default the threshold is 1.");?>
       </span>
     </td>
   </tr>
   <tr>
-    <td width="22%" valign="top" class="vncellreq"><div id="addressnetworkport">Network (s)</div></td>
+    <td width="22%" valign="top" class="vncellreq"><div id="addressnetworkport"><?=gettext("Network (s)");?></div></td>
     <td width="78%" class="vtable">
       <table id="maintable">
         <tbody>
           <tr>
-            <td><div id="onecolumn">Network</div></td>
-            <td><div id="twocolumn">CIDR</div></td>
+            <td><div id="onecolumn"><?=gettext("Network");?></div></td>
+            <td><div id="twocolumn"><?=gettext("CIDR");?></div></td>
           </tr>
 
 	<?php
@@ -254,7 +254,7 @@ include("head.inc");
 			        </select>
 			      </td>
             <td>
-    		<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="Delete" />
+    		<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete");?>" />
 	      </td>
           </tr>
 <?php
@@ -269,15 +269,15 @@ include("head.inc");
         </tfoot>
 		  </table>
 			<a onclick="javascript:addRowTo('maintable'); return false;" href="#">
-        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="add another entry" />
+        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
       </a>
 		</td>
   </tr>
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-      <input id="submit" name="submit" type="submit" class="formbtn" value="Save" />
-      <a href="services_igmpproxy.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" /></a>
+      <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+      <a href="services_igmpproxy.php"><input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" /></a>
       <?php if (isset($id) && $a_igmpproxy[$id]): ?>
       <input name="id" type="hidden" value="<?=$id;?>" />
       <?php endif; ?>

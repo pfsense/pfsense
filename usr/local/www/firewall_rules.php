@@ -287,7 +287,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <?php if (is_subsystem_dirty('filter')): ?><p>
 <?php print_info_box_np("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
-<div id="loading">
+<div id="loading" style="visibity:hidden">
 	<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif"> Loading, please wait...
 	<p/>&nbsp;
 </div>

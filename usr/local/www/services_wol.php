@@ -58,10 +58,10 @@ if($_GET['wakeall'] <> "") {
 			get_interface_subnet($if));
 		/* Execute wol command and check return code. */
 		if(!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")){
-			$savemsg .= "Sent magic packet to {$mac} ({$description}).<br>";
+			$savemsg .= printf(gettext("Sent magic packet to %s (%s).<br>"),$mac, $description);
 		}
 		else {
-			$savemsg .= "Please check the <a href=\"/diag_logs.php\">system log</a>, the wol command for {$description} ({$mac}) did not complete successfully.<br>";
+			$savemsg .= printf(gettext("Please check the %ssystem log%s, the wol command for %s (%s) did not complete successfully.<br>"),'<a href=\"/diag_logs.php\">','</a>',$description,$mac);
 		}
 	}
 }
@@ -83,9 +83,9 @@ if ($_POST || $_GET['mac']) {
 
 	/* input validation */
 	if (!$mac || !is_macaddr($mac))
-		$input_errors[] = "A valid MAC address must be specified.";
+		$input_errors[] = gettext("A valid MAC address must be specified.");
 	if (!$if)
-		$input_errors[] = "A valid interface must be specified.";
+		$input_errors[] = gettext("A valid interface must be specified.");
 
 	if (!$input_errors) {
 		/* determine broadcast address */
@@ -93,10 +93,10 @@ if ($_POST || $_GET['mac']) {
 			get_interface_subnet($if));
 		/* Execute wol command and check return code. */
 		if(!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")){
-			$savemsg .= "Sent magic packet to {$mac}.";
+			$savemsg .= printf(gettext("Sent magic packet to %s."),$mac);
 		}
 		else {
-			$savemsg .= "Please check the <a href=\"/diag_logs.php\">system log</a>, the wol command for {$mac} did not complete successfully.<br>";
+			$savemsg .= printf(gettext("Please check the %ssystem log%s, the wol command for %s did not complete successfully.<br>"),'<a href=\"/diag_logs.php\">', '</a>', $mac);
 		}
 	}
 }
@@ -110,7 +110,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("Services","Wake on LAN");
+$pgtitle = array(gettext("Services"),gettext("Wake on LAN"));
 include("head.inc");
 
 ?>
@@ -122,10 +122,10 @@ include("head.inc");
 			<form action="services_wol.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 			<tr>
-				<td colspan="2" valign="top" class="listtopic">Wake on LAN</td>
+				<td colspan="2" valign="top" class="listtopic"><?=gettext("Wake on LAN");?></td>
 			</tr>
 			  <tr>
-                  <td width="22%" valign="top" class="vncellreq">Interface</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
                   <td width="78%" class="vtable">
 		     		<select name="interface" class="formselect">
                       <?php 
@@ -136,29 +136,29 @@ include("head.inc");
                       </option>
                       <?php endforeach; ?>
                     </select> <br>
-                    <span class="vexpl">Choose which interface the host to be woken up is connected to.</span></td>
+                    <span class="vexpl"><?=gettext("Choose which interface the host to be woken up is connected to.");?></span></td>
                 </tr>
                 <tr>
-				  <td width="22%" valign="top" class="vncellreq">MAC address</td>
+				  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
 				  <td width="78%" class="vtable">
                       <input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($mac);?>">
                       <br>
-                      Enter a MAC address <span class="vexpl"> in the following format: xx:xx:xx:xx:xx:xx</span></td></tr>
+                      <?=gettext("Enter a MAC address ");?><span class="vexpl"><?=gettext(" in the following format: xx:xx:xx:xx:xx:xx");?></span></td></tr>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Send">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Send");?>">
 				</td>
 				</tr>
 			</table>
 			&nbsp;<br>
-			Wake all clients at once: <a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0"></a><p/>
-			Or Click the MAC address to wake up an individual device:
+			<?=gettext("Wake all clients at once: ");?><a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0"></a><p/>
+			<?=gettext("Or Click the MAC address to wake up an individual device:");?>
 			<table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="15%" class="listhdrr">Interface</td>
-                  <td width="25%" class="listhdrr">MAC address</td>
-                  <td width="50%" class="listhdr">Description</td>
+                  <td width="15%" class="listhdrr"><?=gettext("Interface");?></td>
+                  <td width="25%" class="listhdrr"><?=gettext("MAC address");?></td>
+                  <td width="50%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
@@ -187,7 +187,7 @@ include("head.inc");
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
                         <td valign="middle"><a href="services_wol_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-                        <td valign="middle"><a href="services_wol.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_wol.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
                   </td>
@@ -209,9 +209,9 @@ include("head.inc");
 			<span class="vexpl">
 					<span class="red">
 						<strong>
-							Note:<br>
+							<?=gettext("Note:");?><br>
             			</strong>
-					</span>This service can be used to wake up (power on) computers by sending special &quot;Magic Packets&quot;. The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). 
+					</span><?=gettext("This service can be used to wake up (power on) computers by sending special &quot;Magic Packets&quot;. The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). ");?>
 			</span>
 
 </form>

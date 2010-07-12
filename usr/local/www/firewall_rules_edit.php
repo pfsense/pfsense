@@ -832,7 +832,7 @@ include("head.inc");
 					</tr>
 				</table>
 				<br />
-				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule. <b>This is usually <em>random</em> and almost never equal to the destination port range (and should usually be &quot;any&quot;).</b>")."<br />".gettext("Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port.");?></span><br/>
+				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule."); ?> <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be"); ?> &quot;<?=gettext("any"); ?>&quot;).</b>")."<br />".<?=gettext("Hint: you can leave the"); ?> <em><?=gettext("'to'"); ?></em> <?=gettext("field empty if you only want to filter a single port.");?></span><br/>
 			</td>
 		</tr>
 		<tr>
@@ -926,7 +926,7 @@ include("head.inc");
 				<span class="vexpl">
 					<?=gettext("Specify the port or port range for the destination of the packet for this rule.");?>
 					<br />
-					<?=gettext("Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port");?>
+					<?=gettext("Hint: you can leave the"); ?> <em><?=gettext("'to'"); ?></em> <?=gettext("field empty if you only want to filter a single port");?>
 				</span>
 			</td>
 		</tr>
@@ -1028,7 +1028,7 @@ include("head.inc");
 				<br/><span class="vexpl"><?=gettext("This will disable auto generated reply-to for this rule.");?>
 				</span><p>
 				<input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>">
-				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other NAT/filter rules. It is called <b>Policy filtering</b>");?>
+				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other NAT/filter rules. It is called"); ?> <b><?=gettext("Policy filtering"); ?></b>
 				</span><p>
 				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
 				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>

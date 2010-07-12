@@ -59,28 +59,14 @@ function listtags_pkg() {
 	return $ret;
 }
 
-/* The following items will be treated as arrays in regdomain.xml */
-function listtags_rd() {
-	$ret = explode(" ",
-		"band country flags freqband netband rd  "
-		);
-	return $ret;
-}
-
 function startElement($parser, $name, $attrs) {
-	global $parsedcfg, $depth, $curpath, $havedata, $listtags, $parsedattrs, $parsingattrs;
+	global $parsedcfg, $depth, $curpath, $havedata, $listtags;
 
 	array_push($curpath, strtolower($name));
 
 	$ptr =& $parsedcfg;
-	if (isset($parsingattrs) && !empty($attrs)) {
-		$attrptr =& $parsedattrs;
-		$writeattrs = true;
-	}
 	foreach ($curpath as $path) {
 		$ptr =& $ptr[$path];
-		if (isset($writeattrs))
-			$attrptr =& $attrptr[$path];
 	}
 
 	/* is it an element that belongs to a list? */
@@ -94,19 +80,11 @@ function startElement($parser, $name, $attrs) {
 
 		array_push($curpath, count($ptr));
 
-		if (isset($writeattrs)) {
-			if (!is_array($attrptr))
-				$attrptr = array();
-			$attrptr[count($ptr)] = $attrs;
-		}
-
 	} else if (isset($ptr)) {
 		/* multiple entries not allowed for this element, bail out */
 		die(sprintf("XML error: %s at line %d cannot occur more than once\n",
 				$name,
 				xml_get_current_line_number($parser)));
-	} else if (isset($writeattrs)) {
-		$attrptr = $attrs;
 	}
 
 	$depth++;
@@ -178,23 +156,6 @@ function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 		die("XML error: not $rootboj object found!\n");
 	
 	return $cfg;
-}
-
-function parse_xml_regdomain(&$rdattributes, $rdfile = '/etc/regdomain.xml', $rootobj = 'regulatory-data') {
-	global $listtags, $parsedattrs, $parsingattrs;
-	$listtags = listtags_rd();
-	if (isset($rdattributes)) {
-		$parsedattrs = array();
-		$parsingattrs = true;
-		$ret = parse_xml_config_raw($rdfile, $rootobj);
-		if ($parsedattrs[$rootobj])
-			$rdattributes = $parsedattrs[$rootobj];
-		unset($parsedattrs);
-		unset($parsingattrs);
-		return $ret;
-	} else {
-		return parse_xml_config_raw($rdfile, $rootobj);
-	}
 }
 
 function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {

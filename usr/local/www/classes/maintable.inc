@@ -116,7 +116,7 @@ class MainTable {
 				} else {
 					$cl = 'listr';
 				}
-				echo "  <td class=\"{$cl}\" onClick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location=\'{$this->edit_uri}?id={$cur_row}\'\">\n";
+				echo "  <td class=\"{$cl}\" onClick=\"fr_toggle({$cur_row})\" id=\"frd{$cur_row}\" ondblclick=\"document.location='{$this->edit_uri}?id={$cur_row}'\">\n";
 				if (is_array($row[$this->cname[$col]])) {
 					foreach ($row[$this->cname[$col]] as $data) {
 						echo "    {$data}<br/>\n";

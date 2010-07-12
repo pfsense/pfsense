@@ -930,7 +930,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<?php set_checked($pconfig['dynamic_ip'],$chk); ?>
-										<input name="dynamic_ip" type="checkbox" id="dynamic_ip" value="yes" <?=$chk;?>">
+										<input name="dynamic_ip" type="checkbox" id="dynamic_ip" value="yes" <?=$chk;?>/>
 									</td>
 									<td>
 										<span class="vexpl">
@@ -948,7 +948,7 @@ function netbios_change() {
 								<tr>
 									<td>
 										<?php set_checked($pconfig['pool_enable'],$chk); ?>
-										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?>">
+										<input name="pool_enable" type="checkbox" id="pool_enable" value="yes" <?=$chk;?>/>
 									</td>
 									<td>
 										<span class="vexpl">

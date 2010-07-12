@@ -85,7 +85,7 @@ if ($_GET['act'] == "del") {
 						<?php if (count($sad)): ?>
 						<tr>
 							<td nowrap class="listhdrr">Source</td>
-							<td nowrap class="listhdrr">Destination</a></td>
+							<td nowrap class="listhdrr">Destination</td>
 							<td nowrap class="listhdrr">Protocol</td>
 							<td nowrap class="listhdrr">SPI</td>
 							<td nowrap class="listhdrr">Enc. alg.</td>

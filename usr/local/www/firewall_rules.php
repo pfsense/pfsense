@@ -98,6 +98,38 @@ if ($_POST['if'])
 
 $ifdescs = get_configured_interface_with_descr();
 
+// Drag and drop reordering
+if($_REQUEST['dragdroporder']) {
+	// First create a new ruleset array and tmp arrays
+	$a_filter_unorder = array();
+	$a_filter_order = array();
+	$a_filter_order_tmp = array();
+	// Pointer to id of item being reordered
+	$found = 0;
+	$drag_order = $_REQUEST['dragtable'];
+	// Next traverse through rules building a new order for interface
+	for ($i = 0; isset($a_filter[$i]); $i++) {
+		if($a_filter[$i]['interface'] <> $_REQUEST['if']) 
+			$a_filter_unorder[] = $a_filter[$i];
+		else 
+			$a_filter_order_tmp[] = $a_filter[$i];
+	}
+	// Reorder rules with the posted order
+	for ($i = 0; $i<count($drag_order); $i++) 
+		$a_filter_order[] = $a_filter_order_tmp[$drag_order[$i]];
+	unset($config['filter']['rule']);
+	// Overwrite filter rules with newly created items
+	$config['filter']['rule'] = $a_filter_order;
+	foreach($a_filter_unorder as $aa) 
+		$config['filter']['rule'][] = $aa;
+	// Write configuration
+	$config = write_config("Drag and drop firewall rules ordering update.");
+	// Redirect back to page
+	mark_subsystem_dirty('filter');
+	Header("Location: firewall_rules.php?if=" . $_REQUEST['if']);
+	exit;
+}
+
 /* add group interfaces */
 if (is_array($config['ifgroups']['ifgroupentry']))
 	foreach($config['ifgroups']['ifgroupentry'] as $ifgen)
@@ -162,6 +194,10 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
+
+// Handle save msg if defined
+if($_REQUEST['savemsg']) 
+	$savemsg = htmlentities($_REQUEST['savemsg']);
 
 if (isset($_POST['del_x'])) {
 	/* delete selected rules */
@@ -245,12 +281,17 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_rules.php" method="post">
+
 <script type="text/javascript" language="javascript" src="/javascript/row_toggle.js">
 </script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('filter')): ?><p>
 <?php print_info_box_np("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
+<div id="loading" style="visibity:hidden">
+	<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif"> Loading, please wait...
+	<p/>&nbsp;
+</div>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php
@@ -368,6 +409,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				  </td>
 				</tr>
 <?php endif; ?>
+				<tbody id="dragtable" width="100%">
 				<?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++):
 					$filterent = $a_filter[$i];
 					if ($filterent['interface'] != $if && !isset($filterent['floating']))
@@ -589,7 +631,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else  echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
                   </td>
-<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><?=$textss;?>
+				  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><?=$textss;?>
                           <?php
 							if (isset($filterent['ackqueue']) && isset($filterent['defaultqueue'])) {
 								$desc = $filterent['ackqueue'] ;
@@ -622,6 +664,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				  </td>
 				</tr>
 			  <?php $nrules++; endfor; ?>
+			  </tbody>
 			  <?php if ($nrules == 0): ?>
               <td class="listt"></td>
 			  <td class="listt"></td>
@@ -693,13 +736,21 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                 </tr>
 		<tr>
 		  <td colspan="10">
-  <p>
-  <strong><span class="red">Hint:<br>
-  </span></strong>Rules are evaluated on a first-match basis (i.e.
+  &nbsp;<p/>
+  <strong>
+	<span class="red">Hint:</span>
+  </strong><br>
+	<ul>
+  <li>Rules are evaluated on a first-match basis (i.e.
   the action of the first rule to match a packet will be executed).
   This means that if you use block rules, you'll have to pay attention
   to the rule order. Everything that isn't explicitly passed is blocked
-  by default.</p>
+  by default.
+</li>
+<li>
+  You may drag and drop rules using your mouse to reorder the rule ordering.
+</li>
+</ul>
 		 </td>
 	        </tr>
               </table>
@@ -708,6 +759,32 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
   </tr>
 </table>
   <input type="hidden" name="if" value="<?=$if;?>">
+  <script type="text/javascript">
+	var number_of_rules = <?=$nrules?>;
+<?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++): ?>
+	Sortable.create("dragtable", { 
+		tag:"tr", 
+		format:"fr([0-9999999])",
+		containment:["dragtable"], 
+		onChange:function(affected) {
+			document.body.style.cursor = 'move';
+		},
+		onUpdate:function(container) { 
+			document.body.style.cursor = 'move';
+			updateOrder(Sortable.serialize('dragtable', 'tr'));
+		} 
+	});
+<?php endfor; ?>
+	function updateOrder(order) {
+		if(document.getElementById("redboxtable"))
+			$('redboxtable').hide();
+		$('loading').show();
+		document.body.style.cursor = 'wait';
+		document.location = 'firewall_rules.php?if=<?=$if?>&dragdroporder=true&' + Sortable.serialize('dragtable', 'tr');
+		return;
+	}
+	$('loading').hide();
+  </script>
 </form>
 <?php include("fend.inc"); ?>
 </body>

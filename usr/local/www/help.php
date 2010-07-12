@@ -226,8 +226,8 @@ $helppages = array(
 	'load_balancer_relay_protocol_edit.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
 	'load_balancer_virtual_server.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
 	'load_balancer_virtual_server_edit.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
-	'status_slbd_pool.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
-	'status_slbd_vs.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+	'status_lb_pool.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
+	'status_lb_vs.php' => 'http://doc.pfsense.org/index.php/Category:Load_balancing',
 
 
 	/* From here down are packages. Not checking these as strictly, 

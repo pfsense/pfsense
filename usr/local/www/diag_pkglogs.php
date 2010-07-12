@@ -77,7 +77,7 @@ if(!$apkg) { // If we aren't looking for a specific package, locate the first pa
 	$i = $apkgid;
 }
 
-$pgtitle = array("Status","Package logs");
+$pgtitle = array(gettext("Status"),gettext("Package logs"));
 include("head.inc");
 
 ?>
@@ -88,7 +88,7 @@ include("head.inc");
   <ul id="tabnav">
     <?php
 	if($pkgwithlogging == false) {
-		print_info_box("No packages with logging facilities are currently installed.");
+		print_info_box(gettext("No packages with logging facilities are currently installed."));
 		echo '</ul></td></tr></table>';
 		include("fend.inc");
 		exit;
@@ -112,7 +112,7 @@ include("head.inc");
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  Last <?= $nentries ?> <?= $curtab ?> log entries</td>
+			  <?php printf(gettext("Last %s %s log entries"),$nentries,$curtab); ?></td>
 		  </tr>
 		  <?php
 			$package =& $config['installedpackages']['package'][$apkgid];

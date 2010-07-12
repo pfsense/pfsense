@@ -121,12 +121,12 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 <h3><?php echo $label; ?></h3>
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td class="listhdrr">IP</td>
-		<td class="listhdrr"># States</td>
-		<td class="listhdrr">Proto</td>
-		<td class="listhdrr"># States</td>
-		<td class="listhdrr">Src Ports</td>
-		<td class="listhdrr">Dst Ports</td>
+		<td class="listhdrr"><?=gettext("IP");?></td>
+		<td class="listhdrr"># <?=gettext("States");?></td>
+		<td class="listhdrr"><?=gettext("Proto");?></td>
+		<td class="listhdrr"># <?=gettext("States");?></td>
+		<td class="listhdrr"><?=gettext("Src Ports");?></td>
+		<td class="listhdrr"><?=gettext("Dst Ports");?></td>
 	</tr>
 <?php   if ($sort)
 		uksort($iparr, "sort_by_ip");
@@ -156,16 +156,16 @@ function print_summary_table($label, $iparr, $sort = TRUE) { ?>
 <?
 }
 
-$pgtitle = array("Diagnostics", "State Table Summary");
+$pgtitle = array(gettext("Diagnostics"),gettext("State Table Summary"));
 require_once("guiconfig.inc");
 include("head.inc");
 include("fbegin.inc");
 
 
-print_summary_table("By Source IP", $srcipinfo);
-print_summary_table("By Destination IP", $dstipinfo);
-print_summary_table("Total per IP", $allipinfo);
-print_summary_table("By IP Pair", $pairipinfo, FALSE);
+print_summary_table(gettext("By Source IP"), $srcipinfo);
+print_summary_table(gettext("By Destination IP"), $dstipinfo);
+print_summary_table(gettext("Total per IP"), $allipinfo);
+print_summary_table(gettext("By IP Pair"), $pairipinfo, FALSE);
 ?>
 
 <?php include("fend.inc"); ?>

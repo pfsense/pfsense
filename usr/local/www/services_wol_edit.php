@@ -79,7 +79,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "interface mac");
-	$reqdfieldsn = explode(",", "Interface,MAC address");
+	$reqdfieldsn = array(gettext("Interface"),gettext("MAC address"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -87,7 +87,7 @@ if ($_POST) {
         $_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 	
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
-		$input_errors[] = "A valid MAC address must be specified.";
+		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
 
 	if (!$input_errors) {
@@ -109,7 +109,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services","Wake on LAN","Edit");
+$pgtitle = array(gettext("Services"),gettext("Wake on LAN"),gettext("Edit"));
 include("head.inc");
 
 ?>
@@ -120,10 +120,10 @@ include("head.inc");
             <form action="services_wol_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Edit WOL entry</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit WOL entry");?></td>
 				</tr>	
 			  <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Interface</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface");?></td>
                   <td width="78%" class="vtable">
 <select name="interface" class="formfld">
                       <?php 
@@ -134,27 +134,27 @@ include("head.inc");
                       </option>
                       <?php endforeach; ?>
                     </select> <br>
-                    <span class="vexpl">Choose which interface this host is connected to.</span></td>
+                    <span class="vexpl"><?=gettext("Choose which interface this host is connected to.");?></span></td>
                 </tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncellreq">MAC address</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="mac" type="text" class="formfld" id="mac" size="20" value="<?=htmlspecialchars($pconfig['mac']);?>">
                     <br> 
-                    <span class="vexpl">Enter a MAC address  in the following format: 
-                    xx:xx:xx:xx:xx:xx<em></em></span></td>
+                    <span class="vexpl"><?=gettext("Enter a MAC address  in the following format: ".
+                    "xx:xx:xx:xx:xx:xx");?><em></em></span></td>
                 </tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here".
+                   " for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input class="formbtn" type="button" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
                     <?php if (isset($id) && $a_wol[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

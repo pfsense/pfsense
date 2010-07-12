@@ -81,14 +81,14 @@ if ($_POST) {
 	$reqdfields = array();
 	$reqdfieldsn = array();
 	$reqdfields = array_merge($reqdfields, explode(" ", "host username password type"));
-	$reqdfieldsn = array_merge($reqdfieldsn, explode(",", "Hostname,Username,Password,Service type"));
+	$reqdfieldsn = array_merge($reqdfieldsn, array(gettext("Hostname"),gettext("Username"),gettext("Password"),gettext("Service type")));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (($_POST['mx'] && !is_domain($_POST['mx']))) 
-		$input_errors[] = "The MX contains invalid characters.";
+		$input_errors[] = gettext("The MX contains invalid characters.");
 	if (($_POST['username'] && !is_dyndns_username($_POST['username'])) || $_POST['username'] == "") 
-		$input_errors[] = "The username contains invalid characters.";
+		$input_errors[] = gettext("The username contains invalid characters.");
 
 	if (!$input_errors) {
 		$dyndns = array();
@@ -124,7 +124,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services","Dynamic DNS client");
+$pgtitle = array(gettext("Services"),gettext("Dynamic DNS client"));
 include("head.inc");
 
 ?>
@@ -138,18 +138,18 @@ include("head.inc");
                 <tr>
                   <td colspan="2" valign="top" class="optsect_t">
 				  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-				  <tr><td class="optsect_s"><strong>Dynamic DNS client</strong></td></tr>
+				  <tr><td class="optsect_s"><strong><?=gettext("Dynamic DNS client");?></strong></td></tr>
 				  </table>
 				  </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">Disable</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Disable");?></td>
 				  <td width="78%" class="vtable">
-				    <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
+				    <input name="enable" type="checkbox" id="enable" value="<?=gettext("yes");?>" <?php if ($pconfig['enable']) echo "checked"; ?>>
 				  </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Service type</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Service type");?></td>
                   <td width="78%" class="vtable">
 			<select name="type" class="formselect" id="type">
                       <?php
@@ -163,7 +163,7 @@ include("head.inc");
                     </select></td>
 				</tr>
 				<tr>
-				   <td width="22%" valign="top" class="vncellreq">Interface to monitor</td>  
+				   <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface to monitor");?></td>  
 				   <td width="78%" class="vtable">
 				   <select name="interface" class="formselect" id="interface">
 				   <?php $iflist = get_configured_interface_with_descr();
@@ -175,14 +175,14 @@ include("head.inc");
 					</td>
 				</tr>	
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Hostname</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Hostname");?></td>
                   <td width="78%" class="vtable">
                     <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
                     <br>
 				    <span class="vexpl">
-				    <span class="red"><strong>Note:<br></strong>
+				    <span class="red"><strong><?=gettext("Note:");?><br></strong>
 				    </span>
-					Enter the complete host/domain name.  example:  myhost.dyndns.org
+					<?=gettext("Enter the complete host/domain name.  example:  myhost.dyndns.org");?>
 				    </span>
 		          </td>
 				</tr>
@@ -191,31 +191,31 @@ include("head.inc");
                   <td width="78%" class="vtable">
                     <input name="mx" type="text" class="formfld unknown" id="mx" size="30" value="<?=htmlspecialchars($pconfig['mx']);?>">
                     <br>
-					Note: With DynDNS service you can only use a hostname, not an IP address.
+					<?=gettext("Note: With DynDNS service you can only use a hostname, not an IP address.");?>
 					<br>
-                    Set this option only if you need a special MX record. Not
-                    all services support this.</td>
+                    <?=gettext("Set this option only if you need a special MX record. Not".
+                   " all services support this.");?></td>
 				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Wildcards</td>
                   <td width="78%" class="vtable">
                     <input name="wildcard" type="checkbox" id="wildcard" value="yes" <?php if ($pconfig['wildcard']) echo "checked"; ?>>
-                    Enable Wildcard</td>
+                    <?=gettext("Enable ");?>Wildcard</td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Username</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Username");?></td>
                   <td width="78%" class="vtable">
                     <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
                   </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Password</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Password");?></td>
                   <td width="78%" class="vtable">
                     <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
                   </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="60" value="<?=htmlspecialchars($pconfig['descr']);?>">
                   </td>
@@ -223,8 +223,8 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)">
-					<a href="services_dyndns.php"><input name="cancel" type="button" class="formbtn" value="Cancel"></a>
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onClick="enable_change(true)">
+					<a href="services_dyndns.php"><input name="cancel" type="button" class="formbtn" value="<?=gettext("Cancel");?>"></a>
 					<?php if (isset($id) && $a_dyndns[$id]): ?>
 						<input name="id" type="hidden" value="<?=$id;?>">
 					<?php endif; ?>
@@ -232,10 +232,10 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
-                    </strong></span>You must configure a DNS server in <a href="system.php">System:
-                    General setup</a> or allow the DNS server list to be overridden
-                    by DHCP/PPP on WAN for dynamic DNS updates to work.</span></td>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+                    </strong></span><?php printf(gettext("You must configure a DNS server in %sSystem:
+                    General setup%s or allow the DNS server list to be overridden
+                    by DHCP/PPP on WAN for dynamic DNS updates to work."),'<a href="system.php">','</a>');?></span></td>
                 </tr>
               </table>
 </form>

@@ -309,7 +309,7 @@ include("head.inc");
 				<tr><td align="right"><b><?=gettext("Mode"); ?>:</b></td>
                   <td>
                       &nbsp;&nbsp;<input name="advancedoripsec" type="radio" id="ipsecpassthru" value="ipsecpassthru" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked";?>>
-                      <strong><?=gettext("Automatic outbound NAT rule generation<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(IPsec passthrough included)");?></strong>
+                      <strong><?=gettext("Automatic outbound NAT rule generation"); ?><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?=gettext("(IPsec passthrough included)");?></strong>
                   </td>
 
                   <td>

@@ -40,7 +40,7 @@
 ##|*MATCH=diag_ping.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Diagnostics"), "Ping");
+$pgtitle = array(gettext("Diagnostics"), gettext("Ping"));
 require("guiconfig.inc");
 
 define('MAX_COUNT', 10);
@@ -82,10 +82,10 @@ include("head.inc"); ?>
 			<form action="diag_ping.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Ping</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Ping"); ?></td>
 				</tr>
                 <tr>
-				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?>></td>
+				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
 				  <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
 				</tr>

@@ -77,7 +77,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("Services","IGMP Proxy");
+$pgtitle = array(gettext("Services"),gettext("IGMP Proxy"));
 include("head.inc");
 
 ?>
@@ -87,20 +87,20 @@ include("head.inc");
 <form action="services_igmpproxy.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('igmpproxy')): ?><p>
-<?php print_info_box_np("The IGMP entry list has been changed.<br>You must apply the changes in order for them to take effect.");?>
+<?php print_info_box_np(gettext("The IGMP entry list has been changed.<br>You must apply the changes in order for them to take effect."));?>
 <?php endif; ?>
 
 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr>
-  <td width="15%" class="listhdrr">Name</td>
-  <td width="10%" class="listhdrr">Type</td>
-  <td width="25%" class="listhdrr">Values</td>
-  <td width="25%" class="listhdr">Description</td>
+  <td width="15%" class="listhdrr"><?=gettext("Name");?></td>
+  <td width="10%" class="listhdrr"><?=gettext("Type");?></td>
+  <td width="25%" class="listhdrr"><?=gettext("Values");?></td>
+  <td width="25%" class="listhdr"><?=gettext("Description");?></td>
   <td width="5%" class="list">
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
 	<td valign="middle" width="17">&nbsp;</td>
-        <td valign="middle"><a href="services_igmpproxy_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new igmpentry"></a></td>
+        <td valign="middle"><a href="services_igmpproxy_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new igmpentry");?>"></a></td>
       </tr>
     </table>
   </td>
@@ -131,7 +131,7 @@ include("head.inc");
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
         <td valign="middle"><a href="services_igmpproxy_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="edit igmpentry"></a></td>
-        <td><a href="services_igmpproxy.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this igmpentry? All elements that still use it will become invalid (e.g. filter rules)!')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="delete igmpentry"></a></td>
+        <td><a href="services_igmpproxy.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this igmpentry? All elements that still use it will become invalid (e.g. filter rules)!");?>')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="<?=gettext("delete igmpentry");?>"></a></td>
       </tr>
     </table>
   </td>
@@ -143,7 +143,7 @@ include("head.inc");
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
 	<td valign="middle" width="17">&nbsp;</td>
-        <td valign="middle"><a href="services_igmpproxy_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new igmpentry"></a></td>
+        <td valign="middle"><a href="services_igmpproxy_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new igmpentry");?>"></a></td>
         </td>
       </tr>
     </table>
@@ -152,13 +152,13 @@ include("head.inc");
   <tr>
     <td colspan="2" width="78%">
 	<br />
-      <input id="submit" name="submit" type="submit" class="formbtn" value="Save" />
+      <input id="submit" name="submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
 	<br />
     </td>
   </tr>
 <tr>
   <td class="tabcont" colspan="4">
-   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface can be configured.</span></p>
+   <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br></strong></span><?=gettext("Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. Only one 'upstream' interface can be configured.");?></span></p>
   </td>
 </tr>
 </table>

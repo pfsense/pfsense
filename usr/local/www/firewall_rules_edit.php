@@ -796,7 +796,7 @@ include("head.inc");
 				</table>
 				<div id="showadvancedboxspr">
 					<p>
-					<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> type="button" onClick="show_source_port_range()" value="Advanced"></input> - <?=gettext("Show source port range");?></a>
+					<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> type="button" onClick="show_source_port_range()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show source port range");?></a>
 				</div>
 			</td>
 		</tr>
@@ -936,7 +936,7 @@ include("head.inc");
 				<input name="log" type="checkbox" id="log" value="yes" <?php if ($pconfig['log']) echo "checked"; ?>>
 				<strong><?=gettext("Log packets that are handled by this rule");?></strong>
 				<br />
-				<span class="vexpl"><?=gettext("Hint: the firewall has limited local log space. Don't turn on logging for everything. If you want to do a lot of logging, consider using a remote syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: Settings</a> page).");?></span>
+				<span class="vexpl"><?=gettext("Hint: the firewall has limited local log space. Don't turn on logging for everything. If you want to do a lot of logging, consider using a remote syslog server (see the"); ?> <a href="diag_logs_settings.php"><?=gettext("Diagnostics: System logs: Settings"); ?></a> <?=gettext("page).");?></span>
 			</td>
 		</tr>
 		<tr>
@@ -951,7 +951,7 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				&nbsp;<br>&nbsp;
-				<input name="Submit" type="submit" class="formbtn" value="Save">  <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 <?php			if (isset($id) && $a_filter[$id]): ?>
 					<input name="id" type="hidden" value="<?=$id;?>">
 <?php 			endif; ?>
@@ -968,7 +968,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Source OS");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvsourceosbox" <? if ($pconfig['os']) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_sourceos()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_sourceos()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showsourceosadv" <? if (empty($pconfig['os'])) echo "style='display:none'"; ?>>
 					<?=gettext("OS Type");?>:&nbsp;
@@ -1345,7 +1345,7 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				&nbsp;<br>&nbsp;
-				<input name="Submit" type="submit" class="formbtn" value="Save">  <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 <?php			if (isset($id) && $a_filter[$id]): ?>
 					<input name="id" type="hidden" value="<?=$id;?>">
 <?php 			endif; ?>

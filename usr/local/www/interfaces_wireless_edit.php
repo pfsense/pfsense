@@ -125,7 +125,7 @@ if ($_POST) {
 				if (isset($id) && $a_clones[$id]) {
 					if ($clone['if'] != $a_clones[$id]['if'])
 						mwexec("/sbin/ifconfig " . $a_clones[$id]['cloneif'] . " destroy");
-					$input_errors[] = "Created with id {$id}";
+					$input_errors[] = sprintf(gettext("Created with id %s"), $id);
 					$a_clones[$id] = $clone;
 				} else {
 					$input_errors[] = gettext("Created without id");
@@ -185,7 +185,7 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl"><?=gettext("You may enter a description here".
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here ".
                     "for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>

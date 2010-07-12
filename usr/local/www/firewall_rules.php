@@ -122,11 +122,6 @@ if($_REQUEST['dragdroporder']) {
 	$config['filter']['rule'] = $a_filter_order;
 	foreach($a_filter_unorder as $aa) 
 		$config['filter']['rule'][] = $aa;
-	// Identifty what changed
-	for ($i = 0; $i<count($drag_order); $i++) {
-		if(array_diff($a_filter_order[$i], $a_filter_order_tmp[$i])) 
-			$changed_item[] = $i;
-	}
 	// Write configuration
 	$config = write_config("Drag and drop firewall rules ordering update.");
 	// Redirect back to page
@@ -285,12 +280,17 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_rules.php" method="post">
+
 <script type="text/javascript" language="javascript" src="/javascript/row_toggle.js">
 </script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('filter')): ?><p>
 <?php print_info_box_np("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
+<div id="loading">
+	<img src="/themes/<?=$g['theme']?>/images/misc/loader.gif"> Loading, please wait...
+	<p/>&nbsp;
+</div>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php
@@ -768,10 +768,14 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 	});
 <?php endfor; ?>
 	function updateOrder(order) {
+		if(document.getElementById("redboxtable"))
+			$('redboxtable').hide();
+		$('loading').show();
 		document.body.style.cursor = 'wait';
 		document.location = 'firewall_rules.php?if=<?=$if?>&dragdroporder=true&' + Sortable.serialize('dragtable', 'tr');
 		return;
 	}
+	$('loading').hide();
   </script>
 </form>
 <?php include("fend.inc"); ?>

@@ -286,13 +286,12 @@ function local_user_set(& $user) {
 		mkdir($home_base, 0755);
 
 	/* configure shell type */
-	if (!(userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all"))) {
-		if (!userHasPrivilege($user, "user-copy-files"))
-			$user_shell = "/sbin/nologin";
-		else
-			$user_shell = "/usr/local/bin/scponly";
-	} else {
+	if (userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all")) {
 		$user_shell = "/bin/tcsh";
+	} elseif (!userHasPrivilege($user, "user-copy-files")) {
+		$user_shell = "/sbin/nologin";
+	} else {
+		$user_shell = "/usr/local/bin/scponly";
 	}
 
 	/* root user special handling */

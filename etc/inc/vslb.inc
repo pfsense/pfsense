@@ -261,16 +261,26 @@ function relayd_configure() {
   fclose($fd);
 
   if (is_process_running('relayd')) {
-    /*
-     * XXX: Something breaks our control connection with relayd and makes relayctl stop working
-     * rule reloads are the current suspect
-     * mwexec('/usr/local/bin/relayctl stop');
-     */
-     mwexec('pkill relayd');
+	if (! empty($vs_a)) {
+		// it's running and there is a config, just reload
+		mwexec("/usr/local/bin/relayctl reload");
+	} else {
+		/*
+		* XXX: Something breaks our control connection with relayd
+		* and makes 'relayctl stop' not work
+		* rule reloads are the current suspect
+		* mwexec('/usr/local/bin/relayctl stop');
+		*  returns "command failed"
+		*/
+		mwexec('pkill relayd');
+	}
+  } else {
+	if (! empty($vs_a)) {
+		// not running and there is a config, start it
+		mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
+	}	
   }
-  if (! empty($vs_a)) {
-    mwexec("/usr/local/sbin/relayd -f {$g['varetc_path']}/relayd.conf");
-  }
+
 }
 
 ?>

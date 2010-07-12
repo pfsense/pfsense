@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	status_slbd_pool.php
+	status_lb_pool.php
 	part of pfSense (http://www.pfsense.com/)
 
 	Copyright (C) 2006 Seth Mos <seth.mos@xs4all.nl>.
@@ -36,7 +36,7 @@
 ##|*IDENT=page-status-loadbalancer-pool
 ##|*NAME=Status: Load Balancer: Pool page
 ##|*DESCR=Allow access to the 'Status: Load Balancer: Pool' page.
-##|*MATCH=status_slbd_pool.php*
+##|*MATCH=status_lb_pool.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -46,7 +46,7 @@ if (!is_array($config['load_balancer']['lbpool'])) {
 }
 $a_pool = &$config['load_balancer']['lbpool'];
 
-$slbd_logfile = "{$g['varlog_path']}/slbd.log";
+$lb_logfile = "{$g['varlog_path']}/relayd.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
@@ -67,8 +67,8 @@ include("head.inc");
   <?php
         /* active tabs */
         $tab_array = array();
-        $tab_array[] = array("Pools", true, "status_slbd_pool.php");
-        $tab_array[] = array("Virtual Servers", false, "status_slbd_vs.php");
+        $tab_array[] = array("Pools", true, "status_lb_pool.php");
+        $tab_array[] = array("Virtual Servers", false, "status_lb_vs.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>
@@ -117,7 +117,7 @@ include("head.inc");
 						$lastchange = "";
                                                 $svr = split("\|", $server);
 						$monitorip = $svr[1];
-						$logstates = return_clog($slbd_logfile, $nentries, true, array("$monitorip", "marking"), "", true);
+						$logstates = return_clog($lb_logfile, $nentries, true, array("$monitorip", "marking"), "", true);
 
 						$logstates = $logstates[0];
 

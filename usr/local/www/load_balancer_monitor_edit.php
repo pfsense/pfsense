@@ -92,7 +92,7 @@ if ($_POST) {
 	/* Ensure that our monitor names are unique */
 	for ($i=0; isset($config['load_balancer']['monitor_type'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['monitor_type'][$i]['name']) && ($i != $id))
-			$input_errors[] = "This monitor name has already been used.  Monitor names must be unique.";
+			$input_errors[] = gettext("This monitor name has already been used.  Monitor names must be unique.");
 
 	switch($_POST['type']) {
 		case 'icmp': {
@@ -106,17 +106,17 @@ if ($_POST) {
 			if (is_array($pconfig['options'])) {
 				if (isset($pconfig['options']['host']) && $pconfig['options']['host'] != "") {
 					if (!is_hostname($pconfig['options']['host'])) {
-						$input_errors[] = "The hostname can only contain the characters A-Z, 0-9 and '-'.";
+						$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
 					}
 				}
 				if (isset($pconfig['options']['code']) && $pconfig['options']['code'] != "") {
 					// Check code
 					if(!is_rfc2616_code($pconfig['options']['code'])) {
-						$input_errors[] = "HTTP(s) codes must be from RFC2616.";
+						$input_errors[] = gettext("HTTP(s) codes must be from RFC2616.");
 					}
 				}
 				if (!isset($pconfig['options']['path']) || $pconfig['options']['path'] == "") {
-					$input_errors[] = "The path to monitor must be set.";
+					$input_errors[] = gettext("The path to monitor must be set.");
 				}
 			}
 			break;
@@ -187,9 +187,9 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services", "Load Balancer","Monitor","Edit");
-#$statusurl = "status_slbd_vs.php";
-$statusurl = "status_slbd_pool.php";
+$pgtitle = array(gettext("Services", "Load Balancer","Monitor","Edit"));
+#$statusurl = "status_lb_vs.php";
+$statusurl = "status_lb_pool.php";
 $logurl = "diag_logs_relayd.php";
 
 include("head.inc");
@@ -226,16 +226,16 @@ function updateType(t){
 	<form action="load_balancer_monitor_edit.php" method="post" name="iform" id="iform">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
  		<tr>
-			<td colspan="2" valign="top" class="listtopic">Edit Load Balancer - Monitor entry</td>
+			<td colspan="2" valign="top" class="listtopic">gettext("Edit Load Balancer - Monitor entry")</td>
                 </tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Name</td>
+			<td width="22%" valign="top" class="vncellreq">gettext("Name")</td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
 			</td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Description</td>
+			<td width="22%" valign="top" class="vncellreq">gettext("Description")</td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
 			</td>
@@ -266,19 +266,19 @@ function updateType(t){
 			<td width="78%" class="vtable" colspan="2">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr align="left">
-						<td valign="top" align="right" class="vtable">Path</td>
+						<td valign="top" align="right" class="vtable">gettext("Path")</td>
 						<td class="vtable" colspan="2">
 							<input name="http_options_path" type="text" <?if(isset($pconfig['options']['path'])) echo "value=\"{$pconfig['options']['path']}\"";?>size="64">
 						</td>
 					</tr>
 					<tr align="left">
-						<td valign="top"  align="right" class="vtable">Host</td>
+						<td valign="top"  align="right" class="vtable">gettext("Host")</td>
 						<td class="vtable" colspan="2">
-							<input name="http_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"{$pconfig['options']['host']}\"";?>size="64"><br/>Hostname for Host: header if needed.
+							<input name="http_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"{$pconfig['options']['host']}\"";?>size="64"><br/>gettext("Hostname for Host: header if needed.")
 						</td>
 					</td>
 					<tr align="left">
-						<td valign="top"  align="right" class="vtable">HTTP Code</td>
+						<td valign="top"  align="right" class="vtable">gettext("HTTP Code")</td>
 						<td class="vtable" colspan="2">
 							<?= print_rfc2616_select("http_options_code", $pconfig['options']['code']); ?>
 						</td>
@@ -307,11 +307,11 @@ function updateType(t){
 					<tr align="left">
 						<td valign="top"  align="right" class="vtable">Host</td>
 						<td class="vtable" colspan="2">
-							<input name="https_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"{$pconfig['options']['host']}\"";?>size="64"><br/>Hostname for Host: header if needed.
+							<input name="https_options_host" type="text" <?if(isset($pconfig['options']['host'])) echo "value=\"{$pconfig['options']['host']}\"";?>size="64"><br/>gettext("Hostname for Host: header if needed.")
 						</td>
 					</td>
 					<tr align="left">
-						<td valign="top"  align="right" class="vtable">HTTP Code</td>
+						<td valign="top"  align="right" class="vtable">gettext("HTTP Code")</td>
 						<td class="vtable" colspan="2">
 							<?= print_rfc2616_select("https_options_code", $pconfig['options']['code']); ?>
 						</td>
@@ -329,17 +329,17 @@ function updateType(t){
 			</td>
 		</tr>
 		<tr align="left" id="send"<?= $pconfig['type'] == "send" ? "" : " style=\"display:none;\""?>>
-			<td width="22%" valign="top" class="vncellreq">Send/Expect</td>
+			<td width="22%" valign="top" class="vncellreq">gettext("Send/Expect")</td>
 			<td width="78%" class="vtable" colspan="2">
 				<table width="100%" border="0" cellpadding="6" cellspacing="0">
 					<tr align="left">
-						<td valign="top"  align="right" class="vtable">Send string</td>
+						<td valign="top"  align="right" class="vtable">gettext("Send string")</td>
 						<td class="vtable" colspan="2">
 							<input name="send_options_send" type="text" <?if(isset($pconfig['options']['send'])) echo "value=\"{$pconfig['options']['send']}\"";?>size="64">
 						</td>
 					</tr>
 					<tr align="left">
-						<td valign="top" align="right"  class="vtable">Expect string</td>
+						<td valign="top" align="right"  class="vtable">gettext("Expect string")</td>
 						<td class="vtable" colspan="2">
 							<input name="send_options_expect" type="text" <?if(isset($pconfig['options']['expect'])) echo "value=\"{$pconfig['options']['expect']}\"";?>size="64">
 						</td>

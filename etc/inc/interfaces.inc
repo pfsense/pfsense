@@ -2127,21 +2127,17 @@ EOD;
 	unset($output);
 	$reg_changing = false;
 
-	if ($wlcfg['regdomain'] && !preg_match("/\sregdomain\s+{$wlcfg['regdomain']}\s/si", $ifconfig_str))
+	/* special case for the debug country code */
+	if ($wlcfg['regcountry'] == 'DEBUG' && !preg_match("/\sregdomain\s+DEBUG\s/si", $ifconfig_str))
+		$reg_changing = true;
+	else if ($wlcfg['regdomain'] && !preg_match("/\sregdomain\s+{$wlcfg['regdomain']}\s/si", $ifconfig_str))
 		$reg_changing = true;
 	else if ($wlcfg['regcountry'] && !preg_match("/\scountry\s+{$wlcfg['regcountry']}\s/si", $ifconfig_str))
 		$reg_changing = true;
-	/* anywhere needs a special case, since it is not included in the ifconfig output.
-	 * Do not combine this if with the one inside. */
-	else if ($wlcfg['reglocation'] == 'anywhere') {
-		if (preg_match("/\s(indoor|outdoor)\s/si", $ifconfig_str))
-			$reg_changing = true;
-	} else if ($wlcfg['reglocation'] && !preg_match("/\s{$wlcfg['reglocation']}\s/si", $ifconfig_str))
+	else if ($wlcfg['reglocation'] == 'anywhere' && preg_match("/\s(indoor|outdoor)\s/si", $ifconfig_str))
 		$reg_changing = true;
-
-	/* special case for the debug country code */
-	if ($wlcfg['regcountry'] == 'DEBUG' && preg_match("/\sregdomain\s+DEBUG\s/si", $ifconfig_str))
-		$reg_changing = false;
+	else if ($wlcfg['reglocation'] && $wlcfg['reglocation'] != 'anywhere' && !preg_match("/\s{$wlcfg['reglocation']}\s/si", $ifconfig_str))
+		$reg_changing = true;
 
 	if ($reg_changing) {
 		/* set regulatory domain */

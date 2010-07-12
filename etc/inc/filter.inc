@@ -1085,7 +1085,8 @@ function filter_nat_rules_generate() {
 			if($natif) {
 				/* If reflection is enabled, turn on extra redirections
 				 * for this rule by adding other interfaces to binat rule. */
-				if(isset($config['system']['enablebinatreflection'])) {
+				if((isset($config['system']['enablebinatreflection']) || $natent['natreflection'] == "enable")
+				   && $natent['natreflection'] != "disable") {
 					$nat_if_list = filter_get_reflection_interfaces($natif);
 				} else {
 					$nat_if_list = array();
@@ -1281,10 +1282,8 @@ function filter_nat_rules_generate() {
 	fwrite($inetd_fd, "tftp-proxy\tdgram\tudp\twait\t\troot\t/usr/libexec/tftp-proxy\ttftp-proxy -v\n");
 
 	if(isset($config['nat']['rule'])) {
-		if(!isset($config['system']['disablenatreflection'])) {
-			/* start redirects on port 19000 of localhost */
-			$starting_localhost_port = 19000;
-		}
+		/* start reflection redirects on port 19000 of localhost */
+		$starting_localhost_port = 19000;
 		$natrules .= "# NAT Inbound Redirects\n";
 		foreach ($config['nat']['rule'] as $rule) {
 			update_filter_reload_status("Creating NAT rule {$rule['descr']}");
@@ -1360,7 +1359,8 @@ function filter_nat_rules_generate() {
 			} else
 				$nordr = "";
 
-			if(!isset($config['system']['disablenatreflection'])) {
+			if((!isset($config['system']['disablenatreflection']) || $rule['natreflection'] == "enable")
+			   && $rule['natreflection'] != "disable") {
 				$nat_if_list = filter_get_reflection_interfaces($natif);
 			} else {
 				$nat_if_list = array();
@@ -2126,13 +2126,18 @@ EOD;
 		}
 	}
 
-	$ipfrules .= "# NAT Reflection rules\n";
-	if(isset($config['nat']['rule']) &&
-		(!isset($config['system']['disablenatreflection']))) {
-		$ipfrules .= <<<EOD
+	if(isset($config['nat']['rule']) && is_array($config['nat']['rule'])) {
+		foreach ($config['nat']['rule'] as $rule) {
+			if((!isset($config['system']['disablenatreflection']) || $rule['natreflection'] == "enable")
+			   && $rule['natreflection'] != "disable") {
+				$ipfrules .= "# NAT Reflection rules\n";
+				$ipfrules .= <<<EOD
 pass in inet tagged PFREFLECT keep state label "NAT REFLECT: Allow traffic to localhost"
 
 EOD;
+				break;
+			}
+		}
 	}
 
 	if(isset($config['filter']['rule'])) {

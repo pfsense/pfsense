@@ -603,21 +603,22 @@ function services_dnsmasq_configure() {
 		if (isset($config['dnsmasq']['regdhcp'])) {
 			$args .= " --dhcp-hostsfile={$g['varetc_path']}/hosts ";
 		}
-
+		
+		/* Setup forwarded domains */
 		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
 			foreach($config['dnsmasq']['domainoverrides'] as $override) {
 			        $args .= ' --server=/' . $override['domain'] . '/' . $override['ip'];
 			}
 		}
 
-		/* suppose that dnsmasq handles our domain and don't send
-		requests for our local domain to upstream servers */
-		//if (!empty($config['system']['domain'])) {
-		//	$args .= sprintf(' --local=/%s/', $config['system']['domain']);
-		//}
+		/* Allow DNS Rebind for forwarded domains */
+		if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
+			foreach($config['dnsmasq']['domainoverrides'] as $override) {
+				$args .= ' --rebind-domain-ok=/' . $override['domain'] . '/ ';
+			}
+		}
 
 		/* run dnsmasq */
-		//--rebind-localhost-ok
 		mwexec("/usr/local/sbin/dnsmasq --rebind-localhost-ok --stop-dns-rebind --local-ttl 1 --all-servers --dns-forward-max=5000 --cache-size=10000 {$args}");
 
 		if ($g['booting'])

@@ -36,6 +36,7 @@
 ##|-PRIV
 
 
+require("globals.inc");
 require("guiconfig.inc");
 require("functions.inc");
 require("filter.inc");
@@ -46,6 +47,8 @@ function gentitle_pkg($pgname) {
 	global $config;
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
+
+global $g;
 
 $stepid = htmlspecialchars($_GET['stepid']);
 if (isset($_POST['stepid']))
@@ -75,9 +78,9 @@ if (!is_array($pkg)) {
 	die;
 }
 
-$title          = $pkg['step'][$stepid]['title'];
-$description    = $pkg['step'][$stepid]['description'];
-$totalsteps     = $pkg['totalsteps'];
+$title       = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
+$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
+$totalsteps  = $pkg['totalsteps'];
 
 if ($pkg['includefile'])
         require_once($pkg['includefile']);
@@ -119,9 +122,6 @@ if ($_POST) {
 	$stepid = $totalsteps;
 }
 
-$title          = $pkg['step'][$stepid]['title'];
-$description    = $pkg['step'][$stepid]['description'];
-
 function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;
 	$field_split = split("->",$field);
@@ -157,6 +157,9 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	$text = "\$config" . $field_conv . " = \"" . $updatetext . "\";";
 	eval($text);
 }
+
+$title       = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
+$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
 
 // handle before form display event.
 do {

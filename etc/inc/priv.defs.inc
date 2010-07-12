@@ -790,13 +790,13 @@ $priv_list['page-status-loadbalancer-pool'] = array();
 $priv_list['page-status-loadbalancer-pool']['name'] = "WebCfg - Status: Load Balancer: Pool page";
 $priv_list['page-status-loadbalancer-pool']['descr'] = "Allow access to the 'Status: Load Balancer: Pool' page.";
 $priv_list['page-status-loadbalancer-pool']['match'] = array();
-$priv_list['page-status-loadbalancer-pool']['match'][] = "status_slbd_pool.php*";
+$priv_list['page-status-loadbalancer-pool']['match'][] = "status_lb_pool.php*";
 
 $priv_list['page-status-loadbalancer-virtualserver'] = array();
 $priv_list['page-status-loadbalancer-virtualserver']['name'] = "WebCfg - Status: Load Balancer: Virtual Server page";
 $priv_list['page-status-loadbalancer-virtualserver']['descr'] = "Allow access to the 'Status: Load Balancer: Virtual Server' page.";
 $priv_list['page-status-loadbalancer-virtualserver']['match'] = array();
-$priv_list['page-status-loadbalancer-virtualserver']['match'][] = "status_slbd_vs.php*";
+$priv_list['page-status-loadbalancer-virtualserver']['match'][] = "status_lb_vs.php*";
 
 $priv_list['page-status-upnpstatus'] = array();
 $priv_list['page-status-upnpstatus']['name'] = "WebCfg - Status: UPnP Status page";

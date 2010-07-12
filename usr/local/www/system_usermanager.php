@@ -319,10 +319,10 @@ if (isAllowedPage("system_usermanager")) {
 				}
 				$userent['uid'] = $config['system']['nextuid']++;
 				/* Add the user to All Users group. */
-				if (!is_array($config['system']['group']['member']))
-					$config['system']['group']['member'] = array();
 				foreach ($config['system']['group'] as $gidx => $group) {
 					if ($group['name'] == "all") {
+						if (!is_array($config['system']['group'][$gidx]['member']))
+							$config['system']['group'][$gidx]['member'] = array();
 						$config['system']['group'][$gidx]['member'][] = $userent['uid'];
 						break;
 					}

@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	status_slbd_vs.php
+	status_lb_vs.php
 	part of pfSense (http://www.pfsense.com/)
 
 	Copyright (C) 2007 Seth Mos <seth.mos@xs4all.nl>.
@@ -37,7 +37,7 @@
 ##|*IDENT=page-status-loadbalancer-virtualserver
 ##|*NAME=Status: Load Balancer: Virtual Server page
 ##|*DESCR=Allow access to the 'Status: Load Balancer: Virtual Server' page.
-##|*MATCH=status_slbd_vs.php*
+##|*MATCH=status_lb_vs.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -119,8 +119,8 @@ include("head.inc");
   <?php
         /* active tabs */
         $tab_array = array();
-        $tab_array[] = array("Pools", false, "status_slbd_pool.php");
-        $tab_array[] = array("Virtual Servers", true, "status_slbd_vs.php");
+        $tab_array[] = array("Pools", false, "status_lb_pool.php");
+        $tab_array[] = array("Virtual Servers", true, "status_lb_vs.php");
         display_top_tabs($tab_array);
   ?>
   </td></tr>

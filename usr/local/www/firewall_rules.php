@@ -735,13 +735,21 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                 </tr>
 		<tr>
 		  <td colspan="10">
-  <p>
-  <strong><span class="red">Hint:<br>
-  </span></strong>Rules are evaluated on a first-match basis (i.e.
+  &nbsp;<p/>
+  <strong>
+	<span class="red">Hint:</span>
+  </strong><br>
+	<ul>
+  <li>Rules are evaluated on a first-match basis (i.e.
   the action of the first rule to match a packet will be executed).
   This means that if you use block rules, you'll have to pay attention
   to the rule order. Everything that isn't explicitly passed is blocked
-  by default.</p>
+  by default.
+</li>
+<li>
+  You may drag and drop rules using your mouse to reorder the rule ordering.
+</li>
+</ul>
 		 </td>
 	        </tr>
               </table>

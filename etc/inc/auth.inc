@@ -415,7 +415,7 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 	if (!is_array($config['system']['group']))
 		return;
 
-	$cur_groups = local_user_get_groups($user);
+	$cur_groups = local_user_get_groups($user, true);
 	$mod_groups = array();
 
 	if (!is_array($new_groups))

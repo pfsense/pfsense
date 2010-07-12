@@ -73,7 +73,7 @@ function dyndnsCheckIP($int) {
 	return $ip_address;
 }
 
-$pgtitle = array("Services", "Dynamic DNS clients");
+$pgtitle = array(gettext("Services"), gettext("Dynamic DNS clients"));
 include("head.inc");
 
 ?>
@@ -97,10 +97,10 @@ include("head.inc");
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
 		  <td width="5%"  class="listhdrr"></td>
-		  <td width="15%" class="listhdrr">Service</td>
-                  <td width="20%" class="listhdrr">Hostname</td>
-                  <td width="20%" class="listhdrr">Cached IP</td>
-                  <td width="50%" class="listhdr">Description</td>
+		  <td width="15%" class="listhdrr"><?=gettext("Service");?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("Cached IP");?></td>
+                  <td width="50%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list"></td>
 		</tr>
 		  <?php $i = 0; foreach ($a_dyndns as $dyndns): ?>
@@ -148,7 +148,7 @@ include("head.inc");
                     <?=htmlspecialchars($dyndns['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="services_dyndns_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="services_dyndns.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="services_dyndns.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
@@ -157,9 +157,9 @@ include("head.inc");
 				</tr>
 				<tr>
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  Note:<br>
+				  <?=gettext("Note:");?><br>
 				  </strong></span>
-				  IP addresses appearing in green are up to date with Dynamic DNS provider.
+				  <?=gettext("IP addresses appearing in green are up to date with Dynamic DNS provider.");?>
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

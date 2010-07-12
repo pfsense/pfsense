@@ -359,8 +359,12 @@ function local_user_del($user) {
 	/* remove all memberships */
 	local_user_set_groups($user);
 
+	/* Don't remove /root */
+	if ($user['uid'] != 0)
+		$rmhome = "-r";
+
 	/* delete from pw db */
-	$cmd = "/usr/sbin/pw userdel {$user['name']}";
+	$cmd = "/usr/sbin/pw userdel {$user['name']} {$rmhome}";
 
 	if($debug)
 		log_error("Running: {$cmd}");

@@ -303,10 +303,10 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	}	
 		
 	echo <<<EOFnp
-	<table class='infobox'>
+	<table class='infobox' id='redboxtable'>
 		<tr>
 			<td>
-				<div class='infoboxnp' id='redbox'>
+				<div class='infoboxnp' id='redboxbox'>
 					<table class='infoboxnptable2'>
 						<tr>
 							<td class='infoboxnptd'>

@@ -40,7 +40,7 @@
 ##|*MATCH=diag_ping.php*
 ##|-PRIV
 
-$pgtitle = array("Diagnostics", "Ping");
+$pgtitle = array(gettext("Diagnostics"), gettext("Ping"));
 require("guiconfig.inc");
 
 define('MAX_COUNT', 10);
@@ -52,11 +52,11 @@ if ($_POST || $_REQUEST['host']) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "host count");
-	$reqdfieldsn = explode(",", "Host,Count");
+	$reqdfieldsn = array(gettext("Host"),gettext("Count"));
 	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (($_REQUEST['count'] < 1) || ($_REQUEST['count'] > MAX_COUNT)) {
-		$input_errors[] = "Count must be between 1 and {MAX_COUNT}";
+		$input_errors[] = sprintf(gettext("Count must be between 1 and %s"), MAX_COUNT);
 	}
 
 	if (!$input_errors) {
@@ -82,15 +82,15 @@ include("head.inc"); ?>
 			<form action="diag_ping.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Ping</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Ping"); ?></td>
 				</tr>
                 <tr>
-				  <td width="22%" valign="top" class="vncellreq">Host</td>
+				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Host"); ?></td>
 				  <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
 				</tr>
 				<tr>
-				  <td width="22%" valign="top" class="vncellreq">Interface</td>
+				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 				  <td width="78%" class="vtable">
 				  <select name="interface" class="formfld">
                       <?php $interfaces = get_configured_interface_with_descr();
@@ -103,7 +103,7 @@ include("head.inc"); ?>
 				  </td>
 				</tr>
 				<tr>
-				  <td width="22%" valign="top" class="vncellreq">Count</td>
+				  <td width="22%" valign="top" class="vncellreq"><?= gettext("Count"); ?></td>
 				  <td width="78%" class="vtable">
 					<select name="count" class="formfld" id="count">
 					<?php for ($i = 1; $i <= MAX_COUNT; $i++): ?>
@@ -114,14 +114,14 @@ include("head.inc"); ?>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Ping">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Ping"); ?>">
 				</td>
 				</tr>
 				<tr>
 				<td valign="top" colspan="2">
 				<? if ($do_ping) {
 					echo "<font face='terminal' size='2'>";
-					echo("<strong>Ping output:</strong><br>");
+					echo "<strong>" . gettext("Ping output") . ":</strong><br>";
 					echo('<pre>');
 					$ifaddr = get_interface_ip($interface);
 					if ($ifaddr)

@@ -48,7 +48,7 @@ if($_REQUEST['getactivity']) {
 	if($_REQUEST['sorttype'])
 		$sorttype = escapeshellarg($_REQUEST['sorttype']);
 	else
-		$sorttype = "bytes";	
+		$sorttype = gettext("bytes");	
 	$text = `pftop -b -a -o {$sorttype}`;
 	echo $text;
 	exit;
@@ -59,7 +59,7 @@ include("head.inc");
 if($_REQUEST['sorttype'])
 	$sorttype = htmlentities($_REQUEST['sorttype']);
 else
-	$sorttype = "bytes";
+	$sorttype = gettext("bytes");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -96,7 +96,7 @@ else
 		print_input_errors($input_errors);
 ?>
 	<form method="post">
-	Sort type: 
+	<?=gettext("Sort type"); ?>: 
 	<select name='sorttype' id='sorttype' onChange='this.form.submit();'>
 		<option value='<?=$sorttype?>'><?=$sorttype?></option>
 		<option value='age'>age</option>

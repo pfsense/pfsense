@@ -64,7 +64,7 @@ else {
 	exec("/sbin/pfctl -s state", $states);
 }
 
-$pgtitle = array("Diagnostics","Show States");
+$pgtitle = array(gettext("Diagnostics"),gettext("Show States"));
 include("head.inc");
 
 ?>
@@ -134,7 +134,7 @@ include("head.inc");
 				<tr>
 					<td>Current state count: <?=$current_statecount?></td>
 					<td style="font-weight:bold;" align="right">
-						<?=gettext("Filter expression:");?>
+						<?=gettext("Filter expression");?>:
 						<input type="text" name="filter" class="formfld search" value="<?=$_GET['filter'];?>" size="30" />
 						<input type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
 					<td>

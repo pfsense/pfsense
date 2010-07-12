@@ -752,16 +752,17 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 </table>
   <input type="hidden" name="if" value="<?=$if;?>">
   <script type="text/javascript">
+	var number_of_rules = <?=$nrules?>;
 <?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++): ?>
 	Sortable.create("dragtable", { 
 		tag:"tr", 
 		format:"fr([0-9999999])",
 		containment:["dragtable"], 
-		onChange: function() {
-			document.body.style.cursor = 'pointer';
+		onChange:function(affected) {
+			document.body.style.cursor = 'move';
 		},
-		onUpdate:function() { 
-			document.body.style.cursor = 'pointer';
+		onUpdate:function(container) { 
+			document.body.style.cursor = 'move';
 			updateOrder(Sortable.serialize('dragtable', 'tr'));
 		} 
 	});

@@ -1335,8 +1335,8 @@ include("head.inc");
 				</select>			
 				<br/>
 				<span class="vexpl">
-					<?=gettext("Choose a Layer7 container to apply application protocol inspection rules.
-					These are valid for TCP and UDP protocols only.");?>
+					<?=gettext("Choose a Layer7 container to apply application protocol inspection rules. " .
+					"These are valid for TCP and UDP protocols only.");?>
 				</span>
 			  </div>
 			</td>

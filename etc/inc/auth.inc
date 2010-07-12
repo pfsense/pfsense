@@ -285,6 +285,7 @@ function local_user_set(& $user) {
 	if (!is_dir($home_base)) 
 		mkdir($home_base, 0755);
 
+	$lock_account = false;
 	/* configure shell type */
 	if (userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all")) {
 		$user_shell = "/bin/tcsh";
@@ -294,6 +295,13 @@ function local_user_set(& $user) {
 		$user_shell = "/usr/local/bin/scponly";
 	} else {
 		$user_shell = "/sbin/nologin";
+		$lock_account = true;
+	}
+
+	/* Lock out disabled or expired users, unless it's root/admin. */
+	if ((is_account_disabled($user_name) || is_account_expired($user_name)) && ($user_uid != 0)) {
+		$user_shell = "/sbin/nologin";
+		$lock_account = true;
 	}
 
 	/* root user special handling */
@@ -350,6 +358,9 @@ function local_user_set(& $user) {
 		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
 		chown("{$user_home}/.ssh/authorized_keys", $user_name);
 	}
+
+	$un = $lock_account ? "" : "un";
+	exec("/usr/sbin/pw {$un}lock {$user_name}");
 	
 	conf_mount_ro();
 }

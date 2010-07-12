@@ -94,8 +94,8 @@ for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 }
 
 $pgtitle = array("Services","Load Balancer","Virtual Servers");
-$statusurl = "status_slbd_vs.php";
-#$statusurl = "status_slbd_pool.php";
+$statusurl = "status_lb_vs.php";
+#$statusurl = "status_lb_pool.php";
 $logurl = "diag_logs_relayd.php";
 
 include("head.inc");

@@ -158,6 +158,9 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 	eval($text);
 }
 
+$title       = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['title']);
+$description = preg_replace("/pfSense/i", $g['product_name'], $pkg['step'][$stepid]['description']);
+
 // handle before form display event.
 do {
 	$oldstepid = $stepid;

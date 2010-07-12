@@ -306,7 +306,7 @@ function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	<table class='infobox' id='redboxtable'>
 		<tr>
 			<td>
-				<div class='infoboxnp' id='infoboxnp'>
+				<div class='infoboxnp' id='redbox'>
 					<table class='infoboxnptable2'>
 						<tr>
 							<td class='infoboxnptd'>

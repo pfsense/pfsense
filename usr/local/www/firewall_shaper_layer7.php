@@ -540,7 +540,7 @@ include("fbegin.inc");
 							<? endif; ?>							
 						</td>
 						<td>
-							<input type="image" src="/themes/<? echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow('maintable',this.parentNode.parentNode); return false;" value="Delete" />
+							<input type="image" src="/themes/<? echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow('maintable',this.parentNode.parentNode); return false;" value="<?=gettext("Delete"); ?>" />
 						</td>
 						</tr>
 						

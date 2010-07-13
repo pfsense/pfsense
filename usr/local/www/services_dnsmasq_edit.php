@@ -77,18 +77,18 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "domain ip");
-	$reqdfieldsn = explode(",", "Domain,IP address");
+	$reqdfieldsn = array(gettext("Domain"),gettext("IP address"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
 	if (($_POST['host'] && !is_hostname($_POST['host']))) 
-		$input_errors[] = "The hostname can only contain the characters A-Z, 0-9 and '-'.";
+		$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
 
 	if (($_POST['domain'] && !is_domain($_POST['domain']))) 
-		$input_errors[] = "A valid domain must be specified.";
+		$input_errors[] = gettext("A valid domain must be specified.");
 		
 	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) 
-		$input_errors[] = "A valid IP address must be specified.";
+		$input_errors[] = gettext("A valid IP address must be specified.");
 
 	/* check for overlaps */
 	foreach ($a_hosts as $hostent) {
@@ -96,7 +96,7 @@ if ($_POST) {
 			continue;
 
 		if (($hostent['host'] == $_POST['host']) && ($hostent['domain'] == $_POST['domain'])) {
-			$input_errors[] = "This host/domain already exists.";
+			$input_errors[] = gettext("This host/domain already exists.");
 			break;
 		}
 	}
@@ -123,7 +123,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services","DNS forwarder","Edit host");
+$pgtitle = array(gettext("Services"),gettext("DNS forwarder"),gettext("Edit host"));
 include("head.inc");
 
 ?>
@@ -134,41 +134,41 @@ include("head.inc");
         <form action="services_dnsmasq_edit.php" method="post" name="iform" id="iform">
         <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-					<td colspan="2" valign="top" class="listtopic">Edit DNS Forwarder entry</td>
+					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit DNS Forwarder entry");?></td>
 				</tr>	
                 <tr>
-                  <td width="22%" valign="top" class="vncell">Host</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Host");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="host" type="text" class="formfld" id="host" size="40" value="<?=htmlspecialchars($pconfig['host']);?>">
-                    <br> <span class="vexpl">Name of the host, without
-                    domain part<br>
-                    e.g. <em>myhost</em></span></td>
+                    <br> <span class="vexpl"><?=gettext("Name of the host, without".
+                   " domain part<br>".
+                   " e.g. <em>myhost</em>");?></span></td>
                 </tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncellreq">Domain</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Domain");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
-                    <br> <span class="vexpl">Domain of the host<br>
-                    e.g. <em>example.com</em></span></td>
+                    <br> <span class="vexpl"><?=gettext("Domain of the host<br>".
+                   " e.g. <em>example.com</em>");?></span></td>
                 </tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncellreq">IP address</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("IP address");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="ip" type="text" class="formfld" id="ip" size="40" value="<?=htmlspecialchars($pconfig['ip']);?>">
-                    <br> <span class="vexpl">IP address of the host<br>
-                    e.g. <em>192.168.100.100</em></span></td>
+                    <br> <span class="vexpl"><?=gettext("IP address of the host<br>".
+                   " e.g. <em>192.168.100.100</em>");?></span></td>
                 </tr>
 				<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here".
+                   " for your reference (not parsed).");?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input class="formbtn" type="button" value="Cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>"> <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
                     <?php if (isset($id) && $a_hosts[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

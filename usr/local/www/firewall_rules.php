@@ -692,7 +692,7 @@ if($_REQUEST['undodrag']) {
 			  <span class="gray">
 			  <?=gettext("No rules are currently defined for this interface")."<br>".
 			  gettext("All incoming connections on this interface will be blocked until you add pass rules.")."<br><br>";?>
-			  Click the <a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="absmiddle"></a><?=gettext(" button to add a new rule.");?></span>
+			  <?=gettext("Click the"); ?> <a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add new rule");?>" border="0" width="17" height="17" align="absmiddle"></a><?=gettext(" button to add a new rule.");?></span>
 			  </td>
 			  <?php endif; ?>
                 <tr id="fr<?=$nrules;?>">

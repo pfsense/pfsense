@@ -48,7 +48,6 @@ function passthrumacs_sort() {
         usort($config['captiveportal']['passthrumac'],"passthrumacscmp");
 }
 
-$pgtitle = array("Services","Captive portal","Edit pass-through MAC address");
 $statusurl = "status_captiveportal.php";
 $logurl = "diag_logs_auth.php";
 
@@ -57,6 +56,8 @@ require("functions.inc");
 require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
+
+$pgtitle = array(gettext("Services"),gettext("Captive portal"),gettext("Edit pass-through MAC address"));
 
 if (!is_array($config['captiveportal']['passthrumac']))
 	$config['captiveportal']['passthrumac'] = array();
@@ -81,26 +82,26 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "mac");
-	$reqdfieldsn = explode(",", "MAC address");
+	$reqdfieldsn = array(gettext("MAC address"));
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
 	$_POST['mac'] = str_replace("-", ":", $_POST['mac']);
 	
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
-		$input_errors[] = "A valid MAC address must be specified. [".$_POST['mac']."]";
+		$input_errors[] = sprintf("%s. [%s]", gettext("A valid MAC address must be specified"), $_POST['mac']);
 	}
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up']))
-		$input_errors[] = "Upload speed needs to be an integer";
+		$input_errors[] = gettext("Upload speed needs to be an integer");
 	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down']))
-		$input_errors[] = "Download speed needs to be an integer";
+		$input_errors[] = gettext("Download speed needs to be an integer");
 
 	foreach ($a_passthrumacs as $macent) {
 		if (isset($id) && ($a_passthrumacs[$id]) && ($a_passthrumacs[$id] === $macent))
 			continue;
 		
 		if ($macent['mac'] == $_POST['mac']){
-			$input_errors[] = "[" . $_POST['mac'] . "] already allowed." ;
+			$input_errors[] = sprintf("[%s] %s.", $_POST['mac'], gettext("already allowed"));
 			break;
 		}	
 	}
@@ -129,8 +130,8 @@ if ($_POST) {
 		$ruleno = captiveportal_get_ipfw_passthru_ruleno($oldmac);
 		if ($ruleno) {
 			captiveportal_free_ipfw_ruleno($ruleno);
-			$rules = "delete {$ruleno}\n";
-			$rules .= "delete " . ++$ruleno . "\n";
+			$rules = sprintf("%s %s\n", gettext("delete"), $ruleno);
+			$rules .= gettext("delete") . " " . ++$ruleno . "\n";
 			$rules .= captiveportal_passthrumac_configure_entry($mac);
 			file_put_contents("{$g['tmp_path']}/tmpmacedit{$id}", $rules);
 			mwexec("/sbin/ipfw -q {$g['tmp_path']}/tmpmacedit{$id}");
@@ -149,35 +150,35 @@ include("head.inc");
             <form action="services_captiveportal_mac_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
-                  <td width="22%" valign="top" class="vncellreq">MAC address</td>
+                  <td width="22%" valign="top" class="vncellreq"><?=gettext("MAC address"); ?></td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="mac" type="text" class="formfld unknown" id="mac" size="17" value="<?=htmlspecialchars($pconfig['mac']);?>">
                     <br> 
-                    <span class="vexpl">MAC address (6 hex octets separated by colons)</span></td>
+                    <span class="vexpl"><?=gettext("MAC address (6 hex octets separated by colons)"); ?></span></td>
                 </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Description"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
+                    <br> <span class="vexpl"><?=gettext("You may enter a description here " .
+                    "for your reference (not parsed)"); ?>.</span></td>
                 </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncell">Bandwidth up</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth up"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="bw_up" type="text" class="formfld unknown" id="bw_up" size="10" value="<?=htmlspecialchars($pconfig['bw_up']);?>">
-                    <br> <span class="vexpl">Enter a upload limit to be enforced on this MAC address in Kbit/s</span></td>
+                    <br> <span class="vexpl"><?=gettext("Enter a upload limit to be enforced on this MAC address in Kbit/s"); ?></span></td>
                 </tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncell">Bandwidth down</td>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("Bandwidth down"); ?></td>
                   <td width="78%" class="vtable"> 
                     <input name="bw_down" type="text" class="formfld unknown" id="bw_down" size="10" value="<?=htmlspecialchars($pconfig['bw_down']);?>">
-                    <br> <span class="vexpl">Enter a download limit to be enforced on this MAC address in Kbit/s</span></td>
+                    <br> <span class="vexpl"><?=gettext("Enter a download limit to be enforced on this MAC address in Kbit/s"); ?></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">
                     <?php if (isset($id) && $a_passthrumacs[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

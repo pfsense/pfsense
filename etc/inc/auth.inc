@@ -255,15 +255,15 @@ function local_sync_accounts() {
 	$allgrp = getGroupEntryByGID(1998);
 	local_group_set($allgrp, true);
 
-	/* sync all local users */
-	if (is_array($config['system']['user']))
-		foreach ($config['system']['user'] as $user)
-			local_user_set($user);
-
 	/* sync all local groups */
 	if (is_array($config['system']['group']))
 		foreach ($config['system']['group'] as $group)
 			local_group_set($group);
+
+	/* sync all local users */
+	if (is_array($config['system']['user']))
+		foreach ($config['system']['user'] as $user)
+			local_user_set($user);
 
 	conf_mount_ro();
 
@@ -285,14 +285,24 @@ function local_user_set(& $user) {
 	if (!is_dir($home_base)) 
 		mkdir($home_base, 0755);
 
+	$lock_account = false;
 	/* configure shell type */
-	if (!(userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all"))) {
-		if (!userHasPrivilege($user, "user-copy-files"))
-			$user_shell = "/sbin/nologin";
-		else
-			$user_shell = "/usr/local/bin/scponly";
-	} else {
+	/* Cases here should be ordered by most privileged to least privileged. */
+	if (userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all")) {
 		$user_shell = "/bin/tcsh";
+	} elseif (userHasPrivilege($user, "user-copy-files")) {
+		$user_shell = "/usr/local/bin/scponly";
+	} elseif (userHasPrivilege($user, "user-ssh-tunnel")) {
+		$user_shell = "/usr/local/sbin/ssh_tunnel_shell";
+	} else {
+		$user_shell = "/sbin/nologin";
+		$lock_account = true;
+	}
+
+	/* Lock out disabled or expired users, unless it's root/admin. */
+	if ((is_account_disabled($user_name) || is_account_expired($user_name)) && ($user_uid != 0)) {
+		$user_shell = "/sbin/nologin";
+		$lock_account = true;
 	}
 
 	/* root user special handling */
@@ -349,6 +359,9 @@ function local_user_set(& $user) {
 		file_put_contents("{$user_home}/.ssh/authorized_keys", $keys);
 		chown("{$user_home}/.ssh/authorized_keys", $user_name);
 	}
+
+	$un = $lock_account ? "" : "un";
+	exec("/usr/sbin/pw {$un}lock {$user_name}");
 	
 	conf_mount_ro();
 }
@@ -359,8 +372,12 @@ function local_user_del($user) {
 	/* remove all memberships */
 	local_user_set_groups($user);
 
+	/* Don't remove /root */
+	if ($user['uid'] != 0)
+		$rmhome = "-r";
+
 	/* delete from pw db */
-	$cmd = "/usr/sbin/pw userdel {$user['name']}";
+	$cmd = "/usr/sbin/pw userdel {$user['name']} {$rmhome}";
 
 	if($debug)
 		log_error("Running: {$cmd}");
@@ -412,7 +429,7 @@ function local_user_set_groups($user, $new_groups = NULL ) {
 	if (!is_array($config['system']['group']))
 		return;
 
-	$cur_groups = local_user_get_groups($user);
+	$cur_groups = local_user_get_groups($user, true);
 	$mod_groups = array();
 
 	if (!is_array($new_groups))

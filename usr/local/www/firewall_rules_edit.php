@@ -796,7 +796,7 @@ include("head.inc");
 				</table>
 				<div id="showadvancedboxspr">
 					<p>
-					<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> type="button" onClick="show_source_port_range()" value="Advanced"></input> - <?=gettext("Show source port range");?></a>
+					<input<?php echo ($edit_disabled===true?' DISABLED':''); ?> type="button" onClick="show_source_port_range()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show source port range");?></a>
 				</div>
 			</td>
 		</tr>
@@ -832,7 +832,7 @@ include("head.inc");
 					</tr>
 				</table>
 				<br />
-				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule. <b>This is usually <em>random</em> and almost never equal to the destination port range (and should usually be &quot;any&quot;).</b>")."<br />".gettext("Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port.");?></span><br/>
+				<span class="vexpl"><?=gettext("Specify the source port or port range for this rule."); ?> <b><?=gettext("This is usually"); ?> <em><?=gettext("random"); ?></em> <?=gettext("and almost never equal to the destination port range (and should usually be"); ?> &quot;<?=gettext("any"); ?>&quot;).</b>")."<br />".<?=gettext("Hint: you can leave the"); ?> <em><?=gettext("\"to\""); ?></em> <?=gettext("field empty if you only want to filter a single port.");?></span><br/>
 			</td>
 		</tr>
 		<tr>
@@ -926,7 +926,7 @@ include("head.inc");
 				<span class="vexpl">
 					<?=gettext("Specify the port or port range for the destination of the packet for this rule.");?>
 					<br />
-					<?=gettext("Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port");?>
+					<?=gettext("Hint: you can leave the"); ?> <em><?=gettext("'to'"); ?></em> <?=gettext("field empty if you only want to filter a single port");?>
 				</span>
 			</td>
 		</tr>
@@ -936,7 +936,7 @@ include("head.inc");
 				<input name="log" type="checkbox" id="log" value="yes" <?php if ($pconfig['log']) echo "checked"; ?>>
 				<strong><?=gettext("Log packets that are handled by this rule");?></strong>
 				<br />
-				<span class="vexpl"><?=gettext("Hint: the firewall has limited local log space. Don't turn on logging for everything. If you want to do a lot of logging, consider using a remote syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: Settings</a> page).");?></span>
+				<span class="vexpl"><?=gettext("Hint: the firewall has limited local log space. Don't turn on logging for everything. If you want to do a lot of logging, consider using a remote syslog server"); ?> (<?=gettext("see the"); ?> <a href="diag_logs_settings.php"><?=gettext("Diagnostics: System logs: Settings"); ?></a> <?=gettext("page"); ?>).</span>
 			</td>
 		</tr>
 		<tr>
@@ -951,7 +951,7 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				&nbsp;<br>&nbsp;
-				<input name="Submit" type="submit" class="formbtn" value="Save">  <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 <?php			if (isset($id) && $a_filter[$id]): ?>
 					<input name="id" type="hidden" value="<?=$id;?>">
 <?php 			endif; ?>
@@ -968,7 +968,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Source OS");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvsourceosbox" <? if ($pconfig['os']) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_sourceos()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_sourceos()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showsourceosadv" <? if (empty($pconfig['os'])) echo "style='display:none'"; ?>>
 					<?=gettext("OS Type");?>:&nbsp;
@@ -1002,7 +1002,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Diffserv Code Point");?></td>
 			<td width="78%" class="vtable">
 				<div id="dsadv" name="dsadv" <? if ($pconfig['dscp']) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_dsdiv();" value="Advanced"> - <?=gettext("Show advanced option");?>
+					<input type="button" onClick="show_dsdiv();" value="<?=gettext("Advanced"); ?>"> - <?=gettext("Show advanced option");?>
 				</div>
 				<div id="dsdivmain" name="dsdivmain" <? if (empty($pconfig['dscp'])) echo "style='display:none'"; ?>>
 					<select name="dscp" id="dscp">
@@ -1018,7 +1018,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Advanced Options");?></td>
 			<td width="78%" class="vtable">
 			<div id="aoadv" name="aoadv">
-				<input type="button" onClick="show_aodiv();" value="Advanced"> - <?=gettext("Show advanced option");?>
+				<input type="button" onClick="show_aodiv();" value="<?=gettext("Advanced"); ?>"> - <?=gettext("Show advanced option");?>
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
 				<input type="checkbox" id="allowopts" value="yes" name="allowopts"<?php if($pconfig['allowopts'] == true) echo " checked"; ?>>
@@ -1028,7 +1028,7 @@ include("head.inc");
 				<br/><span class="vexpl"><?=gettext("This will disable auto generated reply-to for this rule.");?>
 				</span><p>
 				<input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>">
-				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other NAT/filter rules. It is called <b>Policy filtering</b>");?>
+				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other NAT/filter rules. It is called"); ?> <b><?=gettext("Policy filtering"); ?></b>
 				</span><p>
 				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
 				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
@@ -1060,7 +1060,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("TCP flags");?></td>
 			<td width="78%" class="vtable">
 			<div id="showtcpflagsbox" <? if ($pconfig['tcpflags_any'] || $pconfig['tcpflags1'] || $pconfig['tcpflags2']) echo "style='display:none'"; ?>>
-                        	<input type="button" onClick="show_advanced_tcpflags()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
+                        	<input type="button" onClick="show_advanced_tcpflags()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
                         </div>
                         <div id="showtcpflagsadv" <? if (empty($pconfig['tcpflags_any']) && empty($pconfig['tcpflags1']) && empty($pconfig['tcpflags2'])) echo "style='display:none'"; ?>>
 			<div id="tcpheader" name="tcpheader">
@@ -1102,7 +1102,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("State Type");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvstatebox" <? if (!empty($pconfig['statetype']) && $pconfig['statetype'] != "keep state") echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_state()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_state()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showstateadv" <? if (empty($pconfig['statetype']) || $pconfig['statetype'] == "keep state") echo "style='display:none'"; ?>>
 					<select name="statetype">
@@ -1126,7 +1126,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("No XMLRPC Sync");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvnoxmlrpcsyncbox" <? if ($pconfig['nosync']) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_noxmlrpc()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_noxmlrpc()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="shownoxmlrpcadv" <? if (empty($pconfig['nosync'])) echo "style='display:none'"; ?>>
 					<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
@@ -1149,7 +1149,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Schedule");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvschedulebox" <? if (!empty($pconfig['sched'])) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_schedule()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_schedule()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showscheduleadv" <? if (empty($pconfig['sched'])) echo "style='display:none'"; ?>>
 					<select name='sched'>
@@ -1176,7 +1176,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvgatewaybox" <? if (!empty($pconfig['gateway'])) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_gateway()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_gateway()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showgatewayadv" <? if (empty($pconfig['gateway'])) echo "style='display:none'"; ?>>
 					<select name='gateway'>
@@ -1217,7 +1217,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("In/Out");?></td>
 			<td width="78%" class="vtable">
 				<div id="showadvinoutbox" <? if (!empty($pconfig['dnpipe'])) echo "style='display:none'"; ?>>
-					<input type="button" onClick="show_advanced_inout()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
+					<input type="button" onClick="show_advanced_inout()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 				</div>
 				<div id="showinoutadv" <? if (empty($pconfig['dnpipe'])) echo "style='display:none'"; ?>>
 					<select name="dnpipe">
@@ -1267,7 +1267,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell"><?=gettext("Ackqueue/Queue");?></td>
 			<td width="78%" class="vtable">
 			<div id="showadvackqueuebox" <? if (!empty($pconfig['defaultqueue'])) echo "style='display:none'"; ?>>
-				<input type="button" onClick="show_advanced_ackqueue()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
+				<input type="button" onClick="show_advanced_ackqueue()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 			</div>
 			<div id="showackqueueadv" <? if (empty($pconfig['defaultqueue'])) echo "style='display:none'"; ?>>
 				<select name="ackqueue">
@@ -1315,7 +1315,7 @@ include("head.inc");
 				<td width="22%" valign="top" class="vncell"><?=gettext("Layer7");?></td>
 				<td width="78%" class="vtable">
 					<div id="showadvlayer7box" <? if (!empty($pconfig['l7container'])) echo "style='display:none'"; ?>>
-						<input type="button" onClick="show_advanced_layer7()" value="Advanced"></input> - <?=gettext("Show advanced option");?></a>
+						<input type="button" onClick="show_advanced_layer7()" value="<?=gettext("Advanced"); ?>"></input> - <?=gettext("Show advanced option");?></a>
 					</div>
 					<div id="showlayer7adv" <? if (empty($pconfig['l7container'])) echo "style='display:none'"; ?>>
 				<select name="l7container">
@@ -1335,8 +1335,8 @@ include("head.inc");
 				</select>			
 				<br/>
 				<span class="vexpl">
-					<?=gettext("Choose a Layer7 container to apply application protocol inspection rules.
-					These are valid for TCP and UDP protocols only.");?>
+					<?=gettext("Choose a Layer7 container to apply application protocol inspection rules. " .
+					"These are valid for TCP and UDP protocols only.");?>
 				</span>
 			  </div>
 			</td>
@@ -1345,7 +1345,7 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				&nbsp;<br>&nbsp;
-				<input name="Submit" type="submit" class="formbtn" value="Save">  <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>">  <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
 <?php			if (isset($id) && $a_filter[$id]): ?>
 					<input name="id" type="hidden" value="<?=$id;?>">
 <?php 			endif; ?>

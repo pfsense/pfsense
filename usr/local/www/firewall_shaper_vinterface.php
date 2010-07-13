@@ -297,7 +297,7 @@ if ($can_add || $addnewaltq) {
 		$output_form .= "&queue=" . $queue->GetQname();
 	}
 	$output_form .= "&action=add\">";
-	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"Add new queue\">";
+	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"" . gettext("Add new queue") ."\">";
 	$output_form .= "</a>";
 }
 $output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
@@ -308,9 +308,9 @@ if ($queue) {
 $output_form .= "&action=delete\">";
 $output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
 if ($queue)
-	$output_form .= " value=\"Delete this queue\">";
+	$output_form .= " value=\"" . gettext("Delete this queue") ."\">";
 else
-	$output_form .= " value=\"Delete virtual interface\">";
+	$output_form .= " value=\"" . gettext("Delete virtual interface") ."\">";
 $output_form .= "</a>";  
 $output_form .= "</td></tr>";
 $output_form .= "</div>";

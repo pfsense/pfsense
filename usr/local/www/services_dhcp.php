@@ -113,7 +113,7 @@ if($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if'])
-	$savemsg = "<b>The DHCP Server can only be enabled on interfaces configured with static IP addresses.<p> Only interfaces configured with a static IP will be shown.</p></b>";
+	$savemsg = gettext("<b>The DHCP Server can only be enabled on interfaces configured with static IP addresses.<p> Only interfaces configured with a static IP will be shown.</p></b>");
 
 $iflist = get_configured_interface_with_descr();
 
@@ -208,47 +208,47 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['enable']) {
 		$reqdfields = explode(" ", "range_from range_to");
-		$reqdfieldsn = explode(",", "Range begin,Range end");
+		$reqdfieldsn = array(gettext("Range begin"),gettext("Range end"));
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		if (($_POST['range_from'] && !is_ipaddr($_POST['range_from'])))
-			$input_errors[] = "A valid range must be specified.";
+			$input_errors[] = gettext("A valid range must be specified.");
 		if (($_POST['range_to'] && !is_ipaddr($_POST['range_to'])))
-			$input_errors[] = "A valid range must be specified.";
+			$input_errors[] = gettext("A valid range must be specified.");
 		if (($_POST['gateway'] && !is_ipaddr($_POST['gateway'])))
-			$input_errors[] = "A valid IP address must be specified for the gateway.";
+			$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
 		if (($_POST['wins1'] && !is_ipaddr($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddr($_POST['wins2'])))
-			$input_errors[] = "A valid IP address must be specified for the primary/secondary WINS servers.";
+			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
 		if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2'])))
-			$input_errors[] = "A valid IP address must be specified for the primary/secondary DNS servers.";
+			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary DNS servers.");
 
 		if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60)))
-			$input_errors[] = "The default lease time must be at least 60 seconds.";
+			$input_errors[] = gettext("The default lease time must be at least 60 seconds.");
 		if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime'])))
-			$input_errors[] = "The maximum lease time must be at least 60 seconds and higher than the default lease time.";
+			$input_errors[] = gettext("The maximum lease time must be at least 60 seconds and higher than the default lease time.");
 		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain'])))
-			$input_errors[] = "A valid domain name must be specified for the dynamic DNS registration.";
+			$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
 		if (($_POST['ntp1'] && !is_ipaddr($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddr($_POST['ntp2'])))
-			$input_errors[] = "A valid IP address must be specified for the primary/secondary NTP servers.";
+			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
 		if (($_POST['domain'] && !is_domain($_POST['domain'])))
-			$input_errors[] = "A valid domain name must be specified for the DNS domain.";
+			$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
 		if (($_POST['tftp'] && (!is_ipaddr($_POST['tftp']) && !is_domain($_POST['tftp']))))
-			$input_errors[] = "A valid IP address or hostname must be specified for the TFTP server.";
+			$input_errors[] = gettext("A valid IP address or hostname must be specified for the TFTP server.");
 		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver'])))
-			$input_errors[] = "A valid IP address must be specified for the network boot server.";
+			$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");
 
 		if(gen_subnet($ifcfgip, $ifcfgsn) == $_POST['range_from'])
-			$input_errors[] = "You cannot use the network address in the starting subnet range.";
+			$input_errors[] = gettext("You cannot use the network address in the starting subnet range.");
 		if(gen_subnet_max($ifcfgip, $ifcfgsn) == $_POST['range_to'])
-			$input_errors[] = "You cannot use the broadcast address in the ending subnet range.";
+			$input_errors[] = gettext("You cannot use the broadcast address in the ending subnet range.");
 
 		// Disallow a range that includes the virtualip
 		if (is_array($config['virtualip']['vip'])) {
 			foreach($config['virtualip']['vip'] as $vip) {
 				if($vip['interface'] == $if)
 					if($vip['subnet'] && is_inrange($vip['subnet'], $_POST['range_from'], $_POST['range_to']))
-						$input_errors[] = "The subnet range cannot overlap with virtual IP address {$vip['subnet']}.";
+						$input_errors[] = printf(gettext("The subnet range cannot overlap with virtual IP address %s."),$vip['subnet']);
 			}
 		}
 
@@ -259,15 +259,15 @@ if ($_POST) {
 
 			if ((ip2ulong($_POST['range_from']) < $subnet_start) || (ip2ulong($_POST['range_from']) > $subnet_end) ||
 			    (ip2ulong($_POST['range_to']) < $subnet_start) || (ip2ulong($_POST['range_to']) > $subnet_end)) {
-				$input_errors[] = "The specified range lies outside of the current subnet.";
+				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
 			}
 
 			if (ip2ulong($_POST['range_from']) > ip2ulong($_POST['range_to']))
-				$input_errors[] = "The range is invalid (first element higher than second element).";
+				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
 
 			/* make sure that the DHCP Relay isn't enabled on this interface */
 			if (isset($config['dhcrelay'][$if]['enable']))
-				$input_errors[] = "You must disable the DHCP relay on the {$iflist[$if]} interface before enabling the DHCP server.";
+				$input_errors[] = printf(gettext("You must disable the DHCP relay on the %s interface before enabling the DHCP server."),$iflist[$if]);
 		}
 	}
 
@@ -372,7 +372,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("Services","DHCP server");
+$pgtitle = array(gettext("Services"),gettext("DHCP server"));
 $statusurl = "status_dhcp_leases.php";
 $logurl = "diag_logs_dhcp.php";
 
@@ -466,7 +466,7 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 	if ($dhcrelay_enabled) {
-		echo "DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface.";
+		echo gettext("DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface.");
 		include("fend.inc");
 		echo "</body>";
 		echo "</html>";
@@ -474,7 +474,7 @@ include("head.inc");
 	}
 ?>
 <?php if (is_subsystem_dirty('staticmaps')): ?><p>
-<?php print_info_box_np("The static mapping configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(gettext("The static mapping configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
@@ -513,31 +513,31 @@ include("head.inc");
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>
 			<td width="78%" class="vtable">
 				<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
-			<strong>Enable DHCP server on
-			<?=htmlspecialchars($iflist[$if]);?>
-			interface</strong></td>
+			<strong><?php printf(gettext("Enable DHCP server on
+			%s
+			interface"),htmlspecialchars($iflist[$if]));?></strong></td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top" class="vtable">&nbsp;</td>
 			<td width="78%" class="vtable">
 				<input name="denyunknown" id="denyunknown" type="checkbox" value="yes" <?php if ($pconfig['denyunknown']) echo "checked"; ?>>
-				<strong>Deny unknown clients</strong><br>
-				If this is checked, only the clients defined below will get DHCP leases from this server. </td>
+				<strong><?=gettext("Deny unknown clients");?></strong><br>
+				<?=gettext("If this is checked, only the clients defined below will get DHCP leases from this server. ");?></td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncellreq">Subnet</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet");?></td>
 			<td width="78%" class="vtable">
 				<?=gen_subnet($ifcfgip, $ifcfgsn);?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncellreq">Subnet mask</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet mask");?></td>
 			<td width="78%" class="vtable">
 				<?=gen_subnet_mask($ifcfgsn);?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncellreq">Available range</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Available range");?></td>
 			<td width="78%" class="vtable">
 			<?php
 				$range_from = ip2long(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
@@ -554,7 +554,7 @@ include("head.inc");
 			</tr>
 			<?php if($is_olsr_enabled): ?>
 			<tr>
-			<td width="22%" valign="top" class="vncellreq">Subnet Mask</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Subnet Mask");?></td>
 			<td width="78%" class="vtable">
 				<select name="netmask" class="formselect" id="netmask">
 				<?php
@@ -571,115 +571,115 @@ include("head.inc");
 			</tr>
 			<?php endif; ?>
 			<tr>
-			<td width="22%" valign="top" class="vncellreq">Range</td>
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Range");?></td>
 			<td width="78%" class="vtable">
 				<input name="range_from" type="text" class="formfld unknown" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
 				&nbsp;to&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">WINS servers</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("WINS servers");?></td>
 			<td width="78%" class="vtable">
 				<input name="wins1" type="text" class="formfld unknown" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
 				<input name="wins2" type="text" class="formfld unknown" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>">
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">DNS servers</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("DNS servers");?></td>
 			<td width="78%" class="vtable">
 				<input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
 				<input name="dns2" type="text" class="formfld unknown" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br>
-				NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.
+				<?=gettext("NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.");?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">Gateway</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Gateway");?></td>
 			<td width="78%" class="vtable">
 				<input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
-			 	 The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.
+			 	 <?=gettext("The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.");?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">Domain name</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Domain name");?></td>
 			<td width="78%" class="vtable">
 				<input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
-				 The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here.
+				 <?=gettext("The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here.");?>
 			 </td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">Domain search list</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Domain search list");?></td>
 			<td width="78%" class="vtable">
 				<input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
-				The DHCP server can optionally provide a domain search list.
+				<?=gettext("The DHCP server can optionally provide a domain search list.");?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">Default lease time</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Default lease time");?></td>
 			<td width="78%" class="vtable">
 				<input name="deftime" type="text" class="formfld unknown" id="deftime" size="10" value="<?=htmlspecialchars($pconfig['deftime']);?>">
-				seconds<br>
-				This is used for clients that do not ask for a specific
+				<?=gettext("seconds");?><br>
+				<?=gettext("This is used for clients that do not ask for a specific
 				expiration time.<br>
-				The default is 7200 seconds.
+				The default is 7200 seconds.");?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">Maximum lease time</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Maximum lease time");?></td>
 			<td width="78%" class="vtable">
 				<input name="maxtime" type="text" class="formfld unknown" id="maxtime" size="10" value="<?=htmlspecialchars($pconfig['maxtime']);?>">
-				seconds<br>
-				This is the maximum lease time for clients that ask
-				for a specific expiration time.<br>
-				The default is 86400 seconds.
+				<?=gettext("seconds");?><br>
+				<?=gettext("This is the maximum lease time for clients that ask".
+				" for a specific expiration time.<br>".
+				" The default is 86400 seconds.");?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">Failover peer IP:</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Failover peer IP:");?></td>
 			<td width="78%" class="vtable">
 				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
-				Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.
+				<?=gettext("Leave blank to disable.  Enter the interface IP address of the other machine.  Machines must be using CARP.");?>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">Static ARP</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Static ARP");?></td>
 			<td width="78%" class="vtable">
 				<table>
 					<tr>
 					<td>
 						<input valign="middle" type="checkbox" value="yes" name="staticarp" id="staticarp" <?php if($pconfig['staticarp']) echo " checked"; ?>>&nbsp;
 					</td>
-					<td><b>Enable Static ARP entries</b></td>
+					<td><b><?=gettext("Enable Static ARP entries");?></b></td>
 					</tr>
 					<tr>
 					<td>&nbsp;</td>
 					<td>
-						<span class="red"><strong>Note:</strong></span> Only the machines listed below will be able to communicate with the firewall on this NIC.
+						<span class="red"><strong><?=gettext("Note:");?></strong></span><?=gettext(" Only the machines listed below will be able to communicate with the firewall on this NIC.");?>
 					</td>
 					</tr>
 				</table>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">Dynamic DNS</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Dynamic DNS");?></td>
 			<td width="78%" class="vtable">
 				<div id="showddnsbox">
-					<input type="button" onClick="show_ddns_config()" value="Advanced"></input> - Show Dynamic DNS</a>
+					<input type="button" onClick="show_ddns_config()" value="<?=gettext("Advanced");?>"></input><?=gettext(" - Show Dynamic DNS");?></a>
 				</div>
 				<div id="showddns" style="display:none">
 					<input valign="middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if($pconfig['ddnsupdate']) echo " checked"; ?>>&nbsp;
-					<b>Enable registration of DHCP client names in DNS.</b><br />
+					<b><?=gettext("Enable registration of DHCP client names in DNS.");?></b><br />
 					<p>
 					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
-					Note: Leave blank to disable dynamic DNS registration.<br />
-					Enter the dynamic DNS domain which will be used to register client names in the DNS server.
+					<?=gettext("Note: Leave blank to disable dynamic DNS registration.");?><br />
+					<?=gettext("Enter the dynamic DNS domain which will be used to register client names in the DNS server.");?>
 				</div>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">NTP servers</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("NTP servers");?></td>
 			<td width="78%" class="vtable">
 				<div id="showntpbox">
-					<input type="button" onClick="show_ntp_config()" value="Advanced"></input> - Show NTP configuration</a>
+					<input type="button" onClick="show_ntp_config()" value="<?=gettext("Advanced");?>"></input><?=gettext(" - Show NTP configuration");?></a>
 				</div>
 				<div id="showntp" style="display:none">
 					<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>"><br>
@@ -688,56 +688,56 @@ include("head.inc");
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">TFTP server</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("TFTP server");?></td>
 			<td width="78%" class="vtable">
 			<div id="showtftpbox">
-				<input type="button" onClick="show_tftp_config()" value="Advanced"></input> - Show TFTP configuration</a>
+				<input type="button" onClick="show_tftp_config()" value="<?=gettext("Advanced");?>"></input><?=gettext(" - Show TFTP configuration");?></a>
 			</div>
 			<div id="showtftp" style="display:none">
 				<input name="tftp" type="text" class="formfld unknown" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>"><br>
-				Leave blank to disable.  Enter a full hostname or IP for the TFTP server.
+				<?=gettext("Leave blank to disable.  Enter a full hostname or IP for the TFTP server.");?>
 			</div>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">LDAP URI</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("LDAP URI");?></td>
 			<td width="78%" class="vtable">
 				<div id="showldapbox">
-					<input type="button" onClick="show_ldap_config()" value="Advanced"></input> - Show LDAP configuration</a>
+					<input type="button" onClick="show_ldap_config()" value="<?=gettext("Advanced");?>"></input><?=gettext(" - Show LDAP configuration");?></a>
 				</div>
 				<div id="showldap" style="display:none">
 					<input name="ldap" type="text" class="formfld unknown" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>"><br>
-					Leave blank to disable.  Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com
+					<?=gettext("Leave blank to disable.  Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com");?>
 				</div>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">Enable network booting</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Enable network booting");?></td>
 			<td width="78%" class="vtable">
 				<div id="shownetbootbox">
-					<input type="button" onClick="show_netboot_config()" value="Advanced"></input> - Show Network booting</a>
+					<input type="button" onClick="show_netboot_config()" value="<?=gettext("Advanced");?>"></input><?=gettext(" - Show Network booting");?></a>
 				</div>
 				<div id="shownetboot" style="display:none">
 					<input valign="middle" type="checkbox" value="yes" name="netboot" id="netboot" <?php if($pconfig['netboot']) echo " checked"; ?>>&nbsp;
-					<b>Enables network booting.</b>
+					<b><?=gettext("Enables network booting.");?></b>
 					<p>
-					Enter the IP of the <b>next-server</b>
+					<?=gettext("Enter the IP of the <b>next-server</b>");?>
 					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>">
-					and the filename
+					<?=gettext("and the filename");?>
 					<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
-					Note: You need both a filename and a boot server configured for this to work!
+					<?=gettext("Note: You need both a filename and a boot server configured for this to work!");?>
 					<p>
-					Enter the <b>root-path</b>-string
+					<?=gettext("Enter the <b>root-path</b>-string");?>
 					<input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br>
-					Note: string-format: iscsi:(servername):(protocol):(port):(LUN):targetname
+					<?=gettext("Note: string-format: iscsi:(servername):(protocol):(port):(LUN):targetname");?>
 				</div>
 			</td>
 			</tr>
 			<tr>
-			<td width="22%" valign="top" class="vncell">Additional BOOTP/DHCP Options</td>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Additional BOOTP/DHCP Options");?></td>
 			<td width="78%" class="vtable">
 				<div id="shownumbervaluebox">
-					<input type="button" onClick="show_shownumbervalue()" value="Advanced"></input> - Show Additional BOOTP/DHCP Options</a>
+					<input type="button" onClick="show_shownumbervalue()" value="<?=gettext("Advanced");?>"></input><?=gettext(" - Show Additional BOOTP/DHCP Options");?></a>
 				</div>
 				<div id="shownumbervalue" style="display:none">
 				<table id="maintable">
@@ -745,13 +745,13 @@ include("head.inc");
 				<tr>
 				<td colspan="3">
 					<div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp">
-					Enter the DHCP option number and the value for each item you would like to include in the DHCP lease information.  For a list of available options please visit this <a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_new">URL</a>.
+					<?php printf(gettext("Enter the DHCP option number and the value for each item you would like to include in the DHCP lease information.  For a list of available options please visit this %sURL%s."),'<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_new">', '</a>');?>
 					</div>
 				</td>
 				</tr>
 				<tr>
-				<td><div id="onecolumn">Number</div></td>
-				<td><div id="twocolumn">Value</div></td>
+				<td><div id="onecolumn"><?=gettext("Number");?></div></td>
+				<td><div id="twocolumn"><?=gettext("Value");?></div></td>
 				</tr>
 				<?php $counter = 0; ?>
 				<?php
@@ -770,7 +770,7 @@ include("head.inc");
 					<input autocomplete="off" name="value<?php echo $counter; ?>" type="text" class="formfld" id="value<?php echo $counter; ?>" size="55" value="<?=htmlspecialchars($value);?>" />
 				</td>
 				<td>
-					<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="Delete" />
+					<input type="image" src="/themes/<?echo $g['theme'];?>/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="<?=gettext("Delete");?>" />
 				</td>
 				</tr>
 				<?php $counter++; ?>
@@ -780,7 +780,7 @@ include("head.inc");
 				</tfoot>
 				</table>
 				<a onclick="javascript:addRowTo('maintable', 'formfldalias'); return false;" href="#">
-					<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="add another entry" />
+					<img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="<?=gettext("add another entry");?>" />
 				</a>
 				<script type="text/javascript">
 					field_counter_js = 2;
@@ -796,29 +796,29 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<input name="if" type="hidden" value="<?=$if;?>">
-				<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+				<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
 			</td>
 			</tr>
 			<tr>
 			<td width="22%" valign="top">&nbsp;</td>
-			<td width="78%"> <p><span class="vexpl"><span class="red"><strong>Note:<br>
-				</strong></span>The DNS servers entered in <a href="system.php">System:
-				General setup</a> (or the <a href="services_dnsmasq.php">DNS
-				forwarder</a>, if enabled) </span><span class="vexpl">will
+			<td width="78%"> <p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+				</strong></span><?php printf(gettext("The DNS servers entered in %sSystem:
+				General setup%s (or the %sDNS
+				forwarder%s, if enabled)"),'<a href="system.php">','</a>','<a href="services_dnsmasq.php">','</a>');?> </span><span class="vexpl"><?php printf(gettext("will
 				be assigned to clients by the DHCP server.<br>
 				<br>
-				The DHCP lease table can be viewed on the <a href="status_dhcp_leases.php">Status:
-				DHCP leases</a> page.<br>
+				The DHCP lease table can be viewed on the %sStatus:
+				DHCP leases%s page."),'<a href="status_dhcp_leases.php">','</a>');?><br>
 				</span></p>
 			</td>
 			</tr>
 		</table>
 		<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr>
-			<td width="25%" class="listhdrr">MAC address</td>
-			<td width="15%" class="listhdrr">IP address</td>
-			<td width="20%" class="listhdrr">Hostname</td>
-			<td width="30%" class="listhdr">Description</td>
+			<td width="25%" class="listhdrr"><?=gettext("MAC address");?></td>
+			<td width="15%" class="listhdrr"><?=gettext("IP address");?></td>
+			<td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
+			<td width="30%" class="listhdr"><?=gettext("Description");?></td>
 			<td width="10%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			<tr>
@@ -848,7 +848,7 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1">
 			<tr>
 			<td valign="middle"><a href="services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-			<td valign="middle"><a href="services_dhcp.php?if=<?=$if;?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this mapping?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+			<td valign="middle"><a href="services_dhcp.php?if=<?=$if;?>&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this mapping?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 			</tr>
 			</table>
 		</td>

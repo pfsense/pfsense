@@ -49,7 +49,6 @@ function cpelements_sort() {
         usort($config['captiveportal']['element'],"cpelementscmp");
 }
 
-$pgtitle = array("Services","Captive portal");
 $statusurl = "status_captiveportal.php";
 $logurl = "diag_logs_auth.php";
 
@@ -59,6 +58,8 @@ require("functions.inc");
 require("filter.inc");
 require("shaper.inc");
 require("captiveportal.inc");
+
+$pgtitle = array(gettext("Services"),gettext("Captive portal"));
 
 if (!is_array($config['captiveportal']['element']))
 	$config['captiveportal']['element'] = array();
@@ -85,14 +86,14 @@ if ($_POST) {
     	// is there already a file with that name?
     	foreach ($a_element as $element) {
 			if ($element['name'] == $name) {
-				$input_errors[] = "A file with the name '$name' already exists.";
+				$input_errors[] = sprintf(gettext("A file with the name '%s' already exists."), $name);
 				break;
 			}
 		}
 
 		// check total file size
 		if (($total_size + $size) > $g['captiveportal_element_sizelimit']) {
-			$input_errors[] = "The total size of all files uploaded may not exceed " .
+			$input_errors[] = gettext("The total size of all files uploaded may not exceed ") .
 				format_bytes($g['captiveportal_element_sizelimit']) . ".";
 		}
 
@@ -135,24 +136,24 @@ include("head.inc");
   <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
-	$tab_array[] = array("Captive portal", false, "services_captiveportal.php");
-	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
-	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
-	$tab_array[] = array("Vouchers", false, "services_captiveportal_vouchers.php");
-	$tab_array[] = array("File Manager", true, "services_captiveportal_filemanager.php");
+	$tab_array[] = array(gettext("Captive portal"), false, "services_captiveportal.php");
+	$tab_array[] = array(gettext("Pass-through MAC"), false, "services_captiveportal_mac.php");
+	$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php");
+	$tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php");
+	$tab_array[] = array(gettext("File Manager"), true, "services_captiveportal_filemanager.php");
 	display_top_tabs($tab_array);
 ?>  </td></tr>
   <tr>
     <td class="tabcont">
 	<table width="80%" border="0" cellpadding="0" cellspacing="0">
       <tr>
-        <td width="70%" class="listhdrr">Name</td>
-        <td width="20%" class="listhdr">Size</td>
+        <td width="70%" class="listhdrr"><?=gettext("Name"); ?></td>
+        <td width="20%" class="listhdr"><?=gettext("Size"); ?></td>
         <td width="10%" class="list">
 		<table border="0" cellspacing="0" cellpadding="1">
 		    <tr>
 			<td width="17" heigth="17"></td>
-			<td><a href="services_captiveportal_filemanager.php?act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add file" width="17" height="17" border="0"></a></td>
+			<td><a href="services_captiveportal_filemanager.php?act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0"></a></td>
 		    </tr>
 		</table>
 	</td>
@@ -162,14 +163,14 @@ include("head.inc");
 		<td class="listlr"><?=htmlspecialchars($element['name']);?></td>
 		<td class="listr" align="right"><?=format_bytes($element['size']);?></td>
 		<td valign="middle" nowrap class="list">
-		<a href="services_captiveportal_filemanager.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this file?')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="delete file" width="17" height="17" border="0"></a>
+		<a href="services_captiveportal_filemanager.php?act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this file?"); ?>')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete file"); ?>" width="17" height="17" border="0"></a>
 		</td>
 	  </tr>
   <?php $i++; endforeach; ?>
 
   <?php if (count($a_element) > 0): ?>
   	  <tr>
-		<td class="listlr" style="background-color: #eee"><strong>TOTAL</strong></td>
+		<td class="listlr" style="background-color: #eee"><strong><?=gettext("TOTAL"); ?></strong></td>
 		<td class="listr" style="background-color: #eee" align="right"><strong><?=format_bytes($total_size);?></strong></td>
 		<td valign="middle" nowrap class="list"></td>
 	  </tr>
@@ -178,9 +179,9 @@ include("head.inc");
   <?php if ($_GET['act'] == 'add'): ?>
 	  <tr>
 		<td class="listlr" colspan="2"><input type="file" name="new" class="formfld file" size="40" id="new">
-		<input name="Submit" type="submit" class="formbtn" value="Upload"></td>
+		<input name="Submit" type="submit" class="formbtn" value="<?=gettext("Upload"); ?>"></td>
 		<td valign="middle" nowrap class="list">
-		<a href="services_captiveportal_filemanager.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="cancel" width="17" height="17" border="0"></a>
+		<a href="services_captiveportal_filemanager.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("cancel"); ?>" width="17" height="17" border="0"></a>
 		</td>
 	  </tr>
   <?php else: ?>
@@ -190,7 +191,7 @@ include("head.inc");
 			<table border="0" cellspacing="0" cellpadding="1">
 			    <tr>
 				<td width="17" heigth="17"></td>
-				<td><a href="services_captiveportal_filemanager.php?act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add file" width="17" height="17" border="0"></a></td>
+				<td><a href="services_captiveportal_filemanager.php?act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add file"); ?>" width="17" height="17" border="0"></a></td>
 			    </tr>
 			</table>
 		</td>
@@ -198,21 +199,21 @@ include("head.inc");
   <?php endif; ?>
 	</table>
 	<span class="vexpl"><span class="red"><strong>
-	Note:<br>
+	<?=gettext("Note"); ?>:<br>
 	</strong></span>
-	Any files that you upload here with the filename prefix of captiveportal- will
-	be made available in the root directory of the captive portal HTTP(S) server.
-	You may reference them directly from your portal page HTML code using relative paths.
-	Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the
-	file manager. Then you can include it in your portal page like this:<br><br>
+	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
+	"be made available in the root directory of the captive portal HTTP(S) server. " .
+	"You may reference them directly from your portal page HTML code using relative paths. " .
+	"Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the " .
+	"file manager. Then you can include it in your portal page like this"); ?>:<br><br>
 	<tt>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</tt>
 	<br><br>
-	In addition, you can also upload .php files for execution.  You can pass the filename
-	to your custom page from the initial page by using text similar to:
+	<?=gettext("In addition, you can also upload .php files for execution.  You can pass the filename " .
+	"to your custom page from the initial page by using text similar to"); ?>:
 	<br><br>
-	<tt>&lt;a href="/captiveportal-aup.php?redirurl=$PORTAL_REDIRURL$"&gt;Acceptable usage policy&lt/a&gt;</tt>
+	<tt>&lt;a href="/captiveportal-aup.php?redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt/a&gt;</tt>
 	<br><br>
-	The total size limit for all files is <?=format_bytes($g['captiveportal_element_sizelimit']);?>.</span>
+	<?=gettext("The total size limit for all files is"); ?> <?=format_bytes($g['captiveportal_element_sizelimit']);?>.</span>
 </td>
 </tr>
 </table>

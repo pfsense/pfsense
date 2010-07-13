@@ -14,6 +14,13 @@ $priv_list['user-copy-files']['descr'] = "Indicates whether the user is allowed 
 										 "If you are going to use this privilege, you must install ".
 										 "scponly on the appliance (Hint: pkg_add -r scponly).";
 
+$priv_list['user-ssh-tunnel'] = array();
+$priv_list['user-ssh-tunnel']['name']  = "User - System - SSH tunneling";
+$priv_list['user-ssh-tunnel']['descr'] = "Indicates whether the user is able to login for ".
+										"tunneling via SSH when they have no shell access. ".
+										"Note: User - System - Copy files conflicts with ".
+										"this privilege.";
+
 $priv_list['user-l2tp-dialin'] = array();
 $priv_list['user-l2tp-dialin']['name'] = "User - VPN - L2TP Dialin";
 $priv_list['user-l2tp-dialin']['descr'] = "Indicates whether the user is allowed to dial in via L2TP";

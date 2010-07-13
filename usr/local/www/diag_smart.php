@@ -1,0 +1,436 @@
+<?php
+/*
+	Part of pfSense
+
+	Copyright (C) 2006, Eric Friesen
+	All rights reserved
+
+	Some modifications:
+	Copyright (C) 2010 - Jim Pingle
+*/
+
+require("guiconfig.inc");
+
+$pgtitle = array("Diagnostics", "S.M.A.R.T. Monitor Tools");
+$smartctl = "/usr/local/sbin/smartctl";
+$smartd = "/usr/local/sbin/smartd";
+$start_script = "/usr/local/etc/rc.d/smartd.sh";
+
+include("head.inc");
+?>
+
+<style>
+<!--
+
+input {
+	font-family: courier new, courier;
+	font-weight: normal;
+	font-size: 9pt;
+}
+
+pre {
+	border: 2px solid #435370;
+	background: #F0F0F0;
+	padding: 1em;
+	font-family: courier new, courier;
+	white-space: pre;
+	line-height: 10pt;
+	font-size: 10pt;
+}
+
+.label {
+	font-family: tahoma, verdana, arial, helvetica;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.button {
+	font-family: tahoma, verdana, arial, helvetica;
+	font-weight: bold;
+	font-size: 11px;
+}
+
+-->
+</style>
+</head>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
+<?php 
+include("fbegin.inc"); 
+
+// Highlates the words "PASSED", "FAILED", and "WARNING".
+function add_colors($string)
+{
+	// To add words keep arrayes matched by numbers
+	$patterns[0] = '/PASSED/';
+	$patterns[1] = '/FAILED/';
+	$patterns[2] = '/Warning/';
+	$replacements[0] = '<b><font color="#00ff00">PASSED</font></b>';
+	$replacements[1] = '<b><font color="#ff0000">FAILED</font></b>';
+	$replacements[2] = '<font color="#ff0000">Warning</font>';
+	ksort($patterns);
+	ksort($replacements);
+	return preg_replace($patterns, $replacements, $string);
+}
+
+// Edits smartd.conf file, adds or removes email for failed disk reporting
+function update_email($email)
+{
+	// Did they pass an email?
+	if(!empty($email))
+	{
+		// Put it in the smartd.conf file
+		shell_exec("/usr/bin/sed -i old 's/^DEVICESCAN.*/DEVICESCAN -H -m " . $email . "/' /usr/local/etc/smartd.conf");
+	}
+	// Nope
+	else
+	{
+		// Remove email flags in smartd.conf
+		shell_exec("/usr/bin/sed -i old 's/^DEVICESCAN.*/DEVICESCAN/' /usr/local/etc/smartd.conf");
+	}
+}
+
+function smartmonctl($action)
+{
+	global $start_script;
+	shell_exec($start_script . $action);
+}
+
+// What page, aka. action is being wanted
+// If they "get" a page but don't pass all arguments, smartctl will throw an error
+$action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
+switch($action)
+{
+	// Testing devices
+	case 'test':
+	{
+		$test = $_POST['testType'];
+		$output = add_colors(shell_exec($smartctl . " -t " . $test . " /dev/" . $_POST['device']));
+		echo '<pre>' . $output . '
+		<form action="smartmon.php" method="post" name="abort">
+		<input type="hidden" name="device" value="' . $_POST['device'] . '" />
+		<input type="hidden" name="action" value="abort" />
+		<input type="submit" name="submit" value="Abort" />
+		</form>
+		</pre>';
+		break;
+	}
+
+	// Info on devices
+	case 'info':
+	{
+		$type = $_POST['type'];
+		$output = add_colors(shell_exec($smartctl . " -" . $type . " /dev/" . $_POST['device']));
+		echo "<pre>$output</pre>";
+		break;
+	}
+
+	// View logs
+	case 'logs':
+	{
+		$type = $_POST['type'];
+		$output = add_colors(shell_exec($smartctl . " -l " . $type . " /dev/" . $_POST['device']));
+		echo "<pre>$output</pre>";
+		break;
+	}
+
+	// Abort tests
+	case 'abort':
+	{
+		$output = shell_exec($smartctl . " -X /dev/" . $_POST['device']);
+		echo "<pre>$output</pre>";
+		break;
+	}
+
+	// Config changes, users email in xml config and write changes to smartd.conf
+	case 'config':
+	{
+		if(isset($_POST['submit']))
+		{
+			// DOES NOT WORK YET...
+			if($_POST['testemail'])
+			{
+// FIXME				shell_exec($smartd . " -M test -m " . $config['system']['smartmonemail']);
+				$savemsg = "Email sent to " . $config['system']['smartmonemail'];
+				smartmonctl("stop");
+				smartmonctl("start");
+			}
+			else
+			{
+				$config['system']['smartmonemail'] = $_POST['smartmonemail'];
+				write_config();
+
+				// Don't know what all this means, but it addes the config changed header when config is saved
+				$retval = 0;
+				config_lock();
+				if(stristr($retval, "error") <> true)
+					$savemsg = get_std_save_message($retval);
+				else
+					$savemsg = $retval;
+				config_unlock();
+
+				if($_POST['email'])
+				{
+					// Write the changes to the smartd.conf file
+					update_email($_POST['smartmonemail']);
+				}
+
+				// Send sig HUP to smartd, rereads the config file
+				shell_exec("/usr/bin/killall -HUP smartd");
+			}
+		}
+		// Was the config changed? if so , print the message
+		if ($savemsg) print_info_box($savemsg);
+		// Get users email from the xml file
+		$pconfig['smartmonemail'] = $config['system']['smartmonemail'];
+
+		?>
+		<!-- Print the tabs across the top -->
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<?php
+					$tab_array = array();
+					$tab_array[0] = array("Information/Tests", false, $_SERVER['PHP_SELF'] . "?action=default");
+					$tab_array[1] = array("Config", true, $_SERVER['PHP_SELF'] . "?action=config");
+					display_top_tabs($tab_array);
+				?>
+				</td>
+			</tr>
+		</table>
+<!-- user email address -->
+		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="config">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tbody>
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Config</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">Email Adress</td>
+					<td width="78%" class="vtable">
+						<input type="text" name="smartmonemail" value="<?=$pconfig['smartmonemail']?>"/>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top">&nbsp;</td>
+					<td width="78%">
+						<input type="hidden" name="action" value="config" />
+						<input type="hidden" name="email" value="true" />
+						<input type="submit" name="submit" value="Save" class="formbtn" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</form>
+
+<!-- test email -->
+		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="config">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tbody>
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Test email</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">&nbsp;</td>
+					<td width="78%" class="vtable">
+						Send test email to <?=$config['system']['smartmonemail']?>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top">&nbsp;</td>
+					<td width="78%">
+						<input type="hidden" name="action" value="config" />
+						<input type="hidden" name="testemail" value="true" />
+						<input type="submit" name="submit" value="Send" class="formbtn" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</form>
+
+		<?php
+		break;
+	}
+
+	// Default page, prints the forms to view info, test, etc...
+	default:
+	{
+		// Get all AD* and DA* (IDE and SCSI) devices currently installed and stores them in the $devs array
+		exec("ls /dev | grep '^[ad][da]*[0-9]$'", $devs);
+		?>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<?php
+					$tab_array = array();
+					$tab_array[0] = array("Information/Tests", true, $_SERVER['PHP_SELF']);
+					//$tab_array[1] = array("Config", false, $_SERVER['PHP_SELF'] . "?action=config");
+					display_top_tabs($tab_array);
+				?>
+				</td>
+			</tr>
+		</table>
+<!--INFO-->
+		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="info">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tbody>
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Info</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">Info type</td>
+					<td width="78%" class="vtable">
+						<input type="radio" name="type" value="i" />Info<br />
+						<input type="radio" name="type" value="H" checked />Health<br />
+						<input type="radio" name="type" value="c" />SMART Capabilities<br />
+						<input type="radio" name="type" value="A" />Attributes<br />
+						<input type="radio" name="type" value="a" />All<br />
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">Device: /dev/</td>
+					<td width="78%" class="vtable">
+						<select name="device">
+						<?php
+						foreach($devs as $dev)
+						{
+							echo "<option value=" . $dev . ">" . $dev;
+						}
+						?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top">&nbsp;</td>
+					<td width="78%">
+						<input type="hidden" name="action" value="info" />
+						<input type="submit" name="submit" value="View" class="formbtn" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</form>
+<!--TESTS-->
+		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="tests">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tbody>
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Perform Self Tests</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">Test type</td>
+					<td width="78%" class="vtable">
+						<input type="radio" name="testType" value="offline" />Offline<br />
+						<input type="radio" name="testType" value="short" checked />Short<br />
+						<input type="radio" name="testType" value="long" />Long<br />
+						<input type="radio" name="testType" value="conveyance" />Conveyance (ATA Disks Only)<br />
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">Device: /dev/</td>
+					<td width="78%" class="vtable">
+						<select name="device">
+						<?php
+						foreach($devs as $dev)
+						{
+							echo "<option value=" . $dev . ">" . $dev;
+						}
+						?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top">&nbsp;</td>
+					<td width="78%">
+						<input type="hidden" name="action" value="test" />
+						<input type="submit" name="submit" value="Test" class="formbtn" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</form>
+<!--LOGS-->
+		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="logs">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tbody>
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">View Logs</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">Log type</td>
+					<td width="78%" class="vtable">
+						<input type="radio" name="type" value="error" checked />Error<br />
+						<input type="radio" name="type" value="selftest" />Self Test<br />
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">Device: /dev/</td>
+					<td width="78%" class="vtable">
+						<select name="device">
+						<?php
+						foreach($devs as $dev)
+						{
+							echo "<option value=" . $dev . ">" . $dev;
+						}
+						?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top">&nbsp;</td>
+					<td width="78%">
+						<input type="hidden" name="action" value="logs" />
+						<input type="submit" name="submit" value="View" class="formbtn" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</form>
+<!--ABORT-->
+		<form action="<?= $_SERVER['PHP_SELF']?>" method="post" name="abort">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
+			<tbody>
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Abort tests</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top" class="vncell">Device: /dev/</td>
+					<td width="78%" class="vtable">
+						<select name="device">
+						<?php
+						foreach($devs as $dev)
+						{
+							echo "<option value=" . $dev . ">" . $dev;
+						}
+						?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="top">&nbsp;</td>
+					<td width="78%">
+						<input type="hidden" name="action" value="abort" />
+						<input type="submit" name="submit" value="Abort" class="formbtn" onclick="return confirm('Do you really want to abort the test?')" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</form>
+
+		<?php
+		break;
+	}
+}
+
+// print back button on pages
+if(isset($_POST['submit']) && $_POST['submit'] != "Save")
+{
+	echo '<br /><a href="' . $_SERVER['PHP_SELF'] . '">Back</a>';
+}
+?>
+<br />
+<?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
+
+<?php include("fend.inc"); ?>
+</body>
+</html>

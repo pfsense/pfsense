@@ -39,7 +39,6 @@
 ##|*MATCH=firewall_schedule.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Firewall"),gettext("Schedules"));
 
 $dayArray = array (gettext('Mon'),gettext('Tues'),gettext('Wed'),gettext('Thur'),gettext('Fri'),gettext('Sat'),gettext('Sun'));
 $monthArray = array (gettext('January'),gettext('February'),gettext('March'),gettext('April'),gettext('May'),gettext('June'),gettext('July'),gettext('August'),gettext('September'),gettext('October'),gettext('November'),gettext('December'));
@@ -47,6 +46,8 @@ $monthArray = array (gettext('January'),gettext('February'),gettext('March'),get
 require("guiconfig.inc");
 require("filter.inc");
 require("shaper.inc");
+
+$pgtitle = array(gettext("Firewall"),gettext("Schedules"));
 
 if (!is_array($config['schedules']['schedule']))
 	$config['schedules']['schedule'] = array();

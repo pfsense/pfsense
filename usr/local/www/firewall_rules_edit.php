@@ -734,7 +734,7 @@ include("head.inc");
 						if (is_array($config['nat']['rule'])) {
 							foreach( $config['nat']['rule'] as $index => $nat_rule ) {
 								if( isset($nat_rule['associated-rule-id']) && $nat_rule['associated-rule-id']==$pconfig['associated-rule-id'] ) {
-									echo "<a href=\"firewall_nat_edit.php?id={$index}\">View the NAT rule</a><br>";
+									printf("<a href=\"firewall_nat_edit.php?id=%s\">%s</a><br>", $index, gettext("View the NAT rule"));
 									break;
 								}
 							}

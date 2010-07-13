@@ -100,7 +100,7 @@ if ($_GET['act'] == "del") {
        }
 }
 
-$pgtitle = array("Services","DNS forwarder");
+$pgtitle = array(gettext("Services"),gettext("DNS forwarder"));
 include("head.inc");
 
 ?>
@@ -121,34 +121,34 @@ function enable_change(enable_over) {
 <form action="services_dnsmasq.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (is_subsystem_dirty('hosts')): ?><p>
-<?php print_info_box_np("The DNS forwarder configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np(gettext("The DNS forwarder configuration has been changed.<br>You must apply the changes in order for them to take effect."));?><br>
 <?php endif; ?>
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td class="vtable"><p>
                       <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?> onClick="enable_change(false)">
-                      <strong>Enable DNS forwarder<br>
+                      <strong><?=gettext("Enable DNS forwarder");?><br>
                       </strong></p></td>
                 </tr>
                 <tr>
                   <td class="vtable"><p>
                       <input name="regdhcp" type="checkbox" id="regdhcp" value="yes" <?php if ($pconfig['regdhcp'] == "yes") echo "checked";?>>
-                      <strong>Register DHCP leases in DNS forwarder<br>
-                      </strong>If this option is set, then machines that specify
-                      their hostname when requesting a DHCP lease will be registered
-                      in the DNS forwarder, so that their name can be resolved.
-                      You should also set the domain in <a href="system.php">System:
-                      General setup</a> to the proper value.</p>
+                      <strong><?=gettext("Register DHCP leases in DNS forwarder");?><br>
+                      </strong><?php printf(gettext("If this option is set, then machines that specify".
+                     " their hostname when requesting a DHCP lease will be registered".
+                     " in the DNS forwarder, so that their name can be resolved.".
+                     " You should also set the domain in %sSystem:".
+                     " General setup%s to the proper value."),'<a href="system.php">','</a>')?></p>
                     </td>
                 </tr>
                 <tr>
                   <td class="vtable"><p>
                       <input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] == "yes") echo "checked";?>>
-                      <strong>Register DHCP static mappings in DNS forwarder<br>
-                      </strong>If this option is set, then DHCP static mappings will 
-					  be registered in the DNS forwarder, so that their name can be 
-					  resolved. You should also set the domain in <a href="system.php">
-					  System: General setup</a> to the proper value.</p>
+                      <strong><?=gettext("Register DHCP static mappings in DNS forwarder");?><br>
+                      </strong><?php printf(gettext("If this option is set, then DHCP static mappings will ".
+					  "be registered in the DNS forwarder, so that their name can be ".
+					  "resolved. You should also set the domain in %s".
+					  "System: General setup%s to the proper value."),'<a href="system.php">','</a>');?></p>
                     </td>
                 </tr>				
                 <tr>
@@ -156,30 +156,30 @@ function enable_change(enable_over) {
                   </td>
                 </tr>
                 <tr>
-                  <td><p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>If the DNS forwarder is enabled, the DHCP
-                      service (if enabled) will automatically serve the LAN IP
-                      address as a DNS server to DHCP clients so they will use
-                      the forwarder. The DNS forwarder will use the DNS servers
-                      entered in <a href="system.php">System: General setup</a>
-                      or those obtained via DHCP or PPP on WAN if the &quot;Allow
-                      DNS server list to be overridden by DHCP/PPP on WAN&quot;
-                      is checked. If you don't use that option (or if you use
-                      a static IP address on WAN), you must manually specify at
-                      least one DNS server on the <a href="system.php">System:
-                      General setup</a> page.<br>
+                  <td><p><span class="vexpl"><span class="red"><strong><?=gettext("Note:");?><br>
+                      </strong></span><?php printf(gettext("If the DNS forwarder is enabled, the DHCP".
+                     " service (if enabled) will automatically serve the LAN IP".
+                     " address as a DNS server to DHCP clients so they will use".
+                     " the forwarder. The DNS forwarder will use the DNS servers".
+                     " entered in %sSystem: General setup%s".
+                     " or those obtained via DHCP or PPP on WAN if the &quot;Allow".
+                     " DNS server list to be overridden by DHCP/PPP on WAN&quot;".
+                     " is checked. If you don't use that option (or if you use".
+                     " a static IP address on WAN), you must manually specify at".
+                     " least one DNS server on the %sSystem:".
+                      "General setup%s page."),'<a href="system.php">','</a>','<a href="system.php">','</a>');?><br>
                       <br>
-                      You may enter records that override the results from the
-                      forwarders below.</span></p></td>
+                      <?=gettext("You may enter records that override the results from the".
+                     " forwarders below.");?></span></p></td>
                 </tr>
         </table>
         &nbsp;<br>
         <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="20%" class="listhdrr">Host</td>
-                  <td width="25%" class="listhdrr">Domain</td>
-                  <td width="20%" class="listhdrr">IP</td>
-                  <td width="25%" class="listhdr">Description</td>
+                  <td width="20%" class="listhdrr"><?=gettext("Host");?></td>
+                  <td width="25%" class="listhdrr"><?=gettext("Domain");?></td>
+                  <td width="20%" class="listhdrr"><?=gettext("IP");?></td>
+                  <td width="25%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
@@ -207,7 +207,7 @@ function enable_change(enable_over) {
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
                         <td valign="middle"><a href="services_dnsmasq_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-                        <td><a href="services_dnsmasq.php?type=host&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this host?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                        <td><a href="services_dnsmasq.php?type=host&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this host?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 		      </tr>
                    </table>
                 </tr>
@@ -227,16 +227,16 @@ function enable_change(enable_over) {
         <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	       <tr><td>&nbsp;</td></tr>
                <tr>
-                 <td><p>Below you can override an entire domain by specifying an
-                        authoritative DNS server to be queried for that domain.</p></td>
+                 <td><p><?=gettext("Below you can override an entire domain by specifying an".
+                       " authoritative DNS server to be queried for that domain.");?></p></td>
                </tr>
         </table>
 	&nbsp;<br>
         <table width="100%" border="0" cellpadding="0" cellspacing="0">
                <tr>
-                 <td width="35%" class="listhdrr">Domain</td>
-                 <td width="20%" class="listhdrr">IP</td>
-                 <td width="35%" class="listhdr">Description</td>
+                 <td width="35%" class="listhdrr"><?=gettext("Domain");?></td>
+                 <td width="20%" class="listhdrr"><?=gettext("IP");?></td>
+                 <td width="35%" class="listhdr"><?=gettext("Description");?></td>
                  <td width="10%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
 			    <tr>
@@ -258,7 +258,7 @@ function enable_change(enable_over) {
                    <?=htmlspecialchars($doment['descr']);?>&nbsp;
                  </td>
                  <td valign="middle" nowrap class="list"> <a href="services_dnsmasq_domainoverride_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                    &nbsp;<a href="services_dnsmasq.php?act=del&type=doverride&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this domain override?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                    &nbsp;<a href="services_dnsmasq.php?act=del&type=doverride&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this domain override?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
                               </tr>
                         <?php $i++; endforeach; ?>
                <tr>

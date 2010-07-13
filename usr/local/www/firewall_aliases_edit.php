@@ -44,7 +44,6 @@
 ##|*MATCH=firewall_aliases_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
 
 // Keywords not allowed in names
 $reserved_keywords = array("pass", "out", "queue", "max", "min", "pptp", "pppoe", "l2tp", "openvpn");
@@ -53,6 +52,8 @@ require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+
+$pgtitle = array(gettext("Firewall"),gettext("Aliases"),gettext("Edit"));
 
 $reserved_ifs = get_configured_interface_list(false, true);
 $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs);

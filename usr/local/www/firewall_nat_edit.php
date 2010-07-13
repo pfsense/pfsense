@@ -781,7 +781,7 @@ include("fbegin.inc"); ?>
 									echo "<option value=\"{$filter_rule['associated-rule-id']}\"";
 									if ($filter_rule['associated-rule-id']==$pconfig['associated-rule-id']) {
 										echo " SELECTED";
-										$linkedrule = "<br /><a href=\"firewall_rules_edit.php?id={$filter_id}\">View the filter rule</a><br/>";
+										$linkedrule = sprintf("<br /><a href=\"firewall_rules_edit.php?id=%s\">%s</a><br/>", $filter_id, gettext("View the filter rule"));
 									}
 									echo ">". htmlspecialchars('Rule ' . $filter_rule['descr']) . "</option>\n";
 

@@ -111,12 +111,12 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		if (($_POST['server'] && !is_ipaddr($_POST['server'])))
-			$input_errors[] = "A valid Destination Server IP address  must be specified.";
+			$input_errors[] = gettext("A valid Destination Server IP address  must be specified.");
 
 		if (!$input_errors) {
 			/* make sure that the DHCP server isn't enabled on this interface */
 			if (isset($config['dhcpd'][$if]['enable']))
-				$input_errors[] = "You must disable the DHCP server on the {$iflist[$if]} interface before enabling the DHCP Relay.";
+				$input_errors[] = sprintf(gettext("You must disable the DHCP server on the %s interface before enabling the DHCP Relay."),$iflist[$if]);
 			/* make sure that the DHCP server isn't running on any of the implied interfaces */
 			foreach ($config['interfaces'] as $ifname => $ifcfg) {
 				$subnet = $ifcfg['ipaddr'] . "/" . $ifcfg['subnet'];
@@ -126,11 +126,11 @@ if ($_POST) {
 			if (!isset($destif))
 				$destif = "wan";
 			if (isset($config['dhcpd'][$destif]['enable']))
-				$input_errors[] = "You must disable the DHCP server on the {$destif} interface before enabling the DHCP Relay.";
+				$input_errors[] = sprintf(gettext("You must disable the DHCP server on the %s interface before enabling the DHCP Relay."),$destif);
 
 			/* if proxydhcp is selected, make sure DHCP is enabled on WAN */
 			if (isset($config['dhcrelay']['proxydhcp']) && $config['interfaces']['wan']['ipaddr'] != "dhcp")
-				$input_errors[] = "You must have DHCP active on the WAN interface before enabling the DHCP proxy option.";
+				$input_errors[] = gettext("You must have DHCP active on the WAN interface before enabling the DHCP proxy option.");
 		}
 	}
 
@@ -149,7 +149,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("Services","DHCP Relay");
+$pgtitle = array(gettext("Services"),gettext("DHCP Relay"));
 include("head.inc");
 
 ?>
@@ -181,7 +181,7 @@ function enable_change(enable_over) {
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php 
 	if ($dhcpd_enabled) {
-		echo "DHCP Server is currently enabled.  Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.";
+		echo gettext("DHCP Server is currently enabled.  Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.");
 		include("fend.inc"); 
 		echo "</body>";
 		echo "</html>";
@@ -214,31 +214,31 @@ function enable_change(enable_over) {
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable">
 <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
-                          <strong>Enable DHCP relay on
-                          <?=htmlspecialchars($iflist[$if]);?>
-                          interface</strong></td>
+                          <strong><?php printf(gettext("Enable DHCP relay on
+                          %s
+                          interface"),htmlspecialchars($iflist[$if]));?></strong></td>
                       </tr>
 			<tr>
 	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
                       <td width="78%" class="vtable">
 <input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked"; ?>>
-                      <strong>Append circuit ID and agent ID to requests</strong><br>
-                      If this is checked, the DHCP relay will append the circuit ID (<?=$g['product_name'];?> interface number) and the agent ID to the DHCP request.</td>
+                      <strong><?php printf(gettext("Append circuit ID and agent ID to requests</strong><br>
+                      If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request."),$g['product_name']);?></td>
         		  </tr>
                       <tr>
-                        <td width="22%" valign="top" class="vncell">Destination server</td>
+                        <td width="22%" valign="top" class="vncell"><?=gettext("Destination server");?></td>
                         <td width="78%" class="vtable">
-			<input name="proxydhcp" type="checkbox" value="yes" <?php if ($pconfig['proxydhcp']) echo "checked"; ?> onClick="enable_change(false)">  Proxy requests to DHCP server on WAN subnet
+			<input name="proxydhcp" type="checkbox" value="yes" <?php if ($pconfig['proxydhcp']) echo "checked"; ?> onClick="enable_change(false)"><?=gettext("  Proxy requests to DHCP server on WAN subnet");?>
                           <br><br><input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
                           <br>
-			  This is the IP address of the server to which the DHCP packet is relayed.  Select "Proxy requests to DHCP server on WAN subnet" to relay DHCP packets to the server that was used on the WAN interface.
+			  <?=gettext("This is the IP address of the server to which the DHCP packet is relayed.  Select \"Proxy requests to DHCP server on WAN subnet\" to relay DHCP packets to the server that was used on the WAN interface.");?>
                         </td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top">&nbsp;</td>
                         <td width="78%">
                           <input name="if" type="hidden" value="<?=$if;?>">
-                          <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                          <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)">
                         </td>
                       </tr>
                     </table>

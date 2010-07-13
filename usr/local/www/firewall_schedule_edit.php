@@ -53,11 +53,12 @@ function schedule_sort(){
         usort($config['schedules']['schedule'], "schedulecmp");
 }
 
-$pgtitle = array(gettext("Firewall"),gettext("Schedules"),gettext("Edit"));
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
+
+$pgtitle = array(gettext("Firewall"),gettext("Schedules"),gettext("Edit"));
 
 $starttimehr = 00;
 $starttimemin = 00;

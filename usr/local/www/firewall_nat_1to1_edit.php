@@ -158,7 +158,7 @@ include("head.inc");
 					<td colspan="2" valign="top" class="listtopic"><?=gettext("Edit NAT 1:1 entry"); ?></td>
 				</tr>	
 				<tr>
-				  <td width="22%" valign="top" class="vncellreq">Interface</td>
+				  <td width="22%" valign="top" class="vncellreq"><?=gettext("Interface"); ?></td>
 				  <td width="78%" class="vtable">
 					<select name="interface" class="formselect">
 						<?php
@@ -227,19 +227,19 @@ include("head.inc");
                     "for your reference (not parsed)."); ?></span></td>
                 </tr>
 				<tr>
-					<td width="22%" valign="top" class="vncell">NAT reflection</td>
+					<td width="22%" valign="top" class="vncell"><?=gettext("NAT reflection"); ?></td>
 					<td width="78%" class="vtable">
 						<select name="natreflection" class="formselect">
-						<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo "selected"; ?>>use system default</option>
-						<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected"; ?>>enable</option>
-						<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected"; ?>>disable</option>
+						<option value="default" <?php if ($pconfig['natreflection'] != "enable" && $pconfig['natreflection'] != "disable") echo "selected"; ?>><?=gettext("use system default"); ?></option>
+						<option value="enable" <?php if ($pconfig['natreflection'] == "enable") echo "selected"; ?>><?=gettext("enable"); ?></option>
+						<option value="disable" <?php if ($pconfig['natreflection'] == "disable") echo "selected"; ?>><?=gettext("disable"); ?></option>
 						</select>
 					</td>
 				</tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="<?=gettext("Save"); ?>"> <input type="button" class="formbtn" value="<?=gettext("Cancel"); ?>" onclick="history.back()">
                     <?php if (isset($id) && $a_1to1[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>"> 
                     <?php endif; ?>

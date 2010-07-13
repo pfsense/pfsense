@@ -56,7 +56,7 @@ $allowedpages = getAllowedPages($HTTP_SERVER_VARS['AUTH_USER']);
 /*
  * redirect to first allowed page if requesting a wrong url
  */
-if (!isAllowedPage($_SERVER['SCRIPT_NAME'], $_SESSION['Username'])) {
+if (!isAllowedPage($_SERVER['SCRIPT_NAME'])) {
 	if (count($allowedpages) > 0) {
 		$page = str_replace('*', '', $allowedpages[0]);
 		$_SESSION['Post_Login'] = true;
